@@ -2,106 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 839219AE9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:01:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC0439AE9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388978AbfHWL7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 07:59:55 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49014 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfHWL7y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 07:59:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MCKmImQ0R7fs/6XAgJnWu6vihJ6Hr3Y99gy4SyfNOlA=; b=FZCOxMDJPgj2WE7xMMDZy9X0M
-        RjCB/eg/giF5WfYFquy5CueJrkQeb1QLlbtio8nLhsZZQHINVSzGS0Cda9me4z/AQGu6c0AqYlFOD
-        XrB/mbK1i9kKYE94F8rveai4Dx4y30knXWq8z10Yx1f4SP10blnZiw+2GMWzVInqLjoe/hHSyPYxj
-        qdLLts3sw9WYPxjTmnz9JXC2JQT09It8LSA4bfE7B2vGZzmm/u5ER621WzilDr1KIsmTKnnezNnBn
-        y7Rkg2zAPJ9AmnmU3cwODZDlqAIFeWjufdiwtSUav/HvhEZcz+sVKvBAAxAivIYd4vECRHKYuK8vO
-        I/pDM7VVQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i18EP-0003Wt-Mm; Fri, 23 Aug 2019 11:59:49 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 8E5DE305F65;
-        Fri, 23 Aug 2019 13:59:13 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4C530201E04D9; Fri, 23 Aug 2019 13:59:46 +0200 (CEST)
-Date:   Fri, 23 Aug 2019 13:59:46 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ganapatrao Kulkarni <gklkml16@gmail.com>
-Cc:     Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Ganapatrao Kulkarni <gkulkarni@marvell.com>,
-        Jayachandran Chandrasekharan Nair <jnair@marvell.com>
-Subject: Re: [PATCH] perf cgroups: Don't rotate events for cgroups
- unnecessarily
-Message-ID: <20190823115946.GM2349@hirez.programming.kicks-ass.net>
-References: <20190601082722.44543-1-irogers@google.com>
- <20190621082422.GH3436@hirez.programming.kicks-ass.net>
- <CAP-5=fW7sMjQEHm+1e=cdAi+ZyP53UyU7xhAbnouMApuxYqrhw@mail.gmail.com>
- <20190624075520.GC3436@hirez.programming.kicks-ass.net>
- <CAP-5=fU=xbP39b6WZV4h92g6Ub_w4tH2JdApw5t6DTyZqxShUQ@mail.gmail.com>
- <CAKTKpr6m7YzqJ7U2icNHq7ZwoG0pw8ws_EHcLR+-T6ZeEfe15Q@mail.gmail.com>
+        id S2387801AbfHWMAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:00:39 -0400
+Received: from mout.gmx.net ([212.227.15.15]:51627 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388734AbfHWMAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 08:00:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1566561616;
+        bh=7uurcdjt1pmuPWMDE7aso5Yad1UCHW6aP/em6TNpjuY=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Mfz0sRoaAZdo1EVRhSEewVIdbP3GGiVgQiWc4Y5gwYCCJymIoiUrXSbGqaL6ujXKp
+         VCHKiKyQ0mG246vLmsRpYVESsx3NThbOE8KD38pmCFAbMF9rNJ+f73EoMWghYbrV1y
+         oFV1lSg4UV+6jLBuJxGM1IqGWn6Ss9vGElBRY9q0=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [217.61.154.8] ([217.61.154.8]) by web-mail.gmx.net
+ (3c-app-gmx-bs11.server.lan [172.19.170.62]) (via HTTP); Fri, 23 Aug 2019
+ 14:00:16 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKTKpr6m7YzqJ7U2icNHq7ZwoG0pw8ws_EHcLR+-T6ZeEfe15Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <trinity-2f905f45-85d8-4343-8613-31dda5f7556f-1566561616610@3c-app-gmx-bs11>
+From:   "Frank Wunderlich" <frank-w@public-files.de>
+To:     "Mark Brown" <broonie@kernel.org>
+Cc:     "Liam Girdwood" <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        =?UTF-8?Q?=22Ren=C3=A9_van_Dorst=22?= <opensource@vdorst.com>,
+        "Hsin-Hsiung Wang" <hsin-hsiung.wang@mediatek.com>,
+        "Lee Jones" <lee.jones@linaro.org>
+Subject: Aw: Re:  Re: BUG: devm_regulator_get returns EPROBE_DEFER
+ (5.3-rc5..next-20190822) for bpi-r2/mt7623/mt7530
+Content-Type: text/plain; charset=UTF-8
+Date:   Fri, 23 Aug 2019 14:00:16 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <20190823100424.GL23391@sirena.co.uk>
+References: <trinity-584a4b1c-18c9-43ae-8c1a-5057933ad905-1566501837738@3c-app-gmx-bs43>
+ <20190822193015.GK23391@sirena.co.uk>
+ <trinity-5d117f0d-9f34-4a2b-8a12-1cd34152c108-1566505724458@3c-app-gmx-bs43>
+ <20190823100424.GL23391@sirena.co.uk>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:4oV9+ee+6El0HLRs2W95csYW5AXq49DnxYVQONxY9IZMFf61P45ZDW+O+/cY9Xfhy/liD
+ 5yba4Mn1sDmlhLQXQmi4hpVI+CgHG+jge9lMRX8PMEcMzJOlYwQ5WiNeVHB67YWUfd4C/SNCeHuc
+ Lc4iVTwPptXGTxjj6qX/obf7YOID6e62FAkh7Y/8Xg6r7xlOQoYpRyErSZ01KgWioHfyEWrTxMfh
+ jFQjB/JfbwjwaVXWqzdPAcE813uRh1+9pidEoT266QA3raAaKhnYmOb9IfTUDuNb6iipSGLFxm1k
+ JQ=
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1gveNljnRH4=:IFYeteQjU1im3ch0YoBiil
+ tatpL2DwoDvC8wCdBuUoQXu9CycEhxXWGet+e52M7NHdBL62FlVlBvNAlJM9LlhR7VqQxMBlT
+ gSskEcZVO6TtErPk7cVCGmhAE4vGHVhb3tP+4GDV/eu3fCEifLLad80tqBUfqQpTjeBeoSDbJ
+ UzgdqSeSBziaxcXCwlVUb+DhQRIrLi9Da9H7/3XANr/NPnm7nfPBOm/d9PVXt+hpfWlRDYzDB
+ 3J/8xSblKKhM3ZurWTqaXkxEjZycLXS7/lEsEXL+DymJKtxwpYmdeZtDSDRtWq11t0oU0Qg8m
+ rTOPf7RE3tv29UdwTOhJ63D25OW1h3z8TIM0/ur1AXsc9aJCQIknpONNZFJuwCgOa6EWWXi0D
+ B4syyeSGSInU6VlHwUIojk3GYnYkiqVFnw3m6doBEnLJFy9jK0MtUzP6cHCeoyWgyh+6KgQbg
+ nL3pvNy1Sp5dgo1f3F0mk6BCYzy16dzSq037cRDMrQyllm0vSgsy4vQ88LEjY7Izr7aL1Sm/w
+ Sgrx1R3mkPfYjLAx6vawbefupVYV+0dSy/Z1ImZNLyo3fX0hR020iBc4DlkB08KTlJ5TuTx3C
+ TpeTxhTk5f+7GpiomFTOSCBCQJyB5uaNugoUMWEeXHyfHbedfJ0Fxpk+XkrExV2NlRo1ZeDej
+ e41UGpXVIzkG9N1VpmYHT3xJXIQYSiCEHdu56SmwfDhxLrQ==
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> Gesendet: Freitag, 23. August 2019 um 12:04 Uhr
+> Von: "Mark Brown" <broonie@kernel.org>
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
+> Can you run a git bisect to try to identify the commit that
+> caused things to fail?
 
-On Fri, Aug 23, 2019 at 04:13:46PM +0530, Ganapatrao Kulkarni wrote:
+i have not figured out, how to rebase linux-next on my current (working) c=
+odebase :) (failes on file untouched by me at Patch 3/7000+)
 
-> We are seeing regression with our uncore perf driver(Marvell's
-> ThunderX2, ARM64 server platform) on 5.3-Rc1.
-> After bisecting, it turned out to be this patch causing the issue.
+> Look to see if there is a device driver bound to that device, or
+> check if the parent regulator is visible in /sys/class/regulators.
+> You'll also see a mesage printed out for each regulator as it
+> instantiates in the boot logs, you can check there too.
 
-Funnily enough; the email you replied to didn't contain a patch.
+in working version i only get this message in dmesg which
+looks like a device-binding:
 
-> Test case:
-> Load module and run perf for more than 4 events( we have 4 counters,
-> event multiplexing takes place for more than 4 events), then unload
-> module.
-> With this sequence of testing, the system hangs(soft lockup) after 2
-> or 3 iterations. Same test runs for hours on 5.2.
-> 
-> while [ 1 ]
-> do
->         rmmod thunderx2_pmu
->         modprobe thunderx2_pmu
->         perf stat -a -e \
->         uncore_dmc_0/cnt_cycles/,\
->         uncore_dmc_0/data_transfers/,\
->         uncore_dmc_0/read_txns/,\
->         uncore_dmc_0/config=0xE/,\
->         uncore_dmc_0/write_txns/ sleep 1
->         sleep 2
-> done
+mt6323-regulator mt6323-regulator: Chip ID =3D 0x2023
 
-Can you reproduce without the module load+unload? I don't think people
-routinely unload modules.
+this is my regulator: mt6323_vpa_reg
 
+defined in arch/arm/boot/dts/mt6323.dtsi
 
+&pwrap {
+	pmic: mt6323 {
+	  mt6323regulator: mt6323regulator{
+		compatible =3D "mediatek,mt6323-regulator";
+		mt6323_vpa_reg: buck_vpa{
+			regulator-name =3D "vpa";
+			regulator-min-microvolt =3D < 500000>;
+			regulator-max-microvolt =3D <3650000>;
+		};
+	  };
+	};
+};
+
+parent regulator is then
+mt6323regulator: mt6323regulator
+
+which is the one i see i dmesg.
+
+in working version i see the regulator in sys-fs
+
+cat /sys/class/regulator/regulator.*/name | grep vpa
+vpa
+
+=2D------------------------------------------------------------------
+
+so, now to the non-working regulator:
+
+dmesg do not have such entry ;(
+
+regulators-list in /sys/class only containing the dummy and some fixed reg=
+ulators
+
+cat /sys/class/regulator/regulator.*/name
+regulator-dummy
+fixed-1.8V
+fixed-3.3V
+fixed-5V
+
+in arch/arm/boot/dts/mt*.dts and Makefile there is no change between
+working and non-working version.
+in drivers/regulators only the 2 files where i had reverted the
+changes manually without success.
+
+where can be the cause for no more binding main-regulator?
+
+are these strange messages related to this problem?
+
+mtk-cpufreq mtk-cpufreq: failed to initialize dvfs info for cpu0
+
+another strange line is this:
+
+mt6397 1000d000.pwrap:mt6323: unsupported chip: 0x0
+
+so the pwrap above regulator is affected too
+
+and here are many changes in 2 files...
+
+git diff --name-only non-working..working -- drivers/mfd/mt6397-*
+drivers/mfd/mt6397-core.c
+drivers/mfd/mt6397-irq.c
+
+which brings me to this 2 commits:
+
+a4872e80ce7d mfd: mt6397: Extract IRQ related code from core driver
+708cb5cc3fde mfd: mt6397: Rename macros to something more readable
+
+after reverting those 2 regulators are working again.
+Adding both Signed-off-People to CC to keep them informed that a fix is ne=
+eded
+
+> Please fix your mail client to word wrap within paragraphs at something
+> substantially less than 80 columns.  Doing this makes your messages much
+> easier to read and reply to.
+
+i currently write in webmailer, where i cannot set this setting,
+i try to add manual linebreak in long lines, ok?
+
+regards Frank
