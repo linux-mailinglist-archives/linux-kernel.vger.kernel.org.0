@@ -2,107 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AFA79B483
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 18:35:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CDDD9B486
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 18:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436734AbfHWQbc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 12:31:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42272 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388826AbfHWQbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 12:31:31 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B8F121726;
-        Fri, 23 Aug 2019 16:31:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566577890;
-        bh=4uBDuZ3Lx8Vomf88LW9Ys3zz8BLIBREusiqkQZzWd8w=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=mjkSYr6RmiJC0GhN33dx0Y3/zSAByRHlsEKmu6fOigOuNFSZqNX1xcy6b0B/D2QMR
-         KHG0jgYo5rJdQf1/MaBxU5BtYRTHeNGcjORLFJmjaPgGkB61hJ+BWtbaVZ26AJv56a
-         IgOTyFJ3OijaXpACpkByjE3E5wY6wK8MYLijoeCQ=
-Date:   Fri, 23 Aug 2019 17:31:20 +0100
-From:   Will Deacon <will@kernel.org>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <maz@kernel.org>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wei Li <liwei391@huawei.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Rik van Riel <riel@surriel.com>,
-        Waiman Long <longman@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        Grzegorz Halat <ghalat@redhat.com>,
-        Len Brown <len.brown@intel.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Yury Norov <ynorov@marvell.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 2/3] fdt: add support for rng-seed
-Message-ID: <20190823163120.fojtvjfat2ymxoeo@willie-the-truck>
-References: <20190823160612.GJ8130@mit.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190823160612.GJ8130@mit.edu>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S2436763AbfHWQci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 12:32:38 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46054 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436736AbfHWQcf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 12:32:35 -0400
+Received: by mail-pl1-f196.google.com with SMTP id y8so5854991plr.12;
+        Fri, 23 Aug 2019 09:32:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=N2qESvJr/1pmMF3Ae2nRMhv+Yh2vmLQcSbPIwWU4XqU=;
+        b=L6NTSam0xaVt4B1J7FbhhrgYZP5WgZ6n71bwbPTlq2kKZHhL5RuqZ8ASRxgVGcNDJO
+         4l6xeLN7Amq8qyJuqZ8BKsmzBSpjL0fBodG1aqg3UfhX6kRDtMkALRfnDKWE7ZtTH7JU
+         RoRqaR659oAqLh7aS3qTx0YfSYjWqVcQisBLf5f40AGfUPg4zHD9y+BvYW210M62/e1W
+         7h05jsT5TrcwvoaMS3lN7XLJ+2/CPSU7xhD0XTVGn7lURuVtuAk5VFS3WSqmsxHNh93W
+         7XOSKSrxSSfOiGwWmK9wJy7maWwdg9vnZ9JZRC7OyTup80tmVAixLvHOureZG0T2CZLA
+         BMZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=N2qESvJr/1pmMF3Ae2nRMhv+Yh2vmLQcSbPIwWU4XqU=;
+        b=djy3bmJbeZOWUcQ8FIvnDgis+46EnmEUAi+E8COaVS+RiQrSo1vUkyEndC03WR2LbN
+         32zyq2E+92hdrDqz/KWKIc9byoNgdAU3w9uLRM669uau7ZNA2V3vkybnHkD3aBG+yKW1
+         oAl26Xet5QcpTqLwtLX3OsNohnIeTExCGGFj76fku+F5MudtjTAGR5a6oLkSepUVypyQ
+         HuIWvsjd47dPHR6YpszxGB0e/vitpOYZ4YrxZPICbu2aN0/K0f8RoBWOOJ/ct6knmNu9
+         2Rz2SL0I1iBbyg6oGsfwBKakz1x1Rg2K1jadkdxRxMwmqeND60ttrF1Yx7XIhUt3+fF8
+         jRlA==
+X-Gm-Message-State: APjAAAUaD09s78AWFhvuwk5+H4whQNEJRrcPWeUUBjGKsC1CBqtQKLQb
+        1cwwi4xGRvjs70aXh6+9Hts=
+X-Google-Smtp-Source: APXvYqyacElY5Z9Q1CVjkdFuKXjzLiIAcvlHdRQz9qpZxIchxNE4oR4O04kSRxy29esYPVZIl+YGdg==
+X-Received: by 2002:a17:902:aa03:: with SMTP id be3mr5842278plb.240.1566577954950;
+        Fri, 23 Aug 2019 09:32:34 -0700 (PDT)
+Received: from localhost.localdomain ([139.198.121.136])
+        by smtp.gmail.com with ESMTPSA id u7sm3060251pfm.96.2019.08.23.09.32.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 23 Aug 2019 09:32:34 -0700 (PDT)
+From:   Feng Sun <loyou85@gmail.com>
+To:     davem@davemloft.net
+Cc:     edumazet@google.com, dsterba@suse.com, dbanerje@akamai.com,
+        fw@strlen.de, davej@codemonkey.org.uk, tglx@linutronix.de,
+        matwey@sai.msu.ru, sakari.ailus@linux.intel.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Feng Sun <loyou85@gmail.com>,
+        Xiaojun Zhao <xiaojunzhao141@gmail.com>
+Subject: [PATCH] net: fix skb use after free in netpoll_send_skb_on_dev
+Date:   Sat, 24 Aug 2019 00:32:00 +0800
+Message-Id: <1566577920-20956-1-git-send-email-loyou85@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 12:06:12PM -0400, Theodore Y. Ts'o wrote:
-> On Fri, Aug 23, 2019 at 04:41:59PM +0100, Will Deacon wrote:
-> > 
-> > Given that these aren't functional changes, I've kept Ted's ack from v9
-> > and I'll queue these via arm64 assuming they pass testing.
-> > 
-> > Ted -- please shout if you're not happy about that, and I'll drop the
-> > series.
-> 
-> That's fine, thanks.  I'm thinking about making some changes to
-> add_hwgenerator_randomness(), but it's not going to be in the next
-> merge window, and it's more important that we get the interfaces (the
-> Kconfig options and add_bootloader_randomness() function prototype)
-> right for ARM.
+After commit baeababb5b85d5c4e6c917efe2a1504179438d3b
+("tun: return NET_XMIT_DROP for dropped packets"),
+when tun_net_xmit drop packets, it will free skb and return NET_XMIT_DROP,
+netpoll_send_skb_on_dev will run into two use after free cases:
+1. retry netpoll_start_xmit with freed skb;
+2. queue freed skb in npinfo->txq.
 
-Well, on the off-chance that you do need it, I've stuck the series on its
-own branch anyway so you can pull in elsewhere if necessary:
+hit the first case with following kernel log:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git/log/?h=for-next/rng
+[  117.864773] kernel BUG at mm/slub.c:306!
+[  117.864773] invalid opcode: 0000 [#1] SMP PTI
+[  117.864774] CPU: 3 PID: 2627 Comm: loop_printmsg Kdump: loaded Tainted: P           OE     5.3.0-050300rc5-generic #201908182231
+[  117.864775] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  117.864775] RIP: 0010:kmem_cache_free+0x28d/0x2b0
+[  117.864781] Call Trace:
+[  117.864781]  ? tun_net_xmit+0x21c/0x460
+[  117.864781]  kfree_skbmem+0x4e/0x60
+[  117.864782]  kfree_skb+0x3a/0xa0
+[  117.864782]  tun_net_xmit+0x21c/0x460
+[  117.864782]  netpoll_start_xmit+0x11d/0x1b0
+[  117.864788]  netpoll_send_skb_on_dev+0x1b8/0x200
+[  117.864789]  __br_forward+0x1b9/0x1e0 [bridge]
+[  117.864789]  ? skb_clone+0x53/0xd0
+[  117.864790]  ? __skb_clone+0x2e/0x120
+[  117.864790]  deliver_clone+0x37/0x50 [bridge]
+[  117.864790]  maybe_deliver+0x89/0xc0 [bridge]
+[  117.864791]  br_flood+0x6c/0x130 [bridge]
+[  117.864791]  br_dev_xmit+0x315/0x3c0 [bridge]
+[  117.864792]  netpoll_start_xmit+0x11d/0x1b0
+[  117.864792]  netpoll_send_skb_on_dev+0x1b8/0x200
+[  117.864792]  netpoll_send_udp+0x2c6/0x3e8
+[  117.864793]  write_msg+0xd9/0xf0 [netconsole]
+[  117.864793]  console_unlock+0x386/0x4e0
+[  117.864793]  vprintk_emit+0x17e/0x280
+[  117.864794]  vprintk_default+0x29/0x50
+[  117.864794]  vprintk_func+0x4c/0xbc
+[  117.864794]  printk+0x58/0x6f
+[  117.864795]  loop_fun+0x24/0x41 [printmsg_loop]
+[  117.864795]  kthread+0x104/0x140
+[  117.864795]  ? 0xffffffffc05b1000
+[  117.864796]  ? kthread_park+0x80/0x80
+[  117.864796]  ret_from_fork+0x35/0x40
 
-> Now to shanghai some volunteers to get this functionality working for
-> x86 (at least for the UEFI and NERF bootloaders).  :-)
+Signed-off-by: Feng Sun <loyou85@gmail.com>
+Signed-off-by: Xiaojun Zhao <xiaojunzhao141@gmail.com>
+---
+ net/core/netpoll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Hehe, good luck!
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index 2cf27da..b4bffe6 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -335,7 +335,7 @@ void netpoll_send_skb_on_dev(struct netpoll *np, struct sk_buff *skb,
+ 
+ 				HARD_TX_UNLOCK(dev, txq);
+ 
+-				if (status == NETDEV_TX_OK)
++				if (status == NETDEV_TX_OK || status == NET_XMIT_DROP)
+ 					break;
+ 
+ 			}
+@@ -352,7 +352,7 @@ void netpoll_send_skb_on_dev(struct netpoll *np, struct sk_buff *skb,
+ 
+ 	}
+ 
+-	if (status != NETDEV_TX_OK) {
++	if (status != NETDEV_TX_OK && status != NET_XMIT_DROP) {
+ 		skb_queue_tail(&npinfo->txq, skb);
+ 		schedule_delayed_work(&npinfo->tx_work,0);
+ 	}
+-- 
+2.7.4
 
-Will
