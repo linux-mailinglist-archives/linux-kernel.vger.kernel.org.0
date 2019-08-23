@@ -2,116 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 341739B772
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 21:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CCCB9B778
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 21:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392199AbfHWTzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 15:55:35 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36463 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391184AbfHWTze (ORCPT
+        id S2392318AbfHWT4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 15:56:45 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40857 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731765AbfHWT4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 15:55:34 -0400
-Received: by mail-pf1-f196.google.com with SMTP id w2so7133234pfi.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 12:55:34 -0700 (PDT)
+        Fri, 23 Aug 2019 15:56:44 -0400
+Received: by mail-qk1-f194.google.com with SMTP id s145so9242300qke.7
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 12:56:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=XSuUd9OEGM9MvHYqOjSgFcq1+jiet00ohcphBFN2Ku8=;
-        b=dWgkEgDhmeOPeVMVxyU16XbDSKz71EbP3utlMhzj6QfaQGskBbniwQYN+sBfh3k0xb
-         0PmQLGTCDY0XpXU+vDBLhhb5yU46oI93m+K4FlVEYGQjPSMutR0JTTQmnhdR1X2NSPMy
-         u0FnEFgr4h7tUOan2G5M2Hdu5n0p9wSKMXE1Y=
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=vTaAshi9pluGjENrrfftMicTMpjOrhGopwZB6hzguXI=;
+        b=XmdnQ3XPOSwrLu3tByxh+ZVBCu+8gf4v3QrEQR7MLi6j6hCE30XvsnJlLL3xDZlsdg
+         V1QEtfzdpAf2+cNrL+4PWXQ1bkdi4NPtQUY21KiBJBxJjlLTYKtN1Ev401gmS8S9+QBa
+         rrse08tR0y5CdeiPpQM5Lr6s/vZBeJS0OcSoV0Zcn+GSOtvQmMs4JWZz2HzJ5oNt6S0e
+         SLjINAoTnzuj3cLyU+aKUhFN9ity7DDqvCICkoz9933SUyRY5JR1DTyKatCz8RQMw8Zr
+         8KoaRwTw14XZYst0RkajkIELjTnq6a7JkugjoJ37Y9ZCFdWmqih+POIn4bBq7NMGOT8Y
+         o7OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=XSuUd9OEGM9MvHYqOjSgFcq1+jiet00ohcphBFN2Ku8=;
-        b=rCcXGNo7hX8ptAMNBcb2MGdfaVz8LG8BTK8sSxxSbHMImDZOR9mBiGT6WFCKWyeAoh
-         HuQnYKf4wKw+k9fe1D42HADWFcrF1+R+sY5yTbkfbhKP1VJFVX1UN0wGhyDua2s/3/bK
-         ZN2zflJMVZQ2OCLAurPre24tocNgyrRRSiLmlAwHvAZepACXDipJQ2V3Ch9at1FYHX7r
-         hQOVA/isaoCF15qQ/PJsvlpFYahhkVVRkik3Z99UW/awaoQMasW8y+nH065woTzd9QmW
-         5x0zBmVHFLM2u9KlK4R738l2RXJWPcQjaiotTgW5aETpl6KFRNfdoon71s4FdOp1Q/v8
-         IEiw==
-X-Gm-Message-State: APjAAAWGYS8gPwmcKQOKhNM5XJGvgaiHJ01715knJJ1PeZbXzFws1Bb3
-        pkrLWofpB827AC06NmLsB6xVew==
-X-Google-Smtp-Source: APXvYqyq8jAYcKixRslluX5x4YdzavP7W/24Hgq4J76S4aAIIp+mnMo1+VzRsYdY/OZPgDmD6B+xKg==
-X-Received: by 2002:aa7:9907:: with SMTP id z7mr6952346pff.13.1566590133824;
-        Fri, 23 Aug 2019 12:55:33 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id a1sm2550230pgh.61.2019.08.23.12.55.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vTaAshi9pluGjENrrfftMicTMpjOrhGopwZB6hzguXI=;
+        b=Rkbzmu6QO1/z8J7HxVKctrKUxgnh+n4mX4wqhK2GjFPLScNHNpYsZxUKRdxzNiqxI/
+         e2wgWS7Zx8OBVeJ+jbPQ28BOKpDqYNE/LBzMVbiOI0DlisRoWC3Ze1gNrI0vn87iDfHM
+         CjELyystklQ/R5C/3sd/pahHpsMDJEoo0A3DRQDDVfbzepWXSpPGB4r1rIADhrtMp8db
+         8uR82vKMyeDVzcxDzXGlNeb55NTKz0PPmthQ3pYHNA06bT55SFqb4f3hQujPY7krq6Q1
+         BdO65oGqJJC5Xv98rcHTGuapIQkbFouKQrFIELU42tauG1DyuIh32alYLSQzT9gGwIgo
+         ErTw==
+X-Gm-Message-State: APjAAAX98xAa14Lhr5f7b/Ea4bJJXu27FCTqDX7Vo6SwGqbOpEULtrWx
+        t7AcIF0j0vXgSSzawl8HG/ZA0A==
+X-Google-Smtp-Source: APXvYqxgf5wgeiL6ufbZ334VqWwMQGezy5CWWm0nzrMhCFpi0O8GIzGoB/gmIFkF6u6wtWR6LRzjFQ==
+X-Received: by 2002:a37:9c88:: with SMTP id f130mr5826483qke.494.1566590203704;
+        Fri, 23 Aug 2019 12:56:43 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id n21sm2159771qtc.70.2019.08.23.12.56.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Aug 2019 12:55:33 -0700 (PDT)
-Subject: Re: [PATCH 1/7] fs: introduce kernel_pread_file* support
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kselftest@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>
-References: <20190822192451.5983-1-scott.branden@broadcom.com>
- <20190822192451.5983-2-scott.branden@broadcom.com>
- <s5hsgpsqd49.wl-tiwai@suse.de>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <5227a1bb-52e5-d547-2650-b06bee259012@broadcom.com>
-Date:   Fri, 23 Aug 2019 12:55:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <s5hsgpsqd49.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Fri, 23 Aug 2019 12:56:42 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     saeedm@mellanox.com
+Cc:     leon@kernel.org, davem@davemloft.net, moshe@mellanox.com,
+        ferasda@mellanox.com, eranbe@mellanox.com, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] net/mlx5: fix a -Wstringop-truncation warning
+Date:   Fri, 23 Aug 2019 15:56:23 -0400
+Message-Id: <1566590183-9898-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Takashi
+In file included from ./arch/powerpc/include/asm/paca.h:15,
+                 from ./arch/powerpc/include/asm/current.h:13,
+                 from ./include/linux/thread_info.h:21,
+                 from ./include/asm-generic/preempt.h:5,
+                 from ./arch/powerpc/include/generated/asm/preempt.h:1,
+                 from ./include/linux/preempt.h:78,
+                 from ./include/linux/spinlock.h:51,
+                 from ./include/linux/wait.h:9,
+                 from ./include/linux/completion.h:12,
+                 from ./include/linux/mlx5/driver.h:37,
+                 from
+drivers/net/ethernet/mellanox/mlx5/core/lib/eq.h:6,
+                 from
+drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c:33:
+In function 'strncpy',
+    inlined from 'mlx5_fw_tracer_save_trace' at
+drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c:549:2,
+    inlined from 'mlx5_tracer_print_trace' at
+drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c:574:2:
+./include/linux/string.h:305:9: warning: '__builtin_strncpy' output may
+be truncated copying 256 bytes from a string of length 511
+[-Wstringop-truncation]
+  return __builtin_strncpy(p, q, size);
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On 2019-08-23 5:29 a.m., Takashi Iwai wrote:
-> On Thu, 22 Aug 2019 21:24:45 +0200,
-> Scott Branden wrote:
->> Add kernel_pread_file* support to kernel to allow for partial read
->> of files with an offset into the file.  Existing kernel_read_file
->> functions call new kernel_pread_file functions with offset=0 and
->> flags=KERNEL_PREAD_FLAG_WHOLE.
-> Would this change passes the security check like ima?
-> I thought security_kernel_post_read_file() checks the whole content
-> for calculating the hash...
+Fix it by using the new strscpy_pad() since the commit 458a3bf82df4
+("lib/string: Add strscpy_pad() function") which will always
+NUL-terminate the string, and avoid possibly leak data through the ring
+buffer where non-admin account might enable these events through perf.
 
-It passes the fw_run_tests.sh.  How do you test the firmware loader 
-passes this security check?
+Fixes: fd1483fe1f9f ("net/mlx5: Add support for FW reporter dump")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c b/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
+index 8a4930c8bf62..2011eaf15cc5 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/diag/fw_tracer.c
+@@ -546,7 +546,7 @@ static void mlx5_fw_tracer_save_trace(struct mlx5_fw_tracer *tracer,
+ 	trace_data->timestamp = timestamp;
+ 	trace_data->lost = lost;
+ 	trace_data->event_id = event_id;
+-	strncpy(trace_data->msg, msg, TRACE_STR_MSG);
++	strscpy_pad(trace_data->msg, msg, TRACE_STR_MSG);
+ 
+ 	tracer->st_arr.saved_traces_index =
+ 		(tracer->st_arr.saved_traces_index + 1) & (SAVED_TRACES_NUM - 1);
+-- 
+1.8.3.1
 
-What exactly does this ima do?  How do you enable/disable using it?
-
-Any reasonable device would check the integrity of the firmware image 
-being loaded to it.
-
-And, if part of a security model, authenticate the image.
-
-Whatever security check you are referring to is not needed by 
-request_firmware_into_buf when loading
-
-a partial file into a buffer.
-
-
->
->
-> thanks,
->
-> Takashi
