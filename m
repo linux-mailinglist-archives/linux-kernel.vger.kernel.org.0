@@ -2,165 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2CDA9A9DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C54729A9FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392240AbfHWINJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 04:13:09 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41782 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730979AbfHWINJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 04:13:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E9547AE00;
-        Fri, 23 Aug 2019 08:13:06 +0000 (UTC)
-Date:   Fri, 23 Aug 2019 10:13:06 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     jikos@kernel.org, joe.lawrence@redhat.com,
-        Miroslav Benes <mbenes@suse.cz>, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] livepatch: Clear relocation targets on a module
- removal
-Message-ID: <20190823081306.kbkm7b4deqrare2v@pathway.suse.cz>
-References: <20190719122840.15353-1-mbenes@suse.cz>
- <20190719122840.15353-3-mbenes@suse.cz>
- <20190728200427.dbrojgu7hafphia7@treble>
- <alpine.LSU.2.21.1908141256150.16696@pobox.suse.cz>
- <20190814151244.5xoaxib5iya2qjco@treble>
- <20190816094608.3p2z73oxcoqavnm4@pathway.suse.cz>
- <20190822223649.ptg6e7qyvosrljqx@treble>
+        id S2404359AbfHWIOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 04:14:01 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:24463 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404149AbfHWIN6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 04:13:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 91C433F65E;
+        Fri, 23 Aug 2019 10:13:46 +0200 (CEST)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=M7KaK+96;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id QbkcW5whgrGH; Fri, 23 Aug 2019 10:13:45 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 814D53F633;
+        Fri, 23 Aug 2019 10:13:44 +0200 (CEST)
+Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id CC6C83601BA;
+        Fri, 23 Aug 2019 10:13:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1566548024; bh=ilH49lZ4+PXH0zJxFFM4Kn+312EuN85tBhlUd8R6IoU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=M7KaK+96YlQipatKnh5GI58RdErCtNHEQiToHgc/ZIjumFeTjVcFNc9XUwBjj75HZ
+         PL5O0wYfEJ+WATDYrRXtr2V/zWeNfRx9yLCd0ec12QkJXaURpAlXzvC/yXNQcZdBey
+         mJilm/xiTz+VaUDxk5qnwo9aCQArrFG6b8ImOnzs=
+From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
+        =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas_os@shipmail.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: [PATCH v2 0/4] Add support for updated vmware hypercall instruction
+Date:   Fri, 23 Aug 2019 10:13:12 +0200
+Message-Id: <20190823081316.28478-1-thomas_os@shipmail.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190822223649.ptg6e7qyvosrljqx@treble>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-08-22 17:36:49, Josh Poimboeuf wrote:
-> On Fri, Aug 16, 2019 at 11:46:08AM +0200, Petr Mladek wrote:
-> > On Wed 2019-08-14 10:12:44, Josh Poimboeuf wrote:
-> > > On Wed, Aug 14, 2019 at 01:06:09PM +0200, Miroslav Benes wrote:
-> > > > > Really, we should be going in the opposite direction, by creating module
-> > > > > dependencies, like all other kernel modules do, ensuring that a module
-> > > > > is loaded *before* we patch it.  That would also eliminate this bug.
-> > > 
-> > > We should look at whether it makes sense to destabilize live patching
-> > > for everybody, for a small minority of people who care about a small
-> > > minority of edge cases.
-> > 
-> > I do not see it that simple. Forcing livepatched modules to be
-> > loaded would mean loading "random" new modules when updating
-> > livepatches:
-> 
-> I don't want to start a long debate on this, because this idea isn't
-> even my first choice.  But we shouldn't dismiss it outright.
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: <x86@kernel.org>
 
-I am glad to hear that this is not your first choice.
+VMware has started using "vmcall" / "vmmcall" instead of an inl instruction
+for the "backdoor" interface. This series detects support for those
+instructions.
+Outside of the platform code we use the "ALTERNATIVES" self-patching
+mechanism similarly to how this is done with KVM.
+Unfortunately we need two new x86 CPU feature flags for this, since we need
+the default instruction to be "inl". IIRC the vmmouse driver is used by
+other virtualization solutions than VMware, and those might break if
+they encounter any of the other instructions.
 
-
-> >   + It means more actions and higher risk to destabilize
-> >     the system. Different modules have different quality.
-> 
-> Maybe the distro shouldn't ship modules which would destabilize the
-> system.
-
-Is this realistic? Even the best QA could not check all scenarios.
-My point is that the more actions we do the bigger the risk is.
-
-Anyway, this approach might cause loading modules that are never
-or rarely loaded together. Real life systems have limited number of
-peripherals.
-
-I wonder if it might actually break certification of some
-hardware. It is just an idea. I do not know how certifications
-are done and what is the scope or limits.
-
-
-> >   + It might open more security holes that are not fixed by
-> >     the livepatch.
-> 
-> Following the same line of thinking, the livepatch infrastructure might
-> open security holes because of the inherent complexity of late module
-> patching.
-
-Could you be more specific, please?
-Has there been any known security hole in the late module
-livepatching code?
-
-
-> >   + It might require some extra configuration actions to handle
-> >     the newly opened interfaces (devices). For example, updating
-> >     SELinux policies.
-> 
-> I assume you mean user-created policies, not distro ones?  Is this even
-> a realistic concern?
-
-Honestly, I do not know. I am not familiar with this area. There are
-also containers. They are going to be everywhere. They also need a lot
-of rules to keep stuff separated. And it is another area where I have
-no idea if newly loaded and unexpectedly modules might need special
-handling.
-
-
-> >   + Are there conflicting modules that might need to get
-> >     livepatched?
-> 
-> Again is this realistic?
-
-I do not know. But I could imagine it.
-
-
-> > This approach has a strong no-go from my side.
-> 
-> </devils-advocate>
-> 
-> I agree it's not ideal, but nothing is ideal at this point.  Let's not
-> to rule it out prematurely.  I do feel that our current approach is not
-> the best.  It will continue to create problems for us until we fix it.
-
-I am sure that we could do better. I just think that forcibly loading
-modules is opening too huge can of worms. Basically all other
-approaches have more limited or better defined effects.
-
-For example, the newly added code that clears the relocations
-is something that can be tested. Behavior of "random" mix of
-loaded modules opens possibilities that have never been
-discovered before.
-
-
-> > > - Changing 'atomic replace' to allow patch modules to be per-object.
-> > 
-> > The problem might be how to transition all loaded objects atomically
-> > when the needed code is loaded from different modules.
-> 
-> I'm not sure what you mean.
-> 
-> My idea was that each patch module would be specific to an object, with
-> no inter-module change dependencies.  So when using atomic replace, if
-> the patch module is only targeted to vmlinux, then only vmlinux-targeted
-> patch modules would be replaced.
-> 
-> In other words, 'atomic replace' would be object-specific.
-> 
-> > Alternative would be to support only per-object consitency. But it
-> > might reduce the number of supported scenarios too much. Also it
-> > would make livepatching more error-prone.
-
-By per-object consistency I mean the same as you with "each patch
-module would be specific to an object, with no inter-module change
-dependencies".
-
-My concern is that it would prevent semantic changes in a shared code.
-Semantic changes are rare. But changes in shared code are not.
-
-If we reduce the consistency to per-object consistency. Will the
-consistency still make sense then? We might want to go back to
-trees, I mean immediate mode.
-
-Best Regards,
-Petr
+v2:
+- Address various style review comments
+- Use mnemonics instead of bytecode in the ALTERNATIVE_2 macros
+- Use vmcall / vmmcall also for the High-Bandwidth port calls
+- Change the %edx argument to what vmcall / vmmcall expect (flags instead of
+  port number). The port number is added in the default ALTERNATIVE_2 path.
+- Ack to merge the vmmouse patch from Dmitry.
+- Drop license update for now. Will get back with a freestanding patch.
