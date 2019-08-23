@@ -2,150 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 674F49AB71
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:36:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 473BC9AB78
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:40:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732805AbfHWJfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 05:35:32 -0400
-Received: from mta-02.yadro.com ([89.207.88.252]:52788 "EHLO mta-01.yadro.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730861AbfHWJfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 05:35:31 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id 51C2A42ECC;
-        Fri, 23 Aug 2019 09:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        content-transfer-encoding:mime-version:user-agent:content-type
-        :content-type:organization:date:date:from:from:subject:subject
-        :message-id:received:received:received; s=mta-01; t=1566552929;
-         x=1568367330; bh=jKgtvGJmWgHFw9xTDALlI5FqM+Ek3B7dGReC44Js//M=; b=
-        HEKmcsxFbGqsJTfERJLdbiKd+j709hWz/pTxYtYPH2TfmOg/JvFHgdIub9O20EtX
-        9whE9XgUo0PN1XNGWO25rFCXIUsBSZ/Vf/K9WGVizipBvp0QFHtN/MJo9IBdlSVL
-        vx1m/SNdoj9t7VViQ1wmxoh16E3W6W0g5qe15QqV5FA=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 7h2lt6dcs_4a; Fri, 23 Aug 2019 12:35:29 +0300 (MSK)
-Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id 1A51B411F9;
-        Fri, 23 Aug 2019 12:35:29 +0300 (MSK)
-Received: from localhost.localdomain (172.17.15.69) by
- T-EXCH-02.corp.yadro.com (172.17.10.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.669.32; Fri, 23 Aug 2019 12:35:28 +0300
-Message-ID: <fafd757238e204b2566f216f1d6a4bef4b4906c5.camel@yadro.com>
-Subject: [PATCH v1 3/3] watchdog/aspeed: add support for dual boot
-From:   Ivan Mikhaylov <i.mikhaylov@yadro.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-CC:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        <linux-watchdog@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        "Alexander Amelkin" <a.amelkin@yadro.com>,
-        <openbmc@lists.ozlabs.org>
-Date:   Fri, 23 Aug 2019 12:35:28 +0300
-Organization: YADRO
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        id S1733239AbfHWJhE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 05:37:04 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36708 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbfHWJhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 05:37:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=npY3kxMBkpg6StNbFZw2v3WvWnwH4EGOxrS2hJvkUAQ=; b=QYnL2t5MsjdvI+dwV/uz9x/ny
+        w4l7H3zbjU9ULp8rqmNsdkMzJefwulHzT674UaVXVW2ZOxGNk2IPoyDOVYwxdlw2/cUrKB2IuCmzk
+        UFf3j6w6pZBxPDIBCztDYsTGYBwpd2G/WFNNpuW/cqSeOLJdLz2CvmEqnVpO7gFMO3i7gP79I0hrQ
+        PnrgbnRKx5QW5wmGNN0cHJoBXpzj4VZ/EfwacdpQ1zfnNaHhHt6Bv/aWXHXIiY6jseD6krryICT92
+        bfZ6I3NLzuSNC85WpvHObD0w9bp2jOXxOTUBKMCaXC47F2BAJ83x4nEeaGSMW+OLfKDn7VfnST5Xb
+        njK0EEvPQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i15zt-0007yJ-1Y; Fri, 23 Aug 2019 09:36:41 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id A175E307603;
+        Fri, 23 Aug 2019 11:36:05 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DEFD920BF0F18; Fri, 23 Aug 2019 11:36:37 +0200 (CEST)
+Date:   Fri, 23 Aug 2019 11:36:37 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@fb.com, stable@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH] x86/mm: Do not split_large_page() for
+ set_kernel_text_rw()
+Message-ID: <20190823093637.GH2369@hirez.programming.kicks-ass.net>
+References: <20190823052335.572133-1-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.17.15.69]
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-02.corp.yadro.com (172.17.10.102)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190823052335.572133-1-songliubraving@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set WDT_CLEAR_TIMEOUT_AND_BOOT_CODE_SELECTION into WDT_CLEAR_TIMEOUT_STATUS
-to clear out boot code source and re-enable access to the primary SPI flash
-chip while booted via wdt2 from the alternate chip.
+On Thu, Aug 22, 2019 at 10:23:35PM -0700, Song Liu wrote:
+> As 4k pages check was removed from cpa [1], set_kernel_text_rw() leads to
+> split_large_page() for all kernel text pages. This means a single kprobe
+> will put all kernel text in 4k pages:
+> 
+>   root@ ~# grep ffff81000000- /sys/kernel/debug/page_tables/kernel
+>   0xffffffff81000000-0xffffffff82400000     20M  ro    PSE      x  pmd
+> 
+>   root@ ~# echo ONE_KPROBE >> /sys/kernel/debug/tracing/kprobe_events
+>   root@ ~# echo 1 > /sys/kernel/debug/tracing/events/kprobes/enable
+> 
+>   root@ ~# grep ffff81000000- /sys/kernel/debug/page_tables/kernel
+>   0xffffffff81000000-0xffffffff82400000     20M  ro             x  pte
+> 
+> To fix this issue, introduce CPA_FLIP_TEXT_RW to bypass "Text RO" check
+> in static_protections().
+> 
+> Two helper functions set_text_rw() and set_text_ro() are added to flip
+> _PAGE_RW bit for kernel text.
+> 
+> [1] commit 585948f4f695 ("x86/mm/cpa: Avoid the 4k pages check completely")
 
-AST2400 datasheet says:
-"In the 2nd flash booting mode, all the address mapping to CS0# would be
-re-directed to CS1#. And CS0# is not accessable under this mode. To access
-CS0#, firmware should clear the 2nd boot mode register in the WDT2 status
-register WDT30.bit[1]."
-
-Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
----
- drivers/watchdog/aspeed_wdt.c | 44 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
-index cc71861e033a..62bf95cb741f 100644
---- a/drivers/watchdog/aspeed_wdt.c
-+++ b/drivers/watchdog/aspeed_wdt.c
-@@ -53,6 +53,8 @@ MODULE_DEVICE_TABLE(of, aspeed_wdt_of_table);
- #define   WDT_CTRL_ENABLE		BIT(0)
- #define WDT_TIMEOUT_STATUS	0x10
- #define   WDT_TIMEOUT_STATUS_BOOT_SECONDARY	BIT(1)
-+#define WDT_CLEAR_TIMEOUT_STATUS	0x14
-+#define   WDT_CLEAR_TIMEOUT_AND_BOOT_CODE_SELECTION	BIT(0)
- 
- /*
-  * WDT_RESET_WIDTH controls the characteristics of the external pulse (if
-@@ -165,6 +167,42 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
- 	return 0;
- }
- 
-+/* access_cs0 shows if cs0 is accessible, hence the reverted bit */
-+static ssize_t access_cs0_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct aspeed_wdt *wdt = dev_get_drvdata(dev);
-+
-+	uint32_t status = readl(wdt->base + WDT_TIMEOUT_STATUS);
-+
-+	return sprintf(buf, "%u\n",
-+			!(status & WDT_TIMEOUT_STATUS_BOOT_SECONDARY));
-+}
-+
-+static ssize_t access_cs0_store(struct device *dev,
-+			      struct device_attribute *attr,
-+			      const char *buf, size_t size)
-+{
-+	struct aspeed_wdt *wdt = dev_get_drvdata(dev);
-+	unsigned long val = 0;
-+
-+	if (kstrtoul(buf, 10, &val))
-+		return -EINVAL;
-+
-+	if (val)
-+		writel(WDT_CLEAR_TIMEOUT_AND_BOOT_CODE_SELECTION,
-+			wdt->base + WDT_CLEAR_TIMEOUT_STATUS);
-+
-+	return size;
-+}
-+static DEVICE_ATTR_RW(access_cs0);
-+
-+static struct attribute *bswitch_attrs[] = {
-+	&dev_attr_access_cs0.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(bswitch);
-+
- static const struct watchdog_ops aspeed_wdt_ops = {
- 	.start		= aspeed_wdt_start,
- 	.stop		= aspeed_wdt_stop,
-@@ -306,8 +344,12 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
- 	}
- 
- 	status = readl(wdt->base + WDT_TIMEOUT_STATUS);
--	if (status & WDT_TIMEOUT_STATUS_BOOT_SECONDARY)
-+	if (status & WDT_TIMEOUT_STATUS_BOOT_SECONDARY) {
- 		wdt->wdd.bootstatus = WDIOF_CARDRESET;
-+		wdt->wdd.groups = bswitch_groups;
-+	}
-+
-+	dev_set_drvdata(dev, wdt);
- 
- 	return devm_watchdog_register_device(dev, &wdt->wdd);
- }
--- 
-2.20.1
-
-
+ARGH; so this is because ftrace flips the whole kernel range to RW and
+back for giggles? I'm thinking _that_ is a bug, it's a clear W^X
+violation.
