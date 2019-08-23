@@ -2,94 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2990A9B8C4
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 01:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C392D9B8CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 01:27:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfHWXTM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 19:19:12 -0400
-Received: from foss.arm.com ([217.140.110.172]:39548 "EHLO foss.arm.com"
+        id S1727315AbfHWX1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 19:27:13 -0400
+Received: from mga11.intel.com ([192.55.52.93]:21141 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbfHWXTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 19:19:12 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F35328;
-        Fri, 23 Aug 2019 16:19:11 -0700 (PDT)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 665A43F246;
-        Fri, 23 Aug 2019 16:19:10 -0700 (PDT)
-Subject: Re: [PATCH] sched/fair: don't assign runtime for throttled cfs_rq
-To:     bsegall@google.com, Liangyan <liangyan.peng@linux.alibaba.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, shanpeic@linux.alibaba.com,
-        xlpang@linux.alibaba.com
-References: <20190814180021.165389-1-liangyan.peng@linux.alibaba.com>
- <xm26d0gvirdg.fsf@bsegall-linux.svl.corp.google.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <942ae15c-ffa5-74da-208b-7e82df917e16@arm.com>
-Date:   Sat, 24 Aug 2019 00:19:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727065AbfHWX1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 19:27:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 16:27:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,422,1559545200"; 
+   d="scan'208";a="187009630"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Aug 2019 16:27:12 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v7 0/8] Add Error Disconnect Recover (EDR) support
+Date:   Fri, 23 Aug 2019 16:24:05 -0700
+Message-Id: <cover.1566602170.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <xm26d0gvirdg.fsf@bsegall-linux.svl.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/08/2019 21:00, bsegall@google.com wrote:
-[...]
-> Could you mention in the message that this a throttled cfs_rq can have
-> account_cfs_rq_runtime called on it because it is throttled before
-> idle_balance, and the idle_balance calls update_rq_clock to add time
-> that is accounted to the task.
-> 
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-Mayhaps even a comment for the extra condition.
+This patchset adds support for following features:
 
-> I think this solution is less risky than unthrottling
-> in this area, so other than that:
-> 
-> Reviewed-by: Ben Segall <bsegall@google.com>
-> 
+1. Error Disconnect Recover (EDR) support.
+2. _OSC based negotiation support for DPC.
 
-If you don't mind squashing this in:
+You can find EDR spec in the following link.
 
------8<-----
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b1d9cec9b1ed..b47b0bcf56bc 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4630,6 +4630,10 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b, u64 remaining)
- 		if (!cfs_rq_throttled(cfs_rq))
- 			goto next;
- 
-+		/* By the above check, this should never be true */
-+		WARN_ON(cfs_rq->runtime_remaining > 0);
-+
-+		/* Pick the minimum amount to return to a positive quota state */
- 		runtime = -cfs_rq->runtime_remaining + 1;
- 		if (runtime > remaining)
- 			runtime = remaining;
------>8-----
+https://members.pcisig.com/wg/PCI-SIG/document/12614
 
-I'm not adamant about the extra comment, but the WARN_ON would be nice IMO.
+Changes since v6:
+ * Modified the order of patches to enable EDR only after all necessary support is added in kernel.
+ * Addressed Bjorn comments.
 
+Changes since v5:
+ * Addressed Keith's comments.
+ * Added additional check for FF mode in pci_aer_init().
+ * Updated commit history of "PCI/DPC: Add support for DPC recovery on NON_FATAL errors" patch.
 
-@Ben, do you reckon we want to strap
+Changes since v4:
+ * Rebased on top of v5.3-rc1
+ * Fixed lock/unlock issue in edr_handle_event().
+ * Merged "Update error status after reset_link()" patch into this patchset.
 
-Cc: <stable@vger.kernel.org>
-Fixes: ec12cb7f31e2 ("sched: Accumulate per-cfs_rq cpu usage and charge against bandwidth")
+Changes since v3:
+ * Moved EDR related ACPI functions/definitions to pci-acpi.c
+ * Modified commit history in few patches to include spec reference.
+ * Added support to handle DPC triggered by NON_FATAL errors.
+ * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
+ * Addressed Bjorn comments.
 
-to the thing? AFAICT the pick_next_task_fair() + idle_balance() dance you
-described should still be possible on that commit.
+Changes since v2:
+ * Split EDR support patch into multiple patches.
+ * Addressed Bjorn comments.
 
+Changes since v1:
+ * Rebased on top of v5.1-rc1
 
-Other than that,
+Kuppuswamy Sathyanarayanan (8):
+  PCI/ERR: Update error status after reset_link()
+  PCI/DPC: Allow dpc_probe() even if firmware first mode is enabled
+  PCI/DPC: Add dpc_process_error() wrapper function
+  PCI/DPC: Add Error Disconnect Recover (EDR) support
+  PCI/AER: Allow clearing Error Status Register in FF mode
+  PCI/DPC: Update comments related to DPC recovery on NON_FATAL errors
+  PCI/DPC: Clear AER registers in EDR mode
+  PCI/ACPI: Enable EDR support
 
-Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
+ drivers/acpi/pci_root.c         |   9 ++
+ drivers/pci/pci-acpi.c          |  91 +++++++++++++++
+ drivers/pci/pcie/Kconfig        |  10 ++
+ drivers/pci/pcie/aer.c          |  12 +-
+ drivers/pci/pcie/dpc.c          | 194 +++++++++++++++++++++++++++++---
+ drivers/pci/pcie/err.c          |  10 +-
+ drivers/pci/pcie/portdrv_core.c |   8 +-
+ drivers/pci/probe.c             |   1 +
+ include/linux/acpi.h            |   6 +-
+ include/linux/pci-acpi.h        |  11 ++
+ include/linux/pci.h             |   3 +-
+ 11 files changed, 321 insertions(+), 34 deletions(-)
 
-[...]
+-- 
+2.21.0
+
