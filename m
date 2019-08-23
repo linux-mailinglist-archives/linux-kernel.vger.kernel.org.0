@@ -2,70 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED5D9B89C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 00:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AE9F9B89F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 00:50:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfHWWqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 18:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58386 "EHLO mail.kernel.org"
+        id S1726526AbfHWWuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 18:50:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725283AbfHWWqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 18:46:35 -0400
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726371AbfHWWuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 18:50:04 -0400
+Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EA5121897
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 22:46:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D533E21019;
+        Fri, 23 Aug 2019 22:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566600394;
-        bh=5AtlJ8cym2kVMj3VKczQ/Xr2AFA5SHmNJu+9Zb0ZS8I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZY8C3/B7eZSRy5ebXhQPvij2EefFFDcbMwxZDWtqCfrP/cBNiP9RF8ww/isge35Ua
-         zFxjNcx10rXYutEyJmLe+95iYLCIYPZGdAKheA2SHe/bxpBwNqYTP4IkIoF2YbClqM
-         eZNIfK6+Uxl9//ymGHg3lB/X7m82VSY57qMbE2U4=
-Received: by mail-wm1-f42.google.com with SMTP id m125so10471838wmm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 15:46:34 -0700 (PDT)
-X-Gm-Message-State: APjAAAXlwEo8KVTyrAouquFST9Mowo2nhClMmn2iqK95cxk3ZLt4lJ4x
-        kyOZFch1r8FJZETtkBs9FtkoMwQG1yJ/SZwcJB/gFQ==
-X-Google-Smtp-Source: APXvYqwTdt6tHwJgQgfuQY2j6MTIhPY5i33QMVfj1jsY5dz0nP10DPqA6QTn2BjMkcIJfrNxuRltErSdubOhX7NWEAo=
-X-Received: by 2002:a1c:f910:: with SMTP id x16mr7225160wmh.173.1566600392711;
- Fri, 23 Aug 2019 15:46:32 -0700 (PDT)
+        s=default; t=1566600603;
+        bh=eYAG1X9WDD4xzkAH2NydWyQMeTuejVRrxVaVeNeAM3g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nwDyPVI0ABH1BH39ifLtRuePnnK8IKLeqIKB2pjcb9JAiIYT0jTiN/pFB/HH0yCxu
+         XG2ZKBZQ1DBs+0WmWijejD3UIakpEqFsjlYDdBKv8MgVdBx5AD5KaiZ1fYMr22hnwy
+         ub7B4FT/ESGBLgLubP8CrkPtcrDmlUsnEgg9VUII=
+Date:   Sat, 24 Aug 2019 00:50:01 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [patch V2 27/38] posix-cpu-timers: Remove cputime_expires
+Message-ID: <20190823225000.GH18880@lenoir>
+References: <20190821190847.665673890@linutronix.de>
+ <20190821192921.790209622@linutronix.de>
 MIME-Version: 1.0
-References: <20190823205544.24052-1-sean.j.christopherson@intel.com>
-In-Reply-To: <20190823205544.24052-1-sean.j.christopherson@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 23 Aug 2019 15:46:20 -0700
-X-Gmail-Original-Message-ID: <CALCETrXFRAmgqyxtsknpnQaMtVU-hqMRPYR=4Q5JtBgNGxuSGQ@mail.gmail.com>
-Message-ID: <CALCETrXFRAmgqyxtsknpnQaMtVU-hqMRPYR=4Q5JtBgNGxuSGQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: Don't update RIP or do single-step on faulting emulation
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821192921.790209622@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 1:55 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> Don't advance RIP or inject a single-step #DB if emulation signals a
-> fault.  This logic applies to all state updates that are conditional on
-> clean retirement of the emulation instruction, e.g. updating RFLAGS was
-> previously handled by commit 38827dbd3fb85 ("KVM: x86: Do not update
-> EFLAGS on faulting emulation").
->
-> Not advancing RIP is likely a nop, i.e. ctxt->eip isn't updated with
-> ctxt->_eip until emulation "retires" anyways.  Skipping #DB injection
-> fixes a bug reported by Andy Lutomirski where a #UD on SYSCALL due to
-> invalid state with RFLAGS.RF=1 would loop indefinitely due to emulation
+On Wed, Aug 21, 2019 at 09:09:14PM +0200, Thomas Gleixner wrote:
+> The last users of the magic struct cputime based expiry cache are
+> gone. Remove the leftovers.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-EFLAGS.TF=1
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
