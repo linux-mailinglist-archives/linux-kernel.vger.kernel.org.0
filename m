@@ -2,80 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC1F79A9FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B784A9A9FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:18:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404180AbfHWIN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 04:13:57 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41252 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731606AbfHWIN4 (ORCPT
+        id S2404398AbfHWIOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 04:14:32 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43674 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387647AbfHWIOc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 04:13:56 -0400
-Received: by mail-qt1-f194.google.com with SMTP id i4so10401678qtj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 01:13:56 -0700 (PDT)
+        Fri, 23 Aug 2019 04:14:32 -0400
+Received: by mail-wr1-f65.google.com with SMTP id y8so7775450wrn.10
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 01:14:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+iEZzmAuZ9VlWo1rY1HoUVRqOc3pQbx/jL7+3U6XUrE=;
-        b=KQoYmM1kiPcUeWePSRh/MATRSKtGHbDYwmscEnDEJex+ScfK8GC0Pn565Cm8BTQ7fS
-         TN0P76B44uAatP3B3BZ61Hp3/1ZaAhV2sP1r/Qzr+VQI42UarAvsX6fIFMwnvDohlRBM
-         i/SnM/kjB9KyiVRKnmaBnb4WhhIpto3GuckqI=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p/dmfnR+UyPL3cfGh6Tcm8LcRn0ZKE9YaND2fk1NH2Y=;
+        b=yyPg/dahGVPnd10/YstcWu13LfyvUbPCagDdchUUo2M/ySvhyUVmcaIZK5JCG/z8BC
+         1NqikkwjDSULYFKbgXAstzFPevXA/ttINob/6a5g3opj6SqYbVkP1T9KYXRLQsyOaeZ5
+         DnmEoXJyBjQbV+En3rBuaAG7VqgXTfJlgH2HVvzpoXHi4dql+YyUnzlpSCMx66Ek/SaA
+         9ZYtc2mYhjbvIvGHG7JVu6y/gevhoCttbeGfdne/LjcDZUOH+HUktrAInoPeE/G1hhAx
+         14eIO0UIUCTBBr5VITI0afqTa1vOZCos9pABtPyrBxjpvNZ3/5bk3U+aQ+BsybejiXed
+         3+DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+iEZzmAuZ9VlWo1rY1HoUVRqOc3pQbx/jL7+3U6XUrE=;
-        b=Nxab5CVWFJEHb8Wmo/UQ1PmwkVBtsrLn3T79Dk/8wvEU/t9ImajK2n92nyD8GnyjNt
-         36X5oqvzeQaTaTKiOw49VAEY9hqiWtlDW4F69u/5FaK86p239shz6++pGaj24QRJN/9M
-         s8BXlZ/dLF+DDuiPxb9uXm67LjF0AjgScyF8nWR+h98BnT8TDmZHjqKaF1pAIsnIwxka
-         BtSivMljP5yWscYpEHUz3ispk+EBZkxIv9QdtayLmDlXvMyjB6n9nBCK0hgOPwOMwUZB
-         p/3uGGdCzgyraEjx0pS/2YQq9gjUsyupGMXn8py8fMv7iyzW0GVH3dTs/WYJ0GctM8di
-         X6Zw==
-X-Gm-Message-State: APjAAAVPC5zIxPrRxBLJpZhpKhbIlliWlRm/oBdaguuMtYyu07/ptczb
-        SQNrtzeLbZRljtqUwcEuurzMJQFWeys+1aAXWKsfLQ==
-X-Google-Smtp-Source: APXvYqxNnLStOk4ZXp11RN7jSj7XJVMznct6ojLcGz5Yls6xfN9NE4mhgE85LSRowXYs50aMoWOgyWYV7b4IKr4cJAE=
-X-Received: by 2002:ac8:1e1c:: with SMTP id n28mr3591243qtl.78.1566548035657;
- Fri, 23 Aug 2019 01:13:55 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=p/dmfnR+UyPL3cfGh6Tcm8LcRn0ZKE9YaND2fk1NH2Y=;
+        b=iERWMcLpmMnXEL0YiGzA8rvz7id8YjQX3ggckKFWS0WiUkk+kL8aQPFhe+N29lxYjv
+         bKavILCo+vzZMU/QvCmXLRCr/mOnZ9FMuaprnN0jC6uC5eH3MZynQAvG74AofJIuK7Pk
+         40hE8u8wqO8iQLV/IsTF48KuYmoKmWMAcSddk5fjX90g3Xj3opOOuDin8cVFPmeKkTnV
+         BMN2NY3AiIbN6lg3Sg5P4yInvNUCBS3BHOqNT4j2dzReIObzspj2WPd2ru38aKRTSdlm
+         bj0GsEV9q35mALk1yz7IG5Zul7/0j4rpEgTdfj/BZ4/94UbyKNk6DYmRPZRbe0T7pw+U
+         wGpQ==
+X-Gm-Message-State: APjAAAVwZOCTHp23BSFGuxHv3bBh5cThLmt24u1NlHeoQG9BKQgXOm9q
+        RL/11xc+Xu8NrjlnmVa25ENAtA==
+X-Google-Smtp-Source: APXvYqxSguZHrzvEBqYsIAePNZy235amcZ0FUJeSS9jeXh+GJxYdDqD5WfwsNnUyYL9qyLknD6HecQ==
+X-Received: by 2002:adf:e50b:: with SMTP id j11mr3505523wrm.65.1566548070242;
+        Fri, 23 Aug 2019 01:14:30 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 74sm3632535wma.15.2019.08.23.01.14.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2019 01:14:29 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] arm64: meson-sm1: add support for the SM1 based VIM3
+Date:   Fri, 23 Aug 2019 10:14:24 +0200
+Message-Id: <20190823081427.17228-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20190822094516.55130-1-hsinyi@chromium.org> <1566547772.19935.2.camel@mhfsdcap03>
-In-Reply-To: <1566547772.19935.2.camel@mhfsdcap03>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Fri, 23 Aug 2019 16:13:29 +0800
-Message-ID: <CAJMQK-gb+A9dwyMqMcA5yaaXak9no8_=urwK0XbLnNAEGyZ_hg@mail.gmail.com>
-Subject: Re: [PATCH v2] i2c: mediatek: disable zero-length transfers for mt8183
-To:     Qii Wang <qii.wang@mediatek.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Jun Gao <jun.gao@mediatek.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-i2c@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alexandru M Stan <amstan@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 4:09 PM Qii Wang <qii.wang@mediatek.com> wrote:
+This patchset adds support for the Amlogic SM1 based Khadas VIM3 variant.
 
-> >
-> >  static u32 mtk_i2c_functionality(struct i2c_adapter *adap)
-> >  {
-> > -     return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-> > +     if (adap->quirks->flags & I2C_AQ_NO_ZERO_LEN)
-> > +             return I2C_FUNC_I2C |
-> > +                     (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
-> > +     else
-> > +             return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
->
-> It can be removed?
-See previous discussion: https://patchwork.kernel.org/patch/10814391/#22484435
-but not all SoC's quirks has I2C_AQ_NO_ZERO_LEN.
+The S903D3 package variant of SM1 is pin-to-pin compatible with the
+S922X and A311d, so only internal DT changes are needed :
+- DVFS support is different
+- Audio support not yet available for SM1
+
+This patchset moved all the non-g12b nodes to meson-khadas-vim3.dtsi
+and add the sm1 specific nodes into meson-sm1-khadas-vim3.dts.
+
+Display has a color conversion bug on SM1 by using a more recent vendor
+bootloader on the SM1 based VIM3, this is out of scope of this patchset
+and will be fixed in the drm/meson driver.
+
+Dependencies:
+- patch 1,2: None
+- patch 3: Depends on the "arm64: meson-sm1: add support for DVFS" patchset at [1]
+
+[1] https://patchwork.kernel.org/cover/11109411/
+
+Neil Armstrong (3):
+  arm64: dts: khadas-vim3: move common nodes into meson-khadas-vim3.dtsi
+  amlogic: arm: add Amlogic SM1 based Khadas VIM3 variant bindings
+  arm64: dts: khadas-vim3: add support for the SM1 based VIM3
+
+ .../devicetree/bindings/arm/amlogic.yaml      |   3 +-
+ arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+ .../amlogic/meson-g12b-a311d-khadas-vim3.dts  |   1 +
+ .../dts/amlogic/meson-g12b-khadas-vim3.dtsi   | 355 -----------------
+ .../amlogic/meson-g12b-s922x-khadas-vim3.dts  |   1 +
+ .../boot/dts/amlogic/meson-khadas-vim3.dtsi   | 360 ++++++++++++++++++
+ .../dts/amlogic/meson-sm1-khadas-vim3.dts     |  69 ++++
+ 7 files changed, 434 insertions(+), 356 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3.dts
+
+-- 
+2.22.0
+
