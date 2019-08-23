@@ -2,113 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF209A514
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 03:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C9A59A516
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 03:53:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388288AbfHWBwY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 21:52:24 -0400
-Received: from mga05.intel.com ([192.55.52.43]:25107 "EHLO mga05.intel.com"
+        id S2388339AbfHWBxB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 21:53:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733139AbfHWBwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 21:52:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 18:52:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,419,1559545200"; 
-   d="scan'208";a="173330337"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga008.jf.intel.com with ESMTP; 22 Aug 2019 18:52:21 -0700
-Cc:     baolu.lu@linux.intel.com, iommu@lists.linux-foundation.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Micha=c5=82_Wajdeczko?= <michal.wajdeczko@intel.com>
-Subject: Re: [RFC PATCH] iommu/vt-d: Fix IOMMU field not populated on device
- hot re-plug
-To:     Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>
-References: <20190822142922.31526-1-janusz.krzysztofik@linux.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <00f1a3a7-7ff6-e9a0-d9de-a177af6fd64b@linux.intel.com>
-Date:   Fri, 23 Aug 2019 09:51:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388293AbfHWBxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 21:53:01 -0400
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49FBD23407
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 01:53:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566525180;
+        bh=PJMc6ZKXa/g7b223/+IaOfRLu5NCsAji7zbyi99Rxnw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xfMBdrqoXmc7m3LbbE4byZwHzsPlVQD8gMPd1xbVbzV/s7O2qOwPeqOPvCZU7Qx2m
+         oF/8cBtjKeFn7jXuSQaPXd977axDelbI4W973BABG4vUsZxnVDeRu2MT8tlqq0rJec
+         j4VWYVgrGY8vxY6mbVqTTKA3OQNUeOhexOg0nMug=
+Received: by mail-qt1-f179.google.com with SMTP id k13so9795804qtm.12
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 18:53:00 -0700 (PDT)
+X-Gm-Message-State: APjAAAV64jYjalhtZkTeOR0mhoHY/CmdRnPl9bPVoyyosn+DtPrDAVXK
+        fMw+vtF3Uy2m4DqB8BTt++9y0bd2MQuDs2q1Ag==
+X-Google-Smtp-Source: APXvYqyft5c7abf/T+bpSEI9M+ywHq6Wph5MWDZMqP+5YUyAX8skWG5A3788yiHHwtXhbqi9IRuH2qDSGZMrPQLxNCg=
+X-Received: by 2002:ac8:44c4:: with SMTP id b4mr2664407qto.224.1566525179427;
+ Thu, 22 Aug 2019 18:52:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190822142922.31526-1-janusz.krzysztofik@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190822091512.GA32661@mwanda> <20190822093218.26014-1-steven.price@arm.com>
+In-Reply-To: <20190822093218.26014-1-steven.price@arm.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 22 Aug 2019 20:52:47 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+1-qUxF3FSocVis6h4HV-=qnzWfK13hDq+Ns9kNEZuUg@mail.gmail.com>
+Message-ID: <CAL_Jsq+1-qUxF3FSocVis6h4HV-=qnzWfK13hDq+Ns9kNEZuUg@mail.gmail.com>
+Subject: Re: [PATCH] drm/panfrost: Add missing check for pfdev->regulator
+To:     Steven Price <steven.price@arm.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 8/22/19 10:29 PM, Janusz Krzysztofik wrote:
-> When a perfectly working i915 device is hot unplugged (via sysfs) and
-> hot re-plugged again, its dev->archdata.iommu field is not populated
-> again with an IOMMU pointer.  As a result, the device probe fails on
-> DMA mapping error during scratch page setup.
-> 
-> It looks like that happens because devices are not detached from their
-> MMUIO bus before they are removed on device unplug.  Then, when an
-> already registered device/IOMMU association is identified by the
-> reinstantiated device's bus and function IDs on IOMMU bus re-attach
-> attempt, the device's archdata is not populated with IOMMU information
-> and the bad happens.
-> 
-> I'm not sure if this is a proper fix but it works for me so at least it
-> confirms correctness of my analysis results, I believe.  So far I
-> haven't been able to identify a good place where the possibly missing
-> IOMMU bus detach on device unplug operation could be added.
-
-Which kernel version are you testing with? Does it contain below commit?
-
-commit 458b7c8e0dde12d140e3472b80919cbb9ae793f4
-Author: Lu Baolu <baolu.lu@linux.intel.com>
-Date:   Thu Aug 1 11:14:58 2019 +0800
-
-     iommu/vt-d: Detach domain when move device out of group
-
-     When removing a device from an iommu group, the domain should
-     be detached from the device. Otherwise, the stale domain info
-     will still be cached by the driver and the driver will refuse
-     to attach any domain to the device again.
-
-     Cc: Ashok Raj <ashok.raj@intel.com>
-     Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-     Cc: Kevin Tian <kevin.tian@intel.com>
-     Fixes: b7297783c2bb6 ("iommu/vt-d: Remove duplicated code for 
-device hotplug")
-     Reported-and-tested-by: Vlad Buslov <vladbu@mellanox.com>
-     Suggested-by: Robin Murphy <robin.murphy@arm.com>
-     Link: https://lkml.org/lkml/2019/7/26/1133
-     Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-     Signed-off-by: Joerg Roedel <jroedel@suse.de>
-
-Best regards,
-Lu Baolu
-
-> 
-> Signed-off-by: Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+On Thu, Aug 22, 2019 at 4:32 AM Steven Price <steven.price@arm.com> wrote:
+>
+> When modifying panfrost_devfreq_target() to support a device without a
+> regulator defined I missed the check on the error path. Let's add it.
+>
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Fixes: e21dd290881b ("drm/panfrost: Enable devfreq to work without regulator")
+> Signed-off-by: Steven Price <steven.price@arm.com>
 > ---
->   drivers/iommu/intel-iommu.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index 12d094d08c0a..7cdcd0595408 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -2477,6 +2477,9 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
->   		if (info2) {
->   			found      = info2->domain;
->   			info2->dev = dev;
-> +
-> +			if (dev && !dev->archdata.iommu)
-> +				dev->archdata.iommu = info2;
->   		}
->   	}
->   
-> 
+>  drivers/gpu/drm/panfrost/panfrost_devfreq.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+
+Looks fine to me, but seems to be delayed getting to the list and
+patchwork. I'm guessing you're not subscribed to dri-devel because all
+your patches seem to get delayed.
+
+Rob
+
+>
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
+> index 710d903f8e0d..a1f5fa6a742a 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
+> @@ -53,8 +53,10 @@ static int panfrost_devfreq_target(struct device *dev, unsigned long *freq,
+>         if (err) {
+>                 dev_err(dev, "Cannot set frequency %lu (%d)\n", target_rate,
+>                         err);
+> -               regulator_set_voltage(pfdev->regulator, pfdev->devfreq.cur_volt,
+> -                                     pfdev->devfreq.cur_volt);
+> +               if (pfdev->regulator)
+> +                       regulator_set_voltage(pfdev->regulator,
+> +                                             pfdev->devfreq.cur_volt,
+> +                                             pfdev->devfreq.cur_volt);
+>                 return err;
+>         }
+>
+> --
+> 2.20.1
+>
