@@ -2,126 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3457A9B051
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB0259B057
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393498AbfHWNGP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 09:06:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731379AbfHWNGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 09:06:14 -0400
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93E9A22CEC;
-        Fri, 23 Aug 2019 13:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566565573;
-        bh=Nf/JHz2p9KJqWjrRjR6tfsaXgxZ88ZigCZLa5Q1S3bM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CHNv/XEs6tkYE1iNbZUMWfxQUU+XSGU7o/AtPXdNfc3m4vKot0wrNydubMFckNxRx
-         +aj3HGZ32cAvIoOeJl8MMU2JCTbjN1H/gopEEQQhAaVcQAmzLYALQ4cZ9auh34+FEu
-         VcQHe0R8mMhVMLoaSsPwrpSyD3j5V5W0Qxp94Zv0=
-Received: by mail-lj1-f171.google.com with SMTP id l1so8771255lji.12;
-        Fri, 23 Aug 2019 06:06:13 -0700 (PDT)
-X-Gm-Message-State: APjAAAWIiLAVQBgv9DWa0Ou38SE+vzxnlGovKB0Eh2NrEhtPIC8+LGpq
-        jSPPWAd8Kf1RyuvA42NiY/mjrxHP7NHCQLCksSo=
-X-Google-Smtp-Source: APXvYqx494yOQTDUqmJi8lTHGRnu27kjJqD2UIMZu2KQSLjkcVtSK0kWsEnyN0xJ1mxBj8zZ985ITaXoQJmmX5Pwe6s=
-X-Received: by 2002:a2e:8856:: with SMTP id z22mr2895409ljj.71.1566565571829;
- Fri, 23 Aug 2019 06:06:11 -0700 (PDT)
+        id S2404484AbfHWNHc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 09:07:32 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:45199 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727894AbfHWNHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 09:07:31 -0400
+Received: by mail-qk1-f194.google.com with SMTP id m2so8065963qki.12
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 06:07:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KOC9snNl1/HE//4pIB9X4Lz5leylyyb6K3ySSXx/F0M=;
+        b=C0eLfp/Cz7+CtLdljKjWY/17aOuqAP/hDqtTOANOnesIHCl93MDR3U31e4vWXlFo6a
+         K7sZ7lShLJOeaQ63Md92m3d4T0XEEOHWcju6WBY0lhQqQXgHU1k/FDcmU+lancgvIusf
+         Z8QOelSAqcd19KEwqGoPppVkSKjCEBHUMm9H5HzwhMTd2gCvTOrENIN1G16D2NYendVb
+         +bVKYlENXIUC+ASqbeX1EYpL6C8cKId3Cu8IW85Jff8NbSsziD/nOItZaJg9GvaPK78o
+         IOT3uY4AZCGcVeMODI0KgfNHIL9oo+/vhmacfNig0gohtuF3UaHcZjRkdDKiadSykP9r
+         8CEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KOC9snNl1/HE//4pIB9X4Lz5leylyyb6K3ySSXx/F0M=;
+        b=Vi65jy8obsOEpgUZQy+0JL0OgK49jHxGxJDqbobAUvBY2yQNcQsNkSg+IXGZObjFRJ
+         XNFFRe2ewq9R8/OFdAgFUmR02no2aA1Wwt9sg3nVxGxD/drcjGqHMXr8Xim1hoaTkjQK
+         iDuAvPmPJUuwGdhz5MIsnK6CLkwkx5wbCwtCHVIIDbne05+DJiOWJL7KlyK/YyNXLqTH
+         CccO9CuAsVgODPdwVUeIHPdnr03SgKUMEP594Brn9HqE7Vv2kWj1mBFqyh07P/2ndAm3
+         ik5X79UR283ipek4P0iXPBO6YRqyAKIz0Ybgz82DSVCblhKeOH4/0GsnURyXBnFdF16Y
+         ir+g==
+X-Gm-Message-State: APjAAAUfJmRukQa/0DXrB0AsIbaoIfScrCL9lvllMnLUv1rRWs13JiQd
+        0z/Um/scvezXHeB2w4fxw4Q=
+X-Google-Smtp-Source: APXvYqyGjVO0066toGbBSQT+OMQaAyXkubKQjL9+9ER0IB2tHh6jKSsnwtxvyX5J/P5w3HdiktQBfA==
+X-Received: by 2002:a37:9bc4:: with SMTP id d187mr3889498qke.150.1566565650583;
+        Fri, 23 Aug 2019 06:07:30 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id x28sm1449535qtk.8.2019.08.23.06.07.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2019 06:07:29 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id C2F4640340; Fri, 23 Aug 2019 10:07:27 -0300 (-03)
+Date:   Fri, 23 Aug 2019 10:07:27 -0300
+To:     Benjamin Peterson <benjamin@python.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf trace beauty ioctl: fix off-by-one error in table
+Message-ID: <20190823130727.GA10333@kernel.org>
+References: <20190823033625.18814-1-benjamin@python.org>
 MIME-Version: 1.0
-References: <20190823123737.7774-1-ribalda@kernel.org> <20190823123737.7774-5-ribalda@kernel.org>
- <1566564998.3023.13.camel@pengutronix.de>
-In-Reply-To: <1566564998.3023.13.camel@pengutronix.de>
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date:   Fri, 23 Aug 2019 15:05:55 +0200
-X-Gmail-Original-Message-ID: <CAPybu_0iodVnn1Fa5BFi7zc7ugwpN926wCJaoKU548zqrNJ5iw@mail.gmail.com>
-Message-ID: <CAPybu_0iodVnn1Fa5BFi7zc7ugwpN926wCJaoKU548zqrNJ5iw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] media: v4l2-core: Add new helper for area controls
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190823033625.18814-1-benjamin@python.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 2:56 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
->
-> On Fri, 2019-08-23 at 14:37 +0200, Ricardo Ribalda Delgado wrote:
-> > Adding a V4L2_CID_UNIT_CELL_SIZE control requires a lot of boilerplate,
-> > try to minimize it by adding a new helper.
-> >
-> > Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
-> > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> > ---
-> >  drivers/media/v4l2-core/v4l2-ctrls.c | 25 ++++++++++++++++++++++++-
-> >  include/media/v4l2-ctrls.h           | 16 ++++++++++++++++
-> >  2 files changed, 40 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> > index b3bf458df7f7..33e48f0aec1a 100644
-> > --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> > +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> > @@ -2660,7 +2660,6 @@ struct v4l2_ctrl *v4l2_ctrl_new_std_menu_items(struct v4l2_ctrl_handler *hdl,
-> >  }
-> >  EXPORT_SYMBOL(v4l2_ctrl_new_std_menu_items);
-> >
-> > -/* Helper function for standard integer menu controls */
->
-> Why move this ...
->
-> >  struct v4l2_ctrl *v4l2_ctrl_new_int_menu(struct v4l2_ctrl_handler *hdl,
-> >                       const struct v4l2_ctrl_ops *ops,
-> >                       u32 id, u8 _max, u8 _def, const s64 *qmenu_int)
-> > @@ -2684,6 +2683,30 @@ struct v4l2_ctrl *v4l2_ctrl_new_int_menu(struct v4l2_ctrl_handler *hdl,
-> >  }
-> >  EXPORT_SYMBOL(v4l2_ctrl_new_int_menu);
-> >
-> > +static void area_init(const struct v4l2_ctrl *ctrl, u32 idx,
-> > +             union v4l2_ctrl_ptr ptr)
-> > +{
-> > +     memcpy(ptr.p_area, ctrl->priv, sizeof(*ptr.p_area));
-> > +}
-> > +
-> > +static const struct v4l2_ctrl_type_ops area_ops = {
-> > +     .init = area_init,
-> > +};
-> > +
-> > +struct v4l2_ctrl *v4l2_ctrl_new_area(struct v4l2_ctrl_handler *hdl,
-> > +                                  const struct v4l2_ctrl_ops *ops,
-> > +                                  u32 id, const struct v4l2_area *area)
-> > +{
-> > +     static struct v4l2_ctrl_config ctrl = {
-> > +             .id = V4L2_CID_UNIT_CELL_SIZE,
-> > +             .type_ops = &area_ops,
-> > +     };
-> > +
-> > +     return v4l2_ctrl_new_custom(hdl, &ctrl, (void *)area);
-> > +}
-> > +EXPORT_SYMBOL(v4l2_ctrl_new_area);
-> > +
-> > +/* Helper function for standard integer menu controls */
->
-> ... here?
-Because I screwed up :). Let me fix that sorry.
+Em Thu, Aug 22, 2019 at 08:36:25PM -0700, Benjamin Peterson escreveu:
+> While tracing a program that calls isatty(3), I noticed that strace reported
+> TCGETS for the request argument of the underlying ioctl(2) syscall while perf
+> trace reported TCSETS. strace is corrrect. The bug in perf was due to the tty
+> ioctl beauty table starting at 0x5400 rather than 0x5401.
 
-I will push all your changes to:
+Applied, thanks a lot!
 
-https://github.com/ribalda/linux/tree/unit-size-v4
+- Arnaldo
+ 
+> Fixes: 1cc47f2d46206d67285aea0ca7e8450af571da13 ("perf trace beauty ioctl: Improve 'cmd' beautifier")
+> Signed-off-by: Benjamin Peterson <benjamin@python.org>
+> ---
+>  tools/perf/trace/beauty/ioctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
+> index 52242fa4072b..e19eb6ea361d 100644
+> --- a/tools/perf/trace/beauty/ioctl.c
+> +++ b/tools/perf/trace/beauty/ioctl.c
+> @@ -21,7 +21,7 @@
+>  static size_t ioctl__scnprintf_tty_cmd(int nr, int dir, char *bf, size_t size)
+>  {
+>  	static const char *ioctl_tty_cmd[] = {
+> -	"TCGETS", "TCSETS", "TCSETSW", "TCSETSF", "TCGETA", "TCSETA", "TCSETAW",
+> +	[_IOC_NR(TCGETS)] = "TCGETS", "TCSETS", "TCSETSW", "TCSETSF", "TCGETA", "TCSETA", "TCSETAW",
+>  	"TCSETAF", "TCSBRK", "TCXONC", "TCFLSH", "TIOCEXCL", "TIOCNXCL", "TIOCSCTTY",
+>  	"TIOCGPGRP", "TIOCSPGRP", "TIOCOUTQ", "TIOCSTI", "TIOCGWINSZ", "TIOCSWINSZ",
+>  	"TIOCMGET", "TIOCMBIS", "TIOCMBIC", "TIOCMSET", "TIOCGSOFTCAR", "TIOCSSOFTCAR",
+> -- 
+> 2.20.1
 
-plus any other comment and then I will wait 2-3 days for resend
+-- 
 
-
->
-> Looks to me like this comment should stay attached to
-> v4l2_ctrl_new_int_menu.
->
-> regards
-> Philipp
+- Arnaldo
