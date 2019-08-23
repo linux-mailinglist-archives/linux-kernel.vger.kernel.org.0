@@ -2,366 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3586B9A890
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D9D9A86F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:18:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404751AbfHWHT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 03:19:28 -0400
-Received: from mga18.intel.com ([134.134.136.126]:55023 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389685AbfHWHTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 03:19:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 00:19:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,420,1559545200"; 
-   d="scan'208";a="180619648"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by fmsmga007.fm.intel.com with ESMTP; 23 Aug 2019 00:19:21 -0700
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     ashok.raj@intel.com, jacob.jun.pan@intel.com, alan.cox@intel.com,
-        kevin.tian@intel.com, mika.westerberg@linux.intel.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        pengfei.xu@intel.com,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH v7 7/7] iommu/vt-d: Use bounce buffer for untrusted devices
-Date:   Fri, 23 Aug 2019 15:17:35 +0800
-Message-Id: <20190823071735.30264-8-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190823071735.30264-1-baolu.lu@linux.intel.com>
-References: <20190823071735.30264-1-baolu.lu@linux.intel.com>
+        id S1732941AbfHWHSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 03:18:55 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:31923 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728493AbfHWHSy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 03:18:54 -0400
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190823071852epoutp027bde5c304213d375c6efab8881f6e3e0~9fCJHrfAl0151301513epoutp02G
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 07:18:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190823071852epoutp027bde5c304213d375c6efab8881f6e3e0~9fCJHrfAl0151301513epoutp02G
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1566544732;
+        bh=+fYE/jWK1CRZuDZ2tVBT+Ef/F2Gp0hZ+OjNZD7CcuN0=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=JPCoQLPyMnwUsXcRJAb87lIbwjVAz8UJnhO9geXbleKdINR95oS+Pk7MPNyeSIKlr
+         Ie5LM4HsFuPx33ZSSTfcMnvc55/lFYB3Po/KTATm56/rPppRH16qhqPtM2q1rTtoUK
+         Y+RZMMMZQWD9EG8hvLGNnIEbSL4l0oI/7oyWJQfs=
+Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
+        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+        20190823071851epcas2p2a4a203c12c80c1285afac51eb7c84d8f~9fCIdn5SC1459514595epcas2p2h;
+        Fri, 23 Aug 2019 07:18:51 +0000 (GMT)
+Received: from epsmges2p4.samsung.com (unknown [182.195.40.182]) by
+        epsnrtp5.localdomain (Postfix) with ESMTP id 46FCS92KMhzMqYkd; Fri, 23 Aug
+        2019 07:18:49 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        47.3F.04112.9539F5D5; Fri, 23 Aug 2019 16:18:49 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+        20190823071848epcas2p3fe4d229d22b14162c354f88a29f366c2~9fCGBJdVk1882918829epcas2p3k;
+        Fri, 23 Aug 2019 07:18:48 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190823071848epsmtrp10b85cadf4258caf7cfd003e7d6717ccd~9fCF-zuWg1973319733epsmtrp1u;
+        Fri, 23 Aug 2019 07:18:48 +0000 (GMT)
+X-AuditID: b6c32a48-f37ff70000001010-57-5d5f935942ee
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        77.E5.03706.8539F5D5; Fri, 23 Aug 2019 16:18:48 +0900 (KST)
+Received: from KORDO035251 (unknown [12.36.165.204]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20190823071848epsmtip1133664f58af60792a11a792437cc8f99~9fCFn2bUi1770217702epsmtip1x;
+        Fri, 23 Aug 2019 07:18:48 +0000 (GMT)
+From:   "boojin.kim" <boojin.kim@samsung.com>
+To:     "'Herbert Xu'" <herbert@gondor.apana.org.au>
+Cc:     "'Herbert Xu'" <herbert@gondor.apana.org.au>,
+        "'David S. Miller'" <davem@davemloft.net>,
+        "'Eric Biggers'" <ebiggers@kernel.org>,
+        "'Theodore Y. Ts'o'" <tytso@mit.edu>,
+        "'Chao Yu'" <chao@kernel.org>,
+        "'Jaegeuk Kim'" <jaegeuk@kernel.org>,
+        "'Andreas Dilger'" <adilger.kernel@dilger.ca>,
+        "'Theodore Ts'o'" <tytso@mit.edu>, <dm-devel@redhat.com>,
+        "'Mike Snitzer'" <snitzer@redhat.com>,
+        "'Alasdair Kergon'" <agk@redhat.com>,
+        "'Jens Axboe'" <axboe@kernel.dk>,
+        "'Krzysztof Kozlowski'" <krzk@kernel.org>,
+        "'Kukjin Kim'" <kgene@kernel.org>,
+        "'Jaehoon Chung'" <jh80.chung@samsung.com>,
+        "'Ulf Hansson'" <ulf.hansson@linaro.org>,
+        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-fscrypt@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-ext4@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-samsung-soc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 6/9] dm crypt: support diskcipher
+Date:   Fri, 23 Aug 2019 16:18:47 +0900
+Message-ID: <002b01d55983$01b40320$051c0960$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 14.0
+Thread-Index: AdVZgoTeM6vEQWOMSaO8aX0QkbtHrA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0xTVxjN7Xt9r6JdrqVudw3bujc0EQO2ne0uC2xmY/jMTMSZuOjGujf6
+        Uoj9lb6WqdmEbFAB2dAYEQoSf8XNbgQtiMS1hCCs4kSyEYwarVskqwIriIABRdbycOO/853v
+        nPt9J1+ujFAcoVWyApuLd9o4C0MlkK2XVhtStx8y5mrC1XI8OVFG4qYrvxL4pztVFP7tcK8E
+        1/eVkDgYrZPixsBTAu8fSsKDTV4C35jxSHHVvWEC9/WdpbH/3nUpDt5ag++GpyW4tuE2hf84
+        sQEPNUyROBDsIXH/xXoKd81VAVzT1y7BnnOTAJdWTtM41Pjx+pfZljM3JWxJ85dsa8dKtr/X
+        zfp95RR7+3qAYptPFbG/HHskYb+52k2wo+0DFPt9iw+wj/yv5izbYcnI5zkT71Tztjy7qcBm
+        zmQ+3Gp836g3aLSp2nT8FqO2cVY+k8nalJOaXWCJZWfUhZzFHaNyOEFg1r6T4bS7Xbw63y64
+        MhneYbI4tFpHmsBZBbfNnJZnt76t1Wh0+pjyc0v+yPkfpY4QvevOz2GiGBynKsASGYLrUPnI
+        abICJMgUsA2gga4wIRbjAEWiE7RYTAE0fqD2P0v0/jAdxwoYBOjxRLYoegDQ04fnpfEGBdeg
+        5pAPxLESatAF/xMQFxHwGY0GxzvJeCMR6lG4a3/sVZmMhCtRw6QxTsthOmo82kOJeDnqqR2c
+        lxPwNXThn3pCXEKN2nqHQdyqhGnIU+IUJUpUV+5ZkEzT6Er/chFnobpvRyUiTkRDoRZaxCr0
+        oMqzgIvQwOmT84ERrATo6szzxpvI+/e++VkEXI2aLq6NQwTfQF23FjZ7AZVdmqVFWo7KPArR
+        mIyOjvdLRFqFxir3ijSLhh6XggPgde+iiN5FEb2Lsnj/H3sMkD7wIu8QrGZe0DnWLb60H8x/
+        ihS2DXRc29QJoAwwy+SXKz7LVUi5QmG3tRMgGcEo5YUHY5TcxO3ewzvtRqfbwgudQB87wEFC
+        tSLPHvtiNpdRq9cZDJp0PdYbdJh5Se5fevNTBTRzLn4nzzt453OfRLZEVQzWp3SsqI8EehAc
+        G/xA+D0yV5R8ZiL4SQgmrNr6Q7mueOmN4u+UjRHSvfH+u9fYVaaxqZzWuj0j1dtqyo7MKLt3
+        Hv6o4VDyX1knc7/elr1xy+xkS0Yi0335meYLvW/vn9GkVONcYPNs5Kz2q+pXkvZ17zrVXjlq
+        vlvzXulszY7pJ5HoQ4YU8jltCuEUuH8B2IqajSoEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRmVeSWpSXmKPExsWy7bCSnG7E5PhYg87bihZfv3SwWKw/dYzZ
+        YvXdfjaL01PPMlnMOd/CYrH33WxWi7V7/jBbdL+SsXiyfhazxY1fbawW/Y9fM1ucP7+B3WLT
+        42usFntvaVvcv/eTyWLmvDtsFpcWuVu8mveNxWLP3pMsFpd3zWGzOPK/n9Fixvl9TBZtG78y
+        WrT2/GS3OL423EHSY8vKm0weLZvLPbYdUPW4fLbUY9OqTjaPO9f2sHlsXlLvsXvBZyaPpjNH
+        mT3e77vK5tG3ZRWjx+dNcgE8UVw2Kak5mWWpRfp2CVwZb7auYC04zl5xd8095gbGhWxdjJwc
+        EgImEu9evGYHsYUEdjNK9B0xgYhLSWxt38MMYQtL3G85wtrFyAVU85xR4syCxWANbALaEpuP
+        r2IEsUUEDCS2b/oNZjMLTOOQ2PVBHMQWFjCVuHekG2gZBweLgKrEvK/xIGFeAUuJtXNPskHY
+        ghInZz5hASlhFtCTaNsINUVeYvvbOVAnKEjsOPuaEaREBKSkpQiiRERidmcb8wRGwVlIBs1C
+        GDQLyaBZSDoWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjn8tzR2Ml5fEH2IU
+        4GBU4uEt6IiLFWJNLCuuzD3EKMHBrCTCWzYRKMSbklhZlVqUH19UmpNafIhRmoNFSZz3ad6x
+        SCGB9MSS1OzU1ILUIpgsEwenVAPj/OSa9W1d/dfS9K63n54b1X3C+cSWAqnD/vI1HyIsY87q
+        y9e/2CLn6c+WUXD5Ym3vnseaC/u2PP5mt3a5zZYUj0uvzY7c3Zv15QDjJeHpgkwt3gwHH/eF
+        CF+KdStfHfH8kRKHhM5DuXgjtzMbfnMVufJKnMreU1zOr6S3rV5ln++hk4tZLD4qsRRnJBpq
+        MRcVJwIAsdKINPsCAAA=
+X-CMS-MailID: 20190823071848epcas2p3fe4d229d22b14162c354f88a29f366c2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190823071848epcas2p3fe4d229d22b14162c354f88a29f366c2
+References: <CGME20190823071848epcas2p3fe4d229d22b14162c354f88a29f366c2@epcas2p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Intel VT-d hardware uses paging for DMA remapping.
-The minimum mapped window is a page size. The device
-drivers may map buffers not filling the whole IOMMU
-window. This allows the device to access to possibly
-unrelated memory and a malicious device could exploit
-this to perform DMA attacks. To address this, the
-Intel IOMMU driver will use bounce pages for those
-buffers which don't fill whole IOMMU pages.
+On Fri, Aug 23, 2019 at 01:28:37PM +0900, Herbert Xu wrote:
+>
+> No.  If you're after total offload then the crypto API is not for
+> you.  What we can support is the offloading of encryption/decryption
+> over many sectors.
+>
+> Cheers,
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Kevin Tian <kevin.tian@intel.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Tested-by: Xu Pengfei <pengfei.xu@intel.com>
-Tested-by: Mika Westerberg <mika.westerberg@intel.com>
----
- drivers/iommu/intel-iommu.c | 256 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 256 insertions(+)
+FMP doesn't use encrypt/decrypt of crypto API because it doesn't
+expose cipher-text to DRAM.
+But, Crypto API has many useful features such as cipher management,
+cipher allocation with cipher name, key management and test manager.
+All these features are useful for FMP.
+FMP has been cerified with FIPS as below by using test vectors and
+test manager of Crypto API.
+https://csrc.nist.gov/projects/cryptographic-module-validation-program/Certi
+ficate/3255
+https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-pr
+ogram/documents/security-policies/140sp3255.pdf
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index b1ab3526e6fa..1f15c6f5880f 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -41,9 +41,11 @@
- #include <linux/dma-direct.h>
- #include <linux/crash_dump.h>
- #include <linux/numa.h>
-+#include <linux/swiotlb.h>
- #include <asm/irq_remapping.h>
- #include <asm/cacheflush.h>
- #include <asm/iommu.h>
-+#include <trace/events/intel_iommu.h>
- 
- #include "irq_remapping.h"
- #include "intel-pasid.h"
-@@ -3746,6 +3748,252 @@ static const struct dma_map_ops intel_dma_ops = {
- 	.dma_supported = dma_direct_supported,
- };
- 
-+static inline phys_addr_t
-+iova_to_tlb_addr(struct dmar_domain *domain, dma_addr_t addr)
-+{
-+	struct dma_pte *pte;
-+	int level = 0;
-+	u64 phys = 0;
-+
-+	pte = pfn_to_dma_pte(domain, addr >> VTD_PAGE_SHIFT, &level);
-+	if (pte)
-+		phys = dma_pte_addr(pte);
-+
-+	return phys;
-+}
-+
-+static void
-+bounce_sync_single(struct device *dev, dma_addr_t addr, size_t size,
-+		   enum dma_data_direction dir, enum dma_sync_target target)
-+{
-+	struct dmar_domain *domain;
-+	phys_addr_t tlb_addr;
-+
-+	domain = find_domain(dev);
-+	if (WARN_ON(!domain))
-+		return;
-+
-+	tlb_addr = iova_to_tlb_addr(domain, addr);
-+	if (is_swiotlb_buffer(tlb_addr))
-+		swiotlb_tbl_sync_single(dev, tlb_addr, size, dir, target);
-+}
-+
-+static dma_addr_t
-+bounce_map_single(struct device *dev, phys_addr_t paddr, size_t size,
-+		  enum dma_data_direction dir, unsigned long attrs,
-+		  u64 dma_mask)
-+{
-+	size_t aligned_size = ALIGN(size, VTD_PAGE_SIZE);
-+	struct dmar_domain *domain;
-+	struct intel_iommu *iommu;
-+	unsigned long iova_pfn;
-+	unsigned long nrpages;
-+	phys_addr_t tlb_addr;
-+	int prot = 0;
-+	int ret;
-+
-+	domain = find_domain(dev);
-+	if (WARN_ON(dir == DMA_NONE || !domain))
-+		return DMA_MAPPING_ERROR;
-+
-+	iommu = domain_get_iommu(domain);
-+	if (WARN_ON(!iommu))
-+		return DMA_MAPPING_ERROR;
-+
-+	nrpages = aligned_nrpages(0, size);
-+	iova_pfn = intel_alloc_iova(dev, domain,
-+				    dma_to_mm_pfn(nrpages), dma_mask);
-+	if (!iova_pfn)
-+		return DMA_MAPPING_ERROR;
-+
-+	/*
-+	 * Check if DMAR supports zero-length reads on write only
-+	 * mappings..
-+	 */
-+	if (dir == DMA_TO_DEVICE || dir == DMA_BIDIRECTIONAL ||
-+			!cap_zlr(iommu->cap))
-+		prot |= DMA_PTE_READ;
-+	if (dir == DMA_FROM_DEVICE || dir == DMA_BIDIRECTIONAL)
-+		prot |= DMA_PTE_WRITE;
-+
-+	/*
-+	 * If both the physical buffer start address and size are
-+	 * page aligned, we don't need to use a bounce page.
-+	 */
-+	if (!IS_ALIGNED(paddr | size, VTD_PAGE_SIZE)) {
-+		tlb_addr = swiotlb_tbl_map_single(dev,
-+				__phys_to_dma(dev, io_tlb_start),
-+				paddr, size, aligned_size, dir, attrs);
-+		if (tlb_addr == DMA_MAPPING_ERROR)
-+			goto swiotlb_error;
-+	} else {
-+		tlb_addr = paddr;
-+	}
-+
-+	ret = domain_pfn_mapping(domain, mm_to_dma_pfn(iova_pfn),
-+				 tlb_addr >> VTD_PAGE_SHIFT, nrpages, prot);
-+	if (ret)
-+		goto mapping_error;
-+
-+	trace_bounce_map_single(dev, iova_pfn << PAGE_SHIFT, paddr, size);
-+
-+	return (phys_addr_t)iova_pfn << PAGE_SHIFT;
-+
-+mapping_error:
-+	if (is_swiotlb_buffer(tlb_addr))
-+		swiotlb_tbl_unmap_single(dev, tlb_addr, size,
-+					 aligned_size, dir, attrs);
-+swiotlb_error:
-+	free_iova_fast(&domain->iovad, iova_pfn, dma_to_mm_pfn(nrpages));
-+	dev_err(dev, "Device bounce map: %zx@%llx dir %d --- failed\n",
-+		size, (unsigned long long)paddr, dir);
-+
-+	return DMA_MAPPING_ERROR;
-+}
-+
-+static void
-+bounce_unmap_single(struct device *dev, dma_addr_t dev_addr, size_t size,
-+		    enum dma_data_direction dir, unsigned long attrs)
-+{
-+	size_t aligned_size = ALIGN(size, VTD_PAGE_SIZE);
-+	struct dmar_domain *domain;
-+	phys_addr_t tlb_addr;
-+
-+	domain = find_domain(dev);
-+	if (WARN_ON(!domain))
-+		return;
-+
-+	tlb_addr = iova_to_tlb_addr(domain, dev_addr);
-+	if (WARN_ON(!tlb_addr))
-+		return;
-+
-+	intel_unmap(dev, dev_addr, size);
-+	if (is_swiotlb_buffer(tlb_addr))
-+		swiotlb_tbl_unmap_single(dev, tlb_addr, size,
-+					 aligned_size, dir, attrs);
-+
-+	trace_bounce_unmap_single(dev, dev_addr, size);
-+}
-+
-+static dma_addr_t
-+bounce_map_page(struct device *dev, struct page *page, unsigned long offset,
-+		size_t size, enum dma_data_direction dir, unsigned long attrs)
-+{
-+	return bounce_map_single(dev, page_to_phys(page) + offset,
-+				 size, dir, attrs, *dev->dma_mask);
-+}
-+
-+static dma_addr_t
-+bounce_map_resource(struct device *dev, phys_addr_t phys_addr, size_t size,
-+		    enum dma_data_direction dir, unsigned long attrs)
-+{
-+	return bounce_map_single(dev, phys_addr, size,
-+				 dir, attrs, *dev->dma_mask);
-+}
-+
-+static void
-+bounce_unmap_page(struct device *dev, dma_addr_t dev_addr, size_t size,
-+		  enum dma_data_direction dir, unsigned long attrs)
-+{
-+	bounce_unmap_single(dev, dev_addr, size, dir, attrs);
-+}
-+
-+static void
-+bounce_unmap_resource(struct device *dev, dma_addr_t dev_addr, size_t size,
-+		      enum dma_data_direction dir, unsigned long attrs)
-+{
-+	bounce_unmap_single(dev, dev_addr, size, dir, attrs);
-+}
-+
-+static void
-+bounce_unmap_sg(struct device *dev, struct scatterlist *sglist, int nelems,
-+		enum dma_data_direction dir, unsigned long attrs)
-+{
-+	struct scatterlist *sg;
-+	int i;
-+
-+	for_each_sg(sglist, sg, nelems, i)
-+		bounce_unmap_page(dev, sg->dma_address,
-+				  sg_dma_len(sg), dir, attrs);
-+}
-+
-+static int
-+bounce_map_sg(struct device *dev, struct scatterlist *sglist, int nelems,
-+	      enum dma_data_direction dir, unsigned long attrs)
-+{
-+	int i;
-+	struct scatterlist *sg;
-+
-+	for_each_sg(sglist, sg, nelems, i) {
-+		sg->dma_address = bounce_map_page(dev, sg_page(sg),
-+						  sg->offset, sg->length,
-+						  dir, attrs);
-+		if (sg->dma_address == DMA_MAPPING_ERROR)
-+			goto out_unmap;
-+		sg_dma_len(sg) = sg->length;
-+	}
-+
-+	return nelems;
-+
-+out_unmap:
-+	bounce_unmap_sg(dev, sglist, i, dir, attrs | DMA_ATTR_SKIP_CPU_SYNC);
-+	return 0;
-+}
-+
-+static void
-+bounce_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
-+			   size_t size, enum dma_data_direction dir)
-+{
-+	bounce_sync_single(dev, addr, size, dir, SYNC_FOR_CPU);
-+}
-+
-+static void
-+bounce_sync_single_for_device(struct device *dev, dma_addr_t addr,
-+			      size_t size, enum dma_data_direction dir)
-+{
-+	bounce_sync_single(dev, addr, size, dir, SYNC_FOR_DEVICE);
-+}
-+
-+static void
-+bounce_sync_sg_for_cpu(struct device *dev, struct scatterlist *sglist,
-+		       int nelems, enum dma_data_direction dir)
-+{
-+	struct scatterlist *sg;
-+	int i;
-+
-+	for_each_sg(sglist, sg, nelems, i)
-+		bounce_sync_single(dev, sg_dma_address(sg),
-+				   sg_dma_len(sg), dir, SYNC_FOR_CPU);
-+}
-+
-+static void
-+bounce_sync_sg_for_device(struct device *dev, struct scatterlist *sglist,
-+			  int nelems, enum dma_data_direction dir)
-+{
-+	struct scatterlist *sg;
-+	int i;
-+
-+	for_each_sg(sglist, sg, nelems, i)
-+		bounce_sync_single(dev, sg_dma_address(sg),
-+				   sg_dma_len(sg), dir, SYNC_FOR_DEVICE);
-+}
-+
-+static const struct dma_map_ops bounce_dma_ops = {
-+	.alloc			= intel_alloc_coherent,
-+	.free			= intel_free_coherent,
-+	.map_sg			= bounce_map_sg,
-+	.unmap_sg		= bounce_unmap_sg,
-+	.map_page		= bounce_map_page,
-+	.unmap_page		= bounce_unmap_page,
-+	.sync_single_for_cpu	= bounce_sync_single_for_cpu,
-+	.sync_single_for_device	= bounce_sync_single_for_device,
-+	.sync_sg_for_cpu	= bounce_sync_sg_for_cpu,
-+	.sync_sg_for_device	= bounce_sync_sg_for_device,
-+	.map_resource		= bounce_map_resource,
-+	.unmap_resource		= bounce_unmap_resource,
-+	.dma_supported		= dma_direct_supported,
-+};
-+
- static inline int iommu_domain_cache_init(void)
- {
- 	int ret = 0;
-@@ -5309,6 +5557,11 @@ static int intel_iommu_add_device(struct device *dev)
- 		}
- 	}
- 
-+	if (device_needs_bounce(dev)) {
-+		dev_info(dev, "Use Intel IOMMU bounce page dma_ops\n");
-+		set_dma_ops(dev, &bounce_dma_ops);
-+	}
-+
- 	return 0;
- }
- 
-@@ -5326,6 +5579,9 @@ static void intel_iommu_remove_device(struct device *dev)
- 	iommu_group_remove_device(dev);
- 
- 	iommu_device_unlink(&iommu->iommu, dev);
-+
-+	if (device_needs_bounce(dev))
-+		set_dma_ops(dev, NULL);
- }
- 
- static void intel_iommu_get_resv_regions(struct device *device,
--- 
-2.17.1
+Can't I use crypto APIs to take advantage of this?
+I want to find a good way that FMP can use crypto API.
+
+Thanks
+Boojin Kim.
 
