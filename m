@@ -2,132 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC019AABC
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:53:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B12A19AAE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:56:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393233AbfHWIx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 04:53:26 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:53572 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389120AbfHWIx0 (ORCPT
+        id S2390969AbfHWI4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 04:56:42 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:44225 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731191AbfHWI4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 04:53:26 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7N8rL2n039346;
-        Fri, 23 Aug 2019 03:53:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566550401;
-        bh=AygYke9eev/ace09mklN8ehfRR+GaHjHMEoeOSlv2ko=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RuDlomvHA+ozFBm2seWvqjWHsD4d5bUc8SLiA3BbFf31RdvtoNgulPq4c/Hy6faz8
-         gWSFWMsgTBvBYyRe+Qzd1l92xIRKzwbVpP2r7ViAAkjvDlrjhus7mpEUfE9HT8O8Ry
-         dfT0y1b+FY5K0YOhYcWyODGZ1n3qnHyy4JSuDC3s=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7N8rLhh112033
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 23 Aug 2019 03:53:21 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 23
- Aug 2019 03:53:21 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 23 Aug 2019 03:53:21 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7N8rGdo010932;
-        Fri, 23 Aug 2019 03:53:16 -0500
-Subject: Re: [PATCH v10 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
-To:     Pawel Laszczak <pawell@cadence.com>, <felipe.balbi@linux.intel.com>
-CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <rogerq@ti.com>, <linux-kernel@vger.kernel.org>,
-        <jbergsagel@ti.com>, <nsekhar@ti.com>, <nm@ti.com>,
-        <sureshp@cadence.com>, <jpawar@cadence.com>, <kurahul@cadence.com>,
-        <aniljoy@cadence.com>
-References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
- <1563733939-21214-6-git-send-email-pawell@cadence.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <c5067780-9dfe-2a3e-3498-22f3c1dadb87@ti.com>
-Date:   Fri, 23 Aug 2019 14:23:55 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 23 Aug 2019 04:56:41 -0400
+Received: by mail-qt1-f193.google.com with SMTP id 44so10468890qtg.11;
+        Fri, 23 Aug 2019 01:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BTnwn95++Op3SfWaQCpErhny3AGKGOkNMopDRr3KEu0=;
+        b=XGM9hG+O9FrtwGIUWPwCuNTLzgN5bUJNVOdp91Dv6P29Tf98HvbRWmcKJgXEV2Sltk
+         a/FGMeI+jQm6Cnbljsb4PP7+Rps+vijt9Tl+Ok3H7Nx9hPDNqdeBNSNT9uGApXuKB77p
+         znW6hCrBJaBUzMIyr7X5xCXO8zJPz7mf9NAsllLvQQJyWI8SLKyx8qo2EOi4S2KjifRA
+         YNijyfUgRbsPX6iKiJtYYHGxQJ2WSTJgruCSddFw2ven0W06L34HaA6/YHUKDbjT3elK
+         rtdipgAhPX6uK1bSEXs0Y8/KAFRGawESHEzu8GmwFTS39BbHuwHJ1xRa5G1CdI2CxYji
+         vytA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BTnwn95++Op3SfWaQCpErhny3AGKGOkNMopDRr3KEu0=;
+        b=BbZnykNjILalLM/ZoBKG9r+duO/lRSZ1kT1UXahAT8rHYBj+jFjymyYY5FqpWmJ9Mt
+         BPNerFHPmlss5gOprNg8KbN+acAtTyZt2fUnCEpkwHBtRPYSxlZKY5LzSOoFQ8cSKEpo
+         w4F0SkEz9OH7v4rJzsDH+UP6vQQiWlon2AvU57XwjLeV6Dul4dKg56mi0FcNzc2CbUMm
+         uiw4z2jBO5wTge9+w/+PGWsA9IbDFNURIxd1M3Gh6VyMj3W5NemcUX8Wk6bqRUVjdl3A
+         1/X/zQcj0Zz/DiEoiTEaE5bUZl69VSTVpSMikdcmNvPY28lWviMjxaDDKU2ZyEYUJkAo
+         11iA==
+X-Gm-Message-State: APjAAAWgjnMH2jrxJO2ebolVZwd0Ol4czvp3++qgkGH+jcScl0zm9I+x
+        iY29h5OoO05L9D0kOIOQEIYtiB+DL1GEmpdQlGQ=
+X-Google-Smtp-Source: APXvYqyL3NooS+2ggd9zdNLJemCTsHJDuV1xwpwNqzfrpaDL4nGuZMIk0c7+MO0U4L91B22FYl5jAdI4ch3Cf5er3Uk=
+X-Received: by 2002:ac8:2d2c:: with SMTP id n41mr3667775qta.28.1566550600739;
+ Fri, 23 Aug 2019 01:56:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1563733939-21214-6-git-send-email-pawell@cadence.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <cover.1566540652.git.han_mao@c-sky.com> <820d80272fc5627b8d00e684663a614470217606.1566540652.git.han_mao@c-sky.com>
+In-Reply-To: <820d80272fc5627b8d00e684663a614470217606.1566540652.git.han_mao@c-sky.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Fri, 23 Aug 2019 16:56:04 +0800
+Message-ID: <CAEbi=3fbe9zbsLyfA=s9gHtAFJrp5Ox0jWoAqcZudQ_xODicgA@mail.gmail.com>
+Subject: Re: [PATCH V5 1/3] riscv: Add perf callchain support
+To:     Mao Han <han_mao@c-sky.com>
+Cc:     linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Christoph Hellwig <hch@lst.de>, Guo Ren <guoren@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Mao,
 
-On 22/07/19 12:02 AM, Pawel Laszczak wrote:
-> +
-> +/**
-> + * cdns3_req_ep0_get_status - Handling of GET_STATUS standard USB request
-> + * @priv_dev: extended gadget object
-> + * @ctrl_req: pointer to received setup packet
-> + *
-> + * Returns 0 if success, error code on error
-> + */
-> +static int cdns3_req_ep0_get_status(struct cdns3_device *priv_dev,
-> +				    struct usb_ctrlrequest *ctrl)
-> +{
-> +	__le16 *response_pkt;
-> +	u16 usb_status = 0;
-> +	u32 recip;
-> +	u32 reg;
-> +
-> +	recip = ctrl->bRequestType & USB_RECIP_MASK;
-> +
-> +	switch (recip) {
-> +	case USB_RECIP_DEVICE:
-> +		/* self powered */
-> +		if (priv_dev->is_selfpowered)
-> +			usb_status = BIT(USB_DEVICE_SELF_POWERED);
-> +
-> +		if (priv_dev->wake_up_flag)
-> +			usb_status |= BIT(USB_DEVICE_REMOTE_WAKEUP);
-> +
-> +		if (priv_dev->gadget.speed != USB_SPEED_SUPER)
-> +			break;
-> +
-> +		reg = readl(&priv_dev->regs->usb_sts);
+Mao Han <han_mao@c-sky.com> =E6=96=BC 2019=E5=B9=B48=E6=9C=8823=E6=97=A5 =
+=E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=882:16=E5=AF=AB=E9=81=93=EF=BC=9A
 
-I see usb_sts is read, but never used in this function?
+>
+> This patch add support for perf callchain sampling on riscv platform.
+> The return address of leaf function is retrieved from pt_regs as
+> it is not saved in the outmost frame.
+>
+> Signed-off-by: Mao Han <han_mao@c-sky.com>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Greentime Hu <green.hu@gmail.com>
+> Cc: Palmer Dabbelt <palmer@sifive.com>
+> Cc: linux-riscv <linux-riscv@lists.infradead.org>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Guo Ren <guoren@kernel.org>
+> ---
+>  arch/riscv/Makefile                |   3 +
+>  arch/riscv/kernel/Makefile         |   3 +-
+>  arch/riscv/kernel/perf_callchain.c | 115 +++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 120 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/riscv/kernel/perf_callchain.c
 
-> +
-> +		if (priv_dev->u1_allowed)
-> +			usb_status |= BIT(USB_DEV_STAT_U1_ENABLED);
-> +
-> +		if (priv_dev->u2_allowed)
-> +			usb_status |= BIT(USB_DEV_STAT_U2_ENABLED);
-> +
-> +		break;
-> +	case USB_RECIP_INTERFACE:
-> +		return cdns3_ep0_delegate_req(priv_dev, ctrl);
-> +	case USB_RECIP_ENDPOINT:
-> +		/* check if endpoint is stalled */
-> +		cdns3_select_ep(priv_dev, ctrl->wIndex);
-> +		if (EP_STS_STALL(readl(&priv_dev->regs->ep_sts)))
-> +			usb_status =  BIT(USB_ENDPOINT_HALT);
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	response_pkt = (__le16 *)priv_dev->setup_buf;
-> +	*response_pkt = cpu_to_le16(usb_status);
-> +
-> +	cdns3_ep0_run_transfer(priv_dev, priv_dev->setup_dma,
-> +			       sizeof(*response_pkt), 1, 0);
-> +	return 0;
-> +}
-> +
+I just tested "./perf record -e cpu-clock --call-graph fp ls" on
+Unleashed board and I got this failure.
+I take a look at it. It seem failed in here. Do you have any idea?
+It seems fine in Qemu.
 
--- 
-Regards
-Vignesh
+1 *frame =3D *((struct stackframe *)frame->fp - 1);
+ffffffe0001a198c: 00863a83 ld s5,8(a2)
+ffffffe0001a1990: ff093903 ld s2,-16(s2)
+
+./perf record -e cpu-clock --call-graph fp ls
+[ 9619.423884] hrtimer: interrupt took 733000 ns
+[ 9619.977017] Unable to handle kernel paging request at virtual
+address ffffffffffffff94
+[ 9620.214736] Oops [#1]
+[ 9620.289893] Modules linked in:
+[ 9620.391378] CPU: 0 PID: 264 Comm: ls Not tainted
+5.3.0-rc5-00003-gb008f6bcd67c #4
+[ 9620.640176] sepc: ffffffe0001a198c ra : ffffffe0001a199a sp :
+ffffffe000093720
+[ 9620.880366] gp : ffffffe00097dad8 tp : ffffffe000082e40 t0 : 00000000000=
+46000
+[ 9621.120564] t1 : 0000000000000002 t2 : 0000000000000007 s0 : ffffffe0000=
+93760
+[ 9621.360768] s1 : ffffffe000093788 a0 : 0000000000000003 a1 : 00000000000=
+00000
+[ 9621.600991] a2 : ffffffffffffff8c a3 : 0000000000001fa0 a4 : 00000000000=
+00010
+[ 9621.841181] a5 : 0000000000000002 a6 : 0000000000000001 a7 : ffffffe079b=
+34e10
+[ 9622.081400] s2 : ffffffffffffff9c s3 : ffffffe000000000 s4 : 00000000000=
+01ff8
+[ 9622.321618] s5 : ffffffe000093da0 s6 : ffffffe00097d540 s7 : ffffffe07a1=
+517a0
+[ 9622.561811] s8 : 000008bf01c7ff60 s9 : ffffffe000235b2a s10: 00000002000=
+00120
+[ 9622.802015] s11: 0000000000000001 t3 : ffffffe079b34e00 t4 : 00000000000=
+00001
+[ 9623.042194] t5 : 0000000000000008 t6 : ffffffe0009208d0
+[ 9623.218785] sstatus: 0000000200000100 sbadaddr: ffffffffffffff94
+scause: 000000000000000d
+[ 9623.490850] ---[ end trace 49043f28e856d84d ]---
+[ 9623.644217] Kernel panic - not syncing: Fatal exception in interrupt
+[ 9623.855470] SMP: stopping secondary CPUs
+[ 9623.985955] ---[ end Kernel panic - not syncing: Fatal exception in
+interrupt ]---
