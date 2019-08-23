@@ -2,135 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D71649B1E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 16:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BFD69B1EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 16:28:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395238AbfHWO1C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 10:27:02 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:16402 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730899AbfHWO1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 10:27:02 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46FNyB49fnz9v0vD;
-        Fri, 23 Aug 2019 16:26:58 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=JlPug9AY; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id m33tZc2pC33n; Fri, 23 Aug 2019 16:26:58 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46FNyB35Bxz9v0v8;
-        Fri, 23 Aug 2019 16:26:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566570418; bh=evCvfi0A9n/NRk5qwP3dtR7yfNt5fNza93ZH2ibvIgw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JlPug9AYe+9ah/QvJ0Sq6EBvVB9+lu60SZD62xW6Uw3N+pLKE4SjkHIFZ32yAKVtE
-         m5UjrKFFoyLbUvCiEGvfSXIOFtm44u7plKM4pU3GJbPQLV/IRqAc098cKq9thG09Rk
-         +nRZ2ymjNs6pLPPu8ODTu0ciLERshebTZnTKTcDE=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F115C8B894;
-        Fri, 23 Aug 2019 16:26:59 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id LACp8w9li_59; Fri, 23 Aug 2019 16:26:59 +0200 (CEST)
-Received: from [172.25.230.103] (po15451.idsi0.si.c-s.fr [172.25.230.103])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id B96E78B882;
-        Fri, 23 Aug 2019 16:26:59 +0200 (CEST)
-Subject: Re: [PATCH v2 7/7] bug: Move WARN_ON() "cut here" into exception
- handler
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        20190819234111.9019-8-keescook@chromium.org
-Cc:     Kees Cook <keescook@chromium.org>,
+        id S2395257AbfHWO1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 10:27:23 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40625 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730899AbfHWO1X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 10:27:23 -0400
+Received: by mail-wr1-f66.google.com with SMTP id c3so8811463wrd.7
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 07:27:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sHvSmoSmDvSNNSbRGXLQshanw3+uRXJ2ONHrn0tkDQw=;
+        b=FbM8IWYZ48uigQRt74quaG0kgIsk63LbOofdZ7aZ/X3GPHw9i9wE8vAFm+8UOr4HTH
+         inTl5+HR2mSHUBimT06Tj+Votem5Mnyi3Rg+n4wVW0XAiM7kBBkCvW+UPqG/6t2YXfNz
+         Lqajld73G2hYvdl4tBzYPY0czexNPhw6iOPiy9dlydQJD4C5gBh3jaZxkHkB770BEk7A
+         0zyspsIsNB3Uw93jTqgWRG9Q+3tP2Cd18IfmuZKtRkPWp6c6BzCeuVgppDQzkrlqzqJV
+         ZhT+Yltq0PJl5dShimADgOXbcirLgeLpp5wjDN7ZhczER0MaVTE2NFNvVJvTHQn4dZUr
+         c7Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sHvSmoSmDvSNNSbRGXLQshanw3+uRXJ2ONHrn0tkDQw=;
+        b=dZhwsFZFGnsGdP6XFelIBV7x2VsDi5FIxasThjjFCeT7cJ5hKSDWjKKcMR0Ib/nVnr
+         BrtmT5xlm5tVQDnpNiCWLWd8htAAyBDk73FMknmUmT+uliPINF3DbIQLHbK0nuN7eYn0
+         0/BwqnDpqiu9ANT3COKb1RHDJpy+Prn2voTJiOQ4wYSbKgNwl7rK0mwHql2ub5oSYeYt
+         NGezBA7TMI4cCAXL5QrRyKw9D5TFmoIxZvfaTcw+Yc8TZN8vScM0PKb4GXxBjXWx/6KY
+         aoU3BuQnO64wEMm6r2J30jXu9JDrn6Vs6uAY3FrJ0TXVv0zQmzVBUDpZ/oMwc7fCFw0r
+         d0JA==
+X-Gm-Message-State: APjAAAUxZ5RzS7SkNt/WSC/h7PFy0sMde96p2Z87wxtuuNBiaUknvdGj
+        9dMipZS3wTEcUZAabu9qHb8=
+X-Google-Smtp-Source: APXvYqzoHLcPGI5/I3s5TfP34APAeTrtIVfTwQ2dZtv9Cb2F7V2w5S+w8XJjF7009QdBgdTq5D3dbA==
+X-Received: by 2002:adf:f206:: with SMTP id p6mr5788787wro.216.1566570440610;
+        Fri, 23 Aug 2019 07:27:20 -0700 (PDT)
+Received: from andrea ([167.220.196.36])
+        by smtp.gmail.com with ESMTPSA id h23sm4368017wml.43.2019.08.23.07.27.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 23 Aug 2019 07:27:19 -0700 (PDT)
+Date:   Fri, 23 Aug 2019 16:27:08 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Drew Davenport <ddavenport@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Feng Tang <feng.tang@intel.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        YueHaibing <yuehaibing@huawei.com>, linux-arch@vger.kernel.org,
+        John Ogness <john.ogness@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-References: <201908200943.601DD59DCE@keescook>
- <20190822155611.a1a6e26db99ba0876ba9c8bd@linux-foundation.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <86003539-18ec-f2ff-a46f-764edb820dcd@c-s.fr>
-Date:   Fri, 23 Aug 2019 16:26:59 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+Subject: Re: comments style: Re: [RFC PATCH v4 1/9] printk-rb: add a new
+ printk ringbuffer implementation
+Message-ID: <20190823142708.GA2068@andrea>
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+ <20190807222634.1723-2-john.ogness@linutronix.de>
+ <20190820085554.deuejmxn4kbqnq7n@pathway.suse.cz>
+ <20190820092731.GA14137@jagdpanzerIV>
+ <87a7c3f4uj.fsf@linutronix.de>
+ <20190822135052.dp4dvav6fy2ajzkx@pathway.suse.cz>
+ <20190822173801.GA2218@andrea>
+ <20190823104713.mtxarc3ywtnryd2d@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20190822155611.a1a6e26db99ba0876ba9c8bd@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190823104713.mtxarc3ywtnryd2d@pathway.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 23/08/2019 à 00:56, Andrew Morton a écrit :
-> On Tue, 20 Aug 2019 09:47:55 -0700 Kees Cook <keescook@chromium.org> wrote:
+> I am not suggesting to remove all comments. Some human readable
+> explanation is important as long as the code is developed by humans.
 > 
->> Reply-To: 20190819234111.9019-8-keescook@chromium.org
+> I think that I'll have to accept also the extra comments if you are
+> really going to use them to check the consistency by a tool. Or
+> if they are really used for review by some people.
+
+Glad to hear this.  Thank you, Petr.
+
+
+> Do all this manuals, tools, people use any common syntax, please?
+> Would it be usable in our case as well?
 > 
-> Really?
+> I would like to avoid reinventing the wheel. Also I do not want
+> to create a dialect for few people that other potentially interested
+> parties will not understand.
 
-That seems correct, that's the "[PATCH 7/7] bug: Move WARN_ON() "cut 
-here" into exception handler" from the series at 
-https://lkml.org/lkml/2019/8/19/1155
+Right; I think that terms such as "(barrier) matching", "reads-from"
+and "overwrites" are commonly used to refer to litmus tests.  (The
+various primitives/instructions are of course specific to the given
+context: the language, the memory model, etc. )
 
+IOW, I'd say that that wheel _and a common denominator here can be
+represented by the notion of "litmus test".  I'm not suggesting to
+reinvent this wheel of course; my point was more along the lines of
+"let's use the wheel, it'll be helpful..."  ;-)
 
-> 
->> Subject: [PATCH v2 7/7] bug: Move WARN_ON() "cut here" into exception handler
-> 
-> It's strange to receive a standalone [7/7] patch.
-
-Iaw the Reply_To, I understand it as an update of the 7th patch of the 
-series.
-
-> 
->> Date:   Tue, 20 Aug 2019 09:47:55 -0700
->> Sender: linux-kernel-owner@vger.kernel.org
->>
->> The original clean up of "cut here" missed the WARN_ON() case (that
->> does not have a printk message), which was fixed recently by adding
->> an explicit printk of "cut here". This had the downside of adding a
->> printk() to every WARN_ON() caller, which reduces the utility of using
->> an instruction exception to streamline the resulting code. By making
->> this a new BUGFLAG, all of these can be removed and "cut here" can be
->> handled by the exception handler.
->>
->> This was very pronounced on PowerPC, but the effect can be seen on
->> x86 as well. The resulting text size of a defconfig build shows some
->> small savings from this patch:
->>
->>     text    data     bss     dec     hex filename
->> 19691167        5134320 1646664 26472151        193eed7 vmlinux.before
->> 19676362        5134260 1663048 26473670        193f4c6 vmlinux.after
->>
->> This change also opens the door for creating something like BUG_MSG(),
->> where a custom printk() before issuing BUG(), without confusing the "cut
->> here" line.
-> 
-> I can't get this to apply to anything, so I guess that [1/7]-[6/7]
-> mattered ;)
-
-On my side it applies cleanly on top of patch 1-6 of the series.
-
-Christophe
-
-
-> 
->> Reported-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> Fixes: Fixes: 6b15f678fb7d ("include/asm-generic/bug.h: fix "cut here" for WARN_ON for __WARN_TAINT architectures")
-> 
-> I'm seeing double.
-> 
->> Signed-off-by: Kees Cook <keescook@chromium.org>
+  Andrea
