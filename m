@@ -2,105 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C529E9AF4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E549AF6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:28:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394654AbfHWMYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:24:44 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:41767 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbfHWMYn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:24:43 -0400
-Received: by mail-wr1-f47.google.com with SMTP id j16so8449077wrr.8;
-        Fri, 23 Aug 2019 05:24:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wiaJeoINtiSICNo40sR0gJx/Ynv/1TJk6w2DUAYNCpU=;
-        b=a1NACfxlQgrNVmC62tfL0Et+m4j7biyPT8R5CU/uFo5ieZbNzthwLDf5Vxu//V45ZS
-         RUiyPLr+lRM3VdTt4uPVVugMT9aRDC2VJmONOV7QhVy/2crJviKh5GtJHy71Bm7zMpeA
-         jBgu9sPHV64Pi2enAD4HBjuT0JMr7g9tVfiytv6MrMrNlyDvNpN+zz5NQhnEColnSCMd
-         E5DxWyuVPShysSplhnPohSeKrImNAycMalN/n6P84oOWpTxQcVHQrzkorDbqSArvEu2c
-         +JO2GYbiH5mmI3H7Ifh7BxOU2kY/zTBKaVHeIEnxIDlaN+0QRnD/qK9chMn99WC59TOm
-         AAaw==
+        id S2394702AbfHWM1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:27:43 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48437 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392572AbfHWM1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 08:27:42 -0400
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9920AC054C52
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 12:27:41 +0000 (UTC)
+Received: by mail-wm1-f71.google.com with SMTP id r1so4301442wmr.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 05:27:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=wiaJeoINtiSICNo40sR0gJx/Ynv/1TJk6w2DUAYNCpU=;
-        b=di3JOtthUUD/pc3DkqDRckQdpR5HxdFPNkeh7DnAh1GpW3h2klWhiojlGFtmkAQZ4D
-         aWMd10g3043jgYntZIEAGfDn9GNFn36MM5Lcno1qfzBi3TqLpQQPZQ7hRKO94T72JpiG
-         mzVwTm2igGLiaU8Zr+4OY74lLMqU6824CP1FFyJ0SwMP9lWYtU9NKsG+oXYrRMdzA+Yd
-         5EkBLkOZjA4vStfGhIEYLIsVDFmEBlypq8DgYnN7WlMwDHOJJV4Mo//Mgo37X1S1PpVY
-         4vTuXGqBlT3aq2/cE4tkKR8MAj22pvHl6AT4TbOEo6kUZvV3UN2CT3Pt+FqzK1bpOhjf
-         hocQ==
-X-Gm-Message-State: APjAAAXTymhBMOA54OoAXIeTgnGOVFr9BOw6On/cdyr0/qXpuupJye+y
-        inLqHs8adGsEHaYbxUzyhXGdd1Pi
-X-Google-Smtp-Source: APXvYqwV3zXMN/kB/O/gm41ckO0LFZH2k93XMfy/JiFxnwXM6vOgM+oWQTxHyjLWCTnFqH8pn04nEg==
-X-Received: by 2002:a5d:4a0e:: with SMTP id m14mr1216257wrq.72.1566563080830;
-        Fri, 23 Aug 2019 05:24:40 -0700 (PDT)
-Received: from kwango.redhat.com (ip-94-112-128-92.net.upcbroadband.cz. [94.112.128.92])
-        by smtp.gmail.com with ESMTPSA id o9sm3537278wrm.88.2019.08.23.05.24.39
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=7h0x9rgASWk8qPjUOaS/mZJRiG6RBmB84OOVjwHTOWM=;
+        b=GEuRcs+xH4ci/bvgg8JeQs2f0lmlbSAuoGusxi3T7xzOGm4gym1424OuYL87pKZQUF
+         7bW/souq7t9a6YmQhzCZTINQC8yJhGq0hNSrudRE8TafQZTOrOMfE+0elLSbnt2Wq2bc
+         lkwbvLN0KxU6axe0mdwgFktpsNCrjut13DYmVe+fBCWsCMdF0XmdqsRjQmqxqAi80T+b
+         SHMZmvgrNjPlxOiBv0ndrC95jVLBAFLUe+bW7ZmIbUL6tm/znjaF/UUIReTa5ne36KtT
+         mnIkJogJLny96W3XVp8VvzTqtjMsI8DHkMBK+U8aH5nst77Y3194unt5lFmSksxQ22Ve
+         DzrQ==
+X-Gm-Message-State: APjAAAXytNNkLCMMp8jeIoSPMsr3aGB5DpE9Kru8CX27wd4O8R62iIwi
+        Fl0Xmt+RixMleXGkTILbnsdcM/r0bZF+2KzrI6NdKBlSzYSIDoXov85Pud8SRfw+rpHzlDU12o5
+        atOBBmDZRsKm6I/WvEyBvedBR
+X-Received: by 2002:a7b:c95a:: with SMTP id i26mr5108341wml.175.1566563260071;
+        Fri, 23 Aug 2019 05:27:40 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwm7PSBjTdOngOg1paE0LxSJSXRFPKcTRzm90yeu4pMk3McP3Wrxfg4UUz+GWbSSVRnQX4R9A==
+X-Received: by 2002:a7b:c95a:: with SMTP id i26mr5108313wml.175.1566563259845;
+        Fri, 23 Aug 2019 05:27:39 -0700 (PDT)
+Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id r11sm2186226wrt.84.2019.08.23.05.27.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2019 05:24:39 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 5.3-rc6
-Date:   Fri, 23 Aug 2019 14:27:26 +0200
-Message-Id: <20190823122726.15050-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        Fri, 23 Aug 2019 05:27:39 -0700 (PDT)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH 06/13] KVM: x86: Move #GP injection for VMware into x86_emulate_instruction()
+In-Reply-To: <20190823010709.24879-7-sean.j.christopherson@intel.com>
+References: <20190823010709.24879-1-sean.j.christopherson@intel.com> <20190823010709.24879-7-sean.j.christopherson@intel.com>
+Date:   Fri, 23 Aug 2019 14:27:38 +0200
+Message-ID: <87sgpsnk1x.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Sean Christopherson <sean.j.christopherson@intel.com> writes:
 
-The following changes since commit d1abaeb3be7b5fa6d7a1fbbd2e14e3310005c4c1:
+> Immediately inject a #GP when VMware emulation fails and return
+> EMULATE_DONE instead of propagating EMULATE_FAIL up the stack.  This
+> helps pave the way for removing EMULATE_FAIL altogether.
+>
+> Rename EMULTYPE_VMWARE to EMULTYPE_VMWARE_GP to help document why a #GP
+> is injected on emulation failure.
 
-  Linux 5.3-rc5 (2019-08-18 14:31:08 -0700)
+Hm, maybe it's just me but I would've assumed _GP suffix means 'called
+from #GP intercept' and not '#GP is injected on failure'. This is no
+different here because we only do #GP intercepts for vmware backdoor
+emulation and this emulation only happens on #GP.
 
-are available in the Git repository at:
+>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h |  2 +-
+>  arch/x86/kvm/svm.c              |  9 ++-------
+>  arch/x86/kvm/vmx/vmx.c          |  9 ++-------
+>  arch/x86/kvm/x86.c              | 14 +++++++++-----
+>  4 files changed, 14 insertions(+), 20 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index dd6bd9ed0839..d1d5b5ca1195 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1318,7 +1318,7 @@ enum emulation_result {
+>  #define EMULTYPE_TRAP_UD	    (1 << 1)
+>  #define EMULTYPE_SKIP		    (1 << 2)
+>  #define EMULTYPE_ALLOW_RETRY	    (1 << 3)
+> -#define EMULTYPE_VMWARE		    (1 << 5)
+> +#define EMULTYPE_VMWARE_GP	    (1 << 5)
+>  int kvm_emulate_instruction(struct kvm_vcpu *vcpu, int emulation_type);
+>  int kvm_emulate_instruction_from_buffer(struct kvm_vcpu *vcpu,
+>  					void *insn, int insn_len);
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index b96a119690f4..97562c2c8b7b 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -2768,7 +2768,6 @@ static int gp_interception(struct vcpu_svm *svm)
+>  {
+>  	struct kvm_vcpu *vcpu = &svm->vcpu;
+>  	u32 error_code = svm->vmcb->control.exit_info_1;
+> -	int er;
+>  
+>  	WARN_ON_ONCE(!enable_vmware_backdoor);
+>  
+> @@ -2776,12 +2775,8 @@ static int gp_interception(struct vcpu_svm *svm)
+>  		kvm_queue_exception_e(vcpu, GP_VECTOR, error_code);
+>  		return 1;
+>  	}
+> -	er = kvm_emulate_instruction(vcpu, EMULTYPE_VMWARE);
+> -	if (er == EMULATE_USER_EXIT)
+> -		return 0;
+> -	else if (er != EMULATE_DONE)
+> -		kvm_queue_exception_e(vcpu, GP_VECTOR, 0);
+> -	return 1;
+> +	return kvm_emulate_instruction(vcpu, EMULTYPE_VMWARE_GP) !=
+> +						EMULATE_USER_EXIT;
+>  }
+>  
+>  static bool is_erratum_383(void)
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 3ee0dd304bc7..25410c58c758 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -4492,7 +4492,6 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
+>  	u32 intr_info, ex_no, error_code;
+>  	unsigned long cr2, rip, dr6;
+>  	u32 vect_info;
+> -	enum emulation_result er;
+>  
+>  	vect_info = vmx->idt_vectoring_info;
+>  	intr_info = vmx->exit_intr_info;
+> @@ -4514,12 +4513,8 @@ static int handle_exception_nmi(struct kvm_vcpu *vcpu)
+>  			kvm_queue_exception_e(vcpu, GP_VECTOR, error_code);
+>  			return 1;
+>  		}
+> -		er = kvm_emulate_instruction(vcpu, EMULTYPE_VMWARE);
+> -		if (er == EMULATE_USER_EXIT)
+> -			return 0;
+> -		else if (er != EMULATE_DONE)
+> -			kvm_queue_exception_e(vcpu, GP_VECTOR, 0);
+> -		return 1;
+> +		return kvm_emulate_instruction(vcpu, EMULTYPE_VMWARE_GP) !=
+> +							EMULATE_USER_EXIT;
+>  	}
+>  
+>  	/*
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index e0f0e14d8fac..228ca71d5b01 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6210,8 +6210,10 @@ static int handle_emulation_failure(struct kvm_vcpu *vcpu, int emulation_type)
+>  	++vcpu->stat.insn_emulation_fail;
+>  	trace_kvm_emulate_insn_failed(vcpu);
+>  
+> -	if (emulation_type & EMULTYPE_VMWARE)
+> -		return EMULATE_FAIL;
+> +	if (emulation_type & EMULTYPE_VMWARE_GP) {
+> +		kvm_queue_exception_e(vcpu, GP_VECTOR, 0);
+> +		return EMULATE_DONE;
+> +	}
+>  
+>  	kvm_queue_exception(vcpu, UD_VECTOR);
+>  
+> @@ -6543,9 +6545,11 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
+>  		}
+>  	}
+>  
+> -	if ((emulation_type & EMULTYPE_VMWARE) &&
+> -	    !is_vmware_backdoor_opcode(ctxt))
+> -		return EMULATE_FAIL;
+> +	if ((emulation_type & EMULTYPE_VMWARE_GP) &&
+> +	    !is_vmware_backdoor_opcode(ctxt)) {
+> +		kvm_queue_exception_e(vcpu, GP_VECTOR, 0);
+> +		return EMULATE_DONE;
+> +	}
+>  
+>  	if (emulation_type & EMULTYPE_SKIP) {
+>  		kvm_rip_write(vcpu, ctxt->_eip);
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.3-rc6
+Reviewed-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-for you to fetch changes up to a561372405cf6bc6f14239b3a9e57bb39f2788b0:
-
-  libceph: fix PG split vs OSD (re)connect race (2019-08-22 10:47:41 +0200)
-
-----------------------------------------------------------------
-Three important fixes tagged for stable (an indefinite hang, a crash on
-an assert and a NULL pointer dereference) plus a small series from Luis
-fixing instances of vfree() under spinlock.
-
-----------------------------------------------------------------
-Erqi Chen (1):
-      ceph: clear page dirty before invalidate page
-
-Ilya Dryomov (1):
-      libceph: fix PG split vs OSD (re)connect race
-
-Jeff Layton (1):
-      ceph: don't try fill file_lock on unsuccessful GETFILELOCK reply
-
-Luis Henriques (4):
-      libceph: allow ceph_buffer_put() to receive a NULL ceph_buffer
-      ceph: fix buffer free while holding i_ceph_lock in __ceph_setxattr()
-      ceph: fix buffer free while holding i_ceph_lock in __ceph_build_xattrs_blob()
-      ceph: fix buffer free while holding i_ceph_lock in fill_inode()
-
- fs/ceph/addr.c              |  5 +++--
- fs/ceph/caps.c              |  5 ++++-
- fs/ceph/inode.c             |  7 ++++---
- fs/ceph/locks.c             |  3 +--
- fs/ceph/snap.c              |  4 +++-
- fs/ceph/super.h             |  2 +-
- fs/ceph/xattr.c             | 19 ++++++++++++++-----
- include/linux/ceph/buffer.h |  3 ++-
- net/ceph/osd_client.c       |  9 ++++-----
- 9 files changed, 36 insertions(+), 21 deletions(-)
+-- 
+Vitaly
