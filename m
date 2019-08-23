@@ -2,133 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA479A5E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 05:02:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E263E9A5E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 05:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404049AbfHWDCr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 23:02:47 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49972 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726283AbfHWDCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 23:02:47 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E9570F33A7B7D70DA2DC;
-        Fri, 23 Aug 2019 11:02:44 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.211) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 23 Aug
- 2019 11:02:42 +0800
-Subject: Re: [PATCH 1/2] f2fs: introduce {page,io}_is_mergeable() for
- readability
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
-References: <20190712085542.4068-1-yuchao0@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <28424a84-67aa-c8e9-99c3-475be89206ac@huawei.com>
-Date:   Fri, 23 Aug 2019 11:02:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S2404091AbfHWDIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 23:08:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:56123 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389290AbfHWDIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 23:08:47 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46F5vb6dQrz9s7T;
+        Fri, 23 Aug 2019 13:08:43 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1566529724;
+        bh=Y4rV12y4MwnYpN7mGIgEqqv5HK0SPrggGd2iqOCrVoA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=qnJ03ZvU26qzYJkcJYFaoXYxEA8vxKAutntLOldqizpk6kpdN9h1RakdMaX9olX7z
+         MXTf4lwr73ks4UFzERbTlHig3W8kblik2MzzVakT78Niy/eIVme+3LKtvyv5DcDuAP
+         xQ9dQ+nS35o3FSOlC2NNsMYGxvlXgwoAngFlReXuxcl9+etK/blKasLZLGO471n05J
+         yL3Iv6um507c51kBF9ikkZkaTmxp6E4FdzhicFsaCSJAiMn3QA6Ws3ZHcXV+Bluy1F
+         1PwvLAm8hdnCc7GF+4GddCw3ceYgX6SFBvc18ljYnkIjEe9/0FpoMu/Bk2WJ+o8No7
+         o8csPDam9RBPA==
+Date:   Fri, 23 Aug 2019 13:08:41 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Linux Crypto List <linux-crypto@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: linux-next: manual merge of the crypto tree with Linus' tree
+Message-ID: <20190823130841.4fdbda61@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20190712085542.4068-1-yuchao0@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="Sig_/=xcZ.RUWj2DDJGdJ2qm19.r";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/7/12 16:55, Chao Yu wrote:
-> Wrap merge condition into function for readability, no logic change.
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
-> v2: remove bio validation check in page_is_mergeable().
->  fs/f2fs/data.c | 40 +++++++++++++++++++++++++++++++++-------
->  1 file changed, 33 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 6a8db4abdf5f..f1e401f9fc13 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -482,6 +482,33 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->  	return 0;
->  }
->  
-> +static bool page_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
-> +				block_t last_blkaddr, block_t cur_blkaddr)
-> +{
-> +	if (last_blkaddr != cur_blkaddr)
+--Sig_/=xcZ.RUWj2DDJGdJ2qm19.r
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-if (last_blkaddr + 1 != cur_blkaddr)
+Hi all,
 
-Merge condition is wrong here.
+Today's linux-next merge of the crypto tree got a conflict in:
 
-> +		return false;
-> +	return __same_bdev(sbi, cur_blkaddr, bio);
-> +}
-> +
-> +static bool io_type_is_mergeable(struct f2fs_bio_info *io,
-> +						struct f2fs_io_info *fio)
-> +{
-> +	if (io->fio.op != fio->op)
-> +		return false;
-> +	return io->fio.op_flags == fio->op_flags;
-> +}
-> +
-> +static bool io_is_mergeable(struct f2fs_sb_info *sbi, struct bio *bio,
-> +					struct f2fs_bio_info *io,
-> +					struct f2fs_io_info *fio,
-> +					block_t last_blkaddr,
-> +					block_t cur_blkaddr)
-> +{
-> +	if (!page_is_mergeable(sbi, bio, last_blkaddr, cur_blkaddr))
-> +		return false;
-> +	return io_type_is_mergeable(io, fio);
-> +}
-> +
->  int f2fs_merge_page_bio(struct f2fs_io_info *fio)
->  {
->  	struct bio *bio = *fio->bio;
-> @@ -495,8 +522,8 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
->  	trace_f2fs_submit_page_bio(page, fio);
->  	f2fs_trace_ios(fio, 0);
->  
-> -	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
-> -			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
-> +	if (bio && !page_is_mergeable(fio->sbi, bio, *fio->last_block,
-> +						fio->new_blkaddr)) {
->  		__submit_bio(fio->sbi, bio, fio->type);
->  		bio = NULL;
->  	}
-> @@ -569,9 +596,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  
->  	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
->  
-> -	if (io->bio && (io->last_block_in_bio != fio->new_blkaddr - 1 ||
-> -	    (io->fio.op != fio->op || io->fio.op_flags != fio->op_flags) ||
-> -			!__same_bdev(sbi, fio->new_blkaddr, io->bio)))
-> +	if (io->bio && !io_is_mergeable(sbi, io->bio, io, fio,
-> +			io->last_block_in_bio, fio->new_blkaddr))
->  		__submit_merged_bio(io);
->  alloc_new:
->  	if (io->bio == NULL) {
-> @@ -1643,8 +1669,8 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
->  	 * This page will go to BIO.  Do we need to send this
->  	 * BIO off first?
->  	 */
-> -	if (bio && (*last_block_in_bio != block_nr - 1 ||
-> -		!__same_bdev(F2FS_I_SB(inode), block_nr, bio))) {
-> +	if (bio && !page_is_mergeable(F2FS_I_SB(inode), bio,
-> +				*last_block_in_bio, block_nr - 1)) {
+  arch/x86/purgatory/Makefile
 
-*last_block_in_bio, block_nr)
+between commit:
 
-Sorry, anyway, let me send v2.
+  4ce97317f41d ("x86/purgatory: Do not use __builtin_memcpy and __builtin_m=
+emset")
 
->  submit_and_realloc:
->  		__submit_bio(F2FS_I_SB(inode), bio, DATA);
->  		bio = NULL;
-> 
+from Linus' tree and commit:
+
+  ad767ee858b3 ("crypto: sha256 - Move lib/sha256.c to lib/crypto")
+
+from the crypto tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/purgatory/Makefile
+index 8901a1f89cf5,ea86982aba27..000000000000
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@@ -6,12 -6,11 +6,14 @@@ purgatory-y :=3D purgatory.o stack.o setu
+  targets +=3D $(purgatory-y)
+  PURGATORY_OBJS =3D $(addprefix $(obj)/,$(purgatory-y))
+ =20
+ +$(obj)/string.o: $(srctree)/arch/x86/boot/compressed/string.c FORCE
+ +	$(call if_changed_rule,cc_o_c)
+ +
+- $(obj)/sha256.o: $(srctree)/lib/sha256.c FORCE
++ $(obj)/sha256.o: $(srctree)/lib/crypto/sha256.c FORCE
+  	$(call if_changed_rule,cc_o_c)
+ =20
++ CFLAGS_sha256.o :=3D -D__DISABLE_EXPORTS
++=20
+  LDFLAGS_purgatory.ro :=3D -e purgatory_start -r --no-undefined -nostdlib =
+-z nodefaultlib
+  targets +=3D purgatory.ro
+ =20
+
+--Sig_/=xcZ.RUWj2DDJGdJ2qm19.r
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1fWLkACgkQAVBC80lX
+0GzRMgf/X7CRbOkevCxmPAir1DvqbNEOGARqOtal9Ky+ADu1LxKZbnCkUO9fqKWP
+lGGt84IxUT6Xd1alfY34+0p+EVw0eQI4DecRDFgyd00tK5Z2lYrKhcmSHoxVbKUG
+wOPEwuxOnC0bw0nIsb+pNmzJt+ts8C9pYDlOkWMwW4ok0HKvpAXJB9lYn/Xn16hK
+xtLA+AAtYOR6VOV8nrMNsW+1RCw22mZVAdajrIqV0MOyJCfrnc8BC+ZCPg0DXvri
+xUk4sGXIxr3iIPkK/HRwC1cpv+8c8alATo56xWlBwo3CzCIviO94OCVoKlxYi4+j
+I3mqvUxw6qlffEIbjbZdQX4GaIaaGg==
+=kX1i
+-----END PGP SIGNATURE-----
+
+--Sig_/=xcZ.RUWj2DDJGdJ2qm19.r--
