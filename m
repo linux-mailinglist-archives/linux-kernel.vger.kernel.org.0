@@ -2,77 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BE2E9ADDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 13:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE8249ADE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 13:08:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389550AbfHWLHe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 07:07:34 -0400
-Received: from foss.arm.com ([217.140.110.172]:60306 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbfHWLHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 07:07:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8065337;
-        Fri, 23 Aug 2019 04:07:32 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 417653F246;
-        Fri, 23 Aug 2019 04:07:31 -0700 (PDT)
-Date:   Fri, 23 Aug 2019 12:07:22 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "andrew.murray@arm.com" <andrew.murray@arm.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>
-Subject: Re: [PATCHv2 0/4] Layerscape: Remove num-lanes property from PCIe
- nodes
-Message-ID: <20190823110714.GA10257@e121166-lin.cambridge.arm.com>
-References: <20190820073022.24217-1-Zhiqiang.Hou@nxp.com>
+        id S2405191AbfHWLHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 07:07:54 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46204 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727020AbfHWLHx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 07:07:53 -0400
+Received: by mail-lf1-f65.google.com with SMTP id n19so6817382lfe.13
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 04:07:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZHcoLOCEDvNdiKJSIaGU9TMbH+mXTX9zteaN4YnDK00=;
+        b=cPSKEtJOjYq9WsIijVXnZyKIbicP5PMiaPAcAAyh8mxF2fDAkuuFN3FcjHGy6xOiA8
+         dg3q+8r842lRJFe52waZ1pWOP1wKwsDLDgKLqIpRczfz3K1GCezlxU2eAw9eIZbMKxrf
+         mrn4ekEkBMNN05Alm52osCbJSaG9T3p08S1uk/Etvu7P/iU5q1BQZIwSb0LvUTNiRtvb
+         cYFDDf3S1vHAgguA6kMPY4lnFgRTA7hrkOSRgVLfAkUQYbXFTy9PUohmSf4W+STJYWLK
+         3ZPZzlh8ATubZ3jKVG+Q0Xc8NiATpTsN2VCfjDHzuS4R6vwvK+BZ87tC4ou5Z6faQS3u
+         BXhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZHcoLOCEDvNdiKJSIaGU9TMbH+mXTX9zteaN4YnDK00=;
+        b=ls+ExS5UIfpCYrDIrEu4B7h8Qwh81v6kwe8jss2/nJJ9Vq+z1lHcNs2uQaS8LfEErz
+         nSfLDaaxEZgPO5HXgvnj+3EQ6hu413FpIpoSXGcj+RMVLipPMn8ZvQ6IkhLEaaAbKdNi
+         q16uSY0q4rmIj6Li/ycuuNJYbIqAPIKkbOn7wQzXazFeLQgzeTs7RVmbgvOudWWLmZpM
+         CaIEoZCEC2HFS80p7rXtpf9KEV0aMC1Q8qB9WmTBj5MpY1nCkvIywxg1sJm84tBL3AZF
+         RvSZwRyRjQ30nPJJVim/8CMYL3C4/SLxnZ7WpR2GSt9AbLNC/Qu99F4ts1SLcsTI7IyM
+         IkHA==
+X-Gm-Message-State: APjAAAWcKB7cj//+jeoEqa8ebdPDdZlXH0/x/h/45DmIe0QAA2wUseSW
+        1qxMSvxjma/4ITpE36eXKcPdig==
+X-Google-Smtp-Source: APXvYqzi3fwiyJBZWIDhJNnGDLtbqn6NPY5vwE/i10iohempQV8GMBpKT39wg3/8zN79Mnf6fd6bZA==
+X-Received: by 2002:a19:2314:: with SMTP id j20mr1185222lfj.22.1566558471447;
+        Fri, 23 Aug 2019 04:07:51 -0700 (PDT)
+Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
+        by smtp.gmail.com with ESMTPSA id r23sm596312ljm.59.2019.08.23.04.07.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2019 04:07:50 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
+        daniel@ffwll.ch, matthias.bgg@gmail.com
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] drm/mediatek: fix implicit function declaration
+Date:   Fri, 23 Aug 2019 13:07:36 +0200
+Message-Id: <20190823110736.26117-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820073022.24217-1-Zhiqiang.Hou@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 07:28:37AM +0000, Z.q. Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> 
-> On FSL Layerscape SoCs, the number of lanes assigned to PCIe
-> controller is not fixed, it is determined by the selected
-> SerDes protocol. The current num-lanes indicates the max lanes
-> PCIe controller can support up to, instead of the lanes assigned
-> to the PCIe controller. This can result in PCIe link training fail
-> after hot-reset.
-> 
-> Hou Zhiqiang (4):
->   dt-bindings: PCI: designware: Remove the num-lanes from Required
->     properties
->   PCI: dwc: Return directly when num-lanes is not found
->   ARM: dts: ls1021a: Remove num-lanes property from PCIe nodes
->   arm64: dts: fsl: Remove num-lanes property from PCIe nodes
-> 
->  Documentation/devicetree/bindings/pci/designware-pcie.txt | 1 -
->  arch/arm/boot/dts/ls1021a.dtsi                            | 2 --
->  arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi            | 1 -
->  arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi            | 3 ---
->  arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi            | 6 ------
->  arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi            | 3 ---
->  arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi            | 4 ----
->  drivers/pci/controller/dwc/pcie-designware.c              | 6 ++++--
->  8 files changed, 4 insertions(+), 22 deletions(-)
+When building mtk_drm_drv.o the following build error is seen:
 
-Applied to pci/dwc for v5.4, thanks.
+../drivers/gpu/drm/mediatek/mtk_drm_drv.c: In function ‘mtk_drm_kms_init’:
+../drivers/gpu/drm/mediatek/mtk_drm_drv.c:291:8: error: implicit declaration of
+ function ‘dma_set_max_seg_size’; did you mean ‘drm_rect_adjust_size’? [-Werror=implicit-function-declaration]
+  ret = dma_set_max_seg_size(dma_dev, (unsigned int)DMA_BIT_MASK(32));
+        ^~~~~~~~~~~~~~~~~~~~
+        drm_rect_adjust_size
+../drivers/gpu/drm/mediatek/mtk_drm_drv.c:291:52: error: implicit declaration of
+ function ‘DMA_BIT_MASK’; did you mean ‘BIT_MASK’? [-Werror=implicit-function-declaration]
+  ret = dma_set_max_seg_size(dma_dev, (unsigned int)DMA_BIT_MASK(32));
+                                                    ^~~~~~~~~~~~
+                                                    BIT_MASK
 
-Lorenzo
+Rework to add a missing include file 'linux/dma-mapping.h', because that
+is the (only) header file containing that declaration.
+
+Fixes: 070955558e82 ("drm/mediatek: set DMA max segment size")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+index 54536176bcbb..352b81a7a670 100644
+--- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
++++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+@@ -10,6 +10,7 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/pm_runtime.h>
++#include <linux/dma-mapping.h>
+ 
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+-- 
+2.20.1
+
