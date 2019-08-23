@@ -2,216 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D9739A4DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 03:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD519A4E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 03:34:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388041AbfHWB1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 21:27:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730588AbfHWB1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 21:27:00 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB213233A2;
-        Fri, 23 Aug 2019 01:26:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566523619;
-        bh=6xxjLORt0xPkzoEPUFXYG1cXQ+Y1cImnoe/SmkS0e2A=;
-        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=kGwYtQdqH395GM0HbKE8VsJCZOKTZu6zUM6VgRDNti0j1IHOT5wNQbxkVQBX2VQMu
-         CzpWRYUaBk/Q7U69KJRuVqd46FlAt4Yc/wbZwzhr5dc0z3RHTFfIjzY0mOORirKR2V
-         9O7EeNYx5LhgTygYHhat9voOELeEJtOTaV9RJMLs=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190822020847.10159-2-wen.he_1@nxp.com>
-References: <20190822020847.10159-1-wen.he_1@nxp.com> <20190822020847.10159-2-wen.he_1@nxp.com>
-Cc:     leoyang.li@nxp.com, liviu.dudau@arm.com, Wen He <wen.he_1@nxp.com>
-Subject: Re: [v3 2/2] clk: ls1028a: Add clock driver for Display output interface
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Wen He <wen.he_1@nxp.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-devel@linux.nxdi.nxp.com, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 22 Aug 2019 18:26:58 -0700
-Message-Id: <20190823012658.DB213233A2@mail.kernel.org>
+        id S2388138AbfHWBbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 21:31:53 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40185 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730934AbfHWBbx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 21:31:53 -0400
+Received: by mail-pg1-f194.google.com with SMTP id w10so4757944pgj.7;
+        Thu, 22 Aug 2019 18:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=zbm2W6XHpS0o9PhGxMT9TLzTRXLWIz95ylnC0MpzjRg=;
+        b=KZ677euCxtMab8taDO/wlSoAYq71OUSPix+KiHFb9O146idZumCItHZl2o9lIZ17jP
+         kl/H8NZPklv75tjKVpUaKNdUkZp9w1U7YV2QMNYVIoMq+6uWI2lfvEtvaHuuIBNUiD02
+         9hjCJvJO23ioQgBnebHP2B/0oArjBV9/7bEK4rOoL3+cZNX4pA1101oZv6M+ehMDFljS
+         CnBcDpjVr/E1z+kqEPI2yGDU/0i+XftMx9fgbtoPIFVxZ4n43KkYuFmiMVHMX8WsZaVe
+         Rt0Ij9T6CO1p53yk5T+j6Bu5Ei0zf8pmJENMi4WBAn4VxhQ5oNq3f1Hu+c5fb3XmNW6t
+         AI+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zbm2W6XHpS0o9PhGxMT9TLzTRXLWIz95ylnC0MpzjRg=;
+        b=lUNkKc48VFFs6H23hmCy+a6Y8ChjJeSjdl27K3rWQYhGCaQpraSUalNsarGjarc7XK
+         fcQmwUIW+pWJf+LXYjC0VLvIKL8c6kIR+elDHeg3E9y8oyVH9JLHaJy0mUslbRZCYzTo
+         cyW71LMMf9FNKVzI4aEfaX89tr97L57s+LXfOwCztna3hqQ8wf5L7BoOqfKHSE7aE84P
+         aP1xLnTDJfb68YwDeBeQYd2+Qgioy9FzLgtZ8JCY2P8uUOH18uZRG/bC8HM5veOhMSdy
+         9+b03knRaYte3o8PQOaiTSOV/n/AhHpPp57MEosbPKdM4TcorX+xFzirj5npH6FXP3Bv
+         kz2A==
+X-Gm-Message-State: APjAAAVqtn5OahOz9VSQQ1YSBTeg5akPo4GztG2LWOtFrCljXNEic9BJ
+        GGD021hd2krgLiIbEhLWvz4=
+X-Google-Smtp-Source: APXvYqxAWiknUQM9s9bLrknCPab7TrgAbcx4NM00ohq5njwe2xBK3NtCB280gj8dVGMYoc1F6/fLVQ==
+X-Received: by 2002:a17:90a:d793:: with SMTP id z19mr2613966pju.36.1566523912675;
+        Thu, 22 Aug 2019 18:31:52 -0700 (PDT)
+Received: from localhost.localdomain ([106.51.105.240])
+        by smtp.gmail.com with ESMTPSA id v21sm636002pfe.131.2019.08.22.18.31.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 22 Aug 2019 18:31:52 -0700 (PDT)
+From:   Rishi Gupta <gupt21@gmail.com>
+To:     rui.zhang@intel.com
+Cc:     edubezval@gmail.com, daniel.lezcano@linaro.org,
+        alexios.zavras@intel.com, gregkh@linuxfoundation.org,
+        amit.kucheria@linaro.org, allison@lohutok.net, tglx@linutronix.de,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rishi Gupta <gupt21@gmail.com>
+Subject: [PATCH] thermal: intel: int3403: replace printk(KERN_WARN...) with pr_warn(...)
+Date:   Fri, 23 Aug 2019 07:01:42 +0530
+Message-Id: <1566523902-9302-1-git-send-email-gupt21@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Wen He (2019-08-21 19:08:47)
-> Add clock driver for QorIQ LS1028A Display output interfaces(LCD, DPHY),
-> as implemented in TSMC CLN28HPM PLL, this PLL supports the programmable
-> integer division and range of the display output pixel clock's 27-594MHz.
->=20
-> Signed-off-by: Wen He <wen.he_1@nxp.com>
-> ---
-> change in v3:
->         - remove the OF dependency
->         - use clk_parent_data instead of parent_name
->=20
->  drivers/clk/Kconfig      |  10 ++
->  drivers/clk/Makefile     |   1 +
->  drivers/clk/clk-plldig.c | 283 +++++++++++++++++++++++++++++++++++++++
->  3 files changed, 294 insertions(+)
->  create mode 100644 drivers/clk/clk-plldig.c
->=20
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 801fa1cd0321..ab05f342af04 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -223,6 +223,16 @@ config CLK_QORIQ
->           This adds the clock driver support for Freescale QorIQ platforms
->           using common clock framework.
-> =20
-> +config CLK_LS1028A_PLLDIG
-> +        bool "Clock driver for LS1028A Display output"
-> +        depends on ARCH_LAYERSCAPE || COMPILE_TEST
-> +        default ARCH_LAYERSCAPE
-> +        help
-> +          This driver support the Display output interfaces(LCD, DPHY) p=
-ixel clocks
-> +          of the QorIQ Layerscape LS1028A, as implemented TSMC CLN28HPM =
-PLL. Not all
-> +          features of the PLL are currently supported by the driver. By =
-default,
-> +          configured bypass mode with this PLL.
-> +
->  config COMMON_CLK_XGENE
->         bool "Clock driver for APM XGene SoC"
->         default ARCH_XGENE
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 0cad76021297..c8e22a764c4d 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_OXNAS)                +=3D clk-=
-oxnas.o
->  obj-$(CONFIG_COMMON_CLK_PALMAS)                +=3D clk-palmas.o
->  obj-$(CONFIG_COMMON_CLK_PWM)           +=3D clk-pwm.o
->  obj-$(CONFIG_CLK_QORIQ)                        +=3D clk-qoriq.o
-> +obj-$(CONFIG_CLK_LS1028A_PLLDIG)       +=3D clk-plldig.o
->  obj-$(CONFIG_COMMON_CLK_RK808)         +=3D clk-rk808.o
->  obj-$(CONFIG_COMMON_CLK_HI655X)                +=3D clk-hi655x.o
->  obj-$(CONFIG_COMMON_CLK_S2MPS11)       +=3D clk-s2mps11.o
-> diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
-> new file mode 100644
-> index 000000000000..c5ce80a46fd4
-> --- /dev/null
-> +++ b/drivers/clk/clk-plldig.c
-> @@ -0,0 +1,283 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright 2019 NXP
+Direct invocation of printk() is not preferred to emit logs.
+This commit replaces printk(KERN_WARNING) with corresponding
+pr_warn() function call.
 
-Please leave this as C style /* */ comment for the NXP part, but comply
-with the SPDX comment style of // on the first line.
+Signed-off-by: Rishi Gupta <gupt21@gmail.com>
+---
+ drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
-> +static long plldig_round_rate(struct clk_hw *hw, unsigned long rate,
-> +               unsigned long *parent)
-> +{
-> +       unsigned long parent_rate =3D *parent;
-> +       unsigned long round_rate;
-> +       u32 mult =3D 0, rfdphi1 =3D 0;
-> +       bool found =3D false;
-> +
-> +       found =3D plldig_is_valid_range(rate, parent_rate, &mult,
-> +                                       &rfdphi1, &round_rate);
-> +       if (!found) {
-> +               pr_warn("%s: unable to round rate %lu, parent rate :%lu\n=
-",
-> +                               clk_hw_get_name(hw), rate, parent_rate);
-> +               return 0;
-
-This can return an error instead? In fact, you may want to use
-determine_rate clk op instead.
-
-> +       }
-> +
-> +       return round_rate / rfdphi1;
-> +}
-> +
-> +static int plldig_set_rate(struct clk_hw *hw, unsigned long rate,
-> +               unsigned long parent_rate)
-> +{
-> +       struct clk_plldig *data =3D to_clk_plldig(hw);
-> +       bool valid =3D false;
-> +       unsigned long round_rate =3D 0;
-> +       u32 rfdphi1 =3D 0, val, mult =3D 0, cond =3D 0;
-> +       int ret =3D -ETIMEDOUT;
-> +
-> +       valid =3D plldig_is_valid_range(rate, parent_rate, &mult,
-> +                                       &rfdphi1, &round_rate);
-> +       if (!valid) {
-> +               pr_warn("%s: unable to support rate %lu, parent_rate: %lu=
-\n",
-> +                               clk_hw_get_name(hw), rate, parent_rate);
-
-Shouldn't determine_rate or round_rate make this impossible to hit in
-practice? I mean that those ops should prevent the rate from being
-rounded to such a frequency that it becomes invalid.
-
-> +               return -EINVAL;
-> +       }
-> +
-> +       val =3D readl(data->regs + PLLDIG_REG_PLLDV);
-> +       val =3D mult;
-> +       rfdphi1 =3D PLLDIG_SET_RFDPHI1(rfdphi1);
-> +       val |=3D rfdphi1;
-> +
-> +       writel(val, data->regs + PLLDIG_REG_PLLDV);
-> +
-> +       /* delay 200us make sure that old lock state is cleared */
-> +       udelay(200);
-> +
-> +       /* Wait until PLL is locked or timeout (maximum 1000 usecs) */
-> +       ret =3D readl_poll_timeout_atomic(data->regs + PLLDIG_REG_PLLSR, =
-cond,
-> +                                       cond & PLLDIG_LOCK_MASK, 0,
-> +                                       USEC_PER_MSEC);
-> +
-> +       return ret;
-> +}
-> +
-> +static const struct clk_ops plldig_clk_ops =3D {
-> +       .enable =3D plldig_enable,
-> +       .disable =3D plldig_disable,
-> +       .is_enabled =3D plldig_is_enabled,
-> +       .recalc_rate =3D plldig_recalc_rate,
-> +       .round_rate =3D plldig_round_rate,
-> +       .set_rate =3D plldig_set_rate,
-> +};
-[...]
-> +
-> +       ret =3D devm_clk_hw_register(dev, &data->hw);
-> +       if (ret) {
-> +               dev_err(dev, "failed to register %s clock\n", init.name);
-> +               return ret;
-> +       }
-> +
-> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &d=
-ata->hw);
-> +       if (ret)
-> +               dev_err(dev, "failed adding the clock provider\n");
-> +
-> +       return ret;
-> +}
-> +
-> +static int plldig_clk_remove(struct platform_device *pdev)
-> +{
-> +       of_clk_del_provider(pdev->dev.of_node);
-
-This isn't required. devm already does it.
-
-> +       return 0;
-> +}
-> +
-> +static const struct of_device_id plldig_clk_id[] =3D {
-> +       { .compatible =3D "fsl,ls1028a-plldig", .data =3D NULL},
-
-You can leave out the data assignment.
+diff --git a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
+index f5749d4..a7bbd85 100644
+--- a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
++++ b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
+@@ -181,7 +181,7 @@ static int int3403_cdev_add(struct int3403_priv *priv)
+ 
+ 	p = buf.pointer;
+ 	if (!p || (p->type != ACPI_TYPE_PACKAGE)) {
+-		printk(KERN_WARNING "Invalid PPSS data\n");
++		pr_warn("Invalid PPSS data\n");
+ 		kfree(buf.pointer);
+ 		return -EFAULT;
+ 	}
+-- 
+2.7.4
 
