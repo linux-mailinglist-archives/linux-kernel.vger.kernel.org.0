@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7F7A9AF81
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D56FE9AF85
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:30:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394753AbfHWM3a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:29:30 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35348 "EHLO
+        id S2394769AbfHWM3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:29:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35355 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730804AbfHWM33 (ORCPT
+        with ESMTP id S1730804AbfHWM3d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:29:29 -0400
+        Fri, 23 Aug 2019 08:29:33 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i18h2-00024L-DU; Fri, 23 Aug 2019 14:29:24 +0200
+        id 1i18h2-00024i-Uk; Fri, 23 Aug 2019 14:29:25 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 098231C089A;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 838901C04F3;
         Fri, 23 Aug 2019 14:29:24 +0200 (CEST)
-Date:   Fri, 23 Aug 2019 12:29:23 -0000
-From:   tip-bot2 for Ravi Bangoria <tip-bot2@linutronix.de>
+Date:   Fri, 23 Aug 2019 12:29:24 -0000
+From:   tip-bot2 for Gerald BAEZA <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf c2c: Fix report with offline cpus
-Cc:     Nageswara R Sastry <nasastry@in.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Jiri Olsa <jolsa@kernel.org>,
+Subject: [tip: perf/core] libperf: Fix alignment trap with xyarray contents in 'perf
+ stat'
+Cc:     Gerald Baeza <gerald.baeza@st.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20190822085045.25108-1-ravi.bangoria@linux.ibm.com>
-References: <20190822085045.25108-1-ravi.bangoria@linux.ibm.com>
+In-Reply-To: <1566464769-16374-1-git-send-email-gerald.baeza@st.com>
+References: <1566464769-16374-1-git-send-email-gerald.baeza@st.com>
 MIME-Version: 1.0
-Message-ID: <156656336391.32670.13819000137400710283.tip-bot2@tip-bot2>
+Message-ID: <156656336440.32674.1760481697733567809.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from
@@ -51,41 +56,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     1ea770f6c1971bc101b3741f4d88b0b4ea5c4181
-Gitweb:        https://git.kernel.org/tip/1ea770f6c1971bc101b3741f4d88b0b4ea5c4181
-Author:        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-AuthorDate:    Thu, 22 Aug 2019 14:20:45 +05:30
+Commit-ID:     d9c5c083416500e95da098c01be092b937def7fa
+Gitweb:        https://git.kernel.org/tip/d9c5c083416500e95da098c01be092b937def7fa
+Author:        Gerald BAEZA <gerald.baeza@st.com>
+AuthorDate:    Thu, 22 Aug 2019 09:07:01 
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Thu, 22 Aug 2019 17:16:57 -03:00
 
-perf c2c: Fix report with offline cpus
+libperf: Fix alignment trap with xyarray contents in 'perf stat'
 
-If c2c is recorded on a machine where any cpus are offline, 'perf c2c
-report' throws an error "node/cpu topology bugFailed setup nodes".
+Following the patch 'perf stat: Fix --no-scale', an alignment trap
+happens in process_counter_values() on ARMv7 platforms due to the
+attempt to copy non 64 bits aligned double words (pointed by 'count')
+via a NEON vectored instruction ('vld1' with 64 bits alignment
+constraint).
 
-It fails because while preparing node-cpu mapping we don't consider
-offline cpus.
+This patch sets a 64 bits alignment constraint on 'contents[]' field in
+'struct xyarray' since the 'count' pointer used above points to such a
+structure.
 
-Reported-by: Nageswara R Sastry <nasastry@in.ibm.com>
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Fixes: 1e181b92a2da ("perf c2c report: Add 'node' sort key")
-Link: http://lkml.kernel.org/r/20190822085045.25108-1-ravi.bangoria@linux.ibm.com
+Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1566464769-16374-1-git-send-email-gerald.baeza@st.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-c2c.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/lib/include/internal/xyarray.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 01629f5..2111437 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -2027,7 +2027,7 @@ static int setup_nodes(struct perf_session *session)
- 		c2c.node_info = 2;
+diff --git a/tools/perf/lib/include/internal/xyarray.h b/tools/perf/lib/include/internal/xyarray.h
+index 3bf70e4..51e35d6 100644
+--- a/tools/perf/lib/include/internal/xyarray.h
++++ b/tools/perf/lib/include/internal/xyarray.h
+@@ -2,6 +2,7 @@
+ #ifndef __LIBPERF_INTERNAL_XYARRAY_H
+ #define __LIBPERF_INTERNAL_XYARRAY_H
  
- 	c2c.nodes_cnt = session->header.env.nr_numa_nodes;
--	c2c.cpus_cnt  = session->header.env.nr_cpus_online;
-+	c2c.cpus_cnt  = session->header.env.nr_cpus_avail;
++#include <linux/compiler.h>
+ #include <sys/types.h>
  
- 	n = session->header.env.numa_nodes;
- 	if (!n)
+ struct xyarray {
+@@ -10,7 +11,7 @@ struct xyarray {
+ 	size_t entries;
+ 	size_t max_x;
+ 	size_t max_y;
+-	char contents[];
++	char contents[] __aligned(8);
+ };
+ 
+ struct xyarray *xyarray__new(int xlen, int ylen, size_t entry_size);
