@@ -2,169 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 530529B004
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:56:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 767599B009
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394967AbfHWMym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:54:42 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:46490 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfHWMyl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:54:41 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 286C826BC15
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Collabora kernel ML <kernel@collabora.com>,
-        Gwendal Grignou <gwendal@chromium.org>
-Subject: [PATCH v6 11/11] arm/arm64: defconfig: Update configs to use the new CROS_EC options
-Date:   Fri, 23 Aug 2019 14:53:31 +0200
-Message-Id: <20190823125331.5070-12-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190823125331.5070-1-enric.balletbo@collabora.com>
-References: <20190823125331.5070-1-enric.balletbo@collabora.com>
+        id S2394994AbfHWM4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:56:13 -0400
+Received: from mga17.intel.com ([192.55.52.151]:8367 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394976AbfHWM4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 08:56:11 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 05:56:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,421,1559545200"; 
+   d="scan'208";a="208538168"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by fmsmga002.fm.intel.com with ESMTP; 23 Aug 2019 05:56:07 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1i196q-00035N-LO; Fri, 23 Aug 2019 15:56:04 +0300
+Date:   Fri, 23 Aug 2019 15:56:04 +0300
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        tony.luck@intel.com, x86@kernel.org, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, alan@linux.intel.com,
+        linux-kernel@vger.kernel.org, qi-ming.wu@intel.com,
+        cheol.yong.kim@intel.com, rahul.tanwar@intel.com
+Subject: Re: [PATCH v1 1/2] x86/rtc: Add option to skip using RTC
+Message-ID: <20190823125604.GS30120@smile.fi.intel.com>
+References: <cover.1566458029.git.rahul.tanwar@linux.intel.com>
+ <becacc523508b295a52db9f1592e2868e3988e28.1566458029.git.rahul.tanwar@linux.intel.com>
+ <20190822090208.GJ30120@smile.fi.intel.com>
+ <25f6947d-7ba0-c23c-25aa-c4c4173da6b0@linux.intel.com>
+ <20190822130429.GN30120@smile.fi.intel.com>
+ <a6717e97-01cf-771c-8467-be5946528dd0@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6717e97-01cf-771c-8467-be5946528dd0@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recently we refactored the CrOS EC drivers moving part of the code from
-the MFD subsystem to the platform chrome subsystem. During this change
-we needed to rename some config options, so, update the defconfigs
-accordingly.
+On Fri, Aug 23, 2019 at 11:37:38AM +0800, Tanwar, Rahul wrote:
+> On 22/8/2019 9:04 PM, Andy Shevchenko wrote:
+> > On Thu, Aug 22, 2019 at 05:26:33PM +0800, Tanwar, Rahul wrote:
+> > > On 22/8/2019 5:02 PM, Andy Shevchenko wrote:
+> > > > On Thu, Aug 22, 2019 at 03:44:03PM +0800, Rahul Tanwar wrote:
+> > > > > Use a newly introduced optional "status" property of "motorola,mc146818"
+> > > > > compatible DT node to determine if RTC is supported. Skip read/write from
+> > > > > RTC device only when this node is present and status is "disabled". In all
+> > > > > other cases, proceed as before.
+> > > > Can't we rather update ->get_wallclock() and ->set_wallclock() based on this?
+> > > 
+> > > get_wallclock() and set_wallclock() are function pointers of platform_ops
+> > > 
+> > > which are initialized to mach_get_cmos_time() and mach_set_rtc_mmss()
+> > > 
+> > > at init time. Since adding a new platform to override these functions is
+> > > 
+> > > discouraged, so the only way is to modify RTC get/set functions.
+> > Shouldn't it be platform agnostic code?
+> > So, my point is, instead of hacking two functions, perhaps better to avoid them
+> > at all.
+> 
+> Sorry, i could not understand your point. The changes are platform
+> 
+> agnostic i.e. it doesn't break existing use cases. Are you recommending
+> 
+> to add a new platform and make changes there ?
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-Tested-by: Gwendal Grignou <gwendal@chromium.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
+Nope, I propose to do something like
 
-Changes in v6: None
-Changes in v5: None
-Changes in v4: None
-Changes in v3: None
-Changes in v2: None
+void __init foo()
+{
+	if (platform has RTC)
+		return;
 
- arch/arm/configs/exynos_defconfig   | 6 +++++-
- arch/arm/configs/multi_v7_defconfig | 6 ++++--
- arch/arm/configs/pxa_defconfig      | 4 +++-
- arch/arm/configs/tegra_defconfig    | 2 +-
- arch/arm64/configs/defconfig        | 6 ++++--
- 5 files changed, 17 insertions(+), 7 deletions(-)
+	set_wallclock = noop;
+	get_wallclock = noop;
+}
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 2e6a863d25aa..d29029f534ec 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -154,7 +154,11 @@ CONFIG_CPU_THERMAL=y
- CONFIG_THERMAL_EMULATION=y
- CONFIG_WATCHDOG=y
- CONFIG_S3C2410_WATCHDOG=y
--CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_DEV=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=y
-+CONFIG_CROS_EC_I2C=y
-+CONFIG_CROS_EC_SPI=y
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX77693=y
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 6a40bc2ef271..0e9e70badf88 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -511,10 +511,12 @@ CONFIG_MFD_BCM590XX=y
- CONFIG_MFD_AC100=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
--CONFIG_MFD_CROS_EC=m
-+CONFIG_MFD_CROS_EC_DEV=m
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=m
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
--CONFIG_MFD_CROS_EC_CHARDEV=m
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_MFD_DA9063=m
- CONFIG_MFD_MAX14577=y
- CONFIG_MFD_MAX77686=y
-diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
-index 787c3f9be414..635bf7dec53c 100644
---- a/arch/arm/configs/pxa_defconfig
-+++ b/arch/arm/configs/pxa_defconfig
-@@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=m
- CONFIG_MFD_AS3711=y
- CONFIG_MFD_BCM590XX=m
- CONFIG_MFD_AXP20X=y
--CONFIG_MFD_CROS_EC=m
-+CONFIG_MFD_CROS_EC_DEV=m
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=m
- CONFIG_CROS_EC_I2C=m
- CONFIG_CROS_EC_SPI=m
- CONFIG_MFD_ASIC3=y
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 8f5c6a5b444c..061037012335 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=y
- CONFIG_WATCHDOG=y
- CONFIG_TEGRA_WATCHDOG=y
- CONFIG_MFD_AS3722=y
--CONFIG_MFD_CROS_EC=y
-+CONFIG_MFD_CROS_EC_DEV=y
- CONFIG_MFD_MAX8907=y
- CONFIG_MFD_STMPE=y
- CONFIG_MFD_PALMAS=y
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0e58ef02880c..c4df1999fe0d 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -457,8 +457,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
- CONFIG_MFD_BD9571MWV=y
- CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_AXP20X_RSB=y
--CONFIG_MFD_CROS_EC=y
--CONFIG_MFD_CROS_EC_CHARDEV=m
-+CONFIG_MFD_CROS_EC_DEV=y
- CONFIG_MFD_EXYNOS_LPASS=m
- CONFIG_MFD_HI6421_PMIC=y
- CONFIG_MFD_HI655X_PMIC=y
-@@ -668,8 +667,11 @@ CONFIG_VIRTIO_BALLOON=y
- CONFIG_VIRTIO_MMIO=y
- CONFIG_XEN_GNTDEV=y
- CONFIG_XEN_GRANT_DEV_ALLOC=y
-+CONFIG_CHROME_PLATFORMS=y
-+CONFIG_CROS_EC=y
- CONFIG_CROS_EC_I2C=y
- CONFIG_CROS_EC_SPI=y
-+CONFIG_CROS_EC_CHARDEV=m
- CONFIG_COMMON_CLK_RK808=y
- CONFIG_COMMON_CLK_SCPI=y
- CONFIG_COMMON_CLK_CS2000_CP=y
 -- 
-2.20.1
+With Best Regards,
+Andy Shevchenko
+
 
