@@ -2,92 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A520F9A651
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 05:47:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A17A39A61F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 05:40:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404242AbfHWDq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 23:46:56 -0400
-Received: from mail.python.org ([188.166.95.178]:57968 "EHLO mail.python.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732929AbfHWDqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 23:46:55 -0400
-X-Greylist: delayed 621 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 23:46:54 EDT
-Received: from auth1-smtp.messagingengine.com (auth1-smtp.messagingengine.com [66.111.4.227])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.python.org (Postfix) with ESMTPSA id 46F6Wg5B4XzpBSW;
-        Thu, 22 Aug 2019 23:36:31 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=python.org; s=200901;
-        t=1566531392; bh=CDubURVQzkE9HS3aSBAwGhw/+EAk4NT202GmBHhNOwM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cgi9YwqS332lSKx2f8UKapWer/pUFkQQP7Jh38bFzQcvjm6Zmbqg+/S4y8ryxdeAJ
-         s9JktrB861diA5jLBegINe8qqz0b9omWKSUlau9dEUQ/hdu5BX/J+peRVvSN9JmGWf
-         Xxt/W77qm+MJm44qth9H0ok/gP7qy2BBsnYyXwdI=
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 4AE0721C39;
-        Thu, 22 Aug 2019 23:36:30 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 22 Aug 2019 23:36:30 -0400
-X-ME-Sender: <xms:PV9fXUh18pKP3YfAfekO2PaHCXvlkWevDg8KGDxc5IZomgTmPGt21g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudegjedgjeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeeuvghnjhgrmhhi
-    nhcurfgvthgvrhhsohhnuceosggvnhhjrghmihhnsehphihthhhonhdrohhrgheqnecukf
-    hppedujeegrddvudehrdehrdduudegnecurfgrrhgrmhepmhgrihhlfhhrohhmpegstghp
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqddvtdduieekfeefjedquddule
-    eitdeiheefqdgsvghnjhgrmhhinheppehphihthhhonhdrohhrghesfhgrshhtmhgrihhl
-    rdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:PV9fXXfuOij21U7HU5weVyPC87FpAVktpTpfd5vGIDBOSs7b5fFQ1w>
-    <xmx:PV9fXcigMzy8wY1Dn3veMcHbQbxTBS88TNNVP0NZIMHpQgQNi8A0cA>
-    <xmx:PV9fXXffF-E1mfxBjkjzBkDyeuXsoolaHEpoE3iPQAuKFW8lKnRg6g>
-    <xmx:Pl9fXZFvRURQfJGHZ_Vzh9QOXxXajd2A5x6IGpiyLgpXxHvAI1z8UQ>
-Received: from localhost.localdomain (114.sub-174-215-5.myvzw.com [174.215.5.114])
-        by mail.messagingengine.com (Postfix) with ESMTPA id AC950D6005D;
-        Thu, 22 Aug 2019 23:36:28 -0400 (EDT)
-From:   Benjamin Peterson <benjamin@python.org>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] perf trace beauty ioctl: fix off-by-one error in table
-Date:   Thu, 22 Aug 2019 20:36:25 -0700
-Message-Id: <20190823033625.18814-1-benjamin@python.org>
-X-Mailer: git-send-email 2.20.1
+        id S2391606AbfHWDkT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 23:40:19 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:37604 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732546AbfHWDkS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 23:40:18 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7N3dsco056152;
+        Thu, 22 Aug 2019 22:39:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566531594;
+        bh=81SSEYa5Fp4dwV5qila9E6vwCoCXnItQiSYD67zCfW8=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=JWV4ioQFP6IoggZOdMcyoaMP1ZYasXYOhchN4C+7LKmF5GWY/fxycdv4+VTJvOnBp
+         CG/i6CCa5N2V806C2ZUm4j1Uvw9GWhxQp1m80ztT3LFuMkB56p1qu+TsGUuUsqEtiH
+         l2geahbl0GLEirpyHJqBtlG/34hOoHWZDlmJRhBY=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7N3dsgV012046
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 22 Aug 2019 22:39:54 -0500
+Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 22
+ Aug 2019 22:39:54 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 22 Aug 2019 22:39:54 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7N3dmoK102238;
+        Thu, 22 Aug 2019 22:39:49 -0500
+Subject: Re: [PATCH v2 06/10] PCI: layerscape: Modify the way of getting
+ capability with different PEX
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.co" <lorenzo.pieralisi@arm.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "andrew.murray@arm.com" <andrew.murray@arm.com>
+References: <20190822112242.16309-1-xiaowei.bao@nxp.com>
+ <20190822112242.16309-6-xiaowei.bao@nxp.com>
+ <0c02ac52-e4b1-8071-bf9e-d10b28fc9029@ti.com>
+ <AM5PR04MB3299DE7B57F31EA405E4FCBCF5A40@AM5PR04MB3299.eurprd04.prod.outlook.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <11e9b2c3-f4d0-2f82-bb14-45c38a1419e4@ti.com>
+Date:   Fri, 23 Aug 2019 09:09:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <AM5PR04MB3299DE7B57F31EA405E4FCBCF5A40@AM5PR04MB3299.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While tracing a program that calls isatty(3), I noticed that strace reported
-TCGETS for the request argument of the underlying ioctl(2) syscall while perf
-trace reported TCSETS. strace is corrrect. The bug in perf was due to the tty
-ioctl beauty table starting at 0x5400 rather than 0x5401.
+Hi,
 
-Fixes: 1cc47f2d46206d67285aea0ca7e8450af571da13 ("perf trace beauty ioctl: Improve 'cmd' beautifier")
-Signed-off-by: Benjamin Peterson <benjamin@python.org>
----
- tools/perf/trace/beauty/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+(Fixed Lorenzo's email address. All the patches in the series have wrong email id)
 
-diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
-index 52242fa4072b..e19eb6ea361d 100644
---- a/tools/perf/trace/beauty/ioctl.c
-+++ b/tools/perf/trace/beauty/ioctl.c
-@@ -21,7 +21,7 @@
- static size_t ioctl__scnprintf_tty_cmd(int nr, int dir, char *bf, size_t size)
- {
- 	static const char *ioctl_tty_cmd[] = {
--	"TCGETS", "TCSETS", "TCSETSW", "TCSETSF", "TCGETA", "TCSETA", "TCSETAW",
-+	[_IOC_NR(TCGETS)] = "TCGETS", "TCSETS", "TCSETSW", "TCSETSF", "TCGETA", "TCSETA", "TCSETAW",
- 	"TCSETAF", "TCSBRK", "TCXONC", "TCFLSH", "TIOCEXCL", "TIOCNXCL", "TIOCSCTTY",
- 	"TIOCGPGRP", "TIOCSPGRP", "TIOCOUTQ", "TIOCSTI", "TIOCGWINSZ", "TIOCSWINSZ",
- 	"TIOCMGET", "TIOCMBIS", "TIOCMBIC", "TIOCMSET", "TIOCGSOFTCAR", "TIOCSSOFTCAR",
--- 
-2.20.1
+On 23/08/19 8:09 AM, Xiaowei Bao wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Kishon Vijay Abraham I <kishon@ti.com>
+>> Sent: 2019年8月22日 19:44
+>> To: Xiaowei Bao <xiaowei.bao@nxp.com>; bhelgaas@google.com;
+>> robh+dt@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; Leo Li
+>> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.co; arnd@arndb.de;
+>> gregkh@linuxfoundation.org; M.h. Lian <minghuan.lian@nxp.com>; Mingkai
+>> Hu <mingkai.hu@nxp.com>; Roy Zang <roy.zang@nxp.com>;
+>> jingoohan1@gmail.com; gustavo.pimentel@synopsys.com;
+>> linux-pci@vger.kernel.org; devicetree@vger.kernel.org;
+>> linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> linuxppc-dev@lists.ozlabs.org; andrew.murray@arm.com
+>> Subject: Re: [PATCH v2 06/10] PCI: layerscape: Modify the way of getting
+>> capability with different PEX
+>>
+>> Hi,
+>>
+>> On 22/08/19 4:52 PM, Xiaowei Bao wrote:
+>>> The different PCIe controller in one board may be have different
+>>> capability of MSI or MSIX, so change the way of getting the MSI
+>>> capability, make it more flexible.
+>>
+>> please use different pci_epc_features table for different boards.
+> Thanks, I think that it will be more flexible to dynamically get MSI or MSIX capability,
+> Thus, we will not need to define the pci_epc_feature for different boards.
 
+Is the restriction because you cannot have different compatible for different
+boards?
+
+Thanks
+Kishon
+
+>>
+>> Thanks
+>> Kishon
+>>>
+>>> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+>>> ---
+>>> v2:
+>>>  - Remove the repeated assignment code.
+>>>
+>>>  drivers/pci/controller/dwc/pci-layerscape-ep.c | 26
+>>> +++++++++++++++++++-------
+>>>  1 file changed, 19 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c
+>>> b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+>>> index 4e92a95..8461f62 100644
+>>> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
+>>> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+>>> @@ -22,6 +22,7 @@
+>>>
+>>>  struct ls_pcie_ep {
+>>>  	struct dw_pcie		*pci;
+>>> +	struct pci_epc_features	*ls_epc;
+>>>  };
+>>>
+>>>  #define to_ls_pcie_ep(x)	dev_get_drvdata((x)->dev)
+>>> @@ -40,25 +41,26 @@ static const struct of_device_id
+>> ls_pcie_ep_of_match[] = {
+>>>  	{ },
+>>>  };
+>>>
+>>> -static const struct pci_epc_features ls_pcie_epc_features = {
+>>> -	.linkup_notifier = false,
+>>> -	.msi_capable = true,
+>>> -	.msix_capable = false,
+>>> -};
+>>> -
+>>>  static const struct pci_epc_features*  ls_pcie_ep_get_features(struct
+>>> dw_pcie_ep *ep)  {
+>>> -	return &ls_pcie_epc_features;
+>>> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>>> +	struct ls_pcie_ep *pcie = to_ls_pcie_ep(pci);
+>>> +
+>>> +	return pcie->ls_epc;
+>>>  }
+>>>
+>>>  static void ls_pcie_ep_init(struct dw_pcie_ep *ep)  {
+>>>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>>> +	struct ls_pcie_ep *pcie = to_ls_pcie_ep(pci);
+>>>  	enum pci_barno bar;
+>>>
+>>>  	for (bar = BAR_0; bar <= BAR_5; bar++)
+>>>  		dw_pcie_ep_reset_bar(pci, bar);
+>>> +
+>>> +	pcie->ls_epc->msi_capable = ep->msi_cap ? true : false;
+>>> +	pcie->ls_epc->msix_capable = ep->msix_cap ? true : false;
+>>>  }
+>>>
+>>>  static int ls_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no, @@
+>>> -118,6 +120,7 @@ static int __init ls_pcie_ep_probe(struct platform_device
+>> *pdev)
+>>>  	struct device *dev = &pdev->dev;
+>>>  	struct dw_pcie *pci;
+>>>  	struct ls_pcie_ep *pcie;
+>>> +	struct pci_epc_features *ls_epc;
+>>>  	struct resource *dbi_base;
+>>>  	int ret;
+>>>
+>>> @@ -129,6 +132,10 @@ static int __init ls_pcie_ep_probe(struct
+>> platform_device *pdev)
+>>>  	if (!pci)
+>>>  		return -ENOMEM;
+>>>
+>>> +	ls_epc = devm_kzalloc(dev, sizeof(*ls_epc), GFP_KERNEL);
+>>> +	if (!ls_epc)
+>>> +		return -ENOMEM;
+>>> +
+>>>  	dbi_base = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>> "regs");
+>>>  	pci->dbi_base = devm_pci_remap_cfg_resource(dev, dbi_base);
+>>>  	if (IS_ERR(pci->dbi_base))
+>>> @@ -139,6 +146,11 @@ static int __init ls_pcie_ep_probe(struct
+>> platform_device *pdev)
+>>>  	pci->ops = &ls_pcie_ep_ops;
+>>>  	pcie->pci = pci;
+>>>
+>>> +	ls_epc->linkup_notifier = false,
+>>> +	ls_epc->bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
+>>> +
+>>> +	pcie->ls_epc = ls_epc;
+>>> +
+>>>  	platform_set_drvdata(pdev, pcie);
+>>>
+>>>  	ret = ls_add_pcie_ep(pcie, pdev);
+>>>
