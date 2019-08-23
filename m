@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C62A59B6B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 21:12:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C382A9B6B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 21:12:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406070AbfHWTLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 15:11:45 -0400
+        id S2406083AbfHWTLv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 15:11:51 -0400
 Received: from mail-eopbgr20069.outbound.protection.outlook.com ([40.107.2.69]:31678
         "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731649AbfHWTLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 15:11:39 -0400
+        id S2405030AbfHWTLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 15:11:43 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HqdGCt5s+1G+DaKHDzXvMVS3H/SfniygChwwyEh0e1q7PjJGaeC0DcFP+PksgICWblLihJDzxumv29K8yQyzh9tD/DFBy3qqJOTbZcPxeWzslzynmx+g0z1KuF8CKINoIAkHZRoPHE8CjvUMDfGVrAZ8c/La9p8jOHJVAXV+lyJz7o06lAedMlv/VOPzFXETJuwB2ryFzdEav9L+zR78viz9fDmHzM9zNRNf9SSh19iNKdwNN4DOzDv5BFbWsj4A7bvkSoD0Z03yV9zB+/9aS7lk2i9o/hVfXxZegQmWkpO5MSD8sOoQGM51HjHz/FKOn9mKv43YKSyWRS8/TpRmjA==
+ b=IOQ8sA9HIealBV4GQh92D1O4LPW4evUfplXTLVEIwNOu4hWLQlJIJxr2ebWNbIPENVFssqDqEsQ+J2+5+ruMYeQBo3fgG287vrIfNqO36a75JypVo5z0NrKANMmsl/EWzu/ZQGy6w/CTD6SFZHDWc2zj+nL3bMBvzNugsbjSrmliIVxxy5zYX9qR/7MbWRqV2/UPh5lHt6TaxSSEPD7lK7ZvNEOXyTlbyj+AVr1Pp7VWVHkgUenHn8g6/Td3m0A7N5/ix/WRPfpJ823kZE9H+3gEKsauNa9ygP6UfMShxe0ZBYO1VSygYqYK/GYWsz2qEfB9d4raiiJsvPlqb3TN8g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eKiaDvtX3uc9OfHB2O953KVbPXggDj8tZAZWAUvyDtc=;
- b=n0oq5ed2IHezu+24rdjvIDwiCB0VRYIZarR+EDVTz5SerRvzjbWocF41joG0ELScxUO0U2K6PLk9tctk8dgxKXLVpq1QHLVhK+TfY6VjQ/TH/JIvYbbSve+IKfsbso9t5LtCCbXiGHFWJV5nU/Md/GOvXOUucwXmYiW+NXaqvmh2ZJCohKgNTDGFaFA4NQWGa5++jf61Buk6h71Ektb48TlJANJf/b404yropiER9+z28Na+45+TwU3/7j78NC7wyZ0wzZAZCFFK5faqczZuPyxmASdg1ePQz3/yXSd+Gxx90r8DSiiTvTkYWoT8Te2LIWy7W7s61ApzZnOWY67t4Q==
+ bh=pe33SIbYB88KZ1InOfVAGswqJd5chZSXWAxNGDHRk5M=;
+ b=JaLqvWRUN+Yij6/fmEI+egzUHQHL2Aks8hMgMkUDSYQ1iUeKmB5EYchZ8kOvLryVx8aTNyI20yhzaui6NY4qa9v3dvrMbQJVPp9I5HMhgIwyWsxPJaVQ3ZW/8fVwThiPuneyALqGRF/H0A9RXG+PBP0bWzSduDw0lDeHXRLUENfbYLxjMFUrvNKAnOtOXVJXFw2/Ef4/a3IJJTIeVnqUV8Q6gLOVfxKoz+KbHj3er1EzM9mOJf5M/S65v+EKZhcs/SnXw+IOOPbJdyenWIfUBzFOu9NzfFZk7x8a8Ts54TRUaBHz4qK84zXYNV4Vka1oLL2E77gEFIK8o1T4Gg0OSw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eKiaDvtX3uc9OfHB2O953KVbPXggDj8tZAZWAUvyDtc=;
- b=rwCRj8mjpBU8Y6ZaSNb71xdYzpUBnpVsMQNvujZ3k/DSq3SK7BwVixMMugi5VHRVvkLj82lEwOXlpTpyW6AoiGlkwXxjBtIJrlMhtAb/QXyF04X8Q1nNSr2a0xyU9IDi2XaCmMSHi+gMrDE9n7eRepoXWsiEWHUHcMxw7CnAiRY=
+ bh=pe33SIbYB88KZ1InOfVAGswqJd5chZSXWAxNGDHRk5M=;
+ b=l2sd2uZ84hOp9pOFMZ4T4O3R8NbaK4Db9+iwTSSmKyhOHYKh0A3s1+ho0GjazE5MEVnNWBaQ8WXnk7ZRRHcL9UVEcN7PidYhgKDtoaVAgaXRM541Wp8YRKn028JC662U3t1VmTCLICB/nrxiPM6Zz0JsP5oAgcgvDxfrvDs85jw=
 Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com (10.175.20.18) by
  VI1PR0402MB2717.eurprd04.prod.outlook.com (10.175.22.139) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Fri, 23 Aug 2019 19:11:32 +0000
+ 15.20.2178.16; Fri, 23 Aug 2019 19:11:33 +0000
 Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com
  ([fe80::7de6:ea4b:9b5d:d023]) by VI1PR0402MB2863.eurprd04.prod.outlook.com
  ([fe80::7de6:ea4b:9b5d:d023%7]) with mapi id 15.20.2178.020; Fri, 23 Aug 2019
- 19:11:32 +0000
+ 19:11:33 +0000
 From:   Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
 To:     "corbet@lwn.net" <corbet@lwn.net>,
         "robh+dt@kernel.org" <robh+dt@kernel.org>,
@@ -50,12 +50,12 @@ CC:     "jslaby@suse.com" <jslaby@suse.com>,
         "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        Eddy Petrisor <eddy.petrisor@nxp.com>
-Subject: [PATCH v3 1/7] dt-bindings: arm: fsl: Add the S32V234-EVB board
-Thread-Topic: [PATCH v3 1/7] dt-bindings: arm: fsl: Add the S32V234-EVB board
-Thread-Index: AQHVWeaTEtYyWxMnckudXC/xs5O+aw==
-Date:   Fri, 23 Aug 2019 19:11:32 +0000
-Message-ID: <20190823191115.18490-2-stefan-gabriel.mirea@nxp.com>
+        Cosmin Stefan Stoica <cosmin.stoica@nxp.com>
+Subject: [PATCH v3 2/7] arm64: Introduce config for S32
+Thread-Topic: [PATCH v3 2/7] arm64: Introduce config for S32
+Thread-Index: AQHVWeaUeu8ClIZIZ02ntuPRrU2pWg==
+Date:   Fri, 23 Aug 2019 19:11:33 +0000
+Message-ID: <20190823191115.18490-3-stefan-gabriel.mirea@nxp.com>
 References: <20190823191115.18490-1-stefan-gabriel.mirea@nxp.com>
 In-Reply-To: <20190823191115.18490-1-stefan-gabriel.mirea@nxp.com>
 Accept-Language: en-US
@@ -71,52 +71,66 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [212.146.100.6]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 97155e5a-a8f8-4444-2d81-08d727fdb563
+x-ms-office365-filtering-correlation-id: 9a02c3a0-3361-4816-724e-08d727fdb65f
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR0402MB2717;
 x-ms-traffictypediagnostic: VI1PR0402MB2717:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB271781D0E64B5578C9ABA035DFA40@VI1PR0402MB2717.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-microsoft-antispam-prvs: <VI1PR0402MB2717A8A2E191B39B753028A2DFA40@VI1PR0402MB2717.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3968;
 x-forefront-prvs: 0138CD935C
 x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(39860400002)(366004)(396003)(346002)(189003)(199004)(446003)(476003)(2501003)(66446008)(76176011)(6436002)(6486002)(386003)(6506007)(50226002)(81156014)(256004)(86362001)(66946007)(64756008)(66556008)(66476007)(66066001)(186003)(8936002)(6512007)(25786009)(81166006)(36756003)(478600001)(52116002)(8676002)(14454004)(102836004)(6116002)(5660300002)(486006)(26005)(2201001)(71200400001)(53936002)(71190400001)(1076003)(316002)(110136005)(7416002)(54906003)(4326008)(99286004)(7736002)(305945005)(6636002)(3846002)(11346002)(2616005)(4744005)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2717;H:VI1PR0402MB2863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 68cNtxQAbrexGZ9oYrtYBIkeVKOGFTVhHtB1sEqg5bp+tqRIe2fEBRAWt2Gz2gnNe3hMY5xmnek3U5kK9Xxk490Fw8icdoP7TFISIS3AtdhxOIzUg8SiG6iOVz3Hljc4Rn9NAs397jkr1TVzrqqbve9xl0lR7uFKZmYQSFB+NWhb3th2WoynBXH5KEPuMY7Fpbi1Qj5Rsyn7RPJjwTN0KW3DmMeO2dfnPhhdxX7vBOSFMpCRE6sOsD1YJvNEXQQui+usg5deAHYjKZ9lKlAPR+4tco1n4rNWVL/rlFsVWEZSuBpbwqz+io6aBUdLDTPjnJc0mLfHKG52j8kzQPAqzDrrsD27Vo+UxN+0YKX0GH+X29+vQw4aN+I4Cto3KBt8Qsa/lE0yx0chHafN7ys6eRsy40JyVoq5haly/oFNcA4=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <73D9A638E4AE604589785D13B9E6137A@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: GWD3IOsrk4sHW+qE0pyovaqW3bgYKDeZJZBiq+VGjAStQPKOJKZJb3EANeFNfKVAWmZ+DKy9G+x5V/dTzM6XW9bhV2DMTvSInsJZ2h1NsUKnN1iNbPjQPvNk8XDRsWgGn5KT3IKGbxD5Uo6t1pd4iNOoULLk13ziBhWWk7Td933WipktbWIV7ONOqJYZPDGpCn50gA0KMVmWO3Ukp3xtTBoV62QY6Chex5aXzt5I3E0OujPAfk9tNJNxvWpHnps9H3ZQU7tIwr8x6FCRcaZbZR0gUv03sMBkHUPIMMAbSsE0s7AgJ+2MUU0KuPvjZzppld+8oX+qgskQrrXbOYNuRiaRNPoEeaBPC1M586kqt+xWaO6HZ1/deBSb4HK/nqHNImjlSdsC1/I+Btn04Z9VIo+QxKROVHHzFhHfyxm6HhU=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97155e5a-a8f8-4444-2d81-08d727fdb563
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2019 19:11:32.2408
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a02c3a0-3361-4816-724e-08d727fdb65f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2019 19:11:33.8461
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mvxjdSZr5AkOQRQorWYmhG4tcU/6RwRrCD0+BGqdAv1aoNsjORIwDNBpJjxwsP2fet3CuVrRq+PqOepPV+e/UFpxYBGRqIKuFvWn7oon0oo=
+X-MS-Exchange-CrossTenant-userprincipalname: zS9a0F0iyEkxYw4lUr61USq4cr8zGGm0zk9n0fUVA6fjqhXmfDRtQEc078y9HdvlM4hbhlSq6o1RliusO5fKad1LzCyonMA2hyYF1mecMks=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2717
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRWRkeSBQZXRyaciZb3IgPGVkZHkucGV0cmlzb3JAbnhwLmNvbT4NCg0KQWRkIGVudHJ5
-IGZvciB0aGUgTlhQIFMzMlYyMzQgQ3VzdG9tZXIgRXZhbHVhdGlvbiBCb2FyZCB0byB0aGUgYm9h
-cmQvU29DDQpiaW5kaW5ncy4NCg0KU2lnbmVkLW9mZi1ieTogRWRkeSBQZXRyaciZb3IgPGVkZHku
-cGV0cmlzb3JAbnhwLmNvbT4NClNpZ25lZC1vZmYtYnk6IFN0ZWZhbi1HYWJyaWVsIE1pcmVhIDxz
-dGVmYW4tZ2FicmllbC5taXJlYUBueHAuY29tPg0KUmV2aWV3ZWQtYnk6IFJvYiBIZXJyaW5nIDxy
-b2JoQGtlcm5lbC5vcmc+DQotLS0NCiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-YXJtL2ZzbC55YW1sIHwgNiArKysrKysNCiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCsp
-DQoNCmRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2Zz
-bC55YW1sIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9mc2wueWFtbA0K
-aW5kZXggNzI5NGFjMzZmNGMwLi41OTdjNTYzYmRlYzkgMTAwNjQ0DQotLS0gYS9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2ZzbC55YW1sDQorKysgYi9Eb2N1bWVudGF0aW9u
-L2RldmljZXRyZWUvYmluZGluZ3MvYXJtL2ZzbC55YW1sDQpAQCAtMzA5LDQgKzMwOSwxMCBAQCBw
-cm9wZXJ0aWVzOg0KICAgICAgICAgICAgICAgLSBmc2wsbHMyMDg4YS1yZGINCiAgICAgICAgICAg
-LSBjb25zdDogZnNsLGxzMjA4OGENCiANCisgICAgICAtIGRlc2NyaXB0aW9uOiBTMzJWMjM0IGJh
-c2VkIEJvYXJkcw0KKyAgICAgICAgaXRlbXM6DQorICAgICAgICAgIC0gZW51bToNCisgICAgICAg
-ICAgICAgIC0gZnNsLHMzMnYyMzQtZXZiICAgICAgICAgICAjIFMzMlYyMzQtRVZCMiBDdXN0b21l
-ciBFdmFsdWF0aW9uIEJvYXJkDQorICAgICAgICAgIC0gY29uc3Q6IGZzbCxzMzJ2MjM0DQorDQog
-Li4uDQotLSANCjIuMjIuMA0KDQo=
+From: Mihaela Martinas <Mihaela.Martinas@freescale.com>
+
+Add configuration option for the NXP S32 platform family in
+Kconfig.platforms. For starters, the only SoC supported will be Treerunner
+(S32V234), with a single execution target: the S32V234-EVB (rev 29288)
+board.
+
+Signed-off-by: Mihaela Martinas <Mihaela.Martinas@freescale.com>
+Signed-off-by: Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>
+Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
+---
+ arch/arm64/Kconfig.platforms | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 4778c775de1b..64bbe2d0b04f 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -210,6 +210,11 @@ config ARCH_ROCKCHIP
+ 	  This enables support for the ARMv8 based Rockchip chipsets,
+ 	  like the RK3368.
+=20
++config ARCH_S32
++	bool "NXP S32 SoC Family"
++	help
++	  This enables support for the NXP S32 family of processors.
++
+ config ARCH_SEATTLE
+ 	bool "AMD Seattle SoC Family"
+ 	help
+--=20
+2.22.0
+
