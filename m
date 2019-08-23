@@ -2,329 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC539BB8B
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 05:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B4379BB9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 06:23:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfHXD4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 23:56:17 -0400
-Received: from mail-eopbgr30050.outbound.protection.outlook.com ([40.107.3.50]:24326
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        id S1725974AbfHXEXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 00:23:07 -0400
+Received: from mail-eopbgr820097.outbound.protection.outlook.com ([40.107.82.97]:4016
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725917AbfHXD4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 23:56:16 -0400
+        id S1725782AbfHXEXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 00:23:07 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FGuimdsWOf3aTf5gYcmnirhQU18JBDm0ORRGWti4d1ZJa5Sm83IhzD2PE8TucXHOuOhLRz8ag94mArf0JHqXpqcKYegLPrGyA91jPqSA2YljJEh0Pyy0XDGvobTjtf9qiXnobjyVH4mSlBDVX/vWasdjURwiTUDrUICmukuIIcjCKHsy9LMV/f5BAGfubXacXd4MPI/2MJHhvgs0iYoRijfC5UjrkV+YJHN151CTYGKowXGb+Ea37ZJ0dfpRu/hSsa+EfWFssL6UJ6dmOljAkUnUiFqndBIImYUCUNhik/cM8EKdKPLGGSWhO7AOhuCpfTWiwSiyMA4NsEQ7z9KsNw==
+ b=arEv4FG5fUI8BaQ0hpAibay/5mForhL0LyNu3bGLAKi9cAHtJ4VtzDSmoddMuANAPQj3uE4OYklH7djvIH0dp/bxTj+CqZedYeZIo6zLDi7rQFdDKLr3GkjxWGwjaSA7miepLGE45pZrW5LV+/dC+/q+8n8LdCYboKuAEN+aPR6NTZt9g9iv0eSmzlT8eIdGF0/zN6BWKC5vgW8uG6k8py5ceUfSbkZUH99E1AN5b44Fku5xK4cMGsVEItc+GsidkQwQcfbyzGjm3MqMcTbCMSfahqucStQgYZWeuDi7SfeQDLjM1wccXLpcDCeme0HmxmiScPs1MEpXub1MnNXHkA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pGaDgw0q0rRQWAQGl/w0vn81dmj3K2rDWhd3A+G1C30=;
- b=fAomTLBBtKaHzgo67sFGLYlDsNItClIvctiUZMOJ3HsbDlr5GICDR0J3Msf4Qstyy4Eqpfr+zAsQAMARXdOzmQ9nQ30toVx+Dvm+MxJnr2W6zaoUsClXYeubnBpnn+5gXnUrO02571qm8MWF6cwNBQS/07paadCa1jMJcpdDKo9Y6dDoVWEGRc/bbQz3LTLBKSLhGscAaLxDeslJLCSFrHHVnz2Kw5/a6ZrZDzlP5NbSutiwu58lWX9sb5J7LuWHw6g/oRkWYHgWBcIIQUWfnSED7BJxQAytOvxbdEvswPay6u+zI4m9IDGq7Uh3JAgh8mB9SaJVvH95cubj0bjgDA==
+ bh=6M3t0C/yZOiWBcg8+GhsZgGG1CilhjLw2Pvaa90u5FI=;
+ b=UlDqbCIj014+aHnHVVbedXsFO1+fkF+lpt+UiDPV+6cyh+JcYC9jZmgvS/OiCtsST0jrKhOmuCS7pcsGSOiN7n2+FFlkorkX1+KRd2nOWdiWmrHO6dsAPNQk6qvPlQBuXcF6WOs3rR/1e0GXliAV+lPy9x6M5jdpCr0JaQkvVaAsY80GnPgtKFDbc3S5U4Xp2KK/pKXqnEqAawMS76MNn4l0FvGh1fDyXEALRV3HoOjW2ZElac5/99bj54WV5p7tqWICkZKJYczO/fH4NMsgXHG4RugqrPKCFpZVLFvd7e0rAqLzC84YTlSyltMj7hSbuTR4a7PA+jiOSAsvhJWycQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pGaDgw0q0rRQWAQGl/w0vn81dmj3K2rDWhd3A+G1C30=;
- b=PYGCL/uS8dUu9RxxxfDYnIVmdx4vdeBW2mLYsWMUkidesDpE+V3S2re1/eOsTWY70AyM+/fvPO4WXBR9G2W7vHkM3VUApRIY7tzqKBmBbKZx6zL4DMqchxLm2wR8hLDXbL6rZ/8JMv5+EH2jQ7WiY+T4JZfMTYfi/DhkQi4Y1To=
-Received: from AM0PR05MB4866.eurprd05.prod.outlook.com (20.176.214.160) by
- AM0PR05MB5873.eurprd05.prod.outlook.com (20.178.117.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.18; Sat, 24 Aug 2019 03:56:09 +0000
-Received: from AM0PR05MB4866.eurprd05.prod.outlook.com
- ([fe80::216f:f548:1db0:41ea]) by AM0PR05MB4866.eurprd05.prod.outlook.com
- ([fe80::216f:f548:1db0:41ea%6]) with mapi id 15.20.2178.020; Sat, 24 Aug 2019
- 03:56:09 +0000
-From:   Parav Pandit <parav@mellanox.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-CC:     Jiri Pirko <jiri@resnulli.us>, Jiri Pirko <jiri@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        cjia <cjia@nvidia.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH v2 0/2] Simplify mtty driver and mdev core
-Thread-Topic: [PATCH v2 0/2] Simplify mtty driver and mdev core
-Thread-Index: AQHVTfNxjgfwJJG2ZUiuOAmKCwQvf6bx3uKAgAWJU4CAAcVCEIAABCsAgAAWVtCAABCDgIAAzoewgAAqE4CAAECFQIAAFWyAgAAGbNCAABfqAIAAErcwgAjpulCAAJkHAIAAnVNggAAbk4CAAAOYgIAABpwAgAAAVrCAAAfEAIAADNCggAHJU4CAAAIMEIAABiaAgAAA2ACAACadAIAAFGdwgAE42YCAAABasIAAaLIAgAAC1QCAABSugIAAA+pAgAATnYCAAAO7UIAAJVKAgACGAeA=
-Date:   Sat, 24 Aug 2019 03:56:08 +0000
-Message-ID: <AM0PR05MB4866008B0571B90DAFFADA97D1A70@AM0PR05MB4866.eurprd05.prod.outlook.com>
-References: <20190820225722.237a57d2@x1.home>
-        <AM0PR05MB4866437FAA63C447CACCD7E5D1AA0@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190822092903.GA2276@nanopsycho.orion>
-        <AM0PR05MB4866A20F831A5D42E6C79EFED1A50@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190822095823.GB2276@nanopsycho.orion>
-        <AM0PR05MB4866144FD76C302D04DA04B9D1A50@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190822121936.GC2276@nanopsycho.orion>
-        <AM0PR05MB4866F9650CF73FC671972127D1A50@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190823081221.GG2276@nanopsycho.orion>
-        <AM0PR05MB4866DED407D6F1C653D5D560D1A40@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190823082820.605deb07@x1.home>
-        <AM0PR05MB4866867150DAABA422F25FF8D1A40@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190823095229.210e1e84@x1.home>
-        <AM0PR05MB4866E33AF7203DE47F713FAAD1A40@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190823111641.7f928917@x1.home>
-        <AM0PR05MB486648FF7E6624F34842E425D1A40@AM0PR05MB4866.eurprd05.prod.outlook.com>
- <20190823134337.37e4b215@x1.home>
-In-Reply-To: <20190823134337.37e4b215@x1.home>
+ bh=6M3t0C/yZOiWBcg8+GhsZgGG1CilhjLw2Pvaa90u5FI=;
+ b=Ufo2pF60WPVEKCzVxZa8k5iHUKA7IiCgEric31Br1bLPppVKthuRo7JQNqlbJedE0prqG0KL7NweGIdJKwOx8Nfo8QTkSWJ7LJBM55zSKWBoFxzqqAOrZQgOslVage73HUo4WDQCDli5zniwmuZuoCc79xuiOlKcTY1fkGCWbZA=
+Received: from MWHPR21MB0861.namprd21.prod.outlook.com (2603:10b6:300:77::15)
+ by MWHPR21MB0861.namprd21.prod.outlook.com (2603:10b6:300:77::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2220.11; Sat, 24 Aug
+ 2019 04:23:04 +0000
+Received: from MWHPR21MB0861.namprd21.prod.outlook.com (2603:10b6:300:77::15)
+ by MWHPR21MB0861.namprd21.prod.outlook.com (2603:10b6:300:77::15) with
+ TransportReplication id Version 15.20 (Build 2220.11); Sat, 24 Aug 2019
+ 04:23:04 +0000
+Received: from DM5PR21MB0137.namprd21.prod.outlook.com
+ ([fe80::8985:a319:f21:530e]) by DM5PR21MB0137.namprd21.prod.outlook.com
+ ([fe80::c437:6219:efcc:fb8a%8]) with mapi id 15.20.2220.000; Fri, 23 Aug 2019
+ 19:51:57 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     Dexuan Cui <decui@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3 06/12] Drivers: hv: vmbus: Add a helper function
+ is_sub_channel()
+Thread-Topic: [PATCH v3 06/12] Drivers: hv: vmbus: Add a helper function
+ is_sub_channel()
+Thread-Index: AQHVVvnd1/zp+soxM0mbE8pOD/myQKcJKiqA
+Date:   Fri, 23 Aug 2019 19:51:57 +0000
+Message-ID: <DM5PR21MB01375EFE9F76EDED7CC96F95D7A40@DM5PR21MB0137.namprd21.prod.outlook.com>
+References: <1566265863-21252-1-git-send-email-decui@microsoft.com>
+ <1566265863-21252-7-git-send-email-decui@microsoft.com>
+In-Reply-To: <1566265863-21252-7-git-send-email-decui@microsoft.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-08-23T19:51:55.3399838Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=df67a566-7186-471d-8c67-4185fd91456e;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=parav@mellanox.com; 
-x-originating-ip: [106.51.18.188]
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-originating-ip: [24.22.167.197]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3753fca0-8c12-4561-dba1-08d72846ff3e
+x-ms-traffictypediagnostic: MWHPR21MB0861:|MWHPR21MB0861:|MWHPR21MB0861:
+x-ms-office365-filtering-correlation-id: 871e8440-a0ef-4a6c-5baa-08d728035b19
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM0PR05MB5873;
-x-ms-traffictypediagnostic: AM0PR05MB5873:
-x-ld-processed: a652971c-7d2e-4d9b-a6a4-d149256f461b,ExtAddr
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:MWHPR21MB0861;
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR05MB5873E536518A1DF98A817EEAD1A70@AM0PR05MB5873.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-microsoft-antispam-prvs: <MWHPR21MB08615C0F9AA99CB7580F824AD7A70@MWHPR21MB0861.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2399;
 x-forefront-prvs: 0139052FDB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(376002)(346002)(136003)(366004)(13464003)(199004)(189003)(6916009)(66446008)(76116006)(316002)(9686003)(2906002)(6116002)(476003)(186003)(66476007)(102836004)(66556008)(55236004)(26005)(74316002)(6506007)(14444005)(64756008)(4326008)(55016002)(54906003)(5660300002)(71200400001)(71190400001)(53546011)(6436002)(81156014)(256004)(76176011)(66946007)(7696005)(86362001)(8676002)(33656002)(478600001)(8936002)(3846002)(53936002)(305945005)(99286004)(229853002)(486006)(14454004)(6246003)(11346002)(7736002)(25786009)(81166006)(66066001)(52536014)(446003)(9456002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB5873;H:AM0PR05MB4866.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(136003)(39860400002)(376002)(346002)(396003)(199004)(189003)(10090500001)(74316002)(305945005)(66066001)(52536014)(14454004)(7736002)(486006)(6436002)(53936002)(476003)(229853002)(1511001)(446003)(26005)(256004)(14444005)(102836004)(9686003)(11346002)(186003)(2906002)(8990500004)(55016002)(81156014)(81166006)(478600001)(64756008)(66556008)(22452003)(2201001)(76176011)(66946007)(71190400001)(71200400001)(66476007)(7696005)(86362001)(52396003)(76116006)(6506007)(6246003)(2501003)(5660300002)(33656002)(8936002)(3846002)(6116002)(10290500003)(25786009)(316002)(110136005)(99286004)(4326008)(66446008)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR21MB0861;H:MWHPR21MB0861.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hdlsjpNxDUsgv3utnpgQHT5VoIE8f6JShoqtOL5RzQ7JVmeksTpd+V1oSiTPzistfBTiUr+cYEoggfMIh70rtiWMJQkZ9yM/TsfXEfZBUSkxEjjUIC5mA2Z4ZU/zcz8tMAwErQJxZZ4anKyaGNbbrveTSVw599X+s31LAauJJjKwUiT/MzDV66fcILKelaLLK4UAQC4puO7euRhBhxRo8yd+qWm4eA9kFQX47cNvvUHi5tZn4pCe984aDcRYSRIH8XB/k5S10vhWRuXuzdrQVYNrPzPg1nKLprvMx4V6CDSiuGFl6i2n84iQv/9k3U/dvG7aAGPVhCNHxtMzc3PATxZ5vN5D+bciuh/AhTjHDUOpx8IZlNzr55ioVEhzDuR+hcXqLF/majZALlXLmToAnLS5RCULCgyW8TeHDWZ57Co=
+x-microsoft-antispam-message-info: W01ku238fVBf84v5LeyRt+Cau/t/6PdOYRsD+VoSVF4P4elk596AFqETP4AXkRsynAK97Do6Pb3Nbmzz0keQx0p6VqGHB6EcO97vUZ1Ggp1is94so5M/aBv3o7ggwlI+MFooAANmXC4zri8lpu3Ztiq6TM0QGKIElyLgalObs/md6Ylhn2XOEb1hAnQFFoR/KS7ZodGOmClJYEA1jXFzE1beojPFA4Yr2Dxuxfu1Lkb5myRIh7Ud/yb9KxN2thuhSwc49NzSnzt0T33LCuPPLJPNxxB8XTUso05aDug35tuteZ/IDBe/J48dJJD8yGVw2ncah35T5dNEyWQOasPA41X/xs3asxPxpSEQ4xzM/TkjAx15JLEorfW4gsCCQ98OPmXysvfa53D0fEQ+MQpY3jS0YfWv7zTy8ZmBvmslyCY=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3753fca0-8c12-4561-dba1-08d72846ff3e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2019 03:56:08.9416
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 871e8440-a0ef-4a6c-5baa-08d728035b19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2019 19:51:57.1907
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8qOc0mRvH1SVHUE5VzD3RG82R6TdcHVa5mEO3ZeOrfV52GVEULy0YKAh1F1Xbw0FQXPaNPrA8K9eynnKgtOacw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB5873
+X-MS-Exchange-CrossTenant-userprincipalname: BTjFPLZQi4q5YiFJwrsgNaE12Hi+i/iBRcRCqwikyEWfTYL+r1pEhQZ88N10KkkbIJBUY4QaQhxTcNzhX/ltmqEL1ZYIJo+VELVEdG0jcEQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR21MB0861
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Dexuan Cui <decui@microsoft.com> Sent: Monday, August 19, 2019 6:52 P=
+M
+>=20
+> The existing method of telling if a channel is sub-channel in
+> vmbus_process_offer() is cumbersome. This new simple helper function
+> is preferred in future.
+>=20
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> ---
+>  include/linux/hyperv.h | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+> index 6256cc3..2d39248 100644
+> --- a/include/linux/hyperv.h
+> +++ b/include/linux/hyperv.h
+> @@ -245,7 +245,10 @@ struct vmbus_channel_offer {
+>  		} pipe;
+>  	} u;
+>  	/*
+> -	 * The sub_channel_index is defined in win8.
+> +	 * The sub_channel_index is defined in Win8: a value of zero means a
+> +	 * primary channel and a value of non-zero means a sub-channel.
+> +	 *
+> +	 * Before Win8, the field is reserved, meaning it's always zero.
+>  	 */
+>  	u16 sub_channel_index;
+>  	u16 reserved3;
+> @@ -934,6 +937,11 @@ static inline bool is_hvsock_channel(const struct vm=
+bus_channel
+> *c)
+>  		  VMBUS_CHANNEL_TLNPI_PROVIDER_OFFER);
+>  }
+>=20
+> +static inline bool is_sub_channel(const struct vmbus_channel *c)
+> +{
+> +	return c->offermsg.offer.sub_channel_index !=3D 0;
+> +}
+> +
+>  static inline void set_channel_affinity_state(struct vmbus_channel *c,
+>  					      enum hv_numa_policy policy)
+>  {
+> --
+> 1.8.3.1
 
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
 
-> -----Original Message-----
-> From: Alex Williamson <alex.williamson@redhat.com>
-> Sent: Saturday, August 24, 2019 1:14 AM
-> To: Parav Pandit <parav@mellanox.com>
-> Cc: Jiri Pirko <jiri@resnulli.us>; Jiri Pirko <jiri@mellanox.com>; David =
-S . Miller
-> <davem@davemloft.net>; Kirti Wankhede <kwankhede@nvidia.com>; Cornelia
-> Huck <cohuck@redhat.com>; kvm@vger.kernel.org; linux-
-> kernel@vger.kernel.org; cjia <cjia@nvidia.com>; netdev@vger.kernel.org
-> Subject: Re: [PATCH v2 0/2] Simplify mtty driver and mdev core
->=20
-> On Fri, 23 Aug 2019 18:00:30 +0000
-> Parav Pandit <parav@mellanox.com> wrote:
->=20
-> > > -----Original Message-----
-> > > From: Alex Williamson <alex.williamson@redhat.com>
-> > > Sent: Friday, August 23, 2019 10:47 PM
-> > > To: Parav Pandit <parav@mellanox.com>
-> > > Cc: Jiri Pirko <jiri@resnulli.us>; Jiri Pirko <jiri@mellanox.com>;
-> > > David S . Miller <davem@davemloft.net>; Kirti Wankhede
-> > > <kwankhede@nvidia.com>; Cornelia Huck <cohuck@redhat.com>;
-> > > kvm@vger.kernel.org; linux- kernel@vger.kernel.org; cjia
-> > > <cjia@nvidia.com>; netdev@vger.kernel.org
-> > > Subject: Re: [PATCH v2 0/2] Simplify mtty driver and mdev core
-> > >
-> > > On Fri, 23 Aug 2019 16:14:04 +0000
-> > > Parav Pandit <parav@mellanox.com> wrote:
-> > >
-> > > > > > Idea is to have mdev alias as optional.
-> > > > > > Each mdev_parent says whether it wants mdev_core to generate
-> > > > > > an alias or not. So only networking device drivers would set it=
- to true.
-> > > > > > For rest, alias won't be generated, and won't be compared
-> > > > > > either during creation time. User continue to provide only uuid=
-.
-> > > > >
-> > > > > Ok
-> > > > >
-> > > > > > I am tempted to have alias collision detection only within
-> > > > > > children mdevs of the same parent, but doing so will always
-> > > > > > mandate to prefix in netdev name. And currently we are left
-> > > > > > with only 3 characters to prefix it, so that may not be good ei=
-ther.
-> > > > > > Hence, I think mdev core wide alias is better with 12 character=
-s.
-> > > > >
-> > > > > I suppose it depends on the API, if the vendor driver can ask
-> > > > > the mdev core for an alias as part of the device creation
-> > > > > process, then it could manage the netdev namespace for all its
-> > > > > devices, choosing how many characters to use, and fail the
-> > > > > creation if it can't meet a uniqueness requirement.  IOW,
-> > > > > mdev-core would always provide a full
-> > > > > sha1 and therefore gets itself out of the uniqueness/collision as=
-pects.
-> > > > >
-> > > > This doesn't work. At mdev core level 20 bytes sha1 are unique, so
-> > > > mdev core allowed to create a mdev.
-> > >
-> > > The mdev vendor driver has the opportunity to fail the device
-> > > creation in mdev_parent_ops.create().
-> > >
-> > That is not helpful for below reasons.
-> > 1. vendor driver doesn't have visibility in other vendor's alias.
-> > 2. Even for single vendor, it needs to maintain global list of devices =
-to see
-> collision.
-> > 3. multiple vendors needs to implement same scheme.
-> >
-> > Mdev core should be the owner. Shifting ownership from one layer to a
-> > lower layer in vendor driver doesn't solve the problem (if there is
-> > one, which I think doesn't exist).
-> >
-> > > > And then devlink core chooses
-> > > > only 6 bytes (12 characters) and there is collision. Things fall
-> > > > apart. Since mdev provides unique uuid based scheme, it's the mdev
-> > > > core's ownership to provide unique aliases.
-> > >
-> > > You're suggesting/contemplating multiple solutions here, 3-char
-> > > prefix + 12- char sha1 vs <parent netdev> + ?-char sha1.  Also, the
-> > > 15-char total limit is imposed by an external subsystem, where the
-> > > vendor driver is the gateway between that subsystem and mdev.  How
-> > > would mdev integrate with another subsystem that maybe only has
-> > > 9-chars available?  Would the vendor driver API specify "I need an
-> > > alias" or would it specify "I need an X-char length alias"?
-> > Yes, Vendor driver should say how long the alias it wants.
-> > However before we implement that, I suggest let such
-> > vendor/user/driver arrive which needs that. Such variable length alias
-> > can be added at that time and even with that alias collision can be
-> > detected by single mdev module.
->=20
-> If we agree that different alias lengths are possible, then I would reque=
-st that
-> minimally an mdev sample driver be modified to request an alias with a le=
-ngth
-> that can be adjusted without recompiling in order to exercise the collisi=
-on path.
->=20
-Yes. this can be done. But I fail to understand the need to do so.
-It is not the responsibility of the mdev core to show case sha1 collision e=
-fficiency/deficiency.
-So why do you insist exercise it?
-
-> If mdev-core is guaranteeing uniqueness, does this indicate that each ali=
-as
-> length constitutes a separate namespace?  ie. strictly a strcmp(), not a
-> strncmp() to the shorter alias.
->=20
-Yes.
-
-
-> > > Does it make sense that mdev-core would fail creation of a device if
-> > > there's a collision in the 12-char address space between different
-> > > subsystems?  For example, does enm0123456789ab really
-> > > collide with xyz0123456789ab?
-> > I think so, because at mdev level its 12-char alias matters.
-> > Choosing the prefix not adding prefix is really a user space choice.
-> >
-> > >  So if
-> > > mdev were to provided a 40-char sha1, is it possible that the vendor
-> > > driver could consume this in its create callback, truncate it to the
-> > > number of chars required by the vendor driver's subsystem, and
-> > > determine whether a collision exists?
-> > We shouldn't shift the problem from mdev to multiple vendor drivers to
-> > detect collision.
-> >
-> > I still think that user providing alias is better because it knows the
-> > use-case system in use, and eliminates these collision issue.
->=20
-> How is a user provided alias immune from collisions?  The burden is on th=
-e user
-> to provide both a unique uuid and a unique alias.  That makes it trivial =
-to create
-> a collision.
->=20
-Than such collision should have occurred for other subsystem such as netdev=
- while creating vlan, macvlan, ipvlan, vxlan and more devices who are named=
- by the user.
-But that isn't the case.
-
-> > > > > > I do not understand how an extra character reduces collision,
-> > > > > > if that's what you meant.
-> > > > >
-> > > > > If the default were for example 3-chars, we might already have
-> > > > > device 'abc'.  A collision would expose one more char of the new
-> > > > > device, so we might add device with alias 'abcd'.  I mentioned
-> > > > > previously that this leaves an issue for userspace that we can't
-> > > > > change the alias of device abc, so without additional
-> > > > > information, userspace can only determine via elimination the
-> > > > > mapping of alias to device, but userspace has more information
-> > > > > available to it in the form of sysfs links.
-> > > > > > Module options are almost not encouraged anymore with other
-> > > > > > subsystems/drivers.
-> > > > >
-> > > > > We don't live in a world of absolutes.  I agree that the
-> > > > > defaults should work in the vast majority of cases.  Requiring a
-> > > > > user to twiddle module options to make things work is
-> > > > > undesirable, verging on a bug.  A module option to enable some
-> > > > > specific feature, unsafe condition, or test that is outside of
-> > > > > the typical use case is reasonable, imo.
-> > > > > > For testing collision rate, a sample user space script and
-> > > > > > sample mtty is easy and get us collision count too. We
-> > > > > > shouldn't put that using module option in production kernel.
-> > > > > > I practically have the code ready to play with; Changing 12 to
-> > > > > > smaller value is easy with module reload.
-> > > > > >
-> > > > > > #define MDEV_ALIAS_LEN 12
-> > > > >
-> > > > > If it can't be tested with a shipping binary, it probably won't
-> > > > > be tested.  Thanks,
-> > > > It is not the role of mdev core to expose collision
-> > > > efficiency/deficiency of the sha1. It can be tested outside before
-> > > > mdev choose to use it.
-> > >
-> > > The testing I'm considering is the user and kernel response to a
-> > > collision.
-> > > > I am saying we should test with 12 characters with 10,000 or more
-> > > > devices and see how collision occurs. Even if collision occurs,
-> > > > mdev returns EEXIST status indicating user to pick a different
-> > > > UUID for those rare conditions.
-> > >
-> > > The only way we're going to see collision with a 12-char sha1 is if
-> > > we burn the CPU cycles to find uuids that collide in that space.
-> > > 10,000 devices is not remotely enough to generate a collision in
-> > > that address space.  That puts a prerequisite in place that in order
-> > > to test collision, someone needs to know certain magic inputs.
-> > > OTOH, if we could use a shorter abbreviation, collisions are trivial
-> > > to test experimentally.  Thanks,
-> > Yes, and therefore a sane user who wants to create more mdevs,
-> > wouldn't intentionally stress it to see failures.
->=20
-> I don't understand this logic.  I'm simply asking that we have a way to t=
-est the
-> collision behavior without changing the binary.  The path we're driving t=
-owards
-> seems to be making this easier and easier.  If the vendor can request an =
-alias of
-> a specific length, then a sample driver with a module option to set the d=
-esired
-> alias length to 1-char makes it trivially easy to induce a collision. =20
-Sure it is easy to test collision, but my point is - mdev core is not sha1 =
-test module.
-Hence adding functionality of variable alias length to test collision doesn=
-'t make sense.
-When the actual user arrives who needs small alias, we will be able to add =
-additional pieces very easily.
-
-> It doesn't
-> even need to be exposed in a real driver.  Besides, when do we ever get t=
-o
-> design interfaces that only worry about sane users???  Thanks,
->=20
-I intent to say that a sane user who wants to create mdev's will just work =
-fine with less collision.
-If there is collision EEXIST is returns and sane user picks different UUID.
-If user is intentionally picking UUIDs in such a way that triggers sha1 col=
-lision, his intention is likely to not create mdevs for actual use.
-And if interface returns error code it is still fine.
-
-> Alex
