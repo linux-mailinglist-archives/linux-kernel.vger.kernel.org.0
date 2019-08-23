@@ -2,85 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 294269ABC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:50:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 253AD9ABE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:50:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394103AbfHWJs0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 05:48:26 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:16696 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389655AbfHWJsY (ORCPT
+        id S2389508AbfHWJts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 05:49:48 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34712 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729716AbfHWJtr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 05:48:24 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5fb6680000>; Fri, 23 Aug 2019 02:48:24 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 23 Aug 2019 02:48:23 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 23 Aug 2019 02:48:23 -0700
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 23 Aug
- 2019 09:48:23 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 23 Aug
- 2019 09:48:22 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 23 Aug 2019 09:48:22 +0000
-Received: from nkristam-ubuntu.nvidia.com (Not Verified[10.19.65.118]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d5fb6630001>; Fri, 23 Aug 2019 02:48:22 -0700
-From:   Nagarjuna Kristam <nkristam@nvidia.com>
-To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mark.rutland@arm.com>, <robh+dt@kernel.org>, <kishon@ti.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Nagarjuna Kristam" <nkristam@nvidia.com>
-Subject: [Patch V7 8/8] arm64: defconfig: Enable tegra XUDC driver
-Date:   Fri, 23 Aug 2019 15:17:26 +0530
-Message-ID: <1566553646-15338-9-git-send-email-nkristam@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566553646-15338-1-git-send-email-nkristam@nvidia.com>
-References: <1566553646-15338-1-git-send-email-nkristam@nvidia.com>
-X-NVConfidentiality: public
+        Fri, 23 Aug 2019 05:49:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n9so5511425pgc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 02:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4pKJfLts+ii68aI+WC2XZXU7J3w8Upzj8e1MnFrdmK8=;
+        b=VlCSJVwxNCkO9SjHAgCO85lM05XJjw9MAyN2ZHwcdAFbq29drolRzfkqvR5K9YOs7v
+         djh8km3I9oCvdlwwSc210g0KpzYa+ZAp+mm9Bv9bQNzzO2w8NiKf1glGFBP7QDf1U/h+
+         Mi3PXFA+9bsYQ4O3pt4wUuQFj2Xs/iw/dTWb0DzhuLVToDvk1Sa5ekxtbRcj3qEOhA9U
+         oWhnS+mz3YhgHmQy8ga+K1P39hi7Yt3GooTZtMbauGNW5nW+Dod0CVLD+0GZPIpo80xJ
+         3ZjTVwiag9dDBP3Jcqalso6C2qAeOEjBLb7uMox04HDLise2KQfEkFqeHMa4HEvWpxS1
+         upUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4pKJfLts+ii68aI+WC2XZXU7J3w8Upzj8e1MnFrdmK8=;
+        b=GmZ3JTqyxXmWaVRQSVLrldv5BrQ065DC88KVMy/R2jqE/T3uAR6QKDirrsc9LrhxQs
+         4SKn1TWtE8nt8G+hpMA1KNlPOPFZPZbDgA0Mv1EmqTywnIk+3tcOqZCRVkYujpeobeug
+         T7qr7suXTJIRf+HV3iBWSoa6qKK1f5X4VyOy6uRmS53IuIVREGJshaEq3Kv3hyHgLNcH
+         sovS4lj/EA5doKrjYefMP+TA4N1Vs8Mqmn+DlfdrGrWTWfaUlzG5pF8YjUNj8y5aAGLP
+         urUbUMxf4I0mg+GECe8YX1rFmt0aVO4WXoR8JQ5LD36mav0CQVIMj1NxV36br/luCVt7
+         gbdA==
+X-Gm-Message-State: APjAAAWx1opPtypTNPEMotfjnNGTYjp2rGF/Se/RjDdCVhWPsPlXk/r3
+        xweKvU5HxkTsDxl8d+LavbI=
+X-Google-Smtp-Source: APXvYqwmyRgsTR2bIVNhj65qQ9q0WLiJj3ErBAlEDENAyR78vnECqs6yufwWYgqaPVatxGWqgGnYTg==
+X-Received: by 2002:a17:90a:fe5:: with SMTP id 92mr4328993pjz.35.1566553786972;
+        Fri, 23 Aug 2019 02:49:46 -0700 (PDT)
+Received: from localhost ([110.70.58.156])
+        by smtp.gmail.com with ESMTPSA id j5sm2088113pfi.104.2019.08.23.02.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2019 02:49:46 -0700 (PDT)
+Date:   Fri, 23 Aug 2019 18:49:43 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     John Ogness <john.ogness@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: comments style: Re: [RFC PATCH v4 1/9] printk-rb: add a new
+ printk ringbuffer implementation
+Message-ID: <20190823094943.GA15662@jagdpanzerIV>
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+ <20190807222634.1723-2-john.ogness@linutronix.de>
+ <20190820085554.deuejmxn4kbqnq7n@pathway.suse.cz>
+ <20190820092731.GA14137@jagdpanzerIV>
+ <87a7c3f4uj.fsf@linutronix.de>
+ <20190822135052.dp4dvav6fy2ajzkx@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1566553704; bh=GvS3ClGd1yzL7EF3nm32RdBaX4FqGGNeXUuW2nQkYeo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=bLes/oumHW1P1WFWbqRl80zeubTSZz5tyxRQujMRR/3RyUoW6Ql/0XHcHB/T78J1l
-         nF+riPsMff5jfJa5imAq6rN89XWhTynj3rdkBioDIo725WievO0isXAJxLhPIqIdAo
-         UpURdAXq3bbDKyjE/98M/n8dAxvh0ts3RkyxjWSpbeH5hdkRwLFg4dARCiPWHth5N5
-         lZA5bbqbIyrXJzvNxM/N+vaqpVZoxUlJ7hCbUUYt2nySv5XnKS2LJQcGg+wiSYo4Aq
-         wuOGjk/H5xBvkpZSvYljMnYYN2I/IY+QWCgM335g1Lq0isPJCSwEdirsMeUdzcv6jy
-         N+YHwH/Hc+TTg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822135052.dp4dvav6fy2ajzkx@pathway.suse.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable support for Nvidia XUSB device mode controller driver.
+On (08/22/19 15:50), Petr Mladek wrote:
+[..]
+> I could understand that you spend a lot of time on creating the
+> labels and that they are somehow useful for you.
+>
+> But I am not using them and I hope that I will not have to:
+>
+>   + Grepping takes a lot of time, especially over several files.
 
-Signed-off-by: Nagarjuna Kristam <nkristam@nvidia.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+But without labels one still has to grep. A label at least points
+to one exact location.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 358b163..e9233df 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -600,6 +600,7 @@ CONFIG_USB_ULPI=y
- CONFIG_USB_GADGET=y
- CONFIG_USB_RENESAS_USBHS_UDC=m
- CONFIG_USB_RENESAS_USB3=m
-+CONFIG_USB_TEGRA_XUDC=m
- CONFIG_TYPEC=m
- CONFIG_TYPEC_HD3SS3220=m
- CONFIG_MMC=y
--- 
-2.7.4
+>   + Grepping is actually not enough. It is required to read
+>     the following comment or code to realize what the label is for.
+>
+>   + Several barriers have multiple dependencies. Grepping one
+>     label helps to check that one connection makes sense.
+>     But it is hard to keep all relations in head to confirm
+>     that they are complete and make sense overall.
 
+Hmm. Labels don't add dependencies per se. Those tricky and hard to
+follow dependencies will still be there, even if we'd remove
+labels from comments. Labels just attempt to document them and
+to show the intent.
+
+The most important label, which should be added, is John's cell
+phone number. So people can call/text him when something is not
+working ;)
+
+>   + There are about 50 labels in the code. "Entry Lifecycle"
+>     section in dataring.c talks about 8 step. One would
+>     expect that it would require 8 read and 8 write barriers.
+> 
+>     Even coordination of 16 barriers might be complicated to check.
+>     Where 50 is just scary.
+> 
+>   + It seems to be a newly invented format and it is not documented.
+>     I personally do not understand it completely, for example,
+>     the meaning of "RELEASE from jA->cD->hA to jB".
+
+I was under impression that this is the lingo used by LMM, but
+can't find it in Documentation.
+
+I agree, things can be improved and, may be, standardized.
+It feels that tooling is a big part of the problem here.
+
+	-ss
