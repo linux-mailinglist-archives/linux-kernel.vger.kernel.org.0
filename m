@@ -2,67 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F98B9AFDA
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:46:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 642169AFEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391990AbfHWMqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:46:14 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5209 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388016AbfHWMqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:46:14 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EFD9016D994DD546A2AB;
-        Fri, 23 Aug 2019 20:46:10 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 23 Aug 2019
- 20:46:03 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
-        <bruno.thomsen@gmail.com>, <linux@roeck-us.net>
-CC:     <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] rtc: pcf2127: Fix build error without CONFIG_WATCHDOG_CORE
-Date:   Fri, 23 Aug 2019 20:45:53 +0800
-Message-ID: <20190823124553.19364-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S2394743AbfHWMug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:50:36 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:27097 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394663AbfHWMu2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 08:50:28 -0400
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x7NCoNJK023800
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 21:50:24 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x7NCoNJK023800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566564624;
+        bh=F471OW9t2ZS0Cr+hU6yK0V0fBRMBkYv4fz1YEoZsFCM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=osxCFJBJaUFzQTJDoCHztEDBRLE7N0XtnUoH3PXS99RekTt4wCr2RR1ROZNA3kDzd
+         eRpvE0Py4TqWo5v1GmaBUiAcvQApvW0/7rjI9ulX2PQui4SiVTo7JlhzBEHnGNAWfY
+         ExWEGeAtnuXNAMOVq5MIIm4ulQUQJjR6Fij3KbaKWaA9FQaV2BBJUeR/v3QqmjafS9
+         927D43oFuOSAhogofEYm7dFcPqCE9smAq6lTLTG/7n3TiDVhgbEE89570+l5jBp1Kx
+         4hNbCwWH2W7sDN2pJhvXhEg4das+Kt+4NLXtDoKuy4VZy1hxGKOdm+GCEU70vS9HbN
+         vxJ1eiwApo0aQ==
+X-Nifty-SrcIP: [209.85.221.172]
+Received: by mail-vk1-f172.google.com with SMTP id u203so2367699vku.3
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 05:50:24 -0700 (PDT)
+X-Gm-Message-State: APjAAAXBHhiBfr731rtqIT/Anyqbiqh757MVvIdHwru6Z14VaXTtL6UC
+        3QkFdgK76ZwocOaZBELWcIfhEwo12A78y73uRuU=
+X-Google-Smtp-Source: APXvYqxytd8QlJTq69f9lxdUjhx/DenuZ0/veMMfLu4F7VZPoazhMOPCkfW9uzkg0tlmrnt9FRPi6FGpMeFu0xEpa2c=
+X-Received: by 2002:a1f:5dc2:: with SMTP id r185mr2256017vkb.64.1566564622689;
+ Fri, 23 Aug 2019 05:50:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20190506223334.1834-1-nicoleotsuka@gmail.com> <20190506223334.1834-3-nicoleotsuka@gmail.com>
+In-Reply-To: <20190506223334.1834-3-nicoleotsuka@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 23 Aug 2019 21:49:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARacEorb38mVBw_V-Zvz-znWgBma1AP1-z_5B_xZU4ogg@mail.gmail.com>
+Message-ID: <CAK7LNARacEorb38mVBw_V-Zvz-znWgBma1AP1-z_5B_xZU4ogg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] dma-contiguous: Use fallback alloc_pages for
+ single pages
+To:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>, vdumpa@nvidia.com,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thierry Reding <treding@nvidia.com>,
+        Kees Cook <keescook@chromium.org>, iamjoonsoo.kim@lge.com,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If WATCHDOG_CORE is not set, build fails:
+On Tue, May 7, 2019 at 7:36 AM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+>
+> The addresses within a single page are always contiguous, so it's
+> not so necessary to always allocate one single page from CMA area.
+> Since the CMA area has a limited predefined size of space, it may
+> run out of space in heavy use cases, where there might be quite a
+> lot CMA pages being allocated for single pages.
+>
+> However, there is also a concern that a device might care where a
+> page comes from -- it might expect the page from CMA area and act
+> differently if the page doesn't.
+>
+> This patch tries to use the fallback alloc_pages path, instead of
+> one-page size allocations from the global CMA area in case that a
+> device does not have its own CMA area. This'd save resources from
+> the CMA global area for more CMA allocations, and also reduce CMA
+> fragmentations resulted from trivial allocations.
+>
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 
-drivers/rtc/rtc-pcf2127.o: In function `pcf2127_probe.isra.6':
-drivers/rtc/rtc-pcf2127.c:478: undefined reference to `devm_watchdog_register_device'
 
-Add WATCHDOG_CORE Kconfig dependency to fix this.
+This commit (bd2e75633c8012fc8a7431c82fda66237133bf7e)
+broke the DMA for my MMC driver in the following way:
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: bbc597561ce1 ("rtc: pcf2127: add watchdog feature support")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/rtc/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 25af63d..9dce7dc 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -886,6 +886,8 @@ config RTC_DRV_DS3232_HWMON
- config RTC_DRV_PCF2127
- 	tristate "NXP PCF2127"
- 	depends on RTC_I2C_AND_SPI
-+	depends on WATCHDOG
-+	select WATCHDOG_CORE
- 	help
- 	  If you say yes here you get support for the NXP PCF2127/29 RTC
- 	  chips with integrated quartz crystal for industrial applications.
+
+
+[    1.876755] mmc0: ADMA error
+[    1.883385] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[    1.889834] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000002
+[    1.896284] mmc0: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000001
+[    1.902733] mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000013
+[    1.909182] mmc0: sdhci: Present:   0x01ff02f6 | Host ctl: 0x00000019
+[    1.915631] mmc0: sdhci: Power:     0x0000000b | Blk gap:  0x00000000
+[    1.922081] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000fa07
+[    1.928530] mmc0: sdhci: Timeout:   0x0000000b | Int stat: 0x00000001
+[    1.934981] mmc0: sdhci: Int enab:  0x03ff008b | Sig enab: 0x03ff008b
+[    1.941429] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000001
+[    1.947880] mmc0: sdhci: Caps:      0x546ec800 | Caps_1:   0x00000000
+[    1.954329] mmc0: sdhci: Cmd:       0x0000083a | Max curr: 0x00000000
+[    1.960778] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffff
+[    1.967229] mmc0: sdhci: Resp[2]:   0x320f5903 | Resp[3]:  0x3fd05e00
+[    1.973678] mmc0: sdhci: Host ctl2: 0x00000000
+[    1.978125] mmc0: sdhci: ADMA Err:  0x00000001 | ADMA Ptr: 0x000000013965b200
+[    1.985271] mmc0: sdhci: ============================================
+[    1.991758] mmc0: error -5 whilst initialising MMC card
+[    1.991913] 43fb0000.uart: ttyS1 at MMIO 0x43fb0000 (irq = 0,
+base_baud = 768000) is a 16550A
+[    2.011011] hctosys: unable to open rtc device (rtc0)
+[    2.017694] Freeing unused kernel memory: 2368K
+[    2.027131] Run /init as init process
+Starting syslogd: OK
+Starting klogd: OK
+Initializing random number generator... [    2.074399] random: dd:
+uninitialized urandom read (512 bytes read)
+done.
+Starting network: OK
+[    2.109593] mmc0: ADMA error
+[    2.112488] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[    2.118941] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000002
+[    2.125389] mmc0: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000001
+[    2.131840] mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000013
+[    2.138289] mmc0: sdhci: Present:   0x01ff02f6 | Host ctl: 0x00000019
+[    2.144738] mmc0: sdhci: Power:     0x0000000b | Blk gap:  0x00000000
+[    2.151188] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x00004e47
+[    2.157637] mmc0: sdhci: Timeout:   0x0000000b | Int stat: 0x00000001
+[    2.164087] mmc0: sdhci: Int enab:  0x03ff008b | Sig enab: 0x03ff008b
+[    2.170536] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000001
+[    2.176987] mmc0: sdhci: Caps:      0x546ec800 | Caps_1:   0x00000000
+[    2.183435] mmc0: sdhci: Cmd:       0x0000083a | Max curr: 0x00000000
+[    2.189886] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffff
+[    2.196335] mmc0: sdhci: Resp[2]:   0x320f5903 | Resp[3]:  0x3fd05e00
+[    2.202784] mmc0: sdhci: Host ctl2: 0x00000000
+[    2.207232] mmc0: sdhci: ADMA Err:  0x00000001 | ADMA Ptr: 0x000000013965b200
+[    2.214379] mmc0: sdhci: ============================================
+
+[    2.220881] mmc0: error -5 whilst initialising MMC card
+Welcome to Buildroot
+buildroot login: [    2.332786] mmc0: ADMA error
+[    2.335668] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[    2.342119] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000002
+[    2.348568] mmc0: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000001
+[    2.355018] mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000013
+[    2.361468] mmc0: sdhci: Present:   0x01ff02f6 | Host ctl: 0x00000019
+[    2.367917] mmc0: sdhci: Power:     0x0000000b | Blk gap:  0x00000000
+[    2.374367] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000f447
+[    2.380816] mmc0: sdhci: Timeout:   0x0000000b | Int stat: 0x00000001
+[    2.387267] mmc0: sdhci: Int enab:  0x03ff008b | Sig enab: 0x03ff008b
+[    2.393716] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000001
+[    2.400166] mmc0: sdhci: Caps:      0x546ec800 | Caps_1:   0x00000000
+[    2.406615] mmc0: sdhci: Cmd:       0x0000083a | Max curr: 0x00000000
+[    2.413065] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffff
+[    2.419515] mmc0: sdhci: Resp[2]:   0x320f5903 | Resp[3]:  0x3fd05e00
+[    2.425963] mmc0: sdhci: Host ctl2: 0x00000000
+[    2.430412] mmc0: sdhci: ADMA Err:  0x00000001 | ADMA Ptr: 0x000000013965b200
+[    2.437557] mmc0: sdhci: ============================================
+[    2.444031] mmc0: error -5 whilst initialising MMC card
+[    2.572203] mmc0: ADMA error
+[    2.575089] mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+[    2.581540] mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000002
+[    2.587989] mmc0: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000001
+[    2.594439] mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000013
+[    2.600889] mmc0: sdhci: Present:   0x01ef02f6 | Host ctl: 0x00000019
+[    2.607339] mmc0: sdhci: Power:     0x0000000b | Blk gap:  0x00000000
+[    2.613788] mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000e8c7
+[    2.620237] mmc0: sdhci: Timeout:   0x0000000b | Int stat: 0x00000001
+[    2.626686] mmc0: sdhci: Int enab:  0x03ff008b | Sig enab: 0x03ff008b
+[    2.633137] mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000001
+[    2.639586] mmc0: sdhci: Caps:      0x546ec800 | Caps_1:   0x00000000
+[    2.646036] mmc0: sdhci: Cmd:       0x0000083a | Max curr: 0x00000000
+[    2.652485] mmc0: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffff
+[    2.658936] mmc0: sdhci: Resp[2]:   0x320f5903 | Resp[3]:  0x3fd05e00
+[    2.665384] mmc0: sdhci: Host ctl2: 0x00000000
+[    2.669832] mmc0: sdhci: ADMA Err:  0x00000001 | ADMA Ptr: 0x000000013965b200
+[    2.676979] mmc0: sdhci: ============================================
+[    2.683450] mmc0: error -5 whilst initialising MMC card
+
+CTRL-A Z for help | 115200 8N1 | NOR | Minicom 2.7.1 | VT102 | Offline
+| ttyUSB0
+
+Reverting this commit fixed the problem.
+
+
+
 -- 
-2.7.4
-
-
+Best Regards
+Masahiro Yamada
