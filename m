@@ -2,67 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA159A76B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 08:11:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 050B39A772
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 08:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404258AbfHWGLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 02:11:50 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:53282 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404124AbfHWGLu (ORCPT
+        id S2392325AbfHWGQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 02:16:08 -0400
+Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:34193 "EHLO
+        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390037AbfHWGQI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 02:11:50 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 82F1F153BAEA4;
-        Thu, 22 Aug 2019 23:11:49 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 23:11:47 -0700 (PDT)
-Message-Id: <20190822.231147.260584586705057718.davem@davemloft.net>
-To:     saeedm@mellanox.com
-Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
-        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
-        eranbe@mellanox.com, netdev@vger.kernel.org,
-        linux-pci@vger.kernel.org, leon@kernel.org, sashal@kernel.org,
-        bhelgaas@google.com, linux-hyperv@vger.kernel.org
-Subject: Re: [PATCH net-next,v5, 0/6] Add software backchannel and mlx5e HV
- VHCA stats
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <f7a0ce8822e197ace496a348a14ac6939313d8f6.camel@mellanox.com>
-References: <DM6PR21MB133743FB2006A28AE10A170CCAA50@DM6PR21MB1337.namprd21.prod.outlook.com>
-        <20190822.153912.2269276523787180347.davem@davemloft.net>
-        <f7a0ce8822e197ace496a348a14ac6939313d8f6.camel@mellanox.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 22 Aug 2019 23:11:50 -0700 (PDT)
+        Fri, 23 Aug 2019 02:16:08 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07521714|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.525283-0.101757-0.37296;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=han_mao@c-sky.com;NM=1;PH=DS;RN=4;RT=4;SR=0;TI=SMTPD_---.FGwcr64_1566540964;
+Received: from localhost(mailfrom:han_mao@c-sky.com fp:SMTPD_---.FGwcr64_1566540964)
+          by smtp.aliyun-inc.com(10.147.41.158);
+          Fri, 23 Aug 2019 14:16:04 +0800
+From:   Mao Han <han_mao@c-sky.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Mao Han <han_mao@c-sky.com>
+Subject: [PATCH V5 0/3] riscv: Add perf callchain support
+Date:   Fri, 23 Aug 2019 14:15:57 +0800
+Message-Id: <cover.1566540652.git.han_mao@c-sky.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Saeed Mahameed <saeedm@mellanox.com>
-Date: Fri, 23 Aug 2019 05:29:48 +0000
+This patch set add perf callchain(FP/DWARF) support for RISC-V.
+It comes from the csky version callchain support with some
+slight modifications. The patchset base on Linux 5.3.
 
-> On Thu, 2019-08-22 at 15:39 -0700, David Miller wrote:
->> From: Haiyang Zhang <haiyangz@microsoft.com>
->> Date: Thu, 22 Aug 2019 22:37:13 +0000
->> 
->> > The v5 is pretty much the same as v4, except Eran had a fix to
->> patch #3 in response to
->> > Leon Romanovsky <leon@kernel.org>.
->> 
->> Well you now have to send me a patch relative to v4 in order to fix
->> that.
->> 
->> When I say "applied", the series is in my tree and is therefore
->> permanent.
->> It is therefore never appropriate to then post a new version of the
->> series.
-> 
-> Dave, I think you didn't reply back to v4 that the series was applied.
-> So that might have created some confusion for Haiyang.
+Changes since v4:
+  - Add missing PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET
+    verified with extra CFLAGS(-Wall -Werror)
 
-I thought I did, sorry, my bad.
+Changes since v3:
+  - Add more strict check for unwind_frame_kernel
+  - update for kernel 5.3
+
+Changes since v2:
+  - fix inconsistent comment
+  - force to build kernel with -fno-omit-frame-pointer if perf
+    event is enabled
+
+Changes since v1:
+  - simplify implementation and code convention
+
+
+Mao Han (3):
+  riscv: Add perf callchain support
+  riscv: Add support for perf registers sampling
+  riscv: Add support for libdw
+
+ arch/riscv/Kconfig                            |   2 +
+ arch/riscv/Makefile                           |   3 +
+ arch/riscv/include/uapi/asm/perf_regs.h       |  42 ++++++++++
+ arch/riscv/kernel/Makefile                    |   4 +-
+ arch/riscv/kernel/perf_callchain.c            | 115 ++++++++++++++++++++++++++
+ arch/riscv/kernel/perf_regs.c                 |  44 ++++++++++
+ tools/arch/riscv/include/uapi/asm/perf_regs.h |  42 ++++++++++
+ tools/perf/Makefile.config                    |   6 +-
+ tools/perf/arch/riscv/Build                   |   1 +
+ tools/perf/arch/riscv/Makefile                |   4 +
+ tools/perf/arch/riscv/include/perf_regs.h     |  96 +++++++++++++++++++++
+ tools/perf/arch/riscv/util/Build              |   2 +
+ tools/perf/arch/riscv/util/dwarf-regs.c       |  72 ++++++++++++++++
+ tools/perf/arch/riscv/util/unwind-libdw.c     |  57 +++++++++++++
+ 14 files changed, 488 insertions(+), 2 deletions(-)
+ create mode 100644 arch/riscv/include/uapi/asm/perf_regs.h
+ create mode 100644 arch/riscv/kernel/perf_callchain.c
+ create mode 100644 arch/riscv/kernel/perf_regs.c
+ create mode 100644 tools/arch/riscv/include/uapi/asm/perf_regs.h
+ create mode 100644 tools/perf/arch/riscv/Build
+ create mode 100644 tools/perf/arch/riscv/Makefile
+ create mode 100644 tools/perf/arch/riscv/include/perf_regs.h
+ create mode 100644 tools/perf/arch/riscv/util/Build
+ create mode 100644 tools/perf/arch/riscv/util/dwarf-regs.c
+ create mode 100644 tools/perf/arch/riscv/util/unwind-libdw.c
+
+-- 
+2.7.4
+
