@@ -2,121 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5AEC9AFC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:38:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75CDA9AFCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:40:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394824AbfHWMiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:38:12 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40794 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394791AbfHWMhv (ORCPT
+        id S2391799AbfHWMje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:39:34 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:51619 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391161AbfHWMjd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:37:51 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h8so13260446edv.7;
-        Fri, 23 Aug 2019 05:37:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=G8GHc1gsebr19dOVRPy+WGuFpKv95AVuhTZoYxXuGp4=;
-        b=N8Mw3bcE6Uz9tdbA+i9zC40nYruDHrRGaqv8SOa1ygE+nCesxhTotS7tSuBGgwIXSD
-         nnl8la43zyHyb9J2zfULJYJHazU2Y1nHJht0r2QzveEEXquzjkuwi57WXeqGo6IUjiaq
-         XQIXw2WeqgunQZxsQru5cI+R78dHIcfB36MGlJIM6kBd/ZzID6ena0aBLSsBWJ4WJX3y
-         POvHrs6Q3s94wHS5w/AjMZuT8Ax9IlV1o+Oa49hlAQKbpix16u7727hOCVT56LFkh1K7
-         Xnkyzwrw2kN8Sg3C/3K+/PJGst94i9Sk7Td2I6CIuje3H1CwhShcGUDO92cWrZBrZeI0
-         q5Kg==
-X-Gm-Message-State: APjAAAVttimHxzZ1KBo9EhDTMQMSkMm7ykww/8Dqph9SJ7459L0jthVQ
-        vEMzDhPBPprYY7QPKaGZeKg=
-X-Google-Smtp-Source: APXvYqxJl9WqCxbu3k+xan6VXrMOyl0gKP0Kc5twQ2SoQfORvdIdUGEqxjk2XVWSKGEj1FV6aimmQQ==
-X-Received: by 2002:a50:e68d:: with SMTP id z13mr4182976edm.142.1566563869950;
-        Fri, 23 Aug 2019 05:37:49 -0700 (PDT)
-Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
-        by smtp.gmail.com with ESMTPSA id 9sm389687ejw.63.2019.08.23.05.37.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2019 05:37:48 -0700 (PDT)
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Subject: [PATCH v3 7/7] imx214: Use v4l2_ctrl_new_area helper
-Date:   Fri, 23 Aug 2019 14:37:37 +0200
-Message-Id: <20190823123737.7774-7-ribalda@kernel.org>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20190823123737.7774-1-ribalda@kernel.org>
-References: <20190823123737.7774-1-ribalda@kernel.org>
+        Fri, 23 Aug 2019 08:39:33 -0400
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
+  Horatiu.Vultur@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Horatiu.Vultur@microchip.com";
+  x-sender="Horatiu.Vultur@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
+  envelope-from="Horatiu.Vultur@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Horatiu.Vultur@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: RZNuFDnl1BBXOhwfHF/9hW+Lc4xuyvpZaKis9sXHXxKK7TVC50toYnMKpU9L/2ypdjbLtNZGhA
+ gyUZ9oN7oqyib/Zf9AZ7Q+TALCOkqSrfFXiPkVGfIGfU1cQx+S1HxMBRZLk/x1NyWgxRlPr+18
+ bAoiz5xf+d7MS0TeuWs3iIMAlh3Xczyq1JMUNbvI0fUTWp0kmD91I+2tQTBtC+3h6doQKWjLSA
+ AQ+mWfj3StDmNH2mvy9qwgOrvEIdKn4GG2NKazN7+M9QixbWVZ/6IlWSDL86XRYN6fi2wdapjm
+ Lfc=
+X-IronPort-AV: E=Sophos;i="5.64,421,1559545200"; 
+   d="scan'208";a="46368782"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Aug 2019 05:39:32 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 23 Aug 2019 05:39:31 -0700
+Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
+ Transport; Fri, 23 Aug 2019 05:39:31 -0700
+Date:   Fri, 23 Aug 2019 14:39:30 +0200
+From:   Horatiu Vultur <horatiu.vultur@microchip.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <roopa@cumulusnetworks.com>, <nikolay@cumulusnetworks.com>,
+        <davem@davemloft.net>, <UNGLinuxDriver@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <allan.nielsen@microchip.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <bridge@lists.linux-foundation.org>
+Subject: Re: [PATCH 1/3] net: Add HW_BRIDGE offload feature
+Message-ID: <20190823123929.ta4ikozz7jwkwbo2@soft-dev3.microsemi.net>
+References: <1566500850-6247-1-git-send-email-horatiu.vultur@microchip.com>
+ <1566500850-6247-2-git-send-email-horatiu.vultur@microchip.com>
+ <20190822200817.GD21295@lunn.ch>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20190822200817.GD21295@lunn.ch>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of creating manually the V4L2_CID_UNIT_CELL_SIZE control, lets
-use the helper.
+The 08/22/2019 22:08, Andrew Lunn wrote:
+> External E-Mail
+> 
+> 
+> > +/* Determin if the SW bridge can be offloaded to HW. Return true if all
+> > + * the interfaces of the bridge have the feature NETIF_F_HW_SWITCHDEV set
+> > + * and have the same netdev_ops.
+> > + */
+> 
+> Hi Horatiu
+> 
+> Why do you need these restrictions. The HW bridge should be able to
+> learn that a destination MAC address can be reached via the SW
+> bridge. The software bridge can then forward it out the correct
+> interface.
+> 
+> Or are you saying your hardware cannot learn from frames which come
+> from the CPU?
+> 
+> 	Andrew
+> 
+Hi Andrew,
 
-Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
----
- drivers/media/i2c/imx214.c | 29 ++++++++---------------------
- 1 file changed, 8 insertions(+), 21 deletions(-)
+I do not believe that our HW can learn from frames which comes from the
+CPU, at least not in the way they are injected today. But in case of Ocelot
+(and the next chip we are working on), we have other issues in mixing with
+foreign interfaces which is why we have the check in
+ocelot_netdevice_dev_check.
 
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index cc0a013ba7da..625617d4c81a 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -942,26 +942,6 @@ static int __maybe_unused imx214_resume(struct device *dev)
- 	return ret;
- }
- 
--static void unit_size_init(const struct v4l2_ctrl *ctrl, u32 idx,
--		     union v4l2_ctrl_ptr ptr)
--{
--	ptr.p_area->width = 1120;
--	ptr.p_area->height = 1120;
--}
--
--static const struct v4l2_ctrl_type_ops unit_size_ops = {
--	.init = unit_size_init,
--};
--
--static struct v4l2_ctrl *new_unit_size_ctrl(struct v4l2_ctrl_handler *handler)
--{
--	static struct v4l2_ctrl_config ctrl = {
--		.id = V4L2_CID_UNIT_CELL_SIZE,
--		.type_ops = &unit_size_ops,
--	};
--
--	return v4l2_ctrl_new_custom(handler, &ctrl, NULL);
--}
- static int imx214_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -969,6 +949,10 @@ static int imx214_probe(struct i2c_client *client)
- 	static const s64 link_freq[] = {
- 		IMX214_DEFAULT_LINK_FREQ,
- 	};
-+	struct v4l2_area unit_size = {
-+		.width = 1120,
-+		.height = 1120,
-+	};
- 	int ret;
- 
- 	ret = imx214_parse_fwnode(dev);
-@@ -1050,7 +1034,10 @@ static int imx214_probe(struct i2c_client *client)
- 					     V4L2_CID_EXPOSURE,
- 					     0, 3184, 1, 0x0c70);
- 
--	imx214->unit_size = new_unit_size_ctrl(&imx214->ctrls);
-+	imx214->unit_size = v4l2_ctrl_new_area(&imx214->ctrls,
-+					       &imx214_ctrl_ops,
-+					       V4L2_CID_UNIT_CELL_SIZE,
-+					       &unit_size);
- 
- 	ret = imx214->ctrls.error;
- 	if (ret) {
+More important, as we responded to Nikolay, we properly introduced this
+restriction for the wrong reasons.
+
+In SW bridge I will remove all these restrictions and only set ports in
+promisc mode only if NETIF_F_HW_BRIDGE is not set.
+Then in the network driver I can see if a foreign interface is added to
+the bridge, and when that happens I can set the port in promisc mode.
+Then the frames will be flooded to the SW bridge which eventually will
+send to the foreign interface.
 -- 
-2.23.0.rc1
-
+/Horatiu
