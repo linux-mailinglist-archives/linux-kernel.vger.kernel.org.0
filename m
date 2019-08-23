@@ -2,132 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C669D9A593
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:35:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8A329A59F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391173AbfHWCf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 22:35:29 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33719 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390609AbfHWCf2 (ORCPT
+        id S2391226AbfHWCgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 22:36:55 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:56412 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389643AbfHWCgz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 22:35:28 -0400
-Received: by mail-io1-f65.google.com with SMTP id z3so16662193iog.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 19:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2Ob+A4xxX2bRSxLGz92/UzTEvC1yWM8JcjhiXKDPfB8=;
-        b=flcLM5FZxA1UdTl+5MfostzBYwQfyv1yb87DaSzrnDrUwd/ZNj4K4T/rHszC/sFQMH
-         ADUFV/N/N6vulg+PsFB9LiJOba7WYzMsXqe7TkwmxiwQw++HUI5Q9lwxgsadqj5kp36o
-         7ir9Ftxz3Frpzbh7dbD9IWl/fAPy+uyEwFD9Qu0xwImVT/66UuNo3m+3vDu9rqcZdHGP
-         dJuOAFAhp3e0iD0AWnqz3VAQtqcjnUDCLFkZZiPVDrJq83kU9d3bg+KlteAnZK+XFKE6
-         M2BK3WAwQy2tydaBr0xJ2dcLV8QJVxM3CxkgnlBsNXoibdFYaWIIutqUzeXdd2gExoTy
-         FEcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2Ob+A4xxX2bRSxLGz92/UzTEvC1yWM8JcjhiXKDPfB8=;
-        b=Kjpy0NNaPJGkVXwjcSb+7Fu8wqbQq0ihKIx01gmgbvrracecLGRFLHycMrsMIb4vjZ
-         DICARbi1yls82b1NMno+lwerTAUAYN5ZbMn4mPtcbQAE9MjVYGDZlhkzQSGBN5VfGzoE
-         KJ0jpb36t7kiSW7UDJ90hWDGE7IPvwsElyL5+pjgztnBlwQpqxUixZNR00pSegTJc0E0
-         ZrYlN6rMsImER82Wx+M7/hd9xBzUv3gT1nNIHO/2ekfjEBwjo7aU92wW6QrIA51Vvo2g
-         XXSXulEGKu5B7l/3WRyV8mCLYr31XEeklBYjwdswUbBj5to6bZOYuE6wc+q0rEvTT3b6
-         WCMA==
-X-Gm-Message-State: APjAAAWMGEDbSayhHsxhhjm4qK4Tj0cPpbZAhrjA4vxs+OGSTBrSuaSY
-        vnm2JF8B9yG+VKr2myWAxozAfE0vmJvBMykVa/be3A==
-X-Google-Smtp-Source: APXvYqxk0KBtXTDXCH7sq1BDWGn2tzcj3BOrK9VJXXJYjin28Niwi8IhH6bIWJT+jY7Hn20R6XsnRrLk/vFE/AUzyqo=
-X-Received: by 2002:a6b:c581:: with SMTP id v123mr3719443iof.158.1566527727590;
- Thu, 22 Aug 2019 19:35:27 -0700 (PDT)
+        Thu, 22 Aug 2019 22:36:55 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7N2aJ1u068638;
+        Thu, 22 Aug 2019 21:36:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566527779;
+        bh=nkExP0eRbsPB/OWk2fAwZsppRHsUY3F2k8vm2ySuYXE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=n78gSZca5zRUaYh6aN1w/zueFQG3RgizaqRouQ+tXSV380/ZMho4iz27VBE4XBGXe
+         BaeEw45AKwRpJWWodv4To3aNKs8fLmy+7/9fbjNWs+761/erIceZIfOKoJtspcscqn
+         HvdJm3durOh7tJF14fmnvYItUCmQSnOUAdEvY4Uw=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7N2aIBV090688
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 22 Aug 2019 21:36:19 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 22
+ Aug 2019 21:36:18 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 22 Aug 2019 21:36:18 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7N2aEJw039712;
+        Thu, 22 Aug 2019 21:36:15 -0500
+Subject: Re: [PATCH v3 0/4] Lantiq VRX200/ARX300 PCIe PHY driver
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <john@phrozen.org>, <paul.burton@mips.com>, <ralf@linux-mips.org>
+CC:     <robh+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <hauke@hauke-m.de>, <mark.rutland@arm.com>, <ms@dev.tdt.de>
+References: <20190727120415.15859-1-martin.blumenstingl@googlemail.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <1d5212e1-aeb4-1f05-d5d4-6b944cf328cc@ti.com>
+Date:   Fri, 23 Aug 2019 08:06:13 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CGME20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab@epcas2p2.samsung.com>
- <004101d557eb$98b00060$ca100120$@samsung.com> <6ea5e5db-4dd4-719f-3b3e-b89099636ea6@kernel.dk>
-In-Reply-To: <6ea5e5db-4dd4-719f-3b3e-b89099636ea6@kernel.dk>
-From:   Satya Tangirala <satyat@google.com>
-Date:   Thu, 22 Aug 2019 19:35:16 -0700
-Message-ID: <CAA+FYZc6G0xk7Dhx0b9xNRoK+b+DpfuS+OK4wn4bpKpFPiiGUQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] block: support diskcipher
-To:     Jens Axboe <axboe@kernel.dk>, boojin.kim@samsung.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, Chao Yu <chao@kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, dm-devel@redhat.com,
-        Mike Snitzer <snitzer@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-crypto@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190727120415.15859-1-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 5:10 AM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 8/21/19 12:42 AM, boojin.kim wrote:
-> > This patch supports crypto information to be maintained via BIO
-> > and passed to the storage driver.
-> >
-> > To do this, 'bi_aux_private', 'REQ_CYPTE' and 'bi_dun' are added
-> > to the block layer.
-> >
-> > 'bi_aux_private' is added for loading additional private information into
-> > BIO.
-> > 'REQ_CRYPT' is added to distinguish that bi_aux_private is being used
-> > for diskcipher.
-> > F2FS among encryption users uses DUN(device unit number) as
-> > the IV(initial vector) for cryptographic operations.
-> > DUN is stored in 'bi_dun' of bi_iter as a specific value for each BIO.
-> >
-> > Before attempting to merge the two BIOs, the operation is also added to
-> > verify that the crypto information contained in two BIOs is consistent.
->
-> This isn't going to happen. With this, and the inline encryption
-> proposed by Google, we'll bloat the bio even more. At least the Google
-> approach didn't include bio iter changes as well.
->
-> Please work it out between yourselves so we can have a single, clean
-> abstraction that works for both.
->
-> --
-> Jens Axboe
->
 
-Hi Boojin,
 
-We're very keen to make sure that our approach to inline encryption can
-work with diverse hardware, including Samsung's FMP hardware; if you
-can see any issues with using our approach with your hardware please
-let us know.
+On 27/07/19 5:34 PM, Martin Blumenstingl wrote:
+> Various Lantiq (now Intel) SoCs contain one or more PCIe controllers
+> and PHYs.
+> This adds a driver for the PCIe PHYs found on the Lantiq VRX200 and
+> ARX300 SoCs. GRX390 should also be supported as far as I can tell,
+> but I don't have any of these devices to further verify that.
+> 
+> I have tested this PCIe PHY driver with the out-of-tree PCIe controller
+> driver in OpenWrt: [0]
+> 
+> dependencies for this series:
+> none
+> 
+> patches 1-3 should go through the PHY tree
 
-We understand that a possible concern for getting FMP working with our
-patch series for Inline Encryption Support at
+merged the phy patches.
 
-https://lore.kernel.org/linux-block/20190821075714.65140-1-satyat@google.com/
-
-is that unlike some inline encryption hardware (and also unlike the JEDEC
-UFS v2.1 spec), FMP doesn't have the concept of a limited number of
-keyslots - to address that difference we have a "passthrough keyslot
-manager", which we put up on top of our patch series for inline encryption
-support at
-
-https://android-review.googlesource.com/c/kernel/common/+/980137/2
-
-Setting up a passthrough keyslot manager in the request queue of a
-device allows the device to receive a bio's encryption context as-is with
-the bio, which is what FMP would prefer. Are there any issues with
-using the passthrough keyslot manager for FMP?
-
-Thanks!
-Satya
+Thanks
+Kishon
+> patch 4 should go through the mips tree
+> 
+> I am aware that this series is too late for the v5.3 development cycle.
+> Getting review comments is still appreciated so this can be queued early
+> in the v5.4 development cycle.
+> 
+> 
+> Changes since v2 at [2]:
+> - added Rob's Reviewed-by to the dt-bindings patch (thank you!)
+> 
+> Changes since v1 at [1]:
+> - many thanks to Rob for giving me many hints regarding the .yaml bindings!
+> - update the .yaml binding license to (GPL-2.0-only OR BSD-2-Clause)
+> - changed the property lantiq,rcu to type phandle
+> - add the optional big-endian and little-endian boolean properties
+> - use numeric values for the clock phandles in the example to make the
+>   dt_binding_check build happy
+> - replaced two mdelay(1); with usleep_range(1000, 2000); in patch #2
+>   (spotted and reported by Hauke off-list)
+> 
+> 
+> [0] https://github.com/xdarklight/openwrt/commits/lantiq-mainline-pcie-phy-20190702
+> [1] https://patchwork.kernel.org/cover/11028797/
+> [2] https://patchwork.kernel.org/cover/11031421/
+> 
+> 
+> Martin Blumenstingl (4):
+>   dt-bindings: phy: add binding for the Lantiq VRX200 and ARX300 PCIe
+>     PHYs
+>   phy: lantiq: vrx200-pcie: add a driver for the Lantiq VRX200 PCIe PHY
+>   phy: enable compile-testing for the Lantiq PHY drivers
+>   MIPS: lantiq: update the clock alias' for the mainline PCIe PHY driver
+> 
+>  .../bindings/phy/lantiq,vrx200-pcie-phy.yaml  |  95 ++++
+>  arch/mips/lantiq/xway/sysctrl.c               |  16 +-
+>  drivers/phy/Makefile                          |   2 +-
+>  drivers/phy/lantiq/Kconfig                    |  11 +
+>  drivers/phy/lantiq/Makefile                   |   1 +
+>  drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c   | 494 ++++++++++++++++++
+>  .../dt-bindings/phy/phy-lantiq-vrx200-pcie.h  |  11 +
+>  7 files changed, 621 insertions(+), 9 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/phy/lantiq,vrx200-pcie-phy.yaml
+>  create mode 100644 drivers/phy/lantiq/phy-lantiq-vrx200-pcie.c
+>  create mode 100644 include/dt-bindings/phy/phy-lantiq-vrx200-pcie.h
+> 
