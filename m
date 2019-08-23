@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 123AD9A55B
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 246579A557
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:14:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389839AbfHWCMl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 22:12:41 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33725 "EHLO
+        id S2389741AbfHWCMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 22:12:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33728 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389328AbfHWCMU (ORCPT
+        with ESMTP id S2389361AbfHWCMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 22:12:20 -0400
+        Thu, 22 Aug 2019 22:12:21 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i0z3p-0000xf-BB; Fri, 23 Aug 2019 04:12:17 +0200
+        id 1i0z3p-0000xy-Px; Fri, 23 Aug 2019 04:12:17 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0CF751C07E4;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 791A11C0883;
         Fri, 23 Aug 2019 04:12:17 +0200 (CEST)
-Date:   Fri, 23 Aug 2019 02:12:16 -0000
-From:   tip-bot2 for Thomas Gleixner <tip-bot2@linutronix.de>
+Date:   Fri, 23 Aug 2019 02:12:17 -0000
+From:   tip-bot2 for Frederic Weisbecker <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-timers: Cleanup forward declarations and
- includes
-Cc:     linux-kernel@vger.kernel.org,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-In-Reply-To: <20190819143801.472005793@linutronix.de>
-References: <20190819143801.472005793@linutronix.de>
+Subject: [tip: timers/core] hrtimer: Improve comments on handling priority
+ inversion against softirq
+ kthread
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>
+In-Reply-To: <20190820132656.GC2093@lenoir>
+References: <20190820132656.GC2093@lenoir>
 MIME-Version: 1.0
-Message-ID: <156652633698.11661.15470255584101715791.tip-bot2@tip-bot2>
+Message-ID: <156652633741.11664.5398841645445804148.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from
@@ -49,42 +49,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     ce03f613461642669d6150c405dd28f4bfd54bbb
-Gitweb:        https://git.kernel.org/tip/ce03f613461642669d6150c405dd28f4bfd54bbb
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 19 Aug 2019 16:31:42 +02:00
+Commit-ID:     0bee3b601b77dbe7981b5474ae8758d6bf60177a
+Gitweb:        https://git.kernel.org/tip/0bee3b601b77dbe7981b5474ae8758d6bf60177a
+Author:        Frederic Weisbecker <frederic@kernel.org>
+AuthorDate:    Tue, 20 Aug 2019 15:12:23 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 20 Aug 2019 22:09:52 +02:00
+CommitterDate: Tue, 20 Aug 2019 22:05:46 +02:00
 
-posix-timers: Cleanup forward declarations and includes
+hrtimer: Improve comments on handling priority inversion against softirq kthread
 
- - Rename struct siginfo to kernel_siginfo as that is used and required
- - Add a forward declaration for task_struct and remove sched.h include
- - Remove timex.h include as it is not needed
+The handling of a priority inversion between timer cancelling and a a not
+well defined possible preemption of softirq kthread is not very clear.
 
+Especially in the posix timers side it's unclear why there is a specific RT
+wait callback.
+
+All the nice explanations can be found in the initial changelog of
+f61eff83cec9 (hrtimer: Prepare support for PREEMPT_RT").
+
+Extract the detailed informations from there and put it into comments.
+
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lkml.kernel.org/r/20190819143801.472005793@linutronix.de
-
+Link: https://lkml.kernel.org/r/20190820132656.GC2093@lenoir
 ---
- include/linux/posix-timers.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/time/hrtimer.c      | 14 ++++++++++----
+ kernel/time/posix-timers.c |  6 ++++++
+ 2 files changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/posix-timers.h b/include/linux/posix-timers.h
-index 604cec0..26c636d 100644
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -4,11 +4,10 @@
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 4991227..8333537 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1201,10 +1201,16 @@ static void hrtimer_sync_wait_running(struct hrtimer_cpu_base *cpu_base,
+  * deletion of a timer failed because the timer callback function was
+  * running.
+  *
+- * This prevents priority inversion, if the softirq thread on a remote CPU
+- * got preempted, and it prevents a life lock when the task which tries to
+- * delete a timer preempted the softirq thread running the timer callback
+- * function.
++ * This prevents priority inversion: if the soft irq thread is preempted
++ * in the middle of a timer callback, then calling del_timer_sync() can
++ * lead to two issues:
++ *
++ *  - If the caller is on a remote CPU then it has to spin wait for the timer
++ *    handler to complete. This can result in unbound priority inversion.
++ *
++ *  - If the caller originates from the task which preempted the timer
++ *    handler on the same CPU, then spin waiting for the timer handler to
++ *    complete is never going to end.
+  */
+ void hrtimer_cancel_wait_running(const struct hrtimer *timer)
+ {
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 9e37783..0ec5b7a 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -810,6 +810,12 @@ static void common_timer_wait_running(struct k_itimer *timer)
+ 	hrtimer_cancel_wait_running(&timer->it.real.timer);
+ }
  
- #include <linux/spinlock.h>
- #include <linux/list.h>
--#include <linux/sched.h>
--#include <linux/timex.h>
- #include <linux/alarmtimer.h>
- 
--struct siginfo;
-+struct kernel_siginfo;
-+struct task_struct;
- 
- struct cpu_timer_list {
- 	struct list_head entry;
++/*
++ * On PREEMPT_RT this prevent priority inversion against softirq kthread in
++ * case it gets preempted while executing a timer callback. See comments in
++ * hrtimer_cancel_wait_running. For PREEMPT_RT=n this just results in a
++ * cpu_relax().
++ */
+ static struct k_itimer *timer_wait_running(struct k_itimer *timer,
+ 					   unsigned long *flags)
+ {
