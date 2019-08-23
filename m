@@ -2,88 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98DC49B3AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 130789B3B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:46:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405912AbfHWPnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 11:43:04 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34683 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfHWPnE (ORCPT
+        id S2405932AbfHWPoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 11:44:37 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:36025 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405914AbfHWPod (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 11:43:04 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n9so5997922pgc.1;
-        Fri, 23 Aug 2019 08:43:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e6gbuFk04+ij6vjmtC7dZeomrE2Z6PDlZ2TY3DqrgL8=;
-        b=QLHgDm6HNsuMn1HGjbjWhkhHiVW/zxBjbUayNy5D+dcbxqiz9I+U1mH0tmY54MQv2q
-         fU2IdPInVpjANNuMtJVE0F3wF8ZdZy/PR5tdM9aS+PEeifYpl9kceNglF7KQpCwcrUyX
-         7cwhbazJ9p1AIkyjlzQxmj18Lfvf+9eUoBEskXjaXiVyKrX7/Kj5hNbW77M0x7tH8gWN
-         MSGRQhsYKO1ajzBVm9V3MRtbLc+sL18N1F8MZuXIe0emHEfe3zmd9hnNtvzyeFqt3UNY
-         7hbyD6pPzhri8EhIsEmC2gX6ZIyCdqDMGh7tik86ZilVPKXDmn34BE0XoUNIg1JTfmOW
-         cntg==
-X-Gm-Message-State: APjAAAV9uZY2P/abchMRjCbAk7jsSUIvV1C8mclOqR4ptSjV9zXik8Za
-        MOiHA+KP6+pCJJaFJfaXRWg=
-X-Google-Smtp-Source: APXvYqyGepRg8opgN4YZqwET+ErU3AX2HBuZhRJljwXDyVt43xrYXNA7jgKoM0AGGKBYpjHvI4ZwPg==
-X-Received: by 2002:a62:2c93:: with SMTP id s141mr6060133pfs.114.1566574983158;
-        Fri, 23 Aug 2019 08:43:03 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id j10sm3060768pfn.188.2019.08.23.08.43.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2019 08:43:02 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 50B72404D5; Fri, 23 Aug 2019 15:43:01 +0000 (UTC)
-Date:   Fri, 23 Aug 2019 15:43:01 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Scott Branden <scott.branden@broadcom.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 3/3] firmware: add mutex fw_lock_fallback for race
- condition
-Message-ID: <20190823154301.GT16384@42.do-not-panic.com>
-References: <20190816000945.29810-1-scott.branden@broadcom.com>
- <20190816000945.29810-4-scott.branden@broadcom.com>
- <20190819053937.GR16384@42.do-not-panic.com>
- <16823ee6-c52a-b3b5-caed-79c00772fa68@broadcom.com>
- <20190820012655.GU16384@42.do-not-panic.com>
- <s5hd0gwrx4j.wl-tiwai@suse.de>
+        Fri, 23 Aug 2019 11:44:33 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1i1Bjn-0005MO-Bu; Fri, 23 Aug 2019 17:44:27 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E85AF1C04F3;
+        Fri, 23 Aug 2019 17:44:26 +0200 (CEST)
+Date:   Fri, 23 Aug 2019 15:44:26 -0000
+From:   tip-bot2 for Sean Christopherson <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/retpoline: Don't clobber RFLAGS during
+ CALL_NOSPEC on i386
+Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra (Intel) <peterz@infradead.org>,
+        stable@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20190822211122.27579-1-sean.j.christopherson@intel.com>
+References: <20190822211122.27579-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Message-ID: <156657506681.13327.12784359764644509478.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-In-Reply-To: <s5hd0gwrx4j.wl-tiwai@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 12:31:40PM +0200, Takashi Iwai wrote:
-> So, if any, we'd need put a mutex around the fallback loader code.
-> And, the mutex should be rather per device, not a global one.
-> 
-> Or we may trick it by appending the second parallel caller into the
-> same wait queue, but the code will be more complex, so I don't think
-> worth for it.
+The following commit has been merged into the x86/urgent branch of tip:
 
-For now I'm thinking of a new API with a devname prefix to the driver.
-I'll have to test if that works, but not sure if I'll get to it today
-before my vacation starts (today).
+Commit-ID:     b63f20a778c88b6a04458ed6ffc69da953d3a109
+Gitweb:        https://git.kernel.org/tip/b63f20a778c88b6a04458ed6ffc69da953d3a109
+Author:        Sean Christopherson <sean.j.christopherson@intel.com>
+AuthorDate:    Thu, 22 Aug 2019 14:11:22 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 23 Aug 2019 17:38:13 +02:00
 
-  Luis
+x86/retpoline: Don't clobber RFLAGS during CALL_NOSPEC on i386
+
+Use 'lea' instead of 'add' when adjusting %rsp in CALL_NOSPEC so as to
+avoid clobbering flags.
+
+KVM's emulator makes indirect calls into a jump table of sorts, where
+the destination of the CALL_NOSPEC is a small blob of code that performs
+fast emulation by executing the target instruction with fixed operands.
+
+  adcb_al_dl:
+     0x000339f8 <+0>:   adc    %dl,%al
+     0x000339fa <+2>:   ret
+
+A major motiviation for doing fast emulation is to leverage the CPU to
+handle consumption and manipulation of arithmetic flags, i.e. RFLAGS is
+both an input and output to the target of CALL_NOSPEC.  Clobbering flags
+results in all sorts of incorrect emulation, e.g. Jcc instructions often
+take the wrong path.  Sans the nops...
+
+  asm("push %[flags]; popf; " CALL_NOSPEC " ; pushf; pop %[flags]\n"
+     0x0003595a <+58>:  mov    0xc0(%ebx),%eax
+     0x00035960 <+64>:  mov    0x60(%ebx),%edx
+     0x00035963 <+67>:  mov    0x90(%ebx),%ecx
+     0x00035969 <+73>:  push   %edi
+     0x0003596a <+74>:  popf
+     0x0003596b <+75>:  call   *%esi
+     0x000359a0 <+128>: pushf
+     0x000359a1 <+129>: pop    %edi
+     0x000359a2 <+130>: mov    %eax,0xc0(%ebx)
+     0x000359b1 <+145>: mov    %edx,0x60(%ebx)
+
+  ctxt->eflags = (ctxt->eflags & ~EFLAGS_MASK) | (flags & EFLAGS_MASK);
+     0x000359a8 <+136>: mov    -0x10(%ebp),%eax
+     0x000359ab <+139>: and    $0x8d5,%edi
+     0x000359b4 <+148>: and    $0xfffff72a,%eax
+     0x000359b9 <+153>: or     %eax,%edi
+     0x000359bd <+157>: mov    %edi,0x4(%ebx)
+
+For the most part this has gone unnoticed as emulation of guest code
+that can trigger fast emulation is effectively limited to MMIO when
+running on modern hardware, and MMIO is rarely, if ever, accessed by
+instructions that affect or consume flags.
+
+Breakage is almost instantaneous when running with unrestricted guest
+disabled, in which case KVM must emulate all instructions when the guest
+has invalid state, e.g. when the guest is in Big Real Mode during early
+BIOS.
+
+Fixes: 776b043848fd2 ("x86/retpoline: Add initial retpoline support")
+Fixes: 1a29b5b7f347a ("KVM: x86: Make indirect calls in emulator speculation safe")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190822211122.27579-1-sean.j.christopherson@intel.com
+
+---
+ arch/x86/include/asm/nospec-branch.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 109f974..80bc209 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -192,7 +192,7 @@
+ 	"    	lfence;\n"					\
+ 	"       jmp    902b;\n"					\
+ 	"       .align 16\n"					\
+-	"903:	addl   $4, %%esp;\n"				\
++	"903:	lea    4(%%esp), %%esp;\n"			\
+ 	"       pushl  %[thunk_target];\n"			\
+ 	"       ret;\n"						\
+ 	"       .align 16\n"					\
