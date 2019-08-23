@@ -2,128 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59FA19B0A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DACBC9B0CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405446AbfHWNU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 09:20:29 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34425 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404322AbfHWNU0 (ORCPT
+        id S2395132AbfHWNZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 09:25:27 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:33186 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392194AbfHWNZ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 09:20:26 -0400
-Received: by mail-qt1-f193.google.com with SMTP id q4so11144879qtp.1;
-        Fri, 23 Aug 2019 06:20:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1LfnWFWs0YWvUwvqhsL90T++L1EYbaF8DCL5i8TnlTQ=;
-        b=IGcqT2L9Wkft5cAwK651j3W3eBHxve8x0C4MyikQws9NcZLM190a7/AA3JZ1HtXWpy
-         GdGzRMoVVUREaXD/dkNg6XQgREa2yhuygZpG1qGG7MEL2Hf2V3TlohAf1wgBYw4asGVS
-         iZG2a+U7LL18sOQP9/LmObdflOitwFE4afnCDwhPo9LKKZdkGqSxdF18BsijKXc4C+qU
-         I04eNIzpKktFUyypNR34I9HyQBVBufsb9RUKdTcB7yETG7bHE7Od/XvFgGtMSbaUy7Un
-         8iRj4oNsHd+pb7mswL7+8gOIzrxF05qPOBd0o5ksLHEvQCipM/Q8OP9zEV82Cs3yc5oF
-         LzUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1LfnWFWs0YWvUwvqhsL90T++L1EYbaF8DCL5i8TnlTQ=;
-        b=brEH7N+bW7HHW94T6SUYRun/EZFF2317VKNtaId2V02F+V7777R17OrQ+7CF9+goTb
-         JQn3cjTbAP32H9vFiaHgr9d/0ESvU/9PStuCln4Z3m7u7G6lkgudrA27+A0gRurCWo+L
-         uc79PCeKgSrCa3kHxXrFSpH1HXDa66Frzh5m2fcL2OdmYZFk+mnkugI3Ywg1X1LTI0xV
-         quJK/8bJigr+p0i4FQrfJZ1TvvJM0JHX+iKhqtZJng58N/siUrJCX9jZkya2TO7kSLhb
-         5GP56Kifp9riAXEkMtjXTUUtkJg4y2osjK08tvARsEcGvtM8vYCKB/G7leSOHd0+aycI
-         7LDw==
-X-Gm-Message-State: APjAAAWBPRGcR4BiFweSxcMlA76mwU4N19eUnYjmXwuOVZDpR55vzx4a
-        IjNo+f6J+StNbWJNUbbv3KhfxlZ0iRWYXNTl6Zg=
-X-Google-Smtp-Source: APXvYqzwV94dsSIn/VkYPZoc4KCCI+cdmF8oVTo1U8feC63LjNcIddNEQlDaT+/Y6KbvgkLYv+gJ6MnwAOt5WD+BwGo=
-X-Received: by 2002:a0c:abca:: with SMTP id k10mr3794577qvb.177.1566566425657;
- Fri, 23 Aug 2019 06:20:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20190822171243eucas1p12213f2239d6c36be515dade41ed7470b@eucas1p1.samsung.com>
- <20190822171237.20798-1-i.maximets@samsung.com> <CAKgT0UepBGqx=FiqrdC-r3kvkMxVAHonkfc6rDt_HVQuzahZPQ@mail.gmail.com>
- <CALDO+SYhU4krmBO8d4hsDGm+BuUAR4qMv=WzVa=jAx27+g9KnA@mail.gmail.com> <217e90f5-206a-bb80-6699-f6dd750b57d9@intel.com>
-In-Reply-To: <217e90f5-206a-bb80-6699-f6dd750b57d9@intel.com>
-From:   William Tu <u9012063@gmail.com>
-Date:   Fri, 23 Aug 2019 06:19:49 -0700
-Message-ID: <CALDO+SZGXKW_PMrL_AarT3i8WPcM0X=RkEhTnKCDnUkS1cOH0Q@mail.gmail.com>
-Subject: Re: [PATCH net v3] ixgbe: fix double clean of tx descriptors with xdp
-To:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>
-Cc:     Alexander Duyck <alexander.duyck@gmail.com>,
-        Ilya Maximets <i.maximets@samsung.com>,
-        Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        Eelco Chaudron <echaudro@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 23 Aug 2019 09:25:26 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7NDJ8Ij027126;
+        Fri, 23 Aug 2019 13:21:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=ir2AFnt8nALK87m73r2csPIAPLY1tgPuUkiS4h3CCPs=;
+ b=I2RHgf6Hs5F2EG1hIi0iEiGcGkrlAYm8jZQN85BdDUQjwZ6y+ldrrGbV5/kjB8UpPlJM
+ lQ5CCypIIT9y+iKivAysTQ2SvihgWeXjIjumO3HDLdtU22biIaLynvS6W9C+Jk679zDg
+ 5UNBJsIMDV6ifDe3EYMM1TCjntwHOUke4/Pi5qrvlnNlxgAfUGO0uAtpNqRehTmYVwAE
+ 5oid+B5ad5v+UfFx0ozmJFUMOHp8PAYwIlnL7JC/3bgaSjayyiZ1vB0HD12bvjRSklbg
+ M/ykcGxCFo6pkaG24lMQJuw6lRTc5XwrQR0zpuBvj/d4QouW2/rSReDboBxX/WCCz5dG rw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2ue90u4tvg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Aug 2019 13:21:31 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7NDI8vP024465;
+        Fri, 23 Aug 2019 13:21:30 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2uhusfp9ed-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Aug 2019 13:21:30 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7NDLS7o020805;
+        Fri, 23 Aug 2019 13:21:29 GMT
+Received: from [192.168.14.112] (/109.64.228.12)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 23 Aug 2019 06:21:28 -0700
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [RESEND PATCH 04/13] KVM: x86: Drop EMULTYPE_NO_UD_ON_FAIL as a
+ standalone type
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <20190823010709.24879-5-sean.j.christopherson@intel.com>
+Date:   Fri, 23 Aug 2019 16:21:24 +0300
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <4993FDBF-6641-43E9-BCEE-7F5FE58561E9@oracle.com>
+References: <20190823010709.24879-1-sean.j.christopherson@intel.com>
+ <20190823010709.24879-5-sean.j.christopherson@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9357 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908230137
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9357 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908230137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 11:10 PM Bj=C3=B6rn T=C3=B6pel <bjorn.topel@intel.c=
-om> wrote:
->
-> On 2019-08-22 19:32, William Tu wrote:
-> > On Thu, Aug 22, 2019 at 10:21 AM Alexander Duyck
-> > <alexander.duyck@gmail.com> wrote:
-> >>
-> >> On Thu, Aug 22, 2019 at 10:12 AM Ilya Maximets <i.maximets@samsung.com=
-> wrote:
-> >>>
-> >>> Tx code doesn't clear the descriptors' status after cleaning.
-> >>> So, if the budget is larger than number of used elems in a ring, some
-> >>> descriptors will be accounted twice and xsk_umem_complete_tx will mov=
-e
-> >>> prod_tail far beyond the prod_head breaking the completion queue ring=
-.
-> >>>
-> >>> Fix that by limiting the number of descriptors to clean by the number
-> >>> of used descriptors in the tx ring.
-> >>>
-> >>> 'ixgbe_clean_xdp_tx_irq()' function refactored to look more like
-> >>> 'ixgbe_xsk_clean_tx_ring()' since we're allowed to directly use
-> >>> 'next_to_clean' and 'next_to_use' indexes.
-> >>>
-> >>> Fixes: 8221c5eba8c1 ("ixgbe: add AF_XDP zero-copy Tx support")
-> >>> Signed-off-by: Ilya Maximets <i.maximets@samsung.com>
-> >>> ---
-> >>>
-> >>> Version 3:
-> >>>    * Reverted some refactoring made for v2.
-> >>>    * Eliminated 'budget' for tx clean.
-> >>>    * prefetch returned.
-> >>>
-> >>> Version 2:
-> >>>    * 'ixgbe_clean_xdp_tx_irq()' refactored to look more like
-> >>>      'ixgbe_xsk_clean_tx_ring()'.
-> >>>
-> >>>   drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c | 29 ++++++++---------=
----
-> >>>   1 file changed, 11 insertions(+), 18 deletions(-)
-> >>
-> >> Thanks for addressing my concerns.
-> >>
-> >> Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> >
-> > Thanks.
-> >
-> > Tested-by: William Tu <u9012063@gmail.com>
-> >
->
-> Will, thanks for testing! For this patch, did you notice any performance
-> degradation?
->
 
-No noticeable performance degradation seen this time.
-Thanks,
-William
+
+> On 23 Aug 2019, at 4:07, Sean Christopherson =
+<sean.j.christopherson@intel.com> wrote:
+>=20
+> The "no #UD on fail" is used only in the VMWare case, and for the =
+VMWare
+> scenario it really means "#GP instead of #UD on fail".  Remove the =
+flag
+> in preparation for moving all fault injection into the emulation flow
+> itself, which in turn will allow eliminating EMULATE_DONE and company.
+>=20
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+
+When I created the commit which introduced this
+e23661712005 ("KVM: x86: Add emulation_type to not raise #UD on =
+emulation failure")
+I intentionally introduced a new flag to emulation_type instead of using =
+EMULTYPE_VMWARE
+as I thought it=E2=80=99s weird to couple this behaviour specifically =
+with VMware emulation.
+As it made sense to me that there could be more scenarios in which some =
+VMExit handler
+would like to use the x86 emulator but in case of failure want to decide =
+what would be
+the failure handling from the outside. I also didn=E2=80=99t want the =
+x86 emulator to be aware
+of VMware interception internals.
+
+Having said that, one could argue that the x86 emulator already knows =
+about the VMware
+interception internals because of how x86_emulate_instruction() use =
+is_vmware_backdoor_opcode()
+and from the mere existence of EMULTYPE_VMWARE. So I think it=E2=80=99s =
+legit to decide
+that we will just move all the VMware interception logic into the x86 =
+emulator. Including
+handling emulation failures. But then, I would make this patch of yours =
+to also
+modify handle_emulation_failure() to queue #GP to guest directly instead =
+of #GP intercept
+in VMX/SVM to do so.
+I see you do it in a later patch "KVM: x86: Move #GP injection for =
+VMware into x86_emulate_instruction()"
+but I think this should just be squashed with this patch to make sense.
+
+To sum-up, I agree with your approach but I recommend you squash this =
+patch and patch 6 of the series to one
+and change commit message to explain that you just move entire handling =
+of VMware interception into
+the x86 emulator. Instead of providing explanations such as VMware =
+emulation is the only one that use
+=E2=80=9Cno #UD on fail=E2=80=9D.
+
+The diff itself looks fine to me, therefore:
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+
+-Liran
+
+
+> ---
+> arch/x86/include/asm/kvm_host.h | 1 -
+> arch/x86/kvm/svm.c              | 3 +--
+> arch/x86/kvm/vmx/vmx.c          | 3 +--
+> arch/x86/kvm/x86.c              | 2 +-
+> 4 files changed, 3 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/arch/x86/include/asm/kvm_host.h =
+b/arch/x86/include/asm/kvm_host.h
+> index 44a5ce57a905..dd6bd9ed0839 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1318,7 +1318,6 @@ enum emulation_result {
+> #define EMULTYPE_TRAP_UD	    (1 << 1)
+> #define EMULTYPE_SKIP		    (1 << 2)
+> #define EMULTYPE_ALLOW_RETRY	    (1 << 3)
+> -#define EMULTYPE_NO_UD_ON_FAIL	    (1 << 4)
+> #define EMULTYPE_VMWARE		    (1 << 5)
+> int kvm_emulate_instruction(struct kvm_vcpu *vcpu, int =
+emulation_type);
+> int kvm_emulate_instruction_from_buffer(struct kvm_vcpu *vcpu,
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 1f220a85514f..5a42f9c70014 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -2772,8 +2772,7 @@ static int gp_interception(struct vcpu_svm *svm)
+>=20
+> 	WARN_ON_ONCE(!enable_vmware_backdoor);
+>=20
+> -	er =3D kvm_emulate_instruction(vcpu,
+> -		EMULTYPE_VMWARE | EMULTYPE_NO_UD_ON_FAIL);
+> +	er =3D kvm_emulate_instruction(vcpu, EMULTYPE_VMWARE);
+> 	if (er =3D=3D EMULATE_USER_EXIT)
+> 		return 0;
+> 	else if (er !=3D EMULATE_DONE)
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index 18286e5b5983..6ecf773825e2 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -4509,8 +4509,7 @@ static int handle_exception_nmi(struct kvm_vcpu =
+*vcpu)
+>=20
+> 	if (!vmx->rmode.vm86_active && is_gp_fault(intr_info)) {
+> 		WARN_ON_ONCE(!enable_vmware_backdoor);
+> -		er =3D kvm_emulate_instruction(vcpu,
+> -			EMULTYPE_VMWARE | EMULTYPE_NO_UD_ON_FAIL);
+> +		er =3D kvm_emulate_instruction(vcpu, EMULTYPE_VMWARE);
+> 		if (er =3D=3D EMULATE_USER_EXIT)
+> 			return 0;
+> 		else if (er !=3D EMULATE_DONE)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index fe847f8eb947..e0f0e14d8fac 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6210,7 +6210,7 @@ static int handle_emulation_failure(struct =
+kvm_vcpu *vcpu, int emulation_type)
+> 	++vcpu->stat.insn_emulation_fail;
+> 	trace_kvm_emulate_insn_failed(vcpu);
+>=20
+> -	if (emulation_type & EMULTYPE_NO_UD_ON_FAIL)
+> +	if (emulation_type & EMULTYPE_VMWARE)
+> 		return EMULATE_FAIL;
+>=20
+> 	kvm_queue_exception(vcpu, UD_VECTOR);
+> --=20
+> 2.22.0
+>=20
+
