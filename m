@@ -2,154 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5554F9A544
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 096109A54D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:12:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389286AbfHWCMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 22:12:09 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56346 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730401AbfHWCMI (ORCPT
+        id S2389466AbfHWCMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 22:12:21 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33711 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389300AbfHWCMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 22:12:08 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7N29Pp7027687;
-        Thu, 22 Aug 2019 22:11:53 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uj3jqxdp7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Aug 2019 22:11:53 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7N2Bdd1032424;
-        Thu, 22 Aug 2019 22:11:52 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uj3jqxdnr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Aug 2019 22:11:52 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7N24beW014765;
-        Fri, 23 Aug 2019 02:11:51 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma02dal.us.ibm.com with ESMTP id 2ue976uuxr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 23 Aug 2019 02:11:51 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7N2BpKl33554896
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Aug 2019 02:11:51 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16D60B205F;
-        Fri, 23 Aug 2019 02:11:51 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D4FAFB2064;
-        Fri, 23 Aug 2019 02:11:50 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.73])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 23 Aug 2019 02:11:50 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A48D616C1D4F; Thu, 22 Aug 2019 19:11:50 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 19:11:50 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Scott Wood <swood@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Clark Williams <williams@redhat.com>
-Subject: Re: [PATCH RT v2 1/3] rcu: Acquire RCU lock when disabling BHs
-Message-ID: <20190823021150.GM28441@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <20190821231906.4224-1-swood@redhat.com>
- <20190821231906.4224-2-swood@redhat.com>
- <20190821233358.GU28441@linux.ibm.com>
- <20190822133955.GA29841@google.com>
- <20190822152706.GB28441@linux.ibm.com>
- <20190823015009.GA152050@google.com>
+        Thu, 22 Aug 2019 22:12:18 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1i0z3n-0000wA-45; Fri, 23 Aug 2019 04:12:15 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C578E1C0883;
+        Fri, 23 Aug 2019 04:12:14 +0200 (CEST)
+Date:   Fri, 23 Aug 2019 02:12:14 -0000
+From:   tip-bot2 for Thomas Gleixner <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] posix-cpu-timers: Sanitize bogus WARNONS
+Cc:     linux-kernel@vger.kernel.org,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+In-Reply-To: <20190819143801.846497772@linutronix.de>
+References: <20190819143801.846497772@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Message-ID: <156652633476.11645.833680996843703655.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from
+ these emails
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190823015009.GA152050@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-22_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908230021
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 09:50:09PM -0400, Joel Fernandes wrote:
-> On Thu, Aug 22, 2019 at 08:27:06AM -0700, Paul E. McKenney wrote:
-> > On Thu, Aug 22, 2019 at 09:39:55AM -0400, Joel Fernandes wrote:
-> > > On Wed, Aug 21, 2019 at 04:33:58PM -0700, Paul E. McKenney wrote:
-> > > > On Wed, Aug 21, 2019 at 06:19:04PM -0500, Scott Wood wrote:
-> > > > > A plain local_bh_disable() is documented as creating an RCU critical
-> > > > > section, and (at least) rcutorture expects this to be the case.  However,
-> > > > > in_softirq() doesn't block a grace period on PREEMPT_RT, since RCU checks
-> > > > > preempt_count() directly.  Even if RCU were changed to check
-> > > > > in_softirq(), that wouldn't allow blocked BH disablers to be boosted.
-> > > > > 
-> > > > > Fix this by calling rcu_read_lock() from local_bh_disable(), and update
-> > > > > rcu_read_lock_bh_held() accordingly.
-> > > > 
-> > > > Cool!  Some questions and comments below.
-> > > > 
-> > > > 							Thanx, Paul
-> > > > 
-> > > > > Signed-off-by: Scott Wood <swood@redhat.com>
-> > > > > ---
-> > > > > Another question is whether non-raw spinlocks are intended to create an
-> > > > > RCU read-side critical section due to implicit preempt disable.
-> > > > 
-> > > > Hmmm...  Did non-raw spinlocks act like rcu_read_lock_sched()
-> > > > and rcu_read_unlock_sched() pairs in -rt prior to the RCU flavor
-> > > > consolidation?  If not, I don't see why they should do so after that
-> > > > consolidation in -rt.
-> > > 
-> > > May be I am missing something, but I didn't see the connection between
-> > > consolidation and this patch. AFAICS, this patch is so that
-> > > rcu_read_lock_bh_held() works at all on -rt. Did I badly miss something?
-> > 
-> > I was interpreting Scott's question (which would be excluded from the
-> > git commit log) as relating to a possible follow-on patch.
-> > 
-> > The question is "how special can non-raw spinlocks be in -rt?".  From what
-> > I can see, they have been treated as sleeplocks from an RCU viewpoint,
-> > so maybe that should continue to be the case.  It does deserve some
-> > thought because in mainline a non-raw spinlock really would block a
-> > post-consolidation RCU grace period, even in PREEMPT kernels.
-> > 
-> > But then again, you cannot preempt a non-raw spinlock in mainline but
-> > you can in -rt, so extending that exception to RCU is not unreasonable.
-> > 
-> > Either way, we do need to make a definite decision and document it.
-> > If I were forced to make a decision right now, I would follow the old
-> > behavior, so that only raw spinlocks were guaranteed to block RCU grace
-> > periods.  But I am not being forced, so let's actually discuss and make
-> > a conscious decision.  ;-)
-> 
-> I think non-raw spinlocks on -rt should at least do rcu_read_lock() so that
-> any driver or kernel code that depends on this behavior and works on non-rt
-> also works on -rt. It also removes the chance a kernel developer may miss
-> documentation and accidentally forget that their code may break on -rt. I am
-> curious to see how much this design pattern appears in the kernel
-> (spin_lock'ed section "intended" as an RCU-reader by code sequences).
-> 
-> Logically speaking, to me anything that disables preemption on non-RT should
-> do rcu_read_lock() on -rt so that from RCU's perspective, things are working.
-> But I wonder where we would draw the line and if the bar is to need actual
-> examples of usage patterns to make a decision..
-> 
-> Any thoughts?
+The following commit has been merged into the timers/core branch of tip:
 
-Yes.  Let's listen to what the -rt guys have to say.  After all, they
-are the ones who would be dealing with any differences in semantics.
+Commit-ID:     692117c1f7a6770ed41dd8f277cd9fed1dfb16f1
+Gitweb:        https://git.kernel.org/tip/692117c1f7a6770ed41dd8f277cd9fed1dfb16f1
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 19 Aug 2019 16:31:46 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 21 Aug 2019 20:27:15 +02:00
 
-							Thanx, Paul
+posix-cpu-timers: Sanitize bogus WARNONS
+
+Warning when p == NULL and then proceeding and dereferencing p does not
+make any sense as the kernel will crash with a NULL pointer dereference
+right away.
+
+Bailing out when p == NULL and returning an error code does not cure the
+underlying problem which caused p to be NULL. Though it might allow to
+do proper debugging.
+
+Same applies to the clock id check in set_process_cpu_timer().
+
+Clean them up and make them return without trying to do further damage.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lkml.kernel.org/r/20190819143801.846497772@linutronix.de
+
+---
+ kernel/time/posix-cpu-timers.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
+
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index 742d4a4..98223d2 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -375,7 +375,8 @@ static int posix_cpu_timer_del(struct k_itimer *timer)
+ 	struct sighand_struct *sighand;
+ 	struct task_struct *p = timer->it.cpu.task;
+ 
+-	WARN_ON_ONCE(p == NULL);
++	if (WARN_ON_ONCE(!p))
++		return -EINVAL;
+ 
+ 	/*
+ 	 * Protect against sighand release/switch in exit/exec and process/
+@@ -581,7 +582,8 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 	u64 old_expires, new_expires, old_incr, val;
+ 	int ret;
+ 
+-	WARN_ON_ONCE(p == NULL);
++	if (WARN_ON_ONCE(!p))
++		return -EINVAL;
+ 
+ 	/*
+ 	 * Use the to_ktime conversion because that clamps the maximum
+@@ -716,10 +718,11 @@ static int posix_cpu_timer_set(struct k_itimer *timer, int timer_flags,
+ 
+ static void posix_cpu_timer_get(struct k_itimer *timer, struct itimerspec64 *itp)
+ {
+-	u64 now;
+ 	struct task_struct *p = timer->it.cpu.task;
++	u64 now;
+ 
+-	WARN_ON_ONCE(p == NULL);
++	if (WARN_ON_ONCE(!p))
++		return;
+ 
+ 	/*
+ 	 * Easy part: convert the reload time.
+@@ -1001,12 +1004,13 @@ static void check_process_timers(struct task_struct *tsk,
+  */
+ static void posix_cpu_timer_rearm(struct k_itimer *timer)
+ {
++	struct task_struct *p = timer->it.cpu.task;
+ 	struct sighand_struct *sighand;
+ 	unsigned long flags;
+-	struct task_struct *p = timer->it.cpu.task;
+ 	u64 now;
+ 
+-	WARN_ON_ONCE(p == NULL);
++	if (WARN_ON_ONCE(!p))
++		return;
+ 
+ 	/*
+ 	 * Fetch the current sample and update the timer's expiry time.
+@@ -1203,7 +1207,9 @@ void set_process_cpu_timer(struct task_struct *tsk, unsigned int clock_idx,
+ 	u64 now;
+ 	int ret;
+ 
+-	WARN_ON_ONCE(clock_idx == CPUCLOCK_SCHED);
++	if (WARN_ON_ONCE(clock_idx >= CPUCLOCK_SCHED))
++		return;
++
+ 	ret = cpu_timer_sample_group(clock_idx, tsk, &now);
+ 
+ 	if (oldval && ret != -EINVAL) {
