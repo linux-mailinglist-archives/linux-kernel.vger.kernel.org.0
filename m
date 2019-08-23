@@ -2,100 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E3EA9A7D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 08:52:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 829DF9A7DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 08:54:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404575AbfHWGwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 02:52:18 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38238 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732321AbfHWGwR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 02:52:17 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x3so7852640lji.5
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 23:52:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=G5vut+/7GfWn6npImvF9Rc3EcWl6Bwqxpc3Tm/7byaQ=;
-        b=MVIXR6k8i6ZWuPASEFHHR9F0nPCzK0eVjc8PYz7FptLy2OJujuacqW6lgWGhwQySFz
-         3QAySOWoE9nAwQwl1xLEODlrOsAyBMu2u04vibbBBVpvxgU2d/d9lFgSf123gf2E114D
-         /jPW1MjyPfCGwgmewUy7qWtuRuFl0ZdoBgJUXWuNSSUvkanykJHAMib9ZE1FHuoQnZgx
-         XzaapAMFiJGaBP/N7hmC43ow43jjVG9Li0erAVdh6tyQNjy9HmQDLOQfs/eqEiCTGeze
-         cBBi02p/e6U/e0HvajIHRSQG3k6yQHhDjihSPwrKZVq8gfHYtJswFQUJzcr833qCT5/D
-         N/8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G5vut+/7GfWn6npImvF9Rc3EcWl6Bwqxpc3Tm/7byaQ=;
-        b=LWIErfarRSOpmgJrN1KVx/FZjuZHWI3LzWqAqX+rCIkvrCeiG8UvLWEJF+C/pk5Bns
-         GVEcSlAp4ZCzpIAar1gQI3/yHNtjpV0q2A8CTQJPZ+BAYi6yKwhRX5yNNDUYZOjMj/sb
-         F/9Z/i8c/UKWHBuDXkDRA9YozR8t2f3sG0amHJMDnpznKqbxjMtzquicvGSQ6oH5SyGA
-         pkpoQrlM/Iioh3WLxJuM8J992hXxFOxp/5Lp2MVTyZLj70/u/bphJSy9cKTHaVM2Ao01
-         psh0awH/A6w8LAYwil344ihXtlCXYReZrv1hSftQKvYXWe9T4v/ybhQfk8khfFZK4tRk
-         FWzQ==
-X-Gm-Message-State: APjAAAWuv9h8StnYWNEGYjFjpoPABzuA1GfybyWQxjQ4UpRQXlHPwzOa
-        8eXntRhWkB4g/ZJL/9/osSc2/H2xrsNKj+l4sKDfHg==
-X-Google-Smtp-Source: APXvYqyEKzwPdx0ZjJjocJJunKwmjsRZdIowtZKK6Batd8JU0Y56aba6StNeDVmOZui0Y27K+B6WJCN6um5Z3JBIC5I=
-X-Received: by 2002:a2e:80da:: with SMTP id r26mr1814316ljg.62.1566543135677;
- Thu, 22 Aug 2019 23:52:15 -0700 (PDT)
+        id S2404732AbfHWGyx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 02:54:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404303AbfHWGyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 02:54:52 -0400
+Received: from localhost (unknown [106.200.210.161])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BC7921726;
+        Fri, 23 Aug 2019 06:54:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566543291;
+        bh=W+qn+QOwSKG7puhON5UFJGrv26xyv8xtSb5V5rMP7E4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=wDmw9L/HlwxOz/CUNginISgXT6bUGd2KhGdfkcMeC4UfHm55bRlNgTmgwsHlc6He7
+         foWdCjK+8jN0DVJjHT5qJpJGJU1yyHW+6Xw/e6QdqHfDxLRMhT6AdJdBm8KWdmTqw/
+         +Dp1q0feQqbW0+sTAnHu9FpRqt6FoRiIlF55x4FU=
+Date:   Fri, 23 Aug 2019 12:23:40 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, robh+dt@kernel.org, spapothi@codeaurora.org,
+        bgoswami@codeaurora.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        devicetree@vger.kernel.org
+Subject: Re: [RESEND PATCH v4 1/4] dt-bindings: soundwire: add slave bindings
+Message-ID: <20190823065340.GD2672@vkoul-mobl>
+References: <20190822233759.12663-1-srinivas.kandagatla@linaro.org>
+ <20190822233759.12663-2-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-References: <1565707585-5359-1-git-send-email-jcrouse@codeaurora.org> <1565707585-5359-2-git-send-email-jcrouse@codeaurora.org>
-In-Reply-To: <1565707585-5359-2-git-send-email-jcrouse@codeaurora.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 23 Aug 2019 08:52:04 +0200
-Message-ID: <CACRpkdbtPo9dr7E2hZ4=fEWTXappWTaypKJyd9M2jz0tYu7HXw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] arm: Add DRM_MSM to defconfigs with ARCH_QCOM
-To:     Jordan Crouse <jcrouse@codeaurora.org>,
-        Andy Gross <agross@kernel.org>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Olof Johansson <olof@lixom.net>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        =?UTF-8?Q?Yannick_Fertr=C3=A9?= <yannick.fertre@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Anson Huang <Anson.Huang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822233759.12663-2-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 4:46 PM Jordan Crouse <jcrouse@codeaurora.org> wrote:
+On 23-08-19, 00:37, Srinivas Kandagatla wrote:
+> This patch adds bindings for Soundwire Slave devices that includes how
+> SoundWire enumeration address and Link ID are used to represented in
+> SoundWire slave device tree nodes.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../soundwire/soundwire-controller.yaml       | 75 +++++++++++++++++++
+>  1 file changed, 75 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml b/Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml
+> new file mode 100644
+> index 000000000000..91aa6c6d6266
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml
+> @@ -0,0 +1,75 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soundwire/soundwire-controller.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: SoundWire Controller Generic Binding
 
-> Now that CONFIG_DRM_MSM is no longer default 'y' add it as a module to all
-> ARCH_QCOM enabled defconfigs to restore the previous expected build
-> behavior.
->
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+Controller does not make sense here, why not use spec terminology and
+say "SoundWire Slave Generic Binding"
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> +
+> +maintainers:
+> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> +
+> +description: |
+> +  SoundWire busses can be described with a node for the SoundWire controller
+> +  device and a set of child nodes for each SoundWire slave on the bus.
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: "^soundwire(@.*|-[0-9a-f])*$"
+> +
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^.*@[0-9a-f]+$":
+> +    type: object
+> +
+> +    properties:
+> +      compatible:
+> +      pattern: "^sdw[0-9][0-9a-f]{4}[0-9a-f]{4}[0-9a-f]{2}$"
+> +      description:
+> +	  Is the textual representation of SoundWire Enumeration
+> +	  address. compatible string should contain SoundWire Version ID,
+> +	  Manufacturer ID, Part ID and Class ID in order and shall be in
+> +	  lower-case hexadecimal with leading zeroes.
+> +	  Valid sizes of these fields are
+> +	  Version ID is 1 nibble, number '0x1' represents SoundWire 1.0
+> +	  and '0x2' represents SoundWire 1.1 and so on.
+> +	  MFD is 4 nibbles
+> +	  PID is 4 nibbles
+> +	  CID is 2 nibbles
+> +	  More Information on detail of encoding of these fields can be
+> +	  found in MIPI Alliance DisCo & SoundWire 1.0 Specifications.
+> +
+> +      reg:
+> +        maxItems: 1
+> +        description:
+> +          Instance ID and Link ID of SoundWire Device Address.
 
-I suppose Andy will pick this up?
+This looks better :) Thanks.
 
-Yours,
-Linus Walleij
+Apart from the minor nit above this looks good to me, I can merge the
+sdw parts if Rob is fine with them.
+
+Thanks
+
+> +
+> +    required:
+> +      - compatible
+> +      - reg
+> +
+> +examples:
+> +  - |
+> +    soundwire@c2d0000 {
+> +        #address-cells = <2>;
+> +        #size-cells = <0>;
+> +        compatible = "qcom,soundwire-v1.5.0";
+> +        reg = <0x0c2d0000 0x2000>;
+> +
+> +        speaker@1 {
+> +            compatible = "sdw10217201000";
+> +            reg = <1 0>;
+> +        };
+> +
+> +        speaker@2 {
+> +            compatible = "sdw10217201000";
+> +            reg = <2 0>;
+> +        };
+> +    };
+> +
+> +...
+> -- 
+> 2.21.0
+
+-- 
+~Vinod
