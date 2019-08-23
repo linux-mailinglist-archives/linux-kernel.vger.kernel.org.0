@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1474D9ADD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 13:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D13AC9ADC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 13:02:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405016AbfHWLCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 07:02:49 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56462 "EHLO
+        id S2404444AbfHWLCm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 07:02:42 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56458 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403857AbfHWLCa (ORCPT
+        with ESMTP id S2403794AbfHWLCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 23 Aug 2019 07:02:30 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,26 +18,26 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=81XkYAt1dlSIAEhjcYLBf1Q8HHzaz4ERhe2Y36L5NpU=; b=HA+ZvtLmbC5b
-        2CMe30cWTu+37mZVf6jhdYOzE/2v5+oiRnQoFhWodGW8rGsjKQM9A/8S92CVLkHc1ha893mE5y4UP
-        5oeHZngsl8rpdmKOH1pqStlzux82HGoKqS27JxA9eygefyRGX84QfBQAFaRUaKY8ZY8uapEp3UjxI
-        SN0fg=;
+        List-Archive; bh=mN+5b9C6EttW1899uSNoCDw/gN4YKOp8DqLkxZDEmeY=; b=cU3D6gDFstnb
+        NuFIihqPal2LO/DWdOQ476GsOpHQyQmxDTvG1SpUbKLk9jTbFFmFzDnd87MMe59wEUSYyEze9bC8W
+        hf7vv+LYzrYF44g5SHsmyUKXOLCp332O91XyWd2CdndzKQVQ4RLprK+GSAyZXX02o0CIkRDxNKuoo
+        TPlUw=;
 Received: from [92.54.175.117] (helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1i17Kt-0002wH-IE; Fri, 23 Aug 2019 11:02:27 +0000
+        id 1i17Kt-0002wF-De; Fri, 23 Aug 2019 11:02:27 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 4885AD02CD3; Fri, 23 Aug 2019 12:02:27 +0100 (BST)
+        id 24769D02CD0; Fri, 23 Aug 2019 12:02:27 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Vladimir Oltean <olteanv@gmail.com>
 Cc:     broonie@kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
         Mark Brown <broonie@kernel.org>, netdev@vger.kernel.org
-Subject: Applied "spi: spi-fsl-dspi: Reduce indentation level in dspi_interrupt" to the spi tree
-In-Reply-To: <20190822211514.19288-2-olteanv@gmail.com>
+Subject: Applied "spi: spi-fsl-dspi: Remove impossible to reach error check" to the spi tree
+In-Reply-To: <20190822211514.19288-4-olteanv@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190823110227.4885AD02CD3@fitzroy.sirena.org.uk>
+Message-Id: <20190823110227.24769D02CD0@fitzroy.sirena.org.uk>
 Date:   Fri, 23 Aug 2019 12:02:27 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,7 +46,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: spi-fsl-dspi: Reduce indentation level in dspi_interrupt
+   spi: spi-fsl-dspi: Remove impossible to reach error check
 
 has been applied to the spi tree at
 
@@ -71,115 +71,72 @@ to this mail.
 Thanks,
 Mark
 
-From 12fb61a973935c63f2580b3b053017cc14b51f42 Mon Sep 17 00:00:00 2001
+From 1eaeba70738e723be1e5787bdfd9a30f7471d730 Mon Sep 17 00:00:00 2001
 From: Vladimir Oltean <olteanv@gmail.com>
-Date: Fri, 23 Aug 2019 00:15:10 +0300
-Subject: [PATCH] spi: spi-fsl-dspi: Reduce indentation level in dspi_interrupt
+Date: Fri, 23 Aug 2019 00:15:12 +0300
+Subject: [PATCH] spi: spi-fsl-dspi: Remove impossible to reach error check
 
-If the entire function depends on the SPI status register having the
-interrupt bits asserted, then just check it and exit early if those bits
-aren't set (such as in the case of the shared IRQ being triggered for
-the other peripheral). Cosmetic patch.
+dspi->devtype_data is under the total control of the driver. Therefore,
+a bad value is a driver bug and checking it at runtime (and during an
+ISR, at that!) is pointless.
+
+The second "else if" check is only for clarity (instead of a broader
+"else") in case other transfer modes are added in the future. But the
+printing is dead code and can be removed.
 
 Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
-Link: https://lore.kernel.org/r/20190822211514.19288-2-olteanv@gmail.com
+Link: https://lore.kernel.org/r/20190822211514.19288-4-olteanv@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-fsl-dspi.c | 79 +++++++++++++++++++-------------------
- 1 file changed, 40 insertions(+), 39 deletions(-)
+ drivers/spi/spi-fsl-dspi.c | 24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 790cb02fc181..c90db7db4121 100644
+index 6ef2279a3699..6d2c7984ab0e 100644
 --- a/drivers/spi/spi-fsl-dspi.c
 +++ b/drivers/spi/spi-fsl-dspi.c
-@@ -658,47 +658,48 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
- 	regmap_read(dspi->regmap, SPI_SR, &spi_sr);
- 	regmap_write(dspi->regmap, SPI_SR, spi_sr);
+@@ -670,18 +670,10 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
+ 	msg->actual_length += spi_tcnt * dspi->bytes_per_word;
  
-+	if (!(spi_sr & (SPI_SR_EOQF | SPI_SR_TCFQF)))
-+		return IRQ_HANDLED;
-+
-+	/* Get transfer counter (in number of SPI transfers). It was
-+	 * reset to 0 when transfer(s) were started.
-+	 */
-+	regmap_read(dspi->regmap, SPI_TCR, &spi_tcr);
-+	spi_tcnt = SPI_TCR_GET_TCNT(spi_tcr);
-+	/* Update total number of bytes that were transferred */
-+	msg->actual_length += spi_tcnt * dspi->bytes_per_word;
-+
-+	trans_mode = dspi->devtype_data->trans_mode;
-+	switch (trans_mode) {
-+	case DSPI_EOQ_MODE:
-+		dspi_eoq_read(dspi);
-+		break;
-+	case DSPI_TCFQ_MODE:
-+		dspi_tcfq_read(dspi);
-+		break;
-+	default:
-+		dev_err(&dspi->pdev->dev, "unsupported trans_mode %u\n",
-+			trans_mode);
-+			return IRQ_HANDLED;
-+	}
+ 	trans_mode = dspi->devtype_data->trans_mode;
+-	switch (trans_mode) {
+-	case DSPI_EOQ_MODE:
++	if (trans_mode == DSPI_EOQ_MODE)
+ 		dspi_eoq_read(dspi);
+-		break;
+-	case DSPI_TCFQ_MODE:
++	else if (trans_mode == DSPI_TCFQ_MODE)
+ 		dspi_tcfq_read(dspi);
+-		break;
+-	default:
+-		dev_err(&dspi->pdev->dev, "unsupported trans_mode %u\n",
+-			trans_mode);
+-			return IRQ_HANDLED;
+-	}
  
--	if (spi_sr & (SPI_SR_EOQF | SPI_SR_TCFQF)) {
--		/* Get transfer counter (in number of SPI transfers). It was
--		 * reset to 0 when transfer(s) were started.
--		 */
--		regmap_read(dspi->regmap, SPI_TCR, &spi_tcr);
--		spi_tcnt = SPI_TCR_GET_TCNT(spi_tcr);
--		/* Update total number of bytes that were transferred */
--		msg->actual_length += spi_tcnt * dspi->bytes_per_word;
--
--		trans_mode = dspi->devtype_data->trans_mode;
--		switch (trans_mode) {
--		case DSPI_EOQ_MODE:
--			dspi_eoq_read(dspi);
--			break;
--		case DSPI_TCFQ_MODE:
--			dspi_tcfq_read(dspi);
--			break;
--		default:
--			dev_err(&dspi->pdev->dev, "unsupported trans_mode %u\n",
--				trans_mode);
--				return IRQ_HANDLED;
--		}
-+	if (!dspi->len) {
-+		dspi->waitflags = 1;
-+		wake_up_interruptible(&dspi->waitq);
-+		return IRQ_HANDLED;
-+	}
- 
--		if (!dspi->len) {
--			dspi->waitflags = 1;
--			wake_up_interruptible(&dspi->waitq);
--		} else {
--			switch (trans_mode) {
--			case DSPI_EOQ_MODE:
--				dspi_eoq_write(dspi);
--				break;
--			case DSPI_TCFQ_MODE:
--				dspi_tcfq_write(dspi);
--				break;
--			default:
--				dev_err(&dspi->pdev->dev,
--					"unsupported trans_mode %u\n",
--					trans_mode);
--			}
--		}
-+	switch (trans_mode) {
-+	case DSPI_EOQ_MODE:
-+		dspi_eoq_write(dspi);
-+		break;
-+	case DSPI_TCFQ_MODE:
-+		dspi_tcfq_write(dspi);
-+		break;
-+	default:
-+		dev_err(&dspi->pdev->dev,
-+			"unsupported trans_mode %u\n",
-+			trans_mode);
+ 	if (!dspi->len) {
+ 		dspi->waitflags = 1;
+@@ -689,18 +681,10 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
+ 		return IRQ_HANDLED;
  	}
  
+-	switch (trans_mode) {
+-	case DSPI_EOQ_MODE:
++	if (trans_mode == DSPI_EOQ_MODE)
+ 		dspi_eoq_write(dspi);
+-		break;
+-	case DSPI_TCFQ_MODE:
++	else if (trans_mode == DSPI_TCFQ_MODE)
+ 		dspi_tcfq_write(dspi);
+-		break;
+-	default:
+-		dev_err(&dspi->pdev->dev,
+-			"unsupported trans_mode %u\n",
+-			trans_mode);
+-	}
+ 
  	return IRQ_HANDLED;
+ }
 -- 
 2.20.1
 
