@@ -2,74 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176289B034
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C16EC9B03B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:00:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395105AbfHWM5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:57:04 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52789 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389296AbfHWM5D (ORCPT
+        id S2395115AbfHWM72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:59:28 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:33190 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393400AbfHWM72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:57:03 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1i197f-0006X5-4Y; Fri, 23 Aug 2019 14:56:55 +0200
-Message-ID: <1566565015.3023.16.camel@pengutronix.de>
-Subject: Re: [PATCH v3 2/7] Documentation: media: Describe
- V4L2_CID_UNIT_CELL_SIZE
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo@jmondi.org>
-Date:   Fri, 23 Aug 2019 14:56:55 +0200
-In-Reply-To: <20190823123737.7774-2-ribalda@kernel.org>
-References: <20190823123737.7774-1-ribalda@kernel.org>
-         <20190823123737.7774-2-ribalda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u2 
-Mime-Version: 1.0
+        Fri, 23 Aug 2019 08:59:28 -0400
+Received: by mail-io1-f67.google.com with SMTP id z3so19904351iog.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 05:59:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=DnAs7nFCuaLO5vNRp2s9zp3poLpxa7urFlzYqE5ngiA=;
+        b=XN0lurOhtrkg36L2GKpPmfwcg84uyeTErti9SvwVgj4iarL8w4lhLLcfRPV4+pNjY9
+         Iysq32EmrKX0UgEfiRaxEmCQdvwBttlwFVUK4OFyTbtzI8oaW6tmR423cXRlWgBke1WZ
+         eEX3LdbycRD6/jLFjQ6YAv+YAlQcgbtlml3mNswVGBWsloV9t781MT46I3t0jPu5oUIL
+         9f6NBbUcLuCTtNVjYQuQYoxYjva1XkkOnVmHtHLqxKgzNaOpqLstK8c2ufEPiYp9rXSb
+         PAcnc60JMGOjj7EX+885raJADrCHUtp4TzEVyNrf3bnXEe6Zk+sHeRmqLHgyfshk5rXV
+         AVSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DnAs7nFCuaLO5vNRp2s9zp3poLpxa7urFlzYqE5ngiA=;
+        b=osXUaJG6otcNq0n5z/UrEeAlGFkYIxuKX04buJk+SRkIH8L/LkxSPGDgq7w7VMHjln
+         CskFG6UVuQPbaqZExBog9wbiNoytCoebfg0PrkACfXRUCFEzaWXUYm7Jzj9RGUF8gt1m
+         gQm0CiBVW6W7jQFVrRUaulSVrvSwYEcOmb8KuTClHQJRDIwdu8DGFkno7NtPIXAee2se
+         XerDqOQHMBhVWErbP2Uww4ma7UGKpPBCiDyk5GvnkG4wSLvmHdRkfnwsis144sYlZ5GO
+         YwvYahDf9yoeqrpQRF9fyl34W7NDbvK1xTldMORjVbkLAONSkyGtzU1MrjdAsk49o94P
+         nTGQ==
+X-Gm-Message-State: APjAAAUhs8CvV383IHV9mDZy9Zv2fzHT6BKrkBkYU1eSlVyW/h8nRAkj
+        /pKwWE6oxWYW9cSEeWDvcBT93SzmzXkeag==
+X-Google-Smtp-Source: APXvYqy17/d6MTFbBNYw/eobqwz9FFA2Omm4QpHzDJfN7FQvbrvR5+tA2fJweHfKHlis0EsHyfoIGg==
+X-Received: by 2002:a6b:7807:: with SMTP id j7mr6789350iom.224.1566565167620;
+        Fri, 23 Aug 2019 05:59:27 -0700 (PDT)
+Received: from [192.168.1.50] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id v12sm2372300ios.16.2019.08.23.05.59.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 23 Aug 2019 05:59:26 -0700 (PDT)
+Subject: Re: [PATCH v7] ata/pata_buddha: Probe via modalias instead of
+ initcall
+To:     Max Staudt <max@enpas.org>, b.zolnierkie@samsung.com
+Cc:     linux-ide@vger.kernel.org, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org, glaubitz@physik.fu-berlin.de,
+        schmitzmic@gmail.com, geert@linux-m68k.org
+References: <20190823104911.6840-1-max@enpas.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <875526ec-e514-362a-8730-6424bd10b517@kernel.dk>
+Date:   Fri, 23 Aug 2019 06:59:25 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190823104911.6840-1-max@enpas.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-08-23 at 14:37 +0200, Ricardo Ribalda Delgado wrote:
-> New control to pass to userspace the width/height of a pixel. Which is
-> needed for calibration and lens selection.
-> 
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
->  Documentation/media/uapi/v4l/ext-ctrls-image-source.rst | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst b/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
-> index 2c3ab5796d76..6e728accf67b 100644
-> --- a/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
-> +++ b/Documentation/media/uapi/v4l/ext-ctrls-image-source.rst
-> @@ -55,3 +55,11 @@ Image Source Control IDs
->  
->  ``V4L2_CID_TEST_PATTERN_GREENB (integer)``
->      Test pattern green (next to blue) colour component.
-> +
-> +``V4L2_CID_UNIT_CELL_SIZE (struct)``
-> +    This control returns the unit cell size in nanometres. The struct provides
-> +    the width and the height in separated fields to take into consideration
-> +    asymmetric pixels and/or hardware binning.
-> +    The unit cell consists of the whole area of the pixel, sensitive and
-> +    non-sensitive.
-> +    This control is required for automatic calibration sensors/cameras.
+On 8/23/19 4:49 AM, Max Staudt wrote:
+> Up until now, the pata_buddha driver would only check for cards on
+> initcall time. Now, the kernel will call its probe function as soon
+> as a compatible card is detected.
 
-Can we have a link from here to the struct v4l2_area documentation?
+Applied for 5.4, thanks everyone.
 
-regards
-Philipp
+-- 
+Jens Axboe
+
