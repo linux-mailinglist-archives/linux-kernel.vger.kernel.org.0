@@ -2,96 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 728879B620
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 20:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C56669B623
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 20:18:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405087AbfHWSNv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 14:13:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50022 "EHLO mail.kernel.org"
+        id S2405204AbfHWSOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 14:14:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:37948 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404488AbfHWSNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 14:13:51 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E90D621848;
-        Fri, 23 Aug 2019 18:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566584030;
-        bh=0xCTw48rry1GjSWCA20nVEdZYRx5dvv2Tbjic/QpYPY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j3tW81QpTB4r67eNegKPJ86zydDCKm1MRiXRPdCkc4qp949w72IBq4QydoGi5xGp9
-         LBXwnh2eI8YZD/1fF1yl4nIf4m7PQZgkBEgqwcYY1s27N+TUI3QexUE6fG/2jwjmgN
-         R64GaEWxd78Sdbut6vtF4HYAxYbnnbe7AwjtHkDE=
-Date:   Fri, 23 Aug 2019 20:13:48 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [patch V2 23/38] posix-cpu-timers: Switch check_*_timers() to
- array cache
-Message-ID: <20190823181347.GD18880@lenoir>
-References: <20190821190847.665673890@linutronix.de>
- <20190821192921.408222378@linutronix.de>
+        id S2404393AbfHWSOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 14:14:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C81E7337;
+        Fri, 23 Aug 2019 11:14:43 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4AE6C3F246;
+        Fri, 23 Aug 2019 11:14:42 -0700 (PDT)
+Subject: Re: [PATCH 11/15] sched,fair: flatten hierarchical runqueues
+To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, pjt@google.com, peterz@infradead.org,
+        mingo@redhat.com, morten.rasmussen@arm.com, tglx@linutronix.de,
+        mgorman@techsingularity.net, vincent.guittot@linaro.org
+References: <20190822021740.15554-1-riel@surriel.com>
+ <20190822021740.15554-12-riel@surriel.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <967114b2-15a7-b445-3133-074732b20e34@arm.com>
+Date:   Fri, 23 Aug 2019 20:14:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821192921.408222378@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190822021740.15554-12-riel@surriel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 09:09:10PM +0200, Thomas Gleixner wrote:
-> Use the array based expiry cache in check_thread_timers() and convert the
-> store in check_process_timers() for consistency.
+On 22/08/2019 04:17, Rik van Riel wrote:
+> Flatten the hierarchical runqueues into just the per CPU rq.cfs runqueue.
 > 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  kernel/time/posix-cpu-timers.c |   26 +++++++++++---------------
->  1 file changed, 11 insertions(+), 15 deletions(-)
+> Iteration of the sched_entity hierarchy is rate limited to once per jiffy
+> per sched_entity, which is a smaller change than it seems, because load
+> average adjustments were already rate limited to once per jiffy before this
+> patch series.
 > 
-> --- a/kernel/time/posix-cpu-timers.c
-> +++ b/kernel/time/posix-cpu-timers.c
-> @@ -778,8 +778,7 @@ static void check_thread_timers(struct t
->  				struct list_head *firing)
->  {
->  	struct list_head *timers = tsk->posix_cputimers.cpu_timers;
-> -	struct task_cputime *tsk_expires = &tsk->posix_cputimers.cputime_expires;
-> -	u64 expires, stime, utime;
-> +	u64 stime, utime, *expires = tsk->posix_cputimers.expiries;
->  	unsigned long soft;
->  
->  	if (dl_task(tsk))
-> @@ -789,19 +788,14 @@ static void check_thread_timers(struct t
->  	 * If cputime_expires is zero, then there are no active
->  	 * per thread CPU timers.
->  	 */
-> -	if (task_cputime_zero(tsk_expires))
-> +	if (task_cputime_zero(&tsk->posix_cputimers.cputime_expires))
+> This patch breaks CONFIG_CFS_BANDWIDTH. The plan for that is to park tasks
+> from throttled cgroups onto their cgroup runqueues, and slowly (using the
+> GENTLE_FAIR_SLEEPERS) wake them back up, in vruntime order, once the cgroup
+> gets unthrottled, to prevent thundering herd issues.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> 
+> Header from folded patch 'fix-attach-detach_enticy_cfs_rq.patch~':
+> 
+> Subject: sched,fair: fix attach/detach_entity_cfs_rq
+> 
+> While attach_entity_cfs_rq and detach_entity_cfs_rq should iterate over
+> the hierarchy, they do not need to so that twice.
+> 
+> Passing flags into propagate_entity_cfs_rq allows us to reuse that same
+> loop from other functions.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> 
+> 
+> Header from folded patch 'enqueue-order.patch':
+> 
+> Subject: sched,fair: better ordering at enqueue_task_fair time
+> 
+> In order to get useful numbers for the task's hierarchical weight,
+> task priority, etc things need to be done in a certain order at task
+> enqueue time.
+> 
+> Specifically:
+> 1) static load/weight to "local" cfs_rq
+> 2) propagate load/weight up the tree
+> 3) add runnable load avg to root cfs_rq
+> 
+> The reason is that each step depends on the things done by the
+> step beforehand, and we can end up with nonsense numbers if we
+> do not do things right.
+> 
+> Also, make sure that we walk all the way up the hierarchy at
+> enqueue_task_fair time in order to get the benefit from the ramp-up
+> logic in update_cfs_group.
+
+[...]
+
+>  /*
+> @@ -6953,7 +6849,6 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
+>  	if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
 >  		return;
 >  
->  	task_cputime(tsk, &utime, &stime);
+> -	find_matching_se(&se, &pse);
+>  	update_curr(cfs_rq_of(se));
+>  	BUG_ON(!pse);
+>  	if (wakeup_preempt_entity(se, pse) == 1) {
+> @@ -6994,100 +6889,18 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
+>  	struct task_struct *p;
+>  	int new_tasks;
 >  
-> -	expires = check_timers_list(timers, firing, utime + stime);
-> -	tsk_expires->prof_exp = expires;
+> +	put_prev_task(rq, prev);
+>  again:
+>  	if (!cfs_rq->nr_running)
+>  		goto idle;
+>  
+> -#ifdef CONFIG_FAIR_GROUP_SCHED
+> -	if (prev->sched_class != &fair_sched_class)
+> -		goto simple;
 > -
-> -	expires = check_timers_list(++timers, firing, utime);
-> -	tsk_expires->virt_exp = expires;
+> -	/*
+> -	 * Because of the set_next_buddy() in dequeue_task_fair() it is rather
+> -	 * likely that a next task is from the same cgroup as the current.
+> -	 *
+> -	 * Therefore attempt to avoid putting and setting the entire cgroup
+> -	 * hierarchy, only change the part that actually changes.
+> -	 */
 > -
-> -	tsk_expires->sched_exp = check_timers_list(++timers, firing,
-> -						   tsk->se.sum_exec_runtime);
-> +	*expires++ = check_timers_list(timers, firing, utime + stime);
-> +	*expires++ = check_timers_list(++timers, firing, utime);
-> +	*expires = check_timers_list(++timers, firing, tsk->se.sum_exec_runtime);
+> -	do {
+> -		struct sched_entity *curr = cfs_rq->curr;
+> -
+> -		/*
+> -		 * Since we got here without doing put_prev_entity() we also
+> -		 * have to consider cfs_rq->curr. If it is still a runnable
+> -		 * entity, update_curr() will update its vruntime, otherwise
+> -		 * forget we've ever seen it.
+> -		 */
+> -		if (curr) {
+> -			if (curr->on_rq)
+> -				update_curr(cfs_rq);
+> -			else
+> -				curr = NULL;
+> -
+> -			/*
+> -			 * This call to check_cfs_rq_runtime() will do the
+> -			 * throttle and dequeue its entity in the parent(s).
+> -			 * Therefore the nr_running test will indeed
+> -			 * be correct.
+> -			 */
+> -			if (unlikely(check_cfs_rq_runtime(cfs_rq))) {
+> -				cfs_rq = &rq->cfs;
+> -
+> -				if (!cfs_rq->nr_running)
+> -					goto idle;
+> -
+> -				goto simple;
+> -			}
+> -		}
+> -
+> -		se = pick_next_entity(cfs_rq, curr);
+> -		cfs_rq = group_cfs_rq(se);
+> -	} while (cfs_rq);
+> -
+> -	p = task_of(se);
+> -
+> -	/*
+> -	 * Since we haven't yet done put_prev_entity and if the selected task
+> -	 * is a different task than we started out with, try and touch the
+> -	 * least amount of cfs_rqs.
+> -	 */
+> -	if (prev != p) {
+> -		struct sched_entity *pse = &prev->se;
+> -
+> -		while (!(cfs_rq = is_same_group(se, pse))) {
+> -			int se_depth = se->depth;
+> -			int pse_depth = pse->depth;
+> -
+> -			if (se_depth <= pse_depth) {
+> -				put_prev_entity(cfs_rq_of(pse), pse);
+> -				pse = parent_entity(pse);
+> -			}
+> -			if (se_depth >= pse_depth) {
+> -				set_next_entity(cfs_rq_of(se), se);
+> -				se = parent_entity(se);
+> -			}
 
-What a nice reading for anyone learning the difference between pointers's
-pre and post incrementation :-)
+Looks like with the se->depth related code gone here in
+pick_next_task_fair() and the call to find_matching_se() in
+check_preempt_wakeup() you could remove se->depth entirely.
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+[...]
