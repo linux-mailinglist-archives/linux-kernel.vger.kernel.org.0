@@ -2,71 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3CBB9B618
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 20:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC0E29B621
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 20:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404551AbfHWSL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 14:11:57 -0400
-Received: from mga14.intel.com ([192.55.52.115]:36340 "EHLO mga14.intel.com"
+        id S2405162AbfHWSNz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 14:13:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:37918 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388081AbfHWSL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 14:11:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 11:11:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,422,1559545200"; 
-   d="scan'208";a="379832334"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
-  by fmsmga006.fm.intel.com with ESMTP; 23 Aug 2019 11:11:56 -0700
-Subject: Re: [PATCH 0/3] libnvdimm/security: Enumerate the frozen state and
- other cleanups
-To:     Dan Williams <dan.j.williams@intel.com>, linux-nvdimm@lists.01.org
-Cc:     Jeff Moyer <jmoyer@redhat.com>, linux-kernel@vger.kernel.org
-References: <156583201347.2815870.4687949334637966672.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Dave Jiang <dave.jiang@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
- 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
- o6nmKbYpUAltQObU2w==
-Message-ID: <20fe41f4-80d7-521b-0517-267e3754c372@intel.com>
-Date:   Fri, 23 Aug 2019 11:11:56 -0700
+        id S2404488AbfHWSNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 14:13:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D373337;
+        Fri, 23 Aug 2019 11:13:54 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C4B23F246;
+        Fri, 23 Aug 2019 11:13:52 -0700 (PDT)
+Subject: Re: [PATCH 01/15] sched: introduce task_se_h_load helper
+To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, pjt@google.com, peterz@infradead.org,
+        mingo@redhat.com, morten.rasmussen@arm.com, tglx@linutronix.de,
+        mgorman@techsingularity.net, vincent.guittot@linaro.org,
+        Josef Bacik <josef@toxicpanda.com>
+References: <20190822021740.15554-1-riel@surriel.com>
+ <20190822021740.15554-2-riel@surriel.com>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <c5c07c34-b46a-6956-2341-138a83c8c800@arm.com>
+Date:   Fri, 23 Aug 2019 20:13:39 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <156583201347.2815870.4687949334637966672.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <20190822021740.15554-2-riel@surriel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,37 +42,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 8/14/19 6:20 PM, Dan Williams wrote:
-> Jeff reported a scenario where ndctl was failing to unlock DIMMs [1].
-> Through the course of debug it was discovered that the security
-> interface on the DIMMs was in the 'frozen' state disallowing unlock, or
-> any security operation.  Unfortunately the kernel only showed that the
-> DIMMs were 'locked', not 'locked' and 'frozen'.
+On 22/08/2019 04:17, Rik van Riel wrote:
+> Sometimes the hierarchical load of a sched_entity needs to be calculated.
+> Rename task_h_load to task_se_h_load, and directly pass a sched_entity to
+> that function.
 > 
-> Introduce a new sysfs 'frozen' attribute so that ndctl can reflect the
-> "security-operations-allowed" state independently of the lock status.
-> Then, followup with cleanups related to replacing a security-state-enum
-> with a set of flags.
+> Move the function declaration up above where it will be used later.
 > 
-> [1]: https://lists.01.org/pipermail/linux-nvdimm/2019-August/022856.html
+> No functional changes.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 > ---
-> 
-> Dan Williams (3):
->       libnvdimm/security: Introduce a 'frozen' attribute
->       libnvdimm/security: Tighten scope of nvdimm->busy vs security operations
->       libnvdimm/security: Consolidate 'security' operations
-> 
-> 
->  drivers/acpi/nfit/intel.c        |   65 +++++++-----
->  drivers/nvdimm/bus.c             |    2 
->  drivers/nvdimm/dimm_devs.c       |  134 ++++++--------------------
->  drivers/nvdimm/nd-core.h         |   51 ++++------
->  drivers/nvdimm/security.c        |  199 +++++++++++++++++++++++++-------------
->  include/linux/libnvdimm.h        |    9 +-
->  tools/testing/nvdimm/dimm_devs.c |   19 +---
->  7 files changed, 231 insertions(+), 248 deletions(-)
-> 
 
-For the series
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Thanks.
+[...]
+
+> @@ -1668,7 +1668,7 @@ static void task_numa_compare(struct task_numa_env *env,
+>  	/*
+>  	 * In the overloaded case, try and keep the load balanced.
+>  	 */
+> -	load = task_h_load(env->p) - task_h_load(cur);
+> +	load = task_se_h_load(env->p->se) - task_se_h_load(cur->se);
+
+Shouldn't this be:
+
+load = task_se_h_load(&env->p->se) - task_se_h_load(&cur->se);
+
+>  	if (!load)
+>  		goto assign;
+>  
+> @@ -1706,7 +1706,7 @@ static void task_numa_find_cpu(struct task_numa_env *env,
+>  	bool maymove = false;
+>  	int cpu;
+>  
+> -	load = task_h_load(env->p);
+> +	load = task_se_h_load(env->p->se);
+
+load = task_se_h_load(&env->p->se);
+
+Only visible with CONFIG_NUMA_BALANCING though.
+
+[...]
