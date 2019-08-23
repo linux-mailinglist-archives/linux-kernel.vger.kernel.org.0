@@ -2,97 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46EF19A5BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 752779A5BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391434AbfHWCot (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 22:44:49 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33869 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391320AbfHWCo1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 22:44:27 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i0zYo-0001NZ-HQ; Fri, 23 Aug 2019 04:44:18 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 162741C0890;
-        Fri, 23 Aug 2019 04:44:18 +0200 (CEST)
-Date:   Fri, 23 Aug 2019 02:44:18 -0000
-From:   tip-bot2 for Adrian Hunter <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf evsel: Add comment for 'idx' member in 'struct
- perf_sample_id
-Cc:     linux-kernel@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-In-Reply-To: <83ff264f-84c3-5372-8976-dd9293d20c6f@intel.com>
-References: <83ff264f-84c3-5372-8976-dd9293d20c6f@intel.com>
+        id S2403792AbfHWCqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 22:46:35 -0400
+Received: from mga05.intel.com ([192.55.52.43]:28858 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725856AbfHWCqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 22:46:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 19:46:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,419,1559545200"; 
+   d="scan'208";a="173339882"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga008.jf.intel.com with ESMTP; 22 Aug 2019 19:46:34 -0700
+Received: from [10.226.38.19] (vramuthx-mobl1.gar.corp.intel.com [10.226.38.19])
+        by linux.intel.com (Postfix) with ESMTP id 6781F580258;
+        Thu, 22 Aug 2019 19:46:32 -0700 (PDT)
+Subject: Re: [PATCH v4 1/2] dt-bindings: phy: intel-emmc-phy: Add YAML schema
+ for LGM eMMC PHY
+To:     Rob Herring <robh@kernel.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
+        peter.harliman.liem@intel.com
+References: <20190822102843.47964-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <CAL_JsqJEW0UDqYDTvOeRsZh9WJTeT99JZP8PtkvbnBU2dhYJEQ@mail.gmail.com>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <bb31715a-64de-3b44-ef43-09bc73819f73@linux.intel.com>
+Date:   Fri, 23 Aug 2019 10:46:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Message-ID: <156652825802.13162.17047087829811980417.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from
- these emails
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <CAL_JsqJEW0UDqYDTvOeRsZh9WJTeT99JZP8PtkvbnBU2dhYJEQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+Hi Rob,
 
-Commit-ID:     3c84e65a533dbaa1a29bfd847deca73704b675eb
-Gitweb:        https://git.kernel.org/tip/3c84e65a533dbaa1a29bfd847deca73704b675eb
-Author:        Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate:    Mon, 12 Aug 2019 12:09:35 +03:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 20 Aug 2019 12:17:45 -03:00
+On 22/8/2019 8:49 PM, Rob Herring wrote:
+> On Thu, Aug 22, 2019 at 5:28 AM Ramuthevar,Vadivel MuruganX
+> <vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
+>> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>>
+>> Add a YAML schema to use the host controller driver with the
+>> eMMC PHY on Intel's Lightning Mountain SoC.
+>>
+>> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> ---
+>> changes in v4:
+>>    - As per Rob's review: validate 5.2 and 5.3
+>>    - drop unrelated items.
+>>
+>> changes in v3:
+>>    - resolve 'make dt_binding_check' warnings
+>>
+>> changes in v2:
+>>    As per Rob Herring review comments, the following updates
+>>   - change GPL-2.0 -> (GPL-2.0-only OR BSD-2-Clause)
+>>   - filename is the compatible string plus .yaml
+>>   - LGM: Lightning Mountain
+>>   - update maintainer
+>>   - add intel,syscon under property list
+>>   - keep one example instead of two
+>> ---
+>>   .../bindings/phy/intel,lgm-emmc-phy.yaml           | 50 ++++++++++++++++++++++
+>>   1 file changed, 50 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-perf evsel: Add comment for 'idx' member in 'struct perf_sample_id
+Thank you so much for the review and your time.
 
-The 'idx' member was added as preparation for AUX area sampling. Add a
-comment to describe why.
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/83ff264f-84c3-5372-8976-dd9293d20c6f@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/evsel.h | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 9cd6e3a..efe0806 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -23,6 +23,13 @@ struct perf_sample_id {
- 	struct hlist_node 	node;
- 	u64		 	id;
- 	struct evsel		*evsel;
-+       /*
-+	* 'idx' will be used for AUX area sampling. A sample will have AUX area
-+	* data that will be queued for decoding, where there are separate
-+	* queues for each CPU (per-cpu tracing) or task (per-thread tracing).
-+	* The sample ID can be used to lookup 'idx' which is effectively the
-+	* queue number.
-+	*/
- 	int			idx;
- 	int			cpu;
- 	pid_t			tid;
+With Best Regards
+Vadivel Murugan
