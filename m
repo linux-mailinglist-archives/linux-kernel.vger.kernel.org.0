@@ -2,303 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9471E9A830
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:06:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 955E19A84B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392751AbfHWHFD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 03:05:03 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:60900 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392683AbfHWHE6 (ORCPT
+        id S2392757AbfHWHLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 03:11:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25460 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389927AbfHWHLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 03:04:58 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x7N74vIn011425, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x7N74vIn011425
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 23 Aug 2019 15:04:57 +0800
-Received: from fc30.localdomain (172.21.177.138) by RTITCASV01.realtek.com.tw
- (172.21.6.18) with Microsoft SMTP Server id 14.3.468.0; Fri, 23 Aug 2019
- 15:04:55 +0800
-From:   Hayes Wang <hayeswang@realtek.com>
-To:     <netdev@vger.kernel.org>
-CC:     <nic_swsd@realtek.com>, <linux-kernel@vger.kernel.org>,
-        Hayes Wang <hayeswang@realtek.com>
-Subject: [PATCH net-next v2 2/2] r8152: add a helper function about setting EEE
-Date:   Fri, 23 Aug 2019 15:04:12 +0800
-Message-ID: <1394712342-15778-307-Taiwan-albertk@realtek.com>
-X-Mailer: Microsoft Office Outlook 11
-In-Reply-To: <1394712342-15778-305-Taiwan-albertk@realtek.com>
-References: <1394712342-15778-304-Taiwan-albertk@realtek.com>
- <1394712342-15778-305-Taiwan-albertk@realtek.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [172.21.177.138]
+        Fri, 23 Aug 2019 03:11:33 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7N773xo036086
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 03:11:32 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ujap99wn9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 03:11:32 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <huntbag@linux.vnet.ibm.com>;
+        Fri, 23 Aug 2019 08:11:30 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 23 Aug 2019 08:11:26 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7N7BPnO51773542
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Aug 2019 07:11:25 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 02F155204E;
+        Fri, 23 Aug 2019 07:11:25 +0000 (GMT)
+Received: from boston16h.aus.stglabs.ibm.com (unknown [9.3.23.78])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 408F45204F;
+        Fri, 23 Aug 2019 07:11:23 +0000 (GMT)
+From:   Abhishek Goel <huntbag@linux.vnet.ibm.com>
+To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        devicetree@vger.kernel.org, paulus@samba.org
+Cc:     npiggin@gmail.com, mpe@ellerman.id.au, ego@linux.vnet.ibm.com,
+        svaidy@linux.ibm.com, mikey@neuling.org, rjw@rjwysocki.net,
+        daniel.lezcano@linaro.org,
+        Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Subject: [RFC 0/3] New idle device-tree format and support for versioned stop state
+Date:   Fri, 23 Aug 2019 02:09:37 -0500
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 19082307-4275-0000-0000-0000035C72A3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082307-4276-0000-0000-0000386E9AD6
+Message-Id: <20190823070940.43220-1-huntbag@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-23_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908230072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a helper funtcion "rtl_eee_enable" for setting EEE. Besides, I
-move r8153_eee_en() and r8153b_eee_en(). And, I remove r8152b_enable_eee(),
-r8153_set_eee(), and r8153b_set_eee().
+Background
+------------------
 
-Signed-off-by: Hayes Wang <hayeswang@realtek.com>
----
- drivers/net/usb/r8152.c | 166 +++++++++++++++++++---------------------
- 1 file changed, 77 insertions(+), 89 deletions(-)
+Previously if a older kernel runs on a newer firmware, it may enable
+all available states irrespective of its capability of handling it.
+Consider a case that some stop state has a bug, we end up disabling all
+the stop states. This patch introduces selective control to solve this
+problem.
 
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index a7aa48bee732..220079a8882f 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -3202,14 +3202,75 @@ static void r8152_eee_en(struct r8152 *tp, bool enable)
- 	ocp_reg_write(tp, OCP_EEE_CONFIG3, config3);
- }
- 
--static void r8152b_enable_eee(struct r8152 *tp)
-+static void r8153_eee_en(struct r8152 *tp, bool enable)
- {
--	if (tp->eee_en) {
--		r8152_eee_en(tp, true);
--		r8152_mmd_write(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV, tp->eee_adv);
-+	u32 ocp_data;
-+	u16 config;
-+
-+	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_EEE_CR);
-+	config = ocp_reg_read(tp, OCP_EEE_CFG);
-+
-+	if (enable) {
-+		ocp_data |= EEE_RX_EN | EEE_TX_EN;
-+		config |= EEE10_EN;
- 	} else {
--		r8152_eee_en(tp, false);
--		r8152_mmd_write(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV, 0);
-+		ocp_data &= ~(EEE_RX_EN | EEE_TX_EN);
-+		config &= ~EEE10_EN;
-+	}
-+
-+	ocp_write_word(tp, MCU_TYPE_PLA, PLA_EEE_CR, ocp_data);
-+	ocp_reg_write(tp, OCP_EEE_CFG, config);
-+}
-+
-+static void r8153b_eee_en(struct r8152 *tp, bool enable)
-+{
-+	r8153_eee_en(tp, enable);
-+
-+	if (enable)
-+		r8153b_ups_flags_w1w0(tp, UPS_FLAGS_EN_EEE, 0);
-+	else
-+		r8153b_ups_flags_w1w0(tp, 0, UPS_FLAGS_EN_EEE);
-+}
-+
-+static void rtl_eee_enable(struct r8152 *tp, bool enable)
-+{
-+	switch (tp->version) {
-+	case RTL_VER_01:
-+	case RTL_VER_02:
-+	case RTL_VER_07:
-+		if (enable) {
-+			r8152_eee_en(tp, true);
-+			r8152_mmd_write(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV,
-+					tp->eee_adv);
-+		} else {
-+			r8152_eee_en(tp, false);
-+			r8152_mmd_write(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV, 0);
-+		}
-+		break;
-+	case RTL_VER_03:
-+	case RTL_VER_04:
-+	case RTL_VER_05:
-+	case RTL_VER_06:
-+		if (enable) {
-+			r8153_eee_en(tp, true);
-+			ocp_reg_write(tp, OCP_EEE_ADV, tp->eee_adv);
-+		} else {
-+			r8153_eee_en(tp, true);
-+			ocp_reg_write(tp, OCP_EEE_ADV, 0);
-+		}
-+		break;
-+	case RTL_VER_08:
-+	case RTL_VER_09:
-+		if (enable) {
-+			r8153b_eee_en(tp, true);
-+			ocp_reg_write(tp, OCP_EEE_ADV, tp->eee_adv);
-+		} else {
-+			r8153b_eee_en(tp, true);
-+			ocp_reg_write(tp, OCP_EEE_ADV, 0);
-+		}
-+		break;
-+	default:
-+		break;
- 	}
- }
- 
-@@ -3231,7 +3292,7 @@ static void rtl8152_disable(struct r8152 *tp)
- 
- static void r8152b_hw_phy_cfg(struct r8152 *tp)
- {
--	r8152b_enable_eee(tp);
-+	rtl_eee_enable(tp, tp->eee_en);
- 	r8152_aldps_en(tp, true);
- 	r8152b_enable_fc(tp);
- 
-@@ -3425,36 +3486,6 @@ static void r8153b_aldps_en(struct r8152 *tp, bool enable)
- 		r8153b_ups_flags_w1w0(tp, 0, UPS_FLAGS_EN_ALDPS);
- }
- 
--static void r8153_eee_en(struct r8152 *tp, bool enable)
--{
--	u32 ocp_data;
--	u16 config;
--
--	ocp_data = ocp_read_word(tp, MCU_TYPE_PLA, PLA_EEE_CR);
--	config = ocp_reg_read(tp, OCP_EEE_CFG);
--
--	if (enable) {
--		ocp_data |= EEE_RX_EN | EEE_TX_EN;
--		config |= EEE10_EN;
--	} else {
--		ocp_data &= ~(EEE_RX_EN | EEE_TX_EN);
--		config &= ~EEE10_EN;
--	}
--
--	ocp_write_word(tp, MCU_TYPE_PLA, PLA_EEE_CR, ocp_data);
--	ocp_reg_write(tp, OCP_EEE_CFG, config);
--}
--
--static void r8153b_eee_en(struct r8152 *tp, bool enable)
--{
--	r8153_eee_en(tp, enable);
--
--	if (enable)
--		r8153b_ups_flags_w1w0(tp, UPS_FLAGS_EN_EEE, 0);
--	else
--		r8153b_ups_flags_w1w0(tp, 0, UPS_FLAGS_EN_EEE);
--}
--
- static void r8153b_enable_fc(struct r8152 *tp)
- {
- 	r8152b_enable_fc(tp);
-@@ -3470,7 +3501,7 @@ static void r8153_hw_phy_cfg(struct r8152 *tp)
- 	r8153_aldps_en(tp, false);
- 
- 	/* disable EEE before updating the PHY parameters */
--	r8153_eee_en(tp, false);
-+	rtl_eee_enable(tp, false);
- 	ocp_reg_write(tp, OCP_EEE_ADV, 0);
- 
- 	if (tp->version == RTL_VER_03) {
-@@ -3502,10 +3533,8 @@ static void r8153_hw_phy_cfg(struct r8152 *tp)
- 	sram_write(tp, SRAM_10M_AMP1, 0x00af);
- 	sram_write(tp, SRAM_10M_AMP2, 0x0208);
- 
--	if (tp->eee_en) {
--		r8153_eee_en(tp, true);
--		ocp_reg_write(tp, OCP_EEE_ADV, tp->eee_adv);
--	}
-+	if (tp->eee_en)
-+		rtl_eee_enable(tp, true);
- 
- 	r8153_aldps_en(tp, true);
- 	r8152b_enable_fc(tp);
-@@ -3545,7 +3574,7 @@ static void r8153b_hw_phy_cfg(struct r8152 *tp)
- 	r8153b_aldps_en(tp, false);
- 
- 	/* disable EEE before updating the PHY parameters */
--	r8153b_eee_en(tp, false);
-+	rtl_eee_enable(tp, false);
- 	ocp_reg_write(tp, OCP_EEE_ADV, 0);
- 
- 	r8153b_green_en(tp, test_bit(GREEN_ETHERNET, &tp->flags));
-@@ -3608,10 +3637,8 @@ static void r8153b_hw_phy_cfg(struct r8152 *tp)
- 
- 	r8153b_ups_flags_w1w0(tp, ups_flags, 0);
- 
--	if (tp->eee_en) {
--		r8153b_eee_en(tp, true);
--		ocp_reg_write(tp, OCP_EEE_ADV, tp->eee_adv);
--	}
-+	if (tp->eee_en)
-+		rtl_eee_enable(tp, true);
- 
- 	r8153b_aldps_en(tp, true);
- 	r8153b_enable_fc(tp);
-@@ -4930,12 +4957,7 @@ static int r8152_set_eee(struct r8152 *tp, struct ethtool_eee *eee)
- 	tp->eee_en = eee->eee_enabled;
- 	tp->eee_adv = val;
- 
--	r8152_eee_en(tp, eee->eee_enabled);
--
--	if (eee->eee_enabled)
--		r8152_mmd_write(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV, val);
--	else
--		r8152_mmd_write(tp, MDIO_MMD_AN, MDIO_AN_EEE_ADV, 0);
-+	rtl_eee_enable(tp, tp->eee_en);
- 
- 	return 0;
- }
-@@ -4963,40 +4985,6 @@ static int r8153_get_eee(struct r8152 *tp, struct ethtool_eee *eee)
- 	return 0;
- }
- 
--static int r8153_set_eee(struct r8152 *tp, struct ethtool_eee *eee)
--{
--	u16 val = ethtool_adv_to_mmd_eee_adv_t(eee->advertised);
--
--	tp->eee_en = eee->eee_enabled;
--	tp->eee_adv = val;
--
--	r8153_eee_en(tp, eee->eee_enabled);
--
--	if (eee->eee_enabled)
--		ocp_reg_write(tp, OCP_EEE_ADV, val);
--	else
--		ocp_reg_write(tp, OCP_EEE_ADV, 0);
--
--	return 0;
--}
--
--static int r8153b_set_eee(struct r8152 *tp, struct ethtool_eee *eee)
--{
--	u16 val = ethtool_adv_to_mmd_eee_adv_t(eee->advertised);
--
--	tp->eee_en = eee->eee_enabled;
--	tp->eee_adv = val;
--
--	r8153b_eee_en(tp, eee->eee_enabled);
--
--	if (eee->eee_enabled)
--		ocp_reg_write(tp, OCP_EEE_ADV, val);
--	else
--		ocp_reg_write(tp, OCP_EEE_ADV, 0);
--
--	return 0;
--}
--
- static int
- rtl_ethtool_get_eee(struct net_device *net, struct ethtool_eee *edata)
- {
-@@ -5382,7 +5370,7 @@ static int rtl_ops_init(struct r8152 *tp)
- 		ops->down		= rtl8153_down;
- 		ops->unload		= rtl8153_unload;
- 		ops->eee_get		= r8153_get_eee;
--		ops->eee_set		= r8153_set_eee;
-+		ops->eee_set		= r8152_set_eee;
- 		ops->in_nway		= rtl8153_in_nway;
- 		ops->hw_phy_cfg		= r8153_hw_phy_cfg;
- 		ops->autosuspend_en	= rtl8153_runtime_enable;
-@@ -5400,7 +5388,7 @@ static int rtl_ops_init(struct r8152 *tp)
- 		ops->down		= rtl8153b_down;
- 		ops->unload		= rtl8153b_unload;
- 		ops->eee_get		= r8153_get_eee;
--		ops->eee_set		= r8153b_set_eee;
-+		ops->eee_set		= r8152_set_eee;
- 		ops->in_nway		= rtl8153_in_nway;
- 		ops->hw_phy_cfg		= r8153b_hw_phy_cfg;
- 		ops->autosuspend_en	= rtl8153b_runtime_enable;
+Previous version of these patches can be found at:
+https://lkml.org/lkml/2018/10/11/544
+These patch however also had patches for support of opal save-restore
+which now I am decoupling and will take them seperately.
+I have posted the corresponding skiboot patches for this kernel patchset
+here : https://patchwork.ozlabs.org/cover/1144587/
+
+What's new?
+--------------------
+
+Add stop states under ibm,idle-states in addition to the current array
+based device tree properties.
+
+New device tree format adds a compatible flag which has version
+corresponding to every state, so that only kernel which has the capability
+to handle the version of stop state will enable it. Drawback of the array
+based dt node is that versioning of idle states is not possible.
+
+Older kernel will still see stop0 and stop0_lite in older format and we
+will deprecate it after some time.
+
+Consider a case that stop4 has a bug. We take the following steps to
+mitigate the problem.
+
+1) Change compatible string for stop4 in OPAL to "stop4,v2" from
+"stop4,v1", i.e. basicallly bump up the previous version and ship the
+new firmware.
+
+2) The kernel will ignore stop4 as it won't be able to recognize this
+new version. Kernel will also ignore all the deeper states because its
+possible that a cpu have requested for a deeper state but was never able
+to enter into it. But we will still have shallower states that are there
+before stop 4. This, thus prevents from completely disabling stop states.
+
+Linux kernel can now look at the version string and decide if it has the
+ability to handle that idle state. Henceforth, if kernel does not know
+about a version, it will skip that state and all the deeper state.
+
+Once when the workaround are implemented into the kernel, we can bump up
+the known version in kernel for that state, so that support can be
+enabled once again in kernel.
+
+New Device-tree :
+
+Final output
+       power-mgt {
+            ...
+         ibm,enabled-stop-levels = <0xec000000>;
+         ibm,cpu-idle-state-psscr-mask = <0x0 0x3003ff 0x0 0x3003ff>;
+         ibm,cpu-idle-state-latencies-ns = <0x3e8 0x7d0>;
+         ibm,cpu-idle-state-psscr = <0x0 0x330 0x0 0x300330>;
+         ibm,cpu-idle-state-flags = <0x100000 0x101000>;
+         ibm,cpu-idle-state-residency-ns = <0x2710 0x4e20>;
+         ibm,idle-states {
+                     stop4 {
+                         flags = <0x207000>;
+                         compatible = "stop4,v1",
+                         psscr-mask = <0x0 0x3003ff>;
+                         latency-ns = <0x186a0>;
+                         residency-ns = <0x989680>;
+                         psscr = <0x0 0x300374>;
+			 ...
+                  };
+                    ...
+                    stop11 {
+                         ...
+                         compatible = "stop11,v1",
+                         ...
+                  };
+             };
+
+
+Abhishek Goel (3):
+  cpuidle/powernv : Pass state pointer instead of values to stop loop
+  cpuidle/powernv: Add support for versioned stop states
+  cpuidle/powernv : Add flags to identify stop state type
+
+ arch/powerpc/include/asm/cpuidle.h    |   8 +-
+ arch/powerpc/include/asm/opal-api.h   |   7 +
+ arch/powerpc/include/asm/processor.h  |   5 +-
+ arch/powerpc/platforms/powernv/idle.c | 371 +++++++++++++++++++++-----
+ drivers/cpuidle/cpuidle-powernv.c     |  81 +++---
+ 5 files changed, 363 insertions(+), 109 deletions(-)
+
 -- 
-2.21.0
+2.17.1
 
