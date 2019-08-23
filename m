@@ -2,88 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B83DA9A848
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:10:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 190E39A85D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:13:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390636AbfHWHKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 03:10:43 -0400
-Received: from mga06.intel.com ([134.134.136.31]:6425 "EHLO mga06.intel.com"
+        id S2389395AbfHWHNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 03:13:44 -0400
+Received: from shell.v3.sk ([90.176.6.54]:40112 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728332AbfHWHKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 03:10:43 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 00:10:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,420,1559545200"; 
-   d="scan'208";a="196419917"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 23 Aug 2019 00:10:38 -0700
-Received: by lahna (sSMTP sendmail emulation); Fri, 23 Aug 2019 10:10:37 +0300
-Date:   Fri, 23 Aug 2019 10:10:37 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Matthias Andree <matthias.andree@gmx.de>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Paul Menzel <pmenzel@molgen.mpg.de>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Justin Forbes <jmforbes@linuxtx.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: Add missing link delays required by the PCIe spec
-Message-ID: <20190823071037.GP19908@lahna.fi.intel.com>
-References: <20190821124519.71594-1-mika.westerberg@linux.intel.com>
- <9f741e3a-0878-b914-39d8-a64a02484cb5@gmx.de>
+        id S1731093AbfHWHNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 03:13:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id F065CD7697;
+        Fri, 23 Aug 2019 09:13:39 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id yGh66jtHXRfw; Fri, 23 Aug 2019 09:13:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 46C8AD7698;
+        Fri, 23 Aug 2019 09:13:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 9QtK_aypLOFJ; Fri, 23 Aug 2019 09:13:35 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id D11F1D7697;
+        Fri, 23 Aug 2019 09:13:34 +0200 (CEST)
+Message-ID: <0897fa54f487f481bf8770ed516578b6f4f53380.camel@v3.sk>
+Subject: Re: [PATCH v2 16/20] ARM: mmp: add SMP support
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Olof Johansson <olof@lixom.net>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Stephen Boyd <sboyd@kernel.org>, Marc Zyngier <maz@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 23 Aug 2019 09:13:33 +0200
+In-Reply-To: <6f9d2285-5ca4-a63a-610e-890b49a4f816@gmail.com>
+References: <20190822092643.593488-1-lkundrak@v3.sk>
+         <20190822092643.593488-17-lkundrak@v3.sk>
+         <6f9d2285-5ca4-a63a-610e-890b49a4f816@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9f741e3a-0878-b914-39d8-a64a02484cb5@gmx.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 08:29:09PM +0200, Matthias Andree wrote:
-> Am 21.08.19 um 14:45 schrieb Mika Westerberg:
-> > Hi all,
-> >
-> > As the changelog says this is reworked version that tries to avoid reported
-> > issues while at the same time fix the missing delays so we can get ICL
-> > systems and at least the one system with Titan Ridge controller working
-> > properly.
-> >
-> > @Matthias, @Paul and @Nicholas: it would be great if you could try the
-> > patch on top of v5.4-rc5+ and verify that it does not cause any issues on
-> > your systems.
-> >
-> >  drivers/pci/pci-driver.c |  19 ++++++
-> >  drivers/pci/pci.c        | 127 ++++++++++++++++++++++++++++++++++++---
-> >  drivers/pci/pci.h        |   1 +
-> >  3 files changed, 137 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> > index a8124e47bf6e..9aec78ed8907 100644
+On Thu, 2019-08-22 at 09:36 -0700, Florian Fainelli wrote:
+> On 8/22/19 2:26 AM, Lubomir Rintel wrote:
+> > Used to bring up the second core on MMP3.
+> > 
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > 
+> > ---
+> > Changes since v1:
+> > - Wrap SW_BRANCH_VIRT_ADDR with __pa_symbol()
+> > 
+> >  arch/arm/mach-mmp/Makefile  |  3 +++
+> >  arch/arm/mach-mmp/platsmp.c | 33 +++++++++++++++++++++++++++++++++
+> >  2 files changed, 36 insertions(+)
+> >  create mode 100644 arch/arm/mach-mmp/platsmp.c
+> > 
+> > diff --git a/arch/arm/mach-mmp/Makefile b/arch/arm/mach-mmp/Makefile
+> > index 322c1c97dc900..7b3a7f979eece 100644
+> > --- a/arch/arm/mach-mmp/Makefile
+> > +++ b/arch/arm/mach-mmp/Makefile
+> > @@ -22,6 +22,9 @@ ifeq ($(CONFIG_PM),y)
+> >  obj-$(CONFIG_CPU_PXA910)	+= pm-pxa910.o
+> >  obj-$(CONFIG_CPU_MMP2)		+= pm-mmp2.o
+> >  endif
+> > +ifeq ($(CONFIG_SMP),y)
+> > +obj-$(CONFIG_MACH_MMP3_DT)	+= platsmp.o
+> > +endif
+> >  
+> >  # board support
+> >  obj-$(CONFIG_MACH_ASPENITE)	+= aspenite.o
+> > diff --git a/arch/arm/mach-mmp/platsmp.c b/arch/arm/mach-mmp/platsmp.c
+> > new file mode 100644
+> > index 0000000000000..98d5ef23623cb
+> > --- /dev/null
+> > +++ b/arch/arm/mach-mmp/platsmp.c
+> > @@ -0,0 +1,33 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Copyright (C) 2019 Lubomir Rintel <lkundrak@v3.sk>
+> > + */
+> > +#include <linux/io.h>
+> > +#include <asm/smp_scu.h>
+> > +#include <asm/smp.h>
+> > +#include "addr-map.h"
+> > +
+> > +#define SW_BRANCH_VIRT_ADDR	CIU_REG(0x24)
+> > +
+> > +static int mmp3_boot_secondary(unsigned int cpu, struct task_struct *idle)
+> > +{
+> > +	/*
+> > +	 * Apparently, the boot ROM on the second core spins on this
+> > +	 * register becoming non-zero and then jumps to the address written
+> > +	 * there. No IPIs involved.
+> > +	 */
+> > +	__raw_writel(virt_to_phys(secondary_startup),
+> > +			__pa_symbol(SW_BRANCH_VIRT_ADDR));
 > 
-> ...
-> 
-> Mika, Bjorn, Rafael,
-> 
-> quick smoke test, this test applied with git-am on top
-> v5.3-rc5-149-gbb7ba8069de9, reboot, suspend, wake, suspend, wake,
-> hibernate, wake, looks good to me. The top of git log --pretty-short is
-> shown below.
+> That looks wrong, the __pa_symbol() is applicable to secondary_startup,
+> while SW_BRANCH_VIRT_ADDR does not need that.
 
-Thanks for testing!
+Whoops, sorry for that. Will fix in the next patch version in a few
+days.
 
-> Couldn't test on v5.4-rc5 though as I've handed off my time machine for
-> repairs,
-> I seem to recall they said something about the flux compensator.
+Thanks
+Lubo
 
-:)
