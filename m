@@ -2,94 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7829A912
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5FE9A91D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390859AbfHWHoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 03:44:34 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34477 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388503AbfHWHod (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 03:44:33 -0400
-Received: by mail-lf1-f65.google.com with SMTP id b29so6461150lfq.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 00:44:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8VhnyQ/lvnPjeI+ZEe4VcwGbfHZbPpwY+AwHcnvR+oE=;
-        b=I7Wm2w112kZVo5kWC7G4B9lxgpkpfdDFoX4S5HugYjmAlJg9Z0erMI9NUjIR6JI91X
-         Ksvwc+eyUbldOgsBbz65LlhuXXdpscFzJc1vJ07sq2yZe6jlm9x/fvoK0tql9th3ci1/
-         CS+DHzG+MT0BgLZQuteblBYRpuXfutqgO3hdFI44CeD329VZcVFLu1vQ44gVVuzeSVII
-         9p9q/El026NdnM9A+3b7963AZEg2TEzK3EH31+tAvlgORlD7In2/scnhEcL1feu4ST/1
-         DZzgp81ZoP5eiSFgyUIMgsd2vNRj0qHbQfnJPxqefeos6vZgInxz5UN2yqRGIAW1wRLF
-         a/Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8VhnyQ/lvnPjeI+ZEe4VcwGbfHZbPpwY+AwHcnvR+oE=;
-        b=aFl+TyhLwAHDXzEtZs7SxsQ1qmQOt/mlHuQK7MB2L1ZpBMz0EBYquPRkCYx+zN/Ln/
-         rLQNo9uRtYbJql8iy7CJZYaw4JodT/PpUe/WCeM+mOVTAnDqQ4bnWuqfKYEWwa2nBedp
-         rdUWXEo3F/6QKNHdp/2A1+wuB8yfq/eU/JID9/32mi6hXAXpkmv/g3ajmskN0WMXbTgS
-         lG0k91bYzUSTFdYzjQneB5fafbF570+3HByKz94izejlqyeSN6h/dnFEhSJc3OrFB/RZ
-         j55tiWJ2akcfaUIIDkZfdjLi2Eezk96oCACIkdLI9iz95Bdy7hlzU9KMChWEpdbA+G7s
-         yEwg==
-X-Gm-Message-State: APjAAAVe4kbBo+KQ/EUPuTPHw4zjoUZelkPlJ9FdUmYRjnbBSn9tQkYw
-        dYM4B7VE40RPwLGzner+h54f87IWWPAiuSzcvXYUYFJyZsg=
-X-Google-Smtp-Source: APXvYqyNoQgfYc8y4pHvuwV6KbLFLXwLC/iwoPTjq9ZJq+M/tH/JxhgIoE9IKKUF7jG7d7iHWjhzOuKCY0Oof3gDTrw=
-X-Received: by 2002:a19:e006:: with SMTP id x6mr1828413lfg.165.1566546271241;
- Fri, 23 Aug 2019 00:44:31 -0700 (PDT)
+        id S2391013AbfHWHtv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 03:49:51 -0400
+Received: from mail5.windriver.com ([192.103.53.11]:52824 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390903AbfHWHtv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 03:49:51 -0400
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x7N7lHxn011155
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 23 Aug 2019 00:47:53 -0700
+Received: from pek-xsun-d1.wrs.com (128.224.162.163) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.50) with Microsoft SMTP Server id
+ 14.3.468.0; Fri, 23 Aug 2019 00:47:13 -0700
+From:   Xulin Sun <xulin.sun@windriver.com>
+To:     <kvalo@codeaurora.org>
+CC:     <stefan.wahren@i2se.com>, <xulin.sun@windriver.com>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <brcm80211-dev-list@cypress.com>,
+        <brcm80211-dev-list.pdl@broadcom.com>,
+        <linux-wireless@vger.kernel.org>, <arend.vanspriel@broadcom.com>,
+        <franky.lin@broadcom.com>, <hante.meuleman@broadcom.com>,
+        <chi-hsien.lin@cypress.com>, <wright.feng@cypress.com>,
+        <davem@davemloft.net>, <stanley.hsu@cypress.com>
+Subject: [PATCH] brcmfmac: replace strncpy() by strscpy()
+Date:   Fri, 23 Aug 2019 15:47:08 +0800
+Message-ID: <20190823074708.20081-1-xulin.sun@windriver.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-References: <20190809162956.488941-1-arnd@arndb.de> <20190809163334.489360-1-arnd@arndb.de>
- <20190809163334.489360-5-arnd@arndb.de>
-In-Reply-To: <20190809163334.489360-5-arnd@arndb.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 23 Aug 2019 09:44:19 +0200
-Message-ID: <CACRpkdajapOw+fsEx1fqG3FL-n-WYmOUoGw_HGRHd730h+uv-w@mail.gmail.com>
-Subject: Re: [PATCH 5/7] ARM: xscale: fix multi-cpu compilation
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     soc@kernel.org, Russell King <linux@armlinux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dmaengine@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 6:33 PM Arnd Bergmann <arnd@arndb.de> wrote:
+The strncpy() may truncate the copied string,
+replace it by the safer strscpy().
 
-> Building a combined ARMv4+XScale kernel produces these
-> and other build failures:
->
-> /tmp/copypage-xscale-3aa821.s: Assembler messages:
-> /tmp/copypage-xscale-3aa821.s:167: Error: selected processor does not support `pld [r7,#0]' in ARM mode
-> /tmp/copypage-xscale-3aa821.s:168: Error: selected processor does not support `pld [r7,#32]' in ARM mode
-> /tmp/copypage-xscale-3aa821.s:169: Error: selected processor does not support `pld [r1,#0]' in ARM mode
-> /tmp/copypage-xscale-3aa821.s:170: Error: selected processor does not support `pld [r1,#32]' in ARM mode
-> /tmp/copypage-xscale-3aa821.s:171: Error: selected processor does not support `pld [r7,#64]' in ARM mode
-> /tmp/copypage-xscale-3aa821.s:176: Error: selected processor does not support `ldrd r4,r5,[r7],#8' in ARM mode
-> /tmp/copypage-xscale-3aa821.s:180: Error: selected processor does not support `strd r4,r5,[r1],#8' in ARM mode
+To avoid below compile warning with gcc 8.2:
 
-OK we certainly need this.
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:In function 'brcmf_vndr_ie':
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:4227:2:
+warning: 'strncpy' output truncated before terminating nul copying 3 bytes from a string of the same length [-Wstringop-truncation]
+  strncpy(iebuf, add_del_cmd, VNDR_IE_CMD_LEN - 1);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-> Add an explict .arch armv5 in the inline assembly to allow the ARMv5
-> specific instructions regardless of the compiler -march= target.
+Signed-off-by: Xulin Sun <xulin.sun@windriver.com>
+---
+ drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-You probably mean...
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+index b6d0df354b36..7ad60374fa96 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c
+@@ -4226,9 +4226,7 @@ brcmf_parse_vndr_ies(const u8 *vndr_ie_buf, u32 vndr_ie_len,
+ static u32
+ brcmf_vndr_ie(u8 *iebuf, s32 pktflag, u8 *ie_ptr, u32 ie_len, s8 *add_del_cmd)
+ {
+-
+-	strncpy(iebuf, add_del_cmd, VNDR_IE_CMD_LEN - 1);
+-	iebuf[VNDR_IE_CMD_LEN - 1] = '\0';
++	strscpy(iebuf, add_del_cmd, VNDR_IE_CMD_LEN);
+ 
+ 	put_unaligned_le32(1, &iebuf[VNDR_IE_COUNT_OFFSET]);
+ 
+-- 
+2.17.1
 
-> +.arch xscale                                   \n\
->         pld     [%0, #0]                        \n\
-
-Explicit .arch xscale rather than .arch armv5.
-
-Yours,
-Linus Walleij
