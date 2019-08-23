@@ -2,199 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 816DF9B6DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 21:14:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B6209B6E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 21:15:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389673AbfHWTOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 15:14:39 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36102 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728512AbfHWTOi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 15:14:38 -0400
-Received: by mail-pl1-f194.google.com with SMTP id f19so6078588plr.3;
-        Fri, 23 Aug 2019 12:14:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=KfyCvX/wLd+xBmfJHt9z6f1mRRr5A8kveHSdf9q4hGs=;
-        b=M8S8yGC7LZgC1vErDOoHct/w8T0Ps0GwHoxdt7XCW/IfGlv+EVwtweMFpwIQFAE4SD
-         zVFIw0jNxfwQSqcSdGv7cN+S4s+iFP4Sb2vQbcC1TyP4fYa+0yaGs3YTCeHH2M4If8yW
-         gXSxWTSeyXU54BisNezLnafFi1zDnev2HfUu8PAP4YLu7GkleyOEeaG0SRglUWQEmTzC
-         D4FtgMwDXQ+8RKtyx04LwGz0XZ2VE+ntrggi+3qGwweHUQr8tH+knrFCt78IrSZoRr2J
-         AUOt/k3rAB0FB/3geWDUNDkkJrIFYxMs5WUIvJycEFu/O68BpG3BwnkPYGPAa/gn/NN9
-         fJ5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KfyCvX/wLd+xBmfJHt9z6f1mRRr5A8kveHSdf9q4hGs=;
-        b=tZ/0+WAYW65FTNE35YmJj+3V5MI0tlOt41yLb4pavPaCVH+nUwqLgEmD3dyMrqkjzK
-         dBf1CGEZF38Ho9hVsYT+PbyvyP2Dam7nTE/3z7q1Ojecr9GYCyX9GvzWxjzeseuttbTW
-         W6Pw8uT0+gXZx/dVW8Jm1IodMIcJYHBNihEvpKprLvZC5zSnS0Dl4FaX1lgfGkvIiAC+
-         e9R3DxMdfGcjYNW8jH4TcKIvEMGYshaUXvwnc/8w0TVTNNjwDBxqYV2yHs2QyQ/yPt2C
-         +6urDN+PdHbfX9dcYT5MjLdJ96OjYgNfa4yS3OV09ztLVC8wEVc3ia8nj1t9uTc70pI3
-         tPsg==
-X-Gm-Message-State: APjAAAVV7FwlgOoLn2kkc8vwlUoV7STOLs5iB0qzfkxqEC8Ff78ysp9j
-        ZXPKad+4y4m2GjZSbX+3m9GG6dl6
-X-Google-Smtp-Source: APXvYqy+0eDy7inwc30A38gZ65ippwvVtu3pIyFRgieb00b8trbyEm9Bnp8DP8TU36jggEXda6+rkA==
-X-Received: by 2002:a17:902:3:: with SMTP id 3mr6767876pla.41.1566587677471;
-        Fri, 23 Aug 2019 12:14:37 -0700 (PDT)
-Received: from vm ([104.133.9.111])
-        by smtp.gmail.com with ESMTPSA id h17sm4685829pfo.24.2019.08.23.12.14.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2019 12:14:37 -0700 (PDT)
-From:   Forrest Fleming <ffleming@gmail.com>
-To:     Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc:     Forrest Fleming <ffleming@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        id S2406115AbfHWTPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 15:15:32 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:31777 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388918AbfHWTPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 15:15:32 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 46FWKG2hrMz9w;
+        Fri, 23 Aug 2019 21:13:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1566587634; bh=4N7WbSeiQ7Bn/AmuMiSbw7b2zfJLpYCfYnFzOgW76GY=;
+        h=Date:From:Subject:To:Cc:From;
+        b=f02O1ATPC0BoTrddjp3a+2SBrqoz2mKGAan5k49e5s4fM0f0rCM4881NWKVM4trp6
+         gjuZ+x2Z9fJ9EIgUJ3AbYdm1gMIyM04CTwBJxccxShvv2SqTb941n73P+zLnvt2wAz
+         /lsjX0p+om5r+uxkyIBxdaqzsCiQgBbLKWc9qdZJmz2q9T8uUFsnjFMsAzeA+SGCJ6
+         tm8nidI0HD10sZeUTFiiVs0d3TN5YJoyj0gEZfxJ5OeM8EG4N6KxM66hxqJTejYDgx
+         CJH+ljuE5+Oqy1wmKqocyLHSqvQZArEujEHGiCbdPhAQ2wNway0PunTuYeoYOCKZnb
+         KLaL3C9E8qJ9Q==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.101.2 at mail
+Date:   Fri, 23 Aug 2019 21:15:27 +0200
+Message-Id: <5866b49b330a750b44003ebd9f532541dcb13f18.1566587656.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v2] HID: fix error message in hid_open_report()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     linux-input@vger.kernel.org
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] net: intel: Cleanup e1000 - add space between }}
-Date:   Fri, 23 Aug 2019 19:14:21 +0000
-Message-Id: <20190823191421.3318-1-ffleming@gmail.com>
-X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-suggested by checkpatch
+On HID report descriptor parsing error the code displays bogus
+pointer instead of error offset (subtracts start=NULL from end).
+Make the message more useful by displaying correct error offset
+and include total buffer size for reference.
 
-Signed-off-by: Forrest Fleming <ffleming@gmail.com>
+This was carried over from ancient times - "Fixed" commit just
+promoted the message from DEBUG to ERROR.
+
+Cc: stable@vger.kernel.org
+Fixes: 8c3d52fc393b ("HID: make parser more verbose about parsing errors by default")
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+
 ---
- .../net/ethernet/intel/e1000/e1000_param.c    | 28 +++++++++----------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+v2: fixed printf() warning spotted by Jiri Kosina <jikos@kernel.org>
 
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_param.c b/drivers/net/ethernet/intel/e1000/e1000_param.c
-index d3f29ffe1e47..1a1f2f0237f9 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_param.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_param.c
-@@ -266,7 +266,7 @@ void e1000_check_options(struct e1000_adapter *adapter)
- 			.arg  = { .r = {
- 				.min = E1000_MIN_TXD,
- 				.max = mac_type < e1000_82544 ? E1000_MAX_TXD : E1000_MAX_82544_TXD
--				}}
-+				} }
- 		};
+ * against v5.2.9
+
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+---
+ drivers/hid/hid-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+index 210b81a56e1a..3af76624e4aa 100644
+--- a/drivers/hid/hid-core.c
++++ b/drivers/hid/hid-core.c
+@@ -1139,6 +1139,7 @@ int hid_open_report(struct hid_device *device)
+ 	__u8 *start;
+ 	__u8 *buf;
+ 	__u8 *end;
++	__u8 *next;
+ 	int ret;
+ 	static int (*dispatch_type[])(struct hid_parser *parser,
+ 				      struct hid_item *item) = {
+@@ -1192,7 +1193,8 @@ int hid_open_report(struct hid_device *device)
+ 	device->collection_size = HID_DEFAULT_NUM_COLLECTIONS;
  
- 		if (num_TxDescriptors > bd) {
-@@ -295,7 +295,7 @@ void e1000_check_options(struct e1000_adapter *adapter)
- 				.min = E1000_MIN_RXD,
- 				.max = mac_type < e1000_82544 ? E1000_MAX_RXD :
- 				       E1000_MAX_82544_RXD
--			}}
-+			} }
- 		};
+ 	ret = -EINVAL;
+-	while ((start = fetch_item(start, end, &item)) != NULL) {
++	while ((next = fetch_item(start, end, &item)) != NULL) {
++		start = next;
  
- 		if (num_RxDescriptors > bd) {
-@@ -341,7 +341,7 @@ void e1000_check_options(struct e1000_adapter *adapter)
- 			.err  = "reading default settings from EEPROM",
- 			.def  = E1000_FC_DEFAULT,
- 			.arg  = { .l = { .nr = ARRAY_SIZE(fc_list),
--					 .p = fc_list }}
-+					 .p = fc_list } }
- 		};
+ 		if (item.format != HID_ITEM_FORMAT_SHORT) {
+ 			hid_err(device, "unexpected long global item\n");
+@@ -1230,7 +1232,8 @@ int hid_open_report(struct hid_device *device)
+ 		}
+ 	}
  
- 		if (num_FlowControl > bd) {
-@@ -359,7 +359,7 @@ void e1000_check_options(struct e1000_adapter *adapter)
- 			.err  = "using default of " __MODULE_STRING(DEFAULT_TIDV),
- 			.def  = DEFAULT_TIDV,
- 			.arg  = { .r = { .min = MIN_TXDELAY,
--					 .max = MAX_TXDELAY }}
-+					 .max = MAX_TXDELAY } }
- 		};
- 
- 		if (num_TxIntDelay > bd) {
-@@ -377,7 +377,7 @@ void e1000_check_options(struct e1000_adapter *adapter)
- 			.err  = "using default of " __MODULE_STRING(DEFAULT_TADV),
- 			.def  = DEFAULT_TADV,
- 			.arg  = { .r = { .min = MIN_TXABSDELAY,
--					 .max = MAX_TXABSDELAY }}
-+					 .max = MAX_TXABSDELAY } }
- 		};
- 
- 		if (num_TxAbsIntDelay > bd) {
-@@ -395,7 +395,7 @@ void e1000_check_options(struct e1000_adapter *adapter)
- 			.err  = "using default of " __MODULE_STRING(DEFAULT_RDTR),
- 			.def  = DEFAULT_RDTR,
- 			.arg  = { .r = { .min = MIN_RXDELAY,
--					 .max = MAX_RXDELAY }}
-+					 .max = MAX_RXDELAY } }
- 		};
- 
- 		if (num_RxIntDelay > bd) {
-@@ -413,7 +413,7 @@ void e1000_check_options(struct e1000_adapter *adapter)
- 			.err  = "using default of " __MODULE_STRING(DEFAULT_RADV),
- 			.def  = DEFAULT_RADV,
- 			.arg  = { .r = { .min = MIN_RXABSDELAY,
--					 .max = MAX_RXABSDELAY }}
-+					 .max = MAX_RXABSDELAY } }
- 		};
- 
- 		if (num_RxAbsIntDelay > bd) {
-@@ -431,7 +431,7 @@ void e1000_check_options(struct e1000_adapter *adapter)
- 			.err  = "using default of " __MODULE_STRING(DEFAULT_ITR),
- 			.def  = DEFAULT_ITR,
- 			.arg  = { .r = { .min = MIN_ITR,
--					 .max = MAX_ITR }}
-+					 .max = MAX_ITR } }
- 		};
- 
- 		if (num_InterruptThrottleRate > bd) {
-@@ -545,7 +545,7 @@ static void e1000_check_copper_options(struct e1000_adapter *adapter)
- 			{          0, "" },
- 			{   SPEED_10, "" },
- 			{  SPEED_100, "" },
--			{ SPEED_1000, "" }};
-+			{ SPEED_1000, "" } };
- 
- 		opt = (struct e1000_option) {
- 			.type = list_option,
-@@ -553,7 +553,7 @@ static void e1000_check_copper_options(struct e1000_adapter *adapter)
- 			.err  = "parameter ignored",
- 			.def  = 0,
- 			.arg  = { .l = { .nr = ARRAY_SIZE(speed_list),
--					 .p = speed_list }}
-+					 .p = speed_list } }
- 		};
- 
- 		if (num_Speed > bd) {
-@@ -567,7 +567,7 @@ static void e1000_check_copper_options(struct e1000_adapter *adapter)
- 		static const struct e1000_opt_list dplx_list[] = {
- 			{           0, "" },
- 			{ HALF_DUPLEX, "" },
--			{ FULL_DUPLEX, "" }};
-+			{ FULL_DUPLEX, "" } };
- 
- 		opt = (struct e1000_option) {
- 			.type = list_option,
-@@ -575,7 +575,7 @@ static void e1000_check_copper_options(struct e1000_adapter *adapter)
- 			.err  = "parameter ignored",
- 			.def  = 0,
- 			.arg  = { .l = { .nr = ARRAY_SIZE(dplx_list),
--					 .p = dplx_list }}
-+					 .p = dplx_list } }
- 		};
- 
- 		if (num_Duplex > bd) {
-@@ -623,7 +623,7 @@ static void e1000_check_copper_options(struct e1000_adapter *adapter)
- 			 { 0x2c, AA "1000/FD, 100/FD, 100/HD" },
- 			 { 0x2d, AA "1000/FD, 100/FD, 100/HD, 10/HD" },
- 			 { 0x2e, AA "1000/FD, 100/FD, 100/HD, 10/FD" },
--			 { 0x2f, AA "1000/FD, 100/FD, 100/HD, 10/FD, 10/HD" }};
-+			 { 0x2f, AA "1000/FD, 100/FD, 100/HD, 10/FD, 10/HD" } };
- 
- 		opt = (struct e1000_option) {
- 			.type = list_option,
-@@ -631,7 +631,7 @@ static void e1000_check_copper_options(struct e1000_adapter *adapter)
- 			.err  = "parameter ignored",
- 			.def  = AUTONEG_ADV_DEFAULT,
- 			.arg  = { .l = { .nr = ARRAY_SIZE(an_list),
--					 .p = an_list }}
-+					 .p = an_list } }
- 		};
- 
- 		if (num_AutoNeg > bd) {
+-	hid_err(device, "item fetching failed at offset %d\n", (int)(end - start));
++	hid_err(device, "item fetching failed at offset %u/%u\n",
++		size - (unsigned int)(end - start), size);
+ err:
+ 	kfree(parser->collection_stack);
+ alloc_err:
 -- 
-2.17.1
+2.20.1
 
