@@ -2,162 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7EA19B3B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 055F39B3BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405919AbfHWPoc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 11:44:32 -0400
-Received: from mga11.intel.com ([192.55.52.93]:50812 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732655AbfHWPob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 11:44:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 08:44:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,421,1559545200"; 
-   d="scan'208";a="330763198"
-Received: from sdkulkar-mobl.amr.corp.intel.com (HELO [10.254.94.219]) ([10.254.94.219])
-  by orsmga004.jf.intel.com with ESMTP; 23 Aug 2019 08:44:30 -0700
-Subject: Re: [alsa-devel] [RESEND PATCH v4 2/4] soundwire: core: add device
- tree support for slave devices
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        broonie@kernel.org, robh+dt@kernel.org, vkoul@kernel.org
-Cc:     devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, spapothi@codeaurora.org,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org
-References: <20190822233759.12663-1-srinivas.kandagatla@linaro.org>
- <20190822233759.12663-3-srinivas.kandagatla@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <2f1b5e2e-4699-1d06-e28e-708d5ed99b6a@linux.intel.com>
-Date:   Fri, 23 Aug 2019 10:44:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2405947AbfHWPol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 11:44:41 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46604 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405927AbfHWPoh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 11:44:37 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z1so9032917wru.13
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 08:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=94WrC/BBgFJ3B1KulaFSwiNtZR1yN0jFyWLE8Zon3I0=;
+        b=PG4XOJ29ZJXkv/aI115bn6+yjvx6Pazp64dPnO+Zc60xH8oYL9GNUGM2NUSEslY8KR
+         4zNar2bwmtBWE4T7J3eukHuW7BvmFFpjsFocpkP9oPdgFr+W0bnVIgNN6fQR7ZiNSmK7
+         5x8qOo+Buv6mV+ibVqQ+y9Z0TVh0iV90pKp5eJZrBbHs5ugAkYi8QTYAGX0OtMV0ugjw
+         cvCLTVzbsy724GH6e6BzoPyM5zU1CkDKhxqGVfZ+Lzk05XiY1bqJK25kvUoFtSuxspDl
+         Hu6QfAgJB/FlSyoOYtSqaEGhMY6vHF//rr5FP0yCR6bbByNXcyjIMbg/tiEkcdz3sdgh
+         FPSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=94WrC/BBgFJ3B1KulaFSwiNtZR1yN0jFyWLE8Zon3I0=;
+        b=Ry3fxHos1QGw2iQ8adGIMRRgNuZvB/X6JrjumJlboejWoU6QteAfHpqX8Xgv0+ciaY
+         g2Eu48y66vlyLwMvT2nPPNMww5Aq/aCyVLBzzemRebdomFFMAoAubXVo4UQ4W5PlVYOE
+         Fk+s2jaL3pAS7voMwrccxAz49Pes1+dbbO43ZfyVSvjoSGR+EhA07vrz4crOp/ETEtlg
+         lUcGeNDLkr+hNRZ29rbORF2e5F66QPRZ/RT2xe6uX+aXbb5+1rhh1OXSQq02G1BimMey
+         xHdXZH3g7BQJIVDS347/gyB9YPRXS7DmYUQva7h8XtA29EONjPO7YZ+UfbbKHg/T2QYP
+         LURQ==
+X-Gm-Message-State: APjAAAURxo56Ik75IIFZ0SOwYQjeNQs4BXYE1PQNW8hCgPOLpV1XRX+n
+        tnEaczVi11tS7p0DQgIv/BNhmw==
+X-Google-Smtp-Source: APXvYqwezDRfZb6B8c8Y1CQApWZ9F//On7ooLCRo4hwkX0NwPYIUHhbrpO8M8TY2AesSZdBr3W4hLQ==
+X-Received: by 2002:adf:dbcd:: with SMTP id e13mr5804786wrj.314.1566575075858;
+        Fri, 23 Aug 2019 08:44:35 -0700 (PDT)
+Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id v7sm3567342wrn.41.2019.08.23.08.44.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2019 08:44:35 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] ASoC: meson: axg-tdm-formatter: add g12a reset
+Date:   Fri, 23 Aug 2019 17:44:30 +0200
+Message-Id: <20190823154432.16268-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190822233759.12663-3-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset add the possibility to provide a reset to the tdm formatter.
+Such reset is available on the g12a SoC family and helps solve a random
+channel output shift when using more than one output lane.
 
+Changes since v1 [0]:
+- Rebased on kevin's tree
 
-On 8/22/19 6:37 PM, Srinivas Kandagatla wrote:
-> This patch adds support to parsing device tree based
-> SoundWire slave devices.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->   drivers/soundwire/bus.c   |  2 ++
->   drivers/soundwire/bus.h   |  1 +
->   drivers/soundwire/slave.c | 52 +++++++++++++++++++++++++++++++++++++++
->   3 files changed, 55 insertions(+)
-> 
-> diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-> index 49f64b2115b9..c2eaeb5c38ed 100644
-> --- a/drivers/soundwire/bus.c
-> +++ b/drivers/soundwire/bus.c
-> @@ -77,6 +77,8 @@ int sdw_add_bus_master(struct sdw_bus *bus)
->   	 */
->   	if (IS_ENABLED(CONFIG_ACPI) && ACPI_HANDLE(bus->dev))
->   		ret = sdw_acpi_find_slaves(bus);
-> +	else if (IS_ENABLED(CONFIG_OF) && bus->dev->of_node)
-> +		ret = sdw_of_find_slaves(bus);
->   	else
->   		ret = -ENOTSUPP; /* No ACPI/DT so error out */
->   
-> diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
-> index 3048ca153f22..ee46befedbd1 100644
-> --- a/drivers/soundwire/bus.h
-> +++ b/drivers/soundwire/bus.h
-> @@ -15,6 +15,7 @@ static inline int sdw_acpi_find_slaves(struct sdw_bus *bus)
->   }
->   #endif
->   
-> +int sdw_of_find_slaves(struct sdw_bus *bus);
->   void sdw_extract_slave_id(struct sdw_bus *bus,
->   			  u64 addr, struct sdw_slave_id *id);
->   
-> diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
-> index f39a5815e25d..3ef265d2ee89 100644
-> --- a/drivers/soundwire/slave.c
-> +++ b/drivers/soundwire/slave.c
-> @@ -2,6 +2,7 @@
->   // Copyright(c) 2015-17 Intel Corporation.
->   
->   #include <linux/acpi.h>
-> +#include <linux/of.h>
->   #include <linux/soundwire/sdw.h>
->   #include <linux/soundwire/sdw_type.h>
->   #include "bus.h"
-> @@ -35,6 +36,7 @@ static int sdw_slave_add(struct sdw_bus *bus,
->   
->   	slave->dev.release = sdw_slave_release;
->   	slave->dev.bus = &sdw_bus_type;
-> +	slave->dev.of_node = of_node_get(to_of_node(fwnode));
->   	slave->bus = bus;
->   	slave->status = SDW_SLAVE_UNATTACHED;
->   	slave->dev_num = 0;
-> @@ -112,3 +114,53 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
->   }
->   
->   #endif
-> +
-> +/*
-> + * sdw_of_find_slaves() - Find Slave devices in master device tree node
-> + * @bus: SDW bus instance
-> + *
-> + * Scans Master DT node for SDW child Slave devices and registers it.
-> + */
-> +int sdw_of_find_slaves(struct sdw_bus *bus)
-> +{
-> +	struct device *dev = bus->dev;
-> +	struct device_node *node;
-> +
-> +	for_each_child_of_node(bus->dev->of_node, node) {
-> +		int link_id, sdw_version, ret, len;
-> +		const char *compat = NULL;
-> +		struct sdw_slave_id id;
-> +		const __be32 *addr;
-> +
-> +		compat = of_get_property(node, "compatible", NULL);
-> +		if (!compat)
-> +			continue;
-> +
-> +		ret = sscanf(compat, "sdw%01x%04hx%04hx%02hhx", &sdw_version,
-> +			     &id.mfg_id, &id.part_id, &id.class_id);
-> +
-> +		if (ret != 4) {
-> +			dev_err(dev, "Invalid compatible string found %s\n",
-> +				compat);
-> +			continue;
-> +		}
-> +
-> +		addr = of_get_property(node, "reg", &len);
-> +		if (!addr || (len < 2 * sizeof(u32))) {
-> +			dev_err(dev, "Invalid Instance and Link ID\n");
-> +			continue;
-> +		}
-> +
-> +		id.unique_id = be32_to_cpup(addr++);
-> +		link_id = be32_to_cpup(addr);
+[0]: https://lkml.kernel.org/r/20190820121551.18398-1-jbrunet@baylibre.com
 
-So here the link ID is obviously not in the address, so you are not 
-using the MIPI spec as we discussed initially?
+Jerome Brunet (2):
+  arm64: dts: meson: g12a: audio clock controller provides resets
+  arm64: dts: meson: g12a: add reset to tdm formatters
 
-> +		id.sdw_version = sdw_version;
-> +
-> +		/* Check for link_id match */
-> +		if (link_id != bus->link_id)
-> +			continue;
-> +
-> +		sdw_slave_add(bus, &id, of_fwnode_handle(node));
-> +	}
-> +
-> +	return 0;
-> +}
-> 
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+-- 
+2.21.0
+
