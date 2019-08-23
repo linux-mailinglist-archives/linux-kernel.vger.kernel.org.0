@@ -2,158 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BAAD9AD7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84E0C9AD78
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:42:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389689AbfHWKmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 06:42:31 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52128 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388655AbfHWKmb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:42:31 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190823104229euoutp0130209f8913cd1e7aabf5700a8a8970aa~9hz7qcEH62159621596euoutp017
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 10:42:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190823104229euoutp0130209f8913cd1e7aabf5700a8a8970aa~9hz7qcEH62159621596euoutp017
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566556949;
-        bh=/+8sX1IwLtd70Fz4kr7IaaRknglBZi+mCocggncPzmQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=T5sIc6ALwC9iPZFhwAFv/qdzKSKIHieA5RuGoO6sc8SqRkTDZ04EwMnISK4isuLF1
-         1+ZRNeel+AjN6YD9mD35qOPsEPz9u7HeabjMFlwcDdUNtMbNo8OrttcHZONSYxWeoZ
-         yQ/5RdGifp+pMCyOxz1SIEldQjTAQ58jTOus1sHc=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190823104228eucas1p186ef5140430ad48c986e5e56202d7b43~9hz61FU-92136521365eucas1p1B;
-        Fri, 23 Aug 2019 10:42:28 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E2.92.04469.413CF5D5; Fri, 23
-        Aug 2019 11:42:28 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190823104228eucas1p2ce9162667a7fac65d3bf4abfa38253e7~9hz6GWqJR0355603556eucas1p2K;
-        Fri, 23 Aug 2019 10:42:28 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190823104227eusmtrp16ee00847a73b5142e0981d52aaf6f641~9hz52bcv90951109511eusmtrp1X;
-        Fri, 23 Aug 2019 10:42:27 +0000 (GMT)
-X-AuditID: cbfec7f2-569ff70000001175-68-5d5fc314047d
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 6E.EE.04166.313CF5D5; Fri, 23
-        Aug 2019 11:42:27 +0100 (BST)
-Received: from [106.120.51.71] (unknown [106.120.51.71]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190823104227eusmtip2e7c89f5bb809d018b40bbd2c3a1aea7b~9hz5f3nw20575205752eusmtip27;
-        Fri, 23 Aug 2019 10:42:27 +0000 (GMT)
-Subject: Re: [PATCH v6] ata/pata_buddha: Probe via modalias instead of
- initcall
-To:     Max Staudt <max@enpas.org>
-Cc:     axboe@kernel.dk, linux-ide@vger.kernel.org,
-        linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
-        glaubitz@physik.fu-berlin.de, schmitzmic@gmail.com,
-        geert@linux-m68k.org
-From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Message-ID: <7d3c4379-23bd-ef3a-e725-86516097850a@samsung.com>
-Date:   Fri, 23 Aug 2019 12:42:25 +0200
+        id S2389133AbfHWKmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 06:42:10 -0400
+Received: from foss.arm.com ([217.140.110.172]:59894 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388655AbfHWKmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 06:42:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61D44337;
+        Fri, 23 Aug 2019 03:42:08 -0700 (PDT)
+Received: from [10.37.12.154] (unknown [10.37.12.154])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD3923F246;
+        Fri, 23 Aug 2019 03:42:04 -0700 (PDT)
+Subject: Re: Regression in 5.3-rc1 and later
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Chris Clayton <chris2553@googlemail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org,
+        shuah@kernel.org, sthotton@marvell.com, andre.przywara@arm.com,
+        arnd@arndb.de, salyzyn@android.com, huw@codeweavers.com,
+        catalin.marinas@arm.com, daniel.lezcano@linaro.org,
+        will.deacon@arm.com, linux-mips@vger.kernel.org,
+        ralf@linux-mips.org, 0x7f454c46@gmail.com, paul.burton@mips.com,
+        linux-kselftest@vger.kernel.org, linux@rasmusvillemoes.dk,
+        tglx@linutronix.de, pcc@google.com,
+        linux-arm-kernel@lists.infradead.org
+References: <faaa3843-09a6-1a21-3448-072eeed1ea00@googlemail.com>
+ <20190823103654.GX13294@shell.armlinux.org.uk>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <8ab59d01-348e-9ac1-2944-5e98acd9b1f8@arm.com>
+Date:   Fri, 23 Aug 2019 11:43:32 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.6.1
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190820165715.15185-1-max@enpas.org>
+In-Reply-To: <20190823103654.GX13294@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRmVeSWpSXmKPExsWy7djPc7oih+NjDVrmylusvtvPZvHs1l4m
-        i9nvlS2O7XjEZHF51xw2i93v7zNaPGz6wGQxt3U6uwOHx+Gvm9k8ds66y+5x+Wypx6HDHYwe
-        B8+dY/T4vEkugC2KyyYlNSezLLVI3y6BK2Pn3ymsBU28FatX32dvYJzP1cXIySEhYCIxde8l
-        ti5GLg4hgRWMEv83nWGCcL4wStxdcIkVwvnMKLH7x0d2mJa1Kz9BJZYzShzbsoQNJCEk8JZR
-        YusJERBbWCBQ4tenWYwgtoiAnMTH1quMIA3MAtsYJY6efgU2iU3ASmJi+yqwIl4BO4mWZxPA
-        bBYBVYmXTXuYQWxRgQiJ+8c2sELUCEqcnPmEBcTmFDCWeL1hDlgNs4C4xK0n85kgbHmJ7W8h
-        4hICh9glbq2Bsl0knu5cxARhC0u8Or4F6hsZidOTe1hAjpMQWMco8bfjBTOEs51RYvnkf2wQ
-        VdYSh49fBLqCA2iDpsT6XfogpoSAo8TFv7IQJp/EjbeCECfwSUzaNp0ZIswr0dEmBDFDTWLD
-        sg1sMFu7dq5knsCoNAvJY7OQPDMLyTOzENYuYGRZxSieWlqcm55abJiXWq5XnJhbXJqXrpec
-        n7uJEZiSTv87/mkH49dLSYcYBTgYlXh4T3TFxQqxJpYVV+YeYpTgYFYS4S2bCBTiTUmsrEot
-        yo8vKs1JLT7EKM3BoiTOW83wIFpIID2xJDU7NbUgtQgmy8TBKdXAqHLk8k6XdVd5u6JvVKv8
-        VCpKbd724cCsx7VqG3w2SCrr7hEye5ovl3jp+iRJM//2U2Juu+3+nZbRW8nkmCHbfCvrR23A
-        8m+OCt1N+TLSyqWr2Bb+NJ3s+iOB5eoB00N/TK6FKJpd3i3Bn9PatY9ryfkLLy8Kz1NVuN/+
-        VUK9vmWB779yO4P/SizFGYmGWsxFxYkAJawZ7kUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGIsWRmVeSWpSXmKPExsVy+t/xe7rCh+NjDVZd07ZYfbefzeLZrb1M
-        FrPfK1sc2/GIyeLyrjlsFrvf32e0eNj0gclibut0dgcOj8NfN7N57Jx1l93j8tlSj0OHOxg9
-        Dp47x+jxeZNcAFuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5m
-        WWqRvl2CXsbOv1NYC5p4K1avvs/ewDifq4uRk0NCwERi7cpPrF2MXBxCAksZJQ5ve8LexcgB
-        lJCROL6+DKJGWOLPtS42iJrXjBL3PqxkB0kICwRK/Po0ixHEFhGQk/jYepURpIhZYBujxNdr
-        0xkhOtoYJe6snsIEUsUmYCUxsX0VWAevgJ1Ey7MJYDaLgKrEy6Y9zCC2qECExJn3K1ggagQl
-        Ts58AmZzChhLvN4wB6yGWUBd4s+8S1C2uMStJ/OZIGx5ie1v5zBPYBSahaR9FpKWWUhaZiFp
-        WcDIsopRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMwDrcd+7l5B+OljcGHGAU4GJV4eE90xcUK
-        sSaWFVfmHmKU4GBWEuEtmwgU4k1JrKxKLcqPLyrNSS0+xGgK9NxEZinR5HxgisgriTc0NTS3
-        sDQ0NzY3NrNQEuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cCY+XwmU21jUeuOpYt/LJuS4edX
-        9jDV/Nukg5EG6/3jexVY468e5T9c9Oj3/GmachqtDRMXT7xQJvSYpT7vaWbi//ubcpwN5oum
-        GHe0se9YbrPpmF7KQlvHmZdEtaWlU/52TBaf4CUMjOmJDzQezDzXFFHtdvtJZ4RH48J1zz88
-        e3heQ1Lz3iIlluKMREMt5qLiRAAiHiZD2QIAAA==
-X-CMS-MailID: 20190823104228eucas1p2ce9162667a7fac65d3bf4abfa38253e7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190820165731epcas2p340cc3421251987896b857da4ec42038e
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190820165731epcas2p340cc3421251987896b857da4ec42038e
-References: <CGME20190820165731epcas2p340cc3421251987896b857da4ec42038e@epcas2p3.samsung.com>
-        <20190820165715.15185-1-max@enpas.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Russell,
 
-Hi,
-
-On 8/20/19 6:57 PM, Max Staudt wrote:
-> Up until now, the pata_buddha driver would only check for cards on
-> initcall time. Now, the kernel will call its probe function as soon
-> as a compatible card is detected.
+On 8/23/19 11:36 AM, Russell King - ARM Linux admin wrote:
+> Hi,
 > 
-> v6: Only do the drvdata workaround for X-Surf (remove breaks otherwise)
->     Style
+> To everyone on the long Cc list...
 > 
-> v5: Remove module_exit(): There's no good way to handle the X-Surf hack.
->     Also include a workaround to save X-Surf's drvdata in case zorro8390
->     is active.
+> What's happening with this?  I was about to merge the patches for 32-bit
+> ARM, which I don't want to do if doing so will cause this regression on
+> 32-bit ARM as well.
 > 
-> v4: Clean up pata_buddha_probe() by using ent->driver_data.
->     Support X-Surf via late_initcall()
+
+The regression is sorted as of yesterday, a new patch is going through tip:
+timers/urgent and will be part of the next -rc.
+
+If you want to merge them there should be nothing blocking.
+
+> Thanks.
 > 
-> v3: Clean up devm_*, implement device removal.
+> On Thu, Aug 22, 2019 at 07:57:59AM +0100, Chris Clayton wrote:
+>> Hi everyone,
+>>
+>> Firstly, apologies to anyone on the long cc list that turns out not to be particularly interested in the following, but
+>> you were all marked as cc'd in the commit message below.
+>>
+>> I've found a problem that isn't present in 5.2 series or 4.19 series kernels, and seems to have arrived in 5.3-rc1. The
+>> problem is that if I suspend (to ram) my laptop, on resume 14 minutes or more after suspending, I have no networking
+>> functionality. If I resume the laptop after 13 minutes or less, networking works fine. I haven't tried to get finer
+>> grained timings between 13 and 14 minutes, but can do if it would help.
+>>
+>> ifconfig shows that wlan0 is still up and still has its assigned ip address but, for instance, a ping of any other
+>> device on my network, fails as does pinging, say, kernel.org. I've tried "downing" the network with (/sbin/ifdown) and
+>> unloading the iwlmvm module and then reloading the module and "upping" (/sbin/ifup) the network, but my network is still
+>> unusable. I should add that the problem also manifests if I hibernate the laptop, although my testing of this has been
+>> minimal. I can do more if required.
+>>
+>> As I say, the problem first appears in 5.3-rc1, so I've bisected between 5.2.0 and 5.3-rc1 and that concluded with:
+>>
+>> [chris:~/kernel/linux]$ git bisect good
+>> 7ac8707479886c75f353bfb6a8273f423cfccb23 is the first bad commit
+>> commit 7ac8707479886c75f353bfb6a8273f423cfccb23
+>> Author: Vincenzo Frascino <vincenzo.frascino@arm.com>
+>> Date:   Fri Jun 21 10:52:49 2019 +0100
+>>
+>>     x86/vdso: Switch to generic vDSO implementation
+>>
+>>     The x86 vDSO library requires some adaptations to take advantage of the
+>>     newly introduced generic vDSO library.
+>>
+>>     Introduce the following changes:
+>>      - Modification of vdso.c to be compliant with the common vdso datapage
+>>      - Use of lib/vdso for gettimeofday
+>>
+>>     [ tglx: Massaged changelog and cleaned up the function signature formatting ]
+>>
+>>     Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+>>     Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>>     Cc: linux-arch@vger.kernel.org
+>>     Cc: linux-arm-kernel@lists.infradead.org
+>>     Cc: linux-mips@vger.kernel.org
+>>     Cc: linux-kselftest@vger.kernel.org
+>>     Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>     Cc: Will Deacon <will.deacon@arm.com>
+>>     Cc: Arnd Bergmann <arnd@arndb.de>
+>>     Cc: Russell King <linux@armlinux.org.uk>
+>>     Cc: Ralf Baechle <ralf@linux-mips.org>
+>>     Cc: Paul Burton <paul.burton@mips.com>
+>>     Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>     Cc: Mark Salyzyn <salyzyn@android.com>
+>>     Cc: Peter Collingbourne <pcc@google.com>
+>>     Cc: Shuah Khan <shuah@kernel.org>
+>>     Cc: Dmitry Safonov <0x7f454c46@gmail.com>
+>>     Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>>     Cc: Huw Davies <huw@codeweavers.com>
+>>     Cc: Shijith Thotton <sthotton@marvell.com>
+>>     Cc: Andre Przywara <andre.przywara@arm.com>
+>>     Link: https://lkml.kernel.org/r/20190621095252.32307-23-vincenzo.frascino@arm.com
+>>
+>>  arch/x86/Kconfig                         |   3 +
+>>  arch/x86/entry/vdso/Makefile             |   9 ++
+>>  arch/x86/entry/vdso/vclock_gettime.c     | 245 ++++---------------------------
+>>  arch/x86/entry/vdso/vdsox32.lds.S        |   1 +
+>>  arch/x86/entry/vsyscall/Makefile         |   2 -
+>>  arch/x86/entry/vsyscall/vsyscall_gtod.c  |  83 -----------
+>>  arch/x86/include/asm/pvclock.h           |   2 +-
+>>  arch/x86/include/asm/vdso/gettimeofday.h | 191 ++++++++++++++++++++++++
+>>  arch/x86/include/asm/vdso/vsyscall.h     |  44 ++++++
+>>  arch/x86/include/asm/vgtod.h             |  75 +---------
+>>  arch/x86/include/asm/vvar.h              |   7 +-
+>>  arch/x86/kernel/pvclock.c                |   1 +
+>>  12 files changed, 284 insertions(+), 379 deletions(-)
+>>  delete mode 100644 arch/x86/entry/vsyscall/vsyscall_gtod.c
+>>  create mode 100644 arch/x86/include/asm/vdso/gettimeofday.h
+>>  create mode 100644 arch/x86/include/asm/vdso/vsyscall.h
+>>
+>> To confirm my bisection was correct, I did a git checkout of 7ac8707479886c75f353bfb6a8273f423cfccb2. As expected, the
+>> kernel exhibited the problem I've described. However, a kernel built at the immediately preceding (parent?) commit
+>> (bfe801ebe84f42b4666d3f0adde90f504d56e35b) has a working network after a (>= 14minute) suspend/resume cycle.
+>>
+>> As the module name implies, I'm using wireless networking. The hardware is detected as "Intel(R) Wireless-AC 9260
+>> 160MHz, REV=0x324" by iwlwifi.
+>>
+>> I'm more than happy to provide additional diagnostics (but may need a little hand-holding) and to apply diagnostic or
+>> fix patches, but please cc me on any reply as I'm not subscribed to any of the kernel-related mailing lists.
+>>
+>> Chris
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
 > 
-> v2: Rename 'zdev' to 'z' to make the patch easy to analyse with
->     git diff --ignore-space-change
-> 
-> Signed-off-by: Max Staudt <max@enpas.org>
-> ---
->  drivers/ata/pata_buddha.c | 231 +++++++++++++++++++++++++++-------------------
->  1 file changed, 138 insertions(+), 93 deletions(-)
-> 
-> diff --git a/drivers/ata/pata_buddha.c b/drivers/ata/pata_buddha.c
-> index 11a8044ff..9e1b57866 100644
-> --- a/drivers/ata/pata_buddha.c
-> +++ b/drivers/ata/pata_buddha.c
 
-[...]
-
-> +static struct zorro_driver pata_buddha_driver = {
-> +	.name           = "pata_buddha",
-> +	.id_table       = pata_buddha_zorro_tbl,
-> +	.probe          = pata_buddha_probe,
-> +	.remove         = pata_buddha_remove,
-> +	.driver  = {
-> +		.suppress_bind_attrs = true,
-
-I thought that we had agreed that this is not needed?
-
-With that fixed:
-
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+-- 
+Regards,
+Vincenzo
