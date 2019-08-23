@@ -2,86 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41FC19AA0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B8D09AA27
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389419AbfHWISS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 04:18:18 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41247 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388631AbfHWISS (ORCPT
+        id S2405224AbfHWITZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 04:19:25 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:35197 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729113AbfHWITX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 04:18:18 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j16so7790924wrr.8
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 01:18:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=prXm3P3EuozGuFJkO3h5BCLJubkE/g8QKoERuCU4E8M=;
-        b=fweN2nB3N+MJP0ngSWEQ7i9ICK8STO+eyQwG7DASE6jmfiR7L1GVpnqrlGWHT9dAKv
-         1MUob/wt6UwJlXxof8YC5qD4F3djycZ469WUJ+0rAFtioo5yfEwJYNZXPoPIUhPV9vyI
-         AFX6KhzOeBh9MDNDlCaW8z9Z9l/KwtXeiWjjw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=prXm3P3EuozGuFJkO3h5BCLJubkE/g8QKoERuCU4E8M=;
-        b=TrOMFV+8iZ0WtYtCrBwk8mqiIr4T6IlRCbPE9RYyRuGT5WLG2YPPuxfG+l/Y2Lo3o9
-         qQJ33nVCL0RNoMibFHLCcG3MAnA1GzzkQftdBVD4QI1WSgrj2+WVdaih8d67ROaAjsqg
-         dxH4Ty1JchD1NHsyeUXOkecI8XtIKbsqnLYBOSOwNIY8Z6kpKB8MbmsBWxuHtTfwRA/Z
-         s8HHf0qy9wHbaEY4iE/PheqXDkjqLGvn6gIGh5Unb6THYVDaxu0AaHoIw3Q8Sfblw1T+
-         Ze6GLXXQkIEDZ6PBAZOC3dAeAvFh+IfmWKka6rT6w7RLJEf+AXhncVpIbyYEAquuCOxT
-         JBcw==
-X-Gm-Message-State: APjAAAVvX05V2fI9fRt08F6kPUZ8RQzyXfsIAIsmqXnXyYW4ol3hf2vF
-        47sjPIML0/4ngVJoRyvxXXPvPg==
-X-Google-Smtp-Source: APXvYqw+XUl+DLn+INP9GfpdrffdxYEgE59Xt8vee45Eb39L4aEq5x+cjyJsy5MtieVi+SDMo3zuBA==
-X-Received: by 2002:adf:e504:: with SMTP id j4mr3465872wrm.222.1566548295940;
-        Fri, 23 Aug 2019 01:18:15 -0700 (PDT)
-Received: from [10.176.68.244] ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id e14sm1771959wma.37.2019.08.23.01.18.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 23 Aug 2019 01:18:15 -0700 (PDT)
-Subject: Re: [PATCH] brcmfmac: replace strncpy() by strscpy()
-To:     Xulin Sun <xulin.sun@windriver.com>, kvalo@codeaurora.org
-Cc:     stefan.wahren@i2se.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, brcm80211-dev-list@cypress.com,
-        brcm80211-dev-list.pdl@broadcom.com,
-        linux-wireless@vger.kernel.org, franky.lin@broadcom.com,
-        hante.meuleman@broadcom.com, chi-hsien.lin@cypress.com,
-        wright.feng@cypress.com, davem@davemloft.net,
-        stanley.hsu@cypress.com
-References: <20190823074708.20081-1-xulin.sun@windriver.com>
-From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <894851e7-f057-4789-f9af-f098a968d713@broadcom.com>
-Date:   Fri, 23 Aug 2019 10:18:13 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 23 Aug 2019 04:19:23 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 8809F60007;
+        Fri, 23 Aug 2019 08:19:20 +0000 (UTC)
+Date:   Fri, 23 Aug 2019 10:19:20 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     megous@megous.com
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 3/3] arm64: dts: sun50i-h6: Add support for RTC and
+ fix the clock tree
+Message-ID: <20190823081920.xxqg6w7tlnvvkzlx@flea>
+References: <20190820151934.3860-1-megous@megous.com>
+ <20190820151934.3860-4-megous@megous.com>
 MIME-Version: 1.0
-In-Reply-To: <20190823074708.20081-1-xulin.sun@windriver.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bvvuqig3adpl6wgr"
+Content-Disposition: inline
+In-Reply-To: <20190820151934.3860-4-megous@megous.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/23/2019 9:47 AM, Xulin Sun wrote:
-> The strncpy() may truncate the copied string,
-> replace it by the safer strscpy().
-> 
-> To avoid below compile warning with gcc 8.2:
-> 
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:In function 'brcmf_vndr_ie':
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:4227:2:
-> warning: 'strncpy' output truncated before terminating nul copying 3 bytes from a string of the same length [-Wstringop-truncation]
->    strncpy(iebuf, add_del_cmd, VNDR_IE_CMD_LEN - 1);
->    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
-> Signed-off-by: Xulin Sun <xulin.sun@windriver.com>
-> ---
->   drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
+--bvvuqig3adpl6wgr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Aug 20, 2019 at 05:19:34PM +0200, megous@megous.com wrote:
+> From: Ondrej Jirman <megous@megous.com>
+>
+> This patch adds RTC node and fixes the clock properties and nodes
+> to reflect the real clock tree.
+>
+> The device nodes for the internal oscillator and osc32k are removed,
+> as these clocks are now provided by the RTC device. Clock references
+> are fixed accordingly, too.
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
+
+The prefix should be "arm64: dts: allwinner: h6:"
+
+I've fixed it up and applied it.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--bvvuqig3adpl6wgr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXV+hiAAKCRDj7w1vZxhR
+xQlxAP9kdMuf4hAYTBGWFaQzFVjFmqRMRi1y/pCcJ+PHKLK3TAD8DZOSzZhHJZFE
+oscKRT3ZVaryNY1pphYVt0LlyyDu2Q0=
+=Ngr3
+-----END PGP SIGNATURE-----
+
+--bvvuqig3adpl6wgr--
