@@ -2,338 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE89F9AD9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938929ADAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:52:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392289AbfHWKtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 06:49:18 -0400
-Received: from enpas.org ([46.38.239.100]:44656 "EHLO mail.enpas.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390368AbfHWKtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:49:18 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        by mail.enpas.org (Postfix) with ESMTPSA id BF44E100174;
-        Fri, 23 Aug 2019 10:49:14 +0000 (UTC)
-From:   Max Staudt <max@enpas.org>
-To:     b.zolnierkie@samsung.com, axboe@kernel.dk
-Cc:     linux-ide@vger.kernel.org, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org, glaubitz@physik.fu-berlin.de,
-        schmitzmic@gmail.com, geert@linux-m68k.org,
-        Max Staudt <max@enpas.org>
-Subject: [PATCH v7] ata/pata_buddha: Probe via modalias instead of initcall
-Date:   Fri, 23 Aug 2019 12:49:11 +0200
-Message-Id: <20190823104911.6840-1-max@enpas.org>
-X-Mailer: git-send-email 2.11.0
+        id S2392664AbfHWKvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 06:51:42 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:57794 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730991AbfHWKvl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 06:51:41 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 46FJ9l2qlDz1rGRc;
+        Fri, 23 Aug 2019 12:51:39 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 46FJ9l2TjCz1qqkV;
+        Fri, 23 Aug 2019 12:51:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id funYEpq1XLjl; Fri, 23 Aug 2019 12:51:38 +0200 (CEST)
+X-Auth-Info: STQJys8Qs0uQp8jPsYNHRNPU6hiQQiJ6TDsRYhTz6+w=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri, 23 Aug 2019 12:51:38 +0200 (CEST)
+Subject: Re: [PATCH] Input: ili210x - switch to using threaded IRQ
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20190811161104.GA43556@dtor-ws>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <1bee0866-d022-2adf-3734-aeb2689d28f1@denx.de>
+Date:   Fri, 23 Aug 2019 12:34:13 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190811161104.GA43556@dtor-ws>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Up until now, the pata_buddha driver would only check for cards on
-initcall time. Now, the kernel will call its probe function as soon
-as a compatible card is detected.
+On 8/11/19 6:11 PM, Dmitry Torokhov wrote:
+> Let's switch the driver to using threaded IRQ so that we do not need to
+> manage the interrupt and work separately, and we do not acknowledge
+> interrupt until we finished handling it completely.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-v7: Removed suppress_bind_attrs that slipped in
-
-v6: Only do the drvdata workaround for X-Surf (remove breaks otherwise)
-    Style
-
-v5: Remove module_exit(): There's no good way to handle the X-Surf hack.
-    Also include a workaround to save X-Surf's drvdata in case zorro8390
-    is active.
-
-v4: Clean up pata_buddha_probe() by using ent->driver_data.
-    Support X-Surf via late_initcall()
-
-v3: Clean up devm_*, implement device removal.
-
-v2: Rename 'zdev' to 'z' to make the patch easy to analyse with
-    git diff --ignore-space-change
-
-Signed-off-by: Max Staudt <max@enpas.org>
----
- drivers/ata/pata_buddha.c | 228 +++++++++++++++++++++++++++-------------------
- 1 file changed, 135 insertions(+), 93 deletions(-)
-
-diff --git a/drivers/ata/pata_buddha.c b/drivers/ata/pata_buddha.c
-index 11a8044ff..27d4c417f 100644
---- a/drivers/ata/pata_buddha.c
-+++ b/drivers/ata/pata_buddha.c
-@@ -18,7 +18,9 @@
- #include <linux/kernel.h>
- #include <linux/libata.h>
- #include <linux/mm.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <linux/types.h>
- #include <linux/zorro.h>
- #include <scsi/scsi_cmnd.h>
- #include <scsi/scsi_host.h>
-@@ -29,7 +31,7 @@
- #include <asm/setup.h>
- 
- #define DRV_NAME "pata_buddha"
--#define DRV_VERSION "0.1.0"
-+#define DRV_VERSION "0.1.1"
- 
- #define BUDDHA_BASE1	0x800
- #define BUDDHA_BASE2	0xa00
-@@ -47,11 +49,11 @@ enum {
- 	BOARD_XSURF
- };
- 
--static unsigned int buddha_bases[3] __initdata = {
-+static unsigned int buddha_bases[3] = {
- 	BUDDHA_BASE1, BUDDHA_BASE2, BUDDHA_BASE3
- };
- 
--static unsigned int xsurf_bases[2] __initdata = {
-+static unsigned int xsurf_bases[2] = {
- 	XSURF_BASE1, XSURF_BASE2
- };
- 
-@@ -145,111 +147,151 @@ static struct ata_port_operations pata_xsurf_ops = {
- 	.set_mode	= pata_buddha_set_mode,
- };
- 
--static int __init pata_buddha_init_one(void)
-+static int pata_buddha_probe(struct zorro_dev *z,
-+			     const struct zorro_device_id *ent)
- {
--	struct zorro_dev *z = NULL;
-+	static const char * const board_name[] = {
-+		"Buddha", "Catweasel", "X-Surf"
-+	};
-+	struct ata_host *host;
-+	void __iomem *buddha_board;
-+	unsigned long board;
-+	unsigned int type = ent->driver_data;
-+	unsigned int nr_ports = (type == BOARD_CATWEASEL) ? 3 : 2;
-+	void *old_drvdata;
-+	int i;
-+
-+	dev_info(&z->dev, "%s IDE controller\n", board_name[type]);
-+
-+	board = z->resource.start;
-+
-+	if (type != BOARD_XSURF) {
-+		if (!devm_request_mem_region(&z->dev,
-+					     board + BUDDHA_BASE1,
-+					     0x800, DRV_NAME))
-+			return -ENXIO;
-+	} else {
-+		if (!devm_request_mem_region(&z->dev,
-+					     board + XSURF_BASE1,
-+					     0x1000, DRV_NAME))
-+			return -ENXIO;
-+		if (!devm_request_mem_region(&z->dev,
-+					     board + XSURF_BASE2,
-+					     0x1000, DRV_NAME)) {
-+		}
-+	}
-+
-+	/* Workaround for X-Surf: Save drvdata in case zorro8390 has set it */
-+	if (type == BOARD_XSURF)
-+		old_drvdata = dev_get_drvdata(&z->dev);
-+
-+	/* allocate host */
-+	host = ata_host_alloc(&z->dev, nr_ports);
-+	if (type == BOARD_XSURF)
-+		dev_set_drvdata(&z->dev, old_drvdata);
-+	if (!host)
-+		return -ENXIO;
-+
-+	buddha_board = ZTWO_VADDR(board);
-+
-+	/* enable the board IRQ on Buddha/Catweasel */
-+	if (type != BOARD_XSURF)
-+		z_writeb(0, buddha_board + BUDDHA_IRQ_MR);
- 
--	while ((z = zorro_find_device(ZORRO_WILDCARD, z))) {
--		static const char *board_name[]
--			= { "Buddha", "Catweasel", "X-Surf" };
--		struct ata_host *host;
--		void __iomem *buddha_board;
--		unsigned long board;
--		unsigned int type, nr_ports = 2;
--		int i;
--
--		if (z->id == ZORRO_PROD_INDIVIDUAL_COMPUTERS_BUDDHA) {
--			type = BOARD_BUDDHA;
--		} else if (z->id == ZORRO_PROD_INDIVIDUAL_COMPUTERS_CATWEASEL) {
--			type = BOARD_CATWEASEL;
--			nr_ports++;
--		} else if (z->id == ZORRO_PROD_INDIVIDUAL_COMPUTERS_X_SURF) {
--			type = BOARD_XSURF;
--		} else
--			continue;
--
--		dev_info(&z->dev, "%s IDE controller\n", board_name[type]);
--
--		board = z->resource.start;
-+	for (i = 0; i < nr_ports; i++) {
-+		struct ata_port *ap = host->ports[i];
-+		void __iomem *base, *irqport;
-+		unsigned long ctl = 0;
- 
- 		if (type != BOARD_XSURF) {
--			if (!devm_request_mem_region(&z->dev,
--						     board + BUDDHA_BASE1,
--						     0x800, DRV_NAME))
--				continue;
-+			ap->ops = &pata_buddha_ops;
-+			base = buddha_board + buddha_bases[i];
-+			ctl = BUDDHA_CONTROL;
-+			irqport = buddha_board + BUDDHA_IRQ + i * 0x40;
- 		} else {
--			if (!devm_request_mem_region(&z->dev,
--						     board + XSURF_BASE1,
--						     0x1000, DRV_NAME))
--				continue;
--			if (!devm_request_mem_region(&z->dev,
--						     board + XSURF_BASE2,
--						     0x1000, DRV_NAME))
--				continue;
-+			ap->ops = &pata_xsurf_ops;
-+			base = buddha_board + xsurf_bases[i];
-+			/* X-Surf has no CS1* (Control/AltStat) */
-+			irqport = buddha_board + XSURF_IRQ;
- 		}
- 
--		/* allocate host */
--		host = ata_host_alloc(&z->dev, nr_ports);
--		if (!host)
--			continue;
--
--		buddha_board = ZTWO_VADDR(board);
--
--		/* enable the board IRQ on Buddha/Catweasel */
--		if (type != BOARD_XSURF)
--			z_writeb(0, buddha_board + BUDDHA_IRQ_MR);
--
--		for (i = 0; i < nr_ports; i++) {
--			struct ata_port *ap = host->ports[i];
--			void __iomem *base, *irqport;
--			unsigned long ctl = 0;
--
--			if (type != BOARD_XSURF) {
--				ap->ops = &pata_buddha_ops;
--				base = buddha_board + buddha_bases[i];
--				ctl = BUDDHA_CONTROL;
--				irqport = buddha_board + BUDDHA_IRQ + i * 0x40;
--			} else {
--				ap->ops = &pata_xsurf_ops;
--				base = buddha_board + xsurf_bases[i];
--				/* X-Surf has no CS1* (Control/AltStat) */
--				irqport = buddha_board + XSURF_IRQ;
--			}
--
--			ap->pio_mask = ATA_PIO4;
--			ap->flags |= ATA_FLAG_SLAVE_POSS | ATA_FLAG_NO_IORDY;
--
--			ap->ioaddr.data_addr		= base;
--			ap->ioaddr.error_addr		= base + 2 + 1 * 4;
--			ap->ioaddr.feature_addr		= base + 2 + 1 * 4;
--			ap->ioaddr.nsect_addr		= base + 2 + 2 * 4;
--			ap->ioaddr.lbal_addr		= base + 2 + 3 * 4;
--			ap->ioaddr.lbam_addr		= base + 2 + 4 * 4;
--			ap->ioaddr.lbah_addr		= base + 2 + 5 * 4;
--			ap->ioaddr.device_addr		= base + 2 + 6 * 4;
--			ap->ioaddr.status_addr		= base + 2 + 7 * 4;
--			ap->ioaddr.command_addr		= base + 2 + 7 * 4;
--
--			if (ctl) {
--				ap->ioaddr.altstatus_addr = base + ctl;
--				ap->ioaddr.ctl_addr	  = base + ctl;
--			}
--
--			ap->private_data = (void *)irqport;
--
--			ata_port_desc(ap, "cmd 0x%lx ctl 0x%lx", board,
--				      ctl ? board + buddha_bases[i] + ctl : 0);
-+		ap->pio_mask = ATA_PIO4;
-+		ap->flags |= ATA_FLAG_SLAVE_POSS | ATA_FLAG_NO_IORDY;
-+
-+		ap->ioaddr.data_addr		= base;
-+		ap->ioaddr.error_addr		= base + 2 + 1 * 4;
-+		ap->ioaddr.feature_addr		= base + 2 + 1 * 4;
-+		ap->ioaddr.nsect_addr		= base + 2 + 2 * 4;
-+		ap->ioaddr.lbal_addr		= base + 2 + 3 * 4;
-+		ap->ioaddr.lbam_addr		= base + 2 + 4 * 4;
-+		ap->ioaddr.lbah_addr		= base + 2 + 5 * 4;
-+		ap->ioaddr.device_addr		= base + 2 + 6 * 4;
-+		ap->ioaddr.status_addr		= base + 2 + 7 * 4;
-+		ap->ioaddr.command_addr		= base + 2 + 7 * 4;
-+
-+		if (ctl) {
-+			ap->ioaddr.altstatus_addr = base + ctl;
-+			ap->ioaddr.ctl_addr	  = base + ctl;
- 		}
- 
--		ata_host_activate(host, IRQ_AMIGA_PORTS, ata_sff_interrupt,
--				  IRQF_SHARED, &pata_buddha_sht);
-+		ap->private_data = (void *)irqport;
- 
-+		ata_port_desc(ap, "cmd 0x%lx ctl 0x%lx", board,
-+			      ctl ? board + buddha_bases[i] + ctl : 0);
- 	}
- 
-+	ata_host_activate(host, IRQ_AMIGA_PORTS, ata_sff_interrupt,
-+			  IRQF_SHARED, &pata_buddha_sht);
-+
- 	return 0;
- }
- 
--module_init(pata_buddha_init_one);
-+static void pata_buddha_remove(struct zorro_dev *z)
-+{
-+	struct ata_host *host = dev_get_drvdata(&z->dev);
-+
-+	ata_host_detach(host);
-+}
-+
-+static const struct zorro_device_id pata_buddha_zorro_tbl[] = {
-+	{ ZORRO_PROD_INDIVIDUAL_COMPUTERS_BUDDHA, BOARD_BUDDHA},
-+	{ ZORRO_PROD_INDIVIDUAL_COMPUTERS_CATWEASEL, BOARD_CATWEASEL},
-+	{ 0 }
-+};
-+MODULE_DEVICE_TABLE(zorro, pata_buddha_zorro_tbl);
-+
-+static struct zorro_driver pata_buddha_driver = {
-+	.name           = "pata_buddha",
-+	.id_table       = pata_buddha_zorro_tbl,
-+	.probe          = pata_buddha_probe,
-+	.remove         = pata_buddha_remove,
-+};
-+
-+/*
-+ * We cannot have a modalias for X-Surf boards, as it competes with the
-+ * zorro8390 network driver. As a stopgap measure until we have proper
-+ * MFD support for this board, we manually attach to it late after Zorro
-+ * has enumerated its boards.
-+ */
-+static int __init pata_buddha_late_init(void)
-+{
-+	struct zorro_dev *z = NULL;
-+
-+	/* Auto-bind to regular boards */
-+	zorro_register_driver(&pata_buddha_driver);
-+
-+	/* Manually bind to all X-Surf boards */
-+	while ((z = zorro_find_device(ZORRO_PROD_INDIVIDUAL_COMPUTERS_X_SURF, z))) {
-+		static struct zorro_device_id xsurf_ent = {
-+			ZORRO_PROD_INDIVIDUAL_COMPUTERS_X_SURF, BOARD_XSURF
-+		};
-+
-+		pata_buddha_probe(z, &xsurf_ent);
-+	}
-+
-+	return 0;
-+}
-+late_initcall(pata_buddha_late_init);
- 
- MODULE_AUTHOR("Bartlomiej Zolnierkiewicz");
- MODULE_DESCRIPTION("low-level driver for Buddha/Catweasel/X-Surf PATA");
--- 
-2.11.0
-
+On ILI2117
+Tested-by: Marek Vasut <marex@denx.de>
