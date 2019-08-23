@@ -2,114 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E8859AD1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:29:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CCC39AD4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:33:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387970AbfHWK3F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 06:29:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53940 "EHLO mx1.suse.de"
+        id S2403818AbfHWKdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 06:33:31 -0400
+Received: from mail-eopbgr710055.outbound.protection.outlook.com ([40.107.71.55]:43568
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726142AbfHWK3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:29:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 49845ACB4;
-        Fri, 23 Aug 2019 10:29:03 +0000 (UTC)
-Date:   Fri, 23 Aug 2019 12:29:02 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     John Ogness <john.ogness@linutronix.de>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: comments style: Re: [RFC PATCH v4 1/9] printk-rb: add a new
- printk ringbuffer implementation
-Message-ID: <20190823102902.c2l2h3qinykrcmep@pathway.suse.cz>
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
- <20190807222634.1723-2-john.ogness@linutronix.de>
- <20190820085554.deuejmxn4kbqnq7n@pathway.suse.cz>
- <20190820092731.GA14137@jagdpanzerIV>
- <87a7c3f4uj.fsf@linutronix.de>
- <20190823055445.GA7195@jagdpanzerIV>
+        id S1730818AbfHWKdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 06:33:31 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iq0qdLGvTl0M69MZPYunidnEBDd7KoTYizAnVwBJ56Vgh9IxF4z89Eun6SmpdrRB6/OkbU5kJRG39vYJxenlbR7fgZW71aEvOk1N0GuNIBNNAzE4VxKkIH4+fqDoWPdGwJ7jLAu3JwCAZs/UjMdtWFSGwos3Yt87d8NBpxI+KCgXxeA2OjYTYjxNUXQGasNzifVy6VCmaR8yvZNNYm2XGQZbYjJUHE8qkxE3JlGvZtCgLgV2ASwaErc1vgLPpEN4cK8XV7PcS1v3Dxe319N+y/29Pz6kvBWu3uuS8Gqv1A2/EvhqJv+xXsb1knfFQmWv0eP7hped9UYga/odNU0XiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vw5miTTGcDyaWU3bGKdl/sgBX3EJjhV1YyoYn+RC6jM=;
+ b=lTUoj7PPCDti4C3gVHKvLVVgjAwHyVf7JQK/gBccYT52fpfR+JVOuhATK0Pk2gsRWVoF6g27Oo4btcHCQvZNamd3lf+cXVGPqOUIPWwAa0R3S7JmtWTrc+lS5N0MJwdy+GHqQhu3TS1DO131hHMtOjelLkllZoqpW4qVQVU0JjrYSdaG2xgM8Uv/KJ3AW4jbUCJXx5bd080zDLMLqAhgZewxBi2u7FLSQtw5ABCW49wZJHb6bQxn5m2eG8b2gcHDRWW9hsvGZTqpx1pZY6ASiglXvspNd6pEgRtjDKc9oddVoODopCraUGz9ob62EPNqaJz+BKKEG5a8kTCH26MAJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synaptics.com; dmarc=pass action=none
+ header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vw5miTTGcDyaWU3bGKdl/sgBX3EJjhV1YyoYn+RC6jM=;
+ b=FYEok7fWqn/0A58L6cIvbnqRSABjQlN5RX5VeLO35XKnXz8I7A2327+ohVfjLf+T1G999RwpDSRPZxqt+CtWHG+sGSACe1qzCY1cgv6acrlpxAhLi+35cD6F3g+3RHlUh5XMZn0JL/dZYYYPyN1jDBoY1kjAZIyXNM+/qKe1D2g=
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
+ BYAPR03MB3640.namprd03.prod.outlook.com (52.135.213.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Fri, 23 Aug 2019 10:30:02 +0000
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::b050:60f8:d275:e9f4]) by BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::b050:60f8:d275:e9f4%7]) with mapi id 15.20.2178.020; Fri, 23 Aug 2019
+ 10:30:02 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Russell King <linux@armlinux.org.uk>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] ARM: ftrace: remove mcount(),ftrace_caller_old() and
+ ftrace_call_old()
+Thread-Topic: [PATCH v2] ARM: ftrace: remove mcount(),ftrace_caller_old() and
+ ftrace_call_old()
+Thread-Index: AQHVWZ247bHc8lRHzEW3X45ZRp5UUQ==
+Date:   Fri, 23 Aug 2019 10:30:02 +0000
+Message-ID: <20190823181842.108e6e73@xhacker.debian>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [124.74.246.114]
+x-clientproxiedby: TY2PR02CA0024.apcprd02.prod.outlook.com
+ (2603:1096:404:56::36) To BYAPR03MB4773.namprd03.prod.outlook.com
+ (2603:10b6:a03:134::24)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9ddce9d6-de1f-4d9a-2025-08d727b4daf3
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR03MB3640;
+x-ms-traffictypediagnostic: BYAPR03MB3640:
+x-microsoft-antispam-prvs: <BYAPR03MB3640C6CBDA087370AAE28EDDEDA40@BYAPR03MB3640.namprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1169;
+x-forefront-prvs: 0138CD935C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(396003)(39850400004)(346002)(366004)(199004)(189003)(102836004)(8676002)(305945005)(81156014)(81166006)(7736002)(478600001)(86362001)(53936002)(8936002)(14454004)(256004)(486006)(9686003)(6512007)(6116002)(25786009)(6436002)(71200400001)(71190400001)(3846002)(6486002)(2906002)(50226002)(4326008)(66946007)(66476007)(66556008)(64756008)(66446008)(26005)(476003)(186003)(54906003)(110136005)(5660300002)(1076003)(316002)(66066001)(4744005)(99286004)(6506007)(386003)(52116002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3640;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 44TFjnAd+z5VsBNJiYJ0DHuLteLk4dfPFywCc1rrm8vXZ7lmnG8U5o4At5TofGzmplAZvbuvUMJC5LDcDpORo3218fl5fnZUnCoviX+fU1EO8zmLKV/YxHN2oUYVzN7WbJN5/x9TDtm90ZH+M36bFoo1TEPIlaWPlaNCT9HFdsKyu4I8FRCjhL9HM4Sj52/9MNJ2ddNE6PKBUvKEWMTMKv4+w/MRxhMAJUdIPuEAYCKXLCr457QeI1C7ZSB6cia53i85m/6s4iKdjXB6GAfpk2zvL9eW8EgE0lL+tS2Dmtbu9SOSQAHOvQe2Hl0978lU4qTg1ogNBo94Gt7MU0XgYD6hS2YC0Ig0/fnK/GCn5rNio9nekk1R2ZIBiu5tZuIopzi9+Q4/qzNvYQXgiWn70hnX3dk/Qa6kRSTE+3CZveU=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <00A50105E477CE489D558106E4749D61@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190823055445.GA7195@jagdpanzerIV>
-User-Agent: NeoMutt/20170912 (1.9.0)
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ddce9d6-de1f-4d9a-2025-08d727b4daf3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2019 10:30:02.0935
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: j4cddftsdfNwyZMxhd6sgfZqvaQ//YKu6ceICF88ebomk4kMBqYnm7k8HXPfrx1mrSNB0I8estRfB4gnIm4zBA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3640
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2019-08-23 14:54:45, Sergey Senozhatsky wrote:
-> On (08/21/19 07:46), John Ogness wrote:
-> [..]
-> > The labels are necessary for the technical documentation of the
-> > barriers. And, after spending much time in this, I find them very
-> > useful. But I agree that there needs to be a better way to assign label
-> > names.
-> [..]
-> > > Where dp stands for descriptor push. For dataring we can add a 'dr'
-> > > prefix, to avoid confusion with desc barriers, which have 'd' prefix.
-> > > And so on. Dunno.
-> > 
-> > Yeah, I spent a lot of time going in circles on this one.
-> [..]
-> > I hope that we can agree that the labels are important. And that a
-> > formal documentation of the barriers is also important. Yes, they are a
-> > lot of work, but I find it makes it a lot easier to go back to the code
-> > after I've been away for a while. Even now, as I go through your
-> > feedback on code that I wrote over a month ago, I find the formal
-> > comments critical to quickly understand _exactly_ why the memory
-> > barriers exist.
-> 
-> Yeah. I like those tagsi/labels, and appreciate your efforts.
-> 
-> Speaking about it in general, not necessarily related to printk patch set.
-> With or without labels/tags we still have to grep. But grep-ing is much
-> easier when we have labels/tags. Otherwise it's sometimes hard to understand
-> what to grep for - _acquire, _relaxed, smp barrier, write_once, or
-> anything else.
+Commit d3c61619568c ("ARM: 8788/1: ftrace: remove old mcount support")
+removed the old mcount support, but forget to remove these three
+declarations. This patch removes them.
 
-Grepping is not needed when function names are used in the comment
-and cscope might be used. Each function should be short
-and easy enough so that any nested label can be found by eyes.
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
 
-A custom script is an alternative but it would be better to use
-existing tools.
+Changes since v1:
+  - remove mcount() declaration too
 
-In each case, two letter labels would get redundant sooner or later
-when the semantic gets used widely. And I hope that we use a semantic
-that is going to be used widely.
+ arch/arm/include/asm/ftrace.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> > Perhaps we should choose labels that are more clear, like:
-> > 
-> >     dataring_push:A
-> >     dataring_push:B
-> > 
-> > Then we would see comments like:
-> > 
-> >     Memory barrier involvement:
-> > 
-> >     If _dataring_pop:B reads from dataring_datablock_setid:A, then
-> >     _dataring_pop:C reads from dataring_push:G.
-> [..]
-> >     RELEASE from dataring_push:E to dataring_datablock_setid:A
-> >        matching
-> >     ACQUIRE from _dataring_pop:B to _dataring_pop:E
-> 
-> I thought about it. That's very informative, albeit pretty hard to maintain.
-> The same applies to drA or prA and any other context dependent prefix.
+diff --git a/arch/arm/include/asm/ftrace.h b/arch/arm/include/asm/ftrace.h
+index 18b0197f2384..f67596427971 100644
+--- a/arch/arm/include/asm/ftrace.h
++++ b/arch/arm/include/asm/ftrace.h
+@@ -23,9 +23,6 @@ static inline unsigned long ftrace_call_adjust(unsigned l=
+ong addr)
+ 	/* With Thumb-2, the recorded addresses have the lsb set */
+ 	return addr & ~1;
+ }
+-
+-extern void ftrace_caller_old(void);
+-extern void ftrace_call_old(void);
+ #endif
+=20
+ #endif
+--=20
+2.23.0.rc1
 
-The maintenance is my concern as well. The labels should be primary
-for an automatized consistency checker. They make sense only when
-they are in sync with the code.
-
-Best Regards,
-Petr
