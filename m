@@ -2,128 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 055839AA74
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:35:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E6B59AA8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:40:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392974AbfHWIfI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 04:35:08 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:33917 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388643AbfHWIfI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 04:35:08 -0400
-Received: by mail-yw1-f68.google.com with SMTP id n126so3536767ywf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 01:35:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=softbankrobotics.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=284PWXHVGzRZZdT7XwDUs6v5UcNXYuTeKdqhJJBvCCU=;
-        b=StVUbOT7p6i/lwOqImKMPdnepuGo+Mh3UHEAiTBF9v1mUNp1d7rI+fTaF3X+fXvPrk
-         qf1cuy9/Ojs8I0XfYe4tZ3ttnEmLoV/GlKofwStnWQ6CblrmgRW8GTp6+uwObpyIUZod
-         66xh54lHTkI3LhyRJG1Cf4viaCQ66JgHLT55NUgE96udJoyB6uVdeUT3NHRoNE8Lu33i
-         GuWdnJCV8JHhTz+7CrPZ12ArVGvSHhdp8r8M/gJBUQ+9gimvIVCUDaHmgkrK1Bzcztwm
-         r9zdNuwwVPzPgv+yG1to9VLoYmCN6Q5eMPah6ZKXDf9tQuMnlDKVLScWJzRLSpHEiGQP
-         QDRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=284PWXHVGzRZZdT7XwDUs6v5UcNXYuTeKdqhJJBvCCU=;
-        b=Cx1krPAosAmXLABxzlAwjlOu9XwBQhHN3Y9m2AnjkoHakFFhVx9Qy9E9e7zQXA2vS/
-         j4BBe9hTTnNyNXvBlHHAdSmnpKnKxoXyAkoJX+8U4Ydu1FlDFRqgS7Q3UfXRlHftTsJj
-         5T9/mhbdHbUo4i0Vs5BsRczqFQujJOFNJYYHSbLY5ic3+w1bSMZ6y67/aRfRs88GcjpY
-         Pyxj5CCX9kuhE5xsUpIYRuLq+zYkAYBAjpJKYARH6bjyVaFn3CuZExVRsdGWYPyUBCBF
-         m2c9006gRrbUwcueeq99Wir0mgaz054ocBotZ4cGO4xXlYj7GXTgcdYiuaA4IqOZJRnY
-         YQZg==
-X-Gm-Message-State: APjAAAWLDOvhVQZWfMV6Yn13hrZ+3ocgH8b6Nnmt2TaOchda90Eo3QVG
-        rgOKYjNfdRuvw+aSKBvRxVMmRK8coEdipsuytdRZ8r62leGvMfCP4Nmh/NnoHBZNPEF6f9i77gQ
-        hfKHAgW4/kfMyZAZ+Dzu0O5DGOY5sZ5p8aSqi
-X-Google-Smtp-Source: APXvYqwpejBzZmLqoKc/cfjdMoWPr24uqlXzkyV/NLLpnkswzwBJZN4amTV9/pauaMkDQNOO4iX6rtt7bxteS3sq9bY=
-X-Received: by 2002:a81:4607:: with SMTP id t7mr2425605ywa.246.1566549307154;
- Fri, 23 Aug 2019 01:35:07 -0700 (PDT)
+        id S2404866AbfHWIj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 04:39:59 -0400
+Received: from 8bytes.org ([81.169.241.247]:51056 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403907AbfHWIj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 04:39:58 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 91BBF246; Fri, 23 Aug 2019 10:39:57 +0200 (CEST)
+Date:   Fri, 23 Aug 2019 10:39:56 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, alan.cox@intel.com, kevin.tian@intel.com,
+        mika.westerberg@linux.intel.com, Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        pengfei.xu@intel.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v7 1/7] iommu/vt-d: Don't switch off swiotlb if use
+ direct dma
+Message-ID: <20190823083956.GB24194@8bytes.org>
+References: <20190823071735.30264-1-baolu.lu@linux.intel.com>
+ <20190823071735.30264-2-baolu.lu@linux.intel.com>
 MIME-Version: 1.0
-References: <20190821125035.7616-1-srinivas.kandagatla@linaro.org>
-In-Reply-To: <20190821125035.7616-1-srinivas.kandagatla@linaro.org>
-From:   Julien Massot <jmassot@softbankrobotics.com>
-Date:   Fri, 23 Aug 2019 10:34:56 +0200
-Message-ID: <CADGp=QcVCqnBLQPsd0ccNrT4+jzK3Shjki3xYsasi6wytYs_8w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: sdm845: add adsp and cdsp fastrpc nodes
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190823071735.30264-2-baolu.lu@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 2:50 PM Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> wrote:
->
-> Add fastrpc compute context bank nodes to both cdsp and adsp.
+On Fri, Aug 23, 2019 at 03:17:29PM +0800, Lu Baolu wrote:
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -4569,9 +4569,6 @@ static int __init platform_optin_force_iommu(void)
+>  		iommu_identity_mapping |= IDENTMAP_ALL;
+>  
+>  	dmar_disabled = 0;
+> -#if defined(CONFIG_X86) && defined(CONFIG_SWIOTLB)
+> -	swiotlb = 0;
+> -#endif
+>  	no_iommu = 0;
+>  
+>  	return 1;
+> @@ -4710,9 +4707,6 @@ int __init intel_iommu_init(void)
+>  	}
+>  	up_write(&dmar_global_lock);
+>  
+> -#if defined(CONFIG_X86) && defined(CONFIG_SWIOTLB)
+> -	swiotlb = 0;
+> -#endif
 
-Works for me, i'm able to run hexagon sdk example on DB845c.
+So this will cause the 64MB SWIOTLB aperture to be allocated even when
+there will never be an untrusted device in the system, right? I guess
+this will break some kdump setups as they need to resize their low
+memory allocations to make room for the aperture because of this
+patch-set.
 
-Tested-by: Julien Massot <jmassot@softbankrobotics.com>
-Reviewed-by: Julien Massot <jmassot@softbankrobotics.com>
+But I also don't see a way around this for now as untrusted devices are
+usually hotplugged and might not be present at boot. So we can't make
+the decision about the allocation at boot time.
 
---=20
+But this mechanism needs to be moved to the dma-iommu implementation at
+some point, and then we should allocate the bounce memory pages
+on-demand. We can easily do this in page-size chunks and map them
+together with iommu page-tables. This way we don't need to pre-allocate
+a large memory-chunk at boot.
 
+Regards,
 
-*This email and any attachment thereto are confidential and intended=20
-solely for the use of the individual or entity to whom they are addressed.
-
-If you are not the intended recipient, please be advised that disclosing,=
-=20
-copying, distributing or taking any action in reliance on the contents of=
-=20
-this email is strictly prohibited. In such case, please immediately advise=
-=20
-the sender, and delete all copies and attachment from your system.
-This=20
-email shall not be construed and is not tantamount to an offer, an=20
-acceptance of offer, or an agreement by SoftBank Robotics Europe on any=20
-discussion or contractual document whatsoever. No employee or agent is=20
-authorized to represent or bind SoftBank Robotics Europe to third parties=
-=20
-by email, or act on behalf of SoftBank Robotics Europe by email, without=20
-express written confirmation by SoftBank Robotics Europe=E2=80=99 duly auth=
-orized=20
-representatives.
-*
-
-
-
-*Ce message =C3=A9lectronique et =C3=A9ventuelles pi=C3=A8ces=20
-jointes sont confidentiels, et exclusivement destin=C3=A9s =C3=A0 la person=
-ne ou=20
-l'entit=C3=A9 =C3=A0 qui ils sont adress=C3=A9s.
-Si vous n'=C3=AAtes pas le destinataire vis=C3=A9,=20
-vous =C3=AAtes pri=C3=A9 de ne pas divulguer, copier, distribuer ou prendre=
- toute=20
-d=C3=A9cision sur la foi de ce message =C3=A9lectronique. Merci d'en aviser=
-=20
-imm=C3=A9diatement l'exp=C3=A9diteur et de supprimer toutes les copies et =
-=C3=A9ventuelles=20
-pi=C3=A8ces jointes de votre syst=C3=A8me.
-Ce message =C3=A9lectronique n'=C3=A9quivaut pas =C3=A0=20
-une offre, =C3=A0 une acceptation d=E2=80=99offre, ou =C3=A0 un accord de S=
-oftBank Robotics=20
-Europe sur toute discussion ou document contractuel quel qu=E2=80=99il soit=
-, et ne=20
-peut =C3=AAtre interpr=C3=A9t=C3=A9 comme tel. Aucun employ=C3=A9 ou agent =
-de SoftBank Robotics=20
-Europe n'est autoris=C3=A9 =C3=A0 repr=C3=A9senter ou =C3=A0 engager la soc=
-i=C3=A9t=C3=A9 par email, ou =C3=A0=20
-agir au nom et pour le compte de la soci=C3=A9t=C3=A9 par email, sans qu=E2=
-=80=99une=20
-confirmation =C3=A9crite soit donn=C3=A9e par le repr=C3=A9sentant l=C3=A9g=
-al de SoftBank=20
-Robotics Europe ou par toute autre personne ayant re=C3=A7u d=C3=A9l=C3=A9g=
-ation de=20
-pouvoir appropri=C3=A9e.
-*
-
-**
+	Joerg
