@@ -2,85 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F8B9AF41
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1539C9AF54
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394637AbfHWMY2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:24:28 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35278 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbfHWMYS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:24:18 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i18c1-0001si-Hj; Fri, 23 Aug 2019 14:24:13 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0E0AB1C089A;
-        Fri, 23 Aug 2019 14:24:12 +0200 (CEST)
-Date:   Fri, 23 Aug 2019 12:24:11 -0000
-From:   tip-bot2 for Arnaldo Carvalho de Melo <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf x86 kvm-stat: Add missing string.h header
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <tip-qrz8hhvrhwnmt5ocfwk4br5d@git.kernel.org>
-References: <tip-qrz8hhvrhwnmt5ocfwk4br5d@git.kernel.org>
+        id S2394666AbfHWMZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:25:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732221AbfHWMZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 08:25:43 -0400
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF53B22CE3;
+        Fri, 23 Aug 2019 12:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566563142;
+        bh=g5FCobcLXbFWD1bY0xj5Ltqc0DHt00eTk6b7TbAqkL4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tDsKSTc7Pq6mv0Fb5A+C8soRQPOrS/jACL/AZ63MamUPdYVDbbqyGeMiv7oo1j90v
+         AkJffzmtTA4Oj01DMNU6GQOCTNHbwh3eUQ3oj3wh8JRPbwHeI/NOcOYdGMsKDutVYj
+         GzBy8i+0rvmVcGpLKahhtGQgaBphnre2iYLa2Xkw=
+Received: by mail-qt1-f170.google.com with SMTP id x4so10957940qts.5;
+        Fri, 23 Aug 2019 05:25:41 -0700 (PDT)
+X-Gm-Message-State: APjAAAUEwfkqi9ZWTYcJZMZLF3KVPOdWHkmWbbyUOAeKZZk+BgdDnMCQ
+        Y1x8KpxGnlu7ym+4hh5mSGnvxpx1skvE3+TVmQ==
+X-Google-Smtp-Source: APXvYqxLswLc9PpByiXyjVxzZM7JQ3UDwxGAU368M52WiLNV2vB5VtvPU7Z7PlObbR0c5TNfj59zF550VG6Tq9MNMcs=
+X-Received: by 2002:ac8:44c4:: with SMTP id b4mr4355900qto.224.1566563141086;
+ Fri, 23 Aug 2019 05:25:41 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <156656305193.32132.1327980312185969921.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from
- these emails
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <42039170811f798b8edc66bf85166aefe7dbc903.1566531960.git.eswara.kota@linux.intel.com>
+In-Reply-To: <42039170811f798b8edc66bf85166aefe7dbc903.1566531960.git.eswara.kota@linux.intel.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 23 Aug 2019 07:25:29 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJxh5TzDb8kOFm+F5Gs4WXF6BP5uaNPLcyx+srtaDisMw@mail.gmail.com>
+Message-ID: <CAL_JsqJxh5TzDb8kOFm+F5Gs4WXF6BP5uaNPLcyx+srtaDisMw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: reset: Add YAML schemas for the Intel
+ Reset controller
+To:     Dilip Kota <eswara.kota@linux.intel.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+On Fri, Aug 23, 2019 at 12:28 AM Dilip Kota <eswara.kota@linux.intel.com> wrote:
+>
+> Add YAML schemas for the reset controller on Intel
+> Lightening Mountain (LGM) SoC.
+>
+> Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
+> ---
+> Changes on v2:
+>     Address review comments
+>       Update the compatible property definition
+>       Add description for reset-cells
+>       Add 'additionalProperties: false' property
+>
+>  .../bindings/reset/intel,syscon-reset.yaml         | 53 ++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml b/Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml
+> new file mode 100644
+> index 000000000000..3403a967190a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml
+> @@ -0,0 +1,53 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/reset/intel,syscon-reset.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Intel Lightening Mountain SoC System Reset Controller
+> +
+> +maintainers:
+> +  - Dilip Kota <eswara.kota@linux.intel.com>
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: intel,rcu-lgm
+> +      - const: syscon
+> +
+> +  reg:
+> +    description: Reset controller register base address and size
+> +
+> +  intel,global-reset:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description: Global reset register offset and bit offset.
+> +
+> +  "#reset-cells":
+> +    const: 2
+> +    description: |
+> +      The 1st cell is the register offset.
+> +      The 2nd cell is the bit offset in the register.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - intel,global-reset
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    rcu0: reset-controller@00000000 {
+> +        compatible = "intel,rcu-lgm", "syscon";
+> +        reg = <0x000000 0x80000>;
+> +        intel,global-reset = <0x10 30>;
+> +        #reset-cells = <2>;
+> +    };
+> +
+> +    pcie_phy0: pciephy@... {
+> +        ...
 
-Commit-ID:     1028f96226b1f4419bd5b56c3d234a83329d4f5b
-Gitweb:        https://git.kernel.org/tip/1028f96226b1f4419bd5b56c3d234a83329d4f5b
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Wed, 21 Aug 2019 14:48:57 -03:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 22 Aug 2019 17:16:57 -03:00
+You need to run 'make dt_binding_check' and fix the warnings. The
+example has to be buildable and it is not.
 
-perf x86 kvm-stat: Add missing string.h header
-
-It uses strcmp(), strstr() and was getting the required string.h header
-by luck, from evsel.h -> cpumap.h -> debug.h -> string.h, add the
-missing header.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-qrz8hhvrhwnmt5ocfwk4br5d@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/arch/x86/util/kvm-stat.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
-index 81b531a..c0775c3 100644
---- a/tools/perf/arch/x86/util/kvm-stat.c
-+++ b/tools/perf/arch/x86/util/kvm-stat.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <errno.h>
-+#include <string.h>
- #include "../../../util/kvm-stat.h"
- #include "../../../util/evsel.h"
- #include <asm/svm.h>
+> +        /* address offset: 0x10, bit offset: 12 */
+> +        resets = <&rcu0 0x10 12>;
+> +        ...
+> +    };
+> --
+> 2.11.0
+>
