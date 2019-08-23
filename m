@@ -2,98 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 767599B009
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 026919B021
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394994AbfHWM4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:56:13 -0400
-Received: from mga17.intel.com ([192.55.52.151]:8367 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394976AbfHWM4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:56:11 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 05:56:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,421,1559545200"; 
-   d="scan'208";a="208538168"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga002.fm.intel.com with ESMTP; 23 Aug 2019 05:56:07 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1i196q-00035N-LO; Fri, 23 Aug 2019 15:56:04 +0300
-Date:   Fri, 23 Aug 2019 15:56:04 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        tony.luck@intel.com, x86@kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, alan@linux.intel.com,
-        linux-kernel@vger.kernel.org, qi-ming.wu@intel.com,
-        cheol.yong.kim@intel.com, rahul.tanwar@intel.com
-Subject: Re: [PATCH v1 1/2] x86/rtc: Add option to skip using RTC
-Message-ID: <20190823125604.GS30120@smile.fi.intel.com>
-References: <cover.1566458029.git.rahul.tanwar@linux.intel.com>
- <becacc523508b295a52db9f1592e2868e3988e28.1566458029.git.rahul.tanwar@linux.intel.com>
- <20190822090208.GJ30120@smile.fi.intel.com>
- <25f6947d-7ba0-c23c-25aa-c4c4173da6b0@linux.intel.com>
- <20190822130429.GN30120@smile.fi.intel.com>
- <a6717e97-01cf-771c-8467-be5946528dd0@linux.intel.com>
+        id S2395019AbfHWM4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:56:18 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:59260 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732824AbfHWM4K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 08:56:10 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7NCu3ku076487;
+        Fri, 23 Aug 2019 07:56:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566564964;
+        bh=90F2Ku1Xn8M7W9QVFhYhs3tdIyL07/aRX/oyDTbPkQM=;
+        h=From:To:CC:Subject:Date;
+        b=vjbu0oxDaj/Z/q8NQPAemQSd1aSsfSI2xT2o831AZa+07dKUXjZFWW/vKhp7Gsf2A
+         8y9RuVmeskLNZ60kCzGY6UDJQ++Kw8IUgrsFye+VFKF6h6Fs7/gi88FtyEhyk+WzVt
+         S+VTFIsDkI5uG5LpKX/832LrD010lPyKiyP4ZmsM=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7NCu3uB015093
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 23 Aug 2019 07:56:03 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 23
+ Aug 2019 07:56:01 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 23 Aug 2019 07:56:01 -0500
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7NCtwke092319;
+        Fri, 23 Aug 2019 07:55:59 -0500
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <vkoul@kernel.org>, <robh+dt@kernel.org>
+CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+Subject: [PATCH 0/5] dmaengine: ti: edma: Multicore usage related fixes
+Date:   Fri, 23 Aug 2019 15:56:13 +0300
+Message-ID: <20190823125618.8133-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6717e97-01cf-771c-8467-be5946528dd0@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 11:37:38AM +0800, Tanwar, Rahul wrote:
-> On 22/8/2019 9:04 PM, Andy Shevchenko wrote:
-> > On Thu, Aug 22, 2019 at 05:26:33PM +0800, Tanwar, Rahul wrote:
-> > > On 22/8/2019 5:02 PM, Andy Shevchenko wrote:
-> > > > On Thu, Aug 22, 2019 at 03:44:03PM +0800, Rahul Tanwar wrote:
-> > > > > Use a newly introduced optional "status" property of "motorola,mc146818"
-> > > > > compatible DT node to determine if RTC is supported. Skip read/write from
-> > > > > RTC device only when this node is present and status is "disabled". In all
-> > > > > other cases, proceed as before.
-> > > > Can't we rather update ->get_wallclock() and ->set_wallclock() based on this?
-> > > 
-> > > get_wallclock() and set_wallclock() are function pointers of platform_ops
-> > > 
-> > > which are initialized to mach_get_cmos_time() and mach_set_rtc_mmss()
-> > > 
-> > > at init time. Since adding a new platform to override these functions is
-> > > 
-> > > discouraged, so the only way is to modify RTC get/set functions.
-> > Shouldn't it be platform agnostic code?
-> > So, my point is, instead of hacking two functions, perhaps better to avoid them
-> > at all.
-> 
-> Sorry, i could not understand your point. The changes are platform
-> 
-> agnostic i.e. it doesn't break existing use cases. Are you recommending
-> 
-> to add a new platform and make changes there ?
+Hi,
 
-Nope, I propose to do something like
+When other cores want to use EDMA for their use cases Linux was not playing
+nicely.
+By design EDMA is supporting shared use with shadow regions. Linux is using
+region0, others can be used by other cores.
 
-void __init foo()
-{
-	if (platform has RTC)
-		return;
+In order to not break multicore shared usage of EDMA:
+- do not reset paRAM slots which is not allocated for Linux (reserved paRAM
+  slots)
+- Only reset region0 access registers, do not touch other regions
+- Add option for reserved channels which should not be used by Linux in a similar
+  fashion as we already have for reserved paRAM slots.
 
-	set_wallclock = noop;
-	get_wallclock = noop;
-}
+Regards,
+Peter
+---
+Peter Ujfalusi (5):
+  dmaengine: ti: edma: Do not reset reserved paRAM slots
+  dmaengine: ti: edma: Only reset region0 access registers
+  dmaengine: ti: edma: Use bitmap_set() instead of open coded
+    edma_set_bits()
+  dt-bindings: dma: ti-edma: Add option for reserved channel ranges
+  dmaengine: ti: edma: Add support for handling reserved channels
+
+ .../devicetree/bindings/dma/ti-edma.txt       |   5 +
+ drivers/dma/ti/edma.c                         | 190 +++++++++++-------
+ 2 files changed, 123 insertions(+), 72 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Peter
 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
