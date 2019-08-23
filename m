@@ -2,165 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C2529B561
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 19:24:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64BE49B56D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 19:28:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389251AbfHWRY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 13:24:27 -0400
-Received: from mout.web.de ([212.227.15.14]:48513 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388090AbfHWRY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 13:24:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1566581057;
-        bh=axaiOeUShbLcLslK7d9+vWY1/tIn2dxWmeYhqI286Jo=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=N1GeB/6c+DKmDV6l0JAMUJJGyA04U9jzOutwEmRUv1Hi8cdD/XH2p6j5u8EWl1ROY
-         XKnFO+NqkWsyN7v91zfkXrUhmooPLCJS4RIp+SiKJHWbhJ6Zrxc57PeKgA7uvApDNP
-         N9LLYenmQhZGxzKsXA6+YSqpODseMQPv19sS9WIs=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.133.157.93]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0MfqC4-1hpCj71idw-00ND8W; Fri, 23
- Aug 2019 19:24:17 +0200
-Subject: Re: staging: vt6656: Use common error handling code in
- vnt_alloc_bufs()
-To:     Quentin Deslandes <quentin.deslandes@itdev.co.uk>
-Cc:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Forest Bond <forest@alittletooquiet.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-References: <91e8a9b7-e79d-dafc-10b8-dd79eb59eff9@web.de>
- <20190823145540.GA2536@qd-ubuntu>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <10006e33-ed90-74ec-4d59-4074caf4ecd4@web.de>
-Date:   Fri, 23 Aug 2019 19:24:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2389667AbfHWR2D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 13:28:03 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37765 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389289AbfHWR2C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 13:28:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d1so6126237pgp.4
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 10:28:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JpGZpvS6y7xgN7XnzsEu5TdSqjOQTKTe7TuWBgzpXxk=;
+        b=DPbWDrNSkF3m3LM0LR49Pzw0ikWe08dHQLzlDwCCEd7SbY6lXjBe4g0E0/Oh0SS+8L
+         1E2R3whjpm/iFQXBpTT4okhqcaJ9ZnLIQH02NXVEugo9GHSE50Jg8iFRbsmg/FsPppnw
+         MrLpLS4WEb0jVHfL7Ku4uZCHChd+71dF0jelCrk2VXPZsc/GseLHkRq3LfohfXHpj4oa
+         AeTShyhb7KisbZpowlWSJWUH5/NPhwM3qX6O9qpBe+sFL60yTW4cJ4vUQwBWpprLutHO
+         5jYbqQDNL1N504EYpXBVjn24evq+dP/NDByqBukweHmVAjQPQCqMp6Hlv66N/RkoT59S
+         yfsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JpGZpvS6y7xgN7XnzsEu5TdSqjOQTKTe7TuWBgzpXxk=;
+        b=sq8aJ1dPS2ttQkrjtA3wOWm7OhYmO7Vc3jAzv7tl1QSbonf4g5nmWQsjLJz3/regrO
+         DaF3sTWIwmgZ/ktR3Qjl9888jPHkRmGzOCzyq1qZDHkUiu5H0HsZrT+bmwu0W0gnLVJ5
+         bNJt+LgsUuAmZMfAS0Aw7+fzCjc1QhtL7dDAV0TqvqNioIbFas+6dTwde5wXyenZSjJI
+         UWfaTSiKDnJy7SvzsuRJvpgmiXSq8oQP999IqX6KbHQtby3vgbpCYy8NLA9p+YlIjzbe
+         HYz3f/wis52wFyhhFBkk1um6ZTU7WYPKQ+AmEHret/cbGFVaLSQ9NMK/3t9cf2NJ60m+
+         HEyQ==
+X-Gm-Message-State: APjAAAWOyOeoZ3SXCt8RfrhjBe3OaANFdTpWpZHr5lam9nIlHA7hKdws
+        /kyKvolromHTZYD2CKnjjjGNaVYLlCH+l7rI0jEPVA==
+X-Google-Smtp-Source: APXvYqxO41uhCLsTUJZzB3icsTW0bMGI+WWDOYyKC539Pf/Fhot22x5RnB49yWHNSNlX8BLD0YS+A9/mQTKWddz6BQY=
+X-Received: by 2002:a63:b919:: with SMTP id z25mr4863766pge.201.1566581281074;
+ Fri, 23 Aug 2019 10:28:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190823145540.GA2536@qd-ubuntu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:f2OZOzRZwcMG9mCS05z3+J38Ecf6PmC5XXpes47trtjfqk5XosS
- lofMm55AzDrJ+EL5k3ZUEO0RSbTzm4wS32fb+9pv7cbnJIWDT3XPeiXnJa64xW74eMvT14V
- q7Ws/C46B+P8UTZoeCY6IoCZdwc/PcKZ2gM1mhybx/X3No7bbZehvx1SzARsNpt8EKbx+bU
- tz3B4CQyojGvfkqEmYQhg==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4bqdoIQTb5Q=:tNdzmmacaQ4bQBLHOuihVx
- T38EmW32SSpmoWMHhlBQkvxQhoAs/bgiyqn7dRZRtUCTvJFJQcbK3X9MmUdPMmRrN5dn6seqN
- P/qfZAsukPfR22hGXwzoF/awBcLRcqwnS02gzrngUUuNA3hLbNc39R0FYHsIdyJbFzsMGLGCa
- d9GNukuQFAzh67x+UOB6IVGrNrUwa4nn78rQhZ/XgTiIlt6oL3BkT12KCBS32uJP2a43dtRYX
- w9W4uEcMynUp267QIHhKZ5kQsxH+DQ9AgTNdxenizapokDUvLGDUg+ABL+47pgTeLdRSGa8r4
- SJ8H0a1PnL6ajqcV8khsTz/istsmeq+TwcsYa8it7WHkDv0Xd5cX42v+RWfJ0Ta30ETXvRm11
- E2p3S2fi3QQs22HHWur2rR1iGmQBeTrS4km/uDF4S7NVpl/rQOIbJmV49s5CGNZ9+C6mcQk0S
- 4BKxM+K/jRw1uVfmOvHvfkjhUcixkx9ddA+IuXAB4wMrBvhp8D0RiGYegQW8JmulDslrc631/
- Y4wWDe3FqUBYWjeVuzzXEksbBHPMdOwE01+IzLRUU3dQVNpV5KOliNllHCmeNNstP+BtPcDOg
- mxjnwB7xzOJ816DDFe8sKEomTFGVlCsMr6MHwAAwQKnqLH84Rk8QEtZFE5r0aYy8pNz03ylas
- pvR+3WtR5qjrktN/LE495H7EVfheocXC0jFm9AbjXuTDFSysDiwfAumw1prXeypUttk3/qnXO
- HvF2+VlM7HeRnO+xyggDX3d25JjBuBCx4pKuxpj2xUfDQE81W9GDKTdsbeU2ro5jh+2duBG7b
- bPTvpZCZVYhFt4AqeC1W/Uo1xdHpTs+uzGEprT1IR76WA1gkjxlPnXDzgCusHQ1mWe0CPb26K
- K/KyDk8z9S8pNorhnnIyvpneWTAT+ebqY4knYP7XZlLL18LJa74hZdQExA0ptQtponEZSyr1p
- /jF0+0BmKl0cgaqvNZ1TZwE4w5LxZi/0oiyJuCq/g+RgYfzj0SE1fMJoG88WEVbtXE+4tE0rL
- VAYkypte0ixULGcUZt0zoCb11gm2epE/QAYYO+FLcGCy8rzqDYJ8MT7qwElFScD3dHAvlkerQ
- vvk+lellNVxgXJjsyqJk7Pmaos1iqex4qDcrB8+0eTv1pBBg5UH4/ff2y3I1a4U2GcD7+d7yW
- q6tec=
+References: <20190820232046.50175-1-brendanhiggins@google.com>
+ <20190820232046.50175-2-brendanhiggins@google.com> <7f2c8908-75f6-b793-7113-ad57c51777ce@kernel.org>
+ <CAFd5g44mRK9t4f58i_YMEt=e9RTxwrrhFY_V2LW_E7bUwR3cdg@mail.gmail.com> <4513d9f3-a69b-a9a4-768b-86c2962b62e0@kernel.org>
+In-Reply-To: <4513d9f3-a69b-a9a4-768b-86c2962b62e0@kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 23 Aug 2019 10:27:49 -0700
+Message-ID: <CAFd5g446J=cVW4QW+QeZMLDi+ANqshAW6KTrFFBTusPcdr6-GA@mail.gmail.com>
+Subject: Re: [PATCH v14 01/18] kunit: test: add KUnit test runner core
+To:     shuah <shuah@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- Your patch remove redundant code, which is fine.
-
-Thanks for your constructive feedback.
-
-
-> code you changed was simple enough to be understand quickly. I think rep=
-lacing
-> it with a crossed goto (even if it remove redundant code) might not be t=
-he best
-> option.
+On Fri, Aug 23, 2019 at 10:05 AM shuah <shuah@kernel.org> wrote:
 >
-> A solution might be to move the second loop to the top of the function
-
-I am unsure about the relevance of the loop ordering for the affected
-resource allocations.
-
-
-> so you should be able to replace the end of the cleanup calls with:
+> On 8/23/19 10:48 AM, Brendan Higgins wrote:
+> > On Fri, Aug 23, 2019 at 8:33 AM shuah <shuah@kernel.org> wrote:
+> >>
+> >> Hi Brendan,
+> >>
+> >> On 8/20/19 5:20 PM, Brendan Higgins wrote:
+> >>> Add core facilities for defining unit tests; this provides a common way
+> >>> to define test cases, functions that execute code which is under test
+> >>> and determine whether the code under test behaves as expected; this also
+> >>> provides a way to group together related test cases in test suites (here
+> >>> we call them test_modules).
+> >>>
+> >>> Just define test cases and how to execute them for now; setting
+> >>> expectations on code will be defined later.
+> >>>
+> >>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> >>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> >>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> >>> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> >>> ---
+> >>>    include/kunit/test.h | 179 ++++++++++++++++++++++++++++++++++++++++
+> >>>    kunit/Kconfig        |  17 ++++
+> >>>    kunit/Makefile       |   1 +
+> >>>    kunit/test.c         | 191 +++++++++++++++++++++++++++++++++++++++++++
+> >>>    4 files changed, 388 insertions(+)
+> >>>    create mode 100644 include/kunit/test.h
+> >>>    create mode 100644 kunit/Kconfig
+> >>>    create mode 100644 kunit/Makefile
+> >>>    create mode 100644 kunit/test.c
+> >>>
+> >>> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> >>> new file mode 100644
+> >>> index 0000000000000..e0b34acb9ee4e
+> >>> --- /dev/null
+> >>> +++ b/include/kunit/test.h
+> >>> @@ -0,0 +1,179 @@
+> >>> +/* SPDX-License-Identifier: GPL-2.0 */
+> >>> +/*
+> >>> + * Base unit test (KUnit) API.
+> >>> + *
+> >>> + * Copyright (C) 2019, Google LLC.
+> >>> + * Author: Brendan Higgins <brendanhiggins@google.com>
+> >>> + */
+> >>> +
+> >>> +#ifndef _KUNIT_TEST_H
+> >>> +#define _KUNIT_TEST_H
+> >>> +
+> >>> +#include <linux/types.h>
+> >>> +
+> >>> +struct kunit;
+> >>> +
+> >>> +/**
+> >>> + * struct kunit_case - represents an individual test case.
+> >>> + * @run_case: the function representing the actual test case.
+> >>> + * @name: the name of the test case.
+> >>> + *
+> >>> + * A test case is a function with the signature, ``void (*)(struct kunit *)``
+> >>> + * that makes expectations (see KUNIT_EXPECT_TRUE()) about code under test. Each
+> >>> + * test case is associated with a &struct kunit_suite and will be run after the
+> >>> + * suite's init function and followed by the suite's exit function.
+> >>> + *
+> >>> + * A test case should be static and should only be created with the KUNIT_CASE()
+> >>> + * macro; additionally, every array of test cases should be terminated with an
+> >>> + * empty test case.
+> >>> + *
+> >>> + * Example:
+> >>
+> >> Can you fix these line continuations. It makes it very hard to read.
+> >> Sorry for this late comment. These comments lines are longer than 80
+> >> and wrap.
+> >
+> > None of the lines in this commit are over 80 characters in column
+> > width. Some are exactly 80 characters (like above).
+> >
+> > My guess is that you are seeing the diff added text (+ ), which when
+> > you add that to a line which is exactly 80 char in length ends up
+> > being over 80 char in email. If you apply the patch you will see that
+> > they are only 80 chars.
+> >
+> >>
+> >> There are several comment lines in the file that are way too long.
+> >
+> > Note that checkpatch also does not complain about any over 80 char
+> > lines in this file.
+> >
+> > Sorry if I am misunderstanding what you are trying to tell me. Please
+> > confirm either way.
+> >
 >
-> enomem:
-> 	ret =3D -ENOMEM;
-> free_rx:
-> 	vnt_free_rx_bufs(priv);
-> 	return ret;
+> WARNING: Avoid unnecessary line continuations
+> #258: FILE: include/kunit/test.h:137:
+> +                */                                                            \
+>
+> total: 0 errors, 2 warnings, 388 lines checked
 
-The exception handling can eventually adjusted another bit according
-to your refactoring.
+Ah, okay so you don't like the warning about the line continuation.
+That's not because it is over 80 char, but because there is a line
+continuation after a comment. I don't really see a way to get rid of
+it without removing the comment from inside the macro.
 
+I put this TODO there in the first place a Luis' request, and I put it
+in the body of the macro because this macro already had a kernel-doc
+comment and I didn't think that an implementation detail TODO belonged
+in the user documentation.
 
-> This way, only a failed call to vnt_submit_rx_urb() should jump to free_=
-rx,
+> Go ahead fix these. It appears there are few lines that either longer
+> than 80. In general, I keep them around 75, so it is easier read.
 
-It seems that a goto statement will still be needed in an error code
-part by both discussed variants.
+Sorry, the above is the only checkpatch warning other than the
+reminder to update the MAINTAINERS file.
 
-
-> another failed call should jump to enomem or previously defined
-> label, so we can correctly forward errors.
-
-This view sounds promising.
-
-
-> With such solution it might be worth adding a comment to describe
-> that all error should be ENOMEM except for vnt_submit_rx_urb().
-
-Can this function implementation become clearer also without
-such a comment?
-
-Regards,
-Markus
+Are you saying you want me to go through and make all the lines fit in
+75 char column width? I hope not because that is going to be a pretty
+substantial change to make.
