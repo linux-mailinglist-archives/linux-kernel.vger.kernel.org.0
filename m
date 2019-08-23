@@ -2,295 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 082999AC4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:59:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38A019ABFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbfHWJ6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 05:58:48 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57212 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726620AbfHWJ6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 05:58:48 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id ADB76A3E56D603C648FA;
-        Fri, 23 Aug 2019 17:58:46 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 23 Aug 2019 17:58:39 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 3/3] f2fs: enhance f2fs_is_checkpoint_ready()'s readability
-Date:   Fri, 23 Aug 2019 17:58:36 +0800
-Message-ID: <20190823095836.28569-3-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20190823095836.28569-1-yuchao0@huawei.com>
-References: <20190823095836.28569-1-yuchao0@huawei.com>
+        id S2389855AbfHWJxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 05:53:11 -0400
+Received: from smtp2.goneo.de ([85.220.129.33]:42936 "EHLO smtp2.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389636AbfHWJxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 05:53:11 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp2.goneo.de (Postfix) with ESMTP id 7EDB123F3BB;
+        Fri, 23 Aug 2019 11:53:07 +0200 (CEST)
+X-Virus-Scanned: by goneo
+X-Spam-Flag: NO
+X-Spam-Score: -3.113
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.113 tagged_above=-999 tests=[ALL_TRUSTED=-1,
+        AWL=-0.213, BAYES_00=-1.9] autolearn=ham
+Received: from smtp2.goneo.de ([127.0.0.1])
+        by localhost (smtp2.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id EtZZPu5spIOh; Fri, 23 Aug 2019 11:53:06 +0200 (CEST)
+Received: from lem-wkst-02.lemonage (hq.lemonage.de [87.138.178.34])
+        by smtp2.goneo.de (Postfix) with ESMTPSA id E66B823F488;
+        Fri, 23 Aug 2019 11:53:05 +0200 (CEST)
+Date:   Fri, 23 Aug 2019 12:06:11 +0200
+From:   Lars Poeschel <poeschel@lemonage.de>
+To:     Claudiu.Beznea@microchip.com
+Cc:     gregkh@linuxfoundation.org, tglx@linutronix.de, swinslow@gmail.com,
+        allison@lohutok.net, opensource@jilayne.com,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, johan@kernel.org
+Subject: Re: [PATCH v6 5/7] nfc: pn533: add UART phy driver
+Message-ID: <20190823100611.GB14401@lem-wkst-02.lemonage>
+References: <20190820120345.22593-1-poeschel@lemonage.de>
+ <20190820120345.22593-5-poeschel@lemonage.de>
+ <909777a0-a70e-2174-4455-4afa0591a462@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <909777a0-a70e-2174-4455-4afa0591a462@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes sematics of f2fs_is_checkpoint_ready()'s return
-value as: return true when checkpoint is ready, other return false,
-it can improve readability of below conditions.
+On Thu, Aug 22, 2019 at 10:09:09AM +0000, Claudiu.Beznea@microchip.com wrote:
+> Hi Lars,
+> 
+> On 20.08.2019 15:03, Lars Poeschel wrote:
+> > This adds the UART phy interface for the pn533 driver.
+> > The pn533 driver can be used through UART interface this way.
+> > It is implemented as a serdev device.
+> > 
+> > Cc: Johan Hovold <johan@kernel.org>
+> > Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
+> > ---
+> > Changes in v6:
+> > - Rebased the patch series on v5.3-rc5
+> > 
+> > Changes in v5:
+> > - Use the splitted pn53x_common_init and pn53x_register_nfc
+> >   and pn53x_common_clean and pn53x_unregister_nfc alike
+> > 
+> > Changes in v4:
+> > - SPDX-License-Identifier: GPL-2.0+
+> > - Source code comments above refering items
+> > - Error check for serdev_device_write's
+> > - Change if (xxx == NULL) to if (!xxx)
+> > - Remove device name from a dev_err
+> > - move pn533_register in _probe a bit towards the end of _probe
+> > - make use of newly added dev_up / dev_down phy_ops
+> > - control send_wakeup variable from dev_up / dev_down
+> > 
+> > Changes in v3:
+> > - depend on SERIAL_DEV_BUS in Kconfig
+> > 
+> > Changes in v2:
+> > - switched from tty line discipline to serdev, resulting in many
+> >   simplifications
+> > - SPDX License Identifier
+> > 
+> >  drivers/nfc/pn533/Kconfig  |  11 ++
+> >  drivers/nfc/pn533/Makefile |   2 +
+> >  drivers/nfc/pn533/pn533.h  |   8 +
+> >  drivers/nfc/pn533/uart.c   | 316 +++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 337 insertions(+)
+> >  create mode 100644 drivers/nfc/pn533/uart.c
+> > 
+> > diff --git a/drivers/nfc/pn533/Kconfig b/drivers/nfc/pn533/Kconfig
+> > index f6d6b345ba0d..7fe1bbe26568 100644
+> > --- a/drivers/nfc/pn533/Kconfig
+> > +++ b/drivers/nfc/pn533/Kconfig
+> > @@ -26,3 +26,14 @@ config NFC_PN533_I2C
+> >  
+> >  	  If you choose to build a module, it'll be called pn533_i2c.
+> >  	  Say N if unsure.
+> > +
+> > +config NFC_PN532_UART
+> > +	tristate "NFC PN532 device support (UART)"
+> > +	depends on SERIAL_DEV_BUS
+> > +	select NFC_PN533
+> > +	---help---
+> > +	  This module adds support for the NXP pn532 UART interface.
+> > +	  Select this if your platform is using the UART bus.
+> > +
+> > +	  If you choose to build a module, it'll be called pn532_uart.
+> > +	  Say N if unsure.
+> > diff --git a/drivers/nfc/pn533/Makefile b/drivers/nfc/pn533/Makefile
+> > index 43c25b4f9466..b9648337576f 100644
+> > --- a/drivers/nfc/pn533/Makefile
+> > +++ b/drivers/nfc/pn533/Makefile
+> > @@ -4,7 +4,9 @@
+> >  #
+> >  pn533_usb-objs  = usb.o
+> >  pn533_i2c-objs  = i2c.o
+> > +pn532_uart-objs  = uart.o
+> >  
+> >  obj-$(CONFIG_NFC_PN533)     += pn533.o
+> >  obj-$(CONFIG_NFC_PN533_USB) += pn533_usb.o
+> >  obj-$(CONFIG_NFC_PN533_I2C) += pn533_i2c.o
+> > +obj-$(CONFIG_NFC_PN532_UART) += pn532_uart.o
+> > diff --git a/drivers/nfc/pn533/pn533.h b/drivers/nfc/pn533/pn533.h
+> > index 510ddebbd896..6541088fad73 100644
+> > --- a/drivers/nfc/pn533/pn533.h
+> > +++ b/drivers/nfc/pn533/pn533.h
+> > @@ -43,6 +43,11 @@
+> >  
+> >  /* Preamble (1), SoPC (2), ACK Code (2), Postamble (1) */
+> >  #define PN533_STD_FRAME_ACK_SIZE 6
+> > +/*
+> > + * Preamble (1), SoPC (2), Packet Length (1), Packet Length Checksum (1),
+> > + * Specific Application Level Error Code (1) , Postamble (1)
+> > + */
+> > +#define PN533_STD_ERROR_FRAME_SIZE 8
+> >  #define PN533_STD_FRAME_CHECKSUM(f) (f->data[f->datalen])
+> >  #define PN533_STD_FRAME_POSTAMBLE(f) (f->data[f->datalen + 1])
+> >  /* Half start code (3), LEN (4) should be 0xffff for extended frame */
+> > @@ -84,6 +89,9 @@
+> >  #define PN533_CMD_MI_MASK 0x40
+> >  #define PN533_CMD_RET_SUCCESS 0x00
+> >  
+> > +#define PN533_FRAME_DATALEN_ACK 0x00
+> > +#define PN533_FRAME_DATALEN_ERROR 0x01
+> > +#define PN533_FRAME_DATALEN_EXTENDED 0xFF
+> >  
+> >  enum  pn533_protocol_type {
+> >  	PN533_PROTO_REQ_ACK_RESP = 0,
+> > diff --git a/drivers/nfc/pn533/uart.c b/drivers/nfc/pn533/uart.c
+> > new file mode 100644
+> > index 000000000000..f1cc2354a4fd
+> > --- /dev/null
+> > +++ b/drivers/nfc/pn533/uart.c
+> > @@ -0,0 +1,316 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * Driver for NXP PN532 NFC Chip - UART transport layer
+> > + *
+> > + * Copyright (C) 2018 Lemonage Software GmbH
+> > + * Author: Lars Pöschel <poeschel@lemonage.de>
+> > + * All rights reserved.
+> > + */
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/nfc.h>
+> > +#include <linux/netdevice.h>
+> > +#include <linux/of.h>
+> > +#include <linux/serdev.h>
+> > +#include "pn533.h"
+> > +
+> > +#define PN532_UART_SKB_BUFF_LEN	(PN533_CMD_DATAEXCH_DATA_MAXLEN * 2)
+> > +
+> > +enum send_wakeup {
+> > +	PN532_SEND_NO_WAKEUP = 0,
+> > +	PN532_SEND_WAKEUP,
+> > +	PN532_SEND_LAST_WAKEUP,
+> > +};
+> > +
+> > +
+> > +struct pn532_uart_phy {
+> > +	struct serdev_device *serdev;
+> > +	struct sk_buff *recv_skb;
+> > +	struct pn533 *priv;
+> > +	enum send_wakeup send_wakeup;
+> 
+> Could there be any concurrency issues w/ regards to accessing this
+> variable? I see it is accessed in pn532_uart_send_frame(), pn532_dev_up(),
+> pn532_dev_down() which may be called from the following wq:
+> 
+>         INIT_WORK(&priv->mi_tm_rx_work, pn533_wq_tm_mi_recv);
+> 
+>         INIT_WORK(&priv->mi_tm_tx_work, pn533_wq_tm_mi_send);
+> 
+>         INIT_DELAYED_WORK(&priv->poll_work, pn533_wq_poll);
+> 
+> 
+> and from net/nfc/core.c via dev_up()/dev_down().
 
-f2fs_submit_page_write()
-...
-	if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN) ||
-				!f2fs_is_checkpoint_ready(sbi))
-		__submit_merged_bio(io);
+Well, I spend some minutes thinking about this. There should be no real
+problem. The code in pn533.c ensures, that commands are transmitted
+sequencially. And it always is command - response. So if a command is
+send, the driver waits for a response from the chip.
+So pn532_uart_send_frame should not be called multiple times without
+reaching at least serdev_device_write, but at this point the race is
+already over.
+There is one exception, this is the abort command. This command can be
+sent without receiving a previous response. So there is the possibility
+of a successful race.
+The send_wakeup variable is used to control if we need to send a
+wakeup request to the pn532 chip prior to the actual command we would
+like to send.
+Worst thing that I see could happen - if the race succeeds - is that we
+send a wakeup to the chip that is propably not needed as it is already
+awake. But this does not hurt as a wakeup send to the pn532 is
+essentially a no-op if the chip is awake already. I could have
+implemented it so, that a wakeup is sent in front of every command
+without thinking and the driver would work.
+The same is with pn532_dev_up. It could be that there is one wakeup sent
+to much, but it does not hurt.
+pn532_dev_down is not problematic I think.
 
-f2fs_balance_fs()
-...
-	if (!f2fs_is_checkpoint_ready(sbi))
-		return;
+To sum it up: There is maybe a very little probability, but it does
+nothing bad. Question is now: Is it worth mutex'ing the send_wakeup
+variable or can we leave it as-is ?
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c    |  7 ++++---
- fs/f2fs/file.c    | 18 ++++++++----------
- fs/f2fs/inode.c   |  2 +-
- fs/f2fs/namei.c   | 36 ++++++++++++++----------------------
- fs/f2fs/segment.c |  2 +-
- fs/f2fs/segment.h |  8 ++++----
- fs/f2fs/xattr.c   |  5 ++---
- 7 files changed, 34 insertions(+), 44 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 769c548e955a..bf648c8c50ad 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -634,7 +634,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 		goto next;
- out:
- 	if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN) ||
--				f2fs_is_checkpoint_ready(sbi))
-+				!f2fs_is_checkpoint_ready(sbi))
- 		__submit_merged_bio(io);
- 	up_write(&io->io_rwsem);
- }
-@@ -2571,9 +2571,10 @@ static int f2fs_write_begin(struct file *file, struct address_space *mapping,
- 
- 	trace_f2fs_write_begin(inode, pos, len, flags);
- 
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
-+	if (!f2fs_is_checkpoint_ready(sbi)) {
-+		err = -ENOSPC;
- 		goto fail;
-+	}
- 
- 	if ((f2fs_is_atomic_file(inode) &&
- 			!f2fs_available_free_memory(sbi, INMEM_PAGES)) ||
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 05d60082da3a..97038a9a91e3 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -57,9 +57,11 @@ static vm_fault_t f2fs_vm_page_mkwrite(struct vm_fault *vmf)
- 		err = -EIO;
- 		goto err;
- 	}
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
-+
-+	if (!f2fs_is_checkpoint_ready(sbi)) {
-+		err = -ENOSPC;
- 		goto err;
-+	}
- 
- 	sb_start_pagefault(inode->i_sb);
- 
-@@ -1575,9 +1577,8 @@ static long f2fs_fallocate(struct file *file, int mode,
- 
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
- 		return -EIO;
--	ret = f2fs_is_checkpoint_ready(F2FS_I_SB(inode));
--	if (ret)
--		return ret;
-+	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
-+		return -ENOSPC;
- 
- 	/* f2fs only support ->fallocate for regular file */
- 	if (!S_ISREG(inode->i_mode))
-@@ -3162,13 +3163,10 @@ static int f2fs_set_volume_name(struct file *filp, unsigned long arg)
- 
- long f2fs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- {
--	int ret;
--
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(file_inode(filp)))))
- 		return -EIO;
--	ret = f2fs_is_checkpoint_ready(F2FS_I_SB(file_inode(filp)));
--	if (ret)
--		return ret;
-+	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(file_inode(filp))))
-+		return -ENOSPC;
- 
- 	switch (cmd) {
- 	case F2FS_IOC_GETFLAGS:
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 88af85e0db62..87214414936b 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -616,7 +616,7 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 	if (!is_inode_flag_set(inode, FI_DIRTY_INODE))
- 		return 0;
- 
--	if (f2fs_is_checkpoint_ready(sbi))
-+	if (!f2fs_is_checkpoint_ready(sbi))
- 		return -ENOSPC;
- 
- 	/*
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 7a2d43a9f1a6..8b02c69df199 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -272,9 +272,8 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
--		return err;
-+	if (!f2fs_is_checkpoint_ready(sbi))
-+		return -ENOSPC;
- 
- 	err = dquot_initialize(dir);
- 	if (err)
-@@ -321,9 +320,8 @@ static int f2fs_link(struct dentry *old_dentry, struct inode *dir,
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
--		return err;
-+	if (!f2fs_is_checkpoint_ready(sbi))
-+		return -ENOSPC;
- 
- 	err = fscrypt_prepare_link(old_dentry, dir, dentry);
- 	if (err)
-@@ -592,9 +590,8 @@ static int f2fs_symlink(struct inode *dir, struct dentry *dentry,
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
--		return err;
-+	if (!f2fs_is_checkpoint_ready(sbi))
-+		return -ENOSPC;
- 
- 	err = fscrypt_prepare_symlink(dir, symname, len, dir->i_sb->s_blocksize,
- 				      &disk_link);
-@@ -724,9 +721,8 @@ static int f2fs_mknod(struct inode *dir, struct dentry *dentry,
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
--		return err;
-+	if (!f2fs_is_checkpoint_ready(sbi))
-+		return -ENOSPC;
- 
- 	err = dquot_initialize(dir);
- 	if (err)
-@@ -822,13 +818,11 @@ static int __f2fs_tmpfile(struct inode *dir, struct dentry *dentry,
- static int f2fs_tmpfile(struct inode *dir, struct dentry *dentry, umode_t mode)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
--	int ret;
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
--	ret = f2fs_is_checkpoint_ready(sbi);
--	if (ret)
--		return ret;
-+	if (!f2fs_is_checkpoint_ready(sbi))
-+		return -ENOSPC;
- 
- 	if (IS_ENCRYPTED(dir) || DUMMY_ENCRYPTION_ENABLED(sbi)) {
- 		int err = fscrypt_get_encryption_info(dir);
-@@ -865,9 +859,8 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
--		return err;
-+	if (!f2fs_is_checkpoint_ready(sbi))
-+		return -ENOSPC;
- 
- 	if (is_inode_flag_set(new_dir, FI_PROJ_INHERIT) &&
- 			(!projid_eq(F2FS_I(new_dir)->i_projid,
-@@ -1060,9 +1053,8 @@ static int f2fs_cross_rename(struct inode *old_dir, struct dentry *old_dentry,
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
--		return err;
-+	if (!f2fs_is_checkpoint_ready(sbi))
-+		return -ENOSPC;
- 
- 	if ((is_inode_flag_set(new_dir, FI_PROJ_INHERIT) &&
- 			!projid_eq(F2FS_I(new_dir)->i_projid,
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index b6f838c055d7..ccee5fb69479 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -501,7 +501,7 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- 	if (need && excess_cached_nats(sbi))
- 		f2fs_balance_fs_bg(sbi);
- 
--	if (f2fs_is_checkpoint_ready(sbi))
-+	if (!f2fs_is_checkpoint_ready(sbi))
- 		return;
- 
- 	/*
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 38ae95301169..bdcce35be077 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -593,13 +593,13 @@ static inline bool has_not_enough_free_secs(struct f2fs_sb_info *sbi,
- 		reserved_sections(sbi) + needed);
- }
- 
--static inline int f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
-+static inline bool f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
- {
- 	if (likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
--		return 0;
-+		return true;
- 	if (likely(!has_not_enough_free_secs(sbi, 0, 0)))
--		return 0;
--	return -ENOSPC;
-+		return true;
-+	return false;
- }
- 
- static inline bool excess_prefree_segs(struct f2fs_sb_info *sbi)
-diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
-index f85c810e33ca..181900af2576 100644
---- a/fs/f2fs/xattr.c
-+++ b/fs/f2fs/xattr.c
-@@ -732,9 +732,8 @@ int f2fs_setxattr(struct inode *inode, int index, const char *name,
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return -EIO;
--	err = f2fs_is_checkpoint_ready(sbi);
--	if (err)
--		return err;
-+	if (!f2fs_is_checkpoint_ready(sbi))
-+		return -ENOSPC;
- 
- 	err = dquot_initialize(inode);
- 	if (err)
--- 
-2.18.0.rc1
-
+Thank you for your review, Claudiu.
+Regards,
+Lars
