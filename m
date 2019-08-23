@@ -2,176 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAE5E9B36C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F25F9B371
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:36:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405808AbfHWPf0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 11:35:26 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34475 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbfHWPfZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 11:35:25 -0400
-Received: by mail-ed1-f68.google.com with SMTP id s49so14090422edb.1;
-        Fri, 23 Aug 2019 08:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bOTGFv5QNbPl3kVZJ4gX2MgKifaU/Np4JrPC/q7d9x0=;
-        b=jNdhZRcQK5y+PojJ7V/Sn+FdoPbwecWUtbkSsPfr58aeb81sQGQLPfB4DFZOn36WG8
-         L1lEx/cxPLfwP6mboEEqNaxH5XWea+HHowziqCnpgVkssEm64aWW6hHScvSyk+O3mZDy
-         ddxVYuEl2hLfg6EvNLTV0Dh9YE0UwoIAZU7VAqKb/GZn25cRLLsSPGFHIwV7eoUCVlA5
-         +6kYHigIQOAboTwvj5NIXVctFATWuSB3NHGqPPORZOlwElShEugldGUGv89e0xYH/NH8
-         9xeHbmp57yoXtKU8yS7z3GjxGm3Tjo83zBqaUQeAyd4BKJFdVaxksZSBcPBjYrOW5LW4
-         iJDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=bOTGFv5QNbPl3kVZJ4gX2MgKifaU/Np4JrPC/q7d9x0=;
-        b=hCcWdiB8632mxFWmwcBxsHPNC5DB+5toBg9nkPk7TZGgLW+eJq6BB77DjU84BhRaLc
-         JZ5Ua4JEDshIg+QMGekU4Taj6uJwEClSZeqVCtKz+SoB98d7mibMkf03nXRuv/OofZX9
-         vbwcmGYeMaV9WlphVhtBnXlUZeYF2lFL59ZyM3vmVCmCi68e6xyxVyWiTY1XeleZ3YCY
-         6QjG1nk0XE9OW18QD5t3AbGYX6ckWzjEoAKwbBxhd/J5a6BtlakPJc8QIhbhmhJqvevz
-         k2bTtmqDOcAaMKZPt0DaSIMtzqLnqbWdp4mFCEbvmfXbM5gMnS8YmzvqTIjdKp9M1jQO
-         uq+Q==
-X-Gm-Message-State: APjAAAWo9tMzAUNMTDcvST3m76pweUVQtHa9QXqHvzTRewJqSa1hhdRX
-        kmjipJLOCfQaVGtiHFous7Y=
-X-Google-Smtp-Source: APXvYqzKvdIXkRXTP1wlFT82Jizjc4owDzkEfOxvKG+mfTuTRDbK87P4w3EHhmpBZiJGenU34XE/hw==
-X-Received: by 2002:a17:906:4b13:: with SMTP id y19mr4890953eju.145.1566574522372;
-        Fri, 23 Aug 2019 08:35:22 -0700 (PDT)
-Received: from ziggy.stardust ([37.223.137.147])
-        by smtp.gmail.com with ESMTPSA id i13sm589280edr.83.2019.08.23.08.35.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2019 08:35:21 -0700 (PDT)
-Subject: Re: [PATCH v5 09/10] rtc: mt6397: fix alarm register overwrite
-To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <rfontana@redhat.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rtc@vger.kernel.org, srv_heupstream@mediatek.com,
-        Ran Bi <ran.bi@mediatek.com>
-References: <1566531931-9772-1-git-send-email-hsin-hsiung.wang@mediatek.com>
- <1566531931-9772-10-git-send-email-hsin-hsiung.wang@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <bf8435a7-db97-5ed8-bccc-9d197396aeb6@gmail.com>
-Date:   Fri, 23 Aug 2019 17:35:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2405827AbfHWPgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 11:36:12 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:41585 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726964AbfHWPgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 11:36:09 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46FQTx5xXzz9tyfQ;
+        Fri, 23 Aug 2019 17:36:05 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=jrdwbs49; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id WDbwHxX_DhSu; Fri, 23 Aug 2019 17:36:05 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46FQTx4mJgz9tyfP;
+        Fri, 23 Aug 2019 17:36:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1566574565; bh=taOtIuFOLV3LderGgGTjI+WsiQvKgWM+udHMcArbX6M=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=jrdwbs496wJTnFOi+YyWfXwhY8qwVNB0jqtWxzq8O7jdWqAEs6fgwBupPWtqkn6tW
+         We6YpPGdJoOPsuVQ8I46mS95AAi/0qZbDIltmVIynzY+r9+A1hSbpc6u8i812/EJWR
+         s7P9dl9hXeNuIMQYpYOGUgCKH13wi6Ydtu5bQIR4=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 475018B895;
+        Fri, 23 Aug 2019 17:36:07 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 6H3uH_qZt4h0; Fri, 23 Aug 2019 17:36:07 +0200 (CEST)
+Received: from pc16032vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.103])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 07E788B882;
+        Fri, 23 Aug 2019 17:36:07 +0200 (CEST)
+Subject: Re: [PATCH 3/3] powerpc: use __builtin_trap() in BUG/WARN macros.
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <a6781075192afe0c909ce7d091de7931183a5d93.1566219503.git.christophe.leroy@c-s.fr>
+ <20510ce03cc9463f1c9e743c1d93b939de501b53.1566219503.git.christophe.leroy@c-s.fr>
+ <20190819132313.GH31406@gate.crashing.org>
+ <dbafc03a-6eda-d9a3-c451-d242f03b01d9@c-s.fr>
+ <20190819143700.GK31406@gate.crashing.org>
+ <44a19633-f2a9-79f9-da7c-16ba64a66600@c-s.fr>
+ <20190819154531.GM31406@gate.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <6931c0d8-8aa8-8039-fc7f-8e2026b94036@c-s.fr>
+Date:   Fri, 23 Aug 2019 15:35:31 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <1566531931-9772-10-git-send-email-hsin-hsiung.wang@mediatek.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190819154531.GM31406@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -179,105 +71,234 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 23/08/2019 05:45, Hsin-Hsiung Wang wrote:
-> From: Ran Bi <ran.bi@mediatek.com>
+On 08/19/2019 03:45 PM, Segher Boessenkool wrote:
+> On Mon, Aug 19, 2019 at 05:05:46PM +0200, Christophe Leroy wrote:
+>> Le 19/08/2019 à 16:37, Segher Boessenkool a écrit :
+>>> On Mon, Aug 19, 2019 at 04:08:43PM +0200, Christophe Leroy wrote:
+>>>> Le 19/08/2019 à 15:23, Segher Boessenkool a écrit :
+>>>>> On Mon, Aug 19, 2019 at 01:06:31PM +0000, Christophe Leroy wrote:
+>>>>>> Note that we keep using an assembly text using "twi 31, 0, 0" for
+>>>>>> inconditional traps because GCC drops all code after
+>>>>>> __builtin_trap() when the condition is always true at build time.
+>>>>>
+>>>>> As I said, it can also do this for conditional traps, if it can prove
+>>>>> the condition is always true.
+>>>>
+>>>> But we have another branch for 'always true' and 'always false' using
+>>>> __builtin_constant_p(), which don't use __builtin_trap(). Is there
+>>>> anything wrong with that ?:
+>>>
+>>> The compiler might not realise it is constant when it evaluates the
+>>> __builtin_constant_p, but only realises it later.  As the documentation
+>>> for the builtin says:
+>>>    A return of 0 does not indicate that the
+>>>    value is _not_ a constant, but merely that GCC cannot prove it is a
+>>>    constant with the specified value of the '-O' option.
+>>
+>> So you mean GCC would not be able to prove that
+>> __builtin_constant_p(cond) is always true but it would be able to prove
+>> that if (cond)  is always true ?
 > 
-> Alarm registers high byte was reserved for other functions.
-> This add mask in alarm registers operation functions.
-> This also fix error condition in interrupt handler.
+> Not sure what you mean, sorry.
 > 
-> Fixes: fc2979118f3f ("rtc: mediatek: Add MT6397 RTC driver")
+>> And isn't there a away to tell GCC that '__builtin_trap()' is
+>> recoverable in our case ?
 > 
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Signed-off-by: Ran Bi <ran.bi@mediatek.com>
+> No, GCC knows that a trap will never fall through.
+> 
+>>> I think it may work if you do
+>>>
+>>> #define BUG_ON(x) do {						\
+>>> 	if (__builtin_constant_p(x)) {				\
+>>> 		if (x)						\
+>>> 			BUG();					\
+>>> 	} else {						\
+>>> 		BUG_ENTRY("", 0);				\
+>>> 		if (x)						\
+>>> 			__builtin_trap();			\
+>>> 	}							\
+>>> } while (0)
+>>
+>> It doesn't work:
+> 
+> You need to make a BUG_ENTRY so that it refers to the *following* trap
+> instruction, if you go this way.
+> 
+>>> I don't know how BUG_ENTRY works exactly.
+>>
+>> It's basic, maybe too basic: it adds an inline asm with a label, and
+>> adds a .long in the __bug_table section with the address of that label.
+>>
+>> When putting it after the __builtin_trap(), I changed it to using the
+>> address before the one of the label which is always the twxx instruction
+>> as far as I can see.
+>>
+>> #define BUG_ENTRY(insn, flags, ...)			\
+>> 	__asm__ __volatile__(				\
+>> 		"1:	" insn "\n"			\
+>> 		".section __bug_table,\"aw\"\n"		\
+>> 		"2:\t" PPC_LONG "1b, %0\n"		\
+>> 		"\t.short %1, %2\n"			\
+>> 		".org 2b+%3\n"				\
+>> 		".previous\n"				\
+>> 		: : "i" (__FILE__), "i" (__LINE__),	\
+>> 		  "i" (flags),				\
+>> 		  "i" (sizeof(struct bug_entry)),	\
+>> 		  ##__VA_ARGS__)
+> 
+> #define MY_BUG_ENTRY(lab, flags)			\
+> 	__asm__ __volatile__(				\
+> 		".section __bug_table,\"aw\"\n"		\
+> 		"2:\t" PPC_LONG "%4, %0\n"		\
+> 		"\t.short %1, %2\n"			\
+> 		".org 2b+%3\n"				\
+> 		".previous\n"				\
+> 		: : "i" (__FILE__), "i" (__LINE__),	\
+> 		  "i" (flags),				\
+> 		  "i" (sizeof(struct bug_entry)),	\
+> 		  "i" (lab))
+> 
+> called as
+> 
+> #define BUG_ON(x) do {						\
+> 	MY_BUG_ENTRY(&&lab, 0);					\
+> 	lab: if (x)						\
+> 		__builtin_trap();				\
+> } while (0)
+> 
+> not sure how reliable that works -- *if* it works, I just typed that in
+> without testing or anything -- but hopefully you get the idea.
+> 
 
-Misses your Signed-off-by.
+I've not been able to make it work. GCC puts the label (.L2 and .L6) 
+outside of the function, so the instruction preceding the label is blr, 
+not the trap.
 
-Regards,
-Matthias
+#define _EMIT_BUG_ENTRY				\
+	".section __bug_table,\"aw\"\n"		\
+	"2:\t" PPC_LONG "%4, %0\n"		\
+	"\t.short %1, %2\n"			\
+	".org 2b+%3\n"				\
+	".previous\n"
 
-> ---
->  drivers/rtc/rtc-mt6397.c | 47 +++++++++++++++++++++++++++++++++--------------
->  1 file changed, 33 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-> index b46ed4d..828def7 100644
-> --- a/drivers/rtc/rtc-mt6397.c
-> +++ b/drivers/rtc/rtc-mt6397.c
-> @@ -47,6 +47,14 @@
->  
->  #define RTC_AL_SEC		0x0018
->  
-> +#define RTC_AL_SEC_MASK		0x003f
-> +#define RTC_AL_MIN_MASK		0x003f
-> +#define RTC_AL_HOU_MASK		0x001f
-> +#define RTC_AL_DOM_MASK		0x001f
-> +#define RTC_AL_DOW_MASK		0x0007
-> +#define RTC_AL_MTH_MASK		0x000f
-> +#define RTC_AL_YEA_MASK		0x007f
-> +
->  #define RTC_PDN2		0x002e
->  #define RTC_PDN2_PWRON_ALARM	BIT(4)
->  
-> @@ -103,7 +111,7 @@ static irqreturn_t mtk_rtc_irq_handler_thread(int irq, void *data)
->  		irqen = irqsta & ~RTC_IRQ_EN_AL;
->  		mutex_lock(&rtc->lock);
->  		if (regmap_write(rtc->regmap, rtc->addr_base + RTC_IRQ_EN,
-> -				 irqen) < 0)
-> +				 irqen) == 0)
->  			mtk_rtc_write_trigger(rtc);
->  		mutex_unlock(&rtc->lock);
->  
-> @@ -225,12 +233,12 @@ static int mtk_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alm)
->  	alm->pending = !!(pdn2 & RTC_PDN2_PWRON_ALARM);
->  	mutex_unlock(&rtc->lock);
->  
-> -	tm->tm_sec = data[RTC_OFFSET_SEC];
-> -	tm->tm_min = data[RTC_OFFSET_MIN];
-> -	tm->tm_hour = data[RTC_OFFSET_HOUR];
-> -	tm->tm_mday = data[RTC_OFFSET_DOM];
-> -	tm->tm_mon = data[RTC_OFFSET_MTH];
-> -	tm->tm_year = data[RTC_OFFSET_YEAR];
-> +	tm->tm_sec = data[RTC_OFFSET_SEC] & RTC_AL_SEC_MASK;
-> +	tm->tm_min = data[RTC_OFFSET_MIN] & RTC_AL_MIN_MASK;
-> +	tm->tm_hour = data[RTC_OFFSET_HOUR] & RTC_AL_HOU_MASK;
-> +	tm->tm_mday = data[RTC_OFFSET_DOM] & RTC_AL_DOM_MASK;
-> +	tm->tm_mon = data[RTC_OFFSET_MTH] & RTC_AL_MTH_MASK;
-> +	tm->tm_year = data[RTC_OFFSET_YEAR] & RTC_AL_YEA_MASK;
->  
->  	tm->tm_year += RTC_MIN_YEAR_OFFSET;
->  	tm->tm_mon--;
-> @@ -251,14 +259,25 @@ static int mtk_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
->  	tm->tm_year -= RTC_MIN_YEAR_OFFSET;
->  	tm->tm_mon++;
->  
-> -	data[RTC_OFFSET_SEC] = tm->tm_sec;
-> -	data[RTC_OFFSET_MIN] = tm->tm_min;
-> -	data[RTC_OFFSET_HOUR] = tm->tm_hour;
-> -	data[RTC_OFFSET_DOM] = tm->tm_mday;
-> -	data[RTC_OFFSET_MTH] = tm->tm_mon;
-> -	data[RTC_OFFSET_YEAR] = tm->tm_year;
-> -
->  	mutex_lock(&rtc->lock);
-> +	ret = regmap_bulk_read(rtc->regmap, rtc->addr_base + RTC_AL_SEC,
-> +			       data, RTC_OFFSET_COUNT);
-> +	if (ret < 0)
-> +		goto exit;
-> +
-> +	data[RTC_OFFSET_SEC] = ((data[RTC_OFFSET_SEC] & ~(RTC_AL_SEC_MASK)) |
-> +				(tm->tm_sec & RTC_AL_SEC_MASK));
-> +	data[RTC_OFFSET_MIN] = ((data[RTC_OFFSET_MIN] & ~(RTC_AL_MIN_MASK)) |
-> +				(tm->tm_min & RTC_AL_MIN_MASK));
-> +	data[RTC_OFFSET_HOUR] = ((data[RTC_OFFSET_HOUR] & ~(RTC_AL_HOU_MASK)) |
-> +				(tm->tm_hour & RTC_AL_HOU_MASK));
-> +	data[RTC_OFFSET_DOM] = ((data[RTC_OFFSET_DOM] & ~(RTC_AL_DOM_MASK)) |
-> +				(tm->tm_mday & RTC_AL_DOM_MASK));
-> +	data[RTC_OFFSET_MTH] = ((data[RTC_OFFSET_MTH] & ~(RTC_AL_MTH_MASK)) |
-> +				(tm->tm_mon & RTC_AL_MTH_MASK));
-> +	data[RTC_OFFSET_YEAR] = ((data[RTC_OFFSET_YEAR] & ~(RTC_AL_YEA_MASK)) |
-> +				(tm->tm_year & RTC_AL_YEA_MASK));
-> +
->  	if (alm->enabled) {
->  		ret = regmap_bulk_write(rtc->regmap,
->  					rtc->addr_base + RTC_AL_SEC,
-> 
+#define BUG_ENTRY(flags, label)				\
+	__asm__ __volatile__(				\
+		_EMIT_BUG_ENTRY				\
+		: : "i" (__FILE__), "i" (__LINE__),	\
+		  "i" (flags),				\
+		  "i" (sizeof(struct bug_entry)),	\
+		  "i" (label - 4))
+
+#define __recoverable_trap()	asm volatile ("twi 31, 0, 0;");
+
+#define __WARN_FLAGS(flags) do {				\
+	__label__ label;					\
+	BUG_ENTRY(BUGFLAG_WARNING | (flags), &&label);		\
+	__recoverable_trap();					\
+	label: ;						\
+} while (0)
+
+#define WARN_ON(x) ({						\
+	int __ret_warn_on = !!(x);				\
+	if (__builtin_constant_p(__ret_warn_on)) {		\
+		if (__ret_warn_on)				\
+			__WARN_TAINT(TAINT_WARN);		\
+	} else {						\
+		__label__ label;				\
+		BUG_ENTRY(BUGFLAG_WARNING | BUGFLAG_TAINT(TAINT_WARN), &&label);	\
+		if (__ret_warn_on)				\
+			__builtin_trap();			\
+		label: ;					\
+	}							\
+	unlikely(__ret_warn_on);				\
+})
+
+void test_warn1(unsigned long long a)
+{
+	WARN_ON(a);
+}
+
+void test_warn2(unsigned long a)
+{
+	WARN_ON(a);
+}
+
+00000000 <test_warn1>:
+    0:	7c 63 23 78 	or      r3,r3,r4
+    4:	0f 03 00 00 	twnei   r3,0
+    8:	4e 80 00 20 	blr
+
+0000000c <test_warn2>:
+    c:	0f 03 00 00 	twnei   r3,0
+   10:	4e 80 00 20 	blr
+
+RELOCATION RECORDS FOR [__bug_table]:
+OFFSET   TYPE              VALUE
+00000000 R_PPC_ADDR32      .text+0x00000008
+00000004 R_PPC_ADDR32      .rodata.str1.4
+0000000c R_PPC_ADDR32      .text+0x00000010
+00000010 R_PPC_ADDR32      .rodata.str1.4
+
+
+	.file	"test.c"
+	.section	".text"
+.Ltext0:
+	.align 2
+	.globl test_warn1
+	.type	test_warn1, @function
+test_warn1:
+.LFB598:
+	.file 1 "arch/powerpc/mm/test.c"
+	.loc 1 34 0
+.LBB2:
+.LBB3:
+	.loc 1 35 0
+#APP
+  # 35 "arch/powerpc/mm/test.c" 1
+	.section __bug_table,"aw"
+2:	.long .L2-4, .LC0
+	.short 35, 2305
+.org 2b+12
+.previous
+
+  # 0 "" 2
+#NO_APP
+	or 3,3,4
+	twnei 3,0
+	blr
+.L3:
+.L2:
+.LBE3:
+.LBE2:
+.LFE598:
+	.size	test_warn1, .-test_warn1
+	.align 2
+	.globl test_warn2
+	.type	test_warn2, @function
+test_warn2:
+.LFB599:
+	.loc 1 39 0
+.LBB4:
+.LBB5:
+	.loc 1 40 0
+#APP
+  # 40 "arch/powerpc/mm/test.c" 1
+	.section __bug_table,"aw"
+2:	.long .L6-4, .LC0
+	.short 40, 2305
+.org 2b+12
+.previous
+
+  # 0 "" 2
+#NO_APP
+	twnei 3,0
+	blr
+.L7:
+.L6:
+.LBE5:
+.LBE4:
+.LFE599:
+
+Any idea ?
+
+Christophe
