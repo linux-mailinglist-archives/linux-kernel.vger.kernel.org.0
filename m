@@ -2,112 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E38419A716
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 07:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E7569A720
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 07:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392081AbfHWF2u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 01:28:50 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42517 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392067AbfHWF2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 01:28:49 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b16so7402376wrq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 22:28:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0jZOuGomjvqGYTjnoHRQnEezUC30S/yYktb2hSFP7WE=;
-        b=ZsZhZA5toWhhCMR8ORZnkeX18nS/RQ2ih4MGR5PbRXW4fGxvgYg41L5YkbhqfuMXAg
-         mkAKeh3DAtZHZr2Hy8m1ZZEyMd0RYkpIVNOinUsUm9LSyeaZL5xjE5mDmFb6hBOgPoP4
-         x3XX/VTD9ZCimPxO3iHOWmMSWKM9ozmfQpa5ODTu03PSPfBQAxVrqHRR4i7tCTvrEuvD
-         8S4CM2B8GSezAVMEVwuJrKF8O2JJxynlNW2q3whLIqL8iKIymONrlRfa354T15nmpb9t
-         YQQLUdqtjyw97shJg5StkamMN1OCVetEtqsQEjw5m9+DxyojtsUay/oeJ2Pz6F1jVb2r
-         84zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0jZOuGomjvqGYTjnoHRQnEezUC30S/yYktb2hSFP7WE=;
-        b=EaNhgp6+IoX2Vg1t6sojoi6pbuwORAKl7ucg+2X30DkOK9nayDi6bIwWbtXBDNZCtr
-         xwc9+NZ/EbcBSTdKxMTyI9mwtmU30US/ey2fz+n4ZJIIx6dhu1swjAPZc9vkGdjBHJbn
-         za/to6yJ82IzBoE4SwSUM5k4lp9oWd4EtntJkBcvEL5iPkNcFD+RGTsHkU7x0VK5h6br
-         omIIrL0t1XXTSP6TBJLZFT0z/4q++VtzZYzSzWB3OxM2G5BVkyiOBWymvVyu4a69Vpl3
-         gE41IeFXaMd7nkmXRUjhiSCRqYPsl3aYwsDVWyOM4N68Ge7HXeW3Fw5vydMPVFPy7D7U
-         Ivyg==
-X-Gm-Message-State: APjAAAXZeOk5c7QoDogESwCJpVCSHbHRt6/VNjCrqXIQsjKOKP6yO370
-        u6ktUwd4eHLy9L7gS7nqKs0=
-X-Google-Smtp-Source: APXvYqz0Z2vhDlK0hJlhKifI62Nz2sFkvKxwoKaEwtT65rtUxiNhzfI4E7Wt5QqqMivW9WMKUI00cg==
-X-Received: by 2002:a5d:50cb:: with SMTP id f11mr2663367wrt.277.1566538127201;
-        Thu, 22 Aug 2019 22:28:47 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id w5sm2377262wmm.43.2019.08.22.22.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 22:28:46 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 22:28:44 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Huckleberry <nhuck@google.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Miles Chen =?utf-8?B?KOmZs+awkeaouik=?= 
-        <miles.chen@mediatek.com>, Tri Vo <trong@google.com>
-Subject: Re: [PATCH v3] ARM: UNWINDER_FRAME_POINTER implementation for Clang
-Message-ID: <20190823052844.GA70417@archlinux-threadripper>
-References: <CAKwvOd=wKUhnWr4UhVvgn6NYh+=zQOpMmKG9d_zEqaKLa4_9FA@mail.gmail.com>
- <20190822183022.130790-1-nhuck@google.com>
- <CAKwvOdn6av8bX4xUtuuKeJQdiQU+_Ty2aM8wtjP9+teU0Gt6Yg@mail.gmail.com>
+        id S2392153AbfHWF3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 01:29:53 -0400
+Received: from mail-eopbgr70057.outbound.protection.outlook.com ([40.107.7.57]:29377
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387557AbfHWF3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 01:29:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RBE5p1zcaoMfqOpytfPTvF5LbUXbNLxY8xARTLyqMV7WKYLNMw/AJwKpkwo9Ib0ycZHHZjfDQmcPKfz93oL3E7v7ijp/U6HW2Nkd9m2e5xuW5wdKGj1RFtjshJplqGwWZ55HONsWDyv12m7XTn5EJEEkpHS/D2/7DeadKkSrkrKIvNI11NLLYxGa9k/iFrJYema3oKDbLEzeU+hqes5yJH9rMhaiTLBIX8n+cl2A2XCnxpdvWRggXILNwfAZA6JwqAYxa/LM7TcgCuJkpWckwkcJ0QuyS/qxKC0aaMSZ98bjIBDVk/6PPlN75H8yMxZL4wy2dTJseWKM/4oesbN6rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L+WEjn2svcEvToFpi9uCRGeqlOIG+8XQwktFO0mlFgc=;
+ b=k1L1eU8BaDU06oEk7YnOZ0UAytCUDYWPyrcYMEXasOjUXRwCkVzH77/xZYSmOryU7MpwDWu7e2w2OdybG5j3KcC+4fT8Ul9YY5J+O8TzW46EtQa638whMiCvC9J24qXFCWLKvazmTCOqzV2Ex26y8pgFsjw8Ak9IEp8ETtj68pxoIJVMkY8BcpcsDL8GSpdurdyzSIp+nnfCZGSdqqCc6kAShlpEKjyiGAyjkpm2qIpVJQT6n/otc2sRdP4V1WvdMubaMCz3uBYlfDpCWVzTDUTUVNltzeRVxKOAIsfQzcIAjAOO6+SF4W/GFw0FCZRrRmBD6W7qCO/cpVvxxd+DMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L+WEjn2svcEvToFpi9uCRGeqlOIG+8XQwktFO0mlFgc=;
+ b=gb6J0mlRexthQ+xp7kW1tx4K9KoMr/LQLq3HbA84IVkG1vb7u1m76/QO6HLBuh4+FWuCgPLcY7uo0/fiHAUWF6DCHwgIq1+wNJ+Pm15+SxhbM7RQ4SE9BYc8+Oitn1VDmDS5DM9Y265GyT+I8NNavxojucTLZJVw7xegko+tdl0=
+Received: from AM4PR0501MB2756.eurprd05.prod.outlook.com (10.172.216.138) by
+ AM4PR0501MB2739.eurprd05.prod.outlook.com (10.172.222.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Fri, 23 Aug 2019 05:29:48 +0000
+Received: from AM4PR0501MB2756.eurprd05.prod.outlook.com
+ ([fe80::e414:3306:9996:bb7a]) by AM4PR0501MB2756.eurprd05.prod.outlook.com
+ ([fe80::e414:3306:9996:bb7a%4]) with mapi id 15.20.2178.020; Fri, 23 Aug 2019
+ 05:29:48 +0000
+From:   Saeed Mahameed <saeedm@mellanox.com>
+To:     "davem@davemloft.net" <davem@davemloft.net>,
+        haiyangz <haiyangz@microsoft.com>
+CC:     kys <kys@microsoft.com>,
+        "sthemmin@microsoft.com" <sthemmin@microsoft.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+Subject: Re: [PATCH net-next,v5, 0/6] Add software backchannel and mlx5e HV
+ VHCA stats
+Thread-Topic: [PATCH net-next,v5, 0/6] Add software backchannel and mlx5e HV
+ VHCA stats
+Thread-Index: AQHVWTieJNg4lNlPokigzqQxpEz7DacHwLuAgAAAK6CAAAF/AIAAcrYA
+Date:   Fri, 23 Aug 2019 05:29:48 +0000
+Message-ID: <f7a0ce8822e197ace496a348a14ac6939313d8f6.camel@mellanox.com>
+References: <1566512708-13785-1-git-send-email-haiyangz@microsoft.com>
+         <20190822.153315.1245817410062415025.davem@davemloft.net>
+         <DM6PR21MB133743FB2006A28AE10A170CCAA50@DM6PR21MB1337.namprd21.prod.outlook.com>
+         <20190822.153912.2269276523787180347.davem@davemloft.net>
+In-Reply-To: <20190822.153912.2269276523787180347.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=saeedm@mellanox.com; 
+x-originating-ip: [73.15.39.150]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ae7633af-695e-4195-516c-08d7278aea53
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM4PR0501MB2739;
+x-ms-traffictypediagnostic: AM4PR0501MB2739:
+x-ld-processed: a652971c-7d2e-4d9b-a6a4-d149256f461b,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM4PR0501MB27398D27ACEC59B020FB535ABEA40@AM4PR0501MB2739.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0138CD935C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(366004)(136003)(39850400004)(396003)(199004)(189003)(256004)(81156014)(305945005)(4326008)(14444005)(25786009)(7416002)(6246003)(7736002)(53936002)(478600001)(14454004)(36756003)(6486002)(229853002)(76116006)(66556008)(91956017)(486006)(66476007)(64756008)(66446008)(66946007)(6512007)(6436002)(86362001)(5660300002)(476003)(2616005)(11346002)(76176011)(2501003)(1511001)(4744005)(446003)(66066001)(3846002)(6116002)(26005)(186003)(58126008)(8936002)(102836004)(71200400001)(71190400001)(316002)(6506007)(118296001)(54906003)(110136005)(81166006)(99286004)(8676002)(2906002)(42413003)(142933001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2739;H:AM4PR0501MB2756.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: CBscFu4hTD+sjgHAkb5WHD5WRX4kaYwITGFqMj7FiXM5kreqqJ6MvqsAClvqJP9P021DQNPL1AGO2fJWSq23zX5U/bh6laObeOezZWlOJ1ZBoHniinNFk7mbCktwfbHNweM9yloQVm5xPAgC9FgyQ9kD4I7S9mFsd1sg/rMT7N1wSbdR48BxJ8N8p1bgCTu9spsWWQWp334m62tJG9xN7bK0rpbxmu2vX8PqC7LEsjMbHYIXrSkvwM8fjHtJhQuLrEkaQVz95LVadDCsuNv6TUtw/UWglIlX/0e1nEOcUd1PBmxVTZfAGbI+pGJSGFeChvRVyqWqtshZjwTalXN5x+IdzwKuzqw41B11//UbzR12/SeIB7+z5p45d8OzTrsGMk+mSU0Cp/5+rZGk4lcVRffzGECbQd78sTOV/UpFylM=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5A38AD13F917E245912CB4DF7CC053CB@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdn6av8bX4xUtuuKeJQdiQU+_Ty2aM8wtjP9+teU0Gt6Yg@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae7633af-695e-4195-516c-08d7278aea53
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2019 05:29:48.5224
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T6oRx5+8UZwQ1sKHaFKUhjXHgWirgAu82wAAKo/2yY07Lx8Tqdjv9raqR2coAxrO4mNWFLcECcmLqNy7lTtymg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2739
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 01:02:05PM -0700, 'Nick Desaulniers' via Clang Built Linux wrote:
-> On Thu, Aug 22, 2019 at 11:30 AM Nathan Huckleberry <nhuck@google.com> wrote:
-> >
-> > The stackframe setup when compiled with clang is different.
-> > Since the stack unwinder expects the gcc stackframe setup it
-> > fails to print backtraces. This patch adds support for the
-> > clang stackframe setup.
-> >
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/35
-> > Cc: clang-built-linux@googlegroups.com
-> > Suggested-by: Tri Vo <trong@google.com>
-> > Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-> > Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-> 
-> Great, thanks for following up on the suggestions from code review.
-> Since this is going to go up via the arm tree, which has its own
-> process, please add my:
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> to the commit message, then submit the patch to the maintainer's patch
-> tracking system:
-> https://www.armlinux.org.uk/developer/patches/info.php
-> (create a login, sign in, then visit:
-> https://www.armlinux.org.uk/developer/patches/add.php . I think the
-> correct thing is to put the first line of the commit in the summary
-> field, next/master as the kernel version (I applied/tested off of
-> -next), then the rest of the commit message body in the Patch Notes
-> field.  Make sure to attach the patch file.  Finally, it should appear
-> at https://www.armlinux.org.uk/developer/patches/section.php?section=0
-> I think within 24hrs).
-
-Also for the record, I came across this a couple of months ago, Catalin
-Marinas had a git config alias that could be used for sending one patch
-to the patches email address so that you don't have to muck around the
-web interface:
-
-https://lore.kernel.org/lkml/20190624144924.GE29120@arrakis.emea.arm.com/
-
-Web interface works fine but I prefer everything via the command line :)
-
-Cheers,
-Nathan
+T24gVGh1LCAyMDE5LTA4LTIyIGF0IDE1OjM5IC0wNzAwLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+
+IEZyb206IEhhaXlhbmcgWmhhbmcgPGhhaXlhbmd6QG1pY3Jvc29mdC5jb20+DQo+IERhdGU6IFRo
+dSwgMjIgQXVnIDIwMTkgMjI6Mzc6MTMgKzAwMDANCj4gDQo+ID4gVGhlIHY1IGlzIHByZXR0eSBt
+dWNoIHRoZSBzYW1lIGFzIHY0LCBleGNlcHQgRXJhbiBoYWQgYSBmaXggdG8NCj4gcGF0Y2ggIzMg
+aW4gcmVzcG9uc2UgdG8NCj4gPiBMZW9uIFJvbWFub3Zza3kgPGxlb25Aa2VybmVsLm9yZz4uDQo+
+IA0KPiBXZWxsIHlvdSBub3cgaGF2ZSB0byBzZW5kIG1lIGEgcGF0Y2ggcmVsYXRpdmUgdG8gdjQg
+aW4gb3JkZXIgdG8gZml4DQo+IHRoYXQuDQo+IA0KPiBXaGVuIEkgc2F5ICJhcHBsaWVkIiwgdGhl
+IHNlcmllcyBpcyBpbiBteSB0cmVlIGFuZCBpcyB0aGVyZWZvcmUNCj4gcGVybWFuZW50Lg0KPiBJ
+dCBpcyB0aGVyZWZvcmUgbmV2ZXIgYXBwcm9wcmlhdGUgdG8gdGhlbiBwb3N0IGEgbmV3IHZlcnNp
+b24gb2YgdGhlDQo+IHNlcmllcy4NCg0KRGF2ZSwgSSB0aGluayB5b3UgZGlkbid0IHJlcGx5IGJh
+Y2sgdG8gdjQgdGhhdCB0aGUgc2VyaWVzIHdhcyBhcHBsaWVkLg0KU28gdGhhdCBtaWdodCBoYXZl
+IGNyZWF0ZWQgc29tZSBjb25mdXNpb24gZm9yIEhhaXlhbmcuDQoNCg0K
