@@ -2,164 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84E0C9AD78
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:42:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CB1F9AD81
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:44:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389133AbfHWKmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 06:42:10 -0400
-Received: from foss.arm.com ([217.140.110.172]:59894 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388655AbfHWKmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:42:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61D44337;
-        Fri, 23 Aug 2019 03:42:08 -0700 (PDT)
-Received: from [10.37.12.154] (unknown [10.37.12.154])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD3923F246;
-        Fri, 23 Aug 2019 03:42:04 -0700 (PDT)
-Subject: Re: Regression in 5.3-rc1 and later
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Chris Clayton <chris2553@googlemail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org,
-        shuah@kernel.org, sthotton@marvell.com, andre.przywara@arm.com,
-        arnd@arndb.de, salyzyn@android.com, huw@codeweavers.com,
-        catalin.marinas@arm.com, daniel.lezcano@linaro.org,
-        will.deacon@arm.com, linux-mips@vger.kernel.org,
-        ralf@linux-mips.org, 0x7f454c46@gmail.com, paul.burton@mips.com,
-        linux-kselftest@vger.kernel.org, linux@rasmusvillemoes.dk,
-        tglx@linutronix.de, pcc@google.com,
-        linux-arm-kernel@lists.infradead.org
-References: <faaa3843-09a6-1a21-3448-072eeed1ea00@googlemail.com>
- <20190823103654.GX13294@shell.armlinux.org.uk>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <8ab59d01-348e-9ac1-2944-5e98acd9b1f8@arm.com>
-Date:   Fri, 23 Aug 2019 11:43:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2390114AbfHWKoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 06:44:00 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38010 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389475AbfHWKn7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 06:43:59 -0400
+Received: by mail-io1-f67.google.com with SMTP id p12so19047787iog.5
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 03:43:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LguLqmbBWbPdKueS6f8s+iff5p51lzL0SO42xI76Zlw=;
+        b=fDrSWemFkny3Xi2K12jcJc98rev4rMqe2wMpCQgAviDgObYJUXPWHc9Yt9XpjBwBUz
+         STREfMnY1KZSW+oPJqgSP0pmfhebOHzlqyROP42H77xNprtAiNhkslCM08eb9WfpHPfU
+         OP73A2HkgHa2tyuE7RPtgdPBAr32STFtxJVKq8KbuLpuORKWF4m/xE7G58iYTo+syOQ5
+         zN7LbjEq+AsHG9ki0on2TW23QGAhO8wRxsQK3uFbgDby06D6+aWt61ER/wSVRJ5RzlZX
+         7TK531VydE+W5sTS16+Vak0h0OMVJSysg4J/iTAC3ql6WjwY+zJ1rOeFBj97zij8s4U5
+         Za6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LguLqmbBWbPdKueS6f8s+iff5p51lzL0SO42xI76Zlw=;
+        b=Hidm3s52Td6OzvpuLs56LDjHjYvU3PR6f1+0AVnkVdW/IFtNAVJY3LW0t+0A6aSZrW
+         Znpu6yCi2rSrQVL15Dpe7JRTqhS0BEC+l9aFVBRrQC1Hyaf+YNEWPBTwXOM66Yoj2WUk
+         knTf7Fy5t1PkIQERFxn6/yddl32ByWB/gty5HIzV6NIYmDiKUEUmw7QTC6EbajMEDqPj
+         I5EnjkY5faR78rEKF1l7jonsezSwOv34AECX6JNkW2B98Q/4ygwCDPJbEv/Z0C4w1Axi
+         1oV0HuwmJ+bd9yzKun3U83SC6pYvL2vavRBfqVj7zfy3aT6vLE249SC+r5rkf5WzA9jq
+         /pXQ==
+X-Gm-Message-State: APjAAAWcQaa6OPUdCzThrnxTvS46OLZCvZEB087cAB23nZcidvIeh4tc
+        k9j27mAYgfDhaNQFRyrUHCV6/1YuQKGSZn/0smQ=
+X-Google-Smtp-Source: APXvYqwvE5etieJ+BSLkV7jGzhBvKdUSHisPxx0L/1Ko14iO5GUnhe+tuipbm3da27eeCtegwyLCvgYIrY4rnnu0IDc=
+X-Received: by 2002:a6b:6a15:: with SMTP id x21mr5790479iog.40.1566557038542;
+ Fri, 23 Aug 2019 03:43:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190823103654.GX13294@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190601082722.44543-1-irogers@google.com> <20190621082422.GH3436@hirez.programming.kicks-ass.net>
+ <CAP-5=fW7sMjQEHm+1e=cdAi+ZyP53UyU7xhAbnouMApuxYqrhw@mail.gmail.com>
+ <20190624075520.GC3436@hirez.programming.kicks-ass.net> <CAP-5=fU=xbP39b6WZV4h92g6Ub_w4tH2JdApw5t6DTyZqxShUQ@mail.gmail.com>
+In-Reply-To: <CAP-5=fU=xbP39b6WZV4h92g6Ub_w4tH2JdApw5t6DTyZqxShUQ@mail.gmail.com>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Fri, 23 Aug 2019 16:13:46 +0530
+Message-ID: <CAKTKpr6m7YzqJ7U2icNHq7ZwoG0pw8ws_EHcLR+-T6ZeEfe15Q@mail.gmail.com>
+Subject: Re: [PATCH] perf cgroups: Don't rotate events for cgroups unnecessarily
+To:     Ian Rogers <irogers@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Ganapatrao Kulkarni <gkulkarni@marvell.com>,
+        Jayachandran Chandrasekharan Nair <jnair@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell,
+Hi,
 
-On 8/23/19 11:36 AM, Russell King - ARM Linux admin wrote:
-> Hi,
-> 
-> To everyone on the long Cc list...
-> 
-> What's happening with this?  I was about to merge the patches for 32-bit
-> ARM, which I don't want to do if doing so will cause this regression on
-> 32-bit ARM as well.
-> 
+We are seeing regression with our uncore perf driver(Marvell's
+ThunderX2, ARM64 server platform) on 5.3-Rc1.
+After bisecting, it turned out to be this patch causing the issue.
 
-The regression is sorted as of yesterday, a new patch is going through tip:
-timers/urgent and will be part of the next -rc.
+Test case:
+Load module and run perf for more than 4 events( we have 4 counters,
+event multiplexing takes place for more than 4 events), then unload
+module.
+With this sequence of testing, the system hangs(soft lockup) after 2
+or 3 iterations. Same test runs for hours on 5.2.
 
-If you want to merge them there should be nothing blocking.
+while [ 1 ]
+do
+        rmmod thunderx2_pmu
+        modprobe thunderx2_pmu
+        perf stat -a -e \
+        uncore_dmc_0/cnt_cycles/,\
+        uncore_dmc_0/data_transfers/,\
+        uncore_dmc_0/read_txns/,\
+        uncore_dmc_0/config=0xE/,\
+        uncore_dmc_0/write_txns/ sleep 1
+        sleep 2
+done
 
-> Thanks.
-> 
-> On Thu, Aug 22, 2019 at 07:57:59AM +0100, Chris Clayton wrote:
->> Hi everyone,
->>
->> Firstly, apologies to anyone on the long cc list that turns out not to be particularly interested in the following, but
->> you were all marked as cc'd in the commit message below.
->>
->> I've found a problem that isn't present in 5.2 series or 4.19 series kernels, and seems to have arrived in 5.3-rc1. The
->> problem is that if I suspend (to ram) my laptop, on resume 14 minutes or more after suspending, I have no networking
->> functionality. If I resume the laptop after 13 minutes or less, networking works fine. I haven't tried to get finer
->> grained timings between 13 and 14 minutes, but can do if it would help.
->>
->> ifconfig shows that wlan0 is still up and still has its assigned ip address but, for instance, a ping of any other
->> device on my network, fails as does pinging, say, kernel.org. I've tried "downing" the network with (/sbin/ifdown) and
->> unloading the iwlmvm module and then reloading the module and "upping" (/sbin/ifup) the network, but my network is still
->> unusable. I should add that the problem also manifests if I hibernate the laptop, although my testing of this has been
->> minimal. I can do more if required.
->>
->> As I say, the problem first appears in 5.3-rc1, so I've bisected between 5.2.0 and 5.3-rc1 and that concluded with:
->>
->> [chris:~/kernel/linux]$ git bisect good
->> 7ac8707479886c75f353bfb6a8273f423cfccb23 is the first bad commit
->> commit 7ac8707479886c75f353bfb6a8273f423cfccb23
->> Author: Vincenzo Frascino <vincenzo.frascino@arm.com>
->> Date:   Fri Jun 21 10:52:49 2019 +0100
->>
->>     x86/vdso: Switch to generic vDSO implementation
->>
->>     The x86 vDSO library requires some adaptations to take advantage of the
->>     newly introduced generic vDSO library.
->>
->>     Introduce the following changes:
->>      - Modification of vdso.c to be compliant with the common vdso datapage
->>      - Use of lib/vdso for gettimeofday
->>
->>     [ tglx: Massaged changelog and cleaned up the function signature formatting ]
->>
->>     Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
->>     Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->>     Cc: linux-arch@vger.kernel.org
->>     Cc: linux-arm-kernel@lists.infradead.org
->>     Cc: linux-mips@vger.kernel.org
->>     Cc: linux-kselftest@vger.kernel.org
->>     Cc: Catalin Marinas <catalin.marinas@arm.com>
->>     Cc: Will Deacon <will.deacon@arm.com>
->>     Cc: Arnd Bergmann <arnd@arndb.de>
->>     Cc: Russell King <linux@armlinux.org.uk>
->>     Cc: Ralf Baechle <ralf@linux-mips.org>
->>     Cc: Paul Burton <paul.burton@mips.com>
->>     Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>     Cc: Mark Salyzyn <salyzyn@android.com>
->>     Cc: Peter Collingbourne <pcc@google.com>
->>     Cc: Shuah Khan <shuah@kernel.org>
->>     Cc: Dmitry Safonov <0x7f454c46@gmail.com>
->>     Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->>     Cc: Huw Davies <huw@codeweavers.com>
->>     Cc: Shijith Thotton <sthotton@marvell.com>
->>     Cc: Andre Przywara <andre.przywara@arm.com>
->>     Link: https://lkml.kernel.org/r/20190621095252.32307-23-vincenzo.frascino@arm.com
->>
->>  arch/x86/Kconfig                         |   3 +
->>  arch/x86/entry/vdso/Makefile             |   9 ++
->>  arch/x86/entry/vdso/vclock_gettime.c     | 245 ++++---------------------------
->>  arch/x86/entry/vdso/vdsox32.lds.S        |   1 +
->>  arch/x86/entry/vsyscall/Makefile         |   2 -
->>  arch/x86/entry/vsyscall/vsyscall_gtod.c  |  83 -----------
->>  arch/x86/include/asm/pvclock.h           |   2 +-
->>  arch/x86/include/asm/vdso/gettimeofday.h | 191 ++++++++++++++++++++++++
->>  arch/x86/include/asm/vdso/vsyscall.h     |  44 ++++++
->>  arch/x86/include/asm/vgtod.h             |  75 +---------
->>  arch/x86/include/asm/vvar.h              |   7 +-
->>  arch/x86/kernel/pvclock.c                |   1 +
->>  12 files changed, 284 insertions(+), 379 deletions(-)
->>  delete mode 100644 arch/x86/entry/vsyscall/vsyscall_gtod.c
->>  create mode 100644 arch/x86/include/asm/vdso/gettimeofday.h
->>  create mode 100644 arch/x86/include/asm/vdso/vsyscall.h
->>
->> To confirm my bisection was correct, I did a git checkout of 7ac8707479886c75f353bfb6a8273f423cfccb2. As expected, the
->> kernel exhibited the problem I've described. However, a kernel built at the immediately preceding (parent?) commit
->> (bfe801ebe84f42b4666d3f0adde90f504d56e35b) has a working network after a (>= 14minute) suspend/resume cycle.
->>
->> As the module name implies, I'm using wireless networking. The hardware is detected as "Intel(R) Wireless-AC 9260
->> 160MHz, REV=0x324" by iwlwifi.
->>
->> I'm more than happy to provide additional diagnostics (but may need a little hand-holding) and to apply diagnostic or
->> fix patches, but please cc me on any reply as I'm not subscribed to any of the kernel-related mailing lists.
->>
->> Chris
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
-> 
+Is this patch tested adequately?
 
--- 
-Regards,
-Vincenzo
+On Fri, Jun 28, 2019 at 3:18 AM Ian Rogers <irogers@google.com> wrote:
+>
+> group_index On Mon, Jun 24, 2019 at 12:55 AM Peter Zijlstra
+> <peterz@infradead.org> wrote:
+> >
+> > On Fri, Jun 21, 2019 at 11:01:29AM -0700, Ian Rogers wrote:
+> > > On Fri, Jun 21, 2019 at 1:24 AM Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >
+> > > > On Sat, Jun 01, 2019 at 01:27:22AM -0700, Ian Rogers wrote:
+> > > > > @@ -3325,6 +3331,15 @@ static int flexible_sched_in(struct perf_event *event, void *data)
+> > > > >                       sid->can_add_hw = 0;
+> > > > >       }
+> > > > >
+> > > > > +     /*
+> > > > > +      * If the group wasn't scheduled then set that multiplexing is necessary
+> > > > > +      * for the context. Note, this won't be set if the event wasn't
+> > > > > +      * scheduled due to event_filter_match failing due to the earlier
+> > > > > +      * return.
+> > > > > +      */
+> > > > > +     if (event->state == PERF_EVENT_STATE_INACTIVE)
+> > > > > +             sid->ctx->rotate_necessary = 1;
+> > > > > +
+> > > > >       return 0;
+> > > > >  }
+> > > >
+> > > > That looked odd; which had me look harder at this function which
+> > > > resulted in the below. Should we not terminate the context interation
+> > > > the moment one flexible thingy fails to schedule?
+> > >
+> > > If we knew all the events were hardware events then this would be
+> > > true, as there may be software events that always schedule then the
+> > > continued iteration is necessary.
+> >
+> > But this is the 'old' code, where this is guaranteed by the context.
+> > That is, if this is a hardware context; there wil only be software
+> > events due to them being in a group with hardware events.
+> >
+> > If this is a software group, then we'll never fail to schedule and we'll
+> > not get in this branch to begin with.
+> >
+> > Or am I now confused for having been staring at two different code-bases
+> > at the same time?
+>
+> I believe you're right and I'd overlooked this. I think there is a
+> more efficient version of this code possible that I can follow up
+> with. There are 3 perf_event_contexts, potentially a sw and hw context
+> within the task_struct and one per-CPU in perf_cpu_context. With this
+> change I'm focussed on improving rotation of cgroup events that appear
+> system wide within the per-CPU context. Without cgroup events the
+> system wide events don't need to be iterated over during scheduling
+> in. The branch that can set rotate_necessary will only be necessary
+> for the task hardware events. For system wide events, considered with
+> cgroup mode scheduling in, the branch is necessary as rotation may be
+> necessary. It'd be possible to have variants of flexible_sched_in that
+> behave differently in the task software event context, and the system
+> wide and task hardware contexts.
+>
+> I have a series of patches related to Kan Liang's cgroup
+> perf_event_groups improvements. I'll mail these out and see if I can
+> avoid the branch in the task software event context case.
+>
+> Thanks,
+> Ian
+
+Thanks,
+Ganapat
