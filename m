@@ -2,88 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D035A9A448
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 02:27:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87CA9A44D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 02:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731200AbfHWA0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 20:26:14 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33002 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730942AbfHWA0O (ORCPT
+        id S1731600AbfHWAe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 20:34:27 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:1674 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727368AbfHWAe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 20:26:14 -0400
-Received: by mail-io1-f67.google.com with SMTP id z3so16090093iog.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 17:26:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=Cp8ZYynjPP3tS6E6JWS/kCCDcF/PEMlQkrlg3wJqck4=;
-        b=m3U8bjOlVQRi1ZmBA/w4GmPJkRSBAVZTOQyEaPfQTBsXntHoHb0KH+WYqNyV3odijy
-         jMsBx7vaeBd9EE5+qsTOwlF7Mcxh62jSh3vrW2DDY8k9pqMn0l7NXYZorb6odm0QU3YB
-         RJcOcx3ZhDwOq8Qr/Su0EUEIB0pjvnSgWNt+u7GVcOVKT2TTFmpn9sj38pbJhM9ysMNJ
-         Rc5nxpI3cDGZfS3j/1WZjERWIsMdXuPuFK+yNggR2thtuzTVsQK2fxTFFZ1bQLrXGQPh
-         0h0rtzUYapE/KeYuCE/TawZ4rDxmbj8CbmfsJQtH8DXEjnYgzZHQmDOoOSlanGCrhVoQ
-         /Kxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=Cp8ZYynjPP3tS6E6JWS/kCCDcF/PEMlQkrlg3wJqck4=;
-        b=NNEVKVk/InmEivlua/KZFEInHA5gkjgHmdE4sSnKe5MMQ070bGo/6IxN7ZJF3okJQK
-         fGTynJeJJmvA88MWZJsWjd0hGg5PnxSPfp2tthv2bKzbGGa0Q6+AyFDr28TaJb9+u2Tx
-         F2cfiPRWjv6z4Aa7IjWtDr7CTbZM8+mb0jcUHG77VgdvrJ17T0KEI9ZXA0NIbeGOogVz
-         jXl1kQ4eLgY620CyKpSlZf2vJWBlnDqedIoI6fKlRt2KIr3eiGWFc5VKA5vNhiFv/vHm
-         52CcW1rR4+uKtygoT0AW47sDUN/IMfPkh4z/+KfmbCodNXKZk2ZxbWsEIl/KvsSH+mjZ
-         Rs/g==
-X-Gm-Message-State: APjAAAUgQWmb4JNeIfxGZtGYkSVng0n+xot19WR+yeSnsVmAn0pPmh3t
-        kWPXRrvKetudc0wOFEgpJYFyf5l0ywQ6Xt8NooA=
-X-Google-Smtp-Source: APXvYqxmrO5eJZVE06unjWmrGOmZsOtN7q36BnDburoQn2HuFQqa1UNMTxTVmbqupQyRg3n/ENOFZ7GtapMA+RI9rtw=
-X-Received: by 2002:a5d:9487:: with SMTP id v7mr1713506ioj.230.1566519973649;
- Thu, 22 Aug 2019 17:26:13 -0700 (PDT)
+        Thu, 22 Aug 2019 20:34:26 -0400
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7N0Xl1F023245;
+        Thu, 22 Aug 2019 17:34:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=jXTDCEX9uB05m2ZAKn8xEBSbv7qpvVbJT68jNFrclZ0=;
+ b=dxXUTWXkzNmGDbYsSzFMd65ZeAJ4nIId6HKr3ioZnQAis4SrDKvXd99GQt2aWIP8G+aX
+ oAE09wNrwl178sJnkxdCyBtUX8gkZ2Fb4WWuqT5xnsl1c0h8kqiHa/wkof6/wjfz/BX4
+ uw0tH6CfND841H7EF4DH3Oc3nLX4AlrwjwI= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2uj290ru5a-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 22 Aug 2019 17:34:21 -0700
+Received: from prn-mbx01.TheFacebook.com (2620:10d:c081:6::15) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 22 Aug 2019 17:33:53 -0700
+Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
+ prn-mbx01.TheFacebook.com (2620:10d:c081:6::15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Thu, 22 Aug 2019 17:33:53 -0700
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Thu, 22 Aug 2019 17:33:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JqAd/GgTzMNX/HC7LNXYNHwnlWmpCJZhhtIQVKrFrf8nTY6CpqdNW29tIcJVoB08jP0wa4+AaQJCrWk/7o+gwyWNWrqklKMhrZPaVcMA38LdrYnhuILZr2WJNk8ju+fLSg4AcLPQMaLeSjD+MvXzuLt8UeAA4xIHJJp70H26NtrDVR/CoH32SKeXpnSpWap0wlCXoWn2JZp9KB6HlBvZ+Qg1RXfXtoGaLhhHeCV8MehVFea1x4VpvRg43zlS95nljmNAmUw7348GrpqiWQLcYR54ceXfnjigUGXGwNDZRlv9Vv6o+2VWgJO3Hlz64STTpDgMU015D352ktB6JadzYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jXTDCEX9uB05m2ZAKn8xEBSbv7qpvVbJT68jNFrclZ0=;
+ b=G3+MvNPlSjlkWWiyVlc0o2yd2+EWViCAI6qqmD3Y4D1F1YweX44O8ajviVAD/GOsTcEOeQ5d5e7OMwEbJi0zCfDtws+8WXxZ+0d2FngmZBo9+0g85xQkHcuLTxG2/yNpmevHIoTtB5m6cBDcXYfTQgNl1vDZSQgnmRHBTdXMe6fDmQXbDUwB9w25CkyPBbg2mZ84rdNqemWcanKHg11WSm+KRtd9Vp1SLSvlCHWLdQBpndMIgzB2KqKdrT62o8J3MaHUbt3A4nUxhZVeVht3cl3GFqMXA3zr0dYhuNb+vUxbBDcRAYQNpzi99cCJ2g7oxUFlajr5dycseJ10MI6RoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jXTDCEX9uB05m2ZAKn8xEBSbv7qpvVbJT68jNFrclZ0=;
+ b=J7P5M5yl4d1bGeU1umHInLCIAHpcuJNFvgkOgkADvtAJSC+VDSuIH+evQq12JiLnd/7go3TS8oWxal9BTFaKZtK4xWuRM36A/ecxc6Qxhw5n8FveIEU7J1WgRqBIm5Vb/1mMkC0JkNSRLLKqc87tU5Vg/s0Vh+Xt7PAsoE+qDds=
+Received: from DM6PR15MB2635.namprd15.prod.outlook.com (20.179.161.152) by
+ DM6PR15MB3641.namprd15.prod.outlook.com (10.141.165.215) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Fri, 23 Aug 2019 00:33:51 +0000
+Received: from DM6PR15MB2635.namprd15.prod.outlook.com
+ ([fe80::d1fc:b5c5:59a1:bd7e]) by DM6PR15MB2635.namprd15.prod.outlook.com
+ ([fe80::d1fc:b5c5:59a1:bd7e%3]) with mapi id 15.20.2178.020; Fri, 23 Aug 2019
+ 00:33:51 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v3 0/3] vmstats/vmevents flushing
+Thread-Topic: [PATCH v3 0/3] vmstats/vmevents flushing
+Thread-Index: AQHVVuIB+G+nqdgGRkW4V6+4fmWsuqcH1HiAgAASnoA=
+Date:   Fri, 23 Aug 2019 00:33:51 +0000
+Message-ID: <20190823003347.GA4252@castle>
+References: <20190819230054.779745-1-guro@fb.com>
+ <20190822162709.fa100ba6c58e15ea35670616@linux-foundation.org>
+In-Reply-To: <20190822162709.fa100ba6c58e15ea35670616@linux-foundation.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR14CA0052.namprd14.prod.outlook.com
+ (2603:10b6:300:81::14) To DM6PR15MB2635.namprd15.prod.outlook.com
+ (2603:10b6:5:1a6::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::4e7c]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 26296089-602d-479d-4802-08d72761923f
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DM6PR15MB3641;
+x-ms-traffictypediagnostic: DM6PR15MB3641:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR15MB3641F6A11EBA94298849D625BEA40@DM6PR15MB3641.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0138CD935C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39860400002)(136003)(396003)(376002)(366004)(346002)(189003)(199004)(446003)(476003)(8936002)(52116002)(11346002)(33656002)(76176011)(6246003)(86362001)(6436002)(1076003)(81156014)(81166006)(7736002)(33716001)(316002)(8676002)(6512007)(5660300002)(9686003)(305945005)(102836004)(486006)(53936002)(6486002)(54906003)(99286004)(64756008)(66476007)(46003)(66446008)(66946007)(66556008)(6916009)(256004)(6116002)(386003)(25786009)(186003)(229853002)(6506007)(14454004)(4326008)(71190400001)(71200400001)(478600001)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR15MB3641;H:DM6PR15MB2635.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: KjJf1wRT6j6YO+1z6CZMOdzootfuLQkd7eKv3B7brDLkgBcDT5p8JztksnEOjT8IPnUWSLneDYqKjjklnWfextZX4FyT2QqZ78EvVOPBimzHb5MEik0jUu0ABBlGaPR09CBcdKsx6lNaUWIX9EfjWPkZZqXhVhL24axK9vMoDltuY98kRau5oVqJoE7HDz1rU1JzelIabIYNLGynCLAopRrwpR6uVXxu7tIOD3osprKaoAOfr+vhyLiipqGbLXjTXWoQ37lr6ZKyxjVU9lSPqvjxaByHceRpK/zR/fYptfrlWuUV1Ds9Baks8ahKNIk50g6mI3D8w5o6MUO72qpU0pTRg7zCL1lHg21tzPiegIXJZ0Qfs6QfWJuGNlrDSj2Gtqb7mpS5WIvFt3kbBOpcPgashGMkDXWZbS+FFDmKIW4=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <25B4E9D6247EA344B11B2F94180BC7C9@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a4f:2756:0:0:0:0:0 with HTTP; Thu, 22 Aug 2019 17:26:13
- -0700 (PDT)
-From:   Mrs Monica <monicagabriele64@gmail.com>
-Date:   Thu, 22 Aug 2019 17:26:13 -0700
-X-Google-Sender-Auth: tYy27dHN1ephjEHQ6IUzhvCW1t8
-Message-ID: <CAGUXdN=gpb5fBp-=Y_+ja4++DDtDqPbzT-hEg=MTaTWvFTz8Jw@mail.gmail.com>
-Subject: Please Let My Situation Touch Your Heart.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 26296089-602d-479d-4802-08d72761923f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2019 00:33:51.6085
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dvwfwmS2tUge4jp2UF+IUJ/3rHUsv5XbcowdWWe+RMxi2olVBsZ6wK5Mlc7mF9zq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR15MB3641
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-22_15:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=809 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908230002
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Hello My Dear
+On Thu, Aug 22, 2019 at 04:27:09PM -0700, Andrew Morton wrote:
+> On Mon, 19 Aug 2019 16:00:51 -0700 Roman Gushchin <guro@fb.com> wrote:
+>=20
+> > v3:
+> >   1) rearranged patches [2/3] and [3/3] to make [1/2] and [2/2] suitabl=
+e
+> >   for stable backporting
+> >=20
+> > v2:
+> >   1) fixed !CONFIG_MEMCG_KMEM build by moving memcg_flush_percpu_vmstat=
+s()
+> >   and memcg_flush_percpu_vmevents() out of CONFIG_MEMCG_KMEM
+> >   2) merged add-comments-to-slab-enums-definition patch in
+> >=20
+> > Thanks!
+> >=20
+> > Roman Gushchin (3):
+> >   mm: memcontrol: flush percpu vmstats before releasing memcg
+> >   mm: memcontrol: flush percpu vmevents before releasing memcg
+> >   mm: memcontrol: flush percpu slab vmstats on kmem offlining
+> >=20
+>=20
+> Can you please explain why the first two patches were cc:stable but not
+> the third?
+>=20
+>=20
 
-Calvary Greetings in the name of the ALMIGHTY
+Because [1] and [2] are fixing commit 42a300353577 ("mm: memcontrol: fix
+recursive statistics correctness & scalabilty"), which has been merged into=
+ 5.2.
 
-I am Mrs Monica Gabriele from Switzerland I am married to Late
-Mr.Gabriele Joseph who is a wealthy business man here in Burkina Faso
-we were married  for many years without a child before he died after a
-brief illness. Before his sudden death we where devoted Christian When
-my late husband was alive he deposited the sum of Six Million Two
-Hundred United State Dollars ($6.200.000.00) in one of the prime bank
-here in Burkina Faso Presently this money is still with the Bank,
+And [3] fixes commit fb2f2b0adb98 ("mm: memcg/slab: reparent memcg kmem_cac=
+hes
+on cgroup removal"), which is in not yet released 5.3, so stable backport i=
+sn't
+required.
 
-I am very sick from Kidney cancer that i may not last till the next
-two months according to my doctor so now i decided to donate this
-money to a honest individual who will use it to work for Almighty,
-orphans, widow and maintenance of church to fulfill the vow i and my
-late husband made to Almighty, and i have chosen you after praying.
-
-I want this money to be use as i have said since i do not have any
-child to inherit it and our relatives are all unbelievers and i don't
-want our hard earn money to be used in ungodly way so you will take
-40% of the fund for your effort and use the remaining as i stated, as
-soon as i read from you i will give you more details on how to achieve
-it, I need your urgent reply on my private email address:
-(monicagabriele64@gmail.com) as i don't know what tomorrow will
-result, i wish you the best in life. Please Always remember me in your
- prayers.
-
-Yours Sister,
-Mrs Monica Gabriele.
-Please Let My Situation Touch Your Heart.
+Thanks!
