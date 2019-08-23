@@ -2,305 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D4099AE63
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 13:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B299AE5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 13:48:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393335AbfHWLs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 07:48:56 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34970 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2392870AbfHWLsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 07:48:55 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 23E5D69B70B39C235804;
-        Fri, 23 Aug 2019 19:48:53 +0800 (CST)
-Received: from [127.0.0.1] (10.184.12.158) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 23 Aug 2019
- 19:48:44 +0800
-Subject: Re: [PATCH v3 10/10] arm64: Retrieve stolen time as paravirtualized
- guest
-To:     Steven Price <steven.price@arm.com>, Marc Zyngier <maz@kernel.org>,
-        "Will Deacon" <will@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <kvmarm@lists.cs.columbia.edu>
-CC:     <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        <linux-doc@vger.kernel.org>, Russell King <linux@armlinux.org.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <20190821153656.33429-1-steven.price@arm.com>
- <20190821153656.33429-11-steven.price@arm.com>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <6040a45c-fc39-a33e-c6a4-7baa586c247c@huawei.com>
-Date:   Fri, 23 Aug 2019 19:45:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
- Thunderbird/64.0
+        id S2393229AbfHWLqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 07:46:24 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:57060 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727025AbfHWLqX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 07:46:23 -0400
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7NBk8pL043373;
+        Fri, 23 Aug 2019 20:46:08 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Fri, 23 Aug 2019 20:46:08 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7NBk7hl043365
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 23 Aug 2019 20:46:08 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] /dev/mem: Bail out upon SIGKILL when reading memory.
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
+References: <1566338811-4464-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <CAHk-=wjFsF6zmcDaBdpYEvCWiq=x7_NuQWEm=OinZ9TuQd4ZZQ@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <5b4e0535-3b29-5165-4568-85fe75cf6736@i-love.sakura.ne.jp>
+Date:   Fri, 23 Aug 2019 20:46:04 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190821153656.33429-11-steven.price@arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <CAHk-=wjFsF6zmcDaBdpYEvCWiq=x7_NuQWEm=OinZ9TuQd4ZZQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.12.158]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steven,
-
-On 2019/8/21 23:36, Steven Price wrote:
-> Enable paravirtualization features when running under a hypervisor
-> supporting the PV_TIME_ST hypercall.
+On 2019/08/23 7:08, Linus Torvalds wrote:
+>> syzbot found that a thread can stall for minutes inside read_mem()
+>> after that thread was killed by SIGKILL [1]. Reading 2GB at one read()
+>> is legal, but delaying termination of killed thread for minutes is bad.
 > 
-> For each (v)CPU, we ask the hypervisor for the location of a shared
-> page which the hypervisor will use to report stolen time to us. We set
-> pv_time_ops to the stolen time function which simply reads the stolen
-> value from the shared page for a VCPU. We guarantee single-copy
-> atomicity using READ_ONCE which means we can also read the stolen
-> time for another VCPU than the currently running one while it is
-> potentially being updated by the hypervisor.
+> Side note: we might even just allow regular signals to interrupt
+> /dev/mem reads. We already do that for /dev/zero, and the risk of
+> breaking something is likely fairly low since nothing should use that
+> thing anyway.
 > 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->   arch/arm64/include/asm/paravirt.h |   9 +-
->   arch/arm64/kernel/paravirt.c      | 148 ++++++++++++++++++++++++++++++
->   arch/arm64/kernel/time.c          |   3 +
->   include/linux/cpuhotplug.h        |   1 +
->   4 files changed, 160 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/paravirt.h b/arch/arm64/include/asm/paravirt.h
-> index 799d9dd6f7cc..125c26c42902 100644
-> --- a/arch/arm64/include/asm/paravirt.h
-> +++ b/arch/arm64/include/asm/paravirt.h
-> @@ -21,6 +21,13 @@ static inline u64 paravirt_steal_clock(int cpu)
->   {
->   	return pv_ops.time.steal_clock(cpu);
->   }
-> -#endif
-> +
-> +int __init kvm_guest_init(void);
-> +
-> +#else
-> +
-> +#define kvm_guest_init()
-> +
-> +#endif // CONFIG_PARAVIRT
->   
->   #endif
-> diff --git a/arch/arm64/kernel/paravirt.c b/arch/arm64/kernel/paravirt.c
-> index 4cfed91fe256..ea8dbbbd3293 100644
-> --- a/arch/arm64/kernel/paravirt.c
-> +++ b/arch/arm64/kernel/paravirt.c
-> @@ -6,13 +6,161 @@
->    * Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
->    */
->   
-> +#define pr_fmt(fmt) "kvmarm-pv: " fmt
-> +
-> +#include <linux/arm-smccc.h>
-> +#include <linux/cpuhotplug.h>
->   #include <linux/export.h>
-> +#include <linux/io.h>
->   #include <linux/jump_label.h>
-> +#include <linux/printk.h>
-> +#include <linux/psci.h>
-> +#include <linux/reboot.h>
-> +#include <linux/slab.h>
->   #include <linux/types.h>
-> +
->   #include <asm/paravirt.h>
-> +#include <asm/pvclock-abi.h>
-> +#include <asm/smp_plat.h>
->   
->   struct static_key paravirt_steal_enabled;
->   struct static_key paravirt_steal_rq_enabled;
->   
->   struct paravirt_patch_template pv_ops;
->   EXPORT_SYMBOL_GPL(pv_ops);
-> +
-> +struct kvmarm_stolen_time_region {
-> +	struct pvclock_vcpu_stolen_time *kaddr;
-> +};
-> +
-> +static DEFINE_PER_CPU(struct kvmarm_stolen_time_region, stolen_time_region);
-> +
-> +static bool steal_acc = true;
-> +static int __init parse_no_stealacc(char *arg)
-> +{
-> +	steal_acc = false;
-> +	return 0;
-> +}
-> +
-> +early_param("no-steal-acc", parse_no_stealacc);
-> +
-> +/* return stolen time in ns by asking the hypervisor */
-> +static u64 kvm_steal_clock(int cpu)
-> +{
-> +	struct kvmarm_stolen_time_region *reg;
-> +
-> +	reg = per_cpu_ptr(&stolen_time_region, cpu);
-> +	if (!reg->kaddr) {
-> +		pr_warn_once("stolen time enabled but not configured for cpu %d\n",
-> +			     cpu);
-> +		return 0;
-> +	}
-> +
-> +	return le64_to_cpu(READ_ONCE(reg->kaddr->stolen_time));
-> +}
-> +
-> +static int disable_stolen_time_current_cpu(void)
-> +{
-> +	struct kvmarm_stolen_time_region *reg;
-> +
-> +	reg = this_cpu_ptr(&stolen_time_region);
-> +	if (!reg->kaddr)
-> +		return 0;
-> +
-> +	memunmap(reg->kaddr);
-> +	memset(reg, 0, sizeof(*reg));
-> +
-> +	return 0;
-> +}
-> +
-> +static int stolen_time_dying_cpu(unsigned int cpu)
-> +{
-> +	return disable_stolen_time_current_cpu();
-> +}
-> +
-> +static int init_stolen_time_cpu(unsigned int cpu)
-> +{
-> +	struct kvmarm_stolen_time_region *reg;
-> +	struct arm_smccc_res res;
-> +
-> +	reg = this_cpu_ptr(&stolen_time_region);
-> +
-> +	arm_smccc_1_1_invoke(ARM_SMCCC_HV_PV_TIME_ST, &res);
-> +
-> +	if ((long)res.a0 < 0)
-> +		return -EINVAL;
-> +
-> +	reg->kaddr = memremap(res.a0,
-> +			      sizeof(struct pvclock_vcpu_stolen_time),
-> +			      MEMREMAP_WB);
+> Also, if it takes minutes to delay killing things, that implies that
+> we're probably still faulting in pages for the read_mem(). Which
+> points to another possible thing we could do in general: just don't
+> bother to handle page faults when a fatal signal is pending.
 
-cpuhp callbacks can be invoked in atomic context (see:
-	secondary_start_kernel ->
-	notify_cpu_starting ->
-	invoke callbacks),
-but memremap might sleep...
+The cause of stall (by the reproducer) is that read_mem() continues iteration
+until copy_to_user() returns -EFAULT (the userspace is asking for 2GB without
+allocating 2GB of buffer to receive the result). Also, since the reproducer
+concurrently calls preadv() but iteration loop in read_mem() consumes 100% of
+CPU time, termination of killed threads is delayed a lot.
 
-Try to run a DEBUG_ATOMIC_SLEEP enabled PV guest, I guess we will be
-greeted by the Sleep-in-Atomic-Context BUG.  We need an alternative
-here?
+Thus, I can confirm that adding cond_resched() and fatal_signal_pending(current)
+check into the iteration significantly reduces termination delay.
 
-> +
-> +	if (!reg->kaddr) {
-> +		pr_warn("Failed to map stolen time data structure\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	if (le32_to_cpu(reg->kaddr->revision) != 0 ||
-> +	    le32_to_cpu(reg->kaddr->attributes) != 0) {
-> +		pr_warn("Unexpected revision or attributes in stolen time data\n");
-> +		return -ENXIO;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int kvm_arm_init_stolen_time(void)
-> +{
-> +	int ret;
-> +
-> +	ret = cpuhp_setup_state(CPUHP_AP_ARM_KVMPV_STARTING,
-> +				"hypervisor/kvmarm/pv:starting",
-> +				init_stolen_time_cpu, stolen_time_dying_cpu);
-> +	if (ret < 0)
-> +		return ret;
-> +	return 0;
-> +}
-> +
-> +static bool has_kvm_steal_clock(void)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	/* To detect the presence of PV time support we require SMCCC 1.1+ */
-> +	if (psci_ops.smccc_version < SMCCC_VERSION_1_1)
-> +		return false;
-> +
-> +	arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-> +			     ARM_SMCCC_HV_PV_FEATURES, &res);
-> +
-> +	if (res.a0 != SMCCC_RET_SUCCESS)
-> +		return false;
-> +
-> +	arm_smccc_1_1_invoke(ARM_SMCCC_HV_PV_FEATURES,
-> +			     ARM_SMCCC_HV_PV_TIME_ST, &res);
-> +
-> +	if (res.a0 != SMCCC_RET_SUCCESS)
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-> +int __init kvm_guest_init(void)
-> +{
-> +	int ret = 0;
-
-And this look like a redundant initialization?
-
-
-Thanks,
-zenghui
-
-> +
-> +	if (!has_kvm_steal_clock())
-> +		return 0;
-> +
-> +	ret = kvm_arm_init_stolen_time();
-> +	if (ret)
-> +		return ret;
-> +
-> +	pv_ops.time.steal_clock = kvm_steal_clock;
-> +
-> +	static_key_slow_inc(&paravirt_steal_enabled);
-> +	if (steal_acc)
-> +		static_key_slow_inc(&paravirt_steal_rq_enabled);
-> +
-> +	pr_info("using stolen time PV\n");
-> +
-> +	return 0;
-> +}
-> diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
-> index 0b2946414dc9..a52aea14c6ec 100644
-> --- a/arch/arm64/kernel/time.c
-> +++ b/arch/arm64/kernel/time.c
-> @@ -30,6 +30,7 @@
->   
->   #include <asm/thread_info.h>
->   #include <asm/stacktrace.h>
-> +#include <asm/paravirt.h>
->   
->   unsigned long profile_pc(struct pt_regs *regs)
->   {
-> @@ -65,4 +66,6 @@ void __init time_init(void)
->   
->   	/* Calibrate the delay loop directly */
->   	lpj_fine = arch_timer_rate / HZ;
-> +
-> +	kvm_guest_init();
->   }
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index 068793a619ca..89d75edb5750 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -136,6 +136,7 @@ enum cpuhp_state {
->   	/* Must be the last timer callback */
->   	CPUHP_AP_DUMMY_TIMER_STARTING,
->   	CPUHP_AP_ARM_XEN_STARTING,
-> +	CPUHP_AP_ARM_KVMPV_STARTING,
->   	CPUHP_AP_ARM_CORESIGHT_STARTING,
->   	CPUHP_AP_ARM64_ISNDEP_STARTING,
->   	CPUHP_AP_SMPCFD_DYING,
-> 
+[ 1414.479373][T82148] read_mem: sz=4096 count=1070538751
+[ 1414.481476][T75184] read_mem: sz=4096 count=1064574975
+[ 1414.483489][T75184] read_mem: sz=4096 count=1064570879
+[ 1414.483495][T82148] read_mem: sz=4096 count=1070534655
+[ 1414.485517][T74318] read_mem: sz=4096 count=1060986879
+[ 1414.485520][T75184] read_mem: sz=4096 count=1064566783
+[ 1414.487978][T75184] read_mem: sz=4096 count=1064562687
+[ 1414.487982][T74318] read_mem: sz=4096 count=1060982783
+[ 1414.490011][T75184] read_mem: sz=4096 count=1064558591
+[ 1414.490015][T74318] read_mem: sz=4096 count=1060978687
+[ 1414.492099][T82148] read_mem: sz=4096 count=1070530559
+[ 1414.492101][T75184] read_mem: sz=4096 count=1064554495
+[ 1414.492104][T74497] read_mem: sz=4096 count=1062944767
+[ 1414.494100][T75184] read_mem: sz=4096 count=1064550399
+[ 1414.494104][T82148] read_mem: sz=4096 count=1070526463
+[ 1414.494107][T74497] read_mem: sz=4096 count=1062940671
+[ 1414.496112][T82148] read_mem: sz=4096 count=1070522367
+[ 1414.496116][T74497] read_mem: sz=4096 count=1062936575
+[ 1414.496119][T75184] read_mem: sz=4096 count=1064546303
+[ 1414.498157][T75184] read_mem: sz=4096 count=1064542207
+[ 1414.498169][T74497] read_mem: sz=4096 count=1062932479
+[ 1414.498276][   T33] INFO: task a.out:74318 can't die for more than 30 seconds.
+[ 1414.498278][   T33] a.out           R  running task    13688 74318 112832 0x80004084
+[ 1414.498284][   T33] Call Trace:
+[ 1414.498292][   T33]  ? __schedule+0x253/0x700
+[ 1414.498296][   T33]  preempt_schedule_common+0x1b/0x3a
+[ 1414.498298][   T33]  _cond_resched+0x18/0x20
+[ 1414.498301][   T33]  kmem_cache_alloc_trace+0x274/0x320
+[ 1414.498354][   T33]  ? reserve_memtype+0xd4/0x3e0
+[ 1414.498359][   T33]  reserve_memtype+0xd4/0x3e0
+[ 1414.498363][   T33]  ? memremap+0xa0/0x1a0
+[ 1414.498365][   T33]  __ioremap_caller.isra.10+0xeb/0x2f0
+[ 1414.498370][   T33]  memremap+0xa0/0x1a0
+[ 1414.498373][   T33]  xlate_dev_mem_ptr+0x20/0x30
+[ 1414.498403][   T33]  read_mem+0xf3/0x1f0
+[ 1414.498409][   T33]  do_loop_readv_writev+0x47/0x160
+[ 1414.498413][   T33]  do_iter_read+0xef/0x120
+[ 1414.498417][   T33]  vfs_readv+0x68/0xa0
+[ 1414.498423][   T33]  ? ktime_get_coarse_real_ts64+0x66/0xd0
+[ 1414.498426][   T33]  ? lockdep_hardirqs_on+0x122/0x1b0
+[ 1414.498429][   T33]  ? syscall_trace_enter+0x1f3/0x340
+[ 1414.498431][   T33]  ? syscall_trace_enter+0x1f3/0x340
+[ 1414.498433][   T33]  ? trace_hardirqs_on_thunk+0x1a/0x20
+[ 1414.498436][   T33]  do_preadv+0x97/0xc0
+[ 1414.498440][   T33]  do_syscall_64+0x55/0x260
+[ 1414.498443][   T33]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 1414.498445][   T33] RIP: 0033:0x7f63675c0349
+[ 1414.498449][   T33] Code: Bad RIP value.
+[ 1414.498450][   T33] RSP: 002b:00007ffd22952c18 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+[ 1414.498452][   T33] RAX: ffffffffffffffda RBX: 00000000000f4240 RCX: 00007f63675c0349
+[ 1414.498453][   T33] RDX: 0000000000000002 RSI: 0000000020000740 RDI: 0000000000000003
+[ 1414.498453][   T33] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[ 1414.498454][   T33] R10: 00000000febfffff R11: 0000000000000246 R12: 000000000014e1ab
+[ 1414.498455][   T33] R13: 00007ffd22952d50 R14: 0000000000000000 R15: 0000000000000000
+[ 1414.498463][   T33] INFO: task a.out:74497 can't die for more than 30 seconds.
+[ 1414.498464][   T33] a.out           R  running task    13888 74497 112827 0x8000408c
+[ 1414.498468][   T33] Call Trace:
+[ 1414.498473][   T33]  ? __lock_acquire+0x24b/0x1090
+[ 1414.498479][   T33]  ? vprintk_emit+0x19e/0x2e0
+[ 1414.498484][   T33]  ? vprintk_emit+0x1d4/0x2e0
+[ 1414.498485][   T33]  ? vprintk_emit+0x19e/0x2e0
+[ 1414.498490][   T33]  ? printk+0x53/0x6a
+[ 1414.498495][   T33]  ? read_mem+0x19a/0x1f0
+[ 1414.498499][   T33]  ? do_loop_readv_writev+0x47/0x160
+[ 1414.498503][   T33]  ? do_iter_read+0xef/0x120
+[ 1414.498506][   T33]  ? vfs_readv+0x68/0xa0
+[ 1414.498511][   T33]  ? ktime_get_coarse_real_ts64+0x66/0xd0
+[ 1414.498512][   T33]  ? lockdep_hardirqs_on+0x122/0x1b0
+[ 1414.498515][   T33]  ? syscall_trace_enter+0x1f3/0x340
+[ 1414.498517][   T33]  ? syscall_trace_enter+0x1f3/0x340
+[ 1414.498519][   T33]  ? trace_hardirqs_on_thunk+0x1a/0x20
+[ 1414.498521][   T33]  ? do_preadv+0x97/0xc0
+[ 1414.498525][   T33]  ? do_syscall_64+0x55/0x260
+[ 1414.498527][   T33]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 1414.498535][   T33] INFO: task a.out:74786 can't die for more than 30 seconds.
+[ 1414.498535][   T33] a.out           R  running task    13688 74786 112831 0x80004084
+[ 1414.498539][   T33] Call Trace:
+[ 1414.498542][   T33]  ? __schedule+0x253/0x700
+[ 1414.498546][   T33]  preempt_schedule_common+0x1b/0x3a
+[ 1414.498548][   T33]  _cond_resched+0x18/0x20
+[ 1414.498550][   T33]  kmem_cache_alloc_trace+0x274/0x320
+[ 1414.498552][   T33]  ? reserve_memtype+0xd4/0x3e0
+[ 1414.498555][   T33]  reserve_memtype+0xd4/0x3e0
+[ 1414.498558][   T33]  ? memremap+0xa0/0x1a0
+[ 1414.498561][   T33]  __ioremap_caller.isra.10+0xeb/0x2f0
+[ 1414.498566][   T33]  memremap+0xa0/0x1a0
+[ 1414.498568][   T33]  xlate_dev_mem_ptr+0x20/0x30
+[ 1414.498570][   T33]  read_mem+0xf3/0x1f0
+[ 1414.498574][   T33]  do_loop_readv_writev+0x47/0x160
+[ 1414.498578][   T33]  do_iter_read+0xef/0x120
+[ 1414.498581][   T33]  vfs_readv+0x68/0xa0
+[ 1414.498586][   T33]  ? ktime_get_coarse_real_ts64+0x66/0xd0
+[ 1414.498588][   T33]  ? lockdep_hardirqs_on+0x122/0x1b0
+[ 1414.498590][   T33]  ? syscall_trace_enter+0x1f3/0x340
+[ 1414.498592][   T33]  ? syscall_trace_enter+0x1f3/0x340
+[ 1414.498594][   T33]  ? trace_hardirqs_on_thunk+0x1a/0x20
+[ 1414.498596][   T33]  do_preadv+0x97/0xc0
+[ 1414.498600][   T33]  do_syscall_64+0x55/0x260
+[ 1414.498602][   T33]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[ 1414.498603][   T33] RIP: 0033:0x7f63675c0349
+[ 1414.498605][   T33] Code: Bad RIP value.
+[ 1414.498606][   T33] RSP: 002b:00007ffd22952c18 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+[ 1414.498607][   T33] RAX: ffffffffffffffda RBX: 00000000000f4240 RCX: 00007f63675c0349
+[ 1414.498608][   T33] RDX: 0000000000000002 RSI: 0000000020000740 RDI: 0000000000000003
+[ 1414.498609][   T33] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[ 1414.498610][   T33] R10: 00000000febfffff R11: 0000000000000246 R12: 000000000014e74b
+[ 1414.498610][   T33] R13: 00007ffd22952d50 R14: 0000000000000000 R15: 0000000000000000
+[ 1414.498620][   T33] 
+[ 1414.498620][   T33] Showing all locks held in the system:
+[ 1414.498624][   T33] 1 lock held by khungtaskd/33:
+[ 1414.498625][   T33]  #0: ffffffff96276b40 (rcu_read_lock){....}, at: debug_show_all_locks+0xe/0x1a0
+[ 1414.498774][   T33] 2 locks held by agetty/2831:
+[ 1414.498775][   T33]  #0: ffffa3a16cd84b18 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x1f/0x50
+[ 1414.498803][   T33]  #1: ffffb02b413592e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0xd3/0x930
+[ 1414.498814][   T33] 2 locks held by bash/2859:
+[ 1414.498814][   T33]  #0: ffffa3a16cd81338 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x1f/0x50
+[ 1414.498817][   T33]  #1: ffffb02b4135d2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0xd3/0x930
+[ 1414.498823][   T33] 2 locks held by bash/2984:
+[ 1414.498824][   T33]  #0: ffffa3a17453ddb8 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x1f/0x50
+[ 1414.498826][   T33]  #1: ffffb02b41fcd2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0xd3/0x930
+[ 1414.498832][   T33] 2 locks held by agetty/4230:
+[ 1414.498833][   T33]  #0: ffffa3a16cdf6708 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref_wait+0x1f/0x50
+[ 1414.498835][   T33]  #1: ffffb02b461ff2e0 (&ldata->atomic_read_lock){+.+.}, at: n_tty_read+0xd3/0x930
+[ 1414.498843][   T33] 1 lock held by a.out/74497:
+[ 1414.498848][   T33] 3 locks held by a.out/78162:
+[ 1414.498852][   T33] 1 lock held by a.out/86204:
+[ 1414.498856][   T33] 
+[ 1414.498857][   T33] =============================================
+[ 1414.498857][   T33] 
+[ 1414.500709][T75184] read_mem: sz=4096 count=1064538111
+[ 1414.505727][T75184] read_mem: sz=4096 count=1064534015
+[ 1414.524668][T74318] read_mem: sz=4096 count=1060974591
+[ 1414.526675][T74786] read_mem: sz=4096 count=1062191103
+[ 1414.529343][T82148] read_mem: sz=4096 count=1070518271
+[ 1414.529356][T78162] read_mem: sz=4096 count=1067028479
+[ 1414.530675][T74318] read_mem: sz=4096 count=1060970495
+[ 1414.532791][T74318] read_mem: sz=4096 count=1060966399
+[ 1414.532806][T75184] read_mem: sz=4096 count=1064529919
+[ 1414.534823][T75184] read_mem: sz=4096 count=1064525823
 
