@@ -2,258 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DEC3C9AC15
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:55:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875A69AC09
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:55:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391240AbfHWJzP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 05:55:15 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56076 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390766AbfHWJzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 05:55:12 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A08D87F745;
-        Fri, 23 Aug 2019 09:55:11 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-60.ams2.redhat.com [10.36.116.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E55875DA8C;
-        Fri, 23 Aug 2019 09:55:10 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id B197D31EA3; Fri, 23 Aug 2019 11:55:04 +0200 (CEST)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v8 11/18] drm/virtio: rework virtio_gpu_transfer_to_host_ioctl fencing
-Date:   Fri, 23 Aug 2019 11:54:56 +0200
-Message-Id: <20190823095503.2261-12-kraxel@redhat.com>
-In-Reply-To: <20190823095503.2261-1-kraxel@redhat.com>
-References: <20190823095503.2261-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Fri, 23 Aug 2019 09:55:11 +0000 (UTC)
+        id S2390096AbfHWJzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 05:55:04 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43464 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388470AbfHWJzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 05:55:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 24260AF3E;
+        Fri, 23 Aug 2019 09:55:02 +0000 (UTC)
+Subject: Re: [LKP] [drm/mgag200] 90f479ae51: vm-scalability.median -18.8%
+ regression
+To:     Dave Airlie <airlied@gmail.com>
+Cc:     Feng Tang <feng.tang@intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Rong Chen <rong.a.chen@intel.com>,
+        =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ying.huang@intel.com, LKP <lkp@01.org>
+References: <20190729095155.GP22106@shao2-debian>
+ <1c0bf22b-2c69-6b45-f700-ed832a3a5c17@suse.de>
+ <14fdaaed-51c8-b270-b46b-cba7b5c4ba52@suse.de>
+ <20190805070200.GA91650@shbuild999.sh.intel.com>
+ <c0c3f387-dc93-3146-788c-23258b28a015@intel.com>
+ <045a23ab-78f7-f363-4a2e-bf24a7a2f79e@suse.de>
+ <37ae41e4-455d-c18d-5c93-7df854abfef9@intel.com>
+ <370747ca-4dc9-917b-096c-891dcc2aedf0@suse.de>
+ <c6e220fe-230c-265c-f2fc-b0948d1cb898@intel.com>
+ <20190812072545.GA63191@shbuild999.sh.intel.com>
+ <20190813093616.GA65475@shbuild999.sh.intel.com>
+ <64d41701-55a4-e526-17ae-8936de4bc1ef@suse.de>
+ <CAPM=9twNdYZCbyByLqZPpcK+ifoeL0weXppqzLyZEOn7GPAV_Q@mail.gmail.com>
+From:   Thomas Zimmermann <tzimmermann@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
+ IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
+ AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
+ 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
+ hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
+ YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
+ 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
+ tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
+ R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
+ E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
+ kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
+ 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
+ 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
+ A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
+ NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
+ VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
+ iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
+ VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
+ iNx9uqqx
+Message-ID: <7ba725e3-3db7-36d7-25f5-d9ef607ebf65@suse.de>
+Date:   Fri, 23 Aug 2019 11:54:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAPM=9twNdYZCbyByLqZPpcK+ifoeL0weXppqzLyZEOn7GPAV_Q@mail.gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="BX3CP7cHYzOQa9F5YKqbW8zm5Dwdk7dGN"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the virtio_gpu_array_* helper workflow.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--BX3CP7cHYzOQa9F5YKqbW8zm5Dwdk7dGN
+Content-Type: multipart/mixed; boundary="UfVNc8G4JXNq0jGSgU2yvKqdKxlAlgW6V";
+ protected-headers="v1"
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: Dave Airlie <airlied@gmail.com>
+Cc: Feng Tang <feng.tang@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
+ Rong Chen <rong.a.chen@intel.com>, =?UTF-8?Q?Michel_D=c3=a4nzer?=
+ <michel@daenzer.net>, LKML <linux-kernel@vger.kernel.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>, ying.huang@intel.com,
+ LKP <lkp@01.org>
+Message-ID: <7ba725e3-3db7-36d7-25f5-d9ef607ebf65@suse.de>
+Subject: Re: [LKP] [drm/mgag200] 90f479ae51: vm-scalability.median -18.8%
+ regression
+References: <20190729095155.GP22106@shao2-debian>
+ <1c0bf22b-2c69-6b45-f700-ed832a3a5c17@suse.de>
+ <14fdaaed-51c8-b270-b46b-cba7b5c4ba52@suse.de>
+ <20190805070200.GA91650@shbuild999.sh.intel.com>
+ <c0c3f387-dc93-3146-788c-23258b28a015@intel.com>
+ <045a23ab-78f7-f363-4a2e-bf24a7a2f79e@suse.de>
+ <37ae41e4-455d-c18d-5c93-7df854abfef9@intel.com>
+ <370747ca-4dc9-917b-096c-891dcc2aedf0@suse.de>
+ <c6e220fe-230c-265c-f2fc-b0948d1cb898@intel.com>
+ <20190812072545.GA63191@shbuild999.sh.intel.com>
+ <20190813093616.GA65475@shbuild999.sh.intel.com>
+ <64d41701-55a4-e526-17ae-8936de4bc1ef@suse.de>
+ <CAPM=9twNdYZCbyByLqZPpcK+ifoeL0weXppqzLyZEOn7GPAV_Q@mail.gmail.com>
+In-Reply-To: <CAPM=9twNdYZCbyByLqZPpcK+ifoeL0weXppqzLyZEOn7GPAV_Q@mail.gmail.com>
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 +--
- drivers/gpu/drm/virtio/virtgpu_ioctl.c | 50 +++++++++++---------------
- drivers/gpu/drm/virtio/virtgpu_plane.c | 21 ++++++++---
- drivers/gpu/drm/virtio/virtgpu_vq.c    |  9 +++--
- 4 files changed, 47 insertions(+), 37 deletions(-)
+--UfVNc8G4JXNq0jGSgU2yvKqdKxlAlgW6V
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index fa568cbfdddc..4f54bf7c02af 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -279,10 +279,10 @@ void virtio_gpu_cmd_create_resource(struct virtio_gpu_device *vgdev,
- void virtio_gpu_cmd_unref_resource(struct virtio_gpu_device *vgdev,
- 				   uint32_t resource_id);
- void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
--					struct virtio_gpu_object *bo,
- 					uint64_t offset,
- 					__le32 width, __le32 height,
- 					__le32 x, __le32 y,
-+					struct virtio_gpu_object_array *objs,
- 					struct virtio_gpu_fence *fence);
- void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
- 				   uint32_t resource_id,
-@@ -329,10 +329,10 @@ void virtio_gpu_cmd_transfer_from_host_3d(struct virtio_gpu_device *vgdev,
- 					  struct virtio_gpu_object_array *objs,
- 					  struct virtio_gpu_fence *fence);
- void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
--					struct virtio_gpu_object *bo,
- 					uint32_t ctx_id,
- 					uint64_t offset, uint32_t level,
- 					struct virtio_gpu_box *box,
-+					struct virtio_gpu_object_array *objs,
- 					struct virtio_gpu_fence *fence);
- void
- virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 444696f73e96..cffde4760468 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -383,52 +383,44 @@ static int virtio_gpu_transfer_to_host_ioctl(struct drm_device *dev, void *data,
- 	struct virtio_gpu_device *vgdev = dev->dev_private;
- 	struct virtio_gpu_fpriv *vfpriv = file->driver_priv;
- 	struct drm_virtgpu_3d_transfer_to_host *args = data;
--	struct ttm_operation_ctx ctx = { true, false };
--	struct drm_gem_object *gobj = NULL;
--	struct virtio_gpu_object *qobj = NULL;
-+	struct virtio_gpu_object_array *objs;
- 	struct virtio_gpu_fence *fence;
- 	struct virtio_gpu_box box;
- 	int ret;
- 	u32 offset = args->offset;
- 
--	gobj = drm_gem_object_lookup(file, args->bo_handle);
--	if (gobj == NULL)
-+	objs = virtio_gpu_array_from_handles(file, &args->bo_handle, 1);
-+	if (objs == NULL)
- 		return -ENOENT;
- 
--	qobj = gem_to_virtio_gpu_obj(gobj);
--
--	ret = virtio_gpu_object_reserve(qobj);
--	if (ret)
--		goto out;
--
--	ret = ttm_bo_validate(&qobj->tbo, &qobj->placement, &ctx);
--	if (unlikely(ret))
--		goto out_unres;
--
- 	convert_to_hw_box(&box, &args->box);
- 	if (!vgdev->has_virgl_3d) {
- 		virtio_gpu_cmd_transfer_to_host_2d
--			(vgdev, qobj, offset,
--			 box.w, box.h, box.x, box.y, NULL);
-+			(vgdev, offset,
-+			 box.w, box.h, box.x, box.y,
-+			 objs, NULL);
- 	} else {
-+		ret = virtio_gpu_array_lock_resv(objs);
-+		if (ret != 0)
-+			goto err_put_free;
-+
-+		ret = -ENOMEM;
- 		fence = virtio_gpu_fence_alloc(vgdev);
--		if (!fence) {
--			ret = -ENOMEM;
--			goto out_unres;
--		}
-+		if (!fence)
-+			goto err_unlock;
-+
- 		virtio_gpu_cmd_transfer_to_host_3d
--			(vgdev, qobj,
-+			(vgdev,
- 			 vfpriv ? vfpriv->ctx_id : 0, offset,
--			 args->level, &box, fence);
--		dma_resv_add_excl_fence(qobj->tbo.base.resv,
--						  &fence->f);
-+			 args->level, &box, objs, fence);
- 		dma_fence_put(&fence->f);
- 	}
-+	return 0;
- 
--out_unres:
--	virtio_gpu_object_unreserve(qobj);
--out:
--	drm_gem_object_put_unlocked(gobj);
-+err_unlock:
-+	virtio_gpu_array_unlock_resv(objs);
-+err_put_free:
-+	virtio_gpu_array_put_free(objs);
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_plane.c b/drivers/gpu/drm/virtio/virtgpu_plane.c
-index 11539b66c6f2..80c51b098a51 100644
---- a/drivers/gpu/drm/virtio/virtgpu_plane.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_plane.c
-@@ -109,12 +109,19 @@ static void virtio_gpu_primary_plane_update(struct drm_plane *plane,
- 		bo = gem_to_virtio_gpu_obj(vgfb->base.obj[0]);
- 		handle = bo->hw_res_handle;
- 		if (bo->dumb) {
-+			struct virtio_gpu_object_array *objs;
-+
-+			objs = virtio_gpu_array_alloc(1);
-+			if (!objs)
-+				return;
-+			virtio_gpu_array_add_obj(objs, vgfb->base.obj[0]);
- 			virtio_gpu_cmd_transfer_to_host_2d
--				(vgdev, bo, 0,
-+				(vgdev, 0,
- 				 cpu_to_le32(plane->state->src_w >> 16),
- 				 cpu_to_le32(plane->state->src_h >> 16),
- 				 cpu_to_le32(plane->state->src_x >> 16),
--				 cpu_to_le32(plane->state->src_y >> 16), NULL);
-+				 cpu_to_le32(plane->state->src_y >> 16),
-+				 objs, NULL);
- 		}
- 	} else {
- 		handle = 0;
-@@ -204,11 +211,17 @@ static void virtio_gpu_cursor_plane_update(struct drm_plane *plane,
- 
- 	if (bo && bo->dumb && (plane->state->fb != old_state->fb)) {
- 		/* new cursor -- update & wait */
-+		struct virtio_gpu_object_array *objs;
-+
-+		objs = virtio_gpu_array_alloc(1);
-+		if (!objs)
-+			return;
-+		virtio_gpu_array_add_obj(objs, vgfb->base.obj[0]);
- 		virtio_gpu_cmd_transfer_to_host_2d
--			(vgdev, bo, 0,
-+			(vgdev, 0,
- 			 cpu_to_le32(plane->state->crtc_w),
- 			 cpu_to_le32(plane->state->crtc_h),
--			 0, 0, vgfb->fence);
-+			 0, 0, objs, vgfb->fence);
- 		dma_fence_wait(&vgfb->fence->f, true);
- 		dma_fence_put(&vgfb->fence->f);
- 		vgfb->fence = NULL;
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 59d32787944d..e8f5670aadf2 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -491,12 +491,13 @@ void virtio_gpu_cmd_resource_flush(struct virtio_gpu_device *vgdev,
- }
- 
- void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
--					struct virtio_gpu_object *bo,
- 					uint64_t offset,
- 					__le32 width, __le32 height,
- 					__le32 x, __le32 y,
-+					struct virtio_gpu_object_array *objs,
- 					struct virtio_gpu_fence *fence)
- {
-+	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(objs->objs[0]);
- 	struct virtio_gpu_transfer_to_host_2d *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
- 	bool use_dma_api = !virtio_has_iommu_quirk(vgdev->vdev);
-@@ -508,6 +509,7 @@ void virtio_gpu_cmd_transfer_to_host_2d(struct virtio_gpu_device *vgdev,
- 
- 	cmd_p = virtio_gpu_alloc_cmd(vgdev, &vbuf, sizeof(*cmd_p));
- 	memset(cmd_p, 0, sizeof(*cmd_p));
-+	vbuf->objs = objs;
- 
- 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_TRANSFER_TO_HOST_2D);
- 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
-@@ -900,12 +902,13 @@ virtio_gpu_cmd_resource_create_3d(struct virtio_gpu_device *vgdev,
- }
- 
- void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
--					struct virtio_gpu_object *bo,
- 					uint32_t ctx_id,
- 					uint64_t offset, uint32_t level,
- 					struct virtio_gpu_box *box,
-+					struct virtio_gpu_object_array *objs,
- 					struct virtio_gpu_fence *fence)
- {
-+	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(objs->objs[0]);
- 	struct virtio_gpu_transfer_host_3d *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
- 	bool use_dma_api = !virtio_has_iommu_quirk(vgdev->vdev);
-@@ -918,6 +921,8 @@ void virtio_gpu_cmd_transfer_to_host_3d(struct virtio_gpu_device *vgdev,
- 	cmd_p = virtio_gpu_alloc_cmd(vgdev, &vbuf, sizeof(*cmd_p));
- 	memset(cmd_p, 0, sizeof(*cmd_p));
- 
-+	vbuf->objs = objs;
-+
- 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_TRANSFER_TO_HOST_3D);
- 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
- 	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
--- 
-2.18.1
+Hi
 
+Am 22.08.19 um 22:02 schrieb Dave Airlie:
+> On Fri, 23 Aug 2019 at 03:25, Thomas Zimmermann <tzimmermann@suse.de> w=
+rote:
+>>
+>> Hi
+>>
+>> I was traveling and could reply earlier. Sorry for taking so long.
+>>
+>> Am 13.08.19 um 11:36 schrieb Feng Tang:
+>>> Hi Thomas,
+>>>
+>>> On Mon, Aug 12, 2019 at 03:25:45PM +0800, Feng Tang wrote:
+>>>> Hi Thomas,
+>>>>
+>>>> On Fri, Aug 09, 2019 at 04:12:29PM +0800, Rong Chen wrote:
+>>>>> Hi,
+>>>>>
+>>>>>>> Actually we run the benchmark as a background process, do we need=
+ to
+>>>>>>> disable the cursor and test again?
+>>>>>> There's a worker thread that updates the display from the shadow b=
+uffer.
+>>>>>> The blinking cursor periodically triggers the worker thread, but t=
+he
+>>>>>> actual update is just the size of one character.
+>>>>>>
+>>>>>> The point of the test without output is to see if the regression c=
+omes
+>>>>> >from the buffer update (i.e., the memcpy from shadow buffer to VRA=
+M), or
+>>>>> >from the worker thread. If the regression goes away after disablin=
+g the
+>>>>>> blinking cursor, then the worker thread is the problem. If it alre=
+ady
+>>>>>> goes away if there's simply no output from the test, the screen up=
+date
+>>>>>> is the problem. On my machine I have to disable the blinking curso=
+r, so
+>>>>>> I think the worker causes the performance drop.
+>>>>>
+>>>>> We disabled redirecting stdout/stderr to /dev/kmsg,  and the regres=
+sion is
+>>>>> gone.
+>>>>>
+>>>>> commit:
+>>>>>   f1f8555dfb9 drm/bochs: Use shadow buffer for bochs framebuffer co=
+nsole
+>>>>>   90f479ae51a drm/mgag200: Replace struct mga_fbdev with generic fr=
+amebuffer
+>>>>> emulation
+>>>>>
+>>>>> f1f8555dfb9a70a2  90f479ae51afa45efab97afdde testcase/testparams/te=
+stbox
+>>>>> ----------------  -------------------------- ----------------------=
+-----
+>>>>>          %stddev      change         %stddev
+>>>>>              \          |                \
+>>>>>      43785                       44481
+>>>>> vm-scalability/300s-8T-anon-cow-seq-hugetlb/lkp-knm01
+>>>>>      43785                       44481        GEO-MEAN vm-scalabili=
+ty.median
+>>>>
+>>>> Till now, from Rong's tests:
+>>>> 1. Disabling cursor blinking doesn't cure the regression.
+>>>> 2. Disabling printint test results to console can workaround the
+>>>> regression.
+>>>>
+>>>> Also if we set the perfer_shadown to 0, the regression is also
+>>>> gone.
+>>>
+>>> We also did some further break down for the time consumed by the
+>>> new code.
+>>>
+>>> The drm_fb_helper_dirty_work() calls sequentially
+>>> 1. drm_client_buffer_vmap       (290 us)
+>>> 2. drm_fb_helper_dirty_blit_real  (19240 us)
+>>> 3. helper->fb->funcs->dirty()    ---> NULL for mgag200 driver
+>>> 4. drm_client_buffer_vunmap       (215 us)
+>>>
+>>
+>> It's somewhat different to what I observed, but maybe I just couldn't
+>> reproduce the problem correctly.
+>>
+>>> The average run time is listed after the function names.
+>>>
+>>> From it, we can see drm_fb_helper_dirty_blit_real() takes too long
+>>> time (about 20ms for each run). I guess this is the root cause
+>>> of this regression, as the original code doesn't use this dirty worke=
+r.
+>>
+>> True, the original code uses a temporary buffer, but updates the displ=
+ay
+>> immediately.
+>>
+>> My guess is that this could be a caching problem. The worker runs on a=
+
+>> different CPU, which doesn't have the shadow buffer in cache.
+>>
+>>> As said in last email, setting the prefer_shadow to 0 can avoid
+>>> the regrssion. Could it be an option?
+>>
+>> Unfortunately not. Without the shadow buffer, the console's display
+>> buffer permanently resides in video memory. It consumes significant
+>> amount of that memory (say 8 MiB out of 16 MiB). That doesn't leave
+>> enough room for anything else.
+>>
+>> The best option is to not print to the console.
+>=20
+> Wait a second, I thought the driver did an eviction on modeset of the
+> scanned out object, this was a deliberate design decision made when
+> writing those drivers, has this been removed in favour of gem and
+> generic code paths?
+
+Yes. We added back this feature for testing in [1]. It was only an
+improvement of ~1% compared to the original report. I wouldn't mind
+landing this patch set, but it probably doesn't make a difference either.=
+
+
+Best regards
+Thomas
+
+[1] https://lists.freedesktop.org/archives/dri-devel/2019-August/228950.h=
+tml
+
+>=20
+> Dave.
+>=20
+
+--=20
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
+GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
+HRB 21284 (AG N=C3=BCrnberg)
+
+
+--UfVNc8G4JXNq0jGSgU2yvKqdKxlAlgW6V--
+
+--BX3CP7cHYzOQa9F5YKqbW8zm5Dwdk7dGN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl1ft/QACgkQaA3BHVML
+eiM8Tgf+KBbm9lizxffLYbEQPJcuUsnSU/caG24GOCIxe0ojHKUmVxQWiwZQXNPe
+a98SXAQRB453dWGEvaeNIzNDzorlgfSp76mvXvlQ0ZZJ0joRS/RcS7O+1Q7irzsk
+zft51SZqyw+XSC7KtRPYkwjcs7T+bUM45JXJBtgQx3KxpqROubNij9hbQotoQFGG
+b3TSl6g81OVg5s7JAd+CuX/YdVCFqHyTATJutD9M5SMaLZAx3EQOrLSKfia9e5Nq
+8BKrU1Ewg6fwfX1H7cGBZMumm3o595rnscBCO/o1jBwrkSblcRi/MnpqOz9J9HQm
+XJWQiwPRuUWsUbCjuOkEA9SJHqcZkQ==
+=/fro
+-----END PGP SIGNATURE-----
+
+--BX3CP7cHYzOQa9F5YKqbW8zm5Dwdk7dGN--
