@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6174F9BC14
+	by mail.lfdr.de (Postfix) with ESMTP id CB7359BC15
 	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 08:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbfHXGDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 02:03:04 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43582 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfHXGC4 (ORCPT
+        id S1727431AbfHXGDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 02:03:13 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32790 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727147AbfHXGC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 02:02:56 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 4so6865122pld.10
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 23:02:55 -0700 (PDT)
+        Sat, 24 Aug 2019 02:02:57 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g2so8053208pfq.0
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 23:02:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=yQmvpe+T4cj+4Y3PYlBtzIZazSTk3vEicHeRtboqFPE=;
-        b=i3RjvQv1p1+ga3QmE1WALQEAcpZq5wEHO7zx+2ZdcSw2wrL3C6HUhz1EV40msOQm7R
-         NXEbvL8wXlfdgI1b1N+k91JT8h+fCY5i71jxYVtEz/omQB/tX/6fPhEnbk2QF36SA2KT
-         L6UxCsK8aXX5BUZeJlUU5sbf7EG5/dsGLmHiFypv2NFr5kz9uUdvNBA4VP3H2UMtT59m
-         mjsB2kwYMNjjDBToT41ewCQ2QIo10gsel6jbL0jYX2ayq3KkUfi6UEav+WyfhoKNoOrT
-         OyYk10qS1jfDNOn48YrB1qp8tYa85B2YZV1YswbRTywtE7XAkVEG6saPxrArV0SGzJOz
-         qvRw==
-X-Gm-Message-State: APjAAAUq9Lv3y9Zs084+WnGhKDvExG934+LnBV2+kC6ZWGcnYtY4JzWb
-        pQXyHmnfo6UcQlwKksOUdoo=
-X-Google-Smtp-Source: APXvYqzw1snjNVuL3nM1dQtSjBtbLdhm9qVAcSizLuZxmSKdfWljVUQCBqtqrIvsyIjid4IUe3ggYA==
-X-Received: by 2002:a17:902:a40d:: with SMTP id p13mr8558501plq.92.1566626574911;
-        Fri, 23 Aug 2019 23:02:54 -0700 (PDT)
+        bh=F+nj3E/Xs8M7qxtN9qZbU1CEqcrINAxu4k53hreWaAI=;
+        b=EVwFOFRCLghWrV0B+Fgrf9sXqIz31luQckRhXbCogqE/cNfM8k73Y6HwKDlmIq8A+G
+         HxcNwPCzKijsvwc/Bn+fqZfhonidiEMLuxFuX78RAJBwA17y0sCbzBw0nu4pS6JAgu/I
+         K80zgOkAlrkJFSSsAaMQ+qDw2E7o7qVfbNUf6Ta3hZl1V2lRL+J8suLqtOVnaKLoznnB
+         b3rcKY9fA2bOQ3lONgofr+nWhtQmbtlFVdJgFaHleHDZEaVDZcV8+xcU/H0FckNlZ7t3
+         J506fuTyCqwLIK4SnhCYJRTlNjyNmc4TlGWJ4F0PZAjQX0JIQIBZRZ7SRtvGt5mGQKPf
+         qAxA==
+X-Gm-Message-State: APjAAAX8QhyRU+smPAdkQFExWpcywLC19839EVNeLf2k03oa7hVVwc3r
+        iJ8JaEYNOAS0S2Rj6ic+u8Y=
+X-Google-Smtp-Source: APXvYqwoSY1YsQL7ykK2Wm70uU0BpfKji/wNiOEP4B4MY7NXWa87XMT8TEerNMfzR/+iHEWz7ovu3A==
+X-Received: by 2002:a65:5cca:: with SMTP id b10mr7190158pgt.365.1566626576692;
+        Fri, 23 Aug 2019 23:02:56 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id i11sm6505645pfk.34.2019.08.23.23.02.53
+        by smtp.gmail.com with ESMTPSA id i11sm6505645pfk.34.2019.08.23.23.02.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2019 23:02:54 -0700 (PDT)
+        Fri, 23 Aug 2019 23:02:55 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>
@@ -41,9 +41,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH v4 8/9] x86/mm/tlb: Remove UV special case
-Date:   Fri, 23 Aug 2019 15:41:52 -0700
-Message-Id: <20190823224153.15223-9-namit@vmware.com>
+Subject: [PATCH v4 9/9] x86/mm/tlb: Remove unnecessary uses of the inline keyword
+Date:   Fri, 23 Aug 2019 15:41:53 -0700
+Message-Id: <20190823224153.15223-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190823224153.15223-1-namit@vmware.com>
 References: <20190823224153.15223-1-namit@vmware.com>
@@ -52,55 +52,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGI UV TLB flushes is outdated and will be replaced with compatible
-smp_call_many APIC function in the future. For now, simplify the code by
-removing the UV special case.
+The compiler is smart enough without these hints.
 
+Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Acked-by: Mike Travis <mike.travis@hpe.com>
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- arch/x86/mm/tlb.c | 25 -------------------------
- 1 file changed, 25 deletions(-)
+ arch/x86/mm/tlb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 1393b3cd3697..3dca146edcf1 100644
+index 3dca146edcf1..0addc6e84126 100644
 --- a/arch/x86/mm/tlb.c
 +++ b/arch/x86/mm/tlb.c
-@@ -679,31 +679,6 @@ void native_flush_tlb_multi(const struct cpumask *cpumask,
- 		trace_tlb_flush(TLB_REMOTE_SEND_IPI,
- 				(info->end - info->start) >> PAGE_SHIFT);
+@@ -189,7 +189,7 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
+ 	}
+ }
  
--	if (is_uv_system()) {
--		/*
--		 * This whole special case is confused.  UV has a "Broadcast
--		 * Assist Unit", which seems to be a fancy way to send IPIs.
--		 * Back when x86 used an explicit TLB flush IPI, UV was
--		 * optimized to use its own mechanism.  These days, x86 uses
--		 * smp_call_function_many(), but UV still uses a manual IPI,
--		 * and that IPI's action is out of date -- it does a manual
--		 * flush instead of calling flush_tlb_func().  This
--		 * means that the percpu tlb_gen variables won't be updated
--		 * and we'll do pointless flushes on future context switches.
--		 *
--		 * Rather than hooking native_flush_tlb_multi() here, I think
--		 * that UV should be updated so that smp_call_function_many(),
--		 * etc, are optimal on UV.
--		 */
--		flush_tlb_func((void *)info);
--
--		cpumask = uv_flush_tlb_others(cpumask, info);
--		if (cpumask)
--			smp_call_function_many(cpumask, flush_tlb_func,
--					       (void *)info, 1);
--		return;
--	}
--
- 	/*
- 	 * If no page tables were freed, we can skip sending IPIs to
- 	 * CPUs in lazy TLB mode. They will flush the CPU themselves
+-static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
++static unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
+ {
+ 	unsigned long next_tif = task_thread_info(next)->flags;
+ 	unsigned long ibpb = (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
+@@ -741,7 +741,7 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(struct flush_tlb_info, flush_tlb_info);
+ static DEFINE_PER_CPU(unsigned int, flush_tlb_info_idx);
+ #endif
+ 
+-static inline struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
++static struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
+ 			unsigned long start, unsigned long end,
+ 			unsigned int stride_shift, bool freed_tables,
+ 			u64 new_tlb_gen)
+@@ -768,7 +768,7 @@ static inline struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
+ 	return info;
+ }
+ 
+-static inline void put_flush_tlb_info(void)
++static void put_flush_tlb_info(void)
+ {
+ #ifdef CONFIG_DEBUG_VM
+ 	/* Complete reentrency prevention checks */
 -- 
 2.17.1
 
