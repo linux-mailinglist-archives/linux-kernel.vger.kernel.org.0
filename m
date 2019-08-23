@@ -2,86 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2705B9AA52
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:28:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED1F9AA49
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:27:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392795AbfHWI2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 04:28:39 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43902 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390566AbfHWI2j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 04:28:39 -0400
-Received: by mail-ot1-f68.google.com with SMTP id e12so8041197otp.10
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 01:28:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I01Rd3eaxSJ78FG7Sav/xOd85SsWSsEzvMhKftmhJLE=;
-        b=mQ9spONT1/DOnCwOYCs1jFqq5EOYQ5h1dBBo6WCcHhHTi/4/PRWa05u2hQAyEUlrYQ
-         FCaxfYqtH19ZZv5ZEVI9xgl/G9OwKDtKY9dQx3ApjD8FRl8sgf8itnZbcEMSjayQybsb
-         er5yyW+0w1vk/xPkeSIETCMPMCrtxzDqwZvlSNzxorIqGCAeY0m69aZB7bpZqh1Iu8QQ
-         akzfe+0Dn+XdvQw3rU66YFie/i20h3+iMFruntsULVcKSi1W6wQt8sdYhYycUZ+eSKGY
-         JM+m24tJfmIQ0Oajtr/M7KRfxPHNBmwQbpq5jzVpz+uYUHa2WHY1niJZuB6UoWfC38GS
-         oFKg==
-X-Gm-Message-State: APjAAAXKfhNEsYRcHP9XHUCo60MnRoSlLzRWgQKevCgHj+jG7hycMCGO
-        VEEClwEGlpKYxaiCBvkzhJSa/xOlbKj3O2ZozVYKKQ==
-X-Google-Smtp-Source: APXvYqyqdAxGVm2yMUytfNc9WX6a5aL/7hEQvriEj+yfmj8WyLMbwK0No6Navxiw9hVPjb9mfFcw4wZ2uC0dwAqCxI4=
-X-Received: by 2002:a9d:61c3:: with SMTP id h3mr3269258otk.39.1566548918554;
- Fri, 23 Aug 2019 01:28:38 -0700 (PDT)
+        id S2392665AbfHWI1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 04:27:01 -0400
+Received: from mga05.intel.com ([192.55.52.43]:53883 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733069AbfHWI1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 04:27:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 01:27:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,420,1559545200"; 
+   d="scan'208";a="203702966"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by fmsmga004.fm.intel.com with ESMTP; 23 Aug 2019 01:26:58 -0700
+Subject: Re: [RESEND PATCH v2 2/2] usb: xhci-mtk: add an optional xhci_ck
+ clock
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-usb@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org
+References: <1566542425-20082-1-git-send-email-chunfeng.yun@mediatek.com>
+ <1566542425-20082-2-git-send-email-chunfeng.yun@mediatek.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <e1e4d220-9540-2001-13aa-89ff8ce829f5@linux.intel.com>
+Date:   Fri, 23 Aug 2019 11:28:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190819080028.13091-1-geert@linux-m68k.org> <CACRpkdb66GWnW6j=G==vAP_79ePyVCL=dHwcM2ui-GRC58eCjg@mail.gmail.com>
-In-Reply-To: <CACRpkdb66GWnW6j=G==vAP_79ePyVCL=dHwcM2ui-GRC58eCjg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Aug 2019 10:28:26 +0200
-Message-ID: <CAMuHMdWAQn+GmJ6q_VfGdkMmS7amEaSUndSJ73J616nFKNbfFw@mail.gmail.com>
-Subject: Re: [PATCH] soc: ixp4xx: Protect IXP4xx SoC drivers by ARCH_IXP4XX || COMPILE_TEST
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1566542425-20082-2-git-send-email-chunfeng.yun@mediatek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 23.8.2019 9.40, Chunfeng Yun wrote:
+> Some SoCs may have an optional clock xhci_ck (125M or 200M), it
+> usually uses the same PLL as sys_ck, so support it.
+> 
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 
-On Fri, Aug 23, 2019 at 10:26 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, Aug 19, 2019 at 10:46 AM Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > The move of the IXP4xx SoC drivers exposed their config options on all
-> > platforms.
-> >
-> > Fix this by wrapping them inside an ARCH_IXP4XX or COMPILE_TEST block.
-> >
-> > Fixes: fcf2d8978cd538a5 ("ARM: ixp4xx: Move NPE and QMGR to drivers/soc")
-> > Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > ---
-> > v2:
-> >   - Rebased on top of commit ec8f24b7faaf3d47 ("treewide: Add SPDX
-> >     license identifier - Makefile/Kconfig").
->
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->
-> Do you want me to also take care of sending this into the ARM SoC tree?
-
-Given you're listed as (one of) the maintainer(s), I think that would make
-perfect sense.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
