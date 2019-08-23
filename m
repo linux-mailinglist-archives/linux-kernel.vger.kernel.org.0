@@ -2,66 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D82B9B3DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:50:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 855E09B3E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:52:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436555AbfHWPuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 11:50:32 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34772 "EHLO
+        id S1732764AbfHWPwB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 11:52:01 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38270 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732803AbfHWPub (ORCPT
+        with ESMTP id S1726889AbfHWPwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 11:50:31 -0400
-Received: by mail-ed1-f65.google.com with SMTP id s49so14170766edb.1;
-        Fri, 23 Aug 2019 08:50:30 -0700 (PDT)
+        Fri, 23 Aug 2019 11:52:00 -0400
+Received: by mail-ed1-f65.google.com with SMTP id r12so14157654edo.5;
+        Fri, 23 Aug 2019 08:51:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=eHboKXefOkoZFmnF3HVNlpLNUtuSikyS51qtsqcaUNo=;
-        b=GxW2rwOO7d8kg4vtCGGiuz3nmJ2Ekh3ZHhAG9bOvWMapjX3RPc/cpDhW6LMJedTv6g
-         U0LC6qOT6AiRnWYoD2cvokdqYT2GcvAqp8KUZLEmMXZMIw3Zvv1XGKNATf2samrn+NM+
-         UES3GzS9CnQgu0pT+g1C2nshV+aEhH/Z+vOs9UK3uzwskhJm6+2ul0SXk5CiX/PZlZES
-         CDXb3CYmmihukzY2XS1mqyMLRDmaEvuQGlflWeZO3VJ7jIpCsyTGu8jMW8Y32XtFT8XX
-         XZLraQAyq0JDoXPf9Dwyhd3XRfal8iqeTmpnDt0dIjZk+SFiJeZkQM79iDww4fzwnYuw
-         vnhA==
+        bh=iyqrdjipyXAujuXf+ThiuGW6nNdgnVLRywofD+cV01o=;
+        b=rvlqHn0L1193g1bK59aDzW5QFZ7INT6gNf3Fv0WGM522kqXV05cx99QeADHrYojnOT
+         bBasDwlDXOn41HN2QOKRtrcmmRM/G/wE+Uf+ceza0tFj3kPXujfHkI9QSDImmXugxTec
+         H3ligJeorzjo88okJUYQ4pB8lIuFR0SMKGoanMIsO8C+dtiAz1c8MZ8YuILQnH+aZJt/
+         cOXURAuFat+IaVpuPsi9LaIbMhbPf7HoLIHmQ1jayg4BTXyEMV8DF8j6t7RC4mKrXHxm
+         EuY6VOaCVkBiEbxCEAd65AWT3RWP2OmhZCENtrfZkCgrsV1F3lsIQNjsexKJP8/NIOMK
+         IPBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=eHboKXefOkoZFmnF3HVNlpLNUtuSikyS51qtsqcaUNo=;
-        b=hg3m7ujRhitl66+/MJMMDmZV+kCzsS81lZ1mcyFEYtybGLPJ/U7xn8v8GRp8kBzpPk
-         quckQPLvU0D0cX8Tzis18FArZLLNnMTEEHaxG1cGhDyZIAlOLWOrqghwKNluzvxYFUcV
-         osxnJiBE79tMVpIyfTXQzB+XNd09+pnT6YLJDsCp/UM4PFL0rDKMVN+mTrQfvnsnbU9/
-         M3DGxFEFRlN3iuAN4DodM9jYxg+lwg39Sci2NAoe2o83kYJCwsHhz3T1ZsBqbb9WaGQr
-         iIe6go4Bl2YxiFhipDjxKy4+nl2/LUgJw8hyy0kNacKwz2AlzltnP7vjj6ecKVeKV5Cd
-         PsHA==
-X-Gm-Message-State: APjAAAX43SzF47z8Rpel8lszLY4Kv4IGiQ1RIOnfk4NZosFQDw82eVxE
-        GNu8qwX29FA83yIj8ZGaS9fCrgGsaXI=
-X-Google-Smtp-Source: APXvYqxpNIuY03AF3h8WerlDr0+pTMI81yj7RHxSM8dTyt4gRlHl0wdVNr+b+L24Gp0ga5HUsOyfdQ==
-X-Received: by 2002:a50:bb23:: with SMTP id y32mr5288045ede.145.1566575429297;
-        Fri, 23 Aug 2019 08:50:29 -0700 (PDT)
+        bh=iyqrdjipyXAujuXf+ThiuGW6nNdgnVLRywofD+cV01o=;
+        b=D1yzr/aRTHmEwXlmsa6rW4vNtsUZFfe77clNJSvzORSTSPEf1MS7Nj1ZnnIXk4KtG+
+         l1WzphhUn9LZPEoYpB6Cx/z713RHtTWrb2hdc8hTSVjBLxAPUgmxvelX3nDKNT+hv4pD
+         qX+SWwHRnA9o/AoEo0kStFaOG6Ku2VlY8tHe0MoYAvAybkozcIb/f/cNBt1Ci8y+6gxq
+         BpYJzNrz6EJ4FL0xhZWPYij2eeNKtuMTk0qXkdClcbsRDLK0Hx2B4EkVVbhSIWgcDJuj
+         Owb5k6TO1Z4SPk3IUd1GRJ+ENPO5zcouen2yoeBT6pM+Ix69GR/SoAFHTypfL/7XNVst
+         uz+g==
+X-Gm-Message-State: APjAAAWonhuyXuvnvTf35Oq7eAGklI2CX1td+xTBZ4NAbWvt2mGUNSaK
+        L/XHjbUJfAJQFq4r8Q5r1TYj9NdcPzA=
+X-Google-Smtp-Source: APXvYqznB5coGlLh9coLbb8PuXMvVnSjrTSolQ3eNOBqxBxf0JB7bBx1R5LOZE7siYfusUythAV2EA==
+X-Received: by 2002:aa7:d5d3:: with SMTP id d19mr5432403eds.103.1566575517699;
+        Fri, 23 Aug 2019 08:51:57 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.137.147])
-        by smtp.gmail.com with ESMTPSA id f6sm595737edn.63.2019.08.23.08.50.28
+        by smtp.gmail.com with ESMTPSA id k12sm469254ejz.79.2019.08.23.08.51.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2019 08:50:28 -0700 (PDT)
-Subject: Re: [PATCH v2 01/11] dt-bindings: mediatek: add support for mt6779
- reference board
-To:     Mars Cheng <mars.cheng@mediatek.com>,
-        Rob Herring <robh@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+        Fri, 23 Aug 2019 08:51:57 -0700 (PDT)
+Subject: Re: [PATCH v2 03/11] dt-bindings: irq: mtk,sysirq: add support for
+ mt6779
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Cc:     Rob Herring <robh@kernel.org>, Marc Zyngier <marc.zyngier@arm.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     CC Hwang <cc.hwang@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
         Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        mtk01761 <wendell.lin@mediatek.com>, linux-clk@vger.kernel.org
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, wsd_upstream@mediatek.com,
+        mtk01761 <wendell.lin@mediatek.com>,
+        linux-clk <linux-clk@vger.kernel.org>
 References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
- <1566206502-4347-2-git-send-email-mars.cheng@mediatek.com>
+ <1566206502-4347-4-git-send-email-mars.cheng@mediatek.com>
+ <CACRpkdY4sVV5oyFa+a30dY2A9tsKpzTeuQ8ChmnXcm-5_eZkVA@mail.gmail.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -157,12 +161,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <9f3daf61-eb8b-28c9-e3ce-08b9ca61166b@gmail.com>
-Date:   Fri, 23 Aug 2019 17:50:27 +0200
+Message-ID: <827cd581-8fa0-d59b-f21c-de16f8c2ee50@gmail.com>
+Date:   Fri, 23 Aug 2019 17:51:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1566206502-4347-2-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <CACRpkdY4sVV5oyFa+a30dY2A9tsKpzTeuQ8ChmnXcm-5_eZkVA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -171,33 +175,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
-
-On 19/08/2019 11:21, Mars Cheng wrote:
-> Update binding document for mt6779 reference board
+On 23/08/2019 10:51, Linus Walleij wrote:
+> On Mon, Aug 19, 2019 at 11:22 AM Mars Cheng <mars.cheng@mediatek.com> wrote:
 > 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-
-Applied thanks!
-
-> ---
->  .../devicetree/bindings/arm/mediatek.yaml          |    4 ++++
->  1 file changed, 4 insertions(+)
+>> Add binding documentation of mediatek,sysirq for mt6779 SoC.
+>>
+>> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> index a4ad2eb..4043c50 100644
-> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
-> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
-> @@ -48,6 +48,10 @@ properties:
->            - const: mediatek,mt6765
->        - items:
->            - enum:
-> +              - mediatek,mt6779-evb
-> +          - const: mediatek,mt6779
-> +      - items:
-> +          - enum:
->                - mediatek,mt6795-evb
->            - const: mediatek,mt6795
->        - items:
+> I'm relying on Sean to review this and ACK when he's pleased
+> with the result.
 > 
+
+I suppose you meant 4/11, right :)
+
+Regards,
+Matthias
