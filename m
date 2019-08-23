@@ -2,96 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 044E09A5AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:41:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3FFF9A5BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:45:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391264AbfHWClY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 22:41:24 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:57654 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389719AbfHWClY (ORCPT
+        id S2403774AbfHWCpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 22:45:21 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:29997 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391306AbfHWCpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 22:41:24 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7N2fHnn040351;
-        Thu, 22 Aug 2019 21:41:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566528077;
-        bh=pG93l+RMglvDxl8bb0IbXg5xaVYgCMI7e0/JyG61YKY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=pTCIk/NQVNBCsLX4tPCJ9C5QZvRxRtoQVQ+Z4Jq1c049w3QRhK+bo34Z/Rzikz9tT
-         1KA2dlPAJVQ4E7mSA1wOfNhZCzju70n9ztDlEUO3BkqYzXgbyUsqeYaWRLWSCntK8N
-         nCF4xJD1zd85qZKHgP7CsNhhgvPrYF1G967mwOy0=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7N2fGVu096937
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 22 Aug 2019 21:41:16 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 22
- Aug 2019 21:41:16 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 22 Aug 2019 21:41:16 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7N2fDl8119839;
-        Thu, 22 Aug 2019 21:41:14 -0500
-Subject: Re: [PATCH 10/12] phy: amlogic: G12A: Fix misuse of GENMASK macro
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kevin Hilman <khilman@baylibre.com>
-CC:     <linux-amlogic@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <cover.1562734889.git.joe@perches.com>
- <d149d2851f9aa2425c927cb8e311e20c4b83e186.1562734889.git.joe@perches.com>
- <c6cabf9c-7edd-eea8-3388-df781163cddd@baylibre.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <6d7abb4d-fe68-8d02-d985-7214118be126@ti.com>
-Date:   Fri, 23 Aug 2019 08:11:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <c6cabf9c-7edd-eea8-3388-df781163cddd@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 22 Aug 2019 22:45:20 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x7N2i1YP015237;
+        Fri, 23 Aug 2019 11:44:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x7N2i1YP015237
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566528242;
+        bh=RUQPvpeRirVgphhnQn/uX9bo3iR6wYuDL45CJSJJoug=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nCKjhe3pKvSY21V/fQedzyEyJxixda6YkE/vIjR4gckiMxCR2Ri/HX7RmIyvBf2g5
+         v+Wra+fyG/KES1p4LdTXY1GCqaUzcx3GDGAew8hVzH9tFfn6ekLFOGsjoMsjvR4ZAd
+         7PjQ87z7iPsp/nnw94Izt8Z6bLGqTLHPcM1skMTCL5Hx2MGVE4836eraFocvVpkAP7
+         Z1xj1Xf79DzUqiKvuODHuFbcY+NiUDSlq3/BiUUyIP9+GrNEvOafjDz45WBhUwXMwx
+         TMM8RVgyCN6UIayVxau8Xk4Av/H/5+0PoiBrZSrbHbRBLDqNpqqBbrpGov0qVxFvrO
+         /NQcwzyECOxGw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: at91: move platform-specific asm-offset.h to arch/arm/mach-at91
+Date:   Fri, 23 Aug 2019 11:43:45 +0900
+Message-Id: <20190823024346.591-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+<generated/at91_pm_data-offsets.h> is only generated and included by
+arch/arm/mach-at91/, so it does not need to reside in the globally
+visible include/generated/.
 
+I renamed it to arch/arm/mach-at91/pm_data-offsets.h since the prefix
+'at91_' is just redundant in mach-at91/.
 
-On 22/07/19 12:53 PM, Neil Armstrong wrote:
-> On 10/07/2019 07:04, Joe Perches wrote:
->> Arguments are supposed to be ordered high then low.
->>
->> Signed-off-by: Joe Perches <joe@perches.com>
->> ---
->>  drivers/phy/amlogic/phy-meson-g12a-usb2.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/phy/amlogic/phy-meson-g12a-usb2.c b/drivers/phy/amlogic/phy-meson-g12a-usb2.c
->> index 9065ffc85eb4..cd7eccab2649 100644
->> --- a/drivers/phy/amlogic/phy-meson-g12a-usb2.c
->> +++ b/drivers/phy/amlogic/phy-meson-g12a-usb2.c
->> @@ -66,7 +66,7 @@
->>  #define PHY_CTRL_R14						0x38
->>  	#define PHY_CTRL_R14_I_RDP_EN				BIT(0)
->>  	#define PHY_CTRL_R14_I_RPU_SW1_EN			BIT(1)
->> -	#define PHY_CTRL_R14_I_RPU_SW2_EN			GENMASK(2, 3)
->> +	#define PHY_CTRL_R14_I_RPU_SW2_EN			GENMASK(3, 2)
->>  	#define PHY_CTRL_R14_PG_RSTN				BIT(4)
->>  	#define PHY_CTRL_R14_I_C2L_DATA_16_8			BIT(5)
->>  	#define PHY_CTRL_R14_I_C2L_ASSERT_SINGLE_EN_ZERO	BIT(6)
->>
-> 
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+My main motivation of this change is to avoid the race condition for
+the parallel build (-j) when CONFIG_IKHEADERS is enabled.
 
-Shouldn't this go to stable trees as well?
+When it is enabled, all the headers under include/ are archived into
+kernel/kheaders_data.tar.xz and exposed in the sysfs.
 
--Kishon
+In the parallel build, we have no idea in which order files are built.
+
+ - If at91_pm_data-offsets.h is built before kheaders_data.tar.xz,
+   the header will be included in the archive. Probably nobody will
+   use it, but it is harmless except that it will increase the archive
+   size needlessly.
+
+ - If kheaders_data.tar.xz is built before at91_pm_data-offsets.h,
+   the header will not be included in the archive. However, in the next
+   build, the archive will be re-generated to include the newly-found
+   at91_pm_data-offsets.h. This is not nice from the build system point
+   of view.
+
+ - If at91_pm_data-offsets.h and kheaders_data.tar.xz are built at the
+   same time, the corrupted header might be included in the archive,
+   which does not look nice either.
+
+This commit fixes the race.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/arm/mach-at91/.gitignore   | 1 +
+ arch/arm/mach-at91/Makefile     | 5 +++--
+ arch/arm/mach-at91/pm_suspend.S | 2 +-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/mach-at91/.gitignore
+
+diff --git a/arch/arm/mach-at91/.gitignore b/arch/arm/mach-at91/.gitignore
+new file mode 100644
+index 000000000000..2ecd6f51c8a9
+--- /dev/null
++++ b/arch/arm/mach-at91/.gitignore
+@@ -0,0 +1 @@
++pm_data-offsets.h
+diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
+index 31b61f0e1c07..de64301dcff2 100644
+--- a/arch/arm/mach-at91/Makefile
++++ b/arch/arm/mach-at91/Makefile
+@@ -19,9 +19,10 @@ ifeq ($(CONFIG_PM_DEBUG),y)
+ CFLAGS_pm.o += -DDEBUG
+ endif
+ 
+-include/generated/at91_pm_data-offsets.h: arch/arm/mach-at91/pm_data-offsets.s FORCE
++$(obj)/pm_data-offsets.h: $(obj)/pm_data-offsets.s FORCE
+ 	$(call filechk,offsets,__PM_DATA_OFFSETS_H__)
+ 
+-arch/arm/mach-at91/pm_suspend.o: include/generated/at91_pm_data-offsets.h
++$(obj)/pm_suspend.o: $(obj)/pm_data-offsets.h
+ 
+ targets += pm_data-offsets.s
++clean-files += pm_data-offsets.h
+diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+index c751f047b116..ed57c879d4e1 100644
+--- a/arch/arm/mach-at91/pm_suspend.S
++++ b/arch/arm/mach-at91/pm_suspend.S
+@@ -10,7 +10,7 @@
+ #include <linux/linkage.h>
+ #include <linux/clk/at91_pmc.h>
+ #include "pm.h"
+-#include "generated/at91_pm_data-offsets.h"
++#include "pm_data-offsets.h"
+ 
+ #define	SRAMC_SELF_FRESH_ACTIVE		0x01
+ #define	SRAMC_SELF_FRESH_EXIT		0x00
+-- 
+2.17.1
+
