@@ -2,77 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 614B49AC06
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:54:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DCFD9AC1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:55:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390033AbfHWJyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 05:54:01 -0400
-Received: from ozlabs.org ([203.11.71.1]:50241 "EHLO ozlabs.org"
+        id S2390940AbfHWJzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 05:55:14 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57858 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389719AbfHWJyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 05:54:01 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S2390631AbfHWJzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 05:55:10 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46FGv96Y9Yz9sBp;
-        Fri, 23 Aug 2019 19:53:57 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1566554039;
-        bh=BfJ4KeMa9ynIbqcUGKqsYvI1yTpHP9RlmVesWrmaLB8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ZFCDdjGA496Rzj1MHYXPmcTMB6hcvg5d8lrz2VziNJbr8DRl+Ro8CRNxpVTQkwGMB
-         uSZ2prc9OXYh/uJhq+IqqaCmVGrsiuVR4HuFjoussNnUogzadE1+l2r2YSCTMPBxLf
-         tKR7aYsRgflcfQNG5/lEKjpvtCatYFk+1nNTEgZ6u+6nQQPZZHH3K2zCpfNJCJT/kL
-         p+Y0SXlFAvUTg9JdGK9sNrbM4vItvOttSSg58Cpy0XR0NTbZwiriZUSdmZ0uQiGUZt
-         xeWN/7ck+5me7+/LBtTjroAPsEFcSKxwOM1f0o1FsNr6tm4y5w4CqpJF7RBAAXIUlq
-         GOi8hK4x3ySxQ==
-Date:   Fri, 23 Aug 2019 19:53:56 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paul Mackerras <paulus@ozlabs.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: linux-next: Signed-off-by missing for commit in the kvm-ppc tree
-Message-ID: <20190823195356.3d6f4ebe@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BXiLglyjSYLp9Wz80AFIQk8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C1D11801584;
+        Fri, 23 Aug 2019 09:55:10 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-60.ams2.redhat.com [10.36.116.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E6891001B28;
+        Fri, 23 Aug 2019 09:55:04 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 3987531E7A; Fri, 23 Aug 2019 11:55:03 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v8 01/18] drm/virtio: pass gem reservation object to ttm init
+Date:   Fri, 23 Aug 2019 11:54:46 +0200
+Message-Id: <20190823095503.2261-2-kraxel@redhat.com>
+In-Reply-To: <20190823095503.2261-1-kraxel@redhat.com>
+References: <20190823095503.2261-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Fri, 23 Aug 2019 09:55:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BXiLglyjSYLp9Wz80AFIQk8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+With this gem and ttm will use the same reservation object,
+so mixing and matching ttm / gem reservation helpers should
+work fine.
 
-Hi all,
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+---
+ drivers/gpu/drm/virtio/virtgpu_object.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Commit
+diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
+index b2da31310d24..242766d644a7 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_object.c
++++ b/drivers/gpu/drm/virtio/virtgpu_object.c
+@@ -132,7 +132,8 @@ int virtio_gpu_object_create(struct virtio_gpu_device *vgdev,
+ 	virtio_gpu_init_ttm_placement(bo);
+ 	ret = ttm_bo_init(&vgdev->mman.bdev, &bo->tbo, params->size,
+ 			  ttm_bo_type_device, &bo->placement, 0,
+-			  true, acc_size, NULL, NULL,
++			  true, acc_size, NULL,
++			  bo->gem_base.resv,
+ 			  &virtio_gpu_ttm_bo_destroy);
+ 	/* ttm_bo_init failure will call the destroy */
+ 	if (ret != 0)
+-- 
+2.18.1
 
-  ff7240ccf0cd ("KVM: PPC: Book3S: Mark expected switch fall-through")
-
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BXiLglyjSYLp9Wz80AFIQk8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1ft7QACgkQAVBC80lX
-0Gx1sggAoLNRPbANjKnnzXcuhwMDpEbvfsCI0STGPK0klb9YmUi+pTxFKH3/Gxil
-XpUrK3eAIB8o4ACRuWKxsQDmfoO7ubo5zxlINBD+Ddd0GmdKOB2GOLhU7CY/bPAy
-BoN5ik0yflfjsKXhlKShzUZcDfiDOSvApf+k7cPL3XMDJQlkDSN1GUiIpzwGp570
-nSHlgzQQCmBJQwcFjHyF+2axuCqvRAkq6GxICIP5XL8jnwJgzjpSchHTivC7tNbl
-q/BXNkujELLzm4xJbt5M2TeeYJXHdNlfKF9zaXHUD/Ptwg5EvPSMZHht4MCDuxPj
-gUpq1DeQYmhv8QBwKYG3uN9Thi6Ihw==
-=culJ
------END PGP SIGNATURE-----
-
---Sig_/BXiLglyjSYLp9Wz80AFIQk8--
