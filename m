@@ -2,89 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C35FA9ADA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:52:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 987879ADB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:56:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392560AbfHWKvb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 06:51:31 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:58378 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730991AbfHWKvb (ORCPT
+        id S2389021AbfHWK4w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 06:56:52 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46980 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731756AbfHWK4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:51:31 -0400
+        Fri, 23 Aug 2019 06:56:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rV5X87m2aVqvDyTVi9a6HowY/GyHB5VKLCi2GkCc/3U=; b=tjNEkBlgX2N/B2l3X1g+NoyZu
-        hkDt1Rsb7Keu46ouFXQi0jsTqHid4G7fyRp9JKvYVfF+aju3zu8YQaanWmYCiJhvsOfxd3sH7cC+h
-        CvA5LXEj48rUIGz4//lebn/Vo+t+VkDgABlo8k3RhsQWMoLDOONu70LBIVdvfs1dYndKU/HAgUL2h
-        gyiw8vJrzM379DK9x5bn4LBm4s8yLXVwN9UEiXnsJpnkW5IbXFsiURr1yLpIUUq3BsRMO+5zhce8z
-        NLB8G1celxCrEH7vlQvrlpIL+11RcifC6WexTVKhYn9AzduRMeAAmYU/KcF2IlMVgdVTlAzUkT4Uz
-        a1kQkmc3g==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:48402)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1i17AD-0004Be-I5; Fri, 23 Aug 2019 11:51:25 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1i17A9-0000BF-9q; Fri, 23 Aug 2019 11:51:21 +0100
-Date:   Fri, 23 Aug 2019 11:51:21 +0100
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     Chris Clayton <chris2553@googlemail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-arch@vger.kernel.org,
-        shuah@kernel.org, sthotton@marvell.com, andre.przywara@arm.com,
-        arnd@arndb.de, salyzyn@android.com, huw@codeweavers.com,
-        catalin.marinas@arm.com, daniel.lezcano@linaro.org,
-        will.deacon@arm.com, linux-mips@vger.kernel.org,
-        ralf@linux-mips.org, 0x7f454c46@gmail.com, paul.burton@mips.com,
-        linux-kselftest@vger.kernel.org, linux@rasmusvillemoes.dk,
-        tglx@linutronix.de, pcc@google.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: Regression in 5.3-rc1 and later
-Message-ID: <20190823105121.GA13294@shell.armlinux.org.uk>
-References: <faaa3843-09a6-1a21-3448-072eeed1ea00@googlemail.com>
- <20190823103654.GX13294@shell.armlinux.org.uk>
- <8ab59d01-348e-9ac1-2944-5e98acd9b1f8@arm.com>
+         bh=koiWObzq5rTKtpZczJCbXwdbVcOOLP/YJmcfb1IFvJg=; b=G/YbZ2CAkQ86wEx4LmYJ+yV3W
+        XyHFenI917EjqhYjceApNe4nnZfkQWCd28y1DCC6+HCc7JkibNaHrxNW8X6Ri8bn3o137XoVq92kt
+        JrWsEVTXUpTQpjx8gjBjZIRgwAvnl4i0iUprflZsVmcYlOKkTvxFdYGaKW+ssAQcsSyKw=;
+Received: from [92.54.175.117] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1i17FS-0002vG-5l; Fri, 23 Aug 2019 10:56:50 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id CEF79D02BF1; Fri, 23 Aug 2019 11:56:49 +0100 (BST)
+Date:   Fri, 23 Aug 2019 11:56:49 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] Fix shared IRQ behavior in spi-fsl-dspi
+Message-ID: <20190823105649.GP23391@sirena.co.uk>
+References: <20190822212450.21420-1-olteanv@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="OGLMwEELQbPC02lM"
 Content-Disposition: inline
-In-Reply-To: <8ab59d01-348e-9ac1-2944-5e98acd9b1f8@arm.com>
+In-Reply-To: <20190822212450.21420-1-olteanv@gmail.com>
+X-Cookie: Don't SANFORIZE me!!
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 11:43:32AM +0100, Vincenzo Frascino wrote:
-> Hi Russell,
-> 
-> On 8/23/19 11:36 AM, Russell King - ARM Linux admin wrote:
-> > Hi,
-> > 
-> > To everyone on the long Cc list...
-> > 
-> > What's happening with this?  I was about to merge the patches for 32-bit
-> > ARM, which I don't want to do if doing so will cause this regression on
-> > 32-bit ARM as well.
-> > 
-> 
-> The regression is sorted as of yesterday, a new patch is going through tip:
-> timers/urgent and will be part of the next -rc.
-> 
-> If you want to merge them there should be nothing blocking.
 
-I don't have access to the tip tree.
+--OGLMwEELQbPC02lM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll wait a kernel release cycle instead.
+On Fri, Aug 23, 2019 at 12:24:49AM +0300, Vladimir Oltean wrote:
+> This patch is taken out of the "Poll mode for NXP DSPI driver" series
+> and respun against the "for-4.20" branch.
+> $(git describe --tags 13aed2392741) shows:
+> v4.20-rc1-18-g13aed2392741
 
-Thanks.
+Please don't send cover letters for single patches, if there is anything
+that needs saying put it in the changelog of the patch or after the ---
+if it's administrative stuff.  This reduces mail volume and ensures that=20
+any important information is recorded in the changelog rather than being
+lost.=20
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+--OGLMwEELQbPC02lM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1fxnEACgkQJNaLcl1U
+h9ASIQf/SKt+WpRN4Gf/NlepPXBNfqGFEvuWS2se0FwyKunIaQlk4lzGfX1kEI/4
+N+RMdtnCKkjtIcByafumflx4xoBo3AXOh1PV5eVN2wdsBHu1sep+dgNKh5UYVFTs
+x9W6ghQaxtkFSecDC1bmvY+m8q2hWnDC3Q0AjbLlqaM7yPh70sXh7SR2fRnekKCE
+stJavztU7SumHzpVenm+8zOw+6SPLe6wjUk7KK6tGzMHGLrtwWJnGMtCuBnwfhQU
+W9NigLpkbj+DgajGbqz7uG8cqIHmVN8/UECeHXmMdsm2LN+oq138TGLQLGBRFTkD
+91hT+SbfV96ycUSDNHYPi4BrH+JHlg==
+=XdkG
+-----END PGP SIGNATURE-----
+
+--OGLMwEELQbPC02lM--
