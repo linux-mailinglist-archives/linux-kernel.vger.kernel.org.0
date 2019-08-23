@@ -2,92 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DF3F9AC7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 938FD9AC8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 12:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392209AbfHWKHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 06:07:35 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40239 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392179AbfHWKHe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:07:34 -0400
-Received: by mail-lf1-f65.google.com with SMTP id b17so6737883lff.7
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 03:07:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qf0tKIGUzLMHo8897bxI7RBcbf3ra5As2xUShZTHVXk=;
-        b=jE9gw94w/pgz7UVZYcAdoir7gdHC599uaFqAZfv/f+xhZWcVIzW5ycibkKiuc64Fij
-         2v4MmF0EjLuSL4ozfNyabI2Cc/9hXbI0/l/SABfxMRUQavmZTxEU/1lU8V+4aZQ2q8Ui
-         EKZdNO+7tNhDCjhevzqHhf4C+hZUmRkl4WzOqEr4wvi++7J1ScnWHKKyI1Vl/wCB8N4X
-         UdG8vhkdJVDgmJ/eHPOJPZ0VvHYVn98u2Wjy2/iNGBFAR/AabPqBsR3aiOL3+g9VEOH/
-         1blIdDdH2RH0IUiC0ieXO+TdZFiJnlJFCrkbsHOZ1+tb+sGi/F54Zm4fSWtYHKthO+L2
-         hLYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qf0tKIGUzLMHo8897bxI7RBcbf3ra5As2xUShZTHVXk=;
-        b=LtFM453H6nFLd98zUiAbfqEyCQtdvVXWAZOGPONNVrF9r6O3Y8GW1tQGvJ3umpakpb
-         hidtjk+4VEpOILkcb/ICY/ssAKDCAtQSNW5T7iTcYsI6Fw1uG5oEql/djSCYI4UqEzG3
-         ZiOiQHtS8X3BU+OH53/TC/7zQXTW1Qk7GEaxfXop1xo956tFL18KfZNb1etjrqH+nSQi
-         YiBfMVGoEC9CPWlsCCLOT740EMGXZH/0vk7cuWYIxXpjxKBlLIGIk1cYNXVYZNRj3MWf
-         8jrM8/vEcC7ABsogLglx3XYUMYZ83x4UAjQ/LNtuxGWG5BOrPnekHToHBbzR/WKm6diE
-         BZow==
-X-Gm-Message-State: APjAAAXYkFZE1W8uumS67Yxd9FvPmE3OhkarXEPT/SvDHCWc6iKmF2qH
-        FJ9grBCnS7VSVhF/ju6pM7gARvBWnKCxW3vJBna98w==
-X-Google-Smtp-Source: APXvYqz/i+Y3ogiFU/vofGIhUoKotD90TSylBi/yYuyP+ATnMPS5RQPyrHi8LuwHLISNXwEhRblFyeyDZpGORCQSiqo=
-X-Received: by 2002:ac2:5c42:: with SMTP id s2mr2378472lfp.61.1566554852633;
- Fri, 23 Aug 2019 03:07:32 -0700 (PDT)
-MIME-Version: 1.0
-References: <1566547041-20804-1-git-send-email-chunfeng.yun@mediatek.com> <1566547041-20804-4-git-send-email-chunfeng.yun@mediatek.com>
-In-Reply-To: <1566547041-20804-4-git-send-email-chunfeng.yun@mediatek.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 23 Aug 2019 12:07:20 +0200
-Message-ID: <CACRpkdbr9PjFAvrq14DJmX1OSKYJxYFPaQZpVJaT_Q1_DUW=sw@mail.gmail.com>
-Subject: Re: [PATCH next v10 03/11] dt-bindings: usb: add binding for USB GPIO
- based connection detection driver
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Biju Das <biju.das@bp.renesas.com>,
+        id S2403948AbfHWKIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 06:08:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2403911AbfHWKIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 06:08:11 -0400
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 930E2233FD;
+        Fri, 23 Aug 2019 10:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566554890;
+        bh=Crf5MDMj/lbQANBrYTEedXUjRJ1Lg0gXyJkpryyhpFA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2I9aABEKFe19P/u13VQXXoUe/QJfkyZhnE0fm2bEYfevqJkdBCeLFRhuL9BGhTqm9
+         9b22xeAubdeOR3pRDInaRFfTkcxdZ8PwA+INjNhzq3Q9XM97koWPu16tcri5SeaQ3o
+         1/OE/G1oAP9zb5aK6WuNSUUQXiGCCu+BxkVjsYOQ=
+Date:   Fri, 23 Aug 2019 12:08:07 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     megous@megous.com
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-usb <linux-usb@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: allwinner: orange-pi-3: Enable WiFi
+Message-ID: <20190823100807.22heh2gahi7owo4e@flea>
+References: <20190823094228.6540-1-megous@megous.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sx4erx44vln7kzi7"
+Content-Disposition: inline
+In-Reply-To: <20190823094228.6540-1-megous@megous.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 9:58 AM Chunfeng Yun <chunfeng.yun@mediatek.com> wrote:
 
-> It's used to support dual role switch via GPIO when use Type-B
-> receptacle, typically the USB ID pin is connected to an input
-> GPIO, and also used to enable/disable device when the USB Vbus
-> pin is connected to an input GPIO.
+--sx4erx44vln7kzi7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+On Fri, Aug 23, 2019 at 11:42:28AM +0200, megous@megous.com wrote:
+> From: Ondrej Jirman <megous@megous.com>
 >
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> Orange Pi 3 has AP6256 WiFi/BT module. WiFi part of the module is called
+> bcm43356 and can be used with the brcmfmac driver. The module is powered by
+> the two always on regulators (not AXP805).
+>
+> WiFi uses a PG port with 1.8V voltage level signals. SoC needs to be
+> configured so that it sets up an 1.8V input bias on this port. This is done
+> by the pio driver by reading the vcc-pg-supply voltage.
+>
+> You'll need a fw_bcm43456c5_ag.bin firmware file and nvram.txt
+> configuration that can be found in the Xulongs's repository for H6:
+>
+> https://github.com/orangepi-xunlong/OrangePiH6_external/tree/master/ap6256
+>
+> Mainline brcmfmac driver expects the firmware and nvram at the following
+> paths relative to the firmware directory:
+>
+>   brcm/brcmfmac43456-sdio.bin
+>   brcm/brcmfmac43456-sdio.txt
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
 > ---
-> v9~v10 no changes
+>
+> Since RTC patches for H6 were merged, this can now go in too, if it looks ok.
+>
+> Other patches for this WiFi chip support were merged in previous cycles,
+> so this just needs enabling in DTS now.
+>
+> Sorry for the links in the commit log, but this information is useful,
+> even if the link itself goes bad. Any pointer what to google for
+> (file names, tree name) is great for anyone searching in the future.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I understand, but this should (also?) be in the wiki. Please add it
+there too.
 
-Yours,
-Linus Walleij
+> Please take a look.
+>
+> Thank you,
+> 	Ondrej
+>
+>  .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> index eda9d5f640b9..49d954369087 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi-3.dts
+> @@ -56,6 +56,34 @@
+>  		regulator-max-microvolt = <5000000>;
+>  		regulator-always-on;
+>  	};
+> +
+> +	reg_vcc33_wifi: vcc33-wifi {
+> +		/* Always on 3.3V regulator for WiFi and BT */
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc33-wifi";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-always-on;
+> +		vin-supply = <&reg_vcc5v>;
+> +	};
+> +
+> +	reg_vcc_wifi_io: vcc-wifi-io {
+> +		/* Always on 1.8V/300mA regulator for WiFi and BT IO */
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vcc-wifi-io";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		regulator-always-on;
+> +		vin-supply = <&reg_vcc33_wifi>;
+> +	};
+> +
+> +	wifi_pwrseq: wifi_pwrseq {
+> +		compatible = "mmc-pwrseq-simple";
+> +		clocks = <&rtc 1>;
+> +		clock-names = "ext_clock";
+> +		reset-gpios = <&r_pio 1 3 GPIO_ACTIVE_LOW>; /* PM3 */
+> +		post-power-on-delay-ms = <200>;
+> +	};
+>  };
+>
+>  &cpu0 {
+> @@ -91,6 +119,25 @@
+>  	status = "okay";
+>  };
+>
+> +&mmc1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&mmc1_pins>;
+
+This is the default already. I've removed it and applied.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--sx4erx44vln7kzi7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXV+7BwAKCRDj7w1vZxhR
+xdUoAP9lf+bDRTFhwEM+MuhxjkNWf8b3rdWTvPeIslZaYzUokAD+O9BdXFqXhK6Q
+TawAIlkWp7SHKOU0NdRWhmLzQZyaJwM=
+=YyL0
+-----END PGP SIGNATURE-----
+
+--sx4erx44vln7kzi7--
