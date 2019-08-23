@@ -2,139 +2,229 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D9F9B6C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 21:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 124CC9B6DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 21:14:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406141AbfHWTMJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 15:12:09 -0400
-Received: from mail-eopbgr20069.outbound.protection.outlook.com ([40.107.2.69]:31678
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2406115AbfHWTMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 15:12:06 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e9Ltf4KAnlgLs3jIF2avxYjRL/ZcIRyFhrNHyEhPofo8a47OlgMUaC3hLBKND9x5+3HhffUD0wimM6bKBVjYX8lltcK1cjCJMfpMhdFJgEvGBJ0O1KqVDeg8fczhHX0xRmcqgvDsetw6Qh/PJKrQaahaVgICEzXaFziyNtZGp0jaCMCjHL+pyKC69srMD2EaQ1nXiDDVIsAOz+jMZR6ANMUr9EwHFm+7dYlt96kMtuo0ZfNFBDQfKdsZSDkvnOB6YxANpFX7HazOJupHrsUg0glTmiODG7d44JGeKCcE65dQjDYClYHmCCyoeAlh1gHhQDlHNeV8EnYLS83syX5JzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=egAmLLcYxNc+vNg4VL0BrjM1fDO0l7UPG3LF2prGCGY=;
- b=F/h0ojSGgxW0PaqeRb7OFjiqb3Xp9D6etzxz/gBwSRKUo+GWpEuHvmZpTJAP+8jGqBXveJMEMDRoD8R736+DOJNgYtqWz5jKmSNjP2Vo2pDXkQcDKzSaOaXkc/0GkJN9G8iPLpH2dQp/7sQlc8v25hk+AePLtvgBwPQqDMjgzuuiLSob6LuK45Sg+GPucsiqg5VU6YYl8NsQLlvo2Lj4b1Z6kxzxucWcHN7+Dt3ZnnWvFyRudNdRU5nXu0dnxl2utxD1ytCxlEeJThgw8fvuJh3dTS8KX6izTchhlg8ZgibxMjxRwy4HyfRJwj3TlyfLTHV3cTM+qT2hIDt5ByqP4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=egAmLLcYxNc+vNg4VL0BrjM1fDO0l7UPG3LF2prGCGY=;
- b=EoVemOlIBJeY/WvrPItvVs+vdOuFhPGY2a5VaxPzAfAmyMRALG+GDG2B5FW7r+3DxEgdCotWSvbUa1zY7AsLMxUSnqCmMDUAofPoLbenTx14vIgP5Lj4WXVtBB4RdQ69hBL3xYJzCFS1ZhIBg5+me276UfiKu6f7VlHL8a+M93g=
-Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com (10.175.20.18) by
- VI1PR0402MB2717.eurprd04.prod.outlook.com (10.175.22.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Fri, 23 Aug 2019 19:11:42 +0000
-Received: from VI1PR0402MB2863.eurprd04.prod.outlook.com
- ([fe80::7de6:ea4b:9b5d:d023]) by VI1PR0402MB2863.eurprd04.prod.outlook.com
- ([fe80::7de6:ea4b:9b5d:d023%7]) with mapi id 15.20.2178.020; Fri, 23 Aug 2019
- 19:11:42 +0000
-From:   Stefan-gabriel Mirea <stefan-gabriel.mirea@nxp.com>
-To:     "corbet@lwn.net" <corbet@lwn.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>
-CC:     "jslaby@suse.com" <jslaby@suse.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Cosmin Stefan Stoica <cosmin.stoica@nxp.com>
-Subject: [PATCH v3 7/7] arm64: defconfig: Enable configs for S32V234
-Thread-Topic: [PATCH v3 7/7] arm64: defconfig: Enable configs for S32V234
-Thread-Index: AQHVWeaY2v6WFA+VBUyvk0fD5W0utQ==
-Date:   Fri, 23 Aug 2019 19:11:42 +0000
-Message-ID: <20190823191115.18490-8-stefan-gabriel.mirea@nxp.com>
-References: <20190823191115.18490-1-stefan-gabriel.mirea@nxp.com>
-In-Reply-To: <20190823191115.18490-1-stefan-gabriel.mirea@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.22.0
-x-clientproxiedby: AM5PR0402CA0007.eurprd04.prod.outlook.com
- (2603:10a6:203:90::17) To VI1PR0402MB2863.eurprd04.prod.outlook.com
- (2603:10a6:800:af::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=stefan-gabriel.mirea@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: fdf608ca-8d79-4ea7-96c8-08d727fdbb40
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR0402MB2717;
-x-ms-traffictypediagnostic: VI1PR0402MB2717:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB27175AF93966C49C47D55850DFA40@VI1PR0402MB2717.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3044;
-x-forefront-prvs: 0138CD935C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(39860400002)(366004)(396003)(346002)(189003)(199004)(446003)(476003)(2501003)(66446008)(76176011)(6436002)(6486002)(386003)(6506007)(50226002)(81156014)(256004)(86362001)(66946007)(64756008)(66556008)(66476007)(66066001)(186003)(8936002)(6512007)(25786009)(81166006)(36756003)(478600001)(52116002)(8676002)(14454004)(102836004)(6116002)(5660300002)(486006)(26005)(2201001)(71200400001)(53936002)(71190400001)(1076003)(316002)(110136005)(7416002)(54906003)(4326008)(99286004)(7736002)(305945005)(6636002)(3846002)(11346002)(2616005)(4744005)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2717;H:VI1PR0402MB2863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: XUoXzVhHQn4W7F6ga20L4KDqNtgmFRvHXKqS1PiKRqQB9CGNKnwzQwxGV/vpJPYDyT3e1+4mcse9Y2PPXQgY8Uv8/7cCvtfKJu20GJfwzeQU4OC6fxTOJ3Us46cheTjhFt5CqP/omZan/skxY0xMd3ZSFufEApczwv0V5cbeJor5QHbTUtb9yjAtFsb9LcTKBxo0p+XSoqnLhhMDMJneHk1T8TTuTbP+Sms3nIBsgTaGnmoa5OGGJrFdSx+jvj7RqfnVy6QPXtX4RXGEBW095xObxtsZ3ppWutw7NzAwbv46/yD/cXfmF1CMlwHtc5rP9kYE54UMtknGS9jBnShMe4TW95aKMNP8bUSuvsogKYDhNdBONYAPrWn8knYtn6CVh//KaCOMHgFAnbAA0vFo6ZfncVWBpxuwgnmB9V1OCO0=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1732849AbfHWTOW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 15:14:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42236 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728512AbfHWTOV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 15:14:21 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 43A383086262;
+        Fri, 23 Aug 2019 19:14:21 +0000 (UTC)
+Received: from linux-ws.nc.xsintricity.com (ovpn-112-63.rdu2.redhat.com [10.10.112.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6590A5D9E5;
+        Fri, 23 Aug 2019 19:14:20 +0000 (UTC)
+Message-ID: <324f57e86a1e9240657dd0c3beede10d6c89baea.camel@redhat.com>
+Subject: Re: [PULL REQUEST] Please pull rdma.git
+From:   Doug Ledford <dledford@redhat.com>
+To:     "Torvalds, Linus" <torvalds@linux-foundation.org>
+Cc:     "Gunthorpe, Jason" <jgg@ziepe.ca>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 23 Aug 2019 15:14:17 -0400
+In-Reply-To: <5b0aa103f6007e1887f9b2cacaec8015834589b8.camel@xsintricity.com>
+References: <5b0aa103f6007e1887f9b2cacaec8015834589b8.camel@xsintricity.com>
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-d9vBLQc5DZJC2HMDiJ6l"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdf608ca-8d79-4ea7-96c8-08d727fdbb40
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2019 19:11:42.0284
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cSEddpcg/saqOpsEelq3kR9VHxcbrTTYUOioxZ1IdiPq88OOF36gDNiOjo9ibMpDFx9exECfseb7Fg214LLzXBjw6w6MVrHaawp15P7dsRo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2717
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 23 Aug 2019 19:14:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mihaela Martinas <Mihaela.Martinas@freescale.com>
 
-Enable support for the S32V234 SoC, including the previously added UART
-driver.
+--=-d9vBLQc5DZJC2HMDiJ6l
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Mihaela Martinas <Mihaela.Martinas@freescale.com>
-Signed-off-by: Adrian.Nitu <adrian.nitu@freescale.com>
-Signed-off-by: Stoica Cosmin-Stefan <cosmin.stoica@nxp.com>
-Signed-off-by: Stefan-Gabriel Mirea <stefan-gabriel.mirea@nxp.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+Hi Linus,
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0e58ef02880c..bb5aa95a8455 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -48,6 +48,7 @@ CONFIG_ARCH_MXC=3Dy
- CONFIG_ARCH_QCOM=3Dy
- CONFIG_ARCH_RENESAS=3Dy
- CONFIG_ARCH_ROCKCHIP=3Dy
-+CONFIG_ARCH_S32=3Dy
- CONFIG_ARCH_SEATTLE=3Dy
- CONFIG_ARCH_STRATIX10=3Dy
- CONFIG_ARCH_SYNQUACER=3Dy
-@@ -347,6 +348,8 @@ CONFIG_SERIAL_XILINX_PS_UART=3Dy
- CONFIG_SERIAL_XILINX_PS_UART_CONSOLE=3Dy
- CONFIG_SERIAL_FSL_LPUART=3Dy
- CONFIG_SERIAL_FSL_LPUART_CONSOLE=3Dy
-+CONFIG_SERIAL_FSL_LINFLEXUART=3Dy
-+CONFIG_SERIAL_FSL_LINFLEXUART_CONSOLE=3Dy
- CONFIG_SERIAL_MVEBU_UART=3Dy
- CONFIG_SERIAL_DEV_BUS=3Dy
- CONFIG_VIRTIO_CONSOLE=3Dy
+I didn't notice I was on my personal email identity when I sent the pull
+request.  Sorry about that.  It's really me ;-)
+
+On Fri, 2019-08-23 at 14:48 -0400, Doug Ledford wrote:
+> Hi Linus,
+>=20
+> No beating around the bush: this is a monster pull request for an -rc5
+> kernel.  Intel hit me with a series of fixes for TID processing.=20
+> Mellanox hit me with a series for their UMR memory support.
+>=20
+> And we had one fix for siw that fixes the 32bit build warnings and
+> because of the number of casts that had to be changed to properly
+> silence the warnings, that one patch alone is a full 40% of the LOC of
+> this entire pull request.  Given that this is the initial release
+> kernel
+> for siw, I'm trying to fix anything in it that we can, so that adds to
+> the impetus to take fixes for it like this one.
+>=20
+> I had to do a rebase early in the week.  Jason had thought he put a
+> patch on the rc queue that he needed to be there so he could base some
+> work off of it, and it had actually not been placed there.  So he
+> asked
+> me (on Tuesday) to fix that up before pushing my wip branch to the
+> official rc branch.  I did, and that's why the early patches look like
+> they were all committed at the same time on Tuesday.  That bunch had
+> been in my queue prior.
+>=20
+> The various patches all pass my test for being legitimate fixes and
+> not
+> attempts to slide new features or development into a late rc.  Well,
+> they were all fixes with the exception of a couple clean up patches
+> people wrote for making the fixes they also wrote better (like a
+> cleanup
+> patch to move UMR checking into a function so that the remaining UMR
+> fix
+> patches can reference that function), so I left those in place too.
+>=20
+> My apologies for the LOC count and the number of patches here, it's
+> just
+> how the cards fell this cycle.  I hope you agree with me that they're
+> justified fixes.
+>=20
+> Here's the boilerplate:
+>=20
+> The following changes since commit
+> d1abaeb3be7b5fa6d7a1fbbd2e14e3310005c4c1:
+>=20
+>   Linux 5.3-rc5 (2019-08-18 14:31:08 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git
+> tags/for-linus
+>=20
+> for you to fetch changes up to
+> c536277e0db1ad2e9fbb9dfd940c3565a14d9c52:
+>=20
+>   RDMA/siw: Fix 64/32bit pointer inconsistency (2019-08-23 12:08:27
+> -0400)
+>=20
+> ----------------------------------------------------------------
+> Pull request for 5.3-rc5
+>=20
+> - Fix siw buffer mapping issue
+> - Fix siw 32/64 casting issues
+> - Fix a KASAN access issue in bnxt_re
+> - Fix several memory leaks (hfi1, mlx4)
+> - Fix a NULL deref in cma_cleanup
+> - Fixes for UMR memory support in mlx5 (4 patch series)
+> - Fix namespace check for restrack
+> - Fixes for counter support
+> - Fixes for hfi1 TID processing (5 patch series)
+> - Fix potential NULL deref in siw
+> - Fix memory page calculations in mlx5
+>=20
+> Signed-off-by: Doug Ledford <dledford@redhat.com>
+>=20
+> ----------------------------------------------------------------
+> Bernard Metzler (3):
+>       RDMA/siw: Fix potential NULL de-ref
+>       RDMA/siw: Fix SGL mapping issues
+>       RDMA/siw: Fix 64/32bit pointer inconsistency
+>=20
+> Ido Kalir (1):
+>       IB/core: Fix NULL pointer dereference when bind QP to counter
+>=20
+> Jason Gunthorpe (1):
+>       RDMA/mlx5: Fix MR npages calculation for IB_ACCESS_HUGETLB
+>=20
+> Kaike Wan (5):
+>       IB/hfi1: Drop stale TID RDMA packets
+>       IB/hfi1: Unsafe PSN checking for TID RDMA READ Resp packet
+>       IB/hfi1: Add additional checks when handling TID RDMA READ RESP
+> packet
+>       IB/hfi1: Add additional checks when handling TID RDMA WRITE DATA
+> packet
+>       IB/hfi1: Drop stale TID RDMA packets that cause TIDErr
+>=20
+> Leon Romanovsky (2):
+>       RDMA/counters: Properly implement PID checks
+>       RDMA/restrack: Rewrite PID namespace check to be reliable
+>=20
+> Moni Shoua (4):
+>       IB/mlx5: Consolidate use_umr checks into single function
+>       IB/mlx5: Report and handle ODP support properly
+>       IB/mlx5: Fix MR re-registration flow to use UMR properly
+>       IB/mlx5: Block MR WR if UMR is not possible
+>=20
+> Selvin Xavier (1):
+>       RDMA/bnxt_re: Fix stack-out-of-bounds in
+> bnxt_qplib_rcfw_send_message
+>=20
+> Wenwen Wang (3):
+>       IB/mlx4: Fix memory leaks
+>       infiniband: hfi1: fix a memory leak bug
+>       infiniband: hfi1: fix memory leaks
+>=20
+> zhengbin (1):
+>       RDMA/cma: fix null-ptr-deref Read in cma_cleanup
+>=20
+>  drivers/infiniband/core/cma.c              |  6 ++-
+>  drivers/infiniband/core/counters.c         | 10 ++--
+>  drivers/infiniband/core/nldev.c            |  3 +-
+>  drivers/infiniband/core/restrack.c         | 15 +++---
+>  drivers/infiniband/core/umem.c             |  7 +--
+>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.c |  8 ++-
+>  drivers/infiniband/hw/bnxt_re/qplib_rcfw.h | 11 ++--
+>  drivers/infiniband/hw/hfi1/fault.c         | 12 +++--
+>  drivers/infiniband/hw/hfi1/tid_rdma.c      | 76 ++++++++++-----------
+> ------
+>  drivers/infiniband/hw/mlx4/mad.c           |  4 +-
+>  drivers/infiniband/hw/mlx5/main.c          |  6 +--
+>  drivers/infiniband/hw/mlx5/mem.c           |  5 +-
+>  drivers/infiniband/hw/mlx5/mlx5_ib.h       | 14 +++++
+>  drivers/infiniband/hw/mlx5/mr.c            |  7 ++-
+>  drivers/infiniband/hw/mlx5/odp.c           | 17 ++++---
+>  drivers/infiniband/hw/mlx5/qp.c            | 24 +++++++--
+>  drivers/infiniband/sw/siw/siw.h            |  8 +--
+>  drivers/infiniband/sw/siw/siw_cm.c         | 82 ++++++++++++++-------
+> ---------
+>  drivers/infiniband/sw/siw/siw_cq.c         |  5 +-
+>  drivers/infiniband/sw/siw/siw_mem.c        | 14 ++---
+>  drivers/infiniband/sw/siw/siw_mem.h        |  2 +-
+>  drivers/infiniband/sw/siw/siw_qp.c         |  2 +-
+>  drivers/infiniband/sw/siw/siw_qp_rx.c      | 26 +++++-----
+>  drivers/infiniband/sw/siw/siw_qp_tx.c      | 80 ++++++++++++++-------
+> --------
+>  drivers/infiniband/sw/siw/siw_verbs.c      | 40 +++++++--------
+>  include/rdma/restrack.h                    |  3 +-
+>  26 files changed, 248 insertions(+), 239 deletions(-)
+>=20
 --=20
-2.22.0
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
+--=-d9vBLQc5DZJC2HMDiJ6l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAl1gOwkACgkQuCajMw5X
+L90DKQ//fSAE4ev1OxxfyQzo9HhweIbuZNeY1Iq66mBhDQl6BJUfDq1nZyLxV/Ab
+vxhCookz3SVn1ItQ4JUrW1LJF9qvuHdRQvWm9KnVhDqRyRvUxkgz8Mxjvr8G8/8h
+cWwI9PYdcR/yOKNPA4rQ4OGBdVGJePgKdfkFuLojR28KAh4i0XWnJEnsKXEADbGO
+qqh86Jv2x+wIkaunEOBjMfYdvDz7VhXWuy4Jelqc2WxjbBYPsEXcSWgHB342XTbK
+j+eBUMv0O+ns4er5ckIefNKWEp/1HK3JI+x2gvRNdy9oBdsYrwnB+5Zkhnohoj8y
+cZYT3jOwEFKvy0Tt6txcy3KZOzA3gRm3edmg4Ld3FpN5bQ6EGQ0CzGdu7CADCvCg
+/EmYmVashRxp71QLmP/jKdK3bBHs5NC/he3lkUnzSfNdNlX/JVi//XtztFb8gmRD
+GIWdEvIBiy5wVoXJ1NKDySbc7SVxhKSUyuPPqxBMp0utxvXOBo3IGu3BHj1UKqUe
+bTFyaZWnjsrfW8EvYnanuLqCkateNPqs3xUbEmC/kwx5mipcTz9KsJG8+CSUJM+7
+drape5hCjo/NESn8VPPc8RHZngIILH/9OpHmRfXApLTwTEaGGW8AiMNqKIXnUhch
+Fnj5U717adEC3sVsWLbpYk8Tl4pXL1EE72RhEzHjSHr3s4eMPBY=
+=kyjY
+-----END PGP SIGNATURE-----
+
+--=-d9vBLQc5DZJC2HMDiJ6l--
 
