@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B7929B063
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45E579B06A
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404566AbfHWNJj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 09:09:39 -0400
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:45752 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfHWNJd (ORCPT
+        id S2404764AbfHWNJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 09:09:45 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38796 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394994AbfHWNJg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 09:09:33 -0400
-Received: by mail-wr1-f49.google.com with SMTP id q12so8561265wrj.12;
-        Fri, 23 Aug 2019 06:09:32 -0700 (PDT)
+        Fri, 23 Aug 2019 09:09:36 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g17so8605672wrr.5;
+        Fri, 23 Aug 2019 06:09:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8VCD60Jb/+pjJ/5tE2H1gE1kn+YA9VqYcdsUMqOXSco=;
-        b=QDjAJEJq6ZcVuSHwU+MBKVsJ+39TQfO5zpnFhyxxytBqnvyL4EtFjYELT9Xf7dCXK5
-         5YDBt6H932I+KJgHm0IVNRDSmsC1CnhEt1bf7nJxDgz2DuYJK3EC5xTVUhgZEEmrSaSE
-         lkjrPV8lAUp15Kx63HaUvBsveFSORtXGfqlyfxLsxQtpSvDPq5sV41wlKFDz573i6Ka4
-         me3obmuVQ6ad/KqBaS/XfDgJ4m5iX/ar6XUszx5NQBeA8FtkODNYJodgCsqKQiv6VAmN
-         ZtwFTeLHVRVLtuKlvzluRoLkI7pOPKbBwPvPF09w3fQVMGwGLMahnkYMOfIYYWgaAqUV
-         i1Lg==
+        bh=MRgcnuzG2I8lDuGL1jMNsqN/KgyJ2300oOMbrHcQPAk=;
+        b=UqHtalEMPEp3cSm+E2tTMndX4iPSkrW7CknIbiyhI7JRQv9rH2Rk6ZpoWDasM7bS2g
+         fbDOBgLxD04GDfGsaEYGYZlE/IZ8DYSS6DBuV1m2s2LXImC2UdQsCWbLJIaTrvGjaLoe
+         uobQ55c5l9XrUmvtrySAQlGTinrOQkwxVfrwn+4XNsgGfs3zGmgpNUzF9jACZP7jgiWV
+         HC/GR8yzSH5Vg8rIiGgiPeYjFhkrMgMvKn4I7US4uWTmDsYJ7qJytWAInzN7TQhwiFDx
+         wdklaIoI8CPt0zCZ/dt5yxrRe/WnsDcBxZe1HRcb/KqxaE4EoAZtJpO3FC1igcKlM9ul
+         mnKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8VCD60Jb/+pjJ/5tE2H1gE1kn+YA9VqYcdsUMqOXSco=;
-        b=dkmqvYL4c0TFaBZ62BZ0tYrAsydtouiAeVwnAWmWSViMYhk9YIFpnFGJ5LXKYwllkA
-         ak5zjoWPlCb/bsRYPZCnOGWafPPt8O0tmOoNI0pf4eTcdzq3mT6MxRuVQQm14qNM/ZlY
-         VvTVbQPZkmIIQp+8NHSm2drCm0p6K+bdHdejyWM1J41D/6vfkRRXoQmUEb7/UbL+7/ek
-         AWf4QnJpkCk9ZkAVRMfTT9wOIu9NzpNqJ1kvt5nfISMHaNe/12nYhgdnV0tU9pPFdPha
-         FDL3QpR45XfeF8cWjQq+mSjczkcTnFUNPc1vQOKO8mJrv8XBWQ2Ywic9pjalIjwnVoGw
-         rREw==
-X-Gm-Message-State: APjAAAVHv9FabKYdsvRKOomVDJcLp3+uP3uXefvVpj+NX40Dl4wCccx7
-        1lUE7wPvcZIMzBMpa6vuahA=
-X-Google-Smtp-Source: APXvYqxeasfLg6QmAfYNd5CxvNxF5CTrTfQn9CMhycqaL9NZ/B1NdtGXp9v0usy0mUSJePpK3pFTXA==
-X-Received: by 2002:a5d:4b05:: with SMTP id v5mr5151794wrq.208.1566565771240;
-        Fri, 23 Aug 2019 06:09:31 -0700 (PDT)
+        bh=MRgcnuzG2I8lDuGL1jMNsqN/KgyJ2300oOMbrHcQPAk=;
+        b=Hic16hcA5EKGAB5L7V4fz9wMQ5Tz9dUSjsw5YwNw4YxVAuw2QkOo/fSnC3cRtUx/EI
+         pcfrDo5SrLSsxmlnzvqfugnRaGjO+CvEI8NecO5QUNHM9Ryt5haG3/lx3gFgyd5l/Bzf
+         zArMw2OqIo//D+kfcg9GRVbdayqRyUdLIX3cUQIgDAQeLT3Jka4HM3ATWnyKJ/A6z9rN
+         UaigTqVmmbO4ZJplzgM1+7DeUX0lQLhVc4pHhw0S0+COZeF0QzzUM7+xjPA2RTJxuqoJ
+         bYg5JdBqHz9AgLWG4Nix0znLCncQhmuxYGpgmBwVXC7vv0ukEiVwlvUrFRnQ53wmCeiU
+         WIow==
+X-Gm-Message-State: APjAAAXSDH5Deb/858uKR+tGm3E3TL2ve/OiUe56yT1OfUXXFXUYLhzN
+        f7bTC/9J+WQXDIKL3oYqc7Y=
+X-Google-Smtp-Source: APXvYqxcQ+4cLIrzVciiwjDYzpbA9TaWEp26IDcmHpMs2V3goBt61z+hwndHALj9mnOCwTB+n0vPPw==
+X-Received: by 2002:adf:a55d:: with SMTP id j29mr4849842wrb.275.1566565774269;
+        Fri, 23 Aug 2019 06:09:34 -0700 (PDT)
 Received: from localhost.localdomain ([94.204.252.234])
-        by smtp.gmail.com with ESMTPSA id m7sm4359854wmi.18.2019.08.23.06.09.28
+        by smtp.gmail.com with ESMTPSA id m7sm4359854wmi.18.2019.08.23.06.09.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 23 Aug 2019 06:09:30 -0700 (PDT)
+        Fri, 23 Aug 2019 06:09:33 -0700 (PDT)
 From:   Christian Hewitt <christianshewitt@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -52,9 +52,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Chrisitian Hewitt <christianshewitt@gmail.com>,
         Oleg Ivanov <balbes-150@yandex.ru>
-Subject: [PATCH 1/3] dt-bindings: Add vendor prefix for Ugoos
-Date:   Fri, 23 Aug 2019 17:08:35 +0400
-Message-Id: <1566565717-5182-2-git-send-email-christianshewitt@gmail.com>
+Subject: [PATCH 2/3] dt-bindings: arm: amlogic: Add support for the Ugoos AM6
+Date:   Fri, 23 Aug 2019 17:08:36 +0400
+Message-Id: <1566565717-5182-3-git-send-email-christianshewitt@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1566565717-5182-1-git-send-email-christianshewitt@gmail.com>
 References: <1566565717-5182-1-git-send-email-christianshewitt@gmail.com>
@@ -63,29 +63,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ugoos Industrial Co., Ltd. are a manufacturer of ARM based TV Boxes,
-Dongles, Digital Signage and Advertisement Solutions [0].
+The Ugoos AM6 is based on the Amlogic W400 reference design using the S922X
+chipset. Hardware specifications:
 
-[0] (https://ugoos.com)
+- 2GB LPDDR4 RAM
+- 16GB eMMC storage
+- 10/100/1000 Base-T Ethernet using External RGMII PHY
+- 802.11 a/b/g/b/ac + BT 5.0 sdio wireless (Ampak 6398S)
+- HDMI 2.0 (4k@60p) video
+- Composite video + 2-channel audio output on 3.5mm jack
+- S/PDIF audio output
+- Aux input
+- 1x USB 3.0
+- 3x USB 2.0
+- 1x micro SD card slot
 
 Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 6992bbb..d962be9 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -965,6 +965,8 @@ patternProperties:
-     description: Ubiquiti Networks
-   "^udoo,.*":
-     description: Udoo
-+  "^ugoos,.*":
-+    description: Ugoos Industrial Co., Ltd.
-   "^uniwest,.*":
-     description: United Western Technologies Corp (UniWest)
-   "^upisemi,.*":
+diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
+index 325c6fd..2ded61d 100644
+--- a/Documentation/devicetree/bindings/arm/amlogic.yaml
++++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
+@@ -139,6 +139,7 @@ properties:
+         items:
+           - enum:
+               - hardkernel,odroid-n2
++              - ugoos,am6
+           - const: amlogic,g12b
+ 
+ ...
 -- 
 2.7.4
 
