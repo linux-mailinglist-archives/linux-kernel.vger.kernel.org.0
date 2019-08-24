@@ -2,95 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50E199C04E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 23:12:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7589C055
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 23:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728140AbfHXVMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 17:12:10 -0400
-Received: from mail-wr1-f43.google.com ([209.85.221.43]:35995 "EHLO
-        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727777AbfHXVMK (ORCPT
+        id S1727997AbfHXVSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 17:18:10 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42922 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726842AbfHXVSI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 17:12:10 -0400
-Received: by mail-wr1-f43.google.com with SMTP id r3so11737631wrt.3;
-        Sat, 24 Aug 2019 14:12:08 -0700 (PDT)
+        Sat, 24 Aug 2019 17:18:08 -0400
+Received: by mail-lf1-f65.google.com with SMTP id s19so9553495lfb.9
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2019 14:18:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=0Iy/5bEEOYfDEI8uS9YsPalXrQmIXfqc76b7xMFBL04=;
-        b=X6RCK4A2Jwrc3n8bHchGJ44qqh+EbuCLRwYrHn9K607tGJQL5U7Vf9g49d/NbvgNE1
-         PUMZpRvE2ugbpCjsLLcF37QUk0DaaHCe3y2JgygAtStEQzTi0g6h7lQ4NABnquoePrsS
-         wfDzjaOyAHtlHXhnXVZfH4fmqe2obymh6mPBigc+tDyyNW8VmMNaXtGWWfXYTFQG1ZRc
-         GmIESa7DiLL3oyW9m6jl4LGh49hzCs+xB6z+FWvvzxavWKl/BoRJzjHulM36FKNWP0Q/
-         ozIvZQsXRe4S2xgc6eYcrdSTCMi9gNRQdiHwQyzfCrXucnrGumf/T2roI6Ha6UIO+8pY
-         505Q==
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=buG8rS1mJF0qAnzC4CPBok3txDbgd1yDUZD/dbaM0ZI=;
+        b=BE85dBJbTx/kCV/K61eeXdfzfnJ2mys1pqTCzNLN+29ZHQOyNl4I0MC0JtYtksN+3/
+         ThtcLUKmJQRpyc+FwTr/Xs7fOvgEwJrDE/O9EvdkhQoVPENqR2+P6dBQAyzfvnhdiQ5h
+         aY1OBBncu7vycqpujXGWqpvbtcr4L5vCSuvcNu+X+a/KDIDDkoz/iyWyUnl64/ulJ7/i
+         Sh1ZO7XNNbGhgltOWHB5Mhaw5U5fHU1foQY12xa2gvnlySrqB6YITMnNQgEMHndh+jH6
+         gY/ZaCu3wvWUE0/wwCAs3IBaMO4l1eWkftuXLIDGNZCaHTBSetOwtlhu0vLIA4ljEvth
+         JpYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=0Iy/5bEEOYfDEI8uS9YsPalXrQmIXfqc76b7xMFBL04=;
-        b=ABCymOQQBH/oyCly+qxpTAm/AFIlZS7vVe+qXeFzyFrW4YcdSQajYYm3HbkENQszvB
-         im0aILU6whmU1FgWWs2kHwakWnINBhzoE8ZmAUvd+59NSLvzjyy5tZD3A5aiE0eETau4
-         CFxpyK8izZLJyPVJXFnONCULOf8RN84Lq55R67R+NTpvqIP7gughLdeuL1+3RBEvDJWD
-         sO6+AnDirWMCI7DmQUZ0tDEY4GfTvKtVfpi0bJnnXNcuV694nxg2UUE2vHUZDFt2/rOt
-         UiuVf5N0mIEECEEprDP71uzaYVZpO7cP1kYQ5a6/TSAorbRTo4sG4VAbZlUbFXosSLPd
-         n5Jg==
-X-Gm-Message-State: APjAAAWUbfPVcJVqpt0IYuiaxPm7OSqBCWgJJcXohCSAkW39qdchvXq7
-        oe5Bo4dM6IzUDyET49xoP38VgSBw
-X-Google-Smtp-Source: APXvYqwXS3VX8r3hP1MDKfaRoFze51b3fXBK6iDIg61x8d/gRpLGZIH0numvlMifbzP2KUAXD5gzgg==
-X-Received: by 2002:adf:f0ce:: with SMTP id x14mr6729779wro.31.1566681127579;
-        Sat, 24 Aug 2019 14:12:07 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300F133C1F6001D020CA8E905822D.dip0.t-ipconnect.de. [2003:f1:33c1:f600:1d02:ca8:e905:822d])
-        by smtp.googlemail.com with ESMTPSA id g14sm12742386wrb.38.2019.08.24.14.12.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2019 14:12:06 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     eswara.kota@linux.intel.com
-Cc:     cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, qi-ming.wu@intel.com, robh@kernel.org,
-        hauke@hauke-m.de
-Subject: RE: [PATCH v2 2/2] reset: Reset controller driver for Intel LGM SoC
-Date:   Sat, 24 Aug 2019 23:11:58 +0200
-Message-Id: <20190824211158.5900-1-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <90cc600d6f7ded68f5a618b626bd9cffa5edf5c3.1566531960.git.eswara.kota@linux.intel.com>
-References: <90cc600d6f7ded68f5a618b626bd9cffa5edf5c3.1566531960.git.eswara.kota@linux.intel.com>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=buG8rS1mJF0qAnzC4CPBok3txDbgd1yDUZD/dbaM0ZI=;
+        b=pUXWSeGq6tub5a+lWPzCy8d1+qiGuaCoRWqeOTISFHHhFBYbM4GTYYjShPxPRdTISR
+         +70f995DHlQGETsQ4oCwCqfgEt6LdlByT4woQvsY6vQFlBvwvWYDJxT1ers9BLNnK4jW
+         /2gy2wFOhvsoNQipvsRZT1baRDNBXk0DUf41hwtlHT7qD794BBX9VFWSY/Z1n/6Uh6L+
+         l/b+bmeHJacFDsjwpjYqYQrQVSKSXAfzzOF7ElwOXOFblah4uOEhc8+ZSbJEcVfL6566
+         8OUGOFl4MVy9bsIpCvTrsLQbvwVk7Pr4kWYseCJACubore99FLUQ1GoxmHMhV8jXCKrx
+         qgtw==
+X-Gm-Message-State: APjAAAWdoxb1M6jsqCb0IgS0pPcMtQUvDVw30xlRED4VoVTgyfIvufuU
+        un/VH0Wve+gpPjtS5ByGlyJ4IFERSGWEZdlOsSFN8A==
+X-Google-Smtp-Source: APXvYqytYBob1ysBJFACFwD27yhpXuh79le74ImOIBK9fnFXYOfsrqZBUWF/nbQVDk6NXB+PhLckDQnRms6L+zoHv0A=
+X-Received: by 2002:ac2:5939:: with SMTP id v25mr6513387lfi.115.1566681486625;
+ Sat, 24 Aug 2019 14:18:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 24 Aug 2019 23:17:54 +0200
+Message-ID: <CACRpkdaWR9GZ0Hem4h-jdGcYc_Uwx29XvsHuEgvXiebRG6DCwA@mail.gmail.com>
+Subject: [GIT PULL] GPIO fixes for v5.3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dilip,
+Hi Linus,
 
-> Add driver for the reset controller present on Intel
-> Lightening Mountain (LGM) SoC for performing reset
-> management of the devices present on the SoC. Driver also
-> registers a reset handler to peform the entire device reset.
+here is a (hopefully last) set of GPIO fixes for the v5.3 kernel
+cycle. Two are pretty core.
 
-[...]
-> +static const struct of_device_id intel_reset_match[] = {
-> +	{ .compatible = "intel,rcu-lgm" },
-> +	{}
-> +};
-how is this IP block differnet from the one used in many Lantiq SoCs?
-there is already an upstream driver for the RCU IP block on the Lantiq
-SoCs: drivers/reset/reset-lantiq.c
+Please pull them in! Details in the signed tag.
 
-some background:
-Lantiq was started as a spinoff from Infineon in 2009. Intel then
-acquired Lantiq in 2015. source: [0]
-Intel is re-using some of the IP blocks from the MIPS Lantiq SoCs
-(Intel even has some own MIPS SoCs as part of the Lantiq acquisition,
-typically used for PON/GPON/ADSL/VDSL capable network devices).
-Thus I think it is likely that the new "Lightening Mountain" SoCs use
-an updated version of the Lantiq RCU IP.
+Yours,
+Linus Walleij
 
+The following changes since commit d45331b00ddb179e291766617259261c112db872:
 
-Martin
+  Linux 5.3-rc4 (2019-08-11 13:26:41 -0700)
 
+are available in the Git repository at:
 
-[0] https://wikidevi.com/wiki/Lantiq
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+tags/gpio-v5.3-4
+
+for you to fetch changes up to 48057ed1840fde9239b1e000bea1a0a1f07c5e99:
+
+  gpio: Fix irqchip initialization order (2019-08-23 11:00:43 +0200)
+
+----------------------------------------------------------------
+GPIO fixes for the v5.3 kernel:
+
+- Fix not reporting open drain/source lines to userspace as "input"
+- Fix a minor build error found in randconfigs
+- Fix a chip select quirk on the Freescale SPI
+- Fix the irqchip initialization semantic order to reflect what
+  it was using the old API
+
+----------------------------------------------------------------
+Andreas Kemnade (1):
+      gpio: of: fix Freescale SPI CS quirk handling
+
+Bartosz Golaszewski (1):
+      gpiolib: never report open-drain/source lines as 'input' to user-space
+
+Linus Walleij (1):
+      gpio: Fix irqchip initialization order
+
+YueHaibing (1):
+      gpio: Fix build error of function redefinition
+
+ drivers/gpio/gpiolib-of.c |  2 +-
+ drivers/gpio/gpiolib.c    | 36 +++++++++++++++++++-----------------
+ include/linux/gpio.h      | 24 ------------------------
+ 3 files changed, 20 insertions(+), 42 deletions(-)
