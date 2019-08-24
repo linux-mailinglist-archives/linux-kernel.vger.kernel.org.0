@@ -2,53 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1238D9BF57
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 20:45:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC329BF61
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 20:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbfHXSpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 14:45:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727940AbfHXSpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 14:45:09 -0400
-Subject: Re: [GIT PULL] Hyper-V commits for v5.3-rc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566672308;
-        bh=UOSlRmEptJkj0Waa6NENDDkwnv9qgN1PFyh68/zOBZg=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=wBFVViDGmwBP5EOMjrNyJ7vqlJdQQDbqPfstUqmkxYQI7xvH0ZDDLjgesRW0PCyDU
-         JqfuQQpHaLGnhrqzdHIGkpKrNRa2uMRf/ZW/c4LZDRan+XJN4R6lKsebIXY3OCWeKz
-         I4kNDh7NuM7qdVW3WcWZPDjpyOIGisbKnM/xkbQ4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190824173935.63A412146E@mail.kernel.org>
-References: <20190824173935.63A412146E@mail.kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190824173935.63A412146E@mail.kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git
- tags/hyperv-fixes-signed
-X-PR-Tracked-Commit-Id: a9fc4340aee041dd186d1fb8f1b5d1e9caf28212
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 361469211f876e67d7ca3d3d29e6d1c3e313d0f1
-Message-Id: <156667230845.2337.4059356004364464694.pr-tracker-bot@kernel.org>
-Date:   Sat, 24 Aug 2019 18:45:08 +0000
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@microsoft.com
+        id S1727826AbfHXStV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 14:49:21 -0400
+Received: from mail-pf1-f175.google.com ([209.85.210.175]:41079 "EHLO
+        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfHXStV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 14:49:21 -0400
+Received: by mail-pf1-f175.google.com with SMTP id 196so8891450pfz.8;
+        Sat, 24 Aug 2019 11:49:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I5fAoCSunKyneQTnxswt2lZAvNjsVlaAOR0R91zCLtY=;
+        b=FEwBv8btTNIYphxJxntCEk1P1gSbJ23VCP2kFlrutJ/W2DM07vIMjMhN01WntGgWWc
+         SpTIhC+t9l2Is3kJPeI+6uNFlmLNmTtudjQpw68gcXHJryP1x6LL34+XIapDJg/C5YeZ
+         qE9U+O85LEyzbFeZe6FPnr1MEGiyJ8TjYJ/4GDfELJ52filMQTv+20c8H4H8uHar9gK5
+         8zWOcOd1XLXF9Lp1Siqa8PWA9m7n5rkzl2Zt8rbf3ztyMlS46DVbMrTWKFtWLU5PdIgR
+         awTg7/ArU6pNTVB1d0N6cPAs3fpqoEMaMo95nasUkoeh1slE5dXJDh39BIBgjHR+fooy
+         OzYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=I5fAoCSunKyneQTnxswt2lZAvNjsVlaAOR0R91zCLtY=;
+        b=AKDkPY4nzptzMcZC6bc8vHCRaQmxXj3N4v7U0YX/MTocztrqcSA/zEUF17x9cfV9uL
+         aH6I6mFSHlufzmEa/OCo0L2P/YiikcATLWLZF8KSjJ8fhB40J/pCQM1iHXhUuwIavCbk
+         QKr22pge4DTiOl9PW8yAYLoQ8JCI90JS0SNn6d2R4EelPyonlv4nTQP7kFpYHve1Jr1U
+         CEjFijHcpXAAtp335WX1dSiKJGPjGI466jOHJLNCaupoH0vMGVReupt8Gi0nyRC5frgj
+         EtEQRCTDEbQVjV1d1rjVGubNCGJOpYJrhLYrFQEj6FKhyMFKbuEsDmmBUfS1gj/HFRzD
+         u6oA==
+X-Gm-Message-State: APjAAAVDP1lJWPeUg3zLJTicLk+udTCtRxQmwueIjBWPASNe2JqP/IRN
+        0WBrrHVxugfAvdBbCChqzh8=
+X-Google-Smtp-Source: APXvYqx9uWXRu5STlTuhhddKk5s+NXsSeIbWWPfxTYTrEsTy7Epo+SsjR8s1Ko1fAa3ulcwtF00Qxw==
+X-Received: by 2002:a63:31cc:: with SMTP id x195mr9042601pgx.147.1566672560712;
+        Sat, 24 Aug 2019 11:49:20 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.74.111])
+        by smtp.gmail.com with ESMTPSA id t8sm5519292pji.24.2019.08.24.11.49.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2019 11:49:20 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCHv4 0/3] Odroid c2 usb fixs
+Date:   Sat, 24 Aug 2019 18:49:09 +0000
+Message-Id: <20190824184912.795-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 24 Aug 2019 10:59:21 -0400:
+Some time ago I had tired to enable usb bus 1 for Odroid C2/C1
+but it's look like some more work is needed to u-boot and
+usb_phy driver to initialize this port.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
+Below patches tries to address the issue regarding usb bus 2 (4 port)
+while disable the usb bus 1 on this board.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/361469211f876e67d7ca3d3d29e6d1c3e313d0f1
+Prevoius patch
+[0] https://lkml.org/lkml/2019/1/29/325
+I have tried to split the patchs for now.
 
-Thank you!
+Anand Moon (3):
+  arm64: dts: meson: odroid-c2: p5v0 is the main 5V power input
+  arm64: dts: meson: odroid-c2: Add missing linking regulator to usb bus
+  arm64: dts: meson: odroid-c2: Disable usb_otg bus to avoid power
+    failed warning
+
+ .../boot/dts/amlogic/meson-gxbb-odroidc2.dts  | 20 +++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.23.0
+
