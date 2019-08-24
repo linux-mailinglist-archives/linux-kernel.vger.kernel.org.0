@@ -2,109 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A324A9BA7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 03:35:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA4229BAC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 03:54:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfHXBfa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 21:35:30 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:44053 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728108AbfHXBf2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 21:35:28 -0400
-Received: by mail-pl1-f201.google.com with SMTP id t2so6845655plq.11
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 18:35:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=RZYwg2AKNWWbK5AlePl3YpD83HqbQqaQ/S9W/auEYuc=;
-        b=sXlKKJhgEU1wa6b+t1Kfk3Us9JBNqB6qgFrYAorUjpNahnQtVB62F129r9jqW7As2D
-         TECRv23j+orFXVoF1btyTlgKbGavDLv/mRXRpxUvewJTVsSyWUiwJR/MDWHL2k4m7043
-         cnxd+RK+ZXWwaD0m4kGAzCv3TPvws/OkUrPxVWvZj7C8gOUsEIbG1ulzMU+UBC5ulBWq
-         dWbj8dEXXE7CGrs/FCxd7vyonAjP9xvohhPSk8O9Rj98/htG5iBLR1KI8Hh4Pbg0s00U
-         4YCNUKyFTqpEwz4Jf4CPs5qIZGCq3zkZi2UB5XVr4PO3/OBx5gUJAlDS2TXKFE4g9qqr
-         g5EQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=RZYwg2AKNWWbK5AlePl3YpD83HqbQqaQ/S9W/auEYuc=;
-        b=hwfdKgBbfaeCOZWj9XqynOdGEAmg1BqsrlETQsJxmpb/TLd5g1A4JkewcIGoGO8XZ8
-         MwS2uY61M6tCnsospazkRReOe6xLw1yHXmTHmvG3L5L/QqsjI38Ib4ApDiY1Z59xLipv
-         Z9ZDi8sk+7vIyUArBBeAA61ipgZO7h6onGtvk0jVMU/2u/66oWtFljTF84ESSuht5XNZ
-         P6uGmKkFjrVBvdcV/q5AdiAc2lPTFEi2k2Li6N2HoeFjY5Zx8GeuwA99orDCAB1t91xe
-         ntEUJfBLsvLIPpG2huBuZm9Kbm4WrxpI/+1RPNY7F5X+581nbcBaq5U40X6RKNSGSUC/
-         EWSA==
-X-Gm-Message-State: APjAAAXTUNkVv+VOvHwRYaU+z0OCAKu63CzKkuNiFSehv3eu+Sys7CkY
-        3XnESuKn70G2pQ3SJ52i6DLlSZY1mBqioA2kscNmBw==
-X-Google-Smtp-Source: APXvYqxeho9rBF0ZZ6VsD/UiYLMznIviw0ZlKZiyS4hv5yytF5NdlNUif2Pu10B+ZY4kXv3ubxh1pUBcBlFmg94D169gig==
-X-Received: by 2002:a63:c03:: with SMTP id b3mr6561436pgl.23.1566610527139;
- Fri, 23 Aug 2019 18:35:27 -0700 (PDT)
-Date:   Fri, 23 Aug 2019 18:34:25 -0700
-In-Reply-To: <20190824013425.175645-1-brendanhiggins@google.com>
-Message-Id: <20190824013425.175645-19-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20190824013425.175645-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-Subject: [PATCH v15 18/18] MAINTAINERS: add proc sysctl KUnit test to PROC
- SYSCTL section
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     frowand.list@gmail.com, gregkh@linuxfoundation.org,
-        jpoimboe@redhat.com, keescook@google.com,
-        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
-        peterz@infradead.org, robh@kernel.org, sboyd@kernel.org,
-        shuah@kernel.org, tytso@mit.edu, yamada.masahiro@socionext.com
-Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
-        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
-        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
-        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
-        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
-        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
-        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
-        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>,
-        Iurii Zaikin <yzaikin@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726206AbfHXBtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 21:49:24 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5650 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725283AbfHXBtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 21:49:24 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 72B379924FCC14EF7B24;
+        Sat, 24 Aug 2019 09:49:20 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 24 Aug 2019 09:49:16 +0800
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+To:     <joro@8bytes.org>
+CC:     <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] iommu/dma: fix for dereferencing before null checking
+Date:   Sat, 24 Aug 2019 09:47:12 +0800
+Message-ID: <1566611232-165399-1-git-send-email-linyunsheng@huawei.com>
+X-Mailer: git-send-email 2.8.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add entry for the new proc sysctl KUnit test to the PROC SYSCTL section,
-and add Iurii as a maintainer.
+The cookie is dereferenced before null checking in the function
+iommu_dma_init_domain.
 
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+This patch moves the dereferencing after the null checking.
+
+Fixes: fdbe574eb693 ("iommu/dma: Allow MSI-only cookies")
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/iommu/dma-iommu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f0bd77e8a8a2..0cac78807137 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12965,12 +12965,14 @@ F:	Documentation/filesystems/proc.txt
- PROC SYSCTL
- M:	Luis Chamberlain <mcgrof@kernel.org>
- M:	Kees Cook <keescook@chromium.org>
-+M:	Iurii Zaikin <yzaikin@google.com>
- L:	linux-kernel@vger.kernel.org
- L:	linux-fsdevel@vger.kernel.org
- S:	Maintained
- F:	fs/proc/proc_sysctl.c
- F:	include/linux/sysctl.h
- F:	kernel/sysctl.c
-+F:	kernel/sysctl-test.c
- F:	tools/testing/selftests/sysctl/
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index d991d40..cdf7814 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -303,13 +303,15 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+ 		u64 size, struct device *dev)
+ {
+ 	struct iommu_dma_cookie *cookie = domain->iova_cookie;
+-	struct iova_domain *iovad = &cookie->iovad;
+ 	unsigned long order, base_pfn;
++	struct iova_domain *iovad;
+ 	int attr;
  
- PS3 NETWORK SUPPORT
+ 	if (!cookie || cookie->type != IOMMU_DMA_IOVA_COOKIE)
+ 		return -EINVAL;
+ 
++	iovad = &cookie->iovad;
++
+ 	/* Use the smallest supported page size for IOVA granularity */
+ 	order = __ffs(domain->pgsize_bitmap);
+ 	base_pfn = max_t(unsigned long, 1, base >> order);
 -- 
-2.23.0.187.g17f5b7556c-goog
+2.8.1
 
