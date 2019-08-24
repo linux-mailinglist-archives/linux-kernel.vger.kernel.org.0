@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE8F59C01A
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:27:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A49E39C016
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbfHXU1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 16:27:17 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:12082 "EHLO rere.qmqm.pl"
+        id S1728169AbfHXU1L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 16:27:11 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:12354 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727879AbfHXU05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 16:26:57 -0400
+        id S1727936AbfHXU06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 16:26:58 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 46G8sC3TJ3zTs;
-        Sat, 24 Aug 2019 22:25:19 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 46G8sD20xTzX0;
+        Sat, 24 Aug 2019 22:25:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1566678319; bh=VdbgtZ09Jmhv6nJYzpWS3ntFIzMHLWp5KKJVlktY88w=;
+        t=1566678320; bh=yiTBq/DuyyKpDzXcgmYnUpaUSvdYXCpYBzYX6OrpC7I=;
         h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=anw28Gshlg7ioShZh4jMUTbNhZLisNCofQ7YU/mNq1U957DdsRYUy0eFjOFaT5i53
-         5mP8AKvzz4Vl324o0DRvozaxEUsX3Aohg9XUhRjGDB9ewFakBsSD1Xw0+nz9dxeiza
-         1RPw2S12ZiNB55qaCwIK8xqfcbSM3fiYYAKifSbPZx9PnpG6U1kWCvWEV3lB6JwbI3
-         3yP8CTo02S2cKCt3uOKj0SzOugCwJPrYoyKtxs+MIibEG77Ra/mlfqqKza0ba+DJx7
-         KMsgfp+ulEIu7vzox++YCmsKj6TYM93ykMNsPY8RZAaijYzhmqcINdd+1KQ1jr0YVl
-         SS2AmLbJejucw==
+        b=HLCnPEdysqXSybASSetiJ6esb3pO/zLIItQaTDSr67J6FCKz1PPgVwOOhCbB4TBCB
+         M0Z+QxSH05CeMcGS/qR0f9fZdjzJR8KUIgdKZgrGn+ao8YB4vGqo447fFXkW8EAa3N
+         nCJN3DViDPex2opeTdzbwSm38sVs4n741ohb3XIa1qTVmNE5CCxShpM8GG/TBUMIdY
+         mWZFJFXf/hvWrJF4GyRkOPdquVFpeWAoKk1vk7SZDd12eCl+6MVqSOcV713Bu4xKdB
+         mPIe/UQjcm9XW53v8vEoLjzG0dFELFIwSRQ42ngEyNOHCJFjron35FaM+RJ+Aojm78
+         vrYzHXR0Wp85Q==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.101.2 at mail
-Date:   Sat, 24 Aug 2019 22:26:54 +0200
-Message-Id: <44fa6b700421e80778f20ff9ead2b148cf6d2e92.1566677788.git.mirq-linux@rere.qmqm.pl>
+Date:   Sat, 24 Aug 2019 22:26:55 +0200
+Message-Id: <9b85d5a7c7e788e9ed87d020323ad9292e3aeab7.1566677788.git.mirq-linux@rere.qmqm.pl>
 In-Reply-To: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 3/6] ASoC: atmel_ssc_dai: implement left-justified data
- mode
+Subject: [PATCH v2 4/6] dt-bindings: misc: atmel-ssc: LRCLK from TF/RF pin
+ option
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -54,37 +54,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable support for left-justified data mode for SSC-codec link.
+Add single-pin LRCLK source options for Atmel SSC module.
 
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
 ---
- v2: rebased
+  v2: split from implementation patch
 
 ---
- sound/soc/atmel/atmel_ssc_dai.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/misc/atmel-ssc.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index 7dc6ec9b8c7a..48e9eef34c0f 100644
---- a/sound/soc/atmel/atmel_ssc_dai.c
-+++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -564,6 +564,15 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
+diff --git a/Documentation/devicetree/bindings/misc/atmel-ssc.txt b/Documentation/devicetree/bindings/misc/atmel-ssc.txt
+index f9fb412642fe..c98e96dbec3a 100644
+--- a/Documentation/devicetree/bindings/misc/atmel-ssc.txt
++++ b/Documentation/devicetree/bindings/misc/atmel-ssc.txt
+@@ -24,6 +24,11 @@ Optional properties:
+        this parameter to choose where the clock from.
+      - By default the clock is from TK pin, if the clock from RK pin, this
+        property is needed.
++  - atmel,lrclk-from-tf-pin: bool property.
++  - atmel,lrclk-from-rf-pin: bool property.
++     - SSC in slave mode gets LRCLK from RF for receive and TF for transmit
++       data direction. This property makes both use single TF (or RF) pin
++       as LRCLK. At most one can be present.
+   - #sound-dai-cells: Should contain <0>.
+      - This property makes the SSC into an automatically registered DAI.
  
- 	switch (ssc_p->daifmt & SND_SOC_DAIFMT_FORMAT_MASK) {
- 
-+	case SND_SOC_DAIFMT_LEFT_J:
-+		fs_osync = SSC_FSOS_POSITIVE;
-+		fs_edge = SSC_START_RISING_RF;
-+
-+		rcmr =	  SSC_BF(RCMR_STTDLY, 0);
-+		tcmr =	  SSC_BF(TCMR_STTDLY, 0);
-+
-+		break;
-+
- 	case SND_SOC_DAIFMT_I2S:
- 		fs_osync = SSC_FSOS_NEGATIVE;
- 		fs_edge = SSC_START_FALLING_RF;
 -- 
 2.20.1
 
