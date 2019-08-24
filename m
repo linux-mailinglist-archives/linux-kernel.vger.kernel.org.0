@@ -2,51 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80BEC9BF58
+	by mail.lfdr.de (Postfix) with ESMTP id 1238D9BF57
 	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 20:45:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbfHXSpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728029AbfHXSpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sat, 24 Aug 2019 14:45:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53876 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:53910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727912AbfHXSpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 14:45:08 -0400
-Subject: Re: [GIT PULL] SCSI fixes for 5.3-rc5
+        id S1727940AbfHXSpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 14:45:09 -0400
+Subject: Re: [GIT PULL] Hyper-V commits for v5.3-rc
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1566672308;
-        bh=0EifMnHF0dXWeVEJO39RSkX1igyuAB6qFQUFX/o3MXI=;
+        bh=UOSlRmEptJkj0Waa6NENDDkwnv9qgN1PFyh68/zOBZg=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=omEhZJXRsvCDidF32DXFfxtJynZQBrg7wdOD1lGao7ml4zpVJna7JXh9c4nbxgQcM
-         VWKI7AXy7EGDtbVJsakJKYF9B36O+fkZtkl48ymv7ugJRM9dl7ViROeAsOxSIz7zTK
-         72WDa+hz9Z/d4jhAT4Ou/eA3clHQudxzuObrjZ3c=
+        b=wBFVViDGmwBP5EOMjrNyJ7vqlJdQQDbqPfstUqmkxYQI7xvH0ZDDLjgesRW0PCyDU
+         JqfuQQpHaLGnhrqzdHIGkpKrNRa2uMRf/ZW/c4LZDRan+XJN4R6lKsebIXY3OCWeKz
+         I4kNDh7NuM7qdVW3WcWZPDjpyOIGisbKnM/xkbQ4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <1566638608.2975.19.camel@HansenPartnership.com>
-References: <1566638608.2975.19.camel@HansenPartnership.com>
+In-Reply-To: <20190824173935.63A412146E@mail.kernel.org>
+References: <20190824173935.63A412146E@mail.kernel.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <1566638608.2975.19.camel@HansenPartnership.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-X-PR-Tracked-Commit-Id: 77ffd3465ba837e9dc714e17b014e77b2eae765a
+X-PR-Tracked-Message-Id: <20190824173935.63A412146E@mail.kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git
+ tags/hyperv-fixes-signed
+X-PR-Tracked-Commit-Id: a9fc4340aee041dd186d1fb8f1b5d1e9caf28212
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 17d0fbf47eb15ab7780cc77b28de070ec37e15c5
-Message-Id: <156667230804.2337.8948750981514850563.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 361469211f876e67d7ca3d3d29e6d1c3e313d0f1
+Message-Id: <156667230845.2337.4059356004364464694.pr-tracker-bot@kernel.org>
 Date:   Sat, 24 Aug 2019 18:45:08 +0000
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@microsoft.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sat, 24 Aug 2019 10:23:28 +0100:
+The pull request you sent on Sat, 24 Aug 2019 10:59:21 -0400:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+> git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/17d0fbf47eb15ab7780cc77b28de070ec37e15c5
+https://git.kernel.org/torvalds/c/361469211f876e67d7ca3d3d29e6d1c3e313d0f1
 
 Thank you!
 
