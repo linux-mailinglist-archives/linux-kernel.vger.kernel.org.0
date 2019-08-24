@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C1C49C00F
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF4B9C011
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbfHXU05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 16:26:57 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:62629 "EHLO rere.qmqm.pl"
+        id S1728010AbfHXU07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 16:26:59 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:64738 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726464AbfHXU0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 16:26:55 -0400
+        id S1727708AbfHXU05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 16:26:57 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 46G8s91604zGl;
-        Sat, 24 Aug 2019 22:25:17 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 46G8sB1SjrzMK;
+        Sat, 24 Aug 2019 22:25:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1566678317; bh=bI4z6h+GTprYkJG4UIeziaeNCROEh3xOu5vMoCUwBkc=;
+        t=1566678318; bh=b1ek30lBM19VEowKiuxbPntDd/KyiOI+RsIayDlIPSE=;
         h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=kV9Oso3/S7TQywbIKVaxb9X+muAQ/SPO73jIs0Vf8pfH0YJ8qKetq8TQw0wt3F5Yc
-         EFQ1cVLJujArhDaMGce+XLp/EO8kbUa+jH9EdpqeT1UTA3w9yZhkontd88bW/Y4qAP
-         fKdrgW7cc/rYdqhxV2FJgkjHnhMB5sRFC6TBV9IXALS4YEmrvVWWdHwgATCU1DnDhn
-         +jeGIkW91SqGkpTJb1VP7fPxb8msf27AfCLQruKYWn5bwiAA4p1szQMgw0QccJaQh5
-         cLu3zJaBVKi/Kq+LqBAWbkZUd9gKb7rV89d2PhCz4ywvm8/JASyxGtfAcBKkgQagFn
-         9xsjFe4s3wHeQ==
+        b=WPRi+wrljlChgomDgenPw6WjWkEF0QUrfddbn+HpD7+Pxi0P2uXrDhHSKF9RmF1E/
+         10gIljWH0OQ6hlS1wNejS1saBAm9usZSC7dFBpHeuanU0Qil8UQlw3iYVj8dwqI3SD
+         b+OS4I51FygKAjXBc//QSIpUZydf+JxjnWGDAPhJWaX9ZjFJQuCW56YvIbDAwFbVQ5
+         TOrb6zyh1+/QUJOn9riWoIU3WCiSoJD0KGb/gXuzC57dxe3yqsV1UV69lfM7q9gtfj
+         JpWq17xMvVdA7LAJZAiXtgcPH1JbT5IjI8twDNJNYbrsv1Wc44Xq//4x9cwA6ycW2m
+         k6u8H2xSASNtA==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.101.2 at mail
-Date:   Sat, 24 Aug 2019 22:26:52 +0200
-Message-Id: <233d5461f4448df151755de7b69a0cd3ad310d5c.1566677788.git.mirq-linux@rere.qmqm.pl>
+Date:   Sat, 24 Aug 2019 22:26:53 +0200
+Message-Id: <f5949b0326fdcdca072f3ed03f77de9e207631cd.1566677788.git.mirq-linux@rere.qmqm.pl>
 In-Reply-To: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 1/6] ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in
- Kconfig
+Subject: [PATCH v2 2/6] ASoC: atmel_ssc_dai: rework DAI format configuration
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -54,67 +53,349 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow SSC to be used on platforms described using audio-graph-card
-in Device Tree.
+Rework DAI format calculation in preparation for adding more formats
+later. As a side-effect this enables all CBM/CBS x CFM/CFS combinations
+for supported formats. (Note: the additional modes are not tested.)
+
+Note: this changes FSEDGE to POSITIVE for I2S CBM_CFS mode as the TXSYN
+interrupt is not used anyway.
 
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
 ---
- v2: extended to PDC mode
-     reworked and fixed Kconfig option dependencies
+ v2: added note about extended modes' status
+     incorporated common FS (LRCLK) configuration
 
 ---
- sound/soc/atmel/Kconfig | 30 ++++++++++++++++++------------
- 1 file changed, 18 insertions(+), 12 deletions(-)
+ sound/soc/atmel/atmel_ssc_dai.c | 286 +++++++++-----------------------
+ 1 file changed, 80 insertions(+), 206 deletions(-)
 
-diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
-index 06c1d5ce642c..f118c229ed82 100644
---- a/sound/soc/atmel/Kconfig
-+++ b/sound/soc/atmel/Kconfig
-@@ -12,25 +12,31 @@ if SND_ATMEL_SOC
- config SND_ATMEL_SOC_PDC
- 	tristate
- 	depends on HAS_DMA
--	default m if SND_ATMEL_SOC_SSC_PDC=m && SND_ATMEL_SOC_SSC=m
--	default y if SND_ATMEL_SOC_SSC_PDC=y || (SND_ATMEL_SOC_SSC_PDC=m && SND_ATMEL_SOC_SSC=y)
+diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
+index 6f89483ac88c..7dc6ec9b8c7a 100644
+--- a/sound/soc/atmel/atmel_ssc_dai.c
++++ b/sound/soc/atmel/atmel_ssc_dai.c
+@@ -471,7 +471,7 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
+ 	int dir, channels, bits;
+ 	u32 tfmr, rfmr, tcmr, rcmr;
+ 	int ret;
+-	int fslen, fslen_ext;
++	int fslen, fslen_ext, fs_osync, fs_edge;
+ 	u32 cmr_div;
+ 	u32 tcmr_period;
+ 	u32 rcmr_period;
+@@ -558,226 +558,36 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
+ 	/*
+ 	 * Compute SSC register settings.
+ 	 */
+-	switch (ssc_p->daifmt
+-		& (SND_SOC_DAIFMT_FORMAT_MASK | SND_SOC_DAIFMT_MASTER_MASK)) {
+ 
+-	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS:
+-		/*
+-		 * I2S format, SSC provides BCLK and LRC clocks.
+-		 *
+-		 * The SSC transmit and receive clocks are generated
+-		 * from the MCK divider, and the BCLK signal
+-		 * is output on the SSC TK line.
+-		 */
 -
--config SND_ATMEL_SOC_SSC_PDC
--	tristate
- 
- config SND_ATMEL_SOC_DMA
- 	tristate
- 	select SND_SOC_GENERIC_DMAENGINE_PCM
--	default m if SND_ATMEL_SOC_SSC_DMA=m && SND_ATMEL_SOC_SSC=m
--	default y if SND_ATMEL_SOC_SSC_DMA=y || (SND_ATMEL_SOC_SSC_DMA=m && SND_ATMEL_SOC_SSC=y)
+-		if (bits > 16 && !ssc->pdata->has_fslen_ext) {
+-			dev_err(dai->dev,
+-				"sample size %d is too large for SSC device\n",
+-				bits);
+-			return -EINVAL;
+-		}
 -
--config SND_ATMEL_SOC_SSC_DMA
--	tristate
+-		fslen_ext = (bits - 1) / 16;
+-		fslen = (bits - 1) % 16;
+-
+-		rcmr =	  SSC_BF(RCMR_PERIOD, rcmr_period)
+-			| SSC_BF(RCMR_STTDLY, START_DELAY)
+-			| SSC_BF(RCMR_START, SSC_START_FALLING_RF)
+-			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
+-			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
+-			| SSC_BF(RCMR_CKS, SSC_CKS_DIV);
+-
+-		rfmr =    SSC_BF(RFMR_FSLEN_EXT, fslen_ext)
+-			| SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(RFMR_FSOS, SSC_FSOS_NEGATIVE)
+-			| SSC_BF(RFMR_FSLEN, fslen)
+-			| SSC_BF(RFMR_DATNB, (channels - 1))
+-			| SSC_BIT(RFMR_MSBF)
+-			| SSC_BF(RFMR_LOOP, 0)
+-			| SSC_BF(RFMR_DATLEN, (bits - 1));
+-
+-		tcmr =	  SSC_BF(TCMR_PERIOD, tcmr_period)
+-			| SSC_BF(TCMR_STTDLY, START_DELAY)
+-			| SSC_BF(TCMR_START, SSC_START_FALLING_RF)
+-			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
+-			| SSC_BF(TCMR_CKO, SSC_CKO_CONTINUOUS)
+-			| SSC_BF(TCMR_CKS, SSC_CKS_DIV);
+-
+-		tfmr =    SSC_BF(TFMR_FSLEN_EXT, fslen_ext)
+-			| SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(TFMR_FSDEN, 0)
+-			| SSC_BF(TFMR_FSOS, SSC_FSOS_NEGATIVE)
+-			| SSC_BF(TFMR_FSLEN, fslen)
+-			| SSC_BF(TFMR_DATNB, (channels - 1))
+-			| SSC_BIT(TFMR_MSBF)
+-			| SSC_BF(TFMR_DATDEF, 0)
+-			| SSC_BF(TFMR_DATLEN, (bits - 1));
+-		break;
+-
+-	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBM_CFM:
+-		/* I2S format, CODEC supplies BCLK and LRC clocks. */
+-		rcmr =	  SSC_BF(RCMR_PERIOD, 0)
+-			| SSC_BF(RCMR_STTDLY, START_DELAY)
+-			| SSC_BF(RCMR_START, SSC_START_FALLING_RF)
+-			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
+-			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
+-			| SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
+-					   SSC_CKS_PIN : SSC_CKS_CLOCK);
+-
+-		rfmr =	  SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(RFMR_FSOS, SSC_FSOS_NONE)
+-			| SSC_BF(RFMR_FSLEN, 0)
+-			| SSC_BF(RFMR_DATNB, (channels - 1))
+-			| SSC_BIT(RFMR_MSBF)
+-			| SSC_BF(RFMR_LOOP, 0)
+-			| SSC_BF(RFMR_DATLEN, (bits - 1));
+-
+-		tcmr =	  SSC_BF(TCMR_PERIOD, 0)
+-			| SSC_BF(TCMR_STTDLY, START_DELAY)
+-			| SSC_BF(TCMR_START, SSC_START_FALLING_RF)
+-			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
+-			| SSC_BF(TCMR_CKO, SSC_CKO_NONE)
+-			| SSC_BF(TCMR_CKS, ssc->clk_from_rk_pin ?
+-					   SSC_CKS_CLOCK : SSC_CKS_PIN);
++	fslen_ext = (bits - 1) / 16;
++	fslen = (bits - 1) % 16;
  
- config SND_ATMEL_SOC_SSC
- 	tristate
--	default y if SND_ATMEL_SOC_SSC_DMA=y || SND_ATMEL_SOC_SSC_PDC=y
--	default m if SND_ATMEL_SOC_SSC_DMA=m || SND_ATMEL_SOC_SSC_PDC=m
-+
-+config SND_ATMEL_SOC_SSC_PDC
-+	tristate "SoC PCM DAI support for AT91 SSC controller using PDC"
-+	depends on ATMEL_SSC
-+	select SND_ATMEL_SOC_PDC
-+	select SND_ATMEL_SOC_SSC
-+	help
-+	  Say Y or M if you want to add support for Atmel SSC interface
-+	  in PDC mode configured using audio-graph-card in device-tree.
-+
-+config SND_ATMEL_SOC_SSC_DMA
-+	tristate "SoC PCM DAI support for AT91 SSC controller using DMA"
-+	depends on ATMEL_SSC
-+	select SND_ATMEL_SOC_DMA
-+	select SND_ATMEL_SOC_SSC
-+	help
-+	  Say Y or M if you want to add support for Atmel SSC interface
-+	  in DMA mode configured using audio-graph-card in device-tree.
+-		tfmr =	  SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(TFMR_FSDEN, 0)
+-			| SSC_BF(TFMR_FSOS, SSC_FSOS_NONE)
+-			| SSC_BF(TFMR_FSLEN, 0)
+-			| SSC_BF(TFMR_DATNB, (channels - 1))
+-			| SSC_BIT(TFMR_MSBF)
+-			| SSC_BF(TFMR_DATDEF, 0)
+-			| SSC_BF(TFMR_DATLEN, (bits - 1));
+-		break;
+-
+-	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBM_CFS:
+-		/* I2S format, CODEC supplies BCLK, SSC supplies LRCLK. */
+-		if (bits > 16 && !ssc->pdata->has_fslen_ext) {
+-			dev_err(dai->dev,
+-				"sample size %d is too large for SSC device\n",
+-				bits);
+-			return -EINVAL;
+-		}
+-
+-		fslen_ext = (bits - 1) / 16;
+-		fslen = (bits - 1) % 16;
+-
+-		rcmr =	  SSC_BF(RCMR_PERIOD, rcmr_period)
+-			| SSC_BF(RCMR_STTDLY, START_DELAY)
+-			| SSC_BF(RCMR_START, SSC_START_FALLING_RF)
+-			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
+-			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
+-			| SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
+-					   SSC_CKS_PIN : SSC_CKS_CLOCK);
+-
+-		rfmr =    SSC_BF(RFMR_FSLEN_EXT, fslen_ext)
+-			| SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(RFMR_FSOS, SSC_FSOS_NEGATIVE)
+-			| SSC_BF(RFMR_FSLEN, fslen)
+-			| SSC_BF(RFMR_DATNB, (channels - 1))
+-			| SSC_BIT(RFMR_MSBF)
+-			| SSC_BF(RFMR_LOOP, 0)
+-			| SSC_BF(RFMR_DATLEN, (bits - 1));
+-
+-		tcmr =	  SSC_BF(TCMR_PERIOD, tcmr_period)
+-			| SSC_BF(TCMR_STTDLY, START_DELAY)
+-			| SSC_BF(TCMR_START, SSC_START_FALLING_RF)
+-			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
+-			| SSC_BF(TCMR_CKO, SSC_CKO_NONE)
+-			| SSC_BF(TCMR_CKS, ssc->clk_from_rk_pin ?
+-					   SSC_CKS_CLOCK : SSC_CKS_PIN);
+-
+-		tfmr =    SSC_BF(TFMR_FSLEN_EXT, fslen_ext)
+-			| SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_NEGATIVE)
+-			| SSC_BF(TFMR_FSDEN, 0)
+-			| SSC_BF(TFMR_FSOS, SSC_FSOS_NEGATIVE)
+-			| SSC_BF(TFMR_FSLEN, fslen)
+-			| SSC_BF(TFMR_DATNB, (channels - 1))
+-			| SSC_BIT(TFMR_MSBF)
+-			| SSC_BF(TFMR_DATDEF, 0)
+-			| SSC_BF(TFMR_DATLEN, (bits - 1));
+-		break;
+-
+-	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_CBS_CFS:
+-		/*
+-		 * DSP/PCM Mode A format, SSC provides BCLK and LRC clocks.
+-		 *
+-		 * The SSC transmit and receive clocks are generated from the
+-		 * MCK divider, and the BCLK signal is output
+-		 * on the SSC TK line.
+-		 */
+-		rcmr =	  SSC_BF(RCMR_PERIOD, rcmr_period)
+-			| SSC_BF(RCMR_STTDLY, 1)
+-			| SSC_BF(RCMR_START, SSC_START_RISING_RF)
+-			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
+-			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
+-			| SSC_BF(RCMR_CKS, SSC_CKS_DIV);
++	switch (ssc_p->daifmt & SND_SOC_DAIFMT_FORMAT_MASK) {
  
- config SND_AT91_SOC_SAM9G20_WM8731
- 	tristate "SoC Audio support for WM8731-based At91sam9g20 evaluation board"
+-		rfmr =	  SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(RFMR_FSOS, SSC_FSOS_POSITIVE)
+-			| SSC_BF(RFMR_FSLEN, 0)
+-			| SSC_BF(RFMR_DATNB, (channels - 1))
+-			| SSC_BIT(RFMR_MSBF)
+-			| SSC_BF(RFMR_LOOP, 0)
+-			| SSC_BF(RFMR_DATLEN, (bits - 1));
++	case SND_SOC_DAIFMT_I2S:
++		fs_osync = SSC_FSOS_NEGATIVE;
++		fs_edge = SSC_START_FALLING_RF;
+ 
+-		tcmr =	  SSC_BF(TCMR_PERIOD, tcmr_period)
+-			| SSC_BF(TCMR_STTDLY, 1)
+-			| SSC_BF(TCMR_START, SSC_START_RISING_RF)
+-			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
+-			| SSC_BF(TCMR_CKO, SSC_CKO_CONTINUOUS)
+-			| SSC_BF(TCMR_CKS, SSC_CKS_DIV);
++		rcmr =	  SSC_BF(RCMR_STTDLY, 1);
++		tcmr =	  SSC_BF(TCMR_STTDLY, 1);
+ 
+-		tfmr =	  SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(TFMR_FSDEN, 0)
+-			| SSC_BF(TFMR_FSOS, SSC_FSOS_POSITIVE)
+-			| SSC_BF(TFMR_FSLEN, 0)
+-			| SSC_BF(TFMR_DATNB, (channels - 1))
+-			| SSC_BIT(TFMR_MSBF)
+-			| SSC_BF(TFMR_DATDEF, 0)
+-			| SSC_BF(TFMR_DATLEN, (bits - 1));
+ 		break;
+ 
+-	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_CBM_CFM:
++	case SND_SOC_DAIFMT_DSP_A:
+ 		/*
+-		 * DSP/PCM Mode A format, CODEC supplies BCLK and LRC clocks.
++		 * DSP/PCM Mode A format
+ 		 *
+ 		 * Data is transferred on first BCLK after LRC pulse rising
+ 		 * edge.If stereo, the right channel data is contiguous with
+ 		 * the left channel data.
+ 		 */
+-		rcmr =	  SSC_BF(RCMR_PERIOD, 0)
+-			| SSC_BF(RCMR_STTDLY, START_DELAY)
+-			| SSC_BF(RCMR_START, SSC_START_RISING_RF)
+-			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
+-			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
+-			| SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
+-					   SSC_CKS_PIN : SSC_CKS_CLOCK);
++		fs_osync = SSC_FSOS_POSITIVE;
++		fs_edge = SSC_START_RISING_RF;
++		fslen = fslen_ext = 0;
+ 
+-		rfmr =	  SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(RFMR_FSOS, SSC_FSOS_NONE)
+-			| SSC_BF(RFMR_FSLEN, 0)
+-			| SSC_BF(RFMR_DATNB, (channels - 1))
+-			| SSC_BIT(RFMR_MSBF)
+-			| SSC_BF(RFMR_LOOP, 0)
+-			| SSC_BF(RFMR_DATLEN, (bits - 1));
++		rcmr =	  SSC_BF(RCMR_STTDLY, 1);
++		tcmr =	  SSC_BF(TCMR_STTDLY, 1);
+ 
+-		tcmr =	  SSC_BF(TCMR_PERIOD, 0)
+-			| SSC_BF(TCMR_STTDLY, START_DELAY)
+-			| SSC_BF(TCMR_START, SSC_START_RISING_RF)
+-			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
+-			| SSC_BF(TCMR_CKO, SSC_CKO_NONE)
+-			| SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
+-					   SSC_CKS_CLOCK : SSC_CKS_PIN);
+-
+-		tfmr =	  SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
+-			| SSC_BF(TFMR_FSDEN, 0)
+-			| SSC_BF(TFMR_FSOS, SSC_FSOS_NONE)
+-			| SSC_BF(TFMR_FSLEN, 0)
+-			| SSC_BF(TFMR_DATNB, (channels - 1))
+-			| SSC_BIT(TFMR_MSBF)
+-			| SSC_BF(TFMR_DATDEF, 0)
+-			| SSC_BF(TFMR_DATLEN, (bits - 1));
+ 		break;
+ 
+ 	default:
+@@ -785,6 +595,70 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
+ 			ssc_p->daifmt);
+ 		return -EINVAL;
+ 	}
++
++	if (!atmel_ssc_cfs(ssc_p)) {
++		fslen = fslen_ext = 0;
++		rcmr_period = tcmr_period = 0;
++		fs_osync = SSC_FSOS_NONE;
++	}
++
++	rcmr |=	  SSC_BF(RCMR_START, fs_edge);
++	tcmr |=	  SSC_BF(TCMR_START, fs_edge);
++
++	if (atmel_ssc_cbs(ssc_p)) {
++		/*
++		 * SSC provides BCLK
++		 *
++		 * The SSC transmit and receive clocks are generated from the
++		 * MCK divider, and the BCLK signal is output
++		 * on the SSC TK line.
++		 */
++		rcmr |=	  SSC_BF(RCMR_CKS, SSC_CKS_DIV)
++			| SSC_BF(RCMR_CKO, SSC_CKO_NONE);
++
++		tcmr |=	  SSC_BF(TCMR_CKS, SSC_CKS_DIV)
++			| SSC_BF(TCMR_CKO, SSC_CKO_CONTINUOUS);
++	} else {
++		rcmr |=	  SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
++					SSC_CKS_PIN : SSC_CKS_CLOCK)
++			| SSC_BF(RCMR_CKO, SSC_CKO_NONE);
++
++		tcmr |=	  SSC_BF(TCMR_CKS, ssc->clk_from_rk_pin ?
++					SSC_CKS_CLOCK : SSC_CKS_PIN)
++			| SSC_BF(TCMR_CKO, SSC_CKO_NONE);
++	}
++
++	rcmr |=	  SSC_BF(RCMR_PERIOD, rcmr_period)
++		| SSC_BF(RCMR_CKI, SSC_CKI_RISING);
++
++	tcmr |=   SSC_BF(TCMR_PERIOD, tcmr_period)
++		| SSC_BF(TCMR_CKI, SSC_CKI_FALLING);
++
++	rfmr =    SSC_BF(RFMR_FSLEN_EXT, fslen_ext)
++		| SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
++		| SSC_BF(RFMR_FSOS, fs_osync)
++		| SSC_BF(RFMR_FSLEN, fslen)
++		| SSC_BF(RFMR_DATNB, (channels - 1))
++		| SSC_BIT(RFMR_MSBF)
++		| SSC_BF(RFMR_LOOP, 0)
++		| SSC_BF(RFMR_DATLEN, (bits - 1));
++
++	tfmr =    SSC_BF(TFMR_FSLEN_EXT, fslen_ext)
++		| SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
++		| SSC_BF(TFMR_FSDEN, 0)
++		| SSC_BF(TFMR_FSOS, fs_osync)
++		| SSC_BF(TFMR_FSLEN, fslen)
++		| SSC_BF(TFMR_DATNB, (channels - 1))
++		| SSC_BIT(TFMR_MSBF)
++		| SSC_BF(TFMR_DATDEF, 0)
++		| SSC_BF(TFMR_DATLEN, (bits - 1));
++
++	if (fslen_ext && !ssc->pdata->has_fslen_ext) {
++		dev_err(dai->dev, "sample size %d is too large for SSC device\n",
++			bits);
++		return -EINVAL;
++	}
++
+ 	pr_debug("atmel_ssc_hw_params: "
+ 			"RCMR=%08x RFMR=%08x TCMR=%08x TFMR=%08x\n",
+ 			rcmr, rfmr, tcmr, tfmr);
 -- 
 2.20.1
 
