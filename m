@@ -2,129 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 696369C074
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 23:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0969C084
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 23:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbfHXV3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 17:29:18 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46599 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727907AbfHXV3R (ORCPT
+        id S1728249AbfHXVg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 17:36:27 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:28362 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727708AbfHXVg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 17:29:17 -0400
-Received: by mail-ot1-f65.google.com with SMTP id z17so11862492otk.13;
-        Sat, 24 Aug 2019 14:29:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NeHDDT5xeUM288NKVamfGsJVmVu1XwAAe3AxKH60utQ=;
-        b=Ly3Kf0VwR9LsyZVVa+EOsomX2wAFjqIU390PXXa0DK62nLZ7VpXD9zwowzBPiCUpsU
-         7vOQLVMMyyTzHyZrdA/epH1UICSqFzTgv6nLgchp/hjQceNFxDd5l4ctmjrFmwEIrWAq
-         5PO2uzSBkIyWPsTzqgmxQKtOaWSasqLiHv4jOIKop84uYrOd/9JSIjQjFCYwiOsFu7eQ
-         GG8eqns023jFpz+s1KEungiE53ci+4RT9Ze94r7A3fsaO2lIXr1ev1hUaYLzO30do51e
-         vg3UcQc/KEZttKjF53nZpt+yHC5s0sSctlG3CTsj0J3WP1S4++a5z36kxS2aEM8hOOak
-         ASNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NeHDDT5xeUM288NKVamfGsJVmVu1XwAAe3AxKH60utQ=;
-        b=RD5U0WyDc59HdaByi8GjYa1sFTAZfuKOpf4MrAIrdESLwXz81tpCN0SeY9fr6Gg0Fh
-         jrvDIb4SXeSM+2pLWrV50yDx0MrrnQmeoF3mU0Mvfib9olchOxN3zNzMAwHag46AKkKQ
-         pE44NqpnJwzDsanjuCRoHibJdyrUQr7exTaAW87jk/PgGj0Isu/nEWEikXvs4uXGOx2S
-         ckP5oP7S6ej2dBtudbI1mCDT+hFTsQ1w7DeiRYAWhS3OevPnd3rFamqfIREhCotplPdY
-         UO0rWDRs8+HESIRG/3YHMvEv52tIzWtFEWk1NMRW+l6b5Z9zh3CG6kUI+1zKr+k/YaTk
-         HlDg==
-X-Gm-Message-State: APjAAAWcbspCaVHC7UVi2aQGEB/cEPyRfiYOvej67oxm+6OriZUgT7IL
-        HGZPEzxaGcbwbA903S+Mw3k9zy1QkxaEyUUQuV42J21I
-X-Google-Smtp-Source: APXvYqwZ4LtTbx1t2uEJ3OH/npfUf1S1SQtV0TTY+uuc+2k/bBVJu0K2vv4Zrs3bIWzAMsVuhirsdW09fdbogEOTKAg=
-X-Received: by 2002:a9d:1d5:: with SMTP id e79mr9347623ote.98.1566682156724;
- Sat, 24 Aug 2019 14:29:16 -0700 (PDT)
+        Sat, 24 Aug 2019 17:36:27 -0400
+X-Greylist: delayed 1894 seconds by postgrey-1.27 at vger.kernel.org; Sat, 24 Aug 2019 17:36:27 EDT
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7OL4Uwt036514;
+        Sun, 25 Aug 2019 06:04:31 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Sun, 25 Aug 2019 06:04:30 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from localhost.localdomain (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7OL4RX5036503
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Sun, 25 Aug 2019 06:04:30 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Mark Brown <broonie@kernel.org>,
+        David Yang <yangxiaohua@everest-semi.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH] ASoC: es8316: limit headphone mixer volume
+Date:   Sun, 25 Aug 2019 06:04:26 +0900
+Message-Id: <20190824210426.16218-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-References: <1566633850-9421-1-git-send-email-christianshewitt@gmail.com> <1566633850-9421-4-git-send-email-christianshewitt@gmail.com>
-In-Reply-To: <1566633850-9421-4-git-send-email-christianshewitt@gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 24 Aug 2019 23:29:05 +0200
-Message-ID: <CAFBinCC-ncHtni9-Ve1_eQROTrJg0WPkA_rOi1We7T-uSOyYHg@mail.gmail.com>
-Subject: Re: [PATCH v2, 3/3] arm64: dts: meson-g12b-ugoos-am6: add initial device-tree
-To:     Christian Hewitt <christianshewitt@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Oleg Ivanov <balbes-150@yandex.ru>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christian,
+This patch limits Headphone mixer volume to 4 from 7.
+Because output sound suddenly becomes very loudly with many noise if
+set volume over 4.
 
-On Sat, Aug 24, 2019 at 10:06 AM Christian Hewitt
-<christianshewitt@gmail.com> wrote:
->
-> The Ugoos AM6 is based on the Amlogic W400 (G12B) reference design using the
-> S922X chipset. Hardware specifications:
->
-> - 2GB LPDDR4 RAM
-> - 16GB eMMC storage
-> - 10/100/1000 Base-T Ethernet using External RGMII PHY
-> - 802.11 a/b/g/b/ac + BT 5.0 sdio wireless (Ampak 6398S)
-> - HDMI 2.0 (4k@60p) video
-> - Composite video + 2-channel audio output on 3.5mm jack
-> - S/PDIF audio output
-> - Aux input
-> - 1x USB 3.0
-> - 3x USB 2.0
-> - 1x micro SD card slot
->
-> The device-tree is laregly based on meson-g12b-odroid-n2 but with audio
-typo -> largely
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+---
+ sound/soc/codecs/es8316.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[...]
-> +       tflash_vdd: regulator-tflash_vdd {
-> +               compatible = "regulator-fixed";
-> +
-> +               regulator-name = "TFLASH_VDD";
-> +               regulator-min-microvolt = <3300000>;
-> +               regulator-max-microvolt = <3300000>;
-> +
-> +               gpio = <&gpio_ao GPIOAO_8 GPIO_ACTIVE_HIGH>;
-> +               enable-active-high;
-do we need regulator-always-on here as well, see [0]?
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index 8dfb5dbeebbf..bc4141e1eb7f 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -91,7 +91,7 @@ static const struct snd_kcontrol_new es8316_snd_controls[] = {
+ 	SOC_DOUBLE_TLV("Headphone Playback Volume", ES8316_CPHP_ICAL_VOL,
+ 		       4, 0, 3, 1, hpout_vol_tlv),
+ 	SOC_DOUBLE_TLV("Headphone Mixer Volume", ES8316_HPMIX_VOL,
+-		       0, 4, 7, 0, hpmixer_gain_tlv),
++		       0, 4, 4, 0, hpmixer_gain_tlv),
+ 
+ 	SOC_ENUM("Playback Polarity", dacpol),
+ 	SOC_DOUBLE_R_TLV("DAC Playback Volume", ES8316_DAC_VOLL,
+-- 
+2.23.0.rc1
 
-[...]
-> +       usb_pwr_en: regulator-usb_pwr_en {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "USB_PWR_EN";
-> +               regulator-min-microvolt = <5000000>;
-> +               regulator-max-microvolt = <5000000>;
-> +               vin-supply = <&vcc_5v>;
-> +
-> +               /* Connected to the microUSB port power enable */
-> +               gpio = <&gpio GPIOH_6 GPIO_ACTIVE_HIGH>;
-> +               enable-active-high;
-> +       };
-the photos I found don't show a micro USB port (but 3x USB A 2.0 and
-1x USB A 3.0 - just like you mentioned in the patch description)
-does this regulator exist?
-
-[...]
-> +&ethmac {
-> +       pinctrl-0 = <&eth_pins>, <&eth_rgmii_pins>;
-> +       pinctrl-names = "default";
-> +       status = "okay";
-> +       phy-mode = "rgmii";
-> +       phy-handle = <&external_phy>;
-> +       amlogic,tx-delay-ns = <2>;
-> +};
-is the PHY reset GPIO not wired to GPIOZ_15 like on Odroid-N2 and X96 Max?
-
-
-Martin
-
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts?id=dc7f2cb218b5ef65ab3d455a0e62d27e44075203
