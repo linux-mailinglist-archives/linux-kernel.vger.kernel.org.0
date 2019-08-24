@@ -2,53 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD33E9BF98
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 21:00:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4383C9BFA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 21:02:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbfHXTAf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 24 Aug 2019 15:00:35 -0400
-Received: from smtp2.osep.mendoza.gov.ar ([200.16.135.145]:52918 "HELO
-        smtp2.osep.mendoza.gov.ar" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727950AbfHXTAd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 15:00:33 -0400
-Received: (qmail 402 invoked from network); 24 Aug 2019 14:14:38 -0000
-Received: from unknown (HELO zimbra.servers.dg.intranet) (10.10.195.224)
-  by smtp2.osep.mendoza.gov.ar with SMTP; 24 Aug 2019 14:14:38 -0000
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.servers.dg.intranet (Postfix) with ESMTP id DB8B3CF7CC66;
-        Sat, 24 Aug 2019 11:14:37 -0300 (ART)
-Received: from zimbra.servers.dg.intranet ([127.0.0.1])
-        by localhost (zimbra.servers.dg.intranet [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id RViPrJdL95bg; Sat, 24 Aug 2019 11:14:37 -0300 (ART)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.servers.dg.intranet (Postfix) with ESMTP id 877BBCF7CC58;
-        Sat, 24 Aug 2019 11:14:37 -0300 (ART)
-X-Virus-Scanned: amavisd-new at osep.mendoza.gov.ar
-Received: from zimbra.servers.dg.intranet ([127.0.0.1])
-        by localhost (zimbra.servers.dg.intranet [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 9n2-6F1Dy9XD; Sat, 24 Aug 2019 11:14:37 -0300 (ART)
-Received: from zimbra.servers.dg.intranet (zimbra.servers.dg.intranet [10.10.195.224])
-        by zimbra.servers.dg.intranet (Postfix) with ESMTP id BAAEBCF7CC40;
-        Sat, 24 Aug 2019 11:14:36 -0300 (ART)
-Date:   Sat, 24 Aug 2019 11:14:36 -0300 (ART)
-From:   "Herr.Robert Jackson" <liliana.marinero@osep.mendoza.gov.ar>
-Reply-To: SKY GROUP FINANCIAL <skygroupfinancial0@gmail.com>
-Message-ID: <1268244548.24999093.1566656076742.JavaMail.zimbra@osep.mendoza.gov.ar>
-Subject: 
+        id S1728162AbfHXTB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 15:01:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56240 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727738AbfHXTB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 15:01:57 -0400
+Received: from X250.getinternet.no (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2981920850;
+        Sat, 24 Aug 2019 19:01:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566673316;
+        bh=Ur27vR1/2HgfpDMbK7K/TlEe+q+j8m31vDlrvbuGmJU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yc+tM+luWTvIH5tNv1EinwZi8WeOYZ+MRt54MM89QW+OvquNVB8BOHv6BeEvgbpcx
+         KBlhBr9j3YwJGY4OQurjIRRb71CD6izEPkotTUObcnZUYX9kXNiZljhypH6Savn6ga
+         3Tt4Fs2DAnbWohy+3CGU1QICG2Iy5Ow+hrfcHq/M=
+Date:   Sat, 24 Aug 2019 21:01:44 +0200
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>, kernel@collabora.com,
+        Gary Bisson <gary.bisson@boundarydevices.com>,
+        Troy Kisky <troy.kisky@boundarydevices.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: arm: imx: add imx8mq nitrogen support
+Message-ID: <20190824190142.GA16308@X250.getinternet.no>
+References: <20190819172606.6410-1-dafna.hirschfeld@collabora.com>
+ <20190819172606.6410-2-dafna.hirschfeld@collabora.com>
+ <CAL_JsqJx6pTw7Pr=7f0jkC81JF+EDkyhHrvFehSWZV=0wy+YXQ@mail.gmail.com>
+ <26b78fe57106f47d34f14bec2f81732af40c3d8d.camel@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [172.16.3.2]
-X-Mailer: Zimbra 8.6.0_GA_1153 (zclient/8.6.0_GA_1153)
-Thread-Topic: 
-Thread-Index: 9gdTMQJ8JBu8cvpzdFVmtKjzn0qahQ==
-To:     unlisted-recipients:; (no To-header on input)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <26b78fe57106f47d34f14bec2f81732af40c3d8d.camel@collabora.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 20, 2019 at 06:27:39PM +0200, Dafna Hirschfeld wrote:
+> On Mon, 2019-08-19 at 14:08 -0500, Rob Herring wrote:
+> > On Mon, Aug 19, 2019 at 12:26 PM Dafna Hirschfeld
+> > <dafna.hirschfeld@collabora.com> wrote:
+> > > From: Gary Bisson <gary.bisson@boundarydevices.com>
+> > > 
+> > > The Nitrogen8M is an ARM based single board computer (SBC)
+> > > designed to leverage the full capabilities of NXP’s i.MX8M
+> > > Quad processor.
+> > > 
+> > > Signed-off-by: Gary Bisson <gary.bisson@boundarydevices.com>
+> > > Signed-off-by: Troy Kisky <troy.kisky@boundarydevices.com>
+> > > [Dafna: porting vendor's code to mainline]
+> > > Signed-off-by: Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/arm/fsl.yaml | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > 
+> > Please add acks/reviewed-bys when posting new versions.
+> > 
+> Hi,
+> Thank you for the remark, I forgot to add it. I will add it in the
+> next.
 
+I applied the patch with Rob's Reviewed-by on v3.
 
-Wir sind zuverlässige, vertrauenswürdige Kreditgeber, leihen wir Unternehmen und Einzelpersonen zu einem niedrigen Zinssatz von 2%, Sind Sie auf der Suche nach einem Geschäftskredit, Privatkredite, Schuldenkonsolidierung, unbesicherte Kredite, Risikokapital, wenn ja Kontaktieren Sie uns jetzt für weitere Einzelheiten.
+Shawn
