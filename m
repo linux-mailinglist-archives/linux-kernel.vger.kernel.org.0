@@ -2,104 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A7589C055
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 23:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E21829C059
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 23:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbfHXVSK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 17:18:10 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42922 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbfHXVSI (ORCPT
+        id S1728157AbfHXVSP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 17:18:15 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45987 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727969AbfHXVSO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 17:18:08 -0400
-Received: by mail-lf1-f65.google.com with SMTP id s19so9553495lfb.9
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2019 14:18:07 -0700 (PDT)
+        Sat, 24 Aug 2019 17:18:14 -0400
+Received: by mail-ot1-f66.google.com with SMTP id m24so11866744otp.12;
+        Sat, 24 Aug 2019 14:18:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=buG8rS1mJF0qAnzC4CPBok3txDbgd1yDUZD/dbaM0ZI=;
-        b=BE85dBJbTx/kCV/K61eeXdfzfnJ2mys1pqTCzNLN+29ZHQOyNl4I0MC0JtYtksN+3/
-         ThtcLUKmJQRpyc+FwTr/Xs7fOvgEwJrDE/O9EvdkhQoVPENqR2+P6dBQAyzfvnhdiQ5h
-         aY1OBBncu7vycqpujXGWqpvbtcr4L5vCSuvcNu+X+a/KDIDDkoz/iyWyUnl64/ulJ7/i
-         Sh1ZO7XNNbGhgltOWHB5Mhaw5U5fHU1foQY12xa2gvnlySrqB6YITMnNQgEMHndh+jH6
-         gY/ZaCu3wvWUE0/wwCAs3IBaMO4l1eWkftuXLIDGNZCaHTBSetOwtlhu0vLIA4ljEvth
-         JpYQ==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fC0UloVJVd7/NU/uEaCTd2LLUTCDIdGGkP7UNozA/vg=;
+        b=kGmCMbR7sxG2Q8arZgcNRhhxUCcaNY2s4M5AYWXatkqZrkrTiw/az6vmKkeQ+y9dEc
+         v/tuz6wuTkTI+rnsAVPp40XfYO2EoxITAIk1/RQOMwzzCZGZD/2BHWKJxT8XClRRv/xK
+         ZTOEXs62AfMNAwgwqtj2J57M+qDI1UHhG4F+4rTJDFWLkOf/8DAj9PCcuxoVKAYCXgG0
+         PY/sPTQrqZbxlgZ6vUvOlcRkZcYcbvnEVu+pC+dgYb71mZ5gNgMbJtsMCquMhVKBtRE5
+         4gdy1e76nRnZBVcr8neWFQ3hJ8x4zUEq36HSDhNvg07d4h00Jx5DyUsC0mVfkfTEt393
+         c1sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=buG8rS1mJF0qAnzC4CPBok3txDbgd1yDUZD/dbaM0ZI=;
-        b=pUXWSeGq6tub5a+lWPzCy8d1+qiGuaCoRWqeOTISFHHhFBYbM4GTYYjShPxPRdTISR
-         +70f995DHlQGETsQ4oCwCqfgEt6LdlByT4woQvsY6vQFlBvwvWYDJxT1ers9BLNnK4jW
-         /2gy2wFOhvsoNQipvsRZT1baRDNBXk0DUf41hwtlHT7qD794BBX9VFWSY/Z1n/6Uh6L+
-         l/b+bmeHJacFDsjwpjYqYQrQVSKSXAfzzOF7ElwOXOFblah4uOEhc8+ZSbJEcVfL6566
-         8OUGOFl4MVy9bsIpCvTrsLQbvwVk7Pr4kWYseCJACubore99FLUQ1GoxmHMhV8jXCKrx
-         qgtw==
-X-Gm-Message-State: APjAAAWdoxb1M6jsqCb0IgS0pPcMtQUvDVw30xlRED4VoVTgyfIvufuU
-        un/VH0Wve+gpPjtS5ByGlyJ4IFERSGWEZdlOsSFN8A==
-X-Google-Smtp-Source: APXvYqytYBob1ysBJFACFwD27yhpXuh79le74ImOIBK9fnFXYOfsrqZBUWF/nbQVDk6NXB+PhLckDQnRms6L+zoHv0A=
-X-Received: by 2002:ac2:5939:: with SMTP id v25mr6513387lfi.115.1566681486625;
- Sat, 24 Aug 2019 14:18:06 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fC0UloVJVd7/NU/uEaCTd2LLUTCDIdGGkP7UNozA/vg=;
+        b=V5hSO8RjJpdkcXh1T1UhO4frhJE9cxpXN+f9DkYOS1XIMLPJcJcatUJIrDXZRal18Y
+         2UGSpDvLnhFPTRzo+SQ6cDtDE+iRcdLxUhyuim99wl/MPCkV1e7QNEWj6nS7UQKMro0E
+         KX5vyAMlwNlpUg15A16RgSb6glSRRu3TuXYFP0S9c5KJteXu5jR+Nf71W68W7j//pCJ/
+         EzjpR++s5aGHw469SF2OtNITAqmaGjDlgZka4xsFhdZczezmjBHDxo7t1JZkXra8E+/V
+         zB9RAl1Thae8vqGH4kk3gVY8V9mHoWlphXUKiXOR4M4f1xv6BZOdfF+TbXl1AuypksZy
+         8HeA==
+X-Gm-Message-State: APjAAAUwqXaClXtfsJ629Azgf5JaXnz+tkkAsMCDGBFTXbLAZuhh8zAe
+        +hkd3oPXVenOTWOqZFAW2IpTgEwGZEXoS62PEn0=
+X-Google-Smtp-Source: APXvYqyc9UMrt0FZO+Czm5ynmHfnj9YArOYB/nd6DV6XFFx7to8SEBFvn4jOe+dwqxaAVKBg8HIXBX6GFOg3lVZAIRY=
+X-Received: by 2002:a9d:7b44:: with SMTP id f4mr895020oto.42.1566681492890;
+ Sat, 24 Aug 2019 14:18:12 -0700 (PDT)
 MIME-Version: 1.0
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 24 Aug 2019 23:17:54 +0200
-Message-ID: <CACRpkdaWR9GZ0Hem4h-jdGcYc_Uwx29XvsHuEgvXiebRG6DCwA@mail.gmail.com>
-Subject: [GIT PULL] GPIO fixes for v5.3
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190824184912.795-1-linux.amoon@gmail.com>
+In-Reply-To: <20190824184912.795-1-linux.amoon@gmail.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sat, 24 Aug 2019 23:18:01 +0200
+Message-ID: <CAFBinCCkEE8==-Sqqj_=Ofnx7_H-970dETwEmEPohs74806ZMw@mail.gmail.com>
+Subject: Re: [PATCHv4 0/3] Odroid c2 usb fixs
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Anand,
 
-here is a (hopefully last) set of GPIO fixes for the v5.3 kernel
-cycle. Two are pretty core.
+thank you for the patches
 
-Please pull them in! Details in the signed tag.
-
-Yours,
-Linus Walleij
-
-The following changes since commit d45331b00ddb179e291766617259261c112db872:
-
-  Linux 5.3-rc4 (2019-08-11 13:26:41 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
-tags/gpio-v5.3-4
-
-for you to fetch changes up to 48057ed1840fde9239b1e000bea1a0a1f07c5e99:
-
-  gpio: Fix irqchip initialization order (2019-08-23 11:00:43 +0200)
-
-----------------------------------------------------------------
-GPIO fixes for the v5.3 kernel:
-
-- Fix not reporting open drain/source lines to userspace as "input"
-- Fix a minor build error found in randconfigs
-- Fix a chip select quirk on the Freescale SPI
-- Fix the irqchip initialization semantic order to reflect what
-  it was using the old API
-
-----------------------------------------------------------------
-Andreas Kemnade (1):
-      gpio: of: fix Freescale SPI CS quirk handling
-
-Bartosz Golaszewski (1):
-      gpiolib: never report open-drain/source lines as 'input' to user-space
-
-Linus Walleij (1):
-      gpio: Fix irqchip initialization order
-
-YueHaibing (1):
-      gpio: Fix build error of function redefinition
-
- drivers/gpio/gpiolib-of.c |  2 +-
- drivers/gpio/gpiolib.c    | 36 +++++++++++++++++++-----------------
- include/linux/gpio.h      | 24 ------------------------
- 3 files changed, 20 insertions(+), 42 deletions(-)
+On Sat, Aug 24, 2019 at 8:49 PM Anand Moon <linux.amoon@gmail.com> wrote:
+[...]
+> Anand Moon (3):
+>   arm64: dts: meson: odroid-c2: p5v0 is the main 5V power input
+>   arm64: dts: meson: odroid-c2: Add missing linking regulator to usb bus
+>   arm64: dts: meson: odroid-c2: Disable usb_otg bus to avoid power
+>     failed warning
+this whole series is:
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
