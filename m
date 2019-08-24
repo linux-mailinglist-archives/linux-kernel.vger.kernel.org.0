@@ -2,159 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C28479BB7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 05:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC1149BB73
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 05:43:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfHXDnq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 23:43:46 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:47399 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726793AbfHXDno (ORCPT
+        id S1726877AbfHXDlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 23:41:46 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34325 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbfHXDlq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 23:43:44 -0400
-X-UUID: 94847ecf790d458e8eb21d4e003c3ac6-20190824
-X-UUID: 94847ecf790d458e8eb21d4e003c3ac6-20190824
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 2038650983; Sat, 24 Aug 2019 11:06:42 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 24 Aug 2019 11:06:34 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 24 Aug 2019 11:06:33 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Tomasz Figa <tfiga@google.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yong.wu@mediatek.com>,
-        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        <anan.sun@mediatek.com>, Matthias Kaehlcke <mka@chromium.org>,
-        <cui.zhang@mediatek.com>, <chao.hao@mediatek.com>,
-        <ming-fan.chen@mediatek.com>
-Subject: [PATCH v11 20/23] memory: mtk-smi: Add bus_sel for mt8183
-Date:   Sat, 24 Aug 2019 11:02:05 +0800
-Message-ID: <1566615728-26388-21-git-send-email-yong.wu@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1566615728-26388-1-git-send-email-yong.wu@mediatek.com>
-References: <1566615728-26388-1-git-send-email-yong.wu@mediatek.com>
+        Fri, 23 Aug 2019 23:41:46 -0400
+Received: by mail-io1-f68.google.com with SMTP id s21so24802662ioa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 20:41:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k4JfOThgU1rKXkGTSmWuM/49rJOouhdAv0PQSZEcT8E=;
+        b=XK+VZ1iVfxgnbKguT+7cU89msBjcvPUQ3ycYVzyoHOjcWABcHh8bY1onqf4xYWwx0r
+         6zFiSXdqLXPrtwGw+qyxd7/HVupwGaZ3QCNqlrLdHFobNC1oSjNct0Vq0YQ2FuwfwkTA
+         OaARrvajKojascXHNlOxZdSNs1FQXn33nqLl3B8f6l3P7r7ELaUHqOHaTsAKGMqNObeP
+         tUMZy7BxTzau8ZMwO3u/Uncbg0GB+NUfaA6rzquorHGKAeIQQKH7zlnGgZ62EuukCXpY
+         gKFGlTGUcWsb/Ej/QBGQo7ShqalwblzlRVouLU/DYxBrAfnG5cHFOwHVGhMvWlieWRIi
+         AOPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k4JfOThgU1rKXkGTSmWuM/49rJOouhdAv0PQSZEcT8E=;
+        b=dv3DjFAVMd1Vk1FSEUzlG4bfFhFdLqaUYO/qFSKboxht8teUYG9/swQz28m01P/UjV
+         7/0r1JCK4ot0czaab/lo00bnQ4mnE+kz3W9ZU/l7oZNtJf3St3kCXadOkzPrfbJT5+gW
+         QtZC7qXnHbfaTnC2awyIfWTVa6N7E+xLWtcUpyRaLNjp6edpu56uYCPllW+yOkc///wx
+         gPmTVaoKjar6AgB9/o6TnWhSerUTa04OIYJVW97MyLprONEeS27QBkZ5G61pF9x3LGBd
+         WSjiOKw/Zwq858a6ZJovwjI9hx8v2dbE+tZIZxePvzV9vZO1krcEQ3yqXZ0OEjnJT6o7
+         jrww==
+X-Gm-Message-State: APjAAAUnBD1O6sel4S7CkMiS54Y70Azg+XsLlCUCDpnWMMh0lvTwCZsN
+        ym+tr9O+6uQZTC/QcXx1Bm0c5Zh0HmJ8wceyKw8=
+X-Google-Smtp-Source: APXvYqxj6hFHjPvE181WudeKU0q0Rg+0ht6n+KXE3Jr/bTBy/3xnAwRNTMAvQVi+f3UaypI8xYFlRrN9Z+gK1b3xvkU=
+X-Received: by 2002:a5d:934c:: with SMTP id i12mr4089843ioo.203.1566618105736;
+ Fri, 23 Aug 2019 20:41:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20190817004726.2530670-1-guro@fb.com> <20190823223257.GA22200@tower.DHCP.thefacebook.com>
+In-Reply-To: <20190823223257.GA22200@tower.DHCP.thefacebook.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Sat, 24 Aug 2019 11:41:09 +0800
+Message-ID: <CALOAHbAXzqGksOOCOfB8ykrMQQjo7g_h7hUexr2WdAQkh3N7zg@mail.gmail.com>
+Subject: Re: [PATCH] Partially revert "mm/memcontrol.c: keep local VM counters
+ in sync with the hierarchical ones"
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are 2 mmu cells in a M4U HW. we could adjust some larbs entering
-mmu0 or mmu1 to balance the bandwidth via the smi-common register
-SMI_BUS_SEL(0x220)(Each larb occupy 2 bits).
+On Sat, Aug 24, 2019 at 6:33 AM Roman Gushchin <guro@fb.com> wrote:
+>
+> On Fri, Aug 16, 2019 at 05:47:26PM -0700, Roman Gushchin wrote:
+> > Commit 766a4c19d880 ("mm/memcontrol.c: keep local VM counters in sync
+> > with the hierarchical ones") effectively decreased the precision of
+> > per-memcg vmstats_local and per-memcg-per-node lruvec percpu counters.
+> >
+> > That's good for displaying in memory.stat, but brings a serious regression
+> > into the reclaim process.
+> >
+> > One issue I've discovered and debugged is the following:
+> > lruvec_lru_size() can return 0 instead of the actual number of pages
+> > in the lru list, preventing the kernel to reclaim last remaining
+> > pages. Result is yet another dying memory cgroups flooding.
+> > The opposite is also happening: scanning an empty lru list
+> > is the waste of cpu time.
+> >
+> > Also, inactive_list_is_low() can return incorrect values, preventing
+> > the active lru from being scanned and freed. It can fail both because
+> > the size of active and inactive lists are inaccurate, and because
+> > the number of workingset refaults isn't precise. In other words,
+> > the result is pretty random.
+> >
+> > I'm not sure, if using the approximate number of slab pages in
+> > count_shadow_number() is acceptable, but issues described above
+> > are enough to partially revert the patch.
+> >
+> > Let's keep per-memcg vmstat_local batched (they are only used for
+> > displaying stats to the userspace), but keep lruvec stats precise.
+> > This change fixes the dead memcg flooding on my setup.
+> >
+> > Fixes: 766a4c19d880 ("mm/memcontrol.c: keep local VM counters in sync with the hierarchical ones")
+> > Signed-off-by: Roman Gushchin <guro@fb.com>
+> > Cc: Yafang Shao <laoar.shao@gmail.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+>
+> Any other concerns/comments here?
+>
+> I'd prefer to fix the regression: we're likely leaking several pages
+> of memory for each created and destroyed memory cgroup. Plus
+> all internal structures, which are measured in hundreds of kb.
+>
 
-In mt8183, For better performance, we switch larb1/2/5/7 to enter
-mmu1 while the others still keep enter mmu0.
+Hi Roman,
 
-In mt8173 and mt2712, we don't get the performance issue,
-Keep its default value(0x0), that means all the larbs enter mmu0.
+As it really introduces issues, I agree with you that we should fix it first.
 
-Note: smi gen1(mt2701/mt7623) don't have this bus_sel.
+So for your fix,
+Acked-by: Yafang Shao <laoar.shao@gmail.com>
 
-And, the base of smi-common is completely different with smi_ao_base
-of gen1, thus I add new variable for that.
-
-CC: Matthias Brugger <matthias.bgg@gmail.com>
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-Reviewed-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
----
- drivers/memory/mtk-smi.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index 2bb55b86..289e595 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -41,6 +41,12 @@
- #define SMI_LARB_NONSEC_CON(id)	(0x380 + ((id) * 4))
- #define F_MMU_EN		BIT(0)
- 
-+/* SMI COMMON */
-+#define SMI_BUS_SEL			0x220
-+#define SMI_BUS_LARB_SHIFT(larbid)	((larbid) << 1)
-+/* All are MMU0 defaultly. Only specialize mmu1 here. */
-+#define F_MMU1_LARB(larbid)		(0x1 << SMI_BUS_LARB_SHIFT(larbid))
-+
- enum mtk_smi_gen {
- 	MTK_SMI_GEN1,
- 	MTK_SMI_GEN2
-@@ -49,6 +55,7 @@ enum mtk_smi_gen {
- struct mtk_smi_common_plat {
- 	enum mtk_smi_gen gen;
- 	bool             has_gals;
-+	u32              bus_sel; /* Balance some larbs to enter mmu0 or mmu1 */
- };
- 
- struct mtk_smi_larb_gen {
-@@ -64,8 +71,10 @@ struct mtk_smi {
- 	struct clk			*clk_apb, *clk_smi;
- 	struct clk			*clk_gals0, *clk_gals1;
- 	struct clk			*clk_async; /*only needed by mt2701*/
--	void __iomem			*smi_ao_base;
--
-+	union {
-+		void __iomem		*smi_ao_base; /* only for gen1 */
-+		void __iomem		*base;	      /* only for gen2 */
-+	};
- 	const struct mtk_smi_common_plat *plat;
- };
- 
-@@ -402,6 +411,8 @@ static int __maybe_unused mtk_smi_larb_suspend(struct device *dev)
- static const struct mtk_smi_common_plat mtk_smi_common_mt8183 = {
- 	.gen      = MTK_SMI_GEN2,
- 	.has_gals = true,
-+	.bus_sel  = F_MMU1_LARB(1) | F_MMU1_LARB(2) | F_MMU1_LARB(5) |
-+		    F_MMU1_LARB(7),
- };
- 
- static const struct of_device_id mtk_smi_common_of_ids[] = {
-@@ -474,6 +485,11 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
- 		ret = clk_prepare_enable(common->clk_async);
- 		if (ret)
- 			return ret;
-+	} else {
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		common->base = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(common->base))
-+			return PTR_ERR(common->base);
- 	}
- 	pm_runtime_enable(dev);
- 	platform_set_drvdata(pdev, common);
-@@ -489,6 +505,7 @@ static int mtk_smi_common_remove(struct platform_device *pdev)
- static int __maybe_unused mtk_smi_common_resume(struct device *dev)
- {
- 	struct mtk_smi *common = dev_get_drvdata(dev);
-+	u32 bus_sel = common->plat->bus_sel;
- 	int ret;
- 
- 	ret = mtk_smi_clk_enable(common);
-@@ -496,6 +513,9 @@ static int __maybe_unused mtk_smi_common_resume(struct device *dev)
- 		dev_err(common->dev, "Failed to enable clock(%d).\n", ret);
- 		return ret;
- 	}
-+
-+	if (common->plat->gen == MTK_SMI_GEN2 && bus_sel)
-+		writel(bus_sel, common->base + SMI_BUS_SEL);
- 	return 0;
- }
- 
--- 
-1.9.1
-
+Thanks
+Yafang
