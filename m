@@ -2,168 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F08079BD97
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 14:16:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 238CB9BD9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 14:19:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbfHXMOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 08:14:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727779AbfHXMOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 08:14:48 -0400
-Received: from localhost (unknown [88.128.80.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39ADC2146E;
-        Sat, 24 Aug 2019 12:14:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566648886;
-        bh=OvNjLf+NcTi1GfOpW/USA/QU+p92EDM61oihrL1V+cI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G18Ybb7k85lpu6cl84ms4TxJX4s8q/B0dxS+Vrj7LQ/+s7iYfkiRcw+oXHlQINkR4
-         ns8961EKkMKZMg0jv3o7ClYYVtvQPyTsVP9SparsJbKtZtW0JuTNo3HRGlb7edk+An
-         CX/EMjNGRbSdx0kWOcQgI6HuYL18Z+0VF6cPuz5Y=
-Date:   Sat, 24 Aug 2019 14:14:43 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Stefan Lippers-Hollmann <s.l-h@gmx.de>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.2 000/135] 5.2.10-stable review
-Message-ID: <20190824121443.GA21592@kroah.com>
-References: <20190822170811.13303-1-sashal@kernel.org>
- <20190822172619.GA22458@kroah.com>
- <20190823000527.0ea91c6b@mir>
- <20190822233847.GB24034@kroah.com>
- <20190823024248.11e2dac3@mir>
- <20190823062853.GC1581@sasha-vm>
- <20190823173627.GA1040@kroah.com>
- <20190824011805.GH1581@sasha-vm>
- <20190824023258.GA9862@kroah.com>
- <20190824054835.GI1581@sasha-vm>
+        id S1728186AbfHXMTg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 08:19:36 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:28713 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727894AbfHXMT0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 08:19:26 -0400
+Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
+  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="Tudor.Ambarus@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa1.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa1.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: cstALZmcKShFHx7nWAmw5vIZdJlHTnbhfXpC0QwIkFlYw9GD7+vGSAPZdgiEFREhuUKHJugwhD
+ F/Qxx0ccBtxqaU0LsJAgKkSrgHMMBsMV8Q48O5EgpH3Jadh0dQwCqsY9jU/wySGUv9fqFyBOlj
+ ClF0QsDUmv6/8JZRazppC9iNyOarePjwc0E8kuWyu+ZpVzxt49IGcRWey4x9Pg1kYb8q3RsMpI
+ SH6wBE2Jdy5bqLeJUAIBBQwGAbDf84SS5MXtZY/8Ma6wbHqbLEa2dp7dAXeVlMwBELDqTajVxU
+ IVg=
+X-IronPort-AV: E=Sophos;i="5.64,425,1559545200"; 
+   d="scan'208";a="47840268"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Aug 2019 05:19:24 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Sat, 24 Aug 2019 05:19:24 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Sat, 24 Aug 2019 05:19:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d3mjDZe81YzA985qmj/KrGOK0EgJn19gXbtTzLyR0dpe1O0XT1jzLaFMVRmASI6I8yvlcgp4D3ZZkqt5p4vPfYaVkjSFUEPS9y3/M2yLUsLqWTDSc2OjU66FaDz891sedBXElOpIxTm42AwH9H1C+zRsJBZwmMiZRrrsWvO6RuFKao1K/L675Zj7jfOI55nCgtadcU8t29QGtJ8AbhUjaKIwhTi4Ts7tTd/K70HJM7uRynG57GOmBtzlXQ1vaBIt1vZ8K60QCG4M3wMkzKfuqS7E2jIZgyG0QhL2Tz5eWn5wLEEPLl4j4+5StkXtZyngLbGTmqXFKliswn493+ZDlQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7G/GT0UzfqigAX9pnCO9NcyKkzat22E3yCpNLW/EyGQ=;
+ b=jKcbpw+Dt9IRIJTcvXGSF2GMqO+aPeDcKwQZxAjs4YWzCPgau0z4RYDiGZGsYttemmlZcivMK8Wl+kfAglGC+uglKGYo8Q+9E2rXyDOW+NpG1igd/UmuHqg93JL/90q4PzbHFwKmsLrKNsa9D1sYmL7vH/g9XwLukF3WRbgdu7mnUva0clDORiHn1Ntqs1vulQ5sSBm3Ee9KcBCzTRieep1wt98bpDAdhJHIDrn6OkJZg+ktDObM7X/rVq73iviww034hIq88J0GT9vD/tUfMqP9sVQDS6jBZOe7btmEZr196hTWBaW6StPMrNELBFg53l/oZWZV8zzKdJWV4KNmPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7G/GT0UzfqigAX9pnCO9NcyKkzat22E3yCpNLW/EyGQ=;
+ b=EGY6JNTUWpv3srFZOXkMHOFTUsxtusqEJ1e+h6soi13GB2cSaV50mFlD8yo5qUWboXUkVuZi1EsAWHYDLkC8W1on++IYfADUxt7zrUgf0gmOQKeTgPuHeunJeCaCSYuIp0ZFK4NhnTbBXZNnI+Zimdh2hyGBqOOSnXSaDTx7q0E=
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
+ MN2PR11MB4317.namprd11.prod.outlook.com (52.135.36.33) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.19; Sat, 24 Aug 2019 12:19:19 +0000
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5]) by MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5%7]) with mapi id 15.20.2178.020; Sat, 24 Aug 2019
+ 12:19:19 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <boris.brezillon@collabora.com>, <marek.vasut@gmail.com>,
+        <vigneshr@ti.com>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC:     <Tudor.Ambarus@microchip.com>
+Subject: [PATCH v2 0/3] mtd: spi-nor: move manuf out of the core - batch 3
+Thread-Topic: [PATCH v2 0/3] mtd: spi-nor: move manuf out of the core - batch
+ 3
+Thread-Index: AQHVWnYn5mOHtk7pzUijfzFDYNIN7Q==
+Date:   Sat, 24 Aug 2019 12:19:18 +0000
+Message-ID: <20190824121910.15267-1-tudor.ambarus@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0602CA0013.eurprd06.prod.outlook.com
+ (2603:10a6:800:bc::23) To MN2PR11MB4448.namprd11.prod.outlook.com
+ (2603:10b6:208:193::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.9.5
+x-originating-ip: [86.127.53.184]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b7063776-3fa3-4f41-6bb9-08d7288d499e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR11MB4317;
+x-ms-traffictypediagnostic: MN2PR11MB4317:
+x-ms-exchange-purlcount: 4
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR11MB4317249DC5DBB7F725863BA4F0A70@MN2PR11MB4317.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0139052FDB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(346002)(39860400002)(376002)(189003)(199004)(81156014)(110136005)(6436002)(3846002)(8936002)(8676002)(6306002)(6512007)(50226002)(305945005)(25786009)(7736002)(478600001)(53936002)(2906002)(316002)(66066001)(81166006)(99286004)(36756003)(6486002)(107886003)(386003)(6506007)(102836004)(476003)(2616005)(52116002)(486006)(26005)(186003)(6116002)(2501003)(4326008)(71190400001)(71200400001)(2201001)(4744005)(66946007)(66476007)(66556008)(64756008)(14454004)(966005)(1076003)(256004)(66446008)(86362001)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4317;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: KlAPaNIImIXr0JTK1/Cy4l+F0/ElALTLOpSm1qipdfxSFQJwWwh19qgJkKj/7uqGC7umUfusztlCnNr2fSyrOuYmUJ1+YIKp+IwdDIElINkfdkaXr3cbN99tkp59n8mUZ/WzbaOBTtUJ0BV/n7fj4sSELV8ZBADd5emLxQwCa4/rrQNddDNps4OthPMhc94sPEInnXBcByuQAzDC+9gtJKnljOVGS1988fBDLyCsc88Cutz7P6VftyFF87hvg3gtAW7BhFBuSZyL5kSftJd2g6wf7WfQfstQHflkl2vMLnOQiwdAwvLvXb1uDqyiAFW+yUdIlwWo/KaxDaFmXmwGJS7zxl3cIwLTxp3zQQZ1GAM9StJLdjX5ShODPPz+DPsTx3fh848p5Apo5s6ujhyFQqm7w/lSQWezTZFvbyBe4m8=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190824054835.GI1581@sasha-vm>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7063776-3fa3-4f41-6bb9-08d7288d499e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2019 12:19:18.9781
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: bBSLgtaEG0uXROtaGovOCnYBoEPAqPpybl1WdwWf6Ga+GEj28z19QpBz//NIiy7QdH19ss1Vv4LillErIQAQqsxcoXyIE2HzGBFEodwQiD0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4317
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 24, 2019 at 01:48:35AM -0400, Sasha Levin wrote:
-> On Fri, Aug 23, 2019 at 07:32:58PM -0700, Greg KH wrote:
-> > On Fri, Aug 23, 2019 at 09:18:05PM -0400, Sasha Levin wrote:
-> > > On Fri, Aug 23, 2019 at 10:36:27AM -0700, Greg KH wrote:
-> > > > On Fri, Aug 23, 2019 at 02:28:53AM -0400, Sasha Levin wrote:
-> > > > > On Fri, Aug 23, 2019 at 02:42:48AM +0200, Stefan Lippers-Hollmann wrote:
-> > > > > > Hi
-> > > > > >
-> > > > > > On 2019-08-22, Greg KH wrote:
-> > > > > > > On Fri, Aug 23, 2019 at 12:05:27AM +0200, Stefan Lippers-Hollmann wrote:
-> > > > > > > > On 2019-08-22, Greg KH wrote:
-> > > > > > > > > On Thu, Aug 22, 2019 at 01:05:56PM -0400, Sasha Levin wrote:
-> > > > > > [...]
-> > > > > > > > It might be down to kernel.org mirroring, but the patch file doesn't
-> > > > > > > > seem to be available yet (404), both in the wrong location listed
-> > > > > > > > above - and the expected one under
-> > > > > > > >
-> > > > > > > > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.10-rc1.gz
-> > > > > > [...]
-> > > > > > > Ah, no, it's not a mirroring problem, Sasha and I didn't know if anyone
-> > > > > > > was actually using the patch files anymore, so it was simpler to do a
-> > > > > > > release without them to see what happens. :)
-> > > > > > >
-> > > > > > > Do you rely on these, or can you use the -rc git tree or the quilt
-> > > > > > > series?  If you do rely on them, we will work to fix this, it just
-> > > > > > > involves some scripting that we didn't get done this morning.
-> > > > > >
-> > > > > > "Rely" is a strong word, I can adapt if they're going away, but
-> > > > > > I've been using them so far, as in (slightly simplified):
-> > > > > >
-> > > > > > $ cd patches/upstream/
-> > > > > > $ wget https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-5.2.9.xz
-> > > > > > $ xz -d patch-5.2.9.xz
-> > > > > > $ wget https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.10-rc1.gz
-> > > > > > $ gunzip patch-5.2.10-rc1.gz
-> > > > > > $ vim ../series
-> > > > > > $ quilt ...
-> > > > > >
-> > > > > > I can switch to importing the quilt queue with some sed magic (and I
-> > > > > > already do that, if interesting or just a larger amounts of patches are
-> > > > > > queuing up for more than a day or two), but using the -rc patches has
-> > > > > > been convenient in that semi-manual workflow, also to make sure to really
-> > > > > > get and test the formal -rc patch, rather than something inbetween.
-> > > > >
-> > > > > An easy way to generate a patch is to just use the git.kernel.org web
-> > > > > interface. A patch for 5.2.10-rc1 would be:
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/patch/?id=linux-5.2.y&id2=v5.2.9
-> > > > >
-> > > > > Personally this patch upload story sounded to me like a pre-git era
-> > > > > artifact...
-> > > >
-> > > > Given that we no longer do patches for Linus's -rc releases for the past
-> > > > few years, maybe it is time to move to do the same for the stable
-> > > > releases to be consistent.
-> > > 
-> > > Or tarballs? Why do we generate tarballs (and go through kup)?
-> > > git.kernel.org already does it for us.
-> > 
-> > As I mentioned yesterday, but writing it down here for posterity,
-> > there's a number of reasons.
-> > 
-> > First off, the release process doesn't require kup for when a "real"
-> > release happens, that's all now donw on git.kernel.org with a process
-> > involving a signed note and some other fun backend stuff.  We are
-> > working on expanding that in the future with some other signature
-> > validation as well, to make it easier to verify tarballs are "correct"
-> > as what we do today is a bit different than other projects.
-> 
-> I think that I made it read like I want to remove tarballs altogether.
-> That's not the case: I just want to get rid of the magical signed note
-> process.
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-That "signed note process" is _way_ better than what we used to do.
+Trim spi_nor_scan() huge function.
 
-> The way I understand it, we generate tarballs twice: once during the
-> magical signed note process, and once by the git interface. I'm just
-> suggesting we reduce that down to happen once.
+Depends on 'mtd: spi-nor: move manuf out of the core - batch 2' series:
+https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D127122
+which depends on:
 
-How about we make it even better, we never generate it at all!
+Depends on 'mtd: spi-nor: move manuf out of the core - batch 1' series:
+https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D127121
+which depends on:
 
-That's how the "signed note" process works, the only thing that does the
-tarball generation is in the kernel.org infrastructure itself, when it
-receives a properly signed note.  I never create it locally or anywhere
-else and we do not use 'kup' anymore for the process either.
+Depends on 'mtd: spi-nor: move manuf out of the core - batch 0' series:
+https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D127030
 
-> Right now you can fetch tarballs from two different links on kernel.org.
-> For example, a 5.2.9 tarball is available at:
-> 
-> - https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.2.9.tar.xz
-> - https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/snapshot/linux-5.2.9.tar.gz
-> 
-> Can't we symlink one to the other?
+All batches can be found at:
+https://github.com/ambarus/linux-0day/tree/spi-nor/manuf-drv
 
-Those are two different hosts/cdn/mirrors/etc.  So no, I do not think we
-can at all without a bunch of work on the code that runs git.kernel.org.
-But I could be wrong, I don't know that side of the process all that
-much.
+Tudor Ambarus (3):
+  mtd: spi-nor: Bring flash params init together
+  mtd: spi_nor: Introduce spi_nor_set_addr_width()
+  mtd: spi-nor: Introduce spi_nor_get_flash_info()
 
-I suggest you look at Konstantin's Kernel Recipes talk from a few years
-ago that describes how a release happens on the kernel.org side.  The
-only change from his talk to what we do today is that I no longer do
-'kup' at all, but instead kick it off with a signed git note.
+ drivers/mtd/spi-nor/spi-nor.c | 155 +++++++++++++++++++++++---------------=
+----
+ 1 file changed, 85 insertions(+), 70 deletions(-)
 
-> > As for the tarball itself, it's still needed for the same reasons we do
-> > so on Linus's releases:
-> > 	- distros use these.  Don't want all Gentoo users hammering on
-> > 	  git.kernel.org for their updated builds, that's a huge waste.
-> 
-> We can just place git.kernel.org generated tarballs (for some repos) on
-> the CDN, no?
+--=20
+2.9.5
 
-That's how it kind of happens already, but not quite, see the
-presentation above for all of the gory details.
-
-thanks,
-
-greg k-h
