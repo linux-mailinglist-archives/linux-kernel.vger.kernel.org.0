@@ -2,131 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C5C9BC2C
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 08:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA9E9BC34
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 08:28:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfHXGN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 02:13:28 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34288 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726713AbfHXGN0 (ORCPT
+        id S1726518AbfHXG15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 02:27:57 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:57385 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbfHXG15 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 02:13:26 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b24so8079628pfp.1
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 23:13:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MU+s43l9YNfmfiKrGOK95V+wQEIYwVtSRsLtoFkiecI=;
-        b=krgFoU/KEeQM+RQpmxwtAL2tnkSOwCihg42Ws/XlQ/BwrsQeK1x8SttNxv8Oeou1IQ
-         Aa1CiPl1VwGp0VmIT5pTkWiorpaj1k0fGDoSPcTLUsLZitcdE1GbVgmr+nNEAM6zThhJ
-         nHVe+XGEWlQdN1qROQ1bEpCe/TpE6IHPDevQLWxqjetVF5pCTFPdq4JLBt+5bYqZtNTc
-         zxURLfVH8jll3gIXypvPMPmaN6IV1Jerk1cobX85csNB/lulS5H67LnEYrVLsHOzETDn
-         FeeYOR5oVdiZQaBec++2E6J8s4EJpn8xmFG5kTeH+ULdpSgEHeO31zuBRpw6nd5Oi/3n
-         i+yQ==
-X-Gm-Message-State: APjAAAWjyULKi+aw49806uVgwZEuqUJgixRdSESo43ksgYFjkzQI5Q6/
-        Gu/mnoj8YEhQUgGV+/k4JkM=
-X-Google-Smtp-Source: APXvYqxNyO+7QU4OZHJPGDlXOAFAwK2WexxG2FE4Zt5O/HQUQbwPmP3m/wCdHI2tOQ6Wbv4Ys1sqKA==
-X-Received: by 2002:a62:aa13:: with SMTP id e19mr8936377pff.37.1566627205661;
-        Fri, 23 Aug 2019 23:13:25 -0700 (PDT)
-Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id o9sm3691360pgv.19.2019.08.23.23.13.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2019 23:13:24 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [RFC PATCH v2 3/3] x86/mm/tlb: Avoid deferring PTI flushes on shootdown
-Date:   Fri, 23 Aug 2019 15:52:48 -0700
-Message-Id: <20190823225248.15597-4-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190823225248.15597-1-namit@vmware.com>
-References: <20190823225248.15597-1-namit@vmware.com>
+        Sat, 24 Aug 2019 02:27:57 -0400
+Received: from [192.168.1.162] ([37.4.249.106]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MrhLw-1iXBy42qrU-00ng4h; Sat, 24 Aug 2019 08:27:48 +0200
+Subject: Re: [PATCH] mailmap: Add Simon Arlott (replacement for expired email
+ address)
+To:     Simon Arlott <simon@octiron.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     trivial@kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+        Eric Anholt <eric@anholt.net>
+References: <ab8c62db-b207-9aa1-e99c-16f9eb4152df@simon.arlott.org.uk>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=stefan.wahren@i2se.com; keydata=
+ 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 AQ==
+Message-ID: <8e64dc69-6d55-7f12-81c8-b62355afcec1@i2se.com>
+Date:   Sat, 24 Aug 2019 08:27:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <ab8c62db-b207-9aa1-e99c-16f9eb4152df@simon.arlott.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:LxTkmkViPl219ehaUW14SAYPBC0pZmS1+P9e2XFXZVfpbGxIK3j
+ +Huubd/DMTDIWMosuPcAI8DQDG/L1hXfdrcrrlJHiFZdVtf2LH++Oz4J5ND4r+HT88xwI3P
+ TZDdlXKPH5fKLdyyGGBY59SZHD3oLlf0xwE2YITsZcWc4C6QswstiaaIO4Pf7oXsV+7Ht/v
+ 6DePngK2lp/2JuSOC1mTw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gwddHKzcgXA=:Sr6r6OHtnhTc7aCbuQ1Ih2
+ Ix8jYg2nrw9FhUh3bdVeG9OAipUT8GeljwNY/YYm+7SrBxvIV+gUrbUhmW7fwuUbRn2NJ81M9
+ 9kPsOuU0/W2OYHYdIj8NzH4u+J/wyAo5SQX6nwzYc3yr+keGbKgGYMm60YetqFaheXMrviO1g
+ N/Grj7l5o9sQF8tbWDg9uLz+KJnLicxMzK5+gv/kIT/LrqgKroVzsufTKCU3zK3YfmYD5uEOj
+ mfu3NMTAnmu/hIHDvxPEM5h+LAmikviAyDNLQpbmD+mVPn15PES0+9YBaBzi1U/czwTFw/ooK
+ uSt7glZnEGOsbNNpEsFFhNkuxxlCv3b1q7sUI8KDomlrrSQHcpdEJ1FME+6N+OhECS8Ld5OMc
+ hoo0u2QdCLyUSa5rxf9O8ZSI4AK1D75SM5uvkoZBaMuaHTY6tT6QquqKfDlQbgH9l+YAH4T8W
+ rgp/hblevnA9Bq6Efutm+o4nDd4knnHf2a8GUEWScPTwNadwtrmKJapG7ZQv4vvi5nddUW1UM
+ iazjvHpNnKo6Cn/5uLydg92zfKv5ZmoGDViyCBdi6MdKqIr9DKGlcx+tJYmZr5cUOuKc7+BvS
+ QFBu/+JbMUA0dxkvyfsEfiL8DDWSynN1H4UwFpNIuG8XEKV6nGT8wSxO1xfT9bf1UrFVUlnH1
+ FEeA61Cp4+rTBsBo+1G6eShCs1Dy/5b4t8+puk5/QHxqN4koGNSNGl+xk2ndz7xwgid3vw23V
+ SOOgTT7xoVtnTOuX9cxycR3cmnq1jvDD0lMRXIQAsYNpQ3aw+jhDAS02DAQ+IuY7lxeBlW15L
+ xnpGfpzLu5AKeDHoZpOp4hzvZ/wT8OhZjx8enKGy6UsipDBpC4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a shootdown is initiated, the initiating CPU has cycles to burn as
-it waits for the responding CPUs to receive the IPI and acknowledge it.
-In these cycles it is better to flush the user page-tables using
-INVPCID, instead of deferring the TLB flush.
-
-The best way to figure out whether there are cycles to burn is arguably
-to expose from the SMP layer when an acknowledgment is received.
-However, this would break some abstractions.
-
-Instead, use a simpler solution: the initiating CPU of a TLB shootdown
-would not defer PTI flushes. It is not always a win, relatively to
-deferring user page-table flushes, but it prevents performance
-regression.
-
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/include/asm/tlbflush.h |  1 +
- arch/x86/mm/tlb.c               | 10 +++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
-index da56aa3ccd07..066b3804f876 100644
---- a/arch/x86/include/asm/tlbflush.h
-+++ b/arch/x86/include/asm/tlbflush.h
-@@ -573,6 +573,7 @@ struct flush_tlb_info {
- 	unsigned int		initiating_cpu;
- 	u8			stride_shift;
- 	u8			freed_tables;
-+	u8			shootdown;
- };
- 
- #define local_flush_tlb() __flush_tlb()
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 31260c55d597..ba50430275d4 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -592,8 +592,13 @@ static void flush_tlb_user_pt_range(u16 asid, const struct flush_tlb_info *f)
- 
- 	/*
- 	 * We can defer flushes as long as page-tables were not freed.
-+	 *
-+	 * However, if there is a shootdown the initiating CPU has cycles to
-+	 * spare, while it waits for the other cores to respond. In this case,
-+	 * deferring the flushing can cause overheads, so avoid it.
- 	 */
--	if (IS_ENABLED(CONFIG_X86_64) && !f->freed_tables) {
-+	if (IS_ENABLED(CONFIG_X86_64) && !f->freed_tables &&
-+	    (!f->shootdown || f->initiating_cpu != smp_processor_id())) {
- 		flush_user_tlb_deferred(asid, start, end, stride_shift);
- 		return;
- 	}
-@@ -861,6 +866,7 @@ static struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
- 	info->freed_tables	= freed_tables;
- 	info->new_tlb_gen	= new_tlb_gen;
- 	info->initiating_cpu	= smp_processor_id();
-+	info->shootdown		= false;
- 
- 	return info;
- }
-@@ -903,6 +909,7 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- 	 * flush_tlb_func_local() directly in this case.
- 	 */
- 	if (cpumask_any_but(mm_cpumask(mm), cpu) < nr_cpu_ids) {
-+		info->shootdown = true;
- 		flush_tlb_multi(mm_cpumask(mm), info);
- 	} else if (mm == this_cpu_read(cpu_tlbstate.loaded_mm)) {
- 		lockdep_assert_irqs_enabled();
-@@ -970,6 +977,7 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
- 	 * flush_tlb_func_local() directly in this case.
- 	 */
- 	if (cpumask_any_but(&batch->cpumask, cpu) < nr_cpu_ids) {
-+		info->shootdown = true;
- 		flush_tlb_multi(&batch->cpumask, info);
- 	} else if (cpumask_test_cpu(cpu, &batch->cpumask)) {
- 		lockdep_assert_irqs_enabled();
--- 
-2.17.1
-
+Am 22.08.19 um 21:01 schrieb Simon Arlott:
+> Add replacement email address for the one on my expired domain.
+>
+> Signed-off-by: Simon Arlott <simon@octiron.net>
+I already send out my pull requests. Can anyone else take care of this?
