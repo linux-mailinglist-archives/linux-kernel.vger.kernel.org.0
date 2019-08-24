@@ -2,108 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E92B9BEB5
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 18:13:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C662A9BEBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 18:23:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbfHXQKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 12:10:06 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34687 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfHXQKF (ORCPT
+        id S1727580AbfHXQW6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 12:22:58 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:46042 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfHXQW6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 12:10:05 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b24so8760101pfp.1
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2019 09:10:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=HCWGPbCB1IAUiNh4J5x21IviuwK97PdKw68XVj7uGfY=;
-        b=VNcP5cZgHfYl2j6WTkz2IWwk8xT5e0NZc2X47SgYs6umDmL0oxc00FHtHHVgDW7pES
-         jU8dt4L2c64vWHHD5ftu+TtDeMF3/NfWr/ylfomZPj26O6hz1S0SS5eeC/u125tlE+C1
-         1AMRzCsfE6uuqnkp6hjwvfl70dMR1/PqmQlP1PY8II54XOYnc6aoLHDnoBMlVaDZVEsv
-         nF9Nv/uSGMmMmPmyv4Mj4te33iTptp4kBZt/ckMNYje7I2AXwCGgnvnmUzZu/hL1j8VL
-         tyjaegeGIuUZc8cfiX7179arihVqN0rqw87CmvgWaLhH8o2ZdBW62DiL+7DI1tJp/pWZ
-         vpdQ==
+        Sat, 24 Aug 2019 12:22:58 -0400
+Received: from mail-pf1-f197.google.com ([209.85.210.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1i1Yoa-00058e-Ng
+        for linux-kernel@vger.kernel.org; Sat, 24 Aug 2019 16:22:56 +0000
+Received: by mail-pf1-f197.google.com with SMTP id b8so417300pfd.5
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2019 09:22:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HCWGPbCB1IAUiNh4J5x21IviuwK97PdKw68XVj7uGfY=;
-        b=I8Yqz8R6E1Zo2D9OIdsFA3//s+2EKZ2kmXZEXKo61OIaai62qyCrLTRXnYQ9qsTQyJ
-         WGZHNkRXRHW8Etrqe9pfROQXT2OimaEjFmSbNYkOINADjUhQGcgUdh2fQEFQRA1VfLit
-         FLqjpMGDetN8AJBp5Ww2phesfUpVOJspLGgLqyStHlymcFSXJvKXFI7JhllIe3JGNGdv
-         sLVsS1gwcm6X2IEHnZuTh9q0EnT28esDLW2vXlXNG1PclAiP7ZIXrT7jOPjcqt8/huXM
-         6DOlnMzoShEM1ilsj3YPQMowK5F7YKZRuZPAgl4cLGkd7VuMtbx8gWl1YviNAic+scg+
-         0gow==
-X-Gm-Message-State: APjAAAX6ebA/spkBH+8yvkn4qVbWWYZVxKZOY/M+OxIJ/fDgNILqCzl+
-        65Af8nd6fVBoqOKgiP+gwNk=
-X-Google-Smtp-Source: APXvYqybqqz3NHXhqpKcAZEHAN60pgX74B0MOZuG5FpqAVnEbs6fnxhASpzKhRka1WHIRgC1pCaPKA==
-X-Received: by 2002:aa7:9edc:: with SMTP id r28mr10999095pfq.219.1566663004948;
-        Sat, 24 Aug 2019 09:10:04 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC.domain.name ([106.51.17.2])
-        by smtp.gmail.com with ESMTPSA id k5sm6518658pfg.167.2019.08.24.09.10.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 24 Aug 2019 09:10:03 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [RESEND PATCH] perf: Remove duplicate headers
-Date:   Sat, 24 Aug 2019 21:45:19 +0530
-Message-Id: <1566663319-4283-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=5KUerDlSmB77Lo12oQ8r4Q4eH+L8kNrW2/kTpeARao4=;
+        b=LlnIFFJwg52Godd5vi09vM4Iwjwwh1OsuRP1dyk/5D7+riIvr/055zgIE2LrvxckTU
+         3aw73Cdow1JL+GlRRWvshix7iENPedKrbqfyCLaas2c/cjIURSjSeTZj6r0Vk9Z0EOlv
+         uiOVSjfFV7xC2b1p9sFKuTwHDUjjzmutc9Tv3I9I0ZAgbiKaF2ioL6haunmsG5XGs9AU
+         5Tdnn+77M/7mejQ6enOKGyQztoaC6AVYZX2IsKKG2PL6XOo5kWn8myDoavVhKtnHwziH
+         iyHL5ts2ZYKy4TUutS3Nv/Wacz/J29+C9IOFB6tn3Aa6k1JrAJ/3x//SR1BSiZN+amwD
+         PYuA==
+X-Gm-Message-State: APjAAAWc2Es7JZJA3x8evm9Em6gNArJnNlVouWuH6uZxtdWhCtlJvjAO
+        gzO35SlXHHS90cdr05CCIm7d1LyFKcR1Fud8/4HWfJx0QaeQQvFi/SHS8auuf6N8oOdq0aNMreL
+        woRUR43u+CZYuhlOcHY7r7fYQ5CZ1vG8eS81Y4AlwCQ==
+X-Received: by 2002:a17:902:1024:: with SMTP id b33mr9858060pla.325.1566663775426;
+        Sat, 24 Aug 2019 09:22:55 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxmg8gFJdWJtcToHyLrlyWnul3s1B2nKRoi4wilC9bUOgNMwGIwzjgfqh45xtiOOXF1F2sfhg==
+X-Received: by 2002:a17:902:1024:: with SMTP id b33mr9858041pla.325.1566663775217;
+        Sat, 24 Aug 2019 09:22:55 -0700 (PDT)
+Received: from 2001-b011-380f-3c42-54b0-44c4-6d25-80e5.dynamic-ip6.hinet.net (2001-b011-380f-3c42-54b0-44c4-6d25-80e5.dynamic-ip6.hinet.net. [2001:b011:380f:3c42:54b0:44c4:6d25:80e5])
+        by smtp.gmail.com with ESMTPSA id g19sm7073182pfh.27.2019.08.24.09.22.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 24 Aug 2019 09:22:54 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH] HID: quirks: Disable runtime suspend on Microsoft Corp.
+ Basic Optical Mouse v2.0
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <1566481032.8347.44.camel@suse.com>
+Date:   Sun, 25 Aug 2019 00:22:51 +0800
+Cc:     jikos@kernel.org, benjamin.tissoires@redhat.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Message-Id: <E1CAAA78-D4F1-4EA4-8ED2-5B17839BB8D2@canonical.com>
+References: <20190822091744.3451-1-kai.heng.feng@canonical.com>
+ <1566467151.8347.23.camel@suse.com>
+ <AD8A4135-0275-45B3-BEB9-031737A2C756@canonical.com>
+ <1566470325.8347.35.camel@suse.com>
+ <D6E31CB0-BC2B-4B52-AF18-4BE990D3FDA5@canonical.com>
+ <1566481032.8347.44.camel@suse.com>
+To:     Oliver Neukum <oneukum@suse.com>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removed duplicate headers which are included twice.
+at 21:37, Oliver Neukum <oneukum@suse.com> wrote:
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
----
- tools/perf/util/data.c                 | 1 -
- tools/perf/util/get_current_dir_name.c | 1 -
- tools/perf/util/stat-display.c         | 1 -
- 3 files changed, 3 deletions(-)
+> Am Donnerstag, den 22.08.2019, 21:23 +0800 schrieb Kai-Heng Feng:
+>> at 18:38, Oliver Neukum <oneukum@suse.com> wrote:
+>>> Well, sort of. The USB spec merely states how to enter and exit
+>>> a suspended state and that device state must not be lost.
+>>> It does not tell you what a suspended device must be able to do.
+>>
+>> But shouldn’t remote wakeup signaling wakes the device up and let it exit
+>> suspend state?
+>
+> Yes. Have you tested using a button? If they indeed do not work, then
+> the device lies about supporting remote wakeup. That would warrant a
+> quirk, but for remote wakeup.
 
-diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-index 6a64f71..509a41e 100644
---- a/tools/perf/util/data.c
-+++ b/tools/perf/util/data.c
-@@ -8,7 +8,6 @@
- #include <unistd.h>
- #include <string.h>
- #include <asm/bug.h>
--#include <sys/types.h>
- #include <dirent.h>
- 
- #include "data.h"
-diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
-index 267aa60..ebb80cd 100644
---- a/tools/perf/util/get_current_dir_name.c
-+++ b/tools/perf/util/get_current_dir_name.c
-@@ -5,7 +5,6 @@
- #include "util.h"
- #include <unistd.h>
- #include <stdlib.h>
--#include <stdlib.h>
- 
- /* Android's 'bionic' library, for one, doesn't have this */
- 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index 6d043c7..7b3a16c 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -12,7 +12,6 @@
- #include "string2.h"
- #include "sane_ctype.h"
- #include "cgroup.h"
--#include <math.h>
- #include <api/fs/fs.h>
- 
- #define CNTR_NOT_SUPPORTED	"<not supported>"
--- 
-1.9.1
+Button click can wake the mouse up but not movement.
+
+>
+>> Or it’s okay to let the device be suspended when remote wakeup is needed
+>> but broken?
+>
+> Again, the HID spec does not specify what should trigger a remote
+> wakeup. Limiting this to mouse buttons but not movements is
+> inconvinient, but not buggy.
+
+Ok, I still find the behavior really surprising.
+
+>
+> This is indeed what Windows does. The device is suspended when the
+> screen saver switches on. That we do not do that is a deficiency
+> of X.
+> To use runtime PM regularly you need an .ini file
+
+Thanks for the explanation. I guess we can mimic the behavior in systemd or  
+upower.
+
+>
+>
+>>> In other words, if on your system it is on, you need to look
+>>> at udev, not the kernel.
+>>
+>> So if a device is broken when “power/control” is flipped by user, we  
+>> should
+>> deal it at userspace? That doesn’t sound right to me.
+>
+> If it is broken, as in crashing we could talk about it. If it merely
+> does not do what you want, then, yes, that is for user space to deal
+> with.
+
+Ok, I’ll take a look at userspace then.
+
+>
+>>> Well, no. Runtime PM is a trade off. You lose something if you use
+>>> it. If it worked just as well as full power, you would never use
+>>> full power, would you?
+>>
+>> I am not asking the suspended state to work as full power, but to  
+>> prevent a
+>> device enters suspend state because of broken remote wakeup.
+>
+> What then would be the difference between suspended and active? A small
+> delay in data transfer?
+
+Non-operational but with wakeup capability and vise versa.
+
+>
+>>> Whether the loss of functionality or performance is worth the energy
+>>> savings is a policy decision. Hence it belongs into udev.
+>>> Ideally the kernel would tell user space what will work in a
+>>> suspended state. Unfortunately HID does not provide support for that.
+>>
+>> I really don’t think “loss of functionally” belongs to policy decision.  
+>> But
+>> that’s just my opinion.
+>
+> That is just what we do if, for example, you choose between the configs
+> of a USB device or when you use authorization.
+>
+>> Maybe just calling usb_autopm_put_interface() in usbhid_close() to balance
+>> the refcount?
+>
+> No, the refcount is good. If remote wakeup is totally broken, you need
+> to introduce a quirk that will prevent the kernel from believing the
+> device when it claims to support it.
+
+Ok. I’ll see if it’s possible to mimic other OS under current Linux Desktop.
+
+Kai-Heng
+
+>
+> 	Regards
+> 		Oliver
+
 
