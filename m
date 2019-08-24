@@ -2,87 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B7589BD42
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 13:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3F9A9BD63
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 13:57:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfHXLZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 07:25:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56926 "EHLO mail.kernel.org"
+        id S1728001AbfHXL5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 07:57:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727604AbfHXLZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 07:25:51 -0400
+        id S1727779AbfHXL5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 07:57:35 -0400
 Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FA5D206BB;
-        Sat, 24 Aug 2019 11:25:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4A5721670;
+        Sat, 24 Aug 2019 11:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566645950;
-        bh=p0T18Ac2XKyz8tWjMXJ1tfKYxEKJw+mV/K1hBTkTLdM=;
+        s=default; t=1566647854;
+        bh=2gPSnsiLTiZzM3VtEOlTe2NDmgUZRMbJJi3dmdROM2E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f2CmPfEKS8W1/Txnq5raX/38HHvvimfslr6SB+oGrQSDls/D7J9Bco9NNUGtujrHs
-         q9PQqsqwGngHAaLNowMgJ+xsUI2EdALL+jZeWRwMzGHHIhF8O1psIuKq8TT86NQQvH
-         m2CGOkOQUmyeA77k5EP7ArwKtxP1l0hRJsvXg1sg=
-Date:   Sat, 24 Aug 2019 12:25:43 +0100
+        b=oYouPo1TechO7rUXVnYc/d5QQKmx8wd/2lrTjEC73P3PGYatRMoM38205X6ie4daK
+         p2SzQtUHn+KtAP9Odb4S7o/WiTSMgXZi3g//oXrgiOt57B1wdHhQilDoxRSI6EBSQd
+         kjllxlKtG+xB1eupYlk2xisYyma3Rbw/ijawoDp8=
+Date:   Sat, 24 Aug 2019 12:57:28 +0100
 From:   Will Deacon <will@kernel.org>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Yonghong Song <yhs@fb.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Enrico Weigelt <info@metux.net>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        bpf@vger.kernel.org
-Subject: Re: [PATCH 12/16] arm64: prefer __section from compiler_attributes.h
-Message-ID: <20190824112542.7guulvdenm35ihs7@willie-the-truck>
-References: <20190812215052.71840-1-ndesaulniers@google.com>
- <20190812215052.71840-12-ndesaulniers@google.com>
- <20190813082744.xmzmm4j675rqiz47@willie-the-truck>
- <CANiq72mAfJ23PyWzZAELgbKQDCX2nvY0z+dmOMe14qz=wa6eFg@mail.gmail.com>
- <20190813170829.c3lryb6va3eopxd7@willie-the-truck>
- <CAKwvOdk4hca8WzWzhcPEvxXnJVLbXGnhBdDZbeL_W_H91Ttjqw@mail.gmail.com>
- <CANiq72mGoGpx7EAVUPcGuhVkLit8sB3bR-k1XBDyeM8HBUaDZw@mail.gmail.com>
- <CANiq72nUyT-q3A9mTrYzPZ+J9Ya7Lns5MyTK7W7-7yXgFWc2xA@mail.gmail.com>
- <CANiq72nfn4zxAO63GEEoUjumC6Jwi5_jdcD_5Xzt1vZRgh52fg@mail.gmail.com>
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>, youlin.pei@mediatek.com,
+        devicetree@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        cui.zhang@mediatek.com, srv_heupstream@mediatek.com,
+        chao.hao@mediatek.com, linux-kernel@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Tomasz Figa <tfiga@google.com>,
+        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
+        linux-mediatek@lists.infradead.org, ming-fan.chen@mediatek.com,
+        anan.sun@mediatek.com, Matthias Kaehlcke <mka@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v11 00/23] MT8183 IOMMU SUPPORT
+Message-ID: <20190824115728.hsdsp3ut5mywplaw@willie-the-truck>
+References: <1566615728-26388-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANiq72nfn4zxAO63GEEoUjumC6Jwi5_jdcD_5Xzt1vZRgh52fg@mail.gmail.com>
+In-Reply-To: <1566615728-26388-1-git-send-email-yong.wu@mediatek.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 09:35:08PM +0200, Miguel Ojeda wrote:
-> On Thu, Aug 15, 2019 at 11:12 AM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > Btw, I guess that is the Oops you were mentioning in the cover letter?
-> 
-> Pinging about this...
+On Sat, Aug 24, 2019 at 11:01:45AM +0800, Yong Wu wrote:
+> This patchset mainly adds support for mt8183 IOMMU and SMI.
 
-Which bit are you pinging about? This patch (12/16) has been in -next for a
-while and is queued in the arm64 tree for 5.4. The Oops/boot issue is
-addressed in patch 14 which probably needs to be sent as a separate patch
-(with a commit message) if it's targetting 5.3 and, I assume, routed via
-somebody like akpm.
+Thanks for persevering with this, and sorry it took me so long to get
+to grips with the io-pgtable changes.
+
+Joerg -- this is good for you to pick up from my side now, but if you run
+into any fiddly conflicts with any of my other changes then I'm happy to
+resolve them on a separate branch for you to pull.
+
+Just let me know.
+
+Cheers,
 
 Will
