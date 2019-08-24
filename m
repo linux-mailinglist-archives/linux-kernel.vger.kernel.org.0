@@ -2,136 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1D1CA0878
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E9F1A08AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfH1R3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:29:37 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7444 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfH1R3g (ORCPT
+        id S1727190AbfH1Rgv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:36:51 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41801 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727097AbfH1Rgf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:29:36 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d66ba010001>; Wed, 28 Aug 2019 10:29:37 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 28 Aug 2019 10:29:35 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 28 Aug 2019 10:29:35 -0700
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Aug
- 2019 17:29:35 +0000
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Aug
- 2019 17:29:35 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 28 Aug 2019 17:29:34 +0000
-Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d66b9fa0000>; Wed, 28 Aug 2019 10:29:34 -0700
-From:   Vidya Sagar <vidyas@nvidia.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <andrew.murray@arm.com>
-CC:     <kishon@ti.com>, <gustavo.pimentel@synopsys.com>,
-        <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
-        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
-Subject: [PATCH V3 6/6] arm64: tegra: Add PCIe slot supply information in p2972-0000 platform
-Date:   Wed, 28 Aug 2019 22:58:50 +0530
-Message-ID: <20190828172850.19871-7-vidyas@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190828172850.19871-1-vidyas@nvidia.com>
-References: <20190828172850.19871-1-vidyas@nvidia.com>
-X-NVConfidentiality: public
+        Wed, 28 Aug 2019 13:36:35 -0400
+Received: by mail-pg1-f195.google.com with SMTP id x15so96160pgg.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=H81+yOfZIX+C0OkVOiTOPB8MS8Z/VXRjW2hNsAZ0BmE=;
+        b=oIGNA7zeFP/zFnPe/cIum5wdjPrHvoMLsfeTliBiOVxQYlyCXaPqnO3SHVa89WISFB
+         80JplJgciW454D9Z5TpezYCuRwcCCHqoHVN2S8lFPm9/skVtCQGYrHlFREHLOshNCxWz
+         iyelp2X12cknm0AIsjcusjnLaLUZp55DKAKHE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=H81+yOfZIX+C0OkVOiTOPB8MS8Z/VXRjW2hNsAZ0BmE=;
+        b=YemyCwOr7iE2h8qVBRKkpVgCuYJn4imcHBlzX+7+lQ2KN9MAMgTtOuQMRLn6XQG150
+         WAKC6IXi1t+7WrQAeBDJbeTOcbdE8jC6SKDoaLVDm2I6lAXHR4Xrn8ql65qCGITQtnff
+         Rj6z43YfbcHuzwBLwpqvNYA5Z+LbOLnZwdBlMju+yd5vWULIimX2NKekgHqIyaP72VSD
+         4pVh/NiejBN8D+gmUsrGBxQ3uH3e7ySjR9o2iCdifJmCA4Vq3NdjgweaVTapIBVgLkPV
+         DzE4/r9gaIZ6m9HlXxh0Da2WVcNJEJJKs5wMpJm/pkRzqz10HhrCOCWHlIrQDmxD7qrC
+         xcXg==
+X-Gm-Message-State: APjAAAWvSse8ep8Q4tzU5wsNi5ojGUDGXnUKT07gDS0TzorspB9BH7mw
+        dn7NYPMKKHke4vMWs+Fod9YS9w==
+X-Google-Smtp-Source: APXvYqwfqL1fQunyEe0XwF9IhDZjen+nYUd1RNXPbNXfQoln/hNXyPNFYH0ug0RuWImFxCqV0CT8eA==
+X-Received: by 2002:a63:7e1d:: with SMTP id z29mr4479374pgc.346.1567013794108;
+        Wed, 28 Aug 2019 10:36:34 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k25sm3212318pgt.53.2019.08.28.10.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 10:36:29 -0700 (PDT)
+Date:   Sat, 24 Aug 2019 10:17:39 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Drew Davenport <ddavenport@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, Feng Tang <feng.tang@intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        YueHaibing <yuehaibing@huawei.com>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] bug: Move WARN_ON() "cut here" into exception handler
+Message-ID: <201908241016.9DCD43AF1@keescook>
+References: <20190819234111.9019-1-keescook@chromium.org>
+ <20190819234111.9019-8-keescook@chromium.org>
+ <20190820100638.GK2332@hirez.programming.kicks-ass.net>
+ <06ba33fd-27cc-3816-1cdf-70616b1782dd@c-s.fr>
+ <20190820211429.7030b6f6@oasis.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1567013377; bh=pqenOE/Va6ZccwLf8/ZCtakjRCrDvI5bZnar6GjXaYE=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=Zxu+zqpoWxxbZwxEbY6fRhF1p0oN39Mz8qXzcjZkrUsb3xAlI46nkOIVN36SRn4mS
-         JAyBR922LYR0RNBasYMcItyRlKGZOnhY2P0JAgxu/j8ec8A3EeXGtKWlVNyOfQA4vX
-         Whb82J/tEtD/8cYe6YBAmK3ijeCEEEyWeM0cOBplFjF+BykjINIOnbC01nnbSwaZQ4
-         3eo1evbA3bAO3o9WMqka7257ml61Nr29dgRoOC/yq48OtphbmDemnLxFN4KBxEJxS2
-         5JnEfDhygAmB/j3ip/PNEyPourAeOiz4lVQRTLJr6GDhR7wGgPa93m90SRf3j4UR9/
-         h4GeNzZXX+rSg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190820211429.7030b6f6@oasis.local.home>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add 3.3V and 12V supplies regulators information of x16 PCIe slot in
-p2972-0000 platform which is owned by C5 controller and also enable C5
-controller.
+On Tue, Aug 20, 2019 at 09:14:29PM -0400, Steven Rostedt wrote:
+> On Tue, 20 Aug 2019 12:58:49 +0200
+> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+> 
+> > >> index 1077366f496b..6c22e8a6f9de 100644
+> > >> --- a/lib/bug.c
+> > >> +++ b/lib/bug.c
+> > >> @@ -181,6 +181,15 @@ enum bug_trap_type report_bug(unsigned long bugaddr, struct pt_regs *regs)
+> > >>   		}
+> > >>   	}
+> > >>   
+> > >> +	/*
+> > >> +	 * BUG() and WARN_ON() families don't print a custom debug message
+> > >> +	 * before triggering the exception handler, so we must add the
+> > >> +	 * "cut here" line now. WARN() issues its own "cut here" before the
+> > >> +	 * extra debugging message it writes before triggering the handler.
+> > >> +	 */
+> > >> +	if ((bug->flags & BUGFLAG_PRINTK) == 0)
+> > >> +		printk(KERN_DEFAULT CUT_HERE);  
+> > > 
+> > > I'm not loving that BUGFLAG_PRINTK name, BUGFLAG_CUT_HERE makes more
+> > > sense to me.
+> > >   
+> > 
+> > Actually it would be BUGFLAG_NO_CUT_HERE then, otherwise all arches not 
+> > using the generic macros will have to add the flag to get the "cut here" 
+> > line.
+> >
+> 
+> Perhaps they all should be audited to see if they don't have the same
+> problem?
 
-Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
----
-V3:
-* None
+As far as I could tell, all the other combinations end up either using
+the slow path bug helpers or the common exception handler.
+warn-with-a-fmt-string is the only case that does the "early cut here".
 
-V2:
-* None
-
- .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 24 +++++++++++++++++++
- .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  4 +++-
- 2 files changed, 27 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-index 62e07e1197cc..4c38426a6969 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-@@ -289,5 +289,29 @@
- 			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
- 			enable-active-high;
- 		};
-+
-+		vdd_3v3_pcie: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+
-+			regulator-name = "PEX_3V3";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			gpio = <&gpio TEGRA194_MAIN_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
-+			regulator-boot-on;
-+			enable-active-high;
-+		};
-+
-+		vdd_12v_pcie: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+
-+			regulator-name = "VDD_12V";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 1) GPIO_ACTIVE_LOW>;
-+			regulator-boot-on;
-+			enable-active-low;
-+		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-index 23597d53c9c9..d47cd8c4dd24 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-@@ -93,9 +93,11 @@
- 	};
- 
- 	pcie@141a0000 {
--		status = "disabled";
-+		status = "okay";
- 
- 		vddio-pex-ctl-supply = <&vdd_1v8ao>;
-+		vpcie3v3-supply = <&vdd_3v3_pcie>;
-+		vpcie12v-supply = <&vdd_12v_pcie>;
- 
- 		phys = <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
- 		       <&p2u_nvhs_3>, <&p2u_nvhs_4>, <&p2u_nvhs_5>,
 -- 
-2.17.1
-
+Kees Cook
