@@ -2,267 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 727969BDCA
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 14:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 131F09BDD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 14:53:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfHXMwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 08:52:00 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52574 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbfHXMwA (ORCPT
+        id S1728098AbfHXMxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 08:53:15 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43706 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727590AbfHXMxO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 08:52:00 -0400
-Received: by mail-wm1-f67.google.com with SMTP id o4so11267169wmh.2;
-        Sat, 24 Aug 2019 05:51:57 -0700 (PDT)
+        Sat, 24 Aug 2019 08:53:14 -0400
+Received: by mail-pl1-f193.google.com with SMTP id 4so7292939pld.10
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2019 05:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JSgBV9MBCShO23OlCjtj1CCdf6hYfzoSBp8lTwJA768=;
-        b=DQOWN/QllzrZCKEEfJTX0d8DK3Q5l62tpgb+ClmsobNkM1smqVElk3LZXWQHZ8TcQN
-         VXmjUPPTANYEMYy8ya0ffCri/QQPYPLd5H87tV451FJyxCg0TghiSUJwWn2W8LZcSloS
-         sOnlX/pwGpiGUjzswmORlJ4WYCCwvz7w93/KCN+hrMI7KGdCUSrk860aGdFloR1fp7r0
-         b6hyFdwrayXWxGob/65C7mvd97h3ciFXy5CLD5erFAMPlGs1SqV2WxHGTu5vlFycHIOf
-         3TkZaq+L/nCfXLv6AvvVroLIrrnAZydWXDMOLCUfneleK0ho5G2hBagGBgODfO8+Onob
-         XCfQ==
+        d=linaro.org; s=google;
+        h=from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=F/nPYFepDy0cUjW6EXTQwdfVi+FEnIDznVuIrRm/76A=;
+        b=GvW6JYBUVbXc2ui2gYORsIjOTFeKIL7aFET4Fh6Q1fjGX5ma243XPCtctwoAIBRx+B
+         HRSTGuKLsYHrtx/TJXzo+hq3zSdDEUOnHwWWzlS2hi96JavVbw5KHLfQJaY/1wDD2sfj
+         PEf3L1nhNeLzJGbFlSCAe/dfJ3AjaU8M5vFIvWg622vjgrORIZmamtKY+rpUbhxTLeb3
+         X3ZxxTGW/FxrA/P+w61QkVQGFd0EZdXY9mhBzLGB4XLehU3fSTu4hB7WK+oFTD0Kv5Yk
+         VxmuIFrkV70XEBs1VFFt69Runp3vapWFHskYnevB4alDXlmiWTkES0DGtIDn4o8yn0GE
+         +EqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JSgBV9MBCShO23OlCjtj1CCdf6hYfzoSBp8lTwJA768=;
-        b=G2KFrIYvuKQ0X7qtqY/ThWPhL6CCaLS1FxZSNYfQPiXb1l6EaiebHJyNcl7xLHZA0n
-         J2iN0ysMWtYkUi7LhVwUw+wqmx6HAeU9fMoq/UfP7esPFEUZ9xcxKgTa4rjNaP65RB66
-         SgDNAAQFWHdUETTO1dqcpUKSY74knua51AF++lxaSzL5XpdlpfsrVV0x1NOIX5EOIurx
-         j+eWk26pU+MU1BfOhCEcNgNnubf2EUQI6xBauHtsCRpVbi/QuT3zflctbsws7ZOV/rxd
-         p2Kqxk2hwhi+3iGh838HxSx4pRpOupCtpPiJ1Ba5XCPO+dCtBoGg7boOrQVfZlb480W0
-         9DUQ==
-X-Gm-Message-State: APjAAAVKN1yCL6ltHPxtnXcV1ZCD1hU85YcryXrRt9i6bF6PGxKa+DPR
-        fp9ryMcIEFQWPbeIYa6QO7g=
-X-Google-Smtp-Source: APXvYqyvhwbblN+bZH29XrpPziQbV1Z4wd+D5QAB1tLgIqjaVKuNScNG/puKVyL3rPXsdJYddWsrBg==
-X-Received: by 2002:a1c:a003:: with SMTP id j3mr10880353wme.42.1566651116545;
-        Sat, 24 Aug 2019 05:51:56 -0700 (PDT)
-Received: from jernej-laptop.localnet (cpe-86-58-59-25.static.triera.net. [86.58.59.25])
-        by smtp.gmail.com with ESMTPSA id 12sm6028495wmi.34.2019.08.24.05.51.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Aug 2019 05:51:55 -0700 (PDT)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     linux-sunxi@googlegroups.com, megous@megous.com
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: [linux-sunxi] [PATCH v2 2/3] rtc: sun6i: Add support for H6 RTC
-Date:   Sat, 24 Aug 2019 14:51:54 +0200
-Message-ID: <2544007.NTLiB2pbcT@jernej-laptop>
-In-Reply-To: <20190824124654.nqtlkam2gsaqsj77@core.my.home>
-References: <20190820151934.3860-1-megous@megous.com> <10586215.O0B29uHg7A@jernej-laptop> <20190824124654.nqtlkam2gsaqsj77@core.my.home>
+        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=F/nPYFepDy0cUjW6EXTQwdfVi+FEnIDznVuIrRm/76A=;
+        b=cjQz+CVBRU1KHEKgRkYhs+iGHbRJ5hhCxO5GcFFf6dc528im3F4/zG06FrHFD70TBC
+         dzoqOG+loeRKs5mOm5huqH7IMLFfW17jAod4Mgukkq2OkZeu7RImyIRFiuZ6hXTFm7eh
+         jn+mpbG3y4KS3DkZujbu0l3CWko5s2l6BXQa0UawSLBAulH5SkqkjVE7AaZHHHtcoAyu
+         kTbYzPIVDMY1Z/EF6zkEMDsdYN2uFziaTea6lSzVCn+1whKG6BMWnghmSlqUmCuF9kCm
+         W7TSffUvhayg0tt99AFhZIsM0eReO6YMWMTYWKykee0h4nzBVNcRpPm61I8yQrlf/EFx
+         ne6A==
+X-Gm-Message-State: APjAAAXoaWM6mnWG4qYDPqNWKCvKp4H5MWsv+Zz46QrlJv615dZ+G6wt
+        PiU08LhL7dayllDhyVepVWdyWA==
+X-Google-Smtp-Source: APXvYqx+IURKcWdwfiEX/7uNVRhZ17G7ahM9Vc5+Ev5lEshJUeeeQA2/NEVdPLW7JlCdXRlh3EmkdA==
+X-Received: by 2002:a17:902:860b:: with SMTP id f11mr9745085plo.48.1566651194290;
+        Sat, 24 Aug 2019 05:53:14 -0700 (PDT)
+Received: from [192.168.11.133] (li1566-229.members.linode.com. [139.162.86.229])
+        by smtp.gmail.com with ESMTPSA id x9sm4493152pgp.75.2019.08.24.05.53.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 24 Aug 2019 05:53:13 -0700 (PDT)
+From:   zhangfei <zhangfei.gao@linaro.org>
+Subject: Re: [PATCH 2/2] uacce: add uacce module
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-accelerators@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Kenneth Lee <liguozhu@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>
+References: <1565775265-21212-1-git-send-email-zhangfei.gao@linaro.org>
+ <1565775265-21212-3-git-send-email-zhangfei.gao@linaro.org>
+ <20190815142021.GE23267@kroah.com>
+ <5d5a6f5b.1c69fb81.9d35e.5303SMTPIN_ADDED_BROKEN@mx.google.com>
+ <20190819102413.GB2030@kroah.com>
+ <0f7c6241-2028-76e7-0314-8b99cd353bd6@linaro.org>
+ <20190820143341.GB1536@kroah.com>
+Message-ID: <3e237a99-8832-30d5-11de-f65325195478@linaro.org>
+Date:   Sat, 24 Aug 2019 20:53:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190820143341.GB1536@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sobota, 24. avgust 2019 ob 14:46:54 CEST je Ond=C5=99ej Jirman napisal(=
-a):
-> Hi,
->=20
-> On Sat, Aug 24, 2019 at 02:32:32PM +0200, Jernej =C5=A0krabec wrote:
-> > Hi!
-> >=20
-> > Dne torek, 20. avgust 2019 ob 17:19:33 CEST je megous@megous.com=20
-napisal(a):
-> > > From: Ondrej Jirman <megous@megous.com>
-> > >=20
-> > > RTC on H6 is mostly the same as on H5 and H3. It has slight differenc=
-es
-> > > mostly in features that are not yet supported by this driver.
-> > >=20
-> > > Some differences are already stated in the comments in existing code.
-> > > One other difference is that H6 has extra bit in LOSC_CTRL_REG, called
-> > > EXT_LOSC_EN to enable/disable external low speed crystal oscillator.
-> > >=20
-> > > It also has bit EXT_LOSC_STA in LOSC_AUTO_SWT_STA_REG, to check wheth=
-er
-> > > external low speed oscillator is working correctly.
-> > >=20
-> > > This patch adds support for enabling LOSC when necessary:
-> > >=20
-> > > - during reparenting
-> > > - when probing the clock
-> > >=20
-> > > H6 also has capacbility to automatically reparent RTC clock from
-> > > external crystal oscillator, to internal RC oscillator, if external
-> > > oscillator fails. This is enabled by default. Disable it during
-> > > probe.
-> > >=20
-> > > Signed-off-by: Ondrej Jirman <megous@megous.com>
-> > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > > ---
-> > >=20
-> > >  drivers/rtc/rtc-sun6i.c | 40 ++++++++++++++++++++++++++++++++++++++--
-> > >  1 file changed, 38 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-> > > index d50ee023b559..b0c3752bed3f 100644
-> > > --- a/drivers/rtc/rtc-sun6i.c
-> > > +++ b/drivers/rtc/rtc-sun6i.c
-> > > @@ -32,9 +32,11 @@
-> > >=20
-> > >  /* Control register */
-> > >  #define SUN6I_LOSC_CTRL				0x0000
-> > >  #define SUN6I_LOSC_CTRL_KEY			(0x16aa << 16)
-> > >=20
-> > > +#define SUN6I_LOSC_CTRL_AUTO_SWT_BYPASS		BIT(15)
-> >=20
-> > User manual says that above field is bit 14.
->=20
-> See the previous discussion, this is from BSP.
-
-I have two versions of BSP (don't ask me which) which have this set as bit =
-14=20
-and changing this to 14 actually solves all my problems with LOSC (no more=
-=20
-issues with setting RTC and HDMI-CEC works now - it uses LOSC as parent) on=
-=20
-Tanix TX6 box.
-
-Best regards,
-Jernej
-
->=20
-> regards,
-> 	o.
->=20
-> > Best regards,
-> > Jernej
-> >=20
-> > >  #define SUN6I_LOSC_CTRL_ALM_DHMS_ACC		BIT(9)
-> > >  #define SUN6I_LOSC_CTRL_RTC_HMS_ACC		BIT(8)
-> > >  #define SUN6I_LOSC_CTRL_RTC_YMD_ACC		BIT(7)
-> > >=20
-> > > +#define SUN6I_LOSC_CTRL_EXT_LOSC_EN		BIT(4)
-> > >=20
-> > >  #define SUN6I_LOSC_CTRL_EXT_OSC			BIT(0)
-> > >  #define SUN6I_LOSC_CTRL_ACC_MASK		GENMASK(9, 7)
-> > >=20
-> > > @@ -128,6 +130,8 @@ struct sun6i_rtc_clk_data {
-> > >=20
-> > >  	unsigned int has_prescaler : 1;
-> > >  	unsigned int has_out_clk : 1;
-> > >  	unsigned int export_iosc : 1;
-> > >=20
-> > > +	unsigned int has_losc_en : 1;
-> > > +	unsigned int has_auto_swt : 1;
-> > >=20
-> > >  };
-> > > =20
-> > >  struct sun6i_rtc_dev {
-> > >=20
-> > > @@ -190,6 +194,10 @@ static int sun6i_rtc_osc_set_parent(struct clk_hw
-> > > *hw,
-> > > u8 index) val &=3D ~SUN6I_LOSC_CTRL_EXT_OSC;
-> > >=20
-> > >  	val |=3D SUN6I_LOSC_CTRL_KEY;
-> > >  	val |=3D index ? SUN6I_LOSC_CTRL_EXT_OSC : 0;
-> > >=20
-> > > +	if (rtc->data->has_losc_en) {
-> > > +		val &=3D ~SUN6I_LOSC_CTRL_EXT_LOSC_EN;
-> > > +		val |=3D index ? SUN6I_LOSC_CTRL_EXT_LOSC_EN : 0;
-> > > +	}
-> > >=20
-> > >  	writel(val, rtc->base + SUN6I_LOSC_CTRL);
-> > >  	spin_unlock_irqrestore(&rtc->lock, flags);
-> > >=20
-> > > @@ -215,6 +223,7 @@ static void __init sun6i_rtc_clk_init(struct
-> > > device_node *node, const char *iosc_name =3D "rtc-int-osc";
-> > >=20
-> > >  	const char *clkout_name =3D "osc32k-out";
-> > >  	const char *parents[2];
-> > >=20
-> > > +	u32 reg;
-> > >=20
-> > >  	rtc =3D kzalloc(sizeof(*rtc), GFP_KERNEL);
-> > >  	if (!rtc)
-> > >=20
-> > > @@ -235,9 +244,18 @@ static void __init sun6i_rtc_clk_init(struct
-> > > device_node *node, goto err;
-> > >=20
-> > >  	}
-> > >=20
-> > > +	reg =3D SUN6I_LOSC_CTRL_KEY;
-> > > +	if (rtc->data->has_auto_swt) {
-> > > +		/* Bypass auto-switch to int osc, on ext losc failure=20
-*/
-> > > +		reg |=3D SUN6I_LOSC_CTRL_AUTO_SWT_BYPASS;
-> > > +		writel(reg, rtc->base + SUN6I_LOSC_CTRL);
-> > > +	}
-> > > +
-> > >=20
-> > >  	/* Switch to the external, more precise, oscillator */
-> > >=20
-> > > -	writel(SUN6I_LOSC_CTRL_KEY | SUN6I_LOSC_CTRL_EXT_OSC,
-> > > -	       rtc->base + SUN6I_LOSC_CTRL);
-> > > +	reg |=3D SUN6I_LOSC_CTRL_EXT_OSC;
-> > > +	if (rtc->data->has_losc_en)
-> > > +		reg |=3D SUN6I_LOSC_CTRL_EXT_LOSC_EN;
-> > > +	writel(reg, rtc->base + SUN6I_LOSC_CTRL);
-> > >=20
-> > >  	/* Yes, I know, this is ugly. */
-> > >  	sun6i_rtc =3D rtc;
-> > >=20
-> > > @@ -345,6 +363,23 @@ CLK_OF_DECLARE_DRIVER(sun8i_h3_rtc_clk,
-> > > "allwinner,sun8i-h3-rtc", CLK_OF_DECLARE_DRIVER(sun50i_h5_rtc_clk,
-> > > "allwinner,sun50i-h5-rtc", sun8i_h3_rtc_clk_init);
-> > >=20
-> > > +static const struct sun6i_rtc_clk_data sun50i_h6_rtc_data =3D {
-> > > +	.rc_osc_rate =3D 16000000,
-> > > +	.fixed_prescaler =3D 32,
-> > > +	.has_prescaler =3D 1,
-> > > +	.has_out_clk =3D 1,
-> > > +	.export_iosc =3D 1,
-> > > +	.has_losc_en =3D 1,
-> > > +	.has_auto_swt =3D 1,
-> > > +};
-> > > +
-> > > +static void __init sun50i_h6_rtc_clk_init(struct device_node *node)
-> > > +{
-> > > +	sun6i_rtc_clk_init(node, &sun50i_h6_rtc_data);
-> > > +}
-> > > +CLK_OF_DECLARE_DRIVER(sun50i_h6_rtc_clk, "allwinner,sun50i-h6-rtc",
-> > > +		      sun50i_h6_rtc_clk_init);
-> > > +
-> > >=20
-> > >  static const struct sun6i_rtc_clk_data sun8i_v3_rtc_data =3D {
-> > > =20
-> > >  	.rc_osc_rate =3D 32000,
-> > >  	.has_out_clk =3D 1,
-> > >=20
-> > > @@ -675,6 +710,7 @@ static const struct of_device_id sun6i_rtc_dt_ids=
-[]
-> > > =3D {
-> > >=20
-> > >  	{ .compatible =3D "allwinner,sun8i-r40-rtc" },
-> > >  	{ .compatible =3D "allwinner,sun8i-v3-rtc" },
-> > >  	{ .compatible =3D "allwinner,sun50i-h5-rtc" },
-> > >=20
-> > > +	{ .compatible =3D "allwinner,sun50i-h6-rtc" },
-> > >=20
-> > >  	{ /* sentinel */ },
-> > > =20
-> > >  };
-> > >  MODULE_DEVICE_TABLE(of, sun6i_rtc_dt_ids);
-> >=20
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 
+On 2019/8/20 下午10:33, Greg Kroah-Hartman wrote:
+> On Tue, Aug 20, 2019 at 08:36:50PM +0800, zhangfei wrote:
+>> Hi, Greg
+>>
+>> On 2019/8/19 下午6:24, Greg Kroah-Hartman wrote:
+>>>>>> +static int uacce_create_chrdev(struct uacce *uacce)
+>>>>>> +{
+>>>>>> +	int ret;
+>>>>>> +
+>>>>>> +	ret = idr_alloc(&uacce_idr, uacce, 0, 0, GFP_KERNEL);
+>>>>>> +	if (ret < 0)
+>>>>>> +		return ret;
+>>>>>> +
+>>>>> Shouldn't this function create the memory needed for this structure?
+>>>>> You are relying ont he caller to do it for you, why?
+>>>> I think you mean uacce structure here.
+>>>> Yes, currently we count on caller to prepare uacce structure and call
+>>>> uacce_register(uacce).
+>>>> We still think this method is simpler, prepare uacce, register uacce.
+>>>> And there are other system using the same method, like crypto
+>>>> (crypto_register_acomp), nand, etc.
+>>> crypto is not a subsystem to ever try to emulate :)
+>>>
+>>> You are creating a structure with a lifetime that you control, don't
+>>> have someone else create your memory, that's almost never what you want
+>>> to do.  Most all driver subsystems create their own memory chunks for
+>>> what they need to do, it's a much better pattern.
+>>>
+>>> Especially when you get into pointer lifetime issues...
+>> OK, understand now, thanks for your patience.
+>> will use this instead.
+>> struct uacce_interface {
+>>          char name[32];
+>>          unsigned int flags;
+>>          struct uacce_ops *ops;
+>> };
+>> struct uacce *uacce_register(struct device *dev, struct uacce_interface
+>> *interface);
+> What?  Why do you need a structure?  A pointer to the name and the ops
+> should be all that is needed, right?
+We are thinking transfer structure will be more flexible.
+And modify api later would be difficult, requiring many drivers modify 
+together.
+Currently parameters need a flag, a pointer to the name, and ops, but in 
+case more requirement from future drivers usage.
+Also refer usb_register_dev, sdhci_pltfm_init etc, and the structure 
+para can be set as static.
+> And 'dev' here is a pointer to the parent, right?  Might want to make
+> that explicit in the name of the variable :)
+Yes, 'dev' is parent, will change to 'pdev', thanks.
+>>>>>> +
+>>>>>> +static int uacce_dev_match(struct device *dev, void *data)
+>>>>>> +{
+>>>>>> +	if (dev->parent == data)
+>>>>>> +		return -EBUSY;
+>>>>> There should be in-kernel functions for this now, no need for you to
+>>>>> roll your own.
+>>>> Sorry, do not find this function.
+>>>> Only find class_find_device, which still require match.
+>>> It is in linux-next, look there...
+>>>
+>> Suppose you mean the funcs: device_match_name,
+>> device_match_of_node,device_match_devt etc.
+>> Here we need dev->parent, there still no such func.
+> You should NEVER be matching on a parent.  If so, your use of the driver
+> model is wrong :)
+>
+> Remind me to really review the use of the driver core code in your next
+> submission of this series please, I think it needs it.
+>
+>
 
+OK, thanks Greg.
 
