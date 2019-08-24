@@ -2,41 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 963F69BE45
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 16:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 494BA9BE5C
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 17:03:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfHXOkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 10:40:51 -0400
-Received: from mga12.intel.com ([192.55.52.136]:3204 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727604AbfHXOku (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 10:40:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2019 07:40:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,425,1559545200"; 
-   d="scan'208";a="379164198"
-Received: from sneftin-mobl1.ger.corp.intel.com (HELO [10.249.93.120]) ([10.249.93.120])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Aug 2019 07:40:47 -0700
-Subject: Re: [PATCH] igb/igc: Don't warn on fatal read failures when the
- device is removed
-To:     Lyude Paul <lyude@redhat.com>, intel-wired-lan@lists.osuosl.org,
-        netdev@vger.kernel.org
-Cc:     Feng Tang <feng.tang@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org
-References: <20190822183318.27634-1-lyude@redhat.com>
-From:   "Neftin, Sasha" <sasha.neftin@intel.com>
-Message-ID: <0e601456-58c3-b6ed-3be2-3eb5eec12eb4@intel.com>
-Date:   Sat, 24 Aug 2019 17:40:45 +0300
+        id S1727972AbfHXPDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 11:03:48 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34951 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727638AbfHXPDs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 11:03:48 -0400
+Received: by mail-wr1-f67.google.com with SMTP id k2so11250291wrq.2;
+        Sat, 24 Aug 2019 08:03:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hiGz5lvlbrWK+uutFSFiz0Vky1xYc1AVTuAhL4+Ad8o=;
+        b=gqPvvUY/d5ez/8TAduc0IiVUTQQ4BX0/ywQ378zt64y7ub6jjaRp6lgwS4xqJC0sx+
+         fK/HU47NrYzbSHK5kTws5EyLleM6W2GWgq0gmiAiJb1P9ECzPrqfuKcNt5LMUfkyD6Vg
+         zgAbJDqGq/7zlO9Bz68GoDDgEqQzXeDKf25ls4xvRRsDtBrqca1wVJFpsvXxqf7TQf/k
+         VfGs3xr/H4Gs06uHevXeRLkdtP7eIWYl4P1YM44iYpR/rJEC/Gsrhfo3nZlJy1CTmDs/
+         xIntovMLObAXMvoznS47IzJ8zBBVDTqr7ok/UcqNd1L2QfR9wSheJhZNKhNHLtCZ3Xku
+         IY9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hiGz5lvlbrWK+uutFSFiz0Vky1xYc1AVTuAhL4+Ad8o=;
+        b=YM+Z4/TacdG0GKblsq4bimOzlWKawEPvlBvyqFP/4wEMs53k0rhvgjLy4uEUlT4JxH
+         m4YcgLvI9tTcnQ+TXRMEus5hbUgyUbTAQlJEfL/72R7QLtXma+WOlkU29zal9M/jMlXt
+         1u+/6U0VlP9FHaHPB8zZrtbR88i+wrLKU5YFs/vCgmC3yV55yK2HcJYt7lQ611RYCpA9
+         WczaaUj5AznGGUvFc0M8AHjdjeK96nTAlbFfiKK0sKUkWrM3kyVdVF/Sc7dyn3l07/NB
+         lhiOdpmYNrFE9RzMyLJvDWu3/X3cA2Uo6yeYpv4BAQF+ebMSzchlrXdqJPR++mOwprb8
+         cTeA==
+X-Gm-Message-State: APjAAAXIaFeP5SXAQNvP/ZrhuEjybjXDU86pQfQ3tzxqYJIkmkCtsnoH
+        X7OZSe/OkSzww+uGDr9Q/7Ug4WzT
+X-Google-Smtp-Source: APXvYqxcr0JM6GRTYqhy4dvHD6srcnr0X2F75Zyf22rRQoAzEDFPPAoY8zo/XKNa47Ji8bSYRyBBdw==
+X-Received: by 2002:a5d:4211:: with SMTP id n17mr10570320wrq.137.1566659024925;
+        Sat, 24 Aug 2019 08:03:44 -0700 (PDT)
+Received: from ?IPv6:2003:ea:8f04:7c00:2069:2121:113c:4840? (p200300EA8F047C0020692121113C4840.dip0.t-ipconnect.de. [2003:ea:8f04:7c00:2069:2121:113c:4840])
+        by smtp.googlemail.com with ESMTPSA id w5sm6758939wmm.43.2019.08.24.08.03.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 24 Aug 2019 08:03:44 -0700 (PDT)
+Subject: Re: [PATCH net-next 0/1] Add BASE-T1 PHY support
+To:     Christian Herber <christian.herber@nxp.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     "davem@davemloft.net" <davem@davemloft.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190815153209.21529-1-christian.herber@nxp.com>
+ <8c15b855-6947-9930-c3df-71a64fbff33b@gmail.com>
+ <AM6PR0402MB379864B810F08D3698618B5F86A80@AM6PR0402MB3798.eurprd04.prod.outlook.com>
+ <13e65051-fe4f-5964-30b3-75285e6d2eee@gmail.com>
+ <AM6PR0402MB3798FCBF1EE592687B13A3C386AB0@AM6PR0402MB3798.eurprd04.prod.outlook.com>
+ <5c920846-b8f5-d087-cea4-a8ca3f816127@gmail.com>
+ <20190821185715.GA16401@lunn.ch>
+ <AM6PR0402MB3798C702793071E34A5659ED86A50@AM6PR0402MB3798.eurprd04.prod.outlook.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <1f50cdcf-200d-7c25-35ae-aee011a6a520@gmail.com>
+Date:   Sat, 24 Aug 2019 17:03:33 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190822183318.27634-1-lyude@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <AM6PR0402MB3798C702793071E34A5659ED86A50@AM6PR0402MB3798.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,117 +76,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/22/2019 21:33, Lyude Paul wrote:
-> Fatal read errors are worth warning about, unless of course the device
-> was just unplugged from the machine - something that's a rather normal
-> occurence when the igb/igc adapter is located on a Thunderbolt dock. So,
-> let's only WARN() if there's a fatal read error while the device is
-> still present.
+On 22.08.2019 09:18, Christian Herber wrote:
+> On 21.08.2019 20:57, Andrew Lunn wrote:
+>>
+>>> The current patch set IMO is a little bit hacky. I'm not 100% happy
+>>> with the implicit assumption that there can't be devices supporting
+>>> T1 and classic BaseT modes or fiber modes.
+>>
+>>> Andrew: Do you have an opinion on that?
+>>
+>> Hi Heiner
+>>
+>> I would also like cleaner integration. I doubt here is anything in the
+>> standard which says you cannot combine these modes. It is more a
+>> marketing question if anybody would build such a device. Maybe not
+>> directly into a vehicle, but you could imaging a mobile test device
+>> which uses T1 to talk to the car and T4 to connect to the garage
+>> network?
+>>
+>> So i don't think we should limit ourselves. phylib should provide a
+>> clean, simple set of helpers to perform standard operations for
+>> various modes. Drivers can make use of those helpers. That much should
+>> be clear. If we try to make genphy support them all simultaneously, is
+>> less clear.
+>>
+>>       Andrew
+>>
 > 
-> This fixes the following WARN splat that's been appearing whenever I
-> unplug my Caldigit TS3 Thunderbolt dock from my laptop:
+> If you want to go down this path, then i think we have to ask some more 
+> questions. Clause 45 is a very scalable register scheme, it is not a 
+> specific class of devices and will be extended and extended.
 > 
->    igb 0000:09:00.0 enp9s0: PCIe link lost
->    ------------[ cut here ]------------
->    igb: Failed to read reg 0x18!
->    WARNING: CPU: 7 PID: 516 at
->    drivers/net/ethernet/intel/igb/igb_main.c:756 igb_rd32+0x57/0x6a [igb]
->    Modules linked in: igb dca thunderbolt fuse vfat fat elan_i2c mei_wdt
->    mei_hdcp i915 wmi_bmof intel_wmi_thunderbolt iTCO_wdt
->    iTCO_vendor_support x86_pkg_temp_thermal intel_powerclamp joydev
->    coretemp crct10dif_pclmul crc32_pclmul i2c_algo_bit ghash_clmulni_intel
->    intel_cstate drm_kms_helper intel_uncore syscopyarea sysfillrect
->    sysimgblt fb_sys_fops intel_rapl_perf intel_xhci_usb_role_switch mei_me
->    drm roles idma64 i2c_i801 ucsi_acpi typec_ucsi mei intel_lpss_pci
->    processor_thermal_device typec intel_pch_thermal intel_soc_dts_iosf
->    intel_lpss int3403_thermal thinkpad_acpi wmi int340x_thermal_zone
->    ledtrig_audio int3400_thermal acpi_thermal_rel acpi_pad video
->    pcc_cpufreq ip_tables serio_raw nvme nvme_core crc32c_intel uas
->    usb_storage e1000e i2c_dev
->    CPU: 7 PID: 516 Comm: kworker/u16:3 Not tainted 5.2.0-rc1Lyude-Test+ #14
->    Hardware name: LENOVO 20L8S2N800/20L8S2N800, BIOS N22ET35W (1.12 ) 04/09/2018
->    Workqueue: kacpi_hotplug acpi_hotplug_work_fn
->    RIP: 0010:igb_rd32+0x57/0x6a [igb]
->    Code: 87 b8 fc ff ff 48 c7 47 08 00 00 00 00 48 c7 c6 33 42 9b c0 4c 89
->    c7 e8 47 45 cd dc 89 ee 48 c7 c7 43 42 9b c0 e8 c1 94 71 dc <0f> 0b eb
->    08 8b 00 ff c0 75 b0 eb c8 44 89 e0 5d 41 5c c3 0f 1f 44
->    RSP: 0018:ffffba5801cf7c48 EFLAGS: 00010286
->    RAX: 0000000000000000 RBX: ffff9e7956608840 RCX: 0000000000000007
->    RDX: 0000000000000000 RSI: ffffba5801cf7b24 RDI: ffff9e795e3d6a00
->    RBP: 0000000000000018 R08: 000000009dec4a01 R09: ffffffff9e61018f
->    R10: 0000000000000000 R11: ffffba5801cf7ae5 R12: 00000000ffffffff
->    R13: ffff9e7956608840 R14: ffff9e795a6f10b0 R15: 0000000000000000
->    FS:  0000000000000000(0000) GS:ffff9e795e3c0000(0000) knlGS:0000000000000000
->    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->    CR2: 0000564317bc4088 CR3: 000000010e00a006 CR4: 00000000003606e0
->    DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->    DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->    Call Trace:
->     igb_release_hw_control+0x1a/0x30 [igb]
->     igb_remove+0xc5/0x14b [igb]
->     pci_device_remove+0x3b/0x93
->     device_release_driver_internal+0xd7/0x17e
->     pci_stop_bus_device+0x36/0x75
->     pci_stop_bus_device+0x66/0x75
->     pci_stop_bus_device+0x66/0x75
->     pci_stop_and_remove_bus_device+0xf/0x19
->     trim_stale_devices+0xc5/0x13a
->     ? __pm_runtime_resume+0x6e/0x7b
->     trim_stale_devices+0x103/0x13a
->     ? __pm_runtime_resume+0x6e/0x7b
->     trim_stale_devices+0x103/0x13a
->     acpiphp_check_bridge+0xd8/0xf5
->     acpiphp_hotplug_notify+0xf7/0x14b
->     ? acpiphp_check_bridge+0xf5/0xf5
->     acpi_device_hotplug+0x357/0x3b5
->     acpi_hotplug_work_fn+0x1a/0x23
->     process_one_work+0x1a7/0x296
->     worker_thread+0x1a8/0x24c
->     ? process_scheduled_works+0x2c/0x2c
->     kthread+0xe9/0xee
->     ? kthread_destroy_worker+0x41/0x41
->     ret_from_fork+0x35/0x40
->    ---[ end trace 252bf10352c63d22 ]---
+> Currently, the phy-c45.c supports 10/100/1000/2500/5000/10000 Mbps 
+> consumer/enterprise PHYs. This is also an implicit assumption. The 
+> register set (e.g. on auto-neg) used for this will also only support 
+> these modes and nothing more, as it is done scaling.
 > 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Fixes: 47e16692b26b ("igb/igc: warn when fatal read failure happens")
-> Cc: Feng Tang <feng.tang@intel.com>
-> Cc: Sasha Neftin <sasha.neftin@intel.com>
-> Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-> Cc: intel-wired-lan@lists.osuosl.org
-> ---
->   drivers/net/ethernet/intel/igb/igb_main.c | 3 ++-
->   drivers/net/ethernet/intel/igc/igc_main.c | 3 ++-
->   2 files changed, 4 insertions(+), 2 deletions(-)
+> Currently not supported, but already present in IEEE 802.3:
+> - MultiGBASE-T (25/40 Gbps) (see e.g. MultiGBASE-T AN control 1 register)
+> - BASE-T1
+> - 10BASE-T1
+> - NGBASE-T1
 > 
-> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-> index e5b7e638df28..1a7f7cd28df9 100644
-> --- a/drivers/net/ethernet/intel/igb/igb_main.c
-> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
-> @@ -753,7 +753,8 @@ u32 igb_rd32(struct e1000_hw *hw, u32 reg)
->   		struct net_device *netdev = igb->netdev;
->   		hw->hw_addr = NULL;
->   		netdev_err(netdev, "PCIe link lost\n");
-> -		WARN(1, "igb: Failed to read reg 0x%x!\n", reg);
-> +		WARN(pci_device_is_present(igb->pdev),
-> +		     "igb: Failed to read reg 0x%x!\n", reg);
->   	}
->   
->   	return value;
-> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-> index 28072b9aa932..f873a4b35eaf 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_main.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
-> @@ -3934,7 +3934,8 @@ u32 igc_rd32(struct igc_hw *hw, u32 reg)
->   		hw->hw_addr = NULL;
->   		netif_device_detach(netdev);
->   		netdev_err(netdev, "PCIe link lost, device now detached\n");
-> -		WARN(1, "igc: Failed to read reg 0x%x!\n", reg);
-> +		WARN(pci_device_is_present(igc->pdev),
-> +		     "igc: Failed to read reg 0x%x!\n", reg);
->   	}
->   
->   	return value;
+> And surely there are some on the way or already there that I am not 
+> aware of.
 > 
-Thanks, for igc
-Acked-by: Sasha Neftin <sasha.neftin@intel.com>
+> To me, one architectural decision point is if you want to have generic 
+> support for all C45 PHYs in one file, or if you want to split it by 
+> device class. I went down the first path with my patch, as this is the 
+> road gone also with the existing code.
+> 
+> If you want to split BASE-T1, i think you will need one basic C45 
+> library (genphy_c45_pma_read_abilities() is a good example of a function 
+> that is not specific to a device class). On the other hand, 
+> genphy_c45_pma_setup_forced() is not a generic function at this point as 
+> it supports only a subset of devices managed in C45.
+> 
+> I tend to agree with you that splitting is the best way to go in the 
+> long run, but that also requires a split of the existing phy-c45.c into 
+> two IMHO.
+> 
+BASE-T1 seems to be based on Clause 45 (at least Clause 45 MDIO),
+but it's not fully compliant with Clause 45. Taking AN link status
+as an example: 45.2.7.2.7 states that link-up is signaled in bit 7.1.2.
+If BASE-T1 uses a different register, then it's not fully Clause 45
+compatible.
+Therefore also my question for the datasheet of an actual BASE-T1 PHY,
+as I would be curious whether it shadows the link-up bit from 7.513.2
+to 7.1.2 to be Clause 45 compliant. Definitely reading bit 7.513.2
+is nothing that belongs into a genphy_c45_ function.
+
+The extension to genphy_c45_pma_read_abilities() looks good to me,
+for the other parts I'd like to see first how real world BASE-T1 PHYs
+handle it. If they shadow the T1-specific bits to the Clause 45
+standard ones, we should be fine. Otherwise IMO we have to add
+separate T1 functions to phylib.
+
+Heiner
+
+
+
+
+
+
+
+
+
+
+
+
+
+
