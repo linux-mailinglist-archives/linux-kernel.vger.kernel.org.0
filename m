@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A95879BD9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 14:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74CFE9BDA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 14:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbfHXMTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 08:19:32 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:56602 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbfHXMT0 (ORCPT
+        id S1727972AbfHXM1O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 08:27:14 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:7770 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbfHXM1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 08:19:26 -0400
-Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+        Sat, 24 Aug 2019 08:27:14 -0400
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
   Tudor.Ambarus@microchip.com designates 198.175.253.82 as
   permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
   envelope-from="Tudor.Ambarus@microchip.com";
   x-sender="Tudor.Ambarus@microchip.com";
   x-conformance=spf_only; x-record-type="v=spf1";
@@ -23,38 +23,38 @@ Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
   a:smtpout.microchip.com a:mx1.microchip.iphmx.com
   a:mx2.microchip.iphmx.com include:servers.mcsv.net
   include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa2.microchip.iphmx.com: no sender
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
   authenticity information available from domain of
   postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
   envelope-from="Tudor.Ambarus@microchip.com";
   x-sender="postmaster@email.microchip.com";
   x-conformance=spf_only
-Authentication-Results: esa2.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: VnfZNauAfnpmPsuQScodRlSRfP2CxNY7YwpayywfomKyp0OGV1GQRAVB+k3P2B1xV8Ss6E9E56
- RRoRLMjUFg7b97UsngNLC2hPRGp6M9Q3qQvUEfhdKwa30eIkAHAv+p/7h9jksgw7iEMSnCjdxR
- PLV+khLHeGn1kPuPXTo2cgFwwgVyadllL8OyQWIQvKKxjfgffx+LNdGJDk3tRMCWnrcP69mmnK
- MwXv4krZOh07aXjW3zdXNkR4N3IVojBVmv22PeE+4Z+xoHX35/KazjM5CGReBP3/fA69g+IV1u
- kxY=
+Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: vnQIt12T4Uls+N6F2FI7Qb2Z1AeBHJya3glr4gP3yTFrZLrP4BVMDab64uLWycDqsfW1wBrmXH
+ +MkHRKAdrJxXouDtT9/WP2xLmxDKo8NttcbQ/J3RMeBqDs9Lr2ldahF1sciYYeWgjL+yEW2n90
+ uDdqY+AVDfVJPCQAicQjBu7Ik/SVd4ucBWL/oWHQ5WiaiSUSlKLeM7VJWXoQtUmVmxPJxS4ApE
+ 5vk0BYBVe4PEN55FDktO/jfYFilBtyDlHzzFpFCtpJZvfYNo1PKWoS3EHTj7Ne8HwqOGhb3Ivw
+ /hk=
 X-IronPort-AV: E=Sophos;i="5.64,425,1559545200"; 
-   d="scan'208";a="46393054"
+   d="scan'208";a="43549131"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Aug 2019 05:19:25 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Aug 2019 05:27:12 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sat, 24 Aug 2019 05:19:24 -0700
-Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Sat, 24 Aug 2019 05:19:25 -0700
+ 15.1.1713.5; Sat, 24 Aug 2019 05:27:12 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Sat, 24 Aug 2019 05:27:11 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=R3Rjhv1FeT7CCCAUZKfQUlMrV/6eljJnM+QcF8pZoCMqFHzzwf1459TcXqK+yUtWG1ReDA51HJxgbPc0APv9wKaOOemKhscz6Jrm/BHb+4Obfs5yLRxfSm7zS7wREx6WbQtGzu3LNEBWEYlKjo6S3LpHTlObEwoHbLMLDXS/st3ekQ4x+Q72yo8LhstLcJyvQuuYC4yuofvWC3VIbVTzECmLZbJ5aOLAtpV5vOId8NhgQqVulwwzUCtnJ0cxz2QaTILVhbMUiAOs9CyzVxfsNPsC5QAYAPprpoaJzjREhO7myN78CBuxJD665mXalcd+5D+/ReuPk16StEybGDHCFQ==
+ b=fH/Dp5sSDlouIOCgk+J4ujMoH+9Zoxag+TVLlzRp/2dtLudsxwCMnu0m3tusWHQnhj3ub1OBNSa7OHpBH+bZn4dhC60vvHQhJAV+S4SiWUrhzD+9lfy4+4RmQOc7Yi8920hhDLV2uuf66uhV42lt6Ey/sEwwIoGgKFOHvMTBb1vSLmkwbjdFz/ULGvHRbcasrlz2mZOaRzriTi3oHUgobTklERFGggcDXt6ox6vDcG1bBs//YVEiCVDfcjV9kC8Gp+KQF3fgkMqdRSAZ6e8I9j2+k85iz4xr/CH4zuLWeUnf8+C1OexZ8hzRIUI7Jd7G5/54htddtNSwAvzMjhJqIw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BvtBFNFgEONvIlG7ZSlpX92LWyJivrHulz+wbaLFvTk=;
- b=XzIwRU+tL02jsmPtk2biETam23tv5V8/gikv94DwkdcacU9Ic1ysSwW8xbDzdQ05Q5jLmxuaMYSMCX7Pu7kKMbpSy2ifQGlfqLZZnDD5qUzj4gbQfW8ZJsQfv+u46xxiSrMgVi5PcOOMH2ET2AoBRhNL46LekMgIvrJgkpxnuTVNmULJlbuhtQoRtDrN9lwyGjcNpkfBC6kHUYNX9Z0sij5mKJXevgY2ZeH/Y2f9/AqR8zcP5Vu0huFTUeNp19xscH6FWS87hSrr77kkK9GGbVdUbNL74wCKWJN3ZZDtjd1wIyD52lyj3JDqSZVcJXGBJc4l2LmY+8hQSEw5y+Hr0g==
+ bh=/nxJcHaNeA/yPG2kHwnUvf2teMt3BEJFdf20flB/oBk=;
+ b=aHOdymDMSxcL4WvsBSjGGijNUyHbB+PpZzmWq/j1G3BudqWr9pn4Az2YVgIg4tlzTXvoWwIn1iSqoaKLjMCy/04zSaK8pHnjG4ivPwrFXEL/DHI0+o9IvXXj5wwHNjLEsNwXqTggfwn5GS3a42FmuGpAFJa6yEz7uNuy4s8wI9mbIHtud6VfHSDBGBICjVl3HANcG5BEmce3FfnA7+tUEZRrGv2ZKJ13x4DIykIVPz19FwX5sWSTjjb1NI0nN3F5kge3en+obSCe1wAQDF6cg2LOuk02t/pu1jo9MQnABXdFAlzCiNXJkO+sGe3Kc/p/rIodoKQ2wore5e/Dd4oK1w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=microchip.com; dmarc=pass action=none
  header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
@@ -62,62 +62,61 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector2-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BvtBFNFgEONvIlG7ZSlpX92LWyJivrHulz+wbaLFvTk=;
- b=Uu1K54uvwXbj+I0nUDXLGjB9H6n/J0w0g2OkzWvd7R41gVMR4ZYkcHM0teGH5rH7N5/iZsgA9kzyRLXRxjVEevNuuzIqyVgJCsax46qnHh5D3AwvJcnbhjd3gCBcw4eKCAwOZ0PpR3Wb0JVBzhcoSU+Pu5naeVB1mo+abYIDdX0=
+ bh=/nxJcHaNeA/yPG2kHwnUvf2teMt3BEJFdf20flB/oBk=;
+ b=PDM60BEqhtuoq3wXI51fw2cUnPYE74vAbXLjW2eTj3zUjQFHMRd4wKuCozgpeOxsJ//Gyn9Pb5OEakcBWAGun/nXam+IowMijzopKKlXJXPoKZ5q91MhAlCQDxx8mLJkD04hF8tTD4jFapiGMRm/gkfyGh4KbCmD+2wvJ76WOx4=
 Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
- MN2PR11MB4317.namprd11.prod.outlook.com (52.135.36.33) with Microsoft SMTP
+ MN2PR11MB3854.namprd11.prod.outlook.com (20.178.252.23) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.19; Sat, 24 Aug 2019 12:19:24 +0000
+ 15.20.2178.16; Sat, 24 Aug 2019 12:27:10 +0000
 Received: from MN2PR11MB4448.namprd11.prod.outlook.com
  ([fe80::70c3:e929:4da2:60a5]) by MN2PR11MB4448.namprd11.prod.outlook.com
  ([fe80::70c3:e929:4da2:60a5%7]) with mapi id 15.20.2178.020; Sat, 24 Aug 2019
- 12:19:24 +0000
+ 12:27:10 +0000
 From:   <Tudor.Ambarus@microchip.com>
 To:     <boris.brezillon@collabora.com>, <marek.vasut@gmail.com>,
         <vigneshr@ti.com>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
         <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
 CC:     <Tudor.Ambarus@microchip.com>
-Subject: [PATCH v2 3/3] mtd: spi-nor: Introduce spi_nor_get_flash_info()
-Thread-Topic: [PATCH v2 3/3] mtd: spi-nor: Introduce spi_nor_get_flash_info()
-Thread-Index: AQHVWnYqsaBgY0z+y0ChKE2/G9euMQ==
-Date:   Sat, 24 Aug 2019 12:19:24 +0000
-Message-ID: <20190824121910.15267-4-tudor.ambarus@microchip.com>
-References: <20190824121910.15267-1-tudor.ambarus@microchip.com>
-In-Reply-To: <20190824121910.15267-1-tudor.ambarus@microchip.com>
+Subject: [PATCH v2 0/2] mtd: spi-nor: add Global Block Unlock support
+Thread-Topic: [PATCH v2 0/2] mtd: spi-nor: add Global Block Unlock support
+Thread-Index: AQHVWndAYVHRO2wYkke/GPaXf6i9zg==
+Date:   Sat, 24 Aug 2019 12:27:10 +0000
+Message-ID: <20190824122700.23558-1-tudor.ambarus@microchip.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0602CA0013.eurprd06.prod.outlook.com
- (2603:10a6:800:bc::23) To MN2PR11MB4448.namprd11.prod.outlook.com
+x-clientproxiedby: VI1PR04CA0129.eurprd04.prod.outlook.com
+ (2603:10a6:803:f0::27) To MN2PR11MB4448.namprd11.prod.outlook.com
  (2603:10b6:208:193::29)
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.9.5
 x-originating-ip: [86.127.53.184]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3c4fb2cd-cf72-411c-90ef-08d7288d4cc9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR11MB4317;
-x-ms-traffictypediagnostic: MN2PR11MB4317:
+x-ms-office365-filtering-correlation-id: 5740c08e-30ce-4a3d-851d-08d7288e62cf
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:MN2PR11MB3854;
+x-ms-traffictypediagnostic: MN2PR11MB3854:
+x-ms-exchange-purlcount: 1
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR11MB4317A4DBC8EEC29A3C523CD2F0A70@MN2PR11MB4317.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1824;
+x-microsoft-antispam-prvs: <MN2PR11MB38544B6597422A396DEDBBFFF0A70@MN2PR11MB3854.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
 x-forefront-prvs: 0139052FDB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(346002)(39860400002)(376002)(189003)(199004)(52314003)(81156014)(110136005)(6436002)(3846002)(8936002)(8676002)(6512007)(50226002)(305945005)(25786009)(7736002)(478600001)(53936002)(2906002)(316002)(66066001)(81166006)(99286004)(36756003)(6486002)(107886003)(386003)(6506007)(102836004)(476003)(2616005)(52116002)(76176011)(446003)(486006)(26005)(186003)(6116002)(2501003)(4326008)(11346002)(71190400001)(71200400001)(2201001)(66946007)(66476007)(66556008)(64756008)(14454004)(1076003)(256004)(14444005)(66446008)(86362001)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4317;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(366004)(39860400002)(396003)(199004)(189003)(256004)(66946007)(966005)(81156014)(81166006)(186003)(2201001)(64756008)(66446008)(66556008)(26005)(478600001)(486006)(50226002)(6306002)(2616005)(6512007)(386003)(102836004)(8676002)(86362001)(2501003)(6506007)(1076003)(14454004)(316002)(476003)(6116002)(66476007)(99286004)(110136005)(6486002)(305945005)(6436002)(7736002)(71200400001)(2906002)(8936002)(25786009)(53936002)(66066001)(107886003)(3846002)(71190400001)(4326008)(5660300002)(52116002)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3854;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /z8rJ+xBPNrhZqoqVzjBw0WfJSNwBPv5k6N6BBe3GuH8YPnvgplSNiQG4lngedt4oNDep6nWNgQBaGLw3SoUgPmtONe6a/sF1cCakGT18xuuV4nJJDcdzmyfRerL+ntn5UrCrlmwq9Cpkm9fs+LEWrw518uhi1A1/xnSO0DCQBRoQAkbO5SPnvAfp7Ta1BkCmk2JNSbIjVprSTjiFcHm1KfOi4bY6MyEk4d7yiRWMIRhEnzghncn7hLTeii9ubUpoLvqAlxcD8vpXQ9tXD8mzlaI+9f/yoZ91X41lrdFcaWIxF9LMIqwZjX6lxGnpJ0Hk9oR82SSsmCNkY3ZQ8GHmFSKgTTxeD08+V8DN3gfDha9dn3lAf9MlaojAFSVUbyuUTgbW5+FyT4RbOVJxUD4ITfzsOUCWMn5v9avdFQ8WPU=
+x-microsoft-antispam-message-info: UQM7XSHb9itnqIEaYFN5YnxmLGfrrJELHRyHnTGjcgfFurHCFH7OVXSDpZGs0jqHY+UwOh7vKCwM4TdMTF4ixkXIyEnA9xdVL3mNr1RjtPHeHArGqMV+lP1KWRpb2GcXPLyK0BYW/thjleG1gdt7rm3iy+ddYa8T55RnnLd12SI4rmoDajkE2qiT54TyeyWZ3dF6pMsj7qYysOxOObNO4TIErfRXVhA0glnWCj7+uj92beS1J8XPmZWdn9S0cFvaW6xIPGydxser8KTCq9lyYsVAVMaKKEsTkxjnYuh2O3QURV6/iBnuo5+m+OX1xNk60XAyaODgyEOEZIvp1x6C0nNpjaVPRdyB09FmyeSVQR0LUkoIYbF+M9DTJh5nhak/lxPfS75OaPKQA7/l7o3cT67p48L6DnzBlle3RWZJulg=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c4fb2cd-cf72-411c-90ef-08d7288d4cc9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2019 12:19:24.1941
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5740c08e-30ce-4a3d-851d-08d7288e62cf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Aug 2019 12:27:10.7377
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9CT9YxynvAx6q48LHPgPw5EJiv5j52Kzd07iLefjO51DM+PjSeu+V9g2FSTuZTcJ0Nz2Fd+BaP5ymflq6nCnmywdrYGxEMIh/zG93J4x3PE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4317
+X-MS-Exchange-CrossTenant-userprincipalname: ZhRJ9LFPbUtJSbHgtjD6sSAqTubtCBU0j/nGdB8zJNVjfEmO/ptFH9TKf6NQN6OoBYL+ngjxMGOWoBFYgMK7bxBk748j4xyZL06/vKWfFM0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3854
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -125,116 +124,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-Dedicate a function for getting the pointer to the flash_info
-const struct. Trim a bit the spi_nor_scan() huge function.
+v2: the check for UNLOCK_GLOBAL_BLOCK should be done the first
+thing in spi_nor_disable_block_protection(). We use it for a faster
+throughput, a single command cycle that unlocks the entire memory
+array. Fix it.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 76 +++++++++++++++++++++++++--------------=
-----
- 1 file changed, 44 insertions(+), 32 deletions(-)
+This is similar with what other nor flashes are doing by clearing the
+block protection bits from the status register: disable the write
+protection after a power-on reset cycle.
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 449d2c4918ca..1896d36a7d11 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -4807,10 +4807,50 @@ static int spi_nor_set_addr_width(struct spi_nor *n=
-or)
- 	return 0;
- }
-=20
-+static const struct flash_info *spi_nor_get_flash_info(struct spi_nor *nor=
-,
-+						       const char *name)
-+{
-+	const struct flash_info *info =3D NULL;
-+
-+	if (name)
-+		info =3D spi_nor_match_id(name);
-+	/* Try to auto-detect if chip name wasn't specified or not found */
-+	if (!info)
-+		info =3D spi_nor_read_id(nor);
-+	if (IS_ERR_OR_NULL(info))
-+		return ERR_PTR(-ENOENT);
-+
-+	/*
-+	 * If caller has specified name of flash model that can normally be
-+	 * detected using JEDEC, let's verify it.
-+	 */
-+	if (name && info->id_len) {
-+		const struct flash_info *jinfo;
-+
-+		jinfo =3D spi_nor_read_id(nor);
-+		if (IS_ERR(jinfo)) {
-+			return jinfo;
-+		} else if (jinfo !=3D info) {
-+			/*
-+			 * JEDEC knows better, so overwrite platform ID. We
-+			 * can't trust partitions any longer, but we'll let
-+			 * mtd apply them anyway, since some partitions may be
-+			 * marked read-only, and we don't want to lose that
-+			 * information, even if it's not 100% accurate.
-+			 */
-+			dev_warn(nor->dev, "found %s, expected %s\n",
-+				 jinfo->name, info->name);
-+			info =3D jinfo;
-+		}
-+	}
-+
-+	return info;
-+}
-+
- int spi_nor_scan(struct spi_nor *nor, const char *name,
- 		 const struct spi_nor_hwcaps *hwcaps)
- {
--	const struct flash_info *info =3D NULL;
-+	const struct flash_info *info;
- 	struct device *dev =3D nor->dev;
- 	struct mtd_info *mtd =3D &nor->mtd;
- 	struct device_node *np =3D spi_nor_get_flash_node(nor);
-@@ -4841,37 +4881,9 @@ int spi_nor_scan(struct spi_nor *nor, const char *na=
-me,
- 	if (!nor->bouncebuf)
- 		return -ENOMEM;
-=20
--	if (name)
--		info =3D spi_nor_match_id(name);
--	/* Try to auto-detect if chip name wasn't specified or not found */
--	if (!info)
--		info =3D spi_nor_read_id(nor);
--	if (IS_ERR_OR_NULL(info))
--		return -ENOENT;
--
--	/*
--	 * If caller has specified name of flash model that can normally be
--	 * detected using JEDEC, let's verify it.
--	 */
--	if (name && info->id_len) {
--		const struct flash_info *jinfo;
--
--		jinfo =3D spi_nor_read_id(nor);
--		if (IS_ERR(jinfo)) {
--			return PTR_ERR(jinfo);
--		} else if (jinfo !=3D info) {
--			/*
--			 * JEDEC knows better, so overwrite platform ID. We
--			 * can't trust partitions any longer, but we'll let
--			 * mtd apply them anyway, since some partitions may be
--			 * marked read-only, and we don't want to lose that
--			 * information, even if it's not 100% accurate.
--			 */
--			dev_warn(dev, "found %s, expected %s\n",
--				 jinfo->name, info->name);
--			info =3D jinfo;
--		}
--	}
-+	info =3D spi_nor_get_flash_info(nor, name);
-+	if (IS_ERR(info))
-+		return PTR_ERR(info);
-=20
- 	nor->info =3D info;
-=20
+The Global Block-Protection Unlock command offers a single command cycle
+that unlocks the entire memory array. Prefer this method for higher
+throughput.
+
+Tested on the sst26vf064b flash using the atmel-quadspi driver.
+
+This has nothing to do with the move manufacturer out of the spi-nor core
+pursue, but depends on 'mtd: spi-nor: move manuf out of the core - batch 0'
+https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D127030
+
+Tudor Ambarus (2):
+  mtd: spi-nor: add Global Block Unlock support
+  mtd: spi-nor: unlock global block protection on sst26vf064b
+
+ drivers/mtd/spi-nor/spi-nor.c | 50 +++++++++++++++++++++++++++++++++++++++=
+++--
+ include/linux/mtd/spi-nor.h   |  1 +
+ 2 files changed, 49 insertions(+), 2 deletions(-)
+
 --=20
 2.9.5
 
