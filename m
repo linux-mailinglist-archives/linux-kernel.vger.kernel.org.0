@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DF4B9C011
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:27:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE8F59C01A
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:27:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbfHXU07 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 16:26:59 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:64738 "EHLO rere.qmqm.pl"
+        id S1728186AbfHXU1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 16:27:17 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:12082 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727708AbfHXU05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727879AbfHXU05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 24 Aug 2019 16:26:57 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 46G8sB1SjrzMK;
-        Sat, 24 Aug 2019 22:25:18 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 46G8sC3TJ3zTs;
+        Sat, 24 Aug 2019 22:25:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1566678318; bh=b1ek30lBM19VEowKiuxbPntDd/KyiOI+RsIayDlIPSE=;
+        t=1566678319; bh=VdbgtZ09Jmhv6nJYzpWS3ntFIzMHLWp5KKJVlktY88w=;
         h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=WPRi+wrljlChgomDgenPw6WjWkEF0QUrfddbn+HpD7+Pxi0P2uXrDhHSKF9RmF1E/
-         10gIljWH0OQ6hlS1wNejS1saBAm9usZSC7dFBpHeuanU0Qil8UQlw3iYVj8dwqI3SD
-         b+OS4I51FygKAjXBc//QSIpUZydf+JxjnWGDAPhJWaX9ZjFJQuCW56YvIbDAwFbVQ5
-         TOrb6zyh1+/QUJOn9riWoIU3WCiSoJD0KGb/gXuzC57dxe3yqsV1UV69lfM7q9gtfj
-         JpWq17xMvVdA7LAJZAiXtgcPH1JbT5IjI8twDNJNYbrsv1Wc44Xq//4x9cwA6ycW2m
-         k6u8H2xSASNtA==
+        b=anw28Gshlg7ioShZh4jMUTbNhZLisNCofQ7YU/mNq1U957DdsRYUy0eFjOFaT5i53
+         5mP8AKvzz4Vl324o0DRvozaxEUsX3Aohg9XUhRjGDB9ewFakBsSD1Xw0+nz9dxeiza
+         1RPw2S12ZiNB55qaCwIK8xqfcbSM3fiYYAKifSbPZx9PnpG6U1kWCvWEV3lB6JwbI3
+         3yP8CTo02S2cKCt3uOKj0SzOugCwJPrYoyKtxs+MIibEG77Ra/mlfqqKza0ba+DJx7
+         KMsgfp+ulEIu7vzox++YCmsKj6TYM93ykMNsPY8RZAaijYzhmqcINdd+1KQ1jr0YVl
+         SS2AmLbJejucw==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.101.2 at mail
-Date:   Sat, 24 Aug 2019 22:26:53 +0200
-Message-Id: <f5949b0326fdcdca072f3ed03f77de9e207631cd.1566677788.git.mirq-linux@rere.qmqm.pl>
+Date:   Sat, 24 Aug 2019 22:26:54 +0200
+Message-Id: <44fa6b700421e80778f20ff9ead2b148cf6d2e92.1566677788.git.mirq-linux@rere.qmqm.pl>
 In-Reply-To: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
 References: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 2/6] ASoC: atmel_ssc_dai: rework DAI format configuration
+Subject: [PATCH v2 3/6] ASoC: atmel_ssc_dai: implement left-justified data
+ mode
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -53,349 +54,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rework DAI format calculation in preparation for adding more formats
-later. As a side-effect this enables all CBM/CBS x CFM/CFS combinations
-for supported formats. (Note: the additional modes are not tested.)
-
-Note: this changes FSEDGE to POSITIVE for I2S CBM_CFS mode as the TXSYN
-interrupt is not used anyway.
+Enable support for left-justified data mode for SSC-codec link.
 
 Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
 ---
- v2: added note about extended modes' status
-     incorporated common FS (LRCLK) configuration
+ v2: rebased
 
 ---
- sound/soc/atmel/atmel_ssc_dai.c | 286 +++++++++-----------------------
- 1 file changed, 80 insertions(+), 206 deletions(-)
+ sound/soc/atmel/atmel_ssc_dai.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/sound/soc/atmel/atmel_ssc_dai.c b/sound/soc/atmel/atmel_ssc_dai.c
-index 6f89483ac88c..7dc6ec9b8c7a 100644
+index 7dc6ec9b8c7a..48e9eef34c0f 100644
 --- a/sound/soc/atmel/atmel_ssc_dai.c
 +++ b/sound/soc/atmel/atmel_ssc_dai.c
-@@ -471,7 +471,7 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
- 	int dir, channels, bits;
- 	u32 tfmr, rfmr, tcmr, rcmr;
- 	int ret;
--	int fslen, fslen_ext;
-+	int fslen, fslen_ext, fs_osync, fs_edge;
- 	u32 cmr_div;
- 	u32 tcmr_period;
- 	u32 rcmr_period;
-@@ -558,226 +558,36 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
- 	/*
- 	 * Compute SSC register settings.
- 	 */
--	switch (ssc_p->daifmt
--		& (SND_SOC_DAIFMT_FORMAT_MASK | SND_SOC_DAIFMT_MASTER_MASK)) {
+@@ -564,6 +564,15 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
  
--	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBS_CFS:
--		/*
--		 * I2S format, SSC provides BCLK and LRC clocks.
--		 *
--		 * The SSC transmit and receive clocks are generated
--		 * from the MCK divider, and the BCLK signal
--		 * is output on the SSC TK line.
--		 */
--
--		if (bits > 16 && !ssc->pdata->has_fslen_ext) {
--			dev_err(dai->dev,
--				"sample size %d is too large for SSC device\n",
--				bits);
--			return -EINVAL;
--		}
--
--		fslen_ext = (bits - 1) / 16;
--		fslen = (bits - 1) % 16;
--
--		rcmr =	  SSC_BF(RCMR_PERIOD, rcmr_period)
--			| SSC_BF(RCMR_STTDLY, START_DELAY)
--			| SSC_BF(RCMR_START, SSC_START_FALLING_RF)
--			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
--			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
--			| SSC_BF(RCMR_CKS, SSC_CKS_DIV);
--
--		rfmr =    SSC_BF(RFMR_FSLEN_EXT, fslen_ext)
--			| SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(RFMR_FSOS, SSC_FSOS_NEGATIVE)
--			| SSC_BF(RFMR_FSLEN, fslen)
--			| SSC_BF(RFMR_DATNB, (channels - 1))
--			| SSC_BIT(RFMR_MSBF)
--			| SSC_BF(RFMR_LOOP, 0)
--			| SSC_BF(RFMR_DATLEN, (bits - 1));
--
--		tcmr =	  SSC_BF(TCMR_PERIOD, tcmr_period)
--			| SSC_BF(TCMR_STTDLY, START_DELAY)
--			| SSC_BF(TCMR_START, SSC_START_FALLING_RF)
--			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
--			| SSC_BF(TCMR_CKO, SSC_CKO_CONTINUOUS)
--			| SSC_BF(TCMR_CKS, SSC_CKS_DIV);
--
--		tfmr =    SSC_BF(TFMR_FSLEN_EXT, fslen_ext)
--			| SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(TFMR_FSDEN, 0)
--			| SSC_BF(TFMR_FSOS, SSC_FSOS_NEGATIVE)
--			| SSC_BF(TFMR_FSLEN, fslen)
--			| SSC_BF(TFMR_DATNB, (channels - 1))
--			| SSC_BIT(TFMR_MSBF)
--			| SSC_BF(TFMR_DATDEF, 0)
--			| SSC_BF(TFMR_DATLEN, (bits - 1));
--		break;
--
--	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBM_CFM:
--		/* I2S format, CODEC supplies BCLK and LRC clocks. */
--		rcmr =	  SSC_BF(RCMR_PERIOD, 0)
--			| SSC_BF(RCMR_STTDLY, START_DELAY)
--			| SSC_BF(RCMR_START, SSC_START_FALLING_RF)
--			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
--			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
--			| SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
--					   SSC_CKS_PIN : SSC_CKS_CLOCK);
--
--		rfmr =	  SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(RFMR_FSOS, SSC_FSOS_NONE)
--			| SSC_BF(RFMR_FSLEN, 0)
--			| SSC_BF(RFMR_DATNB, (channels - 1))
--			| SSC_BIT(RFMR_MSBF)
--			| SSC_BF(RFMR_LOOP, 0)
--			| SSC_BF(RFMR_DATLEN, (bits - 1));
--
--		tcmr =	  SSC_BF(TCMR_PERIOD, 0)
--			| SSC_BF(TCMR_STTDLY, START_DELAY)
--			| SSC_BF(TCMR_START, SSC_START_FALLING_RF)
--			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
--			| SSC_BF(TCMR_CKO, SSC_CKO_NONE)
--			| SSC_BF(TCMR_CKS, ssc->clk_from_rk_pin ?
--					   SSC_CKS_CLOCK : SSC_CKS_PIN);
-+	fslen_ext = (bits - 1) / 16;
-+	fslen = (bits - 1) % 16;
+ 	switch (ssc_p->daifmt & SND_SOC_DAIFMT_FORMAT_MASK) {
  
--		tfmr =	  SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(TFMR_FSDEN, 0)
--			| SSC_BF(TFMR_FSOS, SSC_FSOS_NONE)
--			| SSC_BF(TFMR_FSLEN, 0)
--			| SSC_BF(TFMR_DATNB, (channels - 1))
--			| SSC_BIT(TFMR_MSBF)
--			| SSC_BF(TFMR_DATDEF, 0)
--			| SSC_BF(TFMR_DATLEN, (bits - 1));
--		break;
--
--	case SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_CBM_CFS:
--		/* I2S format, CODEC supplies BCLK, SSC supplies LRCLK. */
--		if (bits > 16 && !ssc->pdata->has_fslen_ext) {
--			dev_err(dai->dev,
--				"sample size %d is too large for SSC device\n",
--				bits);
--			return -EINVAL;
--		}
--
--		fslen_ext = (bits - 1) / 16;
--		fslen = (bits - 1) % 16;
--
--		rcmr =	  SSC_BF(RCMR_PERIOD, rcmr_period)
--			| SSC_BF(RCMR_STTDLY, START_DELAY)
--			| SSC_BF(RCMR_START, SSC_START_FALLING_RF)
--			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
--			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
--			| SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
--					   SSC_CKS_PIN : SSC_CKS_CLOCK);
--
--		rfmr =    SSC_BF(RFMR_FSLEN_EXT, fslen_ext)
--			| SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(RFMR_FSOS, SSC_FSOS_NEGATIVE)
--			| SSC_BF(RFMR_FSLEN, fslen)
--			| SSC_BF(RFMR_DATNB, (channels - 1))
--			| SSC_BIT(RFMR_MSBF)
--			| SSC_BF(RFMR_LOOP, 0)
--			| SSC_BF(RFMR_DATLEN, (bits - 1));
--
--		tcmr =	  SSC_BF(TCMR_PERIOD, tcmr_period)
--			| SSC_BF(TCMR_STTDLY, START_DELAY)
--			| SSC_BF(TCMR_START, SSC_START_FALLING_RF)
--			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
--			| SSC_BF(TCMR_CKO, SSC_CKO_NONE)
--			| SSC_BF(TCMR_CKS, ssc->clk_from_rk_pin ?
--					   SSC_CKS_CLOCK : SSC_CKS_PIN);
--
--		tfmr =    SSC_BF(TFMR_FSLEN_EXT, fslen_ext)
--			| SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_NEGATIVE)
--			| SSC_BF(TFMR_FSDEN, 0)
--			| SSC_BF(TFMR_FSOS, SSC_FSOS_NEGATIVE)
--			| SSC_BF(TFMR_FSLEN, fslen)
--			| SSC_BF(TFMR_DATNB, (channels - 1))
--			| SSC_BIT(TFMR_MSBF)
--			| SSC_BF(TFMR_DATDEF, 0)
--			| SSC_BF(TFMR_DATLEN, (bits - 1));
--		break;
--
--	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_CBS_CFS:
--		/*
--		 * DSP/PCM Mode A format, SSC provides BCLK and LRC clocks.
--		 *
--		 * The SSC transmit and receive clocks are generated from the
--		 * MCK divider, and the BCLK signal is output
--		 * on the SSC TK line.
--		 */
--		rcmr =	  SSC_BF(RCMR_PERIOD, rcmr_period)
--			| SSC_BF(RCMR_STTDLY, 1)
--			| SSC_BF(RCMR_START, SSC_START_RISING_RF)
--			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
--			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
--			| SSC_BF(RCMR_CKS, SSC_CKS_DIV);
-+	switch (ssc_p->daifmt & SND_SOC_DAIFMT_FORMAT_MASK) {
- 
--		rfmr =	  SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(RFMR_FSOS, SSC_FSOS_POSITIVE)
--			| SSC_BF(RFMR_FSLEN, 0)
--			| SSC_BF(RFMR_DATNB, (channels - 1))
--			| SSC_BIT(RFMR_MSBF)
--			| SSC_BF(RFMR_LOOP, 0)
--			| SSC_BF(RFMR_DATLEN, (bits - 1));
-+	case SND_SOC_DAIFMT_I2S:
-+		fs_osync = SSC_FSOS_NEGATIVE;
-+		fs_edge = SSC_START_FALLING_RF;
- 
--		tcmr =	  SSC_BF(TCMR_PERIOD, tcmr_period)
--			| SSC_BF(TCMR_STTDLY, 1)
--			| SSC_BF(TCMR_START, SSC_START_RISING_RF)
--			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
--			| SSC_BF(TCMR_CKO, SSC_CKO_CONTINUOUS)
--			| SSC_BF(TCMR_CKS, SSC_CKS_DIV);
-+		rcmr =	  SSC_BF(RCMR_STTDLY, 1);
-+		tcmr =	  SSC_BF(TCMR_STTDLY, 1);
- 
--		tfmr =	  SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(TFMR_FSDEN, 0)
--			| SSC_BF(TFMR_FSOS, SSC_FSOS_POSITIVE)
--			| SSC_BF(TFMR_FSLEN, 0)
--			| SSC_BF(TFMR_DATNB, (channels - 1))
--			| SSC_BIT(TFMR_MSBF)
--			| SSC_BF(TFMR_DATDEF, 0)
--			| SSC_BF(TFMR_DATLEN, (bits - 1));
- 		break;
- 
--	case SND_SOC_DAIFMT_DSP_A | SND_SOC_DAIFMT_CBM_CFM:
-+	case SND_SOC_DAIFMT_DSP_A:
- 		/*
--		 * DSP/PCM Mode A format, CODEC supplies BCLK and LRC clocks.
-+		 * DSP/PCM Mode A format
- 		 *
- 		 * Data is transferred on first BCLK after LRC pulse rising
- 		 * edge.If stereo, the right channel data is contiguous with
- 		 * the left channel data.
- 		 */
--		rcmr =	  SSC_BF(RCMR_PERIOD, 0)
--			| SSC_BF(RCMR_STTDLY, START_DELAY)
--			| SSC_BF(RCMR_START, SSC_START_RISING_RF)
--			| SSC_BF(RCMR_CKI, SSC_CKI_RISING)
--			| SSC_BF(RCMR_CKO, SSC_CKO_NONE)
--			| SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
--					   SSC_CKS_PIN : SSC_CKS_CLOCK);
++	case SND_SOC_DAIFMT_LEFT_J:
 +		fs_osync = SSC_FSOS_POSITIVE;
 +		fs_edge = SSC_START_RISING_RF;
-+		fslen = fslen_ext = 0;
- 
--		rfmr =	  SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(RFMR_FSOS, SSC_FSOS_NONE)
--			| SSC_BF(RFMR_FSLEN, 0)
--			| SSC_BF(RFMR_DATNB, (channels - 1))
--			| SSC_BIT(RFMR_MSBF)
--			| SSC_BF(RFMR_LOOP, 0)
--			| SSC_BF(RFMR_DATLEN, (bits - 1));
-+		rcmr =	  SSC_BF(RCMR_STTDLY, 1);
-+		tcmr =	  SSC_BF(TCMR_STTDLY, 1);
- 
--		tcmr =	  SSC_BF(TCMR_PERIOD, 0)
--			| SSC_BF(TCMR_STTDLY, START_DELAY)
--			| SSC_BF(TCMR_START, SSC_START_RISING_RF)
--			| SSC_BF(TCMR_CKI, SSC_CKI_FALLING)
--			| SSC_BF(TCMR_CKO, SSC_CKO_NONE)
--			| SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
--					   SSC_CKS_CLOCK : SSC_CKS_PIN);
--
--		tfmr =	  SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
--			| SSC_BF(TFMR_FSDEN, 0)
--			| SSC_BF(TFMR_FSOS, SSC_FSOS_NONE)
--			| SSC_BF(TFMR_FSLEN, 0)
--			| SSC_BF(TFMR_DATNB, (channels - 1))
--			| SSC_BIT(TFMR_MSBF)
--			| SSC_BF(TFMR_DATDEF, 0)
--			| SSC_BF(TFMR_DATLEN, (bits - 1));
- 		break;
- 
- 	default:
-@@ -785,6 +595,70 @@ static int atmel_ssc_hw_params(struct snd_pcm_substream *substream,
- 			ssc_p->daifmt);
- 		return -EINVAL;
- 	}
 +
-+	if (!atmel_ssc_cfs(ssc_p)) {
-+		fslen = fslen_ext = 0;
-+		rcmr_period = tcmr_period = 0;
-+		fs_osync = SSC_FSOS_NONE;
-+	}
++		rcmr =	  SSC_BF(RCMR_STTDLY, 0);
++		tcmr =	  SSC_BF(TCMR_STTDLY, 0);
 +
-+	rcmr |=	  SSC_BF(RCMR_START, fs_edge);
-+	tcmr |=	  SSC_BF(TCMR_START, fs_edge);
++		break;
 +
-+	if (atmel_ssc_cbs(ssc_p)) {
-+		/*
-+		 * SSC provides BCLK
-+		 *
-+		 * The SSC transmit and receive clocks are generated from the
-+		 * MCK divider, and the BCLK signal is output
-+		 * on the SSC TK line.
-+		 */
-+		rcmr |=	  SSC_BF(RCMR_CKS, SSC_CKS_DIV)
-+			| SSC_BF(RCMR_CKO, SSC_CKO_NONE);
-+
-+		tcmr |=	  SSC_BF(TCMR_CKS, SSC_CKS_DIV)
-+			| SSC_BF(TCMR_CKO, SSC_CKO_CONTINUOUS);
-+	} else {
-+		rcmr |=	  SSC_BF(RCMR_CKS, ssc->clk_from_rk_pin ?
-+					SSC_CKS_PIN : SSC_CKS_CLOCK)
-+			| SSC_BF(RCMR_CKO, SSC_CKO_NONE);
-+
-+		tcmr |=	  SSC_BF(TCMR_CKS, ssc->clk_from_rk_pin ?
-+					SSC_CKS_CLOCK : SSC_CKS_PIN)
-+			| SSC_BF(TCMR_CKO, SSC_CKO_NONE);
-+	}
-+
-+	rcmr |=	  SSC_BF(RCMR_PERIOD, rcmr_period)
-+		| SSC_BF(RCMR_CKI, SSC_CKI_RISING);
-+
-+	tcmr |=   SSC_BF(TCMR_PERIOD, tcmr_period)
-+		| SSC_BF(TCMR_CKI, SSC_CKI_FALLING);
-+
-+	rfmr =    SSC_BF(RFMR_FSLEN_EXT, fslen_ext)
-+		| SSC_BF(RFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
-+		| SSC_BF(RFMR_FSOS, fs_osync)
-+		| SSC_BF(RFMR_FSLEN, fslen)
-+		| SSC_BF(RFMR_DATNB, (channels - 1))
-+		| SSC_BIT(RFMR_MSBF)
-+		| SSC_BF(RFMR_LOOP, 0)
-+		| SSC_BF(RFMR_DATLEN, (bits - 1));
-+
-+	tfmr =    SSC_BF(TFMR_FSLEN_EXT, fslen_ext)
-+		| SSC_BF(TFMR_FSEDGE, SSC_FSEDGE_POSITIVE)
-+		| SSC_BF(TFMR_FSDEN, 0)
-+		| SSC_BF(TFMR_FSOS, fs_osync)
-+		| SSC_BF(TFMR_FSLEN, fslen)
-+		| SSC_BF(TFMR_DATNB, (channels - 1))
-+		| SSC_BIT(TFMR_MSBF)
-+		| SSC_BF(TFMR_DATDEF, 0)
-+		| SSC_BF(TFMR_DATLEN, (bits - 1));
-+
-+	if (fslen_ext && !ssc->pdata->has_fslen_ext) {
-+		dev_err(dai->dev, "sample size %d is too large for SSC device\n",
-+			bits);
-+		return -EINVAL;
-+	}
-+
- 	pr_debug("atmel_ssc_hw_params: "
- 			"RCMR=%08x RFMR=%08x TCMR=%08x TFMR=%08x\n",
- 			rcmr, rfmr, tcmr, tfmr);
+ 	case SND_SOC_DAIFMT_I2S:
+ 		fs_osync = SSC_FSOS_NEGATIVE;
+ 		fs_edge = SSC_START_FALLING_RF;
 -- 
 2.20.1
 
