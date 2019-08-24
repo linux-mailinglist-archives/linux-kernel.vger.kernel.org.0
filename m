@@ -2,93 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0CA49C094
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 23:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CF79C098
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 23:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbfHXVnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 17:43:10 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45228 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727907AbfHXVnK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 17:43:10 -0400
-Received: by mail-ed1-f66.google.com with SMTP id x19so19771507eda.12
-        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2019 14:43:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=dMgECI3zGGanZKQTiQGkND1nITRy1uqCZIqmoiUmuq8=;
-        b=YzGIVI5RTajaGCA3pZ5dDGpm8JxL5bgGM4trQNRrJT1gUzYJaqWzZGhBkUkWn2VZMK
-         slQ+y4Zp+njyb/OolWPQZidvbG3cBv+a/C7n/DcfGq5gybXRdQGLQtVZzcgICz8QC2Cn
-         Fe9lHM+oAjwqqDeHIE8Ss3gQ/wI/vpk7DvKOI5aOFXx1gfyA6vsCp0F1JI+4nuUTDBLz
-         LsJaF+LjdVvcHqoYtWZeNz9Yx0EGYSiCOV80vCdH2AddZZmk3PvQ4Ck6NWAFmH6C9bKj
-         XviWSDj0/nILF3zcGGST46tvUjvV9M2rIn1OWVRZ0xgbNvwNlbvopc76QSxYtUaO3afe
-         MWFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=dMgECI3zGGanZKQTiQGkND1nITRy1uqCZIqmoiUmuq8=;
-        b=k/MELj3rDqeCKOdb06rT+Hjr9A/13Ly8khBy2//dpEXsJ/fewlnSmuJnL4DE/FtY0p
-         1hStz7srYxRxlRFKJQ7ACKsItmqSy68A//41WrmzbJgIcWRp2lTrOpkJBZdNydc9quu8
-         prHs8oje3MwREaAE0ZwNCQ0utgQhrgmLrOxQZQpBEpWDJHD+WV1+bo+HjYMfXBOnDuT9
-         eexO9MJ1SEw41RsbE5inbzcwjWcpx3n0GI4tL2hsE4BTj2TYecA2VtC28x8LCY71Bpgl
-         ohaUao+DLUw/w8upT1o673iHaLHTqYdsqVFsIOj8gAIxHR1M3b+Tj70zC5LrjDGEggGm
-         gIuw==
-X-Gm-Message-State: APjAAAWMLdazfAye68Q4ki/sYdL6anZm4NoLolyk0exjfFLWMqCh+Oeh
-        o+t+uuQcvXoprSbfZJx/z57jirRDauChJQik3Vc=
-X-Google-Smtp-Source: APXvYqzYXG52YFp6U/mO2XXlPrFxuP32s2PF1HWhdtsLrN1FPZ1xS5/kMe5ofnRGUKwl8le9vbmqnyXcxkB1JDyto50=
-X-Received: by 2002:a17:906:1499:: with SMTP id x25mr10012937ejc.42.1566682988485;
- Sat, 24 Aug 2019 14:43:08 -0700 (PDT)
+        id S1728149AbfHXVtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 17:49:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33346 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727956AbfHXVtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 17:49:33 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FA312133F;
+        Sat, 24 Aug 2019 21:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566683372;
+        bh=AEi9xsN3Xx/abMEbB13bCDWDcwoVz1r6hZ6AC4FqEgY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=td9MUgrzMnGqZn8/N5xZvEi0gIOVZV3AvIn1KQJ7zBX8PGr99ohGoM4Wt75d2ETHb
+         JfeTD51UFPo3o0k2Wna5faSJehIXN1pHRJfeIbMUl4G0okK/vKCivoABjEbf62EQqC
+         AL8/GEPjceVscqgtEAvoQ3ezoWLbWhj55F2dvvXI=
+Subject: Re: [PATCH 5.2 000/135] 5.2.10-stable review
+To:     Greg KH <greg@kroah.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, shuah <shuah@kernel.org>
+References: <20190822170811.13303-1-sashal@kernel.org>
+ <00216731-a088-7d47-eafb-70409f876bda@kernel.org>
+ <20190824023829.GE9862@kroah.com>
+ <e4d5ba59-8e38-a267-8a14-3c6bc03f77bd@kernel.org>
+ <20190824153348.GA27505@kroah.com>
+ <93850e40-7df9-b5db-bda4-5b4354d2c3f3@kernel.org>
+ <20190824181445.GA10804@kroah.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <bf9b854f-0144-1260-9bab-d9d2ea455864@kernel.org>
+Date:   Sat, 24 Aug 2019 15:49:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:aa7:cccf:0:0:0:0:0 with HTTP; Sat, 24 Aug 2019 14:43:07
- -0700 (PDT)
-Reply-To: c.maulhardt87@yahoo.com
-From:   "Mrs.Amina Jane Mohammed" <anekechin123@gmail.com>
-Date:   Sat, 24 Aug 2019 14:43:07 -0700
-Message-ID: <CAAuQ86Lq3+b3cCk-67cpttrWgbG3QMrz4nvnjfD-NDaR0TQu9Q@mail.gmail.com>
-Subject: Re: CONGRATULATION ONCE AGAIN
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190824181445.GA10804@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-Attention:
+On 8/24/19 12:14 PM, Greg KH wrote:
+> On Sat, Aug 24, 2019 at 11:01:19AM -0600, shuah wrote:
+>> On 8/24/19 9:33 AM, Greg KH wrote:
+>>> On Sat, Aug 24, 2019 at 09:21:53AM -0600, shuah wrote:
+>>>> On 8/23/19 8:38 PM, Greg KH wrote:
+>>>>> On Fri, Aug 23, 2019 at 12:41:03PM -0600, shuah wrote:
+>>>>>> On 8/22/19 11:05 AM, Sasha Levin wrote:
+>>>>>>>
+>>>>>>> This is the start of the stable review cycle for the 5.2.10 release.
+>>>>>>> There are 135 patches in this series, all will be posted as a response
+>>>>>>> to this one.  If anyone has any issues with these being applied, please
+>>>>>>> let me know.
+>>>>>>>
+>>>>>>> Responses should be made by Sat 24 Aug 2019 05:07:10 PM UTC.
+>>>>>>> Anything received after that time might be too late.
+>>>>>>>
+>>>>>>> The whole patch series can be found in one patch at:
+>>>>>>>             https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-5.2.10-rc1.gz
+>>>>>>
+>>>>>> I am seeing "Sorry I can't find your kernels". Is this posted?
+>>>>>
+>>>>> Ah, Sasha didn't generate the patch but it was still listed here, oops.
+>>>>> He copied my format and we didn't notice this, sorry about that.
+>>>>>
+>>>>> As the thread shows, we didn't generate this file this time to see what
+>>>>> would happen.  If your test process requires it, we can generate it as I
+>>>>> don't want to break it.
+>>>>>
+>>>>
+>>>> It will make it lot easier for me to have continued support for patch
+>>>> generation. My scripts do "wget" to pull the patch and apply.
+>>>
+>>> Ok, we will get this back and working, sorry about that.
+>>>
+>>
+>> Great. Thanks for accommodating my workflow.
+> 
+> I have uploaded it to kernel.org now, should show up on the "public
+> side" in 15 minutes or so.
+> 
 
-This is to inform you that you have been selected to receive the 2019
-United Nations Democracy Fund (UNDEF) of $250,000 (US Dollars). The
-selection process was carried out through The United Nations (UN)
-computerized email selection system (ESS), from a database of over
-250,000 email addresses obtained from all continents of the world,
-which you were selected among to receive $250,000 (US Dollars).
+Great. Downloaded successfully.
 
-The United Nations Democracy Fund (UNDEF) was created by the former UN
-Secretary-General Kofi A. Annan in 2005 as a United Nations General
-Trust Fund to support democratization efforts and civil society
-organizations around the world. You are advice to contact The United
-Nations Democracy Fund (UNDEF) Grants Manager to claim your Cashier
-Check valued the sum of $250,000 (US Dollars).
+thanks,
+-- Shuah
 
-Name: Christine Maulhardt
-Email: c.maulhardt87@yahoo.com
-Phone: +1 (708) 390-8956
-
-Contact her by providing her with the under listed information as soon
-as possible.
-
-1. Name In Full :
-2. Address :
-3. Nationality :
-4. Direct Phone :
-
-Be inform that Christine Maulhardt is the Grants Manager and she is
-responsible for the smooth and efficient processing of your $250,000
-(US Dollars) United Nations Democracy Fund grants,therefore, contact
-her immediately with these informations as required above.
-Congratulations once again.
-
-Mrs.Amina Jane Mohammed
-Deputy Secretary-General of the United Nations.
