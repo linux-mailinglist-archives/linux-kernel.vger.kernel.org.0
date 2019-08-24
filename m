@@ -2,33 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 069B29C00E
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1C49C00F
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfHXU0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 16:26:54 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:47251 "EHLO rere.qmqm.pl"
+        id S1727950AbfHXU05 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 16:26:57 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:62629 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726842AbfHXU0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 16:26:54 -0400
+        id S1726464AbfHXU0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 16:26:55 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 46G8s64hS6zw;
-        Sat, 24 Aug 2019 22:25:14 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 46G8s91604zGl;
+        Sat, 24 Aug 2019 22:25:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1566678316; bh=cjKOovDL+bRYnoSIR5KoHK4uHeLbz95Ofcl724n69I8=;
-        h=Date:From:Subject:To:Cc:From;
-        b=Qy14nzbf1OgvFwcEdGs/WQZj/XWXrU6g157AJRvrsXx3oKLN0xPeltoxNUESbPO2g
-         k1k49Sh6r4oMEKGd+h61L1MvwwqHgs3k3NJZ3LnZBitxsYWQYDmFiSceXKVxXsEVjX
-         N9PQ4aEkRZnO8wm+jC76ojyXEhtS5S1SqI/O5T/VLcnfSxf2Vf0ilhCrXeLdrgItuE
-         dh72p4KWtN9zwr78X7KF9H6r52CaghFFIcazQEiWQP3LLlrIDXm+CZmLEAS5n1ZRau
-         bwF7UMR5jztspvx9GW+YV6CyiIvIS6S/z4pAiDgAp0CTNoYCMnv5vd5IvdI098BL24
-         KXvjzGDbP51dA==
+        t=1566678317; bh=bI4z6h+GTprYkJG4UIeziaeNCROEh3xOu5vMoCUwBkc=;
+        h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
+        b=kV9Oso3/S7TQywbIKVaxb9X+muAQ/SPO73jIs0Vf8pfH0YJ8qKetq8TQw0wt3F5Yc
+         EFQ1cVLJujArhDaMGce+XLp/EO8kbUa+jH9EdpqeT1UTA3w9yZhkontd88bW/Y4qAP
+         fKdrgW7cc/rYdqhxV2FJgkjHnhMB5sRFC6TBV9IXALS4YEmrvVWWdHwgATCU1DnDhn
+         +jeGIkW91SqGkpTJb1VP7fPxb8msf27AfCLQruKYWn5bwiAA4p1szQMgw0QccJaQh5
+         cLu3zJaBVKi/Kq+LqBAWbkZUd9gKb7rV89d2PhCz4ywvm8/JASyxGtfAcBKkgQagFn
+         9xsjFe4s3wHeQ==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.101.2 at mail
-Date:   Sat, 24 Aug 2019 22:26:49 +0200
-Message-Id: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
+Date:   Sat, 24 Aug 2019 22:26:52 +0200
+Message-Id: <233d5461f4448df151755de7b69a0cd3ad310d5c.1566677788.git.mirq-linux@rere.qmqm.pl>
+In-Reply-To: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
+References: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
 From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH v2 0/6] ] ASoC: atmel: extend SSC support
+Subject: [PATCH v2 1/6] ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in
+ Kconfig
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -51,35 +54,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series improves support for various configurations using SSC module
-as implemented in Atmel SAMA5Dx SoCs. Patches are:
+Allow SSC to be used on platforms described using audio-graph-card
+in Device Tree.
 
-1. enable SSC in Kconfig for audio-graph-card support
-2. DRY mode setting code
-3. implement left-justified data mode
-4-6. enable shared FSYNC source for slave mode
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-Patches against tiwai/sound/for-next tree. You can also pull from
-   https://rere.qmqm.pl/git/linux
-branch:
-   atmel-ssc
+---
+ v2: extended to PDC mode
+     reworked and fixed Kconfig option dependencies
 
+---
+ sound/soc/atmel/Kconfig | 30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
-Michał Mirosław (6):
-  ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in Kconfig
-  ASoC: atmel_ssc_dai: rework DAI format configuration
-  ASoC: atmel_ssc_dai: implement left-justified data mode
-  dt-bindings: misc: atmel-ssc: LRCLK from TF/RF pin option
-  misc: atmel-ssc: get LRCLK pin selection from DT
-  ASoC: atmel_ssc_dai: Enable shared FSYNC source in frame-slave mode
-
- .../devicetree/bindings/misc/atmel-ssc.txt    |   5 +
- drivers/misc/atmel-ssc.c                      |   9 +
- include/linux/atmel-ssc.h                     |   2 +
- sound/soc/atmel/Kconfig                       |  30 +-
- sound/soc/atmel/atmel_ssc_dai.c               | 305 ++++++------------
- 5 files changed, 137 insertions(+), 214 deletions(-)
-
+diff --git a/sound/soc/atmel/Kconfig b/sound/soc/atmel/Kconfig
+index 06c1d5ce642c..f118c229ed82 100644
+--- a/sound/soc/atmel/Kconfig
++++ b/sound/soc/atmel/Kconfig
+@@ -12,25 +12,31 @@ if SND_ATMEL_SOC
+ config SND_ATMEL_SOC_PDC
+ 	tristate
+ 	depends on HAS_DMA
+-	default m if SND_ATMEL_SOC_SSC_PDC=m && SND_ATMEL_SOC_SSC=m
+-	default y if SND_ATMEL_SOC_SSC_PDC=y || (SND_ATMEL_SOC_SSC_PDC=m && SND_ATMEL_SOC_SSC=y)
+-
+-config SND_ATMEL_SOC_SSC_PDC
+-	tristate
+ 
+ config SND_ATMEL_SOC_DMA
+ 	tristate
+ 	select SND_SOC_GENERIC_DMAENGINE_PCM
+-	default m if SND_ATMEL_SOC_SSC_DMA=m && SND_ATMEL_SOC_SSC=m
+-	default y if SND_ATMEL_SOC_SSC_DMA=y || (SND_ATMEL_SOC_SSC_DMA=m && SND_ATMEL_SOC_SSC=y)
+-
+-config SND_ATMEL_SOC_SSC_DMA
+-	tristate
+ 
+ config SND_ATMEL_SOC_SSC
+ 	tristate
+-	default y if SND_ATMEL_SOC_SSC_DMA=y || SND_ATMEL_SOC_SSC_PDC=y
+-	default m if SND_ATMEL_SOC_SSC_DMA=m || SND_ATMEL_SOC_SSC_PDC=m
++
++config SND_ATMEL_SOC_SSC_PDC
++	tristate "SoC PCM DAI support for AT91 SSC controller using PDC"
++	depends on ATMEL_SSC
++	select SND_ATMEL_SOC_PDC
++	select SND_ATMEL_SOC_SSC
++	help
++	  Say Y or M if you want to add support for Atmel SSC interface
++	  in PDC mode configured using audio-graph-card in device-tree.
++
++config SND_ATMEL_SOC_SSC_DMA
++	tristate "SoC PCM DAI support for AT91 SSC controller using DMA"
++	depends on ATMEL_SSC
++	select SND_ATMEL_SOC_DMA
++	select SND_ATMEL_SOC_SSC
++	help
++	  Say Y or M if you want to add support for Atmel SSC interface
++	  in DMA mode configured using audio-graph-card in device-tree.
+ 
+ config SND_AT91_SOC_SAM9G20_WM8731
+ 	tristate "SoC Audio support for WM8731-based At91sam9g20 evaluation board"
 -- 
 2.20.1
 
