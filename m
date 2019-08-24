@@ -2,56 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12EE99C02F
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 175AF9C032
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 22:47:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbfHXUqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 16:46:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49662 "EHLO mail.kernel.org"
+        id S1728029AbfHXUrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 16:47:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726842AbfHXUqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 16:46:25 -0400
+        id S1726842AbfHXUrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 16:47:45 -0400
 Received: from X250.getinternet.no (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5176323400;
-        Sat, 24 Aug 2019 20:46:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75B7023400;
+        Sat, 24 Aug 2019 20:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566679584;
-        bh=yZMM3l308/2lqQFht7ckfNZ8LSwL8s2Dgv+0qdHJC0k=;
+        s=default; t=1566679665;
+        bh=TJqij8c/dTiUq/2K83ATZKYkTkvjNo6UP+zrCOvUTKc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S2rtEB2YMmpIYVgLsAtzygziEHICBpBa5ERig+771E0NZDfRpB1uOqbqPeujMfAXM
-         61LjpTP6lfAaUamQwUfebLy8bpbZa1EZVIw07q1xJEts1KXTQoKL1IwmDRGYjEnCxZ
-         iBcdQvx+YxXv5AIxIYUSkm8qRBVY3kfKQ5YALayc=
-Date:   Sat, 24 Aug 2019 22:46:12 +0200
+        b=hBqEGbCuzVfuP9xucEQG37JN2EqZ5NxttIi1Vs4YkTCSn03KAWzl6V4AL+qJerkv9
+         k49976kLMPUGVRwtAOcuQm06kAzqjw1ChQXaU21ER4q5LNvFtHAB/Gw4MszwhiPEsg
+         rURC4XI+3/uCPpa2xTIcfBgt3wV5mbpm3bpQZV8E=
+Date:   Sat, 24 Aug 2019 22:47:31 +0200
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 1/4] dt-bindings: vendor-prefixes: Add Anvo-Systems
-Message-ID: <20190824204611.GL16308@X250.getinternet.no>
-References: <20190822060238.3887-1-krzk@kernel.org>
+        Lucas Stach <l.stach@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Carlo Caione <ccaione@baylibre.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] arm64: dts: imx8mq: Add mux controller to iomuxc_gpr
+Message-ID: <20190824204730.GM16308@X250.getinternet.no>
+References: <cover.1566471985.git.agx@sigxcpu.org>
+ <fa3b1df7fc5e74f375df5de53061d1a93d154b51.1566471985.git.agx@sigxcpu.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190822060238.3887-1-krzk@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fa3b1df7fc5e74f375df5de53061d1a93d154b51.1566471985.git.agx@sigxcpu.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 08:02:35AM +0200, Krzysztof Kozlowski wrote:
-> Add vendor prefix for Anvo-Systems Dresden GmbH.
+On Thu, Aug 22, 2019 at 01:10:23PM +0200, Guido Günther wrote:
+> The only mux controls the MIPI DSI input selection.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Guido Günther <agx@sigxcpu.org>
 
-Applied all, thanks.
+Applied, thanks.
