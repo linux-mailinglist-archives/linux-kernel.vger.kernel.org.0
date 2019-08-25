@@ -2,96 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BE07A08A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 993B1A08A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:36:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfH1Rga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:36:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46753 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727004AbfH1Rg2 (ORCPT
+        id S1726866AbfH1RgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:36:23 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37510 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfH1RgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:36:28 -0400
-Received: by mail-pg1-f195.google.com with SMTP id m3so82876pgv.13
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:28 -0700 (PDT)
+        Wed, 28 Aug 2019 13:36:22 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d1so108880pgp.4
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=hV/pCYqzahAlVmQhj4vllaPyolkogafd9L1Tz3zl8gE=;
-        b=cakfZ9rzzvgOXHN5tqW79itJAU9INSYghI/taA2o6Pk1fScvhu/l/Q2JbUAvwgjmlY
-         d010F4eG/hAE7lN2nJm0EeTRyO2CKpl9BKnLgcB68yxJL+7g6agNRfqpSm1GCJbkjXP8
-         7/KkF603jYPyMhu0lt2mQNl2sqC1ZFV3lHe5o=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=6UE+8RvEo5nUTpBHC8CVrwLN+hK169/Ej6xs9Gc2BAI=;
+        b=jGcpXKRmPVCZNwCgO1nKcsqMI9U4SCt8DCyYgPL6wc+VGQ63jM0BIJCMV7ThpFqOaZ
+         cgvtyiGt6H0rk0gbF9bRN6ZSIzWOzLBSdbiK52O5rc0b5BLumbczgrM8ly3V9PDP6hYU
+         jMI+A15m1bcvya2vfCUPnRzyPb/KjtVZeMTVI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=hV/pCYqzahAlVmQhj4vllaPyolkogafd9L1Tz3zl8gE=;
-        b=MDPluiuYDSHnWseeWkxZltmY8VyLt/NhUlA8tEYMk0K+DdP/vSmwfRFCeJvJXF03LR
-         nNm3m5cI9QYbXKGX/oHJ5lN6eX+R5BEKdyGnntOZ+LhvgcI4A+4xi57rMzcaTxNsJ8B1
-         kPmKj2QGVuB9BXJK1rNEhIN+64IYB0AQ0IpqyFYq9ZPzawd3Ee10TqSbfI6e5KB3zitC
-         ECe+Hg27q6WpnvovUJT1IqprRjx9iO8eR1LcRl2226484lhczw0Af/zTvDDNPmkExBKI
-         OmKS4Sf77YJlEP2OXseC+enpNj3vkpL0KFgS/jlP56+oAENxBSB8w8ocr/uMNOVXOi8U
-         O8Cw==
-X-Gm-Message-State: APjAAAU3vnzndskU7/pK9bNdysWN1D+v9RvKM/JvBHxDTjKROKr/HK6z
-        raEuEJ0W2oI5/DtrxWWuv3t19g==
-X-Google-Smtp-Source: APXvYqy60PpmqtsU1KPAQexGXqntmtXL8FLGbG3Z+1AAxVXf6D9kHPAZ4kMU3ARbiKgQM8DgyWT+8Q==
-X-Received: by 2002:a63:f13:: with SMTP id e19mr4496190pgl.132.1567013788275;
-        Wed, 28 Aug 2019 10:36:28 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6UE+8RvEo5nUTpBHC8CVrwLN+hK169/Ej6xs9Gc2BAI=;
+        b=pb9JTomD6Pj4JnH/fgu2GDq5KcaTkFeo6elK36XkpS9xGvZm90cdLm0WttU/ug60Sz
+         cQZGz0ESlrYf9kZQ53LXpTX7op3V4Y/j+SQFghdNfHrJVxGdX+sGCAFQyxy5gMU1elaS
+         bZke6nxXtsdkzRVtVrYetlQ72k/qpVxzK3pHAZI737h7hUMrPNIbpv3JF0ECAOW1g8ju
+         io8VBC7pPgNxQ4wBn69WtHFzz6bacCcFVHHpkvp+pb0EDKCc6wnKkWLPi70JrysssFoA
+         uOXHknarANTiPAubN3F5y4tkKIl4LqsdqmQrxmRLXaqkalSUfgXkNyA2WJPPq/0P5igX
+         qYqQ==
+X-Gm-Message-State: APjAAAVqV70rmMUPOJLHYmIlzfgnMYv3lIXU+21RebPO/lti2B19xdLr
+        d8OahNNwtyStZ8tvXWZv91DpZg==
+X-Google-Smtp-Source: APXvYqybGGo4hAWY0liuPOvcwNQox+SaWvfE3bLs/NnEpsFAI6tgV4NR3avVNk4mBqRMpi6eJKW6vg==
+X-Received: by 2002:a63:d301:: with SMTP id b1mr4386883pgg.379.1567013782132;
+        Wed, 28 Aug 2019 10:36:22 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g14sm3456466pfb.150.2019.08.28.10.36.22
+        by smtp.gmail.com with ESMTPSA id b24sm3173768pgw.66.2019.08.28.10.36.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 10:36:24 -0700 (PDT)
-Date:   Sun, 25 Aug 2019 16:18:56 -0700
+        Wed, 28 Aug 2019 10:36:20 -0700 (PDT)
+Date:   Sun, 25 Aug 2019 16:23:39 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] uaccess: Disallow > INT_MAX copy sizes
-Message-ID: <201908251612.F9902D7A@keescook>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>, Shuah Khan <shuah@kernel.org>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Alakesh Haloi <alakesh.haloi@gmail.com>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kbuild test robot <lkp@intel.com>, lkp@01.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [ptrace] 201766a20e: kernel_selftests.seccomp.make_fail
+Message-ID: <201908251622.0EE8CE0E@keescook>
+References: <20190729093530.GL22106@shao2-debian>
+ <20190805094719.GA1693@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190805094719.GA1693@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we've done with VFS, string operations, etc, reject usercopy sizes
-larger than INT_MAX, which would be nice to have for catching bugs
-related to size calculation overflows[1].
+On Mon, Aug 05, 2019 at 12:47:19PM +0300, Dmitry V. Levin wrote:
+> On Mon, Jul 29, 2019 at 05:35:30PM +0800, kernel test robot wrote:
+> > FYI, we noticed the following commit (built with gcc-7):
+> > 
+> > commit: 201766a20e30f982ccfe36bebfad9602c3ff574a ("ptrace: add PTRACE_GET_SYSCALL_INFO request")
+> > https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
+> > 
+> > in testcase: kernel_selftests
+> > with following parameters:
+> > 
+> > 	group: kselftests-02
+> > 
+> > test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
+> > test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
+> 
+> The URL above also says: "Tests are intended to be run after building,
+> installing and booting a kernel".
+> 
+> Please build selftests with installed kernel headers corresponding to the
+> installed kernel.
+> 
+> Alternatively, tools/testing/selftests/lib.mk could be extended
+> to include uapi headers from the kernel tree into CPPFLAGS, e.g.
+> 
+> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+> index 1c8a1963d03f..b5f4f0fb8eeb 100644
+> --- a/tools/testing/selftests/lib.mk
+> +++ b/tools/testing/selftests/lib.mk
+> @@ -10,6 +10,9 @@ ifeq (0,$(MAKELEVEL))
+>  endif
+>  selfdir = $(realpath $(dir $(filter %/lib.mk,$(MAKEFILE_LIST))))
+>  
+> +uapi_dir = $(realpath $(selfdir)/../../../include/uapi)
+> +CPPFLAGS += -I$(uapi_dir)
+> +
+>  # The following are built by lib.mk common compile rules.
+>  # TEST_CUSTOM_PROGS should be used by tests that require
+>  # custom build rule and prevent common build rule use.
 
-This adds 10 bytes to x86_64 defconfig text and 1980 bytes to the data
-section:
+I like this solution, as it's a common problem and it solves it in one
+place for all of the selftests.
 
-   text    data     bss     dec     hex filename
-19691167        5134320 1646664 26472151        193eed7 vmlinux.before
-19691177        5136300 1646664 26474141        193f69d vmlinux.after
-
-[1] https://marc.info/?l=linux-s390&m=156631939010493&w=2
-
-Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/thread_info.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index 659a4400517b..e93e249a4e9b 100644
---- a/include/linux/thread_info.h
-+++ b/include/linux/thread_info.h
-@@ -147,6 +147,8 @@ check_copy_size(const void *addr, size_t bytes, bool is_source)
- 			__bad_copy_to();
- 		return false;
- 	}
-+	if (WARN_ON_ONCE(bytes > INT_MAX))
-+		return false;
- 	check_object_size(addr, bytes, is_source);
- 	return true;
- }
--- 
-2.17.1
-
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
 Kees Cook
