@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC6F9C17E
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 06:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C09E9C183
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 06:02:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726788AbfHYECc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 00:02:32 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40319 "EHLO
+        id S1726977AbfHYECg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 00:02:36 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40321 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbfHYECa (ORCPT
+        with ESMTP id S1726726AbfHYECd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 00:02:30 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c3so12101209wrd.7;
-        Sat, 24 Aug 2019 21:02:29 -0700 (PDT)
+        Sun, 25 Aug 2019 00:02:33 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c3so12101254wrd.7;
+        Sat, 24 Aug 2019 21:02:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=zA4JW/hg+wx6CJsdzmqfZbE0PagO6sXNIEqF5lUUdjU=;
-        b=NNtOikS18WU6T3gIKJEnRf8jbT7LMki9B8UG3870rXW0i05gDzzFcTZ+G7aKEZRrG4
-         5Egd6B1CDenIiIjCYMQkL78+LgBx+A8ur0hNUS1EY2KA7o1P42lpk1t6hpz+S/ytCYzJ
-         kW6fRvNd56jhbdBW9zTMktQKpk3JFfjFnnPeZIxPPwp5I202Ktj1lc9yMsi7OncHSlUq
-         lvWhD6ydLALH3CxZb4+Y41F12Z6mXz/JRZUfDbLPA82fQiwzRwMKu2CiLRrX/UM2/Fb1
-         26TmWcUvQAS3vNh7CsFggwVVLDzA6R+tRtUuT1h5gET5EbsyLhojyihgJgVr5ofgnkb+
-         nb/w==
+        bh=nS5ZdwaXnWLnup1daWCQzgoGPiOKricQ3p0EiljFPek=;
+        b=YsFhtGysGFaBx0FpoKJiH+kDHGWWH2ZTZCvrxYciZu6TGElkD8hmOBYdl1IrsqJw1H
+         bVnOr8TKC6t2jdWvfxVtI60Hi+53O1WRnEjXDkHQjfQzZzMtC74DMR423jRtUF7UL/BQ
+         Gpdf15fJoQmY/1H/t0NN78HNREdCRlionQg3jCc8sqaJJkobwfX8woxGfE3WM7DILeeL
+         QRB7hguPsEUlBLcBjt9+xflN7mdD1O5llbV+XFbR6aAWko9FKtgXZQSs0AxvaZm1Mx+k
+         RxA0OO+p4sFltJtp+7Fg/3YlopTfKhUaF1s8vgoFKN5v2mvFn/mI5vSFhnnCPTCBCfio
+         Telw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=zA4JW/hg+wx6CJsdzmqfZbE0PagO6sXNIEqF5lUUdjU=;
-        b=aYLUNQaSZ44LP6g9m0rRZJBiv6lVlUUhuK3sfX0vlgI1QeOtgWLxJGMyGu4+CIw202
-         X3nyeqsZI7QsIyTKHuXGecEkbz6PFQVntsgIc1qLM5B+YbdNMYtxif1YzVPQIx5Kh/Q2
-         a2MxhsMKEZw1J7Gbb6F6Xym65QUQTAhUrWiZEC62gwuprUOcshnCT4yokyGid3mULlat
-         mjZ0+UNdwwhBD4WSQkR40HIAmmiTfyJ50eBRY65Q2pnqBPkzraIERQD22e4jtqyYwcGo
-         tafQUzJWcIMHd+Q6SXtg/d7BdQ56S8LoWrOy1adBZf0BvKwslVixy4Ei38E7IYL6S44c
-         PuPQ==
-X-Gm-Message-State: APjAAAX4WfndeOgupH4VrwVJQtk/mOGWzC1XEVkzn6PGt93kIXGUS4qv
-        p3yUZXe3GmdgnNP9Gj5Ytho=
-X-Google-Smtp-Source: APXvYqytpsaH+5s4MR9HODR+t+2siNqosgJSnzuzUa0mwtEnEkV1Q/JdbO8154er/EIwX3efOJM1dw==
-X-Received: by 2002:adf:dfc5:: with SMTP id q5mr14714925wrn.142.1566705748885;
-        Sat, 24 Aug 2019 21:02:28 -0700 (PDT)
+        bh=nS5ZdwaXnWLnup1daWCQzgoGPiOKricQ3p0EiljFPek=;
+        b=dCCukjZX+9Qrw7/txOblIg47nZyFXvFLRRN4lzh2AC6qVRGgSNYOqNPGGykkyNmKxA
+         3p5fldqXnLlA93WXUin3wRkH0hXIlvG8XnuF90BqnX4OTWTyVqu4Ue0A53Jf3WThqJjW
+         uE3fzfGJgKfZMICdofEn30p9jp6ecLNpz6UZhNuGXgvncwGCUyJOQPtyMHbXcfmgbO/G
+         e+11ZOrvMf7faJb3YhepSC6UmCVNo1ymJIdagGBIcTEvdZ4FRdAliAlG2PjFvstVerhG
+         iosDvEwkoFQN4oY5w//2Iy/pwYdp7Vt/pCxQgmuPVCWtO5VyK3vqPLIzZlPLyIgsJzon
+         AYWg==
+X-Gm-Message-State: APjAAAV6VVFwXia/Rjs07ETKNI7qmiAI9bltTjaJhJe/+OO/1WMk6T1w
+        iAqbyL6URIE5pLfmhaUApvs=
+X-Google-Smtp-Source: APXvYqzpbvks94RUaUaHxbIcLp4EI33cVGxO4/18OYAgWCn3juOpT/w3h/KFPUXwRVDgDJmS/myrJA==
+X-Received: by 2002:a5d:63d1:: with SMTP id c17mr10502168wrw.3.1566705751398;
+        Sat, 24 Aug 2019 21:02:31 -0700 (PDT)
 Received: from localhost.localdomain ([94.204.252.234])
-        by smtp.gmail.com with ESMTPSA id a6sm6820985wmj.15.2019.08.24.21.02.26
+        by smtp.gmail.com with ESMTPSA id a6sm6820985wmj.15.2019.08.24.21.02.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 24 Aug 2019 21:02:28 -0700 (PDT)
+        Sat, 24 Aug 2019 21:02:30 -0700 (PDT)
 From:   Christian Hewitt <christianshewitt@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -51,9 +51,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Chrisitian Hewitt <christianshewitt@gmail.com>
-Subject: [PATCH 4/7] arm64: dts: meson-gxbb-wetek-play2: add rc-wetek-play2 keymap
-Date:   Sun, 25 Aug 2019 08:01:25 +0400
-Message-Id: <1566705688-18442-5-git-send-email-christianshewitt@gmail.com>
+Subject: [PATCH 5/7] arm64: dts: meson-gxl-s905x-khadas-vim: use rc-khadas keymap
+Date:   Sun, 25 Aug 2019 08:01:26 +0400
+Message-Id: <1566705688-18442-6-git-send-email-christianshewitt@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
 References: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
@@ -62,25 +62,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add the rc-wetek-play2 keymap to the ir node
+Swap to the rc-khadas keymap that maps the mouse button to KEY_MUTE.
 
 Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
-index 0038522..1d32d1f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts
-@@ -54,3 +54,7 @@
- &usb1 {
- 	status = "okay";
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+index 5499e8d..2a5cd30 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts
+@@ -110,7 +110,7 @@
  };
-+
-+&ir {
-+	linux,rc-map-name = "rc-wetek-play2";
-+};
+ 
+ &ir {
+-	linux,rc-map-name = "rc-geekbox";
++	linux,rc-map-name = "rc-khadas";
+ };
+ 
+ &gpio_ao {
 -- 
 2.7.4
 
