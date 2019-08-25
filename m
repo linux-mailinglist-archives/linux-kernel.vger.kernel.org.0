@@ -2,97 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 065A69C433
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 15:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C58749C43F
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 16:02:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbfHYNv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 09:51:27 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:33751 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728668AbfHYNvX (ORCPT
+        id S1728451AbfHYOBy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 10:01:54 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:36558 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728359AbfHYOBy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 09:51:23 -0400
-X-Originating-IP: 87.18.63.98
-Received: from uno.homenet.telecomitalia.it (unknown [87.18.63.98])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 184EAC0003;
-        Sun, 25 Aug 2019 13:51:18 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli@fpond.eu, airlied@linux.ie, daniel@ffwll.ch
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        VenkataRajesh.Kalakodima@in.bosch.com,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 14/14] drm: rcar-du: Force CMM enablement when resuming
-Date:   Sun, 25 Aug 2019 15:51:54 +0200
-Message-Id: <20190825135154.11488-15-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
-References: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
+        Sun, 25 Aug 2019 10:01:54 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 6C0CC6083139;
+        Sun, 25 Aug 2019 16:01:51 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id tqJfLNQv7xsv; Sun, 25 Aug 2019 16:01:51 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 2B6FB608311C;
+        Sun, 25 Aug 2019 16:01:51 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id h9v8sJCiOh-s; Sun, 25 Aug 2019 16:01:51 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 05E1B6089354;
+        Sun, 25 Aug 2019 16:01:50 +0200 (CEST)
+Date:   Sun, 25 Aug 2019 16:01:50 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     torvalds <torvalds@linux-foundation.org>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1811413787.73825.1566741710952.JavaMail.zimbra@nod.at>
+Subject: [GIT PULL] UBIFS/JFFS2 fixes for 5.3-rc6
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Index: 1z3uoU3loWp1K/Oo/z0waK5U/6Z3kw==
+Thread-Topic: UBIFS/JFFS2 fixes for 5.3-rc6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When resuming from system suspend, the DU driver is responsible for
-reprogramming and enabling the CMM unit if it was in use at the time
-the system entered the suspend state.
+Linus,
 
-Force the color_mgmt_changed flag to true if any of the DRM color
-transformation properties was set in the CRTC state duplicated at
-suspend time, as the CMM gets reprogrammed only if said flag is active in
-the rcar_du_atomic_commit_update_cmm() method.
+The following changes since commit d1abaeb3be7b5fa6d7a1fbbd2e14e3310005c4c1:
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+  Linux 5.3-rc5 (2019-08-18 14:31:08 -0700)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 018480a8f35c..6e38495fb78f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -17,6 +17,7 @@
- #include <linux/slab.h>
- #include <linux/wait.h>
- 
-+#include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_fb_helper.h>
-@@ -482,6 +483,26 @@ static int rcar_du_pm_suspend(struct device *dev)
- static int rcar_du_pm_resume(struct device *dev)
- {
- 	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-+	struct drm_atomic_state *state = rcdu->ddev->mode_config.suspend_state;
-+	unsigned int i;
-+
-+	for (i = 0; i < rcdu->num_crtcs; ++i) {
-+		struct drm_crtc *crtc = &rcdu->crtcs[i].crtc;
-+		struct drm_crtc_state *crtc_state;
-+
-+		crtc_state = drm_atomic_get_existing_crtc_state(state, crtc);
-+		if (!crtc_state)
-+			continue;
-+
-+		/*
-+		 * Force re-enablement of CMM after system resume if any
-+		 * of the DRM color transformation properties was set in
-+		 * the state saved at system suspend time.
-+		 */
-+		if (crtc_state->gamma_lut || crtc_state->degamma_lut ||
-+		    crtc_state->ctm)
-+			crtc_state->color_mgmt_changed = true;
-+	}
- 
- 	return drm_mode_config_helper_resume(rcdu->ddev);
- }
--- 
-2.22.0
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/for-linus-5.3-rc6
+
+for you to fetch changes up to 0af83abbd4a6e36a4b209d8c57c26143e40eeec1:
+
+  ubifs: Limit the number of pages in shrink_liability (2019-08-22 17:25:33 +0200)
+
+----------------------------------------------------------------
+This pull request contains the following fixes for UBIFS and JFFS2:
+
+UBIFS:
+
+- Don't block too long in writeback_inodes_sb()
+- Fix for a possible overrun of the log head
+- Fix double unlock in orphan_delete()
+
+JFFS2:
+
+- Remove C++ style from UAPI header and unbreak picky toolchains
+
+----------------------------------------------------------------
+Liu Song (1):
+      ubifs: Limit the number of pages in shrink_liability
+
+Masahiro Yamada (1):
+      jffs2: Remove C++ style comments from uapi header
+
+Richard Weinberger (2):
+      ubifs: Fix double unlock around orphan_delete()
+      ubifs: Correctly initialize c->min_log_bytes
+
+ fs/ubifs/budget.c          | 2 +-
+ fs/ubifs/orphan.c          | 2 --
+ fs/ubifs/super.c           | 4 ++++
+ include/uapi/linux/jffs2.h | 5 -----
+ 4 files changed, 5 insertions(+), 8 deletions(-)
