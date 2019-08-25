@@ -2,64 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC2B9C135
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 03:11:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D25B09C141
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 03:32:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbfHYBKb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 21:10:31 -0400
-Received: from verein.lst.de ([213.95.11.211]:38250 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbfHYBKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 21:10:31 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id BCB0D68AEF; Sun, 25 Aug 2019 03:10:25 +0200 (CEST)
-Date:   Sun, 25 Aug 2019 03:10:25 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>, vdumpa@nvidia.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thierry Reding <treding@nvidia.com>,
-        Kees Cook <keescook@chromium.org>, iamjoonsoo.kim@lge.com,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org
-Subject: Re: [PATCH v2 2/2] dma-contiguous: Use fallback alloc_pages for
- single pages
-Message-ID: <20190825011025.GA23410@lst.de>
-References: <20190506223334.1834-1-nicoleotsuka@gmail.com> <20190506223334.1834-3-nicoleotsuka@gmail.com> <CAK7LNARacEorb38mVBw_V-Zvz-znWgBma1AP1-z_5B_xZU4ogg@mail.gmail.com> <CAK7LNAQfYBCoChMV=MOwcUyVoqRkrPWs7DaWdzDqjBe18gGiAQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAQfYBCoChMV=MOwcUyVoqRkrPWs7DaWdzDqjBe18gGiAQ@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1728373AbfHYBcC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 21:32:02 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:34351 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728320AbfHYBcB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 21:32:01 -0400
+Received: from grover.flets-west.jp (softbank126125143222.bbtec.net [126.125.143.222]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id x7P1VTtI011335;
+        Sun, 25 Aug 2019 10:31:30 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x7P1VTtI011335
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566696690;
+        bh=UySt3IPQMKQvA8Z6xXUcqOfyPtK0Hni6tKUbgs1EZ/I=;
+        h=From:To:Cc:Subject:Date:From;
+        b=eWAcLDCT59y58Rfu/1f5RkY99019OS3+Wlfv0VmdeXHVcwlbhs7LJJpzNqi3TdGDw
+         9EA6rclq5AGHFwaD2alKpEUtofXI69ZR7RP/PBjN29NtoaYoa0YlQRTvHpflbyPvln
+         I4HMi8kbXkJljsXilZqbE8doE+GF9h8k3BauVzdr6esn79gaI1khmSXC9x+xqa1ntv
+         cF0TMcx3olVOAsZle6/7OFFYHXxvLVVllOeuO22IosFCbNxsXkZpfnE+YlOCK/itaW
+         rJArTylYRZm0jb/OMbgs6iK6KL2h47D9bxqcjwL+Vs5QSpgjkaqIrg9WiP3mAPX0ew
+         wzTCuzu59R1ng==
+X-Nifty-SrcIP: [126.125.143.222]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] kbuild: remove clean-dirs syntax
+Date:   Sun, 25 Aug 2019 10:31:27 +0900
+Message-Id: <20190825013128.12831-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 09:56:52PM +0900, Masahiro Yamada wrote:
-> + linux-mmc, Ulf Hansson, Adrian Hunter,
-> 
-> 
-> ADMA of SDHCI is not working
-> since bd2e75633c8012fc8a7431c82fda66237133bf7e
+The only the difference between clean-files and clean-dirs is the -r
+option passed to the 'rm' command.
 
-Does it work for you with this commit:
+You can always pass -r, and then remove the clean-dirs syntax.
 
-http://git.infradead.org/users/hch/dma-mapping.git/commitdiff/90ae409f9eb3bcaf38688f9ec22375816053a08e
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ Documentation/kbuild/makefiles.rst | 16 ++++------------
+ scripts/Makefile.clean             | 16 ++--------------
+ scripts/kconfig/Makefile           |  2 +-
+ usr/include/Makefile               |  4 +---
+ 4 files changed, 8 insertions(+), 30 deletions(-)
+
+diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
+index 68ed20ef37dd..78aa51a6fcd4 100644
+--- a/Documentation/kbuild/makefiles.rst
++++ b/Documentation/kbuild/makefiles.rst
+@@ -765,7 +765,8 @@ Files matching the patterns "*.[oas]", "*.ko", plus some additional files
+ generated by kbuild are deleted all over the kernel src tree when
+ "make clean" is executed.
+ 
+-Additional files can be specified in kbuild makefiles by use of $(clean-files).
++Additional files or directories can be specified in kbuild makefiles by use of
++$(clean-files).
+ 
+ 	Example::
+ 
+@@ -776,17 +777,8 @@ When executing "make clean", the file "crc32table.h" will be deleted.
+ Kbuild will assume files to be in the same relative directory as the
+ Makefile, except if prefixed with $(objtree).
+ 
+-To delete a directory hierarchy use:
+-
+-	Example::
+-
+-		#scripts/package/Makefile
+-		clean-dirs := $(objtree)/debian/
+-
+-This will delete the directory debian in the toplevel directory, including all
+-subdirectories.
+-
+-To exclude certain files from make clean, use the $(no-clean-files) variable.
++To exclude certain files or directories from make clean, use the
++$(no-clean-files) variable.
+ 
+ Usually kbuild descends down in subdirectories due to "obj-* := dir/",
+ but in the architecture makefiles where the kbuild infrastructure
+diff --git a/scripts/Makefile.clean b/scripts/Makefile.clean
+index 0b80e3207b20..cbfbe13dc87d 100644
+--- a/scripts/Makefile.clean
++++ b/scripts/Makefile.clean
+@@ -52,26 +52,14 @@ __clean-files   := $(wildcard                                               \
+ 		   $(addprefix $(obj)/, $(filter-out $(objtree)/%, $(__clean-files))) \
+ 		   $(filter $(objtree)/%, $(__clean-files)))
+ 
+-# same as clean-files
+-
+-__clean-dirs    := $(wildcard                                               \
+-		   $(addprefix $(obj)/, $(filter-out $(objtree)/%, $(clean-dirs)))    \
+-		   $(filter $(objtree)/%, $(clean-dirs)))
+-
+ # ==========================================================================
+ 
+-quiet_cmd_clean    = CLEAN   $(obj)
+-      cmd_clean    = rm -f $(__clean-files)
+-quiet_cmd_cleandir = CLEAN   $(__clean-dirs)
+-      cmd_cleandir = rm -rf $(__clean-dirs)
+-
++quiet_cmd_clean = CLEAN   $(obj)
++      cmd_clean = rm -rf $(__clean-files)
+ 
+ __clean: $(subdir-ymn)
+ ifneq ($(strip $(__clean-files)),)
+ 	+$(call cmd,clean)
+-endif
+-ifneq ($(strip $(__clean-dirs)),)
+-	+$(call cmd,cleandir)
+ endif
+ 	@:
+ 
+diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+index 7656e1137b6b..bed7a5a2fbe9 100644
+--- a/scripts/kconfig/Makefile
++++ b/scripts/kconfig/Makefile
+@@ -114,7 +114,7 @@ testconfig: $(obj)/conf
+ 	$(PYTHON3) -B -m pytest $(srctree)/$(src)/tests \
+ 	-o cache_dir=$(abspath $(obj)/tests/.cache) \
+ 	$(if $(findstring 1,$(KBUILD_VERBOSE)),--capture=no)
+-clean-dirs += tests/.cache
++clean-files += tests/.cache
+ 
+ # Help text used by make help
+ help:
+diff --git a/usr/include/Makefile b/usr/include/Makefile
+index 1fb6abe29b2f..05c71ef42f51 100644
+--- a/usr/include/Makefile
++++ b/usr/include/Makefile
+@@ -115,6 +115,4 @@ header-test-y += $(filter-out $(header-test-), \
+ 			$(patsubst $(obj)/%,%, $(wildcard \
+ 			$(addprefix $(obj)/, *.h */*.h */*/*.h */*/*/*.h))))
+ 
+-# For GNU Make <= 4.2.1, $(wildcard $(obj)/*/) matches to not only directories
+-# but also regular files. Use $(filter %/, ...) just in case.
+-clean-dirs += $(patsubst $(obj)/%/,%,$(filter %/, $(wildcard $(obj)/*/)))
++clean-files += $(filter-out Makefile, $(notdir $(wildcard $(obj)/*)))
+-- 
+2.17.1
+
