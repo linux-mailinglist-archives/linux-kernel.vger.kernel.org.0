@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71365A08AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:37:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BE07A08A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbfH1Rg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:36:57 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43695 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727097AbfH1Rgz (ORCPT
+        id S1727060AbfH1Rga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:36:30 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46753 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbfH1Rg2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:36:55 -0400
-Received: by mail-pg1-f194.google.com with SMTP id k3so91941pgb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:54 -0700 (PDT)
+        Wed, 28 Aug 2019 13:36:28 -0400
+Received: by mail-pg1-f195.google.com with SMTP id m3so82876pgv.13
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=93yuXrsoDJcxfGXtFKyOpMG4hjEuFRY7JcoZkRO/7KU=;
-        b=ef/XNIoNJ8FNf/2UnZbvjPJFb8vqeFEtJZZiDWxVd0dEO6hxV7LL75+7/Iq8aGzpzF
-         iVg4v8/Ta29xut1+Ke/E3ivGKILuYoiqx8ehk5RClbXXnKRntl6kt8DoHEWsooVI/UG1
-         Mw6C1HP/T5nI64PfzV2LE0znr18jvo0nu1TnI=
+        bh=hV/pCYqzahAlVmQhj4vllaPyolkogafd9L1Tz3zl8gE=;
+        b=cakfZ9rzzvgOXHN5tqW79itJAU9INSYghI/taA2o6Pk1fScvhu/l/Q2JbUAvwgjmlY
+         d010F4eG/hAE7lN2nJm0EeTRyO2CKpl9BKnLgcB68yxJL+7g6agNRfqpSm1GCJbkjXP8
+         7/KkF603jYPyMhu0lt2mQNl2sqC1ZFV3lHe5o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=93yuXrsoDJcxfGXtFKyOpMG4hjEuFRY7JcoZkRO/7KU=;
-        b=H4T+v96XSsIL9kWI0dyirn35Jg7Gku3tNlfM9Ndli3hCt81VR7gDq5cBsmq2g8W7nO
-         GjreqtOnzhLha5taCeIP2WGd0br8FitBXIUjpezl2MW/p7761NC0KwJwDtZydxnZZsQ+
-         /n5wLAp++GVtKw+fjYUT7KevKGvzwOEpDjzrrNlCShoXM92F0wqO3BfDJNwUiJcasui+
-         jfX0y4HveuhKxWz2eiZFJe1pvy+xWJS6wd+boSwtHDR8vSuashtFVm3V2O59FmYkVjLX
-         gat55njzGP83/81XiwX634iGWNB9dB+bRVy+SqRxnMEArQQ0TQifHe2oYaMwG/74Y+uS
-         6how==
-X-Gm-Message-State: APjAAAWZKhzaIiM51Nh8Nx8izjwNAcOvZdRErfZLcAnRC+WUkK2zcc6R
-        rY0ONzHine5zljdPGuJPanOErA==
-X-Google-Smtp-Source: APXvYqxFk5KhDDxCy5Ewx4tfQUPIRn0OhctMJTT0EyfySELBd8Ch/wU/0zGOElx+WEND0stqqdNuhQ==
-X-Received: by 2002:a17:90a:380a:: with SMTP id w10mr5337257pjb.138.1567013814445;
-        Wed, 28 Aug 2019 10:36:54 -0700 (PDT)
+        bh=hV/pCYqzahAlVmQhj4vllaPyolkogafd9L1Tz3zl8gE=;
+        b=MDPluiuYDSHnWseeWkxZltmY8VyLt/NhUlA8tEYMk0K+DdP/vSmwfRFCeJvJXF03LR
+         nNm3m5cI9QYbXKGX/oHJ5lN6eX+R5BEKdyGnntOZ+LhvgcI4A+4xi57rMzcaTxNsJ8B1
+         kPmKj2QGVuB9BXJK1rNEhIN+64IYB0AQ0IpqyFYq9ZPzawd3Ee10TqSbfI6e5KB3zitC
+         ECe+Hg27q6WpnvovUJT1IqprRjx9iO8eR1LcRl2226484lhczw0Af/zTvDDNPmkExBKI
+         OmKS4Sf77YJlEP2OXseC+enpNj3vkpL0KFgS/jlP56+oAENxBSB8w8ocr/uMNOVXOi8U
+         O8Cw==
+X-Gm-Message-State: APjAAAU3vnzndskU7/pK9bNdysWN1D+v9RvKM/JvBHxDTjKROKr/HK6z
+        raEuEJ0W2oI5/DtrxWWuv3t19g==
+X-Google-Smtp-Source: APXvYqy60PpmqtsU1KPAQexGXqntmtXL8FLGbG3Z+1AAxVXf6D9kHPAZ4kMU3ARbiKgQM8DgyWT+8Q==
+X-Received: by 2002:a63:f13:: with SMTP id e19mr4496190pgl.132.1567013788275;
+        Wed, 28 Aug 2019 10:36:28 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g2sm3692290pfm.32.2019.08.28.10.36.51
+        by smtp.gmail.com with ESMTPSA id g14sm3456466pfb.150.2019.08.28.10.36.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 10:36:51 -0700 (PDT)
-Date:   Sun, 25 Aug 2019 16:12:04 -0700
+        Wed, 28 Aug 2019 10:36:24 -0700 (PDT)
+Date:   Sun, 25 Aug 2019 16:18:56 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Dan Carpenter <dan.carpenter@oracle.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] uaccess: Add missing __must_check attributes
-Message-ID: <201908251609.ADAD5CAAC1@keescook>
+Subject: [PATCH] uaccess: Disallow > INT_MAX copy sizes
+Message-ID: <201908251612.F9902D7A@keescook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -57,114 +57,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The usercopy implementation comments describe that callers of the
-copy_*_user() family of functions must always have their return values
-checked. This can be enforced at compile time with __must_check, so add
-it where needed.
+As we've done with VFS, string operations, etc, reject usercopy sizes
+larger than INT_MAX, which would be nice to have for catching bugs
+related to size calculation overflows[1].
 
+This adds 10 bytes to x86_64 defconfig text and 1980 bytes to the data
+section:
+
+   text    data     bss     dec     hex filename
+19691167        5134320 1646664 26472151        193eed7 vmlinux.before
+19691177        5136300 1646664 26474141        193f69d vmlinux.after
+
+[1] https://marc.info/?l=linux-s390&m=156631939010493&w=2
+
+Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/thread_info.h |  2 +-
- include/linux/uaccess.h     | 21 +++++++++++----------
- 2 files changed, 12 insertions(+), 11 deletions(-)
+ include/linux/thread_info.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
-index 8d8821b3689a..659a4400517b 100644
+index 659a4400517b..e93e249a4e9b 100644
 --- a/include/linux/thread_info.h
 +++ b/include/linux/thread_info.h
-@@ -134,7 +134,7 @@ static inline void copy_overflow(int size, unsigned long count)
- 	WARN(1, "Buffer overflow detected (%d < %lu)!\n", size, count);
- }
- 
--static __always_inline bool
-+static __always_inline __must_check bool
- check_copy_size(const void *addr, size_t bytes, bool is_source)
- {
- 	int sz = __compiletime_object_size(addr);
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index 34a038563d97..70bbdc38dc37 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -55,7 +55,7 @@
-  * as usual) and both source and destination can trigger faults.
-  */
- 
--static __always_inline unsigned long
-+static __always_inline __must_check unsigned long
- __copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
- {
- 	kasan_check_write(to, n);
-@@ -63,7 +63,7 @@ __copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
- 	return raw_copy_from_user(to, from, n);
- }
- 
--static __always_inline unsigned long
-+static __always_inline __must_check unsigned long
- __copy_from_user(void *to, const void __user *from, unsigned long n)
- {
- 	might_fault();
-@@ -85,7 +85,7 @@ __copy_from_user(void *to, const void __user *from, unsigned long n)
-  * The caller should also make sure he pins the user space address
-  * so that we don't result in page fault and sleep.
-  */
--static __always_inline unsigned long
-+static __always_inline __must_check unsigned long
- __copy_to_user_inatomic(void __user *to, const void *from, unsigned long n)
- {
- 	kasan_check_read(from, n);
-@@ -93,7 +93,7 @@ __copy_to_user_inatomic(void __user *to, const void *from, unsigned long n)
- 	return raw_copy_to_user(to, from, n);
- }
- 
--static __always_inline unsigned long
-+static __always_inline __must_check unsigned long
- __copy_to_user(void __user *to, const void *from, unsigned long n)
- {
- 	might_fault();
-@@ -103,7 +103,7 @@ __copy_to_user(void __user *to, const void *from, unsigned long n)
- }
- 
- #ifdef INLINE_COPY_FROM_USER
--static inline unsigned long
-+static inline __must_check unsigned long
- _copy_from_user(void *to, const void __user *from, unsigned long n)
- {
- 	unsigned long res = n;
-@@ -117,12 +117,12 @@ _copy_from_user(void *to, const void __user *from, unsigned long n)
- 	return res;
- }
- #else
--extern unsigned long
-+extern __must_check unsigned long
- _copy_from_user(void *, const void __user *, unsigned long);
- #endif
- 
- #ifdef INLINE_COPY_TO_USER
--static inline unsigned long
-+static inline __must_check unsigned long
- _copy_to_user(void __user *to, const void *from, unsigned long n)
- {
- 	might_fault();
-@@ -133,7 +133,7 @@ _copy_to_user(void __user *to, const void *from, unsigned long n)
- 	return n;
- }
- #else
--extern unsigned long
-+extern __must_check unsigned long
- _copy_to_user(void __user *, const void *, unsigned long);
- #endif
- 
-@@ -222,8 +222,9 @@ static inline bool pagefault_disabled(void)
- 
- #ifndef ARCH_HAS_NOCACHE_UACCESS
- 
--static inline unsigned long __copy_from_user_inatomic_nocache(void *to,
--				const void __user *from, unsigned long n)
-+static inline __must_check unsigned long
-+__copy_from_user_inatomic_nocache(void *to, const void __user *from,
-+				  unsigned long n)
- {
- 	return __copy_from_user_inatomic(to, from, n);
+@@ -147,6 +147,8 @@ check_copy_size(const void *addr, size_t bytes, bool is_source)
+ 			__bad_copy_to();
+ 		return false;
+ 	}
++	if (WARN_ON_ONCE(bytes > INT_MAX))
++		return false;
+ 	check_object_size(addr, bytes, is_source);
+ 	return true;
  }
 -- 
 2.17.1
