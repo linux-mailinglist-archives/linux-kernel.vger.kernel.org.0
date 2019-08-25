@@ -2,75 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 908389C168
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 05:26:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53D5B9C17A
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 06:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfHYDZn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 23:25:43 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:38571 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727708AbfHYDZm (ORCPT
+        id S1725834AbfHYECW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 00:02:22 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41811 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbfHYECV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 23:25:42 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7P3POUv029060
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 24 Aug 2019 23:25:25 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7F19A42049E; Sat, 24 Aug 2019 23:25:24 -0400 (EDT)
-Date:   Sat, 24 Aug 2019 23:25:24 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Guo <guoyang2@huawei.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Subject: Re: [PATCH] ext4: change the type of ext4 cache stats to
- percpu_counter to improve performance
-Message-ID: <20190825032524.GD5163@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Guo <guoyang2@huawei.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-References: <1566528454-13725-1-git-send-email-zhangshaokun@hisilicon.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1566528454-13725-1-git-send-email-zhangshaokun@hisilicon.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 25 Aug 2019 00:02:21 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j16so12100056wrr.8;
+        Sat, 24 Aug 2019 21:02:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=nWmRqjrC+TU28eDb3UcDIF7I87vLorA/ZMl1z/jnRWg=;
+        b=NvpEkAddyUAnizZzJTz3P6sWKPGBsBTDPTnWKQ484X6BBjODpQL5c00mdXFJmw6q8a
+         eba+zk4zJx2Mi2VV3QrELx59CX9y89QXI5dn8NuhinT/TIaKrl/7piYUI3pKSfjVtIaG
+         N02e/uQkZ2T1go8wZvX2oSbhs/BBUPnhxtkJtEcFt1mbA0qU+3SJ9tv6G0PWDQr0n6xp
+         nAS7EuCZC/YUHpK8A0hLD679Jt9kvLOs6TxwFGkRf47NXbSmRGZZ4TwSkXnECkkPMS4Y
+         JnnCmTLXdIv0VOIRpW0efZNpSSUOJMpDVnxtdt+naAC7vGYDkPuiaInwWEEDKXzvwIcs
+         bUCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nWmRqjrC+TU28eDb3UcDIF7I87vLorA/ZMl1z/jnRWg=;
+        b=cyHV0kou4gOjc5gPgkWZSU97tNqttgttcJPy0MmijZe9aewGhACaCUQkYH1zLHsnay
+         +rEfc1ebKfU2JEKRobgxSfScMw8oeP1ndCd4dYNuQndbwQsiTTK8YilvACLp49NclpzV
+         qe6oc6BsAN+LnuupIjVhbYD3lFnAdVC2MPdGesL38u6ubEEXEH0v2lrhL1IrBFsV1wxk
+         fGPOBGkiix2zlORNKq40grGx2I+I4MJmnc0QqoykO9y1TxsS1neSduEchKwHed9LpBlU
+         DNN95twmPriyAjXFaZQhkhPw/KVy8aUm54aWytLIP4Nzx1rEkn+hHJU6vOO1/S+zngMK
+         pJGA==
+X-Gm-Message-State: APjAAAVTAcbPGSfxDWXDQIBGegs/euCoU2+SGGRA8+KJmkqj0DzD3hEN
+        zrhZb/gKp5A5/gVshUHrXYA=
+X-Google-Smtp-Source: APXvYqyyGTaMrndxI5ko5zR9b9GuYjLRGxkOVAdm1bHns/2lhqPy7lRlR8gHlGgioXmGtodHRAs/2g==
+X-Received: by 2002:a5d:4703:: with SMTP id y3mr14839913wrq.63.1566705739289;
+        Sat, 24 Aug 2019 21:02:19 -0700 (PDT)
+Received: from localhost.localdomain ([94.204.252.234])
+        by smtp.gmail.com with ESMTPSA id a6sm6820985wmj.15.2019.08.24.21.02.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 24 Aug 2019 21:02:18 -0700 (PDT)
+From:   Christian Hewitt <christianshewitt@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Chrisitian Hewitt <christianshewitt@gmail.com>
+Subject: [PATCH 0/7] arm64: dts: meson: ir keymap updates
+Date:   Sun, 25 Aug 2019 08:01:21 +0400
+Message-Id: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 10:47:34AM +0800, Shaokun Zhang wrote:
-> From: Yang Guo <guoyang2@huawei.com>
-> 
-> @es_stats_cache_hits and @es_stats_cache_misses are accessed frequently in
-> ext4_es_lookup_extent function, it would influence the ext4 read/write
-> performance in NUMA system.
-> Let's optimize it using percpu_counter, it is profitable for the
-> performance.
-> 
-> The test command is as below:
-> fio -name=randwrite -numjobs=8 -filename=/mnt/test1 -rw=randwrite
-> -ioengine=libaio -direct=1 -iodepth=64 -sync=0 -norandommap -group_reporting
-> -runtime=120 -time_based -bs=4k -size=5G
-> 
-> And the result is better 10% than the initial implement:
-> without the patch，IOPS=197k, BW=770MiB/s (808MB/s)(90.3GiB/120002msec)
-> with the patch,  IOPS=218k, BW=852MiB/s (894MB/s)(99.9GiB/120002msec)
-> 
-> Cc: "Theodore Ts'o" <tytso@mit.edu>
-> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> Signed-off-by: Yang Guo <guoyang2@huawei.com>
-> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+This series adds keymaps for several box/board vendor IR remote devices
+to respective device-tree files. The keymaps were submitted in [0] and
+have been queued for inclusion in Linux 5.4.
 
-Applied with some adjustments so it would apply.  I also changed the patch summary to:
+The Khadas remote change swaps the rc-geekbox keymap for rc-khadas. The
+Geekbox branded remote was only sold for a brief period when VIM(1) was
+a new device. The Khadas branded remote that replaced it exchanged the
+Geekbox full-screen key for an Android mouse button using a different IR
+keycode. The rc-khadas keymap supports the mouse button keycode and maps
+it to KEY_MUTE.
 
-    ext4: use percpu_counters for extent_status cache hits/misses
+[0] https://patchwork.kernel.org/project/linux-media/list/?series=160309
 
-    	      		      	  		- Ted
+Christian Hewitt (7):
+  arm64: dts: meson-g12b-odroid-n2: add rc-odroid keymap
+  arm64: dts: meson-g12a-x96-max: add rc-x96max keymap
+  arm64: dts: meson-gxbb-wetek-hub: add rc-wetek-hub keymap
+  arm64: dts: meson-gxbb-wetek-play2: add rc-wetek-play2 keymap
+  arm64: dts: meson-gxl-s905x-khadas-vim: use rc-khadas keymap
+  arm64: dts: meson-gxl-s905w-tx3-mini: add rc-tx3mini keymap
+  arm64: dts: meson-gxm-khadas-vim2: use rc-khadas keymap
+
+ arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts         | 1 +
+ arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts       | 1 +
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts       | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-play2.dts     | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905w-tx3-mini.dts   | 4 ++++
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-khadas-vim.dts | 2 +-
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts      | 2 +-
+ 7 files changed, 16 insertions(+), 2 deletions(-)
+
+-- 
+2.7.4
+
