@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E879C577
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 20:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C77E9C573
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 20:18:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbfHYSSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 14:18:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42142 "EHLO mx1.redhat.com"
+        id S1728994AbfHYSSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 14:18:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44342 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728948AbfHYSST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 14:18:19 -0400
+        id S1728972AbfHYSSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 14:18:21 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 38908189DAC8;
-        Sun, 25 Aug 2019 18:18:18 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8F0DF10576D9;
+        Sun, 25 Aug 2019 18:18:20 +0000 (UTC)
 Received: from krava.redhat.com (ovpn-204-45.brq.redhat.com [10.40.204.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D01F5D9C3;
-        Sun, 25 Aug 2019 18:18:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 95ABF6DA91;
+        Sun, 25 Aug 2019 18:18:18 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,21 +27,21 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 08/12] libperf: Add read_event to perf/event.h
-Date:   Sun, 25 Aug 2019 20:17:48 +0200
-Message-Id: <20190825181752.722-9-jolsa@kernel.org>
+Subject: [PATCH 09/12] libperf: Add throttle_event to perf/event.h
+Date:   Sun, 25 Aug 2019 20:17:49 +0200
+Message-Id: <20190825181752.722-10-jolsa@kernel.org>
 In-Reply-To: <20190825181752.722-1-jolsa@kernel.org>
 References: <20190825181752.722-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Sun, 25 Aug 2019 18:18:18 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Sun, 25 Aug 2019 18:18:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moving read_event event definition into libperf's event.h
+Moving throttle_event event definition into libperf's event.h
 header include.
 
 In order to keep libperf simple, we switch 'u64/u32/u16/u8'
@@ -62,88 +62,63 @@ Adding and using new PRI_lu64 and PRI_lx64 macros to be used for
 that.  Using extra '_' to ease up the reading and differentiate
 them from standard PRI*64 macros.
 
-Link: http://lkml.kernel.org/n/tip-f41v4s56i2u4hbn2hzufa12l@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-u7lk8zc4lpm2sxijnun00siz@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/include/perf/event.h | 12 ++++++++++++
- tools/perf/util/event.h             | 12 ------------
- tools/perf/util/session.c           |  8 ++++----
- 3 files changed, 16 insertions(+), 16 deletions(-)
+ tools/perf/lib/include/perf/event.h | 7 +++++++
+ tools/perf/util/event.h             | 7 -------
+ tools/perf/util/python.c            | 4 ++--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-index 3bd2727ac5f9..a03dbe776a44 100644
+index a03dbe776a44..80d0bc48baff 100644
 --- a/tools/perf/lib/include/perf/event.h
 +++ b/tools/perf/lib/include/perf/event.h
-@@ -61,4 +61,16 @@ struct lost_samples_event {
- 	__u64 lost;
+@@ -73,4 +73,11 @@ struct read_event {
+ 	__u64 id;
  };
  
-+/*
-+ * PERF_FORMAT_ENABLED | PERF_FORMAT_RUNNING | PERF_FORMAT_ID
-+ */
-+struct read_event {
++struct throttle_event {
 +	struct perf_event_header header;
-+	__u32 pid, tid;
-+	__u64 value;
-+	__u64 time_enabled;
-+	__u64 time_running;
++	__u64 time;
 +	__u64 id;
++	__u64 stream_id;
 +};
 +
  #endif /* __LIBPERF_EVENT_H */
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 1bf44b73fbbf..89872279a5af 100644
+index 89872279a5af..d03a70e2e6a4 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -16,18 +16,6 @@
+@@ -16,13 +16,6 @@
  #define PRI_lu64 "l" PRIu64
  #define PRI_lx64 "l" PRIx64
  
--/*
-- * PERF_FORMAT_ENABLED | PERF_FORMAT_RUNNING | PERF_FORMAT_ID
-- */
--struct read_event {
+-struct throttle_event {
 -	struct perf_event_header header;
--	u32 pid, tid;
--	u64 value;
--	u64 time_enabled;
--	u64 time_running;
+-	u64 time;
 -	u64 id;
+-	u64 stream_id;
 -};
 -
- struct throttle_event {
- 	struct perf_event_header header;
- 	u64 time;
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 82e0438a9160..cb1d8dcd0c19 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1260,7 +1260,7 @@ static void dump_read(struct evsel *evsel, union perf_event *event)
- 	if (!dump_trace)
- 		return;
+ #ifndef KSYM_NAME_LEN
+ #define KSYM_NAME_LEN 256
+ #endif
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 5be85f50cd1c..d21e270c7823 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -233,8 +233,8 @@ static PyObject *pyrf_throttle_event__repr(struct pyrf_event *pevent)
+ {
+ 	struct throttle_event *te = (struct throttle_event *)(&pevent->event.header + 1);
  
--	printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
-+	printf(": %d %d %s %" PRI_lu64 "\n", event->read.pid, event->read.tid,
- 	       perf_evsel__name(evsel),
- 	       event->read.value);
- 
-@@ -1270,13 +1270,13 @@ static void dump_read(struct evsel *evsel, union perf_event *event)
- 	read_format = evsel->core.attr.read_format;
- 
- 	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
--		printf("... time enabled : %" PRIu64 "\n", read_event->time_enabled);
-+		printf("... time enabled : %" PRI_lu64 "\n", read_event->time_enabled);
- 
- 	if (read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
--		printf("... time running : %" PRIu64 "\n", read_event->time_running);
-+		printf("... time running : %" PRI_lu64 "\n", read_event->time_running);
- 
- 	if (read_format & PERF_FORMAT_ID)
--		printf("... id           : %" PRIu64 "\n", read_event->id);
-+		printf("... id           : %" PRI_lu64 "\n", read_event->id);
+-	return _PyUnicode_FromFormat("{ type: %sthrottle, time: %" PRIu64 ", id: %" PRIu64
+-				   ", stream_id: %" PRIu64 " }",
++	return _PyUnicode_FromFormat("{ type: %sthrottle, time: %" PRI_lu64 ", id: %" PRI_lu64
++				   ", stream_id: %" PRI_lu64 " }",
+ 				   pevent->event.header.type == PERF_RECORD_THROTTLE ? "" : "un",
+ 				   te->time, te->id, te->stream_id);
  }
- 
- static struct machine *machines__find_for_cpumode(struct machines *machines,
 -- 
 2.21.0
 
