@@ -2,94 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E37E49C52C
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 19:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DAAA9C52E
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 19:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbfHYRiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 13:38:05 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51422 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbfHYRiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 13:38:04 -0400
-Received: by mail-wm1-f66.google.com with SMTP id k1so13336854wmi.1
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 10:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=nUBff10lsASBE91F8KigCpGgGqpKzg5hEBg0Knu8bCo=;
-        b=MD7FaYs3Po93LP2EVlwniuTCClIUheV1+e4SE7O7U05CgbYG9+0Tz52709kBM7lzGH
-         mdO6l4i12vl6Uzc3njlmgjbXqSUi48C41OEWxQM7AYnVZyfKjjM7t330SvWuyEjtY6s/
-         HVaLCcJeagUKP/q3uIvlgp/5061kmyOMW+BYNmEwWakSOMKT4SaLpCNdlMj81VMzPtXu
-         ZvbzbwbExL2AliXB27sQLxuw2uZGK9qW/Jou+Uhbx6fpCdzQKv/Y948mBTWv46yYHHIc
-         ah8qwouWvGIk6poTnmek2NazZHcOHmbD66wEkjTR8LGbd/v+H9iooFjFEgYVJHKhS2NT
-         NUQg==
+        id S1728793AbfHYRiT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 13:38:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52996 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727077AbfHYRiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 13:38:19 -0400
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 200954E924
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 17:38:19 +0000 (UTC)
+Received: by mail-ed1-f71.google.com with SMTP id f11so8255723edn.9
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 10:38:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=nUBff10lsASBE91F8KigCpGgGqpKzg5hEBg0Knu8bCo=;
-        b=DQObd38kEtiIHZ/uamgcYELjMj+C+KzPo6YWWvOKAKnmX4PeRFWYSflTkunCh2goil
-         kATA4JCAzjKLu2jw543aWM4plZHIa5oRCi1CRvCI4jLCt0biJc9UlkEXecPs8W6yl10+
-         h2VdG9pqJK5h3nUah1yKUpZmjD+4LECdjfzYfDUoo3M5xHni8FLgg9xJtogQDA+jnIl+
-         uglMc+9LL5fXtpbhjbsoWTdyJ9x6wkg3PSFZBvFDlhLMb6lp+txX5ZUf+gARtMAnqwc/
-         cz4N5SIMmKwzCr314GXDj3AIPC4BEliZcflW3DFpH5+ZfNJaWFRYmhPcR5wywrAj7si6
-         B0Fw==
-X-Gm-Message-State: APjAAAWaL/Lq/dCjb3r7HcpLEBXytr5BRcBafAgVODAKzuaVd82yEhGN
-        bFtS1Xpqltit+qNLrepYAbiZXEHA
-X-Google-Smtp-Source: APXvYqzFD5J9xm9Djp2lvUE2tM8UAhKNmIuyggfhQ/wFx0rAGud00RsDQmwjOlIYe3c34/4NTdqvxQ==
-X-Received: by 2002:a1c:760b:: with SMTP id r11mr17569898wmc.41.1566754682714;
-        Sun, 25 Aug 2019 10:38:02 -0700 (PDT)
-Received: from gmail.com (82.159.32.155.dyn.user.ono.com. [82.159.32.155])
-        by smtp.gmail.com with ESMTPSA id o8sm17049994wma.1.2019.08.25.10.38.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 25 Aug 2019 10:38:02 -0700 (PDT)
-Date:   Sun, 25 Aug 2019 19:37:55 +0200
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        Robin van der Gracht <robin@protonic.nl>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] auxdisplay for v5.3-rc7
-Message-ID: <20190825173755.GA19827@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CK1a23hD4lHdM/UHCYL3dWOeCp7ea2G2doEW1IlG12o=;
+        b=rMAdH955d1QEcX86lJM6r748SXqzk3WXOBVjTQ0OwyVggcuCbbrv5iN5fhBRHqTA91
+         tKM2NWwKAR2oUb9mU9cx/KWEeoEj/WYNtU71HX+7ukboJw5s6O/4OmW7mswvDiKPS7Hm
+         0b0JykbptQV3RaIIreLTfXmD3KovSF1US2QtZ7pwcT9Egw0RMKIEJW9K78mRHLS7BFZJ
+         pBrkWp943BsliBpgjWzS0wm5rRsijXCoblCexyUl1a6g9mC9wJS32YwZLgxLrlGMvdLP
+         dgMP9iRLRd15IzbBJnXl7wIaJOzXtgZ1gCISG6RZSoso9pWU6Tez1pSalqYuBLmwhqiz
+         fNZA==
+X-Gm-Message-State: APjAAAU+GO8uWJtnnYmzldzFI9ljOccZbT94hsq3hvRF6tbXNFdK0k+M
+        5wL/RQ0mgyp1+j2eEQfyCssfkKl5wJRbjg72NBTFMSxK7FKHzhFD+6HpEV0aSG2PuT3N7y5CaaN
+        G34erBVbxGHU8PngyQjWySHXE
+X-Received: by 2002:a50:f05a:: with SMTP id u26mr14914556edl.116.1566754697636;
+        Sun, 25 Aug 2019 10:38:17 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqy//Oidu64o3SogMsT7m8oHy4BJyX16GMS3wuS3JJc9u+iiQQPgmxOGqTa6iW0EjR/CbX4hXQ==
+X-Received: by 2002:a50:f05a:: with SMTP id u26mr14914547edl.116.1566754697496;
+        Sun, 25 Aug 2019 10:38:17 -0700 (PDT)
+Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id c15sm2459120ejs.17.2019.08.25.10.38.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2019 10:38:16 -0700 (PDT)
+Subject: Re: [PATCH] ASoC: es8316: limit headphone mixer volume
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Mark Brown <broonie@kernel.org>,
+        David Yang <yangxiaohua@everest-semi.com>,
+        Daniel Drake <drake@endlessm.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+References: <20190824210426.16218-1-katsuhiro@katsuster.net>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <943932bf-2042-2a69-c705-b8e090e96377@redhat.com>
+Date:   Sun, 25 Aug 2019 19:38:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: elm/2
+In-Reply-To: <20190824210426.16218-1-katsuhiro@katsuster.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-Please pull this cleanup.
+On 24-08-19 23:04, Katsuhiro Suzuki wrote:
+> This patch limits Headphone mixer volume to 4 from 7.
+> Because output sound suddenly becomes very loudly with many noise if
+> set volume over 4.
+> 
+> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 
-Cheers,
-Miguel
+Higher then 4 not working matches my experience, see this comment from
+the UCM file: alsa-lib/src/conf/ucm/codecs/es8316/EnableSeq.conf :
 
-The following changes since commit d1abaeb3be7b5fa6d7a1fbbd2e14e3310005c4c1:
+# Set HP mixer vol to -6 dB (4/7) louder does not work
+cset "name='Headphone Mixer Volume' 4"
 
-  Linux 5.3-rc5 (2019-08-18 14:31:08 -0700)
+Limiting this to the actual working range at the kernel level seems
+sensible:
 
-are available in the Git repository at:
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-  https://github.com/ojeda/linux.git tags/auxdisplay-for-linus-v5.3-rc7
+Regards,
 
-for you to fetch changes up to a180d023ec7ba0e43b2385876950d9ce7ab618f1:
+Hans
 
-  auxdisplay: ht16k33: Make ht16k33_fb_fix and ht16k33_fb_var constant (2019-08-20 11:48:54 +0200)
 
-----------------------------------------------------------------
-A minor auxdisplay improvement:
 
- - ht16k33: Make ht16k33_fb_fix and ht16k33_fb_var constant (Nishka Dasgupta)
-
-----------------------------------------------------------------
-Nishka Dasgupta (1):
-      auxdisplay: ht16k33: Make ht16k33_fb_fix and ht16k33_fb_var constant
-
- drivers/auxdisplay/ht16k33.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> ---
+>   sound/soc/codecs/es8316.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+> index 8dfb5dbeebbf..bc4141e1eb7f 100644
+> --- a/sound/soc/codecs/es8316.c
+> +++ b/sound/soc/codecs/es8316.c
+> @@ -91,7 +91,7 @@ static const struct snd_kcontrol_new es8316_snd_controls[] = {
+>   	SOC_DOUBLE_TLV("Headphone Playback Volume", ES8316_CPHP_ICAL_VOL,
+>   		       4, 0, 3, 1, hpout_vol_tlv),
+>   	SOC_DOUBLE_TLV("Headphone Mixer Volume", ES8316_HPMIX_VOL,
+> -		       0, 4, 7, 0, hpmixer_gain_tlv),
+> +		       0, 4, 4, 0, hpmixer_gain_tlv),
+>   
+>   	SOC_ENUM("Playback Polarity", dacpol),
+>   	SOC_DOUBLE_R_TLV("DAC Playback Volume", ES8316_DAC_VOLL,
+> 
