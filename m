@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1E99C56F
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 20:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3936B9C571
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 20:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728931AbfHYSSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 14:18:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40394 "EHLO mx1.redhat.com"
+        id S1728946AbfHYSSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 14:18:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:19574 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728897AbfHYSSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 14:18:10 -0400
+        id S1728897AbfHYSSN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 14:18:13 -0400
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E532710881CA;
-        Sun, 25 Aug 2019 18:18:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id E99FD10F23E4;
+        Sun, 25 Aug 2019 18:18:12 +0000 (UTC)
 Received: from krava.redhat.com (ovpn-204-45.brq.redhat.com [10.40.204.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 088905D9C3;
-        Sun, 25 Aug 2019 18:18:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 480765D9C3;
+        Sun, 25 Aug 2019 18:18:10 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,21 +27,21 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 05/12] libperf: Add fork_event to perf/event.h
-Date:   Sun, 25 Aug 2019 20:17:45 +0200
-Message-Id: <20190825181752.722-6-jolsa@kernel.org>
+Subject: [PATCH 06/12] libperf: Add lost_event to perf/event.h
+Date:   Sun, 25 Aug 2019 20:17:46 +0200
+Message-Id: <20190825181752.722-7-jolsa@kernel.org>
 In-Reply-To: <20190825181752.722-1-jolsa@kernel.org>
 References: <20190825181752.722-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Sun, 25 Aug 2019 18:18:10 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Sun, 25 Aug 2019 18:18:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moving fork_event event definition into libperf's event.h
+Moving lost_event event definition into libperf's event.h
 header include.
 
 In order to keep libperf simple, we switch 'u64/u32/u16/u8'
@@ -62,61 +62,103 @@ Adding and using new PRI_lu64 and PRI_lx64 macros to be used for
 that.  Using extra '_' to ease up the reading and differentiate
 them from standard PRI*64 macros.
 
-Link: http://lkml.kernel.org/n/tip-p4ooh7midl03a03o03xcsqws@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-ayq02ukxxsjmv3kcn2s4qxyt@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/include/perf/event.h | 7 +++++++
- tools/perf/util/event.h             | 7 -------
- tools/perf/util/python.c            | 2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ tools/perf/builtin-sched.c          | 2 +-
+ tools/perf/lib/include/perf/event.h | 6 ++++++
+ tools/perf/util/event.c             | 2 +-
+ tools/perf/util/event.h             | 6 ------
+ tools/perf/util/machine.c           | 2 +-
+ tools/perf/util/python.c            | 4 ++--
+ 6 files changed, 11 insertions(+), 11 deletions(-)
 
+diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+index 0d6b4c3b1a51..025151dcb651 100644
+--- a/tools/perf/builtin-sched.c
++++ b/tools/perf/builtin-sched.c
+@@ -2643,7 +2643,7 @@ static int process_lost(struct perf_tool *tool __maybe_unused,
+ 
+ 	timestamp__scnprintf_usec(sample->time, tstr, sizeof(tstr));
+ 	printf("%15s ", tstr);
+-	printf("lost %" PRIu64 " events on cpu %d\n", event->lost.lost, sample->cpu);
++	printf("lost %" PRI_lu64 " events on cpu %d\n", event->lost.lost, sample->cpu);
+ 
+ 	return 0;
+ }
 diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-index 265bb01029f0..7a34221abbba 100644
+index 7a34221abbba..6c25d0adbe6d 100644
 --- a/tools/perf/lib/include/perf/event.h
 +++ b/tools/perf/lib/include/perf/event.h
-@@ -43,4 +43,11 @@ struct namespaces_event {
- 	struct perf_ns_link_info link_info[];
+@@ -50,4 +50,10 @@ struct fork_event {
+ 	__u64 time;
  };
  
-+struct fork_event {
++struct lost_event {
 +	struct perf_event_header header;
-+	__u32 pid, ppid;
-+	__u32 tid, ptid;
-+	__u64 time;
++	__u64 id;
++	__u64 lost;
 +};
 +
  #endif /* __LIBPERF_EVENT_H */
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 0954f980574f..3bd9fc2a3ae8 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1480,7 +1480,7 @@ size_t perf_event__fprintf_switch(union perf_event *event, FILE *fp)
+ 
+ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
+ {
+-	return fprintf(fp, " lost %" PRIu64 "\n", event->lost.lost);
++	return fprintf(fp, " lost %" PRI_lu64 "\n", event->lost.lost);
+ }
+ 
+ size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index e8c57c23aa24..817f12643f11 100644
+index 817f12643f11..cc9cc38f0bf7 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -16,13 +16,6 @@
+@@ -16,12 +16,6 @@
  #define PRI_lu64 "l" PRIu64
  #define PRI_lx64 "l" PRIx64
  
--struct fork_event {
+-struct lost_event {
 -	struct perf_event_header header;
--	u32 pid, ppid;
--	u32 tid, ptid;
--	u64 time;
+-	u64 id;
+-	u64 lost;
 -};
 -
- struct lost_event {
+ struct lost_samples_event {
  	struct perf_event_header header;
- 	u64 id;
+ 	u64 lost;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 5734460fc89e..f61349d1d0d4 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -642,7 +642,7 @@ int machine__process_namespaces_event(struct machine *machine __maybe_unused,
+ int machine__process_lost_event(struct machine *machine __maybe_unused,
+ 				union perf_event *event, struct perf_sample *sample __maybe_unused)
+ {
+-	dump_printf(": id:%" PRIu64 ": lost:%" PRIu64 "\n",
++	dump_printf(": id:%" PRI_lu64 ": lost:%" PRI_lu64 "\n",
+ 		    event->lost.id, event->lost.lost);
+ 	return 0;
+ }
 diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 55ff0c3182d6..8bdadb24f6ba 100644
+index 8bdadb24f6ba..5be85f50cd1c 100644
 --- a/tools/perf/util/python.c
 +++ b/tools/perf/util/python.c
-@@ -170,7 +170,7 @@ static PyMemberDef pyrf_task_event__members[] = {
- static PyObject *pyrf_task_event__repr(struct pyrf_event *pevent)
- {
- 	return _PyUnicode_FromFormat("{ type: %s, pid: %u, ppid: %u, tid: %u, "
--				   "ptid: %u, time: %" PRIu64 "}",
-+				   "ptid: %u, time: %" PRI_lu64 "}",
- 				   pevent->event.header.type == PERF_RECORD_FORK ? "fork" : "exit",
- 				   pevent->event.fork.pid,
- 				   pevent->event.fork.ppid,
+@@ -263,8 +263,8 @@ static PyObject *pyrf_lost_event__repr(struct pyrf_event *pevent)
+ 	PyObject *ret;
+ 	char *s;
+ 
+-	if (asprintf(&s, "{ type: lost, id: %#" PRIx64 ", "
+-			 "lost: %#" PRIx64 " }",
++	if (asprintf(&s, "{ type: lost, id: %#" PRI_lx64 ", "
++			 "lost: %#" PRI_lx64 " }",
+ 		     pevent->event.lost.id, pevent->event.lost.lost) < 0) {
+ 		ret = PyErr_NoMemory();
+ 	} else {
 -- 
 2.21.0
 
