@@ -2,161 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 313D69C5C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 21:19:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 641DE9C5D1
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 21:36:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbfHYTTu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 25 Aug 2019 15:19:50 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:22691
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728974AbfHYTTu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 15:19:50 -0400
-X-IronPort-AV: E=Sophos;i="5.64,430,1559512800"; 
-   d="scan'208";a="317140672"
-Received: from unknown (HELO [192.168.8.118]) ([117.136.0.199])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Aug 2019 21:19:42 +0200
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] scripts: coccinelle: check for !(un)?likely usage
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-Mailer: iPhone Mail (16F203)
-In-Reply-To: <88f6e48e-1230-9488-a973-397f4e6dfbb5@linux.com>
-Date:   Mon, 26 Aug 2019 03:19:35 +0800
-Cc:     Joe Perches <joe@perches.com>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <4E9DDF9E-C883-44F0-A3F4-CD49284DB60D@lip6.fr>
-References: <20190825130536.14683-1-efremov@linux.com> <b5bae2981e27d133b61d99b08ee60244bf7aabe3.camel@perches.com> <88f6e48e-1230-9488-a973-397f4e6dfbb5@linux.com>
-To:     Denis Efremov <efremov@linux.com>
+        id S1729017AbfHYTc2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 15:32:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44804 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728685AbfHYTc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 15:32:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 96ED3AFE4;
+        Sun, 25 Aug 2019 19:32:25 +0000 (UTC)
+Date:   Sun, 25 Aug 2019 21:32:18 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Pu Wen <puwen@hygon.cn>, Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [GIT pull] x86/urgent for 5.3-rc5
+Message-ID: <20190825193218.GD20639@zn.tnic>
+References: <156672618029.19810.8479315461492191933.tglx@nanos.tec.linutronix.de>
+ <156672618029.19810.9732807383797358917.tglx@nanos.tec.linutronix.de>
+ <CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com>
+ <20190825173000.GB20639@zn.tnic>
+ <CAHk-=wiV54LwvWcLeATZ4q7rA5Dd9kE0Lchx=k023kgxFHySNQ@mail.gmail.com>
+ <20190825182922.GC20639@zn.tnic>
+ <CAHk-=wjhyg-MndXHZGRD+ZKMK1UrcghyLH32rqQA=YmcxV7Z0Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wjhyg-MndXHZGRD+ZKMK1UrcghyLH32rqQA=YmcxV7Z0Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Aug 25, 2019 at 11:38:50AM -0700, Linus Torvalds wrote:
+> On Sun, Aug 25, 2019 at 11:29 AM Borislav Petkov <bp@suse.de> wrote:
+> >
+> > My lazy, sticky Sunday brain could come up only with this:
+> 
+> Looks reasonable, except I think this only runs at boot, right?
+> 
+> I _think_ the boot CPU is magical during suspend/resume, and doesn't
+> do the full CPU bringup.
+> 
+> Although I guess this would still report it for the other CPU's? I
+> didn't check if this gets done during CPU bringup of secondary CPU's.
 
+So after adding a dump_stack() at the beginning of this function (yap,
+I'm lazy) I see during boot:
 
-> On 26 Aug 2019, at 02:59, Denis Efremov <efremov@linux.com> wrote:
-> 
-> 
-> 
->> On 25.08.2019 19:37, Joe Perches wrote:
->>> On Sun, 2019-08-25 at 16:05 +0300, Denis Efremov wrote:
->>> This patch adds coccinelle script for detecting !likely and !unlikely
->>> usage. It's better to use unlikely instead of !likely and vice versa.
->> 
->> Please explain _why_ is it better in the changelog.
->> 
-> 
-> In my naive understanding the negation (!) before the likely/unlikely
-> could confuse the compiler
+[    0.230044] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.3.0-rc5+ #9
+[    0.230759] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
+[    0.231690] Call Trace:
+[    0.232097]  dump_stack+0x46/0x60
+[    0.232496]  x86_init_rdrand+0xf/0xa1
+[    0.232496]  identify_cpu+0x352/0x540
+[    0.232496]  identify_boot_cpu+0xc/0x8f
+[    0.232496]  check_bugs+0x28/0x8e4
+[    0.232496]  ? __get_locked_pte+0x13e/0x1f0
+[    0.232496]  start_kernel+0x4ae/0x4ca
 
-As a human I am confused. Is !likely(x) equivalent to x or !x?
+and also on all the remaining 15 CPUs of the guest. Then, suspending to
+RAM and resuming right afterwards says:
 
-Julia
+[   51.620230] Disabling non-boot CPUs ...
+[   51.622745] smpboot: CPU 1 is now offline
+[   51.627264] smpboot: CPU 2 is now offline
+[   51.630581] smpboot: CPU 3 is now offline
+[   51.634533] smpboot: CPU 4 is now offline
+[   51.638715] smpboot: CPU 5 is now offline
+[   51.642590] smpboot: CPU 6 is now offline
+[   51.645890] smpboot: CPU 7 is now offline
+[   51.649076] smpboot: CPU 8 is now offline
+[   51.652362] smpboot: CPU 9 is now offline
+[   51.655647] smpboot: CPU 10 is now offline
+[   51.659061] smpboot: CPU 11 is now offline
+[   51.662772] smpboot: CPU 12 is now offline
+[   51.665863] smpboot: CPU 13 is now offline
+[   51.667980] smpboot: CPU 14 is now offline
+[   51.671644] smpboot: CPU 15 is now offline
+[   51.675640] ACPI: Low-level resume complete
+[   51.675640] PM: Restoring platform NVS memory
+[   51.675640] Enabling non-boot CPUs ...
+[   51.728674] x86: Booting SMP configuration:
+[   51.729015] smpboot: Booting Node 0 Processor 1 APIC 0x1
+[   51.625362] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.3.0-rc5+ #9
+[   51.625362] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
+[   51.625362] Call Trace:
+[   51.625362]  dump_stack+0x46/0x60
+[   51.625362]  x86_init_rdrand+0xf/0xa1
+[   51.625362]  identify_cpu+0x352/0x540
+[   51.625362]  identify_secondary_cpu+0x13/0x80
+[   51.625362]  smp_store_cpu_info+0x45/0x50
+[   51.625362]  start_secondary+0x4f/0x180
+[   51.625362]  secondary_startup_64+0xa4/0xb0
+[   51.740833] CPU1 is up
+...
 
+and the remaining 14(!). Yes, this doesn't run on the BSP during resume.
+I think the better thing to do would be to stick this in a CPUHP
+notifier...
 
-> and the initial branch-prediction intent
-> could be "falsified". I would say that either you need to move the
-> negation under the bracket "!unlikely(cond) -> unlikely(!cond)" or
-> you need to use likely instead "!unlikely(cond) -> likely(cond)".
-> However, I'm not a compiler expert to state that this is a general
-> rule. But, we've got 2 special macro for branch predicting, not one.
-> There is also ftrace in-between. I will try to do some simple
-> benchmarking.
-> 
->> btw: there are relatively few uses like this in the kernel.
->> 
->> $ git grep -P '!\s*(?:un)?likely\s*\(' | wc -l
->> 40
->> 
->> afaict: It may save 2 bytes of x86/64 object code.
->> 
->> For instance:
->> 
->> $ diff -urN kernel/tsacct.lst.old kernel/tsacct.lst.new|less
->> --- kernel/tsacct.lst.old       2019-08-25 09:21:39.936570183 -0700
->> +++ kernel/tsacct.lst.new       2019-08-25 09:22:20.774324886 -0700
->> @@ -24,158 +24,153 @@
->>   15:  48 89 fb                mov    %rdi,%rbx
->>        u64 time, delta;
->> 
->> -       if (!likely(tsk->mm))
->> +       if (unlikely(tsk->mm))
->>   18:  4c 8d ab 28 02 00 00    lea    0x228(%rbx),%r13
->>   1f:  e8 00 00 00 00          callq  24 <__acct_update_integrals+0x24>
->>                        20: R_X86_64_PLT32      __sanitizer_cov_trace_pc-0x4
->>   24:  4c 89 ef                mov    %r13,%rdi
->>   27:  e8 00 00 00 00          callq  2c <__acct_update_integrals+0x2c>
->>                        28: R_X86_64_PLT32      __asan_load8_noabort-0x4
->> -  2c:  4c 8b bb 28 02 00 00    mov    0x228(%rbx),%r15
->> -  33:  4d 85 ff                test   %r15,%r15
->> -  36:  74 34                   je     6c <__acct_update_integrals+0x6c>
->> +  2c:  48 83 bb 28 02 00 00    cmpq   $0x0,0x228(%rbx)
->> +  33:  00 
->> +  34:  75 34                   jne    6a <__acct_update_integrals+0x6a>
->>                return;
-> 
-> I think it's incorrect to say so in general. For example, on x86/64:
-> 
-> $ make mrproper
-> $ make allyesconfig
-> $ make && mv vmlinux vmlinux-000
-> $ make coccicheck MODE=patch COCCI=scripts/coccinelle/misc/unlikely.cocci | patch -p1
-> $ make 
-> $ ./scripts/bloat-o-meter ./vmlinux-000 ./vmlinux
-> add/remove: 0/0 grow/shrink: 3/4 up/down: 41/-35 (6)
-> Function                                     old     new   delta
-> dpaa2_io_service_rearm                       357     382     +25
-> intel_pmu_hw_config                         1277    1285      +8
-> get_sigframe.isra.constprop                 1657    1665      +8
-> csum_partial_copy_from_user                  605     603      -2
-> wait_consider_task                          3807    3797     -10
-> __acct_update_integrals                      384     373     -11
-> pipe_to_sendpage                             459     447     -12
-> Total: Before=312759461, After=312759467, chg +0.00%
-> 
-> It definitely influence the way the compiler optimizes the code.  
-> 
->> 
->> And here's a possible equivalent checkpatch test.
->> ---
->> scripts/checkpatch.pl | 18 ++++++++++++++++++
->> 1 file changed, 18 insertions(+)
->> 
->> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
->> index 287fe73688f0..364603ad1a47 100755
->> --- a/scripts/checkpatch.pl
->> +++ b/scripts/checkpatch.pl
->> @@ -6529,6 +6529,24 @@ sub process {
->>                 "Using $1 should generally have parentheses around the comparison\n" . $herecurr);
->>        }
->> 
->> +# !(likely|unlikely)(condition) use should be (unlikely|likely)(condition)
->> +        if ($perl_version_ok &&
->> +            $line =~ /(\!\s*((?:un)?likely))\s*$balanced_parens/) {
->> +            my $match = $1;
->> +            my $type =  $2;
->> +            my $reverse;
->> +            if ($type eq "likely") {
->> +                $reverse = "unlikely";
->> +            } else {
->> +                $reverse = "likely";
->> +            }
->> +            if (WARN("LIKELY_MISUSE",
->> +                 "Prefer $reverse over $match\n" . $herecurr) &&
->> +                $fix) {
->> +                $fixed[$fixlinenr] =~ s/\Q$match\E\s*\(/$reverse(/;
->> +            }
->> +        }
->> +
->> # whine mightly about in_atomic
->>        if ($line =~ /\bin_atomic\s*\(/) {
->>            if ($realfile =~ m@^drivers/@) {
->> 
->> 
+Btw:
 
+Subject: Undelivered Mail Returned to Sender
+
+...
+
+<puwen@hygon.cn>: Host or domain name not found. Name service error for
+    name=spam01.hygon.cn type=AAAA: Host found but no data record of requested
+    type
+
+hygon.cn domain doesn't even resolve from here. Oh boy.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 247165, AG München
