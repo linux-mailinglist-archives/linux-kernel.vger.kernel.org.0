@@ -2,64 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C809C526
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 19:33:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 592EE9C52D
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 19:38:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbfHYRdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 13:33:43 -0400
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:39897 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725971AbfHYRdn (ORCPT
+        id S1728778AbfHYRiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 13:38:08 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41033 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbfHYRiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 13:33:43 -0400
-Received: from xps13 ([83.160.161.190])
-        by smtp-cloud7.xs4all.net with ESMTPSA
-        id 1wOWi1kpFThuu1wOZix6bZ; Sun, 25 Aug 2019 19:33:41 +0200
-Message-ID: <dd3a1ec7d03888dade78db1e4c45ec1347c0815b.camel@tiscali.nl>
-Subject: Re: Linux 5.2.10
-From:   Paul Bolle <pebolle@tiscali.nl>
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, akpm@linux-foundation.org
-Cc:     jslaby@suse.cz, lwn@lwn.net
-Date:   Sun, 25 Aug 2019 19:33:36 +0200
-In-Reply-To: <20190825144703.6518-1-sashal@kernel.org>
-References: <20190825144703.6518-1-sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Sun, 25 Aug 2019 13:38:07 -0400
+Received: by mail-lf1-f65.google.com with SMTP id 62so10526770lfa.8
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 10:38:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V6JITCXyksgGXPuuiEKTTWYpxFZ0smMdS2qA/RBn6LM=;
+        b=Cn+X/37xbugDcXrRxIZ5lJxNcBOgsbWUT3oQDffw/10clliWPwH7NfEePy+DMUW+S/
+         /3AQHcXBW5JCoafWOZqZ6gfThcwMhjF1lSFM7mGVSw/KQsH7CkEnF49qp+NzbxQ2HVla
+         zpvzOOa6IP/i12QsAdliEN7n5p+QzwsDzCxi4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V6JITCXyksgGXPuuiEKTTWYpxFZ0smMdS2qA/RBn6LM=;
+        b=uCe1boamzDKpCRZ8Y/t4x7rFPSt4synkXJtI05nDdMmMdzERhqR6vOcmKi6eN3wt1K
+         DjvTRy2piqufDtfgvlXPKy9Yd/4V35KXY0oneXvT6sVZZAAIHihJDc9121vHpQCBc08D
+         H89GHCmerBCcPkvvwDhW+QO7fXk1TnJs2dEMF//hoxyioAmvCOHWbNoavf8NBbG83/fw
+         N3RozDxMLXzgz5rsTpCDTFlB/MoMzDq4kWHDEZKMAS040eLa6dNjVRRJi/ijDJ9g42NC
+         iLXSjlh0cC+xli/lJ8+saj/cbJpLw9lGAXEJMwdct1CeD58yzKV1YJgBUcsrebXc1BOm
+         a8xA==
+X-Gm-Message-State: APjAAAWPkDbwWFME5N5xkOletX9eF6PwX6qmYMnsFEmOyGkh3qaSbnv/
+        uO0faXlrivncbDscQI8DCgeH9jJtAa8=
+X-Google-Smtp-Source: APXvYqzl6SnUPih8iPiczcFRbvg/A/+hGFN89NG1Pi2nvsvjq9704xINfIc9etslieoNVRHvGxLi4A==
+X-Received: by 2002:a19:e04f:: with SMTP id g15mr8821749lfj.46.1566754684863;
+        Sun, 25 Aug 2019 10:38:04 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id y70sm1647890lje.41.2019.08.25.10.38.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2019 10:38:03 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id w67so2394860lff.4
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 10:38:03 -0700 (PDT)
+X-Received: by 2002:ac2:428d:: with SMTP id m13mr8395283lfh.52.1566754683351;
+ Sun, 25 Aug 2019 10:38:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfN42HIq+T3e6Uv/dme3AG85mTGT+JGuflqMTtz8RstCz+SUKfVyH8XVdG0FXfkAryY22SyVhHtjulJ79HbQDNe1awwJLteU8Y7LgtSsSPfLXbMgMLpMr
- dgFYqzbuSXKMhe9vwA9WY8kLcI+r58Sko2XPfQ58bIiDF+ZfuwkM8bEXlAYTA8uFwiT6iI2+5h63KEt6VHtL9ZXWb6cDC4zdmHf5ceiYaTroGdeXSgsNZH/v
- crvnRkoCdz1TpplAHdpGY6fWxkBYP/QKf4kmBciEgfCB4saYsEMvTnVliLkleDSQ6GRt3W6W8HiJCXbETaBtPQ==
+References: <156672618029.19810.8479315461492191933.tglx@nanos.tec.linutronix.de>
+ <156672618029.19810.9732807383797358917.tglx@nanos.tec.linutronix.de>
+ <CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com> <20190825173000.GB20639@zn.tnic>
+In-Reply-To: <20190825173000.GB20639@zn.tnic>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 25 Aug 2019 10:37:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiV54LwvWcLeATZ4q7rA5Dd9kE0Lchx=k023kgxFHySNQ@mail.gmail.com>
+Message-ID: <CAHk-=wiV54LwvWcLeATZ4q7rA5Dd9kE0Lchx=k023kgxFHySNQ@mail.gmail.com>
+Subject: Re: [GIT pull] x86/urgent for 5.3-rc5
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sasha,
+On Sun, Aug 25, 2019 at 10:30 AM Borislav Petkov <bp@suse.de> wrote:
+>
+> Should we do that somewhere in the early boot code by adding a WARN_ON()
+> or so and see who screams?
 
-Sasha Levin schreef op zo 25-08-2019 om 10:47 [-0400]:
-> I'm announcing the release of the 5.2.10 kernel.
-> 
-> All users of the 5.2 kernel series must upgrade.
-> 
-> The updated 5.2.y git tree can be found at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-5.2.y
-> and can be browsed at the normal kernel.org git web browser:
->         https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+It might be a good idea, just to see if it ever happens (again).
 
-v5.2.10 was tagged by sashal@kernel.org but signed by 
-alexander.levin@verizon.com. Perhaps you could use one of gpg2's many options
-to add an
-    aka "Sasha Levin <sashal@kernel.org>"
+It doesn't even have to be early boot. It's probably more important to
+let the user _know_, than it is to then disable the rdrand
+instruction.
 
-line to that key. (I assume "--recv-key" then would have found your key.)
+Particularly since we might as well just do it in general, and in the
+general case we don't even know how to hide it in cpuid. So maybe just
+something like "read the rdrand value a few times, make sure it
+actually changes" at CPU bring-up (both boot and resume)
 
-Or would that be a sin against kernel.org policy, state-of-the-art
-cryptographic practices, or whatever?
+It sounds like a stupid test, but considering that AMD has had this
+particular bug now several times over at least three different
+generations, maybe it's not a stupid test after all.
 
-Thanks,
+Who knows what the Chinese CPU's that use the AMD core do? Hygon?
+Whatever. Did they get the firmware fixes?
 
-
-Paul Bolle
-
+              Linus
