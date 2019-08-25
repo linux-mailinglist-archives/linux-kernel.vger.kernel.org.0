@@ -2,140 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 173129C2B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 11:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B11A49C2BB
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 11:45:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbfHYJpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 05:45:24 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:37972 "EHLO
+        id S1727904AbfHYJpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 05:45:50 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:37995 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbfHYJpP (ORCPT
+        with ESMTP id S1726494AbfHYJpu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 05:45:15 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
+        Sun, 25 Aug 2019 05:45:50 -0400
+Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1i1p5E-0004t8-Qq; Sun, 25 Aug 2019 11:45:12 +0200
-Date:   Sun, 25 Aug 2019 09:43:00 -0000
+        id 1i1p5n-0004vw-10; Sun, 25 Aug 2019 11:45:47 +0200
+Date:   Sun, 25 Aug 2019 11:45:46 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] perf/urgent for 5.3-rc5
-References: <156672618029.19810.8479315461492191933.tglx@nanos.tec.linutronix.de>
-Message-ID: <156672618029.19810.8453030714221422841.tglx@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+To:     Ming Lei <ming.lei@redhat.com>
+cc:     linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <kbusch@kernel.org>,
+        linux-nvme@lists.infradead.org,
+        Jon Derrick <jonathan.derrick@intel.com>
+Subject: Re: [PATCH V6 0/2] genriq/affinity: Make vectors allocation fair
+In-Reply-To: <20190825080212.GA17265@ming.t460p>
+Message-ID: <alpine.DEB.2.21.1908251145290.1939@nanos.tec.linutronix.de>
+References: <20190819124937.9948-1-ming.lei@redhat.com> <20190825080212.GA17265@ming.t460p>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Sun, 25 Aug 2019, Ming Lei wrote:
+> On Mon, Aug 19, 2019 at 08:49:35PM +0800, Ming Lei wrote:
+> 
+> Hi Thomas,
+> 
+> Gentle ping on the two patches.
 
-please pull the latest perf-urgent-for-linus git tree from:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
-
-up to:  f1c6ece23729: kprobes: Fix potential deadlock in kprobe_optimizer()
-
-Two small fixes for kprobes and perf:
-
-    - Prevent a deadlock in kprobe_optimizer() causes by reverse lock
-      ordering
-
-    - Fix a comment typo
-
-Thanks,
-
-	tglx
-
------------------->
-Andrea Righi (1):
-      kprobes: Fix potential deadlock in kprobe_optimizer()
-
-Su Yanjun (1):
-      perf/x86: Fix typo in comment
-
-
- arch/x86/events/core.c | 2 +-
- kernel/kprobes.c       | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 81b005e4c7d9..325959d19d9a 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -1236,7 +1236,7 @@ void x86_pmu_enable_event(struct perf_event *event)
-  * Add a single event to the PMU.
-  *
-  * The event is added to the group of enabled events
-- * but only if it can be scehduled with existing events.
-+ * but only if it can be scheduled with existing events.
-  */
- static int x86_pmu_add(struct perf_event *event, int flags)
- {
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 9873fc627d61..d9770a5393c8 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -470,6 +470,7 @@ static DECLARE_DELAYED_WORK(optimizing_work, kprobe_optimizer);
-  */
- static void do_optimize_kprobes(void)
- {
-+	lockdep_assert_held(&text_mutex);
- 	/*
- 	 * The optimization/unoptimization refers online_cpus via
- 	 * stop_machine() and cpu-hotplug modifies online_cpus.
-@@ -487,9 +488,7 @@ static void do_optimize_kprobes(void)
- 	    list_empty(&optimizing_list))
- 		return;
- 
--	mutex_lock(&text_mutex);
- 	arch_optimize_kprobes(&optimizing_list);
--	mutex_unlock(&text_mutex);
- }
- 
- /*
-@@ -500,6 +499,7 @@ static void do_unoptimize_kprobes(void)
- {
- 	struct optimized_kprobe *op, *tmp;
- 
-+	lockdep_assert_held(&text_mutex);
- 	/* See comment in do_optimize_kprobes() */
- 	lockdep_assert_cpus_held();
- 
-@@ -507,7 +507,6 @@ static void do_unoptimize_kprobes(void)
- 	if (list_empty(&unoptimizing_list))
- 		return;
- 
--	mutex_lock(&text_mutex);
- 	arch_unoptimize_kprobes(&unoptimizing_list, &freeing_list);
- 	/* Loop free_list for disarming */
- 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
-@@ -524,7 +523,6 @@ static void do_unoptimize_kprobes(void)
- 		} else
- 			list_del_init(&op->list);
- 	}
--	mutex_unlock(&text_mutex);
- }
- 
- /* Reclaim all kprobes on the free_list */
-@@ -556,6 +554,7 @@ static void kprobe_optimizer(struct work_struct *work)
- {
- 	mutex_lock(&kprobe_mutex);
- 	cpus_read_lock();
-+	mutex_lock(&text_mutex);
- 	/* Lock modules while optimizing kprobes */
- 	mutex_lock(&module_mutex);
- 
-@@ -583,6 +582,7 @@ static void kprobe_optimizer(struct work_struct *work)
- 	do_free_cleaned_kprobes();
- 
- 	mutex_unlock(&module_mutex);
-+	mutex_unlock(&text_mutex);
- 	cpus_read_unlock();
- 	mutex_unlock(&kprobe_mutex);
- 
-
-
+In my queue
