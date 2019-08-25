@@ -2,79 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AC0C9C61A
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 22:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC2FC9C621
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 22:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbfHYUcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 16:32:25 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:58945 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729082AbfHYUcZ (ORCPT
+        id S1729187AbfHYUpj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 16:45:39 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37549 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728909AbfHYUpj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 16:32:25 -0400
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id EA8E8200003;
-        Sun, 25 Aug 2019 20:32:22 +0000 (UTC)
-Date:   Sun, 25 Aug 2019 22:32:22 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org, soc@kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: at91: SoC for 5.4
-Message-ID: <20190825203222.GA22800@piout.net>
+        Sun, 25 Aug 2019 16:45:39 -0400
+Received: by mail-lf1-f66.google.com with SMTP id w67so2569236lff.4
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 13:45:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=pYr6d0TqDBZJiGDM65yUDwZgwxV9r/UgERdB1DdKGhk=;
+        b=merYvVNz3XTkAguGe0KmeNCT7qATUbpbjfbNSU4cukNfVihROujObBCrwk7sn2iwVo
+         k5+KIwUA4W3lNPh0jVDg21qRjZPNk9kx5ngOUawPP5gMBOOIn1mX1TEEl7cO/GElOp4c
+         jogPNM/nuYsB7RKcdMX2+pFzMdfghQhfZtOsPV9y0JV/q+j42BExCfa+5ZiRfbHffvc3
+         yddfJUsWggXSkwwXQA9pvEZU28HPvt4M2++IghjijaXN7Wjytg+aZYNoXHn4DmrI+dXs
+         87KnBt29d58hWsxuHt1gOqvY5qM5hCCjL359z8dT5WO8bNH+cT2N53a2tEZwYdazI+/i
+         zOKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=pYr6d0TqDBZJiGDM65yUDwZgwxV9r/UgERdB1DdKGhk=;
+        b=Ng0Ihda4XzvtrTmGJpwrWs2Y76CP9n5+495bnwVUBZJRkFhL2rK5fqXJ8UAvbEEDf/
+         6AttJKmvh1J7XnFz/gQvR+BfiyCwt1IHJWb3t4klX0Qf/fxgRErAzPWcEkMy65u4sqGV
+         RK6U9ka30GjC+q+EK0Jur6s/cg4cBSufflQgNn33XnbjXA2Dh2NVFKlF65cT/AAL3iBZ
+         M8eimpHHmfXz+siLjwfRfXvSsApHMJzmM10te8s1b3T/XOQift5z608KlcNVSxHeRhPa
+         UyUI6WoYNh6aHph2S/1TO4hbXOavzHw2eK/lRAFXZLmtUKe/y2BjS/8WkxRps+HCudFW
+         HTjw==
+X-Gm-Message-State: APjAAAXXPM2R3QjEq/LuUmfZik8qjonX9Z8HW85jfzHB2lNdh2SaoAVS
+        eguV00JXYzm2Cd3OhaNS11k=
+X-Google-Smtp-Source: APXvYqwXNMLWbQhEMkf9Yi0/ZfLM0yayORYGl8XrgkqLZrRcTG+h3OOykWCDwdjHK86g+x6372J1HQ==
+X-Received: by 2002:ac2:539b:: with SMTP id g27mr4988676lfh.73.1566765936888;
+        Sun, 25 Aug 2019 13:45:36 -0700 (PDT)
+Received: from [192.168.0.160] ([178.71.168.190])
+        by smtp.gmail.com with ESMTPSA id u20sm1323570lfl.4.2019.08.25.13.45.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Aug 2019 13:45:36 -0700 (PDT)
+To:     Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Straube <straube.linux@gmail.com>,
+        Sanjana Sanikommu <sanjana99reddy99@gmail.com>,
+        Vatsala Narang <vatsalanarang@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        devel@driverdev.osuosl.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ivan Safonov <insafonov@gmail.com>
+From:   Ivan Safonov <insafonov@gmail.com>
+Subject: [PATCH] r8188eu: use skb_put_data instead of skb_put/memcpy pair
+Message-ID: <4c9e1e66-5ffc-c04b-9ea8-39cec5fd9b2a@gmail.com>
+Date:   Sun, 25 Aug 2019 23:48:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+skb_put_data is shorter and clear.
 
-A non urgent fix for the generated header in mach-at91 and mostly
-MAINTAINERS updates.
+Signed-off-by: Ivan Safonov <insafonov@gmail.com>
+---
+  drivers/staging/rtl8188eu/core/rtw_recv.c        | 6 +-----
+  drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 3 +--
+  2 files changed, 2 insertions(+), 7 deletions(-)
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+diff --git a/drivers/staging/rtl8188eu/core/rtw_recv.c 
+b/drivers/staging/rtl8188eu/core/rtw_recv.c
+index 620da6c003d8..d4278361e002 100644
+--- a/drivers/staging/rtl8188eu/core/rtw_recv.c
++++ b/drivers/staging/rtl8188eu/core/rtw_recv.c
+@@ -1373,11 +1373,7 @@ static struct recv_frame *recvframe_defrag(struct 
+adapter *adapter,
+                 /* append  to first fragment frame's tail (if privacy 
+frame, pull the ICV) */
+                 skb_trim(prframe->pkt, prframe->pkt->len - 
+prframe->attrib.icv_len);
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+-               /* memcpy */
+-               memcpy(skb_tail_pointer(prframe->pkt), pnfhdr->pkt->data,
+-                      pnfhdr->pkt->len);
+-
+-               skb_put(prframe->pkt, pnfhdr->pkt->len);
++               skb_put_data(prframe->pkt, pnfhdr->pkt->data, 
+pnfhdr->pkt->len);
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-5.4-soc
-
-for you to fetch changes up to 2cb831e0f152e483ab797b44787a4ff426267fbc:
-
-  mailmap: map old company name to new one @microchip.com (2019-08-23 21:53:40 +0200)
-
-----------------------------------------------------------------
-AT91 SoC for 5.4
-
- - MAINTAINERS updates
- - a generated headers parallel build fix
-
-----------------------------------------------------------------
-Masahiro Yamada (1):
-      ARM: at91: move platform-specific asm-offset.h to arch/arm/mach-at91
-
-Nicolas Ferre (3):
-      MAINTAINERS: at91: Collect all pinctrl/gpio drivers in same entry
-      MAINTAINERS: at91: remove the TC entry
-      mailmap: map old company name to new one @microchip.com
-
- .mailmap                        |  1 +
- MAINTAINERS                     | 14 +-------------
- arch/arm/mach-at91/.gitignore   |  1 +
- arch/arm/mach-at91/Makefile     |  5 +++--
- arch/arm/mach-at91/pm_suspend.S |  2 +-
- 5 files changed, 7 insertions(+), 16 deletions(-)
- create mode 100644 arch/arm/mach-at91/.gitignore
-
+                 prframe->attrib.icv_len = pnfhdr->attrib.icv_len;
+                 plist = plist->next;
+diff --git a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c 
+b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+index eedf2cd831d1..aaab0d577453 100644
+--- a/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c
+@@ -122,8 +122,7 @@ static int recvbuf2recvframe(struct adapter *adapt, 
+struct sk_buff *pskb)
+                         precvframe->pkt = pkt_copy;
+                         skb_reserve(pkt_copy, 8 - 
+((size_t)(pkt_copy->data) & 7));/* force pkt_copy->data at 8-byte 
+alignment address */
+                         skb_reserve(pkt_copy, shift_sz);/* force ip_hdr 
+at 8-byte alignment address according to shift_sz. */
+-                       memcpy(pkt_copy->data, (pbuf + 
+pattrib->drvinfo_sz + RXDESC_SIZE), skb_len);
+-                       skb_put(precvframe->pkt, skb_len);
++                       skb_put_data(pkt_copy, (pbuf + 
+pattrib->drvinfo_sz + RXDESC_SIZE), skb_len);
+                 } else {
+                         DBG_88E("%s: alloc_skb fail , drop frag frame\n",
+                                 __func__);
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.21.0
