@@ -2,98 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C6029C11D
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 02:08:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95EC69C136
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 03:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbfHYAIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 20:08:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35574 "EHLO mail.kernel.org"
+        id S1728337AbfHYBKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 21:10:38 -0400
+Received: from mga07.intel.com ([134.134.136.100]:4487 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727879AbfHYAIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 20:08:21 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80D10206E0;
-        Sun, 25 Aug 2019 00:08:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566691700;
-        bh=2N9Dfvtue7/UaW9AT3W2m/GlFrrjff4ldFX+mK31j9o=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=X0iSHGc1EBzCjxPCO8IU4tN9W76L2HCxx8H7V+8Em/tGj1RUQ75zPEOqjN3un/yGo
-         O7+FJk8vIdcUxVON+h3b1k13TaecYmMti+2rNvNnWHTd9drzCQHxYNCKbk2wcMn2s/
-         0cPBWaUnRu39+au8Y3f7P1aQJRlC+2CHzs+sFIIE=
-Subject: Re: [PATCH 5.2 000/135] 5.2.10-stable review
-To:     Greg KH <greg@kroah.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, shuah <shuah@kernel.org>
-References: <20190822170811.13303-1-sashal@kernel.org>
- <00216731-a088-7d47-eafb-70409f876bda@kernel.org>
- <20190824023829.GE9862@kroah.com>
- <e4d5ba59-8e38-a267-8a14-3c6bc03f77bd@kernel.org>
- <20190824153348.GA27505@kroah.com>
- <93850e40-7df9-b5db-bda4-5b4354d2c3f3@kernel.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <ebc10349-575a-868e-247b-56b84241506a@kernel.org>
-Date:   Sat, 24 Aug 2019 18:08:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <93850e40-7df9-b5db-bda4-5b4354d2c3f3@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1728214AbfHYBKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 24 Aug 2019 21:10:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Aug 2019 18:10:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,427,1559545200"; 
+   d="scan'208";a="204158112"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga004.fm.intel.com with ESMTP; 24 Aug 2019 18:10:35 -0700
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+        dbueso@suse.de, linux-kernel@vger.kernel.org
+Cc:     Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH] lib/rbtree: set successor's parent unconditionally
+Date:   Sun, 25 Aug 2019 09:10:10 +0800
+Message-Id: <20190825011010.31072-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/24/19 11:01 AM, shuah wrote:
-> On 8/24/19 9:33 AM, Greg KH wrote:
->> On Sat, Aug 24, 2019 at 09:21:53AM -0600, shuah wrote:
->>> On 8/23/19 8:38 PM, Greg KH wrote:
->>>> On Fri, Aug 23, 2019 at 12:41:03PM -0600, shuah wrote:
->>>>> On 8/22/19 11:05 AM, Sasha Levin wrote:
->>>>>>
->>>>>> This is the start of the stable review cycle for the 5.2.10 release.
->>>>>> There are 135 patches in this series, all will be posted as a 
->>>>>> response
->>>>>> to this one.  If anyone has any issues with these being applied, 
->>>>>> please
->>>>>> let me know.
->>>>>>
->>>>>> Responses should be made by Sat 24 Aug 2019 05:07:10 PM UTC.
->>>>>> Anything received after that time might be too late.
->>>>>>
->>>>>> The whole patch series can be found in one patch at:
->>>>>>            
->>>>>> https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-5.2.10-rc1.gz 
->>>>>>
->>>>>
->>>>> I am seeing "Sorry I can't find your kernels". Is this posted?
->>>>
->>>> Ah, Sasha didn't generate the patch but it was still listed here, oops.
->>>> He copied my format and we didn't notice this, sorry about that.
->>>>
->>>> As the thread shows, we didn't generate this file this time to see what
->>>> would happen.  If your test process requires it, we can generate it 
->>>> as I
->>>> don't want to break it.
->>>>
->>>
->>> It will make it lot easier for me to have continued support for patch
->>> generation. My scripts do "wget" to pull the patch and apply.
->>
->> Ok, we will get this back and working, sorry about that.
->>
-> 
-> Great. Thanks for accommodating my workflow.
-> 
+Both in Case 2 and 3, we exchange n and s. This mean no matter whether
+child2 is NULL or not, successor's parent should be assigned to node's.
 
-Compiled and booted on my test system. No dmesg regressions.
+This patch takes this step out to make it explicit and reduce the
+ambiguity.
 
-thanks,
--- Shuah
+Besides, this step reduces some symbol size like rb_erase().
+
+   KERN_CONFIG       upstream       patched
+   OPT_FOR_PERF      877            870
+   OPT_FOR_SIZE      635            621
+
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+---
+ include/linux/rbtree_augmented.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/linux/rbtree_augmented.h b/include/linux/rbtree_augmented.h
+index 179faab29f52..8fcddfef7876 100644
+--- a/include/linux/rbtree_augmented.h
++++ b/include/linux/rbtree_augmented.h
+@@ -237,14 +237,13 @@ __rb_erase_augmented(struct rb_node *node, struct rb_root *root,
+ 		__rb_change_child(node, successor, tmp, root);
+ 
+ 		if (child2) {
+-			successor->__rb_parent_color = pc;
+ 			rb_set_parent_color(child2, parent, RB_BLACK);
+ 			rebalance = NULL;
+ 		} else {
+ 			unsigned long pc2 = successor->__rb_parent_color;
+-			successor->__rb_parent_color = pc;
+ 			rebalance = __rb_is_black(pc2) ? parent : NULL;
+ 		}
++		successor->__rb_parent_color = pc;
+ 		tmp = successor;
+ 	}
+ 
+-- 
+2.17.1
+
