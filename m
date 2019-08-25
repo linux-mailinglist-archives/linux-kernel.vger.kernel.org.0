@@ -2,73 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 963B29C664
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 00:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B83A69C66F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 00:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbfHYWNN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 18:13:13 -0400
-Received: from smtprelay0200.hostedemail.com ([216.40.44.200]:34111 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728931AbfHYWNN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 18:13:13 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 89B4818224D78;
-        Sun, 25 Aug 2019 22:13:11 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::,RULES_HIT:41:355:379:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3872:3874:4321:5007:10004:10400:10848:11026:11232:11658:11914:12297:12740:12895:13069:13311:13357:13439:13894:13972:14659:14721:21080:21433:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: lock65_1bc21af378138
-X-Filterd-Recvd-Size: 1900
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 25 Aug 2019 22:13:10 +0000 (UTC)
-Message-ID: <98427b15d2a5cc93c72867bb7800df6c38f1f7bf.camel@perches.com>
-Subject: Re: [PATCH] cdrom: make debug logging rely on pr_debug and debugfs
- only.
-From:   Joe Perches <joe@perches.com>
-To:     Diego Elio =?ISO-8859-1?Q?Petten=F2?= <flameeyes@flameeyes.com>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Sun, 25 Aug 2019 15:13:09 -0700
-In-Reply-To: <20190825215833.25817-1-flameeyes@flameeyes.com>
-References: <20190825215833.25817-1-flameeyes@flameeyes.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        id S1729058AbfHYWfk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 18:35:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728944AbfHYWfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 18:35:40 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E8942070B;
+        Sun, 25 Aug 2019 22:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566772539;
+        bh=fWYAPG+1006AeWWBWjdG72l6elL2X09zkjVtE8i+LMM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pG5I1EzAHntwN3s4m3gHH+8/TIlRnVM79XmNAIeWYXWplYBB58l/xUs6H+05dt4J+
+         XwS+Kv4zcbRXT6HXgyUm0ANczl6MpluKFQVQGaY7qzBGzGd2xtvheXcoDfCXxWI5JD
+         Rb5Z4SErUlv2gPPlzL6m+NyWJ7KnHKZ59CnCW+Yg=
+Date:   Sun, 25 Aug 2019 18:35:38 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     =?iso-8859-1?Q?J=F6rg-Volker?= Peetz <jvpeetz@web.de>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Linux 5.2.10
+Message-ID: <20190825223537.GB5281@sasha-vm>
+References: <20190825144703.6518-1-sashal@kernel.org>
+ <qju9bd$47qi$1@blaine.gmane.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <qju9bd$47qi$1@blaine.gmane.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-08-25 at 22:58 +0100, Diego Elio Pettenò wrote:
-> The cdrom driver predates debugfs and most of the modern debugging
-> facilities, so instead it has been includings a module parameter and an
-> ioctl to enable debug messages.
-> 
-> In 2019, debugfs and dynamic debug makes most of that redundant, and even
-> confusing when trying to trace things in the dept of the driver.
-[]
-> diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-[]
-> @@ -591,7 +556,7 @@ int register_cdrom(struct cdrom_device_info *cdi)
->  	static char banner_printed;
->  	const struct cdrom_device_ops *cdo = cdi->ops;
->  
-> -	cd_dbg(CD_OPEN, "entering register_cdrom\n");
-> +	pr_debug("entering register_cdrom\n");
+Thanks for looking into this!
 
-debut output for function tracing can also be removed
-and ftrace used instead.
+On Sun, Aug 25, 2019 at 05:26:37PM +0200, Jörg-Volker Peetz wrote:
+>Where can I find your public gpg key and it's fingerprint?
+>It's not yet documented on https://www.kernel.org/category/signatures.html .
 
-> @@ -643,7 +608,7 @@ int register_cdrom(struct cdrom_device_info *cdi)
->  
->  void unregister_cdrom(struct cdrom_device_info *cdi)
->  {
-> -	cd_dbg(CD_OPEN, "entering unregister_cdrom\n");
-> +	pr_debug("entering unregister_cdrom\n");
+You're right, I'll send a patch to add my fingerprint as well.
 
-etc...
+>I'm asking because the "gpg --locate-keys" method does not work for me.
 
+I can confirm this, and this is weird... I see a kernel.org UID on the
+key, and gpg seems to confirm that as well:
 
+$ gpg --quick-add-uid DEA66FF797772CDC 'Sasha Levin <sashal@kernel.org>'
+gpg: Such a user ID already exists on this key!
+
+Let me contact kernel.org support to see what I'm doing wrong...
+
+--
+Thanks,
+Sasha
