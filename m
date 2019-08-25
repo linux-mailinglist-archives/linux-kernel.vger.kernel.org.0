@@ -2,143 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE10F9C576
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 20:18:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 117BB9C57A
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 20:18:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbfHYSSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 14:18:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58422 "EHLO mx1.redhat.com"
+        id S1729049AbfHYSSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 14:18:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43790 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729014AbfHYSS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 14:18:28 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1728727AbfHYSSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 14:18:46 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EF4085AFE3;
-        Sun, 25 Aug 2019 18:18:27 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-45.brq.redhat.com [10.40.204.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 049D55D9C3;
-        Sun, 25 Aug 2019 18:18:25 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 12/12] libperf: Add sample_event to perf/event.h
-Date:   Sun, 25 Aug 2019 20:17:52 +0200
-Message-Id: <20190825181752.722-13-jolsa@kernel.org>
-In-Reply-To: <20190825181752.722-1-jolsa@kernel.org>
-References: <20190825181752.722-1-jolsa@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 8A02AA28883;
+        Sun, 25 Aug 2019 18:18:46 +0000 (UTC)
+Received: from shalem.localdomain.com (ovpn-116-52.ams2.redhat.com [10.36.116.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DD6E5D6A3;
+        Sun, 25 Aug 2019 18:18:42 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-crypto@vger.kernel.org, x86@kernel.org,
+        linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] crypto: sha256 - Add missing MODULE_LICENSE() to lib/crypto/sha256.c
+Date:   Sun, 25 Aug 2019 20:18:41 +0200
+Message-Id: <20190825181841.2494-1-hdegoede@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sun, 25 Aug 2019 18:18:28 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Sun, 25 Aug 2019 18:18:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moving sample_event event definition into libperf's event.h
-header include.
+lib/crypto/sha256.c / lib/crypto/libsha256.o may end up being a module,
+so it needs a MODULE_LICENSE() line, add this.
 
-In order to keep libperf simple, we switch 'u64/u32/u16/u8'
-types used events to their generic '__u*' versions.
-
-Link: http://lkml.kernel.org/n/tip-paajp02emao31m93fcy14dbx@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 ---
- tools/perf/lib/include/perf/event.h | 5 +++++
- tools/perf/util/event.h             | 5 -----
- tools/perf/util/evlist.c            | 2 +-
- tools/perf/util/evsel.c             | 8 ++++----
- 4 files changed, 10 insertions(+), 10 deletions(-)
+ lib/crypto/sha256.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-index 74317bcf74bf..daa1924c1d11 100644
---- a/tools/perf/lib/include/perf/event.h
-+++ b/tools/perf/lib/include/perf/event.h
-@@ -104,4 +104,9 @@ struct bpf_event {
- 	__u8 tag[BPF_TAG_SIZE];  // prog tag
- };
+diff --git a/lib/crypto/sha256.c b/lib/crypto/sha256.c
+index 45ad87520769..42d75e490a97 100644
+--- a/lib/crypto/sha256.c
++++ b/lib/crypto/sha256.c
+@@ -13,6 +13,7 @@
  
-+struct sample_event {
-+	struct perf_event_header header;
-+	__u64 array[];
-+};
+ #include <linux/bitops.h>
+ #include <linux/export.h>
++#include <linux/module.h>
+ #include <linux/string.h>
+ #include <crypto/sha256.h>
+ #include <asm/unaligned.h>
+@@ -314,3 +315,5 @@ int sha224_final(struct sha256_state *sctx, u8 *out)
+ 	return __sha256_final(sctx, out, 7);
+ }
+ EXPORT_SYMBOL(sha224_final);
 +
- #endif /* __LIBPERF_EVENT_H */
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index cd1d8d1007dc..37349ddb30f0 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -26,11 +26,6 @@
- /* perf sample has 16 bits size limit */
- #define PERF_SAMPLE_MAX_SIZE (1 << 16)
- 
--struct sample_event {
--	struct perf_event_header        header;
--	u64 array[];
--};
--
- struct regs_dump {
- 	u64 abi;
- 	u64 mask;
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index ff415680fe0a..47bc54111f57 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -587,7 +587,7 @@ struct evsel *perf_evlist__id2evsel_strict(struct evlist *evlist,
- static int perf_evlist__event2id(struct evlist *evlist,
- 				 union perf_event *event, u64 *id)
- {
--	const u64 *array = event->sample.array;
-+	const __u64 *array = event->sample.array;
- 	ssize_t n;
- 
- 	n = (event->header.size - sizeof(event->header)) >> 3;
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index e983e721beca..552bc4c839f4 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -2008,7 +2008,7 @@ static int perf_evsel__parse_id_sample(const struct evsel *evsel,
- 				       struct perf_sample *sample)
- {
- 	u64 type = evsel->core.attr.sample_type;
--	const u64 *array = event->sample.array;
-+	const __u64 *array = event->sample.array;
- 	bool swapped = evsel->needs_swap;
- 	union u64_swap u;
- 
-@@ -2098,7 +2098,7 @@ int perf_evsel__parse_sample(struct evsel *evsel, union perf_event *event,
- {
- 	u64 type = evsel->core.attr.sample_type;
- 	bool swapped = evsel->needs_swap;
--	const u64 *array;
-+	const __u64 *array;
- 	u16 max_size = event->header.size;
- 	const void *endp = (void *)event + max_size;
- 	u64 sz;
-@@ -2377,7 +2377,7 @@ int perf_evsel__parse_sample_timestamp(struct evsel *evsel,
- 				       u64 *timestamp)
- {
- 	u64 type = evsel->core.attr.sample_type;
--	const u64 *array;
-+	const __u64 *array;
- 
- 	if (!(type & PERF_SAMPLE_TIME))
- 		return -1;
-@@ -2528,7 +2528,7 @@ int perf_event__synthesize_sample(union perf_event *event, u64 type,
- 				  u64 read_format,
- 				  const struct perf_sample *sample)
- {
--	u64 *array;
-+	__u64 *array;
- 	size_t sz;
- 	/*
- 	 * used for cross-endian analysis. See git commit 65014ab3
++MODULE_LICENSE("GPL");
 -- 
-2.21.0
+2.23.0
 
