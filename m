@@ -2,77 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FF5E9C5FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 21:56:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1E549C605
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 22:00:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbfHYT4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 15:56:25 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38646 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728962AbfHYT4Y (ORCPT
+        id S1729084AbfHYUAJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 16:00:09 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39219 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbfHYUAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 15:56:24 -0400
-Received: by mail-lf1-f68.google.com with SMTP id f21so5722033lfc.5;
-        Sun, 25 Aug 2019 12:56:23 -0700 (PDT)
+        Sun, 25 Aug 2019 16:00:08 -0400
+Received: by mail-ot1-f66.google.com with SMTP id b1so13314539otp.6;
+        Sun, 25 Aug 2019 13:00:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aNr4Eb/OClyqUi9J6625K0uKkXRSs4d01YJAiRjVE7A=;
-        b=WyoTJVrbbLq8FbO4TiYd5CrfgfvZ/Ws3Or/Q8fFtw+6WmPUY1j7gpEMSRodUhUCA/u
-         uL3qZp5ltjLSfCz6LbDA/DtjDqBdiqJ67Bc4JuF1DpY5gr3kdeufOd+WOXXqOBip92ob
-         z83W5JH3vT9mRTmY303X35KTBkey1NSm6LbMzRrI/axOhl2Z7F9K+7kWGECuT/nkHJ3L
-         4eULs2SQ/KWvBD7+do/T/laxix/bdmiyH/qNacguHRFkN546rytHBIAISs9pX1a6qH/k
-         iBGeWkqE9b/v9RPmLdz2tBw/pyYJfageU2NTsckkCjW0LbrGwH//VhtQ3GAoibE4HUXb
-         UfSA==
+        bh=zXY+vp9jRGpj9AwVjvaZbbtqnQMg4LrCQrKGAkuzItM=;
+        b=F2OO1oz7p1xplg6LJMZYwvRm0fnVwDnp6BRBhYp0l8A0qZjst2X8KsuaKIMIkDoZEQ
+         pCHsZ9rC94kNLoL6YSH6/UWkUw1spBjrUwNIBJvzjRCuxSBZse74rLt6T3Jx9ngLcKtc
+         H/yi/sDUOMb3elM1YnWXXuYV8esWMdW4hvGp2i90GxJGo1wxktZINaHPZiQcJVgnRdVV
+         LL9oSNIQr/Vg0fd15sq9o34SjRfS6hwtW68De9wkPWyKiUewd5+ODOJOcUwRzwb+LhBx
+         +r6b7s9vRhtciZ4c5Zu6Uj4vwu4f1icD7pmiOm8XkYCAHbnwDvMuzXYE7u8lXOrfH8qp
+         bxzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aNr4Eb/OClyqUi9J6625K0uKkXRSs4d01YJAiRjVE7A=;
-        b=dtVrnOyf99DXZGjxNhRoOYr7pT18X6CNdEih5GlPqtR+xDqMK/oiJ+A33l04unTutI
-         y9/qpXm3E36jWFLqCuKQAVKEr4IA+gT/01jkA3613Yo6tX3FkxhPQ1pwJCp3yjHU8ROj
-         ggDWS8lQ7UxhpQ7X+5nd5gyEipVIUq9rCVDLnqN8801W+LOBlEeNOYz3lX6+K01h8/ez
-         /iFgBJXAlERaG9JFnnrMvMh6gx/6dJTS15WGATLEEqUMVsE2RUO4GjXz39FGFuS9O+gn
-         KfOYlwlYHcg+26QEUDWnr/fwr2OUAgTMM1fyOp2PTmHMrsjFpIGU+ui8qhlOHi85ET4v
-         646w==
-X-Gm-Message-State: APjAAAU8JSkxZy7T9GO9YZK+RMGfmK4arZxI4pIFi4qI53UhP1F9xGPZ
-        Gkt+b0afrgk2/U75XqzO+VwrSqqNYLWV9mo6ab4=
-X-Google-Smtp-Source: APXvYqxNB9g686I/txTkwcUXa2qaf6TAlS+aO49/xFd/b6spcrqM8Blz4ezofbNhYBx3iNvXChpSvb/HbShO6VA4Gak=
-X-Received: by 2002:a19:c1cc:: with SMTP id r195mr8534933lff.95.1566762982456;
- Sun, 25 Aug 2019 12:56:22 -0700 (PDT)
+        bh=zXY+vp9jRGpj9AwVjvaZbbtqnQMg4LrCQrKGAkuzItM=;
+        b=SfNvXW+0J2H7r+hktDLz2DS4cIQDpPlZ7Rgvvk6dPc7GZdV0bdNBPuboYjUlyrLiJr
+         Dc/sRfebRPHrKQIEExatRA8BJdND1KCJRuVetH7ZAUtbm5FFlDS79cL47V5uN6Wn8mbJ
+         KSCHJuP38DQ+NTxn4pcYUG5fPU+vegaFdDpAA66a5VprdPSk7v8s8a6VrbEZpU7xzWX7
+         rJWJ9X/2k0nfdD7y6pSC95u0u7uCaE20TQeOMnX8+5U9uSKGza5Xdkcd7/fuwB9sLElY
+         LfNCphNQf0fWWgss2prIznGFu/07pcpYqHt5Oi8pQGogIunjTeFIW5CqJ6tgqafLYuUS
+         cmgw==
+X-Gm-Message-State: APjAAAWuA6pSghE0jua2JgGOuvAVQQADSFbFD8flpcgLqazp053IwXEs
+        5YMb/8Fuf7vtuzwoEh+AlU0yNr8pOBNlbsfhIcAiN2gA
+X-Google-Smtp-Source: APXvYqyZu4IJ7I+DpLeCK6W/EgEKtsIl2fZBrWMoOYcz2co8fxVnv4eQJJUV/XDH381rnV0JfTwdjzjeHaJs5fJoXAg=
+X-Received: by 2002:a9d:7b44:: with SMTP id f4mr3819368oto.42.1566763207717;
+ Sun, 25 Aug 2019 13:00:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <1566713247-23873-1-git-send-email-jrdr.linux@gmail.com> <20190825194354.GC21239@ziepe.ca>
-In-Reply-To: <20190825194354.GC21239@ziepe.ca>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 26 Aug 2019 01:32:09 +0530
-Message-ID: <CAFqt6za5uUSKLMn0E25M1tYG853tpdE-kcoUYHdmby5s4d0JKg@mail.gmail.com>
-Subject: Re: [PATCH] IB/mlx5: Convert to use vm_map_pages_zero()
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     leon@kernel.org, Doug Ledford <dledford@redhat.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
+References: <20190823090418.17148-1-narmstrong@baylibre.com> <20190823090418.17148-6-narmstrong@baylibre.com>
+In-Reply-To: <20190823090418.17148-6-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 25 Aug 2019 21:59:56 +0200
+Message-ID: <CAFBinCDjO2sWcE8hmPfn1vsar52yeeTVAZaYJ6vR3rXaVJQQPg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: meson-sm1-sei610: add USB support
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, ulf.hansson@linaro.org,
+        linux-amlogic@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 1:13 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On Fri, Aug 23, 2019 at 11:06 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
-> On Sun, Aug 25, 2019 at 11:37:27AM +0530, Souptick Joarder wrote:
-> > First, length passed to mmap is checked explicitly against
-> > PAGE_SIZE.
-> >
-> > Second, if vma->vm_pgoff is passed as non zero, it would return
-> > error. It appears like driver is expecting vma->vm_pgoff to
-> > be passed as 0 always.
+> Add the USB properties for the Amlogic SM1 Based SEI610 Board in order to
+> support the USB DRD Type-C port and the USB3 Type A port.
 >
-> ? pg_off is not zero
-
-Sorry, I mean, driver has a check against non zero to return error -EOPNOTSUPP
-which means in true scenario driver is expecting vma->vm_pgoff should be passed
-as 0.
-
--       if (get_index(vma->vm_pgoff) != MLX5_IB_CLOCK_INFO_V1)
--               return -EOPNOTSUPP;
+> The USB DRD Type-C controller uses the ID signal to toggle the USB role
+> between the DWC3 Host controller and the DWC2 Device controller.
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+(based on the patch description as I don't have the schematics for this board)
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
