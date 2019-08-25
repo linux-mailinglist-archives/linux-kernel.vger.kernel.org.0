@@ -2,86 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B71199C180
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 06:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA769C223
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 07:43:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfHYECj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 00:02:39 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55482 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbfHYECi (ORCPT
+        id S1726269AbfHYFkw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 01:40:52 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36288 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725972AbfHYFkw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 00:02:38 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f72so12346173wmf.5;
-        Sat, 24 Aug 2019 21:02:36 -0700 (PDT)
+        Sun, 25 Aug 2019 01:40:52 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f19so8131106plr.3
+        for <linux-kernel@vger.kernel.org>; Sat, 24 Aug 2019 22:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VN2qLUPJ6VKX1aGIcYVhw809Zd7AJNllVKXjslGw4q8=;
-        b=Za5I32pq80QeFA2QlN9eNKTZqMy9Qq+vvcZe1pjeZeVPbi+hviAcNBkYso27Y/MR2w
-         7uOIlNBNpassE2uey3INI3QPwcqkDYcQB7MKtV2yDT04Yo+3hHKvVb+z2uAFJyP+NEXQ
-         kJ0E+sBtK/ejAjxNZ8KbgHKKzsKWepT+aZEhdW/pyN6L730ApJ7A+CwHo3zaLk5Jyb6q
-         /eJqJp2BJvM94F44X/oH/gRhoWS93g/sKhMv6RGir/BkTgb1kaVJAsR3NSw+ffVoLUyh
-         /m1x4nPrNL7vEW04O2CAcLqldC6R+AZAWybCvetqE7qhOs00gkPNLnn3obziGzOfCzHN
-         3knQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=oFfgVd1HrYudeMH+V4T/rdJ0ZaXATB1kXtOEUXrqdlA=;
+        b=m8fdl5A8fxXULQBbv8DkWxR9lnZiN19xRHyF1cgeSYypSxNVhdNlMol9HGfyjTEt1Z
+         NErtDMu9J9v757HnHofiLvHU1oSaFrIlxB3VzbNbT6UXuq3VUvWGI0BP+aaOSh/f1KWY
+         uaOBA+rJ54B801AC5/cCGpqkuvzenMui0NuCBm+Iw1y+mnhmlzYCC+Wp+ElT1K5hrH1v
+         PYMBNKLM2QiQnH6+y/KSWsjyHgLDVyJS0upAZH4+iT1J2sGJ5NuHI6PoRaYmSrylAPhz
+         W0wlIrAJhAtq6Jl4V1Gmydewmtgg4/3TgMxdcrYHi5jo5jc9BerpmEbSKfassIMPFwTF
+         3L5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=VN2qLUPJ6VKX1aGIcYVhw809Zd7AJNllVKXjslGw4q8=;
-        b=XYP7G8wNwuyZr99Adxf3p0hn5xG43JZDk80MePN2VuvHRtORoynijFm/xrFBhrlKlm
-         VU+o9ZeJ2jom7OL9sjqYoYTmuIPmABRt9oUvGrzxr6evjStFd5E+vBD2vBLKj/iJKnfL
-         68ySrRcu/RYJcV2lYP3+/h2Fn9GK+emmdJbCtTWgMLA7N0wqjVJMZ91stuoQOIcHXyv2
-         KeMLBWYwvLCYedFW1dBmuIRPyLboca+DYX4+DQzazgUB7Z79n8wILrWyESiZgd26iY71
-         nj1yHB+Va9J0cGc9pPA4UlEpVL3JK/pCcZ0jkmKLYbyZn7NpD1U9M7i9BWz+s8Q4r9Z8
-         ncIw==
-X-Gm-Message-State: APjAAAXPtGhAori7D1zK/ftY26PP4StEgWuyrXbePHL4Ss+yi9d8jdSY
-        BAIwGXWgpI4vNm73UBlnUNs=
-X-Google-Smtp-Source: APXvYqwE8fQkbgsLZou7MaC4xJa1Tgjho5p7QMokyP/C75xx69LIUugw3ZFA2aH0SNV6nB5N6/xdEg==
-X-Received: by 2002:a7b:cf11:: with SMTP id l17mr13425743wmg.158.1566705756007;
-        Sat, 24 Aug 2019 21:02:36 -0700 (PDT)
-Received: from localhost.localdomain ([94.204.252.234])
-        by smtp.gmail.com with ESMTPSA id a6sm6820985wmj.15.2019.08.24.21.02.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 24 Aug 2019 21:02:35 -0700 (PDT)
-From:   Christian Hewitt <christianshewitt@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Chrisitian Hewitt <christianshewitt@gmail.com>
-Subject: [PATCH 7/7] arm64: dts: meson-gxm-khadas-vim2: use rc-khadas keymap
-Date:   Sun, 25 Aug 2019 08:01:28 +0400
-Message-Id: <1566705688-18442-8-git-send-email-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
-References: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
+         :references:mime-version:content-transfer-encoding;
+        bh=oFfgVd1HrYudeMH+V4T/rdJ0ZaXATB1kXtOEUXrqdlA=;
+        b=RzPZQEbmYUJRkRiBC1RRN3F2Y6H3WsdLNImKG0UpnHC1cRCZ4IIL4Yxh4MbE/1uegc
+         Wxse4G2D6pQzZl0cHb+IbFvbppMj2ENwBXnJOTb+sTvhkOq323ajWzsRIeEcFGVv/7VN
+         hOEugt6wWhh1OaIMMEXr9Kr5UB1Sjvlm5XftUyhmrwoo4FdeyRq7uXMsV1cvv5TeGaQg
+         cfH+Q8vLgOQXKFPr6bqjDwflJu5PKRQ/JNvFo/Gls60NBOsNyd6/I+O9gY3FCJfTupcR
+         Px2xUxpT5lehHD479o/KFvX72kW1J+aZgxpyHOWQxipV26VobHl/IkowYUC9sw9bPpsE
+         L6OQ==
+X-Gm-Message-State: APjAAAU/jzFLKrleIgxkNTj9/xm4kN5aDptzjagbGLMSmvW/vSNpn0Nq
+        mT6VpD7a0mpdtVOkS5umNC4=
+X-Google-Smtp-Source: APXvYqycSpOt5WgIzTiPYUlZTknHB+u4aBa9CR62RYRGwaidOo2OVwDD12nanrgdW9DMXKOSU+PJyQ==
+X-Received: by 2002:a17:902:4201:: with SMTP id g1mr13023712pld.300.1566711651684;
+        Sat, 24 Aug 2019 22:40:51 -0700 (PDT)
+Received: from localhost.localdomain (ip-103-85-38-221.syd.xi.com.au. [103.85.38.221])
+        by smtp.gmail.com with ESMTPSA id r75sm9395181pfc.18.2019.08.24.22.40.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 24 Aug 2019 22:40:51 -0700 (PDT)
+From:   Adam Zerella <adam.zerella@gmail.com>
+Cc:     Adam Zerella <adam.zerella@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] pcmcia/i82092: Refactored dprintk macro for dev_dbg().
+Date:   Sun, 25 Aug 2019 15:35:10 +1000
+Message-Id: <20190825053513.13990-1-adam.zerella@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190823174357.GA8052@kroah.com>
+References: <20190823174357.GA8052@kroah.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Swap to the rc-khadas keymap that maps the mouse button to KEY_MUTE.
+As suggested in https://kernelnewbies.org/KernelJanitors/Todo
+this patch replaces the outdated macro of DPRINTK for dev_dbg()
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Adam Zerella <adam.zerella@gmail.com>
+To: linux-kernel@vger.kernel.org
+Signed-off-by: Adam Zerella <adam.zerella@gmail.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes in v2:
+  - Swap pr_debug() for dev_dbg()
+  - Clarify commit summary message
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index 989d33a..f25ddd1 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-@@ -299,7 +299,7 @@
- 	status = "okay";
- 	pinctrl-0 = <&remote_input_ao_pins>;
- 	pinctrl-names = "default";
--	linux,rc-map-name = "rc-geekbox";
-+	linux,rc-map-name = "rc-khadas";
- };
+ drivers/pcmcia/i82092.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
+index ec54a2aa5cb8..245d60189375 100644
+--- a/drivers/pcmcia/i82092.c
++++ b/drivers/pcmcia/i82092.c
+@@ -117,9 +117,9 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
+ 		
+ 		if (card_present(i)) {
+ 			sockets[i].card_state = 3;
+-			dprintk(KERN_DEBUG "i82092aa: slot %i is occupied\n",i);
++			dev_dbg(&dev->dev, "i82092aa: slot %i is occupied\n", i);
+ 		} else {
+-			dprintk(KERN_DEBUG "i82092aa: slot %i is vacant\n",i);
++			dev_dbg(&dev->dev, "i82092aa: slot %i is vacant\n", i);
+ 		}
+ 	}
+ 		
+@@ -128,7 +128,7 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
+ 	pci_write_config_byte(dev, 0x50, configbyte); /* PCI Interrupt Routing Register */
  
- &pwm_AO_ab {
+ 	/* Register the interrupt handler */
+-	dprintk(KERN_DEBUG "Requesting interrupt %i \n",dev->irq);
++	dev_dbg(&dev->dev, "Requesting interrupt %i\n", dev->irq);
+ 	if ((ret = request_irq(dev->irq, i82092aa_interrupt, IRQF_SHARED, "i82092aa", i82092aa_interrupt))) {
+ 		printk(KERN_ERR "i82092aa: Failed to register IRQ %d, aborting\n", dev->irq);
+ 		goto err_out_free_res;
 -- 
-2.7.4
+2.20.1
 
