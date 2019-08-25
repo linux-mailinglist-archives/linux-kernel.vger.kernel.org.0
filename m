@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EF449C17C
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 06:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E4B49C185
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 06:02:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfHYEC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 00:02:27 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40473 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbfHYEC0 (ORCPT
+        id S1726700AbfHYECb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 00:02:31 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38323 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbfHYEC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 00:02:26 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c5so12490525wmb.5;
-        Sat, 24 Aug 2019 21:02:24 -0700 (PDT)
+        Sun, 25 Aug 2019 00:02:28 -0400
+Received: by mail-wm1-f66.google.com with SMTP id m125so12674227wmm.3;
+        Sat, 24 Aug 2019 21:02:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pvW2fAe5qKhI+32AuCLAPIq8InayZWwjBPViLCnooBA=;
-        b=YNUzb656fRAp02e6EEjNCbourwaslTMlBfdnBZy5wc53xGSYuZGIQs7JrIlbea2Ugd
-         JCJaKvCjo33MT3ZkPK7p4hvKqnrDLmPtCkIX1skl3nPAS2pm28ktEL1cGvtLu5gUuCTL
-         SpeCPIfLBsDnp24rwx7ZvHv2QHx+oxy7oKISEvsBR5nq0JXelIrFASyD6L/xW+orfsCs
-         4XjG1JvF5NHvvPv51TgA8lFj0SQSVfAECmw8InYZkiLgWZpoOa9/I8HJGPTU2pJixc0T
-         9F70iMW+nudCwXOtIT40A/Gw2g8ZMiNPfh6W0y7vfwxzsKrJ7mDWdJdmAoC+VrZyYvCV
-         1rIQ==
+        bh=zELEUgSsCN+8CRAOeDo9/h1leFLyd06lkasS5K9oq38=;
+        b=adjbLfK8fidX/mMusGXjbEyvbhpLmfP04BYSiiwz0j3ALh42WU/gfYLDnik2D9ViPZ
+         Z1601BUxrJD3wVL+8UTRUOcLekPV9VOFO8HA7Lqtixzkxki56TLAgkkcP+EcNytqvfXx
+         jWYFLpe1evjM6sYocwV40uE5J6KZZ34WJ8Lz/IZZUUlIkmkb3gmIjNe7B50r9smKqqHs
+         DA2TGBkKZIREM6sAZ6Bfb97Jvl8u3Y3PB6o45kjHWEZUoVVrLZ3M8PP+zYXDypq9RpL9
+         HfT4NdfnSZMfV/6JGpSKzRFeFmLUXv2U9XjVkQcEUNAEM1wdjhJR4OrKBkIfWDs49D+E
+         FZoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pvW2fAe5qKhI+32AuCLAPIq8InayZWwjBPViLCnooBA=;
-        b=MYvHJYaQekYADocXzlP+SSQ325FLCW6t/EHSTkkxy3yGosS9+jYoLQbKmViF5kZLIr
-         GRuydr0v/W9w+z4C9Dod1FFcAw92fmrPJNMuISUvRHGKmvEw3oi7fAQsxzG0/uOKPL7G
-         GzfBPtx6CWWfP/tx63eKla+LpOA0um6n/GXhgwMFDlp6YWzMrXnLpS6NyTa1jG1BKX6M
-         UEUWRBlBKB3xeZiTsMXEySW6xJjO8Bq0zdC5qWohiaFurHuQoMfY1wzCSXlnBdWOxR88
-         xWait3FiV4ahztiydNUsx6SpMQVy3+YwKb0L0hJCmjGLlPsc11LGuBXPDbMLjsa5Uzay
-         +dow==
-X-Gm-Message-State: APjAAAVrPWzopqINhb6GcKFpUIM4j/Zf8CQtqZihax8lwL9dSp6FiUiF
-        6scT5TD6wK2CzS/Lh2buqb1M2wf4rEsFLw==
-X-Google-Smtp-Source: APXvYqztzIJKlySFmdH9BdFnbtrF+f7KI5MphOF2Nh6m250q3lZ/+sKv+4qCnuRAgmm6p/IffKy0hA==
-X-Received: by 2002:a1c:7914:: with SMTP id l20mr14162802wme.130.1566705743964;
-        Sat, 24 Aug 2019 21:02:23 -0700 (PDT)
+        bh=zELEUgSsCN+8CRAOeDo9/h1leFLyd06lkasS5K9oq38=;
+        b=MIN9F3g0fk41cH5eMbcVh596ubpmi1lWQhTGPKVrS92gtI3xsmbWs8TdMiby6+UzdJ
+         kotGHfq3I4lZQPmKfcY8xm++5aLnx/bx8rmDT8Hc1325CgJHH2g+LcRXA5av3aaGsZVh
+         /oWHx66MBbxHMH5oHq/WzJ9RmbmsOpm7LIeDVqIuGwuJISakOOn38pRwaT6u+o9xfK5u
+         MTGDwvHcVvWfx9UBcH90mMOHjT5o9e5dEs70jvq7t800wRDre5IFOvAIT3r3bD7NWlB0
+         RHpclal51huCy9Ne/JjwxGdtnpJY9wwQ4NHTfHtem/9ldhx/r/sQgoNBH8PxKOHVPSrf
+         UuPA==
+X-Gm-Message-State: APjAAAU5BA7g3o3j0SfnR/E6N8YGg852MZ2yP93aYu1cUHdlPQW5wJeB
+        IPi3mJEr6Bop7TVXI0CQG+c=
+X-Google-Smtp-Source: APXvYqx4cizF/w/NxjuQDhehIndoZo3vHd5SzkH1pDdj55nTy14mvcbc2b5y15qoEMJmPp4mbQ91iQ==
+X-Received: by 2002:a1c:9a46:: with SMTP id c67mr13836550wme.152.1566705746188;
+        Sat, 24 Aug 2019 21:02:26 -0700 (PDT)
 Received: from localhost.localdomain ([94.204.252.234])
-        by smtp.gmail.com with ESMTPSA id a6sm6820985wmj.15.2019.08.24.21.02.21
+        by smtp.gmail.com with ESMTPSA id a6sm6820985wmj.15.2019.08.24.21.02.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 24 Aug 2019 21:02:23 -0700 (PDT)
+        Sat, 24 Aug 2019 21:02:25 -0700 (PDT)
 From:   Christian Hewitt <christianshewitt@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -51,9 +51,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Chrisitian Hewitt <christianshewitt@gmail.com>
-Subject: [PATCH 2/7] arm64: dts: meson-g12a-x96-max: add rc-x96max keymap
-Date:   Sun, 25 Aug 2019 08:01:23 +0400
-Message-Id: <1566705688-18442-3-git-send-email-christianshewitt@gmail.com>
+Subject: [PATCH 3/7] arm64: dts: meson-gxbb-wetek-hub: add rc-wetek-hub keymap
+Date:   Sun, 25 Aug 2019 08:01:24 +0400
+Message-Id: <1566705688-18442-4-git-send-email-christianshewitt@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
 References: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
@@ -62,25 +62,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add the rc-x96max keymap to the ir node
+add the rc-wetek-hub keymap to the ir node
 
 Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-index fe4013c..357d7dc 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
-@@ -277,6 +277,7 @@
- 	status = "okay";
- 	pinctrl-0 = <&remote_input_ao_pins>;
- 	pinctrl-names = "default";
-+	linux,rc-map-name = "rc-x96max";
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts
+index 2bfe699..83b985b 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-wetek-hub.dts
+@@ -12,3 +12,7 @@
+ 	compatible = "wetek,hub", "amlogic,meson-gxbb";
+ 	model = "WeTek Hub";
  };
- 
- &ext_mdio {
++
++&ir {
++	linux,rc-map-name = "rc-wetek-hub";
++};
 -- 
 2.7.4
 
