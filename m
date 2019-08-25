@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E3209C267
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 09:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97F039C26D
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 09:18:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfHYHP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 03:15:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57886 "EHLO mail.kernel.org"
+        id S1726874AbfHYHSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 03:18:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbfHYHP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 03:15:57 -0400
+        id S1726222AbfHYHSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 03:18:53 -0400
 Received: from X250.getinternet.no (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 905F420850;
-        Sun, 25 Aug 2019 07:15:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEE5320850;
+        Sun, 25 Aug 2019 07:18:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566717356;
-        bh=8pqmVNKR1eEG8zWJwqVegtkwFiqBjuE2bxUuKd2gWAg=;
+        s=default; t=1566717532;
+        bh=u6TLqqJcw4RRZYE1Dwc3608YvdXfn/16/oY6owKULKk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jNyNPj3RzhO3eG/nR5IoYVHpEutzU1wJB05NgxkW+aiGgqPdn9b3BWzLcHth8eFLg
-         RZKKoY7phAAIdhkdoqPHTWvhBQVyUq53OC6vJ/R3KwQIoan26oy1Hg4Kcky/vdH92g
-         LE5uKYf00DKgPgDqrn9fD3//Bv2iva41QBoli8LQ=
-Date:   Sun, 25 Aug 2019 09:15:44 +0200
+        b=KpqiCHhhQVcAodn5otYYU6uJQEXGEs0kEj6qlIrotDBfSjTrMiBtOTakQxQ4suz34
+         7CHm6q3dDdR681aQ+qCZQxH7idgCMqIkQTKd2fuLLpkZf+PBv6VB+KR9xLX880OmrO
+         k7W7bL4zTYZlwkQSeVDToLuJdqx0+t/qGkjrFm1Y=
+Date:   Sun, 25 Aug 2019 09:18:40 +0200
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Andrey Smirnov <andrew.smirnov@gmail.com>
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -31,24 +31,25 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         Cory Tusar <cory.tusar@zii.aero>,
         Fabio Estevam <festevam@gmail.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: vf610-zii-scu4-aib: Configure IRQ line for
- GPIO expander
-Message-ID: <20190825071543.GB5292@X250.getinternet.no>
-References: <20190824002703.13902-1-andrew.smirnov@gmail.com>
+Subject: Re: [PATCH] ARM: dts: vf610-zii-scu4-aib: Use generic names for DT
+ nodes
+Message-ID: <20190825071839.GC5292@X250.getinternet.no>
+References: <20190824002747.14610-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190824002703.13902-1-andrew.smirnov@gmail.com>
+In-Reply-To: <20190824002747.14610-1-andrew.smirnov@gmail.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 05:27:03PM -0700, Andrey Smirnov wrote:
-> Configure IRQ line for SX1503 GPIO expander. We already have
-> appropriate pinmux entry and all that is missing is "interrupt-parent"
-> and "interrupts" properties. Add them.
+On Fri, Aug 23, 2019 at 05:27:47PM -0700, Andrey Smirnov wrote:
+> The devicetree specification recommends using generic node names.
+> 
+> Some ZII dts files already follow such recommendation, but some don't,
+> so use generic node names for consistency among the ZII dts files.
 > 
 > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 > Cc: Shawn Guo <shawnguo@kernel.org>
@@ -58,4 +59,117 @@ On Fri, Aug 23, 2019 at 05:27:03PM -0700, Andrey Smirnov wrote:
 > Cc: linux-arm-kernel@lists.infradead.org
 > Cc: linux-kernel@vger.kernel.org
 
-Applied, thanks.
+It doesn't apply to my branch.
+
+Shawn
+
+> ---
+>  arch/arm/boot/dts/vf610-zii-scu4-aib.dts | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
+> index 45a978defbdc..6edd682dbd29 100644
+> --- a/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
+> +++ b/arch/arm/boot/dts/vf610-zii-scu4-aib.dts
+> @@ -417,7 +417,7 @@
+>  	pinctrl-0 = <&pinctrl_dspi1>;
+>  	status = "okay";
+>  
+> -	spi-flash@0 {
+> +	flash@0 {
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+>  		compatible = "jedec,spi-nor";
+> @@ -430,7 +430,7 @@
+>  		};
+>  	};
+>  
+> -	spi-flash@1 {
+> +	flash@1 {
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+>  		compatible = "jedec,spi-nor";
+> @@ -519,7 +519,7 @@
+>  		#gpio-cells = <2>;
+>  	};
+>  
+> -	lm75@48 {
+> +	temp-sensor@48 {
+>  		compatible = "national,lm75";
+>  		reg = <0x48>;
+>  	};
+> @@ -534,7 +534,7 @@
+>  		reg = <0x52>;
+>  	};
+>  
+> -	ds1682@6b {
+> +	elapsed-time-recorder@6b {
+>  		compatible = "dallas,ds1682";
+>  		reg = <0x6b>;
+>  	};
+> @@ -551,7 +551,7 @@
+>  		reg = <0x38>;
+>  	};
+>  
+> -	adt7411@4a {
+> +	adc@4a {
+>  		compatible = "adi,adt7411";
+>  		reg = <0x4a>;
+>  	};
+> @@ -563,7 +563,7 @@
+>  	pinctrl-0 = <&pinctrl_i2c2>;
+>  	status = "okay";
+>  
+> -	gpio9: sx1503q@20 {
+> +	gpio9: io-expander@20 {
+>  		compatible = "semtech,sx1503q";
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&pinctrl_sx1503_20>;
+> @@ -574,12 +574,12 @@
+>  		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+>  	};
+>  
+> -	lm75@4e {
+> +	temp-sensor@4e {
+>  		compatible = "national,lm75";
+>  		reg = <0x4e>;
+>  	};
+>  
+> -	lm75@4f {
+> +	temp-sensor@4f {
+>  		compatible = "national,lm75";
+>  		reg = <0x4f>;
+>  	};
+> @@ -591,17 +591,17 @@
+>  		reg = <0x23>;
+>  	};
+>  
+> -	adt7411@4a {
+> +	adc@4a {
+>  		compatible = "adi,adt7411";
+>  		reg = <0x4a>;
+>  	};
+>  
+> -	at24c08@54 {
+> +	eeprom@54 {
+>  		compatible = "atmel,24c08";
+>  		reg = <0x54>;
+>  	};
+>  
+> -	tca9548@70 {
+> +	i2c-mux@70 {
+>  		compatible = "nxp,pca9548";
+>  		pinctrl-names = "default";
+>  		#address-cells = <1>;
+> @@ -639,7 +639,7 @@
+>  		};
+>  	};
+>  
+> -	tca9548@71 {
+> +	i2c-mux@71 {
+>  		compatible = "nxp,pca9548";
+>  		pinctrl-names = "default";
+>  		reg = <0x71>;
+> -- 
+> 2.21.0
+> 
