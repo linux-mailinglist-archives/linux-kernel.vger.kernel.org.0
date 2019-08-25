@@ -2,88 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B989C5D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 21:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 902F79C5D5
+	for <lists+linux-kernel@lfdr.de>; Sun, 25 Aug 2019 21:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbfHYTgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 15:36:13 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41825 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728685AbfHYTgN (ORCPT
+        id S1729054AbfHYTit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 15:38:49 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46334 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728699AbfHYTit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 15:36:13 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m24so13124497ljg.8
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 12:36:12 -0700 (PDT)
+        Sun, 25 Aug 2019 15:38:49 -0400
+Received: by mail-oi1-f194.google.com with SMTP id t24so10572507oij.13;
+        Sun, 25 Aug 2019 12:38:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hAswaA+5kfAJ/8Xl6w/3NSvkuweofFlH8yoI56Fa/nI=;
-        b=Vu6husFeGUaigOJXCqEcSBrt04gWZ1s+iUlkA0koyfGUSNXHjUSnWnayL6tT/h+8Sk
-         PWx8ZOZWbbSgKhYytJHG91IFsyzEL6IBYgLJuDe6pNDP8PhRLKnKlg9qzu1UvrVieDGI
-         vMi+e80N+H6Dqd7F8bauQkAZ0fTAgijYRS0Q0=
+        bh=chkqvuhekHGQhYnW0yA1AUvunv0CUeXBozcgE5RCGR0=;
+        b=u0cppoVMppKPI4R3tE0oQQPUsjzQdBiwzIVOtcPozizIdOfQcPFCm4jdFut4NLyLHl
+         W7ia+LzopmIt5jWdEAFGUgT7HxX8pm5XT+F4VWzuako2kqYDtXCS2WaL0eRYHmbhut5i
+         Wx6Mqe9uay3JAyeHjmznXMHzmTGUENFoFJwfcWYbHOEEZpQN5h8ragkZrjd6CBuQPEC3
+         /DHI0LFnSIkbSLRhr8D4s+ip6Bfaj4gjbeP1qf2DNlVlLlNC1Jqu10ePv2ESrd+OUisf
+         vnRxY9V6p8RAh4ddtvYeGfnqMu+SgFkdQH9PV+AqPXPIE6Ou6MviSIidgWdoyT00Oo2j
+         Nq4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hAswaA+5kfAJ/8Xl6w/3NSvkuweofFlH8yoI56Fa/nI=;
-        b=OaQJXGFiO9s51FElAyGjIHuwdTYGAJuR7xIN0AyRUtZFQoJTU5HlUhs8B7lmRiWvRu
-         1QLEh+8h/R7LGQZ0Uz8Jitpe9CB6Y2vPyjbu1WlM6p9yEaerptNcJsf174OeT/SZ1bew
-         nBLDshEyBaAQevLfSUktM5dlqfmn9hvqWCOvQAcST1ZFLnyKOYCwmZicEzXkmLAcfN4r
-         +19EuzznqiEpkb36+aKmLmcoips91rNRQWonpQdQE1xko4pFYYSeh5ogFyuY6WmKIr3l
-         VpfouD6+8qU1EOlzHGzLoaVhK2HBcfWxR91iy5VTargOXCWnOcFTGSzf9rXwkGiLrJZR
-         /3SA==
-X-Gm-Message-State: APjAAAV75Ww9//XqL0/rlnp5ZFRkj9m9AsFTAfW1jupIk4b/JIbNDHlb
-        M6Gqt8omKTRptqt6CSSehi66LyJ6g44=
-X-Google-Smtp-Source: APXvYqzvIuEkPY+HZifFw9Y/qDsJVNtX2KTa2BDP5DukTdVZ5YTKGNUTe1GGyIX6sSy9CIf4SF7Iog==
-X-Received: by 2002:a2e:2c09:: with SMTP id s9mr8612845ljs.222.1566761770727;
-        Sun, 25 Aug 2019 12:36:10 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id s21sm1697066ljm.28.2019.08.25.12.36.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 Aug 2019 12:36:09 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id z17so13191584ljz.0
-        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 12:36:09 -0700 (PDT)
-X-Received: by 2002:a2e:7018:: with SMTP id l24mr8519623ljc.165.1566761769215;
- Sun, 25 Aug 2019 12:36:09 -0700 (PDT)
+        bh=chkqvuhekHGQhYnW0yA1AUvunv0CUeXBozcgE5RCGR0=;
+        b=dgQWgdiLi1DuwOtrn+csirs25/3irHhtpEMGGv/ChbzdTCUH9WZ50MZmq0ryGLNm9M
+         ZidbjF/8w64U8L1tznwzGtDiGuarL1JrklfpcgP3W2lqtJYOFmoRbSbMOcZVVXhJ409h
+         XfT01C2mlMB/TBmxs2jhJFAleao/HrX6EOy0cQFV1+MGzzYXvrFXN+rr5dW1EZ3Ofe/4
+         wFgam1pQwL/niHFvlfMp0ywMn+aNKVI78hdLce8gOyQzLskJeIXj44dnnhtvDphslMaL
+         btJAdFCcH2NLuj+Sin8SYGYsbO0q+Vh7/EtWZ2ojRqjkXx9ocxT+YOGXi5HN/cuWsKdk
+         l1Fw==
+X-Gm-Message-State: APjAAAWsfoUTnml1YKrvw2zzY7J1Z5obT/r6KiauUGk1TfscgfseP7+w
+        8liFrn9JyOResHtOBLzaHnSAqrSw3tazF1WzhWg=
+X-Google-Smtp-Source: APXvYqy1R4zVYwEh8pivnSC69fyaMBLMJemyEus17wAdFf0HZLtZeNrG0Fme7e3Pe3MsSQoUcaWkpnlg8DlAMDncj6c=
+X-Received: by 2002:a05:6808:30d:: with SMTP id i13mr10330434oie.39.1566761928007;
+ Sun, 25 Aug 2019 12:38:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <156672618029.19810.8479315461492191933.tglx@nanos.tec.linutronix.de>
- <156672618029.19810.9732807383797358917.tglx@nanos.tec.linutronix.de>
- <CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com>
- <20190825173000.GB20639@zn.tnic> <CAHk-=wiV54LwvWcLeATZ4q7rA5Dd9kE0Lchx=k023kgxFHySNQ@mail.gmail.com>
- <20190825182922.GC20639@zn.tnic> <CAHk-=wjhyg-MndXHZGRD+ZKMK1UrcghyLH32rqQA=YmcxV7Z0Q@mail.gmail.com>
- <20190825193218.GD20639@zn.tnic>
-In-Reply-To: <20190825193218.GD20639@zn.tnic>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 25 Aug 2019 12:35:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiBqmHTFYJWOehB=k3mC7srsx0DWMCYZ7fMOC0T7v1KHA@mail.gmail.com>
-Message-ID: <CAHk-=wiBqmHTFYJWOehB=k3mC7srsx0DWMCYZ7fMOC0T7v1KHA@mail.gmail.com>
-Subject: Re: [GIT pull] x86/urgent for 5.3-rc5
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Pu Wen <puwen@hygon.cn>, Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
+References: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
+In-Reply-To: <1566705688-18442-1-git-send-email-christianshewitt@gmail.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 25 Aug 2019 21:38:37 +0200
+Message-ID: <CAFBinCD0uhE9Fj1we2MkaTbk7RwtmKh7Fn1C-2nn9wiWqCoNfg@mail.gmail.com>
+Subject: Re: [PATCH 0/7] arm64: dts: meson: ir keymap updates
+To:     Christian Hewitt <christianshewitt@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 25, 2019 at 12:32 PM Borislav Petkov <bp@suse.de> wrote:
+On Sun, Aug 25, 2019 at 6:03 AM Christian Hewitt
+<christianshewitt@gmail.com> wrote:
 >
+> This series adds keymaps for several box/board vendor IR remote devices
+> to respective device-tree files. The keymaps were submitted in [0] and
+> have been queued for inclusion in Linux 5.4.
 >
-> and also on all the remaining 15 CPUs of the guest. Then, suspending to
-> RAM and resuming right afterwards says:
+> The Khadas remote change swaps the rc-geekbox keymap for rc-khadas. The
+> Geekbox branded remote was only sold for a brief period when VIM(1) was
+> a new device. The Khadas branded remote that replaced it exchanged the
+> Geekbox full-screen key for an Android mouse button using a different IR
+> keycode. The rc-khadas keymap supports the mouse button keycode and maps
+> it to KEY_MUTE.
 >
-> and the remaining 14(!). Yes, this doesn't run on the BSP during resume.
-> I think the better thing to do would be to stick this in a CPUHP
-> notifier...
-
-You know what? The days of UP are long gone, and we really only want a
-one-time warning, so I think your thing is fine as-is.
-
-It would be good to test with a known-bad setup, of course..
-
-                   Linus
+> [0] https://patchwork.kernel.org/project/linux-media/list/?series=160309
+>
+> Christian Hewitt (7):
+>   arm64: dts: meson-g12b-odroid-n2: add rc-odroid keymap
+>   arm64: dts: meson-g12a-x96-max: add rc-x96max keymap
+>   arm64: dts: meson-gxbb-wetek-hub: add rc-wetek-hub keymap
+>   arm64: dts: meson-gxbb-wetek-play2: add rc-wetek-play2 keymap
+>   arm64: dts: meson-gxl-s905x-khadas-vim: use rc-khadas keymap
+>   arm64: dts: meson-gxl-s905w-tx3-mini: add rc-tx3mini keymap
+>   arm64: dts: meson-gxm-khadas-vim2: use rc-khadas keymap
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
