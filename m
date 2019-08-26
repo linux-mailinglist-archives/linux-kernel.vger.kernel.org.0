@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1C849D61E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 21:01:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF289D624
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 21:01:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387573AbfHZTBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 15:01:03 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:38639 "EHLO
+        id S2387894AbfHZTBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 15:01:22 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:32845 "EHLO
         mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfHZTBB (ORCPT
+        with ESMTP id S2387577AbfHZTBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 15:01:01 -0400
-Received: by mail-qt1-f193.google.com with SMTP id q64so7291596qtd.5
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 12:01:00 -0700 (PDT)
+        Mon, 26 Aug 2019 15:01:02 -0400
+Received: by mail-qt1-f193.google.com with SMTP id v38so18995846qtb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 12:01:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=MVGzHS9ibRvktU9gzuXWTCeM/ZsMv8ZNEfXsJO3ZoxM=;
-        b=B26GOpyrtMcVplPhl7Il/MGEWWA8xd6bEnjFdWoHib2Rq2CQ2PBaL6pitAD90OeatG
-         tvJzrwjReaiCAXbgM7nLmeUHIJ8/TZBf0kkeT01e/VjRWbOWaZD4xgFGJy/70LhHlAsY
-         UnjEME49+kC2iR55o2+mlOizKCmy3OB/EctD8PVQHoI6XHSMF53PwgEfahO3jykEsLIb
-         rx3c0uE2DuomPLwTqb/gjWEYyvIfaBDdYx+79C/aU9O3JgLSowUa+EQVq5O5HLoHhJUX
-         Vo7WzIj4qCeHmTkqlfQYvj9mS8pVTI0zrxWAM+EBdsWGT1jbV7TzXerLWaktA4hBPL5w
-         1G6w==
+        bh=2Iyu8V2mhRgac8+S13ID8s2986xy5pxZvhk9T7S5rNU=;
+        b=UFXzaaLCAVwRSz6XEcr9mJF5kHCBrdjGe3QkcYu3MGkKN44wfFfrzlG0jc7ANzJ77n
+         9EoRiykDzx5lyexiZKGga2j3mHmXj7jLWKeImUzAxoVVED14tv/gZEJHmCbMexLFIPAF
+         5ZytoKvyGY0XeEXjN9ofyjZRs3CXeuzBSR6meTOyX137+CHIWynDofBLwZgxFIeOEuwU
+         OK7JwW7xuggSckOozTZhHrg1yHzheQ686DtTHSePs2X0r2pswsBkvl7gwF6Fso0bHiKp
+         JpJ0aXsoIgjae8qYFNMcuLsCVjUn7vzSman7d/ATv3DURMO5i0LYjOOZX24xNTqRoQ4o
+         0w0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MVGzHS9ibRvktU9gzuXWTCeM/ZsMv8ZNEfXsJO3ZoxM=;
-        b=KVFFj4QUb5Nat7k0xqNthf+g3kB62NuRVTTm40TsMjTMQ4GkvROJgoXLA5akQkNYaz
-         ymnrYrxS1k543uY5r5iiO4FBpQ/knTLDCm3sa2l6tfRJdTsuni7cK9LczeVzokSBjdh7
-         v4/oMGNj0hQhtmy2Im1/VmSFCXlxuMJFV29T8FjLsE1EELATjj6SjD1IXrWW4rQQtxuz
-         lXDaXMdVycb56iDhsaDgMtrNaggFnx4QL0ZsIrsdDEtT3K1/TmzhEReX9BKX0lJ/GPOi
-         x2gfSnY1c2q+zdSK8YKDa562J+gslLgY+emZ2aw3FmXZyNmTl+W5z+Pt4zy2G02v0hl8
-         XCLQ==
-X-Gm-Message-State: APjAAAXQE9Gfn6vPk1SIkxzYHqHWiE5GtfNBUvcwtaxon9SJYCo/KdRy
-        fj8e7OSA/wFTPGztPeGlkVT6YA==
-X-Google-Smtp-Source: APXvYqxeU7d2ypGYD+w4LlmlZBLQ94N4jLKoJtLpD4qFS3r6JUQs+pZr0N0cUZuPWjoo9GSHYRXaKw==
-X-Received: by 2002:ac8:64a:: with SMTP id e10mr18640949qth.30.1566846059770;
-        Mon, 26 Aug 2019 12:00:59 -0700 (PDT)
+        bh=2Iyu8V2mhRgac8+S13ID8s2986xy5pxZvhk9T7S5rNU=;
+        b=IHdgFQXQami5T43Pry1T0nuAPfFq2MttzPp2mfnFV/RVM6+1b1HBNXZLUpn01ACEBP
+         mJW/TVoBB3X+Tu27IA5nSNIsc1OTcySmGG5rdjmqfgj+AB2KlhftWcF+Lpj+svunYomP
+         gAywgjqvCVe6X5U3ESRPU6m8Gi+SoVsgJbmeI21BSrrTEc8au9yeI3lU5i35qi3dMwHk
+         iGgLnDO3+03mXKo3RWl4FBBGSi9DD53oxkEVl/3oUMSHIEy9xKaUL+dj0zsjkmVFkLwF
+         t9iCZ0KnSnMmYZYFBzh1BTGRPoQ/9qlh99LXc5025bfqrckOcBBMDmSulCRQzd8ehq1N
+         UJkA==
+X-Gm-Message-State: APjAAAUDkRFsdvvQp1Lx2tN1GpHRxDFNvFNyO0O7JSVQ5Ml8aBG57G+/
+        5o718of2NSfmdvUlpsemcEk3MA==
+X-Google-Smtp-Source: APXvYqwJEoLilU8DEOh3KuHyqH0S1JmiSp9yFcsGVAyDCCyoqq7RSrfnW4/Garo6AgPuH9RBmHyTWg==
+X-Received: by 2002:ac8:317a:: with SMTP id h55mr19163671qtb.105.1566846061160;
+        Mon, 26 Aug 2019 12:01:01 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id o45sm8614377qta.65.2019.08.26.12.00.58
+        by smtp.gmail.com with ESMTPSA id o45sm8614377qta.65.2019.08.26.12.00.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 12:00:59 -0700 (PDT)
+        Mon, 26 Aug 2019 12:01:00 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
         james.morse@arm.com, vladimir.murzin@arm.com, mark.rutland@arm.com
-Subject: [PATCH v1 1/6] rqchip/gic-v3-its: reset prop table outside of allocation
-Date:   Mon, 26 Aug 2019 15:00:51 -0400
-Message-Id: <20190826190056.27854-2-pasha.tatashin@soleen.com>
+Subject: [PATCH v1 2/6] rqchip/gic-v3-its: use temporary va / pa variables
+Date:   Mon, 26 Aug 2019 15:00:52 -0400
+Message-Id: <20190826190056.27854-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190826190056.27854-1-pasha.tatashin@soleen.com>
 References: <20190826190056.27854-1-pasha.tatashin@soleen.com>
@@ -63,59 +63,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation of adding another variant of allocation, move
-the resetting outside of the current allocator.
+This is a cleanup, that will help later when a variant that does not
+require memremap is added.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 13 +++----------
- 1 file changed, 3 insertions(+), 10 deletions(-)
+ drivers/irqchip/irq-gic-v3-its.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 1b5c3672aea2..ada18748ed1c 100644
+index ada18748ed1c..656b6c6e1bf8 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1621,15 +1621,7 @@ static void gic_reset_prop_table(void *va)
- 
- static struct page *its_allocate_prop_table(gfp_t gfp_flags)
+@@ -1668,15 +1668,17 @@ static int gic_reserve_range(phys_addr_t addr, unsigned long size)
+ static int __init its_setup_lpi_prop_table(void)
  {
--	struct page *prop_page;
--
--	prop_page = alloc_pages(gfp_flags, get_order(LPI_PROPBASE_SZ));
--	if (!prop_page)
--		return NULL;
--
--	gic_reset_prop_table(page_address(prop_page));
--
--	return prop_page;
-+	return alloc_pages(gfp_flags, get_order(LPI_PROPBASE_SZ));
- }
+ 	if (gic_rdists->flags & RDIST_FLAGS_RD_TABLES_PREALLOCATED) {
++		unsigned long pa;
+ 		u64 val;
++		void *va;
  
- static void its_free_prop_table(struct page *prop_page)
-@@ -1685,7 +1677,6 @@ static int __init its_setup_lpi_prop_table(void)
- 		gic_rdists->prop_table_va = memremap(gic_rdists->prop_table_pa,
- 						     LPI_PROPBASE_SZ,
- 						     MEMREMAP_WB);
--		gic_reset_prop_table(gic_rdists->prop_table_va);
+ 		val = gicr_read_propbaser(gic_data_rdist_rd_base() + GICR_PROPBASER);
+ 		lpi_id_bits = (val & GICR_PROPBASER_IDBITS_MASK) + 1;
+ 
+-		gic_rdists->prop_table_pa = val & GENMASK_ULL(51, 12);
+-		gic_rdists->prop_table_va = memremap(gic_rdists->prop_table_pa,
+-						     LPI_PROPBASE_SZ,
+-						     MEMREMAP_WB);
++		pa = val & GENMASK_ULL(51, 12);
++		va = memremap(pa, LPI_PROPBASE_SZ, MEMREMAP_WB);
++		gic_rdists->prop_table_pa = pa;
++		gic_rdists->prop_table_va = va;
  	} else {
  		struct page *page;
  
-@@ -1703,6 +1694,7 @@ static int __init its_setup_lpi_prop_table(void)
- 		WARN_ON(gic_reserve_range(gic_rdists->prop_table_pa,
- 					  LPI_PROPBASE_SZ));
- 	}
-+	gic_reset_prop_table(gic_rdists->prop_table_va);
- 
- 	pr_info("GICv3: using LPI property table @%pa\n",
- 		&gic_rdists->prop_table_pa);
-@@ -3079,6 +3071,7 @@ static int its_vpe_irq_domain_alloc(struct irq_domain *domain, unsigned int virq
- 		its_lpi_free(bitmap, base, nr_ids);
- 		return -ENOMEM;
- 	}
-+	gic_reset_prop_table(page_address(vprop_page));
- 
- 	vm->db_bitmap = bitmap;
- 	vm->db_lpi_base = base;
 -- 
 2.23.0
 
