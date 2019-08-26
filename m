@@ -2,62 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49F009D796
+	by mail.lfdr.de (Postfix) with ESMTP id B8EA69D797
 	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbfHZUow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:44:52 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45823 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728694AbfHZUou (ORCPT
+        id S1730855AbfHZUoy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:44:54 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37903 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730620AbfHZUov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:44:50 -0400
-Received: by mail-wr1-f65.google.com with SMTP id q12so16555356wrj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:44:49 -0700 (PDT)
+        Mon, 26 Aug 2019 16:44:51 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g17so16620397wrr.5
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SZT7LwQ4zVm6UpU1R0QaKTwCzMI6AEH9QZz6xkZt/VY=;
-        b=SOVljHUU8N7UbYj/cOCqgEomKmgW/J60GyZGE8TlJHFlEQP3S8H5JbmKJRln4V8uTH
-         1wmjcjxn/otSmTYMMbHHqk9cpXO+iunSYYqnkeDJFnZrbagQOcDvaYvDvTSuCkGdobYH
-         yPdEdjfRf6YWiDbWw1rcR4Xbnt+xZQDzSLOJ8+NCTjg8G6U1uArrZc6VWR7N2eiz78O8
-         OLrmN2VVwjDWJN9bIz+7NwHo+JPHDfW9WOQ/cQXIiT4ozFmPGQjrtNYzUU9q0dF2RvPz
-         fmrQAxhgz9q1XKjICu+OBZQTaq9AJl3SQ+jbS2GjyferSwq0iMEqajyG2HyIPnOs0OVR
-         eKZA==
+        bh=KPovm7Wqq5ONpgYMzcWE7OA1yW+eFGPyRUwfUI0hUJ0=;
+        b=aU3cka8c1AQSVSN8MhAGKFkLRjd0H8XrOtbp/x2/hFD2uq4c0BbiB2QY0ghWInXBGC
+         5rN5dd3SqgbzjbMCFWIpScJgDCd1YCPSTxuF2IjR4wG/Jz206l7856QTAku0xz2boFbH
+         xDPEUKf1OTt2vpZhFICPjDYkFy2HNrlf5SUg7lcV/G198a9Ci9hsaXQKgnK7yIxTvsZN
+         j8P6b6+xsyvAeMr2eSnIYCL/KatF+OXC6YnPNtBUoxOs8U1am6qjXfeiFV7HFp9kGj8V
+         Q83XJKPTKHtLU058eb1EFPriPhAR4ZZcPPT6/RTMTC4RwTmmWwAXCem9jCPuF6ZSxK9S
+         SOBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SZT7LwQ4zVm6UpU1R0QaKTwCzMI6AEH9QZz6xkZt/VY=;
-        b=tMLlGMzRaOMR0K1dlg1wOL9Xlbuvnd+hax4Sn1CWEWwM6VmBD3gI3vpLmuWMAMu0tQ
-         ZquC1tOxvwmeXmS6N1gpjTvq0Rw61KJaapAV4FKS62c6HSyF1qGb04W1J2MFxrP7G6WY
-         9vNQGl7ctfpqXfTT04aIdEzECRrfp4SD5loTwwWXb5mNgX7r6Qv6LKSzJa9N2d2gUM3n
-         /r4gAZiN/lpqfiEqzvH7Oc9U/nPhfuuyU4E9fNC81gRbjM5aFWn6mm/cmdJcWm5CES7s
-         Ona/Nfpja5KlStkRzn3G3VAxLkHUQRpGOpBBMjy3P8P1sR0JJCh4bPbArawj+XHNq/EI
-         ubOA==
-X-Gm-Message-State: APjAAAWqx6uvcXdV9x5hUutepjlJR1jPRfrBi1YKpdNYrkltGhr1lcbN
-        58MJ3b8J12IN3uFuPsIlyGfDiQ==
-X-Google-Smtp-Source: APXvYqwdwUCw5aUqZelDvNyEgt4T4jxvKT/tVakrpiJfZDKLHDs0Lltb+i/VwDXc0av0TDel5R/6Gg==
-X-Received: by 2002:adf:e5cd:: with SMTP id a13mr23978628wrn.316.1566852288125;
-        Mon, 26 Aug 2019 13:44:48 -0700 (PDT)
+        bh=KPovm7Wqq5ONpgYMzcWE7OA1yW+eFGPyRUwfUI0hUJ0=;
+        b=dbb6lUI4bmUHE9f28xuQNLK5It0CDCQvDYyvrCHzEvdF/DvhzrSJCtIPE5ZFipl1yx
+         VKxUSY20fSyL2qPIOOnaajJC6dCkD3vfc4tY0HkOMVah7XG0Jm2crMb5QDRwQv42KtoZ
+         agJTcXkVYhnCwXNH+hgl4iG/1a0d2A87/3W9XGLygA4rDamMA2YxodX5Zog3q3Lj7LMB
+         dJ21Skf24VTlpzM2GXXQJjrOJpn5hpyD5ITNf14H6KSaB25w48o9fOuPnKyRMQN6/o5j
+         jblWWQqetZyy/VdvHPMa8SuMzidPpKWp8Wl05U5PTKjWN8vmjs6lH3d0F8Qt5VT8QoIo
+         Aq2A==
+X-Gm-Message-State: APjAAAWhjkWjEv14nTxkkB80GSZToMa5L7GOsIX1ZbD71PWkMPr2zkam
+        9tGnnFhf3ttw+uttllxKN/Ho8w==
+X-Google-Smtp-Source: APXvYqx1bP/yZ2ct9gGrw3/PrAY5QgTYxdvm4ozIz6UraMNr+NRuLzZjgbTD62gTCxjLFwLXZDIrog==
+X-Received: by 2002:adf:fc03:: with SMTP id i3mr23215781wrr.48.1566852289672;
+        Mon, 26 Aug 2019 13:44:49 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab])
-        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.44.46
+        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.44.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 13:44:47 -0700 (PDT)
+        Mon, 26 Aug 2019 13:44:49 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support)
-Subject: [PATCH 05/20] dt-bindings: timer: Convert Allwinner A13 HSTimer to a schema
-Date:   Mon, 26 Aug 2019 22:43:52 +0200
-Message-Id: <20190826204407.17759-5-daniel.lezcano@linaro.org>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip
+        (AT91) SoC support)
+Subject: [PATCH 06/20] clocksource/drivers/tcb_clksrc: Register delay timer
+Date:   Mon, 26 Aug 2019 22:43:53 +0200
+Message-Id: <20190826204407.17759-6-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190826204407.17759-1-daniel.lezcano@linaro.org>
 References: <df27caba-d9f8-e64d-0563-609f8785ecb3@linaro.org>
@@ -67,141 +64,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-The newer Allwinner SoCs have a High Speed Timer supported in Linux, with a
-matching Device Tree binding.
+Implement and register delay timer to allow get_cycles() to work properly.
 
-Now that we have the DT validation in place, let's convert the device tree
-bindings for that controller over to a YAML schemas.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- .../timer/allwinner,sun5i-a13-hstimer.txt     | 26 ------
- .../timer/allwinner,sun5i-a13-hstimer.yaml    | 79 +++++++++++++++++++
- 2 files changed, 79 insertions(+), 26 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml
+ drivers/clocksource/Kconfig           |  2 +-
+ drivers/clocksource/timer-atmel-tcb.c | 18 ++++++++++++++++++
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt b/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt
-deleted file mode 100644
-index 2c5c1be78360..000000000000
---- a/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--Allwinner SoCs High Speed Timer Controller
--
--Required properties:
--
--- compatible :	should be "allwinner,sun5i-a13-hstimer" or
--		"allwinner,sun7i-a20-hstimer"
--- reg : Specifies base physical address and size of the registers.
--- interrupts :	The interrupts of these timers (2 for the sun5i IP, 4 for the sun7i
--		one)
--- clocks: phandle to the source clock (usually the AHB clock)
--
--Optional properties:
--- resets: phandle to a reset controller asserting the timer
--
--Example:
--
--timer@1c60000 {
--	compatible = "allwinner,sun7i-a20-hstimer";
--	reg = <0x01c60000 0x1000>;
--	interrupts = <0 51 1>,
--		     <0 52 1>,
--		     <0 53 1>,
--		     <0 54 1>;
--	clocks = <&ahb1_gates 19>;
--	resets = <&ahb1rst 19>;
--};
-diff --git a/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml b/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml
-new file mode 100644
-index 000000000000..dfa0c41fd261
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml
-@@ -0,0 +1,79 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/timer/allwinner,sun5i-a13-hstimer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 5e9317dc3d39..a642c23b2fba 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -429,7 +429,7 @@ config ATMEL_ST
+ 
+ config ATMEL_TCB_CLKSRC
+ 	bool "Atmel TC Block timer driver" if COMPILE_TEST
+-	depends on HAS_IOMEM
++	depends on ARM && HAS_IOMEM
+ 	select TIMER_OF if OF
+ 	help
+ 	  Support for Timer Counter Blocks on Atmel SoCs.
+diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
+index 6ed31f9def7e..7427b07495a8 100644
+--- a/drivers/clocksource/timer-atmel-tcb.c
++++ b/drivers/clocksource/timer-atmel-tcb.c
+@@ -6,6 +6,7 @@
+ #include <linux/irq.h>
+ 
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/ioport.h>
+ #include <linux/io.h>
+@@ -125,6 +126,18 @@ static u64 notrace tc_sched_clock_read32(void)
+ 	return tc_get_cycles32(&clksrc);
+ }
+ 
++static struct delay_timer tc_delay_timer;
 +
-+title: Allwinner A13 High-Speed Timer Device Tree Bindings
++static unsigned long tc_delay_timer_read(void)
++{
++	return tc_get_cycles(&clksrc);
++}
 +
-+maintainers:
-+  - Chen-Yu Tsai <wens@csie.org>
-+  - Maxime Ripard <maxime.ripard@bootlin.com>
++static unsigned long notrace tc_delay_timer_read32(void)
++{
++	return tc_get_cycles32(&clksrc);
++}
 +
-+properties:
-+  compatible:
-+    oneOf:
-+      - const: allwinner,sun5i-a13-hstimer
-+      - const: allwinner,sun7i-a20-hstimer
-+      - items:
-+          - const: allwinner,sun6i-a31-hstimer
-+          - const: allwinner,sun7i-a20-hstimer
+ #ifdef CONFIG_GENERIC_CLOCKEVENTS
+ 
+ struct tc_clkevt_device {
+@@ -432,6 +445,7 @@ static int __init tcb_clksrc_init(struct device_node *node)
+ 		/* setup ony channel 0 */
+ 		tcb_setup_single_chan(&tc, best_divisor_idx);
+ 		tc_sched_clock = tc_sched_clock_read32;
++		tc_delay_timer.read_current_timer = tc_delay_timer_read32;
+ 	} else {
+ 		/* we have three clocks no matter what the
+ 		 * underlying platform supports.
+@@ -444,6 +458,7 @@ static int __init tcb_clksrc_init(struct device_node *node)
+ 		/* setup both channel 0 & 1 */
+ 		tcb_setup_dual_chan(&tc, best_divisor_idx);
+ 		tc_sched_clock = tc_sched_clock_read;
++		tc_delay_timer.read_current_timer = tc_delay_timer_read;
+ 	}
+ 
+ 	/* and away we go! */
+@@ -458,6 +473,9 @@ static int __init tcb_clksrc_init(struct device_node *node)
+ 
+ 	sched_clock_register(tc_sched_clock, 32, divided_rate);
+ 
++	tc_delay_timer.freq = divided_rate;
++	register_current_timer_delay(&tc_delay_timer);
 +
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    minItems: 2
-+    maxItems: 4
-+    items:
-+      - description: Timer 0 Interrupt
-+      - description: Timer 1 Interrupt
-+      - description: Timer 2 Interrupt
-+      - description: Timer 3 Interrupt
-+
-+  clocks:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+if:
-+  properties:
-+    compatible:
-+      items:
-+        const: allwinner,sun5i-a13-hstimer
-+
-+then:
-+  properties:
-+    interrupts:
-+      minItems: 2
-+      maxItems: 2
-+
-+else:
-+  properties:
-+    interrupts:
-+      minItems: 4
-+      maxItems: 4
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    timer@1c60000 {
-+        compatible = "allwinner,sun7i-a20-hstimer";
-+        reg = <0x01c60000 0x1000>;
-+        interrupts = <0 51 1>,
-+                     <0 52 1>,
-+                     <0 53 1>,
-+                     <0 54 1>;
-+        clocks = <&ahb1_gates 19>;
-+        resets = <&ahb1rst 19>;
-+    };
-+
-+...
+ 	return 0;
+ 
+ err_unregister_clksrc:
 -- 
 2.17.1
 
