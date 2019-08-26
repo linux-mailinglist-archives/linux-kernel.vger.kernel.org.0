@@ -2,99 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 570109D265
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCB109D26E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732922AbfHZPNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:13:23 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34485 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732908AbfHZPNW (ORCPT
+        id S1732211AbfHZPPd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:15:33 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46229 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728732AbfHZPPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:13:22 -0400
-Received: by mail-pf1-f194.google.com with SMTP id b24so12018299pfp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 08:13:22 -0700 (PDT)
+        Mon, 26 Aug 2019 11:15:32 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z1so15696650wru.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 08:15:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=j5KxHjXq4wZrRuSjnTO35VtGsy0U6Zm7/urplqoNwEg=;
-        b=LrSYxPcMCE8kKbBcH0Y3Ky8LLQbhHQZMufx9PAeg0KliOgtT46O/2328VxjkC002s0
-         fMFUqT3o78VSV7bCvVraoOlBIzM+/qiB5YjjfsWZg/0MDQ9Tukt7OT68Ak+Hc14VlMvF
-         4WSz87/WMNlIAu77o+bBIo1Vi/Vgxb1pcjEbFcfy8MGu3LFJRUvTg7GiMMF2p/n5zXmm
-         3OVCDL2D5CAWZnrHVicbMxKodku8gEbDG632rr2+ASNo8rlylbBcCHYsOAmF8CmOjLML
-         qYi+Nuu1sU4Nybzy33ueiE7/rQK9yoJ6zRD6dYBZazM4SgLXJo9PqUTfJY8OYzOXJQyg
-         C+0w==
+        bh=QMc8BlFNPwhPMkitaQqYoQoxo4FLyEe7KvlKmz3CRSU=;
+        b=IK4bcaUHJxVr5f3+1q9aB477uA6/aGYXg37x+81Y2Ak4Z8NyC7YCHsbt6yXQmMRud5
+         i4zPn0V+BRuBq86WtDn8g+Nvs5B+H1wZtQDFornWtxRuA31nQoT1DOrnv/drN8BFcsrk
+         FJoOjzqrHy//7LYX7NIAs3k8sOf0efOfawx/9mEy/CwbSfKSFFHIeGw93iKJcxVme968
+         COPsmMb+yLY8CD3R/L9DErB31NsaryHOwpsQdq1+0ZpUxSNGLp4w2WO9aHSHVgkte3Wo
+         LrqsEcJF9vLUcY7Mm+T5E8Lfc0B6iFC6+HrF+aAl+rNhFwcfarXz3JDzGZxpna9ZKkWd
+         okAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j5KxHjXq4wZrRuSjnTO35VtGsy0U6Zm7/urplqoNwEg=;
-        b=kumkU5yBxU/mybx9on4u2ADlwVkzE+IMmx4Uv2Wgfe8MX+qkfAKqcjlPKUBOAJ3ddQ
-         WT1Dn9BkYyYAdeBAs1vJfnBnZQKhyLcn+RMPi6Eori8sDN0BL12fS0BAi65kIRJBraEO
-         JTLWL3YMLGOowrHUq2UM9cMloynuDOvpX6tUmJD+LnB2GHF7cBl+1Nh7IONivLGTsayq
-         MxzOENlC8xGyEFkygxe+iWRzZIWsiX9rEP+EsHhKVmWTeQZXTVcDQ/SlEw6HSi4x9yLY
-         uYTU6VaR4uHy/g8ppU6JVGNzqRrFrl1sXsh/qiMoin9sLY4+ZTk7VnmSi60vypDcaE9U
-         LpjA==
-X-Gm-Message-State: APjAAAW3ptAQzzekSS4rXtbLd1PnVfIdmc74TcjLP15uAlUvn01F8G9F
-        cUpK044rBJyl2z1BF3AXUOyZ8Q==
-X-Google-Smtp-Source: APXvYqza9qWjK7AbgQw32FUjQQVrD1ZaaAa3XtLTCQmQ29i1QX33eiFCIhXgsXNEeD+tlhOh+piA+Q==
-X-Received: by 2002:a63:6c46:: with SMTP id h67mr17290709pgc.248.1566832401867;
-        Mon, 26 Aug 2019 08:13:21 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g8sm11351479pgk.1.2019.08.26.08.13.20
+        bh=QMc8BlFNPwhPMkitaQqYoQoxo4FLyEe7KvlKmz3CRSU=;
+        b=TMguOMr6hTMqym2lRTgktRrFylbdn0NQufESPKiHKSW91AWyD1FvkyGlvWow3GUkid
+         rW8952Oapy1GjFoIgcjBU5L3HMPSz8bN8M/yxkyUIp++4wSW8WU6IsuwNHwZdfJ4RI+X
+         rc1l3r19NiUcNOoCAporFjTnIjUWqtI1GGzIupHmr8YMi/odeZnoguFhvJnUYQfae+ok
+         EzaqvvW4hHfpcRstbrfIizxTHQm5xHLWD18Kn4fnOEjeFy+iKj291/SlQM7TnL29N33R
+         t+zOuMmqoXf7U0EUZkd4SjlDBgM3aC7i/tDLOlbtuIM4t90pUQ+pf2JjU3Rv2ambLDIC
+         devQ==
+X-Gm-Message-State: APjAAAWjxJsu4rVE+0t7nlAXZ1NGNaQWzrgPXcV+Y07Ai6hxJV9eSqEZ
+        Zoa/3Fffn0vek7Y3QoBUt4E=
+X-Google-Smtp-Source: APXvYqx50jWkW+jSQ4r//xNkXNJqtoB1M5J0Csu13FzO88J5ru1KMzVr7A6FyWGpl9iGrChq1LngwQ==
+X-Received: by 2002:a5d:4205:: with SMTP id n5mr22982928wrq.52.1566832530322;
+        Mon, 26 Aug 2019 08:15:30 -0700 (PDT)
+Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id s64sm25344990wmf.16.2019.08.26.08.15.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 08:13:21 -0700 (PDT)
-Date:   Mon, 26 Aug 2019 08:15:12 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Subject: Re: [PATCH] phy: qcom-qmp: Correct ready status, again
-Message-ID: <20190826151512.GX26807@tuxbook-pro>
-References: <20190806004256.20152-1-bjorn.andersson@linaro.org>
- <20190806155040.0B54520C01@mail.kernel.org>
- <57556d09-e2db-dc00-45a9-cbb57da02319@ti.com>
+        Mon, 26 Aug 2019 08:15:29 -0700 (PDT)
+Date:   Mon, 26 Aug 2019 08:15:28 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Ilie Halip <ilie.halip@gmail.com>
+Cc:     clang-built-linux@googlegroups.com,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bus: imx-weim: remove __init from 2 functions
+Message-ID: <20190826151528.GA91444@archlinux-threadripper>
+References: <20190826095828.8948-1-ilie.halip@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <57556d09-e2db-dc00-45a9-cbb57da02319@ti.com>
+In-Reply-To: <20190826095828.8948-1-ilie.halip@gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 20 Aug 17:23 PDT 2019, Kishon Vijay Abraham I wrote:
-
-> Hi Sasha,
+On Mon, Aug 26, 2019 at 12:58:28PM +0300, Ilie Halip wrote:
+> A previous commit removed __init from weim_probe(), but this attribute is
+> still present for other functions called from it. Thus, these warnings
+> are triggered:
+>     WARNING: Section mismatch in reference from the function weim_probe() to the function .init.text:imx_weim_gpr_setup()
+>     WARNING: Section mismatch in reference from the function weim_probe() to the function .init.text:weim_timing_setup()
 > 
-> On 06/08/19 9:20 PM, Sasha Levin wrote:
-> > Hi,
-> > 
-> > [This is an automated email]
-> > 
-> > This commit has been processed because it contains a "Fixes:" tag,
-> > fixing commit: 885bd765963b phy: qcom-qmp: Correct READY_STATUS poll break condition.
-> > 
-> > The bot has tested the following trees: v5.2.6.
-> > 
-> > v5.2.6: Failed to apply! Possible dependencies:
-> >     520602640419 ("phy: qcom-qmp: Raise qcom_qmp_phy_enable() polling delay")
-> > 
-> > 
-> > NOTE: The patch will not be queued to stable trees until it is upstream.
-> > 
-> > How should we proceed with this patch?
+> Remove the __init attribute from these functions as well, since they
+> don't seem to be used anywhere else.
 > 
-> Merging of this patch got delayed. Bjorn, Is it okay if this patch gets merged
-> in the next merge window and backported to stable releases then?
-> 
+> Signed-off-by: Ilie Halip <ilie.halip@gmail.com>
+> Reported-by: "kernelci.org bot" <bot@kernelci.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: clang-built-linux@googlegroups.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 
-That's fine, thanks for picking it up Kishon
-
-Regards,
-Bjorn
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
