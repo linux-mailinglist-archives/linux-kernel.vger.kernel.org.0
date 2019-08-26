@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C57B9D2FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BCAA9D2F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbfHZPj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:39:26 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37489 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733080AbfHZPiy (ORCPT
+        id S1733173AbfHZPjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:39:19 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37489 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733084AbfHZPiz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:38:54 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z11so15806775wrt.4;
-        Mon, 26 Aug 2019 08:38:52 -0700 (PDT)
+        Mon, 26 Aug 2019 11:38:55 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z11so15806828wrt.4;
+        Mon, 26 Aug 2019 08:38:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1rCIaYhy19uhXqC3cBNmvWggUiwiZruQsnEVhDd61mE=;
-        b=sD1CuSzQvWhR23G3qCHetdlB2WpWRN3KHeFCCQEtGFnDuEGxQH39AKPzMaIRM5Ma8+
-         /fbaZj9gd9FLAc/K73uSH4gUHeKUZ60OxmMK4suZa1etc6GmvZ2IkMZWqzPlhP2DluQo
-         8LvUXBPD8qQTF2bNvewi0AaCKbNDoswJJkVV7/xEGIGl7Ya3y2OCguD8aNcKqAohoeeW
-         jskBdvv2aaKo93Bhnfb7/4AM+wfXYcifNH+0Pbw+PeQhV23A/PDs1Gm5boGOQxkvJHre
-         aZDueiiS3CaWB3f2kW9dCO8pOgOBU9sfdtIMqKqIYr/h7ZJ+ubEdjUhZsj4zEvDw8iHv
-         7YWg==
-X-Gm-Message-State: APjAAAWMLDRwjbA/JDioRCAeph0L+DMNsFKNBAOUJxbzN6GTJKF8tEt0
-        zsQ/YdowJbV+coveiduEecxUtlBDVug=
-X-Google-Smtp-Source: APXvYqzz9bVlQdXc7SzziaVbdiGF8boBNGBFFqyPOelinM1tHX9oibhkShJbp6vuG99X/Ilm2U7GiA==
-X-Received: by 2002:a5d:6446:: with SMTP id d6mr22393884wrw.159.1566833931686;
-        Mon, 26 Aug 2019 08:38:51 -0700 (PDT)
+        bh=2dEBK2/0QEjcEIbTow6H8atvD57XckSzsqrktuuuwiQ=;
+        b=OCAKU52hK0T9S5eI8kcxW8qWsy1dxmabdatM9GOKmljpRiGV7rh40tItEnLXAubjor
+         pXP4TsTuocQv8aS1Kj+CunwsuEPDcPGYMsMwoNqhnkYS322+gi/ckEvWY5Aan9PpWmly
+         sQy9WcfzjSFx6rGMLOmqbqAoIQ5XD3ve1vyymO/9k2hMVGvR0dNZ4C3yQDYS7PSj6E84
+         q0BGUvUW2PtK06jjonMPhozUJROfquf31Bt2cbk+lgh0lLyA6CPPzjBSiZlL8AG1a7Qu
+         A928hqRPP+fwLk5Z1yfjMcc/I+hKgwB2WgCarzA7VCNEqYiVHf5/Nsdr/mg9lHusT9xX
+         DWEA==
+X-Gm-Message-State: APjAAAXf5dcKiaIugP31VLO9+/dWrMqd8hcbTey4ZiS3VtyB+QPj+gn3
+        2fEx+/7/0Y0eDn94dLNNNsP4cLdPD64=
+X-Google-Smtp-Source: APXvYqwjXotGvt0EQ3krMpcIpOWZidN92OK/jBtmB2hqylriN76aoWIA6r+Xj3p2ErKfcs5YQG1CBQ==
+X-Received: by 2002:a5d:63d0:: with SMTP id c16mr23237426wrw.22.1566833932617;
+        Mon, 26 Aug 2019 08:38:52 -0700 (PDT)
 Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
-        by smtp.gmail.com with ESMTPSA id z8sm11580798wru.13.2019.08.26.08.38.50
+        by smtp.gmail.com with ESMTPSA id z8sm11580798wru.13.2019.08.26.08.38.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 08:38:51 -0700 (PDT)
+        Mon, 26 Aug 2019 08:38:52 -0700 (PDT)
 From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
@@ -47,9 +47,9 @@ Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 09/12] ARM: dts: imx7d: cl-som-imx7: add SMSC USB3503 usb hub
-Date:   Mon, 26 Aug 2019 16:37:57 +0100
-Message-Id: <20190826153800.35400-9-git@andred.net>
+Subject: [PATCH 10/12] ARM: dts: imx7d: cl-som-imx7: add WiLink8 WLAN support
+Date:   Mon, 26 Aug 2019 16:37:58 +0100
+Message-Id: <20190826153800.35400-10-git@andred.net>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20190826153800.35400-1-git@andred.net>
 References: <20190826153800.35400-1-git@andred.net>
@@ -61,10 +61,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As per the SoM design, add the SMSC USB3503 that is
-used as a PHY in hardware-only mode, connected
-to the imx7d's &usbh interface, providing additional
-USB ports for USB and mini-PCIe.
+add / enable TI's WiLink8 WLAN module on SDIO2.
+
+Notes:
+* power is always enabled (because of bluetooth)
+* the downstream delay of 70ms after power-on
+  doesn't seem to reliably work, hence it was
+  bumped to 700ms
 
 Signed-off-by: André Draszik <git@andred.net>
 Cc: Ilya Ledvich <ilya@compulab.co.il>
@@ -79,26 +82,94 @@ Cc: NXP Linux Team <linux-imx@nxp.com>
 Cc: devicetree@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 ---
- arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 60 +++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
 
 diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-index f80be855b4ec..a16cbb070a12 100644
+index a16cbb070a12..4cb36decef3d 100644
 --- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
 +++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-@@ -22,6 +22,12 @@
- 		device_type = "memory";
- 		reg = <0x80000000 0x10000000>; /* 256 MB - minimal configuration */
+@@ -28,6 +28,24 @@
+ 		compatible = "smsc,usb3503";
+ 		reset-gpios = <&pca9555 6 GPIO_ACTIVE_LOW>;
  	};
 +
-+	/* SMSC USB3503 connected to &usbh */
-+	usb_hub: usb-hub {
-+		compatible = "smsc,usb3503";
-+		reset-gpios = <&pca9555 6 GPIO_ACTIVE_LOW>;
++	pwrseq_ti_wifi: ti-wifi-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		reset-gpios = <&pca9555 0 GPIO_ACTIVE_LOW>;
++		post-power-on-delay-ms = <700>;
++		/* 10μs during shutdown, but 60μs between two enables */
++		power-off-delay-us = "60";
++	};
++
++	reg_ti_wifi: regulator-ti-wifi {
++		compatible = "regulator-fixed";
++		regulator-name = "wilink-regulator";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pca9555 9 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
 +	};
  };
  
  &cpu0 {
+@@ -232,6 +250,31 @@
+ 	status = "okay";
+ };
+ 
++&usdhc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usdhc2>;
++	bus-width = <4>;
++	no-1-8-v;
++	keep-power-in-suspend;
++	wakeup-source;
++	vmmc-supply = <&reg_ti_wifi>;
++	mmc-pwrseq = <&pwrseq_ti_wifi>;
++	non-removable;
++	cap-power-off-card;
++	status = "okay";
++
++	#address-cells = <1>;
++	#size-cells = <0>;
++	wlcore: wlcore@2 {
++		compatible = "ti,wl1835";
++		reg = <2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_usdhc2_wlcore>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <15 IRQ_TYPE_LEVEL_HIGH>;
++	};
++};
++
+ &usdhc3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc3>;
+@@ -308,6 +351,23 @@
+ 		>;
+ 	};
+ 
++	pinctrl_usdhc2: usdhc2grp {
++		fsl,pins = <
++			MX7D_PAD_SD2_CMD__SD2_CMD		0x59
++			MX7D_PAD_SD2_CLK__SD2_CLK		0x19
++			MX7D_PAD_SD2_DATA0__SD2_DATA0		0x59
++			MX7D_PAD_SD2_DATA1__SD2_DATA1		0x59
++			MX7D_PAD_SD2_DATA2__SD2_DATA2		0x59
++			MX7D_PAD_SD2_DATA3__SD2_DATA3		0x59
++		>;
++	};
++
++	pinctrl_usdhc2_wlcore: usdhc2wlcoregrp {
++		fsl,pins = <
++			MX7D_PAD_GPIO1_IO15__GPIO1_IO15		0x34
++		>;
++	};
++
+ 	pinctrl_usdhc3: usdhc3grp {
+ 		fsl,pins = <
+ 			MX7D_PAD_SD3_CMD__SD3_CMD		0x59
 -- 
 2.23.0.rc1
 
