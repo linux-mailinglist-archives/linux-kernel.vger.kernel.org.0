@@ -2,70 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B950E9CB42
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 10:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 125939CB31
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 10:01:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730323AbfHZIJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 04:09:25 -0400
-Received: from a3.inai.de ([88.198.85.195]:35764 "EHLO a3.inai.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728168AbfHZIJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 04:09:25 -0400
-X-Greylist: delayed 590 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Aug 2019 04:09:24 EDT
-Received: by a3.inai.de (Postfix, from userid 25121)
-        id 80EC73BB696A; Mon, 26 Aug 2019 09:59:33 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by a3.inai.de (Postfix) with ESMTP id 7FE983BB6EEC;
-        Mon, 26 Aug 2019 09:59:33 +0200 (CEST)
-Date:   Mon, 26 Aug 2019 09:59:33 +0200 (CEST)
-From:   Jan Engelhardt <jengelh@inai.de>
-To:     Florian Westphal <fw@strlen.de>
-cc:     Rundong Ge <rdong.ge@gmail.com>, davem@davemloft.net,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, pablo@netfilter.org, kadlec@netfilter.org,
-        roopa@cumulusnetworks.com, netfilter-devel@vger.kernel.org,
-        coreteam@netfilter.org, bridge@lists.linux-foundation.org,
-        nikolay@cumulusnetworks.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bridge:fragmented packets dropped by bridge
-In-Reply-To: <20190730123542.zrsrfvcy7t2n3d4g@breakpoint.cc>
-Message-ID: <nycvar.YFH.7.76.1908260955400.22383@n3.vanv.qr>
-References: <20190730122534.30687-1-rdong.ge@gmail.com> <20190730123542.zrsrfvcy7t2n3d4g@breakpoint.cc>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1730305AbfHZIBN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 04:01:13 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:57303 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726875AbfHZIBN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 04:01:13 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id A805C37B;
+        Mon, 26 Aug 2019 04:01:11 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Mon, 26 Aug 2019 04:01:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=6R15M5gpXp6+t5ucxX5BenurBan
+        iwk5iWP/DzbBg5DU=; b=N4ZkxriL+KWtGKhMDq4zY7SZOQMCRHKmbWr7QXeS4ZC
+        7ccTC8mfuqMp0a/reeq66Rw5E30sFntXklfEIWeh+qIh6L4QJcYxiCQ6TAw0bS2e
+        PEuCtAL+QRa9//uKlzL+83G57ZmH26poWUZ6LC/VxVIqThR02SV5dBeEXjf3KLtK
+        iPhYegS2W290c1vwJdCh+I2Oe17lMURl3dM2LB6JW8OQNhGJEGHSKH60VTzjQiaN
+        SRP5UB77MI4Ru/XB4Hb0EkkvwQviHXkltmkawsbl4IBcEQWBFIJkevpFfiLZk/M9
+        X7ZK9bBKibKv3eQSI/cYSI5+sedM7IVCelFhfB7biyw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=6R15M5
+        gpXp6+t5ucxX5BenurBaniwk5iWP/DzbBg5DU=; b=jG6F4Rdh+XZIGvPnoktgO8
+        fFRYrtJsdap6E8xiPtwLLuyQy+0vgpJ/7BdSIRSNkh2wLjCnXrzAbaOyNMkaJv4k
+        8WFxWthRG+nuMiDE6Kbdnf1CjenFwAsFMB38I7DA5R+QGUShtJwMopJAXfV5X7UB
+        psioXqXoEFLP1CuRIMgZZnhqwzVGWibVlbo3eLWLMppu+pK843fW+UqJpd3lJikz
+        Nmt5JCfmMmPDQkUaRcWmtkAGEuerMZTRRXohI8YrXMO909vAtcgIJ/OI0gPWVJCy
+        nIuAjGnWgB3IRLD4RToOJ3PE6z7vLL5/Xdlz1pFCf55myFFo+Tr7fc28kv9MFOgw
+        ==
+X-ME-Sender: <xms:xpFjXc4ZFbe6uLo-OA2gTsNCnPaZZqKk_QuozqFWkQd2Ecu06PRnJA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudehfedguddvjecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucffohhmrghinhepkhgvrhhnvg
+    hlrdhorhhgnecukfhppeekledrvddthedruddvkedrvdegieenucfrrghrrghmpehmrghi
+    lhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:xpFjXVhhblGQG1rhTevfJPff4HgH6zC_ocl8Vu6XbARUqhe3DVlIYA>
+    <xmx:xpFjXS2R7zQZgnIQOrdPPlDuslkxlSOhEJ2ThSUb93BsMytomEf46w>
+    <xmx:xpFjXborEjL1SENQrhNcCt_XcxnYEghJ_uexRgKLCQqZxWZgNpp0iA>
+    <xmx:x5FjXbrKkO73fUaGrV-LxbI-1VebKEomHXdVOnNBEyPUn2q0lfODtg>
+Received: from localhost (unknown [89.205.128.246])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2D32C8005C;
+        Mon, 26 Aug 2019 04:01:09 -0400 (EDT)
+Date:   Mon, 26 Aug 2019 10:01:07 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, akpm@linux-foundation.org, jslaby@suse.cz,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Subject: Re: Linux 5.2.10
+Message-ID: <20190826080107.GB30396@kroah.com>
+References: <20190825144703.6518-1-sashal@kernel.org>
+ <20190826063834.GD31983@Gentoo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826063834.GD31983@Gentoo>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 26, 2019 at 12:08:38PM +0530, Bhaskar Chowdhury wrote:
 
-On Tuesday 2019-07-30 14:35, Florian Westphal wrote:
->Rundong Ge <rdong.ge@gmail.com> wrote:
->> Given following setup:
->> -modprobe br_netfilter
->> -echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
->> -brctl addbr br0
->> -brctl addif br0 enp2s0
->> -brctl addif br0 enp3s0
->> -brctl addif br0 enp6s0
->> -ifconfig enp2s0 mtu 1300
->> -ifconfig enp3s0 mtu 1500
->> -ifconfig enp6s0 mtu 1500
->> -ifconfig br0 up
->> 
->>                  multi-port
->> mtu1500 - mtu1500|bridge|1500 - mtu1500
->>   A                  |            B
->>                    mtu1300
->
->How can a bridge forward a frame from A/B to mtu1300?
+<snip>
 
-There might be a misunderstanding here judging from the shortness of this
-thread.
+Due, learn to properly trim emails...
 
-I understood it such that the bridge ports (eth0,eth1) have MTU 1500, yet br0
-(in essence the third bridge port if you so wish) itself has MTU 1300.
+> For some unknown reason kernel.org still showing me 5.2.9 ..Please refer
+> to the attached screenshot.
 
-Therefore, frame forwarding from eth0 to eth1 should succeed, since the
-1300-byte MTU is only relevant if the bridge decides the packet needs to be
-locally delivered.
+What mirror are you hitting here?  There is a way somehow to see that on
+your end, I thought it was at the bottom of the page.
+
+You are not seeing any of the releases that happened yesterday, which is
+really odd, it's not just a 5.2.10 issue.
+
+thanks,
+
+greg k-h
