@@ -2,142 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 463139CAD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 423849CAC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:42:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfHZHnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 03:43:08 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37598 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728198AbfHZHnI (ORCPT
+        id S1730233AbfHZHmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 03:42:18 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:51725 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729942AbfHZHmS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 03:43:08 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z11so14303396wrt.4
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 00:43:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=p5oyCYaJHBmFYOFhDsV/KxDjOZ3RTaSbGo7EOXTZkuQ=;
-        b=pr5if38R/pA6yUqREb4B9B71whumkY3X8vJq/B6xy9/l4vwNtcKzRXOQlrxImRD8tE
-         OdohWPAip1+Myg+6xK8ZVA3O86ZTiAD2ixkEgn0W1vsRq7TskjGuZnMg1uMtD/kK3nLK
-         5Ixylu6cvSiaZ95n97R0elAu8cUqcpwsAU5BNULFiCr8w/+qz9JQasEOuvqFyKPxIi1v
-         r/qR+lEgqRwXKZb7PkodK6DVZrmv0OCu3RuOPyvDsnZAkEsbajBsRTlxCHFwJ8/UPL7R
-         VklANqASZsrac9Z7RGCjCdqUtx3BSTHOcp1a//GH2i3kb1uPLTrMvEWm1EV6ONdWGN/Q
-         tNag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=p5oyCYaJHBmFYOFhDsV/KxDjOZ3RTaSbGo7EOXTZkuQ=;
-        b=lP74mrg5SdRATQ4hZCQzAQooyLG/k+Z5RF11lpCjkkHSDiFUEAPyk+BaLq+pQ9mLRC
-         S8CcdF7b0VGNLC/5Pd79Rr+xK87Rnyy9vCqhb/oQSpKziqIQgeU0mQDxG8xdIJKYL20w
-         g2ly8kA8yBP6RRcB2J1Hswu/pFphP6DBa5qhkex/N+4u/jYjm9XXipn7BPyY7f7J+J88
-         QA1Efxh6V/YNbAhUnEt2+UHp0Jh+WnYQOMU1DvEvoTgAjM5jLixmbiXeRUlC63y6Wm4O
-         TBBgcA0AvrJ9ahYtJgQHsZCtwWZtf5iXM7WviUhatBZstQoX463hqTkW4QRNz+wh9xRa
-         qWuQ==
-X-Gm-Message-State: APjAAAXoCdYbTkoDlzeRSCICAxKPaQ9v8r6ycLwzwxF2Pk2IGlPeVskr
-        dETxwWH8w5bFoTe4aHSzXuKxRoPfgXoeCQ==
-X-Google-Smtp-Source: APXvYqz7qPD3lcPFcsPhPwWRvMw87SDHJqroufj6xUUa82+Rg/rHfw5UX4ASw8sGCUQU1xEFrG6osg==
-X-Received: by 2002:a05:6000:1189:: with SMTP id g9mr22063768wrx.51.1566805384996;
-        Mon, 26 Aug 2019 00:43:04 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id r16sm21538843wrc.81.2019.08.26.00.43.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Aug 2019 00:43:04 -0700 (PDT)
-Subject: Re: [PATCH 3/3] arm64: dts: khadas-vim3: add support for the SM1
- based VIM3
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190823081427.17228-1-narmstrong@baylibre.com>
- <20190823081427.17228-4-narmstrong@baylibre.com>
- <CAFBinCAH2LP2OyFEek290Prm9N=rxxAc-9gZ_jS0tY_4+utByA@mail.gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- mQENBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAG0KE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT6JATsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIW5AQ0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAYkBHwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8guQINBFYnf6QBEADQ+wBYa+X2n/xIQz/RUoGHf84Jm+yTqRT43t7sO48/cBW9vAn9
- GNwnJ3HRJWKATW0ZXrCr40ES/JqM1fUTfiFDB3VMdWpEfwOAT1zXS+0rX8yljgsWR1UvqyEP
- 3xN0M/40Zk+rdmZKaZS8VQaXbveaiWMEmY7sBV3QvgOzB7UF2It1HwoCon5Y+PvyE3CguhBd
- 9iq5iEampkMIkbA3FFCpQFI5Ai3BywkLzbA3ZtnMXR8Qt9gFZtyXvFQrB+/6hDzEPnBGZOOx
- zkd/iIX59SxBuS38LMlhPPycbFNmtauOC0DNpXCv9ACgC9tFw3exER/xQgSpDVc4vrL2Cacr
- wmQp1k9E0W+9pk/l8S1jcHx03hgCxPtQLOIyEu9iIJb27TjcXNjiInd7Uea195NldIrndD+x
- 58/yU3X70qVY+eWbqzpdlwF1KRm6uV0ZOQhEhbi0FfKKgsYFgBIBchGqSOBsCbL35f9hK/JC
- 6LnGDtSHeJs+jd9/qJj4WqF3x8i0sncQ/gszSajdhnWrxraG3b7/9ldMLpKo/OoihfLaCxtv
- xYmtw8TGhlMaiOxjDrohmY1z7f3rf6njskoIXUO0nabun1nPAiV1dpjleg60s3OmVQeEpr3a
- K7gR1ljkemJzM9NUoRROPaT7nMlNYQL+IwuthJd6XQqwzp1jRTGG26J97wARAQABiQM+BBgB
- AgAJBQJWJ3+kAhsCAikJEBaat7Gkz/iuwV0gBBkBAgAGBQJWJ3+kAAoJEHfc29rIyEnRk6MQ
- AJDo0nxsadLpYB26FALZsWlN74rnFXth5dQVQ7SkipmyFWZhFL8fQ9OiIoxWhM6rSg9+C1w+
- n45eByMg2b8H3mmQmyWztdI95OxSREKwbaXVapCcZnv52JRjlc3DoiiHqTZML5x1Z7lQ1T3F
- 8o9sKrbFO1WQw1+Nc91+MU0MGN0jtfZ0Tvn/ouEZrSXCE4K3oDGtj3AdC764yZVq6CPigCgs
- 6Ex80k6QlzCdVP3RKsnPO2xQXXPgyJPJlpD8bHHHW7OLfoR9DaBNympfcbQJeekQrTvyoASw
- EOTPKE6CVWrcQIztUp0WFTdRGgMK0cZB3Xfe6sOp24PQTHAKGtjTHNP/THomkH24Fum9K3iM
- /4Wh4V2eqGEgpdeSp5K+LdaNyNgaqzMOtt4HYk86LYLSHfFXywdlbGrY9+TqiJ+ZVW4trmui
- NIJCOku8SYansq34QzYM0x3UFRwff+45zNBEVzctSnremg1mVgrzOfXU8rt+4N1b2MxorPF8
- 619aCwVP7U16qNSBaqiAJr4e5SNEnoAq18+1Gp8QsFG0ARY8xp+qaKBByWES7lRi3QbqAKZf
- yOHS6gmYo9gBmuAhc65/VtHMJtxwjpUeN4Bcs9HUpDMDVHdfeRa73wM+wY5potfQ5zkSp0Jp
- bxnv/cRBH6+c43stTffprd//4Hgz+nJcCgZKtCYIAPkUxABC85ID2CidzbraErVACmRoizhT
- KR2OiqSLW2x4xdmSiFNcIWkWJB6Qdri0Fzs2dHe8etD1HYaht1ZhZ810s7QOL7JwypO8dscN
- KTEkyoTGn6cWj0CX+PeP4xp8AR8ot4d0BhtUY34UPzjE1/xyrQFAdnLd0PP4wXxdIUuRs0+n
- WLY9Aou/vC1LAdlaGsoTVzJ2gX4fkKQIWhX0WVk41BSFeDKQ3RQ2pnuzwedLO94Bf6X0G48O
- VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <18abe20d-b86c-a4ed-70bc-c8451dcf5348@baylibre.com>
-Date:   Mon, 26 Aug 2019 09:43:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 26 Aug 2019 03:42:18 -0400
+X-Originating-IP: 87.18.63.98
+Received: from uno.localdomain (unknown [87.18.63.98])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 26969FF80F;
+        Mon, 26 Aug 2019 07:42:13 +0000 (UTC)
+Date:   Mon, 26 Aug 2019 09:43:44 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 5/7] media: v4l2-core: Add new helper for area controls
+Message-ID: <20190826074344.yboir7ihjvrqyrv6@uno.localdomain>
+References: <20190823123737.7774-1-ribalda@kernel.org>
+ <20190823123737.7774-5-ribalda@kernel.org>
+ <1566564998.3023.13.camel@pengutronix.de>
+ <CAPybu_0iodVnn1Fa5BFi7zc7ugwpN926wCJaoKU548zqrNJ5iw@mail.gmail.com>
+ <1566566016.3023.21.camel@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCAH2LP2OyFEek290Prm9N=rxxAc-9gZ_jS0tY_4+utByA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gmvus75kizerfxb7"
+Content-Disposition: inline
+In-Reply-To: <1566566016.3023.21.camel@pengutronix.de>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/08/2019 21:55, Martin Blumenstingl wrote:
-> On Fri, Aug 23, 2019 at 10:15 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->>
->> Add the Amlogic SM1 based Khadas VIM3, sharing all the same features
->> as the G12B based one, but:
->> - a different DVFS support since only a single cluster is available
->> - audio is still not available on SM1
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> schematics are not available yet but this looks sane so:
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> 
 
-I assume it's the same schematics as the A311D VIM3.
+--gmvus75kizerfxb7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-BTW, as I asked on patch 2, Khadas asked me to rename the board to "vim3l",
-which is the commercial name, should I only change the DT name or also the
-compatible "khadas,vim3l" ?
+Hi Ricardo,
 
-Neil
+On Fri, Aug 23, 2019 at 03:13:36PM +0200, Philipp Zabel wrote:
+> On Fri, 2019-08-23 at 15:05 +0200, Ricardo Ribalda Delgado wrote:
+> > On Fri, Aug 23, 2019 at 2:56 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+> > >
+> > > On Fri, 2019-08-23 at 14:37 +0200, Ricardo Ribalda Delgado wrote:
+> > > > Adding a V4L2_CID_UNIT_CELL_SIZE control requires a lot of boilerplate,
+> > > > try to minimize it by adding a new helper.
+> > > >
+> > > > Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
+> > > > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+> > > > ---
+> > > >  drivers/media/v4l2-core/v4l2-ctrls.c | 25 ++++++++++++++++++++++++-
+> > > >  include/media/v4l2-ctrls.h           | 16 ++++++++++++++++
+> > > >  2 files changed, 40 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > > > index b3bf458df7f7..33e48f0aec1a 100644
+> > > > --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> > > > +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> > > > @@ -2660,7 +2660,6 @@ struct v4l2_ctrl *v4l2_ctrl_new_std_menu_items(struct v4l2_ctrl_handler *hdl,
+> > > >  }
+> > > >  EXPORT_SYMBOL(v4l2_ctrl_new_std_menu_items);
+> > > >
+> > > > -/* Helper function for standard integer menu controls */
+> > >
+> > > Why move this ...
+> > >
+> > > >  struct v4l2_ctrl *v4l2_ctrl_new_int_menu(struct v4l2_ctrl_handler *hdl,
+> > > >                       const struct v4l2_ctrl_ops *ops,
+> > > >                       u32 id, u8 _max, u8 _def, const s64 *qmenu_int)
+> > > > @@ -2684,6 +2683,30 @@ struct v4l2_ctrl *v4l2_ctrl_new_int_menu(struct v4l2_ctrl_handler *hdl,
+> > > >  }
+> > > >  EXPORT_SYMBOL(v4l2_ctrl_new_int_menu);
+> > > >
+> > > > +static void area_init(const struct v4l2_ctrl *ctrl, u32 idx,
+> > > > +             union v4l2_ctrl_ptr ptr)
+> > > > +{
+> > > > +     memcpy(ptr.p_area, ctrl->priv, sizeof(*ptr.p_area));
+> > > > +}
+> > > > +
+> > > > +static const struct v4l2_ctrl_type_ops area_ops = {
+> > > > +     .init = area_init,
+> > > > +};
+> > > > +
+> > > > +struct v4l2_ctrl *v4l2_ctrl_new_area(struct v4l2_ctrl_handler *hdl,
+> > > > +                                  const struct v4l2_ctrl_ops *ops,
+> > > > +                                  u32 id, const struct v4l2_area *area)
+> > > > +{
+> > > > +     static struct v4l2_ctrl_config ctrl = {
+> > > > +             .id = V4L2_CID_UNIT_CELL_SIZE,
+> > > > +             .type_ops = &area_ops,
+> > > > +     };
+> > > > +
+> > > > +     return v4l2_ctrl_new_custom(hdl, &ctrl, (void *)area);
+> > > > +}
+> > > > +EXPORT_SYMBOL(v4l2_ctrl_new_area);
+> > > > +
+> > > > +/* Helper function for standard integer menu controls */
+> > >
+> > > ... here?
+> >
+> > Because I screwed up :). Let me fix that sorry.
+> >
+> > I will push all your changes to:
+> >
+> > https://github.com/ribalda/linux/tree/unit-size-v4
+> >
+> > plus any other comment and then I will wait 2-3 days for resend
+>
+> Awesome, thanks! Feel free to add
+>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+With the issue pointed out by Philipp addressed
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Thanks
+  j
+
+>
+> regards
+> Philipp
+
+--gmvus75kizerfxb7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1jjbAACgkQcjQGjxah
+VjynIhAAwtTeujpSGqKFNzs5jlsF0OGxvrxkVhvjpyZHW7wGZMnmChN9MyNdkWLw
+gZhp7gtlWld/hfX1iOnvgOz0SD5li/EkddFPCPMK/KRvn4ps3oNe98JEduqWushU
+BCwo4sGLXlzmTDEsA5c44oLMkR/G2wOsLpH2x0eOqLKOKAy0AgEpVg7KqvH//0At
+FJA+cBmz3ce2MMsM93sqbxnTVN0nvQ6uAlyRZmAWW2xDHH7Wy9uxKaUCy52Hkywj
+huKlXD/U9kCqlbNSsaIJrKbcmJwdmDN89dxF+nNDRVoVht2w8xi5DYg9jZQCRhIk
+SPE6qySMIoH9sJkQeaYW0rzhD1i/eLI6jm0A1OmvkWtT1E2mLvu5sw4wgZSbkgDO
+ZvdXIsSUFTdBaf12XfLreuilpPcT6uJUg/33DtGdp89nVH3/yesWhsgXrcOJs/UE
+TPudC4xhgVqmy5846MHKkl4v5l263xchmLRGzZlN7LkqQTpDZynpCuLNAI9E5Zhp
+0HSeF3Evg5taR1ZhY3vky4977EUBNmMmKgRxMsoKlC+Be/3MpM6j8h8/b7JQMWrL
+Rwy1co5/ZGUtuYzSYf1jzvJT6PEAGo6Fie1AA53Q3V8qGMdJNx8wAx6p/lb8ACe2
+BkLxFS0V2HgSh6gmAKFSQZoCJzIyc7EJM/6PrB+GotNjsUQse6U=
+=fkss
+-----END PGP SIGNATURE-----
+
+--gmvus75kizerfxb7--
