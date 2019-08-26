@@ -2,115 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 993B1A08A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E13DA08BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:37:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfH1RgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:36:23 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37510 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbfH1RgW (ORCPT
+        id S1727348AbfH1RhL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:37:11 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44965 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727066AbfH1Rgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:36:22 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d1so108880pgp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:22 -0700 (PDT)
+        Wed, 28 Aug 2019 13:36:33 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c81so228882pfc.11
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=6UE+8RvEo5nUTpBHC8CVrwLN+hK169/Ej6xs9Gc2BAI=;
-        b=jGcpXKRmPVCZNwCgO1nKcsqMI9U4SCt8DCyYgPL6wc+VGQ63jM0BIJCMV7ThpFqOaZ
-         cgvtyiGt6H0rk0gbF9bRN6ZSIzWOzLBSdbiK52O5rc0b5BLumbczgrM8ly3V9PDP6hYU
-         jMI+A15m1bcvya2vfCUPnRzyPb/KjtVZeMTVI=
+        bh=UBNYDOQLiPHI747g3CvJSLTMKiFZvSX4+F+h+ZK0RGk=;
+        b=hBpwGl91JHahbLFCmv2w1Mjzc7Oz3kRyNRNlfokM3jA96+3Z6siqSGJK3qXqEvZYXw
+         209fRwW977JPTkPz9WVu94EDq8zT1usK2FPzVbiynFtN99nMvFDHeFEXObaCht1TcFgd
+         4xrqVdOp6iVorPHpgxumzhQ/jyb1V//MFBv7E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=6UE+8RvEo5nUTpBHC8CVrwLN+hK169/Ej6xs9Gc2BAI=;
-        b=pb9JTomD6Pj4JnH/fgu2GDq5KcaTkFeo6elK36XkpS9xGvZm90cdLm0WttU/ug60Sz
-         cQZGz0ESlrYf9kZQ53LXpTX7op3V4Y/j+SQFghdNfHrJVxGdX+sGCAFQyxy5gMU1elaS
-         bZke6nxXtsdkzRVtVrYetlQ72k/qpVxzK3pHAZI737h7hUMrPNIbpv3JF0ECAOW1g8ju
-         io8VBC7pPgNxQ4wBn69WtHFzz6bacCcFVHHpkvp+pb0EDKCc6wnKkWLPi70JrysssFoA
-         uOXHknarANTiPAubN3F5y4tkKIl4LqsdqmQrxmRLXaqkalSUfgXkNyA2WJPPq/0P5igX
-         qYqQ==
-X-Gm-Message-State: APjAAAVqV70rmMUPOJLHYmIlzfgnMYv3lIXU+21RebPO/lti2B19xdLr
-        d8OahNNwtyStZ8tvXWZv91DpZg==
-X-Google-Smtp-Source: APXvYqybGGo4hAWY0liuPOvcwNQox+SaWvfE3bLs/NnEpsFAI6tgV4NR3avVNk4mBqRMpi6eJKW6vg==
-X-Received: by 2002:a63:d301:: with SMTP id b1mr4386883pgg.379.1567013782132;
-        Wed, 28 Aug 2019 10:36:22 -0700 (PDT)
+        bh=UBNYDOQLiPHI747g3CvJSLTMKiFZvSX4+F+h+ZK0RGk=;
+        b=YEJ9alPzv5bd7m3CRpSFeOnMQem0slVHb+mCawzDOuyhdA8nNlw0+xd2rX/pC/u1Z7
+         ql5my0TEGzYSxPgCYFK5kZppo+Cp64OqFWbLyg9Z+wf4xORN7xRodmtB4/VyTA9q5QKu
+         fJAyBg8uIXehN8fktux32SJ+yaDBX8nr1FH+f5BGoGf+25d3kSaZBjtxbBn+ONVy/kbg
+         CuiYZUZuBZ4VFk91ya1WxCLFuPq7C+sMwsdE10RynBeTXH/eVOCS3XxhgbdILiNH33cV
+         tUPG5Un244oq7uX//JVK6FtvbE4rJgxM+4cmJaMIg8Kg+8iuyZR4yCsg8kVlo7cNhj33
+         gbLw==
+X-Gm-Message-State: APjAAAVq4hcjWurw9UnXLDqF4dcc7pZiqahLds7XER/BrL69TfIK0dad
+        vu0MlY/bsUTMgnMXE02fN7ne1A==
+X-Google-Smtp-Source: APXvYqzwkMj0PJ8taLffJ8W2JrcvATme98GQGJX0LS7TPTRiUEPTNp5IYu8fT7uFmLx8nEqHd37GDw==
+X-Received: by 2002:a17:90a:f0d8:: with SMTP id fa24mr5639027pjb.142.1567013792822;
+        Wed, 28 Aug 2019 10:36:32 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b24sm3173768pgw.66.2019.08.28.10.36.20
+        by smtp.gmail.com with ESMTPSA id m145sm5047005pfd.68.2019.08.28.10.36.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 10:36:20 -0700 (PDT)
-Date:   Sun, 25 Aug 2019 16:23:39 -0700
+        Wed, 28 Aug 2019 10:36:29 -0700 (PDT)
+Date:   Mon, 26 Aug 2019 10:48:34 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>, Shuah Khan <shuah@kernel.org>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Alakesh Haloi <alakesh.haloi@gmail.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
         Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kbuild test robot <lkp@intel.com>, lkp@01.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [ptrace] 201766a20e: kernel_selftests.seccomp.make_fail
-Message-ID: <201908251622.0EE8CE0E@keescook>
-References: <20190729093530.GL22106@shao2-debian>
- <20190805094719.GA1693@altlinux.org>
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        David Abdurachmanov <david.abdurachmanov@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        Vincent Chen <vincentc@andestech.com>,
+        Alan Kao <alankao@andestech.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, me@carlosedp.com
+Subject: Re: [PATCH v2] riscv: add support for SECCOMP and SECCOMP_FILTER
+Message-ID: <201908261043.08510F5E66@keescook>
+References: <20190822205533.4877-1-david.abdurachmanov@sifive.com>
+ <alpine.DEB.2.21.9999.1908231717550.25649@viisi.sifive.com>
+ <20190826145756.GB4664@cisco>
+ <CAEn-LTrtn01=fp6taBBG_QkfBtgiJyt6oUjZJOi6VN8OeXp6=g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190805094719.GA1693@altlinux.org>
+In-Reply-To: <CAEn-LTrtn01=fp6taBBG_QkfBtgiJyt6oUjZJOi6VN8OeXp6=g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 12:47:19PM +0300, Dmitry V. Levin wrote:
-> On Mon, Jul 29, 2019 at 05:35:30PM +0800, kernel test robot wrote:
-> > FYI, we noticed the following commit (built with gcc-7):
-> > 
-> > commit: 201766a20e30f982ccfe36bebfad9602c3ff574a ("ptrace: add PTRACE_GET_SYSCALL_INFO request")
-> > https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > 
-> > in testcase: kernel_selftests
-> > with following parameters:
-> > 
-> > 	group: kselftests-02
-> > 
-> > test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
-> > test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
-> 
-> The URL above also says: "Tests are intended to be run after building,
-> installing and booting a kernel".
-> 
-> Please build selftests with installed kernel headers corresponding to the
-> installed kernel.
-> 
-> Alternatively, tools/testing/selftests/lib.mk could be extended
-> to include uapi headers from the kernel tree into CPPFLAGS, e.g.
-> 
-> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-> index 1c8a1963d03f..b5f4f0fb8eeb 100644
-> --- a/tools/testing/selftests/lib.mk
-> +++ b/tools/testing/selftests/lib.mk
-> @@ -10,6 +10,9 @@ ifeq (0,$(MAKELEVEL))
->  endif
->  selfdir = $(realpath $(dir $(filter %/lib.mk,$(MAKEFILE_LIST))))
->  
-> +uapi_dir = $(realpath $(selfdir)/../../../include/uapi)
-> +CPPFLAGS += -I$(uapi_dir)
-> +
->  # The following are built by lib.mk common compile rules.
->  # TEST_CUSTOM_PROGS should be used by tests that require
->  # custom build rule and prevent common build rule use.
+On Mon, Aug 26, 2019 at 09:39:50AM -0700, David Abdurachmanov wrote:
+> I don't have the a build with SECCOMP for the board right now, so it
+> will have to wait. I just finished a new kernel (almost rc6) for Fedora,
 
-I like this solution, as it's a common problem and it solves it in one
-place for all of the selftests.
-
-Reviewed-by: Kees Cook <keescook@chromium.org>
+FWIW, I don't think this should block landing the code: all the tests
+fail without seccomp support. ;) So this patch is an improvement!
 
 -- 
 Kees Cook
