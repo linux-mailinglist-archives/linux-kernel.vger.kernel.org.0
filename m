@@ -2,131 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBA809CE80
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 13:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 155189CEA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 13:55:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731024AbfHZLst (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 07:48:49 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:31654 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730841AbfHZLss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 07:48:48 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46H9J474ncz9v6VH;
-        Mon, 26 Aug 2019 13:48:36 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=DHe4OChf; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id MtV9cCNuh1wj; Mon, 26 Aug 2019 13:48:36 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46H9J45wZjz9v6VG;
-        Mon, 26 Aug 2019 13:48:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566820116; bh=/3WuMrmdmWS/5c4f2953Y2GY9Thjm0CP+EMv8HdNY7A=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=DHe4OChf62mrSsZsw5oDG402l8JwrMpk5BSCEU2X1imYi53QpoXclriQwbQ7g+vVX
-         YB7D0NDfO/Mhpxc62/VIlNbKvWLdIAIwq2FKo/8p+hlRo2jciMygkjZQ+bPfprCiYc
-         f8KMBQzS25e/thiKiAkyJdJf6bhNv45H1KVWdMwM=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C9C218B7E1;
-        Mon, 26 Aug 2019 13:48:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 9Ki3Zbb64eje; Mon, 26 Aug 2019 13:48:41 +0200 (CEST)
-Received: from [172.25.230.103] (po15451.idsi0.si.c-s.fr [172.25.230.103])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A6AD18B7DE;
-        Mon, 26 Aug 2019 13:48:41 +0200 (CEST)
-Subject: Re: [PATCH] powerpc/time: use feature fixup in __USE_RTC() instead of
- cpu feature.
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <55c267ac6e0cd289970accfafbf9dda11a324c2e.1566802736.git.christophe.leroy@c-s.fr>
- <87blwc40i4.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <ba2a7a1f-8dcc-ec44-81d4-ef11a9e29377@c-s.fr>
-Date:   Mon, 26 Aug 2019 13:48:41 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <87blwc40i4.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1731115AbfHZLyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 07:54:13 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:47294 "EHLO
+        mail.loongson.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbfHZLyN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 07:54:13 -0400
+X-Greylist: delayed 417 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Aug 2019 07:54:11 EDT
+Received: from martinqiao.loongson.cn (unknown [10.50.122.134])
+        by mail (Coremail) with SMTP id QMiowPDxv1evxmNdnmcyAA--.271S2;
+        Mon, 26 Aug 2019 19:47:05 +0800 (CST)
+From:   QiaoChong <qiaochong@loongson.cn>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, QiaoChong <qiaochong@loongson.cn>
+Subject: [PATCH] sched/fair: update_curr changed sum_exec_runtime to 1 when sum_exec_runtime is 0 beacuse some kernel code use sum_exec_runtime==0 to test task just be forked.
+Date:   Mon, 26 Aug 2019 19:46:50 +0800
+Message-Id: <20190826114650.10948-1-qiaochong@loongson.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: QMiowPDxv1evxmNdnmcyAA--.271S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw4fWr13JF4kJF1rJrWDurg_yoW8KF1Upw
+        4DWF43trWFq340yFWDAF93Xrnxt3s3Gr4xXrn0y3WfAr4Sg34ftFy0qF4SvF4jyr97tFy3
+        Jr4SyrWxuwn5tr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUvF14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+        4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7VAKI48G6xCjnVAKz4kxM4x0x7Aq67IIx4CE
+        Vc8vx2IErcIFxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_
+        Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+        CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
+        fU0OJ5UUUUU
+X-CM-SenderInfo: 5tld0upkrqwqxorr0wxvrqhubq/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Chong Qiao <qiaochong@loongson.cn>
+
+Such as:
+cpu_cgroup_attach>
+ sched_move_task>
+  task_change_group_fair>
+   task_move_group_fair>
+    detach_task_cfs_rq>
+     vruntime_normalized>
+
+	/*
+	 * When !on_rq, vruntime of the task has usually NOT been normalized.
+	 * But there are some cases where it has already been normalized:
+	 *
+	 * - A forked child which is waiting for being woken up by
+	 *   wake_up_new_task().
+	 * - A task which has been woken up by try_to_wake_up() and
+	 *   waiting for actually being woken up by sched_ttwu_pending().
+	 */
+	if (!se->sum_exec_runtime ||
+	    (p->state == TASK_WAKING && p->sched_remote_wakeup))
+		return true;
+
+p->se.sum_exec_runtime is 0, does not mean task not been run (A forked child which is waiting for being woken up by  wake_up_new_task()).
+
+Task may have been scheduled multimes, but p->se.sum_exec_runtime is still 0, because delta_exec maybe 0 in update_curr.
+
+static void update_curr(struct cfs_rq *cfs_rq)
+{
+...
+	delta_exec = now - curr->exec_start;
+	if (unlikely((s64)delta_exec <= 0))
+		return;
+...
+
+	curr->sum_exec_runtime += delta_exec;
+...
+}
+
+Task has been run and is stopped(on_rq == 0), vruntime not been normalized, but se->sum_exec_runtime == 0.
+This cause vruntime_normalized set on_rq 1, and does not normalize vruntime.
+This may cause task use old vruntime in old cgroup, which maybe very large than task's vruntime in new cgroup.
+Which may cause task may not scheduled in run queue for long time after been waked up.
+
+Now I change sum_exec_runtime to 1 when sum_exec_runtime == 0 in update_curr to make sun_exec_runtime not 0.
+
+Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
+---
+ kernel/sched/fair.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index bc9cfeaac8bd2..c4cd6249d9d2c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -841,8 +841,15 @@ static void update_curr(struct cfs_rq *cfs_rq)
+ 		return;
+ 
+ 	delta_exec = now - curr->exec_start;
+-	if (unlikely((s64)delta_exec <= 0))
++	if (unlikely((s64)delta_exec <= 0)) {
++		/*
++		 * se.sum_exec_runtime == 0 means task is forked and wait to be run.
++		 * So here change se.sum_exec_runtime to 1, to make it not 0.
++		 */
++		if (!curr->sum_exec_runtime)
++			curr->sum_exec_runtime++;
+ 		return;
++	}
+ 
+ 	curr->exec_start = now;
+ 
+-- 
+2.17.1
 
 
-Le 26/08/2019 à 13:41, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> sched_clock(), used by printk(), calls __USE_RTC() to know
->> whether to use realtime clock or timebase.
->>
->> __USE_RTC() uses cpu_has_feature() which is initialised by
->> machine_init(). Before machine_init(), __USE_RTC() returns true,
->> leading to a program check exception on CPUs not having realtime
->> clock.
->>
->> In order to be able to use printk() earlier, use feature fixup.
->> Feature fixups are applies in early_init(), enabling the use of
->> printk() earlier.
->>
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/include/asm/time.h | 9 ++++++++-
->>   1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> The other option would be just to make this a compile time decision, eg.
-> add CONFIG_PPC_601 and use that to gate whether we use RTC.
-
-Euh ... yes OK, why not. And that would help simplify many places in the 
-code. I can propose something in that direction, but it will be a bigger 
-change.
-
-
-> 
-> Given how many 601 users there are, maybe 1?, I think that would be a
-> simpler option and avoids complicating the code / binary for everyone
-> else.
-
-However this patch doesn't complicate things more than it was with 
-cpu_has_feature() which does exactly the same but using static keys, 
-does it ?
-
-Christophe
-
-
-> 
-> cheers
-> 
->> diff --git a/arch/powerpc/include/asm/time.h b/arch/powerpc/include/asm/time.h
->> index 54f4ec1f9fab..3455cb54c333 100644
->> --- a/arch/powerpc/include/asm/time.h
->> +++ b/arch/powerpc/include/asm/time.h
->> @@ -42,7 +42,14 @@ struct div_result {
->>   /* Accessor functions for the timebase (RTC on 601) registers. */
->>   /* If one day CONFIG_POWER is added just define __USE_RTC as 1 */
->>   #ifdef CONFIG_PPC_BOOK3S_32
->> -#define __USE_RTC()	(cpu_has_feature(CPU_FTR_USE_RTC))
->> +static inline bool __USE_RTC(void)
->> +{
->> +	asm_volatile_goto(ASM_FTR_IFCLR("nop;", "b %1;", %0) ::
->> +			  "i" (CPU_FTR_USE_RTC) :: l_use_rtc);
->> +	return false;
->> +l_use_rtc:
->> +	return true;
->> +}
->>   #else
->>   #define __USE_RTC()	0
->>   #endif
->> -- 
->> 2.13.3
