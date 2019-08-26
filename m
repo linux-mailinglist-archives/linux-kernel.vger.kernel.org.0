@@ -2,142 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E526F9CAFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:53:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 264679CB07
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730264AbfHZHxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 03:53:32 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:34419 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730066AbfHZHxb (ORCPT
+        id S1730151AbfHZHzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 03:55:53 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:52005 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727674AbfHZHzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 03:53:31 -0400
-X-Originating-IP: 87.18.63.98
-Received: from uno.localdomain (unknown [87.18.63.98])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 3EAA8FF80B;
-        Mon, 26 Aug 2019 07:53:27 +0000 (UTC)
-Date:   Mon, 26 Aug 2019 09:54:57 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] imx214: Use v4l2_ctrl_new_area helper
-Message-ID: <20190826075457.n2doitmfswywrpy6@uno.localdomain>
-References: <20190823123737.7774-1-ribalda@kernel.org>
- <20190823123737.7774-7-ribalda@kernel.org>
+        Mon, 26 Aug 2019 03:55:53 -0400
+Received: from xps13 ([83.160.161.190])
+        by smtp-cloud8.xs4all.net with ESMTPSA
+        id 29qni4ECMDqPe29qviAvEL; Mon, 26 Aug 2019 09:55:51 +0200
+Message-ID: <bc7a4421b8615732494e1f7253f4c4fe8843c1ca.camel@tiscali.nl>
+Subject: Re: Linux 5.2.10
+From:   Paul Bolle <pebolle@tiscali.nl>
+To:     Greg KH <greg@kroah.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, akpm@linux-foundation.org, jslaby@suse.cz,
+        lwn@lwn.net
+Date:   Mon, 26 Aug 2019 09:55:41 +0200
+In-Reply-To: <20190826043401.GC26547@kroah.com>
+References: <20190825144703.6518-1-sashal@kernel.org>
+         <dd3a1ec7d03888dade78db1e4c45ec1347c0815b.camel@tiscali.nl>
+         <20190826043401.GC26547@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ag5nue2vs66c2tae"
-Content-Disposition: inline
-In-Reply-To: <20190823123737.7774-7-ribalda@kernel.org>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNCRFpFNrDZDVnTeHwqGyboJIt739zLfReiIRtjrR3Sz62MVT2ledFDjxcR2tGdYtkvUgmrA7qqyC/cF/xA5SOTgoPzpS0WzFzV7h9gepJM06DW+fuBz
+ 6/qWXnmkDB+u4UJy/pycQ2LHR49BFJjqbWD1cRHqLFZCHL0KeLw+lH5E6mnHmigf2Xbzms7j7sUuw+3zN3YzZ0ZgAPytjBRW3BtXW1NzVUH8Nw5WrGcW2YZ5
+ u4TcHTly6BYPck9HvZWiR0pfEV1WXY6hUfKlnOWaPQv5A4l0novbAw8nriw8+6vnNc82d6Os5vVHrh3xJKOdsOYBodry7k4f2xUbR191m2g=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Greg KH schreef op ma 26-08-2019 om 06:34 [+0200]:
+> It's on that key already, have you refreshed your version of it?
 
---ag5nue2vs66c2tae
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+I have now. sashal@kernel.org (and another identity) is now on that key.
 
-Hi Ricardo,
+Thanks,
 
-On Fri, Aug 23, 2019 at 02:37:37PM +0200, Ricardo Ribalda Delgado wrote:
-> Instead of creating manually the V4L2_CID_UNIT_CELL_SIZE control, lets
-> use the helper.
->
 
-I think you should drop 4/7 and use directly the new helper here.
+Paul Bolle
 
-Thanks
-  j
-
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
->  drivers/media/i2c/imx214.c | 29 ++++++++---------------------
->  1 file changed, 8 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index cc0a013ba7da..625617d4c81a 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -942,26 +942,6 @@ static int __maybe_unused imx214_resume(struct device *dev)
->  	return ret;
->  }
->
-> -static void unit_size_init(const struct v4l2_ctrl *ctrl, u32 idx,
-> -		     union v4l2_ctrl_ptr ptr)
-> -{
-> -	ptr.p_area->width = 1120;
-> -	ptr.p_area->height = 1120;
-> -}
-> -
-> -static const struct v4l2_ctrl_type_ops unit_size_ops = {
-> -	.init = unit_size_init,
-> -};
-> -
-> -static struct v4l2_ctrl *new_unit_size_ctrl(struct v4l2_ctrl_handler *handler)
-> -{
-> -	static struct v4l2_ctrl_config ctrl = {
-> -		.id = V4L2_CID_UNIT_CELL_SIZE,
-> -		.type_ops = &unit_size_ops,
-> -	};
-> -
-> -	return v4l2_ctrl_new_custom(handler, &ctrl, NULL);
-> -}
->  static int imx214_probe(struct i2c_client *client)
->  {
->  	struct device *dev = &client->dev;
-> @@ -969,6 +949,10 @@ static int imx214_probe(struct i2c_client *client)
->  	static const s64 link_freq[] = {
->  		IMX214_DEFAULT_LINK_FREQ,
->  	};
-> +	struct v4l2_area unit_size = {
-> +		.width = 1120,
-> +		.height = 1120,
-> +	};
->  	int ret;
->
->  	ret = imx214_parse_fwnode(dev);
-> @@ -1050,7 +1034,10 @@ static int imx214_probe(struct i2c_client *client)
->  					     V4L2_CID_EXPOSURE,
->  					     0, 3184, 1, 0x0c70);
->
-> -	imx214->unit_size = new_unit_size_ctrl(&imx214->ctrls);
-> +	imx214->unit_size = v4l2_ctrl_new_area(&imx214->ctrls,
-> +					       &imx214_ctrl_ops,
-> +					       V4L2_CID_UNIT_CELL_SIZE,
-> +					       &unit_size);
->
->  	ret = imx214->ctrls.error;
->  	if (ret) {
-> --
-> 2.23.0.rc1
->
-
---ag5nue2vs66c2tae
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1jkFEACgkQcjQGjxah
-VjxsbA/9F2pksG16C7RtBs2UrBKqiGAbNyG2q2hAISrI+MgxbpdhXD6OY+oEydYj
-+KgNoQiTV4ODdokQejJ3YrOCg76QVmSY4Xd+LwkbgJmresPGjq1h8HsmBft854AS
-/FZ2JTEnQoPfb0BxlecHhfgj1lqHO9ePvN8Oe2r91p9kX0cwPS4KPzd4UJZZ/4wX
-0jj+DzDW98jf1rohQtJ9unTrO5UIBubHRAXNGD3z7zHXMEpJto8SVi2Ek9a8gCwN
-Su4Or4Snppr7YBVC4QlkPsxF/lxUcyW0edDdRQtfxDts3BjE5UguG/IMUj8dFsTN
-XbwDRAGUbYYIzNrzx4baXaZ+FSyqk+KbyUqH+s0lAm1ju/thHKMLBuFLXip885Qy
-+pOK76vRRjMCIuXP5vCCiIHZplVrxfyOomnTqjw1PsQ4/2ljv4Cz2cRB2pQVJECl
-cAEgdfivU+h4EP2NOh1AR47F880Vde3l0E5YPcSzTJW0QJX5pfJPvuEFBV18RjG8
-96wqHvAL2AjdoecQAcqL71MeYo3iUXH4Ed8B1EBNgT8j94QaSwK1L0Ogb1c6DtOl
-59xh3p+z1yWc1ydZofSJwzyykwnlfeUHqjeG8uYrSZNzbMF0NZr4qEu3pZEp1N0Y
-oAvjCfgcjJ16bvlmZRhNnObLJd4KyJhjYkD7s9bqSWX69TuFeeg=
-=hMhH
------END PGP SIGNATURE-----
-
---ag5nue2vs66c2tae--
