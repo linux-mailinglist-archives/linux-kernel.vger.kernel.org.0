@@ -2,185 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BD879DA02
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 01:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 444669DA04
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 01:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbfHZXdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 19:33:20 -0400
-Received: from mail-qt1-f201.google.com ([209.85.160.201]:36726 "EHLO
-        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbfHZXdS (ORCPT
+        id S1728215AbfHZXdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 19:33:32 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:61044 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726616AbfHZXd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 19:33:18 -0400
-Received: by mail-qt1-f201.google.com with SMTP id 38so19191162qtx.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 16:33:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=5FDOwwCe+APWdEQQqNbBpE6iIki5NU5vXPefDHikBmg=;
-        b=BfXwwjAuhrLzwyV49VnJL7NxDepEgABTklx9qhc6rCK5F1w2xw2LFgmzTWfEAHiPTF
-         c5v46KJZa6ts7LaEAl2UEDScmWBYH5FdRRkicG6JhCd5gzMC/MBrJM+gYNO8Y0DVWbd5
-         NXpoHq7M83Am1Y0GWNerd7Jl1ueGsflkoKLPII48XaDmWf1gZAsG9uA8s1QmT0b9GiBR
-         N55L5aExlS7kaRIdXdaPfI1XlO+g1o6LMycyymR5h1zGtC9eyWIzaUH81AY7A3AqGLvk
-         we6DYp4QKXYWKwHLDCaThtFG284KWl3dBsOd8oJmCEJHfUQZs3Chk6Cz9lgq6vY8+BVj
-         jxoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=5FDOwwCe+APWdEQQqNbBpE6iIki5NU5vXPefDHikBmg=;
-        b=hyBLa49npUaOIGXPvlZKAf6ZT2S8FUEeAx/2rEhvZ9A3CIU8Wp23gX4xuBmYoFa3Qk
-         OgBZ7WTRkTsP1tlaLF9aPxMylcmrMLWc4vgEte48VKLrPpS73rSws1IUVBsC1iTVp3p8
-         LtNuiCVX2bkeJZO3rfEex/n0UcPxotZ4AsJNsBhM3CGgWxFf08drM7QbAuz8W0N3WRdC
-         x8l47pEnWHSN67h0Il0FOIkYcYxhRKhbCNB9BG6tdgmk5It3BGOkba9pW8lasPtHRiGO
-         2nW7r25FMWGkMsF4bII2MTv51yKvp1J+ZwZyAYAEJZBlEiQVY0zFZpY/rxUVQN2oBwei
-         nYeQ==
-X-Gm-Message-State: APjAAAW1NZRfeDhuz90AF9QRIfEz+louFqhqzZb+Irhs4OIKZDUEtDzu
-        8B7V01wdOMCi4n0gwGsrW24pJHahJNlRT9+mrw==
-X-Google-Smtp-Source: APXvYqyDImAPzfr0N58wa/tY2W7Edq/krF5d6f1tRQcHXjvREDYlfn3oZlUNIZ7WqjjdFcG1GxtewDdCNH22t72/9w==
-X-Received: by 2002:ad4:45d3:: with SMTP id v19mr17564793qvt.90.1566862396925;
- Mon, 26 Aug 2019 16:33:16 -0700 (PDT)
-Date:   Mon, 26 Aug 2019 16:32:40 -0700
-In-Reply-To: <20190826233240.11524-1-almasrymina@google.com>
-Message-Id: <20190826233240.11524-7-almasrymina@google.com>
-Mime-Version: 1.0
-References: <20190826233240.11524-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-Subject: [PATCH v3 6/6] hugetlb_cgroup: Add hugetlb_cgroup reservation docs
-From:   Mina Almasry <almasrymina@google.com>
-To:     mike.kravetz@oracle.com
-Cc:     shuah@kernel.org, almasrymina@google.com, rientjes@google.com,
-        shakeelb@google.com, gthelen@google.com, akpm@linux-foundation.org,
-        khalid.aziz@oracle.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-        cgroups@vger.kernel.org, aneesh.kumar@linux.vnet.ibm.com,
-        mkoutny@suse.com
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 26 Aug 2019 19:33:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1566862409; x=1598398409;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=c7HyBE9MxmHzkUFyuO44BKPtCDc7GbdgX0jFaQ0/3tk=;
+  b=EUv8rLmncqsoi1+eqyTAtspdM8IRD/R7soVkUIL7b56Q+hUHEkW5XFxg
+   NTD+ck30XO7Gny8pcDXMYv4HtogFuqGQfP610kLvmGYMTtvXo7VN2Q80v
+   zvg7PMULXGSESZGnN30usY/r+S4ZrHYnIYX12giQ+NB9qP6TeTq2adCBt
+   V45vT9pL7KGlgl01BKvxJG2YXyeVbo2A7eQkBqM5CAMiB6WVRq5liJhow
+   dULmFJA/vr6t+FTwP2Q6sOjC4jZgjbCVC24LdLgYScM61DbWDP6SQ/a+E
+   G18mglDo4YznCQq/dolBWjdA1VyeGbqKZuIJM1slpojios3ylQx9LsRtg
+   w==;
+IronPort-SDR: eiRhv/ImHvqV5eo2bMw7mBwPC9jPPLUNa4cY1zB0/f7bF7p/WihWDl0HxhlX7oViJt4EO2wJ+Z
+ Crk3Jd9npfQPDQXvoLFkiLLUp7efWIaPKN5l0/YEdxB0cd7Z4ing5FA1kM/jxI17SAgtJ4mq7l
+ H0XPbdADeLLiHRZGSp+4uXlrZbebqDc2e1cL0dOoS7g/qthh8idWHT/LGfsLi+ChAl7xB07nDG
+ jGEgETmsSO8B/dBl5HaUgeD03Xiyyvcb1d/PmNBW+1eUNOrFD6qCuMU1V80fH0XpOy1YAiW73F
+ MmU=
+X-IronPort-AV: E=Sophos;i="5.64,435,1559491200"; 
+   d="scan'208";a="116718026"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 27 Aug 2019 07:33:27 +0800
+IronPort-SDR: voUB7PV34RQJvMk2sTpSSIUufSJRfWTO+KpsR5aYmpp22oky624eppiNhWiOjJ0JpMsY2dnAQe
+ Bs67gpV6S42GitHKJxrfjxJ4+GFg6FHi8THesfW2wIRmAYqZTmECiKPgwkpHZkRcQZWvy/44bH
+ P+6q4bSpCVScWc0H7oDGJmM8rwRMbOonVB0+7TpEOZQ3OMIO58peYrDj8JTvvYXiR/N50dOtLD
+ 3ww3QqPCjxgy+mFFTEia60KAPgXwB80tpqspwb1t3FOemN09SqnmkP+AZ58jsZ4bpyj7B+HR88
+ nMWiDlimWbs0H+ZTUDsPxQB+
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Aug 2019 16:30:39 -0700
+IronPort-SDR: 9Zd5jC5jSoaARYwrFGDSti3pbB6lV95YOCcz73lSwbo+WPdag1frpWP9ueLJKzk5qW84IRcSIg
+ gqU0EwZtUo6rBWwZY4mBlFoz54S+JaxYhL6sn2qZS6QhKTGClyGt7aD6oIfJBA8957JeJOl1Ie
+ V205cfZVDjfU2n4BhwdLOpNTeK44dXkO+whV6x/gR23XDg+ZgaA8Ie1ZPay3IEvj0sW7iiObOf
+ g8vgyCN/8zcUz/VVPoP3ubRJPV0bIjatVXe5qrz6qC9NsZANvj2kau9OGfKxN7xQiSH5GRk7Fl
+ eRw=
+WDCIronportException: Internal
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip01.wdc.com with ESMTP; 26 Aug 2019 16:33:27 -0700
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Alan Kao <alankao@andestech.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Anup Patel <anup@brainfault.org>, Gary Guo <gary@garyguo.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-riscv@lists.infradead.org,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [RFC PATCH 0/2] Add support for SBI version to 0.2 
+Date:   Mon, 26 Aug 2019 16:32:54 -0700
+Message-Id: <20190826233256.32383-1-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add docs for how to use hugetlb_cgroup reservations, and their behavior.
+This patch series aims to add support for SBI specification version
+v0.2. It doesn't break compatibility with any v0.1 implementation.
+Internally, all the v0.1 calls are just renamed to legacy to be in
+sync with specification [1].
 
----
- .../admin-guide/cgroup-v1/hugetlb.rst         | 84 ++++++++++++++++---
- 1 file changed, 73 insertions(+), 11 deletions(-)
+The patches for v0.2 support in OpenSBI are available at
+http://lists.infradead.org/pipermail/opensbi/2019-August/000422.html
 
-diff --git a/Documentation/admin-guide/cgroup-v1/hugetlb.rst b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-index a3902aa253a96..cc6eb859fc722 100644
---- a/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-+++ b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-@@ -2,13 +2,6 @@
- HugeTLB Controller
- ==================
+[1] https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
 
--The HugeTLB controller allows to limit the HugeTLB usage per control group and
--enforces the controller limit during page fault. Since HugeTLB doesn't
--support page reclaim, enforcing the limit at page fault time implies that,
--the application will get SIGBUS signal if it tries to access HugeTLB pages
--beyond its limit. This requires the application to know beforehand how much
--HugeTLB pages it would require for its use.
--
- HugeTLB controller can be created by first mounting the cgroup filesystem.
+Atish Patra (2):
+RISC-V: Mark existing SBI as legacy SBI.
+RISC-V: Add basic support for SBI v0.2
 
- # mount -t cgroup -o hugetlb none /sys/fs/cgroup
-@@ -28,10 +21,14 @@ process (bash) into it.
+arch/riscv/include/asm/sbi.h | 109 +++++++++++++++++++++++++----------
+arch/riscv/kernel/Makefile   |   1 +
+arch/riscv/kernel/sbi.c      |  50 ++++++++++++++++
+arch/riscv/kernel/setup.c    |   2 +
+4 files changed, 131 insertions(+), 31 deletions(-)
+create mode 100644 arch/riscv/kernel/sbi.c
 
- Brief summary of control files::
-
-- hugetlb.<hugepagesize>.limit_in_bytes     # set/show limit of "hugepagesize" hugetlb usage
-- hugetlb.<hugepagesize>.max_usage_in_bytes # show max "hugepagesize" hugetlb  usage recorded
-- hugetlb.<hugepagesize>.usage_in_bytes     # show current usage for "hugepagesize" hugetlb
-- hugetlb.<hugepagesize>.failcnt		   # show the number of allocation failure due to HugeTLB limit
-+ hugetlb.<hugepagesize>.reservation_limit_in_bytes     # set/show limit of "hugepagesize" hugetlb reservations
-+ hugetlb.<hugepagesize>.reservation_max_usage_in_bytes # show max "hugepagesize" hugetlb reservations recorded
-+ hugetlb.<hugepagesize>.reservation_usage_in_bytes     # show current reservations for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.reservation_failcnt            # show the number of allocation failure due to HugeTLB reservation limit
-+ hugetlb.<hugepagesize>.limit_in_bytes                 # set/show limit of "hugepagesize" hugetlb faults
-+ hugetlb.<hugepagesize>.max_usage_in_bytes             # show max "hugepagesize" hugetlb  usage recorded
-+ hugetlb.<hugepagesize>.usage_in_bytes                 # show current usage for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.failcnt                        # show the number of allocation failure due to HugeTLB usage limit
-
- For a system supporting three hugepage sizes (64k, 32M and 1G), the control
- files include::
-@@ -40,11 +37,76 @@ files include::
-   hugetlb.1GB.max_usage_in_bytes
-   hugetlb.1GB.usage_in_bytes
-   hugetlb.1GB.failcnt
-+  hugetlb.1GB.reservation_limit_in_bytes
-+  hugetlb.1GB.reservation_max_usage_in_bytes
-+  hugetlb.1GB.reservation_usage_in_bytes
-+  hugetlb.1GB.reservation_failcnt
-   hugetlb.64KB.limit_in_bytes
-   hugetlb.64KB.max_usage_in_bytes
-   hugetlb.64KB.usage_in_bytes
-   hugetlb.64KB.failcnt
-+  hugetlb.64KB.reservation_limit_in_bytes
-+  hugetlb.64KB.reservation_max_usage_in_bytes
-+  hugetlb.64KB.reservation_usage_in_bytes
-+  hugetlb.64KB.reservation_failcnt
-   hugetlb.32MB.limit_in_bytes
-   hugetlb.32MB.max_usage_in_bytes
-   hugetlb.32MB.usage_in_bytes
-   hugetlb.32MB.failcnt
-+  hugetlb.32MB.reservation_limit_in_bytes
-+  hugetlb.32MB.reservation_max_usage_in_bytes
-+  hugetlb.32MB.reservation_usage_in_bytes
-+  hugetlb.32MB.reservation_failcnt
-+
-+
-+1. Reservation limits
-+
-+The HugeTLB controller allows to limit the HugeTLB reservations per control
-+group and enforces the controller limit at reservation time. Reservation limits
-+are superior to Page fault limits (see section 2), since Reservation limits are
-+enforced at reservation time, and never causes the application to get SIGBUS
-+signal. Instead, if the application is violating its limits, then it gets an
-+error on reservation time, i.e. the mmap or shmget return an error.
-+
-+
-+2. Page fault limits
-+
-+The HugeTLB controller allows to limit the HugeTLB usage (page fault) per
-+control group and enforces the controller limit during page fault. Since HugeTLB
-+doesn't support page reclaim, enforcing the limit at page fault time implies
-+that, the application will get SIGBUS signal if it tries to access HugeTLB
-+pages beyond its limit. This requires the application to know beforehand how
-+much HugeTLB pages it would require for its use.
-+
-+
-+3. Caveats with shared memory
-+
-+a. Charging and uncharging:
-+
-+For shared hugetlb memory, both hugetlb reservation and usage (page faults) are
-+charged to the first task that causes the memory to be reserved or faulted,
-+and all subsequent uses of this reserved or faulted memory is done without
-+charging.
-+
-+Shared hugetlb memory is only uncharged when it is unreseved or deallocated.
-+This is usually when the hugetlbfs file is deleted, and not when the task that
-+caused the reservation or fault has exited.
-+
-+b. Interaction between reservation limit and fault limit.
-+
-+Generally, it's not recommended to set both of the reservation limit and fault
-+limit in a cgroup. For private memory, the fault usage cannot exceed the
-+reservation usage, so if you set both, one of those limits will be useless.
-+
-+For shared memory, a cgroup's fault usage may be greater than its reservation
-+usage, so some care needs to be taken. Consider this example:
-+
-+- Task A reserves 4 pages in a shared hugetlbfs file. Cgroup A will get
-+  4 reservations charged to it and no faults charged to it.
-+- Task B reserves and faults the same 4 pages as Task A. Cgroup B will get no
-+  reservation charge, but will get charged 4 faulted pages. If Cgroup B's limit
-+  is less than 4, then Task B will get a SIGBUS.
-+
-+For the above scenario, it's not recommended for the userspace to set both
-+reservation limits and fault limits, but it is still allowed to in case it sees
-+some use for it.
 --
-2.23.0.187.g17f5b7556c-goog
+2.21.0
+
