@@ -2,125 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C5429D74F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9DB39D75D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:18:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388050AbfHZUOp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:14:45 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45261 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388018AbfHZUOh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:14:37 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v12so13133147oic.12;
-        Mon, 26 Aug 2019 13:14:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ONmOWKvBkqEH/6EhYi4M9WtYliZ0ZD+WEF16FDwCz2Y=;
-        b=aElc5Gqu7IZBqMgUQlepAcFFQWhg3XUita3Eg48UrKP0LL0M4v2VpLgA0T0riCudaI
-         C/AwEdZxwkUixjJ64yc8WmUom07VWuhXwSis05lPzZiJEQjao0kEClo/Ga3mseYQjgaM
-         GBIs/NxcfrVxnaFmGB3juSONtjL8eNPmXr0LQ1EqdFEye9NqLG3FNslS/39pPNpb6Hxe
-         Cb7xlSLkyd9W2VGPulQC5KERanyiTITn7n6xGZLAcYzZNk/o4b2on8xR5Q5AgydYi52A
-         95ckrj+cWwVuA3H8l4F6K2f4d/O9ozcnAj/RfuZ8Qv5Mh6t0gJrjHxsD+CiZHRvoRBBV
-         f4Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ONmOWKvBkqEH/6EhYi4M9WtYliZ0ZD+WEF16FDwCz2Y=;
-        b=FaUqC75xx5Lvesm3PbYXcJEvIelZnRNcjVmusiyCUzLfTA4+3myUoN1fRTcLLghBzQ
-         lrmtxEzfKOFG4QxuUVfvKuvmyX91FGop8undXj+6qXzp8Pqbgap8H4maK5Yihmjbb/na
-         yTdI2HUf5oOM9TWsDKJmGih77/49cH41NK3fMUAfCI3tNf8N73Vsi9onibJeTptAaxL4
-         F7Rm63socaZQyyA9Y/9sawVLocLQ0njF1Y/r60MdWY3+tYWCkmCb/hCvRrkIyr55Sose
-         kR4ssyMkLn/SH17WFYyMq3L3v4IHl2Ap2MV6OHrVDjqyhVqLQWUsHbWw5kUtvO0W7ynk
-         +JrQ==
-X-Gm-Message-State: APjAAAXYjLlsBx0na7p5KsMHNdYdnvmldad0gpg8QHnpWSwCgtBGPIST
-        bXH7W10FLYvjM7k1nbrvX38sQnv2LNMQJZoBPyg=
-X-Google-Smtp-Source: APXvYqx+wsqBR7LhuXaoGevhgB1lph1QB9TxB004jttF4vjCHdjjEMk/vm+aspko9Z9DT+mYvMOr4vitH26F4N8l39M=
-X-Received: by 2002:a05:6808:8e2:: with SMTP id d2mr14160818oic.47.1566850476997;
- Mon, 26 Aug 2019 13:14:36 -0700 (PDT)
+        id S2387485AbfHZUSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:18:47 -0400
+Received: from mail-eopbgr140082.outbound.protection.outlook.com ([40.107.14.82]:27874
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729144AbfHZUSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 16:18:46 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XsAwmh43uCS27MQ18KLfIZ4coBcAuuwJP7SwlLK2JPEIOQAo6frZJNB+IYUS4Ldu6F0dTp4IzSGi7bMpDIeSsURgJB3QY8323RQHXr6xxYAkSIz+Gxd9awuyikuhhs5XMUidvzuJ9QJqBPB9o/8fzMxpuxNte8Z/T7UmJZs+NY+Xb3cYc7nFdQSI1YOOAsbzjJFMVCTUDRlPzoSo6gJsGVoxNElr9y3r4sl84F+/3E8mLkodG1h5FnHkdSdKvZZcE+i0aulNuHH+kXUka3G7dkdtZtY0jn9Y+Zt+b5OIDn8fFBBzoTgmZlrf1bDQ6rXwHHGNZpK6u5cBCNnXIplXPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=htM6yOe02qdDxP4e6/9WlBeq0RxH8gOR9o57K28N5xw=;
+ b=jyBXKp++KWIe9zeLJDwktbgwdOl9pWaXPEOTndF6HkL6P3ucWwU1vtErQTawmmseOvegvHTi7cQYwQFTGeKV0OzAVb/ynOu4Pn+PZ2hkPcOeDtKK28T13GcR+iAgHytQRwh6aVO1ZevZfoUQSVFg4VQNx7+TV2A/1aVKLhZBVP0sgRRTdNAilwIPD1AYfEXTIJDQO9zG0X7MJDqbFJfJPewj4SChbJRU3lFuPyTzua1IzMXdDZfyYMfoRM03MHxoqhZaHgdOx8K962a842zc0bva87vj2mLUq48cYEBFp56io0PB//hI4bPFF4qCtDP2Oxw8/Nmj5ZTNDwvAZqAAUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=htM6yOe02qdDxP4e6/9WlBeq0RxH8gOR9o57K28N5xw=;
+ b=ZDzBaEHMqdcSwfZliTRiN4rTw9Jck92KcX0MQp41jkzTOnxaNMRyMBdD44aEk9aAp1z/PQsyN2qFSpmUpHeUcCM1a1i0OhMluGBdt17c5jWV8CDM62SVvJVjdCJ99CBEE4o8QK9ySj6yKVw2thCMJGv4R8rpG2LU99z35cMx3b4=
+Received: from HE1PR0501MB2763.eurprd05.prod.outlook.com (10.172.125.17) by
+ HE1PR0501MB2425.eurprd05.prod.outlook.com (10.168.124.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Mon, 26 Aug 2019 20:18:41 +0000
+Received: from HE1PR0501MB2763.eurprd05.prod.outlook.com
+ ([fe80::a561:bcc6:10ab:d06a]) by HE1PR0501MB2763.eurprd05.prod.outlook.com
+ ([fe80::a561:bcc6:10ab:d06a%10]) with mapi id 15.20.2178.023; Mon, 26 Aug
+ 2019 20:18:41 +0000
+From:   Saeed Mahameed <saeedm@mellanox.com>
+To:     "cai@lca.pw" <cai@lca.pw>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC:     Eran Ben Elisha <eranbe@mellanox.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Feras Daoud <ferasda@mellanox.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        Moshe Shemesh <moshe@mellanox.com>
+Subject: Re: [PATCH] net/mlx5: fix a -Wstringop-truncation warning
+Thread-Topic: [PATCH] net/mlx5: fix a -Wstringop-truncation warning
+Thread-Index: AQHVWezn79S9mYXS9UOCwXmOlPmrCacJTW+AgASVnIA=
+Date:   Mon, 26 Aug 2019 20:18:41 +0000
+Message-ID: <9eb82b4de408d5f969c1df069d6b4c76a83e9ed7.camel@mellanox.com>
+References: <1566590183-9898-1-git-send-email-cai@lca.pw>
+         <20190823.151809.442664848668672070.davem@davemloft.net>
+In-Reply-To: <20190823.151809.442664848668672070.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=saeedm@mellanox.com; 
+x-originating-ip: [209.116.155.178]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 84ea3c80-3204-465b-c8bb-08d72a629691
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:HE1PR0501MB2425;
+x-ms-traffictypediagnostic: HE1PR0501MB2425:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <HE1PR0501MB24252E8C06BC887F839FB5BCBEA10@HE1PR0501MB2425.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2582;
+x-forefront-prvs: 01415BB535
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(39860400002)(136003)(366004)(376002)(199004)(189003)(229853002)(91956017)(76116006)(6116002)(305945005)(3846002)(2906002)(107886003)(66066001)(53936002)(7736002)(478600001)(6246003)(76176011)(256004)(446003)(11346002)(186003)(36756003)(486006)(2501003)(86362001)(476003)(2616005)(26005)(316002)(6486002)(118296001)(99286004)(558084003)(110136005)(58126008)(6506007)(102836004)(71190400001)(71200400001)(54906003)(4326008)(6436002)(81166006)(81156014)(64756008)(8936002)(66946007)(66476007)(66556008)(66446008)(6512007)(25786009)(8676002)(5660300002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0501MB2425;H:HE1PR0501MB2763.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 14ALgps/fQKXDLF+Q3x397LOHhIosqD/OfEKwxzCNqgmYeWWaFcXYrzT8oYBlax22PNfBfixb3eNYp9qQ+FyGitMZ3RzhULr9VHvH2kRflV09AjOJE8rGZKvWnAozvVClE5nMMfMNuLgi5+f5VQ/MXdvRfuqTUIb+AyG3sHTds3WIStEpyd2TeNaMQhOBdxr3/MNgXFnpChQxIzg6tbwMjcTrPRZc2Pbyjqw37gaFjiDsYtnXgfK14z/KYmPOODkLb0L5W8ouVrKRS/+wpfxO/C3vDYWE/LzWk3w8xMnaUXBh2X1Z/K9IfUXPQXjnBHtq5IT/p+hz8ZCO2umOaRqkWNrMq+ZJjv4JeAaf75iGyvOeJZk4D59y0LEVJxD8/mDS3x3GyK6DFhEd1q/QLBlF1+XunKpMXcjDUR15YExGb0=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9460794B6C09694DA4274ABE5DE23ACF@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <9bd455a628d4699684c0f9d439b64af1535cccc6.1566208109.git.eswara.kota@linux.intel.com>
- <20190824210302.3187-1-martin.blumenstingl@googlemail.com>
- <2c71003f-06d1-9fe2-2176-94ac816b40e3@linux.intel.com> <f1cb5ba9-b57a-971a-5a2f-1f13e0cc9507@linux.intel.com>
-In-Reply-To: <f1cb5ba9-b57a-971a-5a2f-1f13e0cc9507@linux.intel.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 26 Aug 2019 22:14:25 +0200
-Message-ID: <CAFBinCDojCN0Gxpa0fyh7t8TdvTLc_dwgJgMxC4PoAszK==BKg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] dwc: PCI: intel: Intel PCIe RC controller driver
-To:     Dilip Kota <eswara.kota@linux.intel.com>
-Cc:     "Chuan Hua, Lei" <chuanhua.lei@linux.intel.com>,
-        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com,
-        hch@infradead.org, jingoohan1@gmail.com,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        qi-ming.wu@intel.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84ea3c80-3204-465b-c8bb-08d72a629691
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 20:18:41.6373
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: sVrrw5JTfOLS0/J0pouPgwYMTjVByRxEW0EL7nq4H5MzChdOZHj6qat/Pnvu72H3TbAo3NVV6EAXyUWicFCL0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0501MB2425
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dilip,
-
-On Mon, Aug 26, 2019 at 8:42 AM Dilip Kota <eswara.kota@linux.intel.com> wrote:
-[...]
-> intel_pcie_port structure is having "struct dw_pcie" as mentioned below:
->
-> struct intel_pcie_port {
->         struct dw_pcie          *pci;
->         unsigned int            id; /* Physical RC Index */
->         void __iomem            *app_base;
->         struct gpio_desc        *reset_gpio;
-> [...]
-> };
->
-> Almost all the drivers are following the same way. I don't see any issue in this way.
-> Please help me with more description if you see an issue here.
->
-> struct qcom_pcie {
-> struct dw_pcie *pci;
-> Ref: https://elixir.bootlin.com/linux/v5.3-rc6/source/drivers/pci/controller/dwc/pcie-qcom.c
->
-> struct armada8k_pcie {
-> struct dw_pcie *pci;
-> Ref: https://elixir.bootlin.com/linux/v5.3-rc6/source/drivers/pci/controller/dwc/pcie-armada8k.c
->
-> struct artpec6_pcie {
-> struct dw_pcie *pci;
-> Ref: https://elixir.bootlin.com/linux/v5.3-rc6/source/drivers/pci/controller/dwc/pcie-artpec6.c
->
-> struct kirin_pcie {
-> struct dw_pcie *pci;
-> Ref: https://elixir.bootlin.com/linux/v5.3-rc6/source/drivers/pci/controller/dwc/pcie-kirin.c
->
-> struct spear13xx_pcie {
-> struct dw_pcie *pci;
-> Ref: https://elixir.bootlin.com/linux/v5.3-rc6/source/drivers/pci/controller/dwc/pcie-spear13xx.c
-thank you for this detailed list.
-it seems that I picked the minority of drivers as "reference" where
-it's implemented differently:
-
-first example: pci-meson
-  struct meson_pcie {
-    struct dw_pcie pci;
-    ...
-  };
-
-second example: pcie-tegra194 (only in -next, will be part of v5.4)
-  struct tegra_pcie_dw {
-    ...
-    struct dw_pcie pci;
-    ...
-  };
-
-so some drivers store a pointer pointer to the dw_pcie struct vs.
-embedding the dw_pcie struct directly.
-as far as I know the result will be equal, except that you don't have
-to use a second devm_kzalloc for struct dw_pcie (and thus reducing
-memory fragmentation).
-
-
-Martin
+T24gRnJpLCAyMDE5LTA4LTIzIGF0IDE1OjE4IC0wNzAwLCBEYXZpZCBNaWxsZXIgd3JvdGU6DQo+
+IFNhZWVkLCBJIGFzc3VtZSBJJ2xsIGdldCB0aGlzIGZyb20geW91Lg0KDQpZZXMsIGkgd2lsbCBo
+YW5kbGUgaXQuDQo=
