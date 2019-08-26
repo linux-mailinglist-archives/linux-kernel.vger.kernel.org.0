@@ -2,153 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D73B9C7C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 05:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 354079C7C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 05:19:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729589AbfHZDSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 23:18:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37046 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726434AbfHZDSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 23:18:31 -0400
-Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C25A2070B;
-        Mon, 26 Aug 2019 03:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566789510;
-        bh=P7oPsfV6A0jtk+MZWB9QHUi0b3uNU8xu4OT8knJjVa8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1K7Herj2qVxuRZLdPAV/Cv9TvLbxJbtCpuG0CWOHV0lL3dB+sSx4aZJtbypAx7O9g
-         VOTCVwzOmNcB1vLQP/IvyW1uOZIMqZCre7rRHOzGNMa0xcWmf0fOY/VBUAk4BbAqX1
-         4NZcjANnRUM+4zIKKwzJbDo6p9wpVEISMhcFmhqM=
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3 14/19] tracing/boot: Add synthetic event support
-Date:   Mon, 26 Aug 2019 12:18:24 +0900
-Message-Id: <156678950390.21459.4719180337950500537.stgit@devnote2>
+        id S1729614AbfHZDSu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 23:18:50 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39787 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfHZDSu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 23:18:50 -0400
+Received: by mail-pl1-f196.google.com with SMTP id z3so9296722pln.6;
+        Sun, 25 Aug 2019 20:18:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NrmwNN1a7FGUuY5qZRKkyXWwIR2YCcfzZoksPdLin0A=;
+        b=TlmzPxPucUxy5LwBsS7cLyW0JyboB7rRDlpCi3bqxUn8WWIUEcVhXfevJw8y+ngh5o
+         ABS6ViPcpC5pbIzJEG+5InBrdHHZG4QxkfB//kP8BUE0mP6Nk5NlUvOrHXpgFx2O7lzC
+         Zm8EUvDqXjPmgT+89CzdmY9b3RnY2i0TcSgPZLDM3gu8obw64BQTiSTlOhm96NwE2H9C
+         PaTHppJAQ1JOk0sYsasSGX/as+2dwAHOLkqb9kGmsfXPFNEEhfZCs0Jlrg3/UC2dGICn
+         ThWYOWzD3USGp59rwbvDpRwfvvwLbMTxozpmirBDOF7d/N5uRY/8u0xNdcUPyXV5HkhE
+         GEFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NrmwNN1a7FGUuY5qZRKkyXWwIR2YCcfzZoksPdLin0A=;
+        b=t0H+l4h4RxoA43zgauFz6MhqPplDNmH+H55FMKwjWVXeovZAS11VbayuQBEunKXZj2
+         jagJXaLIgnIUBnGiV2Ss7iJbPJDAUGXoGDpqOJOmtqCUbU1YEECxlb0KL1Ki/FvoGP1r
+         VUEQ7/c7oOXMIJgf/JGFKcUh/h/Eq0MPl1S/xPjWgDq5MRN+S8SgqMyhw8ZtnUKsH6uQ
+         JH57J7UEnZXi8lHwx7A8nFnMXB7fxTlt3WfHLUnbJvWSTQ2pOplVuwTL3AOmAxLHnGmo
+         lhhxLuKJLVIZ0Q/9Au/RFav8fWSsoKnDBFzxuOLuBugy63GYJn9CsF5222nrSc+pY6k/
+         aRBQ==
+X-Gm-Message-State: APjAAAXt/nFGnNv/dOItbF5dLjzywhG1LaDtJU3X6SjFTFGwusP8MIEr
+        WwFnFWmAMEMSIacXN8fWOqk=
+X-Google-Smtp-Source: APXvYqxMYZuZCrmRgtjqP5oL6VKke8iabzvZGj6YOxl8t7JDWy+bH+CiS8SA0I4byANXZmgBLG/uvQ==
+X-Received: by 2002:a17:902:b115:: with SMTP id q21mr16077835plr.76.1566789529424;
+        Sun, 25 Aug 2019 20:18:49 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id y23sm12565905pfr.86.2019.08.25.20.18.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Aug 2019 20:18:48 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH 0/5] a few fixes for sprd's sd host controller
+Date:   Mon, 26 Aug 2019 11:18:25 +0800
+Message-Id: <20190826031830.30931-1-zhang.lyra@gmail.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <156678933823.21459.4100380582025186209.stgit@devnote2>
-References: <156678933823.21459.4100380582025186209.stgit@devnote2>
-User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add synthetic event node support. The synthetic event is a kind of
-event node, but the group name is "synthetic".
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
- - ftrace.event.synthetic.EVENT.fields = FIELD[, FIELD2...];
-   Defines new synthetic event with FIELDs. Each field should be
-   "type varname".
+With this patch-set, both sd card and mmc can be setup.  This patch-set was
+verified on Unisoc's Whale2 and another mobile phone platform SC9863A.
 
-The synthetic node requires "fields" string arraies, which defines
-the fields as same as tracing/synth_events interface.
+Chunyan Zhang (5):
+  mmc: sdhci-sprd: fixed incorrect clock divider
+  mmc: sdhci: sprd: add get_ro hook function
+  mmc: sdhci: sprd: add SDHCI_QUIRK2_PRESET_VALUE_BROKEN
+  mms: sdhci: sprd: add SDHCI_QUIRK_BROKEN_CARD_DETECTION
+  mmc: sdhci: sprd: clear the UHS-I modes read from registers
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- kernel/trace/trace_boot.c        |   47 ++++++++++++++++++++++++++++++++++++++
- kernel/trace/trace_events_hist.c |    5 ++++
- 2 files changed, 52 insertions(+)
+ drivers/mmc/host/sdhci-sprd.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
-index 40c89c7ceee0..2e9fddff660f 100644
---- a/kernel/trace/trace_boot.c
-+++ b/kernel/trace/trace_boot.c
-@@ -142,6 +142,50 @@ trace_boot_add_kprobe_event(struct skc_node *node, const char *event)
- }
- #endif
- 
-+#ifdef CONFIG_HIST_TRIGGERS
-+extern int synth_event_run_command(const char *command);
-+
-+static int __init
-+trace_boot_add_synth_event(struct skc_node *node, const char *event)
-+{
-+	struct skc_node *anode;
-+	char buf[MAX_BUF_LEN], *q;
-+	const char *p;
-+	int len, delta, ret;
-+
-+	len = ARRAY_SIZE(buf);
-+	delta = snprintf(buf, len, "%s", event);
-+	if (delta >= len) {
-+		pr_err("Event name is too long: %s\n", event);
-+		return -E2BIG;
-+	}
-+	len -= delta; q = buf + delta;
-+
-+	skc_node_for_each_array_value(node, "fields", anode, p) {
-+		delta = snprintf(q, len, " %s;", p);
-+		if (delta >= len) {
-+			pr_err("fields string is too long: %s\n", p);
-+			return -E2BIG;
-+		}
-+		len -= delta; q += delta;
-+	}
-+
-+	ret = synth_event_run_command(buf);
-+	if (ret < 0)
-+		pr_err("Failed to add synthetic event: %s\n", buf);
-+
-+
-+	return ret;
-+}
-+#else
-+static inline int __init
-+trace_boot_add_synth_event(struct skc_node *node, const char *event)
-+{
-+	pr_err("Synthetic event is not supported.\n");
-+	return -ENOTSUPP;
-+}
-+#endif
-+
- static void __init
- trace_boot_init_one_event(struct trace_array *tr, struct skc_node *gnode,
- 			  struct skc_node *enode)
-@@ -157,6 +201,9 @@ trace_boot_init_one_event(struct trace_array *tr, struct skc_node *gnode,
- 	if (!strcmp(group, "kprobes"))
- 		if (trace_boot_add_kprobe_event(enode, event) < 0)
- 			return;
-+	if (!strcmp(group, "synthetic"))
-+		if (trace_boot_add_synth_event(enode, event) < 0)
-+			return;
- 
- 	mutex_lock(&event_mutex);
- 	file = find_event_file(tr, group, event);
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index db973928e580..e7f5d0a353e2 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -1343,6 +1343,11 @@ static int create_or_delete_synth_event(int argc, char **argv)
- 	return ret == -ECANCELED ? -EINVAL : ret;
- }
- 
-+int synth_event_run_command(const char *command)
-+{
-+	return trace_run_command(command, create_or_delete_synth_event);
-+}
-+
- static int synth_event_create(int argc, const char **argv)
- {
- 	const char *name = argv[0];
+-- 
+2.20.1
 
