@@ -2,98 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7468D9C9BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 08:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42C119C9C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:01:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729828AbfHZG7g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 02:59:36 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:7685 "EHLO pegase1.c-s.fr"
+        id S1729843AbfHZHBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 03:01:42 -0400
+Received: from mga09.intel.com ([134.134.136.24]:51733 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729487AbfHZG7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 02:59:36 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46H2tV36fcz9vBLK;
-        Mon, 26 Aug 2019 08:59:30 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=BF2Wd3vW; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id opuO-a8eCCRS; Mon, 26 Aug 2019 08:59:30 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46H2tV24bNz9vBLJ;
-        Mon, 26 Aug 2019 08:59:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566802770; bh=8j5mwu9pWK20Qk1oNaDurAISpRT0outYGtUkNA7dR4k=;
-        h=From:Subject:To:Cc:Date:From;
-        b=BF2Wd3vWQzhrPPDonMt+g0Q/G87ECs0Rhh7ErEOA6zVBImOOAzRhLkI5PN4fiQJWI
-         zc6VTVvbVbdxsC24JX6UnyiHrm7l/jGcHALyAXr/Kr0mSSWQHcQVMuDILygvzOU/aa
-         9+KkaAHurSU5hykFmHu5ZSNNGO0hC6F79gQb/+8I=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E464A8B7CE;
-        Mon, 26 Aug 2019 08:59:34 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id mFg2us_BdCCW; Mon, 26 Aug 2019 08:59:34 +0200 (CEST)
-Received: from pc16032vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.103])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id CB6AF8B7B9;
-        Mon, 26 Aug 2019 08:59:34 +0200 (CEST)
-Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 9DAB1672A8; Mon, 26 Aug 2019 06:59:34 +0000 (UTC)
-Message-Id: <55c267ac6e0cd289970accfafbf9dda11a324c2e.1566802736.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/time: use feature fixup in __USE_RTC() instead of cpu
- feature.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 26 Aug 2019 06:59:34 +0000 (UTC)
+        id S1729251AbfHZHBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 03:01:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Aug 2019 00:01:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,431,1559545200"; 
+   d="scan'208";a="209259842"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 26 Aug 2019 00:01:40 -0700
+Received: from [10.226.39.22] (ekotax-mobl.gar.corp.intel.com [10.226.39.22])
+        by linux.intel.com (Postfix) with ESMTP id BB1BC580444;
+        Mon, 26 Aug 2019 00:01:38 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] reset: Reset controller driver for Intel LGM SoC
+To:     Philipp Zabel <p.zabel@pengutronix.de>, robh@kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+References: <42039170811f798b8edc66bf85166aefe7dbc903.1566531960.git.eswara.kota@linux.intel.com>
+ <90cc600d6f7ded68f5a618b626bd9cffa5edf5c3.1566531960.git.eswara.kota@linux.intel.com>
+ <1566549822.3023.2.camel@pengutronix.de>
+ <15c538d7-1045-1a8c-4c8b-194a1de17a16@linux.intel.com>
+ <1566554987.3023.8.camel@pengutronix.de>
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+Message-ID: <ccb18776-c9b4-e5e6-36aa-b1054f45e196@linux.intel.com>
+Date:   Mon, 26 Aug 2019 15:01:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
+MIME-Version: 1.0
+In-Reply-To: <1566554987.3023.8.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sched_clock(), used by printk(), calls __USE_RTC() to know
-whether to use realtime clock or timebase.
 
-__USE_RTC() uses cpu_has_feature() which is initialised by
-machine_init(). Before machine_init(), __USE_RTC() returns true,
-leading to a program check exception on CPUs not having realtime
-clock.
+On 8/23/2019 6:09 PM, Philipp Zabel wrote:
+> On Fri, 2019-08-23 at 17:47 +0800, Dilip Kota wrote:
+> [...]
+>> Thanks for pointing it out.
+>> Reset is not supported on LGM platform.
+>> I will update the reset_device() definition to "return -EOPNOTSUPP"
+> In that case you can just drop intel_reset_device() completely,
+> the core checks whether ops->reset is set before trying to call it.
 
-In order to be able to use printk() earlier, use feature fixup.
-Feature fixups are applies in early_init(), enabling the use of
-printk() earlier.
+Agree, will do the same.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/time.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Regards,
+Dilip
 
-diff --git a/arch/powerpc/include/asm/time.h b/arch/powerpc/include/asm/time.h
-index 54f4ec1f9fab..3455cb54c333 100644
---- a/arch/powerpc/include/asm/time.h
-+++ b/arch/powerpc/include/asm/time.h
-@@ -42,7 +42,14 @@ struct div_result {
- /* Accessor functions for the timebase (RTC on 601) registers. */
- /* If one day CONFIG_POWER is added just define __USE_RTC as 1 */
- #ifdef CONFIG_PPC_BOOK3S_32
--#define __USE_RTC()	(cpu_has_feature(CPU_FTR_USE_RTC))
-+static inline bool __USE_RTC(void)
-+{
-+	asm_volatile_goto(ASM_FTR_IFCLR("nop;", "b %1;", %0) ::
-+			  "i" (CPU_FTR_USE_RTC) :: l_use_rtc);
-+	return false;
-+l_use_rtc:
-+	return true;
-+}
- #else
- #define __USE_RTC()	0
- #endif
--- 
-2.13.3
-
+>
+> regards
+> Philipp
