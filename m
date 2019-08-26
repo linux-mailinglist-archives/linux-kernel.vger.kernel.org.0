@@ -2,124 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 920669D2E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 123EE9D30D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733011AbfHZPiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:38:05 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37535 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731833AbfHZPiE (ORCPT
+        id S1733242AbfHZPjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:39:41 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1355 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733084AbfHZPjV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:38:04 -0400
-Received: by mail-wm1-f65.google.com with SMTP id d16so16322252wme.2;
-        Mon, 26 Aug 2019 08:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Sh9DJjMgqXE7WeVQf/Tx2s2yKAPE6CjBynjLsZuWR9M=;
-        b=lDltRrG2+uHyKNgvQKaYSjqwL/N3HD3dAh6sDbLjcYDQEFT/ZrEFtRzaZTTtvp4XRJ
-         AfxMz/PEc66hkn/zQXQZ8xVvRLmGTaAYW39jDEfwRUphMZz2xJ28RFlutTzV/Wf3Whmk
-         P4GmHK62zvCO7sGJkjrjago8qVKqe+TjLjakGAJEDJwEdIEL9GVpRRJBjs2OmFQKHYXQ
-         HsSVa5FDVqmqCdCV2sF08sos75Y9VO+ZyXZBWh+7LQbiCoXDuOtf/c8D7JD9f6Hd8Jvn
-         6TYxvd60ti7IblY2XxPPQmvNmlheKmeCCxGypMNMjRhEfYfhPlow0B8hrw1AWQqKOJc3
-         meAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Sh9DJjMgqXE7WeVQf/Tx2s2yKAPE6CjBynjLsZuWR9M=;
-        b=YyU08iXBHTooc2IcAqgUf5f16XrKaE8ZQWURZ+Z3/E7X9FgSGwm92BbAFNVRFriBHw
-         09yG8FOKIpnT3cOI8mq0buSYQs/MQWgyiSLlZkBtAW4LXoIDXfuMiVhZAhHz+dzY9k9E
-         tewE/pXZutRSz07QKzPPx7otQdJukFjpq+s35oYCvBQcu+f0Htrhv3Xe1HMYmogGOWpu
-         K0D14fmZkT2mYcS4PvSyvtuMRCtZ9qsKwb3FU8eZid7htujB+VceO31qmM2D2gmpWZ5W
-         IqEPnBzBQTlYC5zJebUl14xGxMAS82edcMs8L3BCMWsZdSQY69vgSGv4RhoSxMfOMHs1
-         C8VQ==
-X-Gm-Message-State: APjAAAUaTTZLDMPwiHYcK7GENcHKeeNFEGAxMFTgTw76+kDmvQyr4o/o
-        NLUl9hAfDBMPpYr0xsdzNWA=
-X-Google-Smtp-Source: APXvYqxLILlxLVypuvY3dis/5jWnxjA8EZXYa52Wudn0LEl6/LvtxMWr5FAvJ9nF5MzYYs1Zt+w/kQ==
-X-Received: by 2002:a1c:6145:: with SMTP id v66mr23582593wmb.42.1566833882631;
-        Mon, 26 Aug 2019 08:38:02 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id 39sm37272363wrc.45.2019.08.26.08.38.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 08:38:02 -0700 (PDT)
-Date:   Mon, 26 Aug 2019 08:38:00 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Bernard Metzler <BMT@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] rdma/siw: Use proper enumerated type in map_cqe_status
-Message-ID: <20190826153800.GA4752@archlinux-threadripper>
-References: <20190710174800.34451-1-natechancellor@gmail.com>
- <OFE93E0F86.E35CE856-ON00258434.002A83CE-00258434.002A83DF@notes.na.collabserv.com>
- <20190711081434.GA86557@archlinux-threadripper>
- <20190711133915.GA25807@ziepe.ca>
- <CAKwvOdnHz3uH4ZM20LGQJ3FYhLQQUYn4Lg0B-YMr7Y1L66TAsA@mail.gmail.com>
- <20190711171808.GF25807@ziepe.ca>
- <20190711173030.GA844@archlinux-threadripper>
- <20190823142427.GD12968@ziepe.ca>
+        Mon, 26 Aug 2019 11:39:21 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7QFPrA8018373;
+        Mon, 26 Aug 2019 17:39:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=C0FjddlLz1tmGjWDBbox9NlNRBYo5AeX1gKNZtaLU5g=;
+ b=Uy9YJ97HWifGqiNE2bZDoI7Goq6JnRM7BYzJuFG+KghxPxQpMXRocx54nTa7JjhnaXH9
+ pPWn55lKtkr86gbQ0Q9xTfq9ue4Wjj5DBRFvLb27ZNa0aCBE5vLQSpdGoU60SWHC7SyC
+ gs/+4Co71mrbqGPctuDkriAajhGNNVpk9F4B/x4ANnsPksHO8u/LErIQhrgi1ivgQF2r
+ XUKzG4wyUm7W+TJra1/zVOWlAG4wmBJlFNv5hr8ScymlZn083D4mrfcRXizwk5EOwODd
+ zxciaIIANo/FGysi1csooiGWhF0x27CYRUjUZgz4fXC6xHuItnr3v7GXNnUEfyz1+wJr KA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2uju0vmgf6-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 26 Aug 2019 17:39:14 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 274E01D1;
+        Mon, 26 Aug 2019 15:38:42 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A29F52D3762;
+        Mon, 26 Aug 2019 17:38:25 +0200 (CEST)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug
+ 2019 17:38:25 +0200
+Received: from localhost (10.201.23.25) by Webmail-ga.st.com (10.75.90.48)
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug 2019 17:38:21
+ +0200
+From:   Fabien Dessenne <fabien.dessenne@st.com>
+To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC:     Fabien Dessenne <fabien.dessenne@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: [PATCH] remoteproc: stm32: clear MCU PDDS at firmware start
+Date:   Mon, 26 Aug 2019 17:38:06 +0200
+Message-ID: <1566833886-16571-1-git-send-email-fabien.dessenne@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190823142427.GD12968@ziepe.ca>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: text/plain
+X-Originating-IP: [10.201.23.25]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-26_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason,
+When remoteproc stops a firmware, it sets the MCU PDDS flag, allowing
+the platform to reach the Standby power mode if needed.
+Symmetrically, clear this flag before running a firmware.
+This fixes the issue where the system goes to Standby mode when the
+MCU crashes while MPU is in CSTOP mode.
 
-On Fri, Aug 23, 2019 at 11:24:27AM -0300, Jason Gunthorpe wrote:
-> On Thu, Jul 11, 2019 at 10:30:30AM -0700, Nathan Chancellor wrote:
-> > On Thu, Jul 11, 2019 at 02:18:08PM -0300, Jason Gunthorpe wrote:
-> > > On Thu, Jul 11, 2019 at 10:16:44AM -0700, Nick Desaulniers wrote:
-> > > > On Thu, Jul 11, 2019 at 6:39 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > > >
-> > > > > On Thu, Jul 11, 2019 at 01:14:34AM -0700, Nathan Chancellor wrote:
-> > > > > > Maybe time to start plumbing Clang into your test flow until it can get
-> > > > > > intergrated with more CI setups? :) It can catch some pretty dodgy
-> > > > > > behavior that GCC doesn't:
-> > > > >
-> > > > > I keep asking how to use clang to build the kernel and last I was told
-> > > > > it still wasn't ready..
-> > > > >
-> > > > > Is it ready now? Is there some flow that will compile with clang
-> > > > > warning free, on any arch? (at least the portion of the kernel I check)
-> > > > 
-> > > > $ make CC=clang ...
-> > > > 
-> > > > Let us know if you find something we haven't already.
-> > > > https://clangbuiltlinux.github.io/
-> > > > https://github.com/ClangBuiltLinux/linux/issues
-> > > 
-> > > What clang version?
-> > > 
-> > > Jason
-> > 
-> > You'll need clang-9 for x86 because of the asm-goto requirement (or a
-> > selective set of reverts for clang-8) but everything else should be
-> > good with clang-8:
-> 
-> The latest clang-9 packages from apt.llvm.org do seem to build the
-> kernel, I get one puzzling warning under RDMA:
-> 
-> drivers/infiniband/hw/hfi1/platform.o: warning: objtool: tune_serdes()+0x1f4: can't find jump dest instruction at .text+0x118a
+Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+---
+ drivers/remoteproc/stm32_rproc.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Any particular config that I should use to easily reproduce this?
+diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+index e2da719..1c95913 100644
+--- a/drivers/remoteproc/stm32_rproc.c
++++ b/drivers/remoteproc/stm32_rproc.c
+@@ -383,10 +383,21 @@ static void stm32_rproc_add_coredump_trace(struct rproc *rproc)
+ 
+ static int stm32_rproc_start(struct rproc *rproc)
+ {
++	struct stm32_rproc *ddata = rproc->priv;
+ 	int err;
+ 
+ 	stm32_rproc_add_coredump_trace(rproc);
+ 
++	/* clear remote proc Deep Sleep */
++	if (ddata->pdds.map) {
++		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
++					 ddata->pdds.mask, 0);
++		if (err) {
++			dev_err(&rproc->dev, "failed to clear pdds\n");
++			return err;
++		}
++	}
++
+ 	err = stm32_rproc_set_hold_boot(rproc, false);
+ 	if (err)
+ 		return err;
+-- 
+2.7.4
 
-> And a BPF one:
-> 
-> kernel/bpf/core.o: warning: objtool: ___bpf_prog_run()+0xd: sibling call from callable instruction with modified stack frame
-
-I think this might be related to this?
-
-https://lore.kernel.org/lkml/cf0273fb-c272-72be-50f9-b25bb7c7f183@windriver.com/
-
-Cheers,
-Nathan
