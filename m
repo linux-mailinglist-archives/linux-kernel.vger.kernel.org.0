@@ -2,93 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF4D29D989
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 714C19D9AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:57:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbfHZWwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 18:52:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41520 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbfHZWwb (ORCPT
+        id S1726875AbfHZW5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 18:57:52 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35561 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbfHZW5v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 18:52:31 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2NqY-0006qf-Ne; Tue, 27 Aug 2019 00:52:23 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 126171C0DDE;
-        Tue, 27 Aug 2019 00:52:20 +0200 (CEST)
-Date:   Mon, 26 Aug 2019 22:52:20 -0000
-From:   tip-bot2 for Magnus Damm <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/sh_cmt: Document "cmt-48" as
- deprecated
-Cc:     Magnus Damm <damm+renesas@opensource.se>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+        Mon, 26 Aug 2019 18:57:51 -0400
+Received: by mail-pf1-f193.google.com with SMTP id d85so12779480pfd.2
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 15:57:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xA1R9dD2TutV2Z170ahV4G14Z1OgTzuJeruk3z7eV2c=;
+        b=AERbP4Rztk3SN5GtGKXtX3TrZ3m/fScubto0XvP+6FDz7VMVU42cAXy6NC3pczw2bc
+         Gwxkpv1s0w69sq4xkWimuKQLIT+DUYruxRwHOVqU8Pqd7P5EpsPGoCEGJchwJ2MUVgEw
+         UPr6LTjpKdJYBCt3d81empjWYPFoCDP7TInHRL9WzZcBx+p4f82RulMm5fIBPu0leQlp
+         TCJajvb8StSXaK8V136MGkMNIhdzdQvoG3y4157iLyd7IQKR75LcVeQz3bsfeD8N15kx
+         CaSDRuOoUl7fNQWbXkKzDPA0yuQelVrDAHr0nEPpM5alelZU1mWOAZvT6b3nAbmuc6iH
+         af1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xA1R9dD2TutV2Z170ahV4G14Z1OgTzuJeruk3z7eV2c=;
+        b=lsv6Di/zpDU59wESEgIDLdYProOdjsCUpsh1qBGycHRyUPCe1IG/cxqHsGE8os7QwB
+         LuzsXTxbAAvuvJCcxg3bWNcgFLnczOLx8+pKFulotBsNerFt/MZqP3uYVO6wYF4Sj0E+
+         a//V0KFyIfrW7ZudKTIZLoTf3jFN3+2TypazDsNiSPUQzhRQwlwp/+B1v0t3to/h+4Q8
+         d/VqsYh8G3puoQSOFi+9mjqWCXPBSD87p7ac8TnYoBMzNBgEyBI2fcurnd2CP/YywngR
+         6RQy4PQ2DPE02jF+UWih4S2wqNzHTXS+J6xIg6delr2a+VmFw7VhM62p1ezelKNu4N/G
+         qVsQ==
+X-Gm-Message-State: APjAAAUOFIsPN7Q4/ENQRYuNlQXuV4z/hARB1gmeq2PQhFcYGYw6Ai5j
+        CHEZWDgbXgzPCHEPfdwz7cYQRCpuiaCuX/94g+qb1A==
+X-Google-Smtp-Source: APXvYqwsVh+pvKpidVTgJBtumnmGK6qLp5RvX6P4qW6oQbh5YH03k6WRn6z+v36x1ZDdGAdycHp/gkbUV9RaoXI2BK0=
+X-Received: by 2002:a17:90a:c20f:: with SMTP id e15mr21969838pjt.123.1566860270396;
+ Mon, 26 Aug 2019 15:57:50 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <156685994001.1342.8063596857526317450.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <CAKwvOdnJAApaUhTQs7w_VjSeYBQa0c-TNxRB4xPLi0Y0sOQMMQ@mail.gmail.com>
+In-Reply-To: <CAKwvOdnJAApaUhTQs7w_VjSeYBQa0c-TNxRB4xPLi0Y0sOQMMQ@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 26 Aug 2019 15:57:39 -0700
+Message-ID: <CAKwvOdkbY_XatVfRbZQ88p=nnrahZbvdjJ0OkU9m73G89_LRzg@mail.gmail.com>
+Subject: Re: a bug in genksysms/CONFIG_MODVERSIONS w/ __attribute__((foo))?
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicholas Piggin <npiggin@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+On Mon, Aug 26, 2019 at 2:22 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> I'm looking into a linkage failure for one of our device kernels, and
+> it seems that genksyms isn't producing a hash value correctly for
+> aggregate definitions that contain __attribute__s like
+> __attribute__((packed)).
+>
+> Example:
+> $ echo 'struct foo { int bar; };' | ./scripts/genksyms/genksyms -d
+> Defn for struct foo == <struct foo { int bar ; } >
+> Hash table occupancy 1/4096 = 0.000244141
+> $ echo 'struct __attribute__((packed)) foo { int bar; };' |
+> ./scripts/genksyms/genksyms -d
+> Hash table occupancy 0/4096 = 0
+>
+> I assume the __attribute__ part isn't being parsed correctly (looks
+> like genksyms is a lex/yacc based C parser).
+>
+> The issue we have in our out of tree driver (*sadface*) is basically a
+> EXPORT_SYMBOL'd function whose signature contains a packed struct.
+>
+> Theoretically, there should be nothing wrong with exporting a function
+> that requires packed structs, and this is just a bug in the lex/yacc
+> based parser, right?  I assume that not having CONFIG_MODVERSIONS
+> coverage of packed structs in particular could lead to potentially
+> not-fun bugs?  Or is using packed structs in exported function symbols
+> with CONFIG_MODVERSIONS forbidden in some documentation somewhere I
+> missed?
 
-Commit-ID:     19d608458f4f3bb3a1f89bd7e4814c3fd30dbec7
-Gitweb:        https://git.kernel.org/tip/19d608458f4f3bb3a1f89bd7e4814c3fd30dbec7
-Author:        Magnus Damm <damm+renesas@opensource.se>
-AuthorDate:    Tue, 20 Aug 2019 21:36:07 +09:00
-Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
-CommitterDate: Tue, 27 Aug 2019 00:31:39 +02:00
-
-clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated
-
-Update the CMT driver to mark "renesas,cmt-48" as deprecated.
-
-Instead of documenting a theoretical hardware device based on current software
-support level, define DT bindings top-down based on available data sheet
-information and make use of part numbers in the DT compat string.
-
-In case of the only in-tree users r8a7740 and sh73a0 the compat strings
-"renesas,r8a7740-cmt1" and "renesas,sh73a0-cmt1" may be used instead.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/sh_cmt.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clocksource/sh_cmt.c b/drivers/clocksource/sh_cmt.c
-index abf5e78..ef773db 100644
---- a/drivers/clocksource/sh_cmt.c
-+++ b/drivers/clocksource/sh_cmt.c
-@@ -918,7 +918,11 @@ static const struct platform_device_id sh_cmt_id_table[] = {
- MODULE_DEVICE_TABLE(platform, sh_cmt_id_table);
- 
- static const struct of_device_id sh_cmt_of_table[] __maybe_unused = {
--	{ .compatible = "renesas,cmt-48", .data = &sh_cmt_info[SH_CMT_48BIT] },
-+	{
-+		/* deprecated, preserved for backward compatibility */
-+		.compatible = "renesas,cmt-48",
-+		.data = &sh_cmt_info[SH_CMT_48BIT]
-+	},
- 	{
- 		/* deprecated, preserved for backward compatibility */
- 		.compatible = "renesas,cmt-48-gen2",
+Ah, looks like I'm late to the party:
+https://lwn.net/Articles/707520/
+-- 
+Thanks,
+~Nick Desaulniers
