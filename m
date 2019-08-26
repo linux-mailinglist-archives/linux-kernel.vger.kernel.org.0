@@ -2,88 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB69B9C95C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 08:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC9529C965
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 08:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729790AbfHZGWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 02:22:30 -0400
-Received: from dcvr.yhbt.net ([64.71.152.64]:52088 "EHLO dcvr.yhbt.net"
+        id S1729678AbfHZGYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 02:24:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:51765 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729535AbfHZGWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 02:22:30 -0400
-Received: from localhost (dcvr.yhbt.net [127.0.0.1])
-        by dcvr.yhbt.net (Postfix) with ESMTP id D53A21F461;
-        Mon, 26 Aug 2019 06:22:29 +0000 (UTC)
-Date:   Mon, 26 Aug 2019 06:22:29 +0000
-From:   Eric Wong <e@80x24.org>
-To:     Heiher <r@hev.cc>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Why the edge-triggered mode doesn't work for epoll file
- descriptor?
-Message-ID: <20190826062229.pjvumg4ag3qwhji6@whir>
-References: <CAHirt9jesMHB_sXx7PyXTxrzLR=3xw9bHERueNMVkWOUkg6XXQ@mail.gmail.com>
+        id S1725446AbfHZGYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 02:24:36 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46H2696BF2z9sMr;
+        Mon, 26 Aug 2019 16:24:33 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1566800673;
+        bh=RCD1EV48x1Kicsb4dw/ssvZwRB/JX7tsrjqIRaYXYCs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Pzt8lI2M+itrsUh78QNTSXipNkDwH6JgLQmPrfWH/CsHV0gtbhLZx+Mz8Scqo+tl0
+         ssGF86c7pJ1PxDrYPOl/hGwvaOGZYZeeQMtqadhAjCj+FJ0PxzCETtrcjPDdnd0SXe
+         IVYnKUizA64qCsjAGbrEA/FE4opCpPrnofI1V2b49UEejjOV3YkfYw19aH68W7H1nB
+         lZV7Yc7f/kGZgmcbXea0acrpgdSgjWsBVlSld2qM8GgHUbiTV7UetALD38uCgZH9av
+         iI3CS2dok1/E8QEIOPCgtHI0fwRtxEXR2uMBJQSXDhIRggjmvZf1susdGw3FYnLSit
+         xkXq7zt/Z2XOA==
+Date:   Mon, 26 Aug 2019 16:24:32 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Gao Xiang <hsiangkao@aol.com>
+Subject: linux-next: build warning after merge of the staging tree
+Message-ID: <20190826162432.11100665@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHirt9jesMHB_sXx7PyXTxrzLR=3xw9bHERueNMVkWOUkg6XXQ@mail.gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/715RiuNkX.D8Z1FGn/mV+yH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Heiher <r@hev.cc> wrote:
-> Hello,
-> 
-> I've added a pipe file descriptor (fd1) to an epoll (fd3) with
-> EPOLLOUT in edge-triggered mode, and then added the fd3 to another
-> epoll (fd4) with EPOLLIN in edge-triggered too.
-> 
-> Next, waiting for fd4 without timeout. When fd1 to be writable, i
-> think epoll_wait(fd4, ...)  only return once, because all file
-> descriptors are added in edge-triggered mode.
-> 
-> But, the actual result is returns many and many times until do once
-> eopll_wait(fd3, ...).
+--Sig_/715RiuNkX.D8Z1FGn/mV+yH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It looks like you can trigger a wakeup loop with printf writing
-to the terminal (not a pipe), and that write to the terminal
-triggering the EPOLLOUT wakeup over and over again.
+Hi all,
 
-I don't know TTY stuff at all, but I assume it's intended
-for terminals.
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-You refer to "pipe file descriptor (fd1)", but I can't reproduce
-the error when running your code piped to "tee" and using
-strace to check epoll_wait returns.
+In file included from include/trace/events/erofs.h:8,
+                 from <command-line>:
+include/trace/events/erofs.h:28:37: warning: 'struct dentry' declared insid=
+e parameter list will not be visible outside of this definition or declarat=
+ion
+  TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
+                                     ^~~~~~
+include/linux/tracepoint.h:233:34: note: in definition of macro '__DECLARE_=
+TRACE'
+  static inline void trace_##name(proto)    \
+                                  ^~~~~
+include/linux/tracepoint.h:396:24: note: in expansion of macro 'PARAMS'
+  __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),  \
+                        ^~~~~~
+include/linux/tracepoint.h:532:2: note: in expansion of macro 'DECLARE_TRAC=
+E'
+  DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+  ^~~~~~~~~~~~~
+include/linux/tracepoint.h:532:22: note: in expansion of macro 'PARAMS'
+  DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+                      ^~~~~~
+include/trace/events/erofs.h:26:1: note: in expansion of macro 'TRACE_EVENT'
+ TRACE_EVENT(erofs_lookup,
+ ^~~~~~~~~~~
+include/trace/events/erofs.h:28:2: note: in expansion of macro 'TP_PROTO'
+  TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
+  ^~~~~~~~
 
-"strace ./foo | tee /dev/null" only shows one epoll_wait returning.
+and moany more like this ...
 
->     e.events = EPOLLIN | EPOLLET;
->     e.data.u64 = 1;
->     if (epoll_ctl (efd[0], EPOLL_CTL_ADD, efd[1], &e) < 0)
->         return -3;
-> 
->     e.events = EPOLLOUT | EPOLLET;
->     e.data.u64 = 2;
->     if (epoll_ctl (efd[1], EPOLL_CTL_ADD, 1, &e) < 0)
->         return -4;
+Introduced by commit
 
-Since epfd[1] is waiting for stdout...
+  47e4937a4a7c ("erofs: move erofs out of staging")
 
->     for (;;) {
->         struct epoll_event events[16];
->         int nfds;
-> 
->         nfds = epoll_wait (efd[0], events, 16, -1);
->         printf ("nfds: %d\n", nfds);
+(or, at least, exposed by it).  It needs, at least, a "struct dentry;"
+added to the file.
 
-Try outputting your message to stderr instead of stdout:
+--=20
+Cheers,
+Stephen Rothwell
 
-        fprintf(stderr, "nfds: %d\n", nfds);
+--Sig_/715RiuNkX.D8Z1FGn/mV+yH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-And then run your program so stdout and stderr point to
-different files:
+-----BEGIN PGP SIGNATURE-----
 
-	./foo | tee /dev/null
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1jeyAACgkQAVBC80lX
+0Gy2qgf+PtoSC+6jAOxO6Eq66/71Txu8WuVZVJlc+HLWvVx6pxfSvZgsPrrH1jQm
+8gfO3HNinUKYJbFV/A3qLs4TFrTcHzGxfzeziPksYfcglCFG74Ie6zXGjo501yfJ
+aIJc1vOb8f47hNS4ePRztO3q/bpDG5Jg03mfGIU9fugmxY7HKbwmsSRaJAN4kU3f
+6teDjjqqUzfuG7vZf1fOMYm9ipMQHEX4vrdzxwd5qCfPXWALDBsAr4Bc8NRY9RST
+LLRwW2drPLhoGxluTMPa8fT8cHGgbyCuwE0Ogr96SuMibOtovZKBLXfCHruKzEQe
+Y6gkHy85TaWdrYyzc0pQ5MXgxDlGwg==
+=K3zZ
+-----END PGP SIGNATURE-----
 
-(so stdout becomes a pipe, and stderr remains your terminal)
+--Sig_/715RiuNkX.D8Z1FGn/mV+yH--
