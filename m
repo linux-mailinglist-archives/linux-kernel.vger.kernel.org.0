@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D189F9CA6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:30:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23F389CA6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730118AbfHZH3t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 03:29:49 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41913 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729946AbfHZH3r (ORCPT
+        id S1730137AbfHZH3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 03:29:53 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36553 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730120AbfHZH3t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 03:29:47 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 196so11227445pfz.8;
-        Mon, 26 Aug 2019 00:29:46 -0700 (PDT)
+        Mon, 26 Aug 2019 03:29:49 -0400
+Received: by mail-pf1-f194.google.com with SMTP id w2so11236988pfi.3;
+        Mon, 26 Aug 2019 00:29:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ov+j8dmklUbxH1qenI+7z+xzSttZ7JB7MnKJwaKTJ8o=;
-        b=EFGv0dcMCI3fgqPBjiMdxArXroa1ewpXvEyMBiOLUddrgPjN4gKfGTnXIdkLJaUXuR
-         +LmM4hxnP6jJVzax9gpVgB72YJ5E1JJ68w8d4BdEzNTUmJMSK75xqmuEc1JkKdNPs9nw
-         kJ+iGovwyQ4/l2WxJuUxPSmKZFbSUwepSvFmsa5um2Vz4AkgYC8ThS2gRgOjia9OGDEk
-         kVLE5JG+E1xgoyauQcsXPUaAVjcBLvpwCE3oPgObFnr9nf6MkL79dyamv4vQbTy6zO6R
-         Nqbjj7ekpxKR1iY8LH89i0jf3/JAts0NGYO5DcpN4PBJcAilNQ7GdmbSdn7nu1mBxNQg
-         X41Q==
+        bh=gICdPQsIaTjTwUfJWho+jc+GHx6tokQahaBmVhNvwDM=;
+        b=E4eliHwychozfMNfOj07MuJmETtFDVWMV9iFqTlqVue8NR8AKGqEmncm8GpGsk5s/G
+         UFvrFoFeHbXcdI3bV3xJSjH76wjBxtjgebzaN0CkLDpGgo1A2f6Qgc+jE97TdEwHV8Fy
+         QZAc5gMD9ALm+H2Z59k6R3EpoSJT5eIuangAiRexD3l4btgddD6gl6tOhGkLXTj8D/+k
+         zTi6yn7eQvAg/8cu/exKqvpDj7m7b+sfebWqbtqWnpbnMoszBYO9aiL36GsEMN87VyJ1
+         JTCPEtb5YO2VmXPxhOwZq4pscUy0LTa8XnTeSI6S+3UhdfwRdwsVgos5jBUCdpnmUm5y
+         ZEQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ov+j8dmklUbxH1qenI+7z+xzSttZ7JB7MnKJwaKTJ8o=;
-        b=f7xFkFH0MpF/MyqVmBMIw8/JQIApDDc17WptClmiRMPN5EAGPTlI7FBgY3vuq9QyMg
-         KYpNFLWtXfV9N3VHfMVgbRmav5Qjooo812P/aY8hruNEKVOGixjZBvgnk4tkrNkshAnP
-         k9HlM42T4gAsCxmapCe8WefClg9UbiZLPYxmcqqFeAoxQALTub8mrdiGNpkDsSJn9n5U
-         t8RKqybvmuefZYKGFa/ZLCQhqFqE0Ntec/tZkoIuRPediGaY2eI2fufQc4iIWaTxWY37
-         ywS5S2ZhQqlzhfGeXd7O8Cd+c7LyXYg86JcILXe0vDWvMIXKPDL2naumHy6XWjG1WcPx
-         cXcA==
-X-Gm-Message-State: APjAAAWw65e/Si8NqGAGHOZIQ9XuK6j5pe3ZFn+seqHkSVd0zMTe4EkH
-        fF6DpricS6ZU67nM3EenEKQ=
-X-Google-Smtp-Source: APXvYqym4NFd6Y769WkEr5WabszGG4IuyyXbdj1m2MF6jYjLasneWerHXnq2IRLP4+4lTqbYnL+R8g==
-X-Received: by 2002:a63:66c5:: with SMTP id a188mr15079458pgc.127.1566804586264;
-        Mon, 26 Aug 2019 00:29:46 -0700 (PDT)
+        bh=gICdPQsIaTjTwUfJWho+jc+GHx6tokQahaBmVhNvwDM=;
+        b=lDyzX338y9JZ+nrhOLKZRET+g+YhcgEEWI83LzLsdU+OkUoEBi0C6d2dddB2UW7SlT
+         WDU3wP90xV8BuuA8ehotmyIxHL/zuSB9ARC2ya60VpJCVbwYkD2qVRMz/BC82GhhfXxs
+         CXGgs3bQEqxcHV+3vGCzCscIMw7qUBtNTnChIg4h207C8wqa+Ksq/mllufvcLrcXC5GC
+         PWEjB4xaiErpUxhg76DzQRN17/TZ41IQtLtt/jVUTrVlUCkSN4IW+hl2Hr4ywdN41yQv
+         08hSOHNDWwRVMwn2V/lV+y2WxxkXEX0KtRRvBev4VT3tj7+neu+GoLpxfL4bVDBfH8KD
+         Ivog==
+X-Gm-Message-State: APjAAAUT4NwsZ28uNKt5jQUgI15GYiG+sQv746DZbASjtpIxsGtUVZZj
+        r+qf2d41LAV+6lAq09aExRs=
+X-Google-Smtp-Source: APXvYqyUshJJ/N7ekbELyD/0XC7quwj1v43OoPlJqRGF0nDUkPg4Z1RHMMRI3kbs6z3a+iD02k6rNg==
+X-Received: by 2002:a17:90a:9f4b:: with SMTP id q11mr18114285pjv.105.1566804589288;
+        Mon, 26 Aug 2019 00:29:49 -0700 (PDT)
 Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id p90sm11195670pjp.7.2019.08.26.00.29.43
+        by smtp.gmail.com with ESMTPSA id p90sm11195670pjp.7.2019.08.26.00.29.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 00:29:45 -0700 (PDT)
+        Mon, 26 Aug 2019 00:29:48 -0700 (PDT)
 From:   Chunyan Zhang <zhang.lyra@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, Orson Zhai <orsonzhai@gmail.com>,
         Baolin Wang <baolin.wang@linaro.org>
 Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
         Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 1/3] serial: sprd: check the right port and membase
-Date:   Mon, 26 Aug 2019 15:29:27 +0800
-Message-Id: <20190826072929.7696-2-zhang.lyra@gmail.com>
+Subject: [PATCH 2/3] serial: sprd: add console_initcall in sprd's uart driver
+Date:   Mon, 26 Aug 2019 15:29:28 +0800
+Message-Id: <20190826072929.7696-3-zhang.lyra@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190826072929.7696-1-zhang.lyra@gmail.com>
 References: <20190826072929.7696-1-zhang.lyra@gmail.com>
@@ -66,52 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-When calling sprd_console_setup(), sprd_uart_port probably is NULL,
-we should check that first instead of checking its items directly.
-
-Also we should check membase to avoid accessing uart device before
-its initialization finished.
+Use console_initcall to save the console index we selected on the
+command line to sprd_console before probe finished. Thus we can
+make different processes to the uart devices during initialization
+according to whether it is used for console.
 
 Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
 ---
- drivers/tty/serial/sprd_serial.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/tty/serial/sprd_serial.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-index 73d71a4e6c0c..a3be4e2dd019 100644
+index a3be4e2dd019..aead823c650b 100644
 --- a/drivers/tty/serial/sprd_serial.c
 +++ b/drivers/tty/serial/sprd_serial.c
-@@ -975,7 +975,7 @@ static void sprd_console_write(struct console *co, const char *s,
+@@ -1008,6 +1008,13 @@ static struct console sprd_console = {
+ 	.data = &sprd_uart_driver,
+ };
  
- static int __init sprd_console_setup(struct console *co, char *options)
- {
--	struct uart_port *port;
-+	struct sprd_uart_port *sprd_uart_port;
- 	int baud = 115200;
- 	int bits = 8;
- 	int parity = 'n';
-@@ -984,15 +984,17 @@ static int __init sprd_console_setup(struct console *co, char *options)
- 	if (co->index >= UART_NR_MAX || co->index < 0)
- 		co->index = 0;
- 
--	port = &sprd_port[co->index]->port;
--	if (port == NULL) {
-+	sprd_uart_port = sprd_port[co->index];
-+	if (!sprd_uart_port || !sprd_uart_port->port.membase) {
- 		pr_info("serial port %d not yet initialized\n", co->index);
- 		return -ENODEV;
- 	}
++static int __init sprd_serial_console_init(void)
++{
++	register_console(&sprd_console);
++	return 0;
++}
++console_initcall(sprd_serial_console_init);
 +
- 	if (options)
- 		uart_parse_options(options, &baud, &parity, &bits, &flow);
+ #define SPRD_CONSOLE	(&sprd_console)
  
--	return uart_set_options(port, co, baud, parity, bits, flow);
-+	return uart_set_options(&sprd_uart_port->port, co, baud,
-+				parity, bits, flow);
- }
- 
- static struct uart_driver sprd_uart_driver;
+ /* Support for earlycon */
 -- 
 2.20.1
 
