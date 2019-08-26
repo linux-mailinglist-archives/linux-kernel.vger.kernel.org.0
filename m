@@ -2,60 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D199D7A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD25F9D7B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731388AbfHZUpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:45:10 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36480 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731065AbfHZUpI (ORCPT
+        id S1731975AbfHZUpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:45:47 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40773 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731260AbfHZUpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:45:08 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g67so794874wme.1
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:45:07 -0700 (PDT)
+        Mon, 26 Aug 2019 16:45:10 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c3so16579857wrd.7
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:45:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EJr/EagOWWWCEFoK6Cl8RHdd3bbJGdepYKWoaGBi1+8=;
-        b=uSRwaaQTED8QF+2S4yqgVSoNPgjxT8uTgt9GhpJsDr+8CvcVzeUbCSE0ERTVchio4p
-         QNRdt30i1fpggxajsFk7Voi6prWjddEOIdOxu/GaOqTH1NMqdBXyL9p9OsvjyHBGqz2n
-         ZtmiU15CtLVF/qW8QfOji5RW101rf6lV2hH4P8NlLJAV2uMDR1rvyAsAeS2SV4p1eKD9
-         ByX/kC7XiDxfjEXRYp4lV1pFvei3AOrAjRvNGOYS5+vNSRte8WFE3BWxQNgdYUSObzPd
-         v08kN1XBFh7jYXDKXF1rRiLfgCLVJMRsBl1Gj22oaCtg0kP8zckgIqrdiYBqAj4kZfE3
-         5SOQ==
+        bh=3NlsbaVmcGi3otv9ZJ2fHYs8AFKgSTfNTic8ebJ9pLc=;
+        b=eK+nQS2Aoko7nn/Hwp8NG6xTWIMU9o7rsicA86jWI/hqnzHtvX3hsz6Ozex+GBWt+1
+         n09i1jpu0+/k02Si8KuL1CL0dPvxc8HnoMdSyP9EQMaKQnNS6rGt8zfn02dt0yM2Gq8C
+         ITkdGB2Hyw5QnhRuq24WDfIQ0C08oQRC+1DLJ/ZpiX5JYqTkOYJZo+iNgGsqarOUUONq
+         UfYb2Va+E/KbHQo3wes0PeRNkqOPKVJFA/kRJx+Z8MO5iu0hatSrc/DdUxGPgt5CA+5i
+         t9gCRLV0h8FyGI6Wc52Mth900QYGf8bQoqcHxKpE3c8Gx/FIXEAFTGnLH5czmj7ZX+g1
+         rw6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=EJr/EagOWWWCEFoK6Cl8RHdd3bbJGdepYKWoaGBi1+8=;
-        b=ada3sQz6Rn7mOpK5YyIU5l7RefuPGLDJ+RGrzQd16/XJ4rNNvUKYOm/QYUtBx9eq9O
-         N+axadk6udbgEEYg5g6D0Sgu3HmEycHXqoXkFs2upWhwbfoi+g/TPunR8igVPXBjPO+5
-         J8TW5aTG5Scu7YpHs7+Gl5A3YqYwEy+R4Chw1WpVUzd57+pydNyYivXgok5TzeR/XDaJ
-         /qcb31e1WUE4KlyhyHPFZbA3IkJ6trpx/KH61NQ3vdILT4kaAaF8dO6CPcSWFXxlLH1o
-         QZS5uJwsLz2R6heRfAFxjrZ3KopLKP/q44tiCXHp2L9GlphQQf3FSokY7FHAdmyyM8WG
-         9p6g==
-X-Gm-Message-State: APjAAAU3tL31kDiyXQ9BhZPjW/JRCDyaQ9q6gjFDwPI+Avnz7xd0LMKY
-        VYy+qzGrhfQTwsOfkrkMw6Juzg==
-X-Google-Smtp-Source: APXvYqwXwSxG80kgpFkYnO+Z1GwvdiIdcVmq6Bkgqse72Bk1nRrZrhz0H9bgN6nDwhLGTu2FJfkc7Q==
-X-Received: by 2002:a1c:ed04:: with SMTP id l4mr24638471wmh.81.1566852306477;
-        Mon, 26 Aug 2019 13:45:06 -0700 (PDT)
+        bh=3NlsbaVmcGi3otv9ZJ2fHYs8AFKgSTfNTic8ebJ9pLc=;
+        b=l4YeKbvm3ooys9vrnlucxDCTEzEj/2aBy9HaSlTL7rQsfd4Y7j/P83eoL+YLR6sLWq
+         ygz5AQpKVLcXHAPNKNl3qJMmjO/kKgyQPhG31qPPNMnEMugW9VJI1IyQUNZK/pJhezUQ
+         hHCTxtongAzmJssEzO/cpMam/Gy+ZTCwPQfBufXBlcC02ph4UQaU6nv2XFymdzYbXHFU
+         x28JT13f5nYPzCKENMEQ9tjYJbx3q9tEhpgXU2itsjEmZHcENrp46fOUvx8ThJmYskXO
+         +e5DAKRAwlJ8jsHtA0b2h7dE+A8Xc0Qrrx92wVZ67gRyS+V9mUqF42Cv03f1bCA9mHR3
+         DNQQ==
+X-Gm-Message-State: APjAAAVBESW3M9eC1DZBXxvycIKkWqIi5HmOETCc6MU8LkvPE8KCljLz
+        ivLMXLlnRw8g56g2tqWpx058gw==
+X-Google-Smtp-Source: APXvYqydUnATzYCn0EWScuMiqbJA85WS+XKj8jFvBs7l930eiBInVzKH4tlZ/MiFRAVHfo7gTo+qxA==
+X-Received: by 2002:adf:f844:: with SMTP id d4mr25413725wrq.128.1566852308552;
+        Mon, 26 Aug 2019 13:45:08 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab])
-        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.45.04
+        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.45.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 13:45:05 -0700 (PDT)
+        Mon, 26 Aug 2019 13:45:07 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        openbmc@lists.ozlabs.org (moderated list:ARM/NUVOTON NPCM ARCHITECTURE)
-Subject: [PATCH 11/20] clocksource/drivers/npcm: Fix GENMASK and timer operation
-Date:   Mon, 26 Aug 2019 22:43:58 +0200
-Message-Id: <20190826204407.17759-11-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 12/20] clocksource/drivers/timer-of: Do not warn on deferred probe
+Date:   Mon, 26 Aug 2019 22:43:59 +0200
+Message-Id: <20190826204407.17759-12-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190826204407.17759-1-daniel.lezcano@linaro.org>
 References: <df27caba-d9f8-e64d-0563-609f8785ecb3@linaro.org>
@@ -65,66 +59,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avi Fishman <avifishman70@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
 
-NPCM7XX_Tx_OPER GENMASK bits are wrong, fix them.
+Deferred probe is an expected return value for clk_get() on many
+platforms. The driver deals with it properly, so there's no need
+to output a warning that may potentially confuse users.
 
-Hopefully the NPCM7XX_REG_TICR0 register reset value of those bits was 0,
-so it did not cause an issue.
-
-The function npcm7xx_timer_oneshot() reads the register
-NPCM7XX_REG_TCSR0, modifies it and then reads it again overwriting the
-previous changes. Remove the extra read which is pointless.
-
-The function npcm7xx_timer_periodic() is correct but the code writes
-to the NPCM7XX_REG_TICR0 register while it is dealing with the
-NPCM7XX_REG_TCSR0 register, that is confusing. Separate the write to
-the registers in the code for the sake of clarity.
-
-Fixes: 1c00289ecd12 ("clocksource/drivers/npcm: Add NPCM7xx timer driver")
-Signed-off-by: Avi Fishman <avifishman70@gmail.com>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-npcm7xx.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/clocksource/timer-of.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/timer-npcm7xx.c
-index 8a30da7f083b..9780ffd8010e 100644
---- a/drivers/clocksource/timer-npcm7xx.c
-+++ b/drivers/clocksource/timer-npcm7xx.c
-@@ -32,7 +32,7 @@
- #define NPCM7XX_Tx_INTEN		BIT(29)
- #define NPCM7XX_Tx_COUNTEN		BIT(30)
- #define NPCM7XX_Tx_ONESHOT		0x0
--#define NPCM7XX_Tx_OPER			GENMASK(27, 3)
-+#define NPCM7XX_Tx_OPER			GENMASK(28, 27)
- #define NPCM7XX_Tx_MIN_PRESCALE		0x1
- #define NPCM7XX_Tx_TDR_MASK_BITS	24
- #define NPCM7XX_Tx_MAX_CNT		0xFFFFFF
-@@ -84,8 +84,6 @@ static int npcm7xx_timer_oneshot(struct clock_event_device *evt)
+diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+index 80542289fae7..d8c2bd4391d0 100644
+--- a/drivers/clocksource/timer-of.c
++++ b/drivers/clocksource/timer-of.c
+@@ -113,8 +113,10 @@ static __init int timer_of_clk_init(struct device_node *np,
+ 	of_clk->clk = of_clk->name ? of_clk_get_by_name(np, of_clk->name) :
+ 		of_clk_get(np, of_clk->index);
+ 	if (IS_ERR(of_clk->clk)) {
+-		pr_err("Failed to get clock for %pOF\n", np);
+-		return PTR_ERR(of_clk->clk);
++		ret = PTR_ERR(of_clk->clk);
++		if (ret != -EPROBE_DEFER)
++			pr_err("Failed to get clock for %pOF\n", np);
++		goto out;
+ 	}
  
- 	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
- 	val &= ~NPCM7XX_Tx_OPER;
--
--	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
- 	val |= NPCM7XX_START_ONESHOT_Tx;
- 	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
- 
-@@ -97,12 +95,11 @@ static int npcm7xx_timer_periodic(struct clock_event_device *evt)
- 	struct timer_of *to = to_timer_of(evt);
- 	u32 val;
- 
-+	writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
-+
- 	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
- 	val &= ~NPCM7XX_Tx_OPER;
--
--	writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
- 	val |= NPCM7XX_START_PERIODIC_Tx;
--
- 	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
- 
- 	return 0;
+ 	ret = clk_prepare_enable(of_clk->clk);
 -- 
 2.17.1
 
