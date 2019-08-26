@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD25F9D7B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5FC29D7A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:48:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbfHZUpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:45:47 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40773 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731260AbfHZUpK (ORCPT
+        id S1727768AbfHZUpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:45:15 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53731 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731391AbfHZUpM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:45:10 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c3so16579857wrd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:45:09 -0700 (PDT)
+        Mon, 26 Aug 2019 16:45:12 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 10so795084wmp.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:45:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3NlsbaVmcGi3otv9ZJ2fHYs8AFKgSTfNTic8ebJ9pLc=;
-        b=eK+nQS2Aoko7nn/Hwp8NG6xTWIMU9o7rsicA86jWI/hqnzHtvX3hsz6Ozex+GBWt+1
-         n09i1jpu0+/k02Si8KuL1CL0dPvxc8HnoMdSyP9EQMaKQnNS6rGt8zfn02dt0yM2Gq8C
-         ITkdGB2Hyw5QnhRuq24WDfIQ0C08oQRC+1DLJ/ZpiX5JYqTkOYJZo+iNgGsqarOUUONq
-         UfYb2Va+E/KbHQo3wes0PeRNkqOPKVJFA/kRJx+Z8MO5iu0hatSrc/DdUxGPgt5CA+5i
-         t9gCRLV0h8FyGI6Wc52Mth900QYGf8bQoqcHxKpE3c8Gx/FIXEAFTGnLH5czmj7ZX+g1
-         rw6Q==
+        bh=OA1YNeBx+8aF3UbvHkUdfo5e5H5+BTnVhu+4DZoJ9fU=;
+        b=Qw2CYVIes9ZxpQuAYS32DRr3g29lH2pNz7f0H8wnHGokAThyoTkArELW7SBmIbbV4c
+         P5ns7XUOrNA0fohmMs7EufD86nZuSwaa28iWg6d6KgRf8mE7NhIQE21+NORL44Bzauk5
+         +MhPJelvveOCWo4yldg2pTnjYn+K4ieQnUaZnGgDtdCCU0Hg8iw5dJ3CzNtxlE2BXHAr
+         NYxy2WUBj4jK9FyYNOXPytaY7RwYVkNrQFGFbkSvEj38CqFm2rRr8BEJdk7OwkroI+Z0
+         7DnQAqoIri/Uad1ZReHtuhO6q5dcDLoNJ3A/zUbWq8LkopJwXu4EcQkWAX/UIlbSJwnK
+         PKSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3NlsbaVmcGi3otv9ZJ2fHYs8AFKgSTfNTic8ebJ9pLc=;
-        b=l4YeKbvm3ooys9vrnlucxDCTEzEj/2aBy9HaSlTL7rQsfd4Y7j/P83eoL+YLR6sLWq
-         ygz5AQpKVLcXHAPNKNl3qJMmjO/kKgyQPhG31qPPNMnEMugW9VJI1IyQUNZK/pJhezUQ
-         hHCTxtongAzmJssEzO/cpMam/Gy+ZTCwPQfBufXBlcC02ph4UQaU6nv2XFymdzYbXHFU
-         x28JT13f5nYPzCKENMEQ9tjYJbx3q9tEhpgXU2itsjEmZHcENrp46fOUvx8ThJmYskXO
-         +e5DAKRAwlJ8jsHtA0b2h7dE+A8Xc0Qrrx92wVZ67gRyS+V9mUqF42Cv03f1bCA9mHR3
-         DNQQ==
-X-Gm-Message-State: APjAAAVBESW3M9eC1DZBXxvycIKkWqIi5HmOETCc6MU8LkvPE8KCljLz
-        ivLMXLlnRw8g56g2tqWpx058gw==
-X-Google-Smtp-Source: APXvYqydUnATzYCn0EWScuMiqbJA85WS+XKj8jFvBs7l930eiBInVzKH4tlZ/MiFRAVHfo7gTo+qxA==
-X-Received: by 2002:adf:f844:: with SMTP id d4mr25413725wrq.128.1566852308552;
-        Mon, 26 Aug 2019 13:45:08 -0700 (PDT)
+        bh=OA1YNeBx+8aF3UbvHkUdfo5e5H5+BTnVhu+4DZoJ9fU=;
+        b=PChVKXXhl4zLLAzvbYnTGzxME6Wv+WfqtLgODXlmq7RBzPXyfKVcBW1S4nktXnKmZt
+         ID+OJEx0Q3BU50DbJ7uCvgiPqLLnBgsDuk7e9yEkDQCJGu2u4xB29D1uqEJxpLyb72XX
+         5Rl6xhzDzAck/Zw279ujiO7Asze7BawXfuS6BF2cmXFpJOXo2G8roFHgzlSs7+W9oDq8
+         eEZNrad28WR/EuVIUCQG1hYMbQXhaCWQWOawSfFAENC8EUiSVCgnLkrFcezoLyOL8Q6s
+         3eFbu9LV3E9doGbbdh2BfPoWCa1/aGMYiw4nrTIfzlFc3PpGl3608gEKY1dBbqTnOIWu
+         D+Ag==
+X-Gm-Message-State: APjAAAWfhH+5ICrqL2LktqkVFTfTEGeVPIdMoXOpizw01lXSv4bxVuw3
+        O/1n9ItwGXp6CK+pjNTrp5LiVi1OW+M=
+X-Google-Smtp-Source: APXvYqyvXmsvciFEhpW32ekSSz9RowZxvGkiwdo2Xh2gd7I7PBA1CRJqNTxMXziYmS/0z0zjgJu4HA==
+X-Received: by 2002:a1c:45:: with SMTP id 66mr23577980wma.40.1566852310139;
+        Mon, 26 Aug 2019 13:45:10 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab])
-        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.45.06
+        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.45.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 13:45:07 -0700 (PDT)
+        Mon, 26 Aug 2019 13:45:09 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 12/20] clocksource/drivers/timer-of: Do not warn on deferred probe
-Date:   Mon, 26 Aug 2019 22:43:59 +0200
-Message-Id: <20190826204407.17759-12-daniel.lezcano@linaro.org>
+Subject: [PATCH 13/20] clocksource/drivers: Do not warn on probe defer
+Date:   Mon, 26 Aug 2019 22:44:00 +0200
+Message-Id: <20190826204407.17759-13-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190826204407.17759-1-daniel.lezcano@linaro.org>
 References: <df27caba-d9f8-e64d-0563-609f8785ecb3@linaro.org>
@@ -61,33 +61,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jon Hunter <jonathanh@nvidia.com>
 
-Deferred probe is an expected return value for clk_get() on many
-platforms. The driver deals with it properly, so there's no need
-to output a warning that may potentially confuse users.
+Deferred probe is an expected return value on many platforms and so
+there's no need to output a warning that may potentially confuse users.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-of.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clocksource/timer-probe.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
-index 80542289fae7..d8c2bd4391d0 100644
---- a/drivers/clocksource/timer-of.c
-+++ b/drivers/clocksource/timer-of.c
-@@ -113,8 +113,10 @@ static __init int timer_of_clk_init(struct device_node *np,
- 	of_clk->clk = of_clk->name ? of_clk_get_by_name(np, of_clk->name) :
- 		of_clk_get(np, of_clk->index);
- 	if (IS_ERR(of_clk->clk)) {
--		pr_err("Failed to get clock for %pOF\n", np);
--		return PTR_ERR(of_clk->clk);
-+		ret = PTR_ERR(of_clk->clk);
-+		if (ret != -EPROBE_DEFER)
-+			pr_err("Failed to get clock for %pOF\n", np);
-+		goto out;
- 	}
+diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
+index dda1946e84dd..ee9574da53c0 100644
+--- a/drivers/clocksource/timer-probe.c
++++ b/drivers/clocksource/timer-probe.c
+@@ -29,7 +29,9 @@ void __init timer_probe(void)
  
- 	ret = clk_prepare_enable(of_clk->clk);
+ 		ret = init_func_ret(np);
+ 		if (ret) {
+-			pr_err("Failed to initialize '%pOF': %d\n", np, ret);
++			if (ret != -EPROBE_DEFER)
++				pr_err("Failed to initialize '%pOF': %d\n", np,
++				       ret);
+ 			continue;
+ 		}
+ 
 -- 
 2.17.1
 
