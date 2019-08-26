@@ -2,107 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83CD79CBB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 10:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDF469CBC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 10:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730718AbfHZIiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 04:38:13 -0400
-Received: from mail-eopbgr130054.outbound.protection.outlook.com ([40.107.13.54]:11747
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730287AbfHZIiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 04:38:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Aq1b7VQ3LWp+Y77ebxX+m7tEYBnJ12L/DagtbokBhDPs7y1jePMD9pCYKcowMxCNue9wOR3GpkJEMEwMcENrXzZ0LeigQkjluuP3unqXoJUvEBt4W4dmHhIVyWtyc0Hhb1V2jEFQEqsu9RDbUWbnDxP79leIGTej+suEHUovKMS9wVajS+4me2iF7SAPlFdDCwbGvlCGYa4QIQj79Sa+v3cZJJ963OzOM+ys93OiSB6gnW0FVduYeBO2BnGSYCHtz26y7exLMh41qJQfkMykZCFwcDEXt79ITHkRKOw6kn4Cnxn2EuiU2Q/N7ZzooHCVCiXltAOZ2i3N19IlQ+ji2g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ImPLFp98OG9GxvY39qGzl7rzxOXXa2eV0wPVct6cG5I=;
- b=lLq1Hq6btIYGmW2O+W8fyOnzCo9N/yQ/EhjBVV4Iv1Hp7W5vl3Bda07jEVrajbr15h35r2M7Yge5sDaakZ2tYnLEKjKUJlaz2DS+Y6jm9zdUnSm3skuiL9LCJQeNR5npgIskvzYgYiZep02wNJu7qAw+Xxr7qI4v5ENUGcufIv/ej/Cfyz8BtmqjZdNb4WKhypsoS3yf6Etmf0Z5s0Mtc3XMIhdms7NaQknAR+rtHmIRKjcfzCpfSQj+RDAlrLxj6+UhvHHK5LIK5kTptrlI4srx5eLRpSd3vpCa6FH3Aevj+cuhldMCupaqvPJ/uUGFCZjV+MD5jZW0dhPVO7/+jA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ImPLFp98OG9GxvY39qGzl7rzxOXXa2eV0wPVct6cG5I=;
- b=UUjvnxmGQcfxAZTcERYT/gzhpqD3sgHa81M/FzbnxvnsXHeLYDB2E3wG7FDq6WKBUdttn6qON+mIhJyaRfWpWhkrZKDJHY3nrI5OghMbFH5XSdogpjiyX+z78Miv0CfEf3XHJX7ViiryPmwfr6kD/AJnLJW8S1mW9eh1dHDRXps=
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
- VI1PR04MB4734.eurprd04.prod.outlook.com (20.177.48.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Mon, 26 Aug 2019 08:38:09 +0000
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::8d42:8283:ede8:9abf]) by VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::8d42:8283:ede8:9abf%7]) with mapi id 15.20.2199.015; Mon, 26 Aug 2019
- 08:38:08 +0000
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-CC:     Chris Spencer <christopher.spencer@sea.co.uk>,
-        Cory Tusar <cory.tusar@zii.aero>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 00/16] crypto: caam - Add i.MX8MQ support
-Thread-Topic: [PATCH v8 00/16] crypto: caam - Add i.MX8MQ support
-Thread-Index: AQHVV5VB3CgVSzdtsUuKFBe5Nr//dA==
-Date:   Mon, 26 Aug 2019 08:38:07 +0000
-Message-ID: <VI1PR04MB44458F25E97B5052CC2498258CA10@VI1PR04MB4445.eurprd04.prod.outlook.com>
-References: <20190820202402.24951-1-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=iuliana.prodan@nxp.com; 
-x-originating-ip: [92.121.36.198]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 07ad3381-17ba-4fa1-0d12-08d72a00b90a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4734;
-x-ms-traffictypediagnostic: VI1PR04MB4734:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB4734897EDE6CD8CDC76D54798CA10@VI1PR04MB4734.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 01415BB535
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(346002)(366004)(39860400002)(396003)(189003)(199004)(71200400001)(44832011)(76116006)(66476007)(66556008)(64756008)(66446008)(26005)(8936002)(66066001)(54906003)(81166006)(110136005)(81156014)(8676002)(53546011)(316002)(186003)(478600001)(102836004)(91956017)(66946007)(229853002)(7736002)(74316002)(305945005)(14454004)(3846002)(6116002)(25786009)(52536014)(6436002)(446003)(4326008)(5660300002)(6246003)(4744005)(6506007)(76176011)(9686003)(476003)(53936002)(2906002)(256004)(7696005)(2501003)(33656002)(99286004)(486006)(86362001)(55016002)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4734;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: VXqiUqdhiGsIOL5zG4+xarKitFNbiyM1lF5MyyexrWrIWidfG3TSZPRjluRc1VAlhqYvt+ZEyyKr4mXrOYEy5VUjdB/UHECDwpAmOJU0BGH+EWs6wScfzBqxHsDNub6m0PVUgQxvxCKyzbTgUc5XZD808uEKhMajI9kpEUrhik4OymrPog05KytSkze03PLiNgfkD5ddVwWRz85iTXL1NMnmKzfLwylyOM3PkXd6zRtXiavWo2oymDICF1lu2X2F7ONjA6Rw4reKEaVl7Pat5P8okLUu8ld67y2gMuO5YzoWS5c11n5vbvzJyGBrZCC8kvCfaihY9Kun/I/aMK0I3Zbc5+U2XllP/8FiKLVzeHduhADQN51BdyxdujUPBjEGsuCKsyFuseJ7qALb9f6eKxQvvT5QnohwX84loH8jhdo=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1730393AbfHZIjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 04:39:54 -0400
+Received: from forwardcorp1j.mail.yandex.net ([5.45.199.163]:42262 "EHLO
+        forwardcorp1j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729523AbfHZIjx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 04:39:53 -0400
+Received: from mxbackcorp2j.mail.yandex.net (mxbackcorp2j.mail.yandex.net [IPv6:2a02:6b8:0:1619::119])
+        by forwardcorp1j.mail.yandex.net (Yandex) with ESMTP id 3B9232E045B;
+        Mon, 26 Aug 2019 11:39:51 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp2j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id kPAtGJAWjF-doPiv6Rx;
+        Mon, 26 Aug 2019 11:39:51 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1566808791; bh=Y7ejts7lpiJhlX4+egWDk+iu4dJWOZ7po0kKT0OpMC4=;
+        h=In-Reply-To:References:Date:Message-ID:From:To:Subject;
+        b=ZVQN0C0X7bfLpqONhnIcbXCciPSnf0ZQe87EOzqxF7ubpJcjvtoTJmY+Jof+wIqia
+         PEaE9w9ENQcqOpxatGvjD0TmDLw+9EItjqMz8obWXNyoLfUEk2Nq2/ckAr+NthoGs5
+         cCPwE+ZAbNG9qfRqLLqgDRWz23KdHvzmNr8zZToU=
+Authentication-Results: mxbackcorp2j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:f558:a2a9:365e:6e19])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id n5aJDOHkZi-doBieEVh;
+        Mon, 26 Aug 2019 11:39:50 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH 00/14] per memcg lru_lock
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Alex Shi <alex.shi@linux.alibaba.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Tejun Heo <tj@kernel.org>, Michal Hocko <mhocko@kernel.org>,
+        Hugh Dickins <hughd@google.com>
+References: <1566294517-86418-1-git-send-email-alex.shi@linux.alibaba.com>
+ <6ba1ffb0-fce0-c590-c373-7cbc516dbebd@oracle.com>
+ <348495d2-b558-fdfd-a411-89c75d4a9c78@linux.alibaba.com>
+ <b776032e-eabb-64ff-8aee-acc2b3711717@oracle.com>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <d5256ebf-8314-8c24-a7ed-e170b7d39b61@yandex-team.ru>
+Date:   Mon, 26 Aug 2019 11:39:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07ad3381-17ba-4fa1-0d12-08d72a00b90a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 08:38:07.8071
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BuFvcvbjt98vqZtEw94/1qVXdppyZp2kjihqEuuEdfjVrviJOkEjXlZ3IkX39ZCOuKKtQngKfcgJ0moYnYgiQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4734
+In-Reply-To: <b776032e-eabb-64ff-8aee-acc2b3711717@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/20/2019 11:24 PM, Andrey Smirnov wrote:=0A=
-> Everyone:=0A=
-> =0A=
-> Picking up where Chris left off (I chatted with him privately=0A=
-> beforehead), this series adds support for i.MX8MQ to CAAM driver. Just=0A=
-> like [v1], this series is i.MX8MQ only.=0A=
-> =0A=
-> Feedback is welcome!=0A=
-> Thanks,=0A=
-> Andrey Smirnov=0A=
-> =0A=
-=0A=
-For the series:=0A=
-Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>=0A=
-=0A=
-Thanks,=0A=
-Iulia=0A=
+On 22/08/2019 18.20, Daniel Jordan wrote:
+> On 8/22/19 7:56 AM, Alex Shi wrote:
+>> 在 2019/8/22 上午2:00, Daniel Jordan 写道:
+>>>    https://git.kernel.org/pub/scm/linux/kernel/git/wfg/vm-scalability.git/tree/case-lru-file-readtwice>
+>>> It's also synthetic but it stresses lru_lock more than just anon alloc/free.  It hits the page activate path, which is where we see this 
+>>> lock in our database, and if enough memory is configured lru_lock also gets stressed during reclaim, similar to [1].
+>>
+>> Thanks for the sharing, this patchset can not help the [1] case, since it's just relief the per container lock contention now.
+> 
+> I should've been clearer.  [1] is meant as an example of someone suffering from lru_lock during reclaim.  Wouldn't your series help 
+> per-memcg reclaim?
+> 
+>> Yes, readtwice case could be more sensitive for this lru_lock changes in containers. I may try to use it in container with some tuning. 
+>> But anyway, aim9 is also pretty good to show the problem and solutions. :)
+>>>
+>>> It'd be better though, as Michal suggests, to use the real workload that's causing problems.  Where are you seeing contention?
+>>
+>> We repeatly create or delete a lot of different containers according to servers load/usage, so normal workload could cause lots of pages 
+>> alloc/remove. 
+> 
+> I think numbers from that scenario would help your case.
+> 
+>> aim9 could reflect part of scenarios. I don't know the DB scenario yet.
+> 
+> We see it during DB shutdown when each DB process frees its memory (zap_pte_range -> mark_page_accessed).  But that's a different thing, 
+> clearly Not This Series.
+> 
+>>>> With this patch series, lruvec->lru_lock show no contentions
+>>>>           &(&lruvec->lru_l...          8          0               0       0               0               0
+>>>>
+>>>> and aim9 page_test/brk_test performance increased 5%~50%.
+>>>
+>>> Where does the 50% number come in?  The numbers below seem to only show ~4% boost.
+>>After splitting lru-locks present per-cpu page-vectors works no so well
+because they mixes pages from different cgroups.
+
+pagevec_lru_move_fn and friends need better implementation:
+either sorting pages or splitting vectores in per-lruvec basis.
+>> the Setddev/CoeffVar case has about 50% performance increase. one of container's mmtests result as following:
+>>
+>> Stddev    page_test      245.15 (   0.00%)      189.29 (  22.79%)
+>> Stddev    brk_test      1258.60 (   0.00%)      629.16 (  50.01%)
+>> CoeffVar  page_test        0.71 (   0.00%)        0.53 (  26.05%)
+>> CoeffVar  brk_test         1.32 (   0.00%)        0.64 (  51.14%)
+> 
+> Aha.  50% decrease in stdev.
+> 
+
+After splitting lru-locks present per-cpu page-vectors works
+no so well because they mix pages from different cgroups.
+
+pagevec_lru_move_fn and friends need better implementation:
+either sorting pages or splitting vectores in per-lruvec basis.
