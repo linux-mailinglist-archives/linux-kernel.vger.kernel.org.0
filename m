@@ -2,138 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59BE69CAFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:53:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C1DB9CB02
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:54:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730216AbfHZHxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 03:53:03 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35685 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730066AbfHZHxD (ORCPT
+        id S1730297AbfHZHyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 03:54:11 -0400
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:6248 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730155AbfHZHyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 03:53:03 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n4so10117101pgv.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 00:53:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=efgN+vHmbZbtfSnoe2tJDrmfT0GUhJplIH0aIIOgUwk=;
-        b=tjQlQ2ExrfoO855NFAVsXPV0e4T1NSJLC/o6pniiADGzTexVhfkjnj7HMQKTfDabp9
-         2VrpOmtAMlfxBTcV5oq3/ef4R19zGKjOvrYi28ZeEgTDLMFABrCXbnBl/A3fkl0pCdHY
-         vv4hfU59E5lc5B7WQxqMi2WmlAsIBjDAguGQ1a6wJy4fHD7zvKZMZXdVkmymfrDkwTn5
-         By0P8Yfc2fhDL0KAmp1Y24MU1f0mZgM6u3TJAKVyzOAYzckNWVHBe6KXAeZvyUWH4vOf
-         CnPTqp67rX2vTBJ8bxYsYiY2uLj2Dqk3bcbw6KN8UbgqtndFk9klGKHWdKr1YQmAVjxp
-         iRww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=efgN+vHmbZbtfSnoe2tJDrmfT0GUhJplIH0aIIOgUwk=;
-        b=YE+ehsmMlZJJioSqAkHeJL1QLVl336QGPPpWg2RNw/K2RvnqUN7e2fhFQTmzcfoWmm
-         6un0D+15To44eDxAh6Rv2HhK8SF+ENnLsAtiae+BNV31mjAmEYzXiT0jJvluL11dbY3z
-         DmpNRDKVnIxaFgi76rUzcktjssCOSSMeJRczMbBWJJ3jW5SmZM8xz/Cgd1RGpJXPaqua
-         hK2zpuXrg9BOP2JK3TUNfazUm5wQyqk3Z0OqZ6NhKmYe6rpSQv8PF8/g0ghaQeliyw9T
-         yprFqsCHaPFh/FGv6gFI3pM8sAzjvXb9Nd0tgTVFSUmCl2E1rLz5Yfo4WV+5TKOyoTBQ
-         lRKQ==
-X-Gm-Message-State: APjAAAVk4cqo4P4GFNtIdYoLqKm0XlVuc1JFUluowZ6UFFJtEhxs9Sg9
-        BrnK8o4oaQgbf7gPY4lh1w==
-X-Google-Smtp-Source: APXvYqyxRtF788S9SAurc3XEByUeMhHgAoa/qAhAeLHGf5p/zj9RyDaDK4+HzzxGKEADZkX1N9VkTQ==
-X-Received: by 2002:a63:ff65:: with SMTP id s37mr14929040pgk.102.1566805982049;
-        Mon, 26 Aug 2019 00:53:02 -0700 (PDT)
-Received: from mypc ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id r75sm14966984pfc.18.2019.08.26.00.52.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 00:53:01 -0700 (PDT)
-Date:   Mon, 26 Aug 2019 15:52:51 +0800
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jan Kara <jack@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm/migrate: see hole as invalid source page
-Message-ID: <20190826075251.GA7486@mypc>
-References: <1565078411-27082-1-git-send-email-kernelfans@gmail.com>
- <1565078411-27082-2-git-send-email-kernelfans@gmail.com>
- <20190815172222.GD30916@redhat.com>
- <20190816150222.GA10855@mypc>
+        Mon, 26 Aug 2019 03:54:10 -0400
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7Q7qxC0005992;
+        Mon, 26 Aug 2019 00:54:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=proofpoint;
+ bh=bUiQvRS1IUGy2yylR4tuv5s3vSLC9AqVMYdBVBCDw9o=;
+ b=mgxwO4W6uTQNaeP2kVpWKfKG56BEzEsQMVup1bb5Vq/Toz/orKNjymD2l0a7U9wVojfh
+ sC8lmqgcFEf9HbxygJ6fuzrGlVLQTSrMF8UneBR+RGDb5sDFTBGjLfGAihHJjo7bLgIL
+ zd3Bjn02Bh5qQDf2FpbHp11S+C1YC+2SpHbkGa7qukX3SPsiiI3Lc3BonEGEtXAe2Q8k
+ LLsgEze0QjsUodcMa3Gmi5Uo5dSdr5PNUR+Nw9DFuaajPlgl6cLRTQF2AoMGiUKxNbDQ
+ 1kmt4ALMUPMMVxmHaxY0tB+xYLCj1sBZt4zPk4XgnmqYJlxGfdKxMdyWFwNkLccw9n/A vg== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pawell@cadence.com
+Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp2055.outbound.protection.outlook.com [104.47.48.55])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2uk28kwbw8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Aug 2019 00:54:01 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d0QyAwYano2V/HYY9NXX7qzTOJxZ5/iMyR6aytMOpHGBnZLGPP7+RnjCX+UavHxwEnwTvz0W2BZwtccMPnxzoDT9QfvSwT3ObtddnA2ApCnU/V/Jja/rG5vGeK6TbmWmV/PwZggEqVE9b9mG5aYxlYYriUtfwJFH8y8G01cVv4nzjxm0pIghmn1EdF6pwLycjI0m4GSPO1qqk1dCRAS+UCbv21FHOJTTQm/Fdqjbvo3BgZz2yViAKdOO6PGv/Ya5bshyQFYe/axAXszxSv4HL3gGZPwlu6i54IsctPPr2hi5ZXdYybZ691rk4LjfFoJf9kOI84JykUxq+c/xd/sTyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bUiQvRS1IUGy2yylR4tuv5s3vSLC9AqVMYdBVBCDw9o=;
+ b=Zmfr6FuC49Y23LmZc+7IozcOI+X8L9AKrMGhqk+dJSZUw6tFDtryBkGopta4Il8eHZqprWCsn8i1aXuF81iW5S8n2vdUbUxRXvTEwIEmSaFbzBvschxOh1IjUqM3qwlQJt6IfXTnu18ncDu9ApgTMPmxYk08WO9AvIZcJyBFjTsWOsyrtkOC4vuRrySQ05YLUMmrHmbPqXBYbHRgUrFosi+xmfWPH1U6nfsYRutkns2PCUmh1ygfxEMILoW1BUTiUCamUzJeACFWMqpQ18zHRR+YheXbx4lsVYA8ngYBCMncSFdcPzneYEQOSQ+aCiJuhzfkEotsoukOsjLe+j1rqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cadence.com; dmarc=pass action=none header.from=cadence.com;
+ dkim=pass header.d=cadence.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bUiQvRS1IUGy2yylR4tuv5s3vSLC9AqVMYdBVBCDw9o=;
+ b=FNdLqnvs5horioQZ2dmycwLph+KPb6W5YYHHUQdBdoatCQYa+IAL+sRWPG/1xyc1Uo6IxiAQ4JRaQRR80pKDt167p6mKzvL7Ln/F34xFwuK4l3Zj/Bo+rYExFXxXkrUjXTN1n5w7eJ0gbBd92RgLdQbdKWVAdwVH7cnS64ukMGA=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB5558.namprd07.prod.outlook.com (20.177.231.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.19; Mon, 26 Aug 2019 07:53:59 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::98f2:1592:6dff:63e]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::98f2:1592:6dff:63e%7]) with mapi id 15.20.2199.021; Mon, 26 Aug 2019
+ 07:53:59 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Peter Chen <peter.chen@nxp.com>
+CC:     "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "rogerq@ti.com" <rogerq@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jbergsagel@ti.com" <jbergsagel@ti.com>,
+        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Jayshri Dajiram Pawar <jpawar@cadence.com>,
+        Rahul Kumar <kurahul@cadence.com>,
+        Anil Joy Varughese <aniljoy@cadence.com>
+Subject: RE: [PATCH v10 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Topic: [PATCH v10 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+Thread-Index: AQHVP/LMLOdqGz4qV0qb+zFnj54Ok6cM6JaAgABX8NA=
+Date:   Mon, 26 Aug 2019 07:53:59 +0000
+Message-ID: <BYAPR07MB4709A7F198301B63CEB0DF6ADDA10@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
+ <1563733939-21214-6-git-send-email-pawell@cadence.com>
+ <20190826021331.whfm7edlnxvjss63@b29397-desktop>
+In-Reply-To: <20190826021331.whfm7edlnxvjss63@b29397-desktop>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-tag-bcast: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYTc0YTAyNDgtYzdkNi0xMWU5LTg3NDUtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGE3NGEwMjQ5LWM3ZDYtMTFlOS04NzQ1LTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMzcxNSIgdD0iMTMyMTEyNzk2MzY1NTA1NjUyIiBoPSJjelV1ZjJ0dUk4djVxOFQyUUtEZjlHdVZJbkU9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-paste: 
+x-dg-rorf: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f42d0f0f-7d9d-44a6-44af-08d729fa8dc2
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR07MB5558;
+x-ms-traffictypediagnostic: BYAPR07MB5558:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR07MB5558E565F99271C54699F71ADDA10@BYAPR07MB5558.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 01415BB535
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(396003)(346002)(376002)(39860400002)(36092001)(189003)(199004)(186003)(14454004)(6116002)(476003)(26005)(33656002)(9686003)(81156014)(8676002)(54906003)(81166006)(3846002)(6506007)(2906002)(102836004)(25786009)(52536014)(486006)(99286004)(478600001)(107886003)(11346002)(446003)(305945005)(76116006)(6246003)(6916009)(71190400001)(71200400001)(66446008)(66066001)(64756008)(66556008)(74316002)(7736002)(6436002)(5660300002)(8936002)(86362001)(53936002)(14444005)(256004)(4326008)(55016002)(316002)(66946007)(229853002)(7696005)(76176011)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5558;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /V/K6TaJQ97V7taOGNPzzKnzXv6vRA2BWCTSqDLhHjsQVhFNTEAFnAQpnXuObKxUTxL3yVIdIHJPXmPWG9lRLOcnAHuX9b3YnAqjttSaq/4uk2vevGxxcuO1kyn+VeEa0AJ1siaTo5R8JgV3bBKzPUm6Y+HpheDBpRU0nAAMsEpEB3iiqYbJEZSmjEVf1S8xe4bTGewvHAFCWyP+TVzL2y+d2FEj5O3KRVYxMN3g2TSt6J1xSaVkRNXcZJk/Pok7OfE6gKp1QqUeMvKJKYWkvRXDCl/wCBocQkRXgVZCo223oXs7EmhvVt5+52nGV0hNzBxSCJnUcQUBxAWyyhYCO/2ZpHvMmrcvN7Kvi/vW+hIPJmm60X0EylXRAZEV+7V6i/nv1BJLgDCx5rEapGHFsVS9JPD3lXJYvaiPOBBJkmc=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816150222.GA10855@mypc>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f42d0f0f-7d9d-44a6-44af-08d729fa8dc2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 07:53:59.2476
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Q//eyI/5MmW0EmZ4CdT/yok/xcpCHmXXUYdTfBM2gRU8c7RavEJIBe8I4lICN7k4x4Kv2eoBmg4KUTDdAGd7+3q8q5Wh8j2L/jLhpmpxY+4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5558
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
+ include:mktomail.com include:spf-0014ca01.pphosted.com
+ include:spf.protection.outlook.com include:auth.msgapp.com
+ include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
+ definitions=2019-08-26_05:2019-08-23,2019-08-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0 spamscore=0
+ clxscore=1015 mlxscore=0 mlxlogscore=994 suspectscore=0 malwarescore=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1908260087
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 11:02:22PM +0800, Pingfan Liu wrote:
-> On Thu, Aug 15, 2019 at 01:22:22PM -0400, Jerome Glisse wrote:
-> > On Tue, Aug 06, 2019 at 04:00:10PM +0800, Pingfan Liu wrote:
-> > > MIGRATE_PFN_MIGRATE marks a valid pfn, further more, suitable to migrate.
-> > > As for hole, there is no valid pfn, not to mention migration.
-> > > 
-> > > Before this patch, hole has already relied on the following code to be
-> > > filtered out. Hence it is more reasonable to see hole as invalid source
-> > > page.
-> > > migrate_vma_prepare()
-> > > {
-> > > 		struct page *page = migrate_pfn_to_page(migrate->src[i]);
-> > > 
-> > > 		if (!page || (migrate->src[i] & MIGRATE_PFN_MIGRATE))
-> > > 		     \_ this condition
-> > > }
-> > 
-> > NAK you break the API, MIGRATE_PFN_MIGRATE is use for 2 things,
-> > first it allow the collection code to mark entry that can be
-> > migrated, then it use by driver to allow driver to skip migration
-> > for some entry (for whatever reason the driver might have), we
-> > still need to keep the entry and not clear it so that we can
-> > cleanup thing (ie remove migration pte entry).
-> Thanks for your kindly review.
-> 
-> I read the code again. Maybe I miss something. But as my understanding,
-> for hole, there is no pte.
-> As the current code migrate_vma_collect_pmd()
-> {
-> 	if (pmd_none(*pmdp))
-> 		return migrate_vma_collect_hole(start, end, walk);
-> ...
-> 	make_migration_entry()
-> }
-> 
-> We do not install migration entry for hole, then no need to remove
-> migration pte entry.
-> 
-> And on the driver side, there is way to migrate a hole. The driver just
-> skip it by
-> drivers/gpu/drm/nouveau/nouveau_dmem.c: if (!spage || !(src_pfns[i] & MIGRATE_PFN_MIGRATE))
->                                              ^^^^
-> Finally, in migrate_vma_finalize(), for a hole,
-> 		if (!page) {
-> 			if (newpage) {
-> 				unlock_page(newpage);
-> 				put_page(newpage);
-> 			}
-> 			continue;
-> 		}
-> And we do not rely on remove_migration_ptes(page, newpage, false); to
-> restore the orignal pte (and it is impossible).
-> 
-Hello, do you have any comment?
+Hi Peter
 
-I think most of important, hole does not use the 'MIGRATE_PFN_MIGRATE'
-API. Hole has not pte, and there is no way to 'remove migration pte
-entry'. Further more, we can know the failure on the source side, no
-need to defer it to driver side.
+>
+>On 19-07-21 19:32:18, Pawel Laszczak wrote:
+>> This patch introduce new Cadence USBSS DRD driver to Linux kernel.
+>>
+>> The Cadence USBSS DRD Controller is a highly configurable IP Core which
+>> can be instantiated as Dual-Role Device (DRD), Peripheral Only and
+>> Host Only (XHCI)configurations.
+>>
+>> The current driver has been validated with FPGA platform. We have
+>> support for PCIe bus, which is used on FPGA prototyping.
+>>
+>> The host side of USBSS-DRD controller is compliant with XHCI
+>> specification, so it works with standard XHCI Linux driver.
+>>
+>> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+>> ---
+>>  drivers/usb/Kconfig                |    2 +
+>>  drivers/usb/Makefile               |    2 +
+>>  drivers/usb/cdns3/Kconfig          |   46 +
+>>  drivers/usb/cdns3/Makefile         |   17 +
+>>  drivers/usb/cdns3/cdns3-pci-wrap.c |  203 +++
+>>  drivers/usb/cdns3/core.c           |  554 +++++++
+>>  drivers/usb/cdns3/core.h           |  109 ++
+>>  drivers/usb/cdns3/debug.h          |  171 ++
+>>  drivers/usb/cdns3/debugfs.c        |   87 ++
+>>  drivers/usb/cdns3/drd.c            |  390 +++++
+>>  drivers/usb/cdns3/drd.h            |  166 ++
+>>  drivers/usb/cdns3/ep0.c            |  914 +++++++++++
+>>  drivers/usb/cdns3/gadget-export.h  |   28 +
+>>  drivers/usb/cdns3/gadget.c         | 2338 ++++++++++++++++++++++++++++
+>>  drivers/usb/cdns3/gadget.h         | 1321 ++++++++++++++++
+>>  drivers/usb/cdns3/host-export.h    |   28 +
+>>  drivers/usb/cdns3/host.c           |   71 +
+>>  drivers/usb/cdns3/trace.c          |   11 +
+>>  drivers/usb/cdns3/trace.h          |  493 ++++++
+>>  19 files changed, 6951 insertions(+)
+>>  create mode 100644 drivers/usb/cdns3/Kconfig
+>>  create mode 100644 drivers/usb/cdns3/Makefile
+>>  create mode 100644 drivers/usb/cdns3/cdns3-pci-wrap.c
+>>  create mode 100644 drivers/usb/cdns3/core.c
+>>  create mode 100644 drivers/usb/cdns3/core.h
+>>  create mode 100644 drivers/usb/cdns3/debug.h
+>>  create mode 100644 drivers/usb/cdns3/debugfs.c
+>>  create mode 100644 drivers/usb/cdns3/drd.c
+>>  create mode 100644 drivers/usb/cdns3/drd.h
+>>  create mode 100644 drivers/usb/cdns3/ep0.c
+>>  create mode 100644 drivers/usb/cdns3/gadget-export.h
+>>  create mode 100644 drivers/usb/cdns3/gadget.c
+>>  create mode 100644 drivers/usb/cdns3/gadget.h
+>>  create mode 100644 drivers/usb/cdns3/host-export.h
+>>  create mode 100644 drivers/usb/cdns3/host.c
+>>  create mode 100644 drivers/usb/cdns3/trace.c
+>>  create mode 100644 drivers/usb/cdns3/trace.h
+>>
+>
+>Pawel, one question duirng my debug, what's purpose
+>for below code:
+>function: cdns3_gadget_ep_dequeue
+>
+>	/* Update ring */
+>	request =3D cdns3_next_request(&priv_ep->deferred_req_list);
 
-By this way, [3/3] can unify the code.
+If you have on mind this line, then yes it should be removed from here.=20
 
-Thanks,
-	Pingfan
+Driver only should allow controller to jump to next TRB in TR.=20
+If it's last TRB in HW ring and there is next request on deferred_req_list =
+then
+new transfer will be started in TRBERR event.
+
+I Will remove it,=20
+Thanks Peter=20
+=20
+>	if (request) {
+>		priv_req =3D to_cdns3_request(request);
+>
+>		link_trb->buffer =3D TRB_BUFFER(priv_ep->trb_pool_dma +
+>					      (priv_req->start_trb * TRB_SIZE));
+>		link_trb->control =3D (link_trb->control & TRB_CYCLE) |
+>				    TRB_TYPE(TRB_LINK) | TRB_CHAIN | TRB_TOGGLE;
+>	} else {
+>		priv_ep->flags |=3D EP_UPDATE_EP_TRBADDR;
+>	}
+>
+>Besides, would you please cc me when you send next version?
+>Thanks,
+>
+
+I was always adding you. =20
+
+<snip>
+>> +
+>> +#include <trace/define_trace.h>
+>> --
+>> 2.17.1
+>>
+
+Cheers,
+Pawell
+
