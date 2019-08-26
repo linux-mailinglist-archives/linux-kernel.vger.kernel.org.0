@@ -2,89 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E97F09D459
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 18:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAC5C9D471
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 18:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733123AbfHZQri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 12:47:38 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41200 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728922AbfHZQrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 12:47:37 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8B990281D1;
-        Mon, 26 Aug 2019 16:47:37 +0000 (UTC)
-Received: from krava (ovpn-204-96.brq.redhat.com [10.40.204.96])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 50C3F194BB;
-        Mon, 26 Aug 2019 16:47:35 +0000 (UTC)
-Date:   Mon, 26 Aug 2019 18:47:34 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH 00/12] libperf: Add events to perf/event.h
-Message-ID: <20190826164734.GE17554@krava>
-References: <20190825181752.722-1-jolsa@kernel.org>
- <20190826154138.GD24801@kernel.org>
+        id S1733292AbfHZQtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 12:49:02 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51806 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731578AbfHZQtC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 12:49:02 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7QGmeAO135983;
+        Mon, 26 Aug 2019 12:48:50 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2umk1urg8g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Aug 2019 12:48:42 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7QGerhX005922;
+        Mon, 26 Aug 2019 16:48:04 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma02wdc.us.ibm.com with ESMTP id 2ujvv6dxfn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Aug 2019 16:48:04 +0000
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7QGm3Sn25952690
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 26 Aug 2019 16:48:03 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 850F0AC062;
+        Mon, 26 Aug 2019 16:48:03 +0000 (GMT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 63E62AC060;
+        Mon, 26 Aug 2019 16:48:01 +0000 (GMT)
+Received: from LeoBras (unknown [9.85.146.55])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 26 Aug 2019 16:48:01 +0000 (GMT)
+Message-ID: <e2cf315d21394ca2c994a2499d9816cd4922197d.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/1] netfilter: nf_tables: fib: Drop IPV6 packages if
+ IPv6 is disabled on boot
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>
+Date:   Mon, 26 Aug 2019 13:47:55 -0300
+In-Reply-To: <20190821095844.me6kscvnfruinseu@salvia>
+References: <20190820005821.2644-1-leonardo@linux.ibm.com>
+         <20190820053607.GL2588@breakpoint.cc>
+         <793ce2e9b6200a033d44716749acc837aaf5e4e7.camel@linux.ibm.com>
+         <20190821095844.me6kscvnfruinseu@salvia>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-zBDRiKK8xztrGjRvBz3a"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826154138.GD24801@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Mon, 26 Aug 2019 16:47:37 +0000 (UTC)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-26_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908260164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 12:41:38PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Sun, Aug 25, 2019 at 08:17:40PM +0200, Jiri Olsa escreveu:
-> > hi,
-> > as a preparation for sampling libperf interface, moving event
-> > definitions into the library header. Moving just the kernel 
-> > non-AUX events now.
-> > 
-> > In order to keep libperf simple, we switch 'u64/u32/u16/u8'
-> > types used events to their generic '__u*' versions.
-> > 
-> > Perf added 'u*' types mainly to ease up printing __u64 values
-> > as stated in the linux/types.h comment:
-> > 
-> >   /*
-> >    * We define u64 as uint64_t for every architecture
-> >    * so that we can print it with "%"PRIx64 without getting warnings.
-> >    *
-> >    * typedef __u64 u64;
-> >    * typedef __s64 s64;
-> >    */
-> > 
-> > Adding and using new PRI_lu64 and PRI_lx64 macros to be used for
-> > that.  Using extra '_' to ease up the reading and differentiate
-> > them from standard PRI*64 macros.
-> 
-> I think we should take advantage of this moment to rename those structs
-> to have the 'perf_record_' prefix on them, I guess we could even remove
-> the _event from them, i.e.:
-> 
-> 'struct mmap_event' becomes 'perf_record_mmap', as it is the description
-> for the PERF_RECORD_MMAP meta-data event, are you ok with that?
 
-hum, not sure about loosing the '_event' here, but we are
-not public yet, so we can always change back ;-) I do like
-it'd follow the enum name
+--=-zBDRiKK8xztrGjRvBz3a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> I can go ahead and do it myself, updating each patch on this series to
-> do that.
+Hello Pablo, Florian,
 
-sure, I thought we'd do it later, but feel free to do it,
-maybe in separate changes?
+I implemented a V2 of this patch with the changes you proposed.
+Could you please give your feedback on that patch?
+https://lkml.org/lkml/2019/8/21/527
 
-thanks,
-jirka
+Thanks!
+
+On Wed, 2019-08-21 at 11:58 +0200, Pablo Neira Ayuso wrote:
+> On Tue, Aug 20, 2019 at 01:15:58PM -0300, Leonardo Bras wrote:
+> > On Tue, 2019-08-20 at 07:36 +0200, Florian Westphal wrote:
+> > > Wouldn't fib_netdev.c have the same problem?
+> > Probably, but I haven't hit this issue yet.
+> >=20
+> > > If so, might be better to place this test in both
+> > > nft_fib6_eval_type and nft_fib6_eval.
+> >=20
+> > I think that is possible, and not very hard to do.
+> >=20
+> > But in my humble viewpoint, it looks like it's nft_fib_inet_eval() and
+> > nft_fib_netdev_eval() have the responsibility to choose a valid
+> > protocol or drop the package.=20
+> > I am not sure if it would be a good move to transfer this
+> > responsibility to nft_fib6_eval_type() and nft_fib6_eval(), so I would
+> > rather add the same test to nft_fib_netdev_eval().
+> >=20
+> > Does it make sense?
+>=20
+> Please, update common code to netdev and ip6 extensions as Florian
+> suggests.
+>=20
+> Thanks.
+
+--=-zBDRiKK8xztrGjRvBz3a
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl1kDTsACgkQlQYWtz9S
+ttTuhA//cuSNReLpNT7MtnSrTh/NMHak2UJhClO5A5q6dWLRuhjag+AG0ik7S0MD
++PN4NFCymRxsrWjBuRPfxBiNskm7Xg+EA55ZSelxwHZhzMIUR/aEANqYBYj/YE+Q
+fhOTXq88MRjYHSYycGoIUviGaLgEQx3wTfaK4aR7F5MfnaUuqqwz7Rnc6E9F740C
+HcnbeoqakAY9SXsNke0NYjM+AnvV5FuGcU3Qcz26cZkRCBMS0QkvE2CR17EOq779
+mmj+nvpdD5h3teEGAznG9yADdwkpgXRDEkg6JHVYSlMC69H9qcvMeXYPbTw4cOkV
+bX4abUrC3pS3LupHMRB8BGKLn2PyZjZHE8xUmKSkC7BH3ZL5A47teNdH9725Geld
+tVA+OIxmujQIU4vWgnQq96auj/ukO/QCzZgE4/7i5m5Sp5lN5IDasVgwTgXkSJQ9
+5KPKGAul8xGiHaYkhjCJd7iZYuhtWq7oer9fF/AC8eTz4v45Kryg0lmmtb0hA4Oc
+9LD9WaI+yg5vCh188b3hLS28jC/yktx/T+6+7lHJqI0jyCHp9vAMl6O5VxUfX/eZ
+PmwQADsZKBzMAgwiuWdPVdogUzhua7pxfpuZ3VS519nPHSybGdiYw6iHYq04+x6E
+i+9y/Zx57p3D03com/Bwurivkd2HnBB+KBbcbqPMDIB/k5cNTIM=
+=hUXu
+-----END PGP SIGNATURE-----
+
+--=-zBDRiKK8xztrGjRvBz3a--
+
