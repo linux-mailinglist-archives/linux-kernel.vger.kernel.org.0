@@ -2,57 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE2969D1E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 16:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53C639D1DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 16:43:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732588AbfHZOrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 10:47:13 -0400
-Received: from mail5.windriver.com ([192.103.53.11]:54602 "EHLO mail5.wrs.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729605AbfHZOrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 10:47:13 -0400
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x7QEhAvv010516
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Mon, 26 Aug 2019 07:43:21 -0700
-Received: from [128.224.162.221] (128.224.162.221) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Mon, 26 Aug
- 2019 07:43:00 -0700
-From:   He Zhe <zhe.he@windriver.com>
-To:     <ast@kernel.org>, <daniel@iogearbox.net>, <kafai@fb.com>,
-        <songliubraving@fb.com>, <yhs@fb.com>, <ndesaulniers@google.com>,
-        <miguel.ojeda.sandonis@gmail.com>, <luc.vanoostenryck@gmail.com>,
-        <schwidefsky@de.ibm.com>, <gregkh@linuxfoundation.org>,
-        <mst@redhat.com>, <gor@linux.ibm.com>, <andreyknvl@google.com>,
-        <jpoimboe@redhat.com>, <liuxiaozhou@bytedance.com>,
-        <yamada.masahiro@socionext.com>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
-        He Zhe <Zhe.He@windriver.com>
-Subject: kernel/bpf/core.o: warning: objtool: ___bpf_prog_run.cold()+0x7: call
- without frame pointer save/setup
-Message-ID: <cf0273fb-c272-72be-50f9-b25bb7c7f183@windriver.com>
-Date:   Mon, 26 Aug 2019 22:42:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731897AbfHZOnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 10:43:03 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43075 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731833AbfHZOnD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 10:43:03 -0400
+Received: by mail-qt1-f196.google.com with SMTP id b11so18056451qtp.10
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 07:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u5tRAUVjwICwqP1eBMBkWBXaZ38ZgsH4zDqL+x+uPlE=;
+        b=Wu1kiSaxjFuhzmEinNBFb3YSHaE7tSSzhgK59v+g0nF2SRc1aArk53h1nFKU2RdEOO
+         7s5h7s4OntPORswAHcuLR7+Qiq4GczQqM3oPkb7XE3DotQMOT3IcVnkCzS1rNLinJ/7E
+         +7/zDaE+SV1wA4Yxdnk6nqlkF3a97y8n1XpvrrL1KgxdXE1rUwApL/Qd2quWZPlA7WoN
+         wflbv4VDsfNRD27owdg5ha2p6s1BqGQJ0j6UgKXt59E7+YNdsHepMJbosXKuWenNd9MK
+         Wh34L0M7vLXsB/gE6GU2P2a3lyz/vq2AT9pNpzM9DjeBxlG45gJD6HuDBRaFtj1Sprgp
+         KwRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=u5tRAUVjwICwqP1eBMBkWBXaZ38ZgsH4zDqL+x+uPlE=;
+        b=UMgwFlW5DYtip0TR6XfDcl9dgnVweiQnqz9CfiPwQneKPCyXzsdxIlUV+ABZ4MjGUy
+         yOF5eGlSJWRg0NU9OgQwT/d6Ly/j6EKV5xj32AdTU6f9txo8R7Z6n5b2RWwuMDbNu/CK
+         Yz1KYf8TcwVuvcMn6v4bMBgC/nioIPDp4Mn/q1gJrjV02mZlmbGXZwHikrOliLrUMgUk
+         zpcZkfL810PB50hOINMVtROlqyMCh1ag2wkwKdKVMLVFlIH+B8/WxjiPRCYhUrcOiUHR
+         wZMNEacz3FF5Pi7SsDfywn1ak68orfKM2RrRlsgNbi/DdYeiBTaLdsx26ijqVOWR287r
+         zI1Q==
+X-Gm-Message-State: APjAAAUt8Up4lRCUI5f9vlgTGWyMugS3T6H2V3XoiMXmId5hLfuea8qr
+        yke0kpl4w77Z37rODCVYkFKIOaIHLpQ=
+X-Google-Smtp-Source: APXvYqwVYjVrmp2SGBbNu2DRmDXtuB0C5ntzmIKReoSuTK9X/Uz0O0RgWFDJp+X7U6707NimRb4gdQ==
+X-Received: by 2002:ac8:7158:: with SMTP id h24mr17459504qtp.73.1566830582162;
+        Mon, 26 Aug 2019 07:43:02 -0700 (PDT)
+Received: from cisco.hsd1.co.comcast.net ([2601:282:901:dd7b:3979:c36f:a14f:ef87])
+        by smtp.gmail.com with ESMTPSA id o33sm7089937qtd.72.2019.08.26.07.43.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2019 07:43:01 -0700 (PDT)
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Shuah Khan <shuah@kernel.org>, Kees Cook <keescook@chromium.org>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH] selftests/seccomp: fix build on older kernels
+Date:   Mon, 26 Aug 2019 08:43:02 -0600
+Message-Id: <20190826144302.7745-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.221]
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi All,
+The seccomp selftest goes to some length to build against older kernel
+headers, viz. all the #ifdefs at the beginning of the file. 201766a20e30
+("ptrace: add PTRACE_GET_SYSCALL_INFO request") introduces some additional
+macros, but doesn't do the #ifdef dance. Let's add that dance here to
+avoid:
 
-Since 3193c0836f20 ("bpf: Disable GCC -fgcse optimization for ___bpf_prog_run()"),
-We have got the following warning,
-kernel/bpf/core.o: warning: objtool: ___bpf_prog_run.cold()+0x7: call without frame pointer save/setup
+gcc -Wl,-no-as-needed -Wall  seccomp_bpf.c -lpthread -o seccomp_bpf
+In file included from seccomp_bpf.c:51:
+seccomp_bpf.c: In function ‘tracer_ptrace’:
+seccomp_bpf.c:1787:20: error: ‘PTRACE_EVENTMSG_SYSCALL_ENTRY’ undeclared (first use in this function); did you mean ‘PTRACE_EVENT_CLONE’?
+  EXPECT_EQ(entry ? PTRACE_EVENTMSG_SYSCALL_ENTRY
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../kselftest_harness.h:608:13: note: in definition of macro ‘__EXPECT’
+  __typeof__(_expected) __exp = (_expected); \
+             ^~~~~~~~~
+seccomp_bpf.c:1787:2: note: in expansion of macro ‘EXPECT_EQ’
+  EXPECT_EQ(entry ? PTRACE_EVENTMSG_SYSCALL_ENTRY
+  ^~~~~~~~~
+seccomp_bpf.c:1787:20: note: each undeclared identifier is reported only once for each function it appears in
+  EXPECT_EQ(entry ? PTRACE_EVENTMSG_SYSCALL_ENTRY
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../kselftest_harness.h:608:13: note: in definition of macro ‘__EXPECT’
+  __typeof__(_expected) __exp = (_expected); \
+             ^~~~~~~~~
+seccomp_bpf.c:1787:2: note: in expansion of macro ‘EXPECT_EQ’
+  EXPECT_EQ(entry ? PTRACE_EVENTMSG_SYSCALL_ENTRY
+  ^~~~~~~~~
+seccomp_bpf.c:1788:6: error: ‘PTRACE_EVENTMSG_SYSCALL_EXIT’ undeclared (first use in this function); did you mean ‘PTRACE_EVENT_EXIT’?
+    : PTRACE_EVENTMSG_SYSCALL_EXIT, msg);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../kselftest_harness.h:608:13: note: in definition of macro ‘__EXPECT’
+  __typeof__(_expected) __exp = (_expected); \
+             ^~~~~~~~~
+seccomp_bpf.c:1787:2: note: in expansion of macro ‘EXPECT_EQ’
+  EXPECT_EQ(entry ? PTRACE_EVENTMSG_SYSCALL_ENTRY
+  ^~~~~~~~~
+make: *** [Makefile:12: seccomp_bpf] Error 1
 
-If reverting the above commit, we will get the following warning,
-kernel/bpf/core.o: warning: objtool: ___bpf_prog_run()+0x8b9: sibling call from callable instruction with modified stack frame
-if CONFIG_RETPOLINE=n, and no warning if CONFIG_RETPOLINE=y
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+Fixes: 201766a20e30 ("ptrace: add PTRACE_GET_SYSCALL_INFO request")
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 6ef7f16c4cf5..7f8b5c8982e3 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -199,6 +199,11 @@ struct seccomp_notif_sizes {
+ };
+ #endif
+ 
++#ifndef PTRACE_EVENTMSG_SYSCALL_ENTRY
++#define PTRACE_EVENTMSG_SYSCALL_ENTRY	1
++#define PTRACE_EVENTMSG_SYSCALL_EXIT	2
++#endif
++
+ #ifndef seccomp
+ int seccomp(unsigned int op, unsigned int flags, void *args)
+ {
+-- 
+2.20.1
 
-Zhe
