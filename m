@@ -2,66 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBDC89CC3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 11:09:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 697159CC42
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 11:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730674AbfHZJJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 05:09:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35748 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730398AbfHZJJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 05:09:27 -0400
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1691581F07
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 09:09:27 +0000 (UTC)
-Received: by mail-ed1-f72.google.com with SMTP id z2so9226931ede.2
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 02:09:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0e8rI6csadbpI9hF/1H0WuciLZJiYzd48jgfPspvsFs=;
-        b=W5Ja3E5SN2QVWEZbvOOpzTtHbf0x+LpBx9TCPaHm2eoXhJoZWAC3IPV76VwR1xPNAL
-         gcaAAxnoVpBTElTZfscSXJ5CtN6/fBKhET/UQROw4yJv8VnwJnCZcV8s4wrXNU0CzD83
-         3VmRBrDoUBiWA2ifSJgK0xA9fDNPf/E0aTZ29YISx62W2zPWc3GjN2X1r5TwxA1UNJMb
-         FWxbe6p4Dch2yZNCZiG/mkSTmORzh/HVA7tUZu6i93fQ54aTjuNrE6dSpj+hHTJ0WdQj
-         I/WPPZwZi0hs2xfHcKNKnu/s7n3d2B/kjyHWNnBtUZ6t4Y52Q9+FI9LKAgNA3Q4eNnq8
-         Iz1A==
-X-Gm-Message-State: APjAAAVUvksCV7guRWEkIgfl9DEbgO7PbWmBNswywHmN6fRlMvdPyz9X
-        cxa2hA/mauBTbGBILwxz4IA40z0zs/xWx+HhX7jZ+ik0ukX5pdR39rfdL4co99UXuvLQ0/ZzGr/
-        RxCURa+/Nrev8tYLzAEKahcsG
-X-Received: by 2002:a17:906:5282:: with SMTP id c2mr15163044ejm.259.1566810565519;
-        Mon, 26 Aug 2019 02:09:25 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyp2vfIUvIpKKX1pS84n5oMSQ3uHxvsZ2FZQ1JSa8hTE/fMToPfSu8EKVTRzGNrm5Nkkj3CMg==
-X-Received: by 2002:a17:906:5282:: with SMTP id c2mr15163037ejm.259.1566810565379;
-        Mon, 26 Aug 2019 02:09:25 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id w19sm1168567edt.41.2019.08.26.02.09.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2019 02:09:24 -0700 (PDT)
-Subject: Re: [PATCH] ASoC: es8316: limit headphone mixer volume
-To:     Daniel Drake <drake@endlessm.com>
-Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Mark Brown <broonie@kernel.org>,
-        David Yang <yangxiaohua@everest-semi.com>,
-        alsa-devel@alsa-project.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-References: <20190824210426.16218-1-katsuhiro@katsuster.net>
- <943932bf-2042-2a69-c705-b8e090e96377@redhat.com>
- <CAD8Lp44_uAC4phZ9NbvM_LKNUoiNUqAnFsq4h-bJiQn6byjzGw@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <eeee149c-4d9b-8b2e-780b-a41e2c87ec02@redhat.com>
-Date:   Mon, 26 Aug 2019 11:09:24 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730713AbfHZJLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 05:11:00 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39394 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729753AbfHZJK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 05:10:59 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 98E03EE471DA0DD908C3;
+        Mon, 26 Aug 2019 17:10:57 +0800 (CST)
+Received: from [127.0.0.1] (10.57.77.74) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 26 Aug 2019
+ 17:10:52 +0800
+Subject: Re: [PATCH] drm/hisilicon: Use dev_get_drvdata
+To:     Chuhong Yuan <hslester96@gmail.com>
+References: <20190723103852.3907-1-hslester96@gmail.com>
+CC:     Rongrong Zou <zourongrong@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+From:   xinliang <z.liuxinliang@hisilicon.com>
+Message-ID: <5D63A21B.1020207@hisilicon.com>
+Date:   Mon, 26 Aug 2019 17:10:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAD8Lp44_uAC4phZ9NbvM_LKNUoiNUqAnFsq4h-bJiQn6byjzGw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190723103852.3907-1-hslester96@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.77.74]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -69,47 +42,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 26-08-19 04:53, Daniel Drake wrote:
-> On Mon, Aug 26, 2019 at 1:38 AM Hans de Goede <hdegoede@redhat.com> wrote:
->> On 24-08-19 23:04, Katsuhiro Suzuki wrote:
->>> This patch limits Headphone mixer volume to 4 from 7.
->>> Because output sound suddenly becomes very loudly with many noise if
->>> set volume over 4.
-> 
-> That sounds like something that should be limited in UCM.
-> 
->> Higher then 4 not working matches my experience, see this comment from
->> the UCM file: alsa-lib/src/conf/ucm/codecs/es8316/EnableSeq.conf :
->>
->> # Set HP mixer vol to -6 dB (4/7) louder does not work
->> cset "name='Headphone Mixer Volume' 4"
-> 
-> What does "does not work" mean more precisely?
+On 2019/7/23 18:38, Chuhong Yuan wrote:
+> Instead of using to_pci_dev + pci_get_drvdata,
+> use dev_get_drvdata to make code simpler.
+>
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 
-IIRC garbled sound.
+Chuhong, thanks for the patch. And sorry for late reply.
+Acked-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
+Applied to drm-hisilicon-hibmc-next.
 
-> I checked the spec, there is indeed something wrong in the kernel driver here.
-> The db scale is not a simple scale as the kernel source suggests.
-> 
-> Instead it is:
-> 0000 – -12dB
-> 0001 – -10.5dB
-> 0010 – -9dB
-> 0011 – -7.5dB
-> 0100 – -6dB
-> 1000 – -4.5dB
-> 1001 – -3dB
-> 1010 – -1.5dB
-> 1011 – 0dB
-> 
-> So perhaps we can fix the kernel to follow this table and then use UCM
-> to limit the volume if its too high on a given platform?
+Thanks,
+Xinliang
 
-Yes that sounds like the right thing to do. Katsuhiro can you confirm that
-using this table allows using the full scale ? note that the full scale now
-has 9 steps rather then 8.
+> ---
+>   drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> index ce89e56937b0..f0be263feff5 100644
+> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> @@ -60,16 +60,14 @@ static struct drm_driver hibmc_driver = {
+>   
+>   static int __maybe_unused hibmc_pm_suspend(struct device *dev)
+>   {
+> -	struct pci_dev *pdev = to_pci_dev(dev);
+> -	struct drm_device *drm_dev = pci_get_drvdata(pdev);
+> +	struct drm_device *drm_dev = dev_get_drvdata(dev);
+>   
+>   	return drm_mode_config_helper_suspend(drm_dev);
+>   }
+>   
+>   static int  __maybe_unused hibmc_pm_resume(struct device *dev)
+>   {
+> -	struct pci_dev *pdev = to_pci_dev(dev);
+> -	struct drm_device *drm_dev = pci_get_drvdata(pdev);
+> +	struct drm_device *drm_dev = dev_get_drvdata(dev);
+>   
+>   	return drm_mode_config_helper_resume(drm_dev);
+>   }
 
-Regards,
-
-Hans
 
