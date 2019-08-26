@@ -2,246 +2,289 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D36F9D948
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 773139D951
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:40:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726678AbfHZWir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 18:38:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33693 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfHZWiq (ORCPT
+        id S1726867AbfHZWk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 18:40:27 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43104 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbfHZWk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 18:38:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id u16so16831013wrr.0
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 15:38:43 -0700 (PDT)
+        Mon, 26 Aug 2019 18:40:27 -0400
+Received: by mail-ot1-f66.google.com with SMTP id e12so16807690otp.10;
+        Mon, 26 Aug 2019 15:40:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SaIBmj1syIhbIo3y0DHYvDjfeP8VfIt7/4u6ebKA9hE=;
-        b=qf8GWX0azpP5W9wmjsXsvDZrIM7ZBxNUy7tCzn+PQzZ10r4izIgThuc6VT0QnWcm6M
-         zjrmMMTn9kJF9HHdcOzXtPRIN0giEANC1gVg9JJkbV76zCgMcBfWzSfKglFJjVBb2Wpu
-         fd/6kOiMxzo6isqbtY8hUzzNA7h9F+MDJC1CprHIf9YFBXnL7wkzsT0eFuo01g92YnN5
-         2charSD1JaTDWr9la4F2RIiHSci8z1wg0W2ANH0+TIhbTaSTZoc/9EsEv/3HXx4BFqu9
-         OEy5mILXfCrIgfvMXYroRQYf8ZLKyqMqyCNAr5souRRlqiWqYOtDUaq38yxQ6RwQGb+q
-         RDhA==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DBtUgp09ILtLJx82v7/9S8a2bPggcu3SBMJmSRWkOWU=;
+        b=q9KKwFI2spBd11DLhVGrnyWQ1itKWiJjNUpvQb1lcigAsiIa+zqXV82lgLULFRFzvY
+         i/A5q06MVmhusfme0Ht+CbyPFuNMSHhcZYLY8I4jksbTYGpNIuOmgXorJ5KIDpiRD80d
+         0zhLZqPjdoEjoVBAOLrpQMonWWoSoNqSpUUzUZBAm8wRtSHcdYw60KPG3ITSWALzqpTQ
+         CEKoNBmEfKEjOnz2LA4YCMClL8//qfoXF7ybS3TZRxu+x2+AyvdmlGx5GAmhZ5KV5AbL
+         1LCSqWmL7gpHIxS6ZfGtcF+QfQvgAeypN9W97aH7Zp97DKtIu6KdXpA6IwBYNPrKjm66
+         Un+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=SaIBmj1syIhbIo3y0DHYvDjfeP8VfIt7/4u6ebKA9hE=;
-        b=OiZbURpWpypa9ebJHk+vibPJg509FHbpkGYE3QxSxM6+qOwdMVjMZ+HGWe7R5jUhS7
-         F+ooLNwUh7lWIpxLt85nFiPj+kmszMfSZ7hScdkmXXzDTvxOLCX8Av1D2bgmh9SHuD4L
-         54ZcXEp78bdzDFNsgYFN9MJwBzCXIUb6m41o140U0cF75+uGzoLqgIDC3QOvdu3RUAG1
-         l8bYTfmodQF+VTpsE2h/kO+5J7hr2y9wVooSJXt2N4+E67IN0s/ybZwgHF6F+KtBCVyw
-         kLVOlkHzAT+E2XY6L/VCYk41L7TO2o1CmUuRTNBSfxLxUMRcGWzVi6k4mnfYLADCeBSz
-         40HQ==
-X-Gm-Message-State: APjAAAUgGlOlCaHqstVAgalof8BYufQC51F0VTjnYoOvTxd4Hq7092vX
-        hyGMARWNSPZPdF6hkrmDpUwn0UDxdEk=
-X-Google-Smtp-Source: APXvYqxblZTUxm+ADPBGH+nFTO9lPKBMkIX9xeYFsGruga4P+tIPzTp2+nJNr4f+BDHWiI4MT2o6vA==
-X-Received: by 2002:adf:dd88:: with SMTP id x8mr26507496wrl.331.1566859122727;
-        Mon, 26 Aug 2019 15:38:42 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab? ([2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab])
-        by smtp.googlemail.com with ESMTPSA id t13sm14908638wrr.0.2019.08.26.15.38.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Aug 2019 15:38:42 -0700 (PDT)
-Subject: [GIT PULL] timers drivers v5.4
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Magnus Damm <damm+renesas@opensource.se>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <df27caba-d9f8-e64d-0563-609f8785ecb3@linaro.org>
- <alpine.DEB.2.21.1908262257570.1939@nanos.tec.linutronix.de>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <417e2196-964a-3f22-4497-dcc7f7b7204d@linaro.org>
-Date:   Tue, 27 Aug 2019 00:38:40 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DBtUgp09ILtLJx82v7/9S8a2bPggcu3SBMJmSRWkOWU=;
+        b=cdG1TRyBji80fNIZfDEbUJHsQaYRvrlJaHRMH0DaIMAGrlSV6aflYeC9HOa+e1cdvy
+         FFECXjIX1c9abUz0jimiXbOASvra5Qllv2QQ/4MXH4tAHhowBavVc1jIHrCCSm03BI89
+         DnzRFP321ZSNXPESbonG04+/BrZN4U+WgxnTDts03U/8T8Vrzs+MFHxhuSG5X+AlZxbc
+         WyqDMdxQGg/TBgGqhVAr62Qv2KhzfYRu/LuL6kOqanMI0OX+IHHz79o8lALiJI/Ckk8u
+         SCkFaGkOZbyCu+IpsSAlq6N6g2xJN80tQj48jN8TCDu+5DT5TPx5+OLsUVlpJSKieLPH
+         mpDw==
+X-Gm-Message-State: APjAAAVFaW7k6O/fDbhP04d7hXynDowLaTiUTp/rsOUBJ8mLYF99rlhV
+        r1GMEaP+ormfvF6CCcT2OSazklgd/nsIKdgqETE=
+X-Google-Smtp-Source: APXvYqz1tIwsKtjQUBPVQFswHzIWhO2ha2uKXMrM0jPjl6uCPWwQ2ehNr4SbBIrZI0zPPR9GJOgG6djB2Nf93UqVxso=
+X-Received: by 2002:a05:6830:1e5a:: with SMTP id e26mr16553944otj.96.1566859224972;
+ Mon, 26 Aug 2019 15:40:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1908262257570.1939@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190823090418.17148-1-narmstrong@baylibre.com>
+ <20190823090418.17148-3-narmstrong@baylibre.com> <CAFBinCBy-VxfSMPMR0cEDuNg8=UOUVvWfkDi2Tp=QhBZka93aQ@mail.gmail.com>
+ <f6e7e4de-e1b7-f642-07cb-fa029ff2a883@baylibre.com>
+In-Reply-To: <f6e7e4de-e1b7-f642-07cb-fa029ff2a883@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 27 Aug 2019 00:40:14 +0200
+Message-ID: <CAFBinCDDygiafTwLgqB9BimqrmwxL2=HFQD8cX8CQL23AFZNXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] soc: amlogic: Add support for Everything-Else
+ power domains controller
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, ulf.hansson@linaro.org,
+        linux-amlogic@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Neil,
 
-Hi Thomas,
+On Mon, Aug 26, 2019 at 10:10 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> On 25/08/2019 23:10, Martin Blumenstingl wrote:
+> > Hi Neil,
+> >
+> > thank you for this update
+> > I haven't tried this on the 32-bit SoCs yet, but I am confident that I
+> > can make it work by "just" adding the SoC specific bits!
+> >
+> > On Fri, Aug 23, 2019 at 11:06 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+> > [...]
+> >> +/* AO Offsets */
+> >> +
+> >> +#define AO_RTI_GEN_PWR_SLEEP0          (0x3a << 2)
+> >> +#define AO_RTI_GEN_PWR_ISO0            (0x3b << 2)
+> >> +
+> >> +/* HHI Offsets */
+> >> +
+> >> +#define HHI_MEM_PD_REG0                        (0x40 << 2)
+> >> +#define HHI_VPU_MEM_PD_REG0            (0x41 << 2)
+> >> +#define HHI_VPU_MEM_PD_REG1            (0x42 << 2)
+> >> +#define HHI_VPU_MEM_PD_REG3            (0x43 << 2)
+> >> +#define HHI_VPU_MEM_PD_REG4            (0x44 << 2)
+> >> +#define HHI_AUDIO_MEM_PD_REG0          (0x45 << 2)
+> >> +#define HHI_NANOQ_MEM_PD_REG0          (0x46 << 2)
+> >> +#define HHI_NANOQ_MEM_PD_REG1          (0x47 << 2)
+> >> +#define HHI_VPU_MEM_PD_REG2            (0x4d << 2)
+> > should we switch to the actual register offsets like we did in the
+> > clock drivers?
+>
+> I find it simpler to refer to the numbers in the documentation...
+OK, I have no strong preference here
+for the 32-bit SoCs I will need to use the offsets based on the
+"amlogic,meson8b-pmu", "syscon" [0], so these will be magic anyways
 
-The following changes since commit 3e2d94535adb2df15f3907e4b4c7cd8a5a4c2b5a:
+[...]
+> >> +#define VPU_HHI_MEMPD(__reg)                                   \
+> >> +       { __reg, BIT(8) },                                      \
+> >> +       { __reg, BIT(9) },                                      \
+> >> +       { __reg, BIT(10) },                                     \
+> >> +       { __reg, BIT(11) },                                     \
+> >> +       { __reg, BIT(12) },                                     \
+> >> +       { __reg, BIT(13) },                                     \
+> >> +       { __reg, BIT(14) },                                     \
+> >> +       { __reg, BIT(15) }
+> > the Amlogic implementation from buildroot-openlinux-A113-201901 (the
+> > latest one I have)
+> > kernel/aml-4.9/drivers/amlogic/media/vout/hdmitx/hdmi_tx_20/hw/hdmi_tx_hw.c
+> > uses:
+> > hd_set_reg_bits(P_HHI_MEM_PD_REG0, 0, 8, 8)
+> > that basically translates to: GENMASK(15, 8) (which means we could
+> > drop this macro)
+> >
+> > the datasheet also states: 15~8 [...] HDMI memory PD (as a single
+> > 8-bit wide register)
+>
+> Yep, but the actual code setting the VPU power domain is in u-boot :
+>
+> drivers/vpu/aml_vpu_power_init.c:
+> 108         for (i = 8; i < 16; i++) {
+> 109                 vpu_hiu_setb(HHI_MEM_PD_REG0, 0, i, 1);
+> 110                 udelay(5);
+> 111         }
+>
+> the linux code is like never used here, my preference goes to the u-boot code
+> implementation.
+I see, let's keep your implementation then
 
-  clocksource/drivers/hyperv: Enable TSC page clocksource on 32bit
-(2019-08-23 16:59:54 +0200)
+> >
+> > [...]
+> >> +static struct meson_ee_pwrc_domain_desc g12a_pwrc_domains[] = {
+> >> +       [PWRC_G12A_VPU_ID]  = VPU_PD("VPU", &g12a_pwrc_vpu, g12a_pwrc_mem_vpu,
+> >> +                                    pwrc_ee_get_power, 11, 2),
+> >> +       [PWRC_G12A_ETH_ID] = MEM_PD("ETH", g12a_pwrc_mem_eth),
+> >> +};
+> >> +
+> >> +static struct meson_ee_pwrc_domain_desc sm1_pwrc_domains[] = {
+> >> +       [PWRC_SM1_VPU_ID]  = VPU_PD("VPU", &sm1_pwrc_vpu, sm1_pwrc_mem_vpu,
+> >> +                                   pwrc_ee_get_power, 11, 2),
+> >> +       [PWRC_SM1_NNA_ID]  = TOP_PD("NNA", &sm1_pwrc_nna, sm1_pwrc_mem_nna,
+> >> +                                   pwrc_ee_get_power),
+> >> +       [PWRC_SM1_USB_ID]  = TOP_PD("USB", &sm1_pwrc_usb, sm1_pwrc_mem_usb,
+> >> +                                   pwrc_ee_get_power),
+> >> +       [PWRC_SM1_PCIE_ID] = TOP_PD("PCI", &sm1_pwrc_pci, sm1_pwrc_mem_pcie,
+> >> +                                   pwrc_ee_get_power),
+> >> +       [PWRC_SM1_GE2D_ID] = TOP_PD("GE2D", &sm1_pwrc_ge2d, sm1_pwrc_mem_ge2d,
+> >> +                                   pwrc_ee_get_power),
+> >> +       [PWRC_SM1_AUDIO_ID] = MEM_PD("AUDIO", sm1_pwrc_mem_audio),
+> >> +       [PWRC_SM1_ETH_ID] = MEM_PD("ETH", g12a_pwrc_mem_eth),
+> >> +};
+> > my impression: I find this hard to read as it merges the TOP and
+> > Memory PD domains from above, adding some seemingly random "11, 2" for
+> > the VPU PD as well as pwrc_ee_get_power for some of the power domains
+> > personally I like the way we describe clk_regmap because it's easy to
+> > read (even though it adds a bit of boilerplate). I'm not sure if we
+> > can make it work here, but this (not compile tested) is what I have in
+> > mind (I chose two random power domains):
+> >   [PWRC_SM1_VPU_ID]  = {
+> >     .name = "VPU",
+> >     .top_pd = SM1_EE_PD(8),
+> >     .mem_pds = {
+> >         VPU_MEMPD(HHI_VPU_MEM_PD_REG0),
+> >         VPU_MEMPD(HHI_VPU_MEM_PD_REG1),
+> >         VPU_MEMPD(HHI_VPU_MEM_PD_REG2),
+> >         VPU_MEMPD(HHI_VPU_MEM_PD_REG3),
+> >         { HHI_VPU_MEM_PD_REG4, GENMASK(1, 0) },
+> >         { HHI_VPU_MEM_PD_REG4, GENMASK(3, 2) },
+> >         { HHI_VPU_MEM_PD_REG4, GENMASK(5, 4) },
+> >         { HHI_VPU_MEM_PD_REG4, GENMASK(7, 6) },
+> >         { HHI_MEM_PD_REG0, GENMASK(15, 8) },
+> >     },
+> >     .num_mem_pds = 9,
+> >     .reset_names_count = 11,
+> >     .clk_names_count = 2,
+> >   },
+> >   [PWRC_SM1_ETH_ID] = {
+> >     .name = "ETH",
+> >     .mem_pds = { HHI_MEM_PD_REG0, GENMASK(3, 2) },
+> >     .num_mem_pds = 1,
+> >   },
+> > ...
+> >
+> > I'd like to get Kevin's feedback on this
+> > what you have right now is probably good enough for the initial
+> > version of this driver. I'm bringing this discussion up because we
+> > will add support for more SoCs to this driver (we migrate GX over to
+> > it and I want to add 32-bit SoC support, which probably means at least
+> > Meson8 - assuming they kept the power domains identical between
+> > Meson8/8b/8m2).
+>
+> I find it more compact, but nothing is set in stone, you can refactor this as
+> will when adding meson8 support, no problems here.
+OK. if Kevin (or someone else) has feedback on this then I don't have
+to waste time if it turns out that it's not a great idea ;)
 
-are available in the Git repository at:
+> >
+> > [...]
+> >> +struct meson_ee_pwrc_domain {
+> >> +       struct generic_pm_domain base;
+> >> +       bool enabled;
+> >> +       struct meson_ee_pwrc *pwrc;
+> >> +       struct meson_ee_pwrc_domain_desc desc;
+> >> +       struct clk_bulk_data *clks;
+> >> +       int num_clks;
+> >> +       struct reset_control *rstc;
+> >> +       int num_rstc;
+> >> +};
+> >> +
+> >> +struct meson_ee_pwrc {
+> >> +       struct regmap *regmap_ao;
+> >> +       struct regmap *regmap_hhi;
+> >> +       struct meson_ee_pwrc_domain *domains;
+> >> +       struct genpd_onecell_data xlate;
+> >> +};
+> > (my impressions on this: I was surprised to find more structs down
+> > here, I expected them to be together with the other structs further
+> > up)
+>
+> These are the "live" structures, opposed to the static structures defining the
+> data and these are allocated and filled a probe time.
+I see, thanks for the explanation
 
-  https://git.linaro.org/people/daniel.lezcano/linux.git tags/timers-v5.4
+> I dislike changing static global data at runtime, this is why I clearly separated both.
+I didn't mean to make them static - the thing that caught my eye was
+that some of the structs are defined at the top of the driver while
+these two are define much further down
+I am used to having all struct definitions in one place
 
-for you to fetch changes up to 19d608458f4f3bb3a1f89bd7e4814c3fd30dbec7:
+> >
+> >> +static bool pwrc_ee_get_power(struct meson_ee_pwrc_domain *pwrc_domain)
+> >> +{
+> >> +       u32 reg;
+> >> +
+> >> +       regmap_read(pwrc_domain->pwrc->regmap_ao,
+> >> +                   pwrc_domain->desc.top_pd->sleep_reg, &reg);
+> >> +
+> >> +       return (reg & pwrc_domain->desc.top_pd->sleep_mask);
+> > should this also check for top_pd->iso_* as well as mem_pd->*?
+> > if the top_pd part was optional we could even use the get_power
+> > callback for *all* power domains in this driver (right now audio and
+> > Ethernet don't have any get_power callback)
+>
+> We could, but how should we handle if one unexpected bit is set ? No idea...
+hmm, I see
+if we need it for other power domains then we can still implement it,
+so it's good for now
 
-  clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated
-(2019-08-27 00:31:39 +0200)
+[...]
+> > bonus question: what about the video decoder power domains?
+> > here is an example from vdec_1_start
+> > (drivers/staging/media/meson/vdec/vdec_1.c):
+> >   /* Enable power for VDEC_1 */
+> >   regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
+> >                                    GEN_PWR_VDEC_1, 0);
+> >   usleep_range(10, 20);
+> >   [...]
+> >   /* enable VDEC Memories */
+> >   amvdec_write_dos(core, DOS_MEM_PD_VDEC, 0);
+> >   /* Remove VDEC1 Isolation */
+> >   regmap_write(core->regmap_ao, AO_RTI_GEN_PWR_ISO0, 0);
+> >
+> > (my point here is that it mixes video decoder "DOS" registers with
+> > AO_RTI_GEN_PWR registers)
+> > do we also want to add support for these "DOS" power domains to the
+> > meson-ee-pwrc driver?
+> > what about the AO_RTI_GEN_PWR part then - should we keep management
+> > for the video decoder power domain bits in AO_RTI_GEN_PWR as part of
+> > the video decoder driver?
+>
+> I left the decoders power domains aside so we can discuss it later on,
+> we should expose multiple power domains, but the driver would need to
+> be changed to support multiple power domains. But will loose the ability
+> to enable/disable each domain at will unless it created a sub-device for
+> each decoder and attaches the domain to to each device and use runtime pm.
+>
+> It's simpler to discuss it later on !
+OK - does this mean you and/or Maxime have "discuss decoder power
+domains" on your (long) TODO-list or do you want me to open this
+discussion after this driver is merged?
 
-----------------------------------------------------------------
-- Remove dev_err() when used with platform_get_irq (Stephen Boyd)
 
-- Add DT binding and new compatible for Allwinner sun4i (Maxime Ripard)
+Martin
 
-- Register the Atmel tcb clocksource for delays (Alexandre Belloni)
 
-- Add a clock divider for the Freescale imx platforms and new timer node
-  in the DT (Anson Huang)
-
-- Use DIV_ROUND_CLOSEST macro for the Renesas OSTM (Geert Uytterhoeven)
-
-- Fix GENMASK and timer operation for the npcm timer (Avi Fishman)
-
-- Fix timer-of showing an error message when EPROBE_DEFER is
-  returned (Jon Hunter)
-
-- Add new SoC DT binding and match for Renesas timers (Magnus Damm)
-
-----------------------------------------------------------------
-Alexandre Belloni (1):
-      clocksource/drivers/tcb_clksrc: Register delay timer
-
-Anson Huang (3):
-      clocksource/drivers/imx-sysctr: Add internal clock divider handle
-      arm64: dts: imx8mm: Add system counter node
-      arm64: dts: imx8mq: Add system counter node
-
-Avi Fishman (1):
-      clocksource/drivers/npcm: Fix GENMASK and timer operation
-
-Geert Uytterhoeven (1):
-      clocksource/drivers/renesas-ostm: Use DIV_ROUND_CLOSEST() helper
-
-Jon Hunter (2):
-      clocksource/drivers/timer-of: Do not warn on deferred probe
-      clocksource/drivers: Do not warn on probe defer
-
-Magnus Damm (7):
-      dt-bindings: timer: renesas, cmt: Add CMT0234 to sh73a0 and r8a7740
-      dt-bindings: timer: renesas, cmt: Update CMT1 on sh73a0 and r8a7740
-      dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a7792
-      dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a77995
-      dt-bindings: timer: renesas, cmt: Update R-Car Gen3 CMT1 usage
-      clocksource/drivers/sh_cmt: r8a7740 and sh73a0 SoC-specific match
-      clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated
-
-Maxime Ripard (4):
-      dt-bindings: timer: Convert Allwinner A10 Timer to a schema
-      dt-bindings: timer: Add missing compatibles
-      clocksource: sun4i: Add missing compatibles
-      dt-bindings: timer: Convert Allwinner A13 HSTimer to a schema
-
-Stephen Boyd (1):
-      clocksource: Remove dev_err() usage after platform_get_irq()
-
- .../bindings/timer/allwinner,sun4i-a10-timer.yaml  | 102
-+++++++++++++++++++++
- .../bindings/timer/allwinner,sun4i-timer.txt       |  19 ----
- .../bindings/timer/allwinner,sun5i-a13-hstimer.txt |  26 ------
- .../timer/allwinner,sun5i-a13-hstimer.yaml         |  79 ++++++++++++++++
- .../devicetree/bindings/timer/renesas,cmt.txt      |  40 ++++----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi          |   8 ++
- arch/arm64/boot/dts/freescale/imx8mq.dtsi          |   8 ++
- drivers/clocksource/Kconfig                        |   2 +-
- drivers/clocksource/em_sti.c                       |   4 +-
- drivers/clocksource/renesas-ostm.c                 |   2 +-
- drivers/clocksource/sh_cmt.c                       |  19 +++-
- drivers/clocksource/sh_tmu.c                       |   5 +-
- drivers/clocksource/timer-atmel-tcb.c              |  18 ++++
- drivers/clocksource/timer-imx-sysctr.c             |   5 +
- drivers/clocksource/timer-npcm7xx.c                |   9 +-
- drivers/clocksource/timer-of.c                     |   6 +-
- drivers/clocksource/timer-probe.c                  |   4 +-
- drivers/clocksource/timer-sun4i.c                  |   4 +
- 18 files changed, 275 insertions(+), 85 deletions(-)
- create mode 100644
-Documentation/devicetree/bindings/timer/allwinner,sun4i-a10-timer.yaml
- delete mode 100644
-Documentation/devicetree/bindings/timer/allwinner,sun4i-timer.txt
- delete mode 100644
-Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt
- create mode 100644
-Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+[0] https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/amlogic/pmu.txt
