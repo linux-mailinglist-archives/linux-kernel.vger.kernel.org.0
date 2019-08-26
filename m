@@ -2,187 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A83329CDF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 13:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AC109CE0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 13:23:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731355AbfHZLUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 07:20:32 -0400
-Received: from zimbra2.kalray.eu ([92.103.151.219]:54948 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730884AbfHZLUa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 07:20:30 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 8EB5227E064D;
-        Mon, 26 Aug 2019 13:20:28 +0200 (CEST)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Ikw_e-efbxjL; Mon, 26 Aug 2019 13:20:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 29B5127E0E5F;
-        Mon, 26 Aug 2019 13:20:28 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 29B5127E0E5F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1566818428;
-        bh=tsMZPKKNKbI1bxBzVmtUnATkR6Uyc9slc45iBOLgVIQ=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=iUOInlIyEEGDWg1LIFSHrTBY4de3dAi8xD/6oxQKuKl+CdMK2LPcp6SG2d97XVVeO
-         2O5VituFjcDVop/SsmJFsf0yBdOqn2xrdXjQheWns6/cgICU3sMwUb5as7MvfhiGiS
-         eRtsUdy+cmA5ien2eKIlM+E1puAcWWaEvcHc6HaE=
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id IdXClkO_c_9L; Mon, 26 Aug 2019 13:20:28 +0200 (CEST)
-Received: from zimbra2.kalray.eu (zimbra2.kalray.eu [192.168.40.202])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 0B6EB27E064D;
-        Mon, 26 Aug 2019 13:20:28 +0200 (CEST)
-Date:   Mon, 26 Aug 2019 13:20:28 +0200 (CEST)
-From:   Marta Rybczynska <mrybczyn@kalray.eu>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     kbusch <kbusch@kernel.org>, axboe <axboe@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Samuel Jones <sjones@kalray.eu>,
-        Guillaume Missonnier <gmissonnier@kalray.eu>
-Message-ID: <1678802062.58145473.1566818428010.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <20190822000652.GF9511@lst.de>
-References: <89520652.56920183.1565948841909.JavaMail.zimbra@kalray.eu> <20190822000652.GF9511@lst.de>
-Subject: Re: [PATCH v2] nvme: allow 64-bit results in passthru commands
+        id S1731107AbfHZLW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 07:22:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38922 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727487AbfHZLW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 07:22:57 -0400
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 859CA85537
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 11:22:56 +0000 (UTC)
+Received: by mail-pg1-f200.google.com with SMTP id 141so9587998pgh.12
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 04:22:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Q7zhErdr3zhXTAX3q0cF2SWaKy8PRaJ11xDeRV5rY7A=;
+        b=OeVilpRK2fm40VT1RbUqYWislyUPLYd3mlS9IQGCCgsBuVNqEFgecMTcl6xgxYyMma
+         h8RZ1PNK7ojWtPvYKtlrxaOdUQlQB8KrEG/Ayzg84EnOb5pWlM9fIe0fqr7woA031xbX
+         84ugGYrbRM8ObJYjuEwY0/syiDp0E8FkEMjl9XEgiWyhEWTY6dMpq058QoP5FN3Vd4Jw
+         mT3PZ1DcVyVB8Ws6PiYe1ZbydmoJG5cKL6SJIzj4EFF3J4T2wH2o5I6QlFNXNxbaAXMS
+         KuNYpQWoSVIpWjG58e/XAfYzze1+oGxK26dw4MmJ6dsCGS4aRzBwtTKKXBNMLISDoM4U
+         203A==
+X-Gm-Message-State: APjAAAWaTXvuGLjaeynzmVLjwPtqAJ2l2vz3eBwNpAO01fVsahS+k3xR
+        JBPk7Ln77SZN3F16kPZkzWKvbdkoEMyS6pSrdNUasyANzMpvAKPkTNDU6KoCf9JKGha2aWYWroR
+        3OjJ0e0M3ee+R5f63v4ZroS7J
+X-Received: by 2002:a63:3805:: with SMTP id f5mr15815884pga.272.1566818575952;
+        Mon, 26 Aug 2019 04:22:55 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwMX+p5IaRGSs2L/aHxh7gwyKZJayxi7Y7zFuvX0f/Yk5rH0vZZArHzlXVYl8NrsWhnHBvJtQ==
+X-Received: by 2002:a63:3805:: with SMTP id f5mr15815858pga.272.1566818575581;
+        Mon, 26 Aug 2019 04:22:55 -0700 (PDT)
+Received: from xz-x1 ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id x12sm3132579pjt.32.2019.08.26.04.22.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2019 04:22:54 -0700 (PDT)
+Date:   Mon, 26 Aug 2019 19:22:44 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Andrew Jones <drjones@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Huth <thuth@redhat.com>
+Subject: Re: [PATCH] KVM: selftests: Detect max PA width from cpuid
+Message-ID: <20190826112244.GE1785@xz-x1>
+References: <20190826075728.21646-1-peterx@redhat.com>
+ <20190826110958.lyueasf5laypkq2r@kamzik.brq.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.12_GA_3794 (ZimbraWebClient - FF57 (Linux)/8.8.12_GA_3794)
-Thread-Topic: nvme: allow 64-bit results in passthru commands
-Thread-Index: 0b2C8OxcS39CpE4vfrdjGI09niL36A==
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190826110958.lyueasf5laypkq2r@kamzik.brq.redhat.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 26, 2019 at 01:09:58PM +0200, Andrew Jones wrote:
+> On Mon, Aug 26, 2019 at 03:57:28PM +0800, Peter Xu wrote:
+> > The dirty_log_test is failing on some old machines like Xeon E3-1220
+> > with tripple faults when writting to the tracked memory region:
+> > 
+> >   Test iterations: 32, interval: 10 (ms)
+> >   Testing guest mode: PA-bits:52, VA-bits:48, 4K pages
+> >   guest physical test memory offset: 0x7fbffef000
+> >   ==== Test Assertion Failure ====
+> >   dirty_log_test.c:138: false
+> >   pid=6137 tid=6139 - Success
+> >      1  0x0000000000401ca1: vcpu_worker at dirty_log_test.c:138
+> >      2  0x00007f3dd9e392dd: ?? ??:0
+> >      3  0x00007f3dd9b6a132: ?? ??:0
+> >   Invalid guest sync status: exit_reason=SHUTDOWN
+> > 
+> > It's because previously we moved the testing memory region from a
+> > static place (1G) to the top of the system's physical address space,
+> > meanwhile we stick to 39 bits PA for all the x86_64 machines.  That's
+> > not true for machines like Xeon E3-1220 where it only supports 36.
+> > 
+> > Let's unbreak this test by dynamically detect PA width from CPUID
+> > 0x80000008.  Meanwhile, even allow kvm_get_supported_cpuid_index() to
+> > fail.  I don't know whether that could be useful because I think
+> > 0x80000008 should be there for all x86_64 hosts, but I also think it's
+> > not really helpful to assert in the kvm_get_supported_cpuid_index().
+> > 
+> > Fixes: b442324b581556e
+> > CC: Paolo Bonzini <pbonzini@redhat.com>
+> > CC: Andrew Jones <drjones@redhat.com>
+> > CC: Radim Krčmář <rkrcmar@redhat.com>
+> > CC: Thomas Huth <thuth@redhat.com>
+> > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > ---
+> >  tools/testing/selftests/kvm/dirty_log_test.c  | 22 +++++++++++++------
+> >  .../selftests/kvm/lib/x86_64/processor.c      |  3 ---
+> >  2 files changed, 15 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
+> > index ceb52b952637..111592f3a1d7 100644
+> > --- a/tools/testing/selftests/kvm/dirty_log_test.c
+> > +++ b/tools/testing/selftests/kvm/dirty_log_test.c
+> > @@ -274,18 +274,26 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
+> >  	DEBUG("Testing guest mode: %s\n", vm_guest_mode_string(mode));
+> >  
+> >  #ifdef __x86_64__
+> > -	/*
+> > -	 * FIXME
+> > -	 * The x86_64 kvm selftests framework currently only supports a
+> > -	 * single PML4 which restricts the number of physical address
+> > -	 * bits we can change to 39.
+> > -	 */
+> > -	guest_pa_bits = 39;
+> > +	{
+> > +		struct kvm_cpuid_entry2 *entry;
+> > +
+> > +		entry = kvm_get_supported_cpuid_entry(0x80000008);
+> > +		/*
+> > +		 * Supported PA width can be smaller than 52 even if
+> > +		 * we're with VM_MODE_P52V48_4K mode.  Fetch it from
+> 
+> It seems like x86_64 should create modes that actually work, rather than
+> always using one named 'P52', but then needing to probe for the actual
+> number of supported physical bits. Indeed testing all x86_64 supported
+> modes, like aarch64 does, would even make more sense in this test.
 
+Should be true.  I'll think it over again...
 
------ On 22 Aug, 2019, at 02:06, Christoph Hellwig hch@lst.de wrote:
+> 
+> 
+> > +		 * the host to update the default value (SDM 4.1.4).
+> > +		 */
+> > +		if (entry)
+> > +			guest_pa_bits = entry->eax & 0xff;
+> 
+> Are we sure > 39 bits will work with this test framework? I can't
+> recall what led me to the FIXME above, other than things not working.
+> It seems I was convinced we couldn't have more bits due to how pml4's
+> were allocated, but maybe I misinterpreted it.
 
-> On Fri, Aug 16, 2019 at 11:47:21AM +0200, Marta Rybczynska wrote:
->> It is not possible to get 64-bit results from the passthru commands,
->> what prevents from getting for the Capabilities (CAP) property value.
->> 
->> As a result, it is not possible to implement IOL's NVMe Conformance
->> test 4.3 Case 1 for Fabrics targets [1] (page 123).
->> 
->> This issue has been already discussed [2], but without a solution.
->> 
->> This patch solves the problem by adding new ioctls with a new
->> passthru structure, including 64-bit results. The older ioctls stay
->> unchanged.
-> 
-> Ok, with my idea not being suitable I think I'm fine with this approach, a
-> little nitpick below:
-> 
->> +static bool is_admin_cmd(unsigned int cmd)
->> +{
->> +	if ((cmd == NVME_IOCTL_ADMIN_CMD) || (cmd == NVME_IOCTL_ADMIN64_CMD))
->> +		return true;
->> +	return false;
->> +}
-> 
-> No need for the inner braces.  But I'm actually not sure the current
-> code structure is very suitable for extending it.
-> 
->> +
->>  static int nvme_ioctl(struct block_device *bdev, fmode_t mode,
->>  		unsigned int cmd, unsigned long arg)
->>  {
->> @@ -1418,13 +1473,13 @@ static int nvme_ioctl(struct block_device *bdev, fmode_t
->> mode,
->>  	 * seperately and drop the ns SRCU reference early.  This avoids a
->>  	 * deadlock when deleting namespaces using the passthrough interface.
->>  	 */
->> -	if (cmd == NVME_IOCTL_ADMIN_CMD || is_sed_ioctl(cmd)) {
->> +	if (is_admin_cmd(cmd) || is_sed_ioctl(cmd)) {
-> 
-> So maybe for this check we should have a is_ctrl_iocl() helper instead
-> that includes the is_sed_ioctl check.
-> 
->>  		struct nvme_ctrl *ctrl = ns->ctrl;
->>  
->>  		nvme_get_ctrl(ns->ctrl);
->>  		nvme_put_ns_from_disk(head, srcu_idx);
->>  
->> -		if (cmd == NVME_IOCTL_ADMIN_CMD)
->> +		if (is_admin_cmd(cmd))
->>  			ret = nvme_user_cmd(ctrl, NULL, argp);
->>  		else
->>  			ret = sed_ioctl(ctrl->opal_dev, cmd, argp);
-> 
-> And then we can move this whole branch into a helper function,
-> which then switches on the ioctl cmd, with sed_ioctl as the fallback.
+As mentioned in the IRC - I think I've got a "success case" of
+that... :)  Please see below:
 
-Do you mean something like this?
+virtlab423:~ $ lscpu
+Architecture:        x86_64
+CPU op-mode(s):      32-bit, 64-bit
+Byte Order:          Little Endian
+CPU(s):              16
+On-line CPU(s) list: 0-15
+Thread(s) per core:  1
+Core(s) per socket:  8
+Socket(s):           2
+NUMA node(s):        2
+Vendor ID:           GenuineIntel
+CPU family:          6
+Model:               63
+Model name:          Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz
+Stepping:            2
+CPU MHz:             2597.168
+BogoMIPS:            5194.31
+Virtualization:      VT-x
+L1d cache:           32K
+L1i cache:           32K
+L2 cache:            256K
+L3 cache:            20480K
+NUMA node0 CPU(s):   0,2,4,6,8,10,12,14
+NUMA node1 CPU(s):   1,3,5,7,9,11,13,15
+Flags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm abm cpuid_fault epb invpcid_single pti tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm xsaveopt cqm_llc cqm_occup_llc dtherm arat pln pts
+virtlab423:~ $ ./dirty_log_test 
+Test iterations: 32, interval: 10 (ms)
+Testing guest mode: PA-bits:52, VA-bits:48, 4K pages
+Supported guest physical address width: 46
+guest physical test memory offset: 0x3fffbffef000
+Dirtied 216064 pages
+Total bits checked: dirty (204841), clear (7922119), track_next (60730)
 
-+static bool is_ctrl_ioctl(unsigned int cmd)
-+{
-+	if (cmd == NVME_IOCTL_ADMIN_CMD || cmd == NVME_IOCTL_ADMIN64_CMD)
-+		return true;
-+	if (is_sed_ioctl(cmd))
-+		return true;
-+	return false;
-+}
-+
-+static int nvme_handle_ctrl_ioctl(struct nvme_ns *ns, unsigned int cmd,
-+				  void __user *argp,
-+				  struct nvme_ns_head *head,
-+				  int srcu_idx)
-+{
-+	struct nvme_ctrl *ctrl = ns->ctrl;
-+	int ret;
-+
-+	nvme_get_ctrl(ns->ctrl);
-+	nvme_put_ns_from_disk(head, srcu_idx);
-+
-+	switch (cmd) {
-+	case NVME_IOCTL_ADMIN_CMD:
-+		ret = nvme_user_cmd(ctrl, NULL, argp);
-+		break;
-+	case NVME_IOCTL_ADMIN64_CMD:
-+		ret = nvme_user_cmd64(ctrl, NULL, argp);
-+		break;
-+	default:
-+		ret = sed_ioctl(ctrl->opal_dev, cmd, argp);
-+		break;
-+	}
-+	nvme_put_ctrl(ctrl);
-+	return ret;
-+}
-+
- static int nvme_ioctl(struct block_device *bdev, fmode_t mode,
- 		unsigned int cmd, unsigned long arg)
- {
-@@ -1418,20 +1501,8 @@ static int nvme_ioctl(struct block_device *bdev, fmode_t mode,
- 	 * seperately and drop the ns SRCU reference early.  This avoids a
- 	 * deadlock when deleting namespaces using the passthrough interface.
- 	 */
--	if (cmd == NVME_IOCTL_ADMIN_CMD || is_sed_ioctl(cmd)) {
--		struct nvme_ctrl *ctrl = ns->ctrl;
--
--		nvme_get_ctrl(ns->ctrl);
--		nvme_put_ns_from_disk(head, srcu_idx);
--
--		if (cmd == NVME_IOCTL_ADMIN_CMD)
--			ret = nvme_user_cmd(ctrl, NULL, argp);
--		else
--			ret = sed_ioctl(ctrl->opal_dev, cmd, argp);
--
--		nvme_put_ctrl(ctrl);
--		return ret;
--	}
-+	if (is_ctrl_ioctl(cmd))
-+		return nvme_handle_ctrl_ioctl(ns, cmd, argp, head, srcu_idx);
- 
- 	switch (cmd) {
- 	case NVME_IOCTL_ID:
+So on above E5-2640 I got PA width==46 and it worked well.  Does this
+mean that 39bits is not really a PA restriction anywhere?  Actually
+that also matches with the other fact that if we look into
+virt_pg_map() it's indeed allocating PML4 entries rather than having
+only one.
 
-Regards,
-Marta
+Thanks,
+
+-- 
+Peter Xu
