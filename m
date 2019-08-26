@@ -2,265 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B3699D946
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E3D9D94C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:39:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfHZWgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 18:36:35 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41402 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbfHZWge (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 18:36:34 -0400
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1i2Nb2-0006c8-Uo; Tue, 27 Aug 2019 00:36:21 +0200
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+        id S1727014AbfHZWi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 18:38:59 -0400
+Received: from mout.gmx.net ([212.227.15.18]:38547 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726278AbfHZWi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 18:38:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1566859062;
+        bh=Pj4uAQaXeIdkvaCK98IbRx1uvJ/X01xMarlBi5RxG2U=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=XvRR+Yjrj/lxPKk9HoTw93NPc2fxEA57GnjWJuC9bbXUlad8hyT40BS7HHIy8tWJf
+         HKhXHa5+08OHFjwRDtYFkVp0gn+1SjXZVa56LhxNDbkvaFA5/1SjLkQmHLLevfod3w
+         5gqrRzYlgA3oUOBtXpspo13yWY+5lQ1efwYudJbU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.179.28] ([217.238.204.231]) by mail.gmx.com (mrgmx002
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MaZWz-1hnB5L0pIX-00K8b7; Tue, 27
+ Aug 2019 00:37:42 +0200
+Subject: Re: [PATCH RESEND 0/8] Fix mmap base in bottom-up mmap
+To:     Alexandre Ghiti <alex@ghiti.fr>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: numlist_push() barriers Re: [RFC PATCH v4 1/9] printk-rb: add a new printk ringbuffer implementation
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
-        <20190807222634.1723-2-john.ogness@linutronix.de>
-        <20190823092109.doduc36avylm5cds@pathway.suse.cz>
-Date:   Tue, 27 Aug 2019 00:36:18 +0200
-In-Reply-To: <20190823092109.doduc36avylm5cds@pathway.suse.cz> (Petr Mladek's
-        message of "Fri, 23 Aug 2019 11:21:09 +0200")
-Message-ID: <878srfo8pp.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-mm@kvack.org
+References: <20190620050328.8942-1-alex@ghiti.fr>
+ <abc7ed75-0f51-7f21-5a74-d389f968ee55@ghiti.fr>
+From:   Helge Deller <deller@gmx.de>
+Message-ID: <9639ebd4-7dcb-0ea5-e0a6-adb8eaecd92a@gmx.de>
+Date:   Tue, 27 Aug 2019 00:37:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <abc7ed75-0f51-7f21-5a74-d389f968ee55@ghiti.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RU5C0dBXjxrRCewq0WWznMGgYJRZJCVSduSK741vTuSXvO8YQ3k
+ e4ipIkY98zehrL5bn2+bhdKDyYEyZ8Bp5SzGjyBxqCZTsoVramKj/Vyd4ck1V830ylao4wf
+ HP5VvjUpOf3gI4uCw2J6OcIgqDuwqloj8mNLmpjVrXYZLCwcKWdSIESQi0IEfnXZU5JrW6G
+ PPkeHq2ID2V1aVdIp6hwg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:nmHZZR9ejPA=:6g+P4z9PhbuHnBsl9sJG2S
+ uDi9RYwCeGIVcZqCxIaHucXHxXbjrudoYGeoAyPxVpstqJQo8WuyBl2Hrvls9JACsOzymJNCw
+ w/AIWUbhS/u2qeDxhCRXF02AHMtN9ow3mtXsGkokAMy3bn1uADS6jsL2EljpHaaNcuzvOZj0v
+ Mka7C7Q9/gdCzdH1Q4yjdYcRbngXG0cInx4ZLV5iVc/zV22NhhDKn4ej4pgRQn0tCVmGySf5C
+ e30/0aXJ0UoNiTKdMW8C6ufzot97nveLD/3ZsMg/BMvE4s++vXW1ijXywqZfSzwcLZZ2/fMj2
+ wtQ9GJ6gOcE90isSkkf2ArTg6SwKx4j/FPifhrcllWWS3ipnH8DtIXRqpIlrWFmtYiN4/4bRB
+ VczuL3X8K7zAXhV1p4vcaHk+3O0E7ROTbfhyK2hb3NF4V9QpZO6EQXin43qZVjRON9bgjIfBR
+ ei+6kjD2/QCuSBnTLO5D9iGMHlzNkxKwrYHdR5YGQTYlV8jgPn3KQNsFav2wliy11yv2S5QvC
+ yO6YWQD4qVm8D5oRRn432HEZRbC7qbSWks0bh1pYWJzrVCkhLl65T8FREjDMvthMVywRsA51C
+ qg617CLdN6zj4FWE47uOyksFOZNJcVljV+eRTIe1yLfLmvFyPNmFsmpyBB2EKPFQ+kgQJyhpq
+ 9ShHmboWZZHKmUxWXN4vt6aPh18o0bPn0LMDk47AhE2ToOsyB2pnoouKh4i3VaV7Li35sqp3H
+ 4rdAE7v9XfaNN9zRXsVP/6q0WBxEsIzRD+heKik/MWEFRd2OzhxuBsk7doDF1szy2gRlrYCLT
+ 1hfvsJQ0r7+00rVnAhjqcAxsXYcoCl3ivj9tj8NDTPw1L+839wNrJoecI9R+2NSTzxyNOgb1X
+ zLxiBeV9WuKyc3S3YPDDoiEpcSYmWDeIS5fy5vxzjWuRQA/0v/1av/OQ884NBMFW9SqR1T+gm
+ +wLUbBR+5ZMDiywLqM7iBON8XtkeUcy5353UqmJ386dSM8clEmUd8rgey4tVffUWnNp7WPaoB
+ zZP1g5eY4MN1Gt6frFhILK0drlKfqxHb0Uvi8rKmKT6LpyHp+zmbM500hqT0oP88Qhfx4Evpn
+ TfnKClj9EdnErvSOmCvB+3ArYDFuwiWP9x9LQ79XKf3uReDC+OC+N0coj4IPoAESrdjWpZWzc
+ 1PsgKx/NTOXIyGmKTnJzPfsJXFQ9tK7lrDyVBrTvWDNqjVzQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
-
-AndreaP responded with some explanation (and great links!) on the topic
-of READ_ONCE. But I feel like your comments about the WRITE_ONCE were
-not addressed. I address that (and your other comments) below...
-
-On 2019-08-23, Petr Mladek <pmladek@suse.com> wrote:
->> --- /dev/null
->> +++ b/kernel/printk/numlist.c
->> +/**
->> + * numlist_push() - Add a node to the list and assign it a sequence number.
->> + *
->> + * @nl: The numbered list to push to.
->> + *
->> + * @n:  A node to push to the numbered list.
->> + *      The node must not already be part of a list.
->> + *
->> + * @id: The ID of the node.
->> + *
->> + * A node is added in two steps: The first step is to make this node the
->> + * head, which causes a following push to add to this node. The second step is
->> + * to update @next_id of the former head node to point to this one, which
->> + * makes this node visible to any task that sees the former head node.
->> + */
->> +void numlist_push(struct numlist *nl, struct nl_node *n, unsigned long id)
->> +{
->> +	unsigned long head_id;
->> +	unsigned long seq;
->> +	unsigned long r;
->> +
->> +	/*
->> +	 * bA:
->> +	 *
->> +	 * Setup the node to be a list terminator: next_id == id.
->> +	 */
->> +	WRITE_ONCE(n->next_id, id);
+On 26.08.19 09:34, Alexandre Ghiti wrote:
+> On 6/20/19 7:03 AM, Alexandre Ghiti wrote:
+>> This series fixes the fallback of the top-down mmap: in case of
+>> failure, a bottom-up scheme can be tried as a last resort between
+>> the top-down mmap base and the stack, hoping for a large unused stack
+>> limit.
+>>
+>> Lots of architectures and even mm code start this fallback
+>> at TASK_UNMAPPED_BASE, which is useless since the top-down scheme
+>> already failed on the whole address space: instead, simply use
+>> mmap_base.
+>>
+>> Along the way, it allows to get rid of of mmap_legacy_base and
+>> mmap_compat_legacy_base from mm_struct.
+>>
+>> Note that arm and mips already implement this behaviour.
+>>
+>> Alexandre Ghiti (8):
+>> =C2=A0=C2=A0 s390: Start fallback of top-down mmap at mm->mmap_base
+>> =C2=A0=C2=A0 sh: Start fallback of top-down mmap at mm->mmap_base
+>> =C2=A0=C2=A0 sparc: Start fallback of top-down mmap at mm->mmap_base
+>> =C2=A0=C2=A0 x86, hugetlbpage: Start fallback of top-down mmap at mm->m=
+map_base
+>> =C2=A0=C2=A0 mm: Start fallback top-down mmap at mm->mmap_base
+>> =C2=A0=C2=A0 parisc: Use mmap_base, not mmap_legacy_base, as low_limit =
+for
+>> =C2=A0=C2=A0=C2=A0=C2=A0 bottom-up mmap
+>> =C2=A0=C2=A0 x86: Use mmap_*base, not mmap_*legacy_base, as low_limit f=
+or bottom-up
+>> =C2=A0=C2=A0=C2=A0=C2=A0 mmap
+>> =C2=A0=C2=A0 mm: Remove mmap_legacy_base and mmap_compat_legacy_code fi=
+elds from
+>> =C2=A0=C2=A0=C2=A0=C2=A0 mm_struct
+>>
+>> =C2=A0 arch/parisc/kernel/sys_parisc.c=C2=A0 |=C2=A0 8 +++-----
+>> =C2=A0 arch/s390/mm/mmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+>> =C2=A0 arch/sh/mm/mmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+>> =C2=A0 arch/sparc/kernel/sys_sparc_64.c |=C2=A0 2 +-
+>> =C2=A0 arch/sparc/mm/hugetlbpage.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 2 +-
+>> =C2=A0 arch/x86/include/asm/elf.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 2 +-
+>> =C2=A0 arch/x86/kernel/sys_x86_64.c=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +=
++--
+>> =C2=A0 arch/x86/mm/hugetlbpage.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 |=C2=A0 7 ++++---
+>> =C2=A0 arch/x86/mm/mmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 20 +++++++++-----------
+>> =C2=A0 include/linux/mm_types.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 |=C2=A0 2 --
+>> =C2=A0 mm/debug.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 4 ++--
+>> =C2=A0 mm/mmap.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 2 +-
+>> =C2=A0 12 files changed, 26 insertions(+), 31 deletions(-)
+>>
 >
-> Do we need WRITE_ONCE() here?
-> Both "n" and "id" are given as parameters and do not change.
-> The assigment must be done before "id" is set as nl->head_id.
-> The ordering is enforced by cmpxchg_release().
+> Any thoughts about that series ? As said before, this is just a preparat=
+ory patchset in order to
+> merge x86 mmap top down code with the generic version.
 
-The cmpxchg_release() ensures that if the node is visible to writers,
-then the finalized assignment is also visible. And the store_release()
-ensures that if the previous node is visible to any readers, then the
-finalized assignment is also visible. In the reader case, if any readers
-happen to be sitting on the node, numlist_read() will fail because the
-ID was updated when the node was popped. So for all these cases any
-compiler optimizations leading to that assigment (tearing, speculation,
-etc) should be irrelevant. Therefore, IMO the WRITE_ONCE() is not
-needed.
+I just tested your patch series successfully on the parisc
+architeture. You may add:
 
-Since all of this is lockless, I used WRITE_ONCE() whenever touching
-shared variables. I must admit the decision may be motivated primarily
-by fear of compiler optimizations. Although "documenting lockless shared
-variable access" did play a role as well.
+Tested-by: Helge Deller <deller@gmx.de> # parisc
 
-I will replace the WRITE_ONCE with an assignment.
-
->> +
->> +	/* bB: #1 */
->> +	head_id = atomic_long_read(&nl->head_id);
->> +
->> +	for (;;) {
->> +		/* bC: */
->> +		while (!numlist_read(nl, head_id, &seq, NULL)) {
->> +			/*
->> +			 * @head_id is invalid. Try again with an
->> +			 * updated value.
->> +			 */
->> +
->> +			cpu_relax();
->
-> I have got very confused by this. cpu_relax() suggests that this
-> cycle is busy waiting until a particular node becomes valid.
-> My first though was that it must cause deadlock in NMI when
-> the interrupted code is supposed to make the node valid.
->
-> But it is the other way. The head is always valid when it is
-> added to the list. It might become invalid when another CPU
-> moves the head and the old one gets reused.
->
-> Anyway, I do not see any reason for cpu_relax() here.
-
-You are correct. The cpu_relax() should not be there. But there is still
-an issue that this could spin hard if the head was recycled and this CPU
-does not yet see the new head value.
-
-To handle that, and in preparation for my next version, I'm now using a
-read_acquire() to load the ID in the node() callback (matching the
-set_release() in assign_desc()). This ensures that if numlist_read()
-fails, the new head will be visible.
-
-> Also the entire cycle would deserve a comment to avoid this mistake.
-> For example:
->
-> 		/*
-> 		 * bC: Read seq from current head. Repeat with new
-> 		 * head when it has changed and the old one got reused.
-> 		 */
-
-Agreed.
-
->> +
->> +			/* bB: #2 */
->> +			head_id = atomic_long_read(&nl->head_id);
->> +		}
->> +
->> +		/*
->> +		 * bD:
->> +		 *
->> +		 * Set @seq to +1 of @seq from the previous head.
->> +		 *
->> +		 * Memory barrier involvement:
->> +		 *
->> +		 * If bB reads from bE, then bC->aA reads from bD.
->> +		 *
->> +		 * Relies on:
->> +		 *
->> +		 * RELEASE from bD to bE
->> +		 *    matching
->> +		 * ADDRESS DEP. from bB to bC->aA
->> +		 */
->> +		WRITE_ONCE(n->seq, seq + 1);
->
-> Do we really need WRITE_ONCE() here? 
-> It is the same problem as with setting n->next_id above.
-
-For the same reasons as the other WRITE_ONCE, I will replace the
-WRITE_ONCE with an assignment.
-
->> +
->> +		/*
->> +		 * bE:
->> +		 *
->> +		 * This store_release() guarantees that @seq and @next are
->> +		 * stored before the node with @id is visible to any popping
->> +		 * writers. It pairs with the address dependency between @id
->> +		 * and @seq/@next provided by numlist_read(). See bD and bF
->> +		 * for details.
->> +		 */
->> +		r = atomic_long_cmpxchg_release(&nl->head_id, head_id, id);
->> +		if (r == head_id)
->> +			break;
->> +
->> +		/* bB: #3 */
->> +		head_id = r;
->> +	}
->> +
->> +	n = nl->node(head_id, nl->node_arg);
->> +
->> +	/*
->> +	 * The old head (which is still the list terminator), cannot be
->> +	 * removed because the list will always have at least one node.
->> +	 * Therefore @n must be non-NULL.
->> +	 */
->
-> Please, move this comment above the nl->node() call. Both locations
-> makes sense. I just see it as an important note for the call and thus
-> is should be above. Also it will be better separated from the below
-> comments for the _release() barrier.
-
-OK.
-
->> +	/*
->> +	 * bF: the STORE part for @next_id
->> +	 *
->> +	 * Set @next_id of the previous head to @id.
->> +	 *
->> +	 * Memory barrier involvement:
->> +	 *
->> +	 * If bB reads from bE, then bF overwrites bA.
->> +	 *
->> +	 * Relies on:
->> +	 *
->> +	 * RELEASE from bA to bE
->> +	 *    matching
->> +	 * ADDRESS DEP. from bB to bF
->> +	 */
->> +	/*
->> +	 * bG: the RELEASE part for @next_id
->> +	 *
->> +	 * This _release() guarantees that a reader will see the updates to
->> +	 * this node's @seq/@next_id if the reader saw the @next_id of the
->> +	 * previous node in the list. It pairs with the address dependency
->> +	 * between @id and @seq/@next provided by numlist_read().
->> +	 *
->> +	 * Memory barrier involvement:
->> +	 *
->> +	 * If aB reads from bG, then aA' reads from bD, where aA' is in
->> +	 * numlist_read() to read the node ID from bG.
->> +	 * If aB reads from bG, then aB' reads from bA, where aB' is in
->> +	 * numlist_read() to read the node ID from bG.
->> +	 *
->> +	 * Relies on:
->> +	 *
->> +	 * RELEASE from bG to bD
->> +	 *    matching
->> +	 * ADDRESS DEP. from aB to aA'
->> +	 *
->> +	 * RELEASE from bG to bA
->> +	 *    matching
->> +	 * ADDRESS DEP. from aB to aB'
->> +	 */
->> +	smp_store_release(&n->next_id, id);
->
-> Sigh, I see this line one screen below the previous command thanks
-> to the extensive comments. Well, bF comment looks redundant.
-
-Yes, it is a lot, but bF and bG are commenting on different things. bF
-is the explanation that the _writer_ will overwrite the previous node's
-terminating value with the ID of the new node. bG is the explanation
-that if the _reader_ reads a non-terminating @next_id value, then the
-initialization of @seq and @next_id for that next node will be visible.
-
-Both of these points are key to the numlist implementation because they
-guarantee the complete and correct linking of the list for all nodes
-pushed.
-
-John Ogness
+Thanks!
+Helge
