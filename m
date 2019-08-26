@@ -2,205 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB009CA63
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A68B9CA74
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbfHZH2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 03:28:53 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:42881 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729925AbfHZH2x (ORCPT
+        id S1728233AbfHZHbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 03:31:14 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41825 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbfHZHbO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 03:28:53 -0400
-X-Originating-IP: 87.18.63.98
-Received: from uno.localdomain (unknown [87.18.63.98])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id D4DF51C0005;
-        Mon, 26 Aug 2019 07:28:48 +0000 (UTC)
-Date:   Mon, 26 Aug 2019 09:30:19 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] media: add V4L2_CID_UNIT_CELL_SIZE control
-Message-ID: <20190826073019.2h2ubmiyglzlkpef@uno.localdomain>
-References: <20190823123737.7774-1-ribalda@kernel.org>
+        Mon, 26 Aug 2019 03:31:14 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o101so14273620ota.8;
+        Mon, 26 Aug 2019 00:31:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=abhvVaOTv7qdR2buENiROg9GGD/qAIGiemfdRCUDpVc=;
+        b=lqH006BCEkX6+z6YENIn73QMRP3M2lnLTwoxVZdUJQhLWIwR3lUFTQg0VITMb13lTz
+         5N0sl8CnbEQu3kExrW0GSFtxjnTpqZVrhkS0l/wxNLBgDo+oiE6TxQ59Flr/5BdkPbce
+         N/4oI+lRekJRQC9h8Bhgs4ImlkixkSMastqcAfwkUewJYcwLycyQhJ4YYy0S6jttw8Zk
+         1fNPFw+P4hmgrXICLx09pfwTdODktj2bfyMneQlpMJJe0wvn/x1rGzJdQsZ5orhVaJ7T
+         DxmNrqP5U9EB9qlO+msUtVPD6+Nxf/pWPEgTzQG3r0gzlMWHQ6JJeCOLdTQ2Oa7b+dyx
+         9Uxg==
+X-Gm-Message-State: APjAAAWq0MWh+ySDwjezNrXuVYTJ0yX1mCnp5KKHCGT7aKp0S/pxmugg
+        uD9BZAxYtTz2uhOBwrgOa+tJLlx4AkoVXCILCsc=
+X-Google-Smtp-Source: APXvYqwGSUko7fTyH6xUMnz8XMOWCsDcFWz2SrtHpmTycrnO0UU8UJwbJdJqLrNcjjb1kJDssLKXYH7hlHP//EIu2Kk=
+X-Received: by 2002:a9d:7a90:: with SMTP id l16mr14310466otn.297.1566804673402;
+ Mon, 26 Aug 2019 00:31:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t4iz3dil4g5c3p7z"
-Content-Disposition: inline
-In-Reply-To: <20190823123737.7774-1-ribalda@kernel.org>
-User-Agent: NeoMutt/20180716
+References: <20190825135154.11488-1-jacopo+renesas@jmondi.org> <20190825135154.11488-9-jacopo+renesas@jmondi.org>
+In-Reply-To: <20190825135154.11488-9-jacopo+renesas@jmondi.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 26 Aug 2019 09:31:02 +0200
+Message-ID: <CAMuHMdUuWFGSTUcAR2aV6cg4hpfzMs5EQBJTNM+ym2k8Ht-bVA@mail.gmail.com>
+Subject: Re: [PATCH v3 08/14] drm: rcar-du: Add support for CMM
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, Ulrich Hecht <uli@fpond.eu>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jacopo,
 
---t4iz3dil4g5c3p7z
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+On Sun, Aug 25, 2019 at 3:51 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add a driver for the R-Car Display Unit Color Correction Module.
+> In most of Gen3 SoCs, each DU output channel is provided with a CMM unit
+> to perform image enhancement and color correction.
+>
+> Add support for CMM through a driver that supports configuration of
+> the 1-dimensional LUT table. More advanced CMM feature will be
+> implemented on top of this basic one.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-Hi Ricardo,
+Thanks for your patch!
 
-On Fri, Aug 23, 2019 at 02:37:31PM +0200, Ricardo Ribalda Delgado wrote:
-> This control returns the unit cell size in nanometres. The struct provides
-> the width and the height in separated fields to take into consideration
-> asymmetric pixels and/or hardware binning.
-> This control is required for automatic calibration of sensors/cameras.
->
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
-> v3:
-> -Put together all actions on ctrl_fill
-> -Move the control to IMAGE_SOURCE
->
->  drivers/media/v4l2-core/v4l2-ctrls.c | 11 +++++++++++
->  include/media/v4l2-ctrls.h           |  2 ++
->  include/uapi/linux/v4l2-controls.h   |  1 +
->  include/uapi/linux/videodev2.h       | 11 +++++++++++
->  4 files changed, 25 insertions(+)
->
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index 1d8f38824631..b3bf458df7f7 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -994,6 +994,7 @@ const char *v4l2_ctrl_get_name(u32 id)
->  	case V4L2_CID_AUTO_FOCUS_RANGE:		return "Auto Focus, Range";
->  	case V4L2_CID_PAN_SPEED:		return "Pan, Speed";
->  	case V4L2_CID_TILT_SPEED:		return "Tilt, Speed";
-> +	case V4L2_CID_UNIT_CELL_SIZE:		return "Unit Cell Size";
->
->  	/* FM Radio Modulator controls */
->  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-> @@ -1375,6 +1376,10 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
->  	case V4L2_CID_MPEG_VIDEO_VP8_FRAME_HEADER:
->  		*type = V4L2_CTRL_TYPE_VP8_FRAME_HEADER;
->  		break;
-> +	case V4L2_CID_UNIT_CELL_SIZE:
-> +		*type = V4L2_CTRL_TYPE_AREA;
-> +		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> +		break;
->  	default:
->  		*type = V4L2_CTRL_TYPE_INTEGER;
->  		break;
-> @@ -1723,6 +1728,9 @@ static int std_validate_compound(const struct v4l2_ctrl *ctrl, u32 idx,
->  	case V4L2_CTRL_TYPE_FWHT_PARAMS:
->  		break;
->
-> +	case V4L2_CTRL_TYPE_AREA:
-> +		break;
-> +
->  	case V4L2_CTRL_TYPE_H264_SPS:
->  	case V4L2_CTRL_TYPE_H264_PPS:
->  	case V4L2_CTRL_TYPE_H264_SCALING_MATRIX:
-> @@ -2421,6 +2429,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
->  	case V4L2_CTRL_TYPE_VP8_FRAME_HEADER:
->  		elem_size = sizeof(struct v4l2_ctrl_vp8_frame_header);
->  		break;
-> +	case V4L2_CTRL_TYPE_AREA:
-> +		elem_size = sizeof(struct v4l2_area);
-> +		break;
->  	default:
->  		if (type < V4L2_CTRL_COMPOUND_TYPES)
->  			elem_size = sizeof(s32);
-> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-> index 570ff4b0205a..9a3d11350e67 100644
-> --- a/include/media/v4l2-ctrls.h
-> +++ b/include/media/v4l2-ctrls.h
-> @@ -50,6 +50,7 @@ struct poll_table_struct;
->   * @p_h264_slice_params:	Pointer to a struct v4l2_ctrl_h264_slice_params.
->   * @p_h264_decode_params:	Pointer to a struct v4l2_ctrl_h264_decode_params.
->   * @p_vp8_frame_header:		Pointer to a VP8 frame header structure.
-> + * @p_area:			Pointer to an area.
+> --- /dev/null
+> +++ b/drivers/gpu/drm/rcar-du/rcar_cmm.c
 
-Actually:
-"Pointer to a struct v4l2_area" ?
+> +static const struct of_device_id rcar_cmm_of_table[] = {
+> +       { .compatible = "renesas,cmm-r8a7795", },
+> +       { .compatible = "renesas,cmm-r8a7796", },
+> +       { .compatible = "renesas,cmm-r8a77965", },
+> +       { .compatible = "renesas,cmm-r8a77990", },
+> +       { .compatible = "renesas,cmm-r8a77995", },
+> +       { .compatible = "renesas,rcar-gen3-cmm", },
 
-Also,, I'm not sure which patch introduces this but I see a new
-warning when building documentation:
-.../Documentation/output/videodev2.h.rst:6: WARNING: undefined label: v4l2-ctrl-type-area (if the link has no caption the label must precede a section header)
+As they're all handled the same, you can drop the SoC-specific values
+from the driver's match table.
 
-Thanks
-   j
+> +       { .compatible = "renesas,rcar-gen2-cmm", },
 
->   * @p:				Pointer to a compound value.
->   */
->  union v4l2_ctrl_ptr {
-> @@ -68,6 +69,7 @@ union v4l2_ctrl_ptr {
->  	struct v4l2_ctrl_h264_slice_params *p_h264_slice_params;
->  	struct v4l2_ctrl_h264_decode_params *p_h264_decode_params;
->  	struct v4l2_ctrl_vp8_frame_header *p_vp8_frame_header;
-> +	struct v4l2_area *p_area;
->  	void *p;
->  };
->
-> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> index a2669b79b294..5a7bedee2b0e 100644
-> --- a/include/uapi/linux/v4l2-controls.h
-> +++ b/include/uapi/linux/v4l2-controls.h
-> @@ -1034,6 +1034,7 @@ enum v4l2_jpeg_chroma_subsampling {
->  #define V4L2_CID_TEST_PATTERN_GREENR		(V4L2_CID_IMAGE_SOURCE_CLASS_BASE + 5)
->  #define V4L2_CID_TEST_PATTERN_BLUE		(V4L2_CID_IMAGE_SOURCE_CLASS_BASE + 6)
->  #define V4L2_CID_TEST_PATTERN_GREENB		(V4L2_CID_IMAGE_SOURCE_CLASS_BASE + 7)
-> +#define V4L2_CID_UNIT_CELL_SIZE			(V4L2_CID_IMAGE_SOURCE_CLASS_BASE + 8)
->
->
->  /* Image processing controls */
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 530638dffd93..05cfc69d7ed6 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -422,6 +422,11 @@ struct v4l2_fract {
->  	__u32   denominator;
->  };
->
-> +struct v4l2_area {
-> +	__u32   width;
-> +	__u32   height;
-> +};
-> +
->  /**
->    * struct v4l2_capability - Describes V4L2 device caps returned by VIDIOC_QUERYCAP
->    *
-> @@ -1720,6 +1725,12 @@ enum v4l2_ctrl_type {
->  	V4L2_CTRL_TYPE_U8	     = 0x0100,
->  	V4L2_CTRL_TYPE_U16	     = 0x0101,
->  	V4L2_CTRL_TYPE_U32	     = 0x0102,
-> +	/*
-> +	 * V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS = 0x0103,
-> +	 * V4L2_CTRL_TYPE_MPEG2_QUANTIZATION = 0x0104,
-> +	 * V4L2_CTRL_TYPE_FWHT_PARAMS = 0x0105,
-> +	 */
-> +	V4L2_CTRL_TYPE_AREA    = 0x0106,
->  };
->
->  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
-> --
-> 2.23.0.rc1
->
+Just wondering: has this been tested on R-Car Gen2?
 
---t4iz3dil4g5c3p7z
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1jiosACgkQcjQGjxah
-VjzEBQ/8CWb6x5I7kqxsbMBDKxZlyPQQCm3vt4BQ9NagdFYVLAJuUI7fpxsSFDmQ
-7b4/ehsoKmrfNvmDUWsGXIpqicEgPQXa+06lZXYTE81O2Frw0SExjXsfhzKS90NE
-Dl4EsSZ090JGIbT/XCWiOArHBy0MNwKA1EF4N0B7uRmGXbUQ/oWW5rDHsG6JVjjF
-qqijzKLnWJ1LlMxPm8i8+ZGpe1AtMc5qMWos5z9ccEHhW9VcR3S/5taLzJwr24ww
-8QqeCKmmYX4lbKKfGIvNHaOvBmUQJGkuNH3qL3YfWjryjpg3sKrSWqhURb801s/Z
-xmOdYZ98EV7/i+CIDZ/F7h3IgbAlgowhRYpSKVnUDwE90WgGluMPDlIQ3oHigX+t
-aReavk+OQNcUsJlYVk6yXioqFlkcWAQAeIsltVWwtey1wzCBEQUzHHZ/FWfl+bl0
-G+PYc0PGsJb9rnnkWjrwaeinkKlt31Ue4Lg0nS5uXy6BfCrM+gQx9hCYXVShmKB0
-FIqpF2JGeZdOvfJHdFsi5iFxPrEABiIhTfMP/IxI8xWEhr29HwKivgcjR0OEcmZ/
-elAJKk2N5HGQFrTD6DTFmyHNV8ODArVzJnTlbqG12fhgyJFj1/P0/fEUgQQ+g0P0
-IofjY7a765Uy2QvIqZ/LOHHo9GyfNe/MX+uaAyOc3+dWf883Bak=
-=M5VN
------END PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---t4iz3dil4g5c3p7z--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
