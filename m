@@ -2,168 +2,224 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B065D9D84D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 23:31:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 150AB9D878
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 23:33:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728691AbfHZVa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 17:30:58 -0400
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:48769 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728673AbfHZVa6 (ORCPT
+        id S1729060AbfHZVdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 17:33:19 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36356 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728532AbfHZVdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 17:30:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566855057; x=1598391057;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=5BJupO2P2MXByAB7nW3DTmi/HATfgl2wmvbsUkO9Q30=;
-  b=F/7YWmpN+0ftE2KgiuZrRZSc/fs8hqhE28BMQqjtnb8ZSybmqQDU+cnC
-   qA1poReEGQoq65UAcuT4vcWtFGbEBn/wHpjU6foenPJyNIzkY0bC1aOvr
-   A+5W8IKmdYwv1RsCJhThOEFpAwIcUsGvehFV/+qox0vVds4Zww9ae0uGE
-   yyO0WIa3D9gUFMIAvRnRcfUbQC9tSnUnAatX9acTk0uVxgJRM1h3xbNTv
-   6yEFY/+6jfX21vR6rf6lzoW9Z8EXuq/p0vGBHfShDKaBSdi5KCPgFutRb
-   qzH+h5LPQ0aEggF0nUI+u1DZi6SQAlxZpJlXoAR0C41DF0eZ3KQC0JctK
-   w==;
-IronPort-SDR: 9T1w6kcOFBskE180WkZ42D98KBypI25kNMM0kPusZcrXy47w5+K/Kl2GwqO6RK79Q+wUafUOlv
- lhIU+StDcKAxYd8tY389zs8lTI4n+sFCOSCOX6fWrgc+phIYnTIDMuIgs/M/WYXYubaV/rhZ23
- mG3X11WL5PBgF1+aaE3jfEX0UTWZUj9V9pFy1npRXtoD29MfRPnTAtZ02Uac0TP2YBgARWVXIA
- oCZ/U/VcKjKhdusj4j647yWZtvAav4s8a09rSf0+ruO7MQdGvnQLr3tqh0fFntI9J+HdVlkY1V
- 0pA=
-X-IronPort-AV: E=Sophos;i="5.64,433,1559491200"; 
-   d="scan'208";a="223351873"
-Received: from mail-co1nam05lp2051.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([104.47.48.51])
-  by ob1.hgst.iphmx.com with ESMTP; 27 Aug 2019 05:30:56 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ligIkPFpTz/773MnDzsqR4JwUzK/kh0/x3D44pEO9+9ZY0hMO7ul9V3TUlZ6GrcbM54VNczHvI19YS85FCDjG9u3cG2OObodVyEUmWGaSauvffvKU04OId3hTJgCfzVdwBa33/jkPeEQYGuL2QnuTfgtSpAfDmgBmP3vgICqO4CzOY/fU9z403JPC5dn6qEEmJSjA+lA7SA75hwlr+XU5Z1Z3oUw6J2ryc4DDzZeE7pXbpjbgEFLGeW+S6VMhqLv/L9vmzmJOIkhLRmHKFsFetw7d9OrbNL+VCykacT4HWg7wV1B6LmwOT+xF4ikedGC1ldsDBUCUe39rg0E8vsOqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5BJupO2P2MXByAB7nW3DTmi/HATfgl2wmvbsUkO9Q30=;
- b=dz31MgY+0V+sKRAYGoEJSztab6o8Pw5fz2IX1Ks1+p5+VlVVCA2f4KxTGO/Pt7WrRvso49D0M7F523uzxMHeh+aVlHgcASyAhMsee+v9qTwuQOubEZpEZQgv4oa1dJ5UVJ1M7RQ3axLfzwK3LNCG/MHutMRCbCr1WzStTOhIH4LpXba2d39LKc+euCIIYkV11gm7rp7qw6aMJHSxTDX1ogNwGK9ZtYsLb9wbahPaQPDcX2uwrQnR9oOSnqDFQPxgjg342XSucVa6EztyIuDFxhznt/yf96DKCceK2q88I5pFKcAstmD1MUNHgRQC0x76fn9JXyn0Z/iuwrsNrC6ksg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 26 Aug 2019 17:33:18 -0400
+Received: by mail-ot1-f66.google.com with SMTP id k18so16686722otr.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 14:33:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5BJupO2P2MXByAB7nW3DTmi/HATfgl2wmvbsUkO9Q30=;
- b=L0B5m7oqDlECS9+QR0mF+hHrZVWZoLWw1Q2APhRvDOXIbOCyaO6hZY5A760kJ9w/xPMF/qZZM4ZZGCYlfRIc4kcfEsKmoZcBZU2yyW12QqzpuVjmPe7T4r/sexQ1CFqbymImpX/a4Awi5APq7KCwArfQitbxYsl2JSXkAme+NJY=
-Received: from DM6PR04MB4908.namprd04.prod.outlook.com (20.176.109.81) by
- DM6PR04MB5099.namprd04.prod.outlook.com (20.176.110.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Mon, 26 Aug 2019 21:30:56 +0000
-Received: from DM6PR04MB4908.namprd04.prod.outlook.com
- ([fe80::99f2:1c81:ffbd:c597]) by DM6PR04MB4908.namprd04.prod.outlook.com
- ([fe80::99f2:1c81:ffbd:c597%7]) with mapi id 15.20.2178.022; Mon, 26 Aug 2019
- 21:30:56 +0000
-From:   Alistair Francis <Alistair.Francis@wdc.com>
-To:     "anup@brainfault.org" <anup@brainfault.org>,
-        "palmer@sifive.com" <palmer@sifive.com>
-CC:     "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] RISC-V: Fix FIXMAP area corruption on RV32 systems
-Thread-Topic: [PATCH] RISC-V: Fix FIXMAP area corruption on RV32 systems
-Thread-Index: AQHVVCiwkrMhoC888UyZ9cBEv4GnHKcBOo8AgACv9oCADBSMgIAAAq+A
-Date:   Mon, 26 Aug 2019 21:30:55 +0000
-Message-ID: <90b3e0574528bbacc0392079d4df94a1b377f7ea.camel@wdc.com>
-References: <mhng-7a475a74-60cb-4e3f-bcae-6cd6299bb173@palmer-si-x1c4>
-In-Reply-To: <mhng-7a475a74-60cb-4e3f-bcae-6cd6299bb173@palmer-si-x1c4>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Alistair.Francis@wdc.com; 
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2c40e6d9-64e4-4854-db22-08d72a6cae00
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR04MB5099;
-x-ms-traffictypediagnostic: DM6PR04MB5099:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR04MB5099CD221EAD80322E4B2DCC90A10@DM6PR04MB5099.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 01415BB535
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(396003)(366004)(346002)(376002)(136003)(189003)(199004)(71200400001)(71190400001)(66946007)(66446008)(64756008)(66556008)(66476007)(54906003)(81166006)(5660300002)(2906002)(14444005)(256004)(91956017)(76116006)(14454004)(36756003)(305945005)(66066001)(7736002)(478600001)(2501003)(26005)(316002)(53936002)(6512007)(186003)(2616005)(446003)(486006)(476003)(11346002)(86362001)(6436002)(6486002)(4326008)(76176011)(6116002)(118296001)(102836004)(229853002)(25786009)(53546011)(8936002)(6506007)(99286004)(8676002)(6246003)(3846002)(110136005)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR04MB5099;H:DM6PR04MB4908.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: fRH398s6NbXdlxBNfZ7uiOcGR2VYCFUu5biJkgXZ1FbLl4XcdZ8ddZqg98Kz9t0H4Mmn/m6UpMWT3yu0nADTuXlb0AB0ZzJIxIWlU/9x4cFsvrrtE/4d+8Sl7on62AzGSX2xtZH1+8Ya6GWzGVzGFNNg/w2Td9jM4y7HpchSCOWg4sOox6jc2C36TngX8nx8mLI0wwKOt9KW2EUnVeJaub/VpdTheABa0xaEXyprCheIoKyP01/ybhZeEo3NbdZlNisIrxwMflX1sMm5I0t1pkE841i2tDzhgkXDKM8Y9j4tM/sX/mEBUyra8iy1dHXhyj/06E4zz9UTqiePcN+8CQjyI4Xfm+QplzIB/+IBYEmHjrKB1b3XkUKThBVA2UDY6eTubSizQMEnGxw/wAeF326F9pK+eXqZIsDoDGfxB8w=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0844F0D5BBE00A4F902ED4508409B335@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=addQr9bC2wmMaOpWzp5KHixoxZuk44VTTnG3FHz50ro=;
+        b=KB19yNqe2JAyNdzPN93BH99s0SUUx4ly84Dg+4BhMZSnUtjRsgn1CtyZkk45Rg9IZz
+         Rch9ySnRAVAkgyrrsg2oJuq3zJPuBF0wbnoZXojIoOPlK7GJjU78phO75hePgy99qNJJ
+         4W7h+BXdL23ATAaiL+3u0fS6tnTdMb6hQq+IexH5BwTUvRW8ADRES45cItBkNr3sxEco
+         lxcLEukToOMG1qoky8nHKT8gqgrMJhfkGoEVqWjxcEQtqrw9BICZ1xZ6ze+048v+vHFn
+         5dGXWwcjEp9ea1R0z4blVj6VALBMF6hVCLufXjBS0+9Gm1gvp/C21pOA6gU2EArJ5AXi
+         H9Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=addQr9bC2wmMaOpWzp5KHixoxZuk44VTTnG3FHz50ro=;
+        b=iJHpQa5MpKwC4DPCj2glBiG5wAsHMBjgZYUmkdxG0QvpLptGPKVkI1t/Xw3JdASAsR
+         IkX+In9x4Tsi57H1IYoAXYHT4DunSfS3OEgoDn58g1C8nUTOW3X1wbvQ+ae1kbcIdD6x
+         CgSRLTaptKXVXgR3l6Xh7khJ4or2jp+BmNaM5ImIY2aRmKoczQdCax7E9WACoNkv6Ad5
+         usW7nDTh0tRoueuVH8CUi/TFZ3rTQ1LtUE9cOJZoHvAGZluRAR2vkgkSNuyLFkeg7yKV
+         4vFL2F+UISRWp9TdwS1RFhlJx7YA8Tf3sd19e/qAyXuEroYujSacQxSPjygS5sqrZw1n
+         f4aQ==
+X-Gm-Message-State: APjAAAUD6/1Zym8zDJozlSOCSpZkXwUykHBwUmrgRJz8mr1XP5/kkFBF
+        lUGE6OI1RcnahrwMu7Jypv27hCK2a/fr5A0MKRGY0YTX
+X-Google-Smtp-Source: APXvYqzdmrCxPsLGkwxNLbv0nCYfX5WN2PH0oFBVdK2D57wEJrFA0ck2wwQinKWCopRImeLq6iaGhc0qX19J1KqtxKY=
+X-Received: by 2002:a05:6830:1e05:: with SMTP id s5mr16213861otr.247.1566855197160;
+ Mon, 26 Aug 2019 14:33:17 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c40e6d9-64e4-4854-db22-08d72a6cae00
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 21:30:55.7972
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Z29GVfNUDD1J/FvD0N9gWzBKlwPnidaKy9RFG5z4HrgEWLJp6y2EZeSGaz2As/ym3HFNnG00pLi8dUHcTsAcU66J3IY1N+Y6KUcvLS6HSQQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB5099
+References: <20190821175720.25901-1-vgoyal@redhat.com> <20190821175720.25901-3-vgoyal@redhat.com>
+ <20190826115316.GB21051@infradead.org> <20190826203326.GB13860@redhat.com> <20190826205829.GC13860@redhat.com>
+In-Reply-To: <20190826205829.GC13860@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 26 Aug 2019 14:33:04 -0700
+Message-ID: <CAPcyv4htarWQysXZh8JDh3mMBNM4WtVs7yL70LGOZ1mQg5bEFA@mail.gmail.com>
+Subject: Re: [PATCH 02/19] dax: Pass dax_dev to dax_writeback_mapping_range()
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>, virtio-fs@redhat.com,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTA4LTI2IGF0IDE0OjE3IC0wNzAwLCBQYWxtZXIgRGFiYmVsdCB3cm90ZToN
-Cj4gT24gU3VuLCAxOCBBdWcgMjAxOSAyMTo0OTowMSBQRFQgKC0wNzAwKSwgYW51cEBicmFpbmZh
-dWx0Lm9yZyB3cm90ZToNCj4gPiBPbiBTdW4sIEF1ZyAxOCwgMjAxOSBhdCAxMTo0OSBQTSBDaHJp
-c3RvcGggSGVsbHdpZyA8DQo+ID4gaGNoQGluZnJhZGVhZC5vcmc+IHdyb3RlOg0KPiA+ID4gPiAr
-I2RlZmluZSBGSVhBRERSX1RPUCAgICAgIChWTUFMTE9DX1NUQVJUKQ0KPiA+ID4gDQo+ID4gPiBO
-aXQ6IG5vIG5lZWQgZm9yIHRoZSBicmFjZXMsIHRoZSBkZWZpbml0aW9ucyBiZWxvdyBkb24ndCB1
-c2UgaXQNCj4gPiA+IGVpdGhlci4NCj4gPiANCj4gPiBTdXJlLCBJIHdpbGwgdXBkYXRlIGFuZCBz
-ZW5kIHYyIHNvb24uDQo+ID4gDQo+ID4gPiA+ICsjaWZkZWYgQ09ORklHXzY0QklUDQo+ID4gPiA+
-ICsjZGVmaW5lIEZJWEFERFJfU0laRSAgICAgUE1EX1NJWkUNCj4gPiA+ID4gKyNlbHNlDQo+ID4g
-PiA+ICsjZGVmaW5lIEZJWEFERFJfU0laRSAgICAgUEdESVJfU0laRQ0KPiA+ID4gPiArI2VuZGlm
-DQo+ID4gPiA+ICsjZGVmaW5lIEZJWEFERFJfU1RBUlQgICAgKEZJWEFERFJfVE9QIC0gRklYQURE
-Ul9TSVpFKQ0KPiA+ID4gPiArDQo+ID4gPiA+ICAvKg0KPiA+ID4gPiAtICogVGFzayBzaXplIGlz
-IDB4NDAwMDAwMDAwMCBmb3IgUlY2NCBvciAweGI4MDAwMDAgZm9yIFJWMzIuDQo+ID4gPiA+ICsg
-KiBUYXNrIHNpemUgaXMgMHg0MDAwMDAwMDAwIGZvciBSVjY0IG9yIDB4OWZjMDAwMDAgZm9yIFJW
-MzIuDQo+ID4gPiA+ICAgKiBOb3RlIHRoYXQgUEdESVJfU0laRSBtdXN0IGV2ZW5seSBkaXZpZGUg
-VEFTS19TSVpFLg0KPiA+ID4gPiAgICovDQo+ID4gPiA+ICAjaWZkZWYgQ09ORklHXzY0QklUDQo+
-ID4gPiA+ICAjZGVmaW5lIFRBU0tfU0laRSAoUEdESVJfU0laRSAqIFBUUlNfUEVSX1BHRCAvIDIp
-DQo+ID4gPiA+ICAjZWxzZQ0KPiA+ID4gPiAtI2RlZmluZSBUQVNLX1NJWkUgVk1BTExPQ19TVEFS
-VA0KPiA+ID4gPiArI2RlZmluZSBUQVNLX1NJWkUgRklYQUREUl9TVEFSVA0KPiA+ID4gPiAgI2Vu
-ZGlmDQo+ID4gPiANCj4gPiA+IE1lbnRpb25pbmcgdGhlIGFkZHJlc3NlcyBpcyBhIGxpdHRsZSB3
-ZWlyZC4gIElNSE8gdGhpcyB3b3VsZCBiZQ0KPiA+ID4gYSBtdWNoIG5pY2VyIHBsYWNlIHRvIGV4
-cGxhaW4gdGhlIGhpZ2gtbGV2ZWwgbWVtb3J5IGxheW91dCwNCj4gPiA+IGluY2x1ZGluZw0KPiA+
-ID4gbWF5YmUgYSBsaXR0bGUgQVNDSUkgYXJ0LiAgQWxzbyB3ZSBjb3VsZCBoYXZlIG9uZSAjaWZk
-ZWYNCj4gPiA+IENPTkZJR182NEJJVA0KPiA+ID4gZm9yIGJvdGggcmVsYXRlZCB2YWx1ZXMuICBM
-YXN0IGJ1dCBub3QgbGVhc3QgaW5zdGVhZCBvZiBzYXlpbmcNCj4gPiA+IHRoYXQNCj4gPiA+IHNv
-bWV0aGluZyBzaG91bGQgYmUgZGl2aWRhYmxlIGl0IHdvdWxkIGJlIG5pY2UgdG8gaGF2ZSBhDQo+
-ID4gPiBCVUlMRF9CVUdfT04NCj4gPiA+IHRvIGVuZm9yY2UgaXQuDQo+ID4gPiANCj4gPiA+IEVp
-dGhlciB3YXkgd2UgYXJlIGxhdGUgaW4gdGhlIGN5Y2xlLCBzbyBJIGd1ZXNzIHRoaXMgaXMgb2sg
-Zm9yDQo+ID4gPiBub3c6DQo+ID4gPiANCj4gPiA+IFJldmlld2VkLWJ5OiBDaHJpc3RvcGggSGVs
-bHdpZyA8aGNoQGxzdC5kZT4NCj4gPiA+IA0KPiA+ID4gQnV0IEknZCBsb3ZlIHRvIHNlZSB0aGlz
-IGFyZWEgaW1wcm92ZWQgYSBsaXR0bGUgZnVydGhlciBhcyBpdCBpcw0KPiA+ID4gZnVsbA0KPiA+
-ID4gb2YgbWluZSBmaWVsZHMuDQo+ID4gDQo+ID4gSSBhZ3JlZSB3aXRoIHlvdS4gV2UgYWxzbyBo
-YXZlIFNwYXJzZW1lbSBhbmQgS0FTQU4gcGF0Y2hlcyB3aGljaA0KPiA+IHRvdWNoIHZpcnR1YWwg
-bWVtb3J5IGxheW91dCBzbyBpdCdzIGltcG9ydGFudCB0byBoYXZlIHZpcnR1YWwNCj4gPiBtZW1v
-cnkgbGF5b3V0DQo+ID4gZG9jdW1lbnRlZCBjbGVhcmx5LiBJIGNhbiBhZGQgdGhlIHJlcXVpcmVk
-IGRvY3VtZW50YXRpb24gYXMNCj4gPiBzZXBhcmF0ZSBwYXRjaC4NCj4gDQo+IERvY3VtZW50YXRp
-b24gaXMgZ3JlYXQsIGJ1dCBpZiB3ZSBkb2N1bWVudCBzb21ldGhpbmcgdGhhdCBpcyBicm9rZW4N
-Cj4gdGhlbiBpdCdzIA0KPiBzdGlsbCBicm9rZW4gOikNCg0KSSdtIGNvbmZ1c2VkIGhlcmUuIFdo
-YXQgaXMgYnJva2VuPw0KDQpSaWdodCBub3cgUlYzMiBkb2VzIG5vdCB3b3JrIHdpdGggdGhlIDUu
-MyBrZXJuZWwgYW5kIHRoaXMgcGF0Y2ggZml4ZXMNCnRoZSByZWdyZXNzaW9uLg0KDQo+IA0KPiBJ
-IHRoaW5rIHRoaXMgbmVlZHMgdG8ganVzdCBiZSByZWRvbmUgLS0gd2Uga2VlcCBydW5uaW5nIGlu
-dG8gaXNzdWVzDQo+IGhlcmUgYW5kIA0KPiBmaXhpbmcgdGhlbSwgYnV0IHRoZXJlIGFyZSBwcm9i
-YWJseSBtb3JlIGlzc3VlcyBhbmQgaXQnbGwgcHJvYmFibHkgYmUNCj4gZmFzdGVyIHRvIA0KPiBq
-dXN0IHRoaW5rIHRocm91Z2ggdGhlIG1lbW9yeSBtYXAgdGhhbiB0byBrZWVwIGZpeGluZyBidWdz
-IGFzIHRoZXkNCj4gY3JvcCB1cC4gIA0KPiBUaGlzIHdhcyBvbmUgb2YgdGhlIGFyZWFzIG9mIHRo
-ZSBwb3J0IEkgZGlkbid0IHJld3JpdGUgYXMgcGFydCBvZiB0aGUNCj4gdXBzdHJlYW0gDQo+IHN1
-Ym1pc3Npb24gcHJvY2VzcywgYW5kIGFzIGEgcmVzdWx0IGl0J3MgcHJldHR5IGNydXN0eS4NCg0K
-SSBjYW4ndCBzcGVhayBmb3IgcmV3cml0aW5nIHRoZSBjb2RlLCBidXQgdGhhdCBzZWVtcyBsaWtl
-IHNvbWV0aGluZw0KdGhhdCBzaG91bGQgaGFwcGVuIGluIHRoZSA1LjQgbWVyZ2Ugd2luZG93IHJp
-Z2h0PyBXaXRoIFJDNiBhbHJlYWR5IG91dCANCnRoaXMgcGF0Y2ggc2VlbXMgbGlrZSB0aGUgb25s
-eSBvcHRpb24gZm9yIDUuMy4gVW5sZXNzIHdlIGFyZSBqdXN0IGdvaW5nDQp0byBkcm9wIFJWMzIg
-c3VwcG9ydCBmcm9tIExpbnV4IGluIHRoZSA1LjMgcmVsZWFzZT8NCg0KQWxpc3RhaXINCg0KPiAN
-Cj4gPiBJIHRoaW5rIHRoZSBiZXN0IHBsYWNlIHRvIGFkZCBBU0NJSSBhcnQgd291bGQgYmUgYXNt
-L3BndGFibGUuaA0KPiA+IHdoZXJlIGFsbA0KPiA+IHZpcnR1YWwgbWVtb3J5IHJlbGF0ZWQgZGVm
-aW5lcyBhcmUgcGxhY2VkLiBTdWdnZXN0aW9ucz8/DQo=
+[ add Jan ]
+
+On Mon, Aug 26, 2019 at 1:58 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Mon, Aug 26, 2019 at 04:33:26PM -0400, Vivek Goyal wrote:
+> > On Mon, Aug 26, 2019 at 04:53:16AM -0700, Christoph Hellwig wrote:
+> > > On Wed, Aug 21, 2019 at 01:57:03PM -0400, Vivek Goyal wrote:
+> > > > Right now dax_writeback_mapping_range() is passed a bdev and dax_dev
+> > > > is searched from that bdev name.
+> > > >
+> > > > virtio-fs does not have a bdev. So pass in dax_dev also to
+> > > > dax_writeback_mapping_range(). If dax_dev is passed in, bdev is not
+> > > > used otherwise dax_dev is searched using bdev.
+> > >
+> > > Please just pass in only the dax_device and get rid of the block device.
+> > > The callers should have one at hand easily, e.g. for XFS just call
+> > > xfs_find_daxdev_for_inode instead of xfs_find_bdev_for_inode.
+> >
+> > Sure. Here is the updated patch.
+> >
+> > This patch can probably go upstream independently. If you are fine with
+> > the patch, I can post it separately for inclusion.
+>
+> Forgot to update function declaration in case of !CONFIG_FS_DAX. Here is
+> the updated patch.
+>
+> Subject: dax: Pass dax_dev instead of bdev to dax_writeback_mapping_range()
+>
+> As of now dax_writeback_mapping_range() takes "struct block_device" as a
+> parameter and dax_dev is searched from bdev name. This also involves taking
+> a fresh reference on dax_dev and putting that reference at the end of
+> function.
+>
+> We are developing a new filesystem virtio-fs and using dax to access host
+> page cache directly. But there is no block device. IOW, we want to make
+> use of dax but want to get rid of this assumption that there is always
+> a block device associated with dax_dev.
+>
+> So pass in "struct dax_device" as parameter instead of bdev.
+>
+> ext2/ext4/xfs are current users and they already have a reference on
+> dax_device. So there is no need to take reference and drop reference to
+> dax_device on each call of this function.
+>
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+> ---
+>  fs/dax.c            |    8 +-------
+>  fs/ext2/inode.c     |    5 +++--
+>  fs/ext4/inode.c     |    2 +-
+>  fs/xfs/xfs_aops.c   |    2 +-
+>  include/linux/dax.h |    4 ++--
+
+Looks good to me. Would be nice to get some ext4 and xfs acks then
+I'll take it through the dax tree for v5.4.
+
+>  5 files changed, 8 insertions(+), 13 deletions(-)
+>
+> Index: rhvgoyal-linux-fuse/fs/dax.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/dax.c   2019-08-26 16:45:26.093710196 -0400
+> +++ rhvgoyal-linux-fuse/fs/dax.c        2019-08-26 16:45:29.462710196 -0400
+> @@ -936,12 +936,11 @@ static int dax_writeback_one(struct xa_s
+>   * on persistent storage prior to completion of the operation.
+>   */
+>  int dax_writeback_mapping_range(struct address_space *mapping,
+> -               struct block_device *bdev, struct writeback_control *wbc)
+> +               struct dax_device *dax_dev, struct writeback_control *wbc)
+>  {
+>         XA_STATE(xas, &mapping->i_pages, wbc->range_start >> PAGE_SHIFT);
+>         struct inode *inode = mapping->host;
+>         pgoff_t end_index = wbc->range_end >> PAGE_SHIFT;
+> -       struct dax_device *dax_dev;
+>         void *entry;
+>         int ret = 0;
+>         unsigned int scanned = 0;
+> @@ -952,10 +951,6 @@ int dax_writeback_mapping_range(struct a
+>         if (!mapping->nrexceptional || wbc->sync_mode != WB_SYNC_ALL)
+>                 return 0;
+>
+> -       dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+> -       if (!dax_dev)
+> -               return -EIO;
+> -
+>         trace_dax_writeback_range(inode, xas.xa_index, end_index);
+>
+>         tag_pages_for_writeback(mapping, xas.xa_index, end_index);
+> @@ -976,7 +971,6 @@ int dax_writeback_mapping_range(struct a
+>                 xas_lock_irq(&xas);
+>         }
+>         xas_unlock_irq(&xas);
+> -       put_dax(dax_dev);
+>         trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
+>         return ret;
+>  }
+> Index: rhvgoyal-linux-fuse/include/linux/dax.h
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/include/linux/dax.h        2019-08-26 16:45:26.094710196 -0400
+> +++ rhvgoyal-linux-fuse/include/linux/dax.h     2019-08-26 16:46:08.101710196 -0400
+> @@ -141,7 +141,7 @@ static inline void fs_put_dax(struct dax
+>
+>  struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+>  int dax_writeback_mapping_range(struct address_space *mapping,
+> -               struct block_device *bdev, struct writeback_control *wbc);
+> +               struct dax_device *dax_dev, struct writeback_control *wbc);
+>
+>  struct page *dax_layout_busy_page(struct address_space *mapping);
+>  dax_entry_t dax_lock_page(struct page *page);
+> @@ -180,7 +180,7 @@ static inline struct page *dax_layout_bu
+>  }
+>
+>  static inline int dax_writeback_mapping_range(struct address_space *mapping,
+> -               struct block_device *bdev, struct writeback_control *wbc)
+> +               struct dax_device *dax_dev, struct writeback_control *wbc)
+>  {
+>         return -EOPNOTSUPP;
+>  }
+> Index: rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/xfs/xfs_aops.c  2019-08-26 16:45:26.094710196 -0400
+> +++ rhvgoyal-linux-fuse/fs/xfs/xfs_aops.c       2019-08-26 16:45:29.471710196 -0400
+> @@ -1120,7 +1120,7 @@ xfs_dax_writepages(
+>  {
+>         xfs_iflags_clear(XFS_I(mapping->host), XFS_ITRUNCATED);
+>         return dax_writeback_mapping_range(mapping,
+> -                       xfs_find_bdev_for_inode(mapping->host), wbc);
+> +                       xfs_find_daxdev_for_inode(mapping->host), wbc);
+>  }
+>
+>  STATIC int
+> Index: rhvgoyal-linux-fuse/fs/ext4/inode.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/ext4/inode.c    2019-08-26 16:45:26.093710196 -0400
+> +++ rhvgoyal-linux-fuse/fs/ext4/inode.c 2019-08-26 16:45:29.475710196 -0400
+> @@ -2992,7 +2992,7 @@ static int ext4_dax_writepages(struct ad
+>         percpu_down_read(&sbi->s_journal_flag_rwsem);
+>         trace_ext4_writepages(inode, wbc);
+>
+> -       ret = dax_writeback_mapping_range(mapping, inode->i_sb->s_bdev, wbc);
+> +       ret = dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
+>         trace_ext4_writepages_result(inode, wbc, ret,
+>                                      nr_to_write - wbc->nr_to_write);
+>         percpu_up_read(&sbi->s_journal_flag_rwsem);
+> Index: rhvgoyal-linux-fuse/fs/ext2/inode.c
+> ===================================================================
+> --- rhvgoyal-linux-fuse.orig/fs/ext2/inode.c    2019-08-26 16:45:26.093710196 -0400
+> +++ rhvgoyal-linux-fuse/fs/ext2/inode.c 2019-08-26 16:45:29.477710196 -0400
+> @@ -957,8 +957,9 @@ ext2_writepages(struct address_space *ma
+>  static int
+>  ext2_dax_writepages(struct address_space *mapping, struct writeback_control *wbc)
+>  {
+> -       return dax_writeback_mapping_range(mapping,
+> -                       mapping->host->i_sb->s_bdev, wbc);
+> +       struct ext2_sb_info *sbi = EXT2_SB(mapping->host->i_sb);
+> +
+> +       return dax_writeback_mapping_range(mapping, sbi->s_daxdev, wbc);
+>  }
+>
+>  const struct address_space_operations ext2_aops = {
