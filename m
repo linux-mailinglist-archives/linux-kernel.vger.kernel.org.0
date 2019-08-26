@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 123EE9D30D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CF079D30C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733242AbfHZPjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:39:41 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1355 "EHLO
+        id S1733232AbfHZPjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:39:37 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:53111 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733084AbfHZPjV (ORCPT
+        by vger.kernel.org with ESMTP id S1733182AbfHZPj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:39:21 -0400
+        Mon, 26 Aug 2019 11:39:27 -0400
 Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7QFPrA8018373;
-        Mon, 26 Aug 2019 17:39:14 +0200
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7QFPxev018386;
+        Mon, 26 Aug 2019 17:39:20 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : mime-version : content-type; s=STMicroelectronics;
- bh=C0FjddlLz1tmGjWDBbox9NlNRBYo5AeX1gKNZtaLU5g=;
- b=Uy9YJ97HWifGqiNE2bZDoI7Goq6JnRM7BYzJuFG+KghxPxQpMXRocx54nTa7JjhnaXH9
- pPWn55lKtkr86gbQ0Q9xTfq9ue4Wjj5DBRFvLb27ZNa0aCBE5vLQSpdGoU60SWHC7SyC
- gs/+4Co71mrbqGPctuDkriAajhGNNVpk9F4B/x4ANnsPksHO8u/LErIQhrgi1ivgQF2r
- XUKzG4wyUm7W+TJra1/zVOWlAG4wmBJlFNv5hr8ScymlZn083D4mrfcRXizwk5EOwODd
- zxciaIIANo/FGysi1csooiGWhF0x27CYRUjUZgz4fXC6xHuItnr3v7GXNnUEfyz1+wJr KA== 
+ bh=tifbBOCihyi3euWjUK2dmnc9nxcr5SJrbcCSflAOoU8=;
+ b=S8XFXpgE1a63XmxAh8nMqPjuQfMFYB2N3TTvQS7qbZkf0UHhuRkPfT/7MSJmwSjvX4Vu
+ urGKqCn6XZWDEmTuZMPOvaky0r+BzIdAp432ZlS8I5OaiL1GYGoPg+lREiVMHHcozFXq
+ 37c1jw542Ti4bkCL2AQ698QSUNAMXgGT8QdNo38tgJVI6b1Sd6uIUv4P8c74Bxr1J22Q
+ Rl2s74rsq11A1NwvdGVitQnt7bU8uvbGTCyPwS3o3Z9puxEk6+h0Zte8huY6PN9QW6cs
+ ICY6B7TVjLa5ZjEUwI406HmBHMivWrUGFgTI2pk1GVi0oBX93QpYp3BHWHUQopwGyiZf mg== 
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2uju0vmgf6-1
+        by mx07-00178001.pphosted.com with ESMTP id 2uju0vmgja-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 26 Aug 2019 17:39:14 +0200
+        Mon, 26 Aug 2019 17:39:20 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 274E01D1;
-        Mon, 26 Aug 2019 15:38:42 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A29F52D3762;
-        Mon, 26 Aug 2019 17:38:25 +0200 (CEST)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug
- 2019 17:38:25 +0200
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6A9E918C;
+        Mon, 26 Aug 2019 15:39:00 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BFD532BE677;
+        Mon, 26 Aug 2019 17:38:34 +0200 (CEST)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug
+ 2019 17:38:34 +0200
 Received: from localhost (10.201.23.25) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug 2019 17:38:21
+ with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug 2019 17:38:31
  +0200
 From:   Fabien Dessenne <fabien.dessenne@st.com>
 To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
@@ -50,9 +50,9 @@ To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
 CC:     Fabien Dessenne <fabien.dessenne@st.com>,
         Loic Pallardy <loic.pallardy@st.com>,
         Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH] remoteproc: stm32: clear MCU PDDS at firmware start
-Date:   Mon, 26 Aug 2019 17:38:06 +0200
-Message-ID: <1566833886-16571-1-git-send-email-fabien.dessenne@st.com>
+Subject: [PATCH] remoteproc: stm32: manage the get_irq probe defer case
+Date:   Mon, 26 Aug 2019 17:38:29 +0200
+Message-ID: <1566833909-16644-1-git-send-email-fabien.dessenne@st.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -64,43 +64,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When remoteproc stops a firmware, it sets the MCU PDDS flag, allowing
-the platform to reach the Standby power mode if needed.
-Symmetrically, clear this flag before running a firmware.
-This fixes the issue where the system goes to Standby mode when the
-MCU crashes while MPU is in CSTOP mode.
+Manage the -EPROBE_DEFER error case for "wdg" IRQ.
 
 Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 ---
- drivers/remoteproc/stm32_rproc.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/remoteproc/stm32_rproc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index e2da719..1c95913 100644
+index 1c95913..2cf4b29 100644
 --- a/drivers/remoteproc/stm32_rproc.c
 +++ b/drivers/remoteproc/stm32_rproc.c
-@@ -383,10 +383,21 @@ static void stm32_rproc_add_coredump_trace(struct rproc *rproc)
+@@ -517,6 +517,9 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
+ 	int err, irq;
  
- static int stm32_rproc_start(struct rproc *rproc)
- {
-+	struct stm32_rproc *ddata = rproc->priv;
- 	int err;
- 
- 	stm32_rproc_add_coredump_trace(rproc);
- 
-+	/* clear remote proc Deep Sleep */
-+	if (ddata->pdds.map) {
-+		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
-+					 ddata->pdds.mask, 0);
-+		if (err) {
-+			dev_err(&rproc->dev, "failed to clear pdds\n");
-+			return err;
-+		}
-+	}
+ 	irq = platform_get_irq(pdev, 0);
++	if (irq == -EPROBE_DEFER)
++		return -EPROBE_DEFER;
 +
- 	err = stm32_rproc_set_hold_boot(rproc, false);
- 	if (err)
- 		return err;
+ 	if (irq > 0) {
+ 		err = devm_request_irq(dev, irq, stm32_rproc_wdg, 0,
+ 				       dev_name(dev), rproc);
 -- 
 2.7.4
 
