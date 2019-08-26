@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 097DA9D9A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:53:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2424D9D983
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728600AbfHZWxT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 18:53:19 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41466 "EHLO
+        id S1727447AbfHZWw0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 18:52:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:41455 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbfHZWwY (ORCPT
+        with ESMTP id S1726944AbfHZWwW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 18:52:24 -0400
+        Mon, 26 Aug 2019 18:52:22 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2NqQ-0006mg-54; Tue, 27 Aug 2019 00:52:14 +0200
+        id 1i2NqQ-0006mh-5l; Tue, 27 Aug 2019 00:52:14 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A609F1C0DDF;
-        Tue, 27 Aug 2019 00:52:12 +0200 (CEST)
-Date:   Mon, 26 Aug 2019 22:52:12 -0000
-From:   tip-bot2 for Alexandre Belloni <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5B87C1C0DE0;
+        Tue, 27 Aug 2019 00:52:13 +0200 (CEST)
+Date:   Mon, 26 Aug 2019 22:52:13 -0000
+From:   tip-bot2 for Anson Huang <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] clocksource/drivers/tcb_clksrc: Register delay timer
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+Subject: [tip: timers/core] clocksource/drivers/imx-sysctr: Add internal clock
+ divider handle
+Cc:     Anson Huang <Anson.Huang@nxp.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <156685993261.1297.1431848765931294560.tip-bot2@tip-bot2>
+Message-ID: <156685993313.1300.5077580516378764921.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -46,91 +47,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     1ce861cec03c79a68bae81a7e039edae46b2c493
-Gitweb:        https://git.kernel.org/tip/1ce861cec03c79a68bae81a7e039edae46b2c493
-Author:        Alexandre Belloni <alexandre.belloni@bootlin.com>
-AuthorDate:    Tue, 13 Aug 2019 15:30:50 +02:00
+Commit-ID:     4419e19d8117dda6bccfbc62090e766f469ff20a
+Gitweb:        https://git.kernel.org/tip/4419e19d8117dda6bccfbc62090e766f469ff20a
+Author:        Anson Huang <Anson.Huang@nxp.com>
+AuthorDate:    Thu, 15 Aug 2019 20:38:42 -04:00
 Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
 CommitterDate: Tue, 27 Aug 2019 00:31:39 +02:00
 
-clocksource/drivers/tcb_clksrc: Register delay timer
+clocksource/drivers/imx-sysctr: Add internal clock divider handle
 
-Implement and register delay timer to allow get_cycles() to work properly.
+The system counter block guide states that the base clock is
+internally divided by 3 before use, that means the clock input of
+system counter defined in DT should be base clock which is normally
+from OSC, and then internally divided by 3 before use.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/Kconfig           |  2 +-
- drivers/clocksource/timer-atmel-tcb.c | 18 ++++++++++++++++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
+ drivers/clocksource/timer-imx-sysctr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 5e9317d..a642c23 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -429,7 +429,7 @@ config ATMEL_ST
+diff --git a/drivers/clocksource/timer-imx-sysctr.c b/drivers/clocksource/timer-imx-sysctr.c
+index fd7d680..b7c80a3 100644
+--- a/drivers/clocksource/timer-imx-sysctr.c
++++ b/drivers/clocksource/timer-imx-sysctr.c
+@@ -20,6 +20,8 @@
+ #define SYS_CTR_EN		0x1
+ #define SYS_CTR_IRQ_MASK	0x2
  
- config ATMEL_TCB_CLKSRC
- 	bool "Atmel TC Block timer driver" if COMPILE_TEST
--	depends on HAS_IOMEM
-+	depends on ARM && HAS_IOMEM
- 	select TIMER_OF if OF
- 	help
- 	  Support for Timer Counter Blocks on Atmel SoCs.
-diff --git a/drivers/clocksource/timer-atmel-tcb.c b/drivers/clocksource/timer-atmel-tcb.c
-index 6ed31f9..7427b07 100644
---- a/drivers/clocksource/timer-atmel-tcb.c
-+++ b/drivers/clocksource/timer-atmel-tcb.c
-@@ -6,6 +6,7 @@
- #include <linux/irq.h>
- 
- #include <linux/clk.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/ioport.h>
- #include <linux/io.h>
-@@ -125,6 +126,18 @@ static u64 notrace tc_sched_clock_read32(void)
- 	return tc_get_cycles32(&clksrc);
- }
- 
-+static struct delay_timer tc_delay_timer;
++#define SYS_CTR_CLK_DIV		0x3
 +
-+static unsigned long tc_delay_timer_read(void)
-+{
-+	return tc_get_cycles(&clksrc);
-+}
+ static void __iomem *sys_ctr_base;
+ static u32 cmpcr;
+ 
+@@ -134,6 +136,9 @@ static int __init sysctr_timer_init(struct device_node *np)
+ 	if (ret)
+ 		return ret;
+ 
++	/* system counter clock is divided by 3 internally */
++	to_sysctr.of_clk.rate /= SYS_CTR_CLK_DIV;
 +
-+static unsigned long notrace tc_delay_timer_read32(void)
-+{
-+	return tc_get_cycles32(&clksrc);
-+}
-+
- #ifdef CONFIG_GENERIC_CLOCKEVENTS
- 
- struct tc_clkevt_device {
-@@ -432,6 +445,7 @@ static int __init tcb_clksrc_init(struct device_node *node)
- 		/* setup ony channel 0 */
- 		tcb_setup_single_chan(&tc, best_divisor_idx);
- 		tc_sched_clock = tc_sched_clock_read32;
-+		tc_delay_timer.read_current_timer = tc_delay_timer_read32;
- 	} else {
- 		/* we have three clocks no matter what the
- 		 * underlying platform supports.
-@@ -444,6 +458,7 @@ static int __init tcb_clksrc_init(struct device_node *node)
- 		/* setup both channel 0 & 1 */
- 		tcb_setup_dual_chan(&tc, best_divisor_idx);
- 		tc_sched_clock = tc_sched_clock_read;
-+		tc_delay_timer.read_current_timer = tc_delay_timer_read;
- 	}
- 
- 	/* and away we go! */
-@@ -458,6 +473,9 @@ static int __init tcb_clksrc_init(struct device_node *node)
- 
- 	sched_clock_register(tc_sched_clock, 32, divided_rate);
- 
-+	tc_delay_timer.freq = divided_rate;
-+	register_current_timer_delay(&tc_delay_timer);
-+
- 	return 0;
- 
- err_unregister_clksrc:
+ 	sys_ctr_base = timer_of_base(&to_sysctr);
+ 	cmpcr = readl(sys_ctr_base + CMPCR);
+ 	cmpcr &= ~SYS_CTR_EN;
