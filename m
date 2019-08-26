@@ -2,80 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A7E99D452
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 18:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E97F09D459
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 18:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733115AbfHZQqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 12:46:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40726 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729065AbfHZQqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 12:46:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9B23DAE47;
-        Mon, 26 Aug 2019 16:46:23 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 1DFFCDA98E; Mon, 26 Aug 2019 18:46:47 +0200 (CEST)
-Date:   Mon, 26 Aug 2019 18:46:47 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Nikolay Borisov <nborisov@suse.com>
-Cc:     dsterba@suse.cz, Christophe Leroy <christophe.leroy@c-s.fr>,
-        erhard_f@mailbox.org, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        stable@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v2] btrfs: fix allocation of bitmap pages.
-Message-ID: <20190826164646.GX2752@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Nikolay Borisov <nborisov@suse.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>, erhard_f@mailbox.org,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        stable@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org
-References: <c3157c8e8e0e7588312b40c853f65c02fe6c957a.1566399731.git.christophe.leroy@c-s.fr>
- <20190826153757.GW2752@twin.jikos.cz>
- <a096d653-8b64-be15-3e81-581536a88e8a@suse.com>
+        id S1733123AbfHZQri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 12:47:38 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:41200 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728922AbfHZQrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 12:47:37 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B990281D1;
+        Mon, 26 Aug 2019 16:47:37 +0000 (UTC)
+Received: from krava (ovpn-204-96.brq.redhat.com [10.40.204.96])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 50C3F194BB;
+        Mon, 26 Aug 2019 16:47:35 +0000 (UTC)
+Date:   Mon, 26 Aug 2019 18:47:34 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH 00/12] libperf: Add events to perf/event.h
+Message-ID: <20190826164734.GE17554@krava>
+References: <20190825181752.722-1-jolsa@kernel.org>
+ <20190826154138.GD24801@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a096d653-8b64-be15-3e81-581536a88e8a@suse.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <20190826154138.GD24801@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Mon, 26 Aug 2019 16:47:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 06:40:24PM +0300, Nikolay Borisov wrote:
-> >> Link: https://bugzilla.kernel.org/show_bug.cgi?id=204371
-> >> Fixes: 69d2480456d1 ("btrfs: use copy_page for copying pages instead of memcpy")
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> >> ---
-> >> v2: Using kmem_cache instead of get_zeroed_page() in order to benefit from SLAB debugging features like redzone.
+On Mon, Aug 26, 2019 at 12:41:38PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Sun, Aug 25, 2019 at 08:17:40PM +0200, Jiri Olsa escreveu:
+> > hi,
+> > as a preparation for sampling libperf interface, moving event
+> > definitions into the library header. Moving just the kernel 
+> > non-AUX events now.
 > > 
-> > I'll take this version, thanks. Though I'm not happy about the allocator
-> > behaviour. The kmem cache based fix can be backported independently to
-> > 4.19 regardless of the SL*B fixes.
+> > In order to keep libperf simple, we switch 'u64/u32/u16/u8'
+> > types used events to their generic '__u*' versions.
 > > 
-> >> +extern struct kmem_cache *btrfs_bitmap_cachep;
+> > Perf added 'u*' types mainly to ease up printing __u64 values
+> > as stated in the linux/types.h comment:
 > > 
-> > I've renamed the cache to btrfs_free_space_bitmap_cachep
+> >   /*
+> >    * We define u64 as uint64_t for every architecture
+> >    * so that we can print it with "%"PRIx64 without getting warnings.
+> >    *
+> >    * typedef __u64 u64;
+> >    * typedef __s64 s64;
+> >    */
 > > 
-> > Reviewed-by: David Sterba <dsterba@suse.com>
+> > Adding and using new PRI_lu64 and PRI_lx64 macros to be used for
+> > that.  Using extra '_' to ease up the reading and differentiate
+> > them from standard PRI*64 macros.
 > 
-> Isn't this obsoleted by
+> I think we should take advantage of this moment to rename those structs
+> to have the 'perf_record_' prefix on them, I guess we could even remove
+> the _event from them, i.e.:
 > 
-> '[PATCH v2 0/2] guarantee natural alignment for kmalloc()' ?
+> 'struct mmap_event' becomes 'perf_record_mmap', as it is the description
+> for the PERF_RECORD_MMAP meta-data event, are you ok with that?
 
-Yeah, but this would add maybe another whole dev cycle to merge and
-release. The reporters of the bug seem to care enough to identify the
-problem and propose the fix so I feel like adding the btrfs-specific fix
-now is a little favor we can afford.
+hum, not sure about loosing the '_event' here, but we are
+not public yet, so we can always change back ;-) I do like
+it'd follow the enum name
 
-The bug is reproduced on an architecture that's not widely tested so
-from practical POV I think this adds more coverage which is desirable.
+> I can go ahead and do it myself, updating each patch on this series to
+> do that.
+
+sure, I thought we'd do it later, but feel free to do it,
+maybe in separate changes?
+
+thanks,
+jirka
