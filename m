@@ -2,173 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1463A9D0F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 15:46:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A4E69D0F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 15:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732176AbfHZNqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 09:46:01 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:34050 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726953AbfHZNqA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 09:46:00 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="Codrin.Ciubotariu@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: EhWV2r5JRWOdo7CAMg5mQpszvR/GJH5tWFVAJkI6xATv3wZ1FRj6TKpejB+hbskPQbEXrsI16A
- FhVk6h2Sfu4B18hVOoQD4qEXyqCh5Dqg+V6qJWstedmeuO6og49DIy1H7X+vzVg7RdKblMpj9Z
- oXFaO78zypn1C/U0H2UOUz47aIvvXtceCHAqmGszWElA0IZCO68JBPPxtGpw1mtnlE6hA8DUVG
- jDuwH+1EnELcLJIa9VrPZaVdLlgOkQfC03mbELgvla6i6do7HsfCk0rpPjHJ5Q9QoLvBcLdMam
- wLM=
-X-IronPort-AV: E=Sophos;i="5.64,433,1559545200"; 
-   d="scan'208";a="43700175"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Aug 2019 06:45:58 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 26 Aug 2019 06:45:57 -0700
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
- Transport; Mon, 26 Aug 2019 06:45:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QGFesGpdl/gCWLpxOJ9b/WvOhK7xMK29I1ZRUErCyajZP9BkrCHpk4qWxjSKVsKbf8QrBVQ/vcOS/C2Xacn0oKEuTLFpt7gsDt9cE0J8K3px/0a/+XLpy4oPrefR8rQTZdzuKl96KYHZ8AC+gR4ia50uzDsstb/oeR5cYOaXsAkZPi+aaM3UrFBdY+Z6X6IbfaiYVHce7+KiyOFreUVKaPH0Z5iVq3gr7Vhhx/u5xiQHgGEdQ2yqesA9ZWKqMjHEtwRpRiBgAPQMUaIGljBbGbd4hGQl/svhJNSrehXFL9xLTof4dS2/Tko2GYJ9ffPxY5IuhXHh6wjfUvS4nxK8vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=64aqOb3qDwGcygfZFYtZSl3K8m9rWCTQMcYUNwyGdHM=;
- b=GWgpgJeOcYXtmuT/9PLsQw4mVYVp11d5dHlpPryj5J+pn+kz2kn9qg9VzwBTUEfVgGx2zF/42B8IvDXx9w0UhlvFWBNZE6x3949L32+mehdYEPBYC7zzFbWnZre6LBiPI0NV80imZGtoJOkowXhbOOhLyhKj/pDaOBskkiyYdTEurs2Yp7uipWoEJ43DNTnpQ1NKFz1k/dqqykkZVSW7f3HEzlkp6VgRjPvSpmxCznbnjupd6MGf5ukWSz2/bYDTuPs+rF/+303LzmVka3NweWizM1cYjW57aZU1wnn3NVSGVLSJKDPDB7yAA513j4iqkwQW1nkIvy1KyWAR+IgnpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=64aqOb3qDwGcygfZFYtZSl3K8m9rWCTQMcYUNwyGdHM=;
- b=UUXwgDI9vQShlX2A9H3sh2h+YvXn9ins/FJ9CoBwjWk9V3XYFqarRhOKbjlfdb4D3B6GlBv67R0cJFtiqBTCr3eGCYeG/M+0elAPtHJ04LGgWC/4qRqPWSHUnjTEdvC36Ej4Q6zzXL/uSSGbizQK7NYfiI3RLZYvssd0ex+zRKU=
-Received: from BY5PR11MB4497.namprd11.prod.outlook.com (52.132.255.220) by
- BY5PR11MB4181.namprd11.prod.outlook.com (10.255.162.32) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.20; Mon, 26 Aug 2019 13:45:56 +0000
-Received: from BY5PR11MB4497.namprd11.prod.outlook.com
- ([fe80::14:24b8:9029:c69]) by BY5PR11MB4497.namprd11.prod.outlook.com
- ([fe80::14:24b8:9029:c69%7]) with mapi id 15.20.2199.021; Mon, 26 Aug 2019
- 13:45:56 +0000
-From:   <Codrin.Ciubotariu@microchip.com>
-To:     <mirq-linux@rere.qmqm.pl>, <alsa-devel@alsa-project.org>,
-        <devicetree@vger.kernel.org>
-CC:     <alexandre.belloni@bootlin.com>, <arnd@arndb.de>,
-        <3chas3@gmail.com>, <gregkh@linuxfoundation.org>, <perex@perex.cz>,
-        <lgirdwood@gmail.com>, <Ludovic.Desroches@microchip.com>,
-        <broonie@kernel.org>, <mark.rutland@arm.com>,
-        <Nicolas.Ferre@microchip.com>, <robh-dt@kernel.org>,
-        <tiwai@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/6] ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA in
- Kconfig
-Thread-Topic: [PATCH v2 1/6] ASoC: atmel: enable SOC_SSC_PDC and SOC_SSC_DMA
- in Kconfig
-Thread-Index: AQHVWrpMB5SfcuBicUqn8zHcvguU4acNc6mA
-Date:   Mon, 26 Aug 2019 13:45:56 +0000
-Message-ID: <2afbf219-9c2d-566a-511c-2bc332479f98@microchip.com>
-References: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
- <233d5461f4448df151755de7b69a0cd3ad310d5c.1566677788.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <233d5461f4448df151755de7b69a0cd3ad310d5c.1566677788.git.mirq-linux@rere.qmqm.pl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P195CA0001.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:800:d0::11) To BY5PR11MB4497.namprd11.prod.outlook.com
- (2603:10b6:a03:1cc::28)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 33b66457-92a4-4b01-f1be-08d72a2bb88d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BY5PR11MB4181;
-x-ms-traffictypediagnostic: BY5PR11MB4181:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BY5PR11MB4181D4D7EE22153FDCFD14E4E7A10@BY5PR11MB4181.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4303;
-x-forefront-prvs: 01415BB535
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(346002)(39860400002)(136003)(199004)(189003)(102836004)(486006)(81166006)(476003)(54906003)(186003)(26005)(2616005)(81156014)(31696002)(53546011)(2906002)(6116002)(3846002)(478600001)(305945005)(110136005)(71190400001)(8676002)(446003)(76176011)(11346002)(7736002)(86362001)(6512007)(64756008)(66476007)(66556008)(66066001)(66446008)(66946007)(2501003)(6506007)(386003)(229853002)(256004)(36756003)(316002)(71200400001)(6436002)(14454004)(6486002)(31686004)(52116002)(8936002)(4326008)(5660300002)(99286004)(2201001)(7416002)(25786009)(6246003)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR11MB4181;H:BY5PR11MB4497.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: DcKaQCVCd9u7bB9fUFTw+GwE5FNeglPZA9Dk85bBgrrH6ZcNEQ9it/SRqgR3M0GlIY8BSBl3SqnPIzUIBZDLkb+aBzraVBF7t1qNNjaZXN0rVcIFNPB02REEX9TcM6yQGz5L+0qkyIJ5Fw7HQjEbzBJFxQGTvv99gsU88pI13FaQT899inXhGOCZ6gTeax4u9DgOt+T6jQcOwAX9yo0FUJzaaYUaMKfGMMqkwyxFIAmJpFrqtinR5+Hpj4Vzjnj9I4qn52TljL6a0JF/s3tP9tTCXUjFTGjfxOZBqPsTZ/p6yKb+3j3NQFS+MFVaAXoSIvU5hSrd6uLEJkhGKPOnX9NbvnXL9fO+Q+txTir6jr6QjUXG9nEALK3xGxehHVVUa5QTjds83i+TruhQwmp60WsaejKeXuiABfIGDfosRMs=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E0A8CDA29785994B80CF66D3605A800D@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1732036AbfHZNq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 09:46:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44324 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728550AbfHZNq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 09:46:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4C2D6B038;
+        Mon, 26 Aug 2019 13:46:57 +0000 (UTC)
+Message-ID: <027272c27398b950f207101a2c5dbc07a30a36bc.camel@suse.de>
+Subject: Re: [PATCH v2 01/11] asm-generic: add dma_zone_size
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     catalin.marinas@arm.com, eric@anholt.net,
+        linux-riscv@lists.infradead.org, frowand.list@gmail.com,
+        m.szyprowski@samsung.com, linux-arch@vger.kernel.org,
+        f.fainelli@gmail.com, will@kernel.org, devicetree@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, marc.zyngier@arm.com,
+        robh+dt@kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, phill@raspberryi.org,
+        mbrugger@suse.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        wahrenst@gmx.net, akpm@linux-foundation.org,
+        Robin Murphy <robin.murphy@arm.com>
+Date:   Mon, 26 Aug 2019 15:46:52 +0200
+In-Reply-To: <20190826070939.GD11331@lst.de>
+References: <20190820145821.27214-1-nsaenzjulienne@suse.de>
+         <20190820145821.27214-2-nsaenzjulienne@suse.de>
+         <20190826070939.GD11331@lst.de>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-rvg1En4pB30QD7Cei8XS"
+User-Agent: Evolution 3.32.4 
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33b66457-92a4-4b01-f1be-08d72a2bb88d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 13:45:56.6493
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rAoDs5E3tlWQb9TqUSHHKGmJFf5OUvjOrMHC3HeVfNcbjsrcm3hs7Fi12US/qw3AQWeVO0b+tFCQAW1HMGrDYH20RqfcaIiG+dpPR81bTe8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR11MB4181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjQuMDguMjAxOSAyMzoyNiwgTWljaGHFgiBNaXJvc8WCYXcgd3JvdGU6DQo+IEFsbG93IFNT
-QyB0byBiZSB1c2VkIG9uIHBsYXRmb3JtcyBkZXNjcmliZWQgdXNpbmcgYXVkaW8tZ3JhcGgtY2Fy
-ZA0KPiBpbiBEZXZpY2UgVHJlZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1pY2hhxYIgTWlyb3PF
-gmF3IDxtaXJxLWxpbnV4QHJlcmUucW1xbS5wbD4NCg0KUmV2aWV3ZWQtYnk6IENvZHJpbiBDaXVi
-b3Rhcml1IDxjb2RyaW4uY2l1Ym90YXJpdUBtaWNyb2NoaXAuY29tPg0KDQpUaGFua3MhDQoNCkJl
-c3QgcmVnYXJkcywNCkNvZHJpbg0KDQo+IA0KPiAtLS0NCj4gICB2MjogZXh0ZW5kZWQgdG8gUERD
-IG1vZGUNCj4gICAgICAgcmV3b3JrZWQgYW5kIGZpeGVkIEtjb25maWcgb3B0aW9uIGRlcGVuZGVu
-Y2llcw0KPiANCj4gLS0tDQo+ICAgc291bmQvc29jL2F0bWVsL0tjb25maWcgfCAzMCArKysrKysr
-KysrKysrKysrKystLS0tLS0tLS0tLS0NCj4gICAxIGZpbGUgY2hhbmdlZCwgMTggaW5zZXJ0aW9u
-cygrKSwgMTIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvc291bmQvc29jL2F0bWVs
-L0tjb25maWcgYi9zb3VuZC9zb2MvYXRtZWwvS2NvbmZpZw0KPiBpbmRleCAwNmMxZDVjZTY0MmMu
-LmYxMThjMjI5ZWQ4MiAxMDA2NDQNCj4gLS0tIGEvc291bmQvc29jL2F0bWVsL0tjb25maWcNCj4g
-KysrIGIvc291bmQvc29jL2F0bWVsL0tjb25maWcNCj4gQEAgLTEyLDI1ICsxMiwzMSBAQCBpZiBT
-TkRfQVRNRUxfU09DDQo+ICAgY29uZmlnIFNORF9BVE1FTF9TT0NfUERDDQo+ICAgCXRyaXN0YXRl
-DQo+ICAgCWRlcGVuZHMgb24gSEFTX0RNQQ0KPiAtCWRlZmF1bHQgbSBpZiBTTkRfQVRNRUxfU09D
-X1NTQ19QREM9bSAmJiBTTkRfQVRNRUxfU09DX1NTQz1tDQo+IC0JZGVmYXVsdCB5IGlmIFNORF9B
-VE1FTF9TT0NfU1NDX1BEQz15IHx8IChTTkRfQVRNRUxfU09DX1NTQ19QREM9bSAmJiBTTkRfQVRN
-RUxfU09DX1NTQz15KQ0KPiAtDQo+IC1jb25maWcgU05EX0FUTUVMX1NPQ19TU0NfUERDDQo+IC0J
-dHJpc3RhdGUNCj4gICANCj4gICBjb25maWcgU05EX0FUTUVMX1NPQ19ETUENCj4gICAJdHJpc3Rh
-dGUNCj4gICAJc2VsZWN0IFNORF9TT0NfR0VORVJJQ19ETUFFTkdJTkVfUENNDQo+IC0JZGVmYXVs
-dCBtIGlmIFNORF9BVE1FTF9TT0NfU1NDX0RNQT1tICYmIFNORF9BVE1FTF9TT0NfU1NDPW0NCj4g
-LQlkZWZhdWx0IHkgaWYgU05EX0FUTUVMX1NPQ19TU0NfRE1BPXkgfHwgKFNORF9BVE1FTF9TT0Nf
-U1NDX0RNQT1tICYmIFNORF9BVE1FTF9TT0NfU1NDPXkpDQo+IC0NCj4gLWNvbmZpZyBTTkRfQVRN
-RUxfU09DX1NTQ19ETUENCj4gLQl0cmlzdGF0ZQ0KPiAgIA0KPiAgIGNvbmZpZyBTTkRfQVRNRUxf
-U09DX1NTQw0KPiAgIAl0cmlzdGF0ZQ0KPiAtCWRlZmF1bHQgeSBpZiBTTkRfQVRNRUxfU09DX1NT
-Q19ETUE9eSB8fCBTTkRfQVRNRUxfU09DX1NTQ19QREM9eQ0KPiAtCWRlZmF1bHQgbSBpZiBTTkRf
-QVRNRUxfU09DX1NTQ19ETUE9bSB8fCBTTkRfQVRNRUxfU09DX1NTQ19QREM9bQ0KPiArDQo+ICtj
-b25maWcgU05EX0FUTUVMX1NPQ19TU0NfUERDDQo+ICsJdHJpc3RhdGUgIlNvQyBQQ00gREFJIHN1
-cHBvcnQgZm9yIEFUOTEgU1NDIGNvbnRyb2xsZXIgdXNpbmcgUERDIg0KPiArCWRlcGVuZHMgb24g
-QVRNRUxfU1NDDQo+ICsJc2VsZWN0IFNORF9BVE1FTF9TT0NfUERDDQo+ICsJc2VsZWN0IFNORF9B
-VE1FTF9TT0NfU1NDDQo+ICsJaGVscA0KPiArCSAgU2F5IFkgb3IgTSBpZiB5b3Ugd2FudCB0byBh
-ZGQgc3VwcG9ydCBmb3IgQXRtZWwgU1NDIGludGVyZmFjZQ0KPiArCSAgaW4gUERDIG1vZGUgY29u
-ZmlndXJlZCB1c2luZyBhdWRpby1ncmFwaC1jYXJkIGluIGRldmljZS10cmVlLg0KPiArDQo+ICtj
-b25maWcgU05EX0FUTUVMX1NPQ19TU0NfRE1BDQo+ICsJdHJpc3RhdGUgIlNvQyBQQ00gREFJIHN1
-cHBvcnQgZm9yIEFUOTEgU1NDIGNvbnRyb2xsZXIgdXNpbmcgRE1BIg0KPiArCWRlcGVuZHMgb24g
-QVRNRUxfU1NDDQo+ICsJc2VsZWN0IFNORF9BVE1FTF9TT0NfRE1BDQo+ICsJc2VsZWN0IFNORF9B
-VE1FTF9TT0NfU1NDDQo+ICsJaGVscA0KPiArCSAgU2F5IFkgb3IgTSBpZiB5b3Ugd2FudCB0byBh
-ZGQgc3VwcG9ydCBmb3IgQXRtZWwgU1NDIGludGVyZmFjZQ0KPiArCSAgaW4gRE1BIG1vZGUgY29u
-ZmlndXJlZCB1c2luZyBhdWRpby1ncmFwaC1jYXJkIGluIGRldmljZS10cmVlLg0KPiAgIA0KPiAg
-IGNvbmZpZyBTTkRfQVQ5MV9TT0NfU0FNOUcyMF9XTTg3MzENCj4gICAJdHJpc3RhdGUgIlNvQyBB
-dWRpbyBzdXBwb3J0IGZvciBXTTg3MzEtYmFzZWQgQXQ5MXNhbTlnMjAgZXZhbHVhdGlvbiBib2Fy
-ZCINCj4gDQoNCg==
+
+--=-rvg1En4pB30QD7Cei8XS
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 2019-08-26 at 09:09 +0200, Christoph Hellwig wrote:
+> On Tue, Aug 20, 2019 at 04:58:09PM +0200, Nicolas Saenz Julienne wrote:
+> > Some architectures have platform specific DMA addressing limitations.
+> > This will allow for hardware description code to provide the constraint=
+s
+> > in a generic manner, so as for arch code to properly setup it's memory
+> > zones and DMA mask.
+>=20
+> I know this just spreads the arm code, but I still kinda hate it.
+
+Rob's main concern was finding a way to pass the constraint from HW definit=
+ion
+to arch without widening fdt's architecture specific function surface. I'd =
+say
+it's fair to argue that having a generic mechanism makes sense as it'll now
+traverse multiple archs and subsystems.
+
+I get adding globals like this is not very appealing, yet I went with it as=
+ it
+was the easier to integrate with arm's code. Any alternative suggestions?
+
+> MAX_DMA_ADDRESS is such an oddly defined concepts.  We have the mm
+> code that uses it to start allocating after the dma zones, but
+> I think that would better be done using a function returning
+> 1 << max(zone_dma_bits, 32) or so.  Then we have about a handful
+> of drivers using it that all seem rather bogus, and one of which
+> I think are usable on arm64.
+
+Is it safe to assume DMA limitations will always be a power of 2? I ask as =
+RPi4
+kinda isn't: ZONE_DMA is 0x3c000000 bytes big, I'm approximating the zone m=
+ask
+to 30 as [0x3c000000 0x3fffffff] isn't defined as memory so it's unlikely t=
+hat
+we=C2=B4ll encounter buffers there. But I don't know how it could affect mm
+initialization code.
+
+This also rules out 'zone_dma_bits' as a mechanism to pass ZONE_DMA's size =
+from
+HW definition code to arch's.
+
+
+--=-rvg1En4pB30QD7Cei8XS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl1j4swACgkQlfZmHno8
+x/7+5Qf/RG+HHfwkIbvgTeNBR6PGQMv7ZNDSxgeVo0caYiQnN2w01vHWnEXBnsNK
+sj6p2ip+d5CQbSOMO2oVO7qS4+BoOjcdnFTNSLH0uN5coZj6sr8u5N/FFdeb2cI+
+6B9opO7apUCnnuwaBeV5Ocepk1gr4rNoRnrOWmFwnqoc9dBRBuKV4ejcEB43ySw6
+wxwOswOu17wPR3o6969vTlP29cTItzXnrjmlTn+lKyQpR6pOzC0IpU1tmO0KkfHM
++U0Kypzbtb5Z9uCWvbS42mvT9oV3/El8iqrw1mPxbwRDgwDsBf2awc+fNmnQTsRK
+4pDSxPGJ5wST3O0WUjysQ9u+RJC+Cg==
+=y9Dx
+-----END PGP SIGNATURE-----
+
+--=-rvg1En4pB30QD7Cei8XS--
+
