@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D51EB9CECD
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 13:59:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A21D99CEC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 13:59:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731260AbfHZL6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 07:58:51 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:32105 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727270AbfHZL6t (ORCPT
+        id S1731490AbfHZL67 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 07:58:59 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:22022 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731455AbfHZL64 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 07:58:49 -0400
-Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+        Mon, 26 Aug 2019 07:58:56 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
   Tudor.Ambarus@microchip.com designates 198.175.253.82 as
   permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
   envelope-from="Tudor.Ambarus@microchip.com";
   x-sender="Tudor.Ambarus@microchip.com";
   x-conformance=spf_only; x-record-type="v=spf1";
@@ -23,38 +23,38 @@ Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
   a:smtpout.microchip.com a:mx1.microchip.iphmx.com
   a:mx2.microchip.iphmx.com include:servers.mcsv.net
   include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa2.microchip.iphmx.com: no sender
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
   authenticity information available from domain of
   postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
   envelope-from="Tudor.Ambarus@microchip.com";
   x-sender="postmaster@email.microchip.com";
   x-conformance=spf_only
-Authentication-Results: esa2.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: w/2E/wQg7qc2SHUqujpeGjyxa0g+TRdr9aNQwxlNj7aE3FlULPFowTtiQvhd44CoENYPJLjQMj
- w3lFlm4eZJNdby0ln391831WL8+uks2eoV4iIXLrN+ylmvdm7gMGuRq+hV0N8gS0Pq/j0PDUMD
- g/CLvXFhkDB/3oED7NDCNOdu++IwUk0qdGRE4SGm/QGHtPgrL9KAyrYGlPd9Ki+bwdn+oA2R8d
- dlpPJua6eCAkZKf6vWi7aVLbDcDxqe7WoiNpEFw1OAi7MpGofq8b4yKS58X/8TEgK8YWjyQTLG
- Anw=
+Authentication-Results: esa5.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: NkNXFDk3qbCkiwInb2c/B1XUn6sDoHNdr/QSCCNtZiqIf3yPghlNYmZy9m4DHxOT0ZXk0pCE5E
+ yoL7jbfwrwXOjhezjN4RQTUaqRa4SgRnubNOBySmNwvTn4GKsOsOCJzl8XOVVwG2wZNylxWSR5
+ ffKyrJfZRVzgwDsYLzTl/Fo+vB5QBulJaDFvls6mnJcPGHtgLaMEHl7ztRFcbi9MnH3v1S+Fvq
+ ilSXXg1lbvNmDer9YlnB00T82g/fpzjn0A43JJjIzKcPVXiqPtoTunQ1p2t+EQGk3uLE3+++WW
+ gPE=
 X-IronPort-AV: E=Sophos;i="5.64,433,1559545200"; 
-   d="scan'208";a="46518699"
+   d="scan'208";a="44987649"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Aug 2019 04:58:48 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Aug 2019 04:58:55 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 26 Aug 2019 04:58:47 -0700
+ 15.1.1713.5; Mon, 26 Aug 2019 04:58:52 -0700
 Received: from NAM01-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
- Transport; Mon, 26 Aug 2019 04:58:47 -0700
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 26 Aug 2019 04:58:51 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FwPnrLpAoaeuo0yBrq267W/NWBlF988CpyT7aooxdRsoV3d4pk/i/i7gxjcouaG20b5/RihlrqopJZtTWkJrlbCOBAh3rGfXZWhOEoa7cHVfn2/oqzZqnHBO2EdA0yGCYnJJ5xjpo4/VOpvCvoGACgt24Bp2QddaxHj50wFEJu+f8Agk0wTzjldXkxeank4FUcHzzcQyKEXlKTk01nxlFpwugaiywSCJU2ecb3Rl8lV1ee6RMj3ziO6LUy/6Di8LmshNOjoIc3ZXdd3YPdbokjScZRogFZ9V8Oq9iayRYBm19sky0PkysAAri1O1pMFcrQW871joO3kMLYh0gyH0tA==
+ b=Get6ImAVYQhFPqYFKnL6oCnd9eEpM9o3aGJIUUbwFBKnop/yoaa+6I4JZQ2Tqjc05Fna19K7Kj7pr0H5bNUCDymlOcgnbU8w2WpLcrhBpBOTE9f4QcSN1c7iLCMZpBfCv/bIf2/l7ipsYTSqQrAfmi27U4o/e+EJsHLEyH0gLO53voR4O4MtoBNACdQywXAgnffJkSd5SdWuNks2R5AY4og5Idv+oVotGves5tbC1xV7rtteekEFhs+3SlO1Gjb6Ry3bqN7qOY2R2SJVayPp2nZ2Z48bryM3gsCAV1ccNBA38me9lvw9e3priJhLMBwKN7xR325RhQ12JgxbY6eXFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8dvCftPXVjqfCZG1RlwZNZbXeH+NyMUjdEv6mgeOqrA=;
- b=Ueh1LoC8qLXcLzJOJg87N9vyXbP7UX5x/nYrxI/OLzfKQnH/rQ3cdZs8F9zoyu8Q6LhdQq+ATqPdw3u+IvCye9NOSFK/s4yofqe/yndx9JTO8LqaVnUk/2DzMHwzTvHyO3OZTeUwV662Eb/2Zvjjmh7GRocl0UNT0d2a9j2lWlyjG0+miUtvZjquHiMlFNsTTRV7qo5hOSq1CMk1jc/9fiOd8HysVb2f+fXrTKIKEQ1aCmlB+orHJoTmdk1/eogejzXTZOFKIqJY7uXDM8WIh0pgj6WGDXJqu1qbPt4GURdN14qRIDFfmEa7FuSH+B3Ms7aX8L+dgV9txIHorv9GfA==
+ bh=o+uGO1wnUc7VOBpwSlQm2Jwaf7rqoSKbN4C3jVfhH9Y=;
+ b=QUsbeK0uxlPB0p7zJJ0yDbeCFgFAnbKGQqZycyeLbNIQ2ZgNFQGZPgA3rlwSslBzn2vQofjHMpHr2a+pNf+mmXyKT3hq9Kumo7kIiDg3jurGWvXUjIZa+Rdgnb0GDoAtuewisniCiU/ZLSSnICZ5QWVhdJjHMBQzaKSrwpjpXa4FiTarRCd0ng1AQ060smcOMEr8N65AnVKS03ak3Z2Jo4o1aC29xTf8oEJ9+N0zTGubktLCGb8sUhenlbBRiKjZbqBCzvsufrB4s0WMdJbCh+1c1o48ekR7aXDuRsJxscctsRXiKzGLEH2GLFRCBWizBUM0WD7aiH7oaiW6se9bOg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=microchip.com; dmarc=pass action=none
  header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
@@ -62,28 +62,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector2-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8dvCftPXVjqfCZG1RlwZNZbXeH+NyMUjdEv6mgeOqrA=;
- b=meNhrOCvBSF03y2NFqM/grzI5wUFW6xebzjA4DTBEN2bhB40JmHuNgbhd3msBtL+C3QI7qER/YzbfnIv7ZAEAU5i3bARWOEg6Fn6XgkWBSOU84EBKL2EUihsgFKKEjOf+440MCLXp8YviC8sJJVmA+hBI+1mI+I4XTFOq3mfp5c=
+ bh=o+uGO1wnUc7VOBpwSlQm2Jwaf7rqoSKbN4C3jVfhH9Y=;
+ b=ED2xuwgwEUMaDzm5OAyflNEH24re6KMmzLcyq6AJN4MjpzItK/EPl7yfWj0/KDpka2CZdPIXGDhmRgpt3Qi9sgNdVBM7+iL8slB2uDLAmDSCzFgmwS/hP84KDyvjvRgA+TwE2LUGiHlTQyea2AFkDcHPPJfiCjCegQy5/xUdz3s=
 Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
  MN2PR11MB4350.namprd11.prod.outlook.com (52.135.39.22) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Mon, 26 Aug 2019 11:58:47 +0000
+ 15.20.2199.21; Mon, 26 Aug 2019 11:58:49 +0000
 Received: from MN2PR11MB4448.namprd11.prod.outlook.com
  ([fe80::70c3:e929:4da2:60a5]) by MN2PR11MB4448.namprd11.prod.outlook.com
  ([fe80::70c3:e929:4da2:60a5%7]) with mapi id 15.20.2199.021; Mon, 26 Aug 2019
- 11:58:47 +0000
+ 11:58:49 +0000
 From:   <Tudor.Ambarus@microchip.com>
 To:     <boris.brezillon@collabora.com>, <marek.vasut@gmail.com>,
         <vigneshr@ti.com>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
         <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
 CC:     <Tudor.Ambarus@microchip.com>
-Subject: [PATCH v3 03/20] mtd: spi-nor: Drop quad_enable() from 'struct
- spi-nor'
-Thread-Topic: [PATCH v3 03/20] mtd: spi-nor: Drop quad_enable() from 'struct
- spi-nor'
-Thread-Index: AQHVXAWehOQWCw0hVUm0xshfEyaE7Q==
-Date:   Mon, 26 Aug 2019 11:58:47 +0000
-Message-ID: <20190826115833.14913-4-tudor.ambarus@microchip.com>
+Subject: [PATCH v3 04/20] mtd: spi-nor: Move erase_map to 'struct
+ spi_nor_flash_parameter'
+Thread-Topic: [PATCH v3 04/20] mtd: spi-nor: Move erase_map to 'struct
+ spi_nor_flash_parameter'
+Thread-Index: AQHVXAWfsCwfU61x0kahhLMF12CZfQ==
+Date:   Mon, 26 Aug 2019 11:58:49 +0000
+Message-ID: <20190826115833.14913-5-tudor.ambarus@microchip.com>
 References: <20190826115833.14913-1-tudor.ambarus@microchip.com>
 In-Reply-To: <20190826115833.14913-1-tudor.ambarus@microchip.com>
 Accept-Language: en-US
@@ -97,28 +97,28 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.9.5
 x-originating-ip: [94.177.32.156]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f125d76b-4fe6-43eb-c0e0-08d72a1cc076
+x-ms-office365-filtering-correlation-id: a33ad0c8-e4d4-4bdc-4479-08d72a1cc190
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR11MB4350;
 x-ms-traffictypediagnostic: MN2PR11MB4350:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR11MB4350B16CFA055E9A917768D8F0A10@MN2PR11MB4350.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-microsoft-antispam-prvs: <MN2PR11MB43505257F17E13306517965AF0A10@MN2PR11MB4350.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
 x-forefront-prvs: 01415BB535
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(376002)(366004)(39860400002)(189003)(199004)(386003)(66476007)(6506007)(66556008)(64756008)(81156014)(66446008)(66946007)(14444005)(256004)(8676002)(81166006)(71200400001)(71190400001)(25786009)(6512007)(1076003)(6436002)(8936002)(107886003)(53936002)(36756003)(6486002)(5660300002)(4326008)(50226002)(486006)(86362001)(66066001)(2616005)(476003)(305945005)(3846002)(186003)(76176011)(52116002)(99286004)(6116002)(478600001)(2501003)(7736002)(446003)(11346002)(14454004)(2906002)(110136005)(2201001)(316002)(26005)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4350;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(376002)(366004)(39860400002)(189003)(199004)(386003)(66476007)(6506007)(66556008)(64756008)(81156014)(66446008)(66946007)(14444005)(256004)(8676002)(81166006)(71200400001)(71190400001)(25786009)(6512007)(1076003)(6436002)(8936002)(107886003)(53936002)(36756003)(6486002)(5660300002)(4326008)(50226002)(486006)(86362001)(66066001)(2616005)(476003)(305945005)(3846002)(186003)(76176011)(52116002)(99286004)(6116002)(478600001)(2501003)(7736002)(446003)(11346002)(14454004)(2906002)(110136005)(2201001)(316002)(26005)(102836004)(309714004);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4350;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: dI28UkGEMJwq2CXeWHny7Y9fF/TmOWiVIcUtDk0d9hjy1gbd7hB9w3DlXbS07UWB67z12gTP3YOUmjiVYTQgt9lsukduAq862KQ76bjampwKvzqdap6RknpYUilCPrq1IIz40KIgGjo+d8i3JEjB76vyLvG+EesrOjnzfHmb0ixM7XhKUChPxNgsgnrwkMNDqoW6T8i31tlHzPXepNE9QDuPMPcymFc3WCvMMePbbWR33eNhef3Kp1sF7VS2gWJ9FDSNTeq+CjK7G+ez9dBHlF66qWzwCJzva4usE4UDUXv3vqjVTNM1C/SY8u295/jZQhwjYUc7mGdudugoxtWUEUMulSpT+NxEysRZMUQy0xITnjSlvFdUyG/QvnCwtZH+yv5K9V3pgwSRptgy7uxIegfUyVrZnXcSyKkJi5lQOoY=
+x-microsoft-antispam-message-info: h8b+soVRgyN2DrgxhDscdAwSJ5pYw1YiRoO/fZRPt8bz9crcDnByg+MBs7Vu4CgxXkvKjm1Wo6G8PZNXuA4M4AE9EmJR3Tju1E14qww6GWTdlLjWR6FzKNsWSARpcT7X1jj/SMG3wQBQ8iF9DdyeYCS5Qva6gcN4I4+JkSXuWWnigrN9Ag7a4VNM3vl0e6rzKGQeXFnZqgBoFKtUjjwSs3z5ShxCEwsRwh1fLs9g+n4/lQ23x+FpFyn61VcUjzNOnOwjKrArpe5JAdA86aRBrZvL7+NZ7aYiyJkRiK8zzfzh3JrNNGhTZVfzxlGS9HjfOS/C0sBXNy/VtOEHY5aTENd0y6rxgyemQMCcP/46kfgn4Akk+2SncoSt1FKWTzJucOy+GyG1zpd/Qz6sXiaDj0Gnyawd277wziZ/njb0JrE=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f125d76b-4fe6-43eb-c0e0-08d72a1cc076
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 11:58:47.4792
+X-MS-Exchange-CrossTenant-Network-Message-Id: a33ad0c8-e4d4-4bdc-4479-08d72a1cc190
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 11:58:49.3071
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /3pByJH70tKdyshqlXmI6l/6bz5OvmIVdngbff743DfEKoAQBEcmJ1ZHl3fMTlZdipxw3++m9jXFneXoXYKXz+UhBgI3n08aIqaBRJKsYH8=
+X-MS-Exchange-CrossTenant-userprincipalname: /73/PV0r70i4OPpytSLt/A58eo/EX67KYavBTmh4fn1sQFLaSX/7e4eE9rsWo+1Tex7w2Wn8n3gLDmRkliIyeg6+pTDja84W+J+LXfd6jzg=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4350
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -128,121 +128,237 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
 All flash parameters and settings should reside inside
-'struct spi_nor_flash_parameter'. Drop the local copy of
-quad_enable() and use the one from 'struct spi_nor_flash_parameter'.
+'struct spi_nor_flash_parameter'. Move the SMPT parsed erase map
+from 'struct spi_nor' to 'struct spi_nor_flash_parameter'.
+
+Please note that there is a roll-back mechanism for the flash
+parameter and settings, for cases when SFDP parser fails. The SFDP
+parser receives a Stack allocated copy of nor->params, called
+sfdp_params, and uses it to retrieve the serial flash discoverable
+parameters. JESD216 SFDP is a standard and has a higher priority
+than the default initialized flash parameters, so will overwrite the
+sfdp_params data when needed. All SFDP code uses the local copy of
+nor->params, that will overwrite it in the end, if the parser succeds.
+
+Saving and restoring the nor->params.erase_map is no longer needed,
+since the SFDP code does not touch it.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 ---
 v3: Collect R-b
 
- drivers/mtd/spi-nor/spi-nor.c | 40 +++++++++++++++++++++++----------------=
+ drivers/mtd/spi-nor/spi-nor.c | 40 +++++++++++++++++++++------------------=
 -
- include/linux/mtd/spi-nor.h   |  2 --
- 2 files changed, 23 insertions(+), 19 deletions(-)
+ include/linux/mtd/spi-nor.h   |  8 +++++---
+ 2 files changed, 26 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index e9b9cd70a999..effda372cb33 100644
+index effda372cb33..9dd6cd8cd13c 100644
 --- a/drivers/mtd/spi-nor/spi-nor.c
 +++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -4403,7 +4403,6 @@ static int spi_nor_setup(struct spi_nor *nor,
+@@ -600,7 +600,7 @@ static void spi_nor_set_4byte_opcodes(struct spi_nor *n=
+or)
+ 	nor->erase_opcode =3D spi_nor_convert_3to4_erase(nor->erase_opcode);
+=20
+ 	if (!spi_nor_has_uniform_erase(nor)) {
+-		struct spi_nor_erase_map *map =3D &nor->erase_map;
++		struct spi_nor_erase_map *map =3D &nor->params.erase_map;
+ 		struct spi_nor_erase_type *erase;
+ 		int i;
+=20
+@@ -1133,7 +1133,7 @@ static int spi_nor_init_erase_cmd_list(struct spi_nor=
+ *nor,
+ 				       struct list_head *erase_list,
+ 				       u64 addr, u32 len)
+ {
+-	const struct spi_nor_erase_map *map =3D &nor->erase_map;
++	const struct spi_nor_erase_map *map =3D &nor->params.erase_map;
+ 	const struct spi_nor_erase_type *erase, *prev_erase =3D NULL;
+ 	struct spi_nor_erase_region *region;
+ 	struct spi_nor_erase_command *cmd =3D NULL;
+@@ -3328,7 +3328,7 @@ static int spi_nor_parse_bfpt(struct spi_nor *nor,
+ 			      const struct sfdp_parameter_header *bfpt_header,
+ 			      struct spi_nor_flash_parameter *params)
+ {
+-	struct spi_nor_erase_map *map =3D &nor->erase_map;
++	struct spi_nor_erase_map *map =3D &params->erase_map;
+ 	struct spi_nor_erase_type *erase_type =3D map->erase_type;
+ 	struct sfdp_bfpt bfpt;
+ 	size_t len;
+@@ -3409,7 +3409,7 @@ static int spi_nor_parse_bfpt(struct spi_nor *nor,
+ 	 * Erase Types defined in the bfpt table.
+ 	 */
+ 	erase_mask =3D 0;
+-	memset(&nor->erase_map, 0, sizeof(nor->erase_map));
++	memset(&params->erase_map, 0, sizeof(params->erase_map));
+ 	for (i =3D 0; i < ARRAY_SIZE(sfdp_bfpt_erases); i++) {
+ 		const struct sfdp_bfpt_erase *er =3D &sfdp_bfpt_erases[i];
+ 		u32 erasesize;
+@@ -3684,14 +3684,18 @@ spi_nor_region_check_overlay(struct spi_nor_erase_r=
+egion *region,
+ /**
+  * spi_nor_init_non_uniform_erase_map() - initialize the non-uniform erase=
+ map
+  * @nor:	pointer to a 'struct spi_nor'
++ * @params:     pointer to a duplicate 'struct spi_nor_flash_parameter' th=
+at is
++ *              used for storing SFDP parsed data
+  * @smpt:	pointer to the sector map parameter table
+  *
+  * Return: 0 on success, -errno otherwise.
+  */
+-static int spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
+-					      const u32 *smpt)
++static int
++spi_nor_init_non_uniform_erase_map(struct spi_nor *nor,
++				   struct spi_nor_flash_parameter *params,
++				   const u32 *smpt)
+ {
+-	struct spi_nor_erase_map *map =3D &nor->erase_map;
++	struct spi_nor_erase_map *map =3D &params->erase_map;
+ 	struct spi_nor_erase_type *erase =3D map->erase_type;
+ 	struct spi_nor_erase_region *region;
+ 	u64 offset;
+@@ -3770,6 +3774,8 @@ static int spi_nor_init_non_uniform_erase_map(struct =
+spi_nor *nor,
+  * spi_nor_parse_smpt() - parse Sector Map Parameter Table
+  * @nor:		pointer to a 'struct spi_nor'
+  * @smpt_header:	sector map parameter table header
++ * @params:		pointer to a duplicate 'struct spi_nor_flash_parameter'
++ *                      that is used for storing SFDP parsed data
+  *
+  * This table is optional, but when available, we parse it to identify the
+  * location and size of sectors within the main data array of the flash me=
+mory
+@@ -3778,7 +3784,8 @@ static int spi_nor_init_non_uniform_erase_map(struct =
+spi_nor *nor,
+  * Return: 0 on success, -errno otherwise.
+  */
+ static int spi_nor_parse_smpt(struct spi_nor *nor,
+-			      const struct sfdp_parameter_header *smpt_header)
++			      const struct sfdp_parameter_header *smpt_header,
++			      struct spi_nor_flash_parameter *params)
+ {
+ 	const u32 *sector_map;
+ 	u32 *smpt;
+@@ -3807,11 +3814,11 @@ static int spi_nor_parse_smpt(struct spi_nor *nor,
+ 		goto out;
+ 	}
+=20
+-	ret =3D spi_nor_init_non_uniform_erase_map(nor, sector_map);
++	ret =3D spi_nor_init_non_uniform_erase_map(nor, params, sector_map);
+ 	if (ret)
+ 		goto out;
+=20
+-	spi_nor_regions_sort_erase_types(&nor->erase_map);
++	spi_nor_regions_sort_erase_types(&params->erase_map);
+ 	/* fall through */
+ out:
+ 	kfree(smpt);
+@@ -3867,7 +3874,7 @@ static int spi_nor_parse_4bait(struct spi_nor *nor,
+ 		{ 0u /* not used */,		BIT(12) },
+ 	};
+ 	struct spi_nor_pp_command *params_pp =3D params->page_programs;
+-	struct spi_nor_erase_map *map =3D &nor->erase_map;
++	struct spi_nor_erase_map *map =3D &params->erase_map;
+ 	struct spi_nor_erase_type *erase_type =3D map->erase_type;
+ 	u32 *dwords;
+ 	size_t len;
+@@ -4097,7 +4104,7 @@ static int spi_nor_parse_sfdp(struct spi_nor *nor,
+=20
+ 		switch (SFDP_PARAM_HEADER_ID(param_header)) {
+ 		case SFDP_SECTOR_MAP_ID:
+-			err =3D spi_nor_parse_smpt(nor, param_header);
++			err =3D spi_nor_parse_smpt(nor, param_header, params);
+ 			break;
+=20
+ 		case SFDP_4BAIT_ID:
+@@ -4129,7 +4136,7 @@ static int spi_nor_parse_sfdp(struct spi_nor *nor,
+ static int spi_nor_init_params(struct spi_nor *nor)
  {
  	struct spi_nor_flash_parameter *params =3D &nor->params;
- 	u32 ignored_mask, shared_mask;
--	bool enable_quad_io;
- 	int err;
+-	struct spi_nor_erase_map *map =3D &nor->erase_map;
++	struct spi_nor_erase_map *map =3D &params->erase_map;
+ 	const struct flash_info *info =3D nor->info;
+ 	u8 i, erase_mask;
 =20
- 	/*
-@@ -4457,23 +4456,33 @@ static int spi_nor_setup(struct spi_nor *nor,
- 		return err;
- 	}
+@@ -4229,17 +4236,12 @@ static int spi_nor_init_params(struct spi_nor *nor)
+ 	if ((info->flags & (SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ)) &&
+ 	    !(info->flags & SPI_NOR_SKIP_SFDP)) {
+ 		struct spi_nor_flash_parameter sfdp_params;
+-		struct spi_nor_erase_map prev_map;
 =20
--	/* Enable Quad I/O if needed. */
--	enable_quad_io =3D (spi_nor_get_protocol_width(nor->read_proto) =3D=3D 4 =
-||
--			  spi_nor_get_protocol_width(nor->write_proto) =3D=3D 4);
--	if (enable_quad_io && params->quad_enable)
--		nor->quad_enable =3D params->quad_enable;
--	else
--		nor->quad_enable =3D NULL;
--
- 	return 0;
- }
+ 		memcpy(&sfdp_params, params, sizeof(sfdp_params));
+-		memcpy(&prev_map, &nor->erase_map, sizeof(prev_map));
 =20
-+/**
-+ * spi_nor_quad_enable() - enable Quad I/O if needed.
-+ * @nor:                pointer to a 'struct spi_nor'
-+ *
-+ * Return: 0 on success, -errno otherwise.
-+ */
-+static int spi_nor_quad_enable(struct spi_nor *nor)
-+{
-+	if (!nor->params.quad_enable)
-+		return 0;
-+
-+	if (!(spi_nor_get_protocol_width(nor->read_proto) =3D=3D 4 ||
-+	      spi_nor_get_protocol_width(nor->write_proto) =3D=3D 4))
-+		return 0;
-+
-+	return nor->params.quad_enable(nor);
-+}
-+
- static int spi_nor_init(struct spi_nor *nor)
- {
- 	int err;
-=20
- 	if (nor->clear_sr_bp) {
--		if (nor->quad_enable =3D=3D spansion_quad_enable)
-+		if (nor->params.quad_enable =3D=3D spansion_quad_enable)
- 			nor->clear_sr_bp =3D spi_nor_spansion_clear_sr_bp;
-=20
- 		err =3D nor->clear_sr_bp(nor);
-@@ -4484,12 +4493,10 @@ static int spi_nor_init(struct spi_nor *nor)
+ 		if (spi_nor_parse_sfdp(nor, &sfdp_params)) {
+ 			nor->addr_width =3D 0;
+ 			nor->flags &=3D ~SNOR_F_4B_OPCODES;
+-			/* restore previous erase map */
+-			memcpy(&nor->erase_map, &prev_map,
+-			       sizeof(nor->erase_map));
+ 		} else {
+ 			memcpy(params, &sfdp_params, sizeof(*params));
  		}
- 	}
+@@ -4353,7 +4355,7 @@ spi_nor_select_uniform_erase(struct spi_nor_erase_map=
+ *map,
 =20
--	if (nor->quad_enable) {
--		err =3D nor->quad_enable(nor);
--		if (err) {
--			dev_err(nor->dev, "quad mode not supported\n");
--			return err;
--		}
-+	err =3D spi_nor_quad_enable(nor);
-+	if (err) {
-+		dev_err(nor->dev, "quad mode not supported\n");
-+		return err;
- 	}
-=20
- 	if (nor->addr_width =3D=3D 4 && !(nor->flags & SNOR_F_4B_OPCODES)) {
-@@ -4706,7 +4713,6 @@ int spi_nor_scan(struct spi_nor *nor, const char *nam=
-e,
- 	 * - select op codes for (Fast) Read, Page Program and Sector Erase.
- 	 * - set the number of dummy cycles (mode cycles + wait states).
- 	 * - set the SPI protocols for register and memory accesses.
--	 * - set the Quad Enable bit if needed (required by SPI x-y-4 protos).
- 	 */
- 	ret =3D spi_nor_setup(nor, hwcaps);
- 	if (ret)
+ static int spi_nor_select_erase(struct spi_nor *nor, u32 wanted_size)
+ {
+-	struct spi_nor_erase_map *map =3D &nor->erase_map;
++	struct spi_nor_erase_map *map =3D &nor->params.erase_map;
+ 	const struct spi_nor_erase_type *erase =3D NULL;
+ 	struct mtd_info *mtd =3D &nor->mtd;
+ 	int i;
 diff --git a/include/linux/mtd/spi-nor.h b/include/linux/mtd/spi-nor.h
-index 77ba692d9348..17787238f0e9 100644
+index 17787238f0e9..a86c0d9fb01d 100644
 --- a/include/linux/mtd/spi-nor.h
 +++ b/include/linux/mtd/spi-nor.h
-@@ -535,7 +535,6 @@ struct flash_info;
-  * @flash_unlock:	[FLASH-SPECIFIC] unlock a region of the SPI NOR
-  * @flash_is_locked:	[FLASH-SPECIFIC] check if a region of the SPI NOR is
-  *			completely locked
-- * @quad_enable:	[FLASH-SPECIFIC] enables SPI NOR quad mode
-  * @clear_sr_bp:	[FLASH-SPECIFIC] clears the Block Protection Bits from
-  *			the SPI NOR Status Register.
-  * @params:		[FLASH-SPECIFIC] SPI-NOR flash parameters and settings.
-@@ -579,7 +578,6 @@ struct spi_nor {
- 	int (*flash_lock)(struct spi_nor *nor, loff_t ofs, uint64_t len);
- 	int (*flash_unlock)(struct spi_nor *nor, loff_t ofs, uint64_t len);
- 	int (*flash_is_locked)(struct spi_nor *nor, loff_t ofs, uint64_t len);
--	int (*quad_enable)(struct spi_nor *nor);
- 	int (*clear_sr_bp)(struct spi_nor *nor);
- 	struct spi_nor_flash_parameter params;
+@@ -479,6 +479,8 @@ struct spi_nor;
+  *                      in the array, the higher priority.
+  * @page_programs:	page program capabilities ordered by priority: the
+  *                      higher index in the array, the higher priority.
++ * @erase_map:		the erase map parsed from the SFDP Sector Map Parameter
++ *                      Table.
+  * @quad_enable:	enables SPI NOR quad mode.
+  */
+ struct spi_nor_flash_parameter {
+@@ -489,6 +491,8 @@ struct spi_nor_flash_parameter {
+ 	struct spi_nor_read_command	reads[SNOR_CMD_READ_MAX];
+ 	struct spi_nor_pp_command	page_programs[SNOR_CMD_PP_MAX];
 =20
++	struct spi_nor_erase_map        erase_map;
++
+ 	int (*quad_enable)(struct spi_nor *nor);
+ };
+=20
+@@ -519,7 +523,6 @@ struct flash_info;
+  * @read_proto:		the SPI protocol for read operations
+  * @write_proto:	the SPI protocol for write operations
+  * @reg_proto		the SPI protocol for read_reg/write_reg/erase operations
+- * @erase_map:		the erase map of the SPI NOR
+  * @prepare:		[OPTIONAL] do some preparations for the
+  *			read/write/erase/lock/unlock operations
+  * @unprepare:		[OPTIONAL] do some post work after the
+@@ -562,7 +565,6 @@ struct spi_nor {
+ 	enum spi_nor_protocol	reg_proto;
+ 	bool			sst_write_second;
+ 	u32			flags;
+-	struct spi_nor_erase_map	erase_map;
+=20
+ 	int (*prepare)(struct spi_nor *nor, enum spi_nor_ops ops);
+ 	void (*unprepare)(struct spi_nor *nor, enum spi_nor_ops ops);
+@@ -610,7 +612,7 @@ spi_nor_region_mark_overlay(struct spi_nor_erase_region=
+ *region)
+=20
+ static bool __maybe_unused spi_nor_has_uniform_erase(const struct spi_nor =
+*nor)
+ {
+-	return !!nor->erase_map.uniform_erase_type;
++	return !!nor->params.erase_map.uniform_erase_type;
+ }
+=20
+ static inline void spi_nor_set_flash_node(struct spi_nor *nor,
 --=20
 2.9.5
 
