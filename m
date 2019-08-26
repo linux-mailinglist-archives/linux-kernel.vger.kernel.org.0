@@ -2,69 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE4B39D53B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 19:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0310A9D547
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 20:02:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387547AbfHZRxn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 13:53:43 -0400
-Received: from mga09.intel.com ([134.134.136.24]:65275 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbfHZRxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 13:53:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Aug 2019 10:53:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,433,1559545200"; 
-   d="scan'208";a="209450824"
-Received: from wvoon-ilbpg2.png.intel.com ([10.88.227.88])
-  by fmsmga002.fm.intel.com with ESMTP; 26 Aug 2019 10:53:39 -0700
-From:   Voon Weifeng <weifeng.voon@intel.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jose Abreu <joabreu@synopsys.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>,
-        Voon Weifeng <weifeng.voon@intel.com>
-Subject: [PATCH v1 net-next] net: phy: mdio_bus: make mdiobus_scan also cover PHY that only talks C45
-Date:   Tue, 27 Aug 2019 09:52:49 +0800
-Message-Id: <1566870769-9967-1-git-send-email-weifeng.voon@intel.com>
-X-Mailer: git-send-email 1.9.1
+        id S2387583AbfHZSCO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 14:02:14 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4846 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729144AbfHZSCN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 14:02:13 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d641ea70000>; Mon, 26 Aug 2019 11:02:15 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 26 Aug 2019 11:02:13 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 26 Aug 2019 11:02:13 -0700
+Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 26 Aug
+ 2019 18:02:12 +0000
+Subject: Re: [PATCH 1/2] mm/hmm: hmm_range_fault() NULL pointer bug
+To:     Christoph Hellwig <hch@lst.de>
+CC:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <nouveau@lists.freedesktop.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20190823221753.2514-1-rcampbell@nvidia.com>
+ <20190823221753.2514-2-rcampbell@nvidia.com> <20190824223754.GA21891@lst.de>
+X-Nvconfidentiality: public
+From:   Ralph Campbell <rcampbell@nvidia.com>
+Message-ID: <e2ecc1a7-0d2f-5957-e6cb-b3c86c085d80@nvidia.com>
+Date:   Mon, 26 Aug 2019 11:02:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
+MIME-Version: 1.0
+In-Reply-To: <20190824223754.GA21891@lst.de>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566842535; bh=q0XlO0WIP1WKl6O/MutlXE9k/HAHL1+wksVgPZA90XQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=d2fknKfO2/+Zv6spaSSH3ujdgxCAZH3q2pr6c/Siwshb41aUxlG/I+6Tyj3fXyYY5
+         r1ZUUnxreiuxEswRCYLLZsMIXjsrYEZ2qKObAcIzx4lFW+80OBz929fmspCEwePFSM
+         Weh8IBdvRGmAYugnTXZh+qH1U82UBGS1UKNXbJ6ZBS+xJMiQMjfCYuJvF6l51O9pkO
+         O0oy/5uowbDESOjWEqnQfr3ZNPKFAUyr/vq/8JL6L4ZXdjyHlF2eCpi6YaUIhZ26eX
+         tDQ19l3lAZnppu1N//ySuXInwpJ3YqMTeBXQVmBM1ehXjdv0DZYHvm24rrRDsWS3r/
+         wDuGvR7pgamGw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ong Boon Leong <boon.leong.ong@intel.com>
 
-Make mdiobus_scan() to try harder to look for any PHY that only talks C45.
+On 8/24/19 3:37 PM, Christoph Hellwig wrote:
+> On Fri, Aug 23, 2019 at 03:17:52PM -0700, Ralph Campbell wrote:
+>> Although hmm_range_fault() calls find_vma() to make sure that a vma exists
+>> before calling walk_page_range(), hmm_vma_walk_hole() can still be called
+>> with walk->vma == NULL if the start and end address are not contained
+>> within the vma range.
+> 
+> Should we convert to walk_vma_range instead?  Or keep walk_page_range
+> but drop searching the vma ourselves?
+> 
+> Except for that the patch looks good to me:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
 
-Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
-Signed-off-by: Voon Weifeng <weifeng.voon@intel.com>
+I think keeping the call to walk_page_range() makes sense.
+Jason is hoping to be able to snapshot a range with & without vmas
+and have the pfns[] filled with empty/valid entries as appropriate.
 
-diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
-index bd04fe762056..30dbc48b4c7e 100644
---- a/drivers/net/phy/mdio_bus.c
-+++ b/drivers/net/phy/mdio_bus.c
-@@ -525,8 +525,12 @@ struct phy_device *mdiobus_scan(struct mii_bus *bus, int addr)
- 	int err;
- 
- 	phydev = get_phy_device(bus, addr, false);
--	if (IS_ERR(phydev))
--		return phydev;
-+	if (IS_ERR(phydev)) {
-+		/* Try C45 to ensure we don't miss PHY that only talks C45 */
-+		phydev = get_phy_device(bus, addr, true);
-+		if (IS_ERR(phydev))
-+			return phydev;
-+	}
- 
- 	/*
- 	 * For DT, see if the auto-probed phy has a correspoding child
--- 
-1.9.1
-
+I plan to repost my patch changing hmm_range_fault() to use
+walk.test_walk which will remove the call to find_vma().
+Jason had some concerns about testing it so that's why I have
+been working on some HMM self tests before resending it.
