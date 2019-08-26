@@ -2,67 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 661049CF31
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 14:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E2539CF3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 14:13:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731681AbfHZMLd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 08:11:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34170 "EHLO mail.kernel.org"
+        id S1731644AbfHZMM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 08:12:59 -0400
+Received: from foss.arm.com ([217.140.110.172]:56720 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731592AbfHZMLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 08:11:33 -0400
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 953492187F;
-        Mon, 26 Aug 2019 12:11:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566821492;
-        bh=YjOhHVNb3S+TKmqIRau91HDeiF/9aMDjoGnlxjpwtFI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nXGicwi8LQMcrqtLzIDuXd2LskmnWsntr0uvzQtncJ+uBbM8dsai6PA6n9rZG3gIj
-         a3B0I+mcQe2sdxhq3J11jzfVQZaccPj66WqPYLJBGrBvvKUac/qJCUXOYaTVoqz/Qx
-         BWxu6sEVnIUFWYZiVrbCphZdvtqiIA96t3Gn3OUI=
-Received: by mail-qk1-f170.google.com with SMTP id 125so13774282qkl.6;
-        Mon, 26 Aug 2019 05:11:32 -0700 (PDT)
-X-Gm-Message-State: APjAAAU/AqaktpcFHCPSQBVrSzrpQaHlQItyqognBR9pw/7wB0qtUO2e
-        aRzTEFJiP1OWJCwlU5VbolbQcBNdJPTVNnl+rA==
-X-Google-Smtp-Source: APXvYqxagKO99F9mS7t6DaXXxukZkMZEy/9XN2GKqINovi5R7IFk0Zl3h+jg5Zq3YC4qsFWsngg9N8DwLKv0FhuW7S8=
-X-Received: by 2002:a37:4941:: with SMTP id w62mr14601999qka.119.1566821491710;
- Mon, 26 Aug 2019 05:11:31 -0700 (PDT)
+        id S1730841AbfHZMM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 08:12:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEA3728;
+        Mon, 26 Aug 2019 05:12:58 -0700 (PDT)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B6E933F718;
+        Mon, 26 Aug 2019 05:12:57 -0700 (PDT)
+Subject: Re: [PATCH] sched/cpufreq: Align trace event behavior of fast
+ switching
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Douglas RAILLARD <douglas.raillard@arm.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        viresh.kumar@linaro.org, mingo@redhat.com
+References: <20190807153340.11516-1-douglas.raillard@arm.com>
+ <3316959.EEulJYEQYJ@kreacher>
+ <20190826094058.GP2369@hirez.programming.kicks-ass.net>
+ <cb75ae16-727e-636b-2b79-4f049259c0aa@arm.com>
+ <20190826112406.GR2369@hirez.programming.kicks-ass.net>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <eccb89bf-80cc-e96a-925e-181095305631@arm.com>
+Date:   Mon, 26 Aug 2019 14:12:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <1566633850-9421-1-git-send-email-christianshewitt@gmail.com> <1566633850-9421-3-git-send-email-christianshewitt@gmail.com>
-In-Reply-To: <1566633850-9421-3-git-send-email-christianshewitt@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 26 Aug 2019 07:11:15 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKJvyYpAb2n1aq7RRKrgnt+oL2yd47b4jh=QiZdu6t39A@mail.gmail.com>
-Message-ID: <CAL_JsqKJvyYpAb2n1aq7RRKrgnt+oL2yd47b4jh=QiZdu6t39A@mail.gmail.com>
-Subject: Re: [PATCH v2,2/3] dt-bindings: arm: amlogic: Add support for the
- Ugoos AM6
-To:     Christian Hewitt <christianshewitt@gmail.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Ivanov <balbes-150@yandex.ru>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190826112406.GR2369@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 24, 2019 at 3:05 AM Christian Hewitt
-<christianshewitt@gmail.com> wrote:
->
-> The Ugoos AM6 is based on the Amlogic W400 (G12B) reference design using the
-> S922X chipset.
->
-> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/amlogic.yaml | 1 +
->  1 file changed, 1 insertion(+)
+On 26/08/2019 13:24, Peter Zijlstra wrote:
+> On Mon, Aug 26, 2019 at 11:51:17AM +0200, Dietmar Eggemann wrote:
+> 
+>> Not sure about the extra  'if trace_cpu_frequency_enabled()' but I guess
+>> it doesn't hurt.
+> 
+> Without that you do that for_each_cpu() iteration unconditionally, even
+> if the tracepoint is disabled.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Makes sense, I'm wondering if we want this in
+cpufreq_notify_transition() CPUFREQ_POSTCHANGE for the
+non-fast-switching drivers as well.
