@@ -2,113 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F3859CCC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 11:47:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 109709CCC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 11:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731015AbfHZJra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 05:47:30 -0400
-Received: from mail-lj1-f182.google.com ([209.85.208.182]:39251 "EHLO
-        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729922AbfHZJr3 (ORCPT
+        id S1731052AbfHZJsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 05:48:38 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40013 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729922AbfHZJsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 05:47:29 -0400
-Received: by mail-lj1-f182.google.com with SMTP id x4so14447031ljj.6
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 02:47:28 -0700 (PDT)
+        Mon, 26 Aug 2019 05:48:37 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c5so14978330wmb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 02:48:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=V4wnC1IESTIvccJjycijXVomS8LY+xe0wyWh2XpadOM=;
-        b=EJBPUqONNfST5dbaQN3WVBVLSK2FdlYkAB3W+e5L2SPL1yrC0uMz2eYkryWWZFfKJx
-         08KLHFLhiH6aUXuNCi2XiBqdXUESKNpaEAp3JOe9FJByq6vEQRNTugAAGzAXRQws+4RI
-         mU8/1T+qXoo6124lsJ2bXZtfB291e6OwieCYwon/dWML3a0lWiEH+DY4St+h21vjGzYl
-         ZgVzO+mgaFdBpLwsMuDmzhmf2fai/bBOMnH5b2PDVPExkoq2rajppnLJ4WBwoLlK27f0
-         dZGhouppmrP7Y8wZj6W1gBhXG34408H7o/gLZ9jfsS1pfU3ME6pXrT+//Fp6H25+xBbq
-         +n0A==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tlLXO+Wmk0gYIcGIx/qZzyKAP+c7x5IBFJLMyNNgig8=;
+        b=hJFcqFC03mrFFin8zRYLF0qJKGObhB+m5kOMCF345enXS1UDHtiDYp91DyvkIzrdqC
+         TT/xAJ/zzQJOqDU1QMPNiuK4XOenm23BcMu75htjRqoiOytoW7O+Ig9/RUsO48XzJx40
+         OXX6WfSgC5SDku3CmolioYQ0li2SPIMA3OkQtxpCUmboo4D3/O1anes929lYlMJoFi+i
+         Xy5Gsk0DAwiuzCcDG16zyQt7iahyLld8jPXi9Yu0cySjz+mwaD2baXsdz31SONLce3aO
+         utXG1PL6fnrnCJxyMhmNxi67uBxht2OfJoSAu+nuz3MP3vCl9rU5/bCMd5jqCFcP3nyL
+         vFhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=V4wnC1IESTIvccJjycijXVomS8LY+xe0wyWh2XpadOM=;
-        b=uggRYVBoRxQOgj1BLr/WUm9HNTzRu+B9HmRUT/aSGY1reAWUEtJKQQc+lpDyCt+b/5
-         WGygljrvgEOF1f1uNFyHZkEf7Azi4WFmjnj/xxpGAJLMaZxY3OOLX3b7SeXcwkDGApTj
-         X3nn/B5JcukyB7cKqralykyKb1lB2C5MvNfSmm3n69kHNmijaxzNF89U+x5nx/Yu+tyc
-         +rajIh5TitHcspRHBD9bTNz2MefamtO74iuQZl2ytZhBJblnrKJmYIShTj/EcTTECzZl
-         P5g3MFtVta8VgOfa/AQt9FMgD0zH8aaSWpZYER2ltKXYW3IwoJuh3hEL9Z1lNcMJIRTu
-         ynrQ==
-X-Gm-Message-State: APjAAAW0CnTEAFi3jQkRQZ8Tv1yB7rDWtoJrd6SZGg20OIe6bf1pttE4
-        ai7WGWxlirq/rOId+zvZqxUxZCDhZaZmWJ3Fp57wBPGOswI=
-X-Google-Smtp-Source: APXvYqymkztdlCAHqJp6WG1YtlxHoUjq6nFfsqaRgdYCw2b5Y7d3wdgrnYU4I272qiRDH+DdWgFa1C71lRg4iAGcgcw=
-X-Received: by 2002:a2e:f19:: with SMTP id 25mr9882288ljp.149.1566812847394;
- Mon, 26 Aug 2019 02:47:27 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tlLXO+Wmk0gYIcGIx/qZzyKAP+c7x5IBFJLMyNNgig8=;
+        b=SXwATmXoWnYB4g/3S1efvmkBKHly5OrXk3Sf4J8n4kTBVQ8mO8eftbKLt2JGT28kag
+         e4/c4OwKTjjrLnH1Q+SeslMJcmp1SH5FjmySSkWZgaP/h2swluynUNWzQMOvADPn+MPA
+         tqbXE9nw5tF4DGrS30t5nfy8Tue0oWv7hvo7bteyYclHcN2gamngURH8dm3EOFX7p6Y5
+         YtFgXYxuF5UCUSQ98o69Unzwb3aPoyFpqZzzbhkGWtmwpZhOhgci7XD8q+Un5mpgVQmL
+         4jEJs/IyKJ6QKfQB/lMAi9j3UgwXTwost6j2oHVoWgZVwpZELrelagoHfsxjtc41Pp/5
+         jRsw==
+X-Gm-Message-State: APjAAAVSbgTLVDOo0WHNjRmUIshCb7OK8/QbsCmzbZyI36KmCpL4C+aG
+        psH6pCxPGnUceX+tduybmGc=
+X-Google-Smtp-Source: APXvYqyO5HARMd26cjsKobpwkE/ylTjOVyVElyzkivtILUSVptyVAYDU4EDmJgg5fmmN05jXgsm9GA==
+X-Received: by 2002:a7b:ca54:: with SMTP id m20mr20895699wml.102.1566812916008;
+        Mon, 26 Aug 2019 02:48:36 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 39sm35395812wrc.45.2019.08.26.02.48.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2019 02:48:35 -0700 (PDT)
+Date:   Mon, 26 Aug 2019 11:48:33 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH 4/5] x86/intel: Aggregate microserver naming
+Message-ID: <20190826094833.GA100070@gmail.com>
+References: <20190822102306.109718810@infradead.org>
+ <20190822102411.337145504@infradead.org>
+ <20190826092750.GA56543@gmail.com>
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Mon, 26 Aug 2019 15:17:16 +0530
-Message-ID: <CA+G9fYtN2tjHZtjtc8isdsD5hF76teeh2-pngUp+uj3WYdj7jA@mail.gmail.com>
-Subject: Linux-next-20190823: x86_64/i386: prot_hsymlinks.c:325: Failed to run
- cmd: useradd hsym
-To:     ltp@lists.linux.it,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        alexey.kodanev@oracle.com, the_hoang0709@yahoo.com
-Cc:     Jan Stancek <jstancek@redhat.com>, chrubis <chrubis@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826092750.GA56543@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do you see this LTP prot_hsymlinks failure on linux next 20190823 on
-x86_64 and i386 devices?
 
-test output log,
-useradd: failure while writing changes to /etc/passwd
-useradd: /home/hsym was created, but could not be removed
-userdel: user 'hsym' does not exist
-prot_hsymlinks    1  TBROK  :  prot_hsymlinks.c:325: Failed to run
-cmd: useradd hsym
-prot_hsymlinks    2  TBROK  :  prot_hsymlinks.c:325: Remaining cases broken
-prot_hsymlinks    3  TBROK  :  prot_hsymlinks.c:325: Failed to run
-cmd: userdel -r hsym
-prot_hsymlinks    4  TBROK  :  tst_sig.c:234: unexpected signal
-SIGIOT/SIGABRT(6) received (pid = 8324).
-prot_hsymlinks    5  TBROK  :  tst_sig.c:234: unexpected signal
-SIGIOT/SIGABRT(6) received (pid = 8324).
-prot_hsymlinks    6  TBROK  :  tst_sig.c:234: unexpected signal
-SIGIOT/SIGABRT(6) received (pid = 8324).
-prot_hsymlinks    7  TBROK  :  tst_sig.c:234: unexpected signal
-SIGIOT/SIGABRT(6) received (pid = 8324).
-prot_hsymlinks    8  TBROK  :  tst_sig.c:234: unexpected signal
-SIGIOT/SIGABRT(6) received (pid = 8324).
-prot_hsymlinks    9  TBROK  :  tst_sig.c:234: unexpected signal
-SIGIOT/SIGABRT(6) received (pid = 8324).
-prot_hsymlinks   10  TBROK  :  tst_sig.c:234: unexpected signal
-SIGIOT/SIGABRT(6) received (pid = 8324).
+Plus re-running your scripts gave the final missing piece:
 
-Full test log,
-https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20190823/testrun/886412/log
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/power/x86/turbostat/turbostat.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Linux version:
-Linux version 5.3.0-rc5-next-20190823 (oe-user@oe-host) (gcc version
-7.3.0 (GCC)) #1 SMP Fri Aug 23 09:35:54 UTC 2019
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 91d869343a16..6eef0cee6d75 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -3405,9 +3405,9 @@ int has_config_tdp(unsigned int family, unsigned int model)
+ 	case INTEL_FAM6_IVYBRIDGE:	/* IVB */
+ 	case INTEL_FAM6_HASWELL:	/* HSW */
+ 	case INTEL_FAM6_HASWELL_X:	/* HSX */
+-	case INTEL_FAM6_HASWELL_GT3E:	/* HSW */
++	case INTEL_FAM6_HASWELL_G:	/* HSW */
+ 	case INTEL_FAM6_BROADWELL:	/* BDW */
+-	case INTEL_FAM6_BROADWELL_GT3E:	/* BDW */
++	case INTEL_FAM6_BROADWELL_G:	/* BDW */
+ 	case INTEL_FAM6_BROADWELL_X:	/* BDX */
+ 	case INTEL_FAM6_SKYLAKE_L:	/* SKL */
+ 	case INTEL_FAM6_CANNONLAKE_L:	/* CNL */
 
-steps to reproduce:
-   cd /opt/ltp
-   ./runltp -s prot_hsymlinks
-
-metadata:
-metadata:
-  git branch: master
-  git repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-  git commit: 9733a7c62c66722bcfdb1a6fe4d35c497312d59a
-  git describe: next-20190823
-  make_kernelversion: 5.3.0-rc5
-  kernel-config:
-http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/intel-corei7-64/lkft/linux-next/591/config
-  build-location:
-http://snapshots.linaro.org/openembedded/lkft/lkft/sumo/intel-corei7-64/lkft/linux-next/591
-  toolchain: x86_64-linaro-linux 7.%
-  series: lkft
-  ltp-syscalls-tests__url: git://github.com/linux-test-project/ltp.git
-  ltp-syscalls-tests__version: '20190517'
-
-Best regards
-Naresh Kamboju
