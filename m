@@ -2,184 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5B0B9D30F
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28CA09D30B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733259AbfHZPjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:39:46 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:1659 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1733200AbfHZPjf (ORCPT
+        id S1732358AbfHZPjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:39:36 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:47685 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733181AbfHZPj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:39:35 -0400
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7QFPxf4018386;
-        Mon, 26 Aug 2019 17:39:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=jU9f5j6ZxSufRp0l6yClPcW1jUXM3GEpOLQlLRS9pBU=;
- b=To1PgnC5V2IkRIl04X2kCQ4oVzbXRNf5P5lzE3ePlDgyC556SLdSpOi1X84Fd05OhJ1w
- 6WFgqhhx5nX1gKmrSRgQmw8akYzlR4e6i+XSLcllZN/jD16WXKTLv3vAiS2ZJwmIhTCf
- nNjp4LSdVgz2RhkXzSkXRBQW2HSGRdG7rcyv4u5yEzBQBZ53PWw+6cFP49237RInq0KJ
- nHf/mgBEOfUFoy89GfXdGrpiuifa6b/AqQmdVru9pKYWYfcSGYtNXNvC93+aSawavht1
- Ws2+y6m06TOminI/hfJwLkBwpSZjkkvFMZU/eqy7s7OEZfxBYzhH27PO/wiuIAV9cze7 VA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2uju0vmgkf-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 26 Aug 2019 17:39:23 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 166B7238;
-        Mon, 26 Aug 2019 15:39:07 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas24.st.com [10.75.90.94])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C05532BC1DD;
-        Mon, 26 Aug 2019 17:38:53 +0200 (CEST)
-Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas24.st.com
- (10.75.90.94) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug
- 2019 17:38:53 +0200
-Received: from localhost (10.201.23.25) by Webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug 2019 17:38:53
- +0200
-From:   Fabien Dessenne <fabien.dessenne@st.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-CC:     Fabien Dessenne <fabien.dessenne@st.com>,
-        Loic Pallardy <loic.pallardy@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>
-Subject: [PATCH 2/2] remoteproc: stm32: wakeup the system by wdg irq
-Date:   Mon, 26 Aug 2019 17:38:43 +0200
-Message-ID: <1566833923-16718-3-git-send-email-fabien.dessenne@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566833923-16718-1-git-send-email-fabien.dessenne@st.com>
-References: <1566833923-16718-1-git-send-email-fabien.dessenne@st.com>
+        Mon, 26 Aug 2019 11:39:27 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7QFdBhX038636;
+        Tue, 27 Aug 2019 00:39:11 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Tue, 27 Aug 2019 00:39:11 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from localhost.localdomain (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7QFd4Dr038600
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 27 Aug 2019 00:39:11 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Mark Brown <broonie@kernel.org>,
+        David Yang <yangxiaohua@everest-semi.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH v2 1/2] ASoC: es8316: fix headphone mixer volume table
+Date:   Tue, 27 Aug 2019 00:38:59 +0900
+Message-Id: <20190826153900.25969-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.25]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-26_08:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the device node defines the 'wakeup-source' property, use the WDG
-exti IRQ as a wakeup source of the system.
+This patch fix setting table of Headphone mixer volume.
+Current code uses 4 ... 7 values but these values are prohibited.
 
-Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
+Correct settings are the following:
+  0000 -12dB
+  0001 -10.5dB
+  0010 -9dB
+  0011 -7.5dB
+  0100 -6dB
+  1000 -4.5dB
+  1001 -3dB
+  1010 -1.5dB
+  1011 0dB
+
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 ---
- drivers/remoteproc/stm32_rproc.c | 47 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ sound/soc/codecs/es8316.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-index 2cf4b29..7ed8895 100644
---- a/drivers/remoteproc/stm32_rproc.c
-+++ b/drivers/remoteproc/stm32_rproc.c
-@@ -15,6 +15,7 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/pm_wakeirq.h>
- #include <linux/regmap.h>
- #include <linux/remoteproc.h>
- #include <linux/reset.h>
-@@ -65,6 +66,7 @@ struct stm32_rproc {
- 	struct reset_control *rst;
- 	struct stm32_syscon hold_boot;
- 	struct stm32_syscon pdds;
-+	int wdg_irq;
- 	u32 nb_rmems;
- 	struct stm32_rproc_mem *rmems;
- 	struct stm32_mbox mb[MBOX_NB_MBX];
-@@ -528,6 +530,13 @@ static int stm32_rproc_parse_dt(struct platform_device *pdev)
- 			return err;
- 		}
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index 8dfb5dbeebbf..f97d9c5210f0 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -53,7 +53,10 @@ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(adc_vol_tlv, -9600, 50, 1);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_max_gain_tlv, -650, 150, 0);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_min_gain_tlv, -1200, 150, 0);
+ static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(alc_target_tlv, -1650, 150, 0);
+-static const SNDRV_CTL_TLVD_DECLARE_DB_SCALE(hpmixer_gain_tlv, -1200, 150, 0);
++static const SNDRV_CTL_TLVD_DECLARE_DB_RANGE(hpmixer_gain_tlv,
++	0, 4, TLV_DB_SCALE_ITEM(-1200, 150, 0),
++	8, 11, TLV_DB_SCALE_ITEM(-450, 150, 0),
++);
  
-+		ddata->wdg_irq = irq;
-+
-+		if (of_property_read_bool(np, "wakeup-source")) {
-+			device_init_wakeup(dev, true);
-+			dev_pm_set_wake_irq(dev, irq);
-+		}
-+
- 		dev_info(dev, "wdg irq registered\n");
- 	}
+ static const SNDRV_CTL_TLVD_DECLARE_DB_RANGE(adc_pga_gain_tlv,
+ 	0, 0, TLV_DB_SCALE_ITEM(-350, 0, 0),
+@@ -91,7 +94,7 @@ static const struct snd_kcontrol_new es8316_snd_controls[] = {
+ 	SOC_DOUBLE_TLV("Headphone Playback Volume", ES8316_CPHP_ICAL_VOL,
+ 		       4, 0, 3, 1, hpout_vol_tlv),
+ 	SOC_DOUBLE_TLV("Headphone Mixer Volume", ES8316_HPMIX_VOL,
+-		       0, 4, 7, 0, hpmixer_gain_tlv),
++		       0, 4, 11, 0, hpmixer_gain_tlv),
  
-@@ -607,6 +616,10 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- free_mb:
- 	stm32_rproc_free_mbox(rproc);
- free_rproc:
-+	if (device_may_wakeup(dev)) {
-+		dev_pm_clear_wake_irq(dev);
-+		device_init_wakeup(dev, false);
-+	}
- 	rproc_free(rproc);
- 	return ret;
- }
-@@ -614,22 +627,56 @@ static int stm32_rproc_probe(struct platform_device *pdev)
- static int stm32_rproc_remove(struct platform_device *pdev)
- {
- 	struct rproc *rproc = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
- 
- 	if (atomic_read(&rproc->power) > 0)
- 		rproc_shutdown(rproc);
- 
- 	rproc_del(rproc);
- 	stm32_rproc_free_mbox(rproc);
-+
-+	if (device_may_wakeup(dev)) {
-+		dev_pm_clear_wake_irq(dev);
-+		device_init_wakeup(dev, false);
-+	}
- 	rproc_free(rproc);
- 
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+static int stm32_rproc_suspend(struct device *dev)
-+{
-+	struct rproc *rproc = dev_get_drvdata(dev);
-+	struct stm32_rproc *ddata = rproc->priv;
-+
-+	if (device_may_wakeup(dev))
-+		return enable_irq_wake(ddata->wdg_irq);
-+
-+	return 0;
-+}
-+
-+static int stm32_rproc_resume(struct device *dev)
-+{
-+	struct rproc *rproc = dev_get_drvdata(dev);
-+	struct stm32_rproc *ddata = rproc->priv;
-+
-+	if (device_may_wakeup(dev))
-+		return disable_irq_wake(ddata->wdg_irq);
-+
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(stm32_rproc_pm_ops,
-+			 stm32_rproc_suspend, stm32_rproc_resume);
-+
- static struct platform_driver stm32_rproc_driver = {
- 	.probe = stm32_rproc_probe,
- 	.remove = stm32_rproc_remove,
- 	.driver = {
- 		.name = "stm32-rproc",
-+		.pm = &stm32_rproc_pm_ops,
- 		.of_match_table = of_match_ptr(stm32_rproc_match),
- 	},
- };
+ 	SOC_ENUM("Playback Polarity", dacpol),
+ 	SOC_DOUBLE_R_TLV("DAC Playback Volume", ES8316_DAC_VOLL,
 -- 
-2.7.4
+2.23.0.rc1
 
