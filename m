@@ -2,101 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EDE19D1E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 16:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C16799D1EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 16:48:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbfHZOqy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 10:46:54 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39772 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729105AbfHZOqx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 10:46:53 -0400
-Received: by mail-wr1-f67.google.com with SMTP id t16so15608781wra.6
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 07:46:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lKqFlQ5uAweiWoy5Q0NBtlqDIxAoWdFqAZ3hE0aWMrA=;
-        b=oOsWkVyy0OVNO3GEWtL9KUlBPcNQ8EXb5NCLaRrryxI86WLE7itY1IhCRJ//gMudtE
-         MI6ag1jiTbVVcDqAqXe22G5Ebaq5BNPFjs6B3Wib8wz4iLstk/g8GUietWVUDOVMtFLD
-         B72moJ69pMr5bro4U1czlxVb8JfS6SU1/pnwUeOux5P8jlS5AmQgmodOo1MfubsAtRFd
-         6thkrxpAUURZh4j5Bx+8fONziNmU3yKSV12jDFNhld88vr6ZzSyAwVmUIXXrkmddsp89
-         B3dw+IJyZkAPVaiO4vKQIwopRI6ZxW7dUD8oDdsLLhWbf2C5s+AV7/4TTATXNxBIP2Vf
-         RzRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lKqFlQ5uAweiWoy5Q0NBtlqDIxAoWdFqAZ3hE0aWMrA=;
-        b=nTSLW29WWABVa9+061mh8oVMAkJxpb2R7Jvk/L8vi7RF65D1DwDYdiE5YwobjM08Xq
-         xFiI2cgor74HqK8GZhYC6o4QxqYhlJ73C9h8BSVRZUP2MYrttAqw4pW7VTXmCQOzzmcX
-         MaRpuu+YCxrTAuOtL7B+G5Qdds0b/QjgWsJv/9yfL4XN4u9K6c5C2Z1LkTqsU7usAQeb
-         Ywlgo7seEEBBP7CAErXKJga71vHslC4Qwrxh3kiXdunj/FwzVIo/dcmkYsENpLtiH511
-         uSGrIeGdEY6YoPyQVRreXyX+ZRkY0YHW5BKSlV6e/PQZaXLGtLxxjVzqeQv3xyVzlj7O
-         AEmw==
-X-Gm-Message-State: APjAAAXeycaS9NullarQ8yyl5r2CvdoNboz57ckSprQpbD2GzfPplJuM
-        XF9gWAPqVgQyh3brj4mjtKKKbNio07alMw==
-X-Google-Smtp-Source: APXvYqzj8GflBpfqyAQoqHVpAUfVZVDf2xgGir3LWPo8zTibAZW8llY0SCOEuBpqNLk+uWaJWp10ZQ==
-X-Received: by 2002:a5d:408c:: with SMTP id o12mr21617046wrp.176.1566830811145;
-        Mon, 26 Aug 2019 07:46:51 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id e9sm12984595wrm.43.2019.08.26.07.46.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 07:46:50 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/meson: vclk: use the correct G12A frac max value
-Date:   Mon, 26 Aug 2019 16:46:47 +0200
-Message-Id: <20190826144647.17302-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1732603AbfHZOsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 10:48:16 -0400
+Received: from mga05.intel.com ([192.55.52.43]:30319 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732028AbfHZOsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 10:48:15 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Aug 2019 07:48:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,433,1559545200"; 
+   d="scan'208";a="184981252"
+Received: from labuser-ice-lake-client-platform.jf.intel.com ([10.54.55.84])
+  by orsmga006.jf.intel.com with ESMTP; 26 Aug 2019 07:48:15 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, acme@kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [RESEND PATCH V3 0/8] TopDown metrics support for Icelake
+Date:   Mon, 26 Aug 2019 07:47:32 -0700
+Message-Id: <20190826144740.10163-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When calculating the HDMI PLL settings for a DMT mode PHY frequency,
-use the correct max fractional PLL value for G12A VPU.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-With this fix, we can finally setup the 1024x76-60 mode.
+Icelake has support for measuring the level 1 TopDown metrics
+directly in hardware. This is implemented by an additional METRICS
+register, and a new Fixed Counter 3 that measures pipeline SLOTS.
 
-Fixes: 202b9808f8ed ("drm/meson: Add G12A Video Clock setup")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/gpu/drm/meson/meson_vclk.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Four TopDown metric events as separate perf events, which map to
+internal METRICS register, are exposed. They are topdown-retiring,
+topdown-bad-spec, topdown-fe-bound and topdown-be-bound.
+Those events do not exist in hardware, but can be allocated by the
+scheduler. The value of TopDown metric events can be calculated by
+multiplying the METRICS (percentage) register with SLOTS fixed counter.
 
-diff --git a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
-index ac491a781952..f690793ae2d5 100644
---- a/drivers/gpu/drm/meson/meson_vclk.c
-+++ b/drivers/gpu/drm/meson/meson_vclk.c
-@@ -638,13 +638,18 @@ static bool meson_hdmi_pll_validate_params(struct meson_drm *priv,
- 		if (frac >= HDMI_FRAC_MAX_GXBB)
- 			return false;
- 	} else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXM) ||
--		   meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXL) ||
--		   meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
-+		   meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXL)) {
- 		/* Empiric supported min/max dividers */
- 		if (m < 106 || m > 247)
- 			return false;
- 		if (frac >= HDMI_FRAC_MAX_GXL)
- 			return false;
-+	} else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
-+		/* Empiric supported min/max dividers */
-+		if (m < 106 || m > 247)
-+			return false;
-+		if (frac >= HDMI_FRAC_MAX_G12A)
-+			return false;
- 	}
- 
- 	return true;
+New in Icelake
+- Do not require generic counters. This allows to collect TopDown always
+  in addition to other events.
+- Measuring TopDown per thread/process instead of only per core
+
+Limitation
+- To get accurate result and avoid reading the METRICS register multiple
+  times, the TopDown metrics events and SLOTS event have to be in the
+  same group.
+- METRICS and SLOTS registers have to be cleared after each read by SW.
+  That is to prevent the lose of precision and a known side effect of
+  METRICS register.
+- Cannot do sampling read SLOTS and TopDown metric events
+
+Please refer SDM Vol3, 18.3.9.3 Performance Metrics for the details of
+TopDown metrics.
+
+Changes since V2:
+- Rebase on top of v5.3-rc1
+
+Key changes since V1:
+- Remove variables for reg_idx and enabled_events[] array.
+  The reg_idx can be calculated by idx in runtime.
+  Using existing active_mask to replace enabled_events.
+- Choose value 47 for the fixed index of BTS.
+- Support OVF_PERF_METRICS overflow bit in PMI handler
+- Drops the caching mechanism and related variables
+  New mechanism is to update all active slots/metrics events for the
+  first slots/metrics events in a group. For each group reading, it
+  still only read the slots/perf_metrics MSR once
+- Disable PMU for read of topdown events to avoid the NMI issue
+- Move RDPMC support to a separate patch
+- Using event=0x00,umask=0x1X for topdown metrics events
+- Drop the patch which add REMOVE transaction
+  We can indicate x86_pmu_stop() by checking
+  (event && !test_bit(event->hw.idx, cpuc->active_mask)),
+  which is a good place to save the slots/metrics MSR value
+
+Andi Kleen (2):
+  perf, tools, stat: Support new per thread TopDown metrics
+  perf, tools: Add documentation for topdown metrics
+
+Kan Liang (6):
+  perf/x86/intel: Set correct mask for TOPDOWN.SLOTS
+  perf/x86/intel: Basic support for metrics counters
+  perf/x86/intel: Support hardware TopDown metrics
+  perf/x86/intel: Support per thread RDPMC TopDown metrics
+  perf/x86/intel: Export TopDown events for Icelake
+  perf/x86/intel: Disable sampling read slots and topdown
+
+ arch/x86/events/core.c                 |  35 ++-
+ arch/x86/events/intel/core.c           | 362 ++++++++++++++++++++++++-
+ arch/x86/events/perf_event.h           |  33 +++
+ arch/x86/include/asm/msr-index.h       |   3 +
+ arch/x86/include/asm/perf_event.h      |  54 +++-
+ include/linux/perf_event.h             |   3 +
+ tools/perf/Documentation/perf-stat.txt |   9 +-
+ tools/perf/Documentation/topdown.txt   | 223 +++++++++++++++
+ tools/perf/builtin-stat.c              |  24 ++
+ tools/perf/util/stat-shadow.c          |  89 ++++++
+ tools/perf/util/stat.c                 |   4 +
+ tools/perf/util/stat.h                 |   8 +
+ 12 files changed, 827 insertions(+), 20 deletions(-)
+ create mode 100644 tools/perf/Documentation/topdown.txt
+
 -- 
-2.22.0
+2.17.1
 
