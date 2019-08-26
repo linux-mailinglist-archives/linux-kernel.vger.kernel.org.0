@@ -2,85 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 188309D071
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 15:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4555D9D080
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 15:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732427AbfHZN0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 09:26:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35596 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732403AbfHZN00 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 09:26:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=MhfKilNLV8AdxkyYpV9V+99YpggpHbv15IYon9mhMkc=; b=SxWguzeHjibJiQGTh0enGJ7wsj
-        xvlWsmuxilsSrybCT7ApvIPfTJthkTEJChIJ5pY9DHIsQGjUN67v8cKOOKr5a0uXhM5HM4z32vow4
-        bkkZjRbgFpCc/BYTH1TR2Srt2asiNr4QwjlKzC6thdTiNry7uant3AU9xHnoI8haOOP/qM8zbiqxw
-        4HlaZ9eaMXY9Je+6oKpIzLdltUVMmtCOJrHiTM/zTsoJ2sL1u6Gn862HOqAy+cr2ZFt3K9eB+DHlR
-        YzntowaXSIiZlnQk9a3lTajwZqbRPQp/EZ6iFMq2aXPq9PasHkqpCJwWzyHeA9WB3ILK9MurfmZqm
-        +7QSFpkQ==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2F0h-0007zP-RH; Mon, 26 Aug 2019 13:26:16 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     iommu@lists.linux-foundation.org
-Cc:     Guan Xuetao <gxt@pku.edu.cn>, Shawn Anastasio <shawn@anastas.io>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] MIPS: document mixing "slightly different CCAs"
-Date:   Mon, 26 Aug 2019 15:25:53 +0200
-Message-Id: <20190826132553.4116-7-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190826132553.4116-1-hch@lst.de>
-References: <20190826132553.4116-1-hch@lst.de>
+        id S1730818AbfHZN14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 09:27:56 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:38178 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727253AbfHZN14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 09:27:56 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D51777CE6EC814E9F398;
+        Mon, 26 Aug 2019 21:27:52 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 26 Aug
+ 2019 21:27:42 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        <weidu.du@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH RESEND] erofs: fix compile warnings when moving out include/trace/events/erofs.h
+Date:   Mon, 26 Aug 2019 21:26:53 +0800
+Message-ID: <20190826132653.100731-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190826132234.96939-1-gaoxiang25@huawei.com>
+References: <20190826132234.96939-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Based on an email from Paul Burton, quoting section 4.8 "Cacheability and
-Coherency Attributes and Access Types" of "MIPS Architecture Volume 1:
-Introduction to the MIPS32 Architecture" (MD00080, revision 6.01).
+As Stephon reported [1], many compile warnings are raised when
+moving out include/trace/events/erofs.h:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+In file included from include/trace/events/erofs.h:8,
+                 from <command-line>:
+include/trace/events/erofs.h:28:37: warning: 'struct dentry' declared inside parameter list will not be visible outside of this definition or declaration
+  TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
+                                     ^~~~~~
+include/linux/tracepoint.h:233:34: note: in definition of macro '__DECLARE_TRACE'
+  static inline void trace_##name(proto)    \
+                                  ^~~~~
+include/linux/tracepoint.h:396:24: note: in expansion of macro 'PARAMS'
+  __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),  \
+                        ^~~~~~
+include/linux/tracepoint.h:532:2: note: in expansion of macro 'DECLARE_TRACE'
+  DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+  ^~~~~~~~~~~~~
+include/linux/tracepoint.h:532:22: note: in expansion of macro 'PARAMS'
+  DECLARE_TRACE(name, PARAMS(proto), PARAMS(args))
+                      ^~~~~~
+include/trace/events/erofs.h:26:1: note: in expansion of macro 'TRACE_EVENT'
+ TRACE_EVENT(erofs_lookup,
+ ^~~~~~~~~~~
+include/trace/events/erofs.h:28:2: note: in expansion of macro 'TP_PROTO'
+  TP_PROTO(struct inode *dir, struct dentry *dentry, unsigned int flags),
+  ^~~~~~~~
+
+That makes me very confused since most original EROFS tracepoint code
+was taken from f2fs, and finally I found
+
+commit 43c78d88036e ("kbuild: compile-test kernel headers to ensure they are self-contained")
+
+It seems these warnings are generated from KERNEL_HEADER_TEST feature and
+ext4/f2fs tracepoint files were in blacklist.
+
+Anyway, let's fix these issues for KERNEL_HEADER_TEST feature instead
+of adding to blacklist...
+
+[1] https://lore.kernel.org/lkml/20190826162432.11100665@canb.auug.org.au/
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- arch/mips/Kconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index fc88f68ea1ee..aff1cadeea43 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -1119,6 +1119,13 @@ config DMA_PERDEV_COHERENT
+[RESEND] Cc Stephen as well. no change at all...
+
+Hi Chao and Greg,
+ It seems the root cause reported by Stephen is the following (sorry for
+ taking some time...) could you kindly review and merge this patch?
+
+Thanks,
+Gao Xiang
+
+ include/trace/events/erofs.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/trace/events/erofs.h b/include/trace/events/erofs.h
+index bfb2da9c4eee..d239f39cbc8c 100644
+--- a/include/trace/events/erofs.h
++++ b/include/trace/events/erofs.h
+@@ -6,6 +6,9 @@
+ #define _TRACE_EROFS_H
  
- config DMA_NONCOHERENT
- 	bool
-+	#
-+	# MIPS allows mixing "slightly different" Cacheability and Coherency
-+	# Attribute bits.  It is believed that the uncached access through
-+	# KSEG1 and the implementation specific "uncached accelerated" used
-+	# by pgprot_writcombine can be mixed, and the latter sometimes provides
-+	# significant advantages.
-+	#
- 	select ARCH_HAS_DMA_WRITE_COMBINE
- 	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
- 	select ARCH_HAS_UNCACHED_SEGMENT
+ #include <linux/tracepoint.h>
++#include <linux/fs.h>
++
++struct erofs_map_blocks;
+ 
+ #define show_dev(dev)		MAJOR(dev), MINOR(dev)
+ #define show_dev_nid(entry)	show_dev(entry->dev), entry->nid
 -- 
-2.20.1
+2.17.1
 
