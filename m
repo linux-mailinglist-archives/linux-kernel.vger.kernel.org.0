@@ -2,275 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 239E09D83D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 23:29:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F26EB9D870
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 23:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728632AbfHZV3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 17:29:39 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43916 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728431AbfHZV3i (ORCPT
+        id S1729004AbfHZVcq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 17:32:46 -0400
+Received: from gateway31.websitewelcome.com ([192.185.144.95]:12761 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728969AbfHZVcq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 17:29:38 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h13so28359667edq.10
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 14:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=irmPiXV6xMb94N1TWBMVdjC+CksYI3/837tqSXMotXI=;
-        b=IA9lp4gQRx2gyfXmziKHHZV62IJhQFfo3kge7R70TpohrPCjPv7YE+m0odk8ubx6XZ
-         T8/hjPQCSndGhCg4mTs2oY+QMBVRf6pzG2/MdXlYwANI6YD3OEz5cN19N+bsMwJsy8L+
-         iccZKGeT5vRw50zWuXvTpih7FW3dPIDNZn8s4CCrxTHo3Rq4QRwd5v2d+OszIQuHmdpG
-         37y9qRIRCVI6/n7EQ0GxLvLHx5I8o9FYqm0rRAQRKTSJPMpebsQxltuLWMSV4oU6HvE2
-         HmcskH5P4lXTXv1SMXmIMXoRX8eWVYeWZm46/rq4aIoFO07sLNH47vgZk7jW0DBX5taZ
-         d1NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=irmPiXV6xMb94N1TWBMVdjC+CksYI3/837tqSXMotXI=;
-        b=kzio4OiFOUDFWP98cv0osCGLO5JM0K7bN28P35KNJ4uA8n/iFylkzF+X/Yi/oao8tz
-         VIaEsaAg3U0UsppU6UqRv3f+OiM1m3NUb6r513uRiugpgmCvT7B0PHE1O+RlCnK3IAWh
-         ZJ2eWFJft6d8DVIp95VTxPL1jVj0AQI+4SmheGhWJ5e1ZgLEe94mih6cwNvl2wNtK3B+
-         zncE230/nxLZS6wuOGJfmxAjbRx2pzZGpfxtu+MWO47sWQ62Ghjc4xXYSO2ujN6rkkwy
-         YgY/LLxu+Te3U/XPGSRuolcT9JGG3SBAuNPznpl9F+CbExfTiEGKgCC8bfuqErZ+ozK2
-         XdGw==
-X-Gm-Message-State: APjAAAVfjjIrHguxXjUvvO+XnKvVPpMFshroLbh0G7NGSqJvpB1d+XfH
-        YtLkaI5NwHnZeNyV/5muM8VmCTsBSFO8pJlTO6sWFA==
-X-Google-Smtp-Source: APXvYqyPUbPVLPRVGlxnyfKkABjtJwt/nypaoGxZPNMI7YKzSdzC8N2ue4PDBfXMa7J57EnWz0DzMTk4z4qERx/JCcw=
-X-Received: by 2002:a50:9ea1:: with SMTP id a30mr21320762edf.304.1566854976172;
- Mon, 26 Aug 2019 14:29:36 -0700 (PDT)
+        Mon, 26 Aug 2019 17:32:46 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id A2586547403
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 16:23:38 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 2MSgifMNa3Qi02MSgiKyr4; Mon, 26 Aug 2019 16:23:38 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=OMFeccUDUHsY8/YYRj7q5Pne88u96XF9DvXpEB2m+is=; b=gsLgSfxocy9u7voXZD6SvZjk2t
+        gI3Z4QFvUR2gPXQ+y/3by5O/tjGEZfwUAdJ6Q9zPs4Rf7Q+3iw0A9M/GlX7/MPEnj5JVWYMdLH6DK
+        RPVrFoN1yF65y/voDYi/eaCAissgQKRixmQVhDjj/uQlhm4WJmJ56ObtD4/CapcWBtRcjoLxATMFF
+        r1+lHX5Ycd7wfmA0N5CxULTOWLeuopn/C4zc80WUJUR+zecTkl1mEistjFxdc0+S21dpYopqEfLs1
+        o8PgNWsoc9jnvUlq25lr6/x7nj6poidrF4jKK8u5jr/CWyrIbNmuArJDv3JHBSHVaAsXla+Eh68KB
+        C4cmR8Hw==;
+Received: from [189.152.216.116] (port=43872 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1i2MSg-000G7A-6Z; Mon, 26 Aug 2019 16:23:38 -0500
+Subject: Re: [PATCH 4.14 38/53] IB/hfi1: Fix Spectre v1 vulnerability
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20190805124927.973499541@linuxfoundation.org>
+ <20190805124932.331142598@linuxfoundation.org>
+ <3d25fa83-91e6-dd99-2170-44a51066c82d@embeddedor.com>
+ <20190826090618.GA15666@kroah.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <3b69e523-575d-93d5-6200-fdc372de786f@embeddedor.com>
+Date:   Mon, 26 Aug 2019 16:23:36 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190826190056.27854-1-pasha.tatashin@soleen.com> <20190826190056.27854-6-pasha.tatashin@soleen.com>
-In-Reply-To: <20190826190056.27854-6-pasha.tatashin@soleen.com>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Mon, 26 Aug 2019 17:29:25 -0400
-Message-ID: <CA+CK2bDXpoRV=1hD50E6FKJry=hRcyxkwbf4fq_PdFRPYCM3UQ@mail.gmail.com>
-Subject: Re: [PATCH v1 5/6] rqchip/gic-v3-its: move reset pending table
- outside of allocator
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>,
-        James Morris <jmorris@namei.org>,
-        Sasha Levin <sashal@kernel.org>,
-        kexec mailing list <kexec@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190826090618.GA15666@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.216.116
+X-Source-L: No
+X-Exim-ID: 1i2MSg-000G7A-6Z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.152.216.116]:43872
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch requires a small fix (which I will do in later revisions):
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 2ffdb3927549..c9faeac4b3a8 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2182,7 +2182,8 @@ static void its_cpu_init_lpis(void)
-                paddr &= GENMASK_ULL(51, 16);
 
-                WARN_ON(!gic_check_reserved_range(paddr, LPI_PENDBASE_SZ));
--               its_free_pending_table(gic_data_rdist()->pend_page);
-+               if (efi_enabled(EFI_CONFIG_TABLES))
-+                       its_free_pending_table(gic_data_rdist()->pend_page);
-                gic_data_rdist()->pend_page = NULL;
+On 8/26/19 4:06 AM, Greg Kroah-Hartman wrote:
 
-                goto out;
+> 
+> Can you provide backports that work if they really are needed?
+> 
 
-reserved-memory does not need to be freed. However, I am confused why
-it is needed to be freed in EFI case. Marc, can you please explain
-this to me?
+It seems they aren't needed.
 
-Thank you,
-Pasha
+Sorry about the noise.
 
-On Mon, Aug 26, 2019 at 3:01 PM Pavel Tatashin
-<pasha.tatashin@soleen.com> wrote:
->
-> Allow to use reserved memory for interrupt controller tables.
->
-> Currently, it is not possible to do kexec reboots without possible memory
-> corruption using device tree and GICv3 interrupt controller.
->
-> GICv3 can be configured once during boot, and location of tables cannot
-> be changed thereafter.
->
-> The fix is to allow to reserve memory region in interrupt controller device
-> property, and use it to do allocations.
->
-> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-> ---
->  drivers/irqchip/irq-gic-v3-its.c | 82 ++++++++++++++++++++++++++++----
->  1 file changed, 72 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index d5f3508ca11f..aeda8760cc4e 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -47,6 +47,54 @@
->
->  static u32 lpi_id_bits;
->
-> +/*
-> + * Describes reserved memory region in interrupt controller.
-> + * The memory reserved: [pa_start, pa_end)
-> + */
-> +struct of_resv {
-> +       unsigned long pa_start;
-> +       unsigned long pa_end;
-> +};
-> +
-> +static struct page __init *get_of_page(struct of_resv *resv, unsigned long size)
-> +{
-> +       unsigned long pa = ALIGN(resv->pa_start, size);
-> +       unsigned long pa_next = pa + size;
-> +
-> +       /* Check if there is enough memory reserved to do another allocation */
-> +       if (pa_next > resv->pa_end)
-> +               return NULL;
-> +
-> +       resv->pa_start = pa_next;
-> +       memset(phys_to_virt(pa), 0, size);
-> +
-> +       return phys_to_page(pa);
-> +}
-> +
-> +/*
-> + * Memory controller might have a reserved memory region to be used for table
-> + * allocations. This is a requirement for kexec reboots.
-> + */
-> +static void __init its_of_mem_region(struct device_node *node,
-> +                                    struct of_resv **resv,
-> +                                    struct of_resv *resv_buf)
-> +{
-> +       struct device_node *np = of_parse_phandle(node, "memory-region", 0);
-> +       struct resource mem_res;
-> +
-> +       if (!np)
-> +               return;
-> +
-> +       if (of_address_to_resource(np, 0, &mem_res)) {
-> +               pr_warn("%pOF: address to resource failed\n", np);
-> +               return;
-> +       }
-> +
-> +       resv_buf->pa_start = mem_res.start;
-> +       resv_buf->pa_end = mem_res.start + resource_size(&mem_res);
-> +       *resv = resv_buf;
-> +}
-> +
->  /*
->   * We allocate memory for PROPBASE to cover 2 ^ lpi_id_bits LPIs to
->   * deal with (one configuration byte per interrupt). PENDBASE has to
-> @@ -1665,7 +1713,7 @@ static int gic_reserve_range(phys_addr_t addr, unsigned long size)
->         return 0;
->  }
->
-> -static int __init its_setup_lpi_prop_table(void)
-> +static int __init its_setup_lpi_prop_table(struct of_resv *resv)
->  {
->         if (gic_rdists->flags & RDIST_FLAGS_RD_TABLES_PREALLOCATED) {
->                 unsigned long pa;
-> @@ -1676,7 +1724,10 @@ static int __init its_setup_lpi_prop_table(void)
->                 lpi_id_bits = (val & GICR_PROPBASER_IDBITS_MASK) + 1;
->
->                 pa = val & GENMASK_ULL(51, 12);
-> -               va = memremap(pa, LPI_PROPBASE_SZ, MEMREMAP_WB);
-> +               if (resv)
-> +                       va = phys_to_virt(pa);
-> +               else
-> +                       va = memremap(pa, LPI_PROPBASE_SZ, MEMREMAP_WB);
->                 gic_rdists->prop_table_pa = pa;
->                 gic_rdists->prop_table_va = va;
->         } else {
-> @@ -1685,7 +1736,10 @@ static int __init its_setup_lpi_prop_table(void)
->                 lpi_id_bits = min_t(u32,
->                                     GICD_TYPER_ID_BITS(gic_rdists->gicd_typer),
->                                     ITS_MAX_LPI_NRBITS);
-> -               page = its_allocate_prop_table(GFP_NOWAIT);
-> +               if (resv)
-> +                       page = get_of_page(resv, LPI_PROPBASE_SZ);
-> +               else
-> +                       page = its_allocate_prop_table(GFP_NOWAIT);
->                 if (!page) {
->                         pr_err("Failed to allocate PROPBASE\n");
->                         return -ENOMEM;
-> @@ -2009,7 +2063,8 @@ static void its_free_pending_table(struct page *pt)
->
->  /*
->   * Booting with kdump and LPIs enabled is generally fine. Any other
-> - * case is wrong in the absence of firmware/EFI support.
-> + * case is wrong in the absence of firmware/EFI support or reserve-memory
-> + * in device tree for interrupt controller.
->   */
->  static bool enabled_lpis_allowed(void)
->  {
-> @@ -2023,7 +2078,7 @@ static bool enabled_lpis_allowed(void)
->         return gic_check_reserved_range(addr, LPI_PROPBASE_SZ);
->  }
->
-> -static int __init allocate_lpi_tables(void)
-> +static int __init allocate_lpi_tables(struct of_resv *resv)
->  {
->         u64 val;
->         int err, cpu;
-> @@ -2039,7 +2094,7 @@ static int __init allocate_lpi_tables(void)
->                 pr_info("GICv3: Using preallocated redistributor tables\n");
->         }
->
-> -       err = its_setup_lpi_prop_table();
-> +       err = its_setup_lpi_prop_table(resv);
->         if (err)
->                 return err;
->
-> @@ -2051,7 +2106,10 @@ static int __init allocate_lpi_tables(void)
->         for_each_possible_cpu(cpu) {
->                 struct page *pend_page;
->
-> -               pend_page = its_allocate_pending_table(GFP_NOWAIT);
-> +               if (resv)
-> +                       pend_page = get_of_page(resv, LPI_PENDBASE_SZ);
-> +               else
-> +                       pend_page = its_allocate_pending_table(GFP_NOWAIT);
->                 if (!pend_page) {
->                         pr_err("Failed to allocate PENDBASE for CPU%d\n", cpu);
->                         return -ENOMEM;
-> @@ -3957,16 +4015,20 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
->                     struct irq_domain *parent_domain)
->  {
->         struct device_node *of_node;
-> +       struct of_resv resv_buf;
-> +       struct of_resv *resv = NULL;
->         struct its_node *its;
->         bool has_v4 = false;
->         int err;
->
->         its_parent = parent_domain;
->         of_node = to_of_node(handle);
-> -       if (of_node)
-> +       if (of_node) {
->                 its_of_probe(of_node);
-> -       else
-> +               its_of_mem_region(of_node, &resv, &resv_buf);
-> +       } else {
->                 its_acpi_probe();
-> +       }
->
->         if (list_empty(&its_nodes)) {
->                 pr_warn("ITS: No ITS available, not enabling LPIs\n");
-> @@ -3975,7 +4037,7 @@ int __init its_init(struct fwnode_handle *handle, struct rdists *rdists,
->
->         gic_rdists = rdists;
->
-> -       err = allocate_lpi_tables();
-> +       err = allocate_lpi_tables(resv);
->         if (err)
->                 return err;
->
-> --
-> 2.23.0
->
+--
+Gustavo
+
