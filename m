@@ -2,128 +2,205 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CBD99CA70
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:30:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDB009CA63
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730151AbfHZH3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 03:29:54 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33866 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730134AbfHZH3x (ORCPT
+        id S1730056AbfHZH2x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 03:28:53 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:42881 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729925AbfHZH2x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 03:29:53 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n9so10077390pgc.1;
-        Mon, 26 Aug 2019 00:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=kiqMdthucN5qlDDkHZdYC3nWxz2rbgAlylxLZ3Dr+rY=;
-        b=aNxvj/kSIiyExBL7CtlLVJRWgoo7J/Qfzip24Dk2Z3Pwdl/chitwuAmnVuqezO1CRK
-         aJnamMjJtAscSP8h1qCzqP8NxNF6/Z3q57QSeU/w4yjY8IrQ+OQ+nfCNxbPbQlhVs8zK
-         9QnIV36qOB4NDj1LVHc91QbvE3lAcfWHJvkfEbWRXsAenrF4lWu3+S8AWpuaDYQ0BkMt
-         itr86HuqdgC9HhyBMbRUZEHCo90Cn6fyPDHqPq7cK0nE/oyBguj9VBfmDFO44G7DUQf7
-         MvPV76WUMxm95Fx+xIySlBa2KUGXyfqeNwGf1YtYmJzli+AESaA1LGhtawhpacr7uMU5
-         aOVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=kiqMdthucN5qlDDkHZdYC3nWxz2rbgAlylxLZ3Dr+rY=;
-        b=c52Zb8PcG2KNW2V1eb4oJ1mhDJDgxxpd3yjUnwxNmPcLvT9yKy8eYuFeOuv+Oz9jvX
-         pBeotnRhtLXB5R8Cp9lF84bPYxsw9bDEMclxiS/0WjERRDfum2L0wYCHw1PL7/pikY2b
-         V4mNqwT2FJQABXOMTgvkT4nJWhdJkKBvmAO5B1vQsRzPkwenMgsVr2ma4+w29wyQUC9l
-         hHfRZvMvT1RKGzvRo/Cl/J/4PFbAdYb/1yTIUItEmliw3o38SGJufXh97U15gputwKv2
-         KDy2LwiBmQBxCMcKEfPA7pOR+HgDjgT4puETtwpFp23Kqd+zdTYznBUMfiO4ZQ1npPZx
-         CnMQ==
-X-Gm-Message-State: APjAAAXV6iwGPnBAPPXp3S3t55D//Z+D7cTYkzOocHF6/XGiHzZ9VZgu
-        VexuLhqLlHNyrE0e1rfAw4U=
-X-Google-Smtp-Source: APXvYqwaEIFfOa5FDdNC/APLv1D0Js3Qz8PsRBDFkX8DIS8QlvZYPfuThCOhfw17POL4Xw+WoinefQ==
-X-Received: by 2002:aa7:851a:: with SMTP id v26mr18339469pfn.238.1566804592041;
-        Mon, 26 Aug 2019 00:29:52 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id p90sm11195670pjp.7.2019.08.26.00.29.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 00:29:51 -0700 (PDT)
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>
-Cc:     linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 3/3] serial: sprd: keep console alive even if missing the 'enable' clock
-Date:   Mon, 26 Aug 2019 15:29:29 +0800
-Message-Id: <20190826072929.7696-4-zhang.lyra@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190826072929.7696-1-zhang.lyra@gmail.com>
-References: <20190826072929.7696-1-zhang.lyra@gmail.com>
+        Mon, 26 Aug 2019 03:28:53 -0400
+X-Originating-IP: 87.18.63.98
+Received: from uno.localdomain (unknown [87.18.63.98])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id D4DF51C0005;
+        Mon, 26 Aug 2019 07:28:48 +0000 (UTC)
+Date:   Mon, 26 Aug 2019 09:30:19 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/7] media: add V4L2_CID_UNIT_CELL_SIZE control
+Message-ID: <20190826073019.2h2ubmiyglzlkpef@uno.localdomain>
+References: <20190823123737.7774-1-ribalda@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="t4iz3dil4g5c3p7z"
+Content-Disposition: inline
+In-Reply-To: <20190823123737.7774-1-ribalda@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-The sprd serial console can work with only 26M fixed clock,
-but the probe() is returning fail if the clock "enable" is not
-configured in device tree.
+--t4iz3dil4g5c3p7z
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-This patch will fix the problem to let the uart device which is
-used for console can be initialized even missing "enable" clock
-configured in devicetree. We should make sure the debug function
-as available as we can. 
+Hi Ricardo,
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
----
- drivers/tty/serial/sprd_serial.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
+On Fri, Aug 23, 2019 at 02:37:31PM +0200, Ricardo Ribalda Delgado wrote:
+> This control returns the unit cell size in nanometres. The struct provides
+> the width and the height in separated fields to take into consideration
+> asymmetric pixels and/or hardware binning.
+> This control is required for automatic calibration of sensors/cameras.
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+> ---
+> v3:
+> -Put together all actions on ctrl_fill
+> -Move the control to IMAGE_SOURCE
+>
+>  drivers/media/v4l2-core/v4l2-ctrls.c | 11 +++++++++++
+>  include/media/v4l2-ctrls.h           |  2 ++
+>  include/uapi/linux/v4l2-controls.h   |  1 +
+>  include/uapi/linux/videodev2.h       | 11 +++++++++++
+>  4 files changed, 25 insertions(+)
+>
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index 1d8f38824631..b3bf458df7f7 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -994,6 +994,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_AUTO_FOCUS_RANGE:		return "Auto Focus, Range";
+>  	case V4L2_CID_PAN_SPEED:		return "Pan, Speed";
+>  	case V4L2_CID_TILT_SPEED:		return "Tilt, Speed";
+> +	case V4L2_CID_UNIT_CELL_SIZE:		return "Unit Cell Size";
+>
+>  	/* FM Radio Modulator controls */
+>  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
+> @@ -1375,6 +1376,10 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  	case V4L2_CID_MPEG_VIDEO_VP8_FRAME_HEADER:
+>  		*type = V4L2_CTRL_TYPE_VP8_FRAME_HEADER;
+>  		break;
+> +	case V4L2_CID_UNIT_CELL_SIZE:
+> +		*type = V4L2_CTRL_TYPE_AREA;
+> +		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
+> +		break;
+>  	default:
+>  		*type = V4L2_CTRL_TYPE_INTEGER;
+>  		break;
+> @@ -1723,6 +1728,9 @@ static int std_validate_compound(const struct v4l2_ctrl *ctrl, u32 idx,
+>  	case V4L2_CTRL_TYPE_FWHT_PARAMS:
+>  		break;
+>
+> +	case V4L2_CTRL_TYPE_AREA:
+> +		break;
+> +
+>  	case V4L2_CTRL_TYPE_H264_SPS:
+>  	case V4L2_CTRL_TYPE_H264_PPS:
+>  	case V4L2_CTRL_TYPE_H264_SCALING_MATRIX:
+> @@ -2421,6 +2429,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
+>  	case V4L2_CTRL_TYPE_VP8_FRAME_HEADER:
+>  		elem_size = sizeof(struct v4l2_ctrl_vp8_frame_header);
+>  		break;
+> +	case V4L2_CTRL_TYPE_AREA:
+> +		elem_size = sizeof(struct v4l2_area);
+> +		break;
+>  	default:
+>  		if (type < V4L2_CTRL_COMPOUND_TYPES)
+>  			elem_size = sizeof(s32);
+> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
+> index 570ff4b0205a..9a3d11350e67 100644
+> --- a/include/media/v4l2-ctrls.h
+> +++ b/include/media/v4l2-ctrls.h
+> @@ -50,6 +50,7 @@ struct poll_table_struct;
+>   * @p_h264_slice_params:	Pointer to a struct v4l2_ctrl_h264_slice_params.
+>   * @p_h264_decode_params:	Pointer to a struct v4l2_ctrl_h264_decode_params.
+>   * @p_vp8_frame_header:		Pointer to a VP8 frame header structure.
+> + * @p_area:			Pointer to an area.
 
-diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-index aead823c650b..c4d8c77c1261 100644
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -1103,6 +1103,16 @@ static int sprd_remove(struct platform_device *dev)
- 	return 0;
- }
- 
-+static bool sprd_uart_is_console(struct uart_port *uport)
-+{
-+	struct console *cons = sprd_uart_driver.cons;
-+
-+	if (cons && cons->index >= 0 && cons->index == uport->line)
-+		return true;
-+
-+	return false;
-+}
-+
- static int sprd_clk_init(struct uart_port *uport)
- {
- 	struct clk *clk_uart, *clk_parent;
-@@ -1129,10 +1139,17 @@ static int sprd_clk_init(struct uart_port *uport)
- 
- 	u->clk = devm_clk_get(uport->dev, "enable");
- 	if (IS_ERR(u->clk)) {
--		if (PTR_ERR(u->clk) != -EPROBE_DEFER)
--			dev_err(uport->dev, "uart%d can't get enable clock\n",
--				uport->line);
--		return PTR_ERR(u->clk);
-+		if (PTR_ERR(u->clk) == -EPROBE_DEFER)
-+			return -EPROBE_DEFER;
-+
-+		dev_warn(uport->dev, "uart%d can't get enable clock\n",
-+			uport->line);
-+
-+		/* To keep console alive even if the error occurred */
-+		if (!sprd_uart_is_console(uport))
-+			return PTR_ERR(u->clk);
-+
-+		u->clk = NULL;
- 	}
- 
- 	return 0;
--- 
-2.20.1
+Actually:
+"Pointer to a struct v4l2_area" ?
 
+Also,, I'm not sure which patch introduces this but I see a new
+warning when building documentation:
+.../Documentation/output/videodev2.h.rst:6: WARNING: undefined label: v4l2-ctrl-type-area (if the link has no caption the label must precede a section header)
+
+Thanks
+   j
+
+>   * @p:				Pointer to a compound value.
+>   */
+>  union v4l2_ctrl_ptr {
+> @@ -68,6 +69,7 @@ union v4l2_ctrl_ptr {
+>  	struct v4l2_ctrl_h264_slice_params *p_h264_slice_params;
+>  	struct v4l2_ctrl_h264_decode_params *p_h264_decode_params;
+>  	struct v4l2_ctrl_vp8_frame_header *p_vp8_frame_header;
+> +	struct v4l2_area *p_area;
+>  	void *p;
+>  };
+>
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index a2669b79b294..5a7bedee2b0e 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -1034,6 +1034,7 @@ enum v4l2_jpeg_chroma_subsampling {
+>  #define V4L2_CID_TEST_PATTERN_GREENR		(V4L2_CID_IMAGE_SOURCE_CLASS_BASE + 5)
+>  #define V4L2_CID_TEST_PATTERN_BLUE		(V4L2_CID_IMAGE_SOURCE_CLASS_BASE + 6)
+>  #define V4L2_CID_TEST_PATTERN_GREENB		(V4L2_CID_IMAGE_SOURCE_CLASS_BASE + 7)
+> +#define V4L2_CID_UNIT_CELL_SIZE			(V4L2_CID_IMAGE_SOURCE_CLASS_BASE + 8)
+>
+>
+>  /* Image processing controls */
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index 530638dffd93..05cfc69d7ed6 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -422,6 +422,11 @@ struct v4l2_fract {
+>  	__u32   denominator;
+>  };
+>
+> +struct v4l2_area {
+> +	__u32   width;
+> +	__u32   height;
+> +};
+> +
+>  /**
+>    * struct v4l2_capability - Describes V4L2 device caps returned by VIDIOC_QUERYCAP
+>    *
+> @@ -1720,6 +1725,12 @@ enum v4l2_ctrl_type {
+>  	V4L2_CTRL_TYPE_U8	     = 0x0100,
+>  	V4L2_CTRL_TYPE_U16	     = 0x0101,
+>  	V4L2_CTRL_TYPE_U32	     = 0x0102,
+> +	/*
+> +	 * V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS = 0x0103,
+> +	 * V4L2_CTRL_TYPE_MPEG2_QUANTIZATION = 0x0104,
+> +	 * V4L2_CTRL_TYPE_FWHT_PARAMS = 0x0105,
+> +	 */
+> +	V4L2_CTRL_TYPE_AREA    = 0x0106,
+>  };
+>
+>  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
+> --
+> 2.23.0.rc1
+>
+
+--t4iz3dil4g5c3p7z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1jiosACgkQcjQGjxah
+VjzEBQ/8CWb6x5I7kqxsbMBDKxZlyPQQCm3vt4BQ9NagdFYVLAJuUI7fpxsSFDmQ
+7b4/ehsoKmrfNvmDUWsGXIpqicEgPQXa+06lZXYTE81O2Frw0SExjXsfhzKS90NE
+Dl4EsSZ090JGIbT/XCWiOArHBy0MNwKA1EF4N0B7uRmGXbUQ/oWW5rDHsG6JVjjF
+qqijzKLnWJ1LlMxPm8i8+ZGpe1AtMc5qMWos5z9ccEHhW9VcR3S/5taLzJwr24ww
+8QqeCKmmYX4lbKKfGIvNHaOvBmUQJGkuNH3qL3YfWjryjpg3sKrSWqhURb801s/Z
+xmOdYZ98EV7/i+CIDZ/F7h3IgbAlgowhRYpSKVnUDwE90WgGluMPDlIQ3oHigX+t
+aReavk+OQNcUsJlYVk6yXioqFlkcWAQAeIsltVWwtey1wzCBEQUzHHZ/FWfl+bl0
+G+PYc0PGsJb9rnnkWjrwaeinkKlt31Ue4Lg0nS5uXy6BfCrM+gQx9hCYXVShmKB0
+FIqpF2JGeZdOvfJHdFsi5iFxPrEABiIhTfMP/IxI8xWEhr29HwKivgcjR0OEcmZ/
+elAJKk2N5HGQFrTD6DTFmyHNV8ODArVzJnTlbqG12fhgyJFj1/P0/fEUgQQ+g0P0
+IofjY7a765Uy2QvIqZ/LOHHo9GyfNe/MX+uaAyOc3+dWf883Bak=
+=M5VN
+-----END PGP SIGNATURE-----
+
+--t4iz3dil4g5c3p7z--
