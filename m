@@ -2,109 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F1F39D577
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 20:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F4A9D57D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 20:09:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387576AbfHZSIp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 14:08:45 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44510 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729777AbfHZSIp (ORCPT
+        id S2387730AbfHZSJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 14:09:18 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:40900 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730228AbfHZSJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 14:08:45 -0400
-Received: by mail-io1-f68.google.com with SMTP id j4so31166495iog.11
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 11:08:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3xah1lt3wlvEGCrDzsIKSHmElIRBV0MEzfEYCJTIRls=;
-        b=bdQxsuUWSvNpsg0AIG13yaf3RhMlQzVC7EwbV348reACqNAzHdsJrHuxOo886AFHM6
-         BAdMIcvJ7+d1LwlNyHYnQtmFCMfYzjDcfqLw+A1IWJe8l+z3Z3jtGGZTnEDVtlaE0pyh
-         LYkP4vRYvhARifbGhDrmehnv5FgIhTdO0ZlPCsogbihy8z6GL+0uWLpVsLQb3CRuKvJN
-         zQLI6glxaQEMdTv0ChHmh7NRpQOF0ddiM/9tL0Vt9RF+vzpOnEL+rt/+IjbMuqO3BF6N
-         LKgEeyo4SlDaqEpZSwhI4+T67dXuW9xcUp7n6btaElxSG2m9ixUuyPUEKOEUi695r2XF
-         poOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3xah1lt3wlvEGCrDzsIKSHmElIRBV0MEzfEYCJTIRls=;
-        b=jk70RMb9VREC/uDM/x4DTZWmPEMOy5Rtt3jF2AtSMDsGT7c3zM20D0mT2dRU/PXuoH
-         5HYtjPXDv+GGlGNez3g/iq+J+Tqy4m/1nD6WX/QSsiXoM/8aWvzAu1RiBv0R/r73MsgQ
-         qXguxYSQxA+tKxI/hjlI7XhFecqJEScamQhfyqQ1Jjdq3aRgnFsfiB8whB3fu9CJlgVg
-         iAWTlYtiQ32E6G/SFTGpySPv6BgWV5kwl0nvU5lB8hPJN1FtOLQ0rL1Ho/lFAw/rasWi
-         KKugHrjSQQeCkD4ZX693yczy8LV1ilVcwWZOQhXA3jOiJfRpWhrpb6i8J2jQA98BCVTk
-         Er/w==
-X-Gm-Message-State: APjAAAXjnca4aRnr32s01B4LqvVuKisXwmyse9mR1p+KsXZNJpC/r3zk
-        mrLexBvw6IWYQnXG3zLfYx8jvZSFmiL89qjzpZs=
-X-Google-Smtp-Source: APXvYqzY1l2S7dZb4q9PB6apMM06+uMptYaLxj2TPY4bAk6d/GzS5TYysGR1ZfRCTmGF0Wyx6Qt6C8fvkwK/idYfNfc=
-X-Received: by 2002:a5e:a802:: with SMTP id c2mr17047667ioa.263.1566842924484;
- Mon, 26 Aug 2019 11:08:44 -0700 (PDT)
+        Mon, 26 Aug 2019 14:09:16 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1i2JQU-0003AI-N4; Mon, 26 Aug 2019 20:09:10 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4F1271C0DAE;
+        Mon, 26 Aug 2019 20:09:10 +0200 (CEST)
+Date:   Mon, 26 Aug 2019 18:09:10 -0000
+From:   tip-bot2 for Bandan Das <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/apic: Do not initialize LDR and DFR for bigsmp
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Bandan Das <bsd@redhat.com>,
+        stable@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20190826101513.5080-2-bsd@redhat.com>
+References: <20190826101513.5080-2-bsd@redhat.com>
 MIME-Version: 1.0
-References: <20190731180131.8597-1-andrew.smirnov@gmail.com>
- <VI1PR04MB7023AE3910B261877892EEABEEA50@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <20190824183108.GA14936@X250>
-In-Reply-To: <20190824183108.GA14936@X250>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Mon, 26 Aug 2019 11:08:33 -0700
-Message-ID: <CAHQ1cqGMXEEpXC=sihO-h6oZ3XQc6+W4TpqBZA_1EW6GCiQMWw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: imx: Drop imx_anatop_init()
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Peter Chen <peter.chen@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <156684295014.23432.15591194830180888887.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 24, 2019 at 11:31 AM Shawn Guo <shawnguo@kernel.org> wrote:
->
-> On Thu, Aug 22, 2019 at 05:33:13PM +0000, Leonard Crestez wrote:
-> > On 31.07.2019 21:01, Andrey Smirnov wrote:
-> > > With commit b5bbe2235361 ("usb: phy: mxs: Disable external charger
-> > > detect in mxs_phy_hw_init()") in tree all of the necessary charger
-> > > setup is done by the USB PHY driver which covers all of the affected
-> > > i.MX6 SoCs.
-> > >
-> > > NOTE: Imx_anatop_init() was also called for i.MX7D, but looking at its
-> > > datasheet it appears to have a different USB PHY IP block, so
-> > > executing i.MX6 charger disable configuration seems unnecessary.
-> > >
-> > > -void __init imx_anatop_init(void)
-> > > -{
-> > > -   anatop = syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");
-> > > -   if (IS_ERR(anatop)) {
-> > > -           pr_err("%s: failed to find imx6q-anatop regmap!\n", __func__);
-> > > -           return;
-> > > -   }
-> >
-> > This patch breaks suspend on imx6 in linux-next because the "anatop"
-> > regmap is no longer initialized. This was found via bisect but
-> > no_console_suspend prints a helpful stack anyway:
-> >
-> > (regmap_read) from [<c01226e4>] (imx_anatop_enable_weak2p5+0x28/0x70)
-> > (imx_anatop_enable_weak2p5) from [<c0122744>]
-> > (imx_anatop_pre_suspend+0x18/0x64)
-> > (imx_anatop_pre_suspend) from [<c0124434>] (imx6q_pm_enter+0x60/0x16c)
-> > (imx6q_pm_enter) from [<c018c8a4>] (suspend_devices_and_enter+0x7d4/0xcbc)
-> > (suspend_devices_and_enter) from [<c018d544>] (pm_suspend+0x7b8/0x904)
-> > (pm_suspend) from [<c018b1b4>] (state_store+0x68/0xc8)
->
-> I dropped it from my branch for now.  Thanks for reporting!
->
+The following commit has been merged into the x86/urgent branch of tip:
 
-OK, it sounds like I can submit a v2 that only removes
-imx_anatop_usb_chrg_detect_disable() and keeps imx_anatop_init()
-intact.
+Commit-ID:     bae3a8d3308ee69a7dbdf145911b18dfda8ade0d
+Gitweb:        https://git.kernel.org/tip/bae3a8d3308ee69a7dbdf145911b18dfda8ade0d
+Author:        Bandan Das <bsd@redhat.com>
+AuthorDate:    Mon, 26 Aug 2019 06:15:12 -04:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 26 Aug 2019 20:00:56 +02:00
 
-Thanks,
-Andrey Smirnov
+x86/apic: Do not initialize LDR and DFR for bigsmp
+
+Legacy apic init uses bigsmp for smp systems with 8 and more CPUs. The
+bigsmp APIC implementation uses physical destination mode, but it
+nevertheless initializes LDR and DFR. The LDR even ends up incorrectly with
+multiple bit being set.
+
+This does not cause a functional problem because LDR and DFR are ignored
+when physical destination mode is active, but it triggered a problem on a
+32-bit KVM guest which jumps into a kdump kernel.
+
+The multiple bits set unearthed a bug in the KVM APIC implementation. The
+code which creates the logical destination map for VCPUs ignores the
+disabled state of the APIC and ends up overwriting an existing valid entry
+and as a result, APIC calibration hangs in the guest during kdump
+initialization.
+
+Remove the bogus LDR/DFR initialization.
+
+This is not intended to work around the KVM APIC bug. The LDR/DFR
+ininitalization is wrong on its own.
+
+The issue goes back into the pre git history. The fixes tag is the commit
+in the bitkeeper import which introduced bigsmp support in 2003.
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git
+
+Fixes: db7b9e9f26b8 ("[PATCH] Clustered APIC setup for >8 CPU systems")
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Bandan Das <bsd@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190826101513.5080-2-bsd@redhat.com
+
+
+---
+ arch/x86/kernel/apic/bigsmp_32.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
+
+diff --git a/arch/x86/kernel/apic/bigsmp_32.c b/arch/x86/kernel/apic/bigsmp_32.c
+index afee386..caedd8d 100644
+--- a/arch/x86/kernel/apic/bigsmp_32.c
++++ b/arch/x86/kernel/apic/bigsmp_32.c
+@@ -38,32 +38,12 @@ static int bigsmp_early_logical_apicid(int cpu)
+ 	return early_per_cpu(x86_cpu_to_apicid, cpu);
+ }
+ 
+-static inline unsigned long calculate_ldr(int cpu)
+-{
+-	unsigned long val, id;
+-
+-	val = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
+-	id = per_cpu(x86_bios_cpu_apicid, cpu);
+-	val |= SET_APIC_LOGICAL_ID(id);
+-
+-	return val;
+-}
+-
+ /*
+- * Set up the logical destination ID.
+- *
+- * Intel recommends to set DFR, LDR and TPR before enabling
+- * an APIC.  See e.g. "AP-388 82489DX User's Manual" (Intel
+- * document number 292116).  So here it goes...
++ * bigsmp enables physical destination mode
++ * and doesn't use LDR and DFR
+  */
+ static void bigsmp_init_apic_ldr(void)
+ {
+-	unsigned long val;
+-	int cpu = smp_processor_id();
+-
+-	apic_write(APIC_DFR, APIC_DFR_FLAT);
+-	val = calculate_ldr(cpu);
+-	apic_write(APIC_LDR, val);
+ }
+ 
+ static void bigsmp_setup_apic_routing(void)
