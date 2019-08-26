@@ -2,78 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60F3F9D788
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E109D78D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730117AbfHZUlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:41:49 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:37913 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729802AbfHZUlj (ORCPT
+        id S1730165AbfHZUnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:43:07 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39734 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727219AbfHZUnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:41:39 -0400
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from parav@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 26 Aug 2019 23:41:36 +0300
-Received: from sw-mtx-036.mtx.labs.mlnx (sw-mtx-036.mtx.labs.mlnx [10.12.150.149])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id x7QKfPDS021168;
-        Mon, 26 Aug 2019 23:41:34 +0300
-From:   Parav Pandit <parav@mellanox.com>
-To:     alex.williamson@redhat.com, jiri@mellanox.com,
-        kwankhede@nvidia.com, cohuck@redhat.com, davem@davemloft.net
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Parav Pandit <parav@mellanox.com>
-Subject: [PATCH 4/4] mtty: Optionally support mtty alias
-Date:   Mon, 26 Aug 2019 15:41:19 -0500
-Message-Id: <20190826204119.54386-5-parav@mellanox.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190826204119.54386-1-parav@mellanox.com>
-References: <20190826204119.54386-1-parav@mellanox.com>
+        Mon, 26 Aug 2019 16:43:06 -0400
+Received: by mail-lf1-f67.google.com with SMTP id x3so13339880lfn.6
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p1NZAj4MoRkEkLRbyMnIKojmRRt6i7vvfvZf586VwIo=;
+        b=BhBSgTH8xbSi4yH5k6ZClji6uofBcvgRFuCrXQ+CfzrGpCHRlBrmOUJoIDPK1Gut9A
+         WeahJGrJaNFNJwh0c/HgVZ5jPoTI/vpzov6ASOuJQEtACsUmt+Beyil6eR8J/Sss3A87
+         OGpnVux86xYACb9VXRrwuzhiAyIqJfCWBBHWywTueMKLM8lD7uDSxeV8QSQ9hDqpCFUd
+         bfkaSEWpK6hDVV0fDEMpS1NHcTuH8tbbhqk/7kWxtF7SXHZ1LpnYNJph7ydAOBf15ESd
+         u7M9Rxl/8fsyV5YrpZ3WWzTS4/AYyQrC5ytQBACXDLrNCEDWRjQOZdMUFw9l8YZq0pXH
+         N87A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p1NZAj4MoRkEkLRbyMnIKojmRRt6i7vvfvZf586VwIo=;
+        b=axneNMGSBRdDPCSg8BVm78U4bzbOFk/KUlYRBkXBwuEbXndRXtbfQmuQmuwconutT6
+         so5UkNC0lolPgar/zh1A4xgPwoWWQOlA2wrnLzaLGmkQ84uX+cwXUAK8cXB/6pndpTrl
+         CwkY0lA87EzjclfPzqlNnp1wnb28EJo+Nlgg4WAr9Wm7UkMYjlKLmus01at6iEQmDj7W
+         p9Jfcdg9bKWNcrrjJZmMBg5SL8fET1zOfbr7uX76lkWkpqZduawPoIVCAtJEbW6MJcSN
+         TBonIVR5hogbBeO/yIanTbyHiZlpsw4LIK/PziQNs8vOnjbMD4U5YL/Ax/9bn4rdUV7I
+         podg==
+X-Gm-Message-State: APjAAAW/a9JcL7TPSgxXxtWP2wsVyhK1LsLKqGJHhmEy0n0V3UsQxVSY
+        9dJP+iVIykO37G0bgUjU1Eg6D5WakiqlSkg2tkEgX/gVDQ==
+X-Google-Smtp-Source: APXvYqw98hCeYYBXk4YZHX6MIRcUUU+QfmECiO74pTKPAWw5m13mQig24osCxIldeAW+pbY5W0hdOp3iRnl5sSj14J4=
+X-Received: by 2002:ac2:4474:: with SMTP id y20mr2537810lfl.31.1566852183926;
+ Mon, 26 Aug 2019 13:43:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <4997df37-4a80-5cf5-effc-0a6f040c4528@huawei.com>
+ <CAHC9VhS_DCBRX6kkmiSYBzq+ELN2AYRypRN6vR_J1+JOi2FDvw@mail.gmail.com> <ce8efa9d-f2b6-5adc-0442-c73e632c6903@huawei.com>
+In-Reply-To: <ce8efa9d-f2b6-5adc-0442-c73e632c6903@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 26 Aug 2019 16:42:52 -0400
+Message-ID: <CAHC9VhS8Rq8J9MBUvqNeEO9pQRzx7mT=EfDagw=MQ2oO8jHbyw@mail.gmail.com>
+Subject: Re: [Question] audit_names use after delete in audit_filter_inodes
+To:     Chen Wandun <chenwandun@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-audit@redhat.com,
+        Eric Paris <eparis@redhat.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a module parameter to set alias length to optionally generate
-mdev alias.
+On Thu, Aug 22, 2019 at 3:22 AM Chen Wandun <chenwandun@huawei.com> wrote:
+> On 2019/8/21 23:36, Paul Moore wrote:
+> > On Wed, Aug 21, 2019 at 5:31 AM Chen Wandun <chenwandun@huawei.com> wrote:
+> >>
+> >> Hi,
+> >> Recently, I hit a use after delete in audit_filter_inodes,
+> >
+> > ...
+> >
+> >> the call stack is below:
+> >> [321315.077117] CPU: 6 PID: 8944 Comm: DefSch0100 Tainted: G           OE  ----V-------   3.10.0-327.62.59.83.w75.x86_64 #1
+> >> [321315.077117] Hardware name: OpenStack Foundation OpenStack Nova, BIOS rel-1.8.1-0-g4adadbd-20170107_142945-9_64_246_229 04/01/2014
+> >
+> > It looks like this is a vendor kernel and not an upstream kernel, yes?
+>
+> I analysed the upstream kernel about audit, and found there is no significant change
+> in audit_names add/read/delete since v3.10.
 
-Example to request mdev alias.
-$ modprobe mtty alias_length=12
+The number of changes in a Linux v3.10 based distro kernel and a
+modern upstream are quite significant, regardless of what you might
+see by comparing a limited number of functions/structs.  I once again
+suggest you contact your distribution provider for support, or move to
+a modern Linux kernel so that upstream can better understand your
+problem.
 
-Signed-off-by: Parav Pandit <parav@mellanox.com>
----
- samples/vfio-mdev/mtty.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-index 92e770a06ea2..92208245b057 100644
---- a/samples/vfio-mdev/mtty.c
-+++ b/samples/vfio-mdev/mtty.c
-@@ -1410,6 +1410,15 @@ static struct attribute_group *mdev_type_groups[] = {
- 	NULL,
- };
- 
-+static unsigned int mtty_alias_length;
-+module_param_named(alias_length, mtty_alias_length, uint, 0444);
-+MODULE_PARM_DESC(alias_length, "mdev alias length; default=0");
-+
-+static unsigned int mtty_get_alias_length(void)
-+{
-+	return mtty_alias_length;
-+}
-+
- static const struct mdev_parent_ops mdev_fops = {
- 	.owner                  = THIS_MODULE,
- 	.dev_attr_groups        = mtty_dev_groups,
-@@ -1422,6 +1431,7 @@ static const struct mdev_parent_ops mdev_fops = {
- 	.read                   = mtty_read,
- 	.write                  = mtty_write,
- 	.ioctl		        = mtty_ioctl,
-+	.get_alias_length	= mtty_get_alias_length
- };
- 
- static void mtty_device_release(struct device *dev)
 -- 
-2.19.2
-
+paul moore
+www.paul-moore.com
