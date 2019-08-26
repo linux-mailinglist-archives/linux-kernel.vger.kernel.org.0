@@ -2,76 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2478F9D51C
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 19:39:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B31E69D50E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 19:38:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387438AbfHZRjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 13:39:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731986AbfHZRjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 13:39:35 -0400
-Received: from localhost (unknown [122.178.200.231])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36B4D2080C;
-        Mon, 26 Aug 2019 17:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566841175;
-        bh=vhvUfinBuSpm31ERs791ilat2rMccKc/GvBF87f6fuM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TJ9aMvddrr4mCu9l3R/JGImtMK12IkD2AcSahL1RwBX/J8vH30u2zbXRbrC7YQrQr
-         6LikbONFNnGjjLjsDpgaSqGg+qOg7dLoXZceMYKcbNRxUOoNvYP1PDdDrC+fRKtoUh
-         MtYV36bW8phNflGVDgBMeAEZZ95EbXmqL4saCNDA=
-Date:   Mon, 26 Aug 2019 23:08:25 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: sm8150: Update parent clock for rpmhcc
-Message-ID: <20190826173825.GJ2672@vkoul-mobl>
-References: <20190822170533.8056-1-vkoul@kernel.org>
+        id S1732741AbfHZRix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 13:38:53 -0400
+Received: from vsmx012.vodafonemail.xion.oxcs.net ([153.92.174.90]:32865 "EHLO
+        vsmx012.vodafonemail.xion.oxcs.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729466AbfHZRix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 13:38:53 -0400
+Received: from vsmx004.vodafonemail.xion.oxcs.net (unknown [192.168.75.198])
+        by mta-8-out.mta.xion.oxcs.net (Postfix) with ESMTP id E3171F34CCC;
+        Mon, 26 Aug 2019 17:38:50 +0000 (UTC)
+Received: from lazy.lzy (unknown [87.157.113.162])
+        by mta-8-out.mta.xion.oxcs.net (Postfix) with ESMTPA id 4A10119A968;
+        Mon, 26 Aug 2019 17:38:35 +0000 (UTC)
+Received: from lazy.lzy (localhost [127.0.0.1])
+        by lazy.lzy (8.15.2/8.14.5) with ESMTPS id x7QHcYGp004219
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 26 Aug 2019 19:38:34 +0200
+Received: (from red@localhost)
+        by lazy.lzy (8.15.2/8.15.2/Submit) id x7QHcXtE004218;
+        Mon, 26 Aug 2019 19:38:33 +0200
+Date:   Mon, 26 Aug 2019 19:38:33 +0200
+From:   Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+To:     Piergiorgio Sartor <piergiorgio.sartor@nexgo.de>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: reeze while write on external usb 3.0 hard disk [Bug 204095]
+Message-ID: <20190826173833.GA4166@lazy.lzy>
+References: <20190817095422.GA4200@lazy.lzy>
+ <Pine.LNX.4.44L0.1908191009490.1506-100000@iolanthe.rowland.org>
+ <20190820072326.GD28968@lst.de>
+ <20190820163722.GA2991@lazy.lzy>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190822170533.8056-1-vkoul@kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190820163722.GA2991@lazy.lzy>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-VADE-STATUS: LEGIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-08-19, 22:35, Vinod Koul wrote:
-> Since rphmcc expects the parent clock name as 'xo_board', update the
-> parent clock name.
+On Tue, Aug 20, 2019 at 06:37:22PM +0200, Piergiorgio Sartor wrote:
+> On Tue, Aug 20, 2019 at 09:23:26AM +0200, Christoph Hellwig wrote:
+> > On Mon, Aug 19, 2019 at 10:14:25AM -0400, Alan Stern wrote:
+> > > Let's bring this to the attention of some more people.
+> > > 
+> > > It looks like the bug that was supposed to be fixed by commit
+> > > d74ffae8b8dd ("usb-storage: Add a limitation for
+> > > blk_queue_max_hw_sectors()"), which is part of 5.2.5, but apparently
+> > > the bug still occurs.
+> > 
+> > Piergiorgio,
+> > 
+> > can you dump the content of max_hw_sectors_kb file for your USB storage
+> > device and send that to this thread?
 > 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  arch/arm64/boot/dts/qcom/sm8150.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi all,
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> index 379c40b9a52f..f92c590fd3dc 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-> @@ -650,7 +650,7 @@
->  			rpmhcc: clock-controller {
->  				compatible = "qcom,sm8150-rpmh-clk";
->  				#clock-cells = <1>;
-> -				clock-names = "xo";
-> +				clock-names = "xo_board";
+> for both kernels, 5.1.20 (working) and 5.2.8 (not working),
+> the content of /sys/dev/x:y/queue/max_hw_sectors_kb is 512
+> for USB storage devices (2.0 and 3.0).
+> 
+> This is for the PC showing the issue.
+> 
+> In an other PC, which does not show the issus at the moment,
+> the values are 120, for USB2.0, and 256, for USB3.0.
 
-With the v5 of the rpmh changes we dont need this, so please drop this
+Hi again,
 
->  				clocks = <&xo_board>;
->  			};
->  		};
-> -- 
-> 2.20.1
+any news on this?
+
+Is there anything I can do to help?
+
+Should I report this somewhere else too?
+
+Currently this is quite a huge problem for me,
+since the only working external storage is an
+old 1394 HDD...
+
+Thanks,
+
+bye,
 
 -- 
-~Vinod
+
+piergiorgio
