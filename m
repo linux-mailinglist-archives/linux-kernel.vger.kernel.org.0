@@ -2,61 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 497659D7A6
+	by mail.lfdr.de (Postfix) with ESMTP id B7D199D7A7
 	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbfHZUpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1731388AbfHZUpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 26 Aug 2019 16:45:10 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53724 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730644AbfHZUpH (ORCPT
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36480 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731065AbfHZUpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:45:07 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 10so794890wmp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:45:05 -0700 (PDT)
+        Mon, 26 Aug 2019 16:45:08 -0400
+Received: by mail-wm1-f67.google.com with SMTP id g67so794874wme.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:45:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FoQUNs6EXC98c6qNkjKAv+h1NQz6LneBfiroF9aLlEY=;
-        b=jPW1jRGNr3AnUe8RjuZmRCXkYAzsbzMhz32nq0OWWy1zpvhbhiDiAAuRPeiyVl491V
-         cCLcdpNtFLqim8SyephS7b9b9ko8sszl0kvNj9BUd6h/QBPgHXF6o+PKgNQPiVfYIRFH
-         B5PaOVC29nRY9kNRjKZOXYVORKwkhwB4w6wIQfyh5qoOxK8zLHitQH33/0d6bWm9f+Hp
-         jXHkDDm3osu6MOCTwW7J2wI7rENToUJpJEwajOTRQlt9CP252Ej6QkLEf/vKr4EMYtlw
-         qSq1d5xHTNDG2TjA+3gjsTNtCTSGd3PgMPfHdHP33PAXjh10wjQNIX5E0VjydN1qN6wD
-         2U1A==
+        bh=EJr/EagOWWWCEFoK6Cl8RHdd3bbJGdepYKWoaGBi1+8=;
+        b=uSRwaaQTED8QF+2S4yqgVSoNPgjxT8uTgt9GhpJsDr+8CvcVzeUbCSE0ERTVchio4p
+         QNRdt30i1fpggxajsFk7Voi6prWjddEOIdOxu/GaOqTH1NMqdBXyL9p9OsvjyHBGqz2n
+         ZtmiU15CtLVF/qW8QfOji5RW101rf6lV2hH4P8NlLJAV2uMDR1rvyAsAeS2SV4p1eKD9
+         ByX/kC7XiDxfjEXRYp4lV1pFvei3AOrAjRvNGOYS5+vNSRte8WFE3BWxQNgdYUSObzPd
+         v08kN1XBFh7jYXDKXF1rRiLfgCLVJMRsBl1Gj22oaCtg0kP8zckgIqrdiYBqAj4kZfE3
+         5SOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=FoQUNs6EXC98c6qNkjKAv+h1NQz6LneBfiroF9aLlEY=;
-        b=btnqkaIZGMoXWn1j+ENn3aqzTK4hmkgTEMce5YYF8e/lN4Vfixi4UuN3SzEWE4QBsY
-         aUrmHDKrcAHfBVMSsCZHylSpWwQKvwCX1SmUI5GLPGlZyJ89ohEBuf4jR/TKxLtVym2y
-         5cg/+GuUtMPtp5Igqax+emmMYo0Xo95tOtHpUp1zqDr8P1LIzOCASN88gyYzHOv1puZU
-         LCsOlvCRvAPMJZAd2e/q8sLTfJUD4UBqLkeII5IxuaNoVMseRFXtQQvnEKS25Ywxx9p2
-         tkIyHZhq1Qn7Aqgn5qnvmQJgZRLHpKbe0iTw3AHzqwTzE7TWXkBGG1VOk3ayXW8rPGln
-         Atjw==
-X-Gm-Message-State: APjAAAVTF+a+qUPnn9HPyMhYLB0Sq+0HpYe8J2WxLmEhmrqZ+l+R+INf
-        B+d2jOh3eCVRUhzyVwLStpT14bdOpYY=
-X-Google-Smtp-Source: APXvYqyHbekAIjbL3EcGUIK26+5NTPt6HqD6js8hW+tX33ban4SVbg0ypMkdOAVMDSLQmyTu6FbxxA==
-X-Received: by 2002:a7b:c8c1:: with SMTP id f1mr21953351wml.87.1566852304570;
-        Mon, 26 Aug 2019 13:45:04 -0700 (PDT)
+        bh=EJr/EagOWWWCEFoK6Cl8RHdd3bbJGdepYKWoaGBi1+8=;
+        b=ada3sQz6Rn7mOpK5YyIU5l7RefuPGLDJ+RGrzQd16/XJ4rNNvUKYOm/QYUtBx9eq9O
+         N+axadk6udbgEEYg5g6D0Sgu3HmEycHXqoXkFs2upWhwbfoi+g/TPunR8igVPXBjPO+5
+         J8TW5aTG5Scu7YpHs7+Gl5A3YqYwEy+R4Chw1WpVUzd57+pydNyYivXgok5TzeR/XDaJ
+         /qcb31e1WUE4KlyhyHPFZbA3IkJ6trpx/KH61NQ3vdILT4kaAaF8dO6CPcSWFXxlLH1o
+         QZS5uJwsLz2R6heRfAFxjrZ3KopLKP/q44tiCXHp2L9GlphQQf3FSokY7FHAdmyyM8WG
+         9p6g==
+X-Gm-Message-State: APjAAAU3tL31kDiyXQ9BhZPjW/JRCDyaQ9q6gjFDwPI+Avnz7xd0LMKY
+        VYy+qzGrhfQTwsOfkrkMw6Juzg==
+X-Google-Smtp-Source: APXvYqwXwSxG80kgpFkYnO+Z1GwvdiIdcVmq6Bkgqse72Bk1nRrZrhz0H9bgN6nDwhLGTu2FJfkc7Q==
+X-Received: by 2002:a1c:ed04:: with SMTP id l4mr24638471wmh.81.1566852306477;
+        Mon, 26 Aug 2019 13:45:06 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab])
-        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.45.03
+        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.45.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 13:45:03 -0700 (PDT)
+        Mon, 26 Aug 2019 13:45:05 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-stm32@st-md-mailman.stormreply.com (moderated list:ARM/STM32
-        ARCHITECTURE),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/STM32
-        ARCHITECTURE)
-Subject: [PATCH 10/20] clocksource/drivers/renesas-ostm: Use DIV_ROUND_CLOSEST() helper
-Date:   Mon, 26 Aug 2019 22:43:57 +0200
-Message-Id: <20190826204407.17759-10-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Avi Fishman <avifishman70@gmail.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        openbmc@lists.ozlabs.org (moderated list:ARM/NUVOTON NPCM ARCHITECTURE)
+Subject: [PATCH 11/20] clocksource/drivers/npcm: Fix GENMASK and timer operation
+Date:   Mon, 26 Aug 2019 22:43:58 +0200
+Message-Id: <20190826204407.17759-11-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190826204407.17759-1-daniel.lezcano@linaro.org>
 References: <df27caba-d9f8-e64d-0563-609f8785ecb3@linaro.org>
@@ -66,31 +65,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Avi Fishman <avifishman70@gmail.com>
 
-Use the DIV_ROUND_CLOSEST() helper instead of open-coding the same
-operation.
+NPCM7XX_Tx_OPER GENMASK bits are wrong, fix them.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Hopefully the NPCM7XX_REG_TICR0 register reset value of those bits was 0,
+so it did not cause an issue.
+
+The function npcm7xx_timer_oneshot() reads the register
+NPCM7XX_REG_TCSR0, modifies it and then reads it again overwriting the
+previous changes. Remove the extra read which is pointless.
+
+The function npcm7xx_timer_periodic() is correct but the code writes
+to the NPCM7XX_REG_TICR0 register while it is dealing with the
+NPCM7XX_REG_TCSR0 register, that is confusing. Separate the write to
+the registers in the code for the sake of clarity.
+
+Fixes: 1c00289ecd12 ("clocksource/drivers/npcm: Add NPCM7xx timer driver")
+Signed-off-by: Avi Fishman <avifishman70@gmail.com>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/renesas-ostm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/timer-npcm7xx.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
-index 61d5f3b539ce..37c39b901bb1 100644
---- a/drivers/clocksource/renesas-ostm.c
-+++ b/drivers/clocksource/renesas-ostm.c
-@@ -221,7 +221,7 @@ static int __init ostm_init(struct device_node *np)
- 	}
+diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/timer-npcm7xx.c
+index 8a30da7f083b..9780ffd8010e 100644
+--- a/drivers/clocksource/timer-npcm7xx.c
++++ b/drivers/clocksource/timer-npcm7xx.c
+@@ -32,7 +32,7 @@
+ #define NPCM7XX_Tx_INTEN		BIT(29)
+ #define NPCM7XX_Tx_COUNTEN		BIT(30)
+ #define NPCM7XX_Tx_ONESHOT		0x0
+-#define NPCM7XX_Tx_OPER			GENMASK(27, 3)
++#define NPCM7XX_Tx_OPER			GENMASK(28, 27)
+ #define NPCM7XX_Tx_MIN_PRESCALE		0x1
+ #define NPCM7XX_Tx_TDR_MASK_BITS	24
+ #define NPCM7XX_Tx_MAX_CNT		0xFFFFFF
+@@ -84,8 +84,6 @@ static int npcm7xx_timer_oneshot(struct clock_event_device *evt)
  
- 	rate = clk_get_rate(ostm_clk);
--	ostm->ticks_per_jiffy = (rate + HZ / 2) / HZ;
-+	ostm->ticks_per_jiffy = DIV_ROUND_CLOSEST(rate, HZ);
+ 	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+ 	val &= ~NPCM7XX_Tx_OPER;
+-
+-	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+ 	val |= NPCM7XX_START_ONESHOT_Tx;
+ 	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
  
- 	/*
- 	 * First probed device will be used as system clocksource. Any
+@@ -97,12 +95,11 @@ static int npcm7xx_timer_periodic(struct clock_event_device *evt)
+ 	struct timer_of *to = to_timer_of(evt);
+ 	u32 val;
+ 
++	writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
++
+ 	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+ 	val &= ~NPCM7XX_Tx_OPER;
+-
+-	writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
+ 	val |= NPCM7XX_START_PERIODIC_Tx;
+-
+ 	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
+ 
+ 	return 0;
 -- 
 2.17.1
 
