@@ -2,109 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EE5C9CD61
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 12:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 775B59CD59
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 12:34:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730584AbfHZKiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 06:38:54 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40743 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729327AbfHZKiy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 06:38:54 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c5so15128620wmb.5
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 03:38:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=Kf8u4CCd/0S9O2So6myGgJK9LXtHBggKOGNILgyNsuQ=;
-        b=zQ8qmx05qaOIOKB3nVfxXqNCv+sn45uHFoupchU/B5zmHCN7P03HHPRLrUjbmJmnhx
-         IpyiotKwMSMCJbdLA9LfMV32TI6cVrpw+aoiguzXU9TCxD84ovcOUzc/yHq2RzLjkOwh
-         V6qOJdCIhgChbe7pPv77ONsJFBRDFa3bl91/LcGbmlZBM/ki7UAsHZzDqDR5Z7AkAkIQ
-         e55qpjmV2NWd/xbpvPP3DnV0donLR7jFVICnLZkeFV19/9R2kmIW99MIPIwW8mmLs50T
-         /tCRnjIzaS3Ez4vOpUw1ZnZZUCN9Z8QTxRF95FpldE71mQQRFb6fqa51UjkMk84x3r8C
-         qxJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=Kf8u4CCd/0S9O2So6myGgJK9LXtHBggKOGNILgyNsuQ=;
-        b=aX5pLhvKrVClKh6fdZbX6qpB5M30Rw3BMZxS7/hOArN2tm4ntyOjoL6c1UlxvRJEH6
-         ZZgDYrmhewy7g2gPCnQzT+/HUemjo3R3UmBh+qIl4XuWctQpu/ygclYInOd8lGehDG3Z
-         h5Pa2oEAHgmDa/6ujonvmGqQBUEM7EgEp/KfhMcbXO30YtGxru2T6zmg7UFVqb3pVHqC
-         sT6MIlo/nyhVQN2x/aMnIfmJYT85Ff79ULTG45x9qCAIQr68qq4iORDq1e/Vp/nOFW5i
-         lO7dbBkbplOGTdTOIsJjSOI1oC22beaCLYuOyrKu6lr3LHyJWAtBbn4s6B/MPXo33atK
-         vKFg==
-X-Gm-Message-State: APjAAAUGQO2Oglf0IVkk2PYGPEpP1saIhN82OXhrPVr/dgIarJGQFgGQ
-        szZFLMK2F3+hRIc2uaLQhKIgNQ==
-X-Google-Smtp-Source: APXvYqx71Hht1gZQHsv1/FmSYQIlLLq0ghiFPtdJ3K9r2UYbesJhnRhD20ID9r47y8tLV2cTZB7m2w==
-X-Received: by 2002:a7b:c198:: with SMTP id y24mr20738869wmi.131.1566815931702;
-        Mon, 26 Aug 2019 03:38:51 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id e11sm32044884wrc.4.2019.08.26.03.38.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 03:38:50 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] 0/6] arm64: meson-sm1: add support for DVFS
-In-Reply-To: <20190826072539.27725-1-narmstrong@baylibre.com>
-References: <20190826072539.27725-1-narmstrong@baylibre.com>
-Date:   Mon, 26 Aug 2019 12:38:49 +0200
-Message-ID: <1jblwc6wjq.fsf@starbuckisacylon.baylibre.com>
+        id S1731004AbfHZKeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 06:34:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51236 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727176AbfHZKeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 06:34:18 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0C684ABC4;
+        Mon, 26 Aug 2019 10:34:16 +0000 (UTC)
+Date:   Mon, 26 Aug 2019 12:41:27 +0200
+From:   Cyril Hrubis <chrubis@suse.cz>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     ltp@lists.linux.it,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        alexey.kodanev@oracle.com, the_hoang0709@yahoo.com,
+        Jan Stancek <jstancek@redhat.com>
+Subject: Re: Linux-next-20190823: x86_64/i386: prot_hsymlinks.c:325: Failed
+ to run cmd: useradd hsym
+Message-ID: <20190826104127.GA14729@haruka>
+References: <CA+G9fYtN2tjHZtjtc8isdsD5hF76teeh2-pngUp+uj3WYdj7jA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtN2tjHZtjtc8isdsD5hF76teeh2-pngUp+uj3WYdj7jA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 26 Aug 2019 at 09:25, Neil Armstrong <narmstrong@baylibre.com> wrote:
+Hi!
+> Do you see this LTP prot_hsymlinks failure on linux next 20190823 on
+> x86_64 and i386 devices?
+> 
+> test output log,
+> useradd: failure while writing changes to /etc/passwd
+> useradd: /home/hsym was created, but could not be removed
 
-> Following DVFS support for the Amlogic G12A and G12B SoCs, this serie
-> enables DVFS on the SM1 SoC for the SEI610 board.
->
-> The SM1 Clock structure is slightly different because of the Cortex-A55
-> core used, having the capability for each core of a same cluster to run
-> at a different frequency thanks to the newly used DynamIQ Shared Unit.
->
-> This is why SM1 has a CPU clock tree for each core and for DynamIQ Shared Unit,
-> with a bypass mux to use the CPU0 instead of the dedicated trees.
->
-> The DSU uses a new GP1 PLL as default clock, thus GP1 is added as read-only.
->
-> The SM1 OPPs has been taken from the Amlogic Vendor tree, and unlike
-> G12A only a single version of the SoC is available.
->
-> Dependencies:
-> - patch 6 is based on the "arm64: meson: add support for SM1 Power Domains" serie,
-> 	but is not a strong dependency, it will work without
->
-> Changes since v1:
-> - exposed GP1, DSU and CPU 1,2,3 clock in patch 1
->
-> Neil Armstrong (5):
->   dt-bindings: clk: meson: add sm1 periph clock controller bindings
->   clk: meson: g12a: add support for SM1 GP1 PLL
->   clk: meson: g12a: add support for SM1 DynamIQ Shared Unit clock
->   clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks
->   arm64: dts: meson-sm1-sei610: enable DVFS
->
->  .../bindings/clock/amlogic,gxbb-clkc.txt      |   1 +
->  .../boot/dts/amlogic/meson-sm1-sei610.dts     |  59 +-
->  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  69 +++
->  drivers/clk/meson/g12a.c                      | 544 ++++++++++++++++++
->  drivers/clk/meson/g12a.h                      |  24 +-
->  include/dt-bindings/clock/g12a-clkc.h         |   5 +
->  6 files changed, 697 insertions(+), 5 deletions(-)
+This looks like an unrelated problem, failure to write to /etc/passwd
+probably means that filesystem is full or some problem happend and how
+is remounted RO.
 
-Applied 1 to 4
+I do not see the kernel messages from this job anywhere at the job
+pages, is it stored somewhere?
 
-Nitpick: two checkpatch warnings regarding 75 char line wrap fixed in place.
-
->
-> -- 
-> 2.22.0
+-- 
+Cyril Hrubis
+chrubis@suse.cz
