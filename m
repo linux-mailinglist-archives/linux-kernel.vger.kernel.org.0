@@ -2,68 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 754F89D002
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 15:04:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CBB99D004
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 15:06:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728769AbfHZNEU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 09:04:20 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54372 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfHZNEU (ORCPT
+        id S1730797AbfHZNF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 09:05:58 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:46912 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730241AbfHZNF6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 09:04:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4LqlgRwuiJk/8JJ10qWC9ccyEahAihBfJhv+eLrMoAo=; b=Aou8o3kx9eLNin8V/NlOX2Wr6
-        +jnWjJThFBbBU9JqyLJ6QYknAQVKI5rQNF7fXI2hx5W6yX1wsNx7EabPWjXp+5MEQWKYcEMaMqJSQ
-        MlKB+LC19Xez+iXADBVL2FWN+zS9WTdnSszfp/0dh0gDIJm+2nlB7/LVrR58scO7eV7gPGL8jT9L8
-        8E0VbalujhArSS8bH2TVQlhcZ39QA87EIjhGA/N86stQa+vQYN9wjo6Zh30M/xZXdX5lLVl6GZfQH
-        oRyWNTzAH7HmK05cD0yXKlKs7GrFbG1ncDr9TsSki1P36/UfRFOsgeb4SNgBV3tuSH8GKRr79k26a
-        8jUfn3l/w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2EfL-00070s-Nj; Mon, 26 Aug 2019 13:04:11 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        Mon, 26 Aug 2019 09:05:58 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AE7B63070F4;
-        Mon, 26 Aug 2019 15:03:36 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2C35D20A71EF4; Mon, 26 Aug 2019 15:04:10 +0200 (CEST)
-Date:   Mon, 26 Aug 2019 15:04:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org
-Cc:     Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH 0/3] Rewrite x86/ftrace to use text_poke()
-Message-ID: <20190826130410.GU2369@hirez.programming.kicks-ass.net>
-References: <20190826125138.710718863@infradead.org>
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id B0F8428BD6A;
+        Mon, 26 Aug 2019 14:05:56 +0100 (BST)
+Date:   Mon, 26 Aug 2019 15:05:53 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-mtd@lists.infradead.org (open list:NAND FLASH SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v2] mtd: rawnand: Fix a memory leak bug
+Message-ID: <20190826150553.3f758c84@collabora.com>
+In-Reply-To: <1566182765-7150-1-git-send-email-wenwen@cs.uga.edu>
+References: <1566182765-7150-1-git-send-email-wenwen@cs.uga.edu>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826125138.710718863@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 02:51:38PM +0200, Peter Zijlstra wrote:
-> Ftrace was one of the last W^X violators; these patches move it over to the
-> generic text_poke() interface and thereby get rid of this oddity.
-> 
-> Very lightly tested...
+On Sun, 18 Aug 2019 21:46:04 -0500
+Wenwen Wang <wenwen@cs.uga.edu> wrote:
 
-I'm thinking there's more cleanup to be had; set_kernel_text_*() can go
-away now, and I'm thinking the whole batching thing can be further
-simplified/shared between this and jump_label.
+> In nand_scan_bbt(), a temporary buffer 'buf' is allocated through
+> vmalloc(). However, if check_create() fails, 'buf' is not deallocated,
+> leading to a memory leak bug. To fix this issue, free 'buf' before
+> returning the error.
+> 
+> Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+> ---
+>  drivers/mtd/nand/raw/nand_bbt.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/nand_bbt.c b/drivers/mtd/nand/raw/nand_bbt.c
+> index 2ef15ef..96045d6 100644
+> --- a/drivers/mtd/nand/raw/nand_bbt.c
+> +++ b/drivers/mtd/nand/raw/nand_bbt.c
+> @@ -1232,7 +1232,7 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
+>  	if (!td) {
+>  		if ((res = nand_memory_bbt(this, bd))) {
+>  			pr_err("nand_bbt: can't scan flash and build the RAM-based BBT\n");
+> -			goto err;
+> +			goto err_free_bbt;
+>  		}
+>  		return 0;
+>  	}
+> @@ -1245,7 +1245,7 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
+>  	buf = vmalloc(len);
+>  	if (!buf) {
+>  		res = -ENOMEM;
+> -		goto err;
+> +		goto err_free_bbt;
+>  	}
+>  
+>  	/* Is the bbt at a given page? */
+> @@ -1258,7 +1258,7 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
+>  
+>  	res = check_create(this, buf, bd);
+
+I know it's too late, but calling
+
+	vfree(buf);
+
+here
+
+>  	if (res)
+> -		goto err;
+> +		goto err_free_buf;
+>  
+>  	/* Prevent the bbt regions from erasing / writing */
+>  	mark_bbt_region(this, td);
+> @@ -1268,7 +1268,9 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
+>  	vfree(buf);
+
+instead of here would have fixed the leak without the need for an extra
+err label.
+
+>  	return 0;
+>  
+> -err:
+> +err_free_buf:
+> +	vfree(buf);
+> +err_free_bbt:
+>  	kfree(this->bbt);
+>  	this->bbt = NULL;
+>  	return res;
 
