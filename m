@@ -2,63 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C6389C6E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 02:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6E5D9C6E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 02:48:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbfHZAsN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 20:48:13 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:48565 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726281AbfHZAsK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728923AbfHZAsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sun, 25 Aug 2019 20:48:10 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7Q0li6E014485
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 25 Aug 2019 20:47:46 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id A868042049E; Sun, 25 Aug 2019 20:47:44 -0400 (EDT)
-Date:   Sun, 25 Aug 2019 20:47:44 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Guo <guoyang2@huawei.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-Subject: Re: [PATCH] ext4: change the type of ext4 cache stats to
- percpu_counter to improve performance
-Message-ID: <20190826004744.GA27472@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Guo <guoyang2@huawei.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>
-References: <1566528454-13725-1-git-send-email-zhangshaokun@hisilicon.com>
- <20190825032524.GD5163@mit.edu>
- <20190825172803.GA9505@sol.localdomain>
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44753 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbfHZAsJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 20:48:09 -0400
+Received: by mail-io1-f67.google.com with SMTP id j4so24831977iog.11;
+        Sun, 25 Aug 2019 17:48:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W/51w5j8xEcYmqOnM2KI7Id/pY4RG7FnEXZK5a9W5RA=;
+        b=jiglPNpgKm4E5mpddxqvqDxY+bWhiTdGIiXT9uvxVz1duakfoA0qsNe5RK29mA6Dcp
+         kg+Wk9tznXQsM40KYC2TtpmG4f9oxaGSqH/PMDRfN6WLlY4IXrKLYga69MPDT1rcbU6s
+         JHwnkbxQiMHJTwzPvpaBKebn9G5xjknuQunqMDbIW5TIFb6CpTWl1NKGwpA1dY92vlqE
+         mGRkyznLTonRN/FzEbyM50uXHAW5ifkHfp2LHlf52/ypSZXw0P25Q62Q56Rgglfv7tgT
+         Tpdp15TuTcucREXfQLHhvQtiYaW0/sNb2oZYwk4jXp6GVtG0atQ99PLhoZPfve7XCAqk
+         UwYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W/51w5j8xEcYmqOnM2KI7Id/pY4RG7FnEXZK5a9W5RA=;
+        b=sNTmYi1sFzWWB9TBhvr3/NXfYQ+nCsoFCUepSGRCwvCHvEXG+Lx6lFHWggc0Fwn2Yb
+         nzvzs3T7ffLxBqGn0DR89OKOyJ78URtAEHDbsf5YKHGZOg648KRnnpoi2co9oSedDFgR
+         LYwJLlb882fh1MAYTs8WXHikr6qRyhsGcqgu/B9zgA71al/PELfheMgy2P21roOIezxg
+         KOGFellgLhIaCMZG0gQeCPTxqwYvsWoLN0wLBUBN4RqvG0KeHHdMLiagUEQ0C2XHtEqU
+         dM/p4D1qa3L5vYsqODHN6pVdbu5wUNnUBUiJQp2E+vkSKTdReBUvxGp+O6hg6w5Ge3Iy
+         Jc2g==
+X-Gm-Message-State: APjAAAVy6B8Qvt9dPF0Rly7CO4xfixWiXq7EBCcGyjI/le1zB0X7Ek4q
+        KcWk+RZ5heyb9W35stsIe9OCws4pLgBNbcH9r90=
+X-Google-Smtp-Source: APXvYqzXg9gVX/qKg0t2MCc7SoktEu+oMdiepBTfW0tBZwwwg2umaYojE9DZsKHbmvFwfWsBZdWs0TnBY8SLScsRhs4=
+X-Received: by 2002:a02:29ca:: with SMTP id p193mr15275350jap.88.1566780488682;
+ Sun, 25 Aug 2019 17:48:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190825172803.GA9505@sol.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190823121535.76296-1-yuehaibing@huawei.com>
+In-Reply-To: <20190823121535.76296-1-yuehaibing@huawei.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Sun, 25 Aug 2019 19:47:57 -0500
+Message-ID: <CAH2r5mt0T=4qw9tuvX-QO7Lh2A_gzWPhLMyou4ZJNDJgmFXEsA@mail.gmail.com>
+Subject: Re: [PATCH -next] cifs: remove set but not used variables
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 25, 2019 at 10:28:03AM -0700, Eric Biggers wrote:
-> This patch is causing the following.  Probably because there's no calls to
-> percpu_counter_destroy() for the new counters?
+merged into cifs-2.6.git for-next
 
-Yeah, I noticed this from my test runs last night as well.  It looks
-like original patch was never tested with CONFIG_HOTPLUG_CPU.
+On Fri, Aug 23, 2019 at 6:11 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> fs/cifs/file.c: In function cifs_lock:
+> fs/cifs/file.c:1696:24: warning: variable cinode set but not used [-Wunused-but-set-variable]
+> fs/cifs/file.c: In function cifs_write:
+> fs/cifs/file.c:1765:23: warning: variable cifs_sb set but not used [-Wunused-but-set-variable]
+> fs/cifs/file.c: In function collect_uncached_read_data:
+> fs/cifs/file.c:3578:20: warning: variable tcon set but not used [-Wunused-but-set-variable]
+>
+> 'cinode' is never used since introduced by
+> commit 03776f4516bc ("CIFS: Simplify byte range locking code")
+> 'cifs_sb' is not used since commit cb7e9eabb2b5 ("CIFS: Use
+> multicredits for SMB 2.1/3 writes").
+> 'tcon' is not used since commit d26e2903fc10 ("smb3: fix bytes_read statistics")
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  fs/cifs/file.c | 7 -------
+>  1 file changed, 7 deletions(-)
+>
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index ab07ae8..f16f6d2 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -1693,7 +1693,6 @@ int cifs_lock(struct file *file, int cmd, struct file_lock *flock)
+>         bool posix_lck = false;
+>         struct cifs_sb_info *cifs_sb;
+>         struct cifs_tcon *tcon;
+> -       struct cifsInodeInfo *cinode;
+>         struct cifsFileInfo *cfile;
+>         __u32 type;
+>
+> @@ -1710,7 +1709,6 @@ int cifs_lock(struct file *file, int cmd, struct file_lock *flock)
+>         cifs_read_flock(flock, &type, &lock, &unlock, &wait_flag,
+>                         tcon->ses->server);
+>         cifs_sb = CIFS_FILE_SB(file);
+> -       cinode = CIFS_I(file_inode(file));
+>
+>         if (cap_unix(tcon->ses) &&
+>             (CIFS_UNIX_FCNTL_CAP & le64_to_cpu(tcon->fsUnixInfo.Capability)) &&
+> @@ -1762,7 +1760,6 @@ cifs_write(struct cifsFileInfo *open_file, __u32 pid, const char *write_data,
+>         int rc = 0;
+>         unsigned int bytes_written = 0;
+>         unsigned int total_written;
+> -       struct cifs_sb_info *cifs_sb;
+>         struct cifs_tcon *tcon;
+>         struct TCP_Server_Info *server;
+>         unsigned int xid;
+> @@ -1770,8 +1767,6 @@ cifs_write(struct cifsFileInfo *open_file, __u32 pid, const char *write_data,
+>         struct cifsInodeInfo *cifsi = CIFS_I(d_inode(dentry));
+>         struct cifs_io_parms io_parms;
+>
+> -       cifs_sb = CIFS_SB(dentry->d_sb);
+> -
+>         cifs_dbg(FYI, "write %zd bytes to offset %lld of %pd\n",
+>                  write_size, *offset, dentry);
+>
+> @@ -3575,10 +3570,8 @@ collect_uncached_read_data(struct cifs_aio_ctx *ctx)
+>         struct cifs_readdata *rdata, *tmp;
+>         struct iov_iter *to = &ctx->iter;
+>         struct cifs_sb_info *cifs_sb;
+> -       struct cifs_tcon *tcon;
+>         int rc;
+>
+> -       tcon = tlink_tcon(ctx->cfile->tlink);
+>         cifs_sb = CIFS_SB(ctx->cfile->dentry->d_sb);
+>
+>         mutex_lock(&ctx->aio_mutex);
+> --
+> 2.7.4
+>
+>
 
-The other problem with this patch is that it initializes
-es_stats_cache_hits and es_stats_cache_miesses too late.  They will
-get used when the journal inode is loaded.  This is mostly harmless,
-but it's also wrong.
 
-I've dropped this patch from the ext4 git tree.
+-- 
+Thanks,
 
-     	     	  	     	      - Ted
+Steve
