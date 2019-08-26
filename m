@@ -2,208 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AA999D428
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 18:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C90E9D433
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 18:40:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732893AbfHZQis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 12:38:48 -0400
-Received: from mail-eopbgr790058.outbound.protection.outlook.com ([40.107.79.58]:34364
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        id S1732952AbfHZQkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 12:40:37 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60288 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729338AbfHZQir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 12:38:47 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Us2ab/FZ6a5DfhggqlkEqxhhaxJDfDrzJ8EEhq2KQjhYhSOUh5pp40bHhA/t/m74jKRcKooIrSdwvtmKxzJ8WH5RcMOz5Fccg7zPxJIh3arH0ojxIMzd3F7sspVRpYaBgeq0OTKvRzjP+u2PlDUZxFWxJJE/vXDvXQ1IzOG/IvVoVQn9qFEuDVphWFnL9jU4RoRSDa3tSFBA5tv39BrZsOoVQ3VJRDm3rqhJoef2Ua1/wtgb2n/URpGsdPX9Zq5vXeOTOVZkn9540zHVQH4FGh4eFioQtsAzaZ8umWTEGYrpNlMFs8FM9GomQS3tIFU42prZFRPss9xH/5w3Tblx5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/fOgzwp3hUY6VVqjsesMdmMrqy33s6G4Q8BDVMRc31c=;
- b=XPBDBDRG/jP1AxavLTPx35k38uBgMYDFOQhtRwI+w0VxXcagZDm+0iCU4O5DI1sSwi0vCHPxp8IBX4jzn8YHXcKqP0FF4Hl5PNaVjwqMd6Ghyecli8ltlPjPRT4lK9tKzd/n4Q6WbedeALvjAN0CjDu9ivW7mj2KD6vSOvAAdHBar6erbA99iBwqYymuJt0Ejx4p+a3fULInLw7My5pyGyRdR1CKItYAYVTSg0kPvbrbyIaQHVrCTSkcHSR7leA2PwFLTylHU5PpHu6Ug2izc2NNZAfBnSPIUuLmBlLFsmOPpBksIwZOgqblgua9mzRJXYSwPCSp73QOf1+f3Nrusg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/fOgzwp3hUY6VVqjsesMdmMrqy33s6G4Q8BDVMRc31c=;
- b=yynQaZh2/ZpU6P3JRP0DZTsApjPpZQ3CaLvYp84vFNvBuin/Ieb1MN8GXo1rVpjXHPTOHGdaHl7ahmN1HkVZkNzXJkWG8x6KOZNjXSJs2Iz8jKwCvUcc5k5i6a1NmTqfH7yQobLEeIzRoFgC5lk+BTHRf/HwhGMhEYQloJbUJuo=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB5736.namprd05.prod.outlook.com (20.178.48.85) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.11; Mon, 26 Aug 2019 16:38:40 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::5163:1b6f:2d03:303d]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::5163:1b6f:2d03:303d%3]) with mapi id 15.20.2220.013; Mon, 26 Aug 2019
- 16:38:40 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Juergen Gross <jgross@suse.com>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 1/3] x86/mm/tlb: Change __flush_tlb_one_user
- interface
-Thread-Topic: [RFC PATCH v2 1/3] x86/mm/tlb: Change __flush_tlb_one_user
- interface
-Thread-Index: AQHVWkMLYooV6F77EkWGcA2ILzZ2S6cNEZGAgACTVoA=
-Date:   Mon, 26 Aug 2019 16:38:40 +0000
-Message-ID: <41C46D29-A0F3-48AA-BC28-2480F24D60FF@vmware.com>
-References: <20190823225248.15597-1-namit@vmware.com>
- <20190823225248.15597-2-namit@vmware.com>
- <edb3a7e8-8fc6-7a55-37c1-3384a8413427@suse.com>
-In-Reply-To: <edb3a7e8-8fc6-7a55-37c1-3384a8413427@suse.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bf5b6d65-d281-4962-dd91-08d72a43da01
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR05MB5736;
-x-ms-traffictypediagnostic: BYAPR05MB5736:
-x-microsoft-antispam-prvs: <BYAPR05MB57367346F71139C4C69D75ACD0A10@BYAPR05MB5736.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01415BB535
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(396003)(366004)(376002)(39860400002)(199004)(189003)(51914003)(2616005)(4326008)(256004)(8936002)(476003)(7736002)(86362001)(99286004)(6512007)(5660300002)(446003)(71190400001)(305945005)(25786009)(66446008)(66946007)(76116006)(64756008)(66556008)(11346002)(33656002)(66476007)(7416002)(6506007)(53546011)(53936002)(478600001)(76176011)(486006)(36756003)(6916009)(66066001)(2906002)(102836004)(8676002)(186003)(316002)(6246003)(3846002)(6116002)(6486002)(54906003)(81156014)(229853002)(81166006)(14454004)(71200400001)(6436002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5736;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: AE4GnSVGHuE0IWnNx0snUXBxx0bRpxFyTWF12kR/6ye4AQjqsA84MlPIFpMaSTN/JFxIZkhkavholQO8NOmtSMmstPznK6RMQwzB3Gu3E2xY7c4SPMuJfh+RA/MXwvmb7zxSJES49FyTNWbyHbqMpKGSMOXwv0pbWq6+23dCT5JF2rEgXYD+QbVvCMPporJgE0q5PBrjTH5ZINM06GOrJndpiC2/lNmgSnwPFgQPMMf1+uvztc1O6VndPgLIUNGxBCDq9TenMY0t/3jXUydbP45ewn/EzVxLwwoT4l34d9LWDgOfsmEiwDoJZJMBuflnc3xgAqwUy95RPRuODE2EQL/9Oji38dfFw1OOa66zAf446iFQ4adPwWtgAUgKdjRi31XaIS299q4jjyHI+Nw84qzF/0Rc7dbrVDPZUc2W1og=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B904E43559F03B4AA00D0177F884944C@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1732900AbfHZQkg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 12:40:36 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 52465C224D703FD301BC;
+        Tue, 27 Aug 2019 00:40:29 +0800 (CST)
+Received: from linux-lLwqrf.huawei.com (10.175.104.237) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 27 Aug 2019 00:40:20 +0800
+From:   Heyi Guo <guoheyi@huawei.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>
+CC:     <wanghaibin.wang@huawei.com>, Heyi Guo <guoheyi@huawei.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        "Suzuki K Poulose" <suzuki.poulose@arm.com>
+Subject: [PATCH] kvm/arm/vgic: fix potential deadlock when ap_list is long
+Date:   Tue, 27 Aug 2019 00:39:12 +0800
+Message-ID: <1566837552-127854-1-git-send-email-guoheyi@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf5b6d65-d281-4962-dd91-08d72a43da01
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 16:38:40.3416
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XN8+No0Vj3zZeZ5Y8m0+egPr1ypwllP1duZXvvD36tOFdWqZeqwvO9IHIp8quD0bZgIvEhklmnHHz/AKaCQRew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5736
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.237]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBBdWcgMjYsIDIwMTksIGF0IDEyOjUxIEFNLCBKdWVyZ2VuIEdyb3NzIDxqZ3Jvc3NAc3Vz
-ZS5jb20+IHdyb3RlOg0KPiANCj4gT24gMjQuMDguMTkgMDA6NTIsIE5hZGF2IEFtaXQgd3JvdGU6
-DQo+PiBfX2ZsdXNoX3RsYl9vbmVfdXNlcigpIGN1cnJlbnRseSBmbHVzaGVzIGEgc2luZ2xlIGVu
-dHJ5LCBhbmQgZmx1c2hlcyBpdA0KPj4gYm90aCBpbiB0aGUga2VybmVsIGFuZCB1c2VyIHBhZ2Ut
-dGFibGVzLCB3aGVuIFBUSSBpcyBlbmFibGVkLg0KPj4gQ2hhbmdlIF9fZmx1c2hfdGxiX29uZV91
-c2VyKCkgYW5kIHJlbGF0ZWQgaW50ZXJmYWNlcyBpbnRvDQo+PiBfX2ZsdXNoX3RsYl9yYW5nZSgp
-IHRoYXQgZmx1c2hlcyBhIHJhbmdlIGFuZCBkb2VzIG5vdCBmbHVzaCB0aGUgdXNlcg0KPj4gcGFn
-ZS10YWJsZS4NCj4+IFRoaXMgcmVmYWN0b3JpbmcgaXMgbmVlZGVkIGZvciB0aGUgbmV4dCBwYXRj
-aCwgYnV0IHJlZ2FyZGxlc3MgbWFrZXMNCj4+IHNlbnNlIGFuZCBoYXMgc2V2ZXJhbCBhZHZhbnRh
-Z2VzLiBGaXJzdCwgb25seSBYZW4tUFYsIHdoaWNoIGRvZXMgbm90DQo+PiB1c2UgUFRJLCBpbXBs
-ZW1lbnRzIHRoZSBwYXJhdmlydHVhbCBpbnRlcmZhY2Ugb2YgZmx1c2hfdGxiX29uZV91c2VyKCkg
-c28NCj4+IG5vdGhpbmcgaXMgYnJva2VuIGJ5IHNlcGFyYXRpbmcgdGhlIHVzZXIgYW5kIGtlcm5l
-bCBwYWdlLXRhYmxlIGZsdXNoZXMsDQo+PiBhbmQgdGhlIGludGVyZmFjZSBpcyBtb3JlIGludHVp
-dGl2ZS4NCj4+IFNlY29uZCwgSU5WTFBHIGNhbiBmbHVzaCB1bnJlbGF0ZWQgbWFwcGluZ3MsIGFu
-ZCBpdCBpcyBhbHNvIGENCj4+IHNlcmlhbGl6aW5nIGluc3RydWN0aW9uLiBJdCBpcyBiZXR0ZXIg
-dG8gaGF2ZSBhIHRpZ2h0IGxvb3AgdGhhdCBmbHVzaGVzDQo+PiB0aGUgZW50cmllcy4NCj4+IFRo
-aXJkLCBjdXJyZW50bHkgX19mbHVzaF90bGJfb25lX2tlcm5lbCgpIGFsc28gZmx1c2hlcyB0aGUg
-dXNlcg0KPj4gcGFnZS10YWJsZXMsIHdoaWNoIGlzIG5vdCBuZWVkZWQuIFRoaXMgYWxsb3dzIHRv
-IGF2b2lkIHRoaXMgcmVkdW5kYW50DQo+PiBmbHVzaC4NCj4+IENjOiBCb3JpcyBPc3Ryb3Zza3kg
-PGJvcmlzLm9zdHJvdnNreUBvcmFjbGUuY29tPg0KPj4gQ2M6IEp1ZXJnZW4gR3Jvc3MgPGpncm9z
-c0BzdXNlLmNvbT4NCj4+IENjOiBTdGVmYW5vIFN0YWJlbGxpbmkgPHNzdGFiZWxsaW5pQGtlcm5l
-bC5vcmc+DQo+PiBDYzogeGVuLWRldmVsQGxpc3RzLnhlbnByb2plY3Qub3JnDQo+PiBTaWduZWQt
-b2ZmLWJ5OiBOYWRhdiBBbWl0IDxuYW1pdEB2bXdhcmUuY29tPg0KPj4gLS0tDQo+PiAgYXJjaC94
-ODYvaW5jbHVkZS9hc20vcGFyYXZpcnQuaCAgICAgICB8ICA1ICsrLS0NCj4+ICBhcmNoL3g4Ni9p
-bmNsdWRlL2FzbS9wYXJhdmlydF90eXBlcy5oIHwgIDMgKystDQo+PiAgYXJjaC94ODYvaW5jbHVk
-ZS9hc20vdGxiZmx1c2guaCAgICAgICB8IDI0ICsrKysrLS0tLS0tLS0tLS0tDQo+PiAgYXJjaC94
-ODYva2VybmVsL3BhcmF2aXJ0LmMgICAgICAgICAgICB8ICA3ICsrLS0tDQo+PiAgYXJjaC94ODYv
-bW0vdGxiLmMgICAgICAgICAgICAgICAgICAgICB8IDM5ICsrKysrKysrKysrKysrKysrKysrKyst
-LS0tLQ0KPj4gIGFyY2gveDg2L3hlbi9tbXVfcHYuYyAgICAgICAgICAgICAgICAgfCAyMSArKysr
-KysrKystLS0tLS0NCj4+ICA2IGZpbGVzIGNoYW5nZWQsIDYyIGluc2VydGlvbnMoKyksIDM3IGRl
-bGV0aW9ucygtKQ0KPiANCj4gLi4uDQo+IA0KPj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L3hlbi9t
-bXVfcHYuYyBiL2FyY2gveDg2L3hlbi9tbXVfcHYuYw0KPj4gaW5kZXggNDhmN2M3ZWI0ZGJjLi5l
-ZDY4NjU3ZjVlNzcgMTAwNjQ0DQo+PiAtLS0gYS9hcmNoL3g4Ni94ZW4vbW11X3B2LmMNCj4+ICsr
-KyBiL2FyY2gveDg2L3hlbi9tbXVfcHYuYw0KPj4gQEAgLTEzMjUsMjIgKzEzMjUsMjcgQEAgc3Rh
-dGljIG5vaW5saW5lIHZvaWQgeGVuX2ZsdXNoX3RsYih2b2lkKQ0KPj4gIAlwcmVlbXB0X2VuYWJs
-ZSgpOw0KPj4gIH0NCj4+ICAtc3RhdGljIHZvaWQgeGVuX2ZsdXNoX3RsYl9vbmVfdXNlcih1bnNp
-Z25lZCBsb25nIGFkZHIpDQo+PiArc3RhdGljIHZvaWQgeGVuX2ZsdXNoX3RsYl9yYW5nZSh1bnNp
-Z25lZCBsb25nIHN0YXJ0LCB1bnNpZ25lZCBsb25nIGVuZCwNCj4+ICsJCQkJdTggc3RyaWRlX3No
-aWZ0KQ0KPj4gIHsNCj4+ICAJc3RydWN0IG1tdWV4dF9vcCAqb3A7DQo+PiAgCXN0cnVjdCBtdWx0
-aWNhbGxfc3BhY2UgbWNzOw0KPj4gLQ0KPj4gLQl0cmFjZV94ZW5fbW11X2ZsdXNoX3RsYl9vbmVf
-dXNlcihhZGRyKTsNCj4+ICsJdW5zaWduZWQgbG9uZyBhZGRyOw0KPj4gICAgCXByZWVtcHRfZGlz
-YWJsZSgpOw0KPj4gICAgCW1jcyA9IHhlbl9tY19lbnRyeShzaXplb2YoKm9wKSk7DQo+PiAgCW9w
-ID0gbWNzLmFyZ3M7DQo+PiAtCW9wLT5jbWQgPSBNTVVFWFRfSU5WTFBHX0xPQ0FMOw0KPj4gLQlv
-cC0+YXJnMS5saW5lYXJfYWRkciA9IGFkZHIgJiBQQUdFX01BU0s7DQo+PiAtCU1VTFRJX21tdWV4
-dF9vcChtY3MubWMsIG9wLCAxLCBOVUxMLCBET01JRF9TRUxGKTsNCj4+ICAtCXhlbl9tY19pc3N1
-ZShQQVJBVklSVF9MQVpZX01NVSk7DQo+PiArCWZvciAoYWRkciA9IHN0YXJ0OyBhZGRyIDwgZW5k
-OyBhZGRyICs9IDF1bCA8PCBzdHJpZGVfc2hpZnQpIHsNCj4+ICsJCXRyYWNlX3hlbl9tbXVfZmx1
-c2hfdGxiX29uZV91c2VyKGFkZHIpOw0KPj4gKw0KPj4gKwkJb3AtPmNtZCA9IE1NVUVYVF9JTlZM
-UEdfTE9DQUw7DQo+PiArCQlvcC0+YXJnMS5saW5lYXJfYWRkciA9IGFkZHIgJiBQQUdFX01BU0s7
-DQo+PiArCQlNVUxUSV9tbXVleHRfb3AobWNzLm1jLCBvcCwgMSwgTlVMTCwgRE9NSURfU0VMRik7
-DQo+PiArDQo+PiArCQl4ZW5fbWNfaXNzdWUoUEFSQVZJUlRfTEFaWV9NTVUpOw0KPj4gKwl9DQo+
-IA0KPiBGb3IgdGhpcyBraW5kIG9mIHVzYWdlIChhIGxvb3ApIHlvdSBzaG91bGQ6DQo+IA0KPiAt
-IHJlcGxhY2UgdGhlIGNhbGwgb2YgeGVuX21jX2VudHJ5KCkgd2l0aCB4ZW5fbWNfYmF0Y2goKQ0K
-PiAtIHVzZSB4ZW5fZXh0ZW5kX21tdWV4dF9vcCgpIGZvciBlYWNoIGxvb3AgaXRlcmF0aW9uDQo+
-IC0gY2FsbCB4ZW5fbWNfaXNzdWUoKSBhZnRlciB0aGUgbG9vcA0KPiANCj4gQWRkaXRpb25hbGx5
-IEknZCBsaWtlIHlvdSB0byByZXBsYWNlIHRyYWNlX3hlbl9tbXVfZmx1c2hfdGxiX29uZV91c2Vy
-KCkNCj4gd2l0aCB0cmFjZV94ZW5fbW11X2ZsdXNoX3RsYl9yYW5nZSgpIHRha2luZyBhbGwgdGhy
-ZWUgcGFyYW1ldGVycyBhbmQNCj4ga2VlcCBpdCB3aGVyZSBpdCB3YXMgKG91dCBvZiB0aGUgbG9v
-cCkuDQo+IA0KPiBUaGUgcGFyYXZpcnQgcGFydHMgc2VlbSB0byBiZSBva2F5Lg0KDQpUaGFua3Mg
-Zm9yIHRoZSBxdWljayByZXNwb25zZS4gSSBkb27igJl0IHRoaW5rIHRoZSBwcmVlbXB0X2Rpc2Fi
-bGUvZW5hYmxlKCkgaXMNCm5lZWRlZCBpbiB0aGlzIGNhc2UsIGJ1dCBJIGtlcHQgdGhlbS4gRG9l
-cyB0aGUgZm9sbG93aW5nIG1hdGNoIHdoYXQgeW91IGhhZA0KaW4gbWluZD8NCg0KLS0tDQogYXJj
-aC94ODYveGVuL21tdV9wdi5jICAgICAgfCAyNSArKysrKysrKysrKysrKy0tLS0tLS0tLS0tDQog
-aW5jbHVkZS90cmFjZS9ldmVudHMveGVuLmggfCAxOCArKysrKysrKysrKystLS0tLS0NCiAyIGZp
-bGVzIGNoYW5nZWQsIDI2IGluc2VydGlvbnMoKyksIDE3IGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0t
-Z2l0IGEvYXJjaC94ODYveGVuL21tdV9wdi5jIGIvYXJjaC94ODYveGVuL21tdV9wdi5jDQppbmRl
-eCA0OGY3YzdlYjRkYmMuLmZhYTAxNTkxZGYzNiAxMDA2NDQNCi0tLSBhL2FyY2gveDg2L3hlbi9t
-bXVfcHYuYw0KKysrIGIvYXJjaC94ODYveGVuL21tdV9wdi5jDQpAQCAtMTMyNSwyMCArMTMyNSwy
-MyBAQCBzdGF0aWMgbm9pbmxpbmUgdm9pZCB4ZW5fZmx1c2hfdGxiKHZvaWQpDQogCXByZWVtcHRf
-ZW5hYmxlKCk7DQogfQ0KIA0KLXN0YXRpYyB2b2lkIHhlbl9mbHVzaF90bGJfb25lX3VzZXIodW5z
-aWduZWQgbG9uZyBhZGRyKQ0KK3N0YXRpYyB2b2lkIHhlbl9mbHVzaF90bGJfcmFuZ2UodW5zaWdu
-ZWQgbG9uZyBzdGFydCwgdW5zaWduZWQgbG9uZyBlbmQsDQorCQkJCXU4IHN0cmlkZV9zaGlmdCkN
-CiB7DQotCXN0cnVjdCBtbXVleHRfb3AgKm9wOw0KLQlzdHJ1Y3QgbXVsdGljYWxsX3NwYWNlIG1j
-czsNCi0NCi0JdHJhY2VfeGVuX21tdV9mbHVzaF90bGJfb25lX3VzZXIoYWRkcik7DQorCXN0cnVj
-dCBtbXVleHRfb3Agb3A7DQorCXVuc2lnbmVkIGxvbmcgYWRkcjsNCiANCiAJcHJlZW1wdF9kaXNh
-YmxlKCk7DQogDQotCW1jcyA9IHhlbl9tY19lbnRyeShzaXplb2YoKm9wKSk7DQotCW9wID0gbWNz
-LmFyZ3M7DQotCW9wLT5jbWQgPSBNTVVFWFRfSU5WTFBHX0xPQ0FMOw0KLQlvcC0+YXJnMS5saW5l
-YXJfYWRkciA9IGFkZHIgJiBQQUdFX01BU0s7DQotCU1VTFRJX21tdWV4dF9vcChtY3MubWMsIG9w
-LCAxLCBOVUxMLCBET01JRF9TRUxGKTsNCisJeGVuX21jX2JhdGNoKCk7DQorCW9wLmNtZCA9IE1N
-VUVYVF9JTlZMUEdfTE9DQUw7DQorDQorCXRyYWNlX3hlbl9tbXVfZmx1c2hfdGxiX3JhbmdlKHN0
-YXJ0LCBlbmQsIHN0cmlkZV9zaGlmdCk7DQorDQorCWZvciAoYWRkciA9IHN0YXJ0OyBhZGRyIDwg
-ZW5kOyBhZGRyICs9IDF1bCA8PCBzdHJpZGVfc2hpZnQpIHsNCisJCW9wLmFyZzEubGluZWFyX2Fk
-ZHIgPSBhZGRyICYgUEFHRV9NQVNLOw0KKwkJeGVuX2V4dGVuZF9tbXVleHRfb3AoJm9wKTsNCisJ
-fQ0KIA0KIAl4ZW5fbWNfaXNzdWUoUEFSQVZJUlRfTEFaWV9NTVUpOw0KIA0KQEAgLTIzOTQsNyAr
-MjM5Nyw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgcHZfbW11X29wcyB4ZW5fbW11X29wcyBfX2lu
-aXRjb25zdCA9IHsNCiANCiAJLmZsdXNoX3RsYl91c2VyID0geGVuX2ZsdXNoX3RsYiwNCiAJLmZs
-dXNoX3RsYl9rZXJuZWwgPSB4ZW5fZmx1c2hfdGxiLA0KLQkuZmx1c2hfdGxiX29uZV91c2VyID0g
-eGVuX2ZsdXNoX3RsYl9vbmVfdXNlciwNCisJLmZsdXNoX3RsYl9yYW5nZSA9IHhlbl9mbHVzaF90
-bGJfcmFuZ2UsDQogCS5mbHVzaF90bGJfbXVsdGkgPSB4ZW5fZmx1c2hfdGxiX211bHRpLA0KIAku
-dGxiX3JlbW92ZV90YWJsZSA9IHRsYl9yZW1vdmVfdGFibGUsDQogDQpkaWZmIC0tZ2l0IGEvaW5j
-bHVkZS90cmFjZS9ldmVudHMveGVuLmggYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy94ZW4uaA0KaW5k
-ZXggNTQ2MDIyYWNmMTYwLi4zMmJmMGE5NGI0ZDggMTAwNjQ0DQotLS0gYS9pbmNsdWRlL3RyYWNl
-L2V2ZW50cy94ZW4uaA0KKysrIGIvaW5jbHVkZS90cmFjZS9ldmVudHMveGVuLmgNCkBAIC0zNTIs
-MTQgKzM1MiwyMCBAQCBERUNMQVJFX0VWRU5UX0NMQVNTKHhlbl9tbXVfcGdkLA0KIERFRklORV9Y
-RU5fTU1VX1BHRF9FVkVOVCh4ZW5fbW11X3BnZF9waW4pOw0KIERFRklORV9YRU5fTU1VX1BHRF9F
-VkVOVCh4ZW5fbW11X3BnZF91bnBpbik7DQogDQotVFJBQ0VfRVZFTlQoeGVuX21tdV9mbHVzaF90
-bGJfb25lX3VzZXIsDQotCSAgICBUUF9QUk9UTyh1bnNpZ25lZCBsb25nIGFkZHIpLA0KLQkgICAg
-VFBfQVJHUyhhZGRyKSwNCitUUkFDRV9FVkVOVCh4ZW5fbW11X2ZsdXNoX3RsYl9yYW5nZSwNCisJ
-ICAgIFRQX1BST1RPKHVuc2lnbmVkIGxvbmcgc3RhcnQsIHVuc2lnbmVkIGxvbmcgZW5kLA0KKwkJ
-ICAgICB1bnNpZ25lZCBjaGFyIHN0cmlkZV9zaGlmdCksDQorCSAgICBUUF9BUkdTKHN0YXJ0LCBl
-bmQsIHN0cmlkZV9zaGlmdCksDQogCSAgICBUUF9TVFJVQ1RfX2VudHJ5KA0KLQkJICAgIF9fZmll
-bGQodW5zaWduZWQgbG9uZywgYWRkcikNCisJCSAgICBfX2ZpZWxkKHVuc2lnbmVkIGxvbmcsIHN0
-YXJ0KQ0KKwkJICAgIF9fZmllbGQodW5zaWduZWQgbG9uZywgZW5kKQ0KKwkJICAgIF9fZmllbGQo
-dW5zaWduZWQgY2hhciwgc3RyaWRlX3NoaWZ0KQ0KIAkJICAgICksDQotCSAgICBUUF9mYXN0X2Fz
-c2lnbihfX2VudHJ5LT5hZGRyID0gYWRkciksDQotCSAgICBUUF9wcmludGsoImFkZHIgJWx4Iiwg
-X19lbnRyeS0+YWRkcikNCisJICAgIFRQX2Zhc3RfYXNzaWduKF9fZW50cnktPnN0YXJ0ID0gc3Rh
-cnQ7DQorCQkJICAgX19lbnRyeS0+ZW5kID0gZW5kOw0KKwkJCSAgIF9fZW50cnktPnN0cmlkZV9z
-aGlmdCA9IHN0cmlkZV9zaGlmdCksDQorCSAgICBUUF9wcmludGsoInN0YXJ0ICVseCBlbmQgJWx4
-IHN0cmlkZV9zaGlmdCAlZCIsIF9fZW50cnktPnN0YXJ0LA0KKwkJICAgICAgX19lbnRyeS0+ZW5k
-LCBfX2VudHJ5LT5zdHJpZGVfc2hpZnQpDQogCSk7DQogDQogVFJBQ0VfRVZFTlQoeGVuX21tdV9m
-bHVzaF90bGJfbXVsdGksDQotLSANCjIuMTcuMQ0KDQo=
+If ap_list is longer than 256, merge_final() in sort_list() will call
+comparison function with the same element just as below:
+
+    do {
+        /*
+         * If the merge is highly unbalanced (e.g. the input is
+         * already sorted), this loop may run many iterations.
+         * Continue callbacks to the client even though no
+         * element comparison is needed, so the client's cmp()
+         * routine can invoke cond_resched() periodically.
+         */
+        if (unlikely(!++count))
+            cmp(priv, b, b);
+
+This will definitely cause deadlock in vgic_irq_cmp() and the call trace
+is:
+
+[ 2667.130283] Call trace:
+[ 2667.130284] queued_spin_lock_slowpath+0x64/0x2a8
+[ 2667.130284] vgic_irq_cmp+0xfc/0x130
+[ 2667.130284] list_sort.part.0+0x1c0/0x268
+[ 2667.130285] list_sort+0x18/0x28
+[ 2667.130285] vgic_flush_lr_state+0x158/0x518
+[ 2667.130285] kvm_vgic_flush_hwstate+0x70/0x108
+[ 2667.130286] kvm_arch_vcpu_ioctl_run+0x114/0xa50
+[ 2667.130286] kvm_vcpu_ioctl+0x490/0x8c8
+[ 2667.130286] do_vfs_ioctl+0xc4/0x8c0
+[ 2667.130287] ksys_ioctl+0x8c/0xa0
+[ 2667.130287] __arm64_sys_ioctl+0x28/0x38
+[ 2667.130287] el0_svc_common+0x78/0x130
+[ 2667.130288] el0_svc_handler+0x38/0x78
+[ 2667.130288] el0_svc+0x8/0xc
+
+So return 0 immediately when a==b.
+
+Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Heyi Guo <guoheyi@huawei.com>
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: James Morse <james.morse@arm.com>
+Cc: Julien Thierry <julien.thierry.kdev@gmail.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ virt/kvm/arm/vgic/vgic.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
+index 13d4b38..64ed0dc 100644
+--- a/virt/kvm/arm/vgic/vgic.c
++++ b/virt/kvm/arm/vgic/vgic.c
+@@ -254,6 +254,13 @@ static int vgic_irq_cmp(void *priv, struct list_head *a, struct list_head *b)
+ 	bool penda, pendb;
+ 	int ret;
+ 
++	/*
++	 * list_sort may call this function with the same element when the list
++	 * is farely long.
++	 */
++	if (unlikely(a == b))
++		return 0;
++
+ 	raw_spin_lock(&irqa->irq_lock);
+ 	raw_spin_lock_nested(&irqb->irq_lock, SINGLE_DEPTH_NESTING);
+ 
+-- 
+1.8.3.1
+
