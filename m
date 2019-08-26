@@ -2,95 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C479CCC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 11:46:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7C669CCC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 11:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731040AbfHZJqh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 05:46:37 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43100 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfHZJqg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 05:46:36 -0400
-Received: by mail-wr1-f67.google.com with SMTP id y8so14613928wrn.10
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 02:46:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EtvI0xSRTbvxcXYic0FI92pUdW0pAG1dUcejVq6p/a0=;
-        b=nMMgdW90B6mREM94Wnjb6J/NtiEXMgnCYkqIsTeG8ZVxudQTCRimYMKKjeA41Qbx+z
-         NDyTrVRAruJz8uSRiw4ZpZ2xLlCBIqC9f8cWCdI5uWC2FUeYqS/78HqGWVjaW+m0zLyB
-         teFfK1hIIYuBs8tjfSAXhYU7bigkvugQdPVj1dv41vHylKJ/0h6JpjfWvH8RVcREukUA
-         JC+Z0x/SFT9ZuCa8+at17UEo5ygDsJZR1BSULMOM1nCokd9L6TkfwX27OuFXZr272Bvc
-         x6sILs7fWGk3OIk//SSSWd17sJehPm5x6XqMtfTSTRDhqwjsHCRj/rZcorvKHzmz87na
-         Ctew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EtvI0xSRTbvxcXYic0FI92pUdW0pAG1dUcejVq6p/a0=;
-        b=CugjLfRlETneFvVE0TUKaA9rxELZVgVHY9qOig9jucOWq8/ZOb50S9u46bqTx1SpNo
-         uZzd1RUFtXJBKV2wP4RUoXd9tn0hLoykyAXabHxfjnCzQVV7wQRO38x1Q0MV/c1YVJZU
-         IbxBQd2wWjgQjtQiXeXu/RAYFrkIIchK9NMXkTPsOefziBCGC7OfOr6YhFpuoBlBOPXM
-         DB1Z7PtdDRloxqvn7W7JiOSFzuBzRumV37HRJgccY954d1Xl7yxb4JsOEAF/LzkhMLzU
-         /Bb2oQTHhb9hZ+c1/j9zYAyNof9ZpFkHp+CSVp1EXJ9qU/8+vrt9NY2a8kD/6eeUux+g
-         liJA==
-X-Gm-Message-State: APjAAAWusufya1OQGhx8qYa3PqvosbR3zTRv/YR9e55fzbiI7OuaV0Cc
-        EbXgZqjZwDrtl34Fo/I5r+A=
-X-Google-Smtp-Source: APXvYqwO6eMiQmbEfkWXa6AlEtTLxRUvX6V8tlSua2Fm7tbdYa00tX8CJiZANRnipEKZVd3CuLsJfA==
-X-Received: by 2002:a5d:4101:: with SMTP id l1mr22205654wrp.202.1566812794994;
-        Mon, 26 Aug 2019 02:46:34 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 2sm15457478wmz.16.2019.08.26.02.46.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 02:46:34 -0700 (PDT)
-Date:   Mon, 26 Aug 2019 11:46:32 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Dave Hansen <dave.hansen@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH 4/5] x86/intel: Aggregate microserver naming
-Message-ID: <20190826094632.GA65121@gmail.com>
-References: <20190822102306.109718810@infradead.org>
- <20190822102411.337145504@infradead.org>
- <20190826092750.GA56543@gmail.com>
+        id S1731061AbfHZJrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 05:47:35 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53624 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729922AbfHZJrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 05:47:35 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id F0F0C5E24C9F767622E8;
+        Mon, 26 Aug 2019 17:47:32 +0800 (CST)
+Received: from szxyal004123181.china.huawei.com (10.65.65.77) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 26 Aug 2019 17:47:24 +0800
+From:   Dongxu Liu <liudongxu3@huawei.com>
+To:     <eric.dumazet@gmail.com>
+CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+        <liudongxu3@huawei.com>, <netdev@vger.kernel.org>
+Subject: Re: [PATCH] net: Adding parameter detection in __ethtool_get_link_ksettings.
+Date:   Mon, 26 Aug 2019 17:47:05 +0800
+Message-ID: <20190826094705.10544-1-liudongxu3@huawei.com>
+X-Mailer: git-send-email 2.12.0.windows.1
+References: <aa0a372e-a169-7d78-0782-505cbdab8f90@gmail.com>
+In-Reply-To: <aa0a372e-a169-7d78-0782-505cbdab8f90@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826092750.GA56543@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.65.65.77]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> On 8/26/19 9:23 AM, Dongxu Liu wrote:
+> The __ethtool_get_link_ksettings symbol will be exported,
+> and external users may use an illegal address.
+> We should check the parameters before using them,
+> otherwise the system will crash.
+> 
+> [ 8980.991134] BUG: unable to handle kernel NULL pointer dereference at           (null)
+> [ 8980.993049] IP: [<ffffffff8155aca7>] __ethtool_get_link_ksettings+0x27/0x140
+> [ 8980.994285] PGD 0
+> [ 8980.995013] Oops: 0000 [#1] SMP
+> [ 8980.995896] Modules linked in: sch_ingress ...
+> [ 8981.013220] CPU: 3 PID: 25174 Comm: kworker/3:3 Tainted: G           O   ----V-------   3.10.0-327.36.58.4.x86_64 #1
+> [ 8981.017667] Workqueue: events linkwatch_event
+> [ 8981.018652] task: ffff8800a8348000 ti: ffff8800b045c000 task.ti: ffff8800b045c000
+> [ 8981.020418] RIP: 0010:[<ffffffff8155aca7>]  [<ffffffff8155aca7>] __ethtool_get_link_ksettings+0x27/0x140
+> [ 8981.022383] RSP: 0018:ffff8800b045fc88  EFLAGS: 00010202
+> [ 8981.023453] RAX: 0000000000000000 RBX: ffff8800b045fcac RCX: 0000000000000000
+> [ 8981.024726] RDX: ffff8800b658f600 RSI: ffff8800b045fcac RDI: ffff8802296e0000
+> [ 8981.026000] RBP: ffff8800b045fc98 R08: 0000000000000000 R09: 0000000000000001
+> [ 8981.027273] R10: 00000000000073e0 R11: 0000082b0cc8adea R12: ffff8802296e0000
+> [ 8981.028561] R13: ffff8800b566e8c0 R14: ffff8800b658f600 R15: ffff8800b566e000
+> [ 8981.029841] FS:  0000000000000000(0000) GS:ffff88023ed80000(0000) knlGS:0000000000000000
+> [ 8981.031715] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 8981.032845] CR2: 0000000000000000 CR3: 00000000b39a9000 CR4: 00000000003407e0
+> [ 8981.034137] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [ 8981.035427] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [ 8981.036702] Stack:
+> [ 8981.037406]  ffff8800b658f600 0000000000009c40 ffff8800b045fce8 ffffffffa047a71d
+> [ 8981.039238]  000000000000004d ffff8800b045fcc8 ffff8800b045fd28 ffffffff815cb198
+> [ 8981.041070]  ffff8800b045fcd8 ffffffff810807e6 00000000e8212951 0000000000000001
+> [ 8981.042910] Call Trace:
+> [ 8981.043660]  [<ffffffffa047a71d>] bond_update_speed_duplex+0x3d/0x90 [bonding]
+> [ 8981.045424]  [<ffffffff815cb198>] ? inetdev_event+0x38/0x530
+> [ 8981.046554]  [<ffffffff810807e6>] ? put_online_cpus+0x56/0x80
+> [ 8981.047688]  [<ffffffffa0480d67>] bond_netdev_event+0x137/0x360 [bonding]
+> ...
+> 
+> Signed-off-by: Dongxu Liu <liudongxu3@huawei.com>
+> ---
+>  net/core/ethtool.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/net/core/ethtool.c b/net/core/ethtool.c index 
+> 6288e69..9a50b64 100644
+> --- a/net/core/ethtool.c
+> +++ b/net/core/ethtool.c
+> @@ -545,6 +545,8 @@ int __ethtool_get_link_ksettings(struct net_device 
+> *dev,  {
+>  	ASSERT_RTNL();
+>  
+> +	if (!dev || !dev->ethtool_ops)
+> +		return -EOPNOTSUPP;
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+> I do not believe dev can possibly be NULL at this point.
 
->  arch/x86/kernel/cpu/common.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  	if (!dev->ethtool_ops->get_link_ksettings)
+>  		return -EOPNOTSUPP;
+>  
+> 
 
-Plus this too:
+> I tried to find an appropriate Fixes: tag.
 
----
- drivers/edac/sb_edac.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> It seems this particular bug was added either by
 
-diff --git a/drivers/edac/sb_edac.c b/drivers/edac/sb_edac.c
-index 37746b045e18..f743502ca9b7 100644
---- a/drivers/edac/sb_edac.c
-+++ b/drivers/edac/sb_edac.c
-@@ -3429,7 +3429,7 @@ static const struct x86_cpu_id sbridge_cpuids[] = {
- 	INTEL_CPU_FAM6(IVYBRIDGE_X,	  pci_dev_descr_ibridge_table),
- 	INTEL_CPU_FAM6(HASWELL_X,	  pci_dev_descr_haswell_table),
- 	INTEL_CPU_FAM6(BROADWELL_X,	  pci_dev_descr_broadwell_table),
--	INTEL_CPU_FAM6(BROADWELL_XEON_D,  pci_dev_descr_broadwell_table),
-+	INTEL_CPU_FAM6(BROADWELL_D,	  pci_dev_descr_broadwell_table),
- 	INTEL_CPU_FAM6(XEON_PHI_KNL,	  pci_dev_descr_knl_table),
- 	INTEL_CPU_FAM6(XEON_PHI_KNM,	  pci_dev_descr_knl_table),
- 	{ }
+> Fixes: 9856909c2abb ("net: bonding: use __ethtool_get_ksettings")
+
+> or generically in :
+
+> Fixes: 3f1ac7a700d0 ("net: ethtool: add new ETHTOOL_xLINKSETTINGS API")
+
+In fact, "dev->ethtool_ops" is a null pointer in my environment.
+I didn't get the case where "dev" is a null pointer.
+Maybe "if (!dev->ethtool_ops)" is more accurate for this bug.
+
+I found this bug in version 3.10, the function name was __ethtool_get_settings.
+After 3f1ac7a700d0 ("net: ethtool: add new ETHTOOL_xLINKSETTINGS API"),
+This function evolved into __ethtool_get_link_ksettings.
 
