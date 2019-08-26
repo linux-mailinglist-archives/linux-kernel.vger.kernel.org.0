@@ -2,111 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E7BB9C7D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 05:19:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 771FA9C7C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 05:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729692AbfHZDTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 23:19:07 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34608 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729681AbfHZDTG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 23:19:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n9so9682388pgc.1;
-        Sun, 25 Aug 2019 20:19:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vrKXb1c+fhWL6XvI6Q8/QhED1MUXcVFYoSihiJAZjTw=;
-        b=slhUxvnhGpV6q597AQTrd/fdto0uqCVHTUkFdHIuxFjXjGw31s9GinpL1xDyvEM9KD
-         ALUyg1Aruz9FyXfUSWbiINUptanxSXIg2ONksosjrl+TPEHh/nPOGP4QGSIYmFUKw5im
-         e5IrhSYWlfawHlB8PvZeAlfZ9T15ue6Y1oR0TkcOKHzOcPAMK7VOYXxUqtfVMm4vtQbC
-         BTtUQjDSn7ziAsWJISuPlckXsFOhrSkcEA4sKL24HSL4q+LHNcZamXsOttEEyAAoK9Y0
-         pTTqfSmD4svCfaKnT5dLKS9hoSTNoqVfvX9EKEed+Ywmpckg8p767hZHL1X5HwM8mvm0
-         2iAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vrKXb1c+fhWL6XvI6Q8/QhED1MUXcVFYoSihiJAZjTw=;
-        b=JhrEH2AU3XiVakWiUzx0LaTkPMysFpLPEQiD0FglfnJP+2AkQN3lT+XFw8c0aloTIZ
-         CW7SBFguo5scgEBqp+eLGGOI/Av6wklXyJT1KbOfFGY/D7lJBSlW/mtyZotXyA3TSoT/
-         x/j6YeMRuULhB/mDsxPiX056IofRtUbZBtb/OucgezNMMqoNqfcRo0yLxLz16mDu5768
-         rFX+ejUffy6UmmjH93L2hdnebgIn66PLKNTEjKSkMtjPgDZkR1dbSp9s0PEKJv7Ng18Q
-         q01gg9FL52VTMV694/Slap0TvSN2hX5YTPmXjjDgn0s2Olr0j7HhpPhdXn+7eXL/+wsr
-         NGZA==
-X-Gm-Message-State: APjAAAURCBdh+ij88GlJR8kpY8fThRUbD2Ef8FHwuo/rMZLtbfxEQwaf
-        iWaD719zGY9KHvwrjs3nCRZUKU/J
-X-Google-Smtp-Source: APXvYqxFQi3ogEq2PItJyW2uQWyx/dSjwssauzEKVYeY3WomX4VlQwGScvONgZlEs6bzn6o3LPPb6A==
-X-Received: by 2002:a65:4546:: with SMTP id x6mr14195563pgr.266.1566789545234;
-        Sun, 25 Aug 2019 20:19:05 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id y23sm12565905pfr.86.2019.08.25.20.19.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Aug 2019 20:19:04 -0700 (PDT)
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 5/5] mmc: sdhci-sprd: clear the UHS-I modes read from registers
-Date:   Mon, 26 Aug 2019 11:18:30 +0800
-Message-Id: <20190826031830.30931-6-zhang.lyra@gmail.com>
+        id S1729599AbfHZDSn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 23:18:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbfHZDSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 25 Aug 2019 23:18:43 -0400
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEEB42173E;
+        Mon, 26 Aug 2019 03:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566789521;
+        bh=4fPsr18xxsuPXL9Lp95SiJ4t2t8JicrM5cKgfBo8bzY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aEB3nHWwf/t9MBjXiLCsEp6Oma7ti9w0hA6d1bWHYcUicvSfyl4HI+PknJbkMczOs
+         Z2agX/TnNrmW4g1BzAfKPUVdedqPspbdIR02ez1lrDXiwnNx5DC3UmLsWnZRaWh1sL
+         Do1KKclTJO2U2ZvWyI65VTCYCs7Vj+tCaYAqsjmc=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v3 15/19] tracing/boot: Add instance node support
+Date:   Mon, 26 Aug 2019 12:18:35 +0900
+Message-Id: <156678951557.21459.13013581523042678676.stgit@devnote2>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190826031830.30931-1-zhang.lyra@gmail.com>
-References: <20190826031830.30931-1-zhang.lyra@gmail.com>
+In-Reply-To: <156678933823.21459.4100380582025186209.stgit@devnote2>
+References: <156678933823.21459.4100380582025186209.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Add instance node support to boottime tracing. User can set
+some options and event nodes under instance node.
 
-sprd's sd host controller supports SDR50/SDR104/DDR50 though, the UHS-I
-mode used by the specific card can be selected via devicetree only.
+ - ftrace.instance.INSTANCE[...];
+   Add new INSTANCE instance. Some options and event nodes
+   are acceptable for instance node.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- drivers/mmc/host/sdhci-sprd.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ kernel/trace/trace_boot.c |   72 ++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 57 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
-index 1fecf055682c..d3c3e95676f0 100644
---- a/drivers/mmc/host/sdhci-sprd.c
-+++ b/drivers/mmc/host/sdhci-sprd.c
-@@ -509,7 +509,8 @@ static void sdhci_sprd_phy_param_parse(struct sdhci_sprd_host *sprd_host,
+diff --git a/kernel/trace/trace_boot.c b/kernel/trace/trace_boot.c
+index 2e9fddff660f..74cffecd12a4 100644
+--- a/kernel/trace/trace_boot.c
++++ b/kernel/trace/trace_boot.c
+@@ -21,15 +21,15 @@ extern int tracing_set_tracer(struct trace_array *tr, const char *buf);
+ extern void __init trace_init_tracepoint_printk(void);
+ extern ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+ 					  unsigned long size, int cpu_id);
++extern struct trace_array *trace_array_create(const char *name);
  
- static const struct sdhci_pltfm_data sdhci_sprd_pdata = {
- 	.quirks = SDHCI_QUIRK_BROKEN_CARD_DETECTION |
--		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
-+		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-+		  SDHCI_QUIRK_MISSING_CAPS,
- 	.quirks2 = SDHCI_QUIRK2_BROKEN_HS200 |
- 		   SDHCI_QUIRK2_USE_32BIT_BLK_CNT |
- 		   SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-@@ -614,6 +615,16 @@ static int sdhci_sprd_probe(struct platform_device *pdev)
+ static void __init
+-trace_boot_set_ftrace_options(struct trace_array *tr, struct skc_node *node)
++trace_boot_set_instance_options(struct trace_array *tr, struct skc_node *node)
+ {
+ 	struct skc_node *anode;
+ 	const char *p;
+ 	char buf[MAX_BUF_LEN];
+ 	unsigned long v = 0;
+-	int err;
  
- 	sdhci_enable_v4_mode(host);
+ 	/* Common ftrace options */
+ 	skc_node_for_each_array_value(node, "options", anode, p) {
+@@ -48,6 +48,23 @@ trace_boot_set_ftrace_options(struct trace_array *tr, struct skc_node *node)
+ 			pr_err("Failed to set trace clock: %s\n", p);
+ 	}
  
-+	/*
-+	 * Supply the existing CAPS, but clear the UHS-I modes. This
-+	 * will allow these modes to be specified only by device
-+	 * tree properties through mmc_of_parse().
-+	 */
-+	host->caps = sdhci_readl(host, SDHCI_CAPABILITIES);
-+	host->caps1 = sdhci_readl(host, SDHCI_CAPABILITIES_1);
-+	host->caps1 &= ~(SDHCI_SUPPORT_SDR50 | SDHCI_SUPPORT_SDR104 |
-+			 SDHCI_SUPPORT_DDR50);
++	p = skc_node_find_value(node, "buffer_size", NULL);
++	if (p && *p != '\0') {
++		v = memparse(p, NULL);
++		if (v < PAGE_SIZE)
++			pr_err("Buffer size is too small: %s\n", p);
++		if (tracing_resize_ring_buffer(tr, v, RING_BUFFER_ALL_CPUS) < 0)
++			pr_err("Failed to resize trace buffer to %s\n", p);
++	}
++}
 +
- 	ret = sdhci_setup_host(host);
- 	if (ret)
- 		goto pm_runtime_disable;
--- 
-2.20.1
++static void __init
++trace_boot_set_global_options(struct trace_array *tr, struct skc_node *node)
++{
++	unsigned long v = 0;
++	const char *p;
++	int err;
++
+ 	/* Command line boot options */
+ 	p = skc_node_find_value(node, "dump_on_oops", NULL);
+ 	if (p) {
+@@ -64,15 +81,6 @@ trace_boot_set_ftrace_options(struct trace_array *tr, struct skc_node *node)
+ 	if (skc_node_find_value(node, "tp_printk", NULL))
+ 		trace_init_tracepoint_printk();
+ 
+-	p = skc_node_find_value(node, "buffer_size", NULL);
+-	if (p && *p != '\0') {
+-		v = memparse(p, NULL);
+-		if (v < PAGE_SIZE)
+-			pr_err("Buffer size is too small: %s\n", p);
+-		if (tracing_resize_ring_buffer(tr, v, RING_BUFFER_ALL_CPUS) < 0)
+-			pr_err("Failed to resize trace buffer to %s\n", p);
+-	}
+-
+ 	if (skc_node_find_value(node, "alloc_snapshot", NULL))
+ 		if (tracing_alloc_snapshot() < 0)
+ 			pr_err("Failed to allocate snapshot buffer\n");
+@@ -266,6 +274,40 @@ trace_boot_enable_tracer(struct trace_array *tr, struct skc_node *node)
+ 	}
+ }
+ 
++static void __init
++trace_boot_init_one_instance(struct trace_array *tr, struct skc_node *node)
++{
++	trace_boot_set_instance_options(tr, node);
++	trace_boot_init_events(tr, node);
++	trace_boot_enable_events(tr, node);
++	trace_boot_enable_tracer(tr, node);
++}
++
++static void __init
++trace_boot_init_instances(struct skc_node *node)
++{
++	struct skc_node *inode;
++	struct trace_array *tr;
++	const char *p;
++
++	node = skc_node_find_child(node, "instance");
++	if (!node)
++		return;
++
++	skc_node_for_each_child(node, inode) {
++		p = skc_node_get_data(inode);
++		if (!p || *p == '\0')
++			continue;
++
++		tr = trace_array_create(p);
++		if (IS_ERR(tr)) {
++			pr_err("Failed to create instance %s\n", p);
++			continue;
++		}
++		trace_boot_init_one_instance(tr, inode);
++	}
++}
++
+ static int __init trace_boot_init(void)
+ {
+ 	struct skc_node *trace_node;
+@@ -279,10 +321,10 @@ static int __init trace_boot_init(void)
+ 	if (!tr)
+ 		return 0;
+ 
+-	trace_boot_set_ftrace_options(tr, trace_node);
+-	trace_boot_init_events(tr, trace_node);
+-	trace_boot_enable_events(tr, trace_node);
+-	trace_boot_enable_tracer(tr, trace_node);
++	trace_boot_set_global_options(tr, trace_node);
++	/* Global trace array is also one instance */
++	trace_boot_init_one_instance(tr, trace_node);
++	trace_boot_init_instances(trace_node);
+ 
+ 	return 0;
+ }
 
