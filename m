@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02AF79D304
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 434699D2F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733089AbfHZPiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:38:54 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33691 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729289AbfHZPir (ORCPT
+        id S1733103AbfHZPi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:38:56 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52775 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733045AbfHZPit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:38:47 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p77so298598wme.0;
-        Mon, 26 Aug 2019 08:38:46 -0700 (PDT)
+        Mon, 26 Aug 2019 11:38:49 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o4so15928111wmh.2;
+        Mon, 26 Aug 2019 08:38:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oRnNY4JLf7ZTy3fdUTm9bEVVoWS6JMbuHY/wh8kGwgE=;
-        b=q4CGZPONOr9Q0DX6Zis1euL7cluDx0OH+bmvlrNwH0wSdPcmZLdUU26nlEwqDCreho
-         8Ta7Kxd75Vimmz2DlN8GDB7IDRpRXS7C7PRRqWbU0yu46Nx3x27QXH/WkzAASlnlf0AQ
-         cHpRyM/I/hAgGO3DjbyxHrzCuV1iNT07wsYBxqFvwYuL5FdelGMqeQlsXa6c2wyzr682
-         iVygu4Weizf7MEV0XGu1/eGD2Ffagj+qfuz1UzoSfURh93fLx429i3zwVFK6KDHppf76
-         rThRJxjM+9Ktp8EW4AwLiq/OUFM5JfMFdQZK8gL2zAR7Ticn/zBc70ChMilg28WZoxW5
-         noFg==
-X-Gm-Message-State: APjAAAUZIDVa5WgS5/AeqbGzf+LfV2s9VMvXNTKKgOiDfU9wEB91cb1f
-        OusyjvbB9vyJk/S+WDuPmdJQW8ilTA4=
-X-Google-Smtp-Source: APXvYqxyyoXPftbW6GeJwx4yF6wo2uOK6DKbLk1+l/KNCdpLBNfpM76u9knFOkAdArEhuytwOMmhtg==
-X-Received: by 2002:a1c:804b:: with SMTP id b72mr22413166wmd.139.1566833925797;
-        Mon, 26 Aug 2019 08:38:45 -0700 (PDT)
+        bh=a4whMVybYrFM/VJAJPt+RDbk4EyD/C4nT92WrUXXMMQ=;
+        b=ZDWDgNtaoGKZJN5ZCD3CwmHdeDT3qs2bA3TXB/jgRVJDt5q+75f0nrdxGIogtwwbO+
+         wML7v86408gOdV22Ea18QyyLnwosgia+jhQCV8nNFtGA55ubad36HE29Xih6yauRG7OZ
+         Z1+ywFKANxvNhbpdLQNSXZ8hZY4NQUtA9EeCJgH6HcX5nXwX6DdHQ7rXjws4BLAmck/5
+         EOBp016BJLsQRKofJ+t1p2rm/RTsJYSMfigun92bAPywGtw4mKlFFZtzgRV5PaSRDBwI
+         eCxgAzUyoFNjY59HenVknekxPCkwAyZhKXwydfXqfsE8i5gpx88LOLXP6ETqgc4qrGum
+         Ltog==
+X-Gm-Message-State: APjAAAVbDS/PJ/uNAd5DDGzjuV3Y/lhO1vcUG+b2wsYXv/+pJVhaXC9x
+        FtdJQ4u+ppu/MiAYmAAhKtZrPPKpftw=
+X-Google-Smtp-Source: APXvYqygTRJ64Z2TySzhfxKxSjAmfAcggoIVmXZ4r3Dc/XwC55KuebNCr5QYo+MM+8TDE2dGCd2iUw==
+X-Received: by 2002:a05:600c:40f:: with SMTP id q15mr23039886wmb.88.1566833926763;
+        Mon, 26 Aug 2019 08:38:46 -0700 (PDT)
 Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
-        by smtp.gmail.com with ESMTPSA id z8sm11580798wru.13.2019.08.26.08.38.44
+        by smtp.gmail.com with ESMTPSA id z8sm11580798wru.13.2019.08.26.08.38.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 08:38:45 -0700 (PDT)
+        Mon, 26 Aug 2019 08:38:46 -0700 (PDT)
 From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
@@ -47,9 +47,9 @@ Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 03/12] ARM: dts: imx7d: cl-som-imx7: fix i2c2
-Date:   Mon, 26 Aug 2019 16:37:51 +0100
-Message-Id: <20190826153800.35400-3-git@andred.net>
+Subject: [PATCH 04/12] ARM: dts: imx7d: cl-som-imx7: add emmicro,em3027 RTC
+Date:   Mon, 26 Aug 2019 16:37:52 +0100
+Message-Id: <20190826153800.35400-4-git@andred.net>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20190826153800.35400-1-git@andred.net>
 References: <20190826153800.35400-1-git@andred.net>
@@ -61,19 +61,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I2C2 is configured incorrectly at the moment:
-* update i2c2 to actually work (fix incorrect pinctrl assignments)
-* add the i2c2 bus recovery information [1]
-
-[1] Note that scl is being marked as GPIO_OPEN_DRAIN even
-though the i.MX pinctrl driver does not support enabling
-open drain directly - it is enabled by the fixed pinmux
-entry.
-So while this flag has no effect in practice, it needs
-to be there purely so as to fix the following warning
-from gpiolib:
-    gpio-6 (scl): enforced open drain please flag it properly in DT/ACPI DSDT/board file
-as that is the mode requested by i2c-imx.c
+add/enable RTC support using the on-board EM3027 real time
+clock on i2c2.
 
 Signed-off-by: André Draszik <git@andred.net>
 Cc: Ilya Ledvich <ilya@compulab.co.il>
@@ -88,59 +77,25 @@ Cc: NXP Linux Team <linux-imx@nxp.com>
 Cc: devicetree@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 ---
- arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 26 +++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-index e0432a3aa36f..ec82f4738c4f 100644
+index ec82f4738c4f..481bd3971c55 100644
 --- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
 +++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
-@@ -72,8 +72,11 @@
- };
- 
- &i2c2 {
--	pinctrl-names = "default";
-+	pinctrl-names = "default", "gpio";
- 	pinctrl-0 = <&pinctrl_i2c2>;
-+	pinctrl-1 = <&pinctrl_i2c2_recovery>;
-+	sda-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
-+	scl-gpios = <&gpio1 6 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
- 	status = "okay";
- 
- 	pmic: pmic@8 {
-@@ -236,13 +239,6 @@
- 		>;
- 	};
- 
--	pinctrl_i2c2: i2c2grp {
--		fsl,pins = <
--			MX7D_PAD_I2C2_SDA__I2C2_SDA		0x4000007f
--			MX7D_PAD_I2C2_SCL__I2C2_SCL		0x4000007f
--		>;
--	};
--
- 	pinctrl_uart1: uart1grp {
- 		fsl,pins = <
- 			MX7D_PAD_UART1_TX_DATA__UART1_DCE_TX	0x79
-@@ -273,4 +269,18 @@
- 			MX7D_PAD_LPSR_GPIO1_IO04__GPIO1_IO4	0x34
- 		>;
+@@ -181,6 +181,11 @@
+ 		reg = <0x50>;
+ 		pagesize = <16>;
  	};
 +
-+	pinctrl_i2c2: i2c2grp {
-+		fsl,pins = <
-+			MX7D_PAD_LPSR_GPIO1_IO07__I2C2_SDA	0x4000000f
-+			MX7D_PAD_LPSR_GPIO1_IO06__I2C2_SCL	0x4000000f
-+		>;
-+	};
-+
-+	pinctrl_i2c2_recovery: i2c2recoverygrp {
-+		fsl,pins = <
-+			MX7D_PAD_LPSR_GPIO1_IO07__GPIO1_IO7	0x4000007f
-+			MX7D_PAD_LPSR_GPIO1_IO06__GPIO1_IO6	0x4000007f
-+		>;
++	rtc@56 {
++		compatible = "emmicro,em3027";
++		reg = <0x56>;
 +	};
  };
+ 
+ &uart1 {
 -- 
 2.23.0.rc1
 
