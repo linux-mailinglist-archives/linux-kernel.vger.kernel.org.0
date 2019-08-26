@@ -2,73 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F1659DA33
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 01:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 973BD9DA37
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 01:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727226AbfHZX4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 19:56:49 -0400
-Received: from cnc.isely.net ([75.149.91.89]:51513 "EHLO cnc.isely.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726020AbfHZX4t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 19:56:49 -0400
-Received: from lochley (lochley-lan.isely.net [::ffff:192.168.23.74])
-  (AUTH: PLAIN isely, TLS: TLSv1/SSLv3,256bits,DHE-RSA-AES256-GCM-SHA384)
-  by cnc.isely.net with ESMTPSA; Mon, 26 Aug 2019 18:56:47 -0500
-  id 0000000000142089.000000005D6471BF.00006FA1
-Date:   Mon, 26 Aug 2019 18:56:47 -0500 (CDT)
-From:   isely@isely.net
-To:     Yizhuo <yzhai003@ucr.edu>
-cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Isely <isely@isely.net>
-Subject: Re: [PATCH] [media] pvrusb2: qctrl.flag will be uninitlaized if
- cx2341x_ctrl_query() returns error code
-In-Reply-To: <20190826235528.9923-1-yzhai003@ucr.edu>
-Message-ID: <alpine.DEB.2.20.1908261856340.22242@lochley.isely.net>
-References: <20190826235528.9923-1-yzhai003@ucr.edu>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
-Mime-Version: 1.0
+        id S1727650AbfHZX5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 19:57:52 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:41609 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbfHZX5u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 19:57:50 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1i2Orm-0007L4-6A; Tue, 27 Aug 2019 01:57:42 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: numlist API Re: [RFC PATCH v4 1/9] printk-rb: add a new printk ringbuffer implementation
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+        <20190807222634.1723-2-john.ogness@linutronix.de>
+        <20190823171802.eo2chwyktibeub7a@pathway.suse.cz>
+Date:   Tue, 27 Aug 2019 01:57:39 +0200
+In-Reply-To: <20190823171802.eo2chwyktibeub7a@pathway.suse.cz> (Petr Mladek's
+        message of "Fri, 23 Aug 2019 19:18:02 +0200")
+Message-ID: <87sgpnmqdo.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2019-08-23, Petr Mladek <pmladek@suse.com> wrote:
+>> --- /dev/null
+>> +++ b/kernel/printk/numlist.c
+>> @@ -0,0 +1,375 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +#include <linux/sched.h>
+>> +#include "numlist.h"
+>
+> struct numlist is really special variant of a list. Let me to
+> do a short summary:
+>
+>    + FIFO queue interface
+>
+>    + nodes sequentially numbered
+>
+>    + nodes referenced by ID instead pointers to avoid ABA problems
+>      + requires custom node() callback to get pointer for given ID
+>
+>    + lockless access:
+>      + pushed nodes must not longer get modified by push() caller
+>      + pop() caller gets exclusive write access, except that they
+>        must modify ID first and do smp_wmb() later
 
-Acked-by: Mike Isely <isely@pobox.com>
+Only if the "numlist user" decides to recycle descriptors (which the
+printk_ringbuffer does) is ID modification of descriptors necessary. How
+that is synchronized with readers is up to the user (for example,
+whether a RELEASE or an smp_wmb() is used).
 
-On Mon, 26 Aug 2019, Yizhuo wrote:
+>    + pop() does not work:
+>      + tail node is "busy"
+> 	+ needs a custom callback that defines when a node is busy
 
-> Inside function ctrl_cx2341x_getv4lflags(), qctrl.flag
-> will be uninitlaized if cx2341x_ctrl_query() returns -EINVAL.
-> However, it will be used in the later if statement, which is
-> potentially unsafe.
-> 
-> Signed-off-by: Yizhuo <yzhai003@ucr.edu>
-> ---
->  drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-> index ad5b25b89699..66a34fb9e6b2 100644
-> --- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-> +++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-> @@ -790,7 +790,7 @@ static int ctrl_cx2341x_set(struct pvr2_ctrl *cptr,int m,int v)
->  
->  static unsigned int ctrl_cx2341x_getv4lflags(struct pvr2_ctrl *cptr)
->  {
-> -	struct v4l2_queryctrl qctrl;
-> +	struct v4l2_queryctrl qctrl = {};
->  	struct pvr2_ctl_info *info;
->  	qctrl.id = cptr->info->v4l_id;
->  	cx2341x_ctrl_query(&cptr->hdw->enc_ctl_state,&qctrl);
-> 
+Note that busy() could always return false if the user has no concept of
+nodes that should not be popped.
 
--- 
+>      + tail is the last node
+> 	+ needed for lockless sequential numbering
+>
+> I will start with one inevitable question ;-) Is it realistic to find
+> another user for this API, please?
 
-Mike Isely
-isely @ isely (dot) net
-PGP: 03 54 43 4D 75 E5 CC 92 71 16 01 E2 B5 F5 C1 E8
+If someone needs a FIFO queue that supports:
+
+1. multiple concurrent writers and multiple concurrent non-consuming
+   readers
+
+2. where readers are allowed to miss nodes but are able to detect how
+   many were missed
+
+3. from any context (including NMI)
+
+then I know of no other data structure available. (Otherwise I would
+have used it!)
+
+> I am not sure that all the indirections, caused by the generic API,
+> are worth the gain.
+
+IMHO the API is sane. The only bizarre rule is that the numlist must
+always have at least 1 node. But since the readers are non-consuming,
+there is no real tragedy here.
+
+My goal is not to create some fabulous abstract data structure that
+everyone should use. But I did try to minimize numlist (and dataring) to
+only be concerned with clearly defined and minimal responsibilities
+without imposing unnecessary restrictions on the user.
+
+> Well, the separate API makes sense anyway. I have some ideas that
+> might make it cleaner.
+
+[snipped the nice refactoring of the ID into the nl_node]
+
+Your idea (along with previous discussions) convinced me of the
+importance of moving the ID-related barriers into the same
+file. However, rather than pushing the ID parts into the numlist, I will
+be moving them all into the "numlist user"
+(i.e. printk_ringbuffer). Your use of the ACQUIRE to load the ID made me
+realize that I need to be doing that as well! (but in the node()
+callback)
+
+The reasons why I do not want the ID in nl_node is:
+
+- The numlist would need to implement the ID-to-node mapping. For the
+  printk_ringbuffer that mapping is simply masking to an index within an
+  array. But why should a numlist user be forced to do it that way? I
+  see no advantage to restricting numlists to being arrays of nodes.
+
+- The dataring structure also uses IDs and requires an ID-to-node
+  mapping. I do not want to bind the dataring and numlist data
+  structures together at this level because they really have nothing to
+  do with each other. Having the dataring and numlist ID-to-node
+  mappings (and their barriers) in the same place (in the
+  numlist/dataring _user_) simplifies the big picture.
+
+- ID-related barriers are only needed if node recycling is involved. The
+  numlist user decides if recycling is used and if yes, then the numlist
+  user is responsible for correctly implementing that.
+
+- By moving all the ID-related barriers to the callbacks, the numlist
+  code remains clean and (with the exception of the one smp_rmb()) does
+  not expect anything from the numlist user.
+
+I believe your main concern was having easily visible symmetric
+barriers. We can achieve that if the read-barriers are in the callbacks
+(for both numlist and dataring). I think it makes more sense to put them
+there. dataring and numlist should not care about the ID-to-node
+mapping.
+
+John Ogness
