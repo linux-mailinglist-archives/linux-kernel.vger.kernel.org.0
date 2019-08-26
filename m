@@ -2,71 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54F3B9D307
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:39:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0C8C9D31E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:40:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733195AbfHZPjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:39:33 -0400
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:47688 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733188AbfHZPj1 (ORCPT
+        id S1733278AbfHZPkE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:40:04 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52791 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733075AbfHZPix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:39:27 -0400
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7QFdBHO038640;
-        Tue, 27 Aug 2019 00:39:12 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Tue, 27 Aug 2019 00:39:11 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from localhost.localdomain (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7QFd4Ds038600
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 27 Aug 2019 00:39:11 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-To:     Mark Brown <broonie@kernel.org>,
-        David Yang <yangxiaohua@everest-semi.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Subject: [PATCH v2 2/2] ASoC: es8316: fix inverted L/R of headphone mixer volume
-Date:   Tue, 27 Aug 2019 00:39:00 +0900
-Message-Id: <20190826153900.25969-2-katsuhiro@katsuster.net>
+        Mon, 26 Aug 2019 11:38:53 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o4so15928413wmh.2;
+        Mon, 26 Aug 2019 08:38:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sMmbpncOJ0ZaEaTp6uD1F3mJKzNvU9i5QAcT7nrh4JY=;
+        b=NtvH4toT+W7NXi5ABjtATrF5W685ALg4xltWgScToNc4u6D020xDuK2Db7Cj6hnk3n
+         /bAFcf+MWY/9tlA2M+g/Ne8virVOhRfv+qKGakE/K6olC4e1wz74yf3B69r40nvMOGWj
+         VlPNEA66BT8+TZH6nwIYozAhhcVfp6Vw+ouS2TZIPeKtRXHD/VX/Jk45SaqT+Ie5AuAf
+         IRmsh1ibRyO6jJl2XzmJHSYm/oDfR6bZWL9Q0A8pbTX9DbHRWo1DZWC9u4MMpm05I+fm
+         df1PEtaBpSHrchQ2zNk3JaniGEjrajVtUNaFZrsBydsZRYcoWT1G33XAzL0sxO9oLefm
+         alcA==
+X-Gm-Message-State: APjAAAUsame9kHgc7uwDG7+Z35RnRZd+rJrf1WTaP4vO37E68QArSZ+4
+        YR1c7J9fOFuBhe5ePpknP2HxCBRu9bw=
+X-Google-Smtp-Source: APXvYqzGJnbPj/aQN9vpELl8apyFyQZE5AG9D4gn7qkUgkt0R4z3A8KozlSMpWB1/cHyMGbBxQxjWQ==
+X-Received: by 2002:a1c:1b42:: with SMTP id b63mr22828360wmb.46.1566833930681;
+        Mon, 26 Aug 2019 08:38:50 -0700 (PDT)
+Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
+        by smtp.gmail.com with ESMTPSA id z8sm11580798wru.13.2019.08.26.08.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2019 08:38:50 -0700 (PDT)
+From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
+        Ilya Ledvich <ilya@compulab.co.il>,
+        Igor Grinberg <grinberg@compulab.co.il>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 08/12] ARM: dts: imx7d: cl-som-imx7: update UART1 (debug) clock
+Date:   Mon, 26 Aug 2019 16:37:56 +0100
+Message-Id: <20190826153800.35400-8-git@andred.net>
 X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20190826153900.25969-1-katsuhiro@katsuster.net>
-References: <20190826153900.25969-1-katsuhiro@katsuster.net>
+In-Reply-To: <20190826153800.35400-1-git@andred.net>
+References: <20190826153800.35400-1-git@andred.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes inverted Left-Right channel of headphone mixer
-volume by wrong shift_left, shift_right values.
+assign OSC as uart1 (debug) clock to achieve low power,
+so that the PLL doesn't need to be kept on
 
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Signed-off-by: André Draszik <git@andred.net>
+Cc: Ilya Ledvich <ilya@compulab.co.il>
+Cc: Igor Grinberg <grinberg@compulab.co.il>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 ---
- sound/soc/codecs/es8316.c | 2 +-
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
-index f97d9c5210f0..e0da24611800 100644
---- a/sound/soc/codecs/es8316.c
-+++ b/sound/soc/codecs/es8316.c
-@@ -94,7 +94,7 @@ static const struct snd_kcontrol_new es8316_snd_controls[] = {
- 	SOC_DOUBLE_TLV("Headphone Playback Volume", ES8316_CPHP_ICAL_VOL,
- 		       4, 0, 3, 1, hpout_vol_tlv),
- 	SOC_DOUBLE_TLV("Headphone Mixer Volume", ES8316_HPMIX_VOL,
--		       0, 4, 11, 0, hpmixer_gain_tlv),
-+		       4, 0, 11, 0, hpmixer_gain_tlv),
+diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+index d4637a8ca223..f80be855b4ec 100644
+--- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+@@ -222,7 +222,7 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_uart1>;
+ 	assigned-clocks = <&clks IMX7D_UART1_ROOT_SRC>;
+-	assigned-clock-parents = <&clks IMX7D_PLL_SYS_MAIN_240M_CLK>;
++	assigned-clock-parents = <&clks IMX7D_OSC_24M_CLK>;
+ 	status = "okay";
+ };
  
- 	SOC_ENUM("Playback Polarity", dacpol),
- 	SOC_DOUBLE_R_TLV("DAC Playback Volume", ES8316_DAC_VOLL,
 -- 
 2.23.0.rc1
 
