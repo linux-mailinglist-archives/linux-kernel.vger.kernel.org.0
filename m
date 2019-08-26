@@ -2,60 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAC029D2DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A295C9D2EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732560AbfHZPeF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:34:05 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57672 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728350AbfHZPeE (ORCPT
+        id S1733041AbfHZPiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:38:46 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40108 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729289AbfHZPip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:34:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gZm47CCL06ybTiP0j0dAUiXrO053lQFsUW6pDmole3U=; b=UqypIqh27pmKxahyd/0HFg4Cv
-        n2pfzS8CIpKBqOvjlsL+BytTAwLBa7XX4Te99ClELPy+d6q/sRzkJE+9nxQNh2J+hpOfPAVlL6gbS
-        ODK1jdLTWrIR1+90tvC+hWF10IqiXcWn1WwxoRuLQGTtb7SKjO3MpYRC8ykny/BM2dyVx57MuPD92
-        uweHAZeaM8hj+vpVpTvjrYFG7Y9xq/HrUJXXh1Zpx7w1t90DFPoQy3T1HZpAYWSjXdIV/InCHD61Q
-        ULT09gMcukaJ+YSgmQ1sP3tY2piDlndjgODjYT+BmGb0OoztGdv0ejl5MAserwJL6DNbB9oxxZCpX
-        FpZ4hrrYA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2H0L-0000VW-Qf; Mon, 26 Aug 2019 15:34:01 +0000
-Date:   Mon, 26 Aug 2019 08:34:01 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Cristian Marussi <cristian.marussi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mark.rutland@arm.com, peterz@infradead.org,
-        catalin.marinas@arm.com, takahiro.akashi@linaro.org,
-        james.morse@arm.com, hidehiro.kawai.ez@hitachi.com,
-        tglx@linutronix.de, will@kernel.org, dave.martin@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 0/7] Unify SMP stop generic logic to common code
-Message-ID: <20190826153401.GB9591@infradead.org>
-References: <20190823115720.605-1-cristian.marussi@arm.com>
+        Mon, 26 Aug 2019 11:38:45 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c5so16125017wmb.5;
+        Mon, 26 Aug 2019 08:38:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5/JN6uYb6Ltt98oMBprPmMJCQ9NUBW/kztrckS3ANvk=;
+        b=C/Yo0orMvf4IG+QJOrsWt5xIUrf2v5jD0UxUCH13cZem3LihB8dGWppH+rfWbFSiZ0
+         z1g0kXp7SG/fVNyipsTD4JrDQZFyAGHyZEdpbJjFBotomzyYdDa03LdOmwXtoIfD+uv1
+         5+diKPHgnIp9msnR/9Q+nIsgU+gI8ozZ/lroQcGzUhkEg+pG1WDP6PnT8lFvhtL4yymE
+         8+BFejpg34mBL+nSrNpspuFxCburY+yz6wvRE6VB0bLFcROnEWDd1E5OBMHrRbrDZrF8
+         y05nixQlUstkmWn9fR2lzW7staLaTtlFzwTb8avWkObcV8j9SjcubFnsV+ai1q/VSZJd
+         rNIQ==
+X-Gm-Message-State: APjAAAW+Em/HG+uRPOc6wE1GkbpgLk1Fh2ANxVWhk4itrwqB66pYTdcW
+        ivOWpVDx2dGEEA4xFmcpoO7bt7uzfZM=
+X-Google-Smtp-Source: APXvYqz6k0m1OCGHUiJ4OnGEKQyzGpm4tnivwPcoBNTuZ+jjYF+s+0PdhAXAhI1A6chPPoWGfmhDAw==
+X-Received: by 2002:a7b:c3d0:: with SMTP id t16mr23715323wmj.25.1566833923520;
+        Mon, 26 Aug 2019 08:38:43 -0700 (PDT)
+Received: from 1aq-andre.garage.tyco.com ([77.107.218.170])
+        by smtp.gmail.com with ESMTPSA id z8sm11580798wru.13.2019.08.26.08.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2019 08:38:42 -0700 (PDT)
+From:   =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Andr=C3=A9=20Draszik?= <git@andred.net>,
+        Ilya Ledvich <ilya@compulab.co.il>,
+        Igor Grinberg <grinberg@compulab.co.il>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 01/12] ARM: dts: imx7d: cl-som-imx7 imx7d-sbc-imx7: move USB
+Date:   Mon, 26 Aug 2019 16:37:49 +0100
+Message-Id: <20190826153800.35400-1-git@andred.net>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190823115720.605-1-cristian.marussi@arm.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 12:57:13PM +0100, Cristian Marussi wrote:
-> An architecture willing to rely on this SMP common logic has to define its
-> own helpers and set CONFIG_ARCH_USE_COMMON_SMP_STOP=y.
-> The series wire this up for arm64.
-> 
-> Behaviour is not changed for architectures not adopting this new common
-> logic.
+Whether and which USB port is enabled and how they
+are powered is a function of the carrier board, not
+of the SoM. Different carrier boards can have different
+ports enabled / wired up, and power them differently;
+so this should really move into the respective DTS.
 
-Seens like this common code only covers arm64.  I think we should
-generally have at least two users for common code.
+Do so and update the USB power supply to reflect
+the actual situation on the sbc-imx7 carrier board.
+
+Signed-off-by: André Draszik <git@andred.net>
+Cc: Ilya Ledvich <ilya@compulab.co.il>
+Cc: Igor Grinberg <grinberg@compulab.co.il>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: devicetree@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+---
+ arch/arm/boot/dts/imx7d-cl-som-imx7.dts | 24 ------------------------
+ arch/arm/boot/dts/imx7d-sbc-imx7.dts    | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 24 deletions(-)
+
+diff --git a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+index 62d5e9a4a781..6f7e85cf0c28 100644
+--- a/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-cl-som-imx7.dts
+@@ -22,15 +22,6 @@
+ 		device_type = "memory";
+ 		reg = <0x80000000 0x10000000>; /* 256 MB - minimal configuration */
+ 	};
+-
+-	reg_usb_otg1_vbus: regulator-vbus {
+-		compatible = "regulator-fixed";
+-		regulator-name = "usb_otg1_vbus";
+-		regulator-min-microvolt = <5000000>;
+-		regulator-max-microvolt = <5000000>;
+-		gpio = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+-		enable-active-high;
+-	};
+ };
+ 
+ &cpu0 {
+@@ -193,13 +184,6 @@
+ 	status = "okay";
+ };
+ 
+-&usbotg1 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_usbotg1>;
+-	vbus-supply = <&reg_usb_otg1_vbus>;
+-	status = "okay";
+-};
+-
+ &usdhc3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc3>;
+@@ -278,11 +262,3 @@
+ 		>;
+ 	};
+ };
+-
+-&iomuxc_lpsr {
+-	pinctrl_usbotg1: usbotg1grp {
+-		fsl,pins = <
+-			MX7D_PAD_LPSR_GPIO1_IO05__GPIO1_IO5	0x14 /* OTG PWREN */
+-		>;
+-	};
+-};
+diff --git a/arch/arm/boot/dts/imx7d-sbc-imx7.dts b/arch/arm/boot/dts/imx7d-sbc-imx7.dts
+index f8a868552707..aab646903de3 100644
+--- a/arch/arm/boot/dts/imx7d-sbc-imx7.dts
++++ b/arch/arm/boot/dts/imx7d-sbc-imx7.dts
+@@ -15,6 +15,14 @@
+ / {
+ 	model = "CompuLab SBC-iMX7";
+ 	compatible = "compulab,sbc-imx7", "compulab,cl-som-imx7", "fsl,imx7d";
++
++	reg_usb_vbus: regulator-usb-vbus {
++		compatible = "regulator-fixed";
++		regulator-name = "usb_vbus";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++	};
+ };
+ 
+ &usdhc1 {
+@@ -26,6 +34,11 @@
+ 	status = "okay";
+ };
+ 
++&&usbotg1 {
++	vbus-supply = <&reg_usb_vbus>;
++	status = "okay";
++};
++
+ &iomuxc {
+ 	pinctrl_usdhc1: usdhc1grp {
+ 		fsl,pins = <
+-- 
+2.23.0.rc1
+
