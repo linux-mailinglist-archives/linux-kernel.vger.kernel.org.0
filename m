@@ -2,154 +2,238 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEC309D78B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1673E9D77A
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbfHZUmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:42:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56742 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727219AbfHZUmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:42:46 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4532D281D1;
-        Mon, 26 Aug 2019 20:42:45 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-6.gru2.redhat.com [10.97.112.6])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 962026092D;
-        Mon, 26 Aug 2019 20:42:44 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id DF559105115;
-        Mon, 26 Aug 2019 17:40:57 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x7QKeped025832;
-        Mon, 26 Aug 2019 17:40:51 -0300
-Date:   Mon, 26 Aug 2019 17:40:50 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Linux PM <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when
- dedicated physical CPUs are available
-Message-ID: <20190826204045.GA24697@amt.cnet>
-References: <1564643196-7797-1-git-send-email-wanpengli@tencent.com>
- <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com>
- <c3fe182f-627f-88ad-cb4d-a4189202b438@redhat.com>
- <20190803202058.GA9316@amt.cnet>
- <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
+        id S1727478AbfHZUlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:41:22 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37095 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726562AbfHZUlV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 16:41:21 -0400
+Received: by mail-wr1-f67.google.com with SMTP id z11so16605921wrt.4
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=to:cc:from:subject:openpgp:autocrypt:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=I/Lg/A5kFBhe3BRV2nWQP1rTvdnutEzzbjoUkGqpMbE=;
+        b=KaSlCY4YZ4nEq9CiEoe3wMuVQbHL/Tv6Em+VLxgjCmqDqZCX8brOj9aVHbghymOgvg
+         tGRJhVeVqBfmxubySdR7dju81uO4zcPGgRCE6plnlXXGEbd9xX5U3mi4qx0KhcBudS7Q
+         8e75rTuQge8vZYdiTYgZd5k9bhh2Xds4GIQOEl2yHHIp1w0REBMeLmTkIh7WdjoT9NjV
+         2WXG7Nabk7s4hU1dc6Z7EvIWr5lOUXyBBCu5gmbmYI/+Erkh2WrqwVmsNkAZl2loHgFe
+         lMrdnrK0JcEO7iV8sJAuoldlI5IN0I8HxE9Ab3VjEM0UZKuihjcTmINn5gqqnQh+z2dv
+         vZvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:content-language
+         :content-transfer-encoding;
+        bh=I/Lg/A5kFBhe3BRV2nWQP1rTvdnutEzzbjoUkGqpMbE=;
+        b=Pfj69NHnF0apX6Yf/fx1YbdkgO6HroD0xDxGKgUqOPklmh18F2CJCKSm2y7elfPlTu
+         uZ5YxgWExas4b7RFNkfJXMBctOFxEZwNxEw+u9WbJWca/YPz8SnIgjLEbXCalfeUaRKd
+         7QmA5inj8tvV699/0zfpvkA/oLSyycg6VcB+eVpkohIM3agT19ZfdO5wbG/LF9MVvX4h
+         YjcwHz4roJnx1Yl5exARwNrSh8GwPWlsH+HwYBIIZdeTrsoIZK/2hZguKt8tMjZOE+yU
+         eRciGhTtqYqBjOIcWy3cf8OSsVFx1LC7RuVaHiuielRJywF3AfSddpynbydxe9lZ2+3y
+         ZQyw==
+X-Gm-Message-State: APjAAAVoW37mHerRpBMg8P83Nc3GF8ijG1YLYnoqWOjiAyRpxr3mbTg1
+        Kfy8GNxy+tgLvfc4Y753tVvhpNIVnVM=
+X-Google-Smtp-Source: APXvYqyERStbb2GMh2jXHe/doC59eqKjIKcXj28aSCwtTiMXT1lhFuHK85KVsGANkoeufHXn3nKldA==
+X-Received: by 2002:adf:e5cd:: with SMTP id a13mr23968434wrn.316.1566852076081;
+        Mon, 26 Aug 2019 13:41:16 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab? ([2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab])
+        by smtp.googlemail.com with ESMTPSA id u186sm1119255wmu.26.2019.08.26.13.41.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Aug 2019 13:41:15 -0700 (PDT)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [GIT PULL] timers drivers v5.5
+Openpgp: preference=signencrypt
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <df27caba-d9f8-e64d-0563-609f8785ecb3@linaro.org>
+Date:   Mon, 26 Aug 2019 22:41:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Mon, 26 Aug 2019 20:42:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 08:55:29AM +0800, Wanpeng Li wrote:
-> On Sun, 4 Aug 2019 at 04:21, Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> >
-> > On Thu, Aug 01, 2019 at 06:54:49PM +0200, Paolo Bonzini wrote:
-> > > On 01/08/19 18:51, Rafael J. Wysocki wrote:
-> > > > On 8/1/2019 9:06 AM, Wanpeng Li wrote:
-> > > >> From: Wanpeng Li <wanpengli@tencent.com>
-> > > >>
-> > > >> The downside of guest side polling is that polling is performed even
-> > > >> with other runnable tasks in the host. However, even if poll in kvm
-> > > >> can aware whether or not other runnable tasks in the same pCPU, it
-> > > >> can still incur extra overhead in over-subscribe scenario. Now we can
-> > > >> just enable guest polling when dedicated pCPUs are available.
-> > > >>
-> > > >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > > >> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> > > >> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> > > >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > > >
-> > > > Paolo, Marcelo, any comments?
-> > >
-> > > Yes, it's a good idea.
-> > >
-> > > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-> > >
-> > > Paolo
-> >
-> 
-> Hi Marcelo,
-> 
-> Sorry for the late response.
-> 
-> > I think KVM_HINTS_REALTIME is being abused somewhat.
-> > It has no clear meaning and used in different locations
-> > for different purposes.
-> 
-> ================== ============ =================================
-> KVM_HINTS_REALTIME 0                      guest checks this feature bit to
-> 
-> determine that vCPUs are never
-> 
-> preempted for an unlimited time
+The following changes since commit 08a3c192c93f4359a94bf47971e55b0324b72b8b:
 
-Unlimited time means infinite time, or unlimited time means 
-10s ? 1s ?
+  posix-timers: Prepare for PREEMPT_RT (2019-08-01 20:51:25 +0200)
 
-The previous definition was much better IMO: HINTS_DEDICATED.
+are available in the Git repository at:
 
+  https://git.linaro.org/people/daniel.lezcano/linux.git tags/timers-v5.5
 
-> allowing optimizations
-> ================== ============ =================================
-> 
-> Now it disables pv queued spinlock, 
+for you to fetch changes up to befd04abfbe4b933515dddb5659d0744be9dba6a:
 
-OK. 
+  clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated
+(2019-08-23 07:38:34 +0200)
 
-> pv tlb shootdown, 
+----------------------------------------------------------------
+- Remove dev_err() when used with platform_get_irq (Stephen Boyd)
 
-OK.
+- Add DT binding and new compatible for Allwinner sun4i (Maxime Ripard)
 
-> pv sched yield
+- Register the Atmel tcb clocksource for delays (Alexandre Belloni)
 
-"The idea is from Xen, when sending a call-function IPI-many to vCPUs,
-yield if any of the IPI target vCPUs was preempted. 17% performance
-increasement of ebizzy benchmark can be observed in an over-subscribe
-environment. (w/ kvm-pv-tlb disabled, testing TLB flush call-function
-IPI-many since call-function is not easy to be trigged by userspace
-workload)."
+- Add a clock divider for the Freescale imx platforms and new timer node
+  in the DT (Anson Huang)
 
-This can probably hurt if vcpus are rarely preempted. 
+- Use DIV_ROUND_CLOSEST macro for the Renesas OSTM (Geert Uytterhoeven)
 
-> which are not expected present in vCPUs are never preempted for an
-> unlimited time scenario.
-> 
-> >
-> > For example, i think that using pv queued spinlocks and
-> > haltpoll is a desired scenario, which the patch below disallows.
-> 
-> So even if dedicated pCPU is available, pv queued spinlocks should
-> still be chose if something like vhost-kthreads are used instead of
-> DPDK/vhost-user. 
+- Fix GENMASK and timer operation for the npcm timer (Avi Fishman)
 
-Can't you enable the individual features you need for optimizing 
-the overcommitted case? This is how things have been done historically:
-If a new feature is available, you enable it to get the desired
-performance. x2apic, invariant-tsc, cpuidle haltpoll...
+- Fix timer-of showing an error message when EPROBE_DEFER is
+  returned (Jon Hunter)
 
-So in your case: enable pv schedyield, enable pv tlb shootdown.
+- Add new SoC DT binding and match for Renesas timers (Magnus Damm)
 
-> kvm adaptive halt-polling will compete with
-> vhost-kthreads, however, poll in guest unaware other runnable tasks in
-> the host which will defeat vhost-kthreads.
+----------------------------------------------------------------
+Alexandre Belloni (1):
+      clocksource/drivers/tcb_clksrc: Register delay timer
 
-It depends on how much work vhost-kthreads needs to do, how successful 
-halt-poll in the guest is, and what improvement halt-polling brings.
-The amount of polling will be reduced to zero if polling 
-is not successful.
+Anson Huang (3):
+      clocksource/drivers/imx-sysctr: Add internal clock divider handle
+      arm64: dts: imx8mm: Add system counter node
+      arm64: dts: imx8mq: Add system counter node
+
+Avi Fishman (1):
+      clocksource/drivers/npcm: Fix GENMASK and timer operation
+
+Geert Uytterhoeven (1):
+      clocksource/drivers/renesas-ostm: Use DIV_ROUND_CLOSEST() helper
+
+Jon Hunter (2):
+      clocksource/drivers/timer-of: Do not warn on deferred probe
+      clocksource/drivers: Do not warn on probe defer
+
+Magnus Damm (7):
+      dt-bindings: timer: renesas, cmt: Add CMT0234 to sh73a0 and r8a7740
+      dt-bindings: timer: renesas, cmt: Update CMT1 on sh73a0 and r8a7740
+      dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a7792
+      dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a77995
+      dt-bindings: timer: renesas, cmt: Update R-Car Gen3 CMT1 usage
+      clocksource/drivers/sh_cmt: r8a7740 and sh73a0 SoC-specific match
+      clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated
+
+Maxime Ripard (4):
+      dt-bindings: timer: Convert Allwinner A10 Timer to a schema
+      dt-bindings: timer: Add missing compatibles
+      clocksource: sun4i: Add missing compatibles
+      dt-bindings: timer: Convert Allwinner A13 HSTimer to a schema
+
+Stephen Boyd (1):
+      clocksource: Remove dev_err() usage after platform_get_irq()
+
+ .../bindings/timer/allwinner,sun4i-a10-timer.yaml  | 102
++++++++++++++++++++++
+ .../bindings/timer/allwinner,sun4i-timer.txt       |  19 ----
+ .../bindings/timer/allwinner,sun5i-a13-hstimer.txt |  26 ------
+ .../timer/allwinner,sun5i-a13-hstimer.yaml         |  79 ++++++++++++++++
+ .../devicetree/bindings/timer/renesas,cmt.txt      |  40 ++++----
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi          |   8 ++
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi          |   8 ++
+ drivers/clocksource/Kconfig                        |   2 +-
+ drivers/clocksource/em_sti.c                       |   4 +-
+ drivers/clocksource/renesas-ostm.c                 |   2 +-
+ drivers/clocksource/sh_cmt.c                       |  19 +++-
+ drivers/clocksource/sh_tmu.c                       |   5 +-
+ drivers/clocksource/timer-atmel-tcb.c              |  18 ++++
+ drivers/clocksource/timer-imx-sysctr.c             |   5 +
+ drivers/clocksource/timer-npcm7xx.c                |   9 +-
+ drivers/clocksource/timer-of.c                     |   6 +-
+ drivers/clocksource/timer-probe.c                  |   4 +-
+ drivers/clocksource/timer-sun4i.c                  |   4 +
+ 18 files changed, 275 insertions(+), 85 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/timer/allwinner,sun4i-a10-timer.yaml
+ delete mode 100644
+Documentation/devicetree/bindings/timer/allwinner,sun4i-timer.txt
+ delete mode 100644
+Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt
+ create mode 100644
+Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
