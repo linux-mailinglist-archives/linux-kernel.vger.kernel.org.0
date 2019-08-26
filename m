@@ -2,58 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2768D9D7B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49F009D796
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731995AbfHZUp7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:45:59 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41708 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729669AbfHZUor (ORCPT
+        id S1730752AbfHZUow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:44:52 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45823 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728694AbfHZUou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:44:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j16so16573394wrr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:44:46 -0700 (PDT)
+        Mon, 26 Aug 2019 16:44:50 -0400
+Received: by mail-wr1-f65.google.com with SMTP id q12so16555356wrj.12
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:44:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GWZ01Skh8cQcWVz+pcA6teJikvF4jln+3VYBxfBbkpc=;
-        b=aaCTVJwleR8Zw8xXwUhKuTzGd3qAizfF2VBj/m0V6UyufC3CfXvN26JTI9Qrqgssr/
-         MhbELD3m6GkHfHycRbKyOSLyJp1wxd8gM339k0zH0PrYKmvsziPSwDgx8OJQWIo6wrwZ
-         yU7N3lGW+65+NSrVqjMTQIyBNrKfysn9IMIvmb6xeRY7xPFzJwXkU8xVO0ez8FjkkANm
-         Nijts4qCeRVlCthLo6XSxPOVkh/3IaPj8g63mPvqx6G7z1P2cVY6jMWljaPU9hKc1R0R
-         Z7kkWsD4ujQUzzh/Y0Rxv/O91hBecyfb02dbxrwgW8Tge+9m29v1crfF+7pvspowd1Ai
-         DaeA==
+        bh=SZT7LwQ4zVm6UpU1R0QaKTwCzMI6AEH9QZz6xkZt/VY=;
+        b=SOVljHUU8N7UbYj/cOCqgEomKmgW/J60GyZGE8TlJHFlEQP3S8H5JbmKJRln4V8uTH
+         1wmjcjxn/otSmTYMMbHHqk9cpXO+iunSYYqnkeDJFnZrbagQOcDvaYvDvTSuCkGdobYH
+         yPdEdjfRf6YWiDbWw1rcR4Xbnt+xZQDzSLOJ8+NCTjg8G6U1uArrZc6VWR7N2eiz78O8
+         OLrmN2VVwjDWJN9bIz+7NwHo+JPHDfW9WOQ/cQXIiT4ozFmPGQjrtNYzUU9q0dF2RvPz
+         fmrQAxhgz9q1XKjICu+OBZQTaq9AJl3SQ+jbS2GjyferSwq0iMEqajyG2HyIPnOs0OVR
+         eKZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GWZ01Skh8cQcWVz+pcA6teJikvF4jln+3VYBxfBbkpc=;
-        b=m9Er6NFSeMpI8H6GNocClnh4yD+gGwArujh32yFb7kk4qxmZP+a12X9xWZB7AUZLzt
-         4Pp/GBNYJk7Du1EbH3goNDC4ZmfPLEJqLcAgGJGF+iL+FeGSbNrJG25MGIiOGcwLVZ8B
-         BJ6nY1wLyGBvw/xF4QW37gGpqu1hcqtXtzWa4K8XwgbEKFfipCljqBcB9L3JIOWok/0s
-         tBGKJ6ExjwCqqUx//utxI4WCxrHu2fmmGF46CwHyetFskKhV8IBgY4OjfqiTS0ilaDv6
-         y74yBkb6oUd7/CEI+xA/70yznKm2GrNY5/BzPrtfuVsVMxSGZcDhp/wQlHsTiw8JgRjD
-         bLDQ==
-X-Gm-Message-State: APjAAAW9vQMcnxGjcwzq+AdBw/NkI+2xns6sG+DvhuxtuhB2LbqNWRZy
-        i/KJ7hbbZGmrQGksv8E9KnNHrQ==
-X-Google-Smtp-Source: APXvYqzPx683hISSMEiLSPegjxKr3ZnA/URrCNibdrFqGNOCuSaM5/nrVsE1EecmfWjLGocI32sTDg==
-X-Received: by 2002:a5d:52cc:: with SMTP id r12mr23928260wrv.272.1566852285709;
-        Mon, 26 Aug 2019 13:44:45 -0700 (PDT)
+        bh=SZT7LwQ4zVm6UpU1R0QaKTwCzMI6AEH9QZz6xkZt/VY=;
+        b=tMLlGMzRaOMR0K1dlg1wOL9Xlbuvnd+hax4Sn1CWEWwM6VmBD3gI3vpLmuWMAMu0tQ
+         ZquC1tOxvwmeXmS6N1gpjTvq0Rw61KJaapAV4FKS62c6HSyF1qGb04W1J2MFxrP7G6WY
+         9vNQGl7ctfpqXfTT04aIdEzECRrfp4SD5loTwwWXb5mNgX7r6Qv6LKSzJa9N2d2gUM3n
+         /r4gAZiN/lpqfiEqzvH7Oc9U/nPhfuuyU4E9fNC81gRbjM5aFWn6mm/cmdJcWm5CES7s
+         Ona/Nfpja5KlStkRzn3G3VAxLkHUQRpGOpBBMjy3P8P1sR0JJCh4bPbArawj+XHNq/EI
+         ubOA==
+X-Gm-Message-State: APjAAAWqx6uvcXdV9x5hUutepjlJR1jPRfrBi1YKpdNYrkltGhr1lcbN
+        58MJ3b8J12IN3uFuPsIlyGfDiQ==
+X-Google-Smtp-Source: APXvYqwdwUCw5aUqZelDvNyEgt4T4jxvKT/tVakrpiJfZDKLHDs0Lltb+i/VwDXc0av0TDel5R/6Gg==
+X-Received: by 2002:adf:e5cd:: with SMTP id a13mr23978628wrn.316.1566852288125;
+        Mon, 26 Aug 2019 13:44:48 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab])
-        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.44.44
+        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.44.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 13:44:44 -0700 (PDT)
+        Mon, 26 Aug 2019 13:44:47 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
 Cc:     linux-kernel@vger.kernel.org,
         Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Chen-Yu Tsai <wens@csie.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
         linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
         sunXi SoC support)
-Subject: [PATCH 04/20] clocksource: sun4i: Add missing compatibles
-Date:   Mon, 26 Aug 2019 22:43:51 +0200
-Message-Id: <20190826204407.17759-4-daniel.lezcano@linaro.org>
+Subject: [PATCH 05/20] dt-bindings: timer: Convert Allwinner A13 HSTimer to a schema
+Date:   Mon, 26 Aug 2019 22:43:52 +0200
+Message-Id: <20190826204407.17759-5-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190826204407.17759-1-daniel.lezcano@linaro.org>
 References: <df27caba-d9f8-e64d-0563-609f8785ecb3@linaro.org>
@@ -65,30 +69,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Newer Allwinner SoCs have different number of interrupts, let's add
-different compatibles for all of them to deal with this properly.
+The newer Allwinner SoCs have a High Speed Timer supported in Linux, with a
+matching Device Tree binding.
+
+Now that we have the DT validation in place, let's convert the device tree
+bindings for that controller over to a YAML schemas.
 
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-sun4i.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../timer/allwinner,sun5i-a13-hstimer.txt     | 26 ------
+ .../timer/allwinner,sun5i-a13-hstimer.yaml    | 79 +++++++++++++++++++
+ 2 files changed, 79 insertions(+), 26 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml
 
-diff --git a/drivers/clocksource/timer-sun4i.c b/drivers/clocksource/timer-sun4i.c
-index 65f38f6ca714..0ba8155b8287 100644
---- a/drivers/clocksource/timer-sun4i.c
-+++ b/drivers/clocksource/timer-sun4i.c
-@@ -219,5 +219,9 @@ static int __init sun4i_timer_init(struct device_node *node)
- }
- TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
- 		       sun4i_timer_init);
-+TIMER_OF_DECLARE(sun8i_a23, "allwinner,sun8i-a23-timer",
-+		 sun4i_timer_init);
-+TIMER_OF_DECLARE(sun8i_v3s, "allwinner,sun8i-v3s-timer",
-+		 sun4i_timer_init);
- TIMER_OF_DECLARE(suniv, "allwinner,suniv-f1c100s-timer",
- 		       sun4i_timer_init);
+diff --git a/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt b/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt
+deleted file mode 100644
+index 2c5c1be78360..000000000000
+--- a/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.txt
++++ /dev/null
+@@ -1,26 +0,0 @@
+-Allwinner SoCs High Speed Timer Controller
+-
+-Required properties:
+-
+-- compatible :	should be "allwinner,sun5i-a13-hstimer" or
+-		"allwinner,sun7i-a20-hstimer"
+-- reg : Specifies base physical address and size of the registers.
+-- interrupts :	The interrupts of these timers (2 for the sun5i IP, 4 for the sun7i
+-		one)
+-- clocks: phandle to the source clock (usually the AHB clock)
+-
+-Optional properties:
+-- resets: phandle to a reset controller asserting the timer
+-
+-Example:
+-
+-timer@1c60000 {
+-	compatible = "allwinner,sun7i-a20-hstimer";
+-	reg = <0x01c60000 0x1000>;
+-	interrupts = <0 51 1>,
+-		     <0 52 1>,
+-		     <0 53 1>,
+-		     <0 54 1>;
+-	clocks = <&ahb1_gates 19>;
+-	resets = <&ahb1rst 19>;
+-};
+diff --git a/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml b/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml
+new file mode 100644
+index 000000000000..dfa0c41fd261
+--- /dev/null
++++ b/Documentation/devicetree/bindings/timer/allwinner,sun5i-a13-hstimer.yaml
+@@ -0,0 +1,79 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/timer/allwinner,sun5i-a13-hstimer.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Allwinner A13 High-Speed Timer Device Tree Bindings
++
++maintainers:
++  - Chen-Yu Tsai <wens@csie.org>
++  - Maxime Ripard <maxime.ripard@bootlin.com>
++
++properties:
++  compatible:
++    oneOf:
++      - const: allwinner,sun5i-a13-hstimer
++      - const: allwinner,sun7i-a20-hstimer
++      - items:
++          - const: allwinner,sun6i-a31-hstimer
++          - const: allwinner,sun7i-a20-hstimer
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    minItems: 2
++    maxItems: 4
++    items:
++      - description: Timer 0 Interrupt
++      - description: Timer 1 Interrupt
++      - description: Timer 2 Interrupt
++      - description: Timer 3 Interrupt
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++if:
++  properties:
++    compatible:
++      items:
++        const: allwinner,sun5i-a13-hstimer
++
++then:
++  properties:
++    interrupts:
++      minItems: 2
++      maxItems: 2
++
++else:
++  properties:
++    interrupts:
++      minItems: 4
++      maxItems: 4
++
++additionalProperties: false
++
++examples:
++  - |
++    timer@1c60000 {
++        compatible = "allwinner,sun7i-a20-hstimer";
++        reg = <0x01c60000 0x1000>;
++        interrupts = <0 51 1>,
++                     <0 52 1>,
++                     <0 53 1>,
++                     <0 54 1>;
++        clocks = <&ahb1_gates 19>;
++        resets = <&ahb1rst 19>;
++    };
++
++...
 -- 
 2.17.1
 
