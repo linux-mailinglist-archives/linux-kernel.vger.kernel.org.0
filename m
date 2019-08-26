@@ -2,96 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DC09C7F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 05:32:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7ACC9C7FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 05:37:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729531AbfHZDcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 25 Aug 2019 23:32:12 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38687 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbfHZDcL (ORCPT
+        id S1729561AbfHZDha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 25 Aug 2019 23:37:30 -0400
+Received: from gateway20.websitewelcome.com ([192.185.44.20]:35387 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726215AbfHZDh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 25 Aug 2019 23:32:11 -0400
-Received: by mail-pf1-f195.google.com with SMTP id o70so10839013pfg.5;
-        Sun, 25 Aug 2019 20:32:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xa8DntdIz8LC3JJ+BkOhzuHnHyOIlOhfoPe7xm4aRe8=;
-        b=Z86t4++BSalOqOkY1hNY6bqmn3pi1wX0qJpSQJ5P8UgHb4p6HaTS92KVyQDbzMfhli
-         AqMPL/1kdWc5CsCqKYh5/2la+lmyj/OQPky92nTLklx+4MJOBpzA8fNMvu+YQz9RGKC7
-         0anuCt1VKhdryArNdNz6RO3p2OL3AkJ5UI+AjMc9tqGA+3TXXn9qSrZ0tZ2CqUmbCnRq
-         CaAYKvSB5WPnNEA1mv+WsfzuzIXKayLupi6dgRb/UPMFmSlsTkeeyeAwnAOwZehPJGMA
-         NbXDEdDmFEjNdpesFNef+QUgNYPJR+FLRb89SZ42iDx91llreqxWbI8LdOFYCjReGdPu
-         n0yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xa8DntdIz8LC3JJ+BkOhzuHnHyOIlOhfoPe7xm4aRe8=;
-        b=HUkBsVswtPrYuxgvz03L9pJ24ZbGEiIzqAV5QTPT7vzpW6WUdbO9fUyMwJSMwK6IY3
-         vpuwOmGLnBjus1WHceT0+LoFfnc9F5JIh37NgF6ymreSmWCbnDgjQLOU4/lnHz0MnGZx
-         gTGyXZH0vRV8NKJ/qFhAelwI/anN5cjDMmy22DxZGbMlEGp1klDPO/cmQIDHEj1Oa3Y8
-         mcJzHrSBufncNZuy+L/gIo3MhEJbXxwNTcJTkSVEQWR7zfH8zNADeggiYTj2G+OZC6O1
-         vD56/CJuxluwicgaNzaG4TxA/llUC3xuRHKgQCZ2BCsquCLW9i8zZ36nNH2YQ8OrpFuQ
-         s9yw==
-X-Gm-Message-State: APjAAAXDr1tsfmbk4EMKPDqAHOYvm0rY8TohvF5IofmJLbK4mZ3DBU8O
-        7jqsl2TrcLT4N7XsgARy2OmHLo98MoC5vtcB5Pk=
-X-Google-Smtp-Source: APXvYqzN3pdcoH83pjRw1/MJddGwkq8XkYEuuFhC6p38MxZs9rCZOLSKFmzpC+SAwhimHbuc5zhdxSTpdKrls0zCmpM=
-X-Received: by 2002:a65:5043:: with SMTP id k3mr1282285pgo.406.1566790330845;
- Sun, 25 Aug 2019 20:32:10 -0700 (PDT)
+        Sun, 25 Aug 2019 23:37:29 -0400
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id DB4E1400DED21
+        for <linux-kernel@vger.kernel.org>; Sun, 25 Aug 2019 21:28:29 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 25kwiJ2rR2qH725kwiGJ3J; Sun, 25 Aug 2019 22:33:22 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:Subject:From:References:To:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eIrYihMjW2sluR5uV5NO3MSvoaFh0ScIl4JWwE8d9pM=; b=WSVkTJl0YdiIBMyJ5IcqNTdE/b
+        HmhDkLnHAhFuwSIjrH9PYqV+H/SCDX9N2BAaoqcGkrpfl9eAf78WWFrBWSSyBoNc00dIsmxQMyhy3
+        WsmrG69xu4utIOaqLr+shNSB7rtk8pV+ve6zj8HPnozMBj9J3S527laCTuH/DkDghqvqD/bU6T5tR
+        YcrtT3bL1yuZlUn53+DkKe2VaEnEBKY583BTcCUg4H70ZU8Hj0MPRhUUiq3MkG/qiPtDKS3rU0D5Q
+        qfgVasNb0b6iS5jXelT3qsIjtTsuZy8XlHTrXTEvPlvB7p5jZrkFWq2oPRAGtpnjh22sUG7tTD6rn
+        V4ZyuWcA==;
+Received: from [189.152.216.116] (port=51728 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1i25kw-00483z-0T; Sun, 25 Aug 2019 22:33:22 -0500
+To:     tglx@linutronix.de, bp@suse.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, x86@kernel.org,
+        mingo@kernel.org, kirill.shutemov@linux.intel.com,
+        kirill@shutemov.name, linux-tip-commits@vger.kernel.org
+References: <20190813131654.24378-1-kirill.shutemov@linux.intel.com>
+ <tip-0a46fff2f9108c2c44218380a43a736cf4612541@git.kernel.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ mQINBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABtCxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPokCPQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA7kCDQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAYkCJQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [tip:x86/urgent] x86/boot/compressed/64: Fix boot on machines
+ with broken E820 table
+Message-ID: <caa30daa-9ed5-e293-f6cd-ff261c995e1e@embeddedor.com>
+Date:   Sun, 25 Aug 2019 22:33:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190822053852.239309-1-Tianyu.Lan@microsoft.com>
- <87zhk1pp9p.fsf@vitty.brq.redhat.com> <20190824151218.GM1581@sasha-vm>
-In-Reply-To: <20190824151218.GM1581@sasha-vm>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Mon, 26 Aug 2019 11:31:59 +0800
-Message-ID: <CAOLK0pyk0z2DodvdP46XD7GrDUHmiRBehs8FT2u7iWes-bLtuA@mail.gmail.com>
-Subject: Re: [PATCH] x86/Hyper-V: Fix build error with CONFIG_HYPERV_TSCPAGE=N
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        linux-hyperv@vger.kernel.org,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        michael.h.kelley@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <tip-0a46fff2f9108c2c44218380a43a736cf4612541@git.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.216.116
+X-Source-L: No
+X-Exim-ID: 1i25kw-00483z-0T
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.152.216.116]:51728
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 25, 2019 at 1:52 AM Sasha Levin <sashal@kernel.org> wrote:
->
-> On Thu, Aug 22, 2019 at 10:39:46AM +0200, Vitaly Kuznetsov wrote:
-> >lantianyu1986@gmail.com writes:
-> >
-> >> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> >>
-> >> Both Hyper-V tsc page and Hyper-V tsc MSR code use variable
-> >> hv_sched_clock_offset for their sched clock callback and so
-> >> define the variable regardless of CONFIG_HYPERV_TSCPAGE setting.
-> >
-> >CONFIG_HYPERV_TSCPAGE is gone after my "x86/hyper-v: enable TSC page
-> >clocksource on 32bit" patch. Do we still have an issue to fix?
->
-> Yes. Let's get it fixed on older kernels (as such we need to tag this
-> one for stable). The 32bit TSC patch won't come in before 5.4 anyway.
->
-> Vitaly, does can you ack this patch? It might require you to re-spin
-> your patch.
->
-Hi Sasha:
-               Thomas has foled this fix into original patch.
-https://lkml.org/lkml/2019/8/23/600
+Hi all,
+
+On 8/19/19 9:16 AM, tip-bot for Kirill A. Shutemov wrote:
+[..]
+> 
+> diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+> index 5f2d03067ae5..2faddeb0398a 100644
+> --- a/arch/x86/boot/compressed/pgtable_64.c
+> +++ b/arch/x86/boot/compressed/pgtable_64.c
+> @@ -72,6 +72,8 @@ static unsigned long find_trampoline_placement(void)
+>  
+>  	/* Find the first usable memory region under bios_start. */
+>  	for (i = boot_params->e820_entries - 1; i >= 0; i--) {
+> +		unsigned long new;
+> +
+>  		entry = &boot_params->e820_table[i];
+>  
+>  		/* Skip all entries above bios_start. */
+> @@ -84,15 +86,20 @@ static unsigned long find_trampoline_placement(void)
+>  
+>  		/* Adjust bios_start to the end of the entry if needed. */
+>  		if (bios_start > entry->addr + entry->size)
+
+Notice that if this condition happens to be false, we end up with an
+uninitialized variable *new*.
+
+What would be the right value to assign to *new* at declaration under
+this condition?
+
+> -			bios_start = entry->addr + entry->size;
+> +			new = entry->addr + entry->size;
+>  
+>  		/* Keep bios_start page-aligned. */
+> -		bios_start = round_down(bios_start, PAGE_SIZE);
+> +		new = round_down(new, PAGE_SIZE);
+>  
+>  		/* Skip the entry if it's too small. */
+> -		if (bios_start - TRAMPOLINE_32BIT_SIZE < entry->addr)
+> +		if (new - TRAMPOLINE_32BIT_SIZE < entry->addr)
+>  			continue;
+>  
+> +		/* Protect against underflow. */
+> +		if (new - TRAMPOLINE_32BIT_SIZE > bios_start)
+> +			break;
+> +
+> +		bios_start = new;
+>  		break;
+>  	}
+>  
+> 
+
 --
-Best regards
-Tianyu Lan
+Gustavo
+
