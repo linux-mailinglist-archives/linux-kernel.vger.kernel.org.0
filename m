@@ -2,116 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A34B29CF6D
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 14:20:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B82309CF73
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 14:20:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731931AbfHZMUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 08:20:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50840 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731914AbfHZMUW (ORCPT
+        id S1731954AbfHZMU6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 08:20:58 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36525 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730199AbfHZMU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 08:20:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jtYBca8klqBOT2cMFIwtTS4Yo/ScZgTti7DMykKSX5w=; b=TqVsVFY1TpWM61S2Qf3BHmeTOX
-        Yd2jAgC4+J5opaUqJiK8voKYIBhok4BYc74CKTm4vndHQbX07K+eZRuLQ/pgG9UCvxC8PeSzARY1/
-        YOzmPlHObM4oGcIXDHVKpN3BGEuiF9PkrmzSHfqGaMpL7DbFsNwQixz3cbNK24pcuox5bPJhmNuGF
-        WS8MJrdgnWd4RySScxOOFvpXFKnXIoR93jXWGZzpWcqjrM6Sv1McQ3kPVBT/qF4QtX/fXJJclbjZB
-        OnYVpj979zH3d4yFHaA88FRpbExPUbQThKBx75RJ6wUUwjnqByexU0wD16FVB0Gdxt4WXP0WZj8h7
-        Yy+/D7Gw==;
-Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2Dyr-0003uc-LI; Mon, 26 Aug 2019 12:20:18 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Stefano Stabellini <sstabellini@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>
-Subject: [PATCH 11/11] arm64: use asm-generic/dma-mapping.h
-Date:   Mon, 26 Aug 2019 14:19:44 +0200
-Message-Id: <20190826121944.515-12-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190826121944.515-1-hch@lst.de>
-References: <20190826121944.515-1-hch@lst.de>
+        Mon, 26 Aug 2019 08:20:58 -0400
+Received: by mail-qt1-f195.google.com with SMTP id z4so17619401qtc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 05:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IInbJuct5ufzKNiytsnk+jMIYv1V6eVTEaTj38ohm3M=;
+        b=fnMzsCTram2mN7X12asMshdyTXllFMcSBIdA21KFh1RFEex2/5FeKlO+9rtE32Hfem
+         jNFRntwunRTt9MR1Ovw/7sG8gRUDu02VVxJVeHApVsYUYSL3ColhOVAIONzU/OwgzIsI
+         Cf+dbVDkOq6orHb9v/8o9ozQW9LemkmRD/qs4cgkUG9GO8bMKSsQ5fVmxRZ8QKmTd/UN
+         cMzUj24siEC0zPzjoKcmIhXTIs2pUPmj3ydsCJXBTyle1aaPAglspzS3pqQgQ9jGMdgs
+         V8/0FEQAaqOhMwcD4fjLClL9PYtQeZh0epvkMiiCdtfvZJMAYEZM7IJ41fzr+ZyQcPqf
+         fuvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IInbJuct5ufzKNiytsnk+jMIYv1V6eVTEaTj38ohm3M=;
+        b=U1SksqcYkL85UC0Q7bYSsaedrCJypdfjQx8g/zEH0ImewA39wlB+qpQ4PeUtKznyuT
+         Lz2YVnHhbUwfeBmXM4TkRNGzM/qk1dQipVRC6hnDv7JT16NEbwqMkSjw29aqf6Zx3952
+         63tQ8vCWUf2goG/FlGoL9tjwm2NwazgbxDtH/Iyrd8JzQ0JgpDJinCTIPY3ilnhzncLN
+         hn1B/1QWG2T8yd0wKG1KQ+2OEEcP3vU5CIyDRUEKOQBsYitG8h10NWsEc3/WHxeimVZf
+         EsV4FyEis3CkYpRpU7uRCblBE/H+hNWD3m2ELN6JKHtBgjq1AxriMdv2W9K4nLrATfKu
+         oelA==
+X-Gm-Message-State: APjAAAXPCXJbDc7BEbu4/tEKvks4z0n8cLVAHJ2O1U+vAnmCLNKu8PJF
+        SECHIp0ti7DcZX1hV6AQiVdyMw==
+X-Google-Smtp-Source: APXvYqz+8moKXNMjENzuAiUz9yUTyRo1T98w+98Tx3SfRXc69ey23f/HpA4QXKYMoXk3ry4w8yOQ3g==
+X-Received: by 2002:ac8:73c7:: with SMTP id v7mr14706237qtp.9.1566822056913;
+        Mon, 26 Aug 2019 05:20:56 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-216-168.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.216.168])
+        by smtp.gmail.com with ESMTPSA id q6sm6213402qke.109.2019.08.26.05.20.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 26 Aug 2019 05:20:56 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1i2DzT-0007A1-Sv; Mon, 26 Aug 2019 09:20:55 -0300
+Date:   Mon, 26 Aug 2019 09:20:55 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     leon@kernel.org, Doug Ledford <dledford@redhat.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] IB/mlx5: Convert to use vm_map_pages_zero()
+Message-ID: <20190826122055.GA27349@ziepe.ca>
+References: <1566713247-23873-1-git-send-email-jrdr.linux@gmail.com>
+ <20190825194354.GC21239@ziepe.ca>
+ <CAFqt6za5uUSKLMn0E25M1tYG853tpdE-kcoUYHdmby5s4d0JKg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqt6za5uUSKLMn0E25M1tYG853tpdE-kcoUYHdmby5s4d0JKg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the Xen special cases are gone nothing worth mentioning is
-left in the arm64 <asm/dma-mapping.h> file, so switch to use the
-asm-generic version instead.
+On Mon, Aug 26, 2019 at 01:32:09AM +0530, Souptick Joarder wrote:
+> On Mon, Aug 26, 2019 at 1:13 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Sun, Aug 25, 2019 at 11:37:27AM +0530, Souptick Joarder wrote:
+> > > First, length passed to mmap is checked explicitly against
+> > > PAGE_SIZE.
+> > >
+> > > Second, if vma->vm_pgoff is passed as non zero, it would return
+> > > error. It appears like driver is expecting vma->vm_pgoff to
+> > > be passed as 0 always.
+> >
+> > ? pg_off is not zero
+> 
+> Sorry, I mean, driver has a check against non zero to return error -EOPNOTSUPP
+> which means in true scenario driver is expecting vma->vm_pgoff should be passed
+> as 0.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Will Deacon <will@kernel.org>
----
- arch/arm64/include/asm/Kbuild        |  1 +
- arch/arm64/include/asm/dma-mapping.h | 22 ----------------------
- arch/arm64/mm/dma-mapping.c          |  1 +
- 3 files changed, 2 insertions(+), 22 deletions(-)
- delete mode 100644 arch/arm64/include/asm/dma-mapping.h
+get_index is masking vm_pgoff, it is not 0
 
-diff --git a/arch/arm64/include/asm/Kbuild b/arch/arm64/include/asm/Kbuild
-index c52e151afab0..98a5405c8558 100644
---- a/arch/arm64/include/asm/Kbuild
-+++ b/arch/arm64/include/asm/Kbuild
-@@ -4,6 +4,7 @@ generic-y += delay.h
- generic-y += div64.h
- generic-y += dma.h
- generic-y += dma-contiguous.h
-+generic-y += dma-mapping.h
- generic-y += early_ioremap.h
- generic-y += emergency-restart.h
- generic-y += hw_irq.h
-diff --git a/arch/arm64/include/asm/dma-mapping.h b/arch/arm64/include/asm/dma-mapping.h
-deleted file mode 100644
-index 67243255a858..000000000000
---- a/arch/arm64/include/asm/dma-mapping.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Copyright (C) 2012 ARM Ltd.
-- */
--#ifndef __ASM_DMA_MAPPING_H
--#define __ASM_DMA_MAPPING_H
--
--#ifdef __KERNEL__
--
--#include <linux/types.h>
--#include <linux/vmalloc.h>
--
--#include <xen/xen.h>
--#include <asm/xen/hypervisor.h>
--
--static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
--{
--	return NULL;
--}
--
--#endif	/* __KERNEL__ */
--#endif	/* __ASM_DMA_MAPPING_H */
-diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
-index 4b244a037349..6578abcfbbc7 100644
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@ -8,6 +8,7 @@
- #include <linux/cache.h>
- #include <linux/dma-noncoherent.h>
- #include <linux/dma-iommu.h>
-+#include <xen/xen.h>
- #include <xen/swiotlb-xen.h>
- 
- #include <asm/cacheflush.h>
--- 
-2.20.1
-
+Jason
