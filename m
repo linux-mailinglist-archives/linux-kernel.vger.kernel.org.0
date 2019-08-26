@@ -2,79 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085039CC00
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 10:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C20D99CBFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 10:57:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730443AbfHZI6g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 04:58:36 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5214 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729569AbfHZI6f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 04:58:35 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 28C44AA3DF56951A2E70;
-        Mon, 26 Aug 2019 16:58:22 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Mon, 26 Aug 2019
- 16:58:12 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
-        <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <Jun.Lei@amd.com>, <Dmytro.Laktyushkin@amd.com>,
-        <Bhawanpreet.Lakha@amd.com>, <joshua.aberback@amd.com>,
-        <Wenjing.Liu@amd.com>, <charlene.liu@amd.com>,
-        <martin.leung@amd.com>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] drm/amdgpu/display: fix build error without CONFIG_DRM_AMD_DC_DSC_SUPPORT
-Date:   Mon, 26 Aug 2019 16:57:07 +0800
-Message-ID: <20190826085707.12504-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        id S1730375AbfHZI5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 04:57:17 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35661 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbfHZI5R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 04:57:17 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1i2AoN-0003gN-GM; Mon, 26 Aug 2019 10:57:15 +0200
+Message-ID: <1566809829.3842.4.camel@pengutronix.de>
+Subject: Re: [RESEND PATCHv4 1/1] drivers/amba: add reset control to amba
+ bus probe
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Date:   Mon, 26 Aug 2019 10:57:09 +0200
+In-Reply-To: <e7e986a2-762e-674b-608b-5ee5b013935b@kernel.org>
+References: <20190820145834.7301-1-dinguyen@kernel.org>
+         <20190820145834.7301-2-dinguyen@kernel.org>
+         <CACRpkdasbXuqUkO3NjMGBU_ePEBT23BS1eP-bigB0_g494LgvQ@mail.gmail.com>
+         <e7e986a2-762e-674b-608b-5ee5b013935b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_DRM_AMD_DC_DSC_SUPPORT is not set, build fails:
+Hi Dinh, Linus,
 
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn20/dcn20_hwseq.c: In function dcn20_hw_sequencer_construct:
-drivers/gpu/drm/amd/amdgpu/../display/dc/dcn20/dcn20_hwseq.c:2099:28:
- error: dcn20_dsc_pg_control undeclared (first use in this function); did you mean dcn20_dpp_pg_control?
-  dc->hwss.dsc_pg_control = dcn20_dsc_pg_control;
-                            ^~~~~~~~~~~~~~~~~~~~
-                            dcn20_dpp_pg_control
+On Fri, 2019-08-23 at 10:42 -0500, Dinh Nguyen wrote:
+> 
+> On 8/23/19 4:19 AM, Linus Walleij wrote:
+> > On Tue, Aug 20, 2019 at 4:58 PM Dinh Nguyen <dinguyen@kernel.org> wrote:
+> > 
+> > > @@ -401,6 +402,26 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
+> > >         ret = amba_get_enable_pclk(dev);
+> > >         if (ret == 0) {
+> > >                 u32 pid, cid;
+> > > +               int count;
+> > > +               struct reset_control *rstc;
+> > > +
+> > > +               /*
+> > > +                * Find reset control(s) of the amba bus and de-assert them.
+> > > +                */
+> > > +               count = reset_control_get_count(&dev->dev);
 
-Use CONFIG_DRM_AMD_DC_DSC_SUPPORT to guard this.
+The reset_control_get_count() inline stub returns -ENOENT, so the
+compiler can throw away the complete loop.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 8a31820b1218 ("drm/amd/display: Make init_hw and init_pipes generic for seamless boot")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c | 4 ++++
- 1 file changed, 4 insertions(+)
+> > > +               while (count > 0) {
+> > > +                       rstc = of_reset_control_get_shared_by_index(dev->dev.of_node, count - 1);
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-index e146d1d..54d67f6 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_hwseq.c
-@@ -2092,7 +2092,11 @@ void dcn20_hw_sequencer_construct(struct dc *dc)
- 	dc->hwss.enable_power_gating_plane = dcn20_enable_power_gating_plane;
- 	dc->hwss.dpp_pg_control = dcn20_dpp_pg_control;
- 	dc->hwss.hubp_pg_control = dcn20_hubp_pg_control;
-+#ifdef CONFIG_DRM_AMD_DC_DSC_SUPPORT
- 	dc->hwss.dsc_pg_control = dcn20_dsc_pg_control;
-+#else
-+	dc->hwss.dsc_pg_control = NULL;
-+#endif
- 	dc->hwss.disable_vga = dcn20_disable_vga;
- 
- 	if (IS_FPGA_MAXIMUS_DC(dc->ctx->dce_environment)) {
--- 
-2.7.4
+Since resets are looked up with of_reset_control_get, I'd use
+of_reset_control_get_count() above for consistency. But see below:
 
+> > > +                       if (IS_ERR(rstc)) {
+> > > +                               if (PTR_ERR(rstc) == -EPROBE_DEFER)
+> > > +                                       ret = -EPROBE_DEFER;
+> > > +                               else
+> > > +                                       dev_err(&dev->dev, "Can't get amba reset!\n");
+> > > +                               break;
+> > > +                       }
+> > > +                       reset_control_deassert(rstc);
+> > > +                       reset_control_put(rstc);
+> > > +                       count--;
+> > > +               }
 
+It looks like the order of deassertions is irrelevant. If so,
+You can use of_reset_control_array_get() to simplify this:
+
++		rstc = of_reset_control_array_get_optional_shared(dev->dev.of_node);
++		if (IS_ERR(rstc)) {
++			if (PTR_ERR(rstc) != -EPROBE_DEFER)
++				dev_err(&dev->dev, "Can't get amba reset!\n");
++			return PTR_ERR(rstc);
++		}
++		reset_control_deassert(rstc);
++		reset_control_put(rstc);
+
+> > I'm not normally a footprint person, but the looks of the stubs in
+> > <linux/reset.h> makes me suspicious whether this will have zero impact
+> > in size on platforms without reset controllers.
+> > 
+> > Can you just ls -al on the kernel without CONFIG_RESET_CONTROLLER
+> > before and after this patch and ascertain that it has zero footprint effect?
+> 
+> Thanks for the review. I checked it, and indeed, it does have a zero
+> footprint effect.
+> 
+> > 
+> > If it doesn't I'd sure like to break this into its own function and
+> > stick a if (!IS_ENABLED(CONFIG_RESET_CONTROLLER)) return 0;
+> > in there to make sure the compiler drops it.
+> > 
+> > Also it'd be nice to get Philipp's ACK on the semantics, though they
+> > look correct to me.
+
+regards
+Philipp
