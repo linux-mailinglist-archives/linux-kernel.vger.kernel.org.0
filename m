@@ -2,154 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E9739D16E
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 16:11:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5566B9D175
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 16:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbfHZOLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 10:11:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50748 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728769AbfHZOLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 10:11:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 18760AC32;
-        Mon, 26 Aug 2019 14:10:59 +0000 (UTC)
-Date:   Mon, 26 Aug 2019 16:10:58 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Andrea Parri <parri.andrea@gmail.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: numlist_push() barriers Re: [RFC PATCH v4 1/9] printk-rb: add a
- new printk ringbuffer implementation
-Message-ID: <20190826141058.y6idkqpjqkpbv5s7@pathway.suse.cz>
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
- <20190807222634.1723-2-john.ogness@linutronix.de>
- <20190823092109.doduc36avylm5cds@pathway.suse.cz>
- <20190826083436.GA3047@andrea>
+        id S1732246AbfHZONS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 10:13:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:23438 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728760AbfHZONR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 10:13:17 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7QECb5A126490;
+        Mon, 26 Aug 2019 10:12:55 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2umgg7sed5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Aug 2019 10:12:55 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7QECeUD126703;
+        Mon, 26 Aug 2019 10:12:54 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2umgg7sece-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Aug 2019 10:12:54 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7QEAJrV025392;
+        Mon, 26 Aug 2019 14:12:53 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma03wdc.us.ibm.com with ESMTP id 2ujvv6d7xs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Aug 2019 14:12:53 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7QECqkr54657466
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 26 Aug 2019 14:12:52 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26A46C605D;
+        Mon, 26 Aug 2019 14:12:52 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8C727C6055;
+        Mon, 26 Aug 2019 14:12:49 +0000 (GMT)
+Received: from swastik.ibm.com (unknown [9.85.199.141])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 26 Aug 2019 14:12:49 +0000 (GMT)
+Subject: Re: [PATCH v3 2/4] powerpc: expose secure variables to userspace via
+ sysfs
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Cc:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>
+References: <1566825818-9731-1-git-send-email-nayna@linux.ibm.com>
+ <1566825818-9731-3-git-send-email-nayna@linux.ibm.com>
+ <20190826140131.GA15270@kroah.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <ff9674e1-1b27-783a-38f3-4fd725353186@linux.vnet.ibm.com>
+Date:   Mon, 26 Aug 2019 10:12:48 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826083436.GA3047@andrea>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20190826140131.GA15270@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-26_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=874 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908260155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-08-26 10:34:36, Andrea Parri wrote:
-> > > +	/*
-> > > +	 * bA:
-> > > +	 *
-> > > +	 * Setup the node to be a list terminator: next_id == id.
-> > > +	 */
-> > > +	WRITE_ONCE(n->next_id, id);
-> > 
-> > Do we need WRITE_ONCE() here?
-> > Both "n" and "id" are given as parameters and do not change.
-> > The assigment must be done before "id" is set as nl->head_id.
-> > The ordering is enforced by cmpxchg_release().
-> 
-> (Disclaimer: this is still a very much debated issue...)
-> 
-> According to the LKMM, this question boils down to the question:
-> 
->   Is there "ordering"/synchronization between the above access and
->   the "matching accesses" bF and aA' to the same location?
-> 
-> Again according to the LKMM's analysis, such synchronization is provided
-> by the RELEASE -> "reads-from" -> ADDR relation.  (Encoding address dep.
-> in litmus tests is kind of tricky but possible, e.g., for the pattern in
-> question, we could write/model as follows:
-> 
-> C S+ponarelease+addroncena
-> 
-> {
-> 	int *y = &a;
-> }
-> 
-> P0(int *x, int **y, int *a)
-> {
-> 	int *r0;
-> 
-> 	*x = 2;
-> 	r0 = cmpxchg_release(y, a, x);
-> }
-> 
-> P1(int *x, int **y)
-> {
-> 	int *r0;
->
-> 	r0 = READ_ONCE(*y);
-> 	*r0 = 1;
-> }
-> 
-> exists (1:r0=x /\ x=2)
-
-Which r0 the above exists rule refers to, please?
-Do both P0 and P1 define r0 by purpose?
-
-> Then
-> 
->   $ herd7 -conf linux-kernel.cfg S+ponarelease+addroncena
->   Test S+ponarelease+addroncena Allowed
->   States 2
->   1:r0=a; x=2;
->   1:r0=x; x=1;
->   No
->   Witnesses
->   Positive: 0 Negative: 2
->   Condition exists (1:r0=x /\ x=2)
->   Observation S+ponarelease+addroncena Never 0 2
->   Time S+ponarelease+addroncena 0.01
->   Hash=7eaf7b5e95419a3c352d7fd50b9cd0d5
-> 
-> that is, the test is not racy and the "exists" clause is not satisfiable
-> in the LKMM.  Notice that _if the READ_ONCE(*y) in P1 were replaced by a
-> plain read, then we would obtain:
-> 
->   Test S+ponarelease+addrnana Allowed
->   States 2
->   1:r0=x; x=1;
->   1:r0=x; x=2;
-
-Do you have any explanation how r0=x; x=2; could happen, please?
-
-Does the ommited READ_ONCE allows to do r0 = (*y) twice
-before and after *r0 = 1?
-Or the two operations P1 can be called in any order?
-
-I am sorry if it obvious. Feel free to ask me to re-read Paul's
-articles on LWN more times or point me to another resources.
 
 
+On 08/26/2019 10:01 AM, Greg Kroah-Hartman wrote:
+> On Mon, Aug 26, 2019 at 09:23:36AM -0400, Nayna Jain wrote:
+>> +static struct bin_attribute update_attr = {
+>> +	.attr = {.name = "update", .mode = 0200},
+>> +	.size = VARIABLE_MAX_SIZE,
+>> +	.write = update_write,
+>> +};
+> Ah, do we need a __BIN_ATTR_WO() macro for you?  That would make this
+> more obvious, right?
 
->   Ok
->   Witnesses
->   Positive: 1 Negative: 1
->   Flag data-race		[ <-- the LKMM warns about a data-race ]
->   Condition exists (1:r0=x /\ x=2)
->   Observation S+ponarelease+addrnana Sometimes 1 1
->   Time S+ponarelease+addrnana 0.00
->   Hash=a61acf2e8e51c2129d33ddf5e4c76a49
-> 
-> N.B. This analysis generally depends on the assumption that every marked
-> access (e.g., the cmpxchg_release() called out above and the READ_ONCE()
-> heading the address dependencies) are _single-copy atomic, an assumption
-> which has been recently shown to _not be valid in such generality:
-> 
->   https://lkml.kernel.org/r/20190821103200.kpufwtviqhpbuv2n@willie-the-truck
+Thanks Greg.  Yes, I agree it will be good to have that.
 
-So, it might be even worse. Do I get it correctly?
-
-Best Regards,
-Petr
+Thanks & Regards,
+      - Nayna
 
