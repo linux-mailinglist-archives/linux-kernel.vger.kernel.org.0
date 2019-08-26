@@ -2,68 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ECE09D778
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEC309D78B
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:42:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfHZUkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:40:10 -0400
-Received: from 195-159-176-226.customer.powertech.no ([195.159.176.226]:43708
-        "EHLO blaine.gmane.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726562AbfHZUkJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:40:09 -0400
-Received: from list by blaine.gmane.org with local (Exim 4.89)
-        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
-        id 1i2LmZ-000222-Ks
-        for linux-kernel@vger.kernel.org; Mon, 26 Aug 2019 22:40:07 +0200
-X-Injected-Via-Gmane: http://gmane.org/
-To:     linux-kernel@vger.kernel.org
-From:   sbaugh@catern.com
-Subject: Re: [PATCH RESEND v11 7/8] open: openat2(2) syscall
-Date:   Mon, 26 Aug 2019 19:50:50 +0000
-Message-ID: <854l2366zp.fsf@catern.com>
-References: <20190820033406.29796-1-cyphar@cyphar.com>
-        <20190820033406.29796-8-cyphar@cyphar.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-Cancel-Lock: sha1:ym8TD2+JE56rxevrCvTf9T8Ptcg=
-Cc:     linux-alpha@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org
+        id S1729442AbfHZUmq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:42:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56742 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727219AbfHZUmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 16:42:46 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4532D281D1;
+        Mon, 26 Aug 2019 20:42:45 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-6.gru2.redhat.com [10.97.112.6])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 962026092D;
+        Mon, 26 Aug 2019 20:42:44 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id DF559105115;
+        Mon, 26 Aug 2019 17:40:57 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id x7QKeped025832;
+        Mon, 26 Aug 2019 17:40:51 -0300
+Date:   Mon, 26 Aug 2019 17:40:50 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when
+ dedicated physical CPUs are available
+Message-ID: <20190826204045.GA24697@amt.cnet>
+References: <1564643196-7797-1-git-send-email-wanpengli@tencent.com>
+ <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com>
+ <c3fe182f-627f-88ad-cb4d-a4189202b438@redhat.com>
+ <20190803202058.GA9316@amt.cnet>
+ <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Mon, 26 Aug 2019 20:42:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Aleksa Sarai <cyphar@cyphar.com> writes:
-> To this end, we introduce the openat2(2) syscall. It provides all of the
-> features of openat(2) through the @how->flags argument, but also
-> also provides a new @how->resolve argument which exposes RESOLVE_* flags
-> that map to our new LOOKUP_* flags. It also eliminates the long-standing
-> ugliness of variadic-open(2) by embedding it in a struct.
+On Tue, Aug 13, 2019 at 08:55:29AM +0800, Wanpeng Li wrote:
+> On Sun, 4 Aug 2019 at 04:21, Marcelo Tosatti <mtosatti@redhat.com> wrote:
+> >
+> > On Thu, Aug 01, 2019 at 06:54:49PM +0200, Paolo Bonzini wrote:
+> > > On 01/08/19 18:51, Rafael J. Wysocki wrote:
+> > > > On 8/1/2019 9:06 AM, Wanpeng Li wrote:
+> > > >> From: Wanpeng Li <wanpengli@tencent.com>
+> > > >>
+> > > >> The downside of guest side polling is that polling is performed even
+> > > >> with other runnable tasks in the host. However, even if poll in kvm
+> > > >> can aware whether or not other runnable tasks in the same pCPU, it
+> > > >> can still incur extra overhead in over-subscribe scenario. Now we can
+> > > >> just enable guest polling when dedicated pCPUs are available.
+> > > >>
+> > > >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > >> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > > >> Cc: Radim Krčmář <rkrcmar@redhat.com>
+> > > >> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> > > >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > > >
+> > > > Paolo, Marcelo, any comments?
+> > >
+> > > Yes, it's a good idea.
+> > >
+> > > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+> > >
+> > > Paolo
+> >
+> 
+> Hi Marcelo,
+> 
+> Sorry for the late response.
+> 
+> > I think KVM_HINTS_REALTIME is being abused somewhat.
+> > It has no clear meaning and used in different locations
+> > for different purposes.
+> 
+> ================== ============ =================================
+> KVM_HINTS_REALTIME 0                      guest checks this feature bit to
+> 
+> determine that vCPUs are never
+> 
+> preempted for an unlimited time
 
-I don't like this usage of a structure in memory to pass arguments that
-would fit in registers. This would be quite inconvenient for me as a
-userspace developer.
+Unlimited time means infinite time, or unlimited time means 
+10s ? 1s ?
 
-Others have brought up issues with this: the issue of seccomp, and the
-issue of mismatch between the userspace interface and the kernel
-interface, are the most important for me. I want to add another,
-admittedly somewhat niche, concern.
+The previous definition was much better IMO: HINTS_DEDICATED.
 
-This interfaces requires a program to allocate memory (even on the
-stack) just to pass arguments to the kernel which could be passed
-without allocating that memory. That makes it more difficult and less
-efficient to use this syscall in any case where memory is not so easily
-allocatable: such as early program startup or assembly, where the stack
-may be limited in size or not even available yet, or when injecting a
-syscall while ptracing.
 
-A struct-passing interface was needed for clone, since we ran out of
-registers; but we have not run out of registers yet for openat, so it
-would be nice to avoid this if we can. We can always expand later...
+> allowing optimizations
+> ================== ============ =================================
+> 
+> Now it disables pv queued spinlock, 
+
+OK. 
+
+> pv tlb shootdown, 
+
+OK.
+
+> pv sched yield
+
+"The idea is from Xen, when sending a call-function IPI-many to vCPUs,
+yield if any of the IPI target vCPUs was preempted. 17% performance
+increasement of ebizzy benchmark can be observed in an over-subscribe
+environment. (w/ kvm-pv-tlb disabled, testing TLB flush call-function
+IPI-many since call-function is not easy to be trigged by userspace
+workload)."
+
+This can probably hurt if vcpus are rarely preempted. 
+
+> which are not expected present in vCPUs are never preempted for an
+> unlimited time scenario.
+> 
+> >
+> > For example, i think that using pv queued spinlocks and
+> > haltpoll is a desired scenario, which the patch below disallows.
+> 
+> So even if dedicated pCPU is available, pv queued spinlocks should
+> still be chose if something like vhost-kthreads are used instead of
+> DPDK/vhost-user. 
+
+Can't you enable the individual features you need for optimizing 
+the overcommitted case? This is how things have been done historically:
+If a new feature is available, you enable it to get the desired
+performance. x2apic, invariant-tsc, cpuidle haltpoll...
+
+So in your case: enable pv schedyield, enable pv tlb shootdown.
+
+> kvm adaptive halt-polling will compete with
+> vhost-kthreads, however, poll in guest unaware other runnable tasks in
+> the host which will defeat vhost-kthreads.
+
+It depends on how much work vhost-kthreads needs to do, how successful 
+halt-poll in the guest is, and what improvement halt-polling brings.
+The amount of polling will be reduced to zero if polling 
+is not successful.
 
