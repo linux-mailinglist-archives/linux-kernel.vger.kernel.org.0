@@ -2,328 +2,343 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40C859D8D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 026219D8DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:08:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfHZWHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 18:07:11 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59516 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726250AbfHZWHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 18:07:11 -0400
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8209680F7C
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 22:07:10 +0000 (UTC)
-Received: by mail-qt1-f199.google.com with SMTP id r10so19000309qte.4
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 15:07:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:organization:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=ycIZbVMTeFm3kLyX9uTzi+eSMUtl8bWnGni4U99zQvw=;
-        b=Gk1yv8sbHls+JnnJUOde0Rx7v9TP0B1d43XvL76mOHZqA4ch+hNPMUps2UXBMci6jq
-         gy94Lynztss6PJ8Ew7wJsWVYCe2MzZUwOQNFqlZ638GGB9onRPAzHMm3ElCRGjMQO+dK
-         6IHvy8USyKWwgb/bULcdL0B30wjQ3K5FdDpssCj6inPOPhdQzH9XbdhZBAYhGkIbDVbz
-         wtsWQ2VDaOtWUQvDEV109nxUJUxdn5cAyTf+Sjajk0fRGGAn7f2r6i5SsUDY1Owft3Xn
-         Xts03jq02aUYnIK+xMjVJUh3AKJrAnn7Oq5a1GOY3KrSz5LOKq+4r8MVGAKNTT9/YNA3
-         tQ6Q==
-X-Gm-Message-State: APjAAAVnOtrjQ4rlT7puqeHzbbSp/nz69VSi7Ufzp8rHCa6pueGIsVTD
-        BO78qPijjqPagPinEy2C39cTy2p8oIj6KzdJ17q/rTPyqbv/GUvA/OdY3cfoHfwSlOJ+RszsIs4
-        50AofKTPjusn+0+kMmQrvoX0h
-X-Received: by 2002:ac8:2544:: with SMTP id 4mr20245719qtn.319.1566857229798;
-        Mon, 26 Aug 2019 15:07:09 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxIK7SBP5kse08y0zIHWURtOxx5pIrlkL5b6alNU0q+MABl9qFeINGvfFmyiLYo7SyvaUlHCA==
-X-Received: by 2002:ac8:2544:: with SMTP id 4mr20245690qtn.319.1566857229562;
-        Mon, 26 Aug 2019 15:07:09 -0700 (PDT)
-Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
-        by smtp.gmail.com with ESMTPSA id o33sm7794230qtd.72.2019.08.26.15.07.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 15:07:09 -0700 (PDT)
-Message-ID: <9512ed84594d6927b916d46d384241ab93d1f45a.camel@redhat.com>
-Subject: Re: [PATCH 02/26] drm/dp_mst: Destroy mstbs from
- destroy_connector_work
-From:   Lyude Paul <lyude@redhat.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, Juston Li <juston.li@intel.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Ville =?ISO-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>, Harry Wentland <hwentlan@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        id S1726829AbfHZWIT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 18:08:19 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57252 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726345AbfHZWIR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 18:08:17 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DF2A79A4;
+        Tue, 27 Aug 2019 00:08:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1566857294;
+        bh=wyWD5j3TasEdSfMY3S2+ejRVUsqV2FW07wFm1wudrJc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hZXhR5PDM3UDtFYUC5B/x+Q9pboicACy0p0va+c0hRSz/MGUZ6aA1ArnKz/rY+ux1
+         tppIdzRfsXpw6woG+PzEikSh9XbgSsx5iA92k9hZfPI2wkTc2L9cFUQnCkY08liyAK
+         Bq8/Cd5tSAOxlRF/m4jCZ+u9sh62aQLUxWxT0hWA=
+Date:   Tue, 27 Aug 2019 01:08:07 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
         linux-kernel@vger.kernel.org
-Date:   Mon, 26 Aug 2019 18:07:07 -0400
-In-Reply-To: <20190813130055.GS7444@phenom.ffwll.local>
-References: <20190718014329.8107-1-lyude@redhat.com>
-         <20190718014329.8107-3-lyude@redhat.com>
-         <20190813130055.GS7444@phenom.ffwll.local>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+Subject: Re: [PATCH] drm/bridge: tc358767: Expose test mode functionality via
+ debugfs
+Message-ID: <20190826220807.GK5031@pendragon.ideasonboard.com>
+References: <20190826182524.5064-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190826182524.5064-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-13 at 15:00 +0200, Daniel Vetter wrote:
-> On Wed, Jul 17, 2019 at 09:42:25PM -0400, Lyude Paul wrote:
-> > Currently we remove MST branch devices from the in-memory topology
-> > immediately when their topology refcount reaches 0. This works just fine
-> > at the moment, but since we're about to add suspend/resume reprobing for
-> > MST topologies we're going to need to be able to travel through the
-> > topology and drop topology refs on branch devices while holding
-> > mgr->mutex. Since we currently can't do this due to the circular locking
-> > dependencies that would incur, move all of the actual work for
-> > drm_dp_destroy_mst_branch_device() into drm_dp_destroy_connector_work()
-> > so we can drop topology refs on MSTBs in any locking context.
-> 
-> Would be good to point at where exactly the problem is here, maybe also
-> mentioned the exact future patch that causes the problem. I did go look
-> around a bit, but didn't spot it.
+Hi Andrey,
 
-Ah, I didn't do a great job of explaining whoops! Basically, the issue is that
-when reprobing the state during suspend/resume, there's of course going to be
-a chance that any MST ports in the topology could have had their PDT changed
-while we were suspended. This in turn means that while we're iterating through
-each mstb's ports in drm_dp_send_link_address() we want to be able to remove
-MSTBs from while under &mgr->lock, something we can't do without handling MSTB
-destruction in another thread. I'll mention this in the next version of this
-patch
+Thank you for the patch.
 
+On Mon, Aug 26, 2019 at 11:25:24AM -0700, Andrey Smirnov wrote:
+> Presently, the driver code artificially limits test pattern mode to a
+> single pattern with fixed color selection. It being a kernel module
+> parameter makes switching "test patter" <-> "proper output" modes
+> on-the-fly clunky and outright impossible if the driver is built into
+> the kernel.
 > 
-> > Cc: Juston Li <juston.li@intel.com>
-> > Cc: Imre Deak <imre.deak@intel.com>
-> > Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> > Cc: Harry Wentland <hwentlan@amd.com>
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > ---
-> >  drivers/gpu/drm/drm_dp_mst_topology.c | 121 +++++++++++++++++---------
-> >  include/drm/drm_dp_mst_helper.h       |  10 +++
-> >  2 files changed, 90 insertions(+), 41 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > index 998081b9b205..d7c3d9233834 100644
-> > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > @@ -1108,34 +1108,17 @@ static void
-> > drm_dp_destroy_mst_branch_device(struct kref *kref)
-> >  	struct drm_dp_mst_branch *mstb =
-> >  		container_of(kref, struct drm_dp_mst_branch, topology_kref);
-> >  	struct drm_dp_mst_topology_mgr *mgr = mstb->mgr;
-> > -	struct drm_dp_mst_port *port, *tmp;
-> > -	bool wake_tx = false;
-> > -
-> > -	mutex_lock(&mgr->lock);
-> > -	list_for_each_entry_safe(port, tmp, &mstb->ports, next) {
-> > -		list_del(&port->next);
-> > -		drm_dp_mst_topology_put_port(port);
-> > -	}
-> > -	mutex_unlock(&mgr->lock);
-> > -
-> > -	/* drop any tx slots msg */
-> > -	mutex_lock(&mstb->mgr->qlock);
-> > -	if (mstb->tx_slots[0]) {
-> > -		mstb->tx_slots[0]->state = DRM_DP_SIDEBAND_TX_TIMEOUT;
-> > -		mstb->tx_slots[0] = NULL;
-> > -		wake_tx = true;
-> > -	}
-> > -	if (mstb->tx_slots[1]) {
-> > -		mstb->tx_slots[1]->state = DRM_DP_SIDEBAND_TX_TIMEOUT;
-> > -		mstb->tx_slots[1] = NULL;
-> > -		wake_tx = true;
-> > -	}
-> > -	mutex_unlock(&mstb->mgr->qlock);
-> >  
-> > -	if (wake_tx)
-> > -		wake_up_all(&mstb->mgr->tx_waitq);
-> > +	INIT_LIST_HEAD(&mstb->destroy_next);
-> >  
-> > -	drm_dp_mst_put_mstb_malloc(mstb);
-> > +	/*
-> > +	 * This can get called under mgr->mutex, so we need to perform the
-> > +	 * actual destruction of the mstb in another worker
-> > +	 */
-> > +	mutex_lock(&mgr->destroy_connector_lock);
-> > +	list_add(&mstb->destroy_next, &mgr->destroy_branch_device_list);
-> > +	mutex_unlock(&mgr->destroy_connector_lock);
-> > +	schedule_work(&mgr->destroy_connector_work);
-> >  }
-> >  
-> >  /**
-> > @@ -3618,10 +3601,56 @@ static void drm_dp_tx_work(struct work_struct
-> > *work)
-> >  	mutex_unlock(&mgr->qlock);
-> >  }
-> >  
-> > +static inline void
-> > +drm_dp_finish_destroy_port(struct drm_dp_mst_port *port)
+> To improve the situation a bit, convert current test pattern code to
+> use debugfs instead by exposing "TestCtl" register. This way old
+> "tc_test_pattern=1" functionality can be emulated via:
 > 
-> Bikeshed: I'd call this _delayed_destroy, I think that makes a bit clearer
-> why there's 2 stages to destroying stuff.
+>     echo -n 0x78146312 > tstctl
 > 
-> > +{
-> > +	INIT_LIST_HEAD(&port->next);
-> > +
-> > +	port->mgr->cbs->destroy_connector(port->mgr, port->connector);
-> > +
-> > +	drm_dp_port_teardown_pdt(port, port->pdt);
-> > +	port->pdt = DP_PEER_DEVICE_NONE;
-> > +
-> > +	drm_dp_mst_put_port_malloc(port);
-> > +}
-> > +
-> > +static inline void
-> > +drm_dp_finish_destroy_mst_branch_device(struct drm_dp_mst_branch *mstb)
-> > +{
-> > +	struct drm_dp_mst_topology_mgr *mgr = mstb->mgr;
-> > +	struct drm_dp_mst_port *port, *tmp;
-> > +	bool wake_tx = false;
-> > +
-> > +	mutex_lock(&mgr->lock);
-> > +	list_for_each_entry_safe(port, tmp, &mstb->ports, next) {
-> > +		list_del(&port->next);
-> > +		drm_dp_mst_topology_put_port(port);
-> > +	}
-> > +	mutex_unlock(&mgr->lock);
-> > +
-> > +	/* drop any tx slots msg */
-> > +	mutex_lock(&mstb->mgr->qlock);
-> > +	if (mstb->tx_slots[0]) {
-> > +		mstb->tx_slots[0]->state = DRM_DP_SIDEBAND_TX_TIMEOUT;
-> > +		mstb->tx_slots[0] = NULL;
-> > +		wake_tx = true;
-> > +	}
-> > +	if (mstb->tx_slots[1]) {
-> > +		mstb->tx_slots[1]->state = DRM_DP_SIDEBAND_TX_TIMEOUT;
-> > +		mstb->tx_slots[1] = NULL;
-> > +		wake_tx = true;
-> > +	}
-> > +	mutex_unlock(&mstb->mgr->qlock);
-> > +
-> > +	if (wake_tx)
-> > +		wake_up_all(&mstb->mgr->tx_waitq);
-> > +
-> > +	drm_dp_mst_put_mstb_malloc(mstb);
-> > +}
-> > +
-> >  static void drm_dp_destroy_connector_work(struct work_struct *work)
-> >  {
-> >  	struct drm_dp_mst_topology_mgr *mgr = container_of(work, struct
-> > drm_dp_mst_topology_mgr, destroy_connector_work);
-> > -	struct drm_dp_mst_port *port;
-> >  	bool send_hotplug = false;
-> >  	/*
-> >  	 * Not a regular list traverse as we have to drop the destroy
-> > @@ -3629,24 +3658,33 @@ static void drm_dp_destroy_connector_work(struct
-> > work_struct *work)
-> >  	 * ordering between this lock and the config mutex.
-> >  	 */
-> >  	for (;;) {
-> > +		struct drm_dp_mst_branch *mstb = NULL;
-> > +		struct drm_dp_mst_port *port = NULL;
-> > +
-> > +		/* Destroy any MSTBs first, and then their ports second */
-> >  		mutex_lock(&mgr->destroy_connector_lock);
-> > -		port = list_first_entry_or_null(&mgr->destroy_connector_list,
-> > struct drm_dp_mst_port, next);
-> > -		if (!port) {
-> > -			mutex_unlock(&mgr->destroy_connector_lock);
-> > -			break;
-> > +		mstb = list_first_entry_or_null(&mgr-
-> > >destroy_branch_device_list,
-> > +						struct drm_dp_mst_branch,
-> > +						destroy_next);
-> > +		if (mstb) {
-> > +			list_del(&mstb->destroy_next);
-> > +		} else {
-> > +			port = list_first_entry_or_null(&mgr-
-> > >destroy_connector_list,
-> > +							struct
-> > drm_dp_mst_port,
-> > +							next);
-> > +			if (port)
-> > +				list_del(&port->next);
-> >  		}
+> and switch back to regular mode can be done with:
 > 
-> Control flow looks rather awkward here. I'd do either two loops, or if you
-> want to have just one, rename it to ->delayed_destroy_list and have a
-> ->delayed_destry_cb next to it?
+>     echo -n 0x78146310 > tstctl
+
+Can't we make this more userfriendly by exposing either a test pattern
+index, or a string ? Do all bits in the register need to be controlled
+from userspace ?
+
+> Note that switching to any of the test patterns, will NOT trigger link
+> re-establishment whereas switching to normal operation WILL. This is
+> done so:
 > 
-> Cheers, Daniel
+> a) we can isolate and verify (e)DP link functionality by switching to
+>    one of the test patters
 > 
+> b) trigger a link re-establishment by switching back to normal mode
 > 
-> > -		list_del(&port->next);
-> >  		mutex_unlock(&mgr->destroy_connector_lock);
-> >  
-> > -		INIT_LIST_HEAD(&port->next);
-> > -
-> > -		mgr->cbs->destroy_connector(mgr, port->connector);
-> > -
-> > -		drm_dp_port_teardown_pdt(port, port->pdt);
-> > -		port->pdt = DP_PEER_DEVICE_NONE;
-> > -
-> > -		drm_dp_mst_put_port_malloc(port);
-> > -		send_hotplug = true;
-> > +		if (mstb) {
-> > +			drm_dp_finish_destroy_mst_branch_device(mstb);
-> > +		} else if (port) {
-> > +			drm_dp_finish_destroy_port(port);
-> > +			send_hotplug = true;
-> > +		} else {
-> > +			break;
-> > +		}
-> >  	}
-> >  	if (send_hotplug)
-> >  		drm_kms_helper_hotplug_event(mgr->dev);
-> > @@ -3840,6 +3878,7 @@ int drm_dp_mst_topology_mgr_init(struct
-> > drm_dp_mst_topology_mgr *mgr,
-> >  	mutex_init(&mgr->destroy_connector_lock);
-> >  	INIT_LIST_HEAD(&mgr->tx_msg_downq);
-> >  	INIT_LIST_HEAD(&mgr->destroy_connector_list);
-> > +	INIT_LIST_HEAD(&mgr->destroy_branch_device_list);
-> >  	INIT_WORK(&mgr->work, drm_dp_mst_link_probe_work);
-> >  	INIT_WORK(&mgr->tx_work, drm_dp_tx_work);
-> >  	INIT_WORK(&mgr->destroy_connector_work,
-> > drm_dp_destroy_connector_work);
-> > diff --git a/include/drm/drm_dp_mst_helper.h
-> > b/include/drm/drm_dp_mst_helper.h
-> > index 8c97a5f92c47..c01f3ea72756 100644
-> > --- a/include/drm/drm_dp_mst_helper.h
-> > +++ b/include/drm/drm_dp_mst_helper.h
-> > @@ -143,6 +143,12 @@ struct drm_dp_mst_branch {
-> >  	 */
-> >  	struct kref malloc_kref;
-> >  
-> > +	/**
-> > +	 * @destroy_next: linked-list entry used by
-> > +	 * drm_dp_destroy_connector_work()
-> > +	 */
-> > +	struct list_head destroy_next;
-> > +
-> >  	u8 rad[8];
-> >  	u8 lct;
-> >  	int num_ports;
-> > @@ -578,6 +584,10 @@ struct drm_dp_mst_topology_mgr {
-> >  	 * @destroy_connector_list: List of to be destroyed connectors.
-> >  	 */
-> >  	struct list_head destroy_connector_list;
-> > +	/**
-> > +	 * @destroy_branch_device_list: List of to be destroyed branch devices
-> > +	 */
-> > +	struct list_head destroy_branch_device_list;
-> >  	/**
-> >  	 * @destroy_connector_lock: Protects @connector_list.
-> >  	 */
-> > -- 
-> > 2.21.0
-> > 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: Cory Tusar <cory.tusar@zii.aero>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/gpu/drm/bridge/tc358767.c | 137 ++++++++++++++++++++++--------
+>  1 file changed, 101 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+> index 6308d93ad91d..7a795b613ed0 100644
+> --- a/drivers/gpu/drm/bridge/tc358767.c
+> +++ b/drivers/gpu/drm/bridge/tc358767.c
+> @@ -17,6 +17,7 @@
+>  
+>  #include <linux/bitfield.h>
+>  #include <linux/clk.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/device.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/i2c.h>
+> @@ -222,11 +223,10 @@
+>  #define COLOR_B			GENMASK(15, 8)
+>  #define ENI2CFILTER		BIT(4)
+>  #define COLOR_BAR_MODE		GENMASK(1, 0)
+> +#define COLOR_BAR_MODE_NORMAL	0
+>  #define COLOR_BAR_MODE_BARS	2
+> -#define PLL_DBG			0x0a04
+>  
+> -static bool tc_test_pattern;
+> -module_param_named(test, tc_test_pattern, bool, 0644);
+
+I assume that his being a debug feature there's no system relying on the
+module parameter that would break if you remove it ?
+
+> +#define PLL_DBG			0x0a04
+>  
+>  struct tc_edp_link {
+>  	struct drm_dp_link	base;
+> @@ -789,16 +789,6 @@ static int tc_set_video_mode(struct tc_data *tc,
+>  	if (ret)
+>  		return ret;
+>  
+> -	/* Test pattern settings */
+> -	ret = regmap_write(tc->regmap, TSTCTL,
+> -			   FIELD_PREP(COLOR_R, 120) |
+> -			   FIELD_PREP(COLOR_G, 20) |
+> -			   FIELD_PREP(COLOR_B, 99) |
+> -			   ENI2CFILTER |
+> -			   FIELD_PREP(COLOR_BAR_MODE, COLOR_BAR_MODE_BARS));
+> -	if (ret)
+> -		return ret;
+> -
+>  	/* DP Main Stream Attributes */
+>  	vid_sync_dly = hsync_len + left_margin + mode->hdisplay;
+>  	ret = regmap_write(tc->regmap, DP0_VIDSYNCDELAY,
+> @@ -1150,14 +1140,6 @@ static int tc_stream_enable(struct tc_data *tc)
+>  
+>  	dev_dbg(tc->dev, "enable video stream\n");
+>  
+> -	/* PXL PLL setup */
+> -	if (tc_test_pattern) {
+> -		ret = tc_pxl_pll_en(tc, clk_get_rate(tc->refclk),
+> -				    1000 * tc->mode.clock);
+> -		if (ret)
+> -			return ret;
+> -	}
+> -
+>  	ret = tc_set_video_mode(tc, &tc->mode);
+>  	if (ret)
+>  		return ret;
+> @@ -1186,12 +1168,8 @@ static int tc_stream_enable(struct tc_data *tc)
+>  	if (ret)
+>  		return ret;
+>  	/* Set input interface */
+> -	value = DP0_AUDSRC_NO_INPUT;
+> -	if (tc_test_pattern)
+> -		value |= DP0_VIDSRC_COLOR_BAR;
+> -	else
+> -		value |= DP0_VIDSRC_DPI_RX;
+> -	ret = regmap_write(tc->regmap, SYSCTRL, value);
+> +	ret = regmap_write(tc->regmap, SYSCTRL,
+> +			   DP0_AUDSRC_NO_INPUT | DP0_VIDSRC_DPI_RX);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -1220,39 +1198,44 @@ static void tc_bridge_pre_enable(struct drm_bridge *bridge)
+>  	drm_panel_prepare(tc->panel);
+>  }
+>  
+> -static void tc_bridge_enable(struct drm_bridge *bridge)
+> +static int __tc_bridge_enable(struct tc_data *tc)
+>  {
+> -	struct tc_data *tc = bridge_to_tc(bridge);
+>  	int ret;
+>  
+>  	ret = tc_get_display_props(tc);
+>  	if (ret < 0) {
+>  		dev_err(tc->dev, "failed to read display props: %d\n", ret);
+> -		return;
+> +		return ret;
+>  	}
+>  
+>  	ret = tc_main_link_enable(tc);
+>  	if (ret < 0) {
+>  		dev_err(tc->dev, "main link enable error: %d\n", ret);
+> -		return;
+> +		return ret;
+>  	}
+>  
+>  	ret = tc_stream_enable(tc);
+>  	if (ret < 0) {
+>  		dev_err(tc->dev, "main link stream start error: %d\n", ret);
+>  		tc_main_link_disable(tc);
+> -		return;
+>  	}
+>  
+> -	drm_panel_enable(tc->panel);
+> +	return ret;
+>  }
+>  
+> -static void tc_bridge_disable(struct drm_bridge *bridge)
+> +static void tc_bridge_enable(struct drm_bridge *bridge)
+>  {
+>  	struct tc_data *tc = bridge_to_tc(bridge);
+> -	int ret;
+>  
+> -	drm_panel_disable(tc->panel);
+> +	if (__tc_bridge_enable(tc) < 0)
+> +		return;
+> +
+> +	drm_panel_enable(tc->panel);
+> +}
+> +
+> +static int __tc_bridge_disable(struct tc_data *tc)
+> +{
+> +	int ret;
+>  
+>  	ret = tc_stream_disable(tc);
+>  	if (ret < 0)
+> @@ -1261,6 +1244,16 @@ static void tc_bridge_disable(struct drm_bridge *bridge)
+>  	ret = tc_main_link_disable(tc);
+>  	if (ret < 0)
+>  		dev_err(tc->dev, "main link disable error: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +
+> +static void tc_bridge_disable(struct drm_bridge *bridge)
+> +{
+> +	struct tc_data *tc = bridge_to_tc(bridge);
+> +
+> +	drm_panel_disable(tc->panel);
+> +	__tc_bridge_disable(tc);
+>  }
+>  
+>  static void tc_bridge_post_disable(struct drm_bridge *bridge)
+> @@ -1372,6 +1365,77 @@ static enum drm_connector_status tc_connector_detect(struct drm_connector *conne
+>  		return connector_status_disconnected;
+>  }
+>  
+> +static int tc_tstctl_set(void *data, u64 val)
+> +{
+> +	struct tc_data *tc = data;
+> +	int ret;
+> +
+> +	if (FIELD_GET(COLOR_BAR_MODE, val) == COLOR_BAR_MODE_NORMAL) {
+> +		ret = regmap_write(tc->regmap, SYSCTRL, DP0_VIDSRC_DPI_RX);
+> +		if (ret) {
+> +			dev_err(tc->dev,
+> +				"failed to select dpi video stream\n");
+> +			return ret;
+> +		}
+> +
+> +		ret = regmap_write(tc->regmap, TSTCTL, val | ENI2CFILTER);
+> +		if (ret) {
+> +			dev_err(tc->dev, "failed to set TSTCTL\n");
+> +			return ret;
+> +		}
+> +
+> +		ret = tc_pxl_pll_dis(tc);
+> +		if (ret) {
+> +			dev_err(tc->dev, "failed to disable PLL\n");
+> +			return ret;
+> +		}
+> +
+> +		/*
+> +		 * Re-establish DP link
+> +		 */
+> +		ret = __tc_bridge_disable(tc);
+> +		if (ret)
+> +			return ret;
+> +
+> +		ret = __tc_bridge_enable(tc);
+> +		if (ret)
+> +			return ret;
+
+If the bridge is currently disabled you should not enable it. I think
+you need to guard against race conditions with the enable/disable
+functions, as well as delay writes until the bridge gets enabled if it
+is currently disabled.
+
+> +	} else {
+> +		ret = tc_pxl_pll_en(tc, clk_get_rate(tc->refclk),
+> +				    1000 * tc->mode.clock);
+> +		if (ret) {
+> +			dev_err(tc->dev, "failed to enable PLL\n");
+> +			return ret;
+> +		}
+> +
+> +		ret = regmap_write(tc->regmap, TSTCTL, val | ENI2CFILTER);
+> +		if (ret) {
+> +			dev_err(tc->dev, "failed to set TSTCTL\n");
+> +			return ret;
+> +		}
+> +
+> +		ret = regmap_write(tc->regmap, SYSCTRL, DP0_VIDSRC_COLOR_BAR);
+> +		if (ret) {
+> +			dev_err(tc->dev, "failed to color bar video stream\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +DEFINE_SIMPLE_ATTRIBUTE(tc_tstctl_fops, NULL, tc_tstctl_set, "%llu\n");
+
+Shouldn't you also provide a get handler ?
+
+> +static int tc_late_register(struct drm_connector *connector)
+> +{
+> +	if (connector->debugfs_entry)
+> +		debugfs_create_file_unsafe("tstctl", 0644,
+> +					   connector->debugfs_entry,
+> +					   connector_to_tc(connector),
+> +					   &tc_tstctl_fops);
+> +	return 0;
+> +}
+
+Why a .late_register() handler, can't you do this at probe time ?
+
+>  static const struct drm_connector_funcs tc_connector_funcs = {
+>  	.detect = tc_connector_detect,
+>  	.fill_modes = drm_helper_probe_single_connector_modes,
+> @@ -1379,6 +1443,7 @@ static const struct drm_connector_funcs tc_connector_funcs = {
+>  	.reset = drm_atomic_helper_connector_reset,
+>  	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>  	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> +	.late_register = tc_late_register,
+>  };
+>  
+>  static int tc_bridge_attach(struct drm_bridge *bridge)
+
 -- 
-Cheers,
-	Lyude Paul
+Regards,
 
+Laurent Pinchart
