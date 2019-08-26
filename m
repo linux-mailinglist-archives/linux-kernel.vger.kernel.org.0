@@ -2,124 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 155189CEA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 13:55:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D9289CE91
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 13:50:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731115AbfHZLyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 07:54:13 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:47294 "EHLO
-        mail.loongson.cn" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbfHZLyN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 07:54:13 -0400
-X-Greylist: delayed 417 seconds by postgrey-1.27 at vger.kernel.org; Mon, 26 Aug 2019 07:54:11 EDT
-Received: from martinqiao.loongson.cn (unknown [10.50.122.134])
-        by mail (Coremail) with SMTP id QMiowPDxv1evxmNdnmcyAA--.271S2;
-        Mon, 26 Aug 2019 19:47:05 +0800 (CST)
-From:   QiaoChong <qiaochong@loongson.cn>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, QiaoChong <qiaochong@loongson.cn>
-Subject: [PATCH] sched/fair: update_curr changed sum_exec_runtime to 1 when sum_exec_runtime is 0 beacuse some kernel code use sum_exec_runtime==0 to test task just be forked.
-Date:   Mon, 26 Aug 2019 19:46:50 +0800
-Message-Id: <20190826114650.10948-1-qiaochong@loongson.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: QMiowPDxv1evxmNdnmcyAA--.271S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw4fWr13JF4kJF1rJrWDurg_yoW8KF1Upw
-        4DWF43trWFq340yFWDAF93Xrnxt3s3Gr4xXrn0y3WfAr4Sg34ftFy0qF4SvF4jyr97tFy3
-        Jr4SyrWxuwn5tr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvF14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-        Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-        4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7VAKI48G6xCjnVAKz4kxM4x0x7Aq67IIx4CE
-        Vc8vx2IErcIFxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_
-        Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
-        fU0OJ5UUUUU
-X-CM-SenderInfo: 5tld0upkrqwqxorr0wxvrqhubq/
+        id S1731248AbfHZLuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 07:50:24 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:42159 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727182AbfHZLuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 07:50:23 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46H9L347lPz9sBF;
+        Mon, 26 Aug 2019 21:50:19 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1566820219;
+        bh=XUEOKU/hBQav3jF/6NZurRChk/w8HeLKvoeo2p6vqjo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=VcVfNGOicxM42nSBlf1G7gBCMN2dZIoVqDFQY9Z6eBiKZ1+m1tRprpsN+rU2Gj+pa
+         xH4wqkUPEIg6u1dFUSwKxd4oV05/YEtmnaHAST5r0npBW/oWn2K98AWDPs7qzt7pKw
+         zytaXvZZ6x1qDkR3rg6pp6cfaaqsECFMF1MrbKPSyXxilJKSIyOQXvAGMgsoxmBQaK
+         WjGcBHZ9TL7fJ53uEFbqbkotrkxQ87VHMdxT1E7Dg0hUNYxQSGYJUX3paVduq0d90m
+         7r55kuWsrLiri0uWZF8AxfuWI5PijmWVPfxEuwhJVFIi1bGG39RRU9YEqHjIGnKYVE
+         jde7vkSidr0xQ==
+Date:   Mon, 26 Aug 2019 21:50:17 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: linux-next: build warning after merge of the devfreq tree
+Message-ID: <20190826215017.02ab0d34@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/VHMmzf1GG0=K07MZvmWTM7j";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chong Qiao <qiaochong@loongson.cn>
+--Sig_/VHMmzf1GG0=K07MZvmWTM7j
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Such as:
-cpu_cgroup_attach>
- sched_move_task>
-  task_change_group_fair>
-   task_move_group_fair>
-    detach_task_cfs_rq>
-     vruntime_normalized>
+Hi all,
 
-	/*
-	 * When !on_rq, vruntime of the task has usually NOT been normalized.
-	 * But there are some cases where it has already been normalized:
-	 *
-	 * - A forked child which is waiting for being woken up by
-	 *   wake_up_new_task().
-	 * - A task which has been woken up by try_to_wake_up() and
-	 *   waiting for actually being woken up by sched_ttwu_pending().
-	 */
-	if (!se->sum_exec_runtime ||
-	    (p->state == TASK_WAKING && p->sched_remote_wakeup))
-		return true;
+After merging the devfreq tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-p->se.sum_exec_runtime is 0, does not mean task not been run (A forked child which is waiting for being woken up by  wake_up_new_task()).
+drivers/devfreq/governor_passive.c: In function 'devfreq_passive_event_hand=
+ler':
+drivers/devfreq/governor_passive.c:152:17: warning: unused variable 'dev' [=
+-Wunused-variable]
+  struct device *dev =3D devfreq->dev.parent;
+                 ^~~
 
-Task may have been scheduled multimes, but p->se.sum_exec_runtime is still 0, because delta_exec maybe 0 in update_curr.
+Introduced by commit
 
-static void update_curr(struct cfs_rq *cfs_rq)
-{
-...
-	delta_exec = now - curr->exec_start;
-	if (unlikely((s64)delta_exec <= 0))
-		return;
-...
+  0ef7c7cce43f ("PM / devfreq: passive: Use non-devm notifiers")
 
-	curr->sum_exec_runtime += delta_exec;
-...
-}
+--=20
+Cheers,
+Stephen Rothwell
 
-Task has been run and is stopped(on_rq == 0), vruntime not been normalized, but se->sum_exec_runtime == 0.
-This cause vruntime_normalized set on_rq 1, and does not normalize vruntime.
-This may cause task use old vruntime in old cgroup, which maybe very large than task's vruntime in new cgroup.
-Which may cause task may not scheduled in run queue for long time after been waked up.
+--Sig_/VHMmzf1GG0=K07MZvmWTM7j
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Now I change sum_exec_runtime to 1 when sum_exec_runtime == 0 in update_curr to make sun_exec_runtime not 0.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Chong Qiao <qiaochong@loongson.cn>
----
- kernel/sched/fair.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1jx3kACgkQAVBC80lX
+0GwudQf/WsOaPAzNPEHyh515RqrfXNAnDGq7Zy1jj/RgpogEZ6BSTBylpb2TTMT1
+8TSxuWcgjApGqs18k4Takjau3UTGsw83rY7Ith8us/Dzoo5cZogxQZrPGtUXAXja
+a3xZqREJeWAjIglz/fHtZ0Z999oXw4WGwzOXqa4pd80LQlAj1HAW+gI8PSL00bmi
+eYH8Ukuogs6GnJSoX99LffuG+P9+JBJqBVU3fOfTL4CrS/Pa/4Dcyz07B+NslK1r
+z1t/KALgUnfTXjDFrb7cWOpw1Hysoc4+p4E5lSwygPCIc01q6U4oKcOgg6QzZaWi
+cMzOWYJwQd7KziDokSqKBiPRXKYqyA==
+=WSqm
+-----END PGP SIGNATURE-----
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index bc9cfeaac8bd2..c4cd6249d9d2c 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -841,8 +841,15 @@ static void update_curr(struct cfs_rq *cfs_rq)
- 		return;
- 
- 	delta_exec = now - curr->exec_start;
--	if (unlikely((s64)delta_exec <= 0))
-+	if (unlikely((s64)delta_exec <= 0)) {
-+		/*
-+		 * se.sum_exec_runtime == 0 means task is forked and wait to be run.
-+		 * So here change se.sum_exec_runtime to 1, to make it not 0.
-+		 */
-+		if (!curr->sum_exec_runtime)
-+			curr->sum_exec_runtime++;
- 		return;
-+	}
- 
- 	curr->exec_start = now;
- 
--- 
-2.17.1
-
-
+--Sig_/VHMmzf1GG0=K07MZvmWTM7j--
