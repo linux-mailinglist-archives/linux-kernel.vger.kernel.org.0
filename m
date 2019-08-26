@@ -2,54 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5FC29D7A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:48:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E9BB9D7B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 22:49:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfHZUpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 16:45:15 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53731 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731391AbfHZUpM (ORCPT
+        id S1731926AbfHZUpm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 16:45:42 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55806 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730637AbfHZUpO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 16:45:12 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 10so795084wmp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:45:10 -0700 (PDT)
+        Mon, 26 Aug 2019 16:45:14 -0400
+Received: by mail-wm1-f66.google.com with SMTP id f72so785981wmf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 13:45:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OA1YNeBx+8aF3UbvHkUdfo5e5H5+BTnVhu+4DZoJ9fU=;
-        b=Qw2CYVIes9ZxpQuAYS32DRr3g29lH2pNz7f0H8wnHGokAThyoTkArELW7SBmIbbV4c
-         P5ns7XUOrNA0fohmMs7EufD86nZuSwaa28iWg6d6KgRf8mE7NhIQE21+NORL44Bzauk5
-         +MhPJelvveOCWo4yldg2pTnjYn+K4ieQnUaZnGgDtdCCU0Hg8iw5dJ3CzNtxlE2BXHAr
-         NYxy2WUBj4jK9FyYNOXPytaY7RwYVkNrQFGFbkSvEj38CqFm2rRr8BEJdk7OwkroI+Z0
-         7DnQAqoIri/Uad1ZReHtuhO6q5dcDLoNJ3A/zUbWq8LkopJwXu4EcQkWAX/UIlbSJwnK
-         PKSw==
+        bh=9a/nmo4HleHfZCRi8ScPQm/5Ra82K05ffJZThzk2QTs=;
+        b=lu16lKE1wbTcy6ZNuBOuRforM5MbT2Ne+jnJr2rCMLswpVp64GS5nb7iwRBo7I8c6M
+         rX+O3u3ymVJkV9apnlC3ZI/cMWFyT9Rz7DEJJG9EzUyal8EppWDAr9sK1sD6wwDVhlVj
+         XaOL2s+XnmCRx9ULx5G322klxXolV0bnJUOnMAiUtjUy3AqXOgljde2E0gh2eA03YngG
+         bGxbow8Yj1Fx8zoJ7LmY5tiObI3fpgUivUiGxLdUwIsDRl3Z7Qe/n9UXvVb0NpY/ojOu
+         +17bew2ZTM3RKOe1K6F5rfbLo4EACqJQM1I4MUBka47TkaOtmvHoHASXAjISRmbbwCmV
+         7nqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OA1YNeBx+8aF3UbvHkUdfo5e5H5+BTnVhu+4DZoJ9fU=;
-        b=PChVKXXhl4zLLAzvbYnTGzxME6Wv+WfqtLgODXlmq7RBzPXyfKVcBW1S4nktXnKmZt
-         ID+OJEx0Q3BU50DbJ7uCvgiPqLLnBgsDuk7e9yEkDQCJGu2u4xB29D1uqEJxpLyb72XX
-         5Rl6xhzDzAck/Zw279ujiO7Asze7BawXfuS6BF2cmXFpJOXo2G8roFHgzlSs7+W9oDq8
-         eEZNrad28WR/EuVIUCQG1hYMbQXhaCWQWOawSfFAENC8EUiSVCgnLkrFcezoLyOL8Q6s
-         3eFbu9LV3E9doGbbdh2BfPoWCa1/aGMYiw4nrTIfzlFc3PpGl3608gEKY1dBbqTnOIWu
-         D+Ag==
-X-Gm-Message-State: APjAAAWfhH+5ICrqL2LktqkVFTfTEGeVPIdMoXOpizw01lXSv4bxVuw3
-        O/1n9ItwGXp6CK+pjNTrp5LiVi1OW+M=
-X-Google-Smtp-Source: APXvYqyvXmsvciFEhpW32ekSSz9RowZxvGkiwdo2Xh2gd7I7PBA1CRJqNTxMXziYmS/0z0zjgJu4HA==
-X-Received: by 2002:a1c:45:: with SMTP id 66mr23577980wma.40.1566852310139;
-        Mon, 26 Aug 2019 13:45:10 -0700 (PDT)
+        bh=9a/nmo4HleHfZCRi8ScPQm/5Ra82K05ffJZThzk2QTs=;
+        b=QdGzY/m372TQDO7zPmfio8cK7fPfER0qWjXXvM8lUFwXZKxLqQJ5DOQMkqyNcZ5t6/
+         GDOHHFVFWk2cawX6PEZWikxzDbb77UdTPBuzlgqg/hye/Ut319sYxwUOZUYMhBrcVs3n
+         bDx7Ord+ZzzGRsSdk5Mfjm5SsaQvI/JSeNgML9x/RFpSyOgvB+XMnczkI5JhJw84mwzA
+         mQltlvpc6hlX03oLXP4vTdh47dqPcdWMFLO4Nl2qa8OWb6rc2NNnepVuaMCIDDsc/ttK
+         M8rzcxWHhnFvm+uNiFOoVUUmIY5jRCTDkVWrRne2JpTRP98LWzm+OjIwwgeAk7jVxxOV
+         QmLw==
+X-Gm-Message-State: APjAAAUsFqkMitulOfpYLxT6DV4wQ17WOPI93+u0DWVNgb8/oXs0jDcm
+        0iYO/Ys57/jUZtJ+q98NSNsR7kG4aRU=
+X-Google-Smtp-Source: APXvYqx3Dz9/5ZvakUdr4CZeHz/47q/CU+TUCt1PKvnuarTxbBhLbHMD+LdPq1NbxDU77er27jsg1w==
+X-Received: by 2002:a7b:cd17:: with SMTP id f23mr24509458wmj.177.1566852312285;
+        Mon, 26 Aug 2019 13:45:12 -0700 (PDT)
 Received: from mai.imgcgcw.net ([2a01:e34:ed2f:f020:f881:f5ed:b15d:96ab])
-        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.45.08
+        by smtp.gmail.com with ESMTPSA id 20sm549557wmk.34.2019.08.26.13.45.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 13:45:09 -0700 (PDT)
+        Mon, 26 Aug 2019 13:45:11 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     tglx@linutronix.de
-Cc:     linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 13/20] clocksource/drivers: Do not warn on probe defer
-Date:   Mon, 26 Aug 2019 22:44:00 +0200
-Message-Id: <20190826204407.17759-13-daniel.lezcano@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Magnus Damm <damm+renesas@opensource.se>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS)
+Subject: [PATCH 14/20] dt-bindings: timer: renesas, cmt: Add CMT0234 to sh73a0 and r8a7740
+Date:   Mon, 26 Aug 2019 22:44:01 +0200
+Message-Id: <20190826204407.17759-14-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190826204407.17759-1-daniel.lezcano@linaro.org>
 References: <df27caba-d9f8-e64d-0563-609f8785ecb3@linaro.org>
@@ -59,32 +64,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Magnus Damm <damm+renesas@opensource.se>
 
-Deferred probe is an expected return value on many platforms and so
-there's no need to output a warning that may potentially confuse users.
+Document the on-chip CMT devices included in r8a7740 and sh73a0.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Included in this patch is DT binding documentation for 32-bit CMTs
+CMT0, CMT2, CMT3 and CMT4. They all contain a single channel and are
+quite similar however some minor differences still exist:
+ - "Counter input clock" (clock input and on-device divider)
+    One example is that RCLK 1/1 is supported by CMT2, CMT3 and CMT4.
+ - "Wakeup request" (supported by CMT0 and CMT2)
+
+Because of this one unique compat string per CMT device is selected.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clocksource/timer-probe.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/clocksource/timer-probe.c b/drivers/clocksource/timer-probe.c
-index dda1946e84dd..ee9574da53c0 100644
---- a/drivers/clocksource/timer-probe.c
-+++ b/drivers/clocksource/timer-probe.c
-@@ -29,7 +29,9 @@ void __init timer_probe(void)
+diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+index c5220bcd852b..45840d475050 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
++++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
+@@ -22,6 +22,10 @@ Required Properties:
  
- 		ret = init_func_ret(np);
- 		if (ret) {
--			pr_err("Failed to initialize '%pOF': %d\n", np, ret);
-+			if (ret != -EPROBE_DEFER)
-+				pr_err("Failed to initialize '%pOF': %d\n", np,
-+				       ret);
- 			continue;
- 		}
+     - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a73a4.
+     - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a73a4.
++    - "renesas,r8a7740-cmt0" for the 32-bit CMT0 device included in r8a7740.
++    - "renesas,r8a7740-cmt2" for the 32-bit CMT2 device included in r8a7740.
++    - "renesas,r8a7740-cmt3" for the 32-bit CMT3 device included in r8a7740.
++    - "renesas,r8a7740-cmt4" for the 32-bit CMT4 device included in r8a7740.
+     - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8a7743.
+     - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8a7743.
+     - "renesas,r8a7744-cmt0" for the 32-bit CMT0 device included in r8a7744.
+@@ -54,6 +58,10 @@ Required Properties:
+     - "renesas,r8a77980-cmt1" for the 48-bit CMT1 device included in r8a77980.
+     - "renesas,r8a77990-cmt0" for the 32-bit CMT0 device included in r8a77990.
+     - "renesas,r8a77990-cmt1" for the 48-bit CMT1 device included in r8a77990.
++    - "renesas,sh73a0-cmt0" for the 32-bit CMT0 device included in sh73a0.
++    - "renesas,sh73a0-cmt2" for the 32-bit CMT2 device included in sh73a0.
++    - "renesas,sh73a0-cmt3" for the 32-bit CMT3 device included in sh73a0.
++    - "renesas,sh73a0-cmt4" for the 32-bit CMT4 device included in sh73a0.
  
+     - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2
+ 		and RZ/G1.
 -- 
 2.17.1
 
