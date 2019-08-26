@@ -2,60 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 689699D622
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 21:01:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 801299D634
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 21:03:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387885AbfHZTBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 15:01:12 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:41595 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387638AbfHZTBH (ORCPT
+        id S2387702AbfHZTDH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 15:03:07 -0400
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:47309 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729433AbfHZTDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 15:01:07 -0400
-Received: by mail-qk1-f193.google.com with SMTP id g17so14924086qkk.8
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 12:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=akAei/7tOU3d191zec9Xi+sZBY39XbiNq2fhlUSUGK8=;
-        b=aHKkuUpclP5IMt7wAHzBt9Sc8X4Or7WoFatBAPGA1CH1KYaZWAevUa/XBG1UeD+BiE
-         CuxaGUZR5K1uB/VS2dvay75flTkQXz6bh07bAv/u9Qscje6ZQNLAY0a3RjWlN485tVZy
-         b4bH4m2ELjpF70da/5WIqrJJVF/TA9aaj1ZKQWRXQs4RwJ3NvZlrgGPsgn1DVPqyNY1Y
-         lP7gjWsw5oQgquGCVVGrZTq5l4DaQj8LiJW1jsUNPeMEV0Z4bp6/kkU6UoG9xFgEFmcT
-         s5mW9o4SuGsusoVxrGMX6dZs89KvC4+2cyyABuNj6g/3YvkJyeufYRLhWz+86jrOXIyL
-         7iLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=akAei/7tOU3d191zec9Xi+sZBY39XbiNq2fhlUSUGK8=;
-        b=qYKziAdntFWYsiCC/qoB5cwT89s14VBrFEecI31I2IMbVkAYbF2dDfTotOumYm/5e/
-         BgvZg5wNFNeXh0Gfe603y7Wsc1j+TYu9orFc9MM6qF/gTkUrZJ3dr5jV+vS/3eJZBKQF
-         mQClWMslVYJUZy7cgvCVJrVLmYCt/1pY6cgrcdS8w1awbpI5Frvt6ewE4+fUhSNTP5K5
-         LRitV2f61/4X1l0DwUyMKixIrAIoMdHkYgDAKUvLprTwzBlqXVE9MPDissg81pNDyd2i
-         GL9SkoHd5mueGhwt0ZASgpYMMTiS0KpxOTywrR06Uneezy9a3zhT3mid4fNLxLmXwAxb
-         V5Ag==
-X-Gm-Message-State: APjAAAUjSwwwjKvD3ccx6+XZ68NxDg7d84yTKUys3z8YZQceRJva6hcw
-        0dmt6h2y/l8YE7GvMjudVswqcA==
-X-Google-Smtp-Source: APXvYqzJXd38pO3iRXZK6ansWFKaAVK7wUwsU2qQ/q6b8pl+RREguA3Jc5PkLVuOG86V0Rto3oaz1Q==
-X-Received: by 2002:a37:c206:: with SMTP id i6mr17410846qkm.384.1566846066175;
-        Mon, 26 Aug 2019 12:01:06 -0700 (PDT)
-Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id o45sm8614377qta.65.2019.08.26.12.01.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 12:01:05 -0700 (PDT)
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        james.morse@arm.com, vladimir.murzin@arm.com, mark.rutland@arm.com
-Subject: [PATCH v1 6/6] dt-bindings: interrupt-controller: add optional memory-region
-Date:   Mon, 26 Aug 2019 15:00:56 -0400
-Message-Id: <20190826190056.27854-7-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190826190056.27854-1-pasha.tatashin@soleen.com>
-References: <20190826190056.27854-1-pasha.tatashin@soleen.com>
+        Mon, 26 Aug 2019 15:03:07 -0400
+Received: from localhost.localdomain ([93.22.133.61])
+        by mwinf5d87 with ME
+        id tv32200091KePP903v333z; Mon, 26 Aug 2019 21:03:04 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 26 Aug 2019 21:03:04 +0200
+X-ME-IP: 93.22.133.61
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     ajk@comnets.uni-bremen.de, davem@davemloft.net
+Cc:     linux-hams@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net/hamradio/6pack: Fix the size of a sk_buff used in 'sp_bump()'
+Date:   Mon, 26 Aug 2019 21:02:09 +0200
+Message-Id: <20190826190209.16795-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,33 +35,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow pre-reserve memory in device tree that can be used in interrupt
-controller tabes. This memory is required when kexec functionality is needed
-with GICv3 controler and device trees.
+We 'allocate' 'count' bytes here. In fact, 'dev_alloc_skb' already add some
+extra space for padding, so a bit more is allocated.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+However, we use 1 byte for the KISS command, then copy 'count' bytes, so
+count+1 bytes.
+
+Explicitly allocate and use 1 more byte to be safe.
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- .../bindings/interrupt-controller/arm,gic-v3.yaml          | 7 +++++++
- 1 file changed, 7 insertions(+)
+This patch should be safe, be however may no be the correct way to fix the
+"buffer overflow". Maybe, the allocated size is correct and we should have:
+   memcpy(ptr, sp->cooked_buf + 1, count - 1);
+or
+   memcpy(ptr, sp->cooked_buf + 1, count - 1sp->rcount);
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-index c34df35a25fc..7640aaa97302 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic-v3.yaml
-@@ -102,6 +102,13 @@ properties:
-       - $ref: /schemas/types.yaml#/definitions/uint32
-       - maximum: 4096   # Should be enough?
+I've not dig deep enough to understand the link betwwen 'rcount' and
+how 'cooked_buf' is used.
+---
+ drivers/net/hamradio/6pack.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/hamradio/6pack.c b/drivers/net/hamradio/6pack.c
+index 331c16d30d5d..23281aeeb222 100644
+--- a/drivers/net/hamradio/6pack.c
++++ b/drivers/net/hamradio/6pack.c
+@@ -344,10 +344,10 @@ static void sp_bump(struct sixpack *sp, char cmd)
  
-+  memory-region:
-+    description:
-+      Memory used to allocate property and pending tables.
-+      Required if kexec functionality is needed.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint64
-+
-   msi-controller:
-     description:
-       Only present if the Message Based Interrupt functionnality is
+ 	sp->dev->stats.rx_bytes += count;
+ 
+-	if ((skb = dev_alloc_skb(count)) == NULL)
++	if ((skb = dev_alloc_skb(count + 1)) == NULL)
+ 		goto out_mem;
+ 
+-	ptr = skb_put(skb, count);
++	ptr = skb_put(skb, count + 1);
+ 	*ptr++ = cmd;	/* KISS command */
+ 
+ 	memcpy(ptr, sp->cooked_buf + 1, count);
 -- 
-2.23.0
+2.20.1
 
