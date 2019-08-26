@@ -2,79 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E63A9CD13
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 12:10:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9077B9CD0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 12:10:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731330AbfHZKKq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 06:10:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46914 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731306AbfHZKKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 06:10:42 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 72397300BEB0;
-        Mon, 26 Aug 2019 10:10:42 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-227.ams2.redhat.com [10.36.116.227])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E1C560920;
-        Mon, 26 Aug 2019 10:10:40 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Arun KS <arunks@codeaurora.org>
-Subject: [PATCH v2 5/6] mm: Introduce for_each_zone_nid()
-Date:   Mon, 26 Aug 2019 12:10:11 +0200
-Message-Id: <20190826101012.10575-6-david@redhat.com>
-In-Reply-To: <20190826101012.10575-1-david@redhat.com>
-References: <20190826101012.10575-1-david@redhat.com>
+        id S1731252AbfHZKKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 06:10:21 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:36013 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727578AbfHZKKV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 06:10:21 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id ADB9B1BF20B;
+        Mon, 26 Aug 2019 10:10:18 +0000 (UTC)
+Date:   Mon, 26 Aug 2019 12:10:18 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Biwen Li <biwen.li@nxp.com>
+Cc:     Trent Piepho <tpiepho@impinj.com>, Leo Li <leoyang.li@nxp.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [EXT] Re: [1/3] rtc/fsl: support flextimer for lx2160a
+Message-ID: <20190826101018.GC21713@piout.net>
+References: <20190823095740.12280-1-biwen.li@nxp.com>
+ <1566579388.5029.8.camel@impinj.com>
+ <DB7PR04MB4490B7AD75C6EE49F5208F738FA10@DB7PR04MB4490.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 26 Aug 2019 10:10:42 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB7PR04MB4490B7AD75C6EE49F5208F738FA10@DB7PR04MB4490.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow to iterate all zones belonging to a nid.
+On 26/08/2019 03:37:43+0000, Biwen Li wrote:
+> > 
+> > On Fri, 2019-08-23 at 17:57 +0800, Biwen Li wrote:
+> > > The patch supports flextimer for lx2160a
+> > >
+> > > Signed-off-by: Biwen Li <biwen.li@nxp.com>
+> > > ---
+> > >  drivers/rtc/rtc-fsl-ftm-alarm.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/rtc/rtc-fsl-ftm-alarm.c b/drivers/rtc/rtc-fsl-
+> > > ftm-alarm.c index 4f7259c2d6a3..2b81525f6db8 100644
+> > > --- a/drivers/rtc/rtc-fsl-ftm-alarm.c
+> > > +++ b/drivers/rtc/rtc-fsl-ftm-alarm.c
+> > > @@ -313,6 +313,7 @@ static const struct of_device_id ftm_rtc_match[] =
+> > > {
+> > >       { .compatible = "fsl,ls1088a-ftm-alarm", },
+> > >       { .compatible = "fsl,ls208xa-ftm-alarm", },
+> > >       { .compatible = "fsl,ls1028a-ftm-alarm", },
+> > > +     { .compatible = "fsl,lx2160a-ftm-alarm", },
+> > >       { },
+> > >  };
+> > >
+> > 
+> > Since there's no data associated with each compatible, it doesn't seem like
+> > there's any need to add a new one.
+> > 
+> > What's normally done is add two compatibles in the dts, the base version and
+> > the specific version, e.g.:
+> > 
+> > +               rcpm: rcpm@1e34040 {
+> > +                       compatible = "fsl,lx2160a-rcpm",
+> > + "fsl,qoriq-cpm-2.1+";
+> > 
+> > Or in this case, compatible = "fsl,lx2160a-ftm-alarm", "fsl,ls1088a-ftm-alarm";
+> > 
+> > Then there's no need to add to the driver list.
+> Yes, it will be work. But it will be confusing. Is ls1088a same with lx2160a? No.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Arun KS <arunks@codeaurora.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- include/linux/mmzone.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Well, if you are sure it is the exact same IP that is used, then you
+should only use one compatible. We usually use the name of the first SoC
+that had the IP. Is it confusing anyone? Probably not because this will
+be in a dtsi that nobody will read.
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 8b5f758942a2..71f2b9b55069 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -1004,6 +1004,11 @@ extern struct zone *next_zone(struct zone *zone);
- 			; /* do nothing */		\
- 		else
- 
-+#define for_each_zone_nid(zone, nid)			\
-+	for (zone = (NODE_DATA(nid))->node_zones;	\
-+	     zone && zone_to_nid(zone) == nid;		\
-+	     zone = next_zone(zone))
-+
- static inline struct zone *zonelist_zone(struct zoneref *zoneref)
- {
- 	return zoneref->zone;
+Note that adding so many compatbile will increase the boot time of your
+platform and this is annoying many NXP customers of the i.mx line.
+
 -- 
-2.21.0
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
