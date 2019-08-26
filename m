@@ -2,105 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D109CA26
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:23:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC0A9CA34
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 09:25:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbfHZHXv convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 26 Aug 2019 03:23:51 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39473 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729832AbfHZHXu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 03:23:50 -0400
-X-Originating-IP: 86.250.200.211
-Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id AB25360002;
-        Mon, 26 Aug 2019 07:23:45 +0000 (UTC)
-Date:   Mon, 26 Aug 2019 09:23:44 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org, frieder.schrempf@kontron.de,
-        juliensu@mxic.com.tw, kstewart@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        marek.vasut@gmail.com, richard@nod.at, tglx@linutronix.de,
-        vigneshr@ti.com
-Subject: Re: [PATCH] Add support for Macronix NAND randomizer
-Message-ID: <20190826092344.7b23ede1@xps13>
-In-Reply-To: <OFF725800E.8B26D2E9-ON48258462.000B94B2-48258462.000FCB85@mxic.com.tw>
-References: <1566280428-4159-1-git-send-email-masonccyang@mxic.com.tw>
-        <20190824130329.68f310aa@xps13>
-        <OFF725800E.8B26D2E9-ON48258462.000B94B2-48258462.000FCB85@mxic.com.tw>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729963AbfHZHZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 03:25:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54188 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727963AbfHZHZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 03:25:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 29254ADF1;
+        Mon, 26 Aug 2019 07:25:27 +0000 (UTC)
+Date:   Mon, 26 Aug 2019 09:25:26 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Pankaj Suryawanshi <pankajssuryawanshi@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>,
+        pankaj.suryawanshi@einfochips.com
+Subject: Re: How cma allocation works ?
+Message-ID: <20190826072526.GC7538@dhcp22.suse.cz>
+References: <CACDBo56W1JGOc6w-NAf-hyWwJQ=vEDsAVAkO8MLLJBpQ0FTAcA@mail.gmail.com>
+ <20190822130219.GK12785@dhcp22.suse.cz>
+ <CACDBo57oFDEYY-GR1NEZEXKS409BkEx+RYywMNwuUn5f5Sz76A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACDBo57oFDEYY-GR1NEZEXKS409BkEx+RYywMNwuUn5f5Sz76A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+On Fri 23-08-19 00:17:22, Pankaj Suryawanshi wrote:
+> On Thu, Aug 22, 2019 at 6:32 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Wed 21-08-19 22:58:03, Pankaj Suryawanshi wrote:
+> > > Hello,
+> > >
+> > > Hard time to understand cma allocation how differs from normal
+> > > allocation ?
+> >
+> > The buddy allocator which is built for order-N sized allocations and it
+> > is highly optimized because it used from really hot paths. The allocator
+> > also involves memory reclaim to get memory when there is none
+> > immediatelly available.
+> >
+> > CMA allocator operates on a pre reserved physical memory range(s) and
+> > focuses on allocating areas that require physically contigous memory of
+> > larger sizes. Very broadly speaking. LWN usually contains nice writeups
+> > for many kernel internals. E.g. quick googling pointed to
+> > https://lwn.net/Articles/486301/
+> >
+> > > I know theoretically how cma works.
+> > >
+> > > 1. How it reserved the memory (start pfn to end pfn) ? what is bitmap_*
+> > > functions ?
+> >
+> > Not sure what you are asking here TBH
+> I know it reserved memory at boot time from start pfn to end pfn, but when
+> i am requesting memory from cma it has different bitmap_*() in cma_alloc()
+> what they are ?
+> because we pass pfn and pfn+count to alloc_contig_range and pfn is come
+> from bitmap_*() function.
+> lets say i have reserved 100MB cma memory at boot time (strart pfn to end
+> pfn) and i am requesting allocation of 30MB from cma area then what is pfn
+> passed to alloc_contig_range() it is same as start pfn or
+> different.(calucaled by bitmap_*()) ?
 
-masonccyang@mxic.com.tw wrote on Mon, 26 Aug 2019 10:52:31 +0800:
+I am not deeply familiar with the CMA implementation but from a very
+brief look it seems that the bitmap simply denotes which portions of the
+reserved area are used and therefore it is easy to find portions of the
+requested size by scanning it.
 
-> Hi Miquel,
-> > 
-> > Mason Yang <masonccyang@mxic.com.tw> wrote on Tue, 20 Aug 2019 13:53:48
-> > +0800:
-> >   
-> > > Macronix NANDs support randomizer operation for user data scrambled,
-> > > which can be enabled with a SET_FEATURE.
-> > > 
-> > > User data written to the NAND device without randomizer is still   
-> readable
-> > > after randomizer function enabled.
-> > > The penalty of randomizer are NOP = 1 instead of NOP = 4 and more time   
-> period
-> > 
-> > please don't use 'NOP' here, use 'subpage accesses' instead, otherwise
-> > people might not understand what it means while it has a real impact.
-> >   
-> 
-> okay, understood. 
-> will fix it by next submitting.
-> 
-> > > is needed in program operation and entering deep power-down mode.
-> > > i.e., tPROG 300us to 340us(randomizer enabled)
-> > > 
-> > > If subpage write not available with hardware ECC, for example,
-> > > NAND chip options NAND_NO_SUBPAGE_WRITE be set in driver and
-> > > randomizer function is recommended for high-reliability.
-> > > Driver checks byte 167 of Vendor Blocks in ONFI parameter page table
-> > > to see if this high-reliability function is supported.
-> > >   
-> > 
-> > You did not flagged this patch as a v2 and forgot about the changelog.  
-> 
-> will fix, thank you.
-> 
-> > You did not listen to our comments in the last version neither. I was
-> > open to a solution with a specific DT property for warned users but I
-> > don't see it coming.  
-> 
-> Sorry I missed the previous version of "read-retry and randomizer support" 
-> patch. 
-> Specific DT property is a good method to control it.
-> 
-> For more high-reliability concern, randomizer is recommended to enable by 
-> default,
-> but sub-page write is not allowed when randomizer is enabled.
-> 
-> Since most of HW ECC did not support sub-page write and we think driver to 
-> check
-> chip options flags is another simple and good way to enable randomizer.
+> > Have you checked the code? It simply tries to reclaim and/or migrate
+> > pages off the pfn range.
+> >
+> What is difference between migration, isolation and reclamation of pages ?
 
-Sorry but this is wrong. Several controllers and NAND chips support
-subpages. And changing now the behavior with such chips would entirely
-break the concerned setups (see Boris answer about UBI complaining if
-the subpage size changes).
+Isolation will set the migrate type to MIGRATE_ISOLATE, btw the comment
+in the code I referred to says this:
+ * Making page-allocation-type to be MIGRATE_ISOLATE means free pages in
+ * the range will never be allocated. Any free pages and pages freed in the
+ * future will not be allocated again. If specified range includes migrate types
+ * other than MOVABLE or CMA, this will fail with -EBUSY. For isolating all
+ * pages in the range finally, the caller have to free all pages in the range.
+ * test_page_isolated() can be used for test it.
 
-Thanks,
-Miquèl
+Reclaim part will simply drop all pages that are easily reclaimable
+(e.g. a clean pagecache) and migration will move existing allocations to
+a different physical location + update references to it from other data
+structures (e.g. page tables to point to a new location).
+
+> > > 5.what isolate_migratepages_range(), reclaim_clean_pages_from_list(),
+> > >  migrate_pages() and shrink_page_list() is doing ?
+> >
+> > Again, have you checked the code/comments? What exactly is not clear?
+> >
+> Why again migrate_isolate_range() ?
+> (reclaim_clean_pages_fron_list) if we are reclaiming only clean pages then
+> pages will not contiguous ? we have only clean pages which are not
+> contiguous ?
+
+reclaim_clean_pages_from_list is a simple wrapper on top of shrink_page_list.
+It simply takes clean page cache pages to reclaim it because that might
+be less expensive than migrating that memory.
+
+> What is work of shrink_page_list() ?
+
+This is a core of the memory reclaim. It unmaps/frees pages and try to
+free them.
+
+> please explain all flow with taking
+> one allocation for example let say reserved cma 100MB and then request
+> allocation of 30MB then how all the flow/function will work ?
+
+I would recommend to read the code carefully and following the git
+history of the code is very helpful as well. This is not a rocket
+science, really.
+-- 
+Michal Hocko
+SUSE Labs
