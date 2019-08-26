@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F29119D996
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:53:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10469D998
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfHZWwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 18:52:54 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41518 "EHLO
+        id S1728442AbfHZWxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 18:53:02 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:41519 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727504AbfHZWwb (ORCPT
+        with ESMTP id S1727522AbfHZWwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 26 Aug 2019 18:52:31 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2NqV-0006oT-C6; Tue, 27 Aug 2019 00:52:20 +0200
+        id 1i2NqV-0006ov-LZ; Tue, 27 Aug 2019 00:52:20 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F137E1C0DE0;
-        Tue, 27 Aug 2019 00:52:16 +0200 (CEST)
-Date:   Mon, 26 Aug 2019 22:52:16 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 064E71C0DE1;
+        Tue, 27 Aug 2019 00:52:18 +0200 (CEST)
+Date:   Mon, 26 Aug 2019 22:52:17 -0000
 From:   tip-bot2 for Magnus Damm <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] dt-bindings: timer: renesas, cmt: Add CMT0234 to
- sh73a0 and r8a7740
+Subject: [tip: timers/core] dt-bindings: timer: renesas, cmt: Add CMT0 and
+ CMT1 to r8a7792
 Cc:     Magnus Damm <damm+renesas@opensource.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh@kernel.org>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Message-ID: <156685993692.1324.16226269746681343671.tip-bot2@tip-bot2>
+Message-ID: <156685993784.1330.17791917363763800076.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,58 +50,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     c90d37c9c41a572ea7183299951341b4640d5b4b
-Gitweb:        https://git.kernel.org/tip/c90d37c9c41a572ea7183299951341b4640d5b4b
+Commit-ID:     649dd060334f13792f624ec3fa8a0024ed1e02bc
+Gitweb:        https://git.kernel.org/tip/649dd060334f13792f624ec3fa8a0024ed1e02bc
 Author:        Magnus Damm <damm+renesas@opensource.se>
-AuthorDate:    Tue, 20 Aug 2019 21:35:03 +09:00
+AuthorDate:    Tue, 20 Aug 2019 21:35:25 +09:00
 Committer:     Daniel Lezcano <daniel.lezcano@linaro.org>
 CommitterDate: Tue, 27 Aug 2019 00:31:39 +02:00
 
-dt-bindings: timer: renesas, cmt: Add CMT0234 to sh73a0 and r8a7740
+dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a7792
 
-Document the on-chip CMT devices included in r8a7740 and sh73a0.
-
-Included in this patch is DT binding documentation for 32-bit CMTs
-CMT0, CMT2, CMT3 and CMT4. They all contain a single channel and are
-quite similar however some minor differences still exist:
- - "Counter input clock" (clock input and on-device divider)
-    One example is that RCLK 1/1 is supported by CMT2, CMT3 and CMT4.
- - "Wakeup request" (supported by CMT0 and CMT2)
-
-Because of this one unique compat string per CMT device is selected.
+This patch adds DT binding documentation for the CMT devices on
+the R-Car Gen2 V2H (r8a7792) SoC.
 
 Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- Documentation/devicetree/bindings/timer/renesas,cmt.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-index c5220bc..45840d4 100644
+index a297fca..5b7690a 100644
 --- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
 +++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-@@ -22,6 +22,10 @@ Required Properties:
- 
-     - "renesas,r8a73a4-cmt0" for the 32-bit CMT0 device included in r8a73a4.
-     - "renesas,r8a73a4-cmt1" for the 48-bit CMT1 device included in r8a73a4.
-+    - "renesas,r8a7740-cmt0" for the 32-bit CMT0 device included in r8a7740.
-+    - "renesas,r8a7740-cmt2" for the 32-bit CMT2 device included in r8a7740.
-+    - "renesas,r8a7740-cmt3" for the 32-bit CMT3 device included in r8a7740.
-+    - "renesas,r8a7740-cmt4" for the 32-bit CMT4 device included in r8a7740.
-     - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8a7743.
-     - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8a7743.
-     - "renesas,r8a7744-cmt0" for the 32-bit CMT0 device included in r8a7744.
-@@ -54,6 +58,10 @@ Required Properties:
-     - "renesas,r8a77980-cmt1" for the 48-bit CMT1 device included in r8a77980.
-     - "renesas,r8a77990-cmt0" for the 32-bit CMT0 device included in r8a77990.
-     - "renesas,r8a77990-cmt1" for the 48-bit CMT1 device included in r8a77990.
-+    - "renesas,sh73a0-cmt0" for the 32-bit CMT0 device included in sh73a0.
-+    - "renesas,sh73a0-cmt2" for the 32-bit CMT2 device included in sh73a0.
-+    - "renesas,sh73a0-cmt3" for the 32-bit CMT3 device included in sh73a0.
-+    - "renesas,sh73a0-cmt4" for the 32-bit CMT4 device included in sh73a0.
- 
-     - "renesas,rcar-gen2-cmt0" for 32-bit CMT0 devices included in R-Car Gen2
- 		and RZ/G1.
+@@ -35,6 +35,8 @@ Required Properties:
+     - "renesas,r8a7790-cmt1" for the 48-bit CMT1 device included in r8a7790.
+     - "renesas,r8a7791-cmt0" for the 32-bit CMT0 device included in r8a7791.
+     - "renesas,r8a7791-cmt1" for the 48-bit CMT1 device included in r8a7791.
++    - "renesas,r8a7792-cmt0" for the 32-bit CMT0 device included in r8a7792.
++    - "renesas,r8a7792-cmt1" for the 48-bit CMT1 device included in r8a7792.
+     - "renesas,r8a7793-cmt0" for the 32-bit CMT0 device included in r8a7793.
+     - "renesas,r8a7793-cmt1" for the 48-bit CMT1 device included in r8a7793.
+     - "renesas,r8a7794-cmt0" for the 32-bit CMT0 device included in r8a7794.
