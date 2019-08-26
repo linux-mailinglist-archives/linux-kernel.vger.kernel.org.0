@@ -2,70 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A1B9D608
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 20:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D01B9D60E
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 20:55:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387465AbfHZSyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 14:54:22 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:60540 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbfHZSyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 14:54:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=kMg9jo2+aYpxinBPCrA/TYwqW4S7g/A5UlAFqVagOUQ=; b=erZ8mhBubPFIsVncmO3w8aNL9C
-        gMrNs54KZCvWdnlFzAoUCXAHWwEjQD/W641MZwGGJ9Q1c1Dv7Mws7xEav867mwI7CVSXrlQgeaqZR
-        kEVzsGlKb7jfke5duLuKGPYlub3KK1QrZbwqwO1hgl41tLqC8viu5Gx6jA+5pJvCzJdg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1i2K8A-0006Av-Tr; Mon, 26 Aug 2019 20:54:18 +0200
-Date:   Mon, 26 Aug 2019 20:54:18 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Voon Weifeng <weifeng.voon@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jose Abreu <joabreu@synopsys.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Ong Boon Leong <boon.leong.ong@intel.com>
-Subject: Re: [PATCH v1 net-next] net: phy: mdio_bus: make mdiobus_scan also
- cover PHY that only talks C45
-Message-ID: <20190826185418.GG2168@lunn.ch>
-References: <1566870769-9967-1-git-send-email-weifeng.voon@intel.com>
- <e9ece5ad-a669-6d6b-d050-c633cad15476@gmail.com>
+        id S2387544AbfHZSzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 14:55:53 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50736 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727559AbfHZSzw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 14:55:52 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 7F21228A165;
+        Mon, 26 Aug 2019 19:55:50 +0100 (BST)
+Date:   Mon, 26 Aug 2019 20:55:47 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        paul.kocialkowski@bootlin.com, mripard@kernel.org,
+        pawel@osciak.com, m.szyprowski@samsung.com,
+        kyungmin.park@samsung.com, tfiga@chromium.org, wens@csie.org,
+        acourbot@chromium.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        ezequiel@collabora.com, jonas@kwiboo.se
+Subject: Re: [PATCH 8/8] media: cedrus: Add support for V4L2_DEC_CMD_FLUSH
+Message-ID: <20190826205547.3ecbf2a1@collabora.com>
+In-Reply-To: <20190822194500.2071-9-jernej.skrabec@siol.net>
+References: <20190822194500.2071-1-jernej.skrabec@siol.net>
+        <20190822194500.2071-9-jernej.skrabec@siol.net>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e9ece5ad-a669-6d6b-d050-c633cad15476@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 11:27:53AM -0700, Florian Fainelli wrote:
-> On 8/26/19 6:52 PM, Voon Weifeng wrote:
-> > From: Ong Boon Leong <boon.leong.ong@intel.com>
-> > 
-> > Make mdiobus_scan() to try harder to look for any PHY that only talks C45.
-> If you are not using Device Tree or ACPI, and you are letting the MDIO
-> bus be scanned, it sounds like there should be a way for you to provide
-> a hint as to which addresses should be scanned (that's
-> mii_bus::phy_mask) and possibly enhance that with a mask of possible C45
-> devices?
+On Thu, 22 Aug 2019 21:45:00 +0200
+Jernej Skrabec <jernej.skrabec@siol.net> wrote:
 
-Yes, i don't like this unconditional c45 scanning. A lot of MDIO bus
-drivers don't look for the MII_ADDR_C45. They are going to do a C22
-transfer, and maybe not mask out the MII_ADDR_C45 from reg, causing an
-invalid register write. Bad things can then happen.
+> This command is useful for explicitly flushing last decoded frame.
+> 
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-With DT and ACPI, we have an explicit indication that C45 should be
-used, so we know on this platform C45 is safe to use. We need
-something similar when not using DT or ACPI.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-	  Andrew
+> ---
+>  .../staging/media/sunxi/cedrus/cedrus_video.c | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+> 
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> index 5153b2bba21e..9eae69d5741c 100644
+> --- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> @@ -331,6 +331,37 @@ static int cedrus_s_fmt_vid_out(struct file *file, void *priv,
+>  	return 0;
+>  }
+>  
+> +static int cedrus_try_decoder_cmd(struct file *file, void *fh,
+> +				  struct v4l2_decoder_cmd *dc)
+> +{
+> +	if (dc->cmd != V4L2_DEC_CMD_FLUSH)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static int cedrus_decoder_cmd(struct file *file, void *fh,
+> +			      struct v4l2_decoder_cmd *dc)
+> +{
+> +	struct cedrus_ctx *ctx = cedrus_file2ctx(file);
+> +	struct vb2_v4l2_buffer *out_vb, *cap_vb;
+> +	int ret;
+> +
+> +	ret = cedrus_try_decoder_cmd(file, fh, dc);
+> +	if (ret < 0)
+> +		return ret;
+
+Not directly related to this patch, but it seems most drivers
+implementing ->vdioc_decoder_cmd() call ->vidioc_try_decoder_cmd()
+internally to make sure the cmd is supported. Maybe something
+we could automate at the v4l2-ioctl.c level.
+
+
