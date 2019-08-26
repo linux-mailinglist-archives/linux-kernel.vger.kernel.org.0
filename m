@@ -2,70 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 447659D8D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43C319D8DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 00:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfHZWIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 18:08:15 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42052 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726345AbfHZWIO (ORCPT
+        id S1726543AbfHZWK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 18:10:26 -0400
+Received: from mail-qk1-f178.google.com ([209.85.222.178]:38442 "EHLO
+        mail-qk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbfHZWKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 18:08:14 -0400
-Received: by mail-qt1-f194.google.com with SMTP id t12so19506525qtp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 15:08:13 -0700 (PDT)
+        Mon, 26 Aug 2019 18:10:25 -0400
+Received: by mail-qk1-f178.google.com with SMTP id u190so15445454qkh.5;
+        Mon, 26 Aug 2019 15:10:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=wJx62bVXuq5VeSwzaQl9szOMIkdAB5uFLpBEy41vLcA=;
-        b=RTmZl5ui0G5GhUiY1M7jmb7dsniQ7af2/ichloDZyCqVp5zhmRYp4VtQsT+IWU1OfP
-         nSol8HHyC2qIpCQyPUGx1mMJwR4Q0MCnfra6UPrDgSnwd2EcZN65rTCCl5zYIKjEmyjn
-         3GiTCkdBz3UVfTHX6ImYjyHTT2TEf6KR2tuY8znx5ifqJFDxmwZBBMwgB5mWdYEOO7OO
-         EEYUNaVpGtFfMFZ9rVyl2CUkAAEJXg5mg4FDUhNNexodJ+kbBFLjRZ2LBOK+yjJVmhZw
-         z1rVcZILL7HB+YR/GsbtZrhiHgManoJE+leJrlCGPcwlAscY59432BtWpOVYTZ3v6Km6
-         AKQw==
+        bh=OqFP4429NaCXrdK6a75re0BTQB3Dv9LNc9qPdlLe7dY=;
+        b=jzHDlGF+NW83sFETNqGnuINCU8OxrNQQs8nx7qRveFYrfG+6AlhBXe9FK5sWKfjDwz
+         yuP1eIBlqR7SJzBQ3KcBCJuE2XSJ07zmw9DwmcIC8o7KKbxJ2CWYKNQ/cHVYCLwDjy8p
+         086DNGaikoTA+t2B7tQA19iJY0oZMeWLgLAfqC7+nutnwxoY8HZIniQev4G1x3zvuc4L
+         8Z877nzINUi8TTnePVPZ7ZhsDs9Zg1brZMMn13C1vNybzS7+zE5TkcDUUc9Ah8Dina6H
+         j5y69fqy9f6cLf/T7zwLM3yxzhb79yGwL1l0O2vGH//3vUWZnBK30t2hPfjJgNUjfR9n
+         mYXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wJx62bVXuq5VeSwzaQl9szOMIkdAB5uFLpBEy41vLcA=;
-        b=X51Yk/jpyEhxaOFf4w0FKr7yv1thqlQ0LEBtHvOChvi6sB8SLHwijVuS8SItJzcPl6
-         xlZ1a6SwUv3umuKzqD4aWBcKDj0UTXC+OOOvcauFnyXl73My59lvtHM1jUIKcDXSgRTJ
-         lTZOkScJcFcj9Aufv1yvVerh7AQRv4ULYdgEzk+mRLsAdOCUg3MS6VHzgzEcAznsCYDy
-         Z0neXhAqzzWdNxdBAHoWn8Ud4wGNHAN44rVpddsjgeBP0+jZJ6XWOa1hj8bkSLPxZHoU
-         vqn2H8JdhV6F0CmmFGwF0cZpz11/1rqwKlDjiG5vPnB7soG7ZKdNSICX2QjjWW8Xd8N/
-         RTlw==
-X-Gm-Message-State: APjAAAVVXWPiQ881ZxfF+uNNi+MmjctMgcRGoZvKhbCW8XJMTjVMEJEP
-        ecJrfjGNrH1djczmAlZR1JE=
-X-Google-Smtp-Source: APXvYqyi+jD0IIItEvVUnXhTKW64spiKpowhEnyqNkj9JH+lpdZSbaRFj3U+cuBSgyHEG6Ibd6a0+w==
-X-Received: by 2002:a0c:abca:: with SMTP id k10mr17685943qvb.177.1566857292976;
-        Mon, 26 Aug 2019 15:08:12 -0700 (PDT)
+        bh=OqFP4429NaCXrdK6a75re0BTQB3Dv9LNc9qPdlLe7dY=;
+        b=g8m8OMkGExdGG8tpYMPqyo0xYfJuVnD3j/vmFCD0RTnW0o+rCcekGkcX6M1P/y/sSR
+         ICj0zpEyet8RaBm7kpMy3NMt+Ddqr8vDf0aUq00a2sf7Yzs3SJFP1RdSgsK/X2vG8TjV
+         N2DaeuOQ5ZMKfBs6I3wqXmTvTzUwzNoFubSy3Ygn5z8Zb9aoMh38fY6f3bcWCe4rLWqd
+         mR72gqldwyQk7e0pyaXXT2SSHvO4JrVc/aSxoYe9DEdbpXnNA7dqR4xcNt7WDDq1KOYF
+         turjKf3B6Jjjuvu9Kn1NLWSeeHK2LFUeVoQGGBker27UupAZZWfGYr92io5ID1t9bZ+a
+         C2Dg==
+X-Gm-Message-State: APjAAAUM3lDuWfHPe1IkPrdTjL++DuZF1JiglWFdWVnaV0ik/m1txrP9
+        H2v4mDe+yZccnWjlW13skmM=
+X-Google-Smtp-Source: APXvYqzZv8ZA0QWR1unXdqHNGBEbmxOTvJsw8UAJi6vHRBGULw4c8TeHzm4E/fhPstdJPGQ71hBoxg==
+X-Received: by 2002:a37:94c1:: with SMTP id w184mr835218qkd.172.1566857424700;
+        Mon, 26 Aug 2019 15:10:24 -0700 (PDT)
 Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id e2sm6316651qkg.38.2019.08.26.15.08.11
+        by smtp.gmail.com with ESMTPSA id i5sm9151056qti.0.2019.08.26.15.10.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 15:08:12 -0700 (PDT)
+        Mon, 26 Aug 2019 15:10:23 -0700 (PDT)
 From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
 X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
 Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 1344040916; Mon, 26 Aug 2019 19:08:10 -0300 (-03)
-Date:   Mon, 26 Aug 2019 19:08:10 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+        id DF3E240916; Mon, 26 Aug 2019 19:10:21 -0300 (-03)
+Date:   Mon, 26 Aug 2019 19:10:21 -0300
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH 00/12] libperf: Add events to perf/event.h
-Message-ID: <20190826220810.GA21761@kernel.org>
-References: <20190825181752.722-1-jolsa@kernel.org>
- <20190826154138.GD24801@kernel.org>
- <20190826164734.GE17554@krava>
+        Peter Zijlstra <peterz@infradead.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Ian Rogers <irogers@google.com>,
+        Song Liu <songliubraving@fb.com>,
+        "Jin, Yao" <yao.jin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jonatan Corbet <corbet@lwn.net>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: BoF on LPC 2019 : Linux Perf advancements for compute intensive
+ and server systems
+Message-ID: <20190826221021.GB21761@kernel.org>
+References: <43216530-4410-6cc4-aa4a-51fa7e7c1b0c@linux.intel.com>
+ <20190826135536.GA24801@kernel.org>
+ <da687997-6280-2613-a389-f7b94c600c2b@linux.intel.com>
+ <20190826175758.GH5447@tassilo.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190826164734.GE17554@krava>
+In-Reply-To: <20190826175758.GH5447@tassilo.jf.intel.com>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,71 +87,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Aug 26, 2019 at 06:47:34PM +0200, Jiri Olsa escreveu:
-> On Mon, Aug 26, 2019 at 12:41:38PM -0300, Arnaldo Carvalho de Melo wrote:
-> > Em Sun, Aug 25, 2019 at 08:17:40PM +0200, Jiri Olsa escreveu:
-> > > hi,
-> > > as a preparation for sampling libperf interface, moving event
-> > > definitions into the library header. Moving just the kernel 
-> > > non-AUX events now.
-> > > 
-> > > In order to keep libperf simple, we switch 'u64/u32/u16/u8'
-> > > types used events to their generic '__u*' versions.
-> > > 
-> > > Perf added 'u*' types mainly to ease up printing __u64 values
-> > > as stated in the linux/types.h comment:
-> > > 
-> > >   /*
-> > >    * We define u64 as uint64_t for every architecture
-> > >    * so that we can print it with "%"PRIx64 without getting warnings.
-> > >    *
-> > >    * typedef __u64 u64;
-> > >    * typedef __s64 s64;
-> > >    */
-> > > 
-> > > Adding and using new PRI_lu64 and PRI_lx64 macros to be used for
-> > > that.  Using extra '_' to ease up the reading and differentiate
-> > > them from standard PRI*64 macros.
+Em Mon, Aug 26, 2019 at 10:57:58AM -0700, Andi Kleen escreveu:
 > > 
-> > I think we should take advantage of this moment to rename those structs
-> > to have the 'perf_record_' prefix on them, I guess we could even remove
-> > the _event from them, i.e.:
+> > > 
+> > > All those are already merged, after long reviewing phases and lots of
+> > > testing, right?
 > > 
-> > 'struct mmap_event' becomes 'perf_record_mmap', as it is the description
-> > for the PERF_RECORD_MMAP meta-data event, are you ok with that?
+> > Right. These changes now constitute parts of the Linux kernel source tree.
 > 
-> hum, not sure about loosing the '_event' here, but we are
-> not public yet, so we can always change back ;-) I do like
-> it'd follow the enum name
+> Might be better to focus on future areas that haven't been merged yet.
 
-So I'm making the already exported to libperf to be renamed to have the
-same name as the PERF_RECORD_ enum they map to, just all lowercase.
+Agreed, we can have a initial, short report on what has been done to
+address these issues, and I think Alexey could take care of that, but
+then we should try and list here what else in addition to what Ian et
+all listed on their talk.
 
-Looks nice and also makes something exported by libperf to have a perf_
-namespace prefix.
-
-BTW: you forgot to move PERF_RECORD_CONTEXT_SWITCH :-)
-
-> > I can go ahead and do it myself, updating each patch on this series to
-> > do that.
-> 
-> sure, I thought we'd do it later, but feel free to do it,
-> maybe in separate changes?
-
-I did it as a separate patch, one patch for all the PERF_RECORD_ already
-moved to libperf.
-
-Also some other minor stuff, like having that
-perf_event.{bpf,ksymbol}_event renamed to play perf_event.{bpf,ksymbol},
-like the other records. so to make this idiom more compact and less
-redundant:
-
-    event->bpf_event
-
-becomes:
-
-    event->bpf
-
-ditto for ksymbol_event.
+And perhaps even things that ammeliorate the problems they list there,
+i.e. Ian, Stephane, the things that Alexey listed were already
+tested/considered by you guys?
 
 - Arnaldo
