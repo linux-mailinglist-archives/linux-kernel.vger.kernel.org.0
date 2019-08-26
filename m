@@ -2,158 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E51A9D272
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 533A49D278
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:17:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732981AbfHZPQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:16:56 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40749 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732960AbfHZPQy (ORCPT
+        id S1733011AbfHZPRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:17:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37690 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732922AbfHZPRJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:16:54 -0400
-Received: by mail-wr1-f66.google.com with SMTP id c3so15697988wrd.7
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 08:16:53 -0700 (PDT)
+        Mon, 26 Aug 2019 11:17:09 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z11so15733779wrt.4;
+        Mon, 26 Aug 2019 08:17:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=flameeyes-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=PRsLeO8FIWrB//Ma4pse3QtgP26sqDLp0rUz7nxZoZw=;
-        b=svnyPSAztO+ZjudSEZff4HhDC9tEkDEKHZnUkNq8nghgJA0dOuKYz6mQCSznH4eeTU
-         JduwkxCp/t8I3o0RJjVrXQiGDhxVjT30/XtKTZFI0lrPzadTMrJNErrYfoK+Y/oYamXm
-         qmLIhYYEs/DLDTjQ4mfLIM5APKDyjhZr7ykNhL6CThv4IqeHY0hEruuYHVJfCzsNS+j3
-         49iXN4Klcorf4aGVS5G44L/XFecpjmKeCq9H6Vx6iH1C1/rUmA4oUUQRdjFbiIom57Tj
-         gKYB3L6sNwsxK1SKUyfL0FBXElZTm58R4MO7l6ATvlp7/v/RrkXYHEULnOtfwAGt6v4A
-         QVZA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3OhNJIqCWkzD4aj6/1vV0aKfa5mah5B+lSn+3N0mtEc=;
+        b=XN8fZPAJwzZ2tOPrFDwaQgVLLZv8Hh04gHCnCm6uzqsmUtX2SdvirNciE6EaARm07N
+         JbwlxbVgQpmO07WidCup5FAlEu6d2kZ1dQhW/sFuxHzJj9UB3IgE+m35NRevPgThK1nB
+         LQlyoyKMt5jwIus7qrYOlO9skf+B+mJDoB8fJ22gdqqXn1CAw+sUUD4g1izvtmEdm3sh
+         NCC2nzoHUezK+Ufm47IbjyNL2ZZ9eI4HEhoAcHnddHeVy9/TY+RMsOgjgymGjbS2zo3R
+         +BxAGlvmFPaiqGyVQhvojHWVpCs6X3f4rzpZI826c31leEYKD8Q3WfNV/nBNV43fK/Rb
+         CAyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=PRsLeO8FIWrB//Ma4pse3QtgP26sqDLp0rUz7nxZoZw=;
-        b=Z5tL2qxFg6WrpEh9nRmGugPMXRf9k4UleHLy1oYCdR5SSE+ZWee0zyvHWd2puYqkBy
-         9Gaq9o8+/rO/vVXqE9iFkDxNRhNTKYOzhRD2oo9cB86NHbUnAD+t5ySajCfahqrG/ooA
-         wt1A+Ls7Onet4n62IaKTasufyO8arK8I5fDx4kjtHp5tu5Ze9xpOCJKY8+cq/auxcA/G
-         8rh1IVGpvn9gf07wQupUhg71t+AD+FCxR3Kk8lUW63zLR80CCl6pbZQ+96kANRn5hjHf
-         WSnOF18pFyShouqvEQutrdlfL3nL3SjOZVnBfFEskg/pMSCy3/i11T5F9yGZs9H4bmK/
-         OBDQ==
-X-Gm-Message-State: APjAAAXhV3MQNFLjmRUKhNQbD429BXmYkT9aEasS6mIixBG+fVsKUTqy
-        mg+cDQS/mgD1/P9Gh7keWy5ne/s++YklVg==
-X-Google-Smtp-Source: APXvYqy416abKbA1Nwhj7IkM221BeCCWPRm32LLGbTetGKA9jXpwbXsJVrrOvIn/+pDdx9640Q7PHg==
-X-Received: by 2002:adf:ea01:: with SMTP id q1mr23829903wrm.271.1566832612773;
-        Mon, 26 Aug 2019 08:16:52 -0700 (PDT)
-Received: from localhost ([2a01:4b00:80c6:1000:5b16:35e9:1ce5:7fc9])
-        by smtp.gmail.com with ESMTPSA id o14sm21389135wrg.64.2019.08.26.08.16.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Aug 2019 08:16:52 -0700 (PDT)
-From:   =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Diego=20Elio=20Petten=C3=B2?= <flameeyes@flameeyes.com>
-Subject: [PATCH 4/4] cdrom: support Beurer GL50 evo CD-on-a-chip devices.
-Date:   Mon, 26 Aug 2019 16:16:40 +0100
-Message-Id: <20190826151640.5036-5-flameeyes@flameeyes.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190826151640.5036-1-flameeyes@flameeyes.com>
-References: <20190826151640.5036-1-flameeyes@flameeyes.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3OhNJIqCWkzD4aj6/1vV0aKfa5mah5B+lSn+3N0mtEc=;
+        b=DEY4DyAQSNoSioyaAYmf8A4PSqzK3x9tsvIBoLaF5bcSJo11yVzt/BjJN+SnenNL3G
+         zzRammTV/5GKeG4aJcEqAE3DzFDOOrmMrWPTAPeuXZ21dDKNa8xHwm00FNWUS+9d52sM
+         OWmjYMsERNvSBJ14xdR+BsWdnnNC8+IEgMlDEKLQ4mOW3jI0Hl0c1dF20BnpaUVI/zeX
+         djLi1EV2Q92m2/ryY9mDgN6/h2T4S7Dw2ipFvZ3I4A573GsBv8FxztBW8zuUNSZaSDLY
+         ifxetzLbL44X0OubyrXR0KIJREBSm/H50mboPbQGGUwsK92vSBm+j6ljwqdOdGOmtGOk
+         R+vw==
+X-Gm-Message-State: APjAAAUBgQAh1crKYl32u8stN70UAV3Sy13Y6x2cb3Yf36eovaiqdir1
+        l6HcGU+Ty3lk48/fDjlhx/uMfdRL0pQ5I9CujRPWPA==
+X-Google-Smtp-Source: APXvYqwu18NgSTZSGLc4mSMOMPegj7LnF3fT8AUKAC5AsFC3IwjtVYQCbU1apNw68rAgvTWINNfUrROfz2oa8RZWo6o=
+X-Received: by 2002:a5d:4f91:: with SMTP id d17mr22795931wru.74.1566832627935;
+ Mon, 26 Aug 2019 08:17:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190826132012.GB6840@mwanda>
+In-Reply-To: <20190826132012.GB6840@mwanda>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Mon, 26 Aug 2019 11:16:55 -0400
+Message-ID: <CADnq5_PEFyHP7cOxZOYroGx+Hf1qSuSg+7DUiAakZMc1GcWbsQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/powerplay: Fix an off by one in navi10_get_smu_msg_index()
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Kevin Wang <kevin1.wang@amd.com>,
+        kernel-janitors@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Huang Rui <ray.huang@amd.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Evan Quan <evan.quan@amd.com>,
+        Kenneth Feng <kenneth.feng@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Beurer GL50 evo uses a Cygnal/Cypress-manufactured CD-on-a-chip that
-only accepts a subset of SCSI commands.
+On Mon, Aug 26, 2019 at 9:20 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> The navi10_message_map[] array has SMU_MSG_MAX_COUNT elements so the ">"
+> has to be changed to ">=" to prevent reading one element beyond the end
+> of the array.
+>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 
-Most of the not-implemented commands are fine to fail, but a few,
-particularly around the MMC or Audio commands, will put the device into an
-unrecoverable state, so they need to be avoided at all costs.
+Applied.  thanks!
 
-In addition to adding a new vendor entry to sr_vendor, this required gating
-a few functions in the cdrom driver to not even try sending the command
-when the capability is not present.
+Alex
 
-Signed-off-by: Diego Elio Pettenò <flameeyes@flameeyes.com>
----
- drivers/cdrom/cdrom.c    | 13 ++++++++++++-
- drivers/scsi/sr_vendor.c | 18 ++++++++++++++++++
- 2 files changed, 30 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/cdrom/cdrom.c b/drivers/cdrom/cdrom.c
-index 732aa7115ebd..97542587b720 100644
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -953,6 +953,12 @@ static void cdrom_count_tracks(struct cdrom_device_info *cdi, tracktype *tracks)
- 	tracks->cdi = 0;
- 	tracks->xa = 0;
- 	tracks->error = 0;
-+
-+	if (!CDROM_CAN(CDC_PLAY_AUDIO)) {
-+		tracks->error = CDS_NO_INFO;
-+		return;
-+	}
-+
- 	/* Grab the TOC header so we can see how many tracks there are */
- 	ret = cdi->ops->audio_ioctl(cdi, CDROMREADTOCHDR, &header);
- 	if (ret) {
-@@ -1116,7 +1122,9 @@ int cdrom_open(struct cdrom_device_info *cdi, struct block_device *bdev,
- 		ret = open_for_data(cdi);
- 		if (ret)
- 			goto err;
--		cdrom_mmc3_profile(cdi);
-+		if (CDROM_CAN(CDC_GENERIC_PACKET)) {
-+			cdrom_mmc3_profile(cdi);
-+		}
- 		if (mode & FMODE_WRITE) {
- 			ret = -EROFS;
- 			if (cdrom_open_write(cdi))
-@@ -2770,6 +2778,9 @@ int cdrom_get_last_written(struct cdrom_device_info *cdi, long *last_written)
- 	   it doesn't give enough information or fails. then we return
- 	   the toc contents. */
- use_toc:
-+	if (!CDROM_CAN(CDC_PLAY_AUDIO))
-+		return -ENOSYS;
-+
- 	toc.cdte_format = CDROM_MSF;
- 	toc.cdte_track = CDROM_LEADOUT;
- 	if ((ret = cdi->ops->audio_ioctl(cdi, CDROMREADTOCENTRY, &toc)))
-diff --git a/drivers/scsi/sr_vendor.c b/drivers/scsi/sr_vendor.c
-index e3b0ce25162b..b5e76869d473 100644
---- a/drivers/scsi/sr_vendor.c
-+++ b/drivers/scsi/sr_vendor.c
-@@ -61,6 +61,7 @@
- #define VENDOR_NEC             2
- #define VENDOR_TOSHIBA         3
- #define VENDOR_WRITER          4	/* pre-scsi3 writers */
-+#define VENDOR_CYGNAL_85ED     5	/* CD-on-a-chip */
- 
- #define VENDOR_TIMEOUT	30*HZ
- 
-@@ -99,6 +100,23 @@ void sr_vendor_init(Scsi_CD *cd)
- 	} else if (!strncmp(vendor, "TOSHIBA", 7)) {
- 		cd->vendor = VENDOR_TOSHIBA;
- 
-+	} else if (!strncmp(vendor, "Beurer", 6) &&
-+		   !strncmp(model, "Gluco Memory", 12)) {
-+		/* The Beurer GL50 evo uses a Cygnal/Cypress-manufactured
-+		   CD-on-a-chip that only accepts a subset of SCSI commands.
-+		   Most of the not-implemented commands are fine to fail, but a
-+		   few, particularly around the MMC or Audio commands, will put
-+		   the device into an unrecoverable state, so they need to be
-+		   avoided at all costs.
-+		*/
-+		cd->vendor = VENDOR_CYGNAL_85ED;
-+		cd->cdi.mask |= (
-+			CDC_MULTI_SESSION |
-+			CDC_CLOSE_TRAY | CDC_OPEN_TRAY |
-+			CDC_LOCK |
-+			CDC_GENERIC_PACKET |
-+			CDC_PLAY_AUDIO
-+			);
- 	}
- #endif
- }
--- 
-2.22.0
-
+> ---
+>  drivers/gpu/drm/amd/powerplay/navi10_ppt.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> index d7e25f5113f1..fbecd25f150f 100644
+> --- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> +++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c
+> @@ -213,7 +213,7 @@ static int navi10_get_smu_msg_index(struct smu_context *smc, uint32_t index)
+>  {
+>         struct smu_11_0_cmn2aisc_mapping mapping;
+>
+> -       if (index > SMU_MSG_MAX_COUNT)
+> +       if (index >= SMU_MSG_MAX_COUNT)
+>                 return -EINVAL;
+>
+>         mapping = navi10_message_map[index];
+> --
+> 2.20.1
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
