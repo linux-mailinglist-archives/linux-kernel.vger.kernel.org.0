@@ -2,95 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D14F19D26B
-	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:14:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 570109D265
+	for <lists+linux-kernel@lfdr.de>; Mon, 26 Aug 2019 17:13:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732954AbfHZPOk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 11:14:40 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43668 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730379AbfHZPOk (ORCPT
+        id S1732922AbfHZPNX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 11:13:23 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34485 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732908AbfHZPNW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 11:14:40 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h13so26944230edq.10;
-        Mon, 26 Aug 2019 08:14:39 -0700 (PDT)
+        Mon, 26 Aug 2019 11:13:22 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b24so12018299pfp.1
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 08:13:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RCDy+7K0fwF6nt7MbSVX8QMpTTG0g3KoAzAmdTsb8DY=;
-        b=ObJMH1xIehE/7oddlecJPARz4qG1rnqBa8UxW+F7d5CbSW9le+05fqM91jvngewFm7
-         IAhywnYGhMJV+QiaU0CiGNlGOQbbbyW6S+pIs3+LjabTbWy6cehK3Q1yeNYSU9ZHMZlX
-         5sxuaVbJnKouPfQRlLo9I1hMCJdZvACLzbC+Tp2z0RYydY1Lr8j5DYqlfQoDp6psvPyw
-         hIPkycJ8dvsDjToArfL3HFvAoW35LpHICPBlqpabSFG5MKfgezZvT4CMjYW4DesFTNx/
-         IFxK1A9l+/Vj90h8Hiwzic/P0mCKWhUuQIgpWmKcMCl+5d+qlai/p8Qpw2ptP+B9bgMt
-         Sw2A==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j5KxHjXq4wZrRuSjnTO35VtGsy0U6Zm7/urplqoNwEg=;
+        b=LrSYxPcMCE8kKbBcH0Y3Ky8LLQbhHQZMufx9PAeg0KliOgtT46O/2328VxjkC002s0
+         fMFUqT3o78VSV7bCvVraoOlBIzM+/qiB5YjjfsWZg/0MDQ9Tukt7OT68Ak+Hc14VlMvF
+         4WSz87/WMNlIAu77o+bBIo1Vi/Vgxb1pcjEbFcfy8MGu3LFJRUvTg7GiMMF2p/n5zXmm
+         3OVCDL2D5CAWZnrHVicbMxKodku8gEbDG632rr2+ASNo8rlylbBcCHYsOAmF8CmOjLML
+         qYi+Nuu1sU4Nybzy33ueiE7/rQK9yoJ6zRD6dYBZazM4SgLXJo9PqUTfJY8OYzOXJQyg
+         C+0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=RCDy+7K0fwF6nt7MbSVX8QMpTTG0g3KoAzAmdTsb8DY=;
-        b=VUqv6ZSz4IS77L03KD5FEFBXj4VL1C5Cm/ehQwnDD9okdW8/gGIQYXfssdW30Z2JI7
-         Ix8cEjTqIkxR+1NS24eYX7sbVbYWeDBDGVdiJpag9wMGYs9DfaekL8oB7u3Wb6/y84fT
-         sLg8wdt66ijD4+gMmIjNZTvNITGRJWd66Jpfsfd4ICSxTsLRq0toIRg5mpG/bFx//Uw/
-         gj5a2Oaezj5Yb8E5j9iQkBRf+nZr6nzrJ3ROr8MS/KBJirsAykfmO7TsbvsPdvK0/OUa
-         znjPa1ceIyROBatecbItDGr7+cvMU8RWkOb1Uxyf+nVvPi5s83DuTQfq5h4VzC/Vaxw5
-         hvig==
-X-Gm-Message-State: APjAAAVpTcqIKIEVfr9Y3LKSbbmECNIERCiw9v0IIhdzrtGZdjUVAbEz
-        KruqhYWfsHkUQrUmgQ1sZb8=
-X-Google-Smtp-Source: APXvYqwVjsfeA0fvtl5KyoGIk6txpb1HMvzkepsVRJ8coXd46DZ5CYhwp3DfC0p/YyPArLJg+vm5WQ==
-X-Received: by 2002:a05:6402:1344:: with SMTP id y4mr18841237edw.124.1566832478387;
-        Mon, 26 Aug 2019 08:14:38 -0700 (PDT)
-Received: from localhost.localdomain (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
-        by smtp.gmail.com with ESMTPSA id r16sm2976795eji.71.2019.08.26.08.14.37
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j5KxHjXq4wZrRuSjnTO35VtGsy0U6Zm7/urplqoNwEg=;
+        b=kumkU5yBxU/mybx9on4u2ADlwVkzE+IMmx4Uv2Wgfe8MX+qkfAKqcjlPKUBOAJ3ddQ
+         WT1Dn9BkYyYAdeBAs1vJfnBnZQKhyLcn+RMPi6Eori8sDN0BL12fS0BAi65kIRJBraEO
+         JTLWL3YMLGOowrHUq2UM9cMloynuDOvpX6tUmJD+LnB2GHF7cBl+1Nh7IONivLGTsayq
+         MxzOENlC8xGyEFkygxe+iWRzZIWsiX9rEP+EsHhKVmWTeQZXTVcDQ/SlEw6HSi4x9yLY
+         uYTU6VaR4uHy/g8ppU6JVGNzqRrFrl1sXsh/qiMoin9sLY4+ZTk7VnmSi60vypDcaE9U
+         LpjA==
+X-Gm-Message-State: APjAAAW3ptAQzzekSS4rXtbLd1PnVfIdmc74TcjLP15uAlUvn01F8G9F
+        cUpK044rBJyl2z1BF3AXUOyZ8Q==
+X-Google-Smtp-Source: APXvYqza9qWjK7AbgQw32FUjQQVrD1ZaaAa3XtLTCQmQ29i1QX33eiFCIhXgsXNEeD+tlhOh+piA+Q==
+X-Received: by 2002:a63:6c46:: with SMTP id h67mr17290709pgc.248.1566832401867;
+        Mon, 26 Aug 2019 08:13:21 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id g8sm11351479pgk.1.2019.08.26.08.13.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 08:14:37 -0700 (PDT)
-From:   Krzysztof Wilczynski <kw@linux.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: Move static keyword to the front of declarations in pci-bridge-emul.c
-Date:   Mon, 26 Aug 2019 17:14:36 +0200
-Message-Id: <20190826151436.4672-1-kw@linux.com>
-X-Mailer: git-send-email 2.22.1
+        Mon, 26 Aug 2019 08:13:21 -0700 (PDT)
+Date:   Mon, 26 Aug 2019 08:15:12 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Subject: Re: [PATCH] phy: qcom-qmp: Correct ready status, again
+Message-ID: <20190826151512.GX26807@tuxbook-pro>
+References: <20190806004256.20152-1-bjorn.andersson@linaro.org>
+ <20190806155040.0B54520C01@mail.kernel.org>
+ <57556d09-e2db-dc00-45a9-cbb57da02319@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57556d09-e2db-dc00-45a9-cbb57da02319@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the static keyword to the front of declarations of
-pci_regs_behavior and pcie_cap_regs_behavior, and resolve
-compiler warning that can be seen when building with
-warnings enabled (W=1).
+On Tue 20 Aug 17:23 PDT 2019, Kishon Vijay Abraham I wrote:
 
-Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
----
- drivers/pci/pci-bridge-emul.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Hi Sasha,
+> 
+> On 06/08/19 9:20 PM, Sasha Levin wrote:
+> > Hi,
+> > 
+> > [This is an automated email]
+> > 
+> > This commit has been processed because it contains a "Fixes:" tag,
+> > fixing commit: 885bd765963b phy: qcom-qmp: Correct READY_STATUS poll break condition.
+> > 
+> > The bot has tested the following trees: v5.2.6.
+> > 
+> > v5.2.6: Failed to apply! Possible dependencies:
+> >     520602640419 ("phy: qcom-qmp: Raise qcom_qmp_phy_enable() polling delay")
+> > 
+> > 
+> > NOTE: The patch will not be queued to stable trees until it is upstream.
+> > 
+> > How should we proceed with this patch?
+> 
+> Merging of this patch got delayed. Bjorn, Is it okay if this patch gets merged
+> in the next merge window and backported to stable releases then?
+> 
 
-diff --git a/drivers/pci/pci-bridge-emul.c b/drivers/pci/pci-bridge-emul.c
-index 06083b86d4f4..5fd90105510d 100644
---- a/drivers/pci/pci-bridge-emul.c
-+++ b/drivers/pci/pci-bridge-emul.c
-@@ -38,7 +38,7 @@ struct pci_bridge_reg_behavior {
- 	u32 rsvd;
- };
- 
--const static struct pci_bridge_reg_behavior pci_regs_behavior[] = {
-+static const struct pci_bridge_reg_behavior pci_regs_behavior[] = {
- 	[PCI_VENDOR_ID / 4] = { .ro = ~0 },
- 	[PCI_COMMAND / 4] = {
- 		.rw = (PCI_COMMAND_IO | PCI_COMMAND_MEMORY |
-@@ -173,7 +173,7 @@ const static struct pci_bridge_reg_behavior pci_regs_behavior[] = {
- 	},
- };
- 
--const static struct pci_bridge_reg_behavior pcie_cap_regs_behavior[] = {
-+static const struct pci_bridge_reg_behavior pcie_cap_regs_behavior[] = {
- 	[PCI_CAP_LIST_ID / 4] = {
- 		/*
- 		 * Capability ID, Next Capability Pointer and
--- 
-2.22.1
+That's fine, thanks for picking it up Kishon
 
+Regards,
+Bjorn
