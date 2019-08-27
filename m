@@ -2,66 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1FA9E857
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:50:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 661B19E860
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729836AbfH0MuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:50:05 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:54139 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726170AbfH0MuF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:50:05 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0TacAofi_1566910188;
-Received: from localhost(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TacAofi_1566910188)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 27 Aug 2019 20:49:54 +0800
-From:   Ben Luo <luoben@linux.alibaba.com>
-To:     alex.williamson@redhat.com, cohuck@redhat.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] vfio/type1: avoid redundant PageReserved checking
-Date:   Tue, 27 Aug 2019 20:49:48 +0800
-Message-Id: <3e892a6bdaa069a6e79c50208bd01cab8c9588ac.1566910119.git.luoben@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        id S1729810AbfH0Mvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:51:48 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:34212 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725783AbfH0Mvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 08:51:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=DBTatqI3H5K1xCSN2ZBvs+q+QhJcXdjDafQvqeHpr2U=; b=lfYa0GwTEentODawKHL8fO8k/H
+        ouE/T5kbz1FOFHXtvOIMnRvr99SAxzlbdx0IE/AnnmY9NXH4jnhGfohJrMrDNb04OYzQ99UwVsV+d
+        FrqIY88r7AaPALwwIzhVWubRm0W9ZvBkGQLzqIQDR7wkcvqhTziMafYtbkUJKEVeiMDA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1i2awh-00039D-J6; Tue, 27 Aug 2019 14:51:35 +0200
+Date:   Tue, 27 Aug 2019 14:51:35 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Razvan Stefanescu <razvan.stefanescu@microchip.com>
+Cc:     Woojung Huh <woojung.huh@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] net: dsa: microchip: fix interrupt mask
+Message-ID: <20190827125135.GA11471@lunn.ch>
+References: <20190827093110.14957-1-razvan.stefanescu@microchip.com>
+ <20190827093110.14957-4-razvan.stefanescu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190827093110.14957-4-razvan.stefanescu@microchip.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-currently, if the page is not a tail of compound page, it will be
-checked twice for the same thing.
+On Tue, Aug 27, 2019 at 12:31:09PM +0300, Razvan Stefanescu wrote:
+> Global Interrupt Mask Register comprises of Lookup Engine (LUE) Interrupt
+> Mask (bit 31) and GPIO Pin Output Trigger and Timestamp Unit Interrupt
+> Mask (bit 29).
+> 
+> This corrects LUE bit.
 
-Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
----
- drivers/vfio/vfio_iommu_type1.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Hi Razvan
 
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 054391f..cbe0d88 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -291,11 +291,10 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
- static bool is_invalid_reserved_pfn(unsigned long pfn)
- {
- 	if (pfn_valid(pfn)) {
--		bool reserved;
- 		struct page *tail = pfn_to_page(pfn);
- 		struct page *head = compound_head(tail);
--		reserved = !!(PageReserved(head));
- 		if (head != tail) {
-+			bool reserved = !!(PageReserved(head));
- 			/*
- 			 * "head" is not a dangling pointer
- 			 * (compound_head takes care of that)
-@@ -310,7 +309,7 @@ static bool is_invalid_reserved_pfn(unsigned long pfn)
- 			if (PageTail(tail))
- 				return reserved;
- 		}
--		return PageReserved(tail);
-+		return !!(PageReserved(tail));
- 	}
- 
- 	return true;
--- 
-1.8.3.1
+Is this a fix? Something that should be back ported to old kernels?
 
+Thanks
+	Andrew
