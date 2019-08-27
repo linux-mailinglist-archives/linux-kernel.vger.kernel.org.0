@@ -2,129 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF2079F6D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 01:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80C6D9F6D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 01:25:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbfH0XYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 19:24:20 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45471 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbfH0XYT (ORCPT
+        id S1726422AbfH0XZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 19:25:04 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37875 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbfH0XZD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 19:24:19 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l1so792360lji.12
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 16:24:18 -0700 (PDT)
+        Tue, 27 Aug 2019 19:25:03 -0400
+Received: by mail-io1-f66.google.com with SMTP id q12so1487372iog.4;
+        Tue, 27 Aug 2019 16:25:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=cHg8GFr+9ZLzMMJHsvNHHov8vbKz3Whz26E/ZLxuKA8=;
-        b=iX+HDWfmnaBb46CDRKHFXgE++7V892uyzQG2a2Arn8P7n3x1TVmXI1UBDIOxvNoVsZ
-         vTvkURufC5eQN/hJlhLxs6BDYLZ0RHg6A2x+e4YRZ4c6vswP50JqKB9rBpeTZF4tHN7w
-         DDEem62jlZZ7rWjYmqKbDJg0Q2BS+F8b4Lr2E6wFwXCf9kkWqpzGu2oy3dTPgGULBFk8
-         LL2zCJpX2GYXqA387DlXwohraUo74Wotv8dMoSnQbAFW4zEr/wGExZDhBGr8jLGEiB+6
-         RleqUUoy+AX2bzmTFqwtY0tPCGwrLGMV8LdMx+uM2reGhqj/OeJ3+OZ2+/akdcsNjuys
-         QM3A==
+        bh=AZp/zzBtS0EBiyMSUURJW6iNqR0pfIGhZlkgvULPVEo=;
+        b=BFSqj6OUgdwftYzzYXGPwUNHC8vNVsa9r2ChznpC7RkSDp2KTGdC7fe9DguD1V+tVQ
+         K8cBTkp5rHqDqGdxqDjclgASr4iyEILJq6x3Ke3xuU2apjbZ8fOLTtx5sl1GHS/8Syj9
+         pbjqo0PJE1BJaEOmruxYMsyErKfh0xuWO6kS/8smjDMKCiC1lQPC2Q44cBw5HBlau/3p
+         34bbDWG/ezWukZfefTBGNZ0qbiHF75LLsmHOiT/44ZTZ/aVNHXUAYlrmhThjmq98uqJo
+         Y/gEb7LzkZ9gOLIDhtDLPjAGApXtQrYV+df0XvyjjDp3Sj/jZUKO6RbpORLBDdMICg9d
+         lkxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=cHg8GFr+9ZLzMMJHsvNHHov8vbKz3Whz26E/ZLxuKA8=;
-        b=UusF4JWSxEiYJlVFbZW39m+ZQsqpcw15zNnxJA+vYmWNfg7/VBUQPoQGgJE4FFQCVI
-         OW/7ZRpycKjAWoKszlVZiksRCIjA6a9hdg0oTc59RZEORkhbUY91Ufg1P7y60pz5NTpM
-         zIoxcpaX1BcPtZY/kRw7ooPqIfxbzS/nGBgI4dDNglphxGdLPPoqmCSPVOiIeDodzW5k
-         jnotGzoONF25sfxHhAEJUiQbHJUQ445DbE7WBWtcoZtydZuf8xd8OdvXDkd0RLRy+BYq
-         IshtDRoouxvIMGJbt0tHop+WWkF7Sqg6rnY/vWr1Q2iw/tzDB2Oo5cfId/FtuzukEYkp
-         PjRw==
-X-Gm-Message-State: APjAAAXK4RScUY2WaQoultAqZwwSNAoIbFjGiw6o6HyXupI/fOAev8+B
-        LFlvN1lvekmdnGyeWyiep+8CtGfFRlcn7Ak9hX5gn7LP
-X-Google-Smtp-Source: APXvYqzm2XLoVNUYSKUOIOGn3CRGqm5tJ47pKMk0lvV0X08v3Xf1Axais5Ej32acW70AX1P6z4muAdmj47ClBJ9+foo=
-X-Received: by 2002:a2e:81c3:: with SMTP id s3mr415016ljg.70.1566948257736;
- Tue, 27 Aug 2019 16:24:17 -0700 (PDT)
+        bh=AZp/zzBtS0EBiyMSUURJW6iNqR0pfIGhZlkgvULPVEo=;
+        b=o8Kg8cGM9SEyCDkNeNPhjf0dmXUrbFlCxvdCtUvdEoxdvBiJ+ypadx4bCvojbhjeYh
+         CNuJS2dhQoUCBgp4xs0ptu7JiWb9bHhZ2em7tqNW7c9c/LIZIyzsosG7yu93AL51bMmy
+         OLqhk69ThwbtQ5O2M/ULL/EwmkJnae5opPoLvEP55MUEIMxIUwjcxH/SNbWvs1jizO68
+         6EYuhmRVH9WxwFwsrfV2L9+cnGeqLCkxu0RC2cUNz6kuLesUypThW2Xb853XkLbA9Qax
+         pcZly/+Oqm8GnC5gUcgU1rmEAGMwo/gPpqHDQGeFWfaBDzWdvGhwBw1lq96TxDrO/KnI
+         Iy9A==
+X-Gm-Message-State: APjAAAXE0f/0lw7ywwLtwyusQ64Rdqj0s8fNu4sPWmdLgetA5vCE87wk
+        Z/i7edZFIwCb/PeI6tjwTpqZK0EMTUX1wu++BVA=
+X-Google-Smtp-Source: APXvYqyqSKNPjI3RqbHeyiPci/pb0qWE5PUDPxcELs94FqcSKNQOerajwYEUx+YZEhYXfNcva0enU+Mb4DAGP/p0KKs=
+X-Received: by 2002:a5d:9b02:: with SMTP id y2mr1072981ion.146.1566948302443;
+ Tue, 27 Aug 2019 16:25:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1559129225.git.vpillai@digitalocean.com> <20190827211417.snpwgnhsu5t6u52y@srcf.ucam.org>
-In-Reply-To: <20190827211417.snpwgnhsu5t6u52y@srcf.ucam.org>
-From:   Aubrey Li <aubrey.intel@gmail.com>
-Date:   Wed, 28 Aug 2019 07:24:06 +0800
-Message-ID: <CAERHkrtr_Vd+y85EX3WXVjJ8Vu-c3Xh8Zr-zpuDHWmN=gQ6j9g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-To:     Matthew Garrett <mjg59@srcf.ucam.org>
-Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
+References: <20190819160643.27998-1-efremov@linux.com> <20190819160643.27998-2-efremov@linux.com>
+ <9cbb34b0-d6be-fbba-9992-9b6939018e5d@linux.com>
+In-Reply-To: <9cbb34b0-d6be-fbba-9992-9b6939018e5d@linux.com>
+From:   "Oliver O'Halloran" <oohall@gmail.com>
+Date:   Wed, 28 Aug 2019 09:24:51 +1000
+Message-ID: <CAOSf1CH7KHmViRQUYBvEtTQz0vMV5oE4SXOHp_E_a69Xew90gw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] PCI: pciehp: Add pciehp_set_indicators() to
+ jointly set LED indicators
+To:     efremov@linux.com
+Cc:     sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 5:14 AM Matthew Garrett <mjg59@srcf.ucam.org> wrote:
+On Tue, Aug 20, 2019 at 2:17 AM Denis Efremov <efremov@linux.com> wrote:
 >
-> Apple have provided a sysctl that allows applications to indicate that
-> specific threads should make use of core isolation while allowing
-> the rest of the system to make use of SMT, and browsers (Safari, Firefox
-> and Chrome, at least) are now making use of this. Trying to do something
-> similar using cgroups seems a bit awkward. Would something like this be
-> reasonable? Having spoken to the Chrome team, I believe that the
-> semantics we want are:
+> Hi,
 >
-> 1) A thread to be able to indicate that it should not run on the same
-> core as anything not in posession of the same cookie
-> 2) Descendents of that thread to (by default) have the same cookie
-> 3) No other thread be able to obtain the same cookie
-> 4) Threads not be able to rejoin the global group (ie, threads can
-> segregate themselves from their parent and peers, but can never rejoin
-> that group once segregated)
+> On 8/19/19 7:06 PM, Denis Efremov wrote:
+> On 8/12/19 11:25 AM, sathyanarayanan kuppuswamy wrote:
+> > Do we need to switch case here ? if (pwr > 0) {} should work right ?
 >
-> but don't know if that's what everyone else would want.
->
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index 094bb03b9cc2..5d411246d4d5 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -229,4 +229,5 @@ struct prctl_mm_map {
->  # define PR_PAC_APDBKEY                        (1UL << 3)
->  # define PR_PAC_APGAKEY                        (1UL << 4)
->
-> +#define PR_CORE_ISOLATE                        55
->  #endif /* _LINUX_PRCTL_H */
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index 12df0e5434b8..a054cfcca511 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -2486,6 +2486,13 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->                         return -EINVAL;
->                 error = PAC_RESET_KEYS(me, arg2);
->                 break;
-> +       case PR_CORE_ISOLATE:
-> +#ifdef CONFIG_SCHED_CORE
-> +               current->core_cookie = (unsigned long)current;
+> I saved the switch here from v2. I think switch makes the inputs check more
+> precise and filters-out all non-valid values. Maybe this check is too strict?
 
-Because AVX512 instructions could pull down the core frequency,
-we also want to give a magic cookie number to all AVX512-using
-tasks on the system, so they won't affect the performance/latency
-of any other tasks.
+Sounds like you're overthinking it tbh. If want to catch programming
+errors then a WARN_ON_ONCE() in the default case would be better than
+silently ignoring invalid values, but it's pretty hard to care.
 
-This could be done by putting all AVX512 tasks into a cgroup, or
-by AVX512 detection the following patch introduced.
+> We could use mask here ON|OFF|BLINK for the check, but I don't know how hardware
+> will handle a case, for example, pwr == ON|BLINK.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=2f7726f955572e587d5f50fbe9b2deed5334bd90
-
-Thanks,
--Aubrey
+ON|BLINK is the same as OFF
