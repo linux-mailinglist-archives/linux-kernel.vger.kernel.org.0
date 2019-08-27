@@ -2,70 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FCDA9F6AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 01:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F36D9F6B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 01:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbfH0XM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 19:12:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45358 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbfH0XM3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 19:12:29 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i2kdD-0005dr-Ja; Wed, 28 Aug 2019 01:12:07 +0200
-Date:   Wed, 28 Aug 2019 01:12:06 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ming Lei <ming.lei@redhat.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Long Li <longli@microsoft.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        John Garry <john.garry@huawei.com>,
-        Hannes Reinecke <hare@suse.com>,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 1/4] softirq: implement IRQ flood detection mechanism
-In-Reply-To: <20190827230451.GB5263@ming.t460p>
-Message-ID: <alpine.DEB.2.21.1908280110380.1939@nanos.tec.linutronix.de>
-References: <20190827085344.30799-1-ming.lei@redhat.com> <20190827085344.30799-2-ming.lei@redhat.com> <alpine.DEB.2.21.1908271633450.1939@nanos.tec.linutronix.de> <alpine.DEB.2.21.1908271817180.1939@nanos.tec.linutronix.de>
- <20190827230451.GB5263@ming.t460p>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1726462AbfH0XNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 19:13:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726034AbfH0XNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 19:13:16 -0400
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B00D422CF5
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 23:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566947595;
+        bh=rHBa9MRffMSBHyUH5QZwjBWkLfU0q5vCcm3u+l5rcIw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VxPi+cBN5ooECgFEkOe7rqU7j7NTwarw2iKh9moOiOt+uRZ/cjiNPytBIwpf3g0nu
+         m9VFcnmtKZTNMv+NVPptklx0a6m5WrvfRfGpBPuaUiOi56VZtrEE38zN/5vXc0MDu8
+         RezyNRm0OmabY8hQ6jqygiNoF+0fXTWmD1YteHE0=
+Received: by mail-wr1-f49.google.com with SMTP id z11so481981wrt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 16:13:14 -0700 (PDT)
+X-Gm-Message-State: APjAAAXYEBkY5ISCIljyfZLmd8YIsSiinZGTwr7gNLcy35BRsv0eEi7F
+        rRAxqrWBlOFpML40vxsSb+U+UBY2AOBwu3842BQx3Q==
+X-Google-Smtp-Source: APXvYqyhai/RL03y2ctYuCVVMR3Zh5Z8EvEHeMe+nXuXfKhsi/nR/0O9Eg9HydYHuOyg0ONueDfECKBsKQewV5ifbIo=
+X-Received: by 2002:a5d:4d4c:: with SMTP id a12mr511436wru.343.1566947593137;
+ Tue, 27 Aug 2019 16:13:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20190823225248.15597-1-namit@vmware.com> <20190823225248.15597-3-namit@vmware.com>
+In-Reply-To: <20190823225248.15597-3-namit@vmware.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 27 Aug 2019 16:13:02 -0700
+X-Gmail-Original-Message-ID: <CALCETrX91RqYsetbTjfrsMHH8LhTW=YMPuatHuo0bdTJeejP=Q@mail.gmail.com>
+Message-ID: <CALCETrX91RqYsetbTjfrsMHH8LhTW=YMPuatHuo0bdTJeejP=Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/3] x86/mm/tlb: Defer PTI flushes
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Aug 2019, Ming Lei wrote:
-> On Tue, Aug 27, 2019 at 06:19:00PM +0200, Thomas Gleixner wrote:
-> > > We definitely are not going to have a 64bit multiplication and division on
-> > > every interrupt. Asided of that this breaks 32bit builds all over the place.
-> > 
-> > That said, we already have infrastructure for something like this in the
-> > core interrupt code which is optimized to be lightweight in the fast path.
-> > 
-> > kernel/irq/timings.c
-> 
-> irq/timings.c is much more complicated, especially it applies EWMA to
-> compute each irq's average interval. However, we only need it for
-> do_IRQ() to cover all interrupt & softirq handler.
+On Fri, Aug 23, 2019 at 11:13 PM Nadav Amit <namit@vmware.com> wrote:
+>
+> INVPCID is considerably slower than INVLPG of a single PTE. Using it to
+> flush the user page-tables when PTI is enabled therefore introduces
+> significant overhead.
+>
+> Instead, unless page-tables are released, it is possible to defer the
+> flushing of the user page-tables until the time the code returns to
+> userspace. These page tables are not in use, so deferring them is not a
+> security hazard.
 
-That does not justify yet another ad hoc thingy.
+I agree and, in fact, I argued against ever using INVPCID in the
+original PTI code.
 
-> Also CONFIG_IRQ_TIMINGS is usually disabled on distributions.
+However, I don't see what freeing page tables has to do with this.  If
+the CPU can actually do speculative page walks based on the contents
+of non-current-PCID TLB entries, then we have major problems, since we
+don't actively flush the TLB for non-running mms at all.
 
-That's not an argument at all.
+I suppose that, if we free a page table, then we can't activate the
+PCID by writing to CR3 before flushing things.  But we can still defer
+the flush and just set the flush bit when we write to CR3.
 
-Thanks,
-
-	tglx
+--Andy
