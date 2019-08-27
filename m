@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E6F9E1AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CAE9E105
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731271AbfH0IOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:14:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49288 "EHLO mail.kernel.org"
+        id S1732761AbfH0IIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:08:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730752AbfH0H5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:57:07 -0400
+        id S1731928AbfH0IGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:06:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B97A3206BA;
-        Tue, 27 Aug 2019 07:57:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C4B5206BA;
+        Tue, 27 Aug 2019 08:06:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892627;
-        bh=pxSnDMCy4QW5fVlt8AHYU8Hw9Z8BgMHTH91vuYTye3I=;
+        s=default; t=1566893200;
+        bh=mmO40OMKYBpLQ8t86cPFUw9lzxw7bu2lLFID7NXlxKc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fz5sjf0zoAe8oUl0623XHyVp0dApqqoqnZouufbAWnift75Kk5s+g4C4h45Q5T4El
-         lx0+PnoI33YZ0xWVbb9fuI4bdvlrTpzjxC/vooNa9W4lhSpOk9ImvjvQYtngCD6ZSp
-         R/O683KLv4D3yNI/+CwQpOlk585/3eLabCXsem6o=
+        b=zjTX6kXj9t5Q8A8dpVeDMkQPxsKW/9DhewjYTE3uyWYBUC2KhTX8QwS4DltNgjKbM
+         hJsIyQUWXI9+xxyE5JP/NTAwKQgHg7Qy6I/0vKsJXSnr/77HBeycbeTScxqRzwX+rw
+         loya4XMc5lKQD2gz1UnAfgGGVJM9mZ+eKADZzwDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Deepak Rawat <drawat@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
+        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Stephane Eranian <eranian@google.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 51/98] drm/vmwgfx: fix memory leak when too many retries have occurred
-Date:   Tue, 27 Aug 2019 09:50:30 +0200
-Message-Id: <20190827072720.986259442@linuxfoundation.org>
+Subject: [PATCH 5.2 103/162] perf ftrace: Fix failure to set cpumask when only one cpu is present
+Date:   Tue, 27 Aug 2019 09:50:31 +0200
+Message-Id: <20190827072741.861943403@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
+In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
+References: <20190827072738.093683223@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +51,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6b7c3b86f0b63134b2ab56508921a0853ffa687a ]
+[ Upstream commit cf30ae726c011e0372fd4c2d588466c8b50a8907 ]
 
-Currently when too many retries have occurred there is a memory
-leak on the allocation for reply on the error return path. Fix
-this by kfree'ing reply before returning.
+The buffer containing the string used to set cpumask is overwritten at
+the end of the string later in cpu_map__snprint_mask due to not enough
+memory space, when there is only one cpu.
 
-Addresses-Coverity: ("Resource leak")
-Fixes: a9cd9c044aa9 ("drm/vmwgfx: Add a check to handle host message failure")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Deepak Rawat <drawat@vmware.com>
-Signed-off-by: Deepak Rawat <drawat@vmware.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+And thus causes the following failure:
+
+  $ perf ftrace ls
+  failed to reset ftrace
+  $
+
+This patch fixes the calculation of the cpumask string size.
+
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Fixes: dc23103278c5 ("perf ftrace: Add support for -a and -C option")
+Link: http://lkml.kernel.org/r/1564734592-15624-1-git-send-email-zhe.he@windriver.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_msg.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/builtin-ftrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-index e4e09d47c5c0e..59e9d05ab928b 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
-@@ -389,8 +389,10 @@ static int vmw_recv_msg(struct rpc_channel *channel, void **msg,
- 		break;
- 	}
+diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+index 9c228c55e1fb7..22386ab350504 100644
+--- a/tools/perf/builtin-ftrace.c
++++ b/tools/perf/builtin-ftrace.c
+@@ -173,7 +173,7 @@ static int set_tracing_cpumask(struct cpu_map *cpumap)
+ 	int last_cpu;
  
--	if (retries == RETRIES)
-+	if (retries == RETRIES) {
-+		kfree(reply);
- 		return -EINVAL;
-+	}
+ 	last_cpu = cpu_map__cpu(cpumap, cpumap->nr - 1);
+-	mask_size = (last_cpu + 3) / 4 + 1;
++	mask_size = last_cpu / 4 + 2; /* one more byte for EOS */
+ 	mask_size += last_cpu / 32; /* ',' is needed for every 32th cpus */
  
- 	*msg_len = reply_len;
- 	*msg     = reply;
+ 	cpumask = malloc(mask_size);
 -- 
 2.20.1
 
