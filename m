@@ -2,111 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 993249F38C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 761299F38E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:52:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731388AbfH0TwR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 15:52:17 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40496 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731304AbfH0TwI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 15:52:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=DotA4iLQHzv00Y2V/yoKvVtA73fz51KfKrhIQUWvQ/A=; b=Jk34QD+kplnhZpigYMK5cBC1i7
-        dhGf0sq5AcLhRXy2QBPuFIjNu5tpr0TAeGY+6iRa5GS9qZhE4XAsx2FC/jyX4BGM4Y/Yo1DHbIcbt
-        rq2FXrtcpFaHcAoKBWNNm9NWgpSKQzYpewUuFMFKdG+VPjfWPr9l12eYYz/s7i/kyN98yoJ+g6gxI
-        khKkw4SmpvmIe+8rYERHkUtR2zJ3ssXSXzi7FyWxVA7/rtfPGygwiWDi+nPsHvECGoYsNnLB6FkT1
-        +fZPeZ8LFT0GHO+GnIsRlAGp4VYYz/HPX8uGrR4hL/tpt5Of4gRizyptBQ/gE83eRv22I0ceC0b8x
-        Dq1hypvQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2hVT-0007JS-CN; Tue, 27 Aug 2019 19:51:55 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1731432AbfH0TwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 15:52:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731405AbfH0TwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 15:52:23 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4CA58307822;
-        Tue, 27 Aug 2019 21:51:17 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 013D8203CEC0B; Tue, 27 Aug 2019 21:51:50 +0200 (CEST)
-Message-Id: <20190827195122.731530141@infradead.org>
-User-Agent: quilt/0.65
-Date:   Tue, 27 Aug 2019 21:48:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, x86@kernel.org,
-        Dave Hansen <dave.hansen@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH -v2 5/5] x86/intel: Add common OPTDIFFs
-References: <20190827194820.378516765@infradead.org>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FDBE20674;
+        Tue, 27 Aug 2019 19:52:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566935543;
+        bh=ZNngPOo5sREOCpdfzOYYctOb0x1tvWdUphEpciupKo0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JowPzasut+xd8bPQ7hheMDMj6dv+3tPnoilVHbn4IdwUHucxfxrg60uylZQ3SjnKQ
+         B+tL71KFXgdX4P1WRuALM8xAa9RG9/pDTXsTENxkFLIg0hl8t11ZE8kQCOOFJw2eIK
+         90HkFschuRPPbK5r3SifSMrtGimh58pWewUjo06c=
+Date:   Tue, 27 Aug 2019 21:52:20 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-spdx@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: add entry for LICENSES and SPDX stuff
+Message-ID: <20190827195220.GA30322@kroah.com>
+References: <20190827172519.GA28849@kroah.com>
+ <alpine.DEB.2.21.1908272135150.1939@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1908272135150.1939@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 27, 2019 at 09:36:23PM +0200, Thomas Gleixner wrote:
+> On Tue, 27 Aug 2019, Greg Kroah-Hartman wrote:
+> 
+> > Thomas and I seem to have become the "unofficial" maintainers for these
+> > files and questions about SPDX things.  So let's make it official.
+> > 
+> > Reported-by: "Darrick J. Wong" <darrick.wong@oracle.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > 
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -9234,6 +9234,17 @@ F:	include/linux/nd.h
+> >  F:	include/linux/libnvdimm.h
+> >  F:	include/uapi/linux/ndctl.h
+> >  
+> > +LICENSES and SPDX stuff
+> > +M:	Thomas Gleixner <tglx@linutronix.de>
+> > +M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > +L:	linux-spdx@vger.kernel.org
+> > +S:	Maintained
+> > +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/spdx.git
+> > +F:	COPYING
+> > +F:	LICENSES/
+> > +F:	scripts/spdxcheck-test.sh
+> > +F:	scripts/spdxcheck.py
+> 
+> We probably want to add Documentation/process/license-rules.rst as well.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: x86@kernel.org
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
----
- arch/x86/include/asm/intel-family.h |   21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+Good idea, will go refresh this patch...
 
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -5,9 +5,6 @@
- /*
-  * "Big Core" Processors (Branded as Core, Xeon, etc...)
-  *
-- * The "_X" parts are generally the EP and EX Xeons, or the
-- * "Extreme" ones, like Broadwell-E, or Atom microserver.
-- *
-  * While adding a new CPUID for a new microarchitecture, add a new
-  * group to keep logically sorted out in chronological order. Within
-  * that group keep the CPUID for the variants sorted by model number.
-@@ -21,9 +18,19 @@
-  * MICROARCH	Is the code name for the micro-architecture for this core.
-  *		N.B. Not the platform name.
-  * OPTDIFF	If needed, a short string to differentiate by market segment.
-- *		Exact strings here will vary over time. _DESKTOP, _MOBILE, and
-- *		_X (short for Xeon server) should be used when they are
-- *		appropriate.
-+ *
-+ *		Common OPTDIFFs:
-+ *
-+ *			- regular client parts
-+ *		_L	- regular mobile parts
-+ *		_G	- parts with extra graphics on
-+ *		_X	- regular server parts
-+ *		_D	- micro server parts
-+ *
-+ *		Historical OPTDIFFs:
-+ *
-+ *		_EP	- 2 socket server parts
-+ *		_EX	- 4+ socket server parts
-  *
-  * The #define line may optionally include a comment including platform names.
-  */
-@@ -91,6 +98,8 @@
- 
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
- #define INTEL_FAM6_ATOM_GOLDMONT_D	0x5F /* Denverton */
-+
-+/* Note: the micro-architecture is "Goldmont Plus" */
- #define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A /* Gemini Lake */
- 
- #define INTEL_FAM6_ATOM_TREMONT_D	0x86 /* Jacobsville */
+thanks,
 
-
+greg k-h
