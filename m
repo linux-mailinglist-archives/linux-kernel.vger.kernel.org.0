@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 320B29E157
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC6439E156
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731656AbfH0IBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:01:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56496 "EHLO mail.kernel.org"
+        id S1732377AbfH0ILb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:11:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731135AbfH0IA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:00:58 -0400
+        id S1726833AbfH0IBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:01:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFCB4206BA;
-        Tue, 27 Aug 2019 08:00:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76E6B21872;
+        Tue, 27 Aug 2019 08:01:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892857;
-        bh=BVc9jPVXfB9lSCQwQrTt1ByWYOlvUO3fKEJjo7L40EQ=;
+        s=default; t=1566892866;
+        bh=zq1uNPKinyJYge4bsychB7kvd71bQAuStkyBQJMgH6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xUbK7WBQBUALHoprHkz4icthjkKWMYZs3ZZJZ2iLegG3c9ZFCLxbKo9DmSbZjIGo2
-         bwT8xOhRYN3qwE4UQpF445pAwzoJNq8cHCYWZGCu04fEM5yv9rQAGaIyw9byj5UTKY
-         3a8Vhf9qSow4oS0s+K5f2Y40LOodyDAJypvHoA28=
+        b=eAYO3MiyUfC0QStOQKPHniuRAVXKZXTyDK0Hk0vFbQmZNiNUb7VaN0Hy6TIDSG9pt
+         VfDfJ0vZwezffm3LgRJugVkV4VKseyGtyVDCW1gDvzY70WUpxr1KHoXtqmebUzn7C0
+         DYghxx9NDfq/NlVfsWVL6ucHfn+TYhm3/3WLi82Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 038/162] st21nfca_connectivity_event_received: null check the allocation
-Date:   Tue, 27 Aug 2019 09:49:26 +0200
-Message-Id: <20190827072739.591097394@linuxfoundation.org>
+Subject: [PATCH 5.2 041/162] ASoC: ti: davinci-mcasp: Fix clk PDIR handling for i2s master mode
+Date:   Tue, 27 Aug 2019 09:49:29 +0200
+Message-Id: <20190827072739.685598752@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -45,30 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9891d06836e67324c9e9c4675ed90fc8b8110034 ]
+[ Upstream commit 34a2a80ff30b5d2330abfa8980c7f0cc15a8158a ]
 
-devm_kzalloc may fail and return null. So the null check is needed.
+When running McASP as master capture alone will not record any audio unless
+a parallel playback stream is running. As soon as the playback stops the
+captured data is going to be silent again.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In McASP master mode we need to set the PDIR for the clock pins and fix
+the mcasp_set_axr_pdir() to skip the bits in the PDIR registers above
+AMUTE.
+
+This went unnoticed as most of the boards uses McASP as slave and neither
+of these issues are visible (audible) in those setups.
+
+Fixes: ca3d9433349e ("ASoC: davinci-mcasp: Update PDIR (pin direction) register handling")
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Link: https://lore.kernel.org/r/20190725083423.7321-1-peter.ujfalusi@ti.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/st21nfca/se.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/ti/davinci-mcasp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nfc/st21nfca/se.c b/drivers/nfc/st21nfca/se.c
-index 06fc542fd1987..6586378cacb05 100644
---- a/drivers/nfc/st21nfca/se.c
-+++ b/drivers/nfc/st21nfca/se.c
-@@ -317,6 +317,8 @@ int st21nfca_connectivity_event_received(struct nfc_hci_dev *hdev, u8 host,
+diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
+index 5e8e31743a28d..dc01bbca0ff69 100644
+--- a/sound/soc/ti/davinci-mcasp.c
++++ b/sound/soc/ti/davinci-mcasp.c
+@@ -194,7 +194,7 @@ static inline void mcasp_set_axr_pdir(struct davinci_mcasp *mcasp, bool enable)
+ {
+ 	u32 bit;
  
- 		transaction = (struct nfc_evt_transaction *)devm_kzalloc(dev,
- 						   skb->len - 2, GFP_KERNEL);
-+		if (!transaction)
-+			return -ENOMEM;
+-	for_each_set_bit(bit, &mcasp->pdir, PIN_BIT_AFSR) {
++	for_each_set_bit(bit, &mcasp->pdir, PIN_BIT_AMUTE) {
+ 		if (enable)
+ 			mcasp_set_bits(mcasp, DAVINCI_MCASP_PDIR_REG, BIT(bit));
+ 		else
+@@ -222,6 +222,7 @@ static void mcasp_start_rx(struct davinci_mcasp *mcasp)
+ 	if (mcasp_is_synchronous(mcasp)) {
+ 		mcasp_set_ctl_reg(mcasp, DAVINCI_MCASP_GBLCTLX_REG, TXHCLKRST);
+ 		mcasp_set_ctl_reg(mcasp, DAVINCI_MCASP_GBLCTLX_REG, TXCLKRST);
++		mcasp_set_clk_pdir(mcasp, true);
+ 	}
  
- 		transaction->aid_len = skb->data[1];
- 		memcpy(transaction->aid, &skb->data[2],
+ 	/* Activate serializer(s) */
 -- 
 2.20.1
 
