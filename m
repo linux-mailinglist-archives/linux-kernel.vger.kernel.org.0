@@ -2,59 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF129F5AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 497249F5B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbfH0V46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:56:58 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44496 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbfH0V46 (ORCPT
+        id S1726422AbfH0V7O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:59:14 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38241 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfH0V7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:56:58 -0400
-Received: by mail-pf1-f195.google.com with SMTP id c81so247768pfc.11
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 14:56:57 -0700 (PDT)
+        Tue, 27 Aug 2019 17:59:13 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w11so199285plp.5
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 14:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=Y58GzbpuJMrCv6Aud3l4fk9q/EphwZ4HzmalX9EXO6k=;
-        b=rTiDJtDz0lF8iZtwS2E9aimITSlzG6HIFOf6vlZyAafpkeUG64U7MV9Yu39sFcNIvd
-         u5fD4k5wylpqkm8n/QGqUCllNPs1caHICWt7RnY9nej7dGYSJx3OaxEj241aSl/rHIys
-         8Q9xzRI9YZPYV1Zp48hrFayXPKz1YzRqaheng59FI1LBq7n+17QKjJbdwJWzCuFBDi3c
-         S0IAg6FMJ6j3lBjTeFkFp8aLLZfa5JTuD4LvlAren6zm7wf1YGNZmP7SIX1D63Jni5ri
-         oEGhgXFyITLiuSzeR/me8xGCH8SjCDcCD3b2OTElyF1odsAR2+cp1eDPuCR5tKtW4hRN
-         OaNg==
+        bh=TdYOcDy5jsMWziyheC0sLWKkoIn520mmauZjzHRKXw0=;
+        b=fqX7HAuzT5KuFfsn8d+HExjzxkOeMp9ciR59skQfXichfF0DxduVaNwQa72F8i2JRJ
+         RcqtQKXAMQAjfhy1CJChhtF3Sv538PUx6V+L2FZJ/YtfvFAsJYwh2hca4OiQtCwBo9OU
+         VwkmnGUC9flIc+hJlh+bpiWQN35phBb0UYpHysFLpKvvDRLPvxMvJ4WUB5kl579mWgYs
+         bAQindBZCEfngbh3o6ERCSUnxUSw2SpKuPE4eKM1o1jcYpeviPzHreexlsNAf4KHD2cN
+         pDTAB49gxvQx3+ZQK9tVGn5gGVTDK2oG3ZS1sD4ab4bIaRI8r81jBAQbtua9fkMRiijQ
+         63CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=Y58GzbpuJMrCv6Aud3l4fk9q/EphwZ4HzmalX9EXO6k=;
-        b=Pxx62nWCok80wMm15ECHcN6042yf1Rh2RcdfD50FboYavFKncbZZFv47VyMhzl1Ov0
-         EDPNWjAuzv++2gW1COCkxMBdD7NxKXmvoQQBRN1TKPZUDVKvzzRKyv28Zdnl2c6wxCZi
-         6el3HydnNqVA4RPNgWCtB8nO4xD6QqJvPCsyCJJV2mB2e0lZKY1lZTWp89xVX6JSAUyv
-         uO7JfZgybbJ39PAL6Jxoxa2mJPndeBtqUMis2lJIaZU34fIUDadgZYBWPzAhdpyQwwI2
-         xLW+yznFhuTsArnOiQ3uZpfDlCa++szrXYMLMQHkOed/I+xGGFSD166zf3CzJ/CQj+x9
-         wSHg==
-X-Gm-Message-State: APjAAAXkU59iHqfKY+XIGf5mbsAIjgUya3Qsz31SwQarGOg5fyxDWOdc
-        HrQalP6Mk0M3Y+a3bJhB2VWNAjjRpjQ=
-X-Google-Smtp-Source: APXvYqypJmra42f+zZaaG5L+JyglSUCu3Jctb6ZUUahBE8VPLzbP7kgdlKfYkQUSzRkfGvw0nbiVeA==
-X-Received: by 2002:a65:640d:: with SMTP id a13mr566500pgv.256.1566943017473;
-        Tue, 27 Aug 2019 14:56:57 -0700 (PDT)
+        bh=TdYOcDy5jsMWziyheC0sLWKkoIn520mmauZjzHRKXw0=;
+        b=jfD1LvBSJvgi5iHpnvVFywteTcCIVH26EPSK/51TDykEODZ3imdtvJ2XlqC6U+0y6+
+         2VWg45PSoi9CMDP27n8Zu0tUVX4Gy27lyw1SfNtOMwOtqbbGgnxdSDF34jY7jmDo1EZr
+         UTWjhzic7I4o5BLv9KNKy03R+0i0/RgoZQJKVpihspws/3SaWol5d7RsiBPyS2ocvNoJ
+         Oyg8ArVUkrWHgs7jcjW8UxF13TVYeKkAbK7wav/GbdOHO0XGQGQyvR2vCBczwnjyFx9m
+         tX2eyzOMwyAfnHtKc2yWkxitFy/F2KkxjykS5iej0gnnw4hXznpblL2YrEg3UAXadR+n
+         wJsQ==
+X-Gm-Message-State: APjAAAVWA6TmNSxxs/d9RowEZA88sJMwwi9L0R+nXCcomCRgVElBvEU5
+        HatsHp/KahZ7b7ZoX/fA/29LOA==
+X-Google-Smtp-Source: APXvYqws8hfOSYTfuqQpuIYlzKB7o2Sp5rFJ3VOL35Gaol7mqdAOiWBTbpZz0mLm3qMRR7/MJdUF5g==
+X-Received: by 2002:a17:902:9b86:: with SMTP id y6mr1087338plp.217.1566943152953;
+        Tue, 27 Aug 2019 14:59:12 -0700 (PDT)
 Received: from localhost ([2601:602:9200:a1a5:cc35:e750:308e:47f])
-        by smtp.gmail.com with ESMTPSA id f72sm168758pjg.10.2019.08.27.14.56.56
+        by smtp.gmail.com with ESMTPSA id e17sm175950pjt.6.2019.08.27.14.59.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Aug 2019 14:56:56 -0700 (PDT)
+        Tue, 27 Aug 2019 14:59:12 -0700 (PDT)
 From:   Kevin Hilman <khilman@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 0/3] arm64: dts: meson-g12: specify suspend OPP
-In-Reply-To: <20190827100307.21661-1-narmstrong@baylibre.com>
-References: <20190827100307.21661-1-narmstrong@baylibre.com>
-Date:   Tue, 27 Aug 2019 14:56:56 -0700
-Message-ID: <7hy2zeuv9z.fsf@baylibre.com>
+Subject: Re: [RESEND PATCH v2 00/14] arm64: dts: meson: fixes following YAML bindings schemas conversion
+In-Reply-To: <20190823070248.25832-1-narmstrong@baylibre.com>
+References: <20190823070248.25832-1-narmstrong@baylibre.com>
+Date:   Tue, 27 Aug 2019 14:59:11 -0700
+Message-ID: <7htva2uv68.fsf@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,22 +65,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Neil Armstrong <narmstrong@baylibre.com> writes:
 
-> Tag the 1,2GHz OPP as suspend OPP to be set before going in suspend mode,
-> for the G12A, G12B and SM1 SoCs.
+> This is the first set of DT fixes following the first YAML bindings conversion
+> at [1], [2] and [3].
 >
-> It has been reported that using various OPPs can lead to error or
-> resume with a different OPP from the ROM, thus use this safe OPP as
-> it is the default OPP used by the BL2 boot firmware.
+> After this set of fixes, the remaining errors are :
+> meson-axg-s400.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
+> meson-g12a-sei510.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
+> meson-g12b-odroid-n2.dt.yaml: usb-hub: gpios:0:0: 20 is not valid under any of the given schemas
+> meson-g12b-odroid-n2.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
+> meson-g12a-x96-max.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
 >
-> Neil Armstrong (3):
->   arm64: dts: meson-g12a: specify suspend OPP
->   arm64: dts: meson-sm1: specify suspend OPP
->   arm64: dts: meson-g12b: specify suspend OPP
+> These are only cosmetic changes, and should not break drivers implementation
+> following the bindings.
 
-Queued patches 1, 3 for v5.4.
+Queued for v5.4,
 
-The SM1 patch has a dependency on the SM1 DVFS series, which in turn has
-a dependency on clock changes.  Once I get a stable tag for the SM1
-clock changes, I'll queue up the rest.
+Thanks,
 
 Kevin
