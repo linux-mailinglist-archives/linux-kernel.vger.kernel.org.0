@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E07349DF7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BB549DFEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730121AbfH0Hyl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:54:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46328 "EHLO mail.kernel.org"
+        id S1730435AbfH0H6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:58:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730098AbfH0Hyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:54:38 -0400
+        id S1730990AbfH0H6i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:58:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F9F4217F5;
-        Tue, 27 Aug 2019 07:54:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 250CB20828;
+        Tue, 27 Aug 2019 07:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892477;
-        bh=Ojiw9cviong+gOk0b1dDRq8ifWqinuxu2WAYzxvhGso=;
+        s=default; t=1566892717;
+        bh=9139bLgvZNJhVU+/KuehRZ88uo1vuy8PX04vIiAa+M4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ODgdSnGXAdb/pl3w05FB6123gyTxqwk0+IH0xIYZRweSU03vnXXMTvkJ5/EZ1Tk6P
-         S1TWNxrGF1m67JgRKssEgdIk8NYZ7rLWEppXgVK2D6CIze1RTWuj/2qtK1+LIUB7LU
-         S+wjss4okF8SShkYWhjObOjMiSDMcXMA3p0n2Rx4=
+        b=furoQnrJqtEGfAVj39TRqa82AQi2nndI6rVE2qRIv+C0fT1pHzQ93HPCBSJe80+Vi
+         k+Og+w36gsqsQ55BPZ6wQWpgbHjl/u1T+AFxvdC5IrDD4mUhWhn1lImjXsqCjgvzmC
+         bkDcDwh2kWGlB56QYMNIB092dqznbjdrSN04wZd4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Dmitry Fomichev <dmitry.fomichev@wdc.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 61/62] dm zoned: fix potential NULL dereference in dmz_do_reclaim()
-Date:   Tue, 27 Aug 2019 09:51:06 +0200
-Message-Id: <20190827072704.012827908@linuxfoundation.org>
+        stable@vger.kernel.org, benjamin.moody@gmail.com,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Salvatore Bonaccorso <carnil@debian.org>
+Subject: [PATCH 4.19 88/98] xfs: fix missing ILOCK unlock when xfs_setattr_nonsize fails due to EDQUOT
+Date:   Tue, 27 Aug 2019 09:51:07 +0200
+Message-Id: <20190827072722.653604904@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e0702d90b79d430b0ccc276ead4f88440bb51352 ]
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-This function is supposed to return error pointers so it matches the
-dmz_get_rnd_zone_for_reclaim() function.  The current code could lead to
-a NULL dereference in dmz_do_reclaim()
+commit 1fb254aa983bf190cfd685d40c64a480a9bafaee upstream.
 
-Fixes: b234c6d7a703 ("dm zoned: improve error handling in reclaim")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Dmitry Fomichev <dmitry.fomichev@wdc.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Benjamin Moody reported to Debian that XFS partially wedges when a chgrp
+fails on account of being out of disk quota.  I ran his reproducer
+script:
+
+# adduser dummy
+# adduser dummy plugdev
+
+# dd if=/dev/zero bs=1M count=100 of=test.img
+# mkfs.xfs test.img
+# mount -t xfs -o gquota test.img /mnt
+# mkdir -p /mnt/dummy
+# chown -c dummy /mnt/dummy
+# xfs_quota -xc 'limit -g bsoft=100k bhard=100k plugdev' /mnt
+
+(and then as user dummy)
+
+$ dd if=/dev/urandom bs=1M count=50 of=/mnt/dummy/foo
+$ chgrp plugdev /mnt/dummy/foo
+
+and saw:
+
+================================================
+WARNING: lock held when returning to user space!
+5.3.0-rc5 #rc5 Tainted: G        W
+------------------------------------------------
+chgrp/47006 is leaving the kernel with locks still held!
+1 lock held by chgrp/47006:
+ #0: 000000006664ea2d (&xfs_nondir_ilock_class){++++}, at: xfs_ilock+0xd2/0x290 [xfs]
+
+...which is clearly caused by xfs_setattr_nonsize failing to unlock the
+ILOCK after the xfs_qm_vop_chown_reserve call fails.  Add the missing
+unlock.
+
+Reported-by: benjamin.moody@gmail.com
+Fixes: 253f4911f297 ("xfs: better xfs_trans_alloc interface")
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Tested-by: Salvatore Bonaccorso <carnil@debian.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/md/dm-zoned-metadata.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/xfs/xfs_iops.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/md/dm-zoned-metadata.c b/drivers/md/dm-zoned-metadata.c
-index ccf17eb6adaa2..b322821a6323b 100644
---- a/drivers/md/dm-zoned-metadata.c
-+++ b/drivers/md/dm-zoned-metadata.c
-@@ -1579,7 +1579,7 @@ static struct dm_zone *dmz_get_seq_zone_for_reclaim(struct dmz_metadata *zmd)
- 	struct dm_zone *zone;
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -803,6 +803,7 @@ xfs_setattr_nonsize(
  
- 	if (list_empty(&zmd->map_seq_list))
--		return NULL;
-+		return ERR_PTR(-EBUSY);
- 
- 	list_for_each_entry(zone, &zmd->map_seq_list, link) {
- 		if (!zone->bzone)
-@@ -1588,7 +1588,7 @@ static struct dm_zone *dmz_get_seq_zone_for_reclaim(struct dmz_metadata *zmd)
- 			return zone;
- 	}
- 
--	return NULL;
-+	return ERR_PTR(-EBUSY);
- }
- 
- /*
--- 
-2.20.1
-
+ out_cancel:
+ 	xfs_trans_cancel(tp);
++	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+ out_dqrele:
+ 	xfs_qm_dqrele(udqp);
+ 	xfs_qm_dqrele(gdqp);
 
 
