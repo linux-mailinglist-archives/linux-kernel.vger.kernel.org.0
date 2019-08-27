@@ -2,109 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94B509EFDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2044E9EFD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:12:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730249AbfH0QMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:12:48 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41115 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730159AbfH0QMr (ORCPT
+        id S1730108AbfH0QMi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:12:38 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42848 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbfH0QMi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:12:47 -0400
-Received: by mail-qt1-f194.google.com with SMTP id i4so21805981qtj.8;
-        Tue, 27 Aug 2019 09:12:45 -0700 (PDT)
+        Tue, 27 Aug 2019 12:12:38 -0400
+Received: by mail-oi1-f195.google.com with SMTP id o6so15372876oic.9;
+        Tue, 27 Aug 2019 09:12:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eRE+ONyqMbnDAqAAt7DNGwf4rRMmk/Hc31TRfDzpAP4=;
-        b=NvBDM/Fmk+0Gbswsr2vZZYkLbZrTzW9TO0uzdrvfJRzEiPpKzCoMVriHaD89sI/KUK
-         AS6VURCsktY4yLe5W2fGoiAfTU5CPzvQWBoN38xm2r9ePTfYOj5fPSBrN5BtwbRsoG9f
-         pPfSmQy/Pid/S92C/IS9u8a7uyJAUUQd/mtY4Y01jbl8ehjxg+VkYjSluKb/OtAjtEal
-         lAnDQtJq7eGQUTmoTpuyDycjVplkL+Hn6xxPDtyIESFT2Ba0M3KbNVoZyZlgasgaoaHf
-         qEAYKPdS1YobzL6SsV6aFSjOUDCadaJHUTUuPOYBzrLnZ89As+JiIgFYRN7JjsrTI8pC
-         ah9g==
-X-Gm-Message-State: APjAAAWTJpoF9VkXkxG3Xvt4j8TgsEB8qVyr+I5+WyZiKYDsUas1pIuV
-        p16c6X60h3rCQ0UNr3aPFZ+O9t32KBeuYL9tKKo=
-X-Google-Smtp-Source: APXvYqzJzXwniWV11iyI5rB1xzenfbGjuNt16WjkWMKnungYxIEtSdoNzRX/9im4O+QtvL8NXUN1aMXrq3HPv0xExpQ=
-X-Received: by 2002:aed:3363:: with SMTP id u90mr23512125qtd.7.1566922365105;
- Tue, 27 Aug 2019 09:12:45 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Cz/ZReSAayiO2TIIiV0TqCPnJ2ta6EUq4sXNauC2br4=;
+        b=FDbqR2IhrA3xRvMLd92Q9mkm5relO/2py5uPevvxLa4bTW8ew36KZyTaK2ttU41R2q
+         A9u5Ivp/Ay/vnKjnMXTFpsH2wDQldwFPHA62OcmSnFtyBRJ3jnzeA3+qhJiAyNq1aBKj
+         9VULKTk6alil+2fjv+FmTec7aax+nKD61U9AfiG3DPAYtgyghd4ZCYxH9FFpOfuzJhpt
+         ydUc5SwBG/7spcFUcPAPT1Xsv0GG8FC8HdL/SAByuljQU3VO7qU5nunwmt7/6uRjs/N5
+         M4Jl/JsUN9Ym4ep1otCGNN0c0OCCrgppOdLjR5vxYfU79tE18OSAwJNffRJ32CKUeMbh
+         mFeQ==
+X-Gm-Message-State: APjAAAWpNpvVA2jahXMvNrXJg3BwDTRFkVqtJ+qQvCFZbV+WHu50+fNv
+        DfRKgzEqrJQUmA1CkXJVtg==
+X-Google-Smtp-Source: APXvYqy5uq8+TgF1D4UOlhXpGeWe88J4wJ104qD4aXUbxNeuR6i5LmlumFgVQYjTec1HMkYnvWFUbQ==
+X-Received: by 2002:a54:4508:: with SMTP id l8mr10701622oil.90.1566922356702;
+        Tue, 27 Aug 2019 09:12:36 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f21sm5402064otq.7.2019.08.27.09.12.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 09:12:36 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 11:12:35 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v6 1/4] dt-bindings: net: phy: Add subnode for LED
+ configuration
+Message-ID: <20190827161235.GA14901@bogus>
+References: <20190813191147.19936-1-mka@chromium.org>
+ <20190813191147.19936-2-mka@chromium.org>
 MIME-Version: 1.0
-References: <20190827154851.10486-1-enric.balletbo@collabora.com> <20190827161045.GC26807@tuxbook-pro>
-In-Reply-To: <20190827161045.GC26807@tuxbook-pro>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 27 Aug 2019 18:12:28 +0200
-Message-ID: <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
-Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
- CROS_EC options
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        SoC Team <soc@kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
-        Lee Jones <lee.jones@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Fabrice Gasnier <fabrice.gasnier@st.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        "Yannick Fertr?" <yannick.fertre@st.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813191147.19936-2-mka@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
->
-> > Recently we refactored the CrOS EC drivers moving part of the code from
-> > the MFD subsystem to the platform chrome subsystem. During this change
-> > we needed to rename some config options, so, update the defconfigs
-> > accordingly.
-> >
-> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
-> > Tested-by: Gwendal Grignou <gwendal@chromium.org>
->
-> Can we make the entries in the generic arm64 defconfig modules?
+On Tue, Aug 13, 2019 at 12:11:44PM -0700, Matthias Kaehlcke wrote:
+> The LED behavior of some Ethernet PHYs is configurable. Add an
+> optional 'leds' subnode with a child node for each LED to be
+> configured. The binding aims to be compatible with the common
+> LED binding (see devicetree/bindings/leds/common.txt).
+> 
+> A LED can be configured to be:
+> 
+> - 'on' when a link is active, some PHYs allow configuration for
+>   certain link speeds
+>   speeds
+> - 'off'
+> - blink on RX/TX activity, some PHYs allow configuration for
+>   certain link speeds
+> 
+> For the configuration to be effective it needs to be supported by
+> the hardware and the corresponding PHY driver.
+> 
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> Changes in v6:
+> - none
+> 
+> Changes in v5:
+> - renamed triggers from 'phy_link_<speed>_active' to 'phy-link-<speed>'
+> - added entries for 'phy-link-<speed>-activity'
+> - added 'phy-link' and 'phy-link-activity' for triggers with any link
+>   speed
+> - added entry for trigger 'none'
+> 
+> Changes in v4:
+> - patch added to the series
+> ---
+>  .../devicetree/bindings/net/ethernet-phy.yaml | 59 +++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> index f70f18ff821f..98ba320f828b 100644
+> --- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> +++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+> @@ -153,6 +153,50 @@ properties:
+>        Delay after the reset was deasserted in microseconds. If
+>        this property is missing the delay will be skipped.
+>  
+> +patternProperties:
+> +  "^leds$":
+> +    type: object
+> +    description:
+> +      Subnode with configuration of the PHY LEDs.
 
-Good idea.
+#address-cells and #size-cells needed.
 
-Actually I would prefer to have all of them as modules for consistency,
-if at all possible.
+> +
+> +    patternProperties:
+> +      "^led@[0-9]+$":
 
-       Arnd
+Need to allow for the case of 1 LED which doesn't need a unit-address 
+nor reg.
+
+> +        type: object
+> +        description:
+> +          Subnode with the configuration of a single PHY LED.
+> +
+> +    properties:
+> +      reg:
+> +        description:
+> +          The ID number of the LED, typically corresponds to a hardware ID.
+> +        $ref: "/schemas/types.yaml#/definitions/uint32"
+
+Standard properties already have a type definition. What's needed is 
+'maxItems: 1'.
+
+> +
+> +      linux,default-trigger:
+> +        description:
+> +          This parameter, if present, is a string specifying the trigger
+> +          assigned to the LED. Supported triggers are:
+> +            "none" - LED will be solid off
+> +            "phy-link" - LED will be solid on when a link is active
+> +            "phy-link-10m" - LED will be solid on when a 10Mb/s link is active
+> +            "phy-link-100m" - LED will be solid on when a 100Mb/s link is active
+> +            "phy-link-1g" - LED will be solid on when a 1Gb/s link is active
+> +            "phy-link-10g" - LED will be solid on when a 10Gb/s link is active
+> +            "phy-link-activity" - LED will be on when link is active and blink
+> +                                  off with activity.
+> +            "phy-link-10m-activity" - LED will be on when 10Mb/s link is active
+> +                                      and blink off with activity.
+> +            "phy-link-100m-activity" - LED will be on when 100Mb/s link is
+> +                                       active and blink off with activity.
+> +            "phy-link-1g-activity" - LED will be on when 1Gb/s link is active
+> +                                     and blink off with activity.
+> +            "phy-link-10g-activity" - LED will be on when 10Gb/s link is active
+> +                                      and blink off with activity.
+
+These strings all need to be in an enum.
+
+The led binding is moving away from linux,default-trigger to 'function' 
+and 'color' properties. You probably want to do that here.
+
+> +
+> +        $ref: "/schemas/types.yaml#/definitions/string"
+> +
+> +    required:
+> +      - reg
+> +
+>  required:
+>    - reg
+>  
+> @@ -173,5 +217,20 @@ examples:
+>              reset-gpios = <&gpio1 4 1>;
+>              reset-assert-us = <1000>;
+>              reset-deassert-us = <2000>;
+> +
+> +            leds {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                led@0 {
+> +                    reg = <0>;
+> +                    linux,default-trigger = "phy-link-1g";
+> +                };
+> +
+> +                led@1 {
+> +                    reg = <1>;
+> +                    linux,default-trigger = "phy-link-100m-activity";
+> +                };
+> +            };
+>          };
+>      };
+> -- 
+> 2.23.0.rc1.153.gdeed80330f-goog
+> 
