@@ -2,200 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F1B49F5A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:55:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D66A9F58C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:51:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbfH0Vz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:55:56 -0400
-Received: from mga09.intel.com ([134.134.136.24]:27694 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725835AbfH0Vzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:55:55 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 14:55:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,438,1559545200"; 
-   d="scan'208";a="185426781"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by orsmga006.jf.intel.com with ESMTP; 27 Aug 2019 14:55:53 -0700
-Date:   Wed, 28 Aug 2019 05:38:29 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     gregkh@linuxfoundation.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org
-Subject: Re: [PATCH v5 3/9] fpga: dfl: afu: convert platform_driver to use
- dev_groups
-Message-ID: <20190827213829.GA4237@hao-dev>
-References: <1565578204-13969-1-git-send-email-hao.wu@intel.com>
- <1565578204-13969-4-git-send-email-hao.wu@intel.com>
- <20190822150701.GB22556@archbox>
+        id S1726418AbfH0Vuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:50:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35942 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfH0Vuw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 17:50:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FB8pN+BfPxkb7VhVcHVNo4pDuBs87uFREFm8kjgxbXI=; b=LfNIE0589Ir9nLcNlwkc4H5Gr
+        q8+xmVwFYXlyGZIMD1twy/HYuEsVWkM29dacB5CxEQaq1LE+E7pmg0QDl8iIRE0VHaedB4giOhHJo
+        G+1tmfRtbau8m8fboQbiuo0Z8g0G7blndf4vbOs3WOTS4jVAjTsk2JkiFV2N5NndH947kxdWc5OhT
+        v2SvywIk5gES4IjtsmzvZ8FLv8b14R3I9Tv2QzchtvciiFiwBtf4rvuBzTHa4y9KaF6iJsPehkE3c
+        prqkLJ7NwyJt6aJNR1/Jt1twuPjSbhBN6XH+Tlkv8o0e8yLxawYLmTeSWnGnUwrRErTNARwt6d91a
+        9XSyawtYg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2jMN-00033M-19; Tue, 27 Aug 2019 21:50:39 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6036330768B;
+        Tue, 27 Aug 2019 23:50:02 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id DA5CF203CEC05; Tue, 27 Aug 2019 23:50:35 +0200 (CEST)
+Date:   Tue, 27 Aug 2019 23:50:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Matthew Garrett <mjg59@srcf.ucam.org>
+Cc:     Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Nishanth Aravamudan <naravamudan@digitalocean.com>,
+        Julien Desfossez <jdesfossez@digitalocean.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
+        tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
+        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
+        Phil Auld <pauld@redhat.com>, Aaron Lu <aaron.lwe@gmail.com>,
+        Aubrey Li <aubrey.intel@gmail.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
+Message-ID: <20190827215035.GH2332@hirez.programming.kicks-ass.net>
+References: <cover.1559129225.git.vpillai@digitalocean.com>
+ <20190827211417.snpwgnhsu5t6u52y@srcf.ucam.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190822150701.GB22556@archbox>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190827211417.snpwgnhsu5t6u52y@srcf.ucam.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 08:07:01AM -0700, Moritz Fischer wrote:
-> Hi Hao,
+On Tue, Aug 27, 2019 at 10:14:17PM +0100, Matthew Garrett wrote:
+> Apple have provided a sysctl that allows applications to indicate that 
+> specific threads should make use of core isolation while allowing 
+> the rest of the system to make use of SMT, and browsers (Safari, Firefox 
+> and Chrome, at least) are now making use of this. Trying to do something 
+> similar using cgroups seems a bit awkward. Would something like this be 
+> reasonable? 
+
+Sure; like I wrote earlier; I only did the cgroup thing because I was
+lazy and it was the easiest interface to hack on in a hurry.
+
+The rest of the ABI nonsense can 'trivially' be done later; if when we
+decide to actually do this.
+
+And given MDS, I'm still not entirely convinced it all makes sense. If
+it were just L1TF, then yes, but now...
+
+> Having spoken to the Chrome team, I believe that the 
+> semantics we want are:
 > 
-> On Mon, Aug 12, 2019 at 10:49:58AM +0800, Wu Hao wrote:
-> > This patch takes advantage of driver core which helps to create
-> > and remove sysfs attribute files, so there is no need to register
-> > sysfs entries manually in dfl-afu platform river code.
-> Same nit: s/river/driver
-> > 
-> > Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Acked-by: Moritz Fischer <mdf@kernel.org>
-
-
-Hi Moritz
-
-Thanks a lot for the review. : )
-
-Have you got a chance to look into the other patches in this patchset?
-
-Thanks
-Hao
-
-> > ---
-> >  drivers/fpga/dfl-afu-main.c | 69 +++++++++++++++++++++++----------------------
-> >  1 file changed, 36 insertions(+), 33 deletions(-)
-> > 
-> > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> > index e50c45e..e955149 100644
-> > --- a/drivers/fpga/dfl-afu-main.c
-> > +++ b/drivers/fpga/dfl-afu-main.c
-> > @@ -282,24 +282,17 @@ static int port_get_id(struct platform_device *pdev)
-> >  	&dev_attr_power_state.attr,
-> >  	NULL,
-> >  };
-> > -ATTRIBUTE_GROUPS(port_hdr);
-> > +
-> > +static const struct attribute_group port_hdr_group = {
-> > +	.attrs = port_hdr_attrs,
-> > +};
-> >  
-> >  static int port_hdr_init(struct platform_device *pdev,
-> >  			 struct dfl_feature *feature)
-> >  {
-> > -	dev_dbg(&pdev->dev, "PORT HDR Init.\n");
-> > -
-> >  	port_reset(pdev);
-> >  
-> > -	return device_add_groups(&pdev->dev, port_hdr_groups);
-> > -}
-> > -
-> > -static void port_hdr_uinit(struct platform_device *pdev,
-> > -			   struct dfl_feature *feature)
-> > -{
-> > -	dev_dbg(&pdev->dev, "PORT HDR UInit.\n");
-> > -
-> > -	device_remove_groups(&pdev->dev, port_hdr_groups);
-> > +	return 0;
-> >  }
-> >  
-> >  static long
-> > @@ -330,7 +323,6 @@ static void port_hdr_uinit(struct platform_device *pdev,
-> >  
-> >  static const struct dfl_feature_ops port_hdr_ops = {
-> >  	.init = port_hdr_init,
-> > -	.uinit = port_hdr_uinit,
-> >  	.ioctl = port_hdr_ioctl,
-> >  };
-> >  
-> > @@ -361,32 +353,37 @@ static void port_hdr_uinit(struct platform_device *pdev,
-> >  	&dev_attr_afu_id.attr,
-> >  	NULL
-> >  };
-> > -ATTRIBUTE_GROUPS(port_afu);
-> >  
-> > -static int port_afu_init(struct platform_device *pdev,
-> > -			 struct dfl_feature *feature)
-> > +static umode_t port_afu_attrs_visible(struct kobject *kobj,
-> > +				      struct attribute *attr, int n)
-> >  {
-> > -	struct resource *res = &pdev->resource[feature->resource_index];
-> > -	int ret;
-> > -
-> > -	dev_dbg(&pdev->dev, "PORT AFU Init.\n");
-> > +	struct device *dev = kobj_to_dev(kobj);
-> >  
-> > -	ret = afu_mmio_region_add(dev_get_platdata(&pdev->dev),
-> > -				  DFL_PORT_REGION_INDEX_AFU, resource_size(res),
-> > -				  res->start, DFL_PORT_REGION_READ |
-> > -				  DFL_PORT_REGION_WRITE | DFL_PORT_REGION_MMAP);
-> > -	if (ret)
-> > -		return ret;
-> > +	/*
-> > +	 * sysfs entries are visible only if related private feature is
-> > +	 * enumerated.
-> > +	 */
-> > +	if (!dfl_get_feature_by_id(dev, PORT_FEATURE_ID_AFU))
-> > +		return 0;
-> >  
-> > -	return device_add_groups(&pdev->dev, port_afu_groups);
-> > +	return attr->mode;
-> >  }
-> >  
-> > -static void port_afu_uinit(struct platform_device *pdev,
-> > -			   struct dfl_feature *feature)
-> > +static const struct attribute_group port_afu_group = {
-> > +	.attrs      = port_afu_attrs,
-> > +	.is_visible = port_afu_attrs_visible,
-> > +};
-> > +
-> > +static int port_afu_init(struct platform_device *pdev,
-> > +			 struct dfl_feature *feature)
-> >  {
-> > -	dev_dbg(&pdev->dev, "PORT AFU UInit.\n");
-> Thanks.
-> > +	struct resource *res = &pdev->resource[feature->resource_index];
-> >  
-> > -	device_remove_groups(&pdev->dev, port_afu_groups);
-> > +	return afu_mmio_region_add(dev_get_platdata(&pdev->dev),
-> > +				   DFL_PORT_REGION_INDEX_AFU,
-> > +				   resource_size(res), res->start,
-> > +				   DFL_PORT_REGION_MMAP | DFL_PORT_REGION_READ |
-> > +				   DFL_PORT_REGION_WRITE);
-> >  }
-> >  
-> >  static const struct dfl_feature_id port_afu_id_table[] = {
-> > @@ -396,7 +393,6 @@ static void port_afu_uinit(struct platform_device *pdev,
-> >  
-> >  static const struct dfl_feature_ops port_afu_ops = {
-> >  	.init = port_afu_init,
-> > -	.uinit = port_afu_uinit,
-> >  };
-> >  
-> >  static struct dfl_feature_driver port_feature_drvs[] = {
-> > @@ -748,9 +744,16 @@ static int afu_remove(struct platform_device *pdev)
-> >  	return 0;
-> >  }
-> >  
-> > +static const struct attribute_group *afu_dev_groups[] = {
-> > +	&port_hdr_group,
-> > +	&port_afu_group,
-> > +	NULL
-> > +};
-> > +
-> >  static struct platform_driver afu_driver = {
-> >  	.driver	= {
-> > -		.name    = DFL_FPGA_FEATURE_DEV_PORT,
-> > +		.name	    = DFL_FPGA_FEATURE_DEV_PORT,
-> > +		.dev_groups = afu_dev_groups,
-> >  	},
-> >  	.probe   = afu_probe,
-> >  	.remove  = afu_remove,
-> > -- 
-> > 1.8.3.1
-> > 
+> 1) A thread to be able to indicate that it should not run on the same 
+> core as anything not in posession of the same cookie
+> 2) Descendents of that thread to (by default) have the same cookie
+> 3) No other thread be able to obtain the same cookie
+> 4) Threads not be able to rejoin the global group (ie, threads can 
+> segregate themselves from their parent and peers, but can never rejoin 
+> that group once segregated)
 > 
-> Thanks,
-> Moritz
+> but don't know if that's what everyone else would want.
+> 
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index 094bb03b9cc2..5d411246d4d5 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -229,4 +229,5 @@ struct prctl_mm_map {
+>  # define PR_PAC_APDBKEY			(1UL << 3)
+>  # define PR_PAC_APGAKEY			(1UL << 4)
+>  
+> +#define PR_CORE_ISOLATE			55
+>  #endif /* _LINUX_PRCTL_H */
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 12df0e5434b8..a054cfcca511 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2486,6 +2486,13 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>  			return -EINVAL;
+>  		error = PAC_RESET_KEYS(me, arg2);
+>  		break;
+> +	case PR_CORE_ISOLATE:
+> +#ifdef CONFIG_SCHED_CORE
+> +		current->core_cookie = (unsigned long)current;
+
+This needs to then also force a reschedule of current. And there's the
+little issue of what happens if 'current' dies while its children live
+on, and current gets re-used for a new process and does this again.
+
+> +#else
+> +		result = -EINVAL;
+> +#endif
+> +		break;
+>  	default:
+>  		error = -EINVAL;
+>  		break;
+> 
+> 
+> -- 
+> Matthew Garrett | mjg59@srcf.ucam.org
