@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7E29DF57
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06BA19DFCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbfH0HxY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:53:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44812 "EHLO mail.kernel.org"
+        id S1729908AbfH0H5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:57:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729762AbfH0HxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:53:21 -0400
+        id S1729864AbfH0H5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:57:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 993BB2173E;
-        Tue, 27 Aug 2019 07:53:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D243206BF;
+        Tue, 27 Aug 2019 07:57:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892400;
-        bh=nr+XhdCJv5KdUbvjEpdXWa5YBu+SA2axb6GLhdsPhOM=;
+        s=default; t=1566892652;
+        bh=3vbSJCKix/NAshU9YCL6JENDiRjmEV0yD3dXShKN4mQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fJd80qykCQ2ihpbg7K/i8cSJsI4ovn5E+zXDHdSh0nOekjmi0QUOUkInfBE/gAAnW
-         3kJxpCnJdjxaWJ6D65xKH3HL6dI6N81yq3Kie7vm4uFownbx8vorR7pjFjmnUtqwd4
-         WguqDlwTzv9VOWk3T9uIIVe/i0hYyrnA+gIR5ohk=
+        b=Tw6nt6o9ePzxoZhnU3eEcmn80o5JdjRVEEWt1tptNS/ypE1f6S5qWJRWoas5glsyA
+         RHMZdKblRLRa7z40nZcxafo7WCGNFGrLQcCOP3TbuLATXEh1L0TZTI7ZlHyITowcsd
+         gokCcVEiBCTusJOBiv4CrOVKb92KlCUV6UWC9Gqc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 4.14 41/62] drm/nouveau: Dont retry infinitely when receiving no data on i2c over AUX
+        stable@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.19 67/98] gpiolib: never report open-drain/source lines as input to user-space
 Date:   Tue, 27 Aug 2019 09:50:46 +0200
-Message-Id: <20190827072702.989407639@linuxfoundation.org>
+Message-Id: <20190827072721.803594347@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,103 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-commit c358ebf59634f06d8ed176da651ec150df3c8686 upstream.
+commit 2c60e6b5c9241b24b8b523fefd3e44fb85622cda upstream.
 
-While I had thought I had fixed this issue in:
+If the driver doesn't support open-drain/source config options, we
+emulate this behavior when setting the direction by calling
+gpiod_direction_input() if the default value is 0 (open-source) or
+1 (open-drain), thus not actively driving the line in those cases.
 
-commit 342406e4fbba ("drm/nouveau/i2c: Disable i2c bus access after
-->fini()")
+This however clears the FLAG_IS_OUT bit for the GPIO line descriptor
+and makes the LINEINFO ioctl() incorrectly report this line's mode as
+'input' to user-space.
 
-It turns out that while I did fix the error messages I was seeing on my
-P50 when trying to access i2c busses with the GPU in runtime suspend, I
-accidentally had missed one important detail that was mentioned on the
-bug report this commit was supposed to fix: that the CPU would only lock
-up when trying to access i2c busses _on connected devices_ _while the
-GPU is not in runtime suspend_. Whoops. That definitely explains why I
-was not able to get my machine to hang with i2c bus interactions until
-now, as plugging my P50 into it's dock with an HDMI monitor connected
-allowed me to finally reproduce this locally.
+This commit modifies the ioctl() to always set the GPIOLINE_FLAG_IS_OUT
+bit in the lineinfo structure's flags field. Since it's impossible to
+use the input mode and open-drain/source options at the same time, we
+can be sure the reported information will be correct.
 
-Now that I have managed to reproduce this issue properly, it looks like
-the problem is much simpler then it looks. It turns out that some
-connected devices, such as MST laptop docks, will actually ACK i2c reads
-even if no data was actually read:
-
-[  275.063043] nouveau 0000:01:00.0: i2c: aux 000a: 1: 0000004c 1
-[  275.063447] nouveau 0000:01:00.0: i2c: aux 000a: 00 01101000 10040000
-[  275.063759] nouveau 0000:01:00.0: i2c: aux 000a: rd 00000001
-[  275.064024] nouveau 0000:01:00.0: i2c: aux 000a: rd 00000000
-[  275.064285] nouveau 0000:01:00.0: i2c: aux 000a: rd 00000000
-[  275.064594] nouveau 0000:01:00.0: i2c: aux 000a: rd 00000000
-
-Because we don't handle the situation of i2c ack without any data, we
-end up entering an infinite loop in nvkm_i2c_aux_i2c_xfer() since the
-value of cnt always remains at 0. This finally properly explains how
-this could result in a CPU hang like the ones observed in the
-aforementioned commit.
-
-So, fix this by retrying transactions if no data is written or received,
-and give up and fail the transaction if we continue to not write or
-receive any data after 32 retries.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Fixes: 521a2ad6f862 ("gpio: add userspace ABI for GPIO line information")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Link: https://lore.kernel.org/r/20190806114151.17652-1-brgl@bgdev.pl
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c |   24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ drivers/gpio/gpiolib.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
-@@ -40,8 +40,7 @@ nvkm_i2c_aux_i2c_xfer(struct i2c_adapter
- 		u8 *ptr = msg->buf;
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1082,9 +1082,11 @@ static long gpio_ioctl(struct file *filp
+ 		if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_ACTIVE_LOW;
+ 		if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
+-			lineinfo.flags |= GPIOLINE_FLAG_OPEN_DRAIN;
++			lineinfo.flags |= (GPIOLINE_FLAG_OPEN_DRAIN |
++					   GPIOLINE_FLAG_IS_OUT);
+ 		if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
+-			lineinfo.flags |= GPIOLINE_FLAG_OPEN_SOURCE;
++			lineinfo.flags |= (GPIOLINE_FLAG_OPEN_SOURCE |
++					   GPIOLINE_FLAG_IS_OUT);
  
- 		while (remaining) {
--			u8 cnt = (remaining > 16) ? 16 : remaining;
--			u8 cmd;
-+			u8 cnt, retries, cmd;
- 
- 			if (msg->flags & I2C_M_RD)
- 				cmd = 1;
-@@ -51,10 +50,19 @@ nvkm_i2c_aux_i2c_xfer(struct i2c_adapter
- 			if (mcnt || remaining > 16)
- 				cmd |= 4; /* MOT */
- 
--			ret = aux->func->xfer(aux, true, cmd, msg->addr, ptr, &cnt);
--			if (ret < 0) {
--				nvkm_i2c_aux_release(aux);
--				return ret;
-+			for (retries = 0, cnt = 0;
-+			     retries < 32 && !cnt;
-+			     retries++) {
-+				cnt = min_t(u8, remaining, 16);
-+				ret = aux->func->xfer(aux, true, cmd,
-+						      msg->addr, ptr, &cnt);
-+				if (ret < 0)
-+					goto out;
-+			}
-+			if (!cnt) {
-+				AUX_TRACE(aux, "no data after 32 retries");
-+				ret = -EIO;
-+				goto out;
- 			}
- 
- 			ptr += cnt;
-@@ -64,8 +72,10 @@ nvkm_i2c_aux_i2c_xfer(struct i2c_adapter
- 		msg++;
- 	}
- 
-+	ret = num;
-+out:
- 	nvkm_i2c_aux_release(aux);
--	return num;
-+	return ret;
- }
- 
- static u32
+ 		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
+ 			return -EFAULT;
 
 
