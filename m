@@ -2,323 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C89AB9DFFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DDFC9DF59
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731222AbfH0H73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:59:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52762 "EHLO mail.kernel.org"
+        id S1729813AbfH0Hxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:53:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49970 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730832AbfH0H7Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:59:25 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729149AbfH0Hx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:53:29 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A0681217F5;
-        Tue, 27 Aug 2019 07:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892763;
-        bh=DshuPobI8Dnkog7Q9j2n0ly1ktr0cpKEiii2MKrU8Dg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yl3gDrayj5J26xyuN2ECmSOkKJcs6xrc7UHDbo1hzvw//YTAzlh5Ybid8zEmznr4u
-         UobFo5eedRcmVS+sbt5xaCpwRKphWK5vEbbfUP6WYVaZH+nOdhzsEobCy3VjVfqef2
-         1slo11G3BhpEA9F5Uvd6wv6AaiEf1EJuMMQIiRHs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+1e0edc4b8b7494c28450@syzkaller.appspotmail.com,
-        David Howells <dhowells@redhat.com>
-Subject: [PATCH 4.19 97/98] rxrpc: Fix local endpoint refcounting
-Date:   Tue, 27 Aug 2019 09:51:16 +0200
-Message-Id: <20190827072723.397975073@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
-User-Agent: quilt/0.66
+        by mx1.redhat.com (Postfix) with ESMTPS id 5B6E43082E25;
+        Tue, 27 Aug 2019 07:53:29 +0000 (UTC)
+Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B010C600D1;
+        Tue, 27 Aug 2019 07:53:25 +0000 (UTC)
+Subject: Re: [PATCH] KVM: arm/arm64: vgic: Use a single IO device per
+ redistributor
+To:     Zenghui Yu <yuzenghui@huawei.com>, eric.auger.pro@gmail.com,
+        maz@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu
+Cc:     zhang.zhanghailiang@huawei.com, wanghaibin.wang@huawei.com,
+        james.morse@arm.com, qemu-arm@nongnu.org,
+        julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com,
+        peter.maydell@linaro.org, andre.przywara@arm.com
+References: <20190823173330.23342-1-eric.auger@redhat.com>
+ <f5b47614-de48-f3cb-0e6f-8a667cb951c0@redhat.com>
+ <5cdcfe9e-98d8-454e-48e7-992fe3ee5eae@huawei.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <ccb49856-f958-8bea-4b27-9a808415c43d@redhat.com>
+Date:   Tue, 27 Aug 2019 09:53:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <5cdcfe9e-98d8-454e-48e7-992fe3ee5eae@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 27 Aug 2019 07:53:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+Hi Zenghui,
+On 8/27/19 9:49 AM, Zenghui Yu wrote:
+> Hi Eric,
+> 
+> Thanks for this patch!
+> 
+> On 2019/8/24 1:52, Auger Eric wrote:
+>> Hi Zenghui, Marc,
+>>
+>> On 8/23/19 7:33 PM, Eric Auger wrote:
+>>> At the moment we use 2 IO devices per GICv3 redistributor: one
+>                                                              ^^^
+>>> one for the RD_base frame and one for the SGI_base frame.
+>   ^^^
+>>>
+>>> Instead we can use a single IO device per redistributor (the 2
+>>> frames are contiguous). This saves slots on the KVM_MMIO_BUS
+>>> which is currently limited to NR_IOBUS_DEVS (1000).
+>>>
+>>> This change allows to instantiate up to 512 redistributors and may
+>>> speed the guest boot with a large number of VCPUs.
+>>>
+>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>
+>> I tested this patch with below kernel and QEMU branches:
+>> kernel: https://github.com/eauger/linux/tree/256fix-v1
+>> (Marc's patch + this patch)
+>> https://github.com/eauger/qemu/tree/v4.1.0-256fix-rfc1-rc0
+>> (header update + kvm_arm_gic_set_irq modification)
+> 
+> I also tested these three changes on HiSi D05 (with 64 pcpus), and yes,
+> I can get a 512U guest to boot properly now.
 
-commit 730c5fd42c1e3652a065448fd235cb9fafb2bd10 upstream.
+Many thanks for the testing (and the bug report). I will formally post
+the QEMU changes asap.
 
-The object lifetime management on the rxrpc_local struct is broken in that
-the rxrpc_local_processor() function is expected to clean up and remove an
-object - but it may get requeued by packets coming in on the backing UDP
-socket once it starts running.
+Thanks
 
-This may result in the assertion in rxrpc_local_rcu() firing because the
-memory has been scheduled for RCU destruction whilst still queued:
-
-	rxrpc: Assertion failed
-	------------[ cut here ]------------
-	kernel BUG at net/rxrpc/local_object.c:468!
-
-Note that if the processor comes around before the RCU free function, it
-will just do nothing because ->dead is true.
-
-Fix this by adding a separate refcount to count active users of the
-endpoint that causes the endpoint to be destroyed when it reaches 0.
-
-The original refcount can then be used to refcount objects through the work
-processor and cause the memory to be rcu freed when that reaches 0.
-
-Fixes: 4f95dd78a77e ("rxrpc: Rework local endpoint management")
-Reported-by: syzbot+1e0edc4b8b7494c28450@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/rxrpc/af_rxrpc.c     |    4 +-
- net/rxrpc/ar-internal.h  |    5 ++
- net/rxrpc/input.c        |   16 ++++++--
- net/rxrpc/local_object.c |   86 +++++++++++++++++++++++++++++------------------
- 4 files changed, 72 insertions(+), 39 deletions(-)
-
---- a/net/rxrpc/af_rxrpc.c
-+++ b/net/rxrpc/af_rxrpc.c
-@@ -195,7 +195,7 @@ static int rxrpc_bind(struct socket *soc
- 
- service_in_use:
- 	write_unlock(&local->services_lock);
--	rxrpc_put_local(local);
-+	rxrpc_unuse_local(local);
- 	ret = -EADDRINUSE;
- error_unlock:
- 	release_sock(&rx->sk);
-@@ -908,7 +908,7 @@ static int rxrpc_release_sock(struct soc
- 	rxrpc_queue_work(&rxnet->service_conn_reaper);
- 	rxrpc_queue_work(&rxnet->client_conn_reaper);
- 
--	rxrpc_put_local(rx->local);
-+	rxrpc_unuse_local(rx->local);
- 	rx->local = NULL;
- 	key_put(rx->key);
- 	rx->key = NULL;
---- a/net/rxrpc/ar-internal.h
-+++ b/net/rxrpc/ar-internal.h
-@@ -258,7 +258,8 @@ struct rxrpc_security {
-  */
- struct rxrpc_local {
- 	struct rcu_head		rcu;
--	atomic_t		usage;
-+	atomic_t		active_users;	/* Number of users of the local endpoint */
-+	atomic_t		usage;		/* Number of references to the structure */
- 	struct rxrpc_net	*rxnet;		/* The network ns in which this resides */
- 	struct list_head	link;
- 	struct socket		*socket;	/* my UDP socket */
-@@ -998,6 +999,8 @@ struct rxrpc_local *rxrpc_lookup_local(s
- struct rxrpc_local *rxrpc_get_local(struct rxrpc_local *);
- struct rxrpc_local *rxrpc_get_local_maybe(struct rxrpc_local *);
- void rxrpc_put_local(struct rxrpc_local *);
-+struct rxrpc_local *rxrpc_use_local(struct rxrpc_local *);
-+void rxrpc_unuse_local(struct rxrpc_local *);
- void rxrpc_queue_local(struct rxrpc_local *);
- void rxrpc_destroy_all_locals(struct rxrpc_net *);
- 
---- a/net/rxrpc/input.c
-+++ b/net/rxrpc/input.c
-@@ -1106,8 +1106,12 @@ static void rxrpc_post_packet_to_local(s
- {
- 	_enter("%p,%p", local, skb);
- 
--	skb_queue_tail(&local->event_queue, skb);
--	rxrpc_queue_local(local);
-+	if (rxrpc_get_local_maybe(local)) {
-+		skb_queue_tail(&local->event_queue, skb);
-+		rxrpc_queue_local(local);
-+	} else {
-+		rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
-+	}
- }
- 
- /*
-@@ -1117,8 +1121,12 @@ static void rxrpc_reject_packet(struct r
- {
- 	CHECK_SLAB_OKAY(&local->usage);
- 
--	skb_queue_tail(&local->reject_queue, skb);
--	rxrpc_queue_local(local);
-+	if (rxrpc_get_local_maybe(local)) {
-+		skb_queue_tail(&local->reject_queue, skb);
-+		rxrpc_queue_local(local);
-+	} else {
-+		rxrpc_free_skb(skb, rxrpc_skb_rx_freed);
-+	}
- }
- 
- /*
---- a/net/rxrpc/local_object.c
-+++ b/net/rxrpc/local_object.c
-@@ -83,6 +83,7 @@ static struct rxrpc_local *rxrpc_alloc_l
- 	local = kzalloc(sizeof(struct rxrpc_local), GFP_KERNEL);
- 	if (local) {
- 		atomic_set(&local->usage, 1);
-+		atomic_set(&local->active_users, 1);
- 		local->rxnet = rxnet;
- 		INIT_LIST_HEAD(&local->link);
- 		INIT_WORK(&local->processor, rxrpc_local_processor);
-@@ -270,11 +271,8 @@ struct rxrpc_local *rxrpc_lookup_local(s
- 		 * bind the transport socket may still fail if we're attempting
- 		 * to use a local address that the dying object is still using.
- 		 */
--		if (!rxrpc_get_local_maybe(local)) {
--			cursor = cursor->next;
--			list_del_init(&local->link);
-+		if (!rxrpc_use_local(local))
- 			break;
--		}
- 
- 		age = "old";
- 		goto found;
-@@ -288,7 +286,10 @@ struct rxrpc_local *rxrpc_lookup_local(s
- 	if (ret < 0)
- 		goto sock_error;
- 
--	list_add_tail(&local->link, cursor);
-+	if (cursor != &rxnet->local_endpoints)
-+		list_replace(cursor, &local->link);
-+	else
-+		list_add_tail(&local->link, cursor);
- 	age = "new";
- 
- found:
-@@ -346,7 +347,8 @@ struct rxrpc_local *rxrpc_get_local_mayb
- }
- 
- /*
-- * Queue a local endpoint.
-+ * Queue a local endpoint unless it has become unreferenced and pass the
-+ * caller's reference to the work item.
-  */
- void rxrpc_queue_local(struct rxrpc_local *local)
- {
-@@ -355,15 +357,8 @@ void rxrpc_queue_local(struct rxrpc_loca
- 	if (rxrpc_queue_work(&local->processor))
- 		trace_rxrpc_local(local, rxrpc_local_queued,
- 				  atomic_read(&local->usage), here);
--}
--
--/*
-- * A local endpoint reached its end of life.
-- */
--static void __rxrpc_put_local(struct rxrpc_local *local)
--{
--	_enter("%d", local->debug_id);
--	rxrpc_queue_work(&local->processor);
-+	else
-+		rxrpc_put_local(local);
- }
- 
- /*
-@@ -379,11 +374,46 @@ void rxrpc_put_local(struct rxrpc_local
- 		trace_rxrpc_local(local, rxrpc_local_put, n, here);
- 
- 		if (n == 0)
--			__rxrpc_put_local(local);
-+			call_rcu(&local->rcu, rxrpc_local_rcu);
- 	}
- }
- 
- /*
-+ * Start using a local endpoint.
-+ */
-+struct rxrpc_local *rxrpc_use_local(struct rxrpc_local *local)
-+{
-+	unsigned int au;
-+
-+	local = rxrpc_get_local_maybe(local);
-+	if (!local)
-+		return NULL;
-+
-+	au = atomic_fetch_add_unless(&local->active_users, 1, 0);
-+	if (au == 0) {
-+		rxrpc_put_local(local);
-+		return NULL;
-+	}
-+
-+	return local;
-+}
-+
-+/*
-+ * Cease using a local endpoint.  Once the number of active users reaches 0, we
-+ * start the closure of the transport in the work processor.
-+ */
-+void rxrpc_unuse_local(struct rxrpc_local *local)
-+{
-+	unsigned int au;
-+
-+	au = atomic_dec_return(&local->active_users);
-+	if (au == 0)
-+		rxrpc_queue_local(local);
-+	else
-+		rxrpc_put_local(local);
-+}
-+
-+/*
-  * Destroy a local endpoint's socket and then hand the record to RCU to dispose
-  * of.
-  *
-@@ -397,16 +427,6 @@ static void rxrpc_local_destroyer(struct
- 
- 	_enter("%d", local->debug_id);
- 
--	/* We can get a race between an incoming call packet queueing the
--	 * processor again and the work processor starting the destruction
--	 * process which will shut down the UDP socket.
--	 */
--	if (local->dead) {
--		_leave(" [already dead]");
--		return;
--	}
--	local->dead = true;
--
- 	mutex_lock(&rxnet->local_mutex);
- 	list_del_init(&local->link);
- 	mutex_unlock(&rxnet->local_mutex);
-@@ -426,13 +446,11 @@ static void rxrpc_local_destroyer(struct
- 	 */
- 	rxrpc_purge_queue(&local->reject_queue);
- 	rxrpc_purge_queue(&local->event_queue);
--
--	_debug("rcu local %d", local->debug_id);
--	call_rcu(&local->rcu, rxrpc_local_rcu);
- }
- 
- /*
-- * Process events on an endpoint
-+ * Process events on an endpoint.  The work item carries a ref which
-+ * we must release.
-  */
- static void rxrpc_local_processor(struct work_struct *work)
- {
-@@ -445,8 +463,10 @@ static void rxrpc_local_processor(struct
- 
- 	do {
- 		again = false;
--		if (atomic_read(&local->usage) == 0)
--			return rxrpc_local_destroyer(local);
-+		if (atomic_read(&local->active_users) == 0) {
-+			rxrpc_local_destroyer(local);
-+			break;
-+		}
- 
- 		if (!skb_queue_empty(&local->reject_queue)) {
- 			rxrpc_reject_packets(local);
-@@ -458,6 +478,8 @@ static void rxrpc_local_processor(struct
- 			again = true;
- 		}
- 	} while (again);
-+
-+	rxrpc_put_local(local);
- }
- 
- /*
-
-
+Eric
+> 
+> Tested-by: Zenghui Yu <yuzenghui@huawei.com>
+> 
+>> On a machine with 224 pcpus, I was able to boot a 512 vcpu guest.
+>>
+>> As expected, qemu outputs warnings:
+>>
+>> qemu-system-aarch64: warning: Number of SMP cpus requested (512) exceeds
+>> the recommended cpus supported by KVM (224)
+>> qemu-system-aarch64: warning: Number of hotpluggable cpus requested
+>> (512) exceeds the recommended cpus supported by KVM (224)
+>>
+>> on the guest: getconf _NPROCESSORS_ONLN returns 512
+>>
+>> Then I have no clue about what can be expected of such overcommit config
+>> and I have not further exercised the guest at the moment. But at least
+>> it seems to boot properly. I also tested without overcommit and it seems
+>> to behave as before (boot, migration).
+>>
+>> I still need to look at the migration of > 256vcpu guest at qemu level.
+> 
+> Let us know if further tests are needed.
+> 
+> 
+> Thanks,
+> zenghui
+> 
