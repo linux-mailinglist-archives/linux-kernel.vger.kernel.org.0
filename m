@@ -2,82 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B14F29DDAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:25:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC4F09DDBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:27:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfH0GZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 02:25:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55450 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725825AbfH0GZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 02:25:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 340F7B04F;
-        Tue, 27 Aug 2019 06:25:33 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 08:25:32 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alastair D'Silva <alastair@au1.ibm.com>
-Cc:     alastair@d-silva.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        Qian Cai <cai@lca.pw>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: Don't manually decrement num_poisoned_pages
-Message-ID: <20190827062532.GP7538@dhcp22.suse.cz>
-References: <20190827053656.32191-1-alastair@au1.ibm.com>
- <20190827053656.32191-2-alastair@au1.ibm.com>
+        id S1727522AbfH0G1J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 02:27:09 -0400
+Received: from esa3.mentor.iphmx.com ([68.232.137.180]:48109 "EHLO
+        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725825AbfH0G1I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 02:27:08 -0400
+IronPort-SDR: Vwo1SmWntcc2XD0RzxL8LM2B6x8zWC8cyzvLhQzoX/97r6ceUClZOqQGkM2rbfpx5AdXi4JN8Q
+ udiQIzRpEjIoaUkBR1YpqnzNOvXwxyA9yiIeQkaTOpSPRdMODvoR/aaUXTdEhmcQMeGbna7d6s
+ /mqL+EFJGZWAsPqj+JkBtn9g9u4ZX2pxC9T2+Wp/nqJ/T7cNIRyPegHZ5mt3XkE3LHwmlCQpT8
+ X4Oayn1CSkCnxAYyg6xu2UL8cjUfaqgbEuRJq8STpK+zhgWZPs1fAt+fHnH/V8NBIb5ZVLUTzW
+ +uw=
+X-IronPort-AV: E=Sophos;i="5.64,436,1559548800"; 
+   d="scan'208";a="40784445"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa3.mentor.iphmx.com with ESMTP; 26 Aug 2019 22:27:07 -0800
+IronPort-SDR: FFTRG1H3H1NsBhx2NcIrn8yJ/CgbRqxnmgbR4z49ED/mZJf5F7OCMl+WmfM80kBAIJV7W85dgR
+ 9FMNgic3TdLS+wi1oPzDUiXGfU7upA+j+OV9RQlZgWIbLrx1n01V06/lOD1tUtkFVVuQ47eYAE
+ WwN/b113oW6K2fldhhb+mOJcjrcd7CIfoSMuNQUtX7WaoRlV6bogo7xaIhHD7EGZv987h6vSS0
+ EJt5SOVyGR0GSJQvR0uWrldQ1P6ta4jx31TgHb3W40WFuNJUHsyZM1vzCtHFHRDT7OThNig61z
+ glo=
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <jiada_wang@mentor.com>, <george_davis@mentor.com>
+Subject: [PATCH v2 05/49] Input: atmel_mxt_ts - split large i2c transfers into blocks
+Date:   Tue, 27 Aug 2019 15:26:30 +0900
+Message-ID: <20190827062714.20266-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827053656.32191-2-alastair@au1.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-08-19 15:36:54, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> Use the function written to do it instead.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+From: Nick Dyer <nick.dyer@itdev.co.uk>
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+On some firmware variants, the size of the info block exceeds what can
+be read in a single transfer.
 
-> ---
->  mm/sparse.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 72f010d9bff5..e41917a7e844 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -11,6 +11,8 @@
->  #include <linux/export.h>
->  #include <linux/spinlock.h>
->  #include <linux/vmalloc.h>
-> +#include <linux/swap.h>
-> +#include <linux/swapops.h>
->  
->  #include "internal.h"
->  #include <asm/dma.h>
-> @@ -898,7 +900,7 @@ static void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
->  
->  	for (i = 0; i < nr_pages; i++) {
->  		if (PageHWPoison(&memmap[i])) {
-> -			atomic_long_sub(1, &num_poisoned_pages);
-> +			num_poisoned_pages_dec();
->  			ClearPageHWPoison(&memmap[i]);
->  		}
->  	}
-> -- 
-> 2.21.0
+Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
+(cherry picked from ndyer/linux/for-upstream commit 74c4f5277cfa403d43fafc404119dc57a08677db)
+[gdavis: Forward port and fix conflicts due to v4.14.51 commit
+	 960fe000b1d3 ("Input: atmel_mxt_ts - fix the firmware
+	 update").]
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+[jiada: Change mxt_read_blks() to __mxt_read_reg(), original __mxt_read_reg() to
+	__mxt_read_chunk()]
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 28 +++++++++++++++++++++---
+ 1 file changed, 25 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 35cbe60094ab..45bab5253775 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -40,7 +40,7 @@
+ #define MXT_OBJECT_START	0x07
+ #define MXT_OBJECT_SIZE		6
+ #define MXT_INFO_CHECKSUM_SIZE	3
+-#define MXT_MAX_BLOCK_WRITE	256
++#define MXT_MAX_BLOCK_WRITE	255
+ 
+ /* Object types */
+ #define MXT_DEBUG_DIAGNOSTIC_T37	37
+@@ -624,8 +624,8 @@ static int mxt_send_bootloader_cmd(struct mxt_data *data, bool unlock)
+ 	return 0;
+ }
+ 
+-static int __mxt_read_reg(struct i2c_client *client,
+-			       u16 reg, u16 len, void *val)
++static int __mxt_read_chunk(struct i2c_client *client,
++			    u16 reg, u16 len, void *val)
+ {
+ 	struct i2c_msg xfer[2];
+ 	u8 buf[2];
+@@ -659,6 +659,28 @@ static int __mxt_read_reg(struct i2c_client *client,
+ 	return ret;
+ }
+ 
++static int __mxt_read_reg(struct i2c_client *client,
++			  u16 reg, u16 len, void *buf)
++{
++	u16 offset = 0;
++	int error;
++	u16 size;
++
++	while (offset < len) {
++		size = min(MXT_MAX_BLOCK_WRITE, len - offset);
++
++		error = __mxt_read_chunk(client,
++					 reg + offset,
++					 size, buf + offset);
++		if (error)
++			return error;
++
++		offset += size;
++	}
++
++	return 0;
++}
++
+ static int __mxt_write_reg(struct i2c_client *client, u16 reg, u16 len,
+ 			   const void *val)
+ {
 -- 
-Michal Hocko
-SUSE Labs
+2.19.2
+
