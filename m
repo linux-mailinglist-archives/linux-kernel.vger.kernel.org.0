@@ -2,71 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 114979E9F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ABD99E9E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbfH0Nsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 09:48:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5673 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725825AbfH0Nsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:48:50 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 06188DC8136FC1B594BC;
-        Tue, 27 Aug 2019 21:48:25 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 27 Aug 2019
- 21:48:14 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
-        <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] phy: mdio-moxart: use devm_platform_ioremap_resource() to simplify code
-Date:   Tue, 27 Aug 2019 21:48:04 +0800
-Message-ID: <20190827134804.14888-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1730148AbfH0NsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 09:48:10 -0400
+Received: from vps.xff.cz ([195.181.215.36]:59392 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725825AbfH0NsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:48:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1566913686; bh=gUkiaA2UIAfdqLZqpz83L/LrKryHgSOsMfxD9p5JB0g=;
+        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
+        b=sInfPNmyAp81M2iQxMQJOE28y/Ho0Y8utaCVwSOeVpnZ9lPQ14QaOa5uVI27fnTN5
+         cCVcd9Dz3wvLkYxGyn4l8FmgikPs9k0c3XzJpOfsBok90o5FCZbg8rkUf8Xk3wQBy7
+         q+cBxetxCsNjEQRtNK/YhpgyExf19CKbEms/5oIM=
+Date:   Tue, 27 Aug 2019 15:48:06 +0200
+From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>, wens@csie.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] arm64: dts: allwinner: a64: pine64-plus: Add PHY
+ regulator delay
+Message-ID: <20190827134806.5l7dxyvzjrvabh7o@core.my.home>
+Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>, wens@csie.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+References: <20190825130336.14154-1-jernej.skrabec@siol.net>
+ <20190827133443.fdxl5wjmgkerc3uh@flea>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190827133443.fdxl5wjmgkerc3uh@flea>
+X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
+ <https://xff.cz/key.txt>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+Hi,
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/phy/mdio-moxart.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On Tue, Aug 27, 2019 at 03:34:43PM +0200, Maxime Ripard wrote:
+> On Sun, Aug 25, 2019 at 03:03:36PM +0200, Jernej Skrabec wrote:
+> > Depending on kernel and bootloader configuration, it's possible that
+> > Realtek ethernet PHY isn't powered on properly. It needs some time
+> > before it can be used.
+> >
+> > Fix that by adding 100ms ramp delay to regulator responsible for
+> > powering PHY.
+> >
+> > Fixes: 94dcfdc77fc5 ("arm64: allwinner: pine64-plus: Enable dwmac-sun8i")
+> > Suggested-by: Ondrej Jirman <megous@megous.com>
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> 
+> How was that delay found?
 
-diff --git a/drivers/net/phy/mdio-moxart.c b/drivers/net/phy/mdio-moxart.c
-index af3910f..2d16fc4 100644
---- a/drivers/net/phy/mdio-moxart.c
-+++ b/drivers/net/phy/mdio-moxart.c
-@@ -113,7 +113,6 @@ static int moxart_mdio_probe(struct platform_device *pdev)
- 	struct device_node *np = pdev->dev.of_node;
- 	struct mii_bus *bus;
- 	struct moxart_mdio_data *data;
--	struct resource *res;
- 	int ret, i;
- 
- 	bus = mdiobus_alloc_size(sizeof(*data));
-@@ -138,8 +137,7 @@ static int moxart_mdio_probe(struct platform_device *pdev)
- 		bus->irq[i] = PHY_IGNORE_INTERRUPT;
- 
- 	data = bus->priv;
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	data->base = devm_ioremap_resource(&pdev->dev, res);
-+	data->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(data->base)) {
- 		ret = PTR_ERR(data->base);
- 		goto err_out_free_mdiobus;
--- 
-2.7.4
+I suggested it. There's no delay in the dwmac-sun8i driver, so after enabling
+the phy power, it will start accessing it over MDIO right away, which is not
+good.
+
+I suggested the value based on post-reset delay in the PHY's datasheet (30ms).
+Multiplied ~3x (if I remember correctly) to get some safety margin. Chip has
+more to do then after the HW reset, and regulator also needs some time to
+ramp-up.
+
+regards,
+	o.
+
+> It should at least have a comment explaining why it's there.
+> 
+> Thanks!
+> Maxime
+> 
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
 
