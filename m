@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 496559E0E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AF1E9E172
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:12:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733078AbfH0IGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:06:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36764 "EHLO mail.kernel.org"
+        id S1731481AbfH0IMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:12:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732635AbfH0IGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:06:44 -0400
+        id S1731169AbfH0H71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:59:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01301206BF;
-        Tue, 27 Aug 2019 08:06:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF7FF206BA;
+        Tue, 27 Aug 2019 07:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566893203;
-        bh=3xvGz0//4v6/Aw45avb0487WgKXitcKzbVzpdel9nek=;
+        s=default; t=1566892766;
+        bh=4SXE3u17cW/vios+tf7ONzbZdajlNUm1nl86PBM+ESo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MsXaUbJLZJgDox64qlBS5KysZ8To2Qjmr39J1DR9Mtwo3gSLBdXDsDO54fDyoQF1D
-         X/jsxcMaCafoEsjekGsVc5+jT8RLcCsP+e9jMAyi4Ey3Ti4TYcusljo+CBybwbg2wt
-         TmZbTn02LJ/zBkE1W46FwPON+yZfLG4QWgbiQbUg=
+        b=bDRswvR+mv8vnwsdNBYMUygmCiZArx52CsOI9J6JeCJ6k8Ew1aroU0AADMD+Gc1w4
+         xj7Mj7pyf1q5R1FZDUhkojvmLAgh3sCmUD4riGm2r6KuybrouhS5z8I14/IE6RzpuL
+         J4LqedkcrSlbrBRIDLlQxcSSsQ+//mF/HqBzckJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 5.2 149/162] mm: memcontrol: flush percpu vmevents before releasing memcg
+        stable@vger.kernel.org,
+        syzbot+78e71c5bab4f76a6a719@syzkaller.appspotmail.com,
+        David Howells <dhowells@redhat.com>
+Subject: [PATCH 4.19 98/98] rxrpc: Fix read-after-free in rxrpc_queue_local()
 Date:   Tue, 27 Aug 2019 09:51:17 +0200
-Message-Id: <20190827072743.933362060@linuxfoundation.org>
+Message-Id: <20190827072723.427504193@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
-References: <20190827072738.093683223@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,78 +44,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: David Howells <dhowells@redhat.com>
 
-commit bb65f89b7d3d305c14951f49860711fbcae70692 upstream.
+commit 06d9532fa6b34f12a6d75711162d47c17c1add72 upstream.
 
-Similar to vmstats, percpu caching of local vmevents leads to an
-accumulation of errors on non-leaf levels.  This happens because some
-leftovers may remain in percpu caches, so that they are never propagated
-up by the cgroup tree and just disappear into nonexistence with on
-releasing of the memory cgroup.
+rxrpc_queue_local() attempts to queue the local endpoint it is given and
+then, if successful, prints a trace line.  The trace line includes the
+current usage count - but we're not allowed to look at the local endpoint
+at this point as we passed our ref on it to the workqueue.
 
-To fix this issue let's accumulate and propagate percpu vmevents values
-before releasing the memory cgroup similar to what we're doing with
-vmstats.
+Fix this by reading the usage count before queuing the work item.
 
-Since on cpu hotplug we do flush percpu vmstats anyway, we can iterate
-only over online cpus.
+Also fix the reading of local->debug_id for trace lines, which must be done
+with the same consideration as reading the usage count.
 
-Link: http://lkml.kernel.org/r/20190819202338.363363-4-guro@fb.com
-Fixes: 42a300353577 ("mm: memcontrol: fix recursive statistics correctness & scalabilty")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 09d2bf595db4 ("rxrpc: Add a tracepoint to track rxrpc_local refcounting")
+Reported-by: syzbot+78e71c5bab4f76a6a719@syzkaller.appspotmail.com
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memcontrol.c |   22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+ include/trace/events/rxrpc.h |    6 +++---
+ net/rxrpc/local_object.c     |   19 ++++++++++---------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
 
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3185,6 +3185,25 @@ static void memcg_flush_percpu_vmstats(s
+--- a/include/trace/events/rxrpc.h
++++ b/include/trace/events/rxrpc.h
+@@ -500,10 +500,10 @@ rxrpc_tx_points;
+ #define E_(a, b)	{ a, b }
+ 
+ TRACE_EVENT(rxrpc_local,
+-	    TP_PROTO(struct rxrpc_local *local, enum rxrpc_local_trace op,
++	    TP_PROTO(unsigned int local_debug_id, enum rxrpc_local_trace op,
+ 		     int usage, const void *where),
+ 
+-	    TP_ARGS(local, op, usage, where),
++	    TP_ARGS(local_debug_id, op, usage, where),
+ 
+ 	    TP_STRUCT__entry(
+ 		    __field(unsigned int,	local		)
+@@ -513,7 +513,7 @@ TRACE_EVENT(rxrpc_local,
+ 			     ),
+ 
+ 	    TP_fast_assign(
+-		    __entry->local = local->debug_id;
++		    __entry->local = local_debug_id;
+ 		    __entry->op = op;
+ 		    __entry->usage = usage;
+ 		    __entry->where = where;
+--- a/net/rxrpc/local_object.c
++++ b/net/rxrpc/local_object.c
+@@ -97,7 +97,7 @@ static struct rxrpc_local *rxrpc_alloc_l
+ 		local->debug_id = atomic_inc_return(&rxrpc_debug_id);
+ 		memcpy(&local->srx, srx, sizeof(*srx));
+ 		local->srx.srx_service = 0;
+-		trace_rxrpc_local(local, rxrpc_local_new, 1, NULL);
++		trace_rxrpc_local(local->debug_id, rxrpc_local_new, 1, NULL);
  	}
+ 
+ 	_leave(" = %p", local);
+@@ -325,7 +325,7 @@ struct rxrpc_local *rxrpc_get_local(stru
+ 	int n;
+ 
+ 	n = atomic_inc_return(&local->usage);
+-	trace_rxrpc_local(local, rxrpc_local_got, n, here);
++	trace_rxrpc_local(local->debug_id, rxrpc_local_got, n, here);
+ 	return local;
  }
  
-+static void memcg_flush_percpu_vmevents(struct mem_cgroup *memcg)
-+{
-+	unsigned long events[NR_VM_EVENT_ITEMS];
-+	struct mem_cgroup *mi;
-+	int cpu, i;
-+
-+	for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
-+		events[i] = 0;
-+
-+	for_each_online_cpu(cpu)
-+		for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
-+			events[i] += raw_cpu_read(
-+				memcg->vmstats_percpu->events[i]);
-+
-+	for (mi = memcg; mi; mi = parent_mem_cgroup(mi))
-+		for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
-+			atomic_long_add(events[i], &mi->vmevents[i]);
-+}
-+
- #ifdef CONFIG_MEMCG_KMEM
- static int memcg_online_kmem(struct mem_cgroup *memcg)
- {
-@@ -4587,10 +4606,11 @@ static void __mem_cgroup_free(struct mem
- 	int node;
+@@ -339,7 +339,8 @@ struct rxrpc_local *rxrpc_get_local_mayb
+ 	if (local) {
+ 		int n = atomic_fetch_add_unless(&local->usage, 1, 0);
+ 		if (n > 0)
+-			trace_rxrpc_local(local, rxrpc_local_got, n + 1, here);
++			trace_rxrpc_local(local->debug_id, rxrpc_local_got,
++					  n + 1, here);
+ 		else
+ 			local = NULL;
+ 	}
+@@ -347,16 +348,16 @@ struct rxrpc_local *rxrpc_get_local_mayb
+ }
  
- 	/*
--	 * Flush percpu vmstats to guarantee the value correctness
-+	 * Flush percpu vmstats and vmevents to guarantee the value correctness
- 	 * on parent's and all ancestor levels.
- 	 */
- 	memcg_flush_percpu_vmstats(memcg);
-+	memcg_flush_percpu_vmevents(memcg);
- 	for_each_node(node)
- 		free_mem_cgroup_per_node_info(memcg, node);
- 	free_percpu(memcg->vmstats_percpu);
+ /*
+- * Queue a local endpoint unless it has become unreferenced and pass the
+- * caller's reference to the work item.
++ * Queue a local endpoint and pass the caller's reference to the work item.
+  */
+ void rxrpc_queue_local(struct rxrpc_local *local)
+ {
+ 	const void *here = __builtin_return_address(0);
++	unsigned int debug_id = local->debug_id;
++	int n = atomic_read(&local->usage);
+ 
+ 	if (rxrpc_queue_work(&local->processor))
+-		trace_rxrpc_local(local, rxrpc_local_queued,
+-				  atomic_read(&local->usage), here);
++		trace_rxrpc_local(debug_id, rxrpc_local_queued, n, here);
+ 	else
+ 		rxrpc_put_local(local);
+ }
+@@ -371,7 +372,7 @@ void rxrpc_put_local(struct rxrpc_local
+ 
+ 	if (local) {
+ 		n = atomic_dec_return(&local->usage);
+-		trace_rxrpc_local(local, rxrpc_local_put, n, here);
++		trace_rxrpc_local(local->debug_id, rxrpc_local_put, n, here);
+ 
+ 		if (n == 0)
+ 			call_rcu(&local->rcu, rxrpc_local_rcu);
+@@ -458,7 +459,7 @@ static void rxrpc_local_processor(struct
+ 		container_of(work, struct rxrpc_local, processor);
+ 	bool again;
+ 
+-	trace_rxrpc_local(local, rxrpc_local_processing,
++	trace_rxrpc_local(local->debug_id, rxrpc_local_processing,
+ 			  atomic_read(&local->usage), NULL);
+ 
+ 	do {
 
 
