@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4CAB9E017
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ED0B9E018
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:00:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731462AbfH0IAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:00:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55140 "EHLO mail.kernel.org"
+        id S1730698AbfH0IAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:00:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731449AbfH0IAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:00:21 -0400
+        id S1731449AbfH0IAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:00:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80F8123405;
-        Tue, 27 Aug 2019 08:00:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EE4920828;
+        Tue, 27 Aug 2019 08:00:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892820;
-        bh=CyQiZCHrxKPp35lufizinN8SC1zCuJm7rkjhjD/lPqg=;
+        s=default; t=1566892823;
+        bh=WgDy+uVCBdzTsaGgiMEMgF5W1wpMhxq1sBHX9lo91jo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FbnAA0xiTmi3YdXJxeSvuhhqjeNvfOWqK0K7/rWdlfXp1fWK+vffkbAEiCatnvDl0
-         IOfDVEQXFvg1zVDLwVyBNvlcl9OZXkzY08wZF/1xqi6AFUThohpF268uGEG9e9ub4R
-         k+YNlMGi2NjwcFHx96pMNT4CZoEMJjjZ+A0QwEvI=
+        b=ZxvcwaeRUdqmLYXciSIULonO9AE8XL5ZiUAJlBbhcmNPv8lB7MPVopcCaAw+CG992
+         J0OXwi71z+GTH1Ec8Sf0ZDWFQ3i9pYT/uhl81kIeWsl/2hzwFgnDpUPngya8sBNhS2
+         bVxBqagD8d5+rUpmu9ov5W77ytmBmjzCxML88A5g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jarod Wilson <jarod@redhat.com>,
-        Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        Thomas Falcon <tlfalcon@linux.ibm.com>,
+        stable@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 026/162] bonding: Force slave speed check after link state recovery for 802.3ad
-Date:   Tue, 27 Aug 2019 09:49:14 +0200
-Message-Id: <20190827072739.215758687@linuxfoundation.org>
+Subject: [PATCH 5.2 027/162] net: mvpp2: Dont check for 3 consecutive Idle frames for 10G links
+Date:   Tue, 27 Aug 2019 09:49:15 +0200
+Message-Id: <20190827072739.245673066@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -48,70 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 12185dfe44360f814ac4ead9d22ad2af7511b2e9 ]
+[ Upstream commit bba18318e7d1d5c8b0bbafd65010a0cee3c65608 ]
 
-The following scenario was encountered during testing of logical
-partition mobility on pseries partitions with bonded ibmvnic
-adapters in LACP mode.
+PPv2's XLGMAC can wait for 3 idle frames before triggering a link up
+event. This can cause the link to be stuck low when there's traffic on
+the interface, so disable this feature.
 
-1. Driver receives a signal that the device has been
-   swapped, and it needs to reset to initialize the new
-   device.
-
-2. Driver reports loss of carrier and begins initialization.
-
-3. Bonding driver receives NETDEV_CHANGE notifier and checks
-   the slave's current speed and duplex settings. Because these
-   are unknown at the time, the bond sets its link state to
-   BOND_LINK_FAIL and handles the speed update, clearing
-   AD_PORT_LACP_ENABLE.
-
-4. Driver finishes recovery and reports that the carrier is on.
-
-5. Bond receives a new notification and checks the speed again.
-   The speeds are valid but miimon has not altered the link
-   state yet.  AD_PORT_LACP_ENABLE remains off.
-
-Because the slave's link state is still BOND_LINK_FAIL,
-no further port checks are made when it recovers. Though
-the slave devices are operational and have valid speed
-and duplex settings, the bond will not send LACPDU's. The
-simplest fix I can see is to force another speed check
-in bond_miimon_commit. This way the bond will update
-AD_PORT_LACP_ENABLE if needed when transitioning from
-BOND_LINK_FAIL to BOND_LINK_UP.
-
-CC: Jarod Wilson <jarod@redhat.com>
-CC: Jay Vosburgh <j.vosburgh@gmail.com>
-CC: Veaceslav Falico <vfalico@gmail.com>
-CC: Andy Gospodarek <andy@greyhouse.net>
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Fixes: 4bb043262878 ("net: mvpp2: phylink support")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_main.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index f183cadd14e3d..e8f48f3cdf948 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -2205,6 +2205,15 @@ static void bond_miimon_commit(struct bonding *bond)
- 	bond_for_each_slave(bond, slave, iter) {
- 		switch (slave->new_link) {
- 		case BOND_LINK_NOCHANGE:
-+			/* For 802.3ad mode, check current slave speed and
-+			 * duplex again in case its port was disabled after
-+			 * invalid speed/duplex reporting but recovered before
-+			 * link monitoring could make a decision on the actual
-+			 * link status
-+			 */
-+			if (BOND_MODE(bond) == BOND_MODE_8023AD &&
-+			    slave->link == BOND_LINK_UP)
-+				bond_3ad_adapter_speed_duplex_changed(slave);
- 			continue;
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 50ed1bdb632db..885529701de90 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -4580,9 +4580,9 @@ static void mvpp2_xlg_config(struct mvpp2_port *port, unsigned int mode,
+ 	else
+ 		ctrl0 &= ~MVPP22_XLG_CTRL0_RX_FLOW_CTRL_EN;
  
- 		case BOND_LINK_UP:
+-	ctrl4 &= ~MVPP22_XLG_CTRL4_MACMODSELECT_GMAC;
+-	ctrl4 |= MVPP22_XLG_CTRL4_FWD_FC | MVPP22_XLG_CTRL4_FWD_PFC |
+-		 MVPP22_XLG_CTRL4_EN_IDLE_CHECK;
++	ctrl4 &= ~(MVPP22_XLG_CTRL4_MACMODSELECT_GMAC |
++		   MVPP22_XLG_CTRL4_EN_IDLE_CHECK);
++	ctrl4 |= MVPP22_XLG_CTRL4_FWD_FC | MVPP22_XLG_CTRL4_FWD_PFC;
+ 
+ 	if (old_ctrl0 != ctrl0)
+ 		writel(ctrl0, port->base + MVPP22_XLG_CTRL0_REG);
 -- 
 2.20.1
 
