@@ -2,184 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A21C29E190
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:13:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 104C29E1D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732054AbfH0INQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:13:16 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:57857 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731007AbfH0INL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:13:11 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46HhT06QfmzB09Zv;
-        Tue, 27 Aug 2019 10:13:08 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=jvkbNv9j; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 7eBVHiy23uDi; Tue, 27 Aug 2019 10:13:08 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46HhT053zkzB09Zn;
-        Tue, 27 Aug 2019 10:13:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566893588; bh=yekcWG/d0H4aoizUdD+G2UyFFVKONjNMIvJn30XRWwU=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=jvkbNv9jN3Ov0/K9ifNJDh8Zpw0XKxesk5hWFsH7qYmmjxmeNZsgT6TRW8+9z3IXI
-         n2uHEZ4mZW8KatCHUT601Dj3H+Te/qoJvZ8W2Nk77TKwxDo3qhEly8f0RE6aLYsyDR
-         UXha5+UwGWkzEOLpHQDOlMLL90xYjniDirT0AH64=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id BD2088B7F6;
-        Tue, 27 Aug 2019 10:13:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id DhOBYalMqP8m; Tue, 27 Aug 2019 10:13:09 +0200 (CEST)
-Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7FEA88B74C;
-        Tue, 27 Aug 2019 10:13:09 +0200 (CEST)
-Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id EC1CD696D8; Tue, 27 Aug 2019 08:13:08 +0000 (UTC)
-Message-Id: <81f39fa06ae582f4a783d26abd2b310204eba8f4.1566893505.git.christophe.leroy@c-s.fr>
-In-Reply-To: <0f7e164afb5d1b022441559fe5a999bb6d3c0a23.1566893505.git.christophe.leroy@c-s.fr>
-References: <0f7e164afb5d1b022441559fe5a999bb6d3c0a23.1566893505.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 2/2] powerpc: cleanup hw_irq.h
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 27 Aug 2019 08:13:08 +0000 (UTC)
+        id S1731158AbfH0IOc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:14:32 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44750 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728972AbfH0IOa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:14:30 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p17so17798478wrf.11
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 01:14:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZKa+G+WNTHyk8o+xbr/dEWEAIM2ZkisNR8p1GVxWpVo=;
+        b=0VeKXm8Af8pEVqLyMPQhZTzMrsz8jVxkUaD5N4qpJaKNrac9JiXxDZSi2OWY6CJWXH
+         k5TbIKg5WQsbaPPeCNzPx5q65qXgXWpUZV626HZ+sCdW1tzeSmkqZVrkaEI7+Z+3zPbK
+         UWO9sJlC4cwbiPfw8AoNHVhuCBhQl4gjU4uNNRNE8VIyHE7+6C1KSIxq6//YMwYgEOUA
+         Y5gtfrxTpa+GeYTYY/8Ze3/m5eUSQrahDFgPWgCyd4xmDWJULzeglCAIyALZVUEMCX2b
+         4UWdV38bJNagvtev1EUAI43EFYDNZyKZtN5fp51ZG77+1QiXjSdH0bWKye3oln5N1neH
+         svkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZKa+G+WNTHyk8o+xbr/dEWEAIM2ZkisNR8p1GVxWpVo=;
+        b=t5nutEcLGxFE6o6uWQpx4fd+imOkRSC5KdPBsjDrSq3kFCEKJaMpFqWTMqPW6qmo4z
+         0U/ONVcqfyQHVPKzp50o1hY4jxePacGwa+OIQigiu8uBuIzR2ZxkBSzr3Tkzlfa6YPE1
+         zzuYNZ6Rl83Xip9JADVa/0XF0RmYFeLV/DjFUDiZGclXpy56H+QHx6iafOFDMjnIQDw7
+         S1GxQv7g78mioRV3pmslC2KWgoTkt5uYKyalL+JN+WI/dCAvNabpq59H4780F6dfYy5d
+         xyM+A00mrX13GHZFf0ZQyQUyJMf6Z+4gmiq6z/nClNXS4x5nzAXEi/6NDNkV/FyZkd/Q
+         O4gQ==
+X-Gm-Message-State: APjAAAWHRysL90LUi4j24Fspvp7RTXTYXTql+FMC2j5RqOvTjc/TeDxQ
+        4L50Q+JPXMshNRt9BhlRe96row==
+X-Google-Smtp-Source: APXvYqzpBpaNw1HlOn1Jl1PNM6gfssXbj4UcMPr8NMqOQJ/Czl/iUduxSNiZP+V231WzJ3FtdGIAng==
+X-Received: by 2002:a5d:4d81:: with SMTP id b1mr26198331wru.27.1566893668403;
+        Tue, 27 Aug 2019 01:14:28 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id f18sm11911792wrx.85.2019.08.27.01.14.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 01:14:27 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        jonas@kwiboo.se, jernej.skrabec@siol.net,
+        boris.brezillon@collabora.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RFC v2 0/8] drm/bridge: dw-hdmi: implement bus-format negotiation and YUV420 support
+Date:   Tue, 27 Aug 2019 10:14:17 +0200
+Message-Id: <20190827081425.15011-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SET_MSR_EE() is just use in this file and doesn't provide
-any added value compared to mtmsr(). Drop it.
+This patchset is based on Boris's v2 "drm: Add support for bus-format negotiation" at [1]
+patchset to implement full bus-format negotiation for DW-HDMI, including YUV420 support and
+10/12/16bit YUV444, YUV422 and RGB. The Color Space Converter support is already implemented.
 
-Add macros to use wrtee/wrteei insn.
+And the counterpart implementation in the Amlogic Meson VPU dw-hdmi glue :
+- basic bus-format negotiation to select YUV444 bus-format as DW-HDMI input
+- YUV420 support when HDMI2.0 YUV420 modeset
 
-Replace #ifdefs by IS_ENABLED()
+This is a follow-up from the previous attempts :
+- "drm/meson: Add support for HDMI2.0 YUV420 4k60" at [2]
+- "drm/meson: Add support for HDMI2.0 4k60" at [3]
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/hw_irq.h | 57 ++++++++++++++++++---------------------
- arch/powerpc/include/asm/reg.h    |  2 ++
- 2 files changed, 28 insertions(+), 31 deletions(-)
+Changes since RFC v1 at [4]:
+- Rewrote negociation using the v2 patchset, including full DW-HDMI fmt negociation
 
-diff --git a/arch/powerpc/include/asm/hw_irq.h b/arch/powerpc/include/asm/hw_irq.h
-index 32a18f2f49bc..c25d57f25a8b 100644
---- a/arch/powerpc/include/asm/hw_irq.h
-+++ b/arch/powerpc/include/asm/hw_irq.h
-@@ -226,8 +226,8 @@ static inline bool arch_irqs_disabled(void)
- #endif /* CONFIG_PPC_BOOK3S */
- 
- #ifdef CONFIG_PPC_BOOK3E
--#define __hard_irq_enable()	asm volatile("wrteei 1" : : : "memory")
--#define __hard_irq_disable()	asm volatile("wrteei 0" : : : "memory")
-+#define __hard_irq_enable()	wrteei(1)
-+#define __hard_irq_disable()	wrteei(0)
- #else
- #define __hard_irq_enable()	__mtmsrd(MSR_EE|MSR_RI, 1)
- #define __hard_irq_disable()	__mtmsrd(MSR_RI, 1)
-@@ -280,8 +280,6 @@ extern void force_external_irq_replay(void);
- 
- #else /* CONFIG_PPC64 */
- 
--#define SET_MSR_EE(x)	mtmsr(x)
--
- static inline unsigned long arch_local_save_flags(void)
- {
- 	return mfmsr();
-@@ -289,47 +287,44 @@ static inline unsigned long arch_local_save_flags(void)
- 
- static inline void arch_local_irq_restore(unsigned long flags)
- {
--#if defined(CONFIG_BOOKE)
--	asm volatile("wrtee %0" : : "r" (flags) : "memory");
--#else
--	mtmsr(flags);
--#endif
-+	if (IS_ENABLED(CONFIG_BOOKE))
-+		wrtee(flags);
-+	else
-+		mtmsr(flags);
- }
- 
- static inline unsigned long arch_local_irq_save(void)
- {
- 	unsigned long flags = arch_local_save_flags();
--#ifdef CONFIG_BOOKE
--	asm volatile("wrteei 0" : : : "memory");
--#elif defined(CONFIG_PPC_8xx)
--	wrtspr(SPRN_EID);
--#else
--	SET_MSR_EE(flags & ~MSR_EE);
--#endif
-+
-+	if (IS_ENABLED(CONFIG_BOOKE))
-+		wrteei(0);
-+	else if (IS_ENABLED(CONFIG_PPC_8xx))
-+		wrtspr(SPRN_EID);
-+	else
-+		mtmsr(flags & ~MSR_EE);
-+
- 	return flags;
- }
- 
- static inline void arch_local_irq_disable(void)
- {
--#ifdef CONFIG_BOOKE
--	asm volatile("wrteei 0" : : : "memory");
--#elif defined(CONFIG_PPC_8xx)
--	wrtspr(SPRN_EID);
--#else
--	arch_local_irq_save();
--#endif
-+	if (IS_ENABLED(CONFIG_BOOKE))
-+		wrteei(0);
-+	else if (IS_ENABLED(CONFIG_PPC_8xx))
-+		wrtspr(SPRN_EID);
-+	else
-+		mtmsr(mfmsr() & ~MSR_EE);
- }
- 
- static inline void arch_local_irq_enable(void)
- {
--#ifdef CONFIG_BOOKE
--	asm volatile("wrteei 1" : : : "memory");
--#elif defined(CONFIG_PPC_8xx)
--	wrtspr(SPRN_EIE);
--#else
--	unsigned long msr = mfmsr();
--	SET_MSR_EE(msr | MSR_EE);
--#endif
-+	if (IS_ENABLED(CONFIG_BOOKE))
-+		wrteei(1);
-+	else if (IS_ENABLED(CONFIG_PPC_8xx))
-+		wrtspr(SPRN_EIE);
-+	else
-+		mtmsr(mfmsr() | MSR_EE);
- }
- 
- static inline bool arch_irqs_disabled_flags(unsigned long flags)
-diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
-index b17ee25df226..04896dd09455 100644
---- a/arch/powerpc/include/asm/reg.h
-+++ b/arch/powerpc/include/asm/reg.h
-@@ -1361,6 +1361,8 @@ static inline void mtmsr_isync(unsigned long val)
- #endif
- #define wrtspr(rn)	asm volatile("mtspr " __stringify(rn) ",0" : \
- 				     : : "memory")
-+#define wrtee(val)	asm volatile("wrtee %0" : : "r" (val) : "memory")
-+#define wrteei(val)	asm volatile("wrteei %0" : : "i" (val) : "memory")
- 
- extern unsigned long msr_check_and_set(unsigned long bits);
- extern bool strict_msr_control;
+[1] https://patchwork.freedesktop.org/patch/msgid/20190826152649.13820-1-boris.brezillon@collabora.com
+[2] https://patchwork.freedesktop.org/patch/msgid/20190520133753.23871-1-narmstrong@baylibre.com
+[3] https://patchwork.freedesktop.org/patch/msgid/1549022873-40549-1-git-send-email-narmstrong@baylibre.com
+[4] https://patchwork.freedesktop.org/patch/msgid/20190820084109.24616-1-narmstrong@baylibre.com
+
+Neil Armstrong (8):
+  drm/meson: venc: make drm_display_mode const
+  drm/meson: meson_dw_hdmi: switch to drm_bridge_funcs
+  drm/bridge: synopsys: dw-hdmi: add bus format negociation
+  drm/meson: dw-hdmi: stop enforcing input_bus_format
+  drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
+  drm/meson: venc: add support for YUV420 setup
+  drm/meson: vclk: add support for YUV420 setup
+  drm/meson: Add YUV420 output support
+
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 251 +++++++++++++++++++++-
+ drivers/gpu/drm/meson/meson_dw_hdmi.c     | 164 +++++++++++---
+ drivers/gpu/drm/meson/meson_vclk.c        |  93 ++++++--
+ drivers/gpu/drm/meson/meson_vclk.h        |   7 +-
+ drivers/gpu/drm/meson/meson_venc.c        |  10 +-
+ drivers/gpu/drm/meson/meson_venc.h        |   4 +-
+ drivers/gpu/drm/meson/meson_venc_cvbs.c   |   3 +-
+ include/drm/bridge/dw_hdmi.h              |   1 +
+ 8 files changed, 466 insertions(+), 67 deletions(-)
+
 -- 
-2.13.3
+2.22.0
 
