@@ -2,145 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 018749DD5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 07:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ADE59DD62
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 07:59:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729319AbfH0FzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 01:55:00 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37714 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfH0Fy7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 01:54:59 -0400
-Received: by mail-lf1-f65.google.com with SMTP id w67so5988856lff.4
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 22:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N+vpsDloTUdy5MvFdUSFeHVMIbrM4Okd8BXV+IVwifM=;
-        b=tBPtAp0WoXthyCDuxt0/UFLRqezDiJevoRKm/SOQIUlGRldn152fQioRxeB7al5xxT
-         sVoOIxaT/VuG5XuiKbuOW9+y1OHW9NHrC/uPtx+grRsTws3Vq7QqhSTz6j+4C26nCUqr
-         LDMbBJz9Sa7OUTHFnJspqelzZyXBxk3eFAElrk3MWHmSUzcbICTCuExINBxSK/XylvvR
-         ohpvOvP1+OoJDBUHQJQWotFSoTwt7NYPl+x0e1RajCT2jLQU3sCCkvBLETeYiSi3H541
-         rDNr7/WbU2NPl9VrKwbfQ/oxycmkvFye7tObGO23O2OCVf9LLaBGOow+JWnc2DkFAg20
-         8Ojw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N+vpsDloTUdy5MvFdUSFeHVMIbrM4Okd8BXV+IVwifM=;
-        b=aKIUjmX+388vTNRpMXtMCv4lXSpf0hgN/Js9R+MrDnhuv/Y1d3y80KajzZWe3GWb7H
-         hVw2N9+hkQq9ZioqHirUXjQHnIvrfjryKlvheKiqpWMfO+eqmnEdRmxa1D/oHqQ5u1o4
-         qQ/S8TLjfIgT7YL6poTZMwigJpb442Rk9W9tpg4pF75VQYUjCu9qijiSjJlh1vN0idCt
-         APJACHhdGheAgpBpGweWZqog26Au1QcLZFm/SmpH99f1w7H55uiCyz5VfeShAFZqbMaW
-         jXw5XMbvCP4Zraudeqa8NDHZfeQuyUWwppgpr6wHY7d/SVX3CAxEv5bxe6gfmlRyzMB4
-         Gu9Q==
-X-Gm-Message-State: APjAAAXH2Dn4yLSqNuYynwRry9Qr03MoW95xDIS0KQDy3doRl7cM8+Ls
-        V+hUTkBIRdRC3jdBMZQFuBBR0BudiRC3nkYURlU=
-X-Google-Smtp-Source: APXvYqzidw7it9RFvQO3QHpIyQRWnqyn2HDPGgcq72wbtDx3y1RWj/BFazwXFiWSboCAudwrFQw+mF1nebwphQAgI5I=
-X-Received: by 2002:ac2:563c:: with SMTP id b28mr12969143lff.93.1566885297683;
- Mon, 26 Aug 2019 22:54:57 -0700 (PDT)
+        id S1729284AbfH0F7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 01:59:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51194 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725811AbfH0F7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 01:59:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CBBB5ABC6;
+        Tue, 27 Aug 2019 05:59:42 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 07:59:41 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     kirill.shutemov@linux.intel.com, hannes@cmpxchg.org,
+        vbabka@suse.cz, rientjes@google.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH -mm] mm: account deferred split THPs into MemAvailable
+Message-ID: <20190827055941.GL7538@dhcp22.suse.cz>
+References: <1566410125-66011-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190822080434.GF12785@dhcp22.suse.cz>
+ <9e4ba38e-0670-7292-ab3a-38af391598ec@linux.alibaba.com>
+ <20190826074350.GE7538@dhcp22.suse.cz>
+ <416daa85-44d4-1ef9-cc4c-6b91a8354c79@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20190826180734.15801-1-codekipper@gmail.com> <20190826180734.15801-2-codekipper@gmail.com>
- <CAGb2v651jVp+J2eyWh7vw-yHmFTVy4eaMjHV0FvOF17C5_Hswg@mail.gmail.com>
-In-Reply-To: <CAGb2v651jVp+J2eyWh7vw-yHmFTVy4eaMjHV0FvOF17C5_Hswg@mail.gmail.com>
-From:   Code Kipper <codekipper@gmail.com>
-Date:   Tue, 27 Aug 2019 07:54:45 +0200
-Message-ID: <CAEKpxBmCg4AkqKM-O3C76gto+mPWyEdDbviAmRJ8PxLOOMTJ7w@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v6 1/3] ASoC: sun4i-i2s: incorrect regmap
- for A83T
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <416daa85-44d4-1ef9-cc4c-6b91a8354c79@linux.alibaba.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Aug 2019 at 06:13, Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Tue, Aug 27, 2019 at 2:07 AM <codekipper@gmail.com> wrote:
-> >
-> > From: Marcus Cooper <codekipper@gmail.com>
-> >
-> > The regmap configuration is set up for the legacy block on the
-> > A83T whereas it uses the new block with a larger register map.
->
-> Looking at the code Allwinner previously released [1], that doesn't seem to be
-> the case. Keep in mind that the register map shown in the user manual is for
-> the TDM interface, which we don't actually support right now.
+On Mon 26-08-19 21:27:38, Yang Shi wrote:
+> 
+> 
+> On 8/26/19 12:43 AM, Michal Hocko wrote:
+> > On Thu 22-08-19 08:33:40, Yang Shi wrote:
+> > > 
+> > > On 8/22/19 1:04 AM, Michal Hocko wrote:
+> > > > On Thu 22-08-19 01:55:25, Yang Shi wrote:
+> > [...]
+> > > > > And, they seems very common with the common workloads when THP is
+> > > > > enabled.  A simple run with MariaDB test of mmtest with THP enabled as
+> > > > > always shows it could generate over fifteen thousand deferred split THPs
+> > > > > (accumulated around 30G in one hour run, 75% of 40G memory for my VM).
+> > > > > It looks worth accounting in MemAvailable.
+> > > > OK, this makes sense. But your above numbers are really worrying.
+> > > > Accumulating such a large amount of pages that are likely not going to
+> > > > be used is really bad. They are essentially blocking any higher order
+> > > > allocations and also push the system towards more memory pressure.
+> > > That is accumulated number, during the running of the test, some of them
+> > > were freed by shrinker already. IOW, it should not reach that much at any
+> > > given time.
+> > Then the above description is highly misleading. What is the actual
+> > number of lingering THPs that wait for the memory pressure in the peak?
+> 
+> By rerunning sysbench mariadb test of mmtest, I didn't see too many THPs in
+> the peak. I saw around 2K THPs sometimes on my VM with 40G memory. But they
+> were short-lived (should be freed when the test exit). And, the number of
+> accumulated THPs are variable.
+> 
+> And, this reminded me to go back double check our internal bug report which
+> lead to the "make deferred split shrinker memcg aware" patchset.
+> 
+> In that case, a mysql instance with real production load was running in a
+> memcg with ~86G limit, the number of deferred split THPs may reach to ~68G
+> (~34K deferred split THPs) in a few hours. The deferred split THP shrinker
+> was not invoked since global memory pressure is still fine since the host
+> has 256G memory, but memcg limit reclaim was triggered.
+> 
+> And, I can't tell if all those deferred split THPs came from mysql or not
+> since there were some other processes run in that container too according to
+> the oom log.
+> 
+> I will update the commit log with the more solid data from production
+> environment.
 
-Should it matter what we support right now?, the block according to the user
-manual shows the bigger range. I don't have a A83T device and from what I
-gather not many users do. But the compatible for the H3 has been removed
-and replaced with the settings for the A83T which also has default settings in
-registers further up than SUNXI_RXCHMAP.
+This is a very useful information. Thanks!
 
->
-> The file shows the base address as 0x01c22800, and the last defined register
-> is SUNXI_RXCHMAP at 0x3c.
->
-> The I2S driver [2] also shows that it is the old register map size, but with
-> TX_FIFO and INT_STA swapped around. This might mean that it would need a
-> separate regmap_config, as the read/write callbacks need to be changed to
-> fit the swapped registers.
->
-> Finally, the TDM driver [3], which matches the TDM section in the manual, shows
-> a larger register map.
->
-> A83T is SUN8IW6, while SUN8IW7 refers to the H3.
+> > > > IIUC deferred splitting is mostly a workaround for nasty locking issues
+> > > > during splitting, right? This is not really an optimization to cache
+> > > > THPs for reuse or something like that. What is the reason this is not
+> > > > done from a worker context? At least THPs which would be freed
+> > > > completely sound like a good candidate for kworker tear down, no?
+> > > Yes, deferred split THP was introduced to avoid locking issues according to
+> > > the document. Memcg awareness would help to trigger the shrinker more often.
+> > > 
+> > > I think it could be done in a worker context, but when to trigger to worker
+> > > is a subtle problem.
+> > Why? What is the problem to trigger it after unmap of a batch worth of
+> > THPs?
+> 
+> This leads to another question, how many THPs are "a batch of worth"?
 
-Since when have we trusted Allwinner code?, the TDM labelled block
-clearly supports
-I2S. The biggest use case for this block is getting HDMI audio working
-on the newer
-devices(LibreELEC nightlies has a user base of over 300) and I've tested this on
-numerous set ups over the last couple of years.
+Some arbitrary reasonable number. Few dozens of THPs waiting for split
+are no big deal. Going into GB as you pointed out above is definitely a
+problem.
 
-Failing that reverting (3e9acd7ac693: "ASoC: sun4i-i2s: Remove
-duplicated quirks structure")
-would help.
-
-BR,
-CK
->
-> ChenYu
->
-> [1] https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/sound/soc/sunxi/hdmiaudio/sunxi-hdmipcm.h
-> [2] https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/sound/soc/sunxi/i2s0/sunxi-i2s0.h
-> [3] https://github.com/allwinner-zh/linux-3.4-sunxi/blob/master/sound/soc/sunxi/daudio0/sunxi-daudio0.h
->
-> > Fixes: 21faaea1343f ("ASoC: sun4i-i2s: Add support for A83T")
-> > Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-> > ---
-> >  sound/soc/sunxi/sun4i-i2s.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> > index 57bf2a33753e..34575a8aa9f6 100644
-> > --- a/sound/soc/sunxi/sun4i-i2s.c
-> > +++ b/sound/soc/sunxi/sun4i-i2s.c
-> > @@ -1100,7 +1100,7 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
-> >  static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
-> >         .has_reset              = true,
-> >         .reg_offset_txdata      = SUN8I_I2S_FIFO_TX_REG,
-> > -       .sun4i_i2s_regmap       = &sun4i_i2s_regmap_config,
-> > +       .sun4i_i2s_regmap       = &sun8i_i2s_regmap_config,
-> >         .field_clkdiv_mclk_en   = REG_FIELD(SUN4I_I2S_CLK_DIV_REG, 8, 8),
-> >         .field_fmt_wss          = REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 2),
-> >         .field_fmt_sr           = REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 6),
-> > --
-> > 2.23.0
-> >
-> > --
-> > You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> > To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> > To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20190826180734.15801-2-codekipper%40gmail.com.
+-- 
+Michal Hocko
+SUSE Labs
