@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E22179DF8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBF629DF8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730302AbfH0HzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:55:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47056 "EHLO mail.kernel.org"
+        id S1730317AbfH0HzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:55:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729387AbfH0HzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:55:16 -0400
+        id S1730292AbfH0HzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:55:19 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFF6020828;
-        Tue, 27 Aug 2019 07:55:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B385C217F5;
+        Tue, 27 Aug 2019 07:55:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892515;
-        bh=HDYpMpXygh6DzBAFUso9mRhj6FU64mGHz38ZIkfZbwo=;
+        s=default; t=1566892518;
+        bh=huxwROHcSxKbnHQwJintPX8UcJBPdpbFcH85JbyLZN8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KFVZO8zAh62K1DzRehzv1Gh0OtKt3i+QsIN1viyxMpThQ7BLAxi5SIs3k7GbQr2Yu
-         tFyMF6qmZ4Bq7DSTYKyKZN3xojckcg/veOGwS5l5bk4cgq4Punq7gKLPK/Kpx4ov9H
-         bMw3VIbjvDQc1Sy5wNX8zGLMyCVggMZX/I2NTtgA=
+        b=iIxDRzUdvh7PSuHlBesuJk9ReVyhCAIwY5cvo2mGXjCicnV00rUb0h5oSDyA7E65J
+         qgMPF8RuA//3yJeRFW+9SdIcBrYitB2g83pi9FVxeamZadRBgaf+YHRtj3X9Ii6k5U
+         16xSvbtInKVaU+menzvDIyWBFEXfkUZovu6mRdjo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michal Kalderon <michal.kalderon@marvell.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 20/98] qed: RDMA - Fix the hw_ver returned in device attributes
-Date:   Tue, 27 Aug 2019 09:49:59 +0200
-Message-Id: <20190827072719.349691597@linuxfoundation.org>
+Subject: [PATCH 4.19 21/98] isdn: mISDN: hfcsusb: Fix possible null-pointer dereferences in start_isoc_chain()
+Date:   Tue, 27 Aug 2019 09:50:00 +0200
+Message-Id: <20190827072719.383216599@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
 References: <20190827072718.142728620@linuxfoundation.org>
@@ -45,31 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 81af04b432fdfabcdbd2c06be2ee647e3ca41a22 ]
+[ Upstream commit a0d57a552b836206ad7705a1060e6e1ce5a38203 ]
 
-The hw_ver field was initialized to zero. Return the chip revision.
-This is relevant for rdma driver.
+In start_isoc_chain(), usb_alloc_urb() on line 1392 may fail
+and return NULL. At this time, fifo->iso[i].urb is assigned to NULL.
 
-Signed-off-by: Michal Kalderon <michal.kalderon@marvell.com>
+Then, fifo->iso[i].urb is used at some places, such as:
+LINE 1405:    fill_isoc_urb(fifo->iso[i].urb, ...)
+                  urb->number_of_packets = num_packets;
+                  urb->transfer_flags = URB_ISO_ASAP;
+                  urb->actual_length = 0;
+                  urb->interval = interval;
+LINE 1416:    fifo->iso[i].urb->...
+LINE 1419:    fifo->iso[i].urb->...
+
+Thus, possible null-pointer dereferences may occur.
+
+To fix these bugs, "continue" is added to avoid using fifo->iso[i].urb
+when it is NULL.
+
+These bugs are found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_rdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/isdn/hardware/mISDN/hfcsusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_rdma.c b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-index 13802b825d65a..909422d939033 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-@@ -442,7 +442,7 @@ static void qed_rdma_init_devinfo(struct qed_hwfn *p_hwfn,
- 	/* Vendor specific information */
- 	dev->vendor_id = cdev->vendor_id;
- 	dev->vendor_part_id = cdev->device_id;
--	dev->hw_ver = 0;
-+	dev->hw_ver = cdev->chip_rev;
- 	dev->fw_ver = (FW_MAJOR_VERSION << 24) | (FW_MINOR_VERSION << 16) |
- 		      (FW_REVISION_VERSION << 8) | (FW_ENGINEERING_VERSION);
- 
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+index 060dc7fd66c1d..cfdb130cb1008 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.c
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
+@@ -1406,6 +1406,7 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
+ 				printk(KERN_DEBUG
+ 				       "%s: %s: alloc urb for fifo %i failed",
+ 				       hw->name, __func__, fifo->fifonum);
++				continue;
+ 			}
+ 			fifo->iso[i].owner_fifo = (struct usb_fifo *) fifo;
+ 			fifo->iso[i].indx = i;
 -- 
 2.20.1
 
