@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 752CA9E05A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C41A9E078
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:05:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732116AbfH0ICw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:02:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60070 "EHLO mail.kernel.org"
+        id S1732425AbfH0IEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:04:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731554AbfH0ICt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:02:49 -0400
+        id S1729684AbfH0ID7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:03:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05C85206BA;
-        Tue, 27 Aug 2019 08:02:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1360B206BA;
+        Tue, 27 Aug 2019 08:03:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892968;
-        bh=a97coZqjOjw8sBI9siM5m9pjy191/+hOcjBuL2b/MOg=;
+        s=default; t=1566893038;
+        bh=OxvKZqEgFGdajh+6mbJpbK1tjc2ZWpcKeqOITLSV9aQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c/r7xYnvn+CvAZx+hpt8iNm/l7d5DTdoyR5edzZt7D9PuN1nwoblIieSNIQV7M0OL
-         0+5nloJkZLtruMrMnU37MATf/S5cLy64TunkOrXSgqz9Xx98j0VenjPUbGuyP4rxEh
-         Bh9Z+Zi2J+FndsD1LOVC8BaxUOIcW+ugxlFDxZwU=
+        b=E25S+Gmw0xNhKz7GkceQ1OHWSFFcyJr8sNbSFKAYuvi0yrTyVQx5OKsYFisoDRQZ1
+         ib821j3sH22G67LWSVigRzi4ThSM89rce7emEy1ktYrjVE+n56WxCKKpLSkHD606Ta
+         EThR5Kbe58JeTdXYGsNs2IrV5GQmIosUUwYISeUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Gregory Greenman <gregory.greenman@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 060/162] iwlwifi: mvm: send LQ command always ASYNC
-Date:   Tue, 27 Aug 2019 09:49:48 +0200
-Message-Id: <20190827072740.263952722@linuxfoundation.org>
+Subject: [PATCH 5.2 062/162] isdn: hfcsusb: Fix mISDN driver crash caused by transfer buffer on the stack
+Date:   Tue, 27 Aug 2019 09:49:50 +0200
+Message-Id: <20190827072740.327172080@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -46,174 +45,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cd4d6b0bcd51580efda9ae54ab7b2d630b4147dc ]
+[ Upstream commit d8a1de3d5bb881507602bc02e004904828f88711 ]
 
-The only place where the command was sent as SYNC is during
-init and this is not really critical. This change is required
-for replacing RS mutex with a spinlock (in the subsequent patch),
-since SYNC comamnd requres sleeping and thus the flow cannot
-be done when holding a spinlock.
+Since linux 4.9 it is not possible to use buffers on the stack for DMA transfers.
 
-Signed-off-by: Gregory Greenman <gregory.greenman@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+During usb probe the driver crashes with "transfer buffer is on stack" message.
+
+This fix k-allocates a buffer to be used on "read_reg_atomic", which is a macro
+that calls "usb_control_msg" under the hood.
+
+Kernel 4.19 backtrace:
+
+usb_hcd_submit_urb+0x3e5/0x900
+? sched_clock+0x9/0x10
+? log_store+0x203/0x270
+? get_random_u32+0x6f/0x90
+? cache_alloc_refill+0x784/0x8a0
+usb_submit_urb+0x3b4/0x550
+usb_start_wait_urb+0x4e/0xd0
+usb_control_msg+0xb8/0x120
+hfcsusb_probe+0x6bc/0xb40 [hfcsusb]
+usb_probe_interface+0xc2/0x260
+really_probe+0x176/0x280
+driver_probe_device+0x49/0x130
+__driver_attach+0xa9/0xb0
+? driver_probe_device+0x130/0x130
+bus_for_each_dev+0x5a/0x90
+driver_attach+0x14/0x20
+? driver_probe_device+0x130/0x130
+bus_add_driver+0x157/0x1e0
+driver_register+0x51/0xe0
+usb_register_driver+0x5d/0x120
+? 0xf81ed000
+hfcsusb_drv_init+0x17/0x1000 [hfcsusb]
+do_one_initcall+0x44/0x190
+? free_unref_page_commit+0x6a/0xd0
+do_init_module+0x46/0x1c0
+load_module+0x1dc1/0x2400
+sys_init_module+0xed/0x120
+do_fast_syscall_32+0x7a/0x200
+entry_SYSENTER_32+0x6b/0xbe
+
+Signed-off-by: Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/mvm.h  |  2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/rs.c   | 23 ++++++++++---------
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c  |  2 +-
- .../net/wireless/intel/iwlwifi/mvm/utils.c    |  4 ++--
- 4 files changed, 16 insertions(+), 15 deletions(-)
+ drivers/isdn/hardware/mISDN/hfcsusb.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-index ed8fc9a9204ca..0c11a219e3477 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mvm.h
-@@ -1807,7 +1807,7 @@ iwl_mvm_vif_dbgfs_clean(struct iwl_mvm *mvm, struct ieee80211_vif *vif)
- #endif /* CONFIG_IWLWIFI_DEBUGFS */
- 
- /* rate scaling */
--int iwl_mvm_send_lq_cmd(struct iwl_mvm *mvm, struct iwl_lq_cmd *lq, bool sync);
-+int iwl_mvm_send_lq_cmd(struct iwl_mvm *mvm, struct iwl_lq_cmd *lq);
- void iwl_mvm_update_frame_stats(struct iwl_mvm *mvm, u32 rate, bool agg);
- int rs_pretty_print_rate(char *buf, int bufsz, const u32 rate);
- void rs_update_last_rssi(struct iwl_mvm *mvm,
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-index 836541caa3167..01b032f18bc8b 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@ -1326,7 +1326,7 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
- 			IWL_DEBUG_RATE(mvm,
- 				       "Too many rates mismatch. Send sync LQ. rs_state %d\n",
- 				       lq_sta->rs_state);
--			iwl_mvm_send_lq_cmd(mvm, &lq_sta->lq, false);
-+			iwl_mvm_send_lq_cmd(mvm, &lq_sta->lq);
- 		}
- 		/* Regardless, ignore this status info for outdated rate */
- 		return;
-@@ -1388,7 +1388,8 @@ void iwl_mvm_rs_tx_status(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
- 		if (info->status.ampdu_ack_len == 0)
- 			info->status.ampdu_len = 1;
- 
--		rs_collect_tlc_data(mvm, mvmsta, tid, curr_tbl, tx_resp_rate.index,
-+		rs_collect_tlc_data(mvm, mvmsta, tid, curr_tbl,
-+				    tx_resp_rate.index,
- 				    info->status.ampdu_len,
- 				    info->status.ampdu_ack_len);
- 
-@@ -1823,7 +1824,7 @@ static void rs_update_rate_tbl(struct iwl_mvm *mvm,
- 			       struct iwl_scale_tbl_info *tbl)
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+index 8fb7c5dea07fc..008a74a1ed444 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.c
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
+@@ -1693,13 +1693,23 @@ hfcsusb_stop_endpoint(struct hfcsusb *hw, int channel)
+ static int
+ setup_hfcsusb(struct hfcsusb *hw)
  {
- 	rs_fill_lq_cmd(mvm, sta, lq_sta, &tbl->rate);
--	iwl_mvm_send_lq_cmd(mvm, &lq_sta->lq, false);
-+	iwl_mvm_send_lq_cmd(mvm, &lq_sta->lq);
- }
++	void *dmabuf = kmalloc(sizeof(u_char), GFP_KERNEL);
+ 	u_char b;
++	int ret;
  
- static bool rs_tweak_rate_tbl(struct iwl_mvm *mvm,
-@@ -2925,7 +2926,7 @@ void rs_update_last_rssi(struct iwl_mvm *mvm,
- static void rs_initialize_lq(struct iwl_mvm *mvm,
- 			     struct ieee80211_sta *sta,
- 			     struct iwl_lq_sta *lq_sta,
--			     enum nl80211_band band, bool update)
-+			     enum nl80211_band band)
- {
- 	struct iwl_scale_tbl_info *tbl;
- 	struct rs_rate *rate;
-@@ -2955,7 +2956,7 @@ static void rs_initialize_lq(struct iwl_mvm *mvm,
- 	rs_set_expected_tpt_table(lq_sta, tbl);
- 	rs_fill_lq_cmd(mvm, sta, lq_sta, rate);
- 	/* TODO restore station should remember the lq cmd */
--	iwl_mvm_send_lq_cmd(mvm, &lq_sta->lq, !update);
-+	iwl_mvm_send_lq_cmd(mvm, &lq_sta->lq);
- }
+ 	if (debug & DBG_HFC_CALL_TRACE)
+ 		printk(KERN_DEBUG "%s: %s\n", hw->name, __func__);
  
- static void rs_drv_get_rate(void *mvm_r, struct ieee80211_sta *sta,
-@@ -3208,7 +3209,7 @@ void iwl_mvm_update_frame_stats(struct iwl_mvm *mvm, u32 rate, bool agg)
-  * Called after adding a new station to initialize rate scaling
-  */
- static void rs_drv_rate_init(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
--			     enum nl80211_band band, bool update)
-+			     enum nl80211_band band)
- {
- 	int i, j;
- 	struct ieee80211_hw *hw = mvm->hw;
-@@ -3288,7 +3289,7 @@ static void rs_drv_rate_init(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
- #ifdef CONFIG_IWLWIFI_DEBUGFS
- 	iwl_mvm_reset_frame_stats(mvm);
- #endif
--	rs_initialize_lq(mvm, sta, lq_sta, band, update);
-+	rs_initialize_lq(mvm, sta, lq_sta, band);
- }
- 
- static void rs_drv_rate_update(void *mvm_r,
-@@ -3602,7 +3603,7 @@ static void rs_set_lq_ss_params(struct iwl_mvm *mvm,
- 
- 		bfersta_ss_params &= ~LQ_SS_BFER_ALLOWED;
- 		bfersta_lq_cmd->ss_params = cpu_to_le32(bfersta_ss_params);
--		iwl_mvm_send_lq_cmd(mvm, bfersta_lq_cmd, false);
-+		iwl_mvm_send_lq_cmd(mvm, bfersta_lq_cmd);
- 
- 		ss_params |= LQ_SS_BFER_ALLOWED;
- 		IWL_DEBUG_RATE(mvm,
-@@ -3768,7 +3769,7 @@ static void rs_program_fix_rate(struct iwl_mvm *mvm,
- 
- 	if (lq_sta->pers.dbg_fixed_rate) {
- 		rs_fill_lq_cmd(mvm, NULL, lq_sta, NULL);
--		iwl_mvm_send_lq_cmd(lq_sta->pers.drv, &lq_sta->lq, false);
-+		iwl_mvm_send_lq_cmd(lq_sta->pers.drv, &lq_sta->lq);
- 	}
- }
- 
-@@ -4171,7 +4172,7 @@ void iwl_mvm_rs_rate_init(struct iwl_mvm *mvm, struct ieee80211_sta *sta,
- 		struct iwl_mvm_sta *mvmsta = iwl_mvm_sta_from_mac80211(sta);
- 
- 		mutex_lock(&mvmsta->lq_sta.rs_drv.mutex);
--		rs_drv_rate_init(mvm, sta, band, update);
-+		rs_drv_rate_init(mvm, sta, band);
- 		mutex_unlock(&mvmsta->lq_sta.rs_drv.mutex);
- 	}
- }
-@@ -4203,7 +4204,7 @@ static int rs_drv_tx_protection(struct iwl_mvm *mvm, struct iwl_mvm_sta *mvmsta,
- 			lq->flags &= ~LQ_FLAG_USE_RTS_MSK;
- 	}
- 
--	return iwl_mvm_send_lq_cmd(mvm, lq, false);
-+	return iwl_mvm_send_lq_cmd(mvm, lq);
- }
- 
- /**
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-index ac9bc65c4d156..22715cdb83171 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -2978,7 +2978,7 @@ out:
- 	IWL_DEBUG_HT(mvm, "Tx aggregation enabled on ra = %pM tid = %d\n",
- 		     sta->addr, tid);
- 
--	return iwl_mvm_send_lq_cmd(mvm, &mvmsta->lq_sta.rs_drv.lq, false);
-+	return iwl_mvm_send_lq_cmd(mvm, &mvmsta->lq_sta.rs_drv.lq);
- }
- 
- static void iwl_mvm_unreserve_agg_queue(struct iwl_mvm *mvm,
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/utils.c b/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-index cc56ab88fb439..a71277de2e0eb 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/utils.c
-@@ -641,12 +641,12 @@ int iwl_mvm_reconfig_scd(struct iwl_mvm *mvm, int queue, int fifo, int sta_id,
-  * this case to clear the state indicating that station creation is in
-  * progress.
-  */
--int iwl_mvm_send_lq_cmd(struct iwl_mvm *mvm, struct iwl_lq_cmd *lq, bool sync)
-+int iwl_mvm_send_lq_cmd(struct iwl_mvm *mvm, struct iwl_lq_cmd *lq)
- {
- 	struct iwl_host_cmd cmd = {
- 		.id = LQ_CMD,
- 		.len = { sizeof(struct iwl_lq_cmd), },
--		.flags = sync ? 0 : CMD_ASYNC,
-+		.flags = CMD_ASYNC,
- 		.data = { lq, },
- 	};
- 
++	if (!dmabuf)
++		return -ENOMEM;
++
++	ret = read_reg_atomic(hw, HFCUSB_CHIP_ID, dmabuf);
++
++	memcpy(&b, dmabuf, sizeof(u_char));
++	kfree(dmabuf);
++
+ 	/* check the chip id */
+-	if (read_reg_atomic(hw, HFCUSB_CHIP_ID, &b) != 1) {
++	if (ret != 1) {
+ 		printk(KERN_DEBUG "%s: %s: cannot read chip id\n",
+ 		       hw->name, __func__);
+ 		return 1;
 -- 
 2.20.1
 
