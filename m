@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4F929E33C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2037E9E344
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:54:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbfH0IyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:54:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40048 "EHLO mx1.redhat.com"
+        id S1729839AbfH0IyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:54:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52800 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726091AbfH0IyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:54:10 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1729783AbfH0IyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:54:16 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A11778980ED;
-        Tue, 27 Aug 2019 08:54:09 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 215674E832;
+        Tue, 27 Aug 2019 08:54:16 +0000 (UTC)
 Received: from localhost (ovpn-8-27.pek2.redhat.com [10.72.8.27])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3572E60610;
-        Tue, 27 Aug 2019 08:54:05 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D52FA5DA8B;
+        Tue, 27 Aug 2019 08:54:11 +0000 (UTC)
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
@@ -30,15 +30,15 @@ Cc:     linux-kernel@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
         John Garry <john.garry@huawei.com>,
         Hannes Reinecke <hare@suse.com>,
         linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org
-Subject: [PATCH 1/4] softirq: implement IRQ flood detection mechanism
-Date:   Tue, 27 Aug 2019 16:53:41 +0800
-Message-Id: <20190827085344.30799-2-ming.lei@redhat.com>
+Subject: [PATCH 2/4] genirq: add IRQF_RESCUE_THREAD
+Date:   Tue, 27 Aug 2019 16:53:42 +0800
+Message-Id: <20190827085344.30799-3-ming.lei@redhat.com>
 In-Reply-To: <20190827085344.30799-1-ming.lei@redhat.com>
 References: <20190827085344.30799-1-ming.lei@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Tue, 27 Aug 2019 08:54:09 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 27 Aug 2019 08:54:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -52,10 +52,13 @@ these submission CPU cores.
 
 Then IRQ flood can be easily triggered, and CPU lockup.
 
-Implement one simple generic CPU IRQ flood detection mechanism. This
-mechanism uses the CPU average interrupt interval to evaluate if IRQ flood
-is triggered. The Exponential Weighted Moving Average(EWMA) is used to
-compute CPU average interrupt interval.
+However, we can't simply use threaded IRQ for avoiding IRQ flood and
+CPU lockup, because thread wakup introduces extra latency, which does
+affect IO latency and throughput a lot.
+
+Add IRQF_RESCUE_THREAD to create one interrupt thread handler for
+avoiding irq flood, and the thread will be waken up for handling
+interrupt in case that IRQ flood is going to be triggered
 
 Cc: Long Li <longli@microsoft.com>
 Cc: Ingo Molnar <mingo@redhat.com>,
@@ -71,170 +74,82 @@ Cc: linux-nvme@lists.infradead.org
 Cc: linux-scsi@vger.kernel.org
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- drivers/base/cpu.c      | 25 ++++++++++++++++++++++
- include/linux/hardirq.h |  2 ++
- kernel/softirq.c        | 46 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 73 insertions(+)
+ include/linux/interrupt.h |  6 ++++++
+ kernel/irq/handle.c       |  6 +++++-
+ kernel/irq/manage.c       | 12 ++++++++++++
+ 3 files changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index cc37511de866..7277d1aa0906 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -20,6 +20,7 @@
- #include <linux/tick.h>
- #include <linux/pm_qos.h>
- #include <linux/sched/isolation.h>
-+#include <linux/hardirq.h>
- 
- #include "base.h"
- 
-@@ -183,10 +184,33 @@ static struct attribute_group crash_note_cpu_attr_group = {
- };
- #endif
- 
-+static ssize_t show_irq_interval(struct device *dev,
-+				 struct device_attribute *attr, char *buf)
-+{
-+	struct cpu *cpu = container_of(dev, struct cpu, dev);
-+	ssize_t rc;
-+	int cpunum;
-+
-+	cpunum = cpu->dev.id;
-+
-+	rc = sprintf(buf, "%llu\n", irq_get_avg_interval(cpunum));
-+	return rc;
-+}
-+
-+static DEVICE_ATTR(irq_interval, 0400, show_irq_interval, NULL);
-+static struct attribute *irq_interval_cpu_attrs[] = {
-+	&dev_attr_irq_interval.attr,
-+	NULL
-+};
-+static struct attribute_group irq_interval_cpu_attr_group = {
-+	.attrs = irq_interval_cpu_attrs,
-+};
-+
- static const struct attribute_group *common_cpu_attr_groups[] = {
- #ifdef CONFIG_KEXEC
- 	&crash_note_cpu_attr_group,
- #endif
-+	&irq_interval_cpu_attr_group,
- 	NULL
- };
- 
-@@ -194,6 +218,7 @@ static const struct attribute_group *hotplugable_cpu_attr_groups[] = {
- #ifdef CONFIG_KEXEC
- 	&crash_note_cpu_attr_group,
- #endif
-+	&irq_interval_cpu_attr_group,
- 	NULL
- };
- 
-diff --git a/include/linux/hardirq.h b/include/linux/hardirq.h
-index da0af631ded5..fd394060ddb3 100644
---- a/include/linux/hardirq.h
-+++ b/include/linux/hardirq.h
-@@ -8,6 +8,8 @@
- #include <linux/vtime.h>
- #include <asm/hardirq.h>
- 
-+extern u64 irq_get_avg_interval(int cpu);
-+extern bool irq_flood_detected(void);
- 
- extern void synchronize_irq(unsigned int irq);
- extern bool synchronize_hardirq(unsigned int irq);
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 0427a86743a4..96e01669a2e0 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -25,6 +25,7 @@
- #include <linux/smpboot.h>
- #include <linux/tick.h>
- #include <linux/irq.h>
-+#include <linux/sched/clock.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/irq.h>
-@@ -52,6 +53,12 @@ DEFINE_PER_CPU_ALIGNED(irq_cpustat_t, irq_stat);
- EXPORT_PER_CPU_SYMBOL(irq_stat);
- #endif
- 
-+struct irq_interval {
-+	u64                     last_irq_end;
-+	u64                     avg;
-+};
-+DEFINE_PER_CPU(struct irq_interval, avg_irq_interval);
-+
- static struct softirq_action softirq_vec[NR_SOFTIRQS] __cacheline_aligned_in_smp;
- 
- DEFINE_PER_CPU(struct task_struct *, ksoftirqd);
-@@ -339,6 +346,41 @@ asmlinkage __visible void do_softirq(void)
- 	local_irq_restore(flags);
- }
- 
-+/*
-+ * Update average irq interval with the Exponential Weighted Moving
-+ * Average(EWMA)
-+ */
-+static void irq_update_interval(void)
-+{
-+#define IRQ_INTERVAL_EWMA_WEIGHT	128
-+#define IRQ_INTERVAL_EWMA_PREV_FACTOR	127
-+#define IRQ_INTERVAL_EWMA_CURR_FACTOR	(IRQ_INTERVAL_EWMA_WEIGHT - \
-+		IRQ_INTERVAL_EWMA_PREV_FACTOR)
-+
-+	int cpu = raw_smp_processor_id();
-+	struct irq_interval *inter = per_cpu_ptr(&avg_irq_interval, cpu);
-+	u64 delta = sched_clock_cpu(cpu) - inter->last_irq_end;
-+
-+	inter->avg = (inter->avg * IRQ_INTERVAL_EWMA_PREV_FACTOR +
-+		delta * IRQ_INTERVAL_EWMA_CURR_FACTOR) /
-+		IRQ_INTERVAL_EWMA_WEIGHT;
-+}
-+
-+u64 irq_get_avg_interval(int cpu)
-+{
-+	return per_cpu_ptr(&avg_irq_interval, cpu)->avg;
-+}
-+
-+/*
-+ * If the average CPU irq interval is less than 8us, we think interrupt
-+ * flood is detected on this CPU
-+ */
-+bool irq_flood_detected(void)
-+{
-+#define  IRQ_FLOOD_THRESHOLD_NS	8000
-+	return raw_cpu_ptr(&avg_irq_interval)->avg <= IRQ_FLOOD_THRESHOLD_NS;
-+}
-+
- /*
-  * Enter an interrupt context.
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 5b8328a99b2a..19fdab18e679 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -61,6 +61,11 @@
+  *                interrupt handler after suspending interrupts. For system
+  *                wakeup devices users need to implement wakeup detection in
+  *                their interrupt handlers.
++ * IRQF_RESCUE_THREAD - Interrupt will be handled in thread context in case
++ *                that irq flood is triggered. Can't afford to always handle
++ *                irq in thread context becasue IO performance drops much by
++ *                the extra wakeup latency. So one backup thread is created
++ *                for avoiding irq flood which may cause CPU lockup.
   */
-@@ -356,6 +398,7 @@ void irq_enter(void)
+ #define IRQF_SHARED		0x00000080
+ #define IRQF_PROBE_SHARED	0x00000100
+@@ -74,6 +79,7 @@
+ #define IRQF_NO_THREAD		0x00010000
+ #define IRQF_EARLY_RESUME	0x00020000
+ #define IRQF_COND_SUSPEND	0x00040000
++#define IRQF_RESCUE_THREAD	0x00080000
+ 
+ #define IRQF_TIMER		(__IRQF_TIMER | IRQF_NO_SUSPEND | IRQF_NO_THREAD)
+ 
+diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
+index a4ace611f47f..8e5312c35483 100644
+--- a/kernel/irq/handle.c
++++ b/kernel/irq/handle.c
+@@ -146,7 +146,11 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
+ 		irqreturn_t res;
+ 
+ 		trace_irq_handler_entry(irq, action);
+-		res = action->handler(irq, action->dev_id);
++		if ((action->flags & IRQF_RESCUE_THREAD) &&
++				irq_flood_detected())
++			res = IRQ_WAKE_THREAD;
++		else
++			res = action->handler(irq, action->dev_id);
+ 		trace_irq_handler_exit(irq, action, res);
+ 
+ 		if (WARN_ONCE(!irqs_disabled(),"irq %u handler %pS enabled interrupts\n",
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index e8f7f179bf77..1566abbf50e8 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1082,6 +1082,8 @@ static int irq_thread(void *data)
+ 	if (force_irqthreads && test_bit(IRQTF_FORCED_THREAD,
+ 					&action->thread_flags))
+ 		handler_fn = irq_forced_thread_fn;
++	else if (action->flags & IRQF_RESCUE_THREAD)
++		handler_fn = irq_forced_thread_fn;
+ 	else
+ 		handler_fn = irq_thread_fn;
+ 
+@@ -2011,6 +2013,16 @@ int request_threaded_irq(unsigned int irq, irq_handler_t handler,
+ 		handler = irq_default_primary_handler;
  	}
  
- 	__irq_enter();
-+	irq_update_interval();
- }
- 
- static inline void invoke_softirq(void)
-@@ -402,6 +445,8 @@ static inline void tick_irq_exit(void)
-  */
- void irq_exit(void)
- {
-+	struct irq_interval *inter = raw_cpu_ptr(&avg_irq_interval);
++	if (irqflags & IRQF_RESCUE_THREAD) {
++		if (irqflags & IRQF_NO_THREAD)
++			return -EINVAL;
++		if (thread_fn)
++			return -EINVAL;
++		if (handler == irq_default_primary_handler)
++			return -EINVAL;
++		thread_fn = handler;
++	}
 +
- #ifndef __ARCH_IRQ_EXIT_IRQS_DISABLED
- 	local_irq_disable();
- #else
-@@ -413,6 +458,7 @@ void irq_exit(void)
- 		invoke_softirq();
- 
- 	tick_irq_exit();
-+	inter->last_irq_end = sched_clock_cpu(smp_processor_id());
- 	rcu_irq_exit();
- 	trace_hardirq_exit(); /* must be last! */
- }
+ 	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
+ 	if (!action)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
