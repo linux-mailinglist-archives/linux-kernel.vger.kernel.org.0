@@ -2,133 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A14899F1C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F6F9F1DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:49:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730376AbfH0RkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 13:40:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47920 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727306AbfH0RkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 13:40:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 490C7AF93;
-        Tue, 27 Aug 2019 17:40:00 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 19:39:55 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pu Wen <puwen@hygon.cn>, Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [GIT pull] x86/urgent for 5.3-rc5
-Message-ID: <20190827173955.GI29752@zn.tnic>
-References: <CAHk-=wiV54LwvWcLeATZ4q7rA5Dd9kE0Lchx=k023kgxFHySNQ@mail.gmail.com>
- <20190825182922.GC20639@zn.tnic>
- <CAHk-=wjhyg-MndXHZGRD+ZKMK1UrcghyLH32rqQA=YmcxV7Z0Q@mail.gmail.com>
- <20190825193218.GD20639@zn.tnic>
- <CAHk-=wiBqmHTFYJWOehB=k3mC7srsx0DWMCYZ7fMOC0T7v1KHA@mail.gmail.com>
- <20190825194912.GF20639@zn.tnic>
- <CAHk-=wjcUQjK=SqPGdZCDEKntOZEv34n9wKJhBrPzcL6J7nDqQ@mail.gmail.com>
- <20190825201723.GG20639@zn.tnic>
- <20190826125342.GC28610@zn.tnic>
- <CAHk-=wj_E58JskechbJyWwpzu5rwKFHEABr4dCZjS+JBvv67Uw@mail.gmail.com>
+        id S1730479AbfH0RtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 13:49:02 -0400
+Received: from cavan.codon.org.uk ([93.93.128.6]:38406 "EHLO
+        cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728371AbfH0Rs6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 13:48:58 -0400
+X-Greylist: delayed 2265 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Aug 2019 13:48:57 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=codon.org.uk; s=63138784; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lLYloM0Ywjig+ulU3rxirWB2hunInBTjYfHlRq1yag0=; b=i4yWR/AGXeNk0efti4p+I0xxR
+        He1mnoWyZPL4x55cesht2sxmTyNiXHwOuyL7xB8q7GvUg6p1hZTfzm6vrlxwxsP1almCB6XTL6qQX
+        mNAr7uZ6CkFnOz2D9Rv+/voSIbzTRnLqlT1cD7Ggd9yTJu/17YA07WnjiesVVv023Nins=;
+Received: from mjg59 by cavan.codon.org.uk with local (Exim 4.89)
+        (envelope-from <mjg59@cavan.codon.org.uk>)
+        id 1i2ezq-00079w-HA; Tue, 27 Aug 2019 18:11:06 +0100
+Date:   Tue, 27 Aug 2019 18:11:06 +0100
+From:   Matthew Garrett <mjg59@srcf.ucam.org>
+To:     Seunghun Han <kkamagui@gmail.com>
+Cc:     Matthew Garrett <mjg59@google.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86: tpm: Remove a busy bit of the NVS area for
+ supporting AMD's fTPM
+Message-ID: <20190827171106.owkvt6slwwg5ypyl@srcf.ucam.org>
+References: <20190826081752.57258-1-kkamagui@gmail.com>
+ <CACdnJutomLNthYDzEc0wFBcBHK5iqnk0p-hkAkp57zQZ38oGPA@mail.gmail.com>
+ <CAHjaAcSFhQsDYL2iRwwhyvxh9mH4DhxZ__DNzhtk=iiZZ5JdbA@mail.gmail.com>
+ <CACdnJutfR2X-5ksXw4PNUdyH2MJs_mExNCcYPp8NLcPW2EDrYQ@mail.gmail.com>
+ <CAHjaAcSpU0eW5PLsEpxTkycwi+wNS67xeizb6_BMM_-qUZYAmg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wj_E58JskechbJyWwpzu5rwKFHEABr4dCZjS+JBvv67Uw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHjaAcSpU0eW5PLsEpxTkycwi+wNS67xeizb6_BMM_-qUZYAmg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: mjg59@cavan.codon.org.uk
+X-SA-Exim-Scanned: No (on cavan.codon.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 09:55:08AM -0700, Linus Torvalds wrote:
-> Side note: I'd suggest
-> 
->         if (WARN_ON_ONCE(!changed))
->                 pr_emerg("RDRAND gives funky smelling output, might
-> consider not using it by booting with \"nordrand\"");
-> 
-> instead.
+On Wed, Aug 28, 2019 at 01:36:30AM +0900, Seunghun Han wrote:
 
-Done, final result with a proper commit message below.
+> I got your point. Is there any problem if some regions which don't
+> need to be handled in NVS area are saved and restored? If there is a
+> problem, how about adding code for ignoring the regions in NVS area to
+> the nvs.c file like Jarkko said? If we add the code, we can save and
+> restore NVS area without driver's interaction.
 
-Do you want it this weekend, after some smoke testing on boxes or should
-I leave it a couple of weeks in tip until the merge window opens, and
-then queue it for 5.4 for longer exposure in linux-next?
+The only thing that knows which regions should be skipped by the NVS 
+driver is the hardware specific driver, so the TPM driver needs to ask 
+the NVS driver to ignore that region and grant control to the TPM 
+driver.
 
-Thx.
-
----
-From: Borislav Petkov <bp@suse.de>
-Date: Sun, 25 Aug 2019 22:50:18 +0200
-Subject: [PATCH] x86/rdrand: Sanity-check RDRAND output
-
-It turned out recently that on certain AMD F15h and F16h machines, due
-to the BIOS dropping the ball after resume, yet again, RDRAND would not
-function anymore:
-
-  c49a0a80137c ("x86/CPU/AMD: Clear RDRAND CPUID bit on AMD family 15h/16h")
-
-Add a silly test to the CPU bringup path, to sanity-check the random
-data RDRAND returns and scream as loudly as possible if that returned
-random data doesn't change.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/CAHk-=wjWPDauemCmLTKbdMYFB0UveMszZpcrwoUkJRRWKrqaTw@mail.gmail.com
----
- arch/x86/kernel/cpu/rdrand.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/rdrand.c b/arch/x86/kernel/cpu/rdrand.c
-index 5c900f9527ff..c4be62058dd9 100644
---- a/arch/x86/kernel/cpu/rdrand.c
-+++ b/arch/x86/kernel/cpu/rdrand.c
-@@ -29,7 +29,8 @@ __setup("nordrand", x86_rdrand_setup);
- #ifdef CONFIG_ARCH_RANDOM
- void x86_init_rdrand(struct cpuinfo_x86 *c)
- {
--	unsigned long tmp;
-+	unsigned int changed = 0;
-+	unsigned long tmp, prev;
- 	int i;
- 
- 	if (!cpu_has(c, X86_FEATURE_RDRAND))
-@@ -42,5 +43,24 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
- 			return;
- 		}
- 	}
-+
-+	/*
-+	 * Stupid sanity-check whether RDRAND does *actually* generate
-+	 * some at least random-looking data.
-+	 */
-+	prev = tmp;
-+	for (i = 0; i < SANITY_CHECK_LOOPS; i++) {
-+		if (rdrand_long(&tmp)) {
-+			if (prev != tmp)
-+				changed++;
-+
-+			prev = tmp;
-+		}
-+	}
-+
-+	if (WARN_ON_ONCE(!changed))
-+		pr_emerg(
-+"RDRAND gives funky smelling output, might consider not using it by booting with \"nordrand\"");
-+
- }
- #endif
 -- 
-2.21.0
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Mary Higgins, Sri Rasiah, HRB 21284 (AG Nürnberg)
--- 
+Matthew Garrett | mjg59@srcf.ucam.org
