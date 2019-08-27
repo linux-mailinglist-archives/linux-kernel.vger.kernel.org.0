@@ -2,128 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9FA59E63F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 12:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B70E9E642
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 13:00:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbfH0K7f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 06:59:35 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52900 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfH0K7e (ORCPT
+        id S1729041AbfH0LAS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 07:00:18 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47686 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfH0LAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 06:59:34 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7RAxF45051356;
-        Tue, 27 Aug 2019 05:59:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566903555;
-        bh=5L8fTBAPAUD1wvBa2VIqOhwiyYh0NH9SJJH4PTKUqsY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=LRt7deMtZhLAFFrLeVm+jWzpQxgCHZIihH4jFGB0DFLIX7uwJPkfk01JgmGJ4lwXG
-         u2Th8oXO0O2XLXWKuIZ6H//GX2RBC/hlxxPz3ptEcJUmYJfIV3aiXn+X4SSF7/7rpf
-         MjaMRHr8i539FlB++abyxPfHd9vZKbQ7JWYfmIFo=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7RAxFSg029003
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Aug 2019 05:59:15 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 27
- Aug 2019 05:59:14 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 27 Aug 2019 05:59:14 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7RAxAKl111334;
-        Tue, 27 Aug 2019 05:59:11 -0500
-Subject: Re: [Patch v3] drivers: mtd: spi-nor: Add flash property for
- mt25qu512a and mt35xu02g
-To:     Ashish Kumar <Ashish.Kumar@nxp.com>, <tudor.ambarus@microchip.com>,
-        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <linux-mtd@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Kuldeep Singh <kuldeep.singh@nxp.com>
-References: <1565692705-27749-1-git-send-email-Ashish.Kumar@nxp.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <9e1986a4-abe6-60f7-5b21-82ff8145f2cc@ti.com>
-Date:   Tue, 27 Aug 2019 16:29:48 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 27 Aug 2019 07:00:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mABMcH5HUXQ/Q6YWOuJJcz06DxftCmdBtzVd6s8/bVM=; b=Jyx10YUPIHl82g2sCLZ/LBjuK
+        /bSPXp6iUhxDqwZxRw3AmFM7lCYg9rZCjWZ6JqbQmyjUo9VqXfg3sLC5nZakJVHypmPVbiEEuKsbM
+        h8QWektPPpSPoXOCEWtY9NJc58XYSIWEuZBDiRAg7qB/nyrsU1ysipqPuy+/4t5kK1O5g=;
+Received: from [92.54.175.117] (helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1i2ZCw-0007wq-RE; Tue, 27 Aug 2019 11:00:14 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 71A09D02CE6; Tue, 27 Aug 2019 12:00:14 +0100 (BST)
+Date:   Tue, 27 Aug 2019 12:00:14 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ricard Wanderlof <ricard.wanderlof@axis.com>,
+        Ricard Wanderlof <ricardw@axis.com>
+Subject: Re: [PATCH AUTOSEL 5.2 040/123] ASoC: Fail card instantiation if DAI
+ format setup fails
+Message-ID: <20190827110014.GD23391@sirena.co.uk>
+References: <20190814021047.14828-1-sashal@kernel.org>
+ <20190814021047.14828-40-sashal@kernel.org>
+ <20190814092213.GC4640@sirena.co.uk>
+ <20190826013515.GG5281@sasha-vm>
 MIME-Version: 1.0
-In-Reply-To: <1565692705-27749-1-git-send-email-Ashish.Kumar@nxp.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ofQ+NWZjH2FySEVi"
+Content-Disposition: inline
+In-Reply-To: <20190826013515.GG5281@sasha-vm>
+X-Cookie: Don't SANFORIZE me!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--ofQ+NWZjH2FySEVi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 13/08/19 4:08 PM, Ashish Kumar wrote:
-> mt25qu512a is rebranded after its spinoff from STM, so it is
-> different only in term of operating frequency, initial JEDEC id
-> is same as that of n25q512a. In order to avoid any confussion
-> with respect to name new entry is added.
-> This flash is tested for Single I/O and QUAD I/O mode on LS1046FRWY.
-> 
-> mt35xu02g is Octal flash supporting Single I/O and QCTAL I/O
-> and it has been tested on LS1028ARDB
-> 
-$subject should start as "mtd: spi-nor:" and should be tweaked as:
+On Sun, Aug 25, 2019 at 09:35:15PM -0400, Sasha Levin wrote:
+> On Wed, Aug 14, 2019 at 10:22:13AM +0100, Mark Brown wrote:
 
-mtd: spi-nor: Add mt25qu512a and mt35xu02g flash entries
+> > > If the DAI format setup fails, there is no valid communication format
+> > > between CPU and CODEC, so fail card instantiation, rather than continue
+> > > with a card that will most likely not function properly.
 
-May be Tudor can fix this while applying, if there are no further comments.
+> > This is another one where if nobody noticed a problem already and things
+> > just happened to be working this might break things, it's vanishingly
+> > unlikely to fix anything that was broken.
 
-Regards
-Vignesh
+> Same as the other patch: this patch suggests it fixes a real bug, and if
+> this patch is broken let's fix it.
 
-> Signed-off-by: Kuldeep Singh <kuldeep.singh@nxp.com>
-> Signed-off-by: Ashish Kumar <ashish.kumar@nxp.com>
-> ---
-> v3:
-> -Reword commits msg
-> -rebase to top of mtd-linux spi-nor/next
-> v2:
-> Incorporate review comments from Vignesh
-> 
->  drivers/mtd/spi-nor/spi-nor.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 03cc788..97d3de8 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -1988,6 +1988,12 @@ static const struct flash_info spi_nor_ids[] = {
->  	{ "n25q128a13",  INFO(0x20ba18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
->  	{ "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
->  	{ "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_QUAD_READ) },
-> +
-> +	/* Micron */
-> +	{ "mt25qu512a", INFO6(0x20bb20, 0x104400, 64 * 1024, 1024, SECT_4K |
-> +				USE_FSR | SPI_NOR_DUAL_READ |
-> +				SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
-> +
->  	{ "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
->  	{ "n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
->  	{ "n25q00",      INFO(0x20ba21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
-> @@ -2003,6 +2009,9 @@ static const struct flash_info spi_nor_ids[] = {
->  			SECT_4K | USE_FSR | SPI_NOR_OCTAL_READ |
->  			SPI_NOR_4B_OPCODES)
->  	},
-> +	{ "mt35xu02g",  INFO(0x2c5b1c, 0, 128 * 1024, 2048,
-> +			SECT_4K | USE_FSR | SPI_NOR_OCTAL_READ |
-> +			SPI_NOR_4B_OPCODES) },
->  
->  	/* PMC */
->  	{ "pm25lv512",   INFO(0,        0, 32 * 1024,    2, SECT_4K_PMC) },
-> 
+If anyone ran into this on the older kernel and fixed or worked
+around it locally there's a reasonable chance this will then
+break what they're doing.  The patch itself is perfectly fine but
+that doesn't mean the rest of the changes it's being backported
+into are also fine.
 
--- 
-Regards
-Vignesh
+--ofQ+NWZjH2FySEVi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1lDT0ACgkQJNaLcl1U
+h9BjVAf/boHZSbqg/5cIB1wL6zlEEE8r9u8Iz9v1u3dB2EpNj81ARXzDX1EjPwU3
+TE930t5hNdqrttap4ejbM7ndJFps7UxtNjQ/cjwAGgSndl04wdrAePhmGp4m+ZBj
+0nABy4K9WXedeEl5LrpafxYHymGZBceNPg8ZyJNrFcuC7US6zgPvbdgt3Medp98X
+yp0mprlLwb/0rrdWB/8ZO9XRagC2AOkpqWHKJ9tDl09Bab1AlSipdX6E/vA7fuEG
+YYbsPoGx4uKkuhxxZ+bvylbB5PqwQndoy3OTFHmGrJZjmSoJaz8Qs57pRrh+EE30
+D+6QDIkvBcg0YjTvppWXYDwqkcLrrw==
+=wi+f
+-----END PGP SIGNATURE-----
+
+--ofQ+NWZjH2FySEVi--
