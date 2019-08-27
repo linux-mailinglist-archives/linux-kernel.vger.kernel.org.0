@@ -2,88 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 556CA9F390
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:52:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DA789F391
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731449AbfH0Tw2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 15:52:28 -0400
-Received: from mga14.intel.com ([192.55.52.115]:28013 "EHLO mga14.intel.com"
+        id S1731114AbfH0TxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 15:53:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731424AbfH0TwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 15:52:25 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 12:52:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,438,1559545200"; 
-   d="scan'208";a="171307402"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga007.jf.intel.com with ESMTP; 27 Aug 2019 12:52:24 -0700
-Date:   Tue, 27 Aug 2019 12:52:24 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Roman Kagan <rkagan@virtuozzo.com>
-Subject: Re: [PATCH 3/3] KVM: x86: announce KVM_CAP_HYPERV_ENLIGHTENED_VMCS
- support only when it is available
-Message-ID: <20190827195224.GI27459@linux.intel.com>
-References: <20190827160404.14098-1-vkuznets@redhat.com>
- <20190827160404.14098-4-vkuznets@redhat.com>
- <CALMp9eRyabQA8v5cJ1AwmtFdNFvWQz2jQ+iGTRQjow7r4FV3xA@mail.gmail.com>
+        id S1730035AbfH0TxN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 15:53:13 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B4E020674;
+        Tue, 27 Aug 2019 19:53:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566935592;
+        bh=7VnK6jTegEgCwnXp3D+hXbGW8Nj3/vYjUFUDbB74H3M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G57nGQjgYnA8J8+Ce44IdVaphL5OlxfyJkmJmLzEtpq5ncjxFqyZsqqwOobChc9s2
+         4gob3xrM9LR03gkCPdUZQAvsg2gVGvvHBm8tvcd4fpOBHHfJvlNHDX0bB0SLGYiX0D
+         2aD41ZJAND8NhbGtoFiSbGrHe0Ygf82+wEjG2UTg=
+Date:   Tue, 27 Aug 2019 21:53:10 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-spdx@vger.kernel.org
+Subject: [PATCH v2] MAINTAINERS: add entry for LICENSES and SPDX stuff
+Message-ID: <20190827195310.GA30618@kroah.com>
+References: <20190827172519.GA28849@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALMp9eRyabQA8v5cJ1AwmtFdNFvWQz2jQ+iGTRQjow7r4FV3xA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190827172519.GA28849@kroah.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 09:54:39AM -0700, Jim Mattson wrote:
-> On Tue, Aug 27, 2019 at 9:04 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
-> >
-> > It was discovered that after commit 65efa61dc0d5 ("selftests: kvm: provide
-> > common function to enable eVMCS") hyperv_cpuid selftest is failing on AMD.
-> > The reason is that the commit changed _vcpu_ioctl() to vcpu_ioctl() in the
-> > test and this one can't fail.
-> >
-> > Instead of fixing the test is seems to make more sense to not announce
-> > KVM_CAP_HYPERV_ENLIGHTENED_VMCS support if it is definitely missing
-> > (on svm and in case kvm_intel.nested=0).
-> >
-> > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> > ---
-> >  arch/x86/kvm/x86.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index d1cd0fcff9e7..ef2e8b138300 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -3106,7 +3106,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
-> >         case KVM_CAP_HYPERV_EVENTFD:
-> >         case KVM_CAP_HYPERV_TLBFLUSH:
-> >         case KVM_CAP_HYPERV_SEND_IPI:
-> > -       case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
-> >         case KVM_CAP_HYPERV_CPUID:
-> >         case KVM_CAP_PCI_SEGMENT:
-> >         case KVM_CAP_DEBUGREGS:
-> > @@ -3183,6 +3182,8 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
-> >                 r = kvm_x86_ops->get_nested_state ?
-> >                         kvm_x86_ops->get_nested_state(NULL, NULL, 0) : 0;
-> >                 break;
-> > +       case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
-> > +               r = kvm_x86_ops->nested_enable_evmcs != NULL;
-> 
-> You should probably have an explicit break here, in case someone later
-> adds another case below.
+Thomas and I seem to have become the "unofficial" maintainers for these
+files and questions about SPDX things.  So let's make it official.
 
-Yep, this will trigger a warning on compilers with -Wimplicit-fallthrough.
+Reported-by: "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+v2:	add Documentation/process/license-rules.rst
+
+ MAINTAINERS |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9234,6 +9234,18 @@ F:	include/linux/nd.h
+ F:	include/linux/libnvdimm.h
+ F:	include/uapi/linux/ndctl.h
+ 
++LICENSES and SPDX stuff
++M:	Thomas Gleixner <tglx@linutronix.de>
++M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
++L:	linux-spdx@vger.kernel.org
++S:	Maintained
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/spdx.git
++F:	COPYING
++F:	Documentation/process/license-rules.rst
++F:	LICENSES/
++F:	scripts/spdxcheck-test.sh
++F:	scripts/spdxcheck.py
++
+ LIGHTNVM PLATFORM SUPPORT
+ M:	Matias Bjorling <mb@lightnvm.io>
+ W:	http://github/OpenChannelSSD
