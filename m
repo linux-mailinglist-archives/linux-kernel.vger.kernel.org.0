@@ -2,123 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8A439F5F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3B589F5F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:22:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbfH0WVh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 18:21:37 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45460 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfH0WVh (ORCPT
+        id S1726372AbfH0WVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 18:21:51 -0400
+Received: from mail-pg1-f202.google.com ([209.85.215.202]:48501 "EHLO
+        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfH0WVu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 18:21:37 -0400
-Received: by mail-pg1-f193.google.com with SMTP id o13so219722pgp.12
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 15:21:36 -0700 (PDT)
+        Tue, 27 Aug 2019 18:21:50 -0400
+Received: by mail-pg1-f202.google.com with SMTP id k20so362224pgg.15
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 15:21:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=+QV1lxfro+2xR75kWYH74+2iVl7rk3tcmnqLNLA7fCo=;
-        b=iJ+G8JlwHiPuZWkUcHmYZ1wNy1XV+y4WOsqYeulXbySkVPtadrhuD6PODEirTRSnKz
-         PcmSWctkTfOPUu2QdZLFCLjZgzPgHst9fW09h2thERpJdEd+shbFxcGg3NxGNiN8VNJj
-         j9c6N9CjbAt69F46n4zHU08vNJUrqAYEuBt4Aown2HorEx/NH++awnk3shP7rl07I5Y3
-         /uaAKAwkv9sRdPF2Uhz1rrW2zwQt9AGvzdnEJfrhJMjA0hqdBXf2Nq2W9HlLqJNzw2jQ
-         HsedPaxYFjjGYIDJ9uW+Nv3LIo/RUfG0ymLrYn+8NxYVgYNYVR14RlELOsfdzTfWzeDM
-         mTwA==
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=wPnUIXwCje9aioFwSMDUTow4aP7pSBCci968MTKmxQQ=;
+        b=DdqrFlgDVEKBQRVomjmwGlh+g1qgU4hmZKsta/aQ5aRsMW9z4MQJfZot5WL/rvHKT7
+         iF5w+r1VrrTBp2XIwotbSYASAMLUhwb40F5Zg89vSzH08qYTkCJGvdDWOchP84tikp9e
+         rSJgwWuDa25OB3hj7O8UvPBtF/GRkbhXhf36MipO/bcYKIEA1AqvtPMfgY23nmSSSUGj
+         2U8gVr9i397FVT7pmFsp9L8p758k/uD+gh/7gGIlmR+3DNetyIKnVl5kuXerOQyOsnzr
+         0YmfG839b3HE4F83Z6ShA4KYsUidQ2COKZMQA+54vkgN/qGZl9bodtCLF9qtELgdBiI1
+         hI+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=+QV1lxfro+2xR75kWYH74+2iVl7rk3tcmnqLNLA7fCo=;
-        b=mHDNJsS0MPMEdCr/lgytDR7H42sRRJ3hXY33F2sRMExBV4VkiMi0MCjHbzx+GymvAw
-         VGyWe7OqOY4769aZGg4NEdx/3Tf4uQ2szEhjSufHVGiipDTS3mXOvujPDwtexWybn9id
-         tPbXtVq6HVMv/nxY4B8j+5o9RgWHrPJUDtp9gsAWOGrLnC7DkRyzCo/4wEFuvaoyaQgN
-         dclW+gtInCScOmdR0B8M/RmO7VuZ/70VDhAyF9TyfMMIcnM/zZPstiRUSdwYDLA4zBaG
-         zqs30xsxERGcI5xtZdV5/5RCz/jtUfo/KJJs/h+rBHII0t0W6S95NzVDobammOocgbL7
-         DetQ==
-X-Gm-Message-State: APjAAAUB2c96RUnAHhXo71StnnLrTrkJECMVZ1Umdc1/foyJO070Vf1N
-        juGF6uAqPVZjIiKanqfWzNFaFg==
-X-Google-Smtp-Source: APXvYqyco51mSNQzAaGPYLSKHmnGSAdHb2J1OzexYesNtAuslu1oxLH/YK/Ojv+o6ZBh9nX/zUeuRA==
-X-Received: by 2002:a63:fc09:: with SMTP id j9mr600765pgi.377.1566944496183;
-        Tue, 27 Aug 2019 15:21:36 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:cc35:e750:308e:47f])
-        by smtp.gmail.com with ESMTPSA id p189sm306576pfb.112.2019.08.27.15.21.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Aug 2019 15:21:35 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>, ulf.hansson@linaro.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>, linux-pm@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] arm64: meson: add support for SM1 Power Domains
-In-Reply-To: <20190823090418.17148-1-narmstrong@baylibre.com>
-References: <20190823090418.17148-1-narmstrong@baylibre.com>
-Date:   Tue, 27 Aug 2019 15:21:35 -0700
-Message-ID: <7hef16uu4w.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=wPnUIXwCje9aioFwSMDUTow4aP7pSBCci968MTKmxQQ=;
+        b=nJNOIxFVeUd2NsuykXvEiUJsyVKU9vkpVNX3ZSXJgEo0R0AHOg0v0Mb0ZOvRd3ESM1
+         I7MrGtprx/dlQum1SlRw2nmrUPOcO9bhBVs+vMkmVaHF4YiuQPnyFYT2d17OHAY/UVDb
+         HssNbxUcaZVSRvp9xH8365XF+96uM248yPXKSVr1KMFjxm1EqD88te7IgiXe5P/PsTW+
+         V4edwQUmfel0QmtnNp9LnygxXptf6HRQmJqoZYVC7UP73XzTMCsq7fLU3xPPuXxR4adU
+         Z4132pp2DqWnXjGV9vm/scCptX70AW3pc45Aj8mv4ZZl/ljc5YMbVwVoVN0NW9TUo1Wk
+         haWA==
+X-Gm-Message-State: APjAAAV1+W+PGnN1UOVjpl3lUHjYDXadHT/b7ye7czcIxcXurbR0vntS
+        zH/wOYsYjs4BTnkDaSwonTaygU8ChXXR
+X-Google-Smtp-Source: APXvYqxtskkh8g9jAVNThHQtjXrbaE3Q7xH0UD9TjZRkMlkr+CxfWcD3QxLwidkiGXvaW+Vd2RCLr9hC0nhV
+X-Received: by 2002:a63:40a:: with SMTP id 10mr636802pge.317.1566944509926;
+ Tue, 27 Aug 2019 15:21:49 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 15:21:44 -0700
+In-Reply-To: <20190827062309.GA30987@kroah.com>
+Message-Id: <20190827222145.32642-1-rajatja@google.com>
+Mime-Version: 1.0
+References: <20190827062309.GA30987@kroah.com>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+Subject: [PATCH v3 1/2] PCI/AER: Add PoisonTLPBlocked to Uncorrectable errors
+From:   Rajat Jain <rajatja@google.com>
+To:     gregkh@linuxfoundation.com, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rajat Jain <rajatja@google.com>, rajatxjain@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+The elements in the aer_uncorrectable_error_string[] refer to
+the bit names in Uncorrectable Error status Register in the PCIe spec
+(Sec 7.8.4.2 in PCIe 4.0)
 
-> This patchset introduces a new "Everything-Else Power Domain Controller"
-> designed to handle all the different non-Always On peripherals like :
-> - VPU
-> - Ethernet Memories
-> - USB, PCIe, Audio, NNA on SM1
->
-> The current "gx-vpu-pwrc" process has been integrated to support the VPU
-> and the other power domains in a single driver.
->
-> Support for SoC domains has been made generic and easily extendable.
->
-> In order to restart from clean architecture :
-> - the PWRC node has been moved into the HHI simple-mfd, this suits much
->   better than beeing in the AO RTI simple-mfd
-> - a brand new yaml bindings schemas has been written
-> - reset-names has been added to clarify which resets are needed, so we can
->   dispatch them to domains
->
-> For G12A, the PWRC now offers support for the ethmac memory power domain.
->
-> For SM1, it also offers support for PCIe, USB, NNA, ethmac and Audio power
-> domains.
->
-> The DOS domains has been excluded for now, but can be added very easily.
->
-> GX hasn't been integrated for now, but it would follow the same scheme
-> as G12A support.
->
-> Changes since v1 at [1]:
-> - removed open-coded reset & clock get, enable/assert, disable/deassert
-> - moved to clk_bulk and reset_array with count check with a warning
-> - removed remaining sm1_pwrc in probe
-> - reordered arguments for VPU_PD and TOP_PD
-> - added get_power for TOP_PD aswell
-> - ported special VPU handling from gx-vpu-pwrc
-> - added shutdown driver call to avoid errors on reboot
-> - fixed patch 4 commit log
-> - collected rob's review tag on patch 1
->
-> [1] https://patchwork.kernel.org/cover/11106393/
+Add the last error bit in the strings array that was missing.
 
-Series queued for v5.4...
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+v3: same as v2
+v2: same as v1
 
-> Neil Armstrong (5):
->   dt-bindings: power: add Amlogic Everything-Else power domains bindings
->   soc: amlogic: Add support for Everything-Else power domains controller
+ drivers/pci/pcie/aer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-These two in v5.4/drivers,
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index b45bc47d04fe..68060a290291 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -36,7 +36,7 @@
+ #define AER_ERROR_SOURCES_MAX		128
+ 
+ #define AER_MAX_TYPEOF_COR_ERRS		16	/* as per PCI_ERR_COR_STATUS */
+-#define AER_MAX_TYPEOF_UNCOR_ERRS	26	/* as per PCI_ERR_UNCOR_STATUS*/
++#define AER_MAX_TYPEOF_UNCOR_ERRS	27	/* as per PCI_ERR_UNCOR_STATUS*/
+ 
+ struct aer_err_source {
+ 	unsigned int status;
+@@ -560,6 +560,7 @@ static const char *aer_uncorrectable_error_string[AER_MAX_TYPEOF_UNCOR_ERRS] = {
+ 	"BlockedTLP",			/* Bit Position 23	*/
+ 	"AtomicOpBlocked",		/* Bit Position 24	*/
+ 	"TLPBlockedErr",		/* Bit Position 25	*/
++	"PoisonTLPBlocked",		/* Bit Position 26	*/
+ };
+ 
+ static const char *aer_agent_string[] = {
+-- 
+2.23.0.187.g17f5b7556c-goog
 
->   arm64: meson-g12: add Everything-Else power domain controller
->   arm64: dts: meson-sm1-sei610: add HDMI display support
->   arm64: dts: meson-sm1-sei610: add USB support
-
-and these 3 in v5.4/dt64,
-
-Thanks,
-
-Kevin
