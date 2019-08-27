@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 967149E170
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:12:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CDF69E139
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731298AbfH0H7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:59:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53624 "EHLO mail.kernel.org"
+        id S1731946AbfH0ICX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:02:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731291AbfH0H7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:59:47 -0400
+        id S1731863AbfH0ICE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:02:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B81D52186A;
-        Tue, 27 Aug 2019 07:59:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3FCF20828;
+        Tue, 27 Aug 2019 08:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892786;
-        bh=OkhriDzPXJ2ft+U5w8rso8ZEaQTThAc6E1KDJGi771c=;
+        s=default; t=1566892923;
+        bh=6abIy+WU9xfUE0ZIkiK0oS8B9mSv4+iueYbcm3+7bpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vo7aFEJ3Q75DhwL6EiDb1kyPX5Ubny+pHuRyinfZm6gu15jTc7+nP1uIu7RZNkT00
-         pkqovgymDE6fFaO0xssvlYzLk+ZOCuzGdjpKd3B5Ufaw9WH5THUN6R9qHFelCQdcj7
-         NzvEfblyMCJHrzgxzcxb2SmStKyklFIbfWJ532Zc=
+        b=PR58BmR/Ex4ZfQ8ypHTCczaQpRo4OjH/08W+IKIynmmMRgXXzL87UybUzXUf3z47L
+         OMP6bpV2demUWMAa0x1h9hP1+KOQxa8y00AVfurQfwpwKLoiqEDJy5w44bEncL5eL9
+         W5X9HQxuKTUj7PUU2JgSXvTa+Z6XWVuvHjmXvYKk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        stable@vger.kernel.org,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 004/162] ASoC: audio-graph-card: fix use-after-free in graph_dai_link_of_dpcm()
-Date:   Tue, 27 Aug 2019 09:48:52 +0200
-Message-Id: <20190827072738.306153730@linuxfoundation.org>
+Subject: [PATCH 5.2 018/162] ASoC: dapm: Fix handling of custom_stop_condition on DAPM graph walks
+Date:   Tue, 27 Aug 2019 09:49:06 +0200
+Message-Id: <20190827072738.963720616@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -45,106 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit aa2e362cb6b3f5ca88093ada01e1a0ace8a517b2 ]
+[ Upstream commit 8dd26dff00c0636b1d8621acaeef3f6f3a39dd77 ]
 
-After calling of_node_put() on the ports, port, and node variables,
-they are still being used, which may result in use-after-free.
-Fix this issue by calling of_node_put() after the last usage.
+DPCM uses snd_soc_dapm_dai_get_connected_widgets to build a
+list of the widgets connected to a specific front end DAI so it
+can search through this list for available back end DAIs. The
+custom_stop_condition was added to is_connected_ep to facilitate this
+list not containing more widgets than is necessary. Doing so both
+speeds up the DPCM handling as less widgets need to be searched and
+avoids issues with CODEC to CODEC links as these would be confused
+with back end DAIs if they appeared in the list of available widgets.
 
-Fixes: dd98fbc558a0 ("ASoC: audio-graph-card: cleanup DAI link loop method - step1")
-Link: https://lore.kernel.org/r/1562743509-30496-4-git-send-email-wen.yang99@zte.com.cn
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+custom_stop_condition was implemented by aborting the graph walk
+when the condition is triggered, however there is an issue with this
+approach. Whilst walking the graph is_connected_ep should update the
+endpoints cache on each widget, if the walk is aborted the number
+of attached end points is unknown for that sub-graph. When the stop
+condition triggered, the original patch ignored the triggering widget
+and returned zero connected end points; a later patch updated this
+to set the triggering widget's cache to 1 and return that. Both of
+these approaches result in inaccurate values being stored in various
+end point caches as the values propagate back through the graph,
+which can result in later issues with widgets powering/not powering
+unexpectedly.
+
+As the original goal was to reduce the size of the widget list passed
+to the DPCM code, the simplest solution is to limit the functionality
+of the custom_stop_condition to the widget list. This means the rest
+of the graph will still be processed resulting in correct end point
+caches, but only widgets up to the stop condition will be added to the
+returned widget list.
+
+Fixes: 6742064aef7f ("ASoC: dapm: support user-defined stop condition in dai_get_connected_widgets")
+Fixes: 5fdd022c2026 ("ASoC: dpcm: play nice with CODEC<->CODEC links")
+Fixes: 09464974eaa8 ("ASoC: dapm: Fix to return correct path list in is_connected_ep.")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Link: https://lore.kernel.org/r/20190718084333.15598-1-ckeepax@opensource.cirrus.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/generic/audio-graph-card.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ sound/soc/soc-dapm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
-index 70ed28d97d497..d5188a179378f 100644
---- a/sound/soc/generic/audio-graph-card.c
-+++ b/sound/soc/generic/audio-graph-card.c
-@@ -222,10 +222,6 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index c91df5a9c8406..835ce1ff188d9 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -1156,8 +1156,8 @@ static __always_inline int is_connected_ep(struct snd_soc_dapm_widget *widget,
+ 		list_add_tail(&widget->work_list, list);
  
- 	dev_dbg(dev, "link_of DPCM (%pOF)\n", ep);
+ 	if (custom_stop_condition && custom_stop_condition(widget, dir)) {
+-		widget->endpoints[dir] = 1;
+-		return widget->endpoints[dir];
++		list = NULL;
++		custom_stop_condition = NULL;
+ 	}
  
--	of_node_put(ports);
--	of_node_put(port);
--	of_node_put(node);
--
- 	if (li->cpu) {
- 		int is_single_links = 0;
- 
-@@ -243,17 +239,17 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 
- 		ret = asoc_simple_parse_cpu(ep, dai_link, &is_single_links);
- 		if (ret)
--			return ret;
-+			goto out_put_node;
- 
- 		ret = asoc_simple_parse_clk_cpu(dev, ep, dai_link, dai);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		ret = asoc_simple_set_dailink_name(dev, dai_link,
- 						   "fe.%s",
- 						   dai_link->cpu_dai_name);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		/* card->num_links includes Codec */
- 		asoc_simple_canonicalize_cpu(dai_link, is_single_links);
-@@ -277,17 +273,17 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 
- 		ret = asoc_simple_parse_codec(ep, dai_link);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		ret = asoc_simple_parse_clk_codec(dev, ep, dai_link, dai);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		ret = asoc_simple_set_dailink_name(dev, dai_link,
- 						   "be.%s",
- 						   codecs->dai_name);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		/* check "prefix" from top node */
- 		snd_soc_of_parse_node_prefix(top, cconf, codecs->of_node,
-@@ -307,19 +303,23 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 
- 	ret = asoc_simple_parse_tdm(ep, dai);
- 	if (ret)
--		return ret;
-+		goto out_put_node;
- 
- 	ret = asoc_simple_parse_daifmt(dev, cpu_ep, codec_ep,
- 				       NULL, &dai_link->dai_fmt);
- 	if (ret < 0)
--		return ret;
-+		goto out_put_node;
- 
- 	dai_link->dpcm_playback		= 1;
- 	dai_link->dpcm_capture		= 1;
- 	dai_link->ops			= &graph_ops;
- 	dai_link->init			= asoc_simple_dai_init;
- 
--	return 0;
-+out_put_node:
-+	of_node_put(ports);
-+	of_node_put(port);
-+	of_node_put(node);
-+	return ret;
- }
- 
- static int graph_dai_link_of(struct asoc_simple_priv *priv,
+ 	if ((widget->is_ep & SND_SOC_DAPM_DIR_TO_EP(dir)) && widget->connected) {
+@@ -1194,8 +1194,8 @@ static __always_inline int is_connected_ep(struct snd_soc_dapm_widget *widget,
+  *
+  * Optionally, can be supplied with a function acting as a stopping condition.
+  * This function takes the dapm widget currently being examined and the walk
+- * direction as an arguments, it should return true if the walk should be
+- * stopped and false otherwise.
++ * direction as an arguments, it should return true if widgets from that point
++ * in the graph onwards should not be added to the widget list.
+  */
+ static int is_connected_output_ep(struct snd_soc_dapm_widget *widget,
+ 	struct list_head *list,
 -- 
 2.20.1
 
