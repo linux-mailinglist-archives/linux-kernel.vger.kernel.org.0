@@ -2,169 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A9B9DD61
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 07:59:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F0BC9DD65
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:01:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbfH0F7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 01:59:40 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39424 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfH0F7k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 01:59:40 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7R5xSHV087937;
-        Tue, 27 Aug 2019 00:59:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566885568;
-        bh=P4oNuerC0LXCGxytQnNK5ZvXLlbp4WG7fggGH4SexHA=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=YMsm+o6gEfozuhAyKFfpLA022t7HmAkv9JTcolEqnneQAcGDrhKOP7FnJYrQno+du
-         NjA4/eg6wD6XcPALz+OPuziyjJXp5kqbtr34zGOiRRHUiGer0hQ8TI0Gu3uIVCLimF
-         vHNIgKjNTzvAtF7x6CSzqxHgF7q2HkN3F09bLIcY=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7R5xSZU100761
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Aug 2019 00:59:28 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 27
- Aug 2019 00:59:27 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 27 Aug 2019 00:59:27 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7R5xO7I057803;
-        Tue, 27 Aug 2019 00:59:25 -0500
-Subject: Re: [RESEND PATCH v3 08/20] mtd: spi-nor: Split spi_nor_init_params()
-To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>,
-        <marek.vasut@gmail.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190826120821.16351-1-tudor.ambarus@microchip.com>
- <20190826120821.16351-9-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <db529e35-801c-efb2-1f05-922fbcb98aef@ti.com>
-Date:   Tue, 27 Aug 2019 11:30:02 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729313AbfH0GBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 02:01:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51928 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725811AbfH0GBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 02:01:42 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3ACDEB62C;
+        Tue, 27 Aug 2019 06:01:40 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 08:01:39 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, kirill.shutemov@linux.intel.com,
+        Yang Shi <yang.shi@linux.alibaba.com>, hannes@cmpxchg.org,
+        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH -mm] mm: account deferred split THPs into MemAvailable
+Message-ID: <20190827060139.GM7538@dhcp22.suse.cz>
+References: <1566410125-66011-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190822080434.GF12785@dhcp22.suse.cz>
+ <ee048bbf-3563-d695-ea58-5f1504aee35c@suse.cz>
+ <20190822152934.w6ztolutdix6kbvc@box>
+ <20190826074035.GD7538@dhcp22.suse.cz>
+ <20190826131538.64twqx3yexmhp6nf@box>
 MIME-Version: 1.0
-In-Reply-To: <20190826120821.16351-9-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826131538.64twqx3yexmhp6nf@box>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 26/08/19 5:38 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
+On Mon 26-08-19 16:15:38, Kirill A. Shutemov wrote:
+> On Mon, Aug 26, 2019 at 09:40:35AM +0200, Michal Hocko wrote:
+> > On Thu 22-08-19 18:29:34, Kirill A. Shutemov wrote:
+> > > On Thu, Aug 22, 2019 at 02:56:56PM +0200, Vlastimil Babka wrote:
+> > > > On 8/22/19 10:04 AM, Michal Hocko wrote:
+> > > > > On Thu 22-08-19 01:55:25, Yang Shi wrote:
+> > > > >> Available memory is one of the most important metrics for memory
+> > > > >> pressure.
+> > > > > 
+> > > > > I would disagree with this statement. It is a rough estimate that tells
+> > > > > how much memory you can allocate before going into a more expensive
+> > > > > reclaim (mostly swapping). Allocating that amount still might result in
+> > > > > direct reclaim induced stalls. I do realize that this is simple metric
+> > > > > that is attractive to use and works in many cases though.
+> > > > > 
+> > > > >> Currently, the deferred split THPs are not accounted into
+> > > > >> available memory, but they are reclaimable actually, like reclaimable
+> > > > >> slabs.
+> > > > >> 
+> > > > >> And, they seems very common with the common workloads when THP is
+> > > > >> enabled.  A simple run with MariaDB test of mmtest with THP enabled as
+> > > > >> always shows it could generate over fifteen thousand deferred split THPs
+> > > > >> (accumulated around 30G in one hour run, 75% of 40G memory for my VM).
+> > > > >> It looks worth accounting in MemAvailable.
+> > > > > 
+> > > > > OK, this makes sense. But your above numbers are really worrying.
+> > > > > Accumulating such a large amount of pages that are likely not going to
+> > > > > be used is really bad. They are essentially blocking any higher order
+> > > > > allocations and also push the system towards more memory pressure.
+> > > > > 
+> > > > > IIUC deferred splitting is mostly a workaround for nasty locking issues
+> > > > > during splitting, right? This is not really an optimization to cache
+> > > > > THPs for reuse or something like that. What is the reason this is not
+> > > > > done from a worker context? At least THPs which would be freed
+> > > > > completely sound like a good candidate for kworker tear down, no?
+> > > > 
+> > > > Agreed that it's a good question. For Kirill :) Maybe with kworker approach we
+> > > > also wouldn't need the cgroup awareness?
+> > > 
+> > > I don't remember a particular locking issue, but I cannot say there's
+> > > none :P
+> > > 
+> > > It's artifact from decoupling PMD split from compound page split: the same
+> > > page can be mapped multiple times with combination of PMDs and PTEs. Split
+> > > of one PMD doesn't need to trigger split of all PMDs and underlying
+> > > compound page.
+> > > 
+> > > Other consideration is the fact that page split can fail and we need to
+> > > have fallback for this case.
+> > > 
+> > > Also in most cases THP split would be just waste of time if we would do
+> > > them at the spot. If you don't have memory pressure it's better to wait
+> > > until process termination: less pages on LRU is still beneficial.
+> > 
+> > This might be true but the reality shows that a lot of THPs might be
+> > waiting for the memory pressure that is essentially freeable on the
+> > spot. So I am not really convinced that "less pages on LRUs" is really a
+> > plausible justification. Can we free at least those THPs which are
+> > unmapped completely without any pte mappings?
 > 
-> Add functions to delimit what the chunks of code do:
+> Unmapped completely pages will be freed with current code. Deferred split
+> only applies to partly mapped THPs: at least on 4k of the THP is still
+> mapped somewhere.
+
+Hmm, I am probably misreading the code but at least current Linus' tree
+reads page_remove_rmap -> [page_remove_anon_compound_rmap ->\ deferred_split_huge_page even
+for fully mapped THP.
+
+> > > Main source of partly mapped THPs comes from exit path. When PMD mapping
+> > > of THP got split across multiple VMAs (for instance due to mprotect()),
+> > > in exit path we unmap PTEs belonging to one VMA just before unmapping the
+> > > rest of the page. It would be total waste of time to split the page in
+> > > this scenario.
+> > > 
+> > > The whole deferred split thing still looks as a reasonable compromise
+> > > to me.
+> > 
+> > Even when it leads to all other problems mentioned in this and memcg
+> > deferred reclaim series?
 > 
-> static void spi_nor_init_params()
-> {
-> 	spi_nor_info_init_params()
-> 	spi_nor_manufacturer_init_params()
-> 	spi_nor_sfdp_init_params()
-> }
+> Yes.
 > 
-> Add descriptions to all methods.
+> You would still need deferred split even if you *try* to split the page on
+> the spot. split_huge_page() can fail (due to pin on the page) and you will
+> need to have a way to try again later.
 > 
-> spi_nor_init_params() becomes of type void, as all its children
-> return void.
+> You'll not win anything in complexity by trying split_huge_page()
+> immediately. I would ague you'll create much more complexity.
+
+I am not arguing for in place split. I am arguing to do it ASAP rather
+than to wait for memory pressure which might be in an unbound amount of
+time. So let me ask again. Why cannot we do that in the worker context?
+Essentially schedure the work item right away?
+
+> > > We may have some kind of watermark and try to keep the number of deferred
+> > > split THP under it. But it comes with own set of problems: what if all
+> > > these pages are pinned for really long time and effectively not available
+> > > for split.
+> > 
+> > Again, why cannot we simply push the freeing where there are no other
+> > mappings? This should be pretty common case, right?
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> ---
-> v3: rename spi_nor_legacy_init_params() to spi_nor_info_init_params()
-
-
-Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
-
-Minor nits below...
-
-[...]
->  
-> +/**
-> + * spi_nor_init_params() - Initialize the flash's parameters and settings.
-> + * @nor:	pointer to a 'struct spi-nor'.
-> + *
-> + * The flash parameters and settings are initialized based on a sequence of
-> + * calls that are ordered by priority:
-> + *
-> + * 1/ Default flash parameters initialization. The initializations are done
-> + *    based on nor->info data:
-> + *		spi_nor_info_init_params()
-> + *
-> + * which can be overwritten by:
-> + * 2/ Manufacturer flash parameters initialization. The initializations are
-> + *    done based on MFR register, or when the decisions can not be done solely
-> + *    based on MFR, by using specific flash_info tweeks, ->default_init():
-> + *		spi_nor_manufacturer_init_params()
-> + *
-> + * which can be overwritten by:
-> + * 3/ SFDP flash parameters initialization. JESD216 SFDP is a standard and
-> + *    should be more accurate that the above.
-> + *		spi_nor_sfdp_init_params()
-> + *
-> + *    Please not that there is a ->post_bfpt() fixup hook that can overwrite the
-
-s/not/note
-
-> + *    flash parameters and settings imediately after parsing the Basic Flash
-
-s/imediately/immediately
-
-> + *    Parameter Table.
-> + */
-> +static void spi_nor_init_params(struct spi_nor *nor)
-> +{
-> +	spi_nor_info_init_params(nor);
->  
->  	spi_nor_manufacturer_init_params(nor);
->  
-> -	if ((info->flags & (SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ)) &&
-> -	    !(info->flags & SPI_NOR_SKIP_SFDP)) {
-> -		struct spi_nor_flash_parameter sfdp_params;
-> -
-> -		memcpy(&sfdp_params, params, sizeof(sfdp_params));
-> -
-> -		if (spi_nor_parse_sfdp(nor, &sfdp_params)) {
-> -			nor->addr_width = 0;
-> -			nor->flags &= ~SNOR_F_4B_OPCODES;
-> -		} else {
-> -			memcpy(params, &sfdp_params, sizeof(*params));
-> -		}
-> -	}
-> -
-> -	return 0;
-> +	if ((nor->info->flags & (SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ)) &&
-> +	    !(nor->info->flags & SPI_NOR_SKIP_SFDP))
-> +		spi_nor_sfdp_init_params(nor);
->  }
->  
->  static int spi_nor_select_read(struct spi_nor *nor,
-> @@ -4670,10 +4715,8 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
->  	    nor->info->flags & SPI_NOR_HAS_LOCK)
->  		nor->clear_sr_bp = spi_nor_clear_sr_bp;
->  
-> -	/* Parse the Serial Flash Discoverable Parameters table. */
-> -	ret = spi_nor_init_params(nor);
-> -	if (ret)
-> -		return ret;
-> +	/* Init flash parameters based on flash_info struct and SFDP */
-> +	spi_nor_init_params(nor);
->  
->  	if (!mtd->name)
->  		mtd->name = dev_name(dev);
+> Partly mapped THP is not common case at all.
 > 
+> To get to this point you will need to create a mapping, fault in THP and
+> then unmap part of it. It requires very active memory management on
+> application side. This kind of applications usually knows if THP is a fit
+> for them.
 
+See other email by Yang Shi for practical examples.
+
+> > I am still not sure that waiting for the memory reclaim is a general
+> > win.
+> 
+> It wins CPU cycles by not doing the work that is likely unneeded.
+> split_huge_page() is not particularly lightweight operation from locking
+> and atomic ops POV.
+> 
+> > Do you have any examples of workloads that measurably benefit from
+> > this lazy approach without any other downsides? In other words how
+> > exactly do we measure cost/benefit model of this heuristic?
+> 
+> Example? Sure.
+> 
+> Compiling mm/memory.c in my setup generates 8 deferred split. 4 of them
+> triggered from exit path. The rest 4 comes from MADV_DONTNEED. It doesn't
+> make sense to convert any of them to in-place split: for short-lived
+> process any split if waste of time without any benefit.
+
+Right, I understand that part. And again, I am not arguing for in place
+split up. All I do care about is _when_ to trigger the "cleanup" aka
+when we do free the memory or split the THP depending on its state. I
+argue that waiting for the memory pressure is too late and examples
+mentioned elsewhere in the thread confirm that.
 -- 
-Regards
-Vignesh
+Michal Hocko
+SUSE Labs
