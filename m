@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2EE9DF36
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC33C9DFB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:56:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfH0HwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:52:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43438 "EHLO mail.kernel.org"
+        id S1730655AbfH0H4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:56:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729308AbfH0HwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:52:10 -0400
+        id S1730071AbfH0H4h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:56:37 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEB7F2173E;
-        Tue, 27 Aug 2019 07:52:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C3DC206BF;
+        Tue, 27 Aug 2019 07:56:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892330;
-        bh=ojC/UGNlNugB3a4nyj6dXP2tDgWTltx02sMqfuw2wis=;
+        s=default; t=1566892596;
+        bh=6tzFu+IH3xMWPHKOI60XXzQnZkJRCFrsRr9v/2+Exic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xkp4HX6nGq1vxw+AHOYsa57k1wZwmHMIcZFip7iania2fy5d7Xz9zyI2GnbT74TIp
-         Lb2MW4w36R8MdcP8cVocYySqJtJqYOSNQmSQ/WoKBPyvOFrOQsLm6LmzTsW2iuawY/
-         0qofpibI4DogeZhz1DoRV/QAZ29UQq7wqjxUZyG0=
+        b=sndbT2MxkRSphl+czNL+WSlPK8jKkecsUDOep4bcSriVqcQf28Ce4Exg20C+IKvrr
+         SWLHNlbnmws8gQna0AmeiXQA4UCPJjhToH6TAj8KvAX+D8EVfpGbracrzhiz+rZg8R
+         U26AOV2E/vuf7lIYnZ+fEtDebOMXxEwcEgzweQuE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        stable@vger.kernel.org, Jiangfeng Xiao <xiaojiangfeng@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 19/62] can: peak_usb: force the string buffer NULL-terminated
-Date:   Tue, 27 Aug 2019 09:50:24 +0200
-Message-Id: <20190827072701.449299878@linuxfoundation.org>
+Subject: [PATCH 4.19 46/98] net: hisilicon: fix hip04-xmit never return TX_BUSY
+Date:   Tue, 27 Aug 2019 09:50:25 +0200
+Message-Id: <20190827072720.657656089@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e787f19373b8a5fa24087800ed78314fd17b984a ]
+[ Upstream commit f2243b82785942be519016067ee6c55a063bbfe2 ]
 
-strncpy() does not ensure NULL-termination when the input string size
-equals to the destination buffer size IFNAMSIZ. The output string is
-passed to dev_info() which relies on the NULL-termination.
+TX_DESC_NUM is 256, in tx_count, the maximum value of
+mod(TX_DESC_NUM - 1) is 254, the variable "count" in
+the hip04_mac_start_xmit function is never equal to
+(TX_DESC_NUM - 1), so hip04_mac_start_xmit never
+return NETDEV_TX_BUSY.
 
-Use strlcpy() instead.
+tx_count is modified to mod(TX_DESC_NUM) so that
+the maximum value of tx_count can reach
+(TX_DESC_NUM - 1), then hip04_mac_start_xmit can reurn
+NETDEV_TX_BUSY.
 
-This issue is identified by a Coccinelle script.
-
-Signed-off-by: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/usb/peak_usb/pcan_usb_core.c | 2 +-
+ drivers/net/ethernet/hisilicon/hip04_eth.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/usb/peak_usb/pcan_usb_core.c b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
-index d68c79f9a4b95..059282a6065c6 100644
---- a/drivers/net/can/usb/peak_usb/pcan_usb_core.c
-+++ b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
-@@ -881,7 +881,7 @@ static void peak_usb_disconnect(struct usb_interface *intf)
+diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
+index 57c0afa25f9fb..fe3b1637fd5f4 100644
+--- a/drivers/net/ethernet/hisilicon/hip04_eth.c
++++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
+@@ -185,7 +185,7 @@ struct hip04_priv {
  
- 		dev_prev_siblings = dev->prev_siblings;
- 		dev->state &= ~PCAN_USB_STATE_CONNECTED;
--		strncpy(name, netdev->name, IFNAMSIZ);
-+		strlcpy(name, netdev->name, IFNAMSIZ);
+ static inline unsigned int tx_count(unsigned int head, unsigned int tail)
+ {
+-	return (head - tail) % (TX_DESC_NUM - 1);
++	return (head - tail) % TX_DESC_NUM;
+ }
  
- 		unregister_netdev(netdev);
- 
+ static void hip04_config_port(struct net_device *ndev, u32 speed, u32 duplex)
 -- 
 2.20.1
 
