@@ -2,157 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE9219DD4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 07:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F77D9DD52
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 07:50:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729310AbfH0Fsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 01:48:39 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:47440 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725879AbfH0Fsi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 01:48:38 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7R5mN9X107439;
-        Tue, 27 Aug 2019 00:48:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566884903;
-        bh=NLw1dkWiMq9XrUKh2CldBAJYtOZ9XDX5mN04ZYPcLhw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=mLW/ZDdvX02S4VgGO0bsiCCS/YrKFaTx1Sr/yJ+RqX79aIcLFhg7rGFnp2zYtNYxS
-         BdSgY7hUYdDYc44sZk9DIqufyGnfAVhv6ieJ2W5EO1EXDzXiB6utAt74R8+xVp2mdY
-         sTIk5SZlSJ2OlKaze46E6EqSJVYYnJgADlVVhrZA=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7R5mNx9086346
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Aug 2019 00:48:23 -0500
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 27
- Aug 2019 00:48:22 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 27 Aug 2019 00:48:22 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7R5mJvL051681;
-        Tue, 27 Aug 2019 00:48:20 -0500
-Subject: Re: [RESEND PATCH v3 06/20] mtd: spi-nor: Add a default_init() fixup
- hook for gd25q256
-To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>,
-        <marek.vasut@gmail.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <boris.brezillon@bootlin.com>
-References: <20190826120821.16351-1-tudor.ambarus@microchip.com>
- <20190826120821.16351-7-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <74bfb73e-e1c4-ce78-f1cb-6ee0050eb275@ti.com>
-Date:   Tue, 27 Aug 2019 11:18:57 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729076AbfH0Fur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 01:50:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725850AbfH0Fur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 01:50:47 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6119621881;
+        Tue, 27 Aug 2019 05:50:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566885045;
+        bh=lEHBj/Cp6miT8ilouSQBQV+Drh2QP6H67UOzw91mqwo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lL8wC7E1B7MGgDe++xI9cadBfd32jJKBaY969kCdvyVvo4kOUnAo+489m5uhoHWS+
+         g2Bp0V+3nK8HAd/6qJDWmb3epzCBcDzO5XgZNwKdQYThPAfLwNa7BiDqs0avy6i1tw
+         DPgY+OZ07gG6wANcZ/TSrJ+YNi+sq/QM28/dd5JA=
+Received: by mail-wm1-f47.google.com with SMTP id m125so1612422wmm.3;
+        Mon, 26 Aug 2019 22:50:45 -0700 (PDT)
+X-Gm-Message-State: APjAAAWZeqhBk0pfSrDC/YYfdgqW+FpbgKnEQ+FxP806yjROmdBWZPFH
+        a0Ju2GXknvjMxqWGkmM6CAdMyx97vkfdh5FpAWY=
+X-Google-Smtp-Source: APXvYqwNnyZZMDEOGiz8SGYVYZXNdNhhDNzfrrBN8JzCIZlhoSwkV5fBKob4EXAh2VIb2AdJGr8NL5kwPKqsobBp9lY=
+X-Received: by 2002:a1c:1f4e:: with SMTP id f75mr25187337wmf.137.1566885043803;
+ Mon, 26 Aug 2019 22:50:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190826120821.16351-7-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <cover.1566540652.git.han_mao@c-sky.com> <820d80272fc5627b8d00e684663a614470217606.1566540652.git.han_mao@c-sky.com>
+ <CAEbi=3fbe9zbsLyfA=s9gHtAFJrp5Ox0jWoAqcZudQ_xODicgA@mail.gmail.com>
+ <CAJF2gTS80XU=4z-_=N=oGV6GH-+8KXCa74DyhVMcRxJRBq5g4A@mail.gmail.com> <CAEbi=3dtDy=CMRagVrj0ihtpYqS+4NkK7eYmn6Gn=2bV9khWVg@mail.gmail.com>
+In-Reply-To: <CAEbi=3dtDy=CMRagVrj0ihtpYqS+4NkK7eYmn6Gn=2bV9khWVg@mail.gmail.com>
+From:   Guo Ren <guoren@kernel.org>
+Date:   Tue, 27 Aug 2019 13:50:32 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTRePr9SbTv=1w80pHvWpywEQXaikO_TTAEPr2Brk6L3-A@mail.gmail.com>
+Message-ID: <CAJF2gTRePr9SbTv=1w80pHvWpywEQXaikO_TTAEPr2Brk6L3-A@mail.gmail.com>
+Subject: Re: [PATCH V5 1/3] riscv: Add perf callchain support
+To:     Greentime Hu <green.hu@gmail.com>
+Cc:     greentime.hu@sifive.com, Mao Han <han_mao@c-sky.com>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We need know the values of *regs, eg: regs->sepc, regs->ra, regs->fp,
+regs->sp, regs->tp
+
+void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
+   struct pt_regs *regs)
+{
+...
+ walk_stackframe(&fr, entry);
+
+// May be we could detect error here and print the regs' value
+}
+
+On Mon, Aug 26, 2019 at 4:03 PM Greentime Hu <green.hu@gmail.com> wrote:
+>
+> Hi Guo,
+>
+> Guo Ren <guoren@kernel.org> =E6=96=BC 2019=E5=B9=B48=E6=9C=8824=E6=97=A5 =
+=E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=888:54=E5=AF=AB=E9=81=93=EF=BC=9A
+> >
+> > Please check CONFIG_FRAME_POINTER
+> >
+> > 1 *frame =3D *((struct stackframe *)frame->fp - 1);
+> > This code is origionally from riscv/kernel/stacktrace.c: walk_stackfram=
+e
+> >
+> > In linux/Makefile it'll involve the options for gcc to definitely
+> > store ra & prev_fp in fp pointer.
+> > ifdef CONFIG_FRAME_POINTER
+> > KBUILD_CFLAGS +=3D -fno-omit-frame-pointer -fno-optimize-sibling-calls
+> >
+> > So --call-graph fp need depends on CONFIG_FRAME_POINTER.
+> >
+>
+> I am pretty sure CONFIG_FRAME_POINTER is Y
+> # zcat /proc/config.gz |grep CONFIG_FRAME_POINTER
+> CONFIG_FRAME_POINTER=3Dy
+>
+> This is not going to go wrong every time, the probability of error is
+> about one tenth or one quarter. randomly
+> There may be some conditions that we have not considered.
+>
+> I add one more condition to check if it is a valid virtual address and
+> it( ./perf record -e cpu-clock --call-graph fp ls) passes 1000 times
+> without failure in Unleashed board based on 5.3-rc5.
+> Here is my patch. Please have  a look at it. I am not sure if it is a
+> good solution.
+>
+> diff --git a/arch/riscv/kernel/perf_callchain.c
+> b/arch/riscv/kernel/perf_callchain.c
+> index d75d15c13dc7..4717942435df 100644
+> --- a/arch/riscv/kernel/perf_callchain.c
+> +++ b/arch/riscv/kernel/perf_callchain.c
+> @@ -18,6 +18,8 @@ static int unwind_frame_kernel(struct stackframe *frame=
+)
+>                 return -EPERM;
+>         if (frame->fp < CONFIG_PAGE_OFFSET)
+>                 return -EPERM;
+> +       if (!virt_addr_valid(frame->fp))
+> +               return -EPERM;
+>
+>         *frame =3D *((struct stackframe *)frame->fp - 1);
+>         if (__kernel_text_address(frame->ra)) {
+>
+> It could catch cases called in this way.
+>
+> [ 1381.936586] frame->fp=3D:ffffffff00547550
+> [ 1382.038542] CPU: 1 PID: 135 Comm: ls Not tainted
+> 5.3.0-rc5-00003-gb008f6bcd67c-dirty #14
+> [ 1382.307440] Call Trace:
+> [ 1382.388947] [<ffffffe0002a2d8e>] walk_stackframe+0x0/0x9a
+> [ 1382.568053] [<ffffffe0002a2f5a>] show_stack+0x2a/0x34
+> [ 1382.735960] [<ffffffe00083dcd6>] dump_stack+0x62/0x7c
+> [ 1382.903863] [<ffffffe0002a49e0>] perf_callchain_kernel+0xd8/0x102
+> [ 1383.106558] [<ffffffe000340a6e>] get_perf_callchain+0x136/0x1f2
+> [ 1383.303128] [<ffffffe00033d480>] perf_callchain+0x52/0x6e
+> [ 1383.482553] [<ffffffe00033d50a>] perf_prepare_sample+0x6e/0x476
+> [ 1383.679357] [<ffffffe00033d92e>] perf_event_output_forward+0x1c/0x50
+> [ 1383.890633] [<ffffffe000338b4c>] __perf_event_overflow+0x6a/0xa4
+> [ 1384.090279] [<ffffffe000338c40>] perf_swevent_hrtimer+0xba/0x106
+> [ 1384.290094] [<ffffffe0002f307c>] __hrtimer_run_queues+0x84/0x108
+> [ 1384.489694] [<ffffffe0002f36b8>] hrtimer_interrupt+0xca/0x1ce
+> [ 1384.680974] [<ffffffe00072f572>] riscv_timer_interrupt+0x32/0x3a
+> [ 1384.880449] [<ffffffe000854b34>] do_IRQ+0x64/0xbe
+> [ 1385.036698] [<ffffffe0002a1c5c>] ret_from_exception+0x0/0xc
+>
+> [13915.697989] frame->fp=3D:fffffffffffff000
+> [13915.799937] CPU: 2 PID: 663 Comm: ls Not tainted
+> 5.3.0-rc5-00003-gb008f6bcd67c-dirty #14
+> [13916.068832] Call Trace:
+> [13916.150380] [<ffffffe0002a2d8e>] walk_stackframe+0x0/0x9a
+> [13916.329450] [<ffffffe0002a2f5a>] show_stack+0x2a/0x34
+> [13916.497360] [<ffffffe00083dcd6>] dump_stack+0x62/0x7c
+> [13916.665265] [<ffffffe0002a49e0>] perf_callchain_kernel+0xd8/0x102
+> [13916.867949] [<ffffffe000340a6e>] get_perf_callchain+0x136/0x1f2
+> [13917.064526] [<ffffffe00033d480>] perf_callchain+0x52/0x6e
+> [13917.243950] [<ffffffe00033d50a>] perf_prepare_sample+0x6e/0x476
+> [13917.440759] [<ffffffe00033d92e>] perf_event_output_forward+0x1c/0x50
+> [13917.652021] [<ffffffe000338b4c>] __perf_event_overflow+0x6a/0xa4
+> [13917.851683] [<ffffffe000338c40>] perf_swevent_hrtimer+0xba/0x106
+> [13918.051494] [<ffffffe0002f307c>] __hrtimer_run_queues+0x84/0x108
+> [13918.251094] [<ffffffe0002f36b8>] hrtimer_interrupt+0xca/0x1ce
+> [13918.442379] [<ffffffe00072f572>] riscv_timer_interrupt+0x32/0x3a
+> [13918.641840] [<ffffffe000854b34>] do_IRQ+0x64/0xbe
+> [13918.798082] [<ffffffe0002a1c5c>] ret_from_exception+0x0/0xc
 
 
-On 26/08/19 5:38 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Boris Brezillon <boris.brezillon@bootlin.com>
-> 
-> gd25q256 needs to tweak the ->quad_enable() implementation and the
-> ->default_init() fixup hook is the perfect place to do that. This way,
-> if we ever need to tweak more things for this flash, we won't have to
-> add new fields in flash_info.
-> 
-> We can get rid of the flash_info->quad_enable field as gd25q256 was
-> the only user.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> [tudor.ambarus@microchip.com: use ->default_init() hook instead of
-> ->post_sfdp()]
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
 
+--=20
+Best Regards
+ Guo Ren
 
-Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
-
-Regards
-Vignesh
-
-> v3: no changes
-> >  drivers/mtd/spi-nor/spi-nor.c | 28 ++++++++++++++++------------
->  1 file changed, 16 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 8fd60e1eebd2..3dbbfe34d1d2 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -222,8 +222,6 @@ struct flash_info {
->  
->  	/* Part specific fixup hooks. */
->  	const struct spi_nor_fixups *fixups;
-> -
-> -	int	(*quad_enable)(struct spi_nor *nor);
->  };
->  
->  #define JEDEC_MFR(info)	((info)->id[0])
-> @@ -2126,6 +2124,21 @@ static struct spi_nor_fixups mx25l25635_fixups = {
->  	.post_bfpt = mx25l25635_post_bfpt_fixups,
->  };
->  
-> +static void gd25q256_default_init(struct spi_nor *nor)
-> +{
-> +	/*
-> +	 * Some manufacturer like GigaDevice may use different
-> +	 * bit to set QE on different memories, so the MFR can't
-> +	 * indicate the quad_enable method for this case, we need
-> +	 * to set it in the default_init fixup hook.
-> +	 */
-> +	nor->params.quad_enable = macronix_quad_enable;
-> +}
-> +
-> +static struct spi_nor_fixups gd25q256_fixups = {
-> +	.default_init = gd25q256_default_init,
-> +};
-> +
->  /* NOTE: double check command sets and memory organization when you add
->   * more nor chips.  This current list focusses on newer chips, which
->   * have been converging on command sets which including JEDEC ID.
-> @@ -2218,7 +2231,7 @@ static const struct flash_info spi_nor_ids[] = {
->  		"gd25q256", INFO(0xc84019, 0, 64 * 1024, 512,
->  			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ |
->  			SPI_NOR_4B_OPCODES | SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB)
-> -			.quad_enable = macronix_quad_enable,
-> +			.fixups = &gd25q256_fixups,
->  	},
->  
->  	/* Intel/Numonyx -- xxxs33b */
-> @@ -4237,15 +4250,6 @@ static int spi_nor_init_params(struct spi_nor *nor)
->  			params->quad_enable = spansion_quad_enable;
->  			break;
->  		}
-> -
-> -		/*
-> -		 * Some manufacturer like GigaDevice may use different
-> -		 * bit to set QE on different memories, so the MFR can't
-> -		 * indicate the quad_enable method for this case, we need
-> -		 * set it in flash info list.
-> -		 */
-> -		if (info->quad_enable)
-> -			params->quad_enable = info->quad_enable;
->  	}
->  
->  	spi_nor_manufacturer_init_params(nor);
-> 
-
--- 
-Regards
-Vignesh
+ML: https://lore.kernel.org/linux-csky/
