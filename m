@@ -2,75 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 601779DFC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:57:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A58C09DF18
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:50:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbfH0H50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:57:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49470 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730779AbfH0H5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:57:16 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33A0F206BA;
-        Tue, 27 Aug 2019 07:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892635;
-        bh=I7p/ytLeKxZOZQ3RD7E4Z3P9rEx740JImr8gqSxp7lk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=piLgIyb3lomrE1Gtw+ftAXDD8y7phtcr3fLC0+fJrllwOypAQD0szUMLtqutu0mN3
-         pfy7y43Bm2aeuX1++BwJXFIUJejWHcrPzeDj/D2D0PwfBNfz/0699+G46OVjiH0g3V
-         U/SyF88Z9P6HuhH8a7bZvhNd4NFFLGdo2H4GHUkQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dinh Nguyen <dinguyen@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.19 62/98] clk: socfpga: stratix10: fix rate caclulationg for cnt_clks
-Date:   Tue, 27 Aug 2019 09:50:41 +0200
-Message-Id: <20190827072721.565982867@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728909AbfH0Hu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:50:29 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:50160 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728834AbfH0Hu1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:50:27 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7R7o8a5125051;
+        Tue, 27 Aug 2019 02:50:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566892208;
+        bh=PdzHYCDcfBYTU3QglVDF7SzK04cZ5/w8A1aZKwXzqFM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=jpyYlNaJvqmsDqFlos12acT5nvyofU5C6Dnuu8b2eArfDM8kgdCdTqKWjp55/ECZ3
+         TAJ963YD3mHh/0pt71nbVngiSYphc0sWSdKOeINN4viHhZXKW8MhnT2Ye/V/eH599l
+         4JGnkCEt3qww2pPgRNrA2CgMulAlQPXlmXff5HNg=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7R7o8IB119262
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 27 Aug 2019 02:50:08 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 27
+ Aug 2019 02:50:07 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 27 Aug 2019 02:50:07 -0500
+Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7R7o3Lp087842;
+        Tue, 27 Aug 2019 02:50:04 -0500
+Subject: Re: [Patch v3] drivers: mtd: spi-nor: Add flash property for
+ mt25qu512a and mt35xu02g
+To:     Ashish Kumar <Ashish.Kumar@nxp.com>, <tudor.ambarus@microchip.com>,
+        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <linux-mtd@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Kuldeep Singh <kuldeep.singh@nxp.com>
+References: <1565692705-27749-1-git-send-email-Ashish.Kumar@nxp.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <436df042-917b-d148-9226-7a2dd62c65e4@ti.com>
+Date:   Tue, 27 Aug 2019 13:20:41 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1565692705-27749-1-git-send-email-Ashish.Kumar@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dinh Nguyen <dinguyen@kernel.org>
-
-commit c7ec75ea4d5316518adc87224e3cff47192579e7 upstream.
-
-Checking bypass_reg is incorrect for calculating the cnt_clk rates.
-Instead we should be checking that there is a proper hardware register
-that holds the clock divider.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-Link: https://lkml.kernel.org/r/20190814153014.12962-1-dinguyen@kernel.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/clk/socfpga/clk-periph-s10.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/clk/socfpga/clk-periph-s10.c
-+++ b/drivers/clk/socfpga/clk-periph-s10.c
-@@ -37,7 +37,7 @@ static unsigned long clk_peri_cnt_clk_re
- 	if (socfpgaclk->fixed_div) {
- 		div = socfpgaclk->fixed_div;
- 	} else {
--		if (!socfpgaclk->bypass_reg)
-+		if (socfpgaclk->hw.reg)
- 			div = ((readl(socfpgaclk->hw.reg) & 0x7ff) + 1);
- 	}
- 
 
 
+On 13/08/19 4:08 PM, Ashish Kumar wrote:
+> mt25qu512a is rebranded after its spinoff from STM, so it is
+> different only in term of operating frequency, initial JEDEC id
+> is same as that of n25q512a. In order to avoid any confussion
+> with respect to name new entry is added.
+> This flash is tested for Single I/O and QUAD I/O mode on LS1046FRWY.
+> 
+> mt35xu02g is Octal flash supporting Single I/O and QCTAL I/O
+> and it has been tested on LS1028ARDB
+> 
+> Signed-off-by: Kuldeep Singh <kuldeep.singh@nxp.com>
+> Signed-off-by: Ashish Kumar <ashish.kumar@nxp.com>
+> ---
+Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
+
+Regards
+Vignesh
+
+> v3:
+> -Reword commits msg
+> -rebase to top of mtd-linux spi-nor/next
+> v2:
+> Incorporate review comments from Vignesh
+> 
+>  drivers/mtd/spi-nor/spi-nor.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+> index 03cc788..97d3de8 100644
+> --- a/drivers/mtd/spi-nor/spi-nor.c
+> +++ b/drivers/mtd/spi-nor/spi-nor.c
+> @@ -1988,6 +1988,12 @@ static const struct flash_info spi_nor_ids[] = {
+>  	{ "n25q128a13",  INFO(0x20ba18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
+>  	{ "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+>  	{ "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_QUAD_READ) },
+> +
+> +	/* Micron */
+> +	{ "mt25qu512a", INFO6(0x20bb20, 0x104400, 64 * 1024, 1024, SECT_4K |
+> +				USE_FSR | SPI_NOR_DUAL_READ |
+> +				SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
+> +
+>  	{ "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
+>  	{ "n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
+>  	{ "n25q00",      INFO(0x20ba21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
+> @@ -2003,6 +2009,9 @@ static const struct flash_info spi_nor_ids[] = {
+>  			SECT_4K | USE_FSR | SPI_NOR_OCTAL_READ |
+>  			SPI_NOR_4B_OPCODES)
+>  	},
+> +	{ "mt35xu02g",  INFO(0x2c5b1c, 0, 128 * 1024, 2048,
+> +			SECT_4K | USE_FSR | SPI_NOR_OCTAL_READ |
+> +			SPI_NOR_4B_OPCODES) },
+>  
+>  	/* PMC */
+>  	{ "pm25lv512",   INFO(0,        0, 32 * 1024,    2, SECT_4K_PMC) },
+> 
+
+-- 
+Regards
+Vignesh
