@@ -2,181 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9389A9EFD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:12:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B509EFDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:12:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbfH0QMR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:12:17 -0400
-Received: from gateway20.websitewelcome.com ([192.185.49.40]:28729 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726537AbfH0QMQ (ORCPT
+        id S1730249AbfH0QMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:12:48 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41115 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730159AbfH0QMr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:12:16 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id B28E3400C40EF
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 10:07:17 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 2e4tinWya2qH72e4tikVuO; Tue, 27 Aug 2019 11:12:15 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WSBQeqkJ5CcbrCqPCgB7MdbtX/7sMQTBGQ+deQxu2II=; b=zGaai2G3SXYyy529zJcXeOarTM
-        IIzW1IpqTl5kIQPPdyKEiGGR2W+dvXsE181psQQBLDn2GhARatHo86O1saJ5hFks0KGkBP2EsC/kt
-        9OPSSa5IVKrWnWzNNMr0yV25cqN4ZiBYUjrxhgztU9yrWjuDp9Ene7jaZYMB/DsePKsOmGb0zIvyc
-        eGGZQG4GwYStLdgjHiuVp1WGR40Fk2FPK0RkBoYWJIch7CzH2Pm/8cSnUAc8kHsrZkUbKHNQyi0dt
-        5Emj7K7etkdiRqGKMCJ9+1TDNROhXOutkQHdN7LJ/mfyoGNk4TZTEXUqCx504Pnp+QLL+Y1Pz3xBC
-        GW/5xXZg==;
-Received: from [189.152.216.116] (port=53388 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1i2e4s-001fut-HC; Tue, 27 Aug 2019 11:12:14 -0500
-Subject: Re: [tip: perf/core] perf script: Fix memory leaks in list_scripts()
-To:     linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
-References: <20190408162748.GA21008@embeddedor>
- <156689437793.24518.1210962260082729908.tip-bot2@tip-bot2>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <b660a320-6b32-cc24-d829-1527dfc16e5d@embeddedor.com>
-Date:   Tue, 27 Aug 2019 11:12:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 27 Aug 2019 12:12:47 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i4so21805981qtj.8;
+        Tue, 27 Aug 2019 09:12:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eRE+ONyqMbnDAqAAt7DNGwf4rRMmk/Hc31TRfDzpAP4=;
+        b=NvBDM/Fmk+0Gbswsr2vZZYkLbZrTzW9TO0uzdrvfJRzEiPpKzCoMVriHaD89sI/KUK
+         AS6VURCsktY4yLe5W2fGoiAfTU5CPzvQWBoN38xm2r9ePTfYOj5fPSBrN5BtwbRsoG9f
+         pPfSmQy/Pid/S92C/IS9u8a7uyJAUUQd/mtY4Y01jbl8ehjxg+VkYjSluKb/OtAjtEal
+         lAnDQtJq7eGQUTmoTpuyDycjVplkL+Hn6xxPDtyIESFT2Ba0M3KbNVoZyZlgasgaoaHf
+         qEAYKPdS1YobzL6SsV6aFSjOUDCadaJHUTUuPOYBzrLnZ89As+JiIgFYRN7JjsrTI8pC
+         ah9g==
+X-Gm-Message-State: APjAAAWTJpoF9VkXkxG3Xvt4j8TgsEB8qVyr+I5+WyZiKYDsUas1pIuV
+        p16c6X60h3rCQ0UNr3aPFZ+O9t32KBeuYL9tKKo=
+X-Google-Smtp-Source: APXvYqzJzXwniWV11iyI5rB1xzenfbGjuNt16WjkWMKnungYxIEtSdoNzRX/9im4O+QtvL8NXUN1aMXrq3HPv0xExpQ=
+X-Received: by 2002:aed:3363:: with SMTP id u90mr23512125qtd.7.1566922365105;
+ Tue, 27 Aug 2019 09:12:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <156689437793.24518.1210962260082729908.tip-bot2@tip-bot2>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.216.116
-X-Source-L: No
-X-Exim-ID: 1i2e4s-001fut-HC
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.152.216.116]:53388
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 1
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190827154851.10486-1-enric.balletbo@collabora.com> <20190827161045.GC26807@tuxbook-pro>
+In-Reply-To: <20190827161045.GC26807@tuxbook-pro>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 27 Aug 2019 18:12:28 +0200
+Message-ID: <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
+Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
+ CROS_EC options
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        SoC Team <soc@kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Yannick Fertr?" <yannick.fertre@st.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
+>
+> > Recently we refactored the CrOS EC drivers moving part of the code from
+> > the MFD subsystem to the platform chrome subsystem. During this change
+> > we needed to rename some config options, so, update the defconfigs
+> > accordingly.
+> >
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> > Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> > Tested-by: Gwendal Grignou <gwendal@chromium.org>
+>
+> Can we make the entries in the generic arm64 defconfig modules?
 
-On 8/27/19 3:26 AM, tip-bot2 for Gustavo A. R. Silva wrote:
-> The following commit has been merged into the perf/core branch of tip:
-> 
-> Commit-ID:     3b4acbb92dbda4829e021e5c6d5410658849fa1c
-> Gitweb:        https://git.kernel.org/tip/3b4acbb92dbda4829e021e5c6d5410658849fa1c
-> Author:        Gustavo A. R. Silva <gustavo@embeddedor.com>
-> AuthorDate:    Mon, 08 Apr 2019 11:27:48 -05:00
-> Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-> CommitterDate: Mon, 26 Aug 2019 11:58:30 -03:00
-> 
-> perf script: Fix memory leaks in list_scripts()
-> 
-> In case memory resources for *buf* and *paths* were allocated, jump to
-> *out* and release them before return.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Good idea.
 
-This should be tagged for stable:
+Actually I would prefer to have all of them as modules for consistency,
+if at all possible.
 
-Cc: stable@vger.kernel.org
-
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> Cc: Jiri Olsa <jolsa@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Addresses-Coverity-ID: 1444328 ("Resource leak")
-> Fixes: 6f3da20e151f ("perf report: Support builtin perf script in scripts menu")
-> Link: http://lkml.kernel.org/r/20190408162748.GA21008@embeddedor
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/perf/ui/browsers/scripts.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/ui/browsers/scripts.c b/tools/perf/ui/browsers/scripts.c
-> index f2fd9f0..50e0c03 100644
-> --- a/tools/perf/ui/browsers/scripts.c
-> +++ b/tools/perf/ui/browsers/scripts.c
-> @@ -133,8 +133,10 @@ static int list_scripts(char *script_name, bool *custom,
->  		int key = ui_browser__input_window("perf script command",
->  				"Enter perf script command line (without perf script prefix)",
->  				script_args, "", 0);
-> -		if (key != K_ENTER)
-> -			return -1;
-> +		if (key != K_ENTER) {
-> +			ret = -1;
-> +			goto out;
-> +		}
->  		sprintf(script_name, "%s script %s", perf, script_args);
->  	} else if (choice < num + max_std) {
->  		strcpy(script_name, paths[choice]);
-> 
-
---
-Gustavo
+       Arnd
