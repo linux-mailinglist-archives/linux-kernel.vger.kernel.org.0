@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C58E9E191
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:13:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D0469E185
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730995AbfH0H60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:58:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51078 "EHLO mail.kernel.org"
+        id S1731028AbfH0H6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:58:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730627AbfH0H6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:58:22 -0400
+        id S1731000AbfH0H61 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:58:27 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 833C5206BF;
-        Tue, 27 Aug 2019 07:58:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3540F206BF;
+        Tue, 27 Aug 2019 07:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892701;
-        bh=zBFIuOVncQ0mQk1/RZt6zBngG9P9fsV2Cwm1yrUWVrM=;
+        s=default; t=1566892706;
+        bh=G9OEy4CmaSXtfVtdYKmh1SHnSG9Tl5z7jV7Dznx61UU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K51Zyklye+x0zSaHMBe0dO69wgfJ7zr06a9ry9Kq5tOGUeeECXUB3ZZbp5O3yug6k
-         2jeJjnV/tnVV1yBtY9ii1+5ZUy+WwbvVQFlSRCOWgg4p+RApuYa+y8iKQ4kf7ToW12
-         Ith+r1l+sxAIK8w0a8JPUv7LzU7UaHrNsVaHcI48=
+        b=s5IJAJy8s+J5S9zy0kqSj72UQ73cwGw0GUPduGcVWqGHY1poWQHnda8YVRpEbkPS9
+         0XI5dCiOraZYeLJlvq5RHxnQ9ShqMFyf2g+BPMz3BV1SEqDW3Oq8Y4sxRaTS0ceV7B
+         JWv/QcI2SnK+BrsdOBimujKXqoM7W+0wa86JZ+ZE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Fomichev <dmitry.fomichev@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.19 82/98] dm zoned: improve error handling in i/o map code
-Date:   Tue, 27 Aug 2019 09:51:01 +0200
-Message-Id: <20190827072722.351038993@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 4.19 84/98] genirq: Properly pair kobject_del() with kobject_add()
+Date:   Tue, 27 Aug 2019 09:51:03 +0200
+Message-Id: <20190827072722.416373794@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
 References: <20190827072718.142728620@linuxfoundation.org>
@@ -44,109 +43,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Fomichev <dmitry.fomichev@wdc.com>
+From: Michael Kelley <mikelley@microsoft.com>
 
-commit d7428c50118e739e672656c28d2b26b09375d4e0 upstream.
+commit d0ff14fdc987303aeeb7de6f1bd72c3749ae2a9b upstream.
 
-Some errors are ignored in the I/O path during queueing chunks
-for processing by chunk works. Since at least these errors are
-transient in nature, it should be possible to retry the failed
-incoming commands.
+If alloc_descs() fails before irq_sysfs_init() has run, free_desc() in the
+cleanup path will call kobject_del() even though the kobject has not been
+added with kobject_add().
 
-The fix -
+Fix this by making the call to kobject_del() conditional on whether
+irq_sysfs_init() has run.
 
-Errors that can happen while queueing chunks are carried upwards
-to the main mapping function and it now returns DM_MAPIO_REQUEUE
-for any incoming requests that can not be properly queued.
+This problem surfaced because commit aa30f47cf666 ("kobject: Add support
+for default attribute groups to kobj_type") makes kobject_del() stricter
+about pairing with kobject_add(). If the pairing is incorrrect, a WARNING
+and backtrace occur in sysfs_remove_group() because there is no parent.
 
-Error logging/debug messages are added where needed.
+[ tglx: Add a comment to the code and make it work with CONFIG_SYSFS=n ]
 
-Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
+Fixes: ecb3f394c5db ("genirq: Expose interrupt information through sysfs")
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Fomichev <dmitry.fomichev@wdc.com>
-Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Link: https://lkml.kernel.org/r/1564703564-4116-1-git-send-email-mikelley@microsoft.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-zoned-target.c |   22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ kernel/irq/irqdesc.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
---- a/drivers/md/dm-zoned-target.c
-+++ b/drivers/md/dm-zoned-target.c
-@@ -513,22 +513,24 @@ static void dmz_flush_work(struct work_s
-  * Get a chunk work and start it to process a new BIO.
-  * If the BIO chunk has no work yet, create one.
-  */
--static void dmz_queue_chunk_work(struct dmz_target *dmz, struct bio *bio)
-+static int dmz_queue_chunk_work(struct dmz_target *dmz, struct bio *bio)
- {
- 	unsigned int chunk = dmz_bio_chunk(dmz->dev, bio);
- 	struct dm_chunk_work *cw;
-+	int ret = 0;
- 
- 	mutex_lock(&dmz->chunk_lock);
- 
- 	/* Get the BIO chunk work. If one is not active yet, create one */
- 	cw = radix_tree_lookup(&dmz->chunk_rxtree, chunk);
- 	if (!cw) {
--		int ret;
- 
- 		/* Create a new chunk work */
- 		cw = kmalloc(sizeof(struct dm_chunk_work), GFP_NOIO);
--		if (!cw)
-+		if (unlikely(!cw)) {
-+			ret = -ENOMEM;
- 			goto out;
-+		}
- 
- 		INIT_WORK(&cw->work, dmz_chunk_work);
- 		atomic_set(&cw->refcount, 0);
-@@ -539,7 +541,6 @@ static void dmz_queue_chunk_work(struct
- 		ret = radix_tree_insert(&dmz->chunk_rxtree, chunk, cw);
- 		if (unlikely(ret)) {
- 			kfree(cw);
--			cw = NULL;
- 			goto out;
- 		}
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -294,6 +294,18 @@ static void irq_sysfs_add(int irq, struc
  	}
-@@ -547,10 +548,12 @@ static void dmz_queue_chunk_work(struct
- 	bio_list_add(&cw->bio_list, bio);
- 	dmz_get_chunk_work(cw);
- 
-+	dmz_reclaim_bio_acc(dmz->reclaim);
- 	if (queue_work(dmz->chunk_wq, &cw->work))
- 		dmz_get_chunk_work(cw);
- out:
- 	mutex_unlock(&dmz->chunk_lock);
-+	return ret;
  }
  
- /*
-@@ -564,6 +567,7 @@ static int dmz_map(struct dm_target *ti,
- 	sector_t sector = bio->bi_iter.bi_sector;
- 	unsigned int nr_sectors = bio_sectors(bio);
- 	sector_t chunk_sector;
-+	int ret;
++static void irq_sysfs_del(struct irq_desc *desc)
++{
++	/*
++	 * If irq_sysfs_init() has not yet been invoked (early boot), then
++	 * irq_kobj_base is NULL and the descriptor was never added.
++	 * kobject_del() complains about a object with no parent, so make
++	 * it conditional.
++	 */
++	if (irq_kobj_base)
++		kobject_del(&desc->kobj);
++}
++
+ static int __init irq_sysfs_init(void)
+ {
+ 	struct irq_desc *desc;
+@@ -324,6 +336,7 @@ static struct kobj_type irq_kobj_type =
+ };
  
- 	dmz_dev_debug(dev, "BIO op %d sector %llu + %u => chunk %llu, block %llu, %u blocks",
- 		      bio_op(bio), (unsigned long long)sector, nr_sectors,
-@@ -601,8 +605,14 @@ static int dmz_map(struct dm_target *ti,
- 		dm_accept_partial_bio(bio, dev->zone_nr_sectors - chunk_sector);
+ static void irq_sysfs_add(int irq, struct irq_desc *desc) {}
++static void irq_sysfs_del(struct irq_desc *desc) {}
  
- 	/* Now ready to handle this BIO */
--	dmz_reclaim_bio_acc(dmz->reclaim);
--	dmz_queue_chunk_work(dmz, bio);
-+	ret = dmz_queue_chunk_work(dmz, bio);
-+	if (ret) {
-+		dmz_dev_debug(dmz->dev,
-+			      "BIO op %d, can't process chunk %llu, err %i\n",
-+			      bio_op(bio), (u64)dmz_bio_chunk(dmz->dev, bio),
-+			      ret);
-+		return DM_MAPIO_REQUEUE;
-+	}
+ #endif /* CONFIG_SYSFS */
  
- 	return DM_MAPIO_SUBMITTED;
- }
+@@ -437,7 +450,7 @@ static void free_desc(unsigned int irq)
+ 	 * The sysfs entry must be serialized against a concurrent
+ 	 * irq_sysfs_init() as well.
+ 	 */
+-	kobject_del(&desc->kobj);
++	irq_sysfs_del(desc);
+ 	delete_irq_desc(irq);
+ 
+ 	/*
 
 
