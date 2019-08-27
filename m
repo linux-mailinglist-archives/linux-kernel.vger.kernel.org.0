@@ -2,110 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B7E69DBB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 04:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2BAC9DBC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 04:55:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbfH0CpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 22:45:14 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:40583 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727887AbfH0CpO (ORCPT
+        id S1728816AbfH0CzN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 22:55:13 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42832 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728406AbfH0CzN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 22:45:14 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=liangyan.peng@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TaZLKac_1566873900;
-Received: from LiangyandeMacBook-Pro.local(mailfrom:liangyan.peng@linux.alibaba.com fp:SMTPD_---0TaZLKac_1566873900)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 27 Aug 2019 10:45:00 +0800
-Subject: Re: [PATCH] sched/fair: don't assign runtime for throttled cfs_rq
-To:     bsegall@google.com, Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, shanpeic@linux.alibaba.com,
-        xlpang@linux.alibaba.com
-References: <20190814180021.165389-1-liangyan.peng@linux.alibaba.com>
- <xm26d0gvirdg.fsf@bsegall-linux.svl.corp.google.com>
- <942ae15c-ffa5-74da-208b-7e82df917e16@arm.com>
- <xm26k1azn7yd.fsf@bsegall-linux.svl.corp.google.com>
-From:   Liangyan <liangyan.peng@linux.alibaba.com>
-Message-ID: <5cfadb62-10b7-d16b-7f30-f3573bb04844@linux.alibaba.com>
-Date:   Tue, 27 Aug 2019 10:45:00 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        Mon, 26 Aug 2019 22:55:13 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i30so13088392pfk.9
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 19:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y3qi2zzHMk5Wx4T0VpqzCsoi+g0ChTEtNAjfI0RCyHs=;
+        b=d9bP2dr4DUzCy0oD6c+0A6kCWj/mxlc0QpCS+/aWoCAsJ7/FR5zpBqchKLAHfxdlLK
+         x2YgAjZtNXvk9CiZON8i3WoW/+B7LozfuztmXCBX6gUz43JvroAFIIrYhpCA1wolkBW1
+         KUOStyE0yFic9S4dI+jrNwsE4hJl7vE5FNfdc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Y3qi2zzHMk5Wx4T0VpqzCsoi+g0ChTEtNAjfI0RCyHs=;
+        b=ZvNZAqX45R8ttel+6RR0dAPGZmSP6ON51DsZHgqwcSfywM6WZWhd7P2YQUPnR0Ytro
+         hZA7IwUAHNsVjae8xdguQHzb3lcakkEjtQKCFeUMJcDPrMZoey/RJenlnNjshnIarNeP
+         8CRLQ5sARwuZciHZdpXa2JpuF4PGqG9AiDb9Bqi0chufoRv4dStcPEtgjyxDzzXhjY+u
+         j/NbFbZAkxwCVYONRdaAigbZT6WxLmkrllhgRiX3pn1/zbfqCAuN1h04p9XTG+RXqhwx
+         kQxEydjwEeKExFotNDB1T4Tu8lUsz3uoT6VbYMHbsCmzhGYRGEMDmuD9lN0S5gu9oSI1
+         hpaA==
+X-Gm-Message-State: APjAAAUjY6P8EKj4WweBBT17gMU91lAv3cTzrw2PhxPKjg8aWuycmR6s
+        phw6+/9KlvUw7VS4tEJOeq3fJMMIt30fHA==
+X-Google-Smtp-Source: APXvYqz7qcYmFntbKxwqe8W8CAyqaSHTVk0IhQXfW8fvfm7h+NJTRxohzDkI0zEpBuwjwgBx3kjshw==
+X-Received: by 2002:a62:754a:: with SMTP id q71mr23227033pfc.15.1566874512591;
+        Mon, 26 Aug 2019 19:55:12 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id o67sm22196757pfb.39.2019.08.26.19.55.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2019 19:55:12 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Alexandru M Stan <amstan@chromium.org>
+Subject: [PATCH] dt-bindings: Clarify interrupts-extended usage
+Date:   Mon, 26 Aug 2019 19:55:11 -0700
+Message-Id: <20190827025511.22166-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
-In-Reply-To: <xm26k1azn7yd.fsf@bsegall-linux.svl.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Reading the description about when to use interrupts-extended leads some
+developers to think that it shouldn't be used unless a device has
+interrupts from more than one interrupt controller. This isn't true. We
+should encourage devicetree writers to use this property in situations
+where it isn't the inherited interrupt-parent so that we have less
+properties in a DT node by virtue of not having to specify an
+interrupt-parent and an interrupts property.
 
+Reported-by: Alexandru M Stan <amstan@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ .../bindings/interrupt-controller/interrupts.txt          | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On 19/8/27 上午1:38, bsegall@google.com wrote:
-> Valentin Schneider <valentin.schneider@arm.com> writes:
-> 
->> On 23/08/2019 21:00, bsegall@google.com wrote:
->> [...]
->>> Could you mention in the message that this a throttled cfs_rq can have
->>> account_cfs_rq_runtime called on it because it is throttled before
->>> idle_balance, and the idle_balance calls update_rq_clock to add time
->>> that is accounted to the task.
->>>
->>
->> Mayhaps even a comment for the extra condition.
->>
->>> I think this solution is less risky than unthrottling
->>> in this area, so other than that:
->>>
->>> Reviewed-by: Ben Segall <bsegall@google.com>
->>>
->>
->> If you don't mind squashing this in:
->>
->> -----8<-----
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index b1d9cec9b1ed..b47b0bcf56bc 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -4630,6 +4630,10 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b, u64 remaining)
->>   		if (!cfs_rq_throttled(cfs_rq))
->>   			goto next;
->>   
->> +		/* By the above check, this should never be true */
->> +		WARN_ON(cfs_rq->runtime_remaining > 0);
->> +
->> +		/* Pick the minimum amount to return to a positive quota state */
->>   		runtime = -cfs_rq->runtime_remaining + 1;
->>   		if (runtime > remaining)
->>   			runtime = remaining;
->> ----->8-----
->>
->> I'm not adamant about the extra comment, but the WARN_ON would be nice IMO.
->>
->>
->> @Ben, do you reckon we want to strap
->>
->> Cc: <stable@vger.kernel.org>
->> Fixes: ec12cb7f31e2 ("sched: Accumulate per-cfs_rq cpu usage and charge against bandwidth")
->>
->> to the thing? AFAICT the pick_next_task_fair() + idle_balance() dance you
->> described should still be possible on that commit.
-> 
-> I'm not sure about stable policy in general, but it seems reasonable.
-> The WARN_ON might want to be WARN_ON_ONCE, and it seems fine to have it
-> or not.
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt b/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+index 8a3c40829899..4a3ee253f7f0 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+@@ -22,10 +22,10 @@ controller node. This property is inherited, so it may be specified in an
+ interrupt client node or in any of its parent nodes. Interrupts listed in the
+ "interrupts" property are always in reference to the node's interrupt parent.
+ 
+-The "interrupts-extended" property is a special form for use when a node needs
+-to reference multiple interrupt parents. Each entry in this property contains
+-both the parent phandle and the interrupt specifier. "interrupts-extended"
+-should only be used when a device has multiple interrupt parents.
++The "interrupts-extended" property is a special form; useful when a node needs
++to reference multiple interrupt parents or a different interrupt parent than
++the inherited one. Each entry in this property contains both the parent phandle
++and the interrupt specifier.
+ 
+   Example:
+ 	interrupts-extended = <&intc1 5 1>, <&intc2 1 0>;
 
-Thanks Ben and Valentin for all of the comments. Per Xunlei's 
-suggestion, I used SCHED_WARN_ON instead in v3. Regarding whether cc 
-stable, I'm also not sure.
+base-commit: 609488bc979f99f805f34e9a32c1e3b71179d10b
+-- 
+Sent by a computer through tubes
 
-> 
->>
->>
->> Other than that,
->>
->> Reviewed-by: Valentin Schneider <valentin.schneider@arm.com>
->>
->> [...]
