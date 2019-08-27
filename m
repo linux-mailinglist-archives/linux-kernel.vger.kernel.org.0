@@ -2,70 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F6F9F1DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 504539F1D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:46:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730479AbfH0RtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 13:49:02 -0400
-Received: from cavan.codon.org.uk ([93.93.128.6]:38406 "EHLO
-        cavan.codon.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728371AbfH0Rs6 (ORCPT
+        id S1730142AbfH0Rqu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 13:46:50 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33346 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbfH0Rqt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 13:48:58 -0400
-X-Greylist: delayed 2265 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Aug 2019 13:48:57 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=codon.org.uk; s=63138784; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lLYloM0Ywjig+ulU3rxirWB2hunInBTjYfHlRq1yag0=; b=i4yWR/AGXeNk0efti4p+I0xxR
-        He1mnoWyZPL4x55cesht2sxmTyNiXHwOuyL7xB8q7GvUg6p1hZTfzm6vrlxwxsP1almCB6XTL6qQX
-        mNAr7uZ6CkFnOz2D9Rv+/voSIbzTRnLqlT1cD7Ggd9yTJu/17YA07WnjiesVVv023Nins=;
-Received: from mjg59 by cavan.codon.org.uk with local (Exim 4.89)
-        (envelope-from <mjg59@cavan.codon.org.uk>)
-        id 1i2ezq-00079w-HA; Tue, 27 Aug 2019 18:11:06 +0100
-Date:   Tue, 27 Aug 2019 18:11:06 +0100
-From:   Matthew Garrett <mjg59@srcf.ucam.org>
-To:     Seunghun Han <kkamagui@gmail.com>
-Cc:     Matthew Garrett <mjg59@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Tue, 27 Aug 2019 13:46:49 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2fYF-0007sj-Uu; Tue, 27 Aug 2019 17:46:40 +0000
+Date:   Tue, 27 Aug 2019 18:46:39 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Joe Perches <joe@perches.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86: tpm: Remove a busy bit of the NVS area for
- supporting AMD's fTPM
-Message-ID: <20190827171106.owkvt6slwwg5ypyl@srcf.ucam.org>
-References: <20190826081752.57258-1-kkamagui@gmail.com>
- <CACdnJutomLNthYDzEc0wFBcBHK5iqnk0p-hkAkp57zQZ38oGPA@mail.gmail.com>
- <CAHjaAcSFhQsDYL2iRwwhyvxh9mH4DhxZ__DNzhtk=iiZZ5JdbA@mail.gmail.com>
- <CACdnJutfR2X-5ksXw4PNUdyH2MJs_mExNCcYPp8NLcPW2EDrYQ@mail.gmail.com>
- <CAHjaAcSpU0eW5PLsEpxTkycwi+wNS67xeizb6_BMM_-qUZYAmg@mail.gmail.com>
+Subject: Re: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit due to
+ u64/pointer abuse
+Message-ID: <20190827174639.GT1131@ZenIV.linux.org.uk>
+References: <20190819100526.13788-1-geert@linux-m68k.org>
+ <581e7d79ed75484beb227672b2695ff14e1f1e34.camel@perches.com>
+ <CAMuHMdVh8dwd=77mHTqG80_D8DK+EtVGewRUJuaJzK1qRYrB+w@mail.gmail.com>
+ <dbc03b4ac1ef4ba2a807409676cf8066@AcuMS.aculab.com>
+ <CAMuHMdWHGTMwK+PO_BgsNZMpqRat1SHE-_CP0UqxEALA_OJeNg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHjaAcSpU0eW5PLsEpxTkycwi+wNS67xeizb6_BMM_-qUZYAmg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: mjg59@cavan.codon.org.uk
-X-SA-Exim-Scanned: No (on cavan.codon.org.uk); SAEximRunCond expanded to false
+In-Reply-To: <CAMuHMdWHGTMwK+PO_BgsNZMpqRat1SHE-_CP0UqxEALA_OJeNg@mail.gmail.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 01:36:30AM +0900, Seunghun Han wrote:
+On Tue, Aug 27, 2019 at 07:29:52PM +0200, Geert Uytterhoeven wrote:
+> Hi David,
+> 
+> On Tue, Aug 27, 2019 at 4:17 PM David Laight <David.Laight@aculab.com> wrote:
+> > From: Geert Uytterhoeven
+> > > Sent: 19 August 2019 18:15
+> > ...
+> > > > I think a cast to unsigned long is rather more common.
+> > > >
+> > > > uintptr_t is used ~1300 times in the kernel.
+> > > > I believe a cast to unsigned long is much more common.
+> > >
+> > > That is true, as uintptr_t was introduced in C99.
+> > > Similarly, unsigned long was used before size_t became common.
+> > >
+> > > However, nowadays size_t and uintptr_t are preferred.
+> >
+> > Isn't uintptr_t defined by the same standard as uint32_t?
+> 
+> I believe so.
 
-> I got your point. Is there any problem if some regions which don't
-> need to be handled in NVS area are saved and restored? If there is a
-> problem, how about adding code for ignoring the regions in NVS area to
-> the nvs.c file like Jarkko said? If we add the code, we can save and
-> restore NVS area without driver's interaction.
+It sure as hell is not.  C99 7.18.1.4:
 
-The only thing that knows which regions should be skipped by the NVS 
-driver is the hardware specific driver, so the TPM driver needs to ask 
-the NVS driver to ignore that region and grant control to the TPM 
-driver.
+The following type designates an unsigned integer type with the property that any valid
+pointer to void can be converted to this type, then converted back to pointer to void,
+and the result will compare equal to the original pointer:
+	uintptr_t
 
--- 
-Matthew Garrett | mjg59@srcf.ucam.org
+IOW, it's "large enough to represent pointers".
