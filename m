@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02A4A9DF79
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FDAB9DFE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:58:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730090AbfH0Hyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:54:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46116 "EHLO mail.kernel.org"
+        id S1730513AbfH0H6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:58:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729576AbfH0Hya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:54:30 -0400
+        id S1730990AbfH0H6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:58:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E47112186A;
-        Tue, 27 Aug 2019 07:54:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DDFE20828;
+        Tue, 27 Aug 2019 07:58:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892469;
-        bh=vbhXG0rORz1IcehPNBtQZMb7EgXEG9oBiCYmrZJYbpY=;
+        s=default; t=1566892709;
+        bh=qweNfn9xllJ7oD+593DII3mEUdfXk4kWNQNKMz0gY/Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CVyCpgGQMTgKLOjjIChD+2WyEez3zArthdwX6VDJy3svTYkYu/nefWjghyvVgx3U6
-         QvrntyzBpR9srSZulXm1OANmLlV8eGTYAtJoAkuHLrD3kAMbNChatpUY73GVFWMdeQ
-         0LOtyzSdyAJbleN9lMwWlN8yrMVIoUc7KXovYGas=
+        b=cR+Thw2vPwSCCtSNScVi71f892pyV9F5oTuFpMv2WKrRrs9jgwBSoi142BlqxHr7i
+         igk2jNWtxUs9eevfu29q9UGFXsCaEUJNCQ3se9CsmGQ31T+Sb1FyAfdSPsBCbVTZVG
+         vmCHk/0emrLE/XtgebRUqGQTvDK48ha0EyXwlrMg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Burns <henryburns@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Henry Burns <henrywolfeburns@gmail.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jonathan Adams <jwadams@google.com>,
+        stable@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 58/62] mm/zsmalloc.c: migration can leave pages in ZS_EMPTY indefinitely
-Date:   Tue, 27 Aug 2019 09:51:03 +0200
-Message-Id: <20190827072703.836244944@linuxfoundation.org>
+Subject: [PATCH 4.19 85/98] mm, page_owner: handle THP splits correctly
+Date:   Tue, 27 Aug 2019 09:51:04 +0200
+Message-Id: <20190827072722.471482519@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,87 +49,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henry Burns <henryburns@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit 1a87aa03597efa9641e92875b883c94c7f872ccb upstream.
+commit f7da677bc6e72033f0981b9d58b5c5d409fa641e upstream.
 
-In zs_page_migrate() we call putback_zspage() after we have finished
-migrating all pages in this zspage.  However, the return value is
-ignored.  If a zs_free() races in between zs_page_isolate() and
-zs_page_migrate(), freeing the last object in the zspage,
-putback_zspage() will leave the page in ZS_EMPTY for potentially an
-unbounded amount of time.
+THP splitting path is missing the split_page_owner() call that
+split_page() has.
 
-To fix this, we need to do the same thing as zs_page_putback() does:
-schedule free_work to occur.
+As a result, split THP pages are wrongly reported in the page_owner file
+as order-9 pages.  Furthermore when the former head page is freed, the
+remaining former tail pages are not listed in the page_owner file at
+all.  This patch fixes that by adding the split_page_owner() call into
+__split_huge_page().
 
-To avoid duplicated code, move the sequence to a new
-putback_zspage_deferred() function which both zs_page_migrate() and
-zs_page_putback() call.
-
-Link: http://lkml.kernel.org/r/20190809181751.219326-1-henryburns@google.com
-Fixes: 48b4800a1c6a ("zsmalloc: page migration support")
-Signed-off-by: Henry Burns <henryburns@google.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Henry Burns <henrywolfeburns@gmail.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: Jonathan Adams <jwadams@google.com>
+Link: http://lkml.kernel.org/r/20190820131828.22684-2-vbabka@suse.cz
+Fixes: a9627bc5e34e ("mm/page_owner: introduce split_page_owner and replace manual handling")
+Reported-by: Kirill A. Shutemov <kirill@shutemov.name>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Matthew Wilcox <willy@infradead.org>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/zsmalloc.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+ mm/huge_memory.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -1878,6 +1878,18 @@ static void dec_zspage_isolation(struct
- 	zspage->isolated--;
- }
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -33,6 +33,7 @@
+ #include <linux/page_idle.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/oom.h>
++#include <linux/page_owner.h>
  
-+static void putback_zspage_deferred(struct zs_pool *pool,
-+				    struct size_class *class,
-+				    struct zspage *zspage)
-+{
-+	enum fullness_group fg;
-+
-+	fg = putback_zspage(class, zspage);
-+	if (fg == ZS_EMPTY)
-+		schedule_work(&pool->free_work);
-+
-+}
-+
- static void replace_sub_page(struct size_class *class, struct zspage *zspage,
- 				struct page *newpage, struct page *oldpage)
- {
-@@ -2047,7 +2059,7 @@ int zs_page_migrate(struct address_space
- 	 * the list if @page is final isolated subpage in the zspage.
- 	 */
- 	if (!is_zspage_isolated(zspage))
--		putback_zspage(class, zspage);
-+		putback_zspage_deferred(pool, class, zspage);
- 
- 	reset_page(page);
- 	put_page(page);
-@@ -2093,14 +2105,13 @@ void zs_page_putback(struct page *page)
- 	spin_lock(&class->lock);
- 	dec_zspage_isolation(zspage);
- 	if (!is_zspage_isolated(zspage)) {
--		fg = putback_zspage(class, zspage);
- 		/*
- 		 * Due to page_lock, we cannot free zspage immediately
- 		 * so let's defer.
- 		 */
--		if (fg == ZS_EMPTY)
--			schedule_work(&pool->free_work);
-+		putback_zspage_deferred(pool, class, zspage);
+ #include <asm/tlb.h>
+ #include <asm/pgalloc.h>
+@@ -2477,6 +2478,9 @@ static void __split_huge_page(struct pag
  	}
-+
- 	spin_unlock(&class->lock);
- }
  
+ 	ClearPageCompound(head);
++
++	split_page_owner(head, HPAGE_PMD_ORDER);
++
+ 	/* See comment in __split_huge_page_tail() */
+ 	if (PageAnon(head)) {
+ 		/* Additional pin to radix tree of swap cache */
 
 
