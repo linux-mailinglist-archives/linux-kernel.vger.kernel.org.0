@@ -2,98 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50F6A9EF2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 730A39EF34
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:43:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728612AbfH0Pl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:41:56 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44286 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726190AbfH0Plz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:41:55 -0400
-Received: by mail-wr1-f65.google.com with SMTP id p17so19289639wrf.11;
-        Tue, 27 Aug 2019 08:41:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Bxn2QHPQaoLTHaLh1S1+V6Gu5XpRhaWezO35cut4r8Q=;
-        b=m0wMJypz/tc4k1Ou0Ldau4jp2J1H1jOI6WoNCDkVdCxF+Csdl+8WkWLs44l9DRZkMf
-         acBefESXpA/28xRsiFZaLkb3/N2Qi3agh+kqbWzy73VABGuQrT74ouU+JHsx66g6yzZG
-         LSZqOkiezFpiNNpAh/gIg291QBhVNaAVfiagkbNiPmgq7ZO3YbqkAEtU05bI1AmZ9Cr/
-         Aq/0YkrProxOmI9BPqvo8AKQhVWTOHYyTcyEyOe+YnLGYbgrMJdwhnPCGlsIB4oeP4kG
-         EJT0QMPMWeEzoeqDjFEAfp/MKtz6URt/q6+jUAcBxNkQ0huvjplA4cGEi9SZf5lBJKpC
-         pTQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Bxn2QHPQaoLTHaLh1S1+V6Gu5XpRhaWezO35cut4r8Q=;
-        b=T0FB7/c5kLkucDc14TAKd2Qc1Z9DMXq/bM3uQ4U5VWIsmzmfNWGHrPXkkAYODsYbYT
-         +21pgv+3owk++rPWnGwjCVoaJmH0R7jecS5qF0pY1dIj+pV3itIxu8WjWOPOkCgA8IAg
-         rbg793BVsCaAqT2JF/2ijRaNeP3NPJYl2EWupfxsQ6CxT2ayX2RAopih4fEfkqyG8h6G
-         pNMjBywYYrUpZLYL5msJrKAMEE2R3nVVtes3xJ8YRS2GlBua5tbUhPg8dx84ASdPQNLr
-         6Wgz6JPyxBf/nM3xmwQvHpOP0LQDzf4Hp3WR/4Z4m/oXgHjQTJPEVWV7knu+iCunKX37
-         1yQQ==
-X-Gm-Message-State: APjAAAWkRxmk2FFwl/YWqpqpP5B4kNmPCLvDqMBGOzhZa5kd/uyJwnec
-        V4QXR+Gnuqt0BQBa/L0P2m2nWLhypEm/0zsGU77tWQuoIPA=
-X-Google-Smtp-Source: APXvYqwKyiFqrPlh5yDoI88FFfW2D35INgtoq/jJAH8Hvv3vnTy27JdzrBLkWuV/hqW+iv91wYtkEr18W0/Cd+GtVG4=
-X-Received: by 2002:a5d:6ccd:: with SMTP id c13mr8239699wrc.4.1566920513497;
- Tue, 27 Aug 2019 08:41:53 -0700 (PDT)
+        id S1728670AbfH0PnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:43:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47480 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726190AbfH0PnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 11:43:11 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28DE220578;
+        Tue, 27 Aug 2019 15:43:09 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 17:43:08 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Rui Miguel Silva <rmfrfs@gmail.com>
+Cc:     driverdev-devel@linuxdriverproject.org, devel@driverdev.osuosl.org,
+        elder@kernel.org, johan@kernel.org, linux-kernel@vger.kernel.org,
+        greybus-dev@lists.linaro.org,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 0/9] staging: move greybus core out of staging
+Message-ID: <20190827154308.GD534@kroah.com>
+References: <20190825055429.18547-1-gregkh@linuxfoundation.org>
+ <20190827133611.GE23584@kadam>
+ <20190827134557.GA25038@kroah.com>
+ <m3d0gqisua.fsf@gmail.com>
 MIME-Version: 1.0
-References: <20190827190526.6f27e763@canb.auug.org.au> <3b5936f1-e471-846a-d133-0e17d290d2f3@infradead.org>
-In-Reply-To: <3b5936f1-e471-846a-d133-0e17d290d2f3@infradead.org>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Tue, 27 Aug 2019 11:41:41 -0400
-Message-ID: <CADnq5_NBnovQGuhsoEsw+S-LBDU-CbWXKm=mJ3Oy6PcgUeiOQw@mail.gmail.com>
-Subject: Re: linux-next: Tree for Aug 27 (amdgpu)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <m3d0gqisua.fsf@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 11:31 AM Randy Dunlap <rdunlap@infradead.org> wrote=
-:
->
-> On 8/27/19 2:05 AM, Stephen Rothwell wrote:
-> > Hi all,
+On Tue, Aug 27, 2019 at 03:30:21PM +0100, Rui Miguel Silva wrote:
+> Hi,
+> On Tue 27 Aug 2019 at 14:45, Greg Kroah-Hartman wrote:
+> > On Tue, Aug 27, 2019 at 04:36:11PM +0300, Dan Carpenter wrote:
+> >> I can't compile greybus so it's hard to run Smatch on it...  I have a
+> >> Smatch thing which ignores missing includes and just tries its best.
+> >> It mostly generates garbage output but a couple of these look like
+> >> potential issues:
 > >
-> > Changes since 20190826:
+> > Why can't you compile the code?
 > >
->
-> on i386:
->
-> ../drivers/gpu/drm/amd/amdgpu/../display/dc/dcn20/dcn20_hwseq.c: In funct=
-ion =E2=80=98dcn20_hw_sequencer_construct=E2=80=99:
-> ../drivers/gpu/drm/amd/amdgpu/../display/dc/dcn20/dcn20_hwseq.c:2127:28: =
-error: =E2=80=98dcn20_dsc_pg_control=E2=80=99 undeclared (first use in this=
- function); did you mean =E2=80=98dcn20_dpp_pg_control=E2=80=99?
->   dc->hwss.dsc_pg_control =3D dcn20_dsc_pg_control;
->                             ^~~~~~~~~~~~~~~~~~~~
->                             dcn20_dpp_pg_control
->
->
-> Full randconfig file is attached.
+> 
+> I think we are missing includes in some of the
+> greybus header files.
 
-Fixed:
-https://cgit.freedesktop.org/~agd5f/linux/commit/?h=3Ddrm-next&id=3Dda26ded=
-3b2fff646d28559004195abe353bce49b
+Really?  Where?  Builds fine here and passes 0-day :)
 
-Alex
+thanks,
 
->
-> --
-> ~Randy
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+greg k-h
