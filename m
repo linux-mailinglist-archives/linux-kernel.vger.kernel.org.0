@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA5CF9E110
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C58E9E191
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:13:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733067AbfH0IIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:08:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35408 "EHLO mail.kernel.org"
+        id S1730995AbfH0H60 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:58:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732817AbfH0IFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:05:35 -0400
+        id S1730627AbfH0H6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:58:22 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F6622173E;
-        Tue, 27 Aug 2019 08:05:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 833C5206BF;
+        Tue, 27 Aug 2019 07:58:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566893134;
-        bh=qCMxmxgU28Adtb3OCPQ8m5kIGKqy6wzZeC/V8xKHQ30=;
+        s=default; t=1566892701;
+        bh=zBFIuOVncQ0mQk1/RZt6zBngG9P9fsV2Cwm1yrUWVrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OivOL2W+2HcL7juI9+ZDmQmtL7zoT0hYZpVjyxr0dJecrfTl0Lz4f+VMbXVlt5xIv
-         xui1hSzHlgkAXBLzHx9hqragWxDzOlh94ZHch5PdnSpwVCUZtVZyEBZEodBkuURjwD
-         AWv8EDkFMNduevkh02Nzh2cGntTAv9jgrCavcfts=
+        b=K51Zyklye+x0zSaHMBe0dO69wgfJ7zr06a9ry9Kq5tOGUeeECXUB3ZZbp5O3yug6k
+         2jeJjnV/tnVV1yBtY9ii1+5ZUy+WwbvVQFlSRCOWgg4p+RApuYa+y8iKQ4kf7ToW12
+         Ith+r1l+sxAIK8w0a8JPUv7LzU7UaHrNsVaHcI48=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 5.2 132/162] IB/hfi1: Add additional checks when handling TID RDMA WRITE DATA packet
-Date:   Tue, 27 Aug 2019 09:51:00 +0200
-Message-Id: <20190827072743.146168096@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Fomichev <dmitry.fomichev@wdc.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 82/98] dm zoned: improve error handling in i/o map code
+Date:   Tue, 27 Aug 2019 09:51:01 +0200
+Message-Id: <20190827072722.351038993@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
-References: <20190827072738.093683223@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +44,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kaike Wan <kaike.wan@intel.com>
+From: Dmitry Fomichev <dmitry.fomichev@wdc.com>
 
-commit 90fdae66e72bf0381d168f12dca0259617927895 upstream.
+commit d7428c50118e739e672656c28d2b26b09375d4e0 upstream.
 
-In a congested fabric with adaptive routing enabled, traces show that
-packets could be delivered out of order, which could cause incorrect
-processing of stale packets. For stale TID RDMA WRITE DATA packets that
-cause KDETH EFLAGS errors, this patch adds additional checks before
-processing the packets.
+Some errors are ignored in the I/O path during queueing chunks
+for processing by chunk works. Since at least these errors are
+transient in nature, it should be possible to retry the failed
+incoming commands.
 
-Fixes: d72fe7d5008b ("IB/hfi1: Add a function to receive TID RDMA WRITE DATA packet")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Link: https://lore.kernel.org/r/20190815192051.105923.69979.stgit@awfm-01.aw.intel.com
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+The fix -
+
+Errors that can happen while queueing chunks are carried upwards
+to the main mapping function and it now returns DM_MAPIO_REQUEUE
+for any incoming requests that can not be properly queued.
+
+Error logging/debug messages are added where needed.
+
+Fixes: 3b1a94c88b79 ("dm zoned: drive-managed zoned block device target")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Fomichev <dmitry.fomichev@wdc.com>
+Reviewed-by: Damien Le Moal <damien.lemoal@wdc.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/hfi1/tid_rdma.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/md/dm-zoned-target.c |   22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/tid_rdma.c
-+++ b/drivers/infiniband/hw/hfi1/tid_rdma.c
-@@ -2947,8 +2947,15 @@ bool hfi1_handle_kdeth_eflags(struct hfi
- 	 */
- 	spin_lock(&qp->s_lock);
- 	qpriv = qp->priv;
-+	if (qpriv->r_tid_tail == HFI1_QP_WQE_INVALID ||
-+	    qpriv->r_tid_tail == qpriv->r_tid_head)
-+		goto unlock;
- 	e = &qp->s_ack_queue[qpriv->r_tid_tail];
-+	if (e->opcode != TID_OP(WRITE_REQ))
-+		goto unlock;
- 	req = ack_to_tid_req(e);
-+	if (req->comp_seg == req->cur_seg)
-+		goto unlock;
- 	flow = &req->flows[req->clear_tail];
- 	trace_hfi1_eflags_err_write(qp, rcv_type, rte, psn);
- 	trace_hfi1_rsp_handle_kdeth_eflags(qp, psn);
+--- a/drivers/md/dm-zoned-target.c
++++ b/drivers/md/dm-zoned-target.c
+@@ -513,22 +513,24 @@ static void dmz_flush_work(struct work_s
+  * Get a chunk work and start it to process a new BIO.
+  * If the BIO chunk has no work yet, create one.
+  */
+-static void dmz_queue_chunk_work(struct dmz_target *dmz, struct bio *bio)
++static int dmz_queue_chunk_work(struct dmz_target *dmz, struct bio *bio)
+ {
+ 	unsigned int chunk = dmz_bio_chunk(dmz->dev, bio);
+ 	struct dm_chunk_work *cw;
++	int ret = 0;
+ 
+ 	mutex_lock(&dmz->chunk_lock);
+ 
+ 	/* Get the BIO chunk work. If one is not active yet, create one */
+ 	cw = radix_tree_lookup(&dmz->chunk_rxtree, chunk);
+ 	if (!cw) {
+-		int ret;
+ 
+ 		/* Create a new chunk work */
+ 		cw = kmalloc(sizeof(struct dm_chunk_work), GFP_NOIO);
+-		if (!cw)
++		if (unlikely(!cw)) {
++			ret = -ENOMEM;
+ 			goto out;
++		}
+ 
+ 		INIT_WORK(&cw->work, dmz_chunk_work);
+ 		atomic_set(&cw->refcount, 0);
+@@ -539,7 +541,6 @@ static void dmz_queue_chunk_work(struct
+ 		ret = radix_tree_insert(&dmz->chunk_rxtree, chunk, cw);
+ 		if (unlikely(ret)) {
+ 			kfree(cw);
+-			cw = NULL;
+ 			goto out;
+ 		}
+ 	}
+@@ -547,10 +548,12 @@ static void dmz_queue_chunk_work(struct
+ 	bio_list_add(&cw->bio_list, bio);
+ 	dmz_get_chunk_work(cw);
+ 
++	dmz_reclaim_bio_acc(dmz->reclaim);
+ 	if (queue_work(dmz->chunk_wq, &cw->work))
+ 		dmz_get_chunk_work(cw);
+ out:
+ 	mutex_unlock(&dmz->chunk_lock);
++	return ret;
+ }
+ 
+ /*
+@@ -564,6 +567,7 @@ static int dmz_map(struct dm_target *ti,
+ 	sector_t sector = bio->bi_iter.bi_sector;
+ 	unsigned int nr_sectors = bio_sectors(bio);
+ 	sector_t chunk_sector;
++	int ret;
+ 
+ 	dmz_dev_debug(dev, "BIO op %d sector %llu + %u => chunk %llu, block %llu, %u blocks",
+ 		      bio_op(bio), (unsigned long long)sector, nr_sectors,
+@@ -601,8 +605,14 @@ static int dmz_map(struct dm_target *ti,
+ 		dm_accept_partial_bio(bio, dev->zone_nr_sectors - chunk_sector);
+ 
+ 	/* Now ready to handle this BIO */
+-	dmz_reclaim_bio_acc(dmz->reclaim);
+-	dmz_queue_chunk_work(dmz, bio);
++	ret = dmz_queue_chunk_work(dmz, bio);
++	if (ret) {
++		dmz_dev_debug(dmz->dev,
++			      "BIO op %d, can't process chunk %llu, err %i\n",
++			      bio_op(bio), (u64)dmz_bio_chunk(dmz->dev, bio),
++			      ret);
++		return DM_MAPIO_REQUEUE;
++	}
+ 
+ 	return DM_MAPIO_SUBMITTED;
+ }
 
 
