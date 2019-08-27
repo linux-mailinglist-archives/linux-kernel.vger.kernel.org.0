@@ -2,97 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 827909EB55
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F70C9EB43
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbfH0Omf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 10:42:35 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34355 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726333AbfH0Ome (ORCPT
+        id S1726054AbfH0Okv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 10:40:51 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:60511 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfH0Okv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 10:42:34 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s18so19110999wrn.1;
-        Tue, 27 Aug 2019 07:42:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ca2+YahgUJ7d9DaNm5wUyN4mWXrxesbHToiPd/b8GMg=;
-        b=C2qheXhAmjKS0CqUVWH8ElAcQta++ZhTzCK3fuMBVVMqOKIvfuAgqBDNobOOFJTDJ7
-         5qMmdVXhOndsKAy1vGHNdAT06Rq74c3cpT+naCVGcWB0/c+/1L1YA6/TNrox0egMMmyD
-         H6me2J6xiSWEV32noukVqvry6bX7cEmkZaubXoNM8LGnNYrnL1Vb/zmi83EnBiAAr2+P
-         nXe35atVZWeeqZlIHICGj/MkW/hrbGjHgD2U/4WfNw5aLSaPXGbUwhH2dYMPt/qo28eQ
-         Vj1tbiSW3jOEXFviowj8nRxUzfz543cCiVW4WyoRngkRVWWIp5pqYLoqdEUX4Z3RRYAB
-         lwFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ca2+YahgUJ7d9DaNm5wUyN4mWXrxesbHToiPd/b8GMg=;
-        b=aKQGeXgAv0zS1Pdtc1Ufenu/lUAuEqcB1IiQoZLVP6y56vOlFEN9TdT75ulpGIGS0i
-         +fktjBKvqXHdKAMyp8q2MZ5nLTcegmzJZrYcqZwToQruXUk6KluSfngrGqIXHXuE6nQS
-         bAF8x92zNFTMwM+++7KmP8vWoym78mcPfnNL+cH2ltM1WmYgn86lZYRozgYHUDwqsJJF
-         2sC8RXwCa2dTeTfR61RqCVONj7EOroZt9P0tfdaJYkKuHBYD0lrsdA/Pv/zx/suTdWrw
-         FY8gAm3z3N9Sle7HffmEoFi4rocQKdjvs8NZDFT4RNGQfQuIeYWtm+Pa1sEt7U9BoGHK
-         Vi0w==
-X-Gm-Message-State: APjAAAUg/N01lExAO/nKLmaDkcLhwzfIFdsGAZKgSKbFJQjPEq2LIwTY
-        qqQcHRgXUZM2jt7korKVzcZBvc0g5hc=
-X-Google-Smtp-Source: APXvYqyLy6WA/c8mkgNmIc0Q+m6JLYADsiirtzRg20Ten7Hc+d8Lg1jBonOAtvjmv5BGzxvhcQo2Kg==
-X-Received: by 2002:adf:f507:: with SMTP id q7mr29777786wro.210.1566916952672;
-        Tue, 27 Aug 2019 07:42:32 -0700 (PDT)
-Received: from bfk-3-vm8-e4.cs.niisi.ras.ru (t109.niisi.ras.ru. [193.232.173.109])
-        by smtp.gmail.com with ESMTPSA id e9sm2799413wmd.25.2019.08.27.07.42.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 07:42:32 -0700 (PDT)
-From:   Peter Mamonov <pmamonov@gmail.com>
-To:     rui.zhang@intel.com
-Cc:     Peter Mamonov <pmamonov@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] thermal: make thermal_zone_of_sensor_register return -ENODEV if a sensor OF node is missing
-Date:   Tue, 27 Aug 2019 17:39:52 +0300
-Message-Id: <20190827143952.19591-1-pmamonov@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 27 Aug 2019 10:40:51 -0400
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 15D4F100013;
+        Tue, 27 Aug 2019 14:40:47 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v7 6/6] arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
+In-Reply-To: <20190710134346.30239-7-gregory.clement@bootlin.com>
+References: <20190710134346.30239-1-gregory.clement@bootlin.com> <20190710134346.30239-7-gregory.clement@bootlin.com>
+Date:   Tue, 27 Aug 2019 16:40:47 +0200
+Message-ID: <87ftlmzn68.fsf@FE-laptop>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When devm_thermal_zone_of_sensor_register() is called from
-hwmon_thermal_add_sensor() it is possible that the relevant sensor is
-missing an OF node. In this case thermal_zone_of_sensor_register() returns
--EINVAL which causes hwmon_thermal_add_sensor() to fail as well. This patch
-changes relevant return code of thermal_zone_of_sensor_register() to
--ENODEV, which is tolerated by hwmon_thermal_add_sensor().
 
-Here is a particular case of such behaviour: the Marvell ethernet PHYs
-driver registers hwmon device for the built-in temperature sensor (see
-drivers/net/phy/marvell.c). Since the sensor doesn't have associated OF
-node devm_hwmon_device_register() returns error which ultimately causes
-failure of the PHY driver's probe function.
 
-Signed-off-by: Peter Mamonov <pmamonov@gmail.com>
----
- drivers/thermal/of-thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Add cpu clock node on AP
+>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-index dc5093be553e..34b0cc173f4a 100644
---- a/drivers/thermal/of-thermal.c
-+++ b/drivers/thermal/of-thermal.c
-@@ -493,7 +493,7 @@ thermal_zone_of_sensor_register(struct device *dev, int sensor_id, void *data,
- 
- 	if (!dev || !dev->of_node) {
- 		of_node_put(np);
--		return ERR_PTR(-EINVAL);
-+		return ERR_PTR(-ENODEV);
- 	}
- 
- 	sensor_np = of_node_get(dev->of_node);
+Applied on mvebu/dt64
+
+Gregory
+> ---
+>  arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi | 4 ++++
+>  arch/arm64/boot/dts/marvell/armada-ap806.dtsi      | 7 +++++++
+>  2 files changed, 11 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
+> index 2baafe12ebd4..472211159979 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-ap806-quad.dtsi
+> @@ -20,24 +20,28 @@
+>  			compatible = "arm,cortex-a72";
+>  			reg = <0x000>;
+>  			enable-method = "psci";
+> +			clocks = <&cpu_clk 0>;
+>  		};
+>  		cpu1: cpu@1 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a72";
+>  			reg = <0x001>;
+>  			enable-method = "psci";
+> +			clocks = <&cpu_clk 0>;
+>  		};
+>  		cpu2: cpu@100 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a72";
+>  			reg = <0x100>;
+>  			enable-method = "psci";
+> +			clocks = <&cpu_clk 1>;
+>  		};
+>  		cpu3: cpu@101 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a72";
+>  			reg = <0x101>;
+>  			enable-method = "psci";
+> +			clocks = <&cpu_clk 1>;
+>  		};
+>  	};
+>  };
+> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> index 91dad7e4ee59..fca6536494b3 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> @@ -280,6 +280,13 @@
+>  				#address-cells = <1>;
+>  				#size-cells = <1>;
+>  
+> +				cpu_clk: clock-cpu@278 {
+> +					compatible = "marvell,ap806-cpu-clock";
+> +					clocks = <&ap_clk 0>, <&ap_clk 1>;
+> +					#clock-cells = <1>;
+> +					reg = <0x278 0xa30>;
+> +				};
+> +
+>  				ap_thermal: thermal-sensor@80 {
+>  					compatible = "marvell,armada-ap806-thermal";
+>  					reg = <0x80 0x10>;
+> -- 
+> 2.20.1
+>
+
 -- 
-2.20.1
-
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
