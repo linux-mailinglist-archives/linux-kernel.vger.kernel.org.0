@@ -2,372 +2,388 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8761D9E93E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC79C9E944
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:25:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730108AbfH0NZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 09:25:08 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42383 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729997AbfH0NZF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:25:05 -0400
-Received: by mail-qt1-f194.google.com with SMTP id t12so21233936qtp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 06:25:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=diB9QR+fjAYcqnIfXIkXcRUq1U2FSgAV8l7GeX/ce9M=;
-        b=qYfEAi38itlyzUaW5Cxd2p9zJeX1LDqmFHLncGFl1Uwjtab9nGt5zWvFxztbL2Ns2J
-         nygs6N1ZTAOPJwswH7dwzn2yB/A5tzxihTvZpN8qytcKS0KlyIokcZW3VTjSA5O9Cil6
-         r3U/HPwKG6Fr1fC1xP96nA5jzIgVjmsVoKfbFFqMGUueyesEAispnupDTwaj2Wgv3q2Y
-         J+YCxfIXjCDd+jF5aexHwOU+bXFxHrHOzODIrsgKcOSHj4YkznWbrGTih+WReq4ivIze
-         Qd/KzySr9LQ/FQve0w3ppITv0VZrP/WhkwcJH83jhuJmD1eh25R+JPf1WEmPdSbTWzDV
-         FtBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=diB9QR+fjAYcqnIfXIkXcRUq1U2FSgAV8l7GeX/ce9M=;
-        b=b12Z+lJZG5Apqr8qSSEBVZ7CdGcAfrBP26LLWl2IzBfdWeOvJ/1JAk4ZFSujkeoNjt
-         MvHm7SleMbLp/LeKYcP2mup7HtpLORNUNZ6g4oMT39icwZrVn+LP57SugScIaaTZVTAw
-         w9eEwnkWu8r+PFu8WfG1iQhlY6XEfbJNww93kfkRe8NeYPX33jsKVsVmEQGJXhfyvgrE
-         fcOeAvd3i0g4M/HB6lQ5bfEtG/uD+Bd5gdXc2zXZFLTlGdzRTl7aKdzEDh6yvy7EZ59n
-         tMB16OkIh30fjykCjvDK/HL5UNapNkEoPAKLepsm2u6mv0DqVZrS1/SdlkwQrvLqN81w
-         8IVQ==
-X-Gm-Message-State: APjAAAVHjzYt8YYzplUA7v70dtxec62Tg4JubphZihZSMfdGjnB17pP8
-        vhDGXPRHRsiDSFgxoobWMQQ=
-X-Google-Smtp-Source: APXvYqzHnkejo7iXyMOPs2PrKR1R1hd26MiUI3X1WtNAeIfrFJxJDzJO+agxAifPrwiHnkopsZ4K8A==
-X-Received: by 2002:aed:3363:: with SMTP id u90mr22634111qtd.7.1566912303567;
-        Tue, 27 Aug 2019 06:25:03 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id h4sm8075921qtq.82.2019.08.27.06.25.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 06:25:02 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id C903840916; Tue, 27 Aug 2019 10:24:59 -0300 (-03)
-Date:   Tue, 27 Aug 2019 10:24:59 -0300
-To:     "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] perf arch powerpc: Sync powerpc syscall.tbl
-Message-ID: <20190827132459.GA20877@kernel.org>
-References: <20190827071458.19897-1-naveen.n.rao@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827071458.19897-1-naveen.n.rao@linux.vnet.ibm.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1730173AbfH0NZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 09:25:27 -0400
+Received: from smtpbgsg2.qq.com ([54.254.200.128]:43197 "EHLO smtpbgsg2.qq.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729091AbfH0NZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:25:26 -0400
+X-QQ-GoodBg: 0
+X-QQ-SSF: 00100000000000F0
+X-QQ-FEAT: +lGgB4a2WkFOFSlUL0FblNLw6D8+3MJTiQcSo9ujuyUZWX2xmC1M0qZSDHiri
+        xHdgeLZKUHQ7NhUxnc3rEMZFQJVh8A41de8PYiPcDarNOLyH1OqawQWbxbhJvTWzbc8TIHZ
+        x9U4BgmqRERRQ14tMBOLFt8DTz3VYshKd8Sf4cJq+dNpC+EexIySYWi5kb/dey7Z9eMr3lw
+        7FQVSSy1c06Rrs/BZMD+rg01E9lkmHRe1efwHQVBUnoa7x2IhjC+vJG3+CvJc9EiBNtcFx6
+        n+4ysSBcXlzWw0Cbh0Iq2M87+YTdLSkWx0SUHSi69qaXjqfOB8hk+EMTU=
+X-QQ-BUSINESS-ORIGIN: 2
+X-Originating-IP: 222.92.124.153
+X-QQ-STYLE: 
+X-QQ-mid: bizmailfree7t1566912305t49307
+From:   "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
+To:     "=?utf-8?B?SmlheHVuIFlhbmc=?=" <jiaxun.yang@flygoat.com>,
+        "=?utf-8?B?bGludXgtbWlwcw==?=" <linux-mips@vger.kernel.org>
+Cc:     "=?utf-8?B?cGF1bC5idXJ0b24=?=" <paul.burton@mips.com>,
+        "=?utf-8?B?dGdseA==?=" <tglx@linutronix.de>,
+        "=?utf-8?B?amFzb24=?=" <jason@lakedaemon.net>,
+        "=?utf-8?B?bWF6?=" <maz@kernel.org>,
+        "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>,
+        "=?utf-8?B?cm9iaCtkdA==?=" <robh+dt@kernel.org>,
+        "=?utf-8?B?bWFyay5ydXRsYW5k?=" <mark.rutland@arm.co>,
+        "=?utf-8?B?ZGV2aWNldHJlZQ==?=" <devicetree@vger.kernel.org>,
+        "=?utf-8?B?SmlheHVuIFlhbmc=?=" <jiaxun.yang@flygoat.com>
+Subject: Re:[PATCH 00/13] Modernize Loongson64 Machine
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: base64
+Date:   Tue, 27 Aug 2019 21:25:05 +0800
+X-Priority: 3
+Message-ID: <tencent_6718208E72843D804D77BB8D@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
+In-Reply-To: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
+X-QQ-ReplyHash: 2042605874
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+        by smtp.qq.com (ESMTP) with SMTP
+        id ; Tue, 27 Aug 2019 21:25:07 +0800 (CST)
+Feedback-ID: bizmailfree:lemote.com:qybgforeign:qybgforeign2
+X-QQ-Bgrelay: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Aug 27, 2019 at 12:44:58PM +0530, Naveen N. Rao escreveu:
-> Copy over powerpc syscall.tbl to grab changes from the below commits:
->   commit cee3536d24a1 ("powerpc: Wire up clone3 syscall")
->   commit 1a271a68e030 ("arch: mark syscall number 435 reserved for clone3")
->   commit 7615d9e1780e ("arch: wire-up pidfd_open()")
->   commit d8076bdb56af ("uapi: Wire up the mount API syscalls on non-x86 arches [ver #2]")
->   commit 39036cd27273 ("arch: add pidfd and io_uring syscalls everywhere")
->   commit 48166e6ea47d ("y2038: add 64-bit time_t syscalls to all 32-bit architectures")
->   commit d33c577cccd0 ("y2038: rename old time and utime syscalls")
->   commit 00bf25d693e7 ("y2038: use time32 syscall names on 32-bit")
->   commit 8dabe7245bbc ("y2038: syscalls: rename y2038 compat syscalls")
->   commit 0d6040d46817 ("arch: add split IPC system calls where needed")
-> 
-> Reported-by: Nicholas Piggin <npiggin@gmail.com>
+SGksIEppYXh1biwNCg0KMSwgVG8gZGVzY3JpYmUgQ1BVIEkgcHJlZmVyICJsb29uZ3NvbiIg
+dG8gImxzIiBiZWNhdXNlICJscyIgaXMgY29uZnVzaW5nLCBhbmQgaW4gZnV0dXJlIHdlIHdp
+bGwgdXNlIGxzMmgvbHM3YSB0byBkZXNjcmliZSBMb29uZ3NvbidzIGJyaWRnZS4NCg0KMiwg
+SSB0aGluayBpdCBpcyBiZXR0ZXIgdG8gdXNlIGxvb25nc29uNjRjL2xvb25nc29uNjRnIHRo
+YW4gbG9vbmdzb24yZWYvbG9vbmdzb242NC4gQXMgd2UgZGlzc2N1c3NlZCwgd2Ugd2lsbCB1
+c2UgUFJJRF9JTVBfTE9PTkdTT05fNjRDL1BSSURfSU1QX0xPT05HU09OXzY0RyB0byBkZXNj
+cmliZSAweDYzMDAvMHhjMDAwLg0KDQpIdWFjYWkNCg0KDQoNCiAtLS0tLS0tLS0tLS0tLS0t
+LS0gT3JpZ2luYWwgLS0tLS0tLS0tLS0tLS0tLS0tDQpGcm9tOiAgIkppYXh1biBZYW5nIjxq
+aWF4dW4ueWFuZ0BmbHlnb2F0LmNvbT47RGF0ZTogIFR1ZSwgQXVnIDI3LCAyMDE5IDA0OjUy
+IFBNVG86ICAibGludXgtbWlwcyI8bGludXgtbWlwc0B2Z2VyLmtlcm5lbC5vcmc+OyBDYzog
+ICJjaGVuaGMiPGNoZW5oY0BsZW1vdGUuY29tPjsgInBhdWwuYnVydG9uIjxwYXVsLmJ1cnRv
+bkBtaXBzLmNvbT47ICJ0Z2x4Ijx0Z2x4QGxpbnV0cm9uaXguZGU+OyAiamFzb24iPGphc29u
+QGxha2VkYWVtb24ubmV0PjsgIm1heiI8bWF6QGtlcm5lbC5vcmc+OyAibGludXgta2VybmVs
+IjxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgInJvYmgrZHQiPHJvYmgrZHRAa2Vy
+bmVsLm9yZz47ICJtYXJrLnJ1dGxhbmQiPG1hcmsucnV0bGFuZEBhcm0uY28+OyAiZGV2aWNl
+dHJlZSI8ZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc+OyAiSmlheHVuIFlhbmciPGppYXh1
+bi55YW5nQGZseWdvYXQuY29tPjsgU3ViamVjdDogIFtQQVRDSCAwMC8xM10gTW9kZXJuaXpl
+IExvb25nc29uNjQgTWFjaGluZSBMb29uZ3NvbiBoYXZlIGEgbG9uZyBoaXN0b3J5IG9mIGNv
+bnRyaWJ1dGluZyB0aGVpciBjb2RlIHRvIG1haW5saW5lIGtlcm5lbC4NCkhvd2V2ZXIsIGl0
+IHNlZW1zIGxpa2UgcmVjZW50IHllYXJzLCB0aGV5IGFyZSBmb2N1c2luZyBvbiBtYWludGFp
+biBhIGtlcm5lbCBieSB0aGVtc2VsdmVzDQpyYXRoZXIgdGhhbiBjb250cmlidXRlIHRoZXJl
+IGNvZGUgdG8gdGhlIGNvbW11bml0eS4NCg0KS2VybmVsIGlzIHByb2dyZXNzIHJhcGlkbHkg
+dG9vLiBUaGVpciBjb2RlIHNsZXB0IGluIG1haW5saW5lIGZvciBhIGxvbmcgcGVyb2lkIHdp
+dGhvdXQgcHJvcGVyDQptYWludGFpbmFuY2UgYW5kIGJlY2FtZSBvdXRkYXRlZC4NCg0KVGhp
+cyBwYXRjaHNldCBicmluZ3MgbW9kZXJuIERldmljZVRyZWUgYW5kIGlycWNoaXAgc3VwcG9y
+dCB0byB0aGUgTG9vbmdzb242NCBtYWNoaW5lLCBhbmQgbGVhdmVzDQpMb29uZ3NvbiAyZS9m
+IGFsb25lIHNpbmNlIHRoZXkgYXJlIHRvbyBsZWdhY3kgdG8gdG91Y2guDQoNCg0KSmlheHVu
+IFlhbmcgKDEzKToNCiAgTUlQUzogTG9vbmdzb242NDogUmVuYW1lIENQVSBUWVBFUw0KICBN
+SVBTOiBMb29uZ3NvbjY0OiBTZXByZWF0ZSBsb29uZ3NvbjJlZi9sb29uZ3NvbjY0IGNvZGUN
+CiAgTUFJTlRBSU5FUlM6IEZpeCBlbnRyaWVzIGZvciBuZXcgbG9vbmdzb242NCBwYXRoDQog
+IGlycWNoaXA6IEFkZCBkcml2ZXIgZm9yIExvb25nc29uLTMgSS9PIGludGVycnVwdCBjb250
+cm9sbGVyDQogIGR0LWJpbmRpbmdzOiBpbnRlcnJ1cHQtY29udHJvbGxlcjogQWRkIExvb25n
+c29uLTMgSU9JTlRDDQogIGlycWNoaXA6IEFkZCBkcml2ZXIgZm9yIExvb25nc29uLTMgSHlw
+ZXJUcmFuc3BvcnQgaW50ZXJydXB0IGNvbnRyb2xsZXINCiAgZHQtYmluZGluZ3M6IGludGVy
+cnVwdC1jb250cm9sbGVyOiBBZGQgTG9vbmdzb24tMyBIVElOVEMNCiAgaXJxY2hpcDogaTgy
+NTk6IEFkZCBwbGF0LXBvbGwgc3VwcG9ydA0KICBpcnFjaGlwOiBtaXBzLWNwdTogQ29udmVy
+dCB0byBzaW1wbGUgZG9tYWluDQogIE1JUFM6IExvb25nc29uNjQ6IERyb3AgbGVnYWN5IElS
+USBjb2RlDQogIGR0LWJpbmRpbmdzOiBtaXBzOiBBZGQgbG9vbmdzb24gY3B1cyAmIGJvYXJk
+cw0KICBNSVBTOiBMb29uZ3NvbjY0OiBBZGQgZ2VuZXJpYyBkdHMNCiAgTUlQUzogTG9vbmdz
+b242NDogTG9hZCBidWlsdC1pbiBkdGJzDQoNCiAuLi4vbG9vbmdzb24sbHMzLWh0aW50Yy55
+YW1sICAgICAgICAgICAgICAgICAgfCAgNTMgKysrKysNCiAuLi4vbG9vbmdzb24sbHMzLWlv
+aW50Yy55YW1sICAgICAgICAgICAgICAgICAgfCAgNjEgKysrKysNCiAuLi4vYmluZGluZ3Mv
+bWlwcy9sb29uZ3Nvbi9jcHVzLnlhbWwgICAgICAgICAgfCAgMzggKysrDQogLi4uL2JpbmRp
+bmdzL21pcHMvbG9vbmdzb24vZGV2aWNlcy55YW1sICAgICAgIHwgIDY0ICsrKysrKw0KIE1B
+SU5UQUlORVJTICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgOSArLQ0K
+IGFyY2gvbWlwcy9LYnVpbGQucGxhdGZvcm1zICAgICAgICAgICAgICAgICAgICB8ICAgMSAr
+DQogYXJjaC9taXBzL0tjb25maWcgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgIDgz
+ICsrKysrLS0NCiBhcmNoL21pcHMvYm9vdC9kdHMvTWFrZWZpbGUgICAgICAgICAgICAgICAg
+ICAgfCAgIDEgKw0KIGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9NYWtlZmlsZSAgICAg
+ICAgICB8ICAgOCArDQogYXJjaC9taXBzL2Jvb3QvZHRzL2xvb25nc29uL2xzMy0ybm9kZXMu
+ZHRzaSAgIHwgICA4ICsNCiBhcmNoL21pcHMvYm9vdC9kdHMvbG9vbmdzb24vbHMzLTRub2Rl
+cy5kdHNpICAgfCAgMTUgKysNCiBhcmNoL21pcHMvYm9vdC9kdHMvbG9vbmdzb24vbHMzLWNw
+dXMuZHRzaSAgICAgfCAxNTAgKysrKysrKysrKysrDQogYXJjaC9taXBzL2Jvb3QvZHRzL2xv
+b25nc29uL2xzMy1nczQ2NC5kdHNpICAgIHwgIDE4ICsrDQogYXJjaC9taXBzL2Jvb3QvZHRz
+L2xvb25nc29uL2xzMy1nczQ2NGUuZHRzaSAgIHwgIDE4ICsrDQogLi4uL2Jvb3QvZHRzL2xv
+b25nc29uL2xzMy1yczc4MGUtcGNoLmR0c2kgICAgIHwgIDM1ICsrKw0KIGFyY2gvbWlwcy9i
+b290L2R0cy9sb29uZ3Nvbi9sczNhLXBhY2thZ2UuZHRzaSB8ICA1OSArKysrKw0KIC4uLi9i
+b290L2R0cy9sb29uZ3Nvbi9sczNhMTAwMF83ODBlXzF3YXkuZHRzICB8ICAxMiArDQogLi4u
+L2Jvb3QvZHRzL2xvb25nc29uL2xzM2ExMDAwXzc4MGVfMndheS5kdHMgIHwgIDEzICsrDQog
+Li4uL2Jvb3QvZHRzL2xvb25nc29uL2xzM2ExMDAwXzc4MGVfNHdheS5kdHMgIHwgIDEzICsr
+DQogLi4uL2Jvb3QvZHRzL2xvb25nc29uL2xzM2EyMDAwXzc4MGVfMXdheS5kdHMgIHwgIDEy
+ICsNCiAuLi4vYm9vdC9kdHMvbG9vbmdzb24vbHMzYTIwMDBfNzgwZV8yd2F5LmR0cyAgfCAg
+MTMgKysNCiAuLi4vYm9vdC9kdHMvbG9vbmdzb24vbHMzYTIwMDBfNzgwZV80d2F5LmR0cyAg
+fCAgMTMgKysNCiAuLi4vYm9vdC9kdHMvbG9vbmdzb24vbHMzYTMwMDBfNzgwZV8xd2F5LmR0
+cyAgfCAgMTIgKw0KIC4uLi9ib290L2R0cy9sb29uZ3Nvbi9sczNhMzAwMF83ODBlXzJ3YXku
+ZHRzICB8ICAxMyArKw0KIC4uLi9ib290L2R0cy9sb29uZ3Nvbi9sczNhMzAwMF83ODBlXzR3
+YXkuZHRzICB8ICAxMyArKw0KIGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczNiLXBh
+Y2thZ2UuZHRzaSB8ICA1OSArKysrKw0KIC4uLi9taXBzL2Jvb3QvZHRzL2xvb25nc29uL2xz
+M2JfNzgwZV8xd2F5LmR0cyB8ICAxMyArKw0KIC4uLi9taXBzL2Jvb3QvZHRzL2xvb25nc29u
+L2xzM2JfNzgwZV8yd2F5LmR0cyB8ICAxMyArKw0KIGFyY2gvbWlwcy9pbmNsdWRlL2FzbS9i
+b290aW5mby5oICAgICAgICAgICAgICB8ICAgMSAtDQogYXJjaC9taXBzL2luY2x1ZGUvYXNt
+L2NvcDIuaCAgICAgICAgICAgICAgICAgIHwgICAyICstDQogYXJjaC9taXBzL2luY2x1ZGUv
+YXNtL2NwdS10eXBlLmggICAgICAgICAgICAgIHwgICA2ICstDQogYXJjaC9taXBzL2luY2x1
+ZGUvYXNtL2NwdS5oICAgICAgICAgICAgICAgICAgIHwgICA0ICstDQogYXJjaC9taXBzL2lu
+Y2x1ZGUvYXNtL2hhemFyZHMuaCAgICAgICAgICAgICAgIHwgICAyICstDQogYXJjaC9taXBz
+L2luY2x1ZGUvYXNtL2lvLmggICAgICAgICAgICAgICAgICAgIHwgICAyICstDQogYXJjaC9t
+aXBzL2luY2x1ZGUvYXNtL2lycWZsYWdzLmggICAgICAgICAgICAgIHwgICAyICstDQogLi4u
+L21hY2gtbG9vbmdzb24yZWYvY3B1LWZlYXR1cmUtb3ZlcnJpZGVzLmggIHwgIDQ1ICsrKysN
+CiAuLi4vY3M1NTM2L2NzNTUzNi5oICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDAN
+CiAuLi4vY3M1NTM2L2NzNTUzNl9tZmdwdC5oICAgICAgICAgICAgICAgICAgICAgfCAgIDAN
+CiAuLi4vY3M1NTM2L2NzNTUzNl9wY2kuaCAgICAgICAgICAgICAgICAgICAgICAgfCAgIDAN
+CiAuLi4vY3M1NTM2L2NzNTUzNl92c20uaCAgICAgICAgICAgICAgICAgICAgICAgfCAgIDAN
+CiAuLi4vbG9vbmdzb24yZWYuaH0gICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMzEg
+Ky0tDQogLi4uL21hY2hpbmUuaCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwg
+ICA2IC0NCiAuLi4vbWMxNDY4MThydGMuaCAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+fCAgIDUgKy0NCiAuLi4vbWVtLmggICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfCAgIDYgKy0NCiBhcmNoL21pcHMvaW5jbHVkZS9hc20vbWFjaC1sb29uZ3NvbjJlZi9w
+Y2kuaCAgfCAgNDMgKysrKw0KIC4uLi9pbmNsdWRlL2FzbS9tYWNoLWxvb25nc29uMmVmL3Nw
+YWNlcy5oICAgICB8ICAxMCArDQogLi4uL2FzbS9tYWNoLWxvb25nc29uNjQvYnVpbHRpbl9k
+dGJzLmggICAgICAgIHwgIDI2ICsrKw0KIC4uLi9tYWNoLWxvb25nc29uNjQvY3B1LWZlYXR1
+cmUtb3ZlcnJpZGVzLmggICB8ICAgMyAtDQogYXJjaC9taXBzL2luY2x1ZGUvYXNtL21hY2gt
+bG9vbmdzb242NC9pcnEuaCAgIHwgICA2ICstDQogLi4uL2FzbS9tYWNoLWxvb25nc29uNjQv
+a2VybmVsLWVudHJ5LWluaXQuaCAgIHwgIDc0IC0tLS0tLQ0KIC4uLi9pbmNsdWRlL2FzbS9t
+YWNoLWxvb25nc29uNjQvbG9vbmdzb242NC5oICB8ICA1MCArKysrDQogLi4uL21pcHMvaW5j
+bHVkZS9hc20vbWFjaC1sb29uZ3NvbjY0L21tem9uZS5oIHwgIDE2IC0tDQogYXJjaC9taXBz
+L2luY2x1ZGUvYXNtL21hY2gtbG9vbmdzb242NC9wY2kuaCAgIHwgIDQxICstLS0NCiAuLi4v
+aW5jbHVkZS9hc20vbWFjaC1sb29uZ3NvbjY0L3dvcmthcm91bmRzLmggfCAgIDQgKy0NCiBh
+cmNoL21pcHMvaW5jbHVkZS9hc20vbW9kdWxlLmggICAgICAgICAgICAgICAgfCAgIDggKy0N
+CiBhcmNoL21pcHMvaW5jbHVkZS9hc20vcGd0YWJsZS1iaXRzLmggICAgICAgICAgfCAgIDIg
+Ky0NCiBhcmNoL21pcHMvaW5jbHVkZS9hc20vcHJvY2Vzc29yLmggICAgICAgICAgICAgfCAg
+IDIgKy0NCiBhcmNoL21pcHMvaW5jbHVkZS9hc20vcjRrY2FjaGUuaCAgICAgICAgICAgICAg
+fCAgIDQgKy0NCiBhcmNoL21pcHMva2VybmVsL2NwdS1wcm9iZS5jICAgICAgICAgICAgICAg
+ICAgfCAgMTQgKy0NCiBhcmNoL21pcHMva2VybmVsL2lkbGUuYyAgICAgICAgICAgICAgICAg
+ICAgICAgfCAgIDIgKy0NCiBhcmNoL21pcHMva2VybmVsL3BlcmZfZXZlbnRfbWlwc3h4LmMg
+ICAgICAgICAgfCAgIDQgKy0NCiBhcmNoL21pcHMva2VybmVsL3NldHVwLmMgICAgICAgICAg
+ICAgICAgICAgICAgfCAgIDIgKy0NCiBhcmNoL21pcHMva2VybmVsL3RyYXBzLmMgICAgICAg
+ICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBhcmNoL21pcHMvbGliL2NzdW1fcGFydGlhbC5T
+ICAgICAgICAgICAgICAgICAgfCAgIDQgKy0NCiBhcmNoL21pcHMvbG9vbmdzb24yZWYvS2Nv
+bmZpZyAgICAgICAgICAgICAgICAgfCAgOTMgKysrKysrKysNCiBhcmNoL21pcHMvbG9vbmdz
+b24yZWYvTWFrZWZpbGUgICAgICAgICAgICAgICAgfCAgMTggKysNCiBhcmNoL21pcHMvbG9v
+bmdzb24yZWYvUGxhdGZvcm0gICAgICAgICAgICAgICAgfCAgMzIgKysrDQogLi4uL2NvbW1v
+bi9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAwDQogLi4uL2NvbW1v
+bi9ib25pdG8taXJxLmMgICAgICAgICAgICAgICAgICAgICAgIHwgICAyICstDQogLi4uL2Nv
+bW1vbi9jbWRsaW5lLmMgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICAyICstDQogLi4u
+L2NvbW1vbi9jczU1MzYvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgIHwgICAwDQogLi4u
+L2NvbW1vbi9jczU1MzYvY3M1NTM2X2FjYy5jICAgICAgICAgICAgICAgIHwgICAwDQogLi4u
+L2NvbW1vbi9jczU1MzYvY3M1NTM2X2VoY2kuYyAgICAgICAgICAgICAgIHwgICAwDQogLi4u
+L2NvbW1vbi9jczU1MzYvY3M1NTM2X2lkZS5jICAgICAgICAgICAgICAgIHwgICAwDQogLi4u
+L2NvbW1vbi9jczU1MzYvY3M1NTM2X2lzYS5jICAgICAgICAgICAgICAgIHwgICAwDQogLi4u
+L2NvbW1vbi9jczU1MzYvY3M1NTM2X21mZ3B0LmMgICAgICAgICAgICAgIHwgICAwDQogLi4u
+L2NvbW1vbi9jczU1MzYvY3M1NTM2X29oY2kuYyAgICAgICAgICAgICAgIHwgICAwDQogLi4u
+L2NvbW1vbi9jczU1MzYvY3M1NTM2X3BjaS5jICAgICAgICAgICAgICAgIHwgICAwDQogLi4u
+L2NvbW1vbi9lYXJseV9wcmludGsuYyAgICAgICAgICAgICAgICAgICAgIHwgICAyICstDQog
+YXJjaC9taXBzL2xvb25nc29uMmVmL2NvbW1vbi9lbnYuYyAgICAgICAgICAgIHwgIDcxICsr
+KysrKw0KIC4uLi97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9uL2luaXQuYyB8
+ICAgNyArLQ0KIC4uLi97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9uL2lycS5j
+ICB8ICAgMiArLQ0KIC4uLi9jb21tb24vbWFjaHR5cGUuYyAgICAgICAgICAgICAgICAgICAg
+ICAgICB8ICAgMyArLQ0KIC4uLi97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9u
+L21lbS5jICB8ICA0MCArLS0tDQogLi4uL3tsb29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9j
+b21tb24vcGNpLmMgIHwgIDExICstDQogLi4uL2NvbW1vbi9wbGF0Zm9ybS5jICAgICAgICAg
+ICAgICAgICAgICAgICAgIHwgICAwDQogLi4uL3tsb29uZ3NvbjY0ID0+IGxvb25nc29uMmVm
+fS9jb21tb24vcG0uYyAgIHwgICAyICstDQogLi4uL2NvbW1vbi9yZXNldC5jICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwgIDIzICstDQogLi4uL3tsb29uZ3NvbjY0ID0+IGxvb25n
+c29uMmVmfS9jb21tb24vcnRjLmMgIHwgICAwDQogLi4uL2NvbW1vbi9zZXJpYWwuYyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHwgIDM3ICstLQ0KIC4uLi9jb21tb24vc2V0dXAuYyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMiArLQ0KIC4uLi97bG9vbmdzb242NCA9
+PiBsb29uZ3NvbjJlZn0vY29tbW9uL3RpbWUuYyB8ICAgMiArLQ0KIC4uLi9jb21tb24vdWFy
+dF9iYXNlLmMgICAgICAgICAgICAgICAgICAgICAgICB8ICAxMCArLQ0KIC4uLi9mdWxvb25n
+LTJlL01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgICB8ICAgMA0KIC4uLi9mdWxvb25n
+LTJlL2RtYS5jICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMA0KIC4uLi9mdWxvb25n
+LTJlL2lycS5jICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMiArLQ0KIC4uLi9mdWxv
+b25nLTJlL3Jlc2V0LmMgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMiArLQ0KIC4uLi9s
+ZW1vdGUtMmYvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMA0KIC4uLi9s
+ZW1vdGUtMmYvY2xvY2suYyAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMiArLQ0KIC4u
+Li9sZW1vdGUtMmYvZG1hLmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMA0KIC4u
+Li9sZW1vdGUtMmYvZWNfa2IzMzEwYi5jICAgICAgICAgICAgICAgICAgICB8ICAgMA0KIC4u
+Li9sZW1vdGUtMmYvZWNfa2IzMzEwYi5oICAgICAgICAgICAgICAgICAgICB8ICAgMA0KIC4u
+Li9sZW1vdGUtMmYvaXJxLmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMiArLQ0K
+IC4uLi9sZW1vdGUtMmYvbWFjaHR5cGUuYyAgICAgICAgICAgICAgICAgICAgICB8ICAgMiAr
+LQ0KIC4uLi9sZW1vdGUtMmYvcG0uYyAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAg
+MiArLQ0KIC4uLi9sZW1vdGUtMmYvcmVzZXQuYyAgICAgICAgICAgICAgICAgICAgICAgICB8
+ICAgMiArLQ0KIGFyY2gvbWlwcy9sb29uZ3NvbjY0L0tjb25maWcgICAgICAgICAgICAgICAg
+ICB8IDEyNiArLS0tLS0tLS0tDQogYXJjaC9taXBzL2xvb25nc29uNjQvTWFrZWZpbGUgICAg
+ICAgICAgICAgICAgIHwgIDIzICstDQogYXJjaC9taXBzL2xvb25nc29uNjQvUGxhdGZvcm0g
+ICAgICAgICAgICAgICAgIHwgIDM2ICstLQ0KIC4uLi9sb29uZ3NvbjY0L3tsb29uZ3Nvbi0z
+ID0+IH0vYWNwaV9pbml0LmMgICB8ICAgMyArLQ0KIC4uLi9sb29uZ3NvbjY0L3tsb29uZ3Nv
+bi0zID0+IH0vY29wMi1leC5jICAgICB8ICAgNSArLQ0KIGFyY2gvbWlwcy9sb29uZ3NvbjY0
+L3tsb29uZ3Nvbi0zID0+IH0vZG1hLmMgICB8ICAgNiArLQ0KIGFyY2gvbWlwcy9sb29uZ3Nv
+bjY0L3tjb21tb24gPT4gfS9lbnYuYyAgICAgICB8IDEzOSArKysrKystLS0tLQ0KIGFyY2gv
+bWlwcy9sb29uZ3NvbjY0L3tsb29uZ3Nvbi0zID0+IH0vaHBldC5jICB8ICAgMA0KIGFyY2gv
+bWlwcy9sb29uZ3NvbjY0L2lycS5jICAgICAgICAgICAgICAgICAgICB8ICAyNyArKysNCiBh
+cmNoL21pcHMvbG9vbmdzb242NC9sb29uZ3Nvbi0zL01ha2VmaWxlICAgICAgfCAgMTEgLQ0K
+IGFyY2gvbWlwcy9sb29uZ3NvbjY0L2xvb25nc29uLTMvaXJxLmMgICAgICAgICB8IDE1OCAt
+LS0tLS0tLS0tLS0tDQogYXJjaC9taXBzL2xvb25nc29uNjQve2xvb25nc29uLTMgPT4gfS9u
+dW1hLmMgIHwgICA0ICstDQogYXJjaC9taXBzL2xvb25nc29uNjQvcGNpLmMgICAgICAgICAg
+ICAgICAgICAgIHwgIDQ1ICsrKysNCiAuLi4vbG9vbmdzb242NC97bG9vbmdzb24tMyA9PiB9
+L3BsYXRmb3JtLmMgICAgfCAgIDANCiBhcmNoL21pcHMvbG9vbmdzb242NC9yZXNldC5jICAg
+ICAgICAgICAgICAgICAgfCAgNTggKysrKysNCiBhcmNoL21pcHMvbG9vbmdzb242NC9zZXR1
+cC5jICAgICAgICAgICAgICAgICAgfCAxMDcgKysrKysrKysrDQogYXJjaC9taXBzL2xvb25n
+c29uNjQve2xvb25nc29uLTMgPT4gfS9zbXAuYyAgIHwgIDI4ICstLQ0KIGFyY2gvbWlwcy9s
+b29uZ3NvbjY0L3tsb29uZ3Nvbi0zID0+IH0vc21wLmggICB8ICAgMA0KIGFyY2gvbWlwcy9t
+bS9jLXI0ay5jICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAzMiArLS0NCiBhcmNoL21p
+cHMvbW0vcGFnZS5jICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBhcmNo
+L21pcHMvbW0vdGxiLXI0ay5jICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDQgKy0NCiBh
+cmNoL21pcHMvbW0vdGxiZXguYyAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDYgKy0N
+CiBhcmNoL21pcHMvb3Byb2ZpbGUvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgfCAgIDQg
+Ky0NCiBhcmNoL21pcHMvb3Byb2ZpbGUvY29tbW9uLmMgICAgICAgICAgICAgICAgICAgfCAg
+IDQgKy0NCiBhcmNoL21pcHMvb3Byb2ZpbGUvb3BfbW9kZWxfbG9vbmdzb24yLmMgICAgICAg
+fCAgIDIgKy0NCiBhcmNoL21pcHMvb3Byb2ZpbGUvb3BfbW9kZWxfbG9vbmdzb24zLmMgICAg
+ICAgfCAgIDIgKy0NCiBhcmNoL21pcHMvcGNpL01ha2VmaWxlICAgICAgICAgICAgICAgICAg
+ICAgICAgfCAgIDIgKy0NCiBhcmNoL21pcHMvcGNpL2ZpeHVwLWZ1bG9vbmcyZS5jICAgICAg
+ICAgICAgICAgfCAgIDIgKy0NCiBhcmNoL21pcHMvcGNpL2ZpeHVwLWxlbW90ZTJmLmMgICAg
+ICAgICAgICAgICAgfCAgIDIgKy0NCiBhcmNoL21pcHMvcGNpL29wcy1sb29uZ3NvbjIuYyAg
+ICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBhcmNoL21pcHMvcGNpL29wcy1sb29uZ3NvbjMu
+YyAgICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBkcml2ZXJzL2NwdWZyZXEvbG9vbmdzb24y
+X2NwdWZyZXEuYyAgICAgICAgICAgfCAgIDIgKy0NCiBkcml2ZXJzL2dwaW8vS2NvbmZpZyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBkcml2ZXJzL2dwaW8vZ3Bpby1s
+b29uZ3Nvbi5jICAgICAgICAgICAgICAgICAgfCAgIDQgKy0NCiBkcml2ZXJzL2lycWNoaXAv
+S2NvbmZpZyAgICAgICAgICAgICAgICAgICAgICAgfCAgMTcgKysNCiBkcml2ZXJzL2lycWNo
+aXAvTWFrZWZpbGUgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKw0KIGRyaXZlcnMvaXJx
+Y2hpcC9pcnEtaTgyNTkuYyAgICAgICAgICAgICAgICAgICB8ICA0NyArKystDQogZHJpdmVy
+cy9pcnFjaGlwL2lycS1sczMtaHRpbnRjLmMgICAgICAgICAgICAgIHwgMTQ1ICsrKysrKysr
+KysrKw0KIGRyaXZlcnMvaXJxY2hpcC9pcnEtbHMzLWlvaW50Yy5jICAgICAgICAgICAgICB8
+IDIxNiArKysrKysrKysrKysrKysrKysNCiBkcml2ZXJzL2lycWNoaXAvaXJxLW1pcHMtY3B1
+LmMgICAgICAgICAgICAgICAgfCAgIDIgKy0NCiBkcml2ZXJzL3BsYXRmb3JtL21pcHMvY3B1
+X2h3bW9uLmMgICAgICAgICAgICAgfCAgIDIgKy0NCiBpbmNsdWRlL2RybS9kcm1fY2FjaGUu
+aCAgICAgICAgICAgICAgICAgICAgICAgfCAgIDIgKy0NCiAxNDggZmlsZXMgY2hhbmdlZCwg
+MjA2NCBpbnNlcnRpb25zKCspLCA4NDEgZGVsZXRpb25zKC0pDQogY3JlYXRlIG1vZGUgMTAw
+NjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnRlcnJ1cHQtY29udHJv
+bGxlci9sb29uZ3NvbixsczMtaHRpbnRjLnlhbWwNCiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9j
+dW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ludGVycnVwdC1jb250cm9sbGVyL2xv
+b25nc29uLGxzMy1pb2ludGMueWFtbA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWlwcy9sb29uZ3Nvbi9jcHVzLnlhbWwNCiBjcmVh
+dGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21pcHMv
+bG9vbmdzb24vZGV2aWNlcy55YW1sDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9i
+b290L2R0cy9sb29uZ3Nvbi9NYWtlZmlsZQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL21p
+cHMvYm9vdC9kdHMvbG9vbmdzb24vbHMzLTJub2Rlcy5kdHNpDQogY3JlYXRlIG1vZGUgMTAw
+NjQ0IGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczMtNG5vZGVzLmR0c2kNCiBjcmVh
+dGUgbW9kZSAxMDA2NDQgYXJjaC9taXBzL2Jvb3QvZHRzL2xvb25nc29uL2xzMy1jcHVzLmR0
+c2kNCiBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9taXBzL2Jvb3QvZHRzL2xvb25nc29uL2xz
+My1nczQ2NC5kdHNpDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9ib290L2R0cy9s
+b29uZ3Nvbi9sczMtZ3M0NjRlLmR0c2kNCiBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9taXBz
+L2Jvb3QvZHRzL2xvb25nc29uL2xzMy1yczc4MGUtcGNoLmR0c2kNCiBjcmVhdGUgbW9kZSAx
+MDA2NDQgYXJjaC9taXBzL2Jvb3QvZHRzL2xvb25nc29uL2xzM2EtcGFja2FnZS5kdHNpDQog
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczNhMTAw
+MF83ODBlXzF3YXkuZHRzDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9ib290L2R0
+cy9sb29uZ3Nvbi9sczNhMTAwMF83ODBlXzJ3YXkuZHRzDQogY3JlYXRlIG1vZGUgMTAwNjQ0
+IGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczNhMTAwMF83ODBlXzR3YXkuZHRzDQog
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczNhMjAw
+MF83ODBlXzF3YXkuZHRzDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9ib290L2R0
+cy9sb29uZ3Nvbi9sczNhMjAwMF83ODBlXzJ3YXkuZHRzDQogY3JlYXRlIG1vZGUgMTAwNjQ0
+IGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczNhMjAwMF83ODBlXzR3YXkuZHRzDQog
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczNhMzAw
+MF83ODBlXzF3YXkuZHRzDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9ib290L2R0
+cy9sb29uZ3Nvbi9sczNhMzAwMF83ODBlXzJ3YXkuZHRzDQogY3JlYXRlIG1vZGUgMTAwNjQ0
+IGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczNhMzAwMF83ODBlXzR3YXkuZHRzDQog
+Y3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9ib290L2R0cy9sb29uZ3Nvbi9sczNiLXBh
+Y2thZ2UuZHRzaQ0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL21pcHMvYm9vdC9kdHMvbG9v
+bmdzb24vbHMzYl83ODBlXzF3YXkuZHRzDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlw
+cy9ib290L2R0cy9sb29uZ3Nvbi9sczNiXzc4MGVfMndheS5kdHMNCiBjcmVhdGUgbW9kZSAx
+MDA2NDQgYXJjaC9taXBzL2luY2x1ZGUvYXNtL21hY2gtbG9vbmdzb24yZWYvY3B1LWZlYXR1
+cmUtb3ZlcnJpZGVzLmgNCiByZW5hbWUgYXJjaC9taXBzL2luY2x1ZGUvYXNtL3ttYWNoLWxv
+b25nc29uNjQgPT4gbWFjaC1sb29uZ3NvbjJlZn0vY3M1NTM2L2NzNTUzNi5oICgxMDAlKQ0K
+IHJlbmFtZSBhcmNoL21pcHMvaW5jbHVkZS9hc20ve21hY2gtbG9vbmdzb242NCA9PiBtYWNo
+LWxvb25nc29uMmVmfS9jczU1MzYvY3M1NTM2X21mZ3B0LmggKDEwMCUpDQogcmVuYW1lIGFy
+Y2gvbWlwcy9pbmNsdWRlL2FzbS97bWFjaC1sb29uZ3NvbjY0ID0+IG1hY2gtbG9vbmdzb24y
+ZWZ9L2NzNTUzNi9jczU1MzZfcGNpLmggKDEwMCUpDQogcmVuYW1lIGFyY2gvbWlwcy9pbmNs
+dWRlL2FzbS97bWFjaC1sb29uZ3NvbjY0ID0+IG1hY2gtbG9vbmdzb24yZWZ9L2NzNTUzNi9j
+czU1MzZfdnNtLmggKDEwMCUpDQogcmVuYW1lIGFyY2gvbWlwcy9pbmNsdWRlL2FzbS97bWFj
+aC1sb29uZ3NvbjY0L2xvb25nc29uLmggPT4gbWFjaC1sb29uZ3NvbjJlZi9sb29uZ3NvbjJl
+Zi5ofSAoOTElKQ0KIHJlbmFtZSBhcmNoL21pcHMvaW5jbHVkZS9hc20ve21hY2gtbG9vbmdz
+b242NCA9PiBtYWNoLWxvb25nc29uMmVmfS9tYWNoaW5lLmggKDgwJSkNCiByZW5hbWUgYXJj
+aC9taXBzL2luY2x1ZGUvYXNtL3ttYWNoLWxvb25nc29uNjQgPT4gbWFjaC1sb29uZ3NvbjJl
+Zn0vbWMxNDY4MThydGMuaCAoODAlKQ0KIHJlbmFtZSBhcmNoL21pcHMvaW5jbHVkZS9hc20v
+e21hY2gtbG9vbmdzb242NCA9PiBtYWNoLWxvb25nc29uMmVmfS9tZW0uaCAoODYlKQ0KIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL21pcHMvaW5jbHVkZS9hc20vbWFjaC1sb29uZ3NvbjJl
+Zi9wY2kuaA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL21pcHMvaW5jbHVkZS9hc20vbWFj
+aC1sb29uZ3NvbjJlZi9zcGFjZXMuaA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL21pcHMv
+aW5jbHVkZS9hc20vbWFjaC1sb29uZ3NvbjY0L2J1aWx0aW5fZHRicy5oDQogZGVsZXRlIG1v
+ZGUgMTAwNjQ0IGFyY2gvbWlwcy9pbmNsdWRlL2FzbS9tYWNoLWxvb25nc29uNjQva2VybmVs
+LWVudHJ5LWluaXQuaA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL21pcHMvaW5jbHVkZS9h
+c20vbWFjaC1sb29uZ3NvbjY0L2xvb25nc29uNjQuaA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBh
+cmNoL21pcHMvbG9vbmdzb24yZWYvS2NvbmZpZw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNo
+L21pcHMvbG9vbmdzb24yZWYvTWFrZWZpbGUNCiBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9t
+aXBzL2xvb25nc29uMmVmL1BsYXRmb3JtDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242
+NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9uL01ha2VmaWxlICgxMDAlKQ0KIHJlbmFtZSBhcmNo
+L21pcHMve2xvb25nc29uNjQgPT4gbG9vbmdzb24yZWZ9L2NvbW1vbi9ib25pdG8taXJxLmMg
+KDk3JSkNCiByZW5hbWUgYXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9j
+b21tb24vY21kbGluZS5jICg5NyUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9
+PiBsb29uZ3NvbjJlZn0vY29tbW9uL2NzNTUzNi9NYWtlZmlsZSAoMTAwJSkNCiByZW5hbWUg
+YXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9jb21tb24vY3M1NTM2L2Nz
+NTUzNl9hY2MuYyAoMTAwJSkNCiByZW5hbWUgYXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+IGxv
+b25nc29uMmVmfS9jb21tb24vY3M1NTM2L2NzNTUzNl9laGNpLmMgKDEwMCUpDQogcmVuYW1l
+IGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9uL2NzNTUzNi9j
+czU1MzZfaWRlLmMgKDEwMCUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBs
+b29uZ3NvbjJlZn0vY29tbW9uL2NzNTUzNi9jczU1MzZfaXNhLmMgKDEwMCUpDQogcmVuYW1l
+IGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9uL2NzNTUzNi9j
+czU1MzZfbWZncHQuYyAoMTAwJSkNCiByZW5hbWUgYXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+
+IGxvb25nc29uMmVmfS9jb21tb24vY3M1NTM2L2NzNTUzNl9vaGNpLmMgKDEwMCUpDQogcmVu
+YW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9uL2NzNTUz
+Ni9jczU1MzZfcGNpLmMgKDEwMCUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9
+PiBsb29uZ3NvbjJlZn0vY29tbW9uL2Vhcmx5X3ByaW50ay5jICg5NyUpDQogY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGFyY2gvbWlwcy9sb29uZ3NvbjJlZi9jb21tb24vZW52LmMNCiByZW5hbWUg
+YXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9jb21tb24vaW5pdC5jICg5
+MCUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29t
+bW9uL2lycS5jICg5OCUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29u
+Z3NvbjJlZn0vY29tbW9uL21hY2h0eXBlLmMgKDk0JSkNCiByZW5hbWUgYXJjaC9taXBzL3ts
+b29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9jb21tb24vbWVtLmMgKDcyJSkNCiByZW5hbWUg
+YXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9jb21tb24vcGNpLmMgKDg5
+JSkNCiByZW5hbWUgYXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9jb21t
+b24vcGxhdGZvcm0uYyAoMTAwJSkNCiByZW5hbWUgYXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+
+IGxvb25nc29uMmVmfS9jb21tb24vcG0uYyAoOTklKQ0KIHJlbmFtZSBhcmNoL21pcHMve2xv
+b25nc29uNjQgPT4gbG9vbmdzb24yZWZ9L2NvbW1vbi9yZXNldC5jICg3NyUpDQogcmVuYW1l
+IGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9uL3J0Yy5jICgx
+MDAlKQ0KIHJlbmFtZSBhcmNoL21pcHMve2xvb25nc29uNjQgPT4gbG9vbmdzb24yZWZ9L2Nv
+bW1vbi9zZXJpYWwuYyAoNjMlKQ0KIHJlbmFtZSBhcmNoL21pcHMve2xvb25nc29uNjQgPT4g
+bG9vbmdzb24yZWZ9L2NvbW1vbi9zZXR1cC5jICg5NyUpDQogcmVuYW1lIGFyY2gvbWlwcy97
+bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vY29tbW9uL3RpbWUuYyAoOTYlKQ0KIHJlbmFt
+ZSBhcmNoL21pcHMve2xvb25nc29uNjQgPT4gbG9vbmdzb24yZWZ9L2NvbW1vbi91YXJ0X2Jh
+c2UuYyAoNzclKQ0KIHJlbmFtZSBhcmNoL21pcHMve2xvb25nc29uNjQgPT4gbG9vbmdzb24y
+ZWZ9L2Z1bG9vbmctMmUvTWFrZWZpbGUgKDEwMCUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9v
+bmdzb242NCA9PiBsb29uZ3NvbjJlZn0vZnVsb29uZy0yZS9kbWEuYyAoMTAwJSkNCiByZW5h
+bWUgYXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9mdWxvb25nLTJlL2ly
+cS5jICg5OCUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJl
+Zn0vZnVsb29uZy0yZS9yZXNldC5jICg5MyUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdz
+b242NCA9PiBsb29uZ3NvbjJlZn0vbGVtb3RlLTJmL01ha2VmaWxlICgxMDAlKQ0KIHJlbmFt
+ZSBhcmNoL21pcHMve2xvb25nc29uNjQgPT4gbG9vbmdzb24yZWZ9L2xlbW90ZS0yZi9jbG9j
+ay5jICg5OCUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJl
+Zn0vbGVtb3RlLTJmL2RtYS5jICgxMDAlKQ0KIHJlbmFtZSBhcmNoL21pcHMve2xvb25nc29u
+NjQgPT4gbG9vbmdzb24yZWZ9L2xlbW90ZS0yZi9lY19rYjMzMTBiLmMgKDEwMCUpDQogcmVu
+YW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3NvbjJlZn0vbGVtb3RlLTJmL2Vj
+X2tiMzMxMGIuaCAoMTAwJSkNCiByZW5hbWUgYXJjaC9taXBzL3tsb29uZ3NvbjY0ID0+IGxv
+b25nc29uMmVmfS9sZW1vdGUtMmYvaXJxLmMgKDk5JSkNCiByZW5hbWUgYXJjaC9taXBzL3ts
+b29uZ3NvbjY0ID0+IGxvb25nc29uMmVmfS9sZW1vdGUtMmYvbWFjaHR5cGUuYyAoOTglKQ0K
+IHJlbmFtZSBhcmNoL21pcHMve2xvb25nc29uNjQgPT4gbG9vbmdzb24yZWZ9L2xlbW90ZS0y
+Zi9wbS5jICg5OSUpDQogcmVuYW1lIGFyY2gvbWlwcy97bG9vbmdzb242NCA9PiBsb29uZ3Nv
+bjJlZn0vbGVtb3RlLTJmL3Jlc2V0LmMgKDk5JSkNCiByZW5hbWUgYXJjaC9taXBzL2xvb25n
+c29uNjQve2xvb25nc29uLTMgPT4gfS9hY3BpX2luaXQuYyAoOTklKQ0KIHJlbmFtZSBhcmNo
+L21pcHMvbG9vbmdzb242NC97bG9vbmdzb24tMyA9PiB9L2NvcDItZXguYyAoODglKQ0KIHJl
+bmFtZSBhcmNoL21pcHMvbG9vbmdzb242NC97bG9vbmdzb24tMyA9PiB9L2RtYS5jICg4MiUp
+DQogcmVuYW1lIGFyY2gvbWlwcy9sb29uZ3NvbjY0L3tjb21tb24gPT4gfS9lbnYuYyAoNzcl
+KQ0KIHJlbmFtZSBhcmNoL21pcHMvbG9vbmdzb242NC97bG9vbmdzb24tMyA9PiB9L2hwZXQu
+YyAoMTAwJSkNCiBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9taXBzL2xvb25nc29uNjQvaXJx
+LmMNCiBkZWxldGUgbW9kZSAxMDA2NDQgYXJjaC9taXBzL2xvb25nc29uNjQvbG9vbmdzb24t
+My9NYWtlZmlsZQ0KIGRlbGV0ZSBtb2RlIDEwMDY0NCBhcmNoL21pcHMvbG9vbmdzb242NC9s
+b29uZ3Nvbi0zL2lycS5jDQogcmVuYW1lIGFyY2gvbWlwcy9sb29uZ3NvbjY0L3tsb29uZ3Nv
+bi0zID0+IH0vbnVtYS5jICg5OCUpDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvbWlwcy9s
+b29uZ3NvbjY0L3BjaS5jDQogcmVuYW1lIGFyY2gvbWlwcy9sb29uZ3NvbjY0L3tsb29uZ3Nv
+bi0zID0+IH0vcGxhdGZvcm0uYyAoMTAwJSkNCiBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9t
+aXBzL2xvb25nc29uNjQvcmVzZXQuYw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL21pcHMv
+bG9vbmdzb242NC9zZXR1cC5jDQogcmVuYW1lIGFyY2gvbWlwcy9sb29uZ3NvbjY0L3tsb29u
+Z3Nvbi0zID0+IH0vc21wLmMgKDk4JSkNCiByZW5hbWUgYXJjaC9taXBzL2xvb25nc29uNjQv
+e2xvb25nc29uLTMgPT4gfS9zbXAuaCAoMTAwJSkNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9pcnFjaGlwL2lycS1sczMtaHRpbnRjLmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
+dmVycy9pcnFjaGlwL2lycS1sczMtaW9pbnRjLmMNCg0KLS0gDQoyLjIyLjA=
 
-Thanks, applied to perf/core.
 
-- Arnaldo
 
-> Signed-off-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-> ---
->  .../arch/powerpc/entry/syscalls/syscall.tbl   | 146 ++++++++++++++----
->  1 file changed, 119 insertions(+), 27 deletions(-)
-> 
-> diff --git a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-> index db3bbb8744af..43f736ed47f2 100644
-> --- a/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-> +++ b/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-> @@ -20,7 +20,9 @@
->  10	common	unlink				sys_unlink
->  11	nospu	execve				sys_execve			compat_sys_execve
->  12	common	chdir				sys_chdir
-> -13	common	time				sys_time			compat_sys_time
-> +13	32	time				sys_time32
-> +13	64	time				sys_time
-> +13	spu	time				sys_time
->  14	common	mknod				sys_mknod
->  15	common	chmod				sys_chmod
->  16	common	lchown				sys_lchown
-> @@ -36,14 +38,17 @@
->  22	spu	umount				sys_ni_syscall
->  23	common	setuid				sys_setuid
->  24	common	getuid				sys_getuid
-> -25	common	stime				sys_stime			compat_sys_stime
-> +25	32	stime				sys_stime32
-> +25	64	stime				sys_stime
-> +25	spu	stime				sys_stime
->  26	nospu	ptrace				sys_ptrace			compat_sys_ptrace
->  27	common	alarm				sys_alarm
->  28	32	oldfstat			sys_fstat			sys_ni_syscall
->  28	64	oldfstat			sys_ni_syscall
->  28	spu	oldfstat			sys_ni_syscall
->  29	nospu	pause				sys_pause
-> -30	nospu	utime				sys_utime			compat_sys_utime
-> +30	32	utime				sys_utime32
-> +30	64	utime				sys_utime
->  31	common	stty				sys_ni_syscall
->  32	common	gtty				sys_ni_syscall
->  33	common	access				sys_access
-> @@ -157,7 +162,9 @@
->  121	common	setdomainname			sys_setdomainname
->  122	common	uname				sys_newuname
->  123	common	modify_ldt			sys_ni_syscall
-> -124	common	adjtimex			sys_adjtimex			compat_sys_adjtimex
-> +124	32	adjtimex			sys_adjtimex_time32
-> +124	64	adjtimex			sys_adjtimex
-> +124	spu	adjtimex			sys_adjtimex
->  125	common	mprotect			sys_mprotect
->  126	32	sigprocmask			sys_sigprocmask			compat_sys_sigprocmask
->  126	64	sigprocmask			sys_ni_syscall
-> @@ -198,8 +205,12 @@
->  158	common	sched_yield			sys_sched_yield
->  159	common	sched_get_priority_max		sys_sched_get_priority_max
->  160	common	sched_get_priority_min		sys_sched_get_priority_min
-> -161	common	sched_rr_get_interval		sys_sched_rr_get_interval	compat_sys_sched_rr_get_interval
-> -162	common	nanosleep			sys_nanosleep			compat_sys_nanosleep
-> +161	32	sched_rr_get_interval		sys_sched_rr_get_interval_time32
-> +161	64	sched_rr_get_interval		sys_sched_rr_get_interval
-> +161	spu	sched_rr_get_interval		sys_sched_rr_get_interval
-> +162	32	nanosleep			sys_nanosleep_time32
-> +162	64	nanosleep			sys_nanosleep
-> +162	spu	nanosleep			sys_nanosleep
->  163	common	mremap				sys_mremap
->  164	common	setresuid			sys_setresuid
->  165	common	getresuid			sys_getresuid
-> @@ -213,7 +224,8 @@
->  173	nospu	rt_sigaction			sys_rt_sigaction		compat_sys_rt_sigaction
->  174	nospu	rt_sigprocmask			sys_rt_sigprocmask		compat_sys_rt_sigprocmask
->  175	nospu	rt_sigpending			sys_rt_sigpending		compat_sys_rt_sigpending
-> -176	nospu	rt_sigtimedwait			sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait
-> +176	32	rt_sigtimedwait			sys_rt_sigtimedwait_time32	compat_sys_rt_sigtimedwait_time32
-> +176	64	rt_sigtimedwait			sys_rt_sigtimedwait
->  177	nospu 	rt_sigqueueinfo			sys_rt_sigqueueinfo		compat_sys_rt_sigqueueinfo
->  178	nospu 	rt_sigsuspend			sys_rt_sigsuspend		compat_sys_rt_sigsuspend
->  179	common	pread64				sys_pread64			compat_sys_pread64
-> @@ -260,7 +272,9 @@
->  218	common	removexattr			sys_removexattr
->  219	common	lremovexattr			sys_lremovexattr
->  220	common	fremovexattr			sys_fremovexattr
-> -221	common	futex				sys_futex			compat_sys_futex
-> +221	32	futex				sys_futex_time32
-> +221	64	futex				sys_futex
-> +221	spu	futex				sys_futex
->  222	common	sched_setaffinity		sys_sched_setaffinity		compat_sys_sched_setaffinity
->  223	common	sched_getaffinity		sys_sched_getaffinity		compat_sys_sched_getaffinity
->  # 224 unused
-> @@ -268,7 +282,9 @@
->  226	32	sendfile64			sys_sendfile64			compat_sys_sendfile64
->  227	common	io_setup			sys_io_setup			compat_sys_io_setup
->  228	common	io_destroy			sys_io_destroy
-> -229	common	io_getevents			sys_io_getevents		compat_sys_io_getevents
-> +229	32	io_getevents			sys_io_getevents_time32
-> +229	64	io_getevents			sys_io_getevents
-> +229	spu	io_getevents			sys_io_getevents
->  230	common	io_submit			sys_io_submit			compat_sys_io_submit
->  231	common	io_cancel			sys_io_cancel
->  232	nospu	set_tid_address			sys_set_tid_address
-> @@ -280,19 +296,33 @@
->  238	common	epoll_wait			sys_epoll_wait
->  239	common	remap_file_pages		sys_remap_file_pages
->  240	common	timer_create			sys_timer_create		compat_sys_timer_create
-> -241	common	timer_settime			sys_timer_settime		compat_sys_timer_settime
-> -242	common	timer_gettime			sys_timer_gettime		compat_sys_timer_gettime
-> +241	32	timer_settime			sys_timer_settime32
-> +241	64	timer_settime			sys_timer_settime
-> +241	spu	timer_settime			sys_timer_settime
-> +242	32	timer_gettime			sys_timer_gettime32
-> +242	64	timer_gettime			sys_timer_gettime
-> +242	spu	timer_gettime			sys_timer_gettime
->  243	common	timer_getoverrun		sys_timer_getoverrun
->  244	common	timer_delete			sys_timer_delete
-> -245	common	clock_settime			sys_clock_settime		compat_sys_clock_settime
-> -246	common	clock_gettime			sys_clock_gettime		compat_sys_clock_gettime
-> -247	common	clock_getres			sys_clock_getres		compat_sys_clock_getres
-> -248	common	clock_nanosleep			sys_clock_nanosleep		compat_sys_clock_nanosleep
-> +245	32	clock_settime			sys_clock_settime32
-> +245	64	clock_settime			sys_clock_settime
-> +245	spu	clock_settime			sys_clock_settime
-> +246	32	clock_gettime			sys_clock_gettime32
-> +246	64	clock_gettime			sys_clock_gettime
-> +246	spu	clock_gettime			sys_clock_gettime
-> +247	32	clock_getres			sys_clock_getres_time32
-> +247	64	clock_getres			sys_clock_getres
-> +247	spu	clock_getres			sys_clock_getres
-> +248	32	clock_nanosleep			sys_clock_nanosleep_time32
-> +248	64	clock_nanosleep			sys_clock_nanosleep
-> +248	spu	clock_nanosleep			sys_clock_nanosleep
->  249	32	swapcontext			ppc_swapcontext			ppc32_swapcontext
->  249	64	swapcontext			ppc64_swapcontext
->  249	spu	swapcontext			sys_ni_syscall
->  250	common	tgkill				sys_tgkill
-> -251	common	utimes				sys_utimes			compat_sys_utimes
-> +251	32	utimes				sys_utimes_time32
-> +251	64	utimes				sys_utimes
-> +251	spu	utimes				sys_utimes
->  252	common	statfs64			sys_statfs64			compat_sys_statfs64
->  253	common	fstatfs64			sys_fstatfs64			compat_sys_fstatfs64
->  254	32	fadvise64_64			ppc_fadvise64_64
-> @@ -308,8 +338,10 @@
->  261	nospu	set_mempolicy			sys_set_mempolicy		compat_sys_set_mempolicy
->  262	nospu	mq_open				sys_mq_open			compat_sys_mq_open
->  263	nospu	mq_unlink			sys_mq_unlink
-> -264	nospu	mq_timedsend			sys_mq_timedsend		compat_sys_mq_timedsend
-> -265	nospu	mq_timedreceive			sys_mq_timedreceive		compat_sys_mq_timedreceive
-> +264	32	mq_timedsend			sys_mq_timedsend_time32
-> +264	64	mq_timedsend			sys_mq_timedsend
-> +265	32	mq_timedreceive			sys_mq_timedreceive_time32
-> +265	64	mq_timedreceive			sys_mq_timedreceive
->  266	nospu	mq_notify			sys_mq_notify			compat_sys_mq_notify
->  267	nospu	mq_getsetattr			sys_mq_getsetattr		compat_sys_mq_getsetattr
->  268	nospu	kexec_load			sys_kexec_load			compat_sys_kexec_load
-> @@ -324,8 +356,10 @@
->  277	nospu	inotify_rm_watch		sys_inotify_rm_watch
->  278	nospu	spu_run				sys_spu_run
->  279	nospu	spu_create			sys_spu_create
-> -280	nospu	pselect6			sys_pselect6			compat_sys_pselect6
-> -281	nospu	ppoll				sys_ppoll			compat_sys_ppoll
-> +280	32	pselect6			sys_pselect6_time32		compat_sys_pselect6_time32
-> +280	64	pselect6			sys_pselect6
-> +281	32	ppoll				sys_ppoll_time32		compat_sys_ppoll_time32
-> +281	64	ppoll				sys_ppoll
->  282	common	unshare				sys_unshare
->  283	common	splice				sys_splice
->  284	common	tee				sys_tee
-> @@ -334,7 +368,9 @@
->  287	common	mkdirat				sys_mkdirat
->  288	common	mknodat				sys_mknodat
->  289	common	fchownat			sys_fchownat
-> -290	common	futimesat			sys_futimesat			compat_sys_futimesat
-> +290	32	futimesat			sys_futimesat_time32
-> +290	64	futimesat			sys_futimesat
-> +290	spu	utimesat			sys_futimesat
->  291	32	fstatat64			sys_fstatat64
->  291	64	newfstatat			sys_newfstatat
->  291	spu	newfstatat			sys_newfstatat
-> @@ -350,15 +386,21 @@
->  301	common	move_pages			sys_move_pages			compat_sys_move_pages
->  302	common	getcpu				sys_getcpu
->  303	nospu	epoll_pwait			sys_epoll_pwait			compat_sys_epoll_pwait
-> -304	common	utimensat			sys_utimensat			compat_sys_utimensat
-> +304	32	utimensat			sys_utimensat_time32
-> +304	64	utimensat			sys_utimensat
-> +304	spu	utimensat			sys_utimensat
->  305	common	signalfd			sys_signalfd			compat_sys_signalfd
->  306	common	timerfd_create			sys_timerfd_create
->  307	common	eventfd				sys_eventfd
->  308	common	sync_file_range2		sys_sync_file_range2		compat_sys_sync_file_range2
->  309	nospu	fallocate			sys_fallocate			compat_sys_fallocate
->  310	nospu	subpage_prot			sys_subpage_prot
-> -311	common	timerfd_settime			sys_timerfd_settime		compat_sys_timerfd_settime
-> -312	common	timerfd_gettime			sys_timerfd_gettime		compat_sys_timerfd_gettime
-> +311	32	timerfd_settime			sys_timerfd_settime32
-> +311	64	timerfd_settime			sys_timerfd_settime
-> +311	spu	timerfd_settime			sys_timerfd_settime
-> +312	32	timerfd_gettime			sys_timerfd_gettime32
-> +312	64	timerfd_gettime			sys_timerfd_gettime
-> +312	spu	timerfd_gettime			sys_timerfd_gettime
->  313	common	signalfd4			sys_signalfd4			compat_sys_signalfd4
->  314	common	eventfd2			sys_eventfd2
->  315	common	epoll_create1			sys_epoll_create1
-> @@ -389,11 +431,15 @@
->  340	common	getsockopt			sys_getsockopt			compat_sys_getsockopt
->  341	common	sendmsg				sys_sendmsg			compat_sys_sendmsg
->  342	common	recvmsg				sys_recvmsg			compat_sys_recvmsg
-> -343	common	recvmmsg			sys_recvmmsg			compat_sys_recvmmsg
-> +343	32	recvmmsg			sys_recvmmsg_time32		compat_sys_recvmmsg_time32
-> +343	64	recvmmsg			sys_recvmmsg
-> +343	spu	recvmmsg			sys_recvmmsg
->  344	common	accept4				sys_accept4
->  345	common	name_to_handle_at		sys_name_to_handle_at
->  346	common	open_by_handle_at		sys_open_by_handle_at		compat_sys_open_by_handle_at
-> -347	common	clock_adjtime			sys_clock_adjtime		compat_sys_clock_adjtime
-> +347	32	clock_adjtime			sys_clock_adjtime32
-> +347	64	clock_adjtime			sys_clock_adjtime
-> +347	spu	clock_adjtime			sys_clock_adjtime
->  348	common	syncfs				sys_syncfs
->  349	common	sendmmsg			sys_sendmmsg			compat_sys_sendmmsg
->  350	common	setns				sys_setns
-> @@ -414,6 +460,7 @@
->  363	spu	switch_endian			sys_ni_syscall
->  364	common	userfaultfd			sys_userfaultfd
->  365	common	membarrier			sys_membarrier
-> +# 366-377 originally left for IPC, now unused
->  378	nospu	mlock2				sys_mlock2
->  379	nospu	copy_file_range			sys_copy_file_range
->  380	common	preadv2				sys_preadv2			compat_sys_preadv2
-> @@ -424,4 +471,49 @@
->  385	nospu	pkey_free			sys_pkey_free
->  386	nospu	pkey_mprotect			sys_pkey_mprotect
->  387	nospu	rseq				sys_rseq
-> -388	nospu	io_pgetevents			sys_io_pgetevents		compat_sys_io_pgetevents
-> +388	32	io_pgetevents			sys_io_pgetevents_time32	compat_sys_io_pgetevents
-> +388	64	io_pgetevents			sys_io_pgetevents
-> +# room for arch specific syscalls
-> +392	64	semtimedop			sys_semtimedop
-> +393	common	semget				sys_semget
-> +394	common	semctl				sys_semctl			compat_sys_semctl
-> +395	common	shmget				sys_shmget
-> +396	common	shmctl				sys_shmctl			compat_sys_shmctl
-> +397	common	shmat				sys_shmat			compat_sys_shmat
-> +398	common	shmdt				sys_shmdt
-> +399	common	msgget				sys_msgget
-> +400	common	msgsnd				sys_msgsnd			compat_sys_msgsnd
-> +401	common	msgrcv				sys_msgrcv			compat_sys_msgrcv
-> +402	common	msgctl				sys_msgctl			compat_sys_msgctl
-> +403	32	clock_gettime64			sys_clock_gettime		sys_clock_gettime
-> +404	32	clock_settime64			sys_clock_settime		sys_clock_settime
-> +405	32	clock_adjtime64			sys_clock_adjtime		sys_clock_adjtime
-> +406	32	clock_getres_time64		sys_clock_getres		sys_clock_getres
-> +407	32	clock_nanosleep_time64		sys_clock_nanosleep		sys_clock_nanosleep
-> +408	32	timer_gettime64			sys_timer_gettime		sys_timer_gettime
-> +409	32	timer_settime64			sys_timer_settime		sys_timer_settime
-> +410	32	timerfd_gettime64		sys_timerfd_gettime		sys_timerfd_gettime
-> +411	32	timerfd_settime64		sys_timerfd_settime		sys_timerfd_settime
-> +412	32	utimensat_time64		sys_utimensat			sys_utimensat
-> +413	32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
-> +414	32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
-> +416	32	io_pgetevents_time64		sys_io_pgetevents		sys_io_pgetevents
-> +417	32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
-> +418	32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
-> +419	32	mq_timedreceive_time64		sys_mq_timedreceive		sys_mq_timedreceive
-> +420	32	semtimedop_time64		sys_semtimedop			sys_semtimedop
-> +421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
-> +422	32	futex_time64			sys_futex			sys_futex
-> +423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
-> +424	common	pidfd_send_signal		sys_pidfd_send_signal
-> +425	common	io_uring_setup			sys_io_uring_setup
-> +426	common	io_uring_enter			sys_io_uring_enter
-> +427	common	io_uring_register		sys_io_uring_register
-> +428	common	open_tree			sys_open_tree
-> +429	common	move_mount			sys_move_mount
-> +430	common	fsopen				sys_fsopen
-> +431	common	fsconfig			sys_fsconfig
-> +432	common	fsmount				sys_fsmount
-> +433	common	fspick				sys_fspick
-> +434	common	pidfd_open			sys_pidfd_open
-> +435	nospu	clone3				ppc_clone3
-> -- 
-> 2.23.0
-
--- 
-
-- Arnaldo
