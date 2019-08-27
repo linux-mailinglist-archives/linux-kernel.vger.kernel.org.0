@@ -2,87 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F04FB9E9DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:47:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DFCA9E9DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:48:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729122AbfH0Nrd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 09:47:33 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:36356 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbfH0Nrc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:47:32 -0400
-Received: by mail-vs1-f66.google.com with SMTP id y16so13490169vsc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 06:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IPQYrv4BEVdVy6rwgRtH4GhcTMxzFg15QggsylhIIPs=;
-        b=m3fjzn0i0Q8f5nrO6+S3Ud8xp0u5R2TY61vWm5o63x1ntJ+n2TtXHHYBd0cWkbhNAg
-         SsL/gDXdqe+eYw5ukeaZmqwS0mB5QEuoVwFIU4kOJR8hVh/szp55kFxNmT4Rh2rsMc1b
-         fCtMgID+67KH0ZfkzfcjbHym6yv4meB8n/MO7NEz6NW2rS+b5gABuIWCzp4yRxZj+EDm
-         EIaA65c60gQjERUfx6TEG6pmtpeSWKVZLUdWqLj5cunS+5B0aHPOYXczQLvSBMfreoGo
-         2MEOhMCyHUfvaQPvggzyXejyChUpR3aRx2YbF37NhBSXWp18MnyySkCvN/iPLu1cxiPs
-         GKow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IPQYrv4BEVdVy6rwgRtH4GhcTMxzFg15QggsylhIIPs=;
-        b=A6q4Wg07hvRmh37IMw8ZFypjwFYPYB70hPrPZa5h69U0oMNSR2E2VylRedFB3tUmhv
-         IujZmm6Ywh5Eb9v0jl3gGMBE0zVcPGfK5hQxOUEVr9u/rYOZzyH5WPTexcc214qHUb5w
-         86gQNW9rEn06Ec42/qmXnFQ3exDSQzVwBiEnkj4a/XOgouNu5PvlzZ02S6EilayaixVc
-         Huj2G0LWV94KKWKBD3mNITRv6UPR+22v0URpRi1gaNAFyaikoSG7XzcGwfxfjGxf7E9v
-         KoZQ/wpzluB6KiROxVtF7CQcS8Xs5Ai2epFkXW0kIZlkODpggQcjngGx2WN5w1GCAEks
-         0GLQ==
-X-Gm-Message-State: APjAAAWd4iffdG5puN4J3eqYnt4gs2seLamRbCRJf+92wu1Yat1EjoeY
-        bEwRc95u9fQ7e/XjkCzsNWbZgZh/XRU19H9jw02IIw==
-X-Google-Smtp-Source: APXvYqxj3tnsaHq8DgViGsAoJo9rw8QwkeZH6ZUISBOvBLXIBdN1U29SC597LP2qvis6MuTgFBGdgzDX0uchvgR7WCg=
-X-Received: by 2002:a67:fe4e:: with SMTP id m14mr14244540vsr.34.1566913651835;
- Tue, 27 Aug 2019 06:47:31 -0700 (PDT)
+        id S1729951AbfH0Nr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 09:47:57 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5671 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725825AbfH0Nr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:47:57 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 97BF0BD997FD7DC6858C;
+        Tue, 27 Aug 2019 21:47:47 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Tue, 27 Aug 2019
+ 21:47:41 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <andrew@lunn.ch>, <f.fainelli@gmail.com>, <hkallweit1@gmail.com>,
+        <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] phy: mdio-hisi-femac: use devm_platform_ioremap_resource() to simplify code
+Date:   Tue, 27 Aug 2019 21:47:22 +0800
+Message-ID: <20190827134722.14332-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <20190826031830.30931-1-zhang.lyra@gmail.com>
-In-Reply-To: <20190826031830.30931-1-zhang.lyra@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 27 Aug 2019 15:46:55 +0200
-Message-ID: <CAPDyKFrpvtS9mHO7xN=cbrMHWN+ydPw08mF9oXtNW-TOMsP7Ew@mail.gmail.com>
-Subject: Re: [PATCH 0/5] a few fixes for sprd's sd host controller
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Aug 2019 at 05:18, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
->
-> With this patch-set, both sd card and mmc can be setup.  This patch-set was
-> verified on Unisoc's Whale2 and another mobile phone platform SC9863A.
->
-> Chunyan Zhang (5):
->   mmc: sdhci-sprd: fixed incorrect clock divider
->   mmc: sdhci: sprd: add get_ro hook function
->   mmc: sdhci: sprd: add SDHCI_QUIRK2_PRESET_VALUE_BROKEN
->   mms: sdhci: sprd: add SDHCI_QUIRK_BROKEN_CARD_DETECTION
->   mmc: sdhci: sprd: clear the UHS-I modes read from registers
->
->  drivers/mmc/host/sdhci-sprd.c | 30 +++++++++++++++++++++++++-----
->  1 file changed, 25 insertions(+), 5 deletions(-)
->
-> --
-> 2.20.1
->
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Looks like the entire series should be tagged for stable and having
-the same fixes tag as patch1. No?
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/phy/mdio-hisi-femac.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/drivers/net/phy/mdio-hisi-femac.c b/drivers/net/phy/mdio-hisi-femac.c
+index 287f3cc..f231c2f 100644
+--- a/drivers/net/phy/mdio-hisi-femac.c
++++ b/drivers/net/phy/mdio-hisi-femac.c
+@@ -74,7 +74,6 @@ static int hisi_femac_mdio_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct mii_bus *bus;
+ 	struct hisi_femac_mdio_data *data;
+-	struct resource *res;
+ 	int ret;
+ 
+ 	bus = mdiobus_alloc_size(sizeof(*data));
+@@ -88,8 +87,7 @@ static int hisi_femac_mdio_probe(struct platform_device *pdev)
+ 	bus->parent = &pdev->dev;
+ 
+ 	data = bus->priv;
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	data->membase = devm_ioremap_resource(&pdev->dev, res);
++	data->membase = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(data->membase)) {
+ 		ret = PTR_ERR(data->membase);
+ 		goto err_out_free_mdiobus;
+-- 
+2.7.4
+
+
