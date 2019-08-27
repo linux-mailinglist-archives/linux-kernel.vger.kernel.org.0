@@ -2,158 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01E8D9DABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 02:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFEB29DAC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 02:42:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfH0AiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 20:38:25 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36305 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727251AbfH0AiZ (ORCPT
+        id S1727901AbfH0AmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 20:42:07 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36623 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbfH0AmH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 20:38:25 -0400
-Received: by mail-pf1-f194.google.com with SMTP id w2so12914954pfi.3
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 17:38:25 -0700 (PDT)
+        Mon, 26 Aug 2019 20:42:07 -0400
+Received: by mail-wm1-f66.google.com with SMTP id g67so1183226wme.1;
+        Mon, 26 Aug 2019 17:42:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CzJ4L/ndy3TmvMzhc3lAYgIRX3iQZIHJfLoJy4FPyOo=;
-        b=nv3JPgoD/qTSnxeEOXknD51aWQjDcbr9AW9jwKCFqtUBoS2TevqfKmchyAm7BSRQ4O
-         tyFdft4fk96lQUJQjLGWRk8gqS1yYNUFw10qfpqxTVt2ZSNhdPCC+t1nrkI7F45P0KG7
-         cczO71SHVoSV4NXTdmgJL8ayA9dXWwqY6e9VrbOYHYqLyAL+zA7R5sQFdIcDkhYfYPpx
-         E/a9/2Qs1k0SUZcfS0cW4IaLmz1zonx6AthpxMnb+xykVvqM/mtoDHAOcEHxu2DNOh+J
-         b7TVdSuoCr4cw5I2vJGijjDaXCNiRURx19LBmaFI9ncZagxgF16+E/l+yQ07sk6AAfkc
-         5Ncg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=wraJLvz6EmcrQqM6J8VAkrpu9wLHEffkySlFIVb29F0=;
+        b=PeDP1g4ldCcu3fhNgWXbCJ5ZxhMa4yIWvVYGz//wgx08FfXXVI4JRs/uHjRAVe04SS
+         65Cdv45Rszv5yOevPof37G3B0Pn/7wn//QeEyDFloQpYW2/Y/BOAURqA9Jne868qQmte
+         hBMjd4H4CvHWZARjBRc7rMn/C5vnETz76kqdbHUozej0dJLy6spbc1PmRVKFUGJaqxg8
+         4hl2swVc30lPiOa3E+5E4Pi1JVdRExpUhV72++KHhEn/lwQEGO/fSq0HZlkx7OiRqtFq
+         /pdROK7/Z3zDFMSCsiQEwzW32ivzxSXjq5tzuiFu4fDuQZUz84YsMYFDXunzuAlEZBgx
+         JxmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CzJ4L/ndy3TmvMzhc3lAYgIRX3iQZIHJfLoJy4FPyOo=;
-        b=jeeXDkIum4ru5r887KTE9cshdITLaoXGSs39L4e7EELJg0lvpjqBloim8gHwLflC3Q
-         RTJaWweplYywXfPkY6a0GmYdyJhi4YWSRM5UFUFjqJLrzm59zh0Z4uqsmPccoRI048BD
-         UZct4F0iuhDpyuD6r8nULZ9kMfL+qHA+0W784DhFLqCAtma7C3crowsPqLmxgXJK125T
-         Wvtxeld+Ary6s6z4gF9TKkKeOC+2dX50uMyAk4vj451Lzm2tASvq/nTpCPk9Gy7P7DDt
-         2Xxalmh1Bpa5d3GqwJIeUTzLosXBN7sVi73seruBX2Yzyxdm4flL//0CMpUbWvttlR19
-         aFLA==
-X-Gm-Message-State: APjAAAX2bLG9OhaAMFOr1ifyQs3RUTKM0nZ6B9GFfuFg84C7x+LVkWfu
-        7Bm0cf9BxGQUaAgxbHHUKY8dzg==
-X-Google-Smtp-Source: APXvYqyjPwSyOmWAUWNl7BdiwhUe9MPVY5a44iaTMCz8MH8pBwqliT2FJ3xcoyhkNLlnBO1mO7g7qQ==
-X-Received: by 2002:a62:6489:: with SMTP id y131mr14055419pfb.124.1566866304601;
-        Mon, 26 Aug 2019 17:38:24 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z68sm14631861pgz.88.2019.08.26.17.38.23
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=wraJLvz6EmcrQqM6J8VAkrpu9wLHEffkySlFIVb29F0=;
+        b=Cxq4ec0HDL5seFbih/dmX/s6/cVVl5BYL02g8ANVYmCiUqRyze9zyUSWYyxLPabemq
+         vUHWMYVFNJCYyomMSDOrA0L+sz74SZ6Ww+99UbI8vy84LhYqbcst2v+qQ//85ny7cwMA
+         IEfzPmiExGVEy0qmpMLHeP0FEYF00OTT10wxpk2vCR4kW6ln50stAvcBJ1Mkt9ILtz/E
+         2IfQHX094dQl6IyWjepF3yivk0fxVk1DGrAESnPHdNTZlyC7iJji5DnsFdMQ/g4mRggf
+         AKExtzEPCQMzdxIBo8VWOVAF1qt60ohjsIVEtBAils0V2ew5v+sV+VA+wVOttlS8t2bN
+         59bw==
+X-Gm-Message-State: APjAAAWwBqccNnY3VpVGeLQN2tC/PX4pQW/QvsDsiTEhCjL4y31jJYzI
+        M9ehyDTACE8CIXA0rv3RiS/2EAgvOmm4/A==
+X-Google-Smtp-Source: APXvYqzaPp5TAOKha3Ej5wRwmqulxAgmmXuqPtFGipbQDKzIjYulEY4YpcXlTet7AGiGEH9VkEZEHg==
+X-Received: by 2002:a1c:9648:: with SMTP id y69mr22955151wmd.122.1566866524573;
+        Mon, 26 Aug 2019 17:42:04 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
+        by smtp.gmail.com with ESMTPSA id 7sm882049wmj.46.2019.08.26.17.42.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 17:38:23 -0700 (PDT)
-Date:   Mon, 26 Aug 2019 17:40:14 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: Re: [PATCH] clk: Evict unregistered clks from parent caches
-Message-ID: <20190827004014.GA26807@tuxbook-pro>
-References: <20190826234311.138147-1-sboyd@kernel.org>
+        Mon, 26 Aug 2019 17:42:03 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>
+Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Huckleberry <nhuck@google.com>,
+        Joe Perches <joe@perches.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] kbuild: Do not enable -Wimplicit-fallthrough for clang for now
+Date:   Mon, 26 Aug 2019 17:41:55 -0700
+Message-Id: <20190827004155.11366-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190815225844.145726-1-nhuck@google.com>
+References: <20190815225844.145726-1-nhuck@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826234311.138147-1-sboyd@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 26 Aug 16:43 PDT 2019, Stephen Boyd wrote:
+This functionally reverts commit bfd77145f35c ("Makefile: Convert
+-Wimplicit-fallthrough=3 to just -Wimplicit-fallthrough for clang").
 
-> We leave a dangling pointer in each clk_core::parents array that has an
-> unregistered clk as a potential parent when that clk_core pointer is
-> freed by clk{_hw}_unregister(). It is impossible for the true parent of
-> a clk to be set with clk_set_parent() once the dangling pointer is left
-> in the cache because we compare parent pointers in
-> clk_fetch_parent_index() instead of checking for a matching clk name or
-> clk_hw pointer.
-> 
-> Before commit ede77858473a ("clk: Remove global clk traversal on fetch
-> parent index"), we would check clk_hw pointers, which has a higher
-> chance of being the same between registration and unregistration, but it
-> can still be allocated and freed by the clk provider. In fact, this has
-> been a long standing problem since commit da0f0b2c3ad2 ("clk: Correct
-> lookup logic in clk_fetch_parent_index()") where we stopped trying to
-> compare clk names and skipped over entries in the cache that weren't
-> NULL.
-> 
-> There are good (performance) reasons to not do the global tree lookup in
-> cases where the cache holds dangling pointers to parents that have been
-> unregistered. Let's take the performance hit on the uncommon
-> registration path instead. Loop through all the clk_core::parents arrays
-> when a clk is unregistered and set the entry to NULL when the parent
-> cache entry and clk being unregistered are the same pointer. This will
-> fix this problem and avoid the overhead for the "normal" case.
-> 
-> Based on a patch by Bjorn Andersson.
-> 
-> Fixes: da0f0b2c3ad2 ("clk: Correct lookup logic in clk_fetch_parent_index()")
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+clang enabled support for -Wimplicit-fallthrough in C in r369414 [1],
+which causes a lot of warnings when building the kernel for two reasons:
 
-Thanks for writing this up.
+1. Clang does not support the /* fall through */ comments. There seems
+   to be a general consensus in the LLVM community that this is not
+   something they want to support. Joe Perches wrote a script to convert
+   all of the comments to a "fallthrough" keyword that will be added to
+   compiler_attributes.h [2] [3], which catches the vast majority of the
+   comments. There doesn't appear to be any consensus in the kernel
+   community when to do this conversion.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+2. Clang and GCC disagree about falling through to final case statements
+   with no content or cases that simply break:
 
-> Cc: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/clk.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c0990703ce54..f3982bfa39d6 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3737,6 +3737,34 @@ static const struct clk_ops clk_nodrv_ops = {
->  	.set_parent	= clk_nodrv_set_parent,
->  };
->  
-> +static void clk_core_evict_parent_cache_subtree(struct clk_core *root,
-> +						struct clk_core *target)
-> +{
-> +	int i;
-> +	struct clk_core *child;
-> +
-> +	for (i = 0; i < root->num_parents; i++)
-> +		if (root->parents[i].core == target)
-> +			root->parents[i].core = NULL;
-> +
-> +	hlist_for_each_entry(child, &root->children, child_node)
-> +		clk_core_evict_parent_cache_subtree(child, target);
-> +}
-> +
-> +/* Remove this clk from all parent caches */
-> +static void clk_core_evict_parent_cache(struct clk_core *core)
-> +{
-> +	struct hlist_head **lists;
-> +	struct clk_core *root;
-> +
-> +	lockdep_assert_held(&prepare_lock);
-> +
-> +	for (lists = all_lists; *lists; lists++)
-> +		hlist_for_each_entry(root, *lists, child_node)
-> +			clk_core_evict_parent_cache_subtree(root, core);
-> +
-> +}
-> +
->  /**
->   * clk_unregister - unregister a currently registered clock
->   * @clk: clock to unregister
-> @@ -3775,6 +3803,8 @@ void clk_unregister(struct clk *clk)
->  			clk_core_set_parent_nolock(child, NULL);
->  	}
->  
-> +	clk_core_evict_parent_cache(clk->core);
-> +
->  	hlist_del_init(&clk->core->child_node);
->  
->  	if (clk->core->prepare_count)
-> -- 
-> Sent by a computer through tubes
-> 
+   https://godbolt.org/z/c8csDu
+
+   This difference contributes at least 50 warnings in an allyesconfig
+   build for x86, not considering other architectures. This difference
+   will need to be discussed to see which compiler is right [4] [5].
+
+[1]: https://github.com/llvm/llvm-project/commit/1e0affb6e564b7361b0aadb38805f26deff4ecfc
+[2]: https://lore.kernel.org/lkml/61ddbb86d5e68a15e24ccb06d9b399bbf5ce2da7.camel@perches.com/
+[3]: https://lore.kernel.org/lkml/1d2830aadbe9d8151728a7df5b88528fc72a0095.1564549413.git.joe@perches.com/
+[4]: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91432
+[5]: https://github.com/ClangBuiltLinux/linux/issues/636
+
+Given these two problems need discussion and coordination, do not enable
+-Wimplicit-fallthrough with clang right now. Add a comment to explain
+what is going on as well. This commit should be reverted once these two
+issues are fully flushed out and resolved.
+
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ Makefile | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f125625efd60..6007a56bdbee 100644
+--- a/Makefile
++++ b/Makefile
+@@ -751,6 +751,11 @@ else
+ # These warnings generated too much noise in a regular build.
+ # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
+ KBUILD_CFLAGS += -Wno-unused-but-set-variable
++
++# Warn about unmarked fall-throughs in switch statement.
++# Disabled for clang while comment to attribute conversion happens and
++# https://github.com/ClangBuiltLinux/linux/issues/636 is discussed.
++KBUILD_CFLAGS += $(call cc-option,-Wimplicit-fallthrough,)
+ endif
+ 
+ KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
+@@ -845,9 +850,6 @@ NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+ # warn about C99 declaration after statement
+ KBUILD_CFLAGS += -Wdeclaration-after-statement
+ 
+-# Warn about unmarked fall-throughs in switch statement.
+-KBUILD_CFLAGS += $(call cc-option,-Wimplicit-fallthrough,)
+-
+ # Variable Length Arrays (VLAs) should not be used anywhere in the kernel
+ KBUILD_CFLAGS += -Wvla
+ 
+-- 
+2.23.0
+
