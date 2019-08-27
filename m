@@ -2,41 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84C49E178
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3F059E181
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:12:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730522AbfH0H7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:59:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52196 "EHLO mail.kernel.org"
+        id S1731942AbfH0IMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:12:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731099AbfH0H7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:59:03 -0400
+        id S1729800AbfH0H7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:59:06 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95C7A2186A;
-        Tue, 27 Aug 2019 07:59:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D102217F5;
+        Tue, 27 Aug 2019 07:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892742;
-        bh=RxDSkfwBhmaBGf5yeYT9XqsGu+pXDn6KUzqQgAHY1JI=;
+        s=default; t=1566892745;
+        bh=sV8A029NbP79JhWcV3l+Cv3/1wrI7UO0DdQ5OyIiX3U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Ka0MDBUpcqpnRoKJctWNtJMjNdBGQ+d9dw18bCIXh1O8e092IU58Nks9NgZyiufP
-         seC32hNNEb479NmJc5sRLO7NpPdHghPDDaTG2xZ9leBcZtRADScxA0dwaM3vpygf6c
-         06iEDP/X9WKKAhkIL//9verc9ACzwccrjwKJEG0g=
+        b=qUqWae7HcgO8exQTzw2PhrQhntB77hk46oSLnzAfD7+q19TZB1LLAswFn/xl5ckJe
+         kFJyCgRsrxjKBQdW3uDUmXWcucdXW5M0IFOmxf9+EwNgIJ2Xczy776wbXpQwKnt4am
+         OYbHmhjgqJrSr9TlfD8UUH/Swm+8JQ3ebGhmqkKE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jin Yao <yao.jin@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jin Yao <yao.jin@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 55/98] perf pmu-events: Fix missing "cpu_clk_unhalted.core" event
-Date:   Tue, 27 Aug 2019 09:50:34 +0200
-Message-Id: <20190827072721.212895393@linuxfoundation.org>
+        stable@vger.kernel.org, Zenghui Yu <yuzenghui@huawei.com>,
+        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 56/98] KVM: arm64: Dont write junk to sysregs on reset
+Date:   Tue, 27 Aug 2019 09:50:35 +0200
+Message-Id: <20190827072721.278787742@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
 References: <20190827072718.142728620@linuxfoundation.org>
@@ -49,62 +43,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8e6e5bea2e34c61291d00cb3f47560341aa84bc3 ]
+[ Upstream commit 03fdfb2690099c19160a3f2c5b77db60b3afeded ]
 
-The events defined in pmu-events JSON are parsed and added into perf
-tool. For fixed counters, we handle the encodings between JSON and perf
-by using a static array fixed[].
+At the moment, the way we reset system registers is mildly insane:
+We write junk to them, call the reset functions, and then check that
+we have something else in them.
 
-But the fixed[] has missed an important event "cpu_clk_unhalted.core".
+The "fun" thing is that this can happen while the guest is running
+(PSCI, for example). If anything in KVM has to evaluate the state
+of a system register while junk is in there, bad thing may happen.
 
-For example, on the Tremont platform,
+Let's stop doing that. Instead, we track that we have called a
+reset function for that register, and assume that the reset
+function has done something. This requires fixing a couple of
+sysreg refinition in the trap table.
 
-  [root@localhost ~]# perf stat -e cpu_clk_unhalted.core -a
-  event syntax error: 'cpu_clk_unhalted.core'
-                       \___ parser error
+In the end, the very need of this reset check is pretty dubious,
+as it doesn't check everything (a lot of the sysregs leave outside of
+the sys_regs[] array). It may well be axed in the near future.
 
-With this patch, the event cpu_clk_unhalted.core can be parsed.
-
-  [root@localhost perf]# ./perf stat -e cpu_clk_unhalted.core -a -vvv
-  ------------------------------------------------------------
-  perf_event_attr:
-    type                             4
-    size                             112
-    config                           0x3c
-    sample_type                      IDENTIFIER
-    read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-    disabled                         1
-    inherit                          1
-    exclude_guest                    1
-  ------------------------------------------------------------
-...
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jin Yao <yao.jin@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190729072755.2166-1-yao.jin@linux.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/pmu-events/jevents.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kvm/sys_regs.c | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
 
-diff --git a/tools/perf/pmu-events/jevents.c b/tools/perf/pmu-events/jevents.c
-index 68c92bb599eef..6b36b71106695 100644
---- a/tools/perf/pmu-events/jevents.c
-+++ b/tools/perf/pmu-events/jevents.c
-@@ -450,6 +450,7 @@ static struct fixed {
- 	{ "inst_retired.any_p", "event=0xc0" },
- 	{ "cpu_clk_unhalted.ref", "event=0x0,umask=0x03" },
- 	{ "cpu_clk_unhalted.thread", "event=0x3c" },
-+	{ "cpu_clk_unhalted.core", "event=0x3c" },
- 	{ "cpu_clk_unhalted.thread_any", "event=0x3c,any=1" },
- 	{ NULL, NULL},
- };
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index d112af75680bb..6da2bbdb9648f 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -626,7 +626,7 @@ static void reset_pmcr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r)
+ 	 */
+ 	val = ((pmcr & ~ARMV8_PMU_PMCR_MASK)
+ 	       | (ARMV8_PMU_PMCR_MASK & 0xdecafbad)) & (~ARMV8_PMU_PMCR_E);
+-	__vcpu_sys_reg(vcpu, PMCR_EL0) = val;
++	__vcpu_sys_reg(vcpu, r->reg) = val;
+ }
+ 
+ static bool check_pmu_access_disabled(struct kvm_vcpu *vcpu, u64 flags)
+@@ -968,13 +968,13 @@ static bool access_pmuserenr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
+ /* Silly macro to expand the DBG{BCR,BVR,WVR,WCR}n_EL1 registers in one go */
+ #define DBG_BCR_BVR_WCR_WVR_EL1(n)					\
+ 	{ SYS_DESC(SYS_DBGBVRn_EL1(n)),					\
+-	  trap_bvr, reset_bvr, n, 0, get_bvr, set_bvr },		\
++	  trap_bvr, reset_bvr, 0, 0, get_bvr, set_bvr },		\
+ 	{ SYS_DESC(SYS_DBGBCRn_EL1(n)),					\
+-	  trap_bcr, reset_bcr, n, 0, get_bcr, set_bcr },		\
++	  trap_bcr, reset_bcr, 0, 0, get_bcr, set_bcr },		\
+ 	{ SYS_DESC(SYS_DBGWVRn_EL1(n)),					\
+-	  trap_wvr, reset_wvr, n, 0,  get_wvr, set_wvr },		\
++	  trap_wvr, reset_wvr, 0, 0,  get_wvr, set_wvr },		\
+ 	{ SYS_DESC(SYS_DBGWCRn_EL1(n)),					\
+-	  trap_wcr, reset_wcr, n, 0,  get_wcr, set_wcr }
++	  trap_wcr, reset_wcr, 0, 0,  get_wcr, set_wcr }
+ 
+ /* Macro to expand the PMEVCNTRn_EL0 register */
+ #define PMU_PMEVCNTR_EL0(n)						\
+@@ -1359,7 +1359,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+ 
+ 	{ SYS_DESC(SYS_CSSELR_EL1), NULL, reset_unknown, CSSELR_EL1 },
+ 
+-	{ SYS_DESC(SYS_PMCR_EL0), access_pmcr, reset_pmcr, },
++	{ SYS_DESC(SYS_PMCR_EL0), access_pmcr, reset_pmcr, PMCR_EL0 },
+ 	{ SYS_DESC(SYS_PMCNTENSET_EL0), access_pmcnten, reset_unknown, PMCNTENSET_EL0 },
+ 	{ SYS_DESC(SYS_PMCNTENCLR_EL0), access_pmcnten, NULL, PMCNTENSET_EL0 },
+ 	{ SYS_DESC(SYS_PMOVSCLR_EL0), access_pmovs, NULL, PMOVSSET_EL0 },
+@@ -2072,13 +2072,19 @@ static int emulate_sys_reg(struct kvm_vcpu *vcpu,
+ }
+ 
+ static void reset_sys_reg_descs(struct kvm_vcpu *vcpu,
+-			      const struct sys_reg_desc *table, size_t num)
++				const struct sys_reg_desc *table, size_t num,
++				unsigned long *bmap)
+ {
+ 	unsigned long i;
+ 
+ 	for (i = 0; i < num; i++)
+-		if (table[i].reset)
++		if (table[i].reset) {
++			int reg = table[i].reg;
++
+ 			table[i].reset(vcpu, &table[i]);
++			if (reg > 0 && reg < NR_SYS_REGS)
++				set_bit(reg, bmap);
++		}
+ }
+ 
+ /**
+@@ -2576,18 +2582,16 @@ void kvm_reset_sys_regs(struct kvm_vcpu *vcpu)
+ {
+ 	size_t num;
+ 	const struct sys_reg_desc *table;
+-
+-	/* Catch someone adding a register without putting in reset entry. */
+-	memset(&vcpu->arch.ctxt.sys_regs, 0x42, sizeof(vcpu->arch.ctxt.sys_regs));
++	DECLARE_BITMAP(bmap, NR_SYS_REGS) = { 0, };
+ 
+ 	/* Generic chip reset first (so target could override). */
+-	reset_sys_reg_descs(vcpu, sys_reg_descs, ARRAY_SIZE(sys_reg_descs));
++	reset_sys_reg_descs(vcpu, sys_reg_descs, ARRAY_SIZE(sys_reg_descs), bmap);
+ 
+ 	table = get_target_table(vcpu->arch.target, true, &num);
+-	reset_sys_reg_descs(vcpu, table, num);
++	reset_sys_reg_descs(vcpu, table, num, bmap);
+ 
+ 	for (num = 1; num < NR_SYS_REGS; num++) {
+-		if (WARN(__vcpu_sys_reg(vcpu, num) == 0x4242424242424242,
++		if (WARN(!test_bit(num, bmap),
+ 			 "Didn't reset __vcpu_sys_reg(%zi)\n", num))
+ 			break;
+ 	}
 -- 
 2.20.1
 
