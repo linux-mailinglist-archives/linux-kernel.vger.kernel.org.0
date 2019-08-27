@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C45E49DB32
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 03:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EA7E9DB33
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 03:39:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729169AbfH0Bh5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 21:37:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51074 "EHLO mail.kernel.org"
+        id S1729197AbfH0BiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 21:38:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729094AbfH0Bhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 21:37:53 -0400
+        id S1729153AbfH0Bh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 21:37:56 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C535F22CF5;
-        Tue, 27 Aug 2019 01:37:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6C8121883;
+        Tue, 27 Aug 2019 01:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566869872;
-        bh=XAP+bFNfsfwa4XDcXB0WdP+rywPP34xU6eyFFIAkkdw=;
+        s=default; t=1566869875;
+        bh=jIcvO/lISP2V2k/D3uXnGNZDSFjHD2sUzaMnzay/kQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p/rE6XCZUkxW+tewzh8GJuaxuZVcBK2XGIahclgj+0oAe+3IYyOMJAAL291SG2JxM
-         ljracntKYWgpEFOLQY0hDjZurmLDkrJjJuDrlvgrr6Q2CFes2fU68YBa4xxa9kxXHw
-         fW7dOkHWWXqIZDCAUYWy6UPqZaQ/CmR8KrRiUJJc=
+        b=FMSl/2/15ud3lWOueanUy1uGLbErSDatJ+f5LhhAIpiNdLdsnp+a8NrYJofj8L1gV
+         RliBldN1dtak2i53KxNBZBjCQ2EJ5t3nZ953dQtLpVXyOaMeK+qiBwYEbg1ZgyBiW7
+         +A2aQiRXTofqYh8bJM1cY81EFpG41Rjh6TknnWn8=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -33,9 +33,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Michael Petlan <mpetlan@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 23/33] libperf: Add PERF_RECORD_LOST_SAMPLES 'struct lost_samples_event' to perf/event.h
-Date:   Mon, 26 Aug 2019 22:36:24 -0300
-Message-Id: <20190827013634.3173-24-acme@kernel.org>
+Subject: [PATCH 24/33] libperf: Add PERF_RECORD_READ 'struct read_event' to perf/event.h
+Date:   Mon, 26 Aug 2019 22:36:25 -0300
+Message-Id: <20190827013634.3173-25-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190827013634.3173-1-acme@kernel.org>
 References: <20190827013634.3173-1-acme@kernel.org>
@@ -48,8 +48,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Move the PERF_RECORD_LOST_SAMPLES event definition into libperf's
-event.h header include.
+Move the PERF_RECORD_READ event definition to libperf's event.h header
+include.
 
 In order to keep libperf simple, we switch 'u64/u32/u16/u8' types used
 events to their generic '__u*' versions.
@@ -73,57 +73,88 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190825181752.722-8-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190825181752.722-9-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/include/perf/event.h | 5 +++++
- tools/perf/util/event.h             | 5 -----
- tools/perf/util/machine.c           | 2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ tools/perf/lib/include/perf/event.h | 12 ++++++++++++
+ tools/perf/util/event.h             | 12 ------------
+ tools/perf/util/session.c           |  8 ++++----
+ 3 files changed, 16 insertions(+), 16 deletions(-)
 
 diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-index 71045ea8214c..86a779593405 100644
+index 86a779593405..f1830702e49a 100644
 --- a/tools/perf/lib/include/perf/event.h
 +++ b/tools/perf/lib/include/perf/event.h
-@@ -56,4 +56,9 @@ struct lost_event {
+@@ -61,4 +61,16 @@ struct lost_samples_event {
  	__u64			 lost;
  };
  
-+struct lost_samples_event {
++/*
++ * PERF_FORMAT_ENABLED | PERF_FORMAT_RUNNING | PERF_FORMAT_ID
++ */
++struct read_event {
 +	struct perf_event_header header;
-+	__u64			 lost;
++	__u32			 pid, tid;
++	__u64			 value;
++	__u64			 time_enabled;
++	__u64			 time_running;
++	__u64			 id;
 +};
 +
  #endif /* __LIBPERF_EVENT_H */
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 4a3f50203d04..976a8f00d2a2 100644
+index 976a8f00d2a2..008a2839d667 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -27,11 +27,6 @@
+@@ -27,18 +27,6 @@
  #define PRI_lx64 PRIx64
  #endif
  
--struct lost_samples_event {
+-/*
+- * PERF_FORMAT_ENABLED | PERF_FORMAT_RUNNING | PERF_FORMAT_ID
+- */
+-struct read_event {
 -	struct perf_event_header header;
--	u64 lost;
+-	u32 pid, tid;
+-	u64 value;
+-	u64 time_enabled;
+-	u64 time_running;
+-	u64 id;
 -};
 -
- /*
-  * PERF_FORMAT_ENABLED | PERF_FORMAT_RUNNING | PERF_FORMAT_ID
-  */
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 1ad6e984c2f5..823aaf7b1b83 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -653,7 +653,7 @@ int machine__process_lost_event(struct machine *machine __maybe_unused,
- int machine__process_lost_samples_event(struct machine *machine __maybe_unused,
- 					union perf_event *event, struct perf_sample *sample)
- {
--	dump_printf(": id:%" PRIu64 ": lost samples :%" PRIu64 "\n",
-+	dump_printf(": id:%" PRIu64 ": lost samples :%" PRI_lu64 "\n",
- 		    sample->id, event->lost_samples.lost);
- 	return 0;
+ struct throttle_event {
+ 	struct perf_event_header header;
+ 	u64 time;
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 82e0438a9160..cb1d8dcd0c19 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1260,7 +1260,7 @@ static void dump_read(struct evsel *evsel, union perf_event *event)
+ 	if (!dump_trace)
+ 		return;
+ 
+-	printf(": %d %d %s %" PRIu64 "\n", event->read.pid, event->read.tid,
++	printf(": %d %d %s %" PRI_lu64 "\n", event->read.pid, event->read.tid,
+ 	       perf_evsel__name(evsel),
+ 	       event->read.value);
+ 
+@@ -1270,13 +1270,13 @@ static void dump_read(struct evsel *evsel, union perf_event *event)
+ 	read_format = evsel->core.attr.read_format;
+ 
+ 	if (read_format & PERF_FORMAT_TOTAL_TIME_ENABLED)
+-		printf("... time enabled : %" PRIu64 "\n", read_event->time_enabled);
++		printf("... time enabled : %" PRI_lu64 "\n", read_event->time_enabled);
+ 
+ 	if (read_format & PERF_FORMAT_TOTAL_TIME_RUNNING)
+-		printf("... time running : %" PRIu64 "\n", read_event->time_running);
++		printf("... time running : %" PRI_lu64 "\n", read_event->time_running);
+ 
+ 	if (read_format & PERF_FORMAT_ID)
+-		printf("... id           : %" PRIu64 "\n", read_event->id);
++		printf("... id           : %" PRI_lu64 "\n", read_event->id);
  }
+ 
+ static struct machine *machines__find_for_cpumode(struct machines *machines,
 -- 
 2.21.0
 
