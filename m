@@ -2,135 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A58349F649
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D07679F645
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:37:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfH0Wjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 18:39:51 -0400
-Received: from mga02.intel.com ([134.134.136.20]:60493 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725989AbfH0Wju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 18:39:50 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 15:39:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,438,1559545200"; 
-   d="scan'208";a="192395592"
-Received: from skuppusw-desk.jf.intel.com (HELO skuppusw-desk.amr.corp.intel.com) ([10.54.74.33])
-  by orsmga002.jf.intel.com with ESMTP; 27 Aug 2019 15:39:50 -0700
-Date:   Tue, 27 Aug 2019 15:36:53 -0700
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] PCI: pciehp: Switch LED indicators with a single
- write
-Message-ID: <20190827223653.GD28404@skuppusw-desk.amr.corp.intel.com>
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-References: <20190819160643.27998-1-efremov@linux.com>
- <20190819160643.27998-3-efremov@linux.com>
+        id S1726232AbfH0WhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 18:37:18 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38127 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfH0WhS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 18:37:18 -0400
+Received: by mail-ot1-f66.google.com with SMTP id r20so807032ota.5;
+        Tue, 27 Aug 2019 15:37:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=zauk4U8OoEi1FBo/2vpUOZ45fQEWaY7iuSdGeCHe83s=;
+        b=Lu2AZA2CjEvpqaTyPYa8p1B21lH48/VPBt6GaMqK9fp0al0gFfO7B8n2LD0IabAzjE
+         SOha1LoqMbrbzcrs4pVkzMRFG+A3E7wWSt6SQZ3Yn0gHtI9vtAPkt7kt1ikdN/B4JkUY
+         R8UC+9D1KsZL4ADPbL9ETW7OLieyyFCGW7PUphc9LcSeYNhw/S4h0yWXYeWxzj0A9XrA
+         J295WtsH1WWIFCLoLmDtDL6196XqLMabZKEWBKS4DTsXJbBFBHY4G9GPYA2Q3eVIf6St
+         dhhKztdxw/+dhW/WAZX/5/ZJ/chdAQ8QSbo4Kyr++VKzzKPmG3mf4KYZ0IhC4y2T7fW8
+         CfIQ==
+X-Gm-Message-State: APjAAAWzjc9QL8KAJrDYWzxB9InMhPDOKVb1E54Gi4Z/hapXbvtuwBQz
+        iap1ZS0H20nbRkU6BI+SFQ==
+X-Google-Smtp-Source: APXvYqwyWCyxbtq92eeNM9609mAefZjtCS/Vde8B3KkemlEEUxzPpD1Evn5Zu509yiJdHmGHVTcsHg==
+X-Received: by 2002:a05:6830:1345:: with SMTP id r5mr848280otq.158.1566945437274;
+        Tue, 27 Aug 2019 15:37:17 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q85sm200903oic.52.2019.08.27.15.37.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 15:37:16 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 17:37:16 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Chas Williams <3chas3@gmail.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] dt-bindings: misc: atmel-ssc: LRCLK from TF/RF
+ pin option
+Message-ID: <20190827223716.GA31605@bogus>
+References: <cover.1566677788.git.mirq-linux@rere.qmqm.pl>
+ <9b85d5a7c7e788e9ed87d020323ad9292e3aeab7.1566677788.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190819160643.27998-3-efremov@linux.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9b85d5a7c7e788e9ed87d020323ad9292e3aeab7.1566677788.git.mirq-linux@rere.qmqm.pl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 07:06:41PM +0300, Denis Efremov wrote:
-> This patch replaces all consecutive switches of power and attention
-> indicators with pciehp_set_indicators() call. Thus, performing only
-> single write to a register.
+On Sat, Aug 24, 2019 at 10:26:55PM +0200, Michał Mirosław wrote:
+> Add single-pin LRCLK source options for Atmel SSC module.
 > 
-> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> 
 > ---
->  drivers/pci/hotplug/pciehp_ctrl.c | 19 ++++++++++---------
->  drivers/pci/hotplug/pciehp_hpc.c  |  4 ++--
->  2 files changed, 12 insertions(+), 11 deletions(-)
+>   v2: split from implementation patch
 > 
-> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-> index 631ced0ab28a..232f7bfcfce9 100644
-> --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> @@ -42,8 +42,8 @@ static void set_slot_off(struct controller *ctrl)
->  		msleep(1000);
->  	}
->  
-> -	pciehp_green_led_off(ctrl);
-> -	pciehp_set_attention_status(ctrl, 1);
-> +	pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_OFF,
-> +			      PCI_EXP_SLTCTL_ATTN_IND_ON);
->  }
->  
->  /**
-> @@ -90,8 +90,8 @@ static int board_added(struct controller *ctrl)
->  		}
->  	}
->  
-> -	pciehp_green_led_on(ctrl);
-> -	pciehp_set_attention_status(ctrl, 0);
-> +	pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_ON,
-> +			      PCI_EXP_SLTCTL_ATTN_IND_OFF);
->  	return 0;
->  
->  err_exit:
-> @@ -172,8 +172,8 @@ void pciehp_handle_button_press(struct controller *ctrl)
->  				  slot_name(ctrl));
->  		}
->  		/* blink green LED and turn off amber */
-> -		pciehp_green_led_blink(ctrl);
-> -		pciehp_set_attention_status(ctrl, 0);
-> +		pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_BLINK,
-> +				      PCI_EXP_SLTCTL_ATTN_IND_OFF);
->  		schedule_delayed_work(&ctrl->button_work, 5 * HZ);
->  		break;
->  	case BLINKINGOFF_STATE:
-> @@ -187,12 +187,13 @@ void pciehp_handle_button_press(struct controller *ctrl)
->  		cancel_delayed_work(&ctrl->button_work);
->  		if (ctrl->state == BLINKINGOFF_STATE) {
->  			ctrl->state = ON_STATE;
-> -			pciehp_green_led_on(ctrl);
-> +			pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_ON,
-> +					      PCI_EXP_SLTCTL_ATTN_IND_OFF);
->  		} else {
->  			ctrl->state = OFF_STATE;
-> -			pciehp_green_led_off(ctrl);
-> +			pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_OFF,
-> +					      PCI_EXP_SLTCTL_ATTN_IND_OFF);
->  		}
-> -		pciehp_set_attention_status(ctrl, 0);
->  		ctrl_info(ctrl, "Slot(%s): Action canceled due to button press\n",
->  			  slot_name(ctrl));
->  		break;
-> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-> index 5474b9854a7f..aa4252d11be2 100644
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -667,8 +667,8 @@ static irqreturn_t pciehp_ist(int irq, void *dev_id)
->  	if ((events & PCI_EXP_SLTSTA_PFD) && !ctrl->power_fault_detected) {
->  		ctrl->power_fault_detected = 1;
->  		ctrl_err(ctrl, "Slot(%s): Power fault\n", slot_name(ctrl));
-> -		pciehp_set_attention_status(ctrl, 1);
-> -		pciehp_green_led_off(ctrl);
-> +		pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_OFF,
-> +				      PCI_EXP_SLTCTL_ATTN_IND_ON);
->  	}
->  
->  	/*
-> -- 
-> 2.21.0
+> ---
+>  Documentation/devicetree/bindings/misc/atmel-ssc.txt | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
+> diff --git a/Documentation/devicetree/bindings/misc/atmel-ssc.txt b/Documentation/devicetree/bindings/misc/atmel-ssc.txt
+> index f9fb412642fe..c98e96dbec3a 100644
+> --- a/Documentation/devicetree/bindings/misc/atmel-ssc.txt
+> +++ b/Documentation/devicetree/bindings/misc/atmel-ssc.txt
+> @@ -24,6 +24,11 @@ Optional properties:
+>         this parameter to choose where the clock from.
+>       - By default the clock is from TK pin, if the clock from RK pin, this
+>         property is needed.
+> +  - atmel,lrclk-from-tf-pin: bool property.
+> +  - atmel,lrclk-from-rf-pin: bool property.
+> +     - SSC in slave mode gets LRCLK from RF for receive and TF for transmit
+> +       data direction. This property makes both use single TF (or RF) pin
+> +       as LRCLK. At most one can be present.
 
--- 
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+A single property taking 1 of possible 2 values would prevent the error 
+of more than 1 property present.
+
+>    - #sound-dai-cells: Should contain <0>.
+>       - This property makes the SSC into an automatically registered DAI.
+>  
+> -- 
+> 2.20.1
+> 
