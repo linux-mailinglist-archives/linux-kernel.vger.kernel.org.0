@@ -2,234 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 036CF9EF46
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:46:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AF42E9EF54
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727683AbfH0Pqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:46:47 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:43607 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbfH0Pqr (ORCPT
+        id S1729423AbfH0PtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:49:03 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:34884 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfH0PtC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:46:47 -0400
-Received: from uno.localdomain (unknown [87.18.63.98])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 5ECA3200007;
-        Tue, 27 Aug 2019 15:46:39 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 17:48:10 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli@fpond.eu, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        VenkataRajesh.Kalakodima@in.bosch.com,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/14] drm: rcar-du: Add support for CMM
-Message-ID: <20190827154810.mr5jt2rkaorrry3t@uno.localdomain>
-References: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
- <20190825135154.11488-9-jacopo+renesas@jmondi.org>
- <20190827002422.GQ5031@pendragon.ideasonboard.com>
- <20190827145619.33s7gkv7tgtsr6nz@uno.localdomain>
+        Tue, 27 Aug 2019 11:49:02 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 213D828C771
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     soc@kernel.org
+Cc:     gwendal@chromium.org, bleung@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, lee.jones@linaro.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-tegra@vger.kernel.org,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?q?Yannick=20Fertr=C3=A9?= <yannick.fertre@st.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: [PATCH] arm/arm64: defconfig: Update configs to use the new CROS_EC options
+Date:   Tue, 27 Aug 2019 17:48:51 +0200
+Message-Id: <20190827154851.10486-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4lusbristpbjpnut"
-Content-Disposition: inline
-In-Reply-To: <20190827145619.33s7gkv7tgtsr6nz@uno.localdomain>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Recently we refactored the CrOS EC drivers moving part of the code from
+the MFD subsystem to the platform chrome subsystem. During this change
+we needed to rename some config options, so, update the defconfigs
+accordingly.
 
---4lusbristpbjpnut
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+Tested-by: Gwendal Grignou <gwendal@chromium.org>
+---
+Dear all,
 
-On Tue, Aug 27, 2019 at 04:56:19PM +0200, Jacopo Mondi wrote:
-> Hi Laurent,
->
-> On Tue, Aug 27, 2019 at 03:24:22AM +0300, Laurent Pinchart wrote:
-> > Hi Jacopo,
-> >
-> > Thank you for the patch.
-> >
-> > On Sun, Aug 25, 2019 at 03:51:48PM +0200, Jacopo Mondi wrote:
-> > > Add a driver for the R-Car Display Unit Color Correction Module.
-> > >
-> > > In most of Gen3 SoCs, each DU output channel is provided with a CMM unit
-> > > to perform image enhancement and color correction.
-> > >
-> > > Add support for CMM through a driver that supports configuration of
-> > > the 1-dimensional LUT table. More advanced CMM feature will be
-> > > implemented on top of this basic one.
-> > >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  drivers/gpu/drm/rcar-du/Kconfig    |   7 +
-> > >  drivers/gpu/drm/rcar-du/Makefile   |   1 +
-> > >  drivers/gpu/drm/rcar-du/rcar_cmm.c | 262 +++++++++++++++++++++++++++++
-> > >  drivers/gpu/drm/rcar-du/rcar_cmm.h |  38 +++++
-> > >  4 files changed, 308 insertions(+)
-> > >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.c
-> > >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.h
-> > >
-> > > diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-> > > index 1529849e217e..539d232790d1 100644
-> > > --- a/drivers/gpu/drm/rcar-du/Kconfig
-> > > +++ b/drivers/gpu/drm/rcar-du/Kconfig
-> > > @@ -13,6 +13,13 @@ config DRM_RCAR_DU
-> > >  	  Choose this option if you have an R-Car chipset.
-> > >  	  If M is selected the module will be called rcar-du-drm.
-> > >
-> > > +config DRM_RCAR_CMM
-> > > +	bool "R-Car DU Color Management Module (CMM) Support"
-> > > +	depends on DRM && OF
-> > > +	depends on DRM_RCAR_DU
-> > > +	help
-> > > +	  Enable support for R-Car Color Management Module (CMM).
-> > > +
-> > >  config DRM_RCAR_DW_HDMI
-> > >  	tristate "R-Car DU Gen3 HDMI Encoder Support"
-> > >  	depends on DRM && OF
-> > > diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
-> > > index 6c2ed9c46467..4d1187ccc3e5 100644
-> > > --- a/drivers/gpu/drm/rcar-du/Makefile
-> > > +++ b/drivers/gpu/drm/rcar-du/Makefile
-> > > @@ -15,6 +15,7 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
-> > >  rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
-> > >  rcar-du-drm-$(CONFIG_DRM_RCAR_WRITEBACK) += rcar_du_writeback.o
-> > >
-> > > +obj-$(CONFIG_DRM_RCAR_CMM)		+= rcar_cmm.o
-> > >  obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
-> > >  obj-$(CONFIG_DRM_RCAR_DW_HDMI)		+= rcar_dw_hdmi.o
-> > >  obj-$(CONFIG_DRM_RCAR_LVDS)		+= rcar_lvds.o
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_cmm.c b/drivers/gpu/drm/rcar-du/rcar_cmm.c
-> > > new file mode 100644
-> > > index 000000000000..55361f5701e8
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_cmm.c
-> > > @@ -0,0 +1,262 @@
-> > > +// SPDX-License-Identifier: GPL-2.0+
-> > > +/*
-> > > + * rcar_cmm.c -- R-Car Display Unit Color Management Module
-> > > + *
-> > > + * Copyright (C) 2019 Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > + */
-> > > +
-> > > +#include <linux/io.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/pm_runtime.h>
-> > > +
-> > > +#include <drm/drm_color_mgmt.h>
-> > > +
-> > > +#include "rcar_cmm.h"
-> > > +
-> > > +#define CM2_LUT_CTRL		0x0000
-> > > +#define CM2_LUT_CTRL_LUT_EN	BIT(0)
-> > > +#define CM2_LUT_TBL_BASE	0x0600
-> > > +#define CM2_LUT_TBL(__i)	(CM2_LUT_TBL_BASE + (__i) * 4)
-> > > +
-> > > +struct rcar_cmm {
-> > > +	void __iomem *base;
-> > > +	bool enabled;
-> > > +
-> > > +	/*
-> > > +	 * @lut:		1D-LUT status
-> > > +	 * @lut.enabled:	1D-LUT enabled flag
-> > > +	 * @lut.size:		Number of entries in the LUT table
-> >
-> > Please see my review of patch 13/14, I wonder if we could drop this
-> > field.
-> >
-> > > +	 * @lut.table:		Table of 1D-LUT entries scaled to HW support
-> > > +	 *			precision (8-bits per color component)
-> > > +	 */
-> > > +	struct {
-> > > +		bool enabled;
-> > > +		unsigned int size;
-> > > +		u32 table[CMM_GAMMA_LUT_SIZE];
-> > > +	} lut;
-> > > +};
-> > > +
-> > > +static inline int rcar_cmm_read(struct rcar_cmm *rcmm, u32 reg)
-> > > +{
-> > > +	return ioread32(rcmm->base + reg);
-> > > +}
-> > > +
-> > > +static inline void rcar_cmm_write(struct rcar_cmm *rcmm, u32 reg, u32 data)
-> > > +{
-> > > +	iowrite32(data, rcmm->base + reg);
-> > > +}
-> > > +
-> > > +/*
-> > > + * rcar_cmm_lut_extract() - Scale down to hw precision the DRM LUT table
-> >
-> > s/hw/hardware/ (and below too)
-> >
-> > > + *			    entries and store them.
-> > > + * @rcmm: Pointer to the CMM device
-> > > + * @size: Number of entries in the table
-> > > + * @drm_lut: DRM LUT table
-> > > + */
-> > > +static void rcar_cmm_lut_extract(struct rcar_cmm *rcmm, size_t size,
-> > > +				 const struct drm_color_lut *drm_lut)
-> > > +{
-> > > +	unsigned int i;
-> > > +
-> > > +	for (i = 0; i < size; ++i) {
-> > > +		const struct drm_color_lut *lut = &drm_lut[i];
-> > > +
-> > > +		rcmm->lut.table[i] = drm_color_lut_extract(lut->red, 8) << 16
-> > > +				   | drm_color_lut_extract(lut->green, 8) << 8
-> > > +				   | drm_color_lut_extract(lut->blue, 8);
-> > > +	}
-> > > +
-> > > +	rcmm->lut.size = size;
-> > > +}
-> > > +
-> > > +/*
-> > > + * rcar_cmm_lut_load() - Write to hw the LUT table entries from the local table.
-> > > + *
-> >
-> > No need for a blank line
-> >
-> > > + * @rcmm: Pointer to the CMM device
-> > > + */
-> > > +static void rcar_cmm_lut_load(struct rcar_cmm *rcmm)
-> >
-> > I would name this rcar_cmm_lut_write().
-> >
->
-> I won't, as I would like to convey the LUT tables is loaded from the
+This is basically a resend of [1] in order to get patch into the arm-soc
+patchwork and can be merged independently of the series. The patch was
+originally sent as part of the these series [2] but as defconfig changes
+often cause merge conflicts the maintainers prefer to have this merged
+through the arm-soc tree. My bad was not including the soc ML from the
+begining, so sorry about that.
 
-Sorry, I meant "I wouldn't"... "I won't" is really harsh, sorry about
-it :p
+Thanks,
+ Enric
 
+[1] https://lkml.org/lkml/2019/8/23/518
+[2] https://lkml.org/lkml/2019/8/23/475
 
---4lusbristpbjpnut
-Content-Type: application/pgp-signature; name="signature.asc"
+ arch/arm/configs/exynos_defconfig   | 6 +++++-
+ arch/arm/configs/multi_v7_defconfig | 6 ++++--
+ arch/arm/configs/pxa_defconfig      | 4 +++-
+ arch/arm/configs/tegra_defconfig    | 2 +-
+ arch/arm64/configs/defconfig        | 6 ++++--
+ 5 files changed, 17 insertions(+), 7 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 2e6a863d25aa..d29029f534ec 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -154,7 +154,11 @@ CONFIG_CPU_THERMAL=y
+ CONFIG_THERMAL_EMULATION=y
+ CONFIG_WATCHDOG=y
+ CONFIG_S3C2410_WATCHDOG=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
++CONFIG_CROS_EC_I2C=y
++CONFIG_CROS_EC_SPI=y
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX77693=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 6a40bc2ef271..0e9e70badf88 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -511,10 +511,12 @@ CONFIG_MFD_BCM590XX=y
+ CONFIG_MFD_AC100=y
+ CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_MFD_AXP20X_RSB=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+-CONFIG_MFD_CROS_EC_CHARDEV=m
++CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_MFD_DA9063=m
+ CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index 787c3f9be414..635bf7dec53c 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -393,7 +393,9 @@ CONFIG_SA1100_WATCHDOG=m
+ CONFIG_MFD_AS3711=y
+ CONFIG_MFD_BCM590XX=m
+ CONFIG_MFD_AXP20X=y
+-CONFIG_MFD_CROS_EC=m
++CONFIG_MFD_CROS_EC_DEV=m
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=m
+ CONFIG_CROS_EC_I2C=m
+ CONFIG_CROS_EC_SPI=m
+ CONFIG_MFD_ASIC3=y
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 8f5c6a5b444c..061037012335 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -147,7 +147,7 @@ CONFIG_SENSORS_LM95245=y
+ CONFIG_WATCHDOG=y
+ CONFIG_TEGRA_WATCHDOG=y
+ CONFIG_MFD_AS3722=y
+-CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_DEV=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_MFD_PALMAS=y
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 0e58ef02880c..c4df1999fe0d 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -457,8 +457,7 @@ CONFIG_MFD_ALTERA_SYSMGR=y
+ CONFIG_MFD_BD9571MWV=y
+ CONFIG_MFD_AXP20X_I2C=y
+ CONFIG_MFD_AXP20X_RSB=y
+-CONFIG_MFD_CROS_EC=y
+-CONFIG_MFD_CROS_EC_CHARDEV=m
++CONFIG_MFD_CROS_EC_DEV=y
+ CONFIG_MFD_EXYNOS_LPASS=m
+ CONFIG_MFD_HI6421_PMIC=y
+ CONFIG_MFD_HI655X_PMIC=y
+@@ -668,8 +667,11 @@ CONFIG_VIRTIO_BALLOON=y
+ CONFIG_VIRTIO_MMIO=y
+ CONFIG_XEN_GNTDEV=y
+ CONFIG_XEN_GRANT_DEV_ALLOC=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC=y
+ CONFIG_CROS_EC_I2C=y
+ CONFIG_CROS_EC_SPI=y
++CONFIG_CROS_EC_CHARDEV=m
+ CONFIG_COMMON_CLK_RK808=y
+ CONFIG_COMMON_CLK_SCPI=y
+ CONFIG_COMMON_CLK_CS2000_CP=y
+-- 
+2.20.1
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1lULoACgkQcjQGjxah
-Vjz9iA//TFm2CoEu6Ejbp575oyCLJDwkQOTEwiJ6XCrh6OvQqM9UpDmpsrgZm5MO
-ugkRzecDH+1BwFQZOg2gZThpv1DfTel5kuP/4aNAZFJIUEjPn4Ze+NiD9jA/mdnQ
-K0cCc43qlRbKo19aUPWH+w3rpuyQfVZs9hFvgcXHskkdvv3mrcgiZIYOEe0xgvn8
-IZTWr8hNdlngKr2Fz6GRYjoK/+gnrmcOfWP7feD0Gn5+Cl6qwDBukldOhiMvWr0E
-UGisydFFzwx0al9UZQ6vjkLUiowcVaFuFVNqREu+CLaj/uOXPvYE2vG5pBS690Mu
-EiMGVHKFzQJF4C82LsKCoL7rNEdZV6ll0mKZG+btbPAlAzaJOyACmrV1eSFUdcZi
-7ohp8iflx8n2H6u2nkvahDxrnOEKjZlqPkfmECl/uHDlfRd6FHmVgu//K6oO3Xgs
-uaH3xMwned6dgs4xZMKw03Cp/uZu49kGVXP+ZDeFFsAhAgIrxAf41c/DseR66lkY
-T52rkiR5kj465Gj/egoLjSAePE690WKEJJtdY521oP/Y9WJPFHWEvtla98jf+rBq
-XWzENDhmV9AKdUOwwyzreCvMFvPdLhhB8Yb9KJxfzcQIYZVUWbzt2I5CNnvDbeBi
-RiNjmP5gy1A115kPbc2R+U5ighB5Pk0PPk4F0U0+ThS6tmCMhqY=
-=NTm4
------END PGP SIGNATURE-----
-
---4lusbristpbjpnut--
