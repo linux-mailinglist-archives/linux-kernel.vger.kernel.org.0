@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5FB9E074
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:05:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF76F9E0A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:09:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731885AbfH0IDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:03:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33102 "EHLO mail.kernel.org"
+        id S1732438AbfH0IEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:04:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732375AbfH0IDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:03:51 -0400
+        id S1730764AbfH0IDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:03:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C2EB206BA;
-        Tue, 27 Aug 2019 08:03:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44FF8206BF;
+        Tue, 27 Aug 2019 08:03:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566893030;
-        bh=0WztkM7xhbrKQ4NJ4fgJQ8SR2b4RPZScZv0aK7cZHz0=;
+        s=default; t=1566893032;
+        bh=RC199nhAYZRtj3va6zftvMHOLXIDuyiqPEEpAliMEkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ai1Wp6Ds6NSojENQ4VXcc3osRRaNkg1Pl1EbJkek3d6ht6FvLdsyEWolGJhj0Zlp6
-         3yn02eNu8KcREyc67Wmvl95ddyA+h6egYrrsEMqMdaALlcHTHFnLmzFaj5t0emCimA
-         Z10llsZsV7gfZIjL+BZoUYJA8zzXcyF/9cZv70dE=
+        b=OoXyzm8DG395oCe1crAKyEX1RvIE1wEqAMaQmBHfmEWEOagkj9mH+E/eSFLrjll6/
+         lmtFMzwwXICfIQUPOiF6TN64AuNl8+SMHM2DYojRKJIa0YmITzbZ7z0cdYTVOVTLii
+         lNNxv9k+w00A3H9bV19pz0mfRGG2/cDf9wSWSrjs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiangfeng Xiao <xiaojiangfeng@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 095/162] net: hisilicon: Fix dma_map_single failed on arm64
-Date:   Tue, 27 Aug 2019 09:50:23 +0200
-Message-Id: <20190827072741.513269937@linuxfoundation.org>
+Subject: [PATCH 5.2 096/162] NFSv4: Ensure state recovery handles ETIMEDOUT correctly
+Date:   Tue, 27 Aug 2019 09:50:24 +0200
+Message-Id: <20190827072741.557647315@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -44,105 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 96a50c0d907ac8f5c3d6b051031a19eb8a2b53e3 ]
+[ Upstream commit 67e7b52d44e3d539dfbfcd866c3d3d69da23a909 ]
 
-On the arm64 platform, executing "ifconfig eth0 up" will fail,
-returning "ifconfig: SIOCSIFFLAGS: Input/output error."
+Ensure that the state recovery code handles ETIMEDOUT correctly,
+and also that we set RPC_TASK_TIMEOUT when recovering open state.
 
-ndev->dev is not initialized, dma_map_single->get_dma_ops->
-dummy_dma_ops->__dummy_map_page will return DMA_ERROR_CODE
-directly, so when we use dma_map_single, the first parameter
-is to use the device of platform_device.
-
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hip04_eth.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
+ fs/nfs/nfs4proc.c  | 2 ++
+ fs/nfs/nfs4state.c | 7 +++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index ee6da8d66cd31..51cf6b0db904b 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -153,6 +153,7 @@ struct hip04_priv {
- 	unsigned int reg_inten;
- 
- 	struct napi_struct napi;
-+	struct device *dev;
- 	struct net_device *ndev;
- 
- 	struct tx_desc *tx_desc;
-@@ -383,7 +384,7 @@ static int hip04_tx_reclaim(struct net_device *ndev, bool force)
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 74e1732a4bd01..2023011c7a8fe 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -2150,6 +2150,7 @@ static int nfs4_handle_delegation_recall_error(struct nfs_server *server, struct
+ 		case -ENOENT:
+ 		case -EAGAIN:
+ 		case -ESTALE:
++		case -ETIMEDOUT:
+ 			break;
+ 		case -NFS4ERR_BADSESSION:
+ 		case -NFS4ERR_BADSLOT:
+@@ -2470,6 +2471,7 @@ static int nfs4_run_open_task(struct nfs4_opendata *data,
+ 	if (!ctx) {
+ 		nfs4_init_sequence(&o_arg->seq_args, &o_res->seq_res, 1, 1);
+ 		data->is_recover = true;
++		task_setup_data.flags |= RPC_TASK_TIMEOUT;
+ 	} else {
+ 		nfs4_init_sequence(&o_arg->seq_args, &o_res->seq_res, 1, 0);
+ 		pnfs_lgopen_prepare(data, ctx);
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 261de26d897f7..0e69cd846afb5 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1528,6 +1528,7 @@ restart:
+ 		switch (status) {
+ 		case 0:
+ 			break;
++		case -ETIMEDOUT:
+ 		case -ESTALE:
+ 		case -NFS4ERR_ADMIN_REVOKED:
+ 		case -NFS4ERR_STALE_STATEID:
+@@ -1681,11 +1682,13 @@ restart:
+ 		case -NFS4ERR_EXPIRED:
+ 		case -NFS4ERR_NO_GRACE:
+ 			nfs4_state_mark_reclaim_nograce(sp->so_server->nfs_client, state);
++			/* Fall through */
+ 		case -NFS4ERR_STALE_CLIENTID:
+ 		case -NFS4ERR_BADSESSION:
+ 		case -NFS4ERR_BADSLOT:
+ 		case -NFS4ERR_BAD_HIGH_SLOT:
+ 		case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
++		case -ETIMEDOUT:
+ 			goto out_err;
+ 		}
+ 		nfs4_put_open_state(state);
+@@ -1970,7 +1973,6 @@ static int nfs4_handle_reclaim_lease_error(struct nfs_client *clp, int status)
+ 		return -EPERM;
+ 	case -EACCES:
+ 	case -NFS4ERR_DELAY:
+-	case -ETIMEDOUT:
+ 	case -EAGAIN:
+ 		ssleep(1);
+ 		break;
+@@ -2599,7 +2601,7 @@ static void nfs4_state_manager(struct nfs_client *clp)
  		}
  
- 		if (priv->tx_phys[tx_tail]) {
--			dma_unmap_single(&ndev->dev, priv->tx_phys[tx_tail],
-+			dma_unmap_single(priv->dev, priv->tx_phys[tx_tail],
- 					 priv->tx_skb[tx_tail]->len,
- 					 DMA_TO_DEVICE);
- 			priv->tx_phys[tx_tail] = 0;
-@@ -434,8 +435,8 @@ hip04_mac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 		return NETDEV_TX_BUSY;
- 	}
- 
--	phys = dma_map_single(&ndev->dev, skb->data, skb->len, DMA_TO_DEVICE);
--	if (dma_mapping_error(&ndev->dev, phys)) {
-+	phys = dma_map_single(priv->dev, skb->data, skb->len, DMA_TO_DEVICE);
-+	if (dma_mapping_error(priv->dev, phys)) {
- 		dev_kfree_skb(skb);
- 		return NETDEV_TX_OK;
- 	}
-@@ -505,7 +506,7 @@ static int hip04_rx_poll(struct napi_struct *napi, int budget)
- 			goto refill;
+ 		/* Now recover expired state... */
+-		if (test_and_clear_bit(NFS4CLNT_RECLAIM_NOGRACE, &clp->cl_state)) {
++		if (test_bit(NFS4CLNT_RECLAIM_NOGRACE, &clp->cl_state)) {
+ 			section = "reclaim nograce";
+ 			status = nfs4_do_reclaim(clp,
+ 				clp->cl_mvops->nograce_recovery_ops);
+@@ -2607,6 +2609,7 @@ static void nfs4_state_manager(struct nfs_client *clp)
+ 				continue;
+ 			if (status < 0)
+ 				goto out_error;
++			clear_bit(NFS4CLNT_RECLAIM_NOGRACE, &clp->cl_state);
  		}
  
--		dma_unmap_single(&ndev->dev, priv->rx_phys[priv->rx_head],
-+		dma_unmap_single(priv->dev, priv->rx_phys[priv->rx_head],
- 				 RX_BUF_SIZE, DMA_FROM_DEVICE);
- 		priv->rx_phys[priv->rx_head] = 0;
- 
-@@ -534,9 +535,9 @@ refill:
- 		buf = netdev_alloc_frag(priv->rx_buf_size);
- 		if (!buf)
- 			goto done;
--		phys = dma_map_single(&ndev->dev, buf,
-+		phys = dma_map_single(priv->dev, buf,
- 				      RX_BUF_SIZE, DMA_FROM_DEVICE);
--		if (dma_mapping_error(&ndev->dev, phys))
-+		if (dma_mapping_error(priv->dev, phys))
- 			goto done;
- 		priv->rx_buf[priv->rx_head] = buf;
- 		priv->rx_phys[priv->rx_head] = phys;
-@@ -639,9 +640,9 @@ static int hip04_mac_open(struct net_device *ndev)
- 	for (i = 0; i < RX_DESC_NUM; i++) {
- 		dma_addr_t phys;
- 
--		phys = dma_map_single(&ndev->dev, priv->rx_buf[i],
-+		phys = dma_map_single(priv->dev, priv->rx_buf[i],
- 				      RX_BUF_SIZE, DMA_FROM_DEVICE);
--		if (dma_mapping_error(&ndev->dev, phys))
-+		if (dma_mapping_error(priv->dev, phys))
- 			return -EIO;
- 
- 		priv->rx_phys[i] = phys;
-@@ -675,7 +676,7 @@ static int hip04_mac_stop(struct net_device *ndev)
- 
- 	for (i = 0; i < RX_DESC_NUM; i++) {
- 		if (priv->rx_phys[i]) {
--			dma_unmap_single(&ndev->dev, priv->rx_phys[i],
-+			dma_unmap_single(priv->dev, priv->rx_phys[i],
- 					 RX_BUF_SIZE, DMA_FROM_DEVICE);
- 			priv->rx_phys[i] = 0;
- 		}
-@@ -819,6 +820,7 @@ static int hip04_mac_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	priv = netdev_priv(ndev);
-+	priv->dev = d;
- 	priv->ndev = ndev;
- 	platform_set_drvdata(pdev, ndev);
- 	SET_NETDEV_DEV(ndev, &pdev->dev);
+ 		nfs4_end_drain_session(clp);
 -- 
 2.20.1
 
