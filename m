@@ -2,98 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3514A9F2EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:08:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8906D9F2F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:09:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730891AbfH0TIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 15:08:00 -0400
-Received: from smtprelay0152.hostedemail.com ([216.40.44.152]:36939 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730379AbfH0TIA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 15:08:00 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 06D84440B;
-        Tue, 27 Aug 2019 19:07:59 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3870:3871:3872:3873:3874:4250:4321:5007:7514:7903:10004:10400:10450:10455:10848:11232:11658:11914:12043:12295:12297:12555:12740:12760:12895:13069:13141:13230:13311:13357:13439:14181:14659:14721:14819:19904:19999:21080:21451:21611:21627:30054:30055:30056:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: knot38_7fb82438d284f
-X-Filterd-Recvd-Size: 2809
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 27 Aug 2019 19:07:57 +0000 (UTC)
-Message-ID: <b1ea77866e8736fa691cf4658a87ca2c1bf642d6.camel@perches.com>
-Subject: Re: [PATCH] net: intel: Cleanup e1000 - add space between }}
-From:   Joe Perches <joe@perches.com>
-To:     jeffrey.t.kirsher@intel.com, Forrest Fleming <ffleming@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        id S1730941AbfH0TJY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 15:09:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730262AbfH0TJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 15:09:24 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB663214DA;
+        Tue, 27 Aug 2019 19:09:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566932963;
+        bh=j35b3QQ1PDlfFEvYEGqMq1GykGZQS5sT5QGOHy/w+kM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IAZKefRmWmh+u6QI7ylZYzizG7jW2/plT9xkMo9X1RFdBr1KitVOZRKEZnYmTLfN9
+         vacuFkrD29NZcTcdGVAEl2DOUPUTH/svBYMVCqGueOOSbr/WSleslmTOZ/O6yv8fxx
+         ybeZop38Acehz7hcgC6I9Shoqh6zynbJtMrvdsXA=
+Subject: Re: [PATCH 5.2 000/162] 5.2.11-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Date:   Tue, 27 Aug 2019 12:07:56 -0700
-In-Reply-To: <c40b4043424055fc4dae97771bb46c8ab15c6230.camel@intel.com>
-References: <20190823191421.3318-1-ffleming@gmail.com>
-         <c2279a78904b581924894b712403299903eacbfc.camel@intel.com>
-         <877726fc009ee5ffde50e589d332db90c9695f06.camel@perches.com>
-         <c40b4043424055fc4dae97771bb46c8ab15c6230.camel@intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190827072738.093683223@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <af4552f9-6321-dd61-2264-3f3e793aaf61@kernel.org>
+Date:   Tue, 27 Aug 2019 13:09:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-27 at 12:02 -0700, Jeff Kirsher wrote:
-> On Mon, 2019-08-26 at 20:41 -0700, Joe Perches wrote:
-> > On Mon, 2019-08-26 at 01:03 -0700, Jeff Kirsher wrote:
-> > > On Fri, 2019-08-23 at 19:14 +0000, Forrest Fleming wrote:
-> > > > suggested by checkpatch
-> > > > 
-> > > > Signed-off-by: Forrest Fleming <ffleming@gmail.com>
-> > > > ---
-> > > >  .../net/ethernet/intel/e1000/e1000_param.c    | 28 +++++++++--
-> > > > --------
-> > > >  1 file changed, 14 insertions(+), 14 deletions(-)
-> > > 
-> > > While I do not see an issue with this change, I wonder how
-> > > important it is
-> > > to make such a change.  Especially since most of the hardware
-> > > supported by
-> > > this driver is not available for testing.  In addition, this is one
-> > > suggested change by checkpatch.pl that I personally do not agree
-> > > with.
-> > 
-> > I think checkpatch should allow consecutive }}.
+On 8/27/19 1:48 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.2.11 release.
+> There are 162 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Agreed, have you already submitted a formal patch Joe with the
-> suggested change below?
+> Responses should be made by Thu 29 Aug 2019 07:25:02 AM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.11-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-No.
+Compiled and booted on my test system. No dmesg regressions.
 
->   If so, I will ACK it.
-
-Of course you can add an Acked-by:
-
-> > Maybe:
-> > ---
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > index 287fe73688f0..ac5e0f06e1af 100755
-> > --- a/scripts/checkpatch.pl
-> > +++ b/scripts/checkpatch.pl
-> > @@ -4687,7 +4687,7 @@ sub process {
-> >  
-> >  # closing brace should have a space following it when it has
-> > anything
-> >  # on the line
-> > -		if ($line =~ /}(?!(?:,|;|\)))\S/) {
-> > +		if ($line =~ /}(?!(?:,|;|\)|\}))\S/) {
-> >  			if (ERROR("SPACING",
-> >  				  "space required after that close
-> > brace '}'\n" . $herecurr) &&
-> >  			    $fix) {
-> > 
-> > 
+thanks,
+-- Shuah
 
