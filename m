@@ -2,210 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 170539E8BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B83E79E8B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:10:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730098AbfH0NKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 09:10:50 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58272 "EHLO mx1.redhat.com"
+        id S1729803AbfH0NKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 09:10:36 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38362 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729996AbfH0NKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:10:46 -0400
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729824AbfH0NKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:10:35 -0400
+Received: from zn.tnic (p200300EC2F0CD000F02F6C1468024718.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:d000:f02f:6c14:6802:4718])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8CE5B63704
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 13:10:46 +0000 (UTC)
-Received: by mail-pf1-f199.google.com with SMTP id 22so14576956pfn.22
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 06:10:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=N9+a7Lx6U+FZXaKdnAdrJhECNEGonTqU2sKnt3e3ClU=;
-        b=UURmurtVkcHcZQuSxjUxthzJBLSq+BKrCnG4JKcTAVtRN8R+9xU7JMTavkG3vYwqgX
-         d6VdSW+uJNkAJFkJTS8UDQsNjgHkDfGUx0yI1pZxYmXQbRKmmGoFPalxfEGc6nOacbpo
-         lxE1itIGAmVvLeeJaigePzMesQK072NgRbAMLAQe7ZZjLgCueggVC3Vj7fbkEndk6w8H
-         oJPpcjNJD1bpZkRDpk1BnpEsM8vlqtRbBiF46mBeo3IIuuRmDiy7ZrJhvXm118/3nuCx
-         wXvM9LJFoiP5nQpDFujsp503ztXSQxXAbhdZCNmqytmMVRCjtyPM74At4CgLnVY/V2Uo
-         UZfg==
-X-Gm-Message-State: APjAAAXQVkgta6qooKoGKOWWI9itv827L8Er0T03aKeKs6VCmtkIoNOk
-        QdZnJKZTur3Y3BKzJOtYF0qfUhhqQgPtjlsbOqNqcJxKn93llt6gAhCoqtdwEYxZn4/ns76wyjV
-        4apsF9StWKMT1IdFLINFtvOYu
-X-Received: by 2002:a63:2364:: with SMTP id u36mr20462347pgm.449.1566911445467;
-        Tue, 27 Aug 2019 06:10:45 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqx8gH6I9zaGHxKmC5pr8Mb7cYEdADazuDo9dCtxaA5gmXPWjRBogsoWfRHkoxtzXpTZ565wWA==
-X-Received: by 2002:a63:2364:: with SMTP id u36mr20462326pgm.449.1566911445184;
-        Tue, 27 Aug 2019 06:10:45 -0700 (PDT)
-Received: from xz-x1.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id o67sm24393050pfb.39.2019.08.27.06.10.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 06:10:44 -0700 (PDT)
-From:   Peter Xu <peterx@redhat.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Huth <thuth@redhat.com>,
-        Andrew Jones <drjones@redhat.com>, peterx@redhat.com
-Subject: [PATCH 4/4] KVM: selftests: Remove duplicate guest mode handling
-Date:   Tue, 27 Aug 2019 21:10:15 +0800
-Message-Id: <20190827131015.21691-5-peterx@redhat.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190827131015.21691-1-peterx@redhat.com>
-References: <20190827131015.21691-1-peterx@redhat.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 975791EC0B89;
+        Tue, 27 Aug 2019 15:10:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1566911433;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1O36I11NR1TCXF+c0kx9q6zN8+NXYhHhq5Irre2ThJw=;
+        b=eL3U/jP2V+9BgFmUx2XVAEzxHUZCz/v86h5uaRhGjMr31UHC+T2CTAkJSXBFSpwruJ1XvO
+        gBUuQnvSiU8VFgpWBOnNbhbeKHz7Be5KDdYVQv8jCO1AI1FJMduxPKTWMaGj4DvmS1AVpf
+        pDpkFlNfJpLwsKGI8UtliZUEbNSdwOM=
+Date:   Tue, 27 Aug 2019 15:10:29 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
+        linux-graphics-maintainer@vmware.com,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        dri-devel@lists.freedesktop.org, Doug Covelli <dcovelli@vmware.com>
+Subject: Re: [PATCH v2 2/4] x86/vmware: Add a header file for hypercall
+ definitions
+Message-ID: <20190827131029.GF29752@zn.tnic>
+References: <20190823081316.28478-1-thomas_os@shipmail.org>
+ <20190823081316.28478-3-thomas_os@shipmail.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190823081316.28478-3-thomas_os@shipmail.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the duplication code in run_test() of dirty_log_test because
-after some reordering of functions now we can directly use the outcome
-of vm_create().
+On Fri, Aug 23, 2019 at 10:13:14AM +0200, Thomas Hellström (VMware) wrote:
+> From: Thomas Hellstrom <thellstrom@vmware.com>
+> 
+> The new header is intended to be used by drivers using the backdoor.
+> Follow the kvm example using alternatives self-patching to
+> choose between vmcall, vmmcall and io instructions.
+> 
+> Also define two new CPU feature flags to indicate hypervisor support
+> for vmcall- and vmmcall instructions.
 
-Meanwhile, with the new VM_MODE_PXXV48_4K, we can safely revert
-b442324b58 too where we stick the x86_64 PA width to 39 bits for
-dirty_log_test.
+I could use some of the explanation why we need two feature flags added
+here from:
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- tools/testing/selftests/kvm/dirty_log_test.c  | 52 ++-----------------
- .../testing/selftests/kvm/include/kvm_util.h  |  4 ++
- tools/testing/selftests/kvm/lib/kvm_util.c    | 17 ++++++
- 3 files changed, 26 insertions(+), 47 deletions(-)
+https://lkml.kernel.org/r/970d2bb6-ab29-315f-f5d8-5d11095859af@shipmail.org
 
-diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
-index b2e07a3173b2..73f679bbf082 100644
---- a/tools/testing/selftests/kvm/dirty_log_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -268,10 +268,8 @@ static struct kvm_vm *create_vm(enum vm_guest_mode mode, uint32_t vcpuid,
- static void run_test(enum vm_guest_mode mode, unsigned long iterations,
- 		     unsigned long interval, uint64_t phys_offset)
- {
--	unsigned int guest_pa_bits, guest_page_shift;
- 	pthread_t vcpu_thread;
- 	struct kvm_vm *vm;
--	uint64_t max_gfn;
- 	unsigned long *bmap;
- 
- 	/*
-@@ -286,54 +284,13 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
- 		       2ul << (DIRTY_MEM_BITS - PAGE_SHIFT_4K),
- 		       guest_code);
- 
--	switch (mode) {
--	case VM_MODE_P52V48_4K:
--	case VM_MODE_PXXV48_4K:
--		guest_pa_bits = 52;
--		guest_page_shift = 12;
--		break;
--	case VM_MODE_P52V48_64K:
--		guest_pa_bits = 52;
--		guest_page_shift = 16;
--		break;
--	case VM_MODE_P48V48_4K:
--		guest_pa_bits = 48;
--		guest_page_shift = 12;
--		break;
--	case VM_MODE_P48V48_64K:
--		guest_pa_bits = 48;
--		guest_page_shift = 16;
--		break;
--	case VM_MODE_P40V48_4K:
--		guest_pa_bits = 40;
--		guest_page_shift = 12;
--		break;
--	case VM_MODE_P40V48_64K:
--		guest_pa_bits = 40;
--		guest_page_shift = 16;
--		break;
--	default:
--		TEST_ASSERT(false, "Unknown guest mode, mode: 0x%x", mode);
--	}
--
--	DEBUG("Testing guest mode: %s\n", vm_guest_mode_string(mode));
--
--#ifdef __x86_64__
--	/*
--	 * FIXME
--	 * The x86_64 kvm selftests framework currently only supports a
--	 * single PML4 which restricts the number of physical address
--	 * bits we can change to 39.
--	 */
--	guest_pa_bits = 39;
--#endif
--	max_gfn = (1ul << (guest_pa_bits - guest_page_shift)) - 1;
--	guest_page_size = (1ul << guest_page_shift);
-+	guest_page_size = vm_get_page_size(vm);
- 	/*
- 	 * A little more than 1G of guest page sized pages.  Cover the
- 	 * case where the size is not aligned to 64 pages.
- 	 */
--	guest_num_pages = (1ul << (DIRTY_MEM_BITS - guest_page_shift)) + 16;
-+	guest_num_pages = (1ul << (DIRTY_MEM_BITS -
-+				   vm_get_page_shift(vm))) + 16;
- #ifdef __s390x__
- 	/* Round up to multiple of 1M (segment size) */
- 	guest_num_pages = (guest_num_pages + 0xff) & ~0xffUL;
-@@ -343,7 +300,8 @@ static void run_test(enum vm_guest_mode mode, unsigned long iterations,
- 			 !!((guest_num_pages * guest_page_size) % host_page_size);
- 
- 	if (!phys_offset) {
--		guest_test_phys_mem = (max_gfn - guest_num_pages) * guest_page_size;
-+		guest_test_phys_mem = (vm_get_max_gfn(vm) -
-+				       guest_num_pages) * guest_page_size;
- 		guest_test_phys_mem &= ~(host_page_size - 1);
- 	} else {
- 		guest_test_phys_mem = phys_offset;
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 1c700c6b31b5..0d65fc676182 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -155,6 +155,10 @@ void vm_vcpu_add_default(struct kvm_vm *vm, uint32_t vcpuid, void *guest_code);
- 
- bool vm_is_unrestricted_guest(struct kvm_vm *vm);
- 
-+unsigned int vm_get_page_size(struct kvm_vm *vm);
-+unsigned int vm_get_page_shift(struct kvm_vm *vm);
-+unsigned int vm_get_max_gfn(struct kvm_vm *vm);
-+
- struct kvm_userspace_memory_region *
- kvm_userspace_memory_region_find(struct kvm_vm *vm, uint64_t start,
- 				 uint64_t end);
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 8c6f872a8793..cf39643ff2c7 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -137,6 +137,8 @@ struct kvm_vm *_vm_create(enum vm_guest_mode mode, uint64_t phy_pages,
- {
- 	struct kvm_vm *vm;
- 
-+	DEBUG("Testing guest mode: %s\n", vm_guest_mode_string(mode));
-+
- 	vm = calloc(1, sizeof(*vm));
- 	TEST_ASSERT(vm != NULL, "Insufficient Memory");
- 
-@@ -1662,3 +1664,18 @@ bool vm_is_unrestricted_guest(struct kvm_vm *vm)
- 
- 	return val == 'Y';
- }
-+
-+unsigned int vm_get_page_size(struct kvm_vm *vm)
-+{
-+	return vm->page_size;
-+}
-+
-+unsigned int vm_get_page_shift(struct kvm_vm *vm)
-+{
-+	return vm->page_shift;
-+}
-+
-+unsigned int vm_get_max_gfn(struct kvm_vm *vm)
-+{
-+	return vm->max_gfn;
-+}
+Thx.
+
 -- 
-2.21.0
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
