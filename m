@@ -2,191 +2,323 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B02609E35D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4599C9E37B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 11:00:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbfH0I5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:57:09 -0400
-Received: from foss.arm.com ([217.140.110.172]:41210 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbfH0I5J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:57:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32F00337;
-        Tue, 27 Aug 2019 01:57:08 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B86673F246;
-        Tue, 27 Aug 2019 01:57:07 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 10:57:06 +0200
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-doc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v3 01/10] KVM: arm64: Document PV-time interface
-Message-ID: <20190827085706.GB6541@e113682-lin.lund.arm.com>
-References: <20190821153656.33429-1-steven.price@arm.com>
- <20190821153656.33429-2-steven.price@arm.com>
+        id S1729726AbfH0JAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 05:00:12 -0400
+Received: from forward104p.mail.yandex.net ([77.88.28.107]:36080 "EHLO
+        forward104p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726134AbfH0JAK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 05:00:10 -0400
+Received: from mxback4g.mail.yandex.net (mxback4g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:165])
+        by forward104p.mail.yandex.net (Yandex) with ESMTP id 8C6384B01ABD;
+        Tue, 27 Aug 2019 11:53:40 +0300 (MSK)
+Received: from smtp1p.mail.yandex.net (smtp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:6])
+        by mxback4g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id USMmvwSyRd-reeesadY;
+        Tue, 27 Aug 2019 11:53:40 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1566896020;
+        bh=fnBBBCprjaH99w2T6V/Gv2LwcUpezZbDQCav3t4i/sI=;
+        h=Subject:To:From:Cc:Date:Message-Id;
+        b=t0zwi/SQ9jcB2hDefhrsIC8N6B7VUpora82WzK9aW3G94mYRsnF9Bp+kuFmb5WXm/
+         Coc6LjLtKF6vIErAVEo1AtnbIZa5QNlJi99CqDKiHRcddMhnhDayqD5HsoIp1W8Z+X
+         UswnOAFS+ea3W7GCUAhaExQ2DlDF4Msfft1+/SSs=
+Authentication-Results: mxback4g.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by smtp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id JOqUfE8LDO-rLtCZgJQ;
+        Tue, 27 Aug 2019 11:53:26 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     linux-mips@vger.kernel.org
+Cc:     chenhc@lemote.com, paul.burton@mips.com, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.co,
+        devicetree@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH 00/13] Modernize Loongson64 Machine
+Date:   Tue, 27 Aug 2019 16:52:49 +0800
+Message-Id: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821153656.33429-2-steven.price@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 04:36:47PM +0100, Steven Price wrote:
-> Introduce a paravirtualization interface for KVM/arm64 based on the
-> "Arm Paravirtualized Time for Arm-Base Systems" specification DEN 0057A.
-> 
-> This only adds the details about "Stolen Time" as the details of "Live
-> Physical Time" have not been fully agreed.
-> 
-> User space can specify a reserved area of memory for the guest and
-> inform KVM to populate the memory with information on time that the host
-> kernel has stolen from the guest.
-> 
-> A hypercall interface is provided for the guest to interrogate the
-> hypervisor's support for this interface and the location of the shared
-> memory structures.
-> 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  Documentation/virt/kvm/arm/pvtime.txt | 100 ++++++++++++++++++++++++++
->  1 file changed, 100 insertions(+)
->  create mode 100644 Documentation/virt/kvm/arm/pvtime.txt
-> 
-> diff --git a/Documentation/virt/kvm/arm/pvtime.txt b/Documentation/virt/kvm/arm/pvtime.txt
-> new file mode 100644
-> index 000000000000..1ceb118694e7
-> --- /dev/null
-> +++ b/Documentation/virt/kvm/arm/pvtime.txt
-> @@ -0,0 +1,100 @@
-> +Paravirtualized time support for arm64
-> +======================================
-> +
-> +Arm specification DEN0057/A defined a standard for paravirtualised time
-> +support for AArch64 guests:
-> +
-> +https://developer.arm.com/docs/den0057/a
-> +
-> +KVM/arm64 implements the stolen time part of this specification by providing
-> +some hypervisor service calls to support a paravirtualized guest obtaining a
-> +view of the amount of time stolen from its execution.
-> +
-> +Two new SMCCC compatible hypercalls are defined:
-> +
-> +PV_FEATURES 0xC5000020
-> +PV_TIME_ST  0xC5000022
-> +
-> +These are only available in the SMC64/HVC64 calling convention as
-> +paravirtualized time is not available to 32 bit Arm guests. The existence of
-> +the PV_FEATURES hypercall should be probed using the SMCCC 1.1 ARCH_FEATURES
-> +mechanism before calling it.
-> +
-> +PV_FEATURES
-> +    Function ID:  (uint32)  : 0xC5000020
-> +    PV_func_id:   (uint32)  : Either PV_TIME_LPT or PV_TIME_ST
-> +    Return value: (int32)   : NOT_SUPPORTED (-1) or SUCCESS (0) if the relevant
-> +                              PV-time feature is supported by the hypervisor.
-> +
-> +PV_TIME_ST
-> +    Function ID:  (uint32)  : 0xC5000022
-> +    Return value: (int64)   : IPA of the stolen time data structure for this
-> +                              (V)CPU. On failure:
-> +                              NOT_SUPPORTED (-1)
-> +
-> +The IPA returned by PV_TIME_ST should be mapped by the guest as normal memory
-> +with inner and outer write back caching attributes, in the inner shareable
-> +domain. A total of 16 bytes from the IPA returned are guaranteed to be
-> +meaningfully filled by the hypervisor (see structure below).
-> +
-> +PV_TIME_ST returns the structure for the calling VCPU.
-> +
-> +Stolen Time
-> +-----------
-> +
-> +The structure pointed to by the PV_TIME_ST hypercall is as follows:
-> +
-> +  Field       | Byte Length | Byte Offset | Description
-> +  ----------- | ----------- | ----------- | --------------------------
-> +  Revision    |      4      |      0      | Must be 0 for version 0.1
-> +  Attributes  |      4      |      4      | Must be 0
-> +  Stolen time |      8      |      8      | Stolen time in unsigned
-> +              |             |             | nanoseconds indicating how
-> +              |             |             | much time this VCPU thread
-> +              |             |             | was involuntarily not
-> +              |             |             | running on a physical CPU.
-> +
-> +The structure will be updated by the hypervisor prior to scheduling a VCPU. It
-> +will be present within a reserved region of the normal memory given to the
-> +guest. The guest should not attempt to write into this memory. There is a
-> +structure per VCPU of the guest.
-> +
-> +User space interface
-> +====================
-> +
-> +User space can request that KVM provide the paravirtualized time interface to
-> +a guest by creating a KVM_DEV_TYPE_ARM_PV_TIME device, for example:
-> +
-> +    struct kvm_create_device pvtime_device = {
-> +            .type = KVM_DEV_TYPE_ARM_PV_TIME,
-> +            .attr = 0,
-> +            .flags = 0,
-> +    };
-> +
-> +    pvtime_fd = ioctl(vm_fd, KVM_CREATE_DEVICE, &pvtime_device);
-> +
-> +Creation of the device should be done after creating the vCPUs of the virtual
-> +machine.
-> +
-> +The IPA of the structures must be given to KVM. This is the base address
-> +of an array of stolen time structures (one for each VCPU). The base address
-> +must be page aligned. The size must be at least 64 * number of VCPUs and be a
-> +multiple of PAGE_SIZE.
-> +
-> +The memory for these structures should be added to the guest in the usual
-> +manner (e.g. using KVM_SET_USER_MEMORY_REGION).
-> +
-> +For example:
-> +
-> +    struct kvm_dev_arm_st_region region = {
-> +            .gpa = <IPA of guest base address>,
-> +            .size = <size in bytes>
-> +    };
+Loongson have a long history of contributing their code to mainline kernel.
+However, it seems like recent years, they are focusing on maintain a kernel by themselves
+rather than contribute there code to the community.
 
-This feel fragile; how are you handling userspace creating VCPUs after
-setting this up, the GPA overlapping guest memory, etc.  Is the
-philosophy here that the VMM can mess up the VM if it wants, but that
-this should never lead attacks on the host (we better hope not) and so
-we don't care?
+Kernel is progress rapidly too. Their code slept in mainline for a long peroid without proper
+maintainance and became outdated.
 
-It seems to me setting the IPA per vcpu throught the VCPU device would
-avoid a lot of these issues.  See
-Documentation/virt/kvm/devices/vcpu.txt.
+This patchset brings modern DeviceTree and irqchip support to the Loongson64 machine, and leaves
+Loongson 2e/f alone since they are too legacy to touch.
 
 
-Thanks,
+Jiaxun Yang (13):
+  MIPS: Loongson64: Rename CPU TYPES
+  MIPS: Loongson64: Sepreate loongson2ef/loongson64 code
+  MAINTAINERS: Fix entries for new loongson64 path
+  irqchip: Add driver for Loongson-3 I/O interrupt controller
+  dt-bindings: interrupt-controller: Add Loongson-3 IOINTC
+  irqchip: Add driver for Loongson-3 HyperTransport interrupt controller
+  dt-bindings: interrupt-controller: Add Loongson-3 HTINTC
+  irqchip: i8259: Add plat-poll support
+  irqchip: mips-cpu: Convert to simple domain
+  MIPS: Loongson64: Drop legacy IRQ code
+  dt-bindings: mips: Add loongson cpus & boards
+  MIPS: Loongson64: Add generic dts
+  MIPS: Loongson64: Load built-in dtbs
 
-    Christoffer
+ .../loongson,ls3-htintc.yaml                  |  53 +++++
+ .../loongson,ls3-iointc.yaml                  |  61 +++++
+ .../bindings/mips/loongson/cpus.yaml          |  38 +++
+ .../bindings/mips/loongson/devices.yaml       |  64 ++++++
+ MAINTAINERS                                   |   9 +-
+ arch/mips/Kbuild.platforms                    |   1 +
+ arch/mips/Kconfig                             |  83 +++++--
+ arch/mips/boot/dts/Makefile                   |   1 +
+ arch/mips/boot/dts/loongson/Makefile          |   8 +
+ arch/mips/boot/dts/loongson/ls3-2nodes.dtsi   |   8 +
+ arch/mips/boot/dts/loongson/ls3-4nodes.dtsi   |  15 ++
+ arch/mips/boot/dts/loongson/ls3-cpus.dtsi     | 150 ++++++++++++
+ arch/mips/boot/dts/loongson/ls3-gs464.dtsi    |  18 ++
+ arch/mips/boot/dts/loongson/ls3-gs464e.dtsi   |  18 ++
+ .../boot/dts/loongson/ls3-rs780e-pch.dtsi     |  35 +++
+ arch/mips/boot/dts/loongson/ls3a-package.dtsi |  59 +++++
+ .../boot/dts/loongson/ls3a1000_780e_1way.dts  |  12 +
+ .../boot/dts/loongson/ls3a1000_780e_2way.dts  |  13 ++
+ .../boot/dts/loongson/ls3a1000_780e_4way.dts  |  13 ++
+ .../boot/dts/loongson/ls3a2000_780e_1way.dts  |  12 +
+ .../boot/dts/loongson/ls3a2000_780e_2way.dts  |  13 ++
+ .../boot/dts/loongson/ls3a2000_780e_4way.dts  |  13 ++
+ .../boot/dts/loongson/ls3a3000_780e_1way.dts  |  12 +
+ .../boot/dts/loongson/ls3a3000_780e_2way.dts  |  13 ++
+ .../boot/dts/loongson/ls3a3000_780e_4way.dts  |  13 ++
+ arch/mips/boot/dts/loongson/ls3b-package.dtsi |  59 +++++
+ .../mips/boot/dts/loongson/ls3b_780e_1way.dts |  13 ++
+ .../mips/boot/dts/loongson/ls3b_780e_2way.dts |  13 ++
+ arch/mips/include/asm/bootinfo.h              |   1 -
+ arch/mips/include/asm/cop2.h                  |   2 +-
+ arch/mips/include/asm/cpu-type.h              |   6 +-
+ arch/mips/include/asm/cpu.h                   |   4 +-
+ arch/mips/include/asm/hazards.h               |   2 +-
+ arch/mips/include/asm/io.h                    |   2 +-
+ arch/mips/include/asm/irqflags.h              |   2 +-
+ .../mach-loongson2ef/cpu-feature-overrides.h  |  45 ++++
+ .../cs5536/cs5536.h                           |   0
+ .../cs5536/cs5536_mfgpt.h                     |   0
+ .../cs5536/cs5536_pci.h                       |   0
+ .../cs5536/cs5536_vsm.h                       |   0
+ .../loongson2ef.h}                            |  31 +--
+ .../machine.h                                 |   6 -
+ .../mc146818rtc.h                             |   5 +-
+ .../mem.h                                     |   6 +-
+ arch/mips/include/asm/mach-loongson2ef/pci.h  |  43 ++++
+ .../include/asm/mach-loongson2ef/spaces.h     |  10 +
+ .../asm/mach-loongson64/builtin_dtbs.h        |  26 +++
+ .../mach-loongson64/cpu-feature-overrides.h   |   3 -
+ arch/mips/include/asm/mach-loongson64/irq.h   |   6 +-
+ .../asm/mach-loongson64/kernel-entry-init.h   |  74 ------
+ .../include/asm/mach-loongson64/loongson64.h  |  50 ++++
+ .../mips/include/asm/mach-loongson64/mmzone.h |  16 --
+ arch/mips/include/asm/mach-loongson64/pci.h   |  41 +---
+ .../include/asm/mach-loongson64/workarounds.h |   4 +-
+ arch/mips/include/asm/module.h                |   8 +-
+ arch/mips/include/asm/pgtable-bits.h          |   2 +-
+ arch/mips/include/asm/processor.h             |   2 +-
+ arch/mips/include/asm/r4kcache.h              |   4 +-
+ arch/mips/kernel/cpu-probe.c                  |  14 +-
+ arch/mips/kernel/idle.c                       |   2 +-
+ arch/mips/kernel/perf_event_mipsxx.c          |   4 +-
+ arch/mips/kernel/setup.c                      |   2 +-
+ arch/mips/kernel/traps.c                      |   2 +-
+ arch/mips/lib/csum_partial.S                  |   4 +-
+ arch/mips/loongson2ef/Kconfig                 |  93 ++++++++
+ arch/mips/loongson2ef/Makefile                |  18 ++
+ arch/mips/loongson2ef/Platform                |  32 +++
+ .../common/Makefile                           |   0
+ .../common/bonito-irq.c                       |   2 +-
+ .../common/cmdline.c                          |   2 +-
+ .../common/cs5536/Makefile                    |   0
+ .../common/cs5536/cs5536_acc.c                |   0
+ .../common/cs5536/cs5536_ehci.c               |   0
+ .../common/cs5536/cs5536_ide.c                |   0
+ .../common/cs5536/cs5536_isa.c                |   0
+ .../common/cs5536/cs5536_mfgpt.c              |   0
+ .../common/cs5536/cs5536_ohci.c               |   0
+ .../common/cs5536/cs5536_pci.c                |   0
+ .../common/early_printk.c                     |   2 +-
+ arch/mips/loongson2ef/common/env.c            |  71 ++++++
+ .../{loongson64 => loongson2ef}/common/init.c |   7 +-
+ .../{loongson64 => loongson2ef}/common/irq.c  |   2 +-
+ .../common/machtype.c                         |   3 +-
+ .../{loongson64 => loongson2ef}/common/mem.c  |  40 +---
+ .../{loongson64 => loongson2ef}/common/pci.c  |  11 +-
+ .../common/platform.c                         |   0
+ .../{loongson64 => loongson2ef}/common/pm.c   |   2 +-
+ .../common/reset.c                            |  23 +-
+ .../{loongson64 => loongson2ef}/common/rtc.c  |   0
+ .../common/serial.c                           |  37 +--
+ .../common/setup.c                            |   2 +-
+ .../{loongson64 => loongson2ef}/common/time.c |   2 +-
+ .../common/uart_base.c                        |  10 +-
+ .../fuloong-2e/Makefile                       |   0
+ .../fuloong-2e/dma.c                          |   0
+ .../fuloong-2e/irq.c                          |   2 +-
+ .../fuloong-2e/reset.c                        |   2 +-
+ .../lemote-2f/Makefile                        |   0
+ .../lemote-2f/clock.c                         |   2 +-
+ .../lemote-2f/dma.c                           |   0
+ .../lemote-2f/ec_kb3310b.c                    |   0
+ .../lemote-2f/ec_kb3310b.h                    |   0
+ .../lemote-2f/irq.c                           |   2 +-
+ .../lemote-2f/machtype.c                      |   2 +-
+ .../lemote-2f/pm.c                            |   2 +-
+ .../lemote-2f/reset.c                         |   2 +-
+ arch/mips/loongson64/Kconfig                  | 126 +---------
+ arch/mips/loongson64/Makefile                 |  23 +-
+ arch/mips/loongson64/Platform                 |  36 +--
+ .../loongson64/{loongson-3 => }/acpi_init.c   |   3 +-
+ .../loongson64/{loongson-3 => }/cop2-ex.c     |   5 +-
+ arch/mips/loongson64/{loongson-3 => }/dma.c   |   6 +-
+ arch/mips/loongson64/{common => }/env.c       | 139 ++++++-----
+ arch/mips/loongson64/{loongson-3 => }/hpet.c  |   0
+ arch/mips/loongson64/irq.c                    |  27 +++
+ arch/mips/loongson64/loongson-3/Makefile      |  11 -
+ arch/mips/loongson64/loongson-3/irq.c         | 158 -------------
+ arch/mips/loongson64/{loongson-3 => }/numa.c  |   4 +-
+ arch/mips/loongson64/pci.c                    |  45 ++++
+ .../loongson64/{loongson-3 => }/platform.c    |   0
+ arch/mips/loongson64/reset.c                  |  58 +++++
+ arch/mips/loongson64/setup.c                  | 107 +++++++++
+ arch/mips/loongson64/{loongson-3 => }/smp.c   |  28 +--
+ arch/mips/loongson64/{loongson-3 => }/smp.h   |   0
+ arch/mips/mm/c-r4k.c                          |  32 +--
+ arch/mips/mm/page.c                           |   2 +-
+ arch/mips/mm/tlb-r4k.c                        |   4 +-
+ arch/mips/mm/tlbex.c                          |   6 +-
+ arch/mips/oprofile/Makefile                   |   4 +-
+ arch/mips/oprofile/common.c                   |   4 +-
+ arch/mips/oprofile/op_model_loongson2.c       |   2 +-
+ arch/mips/oprofile/op_model_loongson3.c       |   2 +-
+ arch/mips/pci/Makefile                        |   2 +-
+ arch/mips/pci/fixup-fuloong2e.c               |   2 +-
+ arch/mips/pci/fixup-lemote2f.c                |   2 +-
+ arch/mips/pci/ops-loongson2.c                 |   2 +-
+ arch/mips/pci/ops-loongson3.c                 |   2 +-
+ drivers/cpufreq/loongson2_cpufreq.c           |   2 +-
+ drivers/gpio/Kconfig                          |   2 +-
+ drivers/gpio/gpio-loongson.c                  |   4 +-
+ drivers/irqchip/Kconfig                       |  17 ++
+ drivers/irqchip/Makefile                      |   2 +
+ drivers/irqchip/irq-i8259.c                   |  47 +++-
+ drivers/irqchip/irq-ls3-htintc.c              | 145 ++++++++++++
+ drivers/irqchip/irq-ls3-iointc.c              | 216 ++++++++++++++++++
+ drivers/irqchip/irq-mips-cpu.c                |   2 +-
+ drivers/platform/mips/cpu_hwmon.c             |   2 +-
+ include/drm/drm_cache.h                       |   2 +-
+ 148 files changed, 2064 insertions(+), 841 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/loongson,ls3-htintc.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/loongson,ls3-iointc.yaml
+ create mode 100644 Documentation/devicetree/bindings/mips/loongson/cpus.yaml
+ create mode 100644 Documentation/devicetree/bindings/mips/loongson/devices.yaml
+ create mode 100644 arch/mips/boot/dts/loongson/Makefile
+ create mode 100644 arch/mips/boot/dts/loongson/ls3-2nodes.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/ls3-4nodes.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/ls3-cpus.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/ls3-gs464.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/ls3-gs464e.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/ls3-rs780e-pch.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a-package.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a1000_780e_1way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a1000_780e_2way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a1000_780e_4way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a2000_780e_1way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a2000_780e_2way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a2000_780e_4way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a3000_780e_1way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a3000_780e_2way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3a3000_780e_4way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3b-package.dtsi
+ create mode 100644 arch/mips/boot/dts/loongson/ls3b_780e_1way.dts
+ create mode 100644 arch/mips/boot/dts/loongson/ls3b_780e_2way.dts
+ create mode 100644 arch/mips/include/asm/mach-loongson2ef/cpu-feature-overrides.h
+ rename arch/mips/include/asm/{mach-loongson64 => mach-loongson2ef}/cs5536/cs5536.h (100%)
+ rename arch/mips/include/asm/{mach-loongson64 => mach-loongson2ef}/cs5536/cs5536_mfgpt.h (100%)
+ rename arch/mips/include/asm/{mach-loongson64 => mach-loongson2ef}/cs5536/cs5536_pci.h (100%)
+ rename arch/mips/include/asm/{mach-loongson64 => mach-loongson2ef}/cs5536/cs5536_vsm.h (100%)
+ rename arch/mips/include/asm/{mach-loongson64/loongson.h => mach-loongson2ef/loongson2ef.h} (91%)
+ rename arch/mips/include/asm/{mach-loongson64 => mach-loongson2ef}/machine.h (80%)
+ rename arch/mips/include/asm/{mach-loongson64 => mach-loongson2ef}/mc146818rtc.h (80%)
+ rename arch/mips/include/asm/{mach-loongson64 => mach-loongson2ef}/mem.h (86%)
+ create mode 100644 arch/mips/include/asm/mach-loongson2ef/pci.h
+ create mode 100644 arch/mips/include/asm/mach-loongson2ef/spaces.h
+ create mode 100644 arch/mips/include/asm/mach-loongson64/builtin_dtbs.h
+ delete mode 100644 arch/mips/include/asm/mach-loongson64/kernel-entry-init.h
+ create mode 100644 arch/mips/include/asm/mach-loongson64/loongson64.h
+ create mode 100644 arch/mips/loongson2ef/Kconfig
+ create mode 100644 arch/mips/loongson2ef/Makefile
+ create mode 100644 arch/mips/loongson2ef/Platform
+ rename arch/mips/{loongson64 => loongson2ef}/common/Makefile (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/bonito-irq.c (97%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cmdline.c (97%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cs5536/Makefile (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cs5536/cs5536_acc.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cs5536/cs5536_ehci.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cs5536/cs5536_ide.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cs5536/cs5536_isa.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cs5536/cs5536_mfgpt.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cs5536/cs5536_ohci.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/cs5536/cs5536_pci.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/early_printk.c (97%)
+ create mode 100644 arch/mips/loongson2ef/common/env.c
+ rename arch/mips/{loongson64 => loongson2ef}/common/init.c (90%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/irq.c (98%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/machtype.c (94%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/mem.c (72%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/pci.c (89%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/platform.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/pm.c (99%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/reset.c (77%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/rtc.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/serial.c (63%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/setup.c (97%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/time.c (96%)
+ rename arch/mips/{loongson64 => loongson2ef}/common/uart_base.c (77%)
+ rename arch/mips/{loongson64 => loongson2ef}/fuloong-2e/Makefile (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/fuloong-2e/dma.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/fuloong-2e/irq.c (98%)
+ rename arch/mips/{loongson64 => loongson2ef}/fuloong-2e/reset.c (93%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/Makefile (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/clock.c (98%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/dma.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/ec_kb3310b.c (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/ec_kb3310b.h (100%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/irq.c (99%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/machtype.c (98%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/pm.c (99%)
+ rename arch/mips/{loongson64 => loongson2ef}/lemote-2f/reset.c (99%)
+ rename arch/mips/loongson64/{loongson-3 => }/acpi_init.c (99%)
+ rename arch/mips/loongson64/{loongson-3 => }/cop2-ex.c (88%)
+ rename arch/mips/loongson64/{loongson-3 => }/dma.c (82%)
+ rename arch/mips/loongson64/{common => }/env.c (77%)
+ rename arch/mips/loongson64/{loongson-3 => }/hpet.c (100%)
+ create mode 100644 arch/mips/loongson64/irq.c
+ delete mode 100644 arch/mips/loongson64/loongson-3/Makefile
+ delete mode 100644 arch/mips/loongson64/loongson-3/irq.c
+ rename arch/mips/loongson64/{loongson-3 => }/numa.c (98%)
+ create mode 100644 arch/mips/loongson64/pci.c
+ rename arch/mips/loongson64/{loongson-3 => }/platform.c (100%)
+ create mode 100644 arch/mips/loongson64/reset.c
+ create mode 100644 arch/mips/loongson64/setup.c
+ rename arch/mips/loongson64/{loongson-3 => }/smp.c (98%)
+ rename arch/mips/loongson64/{loongson-3 => }/smp.h (100%)
+ create mode 100644 drivers/irqchip/irq-ls3-htintc.c
+ create mode 100644 drivers/irqchip/irq-ls3-iointc.c
 
-> +
-> +    struct kvm_device_attr st_base = {
-> +            .group = KVM_DEV_ARM_PV_TIME_PADDR,
-> +            .attr = KVM_DEV_ARM_PV_TIME_ST,
-> +            .addr = (u64)&region
-> +    };
-> +
-> +    ioctl(pvtime_fd, KVM_SET_DEVICE_ATTR, &st_base);
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+-- 
+2.22.0
+
