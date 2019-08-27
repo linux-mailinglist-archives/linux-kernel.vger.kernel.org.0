@@ -2,100 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F8D99EB2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21AB99EB26
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:36:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730098AbfH0OhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 10:37:06 -0400
-Received: from mga04.intel.com ([192.55.52.120]:12656 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728702AbfH0OhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 10:37:05 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 07:37:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
-   d="scan'208";a="192250328"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga002.jf.intel.com with ESMTP; 27 Aug 2019 07:37:03 -0700
-Date:   Tue, 27 Aug 2019 08:35:16 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Long Li <longli@microsoft.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        John Garry <john.garry@huawei.com>,
-        Hannes Reinecke <hare@suse.com>,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH 4/4] genirq: use irq's affinity for threaded irq with
- IRQF_RESCUE_THREAD
-Message-ID: <20190827143516.GB23091@localhost.localdomain>
-References: <20190827085344.30799-1-ming.lei@redhat.com>
- <20190827085344.30799-5-ming.lei@redhat.com>
+        id S1729852AbfH0Ogn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 10:36:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44004 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbfH0Ogk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 10:36:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6iDUQNuqkLD0xEwbJW3kzAA85PwkQYPVuQbWXE7HlX4=; b=syZhDELXtKZKB8rOQCi7kyToH
+        sMosz2S+BuGhoxzneQS7sha/O3hfcgG16Qh0dNcp/+6YWdzsYcpKACq5RoBqBuF0nmiz1R8VQa1CJ
+        oGOzrslrkqgfq8vKxAuc0jkgjD2SZNEaZMRwYLQPHfgn21b82afw1TgS7Fp8Mj7mea9cDgv99cFOd
+        TkQ0PREbve0Vkw40NX1cSWNDXRxNqXGme1byEumJcb80WxlyYl6IyRYpnIEqQ9FkBNs7q3Pqs1E32
+        ewhK8GvRJrTPzHSFX5af1z/L3DDu/4ySShZFwKxQxThLwr8xjU/Z6llNi+g3ayDgFifEhBooeuA7X
+        8ETJt1YsQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2caL-0002eg-5F; Tue, 27 Aug 2019 14:36:37 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 45E5F30768B;
+        Tue, 27 Aug 2019 16:35:59 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BBB8620B16823; Tue, 27 Aug 2019 16:36:32 +0200 (CEST)
+Date:   Tue, 27 Aug 2019 16:36:32 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     QiaoChong <qiaochong@loongson.cn>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: update_curr changed sum_exec_runtime to 1
+ when sum_exec_runtime is 0 beacuse some kernel code use sum_exec_runtime==0
+ to test task just be forked.
+Message-ID: <20190827143632.GF2332@hirez.programming.kicks-ass.net>
+References: <20190826114650.10948-1-qiaochong@loongson.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190827085344.30799-5-ming.lei@redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20190826114650.10948-1-qiaochong@loongson.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 04:53:44PM +0800, Ming Lei wrote:
-> In case of IRQF_RESCUE_THREAD, the threaded handler is only used to
-> handle interrupt when IRQ flood comes, use irq's affinity for this thread
-> so that scheduler may select other not too busy CPUs for handling the
-> interrupt.
+On Mon, Aug 26, 2019 at 07:46:50PM +0800, QiaoChong wrote:
+> From: Chong Qiao <qiaochong@loongson.cn>
 > 
-> Cc: Long Li <longli@microsoft.com>
-> Cc: Ingo Molnar <mingo@redhat.com>,
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Keith Busch <keith.busch@intel.com>
-> Cc: Jens Axboe <axboe@fb.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Sagi Grimberg <sagi@grimberg.me>
-> Cc: John Garry <john.garry@huawei.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Hannes Reinecke <hare@suse.com>
-> Cc: linux-nvme@lists.infradead.org
-> Cc: linux-scsi@vger.kernel.org
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  kernel/irq/manage.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+> Such as:
+> cpu_cgroup_attach>
+>  sched_move_task>
+>   task_change_group_fair>
+>    task_move_group_fair>
+>     detach_task_cfs_rq>
+>      vruntime_normalized>
 > 
-> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-> index 1566abbf50e8..03bc041348b7 100644
-> --- a/kernel/irq/manage.c
-> +++ b/kernel/irq/manage.c
-> @@ -968,7 +968,18 @@ irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *action)
->  	if (cpumask_available(desc->irq_common_data.affinity)) {
->  		const struct cpumask *m;
->  
-> -		m = irq_data_get_effective_affinity_mask(&desc->irq_data);
-> +		/*
-> +		 * Managed IRQ's affinity is setup gracefull on MUNA locality,
+> 	/*
+> 	 * When !on_rq, vruntime of the task has usually NOT been normalized.
+> 	 * But there are some cases where it has already been normalized:
+> 	 *
+> 	 * - A forked child which is waiting for being woken up by
+> 	 *   wake_up_new_task().
+> 	 * - A task which has been woken up by try_to_wake_up() and
+> 	 *   waiting for actually being woken up by sched_ttwu_pending().
+> 	 */
+> 	if (!se->sum_exec_runtime ||
+> 	    (p->state == TASK_WAKING && p->sched_remote_wakeup))
+> 		return true;
+> 
+> p->se.sum_exec_runtime is 0, does not mean task not been run (A forked child which is waiting for being woken up by  wake_up_new_task()).
+> 
+> Task may have been scheduled multimes, but p->se.sum_exec_runtime is still 0, because delta_exec maybe 0 in update_curr.
+> 
+> static void update_curr(struct cfs_rq *cfs_rq)
+> {
+> ...
+> 	delta_exec = now - curr->exec_start;
+> 	if (unlikely((s64)delta_exec <= 0))
+> 		return;
+> ...
+> 
+> 	curr->sum_exec_runtime += delta_exec;
+> ...
+> }
+> 
+> Task has been run and is stopped(on_rq == 0), vruntime not been normalized, but se->sum_exec_runtime == 0.
+> This cause vruntime_normalized set on_rq 1, and does not normalize vruntime.
+> This may cause task use old vruntime in old cgroup, which maybe very large than task's vruntime in new cgroup.
+> Which may cause task may not scheduled in run queue for long time after been waked up.
+> 
+> Now I change sum_exec_runtime to 1 when sum_exec_runtime == 0 in update_curr to make sun_exec_runtime not 0.
 
-s/MUNA/NUMA
-
-> +		 * also if IRQF_RESCUE_THREAD is set, interrupt flood has been
-> +		 * triggered, so ask scheduler to run the thread on CPUs
-> +		 * specified by this interrupt's affinity.
-> +		 */
-> +		if ((action->flags & IRQF_RESCUE_THREAD) &&
-> +				irqd_affinity_is_managed(&desc->irq_data))
-> +			m = desc->irq_common_data.affinity;
-> +		else
-> +			m = irq_data_get_effective_affinity_mask(
-> +					&desc->irq_data);
->  		cpumask_copy(mask, m);
->  	} else {
->  		valid = false;
-> -- 
+Have you actually observed this? It is very hard to have a 0 delta
+between two scheduling events.
