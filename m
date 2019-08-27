@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B956E9E1FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BC929E142
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:11:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730153AbfH0Hys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:54:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46432 "EHLO mail.kernel.org"
+        id S1731878AbfH0ICN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:02:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730134AbfH0Hyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:54:44 -0400
+        id S1731080AbfH0IBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:01:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02C1B2173E;
-        Tue, 27 Aug 2019 07:54:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97F0721872;
+        Tue, 27 Aug 2019 08:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892483;
-        bh=fqxq6ETiBZdsvCAhwofkUWVdIzRN71nf0SFBLf8xv38=;
+        s=default; t=1566892912;
+        bh=Ds0GimJ/SUxb9WfKAQynFvWDWWY0JTVWRQ3x7JEx6EU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JuX1q6MY9GEfjbkc3g4qO2KMAWjue9VutdlBZDdTwGpOiSYpQYjTTz0baM5qDH9/L
-         2tE5/aQmpEE1F4Nk8uqFsbv9ucFowVNN/SDn5kPhkaYknN0NiaNtDflozoKg0XJ6z8
-         HMvSueGrnQufn4rBgHwPk2lOuq0tiN7JIgMAFa90=
+        b=pgpPZm5SsitRYjzDs2fEmE/NfVa1ljD/1WnWV1YEqg6AOTzwlRkiBpZsOBOkrY3ax
+         0jPe7Oz3sRYQo6UhOqJSmWiTITa8Sj7zSriCEv4SOLw94F22w136On3Gtp7K7wnyKD
+         nEgN+Iofz0hNGDOj5QUgoJSjYKtSmhuY65CtVIPk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Trukhanov <lahvuun@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 01/98] HID: Add 044f:b320 ThrustMaster, Inc. 2 in 1 DT
-Date:   Tue, 27 Aug 2019 09:49:40 +0200
-Message-Id: <20190827072718.192470316@linuxfoundation.org>
+        stable@vger.kernel.org, Jean Delvare <jdelvare@suse.de>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 055/162] nvmem: Use the same permissions for eeprom as for nvmem
+Date:   Tue, 27 Aug 2019 09:49:43 +0200
+Message-Id: <20190827072740.113392117@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
+In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
+References: <20190827072738.093683223@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,63 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 65f11c72780fa9d598df88def045ccb6a885cf80 ]
+[ Upstream commit e70d8b287301eb6d7c7761c6171c56af62110ea3 ]
 
-Enable force feedback for the Thrustmaster Dual Trigger 2 in 1 Rumble Force
-gamepad. Compared to other Thrustmaster devices, left and right rumble
-motors here are swapped.
+The compatibility "eeprom" attribute is currently root-only no
+matter what the configuration says. The "nvmem" attribute does
+respect the setting of the root_only configuration bit, so do the
+same for "eeprom".
 
-Signed-off-by: Ilya Trukhanov <lahvuun@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+Fixes: b6c217ab9be6 ("nvmem: Add backwards compatibility support for older EEPROM drivers.")
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc: Andrew Lunn <andrew@lunn.ch>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20190728184255.563332e6@endymion
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-tmff.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/nvmem/nvmem-sysfs.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hid/hid-tmff.c b/drivers/hid/hid-tmff.c
-index bea8def64f437..30b8c3256c991 100644
---- a/drivers/hid/hid-tmff.c
-+++ b/drivers/hid/hid-tmff.c
-@@ -34,6 +34,8 @@
+diff --git a/drivers/nvmem/nvmem-sysfs.c b/drivers/nvmem/nvmem-sysfs.c
+index 6f303b91f6e70..9e0c429cd08a2 100644
+--- a/drivers/nvmem/nvmem-sysfs.c
++++ b/drivers/nvmem/nvmem-sysfs.c
+@@ -224,10 +224,17 @@ int nvmem_sysfs_setup_compat(struct nvmem_device *nvmem,
+ 	if (!config->base_dev)
+ 		return -EINVAL;
  
- #include "hid-ids.h"
- 
-+#define THRUSTMASTER_DEVICE_ID_2_IN_1_DT	0xb320
-+
- static const signed short ff_rumble[] = {
- 	FF_RUMBLE,
- 	-1
-@@ -88,6 +90,7 @@ static int tmff_play(struct input_dev *dev, void *data,
- 	struct hid_field *ff_field = tmff->ff_field;
- 	int x, y;
- 	int left, right;	/* Rumbling */
-+	int motor_swap;
- 
- 	switch (effect->type) {
- 	case FF_CONSTANT:
-@@ -112,6 +115,13 @@ static int tmff_play(struct input_dev *dev, void *data,
- 					ff_field->logical_minimum,
- 					ff_field->logical_maximum);
- 
-+		/* 2-in-1 strong motor is left */
-+		if (hid->product == THRUSTMASTER_DEVICE_ID_2_IN_1_DT) {
-+			motor_swap = left;
-+			left = right;
-+			right = motor_swap;
-+		}
-+
- 		dbg_hid("(left,right)=(%08x, %08x)\n", left, right);
- 		ff_field->value[0] = left;
- 		ff_field->value[1] = right;
-@@ -238,6 +248,8 @@ static const struct hid_device_id tm_devices[] = {
- 		.driver_data = (unsigned long)ff_rumble },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb304),   /* FireStorm Dual Power 2 (and 3) */
- 		.driver_data = (unsigned long)ff_rumble },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, THRUSTMASTER_DEVICE_ID_2_IN_1_DT),   /* Dual Trigger 2-in-1 */
-+		.driver_data = (unsigned long)ff_rumble },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb323),   /* Dual Trigger 3-in-1 (PC Mode) */
- 		.driver_data = (unsigned long)ff_rumble },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb324),   /* Dual Trigger 3-in-1 (PS3 Mode) */
+-	if (nvmem->read_only)
+-		nvmem->eeprom = bin_attr_ro_root_nvmem;
+-	else
+-		nvmem->eeprom = bin_attr_rw_root_nvmem;
++	if (nvmem->read_only) {
++		if (config->root_only)
++			nvmem->eeprom = bin_attr_ro_root_nvmem;
++		else
++			nvmem->eeprom = bin_attr_ro_nvmem;
++	} else {
++		if (config->root_only)
++			nvmem->eeprom = bin_attr_rw_root_nvmem;
++		else
++			nvmem->eeprom = bin_attr_rw_nvmem;
++	}
+ 	nvmem->eeprom.attr.name = "eeprom";
+ 	nvmem->eeprom.size = nvmem->size;
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
 -- 
 2.20.1
 
