@@ -2,100 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BCD89DFAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:56:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A59C9DF17
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:50:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730591AbfH0H4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:56:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48310 "EHLO mail.kernel.org"
+        id S1728845AbfH0Hu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:50:27 -0400
+Received: from verein.lst.de ([213.95.11.211]:54480 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730574AbfH0H4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:56:22 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E88D0206BF;
-        Tue, 27 Aug 2019 07:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892581;
-        bh=IMouhFbAtyRnrffhXqdRzpnr6dJAf9xPKL2fxq5ru5Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kCk4XJ0PopMCAmwlHh/ow2TnReX3NG8poNWX4cPgKKN8GRv1Nfl+DTIuM3LIdcZ4s
-         XdDlu/cE9AaSFa2208iE+yj6GFQ2TruiBhO+6qIMrwXvlz4HMEedL8wGCKKlOfltJX
-         7l/Gq96UVxuyhzpg2poOgHVx86qZSDRivhYVzg/g=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Andreas Krebbel <krebbel@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 41/98] s390: put _stext and _etext into .text section
-Date:   Tue, 27 Aug 2019 09:50:20 +0200
-Message-Id: <20190827072720.380385106@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728704AbfH0Hu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:50:27 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 4577B68B05; Tue, 27 Aug 2019 09:50:21 +0200 (CEST)
+Date:   Tue, 27 Aug 2019 09:50:21 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>, vdumpa@nvidia.com,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thierry Reding <treding@nvidia.com>,
+        Kees Cook <keescook@chromium.org>, iamjoonsoo.kim@lge.com,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org
+Subject: Re: [PATCH v2 2/2] dma-contiguous: Use fallback alloc_pages for
+ single pages
+Message-ID: <20190827075021.GA953@lst.de>
+References: <20190506223334.1834-1-nicoleotsuka@gmail.com> <20190506223334.1834-3-nicoleotsuka@gmail.com> <CAK7LNARacEorb38mVBw_V-Zvz-znWgBma1AP1-z_5B_xZU4ogg@mail.gmail.com> <CAK7LNAQfYBCoChMV=MOwcUyVoqRkrPWs7DaWdzDqjBe18gGiAQ@mail.gmail.com> <20190825011025.GA23410@lst.de> <CAK7LNAQb1ZHr=DiHLNeNRaQExMuXdDOV4sFghoGbco_Q=Qzb8g@mail.gmail.com> <20190826073320.GA11712@lst.de> <CAK7LNATYOLEboUTO4qPx2z7cqwDrHBO1HFHG8VzZEJ15STv+nw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNATYOLEboUTO4qPx2z7cqwDrHBO1HFHG8VzZEJ15STv+nw@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 24350fdadbdec780406a1ef988e6cd3875e374a8 ]
+On Tue, Aug 27, 2019 at 04:45:20PM +0900, Masahiro Yamada wrote:
+> On Mon, Aug 26, 2019 at 4:33 PM Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > On Mon, Aug 26, 2019 at 11:05:00AM +0900, Masahiro Yamada wrote:
+> > > This is included in v5.3-rc6
+> > > so I tested it.
+> >
+> > So there is no allocation failure, but you get I/O errors later?
+> 
+> Right.
+> 
+> >
+> > Does the device use a device-private CMA area?
+> 
+> Not sure.
+> My driver is drivers/mmc/host/sdhci-cadence.c
+> It reuses routines in drivers/mmc/host/sdhci.c
+> 
+> 
+> 
+> >  Does it work with Linux
+> > 5.2 if CONFIG_DMA_CMA is disabled?
+> 
+> No.
+> 5.2 + disable CONFIG_DMA_CMA
+> failed in the same way.
 
-Perf relies on _etext and _stext symbols being one of 't', 'T', 'v' or
-'V'. Put them into .text section to guarantee that.
+So it seems like the device wants CMA memory.   I guess the patch
+below will fix it, but that isn't the solution.  Can you try it
+to confirm?  In the end it probably assumes a dma mask it doesn't
+set that the CMA memory satisfies or something similar.
 
-Also moves padding to page boundary inside .text which has an effect that
-.text section is now padded with nops rather than 0's, which apparently
-has been the initial intention for specifying 0x0700 fill expression.
-
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Andreas Krebbel <krebbel@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/s390/kernel/vmlinux.lds.S | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/arch/s390/kernel/vmlinux.lds.S b/arch/s390/kernel/vmlinux.lds.S
-index b43f8d33a3697..18ede6e806b91 100644
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -31,10 +31,9 @@ PHDRS {
- SECTIONS
- {
- 	. = 0x100000;
--	_stext = .;		/* Start of text section */
- 	.text : {
--		/* Text and read-only data */
--		_text = .;
-+		_stext = .;		/* Start of text section */
-+		_text = .;		/* Text and read-only data */
- 		HEAD_TEXT
- 		TEXT_TEXT
- 		SCHED_TEXT
-@@ -46,11 +45,10 @@ SECTIONS
- 		*(.text.*_indirect_*)
- 		*(.fixup)
- 		*(.gnu.warning)
-+		. = ALIGN(PAGE_SIZE);
-+		_etext = .;		/* End of text section */
- 	} :text = 0x0700
+diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+index 69cfb4345388..bd2f24aa7f19 100644
+--- a/kernel/dma/contiguous.c
++++ b/kernel/dma/contiguous.c
+@@ -236,7 +236,7 @@ struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
  
--	. = ALIGN(PAGE_SIZE);
--	_etext = .;		/* End of text section */
--
- 	NOTES :text :note
+ 	if (dev && dev->cma_area)
+ 		cma = dev->cma_area;
+-	else if (count > 1)
++	else
+ 		cma = dma_contiguous_default_area;
  
- 	.dummy : { *(.dummy) } :data
--- 
-2.20.1
-
-
-
+ 	/* CMA can be used only in the context which permits sleeping */
