@@ -2,100 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 918C79F03D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:33:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DD659F03A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:33:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730490AbfH0QdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:33:20 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:43584 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730456AbfH0QdT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:33:19 -0400
-Received: by mail-qk1-f194.google.com with SMTP id m2so17499736qkd.10;
-        Tue, 27 Aug 2019 09:33:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/zg0bV3qxRrrZ8M4aU2pwZR/A1NqBI7vpxBYLuL1/5c=;
-        b=j3Jiius+Z8WuK32G/Nqm5EWD7Hu04KbAui3teuc2W9F3B33LNQ3x0Qyq2DY4/aAxJz
-         Rb8KSp090PhHShKf9HUSSgqHF8cQhqrKNcxhJhkicAWAvTn4CGUTHd/SDyCvu3PP27k4
-         m5kz6L0SbhFspLVvpbxjPU3hlesg67K4+c/az440bca6KKR1SI/e8Bw0Srt0CnNP8hn8
-         s5SjsSt+DFuP3fKKBiWejb+JQ08Sl9xtJUPkwcB33FN5zxHc1DcRwBQqGA5MVGg9K4ji
-         OViPaEA5rlXsEo6qz8GdIBqHFwYnxJj3B+ZL6m6YVz5aOGunDS/5K7tpu3vdrLUzPtyl
-         dX9g==
-X-Gm-Message-State: APjAAAWxCWbCu4BMq6/ZeT4KRa86f0V9+RyTA59el84cAJKtI+lM0A+W
-        aHq507TKYmzcNN6ZKiAEn/a1+0dcKWPQnolv4Pw=
-X-Google-Smtp-Source: APXvYqxmXX+KSa+dqu82Y9804plYSWjLPoR2eL0zXepUxEM9uaGcvZ5C/ITNAAIVCt20lQg/KUKT+p99sfbOHZrATd8=
-X-Received: by 2002:a37:4b0d:: with SMTP id y13mr22291349qka.3.1566923597978;
- Tue, 27 Aug 2019 09:33:17 -0700 (PDT)
+        id S1730267AbfH0QdM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:33:12 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52155 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727057AbfH0QdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 12:33:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 09:33:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
+   d="scan'208";a="185344518"
+Received: from unknown (HELO [10.7.201.140]) ([10.7.201.140])
+  by orsmga006.jf.intel.com with ESMTP; 27 Aug 2019 09:33:11 -0700
+Subject: Re: [PATCH] x86/cpufeature: drop *_MASK_CEHCK
+To:     Borislav Petkov <bp@alien8.de>, Cao jin <caoj.fnst@cn.fujitsu.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com
+References: <20190827070550.15988-1-caoj.fnst@cn.fujitsu.com>
+ <20190827074151.GA29752@zn.tnic>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <57ef4cd4-dfb8-256b-dc88-3f57c43dfe89@intel.com>
+Date:   Tue, 27 Aug 2019 09:33:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190808212234.2213262-1-arnd@arndb.de> <20190808212234.2213262-15-arnd@arndb.de>
- <20190813103605.GL52127@atomide.com> <CAK8P3a0E+QUn9wcP5Obv-FitWyXCFwcp+oPConeO2p-NV1rqsw@mail.gmail.com>
- <20190813181158.GA26798@darkstar.musicnaut.iki.fi> <CAK8P3a0LjKrc+7c5Ht9OL7LfYyLnG9=y7u+w24ujA1xAid_yCQ@mail.gmail.com>
- <20190814074918.GA52127@atomide.com> <CAK8P3a3k_HOGqzMGjtc+7NSaK0Bsa_vxxRFLzY8aP6ev4wa9iA@mail.gmail.com>
- <20190816083403.GB1952@darkstar.musicnaut.iki.fi>
-In-Reply-To: <20190816083403.GB1952@darkstar.musicnaut.iki.fi>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 27 Aug 2019 18:33:01 +0200
-Message-ID: <CAK8P3a3jqNxoihQ+UFvOZMg=AcF2yzHXs5ay6X1TZX8L3zQ3rg@mail.gmail.com>
-Subject: Re: [PATCH 14/22] ARM: omap1: use pci_ioremap_io() for omap_cf
-To:     Aaro Koskinen <aaro.koskinen@iki.fi>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190827074151.GA29752@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 10:34 AM Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
-> On Wed, Aug 14, 2019 at 12:36:40PM +0200, Arnd Bergmann wrote:
-> > On Wed, Aug 14, 2019 at 9:49 AM Tony Lindgren <tony@atomide.com> wrote:
-> > > * Arnd Bergmann <arnd@arndb.de> [190813 19:34]:
-> > > > -#define OMAP1_IO_OFFSET                0x01000000      /* Virtual IO
-> > > > = 0xfefb0000 */
-> > > > +#define OMAP1_IO_OFFSET                0x00fb0000      /* Virtual IO
-> > > > = 0xff000000 */
-> > > >  #define OMAP1_IO_ADDRESS(pa)   IOMEM((pa) - OMAP1_IO_OFFSET)
-> > >
-> > > Oh OK yeah sounds like that's the issue.
-> > >
-> > > > There may be additional locations that hardcode the virtual address.
-> > >
-> > > Those should be in mach-omap1/io.c, and I recall innovator had some
-> > > hardcoded fpga address that should also be checked.
-> >
-> > I see four boards with hardcoded I/O addresses, but they are all below
-> > the PCI I/O virtual address range, and are not affected by that change.
-> >
-> > For the innovator FPGA access, this was ok, it uses the correct address
-> > in the OMAP1_IO_OFFSET range.
->
-> I tried testing this on OSK board. If I boot with earlyprintk disabled,
-> it boots OK and everything works (also CF card) with your playground
-> commit 5723b6686943.
->
-> However with earlyprintk it seems to hang as soon as kernel tries to print
-> something. So something goes wrong with early DEBUG_LL mapping code when
-> CONFIG_DEBUG_UART_VIRT=0xff000000 is used?
+On 8/27/19 12:41 AM, Borislav Petkov wrote:
+>>  #define DISABLED_MASK_BIT_SET(feature_bit)				\
+>> @@ -104,7 +103,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+>>  	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
+>>  	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
+>>  	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
+>> -	   DISABLED_MASK_CHECK					  ||	\
+>>  	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
+>>  
+>>  #define cpu_has(c, bit)							\
+> If you do a little bit of git archeology:
+> 
+> $ git annotate arch/x86/include/asm/cpufeature.h
+> 
+> after a while, you'll see that this was added in:
+> 
+> 1e61f78baf89 ("x86/cpufeature: Make sure DISABLED/REQUIRED macros are updated")
+> 
+> and then you could Cc Dave and ask what he was thinking then?
+> 
+> Leaving in the rest for reference.
 
-I just redid the calculation and came out with the same address, so I
-don't think I put the wrong one there. The address also does not
-conflict with the PCI mapping, and the address is the same one that
-is installed later, so that should also be fine.
+The point was that there are 5 files in the code that need to be changed
+if you change NCAPINTS:
 
-Are you sure you used the correct address in the .config file? If you
-ran 'make oldconfig', the virtual address would not be changed here
-as I just modify the default for a fresh 'make omap1_defconfig'
-run or similar.
+1. arch/x86/include/asm/required-features.h
+2. arch/x86/include/asm/disabled-features.h
+3. tools/arch/x86/include/asm/disabled-features.h
+4. tools/arch/x86/include/asm/required-features.h
+5. arch/x86/include/asm/cpufeature.h (2 sites)
 
-        Arnd
+Each of those sites has a compile-time check for NCAPINTS.  The problem
+is that the *-features.h code doesn't get compiled directly so a
+BUILD_BUG_ON() doesn't work by itself.  So, for the sites there, we put
+it somewhere that *will* get compiled: the macros that actually check
+the bits.
+
+It looks weird, but the end effect is good: If you change NCAPINTS, you
+get compile errors in 5 files and have to go edit those 5 files to fix
+it.  Your patch makes it easier to introduce errors and miss one of
+those sites.
