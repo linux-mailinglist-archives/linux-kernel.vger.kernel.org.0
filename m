@@ -2,69 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 761A29F5B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEF129F5AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:57:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbfH0V6J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:58:09 -0400
-Received: from mga04.intel.com ([192.55.52.120]:52063 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725835AbfH0V6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:58:09 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 14:58:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,438,1559545200"; 
-   d="scan'208";a="381075305"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Aug 2019 14:58:08 -0700
-Date:   Tue, 27 Aug 2019 15:56:22 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
-Cc:     "hch@lst.de" <hch@lst.de>, "x86@kernel.org" <x86@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vmd: Stop overriding dma_map_ops
-Message-ID: <20190827215621.GB23412@localhost.localdomain>
-References: <20190826150652.10316-1-hch@lst.de>
- <8cad7eb5b5b37aeb041fd0c464383bb5223e4a64.camel@intel.com>
+        id S1726593AbfH0V46 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:56:58 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44496 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfH0V46 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 17:56:58 -0400
+Received: by mail-pf1-f195.google.com with SMTP id c81so247768pfc.11
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 14:56:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=Y58GzbpuJMrCv6Aud3l4fk9q/EphwZ4HzmalX9EXO6k=;
+        b=rTiDJtDz0lF8iZtwS2E9aimITSlzG6HIFOf6vlZyAafpkeUG64U7MV9Yu39sFcNIvd
+         u5fD4k5wylpqkm8n/QGqUCllNPs1caHICWt7RnY9nej7dGYSJx3OaxEj241aSl/rHIys
+         8Q9xzRI9YZPYV1Zp48hrFayXPKz1YzRqaheng59FI1LBq7n+17QKjJbdwJWzCuFBDi3c
+         S0IAg6FMJ6j3lBjTeFkFp8aLLZfa5JTuD4LvlAren6zm7wf1YGNZmP7SIX1D63Jni5ri
+         oEGhgXFyITLiuSzeR/me8xGCH8SjCDcCD3b2OTElyF1odsAR2+cp1eDPuCR5tKtW4hRN
+         OaNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=Y58GzbpuJMrCv6Aud3l4fk9q/EphwZ4HzmalX9EXO6k=;
+        b=Pxx62nWCok80wMm15ECHcN6042yf1Rh2RcdfD50FboYavFKncbZZFv47VyMhzl1Ov0
+         EDPNWjAuzv++2gW1COCkxMBdD7NxKXmvoQQBRN1TKPZUDVKvzzRKyv28Zdnl2c6wxCZi
+         6el3HydnNqVA4RPNgWCtB8nO4xD6QqJvPCsyCJJV2mB2e0lZKY1lZTWp89xVX6JSAUyv
+         uO7JfZgybbJ39PAL6Jxoxa2mJPndeBtqUMis2lJIaZU34fIUDadgZYBWPzAhdpyQwwI2
+         xLW+yznFhuTsArnOiQ3uZpfDlCa++szrXYMLMQHkOed/I+xGGFSD166zf3CzJ/CQj+x9
+         wSHg==
+X-Gm-Message-State: APjAAAXkU59iHqfKY+XIGf5mbsAIjgUya3Qsz31SwQarGOg5fyxDWOdc
+        HrQalP6Mk0M3Y+a3bJhB2VWNAjjRpjQ=
+X-Google-Smtp-Source: APXvYqypJmra42f+zZaaG5L+JyglSUCu3Jctb6ZUUahBE8VPLzbP7kgdlKfYkQUSzRkfGvw0nbiVeA==
+X-Received: by 2002:a65:640d:: with SMTP id a13mr566500pgv.256.1566943017473;
+        Tue, 27 Aug 2019 14:56:57 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:cc35:e750:308e:47f])
+        by smtp.gmail.com with ESMTPSA id f72sm168758pjg.10.2019.08.27.14.56.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Aug 2019 14:56:56 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 0/3] arm64: dts: meson-g12: specify suspend OPP
+In-Reply-To: <20190827100307.21661-1-narmstrong@baylibre.com>
+References: <20190827100307.21661-1-narmstrong@baylibre.com>
+Date:   Tue, 27 Aug 2019 14:56:56 -0700
+Message-ID: <7hy2zeuv9z.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cad7eb5b5b37aeb041fd0c464383bb5223e4a64.camel@intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 11:24:05AM -0700, Derrick, Jonathan wrote:
-> On Mon, 2019-08-26 at 17:06 +0200, Christoph Hellwig wrote:
-> > With a little tweak to the intel-iommu code we should be able to work
-> > around the VMD mess for the requester IDs without having to create giant
-> > amounts of boilerplate DMA ops wrapping code.  The other advantage of
-> > this scheme is that we can respect the real DMA masks for the actual
-> > devices, and I bet it will only be a matter of time until we'll see the
-> > first DMA challeneged NVMe devices.
-> > 
-> > The only downside is that we can't offer vmd as a module given that
-> > intel-iommu calls into it.  But the driver only has about 700 lines
-> > of code, so this should not be a major issue.
-> If we're going to remove its ability to be a module, and given its
-> small size, could we make this default =y?
-> 
-> Otherwise we risk breaking platforms which have it enabled with OSVs
-> who miss enabling it
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-Can we keep this as a module if we stick the remapping struct device
-in pci_sysdata instead of going through the vmd driver to get it?
+> Tag the 1,2GHz OPP as suspend OPP to be set before going in suspend mode,
+> for the G12A, G12B and SM1 SoCs.
+>
+> It has been reported that using various OPPs can lead to error or
+> resume with a different OPP from the ROM, thus use this safe OPP as
+> it is the default OPP used by the BL2 boot firmware.
+>
+> Neil Armstrong (3):
+>   arm64: dts: meson-g12a: specify suspend OPP
+>   arm64: dts: meson-sm1: specify suspend OPP
+>   arm64: dts: meson-g12b: specify suspend OPP
 
-Otherwise, very happy to see this dma wrapping go away.
+Queued patches 1, 3 for v5.4.
+
+The SM1 patch has a dependency on the SM1 DVFS series, which in turn has
+a dependency on clock changes.  Once I get a stable tag for the SM1
+clock changes, I'll queue up the rest.
+
+Kevin
