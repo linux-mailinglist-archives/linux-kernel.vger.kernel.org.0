@@ -2,109 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28BDA9DA36
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 01:57:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B9B99DA3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 02:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbfHZX5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 19:57:47 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:59803 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726020AbfHZX5q (ORCPT
+        id S1727103AbfH0AA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 20:00:26 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58032 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726020AbfH0AA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 19:57:46 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 01DEA3CB0;
-        Mon, 26 Aug 2019 19:57:46 -0400 (EDT)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Mon, 26 Aug 2019 19:57:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm3; bh=XME7TZm7cj23/QLbq4OVXeIVehmG6Kj
-        rwVjJRtju3yU=; b=Y6cQ437A8Ha+5sMISr5HPLDDUBGIXZGsj1+W8orSgA+stbB
-        N6MVEEoXQl6B6fp4atWu3Oq6lpm06RBHKxVHgCuB+rQu2M0ZG1ZZNohGEtD/Vxwq
-        lGht1LDPtUHknaJXvkN2VNYPU7ua2NC1LFBWNjuJwkqJGARJjQrL46KjHAad8RPM
-        fdMpUJmNm36qFMPjZ9KKWb+MZeOf5ycRkWAxrgJa2WQvt0I2rHG+PuigTJLaSRK6
-        lmPlL7l5kB2QjYcyoRHTis0cyo5OsJCdWo+Rkq9hfsk5gXx90ONp60x49vkCuA8Y
-        /4znYi7TWepBXZtezyzLhYRlkn/hsgGRSJzODLQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=XME7TZ
-        m7cj23/QLbq4OVXeIVehmG6KjrwVjJRtju3yU=; b=MAW8POA4VYmSqQDxi9ne09
-        FvO8QIzWrk0VH53/UO7gGZvikmkY2ot2SOodhhNQjluNNZ9Y3sP92CvgLWsQbPiO
-        LcU+2no4uTMqJGx+5AkuxEKAQy5PBVIe1/NFUjdHrso1f9zGpD42QlMAaqYfEDwJ
-        HseiIxMzENi3CMwL2LIRL7+J8i7nMVC+MIgeMH80KFcDX9TBBXdM9No1SYH6xlSC
-        4WTVBbsbngHlh3niChfWJzeZkX2X0FDKKte2tbvPhPae/oPm418DJibQb/0hNfPd
-        u+JgFsM3NdrVwmpPfGbZ49by0JWB7KPJBTJYp6SkvDg8qhq/vgQAM/0LWE/d4asw
-        ==
-X-ME-Sender: <xms:93FkXZyTfM9gce3i09PhNxeK-Vitwb5shQUh0jQkqC8ikS8QV72Ydw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudehhedgfedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreerjeenucfhrhhomhepfdetnhgu
-    rhgvficulfgvfhhfvghrhidfuceorghnughrvgifsegrjhdrihgurdgruheqnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgv
-    rhfuihiivgeptd
-X-ME-Proxy: <xmx:93FkXZaSNOM0ClCzMJM1cIjEANP8sMQ3vGeSgUato47e1v6mlPzLFg>
-    <xmx:93FkXaxCkrZHNh3HyyMgrYSzokyfvUw-MZvVlWlst8Ri9_ROzb2ZUA>
-    <xmx:93FkXSGLg2_V89JgCAYaDmhJYlylJ8v8rYEZH5ee-pmGLAj1TbLmRw>
-    <xmx:-XFkXSXqk18oyb9Hz3459qfh9zxfAOV5T12ZjJBLlEmSOsHQgRQdWw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id A3882E00AD; Mon, 26 Aug 2019 19:57:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-139-g73fcb67-fmstable-20190826v1
-Mime-Version: 1.0
-Message-Id: <f33aa4b8-6d06-4226-8859-ce21a4b8728b@www.fastmail.com>
-In-Reply-To: <20190826104636.19324-5-i.mikhaylov@yadro.com>
-References: <20190826104636.19324-1-i.mikhaylov@yadro.com>
- <20190826104636.19324-5-i.mikhaylov@yadro.com>
-Date:   Tue, 27 Aug 2019 09:27:44 +0930
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Ivan Mikhaylov" <i.mikhaylov@yadro.com>,
-        "Guenter Roeck" <linux@roeck-us.net>,
-        "Wim Van Sebroeck" <wim@linux-watchdog.org>
-Cc:     "Joel Stanley" <joel@jms.id.au>, linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        "Alexander Amelkin" <a.amelkin@yadro.com>,
-        openbmc@lists.ozlabs.org, "Rob Herring" <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: =?UTF-8?Q?Re:_[PATCH_v2_4/4]_dt-bindings/watchdog:_Add_access=5Fcs0_opti?=
- =?UTF-8?Q?on_for_alt-boot?=
-Content-Type: text/plain
+        Mon, 26 Aug 2019 20:00:26 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0AB331B;
+        Tue, 27 Aug 2019 02:00:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1566864023;
+        bh=axRmPB+ri4lYGSD+6809gJobxHmxblq+utwkj7h225s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PV8EId/PKc+Z9yzRYVpcWKQ70kOhKNJnKt7RWKXt6oTuNa9GfjNTBQuqk9bWwdv9x
+         5DAQRZf6ABMGbU27nfg8aKoF7g3liBZC1abscP5eIdV2nOnmjRzdsyqdsw0NPhCwUk
+         RbX/pFfTnQBZiKwNlf5dhKvVkZ/VV3xOGtFqyXRc=
+Date:   Tue, 27 Aug 2019 03:00:17 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli@fpond.eu, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: Re: [PATCH v3 13/14] drm: rcar-du: kms: Update CMM in atomic commit
+ tail
+Message-ID: <20190827000017.GB5274@pendragon.ideasonboard.com>
+References: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
+ <20190825135154.11488-14-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190825135154.11488-14-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jacopo,
 
+Thank you for the patch.
 
-On Mon, 26 Aug 2019, at 20:17, Ivan Mikhaylov wrote:
-> The option for the ast2400/2500 to get access to CS0 at runtime.
+On Sun, Aug 25, 2019 at 03:51:53PM +0200, Jacopo Mondi wrote:
+> Update CMM settings at in the atomic commit tail helper method.
 > 
-> Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+> The CMM is updated with new gamma values provided to the driver
+> in the GAMMA_LUT blob property.
+> 
+> Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > ---
->  Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 35 +++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt 
-> b/Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt
-> index c5077a1f5cb3..023a9b578df6 100644
-> --- a/Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt
-> @@ -34,6 +34,13 @@ Optional properties:
->                  engine is responsible for this.
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> index 61ca1d3c379a..047fdb982a11 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/of_platform.h>
+>  #include <linux/wait.h>
 >  
->   - aspeed,alt-boot:    If property is present then boot from alternate 
-> block.
-> +                       At alternate side 'access_cs0' sysfs file 
-> provides:
+> +#include "rcar_cmm.h"
+>  #include "rcar_du_crtc.h"
+>  #include "rcar_du_drv.h"
+>  #include "rcar_du_encoder.h"
+> @@ -368,6 +369,37 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+>   * Atomic Check and Update
+>   */
+>  
+> +static void rcar_du_atomic_commit_update_cmm(struct drm_crtc *crtc,
+> +					     struct drm_crtc_state *old_state)
+> +{
+> +	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
+> +	struct rcar_cmm_config cmm_config = {};
+> +
+> +	if (!rcrtc->cmm || !crtc->state->color_mgmt_changed)
+> +		return;
+> +
+> +	if (!crtc->state->gamma_lut) {
+> +		cmm_config.lut.enable = false;
+> +		rcar_cmm_setup(rcrtc->cmm, &cmm_config);
+> +
+> +		return;
+> +	}
+> +
+> +	cmm_config.lut.enable = true;
+> +	cmm_config.lut.table = (struct drm_color_lut *)
+> +			       crtc->state->gamma_lut->data;
+> +
+> +	/* Set LUT table size to 0 if entries should not be updated. */
+> +	if (!old_state->gamma_lut ||
+> +	    old_state->gamma_lut->base.id != crtc->state->gamma_lut->base.id)
+> +		cmm_config.lut.size = crtc->state->gamma_lut->length
+> +				    / sizeof(cmm_config.lut.table[0]);
 
-Why are we talking about sysfs in the devicetree binding? This patch
-doesn't seem right to me.
+It has just occurred to me that the hardware only support LUTs of
+exactly 256 entries. Should we remove cmm_config.lut.size (simplifying
+the code in the CMM driver), and add a check to the CRTC .atomic_check()
+handler to reject invalid LUTs ? Sorry for not having caught this
+earlier.
 
-Also if we're not supporting the aspeed,alt-boot property we should
-probably document it as deprecated rather than making it disappear,
-unless you're going to fix the systems that are using it.
+> +	else
+> +		cmm_config.lut.size = 0;
+> +
+> +	rcar_cmm_setup(rcrtc->cmm, &cmm_config);
+> +}
+> +
+>  static int rcar_du_atomic_check(struct drm_device *dev,
+>  				struct drm_atomic_state *state)
+>  {
+> @@ -410,6 +442,9 @@ static void rcar_du_atomic_commit_tail(struct drm_atomic_state *old_state)
+>  			rcdu->dpad1_source = rcrtc->index;
+>  	}
+>  
+> +	for_each_old_crtc_in_state(old_state, crtc, crtc_state, i)
+> +		rcar_du_atomic_commit_update_cmm(crtc, crtc_state);
+> +
+>  	/* Apply the atomic update. */
+>  	drm_atomic_helper_commit_modeset_disables(dev, old_state);
+>  	drm_atomic_helper_commit_planes(dev, old_state,
 
-Andrew
+-- 
+Regards,
+
+Laurent Pinchart
