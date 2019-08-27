@@ -2,141 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA199E856
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD1FA9E857
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:50:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbfH0Mtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:49:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbfH0Mtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:49:40 -0400
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5E5221883;
-        Tue, 27 Aug 2019 12:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566910178;
-        bh=1bu0rXvphKzgZ4qatOKJ9eG5F+ybzMBvmitnLK+n9bE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nMiI24QuRojgqYZFjzzwIerufsNUvx8lI7JtSsQrBGkzztzu8P404G7TV1IHMoZk+
-         vQfnvRb4wxvnJKIMg5DbuI6ucEU4dv9rcqPZwnZcsZKtG+Wx9a+eJwpkwpPMAp2CvZ
-         4hshX5L3VpG0PvKWTpQELJ4FEJwosdFD4eRw5ptk=
-Received: by mail-qk1-f172.google.com with SMTP id g17so16799841qkk.8;
-        Tue, 27 Aug 2019 05:49:38 -0700 (PDT)
-X-Gm-Message-State: APjAAAWM3xZAjeFpYi7rVDsZxiGl9AObWpGl5DjguYIacGmE+AgXNAsg
-        RJZ+WERR3RIQ/tAIOukFh3dmnHUJiYJcn3VbyQ==
-X-Google-Smtp-Source: APXvYqyc8cAqLr+5lWC4OcOsH4WwQCDZJCiD70mt/JKEw8mkjMvEJFueWACXOw3on7KMnzXDUY9z834YBM0JJ8P4vV0=
-X-Received: by 2002:a37:682:: with SMTP id 124mr1666838qkg.393.1566910177817;
- Tue, 27 Aug 2019 05:49:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190827085302.5197-1-jiaxun.yang@flygoat.com> <20190827085302.5197-8-jiaxun.yang@flygoat.com>
-In-Reply-To: <20190827085302.5197-8-jiaxun.yang@flygoat.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 27 Aug 2019 07:49:26 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJzkKDVm_DBpp4_w5YZQkg0yo9TJtvxzN5beTf45gtohw@mail.gmail.com>
-Message-ID: <CAL_JsqJzkKDVm_DBpp4_w5YZQkg0yo9TJtvxzN5beTf45gtohw@mail.gmail.com>
-Subject: Re: [PATCH 07/13] dt-bindings: interrupt-controller: Add Loongson-3 HTINTC
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.co>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1729836AbfH0MuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:50:05 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:54139 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726170AbfH0MuF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 08:50:05 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0TacAofi_1566910188;
+Received: from localhost(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TacAofi_1566910188)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 27 Aug 2019 20:49:54 +0800
+From:   Ben Luo <luoben@linux.alibaba.com>
+To:     alex.williamson@redhat.com, cohuck@redhat.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] vfio/type1: avoid redundant PageReserved checking
+Date:   Tue, 27 Aug 2019 20:49:48 +0800
+Message-Id: <3e892a6bdaa069a6e79c50208bd01cab8c9588ac.1566910119.git.luoben@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 3:59 AM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
->
-> Document Loongson-3 HyperTransport Interrupt controller.
->
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  .../loongson,ls3-htintc.yaml                  | 53 +++++++++++++++++++
->  1 file changed, 53 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/loongson,ls3-htintc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/loongson,ls3-htintc.yaml b/Documentation/devicetree/bindings/interrupt-controller/loongson,ls3-htintc.yaml
-> new file mode 100644
-> index 000000000000..c1bc0faca656
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/loongson,ls3-htintc.yaml
-> @@ -0,0 +1,53 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/interrupt-controller/loongson,ls3-htintc.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Loongson-3 HyperTransport Interrupt Controller
-> +
-> +maintainers:
-> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
-> +
-> +description: |
-> +  This interrupt controller is found in the Loongson-3 family of chips to transfer
-> +  interrupts from PCH connected on HyperTransport bus.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +        - loongson,ls3-htintc
+currently, if the page is not a tail of compound page, it will be
+checked twice for the same thing.
 
-Can be simplified to:
+Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
+---
+ drivers/vfio/vfio_iommu_type1.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-compatible
-  const: loongson,ls3-htintc
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 054391f..cbe0d88 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -291,11 +291,10 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+ static bool is_invalid_reserved_pfn(unsigned long pfn)
+ {
+ 	if (pfn_valid(pfn)) {
+-		bool reserved;
+ 		struct page *tail = pfn_to_page(pfn);
+ 		struct page *head = compound_head(tail);
+-		reserved = !!(PageReserved(head));
+ 		if (head != tail) {
++			bool reserved = !!(PageReserved(head));
+ 			/*
+ 			 * "head" is not a dangling pointer
+ 			 * (compound_head takes care of that)
+@@ -310,7 +309,7 @@ static bool is_invalid_reserved_pfn(unsigned long pfn)
+ 			if (PageTail(tail))
+ 				return reserved;
+ 		}
+-		return PageReserved(tail);
++		return !!(PageReserved(tail));
+ 	}
+ 
+ 	return true;
+-- 
+1.8.3.1
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 4
-
-Need to list out what each of the 4 are.
-
-> +
-> +  interrupt-controller: true
-> +
-> +  '#interrupt-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-controller
-> +  - '#interrupt-cells'
-> +
-> +examples:
-> +  - |
-> +               htintc: interrupt-controller@0xEFDFB000080 {
-
-interrupt-controller@efdfb000080
-
-> +                       compatible = "loongson,ls3-htintc";
-> +                       reg = <0xEFD 0xFB000080 0x100>;
-> +                       interrupt-controller;
-> +                       #interrupt-cells = <1>;
-> +
-> +                       interrupt-parent = <&iointc>;
-> +                       interrupts = <24 IRQ_TYPE_LEVEL_HIGH>,
-> +                                               <25 IRQ_TYPE_LEVEL_HIGH>,
-> +                                               <26 IRQ_TYPE_LEVEL_HIGH>,
-> +                                               <27 IRQ_TYPE_LEVEL_HIGH>;
-
-Run 'make dt_binding_check'. This will not build without the necessary include.
-
-> +    };
-> --
-> 2.22.0
->
