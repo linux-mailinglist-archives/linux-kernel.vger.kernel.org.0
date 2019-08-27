@@ -2,67 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFB209F6D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 01:25:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1132D9F6DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 01:25:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbfH0XZB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 19:25:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbfH0XZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 19:25:00 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7308620856;
-        Tue, 27 Aug 2019 23:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566948300;
-        bh=hk7TGUZtvzdF0BPvIoD/1I2qm9Ai1d/Yj7zFwZFR2Xk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FmaxEaqy+R/uHzH132+D9Aos5GevG/k0RwgfXJs69dQh7+rU03Yu1h01avhuXo+xa
-         cGmWCjNX003PRHIHProDiAuCl/o5cRdIUg3Gjr9wBFUdwMvyQmfFuB5sphPaFeLaSx
-         H0sEgyJo7J52GNX4bGtz7g+VLKBRnlLi0+Y/KMT0=
-Date:   Tue, 27 Aug 2019 18:24:57 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Krzysztof Wilczynski <kw@linux.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Daniel J Blueman <daniel@numascale.com>, x86@kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/PCI: Add missing SPDX license header.
-Message-ID: <20190827232457.GI9987@google.com>
-References: <20190819060624.17305-1-kw@linux.com>
+        id S1726541AbfH0XZ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 19:25:29 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38409 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725997AbfH0XZ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 19:25:29 -0400
+Received: by mail-pf1-f194.google.com with SMTP id o70so386902pfg.5
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 16:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C3Lh+/0FHXGNq2XvS9+HzZnHDnerotizKClAN2CZjKM=;
+        b=GWIVi50/b9qoWMgc0w6dan6EeuXkiS/wa2OU8GCVtmDmpXZF2gbr8cQzkvqZrRpECo
+         LMFbVstbTesHK2HmDy6GIzY0YyHeK4Q25QKY11usxlEnGqxiV1mijHsBqS2YhwFISzWY
+         aZIhkUZYCiMTyWARDlYeSRSpUyDHN4cpcDxevC+9TkfugR6++6o7phn73bJjWpNSzHm2
+         zXjusNoBhczPgvGq/i0fBeFta9ZJqw3rlCdx63i6EDPIUwDO5hNXyBZjc5Dfqa+16Fjq
+         P8KiHZR8g3IoDsBOWsOJUvGx58zEHy8QdcSpYC3LnjKteI1M43/13Yeailat0OlTZmT9
+         b5/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C3Lh+/0FHXGNq2XvS9+HzZnHDnerotizKClAN2CZjKM=;
+        b=X15vl1y31XP4hmgVtXUPOYNwUci45dJCGJQ0KM5GB8QXeV3sx3MUWhc+N4ESMUTs6x
+         N68YvEju0S3NW1aZarxhMHWj7vR5L3kxcWxDoymAX8iRZGMghYeXcMYqfGGfuEuK79N9
+         A4VBH0tjdp9bxHh9V1lAC9trYlmqYc6R36FIP3COL+z2dsrEax8FUCUHvnvO6VO9gD/L
+         9sZ8U2EDyt+M3II5O5OaQ2krOr2lvSR1s9urcFoMPGOtWdwUR1DhNmqiyW6Exw/6+kp8
+         OHt0TZsLMYfoDIZSDegX5Xn3t8m2ZelaJJ/Y+GC112U4bMQGgo9TOaB9svQjem1DYXRa
+         nsoA==
+X-Gm-Message-State: APjAAAXiPXvWHbiXMElkX8LiQQUYES/uLD7uMSrdUTXXo7jxg86+XASb
+        LoyF3kuzam0uyE7QWTo6WyW+BbCXd4lT7viWYVtz8Q==
+X-Google-Smtp-Source: APXvYqyNcjG5Dunca/fY3J5WjjGlFBlaU8uhKfiPQcptmXaOhOOJjgTB+dbJfrHZkMgVq2JBfoQN/wVpCALRvZhCJqA=
+X-Received: by 2002:aa7:984a:: with SMTP id n10mr1197241pfq.3.1566948328083;
+ Tue, 27 Aug 2019 16:25:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190819060624.17305-1-kw@linux.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1566920867-27453-1-git-send-email-cai@lca.pw>
+In-Reply-To: <1566920867-27453-1-git-send-email-cai@lca.pw>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 27 Aug 2019 16:25:16 -0700
+Message-ID: <CAKwvOdmEZ6ADQyquRYmr+uNFXyZ0wpBZxNCrQnn8qaRZADzjRw@mail.gmail.com>
+Subject: Re: [PATCH] mm: silence -Woverride-init/initializer-overrides
+To:     Qian Cai <cai@lca.pw>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 08:06:24AM +0200, Krzysztof Wilczynski wrote:
-> Add the missing "SPDX-License-Identifier" license header to the
-> arch/x86/pci/numachip.c.  Use GPL-2.0 identifier derived using
-> the comment mentioning license from the top of the file.
-> 
-> Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+On Tue, Aug 27, 2019 at 8:49 AM Qian Cai <cai@lca.pw> wrote:
+>
+> When compiling a kernel with W=1, there are several of those warnings
+> due to arm64 override a field by purpose. Just disable those warnings
+> for both GCC and Clang of this file, so it will help dig "gems" hidden
+> in the W=1 warnings by reducing some noises.
+>
+> mm/init-mm.c:39:2: warning: initializer overrides prior initialization
+> of this subobject [-Winitializer-overrides]
+>         INIT_MM_CONTEXT(init_mm)
+>         ^~~~~~~~~~~~~~~~~~~~~~~~
+> ./arch/arm64/include/asm/mmu.h:133:9: note: expanded from macro
+> 'INIT_MM_CONTEXT'
+>         .pgd = init_pg_dir,
+>                ^~~~~~~~~~~
+> mm/init-mm.c:30:10: note: previous initialization is here
+>         .pgd            = swapper_pg_dir,
+>                           ^~~~~~~~~~~~~~
+>
+> Note: there is a side project trying to support explicitly allowing
+> specific initializer overrides in Clang, but there is no guarantee it
+> will happen or not.
+>
+> https://github.com/ClangBuiltLinux/linux/issues/639
+>
+> Signed-off-by: Qian Cai <cai@lca.pw>
 > ---
->  arch/x86/pci/numachip.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/pci/numachip.c b/arch/x86/pci/numachip.c
-> index 2e565e65c893..b73157e834e0 100644
-> --- a/arch/x86/pci/numachip.c
-> +++ b/arch/x86/pci/numachip.c
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * This file is subject to the terms and conditions of the GNU General Public
->   * License.  See the file "COPYING" in the main directory of this archive
+>  mm/Makefile | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/mm/Makefile b/mm/Makefile
+> index d0b295c3b764..5a30b8ecdc55 100644
+> --- a/mm/Makefile
+> +++ b/mm/Makefile
 
-You can remove this license text at the same time as in 8cfab3cf63cf
-("PCI: Add SPDX GPL-2.0 to replace GPL v2 boilerplate").
+Hi Qian, thanks for the patch.
+Rather than disable the warning outright, and bury the disabling in a
+directory specific Makefile, why not move it to W=2 in
+scripts/Makefile.extrawarn?
+
+
+I think even better would be to use pragma's to disable the warning in
+mm/init.c.  Looks like __diag support was never ported for clang yet
+from include/linux/compiler-gcc.h to include/linux/compiler-clang.h.
+
+Then you could do:
+
+ 28 struct mm_struct init_mm = {
+ 29   .mm_rb    = RB_ROOT,
+ 30   .pgd    = swapper_pg_dir,
+ 31   .mm_users = ATOMIC_INIT(2),
+ 32   .mm_count = ATOMIC_INIT(1),
+ 33   .mmap_sem = __RWSEM_INITIALIZER(init_mm.mmap_sem),
+ 34   .page_table_lock =
+__SPIN_LOCK_UNLOCKED(init_mm.page_table_lock),
+ 35   .arg_lock =  __SPIN_LOCK_UNLOCKED(init_mm.arg_lock),
+ 36   .mmlist   = LIST_HEAD_INIT(init_mm.mmlist),
+ 37   .user_ns  = &init_user_ns,
+ 38   .cpu_bitmap = { [BITS_TO_LONGS(NR_CPUS)] = 0},
+__diag_push();
+__diag_ignore(CLANG, 4, "-Winitializer-overrides")
+ 39   INIT_MM_CONTEXT(init_mm)
+__diag_pop();
+ 40 };
+
+
+I mean, the arm64 case is not a bug, but I worry about turning this
+warning off.  I'd expect it to only warn once during an arm64 build,
+so does the warning really detract from "W=1 gem finding?"
+
+> @@ -21,6 +21,9 @@ KCOV_INSTRUMENT_memcontrol.o := n
+>  KCOV_INSTRUMENT_mmzone.o := n
+>  KCOV_INSTRUMENT_vmstat.o := n
+>
+> +CFLAGS_init-mm.o += $(call cc-disable-warning, override-init)
+
+-Woverride-init isn't mentioned in the commit message, so not sure if
+it's meant to ride along?
+
+> +CFLAGS_init-mm.o += $(call cc-disable-warning, initializer-overrides)
+> +
+
+-- 
+Thanks,
+~Nick Desaulniers
