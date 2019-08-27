@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10DF69E047
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 603499E04F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731388AbfH0ICJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:02:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58370 "EHLO mail.kernel.org"
+        id S1731924AbfH0ICS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:02:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730990AbfH0IBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:01:49 -0400
+        id S1731424AbfH0IB6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:01:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC7542186A;
-        Tue, 27 Aug 2019 08:01:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 457A1206BA;
+        Tue, 27 Aug 2019 08:01:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892909;
-        bh=5fBCyLdYKRJZNkGM6vIzgoTUIxN+QmUT113TZ6mjfH8=;
+        s=default; t=1566892917;
+        bh=9UdBi8Lm4fpynGT55m3i75gNhsuv8d7zzSNBc9a+6Rk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AiwC24HkAU3E5HOqQK/8nLt9IqwwoLTHzvHSbsy8UQwIGOZ9N74LGHbJBfsS4KFPc
-         ckbiTdSYcztjRmedZdV/KSpWvI0HizJ4sGcibav/iWYeL90V1/sidNeVU+yzK+0JE4
-         MeMiP19ljYVZxEAqJlFSZ5V2VIP2F36M9e7Reh1U=
+        b=RCvzcwqMh40tEnOmOaSyu1AKTcuO6lPwn2w1AUEPRlBRJ4v07PK2zXjg/uggpHqAi
+         a2s/9xP0XByc8Zs+PvhC+nRAELQvC8jadvq0dy+XK3jbdpJm9DHOiDgVtElWlK5V+w
+         8NYC0JMm/YhZaG8YKDbAeDP4UQVhomoBFJe63oRY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Jeffrey Altman <jaltman@auristor.com>,
+        stable@vger.kernel.org,
+        Shahar S Matityahu <shahar.s.matityahu@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 054/162] rxrpc: Fix the lack of notification when sendmsg() fails on a DATA packet
-Date:   Tue, 27 Aug 2019 09:49:42 +0200
-Message-Id: <20190827072740.084025076@linuxfoundation.org>
+Subject: [PATCH 5.2 057/162] iwlwifi: dbg_ini: move iwl_dbg_tlv_load_bin out of debug override ifdef
+Date:   Tue, 27 Aug 2019 09:49:45 +0200
+Message-Id: <20190827072740.174362408@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -45,44 +46,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c69565ee6681e151e2bb80502930a16e04b553d1 ]
+[ Upstream commit 072b30642f90b01d139131ec7bf763778a3a3f41 ]
 
-Fix the fact that a notification isn't sent to the recvmsg side to indicate
-a call failed when sendmsg() fails to transmit a DATA packet with the error
-ENETUNREACH, EHOSTUNREACH or ECONNREFUSED.
+ini debug mode should work even if debug override is not defined.
 
-Without this notification, the afs client just sits there waiting for the
-call to complete in some manner (which it's not now going to do), which
-also pins the rxrpc call in place.
-
-This can be seen if the client has a scope-level IPv6 address, but not a
-global-level IPv6 address, and we try and transmit an operation to a
-server's IPv6 address.
-
-Looking in /proc/net/rxrpc/calls shows completed calls just sat there with
-an abort code of RX_USER_ABORT and an error code of -ENETUNREACH.
-
-Fixes: c54e43d752c7 ("rxrpc: Fix missing start of call timeout")
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
-Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
+Signed-off-by: Shahar S Matityahu <shahar.s.matityahu@intel.com>
+Fixes: 68f6f492c4fa ("iwlwifi: trans: support loading ini TLVs from external file")
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/rxrpc/sendmsg.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/intel/iwlwifi/iwl-drv.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
-index 5d3f33ce6d410..bae14438f8691 100644
---- a/net/rxrpc/sendmsg.c
-+++ b/net/rxrpc/sendmsg.c
-@@ -226,6 +226,7 @@ static int rxrpc_queue_packet(struct rxrpc_sock *rx, struct rxrpc_call *call,
- 			rxrpc_set_call_completion(call,
- 						  RXRPC_CALL_LOCAL_ERROR,
- 						  0, ret);
-+			rxrpc_notify_socket(call);
- 			goto out;
- 		}
- 		_debug("need instant resend %d", ret);
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+index fba242284507b..efd4bf04d0162 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+@@ -1627,6 +1627,8 @@ struct iwl_drv *iwl_drv_start(struct iwl_trans *trans)
+ 	init_completion(&drv->request_firmware_complete);
+ 	INIT_LIST_HEAD(&drv->list);
+ 
++	iwl_load_fw_dbg_tlv(drv->trans->dev, drv->trans);
++
+ #ifdef CONFIG_IWLWIFI_DEBUGFS
+ 	/* Create the device debugfs entries. */
+ 	drv->dbgfs_drv = debugfs_create_dir(dev_name(trans->dev),
 -- 
 2.20.1
 
