@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E4F89DF35
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:52:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B0969DFB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:56:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729336AbfH0HwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:52:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43336 "EHLO mail.kernel.org"
+        id S1730628AbfH0H4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:56:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729220AbfH0HwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:52:04 -0400
+        id S1728948AbfH0H4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:56:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6947C22CF4;
-        Tue, 27 Aug 2019 07:52:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 674EA206BA;
+        Tue, 27 Aug 2019 07:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892324;
-        bh=ZwubuKniwfb55C3TbdV1NUlfoiEdE594PppCw9X/Th0=;
+        s=default; t=1566892589;
+        bh=WNAYaTCm/DuIV/YTw8PphHpZoUionmMISLX3azyMnY4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FzAixwpl3sITHb10frawE9RTft3YcT2ybNDVSQII2oPI6vW2GgRA1SIT1y3mg/mYj
-         vfubeVew2j5zg1GY/YemiUkQcm+sqpRkgzFynfZKUwHJDoU2pupvjDRItL1UH4mesO
-         i5cUdaZrw6f6Y11AhnJtHE1BwZG9Br0zx7W4Sr9U=
+        b=mIWP6/hKtFTNrBobYYuHI2cbOdWc/GA2rUaxTruR/zYqZMtM95BMnljj7fEnlaUN7
+         Ij95Vxb1BApgisbDwd4bRsY8QglMhITu6xwkM3r05WWZAvU3ofSXuFSo4oiJjetJwE
+         YzJa8T4W6GShC+kYgCaP49pqfLemDcIZ5sZWo9Yc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 17/62] perf bench numa: Fix cpu0 binding
-Date:   Tue, 27 Aug 2019 09:50:22 +0200
-Message-Id: <20190827072701.340907310@linuxfoundation.org>
+Subject: [PATCH 4.19 44/98] net: stmmac: tc: Do not return a fragment entry
+Date:   Tue, 27 Aug 2019 09:50:23 +0200
+Message-Id: <20190827072720.543253959@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,55 +44,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6bbfe4e602691b90ac866712bd4c43c51e546a60 ]
+[ Upstream commit 4a6a1385a4db5f42258a40fcd497cbfd22075968 ]
 
-Michael reported an issue with perf bench numa failing with binding to
-cpu0 with '-0' option.
+Do not try to return a fragment entry from TC list. Otherwise we may not
+clean properly allocated entries.
 
-  # perf bench numa mem -p 3 -t 1 -P 512 -s 100 -zZcm0 --thp 1 -M 1 -ddd
-  # Running 'numa/mem' benchmark:
-
-   # Running main, "perf bench numa numa-mem -p 3 -t 1 -P 512 -s 100 -zZcm0 --thp 1 -M 1 -ddd"
-  binding to node 0, mask: 0000000000000001 => -1
-  perf: bench/numa.c:356: bind_to_memnode: Assertion `!(ret)' failed.
-  Aborted (core dumped)
-
-This happens when the cpu0 is not part of node0, which is the benchmark
-assumption and we can see that's not the case for some powerpc servers.
-
-Using correct node for cpu0 binding.
-
-Reported-by: Michael Petlan <mpetlan@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20190801142642.28004-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/bench/numa.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
-index 997875c770b10..275f1c3c73b62 100644
---- a/tools/perf/bench/numa.c
-+++ b/tools/perf/bench/numa.c
-@@ -378,8 +378,10 @@ static u8 *alloc_data(ssize_t bytes0, int map_flags,
- 
- 	/* Allocate and initialize all memory on CPU#0: */
- 	if (init_cpu0) {
--		orig_mask = bind_to_node(0);
--		bind_to_memnode(0);
-+		int node = numa_node_of_cpu(0);
-+
-+		orig_mask = bind_to_node(node);
-+		bind_to_memnode(node);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+index 58ea18af9813a..37c0bc699cd9c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+@@ -37,7 +37,7 @@ static struct stmmac_tc_entry *tc_find_entry(struct stmmac_priv *priv,
+ 		entry = &priv->tc_entries[i];
+ 		if (!entry->in_use && !first && free)
+ 			first = entry;
+-		if (entry->handle == loc && !free)
++		if ((entry->handle == loc) && !free && !entry->is_frag)
+ 			dup = entry;
  	}
  
- 	bytes = bytes0 + HPSIZE;
 -- 
 2.20.1
 
