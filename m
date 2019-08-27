@@ -2,184 +2,365 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E1A69E10E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E5869E0E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732920AbfH0IIl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:08:41 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:57109 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732836AbfH0IFg (ORCPT
+        id S1732625AbfH0IG6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:06:58 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:40246 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732698AbfH0IGy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:05:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1566893136; x=1598429136;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=Ww95DjpyzDtqH6Txvs4SDUXs7Jnj2PvAwV+1xrWrzaA=;
-  b=uIA3IGwt2rw0/Z5jdXBRHC4sDbv8gI2FLJ13mqboI+IGn0VKG8nPkMPo
-   F+Ksp5N4T1c9E3iKDe6Al6OcHw0ddONBvvi6PwujTrhY3xXsF9C7Sa1hx
-   IBEHj35Db9/1kPEb7Ga4fKGGvaYdyE7rHtNuIxs4m9G+XQ8vQIZOe9kUe
-   4=;
-X-IronPort-AV: E=Sophos;i="5.64,436,1559520000"; 
-   d="scan'208";a="824114378"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2c-168cbb73.us-west-2.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 27 Aug 2019 08:05:34 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2c-168cbb73.us-west-2.amazon.com (Postfix) with ESMTPS id 84158A1D54;
-        Tue, 27 Aug 2019 08:05:33 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 27 Aug 2019 08:05:32 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.162.191) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 27 Aug 2019 08:05:29 +0000
-Subject: Re: [PATCH v2 06/15] kvm: x86: Add support for activate/de-activate
- APICv at runtime
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jschoenh@amazon.de" <jschoenh@amazon.de>,
-        "karahmed@amazon.de" <karahmed@amazon.de>,
-        "rimasluk@amazon.com" <rimasluk@amazon.com>,
-        "Grimm, Jon" <Jon.Grimm@amd.com>
-References: <1565886293-115836-1-git-send-email-suravee.suthikulpanit@amd.com>
- <1565886293-115836-7-git-send-email-suravee.suthikulpanit@amd.com>
- <877e6zm5ft.fsf@vitty.brq.redhat.com>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <58fe156f-1bb8-910e-e9ce-1b6c49945b22@amazon.com>
-Date:   Tue, 27 Aug 2019 10:05:26 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        Tue, 27 Aug 2019 04:06:54 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B3BA2F0;
+        Tue, 27 Aug 2019 10:06:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1566893211;
+        bh=TYzbvq3HQyXQCy+chmc0kIiEPmcvqNHWM1+j+bH3U2g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jnY2BHM7PMYTJCBh0Qj2WCNKLN2BVE3olRJ7v3X/4eezUfgdPOKGFbCpxjmsa4Z1G
+         6D38H1w0UBpfMoGTNmBHDMXi2TOjZenZ5O/4j4+E+Qn1DFawwh48Ybbvf23XI9mfDP
+         68E1IVgiLl+W+7yP8E1X3xQwSvbBP0onhQ+dWtlA=
+Date:   Tue, 27 Aug 2019 11:06:44 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/bridge: tc358767: Expose test mode functionality via
+ debugfs
+Message-ID: <20190827080644.GF5054@pendragon.ideasonboard.com>
+References: <20190826182524.5064-1-andrew.smirnov@gmail.com>
+ <20190826220807.GK5031@pendragon.ideasonboard.com>
+ <CAHQ1cqHuJNTH=HDfEP9de0Df_D45VV034riH4J3+ix23v=aM4Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <877e6zm5ft.fsf@vitty.brq.redhat.com>
-Content-Language: en-US
-X-Originating-IP: [10.43.162.191]
-X-ClientProxiedBy: EX13D07UWA004.ant.amazon.com (10.43.160.32) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHQ1cqHuJNTH=HDfEP9de0Df_D45VV034riH4J3+ix23v=aM4Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CgpPbiAyNy4wOC4xOSAwOToyOSwgVml0YWx5IEt1em5ldHNvdiB3cm90ZToKPiAiU3V0aGlrdWxw
-YW5pdCwgU3VyYXZlZSIgPFN1cmF2ZWUuU3V0aGlrdWxwYW5pdEBhbWQuY29tPiB3cml0ZXM6Cj4g
-Cj4+IENlcnRhaW4gcnVudGltZSBjb25kaXRpb25zIHJlcXVpcmUgQVBJQ3YgdG8gYmUgdGVtcG9y
-YXJ5IGRlYWN0aXZhdGVkLgo+PiBIb3dldmVyLCBjdXJyZW50IGltcGxlbWVudGF0aW9uIG9ubHkg
-c3VwcG9ydCBwZXJtYW5lbnRseSBkZWFjdGl2YXRlCj4+IEFQSUN2IGF0IHJ1bnRpbWUgKG1haW5s
-eSB1c2VkIHdoZW4gcnVubmluZyBIeXBlci1WIGd1ZXN0KS4KPj4KPj4gSW4gYWRkdGlvbiwgZm9y
-IEFNRCwgd2hlbiBhY3RpdmF0ZSAvIGRlYWN0aXZhdGUgQVBJQ3YgZHVyaW5nIHJ1bnRpbWUsCj4+
-IGFsbCB2Y3B1cyBpbiB0aGUgVk0gaGFzIHRvIGJlIG9wZXJhdGluZyBpbiB0aGUgc2FtZSBBUElD
-diBtb2RlLCB3aGljaAo+PiByZXF1aXJlcyB0aGUgcmVxdWVzdGluZyAobWFpbikgdmNwdSB0byBu
-b3RpZnkgb3RoZXJzLgo+Pgo+PiBTbywgaW50cm9kdWNlIGludGVyZmFjZXMgdG8gcmVxdWVzdCBh
-bGwgdmNwdXMgdG8gYWN0aXZhdGUvZGVhY3RpdmF0ZQo+PiBBUElDdi4KPj4KPj4gU2lnbmVkLW9m
-Zi1ieTogU3VyYXZlZSBTdXRoaWt1bHBhbml0IDxzdXJhdmVlLnN1dGhpa3VscGFuaXRAYW1kLmNv
-bT4KPj4gLS0tCj4+ICAgYXJjaC94ODYvaW5jbHVkZS9hc20va3ZtX2hvc3QuaCB8ICA5ICsrKysr
-Cj4+ICAgYXJjaC94ODYva3ZtL3g4Ni5jICAgICAgICAgICAgICB8IDc2ICsrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCA4NSBpbnNl
-cnRpb25zKCspCj4+Cj4+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9rdm1faG9z
-dC5oIGIvYXJjaC94ODYvaW5jbHVkZS9hc20va3ZtX2hvc3QuaAo+PiBpbmRleCAwNGQ3MDY2Li5k
-ZmI3YzNkIDEwMDY0NAo+PiAtLS0gYS9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9rdm1faG9zdC5oCj4+
-ICsrKyBiL2FyY2gveDg2L2luY2x1ZGUvYXNtL2t2bV9ob3N0LmgKPj4gQEAgLTc2LDYgKzc2LDEw
-IEBACj4+ICAgI2RlZmluZSBLVk1fUkVRX0hWX1NUSU1FUgkJS1ZNX0FSQ0hfUkVRKDIyKQo+PiAg
-ICNkZWZpbmUgS1ZNX1JFUV9MT0FEX0VPSV9FWElUTUFQCUtWTV9BUkNIX1JFUSgyMykKPj4gICAj
-ZGVmaW5lIEtWTV9SRVFfR0VUX1ZNQ1MxMl9QQUdFUwlLVk1fQVJDSF9SRVEoMjQpCj4+ICsjZGVm
-aW5lIEtWTV9SRVFfQVBJQ1ZfQUNUSVZBVEUJCVwKPj4gKwlLVk1fQVJDSF9SRVFfRkxBR1MoMjUs
-IEtWTV9SRVFVRVNUX1dBSVQgfCBLVk1fUkVRVUVTVF9OT19XQUtFVVApCj4+ICsjZGVmaW5lIEtW
-TV9SRVFfQVBJQ1ZfREVBQ1RJVkFURQlcCj4+ICsJS1ZNX0FSQ0hfUkVRX0ZMQUdTKDI2LCBLVk1f
-UkVRVUVTVF9XQUlUIHwgS1ZNX1JFUVVFU1RfTk9fV0FLRVVQKQo+PiAgIAo+PiAgICNkZWZpbmUg
-Q1IwX1JFU0VSVkVEX0JJVFMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIFwKPj4gICAJKH4odW5zaWduZWQgbG9uZykoWDg2X0NSMF9QRSB8IFg4Nl9DUjBfTVAg
-fCBYODZfQ1IwX0VNIHwgWDg2X0NSMF9UUyBcCj4+IEBAIC0xMDg5LDYgKzEwOTMsNyBAQCBzdHJ1
-Y3Qga3ZtX3g4Nl9vcHMgewo+PiAgIAl2b2lkICgqZW5hYmxlX2lycV93aW5kb3cpKHN0cnVjdCBr
-dm1fdmNwdSAqdmNwdSk7Cj4+ICAgCXZvaWQgKCp1cGRhdGVfY3I4X2ludGVyY2VwdCkoc3RydWN0
-IGt2bV92Y3B1ICp2Y3B1LCBpbnQgdHByLCBpbnQgaXJyKTsKPj4gICAJYm9vbCAoKmdldF9lbmFi
-bGVfYXBpY3YpKHN0cnVjdCBrdm0gKmt2bSk7Cj4+ICsJdm9pZCAoKnByZV91cGRhdGVfYXBpY3Zf
-ZXhlY19jdHJsKShzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUsIGJvb2wgYWN0aXZhdGUpOwo+PiAgIAl2
-b2lkICgqcmVmcmVzaF9hcGljdl9leGVjX2N0cmwpKHN0cnVjdCBrdm1fdmNwdSAqdmNwdSk7Cj4+
-ICAgCXZvaWQgKCpod2FwaWNfaXJyX3VwZGF0ZSkoc3RydWN0IGt2bV92Y3B1ICp2Y3B1LCBpbnQg
-bWF4X2lycik7Cj4+ICAgCXZvaWQgKCpod2FwaWNfaXNyX3VwZGF0ZSkoc3RydWN0IGt2bV92Y3B1
-ICp2Y3B1LCBpbnQgaXNyKTsKPj4gQEAgLTE1NTIsNiArMTU1NywxMCBAQCBpbnQga3ZtX3B2X3Nl
-bmRfaXBpKHN0cnVjdCBrdm0gKmt2bSwgdW5zaWduZWQgbG9uZyBpcGlfYml0bWFwX2xvdywKPj4g
-ICAKPj4gICB2b2lkIGt2bV9tYWtlX21jbG9ja19pbnByb2dyZXNzX3JlcXVlc3Qoc3RydWN0IGt2
-bSAqa3ZtKTsKPj4gICB2b2lkIGt2bV9tYWtlX3NjYW5faW9hcGljX3JlcXVlc3Qoc3RydWN0IGt2
-bSAqa3ZtKTsKPj4gK3ZvaWQga3ZtX3ZjcHVfZGVhY3RpdmF0ZV9hcGljdihzdHJ1Y3Qga3ZtX3Zj
-cHUgKnZjcHUpOwo+PiArdm9pZCBrdm1fdmNwdV9hY3RpdmF0ZV9hcGljdihzdHJ1Y3Qga3ZtX3Zj
-cHUgKnZjcHUpOwo+PiArdm9pZCBrdm1fbWFrZV9hcGljdl9hY3RpdmF0ZV9yZXF1ZXN0KHN0cnVj
-dCBrdm1fdmNwdSAqdmNwdSk7Cj4+ICt2b2lkIGt2bV9tYWtlX2FwaWN2X2RlYWN0aXZhdGVfcmVx
-dWVzdChzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUsIGJvb2wgZGlzYWJsZSk7Cj4+ICAgCj4+ICAgdm9p
-ZCBrdm1fYXJjaF9hc3luY19wYWdlX25vdF9wcmVzZW50KHN0cnVjdCBrdm1fdmNwdSAqdmNwdSwK
-Pj4gICAJCQkJICAgICBzdHJ1Y3Qga3ZtX2FzeW5jX3BmICp3b3JrKTsKPj4gZGlmZiAtLWdpdCBh
-L2FyY2gveDg2L2t2bS94ODYuYyBiL2FyY2gveDg2L2t2bS94ODYuYwo+PiBpbmRleCBmOWMzZjYz
-Li40MGEyMGJmIDEwMDY0NAo+PiAtLS0gYS9hcmNoL3g4Ni9rdm0veDg2LmMKPj4gKysrIGIvYXJj
-aC94ODYva3ZtL3g4Ni5jCj4+IEBAIC0yNiw2ICsyNiw3IEBACj4+ICAgI2luY2x1ZGUgImNwdWlk
-LmgiCj4+ICAgI2luY2x1ZGUgInBtdS5oIgo+PiAgICNpbmNsdWRlICJoeXBlcnYuaCIKPj4gKyNp
-bmNsdWRlICJsYXBpYy5oIgo+PiAgIAo+PiAgICNpbmNsdWRlIDxsaW51eC9jbG9ja3NvdXJjZS5o
-Pgo+PiAgICNpbmNsdWRlIDxsaW51eC9pbnRlcnJ1cHQuaD4KPj4gQEAgLTcxNjMsNiArNzE2NCwy
-MiBAQCBzdGF0aWMgdm9pZCBrdm1fcHZfa2lja19jcHVfb3Aoc3RydWN0IGt2bSAqa3ZtLCB1bnNp
-Z25lZCBsb25nIGZsYWdzLCBpbnQgYXBpY2lkKQo+PiAgIAlrdm1faXJxX2RlbGl2ZXJ5X3RvX2Fw
-aWMoa3ZtLCBOVUxMLCAmbGFwaWNfaXJxLCBOVUxMKTsKPj4gICB9Cj4+ICAgCj4+ICt2b2lkIGt2
-bV92Y3B1X2FjdGl2YXRlX2FwaWN2KHN0cnVjdCBrdm1fdmNwdSAqdmNwdSkKPj4gK3sKPj4gKwlp
-ZiAoIWxhcGljX2luX2tlcm5lbCh2Y3B1KSkgewo+PiArCQlXQVJOX09OX09OQ0UoIXZjcHUtPmFy
-Y2guYXBpY3ZfYWN0aXZlKTsKPj4gKwkJcmV0dXJuOwo+PiArCX0KPj4gKwlpZiAodmNwdS0+YXJj
-aC5hcGljdl9hY3RpdmUpCj4+ICsJCXJldHVybjsKPj4gKwo+PiArCXZjcHUtPmFyY2guYXBpY3Zf
-YWN0aXZlID0gdHJ1ZTsKPj4gKwlrdm1fYXBpY191cGRhdGVfYXBpY3YodmNwdSk7Cj4+ICsKPj4g
-Kwlrdm1feDg2X29wcy0+cmVmcmVzaF9hcGljdl9leGVjX2N0cmwodmNwdSk7Cj4+ICt9Cj4+ICtF
-WFBPUlRfU1lNQk9MX0dQTChrdm1fdmNwdV9hY3RpdmF0ZV9hcGljdik7Cj4+ICsKPj4gICB2b2lk
-IGt2bV92Y3B1X2RlYWN0aXZhdGVfYXBpY3Yoc3RydWN0IGt2bV92Y3B1ICp2Y3B1KQo+PiAgIHsK
-Pj4gICAJaWYgKCFsYXBpY19pbl9rZXJuZWwodmNwdSkpIHsKPj4gQEAgLTcxNzMsOCArNzE5MCwx
-MSBAQCB2b2lkIGt2bV92Y3B1X2RlYWN0aXZhdGVfYXBpY3Yoc3RydWN0IGt2bV92Y3B1ICp2Y3B1
-KQo+PiAgIAkJcmV0dXJuOwo+PiAgIAo+PiAgIAl2Y3B1LT5hcmNoLmFwaWN2X2FjdGl2ZSA9IGZh
-bHNlOwo+PiArCWt2bV9hcGljX3VwZGF0ZV9hcGljdih2Y3B1KTsKPj4gKwo+PiAgIAlrdm1feDg2
-X29wcy0+cmVmcmVzaF9hcGljdl9leGVjX2N0cmwodmNwdSk7Cj4+ICAgfQo+PiArRVhQT1JUX1NZ
-TUJPTF9HUEwoa3ZtX3ZjcHVfZGVhY3RpdmF0ZV9hcGljdik7Cj4+ICAgCj4+ICAgaW50IGt2bV9l
-bXVsYXRlX2h5cGVyY2FsbChzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpCj4+ICAgewo+PiBAQCAtNzY2
-OCw2ICs3Njg4LDU4IEBAIHZvaWQga3ZtX21ha2Vfc2Nhbl9pb2FwaWNfcmVxdWVzdChzdHJ1Y3Qg
-a3ZtICprdm0pCj4+ICAgCWt2bV9tYWtlX2FsbF9jcHVzX3JlcXVlc3Qoa3ZtLCBLVk1fUkVRX1ND
-QU5fSU9BUElDKTsKPj4gICB9Cj4+ICAgCj4+ICt2b2lkIGt2bV9tYWtlX2FwaWN2X2FjdGl2YXRl
-X3JlcXVlc3Qoc3RydWN0IGt2bV92Y3B1ICp2Y3B1KQo+PiArewo+PiArCWludCBpOwo+PiArCXN0
-cnVjdCBrdm1fdmNwdSAqdjsKPj4gKwlzdHJ1Y3Qga3ZtICprdm0gPSB2Y3B1LT5rdm07Cj4+ICsK
-Pj4gKwltdXRleF9sb2NrKCZrdm0tPmFyY2guYXBpY3ZfbG9jayk7Cj4+ICsJaWYgKGt2bS0+YXJj
-aC5hcGljdl9zdGF0ZSAhPSBBUElDVl9ERUFDVElWQVRFRCkgewo+PiArCQltdXRleF91bmxvY2so
-Jmt2bS0+YXJjaC5hcGljdl9sb2NrKTsKPj4gKwkJcmV0dXJuOwo+PiArCX0KPj4gKwo+PiArCWt2
-bV9mb3JfZWFjaF92Y3B1KGksIHYsIGt2bSkKPj4gKwkJa3ZtX2NsZWFyX3JlcXVlc3QoS1ZNX1JF
-UV9BUElDVl9ERUFDVElWQVRFLCB2KTsKPj4gKwo+PiArCWlmIChrdm1feDg2X29wcy0+cHJlX3Vw
-ZGF0ZV9hcGljdl9leGVjX2N0cmwpCj4+ICsJCWt2bV94ODZfb3BzLT5wcmVfdXBkYXRlX2FwaWN2
-X2V4ZWNfY3RybCh2Y3B1LCB0cnVlKTsKPj4gKwo+PiArCWt2bS0+YXJjaC5hcGljdl9zdGF0ZSA9
-IEFQSUNWX0FDVElWQVRFRDsKPj4gKwo+PiArCWt2bV9tYWtlX2FsbF9jcHVzX3JlcXVlc3Qoa3Zt
-LCBLVk1fUkVRX0FQSUNWX0FDVElWQVRFKTsKPj4gKwo+PiArCW11dGV4X3VubG9jaygma3ZtLT5h
-cmNoLmFwaWN2X2xvY2spOwo+PiArfQo+PiArRVhQT1JUX1NZTUJPTF9HUEwoa3ZtX21ha2VfYXBp
-Y3ZfYWN0aXZhdGVfcmVxdWVzdCk7Cj4+ICsKPj4gK3ZvaWQga3ZtX21ha2VfYXBpY3ZfZGVhY3Rp
-dmF0ZV9yZXF1ZXN0KHN0cnVjdCBrdm1fdmNwdSAqdmNwdSwgYm9vbCBkaXNhYmxlKQo+PiArewo+
-PiArCWludCBpOwo+PiArCXN0cnVjdCBrdm1fdmNwdSAqdjsKPj4gKwlzdHJ1Y3Qga3ZtICprdm0g
-PSB2Y3B1LT5rdm07Cj4+ICsKPj4gKwltdXRleF9sb2NrKCZrdm0tPmFyY2guYXBpY3ZfbG9jayk7
-Cj4+ICsJaWYgKGt2bS0+YXJjaC5hcGljdl9zdGF0ZSA9PSBBUElDVl9ERUFDVElWQVRFRCkgewo+
-PiArCQltdXRleF91bmxvY2soJmt2bS0+YXJjaC5hcGljdl9sb2NrKTsKPj4gKwkJcmV0dXJuOwo+
-PiArCX0KPj4gKwo+PiArCWt2bV9mb3JfZWFjaF92Y3B1KGksIHYsIGt2bSkKPj4gKwkJa3ZtX2Ns
-ZWFyX3JlcXVlc3QoS1ZNX1JFUV9BUElDVl9BQ1RJVkFURSwgdik7Cj4gCj4gQ291bGQgeW91IHBs
-ZWFzZSBlbGFib3JhdGUgb24gd2hlbiB3ZSBuZWVkIHRvIGVhdCB0aGUKPiBLVk1fUkVRX0FQSUNW
-X0FDVElWQVRFIHJlcXVlc3QgaGVyZSAoYW5kIEtWTV9SRVFfQVBJQ1ZfREVBQ1RJVkFURSBpbgo+
-IGt2bV9tYWtlX2FwaWN2X2FjdGl2YXRlX3JlcXVlc3QoKSByZXNwZWN0aXZlbHkpPyBUbyBtZSwg
-dGhpcyBsb29rcyBsaWtlCj4gYSBwb3NzaWJsZSBzb3VyY2Ugb2YgaGFyZC10by1kZWJ1ZyBwcm9i
-bGVtcyBpbiB0aGUgZnV0dXJlLgoKCUNQVTAJCQkJCUNQVTEKCmt2bV9tYWtlX2FwaWN2X2FjdGl2
-YXRlX3JlcXVlc3QoKQkuLi4KSGFuZGxlIEtWTV9SRVFfQVBJQ1ZfQUNUSVZBVEUJCUtWTV9SRVFf
-QVBJQ1ZfQUNUSVZBVEU9PTEKdmNwdV9ydW4oKQkJCQkuLi4Ka3ZtX21ha2VfYXBpY3ZfZGVhY3Rp
-dmF0ZV9yZXF1ZXN0KCkJLi4uCgpJbiB0aGF0IGNhc2UgQ1BVMSB3b3VsZCBoYXZlIGJvdGggYWN0
-aXZhdGUgYW5kIGRlYWN0aXZhdGUgcmVxdWVzdHMgCnBlbmRpbmcuIFlvdSBjYW4gc2VlIHRoZSBz
-YW1lIGxvZ2ljIGFib3ZlIGluIHRoZSBhY3RpdmF0ZSgpIGZ1bmN0aW9uLCAKanVzdCByZXZlcnNl
-LgoKSSBhZ3JlZSB0aGF0IGl0IHByb2JhYmx5IG5lZWRzIGF0IGxlYXN0IGEgY29tbWVudCB0byBl
-eHBsYWluIHdoeSB3ZSBoYXZlIAppdC4gQnV0IHdoZW4gSSBsb29rZWQgYXQgdGhlIGNvZGUsIEkg
-Y291bGQgbm90IHRoaW5rIG9mIGEgbmljZXIgd2F5IHRvIAppbXBsZW1lbnQgaXQgZWl0aGVyLgoK
-CkFsZXgKCgoKQW1hem9uIERldmVsb3BtZW50IENlbnRlciBHZXJtYW55IEdtYkgKS3JhdXNlbnN0
-ci4gMzgKMTAxMTcgQmVybGluCkdlc2NoYWVmdHNmdWVocnVuZzogQ2hyaXN0aWFuIFNjaGxhZWdl
-ciwgUmFsZiBIZXJicmljaApFaW5nZXRyYWdlbiBhbSBBbXRzZ2VyaWNodCBDaGFybG90dGVuYnVy
-ZyB1bnRlciBIUkIgMTQ5MTczIEIKU2l0ejogQmVybGluClVzdC1JRDogREUgMjg5IDIzNyA4NzkK
-Cgo=
+Hi Andrey,
 
+On Mon, Aug 26, 2019 at 09:24:57PM -0700, Andrey Smirnov wrote:
+> On Mon, Aug 26, 2019 at 3:08 PM Laurent Pinchart wrote:
+> > On Mon, Aug 26, 2019 at 11:25:24AM -0700, Andrey Smirnov wrote:
+> > > Presently, the driver code artificially limits test pattern mode to a
+> > > single pattern with fixed color selection. It being a kernel module
+> > > parameter makes switching "test patter" <-> "proper output" modes
+> > > on-the-fly clunky and outright impossible if the driver is built into
+> > > the kernel.
+> > >
+> > > To improve the situation a bit, convert current test pattern code to
+> > > use debugfs instead by exposing "TestCtl" register. This way old
+> > > "tc_test_pattern=1" functionality can be emulated via:
+> > >
+> > >     echo -n 0x78146312 > tstctl
+> > >
+> > > and switch back to regular mode can be done with:
+> > >
+> > >     echo -n 0x78146310 > tstctl
+> >
+> > Can't we make this more userfriendly by exposing either a test pattern
+> > index, or a string ?
+> 
+> We could, but then a) it would require more code in the driver b) the
+> files wouldn't correspond directly to something described in the
+> part's datasheet. Just didn't seem worth it to me.
+
+Could you then provide me with the datasheet ? :-) The whole point of a
+driver is to avoid needing detailed knowledge of the device's internals
+in userspace.
+
+> > Do all bits in the register need to be controlled
+> > from userspace ?
+> 
+> Pretty much, yes. It's formatted as RR_GG_BB_X_M, where R, G, B
+> specifies color used for various patterns, X is irrelevant and M
+> specifies test pattern to use.
+> 
+> > > Note that switching to any of the test patterns, will NOT trigger link
+> > > re-establishment whereas switching to normal operation WILL. This is
+> > > done so:
+> > >
+> > > a) we can isolate and verify (e)DP link functionality by switching to
+> > >    one of the test patters
+> > >
+> > > b) trigger a link re-establishment by switching back to normal mode
+> > >
+> > > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> > > Cc: Andrzej Hajda <a.hajda@samsung.com>
+> > > Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> > > Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> > > Cc: Cory Tusar <cory.tusar@zii.aero>
+> > > Cc: Chris Healy <cphealy@gmail.com>
+> > > Cc: Lucas Stach <l.stach@pengutronix.de>
+> > > Cc: dri-devel@lists.freedesktop.org
+> > > Cc: linux-kernel@vger.kernel.org
+> > > ---
+> > >  drivers/gpu/drm/bridge/tc358767.c | 137 ++++++++++++++++++++++--------
+> > >  1 file changed, 101 insertions(+), 36 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+> > > index 6308d93ad91d..7a795b613ed0 100644
+> > > --- a/drivers/gpu/drm/bridge/tc358767.c
+> > > +++ b/drivers/gpu/drm/bridge/tc358767.c
+> > > @@ -17,6 +17,7 @@
+> > >
+> > >  #include <linux/bitfield.h>
+> > >  #include <linux/clk.h>
+> > > +#include <linux/debugfs.h>
+> > >  #include <linux/device.h>
+> > >  #include <linux/gpio/consumer.h>
+> > >  #include <linux/i2c.h>
+> > > @@ -222,11 +223,10 @@
+> > >  #define COLOR_B                      GENMASK(15, 8)
+> > >  #define ENI2CFILTER          BIT(4)
+> > >  #define COLOR_BAR_MODE               GENMASK(1, 0)
+> > > +#define COLOR_BAR_MODE_NORMAL        0
+> > >  #define COLOR_BAR_MODE_BARS  2
+> > > -#define PLL_DBG                      0x0a04
+> > >
+> > > -static bool tc_test_pattern;
+> > > -module_param_named(test, tc_test_pattern, bool, 0644);
+> >
+> > I assume that his being a debug feature there's no system relying on the
+> > module parameter that would break if you remove it ?
+> 
+> Yeah, I don't know of any system that needs that parameter. It seems
+> pretty useless for anything but basic debugging.
+> 
+> > > +#define PLL_DBG                      0x0a04
+> > >
+> > >  struct tc_edp_link {
+> > >       struct drm_dp_link      base;
+> > > @@ -789,16 +789,6 @@ static int tc_set_video_mode(struct tc_data *tc,
+> > >       if (ret)
+> > >               return ret;
+> > >
+> > > -     /* Test pattern settings */
+> > > -     ret = regmap_write(tc->regmap, TSTCTL,
+> > > -                        FIELD_PREP(COLOR_R, 120) |
+> > > -                        FIELD_PREP(COLOR_G, 20) |
+> > > -                        FIELD_PREP(COLOR_B, 99) |
+> > > -                        ENI2CFILTER |
+> > > -                        FIELD_PREP(COLOR_BAR_MODE, COLOR_BAR_MODE_BARS));
+> > > -     if (ret)
+> > > -             return ret;
+> > > -
+> > >       /* DP Main Stream Attributes */
+> > >       vid_sync_dly = hsync_len + left_margin + mode->hdisplay;
+> > >       ret = regmap_write(tc->regmap, DP0_VIDSYNCDELAY,
+> > > @@ -1150,14 +1140,6 @@ static int tc_stream_enable(struct tc_data *tc)
+> > >
+> > >       dev_dbg(tc->dev, "enable video stream\n");
+> > >
+> > > -     /* PXL PLL setup */
+> > > -     if (tc_test_pattern) {
+> > > -             ret = tc_pxl_pll_en(tc, clk_get_rate(tc->refclk),
+> > > -                                 1000 * tc->mode.clock);
+> > > -             if (ret)
+> > > -                     return ret;
+> > > -     }
+> > > -
+> > >       ret = tc_set_video_mode(tc, &tc->mode);
+> > >       if (ret)
+> > >               return ret;
+> > > @@ -1186,12 +1168,8 @@ static int tc_stream_enable(struct tc_data *tc)
+> > >       if (ret)
+> > >               return ret;
+> > >       /* Set input interface */
+> > > -     value = DP0_AUDSRC_NO_INPUT;
+> > > -     if (tc_test_pattern)
+> > > -             value |= DP0_VIDSRC_COLOR_BAR;
+> > > -     else
+> > > -             value |= DP0_VIDSRC_DPI_RX;
+> > > -     ret = regmap_write(tc->regmap, SYSCTRL, value);
+> > > +     ret = regmap_write(tc->regmap, SYSCTRL,
+> > > +                        DP0_AUDSRC_NO_INPUT | DP0_VIDSRC_DPI_RX);
+> > >       if (ret)
+> > >               return ret;
+> > >
+> > > @@ -1220,39 +1198,44 @@ static void tc_bridge_pre_enable(struct drm_bridge *bridge)
+> > >       drm_panel_prepare(tc->panel);
+> > >  }
+> > >
+> > > -static void tc_bridge_enable(struct drm_bridge *bridge)
+> > > +static int __tc_bridge_enable(struct tc_data *tc)
+> > >  {
+> > > -     struct tc_data *tc = bridge_to_tc(bridge);
+> > >       int ret;
+> > >
+> > >       ret = tc_get_display_props(tc);
+> > >       if (ret < 0) {
+> > >               dev_err(tc->dev, "failed to read display props: %d\n", ret);
+> > > -             return;
+> > > +             return ret;
+> > >       }
+> > >
+> > >       ret = tc_main_link_enable(tc);
+> > >       if (ret < 0) {
+> > >               dev_err(tc->dev, "main link enable error: %d\n", ret);
+> > > -             return;
+> > > +             return ret;
+> > >       }
+> > >
+> > >       ret = tc_stream_enable(tc);
+> > >       if (ret < 0) {
+> > >               dev_err(tc->dev, "main link stream start error: %d\n", ret);
+> > >               tc_main_link_disable(tc);
+> > > -             return;
+> > >       }
+> > >
+> > > -     drm_panel_enable(tc->panel);
+> > > +     return ret;
+> > >  }
+> > >
+> > > -static void tc_bridge_disable(struct drm_bridge *bridge)
+> > > +static void tc_bridge_enable(struct drm_bridge *bridge)
+> > >  {
+> > >       struct tc_data *tc = bridge_to_tc(bridge);
+> > > -     int ret;
+> > >
+> > > -     drm_panel_disable(tc->panel);
+> > > +     if (__tc_bridge_enable(tc) < 0)
+> > > +             return;
+> > > +
+> > > +     drm_panel_enable(tc->panel);
+> > > +}
+> > > +
+> > > +static int __tc_bridge_disable(struct tc_data *tc)
+> > > +{
+> > > +     int ret;
+> > >
+> > >       ret = tc_stream_disable(tc);
+> > >       if (ret < 0)
+> > > @@ -1261,6 +1244,16 @@ static void tc_bridge_disable(struct drm_bridge *bridge)
+> > >       ret = tc_main_link_disable(tc);
+> > >       if (ret < 0)
+> > >               dev_err(tc->dev, "main link disable error: %d\n", ret);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > > +static void tc_bridge_disable(struct drm_bridge *bridge)
+> > > +{
+> > > +     struct tc_data *tc = bridge_to_tc(bridge);
+> > > +
+> > > +     drm_panel_disable(tc->panel);
+> > > +     __tc_bridge_disable(tc);
+> > >  }
+> > >
+> > >  static void tc_bridge_post_disable(struct drm_bridge *bridge)
+> > > @@ -1372,6 +1365,77 @@ static enum drm_connector_status tc_connector_detect(struct drm_connector *conne
+> > >               return connector_status_disconnected;
+> > >  }
+> > >
+> > > +static int tc_tstctl_set(void *data, u64 val)
+> > > +{
+> > > +     struct tc_data *tc = data;
+> > > +     int ret;
+> > > +
+> > > +     if (FIELD_GET(COLOR_BAR_MODE, val) == COLOR_BAR_MODE_NORMAL) {
+> > > +             ret = regmap_write(tc->regmap, SYSCTRL, DP0_VIDSRC_DPI_RX);
+> > > +             if (ret) {
+> > > +                     dev_err(tc->dev,
+> > > +                             "failed to select dpi video stream\n");
+> > > +                     return ret;
+> > > +             }
+> > > +
+> > > +             ret = regmap_write(tc->regmap, TSTCTL, val | ENI2CFILTER);
+> > > +             if (ret) {
+> > > +                     dev_err(tc->dev, "failed to set TSTCTL\n");
+> > > +                     return ret;
+> > > +             }
+> > > +
+> > > +             ret = tc_pxl_pll_dis(tc);
+> > > +             if (ret) {
+> > > +                     dev_err(tc->dev, "failed to disable PLL\n");
+> > > +                     return ret;
+> > > +             }
+> > > +
+> > > +             /*
+> > > +              * Re-establish DP link
+> > > +              */
+> > > +             ret = __tc_bridge_disable(tc);
+> > > +             if (ret)
+> > > +                     return ret;
+> > > +
+> > > +             ret = __tc_bridge_enable(tc);
+> > > +             if (ret)
+> > > +                     return ret;
+> >
+> > If the bridge is currently disabled you should not enable it. I think
+> > you need to guard against race conditions with the enable/disable
+> > functions, as well as delay writes until the bridge gets enabled if it
+> > is currently disabled.
+> 
+> OK, will do in v2.
+> 
+> > > +     } else {
+> > > +             ret = tc_pxl_pll_en(tc, clk_get_rate(tc->refclk),
+> > > +                                 1000 * tc->mode.clock);
+> > > +             if (ret) {
+> > > +                     dev_err(tc->dev, "failed to enable PLL\n");
+> > > +                     return ret;
+> > > +             }
+> > > +
+> > > +             ret = regmap_write(tc->regmap, TSTCTL, val | ENI2CFILTER);
+> > > +             if (ret) {
+> > > +                     dev_err(tc->dev, "failed to set TSTCTL\n");
+> > > +                     return ret;
+> > > +             }
+> > > +
+> > > +             ret = regmap_write(tc->regmap, SYSCTRL, DP0_VIDSRC_COLOR_BAR);
+> > > +             if (ret) {
+> > > +                     dev_err(tc->dev, "failed to color bar video stream\n");
+> > > +                     return ret;
+> > > +             }
+> > > +     }
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +DEFINE_SIMPLE_ATTRIBUTE(tc_tstctl_fops, NULL, tc_tstctl_set, "%llu\n");
+> >
+> > Shouldn't you also provide a get handler ?
+> 
+> There really isn't a use-case for reading the value of TestCtl AFAICT,
+> so, I skipped it to avoid having extra code.
+> 
+> > > +static int tc_late_register(struct drm_connector *connector)
+> > > +{
+> > > +     if (connector->debugfs_entry)
+> > > +             debugfs_create_file_unsafe("tstctl", 0644,
+> > > +                                        connector->debugfs_entry,
+> > > +                                        connector_to_tc(connector),
+> > > +                                        &tc_tstctl_fops);
+> > > +     return 0;
+> > > +}
+> >
+> > Why a .late_register() handler, can't you do this at probe time ?
+> 
+> .late_register() happens after drm_debugfs_connector_add() where
+> connector->debugfs_entry gets initialized. AFAICT, I could move that
+> code to probe, but then I'd have create a separate debugfs root
+> directory as well as add code to clean it up (currently I rely on
+> drm_debugfs_connector_remove() removing everything recursively.
+
+The usual approach for this kind of debug feature is to create a
+directory named after dev_name() in order to guarantee uniqueness. I
+feel that could be better, but have no strong preference.
+
+-- 
+Regards,
+
+Laurent Pinchart
