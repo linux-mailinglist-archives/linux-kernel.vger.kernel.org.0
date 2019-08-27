@@ -2,179 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45ABC9F604
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E1A09F607
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:23:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfH0WXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 18:23:07 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34500 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725976AbfH0WXH (ORCPT
+        id S1726530AbfH0WXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 18:23:24 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:42358 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725976AbfH0WXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 18:23:07 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so251970pgc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 15:23:06 -0700 (PDT)
+        Tue, 27 Aug 2019 18:23:24 -0400
+Received: by mail-ot1-f68.google.com with SMTP id j7so750466ota.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 15:23:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Yf7KPUEZygXXJwexFq8sVNy80of36QU2BvfS1YFc1uQ=;
-        b=DxFQR+oulqH7TZnTFeO0AXmXGWRw8zDTd9MWpugL+0n0Aib5ZMDh0gKtEc64fyTaiU
-         FOLFQM2CYjumpVL2LFM5EEYzq4YUwR6QM+ekFlz7+xb+HRUbv/RyO2SJnKXHK3b0s/Yd
-         IMZgA4l2y+ygNdcJ2lwr9Nf98wFppYDeZP7g7/uvRjzpBhkCXktHh6rJ0Q5sObuQCLxi
-         +dOE9bCEq8kSCE3qyIGnytkRwVgV9bV4LTVBmEjwGchqt6zzrZB7w8HYm+k4cH8NwrPa
-         Up8sfath9FNbmrmDKJ03kPgTxUQYfR7SHwXZf27HzkMOy7vJNst6hgvquS/xoNnBS0OE
-         QEXw==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=RaoK0kQyWqR07WymWldpInhn/VvuYB3IpCtzkOOdJKM=;
+        b=HIfV3iIu+JuPr2seqsanWQQXWXgQ3Zyr8AsZSOGnbxMojpjR0OpdDiTpf6Xu94wD3l
+         QXYni607AxUUfsR9W2eI6mlWd9JY2dG7bTRUPfG2Rf4kFB4qbe+aKiqoGCoztSm2d/Ga
+         krW+5kNzf1NAIcywwE0RTT4l8EF8BiH8LQJD+HHT4DsiJra2wzZtTiw9qAcEthgCGagM
+         Lnwu3ZpeLquYcHox6eSrQfxcwzhBclokzAe/4nz7LqdfDpju2j2zfFu1RIzgeR4ILJpW
+         dXO6rZ3AWLa7WMgCB+KbtK1iuQbl8HjRrlHADLJ31/tWj7oA/y/kOS3KH9fRnhjJm5eh
+         /dlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Yf7KPUEZygXXJwexFq8sVNy80of36QU2BvfS1YFc1uQ=;
-        b=C2Y/rPPt35uwwRPt7o2BIXQkl/Q3oFrzyCAMgimWf78J9ulUzs6FCT/qd3L2AEk8qJ
-         rj+uE2ttVlIQ3B9ChefhV0OfWif8SgHOkqwhiP+hnSdbi9kXMlbJ+Y4Ppg9/nworLxY4
-         f1cME4/87cenz+iDtODuCYRGWsOEFeMdz0BAhDT1f22NErjyfN61lWAhgkbjtrBxIHHr
-         GPQQIagT30xjeUJt6fRkcMxy738Jxq7TphcgiBIj703zJhv34G8T6E16oevrwqu9sWhZ
-         cGiXJkf6vmy3vwvhmnA9EL7RtZ54lFujrdWoEPact7eSW64+z4SMJMjKlXvBHeE2G5/n
-         Qwig==
-X-Gm-Message-State: APjAAAVTJ7EOucfS3GbWb7nHOgQdkqTGbL6ghNSd1z9phbUVHi+S0yP6
-        pgBGwmRNZLl9HZsBFpD10rY4bg==
-X-Google-Smtp-Source: APXvYqwT2hpO40tTWBillytawrpLvYzOYf+8qLwBYvEHB+YRDUUxG6ERLaAlK0jg+ytA3DztYQumOA==
-X-Received: by 2002:a17:90a:2047:: with SMTP id n65mr1050342pjc.5.1566944586260;
-        Tue, 27 Aug 2019 15:23:06 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id z25sm313775pfa.91.2019.08.27.15.23.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 15:23:05 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 15:23:03 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Suman Anna <s-anna@ti.com>
-Cc:     linux-remoteproc@vger.kernel.org,
-        Loic Pallardy <loic.pallardy@st.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] rpmsg: virtio_rpmsg_bus: replace "%p" with "%pK"
-Message-ID: <20190827222303.GL6167@minitux>
-References: <20181024011909.21674-1-s-anna@ti.com>
- <40831f80-1e36-66ca-b8e5-684d46ba167e@ti.com>
- <20190827051007.GK1263@builder>
- <8d36d695-dd66-c21f-f49e-f6dc3dbdfc5a@ti.com>
- <20190827220711.GK6167@minitux>
- <619b06b0-c3cc-e36f-c3e5-d13e98520c9c@ti.com>
- <9c5f95a0-c95b-bf68-e78f-6e3d4d837b1e@ti.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=RaoK0kQyWqR07WymWldpInhn/VvuYB3IpCtzkOOdJKM=;
+        b=HTDgsHQ742Wqiaiyd78dct28PIzLbj/35CG/jwSpHb6TXvuqkct4Ez+B39QrUCYgSw
+         xHF2g5Y6BvD7Xv6+6NY1Qn00KHK5NveSiHdA8dKO9xbpQ3YIE9PxeHzX2ImkwbpnmA6c
+         X/3ps7JQ4ikXfWFHDqwWtu88W9IePCK7Mnf9HwcirppnyRssFrmIiZRvEFp3JzxGKIKV
+         4x2xqVFC0nD9HxFVG9qURaMpmdsKwB59bd9FACU5U7ss1t1kRmoZfuds9+IShjhqSqL0
+         hvkDLHKZtUl21eyphYv+2LKF9PHHBDv4X/NreESi6xHfPJVKfMWCogei/nT2wSAbsflh
+         2QqQ==
+X-Gm-Message-State: APjAAAXB4Lz6BDwHQtQs/IZwRbnjirZw1V/0gLQIRuMuo07/bt3WTAwB
+        ioDjpRFkitbSyB6NoaGGVDvVA1LlSpypKLjwCiE=
+X-Google-Smtp-Source: APXvYqyFiBqO9j79d1qHqKQnto98i6Gm/3muGan7+XyW30Ialf0AKdj8tGZ/Py9WEB4m/GbJejStofLnjeVaz9RAd38=
+X-Received: by 2002:a9d:7383:: with SMTP id j3mr825326otk.74.1566944603754;
+ Tue, 27 Aug 2019 15:23:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c5f95a0-c95b-bf68-e78f-6e3d4d837b1e@ti.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Received: by 2002:a4a:4991:0:0:0:0:0 with HTTP; Tue, 27 Aug 2019 15:23:23
+ -0700 (PDT)
+Reply-To: mrphilippine8@gmail.com
+From:   "Mr.Philip" <david1kama202@gmail.com>
+Date:   Tue, 27 Aug 2019 15:23:23 -0700
+Message-ID: <CANMgs4GJAEQoqzzE7-7KsAzLSKRe_eZzQnZwTYhLatuFazcxKQ@mail.gmail.com>
+Subject: Compliment of the day,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27 Aug 15:17 PDT 2019, Suman Anna wrote:
+Compliment of the day,
 
-> On 8/27/19 5:15 PM, Suman Anna wrote:
-> > On 8/27/19 5:07 PM, Bjorn Andersson wrote:
-> >> On Tue 27 Aug 13:25 PDT 2019, Suman Anna wrote:
-> >>
-> >>> Hi Bjorn,
-> >>>
-> >>> On 8/27/19 12:10 AM, Bjorn Andersson wrote:
-> >>>> On Fri 09 Aug 13:25 PDT 2019, Suman Anna wrote:
-> >>>>
-> >>>>> Hi Bjorn,
-> >>>>>
-> >>>>
-> >>>> Hi Suman
-> >>>>
-> >>>>> On 10/23/18 8:19 PM, Suman Anna wrote:
-> >>>>>> The virtio_rpmsg_bus driver uses the "%p" format-specifier for
-> >>>>>> printing the vring buffer address. This prints only a hashed
-> >>>>>> pointer even for previliged users. Use "%pK" instead so that
-> >>>>>> the address can be printed during debug using kptr_restrict
-> >>>>>> sysctl.
-> >>>>>
-> >>>>> Seems to have been lost among the patches, can you pick up this trivial
-> >>>>> patch for 5.4? Should apply cleanly on the latest HEAD as well.
-> >>>>>
-> >>>>
-> >>>> I share Andrew's question regarding what benefit you have from knowing
-> >>>> this value. Should we not just remove the va from the print? Or do you
-> >>>> actually have a use case for it?.
-> >>>
-> >>> I mainly use it during debug when comparing against kernel_page_tables
-> >>> and vmallocinfo. The pools that we use are not always guaranteed to be
-> >>> from linear memory, and behavior changes when using with CMA or DMA pools.
-> >>>
-> >>
-> >> Thanks Suman. It seems to me that there's room for improvement to aid
-> >> this kind of debugging. But your usecase seems reasonable, so I'm
-> >> merging the patch.
-> > 
-> > Thanks Bjorn.
-> 
-> Btw, looks like you applied the patch against rproc-next instead of
-> rpmsg-next.
-> 
+I am Mr.Philip.Kabore I Have a Business Proposal of $5.3 million For
+You. I am aware of the unsafe nature of the internet, and was
+compelled to use this medium due to the nature of this project.
 
-Thanks for noticing so quick; I moved the change to the correct
-branch.
+I have access to very vital information that can be used to transfer
+this huge amount of money, which may culminate into the investment of
+the said funds into your company or any lucrative venture in your
+country.
 
-Regards,
-Bjorn
+If you will like to assist me as a partner then indicate your
+interest, after which we shall both discuss the modalities and the
+sharing percentage.
 
-> regards
-> Suman
-> 
-> > 
-> >>
-> >>> Note that usage of %pK does not leak the addresses automatically, but
-> >>> atleast enables me to get the values when needed. The changes also bring
-> >>> the usage in rpmsg core in sync with the remoteproc core.
-> >>>
-> >>
-> >> Sounds like shouldn't have merged them in remoteproc then ;P
-> > 
-> > Slightly different reasoning looking at the commit, it was probably when
-> > %p was leaking the addresses.
-> > 
-> > regards
-> > Suman
-> > 
-> >>
-> >> Thanks,
-> >> Bjorn
-> >>
-> >>> regards
-> >>> Suman
-> >>>
-> >>>>
-> >>>> Regards,
-> >>>> Bjorn
-> >>>>
-> >>>>> regards
-> >>>>> Suman
-> >>>>>
-> >>>>>>
-> >>>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
-> >>>>>> ---
-> >>>>>>  drivers/rpmsg/virtio_rpmsg_bus.c | 2 +-
-> >>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>>>>> index f29dee731026..1345f373a1a0 100644
-> >>>>>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>>>>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
-> >>>>>> @@ -950,7 +950,7 @@ static int rpmsg_probe(struct virtio_device *vdev)
-> >>>>>>  		goto vqs_del;
-> >>>>>>  	}
-> >>>>>>  
-> >>>>>> -	dev_dbg(&vdev->dev, "buffers: va %p, dma %pad\n",
-> >>>>>> +	dev_dbg(&vdev->dev, "buffers: va %pK, dma %pad\n",
-> >>>>>>  		bufs_va, &vrp->bufs_dma);
-> >>>>>>  
-> >>>>>>  	/* half of the buffers is dedicated for RX */
-> >>>>>>
-> >>>>>
-> >>>
-> > 
-> 
+Upon receipt of your reply on your expression of Interest I will give
+you full details,
+on how the business will be executed I am open for negotiation. You
+should forward your reply to this private Thanks for your anticipated
+cooperation.
+
+Note you might receive this message in your inbox or spam or junk
+folder, depends on your web host or server network.
+
+Thanks=E2=80=99
+Best Regards
+Mr.Philip.Kabore,
