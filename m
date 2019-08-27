@@ -2,93 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECB919EB97
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D38BB9EBA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:55:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729999AbfH0OyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 10:54:00 -0400
-Received: from mga07.intel.com ([134.134.136.100]:21708 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726333AbfH0Ox7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 10:53:59 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 07:53:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
-   d="scan'208";a="380943529"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Aug 2019 07:53:58 -0700
-Date:   Tue, 27 Aug 2019 07:53:58 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Denis Lunev <den@virtuozzo.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Subject: Re: [PATCH 2/3] KVM: x86: set ctxt->have_exception in
- x86_decode_insn()
-Message-ID: <20190827145358.GD27459@linux.intel.com>
-References: <1566911210-30059-1-git-send-email-jan.dakinevich@virtuozzo.com>
- <1566911210-30059-3-git-send-email-jan.dakinevich@virtuozzo.com>
+        id S1730192AbfH0OzO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 10:55:14 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38925 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbfH0OzO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 10:55:14 -0400
+Received: by mail-ed1-f67.google.com with SMTP id g8so31761913edm.6;
+        Tue, 27 Aug 2019 07:55:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=J28up6uPKD34qaYuEApixR8UwpIcwgN+tKjvn/kdwk8=;
+        b=pMVrBsv09u5KWA+6vj2Cr0qR0GSZe6r8BMU1JSA+mY2m8bDJ+IdYJXV+hJDfmP273h
+         03KsR0CTQqVWzTM8EllBHW37q99IulCpwRlLntm1wh7QpBeheqcUWjdGcF92vEjKdwGe
+         JWg1stYWqsmHKwaAOkhxXnI4at6LB104kKnM4BFKCBSqOUYTlJLleTaPM+cWFcES1i88
+         zXTO9JvkAZyanLSswiDgGLU/w5Lg9OUsu2V4nZRlg9a47CKLJgik6d2SfwFNb8UzzLdP
+         TduGiWMz2vDnqLl/Tjwin5PPv0YyzSGJtEK4Qh0lsI17GPFMi0jTeoxn4o37yhTPsYs/
+         Yajw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=J28up6uPKD34qaYuEApixR8UwpIcwgN+tKjvn/kdwk8=;
+        b=ZqxUsczPBiPFBMK5XZlZPVniX1hsWyMq3pzntgIbxB1hH70yGkODme5tXDJbS87Y4o
+         U93W3dBXWldkcqz8tiNYJMuitURVfOu3xgfA2NwbSVQXN+Mi8c31DNSUdIhEna4dRbaX
+         OfChr0VM6VtAsXFaAZezwiGIgky0HT6xwhLnXt8pHDaXs7d95ZTrW9bDXHajhc2jQZ05
+         heCOI74UlRmC5NgLNPAf7c/uc4ezQf/PxdJ8BQLXeFYxA4K5NNK/2kE3qvkC7i5e0VpR
+         IDtj8qpeqN7JwaOL7lDjSkQoptYJSKqauEjQs0xku0/xyRFhgbfcyS6mZoqAs0Gr2Nii
+         lecg==
+X-Gm-Message-State: APjAAAUtey+eXkR7Iq91j9H48jW3SvqmodP63Iqf2SZo42Tp55DI00iM
+        uWiyKDEZAspKhCoOGVvvrxo0Pku9xcGPH1DnbhQ=
+X-Google-Smtp-Source: APXvYqwpdkTQqMFYaHNmnBUxl9LiyKGwNSuxlXy0J60wneAG3Ifqr5uUMFvDC7+xGCyeK/INY6fNuNmfO28F3cIuk8s=
+X-Received: by 2002:a17:906:9607:: with SMTP id s7mr21872991ejx.300.1566917712168;
+ Tue, 27 Aug 2019 07:55:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1566911210-30059-3-git-send-email-jan.dakinevich@virtuozzo.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1566807075-775-1-git-send-email-horatiu.vultur@microchip.com>
+ <20190826123811.GA13411@lunn.ch> <20190827101033.g2cb6j2j4kuyzh2a@soft-dev3.microsemi.net>
+ <20190827131824.GC11471@lunn.ch>
+In-Reply-To: <20190827131824.GC11471@lunn.ch>
+From:   Vladimir Oltean <olteanv@gmail.com>
+Date:   Tue, 27 Aug 2019 17:55:00 +0300
+Message-ID: <CA+h21hrRafYQm8eOcXjNVwudDbu-2=miWD6nCUJdh0jAGE319w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] Add NETIF_F_HW_BR_CAP feature
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Horatiu Vultur <horatiu.vultur@microchip.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        nikolay@cumulusnetworks.com,
+        "David S. Miller" <davem@davemloft.net>,
+        UNGLinuxDriver@microchip.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "Allan W. Nielsen" <allan.nielsen@microchip.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        bridge@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 01:07:08PM +0000, Jan Dakinevich wrote:
-> x86_emulate_instruction() takes into account ctxt->have_exception flag
-> during instruction decoding, but in practice this flag is never set in
-> x86_decode_insn().
-> 
-> Fixes: 6ea6e84 ("KVM: x86: inject exceptions produced by x86_decode_insn")
-> Cc: Denis Lunev <den@virtuozzo.com>
-> Cc: Roman Kagan <rkagan@virtuozzo.com>
-> Cc: Denis Plotnikov <dplotnikov@virtuozzo.com>
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-> ---
->  arch/x86/kvm/emulate.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-> index 6170ddf..f93880f 100644
-> --- a/arch/x86/kvm/emulate.c
-> +++ b/arch/x86/kvm/emulate.c
-> @@ -5395,6 +5395,8 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len)
->  					ctxt->memopp->addr.mem.ea + ctxt->_eip);
->  
->  done:
-> +	if (rc == X86EMUL_PROPAGATE_FAULT)
-> +		ctxt->have_exception = true;
+On Tue, 27 Aug 2019 at 16:20, Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > That sounds like a great idea. I was expecting to add this logic in the
+> > set_rx_mode function of the driver. But unfortunetly, I got the calls to
+> > this function before the dev->promiscuity is updated or not to get the
+> > call at all. For example in case the port is member of a bridge and I try
+> > to enable the promisc mode.
+>
+> Hi Horatiu
+>
+> What about the notifier? Is it called in all the conditions you need
+> to know about?
+>
+> Or, you could consider adding a new switchdev call to pass this
+> information to any switchdev driver which is interested in the
+> information.
+>
+> At the moment, the DSA driver core does not pass onto the driver it
+> should put a port into promisc mode. So pcap etc, will only see
+> traffic directed to the CPU, not all the traffic ingressing the
+> interface. If you put the needed core infrastructure into place, we
+> could plumb it down from the DSA core to DSA drivers.
+>
+> Having said that, i don't actually know if the Marvell switches
+> support this. Forward using the ATU and send a copy to the CPU?  What
+> switches tend to support is port mirroring, sending all the traffic
+> out another port. A couple of DSA drivers support that, via TC.
+>
 
-We should add a sanity check or two on the vector since the emulator code
-goes all over the place, e.g. #UD should not be injected/propagated, and
-trap-like exceptions should not be handled/encountered during decode.
-Note, exception_type() also warns on illegal vectors.
+But the CPU port is not a valid destination for port mirroring in DSA,
+I might add.
 
-  WARN_ON_ONCE(ctxt->exception.vector == UD_VECTOR ||
-	       exception_type(ctxt->exception.vector) == EXCPT_TRAP);
+>         Andrew
 
->  	return (rc != X86EMUL_CONTINUE) ? EMULATION_FAILED : EMULATION_OK;
->  }
->  
-> -- 
-> 2.1.4
-> 
+Regards,
+-Vladimir
