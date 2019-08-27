@@ -2,79 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52CBB9F10A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:01:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FB389F111
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:03:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729696AbfH0RBD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 13:01:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46686 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726871AbfH0RBD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 13:01:03 -0400
-Received: from localhost (unknown [77.137.115.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ED072184D;
-        Tue, 27 Aug 2019 17:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566925262;
-        bh=R7F9h5uQJlGzntybFGiaLkhr8sE4tt5MZxDxbvAJzNA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EVEs4Ht8U0ir6fvcOpezFkjKPvmqxAwn+FdEUcX9zNklA+hAq8P9NiwBBnYQ54Lc7
-         gNZpwO3748lbaLq8djYP+/uY/W/ZSDieNn3HY+mdUtbrNcmf8yveAUqeGqPbjaNO/d
-         WXaBqeDmqOMieK0pReos8pJIDyzAn7IafcP94410=
-Date:   Tue, 27 Aug 2019 20:00:18 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bernard Metzler <BMT@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        id S1730215AbfH0RD1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 13:03:27 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38820 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728834AbfH0RDY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 13:03:24 -0400
+Received: by mail-wm1-f65.google.com with SMTP id m125so3811203wmm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 10:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=S8rsamyfBXW/N7Wx0HIWmvrw01QHVusy6HCq7O34p0s=;
+        b=vbbxpR7NcqMaRBjneOWBFEpZSiZKbZKUdEyZ+FVL1lo3MIDfEIPLoPZ1Ew3mHSOXxj
+         QdPAJBKjq7YFQ2RRq8RupQdHZizFtG9zVdlxaJ9F0w1aakeIVnmFKpdoodcQKudCwmp1
+         W+paPEk5CE0dAAxNhbo1sEDIxPyp9fooqolCpKUBbB+tvjELu4g0otOd43GHEve2pNkb
+         x4nS6oZAlJ/bN9zix3rUAqPquNm0aWr2fBWDfFLrKgQ0OnllJ2JqV4FQFlizQyZtIEzK
+         xl5RW/1yJ/46dWZz8az35xpxkNtvuLxP1qR8gNF3lXtuqnGGLIdCyLrM3hMIj/IgJnTB
+         Tx8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S8rsamyfBXW/N7Wx0HIWmvrw01QHVusy6HCq7O34p0s=;
+        b=Onn1po15IIWx5kGn8a/fTDHzzij7iI7Q7CeCI19drOkv/u59zLuashOD//Yk3JmN2F
+         TZ5hTcgpEv021WKgjZdYlnahgOHGjgrKmHy0dp0hNm0a0AOJt6eL/kcnKJGg0E5H/+q8
+         LSZX/dYIJgUsOY3ohbB4l5794CNYktfAp950YAV96QDGB7lVOYH7ITitY1JdFUi0XDft
+         +CD5LL6i3LvRksXek8yl8raiGEt6yuuEAdZg5FsloOHZZHG5/2FQhw3Nl2WcaELaMeXs
+         GLmITQ8uQRxMSdXA0AB0487mmbLAGzRPyG2d79PgUxHjfZcR4LmdtKiujFowmjCc6NVP
+         MXiQ==
+X-Gm-Message-State: APjAAAVtWxHgVD8/U+rfo/Ls94Y8shUQwbAxzDdg+YQq/mYstnljbD8S
+        zODHIjpF1AEfnYAWWx2eb4I=
+X-Google-Smtp-Source: APXvYqwk9Vl6sV/2BBmZQIYMP6o5FtVMV1ngy+4jwWhy+upD1V8eLynAZ5AlW1Ag2RNAaDb2goUrAA==
+X-Received: by 2002:a1c:c4:: with SMTP id 187mr28258136wma.132.1566925402818;
+        Tue, 27 Aug 2019 10:03:22 -0700 (PDT)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id o9sm17985634wrm.88.2019.08.27.10.03.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2019 10:03:22 -0700 (PDT)
+Subject: Re: get_unmapped_area && in_ia32_syscall (Was: [PATCH] uprobes/x86:
+ fix detection of 32-bit user mode)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Sebastian Mayr <me@sam.st>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] rdma/siw: Use proper enumerated type in map_cqe_status
-Message-ID: <20190827170018.GA4725@mtr-leonro.mtl.com>
-References: <20190711081434.GA86557@archlinux-threadripper>
- <20190711133915.GA25807@ziepe.ca>
- <CAKwvOdnHz3uH4ZM20LGQJ3FYhLQQUYn4Lg0B-YMr7Y1L66TAsA@mail.gmail.com>
- <20190711171808.GF25807@ziepe.ca>
- <20190711173030.GA844@archlinux-threadripper>
- <20190823142427.GD12968@ziepe.ca>
- <20190826153800.GA4752@archlinux-threadripper>
- <20190826154228.GE27349@ziepe.ca>
- <20190826233829.GA36284@archlinux-threadripper>
- <20190827150830.brsvsoopxut2od66@treble>
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <20190728152617.7308-1-me@sam.st>
+ <alpine.DEB.2.21.1908232343470.1939@nanos.tec.linutronix.de>
+ <20190827140055.GA6291@redhat.com>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Message-ID: <15c5d9f6-6429-4775-05af-8a956d44a9ef@gmail.com>
+Date:   Tue, 27 Aug 2019 18:03:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827150830.brsvsoopxut2od66@treble>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190827140055.GA6291@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 10:08:30AM -0500, Josh Poimboeuf wrote:
-> On Mon, Aug 26, 2019 at 04:38:29PM -0700, Nathan Chancellor wrote:
-> > Looks like that comes from tune_qsfp, which gets inlined into
-> > tune_serdes but I am far from an objtool expert so I am not
-> > really sure what kind of issues I am looking for. Adding Josh
-> > and Peter for a little more visibility.
-> >
-> > Here is the original .o file as well:
-> >
-> > https://github.com/nathanchance/creduce-files/raw/4e252c0ca19742c90be1445e6c722a43ae561144/rdma-objtool/platform.o.orig
->
->      574:       0f 87 00 0c 00 00       ja     117a <tune_serdes+0xdfa>
->
-> It's jumping to la-la-land past the end of the function.
+Hi Oleg,
 
-How is it possible?
+On 8/27/19 3:00 PM, Oleg Nesterov wrote:
+[..]
+> But to remind, there is another problem with in_ia32_syscall() && uprobes.
+> 
+> get_unmapped_area() paths use in_ia32_syscall() and this is wrong in case
+> when the caller is xol_add_vma(), in this case TS_COMPAT won't be set.>
+> Usually the addr = TASK_SIZE - PAGE_SIZE passed to get_unmapped_area() should
+> work, mm->get_unmapped_area() won't be even called. But if this addr is already
+> occupied get_area() can return addr > TASK_SIZE.
 
-Thanks
+Technically, it's not bigger than TASK_SIZE that's supplied
+get_unmapped_area() as an argument..
 
->
-> --
-> Josh
+[..]
+>  	if (!area->vaddr) {
+> +		if(!is_64bit_mm(mm))
+> +			current_thread_info()->status |= TS_COMPAT;
+>  		/* Try to map as high as possible, this is only a hint. */
+>  		area->vaddr = get_unmapped_area(NULL, TASK_SIZE - PAGE_SIZE,
+>  						PAGE_SIZE, 0, 0);
+> +		if(!is_64bit_mm(mm))
+> +			current_thread_info()->status &= ~TS_COMPAT;;
+>  		if (area->vaddr & ~PAGE_MASK) {
+>  			ret = area->vaddr;
+>  			goto fail;
+
+It could have been TASK_SIZE_OF(), but that would be not much better in
+my POV. I see that arch_uprobe_analyze_insn() uses is_64bit_mm() which
+is correct the majority of time, but not for processes those jump
+switching CS.. Except criu afair there are at least wine, dosemu.
+I had it in my TODO to fix this :)
+
+Do I read the code properly and xol is always one page?
+Could that page be reserved on the top of mmap_base/mmap_compat_base at
+the binfmt loading time? (I would need than to add .mremap() for
+restoring sake). Probably, not reserving it if personality doesn't allow
+randomization or providing a way to disable it..
+
+Thanks,
+          Dmitry
