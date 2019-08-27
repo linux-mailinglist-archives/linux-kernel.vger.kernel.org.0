@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26D759DFF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42DC09DF46
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:52:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731166AbfH0H7R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:59:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52330 "EHLO mail.kernel.org"
+        id S1729622AbfH0Hwx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:52:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729532AbfH0H7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:59:09 -0400
+        id S1729596AbfH0Hwt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:52:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48A1F2186A;
-        Tue, 27 Aug 2019 07:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3161223406;
+        Tue, 27 Aug 2019 07:52:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892747;
-        bh=3nGdYiL/0uyN+SuzBHF4r3mAJbKh7IcGqCD9ZDmQih0=;
+        s=default; t=1566892368;
+        bh=HKWTmzBr6QwxBD6e2SZEEs4GDcyNy+TTL8HR53n/OQQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJDNjLPSaebd9Je5KeUE+q267ZWjuMQpPGBUh1Xf/bPjOP6wGwr5B6qWDkqu0nYwX
-         9jS0ejsxO4oMpyAfmi75hRdLTnlICUvYBsS6o59Sd1cQ4/UlOaiKI18do50RR9gvpl
-         RFCyFb56yePszS3WDtbhwO7q/u/BT54/Wgy6bFRE=
+        b=av7tgDEO/GqWpYQrI9UGrHrB2I1TitCM/xZOwkfmDXNBQZI6/iNrYxkLz6OEiMwcK
+         3Uf+v4i0GRHMmwsuTVz3XUI3EfiGz3/vA+/CRAfmaKHljcjpJHpUY/tM0RvRenKqqT
+         YDwT+8fxwik2lQX8mCel5ymg7aNl67tathhOPIhM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Deepak Rawat <drawat@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 57/98] KVM: arm: Dont write junk to CP15 registers on reset
+Subject: [PATCH 4.14 31/62] drm/vmwgfx: fix memory leak when too many retries have occurred
 Date:   Tue, 27 Aug 2019 09:50:36 +0200
-Message-Id: <20190827072721.307307069@linuxfoundation.org>
+Message-Id: <20190827072702.539257121@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
+In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
+References: <20190827072659.803647352@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,81 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c69509c70aa45a8c4954c88c629a64acf4ee4a36 ]
+[ Upstream commit 6b7c3b86f0b63134b2ab56508921a0853ffa687a ]
 
-At the moment, the way we reset CP15 registers is mildly insane:
-We write junk to them, call the reset functions, and then check that
-we have something else in them.
+Currently when too many retries have occurred there is a memory
+leak on the allocation for reply on the error return path. Fix
+this by kfree'ing reply before returning.
 
-The "fun" thing is that this can happen while the guest is running
-(PSCI, for example). If anything in KVM has to evaluate the state
-of a CP15 register while junk is in there, bad thing may happen.
-
-Let's stop doing that. Instead, we track that we have called a
-reset function for that register, and assume that the reset
-function has done something.
-
-In the end, the very need of this reset check is pretty dubious,
-as it doesn't check everything (a lot of the CP15 reg leave outside
-of the cp15_regs[] array). It may well be axed in the near future.
-
-Signed-off-by: Marc Zyngier <maz@kernel.org>
+Addresses-Coverity: ("Resource leak")
+Fixes: a9cd9c044aa9 ("drm/vmwgfx: Add a check to handle host message failure")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Signed-off-by: Deepak Rawat <drawat@vmware.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kvm/coproc.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/kvm/coproc.c b/arch/arm/kvm/coproc.c
-index fd6cde23bb5d0..871fa50a09f19 100644
---- a/arch/arm/kvm/coproc.c
-+++ b/arch/arm/kvm/coproc.c
-@@ -658,13 +658,22 @@ int kvm_handle_cp14_64(struct kvm_vcpu *vcpu, struct kvm_run *run)
- }
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
+index 97000996b8dc5..50cc060cc552a 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
+@@ -300,8 +300,10 @@ static int vmw_recv_msg(struct rpc_channel *channel, void **msg,
+ 		break;
+ 	}
  
- static void reset_coproc_regs(struct kvm_vcpu *vcpu,
--			      const struct coproc_reg *table, size_t num)
-+			      const struct coproc_reg *table, size_t num,
-+			      unsigned long *bmap)
- {
- 	unsigned long i;
+-	if (retries == RETRIES)
++	if (retries == RETRIES) {
++		kfree(reply);
+ 		return -EINVAL;
++	}
  
- 	for (i = 0; i < num; i++)
--		if (table[i].reset)
-+		if (table[i].reset) {
-+			int reg = table[i].reg;
-+
- 			table[i].reset(vcpu, &table[i]);
-+			if (reg > 0 && reg < NR_CP15_REGS) {
-+				set_bit(reg, bmap);
-+				if (table[i].is_64bit)
-+					set_bit(reg + 1, bmap);
-+			}
-+		}
- }
- 
- static struct coproc_params decode_32bit_hsr(struct kvm_vcpu *vcpu)
-@@ -1439,17 +1448,15 @@ void kvm_reset_coprocs(struct kvm_vcpu *vcpu)
- {
- 	size_t num;
- 	const struct coproc_reg *table;
--
--	/* Catch someone adding a register without putting in reset entry. */
--	memset(vcpu->arch.ctxt.cp15, 0x42, sizeof(vcpu->arch.ctxt.cp15));
-+	DECLARE_BITMAP(bmap, NR_CP15_REGS) = { 0, };
- 
- 	/* Generic chip reset first (so target could override). */
--	reset_coproc_regs(vcpu, cp15_regs, ARRAY_SIZE(cp15_regs));
-+	reset_coproc_regs(vcpu, cp15_regs, ARRAY_SIZE(cp15_regs), bmap);
- 
- 	table = get_target_table(vcpu->arch.target, &num);
--	reset_coproc_regs(vcpu, table, num);
-+	reset_coproc_regs(vcpu, table, num, bmap);
- 
- 	for (num = 1; num < NR_CP15_REGS; num++)
--		WARN(vcpu_cp15(vcpu, num) == 0x42424242,
-+		WARN(!test_bit(num, bmap),
- 		     "Didn't reset vcpu_cp15(vcpu, %zi)", num);
- }
+ 	*msg_len = reply_len;
+ 	*msg     = reply;
 -- 
 2.20.1
 
