@@ -2,189 +2,300 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2DFB9DFE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:58:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98A379DFF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731052AbfH0H6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:58:41 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:54991 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731007AbfH0H63 (ORCPT
+        id S1730449AbfH0H64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:58:56 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31304 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731056AbfH0H6o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:58:29 -0400
-Received: from cpc129250-craw9-2-0-cust139.know.cable.virginm.net ([82.43.126.140] helo=[192.168.0.11])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1i2WN1-0001L3-Bk; Tue, 27 Aug 2019 07:58:27 +0000
-To:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-        linux-wireless@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190822133524.6274-1-colin.king@canonical.com>
- <d3c16158-ef89-f5ee-2f67-4357c70e8fe9@lwfinger.net>
- <31258833-174f-080b-489e-85d3556bd1de@canonical.com>
- <f1aa1f6f-d293-c2cd-d1fc-a6b10d49a1bb@lwfinger.net>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Subject: Re: [PATCH] bcma: fix incorrect update of BCMA_CORE_PCI_MDIO_DATA
-Message-ID: <a29bf743-f913-c129-8789-0091ec137491@canonical.com>
-Date:   Tue, 27 Aug 2019 08:58:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 27 Aug 2019 03:58:44 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7R7w8hq072864
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 03:58:43 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2umxj8vsrx-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 03:58:42 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 27 Aug 2019 08:58:41 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 27 Aug 2019 08:58:36 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7R7wZv544892514
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Aug 2019 07:58:35 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2115911C058;
+        Tue, 27 Aug 2019 07:58:35 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BA1F411C050;
+        Tue, 27 Aug 2019 07:58:33 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.59])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 27 Aug 2019 07:58:33 +0000 (GMT)
+Date:   Tue, 27 Aug 2019 10:58:32 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Alan Kao <alankao@andestech.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Gary Guo <gary@garyguo.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-riscv@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 2/2] RISC-V: Add basic support for SBI v0.2
+References: <20190826233256.32383-1-atish.patra@wdc.com>
+ <20190826233256.32383-3-atish.patra@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <f1aa1f6f-d293-c2cd-d1fc-a6b10d49a1bb@lwfinger.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826233256.32383-3-atish.patra@wdc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19082707-4275-0000-0000-0000035DCFDC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082707-4276-0000-0000-0000386FFF65
+Message-Id: <20190827075831.GD682@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-26_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908270089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/08/2019 17:38, Larry Finger wrote:
-> On 8/22/19 11:11 AM, Colin Ian King wrote:
->> On 22/08/2019 17:03, Larry Finger wrote:
->>> On 8/22/19 8:35 AM, Colin King wrote:
->>>> From: Colin Ian King <colin.king@canonical.com>
->>>>
->>>> An earlier commit re-worked the setting of the bitmask and is now
->>>> assigning v with some bit flags rather than bitwise or-ing them
->>>> into v, consequently the earlier bit-settings of v are being lost.
->>>> Fix this by replacing an assignment with the bitwise or instead.
->>>>
->>>> Addresses-Coverity: ("Unused value")
->>>> Fixes: 2be25cac8402 ("bcma: add constants for PCI and use them")
->>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>>> ---
->>>>    drivers/bcma/driver_pci.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/bcma/driver_pci.c b/drivers/bcma/driver_pci.c
->>>> index f499a469e66d..d219ee947c07 100644
->>>> --- a/drivers/bcma/driver_pci.c
->>>> +++ b/drivers/bcma/driver_pci.c
->>>> @@ -78,7 +78,7 @@ static u16 bcma_pcie_mdio_read(struct bcma_drv_pci
->>>> *pc, u16 device, u8 address)
->>>>            v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
->>>>        }
->>>>    -    v = BCMA_CORE_PCI_MDIODATA_START;
->>>> +    v |= BCMA_CORE_PCI_MDIODATA_START;
->>>>        v |= BCMA_CORE_PCI_MDIODATA_READ;
->>>>        v |= BCMA_CORE_PCI_MDIODATA_TA;
->>>
->>> I'm not sure the "Fixes" attribute is correct.
->>>
->>> The changes for this section in commit 2be25cac8402 are
->>>
->>> -       v = (1 << 30); /* Start of Transaction */
->>> -       v |= (1 << 28); /* Write Transaction */
->>> -       v |= (1 << 17); /* Turnaround */
->>> -       v |= (0x1F << 18);
->>> +       v = BCMA_CORE_PCI_MDIODATA_START;
->>> +       v |= BCMA_CORE_PCI_MDIODATA_WRITE;
->>> +       v |= (BCMA_CORE_PCI_MDIODATA_DEV_ADDR <<
->>> +             BCMA_CORE_PCI_MDIODATA_DEVADDR_SHF);
->>> +       v |= (BCMA_CORE_PCI_MDIODATA_BLK_ADDR <<
->>> +             BCMA_CORE_PCI_MDIODATA_REGADDR_SHF);
->>> +       v |= BCMA_CORE_PCI_MDIODATA_TA;
->>>
->>> Because the code has done quite a bit of work on v just above this
->>> section, I agree that this is likely an error, but that error happened
->>> in an earlier commit. Thus 2be25cac8402 did not introduce the error,
->>> merely copied it.
-
-I did a second look at Larry's comments above and realized the code he
-is referring to is in bcma_pcie_mdio_set_phy which is OK
-
-Instead, the code I'm fixing is in bcma_pcie_mdio_read, which was broken
-by commit 2be25cac8402fab56bb51166f464d1b420bcf744
-
-        if (pc->core->id.rev >= 10) {
-                max_retries = 200;
-                bcma_pcie_mdio_set_phy(pc, device);
-+               v = (BCMA_CORE_PCI_MDIODATA_DEV_ADDR <<
-+                    BCMA_CORE_PCI_MDIODATA_DEVADDR_SHF);
-+               v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF);
-+       } else {
-+               v = (device << BCMA_CORE_PCI_MDIODATA_DEVADDR_SHF_OLD);
-+               v |= (address << BCMA_CORE_PCI_MDIODATA_REGADDR_SHF_OLD);
-        }
-
--       v = (1 << 30); /* Start of Transaction */
--       v |= (1 << 29); /* Read Transaction */
--       v |= (1 << 17); /* Turnaround */
--       if (pc->core->id.rev < 10)
--               v |= (u32)device << 22;
--       v |= (u32)address << 18;
--       pcicore_write32(pc, mdio_data, v);
-+       v = BCMA_CORE_PCI_MDIODATA_START;
-+       v |= BCMA_CORE_PCI_MDIODATA_READ;
-+       v |= BCMA_CORE_PCI_MDIODATA_TA;
-+
-+       pcicore_write32(pc, BCMA_CORE_PCI_MDIO_DATA, v);
-
-
->>
->> Ugh, this goes back further. I didn't spot that. I'm less confident of
->> what the correct settings should be now.
->>
->>>
->>> Has this change been tested?
->>
->> Afraid not, I don't have the H/W.
+On Mon, Aug 26, 2019 at 04:32:56PM -0700, Atish Patra wrote:
+> The SBI v0.2 introduces a base extension which is backward compatible
+> with v0.1. Implement all helper functions and minimum required SBI
+> calls from v0.2 for now. All other base extension function will be
+> added later as per need.
 > 
-> I admit that I looked at this only because I found it hard to believe
-> that the collective wisdom of the list would have missed the usage of
-> "=" instead of "|=". At least that test was passed. :)
-
-Maybe not after all :-)
-
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  arch/riscv/include/asm/sbi.h | 68 +++++++++++++++++++++++++++++-------
+>  arch/riscv/kernel/Makefile   |  1 +
+>  arch/riscv/kernel/sbi.c      | 50 ++++++++++++++++++++++++++
+>  arch/riscv/kernel/setup.c    |  2 ++
+>  4 files changed, 108 insertions(+), 13 deletions(-)
+>  create mode 100644 arch/riscv/kernel/sbi.c
 > 
-> Larry
-> 
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index 7f5ecaaaa0d7..4a4476956693 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -8,7 +8,6 @@
+>  
+>  #include <linux/types.h>
+>  
+> -
+>  #define SBI_EXT_LEGACY_SET_TIMER 0x0
+>  #define SBI_EXT_LEGACY_CONSOLE_PUTCHAR 0x1
+>  #define SBI_EXT_LEGACY_CONSOLE_GETCHAR 0x2
+> @@ -19,28 +18,61 @@
+>  #define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA_ASID 0x7
+>  #define SBI_EXT_LEGACY_SHUTDOWN 0x8
+>  
+> -#define SBI_CALL_LEGACY(which, arg0, arg1, arg2, arg3) ({             \
+> +#define SBI_EXT_BASE 0x10
+> +
+> +enum sbi_ext_base_fid {
+> +	SBI_EXT_BASE_GET_SPEC_VERSION = 0,
+> +	SBI_EXT_BASE_GET_IMP_ID,
+> +	SBI_EXT_BASE_GET_IMP_VERSION,
+> +	SBI_EXT_BASE_PROBE_EXT,
+> +	SBI_EXT_BASE_GET_MVENDORID,
+> +	SBI_EXT_BASE_GET_MARCHID,
+> +	SBI_EXT_BASE_GET_MIMPID,
+> +};
+> +
+> +#define SBI_CALL_LEGACY(ext, fid, arg0, arg1, arg2, arg3) ({	\
+>  	register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);	\
+>  	register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);	\
+>  	register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);	\
+>  	register uintptr_t a3 asm ("a3") = (uintptr_t)(arg3);	\
+> -	register uintptr_t a7 asm ("a7") = (uintptr_t)(which);	\
+> +	register uintptr_t a6 asm ("a6") = (uintptr_t)(fid);	\
+> +	register uintptr_t a7 asm ("a7") = (uintptr_t)(ext);	\
+>  	asm volatile ("ecall"					\
+> -		      : "+r" (a0)				\
+> -		      : "r" (a1), "r" (a2), "r" (a3), "r" (a7)	\
+> +		      : "+r" (a0), "+r" (a1)			\
+> +		      : "r" (a2), "r" (a3), "r" (a6), "r" (a7) \
 
-I'll send a V2 with the write fix, and the same fixes commit sha
+Maybe I'm missing something, but how is this supposed to work on systems
+with SBI v0.1? Wouldn't this cause a mismatch in the registers?
+
+>  		      : "memory");				\
+>  	a0;							\
+>  })
+>  
+>  /* Lazy implementations until SBI is finalized */
+> -#define SBI_CALL_LEGACY_0(which) SBI_CALL_LEGACY(which, 0, 0, 0, 0)
+> -#define SBI_CALL_LEGACY_1(which, arg0) SBI_CALL_LEGACY(which, arg0, 0, 0, 0)
+> -#define SBI_CALL_LEGACY_2(which, arg0, arg1) \
+> -		SBI_CALL_LEGACY(which, arg0, arg1, 0, 0)
+> -#define SBI_CALL_LEGACY_3(which, arg0, arg1, arg2) \
+> -		SBI_CALL_LEGACY(which, arg0, arg1, arg2, 0)
+> -#define SBI_CALL_LEGACY_4(which, arg0, arg1, arg2, arg3) \
+> -		SBI_CALL_LEGACY(which, arg0, arg1, arg2, arg3)
+> +#define SBI_CALL_LEGACY_0(ext) SBI_CALL_LEGACY(ext, 0, 0, 0, 0, 0)
+> +#define SBI_CALL_LEGACY_1(ext, arg0) SBI_CALL_LEGACY(ext, 0, arg0, 0, 0, 0)
+> +#define SBI_CALL_LEGACY_2(ext, arg0, arg1) \
+> +		SBI_CALL_LEGACY(ext, 0, arg0, arg1, 0, 0)
+> +#define SBI_CALL_LEGACY_3(ext, arg0, arg1, arg2) \
+> +		SBI_CALL_LEGACY(ext, 0, arg0, arg1, arg2, 0)
+> +#define SBI_CALL_LEGACY_4(ext, arg0, arg1, arg2, arg3) \
+> +		SBI_CALL_LEGACY(ext, 0, arg0, arg1, arg2, arg3)
+> +
+> +extern unsigned long sbi_firmware_version;
+> +struct sbiret {
+> +	long error;
+> +	long value;
+> +};
+> +
+> +void riscv_sbi_init(void);
+> +struct sbiret riscv_sbi_ecall(int ext, int fid, int arg0, int arg1,
+> +			       int arg2, int arg3);
+> +
+> +#define SBI_CALL_0(ext, fid) riscv_sbi_ecall(ext, fid, 0, 0, 0, 0)
+> +#define SBI_CALL_1(ext, fid, arg0) riscv_sbi_ecall(ext, fid, arg0, 0, 0, 0)
+> +#define SBI_CALL_2(ext, fid, arg0, arg1) \
+> +		riscv_sbi_ecall(ext, fid, arg0, arg1, 0, 0)
+> +#define SBI_CALL_3(ext, fid, arg0, arg1, arg2) \
+> +		riscv_sbi_ecall(ext, fid, arg0, arg1, arg2, 0)
+> +#define SBI_CALL_4(ext, fid, arg0, arg1, arg2, arg3) \
+> +		riscv_sbi_ecall(ext, fid, arg0, arg1, arg2, arg3)
+> +
+>  
+>  static inline void sbi_console_putchar(int ch)
+>  {
+> @@ -99,4 +131,14 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+>  			  start, size, asid);
+>  }
+>  
+> +static inline unsigned long riscv_sbi_major_version(void)
+> +{
+> +	return (sbi_firmware_version >> 24) & 0x7f;
+> +}
+> +
+> +static inline unsigned long riscv_sbi_minor_version(void)
+> +{
+> +	return sbi_firmware_version & 0xffffff;
+> +}
+> +
+>  #endif
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index 2420d37d96de..faf862d26924 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -17,6 +17,7 @@ obj-y	+= irq.o
+>  obj-y	+= process.o
+>  obj-y	+= ptrace.o
+>  obj-y	+= reset.o
+> +obj-y	+= sbi.o
+>  obj-y	+= setup.o
+>  obj-y	+= signal.o
+>  obj-y	+= syscall_table.o
+> diff --git a/arch/riscv/kernel/sbi.c b/arch/riscv/kernel/sbi.c
+> new file mode 100644
+> index 000000000000..457b8cc0e9d9
+> --- /dev/null
+> +++ b/arch/riscv/kernel/sbi.c
+> @@ -0,0 +1,50 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * SBI initialilization and base extension implementation.
+> + *
+> + * Copyright (c) 2019 Western Digital Corporation or its affiliates.
+> + */
+> +
+> +#include <asm/sbi.h>
+> +#include <linux/sched.h>
+> +
+> +unsigned long sbi_firmware_version;
+> +
+> +struct sbiret riscv_sbi_ecall(int ext, int fid, int arg0, int arg1,
+> +			     int arg2, int arg3)
+> +{
+> +	struct sbiret ret;
+> +
+> +	register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);
+> +	register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);
+> +	register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);
+> +	register uintptr_t a3 asm ("a3") = (uintptr_t)(arg3);
+> +	register uintptr_t a6 asm ("a6") = (uintptr_t)(fid);
+> +	register uintptr_t a7 asm ("a7") = (uintptr_t)(ext);
+> +	asm volatile ("ecall"
+> +		      : "+r" (a0), "+r" (a1)
+> +		      : "r" (a2), "r" (a3), "r" (a6), "r" (a7)
+> +		      : "memory");
+> +	ret.error = a0;
+> +	ret.value = a1;
+> +
+> +	return ret;
+> +}
+> +
+> +static struct sbiret sbi_get_spec_version(void)
+> +{
+> +	return SBI_CALL_0(SBI_EXT_BASE, SBI_EXT_BASE_GET_SPEC_VERSION);
+> +}
+> +
+> +void riscv_sbi_init(void)
+> +{
+> +	struct sbiret ret;
+> +
+> +	/* legacy SBI version*/
+> +	sbi_firmware_version = 0x1;
+> +	ret = sbi_get_spec_version();
+> +	if (!ret.error)
+> +		sbi_firmware_version = ret.value;
+> +	pr_info("SBI version implemented in firmware [%lu:%lu]\n",
+> +		riscv_sbi_major_version(), riscv_sbi_minor_version());
+> +}
+> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> index a990a6cb184f..4c324fd398c8 100644
+> --- a/arch/riscv/kernel/setup.c
+> +++ b/arch/riscv/kernel/setup.c
+> @@ -21,6 +21,7 @@
+>  #include <asm/sections.h>
+>  #include <asm/pgtable.h>
+>  #include <asm/smp.h>
+> +#include <asm/sbi.h>
+>  #include <asm/tlbflush.h>
+>  #include <asm/thread_info.h>
+>  
+> @@ -70,6 +71,7 @@ void __init setup_arch(char **cmdline_p)
+>  	swiotlb_init(1);
+>  #endif
+>  
+> +	riscv_sbi_init();
+>  #ifdef CONFIG_SMP
+>  	setup_smp();
+>  #endif
+> -- 
+> 2.21.0
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+-- 
+Sincerely yours,
+Mike.
+
