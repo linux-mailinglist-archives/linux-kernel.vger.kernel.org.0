@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABE0F9E135
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52BF99E132
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731525AbfH0IC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:02:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
+        id S1731241AbfH0ICa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:02:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729940AbfH0ICK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:02:10 -0400
+        id S1731872AbfH0ICM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:02:12 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AF2020828;
-        Tue, 27 Aug 2019 08:02:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A7722189D;
+        Tue, 27 Aug 2019 08:02:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892929;
-        bh=pyrg+z/7eKmpFw42kpMU9376OOflt9hc68pQE0WBeIs=;
+        s=default; t=1566892931;
+        bh=pGPT17zemIypPs4484MhBsruKNxsWbR1OeIuUDDVENw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZHVMloqXoPzx4dgz68BMFfa9oNK8S3A0oI9BEls452rtrd6SeFfST5TCjD50J4FB/
-         tSr+WuZmHekJrDpt3rAuKF61bGNPCKds9wplDMZIBAkalc6CQSIzVU2ozD8GIZN4e0
-         ewTLkPkwfTFHbkIYJeGVB+nP7ZhkPXgbJy8ISNv8=
+        b=HUHHp5qBW/PWFZOqNADm6NNTHPfJWdm4eiSL1DeL8wpI1iJXnJ6E4p2zNdRiVTvMV
+         vG9M0UxLZ2hrjj2NlxTAlWjygwuO0d0li8Rrc0q2RFhj+W6HXVm9x8YsL5S7BP6H+a
+         wmF1jmrijLfLczagEEs5WGOg95C/X4+Rn3KtwFeQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 020/162] spi: pxa2xx: Balance runtime PM enable/disable on error
-Date:   Tue, 27 Aug 2019 09:49:08 +0200
-Message-Id: <20190827072739.027638612@linuxfoundation.org>
+Subject: [PATCH 5.2 021/162] bpf: sockmap, sock_map_delete needs to use xchg
+Date:   Tue, 27 Aug 2019 09:49:09 +0200
+Message-Id: <20190827072739.059531604@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -44,47 +44,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1274204542f683e1d8491ebe9cc86284d5a8ebcc ]
+[ Upstream commit 45a4521dcbd92e71c9e53031b40e34211d3b4feb ]
 
-Don't undo the PM initialization if we error out before we managed to
-initialize it. The call to pm_runtime_disable() without being preceded
-by pm_runtime_enable() would disturb the balance of the Force.
+__sock_map_delete() may be called from a tcp event such as unhash or
+close from the following trace,
 
-In practice, this happens if we fail to allocate any of the GPIOS ("cs",
-"ready") due to -EPROBE_DEFER because we're getting probled before the
-GPIO driver.
+  tcp_bpf_close()
+    tcp_bpf_remove()
+      sk_psock_unlink()
+        sock_map_delete_from_link()
+          __sock_map_delete()
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Link: https://lore.kernel.org/r/20190719122713.3444318-1-lkundrak@v3.sk
-Signed-off-by: Mark Brown <broonie@kernel.org>
+In this case the sock lock is held but this only protects against
+duplicate removals on the TCP side. If the map is free'd then we have
+this trace,
+
+  sock_map_free
+    xchg()                  <- replaces map entry
+    sock_map_unref()
+      sk_psock_put()
+        sock_map_del_link()
+
+The __sock_map_delete() call however uses a read, test, null over the
+map entry which can result in both paths trying to free the map
+entry.
+
+To fix use xchg in TCP paths as well so we avoid having two references
+to the same map entry.
+
+Fixes: 604326b41a6fb ("bpf, sockmap: convert to generic sk_msg interface")
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-pxa2xx.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/core/sock_map.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index af3f37ba82c83..c1af8887d9186 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -1817,14 +1817,16 @@ static int pxa2xx_spi_probe(struct platform_device *pdev)
- 	status = devm_spi_register_controller(&pdev->dev, controller);
- 	if (status != 0) {
- 		dev_err(&pdev->dev, "problem registering spi controller\n");
--		goto out_error_clock_enabled;
-+		goto out_error_pm_runtime_enabled;
- 	}
+diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+index be6092ac69f8a..1d40e040320d2 100644
+--- a/net/core/sock_map.c
++++ b/net/core/sock_map.c
+@@ -281,16 +281,20 @@ static int __sock_map_delete(struct bpf_stab *stab, struct sock *sk_test,
+ 			     struct sock **psk)
+ {
+ 	struct sock *sk;
++	int err = 0;
  
- 	return status;
- 
--out_error_clock_enabled:
-+out_error_pm_runtime_enabled:
- 	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
+ 	raw_spin_lock_bh(&stab->lock);
+ 	sk = *psk;
+ 	if (!sk_test || sk_test == sk)
+-		*psk = NULL;
++		sk = xchg(psk, NULL);
 +
-+out_error_clock_enabled:
- 	clk_disable_unprepare(ssp->clk);
++	if (likely(sk))
++		sock_map_unref(sk, psk);
++	else
++		err = -EINVAL;
++
+ 	raw_spin_unlock_bh(&stab->lock);
+-	if (unlikely(!sk))
+-		return -EINVAL;
+-	sock_map_unref(sk, psk);
+-	return 0;
++	return err;
+ }
  
- out_error_dma_irq_alloc:
+ static void sock_map_delete_from_link(struct bpf_map *map, struct sock *sk,
 -- 
 2.20.1
 
