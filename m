@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70C2F9E040
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA379E050
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:05:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731850AbfH0IBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:01:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58130 "EHLO mail.kernel.org"
+        id S1731935AbfH0ICU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:02:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730187AbfH0IBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:01:41 -0400
+        id S1731381AbfH0ICB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:02:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 596E2206BA;
-        Tue, 27 Aug 2019 08:01:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B842206BA;
+        Tue, 27 Aug 2019 08:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892900;
-        bh=Bmw78oSogBHQLfgSUraUOxCmqO6IB2RkUbvaOhQYRMk=;
+        s=default; t=1566892920;
+        bh=WS+CmDHqzUy2zgz4R2Zrq74rKLhmlrcLhpmKzwlhLK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N3W30cjZCPa+SA2CJQ/v2jPNixL/8i0EHal9hDLehr2hEOU90mOUeT4StZts8wM/U
-         sb4SHLK9zMBrNuGHCpExjUSPvNKWqCHSApAwKqos4IXGMzsJSZd/kBn5ailT/j7Seq
-         Amb8EgYL2HCD6u6l9+n0tTTXk3/TRKOUi2sxkLaY=
+        b=QjoeVbuHxqLuW54PpkjFSbBQ5TFPDrY9piTkUqPXZ+k/ul+L5ReSq6BvPPJYGrizU
+         1Ta6MVFKhFIc1R7lK4WlQbevfGdBLVtdXmawtogtB8Mp6fhTUKc1i4tVJUVyRnDn4X
+         evqurtm/7HmaLuXD3EO6i8TvE3TCttwTAfMTIFf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 016/162] libbpf: sanitize VAR to conservative 1-byte INT
-Date:   Tue, 27 Aug 2019 09:49:04 +0200
-Message-Id: <20190827072738.902407844@linuxfoundation.org>
+Subject: [PATCH 5.2 017/162] netfilter: ebtables: fix a memory leak bug in compat
+Date:   Tue, 27 Aug 2019 09:49:05 +0200
+Message-Id: <20190827072738.932000832@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -44,40 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1d4126c4e1190d2f7d3f388552f9bd17ae0c64fc ]
+[ Upstream commit 15a78ba1844a8e052c1226f930133de4cef4e7ad ]
 
-If VAR in non-sanitized BTF was size less than 4, converting such VAR
-into an INT with size=4 will cause BTF validation failure due to
-violationg of STRUCT (into which DATASEC was converted) member size.
-Fix by conservatively using size=1.
+In compat_do_replace(), a temporary buffer is allocated through vmalloc()
+to hold entries copied from the user space. The buffer address is firstly
+saved to 'newinfo->entries', and later on assigned to 'entries_tmp'. Then
+the entries in this temporary buffer is copied to the internal kernel
+structure through compat_copy_entries(). If this copy process fails,
+compat_do_replace() should be terminated. However, the allocated temporary
+buffer is not freed on this path, leading to a memory leak.
 
-Signed-off-by: Andrii Nakryiko <andriin@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+To fix the bug, free the buffer before returning from compat_do_replace().
+
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Reviewed-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/bpf/libbpf.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/bridge/netfilter/ebtables.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 3865a5d272514..77e14d9954796 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -1044,8 +1044,13 @@ static void bpf_object__sanitize_btf(struct bpf_object *obj)
- 		if (!has_datasec && kind == BTF_KIND_VAR) {
- 			/* replace VAR with INT */
- 			t->info = BTF_INFO_ENC(BTF_KIND_INT, 0, 0);
--			t->size = sizeof(int);
--			*(int *)(t+1) = BTF_INT_ENC(0, 0, 32);
-+			/*
-+			 * using size = 1 is the safest choice, 4 will be too
-+			 * big and cause kernel BTF validation failure if
-+			 * original variable took less than 4 bytes
-+			 */
-+			t->size = 1;
-+			*(int *)(t+1) = BTF_INT_ENC(0, 0, 8);
- 		} else if (!has_datasec && kind == BTF_KIND_DATASEC) {
- 			/* replace DATASEC with STRUCT */
- 			struct btf_var_secinfo *v = (void *)(t + 1);
+diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+index 1fa9ac483173d..c8177a89f52c3 100644
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -2267,8 +2267,10 @@ static int compat_do_replace(struct net *net, void __user *user,
+ 	state.buf_kern_len = size64;
+ 
+ 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
+-	if (WARN_ON(ret < 0))
++	if (WARN_ON(ret < 0)) {
++		vfree(entries_tmp);
+ 		goto out_unlock;
++	}
+ 
+ 	vfree(entries_tmp);
+ 	tmp.entries_size = size64;
 -- 
 2.20.1
 
