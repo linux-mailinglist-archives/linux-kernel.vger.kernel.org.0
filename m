@@ -2,85 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E0AE9E3D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 11:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95BA39E3C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 11:17:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfH0JTd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 05:19:33 -0400
-Received: from sonic313-13.consmr.mail.bf2.yahoo.com ([74.6.133.123]:33515
-        "EHLO sonic313-13.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726059AbfH0JTd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 05:19:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1566897572; bh=yqDabFs/2ajL4+uqvl75CNrBfWTfbOsHh54Xr0A4zFM=; h=Date:From:Reply-To:Subject:From:Subject; b=C6dap/RfLrk/cntXBvLS87DmoED1nXnVf3cqkYtd9Er0e7UolW6OSB6u0Z15I5PwBxKBaS9xb9sam3yK2+Bgs/oR+GQFue+DPK8rtlKdQOGFNf0OA09Es6R4AXp9lWWbjgCxDsa6EPUPO1IHEkSZ4vWpzCPYFGu5HsBzB1VxKgRtMzWIrAG/71RMfBh3mKzmxNV5O9Cia/YUAwRSJVKhl4veGFQDGA9bCMdOzeqMrxbeb0UQQ5AWP5jfnHorwwbXSxKPWRKJXwvzVDt0av/kUTxQ5y5TC1LWOSC5naov0c1p5LGXlnl0CJLDjUBsP7YiGFlta4GINTCTLl2BfqLlUQ==
-X-YMail-OSG: UZ5CBhgVM1mpP5mMN_fOTiMOOJ7Fpk_MTTERi8A3TNSUIvs3BIzZ.FYrHzNkEvo
- Kma77TnOyRTe_k874DG_XI4VKG8XQLqsSRhilbfjKpoFddq8FQnn7c7YKgb87guJ3NJ.lYtlW9R5
- QGKyyWwckhofBYx5hW5tIXS9lct59aD5xXGiOLwg6P7ZsSEq63VldaIiINmxvIorZECmXcc02kha
- Q9UGS_XhFqjY5_SASND8vuC0KQ1RIZRnVXQ2YJ8r2.yoPqI2.UOzJlFeFOmKJ2Vl.Je9XODO0VpV
- 9kOP3qKHTTH7aqstFPrFIGq0d2n3W040DpnLQXo4iUmURht9hQHdjDzp0LTTC1TVKuIg4tFoE.2d
- 6w5A6kRzDSfmSYCIkoREY.2zDabfYyxiwft9KX5HTR9U563HfS5DncWOwZ2bL4gSV2VhD5LMDYHi
- x1I8MtrvM7ZCuKv1zkQPBI4TM5mI8RjBngNokN6ZaTKKJ_Pg9ER_6bHhYxvzjR8eplzJTeodrP3B
- N1c9XrXKrAcSHrMNRoIpCjhE37qy4M1F4gYvdAQ8aOv3zByig.KgKQRS1fi.ocoMEa_NvFeBlzha
- h5I2sChBmZM.B.0Q2pFhE8v30pNRhm62QFsyNiY3ozK7LxSxG1g3RrALiDIA5cYCT1NMjIJ9ibNx
- WgluOo_5WEP2hv2oSVQWTaZ7eb.R1d2QS6Hv0d.ky7DAOc_ZwvvzawtiEY0ctJCmidCkStC92kKo
- cS_C3frNjppEGejO1xg_DnqmsyFev6JDWUOTDO.HWcQU4jhmSTJHrenozbZMeAoWgBRv0fyXOZgx
- 3VAZtRrOzGmZtSzwDtEq50MOawmZvW8T.VEDJKNZk3.kGgnve1oNkxeg0_zGGYPcNpfttQngtsvh
- P8AQe_sSYR_AUX2rYG86LeW_DlYmtMQuarluE99W7IAcGpc9d2j6P_.IO_eClK3A67FG6hL0kFXc
- yHH.PBYwfJe057hLNnNxtZ.giTZuGWhA2eDm72RnIRG9Xo.fDwjsW8gu_FJJbcbJ7k6EsVPuFdY8
- 8gUsmcmJfTfzXWMT1V8Da4vVSGIEjNhPTc7.Kzf.0u6xbAoCaH9cUlH9lrWdwRapGIL66Wox4UN2
- 5HNYK9xJmphro4HTlm8kldPPpQxlNhYKrUUUMxHx0ETH0wzN7aH.6l3KkLMb5Bt.h5YfCatzumCp
- L3H8ar9oiMIxHewvg57p9.ZeptWhJO1qOkchww4.8w2fj2PH9WOML2QMIOdxGsPJG3g--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Tue, 27 Aug 2019 09:19:32 +0000
-Date:   Tue, 27 Aug 2019 09:19:29 +0000 (UTC)
-From:   Elizabeth Edwards <mrselizabethedward1@gmail.com>
-Reply-To: ee3201366@gmail.com
-Message-ID: <2026022299.1863383.1566897569081@mail.yahoo.com>
-Subject: Dear Friend,
+        id S1728726AbfH0JRQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 05:17:16 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35084 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725805AbfH0JRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 05:17:16 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id DA1F6BBEA7E83C558158;
+        Tue, 27 Aug 2019 17:17:12 +0800 (CST)
+Received: from euler.huawei.com (10.175.104.193) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 27 Aug 2019 17:17:07 +0800
+From:   Hongbo Yao <yaohongbo@huawei.com>
+To:     <yaohongbo@huawei.com>, <mchehab@kernel.org>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] media: v4l2-mem2mem: fix potential memory leak in  v4l2_m2m_register_media_controller
+Date:   Tue, 27 Aug 2019 17:27:06 +0800
+Message-ID: <20190827092706.29494-1-yaohongbo@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.193]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When I ran Syzkaller testsuite, I got this warning:
 
+=====================================================================
+SI: 0000000020000580 RDI: 0000000000000003
+BUG: memory leak
+unreferenced object 0xffff8881d6b0a270 (size 8):
+  comm "syz-executor.0", pid 4859, jiffies 4296016954 (age 22.524s)
+  hex dump (first 8 bytes):
+    00 00 00 00 00 00 00 00                          ........
+  backtrace:
+    [<0000000052b54061>] __media_entity_enum_init+0x40/0xb0 [mc]
+    [<000000005c05c865>] media_device_register_entity+0x294/0x3a0 [mc]
+    [<0000000070832883>] v4l2_m2m_register_entity+0x161/0x220
+[v4l2_mem2mem]
+    [<000000004952637a>] v4l2_m2m_register_media_controller+0x72/0x2d0
+[v4l2_mem2mem]
+    [<0000000047350ea2>] 0xffffffffc17c2c1a
+    [<000000006c6d5c0a>] platform_drv_probe+0x7e/0x100
+drivers/base/platform.c:616
+    [<00000000f51bf5fc>] really_probe+0x342/0x4d0 drivers/base/dd.c:548
+    [<000000006960ad55>] driver_probe_device+0x8c/0x170
+drivers/base/dd.c:709
+    [<000000005d3c0ee4>] device_driver_attach+0x99/0xa0
+drivers/base/dd.c:983
+    [<000000007516b430>] __driver_attach+0xc9/0x150
+drivers/base/dd.c:1060
+    [<00000000c3109efd>] bus_for_each_dev+0x115/0x180
+drivers/base/bus.c:304
+    [<00000000d6a6574c>] bus_add_driver+0x29e/0x340
+drivers/base/bus.c:645
+    [<000000002e9ed7c1>] driver_register+0xf7/0x210
+drivers/base/driver.c:170
+    [<00000000090ecd16>] 0xffffffffc17d0030
+    [<0000000020dfefad>] do_one_initcall+0xd4/0x454 init/main.c:939
+    [<00000000e7a758cd>] do_init_module+0xe0/0x330 kernel/module.c:3468
 
-Dear Friend,
+=====================================================================
 
-Please forgive me for stressing you with my predicaments as I know that thi=
-s letter may come to you as big surprise. Actually, as my pastor advised me=
- to reject earthly reward and thanks by handing the project to someone I ha=
-ve never seen or met for a greater reward in heaven awaits for whoever can =
-give such a costly donation. I came across your E-mail from my personal sea=
-rch, and I decided to email you directly believing that you will be honest =
-to fulfill my final wish before or after my death.
+When the first entity was created failed, m2m_dev->source->name will
+never has chance to release.
 
-Meanwhile, I am Madam Elizabeth Edwards, 73 years, am from USA, still child=
-less. I am suffering from Adenocarcinoma Cancer of the lungs for the past 8=
- years and from all indication my condition is really deteriorating as my d=
-octors have confirmed and courageously advised me that I may not live beyon=
-d 2 weeks from now for the reason that my tumor has reached a critical stag=
-e which has defiled all forms of medical treatment.
+Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
+---
+ drivers/media/v4l2-core/v4l2-mem2mem.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Since my days are numbered, I=E2=80=99ve decided willingly to fulfill my lo=
-ng-time vow to donate to the underprivileged the sum of Eighteen million fi=
-ve hundred thousand dollars ($18.5m) I deposited in a different account ove=
-r 8 years now because I have tried to handle this project by myself but I h=
-ave seen that my health could not allow me to do so anymore. My promise for=
- the poor includes building of well-equipped charity foundation hospital an=
-d a technical school for their survival.
+diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c b/drivers/media/v4l2-core/v4l2-mem2mem.c
+index 4f5176702937..c178aaf04b0f 100644
+--- a/drivers/media/v4l2-core/v4l2-mem2mem.c
++++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
+@@ -791,7 +791,7 @@ int v4l2_m2m_register_media_controller(struct v4l2_m2m_dev *m2m_dev,
+ 	ret = v4l2_m2m_register_entity(mdev, m2m_dev,
+ 			MEM2MEM_ENT_TYPE_SOURCE, vdev, MEDIA_ENT_F_IO_V4L);
+ 	if (ret)
+-		return ret;
++		goto err_rel_name;
+ 	ret = v4l2_m2m_register_entity(mdev, m2m_dev,
+ 			MEM2MEM_ENT_TYPE_PROC, vdev, function);
+ 	if (ret)
+@@ -850,12 +850,13 @@ int v4l2_m2m_register_media_controller(struct v4l2_m2m_dev *m2m_dev,
+ 	media_entity_remove_links(m2m_dev->source);
+ err_rel_entity2:
+ 	media_device_unregister_entity(&m2m_dev->proc);
+-	kfree(m2m_dev->proc.name);
+ err_rel_entity1:
+ 	media_device_unregister_entity(&m2m_dev->sink);
+-	kfree(m2m_dev->sink.name);
++	kfree(m2m_dev->proc.name);
+ err_rel_entity0:
+ 	media_device_unregister_entity(m2m_dev->source);
++	kfree(m2m_dev->sink.name);
++err_rel_name:
+ 	kfree(m2m_dev->source->name);
+ 	return ret;
+ 	return 0;
+-- 
+2.17.1
 
-If you will be honest, kind and willing to assist me handle this charity pr=
-oject as I=E2=80=99ve mentioned here, I will like you to provide me your pe=
-rsonal data like. Contact me through this email address (elisabethe1981@mai=
-l.com) and also send me your private email address.
-
-(1) Your full name:
-(2) country:
-(3) phone number:
-(4) Age:
-
-Best Regards!
-Mrs. Elizabeth Edwards
