@@ -2,74 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B04569E3C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 11:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81FC19E3CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 11:18:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729320AbfH0JOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 05:14:16 -0400
-Received: from mga17.intel.com ([192.55.52.151]:32104 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbfH0JOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 05:14:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 02:14:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,436,1559545200"; 
-   d="scan'208";a="380850102"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Aug 2019 02:14:15 -0700
-Received: from [10.226.39.22] (ekotax-mobl.gar.corp.intel.com [10.226.39.22])
-        by linux.intel.com (Postfix) with ESMTP id 121F7580444;
-        Tue, 27 Aug 2019 02:14:12 -0700 (PDT)
-Subject: Re: [PATCH v2 3/3] dwc: PCI: intel: Intel PCIe RC controller driver
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     "Chuan Hua, Lei" <chuanhua.lei@linux.intel.com>,
-        andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        devicetree@vger.kernel.org, gustavo.pimentel@synopsys.com,
-        hch@infradead.org, jingoohan1@gmail.com,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        qi-ming.wu@intel.com
-References: <9bd455a628d4699684c0f9d439b64af1535cccc6.1566208109.git.eswara.kota@linux.intel.com>
- <20190824210302.3187-1-martin.blumenstingl@googlemail.com>
- <2c71003f-06d1-9fe2-2176-94ac816b40e3@linux.intel.com>
- <f1cb5ba9-b57a-971a-5a2f-1f13e0cc9507@linux.intel.com>
- <CAFBinCDojCN0Gxpa0fyh7t8TdvTLc_dwgJgMxC4PoAszK==BKg@mail.gmail.com>
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-Message-ID: <c0bb5bcf-6ccb-d155-7184-a7174bb36bd8@linux.intel.com>
-Date:   Tue, 27 Aug 2019 17:14:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.0
+        id S1729010AbfH0JSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 05:18:55 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:35541 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbfH0JSy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 05:18:54 -0400
+Received: by mail-oi1-f194.google.com with SMTP id a127so14408428oii.2;
+        Tue, 27 Aug 2019 02:18:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OVULxG89XFAHB1HH6NIasvz1p9D2uKsiFcCnfRE8CtE=;
+        b=TRxrPt8vSJP5G11IsVCYVPwBYMAgO7cBB6Ea/g2g+eOIL00XKvRYr2l/K1j40GlxqL
+         xR92uUxLb6zCEU/UdSdrmiwiPj7Md/IGkmHTOq3hPZDQno0nbjQ/1O/Ajri/4KfZJ3XA
+         XfSD56seUZ3f6Ldkgqae5DdcG4HPjIMSSk/OOs+2dYocT1x0VpgZrA2eS2FE2yX3RfiR
+         W+qQf4Nq+8DcYc8HArh4JkerEsnpitM2opeA3FjjaU/gcorEFGyEvZNtMV2QtbySg8Z7
+         RvXRkjYo400GtGdcJwUScgJ9D6oUSVCQP8XaXScboSPxc7vc2Cnu6vm6QJHCelF82fdp
+         hYwg==
+X-Gm-Message-State: APjAAAUT9PsbZiGzl6bnhUeBijEFOHChOATATVCZ2BQCEFUJG7L0frCj
+        82t/S4Wk/KFFWwq55Wt4z744EuBBiMsjkg5HVsoavg==
+X-Google-Smtp-Source: APXvYqznMhXUExLuIctyuUXvUpp1m+dbcAX8l5N1M3gPdd5A2IghYw0lD32NruIo8f1qmoDoeL8ybGZyqyyUyBwsE0I=
+X-Received: by 2002:aca:b154:: with SMTP id a81mr14710961oif.148.1566897533576;
+ Tue, 27 Aug 2019 02:18:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCDojCN0Gxpa0fyh7t8TdvTLc_dwgJgMxC4PoAszK==BKg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190826195740.29415-1-peda@axentia.se> <20190826195740.29415-3-peda@axentia.se>
+ <CAMuHMdVx77aOyUVhZ2_N76VAP+AJ3X8w-gdHLjnjUEeRKcZmOA@mail.gmail.com> <a31ff144-f037-3580-08b5-aa368572c69d@axentia.se>
+In-Reply-To: <a31ff144-f037-3580-08b5-aa368572c69d@axentia.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 27 Aug 2019 11:18:42 +0200
+Message-ID: <CAMuHMdXTm8n=SXyRejT27Q9Vxv0hw5C8DQDXiNM=06aYXq=dgQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] fbdev: fbmem: allow overriding the number of
+ bootup logos
+To:     Peter Rosin <peda@axentia.se>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Peter,
 
-On 8/27/2019 4:14 AM, Martin Blumenstingl wrote:
-> second example: pcie-tegra194 (only in -next, will be part of v5.4)
->    struct tegra_pcie_dw {
->      ...
->      struct dw_pcie pci;
->      ...
->    };
+On Tue, Aug 27, 2019 at 10:54 AM Peter Rosin <peda@axentia.se> wrote:
+> On 2019-08-27 10:36, Geert Uytterhoeven wrote:
+> > On Mon, Aug 26, 2019 at 10:46 PM Peter Rosin <peda@axentia.se> wrote:
+> >> Probably most useful if you only want one logo regardless of how many
+> >> CPU cores you have.
+> >>
+> >> Signed-off-by: Peter Rosin <peda@axentia.se>
+> >
+> > Thanks for your patch!
+> >
+> >> --- a/Documentation/fb/fbcon.rst
+> >> +++ b/Documentation/fb/fbcon.rst
+> >> @@ -174,6 +174,11 @@ C. Boot options
+> >>         displayed due to multiple CPUs, the collected line of logos is moved
+> >>         as a whole.
+> >>
+> >> +9. fbcon=logo-count:<n>
+> >> +
+> >> +       The value 'n' overrides the number of bootup logos. Zero gives the
+> >> +       default, which is the number of online cpus.
+> >
+> > Isn't that a bit unexpected for the user?
+> > What about making -1 the default (auto), and zero meaning no logos?
 >
-> so some drivers store a pointer pointer to the dw_pcie struct vs.
-> embedding the dw_pcie struct directly.
-> as far as I know the result will be equal, except that you don't have
-> to use a second devm_kzalloc for struct dw_pcie (and thus reducing
-> memory fragmentation).
-Okay, i will change it to "struct dw_pcie pci;"
+> I just naively assumed there was some other mechanism to disable it.
 
-Thanks for the feedback.
+That was my first thought, too, but I couldn't find one.
 
-Regards,
+Gr{oetje,eeting}s,
 
-Dilip
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
