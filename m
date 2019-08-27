@@ -2,87 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 006A39F25D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDC329F261
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:33:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730597AbfH0ScO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 14:32:14 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44536 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727401AbfH0ScN (ORCPT
+        id S1730818AbfH0SdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 14:33:25 -0400
+Received: from smtprelay0123.hostedemail.com ([216.40.44.123]:41458 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730424AbfH0SdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 14:32:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KR1dloJvEf8PAMuU0DB8AHwUdRF837NGwIDbIYsEPbI=; b=n6UUDDIFHWzFr+km8rGIu3scH
-        18/G/IkOhuUlUUWaRWI3jvO2n0Na0prDvZwajHqG9L2Elf+vSJp3UFDXhulSJIlhGXNFAvSgPc5aS
-        zWO6ttcEnaa9okNHQqgBbkjDN0WWtM5oRKl6k0nDgyJvubr4GWRLaXDOial+y7xlghVDo=;
-Received: from 92.41.142.151.threembb.co.uk ([92.41.142.151] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1i2gGI-0000vz-GW; Tue, 27 Aug 2019 18:32:11 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 439CED02CE6; Tue, 27 Aug 2019 19:31:54 +0100 (BST)
-Date:   Tue, 27 Aug 2019 19:31:54 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Vladimir Oltean <olteanv@gmail.com>
-Cc:     linux-spi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH v2 5/5] ARM: dts: ls1021a-tsn: Use the DSPI controller in
- poll mode
-Message-ID: <20190827183154.GI23391@sirena.co.uk>
-References: <20190822211514.19288-1-olteanv@gmail.com>
- <20190822211514.19288-6-olteanv@gmail.com>
- <CA+h21hqWGDCfTg813W1WaXFnRsMdE30WnaXw5TJvpkSp0-w5JA@mail.gmail.com>
- <20190827180502.GF23391@sirena.co.uk>
- <CA+h21hr3qmTG1LyWsEp+hZZW2NJFtg9Dh1k6SXVDd+A_YSQjjw@mail.gmail.com>
- <20190827181318.GG23391@sirena.co.uk>
- <CA+h21hqMVdsUjBdtiHKtKGpyvuaOf25tc4h-GdDEBQqa3EB7tw@mail.gmail.com>
+        Tue, 27 Aug 2019 14:33:25 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id A828E1805A801;
+        Tue, 27 Aug 2019 18:33:23 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id CEC63182CF666;
+        Tue, 27 Aug 2019 18:33:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:981:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2553:2559:2562:2691:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:7576:10004:10400:10848:11026:11232:11658:11914:12043:12297:12555:12679:12740:12760:12895:13069:13311:13357:13439:13548:14181:14659:14721:21080:21221:21451:21627:30054:30060:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
+X-HE-Tag: toad20_7493a051a5231
+X-Filterd-Recvd-Size: 3368
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 27 Aug 2019 18:33:20 +0000 (UTC)
+Message-ID: <b0fe444622e32af6c34f3326e5dce3513adf5113.camel@perches.com>
+Subject: Re: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit due to
+ u64/pointer abuse
+From:   Joe Perches <joe@perches.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Bernard Metzler <bmt@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Tue, 27 Aug 2019 11:33:19 -0700
+In-Reply-To: <CAMuHMdW0jEpE3YrA5Znq8O9e4eswARwYYerEhRLSLWxeXMbsEQ@mail.gmail.com>
+References: <20190819100526.13788-1-geert@linux-m68k.org>
+         <581e7d79ed75484beb227672b2695ff14e1f1e34.camel@perches.com>
+         <CAMuHMdVh8dwd=77mHTqG80_D8DK+EtVGewRUJuaJzK1qRYrB+w@mail.gmail.com>
+         <dbc03b4ac1ef4ba2a807409676cf8066@AcuMS.aculab.com>
+         <CAMuHMdWHGTMwK+PO_BgsNZMpqRat1SHE-_CP0UqxEALA_OJeNg@mail.gmail.com>
+         <20190827174639.GT1131@ZenIV.linux.org.uk>
+         <CAMuHMdW0jEpE3YrA5Znq8O9e4eswARwYYerEhRLSLWxeXMbsEQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gIORF5nGxIt+AP0s"
-Content-Disposition: inline
-In-Reply-To: <CA+h21hqMVdsUjBdtiHKtKGpyvuaOf25tc4h-GdDEBQqa3EB7tw@mail.gmail.com>
-X-Cookie: Don't SANFORIZE me!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 2019-08-27 at 19:59 +0200, Geert Uytterhoeven wrote:
+> On Tue, Aug 27, 2019 at 7:46 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > On Tue, Aug 27, 2019 at 07:29:52PM +0200, Geert Uytterhoeven wrote:
+> > > On Tue, Aug 27, 2019 at 4:17 PM David Laight <David.Laight@aculab.com> wrote:
+> > > > From: Geert Uytterhoeven
+> > > > > Sent: 19 August 2019 18:15
+> > > > ...
+> > > > > > I think a cast to unsigned long is rather more common.
+> > > > > > 
+> > > > > > uintptr_t is used ~1300 times in the kernel.
+> > > > > > I believe a cast to unsigned long is much more common.
 
---gIORF5nGxIt+AP0s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+btw: apparently that's not true.
 
-On Tue, Aug 27, 2019 at 09:16:39PM +0300, Vladimir Oltean wrote:
+This grep may be incomplete but it seems there are fewer
+kernel uses of a cast to unsigned long then pointer:
 
-> I can't seem to find any situation where it performs worse. Hence my
-> question on whether it's a better idea to condition this behavior on a
-> Kconfig option rather than a DT blob which may or may not be in sync.
+$ git grep -P '\(\s*\w+(\s+\w+){0,3}(\s*\*)+\s*\)\s*\(\s*unsigned\s+long\s*\)'|wc -l
+423
 
-If it's unconditionally worse then it shouldn't even be a Kconfig
-option, just make the driver just never use the interrupt.
+Maybe add a cast_to_ptr macro like
 
---gIORF5nGxIt+AP0s
-Content-Type: application/pgp-signature; name="signature.asc"
+#define cast_to_ptr(type, val)	((type)(uintptr_t)(val))
 
------BEGIN PGP SIGNATURE-----
+though that may not save any horizontal space
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1ldxkACgkQJNaLcl1U
-h9ARswf6A+M4PLUEgqtq4LS9LU7LpH/qbPKXT1byjJNJOzZJhiaNOdOfiQUXTpHH
-bipXfDjoA+Bq5QZyp0VX6qO8heo7sSdZzmNKx3wnydsKCGck5e3Ste7Yru5PY2sn
-r9pdyH1nFG5BSfaxxx4fDzBArcNXJM0fo2lVxpwk4tNuviBMKON55SrJ8maV1Krm
-1Tut3wZxZC7UtS5GQE6TDTGpSRSKjEMLNodsZYLRcbh+FimChm5jEHHegB4hLv4b
-o9+IhSlpp+NHkSCoYN2kQmEEi03g95O4mbHSqonF3mpmM4qXQuGsM8brK+UoRgpe
-koyv59Xv//Wv79iCrMHH3tiK8FCRKg==
-=OKu8
------END PGP SIGNATURE-----
+and/or a checkpatch test like:
+---
+ scripts/checkpatch.pl | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---gIORF5nGxIt+AP0s--
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 287fe73688f0..4ec88bc53f2f 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -6281,6 +6281,15 @@ sub process {
+ 			}
+ 		}
+ 
++# check for casts to pointer with intermediate casts to (unsigned long) not (uintptr_t)
++		if ($line =~ /\(\s*\w+(?:\s+\w+){0,3}(?:\s*\*){1,4}\s*\)\s*\(\s*unsigned\s+long\s*\)/) {
++			if (WARN("PREFER_UINTPTR_T",
++				 "prefer intermediate cast to uintptr_t\n" . $herecurr) &&
++			    $fix) {
++				$fixed[$fixlinenr] =~ s/(\(\s*\w+(?:\s+\w+){0,3}(?:\s*\*){1,4}\s*\))\s*\(\s*unsigned\s+long\s*\)/$1(uintptr_t)/;
++			}
++		}
++
+ # check for pointless casting of alloc functions
+ 		if ($line =~ /\*\s*\)\s*$allocFunctions\b/) {
+ 			WARN("UNNECESSARY_CASTS",
+
