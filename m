@@ -2,110 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC329F261
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E86209F264
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:33:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730818AbfH0SdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 14:33:25 -0400
-Received: from smtprelay0123.hostedemail.com ([216.40.44.123]:41458 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730424AbfH0SdZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 14:33:25 -0400
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave03.hostedemail.com (Postfix) with ESMTP id A828E1805A801;
-        Tue, 27 Aug 2019 18:33:23 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id CEC63182CF666;
-        Tue, 27 Aug 2019 18:33:22 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:800:960:973:981:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2197:2199:2393:2553:2559:2562:2691:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:5007:7576:10004:10400:10848:11026:11232:11658:11914:12043:12297:12555:12679:12740:12760:12895:13069:13311:13357:13439:13548:14181:14659:14721:21080:21221:21451:21627:30054:30060:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:25,LUA_SUMMARY:none
-X-HE-Tag: toad20_7493a051a5231
-X-Filterd-Recvd-Size: 3368
-Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 27 Aug 2019 18:33:20 +0000 (UTC)
-Message-ID: <b0fe444622e32af6c34f3326e5dce3513adf5113.camel@perches.com>
-Subject: Re: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit due to
- u64/pointer abuse
-From:   Joe Perches <joe@perches.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Tue, 27 Aug 2019 11:33:19 -0700
-In-Reply-To: <CAMuHMdW0jEpE3YrA5Znq8O9e4eswARwYYerEhRLSLWxeXMbsEQ@mail.gmail.com>
-References: <20190819100526.13788-1-geert@linux-m68k.org>
-         <581e7d79ed75484beb227672b2695ff14e1f1e34.camel@perches.com>
-         <CAMuHMdVh8dwd=77mHTqG80_D8DK+EtVGewRUJuaJzK1qRYrB+w@mail.gmail.com>
-         <dbc03b4ac1ef4ba2a807409676cf8066@AcuMS.aculab.com>
-         <CAMuHMdWHGTMwK+PO_BgsNZMpqRat1SHE-_CP0UqxEALA_OJeNg@mail.gmail.com>
-         <20190827174639.GT1131@ZenIV.linux.org.uk>
-         <CAMuHMdW0jEpE3YrA5Znq8O9e4eswARwYYerEhRLSLWxeXMbsEQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        id S1730589AbfH0Sds (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 14:33:48 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:20318 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730393AbfH0Sds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 14:33:48 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46HyF60c9Kz9tyVK;
+        Tue, 27 Aug 2019 20:33:46 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Se7EgIR6; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id J_eUXk7cwSWF; Tue, 27 Aug 2019 20:33:46 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46HyF56fMVz9tyVG;
+        Tue, 27 Aug 2019 20:33:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1566930825; bh=S21lhrPpGd6dbYfJ8cqZd9xshNHamMkQCPlDAE1DQLQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Se7EgIR6k6yEUFd0XqRUPKvOIkZd2w0BG6cAq1TQGDUZPr4lrsTG39DLpT2B1NarH
+         hLUUSSbklI0KhG+T3Ji9rdL+SOyOrzBrlfmY+I2ffps7TqPox9MYQDMIDkYFmBwl3S
+         Z2nnkpAVernPwu3vTZB2n1DuYDpIhHBkWzhR527U=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E61778B847;
+        Tue, 27 Aug 2019 20:33:45 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id fvXHAOH7aW9s; Tue, 27 Aug 2019 20:33:45 +0200 (CEST)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6FF4B8B842;
+        Tue, 27 Aug 2019 20:33:45 +0200 (CEST)
+Subject: Re: [PATCH 2/2] powerpc: cleanup hw_irq.h
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <0f7e164afb5d1b022441559fe5a999bb6d3c0a23.1566893505.git.christophe.leroy@c-s.fr>
+ <81f39fa06ae582f4a783d26abd2b310204eba8f4.1566893505.git.christophe.leroy@c-s.fr>
+ <1566909844.x4jee1jjda.astroid@bobo.none>
+ <20190827172909.GA31406@gate.crashing.org>
+ <1410046b-e1a3-b892-2add-6c1d353cb781@c-s.fr>
+ <20190827182616.GB31406@gate.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <00cc71bd-35f5-b0d5-e4fa-8368fe4fe78c@c-s.fr>
+Date:   Tue, 27 Aug 2019 20:33:45 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190827182616.GB31406@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-27 at 19:59 +0200, Geert Uytterhoeven wrote:
-> On Tue, Aug 27, 2019 at 7:46 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Tue, Aug 27, 2019 at 07:29:52PM +0200, Geert Uytterhoeven wrote:
-> > > On Tue, Aug 27, 2019 at 4:17 PM David Laight <David.Laight@aculab.com> wrote:
-> > > > From: Geert Uytterhoeven
-> > > > > Sent: 19 August 2019 18:15
-> > > > ...
-> > > > > > I think a cast to unsigned long is rather more common.
-> > > > > > 
-> > > > > > uintptr_t is used ~1300 times in the kernel.
-> > > > > > I believe a cast to unsigned long is much more common.
 
-btw: apparently that's not true.
 
-This grep may be incomplete but it seems there are fewer
-kernel uses of a cast to unsigned long then pointer:
+Le 27/08/2019 à 20:26, Segher Boessenkool a écrit :
+> On Tue, Aug 27, 2019 at 07:36:35PM +0200, Christophe Leroy wrote:
+>> Le 27/08/2019 à 19:29, Segher Boessenkool a écrit :
+>>> On Tue, Aug 27, 2019 at 10:48:24PM +1000, Nicholas Piggin wrote:
+>>>> Christophe Leroy's on August 27, 2019 6:13 pm:
+>>>>> +#define wrtee(val)	asm volatile("wrtee %0" : : "r" (val) : "memory")
+>>>>> +#define wrteei(val)	asm volatile("wrteei %0" : : "i" (val) :
+>>>>> "memory")
+>>>>
+>>>> Can you implement just one macro that uses __builtin_constant_p to
+>>>> select between the imm and reg versions? I forgot if there's some
+>>>> corner cases that prevent that working with inline asm i constraints.
+>>>
+>>> static inline void wrtee(long val)
+>>> {
+>>> 	asm volatile("wrtee%I0 %0" : : "n"(val) : "memory");
+>>> }
+>>
+>> Great, didn't know that possibility.
+>>
+>> Can it be used with any insn, for instance with add/addi ?
+>> Or with mr/li ?
+> 
+> Any instruction, yes.  %I<n> simply outputs an "i" if operand n is a
+> constant integer, and nothing otherwise.
 
-$ git grep -P '\(\s*\w+(\s+\w+){0,3}(\s*\*)+\s*\)\s*\(\s*unsigned\s+long\s*\)'|wc -l
-423
+Thinking about it once more, I'm not sure this form is possible, because 
+wrteei expect 0 or 1. If someone calls wrtee(MSR_EE); (or any constant 
+containing MSR_EE) wrteei 1 is expected. And any constant with MSR_EE 
+cleared should result in wrteei 0.
 
-Maybe add a cast_to_ptr macro like
+> 
+> So
+>    asm("add%I2 %0,%1,%2" : "=r"(dst) : "r"(src1), "ri"(src1));
 
-#define cast_to_ptr(type, val)	((type)(uintptr_t)(val))
+"ri", not "n" as for wrtee ?
 
-though that may not save any horizontal space
+Christophe
 
-and/or a checkpatch test like:
----
- scripts/checkpatch.pl | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 287fe73688f0..4ec88bc53f2f 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -6281,6 +6281,15 @@ sub process {
- 			}
- 		}
- 
-+# check for casts to pointer with intermediate casts to (unsigned long) not (uintptr_t)
-+		if ($line =~ /\(\s*\w+(?:\s+\w+){0,3}(?:\s*\*){1,4}\s*\)\s*\(\s*unsigned\s+long\s*\)/) {
-+			if (WARN("PREFER_UINTPTR_T",
-+				 "prefer intermediate cast to uintptr_t\n" . $herecurr) &&
-+			    $fix) {
-+				$fixed[$fixlinenr] =~ s/(\(\s*\w+(?:\s+\w+){0,3}(?:\s*\*){1,4}\s*\))\s*\(\s*unsigned\s+long\s*\)/$1(uintptr_t)/;
-+			}
-+		}
-+
- # check for pointless casting of alloc functions
- 		if ($line =~ /\*\s*\)\s*$allocFunctions\b/) {
- 			WARN("UNNECESSARY_CASTS",
-
+> works well.  I don't see how you would use it for li/mr...  You can do
+>    asm("add%I1 %0,0,%1" : "=r"(dst) : "ri"(src));
+> I suppose, but that is not really an mr.
+> 
+>>> (This output modifier goes back to the dark ages, some 2.4 or something).
+>>
+>> Hope Clang support it ...
+> 
+> I don't know, sorry.  But it is used all over the place, see sfp-machine.h
+> for example, so maybe?
+> 
+> 
+> Segher
+> 
