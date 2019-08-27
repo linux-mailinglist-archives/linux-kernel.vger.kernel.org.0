@@ -2,88 +2,157 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FE009EA56
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:04:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E48109EA5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:05:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728972AbfH0OEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 10:04:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42996 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfH0OEp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 10:04:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=661U0lSjozJky25e5/EuVz5qAI0zmTf9XyJtMCPs0n0=; b=MHYvhQTl7K//OKrXEbamD4ni1
-        UvrLZ3Lz0teQfWmr6PngU7IqrWfwUicXW+jUHr8dLMN1JozqkCrSN4KDkJbeZ8nOtl7mds9mUT4hF
-        36GNcEtt2d360CH1CNyEuNrQJJ5N+eHgsdmmsx7Vdr1I81RSN86Yrh+dq8FetfkBVh50QXXrNGrRv
-        +YdJcDZV07q5nK/ZG034qdRWyjUuF64/S+tU1oqF2QYUWEbPhLw77Sir1pvnmBoXcWfvHzj4Axs+u
-        P6Mid9tbKsY+3lIM/mGNe/EN5/xnq7ZjP4nRaoebAqq+t8BSjVxR29XT0w1lq+v3qdJM15/WS15oN
-        w/Qc13A5w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2c5S-0004DE-5P; Tue, 27 Aug 2019 14:04:42 +0000
-Date:   Tue, 27 Aug 2019 07:04:42 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     Albert Ou <aou@eecs.berkeley.edu>,
-        Alan Kao <alankao@andestech.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Anup Patel <anup@brainfault.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Gary Guo <gary@garyguo.net>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-riscv@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 1/2] RISC-V: Mark existing SBI as legacy SBI.
-Message-ID: <20190827140442.GB21855@infradead.org>
-References: <20190826233256.32383-1-atish.patra@wdc.com>
- <20190826233256.32383-2-atish.patra@wdc.com>
- <20190827140304.GA21855@infradead.org>
+        id S1729706AbfH0OFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 10:05:04 -0400
+Received: from mga09.intel.com ([134.134.136.24]:30685 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726134AbfH0OFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 10:05:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 07:05:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
+   d="scan'208";a="197314678"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Aug 2019 07:05:01 -0700
+Received: from [10.255.129.116] (unknown [10.255.129.116])
+        by linux.intel.com (Postfix) with ESMTP id 13641580375;
+        Tue, 27 Aug 2019 07:04:56 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] dt-bindings: reset: Add YAML schemas for the Intel
+ Reset controller
+To:     Rob Herring <robh@kernel.org>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
+        qi-ming.wu@intel.com
+References: <42039170811f798b8edc66bf85166aefe7dbc903.1566531960.git.eswara.kota@linux.intel.com>
+ <CAL_JsqJxh5TzDb8kOFm+F5Gs4WXF6BP5uaNPLcyx+srtaDisMw@mail.gmail.com>
+ <746ed130-a1ae-0cc2-5060-70de95cdf2fe@linux.intel.com>
+ <CAL_JsqLSU6+5umYeVmh1NYTcpUcpJKMt7d4d+5E+Ni5rqKJvxQ@mail.gmail.com>
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+Message-ID: <c052e984-1144-6dc1-651a-8d9c924a1da9@linux.intel.com>
+Date:   Tue, 27 Aug 2019 22:04:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827140304.GA21855@infradead.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAL_JsqLSU6+5umYeVmh1NYTcpUcpJKMt7d4d+5E+Ni5rqKJvxQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 07:03:04AM -0700, Christoph Hellwig wrote:
-> > +#define SBI_EXT_LEGACY_SET_TIMER 0x0
-> > +#define SBI_EXT_LEGACY_CONSOLE_PUTCHAR 0x1
-> > +#define SBI_EXT_LEGACY_CONSOLE_GETCHAR 0x2
-> > +#define SBI_EXT_LEGACY_CLEAR_IPI 0x3
-> > +#define SBI_EXT_LEGACY_SEND_IPI 0x4
-> > +#define SBI_EXT_LEGACY_REMOTE_FENCE_I 0x5
-> > +#define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA 0x6
-> > +#define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA_ASID 0x7
-> > +#define SBI_EXT_LEGACY_SHUTDOWN 0x8
-> 
-> As Mike said legacy is a bit of a weird name.  I think this should
-> be SBI01_* or so.  And pleae align the numeric values and maybe use
-> an enum.
-> 
-> > +
-> > +#define SBI_CALL_LEGACY(which, arg0, arg1, arg2, arg3) ({             \
-> >  	register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);	\
-> >  	register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);	\
-> >  	register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);	\
-> 
-> Instead of the weird inline assembly with forced register allocation,
-> why not move this to pure assembly?  AFAICs this is the whole assembly
-> code we'd need:
-> 
-> ENTRY(sbi01_call)
->         ecall
-> END(sbi01_call)
+Hi Rob,
 
-Actually we'll need a mv to a7 for the function id, but the point
-still stands.
+On 8/26/2019 7:23 PM, Rob Herring wrote:
+> On Mon, Aug 26, 2019 at 4:52 AM Dilip Kota <eswara.kota@linux.intel.com> wrote:
+>> Hi Rob,
+>>
+>> On 8/23/2019 8:25 PM, Rob Herring wrote:
+>>> On Fri, Aug 23, 2019 at 12:28 AM Dilip Kota <eswara.kota@linux.intel.com> wrote:
+>>>> Add YAML schemas for the reset controller on Intel
+>>>> Lightening Mountain (LGM) SoC.
+>>>>
+>>>> Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
+>>>> ---
+>>>> Changes on v2:
+>>>>       Address review comments
+>>>>         Update the compatible property definition
+>>>>         Add description for reset-cells
+>>>>         Add 'additionalProperties: false' property
+>>>>
+>>>>    .../bindings/reset/intel,syscon-reset.yaml         | 53 ++++++++++++++++++++++
+>>>>    1 file changed, 53 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml b/Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..3403a967190a
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml
+>>>> @@ -0,0 +1,53 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/reset/intel,syscon-reset.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Intel Lightening Mountain SoC System Reset Controller
+>>>> +
+>>>> +maintainers:
+>>>> +  - Dilip Kota <eswara.kota@linux.intel.com>
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    items:
+>>>> +      - const: intel,rcu-lgm
+>>>> +      - const: syscon
+>>>> +
+>>>> +  reg:
+>>>> +    description: Reset controller register base address and size
+>>>> +
+>>>> +  intel,global-reset:
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>>>> +    description: Global reset register offset and bit offset.
+>>>> +
+>>>> +  "#reset-cells":
+>>>> +    const: 2
+>>>> +    description: |
+>>>> +      The 1st cell is the register offset.
+>>>> +      The 2nd cell is the bit offset in the register.
+>>>> +
+>>>> +required:
+>>>> +  - compatible
+>>>> +  - reg
+>>>> +  - intel,global-reset
+>>>> +  - "#reset-cells"
+>>>> +
+>>>> +additionalProperties: false
+>>>> +
+>>>> +examples:
+>>>> +  - |
+>>>> +    rcu0: reset-controller@00000000 {
+>>>> +        compatible = "intel,rcu-lgm", "syscon";
+>>>> +        reg = <0x000000 0x80000>;
+>>>> +        intel,global-reset = <0x10 30>;
+>>>> +        #reset-cells = <2>;
+>>>> +    };
+>>>> +
+>>>> +    pcie_phy0: pciephy@... {
+>>>> +        ...
+>>> You need to run 'make dt_binding_check' and fix the warnings. The
+>>> example has to be buildable and it is not.
+>> Sure, i  will correct this pcie_phy0 node. But i didn't get any warnings
+>> for make dt_binding_check
+>>
+>>     CHKDT Documentation/devicetree/bindings/reset/intel,syscon-reset.yaml
+>> DTC Documentation/devicetree/bindings/arm/renesas.example.dt.yaml
+>> FATAL ERROR: Unknown output format "yaml"
+>>
+>> Will DTC report about the example node errors? But, DTC is failing with
+>> FATAL_ERROR.
+>> I tried it even after installing libyaml and headers in my local
+>> directory and export the path, but no luck.(ref:
+>> https://lkml.org/lkml/2018/12/3/951)
+>> Could you please let me know if i miss anything and help me to proceed
+>> further.
+> See Documentation/devicetree/writing-schema.md
+
+I have followed all the steps mentioned in the document before keeping 
+the mail itself.
+Does the dtc script looks for libyaml and its header files at any 
+default or specific location?
+
+Regards,
+Dilip
+
+
+>
+> Rob
