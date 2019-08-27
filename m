@@ -2,414 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FCD59EFA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A49439EFAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:05:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730306AbfH0QEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:04:24 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38382 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730252AbfH0QEV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:04:21 -0400
-Received: by mail-wr1-f65.google.com with SMTP id e16so2278484wro.5
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 09:04:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ljo8vajhU+W+Ukm/1s/QogI8ChcEKwBtMF+HxQ/PSw4=;
-        b=pT3W2hD1RvsxoHm+zEZ/U6mTjDjviLu6X1btSRz1uz2E9GHokFjUxdkKJCkelWSu1u
-         bpsj+wb5B6JYz//IC3AJ6ouZyEZgJdlwwF6WDqsHH3ahgA8vcdWT4W/9xu7zdEG9s8qw
-         6YYPisKqXJMWOxmAPFSpZbqj3Mqo6VgzJLMoNoUPgAsdZy50h91qvJUGl+EWU6seNtoE
-         7XxfupdQWUnuD+7YbCsN8fUevv8I+NVGUpKV1eowgsWqw/lXmQJFsTn2+I7V+UXJ8PvZ
-         bC5kOIFz6/b3Rl9M6hYx1ow323QKUjSZBAJCIxSLL+RwJ2YznMMzYF/epQHhNd/rqDV1
-         yA3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ljo8vajhU+W+Ukm/1s/QogI8ChcEKwBtMF+HxQ/PSw4=;
-        b=CNUWGJCtd3GMuQOj53YxAn5trV24B6aYHFXok8hsmiMlJRREEtoVc0weypVjP7ti2n
-         0wT+INYUN1V/g5T7GVf/dfJMhoC4naF7xWsRPKZFtv4Q5RhIpr2PUuEU+AgZ/D/78a4E
-         aVjNKUy3g4yYGvdojH/y61FYh+yXD20pokpVfUjZjg7go4I11kE19LBRTP+FbPyUZSFW
-         IRYMzKRduEsOxXTB0qJ18pU/k6NErzg2lUn2aw4lwwrnYcfaZaRpvFzBjtsC/T/Ua00X
-         MENfX29Nkf3Qs9ZlNdLgEsUjgjNPXDfx3rKOf/0YC9lEXZfXpE3cyOs8jA42RlTK0Vz6
-         tE5w==
-X-Gm-Message-State: APjAAAWKj6CZZqlIdoMPibreYJGDe6p5pg2fB0JZxUM7Z4A18Xa+uJBN
-        YQIs1bzNB4yQreuLoFK4o87Nfg==
-X-Google-Smtp-Source: APXvYqyCAay58gtSIUr78MGmhxH+wCfTtE99gWMRLBFHY3CeeAgj7Z5U0wI2K44F8jvEfOo444iNTA==
-X-Received: by 2002:a5d:50cb:: with SMTP id f11mr30096307wrt.277.1566921857187;
-        Tue, 27 Aug 2019 09:04:17 -0700 (PDT)
-Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
-        by smtp.gmail.com with ESMTPSA id i93sm32304192wri.57.2019.08.27.09.04.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 09:04:16 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 17:04:13 +0100
-From:   Matthias Maennich <maennich@google.com>
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        arnd@arndb.de, geert@linux-m68k.org, gregkh@linuxfoundation.org,
-        hpa@zytor.com, joel@joelfernandes.org,
-        kstewart@linuxfoundation.org, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-usb@vger.kernel.org, lucas.de.marchi@gmail.com,
-        maco@android.com, maco@google.com, michal.lkml@markovi.net,
-        mingo@redhat.com, oneukum@suse.com, pombredanne@nexb.com,
-        sam@ravnborg.org, sspatil@google.com, stern@rowland.harvard.edu,
-        tglx@linutronix.de, usb-storage@lists.one-eyed-alien.net,
-        x86@kernel.org, yamada.masahiro@socionext.com,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [PATCH v3 03/11] module: add support for symbol namespaces.
-Message-ID: <20190827160413.GA148206@google.com>
-References: <20190813121733.52480-1-maennich@google.com>
- <20190821114955.12788-1-maennich@google.com>
- <20190821114955.12788-4-maennich@google.com>
- <20190827153717.GA20822@linux-8ccs.fritz.box>
+        id S1730079AbfH0QE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:04:59 -0400
+Received: from muru.com ([72.249.23.125]:58840 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727064AbfH0QE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 12:04:59 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 3DE5C8107;
+        Tue, 27 Aug 2019 16:05:26 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 09:04:54 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, jacek.anaszewski@gmail.com,
+        sre@kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
+        merlijn@wizzup.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] leds: lm3532: Fix brightness control for i2c mode
+Message-ID: <20190827160454.GA52127@atomide.com>
+References: <20190820195307.27590-1-dmurphy@ti.com>
+ <20190826215822.GY52127@atomide.com>
+ <20190826221413.GA19124@amd>
+ <20190826224437.GZ52127@atomide.com>
+ <20190827121818.GB19927@amd>
+ <0eab6f72-ddb7-3da7-e90e-888374531f86@ti.com>
+ <9939e253-0c9e-5ef7-e160-c1e5fe99c453@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190827153717.GA20822@linux-8ccs.fritz.box>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9939e253-0c9e-5ef7-e160-c1e5fe99c453@ti.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 05:37:18PM +0200, Jessica Yu wrote:
->+++ Matthias Maennich [21/08/19 12:49 +0100]:
->>The EXPORT_SYMBOL_NS() and EXPORT_SYMBOL_NS_GPL() macros can be used to
->>export a symbol to a specific namespace.  There are no _GPL_FUTURE and
->>_UNUSED variants because these are currently unused, and I'm not sure
->>they are necessary.
->>
->>I didn't add EXPORT_SYMBOL_NS() for ASM exports; this patch sets the
->>namespace of ASM exports to NULL by default. In case of relative
->>references, it will be relocatable to NULL. If there's a need, this
->>should be pretty easy to add.
->>
->>A module that wants to use a symbol exported to a namespace must add a
->>MODULE_IMPORT_NS() statement to their module code; otherwise, modpost
->>will complain when building the module, and the kernel module loader
->>will emit an error and fail when loading the module.
->>
->>MODULE_IMPORT_NS() adds a modinfo tag 'import_ns' to the module. That
->>tag can be observed by the modinfo command, modpost and kernel/module.c
->>at the time of loading the module.
->>
->>The ELF symbols are renamed to include the namespace with an asm label;
->>for example, symbol 'usb_stor_suspend' in namespace USB_STORAGE becomes
->>'usb_stor_suspend.USB_STORAGE'.  This allows modpost to do namespace
->>checking, without having to go through all the effort of parsing ELF and
->>relocation records just to get to the struct kernel_symbols.
->>
->>On x86_64 I saw no difference in binary size (compression), but at
->>runtime this will require a word of memory per export to hold the
->>namespace. An alternative could be to store namespaced symbols in their
->>own section and use a separate 'struct namespaced_kernel_symbol' for
->>that section, at the cost of making the module loader more complex.
->>
->>Co-developed-by: Martijn Coenen <maco@android.com>
->>Signed-off-by: Martijn Coenen <maco@android.com>
->>Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>Signed-off-by: Matthias Maennich <maennich@google.com>
->>---
->>include/asm-generic/export.h |  6 +--
->>include/linux/export.h       | 85 ++++++++++++++++++++++++++++++------
->>include/linux/module.h       |  2 +
->>kernel/module.c              | 43 ++++++++++++++++++
->>4 files changed, 120 insertions(+), 16 deletions(-)
->>
->>diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
->>index 63f54907317b..e2b5d0f569d3 100644
->>--- a/include/asm-generic/export.h
->>+++ b/include/asm-generic/export.h
->>@@ -17,11 +17,11 @@
->>
->>.macro __put, val, name
->>#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->>-	.long	\val - ., \name - .
->>+	.long	\val - ., \name - ., 0 - .
->>#elif defined(CONFIG_64BIT)
->>-	.quad	\val, \name
->>+	.quad	\val, \name, 0
->>#else
->>-	.long	\val, \name
->>+	.long	\val, \name, 0
->>#endif
->>.endm
->>
->>diff --git a/include/linux/export.h b/include/linux/export.h
->>index 28a4d2150689..8e12e05444d1 100644
->>--- a/include/linux/export.h
->>+++ b/include/linux/export.h
->>@@ -20,6 +20,8 @@ extern struct module __this_module;
->>
->>#ifdef CONFIG_MODULES
->>
->>+#define NS_SEPARATOR "."
->>+
->>#if defined(__KERNEL__) && !defined(__GENKSYMS__)
->>#ifdef CONFIG_MODVERSIONS
->>/* Mark the CRC weak since genksyms apparently decides not to
->>@@ -49,6 +51,16 @@ extern struct module __this_module;
->> * absolute relocations that require runtime processing on relocatable
->> * kernels.
->> */
->>+#define __KSYMTAB_ENTRY_NS(sym, sec, ns)				\
->>+	__ADDRESSABLE(sym)						\
->>+	asm("	.section \"___ksymtab" sec "+" #sym "\", \"a\"	\n"	\
->>+	    "	.balign	4					\n"	\
->>+	    "__ksymtab_" #sym NS_SEPARATOR #ns ":		\n"	\
->>+	    "	.long	" #sym "- .				\n"	\
->>+	    "	.long	__kstrtab_" #sym "- .			\n"	\
->>+	    "	.long	__kstrtab_ns_" #sym "- .		\n"	\
->>+	    "	.previous					\n")
->>+
->>#define __KSYMTAB_ENTRY(sym, sec)					\
->>	__ADDRESSABLE(sym)						\
->>	asm("	.section \"___ksymtab" sec "+" #sym "\", \"a\"	\n"	\
->>@@ -56,32 +68,53 @@ extern struct module __this_module;
->>	    "__ksymtab_" #sym ":				\n"	\
->>	    "	.long	" #sym "- .				\n"	\
->>	    "	.long	__kstrtab_" #sym "- .			\n"	\
->>+	    "	.long	0 - .					\n"	\
->>	    "	.previous					\n")
->>
->>struct kernel_symbol {
->>	int value_offset;
->>	int name_offset;
->>+	int namespace_offset;
->>};
->>#else
->>+#define __KSYMTAB_ENTRY_NS(sym, sec, ns)				\
->>+	static const struct kernel_symbol __ksymtab_##sym##__##ns	\
->>+	asm("__ksymtab_" #sym NS_SEPARATOR #ns)				\
->>+	__attribute__((section("___ksymtab" sec "+" #sym), used))	\
->>+	__aligned(sizeof(void *))					\
->>+	= { (unsigned long)&sym, __kstrtab_##sym, __kstrtab_ns_##sym}
->
->Style nit: missing space after __kstrtab_ns_##sym.
->
->>+
->>#define __KSYMTAB_ENTRY(sym, sec)					\
->>	static const struct kernel_symbol __ksymtab_##sym		\
->>+	asm("__ksymtab_" #sym)						\
->>	__attribute__((section("___ksymtab" sec "+" #sym), used))	\
->>	__aligned(sizeof(void *))					\
->>-	= { (unsigned long)&sym, __kstrtab_##sym }
->>+	= { (unsigned long)&sym, __kstrtab_##sym, NULL }
->>
->>struct kernel_symbol {
->>	unsigned long value;
->>	const char *name;
->>+	const char *namespace;
->>};
->>#endif
->>
->>-/* For every exported symbol, place a struct in the __ksymtab section */
->>-#define ___EXPORT_SYMBOL(sym, sec)					\
->>+#define ___export_symbol_common(sym, sec)				\
->>	extern typeof(sym) sym;						\
->>	__CRC_SYMBOL(sym, sec)						\
->>	static const char __kstrtab_##sym[]				\
->>	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
->>-	= #sym;								\
->>+	= #sym								\
->
->Any particular reason for this change? Not that it's important, just
->noticing the inconsistent inclusion of the semicolon in some of the
->macros (e.g. __CRC_SYMBOL includes it but __export_symbol_common doesn't).
->
+* Dan Murphy <dmurphy@ti.com> [190827 13:02]:
+> Hello
+> 
+> On 8/27/19 7:44 AM, Dan Murphy wrote:
+> > Tony
+> > 
+> > On 8/27/19 7:18 AM, Pavel Machek wrote:
+> > > On Mon 2019-08-26 15:44:37, Tony Lindgren wrote:
+> > > > * Pavel Machek <pavel@ucw.cz> [190826 22:14]:
+> > > > > On Mon 2019-08-26 14:58:22, Tony Lindgren wrote:
+> > > > > > Hi,
+> > > > > > 
+> > > > > > * Dan Murphy <dmurphy@ti.com> [190820 19:53]:
+> > > > > > > Fix the brightness control for I2C mode.  Instead of
+> > > > > > > changing the full scale current register update the ALS target
+> > > > > > > register for the appropriate banks.
+> > > > > > > 
+> > > > > > > In addition clean up some code errors and random misspellings found
+> > > > > > > during coding.
+> > > > > > > 
+> > > > > > > Tested on Droid4 as well as LM3532 EVM connected to
+> > > > > > > a BeagleBoneBlack
+> > > > > > > 
+> > > > > > > Fixes: e37a7f8d77e1 ("leds: lm3532: Introduce the
+> > > > > > > lm3532 LED driver")
+> > > > > > > Reported-by: Pavel Machek <pavel@ucw.cz>
+> > > > > > > Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> > > > > > > ---
+> > > > > > > 
+> > > > > > > v3 - Removed register define updates -
+> > > > > > > https://lore.kernel.org/patchwork/patch/1114542/
+> > > > > > Looks like starting with this patch in Linux next the LCD on droid4
+> > > > > > is so dim it's unreadable even with brightness set to 255. Setting
+> > > > > > brightness to 0 does blank it completely though.
+> > > > > > 
+> > > > > > Did something maybe break with the various patch revisions or are
+> > > > > > we now missing some dts patch?
+> > > > > Maybe missing dts patch. We should provide maximum current the LED can
+> > > > > handle...
+> > > > Or i2c control is somehow broken and only als control now works?
+> > 
+> > With only setting CONFIG_LEDS_LM3532=m to the next branch I get full
+> > brightness with 255.
+> > 
+> > I also see half brightness at 128 with the ramp down working.
+> > 
+> > I am not able to reproduce this issue on my device.
+> > 
+> Just to make sure my data was right I did a clean rebuild on commit
+> 1dbb9fb4082ce2a2f1cf9596881ddece062d15d0
+> 
+> from the led-next branch.
+> 
+> Just adding the above config flag.  I still cannot reproduce the issue
+> 
+> See attached pic
 
-I tried to be consistent to let the macro "call site" provide the final
-semicolon. And you are right, I could have adjusted __CRC_SYMBOL as
-well. I will adjust this for the next version.
+OK thanks for checking. Probably you can reproduce the issue if you
+reset things to commit c4b8354e5341 ("leds: lm3532: Fix brightness
+control for i2c mode"). There might now be something uninitialized
+with that commit depending on the hardware state on boot if you
+care to check that. Or maybe there's some interaction with other
+patches not yet at commit c4b8354e5341 level.
 
->>+
->>+/* For every exported symbol, place a struct in the __ksymtab section */
->>+#define ___EXPORT_SYMBOL_NS(sym, sec, ns)				\
->>+	___export_symbol_common(sym, sec);			\
->>+	static const char __kstrtab_ns_##sym[]				\
->>+	__attribute__((section("__ksymtab_strings"), used, aligned(1)))	\
->>+	= #ns;								\
->>+	__KSYMTAB_ENTRY_NS(sym, sec, ns)
->>+
->>+#define ___EXPORT_SYMBOL(sym, sec)					\
->>+	___export_symbol_common(sym, sec);				\
->>	__KSYMTAB_ENTRY(sym, sec)
->>
->>#if defined(__DISABLE_EXPORTS)
->>@@ -91,6 +124,7 @@ struct kernel_symbol {
->> * be reused in other execution contexts such as the UEFI stub or the
->> * decompressor.
->> */
->>+#define __EXPORT_SYMBOL_NS(sym, sec, ns)
->>#define __EXPORT_SYMBOL(sym, sec)
->>
->>#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
->>@@ -117,18 +151,26 @@ struct kernel_symbol {
->>#define __cond_export_sym_1(sym, sec) ___EXPORT_SYMBOL(sym, sec)
->>#define __cond_export_sym_0(sym, sec) /* nothing */
->>
->>+#define __EXPORT_SYMBOL_NS(sym, sec, ns)				\
->>+	__ksym_marker(sym);						\
->>+	__cond_export_ns_sym(sym, sec, ns, __is_defined(__KSYM_##sym))
->>+#define __cond_export_ns_sym(sym, sec, ns, conf)			\
->>+	___cond_export_ns_sym(sym, sec, ns, conf)
->>+#define ___cond_export_ns_sym(sym, sec, ns, enabled)			\
->>+	__cond_export_ns_sym_##enabled(sym, sec, ns)
->>+#define __cond_export_ns_sym_1(sym, sec, ns) ___EXPORT_SYMBOL_NS(sym, sec, ns)
->>+#define __cond_export_ns_sym_0(sym, sec, ns) /* nothing */
->>+
->>#else
->>+#define __EXPORT_SYMBOL_NS ___EXPORT_SYMBOL_NS
->>#define __EXPORT_SYMBOL ___EXPORT_SYMBOL
->>#endif
->>
->>-#define EXPORT_SYMBOL(sym)					\
->>-	__EXPORT_SYMBOL(sym, "")
->>-
->>-#define EXPORT_SYMBOL_GPL(sym)					\
->>-	__EXPORT_SYMBOL(sym, "_gpl")
->>-
->>-#define EXPORT_SYMBOL_GPL_FUTURE(sym)				\
->>-	__EXPORT_SYMBOL(sym, "_gpl_future")
->>+#define EXPORT_SYMBOL(sym) __EXPORT_SYMBOL(sym, "")
->>+#define EXPORT_SYMBOL_GPL(sym) __EXPORT_SYMBOL(sym, "_gpl")
->>+#define EXPORT_SYMBOL_GPL_FUTURE(sym) __EXPORT_SYMBOL(sym, "_gpl_future")
->>+#define EXPORT_SYMBOL_NS(sym, ns) __EXPORT_SYMBOL_NS(sym, "", ns)
->>+#define EXPORT_SYMBOL_NS_GPL(sym, ns) __EXPORT_SYMBOL_NS(sym, "_gpl", ns)
->>
->>#ifdef CONFIG_UNUSED_SYMBOLS
->>#define EXPORT_UNUSED_SYMBOL(sym) __EXPORT_SYMBOL(sym, "_unused")
->>@@ -138,11 +180,28 @@ struct kernel_symbol {
->>#define EXPORT_UNUSED_SYMBOL_GPL(sym)
->>#endif
->>
->>-#endif	/* __GENKSYMS__ */
->>+#endif	/* __KERNEL__ && !__GENKSYMS__ */
->>+
->>+#if defined(__GENKSYMS__)
->>+/*
->>+ * When we're running genksyms, ignore the namespace and make the _NS
->>+ * variants look like the normal ones. There are two reasons for this:
->>+ * 1) In the normal definition of EXPORT_SYMBOL_NS, the 'ns' macro
->>+ *    argument is itself not expanded because it's always tokenized or
->>+ *    concatenated; but when running genksyms, a blank definition of the
->>+ *    macro does allow the argument to be expanded; if a namespace
->>+ *    happens to collide with a #define, this can cause issues.
->>+ * 2) There's no need to modify genksyms to deal with the _NS variants
->>+ */
->>+#define EXPORT_SYMBOL_NS(sym, ns) EXPORT_SYMBOL(sym)
->>+#define EXPORT_SYMBOL_NS_GPL(sym, ns) EXPORT_SYMBOL_GPL(sym)
->>+#endif
->>
->>#else /* !CONFIG_MODULES... */
->>
->>#define EXPORT_SYMBOL(sym)
->>+#define EXPORT_SYMBOL_NS(sym, ns)
->>+#define EXPORT_SYMBOL_NS_GPL(sym, ns)
->>#define EXPORT_SYMBOL_GPL(sym)
->>#define EXPORT_SYMBOL_GPL_FUTURE(sym)
->>#define EXPORT_UNUSED_SYMBOL(sym)
->>diff --git a/include/linux/module.h b/include/linux/module.h
->>index 1455812dd325..b3611e749f72 100644
->>--- a/include/linux/module.h
->>+++ b/include/linux/module.h
->>@@ -280,6 +280,8 @@ struct notifier_block;
->>
->>#ifdef CONFIG_MODULES
->>
->>+#define MODULE_IMPORT_NS(ns) MODULE_INFO(import_ns, #ns)
->>+
->>extern int modules_disabled; /* for sysctl */
->>/* Get/put a kernel symbol (calls must be symmetric) */
->>void *__symbol_get(const char *symbol);
->>diff --git a/kernel/module.c b/kernel/module.c
->>index a23067907169..57e8253f2251 100644
->>--- a/kernel/module.c
->>+++ b/kernel/module.c
->>@@ -544,6 +544,15 @@ static const char *kernel_symbol_name(const struct kernel_symbol *sym)
->>#endif
->>}
->>
->>+static const char *kernel_symbol_namespace(const struct kernel_symbol *sym)
->>+{
->>+#ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->>+	return offset_to_ptr(&sym->namespace_offset);
->>+#else
->>+	return sym->namespace;
->>+#endif
->>+}
->>+
->>static int cmp_name(const void *va, const void *vb)
->>{
->>	const char *a;
->>@@ -1379,6 +1388,34 @@ static inline int same_magic(const char *amagic, const char *bmagic,
->>}
->>#endif /* CONFIG_MODVERSIONS */
->>
->>+static char *get_modinfo(const struct load_info *info, const char *tag);
->>+static char *get_next_modinfo(const struct load_info *info, const char *tag,
->>+			      char *prev);
->>+
->>+static int verify_namespace_is_imported(const struct load_info *info,
->>+					const struct kernel_symbol *sym,
->>+					struct module *mod)
->>+{
->>+	const char *namespace;
->>+	char *imported_namespace;
->>+
->>+	namespace = kernel_symbol_namespace(sym);
->>+	if (namespace) {
->>+		imported_namespace = get_modinfo(info, "import_ns");
->>+		while (imported_namespace) {
->>+			if (strcmp(namespace, imported_namespace) == 0)
->>+				return 0;
->>+			imported_namespace = get_next_modinfo(
->>+				info, "import_ns", imported_namespace);
->>+		}
->>+		pr_err("%s: module uses symbol (%s) from namespace %s, but does not import it.\n",
->>+		       mod->name, kernel_symbol_name(sym), namespace);
->>+		return -EINVAL;
->>+	}
->>+	return 0;
->>+}
->>+
->>+
->>/* Resolve a symbol for this module.  I.e. if we find one, record usage. */
->>static const struct kernel_symbol *resolve_symbol(struct module *mod,
->>						  const struct load_info *info,
->>@@ -1413,6 +1450,12 @@ static const struct kernel_symbol *resolve_symbol(struct module *mod,
->>		goto getname;
->>	}
->>
->>+	err = verify_namespace_is_imported(info, sym, mod);
->>+	if (err) {
->>+		sym = ERR_PTR(err);
->>+		goto getname;
->>+	}
->
->I think we should verify the namespace before taking a reference to
->the owner module (just swap the verify_namespace_is_imported() and
->ref_module() calls here).
->
->Other than that, this patch looks good. Thanks!
->
+I confirmed again that things fail at commit c4b8354e5341. But
+now testing with the same Linux next as yesterday things works again.
+Not sure what's going on as failures with Linux next yestreday
+made me start narrowing down what commit causes the issues.
 
-Thanks! I will address the points above.
+Anyways, playing with loading and unloading the leds-lm3532.ko I
+noticed we can also have unpaired regulator calls when using sysfs
+brightness that the below patch attempts to fix. Not sure how I got
+to the point of regulator warnings, but I was trying to enable
+the brightness via sysfs. Maybe I had other patches too when
+I got the regulator warnings.. But please check if the below
+patch makes sense.
 
-Cheers,
-Matthias
+Regards,
 
->>+
->>getname:
->>	/* We must make copy under the lock if we failed to get ref. */
->>	strncpy(ownername, module_name(owner), MODULE_NAME_LEN);
->>-- 
->>2.23.0.rc1.153.gdeed80330f-goog
->>
+Tony
+
+8< ---------------------------
+diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+--- a/drivers/leds/leds-lm3532.c
++++ b/drivers/leds/leds-lm3532.c
+@@ -127,6 +127,7 @@ struct lm3532_als_data {
+  * @num_leds - Number of LED strings are supported in this array
+  * @full_scale_current - The full-scale current setting for the current sink.
+  * @led_strings - The LED strings supported in this array
++ * @enabled - Enabled status
+  * @label - LED label
+  */
+ struct lm3532_led {
+@@ -138,6 +139,7 @@ struct lm3532_led {
+ 	int ctrl_brt_pointer;
+ 	int num_leds;
+ 	int full_scale_current;
++	int enabled:1;
+ 	u32 led_strings[LM3532_MAX_CONTROL_BANKS];
+ 	char label[LED_MAX_NAME_SIZE];
+ };
+@@ -292,11 +294,15 @@ static int lm3532_get_ramp_index(int ramp_time)
+ 				ramp_time);
+ }
+ 
++/* Caller must take care of locking */
+ static int lm3532_led_enable(struct lm3532_led *led_data)
+ {
+ 	int ctrl_en_val = BIT(led_data->control_bank);
+ 	int ret;
+ 
++	if (led_data->enabled)
++		return 0;
++
+ 	ret = regmap_update_bits(led_data->priv->regmap, LM3532_REG_ENABLE,
+ 					 ctrl_en_val, ctrl_en_val);
+ 	if (ret) {
+@@ -304,14 +310,24 @@ static int lm3532_led_enable(struct lm3532_led *led_data)
+ 		return ret;
+ 	}
+ 
+-	return regulator_enable(led_data->priv->regulator);
++	ret = regulator_enable(led_data->priv->regulator);
++	if (ret < 0)
++		return ret;
++
++	led_data->enabled = 1;
++
++	return 0;
+ }
+ 
++/* Caller must take care of locking */
+ static int lm3532_led_disable(struct lm3532_led *led_data)
+ {
+ 	int ctrl_en_val = BIT(led_data->control_bank);
+ 	int ret;
+ 
++	if (!led_data->enabled)
++		return 0;
++
+ 	ret = regmap_update_bits(led_data->priv->regmap, LM3532_REG_ENABLE,
+ 					 ctrl_en_val, 0);
+ 	if (ret) {
+@@ -319,7 +335,13 @@ static int lm3532_led_disable(struct lm3532_led *led_data)
+ 		return ret;
+ 	}
+ 
+-	return regulator_disable(led_data->priv->regulator);
++	ret = regulator_disable(led_data->priv->regulator);
++	if (ret < 0)
++		return ret;
++
++	led_data->enabled = 0;
++
++	return 0;
+ }
+ 
+ static int lm3532_brightness_set(struct led_classdev *led_cdev,
+-- 
+2.23.0
