@@ -2,73 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0468D9EA8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8398F9EAAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:17:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730081AbfH0ONN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 10:13:13 -0400
-Received: from mga12.intel.com ([192.55.52.136]:10800 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730035AbfH0ONI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 10:13:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 07:13:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
-   d="scan'208";a="264282517"
-Received: from xxx.igk.intel.com ([10.237.93.170])
-  by orsmga001.jf.intel.com with ESMTP; 27 Aug 2019 07:13:05 -0700
-From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Cezary Rojewski <cezary.rojewski@intel.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= 
-        <amadeuszx.slawinski@intel.com>
-Subject: [PATCH 6/6] ASoC: Intel: NHLT: Fix debug print format
-Date:   Tue, 27 Aug 2019 16:17:12 +0200
-Message-Id: <20190827141712.21015-7-amadeuszx.slawinski@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190827141712.21015-1-amadeuszx.slawinski@linux.intel.com>
-References: <20190827141712.21015-1-amadeuszx.slawinski@linux.intel.com>
+        id S1728061AbfH0ORp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 10:17:45 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:41726 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726065AbfH0ORp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 10:17:45 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-14-7hY9DUGUPHysiFy6Id__jw-1; Tue, 27 Aug 2019 15:17:41 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 27 Aug 2019 15:17:40 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 27 Aug 2019 15:17:40 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Geert Uytterhoeven' <geert@linux-m68k.org>,
+        Joe Perches <joe@perches.com>
+CC:     Bernard Metzler <bmt@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit due to
+ u64/pointer abuse
+Thread-Topic: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit due to
+ u64/pointer abuse
+Thread-Index: AQHVVrGr4BhhBlFhpEW57H2RBHAQPacPFp7g
+Date:   Tue, 27 Aug 2019 14:17:40 +0000
+Message-ID: <dbc03b4ac1ef4ba2a807409676cf8066@AcuMS.aculab.com>
+References: <20190819100526.13788-1-geert@linux-m68k.org>
+ <581e7d79ed75484beb227672b2695ff14e1f1e34.camel@perches.com>
+ <CAMuHMdVh8dwd=77mHTqG80_D8DK+EtVGewRUJuaJzK1qRYrB+w@mail.gmail.com>
+In-Reply-To: <CAMuHMdVh8dwd=77mHTqG80_D8DK+EtVGewRUJuaJzK1qRYrB+w@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
+X-MC-Unique: 7hY9DUGUPHysiFy6Id__jw-1
+X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
-
-oem_table_id is 8 chars long, so we need to limit it, otherwise it
-may print some unprintable characters into dmesg.
-
-Signed-off-by: Amadeusz Sławiński <amadeuszx.slawinski@intel.com>
----
- sound/soc/intel/skylake/skl-nhlt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/intel/skylake/skl-nhlt.c b/sound/soc/intel/skylake/skl-nhlt.c
-index ab3d23c7bd65..19f328d71f24 100644
---- a/sound/soc/intel/skylake/skl-nhlt.c
-+++ b/sound/soc/intel/skylake/skl-nhlt.c
-@@ -136,7 +136,7 @@ int skl_nhlt_update_topology_bin(struct skl_dev *skl)
- 	struct hdac_bus *bus = skl_to_bus(skl);
- 	struct device *dev = bus->dev;
- 
--	dev_dbg(dev, "oem_id %.6s, oem_table_id %8s oem_revision %d\n",
-+	dev_dbg(dev, "oem_id %.6s, oem_table_id %.8s oem_revision %d\n",
- 		nhlt->header.oem_id, nhlt->header.oem_table_id,
- 		nhlt->header.oem_revision);
- 
--- 
-2.17.1
+RnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuDQo+IFNlbnQ6IDE5IEF1Z3VzdCAyMDE5IDE4OjE1DQou
+Li4NCj4gPiBJIHRoaW5rIGEgY2FzdCB0byB1bnNpZ25lZCBsb25nIGlzIHJhdGhlciBtb3JlIGNv
+bW1vbi4NCj4gPg0KPiA+IHVpbnRwdHJfdCBpcyB1c2VkIH4xMzAwIHRpbWVzIGluIHRoZSBrZXJu
+ZWwuDQo+ID4gSSBiZWxpZXZlIGEgY2FzdCB0byB1bnNpZ25lZCBsb25nIGlzIG11Y2ggbW9yZSBj
+b21tb24uDQo+IA0KPiBUaGF0IGlzIHRydWUsIGFzIHVpbnRwdHJfdCB3YXMgaW50cm9kdWNlZCBp
+biBDOTkuDQo+IFNpbWlsYXJseSwgdW5zaWduZWQgbG9uZyB3YXMgdXNlZCBiZWZvcmUgc2l6ZV90
+IGJlY2FtZSBjb21tb24uDQo+IA0KPiBIb3dldmVyLCBub3dhZGF5cyBzaXplX3QgYW5kIHVpbnRw
+dHJfdCBhcmUgcHJlZmVycmVkLg0KDQpJc24ndCB1aW50cHRyX3QgZGVmaW5lZCBieSB0aGUgc2Ft
+ZSBzdGFuZGFyZCBhcyB1aW50MzJfdD8NCklmIHRoZSBmb3JtZXIgaXMgYWxsb3dlZCBzbyBzaG91
+bGQgdGhlIGxhdHRlci4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lk
+ZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0K
+UmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
