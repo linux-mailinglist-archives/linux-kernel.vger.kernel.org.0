@@ -2,109 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BDF59DE63
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC31D9DE52
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:01:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbfH0HHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:07:08 -0400
-Received: from ushosting.nmnhosting.com ([66.55.73.32]:52164 "EHLO
-        ushosting.nmnhosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725943AbfH0HHF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:07:05 -0400
-X-Greylist: delayed 386 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Aug 2019 03:07:05 EDT
-Received: from mail2.nmnhosting.com (unknown [202.169.106.97])
-        by ushosting.nmnhosting.com (Postfix) with ESMTPS id 6A0512DC009A;
-        Tue, 27 Aug 2019 03:00:38 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=d-silva.org;
-        s=201810a; t=1566889239;
-        bh=Vicp1z3ZYemzE7DrudrWvYVfOYkLSvM90bJCLdQ9aRM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=C6v/ytGkutpfzP2PTxrtBrSOrb4+ce4MDkJwsciLjzlMDvtbaD/YozBZV3Ls5WRlm
-         k08QBl8jwO4ZVA111hlNhazgFVw4HijplQz7qWREPrDb1rQ3PDUb9i/gXYhDj1QeVM
-         rN16RfSPqXnOBdJvg1i9h9qfdcloSjoZF2NMOxHT1n0ZOcv4bpR/tyvEtsQ2bxVckr
-         RQvG+Cqxj4+anhZF1w8iwbcwwavco6NFXdU+hm+IUOAp77E5ZH7hE5LzCPtCM2m6IB
-         Sgv2zBatFyEC/qW2V5KiQF7RJsc62tKQ5LOU4H/xtDxmayaJnLRT7A1VxHxiLGMQSQ
-         hNV8TSivv9k1DqfcYW74bmU1RRCzn2IjDqpr6ubsulqhzDO5V5nIS4fSR2kzy/bgb+
-         O5myAjyfXbIHwFi86sQ7Du8681wYwNrg733juzW6Hcbv9jGDmYnN29RMESUp6X0Rmf
-         omA9W+2KN5ugfRg0oIWIW1wtbLv0IEtPDqW8hHk3Qg7bQ6HdsN4v1VhN3QHDpZvUcI
-         FSWalw652x+LxZyGBii2JfqAwuFV3Pvlww5uPY9kJSxmCSHsWhAzHiJ1Nk5TyN0Pl7
-         7ddDF28KQ9LCAgVLWGDal0AeMOUhj7x/pMquym3PkJzU4/KXWYabbILsqVb7CGrBcW
-         XjsmcwPtFOvIwHFlP+tCbv14=
-Received: from adsilva.ozlabs.ibm.com (static-82-10.transact.net.au [122.99.82.10] (may be forged))
-        (authenticated bits=0)
-        by mail2.nmnhosting.com (8.15.2/8.15.2) with ESMTPSA id x7R70GV1043884
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 27 Aug 2019 17:00:32 +1000 (AEST)
-        (envelope-from alastair@d-silva.org)
-Message-ID: <befab2a0a9f160f8af8c1a412068060636a7a64c.camel@d-silva.org>
-Subject: Re: [PATCH 2/2] mm: don't hide potentially null memmap pointer in
- sparse_remove_section
-From:   "Alastair D'Silva" <alastair@d-silva.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, Qian Cai <cai@lca.pw>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date:   Tue, 27 Aug 2019 17:00:16 +1000
-In-Reply-To: <20190827062445.GO7538@dhcp22.suse.cz>
-References: <20190827053656.32191-1-alastair@au1.ibm.com>
-         <20190827053656.32191-3-alastair@au1.ibm.com>
-         <20190827062445.GO7538@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
+        id S1727267AbfH0HBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:01:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726025AbfH0HBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:01:05 -0400
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C88C1206BF;
+        Tue, 27 Aug 2019 07:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566889264;
+        bh=Biq9mF8dTT+XjGplKumTdtUTNHz0ImKVfvD7CkyAwj0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hgQhsTQ0uGStkRN08ze0pp7gYCNZAgjNr980p+jcVF5VXiEywouzHu1X/QaioYG7h
+         pCwT9TmFUF4jd97IjGFMlF+qXHiYfnmwMA/XS1uzU8+t2GJf5VfqFsV2wMcd3tXQ08
+         RHKJsMf0efsZ6ws16aWkFS5lZ0ADFggxZxhDxI0I=
+Date:   Tue, 27 Aug 2019 09:01:01 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     codekipper@gmail.com
+Cc:     wens@csie.org, linux-sunxi@googlegroups.com,
+        linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
+        broonie@kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, be17068@iperbole.bo.it
+Subject: Re: [PATCH v6 3/3] ASoC: sun4i-i2s: Adjust LRCLK width
+Message-ID: <20190827070101.tastgcqvzrgv3kc5@flea>
+References: <20190826180734.15801-1-codekipper@gmail.com>
+ <20190826180734.15801-4-codekipper@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail2.nmnhosting.com [10.0.1.20]); Tue, 27 Aug 2019 17:00:34 +1000 (AEST)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="aewobl2wvpczcoyt"
+Content-Disposition: inline
+In-Reply-To: <20190826180734.15801-4-codekipper@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-27 at 08:24 +0200, Michal Hocko wrote:
-> On Tue 27-08-19 15:36:55, Alastair D'Silva wrote:
-> > From: Alastair D'Silva <alastair@d-silva.org>
-> > 
-> > By adding offset to memmap before passing it in to
-> > clear_hwpoisoned_pages,
-> > we hide a theoretically null memmap from the null check inside
-> > clear_hwpoisoned_pages.
-> 
-> Isn't that other way around? Calculating the offset struct page
-> pointer
-> will actually make the null check effective. Besides that I cannot
-> really see how pfn_to_page would return NULL. I have to confess that
-> I
-> cannot really see how offset could lead to a NULL struct page either
-> and
-> I strongly suspect that the NULL check is not really needed. Maybe it
-> used to be in the past.
-> 
 
-You're probably right, but I didn't feel confident in removing the NULL
-check. 
+--aewobl2wvpczcoyt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-While the NULL check remains though, I can't see how adding the offset
-would turn a non-NULL pointer into a NULL unless the pointer is invalid
-in the first place, and if this is the case, we should have a comment
-explaining this.
+On Mon, Aug 26, 2019 at 08:07:34PM +0200, codekipper@gmail.com wrote:
+> From: Marcus Cooper <codekipper@gmail.com>
+>
+> Some codecs such as i2s based HDMI audio and the Pine64 DAC require
+> a different amount of bit clocks per frame than what is calculated
+> by the sample width. Use the values obtained by the tdm slot bindings
+> to adjust the LRCLK width accordingly.
+>
+> Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+> ---
+>  sound/soc/sunxi/sun4i-i2s.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+> index 056a299c03fb..0965a97c96e5 100644
+> --- a/sound/soc/sunxi/sun4i-i2s.c
+> +++ b/sound/soc/sunxi/sun4i-i2s.c
+> @@ -455,7 +455,10 @@ static int sun8i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
+>  		break;
+>
+>  	case SND_SOC_DAIFMT_I2S:
+> -		lrck_period = params_physical_width(params);
+> +		if (i2s->slot_width)
+> +			lrck_period = i2s->slot_width;
+> +		else
+> +			lrck_period = params_physical_width(params);
+>  		break;
 
-The NULL check was added in commit:
-95a4774d055c ("memory-hotplug: update mce_bad_pages when removing the
-memory")
-where memmap was originally inited to NULL, and only conditionally
-given a value.
+That would be the case with the DSP formats too, right?
 
-With this in mind, since that situation is no longer true, I think we
-could instead drop the NULL check.
+Maxime
 
--- 
-Alastair D'Silva           mob: 0423 762 819
-skype: alastair_dsilva    
-Twitter: @EvilDeece
-blog: http://alastair.d-silva.org
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--aewobl2wvpczcoyt
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXWTVLQAKCRDj7w1vZxhR
+xSAlAQCvR8zoBbzxDhfl4BOVHlf7M+d/VwTWUWIndBN6/bMNDAD+KSWSTL9rCbyM
+5aTcKxbY8Hi2H/ljbFggOIAykqgEnQI=
+=88rE
+-----END PGP SIGNATURE-----
+
+--aewobl2wvpczcoyt--
