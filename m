@@ -2,155 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA839DE34
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA7D9DE37
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbfH0GmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 02:42:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36444 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726071AbfH0GmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 02:42:04 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1F2977BDAB;
-        Tue, 27 Aug 2019 06:42:04 +0000 (UTC)
-Received: from gigantic.usersys.redhat.com (helium.bos.redhat.com [10.18.17.132])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 644C01001B09;
-        Tue, 27 Aug 2019 06:42:03 +0000 (UTC)
-From:   Bandan Das <bsd@redhat.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        tipbuild@zytor.com, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [tip:x86/urgent 3/3] arch/x86/kernel/apic/apic.c:1182:6: warning: the address of 'x2apic_enabled' will always evaluate as 'true'
-References: <201908270037.RmH8iN2a%lkp@intel.com>
-Date:   Tue, 27 Aug 2019 02:42:02 -0400
-In-Reply-To: <201908270037.RmH8iN2a%lkp@intel.com> (kbuild test robot's
-        message of "Tue, 27 Aug 2019 00:30:41 +0800")
-Message-ID: <jpgwoezgldx.fsf@linux.bootlegged.copy>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1727432AbfH0Gqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 02:46:43 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5662 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725825AbfH0Gqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 02:46:43 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EF80199B740A55BD5CC6;
+        Tue, 27 Aug 2019 14:46:39 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 27 Aug 2019 14:46:30 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <bhelgaas@google.com>, <lukas@wunner.de>
+CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <wangxiongfeng2@huawei.com>, <huawei.libin@huawei.com>,
+        <guohanjun@huawei.com>
+Subject: [PATCH] pci: get pm runtime ref before resetting bus
+Date:   Tue, 27 Aug 2019 14:43:36 +0800
+Message-ID: <1566888216-8810-1-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 27 Aug 2019 06:42:04 +0000 (UTC)
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kbuild test robot <lkp@intel.com> writes:
+When I inject a PCIE Fatal error into a mellanox netdevice, 'dmesg' shows
+the device is recovered successfully, but 'lspci' didn't show the
+device. I checked the configuration space of the slot where the netdevice
+is inserted and found out the bit 'PCI_BRIDGE_CTL_BUS_RESET' is set.
+Later, I found out it is because this bit is saved in
+'saved_config_space' of 'struct pci_dev' when 'pci_pm_runtime_suspend()'
+is called. And 'PCI_BRIDGE_CTL_BUS_RESET' is set every time we restore
+the configuration sapce.
 
-> tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-> head:   cfa16294b1c5b320c0a0e1cac37c784b92366c87
-> commit: cfa16294b1c5b320c0a0e1cac37c784b92366c87 [3/3] x86/apic: Include the LDR when clearing out APIC registers
-> config: i386-defconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.4.0-10) 7.4.0
-> reproduce:
->         git checkout cfa16294b1c5b320c0a0e1cac37c784b92366c87
->         # save the attached .config to linux build tree
->         make ARCH=i386 
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
->
-> All warnings (new ones prefixed by >>):
->
->    arch/x86/kernel/apic/apic.c: In function 'clear_local_APIC':
->>> arch/x86/kernel/apic/apic.c:1182:6: warning: the address of 'x2apic_enabled' will always evaluate as 'true' [-Waddress]
->      if (!x2apic_enabled) {
->          ^
-Thomas, I apologize for the typo here. This is the x2apic_enabled() function.
-Should I respin ?
+This patch use 'pm_runtime_get' to avoid saving the configuration space
+of the bridge when the bus is being reset.
 
->
-> vim +1182 arch/x86/kernel/apic/apic.c
->
->   1142	
->   1143	/*
->   1144	 * Local APIC start and shutdown
->   1145	 */
->   1146	
->   1147	/**
->   1148	 * clear_local_APIC - shutdown the local APIC
->   1149	 *
->   1150	 * This is called, when a CPU is disabled and before rebooting, so the state of
->   1151	 * the local APIC has no dangling leftovers. Also used to cleanout any BIOS
->   1152	 * leftovers during boot.
->   1153	 */
->   1154	void clear_local_APIC(void)
->   1155	{
->   1156		int maxlvt;
->   1157		u32 v;
->   1158	
->   1159		/* APIC hasn't been mapped yet */
->   1160		if (!x2apic_mode && !apic_phys)
->   1161			return;
->   1162	
->   1163		maxlvt = lapic_get_maxlvt();
->   1164		/*
->   1165		 * Masking an LVT entry can trigger a local APIC error
->   1166		 * if the vector is zero. Mask LVTERR first to prevent this.
->   1167		 */
->   1168		if (maxlvt >= 3) {
->   1169			v = ERROR_APIC_VECTOR; /* any non-zero vector will do */
->   1170			apic_write(APIC_LVTERR, v | APIC_LVT_MASKED);
->   1171		}
->   1172		/*
->   1173		 * Careful: we have to set masks only first to deassert
->   1174		 * any level-triggered sources.
->   1175		 */
->   1176		v = apic_read(APIC_LVTT);
->   1177		apic_write(APIC_LVTT, v | APIC_LVT_MASKED);
->   1178		v = apic_read(APIC_LVT0);
->   1179		apic_write(APIC_LVT0, v | APIC_LVT_MASKED);
->   1180		v = apic_read(APIC_LVT1);
->   1181		apic_write(APIC_LVT1, v | APIC_LVT_MASKED);
->> 1182		if (!x2apic_enabled) {
->   1183			v = apic_read(APIC_LDR) & ~APIC_LDR_MASK;
->   1184			apic_write(APIC_LDR, v);
->   1185		}
->   1186		if (maxlvt >= 4) {
->   1187			v = apic_read(APIC_LVTPC);
->   1188			apic_write(APIC_LVTPC, v | APIC_LVT_MASKED);
->   1189		}
->   1190	
->   1191		/* lets not touch this if we didn't frob it */
->   1192	#ifdef CONFIG_X86_THERMAL_VECTOR
->   1193		if (maxlvt >= 5) {
->   1194			v = apic_read(APIC_LVTTHMR);
->   1195			apic_write(APIC_LVTTHMR, v | APIC_LVT_MASKED);
->   1196		}
->   1197	#endif
->   1198	#ifdef CONFIG_X86_MCE_INTEL
->   1199		if (maxlvt >= 6) {
->   1200			v = apic_read(APIC_LVTCMCI);
->   1201			if (!(v & APIC_LVT_MASKED))
->   1202				apic_write(APIC_LVTCMCI, v | APIC_LVT_MASKED);
->   1203		}
->   1204	#endif
->   1205	
->   1206		/*
->   1207		 * Clean APIC state for other OSs:
->   1208		 */
->   1209		apic_write(APIC_LVTT, APIC_LVT_MASKED);
->   1210		apic_write(APIC_LVT0, APIC_LVT_MASKED);
->   1211		apic_write(APIC_LVT1, APIC_LVT_MASKED);
->   1212		if (maxlvt >= 3)
->   1213			apic_write(APIC_LVTERR, APIC_LVT_MASKED);
->   1214		if (maxlvt >= 4)
->   1215			apic_write(APIC_LVTPC, APIC_LVT_MASKED);
->   1216	
->   1217		/* Integrated APIC (!82489DX) ? */
->   1218		if (lapic_is_integrated()) {
->   1219			if (maxlvt > 3)
->   1220				/* Clear ESR due to Pentium errata 3AP and 11AP */
->   1221				apic_write(APIC_ESR, 0);
->   1222			apic_read(APIC_ESR);
->   1223		}
->   1224	}
->   1225	
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+---
+ drivers/pci/pci.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 9cae66c..0079f0a 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -4546,6 +4546,9 @@ void pci_reset_secondary_bus(struct pci_dev *dev)
+ {
+ 	u16 ctrl;
+ 
++	/* avoid wrongly saving 'PCI_BRIDGE_CTL_BUS_RESET' */
++	pm_runtime_get(&dev->dev);
++
+ 	pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &ctrl);
+ 	ctrl |= PCI_BRIDGE_CTL_BUS_RESET;
+ 	pci_write_config_word(dev, PCI_BRIDGE_CONTROL, ctrl);
+@@ -4567,6 +4570,8 @@ void pci_reset_secondary_bus(struct pci_dev *dev)
+ 	 * but we don't make use of them yet.
+ 	 */
+ 	ssleep(1);
++
++	pm_runtime_put(&dev->dev);
+ }
+ 
+ void __weak pcibios_reset_secondary_bus(struct pci_dev *dev)
+-- 
+1.7.12.4
+
