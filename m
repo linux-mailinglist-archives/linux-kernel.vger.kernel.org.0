@@ -2,112 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E06619DB3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 03:40:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81C019DB4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 03:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbfH0Bi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 21:38:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729291AbfH0BiX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 21:38:23 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30C712341E;
-        Tue, 27 Aug 2019 01:38:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566869902;
-        bh=JcRGpSAMSkKk1fFKf/1KaMEweffSNEC99Ix3m7DNLCo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cryP2NQGisJKOnmPvltBdTxiisQfKz4fyvW65b/obwd4mc6m7f4NHIlae9ss7ke9h
-         X+e/GKToKp5gUIQFgO1escOY/W6/5YbkE73tIKDfph1X9mwMyPtc99ScP9/z730qR6
-         MaKCIShI6k7y0nNqwkKeVQ72ccqzjit48VbGZcE0=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 33/33] perf evsel: Rename perf_missing_features::bpf_event to ::bpf
-Date:   Mon, 26 Aug 2019 22:36:34 -0300
-Message-Id: <20190827013634.3173-34-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190827013634.3173-1-acme@kernel.org>
-References: <20190827013634.3173-1-acme@kernel.org>
+        id S1728846AbfH0Bl3 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 26 Aug 2019 21:41:29 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:33827 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbfH0Bl3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 21:41:29 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x7R1fB5g018428
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 27 Aug 2019 10:41:11 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x7R1fBC7004398;
+        Tue, 27 Aug 2019 10:41:11 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id x7R1f8NS009523;
+        Tue, 27 Aug 2019 10:41:11 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.150] [10.38.151.150]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-7897375; Tue, 27 Aug 2019 10:34:31 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC22GP.gisp.nec.co.jp ([10.38.151.150]) with mapi id 14.03.0439.000; Tue,
+ 27 Aug 2019 10:34:29 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Oscar Salvador <osalvador@suse.de>
+CC:     "mhocko@kernel.org" <mhocko@kernel.org>,
+        "mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>
+Subject: Re: poisoned pages do not play well in the buddy allocator
+Thread-Topic: poisoned pages do not play well in the buddy allocator
+Thread-Index: AQHVW/rikgbcCOwjjUKpu7s54tdytqcNoE2A
+Date:   Tue, 27 Aug 2019 01:34:29 +0000
+Message-ID: <20190827013429.GA5125@hori.linux.bs1.fc.nec.co.jp>
+References: <20190826104144.GA7849@linux>
+In-Reply-To: <20190826104144.GA7849@linux>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.34.125.150]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <5C3D0DDFB19E7145A3A8CE56A8E69AE7@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Mon, Aug 26, 2019 at 12:41:50PM +0200, Oscar Salvador wrote:
+> Hi,
+> 
+> When analyzing a problem reported by one of our customers, I stumbbled upon an issue
+> that origins from the fact that poisoned pages end up in the buddy allocator.
+> 
+> Let me break down the stepts that lie to the problem:
+> 
+> 1) We soft-offline a page
+> 2) Page gets flagged as HWPoison and is being sent to the buddy allocator.
+>    This is done through set_hwpoison_free_buddy_page().
+> 3) Kcompactd wakes up in order to perform some compaction.
+> 4) compact_zone() will call migrate_pages()
+> 5) migrate_pages() will try to get a new page from compaction_alloc() to migrate to
+> 6) if cc->freelist is empty, compaction_alloc() will call isolate_free_pagesblock()
+> 7) isolate_free_pagesblock only checks for PageBuddy() to assume that a page is OK
+>    to be used to migrate to. Since HWPoisoned page are also PageBuddy, we add
+>    the page to the list. (same problem exists in fast_isolate_freepages()).
+> 
+> The outcome of that is that we end up happily handing poisoned pages in compaction_alloc,
+> so if we ever got a fault on that page through *_fault, we will return VM_FAULT_HWPOISON,
+> and the process will be killed.
+> 
+> I first though that I could get away with it by checking PageHWPoison in
+> {fast_isolate_freepages/isolate_free_pagesblock}, but not really.
+> It might be that the page we are checking is an order > 0 page, so the first page
+> might not be poisoned, but the one the follows might be, and we end up in the
+> same situation.
 
-No need for that _event suffix, do just like all the other meta events
-and do away with that.
+Yes, this is a whole point of the current implementation.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Song Liu <songliubraving@fb.com>
-Link: https://lkml.kernel.org/n/tip-bvc83f380dva83wlg52yd10t@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/evsel.c | 9 ++++-----
- tools/perf/util/evsel.h | 2 +-
- 2 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> After some more thought, I really came to the conclusion that HWPoison pages should not
+> really be in the buddy allocator, as this is only asking for problems.
+> In this case it is only compaction code, but it could be happening somewhere else,
+> and one would expect that the pages you got from the buddy allocator are __ready__ to use.
+> 
+> I __think__ that we thought we were safe to put HWPoison pages in the buddy allocator as we
+> perform healthy checks when getting a page from there, so we skip poisoned pages
+> 
+> Of course, this is not the end of the story, now that someone got a page, if he frees it,
+> there is a high chance that this page ends up in a pcplist (I saw that).
+> Unless we are on CONFIG_VM_DEBUG, we do not check for the health of pages got from pcplist,
+> as we do when getting a page from the buddy allocator.
+> 
+> I checked [1], and it seems that [2] was going towards fixing this kind of issue.
+> 
+> I think it is about time to revamp the whole thing.
+> 
+> @Naoya: I could give it a try if you are busy.
 
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index b3cfe120d097..fa676355559e 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1072,8 +1072,7 @@ void perf_evsel__config(struct evsel *evsel, struct record_opts *opts,
- 	attr->mmap2 = track && !perf_missing_features.mmap2;
- 	attr->comm  = track;
- 	attr->ksymbol = track && !perf_missing_features.ksymbol;
--	attr->bpf_event = track && !opts->no_bpf_event &&
--		!perf_missing_features.bpf_event;
-+	attr->bpf_event = track && !opts->no_bpf_event && !perf_missing_features.bpf;
- 
- 	if (opts->record_namespaces)
- 		attr->namespaces  = track;
-@@ -1803,7 +1802,7 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 		evsel->core.attr.read_format &= ~(PERF_FORMAT_GROUP|PERF_FORMAT_ID);
- 	if (perf_missing_features.ksymbol)
- 		evsel->core.attr.ksymbol = 0;
--	if (perf_missing_features.bpf_event)
-+	if (perf_missing_features.bpf)
- 		evsel->core.attr.bpf_event = 0;
- retry_sample_id:
- 	if (perf_missing_features.sample_id_all)
-@@ -1920,8 +1919,8 @@ int evsel__open(struct evsel *evsel, struct perf_cpu_map *cpus,
- 		perf_missing_features.aux_output = true;
- 		pr_debug2("Kernel has no attr.aux_output support, bailing out\n");
- 		goto out_close;
--	} else if (!perf_missing_features.bpf_event && evsel->core.attr.bpf_event) {
--		perf_missing_features.bpf_event = true;
-+	} else if (!perf_missing_features.bpf && evsel->core.attr.bpf_event) {
-+		perf_missing_features.bpf = true;
- 		pr_debug2("switching off bpf_event\n");
- 		goto fallback_missing_features;
- 	} else if (!perf_missing_features.ksymbol && evsel->core.attr.ksymbol) {
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index 77e07f2486d3..fd60caced4fc 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -194,7 +194,7 @@ struct perf_missing_features {
- 	bool write_backward;
- 	bool group_read;
- 	bool ksymbol;
--	bool bpf_event;
-+	bool bpf;
- 	bool aux_output;
- };
- 
--- 
-2.21.0
+Thanks for raising hand. That's really wonderful. I think that the series [1] is not
+merge yet but not rejected yet, so feel free to reuse/update/revamp it.
 
+> 
+> [1] https://lore.kernel.org/linux-mm/1541746035-13408-1-git-send-email-n-horiguchi@ah.jp.nec.com/
+> [2] https://lore.kernel.org/linux-mm/1541746035-13408-9-git-send-email-n-horiguchi@ah.jp.nec.com/
+> 
+> -- 
+> Oscar Salvador
+> SUSE L3
+> 
