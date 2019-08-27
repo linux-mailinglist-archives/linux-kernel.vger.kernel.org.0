@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB4B39E035
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EF049E03A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731762AbfH0IB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:01:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57448 "EHLO mail.kernel.org"
+        id S1731814AbfH0IBm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:01:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730829AbfH0IBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:01:24 -0400
+        id S1730695AbfH0IBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:01:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 989B7217F5;
-        Tue, 27 Aug 2019 08:01:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC1E5206BA;
+        Tue, 27 Aug 2019 08:01:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892883;
-        bh=HNlQc3oZRGT6ch+GYLl//BeUYwSDb6WieptQuj9vgxM=;
+        s=default; t=1566892895;
+        bh=lpolk3mGplvQTYlSJ0kutQk3tJP6sDHc93EGxGC3MXo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FqIwMRyAJDk6E7lBWwiTyIjBdta9ePNpWGfvNNvOEL73RBI7Q0ji2+sHCNCn7NBaU
-         2DR2adDr0kjUZwUFI8jpP8mUwBLfNTKQyfie+RaNiePbeT013KW4/wAcDnLaPsVSeX
-         3tJUUFrCq9dgPvI35xRT1UKJxtlQ6kSFRvoEn1zw=
+        b=WkpvPEpMrVxNH+VGw3OrKk956rwH95Yrk7kggwlV3xnOrcBKG/pfZOj8DHGd0fb2A
+         G05iDg6R0vieEJEc7nU7Fpzirae7UZw7h87pa9ebWD0Ruz9CujxKumqxYmFPcbDHgG
+         Vv1D1/voTimYJd9avmyL0u22uum+mXEFXgMGg+ms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Chen Yi <yiche@redhat.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 046/162] isdn: mISDN: hfcsusb: Fix possible null-pointer dereferences in start_isoc_chain()
-Date:   Tue, 27 Aug 2019 09:49:34 +0200
-Message-Id: <20190827072739.837878663@linuxfoundation.org>
+Subject: [PATCH 5.2 050/162] netfilter: ipset: Actually allow destination MAC address for hash:ip,mac sets too
+Date:   Tue, 27 Aug 2019 09:49:38 +0200
+Message-Id: <20190827072739.960706072@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -44,46 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a0d57a552b836206ad7705a1060e6e1ce5a38203 ]
+[ Upstream commit b89d15480d0cacacae1a0fe0b3da01b529f2914f ]
 
-In start_isoc_chain(), usb_alloc_urb() on line 1392 may fail
-and return NULL. At this time, fifo->iso[i].urb is assigned to NULL.
+In commit 8cc4ccf58379 ("ipset: Allow matching on destination MAC address
+for mac and ipmac sets"), ipset.git commit 1543514c46a7, I removed the
+KADT check that prevents matching on destination MAC addresses for
+hash:mac sets, but forgot to remove the same check for hash:ip,mac set.
 
-Then, fifo->iso[i].urb is used at some places, such as:
-LINE 1405:    fill_isoc_urb(fifo->iso[i].urb, ...)
-                  urb->number_of_packets = num_packets;
-                  urb->transfer_flags = URB_ISO_ASAP;
-                  urb->actual_length = 0;
-                  urb->interval = interval;
-LINE 1416:    fifo->iso[i].urb->...
-LINE 1419:    fifo->iso[i].urb->...
+Drop this check: functionality is now commented in man pages and there's
+no reason to restrict to source MAC address matching anymore.
 
-Thus, possible null-pointer dereferences may occur.
-
-To fix these bugs, "continue" is added to avoid using fifo->iso[i].urb
-when it is NULL.
-
-These bugs are found by a static analysis tool STCheck written by us.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Chen Yi <yiche@redhat.com>
+Fixes: 8cc4ccf58379 ("ipset: Allow matching on destination MAC address for mac and ipmac sets")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/hardware/mISDN/hfcsusb.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/netfilter/ipset/ip_set_hash_ipmac.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
-index 0e224232f7464..8fb7c5dea07fc 100644
---- a/drivers/isdn/hardware/mISDN/hfcsusb.c
-+++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
-@@ -1394,6 +1394,7 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
- 				printk(KERN_DEBUG
- 				       "%s: %s: alloc urb for fifo %i failed",
- 				       hw->name, __func__, fifo->fifonum);
-+				continue;
- 			}
- 			fifo->iso[i].owner_fifo = (struct usb_fifo *) fifo;
- 			fifo->iso[i].indx = i;
+diff --git a/net/netfilter/ipset/ip_set_hash_ipmac.c b/net/netfilter/ipset/ip_set_hash_ipmac.c
+index faf59b6a998fe..eb14434083203 100644
+--- a/net/netfilter/ipset/ip_set_hash_ipmac.c
++++ b/net/netfilter/ipset/ip_set_hash_ipmac.c
+@@ -89,10 +89,6 @@ hash_ipmac4_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	struct hash_ipmac4_elem e = { .ip = 0, { .foo[0] = 0, .foo[1] = 0 } };
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 
+-	 /* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_TWO_SRC))
+-		return 0;
+-
+ 	if (skb_mac_header(skb) < skb->head ||
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
 -- 
 2.20.1
 
