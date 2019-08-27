@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC21F9E28C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7C4E9E264
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:27:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbfH0I1h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:27:37 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42828 "EHLO
+        id S1730213AbfH0I0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:26:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42861 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729931AbfH0I0c (ORCPT
+        with ESMTP id S1730055AbfH0I0h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:26:32 -0400
+        Tue, 27 Aug 2019 04:26:37 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2Wo5-0007wK-JZ; Tue, 27 Aug 2019 10:26:25 +0200
+        id 1i2Wo9-0007vM-Vf; Tue, 27 Aug 2019 10:26:30 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 0E98D1C0DE1;
-        Tue, 27 Aug 2019 10:26:23 +0200 (CEST)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9AFC11C0DE4;
+        Tue, 27 Aug 2019 10:26:22 +0200 (CEST)
 Date:   Tue, 27 Aug 2019 08:26:22 -0000
 From:   tip-bot2 for Jiri Olsa <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] libperf: Add PERF_RECORD_BPF_EVENT 'struct
- bpf_event' to perf/event.h
+Subject: [tip: perf/core] libperf: Add PERF_RECORD_KSYMBOL 'struct
+ ksymbol_event' to perf/event.h
 Cc:     Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Michael Petlan <mpetlan@redhat.com>,
@@ -34,10 +34,10 @@ Cc:     Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190825181752.722-12-jolsa@kernel.org>
-References: <20190825181752.722-12-jolsa@kernel.org>
+In-Reply-To: <20190825181752.722-11-jolsa@kernel.org>
+References: <20190825181752.722-11-jolsa@kernel.org>
 MIME-Version: 1.0
-Message-ID: <156689438297.24553.15231613609627693154.tip-bot2@tip-bot2>
+Message-ID: <156689438252.24550.2082971928714763322.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,77 +54,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     b1b510142283c02991f48b27d399852364f7d89b
-Gitweb:        https://git.kernel.org/tip/b1b510142283c02991f48b27d399852364f7d89b
+Commit-ID:     f15e3c25a1b40794a0ef2647360afe873fe34f54
+Gitweb:        https://git.kernel.org/tip/f15e3c25a1b40794a0ef2647360afe873fe34f54
 Author:        Jiri Olsa <jolsa@kernel.org>
-AuthorDate:    Sun, 25 Aug 2019 20:17:51 +02:00
+AuthorDate:    Sun, 25 Aug 2019 20:17:50 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Mon, 26 Aug 2019 19:39:10 -03:00
 
-libperf: Add PERF_RECORD_BPF_EVENT 'struct bpf_event' to perf/event.h
+libperf: Add PERF_RECORD_KSYMBOL 'struct ksymbol_event' to perf/event.h
 
-Move the PERF_RECORD_BPF_EVENT event definition to libperf's event.h.
+Move the PERF_RECORD_KSYMBOL event definition into libperf's event.h
+header include.
 
-In order to keep libperf simple, we switch 'u64/u32/u16/u8'
-types used events to their generic '__u*' versions.
+In order to keep libperf simple, we switch 'u64/u32/u16/u8' types used
+events to their generic '__u*' versions.
+
+Perf added 'u*' types mainly to ease up printing __u64 values
+as stated in the linux/types.h comment:
+
+  /*
+   * We define u64 as uint64_t for every architecture
+   * so that we can print it with "%"PRIx64 without getting warnings.
+   *
+   * typedef __u64 u64;
+   * typedef __s64 s64;
+   */
+
+Add and use new PRI_lu64 and PRI_lx64 macros for that.  Use extra '_' to
+ease up the reading and differentiate them from standard PRI*64 macros.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190825181752.722-12-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190825181752.722-11-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/include/perf/event.h | 11 +++++++++++
- tools/perf/util/event.h             | 10 ----------
- 2 files changed, 11 insertions(+), 10 deletions(-)
+ tools/perf/lib/include/perf/event.h | 13 +++++++++++++
+ tools/perf/util/event.c             |  2 +-
+ tools/perf/util/event.h             | 13 -------------
+ 3 files changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-index 8c36793..585c9d8 100644
+index ef5ec66..8c36793 100644
 --- a/tools/perf/lib/include/perf/event.h
 +++ b/tools/perf/lib/include/perf/event.h
-@@ -5,6 +5,7 @@
- #include <linux/perf_event.h>
- #include <linux/types.h>
- #include <linux/limits.h>
-+#include <linux/bpf.h>
- 
- struct mmap_event {
- 	struct perf_event_header header;
-@@ -93,4 +94,14 @@ struct ksymbol_event {
- 	char			 name[KSYM_NAME_LEN];
+@@ -80,4 +80,17 @@ struct throttle_event {
+ 	__u64			 stream_id;
  };
  
-+struct bpf_event {
-+	struct perf_event_header header;
-+	__u16			 type;
-+	__u16			 flags;
-+	__u32			 id;
++#ifndef KSYM_NAME_LEN
++#define KSYM_NAME_LEN 256
++#endif
 +
-+	/* for bpf_prog types */
-+	__u8			 tag[BPF_TAG_SIZE];  // prog tag
++struct ksymbol_event {
++	struct perf_event_header header;
++	__u64			 addr;
++	__u32			 len;
++	__u16			 ksym_type;
++	__u16			 flags;
++	char			 name[KSYM_NAME_LEN];
 +};
 +
  #endif /* __LIBPERF_EVENT_H */
+diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
+index 3bd9fc2..4447cd2 100644
+--- a/tools/perf/util/event.c
++++ b/tools/perf/util/event.c
+@@ -1485,7 +1485,7 @@ static size_t perf_event__fprintf_lost(union perf_event *event, FILE *fp)
+ 
+ size_t perf_event__fprintf_ksymbol(union perf_event *event, FILE *fp)
+ {
+-	return fprintf(fp, " addr %" PRIx64 " len %u type %u flags 0x%x name %s\n",
++	return fprintf(fp, " addr %" PRI_lx64 " len %u type %u flags 0x%x name %s\n",
+ 		       event->ksymbol_event.addr, event->ksymbol_event.len,
+ 		       event->ksymbol_event.ksym_type,
+ 		       event->ksymbol_event.flags, event->ksymbol_event.name);
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index c4eec1f..091a069 100644
+index 40020f5..c4eec1f 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -27,16 +27,6 @@
+@@ -27,19 +27,6 @@
  #define PRI_lx64 PRIx64
  #endif
  
--struct bpf_event {
--	struct perf_event_header header;
--	u16 type;
--	u16 flags;
--	u32 id;
+-#ifndef KSYM_NAME_LEN
+-#define KSYM_NAME_LEN 256
+-#endif
 -
--	/* for bpf_prog types */
--	u8 tag[BPF_TAG_SIZE];  // prog tag
+-struct ksymbol_event {
+-	struct perf_event_header header;
+-	u64 addr;
+-	u32 len;
+-	u16 ksym_type;
+-	u16 flags;
+-	char name[KSYM_NAME_LEN];
 -};
 -
- #define PERF_SAMPLE_MASK				\
- 	(PERF_SAMPLE_IP | PERF_SAMPLE_TID |		\
- 	 PERF_SAMPLE_TIME | PERF_SAMPLE_ADDR |		\
+ struct bpf_event {
+ 	struct perf_event_header header;
+ 	u16 type;
