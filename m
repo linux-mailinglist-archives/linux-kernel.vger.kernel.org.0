@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4FAD9EBF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E17CC9EC02
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:09:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbfH0PJD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:09:03 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58784 "EHLO
+        id S1730371AbfH0PJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:09:18 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58782 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728612AbfH0PI5 (ORCPT
+        by vger.kernel.org with ESMTP id S1728506AbfH0PI5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 27 Aug 2019 11:08:57 -0400
 Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7RF28XA026519;
-        Tue, 27 Aug 2019 17:08:28 +0200
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7RF27Pu026516;
+        Tue, 27 Aug 2019 17:08:29 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
  : date : message-id : references : in-reply-to : content-type :
  content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=XBn5EdlEuwPuny7s/ZVplkEwvVDz5QZdOFX+dgKCXXA=;
- b=iNORaUj7p6Vrz+dT27NTys4RFbS+VfOsa9329guLiC7b/Do+brszYr2pMO4ew3YzyzNM
- NB0Pjy6+9dBvLiwvNd+yE7efuMkFFrfe7UiYNHZ7+prV8NXDD24+bgJ5upoorAKVYi+T
- c3P2DG8fCtnZ3rJDwIq+9B9t7srkeH93DdVhn4TZoQpeXnEtLl6nB/6F6eEMNPuwetOU
- IFpI3OhI6uS1ozBIUwvNz3fe+qjtwQRge6Fh8bbYlBsa16M/sBr3KC6kFcA+RVBZ8Fa1
- /bM2ZiVTFBhLv/okCWn0oJvRLk4GFWajAJFT1uMjpZdI7sKsbVj9cw42Q7mZDfhVq/wV WA== 
+ bh=MKlaahYh2GyrYNC5OSGbdIImAgdDz5WxBqftSeUPh6k=;
+ b=QWOq4bQUMB5zBU1+CzaYPmnKeVEpx+m6YtBdbQ+JTjVJtfKZLxfXYcZWWIP61Egv4hny
+ TQjT0+ak6jI32S4OD2hd9Fx21WbUZ5GJefv94gDkc9H56I2/u67lqOsaVzBEUakwCJ5V
+ bx2mpGWek4rQUDqWotQ3lzuo8HK77C6gV4IdoAG6WJfXt2BEmrC66G2VWhGUuyd8i2aQ
+ F2Lb3QodX3RpwOhBJBvAvq9DDUaKQ+nQuROR4RwVz0k2Wx5Ei8ZbEiXEgfZtBbmF9pq/
+ 6LHyUvVMyhQ6nNIsYGdgdABWjz06OLYUSbffJZLdCyfde85BicwlxQ3gA+5nAub496Py CA== 
 Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2ujv4kt4b3-1
+        by mx08-00178001.pphosted.com with ESMTP id 2ujv4kt4ay-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 27 Aug 2019 17:08:28 +0200
+        Tue, 27 Aug 2019 17:08:29 +0200
 Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 20FB056;
-        Tue, 27 Aug 2019 15:08:23 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D02862B76DD;
-        Tue, 27 Aug 2019 17:08:22 +0200 (CEST)
-Received: from SFHDAG5NODE1.st.com (10.75.127.13) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 27 Aug
- 2019 17:08:22 +0200
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 20AD154;
+        Tue, 27 Aug 2019 15:08:22 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CCE1B2B76DF;
+        Tue, 27 Aug 2019 17:08:21 +0200 (CEST)
+Received: from SFHDAG5NODE1.st.com (10.75.127.13) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 27 Aug
+ 2019 17:08:21 +0200
 Received: from SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6]) by
  SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6%20]) with mapi id
  15.00.1473.003; Tue, 27 Aug 2019 17:08:21 +0200
@@ -57,11 +57,11 @@ To:     "will@kernel.org" <will@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 CC:     Gerald BAEZA <gerald.baeza@st.com>
-Subject: [PATCH v3 5/5] ARM: dts: stm32: add ddrperfm on stm32mp157c
-Thread-Topic: [PATCH v3 5/5] ARM: dts: stm32: add ddrperfm on stm32mp157c
-Thread-Index: AQHVXOlE7eeGfv5rUUSEpFdWg8XWbA==
+Subject: [PATCH v3 4/5] ARM: configs: enable STM32_DDR_PMU
+Thread-Topic: [PATCH v3 4/5] ARM: configs: enable STM32_DDR_PMU
+Thread-Index: AQHVXOlD6Kq1uoloYU2GrfhWvkfaXA==
 Date:   Tue, 27 Aug 2019 15:08:21 +0000
-Message-ID: <1566918464-23927-6-git-send-email-gerald.baeza@st.com>
+Message-ID: <1566918464-23927-5-git-send-email-gerald.baeza@st.com>
 References: <1566918464-23927-1-git-send-email-gerald.baeza@st.com>
 In-Reply-To: <1566918464-23927-1-git-send-email-gerald.baeza@st.com>
 Accept-Language: fr-FR, en-US
@@ -81,33 +81,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DDRPERFM is the DDR Performance Monitor embedded
-in STM32MP1 SOC.
+STM32_DDR_PMU enables the perf driver that
+controls the DDR Performance Monitor (DDRPERFM)
 
 Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
 ---
- arch/arm/boot/dts/stm32mp157c.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/configs/multi_v7_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp=
-157c.dtsi
-index 0c4e6eb..6ea6933 100644
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@ -1378,6 +1378,14 @@
- 			};
- 		};
-=20
-+		ddrperfm: perf@5a007000 {
-+			compatible =3D "st,stm32-ddr-pmu";
-+			reg =3D <0x5a007000 0x400>;
-+			clocks =3D <&rcc DDRPERFM>;
-+			resets =3D <&rcc DDRPERFM_R>;
-+			status =3D "okay";
-+		};
-+
- 		usart1: serial@5c000000 {
- 			compatible =3D "st,stm32h7-uart";
- 			reg =3D <0x5c000000 0x400>;
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v=
+7_defconfig
+index 6a40bc2..8fa4690 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -1011,6 +1011,7 @@ CONFIG_PHY_DM816X_USB=3Dm
+ CONFIG_OMAP_USB2=3Dy
+ CONFIG_TI_PIPE3=3Dy
+ CONFIG_TWL4030_USB=3Dm
++CONFIG_STM32_DDR_PMU=3Dm
+ CONFIG_MESON_MX_EFUSE=3Dm
+ CONFIG_ROCKCHIP_EFUSE=3Dm
+ CONFIG_NVMEM_IMX_OCOTP=3Dy
 --=20
 2.7.4
