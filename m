@@ -2,76 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B83E79E8B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:10:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAA7D9E8CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729803AbfH0NKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 09:10:36 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:38362 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729824AbfH0NKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:10:35 -0400
-Received: from zn.tnic (p200300EC2F0CD000F02F6C1468024718.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:d000:f02f:6c14:6802:4718])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 975791EC0B89;
-        Tue, 27 Aug 2019 15:10:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1566911433;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1O36I11NR1TCXF+c0kx9q6zN8+NXYhHhq5Irre2ThJw=;
-        b=eL3U/jP2V+9BgFmUx2XVAEzxHUZCz/v86h5uaRhGjMr31UHC+T2CTAkJSXBFSpwruJ1XvO
-        gBUuQnvSiU8VFgpWBOnNbhbeKHz7Be5KDdYVQv8jCO1AI1FJMduxPKTWMaGj4DvmS1AVpf
-        pDpkFlNfJpLwsKGI8UtliZUEbNSdwOM=
-Date:   Tue, 27 Aug 2019 15:10:29 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
-        linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        dri-devel@lists.freedesktop.org, Doug Covelli <dcovelli@vmware.com>
-Subject: Re: [PATCH v2 2/4] x86/vmware: Add a header file for hypercall
- definitions
-Message-ID: <20190827131029.GF29752@zn.tnic>
-References: <20190823081316.28478-1-thomas_os@shipmail.org>
- <20190823081316.28478-3-thomas_os@shipmail.org>
+        id S1728870AbfH0NMq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 09:12:46 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54436 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725920AbfH0NMp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:12:45 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7RD9CAZ001945;
+        Tue, 27 Aug 2019 13:12:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=ASUUUkYHWUhwFKzNS2t3x+k/4UsOO6plVu7exCkK5XU=;
+ b=MPLf+vxxOSe561irWHaSHSyCBYCGV8jpbtY0kHQ/vYVoT9nwJa1pIoMwKod4LgVOkvXh
+ etEcI++34RwpM/Fj7kR2LEtjRZk1P0MRZN4JulOvdVulL+MLOViEAicllqIgO37Mcfri
+ kj5HC2v6F5ppcF1hW+0IfC9HMRgaG6HUnLvE6qXnvljivORFrATxcFogyobn7JPQxILo
+ RwXIhzaX0kSMIMoa7ltyW+Peizl29tUfi8V9RugEs6a64GQfexR91qFOYXYyaMOodxOa
+ Zz9JWtNgbx7hbkB+z7mYYe2VBJW9ubHe3ZRFVh5AuR2cYMC+DckQbPh4dJ+zuQK3Dl7B Rw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2un4n9ra2g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Aug 2019 13:12:41 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7RD98T9051233;
+        Tue, 27 Aug 2019 13:10:41 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2umhu8qtpm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Aug 2019 13:10:40 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7RDAevg015866;
+        Tue, 27 Aug 2019 13:10:40 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 27 Aug 2019 06:10:39 -0700
+Date:   Tue, 27 Aug 2019 16:10:33 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: dvb: redundant assignment to variable tmp
+Message-ID: <20190827131033.GD23584@kadam>
+References: <20190827111527.26337-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190823081316.28478-3-thomas_os@shipmail.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190827111527.26337-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9361 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908270142
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9361 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908270142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 10:13:14AM +0200, Thomas Hellström (VMware) wrote:
-> From: Thomas Hellstrom <thellstrom@vmware.com>
+On Tue, Aug 27, 2019 at 12:15:27PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> The new header is intended to be used by drivers using the backdoor.
-> Follow the kvm example using alternatives self-patching to
-> choose between vmcall, vmmcall and io instructions.
+> Variable tmp is being assigned a value that is never read and tmp
+> is being re-assigned a little later on. The assignment is redundant
+> and hence can be removed.
 > 
-> Also define two new CPU feature flags to indicate hypervisor support
-> for vmcall- and vmmcall instructions.
+> Addresses-Coverity: ("Ununsed value")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/media/dvb-frontends/sp8870.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/media/dvb-frontends/sp8870.c b/drivers/media/dvb-frontends/sp8870.c
+> index 655db8272268..f6793c9c2dc3 100644
+> --- a/drivers/media/dvb-frontends/sp8870.c
+> +++ b/drivers/media/dvb-frontends/sp8870.c
+> @@ -378,8 +378,6 @@ static int sp8870_read_ber (struct dvb_frontend* fe, u32 * ber)
+>  	if (ret < 0)
+>  		return -EIO;
+>  
+> -	tmp = ret & 0x3F;
+> -
 
-I could use some of the explanation why we need two feature flags added
-here from:
+This is pre git code.  It's not clear if the tmp is supposed to be used
+or if we can remove the sp8870_readreg() call also...  The problem is
+that we're disabling the warning without necessarily writing the best
+fix.  It's better to leave the warning there until we are more sure of
+the correct fix.  The warning has useful information and it's not
+hurting anyone.
 
-https://lkml.kernel.org/r/970d2bb6-ab29-315f-f5d8-5d11095859af@shipmail.org
+regards,
+dan carpenter
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
