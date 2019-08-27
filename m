@@ -2,382 +2,352 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 746DD9DB4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 03:41:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B60709DB51
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 03:45:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbfH0Bk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 21:40:57 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46089 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728571AbfH0Bk4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 21:40:56 -0400
-Received: by mail-lf1-f66.google.com with SMTP id n19so13772534lfe.13
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 18:40:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=c62xv5vBM/PnmkjyTRppKCq9KLFp733vzSGNPbBsFlk=;
-        b=rlvOGL39It1oYiP4/B4Lmr9eAavaSCnSGWEtEGghKXPvYIsfCR/Hk/O9zgd0wgabGO
-         4iGjYgSbEjoXB4RBheoLw3FMWf9vygapiVfnvzt4EJ9J4Z3blkPuD5MeWMNkMIJdI5g0
-         TJ3FM/q/0Uq+UjcsiLlF6QCDm6IyjYRjMjdTc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=c62xv5vBM/PnmkjyTRppKCq9KLFp733vzSGNPbBsFlk=;
-        b=CljDfadztr4z30iAKU3TngRBYQRbmT4x0wTrYgVMsE5m88GVy2fXhIAoLWIOBquywm
-         avLv276SH+ZeAMIGPgShDPcNxNjfYaOxEksYK4z8NC7FVmxIZm+/pWJfGdZr1RiHOihK
-         ihCn4CtI7aKUKM3bP1ZBs/VACbm6r+c5R9WuaWtZHMrvujkd/drekaMIZKhc1ar5OM2H
-         Dc7F124eJ60cVi8EARY+738NT1Jwv6DQRVPdeqP/qkfqerH2Fn9o8sebSPx1BDIxSo1+
-         DCeFTCcYaViUARQ0sGA0Q6/f1A9Z8w8tPakoLNCYrZhtJLtTzYVmUedQ7TXS98y+9Ouz
-         vilw==
-X-Gm-Message-State: APjAAAVbpY1o8QSJVzdr+RYCoyAZAes1Bbccr9TWDVyVNFjvuLMAk4Ks
-        lgsKGbUce5tKrv7Tc1RKqFmZ5Rg8AP3dZojGP6RQFKGL
-X-Google-Smtp-Source: APXvYqwDZdY3/QmkYWHAy/elYElRJ4E+3sVocKeoQ8d8m6jY3tg1/8MgFsQfoClrmT63T5w61utMisTlVc8OZHlsiZQ=
-X-Received: by 2002:a19:6d02:: with SMTP id i2mr12359068lfc.191.1566870053709;
- Mon, 26 Aug 2019 18:40:53 -0700 (PDT)
+        id S1728658AbfH0Bo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 21:44:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728335AbfH0Bo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 21:44:58 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CE27F30832E1;
+        Tue, 27 Aug 2019 01:44:57 +0000 (UTC)
+Received: from x1.home (ovpn-116-99.phx2.redhat.com [10.3.116.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 19D2C1001281;
+        Tue, 27 Aug 2019 01:44:57 +0000 (UTC)
+Date:   Mon, 26 Aug 2019 19:44:56 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Parav Pandit <parav@mellanox.com>
+Cc:     jiri@mellanox.com, kwankhede@nvidia.com, cohuck@redhat.com,
+        davem@davemloft.net, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH 1/4] mdev: Introduce sha1 based mdev alias
+Message-ID: <20190826194456.6edef7d1@x1.home>
+In-Reply-To: <20190826204119.54386-2-parav@mellanox.com>
+References: <20190826204119.54386-1-parav@mellanox.com>
+        <20190826204119.54386-2-parav@mellanox.com>
+Organization: Red Hat
 MIME-Version: 1.0
-References: <5d648897.1c69fb81.5e60a.fc70@mx.google.com>
-In-Reply-To: <5d648897.1c69fb81.5e60a.fc70@mx.google.com>
-From:   Joel Fernandes <joel@joelfernandes.org>
-Date:   Mon, 26 Aug 2019 21:40:42 -0400
-Message-ID: <CAEXW_YRm6VuZjG4u2tkAyihCT4Jd194VP3ZMK=foErtVw_cLcg@mail.gmail.com>
-Subject: Re: [RFC v1 2/2] rcu/tree: Remove dynticks_nmi_nesting counter
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Frederic Weisbecker <fweisbec@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        kernel-team <kernel-team@android.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>, rcu <rcu@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Tue, 27 Aug 2019 01:44:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 9:34 PM Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
->
-> The dynticks_nmi_nesting counter serves 4 purposes:
->
+On Mon, 26 Aug 2019 15:41:16 -0500
+Parav Pandit <parav@mellanox.com> wrote:
 
-And actually, I meant 3 purposes ;-) :-P
-
-thanks,
-
- - Joel
-
-
->       (a) rcu_is_cpu_rrupt_from_idle() needs to be able to detect first
->           interrupt nesting level.
->
->       (b) We need to detect half-interrupts till we are sure they're not an
->           issue. However, change the comparison to DYNTICK_IRQ_NONIDLE with 0.
->
->       (c) When a quiescent state report is needed from a nohz_full CPU.
->           The nesting counter detects we are a first level interrupt.
->
-> For (a) we can just use dyntick_nesting == 1 to determine this. Only the
-> outermost interrupt that interrupted an RCU-idle state can set it to 1.
->
-> For (b), this warning condition has not occurred for several kernel
-> releases.  But we still keep the warning but change it to use
-> in_interrupt() instead of the nesting counter. In a later year, we can
-> remove the warning.
->
-> For (c), the nest check is not really necessary since forced_tick would
-> have been set to true in the outermost interrupt, so the nested/NMI
-> interrupts will check forced_tick anyway, and bail.
->
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Whenever a parent requests to generate mdev alias, generate a mdev
+> alias.
+> It is an optional attribute that parent can request to generate
+> for each of its child mdev.
+> mdev alias is generated using sha1 from the mdev name.
+> 
+> Signed-off-by: Parav Pandit <parav@mellanox.com>
 > ---
->  .../Data-Structures/Data-Structures.rst       | 31 +++------
->  Documentation/RCU/stallwarn.txt               |  6 +-
->  kernel/rcu/tree.c                             | 64 +++++++------------
->  kernel/rcu/tree.h                             |  4 +-
->  kernel/rcu/tree_stall.h                       |  4 +-
->  5 files changed, 41 insertions(+), 68 deletions(-)
->
-> diff --git a/Documentation/RCU/Design/Data-Structures/Data-Structures.rst b/Documentation/RCU/Design/Data-Structures/Data-Structures.rst
-> index 4a48e20a46f2..a5a907f434a1 100644
-> --- a/Documentation/RCU/Design/Data-Structures/Data-Structures.rst
-> +++ b/Documentation/RCU/Design/Data-Structures/Data-Structures.rst
-> @@ -936,10 +936,9 @@ This portion of the rcu_data structure is declared as follows:
->  ::
->
->       1   long dynticks_nesting;
-> -     2   long dynticks_nmi_nesting;
-> -     3   atomic_t dynticks;
-> -     4   bool rcu_need_heavy_qs;
-> -     5   bool rcu_urgent_qs;
-> +     2   atomic_t dynticks;
-> +     3   bool rcu_need_heavy_qs;
-> +     4   bool rcu_urgent_qs;
->
->  These fields in the rcu_data structure maintain the per-CPU dyntick-idle
->  state for the corresponding CPU. The fields may be accessed only from
-> @@ -948,26 +947,14 @@ the corresponding CPU (and from tracing) unless otherwise stated.
->  The ``->dynticks_nesting`` field counts the nesting depth of process
->  execution, so that in normal circumstances this counter has value zero
->  or one. NMIs, irqs, and tracers are counted by the
-> -``->dynticks_nmi_nesting`` field. Because NMIs cannot be masked, changes
-> +``->dynticks_nesting`` field as well. Because NMIs cannot be masked, changes
->  to this variable have to be undertaken carefully using an algorithm
->  provided by Andy Lutomirski. The initial transition from idle adds one,
->  and nested transitions add two, so that a nesting level of five is
-> -represented by a ``->dynticks_nmi_nesting`` value of nine. This counter
-> +represented by a ``->dynticks_nesting`` value of nine. This counter
->  can therefore be thought of as counting the number of reasons why this
-> -CPU cannot be permitted to enter dyntick-idle mode, aside from
-> -process-level transitions.
-> -
-> -However, it turns out that when running in non-idle kernel context, the
-> -Linux kernel is fully capable of entering interrupt handlers that never
-> -exit and perhaps also vice versa. Therefore, whenever the
-> -``->dynticks_nesting`` field is incremented up from zero, the
-> -``->dynticks_nmi_nesting`` field is set to a large positive number, and
-> -whenever the ``->dynticks_nesting`` field is decremented down to zero,
-> -the the ``->dynticks_nmi_nesting`` field is set to zero. Assuming that
-> -the number of misnested interrupts is not sufficient to overflow the
-> -counter, this approach corrects the ``->dynticks_nmi_nesting`` field
-> -every time the corresponding CPU enters the idle loop from process
-> -context.
-> +CPU cannot be permitted to enter dyntick-idle mode. It counts both the
-> +process-level and interrupt transitions.
->
->  The ``->dynticks`` field counts the corresponding CPU's transitions to
->  and from either dyntick-idle or user mode, so that this counter has an
-> @@ -1000,7 +987,9 @@ code.
->  +-----------------------------------------------------------------------+
->  | Because this would fail in the presence of interrupts whose handlers  |
->  | never return and of handlers that manage to return from a made-up     |
-> -| interrupt.                                                            |
-> +| interrupt. NOTE: The counters have now been combined however          |
-> +| a temporary warning has been left to make sure this condition never   |
-> +| occurs.                                                               |
->  +-----------------------------------------------------------------------+
->
->  Additional fields are present for some special-purpose builds, and are
-> diff --git a/Documentation/RCU/stallwarn.txt b/Documentation/RCU/stallwarn.txt
-> index f48f4621ccbc..585f73009a56 100644
-> --- a/Documentation/RCU/stallwarn.txt
-> +++ b/Documentation/RCU/stallwarn.txt
-> @@ -173,8 +173,8 @@ For non-RCU-tasks flavors of RCU, when a CPU detects that it is stalling,
->  it will print a message similar to the following:
->
->         INFO: rcu_sched detected stalls on CPUs/tasks:
-> -       2-...: (3 GPs behind) idle=06c/0/0 softirq=1453/1455 fqs=0
-> -       16-...: (0 ticks this GP) idle=81c/0/0 softirq=764/764 fqs=0
-> +       2-...: (3 GPs behind) idle=06c/0 softirq=1453/1455 fqs=0
-> +       16-...: (0 ticks this GP) idle=81c/0 softirq=764/764 fqs=0
->         (detected by 32, t=2603 jiffies, g=7075, q=625)
->
->  This message indicates that CPU 32 detected that CPUs 2 and 16 were both
-> @@ -225,7 +225,7 @@ an estimate of the total number of RCU callbacks queued across all CPUs
->  In kernels with CONFIG_RCU_FAST_NO_HZ, more information is printed
->  for each CPU:
->
-> -       0: (64628 ticks this GP) idle=dd5/3fffffffffffffff/0 softirq=82/543 last_accelerate: a345/d342 Nonlazy posted: ..D
-> +       0: (64628 ticks this GP) idle=dd5/3fffffffffffffff softirq=82/543 last_accelerate: a345/d342 Nonlazy posted: ..D
->
->  The "last_accelerate:" prints the low-order 16 bits (in hex) of the
->  jiffies counter when this CPU last invoked rcu_try_advance_all_cbs()
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index 255cd6835526..1465a3e406f8 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -81,7 +81,6 @@
->
->  static DEFINE_PER_CPU_SHARED_ALIGNED(struct rcu_data, rcu_data) = {
->         .dynticks_nesting = 1,
-> -       .dynticks_nmi_nesting = 0,
->         .dynticks = ATOMIC_INIT(RCU_DYNTICK_CTRL_CTR),
->  };
->  struct rcu_state rcu_state = {
-> @@ -392,15 +391,9 @@ static int rcu_is_cpu_rrupt_from_idle(void)
->         /* Check for counter underflows */
->         RCU_LOCKDEP_WARN(__this_cpu_read(rcu_data.dynticks_nesting) < 0,
->                          "RCU dynticks_nesting counter underflow!");
-> -       RCU_LOCKDEP_WARN(__this_cpu_read(rcu_data.dynticks_nmi_nesting) <= 0,
-> -                        "RCU dynticks_nmi_nesting counter underflow/zero!");
->
-> -       /* Are we at first interrupt nesting level? */
-> -       if (__this_cpu_read(rcu_data.dynticks_nmi_nesting) != 1)
-> -               return false;
-> -
-> -       /* Does CPU appear to be idle from an RCU standpoint? */
-> -       return __this_cpu_read(rcu_data.dynticks_nesting) == 0;
-> +       /* Are we the outermost interrupt that arrived when RCU was idle? */
-> +       return __this_cpu_read(rcu_data.dynticks_nesting) == 1;
->  }
->
->  #define DEFAULT_RCU_BLIMIT 10     /* Maximum callbacks per rcu_do_batch ... */
-> @@ -564,11 +557,10 @@ static void rcu_eqs_enter(bool user)
->         struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
->
->         /* Entering usermode/idle from interrupt is not handled. These would
-> -        * mean usermode upcalls or idle entry happened from interrupts. But,
-> -        * reset the counter if we warn.
-> +        * mean usermode upcalls or idle exit happened from interrupts. Remove
-> +        * the warning by 2020.
->          */
-> -       if (WARN_ON_ONCE(rdp->dynticks_nmi_nesting != 0))
-> -               WRITE_ONCE(rdp->dynticks_nmi_nesting, 0);
-> +       WARN_ON_ONCE(in_interrupt());
->
->         WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) &&
->                      rdp->dynticks_nesting == 0);
-> @@ -627,9 +619,8 @@ void rcu_user_enter(void)
->
->  /*
->   * If we are returning from the outermost NMI handler that interrupted an
-> - * RCU-idle period, update rdp->dynticks and rdp->dynticks_nmi_nesting
-> - * to let the RCU grace-period handling know that the CPU is back to
-> - * being RCU-idle.
-> + * RCU-idle period, update rdp->dynticks to let the RCU grace-period handling
-> + * know that the CPU is back to being RCU-idle.
->   *
->   * If you add or remove a call to rcu_nmi_exit_common(), be sure to test
->   * with CONFIG_RCU_EQS_DEBUG=y.
-> @@ -639,16 +630,13 @@ static __always_inline void rcu_nmi_exit_common(bool irq)
->         struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
->
->         /*
-> -        * Check for ->dynticks_nmi_nesting underflow and bad ->dynticks.
-> +        * Check for ->dynticks_nesting underflow and bad ->dynticks.
->          * (We are exiting an NMI handler, so RCU better be paying attention
->          * to us!)
->          */
->         WARN_ON_ONCE(rdp->dynticks_nesting <= 0);
-> -       WARN_ON_ONCE(rdp->dynticks_nmi_nesting <= 0);
->         WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs());
->
-> -       WRITE_ONCE(rdp->dynticks_nmi_nesting, /* No store tearing. */
-> -                  rdp->dynticks_nmi_nesting - 1);
->         /*
->          * If the nesting level is not 1, the CPU wasn't RCU-idle, so
->          * leave it in non-RCU-idle state.
-> @@ -750,11 +738,10 @@ static void rcu_eqs_exit(bool user)
->         WRITE_ONCE(rdp->dynticks_nesting, 1);
->
->         /* Exiting usermode/idle from interrupt is not handled. These would
-> -        * mean usermode upcalls or idle exit happened from interrupts. But,
-> -        * reset the counter if we warn.
-> +        * mean usermode upcalls or idle exit happened from interrupts. Remove
-> +        * the warning by 2020.
->          */
-> -       if (WARN_ON_ONCE(rdp->dynticks_nmi_nesting != 0))
-> -               WRITE_ONCE(rdp->dynticks_nmi_nesting, 0);
-> +       WARN_ON_ONCE(in_interrupt());
->  }
->
->  /**
-> @@ -795,14 +782,13 @@ void rcu_user_exit(void)
->   * rcu_nmi_enter_common - inform RCU of entry to NMI context
->   * @irq: Is this call from rcu_irq_enter?
->   *
-> - * If the CPU was idle from RCU's viewpoint, update rdp->dynticks and
-> - * rdp->dynticks_nmi_nesting to let the RCU grace-period handling know
-> - * that the CPU is active.  This implementation permits nested NMIs, as
-> - * long as the nesting level does not overflow an int.  (You will probably
-> - * run out of stack space first.)
-> + * If the CPU was idle from RCU's viewpoint, update rdp->dynticks to let the
-> + * RCU grace-period handling know that the CPU is active.  This implementation
-> + * permits nested NMIs, as long as the nesting level does not overflow a long.
-> + * (You will probably run out of stack space first.)
->   *
-> - * If you add or remove a call to rcu_nmi_enter_common(), be sure to test
-> - * with CONFIG_RCU_EQS_DEBUG=y.
-> + * If you add or remove a call to rcu_nmi_enter_common(), be sure to test with
-> + * CONFIG_RCU_EQS_DEBUG=y.
->   */
->  static __always_inline void rcu_nmi_enter_common(bool irq)
+>  drivers/vfio/mdev/mdev_core.c    | 98 +++++++++++++++++++++++++++++++-
+>  drivers/vfio/mdev/mdev_private.h |  5 +-
+>  drivers/vfio/mdev/mdev_sysfs.c   | 13 +++--
+>  include/linux/mdev.h             |  4 ++
+>  4 files changed, 111 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/vfio/mdev/mdev_core.c b/drivers/vfio/mdev/mdev_core.c
+> index b558d4cfd082..e825ff38b037 100644
+> --- a/drivers/vfio/mdev/mdev_core.c
+> +++ b/drivers/vfio/mdev/mdev_core.c
+> @@ -10,9 +10,11 @@
+>  #include <linux/module.h>
+>  #include <linux/device.h>
+>  #include <linux/slab.h>
+> +#include <linux/mm.h>
+>  #include <linux/uuid.h>
+>  #include <linux/sysfs.h>
+>  #include <linux/mdev.h>
+> +#include <crypto/hash.h>
+>  
+>  #include "mdev_private.h"
+>  
+> @@ -27,6 +29,8 @@ static struct class_compat *mdev_bus_compat_class;
+>  static LIST_HEAD(mdev_list);
+>  static DEFINE_MUTEX(mdev_list_lock);
+>  
+> +static struct crypto_shash *alias_hash;
+> +
+>  struct device *mdev_parent_dev(struct mdev_device *mdev)
 >  {
-> @@ -811,15 +797,16 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
->
->         /* Complain about underflow. */
->         WARN_ON_ONCE(rdp->dynticks_nesting < 0);
-> -       WARN_ON_ONCE(rdp->dynticks_nmi_nesting < 0);
->
->         /*
->          * If idle from RCU viewpoint, atomically increment ->dynticks
-> -        * to mark non-idle and increment ->dynticks_nmi_nesting by one.
-> -        * Otherwise, increment ->dynticks_nmi_nesting by two.  This means
-> -        * if ->dynticks_nmi_nesting is equal to one, we are guaranteed
-> +        * to mark non-idle and increment ->dynticks_nesting by one.
-> +        * Otherwise, increment ->dynticks_nesting by two.  This means
-> +        * if ->dynticks_nesting is equal to one, we are guaranteed
->          * to be in the outermost NMI handler that interrupted an RCU-idle
-> -        * period (observation due to Andy Lutomirski).
-> +        * period (observation due to Andy Lutomirski). An exception
-> +        * is if the interrupt arrived in kernel mode; in this case we would
-> +        * be the outermost interrupt but still increment by 2 which is Ok.
->          */
->         if (rcu_dynticks_curr_cpu_in_eqs()) {
->
-> @@ -832,8 +819,7 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
->                         rcu_cleanup_after_idle();
->
->                 incby = 1;
-> -       } else if (tick_nohz_full_cpu(rdp->cpu) &&
-> -                  !rdp->dynticks_nmi_nesting && rdp->rcu_urgent_qs &&
-> +       } else if (tick_nohz_full_cpu(rdp->cpu) && rdp->rcu_urgent_qs &&
->                    !rdp->rcu_forced_tick) {
->                 rdp->rcu_forced_tick = true;
->                 tick_dep_set_cpu(rdp->cpu, TICK_DEP_BIT_RCU);
-> @@ -846,8 +832,6 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
->         WRITE_ONCE(rdp->dynticks_nesting, /* Prevent store tearing. */
->                    rdp->dynticks_nesting + incby);
->
-> -       WRITE_ONCE(rdp->dynticks_nmi_nesting, /* Prevent store tearing. */
-> -                  rdp->dynticks_nmi_nesting + 1);
->         barrier();
+>  	return mdev->parent->dev;
+> @@ -164,6 +168,18 @@ int mdev_register_device(struct device *dev, const struct mdev_parent_ops *ops)
+>  		goto add_dev_err;
+>  	}
+>  
+> +	if (ops->get_alias_length) {
+> +		unsigned int digest_size;
+> +		unsigned int aligned_len;
+> +
+> +		aligned_len = roundup(ops->get_alias_length(), 2);
+> +		digest_size = crypto_shash_digestsize(alias_hash);
+> +		if (aligned_len / 2 > digest_size) {
+> +			ret = -EINVAL;
+> +			goto add_dev_err;
+> +		}
+> +	}
+
+This looks like a sanity check, it could be done outside of the
+parent_list_lock, even before we get a parent device reference.
+
+I think we're using a callback for get_alias_length() rather than a
+fixed field to support the mtty module option added in patch 4, right?
+Its utility is rather limited with no args.  I could imagine that if a
+parent wanted to generate an alias that could be incorporated into a
+string with the parent device name that it would be useful to call this
+with the parent device as an arg.  I guess we can save that until a
+user comes along though.
+
+There doesn't seem to be anything serializing use of alias_hash.
+
+> +
+>  	parent = kzalloc(sizeof(*parent), GFP_KERNEL);
+>  	if (!parent) {
+>  		ret = -ENOMEM;
+> @@ -259,6 +275,7 @@ static void mdev_device_free(struct mdev_device *mdev)
+>  	mutex_unlock(&mdev_list_lock);
+>  
+>  	dev_dbg(&mdev->dev, "MDEV: destroying\n");
+> +	kvfree(mdev->alias);
+>  	kfree(mdev);
 >  }
->
-> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-> index 055c31781d3a..ad7d3e31c5cf 100644
-> --- a/kernel/rcu/tree.h
-> +++ b/kernel/rcu/tree.h
-> @@ -176,8 +176,8 @@ struct rcu_data {
->
->         /* 3) dynticks interface. */
->         int dynticks_snap;              /* Per-GP tracking for dynticks. */
-> -       long dynticks_nesting;          /* Track process nesting level. */
-> -       long dynticks_nmi_nesting;      /* Track irq/NMI nesting level. */
-> +       long dynticks_nesting;          /* Track dyntick (non-IDLE) nesting
-> +                                        * level for kernel entry and interrupt. */
->         atomic_t dynticks;              /* Even value for idle, else odd. */
->         bool rcu_need_heavy_qs;         /* GP old, so heavy quiescent state! */
->         bool rcu_urgent_qs;             /* GP old need light quiescent state. */
-> diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
-> index 841ab43f3e60..0676460107d0 100644
-> --- a/kernel/rcu/tree_stall.h
-> +++ b/kernel/rcu/tree_stall.h
-> @@ -313,7 +313,7 @@ static void print_cpu_stall_info(int cpu)
->         }
->         print_cpu_stall_fast_no_hz(fast_no_hz, cpu);
->         delta = rcu_seq_ctr(rdp->mynode->gp_seq - rdp->rcu_iw_gp_seq);
-> -       pr_err("\t%d-%c%c%c%c: (%lu %s) idle=%03x/%ld/%#lx softirq=%u/%u fqs=%ld %s\n",
-> +       pr_err("\t%d-%c%c%c%c: (%lu %s) idle=%03x/%ld softirq=%u/%u fqs=%ld %s\n",
->                cpu,
->                "O."[!!cpu_online(cpu)],
->                "o."[!!(rdp->grpmask & rdp->mynode->qsmaskinit)],
-> @@ -323,7 +323,7 @@ static void print_cpu_stall_info(int cpu)
->                                 "!."[!delta],
->                ticks_value, ticks_title,
->                rcu_dynticks_snap(rdp) & 0xfff,
-> -              rdp->dynticks_nesting, rdp->dynticks_nmi_nesting,
-> +              rdp->dynticks_nesting,
->                rdp->softirq_snap, kstat_softirqs_cpu(RCU_SOFTIRQ, cpu),
->                READ_ONCE(rcu_state.n_force_qs) - rcu_state.n_force_qs_gpstart,
->                fast_no_hz);
-> --
-> 2.23.0.187.g17f5b7556c-goog
->
+>  
+> @@ -269,18 +286,86 @@ static void mdev_device_release(struct device *dev)
+>  	mdev_device_free(mdev);
+>  }
+>  
+> -int mdev_device_create(struct kobject *kobj,
+> -		       struct device *dev, const guid_t *uuid)
+> +static const char *
+> +generate_alias(const char *uuid, unsigned int max_alias_len)
+> +{
+> +	struct shash_desc *hash_desc;
+> +	unsigned int digest_size;
+> +	unsigned char *digest;
+> +	unsigned int alias_len;
+> +	char *alias;
+> +	int ret = 0;
+> +
+> +	/* Align to multiple of 2 as bin2hex will generate
+> +	 * even number of bytes.
+> +	 */
+
+Comment style for non-networking code please.
+
+> +	alias_len = roundup(max_alias_len, 2);
+> +	alias = kvzalloc(alias_len + 1, GFP_KERNEL);
+
+The size we're generating here should be small enough to just use
+kzalloc(), probably below too.
+
+> +	if (!alias)
+> +		return NULL;
+> +
+> +	/* Allocate and init descriptor */
+> +	hash_desc = kvzalloc(sizeof(*hash_desc) +
+> +			     crypto_shash_descsize(alias_hash),
+> +			     GFP_KERNEL);
+> +	if (!hash_desc)
+> +		goto desc_err;
+> +
+> +	hash_desc->tfm = alias_hash;
+> +
+> +	digest_size = crypto_shash_digestsize(alias_hash);
+> +
+> +	digest = kvzalloc(digest_size, GFP_KERNEL);
+> +	if (!digest) {
+> +		ret = -ENOMEM;
+> +		goto digest_err;
+> +	}
+> +	crypto_shash_init(hash_desc);
+> +	crypto_shash_update(hash_desc, uuid, UUID_STRING_LEN);
+> +	crypto_shash_final(hash_desc, digest);
+> +	bin2hex(&alias[0], digest,
+
+&alias[0], ie. alias
+
+> +		min_t(unsigned int, digest_size, alias_len / 2));
+> +	/* When alias length is odd, zero out and additional last byte
+> +	 * that bin2hex has copied.
+> +	 */
+> +	if (max_alias_len % 2)
+> +		alias[max_alias_len] = 0;
+
+Doesn't this give us a null terminated string for odd numbers but not
+even numbers?  Probably best to define that we always provide a null
+terminated string then we could do this unconditionally.
+
+> +
+> +	kvfree(digest);
+> +	kvfree(hash_desc);
+> +	return alias;
+> +
+> +digest_err:
+> +	kvfree(hash_desc);
+> +desc_err:
+> +	kvfree(alias);
+> +	return NULL;
+> +}
+> +
+> +int mdev_device_create(struct kobject *kobj, struct device *dev,
+> +		       const char *uuid_str, const guid_t *uuid)
+>  {
+>  	int ret;
+>  	struct mdev_device *mdev, *tmp;
+>  	struct mdev_parent *parent;
+>  	struct mdev_type *type = to_mdev_type(kobj);
+> +	unsigned int alias_len = 0;
+> +	const char *alias = NULL;
+>  
+>  	parent = mdev_get_parent(type->parent);
+>  	if (!parent)
+>  		return -EINVAL;
+>  
+> +	if (parent->ops->get_alias_length)
+> +		alias_len = parent->ops->get_alias_length();
+> +	if (alias_len) {
+
+Why isn't this nested into the branch above?
+
+> +		alias = generate_alias(uuid_str, alias_len);
+> +		if (!alias) {
+> +			ret = -ENOMEM;
+
+Could use an ERR_PTR and propagate an errno.
+
+> +			goto alias_fail;
+> +		}
+> +	}
+> +
+>  	mutex_lock(&mdev_list_lock);
+>  
+>  	/* Check for duplicate */
+> @@ -300,6 +385,8 @@ int mdev_device_create(struct kobject *kobj,
+>  	}
+>  
+>  	guid_copy(&mdev->uuid, uuid);
+> +	mdev->alias = alias;
+> +	alias = NULL;
+
+A comment justifying this null'ing might help prevent it getting culled
+as some point.  It appears arbitrary at first look.  Thanks,
+
+Alex
+
+>  	list_add(&mdev->next, &mdev_list);
+>  	mutex_unlock(&mdev_list_lock);
+>  
+> @@ -346,6 +433,8 @@ int mdev_device_create(struct kobject *kobj,
+>  	up_read(&parent->unreg_sem);
+>  	put_device(&mdev->dev);
+>  mdev_fail:
+> +	kvfree(alias);
+> +alias_fail:
+>  	mdev_put_parent(parent);
+>  	return ret;
+>  }
+> @@ -406,6 +495,10 @@ EXPORT_SYMBOL(mdev_get_iommu_device);
+>  
+>  static int __init mdev_init(void)
+>  {
+> +	alias_hash = crypto_alloc_shash("sha1", 0, 0);
+> +	if (!alias_hash)
+> +		return -ENOMEM;
+> +
+>  	return mdev_bus_register();
+>  }
+>  
+> @@ -415,6 +508,7 @@ static void __exit mdev_exit(void)
+>  		class_compat_unregister(mdev_bus_compat_class);
+>  
+>  	mdev_bus_unregister();
+> +	crypto_free_shash(alias_hash);
+>  }
+>  
+>  module_init(mdev_init)
+> diff --git a/drivers/vfio/mdev/mdev_private.h b/drivers/vfio/mdev/mdev_private.h
+> index 7d922950caaf..cf1c0d9842c6 100644
+> --- a/drivers/vfio/mdev/mdev_private.h
+> +++ b/drivers/vfio/mdev/mdev_private.h
+> @@ -33,6 +33,7 @@ struct mdev_device {
+>  	struct kobject *type_kobj;
+>  	struct device *iommu_device;
+>  	bool active;
+> +	const char *alias;
+>  };
+>  
+>  #define to_mdev_device(dev)	container_of(dev, struct mdev_device, dev)
+> @@ -57,8 +58,8 @@ void parent_remove_sysfs_files(struct mdev_parent *parent);
+>  int  mdev_create_sysfs_files(struct device *dev, struct mdev_type *type);
+>  void mdev_remove_sysfs_files(struct device *dev, struct mdev_type *type);
+>  
+> -int  mdev_device_create(struct kobject *kobj,
+> -			struct device *dev, const guid_t *uuid);
+> +int mdev_device_create(struct kobject *kobj, struct device *dev,
+> +		       const char *uuid_str, const guid_t *uuid);
+>  int  mdev_device_remove(struct device *dev);
+>  
+>  #endif /* MDEV_PRIVATE_H */
+> diff --git a/drivers/vfio/mdev/mdev_sysfs.c b/drivers/vfio/mdev/mdev_sysfs.c
+> index 7570c7602ab4..43afe0e80b76 100644
+> --- a/drivers/vfio/mdev/mdev_sysfs.c
+> +++ b/drivers/vfio/mdev/mdev_sysfs.c
+> @@ -63,15 +63,18 @@ static ssize_t create_store(struct kobject *kobj, struct device *dev,
+>  		return -ENOMEM;
+>  
+>  	ret = guid_parse(str, &uuid);
+> -	kfree(str);
+>  	if (ret)
+> -		return ret;
+> +		goto err;
+>  
+> -	ret = mdev_device_create(kobj, dev, &uuid);
+> +	ret = mdev_device_create(kobj, dev, str, &uuid);
+>  	if (ret)
+> -		return ret;
+> +		goto err;
+>  
+> -	return count;
+> +	ret = count;
+> +
+> +err:
+> +	kfree(str);
+> +	return ret;
+>  }
+>  
+>  MDEV_TYPE_ATTR_WO(create);
+> diff --git a/include/linux/mdev.h b/include/linux/mdev.h
+> index 0ce30ca78db0..f036fe9854ee 100644
+> --- a/include/linux/mdev.h
+> +++ b/include/linux/mdev.h
+> @@ -72,6 +72,9 @@ struct device *mdev_get_iommu_device(struct device *dev);
+>   * @mmap:		mmap callback
+>   *			@mdev: mediated device structure
+>   *			@vma: vma structure
+> + * @get_alias_length:	Generate alias for the mdevs of this parent based on the
+> + *			mdev device name when it returns non zero alias length.
+> + *			It is optional.
+>   * Parent device that support mediated device should be registered with mdev
+>   * module with mdev_parent_ops structure.
+>   **/
+> @@ -92,6 +95,7 @@ struct mdev_parent_ops {
+>  	long	(*ioctl)(struct mdev_device *mdev, unsigned int cmd,
+>  			 unsigned long arg);
+>  	int	(*mmap)(struct mdev_device *mdev, struct vm_area_struct *vma);
+> +	unsigned int (*get_alias_length)(void);
+>  };
+>  
+>  /* interface for exporting mdev supported type attributes */
+
