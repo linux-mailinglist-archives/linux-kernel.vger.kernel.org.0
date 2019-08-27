@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF1569DBCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 05:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 197839DBD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 05:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbfH0DCt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 23:02:49 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41984 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728025AbfH0DCt (ORCPT
+        id S1728920AbfH0DC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 23:02:58 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46471 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbfH0DC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 23:02:49 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y1so10989377plp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 20:02:48 -0700 (PDT)
+        Mon, 26 Aug 2019 23:02:57 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c2so11021115plz.13
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 20:02:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ftoGiq3xK+pQxUGAJR7kxnUXFgdZwJFU6Ox1JMGKAXw=;
-        b=H0ygqP0vpOBEcqE1x8oCLF2z0FRkylvUL/nDmV/LzbdyTYXJor/eeeYEQZ8LAprEN5
-         E/rRAxQYnQCXzI9V3dZl/AQH8n8PwdSR6Kvgz7MAmP7rNhrKEUp+Qwg6RppyuP2WOPfR
-         lgSv1tmDLjEKDl56baL975w3ttShcxiBbV65H9Y163qlkUdE9R/AtVVzMACC5UOjgoJB
-         ShczzaFDLHN+yS0Jna6PtHcIRysXNFVI9D6osQ49g9/FYj6v2zzKik1JQU6iLzmTwWYL
-         aPYch0r6nso2LHuQbldKEMph1Mpriqy/dkxpwOZ7lep7+ppF0HfilUestOHPVmjw/uku
-         BQcQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=+678Xv5ru8PcQuczzEyKD2Pw0q4hQ1y6t38q+jHCNZs=;
+        b=IYjfYeg2SY10CgAnFjQidvjw8uO4HIpNGr+sWsaHzTVz8BzWkE+tl0xH6Bf6wWnfmY
+         hJ3Y020hTO33N2n+CK9nuT/0LV2HZdFq8fb2pU04S8jTsSeXo60elpa9fcnjLxPsSsPC
+         uRLPqxUiJw6/bqGhiLMXW722bfYpwCmfWwcH8xiWmlwLEVZR23sXDGLgW2GDWI17LCb5
+         ydBHcw/CvX03GwJSlLYvL5dpsoOi4/+h3oKgCLN4rrd9J05jkoIoF0v3Vrdv+pySvv2O
+         0SeqN+kaN3LOhIz6gxiTzAZWfvIfkVz+zksM5a7XW2O5S+f9kQ6MxPS+HZ63ohbP3RmF
+         fH6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ftoGiq3xK+pQxUGAJR7kxnUXFgdZwJFU6Ox1JMGKAXw=;
-        b=OwilXCxoe3jOvhtfDhbYTbDchSTF0pXeJBZ+xpBQ2gm08CiK1/XSdU1byHLEAh37mp
-         yxmWnz5a8a1vb0usbWGtoqIFJ6QElan/bG2QkRGJpAPsxSTzM9eKrqhU3QWPKkOOVRVe
-         SUx58no0JErNIKzeNZOjvqAE7b/FoDm0BTUyaCQMyCa2UNEgt/f7UHWTSmwhMp56kdEc
-         IEamkJHh/L+cOU5GkTi53qYqu74ZxVut943lbReIbJ0+iS1+xvL/rcvBW75K5CQJRy1R
-         FEoav1rm5qLYj/HMPwY5rwRf3sUSPDQZoyXs+s0FfxFB0Y1zwjcn7MChIn6xxXZA139X
-         quow==
-X-Gm-Message-State: APjAAAUhyh0NmrW1Njvaz8pJT5uNR+qUROvXv76xI/UOKPfggn6FIxto
-        zn5Y5U+K58H22/pXZ2A+VY50kQ8=
-X-Google-Smtp-Source: APXvYqwrwu7Afilzmnk9LI5uLA8Jdsl36xS0kpWP1Xm839jwbTCh2QYc5W1rWMov4fdEOfngS+Fyjg==
-X-Received: by 2002:a17:902:6842:: with SMTP id f2mr22747658pln.39.1566874968466;
-        Mon, 26 Aug 2019 20:02:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=+678Xv5ru8PcQuczzEyKD2Pw0q4hQ1y6t38q+jHCNZs=;
+        b=giqT02kydcUGATd4tF3nyV+V+pSHpRH69RZNSqZYn1Ky5BjkEAOUJV1XJ1I8tKrFfQ
+         0XIFCWTcxfluSZr0JLIm1lW7t8YuIjM4NR3uzKcoOHOEL4Lc0Z4H4AC/bdZIIY0lKymI
+         ADIaLp+UPCBbGe4ErpAch8LOXtCLKAPqq30hYMN2tkzQalOFSJmBZueQiO4gOLdoVEDb
+         r8YwEhFlyLnerbEAv+7BtcvTvwx1E6Nuj811NwrvTNRrtlh/TTlcsOhMq11mSW7RhQWs
+         3hE6/kjjo1rmnmhzT1xfGBJ1e7gD2kHNgwxdTBo3RmeBPyXObxIr8sp6mRqckRgIjuuP
+         H2dA==
+X-Gm-Message-State: APjAAAU3j4Q7w/M3aR/FRa6+qI+e8MhVaKnVeOmYpUV2/9m3dWVh0x0z
+        wJ0UuNWWFbM9GzhAzrT8ag==
+X-Google-Smtp-Source: APXvYqxy5aax1zCxTBqsR8zHF1JVOxQUspv/kSUvTRdHfceCX0u+jQsLz1i41dOfUEMbkoqp6qcK2g==
+X-Received: by 2002:a17:902:6b88:: with SMTP id p8mr20470650plk.95.1566874976285;
+        Mon, 26 Aug 2019 20:02:56 -0700 (PDT)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id s24sm11696535pgm.3.2019.08.26.20.02.40
+        by smtp.gmail.com with ESMTPSA id s24sm11696535pgm.3.2019.08.26.20.02.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Aug 2019 20:02:47 -0700 (PDT)
+        Mon, 26 Aug 2019 20:02:55 -0700 (PDT)
 From:   Pingfan Liu <kernelfans@gmail.com>
-To:     Gleixner <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>,
-        x86@kernel.org
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>, x86@kernel.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>, Ingo Molnar <mingo@redhat.com>,
         Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
@@ -59,64 +60,22 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>, Ingo Molnar <mingo@redhat.com>,
         Eric Biederman <ebiederm@xmission.com>,
         linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>,
         Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org
-Subject: [PATCHv2 0/4] x86/mce: protect nr_cpus from rebooting by broadcast mce
-Date:   Tue, 27 Aug 2019 11:02:19 +0800
-Message-Id: <1566874943-4449-1-git-send-email-kernelfans@gmail.com>
+Subject: [PATCHv2 1/4] x86/apic: correct the ENO in generic_processor_info()
+Date:   Tue, 27 Aug 2019 11:02:20 +0800
+Message-Id: <1566874943-4449-2-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.5
+In-Reply-To: <1566874943-4449-1-git-send-email-kernelfans@gmail.com>
+References: <1566874943-4449-1-git-send-email-kernelfans@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v1 -> v2: fix compile warning and error on x86_32
+When capped by nr_cpu_ids, the current code return -EINVAL or -ENODEV. It
+is better to return -EINVAL for both cases.
 
-
-This series include two related groups:
-[1-3/4]: protect nr_cpus from rebooting by broadcast mce
-[4/4]: improve "kexec -l" robustness against broadcast mce
-
-When I tried to fix [1], Thomas raised concern about the nr_cpus' vulnerability
-to unexpected rebooting by broadcast mce. After analysis, I think only the
-following first case suffers from the rebooting by broadcast mce. [1-3/4] aims
-to fix that issue.
-
-*** Back ground ***
-
-On x86 it's required to have all logical CPUs set CR4.MCE=1. Otherwise, a
-broadcast MCE observing CR4.MCE=0b on any core will shutdown the machine.
-
-The option 'nosmt' has already complied with the above rule by Thomas's patch.
-For detail, refer to 506a66f3748 (Revert "x86/apic: Ignore secondary threads if
-nosmt=force")
-
-But for nr_cpus option, the exposure to broadcast MCE is a little complicated,
-and can be categorized into three cases.
-
--1. boot up by BIOS. Since no one set CR4.MCE=1, nr_cpus risks rebooting by
-broadcast MCE.
-
--2. boot up by "kexec -p nr_cpus=".  Since the 1st kernel has all cpus'
-CR4.MCE=1 set before kexec -p, nr_cpus is free of rebooting by broadcast MCE.
-Furthermore, the crashed kernel's wreckage, including page table and text, is
-not touched by capture kernel. Hence if MCE event happens on capped cpu,
-do_machine_check->__mc_check_crashing_cpu() runs smoothly and returns
-immediately, the capped cpu is still pinned on "halt".
-
--3. boot up by "kexec -l nr_cpus=". As "kexec -p", it is free of rebooting by
-broadcast MCE. But the 1st kernel's wreckage is discarded and changed.  when
-capped cpus execute do_machine_check(), they may crack the new kernel.  But
-this is not related with broadcast MCE, and need an extra fix.
-
-*** Solution ***
-"nr_cpus" can not follow the same way as "nosmt".  Because nr_cpus limits the
-allocation of percpu area and some other kthread memory, which is critical to
-cpu hotplug framework.  Instead, developing a dedicated SIPI callback
-make_capped_cpu_stable() for capped cpu, which does not lean on percpu area to
-work.
-
-[1]: https://lkml.org/lkml/2019/7/5/3
-
-To: Gleixner <tglx@linutronix.de>
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
 To: Andy Lutomirski <luto@kernel.org>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -135,23 +94,23 @@ Cc: linux-kernel@vger.kernel.org
 Cc: Dave Young <dyoung@redhat.com>
 Cc: Baoquan He <bhe@redhat.com>
 Cc: kexec@lists.infradead.org
-
 ---
-Pingfan Liu (4):
-  x86/apic: correct the ENO in generic_processor_info()
-  x86/apic: record capped cpu in generic_processor_info()
-  x86/smp: send capped cpus to a stable state when smp_init()
-  x86/smp: disallow MCE handler on rebooting AP
+ arch/x86/kernel/apic/apic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/x86/include/asm/apic.h  |  1 +
- arch/x86/include/asm/smp.h   |  3 ++
- arch/x86/kernel/apic/apic.c  | 23 ++++++++----
- arch/x86/kernel/cpu/common.c |  7 ++++
- arch/x86/kernel/smp.c        |  8 +++++
- arch/x86/kernel/smpboot.c    | 83 ++++++++++++++++++++++++++++++++++++++++++++
- kernel/smp.c                 |  6 ++++
- 7 files changed, 124 insertions(+), 7 deletions(-)
-
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index f529136..f4f603a 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -2346,7 +2346,7 @@ int generic_processor_info(int apicid, int version)
+ 			"  Processor %d/0x%x ignored.\n", max, thiscpu, apicid);
+ 
+ 		disabled_cpus++;
+-		return -ENODEV;
++		return -EINVAL;
+ 	}
+ 
+ 	if (num_processors >= nr_cpu_ids) {
 -- 
 2.7.5
 
