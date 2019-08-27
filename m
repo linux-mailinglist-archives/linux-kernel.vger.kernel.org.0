@@ -2,123 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 055169F2E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:03:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 457F49F2CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:01:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731135AbfH0TCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 15:02:55 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19460 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726871AbfH0TCy (ORCPT
+        id S1730566AbfH0TBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 15:01:10 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:41995 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbfH0TBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 15:02:54 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7RIxcWJ050616;
-        Tue, 27 Aug 2019 15:02:09 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2un90xk84d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Aug 2019 15:02:09 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7RJ1A4Y027212;
-        Tue, 27 Aug 2019 19:02:08 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma01dal.us.ibm.com with ESMTP id 2ujvv75vwa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Aug 2019 19:02:08 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7RJ27mr46924278
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Aug 2019 19:02:07 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E8ACAE060;
-        Tue, 27 Aug 2019 19:02:07 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3669AE05F;
-        Tue, 27 Aug 2019 19:02:05 +0000 (GMT)
-Received: from LeoBras.aus.stglabs.ibm.com (unknown [9.18.235.216])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Aug 2019 19:02:05 +0000 (GMT)
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Leonardo Bras <leonardo@linux.ibm.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Subject: [PATCH v3 1/1] netfilter: nf_tables: fib: Drop IPV6 packets if IPv6 is disabled on boot
-Date:   Tue, 27 Aug 2019 15:57:49 -0300
-Message-Id: <20190827185748.19148-1-leonardo@linux.ibm.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 27 Aug 2019 15:01:10 -0400
+Received: by mail-qk1-f193.google.com with SMTP id 201so120173qkm.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 12:01:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R+ZzImw1JQRNETvby9DaqBU/AFeon5xlJQ83gAwLiu8=;
+        b=b5JZSsWjp4cRslvorfYwKCYxdlhsqIdojHukLaLhFfYUrDWBFcUjvAe4mME7xCmxHd
+         ln4PCFhTrRbfy9+PEqPW1aMgDCACa5Aja3ze7u6B1o88Bxt2fqgyCkQnwDSdc+oyL47Y
+         MA1CVWxw2OsxyeQyCzQBN5fxTMjYxLf1h0yWPBb2UVvdbpvE2tvbXLu10Nvv5DibIi3F
+         lwvGNFGrtC8l0d6JZEBZuea7jVhf8kctwMwiWDp4SNk3E/SFQF0XWVY6EBsLio2+MovM
+         flIThiRQI22dNv76yWP3GE2OwNFT5Tl9gTn2KpGs055mbqViMWj8VKHO5zoSO3Bfneb3
+         HMQg==
+X-Gm-Message-State: APjAAAUdjllZ0Ee/sSzO4TviNjzp5oCF2xDk18NjbFnAnjsE5Te9edUx
+        jua4y4HA0CE0E/Y7YrCCMTtqpH9Uv9dqG/cx0Ok=
+X-Google-Smtp-Source: APXvYqx+sBo524ZJLvQADl4Q2MieRTlbqQ0a9aosHZyMbYLgFW/zBqRqfkHlIfIk4T8esIJL8nuzBqZ5Zr8YcQR7DAI=
+X-Received: by 2002:a37:4b0d:: with SMTP id y13mr6175qka.3.1566932468383; Tue,
+ 27 Aug 2019 12:01:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-27_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908270180
+References: <CAK8P3a3G=GCpLtNztuoLR4BuugAB=zpa_Jrz5BSft6Yj-nok1g@mail.gmail.com>
+ <20190827145102.p7lmkpytf3mngxbj@treble> <CAHFW8PRsmmCR6TWoXpQ9gyTA7azX9YOerPErCMggcQX-=fAqng@mail.gmail.com>
+In-Reply-To: <CAHFW8PRsmmCR6TWoXpQ9gyTA7azX9YOerPErCMggcQX-=fAqng@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 27 Aug 2019 21:00:52 +0200
+Message-ID: <CAK8P3a2TeaMc_tWzzjuqO-eQjZwJdpbR1yH8yzSQbbVKdWCwSg@mail.gmail.com>
+Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
+To:     Ilie Halip <ilie.halip@gmail.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If IPv6 is disabled on boot (ipv6.disable=1), but nft_fib_inet ends up
-dealing with a IPv6 packet, it causes a kernel panic in
-fib6_node_lookup_1(), crashing in bad_page_fault.
+On Tue, Aug 27, 2019 at 5:00 PM Ilie Halip <ilie.halip@gmail.com> wrote:
+>
+> > > $ clang-9 -c  crc32.i  -O2   ; objtool check  crc32.o
+> > > crc32.o: warning: objtool: fn1 uses BP as a scratch register
+>
+> Yes, I see it too. https://godbolt.org/z/N56HW1
+>
+> > Do you still see this warning with -fno-omit-frame-pointer (assuming
+> > clang has that option)?
+>
+> Using this makes the warning go away. Running objtool with --no-fp
+> also gets rid of it.
 
-The panic is caused by trying to deference a very low address (0x38
-in ppc64le), due to ipv6.fib6_main_tbl = NULL.
-BUG: Kernel NULL pointer dereference at 0x00000038
+I still see the warning after adding back the -fno-omit-frame-pointer
+in my reduced test case:
 
-Fix this behavior by dropping IPv6 packets if !ipv6_mod_enabled().
+$ clang-9 -c  crc32.i -Werror -Wno-address-of-packed-member -Wall
+-Wno-pointer-sign -Wno-unused-value -Wno-constant-logical-operand -O2
+-Wno-unused -fno-omit-frame-pointer
+$ objtool check  crc32.o
+crc32.o: warning: objtool: fn1 uses BP as a scratch register
 
-Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
----
-Changes from v2:
-- Replace veredict.code from NF_DROP to NFT_BREAK
-- Updated commit message (s/package/packet)
+The kernel configuration has frame pointers enabled:
+$ make O=obj-x86  CC=clang-9 V=1 lib/crc32.o
+...
+clang-9 -Wp,-MD,lib/.crc32.o.d  -nostdinc -isystem
+/usr/lib/llvm-9/lib/clang/9.0.0/include -I../arch/x86/include
+-I./arch/x86/include/generated -I../include -I./include
+-I../arch/x86/include/uapi -I./arch/x86/include/generated/uapi
+-I../include/uapi -I./include/generated/uapi -include
+../include/linux/kconfig.h -include ../include/linux/compiler_types.h
+-D__KERNEL__ -Qunused-arguments -Wall -Wundef
+-Werror=strict-prototypes -Wno-trigraphs -fno-strict-aliasing
+-fno-common -fshort-wchar -fno-PIE
+-Werror=implicit-function-declaration -Werror=implicit-int
+-Wno-format-security -std=gnu89 -no-integrated-as
+-Werror=unknown-warning-option -mno-sse -mno-mmx -mno-sse2 -mno-3dnow
+-mno-avx -m64 -mno-80387 -mstack-alignment=8 -mtune=generic
+-mno-red-zone -mcmodel=kernel -DCONFIG_AS_CFI=1
+-DCONFIG_AS_CFI_SIGNAL_FRAME=1 -DCONFIG_AS_CFI_SECTIONS=1
+-DCONFIG_AS_SSSE3=1 -DCONFIG_AS_AVX=1 -DCONFIG_AS_AVX2=1
+-DCONFIG_AS_AVX512=1 -DCONFIG_AS_SHA1_NI=1 -DCONFIG_AS_SHA256_NI=1
+-Wno-sign-compare -fno-asynchronous-unwind-tables
+-fno-delete-null-pointer-checks -Wno-address-of-packed-member -O2
+-Wframe-larger-than=2048 -fstack-protector
+-Wno-format-invalid-specifier -Wno-gnu -Wno-tautological-compare
+-mno-global-merge -Wno-unused-const-variable -fno-omit-frame-pointer
+-fno-optimize-sibling-calls -Wdeclaration-after-statement -Wvla
+-Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants
+-fno-stack-check -Werror=date-time -Werror=incompatible-pointer-types
+-Wno-initializer-overrides -Wno-format -Wno-sign-compare
+-Wno-format-zero-length -I ../lib -I ./lib
+-DKBUILD_BASENAME='"crc32"' -DKBUILD_MODNAME='"crc32"' -c -o
+lib/crc32.o ../lib/crc32.c
+  /bin/bash ../scripts/gen_ksymdeps.sh lib/crc32.o >> lib/.crc32.o.cmd
+   ./tools/objtool/objtool check  lib/crc32.o
+lib/crc32.o: warning: objtool: crc32_le uses BP as a scratch register
+lib/crc32.o: warning: objtool: __crc32c_le uses BP as a scratch register
+lib/crc32.o: warning: objtool: crc32_be uses BP as a scratch register
 
-Changes from v1:
-- Move drop logic from nft_fib_inet_eval() to nft_fib6_eval{,_type}
-so it can affect other usages of these functions.
+I uploaded my .config file to https://pastebin.com/raw/dmQ1CsNs for reference.
 
- net/ipv6/netfilter/nft_fib_ipv6.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I don't see anything unusual in the configuration, but it's interesting that
+this configuration has more of those warnings that other configurations,
+so there must be something to it. Here is a list of how many objtool warnings
+I got in some recent randconfig builds:
 
-diff --git a/net/ipv6/netfilter/nft_fib_ipv6.c b/net/ipv6/netfilter/nft_fib_ipv6.c
-index 7ece86afd079..8496e43b73bd 100644
---- a/net/ipv6/netfilter/nft_fib_ipv6.c
-+++ b/net/ipv6/netfilter/nft_fib_ipv6.c
-@@ -125,6 +125,11 @@ void nft_fib6_eval_type(const struct nft_expr *expr, struct nft_regs *regs,
- 	u32 *dest = &regs->data[priv->dreg];
- 	struct ipv6hdr *iph, _iph;
- 
-+	if (!ipv6_mod_enabled()) {
-+		regs->verdict.code = NFT_BREAK;
-+		return;
-+	}
-+
- 	iph = skb_header_pointer(pkt->skb, noff, sizeof(_iph), &_iph);
- 	if (!iph) {
- 		regs->verdict.code = NFT_BREAK;
-@@ -150,6 +155,11 @@ void nft_fib6_eval(const struct nft_expr *expr, struct nft_regs *regs,
- 	struct rt6_info *rt;
- 	int lookup_flags;
- 
-+	if (!ipv6_mod_enabled()) {
-+		regs->verdict.code = NFT_BREAK;
-+		return;
-+	}
-+
- 	if (priv->flags & NFTA_FIB_F_IIF)
- 		oif = nft_in(pkt);
- 	else if (priv->flags & NFTA_FIB_F_OIF)
--- 
-2.20.1
+$ find rand86/ -name \*success -mmin -300  | while read i ; do echo
+`grep objtool $i | wc -l`  $i ; done
+0 rand86/0x694311F1-success
+0 rand86/0x8D972A20-success
+35 rand86/0x23203CF4-success
+2 rand86/0xCBBF0EE0-success
+2 rand86/0x4C14539-success
+0 rand86/0xDAF4E782-success
+0 rand86/0xC0A55734-success
+0 rand86/0x66A9932-success
+0 rand86/0x6EA0E018-success
+3 rand86/0x39524E4C-success
+0 rand86/0x1529A460-success
+0 rand86/0xF8B3C01-success
+0 rand86/0x3A38D796-success
+1 rand86/0xBC23C91A-success
+0 rand86/0xBB45D3A4-success
+0 rand86/0xA907618F-success
+0 rand86/0xE1FD6050-success
+2 rand86/0x564C9F97-success
+1 rand86/0x6B87B4EC-success
+0 rand86/0x138BF05D-success
+0 rand86/0xBEA383C4-success
+4 rand86/0x13EDB348-success
+0 rand86/0xDD0F59A6-success
+1 rand86/0x1F629018-success
+0 rand86/0x775CC509-success
+8 rand86/0xC368A488-success
+0 rand86/0x619AB1C8-success
+0 rand86/0xF94B887A-success
+197 rand86/0xBB7BE7F0-success
+0 rand86/0x9C77525F-success
+0 rand86/0x8FB025C4-success
+50 rand86/0xA25C2C06-success
+0 rand86/0xC96DF498-success
+3 rand86/0xA9CE5E8F-success
+0 rand86/0xC2F8A840-success
+0 rand86/0xEAD8A021-success
+0 rand86/0x5721D814-success
+141 rand86/0x8259791A-success
+0 rand86/0x9EB91B3D-success
+0 rand86/0x5F1C100E-success
+2 rand86/0xD132EF06-success
+0 rand86/0x1C679BF4-success
+0 rand86/0xE647B3E0-success
+0 rand86/0xEA358480-success
 
+    Arnd
