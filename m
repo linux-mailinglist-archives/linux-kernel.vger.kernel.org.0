@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF10E9DFF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 817E19DFF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbfH0H6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:58:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51620 "EHLO mail.kernel.org"
+        id S1729197AbfH0H7A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:59:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730706AbfH0H6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:58:41 -0400
+        id S1731074AbfH0H6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:58:47 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 025E4206BF;
-        Tue, 27 Aug 2019 07:58:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 095AD20828;
+        Tue, 27 Aug 2019 07:58:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892720;
-        bh=x2yaFsxyNtdZbvKQzpaUTp9W7h6k1yHSMcCMiTZWb6A=;
+        s=default; t=1566892726;
+        bh=w9n+0IkPLMXp12/EI3ePqqrQeWYE9NsYwoEcxGk5xxE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HatZyc0wqFWWcIFOPt6gdm+UzdiqIAkj/0Pxk+uaVgxg+qfmsU7VWk/t7mW+dfdE0
-         khQ86GyI5jVgrvEliP74JSH9VxwQb9vKkmNu2tDNDV3W5Ggcd27MSp+DYiiHPG9Z1h
-         tVbRKtR5V5GcyKyeB0FJbstgA07bHFMglxxg49po=
+        b=DsjtRE86jODgMh3q86/Zknr7mx970LuEnjMn7a+ZNrlIcjX4aI5qAkmJPITTgV7X1
+         mVZ4++X574iU2IgRIoiOKejA5xq1FvzM1zjyqhL6CHFEYCsyV+AGHdwVZvQM6GZlna
+         NuvK5lLA/JMgvUOeYHnUUKSfCqpwL70f2dA6lKlo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable@vger.kernel.org,
+        Allison Henderson <allison.henderson@oracle.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
         Luis Chamberlain <mcgrof@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 89/98] xfs: dont trip over uninitialized buffer on extent read of corrupted inode
-Date:   Tue, 27 Aug 2019 09:51:08 +0200
-Message-Id: <20190827072722.722033898@linuxfoundation.org>
+Subject: [PATCH 4.19 90/98] xfs: Move fs/xfs/xfs_attr.h to fs/xfs/libxfs/xfs_attr.h
+Date:   Tue, 27 Aug 2019 09:51:09 +0200
+Message-Id: <20190827072722.840655823@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
 References: <20190827072718.142728620@linuxfoundation.org>
@@ -45,74 +47,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 6958d11f77d45db80f7e22a21a74d4d5f44dc667 upstream.
+commit e2421f0b5ff3ce279573036f5cfcb0ce28b422a9 upstream.
 
-We've had rather rare reports of bmap btree block corruption where
-the bmap root block has a level count of zero. The root cause of the
-corruption is so far unknown. We do have verifier checks to detect
-this form of on-disk corruption, but this doesn't cover a memory
-corruption variant of the problem. The latter is a reasonable
-possibility because the root block is part of the inode fork and can
-reside in-core for some time before inode extents are read.
+This patch moves fs/xfs/xfs_attr.h to fs/xfs/libxfs/xfs_attr.h
+since xfs_attr.c is in libxfs.  We will need these later in
+xfsprogs.
 
-If this occurs, it leads to a system crash such as the following:
-
- BUG: unable to handle kernel paging request at ffffffff00000221
- PF error: [normal kernel read fault]
- ...
- RIP: 0010:xfs_trans_brelse+0xf/0x200 [xfs]
- ...
- Call Trace:
-  xfs_iread_extents+0x379/0x540 [xfs]
-  xfs_file_iomap_begin_delay+0x11a/0xb40 [xfs]
-  ? xfs_attr_get+0xd1/0x120 [xfs]
-  ? iomap_write_begin.constprop.40+0x2d0/0x2d0
-  xfs_file_iomap_begin+0x4c4/0x6d0 [xfs]
-  ? __vfs_getxattr+0x53/0x70
-  ? iomap_write_begin.constprop.40+0x2d0/0x2d0
-  iomap_apply+0x63/0x130
-  ? iomap_write_begin.constprop.40+0x2d0/0x2d0
-  iomap_file_buffered_write+0x62/0x90
-  ? iomap_write_begin.constprop.40+0x2d0/0x2d0
-  xfs_file_buffered_aio_write+0xe4/0x3b0 [xfs]
-  __vfs_write+0x150/0x1b0
-  vfs_write+0xba/0x1c0
-  ksys_pwrite64+0x64/0xa0
-  do_syscall_64+0x5a/0x1d0
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The crash occurs because xfs_iread_extents() attempts to release an
-uninitialized buffer pointer as the level == 0 value prevented the
-buffer from ever being allocated or read. Change the level > 0
-assert to an explicit error check in xfs_iread_extents() to avoid
-crashing the kernel in the event of localized, in-core inode
-corruption.
-
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Allison Henderson <allison.henderson@oracle.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Dave Chinner <david@fromorbit.com>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/xfs/libxfs/xfs_bmap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/xfs/{ => libxfs}/xfs_attr.h | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename fs/xfs/{ => libxfs}/xfs_attr.h (100%)
 
-diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-index 3a496ffe6551c..ab2465bc413af 100644
---- a/fs/xfs/libxfs/xfs_bmap.c
-+++ b/fs/xfs/libxfs/xfs_bmap.c
-@@ -1178,7 +1178,10 @@ xfs_iread_extents(
- 	 * Root level must use BMAP_BROOT_PTR_ADDR macro to get ptr out.
- 	 */
- 	level = be16_to_cpu(block->bb_level);
--	ASSERT(level > 0);
-+	if (unlikely(level == 0)) {
-+		XFS_ERROR_REPORT(__func__, XFS_ERRLEVEL_LOW, mp);
-+		return -EFSCORRUPTED;
-+	}
- 	pp = XFS_BMAP_BROOT_PTR_ADDR(mp, block, 1, ifp->if_broot_bytes);
- 	bno = be64_to_cpu(*pp);
- 
+diff --git a/fs/xfs/xfs_attr.h b/fs/xfs/libxfs/xfs_attr.h
+similarity index 100%
+rename from fs/xfs/xfs_attr.h
+rename to fs/xfs/libxfs/xfs_attr.h
 -- 
 2.20.1
 
