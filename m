@@ -2,82 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 937EA9F18B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07B6F9F194
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:29:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730569AbfH0RZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 13:25:52 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38862 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfH0RZw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 13:25:52 -0400
-Received: by mail-pf1-f193.google.com with SMTP id o70so14547171pfg.5;
-        Tue, 27 Aug 2019 10:25:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rRezVoilg+nffqvxCs3DF4XZQiwLzh4SLwalFGZk9Lc=;
-        b=sKC20rPMQqaiHQ3bNsYNAWMqZ5IrG43weYvUiEhEWsTHdBk4xdkWAJMtRZaqK3UEl+
-         ptieMi6oL/wqiubyeq8kttdzdb1cQoH3FL+kope2oK3QugrAQmZW0Vy2IQbiDz2dYEf3
-         c6um2LXwHarXdGQLm0SoAaTURxKNuekXzNC1py3Nt9FAIqcUgZCJu5adG8HRjNWtKUO/
-         M+ddp3CVSZ56tb6c6gyrf5qFApGUy1HRZrB24b9LcXxFdKC0bIdjk0seOwWuiOcRyBhF
-         x/e3PD/ndOjWbdM1L2bOHLcce1UvGLMJGMX6l1YwmqEdsRfsBxYqTf7YnaatnFDH2ZWE
-         Rcig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rRezVoilg+nffqvxCs3DF4XZQiwLzh4SLwalFGZk9Lc=;
-        b=CeEsYTLFck6TGNdHyux7njFXFh/jFpjKj27VtGpDBN6DI21sTirhjhB7VE16xCaaLb
-         bXGLvjksE/rqfTkwKoKrcVwTcSq5BPUzMDv+eBBcdyHLwMlXYjhcCTwcm9dHvqhhiViN
-         CAkynu5TzjgXIx+qrr97Vln99mUb5bJRNvOfUqoY3HDID3ahpvbqSig57td1UXQQSMIm
-         ajO34k3qEc+KfISv2PZ8q9MDU+1TzKynIRa0GmtduyUTu/cQ/4rOG+moA+yMfC8qj5Uh
-         6ccCv5VdctRDu3HeSFKqs7EQtsAugpAkBknkIYjPaLnuo2c17+DPxKUWrvzs4xJIxRQR
-         /8fg==
-X-Gm-Message-State: APjAAAU0ah79smf6ViiVeN7sSNW19Kd8hC2rliEZwH7A3EiFQUE3LLym
-        wnFLr/p7AfvHGB1B8vCKJoU=
-X-Google-Smtp-Source: APXvYqwS0sReW3QvGrI4E+kBPMQshS/Ndxj8vSrAZ2znKnPE0khWjfl8xlm0mJfMsBQ+vyLyX9w5ag==
-X-Received: by 2002:aa7:8219:: with SMTP id k25mr13470528pfi.72.1566926751686;
-        Tue, 27 Aug 2019 10:25:51 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id g36sm15844256pgb.78.2019.08.27.10.25.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 10:25:51 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 10:25:50 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.2 000/162] 5.2.11-stable review
-Message-ID: <20190827172550.GD31588@roeck-us.net>
-References: <20190827072738.093683223@linuxfoundation.org>
-MIME-Version: 1.0
+        id S1730229AbfH0R3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 13:29:42 -0400
+Received: from gate.crashing.org ([63.228.1.57]:52705 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727064AbfH0R3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 13:29:42 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x7RHTARD029788;
+        Tue, 27 Aug 2019 12:29:10 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x7RHT9fb029787;
+        Tue, 27 Aug 2019 12:29:09 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Tue, 27 Aug 2019 12:29:09 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Nicholas Piggin <npiggin@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] powerpc: cleanup hw_irq.h
+Message-ID: <20190827172909.GA31406@gate.crashing.org>
+References: <0f7e164afb5d1b022441559fe5a999bb6d3c0a23.1566893505.git.christophe.leroy@c-s.fr> <81f39fa06ae582f4a783d26abd2b310204eba8f4.1566893505.git.christophe.leroy@c-s.fr> <1566909844.x4jee1jjda.astroid@bobo.none>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1566909844.x4jee1jjda.astroid@bobo.none>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 09:48:48AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.11 release.
-> There are 162 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Aug 27, 2019 at 10:48:24PM +1000, Nicholas Piggin wrote:
+> Christophe Leroy's on August 27, 2019 6:13 pm:
+> > +#define wrtee(val)	asm volatile("wrtee %0" : : "r" (val) : "memory")
+> > +#define wrteei(val)	asm volatile("wrteei %0" : : "i" (val) : "memory")
 > 
-> Responses should be made by Thu 29 Aug 2019 07:25:02 AM UTC.
-> Anything received after that time might be too late.
-> 
+> Can you implement just one macro that uses __builtin_constant_p to 
+> select between the imm and reg versions? I forgot if there's some
+> corner cases that prevent that working with inline asm i constraints.
 
-Build results:
-	total: 159 pass: 159 fail: 0
-Qemu test results:
-	total: 390 pass: 390 fail: 0
+static inline void wrtee(long val)
+{
+	asm volatile("wrtee%I0 %0" : : "n"(val) : "memory");
+}
 
-Guenter
+(This output modifier goes back to the dark ages, some 2.4 or something).
+
+
+Segher
