@@ -2,98 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D43569E762
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 861399E75D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:10:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbfH0MJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:09:40 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51273 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728970AbfH0MJh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:09:37 -0400
-Received: by mail-wm1-f67.google.com with SMTP id k1so2838158wmi.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 05:09:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kG73YssMPFpHboph8IgubAuVgxjSOuHAqxxT96cCM2Q=;
-        b=kOw/3B7+sid32pB59rUZflzkjSnwP23rI6gbVyEXcR21a7bnWm2Kx/la6Hir1r3Z/k
-         XyolpsAJmnUxv2wcRAuSXQ/EG9L3udHbjTh2D7NxYKZmkQoiU5zLMdtrLtXaydiTwiTE
-         vMla6o/QueM+UE8coc5gOvzeT3SKVYfHGg/rbVjF86kQl9Qg20rHbkF/8axYE6hudP6W
-         pE3i3V+5F29DRWsO4rcO5AubA4QMLS1tuury1DwIFVZmc9/hn2a/fCPLz8T0WyXculA9
-         wMNM2GCd/m2sBA4JmgUj0Rb6IMKW8DIHS5wTAtSaflT01n/6kulKNxwtwllyUp4TL+BB
-         mieQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kG73YssMPFpHboph8IgubAuVgxjSOuHAqxxT96cCM2Q=;
-        b=PrIPnoX7mzndjfQjTxvqmZtXm3V3+Jar5eowJ/OMml5cEWmq3m5mUoy1P0aRiL2kqN
-         OsHDmy+xB7tTS4fbh19V64oDkNO1Zko/ETW12iIFrypcW8ceW1YMr/Pf/dKU6THZjkgX
-         w2fBm5ywt+NumdfnJZK2kpoGndou/qJN0qxlCkuQaPlxHAQY7Z+9jIqwI+FzLKLulklQ
-         ZJo3WLasfXnwpd++I0Fs1Fcs9fi1jHfPNd+2Wa503H+qRIYAaXkXoYNZm+mtjUD5CyJi
-         LuFIvfKR8k9Cq0ypGNmGBoz2t7FgBloVBjU/WjMSBzRTJOotN3Jd3iIkJ/iS4FQ6uA6u
-         kVmA==
-X-Gm-Message-State: APjAAAXYdBbcUj1CfkznbOYX5o1pOPQGDPJtQO4jNHPGVd5eLfYrUJAr
-        6+8Gmxwn5V9u0fAbHZxXhi10jjqAawUH8IqKTxw=
-X-Google-Smtp-Source: APXvYqx1mySRuuMcf6ImCtUwR4sdXMy95MXfkCQCRN+9owUbpXAKxVScFgRvPxIpEPbW/FiNmjurcC+CkKlR4cQ/EBs=
-X-Received: by 2002:a7b:c246:: with SMTP id b6mr28903280wmj.13.1566907775637;
- Tue, 27 Aug 2019 05:09:35 -0700 (PDT)
+        id S1727380AbfH0MJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:09:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47836 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725850AbfH0MJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 08:09:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 284E9AF19;
+        Tue, 27 Aug 2019 12:09:25 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 14:09:23 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        kirill.shutemov@linux.intel.com,
+        Yang Shi <yang.shi@linux.alibaba.com>, hannes@cmpxchg.org,
+        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH -mm] mm: account deferred split THPs into MemAvailable
+Message-ID: <20190827120923.GB7538@dhcp22.suse.cz>
+References: <1566410125-66011-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190822080434.GF12785@dhcp22.suse.cz>
+ <ee048bbf-3563-d695-ea58-5f1504aee35c@suse.cz>
+ <20190822152934.w6ztolutdix6kbvc@box>
+ <20190826074035.GD7538@dhcp22.suse.cz>
+ <20190826131538.64twqx3yexmhp6nf@box>
+ <20190827060139.GM7538@dhcp22.suse.cz>
+ <20190827110210.lpe36umisqvvesoa@box>
+ <aaaf9742-56f7-44b7-c3db-ad078b7b2220@suse.cz>
 MIME-Version: 1.0
-References: <1566944026-18113-1-git-send-email-shengjiu.wang@nxp.com>
-In-Reply-To: <1566944026-18113-1-git-send-email-shengjiu.wang@nxp.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Tue, 27 Aug 2019 15:09:23 +0300
-Message-ID: <CAEnQRZC9+ZiEUq-X34xv0L-QV4k1_XDbnBgdu8b8Kqo7wiT7CQ@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: cs42xx8: Force suspend/resume during
- system suspend/resume
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     brian.austin@cirrus.com, Paul.Handrigan@cirrus.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aaaf9742-56f7-44b7-c3db-ad078b7b2220@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 1:15 PM Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
->
-> Use force_suspend/resume to make sure clocks are disabled/enabled
-> accordingly during system suspend/resume.
->
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+On Tue 27-08-19 14:01:56, Vlastimil Babka wrote:
+> On 8/27/19 1:02 PM, Kirill A. Shutemov wrote:
+> > On Tue, Aug 27, 2019 at 08:01:39AM +0200, Michal Hocko wrote:
+> >> On Mon 26-08-19 16:15:38, Kirill A. Shutemov wrote:
+> >>>
+> >>> Unmapped completely pages will be freed with current code. Deferred split
+> >>> only applies to partly mapped THPs: at least on 4k of the THP is still
+> >>> mapped somewhere.
+> >>
+> >> Hmm, I am probably misreading the code but at least current Linus' tree
+> >> reads page_remove_rmap -> [page_remove_anon_compound_rmap ->\ deferred_split_huge_page even
+> >> for fully mapped THP.
+> > 
+> > Well, you read correctly, but it was not intended. I screwed it up at some
+> > point.
+> > 
+> > See the patch below. It should make it work as intened.
+> > 
+> > It's not bug as such, but inefficientcy. We add page to the queue where
+> > it's not needed.
+> 
+> But that adding to queue doesn't affect whether the page will be freed
+> immediately if there are no more partial mappings, right? I don't see
+> deferred_split_huge_page() pinning the page.
+> So your patch wouldn't make THPs freed immediately in cases where they
+> haven't been freed before immediately, it just fixes a minor
+> inefficiency with queue manipulation?
 
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Ohh, right. I can see that in free_transhuge_page now. So fully mapped
+THPs really do not matter and what I have considered an odd case is
+really happening more often.
 
-> ---
->  sound/soc/codecs/cs42xx8.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/sound/soc/codecs/cs42xx8.c b/sound/soc/codecs/cs42xx8.c
-> index 5b049fcdba20..94b1adb088fd 100644
-> --- a/sound/soc/codecs/cs42xx8.c
-> +++ b/sound/soc/codecs/cs42xx8.c
-> @@ -684,6 +684,8 @@ static int cs42xx8_runtime_suspend(struct device *dev)
->  #endif
->
->  const struct dev_pm_ops cs42xx8_pm = {
-> +       SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-> +                               pm_runtime_force_resume)
->         SET_RUNTIME_PM_OPS(cs42xx8_runtime_suspend, cs42xx8_runtime_resume, NULL)
->  };
->  EXPORT_SYMBOL_GPL(cs42xx8_pm);
-> --
-> 2.21.0
->
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+That being said this will not help at all for what Yang Shi is seeing
+and we need a more proactive deferred splitting as I've mentioned
+earlier.
+
+-- 
+Michal Hocko
+SUSE Labs
