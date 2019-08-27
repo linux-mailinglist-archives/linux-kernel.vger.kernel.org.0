@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA42A9DFD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:58:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E9459DF64
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730937AbfH0H6G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:58:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50382 "EHLO mail.kernel.org"
+        id S1729923AbfH0Hxx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:53:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730474AbfH0H54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:57:56 -0400
+        id S1729315AbfH0Hxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:53:51 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECD80206BA;
-        Tue, 27 Aug 2019 07:57:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E68D2186A;
+        Tue, 27 Aug 2019 07:53:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892675;
-        bh=Pox7UGSVc3exntObymrJZRHxDv/1qDz0hdp3/iMqotU=;
+        s=default; t=1566892430;
+        bh=8EqrmYTm5gwpS9GJIxi7ddxWodcfC4nUipeB9mMnheU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NiBZs+sut8MZK52lgRo/o4CDRX6UOYlh+G5xxEiP9C7lWGcBc6EL4ZyGvICx1uMSD
-         muU6K58JierscaDiW9hgXRzHOhP/ZL9NgMZYpF8SlkVeD/7Ab21Hftc07j+cTf+wBg
-         RIiXmKj65JU/sGJ9Xmf6N9a3BFVUg9ksg3QsPcDA=
+        b=IqFNUN/hhUsOPu+4Z2dABSua3pyVOgRS3byudjqQ8/Ea/AlFOhHhVPW5LKRNV+qcs
+         N7jR4xXfDEIKN/nF5AKHTr7BbACGrzIPW9qd/sEep7WNpYx6YT5wvPpCYJ3f61Zvx3
+         g93o1A06D5vOpgXpxo396tFjVyrx7dHRRDcHqAPE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neil MacLeod <neil@nmacleod.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 4.19 74/98] x86/boot: Fix boot regression caused by bootparam sanitizing
-Date:   Tue, 27 Aug 2019 09:50:53 +0200
-Message-Id: <20190827072722.081796585@linuxfoundation.org>
+        stable@vger.kernel.org, ZhangXiaoxu <zhangxiaoxu5@huawei.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 50/62] dm btree: fix order of block initialization in btree_split_beneath
+Date:   Tue, 27 Aug 2019 09:50:55 +0200
+Message-Id: <20190827072703.381543115@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
+In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
+References: <20190827072659.803647352@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,41 +43,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+From: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
 
-commit 7846f58fba964af7cb8cf77d4d13c33254725211 upstream.
+commit e4f9d6013820d1eba1432d51dd1c5795759aa77f upstream.
 
-commit a90118c445cc ("x86/boot: Save fields explicitly, zero out everything
-else") had two errors:
+When btree_split_beneath() splits a node to two new children, it will
+allocate two blocks: left and right.  If right block's allocation
+failed, the left block will be unlocked and marked dirty.  If this
+happened, the left block'ss content is zero, because it wasn't
+initialized with the btree struct before the attempot to allocate the
+right block.  Upon return, when flushing the left block to disk, the
+validator will fail when check this block.  Then a BUG_ON is raised.
 
-    * It preserved boot_params.acpi_rsdp_addr, and
-    * It failed to preserve boot_params.hdr
+Fix this by completely initializing the left block before allocating and
+initializing the right block.
 
-Therefore, zero out acpi_rsdp_addr, and preserve hdr.
-
-Fixes: a90118c445cc ("x86/boot: Save fields explicitly, zero out everything else")
-Reported-by: Neil MacLeod <neil@nmacleod.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Neil MacLeod <neil@nmacleod.com>
+Fixes: 4dcb8b57df359 ("dm btree: fix leak of bufio-backed block in btree_split_beneath error path")
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190821192513.20126-1-jhubbard@nvidia.com
+Signed-off-by: ZhangXiaoxu <zhangxiaoxu5@huawei.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/bootparam_utils.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/persistent-data/dm-btree.c |   31 ++++++++++++++++---------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
---- a/arch/x86/include/asm/bootparam_utils.h
-+++ b/arch/x86/include/asm/bootparam_utils.h
-@@ -71,6 +71,7 @@ static void sanitize_boot_params(struct
- 			BOOT_PARAM_PRESERVE(eddbuf_entries),
- 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
- 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
-+			BOOT_PARAM_PRESERVE(hdr),
- 			BOOT_PARAM_PRESERVE(e820_table),
- 			BOOT_PARAM_PRESERVE(eddbuf),
- 		};
+--- a/drivers/md/persistent-data/dm-btree.c
++++ b/drivers/md/persistent-data/dm-btree.c
+@@ -628,39 +628,40 @@ static int btree_split_beneath(struct sh
+ 
+ 	new_parent = shadow_current(s);
+ 
++	pn = dm_block_data(new_parent);
++	size = le32_to_cpu(pn->header.flags) & INTERNAL_NODE ?
++		sizeof(__le64) : s->info->value_type.size;
++
++	/* create & init the left block */
+ 	r = new_block(s->info, &left);
+ 	if (r < 0)
+ 		return r;
+ 
++	ln = dm_block_data(left);
++	nr_left = le32_to_cpu(pn->header.nr_entries) / 2;
++
++	ln->header.flags = pn->header.flags;
++	ln->header.nr_entries = cpu_to_le32(nr_left);
++	ln->header.max_entries = pn->header.max_entries;
++	ln->header.value_size = pn->header.value_size;
++	memcpy(ln->keys, pn->keys, nr_left * sizeof(pn->keys[0]));
++	memcpy(value_ptr(ln, 0), value_ptr(pn, 0), nr_left * size);
++
++	/* create & init the right block */
+ 	r = new_block(s->info, &right);
+ 	if (r < 0) {
+ 		unlock_block(s->info, left);
+ 		return r;
+ 	}
+ 
+-	pn = dm_block_data(new_parent);
+-	ln = dm_block_data(left);
+ 	rn = dm_block_data(right);
+-
+-	nr_left = le32_to_cpu(pn->header.nr_entries) / 2;
+ 	nr_right = le32_to_cpu(pn->header.nr_entries) - nr_left;
+ 
+-	ln->header.flags = pn->header.flags;
+-	ln->header.nr_entries = cpu_to_le32(nr_left);
+-	ln->header.max_entries = pn->header.max_entries;
+-	ln->header.value_size = pn->header.value_size;
+-
+ 	rn->header.flags = pn->header.flags;
+ 	rn->header.nr_entries = cpu_to_le32(nr_right);
+ 	rn->header.max_entries = pn->header.max_entries;
+ 	rn->header.value_size = pn->header.value_size;
+-
+-	memcpy(ln->keys, pn->keys, nr_left * sizeof(pn->keys[0]));
+ 	memcpy(rn->keys, pn->keys + nr_left, nr_right * sizeof(pn->keys[0]));
+-
+-	size = le32_to_cpu(pn->header.flags) & INTERNAL_NODE ?
+-		sizeof(__le64) : s->info->value_type.size;
+-	memcpy(value_ptr(ln, 0), value_ptr(pn, 0), nr_left * size);
+ 	memcpy(value_ptr(rn, 0), value_ptr(pn, nr_left),
+ 	       nr_right * size);
+ 
 
 
