@@ -2,70 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91FA79EAE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB7E9EAF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfH0O00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 10:26:26 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:46055 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbfH0O0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 10:26:25 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.thorsis.com (Postfix) with ESMTP id B642C4E3C;
-        Tue, 27 Aug 2019 16:27:30 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
-Received: from mail.thorsis.com ([127.0.0.1])
-        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6TzvyJAVDxTa; Tue, 27 Aug 2019 16:27:30 +0200 (CEST)
-Received: by mail.thorsis.com (Postfix, from userid 109)
-        id 978834F13; Tue, 27 Aug 2019 16:27:30 +0200 (CEST)
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NO_RECEIVED,
-        NO_RELAYS autolearn=unavailable autolearn_force=no version=3.4.2
-From:   Alexander Dahl <ada@thorsis.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Julien Grall <julien.grall@arm.com>,
-        linux-rt-users@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [ANNOUNCE] v5.2.10-rt5
-Date:   Tue, 27 Aug 2019 16:26:20 +0200
-Message-ID: <1983406.XYedcDVy8E@ada>
-In-Reply-To: <20190827132200.uj44quypjsqu3oup@linutronix.de>
-References: <20190827105542.qxvtteirkh55i5ly@linutronix.de> <1775495.KgcFvHdtex@ada> <20190827132200.uj44quypjsqu3oup@linutronix.de>
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S1729268AbfH0O1l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 10:27:41 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36152 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725987AbfH0O1l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 10:27:41 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7REJCr7038924;
+        Tue, 27 Aug 2019 10:27:12 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2un4brpg29-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Aug 2019 10:27:12 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7REJRd7040045;
+        Tue, 27 Aug 2019 10:27:11 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2un4brpg1e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Aug 2019 10:27:11 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7REQcdq019693;
+        Tue, 27 Aug 2019 14:27:09 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma04dal.us.ibm.com with ESMTP id 2ujvv6me0a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Aug 2019 14:27:09 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7RER8mR55509392
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Aug 2019 14:27:08 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AA2952805C;
+        Tue, 27 Aug 2019 14:27:08 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 72DEF2805E;
+        Tue, 27 Aug 2019 14:27:08 +0000 (GMT)
+Received: from localhost (unknown [9.85.181.53])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Aug 2019 14:27:08 +0000 (GMT)
+From:   Nathan Lynch <nathanl@linux.ibm.com>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Allison Randal <allison@lohutok.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Gen Zhang <blackgod016574@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 2/2] powerpc/pseries: Delete an error message for a failed string duplication in dlpar_store()
+In-Reply-To: <535cfec2-782f-61ec-f6fb-c50186ead2af@web.de>
+References: <db28c84d-ac07-6d9a-a371-c97ab72bf763@web.de> <535cfec2-782f-61ec-f6fb-c50186ead2af@web.de>
+Date:   Tue, 27 Aug 2019 09:27:07 -0500
+Message-ID: <875zmismys.fsf@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-27_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=949 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908270153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Sebastian,
+Markus Elfring <Markus.Elfring@web.de> writes:
 
-Am Dienstag, 27. August 2019, 15:22:01 CEST schrieb Sebastian Andrzej Siewior:
-> of course, !SMP. What about this:
-> 
-> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-> --- a/kernel/time/hrtimer.c
-> +++ b/kernel/time/hrtimer.c
-> @@ -934,7 +934,11 @@ void hrtimer_grab_expiry_lock(const struct hrtimer
-> *timer) {
->  	struct hrtimer_clock_base *base = READ_ONCE(timer->base);
-> 
-> +#ifdef CONFIG_SMP
->  	if (timer->is_soft && base != &migration_base) {
-> +#else
-> +	if (timer->is_soft && base && base->cpu_base) {
-> +#endif
->  		spin_lock(&base->cpu_base->softirq_expiry_lock);
->  		spin_unlock(&base->cpu_base->softirq_expiry_lock);
->  	}
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 27 Aug 2019 13:37:56 +0200
+>
+> Omit an extra message for a memory allocation failure in this function.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-Build error is gone and target system boots successfully, seems to work fine 
-at first sight. Thanks for the quick response.
-
-Greets
-Alex
-
+Acked-by: Nathan Lynch <nathanl@linux.ibm.com>
