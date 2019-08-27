@@ -2,75 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ACEC9E7F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:31:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C55F9E7F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:31:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbfH0MbF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:31:05 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38177 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfH0MbF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:31:05 -0400
-Received: by mail-lj1-f194.google.com with SMTP id x3so18290269lji.5
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 05:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=TE5MclHRuX1cvsN7kZQgtWWu3H658Ljt05YoM0PUdwg=;
-        b=gDNbYdZ2AdaS6NACFgepZZbjeiIUp9TYnxCEbftNonJa8sDsjWKR6Xu79RwT50h4UY
-         n5+iEDQ2yN9iG5Xw1sxyWYpWKcQYVrOcY5UHpbeh9Ynz2xLPjE9kG8ZATdJJ8ShQ019l
-         e1c/UftQd52llvVCidEfkNIQpEP2AqVwSxzDS8byyBasTnKdR9uyX/wdXOoJMnRV4fco
-         P97jpIu7dqJQ31Zcxo1ruKVuZ5jrOyC/aMCYuXSWxfsHPkfkkCFKH5cYEpl+2vjtvhuC
-         pgY0cWth1rzB7UuMpknCw2+cCNSLE59swuTIKZrchEuK1JyhOYjoq2RxKtep96u++KDc
-         s57A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=TE5MclHRuX1cvsN7kZQgtWWu3H658Ljt05YoM0PUdwg=;
-        b=i5rv1qxhWASOGhuRQ+gG+lRKH6kw2Rm+r6TaTm7pZSfPJXZ0BkC7Rq5yk4Sh6BX1r8
-         IESm4/a5OVzGQKLNkDArsnKQ2UCr5Z0/O8eVrDppibSNjj1M3XgqTFdLU+37hz2CgYia
-         eM9cy5UNhIx3BJUTQC8+8wFPM5SCg7GB9BlyCjLNS7eCYrC1z2BITsMseWE6IWcd4oBv
-         XWXra4owsj7IF/T32rUkLi0tpFDDkliw4E5SqvD4z2o1mNrEOlmjVjcc/0lmiN8ht97p
-         QjaZwhnjYcpJgN8D+unlEhfodK/Hlu823WO2ek4FC+kzRL5Va+MWuDNaojTI7uJfTnZR
-         cWQA==
-X-Gm-Message-State: APjAAAUQJsIUv0R1fBnDyW/GfEZKfFxa4776x3MFDHd4AsXguFenOvEd
-        8gELsBZmEj1yqI9bLjyeo9C1wWVzBe4i7046AL4=
-X-Google-Smtp-Source: APXvYqzVrVBomcXTROaGb2Ul3QozFM0mK1BuceW3CA1EoJrN4qW/ukhc9b5Sp3zRh0Zt4n7k4c3vhhqPWNvGUjO3Euw=
-X-Received: by 2002:a2e:9a95:: with SMTP id p21mr13914737lji.175.1566909062998;
- Tue, 27 Aug 2019 05:31:02 -0700 (PDT)
+        id S1727951AbfH0Mbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:31:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47758 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726140AbfH0Mbe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 08:31:34 -0400
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 709B5206BF;
+        Tue, 27 Aug 2019 12:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566909094;
+        bh=FZRUuZCUTyQCSqMedVZ28+flP2/mWM4jyZ9NIq1nk3c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZKpRYyDrGo7oxfI3YL/i80qhuj+nF12zys7abG6s7fzVt4iNdHLBlH6dZAB+Cci76
+         UqD41ZonLyGbeN7Nz6y6Us0NiHRorXfzpPQXam3P4i2VmBeXoIqKDXVXM6uOyDBrG/
+         1V77xjETXCYgnL00y7A8pBav+v0TTWfcpLUI2Xjk=
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>,
+        lgirdwood@gmail.com, broonie@kernel.org
+Cc:     alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        codekipper@gmail.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] ASoC: sun4i-i2s: Revert "ASoC: sun4i-i2s: Remove duplicated quirks structure"
+Date:   Tue, 27 Aug 2019 14:31:30 +0200
+Message-Id: <20190827123131.29129-1-mripard@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Received: by 2002:a19:cb96:0:0:0:0:0 with HTTP; Tue, 27 Aug 2019 05:31:02
- -0700 (PDT)
-From:   Abibatu Ali <abibatu22ali@gmail.com>
-Date:   Tue, 27 Aug 2019 12:31:02 +0000
-X-Google-Sender-Auth: oQNM1vn5LVoEuYNW_tll3DLg8Jo
-Message-ID: <CADSmb7gKP8isf5KCg_3-1Sq-ZrsvX0rV336fpAJPj=eLdSkx=A@mail.gmail.com>
-Subject: HELLO FRIEND
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
-I'm "Mrs.Abibatu Ali" married to Mr. Ali ( an International Contractor
-and Oil Merchant/ jointly in Exposition of Agro
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Equipment ) who died in  Burkina Faso attack,  i am 64 years old and
-diagnosed of cancer for about 2 years
-ago  and my husband informed me that he deposited the sum of
-(17.3Million USD Only) with a Finance house) in OUAGADOUGOU
+This reverts commit 3e9acd7ac6933cdc20c441bbf9a38ed9e42e1490.
 
-BURKINA FASO.
+It turns out that while one I2S controller is described in the A83t
+datasheet, the driver supports another, undocumented, one that has been
+inherited from the older SoCs, while the documented one uses the new
+design.
 
-I want you to help me to use this money  for a charity project before
-I die, for the Poor, Less-privileged and  ORPHANAGES in
-your country.  Please kindly respond
+Fixes: 3e9acd7ac693 ("ASoC: sun4i-i2s: Remove duplicated quirks structure")
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-quickly for further details.
+---
 
-Yours fairly friend,
-Mrs. Abibatu Ali
+Changes from v1:
+  - Add the proper prefix to the commit title
+---
+ sound/soc/sunxi/sun4i-i2s.c | 25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index 57bf2a33753e..a6a3f772fdf0 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -1097,6 +1097,11 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
+ 	.set_fmt		= sun4i_i2s_set_soc_fmt,
+ };
+ 
++/*
++ * This doesn't describe the TDM controller documented in the A83t
++ * datasheet, but the three undocumented I2S controller that use the
++ * older design.
++ */
+ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
+ 	.has_reset		= true,
+ 	.reg_offset_txdata	= SUN8I_I2S_FIFO_TX_REG,
+@@ -1115,6 +1120,24 @@ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
+ 	.set_fmt		= sun8i_i2s_set_soc_fmt,
+ };
+ 
++static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
++	.has_reset		= true,
++	.reg_offset_txdata	= SUN8I_I2S_FIFO_TX_REG,
++	.sun4i_i2s_regmap	= &sun8i_i2s_regmap_config,
++	.field_clkdiv_mclk_en	= REG_FIELD(SUN4I_I2S_CLK_DIV_REG, 8, 8),
++	.field_fmt_wss		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 2),
++	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 6),
++	.bclk_dividers		= sun8i_i2s_clk_div,
++	.num_bclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
++	.mclk_dividers		= sun8i_i2s_clk_div,
++	.num_mclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
++	.get_bclk_parent_rate	= sun8i_i2s_get_bclk_parent_rate,
++	.get_sr			= sun8i_i2s_get_sr_wss,
++	.get_wss		= sun8i_i2s_get_sr_wss,
++	.set_chan_cfg		= sun8i_i2s_set_chan_cfg,
++	.set_fmt		= sun8i_i2s_set_soc_fmt,
++};
++
+ static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
+ 	.has_reset		= true,
+ 	.reg_offset_txdata	= SUN8I_I2S_FIFO_TX_REG,
+@@ -1296,7 +1319,7 @@ static const struct of_device_id sun4i_i2s_match[] = {
+ 	},
+ 	{
+ 		.compatible = "allwinner,sun8i-h3-i2s",
+-		.data = &sun8i_a83t_i2s_quirks,
++		.data = &sun8i_h3_i2s_quirks,
+ 	},
+ 	{
+ 		.compatible = "allwinner,sun50i-a64-codec-i2s",
+-- 
+2.21.0
+
