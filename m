@@ -2,125 +2,417 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62FCF9F4C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:11:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E99AD9F4CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:12:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbfH0VLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:11:24 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49232 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727064AbfH0VLX (ORCPT
+        id S1730597AbfH0VMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:12:53 -0400
+Received: from antares.kleine-koenig.org ([94.130.110.236]:47334 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbfH0VMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:11:23 -0400
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1i2ikJ-0006SQ-9d; Tue, 27 Aug 2019 22:11:19 +0100
-Received: from ben by deadeye with local (Exim 4.92.1)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1i2ikI-0007E4-NV; Tue, 27 Aug 2019 22:11:18 +0100
-Message-ID: <2b6111fbbe3f44c18c93bd247601a40986eacb22.camel@decadent.org.uk>
-Subject: Re: a bug in genksysms/CONFIG_MODVERSIONS w/ __attribute__((foo))?
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Nicholas Piggin <npiggin@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will@kernel.org>,
-        Debian kernel maintainers <debian-kernel@lists.debian.org>
-Date:   Tue, 27 Aug 2019 22:11:13 +0100
-In-Reply-To: <20190827170931.GA26908@kroah.com>
-References: <CAKwvOdnJAApaUhTQs7w_VjSeYBQa0c-TNxRB4xPLi0Y0sOQMMQ@mail.gmail.com>
-         <CAKwvOdkbY_XatVfRbZQ88p=nnrahZbvdjJ0OkU9m73G89_LRzg@mail.gmail.com>
-         <1566899033.o5acyopsar.astroid@bobo.none>
-         <CAK7LNARHacanVT6XjRDkFJDETWX6qHfUJCFhskCVG6aDL-bt1g@mail.gmail.com>
-         <1566908344.dio7j9zb2h.astroid@bobo.none>
-         <daacccf8e36132b6a747fa4b42626a8812906eaa.camel@decadent.org.uk>
-         <20190827170931.GA26908@kroah.com>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-        protocol="application/pgp-signature"; boundary="=-BE+bv3pJLifouWhO5Q8C"
-User-Agent: Evolution 3.30.5-1.1 
+        Tue, 27 Aug 2019 17:12:53 -0400
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id 9886F786050; Tue, 27 Aug 2019 23:12:48 +0200 (CEST)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Enrico@kleine-koenig.org, Weigelt@kleine-koenig.org,
+        metux IT consult <lkml@metux.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] vsprintf: introduce %dE for error constants
+Date:   Tue, 27 Aug 2019 23:12:44 +0200
+Message-Id: <20190827211244.7210-1-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The new format specifier %dE introduced with this patch pretty-prints
+the typical negative error values. So
 
---=-BE+bv3pJLifouWhO5Q8C
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	pr_info("probing failed (%dE)\n", ret);
 
-On Tue, 2019-08-27 at 19:09 +0200, Greg KH wrote:
-> On Tue, Aug 27, 2019 at 04:34:15PM +0100, Ben Hutchings wrote:
-> > On Tue, 2019-08-27 at 22:42 +1000, Nicholas Piggin wrote:
-> > > Masahiro Yamada's on August 27, 2019 8:49 pm:
-[...]
-> > > > modversions is ugly, so it would be great if we could dump it.
-> > > >=20
-> > > > > IIRC (without re-reading it all), in theory distros would be okay
-> > > > > without modversions if they could just provide their own explicit
-> > > > > versioning. They take care about ABIs, so they can version things
-> > > > > carefully if they had to change.
-> >=20
-> > Debian doesn't currently have any other way of detecting ABI changes
-> > (other than eyeballing diffs).
-> >=20
-> > I know there have been proposals of using libabigail for this instead,
-> > but I'm not sure how far those progressed.
->=20
-> Google has started using libabigail to track api changes in AOSP, here's
-> a patch that updates the ABI file after changing it:
-> 	https://android-review.googlesource.com/c/kernel/common/+/1108662
->=20
-> Note, there are issues with it, and some rough edges, but I think it can
-> work.
+yields
 
-Thanks for the pointer.
+	probing failed (EIO)
 
-> But, it means nothing at module load time, this is only at build-check
-> time.  At least modversions would prevent module loading in some cases.
+if ret holds -EIO. This is easier to understand than the for now common
 
-Right, but I *think* that would be enough if we could mark modules for
-strict (exact version) or loose ("ABI version") matching as I outlined.
+	probing failed (-5)
 
-Ben.
+(which used %d instead of %dE) for kernel developers who don't know the
+numbers by heart, The error names are also known and understood by
+userspace coders as they match the values the errno variable can have.
+Also to debug the sitation that resulted in the above message very
+probably involves EIO, so the message already gives the string to look
+out for.
 
---=20
-Ben Hutchings
-I'm always amazed by the number of people who take up solipsism because
-they heard someone else explain it. - E*Borg on alt.fan.pratchett
+glibc (and other libc variants)'s printf have a similar feature: %m
+expands to strerror(errno). I preferred using %dE however because %m in
+userspace doesn't consume an argument (which is however necessary in the
+kernel as there is no global errno variable). Also this is handled
+correctly by the compiler's format string checker as there is a matching
+int variable for the %d the compiler notices.
 
+There are quite some code locations that could be adapted to benefit
+from this:
 
+	$ git grep -E '^\s*(printk|(kv?as|sn?|vs(c?n)?)printf|(kvm|dev|pr)_(emerg|alert|crit|err|warn(ing)?|notice|info|cont|devel|debug|dbg))\(.*(\(%d\)|: %d)\\n' v5.3-rc5 | wc -l
+	9141
 
---=-BE+bv3pJLifouWhO5Q8C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+I expect there are some false negatives where the match is distributed
+over two or more lines and so isn't found.
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+Hello,
 
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAl1lnHEACgkQ57/I7JWG
-EQnH0BAAlri4E/3gs5cBbfQh5sIsnVG9aVv5R1v+vDF8+D6Cc68bnGBijEFifV94
-LNiV9UvQzfkvxSNZHBAOPWZZlY3GIgWFR7IsSR539jH8QSu+8GTZyoO6ZWCx5sm7
-feSSRh2KMTBhonLKRx7DzTMtI9x7UbyuxY82wESbE9BzRwUpZ/YJ1eVXByWkTsow
-6OE9739/AtxDrgQ5mEhw21YVZzgf/173SsCJIZd7MwGN4Isyeetm9ZpCSQSpXez0
-vlojkIlSKk1E+w2WwygxKd/nzYw/YPjfh/8HE6FvvVbdD1UcUj8o0kTjy39WVTe6
-97lC0NEOA8ARgz1AIWpDt/PVYKKATm7iLGAUi5PeB42Hw4VqbuqQHhATelT8W3i2
-UJ9zjeZiIWsB+hXBUB+fG3PAIebpnj4/OboTcpvPNDKxrLUSjOhqNH3yAdM7SGu/
-IFUGo4ayvoXAspTxutjfhBDS6Hfd+voT79+0Za9gTsE4Awpz+soYtykwYpmZTrDc
-ov5iKmEpPI+eyJwDOn0o7bdMyx1OZdGQ+3fONi45rfH3kzVVBPfdzASGcIRtBFae
-xQxf9tOIKg0RKCWHKxnJ8OKQOWV05Bg0YofeSOsrO7srBbQd7WzlvH27o2Tohnb+
-8BfqtvE+Wk4fyxvYQm7qhXxWxu1+9V6UCvmP3TF9UDJxCnYSXQ4=
-=g4Is
------END PGP SIGNATURE-----
+in v1 I handled both positive and negative errors which was challenged.
+I decided to drop that and only handle the (common) negative values.
+Readding handling of positive values later is easier than dropping it.
 
---=-BE+bv3pJLifouWhO5Q8C--
+Sergey Senozhatsky and Enrico Weigelt suggested to use strerror as name
+for the function that I called errno2errstr. (In v1 it was not a
+separate function). I didn't pick this up because the semantic of
+strerror in userspace is different. It returns something like
+"Interrupted system call" while errno2errstr only yields "EINTR".
+
+I dropped EWOULDBLOCK from the list of codes as it is on all Linux archs
+identical to EAGAIN and the way the lookup works now breaks otherwise.
+(And having it wasn't useful already in v1.)
+
+Rasmus Villemoes pointed out that the way I wrote the resulting string
+to the buffer was broken. This is fixed according to his suggestion by
+using string_nocheck(). I also added a test to lib/test_printf.c as he
+requested.
+
+Petr Mladek had some concerns:
+> The array is long, created by cpu&paste, the index of each code
+> is not obvious.
+
+Yeah right, the array is long. This cannot really be changed because we
+have that many error codes. I don't understand your concern about the
+index not being obvious. The array was just a list of (number, string)
+pairs where the position in the array didn't have any semantic.
+
+I agree it would be nice to have only one place that has a collection of
+error codes. I thought about reorganizing how the error constants are
+defined, i.e. doing something like:
+
+        DEFINE_ERROR(EIO, 5, "I/O error")
+
+but I don't see a possibility to let this expand to
+
+        #define EIO 5
+
+without resorting to another macro language. If that were possible the
+list of DEFINE_ERRORs could be reused to help generating the code for
+errno2errstr. So if you have a good idea, please speak up.
+
+> There are ideas to make the code even more tricky to reduce
+> the size, keep it fast.
+
+I think Enrico Weigelt's suggestion to use a case is the best
+performance-wise so that's what I picked up. Also I hope that
+performance isn't that important because the need to print an error
+should not be so common that it really hurts in production.
+
+> Both, %dE modifier and the output format (ECODE) is non-standard.
+
+Yeah, obviously right. The problem is that the new modifier does
+something that wasn't implemented before, so it cannot match any
+standard. %pI is only known on Linux either, so I think being
+non-standard is a weak argument. For user consumption it would be nice
+if we'd get
+
+        probing failed (I/O Error)
+
+from pr_info("probing failed (%dE)\n", -EIO); but that would be still
+more expensive because the collection of string constants would become
+bigger that it is already now and "EIO" is the right one to search for
+when debugging the underlaying problem. So I think "EIO" is even more
+useful than "I/O Error".
+
+> Upper letters gain a lot of attention. But the error code is
+> only helper information. Also many error codes are misleading because
+> they are used either wrongly or there was no better available.
+
+This isn't really an argument against the patch I think. Sure, if a
+function returned (say) EIO while ETIMEOUT would be better, my patch
+doesn't improve that detail. Still
+
+        mydev: Failed to initialize blablub: EIO
+
+is more expressive than
+
+        mydev: Failed to initialize blablub: -5
+
+. With "EIO" in the message it is not worse than with "-5" independant of the
+question if EIO is the right error code used.
+
+> There is no proof that this approach would be widely acceptable for
+> subsystem maintainers. Some might not like mass and "blind" code
+> changes. Some might not like the output at all.
+
+I don't intend to mass convert existing code. I would restrict myself to
+updating the documentation and then maybe send a patch per subsystem as an
+example to let maintainers know and judge for themselves if they like it or
+not. And if it doesn't get picked up, we can just remove the feature again next
+year (or so).
+
+I dropped the example conversion, I think the idea should be clear now
+even without an explicit example.
+
+Best regards
+Uwe
+
+---
+ Documentation/core-api/printk-formats.rst |   3 +
+ lib/test_printf.c                         |   1 +
+ lib/vsprintf.c                            | 188 +++++++++++++++++++++-
+ 3 files changed, 191 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
+index c6224d039bcb..81002414f956 100644
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@ -35,6 +35,9 @@ Integer types
+ 		u64			%llu or %llx
+ 
+ 
++To print the name that corresponds to an integer error constant, use %dE and
++pass the int.
++
+ If <type> is dependent on a config option for its size (e.g., sector_t,
+ blkcnt_t) or is architecture-dependent for its size (e.g., tcflag_t), use a
+ format specifier of its largest possible type and explicitly cast to it.
+diff --git a/lib/test_printf.c b/lib/test_printf.c
+index 944eb50f3862..9b0687928717 100644
+--- a/lib/test_printf.c
++++ b/lib/test_printf.c
+@@ -174,6 +174,7 @@ test_number(void)
+ 		test("0xfffffff0|0xf0|0xf0", "%#02x|%#02x|%#02x", val, val & 0xff, (u8)val);
+ 	}
+ #endif
++	test("EIO", "%dE", -EIO);
+ }
+ 
+ static void __init
+diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+index b0967cf17137..8fed03610402 100644
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@ -682,6 +682,187 @@ static char *pointer_string(char *buf, char *end,
+ 	return number(buf, end, (unsigned long int)ptr, spec);
+ }
+ 
++#define ERRORCODES \
++	ERRORCODE(EPERM) \
++	ERRORCODE(ENOENT) \
++	ERRORCODE(ESRCH) \
++	ERRORCODE(EINTR) \
++	ERRORCODE(EIO) \
++	ERRORCODE(ENXIO) \
++	ERRORCODE(E2BIG) \
++	ERRORCODE(ENOEXEC) \
++	ERRORCODE(EBADF) \
++	ERRORCODE(ECHILD) \
++	ERRORCODE(EAGAIN) \
++	ERRORCODE(ENOMEM) \
++	ERRORCODE(EACCES) \
++	ERRORCODE(EFAULT) \
++	ERRORCODE(ENOTBLK) \
++	ERRORCODE(EBUSY) \
++	ERRORCODE(EEXIST) \
++	ERRORCODE(EXDEV) \
++	ERRORCODE(ENODEV) \
++	ERRORCODE(ENOTDIR) \
++	ERRORCODE(EISDIR) \
++	ERRORCODE(EINVAL) \
++	ERRORCODE(ENFILE) \
++	ERRORCODE(EMFILE) \
++	ERRORCODE(ENOTTY) \
++	ERRORCODE(ETXTBSY) \
++	ERRORCODE(EFBIG) \
++	ERRORCODE(ENOSPC) \
++	ERRORCODE(ESPIPE) \
++	ERRORCODE(EROFS) \
++	ERRORCODE(EMLINK) \
++	ERRORCODE(EPIPE) \
++	ERRORCODE(EDOM) \
++	ERRORCODE(ERANGE) \
++	ERRORCODE(EDEADLK) \
++	ERRORCODE(ENAMETOOLONG) \
++	ERRORCODE(ENOLCK) \
++	ERRORCODE(ENOSYS) \
++	ERRORCODE(ENOTEMPTY) \
++	ERRORCODE(ELOOP) \
++	ERRORCODE(ENOMSG) \
++	ERRORCODE(EIDRM) \
++	ERRORCODE(ECHRNG) \
++	ERRORCODE(EL2NSYNC) \
++	ERRORCODE(EL3HLT) \
++	ERRORCODE(EL3RST) \
++	ERRORCODE(ELNRNG) \
++	ERRORCODE(EUNATCH) \
++	ERRORCODE(ENOCSI) \
++	ERRORCODE(EL2HLT) \
++	ERRORCODE(EBADE) \
++	ERRORCODE(EBADR) \
++	ERRORCODE(EXFULL) \
++	ERRORCODE(ENOANO) \
++	ERRORCODE(EBADRQC) \
++	ERRORCODE(EBADSLT) \
++	ERRORCODE(EBFONT) \
++	ERRORCODE(ENOSTR) \
++	ERRORCODE(ENODATA) \
++	ERRORCODE(ETIME) \
++	ERRORCODE(ENOSR) \
++	ERRORCODE(ENONET) \
++	ERRORCODE(ENOPKG) \
++	ERRORCODE(EREMOTE) \
++	ERRORCODE(ENOLINK) \
++	ERRORCODE(EADV) \
++	ERRORCODE(ESRMNT) \
++	ERRORCODE(ECOMM) \
++	ERRORCODE(EPROTO) \
++	ERRORCODE(EMULTIHOP) \
++	ERRORCODE(EDOTDOT) \
++	ERRORCODE(EBADMSG) \
++	ERRORCODE(EOVERFLOW) \
++	ERRORCODE(ENOTUNIQ) \
++	ERRORCODE(EBADFD) \
++	ERRORCODE(EREMCHG) \
++	ERRORCODE(ELIBACC) \
++	ERRORCODE(ELIBBAD) \
++	ERRORCODE(ELIBSCN) \
++	ERRORCODE(ELIBMAX) \
++	ERRORCODE(ELIBEXEC) \
++	ERRORCODE(EILSEQ) \
++	ERRORCODE(ERESTART) \
++	ERRORCODE(ESTRPIPE) \
++	ERRORCODE(EUSERS) \
++	ERRORCODE(ENOTSOCK) \
++	ERRORCODE(EDESTADDRREQ) \
++	ERRORCODE(EMSGSIZE) \
++	ERRORCODE(EPROTOTYPE) \
++	ERRORCODE(ENOPROTOOPT) \
++	ERRORCODE(EPROTONOSUPPORT) \
++	ERRORCODE(ESOCKTNOSUPPORT) \
++	ERRORCODE(EOPNOTSUPP) \
++	ERRORCODE(EPFNOSUPPORT) \
++	ERRORCODE(EAFNOSUPPORT) \
++	ERRORCODE(EADDRINUSE) \
++	ERRORCODE(EADDRNOTAVAIL) \
++	ERRORCODE(ENETDOWN) \
++	ERRORCODE(ENETUNREACH) \
++	ERRORCODE(ENETRESET) \
++	ERRORCODE(ECONNABORTED) \
++	ERRORCODE(ECONNRESET) \
++	ERRORCODE(ENOBUFS) \
++	ERRORCODE(EISCONN) \
++	ERRORCODE(ENOTCONN) \
++	ERRORCODE(ESHUTDOWN) \
++	ERRORCODE(ETOOMANYREFS) \
++	ERRORCODE(ETIMEDOUT) \
++	ERRORCODE(ECONNREFUSED) \
++	ERRORCODE(EHOSTDOWN) \
++	ERRORCODE(EHOSTUNREACH) \
++	ERRORCODE(EALREADY) \
++	ERRORCODE(EINPROGRESS) \
++	ERRORCODE(ESTALE) \
++	ERRORCODE(EUCLEAN) \
++	ERRORCODE(ENOTNAM) \
++	ERRORCODE(ENAVAIL) \
++	ERRORCODE(EISNAM) \
++	ERRORCODE(EREMOTEIO) \
++	ERRORCODE(EDQUOT) \
++	ERRORCODE(ENOMEDIUM) \
++	ERRORCODE(EMEDIUMTYPE) \
++	ERRORCODE(ECANCELED) \
++	ERRORCODE(ENOKEY) \
++	ERRORCODE(EKEYEXPIRED) \
++	ERRORCODE(EKEYREVOKED) \
++	ERRORCODE(EKEYREJECTED) \
++	ERRORCODE(EOWNERDEAD) \
++	ERRORCODE(ENOTRECOVERABLE) \
++	ERRORCODE(ERFKILL) \
++	ERRORCODE(EHWPOISON) \
++	ERRORCODE(ERESTARTSYS) \
++	ERRORCODE(ERESTARTNOINTR) \
++	ERRORCODE(ERESTARTNOHAND) \
++	ERRORCODE(ENOIOCTLCMD) \
++	ERRORCODE(ERESTART_RESTARTBLOCK) \
++	ERRORCODE(EPROBE_DEFER) \
++	ERRORCODE(EOPENSTALE) \
++	ERRORCODE(ENOPARAM) \
++	ERRORCODE(EBADHANDLE) \
++	ERRORCODE(ENOTSYNC) \
++	ERRORCODE(EBADCOOKIE) \
++	ERRORCODE(ENOTSUPP) \
++	ERRORCODE(ETOOSMALL) \
++	ERRORCODE(ESERVERFAULT) \
++	ERRORCODE(EBADTYPE) \
++	ERRORCODE(EJUKEBOX) \
++	ERRORCODE(EIOCBQUEUED) \
++	ERRORCODE(ERECALLCONFLICT)
++
++#define ERRORCODE(x) 	case x: return #x;
++
++static const char *errint2errstr(int err)
++{
++	switch(-err) {
++	ERRORCODES
++	}
++	return NULL;
++}
++#undef ERRORCODE
++
++static noinline_for_stack
++char *errstr(char *buf, char *end, unsigned long long num,
++	     struct printf_spec spec)
++{
++	const char *errstr = errint2errstr(num);
++	static const struct printf_spec strspec = {
++		.field_width = -1,
++		.precision = 10,
++		.flags = LEFT,
++	};
++
++	if (!errstr) {
++		/* fall back to ordinary number */
++		return number(buf, end, num, spec);
++	}
++
++	return string_nocheck(buf, end, errstr, strspec);
++}
++
+ /* Make pointers available for printing early in the boot sequence. */
+ static int debug_boot_weak_hash __ro_after_init;
+ 
+@@ -2566,7 +2747,12 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
+ 				num = va_arg(args, unsigned int);
+ 			}
+ 
+-			str = number(str, end, num, spec);
++			if (spec.type == FORMAT_TYPE_INT && *fmt == 'E') {
++				fmt++;
++				str = errstr(str, end, num, spec);
++			} else {
++				str = number(str, end, num, spec);
++			}
+ 		}
+ 	}
+ 
+-- 
+2.23.0
+
