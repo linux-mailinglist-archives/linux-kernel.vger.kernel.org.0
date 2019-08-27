@@ -2,127 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E05BE9E1DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB469E173
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:12:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730721AbfH0IPG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:15:06 -0400
-Received: from mail-out.elkdata.ee ([185.7.252.64]:10887 "EHLO
-        mail-out.elkdata.ee" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729635AbfH0IPC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:15:02 -0400
-X-Greylist: delayed 381 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Aug 2019 04:15:01 EDT
-Received: from mail-relay2.elkdata.ee (unknown [185.7.252.69])
-        by mail-out.elkdata.ee (Postfix) with ESMTP id 1D231372A77
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 11:08:37 +0300 (EEST)
-Received: from mail-relay2.elkdata.ee (unknown [185.7.252.69])
-        by mail-relay2.elkdata.ee (Postfix) with ESMTP id 1B95783088C
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 11:08:37 +0300 (EEST)
-X-Virus-Scanned: amavisd-new at elkdata.ee
-Received: from mail-relay2.elkdata.ee ([185.7.252.69])
-        by mail-relay2.elkdata.ee (mail-relay2.elkdata.ee [185.7.252.69]) (amavisd-new, port 10024)
-        with ESMTP id yUwoLpVB-fio for <linux-kernel@vger.kernel.org>;
-        Tue, 27 Aug 2019 11:08:34 +0300 (EEST)
-Received: from mail.elkdata.ee (unknown [185.7.252.68])
-        by mail-relay2.elkdata.ee (Postfix) with ESMTP id 8F9A2830889
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 11:08:34 +0300 (EEST)
-Received: from mail.meie.biz (21-182-190-90.sta.estpak.ee [90.190.182.21])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: leho@jaanalind.ee)
-        by mail.elkdata.ee (Postfix) with ESMTPSA id 84F8160BF17
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 11:08:34 +0300 (EEST)
-Received: by mail.meie.biz (Postfix, from userid 500)
-        id 6DBAEA831AC; Tue, 27 Aug 2019 11:08:34 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kraav.com; s=mail;
-        t=1566893314; bh=c/MrxXN3t+vrxKSqHztny/pq7o/8x6ETk1RdwA+mN7Y=;
-        h=Date:From:To:Subject;
-        b=IvnrGi97/zDPekludBp3LRKk6NmHzfS+5dRb9xVJWxnsGXFatizJRMShAeC6cMarN
-         308BOjLkudsRoCb7acKmhqOybVc0dN0v7mVGQRmLX30E0Rln41saitzf+q/xJSO0Qu
-         xnDRJur0EzIlu4A9lF1Ta5l35QNJjysqDUs+Vy9s=
-Received: from papaya (papaya-vpn.meie.biz [192.168.48.157])
-        by mail.meie.biz (Postfix) with ESMTPA id 55A26A831AA
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 11:08:34 +0300 (EEST)
-Authentication-Results: mail.meie.biz; dmarc=fail (p=none dis=none) header.from=kraav.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kraav.com; s=mail;
-        t=1566893314; bh=c/MrxXN3t+vrxKSqHztny/pq7o/8x6ETk1RdwA+mN7Y=;
-        h=Date:From:To:Subject;
-        b=IvnrGi97/zDPekludBp3LRKk6NmHzfS+5dRb9xVJWxnsGXFatizJRMShAeC6cMarN
-         308BOjLkudsRoCb7acKmhqOybVc0dN0v7mVGQRmLX30E0Rln41saitzf+q/xJSO0Qu
-         xnDRJur0EzIlu4A9lF1Ta5l35QNJjysqDUs+Vy9s=
-Received: (nullmailer pid 9626 invoked by uid 1000);
-        Tue, 27 Aug 2019 08:08:34 -0000
-Date:   Tue, 27 Aug 2019 11:08:34 +0300
-From:   Leho Kraav <leho@kraav.com>
-To:     linux-kernel@vger.kernel.org
-Subject: 5.3.0-rc6: i915 fails at typec_displayport 5120x1440
-Message-ID: <20190827080834.GB4124@papaya>
+        id S1729682AbfH0IMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:12:20 -0400
+Received: from mail-eopbgr20054.outbound.protection.outlook.com ([40.107.2.54]:28775
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730285AbfH0IMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:12:18 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bLO0X5ryPLkudFuyQrDR/7Tb9JS/Jm4oLpnZhatDWJ/+N/axw3CP6KPp/ntDhMAqfbNLwdt2jQ8IrFP0DOhGvY9bOXJ4rx4q8M5WOlQnJ82z7aTOcT53vQjtQ0bgmkaVItjqBDjqLgDnTqvxbXVBt3o1Qy/Y+GnvNgzCnyCgo5Ui3w05AZiSDn4sWSE2o44AyhLPYUCzhDc3J4q75tDeSrzTWipdk5LMii3sr/F0pCn9utEyBu46W657G7YsHi+/mlfF5IwDzmQsQH8eLClrTBZjO9R1lCnmYjXFYU9zPxAWcDJHXfU6qhvGNLOqvsQ9cjU7gnFSPw3lpYCyP0w0NQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w2ARKlJkhbpcUc/LcscdFIYHYj0orvOhKJY4M1p/Hck=;
+ b=doXVegem/mNNpm5sgU3Qz3zjemPCKbcFlnzf2F7nICpgVotH/DOaLkzWEjdk4p8YFBDsaermavs1rxf3pOUDqb92pmWNV5oU4zZQCtzseCh+7IJXv//FAox2QxQnqOWsiy8b6UmgTlNZuZ8deg8WMZDL/D+OkK0d2OPj26hcq4/FNgV3jDb6pg/bVO1gS1CcJzVLji8AgUM24dfNAST7yG1LyosrGA/9SrUbtPqU0zETwPb+GjIOZM/iV9GMBmAMYT0oVUpCpL8ztSwVGqphRMccXYH7aPV1n2Ux/89cnDiE0ifKngG3RUEUZC17mSvDR6FgyCRrbh1RtY/ajqTi8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w2ARKlJkhbpcUc/LcscdFIYHYj0orvOhKJY4M1p/Hck=;
+ b=ou24idicBedA7nTfpkSNAKEBOflCeuWq0yWz20BfPrTml4YfZ0f+ctOJro2yh3C/eFCbqZxwbA1AmOL62YppL4/B3ZwW3vTVpr7q7LMLUSblUqZiMCk7aMJZgjfD2YLUvmdnzZYJsG+uYkqFY6Eqx67LY5IbnXGiLnohLbuQQmk=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB4153.eurprd04.prod.outlook.com (52.134.111.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.20; Tue, 27 Aug 2019 08:12:14 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::3cd8:4bcf:8626:4254]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::3cd8:4bcf:8626:4254%3]) with mapi id 15.20.2199.021; Tue, 27 Aug 2019
+ 08:12:12 +0000
+From:   Biwen Li <biwen.li@nxp.com>
+To:     Nandor Han <nandor.han@vaisala.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        Leo Li <leoyang.li@nxp.com>,
+        "broonie@kernel.org" <broonie@kernel.org>
+CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] Re: [v4] rtc: pcf85363/pcf85263: fix error that failed to
+ run hwclock -w
+Thread-Topic: [EXT] Re: [v4] rtc: pcf85363/pcf85263: fix error that failed to
+ run hwclock -w
+Thread-Index: AQHVXJKQHF/rfq3lnkKORRBaxuIvrKcOo8UAgAABInA=
+Date:   Tue, 27 Aug 2019 08:12:12 +0000
+Message-ID: <DB7PR04MB4490EEEEF3E813A1EC34D1C68FA00@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <20190827043735.31231-1-biwen.li@nxp.com>
+ <2b49e282-fc03-ee59-2719-5a3c1ce573ce@vaisala.com>
+In-Reply-To: <2b49e282-fc03-ee59-2719-5a3c1ce573ce@vaisala.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biwen.li@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f994cc01-333a-4151-7ef2-08d72ac643f3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4153;
+x-ms-traffictypediagnostic: DB7PR04MB4153:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB415399811BB521400EA328048FA00@DB7PR04MB4153.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-forefront-prvs: 0142F22657
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(396003)(346002)(39860400002)(136003)(199004)(189003)(53936002)(54906003)(110136005)(76176011)(44832011)(86362001)(14454004)(7696005)(4326008)(6506007)(25786009)(316002)(3846002)(2201001)(99286004)(66476007)(66946007)(64756008)(71190400001)(6116002)(76116006)(66446008)(66556008)(229853002)(478600001)(55016002)(6246003)(71200400001)(52536014)(305945005)(2906002)(33656002)(102836004)(6436002)(26005)(186003)(476003)(486006)(11346002)(7736002)(2501003)(14444005)(256004)(5660300002)(81156014)(81166006)(9686003)(8936002)(66066001)(8676002)(53546011)(446003)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4153;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: F1NDSbbe5sEOzL9NKeB4+DjmaVDNcxHBW5FmR6nz+gDkNB8ltPuppO3+t+QOIhqrC68ssQP9wsbRCJG9fnGtNvz3kShqAyum312Xnjd1vanogJzF+FrHUg8OuTjv7KuylIMqlNQJ5TlpGy5TRCZlJZ9+iTew4YY/LFsgtBLJlIOaMaYBkBzVTgM5hUM53VQPUeS2fJOSMVBRRVyin8uDpd6EbHHhZBlAizZlxD/NVAcsNNzzTjmFFrU8I4co7E4e2qns+zZpr1XlEqgpBOX920RwAsaE2YdoeYe0FC2qd6cCZds/iSV55lupH80kINM3cnovURqRm9RbzcBVP9swhGAA/7GlYj7Lies/7DqFHN5UynQzCIzqMq6+TbS6UpzWErl7Mqn87GbtAzpp3AR1hVbX22Zxkirw9LigSzTscmk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Bogosity: Unsure, tests=bogofilter, spamicity=0.500000, version=1.2.4
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f994cc01-333a-4151-7ef2-08d72ac643f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2019 08:12:12.6667
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7ScnTmrSYeJNO1LcGyQ8xQIxq2UCW5AZ13YLNl5YTrJf+B2zfH0656IOvXBGXzpeIysq4EZ7qmJ5V+0ldTPL9g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hardware: Dell Latitude 7400 2-in-1, Whiskey Lake, Intel 620
-
-5120x1440 fails to display.
-
-Next available mode 3840x1080 displays fine.
-
-Is this a kernel, or a driver level issue? It fails both in Xorg and
-Wayland, so seems something at the lower levels. This 49" monitor worked
-fine on Latitude 7480 (Kaby Lake), so I'm thinking something with `i915`
-module layer.
-
-What should I try next?
-
-```
-leho@papaya ~ $ [-] uname 
-Linux papaya 5.3.0-rc6+gentoo+ #95 SMP PREEMPT Mon Aug 26 23:50:08 EEST 2019 x86_64 Intel(R) Core(TM) i5-8365U CPU @ 1.60GHz GenuineIntel GNU/Linux
-
-leho@papaya ~ $ [-] xrandr 
-Screen 0: minimum 8 x 8, current 5120 x 1440, maximum 32767 x 32767
-...
-DP1 disconnected (normal left inverted right x axis y axis)
-DP2 connected primary 3840x1080+0+0 (normal left inverted right x axis y axis) 1200mm x 340mm
-   5120x1440     59.98 +  29.98  
-   3840x1080     59.97*+
-   2560x1080     60.00    59.94    59.98  
-   1920x1080     60.00    60.00    50.00    59.94  
-   1920x1080i    60.00    50.00    59.94  
-   1600x1200     60.00  
-   1280x1024     75.02    60.02  
-   1280x800      59.81  
-   1152x864      75.00  
-   1280x720      60.00    50.00    59.94  
-   1024x768      75.03    60.00  
-   800x600       75.00    60.32  
-   720x576       50.00  
-   720x480       60.00    59.94  
-   640x480       75.00    60.00    59.94  
-   720x400       70.08  
-HDMI1 disconnected (normal left inverted right x axis y axis)
-HDMI2 disconnected (normal left inverted right x axis y axis)
-VIRTUAL1 disconnected (normal left inverted right x axis y axis)
-
-leho@papaya ~ $ [-] xrandr --output DP2 --mode 5120x1440 --verbose
-crtc 0:    5120x1440  59.98 +0+0 "DP2"
-xrandr: Configure crtc 0 failed
-crtc 0: disable
-crtc 1: disable
-crtc 2: disable
-crtc 3: disable
-screen 0: revert
-crtc 0: revert
-crtc 1: revert
-crtc 2: revert
-crtc 3: revert
-```
-
--- 
-Leho Kraav, senior technology & digital marketing architect
+PiANCj4gT24gOC8yNy8xOSA3OjM3IEFNLCBCaXdlbiBMaSB3cm90ZToNCj4gPiAgIC0gSW4gZHJp
+dmVycy9ydGMvcnRjLXBjZjg1MzYzLmMsIENUUkxfU1RPUF9FTiBpcyAweDJlLCBidXQgRFRfMTAw
+VEhTDQo+ID4gICAgICAgIGlzIDAsIG1heF9yZWdpdGVyIGlzIDB4MmYsIHRoZW4gcmVnIHdpbGwg
+YmUgZXF1YWwgdG8gMHgzMCwNCj4gPiAgICAgICAgJzB4MzAgPCAweDJmJyBpcyBmYWxzZSxzbyBy
+ZWdtYXBfd3JpdGVhYmxlIHdpbGwgcmV0dXJuIGZhbHNlLg0KPiA+DQo+ID4gICAgICAtIFRoZSBw
+Y2Y4NTM2My9wY2Y4NTI2MyBoYXMgdGhlIGNhcGFiaWxpdHkgb2YgYWRkcmVzcyB3cmFwcGluZw0K
+PiA+ICAgICAgICB3aGljaCBtZWFucyBpZiB5b3UgYWNjZXNzIGEgY29udGludW91cyBhZGRyZXNz
+IHJhbmdlIGFjcm9zcyBhDQo+ID4gICAgICAgIGNlcnRhaW4gYm91bmRhcnkobWF4X3JlZ2lzdGVy
+IG9mIHN0cnVjdCByZWdtYXBfY29uZmlnKSB0aGUNCj4gPiAgICAgICAgaGFyZHdhcmUgYWN0dWFs
+bHkgd3JhcHMgdGhlIGFjY2VzcyB0byBhIGxvd2VyIGFkZHJlc3MuIEJ1dCB0aGUNCj4gPiAgICAg
+ICAgYWRkcmVzcyB2aW9sYXRpb24gY2hlY2sgb2YgcmVnbWFwIHJlamVjdHMgc3VjaCBhY2Nlc3Mu
+DQo+IA0KPiBuaXRwaWNrOiBUaGlzIDIgcGFyYWdyYXBocyBjb3VsZCBiZSBjb21iaW5lZCB0byBj
+bGVhciB1cCB0aGUgaXNzdWU6DQo+IA0KPiBgDQo+IFRoZSBwY2Y4NTM2My9wY2Y4NTI2MyBoYXMg
+dGhlIGNhcGFiaWxpdHkgb2YgYWRkcmVzcyB3cmFwcGluZyB3aGljaCBtZWFucyBpZg0KPiB5b3Ug
+YWNjZXNzIGFuIGFkZHJlc3Mgb3V0c2lkZSB0aGUgYWxsb3dlZCByYW5nZQ0KPiAoMHgwMC0weDJm
+KSB0aGUgaGFyZHdhcmUgYWN0dWFsbHkgd3JhcHMgdGhlIGFjY2VzcyB0byBhIGxvd2VyIGFkZHJl
+c3MuDQo+IFRoZSBydGMtcGY4NTM2MyBkcml2ZXIgd2lsbCB1c2UgdGhpcyBmZWF0dXJlIHRvIGNv
+bmZpZ3VyZSB0aGUgdGltZSBhbmQgZXhlY3V0ZSAyDQo+IGFjdGlvbnMgaW4gdGhlIHNhbWUgaTJj
+IHdyaXRlIG9wZXJhdGlvbiAoc3RvcHBpbmcgdGhlIGNsb2NrIGFuZCBjb25maWd1cmUgdGhlDQo+
+IHRpbWUpLiBIb3dldmVyIHRoZSBkcml2ZXIgaGFzIGFsc28gY29uZmlndXJlZCB0aGUgYHJlZ21h
+cCBtYXhyZWdpc3RlcmANCj4gcHJvdGVjdGlvbiBtZWNoYW5pc20gdGhhdCB3aWxsIGJsb2NrIGFj
+Y2Vzc2luZyBhZGRyZXNzZXMgb3V0c2lkZSB2YWxpZCByYW5nZQ0KPiAoMHgwMC0weDJmKS4NCj4g
+YA0KPiANCj4gbml0cGljazogSSB3b3VsZCBhbHNvIHVzZSBzZXBhcmF0ZSBidWZmZXJzIGZvciB0
+aGlzIGFjdGlvbnMuIFVwIHRvIHlvdSA6KQ0KPiANCj4gT3RoZXJ3aXNlIExHVE0gKzENClRoYW5r
+cywgaXQncyBhIGJlYXV0aWZ1bCBleHBsYW5hdGlvbi4NCj4gDQo+IE5hbmRvcg0K
