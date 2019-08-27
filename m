@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72E209E22C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF509E229
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:17:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729292AbfH0HwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:52:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43408 "EHLO mail.kernel.org"
+        id S1729397AbfH0HwV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:52:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729017AbfH0HwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:52:07 -0400
+        id S1729353AbfH0HwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:52:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0473217F5;
-        Tue, 27 Aug 2019 07:52:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86D7D22CF4;
+        Tue, 27 Aug 2019 07:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892327;
-        bh=wfm3p1mSjCIv3JJ5U8S/ye/6/qwD8rPoPH5Qc/F+lTQ=;
+        s=default; t=1566892333;
+        bh=V++gE4PvWJuMkpFtwQmcf/K7K1tPmJWBBFBe94xTzPo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f97nO4OqiZ36dXAkzIMhhT2cMH1x6kSaLoP/7jQ1wW6wZulMCAJ8sLDOWpDrXUo3/
-         4iJndNZXSlcwLaHVeYAh7fWP5xAhcztHxh4npm2MJYQcnmckGu/cccpBul0HSFa7j9
-         vxG3NSrpyc9XADWN0yM9jJBJyusm8L+k+/9v1p8E=
+        b=igtAVhctzmTl0EZbPSIyT6kyxpByCfKkcd19GRy/gsyXFpklSS2brbD1egCEo6G9g
+         YntM3G218vix6wEIvrl09aUFj47pIHNGsQDLJQRXt91t4wUp9O2r8+q6aLaCRoRJHp
+         fFRPk4xcb9XC77Ka6i0cb0dwT4gqxY624luEBhFU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 18/62] can: sja1000: force the string buffer NULL-terminated
-Date:   Tue, 27 Aug 2019 09:50:23 +0200
-Message-Id: <20190827072701.398701306@linuxfoundation.org>
+Subject: [PATCH 4.14 20/62] net/ethernet/qlogic/qed: force the string buffer NULL-terminated
+Date:   Tue, 27 Aug 2019 09:50:25 +0200
+Message-Id: <20190827072701.496921144@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
 References: <20190827072659.803647352@linuxfoundation.org>
@@ -44,36 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cd28aa2e056cd1ea79fc5f24eed0ce868c6cab5c ]
+[ Upstream commit 3690c8c9a8edff0db077a38783112d8fe12a7dd2 ]
 
-strncpy() does not ensure NULL-termination when the input string size
-equals to the destination buffer size IFNAMSIZ. The output string
-'name' is passed to dev_info which relies on NULL-termination.
+strncpy() does not ensure NULL-termination when the input string
+size equals to the destination buffer size 30.
+The output string is passed to qed_int_deassertion_aeu_bit()
+which calls DP_INFO() and relies NULL-termination.
 
-Use strlcpy() instead.
+Use strlcpy instead. The other conditional branch above strncpy()
+needs no fix as snprintf() ensures NULL-termination.
 
 This issue is identified by a Coccinelle script.
 
 Signed-off-by: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/sja1000/peak_pcmcia.c | 2 +-
+ drivers/net/ethernet/qlogic/qed/qed_int.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/sja1000/peak_pcmcia.c b/drivers/net/can/sja1000/peak_pcmcia.c
-index dd56133cc4616..fc9f8b01ecae2 100644
---- a/drivers/net/can/sja1000/peak_pcmcia.c
-+++ b/drivers/net/can/sja1000/peak_pcmcia.c
-@@ -487,7 +487,7 @@ static void pcan_free_channels(struct pcan_pccard *card)
- 		if (!netdev)
- 			continue;
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_int.c b/drivers/net/ethernet/qlogic/qed/qed_int.c
+index 7746417130bd7..c5d9f290ec4c7 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_int.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_int.c
+@@ -939,7 +939,7 @@ static int qed_int_deassertion(struct qed_hwfn  *p_hwfn,
+ 						snprintf(bit_name, 30,
+ 							 p_aeu->bit_name, num);
+ 					else
+-						strncpy(bit_name,
++						strlcpy(bit_name,
+ 							p_aeu->bit_name, 30);
  
--		strncpy(name, netdev->name, IFNAMSIZ);
-+		strlcpy(name, netdev->name, IFNAMSIZ);
- 
- 		unregister_sja1000dev(netdev);
- 
+ 					/* We now need to pass bitmask in its
 -- 
 2.20.1
 
