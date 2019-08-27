@@ -2,119 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB4AA9E7AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:19:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90FF19E7B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbfH0MRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:17:40 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37160 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbfH0MRj (ORCPT
+        id S1729650AbfH0MSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:18:22 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45940 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfH0MSV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:17:39 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f22so31078241edt.4
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 05:17:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FbGzDuD3RIJ23CO8zb5ApvjBQtLaEmsyKeBOr5aEVwk=;
-        b=imq0LcQtyoCAq4I0t8Dbrpw8qW3p9yhMU1fK7FXpWEAkChTCA/eOGL+sCo2A/5Vdhy
-         icR35TMDiD2XozCvk28c+t3qkmvleFbwayAzGcVkDjd8cEbvOQXsizvKLd3TJpRsc7cJ
-         g5CFwSbwijT5W50v67l+4k/pNFjK7gLJ4RLSEBNztBjjYSpe8HMYBbm3H88kvoD9nY1Y
-         DQc9iQ1MKP6lUqS7opFfw8u2BmSaWPVzNTQ0W0Ppb1AuiGo5HqYTjOkiRWttGHfU9D/3
-         5mtZSEGkk24Uu5ynKhR99hKzMK74T9FENLeMmtxBOXPfgmLGdEy40KiYF4IlHYPj7cs8
-         tKKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FbGzDuD3RIJ23CO8zb5ApvjBQtLaEmsyKeBOr5aEVwk=;
-        b=L759wncuU7OFvMezszudJkAdyptP7giEA8peh6bnRencPbr6yl07412AMssI3pPm9K
-         ZCdRNv2L9PmStjwFJmLTNSzJ0WLE8kl0TMSb/MTNnrTD8x1oVGPN+Cb2JzYecmUCG1l6
-         g9CCwyI2HgXXd0BV7nT36ole6YnB89Q3yyYtQxTdKG27gHknq0gyY0uYjTyBQn5nNa0I
-         oJN08rOmex7kyLSssHThaI37mZNFjtnHZgeTgk3Rn9bMWFRQoZxlD+20lP+VLsNvmm/q
-         bumhIkD2nxLzz9XRRzzR8O1URxR31zQUC595xMY5o4ByIJyian8y7OH5thvJf0UGTHDv
-         65pg==
-X-Gm-Message-State: APjAAAXU/VmRXLlbu159sp/FpFhFLH0FzDehYcElU94Eblx7It2KnP+D
-        C9GpFaGrOjaT7YivTl42KfgA3Q==
-X-Google-Smtp-Source: APXvYqzX5zFQNMBVLvorfdtCo4ceiZTMT5GoTFrvYFVZ1XxJOiQHwWwe82lNcIwbXgct8DP82OccIg==
-X-Received: by 2002:a17:906:a3c4:: with SMTP id ca4mr20907390ejb.5.1566908258127;
-        Tue, 27 Aug 2019 05:17:38 -0700 (PDT)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id v20sm1927306edl.35.2019.08.27.05.17.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 05:17:37 -0700 (PDT)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id C36CA100746; Tue, 27 Aug 2019 15:17:39 +0300 (+03)
-Date:   Tue, 27 Aug 2019 15:17:39 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, kirill.shutemov@linux.intel.com,
-        Yang Shi <yang.shi@linux.alibaba.com>, hannes@cmpxchg.org,
-        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        Tue, 27 Aug 2019 08:18:21 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id AE47A8196C; Tue, 27 Aug 2019 14:18:05 +0200 (CEST)
+Date:   Tue, 27 Aug 2019 14:18:18 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com,
+        sre@kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
+        merlijn@wizzup.org, linux-leds@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH -mm] mm: account deferred split THPs into MemAvailable
-Message-ID: <20190827121739.bzbxjloq7bhmroeq@box>
-References: <1566410125-66011-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190822080434.GF12785@dhcp22.suse.cz>
- <ee048bbf-3563-d695-ea58-5f1504aee35c@suse.cz>
- <20190822152934.w6ztolutdix6kbvc@box>
- <20190826074035.GD7538@dhcp22.suse.cz>
- <20190826131538.64twqx3yexmhp6nf@box>
- <20190827060139.GM7538@dhcp22.suse.cz>
- <20190827110210.lpe36umisqvvesoa@box>
- <aaaf9742-56f7-44b7-c3db-ad078b7b2220@suse.cz>
- <20190827120923.GB7538@dhcp22.suse.cz>
+Subject: Re: [PATCH v3 1/5] leds: lm3532: Fix brightness control for i2c mode
+Message-ID: <20190827121818.GB19927@amd>
+References: <20190820195307.27590-1-dmurphy@ti.com>
+ <20190826215822.GY52127@atomide.com>
+ <20190826221413.GA19124@amd>
+ <20190826224437.GZ52127@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
 Content-Disposition: inline
-In-Reply-To: <20190827120923.GB7538@dhcp22.suse.cz>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190826224437.GZ52127@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 02:09:23PM +0200, Michal Hocko wrote:
-> On Tue 27-08-19 14:01:56, Vlastimil Babka wrote:
-> > On 8/27/19 1:02 PM, Kirill A. Shutemov wrote:
-> > > On Tue, Aug 27, 2019 at 08:01:39AM +0200, Michal Hocko wrote:
-> > >> On Mon 26-08-19 16:15:38, Kirill A. Shutemov wrote:
-> > >>>
-> > >>> Unmapped completely pages will be freed with current code. Deferred split
-> > >>> only applies to partly mapped THPs: at least on 4k of the THP is still
-> > >>> mapped somewhere.
-> > >>
-> > >> Hmm, I am probably misreading the code but at least current Linus' tree
-> > >> reads page_remove_rmap -> [page_remove_anon_compound_rmap ->\ deferred_split_huge_page even
-> > >> for fully mapped THP.
-> > > 
-> > > Well, you read correctly, but it was not intended. I screwed it up at some
-> > > point.
-> > > 
-> > > See the patch below. It should make it work as intened.
-> > > 
-> > > It's not bug as such, but inefficientcy. We add page to the queue where
-> > > it's not needed.
-> > 
-> > But that adding to queue doesn't affect whether the page will be freed
-> > immediately if there are no more partial mappings, right? I don't see
-> > deferred_split_huge_page() pinning the page.
-> > So your patch wouldn't make THPs freed immediately in cases where they
-> > haven't been freed before immediately, it just fixes a minor
-> > inefficiency with queue manipulation?
-> 
-> Ohh, right. I can see that in free_transhuge_page now. So fully mapped
-> THPs really do not matter and what I have considered an odd case is
-> really happening more often.
-> 
-> That being said this will not help at all for what Yang Shi is seeing
-> and we need a more proactive deferred splitting as I've mentioned
-> earlier.
 
-It was not intended to fix the issue. It's fix for current logic. I'm
-playing with the work approach now.
+--NMuMz9nt05w80d4+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
- Kirill A. Shutemov
+On Mon 2019-08-26 15:44:37, Tony Lindgren wrote:
+> * Pavel Machek <pavel@ucw.cz> [190826 22:14]:
+> > On Mon 2019-08-26 14:58:22, Tony Lindgren wrote:
+> > > Hi,
+> > >=20
+> > > * Dan Murphy <dmurphy@ti.com> [190820 19:53]:
+> > > > Fix the brightness control for I2C mode.  Instead of
+> > > > changing the full scale current register update the ALS target
+> > > > register for the appropriate banks.
+> > > >=20
+> > > > In addition clean up some code errors and random misspellings found
+> > > > during coding.
+> > > >=20
+> > > > Tested on Droid4 as well as LM3532 EVM connected to a BeagleBoneBla=
+ck
+> > > >=20
+> > > > Fixes: e37a7f8d77e1 ("leds: lm3532: Introduce the lm3532 LED driver=
+")
+> > > > Reported-by: Pavel Machek <pavel@ucw.cz>
+> > > > Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> > > > ---
+> > > >=20
+> > > > v3 - Removed register define updates - https://lore.kernel.org/patc=
+hwork/patch/1114542/
+> > >=20
+> > > Looks like starting with this patch in Linux next the LCD on droid4
+> > > is so dim it's unreadable even with brightness set to 255. Setting
+> > > brightness to 0 does blank it completely though.
+> > >=20
+> > > Did something maybe break with the various patch revisions or are
+> > > we now missing some dts patch?
+> >=20
+> > Maybe missing dts patch. We should provide maximum current the LED can
+> > handle...=20
+>=20
+> Or i2c control is somehow broken and only als control now works?
+
+Well, max current led is obviously missing. Plus code does not check
+the return from reading led-max-microamp.
+
+ret =3D fwnode_property_read_u32(child, "led-max-microamp",
+                                               &led->full_scale_current);
+
+Untested, but something like this is neccessary according to code
+review.
+
+Signed-off-by: Pavel Machek <pavel@ucw.cz>
+								Pavel
+
+diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/o=
+map4-droid4-xt894.dts
+index 4454449..b883b84 100644
+--- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
++++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+@@ -395,6 +395,7 @@
+ 			ti,led-mode =3D <0>;
+ 			label =3D ":backlight";
+ 			linux,default-trigger =3D "backlight";
++			led-max-microamp =3D 29800;
+ 		};
+=20
+ 		led@1 {
+@@ -402,6 +403,7 @@
+ 			led-sources =3D <1>;
+ 			ti,led-mode =3D <0>;
+ 			label =3D ":kbd_backlight";
++			led-max-microamp =3D 29800;
+ 		};
+ 	};
+ };
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--NMuMz9nt05w80d4+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1lH4oACgkQMOfwapXb+vKiWACgkkLvRG/5tM1SVIfFQ7w05Apv
+53UAni7bPkRZj0eZxJdMWmfyWuPcaUKE
+=vVUm
+-----END PGP SIGNATURE-----
+
+--NMuMz9nt05w80d4+--
