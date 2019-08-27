@@ -2,161 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 577419DE6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4661E9DE7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:15:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbfH0HJk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:09:40 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42826 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbfH0HJj (ORCPT
+        id S1727986AbfH0HPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:15:14 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:46330 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725811AbfH0HPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:09:39 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7R79STM106917;
-        Tue, 27 Aug 2019 02:09:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566889768;
-        bh=L4CsoR9kyF0hZV2P6fxDodIlymhCPt1+Z5sMGLgkq/I=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=U5DGvw3D/XfK5S+7Q7z2auIrJd34DRjTQm7jBm7cP56ljh5no0anoAyl/Av0I7XWg
-         SoL6LqpZDjZ0HH7XlR5PnWDI2WhiPjarkEZk/SUHdbayMKLmidu0lN4KU2EzXLaxYM
-         BHFmlKJtKr3kPKm4FD75BFZ7xHIRXTxjkiHXSsKg=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7R79SY2094956
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Aug 2019 02:09:28 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 27
- Aug 2019 02:09:28 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 27 Aug 2019 02:09:28 -0500
-Received: from [172.24.145.136] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7R79OAV076726;
-        Tue, 27 Aug 2019 02:09:25 -0500
-Subject: Re: [RESEND PATCH v3 12/20] mtd: spi-nor: Add
- spansion_post_sfdp_fixups()
-To:     <Tudor.Ambarus@microchip.com>, <boris.brezillon@collabora.com>,
-        <marek.vasut@gmail.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <boris.brezillon@bootlin.com>
-References: <20190826120821.16351-1-tudor.ambarus@microchip.com>
- <20190826120821.16351-13-tudor.ambarus@microchip.com>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <8f10d895-f97e-934e-8dd4-be22839a7c77@ti.com>
-Date:   Tue, 27 Aug 2019 12:40:02 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 27 Aug 2019 03:15:13 -0400
+X-IronPort-AV: E=Sophos;i="5.64,436,1559491200"; 
+   d="scan'208";a="74331670"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 27 Aug 2019 15:04:59 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 137304CE086C;
+        Tue, 27 Aug 2019 15:04:48 +0800 (CST)
+Received: from TSAO.g08.fujitsu.local (10.167.226.60) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.439.0; Tue, 27 Aug 2019 15:05:01 +0800
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>
+Subject: [PATCH] x86/cpufeature: drop *_MASK_CEHCK
+Date:   Tue, 27 Aug 2019 15:05:50 +0800
+Message-ID: <20190827070550.15988-1-caoj.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.17.2
 MIME-Version: 1.0
-In-Reply-To: <20190826120821.16351-13-tudor.ambarus@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 137304CE086C.AE53D
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
+X-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+They are wrappers of BUILD_BUG_ON_ZERO(NCAPINTS != n), which is already
+present in corresponding *_MASK_BIT_SET. And fill the missing period in
+head comments by the way.
 
+Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+---
+ arch/x86/include/asm/cpufeature.h        | 2 --
+ arch/x86/include/asm/disabled-features.h | 1 -
+ arch/x86/include/asm/required-features.h | 3 +--
+ 3 files changed, 1 insertion(+), 5 deletions(-)
 
-On 26/08/19 5:38 PM, Tudor.Ambarus@microchip.com wrote:
-> From: Boris Brezillon <boris.brezillon@bootlin.com>
-> 
-> Add a spansion_post_sfdp_fixups() function to fix the erase opcode,
-> erase sector size and set the SNOR_F_4B_OPCODES flag.
-> This way, all spansion related quirks are placed in the
-> spansion_post_sfdp_fixups() function.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
-
-Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
-
-Regards
-Vignesh
-
-> v3: no changes, rebase on previous commits
-> 
->  drivers/mtd/spi-nor/spi-nor.c | 37 +++++++++++++++++++++++--------------
->  1 file changed, 23 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index b8caf5171ff5..c862a59ce9df 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -591,18 +591,6 @@ static u8 spi_nor_convert_3to4_erase(u8 opcode)
->  
->  static void spi_nor_set_4byte_opcodes(struct spi_nor *nor)
->  {
-> -	/* Do some manufacturer fixups first */
-> -	switch (JEDEC_MFR(nor->info)) {
-> -	case SNOR_MFR_SPANSION:
-> -		/* No small sector erase for 4-byte command set */
-> -		nor->erase_opcode = SPINOR_OP_SE;
-> -		nor->mtd.erasesize = nor->info->sector_size;
-> -		break;
-> -
-> -	default:
-> -		break;
-> -	}
-> -
->  	nor->read_opcode = spi_nor_convert_3to4_read(nor->read_opcode);
->  	nor->program_opcode = spi_nor_convert_3to4_program(nor->program_opcode);
->  	nor->erase_opcode = spi_nor_convert_3to4_erase(nor->erase_opcode);
-> @@ -4304,6 +4292,19 @@ static void spi_nor_info_init_params(struct spi_nor *nor)
->  	spi_nor_init_uniform_erase_map(map, erase_mask, params->size);
->  }
->  
-> +static void spansion_post_sfdp_fixups(struct spi_nor *nor)
-> +{
-> +	struct mtd_info *mtd = &nor->mtd;
-> +
-> +	if (mtd->size <= SZ_16M)
-> +		return;
-> +
-> +	nor->flags |= SNOR_F_4B_OPCODES;
-> +	/* No small sector erase for 4-byte command set */
-> +	nor->erase_opcode = SPINOR_OP_SE;
-> +	nor->mtd.erasesize = nor->info->sector_size;
-> +}
-> +
->  /**
->   * spi_nor_post_sfdp_fixups() - Updates the flash's parameters and settings
->   * after SFDP has been parsed (is also called for SPI NORs that do not
-> @@ -4316,6 +4317,15 @@ static void spi_nor_info_init_params(struct spi_nor *nor)
->   */
->  static void spi_nor_post_sfdp_fixups(struct spi_nor *nor)
->  {
-> +	switch (JEDEC_MFR(nor->info)) {
-> +	case SNOR_MFR_SPANSION:
-> +		spansion_post_sfdp_fixups(nor);
-> +		break;
-> +
-> +	default:
-> +		break;
-> +	}
-> +
->  	if (nor->info->fixups && nor->info->fixups->post_sfdp)
->  		nor->info->fixups->post_sfdp(nor);
->  }
-> @@ -4862,8 +4872,7 @@ int spi_nor_scan(struct spi_nor *nor, const char *name,
->  		nor->addr_width = 3;
->  	}
->  
-> -	if (info->flags & SPI_NOR_4B_OPCODES ||
-> -	    (JEDEC_MFR(info) == SNOR_MFR_SPANSION && mtd->size > SZ_16M))
-> +	if (info->flags & SPI_NOR_4B_OPCODES)
->  		nor->flags |= SNOR_F_4B_OPCODES;
->  
->  	if (nor->addr_width == 4 && nor->flags & SNOR_F_4B_OPCODES &&
-> 
-
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 58acda503817..232ffb88039c 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -81,7 +81,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
+-	   REQUIRED_MASK_CHECK					  ||	\
+ 	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
+ 
+ #define DISABLED_MASK_BIT_SET(feature_bit)				\
+@@ -104,7 +103,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
+ 	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
+-	   DISABLED_MASK_CHECK					  ||	\
+ 	   BUILD_BUG_ON_ZERO(NCAPINTS != 19))
+ 
+ #define cpu_has(c, bit)							\
+diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+index a5ea841cc6d2..8a2eafa86739 100644
+--- a/arch/x86/include/asm/disabled-features.h
++++ b/arch/x86/include/asm/disabled-features.h
+@@ -84,6 +84,5 @@
+ #define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
+ #define DISABLED_MASK17	0
+ #define DISABLED_MASK18	0
+-#define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
+ 
+ #endif /* _ASM_X86_DISABLED_FEATURES_H */
+diff --git a/arch/x86/include/asm/required-features.h b/arch/x86/include/asm/required-features.h
+index 6847d85400a8..cb98b66d3e81 100644
+--- a/arch/x86/include/asm/required-features.h
++++ b/arch/x86/include/asm/required-features.h
+@@ -1,7 +1,7 @@
+ #ifndef _ASM_X86_REQUIRED_FEATURES_H
+ #define _ASM_X86_REQUIRED_FEATURES_H
+ 
+-/* Define minimum CPUID feature set for kernel These bits are checked
++/* Define minimum CPUID feature set for kernel. These bits are checked
+    really early to actually display a visible error message before the
+    kernel dies.  Make sure to assign features to the proper mask!
+ 
+@@ -101,6 +101,5 @@
+ #define REQUIRED_MASK16	0
+ #define REQUIRED_MASK17	0
+ #define REQUIRED_MASK18	0
+-#define REQUIRED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
+ 
+ #endif /* _ASM_X86_REQUIRED_FEATURES_H */
 -- 
-Regards
-Vignesh
+2.17.0
+
+
+
