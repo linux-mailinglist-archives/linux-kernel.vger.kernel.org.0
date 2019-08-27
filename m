@@ -2,75 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0308A9F20C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:06:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DDE9F21E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:13:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730542AbfH0SG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 14:06:27 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40536 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfH0SG0 (ORCPT
+        id S1730561AbfH0SNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 14:13:17 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:39538 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728972AbfH0SNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 14:06:26 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h8so32507663edv.7;
-        Tue, 27 Aug 2019 11:06:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8Ibe3kzD7C7QCZmA5WwJ37bObPlaX3KGqkjt9Odp1n8=;
-        b=KuJnG6vgXqludJgsM0MzX6nDVVTbQdzw2bJuuc4s+Z/eNTG8K331LU6V0Hrtu88d+K
-         hV5DM1jiNA3+Ek8Ka1h4nxW1th3otRbwF0LsPQh4s/RPQYigA0bhdJChPaHi7PnMuJnt
-         wqqkh5MY7y1z0X6LPlOWrO6c8koifkYrp40fTgAtCqAS4HVu1BPDImSeGf7MxJb6HdC7
-         xGNBPr9ev6YkkiI7Q3EP6Tj3A4sR+QbKIP7SLc04in1M5dxIph1zkDaLAQtTr+GkFL8E
-         XruxZPyd24g9UxxSa23EvhFvDNMCRl7iZXQR9mZMvq0l533XnOUPpTrNMgiYIKnp13wK
-         tFpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8Ibe3kzD7C7QCZmA5WwJ37bObPlaX3KGqkjt9Odp1n8=;
-        b=SqH7KQBb71R6//e64ZwBG/HkW20WojAdH7ZBkhpu1Ama0OAWH4tiv2VMcvz6IuMcKr
-         UGKc/gruFfc6Dt2VP+sXvARTR+uSMjW01Lp1jA2wbtMBTMTiU3l1IsRiYzoCM6keGG9W
-         optGhBMfPxp0LqIbWi4FMP8YRNRE9Jc4ie40sqyaw43wXLulCsX5tu7iwGYGkCW8LY2v
-         RLUSLkK16oDUiMsp+0qgXEFh6MAkIGAALtjYtNE87G/I/oXYO4K4spmXrAe0VuphzBl/
-         Ghzhv5KbUqzGZ5ND8Zu4/rcmKqjgM38t6ILmsIS2NFhzCfoV6kv+JF/R0JP8NLBJ2zwM
-         6Trg==
-X-Gm-Message-State: APjAAAUKeMmpW+VDxRbttqOLp/oddVjRhMv1hfCOXBUD3ZXbL3j0CKZT
-        qhmd97t6BMHMFev9GcFcaKbkIzH0hYWwXDUTNlm6/g==
-X-Google-Smtp-Source: APXvYqwBGa2cpvVeO2O+PpWsy33xgc1TKZKRmdvx6Zd4X70aTHp0+SmfpOyqobWNNyqGU7s9a2iYYS3yE0Hg9TYXbN8=
-X-Received: by 2002:a17:906:1484:: with SMTP id x4mr22743036ejc.204.1566929184870;
- Tue, 27 Aug 2019 11:06:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190822211514.19288-1-olteanv@gmail.com> <20190822211514.19288-6-olteanv@gmail.com>
- <CA+h21hqWGDCfTg813W1WaXFnRsMdE30WnaXw5TJvpkSp0-w5JA@mail.gmail.com> <20190827180502.GF23391@sirena.co.uk>
-In-Reply-To: <20190827180502.GF23391@sirena.co.uk>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Tue, 27 Aug 2019 21:06:14 +0300
-Message-ID: <CA+h21hr3qmTG1LyWsEp+hZZW2NJFtg9Dh1k6SXVDd+A_YSQjjw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] ARM: dts: ls1021a-tsn: Use the DSPI controller in
- poll mode
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-spi@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 27 Aug 2019 14:13:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4GBJd/6CpXINlrjly9Ph5quH3fSBp0S16BuevuJTZa4=; b=ohF//mfhCIMWBylzf7/JOCKps
+        2oKLR4wscTrHyB+NYXBUNSPCh6BwzGbr06n0n7vfU/uAJyjc5LJmZTa5BPGQh61BlDGZd9OYS1YW/
+        5UYIi4VvzS/p8pJfeXqwkoakn++ttk/6e6ljIbSHkIgfPNIJIdoIs3Lt10SyIAb9y7burXHXdz6Gq
+        UTQvh4KE5NtXGbqNLPwen69w9uuDEkLCna+rqUn8yL8nAUdiHZYfTGVGOx3YWj7dKjvm4JqTJ5Dqr
+        n0cYFxakGMWV+e6S03jl2lJ5ewpZSUwhOxGWtjVBwtPERL1MmhIk1hXmUm+QaSWr10IwJAZ4TdVLA
+        I2PGISd1g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2fxe-0006iw-Aj; Tue, 27 Aug 2019 18:12:54 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D59C8301FF9;
+        Tue, 27 Aug 2019 20:12:16 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 92419203CEC08; Tue, 27 Aug 2019 20:12:50 +0200 (CEST)
+Message-Id: <20190827180622.159326993@infradead.org>
+User-Agent: quilt/0.65
+Date:   Tue, 27 Aug 2019 20:06:22 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
+Cc:     Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: [PATCH 0/3] Rewrite x86/ftrace to use text_poke()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Aug 2019 at 21:05, Mark Brown <broonie@kernel.org> wrote:
->
-> On Mon, Aug 26, 2019 at 04:10:51PM +0300, Vladimir Oltean wrote:
->
-> > I noticed you skipped applying this patch, and I'm not sure that Shawn
-> > will review it/take it.
-> > Do you have a better suggestion how I can achieve putting the DSPI
-> > driver in poll mode for this board? A Kconfig option maybe?
->
-> DT changes go through the relevant platform trees, not the
-> subsystem trees, so it's not something I'd expect to apply.
+Ftrace was one of the last W^X violators; these patches move it over to the
+generic text_poke() interface and thereby get rid of this oddity.
 
-But at least is it something that you expect to see done through a
-device tree change?
+The first patch has been posted before and was/is part of my (in-progress)
+static_call and jump_label/jmp8 patch series; but is equally needed here.
+
+The second patch cleans up the text_poke batching code, and the third converts
+ftrace.
+
+---
+ arch/x86/include/asm/ftrace.h        |   2 -
+ arch/x86/include/asm/text-patching.h |  28 +-
+ arch/x86/kernel/alternative.c        | 156 +++++++--
+ arch/x86/kernel/ftrace.c             | 620 +++++------------------------------
+ arch/x86/kernel/jump_label.c         |  83 ++---
+ arch/x86/kernel/kprobes/opt.c        |  11 +-
+ arch/x86/kernel/traps.c              |   9 -
+ 7 files changed, 261 insertions(+), 648 deletions(-)
+
