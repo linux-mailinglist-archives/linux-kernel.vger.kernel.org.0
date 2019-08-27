@@ -2,64 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0FAD9ECA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C3A09ECA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:29:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfH0P3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:29:08 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:34306 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726345AbfH0P3I (ORCPT
+        id S1730262AbfH0P3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:29:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:35542 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbfH0P3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:29:08 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c7so19089868otp.1;
-        Tue, 27 Aug 2019 08:29:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J00Og4COUuio9dl8wM1PzByC3c7MGnLiX6uTGr+VxFk=;
-        b=gh5Kcord4A3A7hzCx/3K8PGJ1A7l5DPLmC9g6EHuJoJB4Hc332BrWl0VWA6/Qe5wFK
-         F1EbAVG8VDdclPwocZkC18ZUuptk69Gb4sScuZ98txOwShnt9U6p0SH1SHuleeOfS491
-         s/Ww6wkGwYGytrmgYGZVgigcv5/yVCxx7v62MgSdEvosvTAUSFDdd22N0KQMdKNxkm9F
-         Eavvi2xBOZg8hABh/SJd3zDR5KZgFKADUKT7+qOfdT5JrgCU2kz1RunHOsC2T5TJQJBv
-         7l8V6tEvVVhCbhg84yObgS+9KtKxaWV2/u18lssyzz08fDtM1MoUo9VsGncCz/lk+/7w
-         r4/g==
-X-Gm-Message-State: APjAAAUecXiBhMK2ZvEVVGtAATFy6xXcpb8vFTtyt6qSyvrskqr1+FtS
-        BuxCnFkho5WZuHcGQujg6Q==
-X-Google-Smtp-Source: APXvYqxwKAHk9mNPIMzdVfKpVpTrDCMOQRLflS4nfZnip6LCEVNfcwi6o5BhJFMmIDQvrZlOVkvPHQ==
-X-Received: by 2002:a9d:4004:: with SMTP id m4mr19130194ote.146.1566919747225;
-        Tue, 27 Aug 2019 08:29:07 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n17sm4750652otl.21.2019.08.27.08.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 08:29:06 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 10:29:05 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     John Wang <wangzqbj@inspur.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        duanzhijia01@inspur.com, linux@roeck-us.net
-Subject: Re: [PATCH] dt-bindings: Add vendor prefix for Inspur Corporation
-Message-ID: <20190827152905.GA29989@bogus>
-References: <20190810095836.6573-1-wangzqbj@inspur.com>
+        Tue, 27 Aug 2019 11:29:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qAXQhWkIiOIHiym/Pv00dHz+qBqrUFQGcxlQUeJH8No=; b=T36oGIpM70lcyuh0ueD9ppmQi
+        cMdTaJf+VCVCSC6XIiHE5A/ShnNKbKCjDdjt9R0pkXYse3jRh8yO2NjcRUKV4TfeDOgPwHmCU2NvZ
+        P6IaJBs8MSHplMhpAKSmrbLGM9iWdH7ZrFQfhWnrR/uAMyVYVMbQni9mUY+AchKnhCqXwA7qtTLv1
+        2AeolXEinIE3ObHL/58kcZmJdPZJtRAcBo+WuYylZN9KMcgn2vWqt2uWdILSe4ro/iFX0bDHDjjE7
+        bQ8pTozhtFssPCp8cRceQpxyGjE6MA3Y0S3em0NVscNiNl7hWp4LsPrcv0fkTecWcOOwMBPvysu2V
+        2vL1TUFuA==;
+Received: from [2601:1c0:6200:6e8::4f71]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2dPJ-0003PV-Jn; Tue, 27 Aug 2019 15:29:17 +0000
+Subject: Re: linux-next: Tree for Aug 27 (kunit)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>
+References: <20190827190526.6f27e763@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c7229254-0d90-d90e-f3df-5b6d6fc0b51f@infradead.org>
+Date:   Tue, 27 Aug 2019 08:29:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190810095836.6573-1-wangzqbj@inspur.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190827190526.6f27e763@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 10 Aug 2019 17:58:36 +0800, John Wang wrote:
-> Signed-off-by: John Wang <wangzqbj@inspur.com>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+On 8/27/19 2:05 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190826:
 > 
 
-Applied, thanks.
+on i386:
+# CONFIG_PRINTK is not set
 
-Rob
+
+../kunit/test.c: In function ‘kunit_vprintk_emit’:
+../kunit/test.c:21:9: error: implicit declaration of function ‘vprintk_emit’; did you mean ‘vprintk’? [-Werror=implicit-function-declaration]
+  return vprintk_emit(0, level, NULL, 0, fmt, args);
+         ^~~~~~~~~~~~
+         vprintk
+
+
+-- 
+~Randy
