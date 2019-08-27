@@ -2,163 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4561C9F670
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1C5A9F66B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbfH0WwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 18:52:06 -0400
-Received: from mga14.intel.com ([192.55.52.115]:42055 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725997AbfH0WwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 18:52:06 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 15:52:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,439,1559545200"; 
-   d="scan'208";a="188046761"
-Received: from skuppusw-desk.jf.intel.com (HELO skuppusw-desk.amr.corp.intel.com) ([10.54.74.33])
-  by FMSMGA003.fm.intel.com with ESMTP; 27 Aug 2019 15:52:05 -0700
-Date:   Tue, 27 Aug 2019 15:49:09 -0700
-From:   Kuppuswamy Sathyanarayanan 
-        <sathyanarayanan.kuppuswamy@linux.intel.com>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/4] PCI: pciehp: Remove
- pciehp_green_led_{on,off,blink}()
-Message-ID: <20190827224909.GF28404@skuppusw-desk.amr.corp.intel.com>
-Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
-References: <20190819160643.27998-1-efremov@linux.com>
- <20190819160643.27998-5-efremov@linux.com>
+        id S1726370AbfH0Wu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 18:50:57 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36349 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725989AbfH0Wu5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 18:50:57 -0400
+Received: by mail-pf1-f194.google.com with SMTP id w2so346164pfi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 15:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zOEu9xUSDVrsGM6W3Flcox0RxExlMvx/ACbW1pnrPBg=;
+        b=Usm12moHUHac03LVvijuSRXEZBvccvhXSPy1aGZptmGTyOJlv9HwXwsEHdqFXO4Fjy
+         oJjqfDRkaK7VUPH4iq5Z8rILoMIkn6m9JCNM6H4QIMSxqk9jAD+Oevb9x69xcP84m5cE
+         Lg2/MGISpiT3slt9ksiZN8SPUlU+UcL8GidncWuemmZCmHTY6Xz7LzvTKno7sCq/IY/3
+         opXEgstVYldu6h1foTnU9ujFEcBzuq4MO/iJqviUjNpKDbi0MhWC9y97nLbn5AeFPrEA
+         d8+jX/Jck3fmEVavrg9+D004WeqLpMx35UEME4kKaai+EKtaosFbxvZ/UVCMo6Y5HmxF
+         RuNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zOEu9xUSDVrsGM6W3Flcox0RxExlMvx/ACbW1pnrPBg=;
+        b=GKTGVuInYPfy0vlNh0w5QjLfjeKJpz3ar/xWDeU50zYsG/Nz5FAUHWgLU5ahB5Ln27
+         CBzjEAaFtOtQNihgJ5rEbOWLeXlnYkk87ak8wRKKi0xdgqfVId8htf8yTFFhZs3fY468
+         BoVipdgnEw2eLSLFcIBBesCBUH6NI5QO+tvykYY0+OcaFNuOnh8NeGsx70Myaf2KyEdi
+         ltNPXUL3gC5v9RwO+GUsnM5cJaN+A2pk6XHr14xcj6EMZS2ueYOoS0QtX3ZUfIs+DdWL
+         cKtxMbm1YPfSduXAViEY0+ng1HpAjOA0OAi9oJ/agvNV6AQK0JjzwbjhIKcAzZBZ7/11
+         fQiw==
+X-Gm-Message-State: APjAAAXyzVpyDHURYTNykP27iMXffVhZTDrLbrH8kT6SiNDjnvBjcgTf
+        wEyZP1TYjpdX1IwOb7K80pow+Qnbtxob8MN0XRV32g==
+X-Google-Smtp-Source: APXvYqw23KIT1k0Xi5MgAknrnDtZVrBXQFptxEYv1UgQ0hbLWHN9Mrvq15ViFtifwG5yvUo07vfeKobCoXeNgNntFxU=
+X-Received: by 2002:aa7:984a:: with SMTP id n10mr1036503pfq.3.1566946256177;
+ Tue, 27 Aug 2019 15:50:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190819160643.27998-5-efremov@linux.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190711133915.GA25807@ziepe.ca> <CAKwvOdnHz3uH4ZM20LGQJ3FYhLQQUYn4Lg0B-YMr7Y1L66TAsA@mail.gmail.com>
+ <20190711171808.GF25807@ziepe.ca> <20190711173030.GA844@archlinux-threadripper>
+ <20190823142427.GD12968@ziepe.ca> <20190826153800.GA4752@archlinux-threadripper>
+ <20190826154228.GE27349@ziepe.ca> <20190826233829.GA36284@archlinux-threadripper>
+ <20190827150830.brsvsoopxut2od66@treble> <20190827170018.GA4725@mtr-leonro.mtl.com>
+ <20190827192344.tcrzolbshwdsosl2@treble> <CAKwvOdk3UTT5jUTuG_wRizdpUtgv3qFB3w3NCtJ7ub5DnptYRA@mail.gmail.com>
+In-Reply-To: <CAKwvOdk3UTT5jUTuG_wRizdpUtgv3qFB3w3NCtJ7ub5DnptYRA@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 27 Aug 2019 15:50:44 -0700
+Message-ID: <CAKwvOdmq3VRLt+SUM=Do7OqasLqzoj4R00-JZGBWFjj8TccNgQ@mail.gmail.com>
+Subject: Re: [PATCH] rdma/siw: Use proper enumerated type in map_cqe_status
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Bernard Metzler <BMT@zurich.ibm.com>,
+        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 07:06:43PM +0300, Denis Efremov wrote:
-> Remove pciehp_green_led_{on,off,blink}() and use pciehp_set_indicators()
-> instead, since the code is mostly the same.
-> 
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> ---
->  drivers/pci/hotplug/pciehp.h      |  3 ---
->  drivers/pci/hotplug/pciehp_ctrl.c | 12 ++++++++---
->  drivers/pci/hotplug/pciehp_hpc.c  | 36 -------------------------------
->  3 files changed, 9 insertions(+), 42 deletions(-)
-> 
-> diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
-> index acda513f37d7..da429345cf70 100644
-> --- a/drivers/pci/hotplug/pciehp.h
-> +++ b/drivers/pci/hotplug/pciehp.h
-> @@ -170,9 +170,6 @@ void pciehp_get_power_status(struct controller *ctrl, u8 *status);
->  void pciehp_set_indicators(struct controller *ctrl, int pwr, int attn);
->  void pciehp_get_latch_status(struct controller *ctrl, u8 *status);
->  int pciehp_query_power_fault(struct controller *ctrl);
-> -void pciehp_green_led_on(struct controller *ctrl);
-> -void pciehp_green_led_off(struct controller *ctrl);
-> -void pciehp_green_led_blink(struct controller *ctrl);
->  bool pciehp_card_present(struct controller *ctrl);
->  bool pciehp_card_present_or_link_active(struct controller *ctrl);
->  int pciehp_check_link_status(struct controller *ctrl);
-> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
-> index 232f7bfcfce9..862fe86e87cc 100644
-> --- a/drivers/pci/hotplug/pciehp_ctrl.c
-> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
-> @@ -65,7 +65,9 @@ static int board_added(struct controller *ctrl)
->  			return retval;
->  	}
->  
-> -	pciehp_green_led_blink(ctrl);
-> +	pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_BLINK,
-> +			      PCI_EXP_SLTCTL_ATTN_IND_NONE);
-> +
->  
->  	/* Check link training status */
->  	retval = pciehp_check_link_status(ctrl);
-> @@ -124,7 +126,9 @@ static void remove_board(struct controller *ctrl, bool safe_removal)
->  	}
->  
->  	/* turn off Green LED */
-> -	pciehp_green_led_off(ctrl);
-> +	pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_OFF,
-> +			      PCI_EXP_SLTCTL_ATTN_IND_NONE);
-> +
->  }
->  
->  static int pciehp_enable_slot(struct controller *ctrl);
-> @@ -311,7 +315,9 @@ static int pciehp_enable_slot(struct controller *ctrl)
->  	pm_runtime_get_sync(&ctrl->pcie->port->dev);
->  	ret = __pciehp_enable_slot(ctrl);
->  	if (ret && ATTN_BUTTN(ctrl))
-> -		pciehp_green_led_off(ctrl); /* may be blinking */
-> +		/* may be blinking */
-> +		pciehp_set_indicators(ctrl, PCI_EXP_SLTCTL_PWR_IND_OFF,
-> +				      PCI_EXP_SLTCTL_ATTN_IND_NONE);
->  	pm_runtime_put(&ctrl->pcie->port->dev);
->  
->  	mutex_lock(&ctrl->state_lock);
-> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
-> index 8f894fd5cd27..9dc1ecd703b9 100644
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -447,42 +447,6 @@ void pciehp_set_indicators(struct controller *ctrl, int pwr, int attn)
->  	}
->  }
->  
-> -void pciehp_green_led_on(struct controller *ctrl)
-> -{
-> -	if (!PWR_LED(ctrl))
-> -		return;
-> -
-> -	pcie_write_cmd_nowait(ctrl, PCI_EXP_SLTCTL_PWR_IND_ON,
-> -			      PCI_EXP_SLTCTL_PIC);
-> -	ctrl_dbg(ctrl, "%s: SLOTCTRL %x write cmd %x\n", __func__,
-> -		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL,
-> -		 PCI_EXP_SLTCTL_PWR_IND_ON);
-> -}
-> -
-> -void pciehp_green_led_off(struct controller *ctrl)
-> -{
-> -	if (!PWR_LED(ctrl))
-> -		return;
-> -
-> -	pcie_write_cmd_nowait(ctrl, PCI_EXP_SLTCTL_PWR_IND_OFF,
-> -			      PCI_EXP_SLTCTL_PIC);
-> -	ctrl_dbg(ctrl, "%s: SLOTCTRL %x write cmd %x\n", __func__,
-> -		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL,
-> -		 PCI_EXP_SLTCTL_PWR_IND_OFF);
-> -}
-> -
-> -void pciehp_green_led_blink(struct controller *ctrl)
-> -{
-> -	if (!PWR_LED(ctrl))
-> -		return;
-> -
-> -	pcie_write_cmd_nowait(ctrl, PCI_EXP_SLTCTL_PWR_IND_BLINK,
-> -			      PCI_EXP_SLTCTL_PIC);
-> -	ctrl_dbg(ctrl, "%s: SLOTCTRL %x write cmd %x\n", __func__,
-> -		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL,
-> -		 PCI_EXP_SLTCTL_PWR_IND_BLINK);
-> -}
-> -
->  int pciehp_power_on_slot(struct controller *ctrl)
->  {
->  	struct pci_dev *pdev = ctrl_dev(ctrl);
-> -- 
-> 2.21.0
-> 
+On Tue, Aug 27, 2019 at 2:27 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Tue, Aug 27, 2019 at 12:23 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > On Tue, Aug 27, 2019 at 08:00:18PM +0300, Leon Romanovsky wrote:
+> > > On Tue, Aug 27, 2019 at 10:08:30AM -0500, Josh Poimboeuf wrote:
+> > > > On Mon, Aug 26, 2019 at 04:38:29PM -0700, Nathan Chancellor wrote:
+> > > > > Looks like that comes from tune_qsfp, which gets inlined into
+> > > > > tune_serdes but I am far from an objtool expert so I am not
+> > > > > really sure what kind of issues I am looking for. Adding Josh
+> > > > > and Peter for a little more visibility.
+> > > > >
+> > > > > Here is the original .o file as well:
+> > > > >
+> > > > > https://github.com/nathanchance/creduce-files/raw/4e252c0ca19742c90be1445e6c722a43ae561144/rdma-objtool/platform.o.orig
+> > > >
+> > > >      574:       0f 87 00 0c 00 00       ja     117a <tune_serdes+0xdfa>
+> > > >
+> > > > It's jumping to la-la-land past the end of the function.
+> > >
+> > > How is it possible?
+> >
+> > Looks like a compiler bug.
+>
+> Nathan,
+> Thanks for the reduced test case.  I modified it slightly:
+> https://godbolt.org/z/15xejg
+>
+> You can see that the label LBB0_5 seemingly points off into space.
+> Let me play with this one more a bit, then I will file a bug and
+> report back.
 
+Something funny going on in one of the earliest optimizations.  Seems
+related to an analysis that's deducing that the case statement is
+exhaustive (so the GNU C case range is unrelated), but it's keeping
+the default case and its comparison around.  The analysis is correct;
+the value should never be > 0xF so there shouldn't be any runtime
+bugs, but this would avoid an unnecessary comparison for exhaustive
+switch statements and save a few bytes of object code in such cases.
+
+Filed: https://bugs.llvm.org/show_bug.cgi?id=43129
 -- 
--- 
-Sathyanarayanan Kuppuswamy
-Linux kernel developer
+Thanks,
+~Nick Desaulniers
