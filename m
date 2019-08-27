@@ -2,73 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F22929DE35
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:45:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24C869DE44
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfH0Gpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 02:45:46 -0400
-Received: from conuserg-10.nifty.com ([210.131.2.77]:29798 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbfH0Gpq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 02:45:46 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x7R6iVgg003740;
-        Tue, 27 Aug 2019 15:44:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x7R6iVgg003740
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1566888272;
-        bh=vtbPJHn0Vac34GPikbOgs/qob9Pq0CHTDp4qvL1XFlo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=odUrtGTgUKVvn/e47CAlTb7EfjZQ+pO+YtzeQ21jiuv7rQKSg4p5msQlk1IMNcPgU
-         X7Z3YVtWNIAgTRZr3gGI+9Ye1UY0kd7yywz3nqNA9IOfNTzW9WggETCWdpHWK0KZiF
-         N1utLwn2WDulFNNXxY8rppRAxm1zqNEpa04XTSo493hguwrHStzdldgd8V7O/SrJnM
-         OsiqiCa/EtBRU4kDTbtLjmQ8BhX0nbKaLOVJ2LAwoArMxs915oGGg7nfjCV0ebUwYk
-         71GQLQPbhyT0MOCfVzczq5qwcFeTsMsnbqRUArVyEAvHYgLaTOGjVcYEK679MmDL6h
-         OUPGx+N4rR6HQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=8F=AB=D3nig?= <christian.koenig@amd.com>,
-        David Zhou <David1.Zhou@amd.com>, amd-gfx@lists.freedesktop.org
-Cc:     dri-devel@lists.freedesktop.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amd: remove meaningless descending into amd/amdkfd/
-Date:   Tue, 27 Aug 2019 15:44:25 +0900
-Message-Id: <20190827064425.19627-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727578AbfH0G4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 02:56:55 -0400
+Received: from protonic.xs4all.nl ([83.163.252.89]:51451 "EHLO protonic.nl"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725879AbfH0G4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 02:56:54 -0400
+X-Greylist: delayed 596 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Aug 2019 02:56:54 EDT
+Received: from troy.prtnl (troy.prtnl [192.168.224.29])
+        by sparta (Postfix) with ESMTP id 336AB44A009E;
+        Tue, 27 Aug 2019 08:48:54 +0200 (CEST)
+From:   David Jander <david@protonic.nl>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Jander <david@protonic.nl>
+Subject: [PATCH 1/2] gpio: gpio-pca953x.c: Correct type of reg_direction
+Date:   Tue, 27 Aug 2019 06:46:28 +0000
+Message-Id: <20190827064629.90214-1-david@protonic.nl>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 04d5e2765802 ("drm/amdgpu: Merge amdkfd into amdgpu"),
-drivers/gpu/drm/amd/amdkfd/Makefile does not contain any syntax that
-is understood by the build system.
+The type of reg_direction needs to match the type of the regmap, which is
+u8.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: David Jander <david@protonic.nl>
 ---
+ drivers/gpio/gpio-pca953x.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/gpu/drm/Makefile | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
-index 9f0d2ee35794..3f9195b7ad13 100644
---- a/drivers/gpu/drm/Makefile
-+++ b/drivers/gpu/drm/Makefile
-@@ -62,7 +62,6 @@ obj-$(CONFIG_DRM_TTM)	+= ttm/
- obj-$(CONFIG_DRM_SCHED)	+= scheduler/
- obj-$(CONFIG_DRM_TDFX)	+= tdfx/
- obj-$(CONFIG_DRM_R128)	+= r128/
--obj-$(CONFIG_HSA_AMD) += amd/amdkfd/
- obj-$(CONFIG_DRM_RADEON)+= radeon/
- obj-$(CONFIG_DRM_AMDGPU)+= amd/amdgpu/
- obj-$(CONFIG_DRM_MGA)	+= mga/
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 378b206d2dc9..30072a570bc2 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -604,7 +604,7 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+ 	u8 new_irqs;
+ 	int level, i;
+ 	u8 invert_irq_mask[MAX_BANK];
+-	int reg_direction[MAX_BANK];
++	u8 reg_direction[MAX_BANK];
+ 
+ 	regmap_bulk_read(chip->regmap, chip->regs->direction, reg_direction,
+ 			 NBANK(chip));
+@@ -679,7 +679,7 @@ static bool pca953x_irq_pending(struct pca953x_chip *chip, u8 *pending)
+ 	bool pending_seen = false;
+ 	bool trigger_seen = false;
+ 	u8 trigger[MAX_BANK];
+-	int reg_direction[MAX_BANK];
++	u8 reg_direction[MAX_BANK];
+ 	int ret, i;
+ 
+ 	if (chip->driver_data & PCA_PCAL) {
+@@ -768,7 +768,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chip,
+ {
+ 	struct i2c_client *client = chip->client;
+ 	struct irq_chip *irq_chip = &chip->irq_chip;
+-	int reg_direction[MAX_BANK];
++	u8 reg_direction[MAX_BANK];
+ 	int ret, i;
+ 
+ 	if (!client->irq)
 -- 
-2.17.1
+2.19.1
 
