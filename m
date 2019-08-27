@@ -2,103 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF1E9DF0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01D1C9DFFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728729AbfH0Hts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:49:48 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41954 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725985AbfH0Htr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:49:47 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 54B5E417F00AEC2B86DC;
-        Tue, 27 Aug 2019 15:49:44 +0800 (CST)
-Received: from [127.0.0.1] (10.184.12.158) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 27 Aug 2019
- 15:49:38 +0800
-Subject: Re: [PATCH] KVM: arm/arm64: vgic: Use a single IO device per
- redistributor
-To:     Auger Eric <eric.auger@redhat.com>, <eric.auger.pro@gmail.com>,
-        <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kvm@vger.kernel.org>, <kvmarm@lists.cs.columbia.edu>
-CC:     <zhang.zhanghailiang@huawei.com>, <wanghaibin.wang@huawei.com>,
-        <james.morse@arm.com>, <qemu-arm@nongnu.org>,
-        <julien.thierry.kdev@gmail.com>, <suzuki.poulose@arm.com>,
-        <peter.maydell@linaro.org>, <andre.przywara@arm.com>
-References: <20190823173330.23342-1-eric.auger@redhat.com>
- <f5b47614-de48-f3cb-0e6f-8a667cb951c0@redhat.com>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <5cdcfe9e-98d8-454e-48e7-992fe3ee5eae@huawei.com>
-Date:   Tue, 27 Aug 2019 15:49:29 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
- Thunderbird/64.0
+        id S1731244AbfH0H7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:59:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731232AbfH0H7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:59:32 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B94FE206BF;
+        Tue, 27 Aug 2019 07:59:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566892772;
+        bh=isvN1jFcyXGNsRWOLMIIqbt9jrnVO/ZAKkLb+61Kmrk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZIXJovVBZPfdOz6f0QU9kirrZjLmcpZ9gl2gMHu5M02/tVLNXOk9g5c/mdASwBEjW
+         NokzwDEUw5Iv25qvejbbMmfLVxdKXuQxD4/Lvn77qOmrINtEyGo+xLYKZTy4VnS3Gy
+         93SGWgAYPbYak10ZVG/hi8vsyu6OpebjW0jTlQxg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 001/162] ASoC: simple_card_utils.h: care NULL dai at asoc_simple_debug_dai()
+Date:   Tue, 27 Aug 2019 09:48:49 +0200
+Message-Id: <20190827072738.194602192@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
+References: <20190827072738.093683223@linuxfoundation.org>
+User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <f5b47614-de48-f3cb-0e6f-8a667cb951c0@redhat.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.12.158]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+[ Upstream commit 52db6685932e326ed607644ab7ebdae8c194adda ]
 
-Thanks for this patch!
+props->xxx_dai might be NULL when DPCM.
+This patch cares it for debug.
 
-On 2019/8/24 1:52, Auger Eric wrote:
-> Hi Zenghui, Marc,
-> 
-> On 8/23/19 7:33 PM, Eric Auger wrote:
->> At the moment we use 2 IO devices per GICv3 redistributor: one
-                                                              ^^^
->> one for the RD_base frame and one for the SGI_base frame.
-   ^^^
->>
->> Instead we can use a single IO device per redistributor (the 2
->> frames are contiguous). This saves slots on the KVM_MMIO_BUS
->> which is currently limited to NR_IOBUS_DEVS (1000).
->>
->> This change allows to instantiate up to 512 redistributors and may
->> speed the guest boot with a large number of VCPUs.
->>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> 
-> I tested this patch with below kernel and QEMU branches:
-> kernel: https://github.com/eauger/linux/tree/256fix-v1
-> (Marc's patch + this patch)
-> https://github.com/eauger/qemu/tree/v4.1.0-256fix-rfc1-rc0
-> (header update + kvm_arm_gic_set_irq modification)
+Fixes: commit 0580dde59438 ("ASoC: simple-card-utils: add asoc_simple_debug_info()")
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/87o922gw4u.wl-kuninori.morimoto.gx@renesas.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/sound/simple_card_utils.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I also tested these three changes on HiSi D05 (with 64 pcpus), and yes,
-I can get a 512U guest to boot properly now.
-
-Tested-by: Zenghui Yu <yuzenghui@huawei.com>
-
-> On a machine with 224 pcpus, I was able to boot a 512 vcpu guest.
-> 
-> As expected, qemu outputs warnings:
-> 
-> qemu-system-aarch64: warning: Number of SMP cpus requested (512) exceeds
-> the recommended cpus supported by KVM (224)
-> qemu-system-aarch64: warning: Number of hotpluggable cpus requested
-> (512) exceeds the recommended cpus supported by KVM (224)
-> 
-> on the guest: getconf _NPROCESSORS_ONLN returns 512
-> 
-> Then I have no clue about what can be expected of such overcommit config
-> and I have not further exercised the guest at the moment. But at least
-> it seems to boot properly. I also tested without overcommit and it seems
-> to behave as before (boot, migration).
-> 
-> I still need to look at the migration of > 256vcpu guest at qemu level.
-
-Let us know if further tests are needed.
+diff --git a/include/sound/simple_card_utils.h b/include/sound/simple_card_utils.h
+index 3429888347e7c..b3609e4c46e0f 100644
+--- a/include/sound/simple_card_utils.h
++++ b/include/sound/simple_card_utils.h
+@@ -149,6 +149,10 @@ inline void asoc_simple_debug_dai(struct asoc_simple_priv *priv,
+ {
+ 	struct device *dev = simple_priv_to_dev(priv);
+ 
++	/* dai might be NULL */
++	if (!dai)
++		return;
++
+ 	if (dai->name)
+ 		dev_dbg(dev, "%s dai name = %s\n",
+ 			name, dai->name);
+-- 
+2.20.1
 
 
-Thanks,
-zenghui
 
