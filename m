@@ -2,72 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F72F9EFF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CCB69EFFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbfH0QRt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:17:49 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34427 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbfH0QRs (ORCPT
+        id S1729779AbfH0QTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:19:47 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44288 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726621AbfH0QTq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:17:48 -0400
-Received: by mail-oi1-f194.google.com with SMTP id g128so15438893oib.1;
-        Tue, 27 Aug 2019 09:17:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7muvzMncx4YoE3IQ35DaVbjOS8KQcGXrD0KkrlfBrr8=;
-        b=GSu7a6hX6FUj+pPyr9nlU6NtKgCFtzIkagj8xAikCJYR/wpKAxQGduezjhRdKjMnbt
-         BMQS4FVLco1IfZ229PafuI33eeaEE+Dv5zHTYOlqq4XZWBInbJspQY8q8tCpgM7ivEpE
-         iBqieUZ2ntUUMSOZy7YdfrDm8NN6UjMoa4x2nMF65OspktGYZ5Yi4YpK75ga9KtHwGnG
-         e3lNbaKtVyDnTc1rXUq7M9lsDc08X+0SExK4w9molYdayT2NefjM75Rm07LXOEvV8D4C
-         4nLZXkZOnAtppjvC3QoEODAO+yaKETkpb91tRSRlk1jQ+V4492Hmr/y25tQRXvEQtmxc
-         dOMw==
-X-Gm-Message-State: APjAAAUjmmxos7esXOz/GnfV3qZkyS4tEWZ+iPcUod9oyMjmbhiB0zeB
-        iNtBfSLY3AnnZVqNP/jk3w==
-X-Google-Smtp-Source: APXvYqySoYjSnor6MzzbBz/lQbLzJ0tJ+VwZ2+9peKDYeoigi2IqpZCPnjF5k6qLhms8Egjt860ocg==
-X-Received: by 2002:aca:4c44:: with SMTP id z65mr10740973oia.113.1566922663759;
-        Tue, 27 Aug 2019 09:17:43 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id k67sm5469648otk.26.2019.08.27.09.17.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 09:17:42 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 11:17:42 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        patches@opensource.cirrus.com
-Subject: Re: [PATCH v2 1/2] mfd: madera: Update DT binding document to
- support clock supplies
-Message-ID: <20190827161742.GA7223@bogus>
-References: <20190814092140.30995-1-ckeepax@opensource.cirrus.com>
+        Tue, 27 Aug 2019 12:19:46 -0400
+Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i2eBS-0002Hz-3S; Tue, 27 Aug 2019 18:19:02 +0200
+Date:   Tue, 27 Aug 2019 18:19:00 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ming Lei <ming.lei@redhat.com>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Long Li <longli@microsoft.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        John Garry <john.garry@huawei.com>,
+        Hannes Reinecke <hare@suse.com>,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 1/4] softirq: implement IRQ flood detection mechanism
+In-Reply-To: <alpine.DEB.2.21.1908271633450.1939@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1908271817180.1939@nanos.tec.linutronix.de>
+References: <20190827085344.30799-1-ming.lei@redhat.com> <20190827085344.30799-2-ming.lei@redhat.com> <alpine.DEB.2.21.1908271633450.1939@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814092140.30995-1-ckeepax@opensource.cirrus.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Aug 2019 10:21:39 +0100, Charles Keepax wrote:
-> Add the 3 input clock sources for the chip into the device tree binding
-> document.
+On Tue, 27 Aug 2019, Thomas Gleixner wrote:
+> On Tue, 27 Aug 2019, Ming Lei wrote:
+> > +/*
+> > + * Update average irq interval with the Exponential Weighted Moving
+> > + * Average(EWMA)
+> > + */
+> > +static void irq_update_interval(void)
+> > +{
+> > +#define IRQ_INTERVAL_EWMA_WEIGHT	128
+> > +#define IRQ_INTERVAL_EWMA_PREV_FACTOR	127
+> > +#define IRQ_INTERVAL_EWMA_CURR_FACTOR	(IRQ_INTERVAL_EWMA_WEIGHT - \
+> > +		IRQ_INTERVAL_EWMA_PREV_FACTOR)
 > 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
+> Please do not stick defines into a function body. That's horrible.
 > 
-> No changes since v1.
+> > +
+> > +	int cpu = raw_smp_processor_id();
+> > +	struct irq_interval *inter = per_cpu_ptr(&avg_irq_interval, cpu);
+> > +	u64 delta = sched_clock_cpu(cpu) - inter->last_irq_end;
 > 
-> Thanks,
-> Charles
+> Why are you doing that raw_smp_processor_id() dance? The call site has
+> interrupts and preemption disabled.
 > 
->  Documentation/devicetree/bindings/mfd/madera.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> Also how is that supposed to work when sched_clock is jiffies based?
 > 
+> > +	inter->avg = (inter->avg * IRQ_INTERVAL_EWMA_PREV_FACTOR +
+> > +		delta * IRQ_INTERVAL_EWMA_CURR_FACTOR) /
+> > +		IRQ_INTERVAL_EWMA_WEIGHT;
+> 
+> We definitely are not going to have a 64bit multiplication and division on
+> every interrupt. Asided of that this breaks 32bit builds all over the place.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+That said, we already have infrastructure for something like this in the
+core interrupt code which is optimized to be lightweight in the fast path.
+
+kernel/irq/timings.c
+
+Talk to Daniel Lezcano (Cc'ed) how you can (ab)use that.
+
+Thanks,
+
+	tglx
