@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58C129DF5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC7839DFD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:57:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729824AbfH0Hxf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:53:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44966 "EHLO mail.kernel.org"
+        id S1730868AbfH0H5q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:57:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729169AbfH0Hx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:53:29 -0400
+        id S1730851AbfH0H5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:57:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED239206BF;
-        Tue, 27 Aug 2019 07:53:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF677206BF;
+        Tue, 27 Aug 2019 07:57:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892408;
+        s=default; t=1566892663;
         bh=GeuldnW2RahsHtyZX8pg5iseW2idGOp+eakQQ2Ylqfk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GWo3pSChxG79dUt1Vjsq6OKadBNElZBLmAd0VthIhH+STGAp2MjIa+5B3K0zUSLt7
-         Te2ZSYZkRpM0RT0mR0BN1go1EUWEAofGT4JBgUQYZhoBUIAjvii/fDF8I9VSGsOJPf
-         2sQ77kzRBDJ2S1F9xrGEWVkr98C+HYOHO+6p41qk=
+        b=JFYNQVW6IYrbWtb4iY/hFDG6SSwJEOEFs6HASsPOV2yBCNZ+Ss3pPtTthDfmP0nmK
+         i4e3vU6p0Y4y/t7ubhfmMVrCR4Kosv7oKH3SZCeawSd0Y/ZhWD1xOMAtzmvmJXqMmG
+         +tNk3TPFAfaIsuEfw/hh+xmKxsMZB2X/Cvlj/vKU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sean Christopherson <sean.j.christopherson@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: [PATCH 4.14 44/62] x86/retpoline: Dont clobber RFLAGS during CALL_NOSPEC on i386
+Subject: [PATCH 4.19 70/98] x86/retpoline: Dont clobber RFLAGS during CALL_NOSPEC on i386
 Date:   Tue, 27 Aug 2019 09:50:49 +0200
-Message-Id: <20190827072703.106012532@linuxfoundation.org>
+Message-Id: <20190827072721.952580476@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
