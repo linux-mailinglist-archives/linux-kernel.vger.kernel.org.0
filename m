@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 467B49DFD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:57:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 423A09DF5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbfH0H5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:57:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50180 "EHLO mail.kernel.org"
+        id S1729836AbfH0Hxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:53:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730851AbfH0H5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:57:47 -0400
+        id S1729804AbfH0Hxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:53:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F43922CF5;
-        Tue, 27 Aug 2019 07:57:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C093A20828;
+        Tue, 27 Aug 2019 07:53:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892666;
-        bh=h6JMnrpTWt6b/ZXOA0G39orRGD5ySO9QiWYMXBmjFJM=;
+        s=default; t=1566892411;
+        bh=GvdTTFn8xWYYNjP/s73R7HmCpkFkg2yW7FrKc12F+4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lnKvpt4uDcCbkTi0+SVKDJgJT9zzdtjmAYF+tvxpc31eSxLjdd69cGQHL3/SRe0dB
-         athLzXVoUxZPDLpm3SvGiJcQJPrxZOat1fwNzLqTV3SdgLGTXkxT5aaGDoEsqXKLJM
-         /OC9r+rGxNg3CrVvNZXLL9u6grmEUQc2o7HGwCfM=
+        b=CTw/jpw0lVdHPjti9FsvfuynE3CPKcpSHuBD1l9qJtUTiExRKVdHWrJ2OOzWKlWJD
+         avL0egjKyPjQBAROrR1yvOeN2QM8LJVLpXfXMzc71vnRmtYOs6bDPK/L0MIWqiq4vs
+         vdjc2XZORVru+BM81LQJc8d6RkRzxAbBskPN5gXw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
         Jiri Slaby <jslaby@suse.cz>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.19 71/98] x86/apic: Handle missing global clockevent gracefully
+Subject: [PATCH 4.14 45/62] x86/apic: Handle missing global clockevent gracefully
 Date:   Tue, 27 Aug 2019 09:50:50 +0200
-Message-Id: <20190827072721.984762949@linuxfoundation.org>
+Message-Id: <20190827072703.162640443@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
+In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
+References: <20190827072659.803647352@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -83,7 +83,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/arch/x86/kernel/apic/apic.c
 +++ b/arch/x86/kernel/apic/apic.c
-@@ -715,7 +715,7 @@ static __initdata unsigned long lapic_ca
+@@ -723,7 +723,7 @@ static __initdata unsigned long lapic_ca
  static __initdata unsigned long lapic_cal_j1, lapic_cal_j2;
  
  /*
@@ -92,7 +92,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
   */
  static void __init lapic_cal_handler(struct clock_event_device *dev)
  {
-@@ -799,7 +799,8 @@ calibrate_by_pmtimer(long deltapm, long
+@@ -807,7 +807,8 @@ calibrate_by_pmtimer(long deltapm, long
  static int __init calibrate_APIC_clock(void)
  {
  	struct clock_event_device *levt = this_cpu_ptr(&lapic_events);
@@ -102,7 +102,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	unsigned long deltaj;
  	long delta, deltatsc;
  	int pm_referenced = 0;
-@@ -830,29 +831,65 @@ static int __init calibrate_APIC_clock(v
+@@ -838,29 +839,65 @@ static int __init calibrate_APIC_clock(v
  	apic_printk(APIC_VERBOSE, "Using local APIC timer interrupts.\n"
  		    "calibrating APIC timer ...\n");
  
@@ -178,7 +178,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	/* Build delta t1-t2 as apic timer counts down */
  	delta = lapic_cal_t1 - lapic_cal_t2;
  	apic_printk(APIC_VERBOSE, "... lapic delta = %ld\n", delta);
-@@ -904,10 +941,11 @@ static int __init calibrate_APIC_clock(v
+@@ -912,10 +949,11 @@ static int __init calibrate_APIC_clock(v
  	levt->features &= ~CLOCK_EVT_FEAT_DUMMY;
  
  	/*
