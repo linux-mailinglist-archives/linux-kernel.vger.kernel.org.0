@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1E979E903
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D849E8FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbfH0NTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 09:19:06 -0400
+        id S1730159AbfH0NSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 09:18:45 -0400
 Received: from mail-eopbgr60138.outbound.protection.outlook.com ([40.107.6.138]:29946
         "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729810AbfH0NSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:18:41 -0400
+        id S1730102AbfH0NSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:18:43 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Sk2BtpmBv5OoSGBgbzQrZr/YEbteoaHoY8r+1JxXzhaM7C31aXGUM0j2M4tbh2MuWHkK+hYbLA/Cl1x73WYV1t0d//MiF9uCvrQdoigA6I/bILNcMkD5Ueer0YEvA6lDfCqyjyFnDDZas7WYKstBMCReyknGfeu7lDXmkywgP6LuOuz44uT5onldMM4hw8LbeAz9ZsNjjb5IE8GzAV6F52Y0obvvvJwoN6olVqG+5Ch/yA9Tay4CnZUpSVfPlokC1y/MTllOWSWwSaVPWTEFa/gAaBnnBYIHF9NqRRgFEwawq+zDDU7hszo9Vbw/DdEGCmdbtiIJjbU7lTodTm0u4g==
+ b=DiSu1ZOt0aoneEX8jbUaKfKlCKgCZxrEAvs00zTZZ6ogCqxf70oXKcedp2+dtAJPPFBVZgiIYEHy5ZO5PGeuPBF5qtVpBMZ9WBn0q6lsc503YezXIRPvCxh6xI8M4voEpJGfqmqQtuF+VPvC0Jfb00H/fwWc6DlCGeL5gTvFvxkIc21wScu9nxmN0gf7bsf+B96qC7JnlBEVai91CWJLKJzd/EOxiLcPdUCDnzWJGNa0Yff066DzWotWUUin/TLgvNLpb/eoCqLANom8PoktbfRd4HegrCQbRl0y57xUx5xMCwFPPqwKVU2LHCtY6fPH3tKObCcWr4MXJVt3oB/CGA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iF0vUPYDx6834cH7zlHc+B8vMi1IQkeBeWO+IsmhPPw=;
- b=BpzL8QAIGvPq+ycUjHiczZX4ISwCCi2CBO63SeAzWQ+kdhk/lx/KD2ITfyR2yt8Xb8eJLqQSDRQxlnpfhYqgzv0xkDQ6O4WBqGWw+Wdms84Pb7/X+QbANHFxvOgjT89hWEUjJ3uLgGg6Mr1DKZN9EOCe/VzVWsEv4LbEScdKfAp4Y6flBLMiei72YMC6c10m9A5Wy9W9ikLZJkFouGUnKNtSwU+tC7zUxzcWNmrLzeIad8uQY1HTRSV/l2OJmE37T9oZ/ZjBXtOoUKLMHcDtD5f+PKz1aaMcOboyktzBaEPfzm9iiWrHbr50Y1uBBfOMOFEfAdL9Tz+KXm0denp9SA==
+ bh=h7Zuy8caVejUd1TKmXB6UJ7ftoxgSyhXZB99usYxeQY=;
+ b=Z1vAC0jrIOADonffeSpbF/WpXttGUeeD1mbqoMa1aXB4TjlPKlNwY5A4ZeHt356PcJVOrQvAsCosCrOcWeUtHeeBIBYZfY8oxaLMrm7WF4Tkm9Gy1vGnkIkpqpIUIApYZJRrSne70tir6rGsiH4CqKHF+hRpMeVmvIt7N11cT849/y98Yaf92W7k5WrDU36jgr4j9b3Wb08rLVkKHUnTfjOyyBGrgaYfQ4iwp0kyFAyZLubVcuOcMcEkmrerlqXZePkTXpDJQSCL+CHo0hlMxI34ZSqLh4HLscPwjYKIJbQ+/pcOYGObq51FTKUdJU09WKFAQAzSJuyrd6kQBTrODg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=toradex.com; dmarc=pass action=none header.from=toradex.com;
  dkim=pass header.d=toradex.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=toradex.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iF0vUPYDx6834cH7zlHc+B8vMi1IQkeBeWO+IsmhPPw=;
- b=CF99QN/vFG7w4OamwBdzTbQXJf8VNZ7ofxEQwpQ6cPVo2fjzHHsLjvz1CqGf4ZZSZfSKXgXTytZ4DpfGtCA8j8L0prtUBX4t3+ZtMZlsrZFcHZ1g7d8sFbjO/XYtiT/8XKHglT3YkDuTgIEYqr3WiyBddckacyP7SBrOloOkJNw=
+ bh=h7Zuy8caVejUd1TKmXB6UJ7ftoxgSyhXZB99usYxeQY=;
+ b=cqm7FLG9XnhMdRQ4Yjk9VEfjmOH6KHd2fyjcYLVp1AAY3zK0gdPVFpuHZypEY8i3TLjG5EwPp7k1IBdnzcTybtnBgo1LMeUqfL8lDrJM/7i/cA6uvEmdkzHPHSvIE7eE7Xg3ew9r3YFP8OHdGL48pt2NAUJ3FzFCSbhyQ7z3R+M=
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com (52.134.17.157) by
  VI1PR0502MB3008.eurprd05.prod.outlook.com (10.172.255.143) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Tue, 27 Aug 2019 13:18:36 +0000
+ 15.20.2199.21; Tue, 27 Aug 2019 13:18:38 +0000
 Received: from VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::f59f:a307:9c53:63b9]) by VI1PR0502MB3965.eurprd05.prod.outlook.com
  ([fe80::f59f:a307:9c53:63b9%6]) with mapi id 15.20.2199.021; Tue, 27 Aug 2019
- 13:18:36 +0000
+ 13:18:38 +0000
 From:   Philippe Schenker <philippe.schenker@toradex.com>
 To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         Max Krummenacher <max.krummenacher@toradex.com>,
@@ -46,17 +46,18 @@ To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>,
         =?iso-8859-2?Q?Michal_Vok=E1=E8?= <michal.vokac@ysoft.com>,
         Fabio Estevam <festevam@gmail.com>
 CC:     Philippe Schenker <philippe.schenker@toradex.com>,
+        Oleksandr Suvorov <oleksandr.suvorov@toradex.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         Sascha Hauer <s.hauer@pengutronix.de>
-Subject: [PATCH v5 10/13] ARM: dts: imx6ull-colibri: Add watchdog
-Thread-Topic: [PATCH v5 10/13] ARM: dts: imx6ull-colibri: Add watchdog
-Thread-Index: AQHVXNnvIkDHPkM4fEe9n/ZzEOccfg==
-Date:   Tue, 27 Aug 2019 13:18:36 +0000
-Message-ID: <20190827131806.6816-11-philippe.schenker@toradex.com>
+Subject: [PATCH v5 11/13] ARM: dts: imx6ull: improve can templates
+Thread-Topic: [PATCH v5 11/13] ARM: dts: imx6ull: improve can templates
+Thread-Index: AQHVXNnwSzVNFthVukSntF0iDrSMvg==
+Date:   Tue, 27 Aug 2019 13:18:38 +0000
+Message-ID: <20190827131806.6816-12-philippe.schenker@toradex.com>
 References: <20190827131806.6816-1-philippe.schenker@toradex.com>
 In-Reply-To: <20190827131806.6816-1-philippe.schenker@toradex.com>
 Accept-Language: en-GB, en-US
@@ -72,83 +73,153 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.23.0
 x-originating-ip: [46.140.72.82]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: dff97774-933c-4923-868e-08d72af1115b
+x-ms-office365-filtering-correlation-id: cb1430dd-7084-4465-90a5-08d72af1127f
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:VI1PR0502MB3008;
 x-ms-traffictypediagnostic: VI1PR0502MB3008:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0502MB3008C8441614BD1C1EA02255F4A00@VI1PR0502MB3008.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-microsoft-antispam-prvs: <VI1PR0502MB3008E5201AEE1C944EFA59FAF4A00@VI1PR0502MB3008.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1417;
 x-forefront-prvs: 0142F22657
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(376002)(39850400004)(396003)(136003)(199004)(189003)(4326008)(256004)(36756003)(6512007)(86362001)(5660300002)(25786009)(66446008)(64756008)(66476007)(66556008)(1076003)(478600001)(66066001)(316002)(110136005)(53936002)(71200400001)(54906003)(71190400001)(7416002)(8936002)(8676002)(52116002)(76176011)(6116002)(6486002)(50226002)(3846002)(2906002)(66946007)(4744005)(99286004)(486006)(44832011)(2616005)(14454004)(305945005)(6506007)(386003)(186003)(7736002)(26005)(81156014)(81166006)(6436002)(476003)(11346002)(446003)(102836004)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB3008;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(376002)(39850400004)(396003)(136003)(199004)(189003)(4326008)(256004)(36756003)(6512007)(14444005)(86362001)(5660300002)(25786009)(66446008)(64756008)(66476007)(66556008)(1076003)(478600001)(66066001)(316002)(110136005)(53936002)(71200400001)(54906003)(71190400001)(7416002)(8936002)(8676002)(52116002)(76176011)(6116002)(6486002)(50226002)(3846002)(2906002)(66946007)(99286004)(486006)(44832011)(2616005)(14454004)(305945005)(6506007)(386003)(186003)(7736002)(26005)(81156014)(81166006)(6436002)(476003)(11346002)(446003)(102836004)(32563001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0502MB3008;H:VI1PR0502MB3965.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: toradex.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: QMdE00kSMHXNPJvi9Z614jWJ3iqdBDv4hzr7Mxjh/AiQucDd8708ZbrWmlVuKVZbp9fXuvLsVoEp+DMu+3XaF++iI1u6MIxCtzczDZ4y4EAg7GbID7KwFWWVNEaPspJippVkL55QOimOXLvR9UIFQGQUvC9e5z9kMjwaNHj32ySBWdFiyj9RePk1oHDXMDneKSUxkkhpXga493MjDzT51q2Ap5Qy+Fw7sf7TK9SLnm4jIwlhciqmL5QyiNqOY1AgdEHCWBd8YmzhOVPJSk/vQF/LANN3BL37uPTfoz/OGKAIFrZudYRC49V3TFjIjuAmdQqohUNpBSsBvIAxNkIlf5/dUMZMjx1aVa+8l7asBXLqJhc+uZpXHNFkS72LsMn1vdyetfLkp9JA7O/yz4rAVHBciA1R/ipUHVKBR5vmWL8=
+x-microsoft-antispam-message-info: RucAMYAzp0x4EMb0fQjEekTnMl1oPiwb31mrQATyYwBiKeW4vsJBEwpvooNZPaCXBgmijrUL3sMmfp5cT9H+vwVr3EHLWU5tgHjYh6AUIqJ1NwWj/1yaSgvmAcQA3WL95i4tHnfoXWVh2nwz7spUgtUSI/LUvu4mHH+VWnxIOijZfARJvuR54MVqBpzlujXzkpw00W2EtSLXKupn8BC4+Q8ggofXedCvITsVppKAbKlLzHMRLYWxkUWcYWxjlTqbFpd1T7KCVgNkAAWPmkjoY/QiXpPH1e6NUHauks3CbmIo+qiXoXqDcC48YARFWnocAzshijYmiApbqmXMI/dESsoXiDqcmytF0S4P66TEFNrvMTqSOYGVQ1S8/vLrE6Pad0u0Zy2Hg2qDDHYdLcT2bK00iAgr78o5pxn5wyT/du0=
 Content-Type: text/plain; charset="iso-8859-2"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: toradex.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dff97774-933c-4923-868e-08d72af1115b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2019 13:18:36.5279
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb1430dd-7084-4465-90a5-08d72af1127f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2019 13:18:38.4238
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: d9995866-0d9b-4251-8315-093f062abab4
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Toxhhlk0q8QkmsW4MwmIC3hFs16csH1w9Wujh93bRifuChYObcBLLiqlJm64P0wml9wh3I4UMKhdqGHVf1r05jXF3unzm4rlivXcJe5g26s=
+X-MS-Exchange-CrossTenant-userprincipalname: haIZTGwRzCRsoj90YVZT4v1hIfX/Rd1lXBUQuQUbKi87WyGlajcD32M2xcREcKyNVoAkUJacKh0hl2H88ArQIyYSahFPuzxJT+VBjwuP+Hg=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0502MB3008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the watchdog to the imx6ull-colibri devicetree
+From: Max Krummenacher <max.krummenacher@toradex.com>
 
+Add the pinmuxing and a inactive node for flexcan1 on SODIMM 55/63
+and move the inactive flexcan nodes to imx6ull-colibri-eval-v3.dtsi
+where they belong.
+
+Note that this commit does not enable flexcan functionality, but rather
+eases the effort needed to do so.
+
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-Acked-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Reviewed-by: Oleksandr Suvorov <oleksandr.suvorov@toradex.com>
 
 ---
 
-Changes in v5: None
+Changes in v5:
+- Added Olek's Reviewed-by
+
 Changes in v4:
-- Add Marcel Ziswiler's Ack
+- Move can nodes to module deviceteree include imx6ull-colibri.dtsi
 
 Changes in v3: None
 Changes in v2: None
 
- arch/arm/boot/dts/imx6ull-colibri.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../arm/boot/dts/imx6ull-colibri-nonwifi.dtsi |  2 +-
+ arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi   |  2 +-
+ arch/arm/boot/dts/imx6ull-colibri.dtsi        | 28 +++++++++++++++++--
+ 3 files changed, 28 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6ull-colibri.dtsi b/arch/arm/boot/dts/imx=
-6ull-colibri.dtsi
-index 1f112ec55e5c..e3220298dd6f 100644
---- a/arch/arm/boot/dts/imx6ull-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6ull-colibri.dtsi
-@@ -199,6 +199,12 @@
- 	assigned-clock-rates =3D <0>, <198000000>;
- };
-=20
-+&wdog1 {
-+	pinctrl-names =3D "default";
-+	pinctrl-0 =3D <&pinctrl_wdog>;
-+	fsl,ext-reset-output;
-+};
-+
+diff --git a/arch/arm/boot/dts/imx6ull-colibri-nonwifi.dtsi b/arch/arm/boot=
+/dts/imx6ull-colibri-nonwifi.dtsi
+index fb213bec4654..95a11b8bcbdb 100644
+--- a/arch/arm/boot/dts/imx6ull-colibri-nonwifi.dtsi
++++ b/arch/arm/boot/dts/imx6ull-colibri-nonwifi.dtsi
+@@ -15,7 +15,7 @@
  &iomuxc {
- 	pinctrl_can_int: canint-grp {
- 		fsl,pins =3D <
-@@ -506,6 +512,12 @@
- 			MX6UL_PAD_GPIO1_IO03__OSC32K_32K_OUT	0x14
- 		>;
- 	};
-+
-+	pinctrl_wdog: wdog-grp {
-+		fsl,pins =3D <
-+			MX6UL_PAD_LCD_RESET__WDOG1_WDOG_ANY    0x30b0
-+		>;
-+	};
+ 	pinctrl-names =3D "default";
+ 	pinctrl-0 =3D <&pinctrl_gpio1 &pinctrl_gpio2 &pinctrl_gpio3
+-		&pinctrl_gpio4 &pinctrl_gpio5 &pinctrl_gpio6>;
++		&pinctrl_gpio4 &pinctrl_gpio5 &pinctrl_gpio6 &pinctrl_gpio7>;
  };
 =20
  &iomuxc_snvs {
+diff --git a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi b/arch/arm/boot/dt=
+s/imx6ull-colibri-wifi.dtsi
+index 038d8c90f6df..a0545431b3dc 100644
+--- a/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
++++ b/arch/arm/boot/dts/imx6ull-colibri-wifi.dtsi
+@@ -26,7 +26,7 @@
+ &iomuxc {
+ 	pinctrl-names =3D "default";
+ 	pinctrl-0 =3D <&pinctrl_gpio1 &pinctrl_gpio2 &pinctrl_gpio3
+-		&pinctrl_gpio4 &pinctrl_gpio5>;
++		&pinctrl_gpio4 &pinctrl_gpio5 &pinctrl_gpio7>;
+=20
+ };
+=20
+diff --git a/arch/arm/boot/dts/imx6ull-colibri.dtsi b/arch/arm/boot/dts/imx=
+6ull-colibri.dtsi
+index e3220298dd6f..6d850d997e1e 100644
+--- a/arch/arm/boot/dts/imx6ull-colibri.dtsi
++++ b/arch/arm/boot/dts/imx6ull-colibri.dtsi
+@@ -54,6 +54,18 @@
+ 	vref-supply =3D <&reg_module_3v3_avdd>;
+ };
+=20
++&can1 {
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&pinctrl_flexcan1>;
++	status =3D "disabled";
++};
++
++&can2 {
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&pinctrl_flexcan2>;
++	status =3D "disabled";
++};
++
+ /* Colibri SPI */
+ &ecspi1 {
+ 	cs-gpios =3D <&gpio3 26 GPIO_ACTIVE_HIGH>;
+@@ -256,6 +268,13 @@
+ 		>;
+ 	};
+=20
++	pinctrl_flexcan1: flexcan1-grp {
++		fsl,pins =3D <
++			MX6UL_PAD_ENET1_RX_DATA0__FLEXCAN1_TX	0x1b020
++			MX6UL_PAD_ENET1_RX_DATA1__FLEXCAN1_RX	0x1b020
++		>;
++	};
++
+ 	pinctrl_flexcan2: flexcan2-grp {
+ 		fsl,pins =3D <
+ 			MX6UL_PAD_ENET1_TX_DATA0__FLEXCAN2_RX	0x1b020
+@@ -271,8 +290,6 @@
+=20
+ 	pinctrl_gpio1: gpio1-grp {
+ 		fsl,pins =3D <
+-			MX6UL_PAD_ENET1_RX_DATA0__GPIO2_IO00	0x74 /* SODIMM 55 */
+-			MX6UL_PAD_ENET1_RX_DATA1__GPIO2_IO01	0x74 /* SODIMM 63 */
+ 			MX6UL_PAD_UART3_RX_DATA__GPIO1_IO25	0X14 /* SODIMM 77 */
+ 			MX6UL_PAD_JTAG_TCK__GPIO1_IO14		0x14 /* SODIMM 99 */
+ 			MX6UL_PAD_NAND_CE1_B__GPIO4_IO14	0x14 /* SODIMM 133 */
+@@ -325,6 +342,13 @@
+ 		>;
+ 	};
+=20
++	pinctrl_gpio7: gpio7-grp { /* CAN1 */
++		fsl,pins =3D <
++			MX6UL_PAD_ENET1_RX_DATA0__GPIO2_IO00	0x74 /* SODIMM 55 */
++			MX6UL_PAD_ENET1_RX_DATA1__GPIO2_IO01	0x74 /* SODIMM 63 */
++		>;
++	};
++
+ 	pinctrl_gpmi_nand: gpmi-nand-grp {
+ 		fsl,pins =3D <
+ 			MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00	0x100a9
 --=20
 2.23.0
 
