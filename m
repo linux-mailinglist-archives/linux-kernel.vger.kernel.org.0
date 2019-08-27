@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5DE29E068
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7A09E06A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:05:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732258AbfH0IDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:03:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60828 "EHLO mail.kernel.org"
+        id S1732295AbfH0IDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:03:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731726AbfH0IDZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:03:25 -0400
+        id S1732262AbfH0IDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:03:31 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14BD22184D;
-        Tue, 27 Aug 2019 08:03:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC9752186A;
+        Tue, 27 Aug 2019 08:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566893004;
-        bh=CnW/99LHE16tUeRklnY6vzCDDEueF8ANJQvc04yPUk4=;
+        s=default; t=1566893010;
+        bh=Rlkn9OqUpPLD+i1nh7Rz33VsZWnKtp4NRAQDgHStGEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bcl41QsNSUklFqKdtIRFHG92JD1qxZqPG/m8dCG4IhYvkU5MSSjNgHnf/Rtg6lGY/
-         i46MwgzECcY8djArhM1yaPaFjHZCZwsne9dq/m9O9oxZPVL5F6cT0gZuaud3+lBZEO
-         soz3gfCA+Ny5zYl9jA+0z8e+mCecNRFI1VRNFSSE=
+        b=YyJAMZY87MQ1TwrpRMBhBRFthywY72LYIZAtMRY2c3NKAs7rz+hBmCPnuqzrGUy28
+         VSq2ySrovEnK3gJyttUyCdr1EVsDYmWIIqXmLDm7+vUQpuJAc5m5Nfd+z4owXvazfw
+         GcvB+uKjEI+d6EB3qKAFZiQeZM5DFYmCPCoegzbA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Andreas Krebbel <krebbel@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 087/162] s390: put _stext and _etext into .text section
-Date:   Tue, 27 Aug 2019 09:50:15 +0200
-Message-Id: <20190827072741.174759983@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 088/162] ata: rb532_cf: Fix unused variable warning in rb532_pata_driver_probe
+Date:   Tue, 27 Aug 2019 09:50:16 +0200
+Message-Id: <20190827072741.214929774@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -45,55 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 24350fdadbdec780406a1ef988e6cd3875e374a8 ]
+[ Upstream commit db341a049ec7e87053c91008cb452d0bfa6dde72 ]
 
-Perf relies on _etext and _stext symbols being one of 't', 'T', 'v' or
-'V'. Put them into .text section to guarantee that.
+Fix the following warning (Building: rb532_defconfig mips):
 
-Also moves padding to page boundary inside .text which has an effect that
-.text section is now padded with nops rather than 0's, which apparently
-has been the initial intention for specifying 0x0700 fill expression.
+drivers/ata/pata_rb532_cf.c: In function ‘rb532_pata_driver_remove’:
+drivers/ata/pata_rb532_cf.c:161:24: warning: unused variable ‘info’ [-Wunused-variable]
+  struct rb532_cf_info *info = ah->private_data;
+                        ^~~~
 
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Andreas Krebbel <krebbel@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Fixes: cd56f35e52d9 ("ata: rb532_cf: Convert to use GPIO descriptors")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/vmlinux.lds.S | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/ata/pata_rb532_cf.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/s390/kernel/vmlinux.lds.S b/arch/s390/kernel/vmlinux.lds.S
-index 49d55327de0bc..7e0eb40209177 100644
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -32,10 +32,9 @@ PHDRS {
- SECTIONS
+diff --git a/drivers/ata/pata_rb532_cf.c b/drivers/ata/pata_rb532_cf.c
+index 7c37f2ff09e41..deae466395de1 100644
+--- a/drivers/ata/pata_rb532_cf.c
++++ b/drivers/ata/pata_rb532_cf.c
+@@ -158,7 +158,6 @@ static int rb532_pata_driver_probe(struct platform_device *pdev)
+ static int rb532_pata_driver_remove(struct platform_device *pdev)
  {
- 	. = 0x100000;
--	_stext = .;		/* Start of text section */
- 	.text : {
--		/* Text and read-only data */
--		_text = .;
-+		_stext = .;		/* Start of text section */
-+		_text = .;		/* Text and read-only data */
- 		HEAD_TEXT
- 		TEXT_TEXT
- 		SCHED_TEXT
-@@ -47,11 +46,10 @@ SECTIONS
- 		*(.text.*_indirect_*)
- 		*(.fixup)
- 		*(.gnu.warning)
-+		. = ALIGN(PAGE_SIZE);
-+		_etext = .;		/* End of text section */
- 	} :text = 0x0700
+ 	struct ata_host *ah = platform_get_drvdata(pdev);
+-	struct rb532_cf_info *info = ah->private_data;
  
--	. = ALIGN(PAGE_SIZE);
--	_etext = .;		/* End of text section */
--
- 	NOTES :text :note
+ 	ata_host_detach(ah);
  
- 	.dummy : { *(.dummy) } :data
 -- 
 2.20.1
 
