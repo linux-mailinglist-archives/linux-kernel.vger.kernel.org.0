@@ -2,227 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B9709E271
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:27:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB6F79E29A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730670AbfH0I1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:27:12 -0400
-Received: from mga09.intel.com ([134.134.136.24]:53395 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730521AbfH0I1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:27:09 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 01:27:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,436,1559545200"; 
-   d="scan'208";a="331748558"
-Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
-  by orsmga004.jf.intel.com with ESMTP; 27 Aug 2019 01:27:06 -0700
-From:   "Ramuthevar,Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-To:     kishon@ti.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh@kernel.org, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        peter.harliman.liem@intel.com,
-        vadivel.muruganx.ramuthevar@linux.intel.com
-Subject: [PATCH v1 2/2] phy: intel-lgm-sdxc: Add support for SDXC PHY
-Date:   Tue, 27 Aug 2019 16:26:52 +0800
-Message-Id: <20190827082652.43840-3-vadivel.muruganx.ramuthevar@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190827082652.43840-1-vadivel.muruganx.ramuthevar@linux.intel.com>
-References: <20190827082652.43840-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+        id S1731106AbfH0I2U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:28:20 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54871 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728797AbfH0I2S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:28:18 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p74so2096520wme.4
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 01:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hZrYD1R7WJYiR8GAdiCixYS23KUbA9+GFETwSrbJeL8=;
+        b=t5KGUhPZLkVvcFpZDMvEFcvQma5D863plyvPgCxiVtdcxDRmBd4Nz1OrXzpNGG0R8/
+         MFZXwqbQnz796LbM5a8DtEE1aDcN7euRieWuXqbO1eLhOg4cQk0zYSbuTBvNiCAMFlf1
+         THeCSh+uXmtlmN4f5lEzvCe8BG/xMyfRlwSDgWSMag5936sChE8OEevKyKTxzDc3iKBm
+         z7vxw9QNrjzccnG510pJ7XJDJlOG0dWlQPPGha9O5Q2YojD8N66HXiu02jW0id3vD1Pn
+         +H6zlh48PLD47W2l2KHE21/MyN36i9gbkGMLQuh0fI03QTmYNyLma87YnRal8tLBI9JS
+         4zbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hZrYD1R7WJYiR8GAdiCixYS23KUbA9+GFETwSrbJeL8=;
+        b=DxdgoODhD8yJ+PNVgZr9dxXDk3JXyvXzGSkp87HjG4Bxh3YYDxHwECjghZyEVs2PJI
+         NV8YJBbCtuAlh+kslDQpZlE7lCN5C44H8I6MvS9m0cWAhjmm4GQdL9ico9VtEMw8ZxcP
+         j6sK6/MLOrv9mKwteDPXvALVdIOcw6XMWEUF+js9XOldnzdsBpgBx52j6kDLasWtfI8G
+         tl6NdydrG8ozigRsL6Dli1yjM6aD4yFegO4t4VnZeu2476vd7ueD0mvRGz6z+SGcAtrz
+         HNpyn5t86Xdxz8vbUwtip1/GFwqSBdOx5DDhNYq+2nbuXxYaUmyWVHXkeFI3MHoCCxpL
+         cy4w==
+X-Gm-Message-State: APjAAAWNSRW8l6HutllbCKHBvk8voGPZfEvUWGiWIIi3H8nl3TiS28+P
+        TzhZ8ChRwhB31o3hu0ozrVY0z4jYEhhQa4ddzqWv+w==
+X-Google-Smtp-Source: APXvYqxY0J8Ax38Avo2shgmLFhgtwVw+uCaxjl/QlygUY3apfuLflYNrzTOlavaJgzCjVsZ5B5W/9oYpQfx1G99l6Lk=
+X-Received: by 2002:a1c:3d89:: with SMTP id k131mr24819207wma.24.1566894494900;
+ Tue, 27 Aug 2019 01:28:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190826233256.32383-1-atish.patra@wdc.com> <20190826233256.32383-2-atish.patra@wdc.com>
+ <20190827075136.GC682@rapoport-lnx>
+In-Reply-To: <20190827075136.GC682@rapoport-lnx>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 27 Aug 2019 13:58:03 +0530
+Message-ID: <CAAhSdy0zOtHftesYW9uuM0gjsOcvyhfuBETbtKaR2Kc1-_sCAQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] RISC-V: Mark existing SBI as legacy SBI.
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alan Kao <alankao@andestech.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Gary Guo <gary@garyguo.net>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+On Tue, Aug 27, 2019 at 1:21 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Mon, Aug 26, 2019 at 04:32:55PM -0700, Atish Patra wrote:
+> > As per the new SBI specification, current SBI implementation is
+> > defined as legacy and will be removed/replaced in future.
+> >
+> > Rename existing implementation to reflect that. This patch is just
+> > a preparatory patch for SBI v0.2 and doesn't introduce any functional
+> > changes.
+> >
+> > Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> > ---
+> >  arch/riscv/include/asm/sbi.h | 61 +++++++++++++++++++-----------------
+> >  1 file changed, 33 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> > index 21134b3ef404..7f5ecaaaa0d7 100644
+> > --- a/arch/riscv/include/asm/sbi.h
+> > +++ b/arch/riscv/include/asm/sbi.h
+> > @@ -8,17 +8,18 @@
+> >
+> >  #include <linux/types.h>
+> >
+> > -#define SBI_SET_TIMER 0
+> > -#define SBI_CONSOLE_PUTCHAR 1
+> > -#define SBI_CONSOLE_GETCHAR 2
+> > -#define SBI_CLEAR_IPI 3
+> > -#define SBI_SEND_IPI 4
+> > -#define SBI_REMOTE_FENCE_I 5
+> > -#define SBI_REMOTE_SFENCE_VMA 6
+> > -#define SBI_REMOTE_SFENCE_VMA_ASID 7
+> > -#define SBI_SHUTDOWN 8
+> > -
+> > -#define SBI_CALL(which, arg0, arg1, arg2, arg3) ({           \
+> > +
+> > +#define SBI_EXT_LEGACY_SET_TIMER 0x0
+> > +#define SBI_EXT_LEGACY_CONSOLE_PUTCHAR 0x1
+> > +#define SBI_EXT_LEGACY_CONSOLE_GETCHAR 0x2
+> > +#define SBI_EXT_LEGACY_CLEAR_IPI 0x3
+> > +#define SBI_EXT_LEGACY_SEND_IPI 0x4
+> > +#define SBI_EXT_LEGACY_REMOTE_FENCE_I 0x5
+> > +#define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA 0x6
+> > +#define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA_ASID 0x7
+> > +#define SBI_EXT_LEGACY_SHUTDOWN 0x8
+>
+> I can't say I'm closely following RISC-V development, but what will happen
+> when SBI v0.3 will come out and will render v0.2 legacy?
+> Won't we need another similar renaming then?
 
-Add support for eMMC PHY on Intel's Lightning Mountain SoC.
+Going forward with SBI v0.3 and higher, we won't see any calling
+convention changes.
 
-Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
----
- drivers/phy/intel/Kconfig          |   6 ++
- drivers/phy/intel/Makefile         |   1 +
- drivers/phy/intel/phy-intel-sdxc.c | 144 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 151 insertions(+)
- create mode 100644 drivers/phy/intel/phy-intel-sdxc.c
+The SBI spec will be maintained and improved by RISC-V UNIX
+platform spec working group.
 
-diff --git a/drivers/phy/intel/Kconfig b/drivers/phy/intel/Kconfig
-index 4ea6a8897cd7..d6356c762a6b 100644
---- a/drivers/phy/intel/Kconfig
-+++ b/drivers/phy/intel/Kconfig
-@@ -7,3 +7,9 @@ config PHY_INTEL_EMMC
- 	select GENERIC_PHY
- 	help
- 	  Enable this to support the Intel EMMC PHY
-+
-+config PHY_INTEL_SDXC
-+       tristate "Intel SDXC PHY driver"
-+       select GENERIC_PHY
-+       help
-+         Enable this to support the Intel SDXC PHY driver
-diff --git a/drivers/phy/intel/Makefile b/drivers/phy/intel/Makefile
-index 6b876a75599d..3c6e7523200c 100644
---- a/drivers/phy/intel/Makefile
-+++ b/drivers/phy/intel/Makefile
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_PHY_INTEL_EMMC)            += phy-intel-emmc.o
-+obj-$(CONFIG_PHY_INTEL_SDXC)            += phy-intel-sdxc.o
-diff --git a/drivers/phy/intel/phy-intel-sdxc.c b/drivers/phy/intel/phy-intel-sdxc.c
-new file mode 100644
-index 000000000000..7e13fd9ced5b
---- /dev/null
-+++ b/drivers/phy/intel/phy-intel-sdxc.c
-@@ -0,0 +1,144 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Intel SDXC PHY driver
-+ * Copyright (C) 2019 Intel, Corp.
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+/* SDXC PHY register definitions */
-+#define SDXC_PHYCTRL_REG	0x88
-+#define OTAPDLYENA_MASK		BIT(14)
-+#define OTAPDLYSEL(x)		((x) << 10)
-+#define OTAPDLYSEL_ALL		OTAPDLYSEL(GENMASK(3, 0))
-+
-+struct intel_sdxc_phy {
-+	struct regmap *syscfg;
-+	struct clk *sdxcclk;
-+};
-+
-+static int intel_sdxc_phy_init(struct phy *phy)
-+{
-+	struct intel_sdxc_phy *priv = phy_get_drvdata(phy);
-+
-+	/*
-+	 * We purposely get the clock here and not in probe to avoid the
-+	 * circular dependency problem.  We expect:
-+	 * - PHY driver to probe
-+	 * - SDHCI driver to start probe
-+	 * - SDHCI driver to register it's clock
-+	 * - SDHCI driver to get the PHY
-+	 * - SDHCI driver to init the PHY
-+	 *
-+	 * The clock is optional, so upon any error just return it like
-+	 * any other error to user.
-+	 */
-+	priv->sdxcclk = clk_get_optional(&phy->dev, "sdxcclk");
-+	if (IS_ERR(priv->sdxcclk)) {
-+		dev_err(&phy->dev, "Error getting sdxcclk\n");
-+		return PTR_ERR(priv->sdxcclk);
-+	}
-+
-+	return 0;
-+}
-+
-+static int intel_sdxc_phy_exit(struct phy *phy)
-+{
-+	struct intel_sdxc_phy *priv = phy_get_drvdata(phy);
-+
-+	clk_put(priv->sdxcclk);
-+
-+	return 0;
-+}
-+
-+static int intel_sdxc_phy_power_on(struct phy *phy)
-+{
-+	struct intel_sdxc_phy *priv = phy_get_drvdata(phy);
-+
-+	/* Output tap delay: disable */
-+	regmap_update_bits(priv->syscfg, SDXC_PHYCTRL_REG, OTAPDLYENA_MASK, 0);
-+
-+	/* Output tap delay */
-+	regmap_update_bits(priv->syscfg, SDXC_PHYCTRL_REG, OTAPDLYSEL_ALL,
-+			   OTAPDLYSEL_ALL);
-+
-+	return 0;
-+}
-+
-+static int intel_sdxc_phy_power_off(struct phy *phy)
-+{
-+	/* Do nothing */
-+	return 0;
-+}
-+
-+static const struct phy_ops ops = {
-+	.init		= intel_sdxc_phy_init,
-+	.exit		= intel_sdxc_phy_exit,
-+	.power_on	= intel_sdxc_phy_power_on,
-+	.power_off	= intel_sdxc_phy_power_off,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static int intel_sdxc_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct intel_sdxc_phy *priv;
-+	struct phy *generic_phy;
-+	struct phy_provider *phy_provider;
-+
-+	if (!dev->parent || !dev->parent->of_node)
-+		return -ENODEV;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	/* Get SDXC phy (accessed via chiptop) regmap */
-+	priv->syscfg = syscon_regmap_lookup_by_phandle(dev->of_node,
-+						       "intel,syscon");
-+	if (IS_ERR(priv->syscfg)) {
-+		dev_err(dev, "No syscon phandle for chiptop\n");
-+		return PTR_ERR(priv->syscfg);
-+	}
-+
-+	generic_phy = devm_phy_create(dev, dev->of_node, &ops);
-+	if (IS_ERR(generic_phy)) {
-+		dev_err(dev, "failed to create PHY\n");
-+		return PTR_ERR(generic_phy);
-+	}
-+
-+	phy_set_drvdata(generic_phy, priv);
-+	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
-+
-+	return PTR_ERR_OR_ZERO(phy_provider);
-+}
-+
-+static const struct of_device_id intel_sdxc_phy_dt_ids[] = {
-+	{ .compatible = "intel,lgm-sdxc-phy" },
-+	{}
-+};
-+
-+MODULE_DEVICE_TABLE(of, intel_sdxc_phy_dt_ids);
-+
-+static struct platform_driver intel_sdxc_driver = {
-+	.probe		= intel_sdxc_phy_probe,
-+	.driver		= {
-+		.name	= "intel-sdxc-phy",
-+		.of_match_table = intel_sdxc_phy_dt_ids,
-+	},
-+};
-+
-+module_platform_driver(intel_sdxc_driver);
-+
-+MODULE_AUTHOR("Peter Harliman Liem <peter.harliman.liem@intel.com>");
-+MODULE_DESCRIPTION("Intel SDXC PHY driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.11.0
+My best guess is that, all future SBI releases (v0.3 or higher) will
+include more optional SBI extensions (hart hotplug, power management, etc).
 
+Regards,
+Anup
+
+>
+> > +#define SBI_CALL_LEGACY(which, arg0, arg1, arg2, arg3) ({             \
+> >       register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);   \
+> >       register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);   \
+> >       register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);   \
+> > @@ -32,58 +33,61 @@
+> >  })
+> >
+> >  /* Lazy implementations until SBI is finalized */
+> > -#define SBI_CALL_0(which) SBI_CALL(which, 0, 0, 0, 0)
+> > -#define SBI_CALL_1(which, arg0) SBI_CALL(which, arg0, 0, 0, 0)
+> > -#define SBI_CALL_2(which, arg0, arg1) SBI_CALL(which, arg0, arg1, 0, 0)
+> > -#define SBI_CALL_3(which, arg0, arg1, arg2) \
+> > -             SBI_CALL(which, arg0, arg1, arg2, 0)
+> > -#define SBI_CALL_4(which, arg0, arg1, arg2, arg3) \
+> > -             SBI_CALL(which, arg0, arg1, arg2, arg3)
+> > +#define SBI_CALL_LEGACY_0(which) SBI_CALL_LEGACY(which, 0, 0, 0, 0)
+> > +#define SBI_CALL_LEGACY_1(which, arg0) SBI_CALL_LEGACY(which, arg0, 0, 0, 0)
+> > +#define SBI_CALL_LEGACY_2(which, arg0, arg1) \
+> > +             SBI_CALL_LEGACY(which, arg0, arg1, 0, 0)
+> > +#define SBI_CALL_LEGACY_3(which, arg0, arg1, arg2) \
+> > +             SBI_CALL_LEGACY(which, arg0, arg1, arg2, 0)
+> > +#define SBI_CALL_LEGACY_4(which, arg0, arg1, arg2, arg3) \
+> > +             SBI_CALL_LEGACY(which, arg0, arg1, arg2, arg3)
+> >
+> >  static inline void sbi_console_putchar(int ch)
+> >  {
+> > -     SBI_CALL_1(SBI_CONSOLE_PUTCHAR, ch);
+> > +     SBI_CALL_LEGACY_1(SBI_EXT_LEGACY_CONSOLE_PUTCHAR, ch);
+> >  }
+> >
+> >  static inline int sbi_console_getchar(void)
+> >  {
+> > -     return SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+> > +     return SBI_CALL_LEGACY_0(SBI_EXT_LEGACY_CONSOLE_GETCHAR);
+> >  }
+> >
+> >  static inline void sbi_set_timer(uint64_t stime_value)
+> >  {
+> >  #if __riscv_xlen == 32
+> > -     SBI_CALL_2(SBI_SET_TIMER, stime_value, stime_value >> 32);
+> > +     SBI_CALL_LEGACY_2(SBI_EXT_LEGACY_SET_TIMER, stime_value,
+> > +                       stime_value >> 32);
+> >  #else
+> > -     SBI_CALL_1(SBI_SET_TIMER, stime_value);
+> > +     SBI_CALL_LEGACY_1(SBI_EXT_LEGACY_SET_TIMER, stime_value);
+> >  #endif
+> >  }
+> >
+> >  static inline void sbi_shutdown(void)
+> >  {
+> > -     SBI_CALL_0(SBI_SHUTDOWN);
+> > +     SBI_CALL_LEGACY_0(SBI_EXT_LEGACY_SHUTDOWN);
+> >  }
+> >
+> >  static inline void sbi_clear_ipi(void)
+> >  {
+> > -     SBI_CALL_0(SBI_CLEAR_IPI);
+> > +     SBI_CALL_LEGACY_0(SBI_EXT_LEGACY_CLEAR_IPI);
+> >  }
+> >
+> >  static inline void sbi_send_ipi(const unsigned long *hart_mask)
+> >  {
+> > -     SBI_CALL_1(SBI_SEND_IPI, hart_mask);
+> > +     SBI_CALL_LEGACY_1(SBI_EXT_LEGACY_SEND_IPI, hart_mask);
+> >  }
+> >
+> >  static inline void sbi_remote_fence_i(const unsigned long *hart_mask)
+> >  {
+> > -     SBI_CALL_1(SBI_REMOTE_FENCE_I, hart_mask);
+> > +     SBI_CALL_LEGACY_1(SBI_EXT_LEGACY_REMOTE_FENCE_I, hart_mask);
+> >  }
+> >
+> >  static inline void sbi_remote_sfence_vma(const unsigned long *hart_mask,
+> >                                        unsigned long start,
+> >                                        unsigned long size)
+> >  {
+> > -     SBI_CALL_3(SBI_REMOTE_SFENCE_VMA, hart_mask, start, size);
+> > +     SBI_CALL_LEGACY_3(SBI_EXT_LEGACY_REMOTE_SFENCE_VMA, hart_mask,
+> > +                       start, size);
+> >  }
+> >
+> >  static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+> > @@ -91,7 +95,8 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+> >                                             unsigned long size,
+> >                                             unsigned long asid)
+> >  {
+> > -     SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
+> > +     SBI_CALL_LEGACY_4(SBI_EXT_LEGACY_REMOTE_SFENCE_VMA_ASID, hart_mask,
+> > +                       start, size, asid);
+> >  }
+> >
+> >  #endif
+> > --
+> > 2.21.0
+> >
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
