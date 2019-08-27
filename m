@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 358559E115
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A4439E21D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:17:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732496AbfH0IJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:09:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34332 "EHLO mail.kernel.org"
+        id S1731137AbfH0IQx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:16:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729589AbfH0IEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:04:45 -0400
+        id S1725811AbfH0HxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:53:23 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88B55206BF;
-        Tue, 27 Aug 2019 08:04:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71CD3206BA;
+        Tue, 27 Aug 2019 07:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566893085;
-        bh=mGsmKSX+IlSa1ev9wq4Chj9N3qmg7Kpn0DmErXx39i4=;
+        s=default; t=1566892403;
+        bh=Jie4Z5NXgR+SZsUsabxqaQqBZME0D+RudUPlaEOqIY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wqJv62ukpiDOIPwEuBo1pWwl0Mq7llTFjmY6n+mIXclFZLw1Cp+H9qQj+kZsHWNPc
-         uLioUwrZTH3vnJbkT8B0nfLJuts9NdtZPCYOcGdMqGwPpPL2zrp9VtTZmJPZCgPZL7
-         Z4BPsVtlPvfdY83WzsQAvRkdKvKV94IlOvd7BlVA=
+        b=HJDLeGJ9vPvsM0M0kmxoLvzVNXFllYG1orTjOcbE79AkT6d/UU4rcTdgxwXlVRUaL
+         VJ+GUFuPmCO/zhQuqIm7zbSv92j6N+9kanjsFrPLFcyHwASuHtW727SH6teyxChIhD
+         n0EdQY64DvPSaKDUk8dxkpNs7Dpc2JhWJHqNAayc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Erqi Chen <chenerqi@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 5.2 116/162] ceph: clear page dirty before invalidate page
-Date:   Tue, 27 Aug 2019 09:50:44 +0200
-Message-Id: <20190827072742.457519086@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.14 42/62] gpiolib: never report open-drain/source lines as input to user-space
+Date:   Tue, 27 Aug 2019 09:50:47 +0200
+Message-Id: <20190827072703.032244937@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
-References: <20190827072738.093683223@linuxfoundation.org>
+In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
+References: <20190827072659.803647352@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Erqi Chen <chenerqi@gmail.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-commit c95f1c5f436badb9bb87e9b30fd573f6b3d59423 upstream.
+commit 2c60e6b5c9241b24b8b523fefd3e44fb85622cda upstream.
 
-clear_page_dirty_for_io(page) before mapping->a_ops->invalidatepage().
-invalidatepage() clears page's private flag, if dirty flag is not
-cleared, the page may cause BUG_ON failure in ceph_set_page_dirty().
+If the driver doesn't support open-drain/source config options, we
+emulate this behavior when setting the direction by calling
+gpiod_direction_input() if the default value is 0 (open-source) or
+1 (open-drain), thus not actively driving the line in those cases.
 
-Cc: stable@vger.kernel.org
-Link: https://tracker.ceph.com/issues/40862
-Signed-off-by: Erqi Chen <chenerqi@gmail.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+This however clears the FLAG_IS_OUT bit for the GPIO line descriptor
+and makes the LINEINFO ioctl() incorrectly report this line's mode as
+'input' to user-space.
+
+This commit modifies the ioctl() to always set the GPIOLINE_FLAG_IS_OUT
+bit in the lineinfo structure's flags field. Since it's impossible to
+use the input mode and open-drain/source options at the same time, we
+can be sure the reported information will be correct.
+
+Fixes: 521a2ad6f862 ("gpio: add userspace ABI for GPIO line information")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Link: https://lore.kernel.org/r/20190806114151.17652-1-brgl@bgdev.pl
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/addr.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -912,8 +912,9 @@ get_more_pages:
- 			if (page_offset(page) >= ceph_wbc.i_size) {
- 				dout("%p page eof %llu\n",
- 				     page, ceph_wbc.i_size);
--				if (ceph_wbc.size_stable ||
--				    page_offset(page) >= i_size_read(inode))
-+				if ((ceph_wbc.size_stable ||
-+				    page_offset(page) >= i_size_read(inode)) &&
-+				    clear_page_dirty_for_io(page))
- 					mapping->a_ops->invalidatepage(page,
- 								0, PAGE_SIZE);
- 				unlock_page(page);
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -971,9 +971,11 @@ static long gpio_ioctl(struct file *filp
+ 		if (test_bit(FLAG_ACTIVE_LOW, &desc->flags))
+ 			lineinfo.flags |= GPIOLINE_FLAG_ACTIVE_LOW;
+ 		if (test_bit(FLAG_OPEN_DRAIN, &desc->flags))
+-			lineinfo.flags |= GPIOLINE_FLAG_OPEN_DRAIN;
++			lineinfo.flags |= (GPIOLINE_FLAG_OPEN_DRAIN |
++					   GPIOLINE_FLAG_IS_OUT);
+ 		if (test_bit(FLAG_OPEN_SOURCE, &desc->flags))
+-			lineinfo.flags |= GPIOLINE_FLAG_OPEN_SOURCE;
++			lineinfo.flags |= (GPIOLINE_FLAG_OPEN_SOURCE |
++					   GPIOLINE_FLAG_IS_OUT);
+ 
+ 		if (copy_to_user(ip, &lineinfo, sizeof(lineinfo)))
+ 			return -EFAULT;
 
 
