@@ -2,102 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109AEA08A2
+	by mail.lfdr.de (Postfix) with ESMTP id E7131A08A5
 	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:36:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726985AbfH1Rg1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:36:27 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42092 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726887AbfH1RgZ (ORCPT
+        id S1727118AbfH1Rgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:36:35 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41800 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbfH1Rge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:36:25 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i30so235372pfk.9
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:24 -0700 (PDT)
+        Wed, 28 Aug 2019 13:36:34 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x15so96141pgg.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:36:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=b+nZcDmATIUXaC+MxWCK15FJhIvbY93mi0/z+AOlbws=;
-        b=SkVTkmMZ34QFhJ9x5Ip+Zoru+Cn2NCFv6G/wl3A2uakQYeESa6ywM95lIbWp5WSip3
-         O88WNt0acCkGbH0JYdZB7suod8oT/iIxPOlrk78/fLmgXVI5MqMgluvalZ5ehmsLBXTo
-         h8lnii+14xsUbvwCUg7NsvmutrPiETtxMU2es=
+        bh=y7AaO08GNeBs1I9FpBRTfd4SN2SpcypvdLrR4vqi9sI=;
+        b=KFgGwNZ7C9KzlJgrEoNn5Qccz43atu/G2HDVJ/8zRILoH/d4hSZ7kEC7mIaT4Tspt3
+         PMbyS1u6tK/7R6dTIU8xUzFoNnyOTmHn4pd9rLlw/eLTA4iPD8tSRZoHKi4AmMLF3Qqj
+         3p2aWfOGqOY4e910NMMC3GWYP4rVP3Usdsy0E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=b+nZcDmATIUXaC+MxWCK15FJhIvbY93mi0/z+AOlbws=;
-        b=YKKPpDFSNkJX8sJ6RkvZ+MIJisKF1VmO1OJjBe696uapIvMBcCWqxQ3rr4Hcdf1j3D
-         iz68kIqsiXhYtVEUl+qqQEiT/4wbIFgHAdghtGTzHVM2iapj0LnoBaQN0WTi+8vLwjmX
-         IdFfvH2nyRRwCevb+F/81PBVWUIiYvtw2WchFFIOd0Yv/we7A18pIifQp/mLJ1bV5OP3
-         QswIWwhgIzIrcjNpjI44FTOc5/oU5U+t/LOsldm8LXOrmlLNs3/qiHndgwgpjlz/EnWB
-         g5hfoDepfyou/H8yNOBX5TCUbcHccQ+aulcUxS8nuHUvi9kqzllSGaJiPqiaTjjxx7iJ
-         DwAQ==
-X-Gm-Message-State: APjAAAW227lLOiERdwZRmBeLDGzLApWkD8ov7iZ6IbjLt73XRU3D7AO3
-        5cSRCTZsEvECR2g6pftwmOIdrQ==
-X-Google-Smtp-Source: APXvYqwShiePGkdcfwoDRcKirKj6KnTdZut+/q6pByCMIH67Pdhni1n4s9cKRDL/kyWaPS6D+4m6RQ==
-X-Received: by 2002:a63:9e54:: with SMTP id r20mr4635504pgo.64.1567013784406;
-        Wed, 28 Aug 2019 10:36:24 -0700 (PDT)
+        bh=y7AaO08GNeBs1I9FpBRTfd4SN2SpcypvdLrR4vqi9sI=;
+        b=js5nRBnzrPEGu7WZ8pBrx4ZnXBSxJbIcdgRwojac5E1pkj8x4NO715rhAUrrp5uWdf
+         gtZlPMH+6OgTWFpC8ejLCJl8Pm2u4hbCAGBnRPBXlOQv9WpXPdhCkwhCGT33wJguF4YV
+         5q8GPY760m7nXYK3el6hLvLG++uptO9YqVjdjHpsByWgwlnIMYlSKXqW5AXaYBMrXoXl
+         IYefiRk6Ww/nRMyAI4GCBBpdRZt2gbxkorvVVuYQHIBtM+KzYXQjbfYIrwPGN8ccovln
+         g42hrg95nOOQbgsvua1gLvrhsb06zIM1MV1+rcfXFUs+geR9hCj/sDGO3LlnFpdg5Mia
+         Kgzg==
+X-Gm-Message-State: APjAAAVPviHEfa/kwBEhCwzYyXDEkzrQETSvxIoFe2VqWFP4WmILnt0l
+        ZOqdZ607pUSnnZ96urTIgWcpgA==
+X-Google-Smtp-Source: APXvYqwdSIUzbK+ujzl7lTqIrYLOBarMQnxoWqQZbPnCgRqhdxwopQiTozDRkFpmIqW7qRmrruCeTA==
+X-Received: by 2002:a63:4846:: with SMTP id x6mr4515289pgk.332.1567013793432;
+        Wed, 28 Aug 2019 10:36:33 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id j17sm3153701pff.50.2019.08.28.10.36.20
+        by smtp.gmail.com with ESMTPSA id a23sm3234684pfo.80.2019.08.28.10.36.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 10:36:20 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 10:49:34 -0700
+        Wed, 28 Aug 2019 10:36:29 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 10:51:59 -0700
 From:   Kees Cook <keescook@chromium.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Raul E Rangel <rrangel@chromium.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lkdtm/bugs: fix build error in lkdtm_EXHAUST_STACK
-Message-ID: <201908271048.A14E3F4C3@keescook>
-References: <20190827164414.122478-1-rrangel@chromium.org>
+To:     Will Deacon <will@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Jan Glauber <jglauber@marvell.com>
+Subject: Re: [PATCH v2 0/6] Rework REFCOUNT_FULL using atomic_fetch_*
+ operations
+Message-ID: <201908271051.5B9C9F25@keescook>
+References: <20190827163204.29903-1-will@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190827164414.122478-1-rrangel@chromium.org>
+In-Reply-To: <20190827163204.29903-1-will@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 10:44:13AM -0600, Raul E Rangel wrote:
-> Building an x86 64 bit kernel:
+On Tue, Aug 27, 2019 at 05:31:58PM +0100, Will Deacon wrote:
+> Hi all,
 > 
-> lkdtm/bugs.c:94:2: error: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Werror=format=]
->   pr_info("Calling function with %d frame size to depth %d ...\n",
->   ^
+> This is version two of the patches I previously posted here:
 > 
-> Fixes: 24cccab42c419 ("lkdtm/bugs: Adjust recursion test to avoid elision")
+>   https://lkml.kernel.org/r/20190802101000.12958-1-will@kernel.org
 > 
-> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> Changes since v1 include:
+> 
+>   * Avoid duplicate WARNs when incrementing from zero
+>   * Some crude lktdm perf results to motivate the change:
+> 
+>     # perf stat -r 3 -B -- echo {ATOMIC,REFCOUNT}_TIMING >/sys/kernel/debug/provoke-crash/DIRECT
+> 
+>     # arm64
+>     ATOMIC_TIMING:					46.50451 +- 0.00134 seconds time elapsed  ( +-  0.00% )
+>     REFCOUNT_TIMING (REFCOUNT_FULL, mainline):		77.57522 +- 0.00982 seconds time elapsed  ( +-  0.01% )
+>     REFCOUNT_TIMING (REFCOUNT_FULL, this series):	48.7181 +- 0.0256 seconds time elapsed  ( +-  0.05% )
+> 
+>     # x86
+>     ATOMIC_TIMING:					31.6225 +- 0.0776 seconds time elapsed  ( +-  0.25% )
+>     REFCOUNT_TIMING (!REFCOUNT_FULL, mainline/x86 asm): 31.6689 +- 0.0901 seconds time elapsed  ( +-  0.28% )
+>     REFCOUNT_TIMING (REFCOUNT_FULL, mainline):		53.203 +- 0.138 seconds time elapsed  ( +-  0.26% )
+>     REFCOUNT_TIMING (REFCOUNT_FULL, this series):	31.7408 +- 0.0486 seconds time elapsed  ( +-  0.15% )
 
-Ah yes; thanks! I should build with W=1 more often. :)
+Nice improvements! :) Please consider the series:
 
-Acked-by: Kees Cook <keescook@chromium.org>
-
-Greg, can you take this into drivers/misc please?
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -Kees
 
-> ---
 > 
->  drivers/misc/lkdtm/bugs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Cheers,
 > 
-> diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-> index 1606658b9b7e..bf945704f21a 100644
-> --- a/drivers/misc/lkdtm/bugs.c
-> +++ b/drivers/misc/lkdtm/bugs.c
-> @@ -91,7 +91,7 @@ void lkdtm_LOOP(void)
->  
->  void lkdtm_EXHAUST_STACK(void)
->  {
-> -	pr_info("Calling function with %d frame size to depth %d ...\n",
-> +	pr_info("Calling function with %lu frame size to depth %d ...\n",
->  		REC_STACK_SIZE, recur_count);
->  	recursive_loop(recur_count);
->  	pr_info("FAIL: survived without exhausting stack?!\n");
+> Will
+> 
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Elena Reshetova <elena.reshetova@intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Hanjun Guo <guohanjun@huawei.com>
+> Cc: Jan Glauber <jglauber@marvell.com>
+> 
+> --->8
+> 
+> Will Deacon (6):
+>   lib/refcount: Define constants for saturation and max refcount values
+>   lib/refcount: Ensure integer operands are treated as signed
+>   lib/refcount: Remove unused refcount_*_checked() variants
+>   lib/refcount: Move bulk of REFCOUNT_FULL implementation into header
+>   lib/refcount: Improve performance of generic REFCOUNT_FULL code
+>   lib/refcount: Consolidate REFCOUNT_{MAX,SATURATED} definitions
+> 
+>  drivers/misc/lkdtm/refcount.c |   8 --
+>  include/linux/refcount.h      | 236 +++++++++++++++++++++++++++++++++++++----
+>  lib/refcount.c                | 237 +-----------------------------------------
+>  3 files changed, 218 insertions(+), 263 deletions(-)
+> 
 > -- 
-> 2.23.0.187.g17f5b7556c-goog
+> 2.11.0
 > 
 
 -- 
