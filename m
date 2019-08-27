@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0691C9E1CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 348489E120
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730520AbfH0H4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:56:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48052 "EHLO mail.kernel.org"
+        id S1732277AbfH0IDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:03:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728972AbfH0H4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:56:08 -0400
+        id S1732238AbfH0ID2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:03:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C54F1206BA;
-        Tue, 27 Aug 2019 07:56:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE7D9206BA;
+        Tue, 27 Aug 2019 08:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892567;
-        bh=MUIcTWJ/nQc3kOxlYLVxWaob9x9FWvs1EU/9x9YOFck=;
+        s=default; t=1566893007;
+        bh=+iGOLvdZF5Oym6+p2UmvYlPOvV4U5PnhKP53laBujds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rSg5O4OWYADa0XYAArc25CaEorRJu7No8gda8y3w3aS3zb/qj8Pg22T7Q1pOeSTt8
-         lHJOpJGA1q9YWzQSmOPacEPI/s0PFzPMpwO5p228MBZ6K6Q2x3RCwz9fLFRrjDQJZP
-         eAKncRqaUSNcJFdSFjGb59+m2UrUnaywgGKdce3s=
+        b=F+nbnzG90WdK4KYOAbN0YSLscyXFdU14MVbwrhj6r6L29gtQbJ1cB54v9B6q0gect
+         e+gCrYjHS8aWd5gOu66pXj4puTYn/TAttpxCTKAckmP6ezBIyCO6Vhwg7BZAjR0mnZ
+         j3l3Vrk89R3oc/UmJxYWqYGgTrE8WvKh6zx7rLJI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Stephen Suryaputra <ssuryaextr@gmail.com>,
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 10/98] selftests: forwarding: gre_multipath: Fix flower filters
+Subject: [PATCH 5.2 061/162] enetc: Fix build error without PHYLIB
 Date:   Tue, 27 Aug 2019 09:49:49 +0200
-Message-Id: <20190827072718.711893415@linuxfoundation.org>
+Message-Id: <20190827072740.297237020@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
+In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
+References: <20190827072738.093683223@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,89 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1be79d89b7ae96e004911bd228ce8c2b5cc6415f ]
+[ Upstream commit 5f4e4203add2b860d2345312509a160f8292063b ]
 
-The TC filters used in the test do not work with veth devices because the
-outer Ethertype is 802.1Q and not IPv4. The test passes with mlxsw
-netdevs since the hardware always looks at "The first Ethertype that
-does not point to either: VLAN, CNTAG or configurable Ethertype".
+If PHYLIB is not set, build enetc will fails:
 
-Fix this by matching on the VLAN ID instead, but on the ingress side.
-The reason why this is not performed at egress is explained in the
-commit cited below.
+drivers/net/ethernet/freescale/enetc/enetc.o: In function `enetc_open':
+enetc.c: undefined reference to `phy_disconnect'
+enetc.c: undefined reference to `phy_start'
+drivers/net/ethernet/freescale/enetc/enetc.o: In function `enetc_close':
+enetc.c: undefined reference to `phy_stop'
+enetc.c: undefined reference to `phy_disconnect'
+drivers/net/ethernet/freescale/enetc/enetc_ethtool.o: undefined reference to `phy_ethtool_get_link_ksettings'
+drivers/net/ethernet/freescale/enetc/enetc_ethtool.o: undefined reference to `phy_ethtool_set_link_ksettings'
+drivers/net/ethernet/freescale/enetc/enetc_mdio.o: In function `enetc_mdio_probe':
+enetc_mdio.c: undefined reference to `mdiobus_alloc_size'
+enetc_mdio.c: undefined reference to `mdiobus_free'
 
-Fixes: 541ad323db3a ("selftests: forwarding: gre_multipath: Update next-hop statistics match criteria")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-by: Stephen Suryaputra <ssuryaextr@gmail.com>
-Tested-by: Stephen Suryaputra <ssuryaextr@gmail.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet drivers")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/net/forwarding/gre_multipath.sh | 24 +++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/freescale/enetc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/net/forwarding/gre_multipath.sh b/tools/testing/selftests/net/forwarding/gre_multipath.sh
-index 37d7297e1cf8a..a8d8e8b3dc819 100755
---- a/tools/testing/selftests/net/forwarding/gre_multipath.sh
-+++ b/tools/testing/selftests/net/forwarding/gre_multipath.sh
-@@ -93,18 +93,10 @@ sw1_create()
- 	ip route add vrf v$ol1 192.0.2.16/28 \
- 	   nexthop dev g1a \
- 	   nexthop dev g1b
--
--	tc qdisc add dev $ul1 clsact
--	tc filter add dev $ul1 egress pref 111 prot ipv4 \
--	   flower dst_ip 192.0.2.66 action pass
--	tc filter add dev $ul1 egress pref 222 prot ipv4 \
--	   flower dst_ip 192.0.2.82 action pass
- }
- 
- sw1_destroy()
- {
--	tc qdisc del dev $ul1 clsact
--
- 	ip route del vrf v$ol1 192.0.2.16/28
- 
- 	ip route del vrf v$ol1 192.0.2.82/32 via 192.0.2.146
-@@ -139,10 +131,18 @@ sw2_create()
- 	ip route add vrf v$ol2 192.0.2.0/28 \
- 	   nexthop dev g2a \
- 	   nexthop dev g2b
-+
-+	tc qdisc add dev $ul2 clsact
-+	tc filter add dev $ul2 ingress pref 111 prot 802.1Q \
-+	   flower vlan_id 111 action pass
-+	tc filter add dev $ul2 ingress pref 222 prot 802.1Q \
-+	   flower vlan_id 222 action pass
- }
- 
- sw2_destroy()
- {
-+	tc qdisc del dev $ul2 clsact
-+
- 	ip route del vrf v$ol2 192.0.2.0/28
- 
- 	ip route del vrf v$ol2 192.0.2.81/32 via 192.0.2.145
-@@ -215,15 +215,15 @@ multipath4_test()
- 	   nexthop dev g1a weight $weight1 \
- 	   nexthop dev g1b weight $weight2
- 
--	local t0_111=$(tc_rule_stats_get $ul1 111 egress)
--	local t0_222=$(tc_rule_stats_get $ul1 222 egress)
-+	local t0_111=$(tc_rule_stats_get $ul2 111 ingress)
-+	local t0_222=$(tc_rule_stats_get $ul2 222 ingress)
- 
- 	ip vrf exec v$h1 \
- 	   $MZ $h1 -q -p 64 -A 192.0.2.1 -B 192.0.2.18 \
- 	       -d 1msec -t udp "sp=1024,dp=0-32768"
- 
--	local t1_111=$(tc_rule_stats_get $ul1 111 egress)
--	local t1_222=$(tc_rule_stats_get $ul1 222 egress)
-+	local t1_111=$(tc_rule_stats_get $ul2 111 ingress)
-+	local t1_222=$(tc_rule_stats_get $ul2 222 ingress)
- 
- 	local d111=$((t1_111 - t0_111))
- 	local d222=$((t1_222 - t0_222))
+diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/ethernet/freescale/enetc/Kconfig
+index 8429f5c1d8106..8ac109e73a7bb 100644
+--- a/drivers/net/ethernet/freescale/enetc/Kconfig
++++ b/drivers/net/ethernet/freescale/enetc/Kconfig
+@@ -2,6 +2,7 @@
+ config FSL_ENETC
+ 	tristate "ENETC PF driver"
+ 	depends on PCI && PCI_MSI && (ARCH_LAYERSCAPE || COMPILE_TEST)
++	select PHYLIB
+ 	help
+ 	  This driver supports NXP ENETC gigabit ethernet controller PCIe
+ 	  physical function (PF) devices, managing ENETC Ports at a privileged
 -- 
 2.20.1
 
