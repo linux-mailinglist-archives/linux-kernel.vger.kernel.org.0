@@ -2,59 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCB2C9E8D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:14:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D7BD79E8E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:17:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbfH0NOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 09:14:05 -0400
-Received: from mga06.intel.com ([134.134.136.31]:16462 "EHLO mga06.intel.com"
+        id S1728702AbfH0NRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 09:17:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43176 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbfH0NOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:14:04 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 06:14:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
-   d="scan'208";a="180223331"
-Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.169])
-  by fmsmga008.fm.intel.com with ESMTP; 27 Aug 2019 06:14:01 -0700
-Date:   Tue, 27 Aug 2019 16:14:00 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
-Message-ID: <20190827131400.qchcwa2act24c47b@linux.intel.com>
-References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
+        id S1725920AbfH0NRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:17:32 -0400
+Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41C86206BF;
+        Tue, 27 Aug 2019 13:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566911851;
+        bh=gBY1Hf6Ol8oNw7i9sKfkkUV86Bt0XlKupuLcyhWkc3k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2Y8Lm6DjGIhFxEi+Vbcu4R56+GWnALp0VlF30VdY2vZHrCodSt4vuQgg3KuXml8gj
+         1kOWtaVaNjDjbvmjm0OaRVvQ1fuXAiVb4bfPiEtMR1jctZSl0kkljmcnVfGebTD3nZ
+         uRgUzmB9n0y4WJxgz1WA8rdzxJvjHD+BhAdhD7d0=
+Date:   Tue, 27 Aug 2019 15:17:28 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [patch V2 38/38] posix-cpu-timers: Utilize timerqueue for storage
+Message-ID: <20190827131727.GA25843@lenoir>
+References: <20190821190847.665673890@linutronix.de>
+ <20190821192922.835676817@linutronix.de>
+ <20190827004846.GM14309@lenoir>
+ <alpine.DEB.2.21.1908270807080.1939@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <alpine.DEB.2.21.1908270807080.1939@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
+On Tue, Aug 27, 2019 at 08:08:06AM +0200, Thomas Gleixner wrote:
+> On Tue, 27 Aug 2019, Frederic Weisbecker wrote:
 > 
-> The interrupt probing of the TPM TIS was broken since we are trying to
-> run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
+> > On Wed, Aug 21, 2019 at 09:09:25PM +0200, Thomas Gleixner wrote:
+> > >  /**
+> > > @@ -92,14 +130,10 @@ struct posix_cputimers {
+> > >  
+> > >  static inline void posix_cputimers_init(struct posix_cputimers *pct)
+> > >  {
+> > > -	pct->timers_active = 0;
+> > > -	pct->expiry_active = 0;
+> > 
+> > No more need to initialize these?
+> > 
+> > > +	memset(pct->bases, 0, sizeof(pct->bases));
 > 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> memset() does that IIRC :)
 
-Need these:
-
-Cc: linux-stable@vger.kernel.org
-Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-
-Thank you. I'll apply this to my tree.
-
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
-/Jarkko
+But those two fields aren't part of pct->bases, are they? :)
