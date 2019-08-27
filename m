@@ -2,72 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A27E9E70B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 13:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCBE49E713
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 13:54:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbfH0LuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 07:50:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43128 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726071AbfH0LuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 07:50:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A9FC3B01E;
-        Tue, 27 Aug 2019 11:50:15 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 13:50:14 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yafang Shao <laoar.shao@gmail.com>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
-        Adric Blake <promarbler14@gmail.com>,
+        id S1728870AbfH0LwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 07:52:00 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35774 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbfH0LwA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 07:52:00 -0400
+Received: by mail-io1-f67.google.com with SMTP id b10so36528497ioj.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 04:51:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PpAYaVqXIDzzWCYZGUrTDP575lSiv4NfiGUR8GS0TG4=;
+        b=S8Ra+hm/VktuuLKgmXx4Led4HSI634Wn+GEvQh1Ot6rcatTA2Y/lNWklJLiqI0P8Pt
+         6OqGGTKtYOiza2E6DKy1zWfQrnZyZBckWn57+KtTa7FXZugmLUD1NSsaEY28WF9jnf+u
+         YI07oKFCtQnfaYOmxVsmwtRfn2wttE1TyKmNRUs42e7y338D4atqXpOhzvQQ6+WjZOmN
+         wDfenOnM8zUKCRtRzzx+nU1iOUMoLtY27sIBfXsOS09D5fJkDzUipmkxzF/eX8Y51kwt
+         aR2//zKKXBf2DJVHcJCI7WM6DgqqrqEX+kGO2T4Q/vVxJnukkJRPxV33X0arScjPvN/i
+         9fPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PpAYaVqXIDzzWCYZGUrTDP575lSiv4NfiGUR8GS0TG4=;
+        b=myBm88WG4ojxrVobdcji+2596nEEFq65cfd1UcFggKDQ2VQoDGKZYOs04az2E9MfVy
+         oWNnHRVMyqL6zCZhF0hXnp5/sOoZo/ziV6CjXnnonrulEptlEpElTquBzsrat6/1PR4y
+         BTHgbZXIWsIKUdCkTTKmMDoBNUjuSpR0jszLz2TlWJyxVuwaiF7Gn0eXLc2gTiCNxCIm
+         JyfMTodcfB25kbiP0A7saHhjWHIGAKtyZMNhAsguFdqwrBDy54PZgcaPq4JrtSErWSNc
+         mhIytUNZjYkwlqbJaRJ3MZU/xLhVtAZPEWC8lIkwE+eaLZ5o1RE5sRSDgvRYdFCFdM6T
+         7I3A==
+X-Gm-Message-State: APjAAAU0eNQQv2BrlkOAZsacgIhT0q8wtelgV0jVZ7+j6tyqb3gJCBFa
+        erav0WXV1L5S+9yJ0y7E9BhjEtRU8ilKWMP2RVE=
+X-Google-Smtp-Source: APXvYqy4z6BwI8sXMDX6dDDYBASFKNHi7rHKynHJNOAjqWi131ChcpUvAK5PPT7mm0ZbhEe5qGwgD/G3K4PRdClYHp0=
+X-Received: by 2002:a02:495:: with SMTP id 143mr22026989jab.94.1566906719117;
+ Tue, 27 Aug 2019 04:51:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190824130516.2540-1-hdanton@sina.com>
+In-Reply-To: <20190824130516.2540-1-hdanton@sina.com>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Tue, 27 Aug 2019 19:51:23 +0800
+Message-ID: <CALOAHbAuY9BnpX6x4KSNURbzybjn5UdSNL7-1Li3R0HSQBqiGQ@mail.gmail.com>
+Subject: Re: WARNINGs in set_task_reclaim_state with memory cgroup
+ andfullmemory usage
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Adric Blake <promarbler14@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Kirill Tkhai <ktkhai@virtuozzo.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
         Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
         Mel Gorman <mgorman@techsingularity.net>,
         Linux MM <linux-mm@kvack.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: WARNINGs in set_task_reclaim_state with memory cgroup and full
- memory usage
-Message-ID: <20190827115014.GZ7538@dhcp22.suse.cz>
-References: <CAE1jjeePxYPvw1mw2B3v803xHVR_BNnz0hQUY_JDMN8ny29M6w@mail.gmail.com>
- <b9cd7603-2441-d351-156a-57d6c13b2c79@linux.alibaba.com>
- <20190826105521.GF7538@dhcp22.suse.cz>
- <20190827104313.GW7538@dhcp22.suse.cz>
- <CALOAHbBMWyPBw+Ciup4+YupbLrxcTW76w+Mfc-mGEm9kcWb8YQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALOAHbBMWyPBw+Ciup4+YupbLrxcTW76w+Mfc-mGEm9kcWb8YQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-08-19 19:43:49, Yafang Shao wrote:
-> On Tue, Aug 27, 2019 at 6:43 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > If there are no objection to the patch I will post it as a standalong
-> > one.
-> 
-> I have no objection to your patch. It could fix the issue.
-> 
-> I still think that it is not proper to use a new scan_control here as
-> it breaks the global reclaim context.
+On Sat, Aug 24, 2019 at 9:05 PM Hillf Danton <hdanton@sina.com> wrote:
 >
-> This context switch from global reclaim to memcg reclaim is very
-> subtle change to the subsequent processing, that may cause some
-> unexpected behavior.
+>
+> On Sat, 24 Aug 2019 16:15:38 +0800 Yafang Shao wrote:
+> >
+> > The memcg soft reclaim is called from kswapd reclam path and direct
+> > reclaim path,
+> > so why not pass the scan_control from the callsite in these two
+> > reclaim paths and use it in memcg soft reclaim ?
+> > Seems there's no specially reason that we must introduce a new
+> > scan_control here.
+> >
+> To protect memcg from being over reclaimed?
 
-Why would it break it? Could you be more specific please?
+Not only this, but also makes the reclaim path more clear.
 
-> Anyway, we can send this patch as a standalong one.
-> Feel free to add:
-> 
-> Acked-by: Yafang Shao <laoar.shao@gmail.com>
+> Victim memcg is selected one after another in a fair way, and punished
+> by reclaiming one memcg a round no more than nr_to_reclaim ==
+> SWAP_CLUSTER_MAX pages. And so is the flip-flop from global to memcg
+> reclaiming. We can see similar protection activities in
+> commit a394cb8ee632 ("memcg,vmscan: do not break out targeted reclaim
+> without reclaimed pages") and
+> commit 2bb0f34fe3c1 ("mm: vmscan: do not iterate all mem cgroups for
+> global direct reclaim").
+>
+> No preference seems in either way except for retaining
+> nr_to_reclaim == SWAP_CLUSTER_MAX and target_mem_cgroup == memcg.
 
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+Setting  target_mem_cgroup here may be a very subtle change for
+subsequent processing.
+Regarding retraining nr_to_reclaim == SWAP_CLUSTER_MAX, it may not
+proper for direct reclaim, that may cause some stall if we iterate all
+memcgs here.
+
+> >
+> > I have checked the hisotry why this order check is introduced here.
+> > The first commit is 4e41695356fb ("memory controller: soft limit
+> > reclaim on contention"),
+> > but it didn't explained why.
+> > At the first glance it is reasonable to remove it, but we should
+> > understand why it was introduced at the first place.
+>
+> Reclaiming order can not make much sense in soft-limit reclaiming
+> under the current protection.
+>
+> Thanks to Adric Blake again.
+>
+> Hillf
+>
