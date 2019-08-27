@@ -2,44 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 124119F39F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:58:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85A869F399
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:58:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731314AbfH0T6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 15:58:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48330 "EHLO
+        id S1731188AbfH0T54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 15:57:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47502 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729626AbfH0T6W (ORCPT
+        with ESMTP id S1728371AbfH0T54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 15:58:22 -0400
+        Tue, 27 Aug 2019 15:57:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=eh2Bqn1HU9pG1FKde+0Wh38v6oHDofMbM5lmPpHqqII=; b=sI9cXxqehsaw
-        AxbJ9fuuT1Q5bG4SlqBVghaPP6aeJvmfwNQ5MiO9QcyIxYUeXeiVxJehgqBJCHj3WLmr572oEpMh/
-        qGTTQMjolQITeQUt+fpPQsr/BaMapvi+hDVw/pxHwhGfPJf1DNjRcIhFgPgNs64Nuc6WhmAU2rRFT
-        QQ0OI=;
+        List-Archive; bh=hiTM/h3UDo2RxTy+m7KYf5j/nlyv0htQ/21oZRo3Z9I=; b=pQe7vBvnHfpn
+        AwQb6D5jZz9k4kbqYNKyadWJX8t6qmS3RSGXNo39M8X6jn4JezeuAVFtLrfR5YfClD0F4aOnzB6On
+        lODnhyGv7RdQ/T/57AGHI9o8O9ytHL5TWhd2SCtCapI5NG8zhf+AvHlQ4vX/cw3oRwasmEGPT1F5k
+        Uv2j8=;
 Received: from 188.28.18.107.threembb.co.uk ([188.28.18.107] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1i2hb8-0001BS-PI; Tue, 27 Aug 2019 19:57:47 +0000
+        id 1i2hb9-0001BV-86; Tue, 27 Aug 2019 19:57:47 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 50AB0D02CE9; Tue, 27 Aug 2019 20:57:44 +0100 (BST)
+        id 8D301D02CEC; Tue, 27 Aug 2019 20:57:44 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     alsa-devel@alsa-project.org, brian.austin@cirrus.com,
-        broonie@kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, Paul.Handrigan@cirrus.com,
-        perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: cs42xx8: Force suspend/resume during system suspend/resume" to the asoc tree
-In-Reply-To: <1566944026-18113-1-git-send-email-shengjiu.wang@nxp.com>
+To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Cc:     alsa-devel@alsa-project.org, Daniel Drake <drake@endlessm.com>,
+        David Yang <yangxiaohua@everest-semi.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: es8316: fix inverted L/R of headphone mixer volume" to the asoc tree
+In-Reply-To: <20190826153900.25969-2-katsuhiro@katsuster.net>
 X-Patchwork-Hint: ignore
-Message-Id: <20190827195744.50AB0D02CE9@fitzroy.sirena.org.uk>
+Message-Id: <20190827195744.8D301D02CEC@fitzroy.sirena.org.uk>
 Date:   Tue, 27 Aug 2019 20:57:44 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -48,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: cs42xx8: Force suspend/resume during system suspend/resume
+   ASoC: es8316: fix inverted L/R of headphone mixer volume
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -73,37 +72,35 @@ to this mail.
 Thanks,
 Mark
 
-From b429ca49406501e2c48c2a137eab12910c21ad0c Mon Sep 17 00:00:00 2001
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Tue, 27 Aug 2019 18:13:46 -0400
-Subject: [PATCH] ASoC: cs42xx8: Force suspend/resume during system
- suspend/resume
+From f6e77921969003eaf5dbae9c0b5feeb20c6caf50 Mon Sep 17 00:00:00 2001
+From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Date: Tue, 27 Aug 2019 00:39:00 +0900
+Subject: [PATCH] ASoC: es8316: fix inverted L/R of headphone mixer volume
 
-Use force_suspend/resume to make sure clocks are disabled/enabled
-accordingly during system suspend/resume.
+This patch fixes inverted Left-Right channel of headphone mixer
+volume by wrong shift_left, shift_right values.
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Link: https://lore.kernel.org/r/1566944026-18113-1-git-send-email-shengjiu.wang@nxp.com
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Reviewed-by: Daniel Drake <drake@endlessm.com>
+Link: https://lore.kernel.org/r/20190826153900.25969-2-katsuhiro@katsuster.net
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs42xx8.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/codecs/es8316.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/cs42xx8.c b/sound/soc/codecs/cs42xx8.c
-index 5b049fcdba20..94b1adb088fd 100644
---- a/sound/soc/codecs/cs42xx8.c
-+++ b/sound/soc/codecs/cs42xx8.c
-@@ -684,6 +684,8 @@ static int cs42xx8_runtime_suspend(struct device *dev)
- #endif
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index 96d04896193f..ed2959dbe1fb 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -92,7 +92,7 @@ static const struct snd_kcontrol_new es8316_snd_controls[] = {
+ 	SOC_DOUBLE_TLV("Headphone Playback Volume", ES8316_CPHP_ICAL_VOL,
+ 		       4, 0, 3, 1, hpout_vol_tlv),
+ 	SOC_DOUBLE_TLV("Headphone Mixer Volume", ES8316_HPMIX_VOL,
+-		       0, 4, 11, 0, hpmixer_gain_tlv),
++		       4, 0, 11, 0, hpmixer_gain_tlv),
  
- const struct dev_pm_ops cs42xx8_pm = {
-+	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
-+				pm_runtime_force_resume)
- 	SET_RUNTIME_PM_OPS(cs42xx8_runtime_suspend, cs42xx8_runtime_resume, NULL)
- };
- EXPORT_SYMBOL_GPL(cs42xx8_pm);
+ 	SOC_ENUM("Playback Polarity", dacpol),
+ 	SOC_DOUBLE_R_TLV("DAC Playback Volume", ES8316_DAC_VOLL,
 -- 
 2.20.1
 
