@@ -2,69 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEDE59F110
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:03:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D414B9F115
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbfH0RDX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 13:03:23 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:35855 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726871AbfH0RDX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 13:03:23 -0400
-Received: by mail-oi1-f193.google.com with SMTP id n1so15531476oic.3;
-        Tue, 27 Aug 2019 10:03:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=egAsBZONFtZF3S68zAxV8vWm95Rzuv+SSezbehwAtCw=;
-        b=DNIo5AA1232Lo4nU/yRAcPD+ay6etEH9XfCCx7hitSOqDSZbQk2PqDjrp2jqWSceHW
-         OhPoU9rcXRIOpwmZEmrYXPJNJOo8GMVW5aaxsIelInugao4FVaIIor1PoQLEH9AVYTxi
-         DL22iwQ6bt2+Y+23aniTZ7dPSDOIhea5He8K6VCTS8ThkLIs1MwyUDmy4jxM/8ScnRQ7
-         hcid3xrgcKeM2MsNZJeIWL53dELCmpo9Pt5W9EF+sz91bYfgEWjgFkm5XWQVOa0lVTg4
-         0uXBQvvWoNGOufd9+HAxdKnUGRgMfmHH6/Z3zgZLEV5mXQXVJYCjGZNXGYWV2cHwUKO6
-         syyQ==
-X-Gm-Message-State: APjAAAWo7iwow3m6kU16wDivroTejVhQbwKLh2uklgcr4ipfFJsvGVQk
-        4CqXieBpGsBi3OuRo3kGVg==
-X-Google-Smtp-Source: APXvYqyrU53AmLJ9RXIkWnzQsmP/nOlBksyu/9B33djgdkagficaUAD5K6LSF+6tYjKO/a4cSoIbMg==
-X-Received: by 2002:aca:b303:: with SMTP id c3mr16045895oif.95.1566925402020;
-        Tue, 27 Aug 2019 10:03:22 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s24sm4246237oic.22.2019.08.27.10.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 10:03:21 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 12:03:20 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] reset: dt-bindings: meson: update arb bindings for
- sm1
-Message-ID: <20190827170320.GA13577@bogus>
-References: <20190820094625.13455-1-jbrunet@baylibre.com>
- <20190820094625.13455-2-jbrunet@baylibre.com>
+        id S1730328AbfH0REt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 13:04:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47694 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727807AbfH0REt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 13:04:49 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 302982184D;
+        Tue, 27 Aug 2019 17:04:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566925488;
+        bh=XeUdz62QOCJpL9O1N11O4eJhz/7iILY7JLWPy9nGNRo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WuXkd4wEUqFBqeJj/V6ZjioNe1M9rL5cnJrGFU/7m31OcEWeb+k1i/SkBWbTWRTec
+         pym9Zae69TjiBa6itpx8NnNfXBipBt8PyxGCl7JVWBCs5BBnxokDf/wnDUxo3oSWPC
+         nFSnat0K5JQrZNeho8SPt2JvvHfTKQkzoOMPKiA4=
+Date:   Tue, 27 Aug 2019 19:04:46 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] uio: uio_pdrv_genirq: Make UIO name controllable
+ via DT node property
+Message-ID: <20190827170446.GA21369@kroah.com>
+References: <20190815212807.25058-1-daniel@zonque.org>
+ <3f65e92e-350e-d414-75c4-8680932b39d1@zonque.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190820094625.13455-2-jbrunet@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3f65e92e-350e-d414-75c4-8680932b39d1@zonque.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Aug 2019 11:46:24 +0200, Jerome Brunet wrote:
-> SM1 SoC family adds two new audio FIFOs with the related arb reset lines
+On Tue, Aug 27, 2019 at 06:07:04PM +0200, Daniel Mack wrote:
+> Hi Greg,
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  .../devicetree/bindings/reset/amlogic,meson-axg-audio-arb.txt  | 3 ++-
->  include/dt-bindings/reset/amlogic,meson-axg-audio-arb.h        | 2 ++
->  2 files changed, 4 insertions(+), 1 deletion(-)
+> On 15/8/2019 11:28 PM, Daniel Mack wrote:
+> > When probed via DT, the uio_pdrv_genirq driver currently uses the name
+> > of the node and exposes that as name of the UIO device to userspace.
+> > 
+> > This doesn't work for systems where multiple nodes with the same name
+> > (but different unit addresses) are present, or for systems where the
+> > node names are auto-generated by a third-party tool.
+> > 
+> > This patch adds the possibility to read the UIO name from the optional
+> > "linux,uio-name" property.
 > 
+> Any opinion on this one?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Sorry, it's in my "to review" queue, was traveling all last week and
+it's really big now :(
+
+it's not lost...
+
+greg k-h
