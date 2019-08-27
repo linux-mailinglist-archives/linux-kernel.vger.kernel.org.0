@@ -2,291 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC58D9F5B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:57:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F1B49F5A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:55:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfH0V5R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:57:17 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35060 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbfH0V5R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:57:17 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n4so217133pgv.2;
-        Tue, 27 Aug 2019 14:57:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Lu+dgyU+uL4vnyCGblRQjsuwttEqbZ012MXEJ+zZ9eE=;
-        b=T/mkd4pNvs/FTOOeVG3FIz4/9Z0VFW3UoYOEakFFfnThh4V6fLrI9MU0oSslZBYp1G
-         zSsGlT3pJYSwUPRsc7bIZXB2/1kTa/pM94MoVaPBII4Pe/k8B/9Yvb3qWXT4m2hq3O78
-         S9Z9ZPmv926mRPOSt4ei4yLOsce1+1HNbGhcYjKxpy3eeziPOa+P7ktgTedhROZkaebA
-         wkeqBu4fZ7HzJuoyijUzqCkB77KsrsGgJEW3rx/DQ55F6GP5yOz9DeI1/w7+8SSDlRti
-         aYwRrRSyIXcbsU9K63hstQ2hc1RncyyGks5tHhlz8govQO9+LvCcsoN/hddsSXvCwwI9
-         zO0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Lu+dgyU+uL4vnyCGblRQjsuwttEqbZ012MXEJ+zZ9eE=;
-        b=D5rSE/IawBbEwpiSvi03iHHbjqA4cprwMFnk0ljhsLgmOOpWgbg0AZPnD1PsYdbkpP
-         igsLgNZIXYGY+bAhhS+61zrqMelHeWjPBI4Z45G3xG3bsSFRMC23BtaYm7dlcmp6DrmY
-         nlAcsJbhoF4DzsYuPvvh0nl9uESkXWfZ50pRae8IcvCvD+SQnUgje+GClPmt1tYnarxr
-         3Us+pgASFn/Hr3/RwZDFcrWHQZyqjvOg1XdFeUl9zQlR9rk9ocd1ewgudoMzKL2qJl6l
-         +VO/fSQUZc/gLFkMyuRU0ey4xBhfw9uoX60tr/wU51MiU46ds0yfPrw5SDBmNdgtTe0V
-         eqHw==
-X-Gm-Message-State: APjAAAWoFjSVgzzEdHyjKU3zLk9bAK8FAOIRGK/aaHKgMVPWv/EmIKSs
-        BE6pmHfa9ztQ2/fZV1GS0TY=
-X-Google-Smtp-Source: APXvYqyzhtNn+QaLqNhkXToZp2ZkAmKjVCCHW0VJX+c/ublFoYb7mnS2kbxN1ZrZwzuTi2wblDHvtA==
-X-Received: by 2002:a17:90a:3b04:: with SMTP id d4mr944359pjc.80.1566943036326;
-        Tue, 27 Aug 2019 14:57:16 -0700 (PDT)
-Received: from localhost ([100.118.89.196])
-        by smtp.gmail.com with ESMTPSA id u16sm300869pgm.83.2019.08.27.14.57.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 14:57:15 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Bruce Wang <bzwang@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Allison Randal <allison@lohutok.net>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
-        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
-        GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 9/9] drm/msm/dpu: async commit support
-Date:   Tue, 27 Aug 2019 14:33:39 -0700
-Message-Id: <20190827213421.21917-10-robdclark@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190827213421.21917-1-robdclark@gmail.com>
-References: <20190827213421.21917-1-robdclark@gmail.com>
+        id S1726548AbfH0Vz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:55:56 -0400
+Received: from mga09.intel.com ([134.134.136.24]:27694 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725835AbfH0Vzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 17:55:55 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 14:55:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,438,1559545200"; 
+   d="scan'208";a="185426781"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga006.jf.intel.com with ESMTP; 27 Aug 2019 14:55:53 -0700
+Date:   Wed, 28 Aug 2019 05:38:29 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     gregkh@linuxfoundation.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, atull@kernel.org
+Subject: Re: [PATCH v5 3/9] fpga: dfl: afu: convert platform_driver to use
+ dev_groups
+Message-ID: <20190827213829.GA4237@hao-dev>
+References: <1565578204-13969-1-git-send-email-hao.wu@intel.com>
+ <1565578204-13969-4-git-send-email-hao.wu@intel.com>
+ <20190822150701.GB22556@archbox>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822150701.GB22556@archbox>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+On Thu, Aug 22, 2019 at 08:07:01AM -0700, Moritz Fischer wrote:
+> Hi Hao,
+> 
+> On Mon, Aug 12, 2019 at 10:49:58AM +0800, Wu Hao wrote:
+> > This patch takes advantage of driver core which helps to create
+> > and remove sysfs attribute files, so there is no need to register
+> > sysfs entries manually in dfl-afu platform river code.
+> Same nit: s/river/driver
+> > 
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> Acked-by: Moritz Fischer <mdf@kernel.org>
 
-In addition, moving to kms->flush_commit() lets us drop the only user
-of kms->commit().
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 13 ------
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  7 ++--
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  5 +++
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     | 46 +++++++++++----------
- drivers/gpu/drm/msm/msm_atomic.c            |  5 +--
- drivers/gpu/drm/msm/msm_kms.h               |  3 --
- 6 files changed, 34 insertions(+), 45 deletions(-)
+Hi Moritz
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 31debd31ab8c..f38a7d27a1c0 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -606,7 +606,6 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc)
- 	struct dpu_crtc *dpu_crtc = to_dpu_crtc(crtc);
- 	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
- 	struct dpu_crtc_state *cstate = to_dpu_crtc_state(crtc->state);
--	int ret;
- 
- 	/*
- 	 * If no mixers has been allocated in dpu_crtc_atomic_check(),
-@@ -626,17 +625,6 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc)
- 				  crtc->state->encoder_mask)
- 		dpu_encoder_prepare_for_kickoff(encoder);
- 
--	/* wait for previous frame_event_done completion */
--	DPU_ATRACE_BEGIN("wait_for_frame_done_event");
--	ret = _dpu_crtc_wait_for_frame_done(crtc);
--	DPU_ATRACE_END("wait_for_frame_done_event");
--	if (ret) {
--		DPU_ERROR("crtc%d wait for frame done failed;frame_pending%d\n",
--				crtc->base.id,
--				atomic_read(&dpu_crtc->frame_pending));
--		goto end;
--	}
--
- 	if (atomic_inc_return(&dpu_crtc->frame_pending) == 1) {
- 		/* acquire bandwidth and other resources */
- 		DPU_DEBUG("crtc%d first commit\n", crtc->base.id);
-@@ -650,7 +638,6 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc)
- 	drm_for_each_encoder_mask(encoder, crtc->dev, crtc->state->encoder_mask)
- 		dpu_encoder_kickoff(encoder);
- 
--end:
- 	reinit_completion(&dpu_crtc->frame_done_comp);
- 	DPU_ATRACE_END("crtc_commit");
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index ac2d534bf59e..3a69b93d8fb6 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -1678,8 +1678,7 @@ static u32 _dpu_encoder_calculate_linetime(struct dpu_encoder_virt *dpu_enc,
- 	return line_time;
- }
- 
--static int _dpu_encoder_wakeup_time(struct drm_encoder *drm_enc,
--		ktime_t *wakeup_time)
-+int dpu_encoder_vsync_time(struct drm_encoder *drm_enc, ktime_t *wakeup_time)
- {
- 	struct drm_display_mode *mode;
- 	struct dpu_encoder_virt *dpu_enc;
-@@ -1766,7 +1765,7 @@ static void dpu_encoder_vsync_event_work_handler(struct kthread_work *work)
- 		return;
- 	}
- 
--	if (_dpu_encoder_wakeup_time(&dpu_enc->base, &wakeup_time))
-+	if (dpu_encoder_vsync_time(&dpu_enc->base, &wakeup_time))
- 		return;
- 
- 	trace_dpu_enc_vsync_event_work(DRMID(&dpu_enc->base), wakeup_time);
-@@ -1840,7 +1839,7 @@ void dpu_encoder_kickoff(struct drm_encoder *drm_enc)
- 	}
- 
- 	if (dpu_enc->disp_info.intf_type == DRM_MODE_ENCODER_DSI &&
--			!_dpu_encoder_wakeup_time(drm_enc, &wakeup_time)) {
-+			!dpu_encoder_vsync_time(drm_enc, &wakeup_time)) {
- 		trace_dpu_enc_early_kickoff(DRMID(drm_enc),
- 					    ktime_to_ms(wakeup_time));
- 		mod_timer(&dpu_enc->vsync_event_timer,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-index 8465b37adf3b..b4913465e602 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-@@ -85,6 +85,11 @@ void dpu_encoder_trigger_kickoff_pending(struct drm_encoder *encoder);
-  */
- void dpu_encoder_kickoff(struct drm_encoder *encoder);
- 
-+/**
-+ * dpu_encoder_wakeup_time - get the time of the next vsync
-+ */
-+int dpu_encoder_vsync_time(struct drm_encoder *drm_enc, ktime_t *wakeup_time);
-+
- /**
-  * dpu_encoder_wait_for_event - Waits for encoder events
-  * @encoder:	encoder pointer
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index d54741f3ad9f..af41af1731c2 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -260,6 +260,20 @@ static void dpu_kms_disable_commit(struct msm_kms *kms)
- 	pm_runtime_put_sync(&dpu_kms->pdev->dev);
- }
- 
-+static ktime_t dpu_kms_vsync_time(struct msm_kms *kms, struct drm_crtc *crtc)
-+{
-+	struct drm_encoder *encoder;
-+
-+	drm_for_each_encoder_mask(encoder, crtc->dev, crtc->state->encoder_mask) {
-+		ktime_t vsync_time;
-+
-+		if (dpu_encoder_vsync_time(encoder, &vsync_time) == 0)
-+			return vsync_time;
-+	}
-+
-+	return ktime_get();
-+}
-+
- static void dpu_kms_prepare_commit(struct msm_kms *kms,
- 		struct drm_atomic_state *state)
- {
-@@ -291,7 +305,16 @@ static void dpu_kms_prepare_commit(struct msm_kms *kms,
- 
- static void dpu_kms_flush_commit(struct msm_kms *kms, unsigned crtc_mask)
- {
--	/* TODO */
-+	struct dpu_kms *dpu_kms = to_dpu_kms(kms);
-+	struct drm_crtc *crtc;
-+
-+	for_each_crtc_mask(dpu_kms->dev, crtc, crtc_mask) {
-+		if (!crtc->state->active)
-+			continue;
-+
-+		trace_dpu_kms_commit(DRMID(crtc));
-+		dpu_crtc_commit_kickoff(crtc);
-+	}
- }
- 
- /*
-@@ -314,25 +337,6 @@ void dpu_kms_encoder_enable(struct drm_encoder *encoder)
- 			continue;
- 
- 		trace_dpu_kms_enc_enable(DRMID(crtc));
--		dpu_crtc_commit_kickoff(crtc);
--	}
--}
--
--static void dpu_kms_commit(struct msm_kms *kms, struct drm_atomic_state *state)
--{
--	struct drm_crtc *crtc;
--	struct drm_crtc_state *crtc_state;
--	int i;
--
--	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
--		/* If modeset is required, kickoff is run in encoder_enable */
--		if (drm_atomic_crtc_needs_modeset(crtc_state))
--			continue;
--
--		if (crtc->state->active) {
--			trace_dpu_kms_commit(DRMID(crtc));
--			dpu_crtc_commit_kickoff(crtc);
--		}
- 	}
- }
- 
-@@ -693,9 +697,9 @@ static const struct msm_kms_funcs kms_funcs = {
- 	.irq             = dpu_irq,
- 	.enable_commit   = dpu_kms_enable_commit,
- 	.disable_commit  = dpu_kms_disable_commit,
-+	.vsync_time      = dpu_kms_vsync_time,
- 	.prepare_commit  = dpu_kms_prepare_commit,
- 	.flush_commit    = dpu_kms_flush_commit,
--	.commit          = dpu_kms_commit,
- 	.wait_flush      = dpu_kms_wait_flush,
- 	.complete_commit = dpu_kms_complete_commit,
- 	.enable_vblank   = dpu_kms_enable_vblank,
-diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-index de767a19e193..de167f0ddca5 100644
---- a/drivers/gpu/drm/msm/msm_atomic.c
-+++ b/drivers/gpu/drm/msm/msm_atomic.c
-@@ -212,10 +212,7 @@ void msm_atomic_commit_tail(struct drm_atomic_state *state)
- 	/*
- 	 * Flush hardware updates:
- 	 */
--	if (kms->funcs->commit) {
--		DRM_DEBUG_ATOMIC("triggering commit\n");
--		kms->funcs->commit(kms, state);
--	}
-+	DRM_DEBUG_ATOMIC("triggering commit\n");
- 	kms->funcs->flush_commit(kms, crtc_mask);
- 
- 	/*
-diff --git a/drivers/gpu/drm/msm/msm_kms.h b/drivers/gpu/drm/msm/msm_kms.h
-index 9a0236eb6487..c8cdf5763dd6 100644
---- a/drivers/gpu/drm/msm/msm_kms.h
-+++ b/drivers/gpu/drm/msm/msm_kms.h
-@@ -80,9 +80,6 @@ struct msm_kms_funcs {
- 	 */
- 	void (*flush_commit)(struct msm_kms *kms, unsigned crtc_mask);
- 
--	/* TODO remove ->commit(), use ->flush_commit() instead: */
--	void (*commit)(struct msm_kms *kms, struct drm_atomic_state *state);
--
- 	/**
- 	 * Wait for any in-progress flush to complete on the specified
- 	 * crtcs.  This should not block if there is no in-progress
--- 
-2.21.0
+Thanks a lot for the review. : )
 
+Have you got a chance to look into the other patches in this patchset?
+
+Thanks
+Hao
+
+> > ---
+> >  drivers/fpga/dfl-afu-main.c | 69 +++++++++++++++++++++++----------------------
+> >  1 file changed, 36 insertions(+), 33 deletions(-)
+> > 
+> > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
+> > index e50c45e..e955149 100644
+> > --- a/drivers/fpga/dfl-afu-main.c
+> > +++ b/drivers/fpga/dfl-afu-main.c
+> > @@ -282,24 +282,17 @@ static int port_get_id(struct platform_device *pdev)
+> >  	&dev_attr_power_state.attr,
+> >  	NULL,
+> >  };
+> > -ATTRIBUTE_GROUPS(port_hdr);
+> > +
+> > +static const struct attribute_group port_hdr_group = {
+> > +	.attrs = port_hdr_attrs,
+> > +};
+> >  
+> >  static int port_hdr_init(struct platform_device *pdev,
+> >  			 struct dfl_feature *feature)
+> >  {
+> > -	dev_dbg(&pdev->dev, "PORT HDR Init.\n");
+> > -
+> >  	port_reset(pdev);
+> >  
+> > -	return device_add_groups(&pdev->dev, port_hdr_groups);
+> > -}
+> > -
+> > -static void port_hdr_uinit(struct platform_device *pdev,
+> > -			   struct dfl_feature *feature)
+> > -{
+> > -	dev_dbg(&pdev->dev, "PORT HDR UInit.\n");
+> > -
+> > -	device_remove_groups(&pdev->dev, port_hdr_groups);
+> > +	return 0;
+> >  }
+> >  
+> >  static long
+> > @@ -330,7 +323,6 @@ static void port_hdr_uinit(struct platform_device *pdev,
+> >  
+> >  static const struct dfl_feature_ops port_hdr_ops = {
+> >  	.init = port_hdr_init,
+> > -	.uinit = port_hdr_uinit,
+> >  	.ioctl = port_hdr_ioctl,
+> >  };
+> >  
+> > @@ -361,32 +353,37 @@ static void port_hdr_uinit(struct platform_device *pdev,
+> >  	&dev_attr_afu_id.attr,
+> >  	NULL
+> >  };
+> > -ATTRIBUTE_GROUPS(port_afu);
+> >  
+> > -static int port_afu_init(struct platform_device *pdev,
+> > -			 struct dfl_feature *feature)
+> > +static umode_t port_afu_attrs_visible(struct kobject *kobj,
+> > +				      struct attribute *attr, int n)
+> >  {
+> > -	struct resource *res = &pdev->resource[feature->resource_index];
+> > -	int ret;
+> > -
+> > -	dev_dbg(&pdev->dev, "PORT AFU Init.\n");
+> > +	struct device *dev = kobj_to_dev(kobj);
+> >  
+> > -	ret = afu_mmio_region_add(dev_get_platdata(&pdev->dev),
+> > -				  DFL_PORT_REGION_INDEX_AFU, resource_size(res),
+> > -				  res->start, DFL_PORT_REGION_READ |
+> > -				  DFL_PORT_REGION_WRITE | DFL_PORT_REGION_MMAP);
+> > -	if (ret)
+> > -		return ret;
+> > +	/*
+> > +	 * sysfs entries are visible only if related private feature is
+> > +	 * enumerated.
+> > +	 */
+> > +	if (!dfl_get_feature_by_id(dev, PORT_FEATURE_ID_AFU))
+> > +		return 0;
+> >  
+> > -	return device_add_groups(&pdev->dev, port_afu_groups);
+> > +	return attr->mode;
+> >  }
+> >  
+> > -static void port_afu_uinit(struct platform_device *pdev,
+> > -			   struct dfl_feature *feature)
+> > +static const struct attribute_group port_afu_group = {
+> > +	.attrs      = port_afu_attrs,
+> > +	.is_visible = port_afu_attrs_visible,
+> > +};
+> > +
+> > +static int port_afu_init(struct platform_device *pdev,
+> > +			 struct dfl_feature *feature)
+> >  {
+> > -	dev_dbg(&pdev->dev, "PORT AFU UInit.\n");
+> Thanks.
+> > +	struct resource *res = &pdev->resource[feature->resource_index];
+> >  
+> > -	device_remove_groups(&pdev->dev, port_afu_groups);
+> > +	return afu_mmio_region_add(dev_get_platdata(&pdev->dev),
+> > +				   DFL_PORT_REGION_INDEX_AFU,
+> > +				   resource_size(res), res->start,
+> > +				   DFL_PORT_REGION_MMAP | DFL_PORT_REGION_READ |
+> > +				   DFL_PORT_REGION_WRITE);
+> >  }
+> >  
+> >  static const struct dfl_feature_id port_afu_id_table[] = {
+> > @@ -396,7 +393,6 @@ static void port_afu_uinit(struct platform_device *pdev,
+> >  
+> >  static const struct dfl_feature_ops port_afu_ops = {
+> >  	.init = port_afu_init,
+> > -	.uinit = port_afu_uinit,
+> >  };
+> >  
+> >  static struct dfl_feature_driver port_feature_drvs[] = {
+> > @@ -748,9 +744,16 @@ static int afu_remove(struct platform_device *pdev)
+> >  	return 0;
+> >  }
+> >  
+> > +static const struct attribute_group *afu_dev_groups[] = {
+> > +	&port_hdr_group,
+> > +	&port_afu_group,
+> > +	NULL
+> > +};
+> > +
+> >  static struct platform_driver afu_driver = {
+> >  	.driver	= {
+> > -		.name    = DFL_FPGA_FEATURE_DEV_PORT,
+> > +		.name	    = DFL_FPGA_FEATURE_DEV_PORT,
+> > +		.dev_groups = afu_dev_groups,
+> >  	},
+> >  	.probe   = afu_probe,
+> >  	.remove  = afu_remove,
+> > -- 
+> > 1.8.3.1
+> > 
+> 
+> Thanks,
+> Moritz
