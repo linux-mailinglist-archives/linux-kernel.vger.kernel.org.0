@@ -2,142 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0ABB9F51B
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 217D29F528
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:36:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730585AbfH0VdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:33:22 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37961 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730376AbfH0VdW (ORCPT
+        id S1730764AbfH0Vgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:36:44 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38004 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfH0Vgo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:33:22 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e16so287947wro.5;
-        Tue, 27 Aug 2019 14:33:19 -0700 (PDT)
+        Tue, 27 Aug 2019 17:36:44 -0400
+Received: by mail-pl1-f195.google.com with SMTP id w11so177154plp.5;
+        Tue, 27 Aug 2019 14:36:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=z356aK2/lAzZKCmGQJjJzdiM5ec3u7ANYqOzPKe5V8g=;
-        b=CuhOWyQAXJugdWMnYzI1ocRXhfE1axC4AOpdQ9efS0uFwO/gXmYnBB5vKO26hfRmca
-         caaJboJVrYcPYx/1wkTXF2oYtcovqJlJmlzLW3dLtCdMjGn4pPBwX4MlWjs40K0R0OkU
-         PqXQAWPTu79OzEns3jnJ2No0zLlhMxmVsoc6uACzamD9CoiIZVoscjU7cwxgqmfjL9u5
-         gdeP7VnktbyRGNPF1cpj8Ymj7xRX4SkcIRuyJDmr1LZ9W4GcayUPbtst6uZ1W2ovmQ/f
-         TRU74QS5LjcHpTrN1OgP64ryg1y7l/DTSGWMkNpoJV8tAGWx7RqDUaX2RKhWAE3E7Zqy
-         pwGw==
+        bh=k+0AUBxbU6JVGwde8Yye0R2BikQpnByAsWECQmXnXdg=;
+        b=ORQG6ecUUO5DHHrbAG09EZHk4pcKZezQuBxRAF+KWI2FGlRh5SpcXahV1RvNmYAeFl
+         dn1epk7Ea0CJf26fKzI/BP5wzDexaa4K9aOFA2nGh98/oHHeHJf25lame43eyEgYOtNN
+         PIexZfo4kWgQrIKgGV1PspZOBb53LpAoG5aO/wAbEqfUlEbIIcfTyK8+a52s3lXPXjbO
+         bqeoqBQbMSkDMQoua45nrrUo0S9OSEBLwN9uRyZ0Zn505CbC+8+vogDtWZSCTTM6tahU
+         7w9X76M1Jwnevb1HG3vcL5+/WlcOoFvyZAUVDkTldSvpT5s3xzipcHNQFsWS+KJTHJg8
+         7RxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=z356aK2/lAzZKCmGQJjJzdiM5ec3u7ANYqOzPKe5V8g=;
-        b=aKzIzJIsHusF7QTkRVslt1chcuD1LNhSuRuTlvwFOKsh8UvEfoFB4bn9Z3j6OZ9+Yq
-         WKvZUy8sMxxTentpHAT71N/bAzAxjeR4lqeAL2mu9HbhsK5+8AGc7j7GUns9y1ioSKZw
-         4rnjqRBMPnGVOyQSm/+oox4yIEQvyEkeb6ZrSw7T3L6SZ/mCJZVjbvUQ85gdlsKz9Xgy
-         AiY/DUFJXbyHDNbobxGt7zFueRl8WJFrbc7A7fN5od/8t7t58ECFZCfZiuQZTZGYBygj
-         sOZHh5VHqaE4B9yRxz9X8Uc8ngURbzrCR98fbR+b5h83nTdk8cmuHFQVZ0zJkam82C5I
-         JfhA==
-X-Gm-Message-State: APjAAAXKt8bmhplgLB8Pk0Yh7BXi/7UWwJCv5MLRgoLJDTg6VEhy2PoT
-        9BSG6esDGwuv1Ctb21Ha2sCgzPJz
-X-Google-Smtp-Source: APXvYqziXkEEN1TeAMUswWsKkrW5+X6qGZdd8ZFAIFhqDbw6sLozbyZujTUpB0QkfbxTFiwtKvn4TQ==
-X-Received: by 2002:a05:6000:118a:: with SMTP id g10mr240736wrx.175.1566941598666;
-        Tue, 27 Aug 2019 14:33:18 -0700 (PDT)
-Received: from [192.168.1.19] (ckl27.neoplus.adsl.tpnet.pl. [83.31.87.27])
-        by smtp.gmail.com with ESMTPSA id e11sm734332wrc.4.2019.08.27.14.33.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 14:33:17 -0700 (PDT)
-Subject: Re: [PATCH v3 2/5] leds: lm3532: Change the define for the fs current
- register
-To:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>
-Cc:     tony@atomide.com, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190820195307.27590-1-dmurphy@ti.com>
- <20190820195307.27590-2-dmurphy@ti.com> <20190825093227.GC1644@amd>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <661a6df1-151c-b11b-6bfb-afd5dea6ca64@gmail.com>
-Date:   Tue, 27 Aug 2019 23:33:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k+0AUBxbU6JVGwde8Yye0R2BikQpnByAsWECQmXnXdg=;
+        b=qXi+GXrAjDzkXj4Cs2mEXLhVbEu6aA+a0HOMfDujGMvZfJT/pJ0mbUix8ub0BYYD1E
+         O8BdZ0hddJmOMZha3xxAbXcwavXgAbrfubp99BEo6+tKw3lTdU8PMZYvxw8vj/CSgJcu
+         Lx6NkVMwO7vFgEc4/HmEruWuNuzpnxXHR865ycCYd3mNEnee0sCqLZGjgV4HviyS+CHq
+         Y6JY3T3H6MODeUiVa9gXHnfumkOax7G/QtFNSACEjvA6RHmXd7i8pM+1UgQV0GdLk14Y
+         9R6G020UCA1nCgjf1rzcvng8Jz3R9CDYVxlUD19hAWYGl2t8I7cxJePhEVnKghS0kEXa
+         o9HA==
+X-Gm-Message-State: APjAAAV1MZR701VbQHO1saODfUMPhCDk/PA1q4X3y3kSF7uec0yLGQIj
+        KEGAbo2nLn4d/we+7QkUfn4=
+X-Google-Smtp-Source: APXvYqy07weBiz46/PfoQJBr6AVmaA4u5nf1lNwSBxa3zqpE7lPXtS1ZoG1ndxvssYCOXXhfmOjHoQ==
+X-Received: by 2002:a17:902:f01:: with SMTP id 1mr981614ply.337.1566941803570;
+        Tue, 27 Aug 2019 14:36:43 -0700 (PDT)
+Received: from localhost ([100.118.89.196])
+        by smtp.gmail.com with ESMTPSA id b126sm275451pfa.177.2019.08.27.14.36.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 14:36:42 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Bruce Wang <bzwang@chromium.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Enrico Weigelt <info@metux.net>,
+        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU), Fritz Koenig <frkoenig@google.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
+        linux-kernel@vger.kernel.org (open list),
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 0/9] drm/msm: async commit support
+Date:   Tue, 27 Aug 2019 14:33:30 -0700
+Message-Id: <20190827213421.21917-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190825093227.GC1644@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/25/19 11:32 AM, Pavel Machek wrote:
-> On Tue 2019-08-20 14:53:04, Dan Murphy wrote:
->> Change the define name of the full scale current registers.
->>
->> Signed-off-by: Dan Murphy <dmurphy@ti.com>
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> 
+From: Rob Clark <robdclark@chromium.org>
 
-Thanks, applied.
+Currently the dpu backend attempts to handle async commits.  But it
+is racey and could result in flushing multiple times in a frame, or
+modifying hw state (such as scanout address or cursor position) after
+the previous flush, but before vblank, causing underflows (which
+manifest as brief black flashes).
+
+This patchset removes the previous dpu async commit handling, and
+reworks the internal kms backend API to decouple flushing.  And in
+the end introduces an hrtimer to flush async updates.  The overall
+approach is:
+
+ 1) Move flushing various hw state out of encoder/crtc atomic commit
+    (which is anyways an improvement over the current state, where
+    we either flush from crtc or encoder, depending on whether it is
+    a full modeset)
+
+ 2) Switch to crtc_mask for anything that completes after atomic
+    _commit_tail(), so we do not need to keep the atomic state
+    around.  Ie. from drm core's perspective, an async commit
+    completes immediately.
+
+    This avoids fighting with drm core about the lifecycle of an
+    atomic state object.
+
+ 3) Track a bitmask of crtcs w/ pending async flush, and setup
+    an hrtimer with expiration 1ms before vblank, to trigger
+    the flush.  For async commits, we push the state down to
+    the double buffered hw registers immediately, and only
+    defer writing the flush registers.
+
+Current patchset only includes the dpu backend support for async
+commits.. mdp4 and mdp5 should be relatively trivial (less layers
+of indirection involved).  But I won't have access to any mdp4 hw
+for a few more weeks, so at least that part I might punt on for
+now.
+
+Rob Clark (9):
+  drm/msm/dpu: unwind async commit handling
+  drm/msm/dpu: add real wait_for_commit_done()
+  drm/msm/dpu: handle_frame_done() from vblank irq
+  drm/msm: add kms->wait_flush()
+  drm/msm: convert kms->complete_commit() to crtc_mask
+  drm/msm: add kms->flush_commit()
+  drm/msm: split power control from prepare/complete_commit
+  drm/msm: async commit support
+  drm/msm/dpu: async commit support
+
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      |  48 +---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h      |   7 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c   |  46 ++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h   |   8 +-
+ .../drm/msm/disp/dpu1/dpu_encoder_phys_vid.c  |  39 ++--
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |  99 +++++----
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c      |  48 ++--
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c      |  47 ++--
+ drivers/gpu/drm/msm/msm_atomic.c              | 210 +++++++++++++++---
+ drivers/gpu/drm/msm/msm_drv.c                 |   1 +
+ drivers/gpu/drm/msm/msm_drv.h                 |   4 +
+ drivers/gpu/drm/msm/msm_kms.h                 | 108 ++++++++-
+ 12 files changed, 466 insertions(+), 199 deletions(-)
 
 -- 
-Best regards,
-Jacek Anaszewski
+2.21.0
+
