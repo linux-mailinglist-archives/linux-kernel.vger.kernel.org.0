@@ -2,73 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 657B49DBD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 05:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CFF59DBEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 05:12:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728836AbfH0DI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 23:08:57 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5217 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728345AbfH0DI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 23:08:57 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 3104FB144201CA99AC2E;
-        Tue, 27 Aug 2019 11:08:54 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Tue, 27 Aug 2019
- 11:08:47 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <akpm@linux-foundation.org>, <sfr@canb.auug.org.au>,
-        <jack@suse.cz>, <reiserfs-devel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH 2/2] reiserfs: remove set but not used variable in do_balan.c
-Date:   Tue, 27 Aug 2019 11:29:32 +0800
-Message-ID: <20190827032932.46622-2-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190827032932.46622-1-yanaijie@huawei.com>
-References: <20190827032932.46622-1-yanaijie@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+        id S1728845AbfH0DMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 26 Aug 2019 23:12:37 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:59410 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728025AbfH0DMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 26 Aug 2019 23:12:36 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7R39dZ4064070;
+        Tue, 27 Aug 2019 03:12:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=CJ907zIBS0LpmHhbkysVeFPKJdRDkZEt0B6aL9TfLEE=;
+ b=YJQb4GF2b9ZG5Q90WwvauLpreMwZi/m/y70MYsaiGJfZb1UyY6H5yrFaFm2nAu0HLJyt
+ dF/janBQrx1i5Tx/lvFrwonE/dZtr1TvvoR7onUAQweUwzf/jDxoY+M03YCq85TsGbeL
+ Hkwmnr48ayyS0+tdPP2WZIwUAQZQNGabqJjHwQSzskceguf0NEsSepX+kF3m1L9E9yjt
+ kDkh2QrRcyVxDQW/G1cDt5J0uIUhM8ubR9eSmPPwwWRsUaTwb8LFrNURark7hVm1WEDY
+ zb70PJ5aJZ9p4TfVt0J6xRsc/ewBcy7fW8yMIl7UwTqu4V6qBwxcZ3KpgI7mJS7zxJUF Gw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2umv7j81r1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Aug 2019 03:12:22 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7R37hsx105267;
+        Tue, 27 Aug 2019 03:12:22 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2umj27kf3y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Aug 2019 03:12:21 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7R3CDjE021834;
+        Tue, 27 Aug 2019 03:12:13 GMT
+Received: from localhost.localdomain (/10.159.230.41)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 26 Aug 2019 20:12:12 -0700
+From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
+To:     arm@kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     khilman@kernel.org, arnd@arndb.de, olof@lixom.net,
+        linux-kernel@vger.kernel.org, santosh.shilimkar@oracle.com
+Subject: [GIT PULL] SOC: TI soc updates for 5.4
+Date:   Mon, 26 Aug 2019 20:11:47 -0700
+Message-Id: <1566875507-8067-1-git-send-email-santosh.shilimkar@oracle.com>
+X-Mailer: git-send-email 1.9.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9361 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=807
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908270033
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9361 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=878 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908270033
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following gcc warning:
+The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
 
-fs/reiserfs/do_balan.c: In function balance_leaf_insert_right:
-fs/reiserfs/do_balan.c:629:6: warning: variable ret set but not used
-[-Wunused-but-set-variable]
+  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
----
- fs/reiserfs/do_balan.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+are available in the git repository at:
 
-diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
-index ffb6d7f0da94..4075e41408b4 100644
---- a/fs/reiserfs/do_balan.c
-+++ b/fs/reiserfs/do_balan.c
-@@ -626,7 +626,6 @@ static void balance_leaf_insert_right(struct tree_balance *tb,
- 	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
- 	int n = B_NR_ITEMS(tbS0);
- 	struct buffer_info bi;
--	int ret;
- 
- 	/* new item or part of it doesn't fall into R[0] */
- 	if (n - tb->rnum[0] >= tb->item_pos) {
-@@ -690,7 +689,7 @@ static void balance_leaf_insert_right(struct tree_balance *tb,
- 		/* whole new item falls into R[0] */
- 
- 		/* Shift rnum[0]-1 items to R[0] */
--		ret = leaf_shift_right(tb, tb->rnum[0] - 1, tb->rbytes);
-+		leaf_shift_right(tb, tb->rnum[0] - 1, tb->rbytes);
- 
- 		/* Insert new item into R[0] */
- 		buffer_info_init_right(tb, &bi);
+  git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git tags/drivers_soc_for_5.4
+
+for you to fetch changes up to 23013399a2252e9f592c2c52a62b213d3ef09217:
+
+  soc: ti: ti_sci_pm_domains: Add support for exclusive and shared access (2019-08-26 20:00:41 -0700)
+
+----------------------------------------------------------------
+soc: TI soc updates for 5.4
+
+ -  Update firmware to support PM domain shared and exclusive support
+ -  Update driver and dt binding docs for the same.
+
+----------------------------------------------------------------
+
+Lokesh Vutla (3):
+  firmware: ti_sci: Allow for device shared and exclusive requests
+  dt-bindings: ti_sci_pm_domains: Add support for exclusive and shared
+    access
+  soc: ti: ti_sci_pm_domains: Add support for exclusive and shared
+    access
+
+ .../devicetree/bindings/soc/ti/sci-pm-domain.txt   | 11 +++++-
+ MAINTAINERS                                        |  1 +
+ drivers/firmware/ti_sci.c                          | 45 +++++++++++++++++++++-
+ drivers/soc/ti/ti_sci_pm_domains.c                 | 23 ++++++++++-
+ include/dt-bindings/soc/ti,sci_pm_domain.h         |  9 +++++
+ include/linux/soc/ti/ti_sci_protocol.h             |  3 ++
+ 6 files changed, 86 insertions(+), 6 deletions(-)
+ create mode 100644 include/dt-bindings/soc/ti,sci_pm_domain.h
+
 -- 
-2.17.2
+1.9.1
 
