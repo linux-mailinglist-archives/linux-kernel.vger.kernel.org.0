@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 104529DF3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:52:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E42829DFCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:57:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729484AbfH0Hwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:52:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43888 "EHLO mail.kernel.org"
+        id S1730855AbfH0H5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:57:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729408AbfH0Hw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:52:29 -0400
+        id S1729864AbfH0H5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:57:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C46A8206BF;
-        Tue, 27 Aug 2019 07:52:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFF0920828;
+        Tue, 27 Aug 2019 07:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892348;
-        bh=ao2XvC2Me3+PmikKc782pXteFXByHv/aYc6+AST064E=;
+        s=default; t=1566892660;
+        bh=V/jx/GmiarNvZXeRvvsDV+LbNzlelfjOaGbjKupoD2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nRjbOUZRuQefrkrq2b4iqI5gSyeE2rTdP6vg/QAd5xzy4aaTaw35QV8KakEa6grb1
-         uamsHjd9YL7rULq4N9t1Rz3UURcCDuA4S35QQmMDwztke6AgrCF2WYDqojL9KBKV7i
-         SSP6Cd/DrfNIeg2oeabsTGfoGDlDDpIVmleO+0XI=
+        b=VKxd8XZQYMGiwsTz4Oxvb4qjy5DecWNTX1RPl1K2lO45KlP52hBsDcN7ZlpsLb1UK
+         yZ5LugFtGVDkh/ZyuO7R7fJ8w49r4hvPpNs3Ncg2uWQaBhm+/gsGphPCM3WZcbjCvC
+         XTHCfeycurlaIidMF/5gp9GZ0rRnvOF374TlqWpk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiangfeng Xiao <xiaojiangfeng@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 25/62] net: hisilicon: make hip04_tx_reclaim non-reentrant
-Date:   Tue, 27 Aug 2019 09:50:30 +0200
-Message-Id: <20190827072701.868386004@linuxfoundation.org>
+        stable@vger.kernel.org, Hsin-Yi Wang <hsinyi@google.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 52/98] block, bfq: handle NULL return value by bfq_init_rq()
+Date:   Tue, 27 Aug 2019 09:50:31 +0200
+Message-Id: <20190827072721.062423874@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,92 +47,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1a2c070ae805910a853b4a14818481ed2e17c727 ]
+[ Upstream commit fd03177c33b287c6541f4048f1d67b7b45a1abc9 ]
 
-If hip04_tx_reclaim is interrupted while it is running
-and then __napi_schedule continues to execute
-hip04_rx_poll->hip04_tx_reclaim, reentrancy occurs
-and oops is generated. So you need to mask the interrupt
-during the hip04_tx_reclaim run.
+As reported in [1], the call bfq_init_rq(rq) may return NULL in case
+of OOM (in particular, if rq->elv.icq is NULL because memory
+allocation failed in failed in ioc_create_icq()).
 
-The kernel oops exception stack is as follows:
+This commit handles this circumstance.
 
-Unable to handle kernel NULL pointer dereference
-at virtual address 00000050
-pgd = c0003000
-[00000050] *pgd=80000000a04003, *pmd=00000000
-Internal error: Oops: 206 [#1] SMP ARM
-Modules linked in: hip04_eth mtdblock mtd_blkdevs mtd
-ohci_platform ehci_platform ohci_hcd ehci_hcd
-vfat fat sd_mod usb_storage scsi_mod usbcore usb_common
-CPU: 0 PID: 0 Comm: swapper/0 Tainted: G           O    4.4.185 #1
-Hardware name: Hisilicon A15
-task: c0a250e0 task.stack: c0a00000
-PC is at hip04_tx_reclaim+0xe0/0x17c [hip04_eth]
-LR is at hip04_tx_reclaim+0x30/0x17c [hip04_eth]
-pc : [<bf30c3a4>]    lr : [<bf30c2f4>]    psr: 600e0313
-sp : c0a01d88  ip : 00000000  fp : c0601f9c
-r10: 00000000  r9 : c3482380  r8 : 00000001
-r7 : 00000000  r6 : 000000e1  r5 : c3482000  r4 : 0000000c
-r3 : f2209800  r2 : 00000000  r1 : 00000000  r0 : 00000000
-Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-Control: 32c5387d  Table: 03d28c80  DAC: 55555555
-Process swapper/0 (pid: 0, stack limit = 0xc0a00190)
-Stack: (0xc0a01d88 to 0xc0a02000)
-[<bf30c3a4>] (hip04_tx_reclaim [hip04_eth]) from [<bf30d2e0>]
-                                                (hip04_rx_poll+0x88/0x368 [hip04_eth])
-[<bf30d2e0>] (hip04_rx_poll [hip04_eth]) from [<c04c2d9c>] (net_rx_action+0x114/0x34c)
-[<c04c2d9c>] (net_rx_action) from [<c021eed8>] (__do_softirq+0x218/0x318)
-[<c021eed8>] (__do_softirq) from [<c021f284>] (irq_exit+0x88/0xac)
-[<c021f284>] (irq_exit) from [<c0240090>] (msa_irq_exit+0x11c/0x1d4)
-[<c0240090>] (msa_irq_exit) from [<c02677e0>] (__handle_domain_irq+0x110/0x148)
-[<c02677e0>] (__handle_domain_irq) from [<c0201588>] (gic_handle_irq+0xd4/0x118)
-[<c0201588>] (gic_handle_irq) from [<c0551700>] (__irq_svc+0x40/0x58)
-Exception stack(0xc0a01f30 to 0xc0a01f78)
-1f20:                                     c0ae8b40 00000000 00000000 00000000
-1f40: 00000002 ffffe000 c0601f9c 00000000 ffffffff c0a2257c c0a22440 c0831a38
-1f60: c0a01ec4 c0a01f80 c0203714 c0203718 600e0213 ffffffff
-[<c0551700>] (__irq_svc) from [<c0203718>] (arch_cpu_idle+0x20/0x3c)
-[<c0203718>] (arch_cpu_idle) from [<c025bfd8>] (cpu_startup_entry+0x244/0x29c)
-[<c025bfd8>] (cpu_startup_entry) from [<c054b0d8>] (rest_init+0xc8/0x10c)
-[<c054b0d8>] (rest_init) from [<c0800c58>] (start_kernel+0x468/0x514)
-Code: a40599e5 016086e2 018088e2 7660efe6 (503090e5)
----[ end trace 1db21d6d09c49d74 ]---
-Kernel panic - not syncing: Fatal exception in interrupt
-CPU3: stopping
-CPU: 3 PID: 0 Comm: swapper/3 Tainted: G      D    O    4.4.185 #1
+[1] https://lkml.org/lkml/2019/7/22/824
 
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Hsin-Yi Wang <hsinyi@google.com>
+Cc: Nicolas Boichat <drinkcat@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Reported-by: Hsin-Yi Wang <hsinyi@google.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hip04_eth.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ block/bfq-iosched.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index c27054b8ce81b..60ef6d40e4896 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -497,6 +497,9 @@ static int hip04_rx_poll(struct napi_struct *napi, int budget)
- 	u16 len;
- 	u32 err;
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index becd793a258c8..d8d2ac294b0c0 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -1886,9 +1886,14 @@ static void bfq_request_merged(struct request_queue *q, struct request *req,
+ 	    blk_rq_pos(container_of(rb_prev(&req->rb_node),
+ 				    struct request, rb_node))) {
+ 		struct bfq_queue *bfqq = bfq_init_rq(req);
+-		struct bfq_data *bfqd = bfqq->bfqd;
++		struct bfq_data *bfqd;
+ 		struct request *prev, *next_rq;
  
-+	/* clean up tx descriptors */
-+	tx_remaining = hip04_tx_reclaim(ndev, false);
++		if (!bfqq)
++			return;
 +
- 	while (cnt && !last) {
- 		buf = priv->rx_buf[priv->rx_head];
- 		skb = build_skb(buf, priv->rx_buf_size);
-@@ -557,8 +560,7 @@ refill:
- 	}
- 	napi_complete_done(napi, rx);
- done:
--	/* clean up tx descriptors and start a new timer if necessary */
--	tx_remaining = hip04_tx_reclaim(ndev, false);
-+	/* start a new timer if necessary */
- 	if (rx < budget && tx_remaining)
- 		hip04_start_tx_timer(priv);
++		bfqd = bfqq->bfqd;
++
+ 		/* Reposition request in its sort_list */
+ 		elv_rb_del(&bfqq->sort_list, req);
+ 		elv_rb_add(&bfqq->sort_list, req);
+@@ -1930,6 +1935,9 @@ static void bfq_requests_merged(struct request_queue *q, struct request *rq,
+ 	struct bfq_queue *bfqq = bfq_init_rq(rq),
+ 		*next_bfqq = bfq_init_rq(next);
  
++	if (!bfqq)
++		return;
++
+ 	/*
+ 	 * If next and rq belong to the same bfq_queue and next is older
+ 	 * than rq, then reposition rq in the fifo (by substituting next
+@@ -4590,12 +4598,12 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+ 
+ 	spin_lock_irq(&bfqd->lock);
+ 	bfqq = bfq_init_rq(rq);
+-	if (at_head || blk_rq_is_passthrough(rq)) {
++	if (!bfqq || at_head || blk_rq_is_passthrough(rq)) {
+ 		if (at_head)
+ 			list_add(&rq->queuelist, &bfqd->dispatch);
+ 		else
+ 			list_add_tail(&rq->queuelist, &bfqd->dispatch);
+-	} else { /* bfqq is assumed to be non null here */
++	} else {
+ 		idle_timer_disabled = __bfq_insert_request(bfqd, rq);
+ 		/*
+ 		 * Update bfqq, because, if a queue merge has occurred
 -- 
 2.20.1
 
