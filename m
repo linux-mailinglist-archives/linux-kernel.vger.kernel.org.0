@@ -2,144 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62B349DDA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F12F89DD99
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:23:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728464AbfH0GXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 02:23:34 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59696 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725825AbfH0GXd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 02:23:33 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B67A060F38; Tue, 27 Aug 2019 06:23:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1566887012;
-        bh=DWiUZ0h0oKq+88OUYVKweLryQ+oqXke10jLm3RzR10s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d+hFDYAv4ew9GCxLPdp/AFrwCNQUN6HIaZCAciVhYLxPNXEZnHAcGUy/3U29hk4wG
-         56qXsrGEql38MXde5WS2z9rAX7PoAn875H495k2CrXbwQz4ryy8ze6ovuqEiHJgyz3
-         p+SIb9+iTdCzlw58kBRGRQm6NV7qGC+9bOZ6Cwco=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from amasule-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726833AbfH0GXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 02:23:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41348 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725825AbfH0GXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 02:23:13 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: amasule@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AC54760E5A;
-        Tue, 27 Aug 2019 06:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1566887012;
-        bh=DWiUZ0h0oKq+88OUYVKweLryQ+oqXke10jLm3RzR10s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d+hFDYAv4ew9GCxLPdp/AFrwCNQUN6HIaZCAciVhYLxPNXEZnHAcGUy/3U29hk4wG
-         56qXsrGEql38MXde5WS2z9rAX7PoAn875H495k2CrXbwQz4ryy8ze6ovuqEiHJgyz3
-         p+SIb9+iTdCzlw58kBRGRQm6NV7qGC+9bOZ6Cwco=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AC54760E5A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=amasule@codeaurora.org
-From:   Aniket Masule <amasule@codeaurora.org>
-To:     linux-media@vger.kernel.org, stanimir.varbanov@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vgarodia@codeaurora.org, Aniket Masule <amasule@codeaurora.org>
-Subject: [PATCH v7 3/3] media: venus: Update to bitrate based clock scaling
-Date:   Tue, 27 Aug 2019 11:53:06 +0530
-Message-Id: <1566886986-10329-4-git-send-email-amasule@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1566886986-10329-1-git-send-email-amasule@codeaurora.org>
-References: <1566886986-10329-1-git-send-email-amasule@codeaurora.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AA9C2054F;
+        Tue, 27 Aug 2019 06:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566886992;
+        bh=est3wmZaSmSGcTJuKxM8cN8m1fYP8CsycRXpIl+3Uos=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VL2rm9MIAHpcITPpub7LChTfs4fcMod9+jzDAtp8AIJjPL8mzSyQZXEkB7m/e1O09
+         NKd2CD0Vts/kOWTvdnrU6Bi/NdeE+LrBVQixyduwhpZobuT8YYWHqCnx92n6jHN+eC
+         y4ejXRdv8Xla9uHWXghROmKxHmcYIYIybfwBMXoE=
+Date:   Tue, 27 Aug 2019 08:23:09 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Rajat Jain <rajatja@google.com>
+Cc:     gregkh@linuxfoundation.com, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        rajatxjain@gmail.com
+Subject: Re: [PATCH v2 2/2] PCI/AER: Split the AER stats into multiple sysfs
+ attributes
+Message-ID: <20190827062309.GA30987@kroah.com>
+References: <20190821231513.36454-2-rajatja@google.com>
+ <20190827005114.229726-1-rajatja@google.com>
+ <20190827005114.229726-2-rajatja@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190827005114.229726-2-rajatja@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduced clock scaling using bitrate, preavious
-calculations consider only the cycles per mb.
-Also, clock scaling is now triggered before every
-buffer being queued to the device. This helps in
-deciding precise clock cycles required.
+On Mon, Aug 26, 2019 at 05:51:14PM -0700, Rajat Jain wrote:
+> --- a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+> +++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
+> @@ -9,89 +9,72 @@ errors may be "seen" / reported by the link partner and not the
+>  problematic endpoint itself (which may report all counters as 0 as it never
+>  saw any problems).
+>  
+> -What:		/sys/bus/pci/devices/<dev>/aer_dev_correctable
+> -Date:		July 2018
+> -KernelVersion: 4.19.0
+> +What: Following files in /sys/bus/pci/devices/<dev>/aer_stats/
+> +correctable_bit0_RxErr
+> +correctable_bit12_Timeout
+> +correctable_bit13_NonFatalErr
+> +correctable_bit14_CorrIntErr
+> +correctable_bit15_HeaderOF
+> +correctable_bit6_BadTLP
+> +correctable_bit7_BadDLLP
+> +correctable_bit8_Rollover
+> +fatal_bit0_Undefined
+> +fatal_bit12_TLP
+> +fatal_bit13_FCP
+> +fatal_bit14_CmpltTO
+> +fatal_bit15_CmpltAbrt
+> +fatal_bit16_UnxCmplt
+> +fatal_bit17_RxOF
+> +fatal_bit18_MalfTLP
+> +fatal_bit19_ECRC
+> +fatal_bit20_UnsupReq
+> +fatal_bit21_ACSViol
+> +fatal_bit22_UncorrIntErr
+> +fatal_bit23_BlockedTLP
+> +fatal_bit24_AtomicOpBlocked
+> +fatal_bit25_TLPBlockedErr
+> +fatal_bit26_PoisonTLPBlocked
+> +fatal_bit4_DLP
+> +fatal_bit5_SDES
+> +nonfatal_bit0_Undefined
+> +nonfatal_bit12_TLP
+> +nonfatal_bit13_FCP
+> +nonfatal_bit14_CmpltTO
+> +nonfatal_bit15_CmpltAbrt
+> +nonfatal_bit16_UnxCmplt
+> +nonfatal_bit17_RxOF
+> +nonfatal_bit18_MalfTLP
+> +nonfatal_bit19_ECRC
+> +nonfatal_bit20_UnsupReq
+> +nonfatal_bit21_ACSViol
+> +nonfatal_bit22_UncorrIntErr
+> +nonfatal_bit23_BlockedTLP
+> +nonfatal_bit24_AtomicOpBlocked
+> +nonfatal_bit25_TLPBlockedErr
+> +nonfatal_bit26_PoisonTLPBlocked
+> +nonfatal_bit4_DLP
+> +nonfatal_bit5_SDES
 
-Signed-off-by: Aniket Masule <amasule@codeaurora.org>
----
- drivers/media/platform/qcom/venus/helpers.c | 33 ++++++++++++++++++++++++-----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+All of those should be indented, right?
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 4ed630b..8fee0ef 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -516,17 +516,26 @@ static int scale_clocks(struct venus_inst *inst)
- 	return 0;
- }
- 
--static unsigned long calculate_vpp_freq(struct venus_inst *inst)
-+static unsigned long calculate_inst_freq(struct venus_inst *inst,
-+					 unsigned long filled_len)
- {
--	unsigned long vpp_freq = 0;
-+	unsigned long vpp_freq = 0, vsp_freq = 0;
-+	u64 fps = inst->fps;
- 	u32 mbs_per_sec;
- 
--	mbs_per_sec = load_per_instance(inst);
-+	mbs_per_sec = load_per_instance(inst) / inst->fps;
- 	vpp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vpp_freq;
- 	/* 21 / 20 is overhead factor */
- 	vpp_freq += vpp_freq / 20;
-+	vsp_freq = mbs_per_sec * inst->clk_data.codec_freq_data->vsp_freq;
- 
--	return vpp_freq;
-+	/* 10 / 7 is overhead factor */
-+	if (inst->session_type == VIDC_SESSION_TYPE_ENC)
-+		vsp_freq += (inst->controls.enc.bitrate * 10) / 7;
-+	else
-+		vsp_freq += ((fps * filled_len * 8) * 10) / 7;
-+
-+	return max(vpp_freq, vsp_freq);
- }
- 
- static int scale_clocks_v4(struct venus_inst *inst)
-@@ -534,12 +543,24 @@ static int scale_clocks_v4(struct venus_inst *inst)
- 	struct venus_core *core = inst->core;
- 	const struct freq_tbl *table = core->res->freq_tbl;
- 	unsigned int num_rows = core->res->freq_tbl_size;
-+	struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
- 	struct device *dev = core->dev;
- 	unsigned int i;
- 	unsigned long freq = 0, freq_core1 = 0, freq_core2 = 0;
-+	unsigned long filled_len = 0;
-+	struct venus_buffer *buf, *n;
-+	struct vb2_buffer *vb;
- 	int ret;
- 
--	freq = calculate_vpp_freq(inst);
-+	v4l2_m2m_for_each_src_buf_safe(m2m_ctx, buf, n) {
-+		vb = &buf->vb.vb2_buf;
-+		filled_len = max(filled_len, vb2_get_plane_payload(vb, 0));
-+	}
-+
-+	if (inst->session_type == VIDC_SESSION_TYPE_DEC && !filled_len)
-+		return 0;
-+
-+	freq = calculate_inst_freq(inst, filled_len);
- 	inst->clk_data.freq = freq;
- 
- 	mutex_lock(&core->lock);
-@@ -701,6 +722,8 @@ void venus_helper_get_ts_metadata(struct venus_inst *inst, u64 timestamp_us,
- 
- 		if (inst->session_type == VIDC_SESSION_TYPE_DEC)
- 			put_ts_metadata(inst, vbuf);
-+
-+		venus_helper_load_scale_clocks(inst);
- 	} else if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
- 		if (inst->session_type == VIDC_SESSION_TYPE_ENC)
- 			fdata.buffer_type = HFI_BUFFER_OUTPUT;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Same for other entries
 
+thanks,
+
+greg k-h
