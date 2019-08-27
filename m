@@ -2,99 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A59C9DF17
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C1F19DF6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728845AbfH0Hu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:50:27 -0400
-Received: from verein.lst.de ([213.95.11.211]:54480 "EHLO verein.lst.de"
+        id S1729407AbfH0HyJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:54:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728704AbfH0Hu1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:50:27 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 4577B68B05; Tue, 27 Aug 2019 09:50:21 +0200 (CEST)
+        id S1729374AbfH0HyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:54:08 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FF2C2173E;
+        Tue, 27 Aug 2019 07:54:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566892447;
+        bh=CHPUc+8YmOyDGILc8fRBA/IrdQfyFvT+TJty6ANtTvg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VEGLLcmsvs1mhAebduK7WPKZXZGBdt1HNMri8KMFkiVYeY6ajBnL5YSuFnCclzesy
+         XTU9NVkH3a0ps9YlR26evAzOmyn3lC3p7jbTCCW/oeijlf2uYQHoJsqBIoZMFxJZVj
+         iNH2ispCBmVpF7XCM/IliyUyN/TK93b8bkhqXI6c=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 16/62] isdn: hfcsusb: Fix mISDN driver crash caused by transfer buffer on the stack
 Date:   Tue, 27 Aug 2019 09:50:21 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>, vdumpa@nvidia.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Thierry Reding <treding@nvidia.com>,
-        Kees Cook <keescook@chromium.org>, iamjoonsoo.kim@lge.com,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org
-Subject: Re: [PATCH v2 2/2] dma-contiguous: Use fallback alloc_pages for
- single pages
-Message-ID: <20190827075021.GA953@lst.de>
-References: <20190506223334.1834-1-nicoleotsuka@gmail.com> <20190506223334.1834-3-nicoleotsuka@gmail.com> <CAK7LNARacEorb38mVBw_V-Zvz-znWgBma1AP1-z_5B_xZU4ogg@mail.gmail.com> <CAK7LNAQfYBCoChMV=MOwcUyVoqRkrPWs7DaWdzDqjBe18gGiAQ@mail.gmail.com> <20190825011025.GA23410@lst.de> <CAK7LNAQb1ZHr=DiHLNeNRaQExMuXdDOV4sFghoGbco_Q=Qzb8g@mail.gmail.com> <20190826073320.GA11712@lst.de> <CAK7LNATYOLEboUTO4qPx2z7cqwDrHBO1HFHG8VzZEJ15STv+nw@mail.gmail.com>
+Message-Id: <20190827072701.285285273@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
+References: <20190827072659.803647352@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATYOLEboUTO4qPx2z7cqwDrHBO1HFHG8VzZEJ15STv+nw@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 04:45:20PM +0900, Masahiro Yamada wrote:
-> On Mon, Aug 26, 2019 at 4:33 PM Christoph Hellwig <hch@lst.de> wrote:
-> >
-> > On Mon, Aug 26, 2019 at 11:05:00AM +0900, Masahiro Yamada wrote:
-> > > This is included in v5.3-rc6
-> > > so I tested it.
-> >
-> > So there is no allocation failure, but you get I/O errors later?
-> 
-> Right.
-> 
-> >
-> > Does the device use a device-private CMA area?
-> 
-> Not sure.
-> My driver is drivers/mmc/host/sdhci-cadence.c
-> It reuses routines in drivers/mmc/host/sdhci.c
-> 
-> 
-> 
-> >  Does it work with Linux
-> > 5.2 if CONFIG_DMA_CMA is disabled?
-> 
-> No.
-> 5.2 + disable CONFIG_DMA_CMA
-> failed in the same way.
+[ Upstream commit d8a1de3d5bb881507602bc02e004904828f88711 ]
 
-So it seems like the device wants CMA memory.   I guess the patch
-below will fix it, but that isn't the solution.  Can you try it
-to confirm?  In the end it probably assumes a dma mask it doesn't
-set that the CMA memory satisfies or something similar.
+Since linux 4.9 it is not possible to use buffers on the stack for DMA transfers.
 
-diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-index 69cfb4345388..bd2f24aa7f19 100644
---- a/kernel/dma/contiguous.c
-+++ b/kernel/dma/contiguous.c
-@@ -236,7 +236,7 @@ struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
+During usb probe the driver crashes with "transfer buffer is on stack" message.
+
+This fix k-allocates a buffer to be used on "read_reg_atomic", which is a macro
+that calls "usb_control_msg" under the hood.
+
+Kernel 4.19 backtrace:
+
+usb_hcd_submit_urb+0x3e5/0x900
+? sched_clock+0x9/0x10
+? log_store+0x203/0x270
+? get_random_u32+0x6f/0x90
+? cache_alloc_refill+0x784/0x8a0
+usb_submit_urb+0x3b4/0x550
+usb_start_wait_urb+0x4e/0xd0
+usb_control_msg+0xb8/0x120
+hfcsusb_probe+0x6bc/0xb40 [hfcsusb]
+usb_probe_interface+0xc2/0x260
+really_probe+0x176/0x280
+driver_probe_device+0x49/0x130
+__driver_attach+0xa9/0xb0
+? driver_probe_device+0x130/0x130
+bus_for_each_dev+0x5a/0x90
+driver_attach+0x14/0x20
+? driver_probe_device+0x130/0x130
+bus_add_driver+0x157/0x1e0
+driver_register+0x51/0xe0
+usb_register_driver+0x5d/0x120
+? 0xf81ed000
+hfcsusb_drv_init+0x17/0x1000 [hfcsusb]
+do_one_initcall+0x44/0x190
+? free_unref_page_commit+0x6a/0xd0
+do_init_module+0x46/0x1c0
+load_module+0x1dc1/0x2400
+sys_init_module+0xed/0x120
+do_fast_syscall_32+0x7a/0x200
+entry_SYSENTER_32+0x6b/0xbe
+
+Signed-off-by: Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/isdn/hardware/mISDN/hfcsusb.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+index 163bc482b2a78..87588198d68fc 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.c
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
+@@ -1701,13 +1701,23 @@ hfcsusb_stop_endpoint(struct hfcsusb *hw, int channel)
+ static int
+ setup_hfcsusb(struct hfcsusb *hw)
+ {
++	void *dmabuf = kmalloc(sizeof(u_char), GFP_KERNEL);
+ 	u_char b;
++	int ret;
  
- 	if (dev && dev->cma_area)
- 		cma = dev->cma_area;
--	else if (count > 1)
-+	else
- 		cma = dma_contiguous_default_area;
+ 	if (debug & DBG_HFC_CALL_TRACE)
+ 		printk(KERN_DEBUG "%s: %s\n", hw->name, __func__);
  
- 	/* CMA can be used only in the context which permits sleeping */
++	if (!dmabuf)
++		return -ENOMEM;
++
++	ret = read_reg_atomic(hw, HFCUSB_CHIP_ID, dmabuf);
++
++	memcpy(&b, dmabuf, sizeof(u_char));
++	kfree(dmabuf);
++
+ 	/* check the chip id */
+-	if (read_reg_atomic(hw, HFCUSB_CHIP_ID, &b) != 1) {
++	if (ret != 1) {
+ 		printk(KERN_DEBUG "%s: %s: cannot read chip id\n",
+ 		       hw->name, __func__);
+ 		return 1;
+-- 
+2.20.1
+
+
+
