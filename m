@@ -2,937 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AACD9F21D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:13:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 021919F218
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:11:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730523AbfH0SNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 14:13:06 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34688 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728670AbfH0SNG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 14:13:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/VgoBSQPqyUubUQ9YPFqh2oo2rzQXOUWGaBsla0GcQo=; b=XRLINOQVAycO+8ZAvL5lweHcc/
-        9gb6U5RL1VADHNAxFK1YSSQutmcg0LnwmIBAe+CytiUajM5Nq48b/RhwwKT416KRN83z3P3MbF86/
-        FG2bobX+WHW6EDAssQoiHeo26dlSOdkROJho4/Bqe6elUjQaObeClcqtPK6tlknw/OMt5pZH87O97
-        n4XC6FmnQ69fdvfmtJT00qZOaXxQJJLjBMqXGiCa2TrlPmKecYOozS9EfWyCbXct+ktJsPXSwQVr8
-        kz/AWvMcxOBLXwkZSc6wLGPRPkyn60oLWyBftaMlvptV3+F9UajUW6YXW6JU2grvpi9P3RRpX2++3
-        BL/kJ9rQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2fxd-0004TK-K8; Tue, 27 Aug 2019 18:12:53 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id E4EDE30768E;
-        Tue, 27 Aug 2019 20:12:16 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id A0802203CEC0B; Tue, 27 Aug 2019 20:12:50 +0200 (CEST)
-Message-Id: <20190827181147.166658077@infradead.org>
-User-Agent: quilt/0.65
-Date:   Tue, 27 Aug 2019 20:06:25 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org, peterz@infradead.org
-Cc:     Nadav Amit <nadav.amit@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Song Liu <songliubraving@fb.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: [PATCH 3/3] x86/ftrace: Use text_poke()
-References: <20190827180622.159326993@infradead.org>
+        id S1730392AbfH0SLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 14:11:39 -0400
+Received: from mail-eopbgr140080.outbound.protection.outlook.com ([40.107.14.80]:50551
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727887AbfH0SLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 14:11:39 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WfyG/8vLVx2pAX6BnBnjn4S+hQPZ2eR/XvWL+SN10evUvnOOqiTnxEAPNHVQHDUy1YY9r7A0tpMT9szqDZZvNRYn6yQrFMK9BYAAUpaysHE3OgpdDgDPFpKwuutnwocB7VcqRkaK64cwyLpd1ABoAA9mKZyJpstlJqMr3xGfyKVEWUbcddZHs4usKIOafJryeXq7it1zRdE/51Dev4jOzMH/EQEDz5pfCAylpUV5KcmGhTd8CvPpNLGpryHNtcu22egV7gInYcxrnk9tHOS/r1l0y6hsBsy9ugdwKY2vFiVXqbo91LI8QxWKADuAfjeyfYVkXwNAECvDDfdGG6MZgA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EUXkmyXVak3F7G1Nqv5fB8j/CABnPalvwGpZujIrrAE=;
+ b=VShp5JA+wUrHxcPorZ9re+2jjWT24gBPt0PkOV9ReehaCPYnJgOR8bfRGojOkRt+gwFS0eIwKWJX/s0seSTPIBU+SrVYLAsLGtC+JbNPxu/E+Tl8Co28L4WNIYqbm49g1UD/VmSg5pUS2vIfoIXtoAmnjO1PtuEC2ZufnhoXuyn6f56In8IDxxGbpjTlOlyrkkgpI16RqNRekzGaSMPVyPDd8pniQiiUQJHJ1QgJCBBEPIAt0hqvOEISglSW01d9LqgL9hN4OfuDUjl20sQ4qyqeTz1LnNojRjcT+zIJ73lmMNILA9zGCTM4apMLtnuilRXC5NgzO+UVWfgda9KWfA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EUXkmyXVak3F7G1Nqv5fB8j/CABnPalvwGpZujIrrAE=;
+ b=Rq8zqfOeR5q1SUrvdfuh9tOrH+XcSLbNZ9xWcnZ9AfDG7qDGNS/qMyUv8CGt9H+UhaKqnB9X0o8YtRSs1/D3WYBkH2N1FhRBOHMjjXqyzZH8FAAminbew2T/0PoW762vG2+dBaoHBy3cwroWhZN6Sb+ellwNKbURfHdURpkRtb0=
+Received: from AM0PR05MB4866.eurprd05.prod.outlook.com (20.176.214.160) by
+ AM0PR05MB5233.eurprd05.prod.outlook.com (20.178.16.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.19; Tue, 27 Aug 2019 18:11:33 +0000
+Received: from AM0PR05MB4866.eurprd05.prod.outlook.com
+ ([fe80::216f:f548:1db0:41ea]) by AM0PR05MB4866.eurprd05.prod.outlook.com
+ ([fe80::216f:f548:1db0:41ea%6]) with mapi id 15.20.2199.020; Tue, 27 Aug 2019
+ 18:11:33 +0000
+From:   Parav Pandit <parav@mellanox.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+CC:     Jiri Pirko <jiri@mellanox.com>,
+        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: RE: [PATCH 0/4] Introduce variable length mdev alias
+Thread-Topic: [PATCH 0/4] Introduce variable length mdev alias
+Thread-Index: AQHVXE6oE0YRBz0PMky+S05YIDBwe6cO90UwgABPfgCAAASicA==
+Date:   Tue, 27 Aug 2019 18:11:32 +0000
+Message-ID: <AM0PR05MB4866E5EA8D8ABFB1A40F60DCD1A00@AM0PR05MB4866.eurprd05.prod.outlook.com>
+References: <20190826204119.54386-1-parav@mellanox.com>
+        <AM0PR05MB4866A24FF3D283F0F3CB3CDAD1A00@AM0PR05MB4866.eurprd05.prod.outlook.com>
+ <20190827114852.499dd8cf@x1.home>
+In-Reply-To: <20190827114852.499dd8cf@x1.home>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=parav@mellanox.com; 
+x-originating-ip: [106.51.18.188]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6bc9e8c4-7d61-4a82-6c7e-08d72b19fde7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR05MB5233;
+x-ms-traffictypediagnostic: AM0PR05MB5233:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR05MB52333E976D60D42F02D82069D1A00@AM0PR05MB5233.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0142F22657
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(376002)(396003)(346002)(366004)(189003)(199004)(132844002)(13464003)(76116006)(7736002)(26005)(8936002)(186003)(99286004)(305945005)(9456002)(14454004)(86362001)(76176011)(102836004)(53546011)(6506007)(2906002)(478600001)(7696005)(74316002)(55236004)(6916009)(5660300002)(55016002)(71190400001)(9686003)(66066001)(25786009)(476003)(8676002)(11346002)(446003)(81156014)(81166006)(53936002)(4326008)(66476007)(66556008)(64756008)(66446008)(6246003)(3846002)(6116002)(229853002)(54906003)(52536014)(14444005)(256004)(316002)(6436002)(71200400001)(486006)(33656002)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB5233;H:AM0PR05MB4866.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: E1A3i9F/sBmukH2Eq1aSo+eD/J/QBI4P413YDUd8/FSpq41kOK8tx4vonAC2zSUY0TzFFA4/zO0g/1JkHQO2gGmWMebAZGf0+varne9IhosvuEP66eCcc7VAVcMS+jg5fzu+Fl0z9qDTp8Yq/aSUCXNpt5dNBo19uTQug6IfxGywMFu+8Cxa9TKCcnOwh/QEJyxQ5SROQ9+lHiZPKGeCkuN/AXSHDaerC4aHtfj0OFLb7IS5Nt5WZU3QtH9ICKsPL9o0Eop/GQlKTwyCrqFcsfAYucsduI0LF0fKZtyeKJH1Hxo/ks7rWSS071H+1Lc4P7XrVdUDCnBYY7nqZZIwSH7ogApLYo/Krhto6Pmdseio0Gxm8sj73Kf2qIm3Px1UNkTWW//WmF5oki8Nolj/R86GEMiLK3quSkReVOBFnK4=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bc9e8c4-7d61-4a82-6c7e-08d72b19fde7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2019 18:11:32.8024
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OQCTsUguT7yFpyGaL7bJXDzn6AHasyK7TPuAiZH+ABACAem1e2Q6teXJOehsZbeISjLumoz0Fii63Q40DfqRug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB5233
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move ftrace over to using the generic x86 text_poke functions; this
-avoids having a second/different copy of that code around.
-
-This also avoids ftrace violating the (new) W^X rule and avoids
-fragmenting the kernel text page-tables, due to no longer having to
-toggle them RW.
-
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Daniel Bristot de Oliveira <bristot@redhat.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/ftrace.h |    2 
- arch/x86/kernel/alternative.c |    4 
- arch/x86/kernel/ftrace.c      |  630 ++++++------------------------------------
- arch/x86/kernel/traps.c       |    9 
- 4 files changed, 93 insertions(+), 552 deletions(-)
-
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -35,8 +35,6 @@ struct dyn_arch_ftrace {
- 	/* No extra data needed for x86 */
- };
- 
--int ftrace_int3_handler(struct pt_regs *regs);
--
- #define FTRACE_GRAPH_TRAMP_ADDR FTRACE_GRAPH_ADDR
- 
- #endif /*  CONFIG_DYNAMIC_FTRACE */
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -941,7 +941,7 @@ static struct bp_patching_desc {
- 	int nr_entries;
- } bp_patching;
- 
--static int patch_cmp(const void *key, const void *elt)
-+static int notrace patch_cmp(const void *key, const void *elt)
- {
- 	struct text_poke_loc *tp = (struct text_poke_loc *) elt;
- 
-@@ -953,7 +953,7 @@ static int patch_cmp(const void *key, co
- }
- NOKPROBE_SYMBOL(patch_cmp);
- 
--int poke_int3_handler(struct pt_regs *regs)
-+int notrace poke_int3_handler(struct pt_regs *regs)
- {
- 	struct text_poke_loc *tp;
- 	void *ip;
---- a/arch/x86/kernel/ftrace.c
-+++ b/arch/x86/kernel/ftrace.c
-@@ -43,16 +43,12 @@ int ftrace_arch_code_modify_prepare(void
- 	 * ftrace has it set to "read/write".
- 	 */
- 	mutex_lock(&text_mutex);
--	set_kernel_text_rw();
--	set_all_modules_text_rw();
- 	return 0;
- }
- 
- int ftrace_arch_code_modify_post_process(void)
-     __releases(&text_mutex)
- {
--	set_all_modules_text_ro();
--	set_kernel_text_ro();
- 	mutex_unlock(&text_mutex);
- 	return 0;
- }
-@@ -60,67 +56,34 @@ int ftrace_arch_code_modify_post_process
- union ftrace_code_union {
- 	char code[MCOUNT_INSN_SIZE];
- 	struct {
--		unsigned char op;
-+		char op;
- 		int offset;
- 	} __attribute__((packed));
- };
- 
--static int ftrace_calc_offset(long ip, long addr)
--{
--	return (int)(addr - ip);
--}
--
--static unsigned char *
--ftrace_text_replace(unsigned char op, unsigned long ip, unsigned long addr)
-+static const char *ftrace_text_replace(char op, unsigned long ip, unsigned long addr)
- {
- 	static union ftrace_code_union calc;
- 
--	calc.op		= op;
--	calc.offset	= ftrace_calc_offset(ip + MCOUNT_INSN_SIZE, addr);
-+	calc.op = op;
-+	calc.offset = (int)(addr - (ip + MCOUNT_INSN_SIZE));
- 
- 	return calc.code;
- }
- 
--static unsigned char *
--ftrace_call_replace(unsigned long ip, unsigned long addr)
--{
--	return ftrace_text_replace(0xe8, ip, addr);
--}
--
--static inline int
--within(unsigned long addr, unsigned long start, unsigned long end)
--{
--	return addr >= start && addr < end;
--}
--
--static unsigned long text_ip_addr(unsigned long ip)
-+static const char *ftrace_nop_replace(void)
- {
--	/*
--	 * On x86_64, kernel text mappings are mapped read-only, so we use
--	 * the kernel identity mapping instead of the kernel text mapping
--	 * to modify the kernel text.
--	 *
--	 * For 32bit kernels, these mappings are same and we can use
--	 * kernel identity mapping to modify code.
--	 */
--	if (within(ip, (unsigned long)_text, (unsigned long)_etext))
--		ip = (unsigned long)__va(__pa_symbol(ip));
--
--	return ip;
-+	return ideal_nops[NOP_ATOMIC5];
- }
- 
--static const unsigned char *ftrace_nop_replace(void)
-+static const char *ftrace_call_replace(unsigned long ip, unsigned long addr)
- {
--	return ideal_nops[NOP_ATOMIC5];
-+	return ftrace_text_replace(CALL_INSN_OPCODE, ip, addr);
- }
- 
--static int
--ftrace_modify_code_direct(unsigned long ip, unsigned const char *old_code,
--		   unsigned const char *new_code)
-+static int ftrace_verify_code(unsigned long ip, const char *old_code)
- {
--	unsigned char replaced[MCOUNT_INSN_SIZE];
--
--	ftrace_expected = old_code;
-+	char cur_code[MCOUNT_INSN_SIZE];
- 
- 	/*
- 	 * Note:
-@@ -129,31 +92,38 @@ ftrace_modify_code_direct(unsigned long
- 	 * Carefully read and modify the code with probe_kernel_*(), and make
- 	 * sure what we read is what we expected it to be before modifying it.
- 	 */
--
- 	/* read the text we want to modify */
--	if (probe_kernel_read(replaced, (void *)ip, MCOUNT_INSN_SIZE))
-+	if (probe_kernel_read(cur_code, (void *)ip, MCOUNT_INSN_SIZE)) {
-+		WARN_ON(1);
- 		return -EFAULT;
-+	}
- 
- 	/* Make sure it is what we expect it to be */
--	if (memcmp(replaced, old_code, MCOUNT_INSN_SIZE) != 0)
-+	if (memcmp(cur_code, old_code, MCOUNT_INSN_SIZE) != 0) {
-+		WARN_ON(1);
- 		return -EINVAL;
-+	}
- 
--	ip = text_ip_addr(ip);
--
--	/* replace the text with the new text */
--	if (probe_kernel_write((void *)ip, new_code, MCOUNT_INSN_SIZE))
--		return -EPERM;
-+	return 0;
-+}
- 
--	sync_core();
-+static int
-+ftrace_modify_code_direct(unsigned long ip, const char *old_code,
-+			  const char *new_code)
-+{
-+	int ret = ftrace_verify_code(ip, old_code);
-+	if (ret)
-+		return ret;
- 
-+	/* replace the text with the new text */
-+	text_poke_early((void *)ip, new_code, MCOUNT_INSN_SIZE);
- 	return 0;
- }
- 
--int ftrace_make_nop(struct module *mod,
--		    struct dyn_ftrace *rec, unsigned long addr)
-+int ftrace_make_nop(struct module *mod, struct dyn_ftrace *rec, unsigned long addr)
- {
--	unsigned const char *new, *old;
- 	unsigned long ip = rec->ip;
-+	const char *new, *old;
- 
- 	old = ftrace_call_replace(ip, addr);
- 	new = ftrace_nop_replace();
-@@ -167,19 +137,20 @@ int ftrace_make_nop(struct module *mod,
- 	 * just modify the code directly.
- 	 */
- 	if (addr == MCOUNT_ADDR)
--		return ftrace_modify_code_direct(rec->ip, old, new);
--
--	ftrace_expected = NULL;
-+		return ftrace_modify_code_direct(ip, old, new);
- 
--	/* Normal cases use add_brk_on_nop */
-+	/*
-+	 * x86 overrides ftrace_replace_code -- this function will never be used
-+	 * in this case.
-+	 */
- 	WARN_ONCE(1, "invalid use of ftrace_make_nop");
- 	return -EINVAL;
- }
- 
- int ftrace_make_call(struct dyn_ftrace *rec, unsigned long addr)
- {
--	unsigned const char *new, *old;
- 	unsigned long ip = rec->ip;
-+	const char *new, *old;
- 
- 	old = ftrace_nop_replace();
- 	new = ftrace_call_replace(ip, addr);
-@@ -189,43 +160,6 @@ int ftrace_make_call(struct dyn_ftrace *
- }
- 
- /*
-- * The modifying_ftrace_code is used to tell the breakpoint
-- * handler to call ftrace_int3_handler(). If it fails to
-- * call this handler for a breakpoint added by ftrace, then
-- * the kernel may crash.
-- *
-- * As atomic_writes on x86 do not need a barrier, we do not
-- * need to add smp_mb()s for this to work. It is also considered
-- * that we can not read the modifying_ftrace_code before
-- * executing the breakpoint. That would be quite remarkable if
-- * it could do that. Here's the flow that is required:
-- *
-- *   CPU-0                          CPU-1
-- *
-- * atomic_inc(mfc);
-- * write int3s
-- *				<trap-int3> // implicit (r)mb
-- *				if (atomic_read(mfc))
-- *					call ftrace_int3_handler()
-- *
-- * Then when we are finished:
-- *
-- * atomic_dec(mfc);
-- *
-- * If we hit a breakpoint that was not set by ftrace, it does not
-- * matter if ftrace_int3_handler() is called or not. It will
-- * simply be ignored. But it is crucial that a ftrace nop/caller
-- * breakpoint is handled. No other user should ever place a
-- * breakpoint on an ftrace nop/caller location. It must only
-- * be done by this code.
-- */
--atomic_t modifying_ftrace_code __read_mostly;
--
--static int
--ftrace_modify_code(unsigned long ip, unsigned const char *old_code,
--		   unsigned const char *new_code);
--
--/*
-  * Should never be called:
-  *  As it is only called by __ftrace_replace_code() which is called by
-  *  ftrace_replace_code() that x86 overrides, and by ftrace_update_code()
-@@ -237,452 +171,84 @@ int ftrace_modify_call(struct dyn_ftrace
- 				 unsigned long addr)
- {
- 	WARN_ON(1);
--	ftrace_expected = NULL;
- 	return -EINVAL;
- }
- 
--static unsigned long ftrace_update_func;
--static unsigned long ftrace_update_func_call;
--
--static int update_ftrace_func(unsigned long ip, void *new)
--{
--	unsigned char old[MCOUNT_INSN_SIZE];
--	int ret;
--
--	memcpy(old, (void *)ip, MCOUNT_INSN_SIZE);
--
--	ftrace_update_func = ip;
--	/* Make sure the breakpoints see the ftrace_update_func update */
--	smp_wmb();
--
--	/* See comment above by declaration of modifying_ftrace_code */
--	atomic_inc(&modifying_ftrace_code);
--
--	ret = ftrace_modify_code(ip, old, new);
--
--	atomic_dec(&modifying_ftrace_code);
--
--	return ret;
--}
--
- int ftrace_update_ftrace_func(ftrace_func_t func)
- {
--	unsigned long ip = (unsigned long)(&ftrace_call);
--	unsigned char *new;
--	int ret;
--
--	ftrace_update_func_call = (unsigned long)func;
--
--	new = ftrace_call_replace(ip, (unsigned long)func);
--	ret = update_ftrace_func(ip, new);
--
--	/* Also update the regs callback function */
--	if (!ret) {
--		ip = (unsigned long)(&ftrace_regs_call);
--		new = ftrace_call_replace(ip, (unsigned long)func);
--		ret = update_ftrace_func(ip, new);
--	}
--
--	return ret;
--}
--
--static nokprobe_inline int is_ftrace_caller(unsigned long ip)
--{
--	if (ip == ftrace_update_func)
--		return 1;
--
--	return 0;
--}
--
--/*
-- * A breakpoint was added to the code address we are about to
-- * modify, and this is the handle that will just skip over it.
-- * We are either changing a nop into a trace call, or a trace
-- * call to a nop. While the change is taking place, we treat
-- * it just like it was a nop.
-- */
--int ftrace_int3_handler(struct pt_regs *regs)
--{
- 	unsigned long ip;
-+	const char *new;
- 
--	if (WARN_ON_ONCE(!regs))
--		return 0;
--
--	ip = regs->ip - INT3_INSN_SIZE;
--
--	if (ftrace_location(ip)) {
--		int3_emulate_call(regs, (unsigned long)ftrace_regs_caller);
--		return 1;
--	} else if (is_ftrace_caller(ip)) {
--		if (!ftrace_update_func_call) {
--			int3_emulate_jmp(regs, ip + CALL_INSN_SIZE);
--			return 1;
--		}
--		int3_emulate_call(regs, ftrace_update_func_call);
--		return 1;
--	}
--
--	return 0;
--}
--NOKPROBE_SYMBOL(ftrace_int3_handler);
--
--static int ftrace_write(unsigned long ip, const char *val, int size)
--{
--	ip = text_ip_addr(ip);
--
--	if (probe_kernel_write((void *)ip, val, size))
--		return -EPERM;
--
--	return 0;
--}
--
--static int add_break(unsigned long ip, const char *old)
--{
--	unsigned char replaced[MCOUNT_INSN_SIZE];
--	unsigned char brk = BREAKPOINT_INSTRUCTION;
--
--	if (probe_kernel_read(replaced, (void *)ip, MCOUNT_INSN_SIZE))
--		return -EFAULT;
--
--	ftrace_expected = old;
--
--	/* Make sure it is what we expect it to be */
--	if (memcmp(replaced, old, MCOUNT_INSN_SIZE) != 0)
--		return -EINVAL;
--
--	return ftrace_write(ip, &brk, 1);
--}
--
--static int add_brk_on_call(struct dyn_ftrace *rec, unsigned long addr)
--{
--	unsigned const char *old;
--	unsigned long ip = rec->ip;
--
--	old = ftrace_call_replace(ip, addr);
--
--	return add_break(rec->ip, old);
--}
--
--
--static int add_brk_on_nop(struct dyn_ftrace *rec)
--{
--	unsigned const char *old;
--
--	old = ftrace_nop_replace();
--
--	return add_break(rec->ip, old);
--}
--
--static int add_breakpoints(struct dyn_ftrace *rec, bool enable)
--{
--	unsigned long ftrace_addr;
--	int ret;
--
--	ftrace_addr = ftrace_get_addr_curr(rec);
--
--	ret = ftrace_test_record(rec, enable);
--
--	switch (ret) {
--	case FTRACE_UPDATE_IGNORE:
--		return 0;
--
--	case FTRACE_UPDATE_MAKE_CALL:
--		/* converting nop to call */
--		return add_brk_on_nop(rec);
--
--	case FTRACE_UPDATE_MODIFY_CALL:
--	case FTRACE_UPDATE_MAKE_NOP:
--		/* converting a call to a nop */
--		return add_brk_on_call(rec, ftrace_addr);
--	}
--	return 0;
--}
--
--/*
-- * On error, we need to remove breakpoints. This needs to
-- * be done caefully. If the address does not currently have a
-- * breakpoint, we know we are done. Otherwise, we look at the
-- * remaining 4 bytes of the instruction. If it matches a nop
-- * we replace the breakpoint with the nop. Otherwise we replace
-- * it with the call instruction.
-- */
--static int remove_breakpoint(struct dyn_ftrace *rec)
--{
--	unsigned char ins[MCOUNT_INSN_SIZE];
--	unsigned char brk = BREAKPOINT_INSTRUCTION;
--	const unsigned char *nop;
--	unsigned long ftrace_addr;
--	unsigned long ip = rec->ip;
--
--	/* If we fail the read, just give up */
--	if (probe_kernel_read(ins, (void *)ip, MCOUNT_INSN_SIZE))
--		return -EFAULT;
--
--	/* If this does not have a breakpoint, we are done */
--	if (ins[0] != brk)
--		return 0;
--
--	nop = ftrace_nop_replace();
--
--	/*
--	 * If the last 4 bytes of the instruction do not match
--	 * a nop, then we assume that this is a call to ftrace_addr.
--	 */
--	if (memcmp(&ins[1], &nop[1], MCOUNT_INSN_SIZE - 1) != 0) {
--		/*
--		 * For extra paranoidism, we check if the breakpoint is on
--		 * a call that would actually jump to the ftrace_addr.
--		 * If not, don't touch the breakpoint, we make just create
--		 * a disaster.
--		 */
--		ftrace_addr = ftrace_get_addr_new(rec);
--		nop = ftrace_call_replace(ip, ftrace_addr);
--
--		if (memcmp(&ins[1], &nop[1], MCOUNT_INSN_SIZE - 1) == 0)
--			goto update;
--
--		/* Check both ftrace_addr and ftrace_old_addr */
--		ftrace_addr = ftrace_get_addr_curr(rec);
--		nop = ftrace_call_replace(ip, ftrace_addr);
--
--		ftrace_expected = nop;
--
--		if (memcmp(&ins[1], &nop[1], MCOUNT_INSN_SIZE - 1) != 0)
--			return -EINVAL;
--	}
--
-- update:
--	return ftrace_write(ip, nop, 1);
--}
--
--static int add_update_code(unsigned long ip, unsigned const char *new)
--{
--	/* skip breakpoint */
--	ip++;
--	new++;
--	return ftrace_write(ip, new, MCOUNT_INSN_SIZE - 1);
--}
--
--static int add_update_call(struct dyn_ftrace *rec, unsigned long addr)
--{
--	unsigned long ip = rec->ip;
--	unsigned const char *new;
--
--	new = ftrace_call_replace(ip, addr);
--	return add_update_code(ip, new);
--}
--
--static int add_update_nop(struct dyn_ftrace *rec)
--{
--	unsigned long ip = rec->ip;
--	unsigned const char *new;
--
--	new = ftrace_nop_replace();
--	return add_update_code(ip, new);
--}
--
--static int add_update(struct dyn_ftrace *rec, bool enable)
--{
--	unsigned long ftrace_addr;
--	int ret;
--
--	ret = ftrace_test_record(rec, enable);
--
--	ftrace_addr  = ftrace_get_addr_new(rec);
--
--	switch (ret) {
--	case FTRACE_UPDATE_IGNORE:
--		return 0;
--
--	case FTRACE_UPDATE_MODIFY_CALL:
--	case FTRACE_UPDATE_MAKE_CALL:
--		/* converting nop to call */
--		return add_update_call(rec, ftrace_addr);
--
--	case FTRACE_UPDATE_MAKE_NOP:
--		/* converting a call to a nop */
--		return add_update_nop(rec);
--	}
--
--	return 0;
--}
--
--static int finish_update_call(struct dyn_ftrace *rec, unsigned long addr)
--{
--	unsigned long ip = rec->ip;
--	unsigned const char *new;
--
--	new = ftrace_call_replace(ip, addr);
--
--	return ftrace_write(ip, new, 1);
--}
--
--static int finish_update_nop(struct dyn_ftrace *rec)
--{
--	unsigned long ip = rec->ip;
--	unsigned const char *new;
--
--	new = ftrace_nop_replace();
--
--	return ftrace_write(ip, new, 1);
--}
--
--static int finish_update(struct dyn_ftrace *rec, bool enable)
--{
--	unsigned long ftrace_addr;
--	int ret;
--
--	ret = ftrace_update_record(rec, enable);
--
--	ftrace_addr = ftrace_get_addr_new(rec);
--
--	switch (ret) {
--	case FTRACE_UPDATE_IGNORE:
--		return 0;
-+	ip = (unsigned long)(&ftrace_call);
-+	new = ftrace_call_replace(ip, (unsigned long)func);
-+	text_poke_bp((void *)ip, new, MCOUNT_INSN_SIZE, NULL);
- 
--	case FTRACE_UPDATE_MODIFY_CALL:
--	case FTRACE_UPDATE_MAKE_CALL:
--		/* converting nop to call */
--		return finish_update_call(rec, ftrace_addr);
--
--	case FTRACE_UPDATE_MAKE_NOP:
--		/* converting a call to a nop */
--		return finish_update_nop(rec);
--	}
-+	ip = (unsigned long)(&ftrace_regs_call);
-+	new = ftrace_call_replace(ip, (unsigned long)func);
-+	text_poke_bp((void *)ip, new, MCOUNT_INSN_SIZE, NULL);
- 
- 	return 0;
- }
- 
--static void do_sync_core(void *data)
--{
--	sync_core();
--}
--
--static void run_sync(void)
--{
--	int enable_irqs;
--
--	/* No need to sync if there's only one CPU */
--	if (num_online_cpus() == 1)
--		return;
--
--	enable_irqs = irqs_disabled();
--
--	/* We may be called with interrupts disabled (on bootup). */
--	if (enable_irqs)
--		local_irq_enable();
--	on_each_cpu(do_sync_core, NULL, 1);
--	if (enable_irqs)
--		local_irq_disable();
--}
--
- void ftrace_replace_code(int enable)
- {
- 	struct ftrace_rec_iter *iter;
- 	struct dyn_ftrace *rec;
--	const char *report = "adding breakpoints";
--	int count = 0;
-+	const char *new, *old;
- 	int ret;
- 
- 	for_ftrace_rec_iter(iter) {
- 		rec = ftrace_rec_iter_record(iter);
- 
--		ret = add_breakpoints(rec, enable);
--		if (ret)
--			goto remove_breakpoints;
--		count++;
--	}
--
--	run_sync();
--
--	report = "updating code";
--	count = 0;
--
--	for_ftrace_rec_iter(iter) {
--		rec = ftrace_rec_iter_record(iter);
--
--		ret = add_update(rec, enable);
--		if (ret)
--			goto remove_breakpoints;
--		count++;
-+		switch (ftrace_test_record(rec, enable)) {
-+		case FTRACE_UPDATE_IGNORE:
-+		default:
-+			continue;
-+
-+		case FTRACE_UPDATE_MAKE_CALL:
-+			old = ftrace_nop_replace();
-+			break;
-+
-+		case FTRACE_UPDATE_MODIFY_CALL:
-+		case FTRACE_UPDATE_MAKE_NOP:
-+			old = ftrace_call_replace(rec->ip, ftrace_get_addr_curr(rec));
-+			break;
-+		};
-+
-+		ret = ftrace_verify_code(rec->ip, old);
-+		if (ret) {
-+			ftrace_bug(ret, rec);
-+			return;
-+		}
- 	}
- 
--	run_sync();
--
--	report = "removing breakpoints";
--	count = 0;
--
- 	for_ftrace_rec_iter(iter) {
- 		rec = ftrace_rec_iter_record(iter);
- 
--		ret = finish_update(rec, enable);
--		if (ret)
--			goto remove_breakpoints;
--		count++;
--	}
--
--	run_sync();
--
--	return;
-+		switch (ftrace_test_record(rec, enable)) {
-+		case FTRACE_UPDATE_IGNORE:
-+		default:
-+			continue;
-+
-+		case FTRACE_UPDATE_MAKE_CALL:
-+		case FTRACE_UPDATE_MODIFY_CALL:
-+			new = ftrace_call_replace(rec->ip, ftrace_get_addr_new(rec));
-+			break;
-+
-+		case FTRACE_UPDATE_MAKE_NOP:
-+			new = ftrace_nop_replace();
-+			break;
-+		};
- 
-- remove_breakpoints:
--	pr_warn("Failed on %s (%d):\n", report, count);
--	ftrace_bug(ret, rec);
--	for_ftrace_rec_iter(iter) {
--		rec = ftrace_rec_iter_record(iter);
--		/*
--		 * Breakpoints are handled only when this function is in
--		 * progress. The system could not work with them.
--		 */
--		if (remove_breakpoint(rec))
--			BUG();
-+		text_poke_queue((void *)rec->ip, new, MCOUNT_INSN_SIZE, NULL);
-+		ftrace_update_record(rec, enable);
- 	}
--	run_sync();
--}
--
--static int
--ftrace_modify_code(unsigned long ip, unsigned const char *old_code,
--		   unsigned const char *new_code)
--{
--	int ret;
--
--	ret = add_break(ip, old_code);
--	if (ret)
--		goto out;
--
--	run_sync();
--
--	ret = add_update_code(ip, new_code);
--	if (ret)
--		goto fail_update;
--
--	run_sync();
--
--	ret = ftrace_write(ip, new_code, 1);
--	/*
--	 * The breakpoint is handled only when this function is in progress.
--	 * The system could not work if we could not remove it.
--	 */
--	BUG_ON(ret);
-- out:
--	run_sync();
--	return ret;
--
-- fail_update:
--	/* Also here the system could not work with the breakpoint */
--	if (ftrace_write(ip, old_code, 1))
--		BUG();
--	goto out;
-+	text_poke_finish();
- }
- 
- void arch_ftrace_update_code(int command)
- {
--	/* See comment above by declaration of modifying_ftrace_code */
--	atomic_inc(&modifying_ftrace_code);
--
- 	ftrace_modify_all_code(command);
--
--	atomic_dec(&modifying_ftrace_code);
- }
- 
- int __init ftrace_dyn_arch_init(void)
-@@ -828,11 +394,7 @@ create_trampoline(struct ftrace_ops *ops
- 
- 	set_vm_flush_reset_perms(trampoline);
- 
--	/*
--	 * Module allocation needs to be completed by making the page
--	 * executable. The page is still writable, which is a security hazard,
--	 * but anyhow ftrace breaks W^X completely.
--	 */
-+	set_memory_ro((unsigned long)trampoline, npages);
- 	set_memory_x((unsigned long)trampoline, npages);
- 	return (unsigned long)trampoline;
- fail:
-@@ -859,11 +421,10 @@ static unsigned long calc_trampoline_cal
- void arch_ftrace_update_trampoline(struct ftrace_ops *ops)
- {
- 	ftrace_func_t func;
--	unsigned char *new;
- 	unsigned long offset;
- 	unsigned long ip;
- 	unsigned int size;
--	int ret, npages;
-+	const char *new;
- 
- 	if (ops->trampoline) {
- 		/*
-@@ -872,14 +433,11 @@ void arch_ftrace_update_trampoline(struc
- 		 */
- 		if (!(ops->flags & FTRACE_OPS_FL_ALLOC_TRAMP))
- 			return;
--		npages = PAGE_ALIGN(ops->trampoline_size) >> PAGE_SHIFT;
--		set_memory_rw(ops->trampoline, npages);
- 	} else {
- 		ops->trampoline = create_trampoline(ops, &size);
- 		if (!ops->trampoline)
- 			return;
- 		ops->trampoline_size = size;
--		npages = PAGE_ALIGN(size) >> PAGE_SHIFT;
- 	}
- 
- 	offset = calc_trampoline_call_offset(ops->flags & FTRACE_OPS_FL_SAVE_REGS);
-@@ -887,15 +445,11 @@ void arch_ftrace_update_trampoline(struc
- 
- 	func = ftrace_ops_get_func(ops);
- 
--	ftrace_update_func_call = (unsigned long)func;
--
-+	mutex_lock(&text_mutex);
- 	/* Do a safe modify in case the trampoline is executing */
- 	new = ftrace_call_replace(ip, (unsigned long)func);
--	ret = update_ftrace_func(ip, new);
--	set_memory_ro(ops->trampoline, npages);
--
--	/* The update should never fail */
--	WARN_ON(ret);
-+	text_poke_bp((void *)ip, new, MCOUNT_INSN_SIZE, NULL);
-+	mutex_unlock(&text_mutex);
- }
- 
- /* Return the address of the function the trampoline calls */
-@@ -981,19 +535,18 @@ void arch_ftrace_trampoline_free(struct
- #ifdef CONFIG_DYNAMIC_FTRACE
- extern void ftrace_graph_call(void);
- 
--static unsigned char *ftrace_jmp_replace(unsigned long ip, unsigned long addr)
-+static const char *ftrace_jmp_replace(unsigned long ip, unsigned long addr)
- {
--	return ftrace_text_replace(0xe9, ip, addr);
-+	return ftrace_text_replace(JMP32_INSN_OPCODE, ip, addr);
- }
- 
- static int ftrace_mod_jmp(unsigned long ip, void *func)
- {
--	unsigned char *new;
-+	const char *new;
- 
--	ftrace_update_func_call = 0UL;
- 	new = ftrace_jmp_replace(ip, (unsigned long)func);
--
--	return update_ftrace_func(ip, new);
-+	text_poke_bp((void *)ip, new, MCOUNT_INSN_SIZE, NULL); // BATCH
-+	return 0;
- }
- 
- int ftrace_enable_ftrace_graph_caller(void)
-@@ -1019,10 +572,9 @@ int ftrace_disable_ftrace_graph_caller(v
- void prepare_ftrace_return(unsigned long self_addr, unsigned long *parent,
- 			   unsigned long frame_pointer)
- {
-+	unsigned long return_hooker = (unsigned long)&return_to_handler;
- 	unsigned long old;
- 	int faulted;
--	unsigned long return_hooker = (unsigned long)
--				&return_to_handler;
- 
- 	/*
- 	 * When resuming from suspend-to-ram, this function can be indirectly
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -568,15 +568,6 @@ NOKPROBE_SYMBOL(do_general_protection);
- 
- dotraplinkage void notrace do_int3(struct pt_regs *regs, long error_code)
- {
--#ifdef CONFIG_DYNAMIC_FTRACE
--	/*
--	 * ftrace must be first, everything else may cause a recursive crash.
--	 * See note by declaration of modifying_ftrace_code in ftrace.c
--	 */
--	if (unlikely(atomic_read(&modifying_ftrace_code)) &&
--	    ftrace_int3_handler(regs))
--		return;
--#endif
- 	if (poke_int3_handler(regs))
- 		return;
- 
 
 
+> -----Original Message-----
+> From: Alex Williamson <alex.williamson@redhat.com>
+> Sent: Tuesday, August 27, 2019 11:19 PM
+> To: Parav Pandit <parav@mellanox.com>
+> Cc: Jiri Pirko <jiri@mellanox.com>; kwankhede@nvidia.com;
+> cohuck@redhat.com; davem@davemloft.net; kvm@vger.kernel.org; linux-
+> kernel@vger.kernel.org; netdev@vger.kernel.org
+> Subject: Re: [PATCH 0/4] Introduce variable length mdev alias
+>=20
+> On Tue, 27 Aug 2019 13:11:17 +0000
+> Parav Pandit <parav@mellanox.com> wrote:
+>=20
+> > Hi Alex, Cornelia,
+> >
+> > > -----Original Message-----
+> > > From: kvm-owner@vger.kernel.org <kvm-owner@vger.kernel.org> On
+> > > Behalf Of Parav Pandit
+> > > Sent: Tuesday, August 27, 2019 2:11 AM
+> > > To: alex.williamson@redhat.com; Jiri Pirko <jiri@mellanox.com>;
+> > > kwankhede@nvidia.com; cohuck@redhat.com; davem@davemloft.net
+> > > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > netdev@vger.kernel.org; Parav Pandit <parav@mellanox.com>
+> > > Subject: [PATCH 0/4] Introduce variable length mdev alias
+> > >
+> > > To have consistent naming for the netdevice of a mdev and to have
+> > > consistent naming of the devlink port [1] of a mdev, which is formed
+> > > using phys_port_name of the devlink port, current UUID is not usable
+> > > because UUID is too long.
+> > >
+> > > UUID in string format is 36-characters long and in binary 128-bit.
+> > > Both formats are not able to fit within 15 characters limit of netdev
+> name.
+> > >
+> > > It is desired to have mdev device naming consistent using UUID.
+> > > So that widely used user space framework such as ovs [2] can make
+> > > use of mdev representor in similar way as PCIe SR-IOV VF and PF
+> representors.
+> > >
+> > > Hence,
+> > > (a) mdev alias is created which is derived using sha1 from the mdev
+> name.
+> > > (b) Vendor driver describes how long an alias should be for the
+> > > child mdev created for a given parent.
+> > > (c) Mdev aliases are unique at system level.
+> > > (d) alias is created optionally whenever parent requested.
+> > > This ensures that non networking mdev parents can function without
+> > > alias creation overhead.
+> > >
+> > > This design is discussed at [3].
+> > >
+> > > An example systemd/udev extension will have,
+> > >
+> > > 1. netdev name created using mdev alias available in sysfs.
+> > >
+> > > mdev UUID=3D83b8f4f2-509f-382f-3c1e-e6bfe0fa1001
+> > > mdev 12 character alias=3Dcd5b146a80a5
+> > >
+> > > netdev name of this mdev =3D enmcd5b146a80a5 Here en =3D Ethernet lin=
+k m
+> > > =3D mediated device
+> > >
+> > > 2. devlink port phys_port_name created using mdev alias.
+> > > devlink phys_port_name=3Dpcd5b146a80a5
+> > >
+> > > This patchset enables mdev core to maintain unique alias for a mdev.
+> > >
+> > > Patch-1 Introduces mdev alias using sha1.
+> > > Patch-2 Ensures that mdev alias is unique in a system.
+> > > Patch-3 Exposes mdev alias in a sysfs hirerchy.
+> > > Patch-4 Extends mtty driver to optionally provide alias generation.
+> > > This also enables to test UUID based sha1 collision and trigger
+> > > error handling for duplicate sha1 results.
+> > >
+> > > In future when networking driver wants to use mdev alias,
+> > > mdev_alias() API will be added to derive devlink port name.
+> > >
+> > Now that majority of above patches looks in shape and I addressed all
+> > comments, In next v1 post, I was considering to include mdev_alias()
+> > and have example use in mtty driver.
+> >
+> > This way, subsequent series of mlx5_core who intents to use
+> > mdev_alias() API makes it easy to review and merge through Dave M,
+> > netdev tree. Is that ok with you?
+>=20
+> What would be the timing for the mlx5_core use case?  Can we coordinate
+> within the same development cycle?  I wouldn't want someone to come
+> clean up the sample driver and remove the API ;)  Thanks,
+>=20
+We targeted it for 5.4. mdev_alias was the only known user interface issue,=
+ which is resolved.
+Some more internal reviews are in progress.
+It might be tight for 5.4, if not 5.4, it should happen in 5.5.
+
+I agree, that is why I was holding up to be part of this series.
+Since its very small API, even if there is any merge conflict, it is easy t=
+o resolve.
+If this change can be merged through netdev tree, its better to include it =
+as part of mlx5_core's mdev series.
+So both options are fine, a direction from you is better to have.
