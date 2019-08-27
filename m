@@ -2,175 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D2D9EF4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE479EF5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:49:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729390AbfH0Pr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:47:29 -0400
-Received: from foss.arm.com ([217.140.110.172]:46990 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbfH0Pr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:47:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A5C7337;
-        Tue, 27 Aug 2019 08:47:28 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 598D23F59C;
-        Tue, 27 Aug 2019 08:47:27 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 16:47:25 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
-        gustavo.pimentel@synopsys.com, digetx@gmail.com,
-        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH 6/6] PCI: tegra: Add support to enable slot regulators
-Message-ID: <20190827154725.GP14582@e119886-lin.cambridge.arm.com>
-References: <20190826073143.4582-1-vidyas@nvidia.com>
- <20190826073143.4582-7-vidyas@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826073143.4582-7-vidyas@nvidia.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+        id S1730088AbfH0Ptu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:49:50 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:38881 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728612AbfH0Ptu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 11:49:50 -0400
+Received: by mail-qk1-f195.google.com with SMTP id u190so17430202qkh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 08:49:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=dibpdWj0PBeXuEM69FfN87DRWH5kS3v94RiPB1mv5iU=;
+        b=CxO4kuP71bXMdZBURSFVdEA6wqQw9veNFs9SiOUXDz8+GLQkSMpNUvDc2+Uu7dWt5K
+         2RVqK/QVIomtdFygUzu5x3xCfxHiRlG1TaWOhZw9yakOOL7eXp8igeouILW2IaBuMGay
+         4KaJtN0aWzCBRsZKQ5XbWAH8QKIfmKVbVsIi6DrJvzDGlXADj65lpVVey4TVTpELbhjQ
+         DAm9fF3n4JfH6dW+9Ax7obiuUAB8pkae7qQawFmQUd90wT2p/W0euy8Hh6/qYLWuMb/9
+         j50hqCT+1aYw1nZRljxHT2U4ZMnPFIUFpeTnY3fVpOScRYLoiFUFUeFMkjfYEgWJnyRH
+         jLaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dibpdWj0PBeXuEM69FfN87DRWH5kS3v94RiPB1mv5iU=;
+        b=WasUyfeQKyvLSs4jKQvyl2Jgc4N2+jH/8UZ6trRdLFiyd4s3iO7g9SrnrkKq1NcCnr
+         JY7/ppOfy1BcjCiblDpIT8snvCX4V9JUn/kBoKYh3DOLpDxijtCxkeP/mdtjEs4a6UGw
+         HpUGuQ9OzgLC+23QU2cGnv2Bng4/6vQom7q5cSwXdRheaMEX3rJhBmx8EE9u7qwzyJe4
+         zKEVtVcJ2/H63N/2hzv4ykTquXqqWlpVIG/CdxvEVmmLQGhZE3Gdd3dENEfND2ayF7nj
+         KSOojIbhDMGdPHN1T8ERWJTFzc2yrWqJUK+N7Gc+bm3ocBOP4YPqSMgsCw0AbfB0+PYN
+         JnSA==
+X-Gm-Message-State: APjAAAU13q/HvALZk8765CHTa+hcyRc90Z0ma+VfO8wOtJoGP28azxPh
+        IpM7bWSMqQp7rXnXuyvrTuTa5Mtloik=
+X-Google-Smtp-Source: APXvYqzu5/zr/pjEg/k5K28N3QPNYROqHF/i7rqJ5Ju2ChMhxp/jinXqOZrHzVQafRHebX5wnlONpg==
+X-Received: by 2002:a37:c49:: with SMTP id 70mr22348368qkm.429.1566920989128;
+        Tue, 27 Aug 2019 08:49:49 -0700 (PDT)
+Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id w1sm8505153qte.36.2019.08.27.08.49.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Aug 2019 08:49:48 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     clang-built-linux@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] mm: silence -Woverride-init/initializer-overrides
+Date:   Tue, 27 Aug 2019 11:47:47 -0400
+Message-Id: <1566920867-27453-1-git-send-email-cai@lca.pw>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 01:01:43PM +0530, Vidya Sagar wrote:
-> Add support to get regulator information of 3.3V and 12V supplies of a PCIe
-> slot from the respective controller's device-tree node and enable those
-> supplies. This is required in platforms like p2972-0000 where the supplies
-> to x16 slot owned by C5 controller need to be enabled before attempting to
-> enumerate the devices.
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
->  drivers/pci/controller/dwc/pcie-tegra194.c | 65 ++++++++++++++++++++++
->  1 file changed, 65 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 8a27b25893c9..97de2151a738 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -278,6 +278,8 @@ struct tegra_pcie_dw {
->  	u32 aspm_l0s_enter_lat;
->  
->  	struct regulator *pex_ctl_supply;
-> +	struct regulator *slot_ctl_3v3;
-> +	struct regulator *slot_ctl_12v;
->  
->  	unsigned int phy_count;
->  	struct phy **phys;
-> @@ -1047,6 +1049,59 @@ static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
->  	}
->  }
->  
-> +static void tegra_pcie_get_slot_regulators(struct tegra_pcie_dw *pcie)
-> +{
-> +	pcie->slot_ctl_3v3 = devm_regulator_get_optional(pcie->dev, "vpcie3v3");
-> +	if (IS_ERR(pcie->slot_ctl_3v3))
-> +		pcie->slot_ctl_3v3 = NULL;
-> +
-> +	pcie->slot_ctl_12v = devm_regulator_get_optional(pcie->dev, "vpcie12v");
-> +	if (IS_ERR(pcie->slot_ctl_12v))
-> +		pcie->slot_ctl_12v = NULL;
+When compiling a kernel with W=1, there are several of those warnings
+due to arm64 override a field by purpose. Just disable those warnings
+for both GCC and Clang of this file, so it will help dig "gems" hidden
+in the W=1 warnings by reducing some noises.
 
-Do these need to take into consideration -EPROBE_DEFER?
+mm/init-mm.c:39:2: warning: initializer overrides prior initialization
+of this subobject [-Winitializer-overrides]
+        INIT_MM_CONTEXT(init_mm)
+        ^~~~~~~~~~~~~~~~~~~~~~~~
+./arch/arm64/include/asm/mmu.h:133:9: note: expanded from macro
+'INIT_MM_CONTEXT'
+        .pgd = init_pg_dir,
+               ^~~~~~~~~~~
+mm/init-mm.c:30:10: note: previous initialization is here
+        .pgd            = swapper_pg_dir,
+                          ^~~~~~~~~~~~~~
 
-Thanks,
+Note: there is a side project trying to support explicitly allowing
+specific initializer overrides in Clang, but there is no guarantee it
+will happen or not.
 
-Andrew Murray
+https://github.com/ClangBuiltLinux/linux/issues/639
 
-> +}
-> +
-> +static int tegra_pcie_enable_slot_regulators(struct tegra_pcie_dw *pcie)
-> +{
-> +	int ret;
-> +
-> +	if (pcie->slot_ctl_3v3) {
-> +		ret = regulator_enable(pcie->slot_ctl_3v3);
-> +		if (ret < 0) {
-> +			dev_err(pcie->dev,
-> +				"Failed to enable 3V3 slot supply: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	if (pcie->slot_ctl_12v) {
-> +		ret = regulator_enable(pcie->slot_ctl_12v);
-> +		if (ret < 0) {
-> +			dev_err(pcie->dev,
-> +				"Failed to enable 12V slot supply: %d\n", ret);
-> +			if (pcie->slot_ctl_3v3)
-> +				regulator_disable(pcie->slot_ctl_3v3);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * According to PCI Express Card Electromechanical Specification
-> +	 * Revision 1.1, Table-2.4, T_PVPERL (Power stable to PERST# inactive)
-> +	 * should be a minimum of 100ms.
-> +	 */
-> +	msleep(100);
-> +
-> +	return 0;
-> +}
-> +
-> +static void tegra_pcie_disable_slot_regulators(struct tegra_pcie_dw *pcie)
-> +{
-> +	if (pcie->slot_ctl_12v)
-> +		regulator_disable(pcie->slot_ctl_12v);
-> +	if (pcie->slot_ctl_3v3)
-> +		regulator_disable(pcie->slot_ctl_3v3);
-> +}
-> +
->  static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  					bool en_hw_hot_rst)
->  {
-> @@ -1060,6 +1115,10 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  		return ret;
->  	}
->  
-> +	ret = tegra_pcie_enable_slot_regulators(pcie);
-> +	if (ret < 0)
-> +		goto fail_slot_reg_en;
-> +
->  	ret = regulator_enable(pcie->pex_ctl_supply);
->  	if (ret < 0) {
->  		dev_err(pcie->dev, "Failed to enable regulator: %d\n", ret);
-> @@ -1142,6 +1201,8 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  fail_core_clk:
->  	regulator_disable(pcie->pex_ctl_supply);
->  fail_reg_en:
-> +	tegra_pcie_disable_slot_regulators(pcie);
-> +fail_slot_reg_en:
->  	tegra_pcie_bpmp_set_ctrl_state(pcie, false);
->  
->  	return ret;
-> @@ -1174,6 +1235,8 @@ static int __deinit_controller(struct tegra_pcie_dw *pcie)
->  		return ret;
->  	}
->  
-> +	tegra_pcie_disable_slot_regulators(pcie);
-> +
->  	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
->  	if (ret) {
->  		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
-> @@ -1372,6 +1435,8 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	tegra_pcie_get_slot_regulators(pcie);
-> +
->  	pcie->pex_ctl_supply = devm_regulator_get(dev, "vddio-pex-ctl");
->  	if (IS_ERR(pcie->pex_ctl_supply)) {
->  		dev_err(dev, "Failed to get regulator: %ld\n",
-> -- 
-> 2.17.1
-> 
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ mm/Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/mm/Makefile b/mm/Makefile
+index d0b295c3b764..5a30b8ecdc55 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -21,6 +21,9 @@ KCOV_INSTRUMENT_memcontrol.o := n
+ KCOV_INSTRUMENT_mmzone.o := n
+ KCOV_INSTRUMENT_vmstat.o := n
+ 
++CFLAGS_init-mm.o += $(call cc-disable-warning, override-init)
++CFLAGS_init-mm.o += $(call cc-disable-warning, initializer-overrides)
++
+ mmu-y			:= nommu.o
+ mmu-$(CONFIG_MMU)	:= highmem.o memory.o mincore.o \
+ 			   mlock.o mmap.o mmu_gather.o mprotect.o mremap.o \
+-- 
+1.8.3.1
+
