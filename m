@@ -2,44 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3918A9E294
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDACC9E29C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730988AbfH0I2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:28:02 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42754 "EHLO
+        id S1729502AbfH0I0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:26:22 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42706 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729726AbfH0I0Z (ORCPT
+        with ESMTP id S1727306AbfH0I0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:26:25 -0400
+        Tue, 27 Aug 2019 04:26:20 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2Wnu-0007nV-9l; Tue, 27 Aug 2019 10:26:14 +0200
+        id 1i2Wnt-0007nU-Su; Tue, 27 Aug 2019 10:26:14 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 097DC1C0DDE;
-        Tue, 27 Aug 2019 10:26:14 +0200 (CEST)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 86C021C07DC;
+        Tue, 27 Aug 2019 10:26:13 +0200 (CEST)
 Date:   Tue, 27 Aug 2019 08:26:13 -0000
-From:   tip-bot2 for James Clark <tip-bot2@linutronix.de>
+From:   tip-bot2 for Arnaldo Carvalho de Melo <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf tests: Fixes hang in zstd compression test by
- changing the source of random data
-Cc:     James Clark <james.clark@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+Subject: [tip: perf/core] perf sort: Remove needless headers from sort.h,
+ provide fwd struct decls
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <3d8cc701-df4e-f949-1715-5118b530e990@arm.com>
-References: <3d8cc701-df4e-f949-1715-5118b530e990@arm.com>
+In-Reply-To: <tip-u63el2vqsovsmnhebx1rcixo@git.kernel.org>
+References: <tip-u63el2vqsovsmnhebx1rcixo@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <156689437397.24490.12973192307479973148.tip-bot2@tip-bot2>
+Message-ID: <156689437339.24487.57241566156068084.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -56,44 +52,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     d93fc7ac88c7347d1c31ca158d1466d1ce2097e1
-Gitweb:        https://git.kernel.org/tip/d93fc7ac88c7347d1c31ca158d1466d1ce2097e1
-Author:        James Clark <James.Clark@arm.com>
-AuthorDate:    Thu, 22 Aug 2019 13:55:15 
+Commit-ID:     185bcb92c80eae2d85ec834ea76a144fd163e2af
+Gitweb:        https://git.kernel.org/tip/185bcb92c80eae2d85ec834ea76a144fd163e2af
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Thu, 22 Aug 2019 17:11:39 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Mon, 26 Aug 2019 11:58:29 -03:00
 
-perf tests: Fixes hang in zstd compression test by changing the source of random data
+perf sort: Remove needless headers from sort.h, provide fwd struct decls
 
-Running 'perf test' with zstd compression linked will hang at the test
-'Zstd perf.data compression/decompression' because /dev/random blocks
-reads until there is enough entropy. This means that the test will
-appear to never complete unless the mouse is continually moved while
-running it.
+Reducing the includes hell a bit more, speeding up the build and
+avoiding needless rebuilds when just one of those files gets updated.
 
-Signed-off-by: James Clark <james.clark@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jeremy Linton <jeremy.linton@arm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/3d8cc701-df4e-f949-1715-5118b530e990@arm.com
+Link: https://lkml.kernel.org/n/tip-u63el2vqsovsmnhebx1rcixo@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/shell/record+zstd_comp_decomp.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/ui/browsers/res_sample.c |  2 ++
+ tools/perf/ui/browsers/scripts.c    |  2 ++
+ tools/perf/ui/stdio/hist.c          |  1 +
+ tools/perf/util/callchain.c         |  1 +
+ tools/perf/util/sort.h              | 15 ++-------------
+ 5 files changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/tests/shell/record+zstd_comp_decomp.sh b/tools/perf/tests/shell/record+zstd_comp_decomp.sh
-index 899604d..63a91ec 100755
---- a/tools/perf/tests/shell/record+zstd_comp_decomp.sh
-+++ b/tools/perf/tests/shell/record+zstd_comp_decomp.sh
-@@ -13,7 +13,7 @@ skip_if_no_z_record() {
- collect_z_record() {
- 	echo "Collecting compressed record file:"
- 	$perf_tool record -o $trace_file -g -z -F 5000 -- \
--		dd count=500 if=/dev/random of=/dev/null
-+		dd count=500 if=/dev/urandom of=/dev/null
- }
+diff --git a/tools/perf/ui/browsers/res_sample.c b/tools/perf/ui/browsers/res_sample.c
+index 08897bd..41a9d89 100644
+--- a/tools/perf/ui/browsers/res_sample.c
++++ b/tools/perf/ui/browsers/res_sample.c
+@@ -6,6 +6,8 @@
+ #include "sort.h"
+ #include "config.h"
+ #include "time-utils.h"
++#include "../util.h"
++#include "../../util/util.h"
+ #include <linux/time64.h>
+ #include <linux/zalloc.h>
  
- check_compressed_stats() {
+diff --git a/tools/perf/ui/browsers/scripts.c b/tools/perf/ui/browsers/scripts.c
+index 04f9aff..f2fd9f0 100644
+--- a/tools/perf/ui/browsers/scripts.c
++++ b/tools/perf/ui/browsers/scripts.c
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include "../../builtin.h"
+ #include "../../util/sort.h"
++#include "../../util/util.h"
+ #include "../../util/hist.h"
+ #include "../../util/debug.h"
+ #include "../../util/symbol.h"
+diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
+index ee7ea6d..51ed675 100644
+--- a/tools/perf/ui/stdio/hist.c
++++ b/tools/perf/ui/stdio/hist.c
+@@ -3,6 +3,7 @@
+ #include <linux/string.h>
+ 
+ #include "../../util/callchain.h"
++#include "../../util/debug.h"
+ #include "../../util/hist.h"
+ #include "../../util/map.h"
+ #include "../../util/map_groups.h"
+diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+index d077704..dd6e010 100644
+--- a/tools/perf/util/callchain.c
++++ b/tools/perf/util/callchain.c
+@@ -20,6 +20,7 @@
+ 
+ #include "asm/bug.h"
+ 
++#include "debug.h"
+ #include "hist.h"
+ #include "sort.h"
+ #include "machine.h"
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index 4ae155c..3d7cef7 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -1,29 +1,18 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __PERF_SORT_H
+ #define __PERF_SORT_H
+-#include "../builtin.h"
+-
+ #include <regex.h>
+-
+-#include "color.h"
++#include <stdbool.h>
+ #include <linux/list.h>
+-#include "cache.h"
+ #include <linux/rbtree.h>
+ #include "map_symbol.h"
+ #include "symbol_conf.h"
+-#include "string.h"
+ #include "callchain.h"
+ #include "values.h"
+ 
+-#include "../perf.h"
+-#include "debug.h"
+-#include "header.h"
+-
+-#include <subcmd/parse-options.h>
+-#include "parse-events.h"
+ #include "hist.h"
+-#include "srcline.h"
+ 
++struct option;
+ struct thread;
+ 
+ extern regex_t parent_regex;
