@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 246CE9E002
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B261C9E006
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:59:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731289AbfH0H7q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:59:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53520 "EHLO mail.kernel.org"
+        id S1731314AbfH0H7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:59:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730030AbfH0H7o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:59:44 -0400
+        id S1729841AbfH0H7t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:59:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E53DC206BF;
-        Tue, 27 Aug 2019 07:59:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BAD121872;
+        Tue, 27 Aug 2019 07:59:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892783;
-        bh=xcF3pwW281JUt2RUmFVom/YBg0958fmp5Qz9HKBi+EA=;
+        s=default; t=1566892789;
+        bh=K7OO/k/9uTUQTsLSQFVuCi0C18WK/eXM3FKrHoVoJ6E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yfK8xC3CNJ8zVA9fux/kDbhXfG5sPxlBsx134ZxFyYBSOSj1e/4P55CFHm+Qst68F
-         GhGdv7HRN1JMjjv26VsMJgAAXB0pjIxPlr1kh2/6KTz/UwqNftBq6wtCLm1ZNbABBN
-         9eePRGm4Hmz4lVzLuSZzy8pM135Z7SvxjBPFcpbE=
+        b=VPY505nQgtNARmb5W5C960sxGFKye30XN4LANTPVM3nNBoIW+evAtUIcfhJMar4Ru
+         qu7bmf6bpvjb6jCivIEPQPMkVMccD3ZQDwNmSh2103g0lk7+5VUiEN7uFmczbmTAvP
+         sJF3aHwHSNVwGRWj9bChTVwnzapcmB/tyhg9UGEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 003/162] ASoC: simple-card: fix an use-after-free in simple_for_each_link()
-Date:   Tue, 27 Aug 2019 09:48:51 +0200
-Message-Id: <20190827072738.264961530@linuxfoundation.org>
+Subject: [PATCH 5.2 005/162] ASoC: audio-graph-card: fix an use-after-free in graph_get_dai_id()
+Date:   Tue, 27 Aug 2019 09:48:53 +0200
+Message-Id: <20190827072738.370355464@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
 References: <20190827072738.093683223@linuxfoundation.org>
@@ -45,48 +45,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 27862d5a3325bc531ec15e3c607e44aa0fd57f6f ]
+[ Upstream commit c152f8491a8d9a4b25afd65a86eb5e55e2a8c380 ]
 
-The codec variable is still being used after the of_node_put() call,
-which may result in use-after-free.
+After calling of_node_put() on the node variable, it is still being
+used, which may result in use-after-free.
+Fix this issue by calling of_node_put() after the last usage.
 
-Fixes: d947cdfd4be2 ("ASoC: simple-card: cleanup DAI link loop method - step1")
-Link: https://lore.kernel.org/r/1562743509-30496-3-git-send-email-wen.yang99@zte.com.cn
+Fixes: a0c426fe1433 ("ASoC: simple-card-utils: check "reg" property on asoc_simple_card_get_dai_id()")
+Link: https://lore.kernel.org/r/1562743509-30496-5-git-send-email-wen.yang99@zte.com.cn
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
 Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/generic/simple-card.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/generic/audio-graph-card.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 544064fdc780c..2712a2b201024 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -378,8 +378,6 @@ static int simple_for_each_link(struct asoc_simple_priv *priv,
- 			goto error;
- 		}
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index d5188a179378f..a681ea443fc16 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -63,6 +63,7 @@ static int graph_get_dai_id(struct device_node *ep)
+ 	struct device_node *endpoint;
+ 	struct of_endpoint info;
+ 	int i, id;
++	u32 *reg;
+ 	int ret;
  
--		of_node_put(codec);
--
- 		/* get convert-xxx property */
- 		memset(&adata, 0, sizeof(adata));
- 		for_each_child_of_node(node, np)
-@@ -401,11 +399,13 @@ static int simple_for_each_link(struct asoc_simple_priv *priv,
- 				ret = func_noml(priv, np, codec, li, is_top);
+ 	/* use driver specified DAI ID if exist */
+@@ -83,8 +84,9 @@ static int graph_get_dai_id(struct device_node *ep)
+ 			return info.id;
  
- 			if (ret < 0) {
-+				of_node_put(codec);
- 				of_node_put(np);
- 				goto error;
- 			}
- 		}
- 
-+		of_node_put(codec);
- 		node = of_get_next_child(top, node);
- 	} while (!is_top && node);
- 
+ 		node = of_get_parent(ep);
++		reg = of_get_property(node, "reg", NULL);
+ 		of_node_put(node);
+-		if (of_get_property(node, "reg", NULL))
++		if (reg)
+ 			return info.port;
+ 	}
+ 	node = of_graph_get_port_parent(ep);
 -- 
 2.20.1
 
