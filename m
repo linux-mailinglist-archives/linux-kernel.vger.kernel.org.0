@@ -2,135 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32B5C9EB24
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE79D9EB2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729941AbfH0Ogo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 10:36:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43960 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728834AbfH0Ogk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 10:36:40 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2caJ-0008Qw-4q; Tue, 27 Aug 2019 16:36:35 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9ACE21C07DC;
-        Tue, 27 Aug 2019 16:36:34 +0200 (CEST)
-Date:   Tue, 27 Aug 2019 14:36:34 -0000
-From:   "tip-bot2 for Ming Lei" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/affinity: Improve __irq_build_affinity_masks()
-Cc:     Ming Lei <ming.lei@redhat.com>,
+        id S1730038AbfH0Ogz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 10:36:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55006 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728702AbfH0Ogj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 10:36:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0FE5ACC1;
+        Tue, 27 Aug 2019 14:36:36 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 16:36:35 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190816022849.14075-2-ming.lei@redhat.com>
-References: <20190816022849.14075-2-ming.lei@redhat.com>
+Subject: Re: dataring_push() barriers Re: [RFC PATCH v4 1/9] printk-rb: add a
+ new printk ringbuffer implementation
+Message-ID: <20190827143635.4taqjj6wjz7gdlea@pathway.suse.cz>
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+ <20190807222634.1723-2-john.ogness@linutronix.de>
+ <20190820135004.7vatbrzphfsgsnw2@pathway.suse.cz>
+ <20190820135004.7vatbrzphfsgsnw2@pathway.suse.cz>
+ <87r25aklsy.fsf@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <156691659442.23585.17929718097373200199.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <87r25aklsy.fsf@linutronix.de>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the irq/core branch of tip:
+On Sun 2019-08-25 04:42:37, John Ogness wrote:
+> On 2019-08-20, Petr Mladek <pmladek@suse.com> wrote:
+> >> +/**
+> >> + * dataring_push() - Reserve a data block in the data array.
+> >> + *
+> >> + * @dr:   The data ringbuffer to reserve data in.
+> >> + *
+> >> + * @size: The size to reserve.
+> >> + *
+> >> + * @desc: A pointer to a descriptor to store the data block information.
+> >> + *
+> >> + * @id:   The ID of the descriptor to be associated.
+> >> + *        The data block will not be set with @id, but rather initialized with
+> >> + *        a value that is explicitly different than @id. This is to handle the
+> >> + *        case when newly available garbage by chance matches the descriptor
+> >> + *        ID.
+> >> + *
+> >> + * This function expects to move the head pointer forward. If this would
+> >> + * result in overtaking the data array index of the tail, the tail data block
+> >> + * will be invalidated.
+> >> + *
+> >> + * Return: A pointer to the reserved writer data, otherwise NULL.
+> >> + *
+> >> + * This will only fail if it was not possible to invalidate the tail data
+> >> + * block.
+> >> + */
+> >> +char *dataring_push(struct dataring *dr, unsigned int size,
+> >> +		    struct dr_desc *desc, unsigned long id)
+> >> +{
+> >> +	unsigned long begin_lpos;
+> >> +	unsigned long next_lpos;
+> >> +	struct dr_datablock *db;
+> >> +	bool ret;
+> >> +
+> >> +	to_db_size(&size);
+> >> +
+> >> +	do {
+> >> +		/* fA: */
+> >> +		ret = get_new_lpos(dr, size, &begin_lpos, &next_lpos);
+> >> +
+> >> +		/*
+> >> +		 * fB:
+> >> +		 *
+> >> +		 * The data ringbuffer tail may have been pushed (by this or
+> >> +		 * any other task). The updated @tail_lpos must be visible to
+> >> +		 * all observers before changes to @begin_lpos, @next_lpos, or
+> >> +		 * @head_lpos by this task are visible in order to allow other
+> >> +		 * tasks to recognize the invalidation of the data
+> >> +		 * blocks.
+> >
+> > This sounds strange. The write barrier should be done only on CPU
+> > that really modified tail_lpos. I.e. it should be in _dataring_pop()
+> > after successful dr->tail_lpos modification.
+> 
+> The problem is that there are no data dependencies between the different
+> variables. When a new datablock is being reserved, it is critical that
+> all other observers see that the tail_lpos moved forward _before_ any
+> other changes. _dataring_pop() uses an smp_rmb() to synchronize for
+> tail_lpos movement.
 
-Commit-ID:     53c1788b7d7720565214a466afffdc818d8c6e5f
-Gitweb:        https://git.kernel.org/tip/53c1788b7d7720565214a466afffdc818d8c6e5f
-Author:        Ming Lei <ming.lei@redhat.com>
-AuthorDate:    Fri, 16 Aug 2019 10:28:48 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 27 Aug 2019 16:31:17 +02:00
+It should be symmetric. It makes sense that _dataring_pop() uses an
+smp_rmb(). Then there should be wmb() in dataring_push().
 
-genirq/affinity: Improve __irq_build_affinity_masks()
+The wmb() should be done only by the CPU that actually did the write.
+And it should be done after the write. This is why I suggested to
+do it after cmpxchg(dr->head_lpos).
 
-One invariant of __irq_build_affinity_masks() is that all CPUs in the
-specified masks (cpu_mask AND node_to_cpumask for each node) should be
-covered during the spread. Even though all requested vectors have been
-reached, it's still required to spread vectors among remained CPUs. A
-similar policy has been taken in case of 'numvecs <= nodes' already.
+> This CPU is about to make some changes and may have
+> seen an updated tail_lpos. An smp_wmb() is useless if this is not the
+> CPU that performed that update. The full memory barrier ensures that all
+> other observers will see what this CPU sees before any of its future
+> changes are seen.
 
-So remove the following check inside the loop:
+I do not understand it. Full memory barrier will not cause that all
+CPUs will see the same.
 
-	if (done >= numvecs)
-		break;
+My understanding of barriers is:
 
-Meantime assign at least 1 vector for remaining nodes if 'numvecs' vectors
-have been handled already.
+   + wmb() is needed after some value is modified and any following
+     modifications must be done later.
 
-Also, if the specified cpumask for one numa node is empty, simply do not
-spread vectors on this node.
+   + rmb() is needed when a value has to be read before the other
+     values are read.
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190816022849.14075-2-ming.lei@redhat.com
+These barriers need to be symmetric. The reader will see the values
+in the right order only when both the writer and the reader use
+the right barriers.
 
----
- kernel/irq/affinity.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+    + wmb() full barrier is needed around some critical section
+      to make sure that all operations happened inside the section
 
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index 6fef480..c7cca94 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -129,14 +129,26 @@ static int __irq_build_affinity_masks(unsigned int startvec,
- 	for_each_node_mask(n, nodemsk) {
- 		unsigned int ncpus, v, vecs_to_assign, vecs_per_node;
- 
--		/* Spread the vectors per node */
--		vecs_per_node = (numvecs - (curvec - firstvec)) / nodes;
--
- 		/* Get the cpus on this node which are in the mask */
- 		cpumask_and(nmsk, cpu_mask, node_to_cpumask[n]);
--
--		/* Calculate the number of cpus per vector */
- 		ncpus = cpumask_weight(nmsk);
-+		if (!ncpus)
-+			continue;
-+
-+		/*
-+		 * Calculate the number of cpus per vector
-+		 *
-+		 * Spread the vectors evenly per node. If the requested
-+		 * vector number has been reached, simply allocate one
-+		 * vector for each remaining node so that all nodes can
-+		 * be covered
-+		 */
-+		if (numvecs > done)
-+			vecs_per_node = max_t(unsigned,
-+					(numvecs - done) / nodes, 1);
-+		else
-+			vecs_per_node = 1;
-+
- 		vecs_to_assign = min(vecs_per_node, ncpus);
- 
- 		/* Account for rounding errors */
-@@ -156,13 +168,11 @@ static int __irq_build_affinity_masks(unsigned int startvec,
- 		}
- 
- 		done += v;
--		if (done >= numvecs)
--			break;
- 		if (curvec >= last_affv)
- 			curvec = firstvec;
- 		--nodes;
- 	}
--	return done;
-+	return done < numvecs ? done : numvecs;
- }
- 
- /*
+
+Back to our situation:
+
+    + rmb() should not be needed here because get_new_lpos() provided
+      a valid lpos.
+
+      It is possible that get_new_lpos() used rmb() to make sure
+      that there was enough space. But such wmb() would be
+      between reading dr->tail_lpos and dr->head_lpos. No
+      other rmb() is needed once the check passed.
+
+    + wmb() is not needed because we have not written anything yet
+
+If there was a race with another CPU than cmpxchg(dr->head_lpos)
+would fail and we will need to repeat everything again.
+
+> >> +	/* fE: */
+> >> +	} while (atomic_long_cmpxchg_relaxed(&dr->head_lpos, begin_lpos,
+> >> +					     next_lpos) != begin_lpos);
+> >> +
+> >
+> > We need a write barrier here to make sure that dr->head_lpos
+> > is updated before we start updating other values, e.g.
+> > db->id below.
+> 
+> My RFCv2 implemented it that way. The function was called data_reserve()
+> and it moved the head using cmpxchg_release(). For RFCv3 I changed to a
+> full memory barrier instead because using acquire/release here is a bit
+> messy. There are 2 different places where the acquire needed to be:
+> 
+> - In _dataring_pop() a load_acquire() of head_lpos would need to be
+>   _before_ loading of begin_lpos and next_lpos.
+> 
+> - In prb_iter_next_valid_entry() a load_acquire() of head_lpos would
+>   need to be at the beginning within the dataring_datablock_isvalid()
+>   check (mC).
+> 
+> If smp_mb() is too heavy to call for every printk(), then we can move to
+> acquire/release. The comments of fB list exactly what is synchronized
+> (and where).
+
+smp_mb() is not a problem. printk() is a slow path.
+
+My problem is that I want to make sure that the code works as
+expected. For this, I want to understand the used barriers.
+And the discussed full barrier in dataring_push() does not make
+sense to me.
+
+Best Regards,
+Petr
