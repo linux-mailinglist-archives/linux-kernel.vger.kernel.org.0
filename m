@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 782289E19A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4888F9E19E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730955AbfH0H6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:58:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50612 "EHLO mail.kernel.org"
+        id S1732100AbfH0INa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:13:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730926AbfH0H6F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:58:05 -0400
+        id S1730976AbfH0H6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:58:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94B5320828;
-        Tue, 27 Aug 2019 07:58:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6BBC206BF;
+        Tue, 27 Aug 2019 07:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892684;
-        bh=IhLlVbaTQ/lDlnnPNW4ZBB3GouK8lSNNKaaDhXnG/mY=;
+        s=default; t=1566892695;
+        bh=3PHM2/imUAmjiR39qRkqNl74KO+K9Dx8CQk/HwCiYko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rK0cdy8Zj/yfpxcnkOXxq2F6NJm5oQiqQjkmP1vG2ylANUChQJMUEJYLpG5SozrJJ
-         Kk+xu3yAeMpuYy57ViGGV9ICZYCvOM6u6Bc28tSTqwAY2qfe5GkAJWlpGPNJp+I+Tz
-         FlSbt/S2h65Ve928IsTUYuy2s8GHXqYeC5gDCqQA=
+        b=VjSJnMUfDLtP/qXl3UwoTiDMY96ErhK0w938IroznTLTGKE/cK79JGf4maMlT2oin
+         6HfL3cDPzYav+8UsMktpRfYTXOoj/0AdiI3sPr/3vvQAEKcq8F6fOtc90R8PkwBfTX
+         m/ktBpuhxSVQPGVgvKNh5tgssgyQgtgdpTEBh12Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        stable@vger.kernel.org, Zhang Tao <kontais@zoho.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
         Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.19 77/98] dm integrity: fix a crash due to BUG_ON in __journal_read_write()
-Date:   Tue, 27 Aug 2019 09:50:56 +0200
-Message-Id: <20190827072722.185737796@linuxfoundation.org>
+Subject: [PATCH 4.19 80/98] dm table: fix invalid memory accesses with too high sector number
+Date:   Tue, 27 Aug 2019 09:50:59 +0200
+Message-Id: <20190827072722.286972407@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
 References: <20190827072718.142728620@linuxfoundation.org>
@@ -45,63 +46,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 5729b6e5a1bcb0bbc28abe82d749c7392f66d2c7 upstream.
+commit 1cfd5d3399e87167b7f9157ef99daa0e959f395d upstream.
 
-Fix a crash that was introduced by the commit 724376a04d1a. The crash is
-reported here: https://gitlab.com/cryptsetup/cryptsetup/issues/468
+If the sector number is too high, dm_table_find_target() should return a
+pointer to a zeroed dm_target structure (the caller should test it with
+dm_target_is_valid).
 
-When reading from the integrity device, the function
-dm_integrity_map_continue calls find_journal_node to find out if the
-location to read is present in the journal. Then, it calculates how many
-sectors are consecutively stored in the journal. Then, it locks the range
-with add_new_range and wait_and_add_new_range.
+However, for some table sizes, the code in dm_table_find_target() that
+performs btree lookup will access out of bound memory structures.
 
-The problem is that during wait_and_add_new_range, we hold no locks (we
-don't hold ic->endio_wait.lock and we don't hold a range lock), so the
-journal may change arbitrarily while wait_and_add_new_range sleeps.
+Fix this bug by testing the sector number at the beginning of
+dm_table_find_target(). Also, add an "inline" keyword to the function
+dm_table_get_size() because this is a hot path.
 
-The code then goes to __journal_read_write and hits
-BUG_ON(journal_entry_get_sector(je) != logical_sector); because the
-journal has changed.
-
-In order to fix this bug, we need to re-check the journal location after
-wait_and_add_new_range. We restrict the length to one block in order to
-not complicate the code too much.
-
-Fixes: 724376a04d1a ("dm integrity: implement fair range locks")
-Cc: stable@vger.kernel.org # v4.19+
+Fixes: 512875bd9661 ("dm: table detect io beyond device")
+Cc: stable@vger.kernel.org
+Reported-by: Zhang Tao <kontais@zoho.com>
 Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-integrity.c |   15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/md/dm-table.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/md/dm-integrity.c
-+++ b/drivers/md/dm-integrity.c
-@@ -1749,7 +1749,22 @@ offload_to_thread:
- 			queue_work(ic->wait_wq, &dio->work);
- 			return;
- 		}
-+		if (journal_read_pos != NOT_FOUND)
-+			dio->range.n_sectors = ic->sectors_per_block;
- 		wait_and_add_new_range(ic, &dio->range);
-+		/*
-+		 * wait_and_add_new_range drops the spinlock, so the journal
-+		 * may have been changed arbitrarily. We need to recheck.
-+		 * To simplify the code, we restrict I/O size to just one block.
-+		 */
-+		if (journal_read_pos != NOT_FOUND) {
-+			sector_t next_sector;
-+			unsigned new_pos = find_journal_node(ic, dio->range.logical_sector, &next_sector);
-+			if (unlikely(new_pos != journal_read_pos)) {
-+				remove_range_unlocked(ic, &dio->range);
-+				goto retry;
-+			}
-+		}
- 	}
- 	spin_unlock_irq(&ic->endio_wait.lock);
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1349,7 +1349,7 @@ void dm_table_event(struct dm_table *t)
+ }
+ EXPORT_SYMBOL(dm_table_event);
  
+-sector_t dm_table_get_size(struct dm_table *t)
++inline sector_t dm_table_get_size(struct dm_table *t)
+ {
+ 	return t->num_targets ? (t->highs[t->num_targets - 1] + 1) : 0;
+ }
+@@ -1374,6 +1374,9 @@ struct dm_target *dm_table_find_target(s
+ 	unsigned int l, n = 0, k = 0;
+ 	sector_t *node;
+ 
++	if (unlikely(sector >= dm_table_get_size(t)))
++		return &t->targets[t->num_targets];
++
+ 	for (l = 0; l < t->depth; l++) {
+ 		n = get_child(n, k);
+ 		node = get_node(t, l, n);
 
 
