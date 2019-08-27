@@ -2,87 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7218F9F197
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:30:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AC5D9F1A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 19:32:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbfH0RaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 13:30:05 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44943 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfH0RaE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 13:30:04 -0400
-Received: by mail-ot1-f68.google.com with SMTP id w4so19417598ote.11;
-        Tue, 27 Aug 2019 10:30:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lp7s9jTNmH1XT1CzC7jr2iIgsMFcBH+5gm5QDo4mxuA=;
-        b=A9zTBHxM0WmsWDF/Tetl+EN3Yah3T+tNfwcNEWVUUyjVeNF2f+FaBQXvAAV4//qual
-         29A+5Iwt83YIZX52UxCgeTxkyoIjMG5b2NLxsFeI/ySo+xySNaLANB3YRCZipN3MpA+o
-         csKBGCyKHkR8E5ugYuQsvwD1L9/h8/YMlX08mBOVY1rADiX7RxlPhbvYZbqg/ofB0Hq7
-         YiBeyr6VTsIZpfyy4td/3+VAKxmfdz37KtgOzEjB0KAnIs8iEDL+UYPyXfjjkZE7SHMg
-         6I5hAFXd7HMuhpyJJ4arU+NLbUdHahBo4m8Rn0pJmRllMnlfxuBYFUF20RMx9gGUg5N9
-         zOzQ==
-X-Gm-Message-State: APjAAAV4Hw9YYxOwaC3Ma9lhuawhTtMu7CXp2iV2llfngB5/OJNJyz9h
-        0n00HSgWcZJJfVcRMsDQZ6J3wRwb9BH7Vb/xaYc=
-X-Google-Smtp-Source: APXvYqzY25m2s2+2xkANxC+qR9+JKRkF2wxjHDh4iAbFON+7jLENyc3ERXETasyThuzk2O/97gnmmMfYS046Imua1JQ=
-X-Received: by 2002:a9d:61c3:: with SMTP id h3mr21336576otk.39.1566927003738;
- Tue, 27 Aug 2019 10:30:03 -0700 (PDT)
+        id S1730573AbfH0Rcu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 13:32:50 -0400
+Received: from mga18.intel.com ([134.134.136.126]:62462 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730448AbfH0Rcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 13:32:43 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 10:32:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,438,1559545200"; 
+   d="scan'208";a="171269783"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by orsmga007.jf.intel.com with ESMTP; 27 Aug 2019 10:32:38 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v8 0/8] Add Error Disconnect Recover (EDR) support
+Date:   Tue, 27 Aug 2019 10:29:22 -0700
+Message-Id: <cover.1566865502.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190819100526.13788-1-geert@linux-m68k.org> <581e7d79ed75484beb227672b2695ff14e1f1e34.camel@perches.com>
- <CAMuHMdVh8dwd=77mHTqG80_D8DK+EtVGewRUJuaJzK1qRYrB+w@mail.gmail.com> <dbc03b4ac1ef4ba2a807409676cf8066@AcuMS.aculab.com>
-In-Reply-To: <dbc03b4ac1ef4ba2a807409676cf8066@AcuMS.aculab.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 27 Aug 2019 19:29:52 +0200
-Message-ID: <CAMuHMdWHGTMwK+PO_BgsNZMpqRat1SHE-_CP0UqxEALA_OJeNg@mail.gmail.com>
-Subject: Re: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit due to
- u64/pointer abuse
-To:     David Laight <David.Laight@aculab.com>
-Cc:     Joe Perches <joe@perches.com>,
-        Bernard Metzler <bmt@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-On Tue, Aug 27, 2019 at 4:17 PM David Laight <David.Laight@aculab.com> wrote:
-> From: Geert Uytterhoeven
-> > Sent: 19 August 2019 18:15
-> ...
-> > > I think a cast to unsigned long is rather more common.
-> > >
-> > > uintptr_t is used ~1300 times in the kernel.
-> > > I believe a cast to unsigned long is much more common.
-> >
-> > That is true, as uintptr_t was introduced in C99.
-> > Similarly, unsigned long was used before size_t became common.
-> >
-> > However, nowadays size_t and uintptr_t are preferred.
->
-> Isn't uintptr_t defined by the same standard as uint32_t?
+This patchset adds support for following features:
 
-I believe so.
+1. Error Disconnect Recover (EDR) support.
+2. _OSC based negotiation support for DPC.
 
-> If the former is allowed so should the latter.
+You can find EDR spec in the following link.
 
-You mean the other way around?
+https://members.pcisig.com/wg/PCI-SIG/document/12614
 
-Gr{oetje,eeting}s,
+Changes since v7:
+ * Updated DSM version number to match the spec.
 
-                        Geert
+Changes since v6:
+ * Modified the order of patches to enable EDR only after all necessary support is added in kernel.
+ * Addressed Bjorn comments.
+
+Changes since v5:
+ * Addressed Keith's comments.
+ * Added additional check for FF mode in pci_aer_init().
+ * Updated commit history of "PCI/DPC: Add support for DPC recovery on NON_FATAL errors" patch.
+
+Changes since v4:
+ * Rebased on top of v5.3-rc1
+ * Fixed lock/unlock issue in edr_handle_event().
+ * Merged "Update error status after reset_link()" patch into this patchset.
+
+Changes since v3:
+ * Moved EDR related ACPI functions/definitions to pci-acpi.c
+ * Modified commit history in few patches to include spec reference.
+ * Added support to handle DPC triggered by NON_FATAL errors.
+ * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
+ * Addressed Bjorn comments.
+
+Changes since v2:
+ * Split EDR support patch into multiple patches.
+ * Addressed Bjorn comments.
+
+Changes since v1:
+ * Rebased on top of v5.1-rc1
+
+Kuppuswamy Sathyanarayanan (8):
+  PCI/ERR: Update error status after reset_link()
+  PCI/DPC: Allow dpc_probe() even if firmware first mode is enabled
+  PCI/DPC: Add dpc_process_error() wrapper function
+  PCI/DPC: Add Error Disconnect Recover (EDR) support
+  PCI/AER: Allow clearing Error Status Register in FF mode
+  PCI/DPC: Update comments related to DPC recovery on NON_FATAL errors
+  PCI/DPC: Clear AER registers in EDR mode
+  PCI/ACPI: Enable EDR support
+
+ drivers/acpi/pci_root.c         |   9 ++
+ drivers/pci/pci-acpi.c          |  91 +++++++++++++++
+ drivers/pci/pcie/Kconfig        |  10 ++
+ drivers/pci/pcie/aer.c          |  12 +-
+ drivers/pci/pcie/dpc.c          | 194 +++++++++++++++++++++++++++++---
+ drivers/pci/pcie/err.c          |  10 +-
+ drivers/pci/pcie/portdrv_core.c |   8 +-
+ drivers/pci/probe.c             |   1 +
+ include/linux/acpi.h            |   6 +-
+ include/linux/pci-acpi.h        |  11 ++
+ include/linux/pci.h             |   3 +-
+ 11 files changed, 321 insertions(+), 34 deletions(-)
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.21.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
