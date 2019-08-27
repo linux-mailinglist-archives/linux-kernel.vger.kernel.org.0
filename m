@@ -2,75 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 817A59DC2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 05:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CADF49DC43
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 06:02:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729128AbfH0D43 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 26 Aug 2019 23:56:29 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:44920 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728909AbfH0D43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 26 Aug 2019 23:56:29 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A8CA41A05A0;
-        Tue, 27 Aug 2019 05:56:27 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8DA431A009E;
-        Tue, 27 Aug 2019 05:56:19 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 92751402A5;
-        Tue, 27 Aug 2019 11:56:09 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, broonie@kernel.org, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de,
-        alsa-devel@alsa-project.org, viorel.suman@nxp.com
-Cc:     linux-imx@nxp.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] ASoC: imx-audmix: register the card on a proper dev
-Date:   Tue, 27 Aug 2019 11:55:15 -0400
-Message-Id: <1566921315-23402-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725943AbfH0ECZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 00:02:25 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42000 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbfH0ECZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 00:02:25 -0400
+Received: by mail-ed1-f66.google.com with SMTP id m44so29389417edd.9
+        for <linux-kernel@vger.kernel.org>; Mon, 26 Aug 2019 21:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n/ISg4lPBXntnhkUlyyoIOqftCgr4zrKHSEP3Z3lTkY=;
+        b=KsGWP3iJylxhOlKZ6vSysfwN+OptsHE8knF2cvoVVQessQgg7RCX1qZ1y3ImlXhxl1
+         JDPKsbQx+Po9Ard+CtUl/d4YEtNv0VgoA3YwppD2JZlVL7cclGKAQiDh1VuQHSC+lxgK
+         6TFvVKK/Vr7H0oMOyO8pbA1TNpEjgQVOpKg2E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n/ISg4lPBXntnhkUlyyoIOqftCgr4zrKHSEP3Z3lTkY=;
+        b=B1/wCA6rueyvFJQMwwnZR2jDWULL4Rfatoqdnva6f7h3JHRnvdDlt4vuEKO72BEfmg
+         Xgq1vS6kVTJEZXSONdxeGpH4yt4d5pnJXGaTMHhs77BmJPFcS1WpJpNmDyyG/oW125HO
+         3fNBhSC7tTwJ9Cm+ShCRvv+QotdvWvamxMb9GrOZ6Drz0a353yMxWH24G02/Y4ZsZdZu
+         GNWove7VawORxpfymOvaMEvXWXGaB1uwuq6XUpoqvBK4qWCOpspyeUSBq/bnfpa9yLTM
+         fy9QqZCnGOAUGDmcWDoWTHfF+zU7HWABV+pMmIXZY9flyghlMz2FwvD+pu7X34v6TDAa
+         LqgA==
+X-Gm-Message-State: APjAAAWyQtclD4valC4ylPtNUgfU+4/3ubF7+aQ/bSMKI+teDh32pK18
+        sy12sX2uKDPPYndaz8jdTwaiOu28a8FlfuTNCFsqGQ==
+X-Google-Smtp-Source: APXvYqwQv3rm7QX/RLFMVOBjGFGVmWW+JwYQSCTiOgD9zGMF8eVfJWhb3hpe7yBJnMZ/nzsKCyu1B59Xj+dYZD4vhuo=
+X-Received: by 2002:a50:9736:: with SMTP id c51mr22130503edb.160.1566878543433;
+ Mon, 26 Aug 2019 21:02:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190814081757.65056-1-yllin@chromium.org> <2dae986a-17c4-f06d-c7c9-47c93132f4aa@collabora.com>
+In-Reply-To: <2dae986a-17c4-f06d-c7c9-47c93132f4aa@collabora.com>
+From:   Pi-Hsun Shih <pihsun@chromium.org>
+Date:   Tue, 27 Aug 2019 12:01:47 +0800
+Message-ID: <CANdKZ0dKEHOESHmRpG4e26rFVKsSeGGUqY2AvFv_6ntO=A7WsA@mail.gmail.com>
+Subject: Re: [PATCH] platform/chrome: cros_ec_rpmsg: Add host command AP sleep
+ state support
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Yilun Lin <yllin@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This platform device is registered from "fsl_audmix", which is
-its parent device. If use pdev->dev.parent for the priv->card.dev,
-the value set by dev_set_drvdata in parent device will be covered
-by the value in child device.
+Tested that with this patch, SCP does receive host command from AP
+while AP goes to suspend and back.
 
-Fixes: b86ef5367761 ("ASoC: fsl: Add Audio Mixer machine driver")
-Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/imx-audmix.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Tested-by: Pi-Hsun Shih <pihsun@chromium.org>
 
-diff --git a/sound/soc/fsl/imx-audmix.c b/sound/soc/fsl/imx-audmix.c
-index 9e1cb18859ce..71590ca6394b 100644
---- a/sound/soc/fsl/imx-audmix.c
-+++ b/sound/soc/fsl/imx-audmix.c
-@@ -325,14 +325,14 @@ static int imx_audmix_probe(struct platform_device *pdev)
- 	priv->card.num_configs = priv->num_dai_conf;
- 	priv->card.dapm_routes = priv->dapm_routes;
- 	priv->card.num_dapm_routes = priv->num_dapm_routes;
--	priv->card.dev = pdev->dev.parent;
-+	priv->card.dev = &pdev->dev;
- 	priv->card.owner = THIS_MODULE;
- 	priv->card.name = "imx-audmix";
- 
- 	platform_set_drvdata(pdev, &priv->card);
- 	snd_soc_card_set_drvdata(&priv->card, priv);
- 
--	ret = devm_snd_soc_register_card(pdev->dev.parent, &priv->card);
-+	ret = devm_snd_soc_register_card(&pdev->dev, &priv->card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed\n");
- 		return ret;
--- 
-2.21.0
-
+On Fri, Aug 23, 2019 at 3:36 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Hi,
+>
+> On 14/8/19 10:17, Yilun Lin wrote:
+> > Add EC host command to inform EC of AP suspend/resume status.
+> >
+> > Signed-off-by: Yilun Lin <yllin@chromium.org>
+>
+> The patch looks good to me but as I don't have the hardware to test this, could
+> I get a Tested-by Pi-Hsun if possible before queuing in chrome-platform-5.4
+>
+> Thanks,
+> Enric
+>
+> > ---
+> >
+> >  drivers/platform/chrome/cros_ec_rpmsg.c | 20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> >
+> > diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+> > index 5d3fb2abad1d..6f34fe629e2c 100644
+> > --- a/drivers/platform/chrome/cros_ec_rpmsg.c
+> > +++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+> > @@ -236,6 +236,25 @@ static void cros_ec_rpmsg_remove(struct rpmsg_device *rpdev)
+> >       cancel_work_sync(&ec_rpmsg->host_event_work);
+> >  }
+> >
+> > +#ifdef CONFIG_PM_SLEEP
+> > +static int cros_ec_rpmsg_suspend(struct device *dev)
+> > +{
+> > +     struct cros_ec_device *ec_dev = dev_get_drvdata(dev);
+> > +
+> > +     return cros_ec_suspend(ec_dev);
+> > +}
+> > +
+> > +static int cros_ec_rpmsg_resume(struct device *dev)
+> > +{
+> > +     struct cros_ec_device *ec_dev = dev_get_drvdata(dev);
+> > +
+> > +     return cros_ec_resume(ec_dev);
+> > +}
+> > +#endif
+> > +
+> > +static SIMPLE_DEV_PM_OPS(cros_ec_rpmsg_pm_ops, cros_ec_rpmsg_suspend,
+> > +                      cros_ec_rpmsg_resume);
+> > +
+> >  static const struct of_device_id cros_ec_rpmsg_of_match[] = {
+> >       { .compatible = "google,cros-ec-rpmsg", },
+> >       { }
+> > @@ -246,6 +265,7 @@ static struct rpmsg_driver cros_ec_driver_rpmsg = {
+> >       .drv = {
+> >               .name   = "cros-ec-rpmsg",
+> >               .of_match_table = cros_ec_rpmsg_of_match,
+> > +             .pm     = &cros_ec_rpmsg_pm_ops,
+> >       },
+> >       .probe          = cros_ec_rpmsg_probe,
+> >       .remove         = cros_ec_rpmsg_remove,
+> >
