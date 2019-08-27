@@ -2,110 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F8E9F2FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B319F304
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:13:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730988AbfH0TMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 15:12:13 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41024 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728312AbfH0TMM (ORCPT
+        id S1731045AbfH0TND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 15:13:03 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35029 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728312AbfH0TND (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 15:12:12 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 196so17970pfz.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 12:12:12 -0700 (PDT)
+        Tue, 27 Aug 2019 15:13:03 -0400
+Received: by mail-io1-f66.google.com with SMTP id b10so793959ioj.2
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 12:13:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=QlG0MCXrlsLf9bJR8f8bjOG6+UwZjxA04tjv5z1sPNs=;
-        b=m0bqYITngjSGYta6fMhmwP9YQH2m9QkENNogl9TLA8dzoJ0grFsKJyyADSsDUGFKgl
-         /lsrx+CnXSeR2yPHYhRo0ixyyTKX5o+K0XOW3OcLwnD4uDU83F9MRxTHzSKQKQ8a5/8B
-         aM/9ojvpNGOWl9IBG9ymayfZcsD1SG7mDjPz7EB+S9XGkuUXqWnUN924CyQGlrHqp7kB
-         kAFj8DUp9BYOPSi7tojk9KsDikWnTCCpqsXOJt/PN53gTGqluU1138cGMBaI0ZSM7AnV
-         DbI9BFeHTFOU9I3a5Rqg2kc7TkI5eImebFMx47lzJ98BbHXw5ODCCZZ11AW2O36P5kE/
-         McpQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HQJxEYUXnqkOd54ze0iIvNMwGeKfFiBDRd0wcO9eWqU=;
+        b=igzHCTGUm2FIXir7Dgwr+iAIiv0yRzYRHwvNq3FJv8G+f8PTq8a3cEkP/flze0PhxX
+         +kClsdGCmWfeOe6vb7Q+AfHhBvICvTcSsfm0PryjDTYNTb7xXsarhieOYcUl/Bny8mVz
+         801aUYeI6Bc2lpTY8CUWoyTchr0aCrEOUhZFTxRbsfDw6iY7/eabs8t3yYUdPiok1BdO
+         hm7teUDadvyFKWlIP1bWX9k5A2Ub2Ui5owwP4M8JM61q779G4T/qQWR6xvgSjKfGo1Ma
+         HhIN8Lfhub7wzi+EBSX0Amd8REw9JvzhbVdvTbcsYEBPm0n0kY8n8TD1Wgn3UhkGfcXm
+         vfyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=QlG0MCXrlsLf9bJR8f8bjOG6+UwZjxA04tjv5z1sPNs=;
-        b=QtElzAaQr0ES2zJcM62fsvTLrlfSMk71YBM+VrDleoJvTKPQYPa02VM6Nx1UbhWNg0
-         gmg/h6TyIjOOQrWg+YoKjUlXA083flZUjknELAgtv0iXLAMHBkZKubApdciXF/FKfmvc
-         WBr0zxX6DbQjfUhZVCEdge6HMX2n0R8sQ/F4DA5MFPyY6LHh/QOfZENZvAXnhzvYGVpR
-         eVZHQIJL9UpcYRPNd3wXFN4DSDidkrzfAO083mhrv8lBuElTFn4yYyXlaocfCN09yJJW
-         aDDrXbGMR0rfPuJEZL7HhR1rhBTLixhW+MzPfT6vP1ZNWuWaeH9qO1bZzd7v+jn0jIuu
-         EX7Q==
-X-Gm-Message-State: APjAAAXQX2PCF/htEgBwb8QVgea3CvrR6vmObdJoCjLkDkr7kXOCcgCq
-        LGpUh6ZKsBk8daiY5Z1Jkq3myg==
-X-Google-Smtp-Source: APXvYqzzoUzbs2yNWZLrVcTZcXe2K8bnbvlaeqGp8P/D5qzS/gw8hp34XezYimT2ZeaIuDknZJoZJg==
-X-Received: by 2002:a65:60cd:: with SMTP id r13mr7312189pgv.315.1566933131786;
-        Tue, 27 Aug 2019 12:12:11 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:cc35:e750:308e:47f])
-        by smtp.gmail.com with ESMTPSA id 14sm56500pfy.40.2019.08.27.12.12.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Aug 2019 12:12:11 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] 0/6] arm64: meson-sm1: add support for DVFS
-In-Reply-To: <1jblwc6wjq.fsf@starbuckisacylon.baylibre.com>
-References: <20190826072539.27725-1-narmstrong@baylibre.com> <1jblwc6wjq.fsf@starbuckisacylon.baylibre.com>
-Date:   Tue, 27 Aug 2019 12:12:09 -0700
-Message-ID: <7h8srexw1i.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HQJxEYUXnqkOd54ze0iIvNMwGeKfFiBDRd0wcO9eWqU=;
+        b=Czo+eirujs25avmwqrwNA3hyY8C17pi1gBLGxoAvh9tFGGVcUUmbDLsjp6b3TJ66yn
+         NGGPbZsUzRCFmy7ZxOoWeCRYbCGvDVK77QjK9sQeq0BrTM8meIKEWPlv4frI6t6iWBez
+         s3LJdEDyCDPa1Fvy32Y0H1WgHPhnt+stSPWAnD9mz+Seg/Znd64dOUKrfVoIyRPJfsDd
+         xvT8DSVoFFvBR2/XefNo+X7sqf4AxqmtAFVPck4JhqvYPgdqy4OiU0Fo4AVcPYpcQG6+
+         Orp77/s0aTCej6OBE3KO+cwwik/DitytDRsMiCGM6rIUCi8YQMKUP59sUA92BjKkpEgi
+         6Bdg==
+X-Gm-Message-State: APjAAAXVIwRDdXArlO442dM8lQIi8+SPrxZXYqVzCbDKs8h41NoaOuV6
+        prvb9MZDO1ZWWpcK1PArfgvpMWmklCk3yz5pPmfaGQ==
+X-Google-Smtp-Source: APXvYqzbQzeTcca6N5+3PhjjFP7J6N1VvGjJla1JyuPmLZHf9fNsWCmlU3bY67zfwgYTIvsTzYaEYd0Hn2NWk6j1T0g=
+X-Received: by 2002:a5e:8f4d:: with SMTP id x13mr191724iop.118.1566933182198;
+ Tue, 27 Aug 2019 12:13:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190823205544.24052-1-sean.j.christopherson@intel.com>
+In-Reply-To: <20190823205544.24052-1-sean.j.christopherson@intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Tue, 27 Aug 2019 12:12:51 -0700
+Message-ID: <CALMp9eSwxTdigRkACRgr=avg8HZh+gPXgPnwd7+CaNEEuS2tQA@mail.gmail.com>
+Subject: Re: [PATCH] KVM: x86: Don't update RIP or do single-step on faulting emulation
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
-
-> On Mon 26 Aug 2019 at 09:25, Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Fri, Aug 23, 2019 at 1:55 PM Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
 >
->> Following DVFS support for the Amlogic G12A and G12B SoCs, this serie
->> enables DVFS on the SM1 SoC for the SEI610 board.
->>
->> The SM1 Clock structure is slightly different because of the Cortex-A55
->> core used, having the capability for each core of a same cluster to run
->> at a different frequency thanks to the newly used DynamIQ Shared Unit.
->>
->> This is why SM1 has a CPU clock tree for each core and for DynamIQ Shared Unit,
->> with a bypass mux to use the CPU0 instead of the dedicated trees.
->>
->> The DSU uses a new GP1 PLL as default clock, thus GP1 is added as read-only.
->>
->> The SM1 OPPs has been taken from the Amlogic Vendor tree, and unlike
->> G12A only a single version of the SoC is available.
->>
->> Dependencies:
->> - patch 6 is based on the "arm64: meson: add support for SM1 Power Domains" serie,
->> 	but is not a strong dependency, it will work without
->>
->> Changes since v1:
->> - exposed GP1, DSU and CPU 1,2,3 clock in patch 1
->>
->> Neil Armstrong (5):
->>   dt-bindings: clk: meson: add sm1 periph clock controller bindings
->>   clk: meson: g12a: add support for SM1 GP1 PLL
->>   clk: meson: g12a: add support for SM1 DynamIQ Shared Unit clock
->>   clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks
->>   arm64: dts: meson-sm1-sei610: enable DVFS
->>
->>  .../bindings/clock/amlogic,gxbb-clkc.txt      |   1 +
->>  .../boot/dts/amlogic/meson-sm1-sei610.dts     |  59 +-
->>  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  69 +++
->>  drivers/clk/meson/g12a.c                      | 544 ++++++++++++++++++
->>  drivers/clk/meson/g12a.h                      |  24 +-
->>  include/dt-bindings/clock/g12a-clkc.h         |   5 +
->>  6 files changed, 697 insertions(+), 5 deletions(-)
+> Don't advance RIP or inject a single-step #DB if emulation signals a
+> fault.  This logic applies to all state updates that are conditional on
+> clean retirement of the emulation instruction, e.g. updating RFLAGS was
+> previously handled by commit 38827dbd3fb85 ("KVM: x86: Do not update
+> EFLAGS on faulting emulation").
 >
-> Applied 1 to 4
+> Not advancing RIP is likely a nop, i.e. ctxt->eip isn't updated with
+> ctxt->_eip until emulation "retires" anyways.  Skipping #DB injection
+> fixes a bug reported by Andy Lutomirski where a #UD on SYSCALL due to
+> invalid state with RFLAGS.RF=1 would loop indefinitely due to emulation
+> overwriting the #UD with #DB and thus restarting the bad SYSCALL over
+> and over.
+>
+> Cc: Nadav Amit <nadav.amit@gmail.com>
+> Cc: stable@vger.kernel.org
+> Reported-by: Andy Lutomirski <luto@kernel.org>
+> Fixes: 663f4c61b803 ("KVM: x86: handle singlestep during emulation")
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>
+> Note, this has minor conflict with my recent series to cleanup the
+> emulator return flows[*].  The end result should look something like:
+>
+>                 if (!ctxt->have_exception ||
+>                     exception_type(ctxt->exception.vector) == EXCPT_TRAP) {
+>                         kvm_rip_write(vcpu, ctxt->eip);
+>                         if (r && ctxt->tf)
+>                                 r = kvm_vcpu_do_singlestep(vcpu);
+>                         __kvm_set_rflags(vcpu, ctxt->eflags);
+>                 }
+>
+> [*] https://lkml.kernel.org/r/20190823010709.24879-1-sean.j.christopherson@intel.com
+>
+>  arch/x86/kvm/x86.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index b4cfd786d0b6..d2962671c3d3 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -6611,12 +6611,13 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu,
+>                 unsigned long rflags = kvm_x86_ops->get_rflags(vcpu);
+>                 toggle_interruptibility(vcpu, ctxt->interruptibility);
+>                 vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
+> -               kvm_rip_write(vcpu, ctxt->eip);
+> -               if (r == EMULATE_DONE && ctxt->tf)
+> -                       kvm_vcpu_do_singlestep(vcpu, &r);
+>                 if (!ctxt->have_exception ||
+> -                   exception_type(ctxt->exception.vector) == EXCPT_TRAP)
+> +                   exception_type(ctxt->exception.vector) == EXCPT_TRAP) {
 
-Will there be a stable tag I can use for that so I can apply patch 5?
+NYC, but...
 
-Kevin
+I don't think this check for "exception_type" is quite right.  A
+general detect fault (which can be synthesized by check_dr_read) is
+mischaracterized by exception_type() as a trap. Or maybe I'm missing
+something? (I often am.)
+
+> +                       kvm_rip_write(vcpu, ctxt->eip);
+> +                       if (r == EMULATE_DONE && ctxt->tf)
+> +                               kvm_vcpu_do_singlestep(vcpu, &r);
+>                         __kvm_set_rflags(vcpu, ctxt->eflags);
+> +               }
+>
+>                 /*
+>                  * For STI, interrupts are shadowed; so KVM_REQ_EVENT will
+> --
+> 2.22.0
+>
