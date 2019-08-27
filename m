@@ -2,209 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 410E79F580
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5CFE9F58B
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:50:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbfH0VrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:47:06 -0400
-Received: from mail-eopbgr00051.outbound.protection.outlook.com ([40.107.0.51]:25157
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726092AbfH0VrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:47:05 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X7XYQ6GMoN4sQYt+A9Le+qGKpAoq2Ax4qM7KcBhPMHMLFtP6lVftDEeEiOBhsUREt5i2IiRWv+acqionqvy72RKEWwpBhebACJAWToJJAS9ijDM0A1KQDoal9xzqA0sD9kNyFft1StXCDraP0lC+wFJOb2JTyK7FA4oHuZIFYczJc4uzGe0vYOrY01j+6hzdtpdYu7bngCtxvO97iFbGlwuw7E9limiY89D+MDvLsXCZhmVTJIHklVs2y7+1HbtItO2MOMtu/ZMRUdEm51WyUyrWmdA9qCHLE/YHw/Lp8Hn429seBL8OPPkmyDTuelwjTmo66utRtFs6xhV4YGgHiQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l6biKHar4QtxmWpQNAM7FGobTAFUv1jyp1Zx1IhJ9X0=;
- b=N2gv/lePrGiU0EdhK+cSXvz8M48pYG6ptWU9FnPC2a3LkZuyN/seORQg86Lb4sQOACW2kQLJAvlVW143aXUKygnoYN1r8rTy+TwDdrY+jhTVeJWBltVK5A6aUICvCiXlNBbiOMkvFYM7fRtikDU/Nn3jucH+apTcSvMP15YEUJuYteXTQg5uXTtOA6GSj1gdT6Aw5svj/3CTQ0Qza+vY28GDAxDlqJHz4/HfvNO7DsHQe/jDrD8XzFK3axz98GvWB+IOxmTSI3oIEHP9aEODBvS6xe6qDK2ruja9hBU+sFuSwJ+xXXNw7+SD/5BfhvOI52m9FAOTem2RM08XkwjTew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l6biKHar4QtxmWpQNAM7FGobTAFUv1jyp1Zx1IhJ9X0=;
- b=JUFaDRFWR9xpVR/vG1yjtYmL0kBCPQwadWb6TixrAXzcNQhdl+AaNlwlfl56KBc/WxGDZJtKj2cnZnRMv6/6QZPLEut6tj+gjMklPzdprMdW5z4usE9eVU0Kziw0roHVw6n1mcPkRapbTEJZ6Ff/xr1EgPBAQBfTnxwVTmiQZpA=
-Received: from VI1PR0501MB2765.eurprd05.prod.outlook.com (10.172.11.140) by
- VI1PR0501MB2462.eurprd05.prod.outlook.com (10.168.136.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.19; Tue, 27 Aug 2019 21:46:58 +0000
-Received: from VI1PR0501MB2765.eurprd05.prod.outlook.com
- ([fe80::5cab:4f5c:d7ed:5e27]) by VI1PR0501MB2765.eurprd05.prod.outlook.com
- ([fe80::5cab:4f5c:d7ed:5e27%6]) with mapi id 15.20.2199.021; Tue, 27 Aug 2019
- 21:46:58 +0000
-From:   Saeed Mahameed <saeedm@mellanox.com>
-To:     "cai@lca.pw" <cai@lca.pw>
-CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Moshe Shemesh <moshe@mellanox.com>,
-        Feras Daoud <ferasda@mellanox.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "leon@kernel.org" <leon@kernel.org>
-Subject: Re: [PATCH] net/mlx5: fix a -Wstringop-truncation warning
-Thread-Topic: [PATCH] net/mlx5: fix a -Wstringop-truncation warning
-Thread-Index: AQHVWezn79S9mYXS9UOCwXmOlPmrCacN8cMAgAGB0ICAABp2gA==
-Date:   Tue, 27 Aug 2019 21:46:58 +0000
-Message-ID: <c1844fb0d81592dfc48f8291f2fdd2a25e1d2e7f.camel@mellanox.com>
-References: <1566590183-9898-1-git-send-email-cai@lca.pw>
-         <21994e7e141ee5453c6814de025e083eeb651127.camel@mellanox.com>
-         <1566936733.5576.16.camel@lca.pw>
-In-Reply-To: <1566936733.5576.16.camel@lca.pw>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=saeedm@mellanox.com; 
-x-originating-ip: [209.116.155.178]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3e0205bd-3b45-4b2a-7015-08d72b381623
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0501MB2462;
-x-ms-traffictypediagnostic: VI1PR0501MB2462:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0501MB24625AC70D9335628C529D00BEA00@VI1PR0501MB2462.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0142F22657
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(39860400002)(346002)(136003)(366004)(51914003)(51234002)(189003)(199004)(71200400001)(25786009)(11346002)(229853002)(2501003)(4326008)(6916009)(66446008)(86362001)(5660300002)(14444005)(256004)(2351001)(966005)(45080400002)(118296001)(14454004)(66946007)(71190400001)(91956017)(64756008)(66556008)(66476007)(76116006)(478600001)(99286004)(58126008)(7736002)(6306002)(66066001)(2906002)(53936002)(316002)(54906003)(3846002)(6436002)(6512007)(8936002)(81156014)(1730700003)(76176011)(186003)(6116002)(26005)(6506007)(476003)(486006)(2616005)(446003)(102836004)(36756003)(6486002)(5640700003)(8676002)(6246003)(305945005)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0501MB2462;H:VI1PR0501MB2765.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: a7wSAUHnsm9xqO91anNKObpVxJBgVYAvEIjuqtfJZdK4TIq70huCKsYVmsHAV/SZD9CS9TDrONEUKQayQpyJf1FuSDFy5AC4ZLN10ac/dMaV6bAViP/boQQye97SJsQbeh8idmEGFJEv884PkBvpcskWyaFxbsS17pS1Vli/dll6rdHKDq5JSKx9ELVjtzNn0YwGxRywBHsEkXgjx98Qzvwzx9R9niEqSGMghz/OvekpyUVKDlYhX54q6Yn/2jEHWyRlwAOswh4kBRW8D6KIE/bbOkkxJWF68Ul3wQjamE/hBf9rxyLd6KetSaOaPLEqp0miUbBTLw27/7CfFtUh6v2OZGdmFvSQ19ymng/3HVlL1X7vRKUIcLJUYUnU0o49eOXUo1NvUfsauQ14+7dH9lVX8jqwXdbucoYLzPwpFL8=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <03BC518C0A206D4D95F3E685CE5E9443@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1726371AbfH0Vuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:50:44 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44261 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbfH0Vuo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 17:50:44 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t14so177962plr.11;
+        Tue, 27 Aug 2019 14:50:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4aREPVUJAE3wJMTq0SKsAn5ZXXhvSa4MM06jPfKs0zg=;
+        b=BE9fQgG0SPdpbj1CmdPkgTysBwpST6VV/oPjvbzf+J6ngdyqpsnvWhCBjxb2cjPgRa
+         EmbwVqxEVl9utIDgXW/pB/OZXZ/Ijq6igFsDKOJCv/fk9S2D+i74UBpOL446NI4MT108
+         SZyPgDFW6E8exva9ogjC/SFMmyv5g8dvWOnzmKhEbzcEd3UMd4MWC9+CCU+vIvqS5xSE
+         lyGvm+bLHF5mLQPgli8sueMven2oLKyyORKW919bAjRwVCHxHxC2qiQy0ezAceCJ6hcU
+         ZcEjg6xnoLFozhkmy/30LZkVDx4Xi7UZxlp8ewi5c2laYqmmX4C9TtlQKAkra9FoAVZL
+         qdUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4aREPVUJAE3wJMTq0SKsAn5ZXXhvSa4MM06jPfKs0zg=;
+        b=jFzs569oG4J5yObq5MdAkVJ6bevO+k/n3Y0YjEaH/DUQOiwTCEXiepjKgujp8YCApy
+         O1oPxGGIkBLN1wimtTPiF3L1XGBBkgQMGCI0v854Bc0QijACRINbDNLOMnC6MWeGgMAa
+         LJrkoUadyQUsg3Lg5Y5dlkwvhghO7/H3lm/7Al3FDboemMJjLX1czXQ66DdZjESHH/W7
+         cgWiCkcvYPm/22x85ysRKM4SD3uzrD/8milEoTQgaI2xoEDZVjDEWMpSWgz/QaLU5/0O
+         nDad3rkEQEmCOEgiecoI2VvWbNKCGIPl8rLlpx39P9/9v6/RCzQSAXaBDPuF0AMK6WXj
+         jDwA==
+X-Gm-Message-State: APjAAAXMSDjOBSDw31o4ssCaHaULoDd7/Sr1cKNKa2X1mmUYvzwhBqjZ
+        WoQ4rDP3i+V+BjgrnhNsl7k=
+X-Google-Smtp-Source: APXvYqyZdAKl5zA4VN2QFCbDCL1mGWtSvdqVd6uaU80oAaOo819B7xX7AiPNynAkkYh+P6478UvRug==
+X-Received: by 2002:a17:902:ff16:: with SMTP id f22mr1058262plj.178.1566942213188;
+        Tue, 27 Aug 2019 14:43:33 -0700 (PDT)
+Received: from localhost ([100.118.89.196])
+        by smtp.gmail.com with ESMTPSA id l3sm171989pjq.18.2019.08.27.14.43.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 14:43:32 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Bruce Wang <bzwang@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
+        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 3/9] drm/msm/dpu: handle_frame_done() from vblank irq
+Date:   Tue, 27 Aug 2019 14:33:33 -0700
+Message-Id: <20190827213421.21917-4-robdclark@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190827213421.21917-1-robdclark@gmail.com>
+References: <20190827213421.21917-1-robdclark@gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3e0205bd-3b45-4b2a-7015-08d72b381623
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2019 21:46:58.3010
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: L3ShhXxoEKkHh3JDXAsrTFhyIS3Z7sOVT3ObVYzeWNLHyigVzKaXsPNzBrqgkyI2eV5g+eLkW3XbK3njoaAH9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0501MB2462
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTA4LTI3IGF0IDE2OjEyIC0wNDAwLCBRaWFuIENhaSB3cm90ZToNCj4gT24g
-TW9uLCAyMDE5LTA4LTI2IGF0IDIxOjExICswMDAwLCBTYWVlZCBNYWhhbWVlZCB3cm90ZToNCj4g
-PiBPbiBGcmksIDIwMTktMDgtMjMgYXQgMTU6NTYgLTA0MDAsIFFpYW4gQ2FpIHdyb3RlOg0KPiA+
-ID4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIC4vYXJjaC9wb3dlcnBjL2luY2x1ZGUvYXNtL3BhY2Eu
-aDoxNSwNCj4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbSAuL2FyY2gvcG93ZXJwYy9pbmNsdWRl
-L2FzbS9jdXJyZW50Lmg6MTMsDQo+ID4gPiAgICAgICAgICAgICAgICAgIGZyb20gLi9pbmNsdWRl
-L2xpbnV4L3RocmVhZF9pbmZvLmg6MjEsDQo+ID4gPiAgICAgICAgICAgICAgICAgIGZyb20gLi9p
-bmNsdWRlL2FzbS1nZW5lcmljL3ByZWVtcHQuaDo1LA0KPiA+ID4gICAgICAgICAgICAgICAgICBm
-cm9tDQo+ID4gPiAuL2FyY2gvcG93ZXJwYy9pbmNsdWRlL2dlbmVyYXRlZC9hc20vcHJlZW1wdC5o
-OjEsDQo+ID4gPiAgICAgICAgICAgICAgICAgIGZyb20gLi9pbmNsdWRlL2xpbnV4L3ByZWVtcHQu
-aDo3OCwNCj4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGludXgvc3Bpbmxv
-Y2suaDo1MSwNCj4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGludXgvd2Fp
-dC5oOjksDQo+ID4gPiAgICAgICAgICAgICAgICAgIGZyb20gLi9pbmNsdWRlL2xpbnV4L2NvbXBs
-ZXRpb24uaDoxMiwNCj4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGludXgv
-bWx4NS9kcml2ZXIuaDozNywNCj4gPiA+ICAgICAgICAgICAgICAgICAgZnJvbQ0KPiA+ID4gZHJp
-dmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2xpYi9lcS5oOjYsDQo+ID4gPiAg
-ICAgICAgICAgICAgICAgIGZyb20NCj4gPiA+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94
-L21seDUvY29yZS9kaWFnL2Z3X3RyYWNlci5jOjMzOg0KPiA+ID4gSW4gZnVuY3Rpb24gJ3N0cm5j
-cHknLA0KPiA+ID4gICAgIGlubGluZWQgZnJvbSAnbWx4NV9md190cmFjZXJfc2F2ZV90cmFjZScg
-YXQNCj4gPiA+IGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seDUvY29yZS9kaWFnL2Z3
-X3RyYWNlci5jOjU0OToyLA0KPiA+ID4gICAgIGlubGluZWQgZnJvbSAnbWx4NV90cmFjZXJfcHJp
-bnRfdHJhY2UnIGF0DQo+ID4gPiBkcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2Nv
-cmUvZGlhZy9md190cmFjZXIuYzo1NzQ6MjoNCj4gPiA+IC4vaW5jbHVkZS9saW51eC9zdHJpbmcu
-aDozMDU6OTogd2FybmluZzogJ19fYnVpbHRpbl9zdHJuY3B5Jw0KPiA+ID4gb3V0cHV0DQo+ID4g
-PiBtYXkNCj4gPiA+IGJlIHRydW5jYXRlZCBjb3B5aW5nIDI1NiBieXRlcyBmcm9tIGEgc3RyaW5n
-IG9mIGxlbmd0aCA1MTENCj4gPiA+IFstV3N0cmluZ29wLXRydW5jYXRpb25dDQo+ID4gPiAgIHJl
-dHVybiBfX2J1aWx0aW5fc3RybmNweShwLCBxLCBzaXplKTsNCj4gPiA+ICAgICAgICAgIF5+fn5+
-fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQo+ID4gPiANCj4gPiA+IEZpeCBpdCBieSB1c2luZyB0
-aGUgbmV3IHN0cnNjcHlfcGFkKCkgc2luY2UgdGhlIGNvbW1pdA0KPiA+ID4gNDU4YTNiZjgyZGY0
-DQo+ID4gPiAoImxpYi9zdHJpbmc6IEFkZCBzdHJzY3B5X3BhZCgpIGZ1bmN0aW9uIikgd2hpY2gg
-d2lsbCBhbHdheXMNCj4gPiA+IE5VTC10ZXJtaW5hdGUgdGhlIHN0cmluZywgYW5kIGF2b2lkIHBv
-c3NpYmx5IGxlYWsgZGF0YSB0aHJvdWdoDQo+ID4gPiB0aGUNCj4gPiA+IHJpbmcNCj4gPiA+IGJ1
-ZmZlciB3aGVyZSBub24tYWRtaW4gYWNjb3VudCBtaWdodCBlbmFibGUgdGhlc2UgZXZlbnRzIHRo
-cm91Z2gNCj4gPiA+IHBlcmYuDQo+ID4gPiANCj4gPiA+IEZpeGVzOiBmZDE0ODNmZTFmOWYgKCJu
-ZXQvbWx4NTogQWRkIHN1cHBvcnQgZm9yIEZXIHJlcG9ydGVyDQo+ID4gPiBkdW1wIikNCj4gPiA+
-IFNpZ25lZC1vZmYtYnk6IFFpYW4gQ2FpIDxjYWlAbGNhLnB3Pg0KPiA+IA0KPiA+IEhpIFFpYW4g
-YW5kIHRoYW5rcyBmb3IgeW91ciBwYXRjaCwNCj4gPiANCj4gPiBXZSBhbHJlYWR5IGhhdmUgYSBw
-YXRjaCB0aGF0IGhhbmRsZXMgdGhpcyBpc3N1ZSwgcGxlYXNlIGNoZWNrIGl0DQo+ID4gb3V0Og0K
-PiA+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3NhZWVk
-L2xpbnV4LmdpdC9jb21taXQvP2g9bmV0LQ0KPiA+IG5leHQtbWx4NQ0KPiA+IA0KPiANCj4gVGhh
-dCBjb21taXQgd2lsbCBtYWtlICJzdHJ1Y3QgbWx4NV9md190cmFjZXIiIHRvbyBsYXJnZSBhbmQg
-dHJpZ2dlciBhDQo+IHdhcm5pbmcgaW4NCj4gX19hbGxvY19wYWdlc19ub2RlbWFzaygpLA0KPiAN
-Cg0KSSBzZWUhIHRoYW5rcyBmb3IgdGhlIGlucHV0LCB0aGUgcGF0Y2ggaXMgc3RpbGwgdW5kZXIg
-cmV2aWV3IGFuZCBub3QNCnlldCBwYXNzZWQgdG8gcmVncmVzc2lvbiBxdWV1ZS4NCg0KSSB3aWxs
-IHRha2UgeW91ciBwYXRjaC4uIGFuZCB3aWxsIGZpeCBvdXIgcGF0Y2ggb24gdG9wIG9mIHlvdXJz
-Lg0KDQo+ICAgICAgICAgLyoNCj4gICAgICAgICAgKiBUaGVyZSBhcmUgc2V2ZXJhbCBwbGFjZXMg
-d2hlcmUgd2UgYXNzdW1lIHRoYXQgdGhlIG9yZGVyDQo+IHZhbHVlIGlzIHNhbmUNCj4gICAgICAg
-ICAgKiBzbyBiYWlsIG91dCBlYXJseSBpZiB0aGUgcmVxdWVzdCBpcyBvdXQgb2YgYm91bmQuDQo+
-ICAgICAgICAgICovDQo+ICAgICAgICAgaWYgKHVubGlrZWx5KG9yZGVyID49IE1BWF9PUkRFUikp
-IHsNCj4gICAgICAgICAgICAgICAgIFdBUk5fT05fT05DRSghKGdmcF9tYXNrICYgX19HRlBfTk9X
-QVJOKSk7DQo+ICAgICAgICAgICAgICAgICByZXR1cm4gTlVMTDsNCj4gICAgICAgICB9DQo+IA0K
-PiBbICAgOTguMzM5NTc2XVsgIFQ5MTRdIFdBUk5JTkc6IENQVTogMCBQSUQ6IDkxNCBhdA0KPiBt
-bS9wYWdlX2FsbG9jLmM6NDcwNQ0KPiBfX2FsbG9jX3BhZ2VzX25vZGVtYXNrKzB4NDQxLzB4MWJi
-MA0KPiBbICAgOTguMzQ5MTc0XVsgIFQ5MTRdIE1vZHVsZXMgbGlua2VkIGluOiBzbWFydHBxaSgr
-KQ0KPiBzY3NpX3RyYW5zcG9ydF9zYXMgdGczDQo+IG1seDVfY29yZSgrKSBsaWJwaHkgZmlybXdh
-cmVfY2xhc3MgZG1fbWlycm9yIGRtX3JlZ2lvbl9oYXNoIGRtX2xvZw0KPiBkbV9tb2QNCj4gZWZp
-dmFyZnMNCj4gWyAgIDk4LjM2MzQ5NV1bICBUOTE0XSBDUFU6IDAgUElEOiA5MTQgQ29tbToga3dv
-cmtlci8wOjIgTm90IHRhaW50ZWQNCj4gNS4zLjAtcmM2LQ0KPiBuZXh0LTIwMTkwODI3KyAjMTQN
-Cj4gWyAgIDk4LjM3MjI0M11bICBUOTE0XSBIYXJkd2FyZSBuYW1lOiBIUEUgUHJvTGlhbnQgREwz
-ODUNCj4gR2VuMTAvUHJvTGlhbnQgREwzODUNCj4gR2VuMTAsIEJJT1MgQTQwIDA3LzEwLzIwMTkN
-Cj4gWyAgIDk4LjM4MTYyN11bICBUOTE0XSBXb3JrcXVldWU6IGV2ZW50cyB3b3JrX2Zvcl9jcHVf
-Zm4NCj4gWyAgIDk4LjM4NjcyMF1bICBUOTE0XSBSSVA6IDAwMTA6X19hbGxvY19wYWdlc19ub2Rl
-bWFzaysweDQ0MS8weDFiYjANCj4gWyAgIDk4LjM5MjkxN11bICBUOTE0XSBDb2RlOiAxNyAwMCAw
-MCA0OCA4ZCA2NSBkOCA1YiA0MSA1YyA0MSA1ZCA0MQ0KPiA1ZSA0MSA1ZiA1ZA0KPiBjMyA4OSA4
-NSAzYyBmZSBmZiBmZiBiYiAwMSAwMCAwMCAwMCBlOSA5NiBmZCBmZiBmZiA4MSBlNyAwMCAyMCAw
-MCAwMA0KPiA3NSAwMiA8MGY+DQo+IDBiIDQ4IGM3IDg1IDUwIGZlIGZmIGZmIDAwIDAwIDAwIDAw
-IGViIDgyIDMxIGQyIGJlIDM2IDEyIDAwIDAwDQo+IFsgICA5OC40MTI3NDBdWyAgVDkxNF0gUlNQ
-OiAwMDE4OmZmZmY4ODg1MzQxOGY5NDggRUZMQUdTOiAwMDAxMDI0Ng0KPiBbICAgOTguNDE4NzA0
-XVsgIFQ5MTRdIFJBWDogMDAwMDAwMDAwMDAwMDAwMCBSQlg6IGZmZmZmZmZmOTU3MWE4NjANCj4g
-UkNYOg0KPiAxZmZmZjExMGE2ODMxZjNlDQo+IFsgICA5OC40MjY2NTJdWyAgVDkxNF0gUkRYOiAw
-MDAwMDAwMDAwMDAwMDAwIFJTSTogMDAwMDAwMDAwMDAwMDAwYg0KPiBSREk6DQo+IDAwMDAwMDAw
-MDAwMDAwMDANCj4gWyAgIDk4LjQzNDY2MV1bICBUOTE0XSBSQlA6IGZmZmY4ODg1MzQxOGZiNTgg
-UjA4OiBmZmZmZWQxMTA4ODA4NDY1DQo+IFIwOToNCj4gZmZmZmVkMTEwODgwODQ2NQ0KPiBbICAg
-OTguNDQyNjEzXVsgIFQ5MTRdIFIxMDogZmZmZmVkMTEwODgwODQ2NCBSMTE6IGZmZmY4ODg4NDQw
-NDIzMjMNCj4gUjEyOg0KPiAwMDAwMDAwMDAwMDAwMDAwDQo+IFsgICA5OC40NTA1NDhdWyAgVDkx
-NF0gUjEzOiAwMDAwMDAwMDAwMDAwMDBiIFIxNDogMDAwMDAwMDAwMDAwMDAwMA0KPiBSMTU6DQo+
-IDAwMDAwMDAwMDAwMDAwMDENCj4gWyAgIDk4LjQ1ODQzNF1bICBUOTE0XSBGUzogIDAwMDAwMDAw
-MDAwMDAwMDAoMDAwMCkNCj4gR1M6ZmZmZjg4ODg0NDAwMDAwMCgwMDAwKQ0KPiBrbmxHUzowMDAw
-MDAwMDAwMDAwMDAwDQo+IFsgICA5OC40NjczNTBdWyAgVDkxNF0gQ1M6ICAwMDEwIERTOiAwMDAw
-IEVTOiAwMDAwIENSMDoNCj4gMDAwMDAwMDA4MDA1MDAzMw0KPiBbICAgOTguNDczOTExXVsgIFQ5
-MTRdIENSMjogMDAwMDU1NWM2NDY4MDE0OCBDUjM6IDAwMDAwMDA1NTA0MTIwMDANCj4gQ1I0Og0K
-PiAwMDAwMDAwMDAwMzQwNmIwDQo+IFsgICA5OC40ODE4MzhdWyAgVDkxNF0gQ2FsbCBUcmFjZToN
-Cj4gWyAgIDk4LjQ4NTAxMV1bICBUOTE0XSAgPyBmaW5kX25leHRfYml0KzB4MmMvMHhhMA0KPiBb
-ICAgOTguNDg5NDkwXVsgIFQ5MTRdICA/IF9fa2FzYW5fY2hlY2tfd3JpdGUrMHgxNC8weDIwDQo+
-IFsgICA5OC40OTQ1MDZdWyAgVDkxNF0gID8gZ3JhcGhfbG9jaysweGI4LzB4MTIwDQo+IFsgICA5
-OC40OTg4MTFdWyAgVDkxNF0gID8gX19mcmVlX3phcHBlZF9jbGFzc2VzKzB4NzQwLzB4NzQwDQo+
-IFsgICA5OC41MDQyMzldWyAgVDkxNF0gID8gZ2ZwX3BmbWVtYWxsb2NfYWxsb3dlZCsweGMwLzB4
-YzANCj4gWyAgIDk4LjUwOTUwNF1bICBUOTE0XSAgPyBfX2thc2FuX2NoZWNrX3JlYWQrMHgxMS8w
-eDIwDQo+IFsgICA5OC41MTQ0NDNdWyAgVDkxNF0gID8gcmVnaXN0ZXJfbG9ja19jbGFzcysweDVl
-Zi8weDk2MA0KPiBbICAgOTguNTE5NjI0XVsgIFQ5MTRdICA/IHJjdV9yZWFkX2xvY2tfc2NoZWRf
-aGVsZCsweGFjLzB4ZTANCj4gWyAgIDk4LjUyNTE1Ml1bICBUOTE0XSAgPyByY3VfcmVhZF9sb2Nr
-X2FueV9oZWxkLnBhcnQuNSsweDIwLzB4MjANCj4gWyAgIDk4LjUzMTEzMF1bICBUOTE0XSAgPyBm
-aW5kX25leHRfYml0KzB4MmMvMHhhMA0KPiBbICAgOTguNTM1NjEwXVsgIFQ5MTRdICBhbGxvY19w
-YWdlc19jdXJyZW50KzB4OWMvMHgxMTANCj4gWyAgIDk4LjU0MDYzOF1bICBUOTE0XSAga21hbGxv
-Y19vcmRlcisweDIyLzB4NzANCj4gWyAgIDk4LjU0NDk0M11bICBUOTE0XSAga21hbGxvY19vcmRl
-cl90cmFjZSsweDIzLzB4MTAwDQo+IFsgICA5OC41NTAwNzJdWyAgVDkxNF0gIG1seDVfZndfdHJh
-Y2VyX2NyZWF0ZSsweDUxLzB4ODcwIFttbHg1X2NvcmVdDQo+IFsgICA5OC41NTYyMTNdWyAgVDkx
-NF0gID8gX19tdXRleF9pbml0KzB4OTQvMHhhMA0KPiBbICAgOTguNTYwNzQ0XVsgIFQ5MTRdICA/
-IG1seDVfaW5pdF9ybF90YWJsZSsweDE0NC8weDIxMCBbbWx4NV9jb3JlXQ0KPiBbICAgOTguNTY2
-OTI5XVsgIFQ5MTRdICBtbHg1X2xvYWRfb25lKzB4MTk5LzB4OTgwIFttbHg1X2NvcmVdDQo+IFsg
-ICA5OC41NzI2MzddWyAgVDkxNF0gIGluaXRfb25lKzB4NDk0LzB4NzYwIFttbHg1X2NvcmVdDQo+
-IFsgICA5OC41Nzc3NzFdWyAgVDkxNF0gID8gbWx4NV9wY2lfcmVzdW1lKzB4ZDAvMHhkMCBbbWx4
-NV9jb3JlXQ0KPiBbICAgOTguNTgzNTc0XVsgIFQ5MTRdICBsb2NhbF9wY2lfcHJvYmUrMHg3YS8w
-eGMwDQo+IFsgICA5OC41ODgwNTRdWyAgVDkxNF0gID8gcGNpX2RtYV9jb25maWd1cmUrMHhhMC8w
-eGEwDQo+IFsgICA5OC41OTI5MzhdWyAgVDkxNF0gIHdvcmtfZm9yX2NwdV9mbisweDJlLzB4NTAN
-Cj4gWyAgIDk4LjU5NzQxNl1bICBUOTE0XSAgcHJvY2Vzc19vbmVfd29yaysweDUzYi8weGE3MA0K
-PiBbICAgOTguNjAyMjIwXVsgIFQ5MTRdICA/IHB3cV9kZWNfbnJfaW5fZmxpZ2h0KzB4MTcwLzB4
-MTcwDQo+IFsgICA5OC42MDc0ODVdWyAgVDkxNF0gID8gbW92ZV9saW5rZWRfd29ya3MrMHgxMTMv
-MHgxNTANCj4gWyAgIDk4LjYxMjQ5N11bICBUOTE0XSAgd29ya2VyX3RocmVhZCsweDM2My8weDVi
-MA0KPiBbICAgOTguNjE2OTc2XVsgIFQ5MTRdICBrdGhyZWFkKzB4MWRmLzB4MjAwDQo+IFsgICA5
-OC42MjA5MzJdWyAgVDkxNF0gID8gcHJvY2Vzc19vbmVfd29yaysweGE3MC8weGE3MA0KPiBbICAg
-OTguNjI1ODQ3XVsgIFQ5MTRdICA/IGt0aHJlYWRfcGFyaysweGQwLzB4ZDANCj4gWyAgIDk4LjYz
-MDI0MF1bICBUOTE0XSAgcmV0X2Zyb21fZm9yaysweDIyLzB4NDANCg==
+From: Rob Clark <robdclark@chromium.org>
+
+Previously the callback was called from whoever called wait_for_vblank(),
+but that isn't a great plan when wait_for_vblank() stops getting called,
+and results in frame_done_timer expiring.
+
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c      |  7 +-----
+ .../drm/msm/disp/dpu1/dpu_encoder_phys_vid.c  | 25 ++++++-------------
+ 2 files changed, 9 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+index c3f7154017c4..e7354aef9805 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -311,12 +311,7 @@ static void dpu_crtc_frame_event_work(struct kthread_work *work)
+ 				| DPU_ENCODER_FRAME_EVENT_PANEL_DEAD)) {
+ 
+ 		if (atomic_read(&dpu_crtc->frame_pending) < 1) {
+-			/* this should not happen */
+-			DRM_ERROR("crtc%d ev:%u ts:%lld frame_pending:%d\n",
+-					crtc->base.id,
+-					fevent->event,
+-					ktime_to_ns(fevent->ts),
+-					atomic_read(&dpu_crtc->frame_pending));
++			/* ignore vblank when not pending */
+ 		} else if (atomic_dec_return(&dpu_crtc->frame_pending) == 0) {
+ 			/* release bandwidth and other resources */
+ 			trace_dpu_crtc_frame_event_done(DRMID(crtc),
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+index 7c73b09894f0..b9c84fb4d4a1 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+@@ -324,6 +324,10 @@ static void dpu_encoder_phys_vid_vblank_irq(void *arg, int irq_idx)
+ 
+ 	/* Signal any waiting atomic commit thread */
+ 	wake_up_all(&phys_enc->pending_kickoff_wq);
++
++	phys_enc->parent_ops->handle_frame_done(phys_enc->parent, phys_enc,
++			DPU_ENCODER_FRAME_EVENT_DONE);
++
+ 	DPU_ATRACE_END("vblank_irq");
+ }
+ 
+@@ -483,8 +487,8 @@ static void dpu_encoder_phys_vid_get_hw_resources(
+ 	hw_res->intfs[phys_enc->intf_idx - INTF_0] = INTF_MODE_VIDEO;
+ }
+ 
+-static int _dpu_encoder_phys_vid_wait_for_vblank(
+-		struct dpu_encoder_phys *phys_enc, bool notify)
++static int dpu_encoder_phys_vid_wait_for_vblank(
++		struct dpu_encoder_phys *phys_enc)
+ {
+ 	struct dpu_encoder_wait_info wait_info;
+ 	int ret;
+@@ -499,10 +503,6 @@ static int _dpu_encoder_phys_vid_wait_for_vblank(
+ 	wait_info.timeout_ms = KICKOFF_TIMEOUT_MS;
+ 
+ 	if (!dpu_encoder_phys_vid_is_master(phys_enc)) {
+-		if (notify && phys_enc->parent_ops->handle_frame_done)
+-			phys_enc->parent_ops->handle_frame_done(
+-					phys_enc->parent, phys_enc,
+-					DPU_ENCODER_FRAME_EVENT_DONE);
+ 		return 0;
+ 	}
+ 
+@@ -512,20 +512,11 @@ static int _dpu_encoder_phys_vid_wait_for_vblank(
+ 
+ 	if (ret == -ETIMEDOUT) {
+ 		dpu_encoder_helper_report_irq_timeout(phys_enc, INTR_IDX_VSYNC);
+-	} else if (!ret && notify && phys_enc->parent_ops->handle_frame_done)
+-		phys_enc->parent_ops->handle_frame_done(
+-				phys_enc->parent, phys_enc,
+-				DPU_ENCODER_FRAME_EVENT_DONE);
++	}
+ 
+ 	return ret;
+ }
+ 
+-static int dpu_encoder_phys_vid_wait_for_vblank(
+-		struct dpu_encoder_phys *phys_enc)
+-{
+-	return _dpu_encoder_phys_vid_wait_for_vblank(phys_enc, true);
+-}
+-
+ static int dpu_encoder_phys_vid_wait_for_commit_done(
+ 		struct dpu_encoder_phys *phys_enc)
+ {
+@@ -615,7 +606,7 @@ static void dpu_encoder_phys_vid_disable(struct dpu_encoder_phys *phys_enc)
+ 	 * scanout buffer) don't latch properly..
+ 	 */
+ 	if (dpu_encoder_phys_vid_is_master(phys_enc)) {
+-		ret = _dpu_encoder_phys_vid_wait_for_vblank(phys_enc, false);
++		ret = dpu_encoder_phys_vid_wait_for_vblank(phys_enc);
+ 		if (ret) {
+ 			atomic_set(&phys_enc->pending_kickoff_cnt, 0);
+ 			DRM_ERROR("wait disable failed: id:%u intf:%d ret:%d\n",
+-- 
+2.21.0
+
