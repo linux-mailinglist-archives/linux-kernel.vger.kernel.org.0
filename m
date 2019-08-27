@@ -2,109 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E1D59F45E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 22:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACBC89F43E
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 22:40:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730920AbfH0UlJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 16:41:09 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:41539 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730438AbfH0UlG (ORCPT
+        id S1730417AbfH0UkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 16:40:18 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42075 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfH0UkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 16:41:06 -0400
-Received: by mail-pf1-f201.google.com with SMTP id 191so225426pfz.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 13:41:06 -0700 (PDT)
+        Tue, 27 Aug 2019 16:40:17 -0400
+Received: by mail-wr1-f68.google.com with SMTP id b16so154776wrq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 13:40:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=xayR1eaTOStHF5jKNWv1XVdOT2EVEaLrqieyOudEAew=;
-        b=NHIhoqFMbp5MdEk/zZR4BkgYP3OtmmrWat2vDnifQG7VpdLb8ymLES1nAKEPdRb7XW
-         qjmB6tUw3vNvc+5O2wFghDgrdxpwGucqBvNtpiL9JE+nwKFgR4GA+rzh/2M8Kl1ofFPO
-         16QHFVi6WVK2Nhql5Vq4QbJzbYNNhRvXUWj0zi5jvg8k4ICb52Db9Xt3yvJEt5H3d8Iv
-         /OcYJprQ8aPOC9FpjOlmj496KpwfbyjsGSKPvver9hp0nlEOqbFQb5Hpb569Hrps1qjf
-         BPPoIbW6pLMIT/PiWXnLALASS1TG5OdI7SwRI/rIX8gb00S4Tr/mNs2rCPO7VvU5r8G5
-         VK9g==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LVY+aGgV5phVkgMSXjfnQV4zLurQzKqT7u/u8Bbhqn4=;
+        b=SdSulqDQhvJQaCl/gqpRI29PMKcIigY1c472uiQr0zBUH0suP/3zID/TWaFKLGGxt6
+         wJU4/jiPdnLLZ98QU2A5JBMHijilc4FRAF9U1kvjapIdUhWELzGMNFxpZJT2qx3bai4t
+         XnCyR06QWZxXtqEDbK+YC3i+qsylW9SxNrCTY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=xayR1eaTOStHF5jKNWv1XVdOT2EVEaLrqieyOudEAew=;
-        b=GbEvixC6GkcfZj6jh+D9busntatKYRIXFVHw3iYfAWZ0nNYp97iJpXBo5r8Uwd3rsn
-         cVVKQZ92nPETFibeskQ32HDGxM5qcXp4pQndvFUUV3nnz91wNlsW2Am3tJs6k33z4EP0
-         lk1q2C5vi64rJUPfOpBj07Vhpk/lCJrYfGGo51AEFgllTNGavMKC4bSnbpUmefW3LTDX
-         QtkWqFYwdTPGN4u9R8kaXZwY6taiWiPAeEcJR6ntE4IcLnk30bJdQTpc2uSE1SuJzssC
-         Vgi4Zr4W5BhQiBc1q7YJY5rQrs6LopAvCga9ZxikObBIKiRV0iB6qnbQ1BM0cFBnNYTq
-         vX5w==
-X-Gm-Message-State: APjAAAXBPa3lqFcFzzur/xXlOcRmIUu/dTWyYdnoTNikggH+Q2Sl2+AN
-        quhwKPBYXYZRkcJRQ5V6iR60pt2qMR1vAfwm8fA=
-X-Google-Smtp-Source: APXvYqxR5yi6cMoNzQQzhEyhbHsQPhQBwZLZlTu/iCHhZxCON5/LG4WyjU2RbMGUa/kinzEiVorrXF6NEks6Cbwenxk=
-X-Received: by 2002:a65:5cca:: with SMTP id b10mr265201pgt.365.1566938465537;
- Tue, 27 Aug 2019 13:41:05 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 13:40:07 -0700
-In-Reply-To: <20190827204007.201890-1-ndesaulniers@google.com>
-Message-Id: <20190827204007.201890-15-ndesaulniers@google.com>
-Mime-Version: 1.0
-References: <20190827204007.201890-1-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-Subject: [PATCH v2 14/14] compiler_attributes.h: add note about __section
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     miguel.ojeda.sandonis@gmail.com
-Cc:     sedat.dilek@gmail.com, will@kernel.org, jpoimboe@redhat.com,
-        naveen.n.rao@linux.vnet.ibm.com, davem@davemloft.net,
-        paul.burton@mips.com, clang-built-linux@googlegroups.com,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LVY+aGgV5phVkgMSXjfnQV4zLurQzKqT7u/u8Bbhqn4=;
+        b=WjCSRGSurjPDK2u0pTRQC9LMFvGF9JByuLXGT6tjO1T/5B10atjSK3VQ6sZ05qhTSa
+         HJqsbE44vzdOwWhVj3mx2+Vkj2tvXURul8Nm++UG3q/QP1HYOaNHDW0uY2sI9dKT/tgb
+         xMZO3vsqLYtr5PeEec/ZCuDFRxIcMp+KORHoBk4gES7S1aEzTgk9g8RtN0qHi+TzgwSQ
+         wEzr+SAMhvjQGrbhePzI6GsSk0bH8upJ8pv2Vd/UiE2ye2JEmjIvSt8v8VQxf5pUpLBz
+         b96mjsBd9nceerGD/YEUGhb6da42DyzK2hhW+6tOjOioc7fw2S6sMN7VYK/UBMECZq8l
+         CB9w==
+X-Gm-Message-State: APjAAAWrfiPjHKU7UnsPgTBC1R1lEmQr7WUahXP78YhO4hP+NeMkAxai
+        poILK59AWVVB7fZXq016CMMOw8rLgdA73eghQya2xnB3npNNGgHFIktwcXNRL33s/Sst4URdZnt
+        f+uUhGHKcdwJrUs/zBwuQAjohs/Bz4PHSIELFBHclUyELPZFYdT/o/WhMTqRaYixec8mm5CnEKc
+        CE
+X-Google-Smtp-Source: APXvYqw2S8S1S6srBLnhNXgrsUaeESkm3bBtz02xDGo7Ut/x/S+256UHwPqj2L8/y9Wugysbq7pyJQ==
+X-Received: by 2002:adf:ce81:: with SMTP id r1mr133139wrn.114.1566938414417;
+        Tue, 27 Aug 2019 13:40:14 -0700 (PDT)
+Received: from rj-aorus.ric.broadcom.com ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id d69sm189454wmd.4.2019.08.27.13.40.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Aug 2019 13:40:13 -0700 (PDT)
+Subject: Re: [PATCH net-next] phy: mdio-bcm-iproc: use
+ devm_platform_ioremap_resource() to simplify code
+To:     YueHaibing <yuehaibing@huawei.com>, andrew@lunn.ch,
+        f.fainelli@gmail.com, hkallweit1@gmail.com, davem@davemloft.net,
+        rjui@broadcom.com, sbranden@broadcom.com
+Cc:     bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190827134616.11396-1-yuehaibing@huawei.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <27e43388-bc8f-6a36-5696-beb3b8d140d4@broadcom.com>
+Date:   Tue, 27 Aug 2019 13:40:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190827134616.11396-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GCC unescapes escaped string section names while Clang does not. Because
-__section uses the `#` stringification operator for the section name, it
-doesn't need to be escaped.
 
-Instead, we should:
-1. Prefer __section(.section_name_no_quotes).
-2. Only use __attribute__((__section(".section"))) when creating the
-section name via C preprocessor (see the definition of __define_initcall
-in arch/um/include/shared/init.h).
 
-This antipattern was found with:
-$ grep -e __section\(\" -e __section__\(\" -r
+On 2019-08-27 6:46 a.m., YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>   drivers/net/phy/mdio-bcm-iproc.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/phy/mdio-bcm-iproc.c b/drivers/net/phy/mdio-bcm-iproc.c
+> index 7d0f388..7e9975d 100644
+> --- a/drivers/net/phy/mdio-bcm-iproc.c
+> +++ b/drivers/net/phy/mdio-bcm-iproc.c
+> @@ -123,15 +123,13 @@ static int iproc_mdio_probe(struct platform_device *pdev)
+>   {
+>   	struct iproc_mdio_priv *priv;
+>   	struct mii_bus *bus;
+> -	struct resource *res;
+>   	int rc;
+>   
+>   	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+>   	if (!priv)
+>   		return -ENOMEM;
+>   
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	priv->base = devm_ioremap_resource(&pdev->dev, res);
+> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
+>   	if (IS_ERR(priv->base)) {
+>   		dev_err(&pdev->dev, "failed to ioremap register\n");
+>   		return PTR_ERR(priv->base);
+> 
 
-See the discussions in:
-Link: https://bugs.llvm.org/show_bug.cgi?id=42950
-Link: https://marc.info/?l=linux-netdev&m=156412960619946&w=2
-Link: https://bugs.llvm.org/show_bug.cgi?id=42950
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
- include/linux/compiler_attributes.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Looks good to me. Thanks.
 
-diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
-index 6b318efd8a74..f8c008d7f616 100644
---- a/include/linux/compiler_attributes.h
-+++ b/include/linux/compiler_attributes.h
-@@ -225,6 +225,16 @@
- #define __pure                          __attribute__((__pure__))
- 
- /*
-+ *  Note: Since this macro makes use of the "stringification operator" `#`, a
-+ *        quoted string literal should not be passed to it. eg.
-+ *        prefer:
-+ *        __section(.foo)
-+ *        to:
-+ *        __section(".foo")
-+ *        unless the section name is dynamically built up, in which case the
-+ *        verbose __attribute__((__section__(".foo" x))) should be preferred.
-+ *        See also: https://bugs.llvm.org/show_bug.cgi?id=42950
-+ *
-  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-section-function-attribute
-  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-section-variable-attribute
-  * clang: https://clang.llvm.org/docs/AttributeReference.html#section-declspec-allocate
--- 
-2.23.0.187.g17f5b7556c-goog
-
+Reviewed-by: Ray Jui <ray.jui@broadcom.com>
