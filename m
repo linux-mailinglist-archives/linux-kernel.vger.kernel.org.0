@@ -2,102 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECE479EF5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:49:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 036CF9EF46
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:46:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbfH0Ptu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:49:50 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:38881 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728612AbfH0Ptu (ORCPT
+        id S1727683AbfH0Pqr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:46:47 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:43607 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfH0Pqr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:49:50 -0400
-Received: by mail-qk1-f195.google.com with SMTP id u190so17430202qkh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 08:49:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=dibpdWj0PBeXuEM69FfN87DRWH5kS3v94RiPB1mv5iU=;
-        b=CxO4kuP71bXMdZBURSFVdEA6wqQw9veNFs9SiOUXDz8+GLQkSMpNUvDc2+Uu7dWt5K
-         2RVqK/QVIomtdFygUzu5x3xCfxHiRlG1TaWOhZw9yakOOL7eXp8igeouILW2IaBuMGay
-         4KaJtN0aWzCBRsZKQ5XbWAH8QKIfmKVbVsIi6DrJvzDGlXADj65lpVVey4TVTpELbhjQ
-         DAm9fF3n4JfH6dW+9Ax7obiuUAB8pkae7qQawFmQUd90wT2p/W0euy8Hh6/qYLWuMb/9
-         j50hqCT+1aYw1nZRljxHT2U4ZMnPFIUFpeTnY3fVpOScRYLoiFUFUeFMkjfYEgWJnyRH
-         jLaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dibpdWj0PBeXuEM69FfN87DRWH5kS3v94RiPB1mv5iU=;
-        b=WasUyfeQKyvLSs4jKQvyl2Jgc4N2+jH/8UZ6trRdLFiyd4s3iO7g9SrnrkKq1NcCnr
-         JY7/ppOfy1BcjCiblDpIT8snvCX4V9JUn/kBoKYh3DOLpDxijtCxkeP/mdtjEs4a6UGw
-         HpUGuQ9OzgLC+23QU2cGnv2Bng4/6vQom7q5cSwXdRheaMEX3rJhBmx8EE9u7qwzyJe4
-         zKEVtVcJ2/H63N/2hzv4ykTquXqqWlpVIG/CdxvEVmmLQGhZE3Gdd3dENEfND2ayF7nj
-         KSOojIbhDMGdPHN1T8ERWJTFzc2yrWqJUK+N7Gc+bm3ocBOP4YPqSMgsCw0AbfB0+PYN
-         JnSA==
-X-Gm-Message-State: APjAAAU13q/HvALZk8765CHTa+hcyRc90Z0ma+VfO8wOtJoGP28azxPh
-        IpM7bWSMqQp7rXnXuyvrTuTa5Mtloik=
-X-Google-Smtp-Source: APXvYqzu5/zr/pjEg/k5K28N3QPNYROqHF/i7rqJ5Ju2ChMhxp/jinXqOZrHzVQafRHebX5wnlONpg==
-X-Received: by 2002:a37:c49:: with SMTP id 70mr22348368qkm.429.1566920989128;
-        Tue, 27 Aug 2019 08:49:49 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id w1sm8505153qte.36.2019.08.27.08.49.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 08:49:48 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     akpm@linux-foundation.org
-Cc:     clang-built-linux@googlegroups.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] mm: silence -Woverride-init/initializer-overrides
-Date:   Tue, 27 Aug 2019 11:47:47 -0400
-Message-Id: <1566920867-27453-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 27 Aug 2019 11:46:47 -0400
+Received: from uno.localdomain (unknown [87.18.63.98])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 5ECA3200007;
+        Tue, 27 Aug 2019 15:46:39 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 17:48:10 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli@fpond.eu, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 08/14] drm: rcar-du: Add support for CMM
+Message-ID: <20190827154810.mr5jt2rkaorrry3t@uno.localdomain>
+References: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
+ <20190825135154.11488-9-jacopo+renesas@jmondi.org>
+ <20190827002422.GQ5031@pendragon.ideasonboard.com>
+ <20190827145619.33s7gkv7tgtsr6nz@uno.localdomain>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4lusbristpbjpnut"
+Content-Disposition: inline
+In-Reply-To: <20190827145619.33s7gkv7tgtsr6nz@uno.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When compiling a kernel with W=1, there are several of those warnings
-due to arm64 override a field by purpose. Just disable those warnings
-for both GCC and Clang of this file, so it will help dig "gems" hidden
-in the W=1 warnings by reducing some noises.
 
-mm/init-mm.c:39:2: warning: initializer overrides prior initialization
-of this subobject [-Winitializer-overrides]
-        INIT_MM_CONTEXT(init_mm)
-        ^~~~~~~~~~~~~~~~~~~~~~~~
-./arch/arm64/include/asm/mmu.h:133:9: note: expanded from macro
-'INIT_MM_CONTEXT'
-        .pgd = init_pg_dir,
-               ^~~~~~~~~~~
-mm/init-mm.c:30:10: note: previous initialization is here
-        .pgd            = swapper_pg_dir,
-                          ^~~~~~~~~~~~~~
+--4lusbristpbjpnut
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Note: there is a side project trying to support explicitly allowing
-specific initializer overrides in Clang, but there is no guarantee it
-will happen or not.
+On Tue, Aug 27, 2019 at 04:56:19PM +0200, Jacopo Mondi wrote:
+> Hi Laurent,
+>
+> On Tue, Aug 27, 2019 at 03:24:22AM +0300, Laurent Pinchart wrote:
+> > Hi Jacopo,
+> >
+> > Thank you for the patch.
+> >
+> > On Sun, Aug 25, 2019 at 03:51:48PM +0200, Jacopo Mondi wrote:
+> > > Add a driver for the R-Car Display Unit Color Correction Module.
+> > >
+> > > In most of Gen3 SoCs, each DU output channel is provided with a CMM unit
+> > > to perform image enhancement and color correction.
+> > >
+> > > Add support for CMM through a driver that supports configuration of
+> > > the 1-dimensional LUT table. More advanced CMM feature will be
+> > > implemented on top of this basic one.
+> > >
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > ---
+> > >  drivers/gpu/drm/rcar-du/Kconfig    |   7 +
+> > >  drivers/gpu/drm/rcar-du/Makefile   |   1 +
+> > >  drivers/gpu/drm/rcar-du/rcar_cmm.c | 262 +++++++++++++++++++++++++++++
+> > >  drivers/gpu/drm/rcar-du/rcar_cmm.h |  38 +++++
+> > >  4 files changed, 308 insertions(+)
+> > >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.c
+> > >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.h
+> > >
+> > > diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+> > > index 1529849e217e..539d232790d1 100644
+> > > --- a/drivers/gpu/drm/rcar-du/Kconfig
+> > > +++ b/drivers/gpu/drm/rcar-du/Kconfig
+> > > @@ -13,6 +13,13 @@ config DRM_RCAR_DU
+> > >  	  Choose this option if you have an R-Car chipset.
+> > >  	  If M is selected the module will be called rcar-du-drm.
+> > >
+> > > +config DRM_RCAR_CMM
+> > > +	bool "R-Car DU Color Management Module (CMM) Support"
+> > > +	depends on DRM && OF
+> > > +	depends on DRM_RCAR_DU
+> > > +	help
+> > > +	  Enable support for R-Car Color Management Module (CMM).
+> > > +
+> > >  config DRM_RCAR_DW_HDMI
+> > >  	tristate "R-Car DU Gen3 HDMI Encoder Support"
+> > >  	depends on DRM && OF
+> > > diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
+> > > index 6c2ed9c46467..4d1187ccc3e5 100644
+> > > --- a/drivers/gpu/drm/rcar-du/Makefile
+> > > +++ b/drivers/gpu/drm/rcar-du/Makefile
+> > > @@ -15,6 +15,7 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
+> > >  rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
+> > >  rcar-du-drm-$(CONFIG_DRM_RCAR_WRITEBACK) += rcar_du_writeback.o
+> > >
+> > > +obj-$(CONFIG_DRM_RCAR_CMM)		+= rcar_cmm.o
+> > >  obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
+> > >  obj-$(CONFIG_DRM_RCAR_DW_HDMI)		+= rcar_dw_hdmi.o
+> > >  obj-$(CONFIG_DRM_RCAR_LVDS)		+= rcar_lvds.o
+> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_cmm.c b/drivers/gpu/drm/rcar-du/rcar_cmm.c
+> > > new file mode 100644
+> > > index 000000000000..55361f5701e8
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/rcar-du/rcar_cmm.c
+> > > @@ -0,0 +1,262 @@
+> > > +// SPDX-License-Identifier: GPL-2.0+
+> > > +/*
+> > > + * rcar_cmm.c -- R-Car Display Unit Color Management Module
+> > > + *
+> > > + * Copyright (C) 2019 Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > + */
+> > > +
+> > > +#include <linux/io.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/of.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/pm_runtime.h>
+> > > +
+> > > +#include <drm/drm_color_mgmt.h>
+> > > +
+> > > +#include "rcar_cmm.h"
+> > > +
+> > > +#define CM2_LUT_CTRL		0x0000
+> > > +#define CM2_LUT_CTRL_LUT_EN	BIT(0)
+> > > +#define CM2_LUT_TBL_BASE	0x0600
+> > > +#define CM2_LUT_TBL(__i)	(CM2_LUT_TBL_BASE + (__i) * 4)
+> > > +
+> > > +struct rcar_cmm {
+> > > +	void __iomem *base;
+> > > +	bool enabled;
+> > > +
+> > > +	/*
+> > > +	 * @lut:		1D-LUT status
+> > > +	 * @lut.enabled:	1D-LUT enabled flag
+> > > +	 * @lut.size:		Number of entries in the LUT table
+> >
+> > Please see my review of patch 13/14, I wonder if we could drop this
+> > field.
+> >
+> > > +	 * @lut.table:		Table of 1D-LUT entries scaled to HW support
+> > > +	 *			precision (8-bits per color component)
+> > > +	 */
+> > > +	struct {
+> > > +		bool enabled;
+> > > +		unsigned int size;
+> > > +		u32 table[CMM_GAMMA_LUT_SIZE];
+> > > +	} lut;
+> > > +};
+> > > +
+> > > +static inline int rcar_cmm_read(struct rcar_cmm *rcmm, u32 reg)
+> > > +{
+> > > +	return ioread32(rcmm->base + reg);
+> > > +}
+> > > +
+> > > +static inline void rcar_cmm_write(struct rcar_cmm *rcmm, u32 reg, u32 data)
+> > > +{
+> > > +	iowrite32(data, rcmm->base + reg);
+> > > +}
+> > > +
+> > > +/*
+> > > + * rcar_cmm_lut_extract() - Scale down to hw precision the DRM LUT table
+> >
+> > s/hw/hardware/ (and below too)
+> >
+> > > + *			    entries and store them.
+> > > + * @rcmm: Pointer to the CMM device
+> > > + * @size: Number of entries in the table
+> > > + * @drm_lut: DRM LUT table
+> > > + */
+> > > +static void rcar_cmm_lut_extract(struct rcar_cmm *rcmm, size_t size,
+> > > +				 const struct drm_color_lut *drm_lut)
+> > > +{
+> > > +	unsigned int i;
+> > > +
+> > > +	for (i = 0; i < size; ++i) {
+> > > +		const struct drm_color_lut *lut = &drm_lut[i];
+> > > +
+> > > +		rcmm->lut.table[i] = drm_color_lut_extract(lut->red, 8) << 16
+> > > +				   | drm_color_lut_extract(lut->green, 8) << 8
+> > > +				   | drm_color_lut_extract(lut->blue, 8);
+> > > +	}
+> > > +
+> > > +	rcmm->lut.size = size;
+> > > +}
+> > > +
+> > > +/*
+> > > + * rcar_cmm_lut_load() - Write to hw the LUT table entries from the local table.
+> > > + *
+> >
+> > No need for a blank line
+> >
+> > > + * @rcmm: Pointer to the CMM device
+> > > + */
+> > > +static void rcar_cmm_lut_load(struct rcar_cmm *rcmm)
+> >
+> > I would name this rcar_cmm_lut_write().
+> >
+>
+> I won't, as I would like to convey the LUT tables is loaded from the
 
-https://github.com/ClangBuiltLinux/linux/issues/639
+Sorry, I meant "I wouldn't"... "I won't" is really harsh, sorry about
+it :p
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- mm/Makefile | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/mm/Makefile b/mm/Makefile
-index d0b295c3b764..5a30b8ecdc55 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -21,6 +21,9 @@ KCOV_INSTRUMENT_memcontrol.o := n
- KCOV_INSTRUMENT_mmzone.o := n
- KCOV_INSTRUMENT_vmstat.o := n
- 
-+CFLAGS_init-mm.o += $(call cc-disable-warning, override-init)
-+CFLAGS_init-mm.o += $(call cc-disable-warning, initializer-overrides)
-+
- mmu-y			:= nommu.o
- mmu-$(CONFIG_MMU)	:= highmem.o memory.o mincore.o \
- 			   mlock.o mmap.o mmu_gather.o mprotect.o mremap.o \
--- 
-1.8.3.1
+--4lusbristpbjpnut
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1lULoACgkQcjQGjxah
+Vjz9iA//TFm2CoEu6Ejbp575oyCLJDwkQOTEwiJ6XCrh6OvQqM9UpDmpsrgZm5MO
+ugkRzecDH+1BwFQZOg2gZThpv1DfTel5kuP/4aNAZFJIUEjPn4Ze+NiD9jA/mdnQ
+K0cCc43qlRbKo19aUPWH+w3rpuyQfVZs9hFvgcXHskkdvv3mrcgiZIYOEe0xgvn8
+IZTWr8hNdlngKr2Fz6GRYjoK/+gnrmcOfWP7feD0Gn5+Cl6qwDBukldOhiMvWr0E
+UGisydFFzwx0al9UZQ6vjkLUiowcVaFuFVNqREu+CLaj/uOXPvYE2vG5pBS690Mu
+EiMGVHKFzQJF4C82LsKCoL7rNEdZV6ll0mKZG+btbPAlAzaJOyACmrV1eSFUdcZi
+7ohp8iflx8n2H6u2nkvahDxrnOEKjZlqPkfmECl/uHDlfRd6FHmVgu//K6oO3Xgs
+uaH3xMwned6dgs4xZMKw03Cp/uZu49kGVXP+ZDeFFsAhAgIrxAf41c/DseR66lkY
+T52rkiR5kj465Gj/egoLjSAePE690WKEJJtdY521oP/Y9WJPFHWEvtla98jf+rBq
+XWzENDhmV9AKdUOwwyzreCvMFvPdLhhB8Yb9KJxfzcQIYZVUWbzt2I5CNnvDbeBi
+RiNjmP5gy1A115kPbc2R+U5ighB5Pk0PPk4F0U0+ThS6tmCMhqY=
+=NTm4
+-----END PGP SIGNATURE-----
+
+--4lusbristpbjpnut--
