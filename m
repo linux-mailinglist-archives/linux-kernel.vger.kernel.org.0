@@ -2,197 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A69B79E841
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12FB19E848
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:47:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbfH0MqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:46:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728419AbfH0MqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:46:01 -0400
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 218A920828;
-        Tue, 27 Aug 2019 12:46:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566909960;
-        bh=yCqgQ12kHxYxzqTgTCI4OpjJkwqamfkpWEe0FJdQj4A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=odpAnp17cSEWoRRgUiUcoe8nXwCgL2/FZjuJgTyUkgpQbUhEC3zuDaHYaxIAqNyP9
-         abWbUomdXnYqZckmdYKPDHNCKikn6IIAK1VrIowZYRZ4kD5ViGzz0e0zMtGBJ9bTfs
-         uj73hbgdmL5oOjq4okwGOnAzTD7On4nCInkYvfqo=
-Received: by mail-qt1-f169.google.com with SMTP id l9so21086881qtu.6;
-        Tue, 27 Aug 2019 05:46:00 -0700 (PDT)
-X-Gm-Message-State: APjAAAUAHojesIRbaV3imNiLcgyP+R1tFuJysP47vecmeKZ6uZEdtuLO
-        Ao6zoaEs8j9O+i0grvuHDGk3MpEPSZOqceCR9Q==
-X-Google-Smtp-Source: APXvYqxMIwkFC6XIiMee0sCToLwzxMHt+U7wnU76fdzIZruEqzXS6CF6ER8UK2SIZrvi1WgadOF9si04HG6inRzCz+Y=
-X-Received: by 2002:aed:22b3:: with SMTP id p48mr20398904qtc.136.1566909959310;
- Tue, 27 Aug 2019 05:45:59 -0700 (PDT)
+        id S1729423AbfH0Mq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:46:57 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39960 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbfH0Mq5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 08:46:57 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c3so18650709wrd.7
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 05:46:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=5QBDLcjxkLr/nnq6qs0lgCdOCwtscFs7g505ezIG0LQ=;
+        b=l8N1F/DzXNM+nJ1ODvblKsaSge7jR1tgnGyWr6gtN2B13qnhtpWlih1mBc7pXZ3vJ3
+         NNX0k4gBpFUirBgKuB+UL+QeyFm+RTPOXN3tvgpwfX4uJlAWZ3MrEyJvavAD10wj+VTr
+         KPnRPtgpYoIUwvnflZAWBqvvrn+4qd+6VFsXqhuJALrIs5GYbrdlTlkRjYnFcJjj1mI7
+         eOrnyEvQ0AQzzAYsJ9qVncvp9D/PVdsTU/pPavB5jM3ft7HosiIU3d+DeZoAaEnPzgTN
+         2gBWCtRQd90oxSysFBW4LDkprZ06II/4b8a08oVAi9KYN+OxgYqKtxa0w8KlLdiuF32p
+         DAyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=5QBDLcjxkLr/nnq6qs0lgCdOCwtscFs7g505ezIG0LQ=;
+        b=qd7aZsE/BdbsY6xTo9QDxPNS0G1zqV6xkNul56t5lyrBo/J+V8QqxvnUxz1UBF5i3K
+         gpStTOYtzXZWEmZujVhPnIcfeEL2oUQlnznfjQmaVFf1GODR8JAo87Mrp2a6gAX8HW/i
+         S2XXGxLxO0Z/OwCZ+o97KA3mnWTuxDj6an11gkxlM6JSDex9GwYIriKWK/+xPXmZRPzs
+         T2I/ygjgXo8ZrbHiqegyFOr/VVPD94n4dEv5QWgBwQ3dFCAF3o6SPBI3VLy/tRzLJPa2
+         GpN3KZegD6KvYGVIlqLCUo1xRjMt70jPpqcVUh1jRg5FUh/UHQlB5CNnFE+VoopeIzwG
+         /ePg==
+X-Gm-Message-State: APjAAAUglzhUQbp0ypDeS8HnYX2IzKuZOMsp4BBYrbEb5E/TODFepoxk
+        KRQ+AmKaCppK2yYM++3vUH2siA==
+X-Google-Smtp-Source: APXvYqwkCYWotRKbdpkyQltpLEzjVgv4zLOCd62Wxvwm420LpJOnl5l1wA6kGmw6pCARSyJtSPQJmA==
+X-Received: by 2002:a5d:604d:: with SMTP id j13mr28317268wrt.244.1566910015713;
+        Tue, 27 Aug 2019 05:46:55 -0700 (PDT)
+Received: from dell ([2.27.35.174])
+        by smtp.gmail.com with ESMTPSA id u129sm3828248wmb.12.2019.08.27.05.46.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Aug 2019 05:46:54 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 13:46:52 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Collabora kernel ML <kernel@collabora.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Gwendal Grignou <gwendal@chromium.org>
+Subject: Re: [PATCH v6 08/11] mfd: cros_ec: Add convenience struct to define
+ dedicated CrOS EC MCUs
+Message-ID: <20190827124652.GC4804@dell>
+References: <20190823125331.5070-1-enric.balletbo@collabora.com>
+ <20190823125331.5070-9-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-References: <20190827085302.5197-1-jiaxun.yang@flygoat.com> <20190827085302.5197-12-jiaxun.yang@flygoat.com>
-In-Reply-To: <20190827085302.5197-12-jiaxun.yang@flygoat.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 27 Aug 2019 07:45:48 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL6htVye-LSBWw1WwRy9xH=zwuH6gurscwoCWj9Te_hAg@mail.gmail.com>
-Message-ID: <CAL_JsqL6htVye-LSBWw1WwRy9xH=zwuH6gurscwoCWj9Te_hAg@mail.gmail.com>
-Subject: Re: [PATCH 11/13] dt-bindings: mips: Add loongson cpus & boards
-To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc:     "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.co>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190823125331.5070-9-enric.balletbo@collabora.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 3:55 AM Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
->
-> Prepare for later dts.
->
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+On Fri, 23 Aug 2019, Enric Balletbo i Serra wrote:
+
+> With the increasing use of dedicated CrOS EC MCUs, it takes a fair amount
+> of boiler plate code to add those devices, add a struct that can be used
+> to specify a dedicated CrOS EC MCU so we can just add a new item to it to
+> define a new dedicated MCU.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> Tested-by: Gwendal Grignou <gwendal@chromium.org>
 > ---
->  .../bindings/mips/loongson/cpus.yaml          | 38 +++++++++++
->  .../bindings/mips/loongson/devices.yaml       | 64 +++++++++++++++++++
->  2 files changed, 102 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mips/loongson/cpus.yaml
->  create mode 100644 Documentation/devicetree/bindings/mips/loongson/devices.yaml
->
-> diff --git a/Documentation/devicetree/bindings/mips/loongson/cpus.yaml b/Documentation/devicetree/bindings/mips/loongson/cpus.yaml
-> new file mode 100644
-> index 000000000000..410d896a0078
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mips/loongson/cpus.yaml
-> @@ -0,0 +1,38 @@
-> +# SPDX-License-Identifier: GPL-2.0
+> 
+> Changes in v6:
+> - Add a break statement once the MCU type has been determined (Lee Jones)
+> 
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
+> 
+>  drivers/mfd/cros_ec_dev.c | 88 ++++++++++++++++++++++-----------------
+>  1 file changed, 49 insertions(+), 39 deletions(-)
 
-Dual license for new bindings please:
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-(GPL-2.0-only OR BSD-2-Clause)
-
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mips/loongson/cpus.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Loongson CPUs bindings
-> +
-> +maintainers:
-> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
-> +
-> +description: |+
-> +  The device tree allows to describe the layout of CPUs in a system through
-> +  the "cpus" node, which in turn contains a number of subnodes (ie "cpu")
-> +  defining properties for every cpu.
-> +
-> +  Bindings for CPU nodes follow the Devicetree Specification, available from:
-> +
-> +  https://www.devicetree.org/specifications/
-> +
-> +properties:
-> +  reg:
-> +    maxItems: 1
-> +    description: |
-> +      Physical ID of a CPU, Can be read from CP0 EBase.CPUNum.
-
-Is this definition specific to Loongson CPUs or all MIPS?
-
-I would expect to see a common MIPS CPU schema with these compatibles
-listed there.
-
-> +
-> +  compatible:
-> +    enum:
-> +      - loongson,gs464
-> +      - loongson,gs464e
-> +      - loongson,gs264
-> +      - loongson,gs464v
-> +
-> +required:
-> +  - device_type
-> +  - reg
-> +  - compatible
-> +...
-> diff --git a/Documentation/devicetree/bindings/mips/loongson/devices.yaml b/Documentation/devicetree/bindings/mips/loongson/devices.yaml
-> new file mode 100644
-> index 000000000000..181881a9f4a9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mips/loongson/devices.yaml
-> @@ -0,0 +1,64 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mips/loongson/devices.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek SoC based Platforms Device Tree Bindings
-
-MediaTek SoC?
-
-> +
-> +maintainers:
-> +  - Jiaxun Yang <jiaxun.yang@flygoat.com>
-> +description: |
-> +  Devices with a Loongson CPU shall have the following properties.
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +
-> +      - description: Loongson 3A1000 + RS780E 1Way
-> +        items:
-> +          - const: loongson,ls3a1000-780e-1way
-> +
-> +      - description: Loongson 3A1000 + RS780E 2Way
-> +        items:
-> +          - const: loongson,ls3a1000-780e-2way
-> +
-> +      - description: Loongson 3A1000 + RS780E 4Way
-> +        items:
-> +          - const: loongson,ls3a1000-780e-4way
-> +
-> +      - description: Loongson 3B1000/1500 + RS780E 1Way
-> +        items:
-> +          - const: loongson,ls3b-780e-1way
-> +
-> +      - description: Loongson 3B1000/1500 + RS780E 2Way
-> +        items:
-> +          - const: loongson,ls3b-780e-2way
-> +
-> +      - description: Loongson 3A2000 + RS780E 1Way
-> +        items:
-> +          - const: loongson,ls3a2000-780e-1way
-> +
-> +      - description: Loongson 3A2000 + RS780E 2Way
-> +        items:
-> +          - const: loongson,ls3a2000-780e-2way
-> +
-> +      - description: Loongson 3A2000 + RS780E 4Way
-> +        items:
-> +          - const: loongson,ls3a2000-780e-4way
-> +
-> +      - description: Loongson 3A3000 + RS780E 1Way
-> +        items:
-> +          - const: loongson,ls3a3000-780e-1way
-> +
-> +      - description: Loongson 3A3000 + RS780E 2Way
-> +        items:
-> +          - const: loongson,ls3a3000-780e-2way
-> +
-> +      - description: Loongson 3A3000 + RS780E 4Way
-> +        items:
-> +          - const: loongson,ls3a3000-780e-4way
-> +
-> +...
-> --
-> 2.22.0
->
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
