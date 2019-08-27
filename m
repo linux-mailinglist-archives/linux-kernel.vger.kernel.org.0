@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B965B9E221
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:17:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D07969E11D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730746AbfH0IRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:17:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44594 "EHLO mail.kernel.org"
+        id S1730262AbfH0IJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:09:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728711AbfH0HxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:53:06 -0400
+        id S1732301AbfH0IDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:03:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FD84217F5;
-        Tue, 27 Aug 2019 07:53:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67B79206BA;
+        Tue, 27 Aug 2019 08:03:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892386;
-        bh=QFhZUAq6CUY2ejbNoS/Xrn+mjYw8ZHmVgo0Cfwif+tc=;
+        s=default; t=1566893015;
+        bh=KddyQA3KvgXBt8t5dp3rdHtiGoMWVjy9NourerTxYCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p1NNQ+Lx54Po5O9pCpCmKos0rep1WCJ3Abi99l2E1sEnOREYOOGhj6t+svINaSq6d
-         lIZrPb8H2i6lA/qg8jgqljdsz+1Lv4KaMcuhEO4KKaQyhl+Ayoavw6f7JPzuOyf2eB
-         jL2N5W/Y4YHXfRvHNvgDq1s8MVWTOfA+xtCyZcQU=
+        b=Tm5S+vValIeHZbUkXndnF9xijznT1GDNZhqoLhxGDVMDGj8yFEx2n3+1OLO5fmqay
+         aWOoUyRbThweXHIyvymnCy9Ry3uxKmimAItmeg7nPwEavSxrlucfH0ftlWhYsCVxtc
+         Us7YPalfezKAQwwLJOe6/nuu4+yMVIMoIciDE8p4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
+        stable@vger.kernel.org, Jose Abreu <joabreu@synopsys.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 10/62] st_nci_hci_connectivity_event_received: null check the allocation
-Date:   Tue, 27 Aug 2019 09:50:15 +0200
-Message-Id: <20190827072700.989331884@linuxfoundation.org>
+Subject: [PATCH 5.2 090/162] net: stmmac: Fix issues when number of Queues >= 4
+Date:   Tue, 27 Aug 2019 09:50:18 +0200
+Message-Id: <20190827072741.294786459@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
+References: <20190827072738.093683223@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,30 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3008e06fdf0973770370f97d5f1fba3701d8281d ]
+[ Upstream commit e8df7e8c233a18d2704e37ecff47583b494789d3 ]
 
-devm_kzalloc may fail and return NULL. So the null check is needed.
+When queues >= 4 we use different registers but we were not subtracting
+the offset of 4. Fix this.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Found out by Coverity.
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nfc/st-nci/se.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c   | 4 ++++
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/nfc/st-nci/se.c b/drivers/nfc/st-nci/se.c
-index 56f2112e0cd84..85df2e0093109 100644
---- a/drivers/nfc/st-nci/se.c
-+++ b/drivers/nfc/st-nci/se.c
-@@ -344,6 +344,8 @@ static int st_nci_hci_connectivity_event_received(struct nci_dev *ndev,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+index e3850938cf2f3..d7bf0ad954b8c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c
+@@ -85,6 +85,8 @@ static void dwmac4_rx_queue_priority(struct mac_device_info *hw,
+ 	u32 value;
  
- 		transaction = (struct nfc_evt_transaction *)devm_kzalloc(dev,
- 					    skb->len - 2, GFP_KERNEL);
-+		if (!transaction)
-+			return -ENOMEM;
+ 	base_register = (queue < 4) ? GMAC_RXQ_CTRL2 : GMAC_RXQ_CTRL3;
++	if (queue >= 4)
++		queue -= 4;
  
- 		transaction->aid_len = skb->data[1];
- 		memcpy(transaction->aid, &skb->data[2], transaction->aid_len);
+ 	value = readl(ioaddr + base_register);
+ 
+@@ -102,6 +104,8 @@ static void dwmac4_tx_queue_priority(struct mac_device_info *hw,
+ 	u32 value;
+ 
+ 	base_register = (queue < 4) ? GMAC_TXQ_PRTY_MAP0 : GMAC_TXQ_PRTY_MAP1;
++	if (queue >= 4)
++		queue -= 4;
+ 
+ 	value = readl(ioaddr + base_register);
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+index 64b8cb88ea45d..d4bd99770f5d1 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_core.c
+@@ -106,6 +106,8 @@ static void dwxgmac2_rx_queue_prio(struct mac_device_info *hw, u32 prio,
+ 	u32 value, reg;
+ 
+ 	reg = (queue < 4) ? XGMAC_RXQ_CTRL2 : XGMAC_RXQ_CTRL3;
++	if (queue >= 4)
++		queue -= 4;
+ 
+ 	value = readl(ioaddr + reg);
+ 	value &= ~XGMAC_PSRQ(queue);
+@@ -169,6 +171,8 @@ static void dwxgmac2_map_mtl_to_dma(struct mac_device_info *hw, u32 queue,
+ 	u32 value, reg;
+ 
+ 	reg = (queue < 4) ? XGMAC_MTL_RXQ_DMA_MAP0 : XGMAC_MTL_RXQ_DMA_MAP1;
++	if (queue >= 4)
++		queue -= 4;
+ 
+ 	value = readl(ioaddr + reg);
+ 	value &= ~XGMAC_QxMDMACH(queue);
 -- 
 2.20.1
 
