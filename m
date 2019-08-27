@@ -2,72 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3661B9F593
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62FAE9F59C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:53:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbfH0Vvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:51:41 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:37484 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbfH0Vvl (ORCPT
+        id S1726709AbfH0VwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:52:13 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40906 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726676AbfH0VwK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:51:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=q4vKrxlRL7Y7Ibwtn4SEfiSUk0Q/l6PJWhH3yvC0ACQ=; b=KamsYMEo8kQObgNdEuux8L2cx
-        6U1Bc9VEtwQK1ZioMgmBHtrXcFcXi7ypCXNm7P2T6JTYjzFTlUTCu9fdI7K6FT7Z1cCyvclDal6ho
-        Nfvayq3HtOFGTe9CMx88yvcGlUg1Sn011wa6swcluz42QrqqF1Rjw14Grf5iNS5ijehMOKta7X1Di
-        Fyhn8I2E01K+he9eS/fMcIzNoaniyitkwjNuxcu9s6kh72W2MsoQGWkkBOyWgKYnNgdYDbLASKCme
-        cbF9zgGGp+vpW6bf+3Sc9iZF0gz7Vj2miPjDwex+vOqpwAsy1TxmZp4JBF1GVufQiew1Lq5U2z+Zl
-        KEbIVa3aA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2jNJ-0003L6-Cx; Tue, 27 Aug 2019 21:51:37 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 96ED5307597;
-        Tue, 27 Aug 2019 23:51:01 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 600F3203CEC05; Tue, 27 Aug 2019 23:51:35 +0200 (CEST)
-Date:   Tue, 27 Aug 2019 23:51:35 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH -v2 0/5] Further sanitize INTEL_FAM6 naming
-Message-ID: <20190827215135.GI2332@hirez.programming.kicks-ass.net>
-References: <20190827194820.378516765@infradead.org>
- <3908561D78D1C84285E8C5FCA982C28F7F43EC93@ORSMSX115.amr.corp.intel.com>
+        Tue, 27 Aug 2019 17:52:10 -0400
+Received: by mail-pf1-f193.google.com with SMTP id w16so254804pfn.7
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 14:52:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+irtzyVRDDrZdpMz7JihRashs6tjpw1hAnPhyXixHfQ=;
+        b=H8vyk3/hGsv4WW7to+VBsIoy/ie5y44IptvuovFBoFlS81qgLeHyMG6YQgBw/5NiNJ
+         4OJbnrcOAqOdQIj7AyUVcV0NQCjrAJdZ1axoB+yMJ3BYN38u4jmdQCGEOEwkSrTpRMhe
+         qO8BNNHqBeQ7OjCM6FRGwKKxkAUT6DfiP5VlwZGowJ17eLxv8jhB0or8+sYF37ERbtzM
+         otWRjXgj2ld2gyoMIrYgsQi4iPLd6zR64a9P8MdgkI8YnzYQZULtWc0Q3QrHJOgA8B26
+         PXEj/PSKdDzY6isF4T/zCx0ihKcSOl8bNbmAbPU0xCELf7iMVWfiH9fVuxD+OjxvTWlc
+         pleA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+irtzyVRDDrZdpMz7JihRashs6tjpw1hAnPhyXixHfQ=;
+        b=th6Qise1/8oUGiUeHmZiOXBfx1UuVWtfvWU7/EJ4tzCrTYEWeoB4hXotQb3OhdfO3y
+         rCcPIiyfSCc1+HJQI2H8uKrs9yJjVZK4iZsqYe4rdS4CpB3LyJL5oDxVpvwv8Y8snxY8
+         MiOU8J6pOw/GF4bAUMgEkAI9RBqZv3OAxGo7V3xg080yTB3SJyoFPNeM6yngyLJQ3a5Z
+         4U41+ljQdOPrkD+9Fa3ksA4DVz4q8T1PRSAPEtg9tmjJouuyA+Tf+Sd9yNrfkp3PBihx
+         3iDuCjArZMnbU/9qL4JEGf30EekeR0B/f6rupOhIO13YS0aiZ7BzJgCrbRsQHpT/QkMm
+         eVbQ==
+X-Gm-Message-State: APjAAAUsDTedOtpkoDUdrWGSKGXJiMNf70hLMYCgW/Fk9IaPulNsmLp3
+        nITqgcIIUIQ0nDCXT/MXtnwalctfQ5YJxaNQpTDL/g==
+X-Google-Smtp-Source: APXvYqxrNp5MqJ49VvEtHBx+6SXiy4HCQDDbPjQbTxaNkfrxJpIxNaW7wj73njCyaAs203y7ieJUT/8pgVpCFwemiTA=
+X-Received: by 2002:a63:eb51:: with SMTP id b17mr527994pgk.384.1566942728992;
+ Tue, 27 Aug 2019 14:52:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7F43EC93@ORSMSX115.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190827174932.44177-1-brendanhiggins@google.com> <20190827214613.9B896206E0@mail.kernel.org>
+In-Reply-To: <20190827214613.9B896206E0@mail.kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 27 Aug 2019 14:51:53 -0700
+Message-ID: <CAFd5g45NudtV4Q-ooXStGnEUDYCBbTx2JvkYQn1_mLZNYqnPjA@mail.gmail.com>
+Subject: Re: [PATCH v1] kunit: fix failure to build without printk
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     shuah <shuah@kernel.org>, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 08:44:23PM +0000, Luck, Tony wrote:
-> > I'm reposting because the version Ingo applied and partially fixed up still
-> > generates build bot failure.
-> 
-> Looks like this version gets them all. I built my standard config, allmodconfig and allyesconfig.
-> 
-> Reviewed-by: Tony Luck <tony.luck@intel.com>
-> 
-> What happens next? Will Ingo back out the previous set & his partial fixup and replace
-> with this series?  Or just slap one extra patch on top of what is already in tip?
-> 
-> First option changes a TIP branch
+On Tue, Aug 27, 2019 at 2:46 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Brendan Higgins (2019-08-27 10:49:32)
+> > Previously KUnit assumed that printk would always be present, which is
+> > not a valid assumption to make. Fix that by ifdefing out functions which
+> > directly depend on printk core functions similar to what dev_printk
+> > does.
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Link: https://lore.kernel.org/linux-kselftest/0352fae9-564f-4a97-715a-fabe016259df@kernel.org/T/#t
+> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > ---
+>
+> Does kunit itself have any meaning if printk doesn't work? Why not just
+> depend on CONFIG_PRINTK for now?
 
-This is uncommon, but not unheard of. I'll talk to Ingo and Thomas
-tomorrow to see what would be the best way forward.
+I was thinking about that, but I figured it is probably easier in the
+long run to make sure it always works without printk.
+
+It also just seemed like the right thing to do, but I suppose that's
+not a very good reason.
+
+I am fine with any of the three options: depend on CONFIG_PRINTK - as
+suggested by Stephen, just use printk - as suggested by Shuah, or
+continue to use vprintk_emit as I have been doing. However, my
+preference is the vprintk_emit option.
+
+Anyone have any strong opinions on the matter?
