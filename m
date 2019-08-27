@@ -2,89 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 199589E7CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2AC09E7D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:24:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbfH0MVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:21:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44340 "EHLO mail.kernel.org"
+        id S1728984AbfH0MX1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:23:27 -0400
+Received: from foss.arm.com ([217.140.110.172]:43770 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbfH0MVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:21:54 -0400
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3152022CF5;
-        Tue, 27 Aug 2019 12:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566908513;
-        bh=eit3RrFqNrNE4vZrZrZF8s6p9Ki/i527M3cLIrYgSgk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=K+bhF6LQlv0PWuqu69sB60FlA8VjbX6q7t88std4fDvwW+Qdv9KvM0+06G4BpppUE
-         Tq7Cm1xEVtY69dumS4ki+R8Lx4ZUFhuF9PEy4Xz7vrH+kntlW5Qv1SH6JUm28eC46r
-         UVt7J4YMad9VT8qigX+DqJi8v3/FaWGHckQXRWjE=
-Received: by mail-qt1-f175.google.com with SMTP id a13so251816qtj.1;
-        Tue, 27 Aug 2019 05:21:53 -0700 (PDT)
-X-Gm-Message-State: APjAAAVSZkctW86tZeY4a8DwYOE7qx2kYiC25d3J++dfr1JW9/L/onfu
-        zLqsZka/A5t4jveqKbxFxr1LDOpgEBdnJ2djPQ==
-X-Google-Smtp-Source: APXvYqyA08IogmVH6/eLxgDuudG/7vlKnuGh62iApaH8ZRCJvpE+Z067YCE/LHZReBYhVH85YjaQVbcpek7HBHvUyfc=
-X-Received: by 2002:ac8:386f:: with SMTP id r44mr22938146qtb.300.1566908512316;
- Tue, 27 Aug 2019 05:21:52 -0700 (PDT)
+        id S1725850AbfH0MX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 08:23:27 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D8E228;
+        Tue, 27 Aug 2019 05:23:26 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D4633F718;
+        Tue, 27 Aug 2019 05:23:25 -0700 (PDT)
+Subject: Re: [PATCH] arm: xen: mm: use __GPF_DMA32 for arm64
+To:     Peng Fan <peng.fan@nxp.com>,
+        "sstabellini@kernel.org" <sstabellini@kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190709083729.11135-1-peng.fan@nxp.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <d70b3a5c-647c-2147-99be-4572f76e898b@arm.com>
+Date:   Tue, 27 Aug 2019 13:23:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <20190823121637.5861-1-masneyb@onstation.org> <20190823121637.5861-3-masneyb@onstation.org>
-In-Reply-To: <20190823121637.5861-3-masneyb@onstation.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 27 Aug 2019 07:21:41 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLmaE+6Lj6KDgscK3OO=fsCGM=90eRCYK_gBA7bdkEbEg@mail.gmail.com>
-Message-ID: <CAL_JsqLmaE+6Lj6KDgscK3OO=fsCGM=90eRCYK_gBA7bdkEbEg@mail.gmail.com>
-Subject: Re: [PATCH v7 2/7] dt-bindings: display: msm: gmu: add optional ocmem property
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Sean Paul <sean@poorly.run>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jonathan Marek <jonathan@marek.ca>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        devicetree@vger.kernel.org, Jordan Crouse <jcrouse@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190709083729.11135-1-peng.fan@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 7:16 AM Brian Masney <masneyb@onstation.org> wrote:
->
-> Some A3xx and A4xx Adreno GPUs do not have GMEM inside the GPU core and
-> must use the On Chip MEMory (OCMEM) in order to be functional. Add the
-> optional ocmem property to the Adreno Graphics Management Unit bindings.
->
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+On 09/07/2019 09:22, Peng Fan wrote:
+> arm64 shares some code under arch/arm/xen, including mm.c.
+> However ZONE_DMA is removed by commit
+> ad67f5a6545("arm64: replace ZONE_DMA with ZONE_DMA32").
+> So to ARM64, need use __GFP_DMA32.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
-> Changes since v6:
-> - link to gmu-sram in example
-> - add ranges property to ocmem example to match bindings
->
-> Changes since v5:
-> - rename ocmem property to sram to match what TI currently has.
->
-> Changes since v4:
-> - None
->
-> Changes since v3:
-> - correct link to qcom,ocmem.yaml
->
-> Changes since v2:
-> - Add a3xx example with OCMEM
->
-> Changes since v1:
-> - None
->
->  .../devicetree/bindings/display/msm/gmu.txt   | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
+>   arch/arm/xen/mm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/xen/mm.c b/arch/arm/xen/mm.c
+> index e1d44b903dfc..a95e76d18bf9 100644
+> --- a/arch/arm/xen/mm.c
+> +++ b/arch/arm/xen/mm.c
+> @@ -27,7 +27,7 @@ unsigned long xen_get_swiotlb_free_pages(unsigned int order)
+>   
+>   	for_each_memblock(memory, reg) {
+>   		if (reg->base < (phys_addr_t)0xffffffff) {
+> -			flags |= __GFP_DMA;
+> +			flags |= __GFP_DMA | __GFP_DMA32;
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Given the definition of GFP_ZONE_BAD, I'm not sure this combination of 
+flags is strictly valid, but rather is implicitly reliant on only one of 
+those zones ever actually existing. As such, it seems liable to blow up 
+if the plans to add ZONE_DMA to arm64[1] go ahead.
+
+Robin.
+
+[1] 
+https://lore.kernel.org/linux-arm-kernel/20190820145821.27214-1-nsaenzjulienne@suse.de/
+
+>   			break;
+>   		}
+>   	}
+> 
