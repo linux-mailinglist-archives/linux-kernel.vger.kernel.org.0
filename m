@@ -2,195 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E33F9F27D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C813F9F286
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:41:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730824AbfH0Sjy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 14:39:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:49348 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730668AbfH0Sjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 14:39:52 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46HyN70NBmz9tyVL;
-        Tue, 27 Aug 2019 20:39:51 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=CxBixA0e; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Wu4KtlgcBwsA; Tue, 27 Aug 2019 20:39:50 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46HyN66NMhz9tyVG;
-        Tue, 27 Aug 2019 20:39:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566931190; bh=17tbpyVj9VI5V631rnzPs87H9HbK2uc1RN6kFnPGn1o=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=CxBixA0eU9SvHnDr/oPRXRbOvnhhlrM4/ahX/Q0wtrV5HNUqVU53DU4R9RAV0TdnA
-         xuOttiQbkbTJtD89uim+ONLb2c55F6uh4DoJmguDI4VMGsh58ogrA/tFBJzQozTJ7k
-         RjS+3akIrMmO0A25LIHsNrN1kXuJCYeK5iak63Fs=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E2FEC8B847;
-        Tue, 27 Aug 2019 20:39:50 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id dCEOzBdSZjMS; Tue, 27 Aug 2019 20:39:50 +0200 (CEST)
-Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A1C508B842;
-        Tue, 27 Aug 2019 20:39:50 +0200 (CEST)
-Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 7D6AB696EA; Tue, 27 Aug 2019 18:39:50 +0000 (UTC)
-Message-Id: <97c95772ccf4a1fc5fc092c664996d08efca3d73.1566931178.git.christophe.leroy@c-s.fr>
-In-Reply-To: <e3de2a60198c1b648a5da19ba29938a1e365d1f3.1566931178.git.christophe.leroy@c-s.fr>
-References: <e3de2a60198c1b648a5da19ba29938a1e365d1f3.1566931178.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 2/2] powerpc: cleanup hw_irq.h
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        segher@kernel.crashing.org, npiggin@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 27 Aug 2019 18:39:50 +0000 (UTC)
+        id S1730542AbfH0SlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 14:41:24 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59978 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728312AbfH0SlY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 14:41:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=epG1Jj0LZAm9JsQ4dirXtSr8T+ss8OxvKfoyO3+fm7o=; b=sM2g0hijUSswGlnHykjQw5vhb
+        +nU6Ko6Hf8zMuJKHsKssVCeLZHvI91ek0A1SoM7ns98Ru2B23NI2E3movUEr8CrskL4MGyQItkPQt
+        dpl5I24ouOTA5uIUuOnhN7xMJmnb+3/cWJw2OOcOVecSPVDRqugaUfYukM3421A8tu2H4=;
+Received: from 92.41.142.151.threembb.co.uk ([92.41.142.151] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1i2gOa-0000xT-5B; Tue, 27 Aug 2019 18:40:45 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 5ACE5D02CE6; Tue, 27 Aug 2019 19:40:39 +0100 (BST)
+Date:   Tue, 27 Aug 2019 19:40:39 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+Cc:     alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Allison Randal <allison@lohutok.net>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Annaliese McDermond <nh6z@nh6z.net>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kirill Marinushkin <kmarinushkin@birdec.tech>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Jourdan <mjourdan@baylibre.com>,
+        Nariman Poushin <npoushin@opensource.cirrus.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nikesh Oswal <nikesh@opensource.cirrus.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Piotr Stankiewicz <piotrs@opensource.cirrus.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        zhong jiang <zhongjiang@huawei.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] wm8904: adapt driver for use with audio-graph-card
+Message-ID: <20190827184039.GJ23391@sirena.co.uk>
+Mail-Followup-To: =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Allison Randal <allison@lohutok.net>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Annaliese McDermond <nh6z@nh6z.net>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+        Enrico Weigelt <info@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Kirill Marinushkin <kmarinushkin@birdec.tech>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Maxime Jourdan <mjourdan@baylibre.com>,
+        Nariman Poushin <npoushin@opensource.cirrus.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Nikesh Oswal <nikesh@opensource.cirrus.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Piotr Stankiewicz <piotrs@opensource.cirrus.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Takashi Iwai <tiwai@suse.com>, Thomas Gleixner <tglx@linutronix.de>,
+        zhong jiang <zhongjiang@huawei.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1566734630.git.mirq-linux@rere.qmqm.pl>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5PPnVwj6ulmYFu5t"
+Content-Disposition: inline
+In-Reply-To: <cover.1566734630.git.mirq-linux@rere.qmqm.pl>
+X-Cookie: Don't SANFORIZE me!!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SET_MSR_EE() is just use in this file and doesn't provide
-any added value compared to mtmsr(). Drop it.
 
-Add a wrtee() inline function to use wrtee/wrteei insn.
+--5PPnVwj6ulmYFu5t
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Replace #ifdefs by IS_ENABLED()
+On Sun, Aug 25, 2019 at 02:17:30PM +0200, Micha=C5=82 Miros=C5=82aw wrote:
+> This series allows to use WM8904 codec as audio-graph-card component.
+> It starts with rework of FLL handling in the codec's driver, and as an
+> example includes (untested) rework for codec with similar FLL: WM8994.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Please make some effort to focus your CC list on only relevant
+people, many upstream developers get a lot of e-mail and cutting
+down on that helps everyone stay more productive, too many can
+also set off anti-spam software.  You've sent this to a lot of
+people and I'm struggling to figure out why most of them are on
+the list.
 
----
-v2: Changed wrtee()/wrteei() to a single wrtee() inline which uses wrtee
-    or wrteei depending on the constness of the argument (Nick's idea).
----
- arch/powerpc/include/asm/hw_irq.h | 57 ++++++++++++++++++---------------------
- arch/powerpc/include/asm/reg.h    |  8 ++++++
- 2 files changed, 34 insertions(+), 31 deletions(-)
+--5PPnVwj6ulmYFu5t
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/arch/powerpc/include/asm/hw_irq.h b/arch/powerpc/include/asm/hw_irq.h
-index 32a18f2f49bc..e3a905e3d573 100644
---- a/arch/powerpc/include/asm/hw_irq.h
-+++ b/arch/powerpc/include/asm/hw_irq.h
-@@ -226,8 +226,8 @@ static inline bool arch_irqs_disabled(void)
- #endif /* CONFIG_PPC_BOOK3S */
- 
- #ifdef CONFIG_PPC_BOOK3E
--#define __hard_irq_enable()	asm volatile("wrteei 1" : : : "memory")
--#define __hard_irq_disable()	asm volatile("wrteei 0" : : : "memory")
-+#define __hard_irq_enable()	wrtee(MSR_EE)
-+#define __hard_irq_disable()	wrtee(0)
- #else
- #define __hard_irq_enable()	__mtmsrd(MSR_EE|MSR_RI, 1)
- #define __hard_irq_disable()	__mtmsrd(MSR_RI, 1)
-@@ -280,8 +280,6 @@ extern void force_external_irq_replay(void);
- 
- #else /* CONFIG_PPC64 */
- 
--#define SET_MSR_EE(x)	mtmsr(x)
--
- static inline unsigned long arch_local_save_flags(void)
- {
- 	return mfmsr();
-@@ -289,47 +287,44 @@ static inline unsigned long arch_local_save_flags(void)
- 
- static inline void arch_local_irq_restore(unsigned long flags)
- {
--#if defined(CONFIG_BOOKE)
--	asm volatile("wrtee %0" : : "r" (flags) : "memory");
--#else
--	mtmsr(flags);
--#endif
-+	if (IS_ENABLED(CONFIG_BOOKE))
-+		wrtee(flags);
-+	else
-+		mtmsr(flags);
- }
- 
- static inline unsigned long arch_local_irq_save(void)
- {
- 	unsigned long flags = arch_local_save_flags();
--#ifdef CONFIG_BOOKE
--	asm volatile("wrteei 0" : : : "memory");
--#elif defined(CONFIG_PPC_8xx)
--	wrtspr(SPRN_EID);
--#else
--	SET_MSR_EE(flags & ~MSR_EE);
--#endif
-+
-+	if (IS_ENABLED(CONFIG_BOOKE))
-+		wrtee(0);
-+	else if (IS_ENABLED(CONFIG_PPC_8xx))
-+		wrtspr(SPRN_EID);
-+	else
-+		mtmsr(flags & ~MSR_EE);
-+
- 	return flags;
- }
- 
- static inline void arch_local_irq_disable(void)
- {
--#ifdef CONFIG_BOOKE
--	asm volatile("wrteei 0" : : : "memory");
--#elif defined(CONFIG_PPC_8xx)
--	wrtspr(SPRN_EID);
--#else
--	arch_local_irq_save();
--#endif
-+	if (IS_ENABLED(CONFIG_BOOKE))
-+		wrtee(0);
-+	else if (IS_ENABLED(CONFIG_PPC_8xx))
-+		wrtspr(SPRN_EID);
-+	else
-+		mtmsr(mfmsr() & ~MSR_EE);
- }
- 
- static inline void arch_local_irq_enable(void)
- {
--#ifdef CONFIG_BOOKE
--	asm volatile("wrteei 1" : : : "memory");
--#elif defined(CONFIG_PPC_8xx)
--	wrtspr(SPRN_EIE);
--#else
--	unsigned long msr = mfmsr();
--	SET_MSR_EE(msr | MSR_EE);
--#endif
-+	if (IS_ENABLED(CONFIG_BOOKE))
-+		wrtee(MSR_EE);
-+	else if (IS_ENABLED(CONFIG_PPC_8xx))
-+		wrtspr(SPRN_EIE);
-+	else
-+		mtmsr(mfmsr() | MSR_EE);
- }
- 
- static inline bool arch_irqs_disabled_flags(unsigned long flags)
-diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
-index b17ee25df226..a18e629d9951 100644
---- a/arch/powerpc/include/asm/reg.h
-+++ b/arch/powerpc/include/asm/reg.h
-@@ -1362,6 +1362,14 @@ static inline void mtmsr_isync(unsigned long val)
- #define wrtspr(rn)	asm volatile("mtspr " __stringify(rn) ",0" : \
- 				     : : "memory")
- 
-+static inline void wrtee(unsigned long val)
-+{
-+	if (__builtin_constant_p(val))
-+		asm volatile("wrteei %0" : : "i" ((val & MSR_EE) ? 1 : 0) : "memory");
-+	else
-+		asm volatile("wrtee %0" : : "r" (val) : "memory");
-+}
-+
- extern unsigned long msr_check_and_set(unsigned long bits);
- extern bool strict_msr_control;
- extern void __msr_check_and_clear(unsigned long bits);
--- 
-2.13.3
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1leSYACgkQJNaLcl1U
+h9D/qAf/aDKjsXpu3OV9W/YRcVKa/q4lkLirQXvzegtCjjtctGiFmmTa8hRGeaU2
+sHHo5pU4H6EDQZubuS3bnNWzE0SRout2VquNd1ddjAQoVCmRv2rfaGFpI2SelVqL
+2lAMUx2niskdB2f1YFRIBbuvwfok6C3qew9aM3DZIDhD+foqHLWuwWYNDjjbwopR
+rqLgjwGRoCwQQh9/HfhdWB7b94NQ74aPsa0xETo+dsR4z1k1PEjoThjBkckOI/eF
+8yFtAR6coVQ2DHbsAKTO7ajC43cumNyh4XhYRAxBVrCJ6wG17AQTT23HTpNaLCGy
+tYANpAltXhi4j1vd/QkH9wh3MvDFww==
+=GFP7
+-----END PGP SIGNATURE-----
+
+--5PPnVwj6ulmYFu5t--
