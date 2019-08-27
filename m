@@ -2,63 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0E2A9E84A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D28919E850
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:48:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729695AbfH0MrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:47:11 -0400
-Received: from mga18.intel.com ([134.134.136.126]:36325 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbfH0MrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:47:11 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 05:47:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,437,1559545200"; 
-   d="scan'208";a="187907181"
-Received: from jsakkine-mobl1.fi.intel.com (HELO localhost) ([10.237.66.169])
-  by FMSMGA003.fm.intel.com with ESMTP; 27 Aug 2019 05:47:08 -0700
-Date:   Tue, 27 Aug 2019 15:47:07 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Garrett <mjg59@google.com>
-Cc:     Seunghun Han <kkamagui@gmail.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86: tpm: Remove a busy bit of the NVS area for
- supporting AMD's fTPM
-Message-ID: <20190827124707.yhqtaqa4ur6i45h7@linux.intel.com>
-References: <20190826081752.57258-1-kkamagui@gmail.com>
- <CACdnJutomLNthYDzEc0wFBcBHK5iqnk0p-hkAkp57zQZ38oGPA@mail.gmail.com>
+        id S1729660AbfH0MsO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:48:14 -0400
+Received: from ml01.weidahitech.com ([61.222.87.235]:2740 "EHLO
+        ml01.weidahitech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfH0MsO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 08:48:14 -0400
+X-Greylist: delayed 487 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Aug 2019 08:48:13 EDT
+Received: from mail02.WHT.local (mail02.wht.local [192.168.10.16])
+        by ml01.weidahitech.com (8.13.8/8.13.8) with ESMTP id x7RCduGf024010;
+        Tue, 27 Aug 2019 20:39:56 +0800
+Received: from x-Veriton-M4620G.WHT.local (192.168.10.88) by MAIL02.WHT.local
+ (192.168.10.16) with Microsoft SMTP Server id 14.2.347.0; Tue, 27 Aug 2019
+ 20:39:58 +0800
+From:   <hn.chen@weidahitech.com>
+To:     <linux-input@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <dmitry.torokhov@gmail.com>,
+        <hn.chen@weidahitech.com>
+Subject: [PATCH] Input: modify quirks of i2c-hid driver for weida's devices
+Date:   Tue, 27 Aug 2019 20:47:16 +0800
+Message-ID: <1566910036-10516-1-git-send-email-hn.chen@weidahitech.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACdnJutomLNthYDzEc0wFBcBHK5iqnk0p-hkAkp57zQZ38oGPA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 10:40:25AM -0700, Matthew Garrett wrote:
-> On Mon, Aug 26, 2019 at 1:18 AM Seunghun Han <kkamagui@gmail.com> wrote:
-> > To support AMD's fTPM, I removed the busy bit from the ACPI NVS area like
-> > the reserved area so that AMD's fTPM regions could be assigned in it.
-> 
-> drivers/acpi/nvs.c saves and restores the contents of NVS regions, and
-> if other drivers use these regions without any awareness of this then
-> things may break. I'm reluctant to say that just unilaterally marking
-> these regions as available is a good thing, but it's clearly what's
-> expected by AMD's implementation. One approach would be to have a
-> callback into the nvs code to indicate that a certain region should be
-> handed off to a driver, which would ensure that we can handle this on
-> a case by case basis?
+From: HungNien Chen <hn.chen@weidahitech.com>
 
-What if E820 would just have a small piece of code just for fTPM's e.g.
-it would check the ACPI tree for fTPM's and ignore TPM regions.
+This 'SET_PWR_WAKEUP_DEV' quirk only works for weida's devices with pid
+0xC300 & 0xC301. Some weida's devices with other pids also need this quirk
+now. Use 'HID_ANY_ID' instead of 0xC300 to make all of weida's devices can be
+fixed on the power on issue. This modification should be safe since devices
+without power on issue will send the power on command only once.
 
-/Jarkko
+Signed-off-by: HungNien Chen <hn.chen@weidahitech.com>
+---
+ drivers/hid/i2c-hid/i2c-hid-core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+index 90164fe..2a7c6e3 100644
+--- a/drivers/hid/i2c-hid/i2c-hid-core.c
++++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+@@ -169,9 +169,7 @@ struct i2c_hid {
+ 	__u16 idProduct;
+ 	__u32 quirks;
+ } i2c_hid_quirks[] = {
+-	{ USB_VENDOR_ID_WEIDA, USB_DEVICE_ID_WEIDA_8752,
+-		I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
+-	{ USB_VENDOR_ID_WEIDA, USB_DEVICE_ID_WEIDA_8755,
++	{ USB_VENDOR_ID_WEIDA, HID_ANY_ID,
+ 		I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV },
+ 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
+ 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET |
+-- 
+1.9.1
+
