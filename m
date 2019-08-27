@@ -2,117 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 718049F59A
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:53:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0A759F5A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:55:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfH0VwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:52:09 -0400
-Received: from muru.com ([72.249.23.125]:58888 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726092AbfH0VwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:52:09 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 478AB8107;
-        Tue, 27 Aug 2019 21:52:37 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: lm3532: Avoid potentially unpaired regulator calls
-Date:   Tue, 27 Aug 2019 14:52:05 -0700
-Message-Id: <20190827215205.59677-1-tony@atomide.com>
-X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726437AbfH0Vzo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:55:44 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34413 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfH0Vzo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 17:55:44 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b24so276507pfp.1;
+        Tue, 27 Aug 2019 14:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=m917iy68AiYtkb2q0cQ7Q/izkV3v3/AN7Omu2+VjOfg=;
+        b=lA5psUzQf2ludbNU59iHu6CcA2pcJoWFp7AeDz5ogJiLP4FvrIoHI7e5ctjg9Klv8M
+         Z9LjArGRWSOg1KpLsVKjj4IhW+myFcWm91vtmsRA/c+a0LxKZjJftuu1axF6W3n64dVN
+         WvtIzDp4d6zvazewkvIXMOW59MdXesudUskDFG3Mw2pdppSwbBiVtNlv5nqlqbUU9eRN
+         ki2/VPiRHSCi5y09VpJ9tY4r70NhJF3mP2erKptgXuvf++fCbPtXmEW8Qxj9vfRl6lrd
+         JDgZUxcGuAkyZF8N9Tzvfazyk4eZT/GTVzxtFCrdcRop09j8SrfD/LlCXayt3IP649Nf
+         7fAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m917iy68AiYtkb2q0cQ7Q/izkV3v3/AN7Omu2+VjOfg=;
+        b=KFpuHRMapVq5RvSL3V5z3C0rd1J/hGi7ASuXYCLnT8yWl7Or1Lvw3SN+2QtOm9gKTb
+         +0dPO6+yJQqQKHPto7CzlywuitstAcuO9OeY/7HpDNjKqH1qhGqxSTaiOiU1xOuBZn0i
+         roszRafYeOAvuzVTXIlkb5QcBLF/o0Xbw/BSJd7mUZ/i7fDpl1VkN8tiiK0pYK2IvmxE
+         0wf8eJimyUpEDo1dk3DXi65Jn/D7v1R4hiDzZ0cpCgihDQ9N09str3Xjp0ATcoXI3fpF
+         CVpbWZjS7wuHPAcGEqAneUNRxAGjM29moaPK9boKq4T40XIlQ1sbx/XeMSImjHvtA0Cb
+         3y3Q==
+X-Gm-Message-State: APjAAAXVe+hwnojS8JY2VVEftid3pNVJrTV/JgZRVQxRffWWO/gtUknr
+        uzZOa73SH4zsGrng5T5VMEpatIcovik=
+X-Google-Smtp-Source: APXvYqyHAA5th5FDbqfZ0JZdkF19gY0MgtZL/1IefiqClEs4PRtVuWU/s/xStQACjpNSJ+MzWOVN/Q==
+X-Received: by 2002:a63:2b0c:: with SMTP id r12mr564319pgr.206.1566942943450;
+        Tue, 27 Aug 2019 14:55:43 -0700 (PDT)
+Received: from a06aacb89ec0.pdc.gateworks.com (68-189-91-139.static.snlo.ca.charter.com. [68.189.91.139])
+        by smtp.gmail.com with ESMTPSA id i9sm298640pgg.38.2019.08.27.14.55.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 14:55:43 -0700 (PDT)
+From:   Matthew Michilot <matthew.michilot@gmail.com>
+X-Google-Original-From: Matthew Michilot <mmichilot@gateworks.com>
+To:     lars@metafoo.de
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Matthew Michilot <matthew.michilot@gmail.com>
+Subject: [PATCH] media: i2c: adv7180: fix adv7280 BT.656-4 compatibility
+Date:   Tue, 27 Aug 2019 21:55:39 +0000
+Message-Id: <20190827215539.1286-1-mmichilot@gateworks.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We may currently get unpaired regulator calls when configuring the LED
-brightness via sysfs in case of regulator calls producing errors. Let's
-fix this by maintaining local state for enabled.
+From: Matthew Michilot <matthew.michilot@gmail.com>
 
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Captured video would be out of sync when using the adv7280 with
+the BT.656-4 protocol. Certain registers (0x04, 0x31, 0xE6) had to
+be configured properly to ensure BT.656-4 compatibility.
+
+An error in the adv7280 reference manual suggested that EAV/SAV mode
+was enabled by default, however upon inspecting register 0x31, it was
+determined to be disabled by default.
+
+Signed-off-by: Matthew Michilot <matthew.michilot@gmail.com>
+Reviewed-by: Tim Harvey <tharvey@gateworks.com>
 ---
- drivers/leds/leds-lm3532.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ drivers/media/i2c/adv7180.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
---- a/drivers/leds/leds-lm3532.c
-+++ b/drivers/leds/leds-lm3532.c
-@@ -127,6 +127,7 @@ struct lm3532_als_data {
-  * @num_leds - Number of LED strings are supported in this array
-  * @full_scale_current - The full-scale current setting for the current sink.
-  * @led_strings - The LED strings supported in this array
-+ * @enabled - Enabled status
-  * @label - LED label
-  */
- struct lm3532_led {
-@@ -138,6 +139,7 @@ struct lm3532_led {
- 	int ctrl_brt_pointer;
- 	int num_leds;
- 	int full_scale_current;
-+	int enabled:1;
- 	u32 led_strings[LM3532_MAX_CONTROL_BANKS];
- 	char label[LED_MAX_NAME_SIZE];
- };
-@@ -292,11 +294,15 @@ static int lm3532_get_ramp_index(int ramp_time)
- 				ramp_time);
- }
- 
-+/* Caller must take care of locking */
- static int lm3532_led_enable(struct lm3532_led *led_data)
- {
- 	int ctrl_en_val = BIT(led_data->control_bank);
- 	int ret;
- 
-+	if (led_data->enabled)
-+		return 0;
-+
- 	ret = regmap_update_bits(led_data->priv->regmap, LM3532_REG_ENABLE,
- 					 ctrl_en_val, ctrl_en_val);
- 	if (ret) {
-@@ -304,14 +310,24 @@ static int lm3532_led_enable(struct lm3532_led *led_data)
- 		return ret;
- 	}
- 
--	return regulator_enable(led_data->priv->regulator);
-+	ret = regulator_enable(led_data->priv->regulator);
-+	if (ret < 0)
-+		return ret;
-+
-+	led_data->enabled = 1;
-+
-+	return 0;
- }
- 
-+/* Caller must take care of locking */
- static int lm3532_led_disable(struct lm3532_led *led_data)
- {
- 	int ctrl_en_val = BIT(led_data->control_bank);
- 	int ret;
- 
-+	if (!led_data->enabled)
-+		return 0;
-+
- 	ret = regmap_update_bits(led_data->priv->regmap, LM3532_REG_ENABLE,
- 					 ctrl_en_val, 0);
- 	if (ret) {
-@@ -319,7 +335,13 @@ static int lm3532_led_disable(struct lm3532_led *led_data)
- 		return ret;
- 	}
- 
--	return regulator_disable(led_data->priv->regulator);
-+	ret = regulator_disable(led_data->priv->regulator);
-+	if (ret < 0)
-+		return ret;
-+
-+	led_data->enabled = 0;
-+
-+	return 0;
- }
- 
- static int lm3532_brightness_set(struct led_classdev *led_cdev,
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index 99697baad2ea..27da424dce76 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -94,6 +94,7 @@
+ #define ADV7180_REG_SHAP_FILTER_CTL_1	0x0017
+ #define ADV7180_REG_CTRL_2		0x001d
+ #define ADV7180_REG_VSYNC_FIELD_CTL_1	0x0031
++#define ADV7180_VSYNC_FIELD_CTL_1_NEWAV 0x12
+ #define ADV7180_REG_MANUAL_WIN_CTL_1	0x003d
+ #define ADV7180_REG_MANUAL_WIN_CTL_2	0x003e
+ #define ADV7180_REG_MANUAL_WIN_CTL_3	0x003f
+@@ -935,10 +936,20 @@ static int adv7182_init(struct adv7180_state *state)
+ 		adv7180_write(state, ADV7180_REG_EXTENDED_OUTPUT_CONTROL, 0x57);
+ 		adv7180_write(state, ADV7180_REG_CTRL_2, 0xc0);
+ 	} else {
+-		if (state->chip_info->flags & ADV7180_FLAG_V2)
++		if (state->chip_info->flags & ADV7180_FLAG_V2) {
++			/* ITU-R BT.656-4 compatible */
+ 			adv7180_write(state,
+ 				      ADV7180_REG_EXTENDED_OUTPUT_CONTROL,
+-				      0x17);
++				      ADV7180_EXTENDED_OUTPUT_CONTROL_NTSCDIS);
++			/* Manually set NEWAVMODE */
++			adv7180_write(state,
++				      ADV7180_REG_VSYNC_FIELD_CTL_1,
++				      ADV7180_VSYNC_FIELD_CTL_1_NEWAV);
++			/* Manually set V bit end position in NTSC mode */
++			adv7180_write(state,
++				      ADV7180_REG_NTSC_V_BIT_END,
++				      ADV7180_NTSC_V_BIT_END_MANUAL_NVEND);
++		}
+ 		else
+ 			adv7180_write(state,
+ 				      ADV7180_REG_EXTENDED_OUTPUT_CONTROL,
 -- 
-2.23.0
+2.17.1
+
