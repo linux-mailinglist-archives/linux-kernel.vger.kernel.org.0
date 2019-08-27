@@ -2,132 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 721889E474
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 11:35:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E19A9E47C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 11:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbfH0Jfk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 05:35:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57346 "EHLO mail.kernel.org"
+        id S1730001AbfH0JgE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 05:36:04 -0400
+Received: from mga01.intel.com ([192.55.52.88]:43426 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726833AbfH0Jfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 05:35:40 -0400
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C22D2186A;
-        Tue, 27 Aug 2019 09:35:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566898538;
-        bh=QwBJ6oW0mDUbmXmBZq/xOiSb0AoEWSa+i67Fo2EQs3E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IBElxmoUKNRUm9l3uA8x2MyS+ZMpfcJG5jPMcXf/AbP8WeAt4AK0moq7YYtVCyMi3
-         +WABBe3yhR0HqCC4213+rKtjpwTL8ALAwhzGjnw5yiBdZrBXKUzg70rj1OhmcRmOM1
-         SBZPITCAS7sME54Y/kLDWZ6+0EI5Yz4Kn9JxqPu4=
-Date:   Tue, 27 Aug 2019 11:35:36 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Code Kipper <codekipper@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/21] ASoC: sun4i-i2s: Number of fixes and TDM Support
-Message-ID: <20190827093536.rl6fjuvctjwd33as@flea>
-References: <cover.e08aa7e33afe117e1fa8f017119d465d47c98016.1566242458.git-series.maxime.ripard@bootlin.com>
- <CAGb2v64xOcs3Vi5k3yUwMiUrzZMuJ5vZ3kxp9w1=CQDrkn3cgA@mail.gmail.com>
+        id S1726833AbfH0JgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 05:36:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 02:36:02 -0700
+X-IronPort-AV: E=Sophos;i="5.64,436,1559545200"; 
+   d="scan'208";a="355716470"
+Received: from jkrzyszt-desk.igk.intel.com (HELO jkrzyszt-desk.ger.corp.intel.com) ([172.22.244.17])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 02:36:01 -0700
+From:   Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        =?utf-8?B?TWljaGHFgg==?= Wajdeczko <michal.wajdeczko@intel.com>
+Subject: Re: [RFC PATCH] iommu/vt-d: Fix IOMMU field not populated on device hot re-plug
+Date:   Tue, 27 Aug 2019 11:35:47 +0200
+Message-ID: <29020717.Hl6jQjRASr@jkrzyszt-desk.ger.corp.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298 Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <790a4a20-7517-fe54-177d-850b9beeb88e@linux.intel.com>
+References: <20190822142922.31526-1-janusz.krzysztofik@linux.intel.com> <7536805.yzB8ZXLclH@jkrzyszt-desk.ger.corp.intel.com> <790a4a20-7517-fe54-177d-850b9beeb88e@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zfutohgftfydg3jy"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v64xOcs3Vi5k3yUwMiUrzZMuJ5vZ3kxp9w1=CQDrkn3cgA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Lu,
 
---zfutohgftfydg3jy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Monday, August 26, 2019 10:29:12 AM CEST Lu Baolu wrote:
+> Hi Janusz,
+> 
+> On 8/26/19 4:15 PM, Janusz Krzysztofik wrote:
+> > Hi Lu,
+> > 
+> > On Friday, August 23, 2019 3:51:11 AM CEST Lu Baolu wrote:
+> >> Hi,
+> >>
+> >> On 8/22/19 10:29 PM, Janusz Krzysztofik wrote:
+> >>> When a perfectly working i915 device is hot unplugged (via sysfs) and
+> >>> hot re-plugged again, its dev->archdata.iommu field is not populated
+> >>> again with an IOMMU pointer.  As a result, the device probe fails on
+> >>> DMA mapping error during scratch page setup.
+> >>>
+> >>> It looks like that happens because devices are not detached from their
+> >>> MMUIO bus before they are removed on device unplug.  Then, when an
+> >>> already registered device/IOMMU association is identified by the
+> >>> reinstantiated device's bus and function IDs on IOMMU bus re-attach
+> >>> attempt, the device's archdata is not populated with IOMMU information
+> >>> and the bad happens.
+> >>>
+> >>> I'm not sure if this is a proper fix but it works for me so at least it
+> >>> confirms correctness of my analysis results, I believe.  So far I
+> >>> haven't been able to identify a good place where the possibly missing
+> >>> IOMMU bus detach on device unplug operation could be added.
+> >>
+> >> Which kernel version are you testing with? Does it contain below commit?
+> >>
+> >> commit 458b7c8e0dde12d140e3472b80919cbb9ae793f4
+> >> Author: Lu Baolu <baolu.lu@linux.intel.com>
+> >> Date:   Thu Aug 1 11:14:58 2019 +0800
+> > 
+> > I was using an internal branch based on drm-tip which didn't contain this
+> > commit yet.  Fortunately it has been already merged into drm-tip over last
+> > weekend and has effectively fixed the issue.
+> 
+> Thanks for testing this.
 
-Hi,
+My testing appeared not sufficiently exhaustive. The fix indeed resolved my 
+initially discovered issue of not being able to rebind the i915 driver to a 
+re-plugged device, however it brought another, probably more serious problem 
+to light.
 
-On Tue, Aug 27, 2019 at 04:20:24PM +0800, Chen-Yu Tsai wrote:
-> Hi everyone,
->
-> On Tue, Aug 20, 2019 at 3:25 AM Maxime Ripard <mripard@kernel.org> wrote:
-> >
-> > From: Maxime Ripard <maxime.ripard@bootlin.com>
-> >
-> > Hi,
-> >
-> > This series aims at fixing a number of issues in the current i2s driver,
-> > mostly related to the i2s master support and the A83t support. It also uses
-> > that occasion to cleanup a few things and simplify the driver. Finally, it
-> > builds on those fixes and cleanups to introduce TDM and DSP formats support.
-> >
-> > Let me know what you think,
-> > Maxime
-> >
-> > Marcus Cooper (1):
-> >   ASoC: sun4i-i2s: Fix the MCLK and BCLK dividers on newer SoCs
-> >
-> > Maxime Ripard (20):
-> >   ASoC: sun4i-i2s: Register regmap and PCM before our component
-> >   ASoC: sun4i-i2s: Switch to devm for PCM register
-> >   ASoC: sun4i-i2s: Replace call to params_channels by local variable
-> >   ASoC: sun4i-i2s: Move the channel configuration to a callback
-> >   ASoC: sun4i-i2s: Move the format configuration to a callback
-> >   ASoC: sun4i-i2s: Rework MCLK divider calculation
-> >   ASoC: sun4i-i2s: Don't use the oversample to calculate BCLK
-> >   ASoC: sun4i-i2s: Use module clock as BCLK parent on newer SoCs
-> >   ASoC: sun4i-i2s: RX and TX counter registers are swapped
-> >   ASoC: sun4i-i2s: Use the actual format width instead of an hardcoded one
-> >   ASoC: sun4i-i2s: Fix LRCK and BCLK polarity offsets on newer SoCs
-> >   ASoC: sun4i-i2s: Fix the LRCK polarity
-> >   ASoC: sun4i-i2s: Fix WSS and SR fields for the A83t
-> >   ASoC: sun4i-i2s: Fix MCLK Enable bit offset on A83t
-> >   ASoC: sun4i-i2s: Fix the LRCK period on A83t
-> >   ASoC: sun4i-i2s: Remove duplicated quirks structure
->
-> Unfortunately the patches that "fix" support on the A83T actually break it.
-> The confusion stems from the user manual not actually documenting the I2S
-> controller. Instead it documents the TDM controller, which is very similar
-> or the same as the I2S controller in the H3. The I2S controller that we
-> actually support in this driver is not the TDM controller, but three other
-> I2S controllers that are only mentioned in the memory map. Support for this
-> was done by referencing the BSP kernel, which has separate driver instances
-> for each controller instance, both I2S and TDM.
->
-> Now to remedy this I could send reverts for all the "A83t" patches, and
-> fixes for all the others that affect the A83t quirks. However the fixes
-> tags existing in the tree would be wrong and confusing. That might be a
-> pain for the stable kernel maintainers.
->
-> Any suggestions on how to proceed?
+When an open i915 device is hot unplugged, IOMMU bus notifier now cleans up 
+IOMMU info for the device on PCI device remove while the i915 driver is still 
+not released, kept by open file descriptors.  Then, on last device close, 
+cleanup attempts lead to kernel panic raised from intel_unmap() on unresolved 
+IOMMU domain.
 
-I've just sent two patches to address that (adding a comment in the
-process so that hopefully it doesn't happen again).
+With commit 458b7c8e0dde reverted and my fix applied, both late device close 
+and device re-plug work for me.  However, I can realize that's probably still 
+not a complete solution, possibly missing some protection against reuse of a 
+removed device other than for cleanup.  If you think that's the right way to 
+go, I can work more on that.
 
-Let me know if it works, and sorry for the mess :/
-Maxime
+I've had a look at other drivers and found AMD is using somehow similar 
+approach.  On the other hand, looking at the IOMMU common code I couldn't 
+identify any arrangement that would support deferred device cleanup.
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+If that approach is not acceptable for Intel IOMMU, please suggest a way you'd 
+like to have it resolved and I can try to implement it.
 
---zfutohgftfydg3jy
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Janusz
 
------BEGIN PGP SIGNATURE-----
+> Best regards,
+> Lu Baolu
+> 
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXWT5aAAKCRDj7w1vZxhR
-xdWcAP92UC8ohpBC1hEZ+YE9YtL68wqEMKjjgaiRbBPuMCI9tQEAvzYPAtyZtF9A
-o8AofY1070asyuWTmZNoBs4WWZOnHQ4=
-=P/nX
------END PGP SIGNATURE-----
 
---zfutohgftfydg3jy--
+
+
