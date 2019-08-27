@@ -2,73 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF26B9F0C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5160F9F0CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730317AbfH0QxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:53:09 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45192 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfH0QxJ (ORCPT
+        id S1730328AbfH0QyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:54:00 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46209 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbfH0Qx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:53:09 -0400
-Received: by mail-ot1-f65.google.com with SMTP id m24so19315395otp.12;
-        Tue, 27 Aug 2019 09:53:08 -0700 (PDT)
+        Tue, 27 Aug 2019 12:53:59 -0400
+Received: by mail-oi1-f194.google.com with SMTP id t24so15472099oij.13;
+        Tue, 27 Aug 2019 09:53:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tXZ+L1izx3v6iUiXs7Bmef3akgnqSl4UHvWXUS90ess=;
-        b=Gpen/bScC7QWsCaxSYyPFbWXLr/Fah/GigR6RuDqd26V2iJSf0civGNqg4KnNjWFsm
-         i2vSXXf8PImIcL73g6gZNtEBvAZ8hv/OaBPOnfTTn3fQnulAt90IlIPz1aN3UVwc7g/G
-         jC5Y4oW2j+zvM7cbTdYWzPQQ6lB0OFlOsTHp1vOnQKozr8leiRC+zNR1qK7cLp00fBEJ
-         fFx6+4akBWxGYfrq8KwrsLsFRI2U6q55J17EUOniSg3aLv7znIPB78y/OiMnCSZF7QeN
-         gVKvZuFKpqiwbktrnI/n1OheIvLI+R6pvvxX0mZpU2CFVLRiL3pVAkY1x7ecZvq2Xfrm
-         uGzg==
-X-Gm-Message-State: APjAAAXedfoMplXwMQ5qK3j479s/rFfROzGt5VxG10D3cUpmHOf3qFAy
-        ibFczigzGYFxLlRP7EelTQ==
-X-Google-Smtp-Source: APXvYqwqaZqJc0EiQWQhXT7audNujzC7IOtWcqZLwMXAJYa90ehz6JXD56+/jyz25pglcwAaTH3NUg==
-X-Received: by 2002:a05:6830:4d6:: with SMTP id s22mr4181259otd.295.1566924788324;
-        Tue, 27 Aug 2019 09:53:08 -0700 (PDT)
+        bh=/cWnSwSnizJoPptrMCxgyU0EGIA7FE8H3qBw7ZxkmMM=;
+        b=FhlNulBcTRdzxP+A9ueXa99BmB0nmJD5lSOK6EK+cncRmhFudE7AjO4Z3STk6vKnPX
+         wxDodSPIu3UX3Y9It+fkP1m5eqcw4IFlCT1MqGZI5ttem7yoX9LzTFBNMKYsbBrLS2j2
+         cPhG8AYCq+tpSLBCES05HakH02jU++uee3/KGFF3JoR27PR8plF2p+X4eETGfOOrces/
+         9NhDQsz4FDqmFH7KCw/OO1rnzPWw/xSsCDhojVmWHIV+U8B5KrdJa53sqbDUzV3m1Tz8
+         jo0z4DIAhY9tlb+FXYHAVD34XmYvgL4b6Yn5pJHFMofGy4lQMfVkWJHqhVrevZ0SFFcL
+         /DdQ==
+X-Gm-Message-State: APjAAAUCFnMXgiHIXZNt+qyFfL6QMInDN/TBtiNCLstiwSACDtB4DXfM
+        Kvffv2V4OVETpuIP4oD+Ng==
+X-Google-Smtp-Source: APXvYqy/YlUNjEPP5QW/TvNLxzezivmnRm+zWoT/6RxwryHO+9wlLtBLicefYrG9cQNpNDQFaShGug==
+X-Received: by 2002:aca:5f46:: with SMTP id t67mr16825090oib.42.1566924838416;
+        Tue, 27 Aug 2019 09:53:58 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a16sm4318199oid.26.2019.08.27.09.53.07
+        by smtp.gmail.com with ESMTPSA id 44sm5772961otf.30.2019.08.27.09.53.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 09:53:07 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 11:53:07 -0500
+        Tue, 27 Aug 2019 09:53:57 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 11:53:57 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Mars Cheng <mars.cheng@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        mtk01761 <wendell.lin@mediatek.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 09/11] clk: mediatek: Add dt-bindings for MT6779 clocks
-Message-ID: <20190827165307.GA29782@bogus>
-References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
- <1566206502-4347-10-git-send-email-mars.cheng@mediatek.com>
+To:     Krzysztof Wilczynski <kw@linux.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] PCI: Fix misspelled words.
+Message-ID: <20190827165357.GA31146@bogus>
+References: <20190819115306.27338-1-kw@linux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1566206502-4347-10-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <20190819115306.27338-1-kw@linux.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Aug 2019 17:21:40 +0800, Mars Cheng wrote:
-> From: mtk01761 <wendell.lin@mediatek.com>
+On Mon, 19 Aug 2019 13:53:06 +0200, Krzysztof Wilczynski wrote:
+> Fix misspelled words in include/linux/pci.h, drivers/pci/Kconfig,
+> and in the documentation for Freescale i.MX6 and Marvell Armada 7K/8K
+> PCIe interfaces.  No functional change intended.
 > 
-> Add MT6779 clock dt-bindings, include topckgen, apmixedsys,
-> infracfg, and subsystem clocks.
+> Related commit 96291d565550 ("PCI: Fix typos and whitespace errors").
 > 
-> Signed-off-by: mtk01761 <wendell.lin@mediatek.com>
+> Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
 > ---
->  include/dt-bindings/clock/mt6779-clk.h |  436 ++++++++++++++++++++++++++++++++
->  1 file changed, 436 insertions(+)
->  create mode 100644 include/dt-bindings/clock/mt6779-clk.h
+>  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt | 2 +-
+>  Documentation/devicetree/bindings/pci/pci-armada8k.txt   | 2 +-
+>  drivers/pci/Kconfig                                      | 2 +-
+>  include/linux/pci.h                                      | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
