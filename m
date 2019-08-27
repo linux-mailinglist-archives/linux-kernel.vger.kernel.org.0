@@ -2,95 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E3339E9FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:49:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 908299EA0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 15:50:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729923AbfH0Nt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 09:49:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55680 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbfH0Nt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:49:27 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99A2522DA7;
-        Tue, 27 Aug 2019 13:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566913766;
-        bh=t8dV1JQ6YjWzp6xWQVowBI3+h+v4134YMz5+lu9L+/A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vxThKCxhmjAnNTIY32ynwA5M4uCpDxXpUzkUdSxei05qZyPP/qcipIdYdgpontZLS
-         YqQzblm7YkM8uRqS4nEl7X1l4vp8fthLL9yo5ADW17nizmtUmnpOpq4umYZW1M12Td
-         k7lg97H0TlLoWg+cDwA12rm24mMpngjjXbqBxIN4=
-Received: by mail-qk1-f169.google.com with SMTP id m2so16982196qkd.10;
-        Tue, 27 Aug 2019 06:49:26 -0700 (PDT)
-X-Gm-Message-State: APjAAAWrxOReXJ7N/us0vxxpIxYuSwtegYzQ/YmtlSHiBss4grRaTBaJ
-        trm5hVqpyA+xN6UFTLFi1nirXb6/IOeDHjRJXw==
-X-Google-Smtp-Source: APXvYqyzUQ15boR9MbWaQGb4gGOqWJfi8CzSbuazLWRrpy5Me3zhwjIkil7L3eEEZiEqqtxcmVl0NXeT5X4kfIDHEnc=
-X-Received: by 2002:a37:4941:: with SMTP id w62mr19882827qka.119.1566913765684;
- Tue, 27 Aug 2019 06:49:25 -0700 (PDT)
+        id S1730302AbfH0NuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 09:50:16 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:38455 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727784AbfH0NuQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:50:16 -0400
+Received: by mail-vs1-f66.google.com with SMTP id 62so13477722vsl.5
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 06:50:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nPR2CQfWmgZTkvcpGyqAZkf0myEhVejsZD6gsIT8RYg=;
+        b=bhjl/ew8Pdmkn2py/fJ8FKDq4d1wSwcKFwpAqCni+esZ62NP1wDMuTrPNmksJfOg+Y
+         My7X+wD93QUDR0E3hIw3E1A8iE7iMuv3TRRMCS3eIOphYFDZF6fKOzuCq2zdoUxjVHh6
+         3+WsdoF0ZGK3YXkZHXokWSPcVEecQW0K0NSoyk88GKCLv84yCim1xpARfVciR67DTXNJ
+         KbB7KkvbrM16nS6EQSKVHuZdTISASCfdZ4mJetpH93xPtPxg9o2VfQdTvVIiIslYhgQa
+         G0PTMTp7ZX6VsTVAGrRDF/zQd9Z+fdlvN31tSNuTNgvkcvZSwUdXdRF7/PPw9J8ppeB9
+         VJWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nPR2CQfWmgZTkvcpGyqAZkf0myEhVejsZD6gsIT8RYg=;
+        b=bCl1fAL68TX8tJNyj/6037E9SPitu9Jcj9M9LiUmmojySYPgoxytZMupTUNT6uOan4
+         aAMhf4SpjfN6ja4ZG0z9bAFYzdTRlsSgLsAVJk3l7u8VmbNUK3HaIgpggeTmyiXUlrDz
+         r9JtCblgsgJeT90dGQZZDjOHZIjQnkqwlaQNxa3/1cXH2PcIGghMDtrn3MQzkpeR3nij
+         nO5M0dgDc0gJyNcRU2OUqGLAXHRZ6MDtnyFZRl1+K63caumdC+L7zBa232s18UuGYiaS
+         bUP4YaeHmdeNw9kd00vrFFoNt5otcs+bdPto99Kfk6+uHaMDUiDCk8Q6Dq1z42GE/G7F
+         tQEw==
+X-Gm-Message-State: APjAAAXFHugLZIdwTOadztEIkURPAUERHDx87B8Cct2T/IMxLYXgphzC
+        DhzjCplm2sNq/6hciibEIUhcydb84RfWjYhzPDtbiQ==
+X-Google-Smtp-Source: APXvYqzQ8I7Ep8k3tduFMMa8uUTlPd+Xy5TxZlq8ti8zHd5KPR80iTc/2sx/Oh/nNRZf59jUJo5lhvjPC3uSaxWvRL4=
+X-Received: by 2002:a67:fe4e:: with SMTP id m14mr14252340vsr.34.1566913815413;
+ Tue, 27 Aug 2019 06:50:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190805143911.12185-1-hhhawa@amazon.com> <20190805143911.12185-2-hhhawa@amazon.com>
- <20190821191704.GA32425@bogus> <1d23d7c5-cd7b-1512-5300-d43e82ba6dc1@amazon.com>
-In-Reply-To: <1d23d7c5-cd7b-1512-5300-d43e82ba6dc1@amazon.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 27 Aug 2019 08:49:13 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+8jGbR4u7FA8r0gP5i2H+nSgOkGU_5mfiL=i=c0sOW8A@mail.gmail.com>
-Message-ID: <CAL_Jsq+8jGbR4u7FA8r0gP5i2H+nSgOkGU_5mfiL=i=c0sOW8A@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] dt-bindings: EDAC: Add Amazon's Annapurna Labs L1 EDAC
-To:     "Hawa, Hanna" <hhhawa@amazon.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>, benh@amazon.com,
-        "Krupnik, Ronen" <ronenk@amazon.com>,
-        Talel Shenhar <talel@amazon.com>,
-        Jonathan Chocron <jonnyc@amazon.com>,
-        "Hanoch, Uri" <hanochu@amazon.com>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>
+References: <20190826021620.11915-1-andrew@aj.id.au>
+In-Reply-To: <20190826021620.11915-1-andrew@aj.id.au>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 27 Aug 2019 15:49:39 +0200
+Message-ID: <CAPDyKFroS-Z+4QYitmYrCugPV_f4u1MDJiRkDxGWvVjsU=9RgA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: mmc: aspeed: Update example ranges property
+To:     Andrew Jeffery <andrew@aj.id.au>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 9:49 AM Hawa, Hanna <hhhawa@amazon.com> wrote:
+On Mon, 26 Aug 2019 at 04:15, Andrew Jeffery <andrew@aj.id.au> wrote:
 >
+> The example node in the binding uses the AST2500 compatible string for
+> the SD controller with a 64kiB ranges property, but the SD controller is
+> allocated 128kiB of MMIO space according to the AST2500 datasheet. Fix
+> the example to correctly reflect the hardware in the AST2500, however it
+> should be noted that the MMIO region is reduced to 64kiB in the AST2600
+> where a second SD controller block has been introduced into the address
+> space.
 >
+> Also add the IBM copyright header that I left out of the initial patch.
 >
-> On 8/21/2019 10:17 PM, Rob Herring wrote:
-> > Why is this even in DT? AFAICT, this is all just CortexA57 core features
-> > (i.e. nothing Amazon specific). The core type and the ECC capabilities
-> > are discoverable.
+> Suggested-by: Joel Stanley <joel@jms.id.au>
+> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+
+Applied for next, thanks!
+
+FYI, I took the liberty to amend all aspeed patches, by putting
+"sdhci-of-aspeed" as the prefix of the commit message header.
+
+Kind regards
+Uffe
+
+
+> ---
+> Hi Ulf, this is the follow-up fix as discussed here:
 >
-> Added to the DT in order to easily enable/disable the driver.
-
-That alone is not reason enough to put it in DT. From a DT
-perspective, I have no idea what the whims of a OS maintainer are
-regarding whether they want all this to be 1 driver or 2 drivers.
-(IMO, it should be 1 as this is ECC for an A57. For a core and memory
-controller, then 2 seems appropriate.)
-
-> You are
-> correct that they are CortexA57 core features and nothing Amazon
-> specific, but it's IMPLEMENTATION DEFINED, meaning that in different
-> cortex revisions (e.g. A57) the register bitmap may change. Because of
-> that we added an Amazon compatible which corresponds to the specific
-> core we are using.
-
-'IMPLEMENTATION DEFINED' usually means not defined by the
-architecture. This doesn't seem like something that's going to change
-with A57 revisions. Plus, the A57 is pretty old now, so we know what's
-out there already. In any case, the revision is discoverable too, so
-we could deal with changes between revisions in any case.
-
-Rob
+> http://patchwork.ozlabs.org/patch/1143090/
+>
+>  Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml b/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
+> index 570f8c72662b..200de9396036 100644
+> --- a/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/aspeed,sdhci.yaml
+> @@ -1,4 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0-or-later
+> +# Copyright 2019 IBM Corp.
+>  %YAML 1.2
+>  ---
+>  $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+> @@ -84,7 +85,7 @@ examples:
+>              reg = <0x1e740000 0x100>;
+>              #address-cells = <1>;
+>              #size-cells = <1>;
+> -            ranges = <0 0x1e740000 0x10000>;
+> +            ranges = <0 0x1e740000 0x20000>;
+>              clocks = <&syscon ASPEED_CLK_GATE_SDCLK>;
+>
+>              sdhci0: sdhci@100 {
+> --
+> 2.20.1
+>
