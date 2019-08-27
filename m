@@ -2,107 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E13F9EF58
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D8A9EF67
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:50:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729861AbfH0Pti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:49:38 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:42974 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726621AbfH0Pti (ORCPT
+        id S1730156AbfH0PuI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:50:08 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42151 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbfH0PuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:49:38 -0400
-Received: by mail-qt1-f194.google.com with SMTP id t12so21763699qtp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 08:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6pvvgSgM9CbdJfaBulsERf+5+2yHIplcG96TA5AmISw=;
-        b=eV1MNaGvP7HxNr2esjzckKmVddzEK3y7o8MIrme4Sno04F5ZbnmCDdt1jLLqed8T5x
-         v8iKIaKUtUSGNbnyxxGyzJTxXIdBzWKlSZ43Rq/9Pf/2vqnR7w6zd5p2saeIKtEBqatg
-         7QPDCEirLtYTsISXIpTvmiTHySnITzmN4dNvB8krvT5hS/7nNJZ3v7+QmSq5Pibvohgm
-         CpMRJRA0VPZalQ50kXT4KXcDPiaXdp4FPv+qqHfIy7wCv4kbh8HHCgg1Usu2Wrn9CtEo
-         XlaAy3fyNDYxZWCkeR6goHFSLQNbXq93U3RQhpcIcV7vri4KHtCVJoVOtjwHjAOFcsfK
-         10kQ==
+        Tue, 27 Aug 2019 11:50:08 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j7so19113568ota.9;
+        Tue, 27 Aug 2019 08:50:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6pvvgSgM9CbdJfaBulsERf+5+2yHIplcG96TA5AmISw=;
-        b=Vr/3j88gl02/XJp271TepIX9DTYn+emit7FWhEPZHeRlwn5ZKejQ9yByyGIENU93Tz
-         P5rsvAafUZpdhQggfczH9aZFQahswU5nCjZxKoUC0K5MFEDyT+0hkNxy7vkIJhtpF1j7
-         IsQHl3P5fGs3r5ldnV+9AQhsk4pEnQvajVq+JSzde5GXqRWUfuPKRbHNO8GkA1pcGgKM
-         mL8shIxk09jdTG6iIqbu9GMWVimEHK21vFMwdF3NqQvIA7jovgJynKMLT5Wkj5M3sZ8u
-         5GB4HtZcFFHY3stACtLLJAZcdLRWgh0vXsccesFXO5OmLeeE0ZLyGGsZEPA2+OkIIpy4
-         N2zg==
-X-Gm-Message-State: APjAAAVLlWv2hw8AFqFS3j13h/aaIyhvnXb5ndKhDTfvQIVcYDuBg25x
-        skIbDeocmnfnavKxNXu+fidoCA==
-X-Google-Smtp-Source: APXvYqyu/DYHXP5pxPrBOc9TAqxSuEjtwU6gt2+NCviFunNPjMYicGGmamfkRX2Rl60RbuNuhl7oWg==
-X-Received: by 2002:ac8:24ce:: with SMTP id t14mr24042841qtt.246.1566920977057;
-        Tue, 27 Aug 2019 08:49:37 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-167-216-168.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.216.168])
-        by smtp.gmail.com with ESMTPSA id u187sm8745056qkh.110.2019.08.27.08.49.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 27 Aug 2019 08:49:36 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1i2dix-0003vR-SQ; Tue, 27 Aug 2019 12:49:35 -0300
-Date:   Tue, 27 Aug 2019 12:49:35 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     leon@kernel.org, Doug Ledford <dledford@redhat.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] IB/mlx5: Convert to use vm_map_pages_zero()
-Message-ID: <20190827154935.GD7149@ziepe.ca>
-References: <1566713247-23873-1-git-send-email-jrdr.linux@gmail.com>
- <20190825194354.GC21239@ziepe.ca>
- <CAFqt6za5uUSKLMn0E25M1tYG853tpdE-kcoUYHdmby5s4d0JKg@mail.gmail.com>
- <20190826122055.GA27349@ziepe.ca>
- <CAFqt6zbTm7jA692-Ta9c5rxKoJyMUz2UPBpYGGs69wRtU=itpw@mail.gmail.com>
+        bh=qYug+8A/OHB6xQ/Ambyfj+28FmEVXD07tPk7WO6HC3Y=;
+        b=Kf5LxI3IoXvREjjgXrfbR5kPTGN9hKsTJRrQJAtT0j59m83wMzylY/PD500IHduPt/
+         gPVyu7hOSeZnjEm2ZIccMrP/YBrTM/b1zpSKy3BTmnMS9AkcL5eJ3gvSkjIzVWYJP3MW
+         J0HOuSkmBPAn98RPJ6oVt3dEbvPTkUPJzqPJPJvXLnF0PT70qHYLYRcKTt/6ICp34FoJ
+         qRJlQcuVwYYRGA+hc7sVTcldtBSHGv/whVMNdNEU8rJ1kowCiEMIrHhCLQq1RKBC4Asj
+         ng4tfuRhk1UkvreSFSArU45wgJLHL69VLgdEmMx0Jqv6yFASsSbvXmki8dRyJT6CgyZH
+         /kAw==
+X-Gm-Message-State: APjAAAUbgsbD2KSPnedMwgQiZ9qNeRTOm87KyS4UsvXfbagX7l7jqRH/
+        w8REN4SEZ06UnvUbGKoPrg==
+X-Google-Smtp-Source: APXvYqyQsr3HFBe8hthN1uJ3CQ2iXfwZPpOybLyrFsnNasFsgN+n7AhakqmuQnHfxjBkmOE1nELixg==
+X-Received: by 2002:a9d:7dc4:: with SMTP id k4mr20904237otn.171.1566921006959;
+        Tue, 27 Aug 2019 08:50:06 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a22sm5137067otr.3.2019.08.27.08.50.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 08:50:06 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 10:50:05 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Ashish Kumar <ashish.kumar@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        Kuldeep Singh <kuldeep.singh@nxp.com>
+Subject: Re: [EXT] Re: [Patch v4 1/3] dt-bindings: spi: spi-fsl-qspi: Add
+ ls2080a compatibility string to bindings
+Message-ID: <20190827155005.GA18581@bogus>
+References: <1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com>
+ <20190821110640.GC5128@sirena.co.uk>
+ <VI1PR04MB401528B4F92DAD98385EF53395AA0@VI1PR04MB4015.eurprd04.prod.outlook.com>
+ <VI1PR04MB4015474B3086AE99354FE65395A50@VI1PR04MB4015.eurprd04.prod.outlook.com>
+ <20190822184927.GH23391@sirena.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFqt6zbTm7jA692-Ta9c5rxKoJyMUz2UPBpYGGs69wRtU=itpw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190822184927.GH23391@sirena.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 01:48:57AM +0530, Souptick Joarder wrote:
-> On Mon, Aug 26, 2019 at 5:50 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> >
-> > On Mon, Aug 26, 2019 at 01:32:09AM +0530, Souptick Joarder wrote:
-> > > On Mon, Aug 26, 2019 at 1:13 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > > >
-> > > > On Sun, Aug 25, 2019 at 11:37:27AM +0530, Souptick Joarder wrote:
-> > > > > First, length passed to mmap is checked explicitly against
-> > > > > PAGE_SIZE.
-> > > > >
-> > > > > Second, if vma->vm_pgoff is passed as non zero, it would return
-> > > > > error. It appears like driver is expecting vma->vm_pgoff to
-> > > > > be passed as 0 always.
-> > > >
-> > > > ? pg_off is not zero
-> > >
-> > > Sorry, I mean, driver has a check against non zero to return error -EOPNOTSUPP
-> > > which means in true scenario driver is expecting vma->vm_pgoff should be passed
-> > > as 0.
-> >
-> > get_index is masking vm_pgoff, it is not 0
+On Thu, Aug 22, 2019 at 07:49:27PM +0100, Mark Brown wrote:
+> On Thu, Aug 22, 2019 at 06:39:18AM +0000, Ashish Kumar wrote:
 > 
-> Sorry, I missed this part. Further looking into code,
-> in mlx5_ib_mmap(), vma_vm_pgoff is used to get command and
-> inside mlx5_ib_mmap_clock_info_page() entire *dev->mdev->clock_info*
-> is mapped.
+> > > > Please use subject lines matching the style for the subsystem.  This
+> > > > makes it easier for people to identify relevant patches.
+> > Hi Mark,
 > 
-> Consider that, the below modification will only take care of vma length
-> error check inside vm_map_pages_zero() and an extra check for vma
-> length is not needed.
+> > After looking at some patch in Documentation/devicetree/bindings/spi/
+> > I think I should update subject line to
+> > dt-bindings: spi: Add ls2080-qspi compatible string for FSL QSPI driver
+> > or 
+> > doc: qspi: Add ls2080-qspi compatible to DT bindings for FSL QSPI driver
+> 
+> Drop the dt-bindings:.
 
-What is the point of vm_map_pages_zero() Is there some reason we should
-prefer it for mapping a single page?
+If you do 'git log --oneline Documentation/devicetree/bindings/' you'll 
+notice that SPI and ASoC are the oddballs now. I don't really care
+except it does add to tribal knowledge needed regarding maintainers' 
+requirements.
 
-Jason
+Rob
