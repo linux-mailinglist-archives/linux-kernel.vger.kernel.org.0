@@ -2,117 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF3E9F0D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A9C9F0D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:55:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730429AbfH0QzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:55:00 -0400
-Received: from mta-02.yadro.com ([89.207.88.252]:40052 "EHLO mta-01.yadro.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730413AbfH0Qy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:54:56 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mta-01.yadro.com (Postfix) with ESMTP id 3774F41209;
-        Tue, 27 Aug 2019 16:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received:received; s=mta-01; t=
-        1566924893; x=1568739294; bh=87VA5h5waSDTUF2CVQN/4Wwh9JYi5VNM4bl
-        aFGLhSMY=; b=gMdBm7HVXlGC8jRakgwY2WAmkhPtPeYsZxpqkbunuWfvgC23B86
-        B6SKzMVsvtgEgU8t7dTVDIU71OEUnd34+SzHiHqNMDwJJVbxdyoVSDttK8S7y803
-        dv+JmJcjATJuvoLmntstZDQFdUu00tZPXMju/cdk4igODmobcHHGY6eQ=
-X-Virus-Scanned: amavisd-new at yadro.com
-Received: from mta-01.yadro.com ([127.0.0.1])
-        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id DE_cOhyTE2_a; Tue, 27 Aug 2019 19:54:53 +0300 (MSK)
-Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mta-01.yadro.com (Postfix) with ESMTPS id 0C98E42ECA;
-        Tue, 27 Aug 2019 19:54:53 +0300 (MSK)
-Received: from localhost.dev.yadro.com (172.17.15.69) by
- T-EXCH-02.corp.yadro.com (172.17.10.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.669.32; Tue, 27 Aug 2019 19:54:52 +0300
-From:   Ivan Mikhaylov <i.mikhaylov@yadro.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-CC:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-        <linux-watchdog@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        Alexander Amelkin <a.amelkin@yadro.com>,
-        <openbmc@lists.ozlabs.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>,
-        Ivan Mikhaylov <i.mikhaylov@yadro.com>
-Subject: [PATCH v3 4/4] aspeed/watchdog: Add access_cs0 option for alt-boot
-Date:   Tue, 27 Aug 2019 19:54:26 +0300
-Message-ID: <20190827165426.17037-5-i.mikhaylov@yadro.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190827165426.17037-1-i.mikhaylov@yadro.com>
-References: <20190827165426.17037-1-i.mikhaylov@yadro.com>
+        id S1730409AbfH0Qyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:54:54 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:40194 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730335AbfH0Qyw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 12:54:52 -0400
+Received: by mail-io1-f67.google.com with SMTP id t6so47934852ios.7
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 09:54:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BOHjP5tc+yZEVIg0MRWpIDqFx5JGItaQGHN16Joy+r0=;
+        b=LImm1TiukFBu1ne3V7tPK2lDYmzuj4dXh0BahpqBrLhOmjWkDLnm/+5PTe3ynD9tjH
+         3XO3s77urhRAkPCJvyFYH2S/cMFGJGwZxjg2ayfTkmUG2Rivg5KffODDoQFNRXU80j8t
+         d5cfVGq6PNQlHoymLKxlyBXEg+XYcR3YSqC5V4orbtB0uLss5o3lShya2h7UKi8EhK20
+         a6Ie04+q1CTmYyMfDZ/9+cduzuB9Jtw56n677JSg5QmeYjrvThjfFgjahv2w/php93wL
+         ROP+Q6EXNx+KrJf+TpmFmxO2HF+ENHmNFMQv0LMoCbbLTeEfuQXe8TVXTWsyVx9fwNkD
+         b6bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BOHjP5tc+yZEVIg0MRWpIDqFx5JGItaQGHN16Joy+r0=;
+        b=cwGgEC9KtbynyFDb0sA6XkdrJ2YgBOd36laXcaPklOmFFIMd7C12ak/4RBQF+fGzos
+         37cuYu9z9rUI7f0YMH2CqdCOShrv0Pq0jzP/wz4Cl07YTzCNIi0tccZehmPqAlFFTxrc
+         kCRSaorW5AFbMn0PiYnvlSmRWRqw6j0z18bi2g5jcRo9Fns8BDd71TcmcY03KMTxe6iU
+         vJwtITJTVwQATZixZcGzR5rWYPMUF+pD1Dl1Yg5sTpEZtXTl7lqsWV8e6AZ1V7DjyOjG
+         rC+2pF3c28Cikp2BIkU6QNGe0WTm0Xhkuzchf0qj+xUx5dS1dHYi2SQ5/kSGG4Fs66Oo
+         LfxA==
+X-Gm-Message-State: APjAAAVw/1gdvX/pkxRpceeKkM8BRpXYWo8vhJUk8l2XIgzMkotY2QXt
+        1QQL2UoLbI/UJp266SGsiL8MUdIV4FslvgJyeyMn6w==
+X-Google-Smtp-Source: APXvYqzBwOW0kq4D3Mw5u/JNKSwavZ6FcPJ53+ULO/GuH3d4BgNMAL73A0JC9I8uiX/MO/BzJqUbGTpEmT9lC18aBec=
+X-Received: by 2002:a6b:6a15:: with SMTP id x21mr23262943iog.40.1566924890982;
+ Tue, 27 Aug 2019 09:54:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [172.17.15.69]
-X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
- T-EXCH-02.corp.yadro.com (172.17.10.102)
+References: <20190827160404.14098-1-vkuznets@redhat.com> <20190827160404.14098-4-vkuznets@redhat.com>
+In-Reply-To: <20190827160404.14098-4-vkuznets@redhat.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Tue, 27 Aug 2019 09:54:39 -0700
+Message-ID: <CALMp9eRyabQA8v5cJ1AwmtFdNFvWQz2jQ+iGTRQjow7r4FV3xA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] KVM: x86: announce KVM_CAP_HYPERV_ENLIGHTENED_VMCS
+ support only when it is available
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Roman Kagan <rkagan@virtuozzo.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The option for the ast2400/2500 to get access to CS0 at runtime.
+On Tue, Aug 27, 2019 at 9:04 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>
+> It was discovered that after commit 65efa61dc0d5 ("selftests: kvm: provide
+> common function to enable eVMCS") hyperv_cpuid selftest is failing on AMD.
+> The reason is that the commit changed _vcpu_ioctl() to vcpu_ioctl() in the
+> test and this one can't fail.
+>
+> Instead of fixing the test is seems to make more sense to not announce
+> KVM_CAP_HYPERV_ENLIGHTENED_VMCS support if it is definitely missing
+> (on svm and in case kvm_intel.nested=0).
+>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/kvm/x86.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index d1cd0fcff9e7..ef2e8b138300 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -3106,7 +3106,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>         case KVM_CAP_HYPERV_EVENTFD:
+>         case KVM_CAP_HYPERV_TLBFLUSH:
+>         case KVM_CAP_HYPERV_SEND_IPI:
+> -       case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
+>         case KVM_CAP_HYPERV_CPUID:
+>         case KVM_CAP_PCI_SEGMENT:
+>         case KVM_CAP_DEBUGREGS:
+> @@ -3183,6 +3182,8 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>                 r = kvm_x86_ops->get_nested_state ?
+>                         kvm_x86_ops->get_nested_state(NULL, NULL, 0) : 0;
+>                 break;
+> +       case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
+> +               r = kvm_x86_ops->nested_enable_evmcs != NULL;
 
-Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
----
- .../ABI/testing/sysfs-class-watchdog          | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
+You should probably have an explicit break here, in case someone later
+adds another case below.
 
-diff --git a/Documentation/ABI/testing/sysfs-class-watchdog b/Documentation/ABI/testing/sysfs-class-watchdog
-index 6317ade5ad19..675f9b537661 100644
---- a/Documentation/ABI/testing/sysfs-class-watchdog
-+++ b/Documentation/ABI/testing/sysfs-class-watchdog
-@@ -72,3 +72,37 @@ Description:
- 		It is a read/write file. When read, the currently assigned
- 		pretimeout governor is returned.  When written, it sets
- 		the pretimeout governor.
-+
-+What:		/sys/class/watchdog/watchdog1/access_cs0
-+Date:		August 2019
-+Contact:	Ivan Mikhaylov <i.mikhaylov@yadro.com>,
-+		Alexander Amelkin <a.amelkin@yadro.com>
-+Description:
-+		It is a read/write file. This attribute exists only if the
-+		system has booted from the alternate flash chip due to
-+		expiration of a watchdog timer of AST2400/AST2500 when
-+		alternate boot function was enabled with 'aspeed,alt-boot'
-+		devicetree option for that watchdog or with an appropriate
-+		h/w strapping (for WDT2 only).
-+
-+		At alternate flash the 'access_cs0' sysfs node provides:
-+			ast2400: a way to get access to the primary SPI flash
-+				chip at CS0 after booting from the alternate
-+				chip at CS1.
-+			ast2500: a way to restore the normal address mapping
-+				from (CS0->CS1, CS1->CS0) to (CS0->CS0,
-+				CS1->CS1).
-+
-+		Clearing the boot code selection and timeout counter also
-+		resets to the initial state the chip select line mapping. When
-+		the SoC is in normal mapping state (i.e. booted from CS0),
-+		clearing those bits does nothing for both versions of the SoC.
-+		For alternate boot mode (booted from CS1 due to wdt2
-+		expiration) the behavior differs as described above.
-+
-+		This option can be used with wdt2 (watchdog1) only.
-+
-+		When read, the current status of the boot code selection is
-+		shown. When written with any non-zero value, it clears
-+		the boot code selection and the timeout counter, which results
-+		in chipselect reset for AST2400/AST2500.
--- 
-2.20.1
-
+>         default:
+>                 break;
+>         }
+> --
+> 2.20.1
+>
