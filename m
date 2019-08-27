@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEBE99DF29
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4A79DF9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:56:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729101AbfH0Hvy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:51:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43068 "EHLO mail.kernel.org"
+        id S1729925AbfH0Hz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729017AbfH0Hvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:51:53 -0400
+        id S1729882AbfH0Hzx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:55:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1544A20828;
-        Tue, 27 Aug 2019 07:51:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 655B22173E;
+        Tue, 27 Aug 2019 07:55:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892312;
-        bh=XPxVmuh+hgcmzKCCKNJMNbO8/qU+oZA+EBmHPfEy8Ls=;
+        s=default; t=1566892552;
+        bh=1Eir6p1IJc3GuA2YZmW8Q30KvMsKNY/uEj1b4mVJxhw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pQDTWJegqWxcAbIqEAGHOhKoc3UN6B2sWzWn0Hex6xRFRnlHkhRFQGzSUBljSzCut
-         G0cSaGJ46MyvOTW9baaMXs0c5W8BM06EIKnkvIbgWfwu00FvXpNrlQ68Jm0sHSoszV
-         cabTxVb7WHVNOsTC+QXtWSzxW8OuRASFb6IMYMas=
+        b=0FrP7qabd6+3CSwL29xaJFXxaJ5V4F0va3FayK+3dDk8tTtW+El/U31lNd9mvUzC/
+         ju9YDVELrvxRmeBCmJ12vDU2v7/su1tpiO1nrnfPH3hKr2k+XQN8Nm3oPFH05cDtx9
+         mr3BPlOlLSzysHaNo6OO+OeIlwVJzLthEc0m60Bo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 05/62] ASoC: dapm: Fix handling of custom_stop_condition on DAPM graph walks
-Date:   Tue, 27 Aug 2019 09:50:10 +0200
-Message-Id: <20190827072700.450291435@linuxfoundation.org>
+Subject: [PATCH 4.19 32/98] can: peak_usb: force the string buffer NULL-terminated
+Date:   Tue, 27 Aug 2019 09:50:11 +0200
+Message-Id: <20190827072719.856511677@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
-References: <20190827072659.803647352@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,74 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 8dd26dff00c0636b1d8621acaeef3f6f3a39dd77 ]
+[ Upstream commit e787f19373b8a5fa24087800ed78314fd17b984a ]
 
-DPCM uses snd_soc_dapm_dai_get_connected_widgets to build a
-list of the widgets connected to a specific front end DAI so it
-can search through this list for available back end DAIs. The
-custom_stop_condition was added to is_connected_ep to facilitate this
-list not containing more widgets than is necessary. Doing so both
-speeds up the DPCM handling as less widgets need to be searched and
-avoids issues with CODEC to CODEC links as these would be confused
-with back end DAIs if they appeared in the list of available widgets.
+strncpy() does not ensure NULL-termination when the input string size
+equals to the destination buffer size IFNAMSIZ. The output string is
+passed to dev_info() which relies on the NULL-termination.
 
-custom_stop_condition was implemented by aborting the graph walk
-when the condition is triggered, however there is an issue with this
-approach. Whilst walking the graph is_connected_ep should update the
-endpoints cache on each widget, if the walk is aborted the number
-of attached end points is unknown for that sub-graph. When the stop
-condition triggered, the original patch ignored the triggering widget
-and returned zero connected end points; a later patch updated this
-to set the triggering widget's cache to 1 and return that. Both of
-these approaches result in inaccurate values being stored in various
-end point caches as the values propagate back through the graph,
-which can result in later issues with widgets powering/not powering
-unexpectedly.
+Use strlcpy() instead.
 
-As the original goal was to reduce the size of the widget list passed
-to the DPCM code, the simplest solution is to limit the functionality
-of the custom_stop_condition to the widget list. This means the rest
-of the graph will still be processed resulting in correct end point
-caches, but only widgets up to the stop condition will be added to the
-returned widget list.
+This issue is identified by a Coccinelle script.
 
-Fixes: 6742064aef7f ("ASoC: dapm: support user-defined stop condition in dai_get_connected_widgets")
-Fixes: 5fdd022c2026 ("ASoC: dpcm: play nice with CODEC<->CODEC links")
-Fixes: 09464974eaa8 ("ASoC: dapm: Fix to return correct path list in is_connected_ep.")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20190718084333.15598-1-ckeepax@opensource.cirrus.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-dapm.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/can/usb/peak_usb/pcan_usb_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index b4c8ba412a5c1..104d5f487c7d1 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -1152,8 +1152,8 @@ static __always_inline int is_connected_ep(struct snd_soc_dapm_widget *widget,
- 		list_add_tail(&widget->work_list, list);
+diff --git a/drivers/net/can/usb/peak_usb/pcan_usb_core.c b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
+index 740ef47eab017..43b0fa2b99322 100644
+--- a/drivers/net/can/usb/peak_usb/pcan_usb_core.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
+@@ -863,7 +863,7 @@ static void peak_usb_disconnect(struct usb_interface *intf)
  
- 	if (custom_stop_condition && custom_stop_condition(widget, dir)) {
--		widget->endpoints[dir] = 1;
--		return widget->endpoints[dir];
-+		list = NULL;
-+		custom_stop_condition = NULL;
- 	}
+ 		dev_prev_siblings = dev->prev_siblings;
+ 		dev->state &= ~PCAN_USB_STATE_CONNECTED;
+-		strncpy(name, netdev->name, IFNAMSIZ);
++		strlcpy(name, netdev->name, IFNAMSIZ);
  
- 	if ((widget->is_ep & SND_SOC_DAPM_DIR_TO_EP(dir)) && widget->connected) {
-@@ -1190,8 +1190,8 @@ static __always_inline int is_connected_ep(struct snd_soc_dapm_widget *widget,
-  *
-  * Optionally, can be supplied with a function acting as a stopping condition.
-  * This function takes the dapm widget currently being examined and the walk
-- * direction as an arguments, it should return true if the walk should be
-- * stopped and false otherwise.
-+ * direction as an arguments, it should return true if widgets from that point
-+ * in the graph onwards should not be added to the widget list.
-  */
- static int is_connected_output_ep(struct snd_soc_dapm_widget *widget,
- 	struct list_head *list,
+ 		unregister_netdev(netdev);
+ 
 -- 
 2.20.1
 
