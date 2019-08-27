@@ -2,113 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E99A9EA7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D29649EA8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 16:13:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729803AbfH0OLl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 10:11:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:57856 "EHLO mx1.redhat.com"
+        id S1730098AbfH0ON3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 10:13:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbfH0OLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 10:11:40 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729159AbfH0ON3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 10:13:29 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63E8118C892F;
-        Tue, 27 Aug 2019 14:11:40 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4D9555D712;
-        Tue, 27 Aug 2019 14:11:40 +0000 (UTC)
-Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 2AFAE18089C8;
-        Tue, 27 Aug 2019 14:11:40 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 10:11:39 -0400 (EDT)
-From:   Jan Stancek <jstancek@redhat.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     peterz@infradead.org, will@kernel.org, stable@vger.kernel.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>,
-        dbueso@suse.de, Ingo Molnar <mingo@kernel.org>,
-        Jan Stancek <jstancek@redhat.com>
-Message-ID: <396661303.8419298.1566915099958.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190826143114.23471-1-sashal@kernel.org>
-References: <20190826143114.23471-1-sashal@kernel.org>
-Subject: Re: [PATCH v5.2 1/2] locking/rwsem: Add missing ACQUIRE to
- read_slowpath exit when queue is empty
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CB52214DA;
+        Tue, 27 Aug 2019 14:13:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566915208;
+        bh=pl2trC3SUKLOMkiq8cJFVya7N1BiXPCf1NJhGvJLSMw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NBcLeWKjodp6DLvUNoe/GG4H9KDx7NsTp+DJ7tH/ydWrFedw9eck+AcxxEJbK+nDk
+         uEikpV6cGeBlB14TQPMBjzRXXPL1ki0eVbmOTI9WmOyFlsMkkN/C6O5dfciw4m7/qw
+         vVhaq7mVFhCnlTK277nOfy12FBpandzq+VL1mXY8=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     dinguyen@kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+        linux@armlinux.org.uk, frowand.list@gmail.com,
+        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, daniel.thompson@linaro.org,
+        linus.walleij@linaro.org, manivannan.sadhasivam@linaro.org,
+        linux-arm-kernel@lists.infradead.org, p.zabel@pengutronix.de
+Subject: [PATCHv6] drivers/amba: add reset control to amba bus probe
+Date:   Tue, 27 Aug 2019 09:11:53 -0500
+Message-Id: <20190827141153.20254-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.40.204.166, 10.4.195.12]
-Thread-Topic: locking/rwsem: Add missing ACQUIRE to read_slowpath exit when queue is empty
-Thread-Index: pM7Z1VrNvE4gMqpOiVyEBizAqOeMqQ==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.70]); Tue, 27 Aug 2019 14:11:40 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The primecell controller on some SoCs, i.e. SoCFPGA, is held in reset by
+default. Until recently, the DMA controller was brought out of reset by the
+bootloader(i.e. U-Boot). But a recent change in U-Boot, the peripherals
+that are not used are held in reset and are left to Linux to bring them
+out of reset.
 
------ Original Message -----
-> From: Jan Stancek <jstancek@redhat.com>
-> 
-> [ Upstream commit e1b98fa316648420d0434d9ff5b92ad6609ba6c3 ]
-> 
-> LTP mtest06 has been observed to occasionally hit "still mapped when
-> deleted" and following BUG_ON on arm64.
-> 
-> The extra mapcount originated from pagefault handler, which handled
-> pagefault for vma that has already been detached. vma is detached
-> under mmap_sem write lock by detach_vmas_to_be_unmapped(), which
-> also invalidates vmacache.
-> 
-> When the pagefault handler (under mmap_sem read lock) calls
-> find_vma(), vmacache_valid() wrongly reports vmacache as valid.
-> 
-> After rwsem down_read() returns via 'queue empty' path (as of v5.2),
-> it does so without an ACQUIRE on sem->count:
-> 
->   down_read()
->     __down_read()
->       rwsem_down_read_failed()
->         __rwsem_down_read_failed_common()
->           raw_spin_lock_irq(&sem->wait_lock);
->           if (list_empty(&sem->wait_list)) {
->             if (atomic_long_read(&sem->count) >= 0) {
->               raw_spin_unlock_irq(&sem->wait_lock);
->               return sem;
-> 
-> The problem can be reproduced by running LTP mtest06 in a loop and
-> building the kernel (-j $NCPUS) in parallel. It does reproduces since
-> v4.20 on arm64 HPE Apollo 70 (224 CPUs, 256GB RAM, 2 nodes). It
-> triggers reliably in about an hour.
-> 
-> The patched kernel ran fine for 10+ hours.
-> 
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Reviewed-by: Will Deacon <will@kernel.org>
-> Acked-by: Waiman Long <longman@redhat.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: dbueso@suse.de
-> Fixes: 4b486b535c33 ("locking/rwsem: Exit read lock slowpath if queue empty &
-> no writer")
-> Link:
-> https://lkml.kernel.org/r/50b8914e20d1d62bb2dee42d342836c2c16ebee7.1563438048.git.jstancek@redhat.com
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
-> 
-> This is a backport for the v5.2 stable tree. There were multiple reports
-> of this issue being hit.
-> 
-> Given that there were a few changes to the code around this, I'd
-> appreciate an ack before pulling it in.
+Add a mechanism for getting the reset property and de-assert the primecell
+module from reset if found. This is a not a hard fail if the reset properti
+is not present in the device tree node, so the driver will continue to
+probe.
 
-ACK, both look good to me.
-I also re-ran reproducer with this series applied on top of 5.2.10, it PASS-ed.
+Because there are different variants of the controller that may have
+multiple reset signals, the code will find all reset(s) specified and
+de-assert them.
 
-Thanks,
-Jan
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+v6: remove the need to reset_control_get_count as
+    of_reset_control_array_get_optional_shared is already doing that
+v5: use of_reset_control_array_get_optional_shared()
+v4: cleaned up indentation in loop
+    fix up a few checkpatch warnings
+    add Reviewed-by:
+v3: add a reset_control_put()
+    add error handling
+v2: move reset control to bus code
+    find all reset properties and de-assert them
+---
+ drivers/amba/bus.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+index 100e798a5c82..f39f075abff9 100644
+--- a/drivers/amba/bus.c
++++ b/drivers/amba/bus.c
+@@ -18,6 +18,7 @@
+ #include <linux/limits.h>
+ #include <linux/clk/clk-conf.h>
+ #include <linux/platform_device.h>
++#include <linux/reset.h>
+ 
+ #include <asm/irq.h>
+ 
+@@ -401,6 +402,19 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
+ 	ret = amba_get_enable_pclk(dev);
+ 	if (ret == 0) {
+ 		u32 pid, cid;
++		struct reset_control *rstc;
++
++		/*
++		 * Find reset control(s) of the amba bus and de-assert them.
++		 */
++		rstc = of_reset_control_array_get_optional_shared(dev->dev.of_node);
++		if (IS_ERR(rstc)) {
++			if (PTR_ERR(rstc) != -EPROBE_DEFER)
++				dev_err(&dev->dev, "Can't get amba reset!\n");
++			return PTR_ERR(rstc);
++		}
++		reset_control_deassert(rstc);
++		reset_control_put(rstc);
+ 
+ 		/*
+ 		 * Read pid and cid based on size of resource
+-- 
+2.20.0
+
