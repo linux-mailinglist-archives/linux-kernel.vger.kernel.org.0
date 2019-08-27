@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C92C79E13E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B956E9E1FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:17:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730182AbfH0IBi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:01:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57772 "EHLO mail.kernel.org"
+        id S1730153AbfH0Hys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:54:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731778AbfH0IBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:01:32 -0400
+        id S1730134AbfH0Hyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:54:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2481217F5;
-        Tue, 27 Aug 2019 08:01:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02C1B2173E;
+        Tue, 27 Aug 2019 07:54:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892891;
-        bh=+cU68XijqRIcgqLFvONk0csbOfLe3BkLdpISFbp4skI=;
+        s=default; t=1566892483;
+        bh=fqxq6ETiBZdsvCAhwofkUWVdIzRN71nf0SFBLf8xv38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HkdNPcDKfBt+8vIfzqqCdrgamY1oIGgxd78wrx7DD3NcfUTyxe+0VUyGAFe2JjgGK
-         hr3JkymwSIqk+xli1YILal8CgwflkxPLKBjoOPiP7dS9LM8Fu+3QE5Ej7gPH7eIswF
-         OjJfY2rdIzkyV180IPrSgytu8PgC8QDDVhLjLzBM=
+        b=JuX1q6MY9GEfjbkc3g4qO2KMAWjue9VutdlBZDdTwGpOiSYpQYjTTz0baM5qDH9/L
+         2tE5/aQmpEE1F4Nk8uqFsbv9ucFowVNN/SDn5kPhkaYknN0NiaNtDflozoKg0XJ6z8
+         HMvSueGrnQufn4rBgHwPk2lOuq0tiN7JIgMAFa90=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 049/162] net: stmmac: manage errors returned by of_get_mac_address()
-Date:   Tue, 27 Aug 2019 09:49:37 +0200
-Message-Id: <20190827072739.930021590@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Trukhanov <lahvuun@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 01/98] HID: Add 044f:b320 ThrustMaster, Inc. 2 in 1 DT
+Date:   Tue, 27 Aug 2019 09:49:40 +0200
+Message-Id: <20190827072718.192470316@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
-References: <20190827072738.093683223@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,47 +45,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 195b2919ccd7ffcaf6b6bbcb39444a53ab8308c7 ]
+[ Upstream commit 65f11c72780fa9d598df88def045ccb6a885cf80 ]
 
-Commit d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
-added support for reading the MAC address from an nvmem-cell. This
-required changing the logic to return an error pointer upon failure.
+Enable force feedback for the Thrustmaster Dual Trigger 2 in 1 Rumble Force
+gamepad. Compared to other Thrustmaster devices, left and right rumble
+motors here are swapped.
 
-If stmmac is loaded before the nvmem provider driver then
-of_get_mac_address() return an error pointer with -EPROBE_DEFER.
-
-Propagate this error so the stmmac driver will be probed again after the
-nvmem provider driver is loaded.
-Default to a random generated MAC address in case of any other error,
-instead of using the error pointer as MAC address.
-
-Fixes: d01f449c008a ("of_net: add NVMEM support to of_get_mac_address")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Ilya Trukhanov <lahvuun@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/hid/hid-tmff.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 0f0f4b31eb7ec..9b5218a8c15bc 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -385,6 +385,13 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
- 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/hid/hid-tmff.c b/drivers/hid/hid-tmff.c
+index bea8def64f437..30b8c3256c991 100644
+--- a/drivers/hid/hid-tmff.c
++++ b/drivers/hid/hid-tmff.c
+@@ -34,6 +34,8 @@
  
- 	*mac = of_get_mac_address(np);
-+	if (IS_ERR(*mac)) {
-+		if (PTR_ERR(*mac) == -EPROBE_DEFER)
-+			return ERR_CAST(*mac);
-+
-+		*mac = NULL;
-+	}
-+
- 	plat->interface = of_get_phy_mode(np);
+ #include "hid-ids.h"
  
- 	/* Get max speed of operation from device tree */
++#define THRUSTMASTER_DEVICE_ID_2_IN_1_DT	0xb320
++
+ static const signed short ff_rumble[] = {
+ 	FF_RUMBLE,
+ 	-1
+@@ -88,6 +90,7 @@ static int tmff_play(struct input_dev *dev, void *data,
+ 	struct hid_field *ff_field = tmff->ff_field;
+ 	int x, y;
+ 	int left, right;	/* Rumbling */
++	int motor_swap;
+ 
+ 	switch (effect->type) {
+ 	case FF_CONSTANT:
+@@ -112,6 +115,13 @@ static int tmff_play(struct input_dev *dev, void *data,
+ 					ff_field->logical_minimum,
+ 					ff_field->logical_maximum);
+ 
++		/* 2-in-1 strong motor is left */
++		if (hid->product == THRUSTMASTER_DEVICE_ID_2_IN_1_DT) {
++			motor_swap = left;
++			left = right;
++			right = motor_swap;
++		}
++
+ 		dbg_hid("(left,right)=(%08x, %08x)\n", left, right);
+ 		ff_field->value[0] = left;
+ 		ff_field->value[1] = right;
+@@ -238,6 +248,8 @@ static const struct hid_device_id tm_devices[] = {
+ 		.driver_data = (unsigned long)ff_rumble },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb304),   /* FireStorm Dual Power 2 (and 3) */
+ 		.driver_data = (unsigned long)ff_rumble },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, THRUSTMASTER_DEVICE_ID_2_IN_1_DT),   /* Dual Trigger 2-in-1 */
++		.driver_data = (unsigned long)ff_rumble },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb323),   /* Dual Trigger 3-in-1 (PC Mode) */
+ 		.driver_data = (unsigned long)ff_rumble },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb324),   /* Dual Trigger 3-in-1 (PS3 Mode) */
 -- 
 2.20.1
 
