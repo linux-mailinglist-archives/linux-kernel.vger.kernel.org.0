@@ -2,98 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DFCD9F570
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:44:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 050689F577
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 23:46:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726474AbfH0Voq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 17:44:46 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:3554 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725835AbfH0Vof (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 17:44:35 -0400
-Received: from pps.filterd (m0134422.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7RLaua4024670;
-        Tue, 27 Aug 2019 21:44:29 GMT
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2umx0s71tb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Aug 2019 21:44:28 +0000
-Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
-        by g9t5008.houston.hpe.com (Postfix) with ESMTP id 0B18F57;
-        Tue, 27 Aug 2019 21:44:28 +0000 (UTC)
-Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-        id CA139201564D7; Tue, 27 Aug 2019 16:44:27 -0500 (CDT)
-From:   Kyle Meyer <meyerk@hpe.com>
-Cc:     Kyle Meyer <meyerk@hpe.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        id S1726603AbfH0Vpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 17:45:46 -0400
+Received: from mga17.intel.com ([192.55.52.151]:33535 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725804AbfH0Vpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 17:45:46 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 14:45:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,438,1559545200"; 
+   d="scan'208";a="209903706"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by fmsmga002.fm.intel.com with ESMTP; 27 Aug 2019 14:45:45 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id C2D09301872; Tue, 27 Aug 2019 14:45:45 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 14:45:45 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH v4 7/7] perf/lib/cpumap: Warn when exceeding MAX_NR_CPUS
-Date:   Tue, 27 Aug 2019 16:43:52 -0500
-Message-Id: <20190827214352.94272-8-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20190827214352.94272-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190827214352.94272-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
- definitions=2019-08-27_04:2019-08-27,2019-08-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- priorityscore=1501 adultscore=0 mlxlogscore=999 impostorscore=0
- spamscore=0 bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1908270202
-To:     unlisted-recipients:; (no To-header on input)
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>
+Subject: Re: [tip: perf/core] perf script: Fix memory leaks in list_scripts()
+Message-ID: <20190827214545.GM5447@tassilo.jf.intel.com>
+References: <20190408162748.GA21008@embeddedor>
+ <156689437793.24518.1210962260082729908.tip-bot2@tip-bot2>
+ <b660a320-6b32-cc24-d829-1527dfc16e5d@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b660a320-6b32-cc24-d829-1527dfc16e5d@embeddedor.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Display a warning when attempting to profile more than MAX_NR_CPU CPUs.
-This patch should not change any behavior.
+> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> This should be tagged for stable:
+> 
+> Cc: stable@vger.kernel.org
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
----
- tools/perf/lib/cpumap.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+It's a theoretical problem (which are explicitely ruled out by stable rules)
+because if you ever see user space malloc() returning NULL the system is likely
+already randomly killing your processes in OOM, including eventually perf.
 
-diff --git a/tools/perf/lib/cpumap.c b/tools/perf/lib/cpumap.c
-index 2834753576b2..1f0e6f334237 100644
---- a/tools/perf/lib/cpumap.c
-+++ b/tools/perf/lib/cpumap.c
-@@ -100,6 +100,9 @@ struct perf_cpu_map *perf_cpu_map__read(FILE *file)
- 		if (prev >= 0) {
- 			int new_max = nr_cpus + cpu - prev - 1;
- 
-+			WARN_ONCE(new_max >= MAX_NR_CPUS, "Perf can support %d CPUs. "
-+							  "Consider raising MAX_NR_CPUS\n", MAX_NR_CPUS);
-+
- 			if (new_max >= max_entries) {
- 				max_entries = new_max + MAX_NR_CPUS / 2;
- 				tmp = realloc(tmp_cpus, max_entries * sizeof(int));
-@@ -192,6 +195,9 @@ struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list)
- 			end_cpu = start_cpu;
- 		}
- 
-+		WARN_ONCE(end_cpu >= MAX_NR_CPUS, "Perf can support %d CPUs. "
-+						  "Consider raising MAX_NR_CPUS\n", MAX_NR_CPUS);
-+
- 		for (; start_cpu <= end_cpu; start_cpu++) {
- 			/* check for duplicates */
- 			for (i = 0; i < nr_cpus; i++)
--- 
-2.12.3
+I can see the value of shutting up coverity though, but that's not something
+that needs to be in stable.
 
+-Andi
