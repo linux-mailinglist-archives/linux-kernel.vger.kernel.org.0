@@ -2,115 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DDFC9DF59
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BD7E9DF60
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbfH0Hxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:53:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49970 "EHLO mx1.redhat.com"
+        id S1729867AbfH0Hxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:53:44 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:45502 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729149AbfH0Hx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:53:29 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729852AbfH0Hxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:53:41 -0400
+Received: from zn.tnic (p200300EC2F0CD000E4ECF72BFDD79A39.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:d000:e4ec:f72b:fdd7:9a39])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5B6E43082E25;
-        Tue, 27 Aug 2019 07:53:29 +0000 (UTC)
-Received: from [10.36.116.105] (ovpn-116-105.ams2.redhat.com [10.36.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B010C600D1;
-        Tue, 27 Aug 2019 07:53:25 +0000 (UTC)
-Subject: Re: [PATCH] KVM: arm/arm64: vgic: Use a single IO device per
- redistributor
-To:     Zenghui Yu <yuzenghui@huawei.com>, eric.auger.pro@gmail.com,
-        maz@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu
-Cc:     zhang.zhanghailiang@huawei.com, wanghaibin.wang@huawei.com,
-        james.morse@arm.com, qemu-arm@nongnu.org,
-        julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com,
-        peter.maydell@linaro.org, andre.przywara@arm.com
-References: <20190823173330.23342-1-eric.auger@redhat.com>
- <f5b47614-de48-f3cb-0e6f-8a667cb951c0@redhat.com>
- <5cdcfe9e-98d8-454e-48e7-992fe3ee5eae@huawei.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <ccb49856-f958-8bea-4b27-9a808415c43d@redhat.com>
-Date:   Tue, 27 Aug 2019 09:53:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 567081EC0965;
+        Tue, 27 Aug 2019 09:53:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1566892420;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=8p1J/zPTLAzb8JP6Pzlpwjulw1RiTNpv98AQ/qRNp1A=;
+        b=Ek/6sU/qfsfjFwI81AIhXWbsw/CibP44YJzq3iiM1ULP96lzq9ngzBvVpHQTgKxXWya37u
+        +RE51/ByIrjJHM/272sv7weTWlIICuu1CW6Nt1QnXcH9T3BwNNTMAwROMtzbS7e4mEuEjz
+        xv0kJO1hEwG0Dod9hcyOj4NN1XV6GmQ=
+Date:   Tue, 27 Aug 2019 09:53:36 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Lei Wang <leiwang_git@outlook.com>
+Cc:     "james.morse@arm.com" <james.morse@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "hangl@microsoft.com" <hangl@microsoft.com>,
+        "lewan@microsoft.com" <lewan@microsoft.com>,
+        "ruizhao@microsoft.com" <ruizhao@microsoft.com>,
+        "scott.branden@broadcom.com" <scott.branden@broadcom.com>,
+        "yuqing.shen@broadcom.com" <yuqing.shen@broadcom.com>,
+        "ray.jui@broadcom.com" <ray.jui@broadcom.com>
+Subject: Re: [PATCH v5 2/2] EDAC: add EDAC driver for DMC520
+Message-ID: <20190827075336.GB29752@zn.tnic>
+References: <BN6PR04MB1107CE3C2D666A806E62851B86C10@BN6PR04MB1107.namprd04.prod.outlook.com>
+ <20190807144016.GA24328@zn.tnic>
+ <BY5PR04MB659914AC91EBB3EAF72977BD86D20@BY5PR04MB6599.namprd04.prod.outlook.com>
+ <20190819093147.GE4841@zn.tnic>
+ <BY5PR04MB65996BD47D541327F8F1BE4A86A00@BY5PR04MB6599.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-In-Reply-To: <5cdcfe9e-98d8-454e-48e7-992fe3ee5eae@huawei.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 27 Aug 2019 07:53:29 +0000 (UTC)
+Content-Disposition: inline
+In-Reply-To: <BY5PR04MB65996BD47D541327F8F1BE4A86A00@BY5PR04MB6599.namprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zenghui,
-On 8/27/19 9:49 AM, Zenghui Yu wrote:
-> Hi Eric,
-> 
-> Thanks for this patch!
-> 
-> On 2019/8/24 1:52, Auger Eric wrote:
->> Hi Zenghui, Marc,
->>
->> On 8/23/19 7:33 PM, Eric Auger wrote:
->>> At the moment we use 2 IO devices per GICv3 redistributor: one
->                                                              ^^^
->>> one for the RD_base frame and one for the SGI_base frame.
->   ^^^
->>>
->>> Instead we can use a single IO device per redistributor (the 2
->>> frames are contiguous). This saves slots on the KVM_MMIO_BUS
->>> which is currently limited to NR_IOBUS_DEVS (1000).
->>>
->>> This change allows to instantiate up to 512 redistributors and may
->>> speed the guest boot with a large number of VCPUs.
->>>
->>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>
->> I tested this patch with below kernel and QEMU branches:
->> kernel: https://github.com/eauger/linux/tree/256fix-v1
->> (Marc's patch + this patch)
->> https://github.com/eauger/qemu/tree/v4.1.0-256fix-rfc1-rc0
->> (header update + kvm_arm_gic_set_irq modification)
-> 
-> I also tested these three changes on HiSi D05 (with 64 pcpus), and yes,
-> I can get a 512U guest to boot properly now.
+On Tue, Aug 27, 2019 at 01:49:29AM +0000, Lei Wang wrote:
+> Yes, this is to help open source developers who potentially might want 
+> to expand this driver, most likely colleagues, and possibly other 
+> developers.
 
-Many thanks for the testing (and the bug report). I will formally post
-the QEMU changes asap.
+Then please put that info in the comment at the beginning of the driver
+- not some random single sentences about what can be done, interspersed
+throughout the code. It needs to be visible at a first glance.
 
-Thanks
+Also, if you want this to be a longer doc, I wouldn't mind at all having
+it in Documentation/edac/ (which doesn't exist yet) and then point
+people to it from the comment at the beginning of the driver.
 
-Eric
-> 
-> Tested-by: Zenghui Yu <yuzenghui@huawei.com>
-> 
->> On a machine with 224 pcpus, I was able to boot a 512 vcpu guest.
->>
->> As expected, qemu outputs warnings:
->>
->> qemu-system-aarch64: warning: Number of SMP cpus requested (512) exceeds
->> the recommended cpus supported by KVM (224)
->> qemu-system-aarch64: warning: Number of hotpluggable cpus requested
->> (512) exceeds the recommended cpus supported by KVM (224)
->>
->> on the guest: getconf _NPROCESSORS_ONLN returns 512
->>
->> Then I have no clue about what can be expected of such overcommit config
->> and I have not further exercised the guest at the moment. But at least
->> it seems to boot properly. I also tested without overcommit and it seems
->> to behave as before (boot, migration).
->>
->> I still need to look at the migration of > 256vcpu guest at qemu level.
-> 
-> Let us know if further tests are needed.
-> 
-> 
-> Thanks,
-> zenghui
-> 
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
