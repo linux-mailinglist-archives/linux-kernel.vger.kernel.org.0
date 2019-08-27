@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AEB29E28E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D6F9E283
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbfH0I1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:27:50 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42816 "EHLO
+        id S1730730AbfH0I12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:27:28 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42840 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729879AbfH0I0a (ORCPT
+        with ESMTP id S1729962AbfH0I0d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:26:30 -0400
+        Tue, 27 Aug 2019 04:26:33 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2Wo1-0007rF-Rh; Tue, 27 Aug 2019 10:26:21 +0200
+        id 1i2Wo4-0007rK-8k; Tue, 27 Aug 2019 10:26:24 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 7AECD1C0DDF;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DCB4F1C0DDE;
         Tue, 27 Aug 2019 10:26:18 +0200 (CEST)
 Date:   Tue, 27 Aug 2019 08:26:18 -0000
 From:   tip-bot2 for Jiri Olsa <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] libperf: Add PERF_RECORD_MMAP 'struct mmap_event' to
- perf/event.h
+Subject: [tip: perf/core] libperf: Add PERF_RECORD_MMAP2 'struct mmap2_event'
+ to perf/event.h
 Cc:     Jiri Olsa <jolsa@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Michael Petlan <mpetlan@redhat.com>,
@@ -34,10 +34,10 @@ Cc:     Jiri Olsa <jolsa@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190825181752.722-2-jolsa@kernel.org>
-References: <20190825181752.722-2-jolsa@kernel.org>
+In-Reply-To: <tip-ufs9ityr5w2xqwtd5w3p6dm4@git.kernel.org>
+References: <tip-ufs9ityr5w2xqwtd5w3p6dm4@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <156689437839.24521.1370616781309040716.tip-bot2@tip-bot2>
+Message-ID: <156689437883.24524.6580405927842192764.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,23 +54,23 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     1345e2ee87a83c758f336f03f7fb305bc5e24490
-Gitweb:        https://git.kernel.org/tip/1345e2ee87a83c758f336f03f7fb305bc5e24490
+Commit-ID:     b66ced19c9f64dbe707cf318fae9fca82b999564
+Gitweb:        https://git.kernel.org/tip/b66ced19c9f64dbe707cf318fae9fca82b999564
 Author:        Jiri Olsa <jolsa@kernel.org>
-AuthorDate:    Sun, 25 Aug 2019 20:17:41 +02:00
+AuthorDate:    Sun, 25 Aug 2019 20:17:42 +02:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Mon, 26 Aug 2019 19:38:04 -03:00
+CommitterDate: Mon, 26 Aug 2019 19:39:09 -03:00
 
-libperf: Add PERF_RECORD_MMAP 'struct mmap_event' to perf/event.h
+libperf: Add PERF_RECORD_MMAP2 'struct mmap2_event' to perf/event.h
 
-Move the mmap_event event definition to libperf's event.h header
+Moving mmap2_event event definition into libperf's event.h header
 include.
 
 In order to keep libperf simple, we switch 'u64/u32/u16/u8' types used
 events to their generic '__u*' versions.
 
-Perf added 'u*' types mainly to ease up printing __u64 values as stated
-in the linux/types.h comment:
+Perf added 'u*' types mainly to ease up printing __u64 values
+as stated in the linux/types.h comment:
 
   /*
    * We define u64 as uint64_t for every architecture
@@ -80,117 +80,94 @@ in the linux/types.h comment:
    * typedef __s64 s64;
    */
 
-Add  and use new PRI_lu64 and PRI_lx64 macros for that.  Use extra '_'
-to ease up reading and differentiate them from standard PRI*64 macros.
-
-Committer notes:
-
-Fixup the PRI_l[ux]64 macros on 32-bit arches, conditionally defining it
-with that extra 'l' modifier only on arches where __u64 is long long,
-leaving it aside on 32-bit arches.
+Adding and using new PRI_lu64 and PRI_lx64 macros to be used for
+that.  Using extra '_' to ease up the reading and differentiate
+them from standard PRI*64 macros.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190825181752.722-2-jolsa@kernel.org
+Link: https://lkml.kernel.org/n/tip-ufs9ityr5w2xqwtd5w3p6dm4@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/include/perf/event.h | 18 ++++++++++++++++++
- tools/perf/util/event.c             |  2 +-
- tools/perf/util/event.h             | 22 ++++++++++++++--------
- tools/perf/util/python.c            |  4 ++--
- 4 files changed, 35 insertions(+), 11 deletions(-)
- create mode 100644 tools/perf/lib/include/perf/event.h
+ tools/perf/lib/include/perf/event.h | 15 +++++++++++++++
+ tools/perf/util/event.c             |  6 +++---
+ tools/perf/util/event.h             | 15 ---------------
+ 3 files changed, 18 insertions(+), 18 deletions(-)
 
 diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-new file mode 100644
-index 0000000..13fe15a
---- /dev/null
+index 13fe15a..c82e0c2 100644
+--- a/tools/perf/lib/include/perf/event.h
 +++ b/tools/perf/lib/include/perf/event.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LIBPERF_EVENT_H
-+#define __LIBPERF_EVENT_H
-+
-+#include <linux/perf_event.h>
-+#include <linux/types.h>
-+#include <linux/limits.h>
-+
-+struct mmap_event {
+@@ -15,4 +15,19 @@ struct mmap_event {
+ 	char			 filename[PATH_MAX];
+ };
+ 
++struct mmap2_event {
 +	struct perf_event_header header;
 +	__u32			 pid, tid;
 +	__u64			 start;
 +	__u64			 len;
 +	__u64			 pgoff;
++	__u32			 maj;
++	__u32			 min;
++	__u64			 ino;
++	__u64			 ino_generation;
++	__u32			 prot;
++	__u32			 flags;
 +	char			 filename[PATH_MAX];
 +};
 +
-+#endif /* __LIBPERF_EVENT_H */
+ #endif /* __LIBPERF_EVENT_H */
 diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index 332edef..43c8625 100644
+index 43c8625..0954f98 100644
 --- a/tools/perf/util/event.c
 +++ b/tools/perf/util/event.c
-@@ -1353,7 +1353,7 @@ int perf_event__process_bpf_event(struct perf_tool *tool __maybe_unused,
+@@ -387,7 +387,7 @@ int perf_event__synthesize_mmap_events(struct perf_tool *tool,
+ 		strcpy(execname, "");
  
- size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
+ 		/* 00400000-0040c000 r-xp 00000000 fd:01 41038  /bin/cat */
+-		n = sscanf(bf, "%"PRIx64"-%"PRIx64" %s %"PRIx64" %x:%x %u %[^\n]\n",
++		n = sscanf(bf, "%"PRI_lx64"-%"PRI_lx64" %s %"PRI_lx64" %x:%x %u %[^\n]\n",
+ 		       &event->mmap2.start, &event->mmap2.len, prot,
+ 		       &event->mmap2.pgoff, &event->mmap2.maj,
+ 		       &event->mmap2.min,
+@@ -1362,8 +1362,8 @@ size_t perf_event__fprintf_mmap(union perf_event *event, FILE *fp)
+ 
+ size_t perf_event__fprintf_mmap2(union perf_event *event, FILE *fp)
  {
--	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64 "]: %c %s\n",
-+	return fprintf(fp, " %d/%d: [%#" PRI_lx64 "(%#" PRI_lx64 ") @ %#" PRI_lx64 "]: %c %s\n",
- 		       event->mmap.pid, event->mmap.tid, event->mmap.start,
- 		       event->mmap.len, event->mmap.pgoff,
- 		       (event->header.misc & PERF_RECORD_MISC_MMAP_DATA) ? 'r' : 'x',
+-	return fprintf(fp, " %d/%d: [%#" PRIx64 "(%#" PRIx64 ") @ %#" PRIx64
+-			   " %02x:%02x %"PRIu64" %"PRIu64"]: %c%c%c%c %s\n",
++	return fprintf(fp, " %d/%d: [%#" PRI_lx64 "(%#" PRI_lx64 ") @ %#" PRI_lx64
++			   " %02x:%02x %"PRI_lu64" %"PRI_lu64"]: %c%c%c%c %s\n",
+ 		       event->mmap2.pid, event->mmap2.tid, event->mmap2.start,
+ 		       event->mmap2.len, event->mmap2.pgoff, event->mmap2.maj,
+ 		       event->mmap2.min, event->mmap2.ino,
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 0e164e8..f43eff2 100644
+index f43eff2..af252be 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -7,19 +7,25 @@
- #include <linux/kernel.h>
- #include <linux/bpf.h>
- #include <linux/perf_event.h>
-+#include <perf/event.h>
+@@ -27,21 +27,6 @@
+ #define PRI_lx64 PRIx64
+ #endif
  
- #include "../perf.h"
- #include "build-id.h"
- #include "perf_regs.h"
- 
--struct mmap_event {
+-struct mmap2_event {
 -	struct perf_event_header header;
 -	u32 pid, tid;
 -	u64 start;
 -	u64 len;
 -	u64 pgoff;
+-	u32 maj;
+-	u32 min;
+-	u64 ino;
+-	u64 ino_generation;
+-	u32 prot;
+-	u32 flags;
 -	char filename[PATH_MAX];
 -};
-+#ifdef __LP64__
-+/*
-+ * /usr/include/inttypes.h uses just 'lu' for PRIu64, but we end up defining
-+ * __u64 as long long unsigned int, and then -Werror=format= kicks in and
-+ * complains of the mismatched types, so use these two special extra PRI
-+ * macros to overcome that.
-+ */
-+#define PRI_lu64 "l" PRIu64
-+#define PRI_lx64 "l" PRIx64
-+#else
-+#define PRI_lu64 PRIu64
-+#define PRI_lx64 PRIx64
-+#endif
- 
- struct mmap2_event {
+-
+ struct comm_event {
  	struct perf_event_header header;
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 75ecc32..55ff0c3 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -130,8 +130,8 @@ static PyObject *pyrf_mmap_event__repr(struct pyrf_event *pevent)
- 	PyObject *ret;
- 	char *s;
- 
--	if (asprintf(&s, "{ type: mmap, pid: %u, tid: %u, start: %#" PRIx64 ", "
--			 "length: %#" PRIx64 ", offset: %#" PRIx64 ", "
-+	if (asprintf(&s, "{ type: mmap, pid: %u, tid: %u, start: %#" PRI_lx64 ", "
-+			 "length: %#" PRI_lx64 ", offset: %#" PRI_lx64 ", "
- 			 "filename: %s }",
- 		     pevent->event.mmap.pid, pevent->event.mmap.tid,
- 		     pevent->event.mmap.start, pevent->event.mmap.len,
+ 	u32 pid, tid;
