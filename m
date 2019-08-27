@@ -2,103 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 070D19F02D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:31:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76B3C9F032
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730213AbfH0Qbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:31:43 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:40221 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbfH0Qbm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:31:42 -0400
-X-Originating-IP: 86.207.98.53
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id CFBC124000E;
-        Tue, 27 Aug 2019 16:31:37 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 18:31:34 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Karel Zak <kzak@redhat.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Alistair Francis <alistair.francis@wdc.com>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: New kernel interface for sys_tz and timewarp?
-Message-ID: <20190827163134.GC21922@piout.net>
-References: <CAK8P3a0VxM1BkjY1D2FfHi6L-ho_NH3v3+gBu45EfpjLF5NU5w@mail.gmail.com>
- <CAHk-=wiO2CWONDBud4nxoPgUJN1JEewFWhHa5wAqY8G5rrTXRQ@mail.gmail.com>
- <20190814000622.GB20365@mit.edu>
- <CAK8P3a1CXRETxn6Gh_cOxM3rZ-wUwVDu-7=yEwjqOY=uEdC6OQ@mail.gmail.com>
- <20190814090936.GB10516@gardel-login>
- <20190814093208.GG3600@piout.net>
- <20190819110903.if3dzhvfnlqutn6s@ws.net.home>
- <20190820185830.GQ3545@piout.net>
- <CAK8P3a0EiP-LsKp1nFHgeRF09tQ0+5kPQd9JXBEKc1is30x3SA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0EiP-LsKp1nFHgeRF09tQ0+5kPQd9JXBEKc1is30x3SA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1730313AbfH0Qcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:32:31 -0400
+Received: from foss.arm.com ([217.140.110.172]:47544 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727138AbfH0Qcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 12:32:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8CE42337;
+        Tue, 27 Aug 2019 09:32:30 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 51CAB3F59C;
+        Tue, 27 Aug 2019 09:32:29 -0700 (PDT)
+From:   Will Deacon <will@kernel.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Will Deacon <will@kernel.org>, Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Elena Reshetova <elena.reshetova@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        Jan Glauber <jglauber@marvell.com>
+Subject: [PATCH v2 0/6] Rework REFCOUNT_FULL using atomic_fetch_* operations
+Date:   Tue, 27 Aug 2019 17:31:58 +0100
+Message-Id: <20190827163204.29903-1-will@kernel.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 27/08/2019 18:27:32+0200, Arnd Bergmann wrote:
-> On Tue, Aug 20, 2019 at 8:58 PM Alexandre Belloni
-> <alexandre.belloni@bootlin.com> wrote:
-> >
-> > On 19/08/2019 13:09:03+0200, Karel Zak wrote:
-> > > On Wed, Aug 14, 2019 at 11:32:08AM +0200, Alexandre Belloni wrote:
-> > > > On 14/08/2019 11:09:36+0200, Lennart Poettering wrote:
-> > > > > On Mi, 14.08.19 10:31, Arnd Bergmann (arnd@arndb.de) wrote:
-> > > > >
-> > > > > > - glibc stops passing the caller timezone argument to the kernel
-> > > > > > - the distro kernel disables CONFIG_RTC_HCTOSYS,
-> > > > > >   CONFIG_RTC_SYSTOHC  and CONFIG_GENERIC_CMOS_UPDATE
-> > > > >
-> > > > > What's the benefit of letting userspace do this? It sounds a lot more
-> > > > > fragile to leave this syncing to userspace if the kernel can do this
-> > > > > trivially on its own.
-> > >
-> > > Good point, why CONFIG_RTC_SYSTOHC has been added to the kernel?
-> > >
-> > > If I good remember than it's because synchronize userspace hwclock
-> > > with rtc is pretty fragile and frustrating. We have improved this
-> > > hwclock code many times and it will never be perfect. See for example
-> > > hwclock --delay= option, sometimes hwclock has no clue about RTC behaviour.
-> > >
-> >
-> > With a bit of care, we can reliably set the rtc to the system time from
-> > userspace. It takes a bit of time (up to 2 seconds) but it can be
-> > reliably set with an accuracy of a few ms on a slow system and an rtc on
-> > a slow bus or a few ns with a fast system and a fast bus.
-> > I know I did say I would implement it in hwclock and I still didn't
-> > (sorry) but we could do better than the --delay option.
-> 
-> Would you use the regular RTC_SET_TIME ioctl for that, or
-> add a new RTC_SYS_TO_HC command that takes an explicit
-> offset? It sounds to me that the synchronization bit (actually
-> waiting for the right moment to update the rtc registers) is better
-> done in the kernel, while the decision about the offset and when
-> to call into the driver is better done in user space.
-> 
+Hi all,
 
-The existing ioctls are fine to do that, see:
-https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/rtc-tools.git/tree/rtc-sync.c
+This is version two of the patches I previously posted here:
+
+  https://lkml.kernel.org/r/20190802101000.12958-1-will@kernel.org
+
+Changes since v1 include:
+
+  * Avoid duplicate WARNs when incrementing from zero
+  * Some crude lktdm perf results to motivate the change:
+
+    # perf stat -r 3 -B -- echo {ATOMIC,REFCOUNT}_TIMING >/sys/kernel/debug/provoke-crash/DIRECT
+
+    # arm64
+    ATOMIC_TIMING:					46.50451 +- 0.00134 seconds time elapsed  ( +-  0.00% )
+    REFCOUNT_TIMING (REFCOUNT_FULL, mainline):		77.57522 +- 0.00982 seconds time elapsed  ( +-  0.01% )
+    REFCOUNT_TIMING (REFCOUNT_FULL, this series):	48.7181 +- 0.0256 seconds time elapsed  ( +-  0.05% )
+
+    # x86
+    ATOMIC_TIMING:					31.6225 +- 0.0776 seconds time elapsed  ( +-  0.25% )
+    REFCOUNT_TIMING (!REFCOUNT_FULL, mainline/x86 asm): 31.6689 +- 0.0901 seconds time elapsed  ( +-  0.28% )
+    REFCOUNT_TIMING (REFCOUNT_FULL, mainline):		53.203 +- 0.138 seconds time elapsed  ( +-  0.26% )
+    REFCOUNT_TIMING (REFCOUNT_FULL, this series):	31.7408 +- 0.0486 seconds time elapsed  ( +-  0.15% )
+
+Cheers,
+
+Will
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Elena Reshetova <elena.reshetova@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Hanjun Guo <guohanjun@huawei.com>
+Cc: Jan Glauber <jglauber@marvell.com>
+
+--->8
+
+Will Deacon (6):
+  lib/refcount: Define constants for saturation and max refcount values
+  lib/refcount: Ensure integer operands are treated as signed
+  lib/refcount: Remove unused refcount_*_checked() variants
+  lib/refcount: Move bulk of REFCOUNT_FULL implementation into header
+  lib/refcount: Improve performance of generic REFCOUNT_FULL code
+  lib/refcount: Consolidate REFCOUNT_{MAX,SATURATED} definitions
+
+ drivers/misc/lkdtm/refcount.c |   8 --
+ include/linux/refcount.h      | 236 +++++++++++++++++++++++++++++++++++++----
+ lib/refcount.c                | 237 +-----------------------------------------
+ 3 files changed, 218 insertions(+), 263 deletions(-)
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.11.0
+
