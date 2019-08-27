@@ -2,110 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E66E09EFDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 051749EFCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 18:11:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbfH0QNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 12:13:25 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:34982 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726539AbfH0QNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 12:13:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=EUdcOXqzDMg/BPMZ+mHA3Lf8aib/qAEj7QKintG8i1o=; b=zoV9sB08UoCM+TTqsh2QC+T5y+
-        lZz1Ib+zNYLNZRXVPOm2DbrZuZSMep/zbGNMPAsR7DBWL3PjE0xYRuVSiCMWWrT9paWu+58hqLWYK
-        BeT4BvV4LrCDclJaiVCpjNqloDVf7Yaooj0FbOSeQq/jYcfdbQfLo98KAgBObxacyNmk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1i2dig-0004bz-PJ; Tue, 27 Aug 2019 17:49:18 +0200
-Date:   Tue, 27 Aug 2019 17:49:18 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     "Voon, Weifeng" <weifeng.voon@intel.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "Ong, Boon Leong" <boon.leong.ong@intel.com>
-Subject: Re: [PATCH v1 net-next] net: phy: mdio_bus: make mdiobus_scan also
- cover PHY that only talks C45
-Message-ID: <20190827154918.GO2168@lunn.ch>
-References: <1566870769-9967-1-git-send-email-weifeng.voon@intel.com>
- <e9ece5ad-a669-6d6b-d050-c633cad15476@gmail.com>
- <20190826185418.GG2168@lunn.ch>
- <D6759987A7968C4889FDA6FA91D5CBC814758ED8@PGSMSX103.gar.corp.intel.com>
+        id S1729903AbfH0QK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 12:10:58 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38469 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726420AbfH0QK5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 12:10:57 -0400
+Received: by mail-io1-f67.google.com with SMTP id p12so47639303iog.5
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 09:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wAZSFhrkNg8EdOkX7+bIojO3qOZTJEurdw0nzGyP6oc=;
+        b=c7Qmh9V0mJfsmJ0EtwOBmGCFdov/0upZx5p7QsvvjmGhxRJqV+e8Z3ZHDER41CuEts
+         K9cPQ1cOAheQbiqZ2SmTXQ1ZGiBiSjya9NaJFFWjm/BXZM++XyBrYhgHB5v1k5v2rd8e
+         EAgsk1PetLvEQljYTJ1wKgeWp/Rr+wCQvCS20bG9aYWDplPJq+R6g3sqy/l0AmyBoSso
+         f5VcH+pNgnuxyy9+HJXmprUUDNDHbFzyQ3WeemOF5F5fYMTMwHeB/sbcNgkq6WDiCtf+
+         yWdYD1L2ttJF8xjf2NNWIWCP/dzG/kIBLeUXWrR/aCXcTjQDkKfJ1eSIKLOvamky62TS
+         rvHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wAZSFhrkNg8EdOkX7+bIojO3qOZTJEurdw0nzGyP6oc=;
+        b=J1bnYPNaonLbUXOfrXNhwMTJIUQO7UQT59kwPIj0hB7cDCKtJsMIIQxs9kCNJPXkmK
+         iL0pi+TS+d+kJ6zDmBBDLJ2ExHNhsu29W/RULmeD58KMPeq8EqeAVCh0qAjs0bnNoqYs
+         EAiGvQzgVK97q9LpsQDmTkEceoQd6t6+zUWvRl/TUzM19YYjmR2PnC/HTtXnTQaIJ4+G
+         4Cc1XdSCO3YcpIf52aIpMHJiZw0ty+7IBrr+BblEKmfVP9Zq8O8bVQ7yPRhpdYvMTF4h
+         SZHi3gM1H91TIW9xHk5ot7D+Upf8pnjtix6v5RyJU7i5AjCAkQdiQeoGdCE+qv8i7t/p
+         gv2Q==
+X-Gm-Message-State: APjAAAV4x7L/bT19UA/YDi0sZtIxvf9xPRf96cu1nHOnaIL5jDzCrhw5
+        BsX4p+GnJdR3N/P3dBm+AurAfMo8S7ql1MAv8AW+Wg==
+X-Google-Smtp-Source: APXvYqwQmXQ63LGIFbQMm/5m/D+YgrCWN32dRNivv1cpTg5pdioaBPmvKsRxmwCw4WeZ2O8Zi4kZOW+1RuNO/TuK42M=
+X-Received: by 2002:a02:cc8f:: with SMTP id s15mr23773601jap.53.1566922256653;
+ Tue, 27 Aug 2019 09:10:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D6759987A7968C4889FDA6FA91D5CBC814758ED8@PGSMSX103.gar.corp.intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190826081752.57258-1-kkamagui@gmail.com> <CACdnJutomLNthYDzEc0wFBcBHK5iqnk0p-hkAkp57zQZ38oGPA@mail.gmail.com>
+ <CAHjaAcSFhQsDYL2iRwwhyvxh9mH4DhxZ__DNzhtk=iiZZ5JdbA@mail.gmail.com>
+In-Reply-To: <CAHjaAcSFhQsDYL2iRwwhyvxh9mH4DhxZ__DNzhtk=iiZZ5JdbA@mail.gmail.com>
+From:   Matthew Garrett <mjg59@google.com>
+Date:   Tue, 27 Aug 2019 09:10:45 -0700
+Message-ID: <CACdnJutfR2X-5ksXw4PNUdyH2MJs_mExNCcYPp8NLcPW2EDrYQ@mail.gmail.com>
+Subject: Re: [PATCH] x86: tpm: Remove a busy bit of the NVS area for
+ supporting AMD's fTPM
+To:     Seunghun Han <kkamagui@gmail.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 03:23:34PM +0000, Voon, Weifeng wrote:
-> > > > Make mdiobus_scan() to try harder to look for any PHY that only
-> > talks C45.
-> > > If you are not using Device Tree or ACPI, and you are letting the MDIO
-> > > bus be scanned, it sounds like there should be a way for you to
-> > > provide a hint as to which addresses should be scanned (that's
-> > > mii_bus::phy_mask) and possibly enhance that with a mask of possible
-> > > C45 devices?
-> > 
-> > Yes, i don't like this unconditional c45 scanning. A lot of MDIO bus
-> > drivers don't look for the MII_ADDR_C45. They are going to do a C22
-> > transfer, and maybe not mask out the MII_ADDR_C45 from reg, causing an
-> > invalid register write. Bad things can then happen.
-> > 
-> > With DT and ACPI, we have an explicit indication that C45 should be used,
-> > so we know on this platform C45 is safe to use. We need something
-> > similar when not using DT or ACPI.
-> > 
-> > 	  Andrew
-> 
-> Florian and Andrew,
-> The mdio c22 is using the start-of-frame ST=01 while mdio c45 is using ST=00
-> as identifier. So mdio c22 device will not response to mdio c45 protocol.
-> As in IEEE 802.1ae-2002 Annex 45A.3 mention that:
-> " Even though the Clause 45 MDIO frames using the ST=00 frame code
-> will also be driven on to the Clause 22 MII Management interface,
-> the Clause 22 PHYs will ignore the frames. "
-> 
-> Hence, I am not seeing any concern that the c45 scanning will mess up with 
-> c22 devices.
+On Tue, Aug 27, 2019 at 1:23 AM Seunghun Han <kkamagui@gmail.com> wrote:
+> If the regions allocated in the NVS region need to be handled by a
+> driver, the callback mechanism is good for it. However, this case
+> doesn't need it because the regions allocated in NVS are just I/O
+> regions.
+>
+> In my opinion, if the driver wants to handle the region in the NVS
+> while suspending or hibernating, it has to use register_pm_notifier()
+> function and handle the event. We already had the mechanism that could
+> ensure that the cases you worried about would be handled, so it seems
+> to me that removing the busy bit from the NVS region is fine.
 
-Hi Voon
-
-Take for example mdio-hisi-femac.c 
-
-static int hisi_femac_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
-{
-        struct hisi_femac_mdio_data *data = bus->priv;
-        int ret;
-
-        ret = hisi_femac_mdio_wait_ready(data);
-        if (ret)
-                return ret;
-
-        writel((mii_id << BIT_PHY_ADDR_OFFSET) | regnum,
-               data->membase + MDIO_RWCTRL);
-
-
-There is no check here for MII_ADDR_C45. So it will perform a C22
-transfer. And regnum will still have MII_ADDR_C45 in it, so the
-writel() is going to set bit 30, since #define MII_ADDR_C45
-(1<<30). What happens on this hardware under these conditions?
-
-You cannot unconditionally ask an MDIO driver to do a C45
-transfer. Some drivers are going to do bad things.
-
-	  Andrew
-
+No. The NVS regions are regions that need to be saved and restored
+over hibernation, but which aren't otherwise handled by a driver -
+that's why the NVS code exists. If drivers are allowed to bind to NVS
+regions without explicit handling, they risk conflicting with that.
