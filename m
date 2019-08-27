@@ -2,106 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B82C9E6EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 13:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AFB09E6F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 13:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfH0LlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 07:41:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:65064 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbfH0LlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 07:41:21 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AB59461D25;
-        Tue, 27 Aug 2019 11:41:20 +0000 (UTC)
-Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D2EEB600D1;
-        Tue, 27 Aug 2019 11:41:16 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 13:41:14 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Parav Pandit <parav@mellanox.com>
-Cc:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 1/4] mdev: Introduce sha1 based mdev alias
-Message-ID: <20190827134114.01ddd049.cohuck@redhat.com>
-In-Reply-To: <AM0PR05MB4866CC932630ADD9BDA51371D1A00@AM0PR05MB4866.eurprd05.prod.outlook.com>
-References: <20190826204119.54386-1-parav@mellanox.com>
-        <20190826204119.54386-2-parav@mellanox.com>
-        <20190827122428.37442fe1.cohuck@redhat.com>
-        <AM0PR05MB4866B68C9E60E42359BE1F4DD1A00@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190827132404.483a74ad.cohuck@redhat.com>
-        <AM0PR05MB4866CC932630ADD9BDA51371D1A00@AM0PR05MB4866.eurprd05.prod.outlook.com>
-Organization: Red Hat GmbH
+        id S1728936AbfH0Lo1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 07:44:27 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44066 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726140AbfH0Lo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 07:44:27 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 342B896AE480CE040498;
+        Tue, 27 Aug 2019 19:44:25 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Tue, 27 Aug
+ 2019 19:44:15 +0800
+Date:   Tue, 27 Aug 2019 19:42:08 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     zhangfei <zhangfei.gao@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+        <linux-accelerators@lists.ozlabs.org>,
+        <linux-kernel@vger.kernel.org>, "Zaibo Xu" <xuzaibo@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>
+Subject: Re: [PATCH 2/2] uacce: add uacce module
+Message-ID: <20190827114208.GB116872@Turing-Arch-b>
+References: <1565775265-21212-3-git-send-email-zhangfei.gao@linaro.org>
+ <20190815141351.GD23267@kroah.com>
+ <6daab785-a8f9-684e-eb71-7a81604d3bb0@linaro.org>
+ <20190820165947.GC3736@kroah.com>
+ <5d5cf0fc.1c69fb81.ec57f.b853SMTPIN_ADDED_BROKEN@mx.google.com>
+ <20190821091709.GA22914@kroah.com>
+ <b88abb8d-50a9-b29e-d3e5-96cc585ecac4@linaro.org>
+ <20190821160542.GA14760@kroah.com>
+ <20190826041042.GB27955@Turing-Arch-b>
+ <20190826042910.GA26547@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 27 Aug 2019 11:41:20 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190826042910.GA26547@kroah.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Aug 2019 11:33:54 +0000
-Parav Pandit <parav@mellanox.com> wrote:
-
-> > -----Original Message-----
-> > From: Cornelia Huck <cohuck@redhat.com>
-> > Sent: Tuesday, August 27, 2019 4:54 PM
-> > To: Parav Pandit <parav@mellanox.com>
-> > Cc: alex.williamson@redhat.com; Jiri Pirko <jiri@mellanox.com>;
-> > kwankhede@nvidia.com; davem@davemloft.net; kvm@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; netdev@vger.kernel.org
-> > Subject: Re: [PATCH 1/4] mdev: Introduce sha1 based mdev alias
-> > 
-> > On Tue, 27 Aug 2019 11:12:23 +0000
-> > Parav Pandit <parav@mellanox.com> wrote:
-> >   
-> > > > -----Original Message-----
-> > > > From: Cornelia Huck <cohuck@redhat.com>
-> > > > Sent: Tuesday, August 27, 2019 3:54 PM
-> > > > To: Parav Pandit <parav@mellanox.com>
-> > > > Cc: alex.williamson@redhat.com; Jiri Pirko <jiri@mellanox.com>;
-> > > > kwankhede@nvidia.com; davem@davemloft.net; kvm@vger.kernel.org;
-> > > > linux- kernel@vger.kernel.org; netdev@vger.kernel.org
-> > > > Subject: Re: [PATCH 1/4] mdev: Introduce sha1 based mdev alias
-> > > >
-
-> > > > What about:
-> > > >
-> > > > * @get_alias_length: optional callback to specify length of the alias to  
-> > create  
-> > > > *                    Returns unsigned integer: length of the alias to be created,
-> > > > *                                              0 to not create an alias
-> > > >  
-> > > Ack.
-> > >  
-> > > > I also think it might be beneficial to add a device parameter here
-> > > > now (rather than later); that seems to be something that makes sense.
-> > > >  
-> > > Without showing the use, it shouldn't be added.  
-> > 
-> > It just feels like an omission: Why should the vendor driver only be able to
-> > return one value here, without knowing which device it is for?
-> > If a driver supports different devices, it may have different requirements for
-> > them.
-> >   
-> Sure. Lets first have this requirement to add it.
-> I am against adding this length field itself without an actual vendor use case, which is adding some complexity in code today.
-> But it was ok to have length field instead of bool.
+On Mon, Aug 26, 2019 at 06:29:10AM +0200, Greg Kroah-Hartman wrote:
+> Date: Mon, 26 Aug 2019 06:29:10 +0200
+> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> To: Kenneth Lee <liguozhu@hisilicon.com>
+> CC: zhangfei <zhangfei.gao@linaro.org>, Arnd Bergmann <arnd@arndb.de>,
+>  linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org, Zaibo
+>  Xu <xuzaibo@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>
+> Subject: Re: [PATCH 2/2] uacce: add uacce module
+> User-Agent: Mutt/1.12.1 (2019-06-15)
+> Message-ID: <20190826042910.GA26547@kroah.com>
 > 
-> Lets not further add "no-requirement futuristic knobs" which hasn't shown its need yet.
-> When a vendor driver needs it, there is nothing prevents such addition.
+> On Mon, Aug 26, 2019 at 12:10:42PM +0800, Kenneth Lee wrote:
+> > On Wed, Aug 21, 2019 at 09:05:42AM -0700, Greg Kroah-Hartman wrote:
+> > > Date: Wed, 21 Aug 2019 09:05:42 -0700
+> > > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > To: zhangfei <zhangfei.gao@linaro.org>
+> > > CC: Arnd Bergmann <arnd@arndb.de>, linux-accelerators@lists.ozlabs.org,
+> > >  linux-kernel@vger.kernel.org, Kenneth Lee <liguozhu@hisilicon.com>, Zaibo
+> > >  Xu <xuzaibo@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>
+> > > Subject: Re: [PATCH 2/2] uacce: add uacce module
+> > > User-Agent: Mutt/1.12.1 (2019-06-15)
+> > > Message-ID: <20190821160542.GA14760@kroah.com>
+> > > 
+> > > On Wed, Aug 21, 2019 at 10:30:22PM +0800, zhangfei wrote:
+> > > > 
+> > > > 
+> > > > On 2019/8/21 下午5:17, Greg Kroah-Hartman wrote:
+> > > > > On Wed, Aug 21, 2019 at 03:21:18PM +0800, zhangfei.gao@foxmail.com wrote:
+> > > > > > Hi, Greg
+> > > > > > 
+> > > > > > On 2019/8/21 上午12:59, Greg Kroah-Hartman wrote:
+> > > > > > > On Tue, Aug 20, 2019 at 09:08:55PM +0800, zhangfei wrote:
+> > > > > > > > On 2019/8/15 下午10:13, Greg Kroah-Hartman wrote:
+> > > > > > > > > On Wed, Aug 14, 2019 at 05:34:25PM +0800, Zhangfei Gao wrote:
+> > > > > > > > > > +int uacce_register(struct uacce *uacce)
+> > > > > > > > > > +{
+> > > > > > > > > > +	int ret;
+> > > > > > > > > > +
+> > > > > > > > > > +	if (!uacce->pdev) {
+> > > > > > > > > > +		pr_debug("uacce parent device not set\n");
+> > > > > > > > > > +		return -ENODEV;
+> > > > > > > > > > +	}
+> > > > > > > > > > +
+> > > > > > > > > > +	if (uacce->flags & UACCE_DEV_NOIOMMU) {
+> > > > > > > > > > +		add_taint(TAINT_CRAP, LOCKDEP_STILL_OK);
+> > > > > > > > > > +		dev_warn(uacce->pdev,
+> > > > > > > > > > +			 "Register to noiommu mode, which export kernel data to user space and may vulnerable to attack");
+> > > > > > > > > > +	}
+> > > > > > > > > THat is odd, why even offer this feature then if it is a major issue?
+> > > > > > > > UACCE_DEV_NOIOMMU maybe confusing here.
+> > > > > > > > 
+> > > > > > > > In this mode, app use ioctl to get dma_handle from dma_alloc_coherent.
+> > > > > > > That's odd, why not use the other default apis to do that?
+> > > > > > > 
+> > > > > > > > It does not matter iommu is enabled or not.
+> > > > > > > > In case iommu is disabled, it maybe dangerous to kernel, so we added warning here, is it required?
+> > > > > > > You should use the other documentated apis for this, don't create your
+> > > > > > > own.
+> > > > > > I am sorry, not understand here.
+> > > > > > Do you mean there is a standard ioctl or standard api in user space, it can
+> > > > > > get dma_handle from dma_alloc_coherent from kernel?
+> > > > > There should be a standard way to get such a handle from userspace
+> > > > > today.  Isn't that what the ion interface does?  DRM also does this, as
+> > > > > does UIO I think.
+> > > > Thanks Greg,
+> > > > Still not find it, will do more search.
+> > > > But this may introduce dependency in our lib, like depend on ion?
+> > > > > Do you have a spec somewhere that shows exactly what you are trying to
+> > > > > do here, along with example userspace code?  It's hard to determine it
+> > > > > given you only have one "half" of the code here and no users of the apis
+> > > > > you are creating.
+> > > > > 
+> > > > The purpose is doing dma in user space.
+> > > 
+> > > Oh no, please no.  Are you _SURE_ you want to do this?
+> > > 
+> > > Again, look at how ION does this and how the DMAbuff stuff is replacing
+> > > it.  Use that api please instead, otherwise you will get it wrong and we
+> > > don't want to duplicate efforts.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
+> > 
+> > Dear Greg. I wrote a blog to explain the intention of WarpDrive here:
+> > https://zhuanlan.zhihu.com/p/79680889.
+> 
+> Putting that information into the changelog and kernel documentation is
+> a much better idea than putting it there.
 
-Frankly, I do not see how it adds complexity; the other callbacks have
-device arguments already, and the vendor driver is free to ignore it if
-it does not have a use for it. I'd rather add the argument before a
-possible future user tries weird hacks to allow multiple values, but
-I'll leave the decision to the maintainers.
+Yes, will do. Thank you.
+
+> 
+> > Sharing data is not our intention, Sharing address is. NOIOMMU mode is just a
+> > temporary solution to let some hardware which does not care the security issue
+> > to try WarpDrive for the first step. Some user do not care this much in embedded
+> > scenario. We saw VFIO use the same model so we also want to make a try. If you
+> > insist this is risky, we can remove it.
+> 
+> Why not just use vfio then?
+
+We tried that in previous patches. But it needs to create unnecessary mdev to
+fulfill the requirement. So we discard it after the discussion in lkml.
+
+> 
+> And yes, for now, please remove it, if you are not requiring it.
+> 
+
+We do require it;) But surely we can kept it in our own branch but push only the
+main function. Thank you.
+
+> thanks,
+> 
+> greg k-h
+
+-- 
+			-Kenneth(Hisilicon)
+
+================================================================================
+本邮件及其附件含有华为公司的保密信息，仅限于发送给上面地址中列出的个人或群组。禁
+止任何其他人以任何形式使用（包括但不限于全部或部分地泄露、复制、或散发）本邮件中
+的信息。如果您错收了本邮件，请您立即电话或邮件通知发件人并删除本邮件！
+This e-mail and its attachments contain confidential information from HUAWEI,
+which is intended only for the person or entity whose address is listed above.
+Any use of the 
+information contained herein in any way (including, but not limited to, total or
+partial disclosure, reproduction, or dissemination) by persons other than the
+intended 
+recipient(s) is prohibited. If you receive this e-mail in error, please notify
+the sender by phone or email immediately and delete it!
+
