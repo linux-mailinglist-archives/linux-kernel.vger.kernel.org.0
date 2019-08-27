@@ -2,84 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 861399E75D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64E849E761
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:10:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfH0MJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:09:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47836 "EHLO mx1.suse.de"
+        id S1729370AbfH0MJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:09:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47888 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725850AbfH0MJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:09:26 -0400
+        id S1725850AbfH0MJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 08:09:35 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 284E9AF19;
-        Tue, 27 Aug 2019 12:09:25 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 14:09:23 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        kirill.shutemov@linux.intel.com,
-        Yang Shi <yang.shi@linux.alibaba.com>, hannes@cmpxchg.org,
-        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH -mm] mm: account deferred split THPs into MemAvailable
-Message-ID: <20190827120923.GB7538@dhcp22.suse.cz>
-References: <1566410125-66011-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190822080434.GF12785@dhcp22.suse.cz>
- <ee048bbf-3563-d695-ea58-5f1504aee35c@suse.cz>
- <20190822152934.w6ztolutdix6kbvc@box>
- <20190826074035.GD7538@dhcp22.suse.cz>
- <20190826131538.64twqx3yexmhp6nf@box>
- <20190827060139.GM7538@dhcp22.suse.cz>
- <20190827110210.lpe36umisqvvesoa@box>
- <aaaf9742-56f7-44b7-c3db-ad078b7b2220@suse.cz>
+        by mx1.suse.de (Postfix) with ESMTP id 9E816AF19;
+        Tue, 27 Aug 2019 12:09:34 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 14:09:28 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     "Singh, Brijesh" <brijesh.singh@amd.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 05/11] KVM: SVM: Add KVM_SEV_RECEIVE_UPDATE_DATA
+ command
+Message-ID: <20190827120928.GC27871@zn.tnic>
+References: <20190710201244.25195-1-brijesh.singh@amd.com>
+ <20190710201244.25195-6-brijesh.singh@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aaaf9742-56f7-44b7-c3db-ad078b7b2220@suse.cz>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190710201244.25195-6-brijesh.singh@amd.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-08-19 14:01:56, Vlastimil Babka wrote:
-> On 8/27/19 1:02 PM, Kirill A. Shutemov wrote:
-> > On Tue, Aug 27, 2019 at 08:01:39AM +0200, Michal Hocko wrote:
-> >> On Mon 26-08-19 16:15:38, Kirill A. Shutemov wrote:
-> >>>
-> >>> Unmapped completely pages will be freed with current code. Deferred split
-> >>> only applies to partly mapped THPs: at least on 4k of the THP is still
-> >>> mapped somewhere.
-> >>
-> >> Hmm, I am probably misreading the code but at least current Linus' tree
-> >> reads page_remove_rmap -> [page_remove_anon_compound_rmap ->\ deferred_split_huge_page even
-> >> for fully mapped THP.
-> > 
-> > Well, you read correctly, but it was not intended. I screwed it up at some
-> > point.
-> > 
-> > See the patch below. It should make it work as intened.
-> > 
-> > It's not bug as such, but inefficientcy. We add page to the queue where
-> > it's not needed.
-> 
-> But that adding to queue doesn't affect whether the page will be freed
-> immediately if there are no more partial mappings, right? I don't see
-> deferred_split_huge_page() pinning the page.
-> So your patch wouldn't make THPs freed immediately in cases where they
-> haven't been freed before immediately, it just fixes a minor
-> inefficiency with queue manipulation?
+On Wed, Jul 10, 2019 at 08:13:06PM +0000, Singh, Brijesh wrote:
+> The command is used for copying the incoming buffer into the
+> SEV guest memory space.
 
-Ohh, right. I can see that in free_transhuge_page now. So fully mapped
-THPs really do not matter and what I have considered an odd case is
-really happening more often.
+...
 
-That being said this will not help at all for what Yang Shi is seeing
-and we need a more proactive deferred splitting as I've mentioned
-earlier.
+> +static int sev_receive_update_data(struct kvm *kvm, struct kvm_sev_cmd *argp)
+> +{
+> +	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+> +	struct kvm_sev_receive_update_data params;
+> +	struct sev_data_receive_update_data *data;
+> +	void *hdr = NULL, *trans = NULL;
+> +	struct page **guest_page;
+> +	unsigned long n;
+> +	int ret, offset;
+> +
+> +	if (!sev_guest(kvm))
+> +		return -EINVAL;
+> +
+> +	if (copy_from_user(&params, (void __user *)(uintptr_t)argp->data,
+> +			sizeof(struct kvm_sev_receive_update_data)))
+> +		return -EFAULT;
+> +
+> +	if (!params.hdr_uaddr || !params.hdr_len ||
+> +	    !params.guest_uaddr || !params.guest_len ||
+> +	    !params.trans_uaddr || !params.trans_len)
+> +		return -EINVAL;
+> +
+> +	/* Check if we are crossing the page boundry */
+
+WARNING: 'boundry' may be misspelled - perhaps 'boundary'?
+
+> +	offset = params.guest_uaddr & (PAGE_SIZE - 1);
+> +	if ((params.guest_len + offset > PAGE_SIZE))
+> +		return -EINVAL;
+> +
+> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	hdr = psp_copy_user_blob(params.hdr_uaddr, params.hdr_len);
+> +	if (IS_ERR(hdr)) {
+> +		ret = PTR_ERR(hdr);
+> +		goto e_free;
+> +	}
+> +
+> +	data->hdr_address = __psp_pa(hdr);
+> +	data->hdr_len = params.hdr_len;
+> +
+> +	trans = psp_copy_user_blob(params.trans_uaddr, params.trans_len);
+> +	if (IS_ERR(trans)) {
+> +		ret = PTR_ERR(trans);
+> +		goto e_free;
+> +	}
+> +
+> +	data->trans_address = __psp_pa(trans);
+> +	data->trans_len = params.trans_len;
+> +
+> +	/* Pin guest memory */
+> +	ret = -EFAULT;
+> +	guest_page = sev_pin_memory(kvm, params.guest_uaddr & PAGE_MASK,
+> +				    PAGE_SIZE, &n, 0);
+> +	if (!guest_page)
+> +		goto e_free;
+> +
+> +	/* The RECEIVE_UPDATE_DATA command requires C-bit to be always set. */
+> +	data->guest_address = (page_to_pfn(guest_page[0]) << PAGE_SHIFT) + offset;
+> +	data->guest_address |= sev_me_mask;
+> +	data->guest_len = params.guest_len;
+> +
+> +	data->handle = sev->handle;
+> +	ret = sev_issue_cmd(kvm, SEV_CMD_RECEIVE_UPDATE_DATA, data, &argp->error);
+> +
+> +	sev_unpin_memory(kvm, guest_page, n);
+> +e_free:
+> +	kfree(data);
+> +	kfree(hdr);
+> +	kfree(trans);
+
+Pls add separate labels so that you don't have to init function-local
+vars above to NULL.
 
 -- 
-Michal Hocko
-SUSE Labs
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 247165, AG München
