@@ -2,146 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AAFD9E234
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:18:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C749E245
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:22:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbfH0IRy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:17:54 -0400
-Received: from mail-eopbgr60053.outbound.protection.outlook.com ([40.107.6.53]:14917
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727788AbfH0IRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:17:53 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mC6SGfUGcj5qfowVWSJ996L5OzXYwktpH8iMQC2pLbM1ADZOtA4ZTllXCzGeYxZ/q49PldKvlaKqln3FVYJAa+fzFzYF9kPN88P3Hx8YIQxLGS0VZ3IJ7Nd4HKdczSBuEjqW//KTCy9iUz7UmRcCEEllnwR/Sv0pbw033bWRUPSvanRzuX+PJ5dUZTFAKM3eEQ7z5Ur73VdXQsuaD2nnTvpDZT4msP1e5mmzUS4BloKxEYd2y4Up/KHk0XQl/sGjq7gt9avOkpKSrWOWh8odLGNUzmeXnVgZyju3dfeGWiO/4kBHvDxPvgzG6X2qGVVwXW/Ch837WE/eCPoRjYFetQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6tLgUOAdcUK2g4ZMA3HdTrrSdjZWSUZVsh5luoh4dMA=;
- b=EWit/mVuTId+PLQDdfPdFEklX278AjaUp4K/eCE/D0p2/6zO9e+xIsNgdyC/Wp/guukcq1BtZ4OK4jPh/gVED1YAZY4hS8KAyfThYtv2i4WvTkP1rs1pY0s1Hfza1ppPezXbpAiJ1IlEkBxLXlWDjr09fIM/TliuY8qtlaaTU86f9WKEzJn38xI0F9uZWgDWuKAhbI+9DW8D9WoCOk54+3ejzLl/ch9m7MB2wYMsLXTg/f+IcivJkFbW/lQXA2PCVof87Ejs5U01uJjbU0F/vIdDpws31h+ANS9sgEWo+rWhkjQSkC0DalI7U35pmkLsg4GFOT/3DfR4ELPJptanKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6tLgUOAdcUK2g4ZMA3HdTrrSdjZWSUZVsh5luoh4dMA=;
- b=rGN9XdhVXSK6FQKzLQd1oOON8o4jwQSZnErHFROQIbdG8UX5bkPRlWT9shQ1o1At85ti97MaJef3s+3g5LJ9VZr4OwpR+WYo0zM7sWGoVN3uvS2nwWTYuYzt139bOhga1adUZsIPeCSznaVi2tmIk0nRDTs10fCZpgVNIHG3VxQ=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6961.eurprd04.prod.outlook.com (52.132.214.213) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Tue, 27 Aug 2019 08:17:50 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::5d98:e1f4:aa72:16b4]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::5d98:e1f4:aa72:16b4%4]) with mapi id 15.20.2178.022; Tue, 27 Aug 2019
- 08:17:50 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
-Thread-Topic: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
-Thread-Index: AQHVXK/qRNohGClvt0yC94cqOwkPUA==
-Date:   Tue, 27 Aug 2019 08:17:50 +0000
-Message-ID: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR02CA0143.apcprd02.prod.outlook.com
- (2603:1096:202:16::27) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 31915c1d-db0b-4f77-1171-08d72ac70cc4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6961;
-x-ms-traffictypediagnostic: AM0PR04MB6961:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB696121F771311C6327AA6D9C88A00@AM0PR04MB6961.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0142F22657
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(136003)(39860400002)(366004)(346002)(199004)(189003)(71200400001)(54906003)(2501003)(8936002)(66066001)(478600001)(36756003)(64756008)(66556008)(6436002)(6486002)(66446008)(386003)(6506007)(66476007)(71190400001)(7736002)(110136005)(305945005)(2201001)(86362001)(316002)(14454004)(6636002)(81156014)(81166006)(2906002)(486006)(2616005)(476003)(26005)(4326008)(44832011)(66946007)(53936002)(186003)(14444005)(52116002)(102836004)(99286004)(25786009)(6512007)(256004)(50226002)(3846002)(6116002)(5660300002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6961;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JaamQxk4G4A+hccSgbT3aTuuAafYjkuY65ZzYnFOIQblxCbZe1qlbpJcI5cPT0nu3ofMKsAYLR9zkghodqNlY23CJx3AHW59knHEHFz2B3Zw4Gba0nCKZLuDntMoBH07iPXlWphzMbUXCga0Xn7Vtf1H3Sci2YqmQm1vNTFUT98tOATjaeWjxHR6KWd9VvaKpGpNelXetfe1pt0WXwQv3dk6dwhCC8U3/O0d52V4z9/N8cT4MMbiL882ZZ9ItppJUVIwCfmvrH3zgQcT8VUJDTHOUk9qL+fFySlcfFVJUK/J7vyg0CLJlNssDKvM9QfHNaSTnnKjCIjGRGZL6jO1zlgk+LoE1qBvBN52HN2/sYTxOHAGC5Ii/biDwf6zX/fU07nZNrOTwG7o/Rxex0hyYEGNYIabOTEEr/tZkHzG32k=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1729706AbfH0IV6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:21:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23098 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729414AbfH0IV5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:21:57 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7R8Ik0d038098
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 04:21:56 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2umxgv5ftq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 04:21:56 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 27 Aug 2019 08:51:45 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 27 Aug 2019 08:51:40 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7R7pd6A63242378
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Aug 2019 07:51:39 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 57D43A4057;
+        Tue, 27 Aug 2019 07:51:39 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6AF34A404D;
+        Tue, 27 Aug 2019 07:51:38 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.59])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 27 Aug 2019 07:51:38 +0000 (GMT)
+Date:   Tue, 27 Aug 2019 10:51:36 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
+        Alan Kao <alankao@andestech.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Anup Patel <anup@brainfault.org>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Gary Guo <gary@garyguo.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-riscv@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 1/2] RISC-V: Mark existing SBI as legacy SBI.
+References: <20190826233256.32383-1-atish.patra@wdc.com>
+ <20190826233256.32383-2-atish.patra@wdc.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31915c1d-db0b-4f77-1171-08d72ac70cc4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2019 08:17:50.1446
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QAq71gkrnoh1/AcRotgSzzX5jZ0h43vi6PEuR8IzdXScqTdTeCB2PVd4YC3FLnefUqRmVumMF2pzHqetUypeaw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6961
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826233256.32383-2-atish.patra@wdc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19082707-0016-0000-0000-000002A36547
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082707-0017-0000-0000-00003303AEC4
+Message-Id: <20190827075136.GC682@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-26_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908270093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On Mon, Aug 26, 2019 at 04:32:55PM -0700, Atish Patra wrote:
+> As per the new SBI specification, current SBI implementation is
+> defined as legacy and will be removed/replaced in future.
+> 
+> Rename existing implementation to reflect that. This patch is just
+> a preparatory patch for SBI v0.2 and doesn't introduce any functional
+> changes.
+> 
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  arch/riscv/include/asm/sbi.h | 61 +++++++++++++++++++-----------------
+>  1 file changed, 33 insertions(+), 28 deletions(-)
+> 
+> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+> index 21134b3ef404..7f5ecaaaa0d7 100644
+> --- a/arch/riscv/include/asm/sbi.h
+> +++ b/arch/riscv/include/asm/sbi.h
+> @@ -8,17 +8,18 @@
+>  
+>  #include <linux/types.h>
+>  
+> -#define SBI_SET_TIMER 0
+> -#define SBI_CONSOLE_PUTCHAR 1
+> -#define SBI_CONSOLE_GETCHAR 2
+> -#define SBI_CLEAR_IPI 3
+> -#define SBI_SEND_IPI 4
+> -#define SBI_REMOTE_FENCE_I 5
+> -#define SBI_REMOTE_SFENCE_VMA 6
+> -#define SBI_REMOTE_SFENCE_VMA_ASID 7
+> -#define SBI_SHUTDOWN 8
+> -
+> -#define SBI_CALL(which, arg0, arg1, arg2, arg3) ({		\
+> +
+> +#define SBI_EXT_LEGACY_SET_TIMER 0x0
+> +#define SBI_EXT_LEGACY_CONSOLE_PUTCHAR 0x1
+> +#define SBI_EXT_LEGACY_CONSOLE_GETCHAR 0x2
+> +#define SBI_EXT_LEGACY_CLEAR_IPI 0x3
+> +#define SBI_EXT_LEGACY_SEND_IPI 0x4
+> +#define SBI_EXT_LEGACY_REMOTE_FENCE_I 0x5
+> +#define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA 0x6
+> +#define SBI_EXT_LEGACY_REMOTE_SFENCE_VMA_ASID 0x7
+> +#define SBI_EXT_LEGACY_SHUTDOWN 0x8
 
-There is hardware issue that:
-The output clock the LPCG cell will not turn back on as expected,
-even though a read of the IPG registers in the LPCG indicates that
-the clock should be enabled.
+I can't say I'm closely following RISC-V development, but what will happen
+when SBI v0.3 will come out and will render v0.2 legacy?
+Won't we need another similar renaming then?
 
-The software workaround is to write twice to enable the LPCG clock
-output.
+> +#define SBI_CALL_LEGACY(which, arg0, arg1, arg2, arg3) ({             \
+>  	register uintptr_t a0 asm ("a0") = (uintptr_t)(arg0);	\
+>  	register uintptr_t a1 asm ("a1") = (uintptr_t)(arg1);	\
+>  	register uintptr_t a2 asm ("a2") = (uintptr_t)(arg2);	\
+> @@ -32,58 +33,61 @@
+>  })
+>  
+>  /* Lazy implementations until SBI is finalized */
+> -#define SBI_CALL_0(which) SBI_CALL(which, 0, 0, 0, 0)
+> -#define SBI_CALL_1(which, arg0) SBI_CALL(which, arg0, 0, 0, 0)
+> -#define SBI_CALL_2(which, arg0, arg1) SBI_CALL(which, arg0, arg1, 0, 0)
+> -#define SBI_CALL_3(which, arg0, arg1, arg2) \
+> -		SBI_CALL(which, arg0, arg1, arg2, 0)
+> -#define SBI_CALL_4(which, arg0, arg1, arg2, arg3) \
+> -		SBI_CALL(which, arg0, arg1, arg2, arg3)
+> +#define SBI_CALL_LEGACY_0(which) SBI_CALL_LEGACY(which, 0, 0, 0, 0)
+> +#define SBI_CALL_LEGACY_1(which, arg0) SBI_CALL_LEGACY(which, arg0, 0, 0, 0)
+> +#define SBI_CALL_LEGACY_2(which, arg0, arg1) \
+> +		SBI_CALL_LEGACY(which, arg0, arg1, 0, 0)
+> +#define SBI_CALL_LEGACY_3(which, arg0, arg1, arg2) \
+> +		SBI_CALL_LEGACY(which, arg0, arg1, arg2, 0)
+> +#define SBI_CALL_LEGACY_4(which, arg0, arg1, arg2, arg3) \
+> +		SBI_CALL_LEGACY(which, arg0, arg1, arg2, arg3)
+>  
+>  static inline void sbi_console_putchar(int ch)
+>  {
+> -	SBI_CALL_1(SBI_CONSOLE_PUTCHAR, ch);
+> +	SBI_CALL_LEGACY_1(SBI_EXT_LEGACY_CONSOLE_PUTCHAR, ch);
+>  }
+>  
+>  static inline int sbi_console_getchar(void)
+>  {
+> -	return SBI_CALL_0(SBI_CONSOLE_GETCHAR);
+> +	return SBI_CALL_LEGACY_0(SBI_EXT_LEGACY_CONSOLE_GETCHAR);
+>  }
+>  
+>  static inline void sbi_set_timer(uint64_t stime_value)
+>  {
+>  #if __riscv_xlen == 32
+> -	SBI_CALL_2(SBI_SET_TIMER, stime_value, stime_value >> 32);
+> +	SBI_CALL_LEGACY_2(SBI_EXT_LEGACY_SET_TIMER, stime_value,
+> +			  stime_value >> 32);
+>  #else
+> -	SBI_CALL_1(SBI_SET_TIMER, stime_value);
+> +	SBI_CALL_LEGACY_1(SBI_EXT_LEGACY_SET_TIMER, stime_value);
+>  #endif
+>  }
+>  
+>  static inline void sbi_shutdown(void)
+>  {
+> -	SBI_CALL_0(SBI_SHUTDOWN);
+> +	SBI_CALL_LEGACY_0(SBI_EXT_LEGACY_SHUTDOWN);
+>  }
+>  
+>  static inline void sbi_clear_ipi(void)
+>  {
+> -	SBI_CALL_0(SBI_CLEAR_IPI);
+> +	SBI_CALL_LEGACY_0(SBI_EXT_LEGACY_CLEAR_IPI);
+>  }
+>  
+>  static inline void sbi_send_ipi(const unsigned long *hart_mask)
+>  {
+> -	SBI_CALL_1(SBI_SEND_IPI, hart_mask);
+> +	SBI_CALL_LEGACY_1(SBI_EXT_LEGACY_SEND_IPI, hart_mask);
+>  }
+>  
+>  static inline void sbi_remote_fence_i(const unsigned long *hart_mask)
+>  {
+> -	SBI_CALL_1(SBI_REMOTE_FENCE_I, hart_mask);
+> +	SBI_CALL_LEGACY_1(SBI_EXT_LEGACY_REMOTE_FENCE_I, hart_mask);
+>  }
+>  
+>  static inline void sbi_remote_sfence_vma(const unsigned long *hart_mask,
+>  					 unsigned long start,
+>  					 unsigned long size)
+>  {
+> -	SBI_CALL_3(SBI_REMOTE_SFENCE_VMA, hart_mask, start, size);
+> +	SBI_CALL_LEGACY_3(SBI_EXT_LEGACY_REMOTE_SFENCE_VMA, hart_mask,
+> +			  start, size);
+>  }
+>  
+>  static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+> @@ -91,7 +95,8 @@ static inline void sbi_remote_sfence_vma_asid(const unsigned long *hart_mask,
+>  					      unsigned long size,
+>  					      unsigned long asid)
+>  {
+> -	SBI_CALL_4(SBI_REMOTE_SFENCE_VMA_ASID, hart_mask, start, size, asid);
+> +	SBI_CALL_LEGACY_4(SBI_EXT_LEGACY_REMOTE_SFENCE_VMA_ASID, hart_mask,
+> +			  start, size, asid);
+>  }
+>  
+>  #endif
+> -- 
+> 2.21.0
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-lpcg-scu.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.=
-c
-index a73a799fb777..7391d0668ec4 100644
---- a/drivers/clk/imx/clk-lpcg-scu.c
-+++ b/drivers/clk/imx/clk-lpcg-scu.c
-@@ -54,6 +54,11 @@ static int clk_lpcg_scu_enable(struct clk_hw *hw)
-=20
- 	reg |=3D val << clk->bit_idx;
- 	writel(reg, clk->reg);
-+	/*
-+	 * There is hardware bug. When enabling the LPCG clock
-+	 * output, SW can write the enabling value twice
-+	 */
-+	writel(reg, clk->reg);
-=20
- 	spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
-=20
-@@ -71,6 +76,11 @@ static void clk_lpcg_scu_disable(struct clk_hw *hw)
- 	reg =3D readl_relaxed(clk->reg);
- 	reg &=3D ~(CLK_GATE_SCU_LPCG_MASK << clk->bit_idx);
- 	writel(reg, clk->reg);
-+	/*
-+	 * There is hardware bug. When enabling the LPCG clock
-+	 * output, SW can write the enabling value twice
-+	 */
-+	writel(reg, clk->reg);
-=20
- 	spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
- }
---=20
-2.16.4
+-- 
+Sincerely yours,
+Mike.
 
