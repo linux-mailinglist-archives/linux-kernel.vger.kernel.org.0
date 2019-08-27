@@ -2,79 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CA5C9DDD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:29:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9BD99DDE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 08:29:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729091AbfH0G2s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 02:28:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56358 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725860AbfH0G2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 02:28:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D72E8B0B6;
-        Tue, 27 Aug 2019 06:28:45 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 08:28:44 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alastair D'Silva <alastair@au1.ibm.com>
-Cc:     alastair@d-silva.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Perform a bounds check in arch_add_memory
-Message-ID: <20190827062844.GQ7538@dhcp22.suse.cz>
-References: <20190827052047.31547-1-alastair@au1.ibm.com>
+        id S1728433AbfH0G3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 02:29:14 -0400
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:11340 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfH0G3N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 02:29:13 -0400
+IronPort-SDR: flWKIDMXFq6+QFhaQ7qLcnRK7Qf5RwK7YrKJKT2nORzeNjPROy0bKcL0WTBX2rGFg8piTGzPD3
+ I+HHesE/FLnlWgF4Bh57RZMj/AVFMFP5uw8Lw5Z9hsk5tlUIvrSL2BA7TTaeigMJ+bCboHShFO
+ ceeC8EWIv/7ne5HzENzcvbDtX60xcekUXKlxjOOUJNPxrMEFAKP4nm3sJo0PT+xMu9hjhxNVSM
+ vHa3WLbIaIvxIlr1w4nsbAvYvIur3ukebHaxij1JBjdbIjxL+fKRCfVl8NE8/2QMqgqAqMr7bC
+ 20Q=
+X-IronPort-AV: E=Sophos;i="5.64,436,1559548800"; 
+   d="scan'208";a="42589375"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa1.mentor.iphmx.com with ESMTP; 26 Aug 2019 22:29:12 -0800
+IronPort-SDR: ZK+TJDo2r0qaqxbC2ZamdU7mCh3TT5Qec7CyQStItXMx8Wyj20sKOfoz0N1aFyHmO/TgEc2MRi
+ +6/IpBc728FtlbQ52HX20BJ8ocTca+M2oHc+MSUeJrgYHXIEHDR2Yt5D2M0bQ9NmgBJjXlZE6e
+ 9dzilqERo94yZl00PLjll2UmCod28XM8yD8SbICSmuA0VY82wwQlYn4cNWczXmijAuR5jtd6Sm
+ x8P+G83PguvXpyDLqReJmH3pjv04N4gaT24sxzW95SZZsbGq2tRYP3WdefRdNHFQgnLv1gntJS
+ N+s=
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>
+CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <jiada_wang@mentor.com>, <george_davis@mentor.com>
+Subject: [PATCH v2 24/49] Input: atmel_mxt_ts - rename bl_completion to chg_completion
+Date:   Tue, 27 Aug 2019 15:28:45 +0900
+Message-ID: <20190827062910.20598-5-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190827062910.20598-1-jiada_wang@mentor.com>
+References: <20190827062910.20598-1-jiada_wang@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827052047.31547-1-alastair@au1.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 27-08-19 15:20:46, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> It is possible for firmware to allocate memory ranges outside
-> the range of physical memory that we support (MAX_PHYSMEM_BITS).
+From: Nick Dyer <nick.dyer@itdev.co.uk>
 
-Doesn't that count as a FW bug? Do you have any evidence of that in the
-field? Just wondering...
+Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
+(cherry picked from ndyer/linux/for-upstream commit dda8453bfb44216645ede798918a314d4fca2481)
+[gdavis: Resolve forward port conflicts due to applying upstream
+	 commit 96a938aa214e ("Input: atmel_mxt_ts - remove platform
+	 data support").]
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+[jiada: call complete(&data->chg_completion) only when in_bootloader is TRUE]
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-> This patch adds a bounds check to ensure that any hotplugged
-> memory is addressable.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->  arch/powerpc/mm/mem.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-> index 9191a66b3bc5..de18fb73de30 100644
-> --- a/arch/powerpc/mm/mem.c
-> +++ b/arch/powerpc/mm/mem.c
-> @@ -111,6 +111,9 @@ int __ref arch_add_memory(int nid, u64 start, u64 size,
->  	unsigned long nr_pages = size >> PAGE_SHIFT;
->  	int rc;
->  
-> +	if ((start + size - 1) >> MAX_PHYSMEM_BITS)
-> +		return -EINVAL;
-> +
->  	resize_hpt_for_hotplug(memblock_phys_mem_size());
->  
->  	start = (unsigned long)__va(start);
-> -- 
-> 2.21.0
-
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index 4e7f82e2fc0c..e5843cb9a35e 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -381,9 +381,6 @@ struct mxt_data {
+ 	u8 T100_reportid_max;
+ 	u16 T107_address;
+ 
+-	/* for fw update in bootloader */
+-	struct completion bl_completion;
+-
+ 	/* for reset handling */
+ 	struct completion reset_completion;
+ 
+@@ -395,6 +392,9 @@ struct mxt_data {
+ 
+ 	enum mxt_suspend_mode suspend_mode;
+ 
++	/* for power up handling */
++	struct completion chg_completion;
++
+ 	/* Indicates whether device is in suspend */
+ 	bool suspended;
+ 
+@@ -611,7 +611,7 @@ static int mxt_check_bootloader(struct mxt_data *data, struct mxt_flash *f)
+ 	 * CHG assertion before reading the status byte.
+ 	 * Once the status byte has been read, the line is deasserted.
+ 	 */
+-	ret = mxt_wait_for_completion(data, &data->bl_completion,
++	ret = mxt_wait_for_completion(data, &data->chg_completion,
+ 				      MXT_FW_CHG_TIMEOUT);
+ 	if (ret) {
+ 		/*
+@@ -1402,8 +1402,7 @@ static irqreturn_t mxt_interrupt(int irq, void *dev_id)
+ 	struct mxt_data *data = dev_id;
+ 
+ 	if (data->in_bootloader) {
+-		/* bootloader state transition completion */
+-		complete(&data->bl_completion);
++		complete(&data->chg_completion);
+ 		return IRQ_HANDLED;
+ 	}
+ 
+@@ -2167,9 +2166,9 @@ static void mxt_regulator_enable(struct mxt_data *data)
+ 	msleep(MXT_CHG_DELAY);
+ 
+ retry_wait:
+-	reinit_completion(&data->bl_completion);
++	reinit_completion(&data->chg_completion);
+ 	data->in_bootloader = true;
+-	error = mxt_wait_for_completion(data, &data->bl_completion,
++	error = mxt_wait_for_completion(data, &data->chg_completion,
+ 					MXT_POWERON_DELAY);
+ 	if (error == -EINTR)
+ 		goto retry_wait;
+@@ -3334,7 +3333,7 @@ static int mxt_enter_bootloader(struct mxt_data *data)
+ 		enable_irq(data->irq);
+ 	}
+ 
+-	reinit_completion(&data->bl_completion);
++	reinit_completion(&data->chg_completion);
+ 
+ 	return 0;
+ }
+@@ -3370,7 +3369,7 @@ static int mxt_load_fw(struct device *dev)
+ 	}
+ 
+ 	/* Wait for flash. */
+-	ret = mxt_wait_for_completion(data, &data->bl_completion,
++	ret = mxt_wait_for_completion(data, &data->chg_completion,
+ 				      MXT_FW_RESET_TIME);
+ 	if (ret)
+ 		goto disable_irq;
+@@ -3381,7 +3380,7 @@ static int mxt_load_fw(struct device *dev)
+ 	 * the CHG line after bootloading has finished, so ignore potential
+ 	 * errors.
+ 	 */
+-	mxt_wait_for_completion(data, &data->bl_completion, MXT_FW_RESET_TIME);
++	mxt_wait_for_completion(data, &data->chg_completion, MXT_FW_RESET_TIME);
+ 
+ 	data->in_bootloader = false;
+ disable_irq:
+@@ -3803,7 +3802,7 @@ static int mxt_probe(struct i2c_client *client, const struct i2c_device_id *id)
+ 	data->irq = client->irq;
+ 	i2c_set_clientdata(client, data);
+ 
+-	init_completion(&data->bl_completion);
++	init_completion(&data->chg_completion);
+ 	init_completion(&data->reset_completion);
+ 	init_completion(&data->crc_completion);
+ 
 -- 
-Michal Hocko
-SUSE Labs
+2.19.2
+
