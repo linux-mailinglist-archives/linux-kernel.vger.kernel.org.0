@@ -2,68 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E77759F1F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 976D69F1FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 20:02:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbfH0SAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 14:00:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53786 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728371AbfH0SAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 14:00:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C0C7AE60;
-        Tue, 27 Aug 2019 18:00:00 +0000 (UTC)
-Date:   Tue, 27 Aug 2019 19:59:54 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Pu Wen <puwen@hygon.cn>, Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [GIT pull] x86/urgent for 5.3-rc5
-Message-ID: <20190827175954.GI27871@zn.tnic>
-References: <CAHk-=wjhyg-MndXHZGRD+ZKMK1UrcghyLH32rqQA=YmcxV7Z0Q@mail.gmail.com>
- <20190825193218.GD20639@zn.tnic>
- <CAHk-=wiBqmHTFYJWOehB=k3mC7srsx0DWMCYZ7fMOC0T7v1KHA@mail.gmail.com>
- <20190825194912.GF20639@zn.tnic>
- <CAHk-=wjcUQjK=SqPGdZCDEKntOZEv34n9wKJhBrPzcL6J7nDqQ@mail.gmail.com>
- <20190825201723.GG20639@zn.tnic>
- <20190826125342.GC28610@zn.tnic>
- <CAHk-=wj_E58JskechbJyWwpzu5rwKFHEABr4dCZjS+JBvv67Uw@mail.gmail.com>
- <20190827173955.GI29752@zn.tnic>
- <CAHk-=wj+w5+dicacZhtUG94r4ee5zEMM4FngC8dq1bB2X+V5Xg@mail.gmail.com>
+        id S1730313AbfH0SCk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 14:02:40 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:45305 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbfH0SCj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 14:02:39 -0400
+Received: by mail-yb1-f196.google.com with SMTP id u32so8528154ybi.12
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 11:02:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XR6/sqrx3cd2fMLsbifvUJ8ua+YMdiSTj/B5AHiQ/oo=;
+        b=I5TOl98iut1jtvrrC0COedDbhwBOFmzUo6dIk8ajzgy6yhTjI8CfubfiZQcp94YzPR
+         0YeziR8YP3Qi8QhuHV6XEzVgPFK7+kM4a8Q0+5an/Q+UQjDRQOVspbzmmt4B9XE9wFck
+         UKwfqXUYhDvuDFZLRCpm31LM6XIUgzLVJKbQBsL5Pfc+Vu3Xqo/flnIugVNJQI7nOsX6
+         uBdXhkB4DmMIP7dwvhYAY+fUS+9FLRbD0HMyj3/Aw6ca+Sq8HynGTxHLTeoygY1pjsg2
+         wSTZA2c6IG5PLwnNU2Zlgnr5w0RQlIK3W1Gc84n51/pm74QCrV8d2OPgRRJjxDwp0Tj7
+         cI1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XR6/sqrx3cd2fMLsbifvUJ8ua+YMdiSTj/B5AHiQ/oo=;
+        b=HBRhp1Wex8TW5wCo2HDTyxWqSroC9ZNeBOYi1qKMDkrfvmwinzIJneaJdamQBQ8Ssg
+         mel74LjKLF2jRZ8p79mOL56R2COcXjSc2A+0n1bgZhdNJNiyP4d0u2Vn6JOBlCaAqo21
+         bXXnyf6f+y88OwW0gxnwZJXzAA8UoxI27qk6DSDGvKNpUzlzxbuVMuxLBPHHV5XIom45
+         767Kpy0DnGvvpJgNc0seV7Oky9C24wq/5D8bEYHZWEa0IYILKg5+zi33wccjoKp2VbiN
+         nbyRE+byrbSTNGXSJ67meVIQ7FFgr1qlaCeKDlc4TydL6TtLIgjU7a+7Qh89spnf3cvz
+         uWiA==
+X-Gm-Message-State: APjAAAWNP3/EBwB2nQEvBTwRsNCgFl53G1P8Row1X2yGDHnN5giPG/cL
+        63QWnWQoO+d3rYOiRvI8doXEMZpXL4qOm4a9LKo=
+X-Google-Smtp-Source: APXvYqxd6NcDOYtY7Ak3XIp6fVqXbHG9XSq7Jyq7V1p+lifxpjKe5DCXK3UfYi6O9dmpCKvle1L+kvbJoVRQ2HYcryQ=
+X-Received: by 2002:a25:bec5:: with SMTP id k5mr33069ybm.259.1566928958725;
+ Tue, 27 Aug 2019 11:02:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wj+w5+dicacZhtUG94r4ee5zEMM4FngC8dq1bB2X+V5Xg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190827162924.88524-1-rrangel@chromium.org>
+In-Reply-To: <20190827162924.88524-1-rrangel@chromium.org>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 27 Aug 2019 14:02:18 -0400
+Message-ID: <CADnq5_ME=erztEhDhW5Z2RYr7kpMT_OOHm2xyJDPGd8a2d3LuA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: fix struct init in update_bounding_box
+To:     Raul E Rangel <rrangel@chromium.org>
+Cc:     amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Charlene Liu <charlene.liu@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Nikola Cornij <nikola.cornij@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        hersen wu <hersenxs.wu@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Jun Lei <Jun.Lei@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 10:46:42AM -0700, Linus Torvalds wrote:
-> No hurry, and I don't care deeply when this goes in. It looks safe and
-> harmless, so any time as far as I'm concerned - whatever is most
-> convenient for people.
-> 
-> This is more of a "let's protect against any future issues" than
-> anything critical right now.
+On Tue, Aug 27, 2019 at 1:33 PM Raul E Rangel <rrangel@chromium.org> wrote:
+>
+> dcn20_resource.c:2636:9: error: missing braces around initializer [-Werror=missing-braces]
+>   struct _vcs_dpi_voltage_scaling_st calculated_states[MAX_CLOCK_LIMIT_STATES] = {0};
+>          ^
+>
+> Fixes: 7ed4e6352c16f ("drm/amd/display: Add DCN2 HW Sequencer and Resource")
+>
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
+> ---
+>
+>  drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
+> index b949e202d6cb..d8dd99bfa275 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
+> @@ -2633,7 +2633,7 @@ static void cap_soc_clocks(
+>  static void update_bounding_box(struct dc *dc, struct _vcs_dpi_soc_bounding_box_st *bb,
+>                 struct pp_smu_nv_clock_table *max_clocks, unsigned int *uclk_states, unsigned int num_states)
+>  {
+> -       struct _vcs_dpi_voltage_scaling_st calculated_states[MAX_CLOCK_LIMIT_STATES] = {0};
+> +       struct _vcs_dpi_voltage_scaling_st calculated_states[MAX_CLOCK_LIMIT_STATES] = {};
 
-Yeah.
+I think it would be better to just use a memset.  Different compilers
+seems to do the wrong thing with these sort of initializations.
 
-> And I suspect it just means that next time somebody screws up rdrand,
-> they'll screw it up to be a simple counter instead of just returning
-> all-ones,
+Alex
 
-I'm reading this, and, for some reason, not even the slightest ounce of
-surprise is materializing in me. I wonder why that is...
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 247165, AG München
+>         int i;
+>         int num_calculated_states = 0;
+>         int min_dcfclk = 0;
+> --
+> 2.23.0.187.g17f5b7556c-goog
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
