@@ -2,114 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C5A9F66B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:51:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8CFF9F676
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 00:54:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfH0Wu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 18:50:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36349 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725989AbfH0Wu5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 18:50:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id w2so346164pfi.3
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 15:50:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zOEu9xUSDVrsGM6W3Flcox0RxExlMvx/ACbW1pnrPBg=;
-        b=Usm12moHUHac03LVvijuSRXEZBvccvhXSPy1aGZptmGTyOJlv9HwXwsEHdqFXO4Fjy
-         oJjqfDRkaK7VUPH4iq5Z8rILoMIkn6m9JCNM6H4QIMSxqk9jAD+Oevb9x69xcP84m5cE
-         Lg2/MGISpiT3slt9ksiZN8SPUlU+UcL8GidncWuemmZCmHTY6Xz7LzvTKno7sCq/IY/3
-         opXEgstVYldu6h1foTnU9ujFEcBzuq4MO/iJqviUjNpKDbi0MhWC9y97nLbn5AeFPrEA
-         d8+jX/Jck3fmEVavrg9+D004WeqLpMx35UEME4kKaai+EKtaosFbxvZ/UVCMo6Y5HmxF
-         RuNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zOEu9xUSDVrsGM6W3Flcox0RxExlMvx/ACbW1pnrPBg=;
-        b=GKTGVuInYPfy0vlNh0w5QjLfjeKJpz3ar/xWDeU50zYsG/Nz5FAUHWgLU5ahB5Ln27
-         CBzjEAaFtOtQNihgJ5rEbOWLeXlnYkk87ak8wRKKi0xdgqfVId8htf8yTFFhZs3fY468
-         BoVipdgnEw2eLSLFcIBBesCBUH6NI5QO+tvykYY0+OcaFNuOnh8NeGsx70Myaf2KyEdi
-         ltNPXUL3gC5v9RwO+GUsnM5cJaN+A2pk6XHr14xcj6EMZS2ueYOoS0QtX3ZUfIs+DdWL
-         cKtxMbm1YPfSduXAViEY0+ng1HpAjOA0OAi9oJ/agvNV6AQK0JjzwbjhIKcAzZBZ7/11
-         fQiw==
-X-Gm-Message-State: APjAAAXyzVpyDHURYTNykP27iMXffVhZTDrLbrH8kT6SiNDjnvBjcgTf
-        wEyZP1TYjpdX1IwOb7K80pow+Qnbtxob8MN0XRV32g==
-X-Google-Smtp-Source: APXvYqw23KIT1k0Xi5MgAknrnDtZVrBXQFptxEYv1UgQ0hbLWHN9Mrvq15ViFtifwG5yvUo07vfeKobCoXeNgNntFxU=
-X-Received: by 2002:aa7:984a:: with SMTP id n10mr1036503pfq.3.1566946256177;
- Tue, 27 Aug 2019 15:50:56 -0700 (PDT)
+        id S1726342AbfH0Wxz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 18:53:55 -0400
+Received: from mga05.intel.com ([192.55.52.43]:54664 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725997AbfH0Wxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 18:53:55 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 15:53:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,439,1559545200"; 
+   d="scan'208";a="181840162"
+Received: from skuppusw-desk.jf.intel.com (HELO skuppusw-desk.amr.corp.intel.com) ([10.54.74.33])
+  by fmsmga007.fm.intel.com with ESMTP; 27 Aug 2019 15:53:54 -0700
+Date:   Tue, 27 Aug 2019 15:50:58 -0700
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Denis Efremov <efremov@linux.com>, Lukas Wunner <lukas@wunner.de>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] Simplify PCIe hotplug indicator control
+Message-ID: <20190827225058.GG28404@skuppusw-desk.amr.corp.intel.com>
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+References: <20190819160643.27998-1-efremov@linux.com>
+ <2f4c857e-a7cc-58da-8be5-cba581c56d9f@linux.com>
+ <20190827223254.GC9987@google.com>
 MIME-Version: 1.0
-References: <20190711133915.GA25807@ziepe.ca> <CAKwvOdnHz3uH4ZM20LGQJ3FYhLQQUYn4Lg0B-YMr7Y1L66TAsA@mail.gmail.com>
- <20190711171808.GF25807@ziepe.ca> <20190711173030.GA844@archlinux-threadripper>
- <20190823142427.GD12968@ziepe.ca> <20190826153800.GA4752@archlinux-threadripper>
- <20190826154228.GE27349@ziepe.ca> <20190826233829.GA36284@archlinux-threadripper>
- <20190827150830.brsvsoopxut2od66@treble> <20190827170018.GA4725@mtr-leonro.mtl.com>
- <20190827192344.tcrzolbshwdsosl2@treble> <CAKwvOdk3UTT5jUTuG_wRizdpUtgv3qFB3w3NCtJ7ub5DnptYRA@mail.gmail.com>
-In-Reply-To: <CAKwvOdk3UTT5jUTuG_wRizdpUtgv3qFB3w3NCtJ7ub5DnptYRA@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 27 Aug 2019 15:50:44 -0700
-Message-ID: <CAKwvOdmq3VRLt+SUM=Do7OqasLqzoj4R00-JZGBWFjj8TccNgQ@mail.gmail.com>
-Subject: Re: [PATCH] rdma/siw: Use proper enumerated type in map_cqe_status
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Bernard Metzler <BMT@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190827223254.GC9987@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 2:27 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Tue, Aug 27, 2019 at 12:23 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> >
-> > On Tue, Aug 27, 2019 at 08:00:18PM +0300, Leon Romanovsky wrote:
-> > > On Tue, Aug 27, 2019 at 10:08:30AM -0500, Josh Poimboeuf wrote:
-> > > > On Mon, Aug 26, 2019 at 04:38:29PM -0700, Nathan Chancellor wrote:
-> > > > > Looks like that comes from tune_qsfp, which gets inlined into
-> > > > > tune_serdes but I am far from an objtool expert so I am not
-> > > > > really sure what kind of issues I am looking for. Adding Josh
-> > > > > and Peter for a little more visibility.
-> > > > >
-> > > > > Here is the original .o file as well:
-> > > > >
-> > > > > https://github.com/nathanchance/creduce-files/raw/4e252c0ca19742c90be1445e6c722a43ae561144/rdma-objtool/platform.o.orig
-> > > >
-> > > >      574:       0f 87 00 0c 00 00       ja     117a <tune_serdes+0xdfa>
-> > > >
-> > > > It's jumping to la-la-land past the end of the function.
-> > >
-> > > How is it possible?
-> >
-> > Looks like a compiler bug.
->
-> Nathan,
-> Thanks for the reduced test case.  I modified it slightly:
-> https://godbolt.org/z/15xejg
->
-> You can see that the label LBB0_5 seemingly points off into space.
-> Let me play with this one more a bit, then I will file a bug and
-> report back.
+On Tue, Aug 27, 2019 at 05:32:54PM -0500, Bjorn Helgaas wrote:
+> On Tue, Aug 20, 2019 at 03:16:43PM +0300, Denis Efremov wrote:
+> > On 8/19/19 7:06 PM, Denis Efremov wrote:
+> > > PCIe defines two optional hotplug indicators: a Power indicator and an
+> > > Attention indicator. Both are controlled by the same register, and each
+> > > can be on, off or blinking. The current interfaces
+> > > (pciehp_green_led_{on,off,blink}() and pciehp_set_attention_status()) are
+> > > non-uniform and require two register writes in many cases where we could
+> > > do one.
+> > > 
+> > > This patchset introduces the new function pciehp_set_indicators(). It
+> > > allows one to set two indicators with a single register write. All
+> > > calls to previous interfaces (pciehp_green_led_* and
+> > > pciehp_set_attention_status()) are replaced with a new one. Thus,
+> > > the amount of duplicated code for setting indicators is reduced.
+> > > 
+> > > Changes in v3:
+> > >   - Changed pciehp_set_indicators() to work with existing
+> > >     PCI_EXP_SLTCTL_* macros
+> > >   - Reworked the inputs validation in pciehp_set_indicators()
+> > >   - Removed pciehp_set_attention_status() and pciehp_green_led_*()
+> > >     completely
+> > > 
+> > > Denis Efremov (4):
+> > >   PCI: pciehp: Add pciehp_set_indicators() to jointly set LED indicators
+> > >   PCI: pciehp: Switch LED indicators with a single write
+> > >   PCI: pciehp: Remove pciehp_set_attention_status()
+> > >   PCI: pciehp: Remove pciehp_green_led_{on,off,blink}()
+> > 
+> > Lukas, Sathyanarayanan, sorry that I've dropped most of yours "Reviewed-by".
+> > The changes in the last 2 patches were significant.
+> 
+> Anybody want to review these?
 
-Something funny going on in one of the earliest optimizations.  Seems
-related to an analysis that's deducing that the case statement is
-exhaustive (so the GNU C case range is unrelated), but it's keeping
-the default case and its comparison around.  The analysis is correct;
-the value should never be > 0xF so there shouldn't be any runtime
-bugs, but this would avoid an unnecessary comparison for exhaustive
-switch statements and save a few bytes of object code in such cases.
+Except for one nitpick in [PATCH v3 1/4], rest seems fine to me.
 
-Filed: https://bugs.llvm.org/show_bug.cgi?id=43129
 -- 
-Thanks,
-~Nick Desaulniers
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
