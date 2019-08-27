@@ -2,74 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 974909F694
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 01:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD039F6A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 01:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbfH0XKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 19:10:06 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:35938 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726030AbfH0XKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 19:10:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=YR2u+b2LhnAELUHnWiGJHlda9p+tN1nN+D0ZxNNeSFg=; b=Sku2ku6uvXejga+FlHP4Ua6LSc
-        X5gdiJkvBtcjGDgiSAcFfFC0Gbfgpy2k8EzblZKgGxL8FcEFxg9V1mAM4TJ6NfaYydV092VkNonx6
-        QL+Qp1QqgIh6aHRSB84A6Av0KoemlAKI1fb9TLcITbhvHy96AZpWYjewXq5XDTa0BUmY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1i2kbA-0007AK-8H; Wed, 28 Aug 2019 01:10:00 +0200
-Date:   Wed, 28 Aug 2019 01:10:00 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     David Miller <davem@davemloft.net>
-Cc:     marco.hartmann@nxp.com, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        christian.herber@nxp.com
-Subject: Re: [PATCH v2 net] Add genphy_c45_config_aneg() function to phy-c45.c
-Message-ID: <20190827231000.GA26248@lunn.ch>
-References: <1566385208-23523-1-git-send-email-marco.hartmann@nxp.com>
- <20190827.150103.723109968950216148.davem@davemloft.net>
+        id S1726504AbfH0XLB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 19:11:01 -0400
+Received: from smtprelay0211.hostedemail.com ([216.40.44.211]:34622 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726034AbfH0XLB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 19:11:01 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id DC4C818224D63;
+        Tue, 27 Aug 2019 23:10:59 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:421:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2692:2828:3138:3139:3140:3141:3142:3353:3622:3865:3867:3868:3871:3872:3873:3874:4250:4321:5007:6121:7974:8828:10004:10400:10848:11026:11232:11473:11658:11914:12048:12297:12679:12740:12895:13069:13161:13229:13311:13357:13439:13894:14180:14659:14721:21080:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:23,LUA_SUMMARY:none
+X-HE-Tag: form24_42aa91898ca32
+X-Filterd-Recvd-Size: 2375
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 27 Aug 2019 23:10:57 +0000 (UTC)
+Message-ID: <a828ba39477f1cfb8933b0e6cc704dfa6c315bcc.camel@perches.com>
+Subject: Re: [PATCH v2] vsprintf: introduce %dE for error constants
+From:   Joe Perches <joe@perches.com>
+To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 27 Aug 2019 16:10:56 -0700
+In-Reply-To: <59bfcf90-f7f8-4d55-b5bf-211f6ca67917@kleine-koenig.org>
+References: <20190827211244.7210-1-uwe@kleine-koenig.org>
+         <04b021b263465c62628964ac402e15fd4cdc13a0.camel@perches.com>
+         <59bfcf90-f7f8-4d55-b5bf-211f6ca67917@kleine-koenig.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827.150103.723109968950216148.davem@davemloft.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 03:01:03PM -0700, David Miller wrote:
-> From: Marco Hartmann <marco.hartmann@nxp.com>
-> Date: Wed, 21 Aug 2019 11:00:46 +0000
+On Tue, 2019-08-27 at 23:35 +0200, Uwe Kleine-König wrote:
+> Hello Joe,
 > 
-> > Commit 34786005eca3 ("net: phy: prevent PHYs w/o Clause 22 regs from calling
-> > genphy_config_aneg") introduced a check that aborts phy_config_aneg()
-> > if the phy is a C45 phy.
-> > This causes phy_state_machine() to call phy_error() so that the phy
-> > ends up in PHY_HALTED state.
+> On 8/27/19 11:22 PM, Joe Perches wrote:
+> > On Tue, 2019-08-27 at 23:12 +0200, Uwe Kleine-König wrote:
+> > > The new format specifier %dE introduced with this patch pretty-prints
+> > > the typical negative error values. So
+> > > 
+> > > 	pr_info("probing failed (%dE)\n", ret);
+> > > 
+> > > yields
+> > > 
+> > > 	probing failed (EIO)
+> > > 
+> > > if ret holds -EIO. This is easier to understand than the for now common
+> > > 
+> > > 	probing failed (-5)
 > > 
-> > Instead of returning -EOPNOTSUPP, call genphy_c45_config_aneg()
-> > (analogous to the C22 case) so that the state machine can run
-> > correctly.
-> > 
-> > genphy_c45_config_aneg() closely resembles mv3310_config_aneg()
-> > in drivers/net/phy/marvell10g.c, excluding vendor specific
-> > configurations for 1000BaseT.
-> > 
-> > Fixes: 22b56e827093 ("net: phy: replace genphy_10g_driver with genphy_c45_driver")
-> > 
-> > Signed-off-by: Marco Hartmann <marco.hartmann@nxp.com>
+> > I suggest using both outputs like '-5 -EIO'
+> > rather than a single string
 > 
-> Andrew, gentle ping to respond to Heiner who said:
+> I like it the way it is implemented as it is more flexible. If you want
+> to see both, you can still do
+> 
+> 	pr_info("probing failed (%d %dE)\n", ret, ret);
+> 
+> and people (like me) who think that giving only EIO can still do just that.
 
-It at least makes it consistent with phy_restart_aneg() and
-phy_aneg_done().
+<shrug>  Up to you.  Just a suggestion.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+btw:
 
-    Andrew
+The test for %<dixu>E (FORMAT_TYPE_INT)
+should probably include a test for
+
+(spec->flags & SIGN)
+
+so that it only is used for %d and %i and
+disregarded for %x and %u
+
+
