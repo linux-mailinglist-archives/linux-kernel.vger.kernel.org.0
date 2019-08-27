@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDACC9E29C
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17BB59E296
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729502AbfH0I0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:26:22 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42706 "EHLO
+        id S1731007AbfH0I2I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:28:08 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42753 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727306AbfH0I0U (ORCPT
+        with ESMTP id S1729721AbfH0I0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:26:20 -0400
+        Tue, 27 Aug 2019 04:26:25 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2Wnt-0007nU-Su; Tue, 27 Aug 2019 10:26:14 +0200
+        id 1i2Wnv-0007o4-7y; Tue, 27 Aug 2019 10:26:15 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 86C021C07DC;
-        Tue, 27 Aug 2019 10:26:13 +0200 (CEST)
-Date:   Tue, 27 Aug 2019 08:26:13 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DD5681C0DDE;
+        Tue, 27 Aug 2019 10:26:14 +0200 (CEST)
+Date:   Tue, 27 Aug 2019 08:26:14 -0000
 From:   tip-bot2 for Arnaldo Carvalho de Melo <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf sort: Remove needless headers from sort.h,
- provide fwd struct decls
+Subject: [tip: perf/core] perf augmented_raw_syscalls: Rename
+ augmented_filename to augmented_arg
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-u63el2vqsovsmnhebx1rcixo@git.kernel.org>
-References: <tip-u63el2vqsovsmnhebx1rcixo@git.kernel.org>
+In-Reply-To: <tip-w9nkt3tvmyn5i4qnwng3ap1k@git.kernel.org>
+References: <tip-w9nkt3tvmyn5i4qnwng3ap1k@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <156689437339.24487.57241566156068084.tip-bot2@tip-bot2>
+Message-ID: <156689437481.24496.10164644571260075841.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,113 +52,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     185bcb92c80eae2d85ec834ea76a144fd163e2af
-Gitweb:        https://git.kernel.org/tip/185bcb92c80eae2d85ec834ea76a144fd163e2af
+Commit-ID:     2ad926db78777148b07fced1e4bc88e20ad00268
+Gitweb:        https://git.kernel.org/tip/2ad926db78777148b07fced1e4bc88e20ad00268
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Thu, 22 Aug 2019 17:11:39 -03:00
+AuthorDate:    Fri, 23 Aug 2019 10:37:47 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Mon, 26 Aug 2019 11:58:29 -03:00
 
-perf sort: Remove needless headers from sort.h, provide fwd struct decls
+perf augmented_raw_syscalls: Rename augmented_filename to augmented_arg
 
-Reducing the includes hell a bit more, speeding up the build and
-avoiding needless rebuilds when just one of those files gets updated.
+Because it is not used only for strings, we already use it for sockaddr
+structs and will use it for all other types.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-u63el2vqsovsmnhebx1rcixo@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-w9nkt3tvmyn5i4qnwng3ap1k@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/ui/browsers/res_sample.c |  2 ++
- tools/perf/ui/browsers/scripts.c    |  2 ++
- tools/perf/ui/stdio/hist.c          |  1 +
- tools/perf/util/callchain.c         |  1 +
- tools/perf/util/sort.h              | 15 ++-------------
- 5 files changed, 8 insertions(+), 13 deletions(-)
+ tools/perf/examples/bpf/augmented_raw_syscalls.c | 42 +++++++--------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
-diff --git a/tools/perf/ui/browsers/res_sample.c b/tools/perf/ui/browsers/res_sample.c
-index 08897bd..41a9d89 100644
---- a/tools/perf/ui/browsers/res_sample.c
-+++ b/tools/perf/ui/browsers/res_sample.c
-@@ -6,6 +6,8 @@
- #include "sort.h"
- #include "config.h"
- #include "time-utils.h"
-+#include "../util.h"
-+#include "../../util/util.h"
- #include <linux/time64.h>
- #include <linux/zalloc.h>
+diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+index 79787cf..b85b177 100644
+--- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
+@@ -60,7 +60,7 @@ struct syscall_exit_args {
+ 	long		   ret;
+ };
  
-diff --git a/tools/perf/ui/browsers/scripts.c b/tools/perf/ui/browsers/scripts.c
-index 04f9aff..f2fd9f0 100644
---- a/tools/perf/ui/browsers/scripts.c
-+++ b/tools/perf/ui/browsers/scripts.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include "../../builtin.h"
- #include "../../util/sort.h"
-+#include "../../util/util.h"
- #include "../../util/hist.h"
- #include "../../util/debug.h"
- #include "../../util/symbol.h"
-diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
-index ee7ea6d..51ed675 100644
---- a/tools/perf/ui/stdio/hist.c
-+++ b/tools/perf/ui/stdio/hist.c
-@@ -3,6 +3,7 @@
- #include <linux/string.h>
+-struct augmented_filename {
++struct augmented_arg {
+ 	unsigned int	size;
+ 	int		err;
+ 	char		value[PATH_MAX];
+@@ -72,8 +72,7 @@ struct augmented_args_payload {
+        struct syscall_enter_args args;
+        union {
+ 		struct {
+-			struct augmented_filename filename,
+-						  filename2;
++			struct augmented_arg arg, arg2;
+ 		};
+ 		struct sockaddr_storage saddr;
+ 	};
+@@ -82,31 +81,30 @@ struct augmented_args_payload {
+ bpf_map(augmented_args_tmp, PERCPU_ARRAY, int, struct augmented_args_payload, 1);
  
- #include "../../util/callchain.h"
-+#include "../../util/debug.h"
- #include "../../util/hist.h"
- #include "../../util/map.h"
- #include "../../util/map_groups.h"
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index d077704..dd6e010 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -20,6 +20,7 @@
+ static inline
+-unsigned int augmented_filename__read(struct augmented_filename *augmented_filename,
+-				      const void *filename_arg, unsigned int filename_len)
++unsigned int augmented_arg__read_str(struct augmented_arg *augmented_arg, const void *arg, unsigned int arg_len)
+ {
+-	unsigned int len = sizeof(*augmented_filename);
+-	int size = probe_read_str(&augmented_filename->value, filename_len, filename_arg);
++	unsigned int augmented_len = sizeof(*augmented_arg);
++	int string_len = probe_read_str(&augmented_arg->value, arg_len, arg);
  
- #include "asm/bug.h"
+-	augmented_filename->size = augmented_filename->err = 0;
++	augmented_arg->size = augmented_arg->err = 0;
+ 	/*
+ 	 * probe_read_str may return < 0, e.g. -EFAULT
+-	 * So we leave that in the augmented_filename->size that userspace will
++	 * So we leave that in the augmented_arg->size that userspace will
+ 	 */
+-	if (size > 0) {
+-		len -= sizeof(augmented_filename->value) - size;
+-		len &= sizeof(augmented_filename->value) - 1;
+-		augmented_filename->size = size;
++	if (string_len > 0) {
++		augmented_len -= sizeof(augmented_arg->value) - string_len;
++		augmented_len &= sizeof(augmented_arg->value) - 1;
++		augmented_arg->size = string_len;
+ 	} else {
+ 		/*
+ 		 * So that username notice the error while still being able
+ 		 * to skip this augmented arg record
+ 		 */
+-		augmented_filename->err = size;
+-		len = offsetof(struct augmented_filename, value);
++		augmented_arg->err = string_len;
++		augmented_len = offsetof(struct augmented_arg, value);
+ 	}
  
-+#include "debug.h"
- #include "hist.h"
- #include "sort.h"
- #include "machine.h"
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index 4ae155c..3d7cef7 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -1,29 +1,18 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #ifndef __PERF_SORT_H
- #define __PERF_SORT_H
--#include "../builtin.h"
--
- #include <regex.h>
--
--#include "color.h"
-+#include <stdbool.h>
- #include <linux/list.h>
--#include "cache.h"
- #include <linux/rbtree.h>
- #include "map_symbol.h"
- #include "symbol_conf.h"
--#include "string.h"
- #include "callchain.h"
- #include "values.h"
+-	return len;
++	return augmented_len;
+ }
  
--#include "../perf.h"
--#include "debug.h"
--#include "header.h"
--
--#include <subcmd/parse-options.h>
--#include "parse-events.h"
- #include "hist.h"
--#include "srcline.h"
+ SEC("!raw_syscalls:unaugmented")
+@@ -174,7 +172,7 @@ int sys_enter_open(struct syscall_enter_args *args)
+         if (augmented_args == NULL)
+                 return 1; /* Failure: don't filter */
  
-+struct option;
- struct thread;
+-	len += augmented_filename__read(&augmented_args->filename, filename_arg, sizeof(augmented_args->filename.value));
++	len += augmented_arg__read_str(&augmented_args->arg, filename_arg, sizeof(augmented_args->arg.value));
  
- extern regex_t parent_regex;
+ 	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
+ 	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len);
+@@ -191,7 +189,7 @@ int sys_enter_openat(struct syscall_enter_args *args)
+         if (augmented_args == NULL)
+                 return 1; /* Failure: don't filter */
+ 
+-	len += augmented_filename__read(&augmented_args->filename, filename_arg, sizeof(augmented_args->filename.value));
++	len += augmented_arg__read_str(&augmented_args->arg, filename_arg, sizeof(augmented_args->arg.value));
+ 
+ 	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
+ 	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len);
+@@ -209,8 +207,8 @@ int sys_enter_rename(struct syscall_enter_args *args)
+         if (augmented_args == NULL)
+                 return 1; /* Failure: don't filter */
+ 
+-	oldpath_len = augmented_filename__read(&augmented_args->filename, oldpath_arg, sizeof(augmented_args->filename.value));
+-	len += oldpath_len + augmented_filename__read((void *)(&augmented_args->filename) + oldpath_len, newpath_arg, sizeof(augmented_args->filename.value));
++	oldpath_len = augmented_arg__read_str(&augmented_args->arg, oldpath_arg, sizeof(augmented_args->arg.value));
++	len += oldpath_len + augmented_arg__read_str((void *)(&augmented_args->arg) + oldpath_len, newpath_arg, sizeof(augmented_args->arg.value));
+ 
+ 	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
+ 	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len);
+@@ -228,8 +226,8 @@ int sys_enter_renameat(struct syscall_enter_args *args)
+         if (augmented_args == NULL)
+                 return 1; /* Failure: don't filter */
+ 
+-	oldpath_len = augmented_filename__read(&augmented_args->filename, oldpath_arg, sizeof(augmented_args->filename.value));
+-	len += oldpath_len + augmented_filename__read((void *)(&augmented_args->filename) + oldpath_len, newpath_arg, sizeof(augmented_args->filename.value));
++	oldpath_len = augmented_arg__read_str(&augmented_args->arg, oldpath_arg, sizeof(augmented_args->arg.value));
++	len += oldpath_len + augmented_arg__read_str((void *)(&augmented_args->arg) + oldpath_len, newpath_arg, sizeof(augmented_args->arg.value));
+ 
+ 	/* If perf_event_output fails, return non-zero so that it gets recorded unaugmented */
+ 	return perf_event_output(args, &__augmented_syscalls__, BPF_F_CURRENT_CPU, augmented_args, len);
