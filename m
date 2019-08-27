@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F4D9DFA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:56:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B26049DF69
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 09:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730561AbfH0H4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 03:56:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48192 "EHLO mail.kernel.org"
+        id S1729978AbfH0HyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:54:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729696AbfH0H4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:56:17 -0400
+        id S1729374AbfH0HyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:54:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C78B206BA;
-        Tue, 27 Aug 2019 07:56:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5ED6206BF;
+        Tue, 27 Aug 2019 07:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892575;
-        bh=i5Jgkpqf/Im+tbDi/BtnbwcDMMNHSPeIWGCo8ndierY=;
+        s=default; t=1566892441;
+        bh=TpboywqHr8Vos/+DQNJacqxYRvYbP+y0hh4/PGICnIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZVQNB7Co3t951hpU/HvM96AjJNnY/sit4ZriAN5q978uLUVvIi9K9g3kXKYIWoNTC
-         JaRE7yr4/2WG2A4Q61hCokfki8iYZVnN7QV3Dg00uXbAoOzp8HTGMK49Clb2zZkQR4
-         wWVs5H7RHfkX6/brxODoNkN/WwlcONti8kdInQE0=
+        b=wRuSdoJ44EvCztqyQyZRUmm5RyUnC43bwpCZRwHgan8e611CpXbSyI7iAJHVK0TiS
+         exLBJf9jhmn0nK9xjU2nHXXNgtWDp5lxjZidnLHz+mSGkha94TeaQh3J1X3rRflbqg
+         BWRtorcSCoEjuIeMoJPa7sS/RNp79L/7ghFq8R2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 39/98] SMB3: Fix potential memory leak when processing compound chain
-Date:   Tue, 27 Aug 2019 09:50:18 +0200
-Message-Id: <20190827072720.252611874@linuxfoundation.org>
+Subject: [PATCH 4.14 14/62] isdn: mISDN: hfcsusb: Fix possible null-pointer dereferences in start_isoc_chain()
+Date:   Tue, 27 Aug 2019 09:50:19 +0200
+Message-Id: <20190827072701.183544951@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
+In-Reply-To: <20190827072659.803647352@linuxfoundation.org>
+References: <20190827072659.803647352@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,85 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3edeb4a4146dc3b54d6fa71b7ee0585cb52ebfdf ]
+[ Upstream commit a0d57a552b836206ad7705a1060e6e1ce5a38203 ]
 
-When a reconnect happens in the middle of processing a compound chain
-the code leaks a buffer from the memory pool. Fix this by properly
-checking for a return code and freeing buffers in case of error.
+In start_isoc_chain(), usb_alloc_urb() on line 1392 may fail
+and return NULL. At this time, fifo->iso[i].urb is assigned to NULL.
 
-Also maintain a buf variable to be equal to either smallbuf or bigbuf
-depending on a response buffer size while parsing a chain and when
-returning to the caller.
+Then, fifo->iso[i].urb is used at some places, such as:
+LINE 1405:    fill_isoc_urb(fifo->iso[i].urb, ...)
+                  urb->number_of_packets = num_packets;
+                  urb->transfer_flags = URB_ISO_ASAP;
+                  urb->actual_length = 0;
+                  urb->interval = interval;
+LINE 1416:    fifo->iso[i].urb->...
+LINE 1419:    fifo->iso[i].urb->...
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Thus, possible null-pointer dereferences may occur.
+
+To fix these bugs, "continue" is added to avoid using fifo->iso[i].urb
+when it is NULL.
+
+These bugs are found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2ops.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/isdn/hardware/mISDN/hfcsusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-index 0ccf8f9b63a2e..97fdbec54db97 100644
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -3121,7 +3121,6 @@ receive_encrypted_standard(struct TCP_Server_Info *server,
- {
- 	int ret, length;
- 	char *buf = server->smallbuf;
--	char *tmpbuf;
- 	struct smb2_sync_hdr *shdr;
- 	unsigned int pdu_length = server->pdu_size;
- 	unsigned int buf_size;
-@@ -3151,18 +3150,15 @@ receive_encrypted_standard(struct TCP_Server_Info *server,
- 		return length;
- 
- 	next_is_large = server->large_buf;
-- one_more:
-+one_more:
- 	shdr = (struct smb2_sync_hdr *)buf;
- 	if (shdr->NextCommand) {
--		if (next_is_large) {
--			tmpbuf = server->bigbuf;
-+		if (next_is_large)
- 			next_buffer = (char *)cifs_buf_get();
--		} else {
--			tmpbuf = server->smallbuf;
-+		else
- 			next_buffer = (char *)cifs_small_buf_get();
--		}
- 		memcpy(next_buffer,
--		       tmpbuf + le32_to_cpu(shdr->NextCommand),
-+		       buf + le32_to_cpu(shdr->NextCommand),
- 		       pdu_length - le32_to_cpu(shdr->NextCommand));
- 	}
- 
-@@ -3191,12 +3187,21 @@ receive_encrypted_standard(struct TCP_Server_Info *server,
- 		pdu_length -= le32_to_cpu(shdr->NextCommand);
- 		server->large_buf = next_is_large;
- 		if (next_is_large)
--			server->bigbuf = next_buffer;
-+			server->bigbuf = buf = next_buffer;
- 		else
--			server->smallbuf = next_buffer;
--
--		buf += le32_to_cpu(shdr->NextCommand);
-+			server->smallbuf = buf = next_buffer;
- 		goto one_more;
-+	} else if (ret != 0) {
-+		/*
-+		 * ret != 0 here means that we didn't get to handle_mid() thus
-+		 * server->smallbuf and server->bigbuf are still valid. We need
-+		 * to free next_buffer because it is not going to be used
-+		 * anywhere.
-+		 */
-+		if (next_is_large)
-+			free_rsp_buf(CIFS_LARGE_BUFFER, next_buffer);
-+		else
-+			free_rsp_buf(CIFS_SMALL_BUFFER, next_buffer);
- 	}
- 
- 	return ret;
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+index 35983c7c31375..163bc482b2a78 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.c
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
+@@ -1402,6 +1402,7 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
+ 				printk(KERN_DEBUG
+ 				       "%s: %s: alloc urb for fifo %i failed",
+ 				       hw->name, __func__, fifo->fifonum);
++				continue;
+ 			}
+ 			fifo->iso[i].owner_fifo = (struct usb_fifo *) fifo;
+ 			fifo->iso[i].indx = i;
 -- 
 2.20.1
 
