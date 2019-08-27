@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E29C9E117
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00E6F9E1AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732636AbfH0IJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:09:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33448 "EHLO mail.kernel.org"
+        id S1731271AbfH0IOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:14:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732436AbfH0IEI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:04:08 -0400
+        id S1730752AbfH0H5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:57:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B68742184D;
-        Tue, 27 Aug 2019 08:04:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B97A3206BA;
+        Tue, 27 Aug 2019 07:57:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566893047;
+        s=default; t=1566892627;
         bh=pxSnDMCy4QW5fVlt8AHYU8Hw9Z8BgMHTH91vuYTye3I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gxjPgu2/lkr4RVOpDPRzvNnKUEm8fSDy6iNqw/rHhxrvGkybe7qXI2fIGc26ZscjR
-         c9k4IkZqAohM3gtI0PPBHdQ6xXkgGfwMCGh4LUtKfgJpBihnGOH0SzFD3OlbEdqGcF
-         qqouRdxn4nZlQLQxSJBeHB+VpDu+NjJVZ+RcV8fM=
+        b=fz5sjf0zoAe8oUl0623XHyVp0dApqqoqnZouufbAWnift75Kk5s+g4C4h45Q5T4El
+         lx0+PnoI33YZ0xWVbb9fuI4bdvlrTpzjxC/vooNa9W4lhSpOk9ImvjvQYtngCD6ZSp
+         R/O683KLv4D3yNI/+CwQpOlk585/3eLabCXsem6o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Deepak Rawat <drawat@vmware.com>,
         Thomas Hellstrom <thellstrom@vmware.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 100/162] drm/vmwgfx: fix memory leak when too many retries have occurred
-Date:   Tue, 27 Aug 2019 09:50:28 +0200
-Message-Id: <20190827072741.727998111@linuxfoundation.org>
+Subject: [PATCH 4.19 51/98] drm/vmwgfx: fix memory leak when too many retries have occurred
+Date:   Tue, 27 Aug 2019 09:50:30 +0200
+Message-Id: <20190827072720.986259442@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
-References: <20190827072738.093683223@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
