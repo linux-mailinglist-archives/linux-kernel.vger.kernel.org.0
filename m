@@ -2,71 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A52669F2F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A022A9F300
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 21:12:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730976AbfH0TKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 15:10:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52338 "EHLO mail.kernel.org"
+        id S1731019AbfH0TMS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 15:12:18 -0400
+Received: from gate.crashing.org ([63.228.1.57]:51655 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730465AbfH0TKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 15:10:05 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71D8A214DA;
-        Tue, 27 Aug 2019 19:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566933004;
-        bh=cK8R8M0P4YzXDIjPRUDK2R0P/pIWXsdyndhUG44ptkg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=A7tk0LDmJ/grJO+mdXUmh80AJX1fRJxA8zhAbrOCOsIdmmVt6wcTiXy0SbbXw19uF
-         tOaCVNOh/VzYFt4bsjQt5Mb01gR9jZntXg5YYXwgyH92O0zrYBtlmstNXHfnUIsH2y
-         V6sXqITpunXVkQepF15qHLtfpMqrZbVJI5R0g4QU=
-Subject: Re: [PATCH 4.19 00/98] 4.19.69-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190827072718.142728620@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <54c96152-aef5-857e-ad89-db20f7afa40b@kernel.org>
-Date:   Tue, 27 Aug 2019 13:10:02 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728312AbfH0TMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 15:12:18 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x7RJBseI002906;
+        Tue, 27 Aug 2019 14:11:54 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x7RJBrZL002905;
+        Tue, 27 Aug 2019 14:11:53 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Tue, 27 Aug 2019 14:11:53 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Nicholas Piggin <npiggin@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] powerpc: cleanup hw_irq.h
+Message-ID: <20190827191153.GC31406@gate.crashing.org>
+References: <0f7e164afb5d1b022441559fe5a999bb6d3c0a23.1566893505.git.christophe.leroy@c-s.fr> <81f39fa06ae582f4a783d26abd2b310204eba8f4.1566893505.git.christophe.leroy@c-s.fr> <1566909844.x4jee1jjda.astroid@bobo.none> <20190827172909.GA31406@gate.crashing.org> <1410046b-e1a3-b892-2add-6c1d353cb781@c-s.fr> <20190827182616.GB31406@gate.crashing.org> <00cc71bd-35f5-b0d5-e4fa-8368fe4fe78c@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00cc71bd-35f5-b0d5-e4fa-8368fe4fe78c@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/27/19 1:49 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.69 release.
-> There are 98 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Aug 27, 2019 at 08:33:45PM +0200, Christophe Leroy wrote:
+> >So
+> >   asm("add%I2 %0,%1,%2" : "=r"(dst) : "r"(src1), "ri"(src1));
 > 
-> Responses should be made by Thu 29 Aug 2019 07:25:02 AM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.69-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+> "ri", not "n" as for wrtee ?
 
-Compiled and booted on my test system. No dmesg regressions.
+"n" means a number.  "i" means any constant integer.  The difference is
+mostly that "n" does not allow relocations.  This probably does not matter
+for this asm, not if you call it with correct values anyway.
 
-thanks,
--- Shuah
+(If you want to pass other than small numbers here, you need different
+constraints; let's not go there).
+
+
+Segher
