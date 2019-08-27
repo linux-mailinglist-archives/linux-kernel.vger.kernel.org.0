@@ -2,35 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF139E257
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFA339E27F
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:28:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729717AbfH0I0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:26:23 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42724 "EHLO
+        id S1729947AbfH0I0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:26:31 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42769 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729370AbfH0I0W (ORCPT
+        with ESMTP id S1729747AbfH0I00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:26:22 -0400
+        Tue, 27 Aug 2019 04:26:26 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2Wnw-0007oZ-3A; Tue, 27 Aug 2019 10:26:16 +0200
+        id 1i2Wnx-0007q0-8F; Tue, 27 Aug 2019 10:26:17 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B98C91C0DDE;
-        Tue, 27 Aug 2019 10:26:15 +0200 (CEST)
-Date:   Tue, 27 Aug 2019 08:26:15 -0000
-From:   tip-bot2 for Arnaldo Carvalho de Melo <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A370B1C0DDE;
+        Tue, 27 Aug 2019 10:26:16 +0200 (CEST)
+Date:   Tue, 27 Aug 2019 08:26:16 -0000
+From:   tip-bot2 for Souptick Joarder <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf augmented_raw_syscalls: Introduce helper to get
- the scratch space
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+Subject: [tip: perf/core] perf tools: Remove duplicate headers
+Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
+In-Reply-To: <1566663319-4283-1-git-send-email-jrdr.linux@gmail.com>
+References: <1566663319-4283-1-git-send-email-jrdr.linux@gmail.com>
 MIME-Version: 1.0
-Message-ID: <156689437565.24502.15798435536563381582.tip-bot2@tip-bot2>
+Message-ID: <156689437654.24508.3120746550321091583.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,119 +54,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     c265784de7adff9e07934b712204556fb0b3ba43
-Gitweb:        https://git.kernel.org/tip/c265784de7adff9e07934b712204556fb0b3ba43
-Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Fri, 23 Aug 2019 15:45:54 -03:00
+Commit-ID:     b4de344b25b9fbd4db7b84da43808a6b7daac887
+Gitweb:        https://git.kernel.org/tip/b4de344b25b9fbd4db7b84da43808a6b7daac887
+Author:        Souptick Joarder <jrdr.linux@gmail.com>
+AuthorDate:    Sat, 24 Aug 2019 21:45:19 +05:30
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Mon, 26 Aug 2019 11:58:29 -03:00
 
-perf augmented_raw_syscalls: Introduce helper to get the scratch space
+perf tools: Remove duplicate headers
 
-We need more than the BPF stack can give us to format the
-raw_syscalls:sys_enter augmented tracepoint, so we use a PERCPU_ARRAY
-map for that, use a helper to shorten the sequence to access that area.
+Removed headers which are included twice.
 
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Mukesh Ojha <mojha@codeaurora.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1566663319-4283-1-git-send-email-jrdr.linux@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/examples/bpf/augmented_raw_syscalls.c | 32 +++++++--------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ tools/perf/util/data.c                 | 1 -
+ tools/perf/util/get_current_dir_name.c | 1 -
+ tools/perf/util/stat-display.c         | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index 0a8d217..8fd5ea0 100644
---- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -78,8 +78,15 @@ struct augmented_args_payload {
- 	};
- };
+diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+index 1d1b97a..74aafe0 100644
+--- a/tools/perf/util/data.c
++++ b/tools/perf/util/data.c
+@@ -9,7 +9,6 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <asm/bug.h>
+-#include <sys/types.h>
+ #include <dirent.h>
  
-+// We need more tmp space than the BPF stack can give us
- bpf_map(augmented_args_tmp, PERCPU_ARRAY, int, struct augmented_args_payload, 1);
+ #include "data.h"
+diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
+index 01f32f2..b205d92 100644
+--- a/tools/perf/util/get_current_dir_name.c
++++ b/tools/perf/util/get_current_dir_name.c
+@@ -5,7 +5,6 @@
+ #include "get_current_dir_name.h"
+ #include <unistd.h>
+ #include <stdlib.h>
+-#include <stdlib.h>
  
-+static inline struct augmented_args_payload *augmented_args_payload(void)
-+{
-+	int key = 0;
-+	return bpf_map_lookup_elem(&augmented_args_tmp, &key);
-+}
-+
- static inline
- unsigned int augmented_arg__read_str(struct augmented_arg *augmented_arg, const void *arg, unsigned int arg_len)
- {
-@@ -122,8 +129,7 @@ int syscall_unaugmented(struct syscall_enter_args *args)
- SEC("!syscalls:sys_enter_connect")
- int sys_enter_connect(struct syscall_enter_args *args)
- {
--	int key = 0;
--	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
-+	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *sockaddr_arg = (const void *)args->args[1];
- 	unsigned int socklen = args->args[2];
- 	unsigned int len = sizeof(augmented_args->args);
-@@ -143,8 +149,7 @@ int sys_enter_connect(struct syscall_enter_args *args)
- SEC("!syscalls:sys_enter_sendto")
- int sys_enter_sendto(struct syscall_enter_args *args)
- {
--	int key = 0;
--	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
-+	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *sockaddr_arg = (const void *)args->args[4];
- 	unsigned int socklen = args->args[5];
- 	unsigned int len = sizeof(augmented_args->args);
-@@ -164,8 +169,7 @@ int sys_enter_sendto(struct syscall_enter_args *args)
- SEC("!syscalls:sys_enter_open")
- int sys_enter_open(struct syscall_enter_args *args)
- {
--	int key = 0;
--	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
-+	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *filename_arg = (const void *)args->args[0];
- 	unsigned int len = sizeof(augmented_args->args);
+ /* Android's 'bionic' library, for one, doesn't have this */
  
-@@ -181,8 +185,7 @@ int sys_enter_open(struct syscall_enter_args *args)
- SEC("!syscalls:sys_enter_openat")
- int sys_enter_openat(struct syscall_enter_args *args)
- {
--	int key = 0;
--	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
-+	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *filename_arg = (const void *)args->args[1];
- 	unsigned int len = sizeof(augmented_args->args);
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index 51d6781..1461dac 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -14,7 +14,6 @@
+ #include "string2.h"
+ #include <linux/ctype.h>
+ #include "cgroup.h"
+-#include <math.h>
+ #include <api/fs/fs.h>
  
-@@ -198,8 +201,7 @@ int sys_enter_openat(struct syscall_enter_args *args)
- SEC("!syscalls:sys_enter_rename")
- int sys_enter_rename(struct syscall_enter_args *args)
- {
--	int key = 0;
--	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
-+	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *oldpath_arg = (const void *)args->args[0],
- 		   *newpath_arg = (const void *)args->args[1];
- 	unsigned int len = sizeof(augmented_args->args), oldpath_len;
-@@ -217,8 +219,7 @@ int sys_enter_rename(struct syscall_enter_args *args)
- SEC("!syscalls:sys_enter_renameat")
- int sys_enter_renameat(struct syscall_enter_args *args)
- {
--	int key = 0;
--	struct augmented_args_payload *augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
-+	struct augmented_args_payload *augmented_args = augmented_args_payload();
- 	const void *oldpath_arg = (const void *)args->args[1],
- 		   *newpath_arg = (const void *)args->args[3];
- 	unsigned int len = sizeof(augmented_args->args), oldpath_len;
-@@ -248,14 +249,13 @@ int sys_enter(struct syscall_enter_args *args)
- 	 */
- 	unsigned int len = sizeof(augmented_args->args);
- 	struct syscall *syscall;
--	int key = 0;
- 
- 	if (pid_filter__has(&pids_filtered, getpid()))
- 		return 0;
- 
--        augmented_args = bpf_map_lookup_elem(&augmented_args_tmp, &key);
--        if (augmented_args == NULL)
--                return 1;
-+	augmented_args = augmented_args_payload();
-+	if (augmented_args == NULL)
-+		return 1;
- 
- 	probe_read(&augmented_args->args, sizeof(augmented_args->args), args);
- 
+ #define CNTR_NOT_SUPPORTED	"<not supported>"
