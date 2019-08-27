@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D98B19E17F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 446B79E106
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731806AbfH0IMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:12:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52502 "EHLO mail.kernel.org"
+        id S1731173AbfH0III (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 04:08:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730809AbfH0H7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 03:59:14 -0400
+        id S1732626AbfH0IGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:06:35 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3197E2186A;
-        Tue, 27 Aug 2019 07:59:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEECC206BA;
+        Tue, 27 Aug 2019 08:06:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892753;
-        bh=FSfcG/9Y4fiGy/iFk9Uk6lrJU6yMcP4v2223qcX1u9M=;
+        s=default; t=1566893195;
+        bh=E2T96lX400mJklYhgl0TGxOlccJvDuTil1Mhu7MLcJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uLp7ho1y+SKxtRuSBYMNTzJC0bED33xFGsvzl47gjm1ThTRQsYYlzwQ/bt14pAU+c
-         JKp8wD2leJWmx8Go0KK505khHuLl8fg9o3/xdW1rsNifY8OOD905+ULCw+Z9jJEfNO
-         YiMAtuFwnjeyZs1dGkhMhKog7KxsSmimFljXtIao=
+        b=MaG8JY+++gUMlP0QP5UkseGmMHalsolI2wm1Zu7qwakaXZhYl9UA+nbE4M55oZcJP
+         U1GCbYtQtsvOHlkLVrows5ftnOQ8fDd7cPPElNGT70NXoOduarUlk08RrllETME/Ab
+         dRQbQUMWDl5/fXvjFu6tDAR+qigTLRVm3wo3jigU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ping Cheng <ping.cheng@wacom.com>,
         Jason Gerecke <jason.gerecke@wacom.com>,
         Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.19 59/98] HID: wacom: correct misreported EKR ring values
-Date:   Tue, 27 Aug 2019 09:50:38 +0200
-Message-Id: <20190827072721.400101505@linuxfoundation.org>
+Subject: [PATCH 5.2 111/162] HID: wacom: correct misreported EKR ring values
+Date:   Tue, 27 Aug 2019 09:50:39 +0200
+Message-Id: <20190827072742.227384521@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
+In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
+References: <20190827072738.093683223@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -68,7 +68,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/hid/wacom_wac.c
 +++ b/drivers/hid/wacom_wac.c
-@@ -1061,7 +1061,7 @@ static int wacom_remote_irq(struct wacom
+@@ -1059,7 +1059,7 @@ static int wacom_remote_irq(struct wacom
  	input_report_key(input, BTN_BASE2, (data[11] & 0x02));
  
  	if (data[12] & 0x80)
