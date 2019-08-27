@@ -2,136 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A759EC5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E70069EC67
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:23:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730127AbfH0PXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:23:13 -0400
-Received: from mail-io1-f48.google.com ([209.85.166.48]:40258 "EHLO
-        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfH0PXM (ORCPT
+        id S1730232AbfH0PXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:23:49 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:1613 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727219AbfH0PXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:23:12 -0400
-Received: by mail-io1-f48.google.com with SMTP id t6so47227779ios.7
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 08:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EialagdAgnBtYjzH6H0eO9CyoHJZ48U2U5aIVIJeUoo=;
-        b=figx/Q98kEpCBkqo3lxQ6atjRtKnOZ/vizqGhR6ya8V3vn3+aFl2oTLswEK1VjnEMg
-         An75CIk3RkB52JqKH80uhifoZiBjBgP+rPZNgE/8ipmRd77Ok9Xb6Y+4IeWDeVn8lmKd
-         ySMOZk1uc2qMWNtBcJuL843WNs9SFPe/F1JQBw+7MCJe3UdkDKvttcuwKgwAi9oppUSI
-         vRtaD9Uy56A0NEqyv6qNzLxcz1F6B3uV/Dp3f7ve6N1FqXtz+1EzyKNRy7GFif41nKI3
-         nQoC9QQViIIaBRegMiHx06KhObDFDXWzNvmgR56X0UTpzB2kBNE2KFkzbQ9//Alh90Yc
-         O4RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EialagdAgnBtYjzH6H0eO9CyoHJZ48U2U5aIVIJeUoo=;
-        b=CgWMNwxHDIvKfYLe5K/sZFGqcXozhoU+14/cLu2Q2hj4m78W3y+8BPm0vKSY2frTo5
-         oQC95ps5cybuZejGNjOHHnuKp8umI9tNeD5FNMwX6RzH+vc2eOcqB0p23LgYsLYstzTI
-         VK9Uh0uYKZoDbIXO57LiBpJFbK5Ahip2SL55/VSJut3895EmMxZlk2dvAsxC4aI7gUXq
-         1IGEXzPYsohk9u6XkGIRYjWjftn6AA1uNuC1FZZcHeqKbrsA/uBB3rkqbsV1t7b6LLFu
-         zIxb//odtObAx8TL1xzVPWZ02IqDcfCE1Y77xPTI/yYiKgbSJHPcTjXw0bOb60dpVlbs
-         cVOA==
-X-Gm-Message-State: APjAAAWgB17wPqWmJgi0sql9Ozdyjl2n2IX9xN//wZko1A7xGfOywH6a
-        5WFYIg0QVrYJZ6fNZu0kzJpkWQ==
-X-Google-Smtp-Source: APXvYqzTjEDUFcepnEf1WEiRSh5mor0Y5ZzBDG+MemPieFRR8sXBVkJz4+O2iILrDrCaJ4x8THmZFQ==
-X-Received: by 2002:a6b:3943:: with SMTP id g64mr24044809ioa.225.1566919391746;
-        Tue, 27 Aug 2019 08:23:11 -0700 (PDT)
-Received: from [192.168.1.50] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id u24sm13275659iot.38.2019.08.27.08.23.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 08:23:10 -0700 (PDT)
-Subject: Re: [PATCHSET v3] writeback, memcg: Implement foreign inode flushing
-To:     Tejun Heo <tj@kernel.org>, jack@suse.cz, hannes@cmpxchg.org,
-        mhocko@kernel.org, vdavydov.dev@gmail.com
-Cc:     cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, guro@fb.com, akpm@linux-foundation.org
-References: <20190826160656.870307-1-tj@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <15a5a6e8-90bf-726b-f68c-db91f1afc651@kernel.dk>
-Date:   Tue, 27 Aug 2019 09:23:09 -0600
+        Tue, 27 Aug 2019 11:23:48 -0400
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7RFLUt5007886;
+        Tue, 27 Aug 2019 17:23:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=SMKi/mX7zvq/yrjJa5DU8JTV4hHp8R0QThyzkk9s3nA=;
+ b=VbqIUTEVJwBhsOXMzWDDM0WvEpGE8M1Fpzxc2dYPMy6ExSX4mLoDAaBLGp0xoV3psUrN
+ mrc3zFMXTWIe16z1EzNMiMSfbFZy7ftoqLjmFYBILsTiBut8g6JZQd5nEI98DH322Wln
+ ASDN4IZp3FXfucqYou5miezHC83yJBffg2S5FNlcIPC+HGTat3x7bXkz7KJgtCJ+aBGI
+ VmJ/Iloca7rnS74AbeTEj9+CiJosfGB28SXarYrcEHbXI/W8pmIhK9hTQd83Y8HhjuMO
+ grAuIuqZ2Mwmgsu4JYZvPXmKNXB4OZtpVs2GtNYceuB59H8KhZJ8NoMxsvftLAo9WGkC 6w== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2ujtcbjk3r-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 27 Aug 2019 17:23:36 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 768AE24;
+        Tue, 27 Aug 2019 15:23:32 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A90C72AC1B6;
+        Tue, 27 Aug 2019 17:23:31 +0200 (CEST)
+Received: from lmecxl0912.lme.st.com (10.75.127.44) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 27 Aug
+ 2019 17:23:31 +0200
+Subject: Re: [PATCH] Documentation: add link to stm32mp157 docs
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Gerald BAEZA <gerald.baeza@st.com>
+CC:     "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1566908347-92201-1-git-send-email-gerald.baeza@st.com>
+ <20190827074825.64a28e88@lwn.net>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <5257eff7-418b-8e94-1ced-30718dd3f5dc@st.com>
+Date:   Tue, 27 Aug 2019 17:23:30 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190826160656.870307-1-tj@kernel.org>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190827074825.64a28e88@lwn.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-27_03:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/26/19 10:06 AM, Tejun Heo wrote:
-> Hello,
-> 
-> Changes from v1[1]:
-> 
-> * More comments explaining the parameters.
-> 
-> * 0003-writeback-Separate-out-wb_get_lookup-from-wb_get_create.patch
->    added and avoid spuriously creating missing wbs for foreign
->    flushing.
-> 
-> Changes from v2[2]:
-> 
-> * Added livelock avoidance and applied other smaller changes suggested
->    by Jan.
-> 
-> There's an inherent mismatch between memcg and writeback.  The former
-> trackes ownership per-page while the latter per-inode.  This was a
-> deliberate design decision because honoring per-page ownership in the
-> writeback path is complicated, may lead to higher CPU and IO overheads
-> and deemed unnecessary given that write-sharing an inode across
-> different cgroups isn't a common use-case.
-> 
-> Combined with inode majority-writer ownership switching, this works
-> well enough in most cases but there are some pathological cases.  For
-> example, let's say there are two cgroups A and B which keep writing to
-> different but confined parts of the same inode.  B owns the inode and
-> A's memory is limited far below B's.  A's dirty ratio can rise enough
-> to trigger balance_dirty_pages() sleeps but B's can be low enough to
-> avoid triggering background writeback.  A will be slowed down without
-> a way to make writeback of the dirty pages happen.
-> 
-> This patchset implements foreign dirty recording and foreign mechanism
-> so that when a memcg encounters a condition as above it can trigger
-> flushes on bdi_writebacks which can clean its pages.  Please see the
-> last patch for more details.
-> 
-> This patchset contains the following four patches.
-> 
->   0001-writeback-Generalize-and-expose-wb_completion.patch
->   0002-bdi-Add-bdi-id.patch
->   0003-writeback-Separate-out-wb_get_lookup-from-wb_get_create.patch
->   0004-writeback-memcg-Implement-cgroup_writeback_by_id.patch
->   0005-writeback-memcg-Implement-foreign-dirty-flushing.patch
-> 
-> 0001-0004 are prep patches which expose wb_completion and implement
-> bdi->id and flushing by bdi and memcg IDs.
-> 
-> 0005 implements foreign inode flushing.
-> 
-> Thanks.  diffstat follows.
-> 
->   fs/fs-writeback.c                |  130 ++++++++++++++++++++++++++++---------
->   include/linux/backing-dev-defs.h |   23 ++++++
->   include/linux/backing-dev.h      |    5 +
->   include/linux/memcontrol.h       |   39 +++++++++++
->   include/linux/writeback.h        |    2
->   mm/backing-dev.c                 |  120 +++++++++++++++++++++++++++++-----
->   mm/memcontrol.c                  |  134 +++++++++++++++++++++++++++++++++++++++
->   mm/page-writeback.c              |    4 +
->   8 files changed, 404 insertions(+), 53 deletions(-)
+Hi Jonathan,
 
-Applied for 5.4, thanks Tejun.
+On 8/27/19 3:48 PM, Jonathan Corbet wrote:
+> On Tue, 27 Aug 2019 12:19:32 +0000
+> Gerald BAEZA <gerald.baeza@st.com> wrote:
+> 
+>> Link to the online stm32mp157 documentation added
+>> in the overview.
+>>
+>> Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
+>> ---
+>>   Documentation/arm/stm32/stm32mp157-overview.rst | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+>> diff --git a/Documentation/arm/stm32/stm32mp157-overview.rst b/Documentation/arm/stm32/stm32mp157-overview.rst
+>> index f62fdc8..8d5a476 100644
+>> --- a/Documentation/arm/stm32/stm32mp157-overview.rst
+>> +++ b/Documentation/arm/stm32/stm32mp157-overview.rst
+>> @@ -14,6 +14,12 @@ It features:
+>>   - Standard connectivity, widely inherited from the STM32 MCU family
+>>   - Comprehensive security support
+>>   
+>> +Resources
+>> +---------
+>> +
+>> +Datasheet and reference manual are publicly available on ST website:
+>> +.. _STM32MP157: https://www.st.com/en/microcontrollers-microprocessors/stm32mp157.html
+>> +
+> 
+> Adding the URL is a fine idea.  But you don't need the extra syntax to
+> create a link if you're not going to actually make a link out of it.  So
+> I'd take the ".. _STM32MP157:" part out and life will be good.
+> 
 
--- 
-Jens Axboe
+We also did it for older stm32 product. Idea was to not have the "full" 
+address but just a shortcut of the link when html file is read. It maybe 
+makes no sens ? (if yes we will have to update older stm32 overview :))
 
+thanks
+Alex
+
+
+> Thanks,
+> 
+> jon
+> 
