@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFFCA9E12F
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:10:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0691C9E1CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 10:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732012AbfH0ICf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 04:02:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59196 "EHLO mail.kernel.org"
+        id S1730520AbfH0H4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 03:56:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731908AbfH0ICT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 04:02:19 -0400
+        id S1728972AbfH0H4I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 03:56:08 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F08420828;
-        Tue, 27 Aug 2019 08:02:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C54F1206BA;
+        Tue, 27 Aug 2019 07:56:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566892937;
-        bh=sy0/m07PKMTkCdmcinVLBxpf0qhjiUFZE268cm2ABUM=;
+        s=default; t=1566892567;
+        bh=MUIcTWJ/nQc3kOxlYLVxWaob9x9FWvs1EU/9x9YOFck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1aUjc5E3Nd/U3ph5gRRFIxEUF7I3H8xroHQ1b1q4/dCtMP1fowp8vhHoY5uqBPciL
-         josIXwRXJwCWRdwrgrzUYUQlDqhQ/uJpLhquqEQdjRSKorSrpeQQpdo3xnGQyXT9fe
-         oeoBtayyl0UO2U0mqe/BHzE8mUJ3uUo7dkoS87wU=
+        b=rSg5O4OWYADa0XYAArc25CaEorRJu7No8gda8y3w3aS3zb/qj8Pg22T7Q1pOeSTt8
+         lHJOpJGA1q9YWzQSmOPacEPI/s0PFzPMpwO5p228MBZ6K6Q2x3RCwz9fLFRrjDQJZP
+         eAKncRqaUSNcJFdSFjGb59+m2UrUnaywgGKdce3s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Stephen Suryaputra <ssuryaextr@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 059/162] iwlwifi: fix locking in delayed GTK setting
-Date:   Tue, 27 Aug 2019 09:49:47 +0200
-Message-Id: <20190827072740.233875735@linuxfoundation.org>
+Subject: [PATCH 4.19 10/98] selftests: forwarding: gre_multipath: Fix flower filters
+Date:   Tue, 27 Aug 2019 09:49:49 +0200
+Message-Id: <20190827072718.711893415@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190827072738.093683223@linuxfoundation.org>
-References: <20190827072738.093683223@linuxfoundation.org>
+In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
+References: <20190827072718.142728620@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,99 +45,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 6569e7d36773956298ec1d5f4e6a2487913d2752 ]
+[ Upstream commit 1be79d89b7ae96e004911bd228ce8c2b5cc6415f ]
 
-This code clearly never could have worked, since it locks
-while already locked. Add an unlocked __iwl_mvm_mac_set_key()
-variant that doesn't do locking to fix that.
+The TC filters used in the test do not work with veth devices because the
+outer Ethertype is 802.1Q and not IPv4. The test passes with mlxsw
+netdevs since the hardware always looks at "The first Ethertype that
+does not point to either: VLAN, CNTAG or configurable Ethertype".
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fix this by matching on the VLAN ID instead, but on the ingress side.
+The reason why this is not performed at egress is explained in the
+commit cited below.
+
+Fixes: 541ad323db3a ("selftests: forwarding: gre_multipath: Update next-hop statistics match criteria")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reported-by: Stephen Suryaputra <ssuryaextr@gmail.com>
+Tested-by: Stephen Suryaputra <ssuryaextr@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/wireless/intel/iwlwifi/mvm/mac80211.c | 39 ++++++++++++-------
- 1 file changed, 26 insertions(+), 13 deletions(-)
+ .../selftests/net/forwarding/gre_multipath.sh | 24 +++++++++----------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-index 964c7baabede3..edffae3741e00 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
-@@ -207,11 +207,11 @@ static const struct cfg80211_pmsr_capabilities iwl_mvm_pmsr_capa = {
- 	},
- };
- 
--static int iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
--			       enum set_key_cmd cmd,
--			       struct ieee80211_vif *vif,
--			       struct ieee80211_sta *sta,
--			       struct ieee80211_key_conf *key);
-+static int __iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
-+				 enum set_key_cmd cmd,
-+				 struct ieee80211_vif *vif,
-+				 struct ieee80211_sta *sta,
-+				 struct ieee80211_key_conf *key);
- 
- void iwl_mvm_ref(struct iwl_mvm *mvm, enum iwl_mvm_ref_type ref_type)
- {
-@@ -2725,7 +2725,7 @@ static int iwl_mvm_start_ap_ibss(struct ieee80211_hw *hw,
- 
- 		mvmvif->ap_early_keys[i] = NULL;
- 
--		ret = iwl_mvm_mac_set_key(hw, SET_KEY, vif, NULL, key);
-+		ret = __iwl_mvm_mac_set_key(hw, SET_KEY, vif, NULL, key);
- 		if (ret)
- 			goto out_quota_failed;
- 	}
-@@ -3493,11 +3493,11 @@ static int iwl_mvm_mac_sched_scan_stop(struct ieee80211_hw *hw,
- 	return ret;
- }
- 
--static int iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
--			       enum set_key_cmd cmd,
--			       struct ieee80211_vif *vif,
--			       struct ieee80211_sta *sta,
--			       struct ieee80211_key_conf *key)
-+static int __iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
-+				 enum set_key_cmd cmd,
-+				 struct ieee80211_vif *vif,
-+				 struct ieee80211_sta *sta,
-+				 struct ieee80211_key_conf *key)
- {
- 	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
- 	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
-@@ -3552,8 +3552,6 @@ static int iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
- 			return -EOPNOTSUPP;
- 	}
- 
--	mutex_lock(&mvm->mutex);
+diff --git a/tools/testing/selftests/net/forwarding/gre_multipath.sh b/tools/testing/selftests/net/forwarding/gre_multipath.sh
+index 37d7297e1cf8a..a8d8e8b3dc819 100755
+--- a/tools/testing/selftests/net/forwarding/gre_multipath.sh
++++ b/tools/testing/selftests/net/forwarding/gre_multipath.sh
+@@ -93,18 +93,10 @@ sw1_create()
+ 	ip route add vrf v$ol1 192.0.2.16/28 \
+ 	   nexthop dev g1a \
+ 	   nexthop dev g1b
 -
- 	switch (cmd) {
- 	case SET_KEY:
- 		if ((vif->type == NL80211_IFTYPE_ADHOC ||
-@@ -3699,7 +3697,22 @@ static int iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
- 		ret = -EINVAL;
- 	}
- 
-+	return ret;
-+}
-+
-+static int iwl_mvm_mac_set_key(struct ieee80211_hw *hw,
-+			       enum set_key_cmd cmd,
-+			       struct ieee80211_vif *vif,
-+			       struct ieee80211_sta *sta,
-+			       struct ieee80211_key_conf *key)
-+{
-+	struct iwl_mvm *mvm = IWL_MAC80211_GET_MVM(hw);
-+	int ret;
-+
-+	mutex_lock(&mvm->mutex);
-+	ret = __iwl_mvm_mac_set_key(hw, cmd, vif, sta, key);
- 	mutex_unlock(&mvm->mutex);
-+
- 	return ret;
+-	tc qdisc add dev $ul1 clsact
+-	tc filter add dev $ul1 egress pref 111 prot ipv4 \
+-	   flower dst_ip 192.0.2.66 action pass
+-	tc filter add dev $ul1 egress pref 222 prot ipv4 \
+-	   flower dst_ip 192.0.2.82 action pass
  }
  
+ sw1_destroy()
+ {
+-	tc qdisc del dev $ul1 clsact
+-
+ 	ip route del vrf v$ol1 192.0.2.16/28
+ 
+ 	ip route del vrf v$ol1 192.0.2.82/32 via 192.0.2.146
+@@ -139,10 +131,18 @@ sw2_create()
+ 	ip route add vrf v$ol2 192.0.2.0/28 \
+ 	   nexthop dev g2a \
+ 	   nexthop dev g2b
++
++	tc qdisc add dev $ul2 clsact
++	tc filter add dev $ul2 ingress pref 111 prot 802.1Q \
++	   flower vlan_id 111 action pass
++	tc filter add dev $ul2 ingress pref 222 prot 802.1Q \
++	   flower vlan_id 222 action pass
+ }
+ 
+ sw2_destroy()
+ {
++	tc qdisc del dev $ul2 clsact
++
+ 	ip route del vrf v$ol2 192.0.2.0/28
+ 
+ 	ip route del vrf v$ol2 192.0.2.81/32 via 192.0.2.145
+@@ -215,15 +215,15 @@ multipath4_test()
+ 	   nexthop dev g1a weight $weight1 \
+ 	   nexthop dev g1b weight $weight2
+ 
+-	local t0_111=$(tc_rule_stats_get $ul1 111 egress)
+-	local t0_222=$(tc_rule_stats_get $ul1 222 egress)
++	local t0_111=$(tc_rule_stats_get $ul2 111 ingress)
++	local t0_222=$(tc_rule_stats_get $ul2 222 ingress)
+ 
+ 	ip vrf exec v$h1 \
+ 	   $MZ $h1 -q -p 64 -A 192.0.2.1 -B 192.0.2.18 \
+ 	       -d 1msec -t udp "sp=1024,dp=0-32768"
+ 
+-	local t1_111=$(tc_rule_stats_get $ul1 111 egress)
+-	local t1_222=$(tc_rule_stats_get $ul1 222 egress)
++	local t1_111=$(tc_rule_stats_get $ul2 111 ingress)
++	local t1_222=$(tc_rule_stats_get $ul2 222 ingress)
+ 
+ 	local d111=$((t1_111 - t0_111))
+ 	local d222=$((t1_222 - t0_222))
 -- 
 2.20.1
 
