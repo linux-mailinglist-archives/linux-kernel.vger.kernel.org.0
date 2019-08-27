@@ -2,99 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24DBD9F3B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 22:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82D9B9F3B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 22:03:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731239AbfH0UDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 16:03:18 -0400
-Received: from saturn.retrosnub.co.uk ([46.235.226.198]:44712 "EHLO
-        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730221AbfH0UDS (ORCPT
+        id S1731308AbfH0UDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 16:03:37 -0400
+Received: from antares.kleine-koenig.org ([94.130.110.236]:43928 "EHLO
+        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730221AbfH0UDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 16:03:18 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id 2F1169E75AC;
-        Tue, 27 Aug 2019 21:03:16 +0100 (BST)
-Date:   Tue, 27 Aug 2019 21:03:14 +0100
-From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc:     "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "colin.king@canonical.com" <colin.king@canonical.com>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: dac: ad5380: fix incorrect assignment to val
-Message-ID: <20190827210314.24887407@archlinux>
-In-Reply-To: <20190818185544.66c32add@archlinux>
-References: <20190815115846.21800-1-colin.king@canonical.com>
-        <876a4d5190828619f75365863cc6bf2cfea4ffea.camel@analog.com>
-        <20190818185544.66c32add@archlinux>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 27 Aug 2019 16:03:37 -0400
+Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
+        id 825F8785AF5; Tue, 27 Aug 2019 22:03:35 +0200 (CEST)
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>
+To:     trivial@kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] trivial: Fix typos "emptry" -> "emptry" and "emtry" -> "entry"
+Date:   Tue, 27 Aug 2019 22:03:20 +0200
+Message-Id: <20190827200320.14737-1-uwe@kleine-koenig.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 18 Aug 2019 18:55:44 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+I found one when reading through spi.c. Then grepped for other instances
+and mistyped the pattern at first. So it's one logical change to fix
+them all in one go :-)
 
-> On Fri, 16 Aug 2019 06:16:26 +0000
-> "Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
-> 
-> > On Thu, 2019-08-15 at 12:58 +0100, Colin King wrote:  
-> > > [External]
-> > >     
-> > 
-> > Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>  
-> Applied to the fixes-togreg branch of iio.git.
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+---
+Hello,
 
-I changed my mind on this because I've been a bit slow sending a pull
-request and we are now at rc6.  Hence I've cherry picked it into
-togreg so it'll go in during the next merge window and get backported
-at that point.
+If this should go via the respective maintainer trees, I can
+also split to increase my patch count.
 
-Thanks,
+Best regards
+Uwe
+---
+ drivers/infiniband/hw/cxgb3/cxio_resource.c        | 2 +-
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c | 2 +-
+ drivers/spi/spi.c                                  | 2 +-
+ fs/xfs/xfs_dquot.c                                 | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Jonathan
-
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> >   
-> > > From: Colin Ian King <colin.king@canonical.com>
-> > > 
-> > > Currently the pointer val is being incorrectly incremented
-> > > instead of the value pointed to by val. Fix this by adding
-> > > in the missing * indirection operator.
-> > > 
-> > > Addresses-Coverity: ("Unused value")
-> > > Fixes: c03f2c536818 ("staging:iio:dac: Add AD5380 driver")
-> > > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > > ---
-> > >  drivers/iio/dac/ad5380.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/iio/dac/ad5380.c b/drivers/iio/dac/ad5380.c
-> > > index 4335214800d2..2ebe08326048 100644
-> > > --- a/drivers/iio/dac/ad5380.c
-> > > +++ b/drivers/iio/dac/ad5380.c
-> > > @@ -220,7 +220,7 @@ static int ad5380_read_raw(struct iio_dev *indio_dev,
-> > >  		if (ret)
-> > >  			return ret;
-> > >  		*val >>= chan->scan_type.shift;
-> > > -		val -= (1 << chan->scan_type.realbits) / 2;
-> > > +		*val -= (1 << chan->scan_type.realbits) / 2;
-> > >  		return IIO_VAL_INT;
-> > >  	case IIO_CHAN_INFO_SCALE:
-> > >  		*val = 2 * st->vref;    
-> 
+diff --git a/drivers/infiniband/hw/cxgb3/cxio_resource.c b/drivers/infiniband/hw/cxgb3/cxio_resource.c
+index c6e7bc4420b6..844fa3cdd7a7 100644
+--- a/drivers/infiniband/hw/cxgb3/cxio_resource.c
++++ b/drivers/infiniband/hw/cxgb3/cxio_resource.c
+@@ -184,7 +184,7 @@ static u32 cxio_hal_get_resource(struct kfifo *fifo, spinlock_t * lock)
+ 	if (kfifo_out_locked(fifo, (unsigned char *) &entry, sizeof(u32), lock))
+ 		return entry;
+ 	else
+-		return 0;	/* fifo emptry */
++		return 0;	/* fifo empty */
+ }
+ 
+ static void cxio_hal_put_resource(struct kfifo *fifo, spinlock_t * lock,
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+index c1eba421ba82..1ac1e49c89ea 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+@@ -1891,7 +1891,7 @@ int hns_dsaf_del_mac_entry(struct dsaf_device *dsaf_dev, u16 vlan_id,
+ 	/*do del opt*/
+ 	hns_dsaf_tcam_mc_invld(dsaf_dev, entry_index);
+ 
+-	/*del soft emtry */
++	/*del soft entry */
+ 	soft_mac_entry += entry_index;
+ 	soft_mac_entry->index = DSAF_INVALID_ENTRY_IDX;
+ 
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 75ac046cae52..ec9d3588659a 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -92,7 +92,7 @@ static ssize_t driver_override_store(struct device *dev,
+ 	if (len) {
+ 		spi->driver_override = driver_override;
+ 	} else {
+-		/* Emptry string, disable driver override */
++		/* Empty string, disable driver override */
+ 		spi->driver_override = NULL;
+ 		kfree(driver_override);
+ 	}
+diff --git a/fs/xfs/xfs_dquot.c b/fs/xfs/xfs_dquot.c
+index fb1ad4483081..78a5a8109644 100644
+--- a/fs/xfs/xfs_dquot.c
++++ b/fs/xfs/xfs_dquot.c
+@@ -1089,7 +1089,7 @@ xfs_qm_dqflush(
+ 	 * to disk, because the log record didn't make it to disk.
+ 	 *
+ 	 * We also have to remove the log item from the AIL in this case,
+-	 * as we wait for an emptry AIL as part of the unmount process.
++	 * as we wait for an empty AIL as part of the unmount process.
+ 	 */
+ 	if (XFS_FORCED_SHUTDOWN(mp)) {
+ 		struct xfs_log_item	*lip = &dqp->q_logitem.qli_item;
+-- 
+2.23.0
 
