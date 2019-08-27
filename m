@@ -2,105 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E17CC9EC02
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:09:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AF0F9EBE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:08:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfH0PJS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:09:18 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:58782 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728506AbfH0PI5 (ORCPT
+        id S1730196AbfH0PIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:08:38 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:43380 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbfH0PIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:08:57 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7RF27Pu026516;
-        Tue, 27 Aug 2019 17:08:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=MKlaahYh2GyrYNC5OSGbdIImAgdDz5WxBqftSeUPh6k=;
- b=QWOq4bQUMB5zBU1+CzaYPmnKeVEpx+m6YtBdbQ+JTjVJtfKZLxfXYcZWWIP61Egv4hny
- TQjT0+ak6jI32S4OD2hd9Fx21WbUZ5GJefv94gDkc9H56I2/u67lqOsaVzBEUakwCJ5V
- bx2mpGWek4rQUDqWotQ3lzuo8HK77C6gV4IdoAG6WJfXt2BEmrC66G2VWhGUuyd8i2aQ
- F2Lb3QodX3RpwOhBJBvAvq9DDUaKQ+nQuROR4RwVz0k2Wx5Ei8ZbEiXEgfZtBbmF9pq/
- 6LHyUvVMyhQ6nNIsYGdgdABWjz06OLYUSbffJZLdCyfde85BicwlxQ3gA+5nAub496Py CA== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2ujv4kt4ay-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 27 Aug 2019 17:08:29 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 20AD154;
-        Tue, 27 Aug 2019 15:08:22 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CCE1B2B76DF;
-        Tue, 27 Aug 2019 17:08:21 +0200 (CEST)
-Received: from SFHDAG5NODE1.st.com (10.75.127.13) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 27 Aug
- 2019 17:08:21 +0200
-Received: from SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6]) by
- SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6%20]) with mapi id
- 15.00.1473.003; Tue, 27 Aug 2019 17:08:21 +0200
-From:   Gerald BAEZA <gerald.baeza@st.com>
-To:     "will@kernel.org" <will@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "olof@lixom.net" <olof@lixom.net>, "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
+        Tue, 27 Aug 2019 11:08:37 -0400
+Received: by mail-ot1-f65.google.com with SMTP id e12so18969470otp.10;
+        Tue, 27 Aug 2019 08:08:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Rywry/EHGhMrNPdqvNtIfK/gHo0RAsE7TRS/X80Y4s4=;
+        b=VkEpZvJb0gmx+7uEdng+y2kJ9ScaXxfV8P2tzCCurLOrBzXS8D3C5dwSTu0EVe69ZS
+         krPbXIwB3sKs2qjJ4p8AFOdoUmzHIn2CBszY11Cvlv472+CJSiqox1kGs8N7mlIdt+vf
+         +tFoaRD6B9Cm+NJ1Fg7+XLSJXpJRt9K9KWjM6qWr4zgk2WVIrZzYEWkeCXwHdlWqb71M
+         H5AKajXXVriEPiYfJat9EC1SPVjxfDbC4Sfqc2Y8xqrkm971/31ePysWUhk3C4KWpGzY
+         hhNWwdNgjEInlPPf4V68rffEVlRk/fOvgsKBDPURlj3Tna4PteRmh0O8RUFTDQ0A/EFG
+         7mqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Rywry/EHGhMrNPdqvNtIfK/gHo0RAsE7TRS/X80Y4s4=;
+        b=G0lOED8suTaVodAD/sP9O9P+zdmtKSctUOpbxAdU3w2sXwYh1bHfSi1ZN8toC4rdZD
+         hyFTeehi2qbbDXBYw8Xa2sRsVAyO+J6vQmZXPAGXPkNa31RyWDkn8aZ1lhDKYH59g4i8
+         mQqrMGhzLT0qcH4iUvgP3sc5y7CcHBSx9K5U8E/Zd/UHZpAaLFUhXwWKxGahbhGLuPoe
+         MQwduRIrXYYfDnntDM/zFP1v7SZ1aIWovzTLBw7Lw4fVVYZHieNy2ZQT5k7craVvvGBF
+         wvD01kChXYvkswoT/B+0UDOQgdri8ONx3f+JlK2ZM9aW2SVV4J9V1wd5Oa+GbU8YmtCH
+         ObVQ==
+X-Gm-Message-State: APjAAAVvhFJ+aWCbzzzxL/NEC4tJ8C8N6J3Ci+cmgJNSEjNAktMxcTgv
+        oBkRM07i1EiEmA65mwIUe1E=
+X-Google-Smtp-Source: APXvYqwwpfSNQV0d79ewTSzoXmpjC+BUdGsqjBOlWIoOpw5l5bLSC7WYnAWjzKmutUoji/llHQz9DQ==
+X-Received: by 2002:a9d:77cc:: with SMTP id w12mr13034784otl.207.1566918516092;
+        Tue, 27 Aug 2019 08:08:36 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
+        by smtp.gmail.com with ESMTPSA id 20sm5690300otd.71.2019.08.27.08.08.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Aug 2019 08:08:35 -0700 (PDT)
+Subject: Re: [PATCH v1 net-next 4/4] net: stmmac: setup higher frequency clk
+ support for EHL & TGL
+To:     "Voon, Weifeng" <weifeng.voon@intel.com>,
+        Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-CC:     Gerald BAEZA <gerald.baeza@st.com>
-Subject: [PATCH v3 4/5] ARM: configs: enable STM32_DDR_PMU
-Thread-Topic: [PATCH v3 4/5] ARM: configs: enable STM32_DDR_PMU
-Thread-Index: AQHVXOlD6Kq1uoloYU2GrfhWvkfaXA==
-Date:   Tue, 27 Aug 2019 15:08:21 +0000
-Message-ID: <1566918464-23927-5-git-send-email-gerald.baeza@st.com>
-References: <1566918464-23927-1-git-send-email-gerald.baeza@st.com>
-In-Reply-To: <1566918464-23927-1-git-send-email-gerald.baeza@st.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.50]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Jose Abreu <joabreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "Ong, Boon Leong" <boon.leong.ong@intel.com>
+References: <1566869891-29239-1-git-send-email-weifeng.voon@intel.com>
+ <1566869891-29239-5-git-send-email-weifeng.voon@intel.com>
+ <7d43e0c6-6f51-0d71-0af8-89f22b0234f9@gmail.com>
+ <20190826201346.GJ2168@lunn.ch>
+ <D6759987A7968C4889FDA6FA91D5CBC814758DB5@PGSMSX103.gar.corp.intel.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <7da534fa-9b7e-9980-e801-3c3e0429b885@gmail.com>
+Date:   Tue, 27 Aug 2019 08:08:30 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-27_03:,,
- signatures=0
+In-Reply-To: <D6759987A7968C4889FDA6FA91D5CBC814758DB5@PGSMSX103.gar.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-STM32_DDR_PMU enables the perf driver that
-controls the DDR Performance Monitor (DDRPERFM)
 
-Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v=
-7_defconfig
-index 6a40bc2..8fa4690 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -1011,6 +1011,7 @@ CONFIG_PHY_DM816X_USB=3Dm
- CONFIG_OMAP_USB2=3Dy
- CONFIG_TI_PIPE3=3Dy
- CONFIG_TWL4030_USB=3Dm
-+CONFIG_STM32_DDR_PMU=3Dm
- CONFIG_MESON_MX_EFUSE=3Dm
- CONFIG_ROCKCHIP_EFUSE=3Dm
- CONFIG_NVMEM_IMX_OCOTP=3Dy
---=20
-2.7.4
+On 8/27/2019 3:38 AM, Voon, Weifeng wrote:
+>>>> +#include <linux/clk-provider.h>
+>>>>  #include <linux/pci.h>
+>>>>  #include <linux/dmi.h>
+>>>>
+>>>> @@ -174,6 +175,19 @@ static int intel_mgbe_common_data(struct
+>> pci_dev *pdev,
+>>>>  	plat->axi->axi_blen[1] = 8;
+>>>>  	plat->axi->axi_blen[2] = 16;
+>>>>
+>>>> +	plat->ptp_max_adj = plat->clk_ptp_rate;
+>>>> +
+>>>> +	/* Set system clock */
+>>>> +	plat->stmmac_clk = clk_register_fixed_rate(&pdev->dev,
+>>>> +						   "stmmac-clk", NULL, 0,
+>>>> +						   plat->clk_ptp_rate);
+>>>> +
+>>>> +	if (IS_ERR(plat->stmmac_clk)) {
+>>>> +		dev_warn(&pdev->dev, "Fail to register stmmac-clk\n");
+>>>> +		plat->stmmac_clk = NULL;
+>>>
+>>> Don't you need to propagate at least EPROBE_DEFER here?
+>>
+>> Hi Florian
+>>
+>> Isn't a fixed rate clock a complete fake. There is no hardware behind it.
+>> So can it return EPROBE_DEFER?
+>>
+>>     Andrew
+> 
+> Yes, there is no hardware behind it. So, I don't think we need to deferred probe
+> and a warning message should be sufficient. Anyhow, please point it out if I miss
+> out anything.
+
+Looks good to me, thanks both for clarifying.
+-- 
+Florian
