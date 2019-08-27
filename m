@@ -2,185 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 565759E76D
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 063DC9E77C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 14:14:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729268AbfH0MOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 08:14:07 -0400
-Received: from mail-io1-f47.google.com ([209.85.166.47]:40863 "EHLO
-        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726125AbfH0MOG (ORCPT
+        id S1729698AbfH0MOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 08:14:38 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33623 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729552AbfH0MOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 08:14:06 -0400
-Received: by mail-io1-f47.google.com with SMTP id t6so45738369ios.7
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 05:14:05 -0700 (PDT)
+        Tue, 27 Aug 2019 08:14:36 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g2so14023231pfq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 05:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=H0oh2nokjXdEAdHLvSc07df1Vwg+DF4MMz66Wx4tFtA=;
-        b=Jy8rVNx2TzxAfDy0auKWAphmlk/SpL5WXW81sWdEnur+pDRhIQHvwdUrRCo0wRU3rD
-         FEgOpvqQGVg10bxvm+hBqGyAYMaNazn+I4r666kaOCLHzF/8QGt9jxe0NzVRr4lCMsoG
-         H/95aFym6Y7+arOH3j1vBfc36D5BlvJ5fhZzs=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=cALbZwSOU8EvtF0iOAGpF4/JluhlENqnhyD2XhJQYmg=;
+        b=mcxwMmfbWpjURk+sDZRfOKum+Lk7DBNWQwm5AO0dJRtYGIeQgT/zq9OmcUo1FepTVk
+         1Zfv/ys1eqatL4TQGiUZ/Ca2kxdXTmfhB6C8iBDNEVGYamkGe1+5b0E3iZQDmV9Bdj1c
+         O3skx9Yhfgk+JScWFGWn+dz6r0xisaS/RQ2MUW4nN32dvED1zRFHO8q3oBA5NDkmCwN6
+         5Gg+3+UfAUIcALrGTAsnL/abFFaVA8AZeGtC0rEeZJmq4ft4TPKBP642ywo+oDJRzeN9
+         nxZHIRWY5+6X0ojlla+nUooceujRC7+Mt5OcmnsWiUe3Pyh8mbzVjL1jgQrFIVCk+Ame
+         KPDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=H0oh2nokjXdEAdHLvSc07df1Vwg+DF4MMz66Wx4tFtA=;
-        b=tV+F6YC3Y13yQuQSQ0CEGwzRFivsN7DHux+t3Qsq/DIiIQRrUjWV5RHecIzeL1mwDm
-         ES7Tin9+nJTlnLXLxz26i8sSR3PdcPDabXwy95M0H7ht1CCBYbHBur2IhcL5yMbaryoE
-         /JaoaRsL3vUUrUtMEaHlHUborgkRvWiTvRfcXaU/WB7Ldj/3Ji/6S0Ai/rdT8/4rAcZM
-         Dwn7JcOGyWjjib5bdM42MOLRpmsK8Cdo0Bo1SorE2NSj6VpFQiHpvFO/wZTAstk3tzro
-         GVX4o56HoVhYyPGQaygKgRkZHNpLUF1CL4Rm4SU5Mc7vkozYy4RiJisUewo98eNhInwA
-         RArA==
-X-Gm-Message-State: APjAAAW12T/dn2RTmWoGUizv6OjF5SReePXy3iYK8MaTMIqAAExZhYGJ
-        1lI36uMkUM0e+xp3cw+4+dhJ3g==
-X-Google-Smtp-Source: APXvYqyWy4k7GbJREqoUvcHfn+Ju51hGtGCLquSKlQiF8TS6j+EOz9fMPyzuiwNuj7mJegedbd7mnA==
-X-Received: by 2002:a5d:9ec6:: with SMTP id a6mr23853869ioe.256.1566908045279;
-        Tue, 27 Aug 2019 05:14:05 -0700 (PDT)
-Received: from iscandar.digidescorp.com ([50.73.98.161])
-        by smtp.googlemail.com with ESMTPSA id q5sm13389061iot.5.2019.08.27.05.14.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 05:14:04 -0700 (PDT)
-From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
-X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Steven J . Magnani" <steve@digidescorp.com>
-Subject: [PATCH v2] udf: augment UDF permissions on new inodes
-Date:   Tue, 27 Aug 2019 07:13:59 -0500
-Message-Id: <20190827121359.9954-1-steve@digidescorp.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=cALbZwSOU8EvtF0iOAGpF4/JluhlENqnhyD2XhJQYmg=;
+        b=Xs87VNa1AFF6OAX62JFCzo2X1kMjqBBucXz7Q4pQgWmE7oiXsveNHSP4oqHQkD0bBa
+         LVNn3FVAwsKoLoXQvMVSmK55JPdBMB/jJ6nDuftQD30/alQsvqEmxynvV+1HmsDU3wJ2
+         a3fHq2LaOIhPzs+5MiULnjaCzW+Pq162jT3kbcYU80DowSiQd5InrMQFop7OriEvgCOp
+         6wjbdf0hjfZZViRW7rf6g2aJv5JmZuCxOuheNKPhZHLGcEaL68hXWEsL373Ve5Wh0ynq
+         wPC9GheixtRuQ/2NGLZoeFx3sP+sD4w/rcdCncjypfqSCZ8mIVDs7o0eA2DF/pp83s2J
+         LFCQ==
+X-Gm-Message-State: APjAAAXEEJizblGsfSaHjfgP2QAWJDtHHklDrTtFAfKnX68vRlpPyoNU
+        uGSqMPa6mLKDqewWz78DRR8Ul75n/w2qqQ==
+X-Google-Smtp-Source: APXvYqzzwYQ+PQW3FGGHUlGlFCWYJGjjnSBcR2EDGQmBj43++CgSd+f7YRVbPjEDs8tLgcX3EeUJGA==
+X-Received: by 2002:a63:3009:: with SMTP id w9mr21859082pgw.260.1566908075548;
+        Tue, 27 Aug 2019 05:14:35 -0700 (PDT)
+Received: from localhost ([49.248.54.193])
+        by smtp.gmail.com with ESMTPSA id b3sm20264505pfp.65.2019.08.27.05.14.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Aug 2019 05:14:34 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com, agross@kernel.org,
+        sboyd@kernel.org, masneyb@onstation.org, marc.w.gonzalez@free.fr,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc:     linux-pm@vger.kernel.org
+Subject: [PATCH v2 03/15] drivers: thermal: tsens: Add __func__ identifier to debug statements
+Date:   Tue, 27 Aug 2019 17:43:59 +0530
+Message-Id: <93fa782bde9c66845993ff883532b3f1f02d99e4.1566907161.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1566907161.git.amit.kucheria@linaro.org>
+References: <cover.1566907161.git.amit.kucheria@linaro.org>
+In-Reply-To: <cover.1566907161.git.amit.kucheria@linaro.org>
+References: <cover.1566907161.git.amit.kucheria@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Windows presents files created within Linux as read-only, even when
-permissions in Linux indicate the file should be writable.
+Printing the function name when enabling debugging makes logs easier to
+read.
 
-
-UDF defines a slightly different set of basic file permissions than Linux.
-Specifically, UDF has "delete" and "change attribute" permissions for each
-access class (user/group/other). Linux has no equivalents for these.
-
-When the Linux UDF driver creates a file (or directory), no UDF delete or
-change attribute permissions are granted. The lack of delete permission
-appears to cause Windows to mark an item read-only when its permissions
-otherwise indicate that it should be read-write.
-
-Fix this by having UDF delete permissions track Linux write permissions.
-Also grant UDF change attribute permission to the owner when creating a
-new inode.
-
-Reported by: Ty Young
-Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
+ drivers/thermal/qcom/tsens-common.c | 8 ++++----
+ drivers/thermal/qcom/tsens.c        | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-Changes since rev 1:
-UDF delete permission tracks with Linux write permission instead
-of being unconditionally granted to the owner at inode creation
-
---- a/fs/udf/udf_i.h	2019-08-14 07:24:05.029508342 -0500
-+++ b/fs/udf/udf_i.h	2019-08-26 21:33:05.064410067 -0500
-@@ -38,6 +38,7 @@ struct udf_inode_info {
- 	__u32			i_next_alloc_block;
- 	__u32			i_next_alloc_goal;
- 	__u32			i_checkpoint;
-+	__u32			i_extraPerms;
- 	unsigned		i_alloc_type : 3;
- 	unsigned		i_efe : 1;	/* extendedFileEntry */
- 	unsigned		i_use : 1;	/* unallocSpaceEntry */
---- a/fs/udf/udfdecl.h	2019-08-26 21:38:12.138562583 -0500
-+++ b/fs/udf/udfdecl.h	2019-08-26 21:09:19.465000110 -0500
-@@ -178,6 +178,7 @@ extern int8_t udf_next_aext(struct inode
- 			    struct kernel_lb_addr *, uint32_t *, int);
- extern int8_t udf_current_aext(struct inode *, struct extent_position *,
- 			       struct kernel_lb_addr *, uint32_t *, int);
-+extern void udf_update_extra_perms(struct inode *inode, umode_t mode);
+diff --git a/drivers/thermal/qcom/tsens-common.c b/drivers/thermal/qcom/tsens-common.c
+index c037bdf92c663..7437bfe196e50 100644
+--- a/drivers/thermal/qcom/tsens-common.c
++++ b/drivers/thermal/qcom/tsens-common.c
+@@ -42,8 +42,8 @@ void compute_intercept_slope(struct tsens_priv *priv, u32 *p1,
  
- /* misc.c */
- extern struct buffer_head *udf_tgetblk(struct super_block *sb,
---- a/fs/udf/ialloc.c	2019-08-14 07:24:05.029508342 -0500
-+++ b/fs/udf/ialloc.c	2019-08-26 21:16:43.379449924 -0500
-@@ -125,6 +125,9 @@ struct inode *udf_new_inode(struct inode
- 	iinfo->i_lenAlloc = 0;
- 	iinfo->i_use = 0;
- 	iinfo->i_checkpoint = 1;
-+	iinfo->i_extraPerms = FE_PERM_U_CHATTR;
-+	udf_update_extra_perms(inode, mode);
-+
- 	if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_AD_IN_ICB))
- 		iinfo->i_alloc_type = ICBTAG_FLAG_AD_IN_ICB;
- 	else if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_SHORT_AD))
---- a/fs/udf/inode.c	2019-08-14 07:24:05.029508342 -0500
-+++ b/fs/udf/inode.c	2019-08-26 21:40:17.865649383 -0500
-@@ -45,6 +45,13 @@
+ 	for (i = 0; i < priv->num_sensors; i++) {
+ 		dev_dbg(priv->dev,
+-			"sensor%d - data_point1:%#x data_point2:%#x\n",
+-			i, p1[i], p2[i]);
++			"%s: sensor%d - data_point1:%#x data_point2:%#x\n",
++			__func__, i, p1[i], p2[i]);
  
- #define EXTENT_MERGE_SIZE 5
- 
-+#define FE_MAPPED_PERMS	(FE_PERM_U_READ | FE_PERM_U_WRITE | FE_PERM_U_EXEC | \
-+			 FE_PERM_G_READ | FE_PERM_G_WRITE | FE_PERM_G_EXEC | \
-+			 FE_PERM_O_READ | FE_PERM_O_WRITE | FE_PERM_O_EXEC)
-+
-+#define FE_DELETE_PERMS	(FE_PERM_U_DELETE | FE_PERM_G_DELETE | \
-+			 FE_PERM_O_DELETE)
-+
- static umode_t udf_convert_permissions(struct fileEntry *);
- static int udf_update_inode(struct inode *, int);
- static int udf_sync_inode(struct inode *inode);
-@@ -1458,6 +1465,8 @@ reread:
- 	else
- 		inode->i_mode = udf_convert_permissions(fe);
- 	inode->i_mode &= ~sbi->s_umask;
-+	iinfo->i_extraPerms = le32_to_cpu(fe->permissions) & ~FE_MAPPED_PERMS;
-+
- 	read_unlock(&sbi->s_cred_lock);
- 
- 	link_count = le16_to_cpu(fe->fileLinkCount);
-@@ -1631,6 +1640,23 @@ static umode_t udf_convert_permissions(s
- 	return mode;
+ 		priv->sensor[i].slope = SLOPE_DEFAULT;
+ 		if (mode == TWO_PT_CALIB) {
+@@ -60,7 +60,7 @@ void compute_intercept_slope(struct tsens_priv *priv, u32 *p1,
+ 		priv->sensor[i].offset = (p1[i] * SLOPE_FACTOR) -
+ 				(CAL_DEGC_PT1 *
+ 				priv->sensor[i].slope);
+-		dev_dbg(priv->dev, "offset:%d\n", priv->sensor[i].offset);
++		dev_dbg(priv->dev, "%s: offset:%d\n", __func__, priv->sensor[i].offset);
+ 	}
  }
  
-+void udf_update_extra_perms(struct inode *inode, umode_t mode)
-+{
-+	struct udf_inode_info *iinfo = UDF_I(inode);
-+
-+	/*
-+	 * UDF 2.01 sec. 3.3.3.3 Note 2:
-+	 * In Unix, delete permission tracks write
-+	 */
-+	iinfo->i_extraPerms &= ~FE_DELETE_PERMS;
-+	if (mode & 0200)
-+		iinfo->i_extraPerms |= FE_PERM_U_DELETE;
-+	if (mode & 0020)
-+		iinfo->i_extraPerms |= FE_PERM_G_DELETE;
-+	if (mode & 0002)
-+		iinfo->i_extraPerms |= FE_PERM_O_DELETE;
-+}
-+
- int udf_write_inode(struct inode *inode, struct writeback_control *wbc)
- {
- 	return udf_update_inode(inode, wbc->sync_mode == WB_SYNC_ALL);
-@@ -1703,10 +1729,7 @@ static int udf_update_inode(struct inode
- 		   ((inode->i_mode & 0070) << 2) |
- 		   ((inode->i_mode & 0700) << 4);
+@@ -209,7 +209,7 @@ int __init init_common(struct tsens_priv *priv)
+ 	if (ret)
+ 		goto err_put_device;
+ 	if (!enabled) {
+-		dev_err(dev, "tsens device is not enabled\n");
++		dev_err(dev, "%s: device not enabled\n", __func__);
+ 		ret = -ENODEV;
+ 		goto err_put_device;
+ 	}
+diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+index 542a7f8c3d962..06c6bbd69a1a7 100644
+--- a/drivers/thermal/qcom/tsens.c
++++ b/drivers/thermal/qcom/tsens.c
+@@ -127,7 +127,7 @@ static int tsens_probe(struct platform_device *pdev)
+ 		of_property_read_u32(np, "#qcom,sensors", &num_sensors);
  
--	udfperms |= (le32_to_cpu(fe->permissions) &
--		    (FE_PERM_O_DELETE | FE_PERM_O_CHATTR |
--		     FE_PERM_G_DELETE | FE_PERM_G_CHATTR |
--		     FE_PERM_U_DELETE | FE_PERM_U_CHATTR));
-+	udfperms |= iinfo->i_extraPerms;
- 	fe->permissions = cpu_to_le32(udfperms);
- 
- 	if (S_ISDIR(inode->i_mode) && inode->i_nlink > 0)
---- a/fs/udf/file.c	2019-08-26 21:38:12.138562583 -0500
-+++ b/fs/udf/file.c	2019-08-26 21:12:44.664536308 -0500
-@@ -280,6 +280,9 @@ static int udf_setattr(struct dentry *de
- 			return error;
+ 	if (num_sensors <= 0) {
+-		dev_err(dev, "invalid number of sensors\n");
++		dev_err(dev, "%s: invalid number of sensors\n", __func__);
+ 		return -EINVAL;
  	}
  
-+	if (attr->ia_valid & ATTR_MODE)
-+		udf_update_extra_perms(inode, attr->ia_mode);
-+
- 	setattr_copy(inode, attr);
- 	mark_inode_dirty(inode);
- 	return 0;
+@@ -156,7 +156,7 @@ static int tsens_probe(struct platform_device *pdev)
+ 
+ 	ret = priv->ops->init(priv);
+ 	if (ret < 0) {
+-		dev_err(dev, "tsens init failed\n");
++		dev_err(dev, "%s: init failed\n", __func__);
+ 		return ret;
+ 	}
+ 
+@@ -164,7 +164,7 @@ static int tsens_probe(struct platform_device *pdev)
+ 		ret = priv->ops->calibrate(priv);
+ 		if (ret < 0) {
+ 			if (ret != -EPROBE_DEFER)
+-				dev_err(dev, "tsens calibration failed\n");
++				dev_err(dev, "%s: calibration failed\n", __func__);
+ 			return ret;
+ 		}
+ 	}
+-- 
+2.17.1
+
