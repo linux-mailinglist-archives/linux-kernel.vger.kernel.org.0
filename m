@@ -2,123 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F7939EF0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAA309EF16
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbfH0Pha (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:37:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40033 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728506AbfH0Ph3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:37:29 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so12900700pgj.7;
-        Tue, 27 Aug 2019 08:37:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OGMX6emQR1IxpVlLVh2L9MxkhIrpMKYtuCVjN/it++Y=;
-        b=oebhzohkNVT/w7W7XTgl7/oHL17GkyFgd1KngfBfOtFeWISVFzwlw4FJ1/ilEVb1rJ
-         Vhupo0cLfir4CslrdMPm20LPcVWZOfVlPKnHqTvjUCZYds5FZICwG8mHxoX9m/b0JQUk
-         RZS7mwP93F9aV3dbAYLA+DgQlKyzs3kf4xgyeg//nWAvL/0onj4AIlq+rLMvr+UB0muD
-         vXB4teK+UIqDZsK6RTf0TtMTei8YiTX5pUrNrli/kJxFIfi0MGyavmz+rwFWm4eARzBG
-         DiQcGUUg7JCDtynbvr6XoPlYOj7db5FlRbN5xdju6VENJohNMmJNmUljX7EGm5GUqaaB
-         LvJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OGMX6emQR1IxpVlLVh2L9MxkhIrpMKYtuCVjN/it++Y=;
-        b=IXOjTRc7e81xAbQxCX1qnmz5NZ7rIHLBDKaygKn3Lwj1+124CuemTzdCSAn1gN1ce1
-         iEl6DUDGLJz5mXq241+3KeY4O9axbacoD6hzFuNyxSNL54u8QfAEnxSMsoiBANbR+gwo
-         V0bPKcSWhCtqj5KWhlIaS6s73qs14gDLgq7/cIMc7t/ZdTbg4DuKM2ujNvMnVuH6gf2u
-         K+pRDL6CkVNKNFyRQgBnduSIXeSwlOoQid0FYrGIh0CdJtLB7iNqWtZ181VQimcdCJ4o
-         xDbOdLoCINdiHRunofyx9LoS3sKhXyijnMyxRD895I++NRR4xVdKV2CzPd9qIzpWHEZC
-         vnQg==
-X-Gm-Message-State: APjAAAWQkSVG41MgWQQHDOcHOb/ag7R7XAoWJrLUuXAPYfgg6QB5RQso
-        uoMmOOYlg66UB4I45Niuht0=
-X-Google-Smtp-Source: APXvYqycqUVsu1TtUS45hUIDY1J/diKpn9XcXnmUwZ9v2pFDeU5TxAt/H+OC3jfol/Ak4mHAeMmvQQ==
-X-Received: by 2002:a17:90a:e38e:: with SMTP id b14mr13232435pjz.125.1566920248773;
-        Tue, 27 Aug 2019 08:37:28 -0700 (PDT)
-Received: from [10.230.28.130] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id e3sm2720186pjr.9.2019.08.27.08.37.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 08:37:27 -0700 (PDT)
-Subject: Re: [PATCH v1 net-next] net: phy: mdio_bus: make mdiobus_scan also
- cover PHY that only talks C45
-To:     "Voon, Weifeng" <weifeng.voon@intel.com>,
-        Andrew Lunn <andrew@lunn.ch>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "Ong, Boon Leong" <boon.leong.ong@intel.com>
-References: <1566870769-9967-1-git-send-email-weifeng.voon@intel.com>
- <e9ece5ad-a669-6d6b-d050-c633cad15476@gmail.com>
- <20190826185418.GG2168@lunn.ch>
- <D6759987A7968C4889FDA6FA91D5CBC814758ED8@PGSMSX103.gar.corp.intel.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <e7548bb7-a431-748b-36a9-be2eb4c3b400@gmail.com>
-Date:   Tue, 27 Aug 2019 08:37:26 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729999AbfH0Ph5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:37:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58596 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727219AbfH0Ph5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 11:37:57 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AF1442A09A5;
+        Tue, 27 Aug 2019 15:37:56 +0000 (UTC)
+Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E942A5D6B0;
+        Tue, 27 Aug 2019 15:37:52 +0000 (UTC)
+Date:   Tue, 27 Aug 2019 10:37:48 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Joe Lawrence <joe.lawrence@redhat.com>
+Cc:     Petr Mladek <pmladek@suse.com>, jikos@kernel.org,
+        Miroslav Benes <mbenes@suse.cz>, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] livepatch: Clear relocation targets on a module
+ removal
+Message-ID: <20190827153748.i7at4wysu5v5k5aw@treble>
+References: <20190719122840.15353-1-mbenes@suse.cz>
+ <20190719122840.15353-3-mbenes@suse.cz>
+ <20190728200427.dbrojgu7hafphia7@treble>
+ <alpine.LSU.2.21.1908141256150.16696@pobox.suse.cz>
+ <20190814151244.5xoaxib5iya2qjco@treble>
+ <20190816094608.3p2z73oxcoqavnm4@pathway.suse.cz>
+ <20190822223649.ptg6e7qyvosrljqx@treble>
+ <20190823081306.kbkm7b4deqrare2v@pathway.suse.cz>
+ <20190826145449.wyo7avwpqyriem46@treble>
+ <5efd9f4e-eccb-cbe0-ec2e-0e2a6a34c0ea@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <D6759987A7968C4889FDA6FA91D5CBC814758ED8@PGSMSX103.gar.corp.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <5efd9f4e-eccb-cbe0-ec2e-0e2a6a34c0ea@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 27 Aug 2019 15:37:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/27/2019 8:23 AM, Voon, Weifeng wrote:
->>>> Make mdiobus_scan() to try harder to look for any PHY that only
->> talks C45.
->>> If you are not using Device Tree or ACPI, and you are letting the MDIO
->>> bus be scanned, it sounds like there should be a way for you to
->>> provide a hint as to which addresses should be scanned (that's
->>> mii_bus::phy_mask) and possibly enhance that with a mask of possible
->>> C45 devices?
->>
->> Yes, i don't like this unconditional c45 scanning. A lot of MDIO bus
->> drivers don't look for the MII_ADDR_C45. They are going to do a C22
->> transfer, and maybe not mask out the MII_ADDR_C45 from reg, causing an
->> invalid register write. Bad things can then happen.
->>
->> With DT and ACPI, we have an explicit indication that C45 should be used,
->> so we know on this platform C45 is safe to use. We need something
->> similar when not using DT or ACPI.
->>
->> 	  Andrew
+On Tue, Aug 27, 2019 at 11:05:51AM -0400, Joe Lawrence wrote:
+> > Sure, it introduces risk.  But we have to compare that risk (which only
+> > affects rare edge cases) with the ones introduced by the late module
+> > patching code.  I get the feeling that "late module patching" introduces
+> > risk to a broader range of use cases than "occasional loading of unused
+> > modules".
+> > 
+> > The latter risk could be minimized by introducing a disabled state for
+> > modules - load it in memory, but don't expose it to users until
+> > explicitly loaded.  Just a brainstormed idea; not sure whether it would
+> > work in practice.
+> > 
 > 
-> Florian and Andrew,
-> The mdio c22 is using the start-of-frame ST=01 while mdio c45 is using ST=00
-> as identifier. So mdio c22 device will not response to mdio c45 protocol.
-> As in IEEE 802.1ae-2002 Annex 45A.3 mention that:
-> " Even though the Clause 45 MDIO frames using the ST=00 frame code
-> will also be driven on to the Clause 22 MII Management interface,
-> the Clause 22 PHYs will ignore the frames. "
+> Interesting idea.  We would need to ensure consistency between the
+> loaded-but-not-enabled module and the version on disk.  Does module init run
+> when it's enabled?  Etc.
+
+I don't think there can be a mismatch unless somebody is mucking with
+the .ko files directly -- and anyway that would already be a problem
+today, because the patch module already assumes that the runtime version
+of the module matches what the patch module was built against.
+
+> <blue sky ideas>
 > 
-> Hence, I am not seeing any concern that the c45 scanning will mess up with 
-> c22 devices.
+> What about folding this the other way?  ie, if a livepatch targets unloaded
+> module foo, loaded module bar, and vmlinux ... it effectively patches bar
+> and vmlinux, but the foo changes are dropped. Responsibility is placed on
+> the admin to install an updated foo before loading it (in which case,
+> livepatching core will again ignore foo.)
+> 
+> Building on this idea, perhaps loading that livepatch would also blacklist
+> specific, known vulnerable (unloaded) module versions.  If the admin tries
+> to load one, a debug msg is generated explaining why it can't be loaded by
+> default.
+> 
+> </blue sky ideas>
 
-It is not so much the messing up that concerns me other than the
-increased scan time. Assuming you are making this change to support your
-stmmac PCI patch series with SGMII/RGMII, etc. cannot you introduce a
-bitmask of C45 PHY addresses that should be scanned and the logic could
-look like (pseudo code):
+I like this.
 
-- for each bit clear in mii_bus::phy_mask, scan it as C22
-- for each bit clear in mii_bus::phy_c45_mask, scan it as C45
+One potential tweak: the updated modules could be delivered with the
+patch module, and either replaced on disk or otherwise hooked into
+modprobe.
 
-or something along those lines?
---
-Florian
+> > > > >    + It might open more security holes that are not fixed by
+> > > > >      the livepatch.
+> > > > 
+> > > > Following the same line of thinking, the livepatch infrastructure might
+> > > > open security holes because of the inherent complexity of late module
+> > > > patching.
+> > > 
+> > > Could you be more specific, please?
+> > > Has there been any known security hole in the late module
+> > > livepatching code?
+> > 
+> > Just off the top of my head, I can think of two recent bugs which can be
+> > blamed on late module patching:
+> > 
+> > 1) There was a RHEL-only bug which caused arch_klp_init_object_loaded()
+> >     to not be loaded.  This resulted in a panic when certain patched code
+> >     was executed.
+> > 
+> > 2) arch_klp_init_object_loaded() currently doesn't have any jump label
+> >     specific code.  This has recently caused panics for patched code
+> >     which relies on static keys.  The workaround is to not use jump
+> >     labels in patched code.  The real fix is to add support for them in
+> >     arch_klp_init_object_loaded().
+> > 
+> > I can easily foresee more problems like those in the future.  Going
+> > forward we have to always keep track of which special sections are
+> > needed for which architectures.  Those special sections can change over
+> > time, or can simply be overlooked for a given architecture.  It's
+> > fragile.
+> 
+> FWIW, the static keys case is more involved than simple deferred relocations
+> -- those keys are added to lists and then the static key code futzes with
+> them when it needs to update code sites.  That means the code managing the
+> data structures, kernel/jump_label.c, will need to understand livepatch's
+> strangely loaded-but-not-initialized variants.
+> 
+> I don't think the other special sections will require such invasive changes,
+> but it's something to keep in mind with respect to late module patching.
+
+Maybe it could be implemented in a way that such differences are
+transparent (insert lots of hand-waving).
+
+So as far as I can tell, we currently have three feasible options:
+
+1) drop unloaded module changes (and blacklist the old .ko and/or replace it)
+2) use per-object patches (with no exported function changes)
+3) half-load unloaded modules so we can patch them
+
+I think I like #1, if we could figure out a simple way to do it.
+
+-- 
+Josh
