@@ -2,109 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 951C89EF3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D2D9EF4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 27 Aug 2019 17:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbfH0Po2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 11:44:28 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:33144 "EHLO mail.skyhub.de"
+        id S1729390AbfH0Pr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 11:47:29 -0400
+Received: from foss.arm.com ([217.140.110.172]:46990 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726190AbfH0Po2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 11:44:28 -0400
-Received: from zn.tnic (p200300EC2F0CD000D58CEF7064D904CD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0c:d000:d58c:ef70:64d9:4cd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A98E31EC06E5;
-        Tue, 27 Aug 2019 17:44:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1566920666;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VHBR4nVac4hkcN25eNcINMCsBK8JU9h3vxB99dyirGI=;
-        b=VcH1A54m6kJs1/No5Lu9Obxh+05iWmYgt7HIHUzgq5yivpuawF7Y+ULYNwUzDL/1G7j5Vl
-        h05fl3yrd83hRgEl/hLOk5uYWhHXRiOP8k4vThzJScwOh1c4RVvFXVKOmxqmoTZTN3FUg2
-        eJOqSSYYTMwyc712h39aGVIQ3zwNR1w=
-Date:   Tue, 27 Aug 2019 17:44:22 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
-        linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        dri-devel@lists.freedesktop.org, Doug Covelli <dcovelli@vmware.com>
-Subject: Re: [PATCH v2 2/4] x86/vmware: Add a header file for hypercall
- definitions
-Message-ID: <20190827154422.GG29752@zn.tnic>
-References: <20190823081316.28478-1-thomas_os@shipmail.org>
- <20190823081316.28478-3-thomas_os@shipmail.org>
+        id S1726574AbfH0Pr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 11:47:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A5C7337;
+        Tue, 27 Aug 2019 08:47:28 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 598D23F59C;
+        Tue, 27 Aug 2019 08:47:27 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 16:47:25 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
+        gustavo.pimentel@synopsys.com, digetx@gmail.com,
+        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH 6/6] PCI: tegra: Add support to enable slot regulators
+Message-ID: <20190827154725.GP14582@e119886-lin.cambridge.arm.com>
+References: <20190826073143.4582-1-vidyas@nvidia.com>
+ <20190826073143.4582-7-vidyas@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190823081316.28478-3-thomas_os@shipmail.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190826073143.4582-7-vidyas@nvidia.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 10:13:14AM +0200, Thomas Hellström (VMware) wrote:
-> +/*
-> + * The high bandwidth out call. The low word of edx is presumed to have the
-> + * HB and OUT bits set.
-> + */
-> +#define VMWARE_HYPERCALL_HB_OUT						\
-> +	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep outsb", \
+On Mon, Aug 26, 2019 at 01:01:43PM +0530, Vidya Sagar wrote:
+> Add support to get regulator information of 3.3V and 12V supplies of a PCIe
+> slot from the respective controller's device-tree node and enable those
+> supplies. This is required in platforms like p2972-0000 where the supplies
+> to x16 slot owned by C5 controller need to be enabled before attempting to
+> enumerate the devices.
+> 
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 65 ++++++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index 8a27b25893c9..97de2151a738 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -278,6 +278,8 @@ struct tegra_pcie_dw {
+>  	u32 aspm_l0s_enter_lat;
+>  
+>  	struct regulator *pex_ctl_supply;
+> +	struct regulator *slot_ctl_3v3;
+> +	struct regulator *slot_ctl_12v;
+>  
+>  	unsigned int phy_count;
+>  	struct phy **phys;
+> @@ -1047,6 +1049,59 @@ static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
+>  	}
+>  }
+>  
+> +static void tegra_pcie_get_slot_regulators(struct tegra_pcie_dw *pcie)
+> +{
+> +	pcie->slot_ctl_3v3 = devm_regulator_get_optional(pcie->dev, "vpcie3v3");
+> +	if (IS_ERR(pcie->slot_ctl_3v3))
+> +		pcie->slot_ctl_3v3 = NULL;
+> +
+> +	pcie->slot_ctl_12v = devm_regulator_get_optional(pcie->dev, "vpcie12v");
+> +	if (IS_ERR(pcie->slot_ctl_12v))
+> +		pcie->slot_ctl_12v = NULL;
 
-Hmm, that looks fishy:
+Do these need to take into consideration -EPROBE_DEFER?
 
-This call in vmw_port_hb_out(), for example, gets converted to the asm
-below (I've left in the asm touching only rDX).
+Thanks,
 
-# drivers/gpu/drm/vmwgfx/vmwgfx_msg.c:160:              VMW_PORT_HB_OUT(
-#NO_APP
-        movzwl  0(%rbp), %edx   # channel_20(D)->channel_id, channel_20(D)->channel_id
+Andrew Murray
 
-	...
-
-        sall    $16, %edx       #, tmp172
-        orl     $3, %edx        #, tmp173
-
-this is adding channel_id and flags:
-
-                        VMWARE_HYPERVISOR_HB | (channel->channel_id << 16) |
-                        VMWARE_HYPERVISOR_OUT,
-
-the $3 being (VMWARE_HYPERVISOR_HB | VMWARE_HYPERVISOR_OUT).
-
-        movslq  %edx, %rdx      # tmp173, tmp174
-
-Here it is sign-extending it.
-
-#APP
-# 160 "drivers/gpu/drm/vmwgfx/vmwgfx_msg.c" 1
-        push %rbp;mov %r8, %rbp;# ALT: oldinstr2        # bp
-661:
-        movw $0x5659, %dx; rep outsb
-
-And now here you're overwriting the low word of %edx. And now it
-contains:
-
-0x[channel_id]5659
-
-and the low word doesn't contain the 3, i.e., (VMWARE_HYPERVISOR_HB |
-VMWARE_HYPERVISOR_OUT) anymore. And that's before you do the hypercall
-so I'm guessing that cannot be right.
-
-Or?
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> +}
+> +
+> +static int tegra_pcie_enable_slot_regulators(struct tegra_pcie_dw *pcie)
+> +{
+> +	int ret;
+> +
+> +	if (pcie->slot_ctl_3v3) {
+> +		ret = regulator_enable(pcie->slot_ctl_3v3);
+> +		if (ret < 0) {
+> +			dev_err(pcie->dev,
+> +				"Failed to enable 3V3 slot supply: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	if (pcie->slot_ctl_12v) {
+> +		ret = regulator_enable(pcie->slot_ctl_12v);
+> +		if (ret < 0) {
+> +			dev_err(pcie->dev,
+> +				"Failed to enable 12V slot supply: %d\n", ret);
+> +			if (pcie->slot_ctl_3v3)
+> +				regulator_disable(pcie->slot_ctl_3v3);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * According to PCI Express Card Electromechanical Specification
+> +	 * Revision 1.1, Table-2.4, T_PVPERL (Power stable to PERST# inactive)
+> +	 * should be a minimum of 100ms.
+> +	 */
+> +	msleep(100);
+> +
+> +	return 0;
+> +}
+> +
+> +static void tegra_pcie_disable_slot_regulators(struct tegra_pcie_dw *pcie)
+> +{
+> +	if (pcie->slot_ctl_12v)
+> +		regulator_disable(pcie->slot_ctl_12v);
+> +	if (pcie->slot_ctl_3v3)
+> +		regulator_disable(pcie->slot_ctl_3v3);
+> +}
+> +
+>  static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>  					bool en_hw_hot_rst)
+>  {
+> @@ -1060,6 +1115,10 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>  		return ret;
+>  	}
+>  
+> +	ret = tegra_pcie_enable_slot_regulators(pcie);
+> +	if (ret < 0)
+> +		goto fail_slot_reg_en;
+> +
+>  	ret = regulator_enable(pcie->pex_ctl_supply);
+>  	if (ret < 0) {
+>  		dev_err(pcie->dev, "Failed to enable regulator: %d\n", ret);
+> @@ -1142,6 +1201,8 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
+>  fail_core_clk:
+>  	regulator_disable(pcie->pex_ctl_supply);
+>  fail_reg_en:
+> +	tegra_pcie_disable_slot_regulators(pcie);
+> +fail_slot_reg_en:
+>  	tegra_pcie_bpmp_set_ctrl_state(pcie, false);
+>  
+>  	return ret;
+> @@ -1174,6 +1235,8 @@ static int __deinit_controller(struct tegra_pcie_dw *pcie)
+>  		return ret;
+>  	}
+>  
+> +	tegra_pcie_disable_slot_regulators(pcie);
+> +
+>  	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
+>  	if (ret) {
+>  		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
+> @@ -1372,6 +1435,8 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> +	tegra_pcie_get_slot_regulators(pcie);
+> +
+>  	pcie->pex_ctl_supply = devm_regulator_get(dev, "vddio-pex-ctl");
+>  	if (IS_ERR(pcie->pex_ctl_supply)) {
+>  		dev_err(dev, "Failed to get regulator: %ld\n",
+> -- 
+> 2.17.1
+> 
