@@ -2,870 +2,281 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FAADA04E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6618BA04FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:30:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727345AbfH1O0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:26:19 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:42111 "EHLO
-        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726368AbfH1O0L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:26:11 -0400
-Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x7SEPFSk001864;
-        Wed, 28 Aug 2019 17:25:15 +0300
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id 8F82862CAA; Wed, 28 Aug 2019 17:25:15 +0300 (IDT)
-From:   Tomer Maimon <tmaimon77@gmail.com>
-To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        vigneshr@ti.com, bbrezillon@kernel.org, avifishman70@gmail.com,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com
-Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v3 2/2] spi: npcm-fiu: add NPCM FIU controller driver
-Date:   Wed, 28 Aug 2019 17:25:13 +0300
-Message-Id: <20190828142513.228556-3-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190828142513.228556-1-tmaimon77@gmail.com>
-References: <20190828142513.228556-1-tmaimon77@gmail.com>
+        id S1726566AbfH1O3z convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 28 Aug 2019 10:29:55 -0400
+Received: from mx2.suse.de ([195.135.220.15]:49752 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726428AbfH1O3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 10:29:55 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4D8E1B620;
+        Wed, 28 Aug 2019 14:29:51 +0000 (UTC)
+Date:   Wed, 28 Aug 2019 16:29:45 +0200
+From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Breno Leitao <leitao@debian.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Allison Randal <allison@lohutok.net>,
+        Michael Neuling <mikey@neuling.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] powerpc/64: make buildable without CONFIG_COMPAT
+Message-ID: <20190828162945.50b86232@naga>
+In-Reply-To: <fb471a46-5598-1c5c-911f-499b1aad259c@c-s.fr>
+References: <cover.1566987936.git.msuchanek@suse.de>
+        <fbf3f09d2f01e53aceea448ac42578251f424829.1566987936.git.msuchanek@suse.de>
+        <fb471a46-5598-1c5c-911f-499b1aad259c@c-s.fr>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Nuvoton NPCM BMC Flash Interface Unit(FIU) SPI master
-controller driver using SPI-MEM interface.
+On Wed, 28 Aug 2019 14:49:16 +0200
+Christophe Leroy <christophe.leroy@c-s.fr> wrote:
 
-The FIU supports single, dual or quad communication interface.
+> Le 28/08/2019 à 12:30, Michal Suchanek a écrit :
+> > There are numerous references to 32bit functions in generic and 64bit
+> > code so ifdef them out.  
+> 
+> As far as possible, avoid opting things out with ifdefs. Ref 
+> https://www.kernel.org/doc/html/latest/process/coding-style.html#conditional-compilation
+> 
+> See comment below.
+> 
+> > 
+> > Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+> > ---
+> > v2:
+> > - fix 32bit ifdef condition in signal.c
+> > - simplify the compat ifdef condition in vdso.c - 64bit is redundant
+> > - simplify the compat ifdef condition in callchain.c - 64bit is redundant
+> > ---
+> >   arch/powerpc/include/asm/syscall.h |  2 ++
+> >   arch/powerpc/kernel/Makefile       | 15 ++++++++++++---
+> >   arch/powerpc/kernel/entry_64.S     |  2 ++
+> >   arch/powerpc/kernel/signal.c       |  5 +++--
+> >   arch/powerpc/kernel/syscall_64.c   |  5 +++--
+> >   arch/powerpc/kernel/vdso.c         |  4 +++-
+> >   arch/powerpc/perf/callchain.c      | 14 ++++++++++----
+> >   7 files changed, 35 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/arch/powerpc/include/asm/syscall.h b/arch/powerpc/include/asm/syscall.h
+> > index 38d62acfdce7..3ed3b75541a1 100644
+> > --- a/arch/powerpc/include/asm/syscall.h
+> > +++ b/arch/powerpc/include/asm/syscall.h
+> > @@ -16,7 +16,9 @@
+> >   
+> >   /* ftrace syscalls requires exporting the sys_call_table */
+> >   extern const unsigned long sys_call_table[];
+> > +#ifdef CONFIG_COMPAT
+> >   extern const unsigned long compat_sys_call_table[];
+> > +#endif  
+> 
+> Leaving the declaration should be harmless.
 
-the FIU controller can operate in following modes:
-- User Mode Access(UMA): provides flash access by using an
-  indirect address/data mechanism.
-- direct rd/wr mode: maps the flash memory into the core
-  address space.
-- SPI-X mode: used for an expansion bus to an ASIC or CPLD.
+Yes, it only allows earlier check that the type is not used.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
- drivers/spi/Kconfig        |  10 +
- drivers/spi/Makefile       |   1 +
- drivers/spi/spi-npcm-fiu.c | 771 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 782 insertions(+)
- create mode 100644 drivers/spi/spi-npcm-fiu.c
+> 
+> >   
+> >   static inline int syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
+> >   {
+> > diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+> > index 1d646a94d96c..b0db365b83d8 100644
+> > --- a/arch/powerpc/kernel/Makefile
+> > +++ b/arch/powerpc/kernel/Makefile
+> > @@ -44,16 +44,25 @@ CFLAGS_btext.o += -DDISABLE_BRANCH_PROFILING
+> >   endif
+> >   
+> >   obj-y				:= cputable.o ptrace.o syscalls.o \
+> > -				   irq.o align.o signal_32.o pmc.o vdso.o \
+> > +				   irq.o align.o pmc.o vdso.o \
+> >   				   process.o systbl.o idle.o \
+> >   				   signal.o sysfs.o cacheinfo.o time.o \
+> >   				   prom.o traps.o setup-common.o \
+> >   				   udbg.o misc.o io.o misc_$(BITS).o \
+> >   				   of_platform.o prom_parse.o
+> > -obj-$(CONFIG_PPC64)		+= setup_64.o sys_ppc32.o \
+> > -				   signal_64.o ptrace32.o \
+> > +ifndef CONFIG_PPC64
+> > +obj-y				+= signal_32.o
+> > +else
+> > +ifdef CONFIG_COMPAT
+> > +obj-y				+= signal_32.o
+> > +endif
+> > +endif
+> > +obj-$(CONFIG_PPC64)		+= setup_64.o signal_64.o \
+> >   				   paca.o nvram_64.o firmware.o \
+> >   				   syscall_64.o  
+> 
+> That's still a bit messy. You could have:
+> 
+> obj-y = +=signal_$(BITS).o
+> obj-$(CONFIG_COMPAT) += signal_32.o
+> 
+> > +ifdef CONFIG_COMPAT
+> > +obj-$(CONFIG_PPC64)		+= sys_ppc32.o ptrace32.o
+> > +endif  
+> 
+> AFAIK, CONFIG_COMPAT is only defined when CONFIG_PP64 is defined, so 
+> could be:
+> 
+> obj-$(CONFIG_COMPAT)		+= sys_ppc32.o ptrace32.o
+> 
+> And could be grouped with the above signal_32.o
+> 
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 3a1d8f1170de..6ee514fd0920 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -433,6 +433,16 @@ config SPI_MT7621
- 	help
- 	  This selects a driver for the MediaTek MT7621 SPI Controller.
- 
-+config SPI_NPCM_FIU
-+	tristate "Nuvoton NPCM FLASH Interface Unit"
-+	depends on ARCH_NPCM || COMPILE_TEST
-+	depends on OF && HAS_IOMEM
-+	help
-+	  This enables support for the Flash Interface Unit SPI controller
-+	  in master mode.
-+	  This driver does not support generic SPI. The implementation only
-+	  supports spi-mem interface.
-+
- config SPI_NPCM_PSPI
- 	tristate "Nuvoton NPCM PSPI Controller"
- 	depends on ARCH_NPCM || COMPILE_TEST
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index 63dcab552bcb..adbebee93a75 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -63,6 +63,7 @@ obj-$(CONFIG_SPI_MT65XX)                += spi-mt65xx.o
- obj-$(CONFIG_SPI_MT7621)		+= spi-mt7621.o
- obj-$(CONFIG_SPI_MXIC)			+= spi-mxic.o
- obj-$(CONFIG_SPI_MXS)			+= spi-mxs.o
-+obj-$(CONFIG_SPI_NPCM_FIU)		+= spi-npcm-fiu.o
- obj-$(CONFIG_SPI_NPCM_PSPI)		+= spi-npcm-pspi.o
- obj-$(CONFIG_SPI_NUC900)		+= spi-nuc900.o
- obj-$(CONFIG_SPI_NXP_FLEXSPI)		+= spi-nxp-fspi.o
-diff --git a/drivers/spi/spi-npcm-fiu.c b/drivers/spi/spi-npcm-fiu.c
-new file mode 100644
-index 000000000000..3ea1ec68147e
---- /dev/null
-+++ b/drivers/spi/spi-npcm-fiu.c
-@@ -0,0 +1,771 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2019 Nuvoton Technology corporation.
-+
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/ioport.h>
-+#include <linux/clk.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+#include <linux/vmalloc.h>
-+#include <linux/regmap.h>
-+#include <linux/of_device.h>
-+#include <linux/spi/spi-mem.h>
-+#include <linux/mfd/syscon.h>
-+
-+/* NPCM7xx GCR module */
-+#define NPCM7XX_INTCR3_OFFSET		0x9C
-+#define NPCM7XX_INTCR3_FIU_FIX		BIT(6)
-+
-+/* Flash Interface Unit (FIU) Registers */
-+#define NPCM_FIU_DRD_CFG		0x00
-+#define NPCM_FIU_DWR_CFG		0x04
-+#define NPCM_FIU_UMA_CFG		0x08
-+#define NPCM_FIU_UMA_CTS		0x0C
-+#define NPCM_FIU_UMA_CMD		0x10
-+#define NPCM_FIU_UMA_ADDR		0x14
-+#define NPCM_FIU_PRT_CFG		0x18
-+#define NPCM_FIU_UMA_DW0		0x20
-+#define NPCM_FIU_UMA_DW1		0x24
-+#define NPCM_FIU_UMA_DW2		0x28
-+#define NPCM_FIU_UMA_DW3		0x2C
-+#define NPCM_FIU_UMA_DR0		0x30
-+#define NPCM_FIU_UMA_DR1		0x34
-+#define NPCM_FIU_UMA_DR2		0x38
-+#define NPCM_FIU_UMA_DR3		0x3C
-+#define NPCM_FIU_MAX_REG_LIMIT		0x80
-+
-+/* FIU Direct Read Configuration Register */
-+#define NPCM_FIU_DRD_CFG_LCK		BIT(31)
-+#define NPCM_FIU_DRD_CFG_R_BURST	GENMASK(25, 24)
-+#define NPCM_FIU_DRD_CFG_ADDSIZ		GENMASK(17, 16)
-+#define NPCM_FIU_DRD_CFG_DBW		GENMASK(13, 12)
-+#define NPCM_FIU_DRD_CFG_ACCTYPE	GENMASK(9, 8)
-+#define NPCM_FIU_DRD_CFG_RDCMD		GENMASK(7, 0)
-+#define NPCM_FIU_DRD_ADDSIZ_SHIFT	16
-+#define NPCM_FIU_DRD_DBW_SHIFT		12
-+#define NPCM_FIU_DRD_ACCTYPE_SHIFT	8
-+
-+/* FIU Direct Write Configuration Register */
-+#define NPCM_FIU_DWR_CFG_LCK		BIT(31)
-+#define NPCM_FIU_DWR_CFG_W_BURST	GENMASK(25, 24)
-+#define NPCM_FIU_DWR_CFG_ADDSIZ		GENMASK(17, 16)
-+#define NPCM_FIU_DWR_CFG_ABPCK		GENMASK(11, 10)
-+#define NPCM_FIU_DWR_CFG_DBPCK		GENMASK(9, 8)
-+#define NPCM_FIU_DWR_CFG_WRCMD		GENMASK(7, 0)
-+#define NPCM_FIU_DWR_ADDSIZ_SHIFT	16
-+#define NPCM_FIU_DWR_ABPCK_SHIFT	10
-+#define NPCM_FIU_DWR_DBPCK_SHIFT	8
-+
-+/* FIU UMA Configuration Register */
-+#define NPCM_FIU_UMA_CFG_LCK		BIT(31)
-+#define NPCM_FIU_UMA_CFG_CMMLCK		BIT(30)
-+#define NPCM_FIU_UMA_CFG_RDATSIZ	GENMASK(28, 24)
-+#define NPCM_FIU_UMA_CFG_DBSIZ		GENMASK(23, 21)
-+#define NPCM_FIU_UMA_CFG_WDATSIZ	GENMASK(20, 16)
-+#define NPCM_FIU_UMA_CFG_ADDSIZ		GENMASK(13, 11)
-+#define NPCM_FIU_UMA_CFG_CMDSIZ		BIT(10)
-+#define NPCM_FIU_UMA_CFG_RDBPCK		GENMASK(9, 8)
-+#define NPCM_FIU_UMA_CFG_DBPCK		GENMASK(7, 6)
-+#define NPCM_FIU_UMA_CFG_WDBPCK		GENMASK(5, 4)
-+#define NPCM_FIU_UMA_CFG_ADBPCK		GENMASK(3, 2)
-+#define NPCM_FIU_UMA_CFG_CMBPCK		GENMASK(1, 0)
-+#define NPCM_FIU_UMA_CFG_ADBPCK_SHIFT	2
-+#define NPCM_FIU_UMA_CFG_WDBPCK_SHIFT	4
-+#define NPCM_FIU_UMA_CFG_DBPCK_SHIFT	6
-+#define NPCM_FIU_UMA_CFG_RDBPCK_SHIFT	8
-+#define NPCM_FIU_UMA_CFG_ADDSIZ_SHIFT	11
-+#define NPCM_FIU_UMA_CFG_WDATSIZ_SHIFT	16
-+#define NPCM_FIU_UMA_CFG_DBSIZ_SHIFT	21
-+#define NPCM_FIU_UMA_CFG_RDATSIZ_SHIFT	24
-+
-+/* FIU UMA Control and Status Register */
-+#define NPCM_FIU_UMA_CTS_RDYIE		BIT(25)
-+#define NPCM_FIU_UMA_CTS_RDYST		BIT(24)
-+#define NPCM_FIU_UMA_CTS_SW_CS		BIT(16)
-+#define NPCM_FIU_UMA_CTS_DEV_NUM	GENMASK(9, 8)
-+#define NPCM_FIU_UMA_CTS_EXEC_DONE	BIT(0)
-+#define NPCM_FIU_UMA_CTS_DEV_NUM_SHIFT	8
-+
-+/* FIU UMA Command Register */
-+#define NPCM_FIU_UMA_CMD_DUM3		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_CMD_DUM2		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_CMD_DUM1		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_CMD_CMD		GENMASK(7, 0)
-+
-+/* FIU UMA Address Register */
-+#define NPCM_FIU_UMA_ADDR_UMA_ADDR	GENMASK(31, 0)
-+#define NPCM_FIU_UMA_ADDR_AB3		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_ADDR_AB2		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_ADDR_AB1		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_ADDR_AB0		GENMASK(7, 0)
-+
-+/* FIU UMA Write Data Bytes 0-3 Register */
-+#define NPCM_FIU_UMA_DW0_WB3		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_DW0_WB2		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_DW0_WB1		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_DW0_WB0		GENMASK(7, 0)
-+
-+/* FIU UMA Write Data Bytes 4-7 Register */
-+#define NPCM_FIU_UMA_DW1_WB7		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_DW1_WB6		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_DW1_WB5		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_DW1_WB4		GENMASK(7, 0)
-+
-+/* FIU UMA Write Data Bytes 8-11 Register */
-+#define NPCM_FIU_UMA_DW2_WB11		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_DW2_WB10		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_DW2_WB9		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_DW2_WB8		GENMASK(7, 0)
-+
-+/* FIU UMA Write Data Bytes 12-15 Register */
-+#define NPCM_FIU_UMA_DW3_WB15		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_DW3_WB14		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_DW3_WB13		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_DW3_WB12		GENMASK(7, 0)
-+
-+/* FIU UMA Read Data Bytes 0-3 Register */
-+#define NPCM_FIU_UMA_DR0_RB3		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_DR0_RB2		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_DR0_RB1		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_DR0_RB0		GENMASK(7, 0)
-+
-+/* FIU UMA Read Data Bytes 4-7 Register */
-+#define NPCM_FIU_UMA_DR1_RB15		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_DR1_RB14		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_DR1_RB13		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_DR1_RB12		GENMASK(7, 0)
-+
-+/* FIU UMA Read Data Bytes 8-11 Register */
-+#define NPCM_FIU_UMA_DR2_RB15		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_DR2_RB14		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_DR2_RB13		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_DR2_RB12		GENMASK(7, 0)
-+
-+/* FIU UMA Read Data Bytes 12-15 Register */
-+#define NPCM_FIU_UMA_DR3_RB15		GENMASK(31, 24)
-+#define NPCM_FIU_UMA_DR3_RB14		GENMASK(23, 16)
-+#define NPCM_FIU_UMA_DR3_RB13		GENMASK(15, 8)
-+#define NPCM_FIU_UMA_DR3_RB12		GENMASK(7, 0)
-+
-+/* FIU Read Mode */
-+enum {
-+	DRD_SINGLE_WIRE_MODE	= 0,
-+	DRD_DUAL_IO_MODE	= 1,
-+	DRD_QUAD_IO_MODE	= 2,
-+	DRD_SPI_X_MODE		= 3,
-+};
-+
-+enum {
-+	DWR_ABPCK_BIT_PER_CLK	= 0,
-+	DWR_ABPCK_2_BIT_PER_CLK	= 1,
-+	DWR_ABPCK_4_BIT_PER_CLK	= 2,
-+};
-+
-+enum {
-+	DWR_DBPCK_BIT_PER_CLK	= 0,
-+	DWR_DBPCK_2_BIT_PER_CLK	= 1,
-+	DWR_DBPCK_4_BIT_PER_CLK	= 2,
-+};
-+
-+#define NPCM_FIU_DRD_16_BYTE_BURST	0x3000000
-+#define NPCM_FIU_DWR_16_BYTE_BURST	0x3000000
-+
-+#define MAP_SIZE_128MB			0x8000000
-+#define MAP_SIZE_16MB			0x1000000
-+#define MAP_SIZE_8MB			0x800000
-+
-+#define NUM_BITS_IN_BYTE		8
-+#define FIU_DRD_MAX_DUMMY_NUMBER	3
-+#define NPCM_MAX_CHIP_NUM		4
-+#define CHUNK_SIZE			16
-+#define UMA_MICRO_SEC_TIMEOUT		150
-+
-+enum {
-+	FIU0 = 0,
-+	FIU3,
-+	FIUX,
-+};
-+
-+struct npcm_fiu_info {
-+	char *name;
-+	u32 fiu_id;
-+	u32 max_map_size;
-+	u32 max_cs;
-+};
-+
-+struct fiu_data {
-+	const struct npcm_fiu_info *npcm_fiu_data_info;
-+	int fiu_max;
-+};
-+
-+static const struct npcm_fiu_info npxm7xx_fiu_info[] = {
-+	{.name = "FIU0", .fiu_id = FIU0,
-+		.max_map_size = MAP_SIZE_128MB, .max_cs = 2},
-+	{.name = "FIU3", .fiu_id = FIU3,
-+		.max_map_size = MAP_SIZE_128MB, .max_cs = 4},
-+	{.name = "FIUX", .fiu_id = FIUX,
-+		.max_map_size = MAP_SIZE_16MB, .max_cs = 2} };
-+
-+static const struct fiu_data npxm7xx_fiu_data = {
-+	.npcm_fiu_data_info = npxm7xx_fiu_info,
-+	.fiu_max = 3,
-+};
-+
-+struct npcm_fiu_spi;
-+
-+struct npcm_fiu_chip {
-+	void __iomem *flash_region_mapped_ptr;
-+	struct npcm_fiu_spi *fiu;
-+	unsigned long clkrate;
-+	u32 chipselect;
-+};
-+
-+struct npcm_fiu_spi {
-+	struct npcm_fiu_chip chip[NPCM_MAX_CHIP_NUM];
-+	const struct npcm_fiu_info *info;
-+	struct spi_mem_op drd_op;
-+	struct resource *res_mem;
-+	struct regmap *regmap;
-+	unsigned long clkrate;
-+	struct device *dev;
-+	struct clk *clk;
-+	bool spix_mode;
-+};
-+
-+static const struct regmap_config npcm_mtd_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.max_register = NPCM_FIU_MAX_REG_LIMIT,
-+};
-+
-+static void npcm_fiu_set_drd(struct npcm_fiu_spi *fiu,
-+			     const struct spi_mem_op *op)
-+{
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_DRD_CFG,
-+			   NPCM_FIU_DRD_CFG_ACCTYPE,
-+			   ilog2(op->addr.buswidth) <<
-+			   NPCM_FIU_DRD_ACCTYPE_SHIFT);
-+	fiu->drd_op.addr.buswidth = op->addr.buswidth;
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_DRD_CFG,
-+			   NPCM_FIU_DRD_CFG_DBW,
-+			   ((op->dummy.nbytes * ilog2(op->addr.buswidth))
-+			    / NUM_BITS_IN_BYTE) << NPCM_FIU_DRD_DBW_SHIFT);
-+	fiu->drd_op.dummy.nbytes = op->dummy.nbytes;
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_DRD_CFG,
-+			   NPCM_FIU_DRD_CFG_RDCMD, op->cmd.opcode);
-+	fiu->drd_op.cmd.opcode = op->cmd.opcode;
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_DRD_CFG,
-+			   NPCM_FIU_DRD_CFG_ADDSIZ,
-+			   (op->addr.nbytes - 3) << NPCM_FIU_DRD_ADDSIZ_SHIFT);
-+	fiu->drd_op.addr.nbytes = op->addr.nbytes;
-+}
-+
-+static ssize_t npcm_fiu_direct_read(struct spi_mem_dirmap_desc *desc,
-+				    u64 offs, size_t len, void *buf)
-+{
-+	struct npcm_fiu_spi *fiu =
-+		spi_controller_get_devdata(desc->mem->spi->master);
-+	struct npcm_fiu_chip *chip = &fiu->chip[desc->mem->spi->chip_select];
-+	void __iomem *src = (void __iomem *)(chip->flash_region_mapped_ptr +
-+					     offs);
-+	u8 *buf_rx = buf;
-+	u32 i;
-+
-+	if (fiu->spix_mode) {
-+		for (i = 0 ; i < len ; i++)
-+			*(buf_rx + i) = ioread8(src + i);
-+	} else {
-+		if (desc->info.op_tmpl.addr.buswidth != fiu->drd_op.addr.buswidth ||
-+		    desc->info.op_tmpl.dummy.nbytes != fiu->drd_op.dummy.nbytes ||
-+		    desc->info.op_tmpl.cmd.opcode != fiu->drd_op.cmd.opcode ||
-+		    desc->info.op_tmpl.addr.nbytes != fiu->drd_op.addr.nbytes)
-+			npcm_fiu_set_drd(fiu, &desc->info.op_tmpl);
-+
-+		memcpy_fromio(buf_rx, src, len);
-+	}
-+
-+	return len;
-+}
-+
-+static ssize_t npcm_fiu_direct_write(struct spi_mem_dirmap_desc *desc,
-+				     u64 offs, size_t len, const void *buf)
-+{
-+	struct npcm_fiu_spi *fiu =
-+		spi_controller_get_devdata(desc->mem->spi->master);
-+	struct npcm_fiu_chip *chip = &fiu->chip[desc->mem->spi->chip_select];
-+	void __iomem *dst = (void __iomem *)(chip->flash_region_mapped_ptr +
-+					     offs);
-+	const u8 *buf_tx = buf;
-+	u32 i;
-+
-+	if (fiu->spix_mode)
-+		for (i = 0 ; i < len ; i++)
-+			iowrite8(*(buf_tx + i), dst + i);
-+	else
-+		memcpy_toio(dst, buf_tx, len);
-+
-+	return len;
-+}
-+
-+static int npcm_fiu_uma_read(struct spi_mem *mem,
-+			     const struct spi_mem_op *op, u32 addr,
-+			      bool is_address_size, u8 *data, u32 data_size)
-+{
-+	struct npcm_fiu_spi *fiu =
-+		spi_controller_get_devdata(mem->spi->master);
-+	u32 uma_cfg = BIT(10);
-+	u32 data_reg[4];
-+	int ret;
-+	u32 val;
-+	u32 i;
-+
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_UMA_CTS,
-+			   NPCM_FIU_UMA_CTS_DEV_NUM,
-+			   (mem->spi->chip_select <<
-+			    NPCM_FIU_UMA_CTS_DEV_NUM_SHIFT));
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_UMA_CMD,
-+			   NPCM_FIU_UMA_CMD_CMD, op->cmd.opcode);
-+
-+	if (is_address_size) {
-+		uma_cfg |= ilog2(op->cmd.buswidth);
-+		uma_cfg |= ilog2(op->addr.buswidth)
-+			<< NPCM_FIU_UMA_CFG_ADBPCK_SHIFT;
-+		uma_cfg |= ilog2(op->dummy.buswidth)
-+			<< NPCM_FIU_UMA_CFG_DBPCK_SHIFT;
-+		uma_cfg |= ilog2(op->data.buswidth)
-+			<< NPCM_FIU_UMA_CFG_RDBPCK_SHIFT;
-+		uma_cfg |= op->dummy.nbytes << NPCM_FIU_UMA_CFG_DBSIZ_SHIFT;
-+		uma_cfg |= op->addr.nbytes << NPCM_FIU_UMA_CFG_ADDSIZ_SHIFT;
-+		regmap_write(fiu->regmap, NPCM_FIU_UMA_ADDR, addr);
-+	} else {
-+		regmap_write(fiu->regmap, NPCM_FIU_UMA_ADDR, 0x0);
-+	}
-+
-+	uma_cfg |= data_size << NPCM_FIU_UMA_CFG_RDATSIZ_SHIFT;
-+	regmap_write(fiu->regmap, NPCM_FIU_UMA_CFG, uma_cfg);
-+	regmap_write_bits(fiu->regmap, NPCM_FIU_UMA_CTS,
-+			  NPCM_FIU_UMA_CTS_EXEC_DONE,
-+			  NPCM_FIU_UMA_CTS_EXEC_DONE);
-+	ret = regmap_read_poll_timeout(fiu->regmap, NPCM_FIU_UMA_CTS, val,
-+				       (!(val & NPCM_FIU_UMA_CTS_EXEC_DONE)), 0,
-+				       UMA_MICRO_SEC_TIMEOUT);
-+	if (ret)
-+		return ret;
-+
-+	if (data_size) {
-+		for (i = 0; i < DIV_ROUND_UP(data_size, 4); i++)
-+			regmap_read(fiu->regmap, NPCM_FIU_UMA_DR0 + (i * 4),
-+				    &data_reg[i]);
-+		memcpy(data, data_reg, data_size);
-+	}
-+
-+	return 0;
-+}
-+
-+static int npcm_fiu_uma_write(struct spi_mem *mem,
-+			      const struct spi_mem_op *op, u8 cmd,
-+			      bool is_address_size, u8 *data, u32 data_size)
-+{
-+	struct npcm_fiu_spi *fiu =
-+		spi_controller_get_devdata(mem->spi->master);
-+	u32 uma_cfg = BIT(10);
-+	u32 data_reg[4] = {0};
-+	u32 val;
-+	u32 i;
-+
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_UMA_CTS,
-+			   NPCM_FIU_UMA_CTS_DEV_NUM,
-+			   (mem->spi->chip_select <<
-+			    NPCM_FIU_UMA_CTS_DEV_NUM_SHIFT));
-+
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_UMA_CMD,
-+			   NPCM_FIU_UMA_CMD_CMD, cmd);
-+
-+	if (data_size) {
-+		memcpy(data_reg, data, data_size);
-+		for (i = 0; i < DIV_ROUND_UP(data_size, 4); i++)
-+			regmap_write(fiu->regmap, NPCM_FIU_UMA_DW0 + (i * 4),
-+				     data_reg[i]);
-+	}
-+
-+	if (is_address_size) {
-+		uma_cfg |= ilog2(op->cmd.buswidth);
-+		uma_cfg |= ilog2(op->addr.buswidth) <<
-+			NPCM_FIU_UMA_CFG_ADBPCK_SHIFT;
-+		uma_cfg |= ilog2(op->data.buswidth) <<
-+			NPCM_FIU_UMA_CFG_WDBPCK_SHIFT;
-+		uma_cfg |= op->addr.nbytes << NPCM_FIU_UMA_CFG_ADDSIZ_SHIFT;
-+		regmap_write(fiu->regmap, NPCM_FIU_UMA_ADDR, op->addr.val);
-+	} else {
-+		regmap_write(fiu->regmap, NPCM_FIU_UMA_ADDR, 0x0);
-+	}
-+
-+	uma_cfg |= (data_size << NPCM_FIU_UMA_CFG_WDATSIZ_SHIFT);
-+	regmap_write(fiu->regmap, NPCM_FIU_UMA_CFG, uma_cfg);
-+
-+	regmap_write_bits(fiu->regmap, NPCM_FIU_UMA_CTS,
-+			  NPCM_FIU_UMA_CTS_EXEC_DONE,
-+			  NPCM_FIU_UMA_CTS_EXEC_DONE);
-+
-+	return regmap_read_poll_timeout(fiu->regmap, NPCM_FIU_UMA_CTS, val,
-+				       (!(val & NPCM_FIU_UMA_CTS_EXEC_DONE)), 0,
-+					UMA_MICRO_SEC_TIMEOUT);
-+}
-+
-+static int npcm_fiu_manualwrite(struct spi_mem *mem,
-+				const struct spi_mem_op *op)
-+{
-+	struct npcm_fiu_spi *fiu =
-+		spi_controller_get_devdata(mem->spi->master);
-+	u8 *data = (u8 *)op->data.buf.out;
-+	u32 num_data_chunks;
-+	u32 remain_data;
-+	u32 idx = 0;
-+	int ret;
-+
-+	num_data_chunks  = op->data.nbytes / CHUNK_SIZE;
-+	remain_data  = op->data.nbytes % CHUNK_SIZE;
-+
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_UMA_CTS,
-+			   NPCM_FIU_UMA_CTS_DEV_NUM,
-+			   (mem->spi->chip_select <<
-+			    NPCM_FIU_UMA_CTS_DEV_NUM_SHIFT));
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_UMA_CTS,
-+			   NPCM_FIU_UMA_CTS_SW_CS, 0);
-+
-+	ret = npcm_fiu_uma_write(mem, op, op->cmd.opcode, true, NULL, 0);
-+	if (ret)
-+		return ret;
-+
-+	/* Starting the data writing loop in multiples of 8 */
-+	for (idx = 0; idx < num_data_chunks; ++idx) {
-+		ret = npcm_fiu_uma_write(mem, op, data[0], false,
-+					 &data[1], CHUNK_SIZE - 1);
-+		if (ret)
-+			return ret;
-+
-+		data += CHUNK_SIZE;
-+	}
-+
-+	/* Handling chunk remains */
-+	if (remain_data > 0) {
-+		ret = npcm_fiu_uma_write(mem, op, data[0], false,
-+					 &data[1], remain_data - 1);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_UMA_CTS,
-+			   NPCM_FIU_UMA_CTS_SW_CS, NPCM_FIU_UMA_CTS_SW_CS);
-+
-+	return 0;
-+}
-+
-+static int npcm_fiu_read(struct spi_mem *mem, const struct spi_mem_op *op)
-+{
-+	u8 *data = op->data.buf.in;
-+	int i, readlen, currlen;
-+	size_t retlen = 0;
-+	u8 *buf_ptr;
-+	u32 addr;
-+	int ret;
-+
-+	i = 0;
-+	currlen = op->data.nbytes;
-+
-+	do {
-+		addr = ((u32)op->addr.val + i);
-+		if (currlen < 16)
-+			readlen = currlen;
-+		else
-+			readlen = 16;
-+
-+		buf_ptr = data + i;
-+		ret = npcm_fiu_uma_read(mem, op, addr, true, buf_ptr,
-+					readlen);
-+		if (ret)
-+			return ret;
-+
-+		i += readlen;
-+		currlen -= 16;
-+	} while (currlen > 0);
-+
-+	retlen = i;
-+
-+	return 0;
-+}
-+
-+static void npcm_fiux_set_direct_wr(struct npcm_fiu_spi *fiu)
-+{
-+	regmap_write(fiu->regmap, NPCM_FIU_DWR_CFG,
-+		     NPCM_FIU_DWR_16_BYTE_BURST);
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_DWR_CFG,
-+			   NPCM_FIU_DWR_CFG_ABPCK,
-+			   DWR_ABPCK_4_BIT_PER_CLK << NPCM_FIU_DWR_ABPCK_SHIFT);
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_DWR_CFG,
-+			   NPCM_FIU_DWR_CFG_DBPCK,
-+			   DWR_DBPCK_4_BIT_PER_CLK << NPCM_FIU_DWR_DBPCK_SHIFT);
-+}
-+
-+static void npcm_fiux_set_direct_rd(struct npcm_fiu_spi *fiu)
-+{
-+	u32 rx_dummy = 0;
-+
-+	regmap_write(fiu->regmap, NPCM_FIU_DRD_CFG,
-+		     NPCM_FIU_DRD_16_BYTE_BURST);
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_DRD_CFG,
-+			   NPCM_FIU_DRD_CFG_ACCTYPE,
-+			   DRD_SPI_X_MODE << NPCM_FIU_DRD_ACCTYPE_SHIFT);
-+	regmap_update_bits(fiu->regmap, NPCM_FIU_DRD_CFG,
-+			   NPCM_FIU_DRD_CFG_DBW,
-+			   rx_dummy << NPCM_FIU_DRD_DBW_SHIFT);
-+}
-+
-+static int npcm_fiu_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
-+{
-+	struct npcm_fiu_spi *fiu =
-+		spi_controller_get_devdata(mem->spi->master);
-+	struct npcm_fiu_chip *chip = &fiu->chip[mem->spi->chip_select];
-+	int ret = 0;
-+	u8 *buf;
-+
-+	dev_dbg(fiu->dev, "cmd:%#x mode:%d.%d.%d.%d addr:%#llx len:%#x\n",
-+		op->cmd.opcode, op->cmd.buswidth, op->addr.buswidth,
-+		op->dummy.buswidth, op->data.buswidth, op->addr.val,
-+		op->data.nbytes);
-+
-+	if (fiu->spix_mode || op->addr.nbytes > 4)
-+		return -ENOTSUPP;
-+
-+	if (fiu->clkrate != chip->clkrate) {
-+		ret = clk_set_rate(fiu->clk, chip->clkrate);
-+		if (ret < 0)
-+			dev_warn(fiu->dev, "Failed setting %lu frequancy, stay at %lu frequancy\n", chip->clkrate, fiu->clkrate);
-+		else
-+			fiu->clkrate = chip->clkrate;
-+	}
-+
-+	if (op->data.dir == SPI_MEM_DATA_IN) {
-+		if (!op->addr.nbytes) {
-+			buf = op->data.buf.in;
-+			ret = npcm_fiu_uma_read(mem, op, op->addr.val, false,
-+						buf, op->data.nbytes);
-+		} else {
-+			ret = npcm_fiu_read(mem, op);
-+		}
-+	} else  {
-+		if (!op->addr.nbytes && !op->data.nbytes)
-+			ret = npcm_fiu_uma_write(mem, op, op->cmd.opcode, false,
-+						 NULL, 0);
-+		if (op->addr.nbytes && !op->data.nbytes) {
-+			int i;
-+			u8 buf_addr[4];
-+			u32 addr = op->addr.val;
-+
-+			for (i = op->addr.nbytes - 1; i >= 0; i--) {
-+				buf_addr[i] = addr & 0xff;
-+				addr >>= 8;
-+			}
-+			ret = npcm_fiu_uma_write(mem, op, op->cmd.opcode, false,
-+						 buf_addr, op->addr.nbytes);
-+		}
-+		if (!op->addr.nbytes && op->data.nbytes)
-+			ret = npcm_fiu_uma_write(mem, op, op->cmd.opcode, false,
-+						 (u8 *)op->data.buf.out,
-+						 op->data.nbytes);
-+		if (op->addr.nbytes && op->data.nbytes)
-+			ret = npcm_fiu_manualwrite(mem, op);
-+	}
-+
-+	return ret;
-+}
-+
-+static int npcm_fiu_dirmap_create(struct spi_mem_dirmap_desc *desc)
-+{
-+	struct npcm_fiu_spi *fiu =
-+		spi_controller_get_devdata(desc->mem->spi->master);
-+	struct npcm_fiu_chip *chip = &fiu->chip[desc->mem->spi->chip_select];
-+	struct regmap *gcr_regmap;
-+
-+	if (!fiu->res_mem) {
-+		dev_warn(fiu->dev, "Reserved memory not defined, direct read disabled\n");
-+		desc->nodirmap = true;
-+		return 0;
-+	}
-+
-+	if (!fiu->spix_mode &&
-+	    desc->info.op_tmpl.data.dir == SPI_MEM_DATA_OUT) {
-+		desc->nodirmap = true;
-+		return 0;
-+	}
-+
-+	if (!chip->flash_region_mapped_ptr) {
-+		chip->flash_region_mapped_ptr =
-+			devm_ioremap_nocache(fiu->dev, (fiu->res_mem->start +
-+							(fiu->info->max_map_size *
-+						    desc->mem->spi->chip_select)),
-+					     (u32)desc->info.length);
-+		if (!chip->flash_region_mapped_ptr) {
-+			dev_warn(fiu->dev, "Error mapping memory region, direct read disabled\n");
-+			desc->nodirmap = true;
-+			return 0;
-+		}
-+	}
-+
-+	if (of_device_is_compatible(fiu->dev->of_node, "nuvoton,npcm750-fiu")) {
-+		gcr_regmap =
-+			syscon_regmap_lookup_by_compatible("nuvoton,npcm750-gcr");
-+		if (IS_ERR(gcr_regmap)) {
-+			dev_warn(fiu->dev, "Didn't find nuvoton,npcm750-gcr, direct read disabled\n");
-+			desc->nodirmap = true;
-+			return 0;
-+		}
-+		regmap_update_bits(gcr_regmap, NPCM7XX_INTCR3_OFFSET,
-+				   NPCM7XX_INTCR3_FIU_FIX,
-+				   NPCM7XX_INTCR3_FIU_FIX);
-+	}
-+
-+	if (desc->info.op_tmpl.data.dir == SPI_MEM_DATA_IN) {
-+		if (!fiu->spix_mode)
-+			npcm_fiu_set_drd(fiu, &desc->info.op_tmpl);
-+		else
-+			npcm_fiux_set_direct_rd(fiu);
-+
-+	} else {
-+		npcm_fiux_set_direct_wr(fiu);
-+	}
-+
-+	return 0;
-+}
-+
-+static int npcm_fiu_setup(struct spi_device *spi)
-+{
-+	struct spi_controller *ctrl = spi->master;
-+	struct npcm_fiu_spi *fiu = spi_controller_get_devdata(ctrl);
-+	struct npcm_fiu_chip *chip;
-+
-+	chip = &fiu->chip[spi->chip_select];
-+	chip->fiu = fiu;
-+	chip->chipselect = spi->chip_select;
-+	chip->clkrate = spi->max_speed_hz;
-+
-+	fiu->clkrate = clk_get_rate(fiu->clk);
-+
-+	return 0;
-+}
-+
-+static const struct spi_controller_mem_ops npcm_fiu_mem_ops = {
-+	.exec_op = npcm_fiu_exec_op,
-+	.dirmap_create = npcm_fiu_dirmap_create,
-+	.dirmap_read = npcm_fiu_direct_read,
-+	.dirmap_write = npcm_fiu_direct_write,
-+};
-+
-+static const struct of_device_id npcm_fiu_dt_ids[] = {
-+	{ .compatible = "nuvoton,npcm750-fiu", .data = &npxm7xx_fiu_data  },
-+	{ /* sentinel */ }
-+};
-+
-+static int npcm_fiu_probe(struct platform_device *pdev)
-+{
-+	const struct fiu_data *fiu_data_match;
-+	const struct of_device_id *match;
-+	struct device *dev = &pdev->dev;
-+	struct spi_controller *ctrl;
-+	struct npcm_fiu_spi *fiu;
-+	void __iomem *regbase;
-+	struct resource *res;
-+	int ret;
-+	int id;
-+
-+	ctrl = spi_alloc_master(dev, sizeof(*fiu));
-+	if (!ctrl)
-+		return -ENOMEM;
-+
-+	fiu = spi_controller_get_devdata(ctrl);
-+
-+	match = of_match_device(npcm_fiu_dt_ids, dev);
-+	if (!match || !match->data) {
-+		dev_err(dev, "No compatible OF match\n");
-+		return -ENODEV;
-+	}
-+
-+	fiu_data_match = match->data;
-+	id = of_alias_get_id(dev->of_node, "fiu");
-+	if (id < 0 || id >= fiu_data_match->fiu_max) {
-+		dev_err(dev, "Invalid platform device id: %d\n", id);
-+		return -EINVAL;
-+	}
-+
-+	fiu->info = &fiu_data_match->npcm_fiu_data_info[id];
-+
-+	platform_set_drvdata(pdev, fiu);
-+	fiu->dev = dev;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "control");
-+	regbase = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(regbase))
-+		return PTR_ERR(regbase);
-+
-+	fiu->regmap = devm_regmap_init_mmio(dev, regbase,
-+					    &npcm_mtd_regmap_config);
-+	if (IS_ERR(fiu->regmap)) {
-+		dev_err(dev, "Failed to create regmap\n");
-+		return PTR_ERR(fiu->regmap);
-+	}
-+
-+	fiu->res_mem = platform_get_resource_byname(pdev, IORESOURCE_MEM,
-+						    "memory");
-+	fiu->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(fiu->clk))
-+		return PTR_ERR(fiu->clk);
-+
-+	fiu->spix_mode = of_property_read_bool(dev->of_node,
-+					       "nuvoton,spix-mode");
-+
-+	platform_set_drvdata(pdev, fiu);
-+	clk_prepare_enable(fiu->clk);
-+
-+	ctrl->mode_bits = SPI_RX_DUAL | SPI_RX_QUAD
-+		| SPI_TX_DUAL | SPI_TX_QUAD;
-+	ctrl->setup = npcm_fiu_setup;
-+	ctrl->bus_num = -1;
-+	ctrl->mem_ops = &npcm_fiu_mem_ops;
-+	ctrl->num_chipselect = fiu->info->max_cs;
-+	ctrl->dev.of_node = dev->of_node;
-+
-+	ret = devm_spi_register_master(dev, ctrl);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int npcm_fiu_remove(struct platform_device *pdev)
-+{
-+	struct npcm_fiu_spi *fiu = platform_get_drvdata(pdev);
-+
-+	clk_disable_unprepare(fiu->clk);
-+	return 0;
-+}
-+
-+MODULE_DEVICE_TABLE(of, npcm_fiu_dt_ids);
-+
-+static struct platform_driver npcm_fiu_driver = {
-+	.driver = {
-+		.name	= "NPCM-FIU",
-+		.bus	= &platform_bus_type,
-+		.of_match_table = npcm_fiu_dt_ids,
-+	},
-+	.probe      = npcm_fiu_probe,
-+	.remove	    = npcm_fiu_remove,
-+};
-+module_platform_driver(npcm_fiu_driver);
-+
-+MODULE_DESCRIPTION("Nuvoton FLASH Interface Unit SPI Controller Driver");
-+MODULE_AUTHOR("Tomer Maimon <tomer.maimon@nuvoton.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.18.0
+Looks better.
 
+> 
+> >   obj-$(CONFIG_VDSO32)		+= vdso32/
+> >   obj-$(CONFIG_PPC_WATCHDOG)	+= watchdog.o
+> >   obj-$(CONFIG_HAVE_HW_BREAKPOINT)	+= hw_breakpoint.o
+> > diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
+> > index 2ec825a85f5b..a2dbf216f607 100644
+> > --- a/arch/powerpc/kernel/entry_64.S
+> > +++ b/arch/powerpc/kernel/entry_64.S
+> > @@ -51,8 +51,10 @@
+> >   SYS_CALL_TABLE:
+> >   	.tc sys_call_table[TC],sys_call_table
+> >   
+> > +#ifdef CONFIG_COMPAT
+> >   COMPAT_SYS_CALL_TABLE:
+> >   	.tc compat_sys_call_table[TC],compat_sys_call_table
+> > +#endif  
+> 
+> Can we avoid this ifdef ?
+
+AFAICT it creates reference to non-existent table otherwise.
+
+> 
+> >   
+> >   /* This value is used to mark exception frames on the stack. */
+> >   exception_marker:
+> > diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
+> > index 60436432399f..ffd045e9fb57 100644
+> > --- a/arch/powerpc/kernel/signal.c
+> > +++ b/arch/powerpc/kernel/signal.c
+> > @@ -277,14 +277,15 @@ static void do_signal(struct task_struct *tsk)
+> >   
+> >   	rseq_signal_deliver(&ksig, tsk->thread.regs);
+> >   
+> > +#if !defined(CONFIG_PPC64) || defined(CONFIG_COMPAT)
+> >   	if (is32) {
+> >           	if (ksig.ka.sa.sa_flags & SA_SIGINFO)
+> >   			ret = handle_rt_signal32(&ksig, oldset, tsk);
+> >   		else
+> >   			ret = handle_signal32(&ksig, oldset, tsk);
+> > -	} else {
+> > +	} else  
+> 
+> " if only one branch of a conditional statement is a single statement 
+> [...] use braces in both branches"
+> 
+> Ref 
+> https://www.kernel.org/doc/html/latest/process/coding-style.html#placing-braces-and-spaces
+> 
+> > +#endif /* 32bit */  
+> 
+> Having an #ifdef in a middle of a if/else is gross.
+> 
+> Check what are the possible values for is32. It will be always true 
+> which CONFIG_PPC32.
+> If you can make sure it is always false without CONFIG_COMPAT, you are 
+> done. If not, then combine the if(is32) with something involving 
+> IS_ENABLED(CONFIG_COMPAT).
+
+The value of is32 is not a problem. References to non-existent
+functions could be.
+
+...
+
+> > diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
+> > index c84bbd4298a0..b3dacc8bc98d 100644
+> > --- a/arch/powerpc/perf/callchain.c
+> > +++ b/arch/powerpc/perf/callchain.c
+> > @@ -15,7 +15,7 @@
+> >   #include <asm/sigcontext.h>
+> >   #include <asm/ucontext.h>
+> >   #include <asm/vdso.h>
+> > -#ifdef CONFIG_PPC64
+> > +#ifdef CONFIG_COMPAT
+> >   #include "../kernel/ppc32.h"
+
+/srv/kernel/arch/powerpc/perf/../kernel/ppc32.h:50:2: error: unknown type name ‘compat_stack_t’
+
+When required declarations are ifdefed in compat.h
+
+> >   
+> >   static inline int valid_user_sp(unsigned long sp, int is_64)
+> >   {
+> > @@ -341,6 +343,7 @@ static inline int valid_user_sp(unsigned long sp, int is_64)
+> >   
+> >   #endif /* CONFIG_PPC64 */
+> >   
+> > +#if !defined(CONFIG_PPC64) || defined(CONFIG_COMPAT)  
+> 
+> You don't need to opt that out.
+
+You need to opt out here:
+
+/srv/kernel/arch/powerpc/perf/callchain.c:349:22: error: field ‘sctx’ has incomplete type
+  struct sigcontext32 sctx;
+/srv/kernel/arch/powerpc/perf/callchain.c:359:2: error: unknown type name ‘compat_siginfo_t’
+  compat_siginfo_t info;
+...
+> 
+> >   /*
+> >    * Layout for non-RT signal frames
+> >    */
+> > @@ -482,12 +485,15 @@ static void perf_callchain_user_32(struct perf_callchain_entry_ctx *entry,
+> >   		sp = next_sp;
+> >   	}
+> >   }
+> > +#endif /* 32bit */
+> >   
+> >   void
+> >   perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs)
+> >   {
+> > -	if (current_is_64bit())
+> > -		perf_callchain_user_64(entry, regs);
+> > -	else
+> > +#if !defined(CONFIG_PPC64) || defined(CONFIG_COMPAT)
+> > +	if (!current_is_64bit())
+> >   		perf_callchain_user_32(entry, regs);
+> > +	else
+> > +#endif
+> > +		perf_callchain_user_64(entry, regs);  
+> 
+> Please rewrite using  IS_ENABLED() instead of #ifdefs.
+
+And ifdef here.
+
+The ifdefs could be potentially reduced in some places, though.
+
+Thanks
+
+Michal
