@@ -2,150 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76BA5A0144
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3938DA014D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:09:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726415AbfH1MHr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 08:07:47 -0400
-Received: from mga09.intel.com ([134.134.136.24]:60816 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbfH1MHr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 08:07:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 05:07:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
-   d="scan'208";a="332142468"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 28 Aug 2019 05:07:46 -0700
-Received: from [10.255.185.142] (unknown [10.255.185.142])
-        by linux.intel.com (Postfix) with ESMTP id CD9DE580107;
-        Wed, 28 Aug 2019 05:07:43 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2] dt-bindings: phy: intel-sdxc-phy: Add YAML schema
- for LGM SDXC PHY
-To:     Rob Herring <robh@kernel.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        peter.harliman.liem@intel.com
-References: <20190827082652.43840-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <20190827082652.43840-2-vadivel.muruganx.ramuthevar@linux.intel.com>
- <CAL_JsqJsTDNR7FsdFouLetzhsRhmr3fVT_xzzhKbR7KuTwepuQ@mail.gmail.com>
- <2a915595-be5f-83f4-34e8-34d667875cc2@linux.intel.com>
- <CAL_JsqLSXCK9u0fC99mv=7Lwmiqg2Qtu7Kf_xFG0WHE3v3wE6w@mail.gmail.com>
-From:   "Ramuthevar, Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Message-ID: <7d076a6f-b761-4968-2280-837630db309d@linux.intel.com>
-Date:   Wed, 28 Aug 2019 20:07:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726472AbfH1MJ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 08:09:28 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:41368 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbfH1MJ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 08:09:27 -0400
+Received: by mail-qt1-f196.google.com with SMTP id i4so2662881qtj.8;
+        Wed, 28 Aug 2019 05:09:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uY/0QthbDm0KRk0gieS7xBLQazGhEOHEGV7wuOo/gng=;
+        b=BGYAmdWj4B0XNk0rvMFA8tozmwzlR/M2xf3gkPNBZ4Q75U4KsbWj7RWdimXtUWgmaF
+         2AwdsadbK+097tHgmE8MeraL+TJquf7NML3n6UnH6caAWoMhXoWiQ7X8QCqOWOxmY+km
+         Ks8aHnGFPHX8hYOHJx/jL7wykxOrVaksZ5minRY1ssfEqfduZd5F2AgrutHiSytCg9Jz
+         XuujESQpo1AovCoC1gz9ZTswRCpm+f+FHkZ3tlnNgwlXdakP7TRvPR/xIaUViQKJ3Oq7
+         v1VoXrxUGM4jHtuQ1x4Fx7R3QWUUk9OwW4HSz5STfHavQRcLkLBfPLJPkYG0nx+YGQu0
+         W2jg==
+X-Gm-Message-State: APjAAAXFfGVzyYZeZLZ8inEwAeyrhU8MsJtchiL1dbBtcevg7RiADsA4
+        8i1NWcyG7LBgCu7EmnpV7hOh+mndbdyB84HZENg=
+X-Google-Smtp-Source: APXvYqxPjCZy8Yr70wpAUsKG4hqpSsecPtkX5jagW7DEkIoSG6k0GIS1TjLQmGSzQOE2w0NAJB8sdbquABde5znr26Y=
+X-Received: by 2002:ad4:45c7:: with SMTP id v7mr2362538qvt.63.1566994166270;
+ Wed, 28 Aug 2019 05:09:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqLSXCK9u0fC99mv=7Lwmiqg2Qtu7Kf_xFG0WHE3v3wE6w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20190827154851.10486-1-enric.balletbo@collabora.com>
+ <20190827161045.GC26807@tuxbook-pro> <CAK8P3a2h2gUhxcVgD5JhR1Uo4qUSuG5yp4RCrAxevNmyD4ZRTA@mail.gmail.com>
+ <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
+In-Reply-To: <2db6cde1-9e7f-8b1c-f2e4-80bdd2478d28@collabora.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 28 Aug 2019 14:09:10 +0200
+Message-ID: <CAK8P3a3zYpgouGAibyMjDykZmy+ABnx6AD2cYpHnXq9Zsw2V=w@mail.gmail.com>
+Subject: Re: [PATCH] arm/arm64: defconfig: Update configs to use the new
+ CROS_EC options
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        SoC Team <soc@kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Collabora kernel ML <kernel@collabora.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Yannick Fertr?" <yannick.fertre@st.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi  Rob,
-
-Thank you for the review comments.
-
-On 28/8/2019 7:39 PM, Rob Herring wrote:
-> On Tue, Aug 27, 2019 at 10:47 PM Ramuthevar, Vadivel MuruganX
-> <vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
->> Hi Rob,
->>
->> On 27/8/2019 8:39 PM, Rob Herring wrote:
->>> On Tue, Aug 27, 2019 at 3:27 AM Ramuthevar,Vadivel MuruganX
->>> <vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
->>>> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
->>>>
->>>> Add a YAML schema to use the host controller driver with the
->>>> SDXC PHY on Intel's Lightning Mountain SoC.
->>>>
->>>> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
->>>> ---
->>>>    .../bindings/phy/intel,lgm-sdxc-phy.yaml           | 50 ++++++++++++++++++++++
->>>>    1 file changed, 50 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-sdxc-phy.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-sdxc-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-sdxc-phy.yaml
->>>> new file mode 100644
->>>> index 000000000000..be05020880bf
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/phy/intel,lgm-sdxc-phy.yaml
->>>> @@ -0,0 +1,50 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/phy/intel,lgm-sdxc-phy.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Intel Lightning Mountain(LGM) SDXC PHY Device Tree Bindings
->>>> +
->>>> +maintainers:
->>>> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
->>>> +
->>>> +description: Binding for SDXC PHY
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    const: intel,lgm-sdxc-phy
->>>> +
->>>> +  intel,syscon:
->>>> +    description: phandle to the sdxc through syscon
->>>> +    $ref: '/schemas/types.yaml#/definitions/phandle'
->>>> +
->>>> +  clocks:
->>>> +    maxItems: 1
->>>> +
->>>> +  clock-names:
->>>> +    maxItems: 1
->>>> +
->>>> +  "#phy-cells":
->>>> +    const: 0
->>>> +
->>>> +required:
->>>> +  - "#phy-cells"
->>>> +  - compatible
->>>> +  - intel,syscon
->>>> +  - clocks
->>>> +  - clock-names
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    sdxc_phy: sdxc_phy {
->>>> +        compatible = "intel,lgm-sdxc-phy";
->>>> +        intel,syscon = <&sysconf>;
->>> Rather than a phandle, can this be a child node of sysconf? You need a
->>> binding for sysconf first anyways.
->> intel,syscon is phandle, emmc_phy is not child node of sysconf, access
->> emmc_phy
->> register over sysconf so made as reference here.
-> How do you access the emmc_phy registers? They are part of the sysconf
-> address space or the sysconf provides some sort of indirect register
-> access? In case of the former, then emmc_phy should be a child node.
-> That's actually fairly common.
-
-Agreed!, you are correct. I have created two files one for syscon and 
-other one is for emmc-phy
-
-Documentation/devicetree/bindings/phy/intel,syscon.yaml
-Documentation/devicetree/bindings/phy/intel,lgm-sdxc-phy.yaml
-
-As you said earlier mail, first syscon bindings to be there, sending the 
-patch as well.
-
-Regards
-Vadivel
-> Rob
+On Wed, Aug 28, 2019 at 12:10 PM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+> On 27/8/19 18:12, Arnd Bergmann wrote:
+> > On Tue, Aug 27, 2019 at 6:08 PM Bjorn Andersson
+> > <bjorn.andersson@linaro.org> wrote:
+> >>
+> >> On Tue 27 Aug 08:48 PDT 2019, Enric Balletbo i Serra wrote:
+> >>
+> >>> Recently we refactored the CrOS EC drivers moving part of the code from
+> >>> the MFD subsystem to the platform chrome subsystem. During this change
+> >>> we needed to rename some config options, so, update the defconfigs
+> >>> accordingly.
+> >>>
+> >>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> >>> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >>> Reviewed-by: Gwendal Grignou <gwendal@chromium.org>
+> >>> Tested-by: Gwendal Grignou <gwendal@chromium.org>
+> >>
+> >> Can we make the entries in the generic arm64 defconfig modules?
+> >
+> > Good idea.
+> >
+> > Actually I would prefer to have all of them as modules for consistency,
+> > if at all possible.
+> >
 >
+> It is very common boot Chromebooks from an USB device, the EC needs to be
+> built-in in order to boot from these devices, otherwise you should use an
+> initramfs. I'd like to avoid forcing people to build an initramfs just to boot
+> from these devices if possible, in fact, my usual workflow is without initramfs,
+> and knowing that with the default defconfig just should boot helps a lot sometimes.
+>
+> Note that, it's not the case for EC subdevices, these are already build as modules.
+
+Ok, fair enough, let's leave it built-in then.
+
+> BTW, Lee asked if this patch should be squashed with the patches that really
+> renames the config options to help bisect ability, I don't have a hard opinion
+> as I don't usually run the config option between bisection steps, so please let
+> me know what do you prefer and I'll respin the patches ASAP if that's the case.
+
+I'm not usually worried about bisection in defconfig changes, since like you
+say most commonly one would not run 'make defconfig' betweens the
+bisection steps.
+
+If we really care about it, we could keep a symbol like this
+in drivers/platform/chrome/Kconfig for one release:
+
+config CONFIG_MFD_CROS_EC
+        tristate "Enable ChromeOS Embedded Controller"
+        select CROS_EC
+        select CHROME_PLATFORMS
+        select CONFIG_MFD_CROS_EC_DEV
+        help
+           This is a transitional Kconfig option and will be removed
+           after everyone enables the parts individually.
+
+      Arnd
