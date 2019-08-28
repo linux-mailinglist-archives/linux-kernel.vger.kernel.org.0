@@ -2,172 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 605259FBD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:32:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 115ED9FBCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:32:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfH1HcV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 03:32:21 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44170 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbfH1HcL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 03:32:11 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t14so803076plr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 00:32:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=908RHXqoFIdDyUK9BmX+x3cPuKJ/6DHA6wfIqO4h7YA=;
-        b=LHp33Ib2+T38e0IXjQ/JWzQfzu4cT2ZtxVmnuwcL9q5tVuYzQWni9xdV5MqwM6dOf+
-         zMsG6qzfi7rQZ+6DMdcWUtjJFnp/CR9IVHDgoeA00k4jYpkSKeAtY3kX6H5Tuz7DEBXO
-         G9ks+0/sk9ZqzK7LDSdpVQ/Og+otkQ5lBFpr6N7v9mQAgu9sBFFhjsUKsFJf88uQOHXC
-         bDcPcEdDvdy+skzUkqs2uvcmOLRD/xuqsM/DN794ptjx/Bm5VtOx5drMMDgf7FSXSAe5
-         4ME88/X3gpKM2yOTvTOZzjKFIPlPy6WlyYK3V0iHlmCSffuBVlDTFjf5LKcOSgX3A9NN
-         UaMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=908RHXqoFIdDyUK9BmX+x3cPuKJ/6DHA6wfIqO4h7YA=;
-        b=Q3TBBsDz6DO5VVURE0yJTt2+IK/XInS1mWVfeVRYr+E1JWj7n9LptX6RLxZLpgS93K
-         l0Zyaa76/z+V+DT85/ANHbFEkaO/eKYzMP9NyzAPAkRr+4gkvqu72/YvFJbqxS46i887
-         CpMGIPVplptxy3IDKCRx8xzj0x+iflBCvnbO9aIEGID1EnWGN7WYMFlBsNOFTCYDOqH3
-         PVVdF8HLtEOolDkBqXpXQfyEioFvA9/RwIfRftFL6NSPWYp9C1A1yj3DlsPgPdKzyjHc
-         BSyyZXPPXTQBxazx577Yv4WBaks2WFdty0IZKSO5zTZ5Aed+h7OApALDex1F5/dPbj9V
-         0giw==
-X-Gm-Message-State: APjAAAVRAksU0igHFaav8d6Zn1weZkG2ZnuFmV7L7UmB7gfcU0W2YayY
-        rWH/txJ7vK9I2jdVlsNVaGo=
-X-Google-Smtp-Source: APXvYqypPismMJSUbw7BXBcfjzFmXHqsBc0ww91dPuRmH1z+bOz9fjUlQN4OKJGhnV06etKV6JeEsw==
-X-Received: by 2002:a17:902:b406:: with SMTP id x6mr2837482plr.114.1566977530016;
-        Wed, 28 Aug 2019 00:32:10 -0700 (PDT)
-Received: from gaurie.seo.corp.google.com ([2401:fa00:d:0:1034:ec6b:8056:9e93])
-        by smtp.gmail.com with ESMTPSA id v145sm1677054pfc.31.2019.08.28.00.32.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 00:32:09 -0700 (PDT)
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>
-Subject: [PATCH 9/9] perf script: Add --show-cgroup-events option
-Date:   Wed, 28 Aug 2019 16:31:30 +0900
-Message-Id: <20190828073130.83800-10-namhyung@kernel.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-In-Reply-To: <20190828073130.83800-1-namhyung@kernel.org>
-References: <20190828073130.83800-1-namhyung@kernel.org>
+        id S1726713AbfH1HcD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 03:32:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34954 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726605AbfH1Hb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 03:31:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E4602B009;
+        Wed, 28 Aug 2019 07:31:56 +0000 (UTC)
+Date:   Wed, 28 Aug 2019 09:31:53 +0200
+From:   Oscar Salvador <osalvador@suse.de>
+To:     Alastair D'Silva <alastair@au1.ibm.com>
+Cc:     alastair@d-silva.org, Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Wei Yang <richardw.yang@linux.intel.com>,
+        Qian Cai <cai@lca.pw>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: Don't manually decrement num_poisoned_pages
+Message-ID: <20190828073148.GA30623@linux>
+References: <20190827053656.32191-1-alastair@au1.ibm.com>
+ <20190827053656.32191-2-alastair@au1.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190827053656.32191-2-alastair@au1.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The --show-cgroup-events option is to print CGROUP events in the
-output like others.
+On Tue, Aug 27, 2019 at 03:36:54PM +1000, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> Use the function written to do it instead.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-script.txt |  3 ++
- tools/perf/builtin-script.c              | 41 ++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 2599b057e47b..3dd297600427 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -319,6 +319,9 @@ OPTIONS
- --show-bpf-events
- 	Display bpf events i.e. events of type PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT.
- 
-+--show-cgroup-events
-+	Display cgroup events i.e. events of type PERF_RECORD_CGROUP.
-+
- --demangle::
- 	Demangle symbol names to human readable form. It's enabled by default,
- 	disable with --no-demangle.
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 51e7e6d0eee6..9017889084bd 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1629,6 +1629,7 @@ struct perf_script {
- 	bool			show_lost_events;
- 	bool			show_round_events;
- 	bool			show_bpf_events;
-+	bool			show_cgroup_events;
- 	bool			allocated;
- 	bool			per_event_dump;
- 	struct evswitch		evswitch;
-@@ -2146,6 +2147,41 @@ static int process_namespaces_event(struct perf_tool *tool,
- 	return ret;
- }
- 
-+static int process_cgroup_event(struct perf_tool *tool,
-+				union perf_event *event,
-+				struct perf_sample *sample,
-+				struct machine *machine)
-+{
-+	struct thread *thread;
-+	struct perf_script *script = container_of(tool, struct perf_script, tool);
-+	struct perf_session *session = script->session;
-+	struct evsel *evsel = perf_evlist__id2evsel(session->evlist, sample->id);
-+	int ret = -1;
-+
-+	thread = machine__findnew_thread(machine, sample->pid, sample->tid);
-+	if (thread == NULL) {
-+		pr_debug("problem processing CGROUP event, skipping it.\n");
-+		return -1;
-+	}
-+
-+	if (perf_event__process_cgroup(tool, event, sample, machine) < 0)
-+		goto out;
-+
-+	if (!evsel->core.attr.sample_id_all) {
-+		sample->cpu = 0;
-+		sample->time = 0;
-+	}
-+	if (!filter_cpu(sample)) {
-+		perf_sample__fprintf_start(sample, thread, evsel,
-+					   PERF_RECORD_CGROUP, stdout);
-+		perf_event__fprintf(event, stdout);
-+	}
-+	ret = 0;
-+out:
-+	thread__put(thread);
-+	return ret;
-+}
-+
- static int process_fork_event(struct perf_tool *tool,
- 			      union perf_event *event,
- 			      struct perf_sample *sample,
-@@ -2485,6 +2521,8 @@ static int __cmd_script(struct perf_script *script)
- 		script->tool.context_switch = process_switch_event;
- 	if (script->show_namespace_events)
- 		script->tool.namespaces = process_namespaces_event;
-+	if (script->show_cgroup_events)
-+		script->tool.cgroup = process_cgroup_event;
- 	if (script->show_lost_events)
- 		script->tool.lost = process_lost_event;
- 	if (script->show_round_events) {
-@@ -3410,6 +3448,7 @@ int cmd_script(int argc, const char **argv)
- 			.mmap2		 = perf_event__process_mmap2,
- 			.comm		 = perf_event__process_comm,
- 			.namespaces	 = perf_event__process_namespaces,
-+			.cgroup		 = perf_event__process_cgroup,
- 			.exit		 = perf_event__process_exit,
- 			.fork		 = perf_event__process_fork,
- 			.attr		 = process_attr,
-@@ -3510,6 +3549,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Show context switch events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-namespace-events", &script.show_namespace_events,
- 		    "Show namespace events (if recorded)"),
-+	OPT_BOOLEAN('\0', "show-cgroup-events", &script.show_cgroup_events,
-+		    "Show cgroup events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-lost-events", &script.show_lost_events,
- 		    "Show lost events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-round-events", &script.show_round_events,
+> ---
+>  mm/sparse.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/sparse.c b/mm/sparse.c
+> index 72f010d9bff5..e41917a7e844 100644
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -11,6 +11,8 @@
+>  #include <linux/export.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/vmalloc.h>
+> +#include <linux/swap.h>
+> +#include <linux/swapops.h>
+>  
+>  #include "internal.h"
+>  #include <asm/dma.h>
+> @@ -898,7 +900,7 @@ static void clear_hwpoisoned_pages(struct page *memmap, int nr_pages)
+>  
+>  	for (i = 0; i < nr_pages; i++) {
+>  		if (PageHWPoison(&memmap[i])) {
+> -			atomic_long_sub(1, &num_poisoned_pages);
+> +			num_poisoned_pages_dec();
+>  			ClearPageHWPoison(&memmap[i]);
+>  		}
+>  	}
+> -- 
+> 2.21.0
+> 
+
 -- 
-2.23.0.187.g17f5b7556c-goog
-
+Oscar Salvador
+SUSE L3
