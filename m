@@ -2,101 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 349559FA9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:37:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 796BC9FAA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:38:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbfH1Ghh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 02:37:37 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34352 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726374AbfH1Ghf (ORCPT
+        id S1726617AbfH1GiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 02:38:08 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:37095 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbfH1GiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 02:37:35 -0400
-X-UUID: 84ec3a7a644b429eb59967b68ca96bcf-20190828
-X-UUID: 84ec3a7a644b429eb59967b68ca96bcf-20190828
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <vic.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 192895952; Wed, 28 Aug 2019 14:37:31 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 28 Aug 2019 14:37:30 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Aug 2019 14:37:30 +0800
-From:   Vic Wu <vic.wu@mediatek.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-CC:     "David S . Miller" <davem@davemloft.net>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        <linux-crypto@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Vic Wu <vic.wu@mediatek.com>
-Subject: [PATCH 5/5] crypto: mediatek: fix incorrect crypto key setting
-Date:   Wed, 28 Aug 2019 14:37:16 +0800
-Message-ID: <20190828063716.22689-5-vic.wu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190828063716.22689-1-vic.wu@mediatek.com>
-References: <20190828063716.22689-1-vic.wu@mediatek.com>
+        Wed, 28 Aug 2019 02:38:07 -0400
+Received: by mail-io1-f72.google.com with SMTP id m7so2457480ioc.4
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 23:38:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=yCd41CNyR60VpDYw3udqbf0xP5cuEnDdTZQAfL1rzYM=;
+        b=hZ/xLceYJRp5JvWVGwQDDP1UsezTojZ32N8AIaAyLU9L/UcKM86n3iDsAEEBQ4UnuY
+         PMQPKZdcwCTdCmfBlu7uU+S9C6QgER8NAJw/+JRW1gl0djFG1pK6LWQd1F4iPTbDnP+2
+         0p+abIGE/gm+Ye6FXsfYGJvjVrNK9owEhBZSsOU1ydQ9OCVicHwiHEyLEeFTEQW55BVN
+         G02pgDwDaEyinLEAdfU9k9URZM+oV+rz4GMrgS1bIg5B2wEUBKaOBKXVgxTobs+o7jRE
+         IUYQA5j4rkiHYqSrocy+k8CzPweRb4kKZnNLx9ePTvwR26A2mSoAXWQVBEuGEfZbmqrz
+         k5pg==
+X-Gm-Message-State: APjAAAW6VBqOPySYuZmegL+NlOGazkTSw25sBDfydasCatiRuuyGFItg
+        VjH5A2cGbXJO2O9xHJFPakbjy6fF+d1qehHDlR+DlszilgOc
+X-Google-Smtp-Source: APXvYqx8FgeCT4z0Sh6kWHCipmMG+aA+vKVax/R/fpauuxDh94FISFhSgUVyrIa/NW5nkUPhsUAUYglzhkZwgT5Ipg6q6PIOkqJH
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-Received: by 2002:a5d:9d89:: with SMTP id 9mr2471525ion.212.1566974286853;
+ Tue, 27 Aug 2019 23:38:06 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 23:38:06 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bd9241059127a1eb@google.com>
+Subject: WARNING in smc_unhash_sk (3)
+From:   syzbot <syzbot+8488cc4cf1c9e09b8b86@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kgraul@linux.ibm.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        ubraun@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Record crypto key to context during setkey and set the key to
-transform state buffer in encrypt/decrypt process.
+Hello,
 
-Signed-off-by: Vic Wu <vic.wu@mediatek.com>
+syzbot found the following crash on:
+
+HEAD commit:    a55aa89a Linux 5.3-rc6
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=112dd212600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58485246ad14eafe
+dashboard link: https://syzkaller.appspot.com/bug?extid=8488cc4cf1c9e09b8b86
+compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
+80fee25776c2fb61e74c1ecb1a523375c2500b69)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15426ebc600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116aca7a600000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+8488cc4cf1c9e09b8b86@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9198 at ./include/net/sock.h:666 sk_del_node_init  
+include/net/sock.h:666 [inline]
+WARNING: CPU: 0 PID: 9198 at ./include/net/sock.h:666  
+smc_unhash_sk+0x21b/0x240 net/smc/af_smc.c:96
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 9198 Comm: syz-executor057 Not tainted 5.3.0-rc6 #93
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1d8/0x2f8 lib/dump_stack.c:113
+  panic+0x25c/0x799 kernel/panic.c:219
+  __warn+0x22f/0x230 kernel/panic.c:576
+  report_bug+0x190/0x290 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  do_error_trap+0xd7/0x440 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:sk_del_node_init include/net/sock.h:666 [inline]
+RIP: 0010:smc_unhash_sk+0x21b/0x240 net/smc/af_smc.c:96
+Code: 48 89 df e8 07 b1 39 00 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3  
+e8 03 d7 31 fa 48 c7 c7 f2 c3 3a 88 31 c0 e8 28 1d 1b fa <0f> 0b eb 85 44  
+89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 5b ff ff ff 4c
+RSP: 0018:ffff888094177b68 EFLAGS: 00010246
+RAX: 0000000000000024 RBX: 0000000000000001 RCX: b964ece25f6b7c00
+RDX: 0000000000000000 RSI: 0000000000000201 RDI: 0000000000000000
+RBP: ffff888094177bb0 R08: ffffffff815cf7d4 R09: ffffed1015d46088
+R10: ffffed1015d46088 R11: 0000000000000000 R12: ffff888098ccb240
+R13: dffffc0000000000 R14: ffff888098ccb2c0 R15: ffff888098ccb268
+  __smc_release+0x1f8/0x3a0 net/smc/af_smc.c:146
+  smc_release+0x15b/0x2c0 net/smc/af_smc.c:185
+  __sock_release net/socket.c:590 [inline]
+  sock_close+0xe1/0x260 net/socket.c:1268
+  __fput+0x2e4/0x740 fs/file_table.c:280
+  ____fput+0x15/0x20 fs/file_table.c:313
+  task_work_run+0x17e/0x1b0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x5e8/0x21a0 kernel/exit.c:879
+  do_group_exit+0x15c/0x2b0 kernel/exit.c:983
+  __do_sys_exit_group+0x17/0x20 kernel/exit.c:994
+  __se_sys_exit_group+0x14/0x20 kernel/exit.c:992
+  __x64_sys_exit_group+0x3b/0x40 kernel/exit.c:992
+  do_syscall_64+0xfe/0x140 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43ff28
+Code: 00 00 be 3c 00 00 00 eb 19 66 0f 1f 84 00 00 00 00 00 48 89 d7 89 f0  
+0f 05 48 3d 00 f0 ff ff 77 21 f4 48 89 d7 44 89 c0 0f 05 <48> 3d 00 f0 ff  
+ff 76 e0 f7 d8 64 41 89 01 eb d8 0f 1f 84 00 00 00
+RSP: 002b:00007ffefacce238 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043ff28
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004bf750 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 00000000200000c0 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d1180 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
 ---
- drivers/crypto/mediatek/mtk-aes.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/crypto/mediatek/mtk-aes.c b/drivers/crypto/mediatek/mtk-aes.c
-index 9eeb8b8d..05f21dc8 100644
---- a/drivers/crypto/mediatek/mtk-aes.c
-+++ b/drivers/crypto/mediatek/mtk-aes.c
-@@ -107,6 +107,7 @@ struct mtk_aes_reqctx {
- struct mtk_aes_base_ctx {
- 	struct mtk_cryp *cryp;
- 	u32 keylen;
-+	__le32 key[12];
- 	__le32 keymode;
- 
- 	mtk_aes_fn start;
-@@ -541,6 +542,8 @@ static int mtk_aes_handle_queue(struct mtk_cryp *cryp, u8 id,
- 		backlog->complete(backlog, -EINPROGRESS);
- 
- 	ctx = crypto_tfm_ctx(areq->tfm);
-+	/* Write key into state buffer */
-+	memcpy(ctx->info.state, ctx->key, sizeof(ctx->key));
- 
- 	aes->areq = areq;
- 	aes->ctx = ctx;
-@@ -660,7 +663,7 @@ static int mtk_aes_setkey(struct crypto_ablkcipher *tfm,
- 	}
- 
- 	ctx->keylen = SIZE_IN_WORDS(keylen);
--	mtk_aes_write_state_le(ctx->info.state, (const u32 *)key, keylen);
-+	mtk_aes_write_state_le(ctx->key, (const u32 *)key, keylen);
- 
- 	return 0;
- }
-@@ -1093,10 +1096,8 @@ static int mtk_aes_gcm_setkey(struct crypto_aead *aead, const u8 *key,
- 	if (err)
- 		goto out;
- 
--	/* Write key into state buffer */
--	mtk_aes_write_state_le(ctx->info.state, (const u32 *)key, keylen);
--	/* Write key(H) into state buffer */
--	mtk_aes_write_state_be(ctx->info.state + ctx->keylen, data->hash,
-+	mtk_aes_write_state_le(ctx->key, (const u32 *)key, keylen);
-+	mtk_aes_write_state_be(ctx->key + ctx->keylen, data->hash,
- 			       AES_BLOCK_SIZE);
- out:
- 	kzfree(data);
--- 
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
