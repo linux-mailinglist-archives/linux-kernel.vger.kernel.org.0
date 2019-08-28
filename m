@@ -2,78 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3D049FFE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:30:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 561CC9FFEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:31:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfH1Kas (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 06:30:48 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39830 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726395AbfH1Kao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 06:30:44 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 19769AFF2;
-        Wed, 28 Aug 2019 10:30:43 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Dmitry V. Levin" <ldv@altlinux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Steven Rostedt" <rostedt@goodmis.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Breno Leitao <leitao@debian.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Allison Randal <allison@lohutok.net>,
-        Michael Neuling <mikey@neuling.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
+        id S1726882AbfH1KbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 06:31:17 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48064 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbfH1KbQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 06:31:16 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id BBF1F81097; Wed, 28 Aug 2019 12:31:00 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 12:31:13 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Pavel Machek <pavel@denx.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 4/4] powerpc/64: Disable COMPAT if littleendian.
-Date:   Wed, 28 Aug 2019 12:30:29 +0200
-Message-Id: <b61dba35d1b255d9eb2c503127b015a5cf479150.1566987936.git.msuchanek@suse.de>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <cover.1566987936.git.msuchanek@suse.de>
-References: <cover.1566987936.git.msuchanek@suse.de>
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chen Yu <yu.c.chen@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 4.19 72/98] x86/CPU/AMD: Clear RDRAND CPUID bit on AMD
+ family 15h/16h
+Message-ID: <20190828103113.GA14677@amd>
+References: <20190827072718.142728620@linuxfoundation.org>
+ <20190827072722.020603090@linuxfoundation.org>
+ <20190827113604.GB18218@amd>
+ <alpine.DEB.2.21.1908271525480.1939@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1908271525480.1939@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ppc32le was never really a thing. Endian swap is already disabled by
-default so this 32bit support is kind of useless on ppc64le.
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- arch/powerpc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--ikeVEW9yuYc//A+q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 5bab0bb6b833..67cd1c4d1bae 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -265,7 +265,7 @@ config PANIC_TIMEOUT
- 
- config COMPAT
- 	bool
--	default y if PPC64
-+	default y if PPC64 && !CPU_LITTLE_ENDIAN
- 	select COMPAT_BINFMT_ELF
- 	select ARCH_WANT_OLD_COMPAT_IPC
- 	select COMPAT_OLD_SIGACTION
--- 
-2.22.0
+On Tue 2019-08-27 15:30:30, Thomas Gleixner wrote:
+> On Tue, 27 Aug 2019, Pavel Machek wrote:
+>=20
+> > On Tue 2019-08-27 09:50:51, Greg Kroah-Hartman wrote:
+> > > From: Tom Lendacky <thomas.lendacky@amd.com>
+> > >=20
+> > > commit c49a0a80137c7ca7d6ced4c812c9e07a949f6f24 upstream.
+> > >=20
+> > > There have been reports of RDRAND issues after resuming from suspend =
+on
+> > > some AMD family 15h and family 16h systems. This issue stems from a B=
+IOS
+> > > not performing the proper steps during resume to ensure RDRAND contin=
+ues
+> > > to function properly.
+> >=20
+> > Yes. And instead of reinitializing the RDRAND on resume, this patch
+> > breaks support even for people with properly functioning BIOSes...
+>=20
+> There is no way to reinitialize RDRAND from the kernel otherwise we would
+> have exactly done that. If you know how to do that please tell.
 
+Would they? AMD is not exactly doing good job with communication
+here. If BIOS can do it, kernel can do it, too... or do you have
+information saying otherwise?
+
+> Also disabling it for every BIOS is the only way which can be done because
+> there is no way to know whether the BIOS is fixed or not at cold boot
+> time. And it has to be known there because applications cache the
+
+I'm pretty sure DMI-based whitelist would help here. It should be
+reasonably to fill it with the common machines at least.
+
+Plus, where is the CVE, and does AMD do anything to make BIOS vendors
+fix them?
+
+Best regards,
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--ikeVEW9yuYc//A+q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1mV/EACgkQMOfwapXb+vKEEACfa9KYDavWYmga5YIPImafscUZ
+6ToAoKvc4xitFnoM3ETkUUD2cV1in6+x
+=OTpt
+-----END PGP SIGNATURE-----
+
+--ikeVEW9yuYc//A+q--
