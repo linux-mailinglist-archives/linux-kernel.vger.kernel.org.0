@@ -2,144 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 868AFA0E38
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 01:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 173C2A0E47
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 01:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfH1X2n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 19:28:43 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38715 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfH1X2n (ORCPT
+        id S1727114AbfH1XjA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 19:39:00 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:44904 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726926AbfH1XjA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 19:28:43 -0400
-Received: by mail-pf1-f196.google.com with SMTP id o70so759983pfg.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 16:28:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+XyfWMjZjslCIkbHpIEJO6yFk4GM8tJmlHzY8WN3VpE=;
-        b=XMtLwACj6fCFbm6guyZbm9jzJBOyNJEoTy7r2/RB7UJhbFEszjyOEmVaFj5OGiCRBf
-         qcwmnxKJjdE3lGkxDWEMahPwvr5c+YAxRrI8cG5n+zOmmLrJahXlDwAXq5+wA2AcHz76
-         WaqGsJGM5nuCtZLonWi9OvF2Be8jS7WGn5Pj+hQ3v8aaJNepAwK5xj2I2cDfQs1zW9+J
-         6fOyt8MXAbfwKRkBaz4NpP54uDc6X2cszk53YroJpf9X30zWd6WkFvyuoGVuxG5eiDeZ
-         UT/Wp8nZ/3iNs+YQhwOb4rgch1ZUzr9bu/mva13GF1CqV2Kf0BJjYbYGwYFGPGpdcRD3
-         m1Bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+XyfWMjZjslCIkbHpIEJO6yFk4GM8tJmlHzY8WN3VpE=;
-        b=kAtRiBENSwfltnLH4bbonziYAb7pMbZv+A2ZjfqHHrYLNMclkMQiYBlHo1VXUnPg+H
-         C8Ab6D3trEzWf7R2s0ygTINmmDa9QhOn13pxUc6+SFcJhSBXL2SQixlY9sBm4B6mLwLJ
-         CensMoNBXWwZfGdoi/dm+ir+V6pqSOOQ+/lki+DC4LucRMXHhPfByM4g/BqVazKqHkHc
-         1JEQzs5Ncv/DBeC4Vcft35n9RYHH5VHetbvEHFK7wz+O3UFe8TGwTDWE3FwUAVAaMsEg
-         8P9az/Uuyw+DNfkzcFpFojQsXoWbrtQyS3M8z7KeLml6Ol/0r0ln+AqtztyQDa55UX9X
-         mCug==
-X-Gm-Message-State: APjAAAWqP4h4krMHwgVrFhztyCwt8sTJ1me+A/8KHbzKcZcbYWy+klXR
-        gfsbazsLe1ANzrzrG0FohFVscJL1QLwnhvo3+w2DqA==
-X-Google-Smtp-Source: APXvYqxoPTiNQF9WXfZ7KaeaFJq1LN79r5ZLWpR7OhqM82xMZYPECA6QfKBmE72pTjxXDBUtXDDp1GOIi1r5C5wFNFI=
-X-Received: by 2002:a63:61cd:: with SMTP id v196mr5724062pgb.263.1567034921605;
- Wed, 28 Aug 2019 16:28:41 -0700 (PDT)
+        Wed, 28 Aug 2019 19:39:00 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7SNYPiU177339;
+        Wed, 28 Aug 2019 23:38:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2019-08-05; bh=GhdPiCSY9MkVGCnGCBcOj7hNHDN3GuDPlSlaUmyDeaA=;
+ b=mrdP4VYFIrZ7wKh/BPHh4lSBwfF2lL+RgLlZ49TRtLNel2CxpcCIR6W4ZPcm2UzX6M92
+ aMTm1hTbtLxcfUfjeyco8ePZ3R9+badhp/75jqHFYX92PFRlnLp3XT4WU0Af5VHre3cq
+ J1sqJZXrqZuqm93cxB3IK6GjwckSemYKyv817WehRTrfo3Pw3+3SCQA4I5qyuHv0y4cM
+ gMvWjqwFiuvpdQxmag3tWZ99Ap1XcEpAz87FbFQt0D4I8IG30OwaDaPWyiiphWryvcUx
+ u+od6gxEfxLmyy77eW/PhdhsPTJmQE7A2VyJqp9x4uVzS10pqMVRPFUEZ2TuVRiLmABu 8g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2up3d5g0g5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 23:38:41 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7SMEVCV043222;
+        Wed, 28 Aug 2019 22:16:31 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2undw7xt84-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 22:16:31 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7SMGUwp010166;
+        Wed, 28 Aug 2019 22:16:30 GMT
+Received: from zissou.us.oracle.com (/10.152.34.58)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Aug 2019 15:16:29 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH v2 0/5] padata flushing and CPU hotplug fixes
+Date:   Wed, 28 Aug 2019 18:14:20 -0400
+Message-Id: <20190828221425.22701-1-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20190828055425.24765-1-yamada.masahiro@socionext.com>
- <20190828055425.24765-2-yamada.masahiro@socionext.com> <20190828182017.GB127646@archlinux-threadripper>
-In-Reply-To: <20190828182017.GB127646@archlinux-threadripper>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 28 Aug 2019 16:28:30 -0700
-Message-ID: <CAKwvOd=r5Y8hQQBeKZ6zAokPdyeT2AVKFsdviTvwV5AyDQQHrw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kbuild: allow Clang to find unused static inline
- functions for W=1 build
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Sven Schnelle <svens@stackframe.org>,
-        Xiaozhou Liu <liuxiaozhou@bytedance.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908280214
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908280219
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 11:20 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Wed, Aug 28, 2019 at 02:54:25PM +0900, Masahiro Yamada wrote:
-> > GCC and Clang have different policy for -Wunused-function; GCC does not
-> > warn unused static inline functions at all whereas Clang does if they
-> > are defined in source files instead of included headers although it has
-> > been suppressed since commit abb2ea7dfd82 ("compiler, clang: suppress
-> > warning for unused static inline functions").
-> >
-> > We often miss to delete unused functions where 'static inline' is used
-> > in *.c files since there is no tool to detect them. Unused code remains
-> > until somebody notices. For example, commit 075ddd75680f ("regulator:
-> > core: remove unused rdev_get_supply()").
-> >
-> > Let's remove __maybe_unused from the inline macro to allow Clang to
-> > start finding unused static inline functions. For now, we do this only
-> > for W=1 build since it is not a good idea to sprinkle warnings for the
-> > normal build.
-> >
-> > My initial attempt was to add -Wno-unused-function for no W=1 build
-> > (https://lore.kernel.org/patchwork/patch/1120594/)
-> >
-> > Nathan Chancellor pointed out that would weaken Clang's checks since
-> > we would no longer get -Wunused-function without W=1. It is true GCC
-> > would detect unused static non-inline functions, but it would weaken
-> > Clang as a standalone compiler at least.
+Hi,
+Here are some miscellaneous padata fixes, mostly to do with CPU hotplug.
+This time around there's a new hotplug state to make the CPU remove path
+cleaner, and the CC list grew a bit.
 
-Got it. No problem.
+Daniel
 
-> >
-> > Here is a counter implementation. The current problem is, W=... only
-> > controls compiler flags, which are globally effective. There is no way
-> > to narrow the scope to only 'static inline' functions.
-> >
-> > This commit defines KBUILD_EXTRA_WARN[123] corresponding to W=[123].
-> > When KBUILD_EXTRA_WARN1 is defined, __maybe_unused is omitted from
-> > the 'inline' macro.
-> >
-> > This makes the code a bit uglier, so personally I do not want to carry
-> > this forever. If we can manage to fix most of the warnings, we can
-> > drop this entirely, then enable -Wunused-function all the time.
+v2:
+ - patches 1-3 are new; 4-5 have changed since v1[*]
+ - attempted to fix padata flushing as requested (Herbert)
+ - changed hotplug state in which __padata_remove_cpu() is
+   called (Herbert)
+ - purged cpumask_clear_cpu() calls from same function (Herbert)
+ - dropped v1's patch 3/2 (Herbert)
+ - after more thought, left the Fixes: tag on the last patch the same
 
-How many warnings?
+testing:
+ - testcase was tcrypt mode=215 sec=1 throughout
+ - ran all cpumask combos among parallel cpumasks, serial cpumasks, and CPU
+   hotplug in a 3-CPU VM
+ - lockdep to check patch 4
+ - tested at each patch in this set with and without
+   CONFIG_CRYPTO_PCRYPT
 
-> >
-> > If you contribute to code clean-up, please run "make CC=clang W=1"
-> > and check -Wunused-function warnings. You will find lots of unused
-> > functions.
-> >
-> > Some of them are false-positives because the call-sites are disabled
-> > by #ifdef. I do not like to abuse the inline keyword for suppressing
-> > unused-function warnings because it is intended to be a hint for the
-> > compiler optimization. I prefer #ifdef around the definition, or
-> > __maybe_unused if #ifdef would make the code too ugly.
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->
-> I can still see warnings from static unused functions and with W=1, I
-> see plenty more. I agree that this is uglier because of the
-> __inline_maybe_unused but I think this is better for regular developers.
-> I will try to work on these unused-function warnings!
+Series based on recent mainline plus all padata patches in cryptodev:
+    git://oss.oracle.com/git/linux-dmjordan.git padata-cpuhp-v2
 
-How many are we talking here?
+[*] https://lore.kernel.org/linux-crypto/20190809192857.26585-1-daniel.m.jordan@oracle.com/
 
->
-> Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-> Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Daniel Jordan (5):
+  padata: make flushing work with async users
+  padata: remove reorder_objects
+  padata: get rid of padata_remove_cpu() for real
+  padata: always acquire cpu_hotplug_lock before pinst->lock
+  padata: validate cpumask without removed CPU during offline
 
-This is getting kind of messy.  I was more ok when the goal seemed to
-be simplifying the definition of `inline`, but this is worse IMO.
+ Documentation/padata.txt   | 18 ++------
+ include/linux/cpuhotplug.h |  1 +
+ include/linux/padata.h     |  5 +-
+ kernel/padata.c            | 95 +++++++++++---------------------------
+ 4 files changed, 36 insertions(+), 83 deletions(-)
 
+
+base-commit: d1abaeb3be7b5fa6d7a1fbbd2e14e3310005c4c1
+prerequisite-patch-id: a5bfed8ea60d5a784b8b3e21ccb5657ced2aa1e3
+prerequisite-patch-id: 96d53aecccb5af242ba5ee342d75810ecd9bfb84
+prerequisite-patch-id: 965d8a63c1461f00219aec2d817f2ca85d49cfb3
+prerequisite-patch-id: 8e6c2988331b46c9467ac568157c6c575cbe6578
 -- 
-Thanks,
-~Nick Desaulniers
+2.23.0
+
