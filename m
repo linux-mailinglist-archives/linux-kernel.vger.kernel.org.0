@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AD479FBFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:36:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4264A9FBE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:35:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfH1Hfw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 03:35:52 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:10305 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726340AbfH1Hfw (ORCPT
+        id S1726560AbfH1He7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 03:34:59 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:53342 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726397AbfH1He7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 03:35:52 -0400
-X-UUID: 6f68ed90593742dab0c3c4620f95d36e-20190828
-X-UUID: 6f68ed90593742dab0c3c4620f95d36e-20190828
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        Wed, 28 Aug 2019 03:34:59 -0400
+X-UUID: 638168f7de3041aca607c8e381ca67b7-20190828
+X-UUID: 638168f7de3041aca607c8e381ca67b7-20190828
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 757357155; Wed, 28 Aug 2019 15:34:39 +0800
+        with ESMTP id 1720530424; Wed, 28 Aug 2019 15:34:41 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 28 Aug 2019 15:34:40 +0800
+ 15.0.1395.4; Wed, 28 Aug 2019 15:34:42 +0800
 Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Aug 2019 15:34:40 +0800
+ Transport; Wed, 28 Aug 2019 15:34:41 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -35,55 +35,42 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 0/7]  add support USB for MT8183
-Date:   Wed, 28 Aug 2019 15:34:24 +0800
-Message-ID: <1566977671-22191-1-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH v2 1/7] dt-bindings: usb: mtu3: support USB wakeup for MT8183
+Date:   Wed, 28 Aug 2019 15:34:25 +0800
+Message-ID: <1566977671-22191-2-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1566977671-22191-1-git-send-email-chunfeng.yun@mediatek.com>
+References: <1566977671-22191-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 45C8A0C3D21D41A54704C36113615E527385CF6190ED1896979E2DBFA0EBD17D2000:8
+X-TM-SNTS-SMTP: 208BA8BCFEDE1CBD161026543F25E0DA2D57AAD24C203025BB8A003AE7FB85082000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series support USB DRD controller and enable it's remote
-wakeup functoin for MT8183, they depend on the following
-series patches:
+Support USB wakeup by ip-sleep mode for MT8183
 
-1. this series add support MT6358 PMIC
-  [v5,01/10] mfd: mt6397: clean up code
-  https://patchwork.kernel.org/patch/11110487/
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+---
+v2: no changes
+---
+ Documentation/devicetree/bindings/usb/mediatek,mtu3.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-2. this series add support pericfg syscon
-  [1/2] dt-bindings: clock: mediatek: add pericfg for MT8183
-  https://patchwork.kernel.org/patch/11117799/
-
-3. add property mediatek,discth for tphy
-  [06/11] phy: phy-mtk-tphy: add a property for disconnect threshold
-  https://patchwork.kernel.org/patch/11110695/
-
-v2 changes:
-  add patch [7/7]
-
-Chunfeng Yun (7):
-  dt-bindings: usb: mtu3: support USB wakeup for MT8183
-  dt-bindings: usb: mtk-xhci: support USB wakeup for MT8183
-  usb: mtu3: support ip-sleep wakeup for MT8183
-  usb: mtk-xhci: support ip-sleep wakeup for MT8183
-  arm64: dts: mt8183: add usb and phy nodes
-  arm64: dts: mt8183: enable USB remote wakeup
-  arm64: dts: mt8183: tune disconnect threshold of u2phy
-
- .../bindings/usb/mediatek,mtk-xhci.txt        |  1 +
- .../devicetree/bindings/usb/mediatek,mtu3.txt |  1 +
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts   | 23 +++++++
- arch/arm64/boot/dts/mediatek/mt8183.dtsi      | 64 +++++++++++++++++++
- drivers/usb/host/xhci-mtk.c                   | 14 +++-
- drivers/usb/mtu3/mtu3_host.c                  | 14 +++-
- 6 files changed, 115 insertions(+), 2 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
+index 3382b5cb471d..ed954bedcd2f 100644
+--- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
++++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
+@@ -48,6 +48,7 @@ Optional properties:
+ 	"wakeup-source", and has two arguments:
+ 	- the first one : register base address of the glue layer in syscon;
+ 	- the second one : hardware version of the glue layer
++		- 0 : used by mt8183 etc
+ 		- 1 : used by mt8173 etc
+ 		- 2 : used by mt2712 etc
+  - mediatek,u3p-dis-msk : mask to disable u3ports, bit0 for u3port0,
 -- 
 2.23.0
 
