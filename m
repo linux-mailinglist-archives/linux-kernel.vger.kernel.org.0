@@ -2,152 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E6AD9F9FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA1889FA0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbfH1FtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 01:49:20 -0400
-Received: from mail-eopbgr690064.outbound.protection.outlook.com ([40.107.69.64]:22290
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725613AbfH1FtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 01:49:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RsqC1pfqbhKh/W7zEwH/Iu+QC6zmU+mRQmi1T3m5IihVHNY0S36YlBKkYyZi08AEhELxNNcg/1grQ1YSBwmWMZiZN6Fz0mdVI/4RJpkbm1bAesXZk/dSMRh6XMWkufqOuRJQf2d8YT08dKaFb7MwlJc/0Zc/fplZeAfRPEspw9bb/jWV3Z8iOl0/4nxAhNuEcRBiLA8Z5l9LG1Nz/W0feLShSQXFeBPZu2qUW4OgxLlsE/bccVhMpVhVsaovoanJPO3wJ4JJYUw5KJqTIrF1eH0dnlCRU99ishyh2VtmDnth4Kr3GE8HvyGJeAdh5cAto5Q6hEYwWmJzmVCLajqBOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O7SYLuCRAiImVwjIAQJQ/z4F4N0tK8u3DjAlLacmcGo=;
- b=EEMFJXKGqNGL5McvDkEcRXHPpPM68s//mbBb4y8tyt00g4Fa9TOHWRdy9l5HeYAldQ6Ehtv0vzO/hXEpMLP/POG4MJdJJsIAQVHQaSckUmlyE3fTvs8K87PGIr67CGdKzee/UXodDcjQihvZp5u6UZygEKvQswkNMb8fijmMw8lGgRm1K6LHjxoAZR9pr68qHKZxyeTeIx4sjLZXb0kWwsnG2YyqNiZi7sGcPbEql3lAJAx8P39qVzR1uvBKzTOS9JbvIgVNS5wXJ+/9DhsasZFGiOjFT5U6VNZduZUFXQ6yEiwHb9gKXACl5aeZFpVG4Tm+Q8mxlBwn0spR2FXRuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O7SYLuCRAiImVwjIAQJQ/z4F4N0tK8u3DjAlLacmcGo=;
- b=HrI6MtgXSvlzdIwIvGk6t5uM5hoggrb5/cvbo1uHu1jiUwDG7jvzpdrXRahG0Rqh+W2IYa7Nyhf/HQHWoJDrA4wKV+FjktVgppzdO+0y/gMKQ1HnUTbGNiKu+GEqj1uARF4b/oAW+oQub2JYwfYcySmdXu6M81l54SkuwKlJPXg=
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
- BYAPR03MB4453.namprd03.prod.outlook.com (20.178.49.82) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Wed, 28 Aug 2019 05:49:17 +0000
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::b050:60f8:d275:e9f4]) by BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::b050:60f8:d275:e9f4%7]) with mapi id 15.20.2199.021; Wed, 28 Aug 2019
- 05:49:17 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/8] regulator: add support for SY8824C regulator
-Thread-Topic: [PATCH 2/8] regulator: add support for SY8824C regulator
-Thread-Index: AQHVXLPE86z8PZfejUaXlIn4vcy6TacPZk+AgAEHU4D//550gA==
-Date:   Wed, 28 Aug 2019 05:49:16 +0000
-Message-ID: <20190828133757.6a0fe6dd@xhacker.debian>
-References: <20190827163252.4982af95@xhacker.debian>
-        <20190827163418.1a32fc48@xhacker.debian>
-        <20190827194437.GO23391@sirena.co.uk>
-        <20190828112705.5e683693@xhacker.debian>
-In-Reply-To: <20190828112705.5e683693@xhacker.debian>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [124.74.246.114]
-x-clientproxiedby: TY2PR02CA0041.apcprd02.prod.outlook.com
- (2603:1096:404:a6::29) To BYAPR03MB4773.namprd03.prod.outlook.com
- (2603:10b6:a03:134::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ec9a8dec-b64c-4a64-b4d9-08d72b7b7691
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR03MB4453;
-x-ms-traffictypediagnostic: BYAPR03MB4453:
-x-microsoft-antispam-prvs: <BYAPR03MB44531E89B6466D8462C13333EDA30@BYAPR03MB4453.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 014304E855
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(396003)(346002)(366004)(199004)(189003)(76176011)(305945005)(7736002)(386003)(1076003)(8676002)(99286004)(6506007)(316002)(102836004)(8936002)(81166006)(6512007)(66476007)(9686003)(229853002)(81156014)(6486002)(478600001)(5660300002)(14454004)(2906002)(6436002)(71190400001)(25786009)(3846002)(6116002)(71200400001)(53936002)(54906003)(86362001)(4326008)(50226002)(446003)(52116002)(186003)(6916009)(26005)(66556008)(6246003)(11346002)(66446008)(476003)(64756008)(14444005)(256004)(66946007)(66066001)(486006)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB4453;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GwZtuduHp//ikAH923Y375WYJci9YgQQmRZhDUmZADtgEdI1YfmbNRNGOW4/YB9yNCI4nyLXS+VbaJrB3LpCb4ddyIeuyFv5vABmKBHQPMsbEGg5H2iFT/nj/N+Zh3rXiaZVqB62kyt6H1tBLlCtDJ2N1B4zl9KJb/tpJvN8HkDaBaDkqd3Fz1D7SJazMbCNWPMjj2wHk9rpDXT6kIKQUfR+WeSW0U8oTjJ95OcFcpP6bcOk5I4XCM1vS9ejstXBKIMvtPEi3shIyDCJ2cmHVnzyhiQpHGGs98comT2gN37wUSI3ds8c1aIDZHfwUhHjnr3c7o+jhjmoxa9MC4iGm/fdZoRMCzQtkxd9IPk0u9+WVWsIsVFhR7w81SwI1KV72o7Y6DvOtG7gIaZjDeOkjYYRVeLTCM0bPzJaVAuKnYI=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <AABB45CDBCCCF849A0ACA2D834A0B47D@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec9a8dec-b64c-4a64-b4d9-08d72b7b7691
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2019 05:49:16.9195
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: k+yQW95OPfmslC6bDdglWOUA4bzMO86g7BnoHAXyOxw5kR/zHVj+AETzUg6ShjHB6gF5UfqlTkpa26Ct3U81Yw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB4453
+        id S1726237AbfH1FzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 01:55:23 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:41031 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfH1FzW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 01:55:22 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x7S5sQl1027215;
+        Wed, 28 Aug 2019 14:54:27 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x7S5sQl1027215
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566971667;
+        bh=1ulsOyalAvz8imh5AvDLy9mR+uGhKRhvRPZqusNGPNY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QWFfx4YqVVqKrFMVUBgcnfCgGgmH4UnvUVDw5b0jiWcuzbYh59RiHeBlY89iqCuns
+         jAihefBttY849PflHjvHW0GfkHKNWH5H3p/wfGSgI1XhHR8X+fK2xEwjZdfv1gSz77
+         RlQcnC13GN0XJNW7bEfdGktIpZGBQXJK+d/b14cHc0rvWgGlxeYVyOO2QqEz/evnCo
+         9vKsyAQ6gAFjziy1opXFHISXQngmgYYCmIiQHkp68Gfcx1r+BCf5y4bLCdkrIgVySV
+         Wee3FC1kVl/ziDQHKbC7DhaixdszE98CgN00SfLfioxHeU6OiePjRTGcMenzYi27Sf
+         XntT+s380czaw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] kbuild: refactor scripts/Makefile.extrawarn
+Date:   Wed, 28 Aug 2019 14:54:24 +0900
+Message-Id: <20190828055425.24765-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 28 Aug 2019 11:27:05 +0800 Jisheng Zhang wrote:
+Instead of the warning-[123] magic, let's accumulate compiler options
+to KBUILD_CFLAGS directly as the top Makefile does. I think this makes
+easier to understand what is going on in this file.
 
-> Hi Mark,
->=20
-> On Tue, 27 Aug 2019 20:44:37 +0100 Mark Brown wrote:
->=20
-> > On Tue, Aug 27, 2019 at 08:45:33AM +0000, Jisheng Zhang wrote:
-> >=20
-> > This looks mostly good and I'll apply it, a couple of small
-> > things though:
-> >  =20
-> > > @@ -0,0 +1,192 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * SY8824C regulator driver
-> > > + *   =20
-> >=20
-> > Please send a patch which updates the entire comment block to be
-> > C++ style so it looks consistent. =20
->=20
-> Do you mean update the following style
->=20
-> A:
->=20
-> // SPDX-License-Identifier: GPL-2.0
-> /*
->  * SY8824C regulator driver
->  * ...
->=20
->=20
-> as B:
->=20
-> // SPDX-License-Identifier: GPL-2.0
-> // SY8824C regulator driver
-> // ...
->=20
-> I'm not sure which style is correct. But I see B is commonly used
+This commit slightly changes the behavior, I think all of which are OK.
 
-sorry, typo. I mean "I see A is commonly used ..."
+[1] Currently, cc-option calls are needlessly evaluated. For example,
+      warning-3 += $(call cc-option, -Wpacked-bitfield-compat)
+    needs evaluating only when W=3, but it is actually evaluated for
+    W=1, W=2 as well. With this commit, only relevant cc-option calls
+    will be evaluated. This is a slight optimization.
 
-> in lots .c source files in other dirs, such as kernel/ mm/ etc.
->=20
-> Could you please clarify?
->=20
-> Thanks
->=20
-> >  =20
-> > > +#define BUCK_EN		(1 << 7)
-> > > +#define MODE		(1 << 6)
-> > > +   =20
-> >=20
-> > Please also add prefixes to these to namespace them, especially
-> > MODE is likely to collide with something later. =20
->=20
-> good idea. Will do in newer version
+[2] Currently, unsupported level like W=4 is checked by:
+      $(error W=$(KBUILD_ENABLE_EXTRA_GCC_CHECKS) is unknown)
+    This will no longer be checked, but I do not think it is a big
+    deal.
+
+[3] Currently, 4 Clang warnings (Winitializer-overrides, Wformat,
+    Wsign-compare, Wformat-zero-length) are shown by any of W=1, W=2,
+    and W=3. With this commit, they will be warned only by W=1. I
+    think this is a more correct behavior since each warning belongs
+    to only one warning level.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ scripts/Makefile.extrawarn | 104 +++++++++++++++++++------------------
+ 1 file changed, 53 insertions(+), 51 deletions(-)
+
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index a74ce2e3c33e..1fa53968e292 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -1,14 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # ==========================================================================
+-#
+ # make W=... settings
+-#
+-# W=1 - warnings that may be relevant and does not occur too often
+-# W=2 - warnings that occur quite often but may still be relevant
+-# W=3 - the more obscure warnings, can most likely be ignored
+-#
+-# $(call cc-option, -W...) handles gcc -W.. options which
+-# are not supported by all versions of the compiler
+ # ==========================================================================
+ 
+ KBUILD_CFLAGS += $(call cc-disable-warning, packed-not-aligned)
+@@ -17,58 +9,68 @@ ifeq ("$(origin W)", "command line")
+   export KBUILD_ENABLE_EXTRA_GCC_CHECKS := $(W)
+ endif
+ 
+-ifdef KBUILD_ENABLE_EXTRA_GCC_CHECKS
+-warning-  := $(empty)
++#
++# W=1 - warnings that may be relevant and does not occur too often
++#
++ifneq ($(findstring 1, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)),)
+ 
+-warning-1 := -Wextra -Wunused -Wno-unused-parameter
+-warning-1 += -Wmissing-declarations
+-warning-1 += -Wmissing-format-attribute
+-warning-1 += -Wmissing-prototypes
+-warning-1 += -Wold-style-definition
+-warning-1 += -Wmissing-include-dirs
+-warning-1 += $(call cc-option, -Wunused-but-set-variable)
+-warning-1 += $(call cc-option, -Wunused-const-variable)
+-warning-1 += $(call cc-option, -Wpacked-not-aligned)
+-warning-1 += $(call cc-option, -Wstringop-truncation)
++KBUILD_CFLAGS += -Wextra -Wunused -Wno-unused-parameter
++KBUILD_CFLAGS += -Wmissing-declarations
++KBUILD_CFLAGS += -Wmissing-format-attribute
++KBUILD_CFLAGS += -Wmissing-prototypes
++KBUILD_CFLAGS += -Wold-style-definition
++KBUILD_CFLAGS += -Wmissing-include-dirs
++KBUILD_CFLAGS += $(call cc-option, -Wunused-but-set-variable)
++KBUILD_CFLAGS += $(call cc-option, -Wunused-const-variable)
++KBUILD_CFLAGS += $(call cc-option, -Wpacked-not-aligned)
++KBUILD_CFLAGS += $(call cc-option, -Wstringop-truncation)
+ # The following turn off the warnings enabled by -Wextra
+-warning-1 += -Wno-missing-field-initializers
+-warning-1 += -Wno-sign-compare
+-
+-warning-2 += -Wcast-align
+-warning-2 += -Wdisabled-optimization
+-warning-2 += -Wnested-externs
+-warning-2 += -Wshadow
+-warning-2 += $(call cc-option, -Wlogical-op)
+-warning-2 += -Wmissing-field-initializers
+-warning-2 += -Wsign-compare
+-warning-2 += $(call cc-option, -Wmaybe-uninitialized)
+-warning-2 += $(call cc-option, -Wunused-macros)
+-
+-warning-3 := -Wbad-function-cast
+-warning-3 += -Wcast-qual
+-warning-3 += -Wconversion
+-warning-3 += -Wpacked
+-warning-3 += -Wpadded
+-warning-3 += -Wpointer-arith
+-warning-3 += -Wredundant-decls
+-warning-3 += -Wswitch-default
+-warning-3 += $(call cc-option, -Wpacked-bitfield-compat)
+-
+-warning := $(warning-$(findstring 1, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)))
+-warning += $(warning-$(findstring 2, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)))
+-warning += $(warning-$(findstring 3, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)))
+-
+-ifeq ("$(strip $(warning))","")
+-        $(error W=$(KBUILD_ENABLE_EXTRA_GCC_CHECKS) is unknown)
+-endif
++KBUILD_CFLAGS += -Wno-missing-field-initializers
++KBUILD_CFLAGS += -Wno-sign-compare
+ 
+-KBUILD_CFLAGS += $(warning)
+ else
+ 
++# W=1 also stops suppressing some warnings
++
+ ifdef CONFIG_CC_IS_CLANG
+ KBUILD_CFLAGS += -Wno-initializer-overrides
+ KBUILD_CFLAGS += -Wno-format
+ KBUILD_CFLAGS += -Wno-sign-compare
+ KBUILD_CFLAGS += -Wno-format-zero-length
+ endif
++
++endif
++
++#
++# W=2 - warnings that occur quite often but may still be relevant
++#
++ifneq ($(findstring 2, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)),)
++
++KBUILD_CFLAGS += -Wcast-align
++KBUILD_CFLAGS += -Wdisabled-optimization
++KBUILD_CFLAGS += -Wnested-externs
++KBUILD_CFLAGS += -Wshadow
++KBUILD_CFLAGS += $(call cc-option, -Wlogical-op)
++KBUILD_CFLAGS += -Wmissing-field-initializers
++KBUILD_CFLAGS += -Wsign-compare
++KBUILD_CFLAGS += $(call cc-option, -Wmaybe-uninitialized)
++KBUILD_CFLAGS += $(call cc-option, -Wunused-macros)
++
++endif
++
++#
++# W=3 - the more obscure warnings, can most likely be ignored
++#
++ifneq ($(findstring 3, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)),)
++
++KBUILD_CFLAGS += -Wbad-function-cast
++KBUILD_CFLAGS += -Wcast-qual
++KBUILD_CFLAGS += -Wconversion
++KBUILD_CFLAGS += -Wpacked
++KBUILD_CFLAGS += -Wpadded
++KBUILD_CFLAGS += -Wpointer-arith
++KBUILD_CFLAGS += -Wredundant-decls
++KBUILD_CFLAGS += -Wswitch-default
++KBUILD_CFLAGS += $(call cc-option, -Wpacked-bitfield-compat)
++
+ endif
+-- 
+2.17.1
 
