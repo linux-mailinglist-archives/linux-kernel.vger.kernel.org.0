@@ -2,222 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71755A04D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 280ACA04BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:23:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfH1O0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:26:03 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:50136 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726860AbfH1OZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:25:44 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2F040E633BED0A638460;
-        Wed, 28 Aug 2019 22:25:41 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.132) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 28 Aug 2019 22:25:33 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, Yufeng Mo <moyufeng@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 12/12] net: hns3: not allow SSU loopback while execute ethtool -t dev
-Date:   Wed, 28 Aug 2019 22:23:16 +0800
-Message-ID: <1567002196-63242-13-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567002196-63242-1-git-send-email-tanhuazhong@huawei.com>
-References: <1567002196-63242-1-git-send-email-tanhuazhong@huawei.com>
+        id S1726617AbfH1OXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:23:43 -0400
+Received: from mga12.intel.com ([192.55.52.136]:63432 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726368AbfH1OXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 10:23:43 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 07:23:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
+   d="scan'208";a="210181730"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
+  by fmsmga002.fm.intel.com with ESMTP; 28 Aug 2019 07:23:40 -0700
+Date:   Wed, 28 Aug 2019 07:23:40 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Denis Lunev <den@virtuozzo.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Yi Wang <wang.yi59@zte.com.cn>, Peng Hao <peng.hao2@zte.com.cn>
+Subject: Re: [PATCH 3/3] KVM: x86: always stop emulation on page fault
+Message-ID: <20190828142340.GA21651@linux.intel.com>
+References: <1566911210-30059-1-git-send-email-jan.dakinevich@virtuozzo.com>
+ <1566911210-30059-4-git-send-email-jan.dakinevich@virtuozzo.com>
+ <20190827145030.GC27459@linux.intel.com>
+ <20190828131948.cb67f97cab502b9f5f63b1b8@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.132]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828131948.cb67f97cab502b9f5f63b1b8@virtuozzo.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufeng Mo <moyufeng@huawei.com>
+On Wed, Aug 28, 2019 at 10:19:51AM +0000, Jan Dakinevich wrote:
+> On Tue, 27 Aug 2019 07:50:30 -0700
+> Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+> > Yikes, this patch and the previous have quite the sordid history.
+> > 
+> > 
+> > The non-void return from inject_emulated_exception() was added by commit
+> > 
+> >   ef54bcfeea6c ("KVM: x86: skip writeback on injection of nested exception")
+> > 
+> > for the purpose of skipping writeback.  At the time, the above blob in the
+> > decode flow didn't exist.
+> > 
+> > 
+> > Decode exception handling was added by commit
+> > 
+> >   6ea6e84309ca ("KVM: x86: inject exceptions produced by x86_decode_insn")
+> > 
+> > but it was dead code even then.  The patch discussion[1] even point out that
+> > it was dead code, i.e. the change probably should have been reverted.
+> > 
+> > 
+> > Peng Hao and Yi Wang later ran into what appears to be the same bug you're
+> > hitting[2][3], and even had patches temporarily queued[4][5], but the
+> > patches never made it to mainline as they broke kvm-unit-tests.  Fun side
+> > note, Radim even pointed out[4] the bug fixed by patch 1/3.
+> > 
+> > So, the patches look correct, but there's the open question of why the
+> > hypercall test was failing for Paolo.  
+> 
+> Sorry, I'm little confused. Could you please, point me which test or tests 
+> were broken? I've just run kvm-unit-test and I see same results with and 
+> without my changes.
+> 
+> > I've tried to reproduce the #DF to
+> > no avail.
 
-The current loopback mode is to add 0x1F to the SMAC address
-as the DMAC address and enable the promiscuous mode.
-However, if the VF address is the same as the DMAC address,
-the loopback test fails.
+Aha!  The #DF occurs if patch 2/3, but not patch 3/3, is applied, and the
+VMware backdoor is enabled.  The backdoor is off by default, which is why
+only Paolo was seeing the #DF.
 
-Loopback can be enabled in three places: SSU, MAC, and serdes.
-By default, SSU loopback is enabled, so if the SMAC and the DMAC
-are the same, the packets are looped back in the SSU. If SSU loopback
-is disabled, packets can reach MAC even if SMAC is the same as DMAC.
+To handle the VMware backdoor, KVM intercepts #GP faults, which includes
+the non-canonical #GP from the hypercall unit test.  With only patch 2/3
+applied, x86_emulate_instruction() injects a #GP for the non-canonical RIP
+but returns EMULATE_FAIL instead of EMULATE_DONE.   EMULATE_FAIL causes
+handle_exception_nmi() (or gp_interception() for SVM) to re-inject the
+original #GP because it thinks emulation failed due to a non-VMware opcode.
 
-Therefore, this patch disables the SSU loopback before the loopback
-test. In this way, the SMAC and DMAC can be the same, and the
-promiscuous mode does not need to be enabled. And this is not
-valid in version 0x20.
+Applying patch 3/3 resolves the issue as x86_emulate_instruction() returns
+EMULATE_DONE after injecting the #GP.
 
-This patch also uses a macro to replace 0x1F.
 
-Fixes: c39c4d98dc65 ("net: hns3: Add mac loopback selftest support in hns3 driver")
-Signed-off-by: Yufeng Mo <moyufeng@huawei.com>
-Reviewed-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  9 +++--
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h | 28 ++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 38 ++++++++++++++++++++++
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  2 ++
- 4 files changed, 75 insertions(+), 2 deletions(-)
+TL;DR:
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index e219bb1..c52eccc 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -97,7 +97,7 @@ static int hns3_lp_setup(struct net_device *ndev, enum hnae3_loop loop, bool en)
- 		break;
- 	}
- 
--	if (ret)
-+	if (ret || h->pdev->revision >= 0x21)
- 		return ret;
- 
- 	if (en) {
-@@ -144,7 +144,10 @@ static int hns3_lp_down(struct net_device *ndev, enum hnae3_loop loop_mode)
- 
- static void hns3_lp_setup_skb(struct sk_buff *skb)
- {
-+#define	HNS3_NIC_LB_DST_MAC_ADDR	0x1f
-+
- 	struct net_device *ndev = skb->dev;
-+	struct hnae3_handle *handle;
- 	unsigned char *packet;
- 	struct ethhdr *ethh;
- 	unsigned int i;
-@@ -160,7 +163,9 @@ static void hns3_lp_setup_skb(struct sk_buff *skb)
- 	 * before the packet reaches mac or serdes, which will defect
- 	 * the purpose of mac or serdes selftest.
- 	 */
--	ethh->h_dest[5] += 0x1f;
-+	handle = hns3_get_handle(ndev);
-+	if (handle->pdev->revision == 0x20)
-+		ethh->h_dest[5] += HNS3_NIC_LB_DST_MAC_ADDR;
- 	eth_zero_addr(ethh->h_source);
- 	ethh->h_proto = htons(ETH_P_ARP);
- 	skb_reset_mac_header(skb);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-index 29979be..4821fe0 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-@@ -223,6 +223,9 @@ enum hclge_opcode_type {
- 	HCLGE_OPC_MAC_ETHTYPE_ADD	    = 0x1010,
- 	HCLGE_OPC_MAC_ETHTYPE_REMOVE	= 0x1011,
- 
-+	/* MAC VLAN commands */
-+	HCLGE_OPC_MAC_VLAN_SWITCH_PARAM	= 0x1033,
-+
- 	/* VLAN commands */
- 	HCLGE_OPC_VLAN_FILTER_CTRL	    = 0x1100,
- 	HCLGE_OPC_VLAN_FILTER_PF_CFG	= 0x1101,
-@@ -771,6 +774,31 @@ struct hclge_vlan_filter_vf_cfg_cmd {
- 	u8  vf_bitmap[16];
- };
- 
-+#define HCLGE_SWITCH_ANTI_SPOOF_B	0U
-+#define HCLGE_SWITCH_ALW_LPBK_B		1U
-+#define HCLGE_SWITCH_ALW_LCL_LPBK_B	2U
-+#define HCLGE_SWITCH_ALW_DST_OVRD_B	3U
-+#define HCLGE_SWITCH_NO_MASK		0x0
-+#define HCLGE_SWITCH_ANTI_SPOOF_MASK	0xFE
-+#define HCLGE_SWITCH_ALW_LPBK_MASK	0xFD
-+#define HCLGE_SWITCH_ALW_LCL_LPBK_MASK	0xFB
-+#define HCLGE_SWITCH_LW_DST_OVRD_MASK	0xF7
-+
-+struct hclge_mac_vlan_switch_cmd {
-+	u8 roce_sel;
-+	u8 rsv1[3];
-+	__le32 func_id;
-+	u8 switch_param;
-+	u8 rsv2[3];
-+	u8 param_mask;
-+	u8 rsv3[11];
-+};
-+
-+enum hclge_mac_vlan_cfg_sel {
-+	HCLGE_MAC_VLAN_NIC_SEL = 0,
-+	HCLGE_MAC_VLAN_ROCE_SEL,
-+};
-+
- #define HCLGE_ACCEPT_TAG1_B		0
- #define HCLGE_ACCEPT_UNTAG1_B		1
- #define HCLGE_PORT_INS_TAG1_EN_B	2
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index dc22b84..ce4b228 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -6211,6 +6211,30 @@ static void hclge_cfg_mac_mode(struct hclge_dev *hdev, bool enable)
- 			"mac enable fail, ret =%d.\n", ret);
- }
- 
-+static int hclge_config_switch_param(struct hclge_dev *hdev, int vfid,
-+				     u8 switch_param, u8 param_mask)
-+{
-+	struct hclge_mac_vlan_switch_cmd *req;
-+	struct hclge_desc desc;
-+	u32 func_id;
-+	int ret;
-+
-+	func_id = hclge_get_port_number(HOST_PORT, 0, vfid, 0);
-+	req = (struct hclge_mac_vlan_switch_cmd *)desc.data;
-+	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_MAC_VLAN_SWITCH_PARAM,
-+				   false);
-+	req->roce_sel = HCLGE_MAC_VLAN_NIC_SEL;
-+	req->func_id = cpu_to_le32(func_id);
-+	req->switch_param = switch_param;
-+	req->param_mask = param_mask;
-+
-+	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-+	if (ret)
-+		dev_err(&hdev->pdev->dev,
-+			"set mac vlan switch parameter fail, ret = %d\n", ret);
-+	return ret;
-+}
-+
- static void hclge_phy_link_status_wait(struct hclge_dev *hdev,
- 				       int link_ret)
- {
-@@ -6465,6 +6489,20 @@ static int hclge_set_loopback(struct hnae3_handle *handle,
- 	struct hclge_dev *hdev = vport->back;
- 	int i, ret;
- 
-+	/* Loopback can be enabled in three places: SSU, MAC, and serdes. By
-+	 * default, SSU loopback is enabled, so if the SMAC and the DMAC are
-+	 * the same, the packets are looped back in the SSU. If SSU loopback
-+	 * is disabled, packets can reach MAC even if SMAC is the same as DMAC.
-+	 */
-+	if (hdev->pdev->revision >= 0x21) {
-+		u8 switch_param = en ? 0 : BIT(HCLGE_SWITCH_ALW_LPBK_B);
-+
-+		ret = hclge_config_switch_param(hdev, PF_VPORT_ID, switch_param,
-+						HCLGE_SWITCH_ALW_LPBK_MASK);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	switch (loop_mode) {
- 	case HNAE3_LOOP_APP:
- 		ret = hclge_set_app_loopback(hdev, en);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index 437a9ff..870550f 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -148,6 +148,8 @@ enum HLCGE_PORT_TYPE {
- 	NETWORK_PORT
- };
- 
-+#define PF_VPORT_ID			0
-+
- #define HCLGE_PF_ID_S			0
- #define HCLGE_PF_ID_M			GENMASK(2, 0)
- #define HCLGE_VF_ID_S			3
--- 
-2.7.4
-
+Swap the order of patches and everything should be hunky dory.  Please
+rebase to the latest kvm/queue, which has an equivalent to patch 1/3.
