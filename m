@@ -2,164 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C28ADA05E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4945A05E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfH1PO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:14:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35295 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbfH1PO2 (ORCPT
+        id S1726921AbfH1PO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:14:57 -0400
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:53357 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726315AbfH1PO5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:14:28 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g7so215473wrx.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 08:14:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=cLVW54x6gnaRczK8Bj/tezWruOcIjVXwYoTBUAiZku8=;
-        b=eH4oqM2eNeEBBzpvYZ3jsCnNkzjQ6R3iz/IFSGaWjd+PPn+vhcFEp7lGnYFqRGjeRc
-         GXcrgkO1uwixBVgEacJnqXs5QJW67xD1z+RTdpIQnPAff+h8npp2UpI6PQsg3U+Bf1TB
-         OF3A7Shrosvlcc/P6DweL1eoKvcn2+A6DTNk8Gx1K6wsbar2skwPwmKWcEO05tvhMA2I
-         cPGcVem6TT+jDSMDwCWX2XQTlBURnFfTrB2PUhOJQ6X//dJB8XUKV6DgL6gCpsy2kaDY
-         ZUHbXnI04Ybr4z42x2PJP1SOukYGiOAUPR6aavrfjWAJ2sGmQ/CIS+mMGkKKKbYnFvqT
-         urtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=cLVW54x6gnaRczK8Bj/tezWruOcIjVXwYoTBUAiZku8=;
-        b=Fm3ptihIMXHrUg0+8tGEo6fNkYm/zkcoM1OfxwgJaB4+LrK0Dhg9/H0xkouwHBnlOe
-         rTIVnPEvcY0WH6jv4YFFoIsMUZa5zmDwF8HVZLBqMHJpT1boigfA8bvKlohZRE/44A5k
-         sY/tkgY3v3hGjqAv869n9SuHcdufMNhAcX8pilGJrHY8S0XuUqH2kqjrWte3Z4G4suXf
-         PPhmSxVnl5JlPFjH1FEx4Zn47//JkTB8hv2umpluHcTrQHL/psrgYOekYGBmA8KhH2LJ
-         pP1HQjOfIEfasgGDFP+ROaIEGp6P2wUtjvOAB6KWnTZh8vGfrh0Qb9jEVAJvTZxgsP8F
-         nLRA==
-X-Gm-Message-State: APjAAAXqu7NQVZ/mg5XFX215AaqhVfcwFMCTnqgTYUMUIw5pc21dRFjL
-        dZBUQmzlyolBkfQGL/7Pt0j/BRLmuIa4PA==
-X-Google-Smtp-Source: APXvYqzroMpLp4PWPoUAWt97ynHU1pwK7Cy2iL6Hh5V9n7I4wkF3jqPqK2v1w+rMhFUL4RvEqqmr3Q==
-X-Received: by 2002:adf:f851:: with SMTP id d17mr5365855wrq.77.1567005265980;
-        Wed, 28 Aug 2019 08:14:25 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id m6sm1754787wrq.95.2019.08.28.08.14.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Aug 2019 08:14:25 -0700 (PDT)
-Subject: Re: [PATCH 0/2] drm/meson: add resume/suspend hooks
-To:     Kevin Hilman <khilman@baylibre.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190827095825.21015-1-narmstrong@baylibre.com>
- <7h5zmixvrz.fsf@baylibre.com>
- <b8ea00c4-3749-e571-edb6-ae5091b23247@baylibre.com>
- <7htva1s4rt.fsf@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <f46be3c3-0baf-1280-f2cf-58b27843668b@baylibre.com>
-Date:   Wed, 28 Aug 2019 17:14:25 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 28 Aug 2019 11:14:57 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 745D15ED;
+        Wed, 28 Aug 2019 11:14:56 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Wed, 28 Aug 2019 11:14:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=UzPHBfLAzVPcvFoQrMGEUfMi0HG
+        clZnPUVz97BwDOS4=; b=bLaKXsQ3P0YckRoi/LQCpjASi0hmHRDVgTvSC1s7UVS
+        CycfOyz3tdX5PDYhUBTqNES6pCGmhAVF/72BRZ0j2e5I4BjMCrGDKC7dpdn+2O62
+        z2Eq/1I/phsRAQvHsgY40NyV3PPLSh0Pu8lsY4xHpB8rLN010CSbb+675BEl8rud
+        vl30Q1x//Vyh/HL9J9oilKoIH3WC4FyQaCC5TymJieYSvqz4RTCq6heIsMjf6fZi
+        K4MESHIWSTkVrU04Y0a2NeTndm9k377aejnrAlhtpg7iFH4U31/2ymCRpOqSInbA
+        R1zQE+rwtmxBKv0EP4NNhffBpQxYBXtxgftjFw+hP0A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=UzPHBf
+        LAzVPcvFoQrMGEUfMi0HGclZnPUVz97BwDOS4=; b=SjyPgHo+Gi5Pu2hpMp/m8/
+        YdRZXGWl7Xupb7bIboIqhApeN2xg4UZ1FZMrHPshWxSHNNCn2x/kxu+JTjTxSGO1
+        pxEKHvwzl0MEoSoGQ050MAl1pmjlXogOA6MYTrDGxrSu+juZEoi/SHjggYByIft0
+        OU8fKq64PP+BXrIUBcmHfMBmB8W3v2W611LUL3uQ/kWx3dZUyH8Yy7GL5+ilvP/U
+        EvDyAB0nQ7kUT9GBRsvcTqT9JGUMEhChYlLerw/TuL0tdSVn83wnIuPKkXRalrtm
+        YyGViO+OmA4iKIAIr6KDh9gyPLinqjZFpvlv2a57KFR/HQoGG4YwMxdOiR8+xwZw
+        ==
+X-ME-Sender: <xms:b5pmXYJksW9YqcKJ_B6n8j55BKk1sDp8UXHvJgWhyp81AM_B0SD8Cw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeitddgkeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlh
+    drohhrghenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedu
+X-ME-Proxy: <xmx:b5pmXcaM0fPYF_KLc3nA2oPNYUkUcJWaPeDtA91dhop7C4AADTnatg>
+    <xmx:b5pmXTvB5VBEgPpAmyW5sxPMASTUv3SfIyvDYlCs2XrKMIIO9Rf7sw>
+    <xmx:b5pmXZtR0TiCPBeWmr3c6zncYrxnHz-88sVh-a09Jfi_KQuxxH3iPA>
+    <xmx:cJpmXTNgdGDhckdctU3q1L7ZfLrRiFqv88yp1Nso3i2jv8E7pBaMcQ>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 57461D60063;
+        Wed, 28 Aug 2019 11:14:55 -0400 (EDT)
+Date:   Wed, 28 Aug 2019 17:14:54 +0200
+From:   Greg KH <greg@kroah.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Yu Chen <yu.c.chen@intel.com>, stable-commits@vger.kernel.org
+Subject: Re: Patch "x86/pm: Introduce quirk framework to save/restore extra
+ MSR registers around suspend/resume" has been added to the 4.4-stable tree
+Message-ID: <20190828151454.GB9673@kroah.com>
+References: <20190828041240.12F5221883@mail.kernel.org>
+ <20190828084351.GC29927@kroah.com>
+ <20190828090043.GA7589@chenyu-office.sh.intel.com>
+ <20190828091155.GA32011@kroah.com>
+ <20190828111323.GA5281@sasha-vm>
 MIME-Version: 1.0
-In-Reply-To: <7htva1s4rt.fsf@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828111323.GA5281@sasha-vm>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/08/2019 17:12, Kevin Hilman wrote:
-> Neil Armstrong <narmstrong@baylibre.com> writes:
+On Wed, Aug 28, 2019 at 07:13:23AM -0400, Sasha Levin wrote:
+> On Wed, Aug 28, 2019 at 11:11:55AM +0200, Greg KH wrote:
+> > On Wed, Aug 28, 2019 at 05:00:44PM +0800, Yu Chen wrote:
+> > > On Wed, Aug 28, 2019 at 10:43:51AM +0200, Greg KH wrote:
+> > > > On Wed, Aug 28, 2019 at 12:12:39AM -0400, Sasha Levin wrote:
+> > > > > This is a note to let you know that I've just added the patch titled
+> > > > >
+> > > > >     x86/pm: Introduce quirk framework to save/restore extra MSR registers around suspend/resume
+> > > > >
+> > > > > to the 4.4-stable tree which can be found at:
+> > > > >     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+> > > > >
+> > > > > The filename of the patch is:
+> > > > >      x86-pm-introduce-quirk-framework-to-save-restore-ext.patch
+> > > > > and it can be found in the queue-4.4 subdirectory.
+> > > > >
+> > > > > If you, or anyone else, feels it should not be added to the stable tree,
+> > > > > please let <stable@vger.kernel.org> know about it.
+> > > > >
+> > > > >
+> > > > >
+> > > > > commit d63273440aa0fdebc30d0c931f15f79beb213134
+> > > > > Author: Chen Yu <yu.c.chen@intel.com>
+> > > > > Date:   Wed Nov 25 01:03:41 2015 +0800
+> > > > >
+> > > > >     x86/pm: Introduce quirk framework to save/restore extra MSR registers around suspend/resume
+> > > > >
+> > > > >     A bug was reported that on certain Broadwell platforms, after
+> > > > >     resuming from S3, the CPU is running at an anomalously low
+> > > > >     speed.
+> > > > >
+> > > > >     It turns out that the BIOS has modified the value of the
+> > > > >     THERM_CONTROL register during S3, and changed it from 0 to 0x10,
+> > > > >     thus enabled clock modulation(bit4), but with undefined CPU Duty
+> > > > >     Cycle(bit1:3) - which causes the problem.
+> > > > >
+> > > > >     Here is a simple scenario to reproduce the issue:
+> > > > >
+> > > > >      1. Boot up the system
+> > > > >      2. Get MSR 0x19a, it should be 0
+> > > > >      3. Put the system into sleep, then wake it up
+> > > > >      4. Get MSR 0x19a, it shows 0x10, while it should be 0
+> > > > >
+> > > > >     Although some BIOSen want to change the CPU Duty Cycle during
+> > > > >     S3, in our case we don't want the BIOS to do any modification.
+> > > > >
+> > > > >     Fix this issue by introducing a more generic x86 framework to
+> > > > >     save/restore specified MSR registers(THERM_CONTROL in this case)
+> > > > >     for suspend/resume. This allows us to fix similar bugs in a much
+> > > > >     simpler way in the future.
+> > > > >
+> > > > >     When the kernel wants to protect certain MSRs during suspending,
+> > > > >     we simply add a quirk entry in msr_save_dmi_table, and customize
+> > > > >     the MSR registers inside the quirk callback, for example:
+> > > > >
+> > > > >       u32 msr_id_need_to_save[] = {MSR_ID0, MSR_ID1, MSR_ID2...};
+> > > > >
+> > > > >     and the quirk mechanism ensures that, once resumed from suspend,
+> > > > >     the MSRs indicated by these IDs will be restored to their
+> > > > >     original, pre-suspend values.
+> > > > >
+> > > > >     Since both 64-bit and 32-bit kernels are affected, this patch
+> > > > >     covers the common 64/32-bit suspend/resume code path. And
+> > > > >     because the MSRs specified by the user might not be available or
+> > > > >     readable in any situation, we use rdmsrl_safe() to safely save
+> > > > >     these MSRs.
+> > > > >
+> > > > >     Reported-and-tested-by: Marcin Kaszewski <marcin.kaszewski@intel.com>
+> > > > >     Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> > > > >     Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > >     Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > > >     Cc: Andy Lutomirski <luto@amacapital.net>
+> > > > >     Cc: Borislav Petkov <bp@alien8.de>
+> > > > >     Cc: Brian Gerst <brgerst@gmail.com>
+> > > > >     Cc: Denys Vlasenko <dvlasenk@redhat.com>
+> > > > >     Cc: H. Peter Anvin <hpa@zytor.com>
+> > > > >     Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > > > >     Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > >     Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > >     Cc: bp@suse.de
+> > > > >     Cc: len.brown@intel.com
+> > > > >     Cc: linux@horizon.com
+> > > > >     Cc: luto@kernel.org
+> > > > >     Cc: rjw@rjwysocki.net
+> > > > >     Link: http://lkml.kernel.org/r/c9abdcbc173dd2f57e8990e304376f19287e92ba.1448382971.git.yu.c.chen@intel.com
+> > > > >     [ More edits to the naming of data structures. ]
+> > > > >     Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > > >
+> > > > No git id of the patch in Linus's tree, or your signed-off-by?
+> > > >
+> > > I think the commit id in Linus'tree should be 7a9c2dd08eadd5c6943115dbbec040c38d2e0822
+> > 
+> > Ah, and Sasha added it because a later patch needed it :(
+> > 
+> > Sasha, can you fix this patch's headers up to be in the "proper" format?
 > 
->> On 27/08/2019 21:17, Kevin Hilman wrote:
->>> Neil Armstrong <narmstrong@baylibre.com> writes:
->>>
->>>> This serie adds the resume/suspend hooks in the Amlogic Meson VPU main driver
->>>> and the DW-HDMI Glue driver to correctly save state and disable HW before
->>>> suspend, and succesfully re-init the HW to recover functionnal display
->>>> after resume.
->>>>
->>>> This serie has been tested on Amlogic G12A based SEI510 board, using
->>>> the newly accepted VRTC driver and the rtcwake utility.
->>>
->>> Tested-by: Kevin Hilman <khilman@baylibre.com>
->>>
->>> Tested on my G12A SEI510 board, and I verified that it fixes
->>> suspend/resume issues previously seen.
->>>
->>> Kevin
->>>
->>
->> Thanks,
->>
->> Applying to drm-misc-next (for v5.5), with a typo fix in the first patch commit log:
->> s/suspens/suspend
-> 
-> Is there any chance of getting this in a a fix for v5.4 so we have a
-> working suspend/resume in v5.4?
+> Yes, I brought it in as a dependency but cherry picked instead of using
+> my scripts by mistake. I'll fix up the patch in the queue.
 
-Nop, it's already applied to drm-misc-next and is already out of the window
-for 5.4 anyway.
-
-Neil
-
-> 
-> Thanks,
-> 
-> Kevin
-> 
-
+I think you forgot to push your changes to kernel.org :)
