@@ -2,113 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E869A0571
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2396A05AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:07:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbfH1O6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:58:37 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42980 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfH1O6h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:58:37 -0400
-Received: by mail-lf1-f68.google.com with SMTP id u13so2425753lfm.9;
-        Wed, 28 Aug 2019 07:58:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8YmNYpAsozJM2W+xkUeMpjHRI0FhBBXfioemVsH1jkE=;
-        b=CkUnyDTf0PR8jDJmjzytcNQo/lK8kgBmdKVH48EVICyn73UNcYsShdWqmfdiFIZHTA
-         wLkRqsqLVGrrDwacCP2LjIPjc4ahe2qif2MMJRdOUV6EMv1PxflOWhrFr91d2rMyVBpE
-         L9NMaWsZ5zMZIkR3DkuzbxDP5hv543St7M5MvbdgNTk7BRROd3KN4Er6llHXja96DLpZ
-         mBU0RfQNohVkcemDZqk+Ua/k7p1CWiqLk0JI9SGhEg3GPawNTE0tgqczs3M4p/dMq05Y
-         6bg+qyx2X9I9QOGTTSLwvWTRl+sTeI/b29biNt9/M3WncLOZVosHWHydZsm0RbyNserE
-         GFlw==
-X-Gm-Message-State: APjAAAUf4kquvpesjgOuToyl/GIT233mPZV7uBZP2TGFFtnF2SUZ09HN
-        PyU5efcEm6tccJb+uHHsF558sKj0ca4=
-X-Google-Smtp-Source: APXvYqzpJU9WDE6PBAh2E+k7LHNv2Od8m+RkZewIUdP7zo/2L3bY1LPCle2Z8Fcl6zZEPnKWV0162w==
-X-Received: by 2002:ac2:4835:: with SMTP id 21mr2854924lft.121.1567004315207;
-        Wed, 28 Aug 2019 07:58:35 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id u14sm662869ljd.14.2019.08.28.07.58.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Aug 2019 07:58:34 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92)
-        (envelope-from <johan@kernel.org>)
-        id 1i2zP5-0008E8-DI; Wed, 28 Aug 2019 16:58:31 +0200
-Date:   Wed, 28 Aug 2019 16:58:31 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: Re: [PATCH V1 2/6] USB: serial: f81232: Force F81534A with RS232 mode
-Message-ID: <20190828145831.GI13017@localhost>
-References: <1559789656-15847-1-git-send-email-hpeter+linux_kernel@gmail.com>
- <1559789656-15847-3-git-send-email-hpeter+linux_kernel@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1559789656-15847-3-git-send-email-hpeter+linux_kernel@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1726974AbfH1PHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:07:03 -0400
+Received: from mga02.intel.com ([134.134.136.20]:6091 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbfH1PHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:07:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 08:07:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
+   d="scan'208";a="380429742"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by fmsmga005.fm.intel.com with ESMTP; 28 Aug 2019 08:06:59 -0700
+Message-ID: <29e6afa9cd7a7b0069ec6b999a2830cbbbe50a56.camel@intel.com>
+Subject: Re: [PATCH v8 11/27] x86/mm: Introduce _PAGE_DIRTY_SW
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Wed, 28 Aug 2019 07:57:41 -0700
+In-Reply-To: <20190828070308.GJ2332@hirez.programming.kicks-ass.net>
+References: <20190813205225.12032-1-yu-cheng.yu@intel.com>
+         <20190813205225.12032-12-yu-cheng.yu@intel.com>
+         <20190823140233.GC2332@hirez.programming.kicks-ass.net>
+         <6c3dc33e16c8bbb6d45c0a6ec7c684de197fa065.camel@intel.com>
+         <20190828070308.GJ2332@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 06, 2019 at 10:54:12AM +0800, Ji-Ze Hong (Peter Hong) wrote:
-> Force F81534A series UARTs with RS232 mode in port_probe().
-
-Please expand on why you need this here.
-
-> Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
-> ---
->  drivers/usb/serial/f81232.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+On Wed, 2019-08-28 at 09:03 +0200, Peter Zijlstra wrote:
+> On Tue, Aug 27, 2019 at 03:37:12PM -0700, Yu-cheng Yu wrote:
+> > On Fri, 2019-08-23 at 16:02 +0200, Peter Zijlstra wrote:
+> > > On Tue, Aug 13, 2019 at 01:52:09PM -0700, Yu-cheng Yu wrote:
+> > > 
+> > > > +static inline pte_t pte_move_flags(pte_t pte, pteval_t from, pteval_t
+> > > > to)
+> > > > +{
+> > > > +	if (pte_flags(pte) & from)
+> > > > +		pte = pte_set_flags(pte_clear_flags(pte, from), to);
+> > > > +	return pte;
+> > > > +}
+> > > 
+> > > Aside of the whole conditional thing (I agree it would be better to have
+> > > this unconditionally); the function doesn't really do as advertised.
+> > > 
+> > > That is, if @from is clear, it doesn't endeavour to make sure @to is
+> > > also clear.
+> > > 
+> > > Now it might be sufficient, but in that case it really needs a comment
+> > > and or different name.
+> > > 
+> > > An implementation that actually moves the bit is something like:
+> > > 
+> > > 	pteval_t a,b;
+> > > 
+> > > 	a = native_pte_value(pte);
+> > > 	b = (a >> from_bit) & 1;
+> > > 	a &= ~((1ULL << from_bit) | (1ULL << to_bit));
+> > > 	a |= b << to_bit;
+> > > 	return make_native_pte(a);
+> > 
+> > There can be places calling pte_wrprotect() on a PTE that is already RO +
+> > DIRTY_SW.  Then in pte_move_flags(pte, _PAGE_DIRTY_HW, _PAGE_DIRTY_SW) we do
+> > not
+> >  want to clear _PAGE_DIRTY_SW.  But, I will look into this and make it more
+> > obvious.
 > 
-> diff --git a/drivers/usb/serial/f81232.c b/drivers/usb/serial/f81232.c
-> index 84efcc66aa56..75dfc0b9ef30 100644
-> --- a/drivers/usb/serial/f81232.c
-> +++ b/drivers/usb/serial/f81232.c
-> @@ -83,12 +83,22 @@ MODULE_DEVICE_TABLE(usb, id_table);
->  #define F81232_F81232_TYPE		1
->  #define F81232_F81534A_TYPE		2
->  
-> +/* Serial port self GPIO control, 2bytes [control&output data][input data] */
-> +#define F81534A_GPIO_REG		0x10e
-> +#define F81534A_GPIO_MODE2_DIR		BIT(6) /* 1: input, 0: output */
-> +#define F81534A_GPIO_MODE1_DIR		BIT(5)
-> +#define F81534A_GPIO_MODE0_DIR		BIT(4)
-> +#define F81534A_GPIO_MODE2_OUTPUT	BIT(2)
-> +#define F81534A_GPIO_MODE1_OUTPUT	BIT(1)
-> +#define F81534A_GPIO_MODE0_OUTPUT	BIT(0)
-> +
->  struct f81232_private {
->  	struct mutex lock;
->  	u8 modem_control;
->  	u8 modem_status;
->  	u8 shadow_lcr;
->  	u8 device_type;
-> +	u8 gpio_mode;
+> Well, then the name 'move' is just wrong, because that is not the
+> semantics you're looking for.
+> 
+> So the thing is; if you provide a generic function that 'munges' two
+> bits, then it's name had better be accurate. But AFAICT you only ever
+> used this for the DIRTY bits, so it might be better to have a function
+> specifically for that and with a comment that spells out the exact
+> semantics and reasons for them.
 
-Why store the mode? Are you going to use it later?
+Yes, I will work on that.
 
->  	speed_t baud_base;
->  	struct work_struct lsr_work;
->  	struct work_struct interrupt_work;
-> @@ -871,6 +881,11 @@ static int f81232_port_probe(struct usb_serial_port *port)
->  	switch (priv->device_type) {
->  	case F81232_F81534A_TYPE:
->  		priv->process_read_urb = f81534a_process_read_urb;
-> +		priv->gpio_mode = F81534A_GPIO_MODE2_DIR;
-> +
-> +		/* tri-state with pull-high, default RS232 Mode */
-> +		status = f81232_set_register(port, F81534A_GPIO_REG,
-> +					priv->gpio_mode);
->  		break;
->  
->  	case F81232_F81232_TYPE:
-
-Johan
+Yu-cheng
