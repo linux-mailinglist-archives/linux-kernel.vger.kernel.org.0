@@ -2,77 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74ACEA0742
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 18:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF80CA074F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 18:27:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726837AbfH1QYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 12:24:37 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42676 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726407AbfH1QYh (ORCPT
+        id S1726735AbfH1Q1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 12:27:35 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:42164 "EHLO
+        herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726397AbfH1Q1e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 12:24:37 -0400
-Received: by mail-io1-f67.google.com with SMTP id e20so683486iob.9
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 09:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u1lLimGMYhfmCL3MKSeS32GLZr2shj1mXSQdp3B8730=;
-        b=ofSVl+blw2/4lc/BpfotBwPm68T0GUBhYn2TVoo6BIKVGtOfIrFEKZK+pVGkY/id/v
-         ApBscizv0pvB/os00gahz9wmDuYhvyhgHdpHtTjg67O3SsZexQvBNjhYQQzNP5vqzl+Y
-         dk47lAClDeZDmUPm5Oko6rc1i+IwiSHtE4hewoKm2dLTdAqfmSQSqhNgpAHrzX9Ce/it
-         dn3fDMrFnlrzDR6odgC13+w31g9sVRAqL2FBT+aLM0r99ae4Au+q1ulsCQRbYF4MV4vD
-         RkLlQbA3fthbHRtpaUIa+qSgrs1ltTsqUvMO4hb5xa6gnrMdBYsgBkuKY9P2VQ6Uq7rI
-         T2AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u1lLimGMYhfmCL3MKSeS32GLZr2shj1mXSQdp3B8730=;
-        b=mZgEiCNLFlvjOqMXvoGmEOoLx6ro9/cW7Nue4wc+Kng0Vg4ZC9LI4973JDgrZJsCIz
-         Q1izey4XH/ybx/sije7i+r4BMH6LhfDUF6iygk3l9f+t1hBtJE1Ou8nWGCInUZOG9cGv
-         gy8jUNiuJWgSJErCQ6kldsSiKS7R+9v4euc0MVEJP+YDEFzikcoZFQq9vsBAen15ENzd
-         WFeIZWG2XSXjsTQy1zNZy9QfgW1EE64q137LAAB4IwukH9tQC4JO/HhL1+QWiHOwL5QO
-         w7Wws2bdRe/sUOCy6OebkeUnQNX0QsY0PS60XHg/irZ6lk+RH6YjfstdWgSPgjUcpQ9A
-         eWyg==
-X-Gm-Message-State: APjAAAVsmQ9WdkGD4lhFd4OsaJ5guP7hkNK8/8uDT+W6XTueMrfqf1bD
-        wlm+VK6TPRS8m/pu9bXDJLK7mFpmfJGHKjFPtRUGQQ==
-X-Google-Smtp-Source: APXvYqy75W4ZP+4Mea96982CTuaW26M/54Xn2KLmojJRs1wlL52kL56BQ3O3f/OEsss37qyJsNrqN1tJKeeS8MGj0RM=
-X-Received: by 2002:a5d:8f9a:: with SMTP id l26mr1849026iol.26.1567009475969;
- Wed, 28 Aug 2019 09:24:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190828075905.24744-1-vkuznets@redhat.com> <20190828075905.24744-3-vkuznets@redhat.com>
-In-Reply-To: <20190828075905.24744-3-vkuznets@redhat.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Wed, 28 Aug 2019 09:24:23 -0700
-Message-ID: <CALMp9eTB_yoYGoNQ5DP+XtVbM8fD21aSD+D6onaE7gCxJueqvw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] KVM: x86: announce KVM_CAP_HYPERV_ENLIGHTENED_VMCS
- support only when it is available
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Roman Kagan <rkagan@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Aug 2019 12:27:34 -0400
+Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id x7SGQIxP004238;
+        Wed, 28 Aug 2019 19:26:19 +0300
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+        id D77DF628F1; Wed, 28 Aug 2019 19:26:18 +0300 (IDT)
+From:   Tomer Maimon <tmaimon77@gmail.com>
+To:     mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de,
+        gregkh@linuxfoundation.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, avifishman70@gmail.com,
+        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
+        benjaminfair@google.com, sumit.garg@linaro.org,
+        jens.wiklander@linaro.org, vkoul@kernel.org, tglx@linutronix.de,
+        joel@jms.id.au
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, openbmc@lists.ozlabs.org,
+        Tomer Maimon <tmaimon77@gmail.com>
+Subject: [PATCH v1 0/2] hwrng: npcm: add NPCM RNG driver support
+Date:   Wed, 28 Aug 2019 19:26:15 +0300
+Message-Id: <20190828162617.237398-1-tmaimon77@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 12:59 AM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> It was discovered that after commit 65efa61dc0d5 ("selftests: kvm: provide
-> common function to enable eVMCS") hyperv_cpuid selftest is failing on AMD.
-> The reason is that the commit changed _vcpu_ioctl() to vcpu_ioctl() in the
-> test and this one can't fail.
->
-> Instead of fixing the test is seems to make more sense to not announce
-> KVM_CAP_HYPERV_ENLIGHTENED_VMCS support if it is definitely missing
-> (on svm and in case kvm_intel.nested=0).
->
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
+This patch set adds Randon Number Generator (RNG) support 
+for the Nuvoton NPCM Baseboard Management Controller (BMC).
+
+The RNG driver we use power consumption when the RNG 
+is not required.
+
+The NPCM RNG driver tested on NPCM750 evaluation board.
+
+Tomer Maimon (2):
+  dt-binding: hwrng: add NPCM RNG documentation
+  hwrng: npcm: add NPCM RNG driver
+
+ .../bindings/rng/nuvoton,npcm-rng.txt         |  17 ++
+ drivers/char/hw_random/Kconfig                |  13 ++
+ drivers/char/hw_random/Makefile               |   1 +
+ drivers/char/hw_random/npcm-rng.c             | 207 ++++++++++++++++++
+ 4 files changed, 238 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rng/nuvoton,npcm-rng.txt
+ create mode 100644 drivers/char/hw_random/npcm-rng.c
+
+-- 
+2.18.0
+
