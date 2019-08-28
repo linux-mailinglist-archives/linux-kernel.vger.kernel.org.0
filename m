@@ -2,62 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B7C7A044A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:10:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36779A044C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbfH1OKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:10:01 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46398 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbfH1OKA (ORCPT
+        id S1726541AbfH1OMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:12:02 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52479 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfH1OMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:10:00 -0400
-Received: by mail-pg1-f196.google.com with SMTP id m3so1522559pgv.13
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 07:09:59 -0700 (PDT)
+        Wed, 28 Aug 2019 10:12:02 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t17so231489wmi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 07:12:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VZRhNAxweazD8NBV7eTpA6CYJ/gd+z7Ql9WdGyX+FwE=;
-        b=GBbT5UQ7j3ObgzNNU7cgMooQCCCx3dRxBHnZqv1rFtHUA2POQnoDDQsvAbZyCl/cwf
-         SJVF1fxU7Fh/6Jci262clcMHzRVM+GP2ao39pPIEJrIcw/mDLPyMyRd4+66KT2/3A9Sy
-         PRos7CgZ5HzSpKREFBlGsJooDNCVvYNec7KlI=
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f1KAv8pKi0AoAgvfh+n5R42Iglf6I+wQt55KJGFF0fM=;
+        b=pc2FgNUQUjmKwzqDzFdyQRbg8Pz0IJ1f67uI8PAy3R+CZy+hUqM5zfcBwGGC0RoBeZ
+         +R0k3wlkOb2mxbERi6LKxTZZzNQu4F02boiRkENQKTIvk9fBBLIYpfPbgaADkVqMgSCJ
+         V1snUwxahhr3Mra0ax3jiesoRcDHZvl5OdK0wonGTm//SQCKQWwaX+n1REV0O+KdfyqD
+         mn8DjWAWkOKYSfHlaRQ7tEDhtYXRekb7UhNMdiz86p8XFnanbwHRSK/wRzlX3zjD0yAi
+         rSgrbYyRggylCIaxeMZ2SQxHL6BiJv3ReBDfNsga+HY/LeH7EXiW/l97aHRxzYH7MkP2
+         j4OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VZRhNAxweazD8NBV7eTpA6CYJ/gd+z7Ql9WdGyX+FwE=;
-        b=kohvujtrnN1ZTJG1rtie7glMQe4jQxYPuKymIVjH7XFfAkTjCeoSrVhFzl6Mt+nl/m
-         L1lmG6+zaOzz5OKPLkRRoWhpAI4FdXuKCtQ37xKRqxkQVfDBHZcEZCPCD/KBs4Ui57h3
-         c/tZ6DEdhglLVh4Ie+NYvNFpPRp2EDIo33B4JYOaDCu1f5WAe2/ZN59JnHv5I7E+NRhW
-         lUSMAxHphvcuNtQ3qv+1lm3VZafkxKRMel9LELirn14SHS2ST73ABSMBRnrph+j7gfzH
-         z1LShykSryndwF6zu+0MTs4yQ3u2aU4dSgwRhHSlDHyVUh+u9Ns9yscLvqwdeZwcrtTd
-         Ij0A==
-X-Gm-Message-State: APjAAAU0RP+fK4YW5DfB244Hwt0N2iJqXaQBknoI8M4VAB3RHDWa3+kI
-        wXK3xqrHCk5R8XD4ta5juvyCxi709t8=
-X-Google-Smtp-Source: APXvYqzvdFe17PVHbUCFnJwUB7HFOOAdpLphkVC6hDocrD+EALSi3m1Fl5NCIiZY36dfgBic1u3gug==
-X-Received: by 2002:a17:90a:326e:: with SMTP id k101mr4660392pjb.15.1567001399024;
-        Wed, 28 Aug 2019 07:09:59 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id w2sm4550209pjr.27.2019.08.28.07.09.56
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f1KAv8pKi0AoAgvfh+n5R42Iglf6I+wQt55KJGFF0fM=;
+        b=DUTCOiJnDSiVGkar2EYncXhc8GIUV3jYdeaQlXCuMRauUL9H2dGKXEoN0UZ9dd0uq3
+         ii3YbuCnH6U2RCtRfEsUc4kGojS+AxL++dktSlISv7rVMC3ue2ifG9ackKWfyW2+eE4d
+         6HGdJuWtr1dMz8b/GkLIhRXSa4Nl+SVUlATBBT/lH0KptJdeiylRbw4qzF1TZwAHnMDh
+         ZDnFg0bu4xWRPFS3XMMPOSbAJfjjdH/AbpeZsJW5jnJaQnUffZxGYovwZJPrsnTmqwBT
+         nnOs5wED3YqzXHqeJydw9z3WpiJ6T95wDo54B1KiQDVhWlF0adphDnpwCDXvDrqOCutg
+         6hRQ==
+X-Gm-Message-State: APjAAAX4S6K2AQyUEs2k53lBXasnbiu1/NegurToXOpzAAT7MJuwvKJt
+        FkyGu0jnJzry8nw7BjrYExhMMayDWBOikQ==
+X-Google-Smtp-Source: APXvYqz96TmPPVEmMTQIWd5o34VAawuoSnxOtUnJnMiSj9qw7YFhgfiDwSSFrKcnrJG3/uC29Gpqlg==
+X-Received: by 2002:a1c:a503:: with SMTP id o3mr4911436wme.37.1567001519544;
+        Wed, 28 Aug 2019 07:11:59 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id a11sm2774838wrx.59.2019.08.28.07.11.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 07:09:58 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>,
-        byungchul.park@lge.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        kernel-team@android.com
-Subject: [PATCH v2] rcu/tree: Add multiple in-flight batches of kfree_rcu work
-Date:   Wed, 28 Aug 2019 10:09:52 -0400
-Message-Id: <20190828140952.258739-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-In-Reply-To: <5d657e35.1c69fb81.54250.01de@mx.google.com>
-References: <5d657e35.1c69fb81.54250.01de@mx.google.com>
+        Wed, 28 Aug 2019 07:11:58 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] arm64: meson-sm1: add support for the SM1 based VIM3L
+Date:   Wed, 28 Aug 2019 16:11:54 +0200
+Message-Id: <20190828141157.15503-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,142 +61,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During testing, it was observed that amount of memory consumed due
-kfree_rcu() batching is 300-400MB. Previously we had only a single
-head_free pointer pointing to the list of rcu_head(s) that are to be
-freed after a grace period. Until this list is drained, we cannot queue
-any more objects on it since such objects may not be ready to be
-reclaimed when the worker thread eventually gets to drainin g the
-head_free list.
+This patchset adds support for the Amlogic SM1 based Khadas VIM3L variant.
 
-We can do better by maintaining multiple lists as done by this patch.
-Testing shows that memory consumption came down by around 100-150MB with
-just adding another list. Adding more than 1 additional list did not
-show any improvement.
+The S903D3 package variant of SM1 is pin-to-pin compatible with the
+S922X and A311d, so only internal DT changes are needed :
+- DVFS support is different
+- Audio support not yet available for SM1
 
-Suggested-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- kernel/rcu/tree.c | 61 ++++++++++++++++++++++++++++++++---------------
- 1 file changed, 42 insertions(+), 19 deletions(-)
+This patchset moved all the non-g12b nodes to meson-khadas-vim3.dtsi
+and add the sm1 specific nodes into meson-sm1-khadas-vim3l.dts.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 4f7c3096d786..5bf8f7e793ea 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2688,28 +2688,37 @@ EXPORT_SYMBOL_GPL(call_rcu);
- 
- /* Maximum number of jiffies to wait before draining a batch. */
- #define KFREE_DRAIN_JIFFIES (HZ / 50)
-+#define KFREE_N_BATCHES 2
-+
-+struct kfree_rcu_work {
-+	/* The rcu_work node for queuing work with queue_rcu_work(). The work
-+	 * is done after a grace period.
-+	 */
-+	struct rcu_work rcu_work;
-+
-+	/* The list of objects that have now left ->head and are queued for
-+	 * freeing after a grace period.
-+	 */
-+	struct rcu_head *head_free;
-+
-+	struct kfree_rcu_cpu *krcp;
-+};
- 
- /*
-  * Maximum number of kfree(s) to batch, if this limit is hit then the batch of
-  * kfree(s) is queued for freeing after a grace period, right away.
-  */
- struct kfree_rcu_cpu {
--	/* The rcu_work node for queuing work with queue_rcu_work(). The work
--	 * is done after a grace period.
--	 */
--	struct rcu_work rcu_work;
- 
- 	/* The list of objects being queued in a batch but are not yet
- 	 * scheduled to be freed.
- 	 */
- 	struct rcu_head *head;
- 
--	/* The list of objects that have now left ->head and are queued for
--	 * freeing after a grace period.
--	 */
--	struct rcu_head *head_free;
-+	/* Pointer to the per-cpu array of kfree_rcu_work structures */
-+	struct kfree_rcu_work krw_arr[KFREE_N_BATCHES];
- 
--	/* Protect concurrent access to this structure. */
-+	/* Protect concurrent access to this structure and kfree_rcu_work. */
- 	spinlock_t lock;
- 
- 	/* The delayed work that flushes ->head to ->head_free incase ->head
-@@ -2730,12 +2739,14 @@ static void kfree_rcu_work(struct work_struct *work)
- {
- 	unsigned long flags;
- 	struct rcu_head *head, *next;
--	struct kfree_rcu_cpu *krcp = container_of(to_rcu_work(work),
--					struct kfree_rcu_cpu, rcu_work);
-+	struct kfree_rcu_work *krwp = container_of(to_rcu_work(work),
-+					struct kfree_rcu_work, rcu_work);
-+	struct kfree_rcu_cpu *krcp;
-+
-+	krcp = krwp->krcp;
- 
- 	spin_lock_irqsave(&krcp->lock, flags);
--	head = krcp->head_free;
--	krcp->head_free = NULL;
-+	head = xchg(&krwp->head_free, NULL);
- 	spin_unlock_irqrestore(&krcp->lock, flags);
- 
- 	/*
-@@ -2758,19 +2769,28 @@ static void kfree_rcu_work(struct work_struct *work)
-  */
- static inline bool queue_kfree_rcu_work(struct kfree_rcu_cpu *krcp)
- {
-+	int i = 0;
-+	struct kfree_rcu_work *krwp = NULL;
-+
- 	lockdep_assert_held(&krcp->lock);
-+	while (i < KFREE_N_BATCHES) {
-+		if (!krcp->krw_arr[i].head_free) {
-+			krwp = &(krcp->krw_arr[i]);
-+			break;
-+		}
-+		i++;
-+	}
- 
--	/* If a previous RCU batch work is already in progress, we cannot queue
-+	/* If both RCU batches are already in progress, we cannot queue
- 	 * another one, just refuse the optimization and it will be retried
- 	 * again in KFREE_DRAIN_JIFFIES time.
- 	 */
--	if (krcp->head_free)
-+	if (!krwp)
- 		return false;
- 
--	krcp->head_free = krcp->head;
--	krcp->head = NULL;
--	INIT_RCU_WORK(&krcp->rcu_work, kfree_rcu_work);
--	queue_rcu_work(system_wq, &krcp->rcu_work);
-+	krwp->head_free = xchg(&krcp->head, NULL);
-+	INIT_RCU_WORK(&krwp->rcu_work, kfree_rcu_work);
-+	queue_rcu_work(system_wq, &krwp->rcu_work);
- 
- 	return true;
- }
-@@ -3736,8 +3756,11 @@ static void __init kfree_rcu_batch_init(void)
- 
- 	for_each_possible_cpu(cpu) {
- 		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
-+		int i = KFREE_N_BATCHES;
- 
- 		spin_lock_init(&krcp->lock);
-+		while (i--)
-+			krcp->krw_arr[i].krcp = krcp;
- 		INIT_DELAYED_WORK(&krcp->monitor_work, kfree_rcu_monitor);
- 	}
- }
+Display has a color conversion bug on SM1 by using a more recent vendor
+bootloader on the SM1 based VIM3, this is out of scope of this patchset
+and will be fixed in the drm/meson driver.
+
+Dependencies:
+- patch 1,2: None
+- patch 3: Depends on the "arm64: meson-sm1: add support for DVFS" patchset at [1]
+
+Changes since v1:
+- renamed compatible to khadas,vim3l
+- renamed DT file to meson-sm1-khadas-vim3l.dts
+
+[1] https://patchwork.kernel.org/cover/11109411/
+
+Neil Armstrong (3):
+  arm64: dts: khadas-vim3: move common nodes into meson-khadas-vim3.dtsi
+  amlogic: arm: add Amlogic SM1 based Khadas VIM3L bindings
+  arm64: dts: khadas-vim3: add support for the SM1 based VIM3L
+
+ .../devicetree/bindings/arm/amlogic.yaml      |   3 +-
+ arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+ .../amlogic/meson-g12b-a311d-khadas-vim3.dts  |   1 +
+ .../dts/amlogic/meson-g12b-khadas-vim3.dtsi   | 355 -----------------
+ .../amlogic/meson-g12b-s922x-khadas-vim3.dts  |   1 +
+ .../boot/dts/amlogic/meson-khadas-vim3.dtsi   | 360 ++++++++++++++++++
+ .../dts/amlogic/meson-sm1-khadas-vim3l.dts    |  70 ++++
+ 7 files changed, 435 insertions(+), 356 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-khadas-vim3.dtsi
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+
 -- 
-2.23.0.187.g17f5b7556c-goog
+2.22.0
 
