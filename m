@@ -2,84 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5374A06DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 18:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E061A06DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 18:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfH1QCA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 12:02:00 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44144 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfH1QB7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 12:01:59 -0400
-Received: by mail-qt1-f193.google.com with SMTP id 44so53416qtg.11
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 09:01:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=18vFUXwCCyqrHJ/cXDKe740sqCaN0Wzc0p2txngC8Ek=;
-        b=P7SsQclItQ7TwVhV0y5ycfjFwdQA0FmKtll48jZxDnHxDPlabGC92g7nP40H8IkSi+
-         MMF3E9f16tNAhesicaRbghW6Smmv/5aIoPs4Rz68aaMXUS5332CcDu19gZhvVqy7M0rc
-         4g19xczqRq6l2PDdHOOsQSgewSZGLBDBy5X7s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=18vFUXwCCyqrHJ/cXDKe740sqCaN0Wzc0p2txngC8Ek=;
-        b=ZaroYaHrMIYHPZAcugea73vpg/LtyrZQsiA4csr/z48HmjaWDdLIBMqP2oUFM8dmZp
-         a5H07bj3uhkM0lKnkkUYyXtpddFb8p/fc3TmcxczW37X0zvEQhCpTc3d3HCHdDtFA1sx
-         vMky4K1/+c/8Tqw5+94Y4l7iLhYlBB63TpkiPAV5eSqKsIqgP1PH6gRpn5jWpEx2pHux
-         tTmdf0o6BwJrfoCOiVs5/Lr3lB3bvRl59hkg9ExbDiw+u+99TzDjEPMaWhEQSZzf3eAS
-         givTfMjN1htNdi7+XjMMQfOatdyygMS2nYpti6WunohAkmcNFpQACfbcM2AP2Dv4rWgq
-         SEuw==
-X-Gm-Message-State: APjAAAUILvAEm8tCq06ej1+9HbOjkzi/0LcMMkwmrQF9OonK21vlx1KA
-        pX0IMdAWE4dy1OqUR7CYXct0Zw==
-X-Google-Smtp-Source: APXvYqx4jGyz1MuhN9X9a/bicikxi0tdkyCPTLusG+cCbuet+03E0QpqUxM5Jstq4dpXPnj2AYgdgg==
-X-Received: by 2002:a05:6214:104f:: with SMTP id l15mr3259215qvr.189.1567008118708;
-        Wed, 28 Aug 2019 09:01:58 -0700 (PDT)
-Received: from chatter.i7.local (192-0-228-88.cpe.teksavvy.com. [192.0.228.88])
-        by smtp.gmail.com with ESMTPSA id l206sm1411936qke.33.2019.08.28.09.01.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 09:01:58 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 12:01:56 -0400
-From:   Konstantin Ryabitsev <mricon@kernel.org>
-To:     Greg KH <greg@kroah.com>
-Cc:     Bhaskar Chowdhury <unixbhaskar@gmail.com>,
-        StableKernel <stable@vger.kernel.org>,
-        LinuxKernel <linux-kernel@vger.kernel.org>
-Subject: Re: Latest kernel version no NOT reflecting on kernel.org
-Message-ID: <20190828160156.GB26001@chatter.i7.local>
-References: <20190828135750.GA5841@Gentoo>
- <20190828151353.GA9673@kroah.com>
+        id S1726933AbfH1QCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 12:02:22 -0400
+Received: from foss.arm.com ([217.140.110.172]:33666 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726450AbfH1QCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 12:02:21 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E32C028;
+        Wed, 28 Aug 2019 09:02:20 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A84DE3F59C;
+        Wed, 28 Aug 2019 09:02:19 -0700 (PDT)
+Subject: Re: [PATCH 04/13] irqchip: Add driver for Loongson-3 I/O interrupt
+ controller
+To:     Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc:     linux-mips@vger.kernel.org, chenhc@lemote.com,
+        paul.burton@mips.com, tglx@linutronix.de, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.co, devicetree@vger.kernel.org
+References: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
+ <20190827085302.5197-5-jiaxun.yang@flygoat.com>
+ <e6a5862f-0f6c-cab0-9f4a-51b7889d38e7@kernel.org>
+ <82c4b9ed-7270-74ce-6e10-165182e540dd@flygoat.com>
+ <20190828075940.549e1983@why>
+ <619b1d35-7bc2-999f-5a51-fb2efdc63f60@flygoat.com>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <45615c1a-7af8-3496-5369-4b2f174a76e7@kernel.org>
+Date:   Wed, 28 Aug 2019 17:02:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190828151353.GA9673@kroah.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <619b1d35-7bc2-999f-5a51-fb2efdc63f60@flygoat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 05:13:53PM +0200, Greg KH wrote:
->On Wed, Aug 28, 2019 at 07:27:53PM +0530, Bhaskar Chowdhury wrote:
->> Am I the only one, who is not seeing it getting reflected on
->> kernel.org???
+On 28/08/2019 16:31, Jiaxun Yang wrote:
+> 
+> On 2019/8/28 下午2:59, Marc Zyngier wrote:
+>> On Wed, 28 Aug 2019 08:27:05 +0800
+>> Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
 >>
->> Well, I have tried it 2 different browsers.....cleared caches several
->> times(heck) .....3 different devices .....and importantly 3 different
->> networks.
+>>> On 2019/8/28 上午12:45, Marc Zyngier wrote:
+>>>> On 27/08/2019 09:52, Jiaxun Yang wrote:
+>>>>> +	chained_irq_enter(chip, desc);
+>>>>> +
+>>>>> +	pending = readl(priv->intc_base + LS3_REG_INTC_EN_STATUS) &
+>>>>> +		readl(priv->intc_base + LS3_REG_INTC_STATUS);
+>>>> Reading the enabled status from the HW on each interrupt? I'm sure
+>>>> that's pretty cheap...
+>>> Seems expensive but to deal with a buggy hardware... That's worthy.
+>> How broken is it? You very much seem to rely on the HW being correct
+>> here, since you trust it exclusively. I'd expect the enable mask to be
+>> a SW construct if you didn't blindly trust it
+> Hi Marc
+> 
+> Thanks for your answering.
+> 
+> The vendor code did this and said there is a HW issue. I just don't have 
+> the guts to remove this check.
+> Seems like sometimes masked interrupt may get ISR set wrongly.
+
+And that would just as well avoided by a SW managed mask.
+
+>> And if this is truly the right way to do it, please document the
+>> various problems with the controller so that we don't break it at a
+>> later time.
+> Thanks, will do.
 >>
->> Wondering!
->
->Adding Konstantin.
->
->I think there's a way to see which cdn mirror you are hitting when you
->ask for "www.kernel.org".  Konstantin, any hints as to see if maybe one
->of the mirrors is out of sync?
+>> Then how comes this comes from the irqchip's DT node? This should be
+>> part of the endpoint's interrupt specifier.
+> 
+> In theory it should be, However if we set different interrupt 
+> lines/cores on that controller, interrupts may get lost. It means we can 
+> only have single parent core/interrupt.
+> 
+> So I'd prefer just set them uniformly by controller's dt-binding to 
+> prevent confusing.
 
-Looks like the Singapore mirror was feeling out-of-sorts. It'll start 
-feeling better shortly.
+And I disagree. You can document the restriction, and even maybe enforce
+it by validating the DT one way or another. But we're not putting what
+ends up being a routing table in the irqchip binding.
 
--K
+	M.
+-- 
+Jazz is not dead, it just smells funny...
