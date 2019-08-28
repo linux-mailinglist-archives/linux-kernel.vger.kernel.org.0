@@ -2,154 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28399A0D7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:22:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48F9EA0D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:24:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfH1WW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 18:22:26 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34058 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbfH1WWZ (ORCPT
+        id S1727017AbfH1WYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 18:24:32 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:58774 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726828AbfH1WYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 18:22:25 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n9so466109pgc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 15:22:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=akmKqcTFKUa05TGRL2FcXxr4lJl27fsl6mDvDHiP0vo=;
-        b=hS0SaDL5O1Ph2r+HBw7A/4RKfAomkMAO8XQ2sY2YLFTXzIBFDP+VHPdWnkcagGW+QX
-         AeGj2YhFC+3kPKry8yIndOXmr/DagrT+AF2RVE9osqN8GwAb6iUflMwlUzj7Y5PJrOpJ
-         lcOJ2NQmG9BhMIo7ziUQALZw79UAz9rdEaMD/x4kJ56I4ZXQQA4DMyYDp0AlgfkhDVgn
-         T5pJUmQJWssVShrLPCxgtT9VDvkhVoZOO9ufqj+ALRpZD1vnSXtPS+9A/MhlT6tI29j2
-         3+TNciM3ykz9nZAonW1stQ6zJtY7gn1uSo8yuAFOsAZmBD47Naog0+JK3hEyTGX1WUj3
-         txkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=akmKqcTFKUa05TGRL2FcXxr4lJl27fsl6mDvDHiP0vo=;
-        b=LFwME1jDlJ+x+Oqzy3fepc5gHo3esVJnpTwTJ9241c3FTSUeOLYs1nHqgmmxUDpZIj
-         tU7nHW7xCu09/gYzUFRmN9fFAvig8mAeX1LkOZPzPZFy+7VFHEQbgONaHjgIQxUmkQ9M
-         gu+IcsOkAGHEPpMXsGojeU0WtXpKPgMj75FE79po3Wg0CIqUYhlFeIaFszEMW+aoedjj
-         eaWr25zqHAPDP6eai+5oEBP9Z0Jf3wRWrO1he/diAIgfFfMvF605eLfYnu46GjJKMeUD
-         lvhC325DLYsNG7TcQRhlQsU+cKD9TO2GRZWDxbuxioiPodso5l2J+p/sybqxsNdX+4ke
-         XLhA==
-X-Gm-Message-State: APjAAAU+gmqX8itFBx04CfH1ldyOBwvejholAuytzn8KQtpGRbxUha+I
-        nMoWjqjCOP/FpkNrvVMO/QHcVpBvFHgUk9gqOLWyGw==
-X-Google-Smtp-Source: APXvYqwAn085HfIVfC7aVZyQ7KsL80NObNnhXjbstU80YtcTM4BNQ5KVXEV3WNdwPDLSJvOGwtdF+TF5PiceeW1EzLo=
-X-Received: by 2002:a17:90a:ac02:: with SMTP id o2mr6606147pjq.134.1567030944115;
- Wed, 28 Aug 2019 15:22:24 -0700 (PDT)
+        Wed, 28 Aug 2019 18:24:31 -0400
+Received: from dread.disaster.area (pa49-181-255-194.pa.nsw.optusnet.com.au [49.181.255.194])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0CD40361493;
+        Thu, 29 Aug 2019 08:24:24 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1i36MY-0004x3-2B; Thu, 29 Aug 2019 08:24:22 +1000
+Date:   Thu, 29 Aug 2019 08:24:22 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christopher Lameter <cl@linux.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
+ kmalloc(power-of-two)
+Message-ID: <20190828222422.GL1119@dread.disaster.area>
+References: <20190826111627.7505-1-vbabka@suse.cz>
+ <20190826111627.7505-3-vbabka@suse.cz>
+ <0100016cd98bb2c1-a2af7539-706f-47ba-a68e-5f6a91f2f495-000000@email.amazonses.com>
+ <20190828194607.GB6590@bombadil.infradead.org>
 MIME-Version: 1.0
-References: <20190828194226.GA29967@swahl-linux> <CAKwvOdn0=7YabPD-5EUwkSoJgWjdYHY2mirM2LUz0TxZTBOf_Q@mail.gmail.com>
- <20190828221048.GB29967@swahl-linux>
-In-Reply-To: <20190828221048.GB29967@swahl-linux>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 28 Aug 2019 15:22:13 -0700
-Message-ID: <CAKwvOdnaxZuJHpbmMzdtKSZD10m3Rd52FdHeq2gvkas3XVmk7w@mail.gmail.com>
-Subject: Re: Purgatory compile flag changes apparently causing Kexec
- relocation overflows
-To:     Steve Wahl <steve.wahl@hpe.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, russ.anderson@hpe.com,
-        dimitri.sivanich@hpe.com, mike.travis@hpe.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828194607.GB6590@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=YO9NNpcXwc8z/SaoS+iAiA==:117 a=YO9NNpcXwc8z/SaoS+iAiA==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=wUb5uO5YJnghlZLzW24A:9 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 3:14 PM Steve Wahl <steve.wahl@hpe.com> wrote:
->
-> On Wed, Aug 28, 2019 at 02:51:21PM -0700, Nick Desaulniers wrote:
-> > On Wed, Aug 28, 2019 at 12:42 PM Steve Wahl <steve.wahl@hpe.com> wrote:
-> > >
-> > > Please CC me on responses to this.
-> > >
-> > > I normally would do more diligence on this, but the timing is such
-> > > that I think it's better to get this out sooner.
-> > >
-> > > With the tip of the tree from https://github.com/torvalds/linux.git  (a
-> > > few days old, most recent commit fetched is
-> > > bb7ba8069de933d69cb45dd0a5806b61033796a3), I'm seeing "kexec: Overflow
-> > > in relocation type 11 value 0x11fffd000" when I try to load a crash
-> > > kernel with kdump. This seems to be caused by commit
-> > > 059f801a937d164e03b33c1848bb3dca67c0b04, which changed the compiler
-> > > flags used to compile purgatory.ro, apparently creating 32 bit
-> > > relocations for things that aren't necessarily reachable with a 32 bit
-> > > reference.  My guess is this only occurs when the crash kernel is
-> > > located outside 32-bit addressable physical space.
-> > >
-> > > I have so far verified that the problem occurs with that commit, and
-> > > does not occur with the previous commit.  For this commit, Thomas
-> > > Gleixner mentioned a few of the changed flags should have been looked
-> > > at twice.  I have not gone so far as to figure out which flags cause
-> > > the problem.
-> > >
-> > > The hardware in use is a HPE Superdome Flex with 48 * 32GiB dimms
-> > > (total 1536 GiB).
-> > >
-> > > One example of the exact error messages seen:
-> > >
-> > > 019-08-28T13:42:39.308110-05:00 uv4test14 kernel: [   45.137743] kexec: Overflow in relocation type 11 value 0x17f7affd000
-> > > 2019-08-28T13:42:39.308123-05:00 uv4test14 kernel: [   45.137749] kexec-bzImage64: Loading purgatory failed
-> >
-> > Thanks for the report and sorry for the breakage.  Can you please send
-> > me more information for how to precisely reproduce the issue?  I'm
-> > happy to look into fixing it.
->
-> Here's the details I know might be important:
->
-> Since this appears to be a problem with the result of a relocation not
-> fitting within 32 bits, I think the location chosen to place the crash
-> kernel needs to be above 4GiB; so you need a machine with more memory
-> than that.
->
-> At the moment I'm running SLES 12 sp 4 as the rest of the
-> environment.  rpm says kdump is kdump-0.8.16-9.2.x86_64.  I've fetched
-> the kernel sources and compiled directly on this system.  I believe I
-> copied the kernel config from the SLES kernel and did a make
-> olddefconfig for configuration.  Made and installed the kernel from
-> the kernel tree.
->
-> crashkernel=512M,high is set on the command line.
->
-> As the system boots, and systemd initializes kdump, it tries to load
-> the crash kernel, I believe through
-> /usr/lib/systemd/system/kdump.service running /lib/kdump/load.sh
-> --update.
->
-> Once that completes, 'systemctl status kdump' indicates a failure, and
-> dmesg | grep kexec shows the error messages mentioned above.
->
-> > Let me go dig up the different listed flags.  Steve, it may be fastest
-> > for you to test re-adding them in your setup to see which one is
-> > important.
->
-> I will work through that tomorrow and let you know what I find.
->
-> > Tglx, if you want to revert the above patches, I'm ok with that.  It's
-> > important that we fix the issue eventually that my patches were meant
-> > to address, but precisely *when* it's solved isn't critical; our
-> > kernels can carry out of tree patches for now until the issue is
-> > completely resolved worst case.
+On Wed, Aug 28, 2019 at 12:46:08PM -0700, Matthew Wilcox wrote:
+> On Wed, Aug 28, 2019 at 06:45:07PM +0000, Christopher Lameter wrote:
+> > I still think implicit exceptions to alignments are a bad idea. Those need
+> > to be explicity specified and that is possible using kmem_cache_create().
+> 
+> I swear we covered this last time the topic came up, but XFS would need
+> to create special slab caches for each size between 512 and PAGE_SIZE.
+> Potentially larger, depending on whether the MM developers are willing to
+> guarantee that kmalloc(PAGE_SIZE * 2, GFP_KERNEL) will return a PAGE_SIZE
+> aligned block of memory indefinitely.
 
-One point that might be more useful first would be, is a revert of:
+Page size alignment of multi-page heap allocations is ncessary. The
+current behaviour w/ KASAN is to offset so a 8KB allocation spans 3
+pages and is not page aligned. That causes just as much in way
+of alignment problems as unaligned objects in multi-object-per-page
+slabs.
 
-commit b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than
-reset KBUILD_CFLAGS")
+As I said in the lastest discussion of this problem on XFS (pmem
+devices w/ KASAN enabled), all we -need- is a GFP flag that tells the
+slab allocator to give us naturally aligned object or fail if it
+can't. I don't care how that gets implemented (e.g. another set of
+heap slabs like the -rcl slabs), I just don't want every high level
+subsystem that allocates heap memory for IO buffers to have to
+implement their own aligned slab caches.
 
-good enough, or must:
+Cheers,
 
-commit 4ce97317f41d ("x86/purgatory: Do not use __builtin_memcpy and
-__builtin_memset")
-
-be reverted additionally?  They were part of a 2 patch patchset.  I
-would prefer tglx to revert as few patches as necessary if possible
-(to avoid "revert of revert" soup), and I doubt the latter patch needs
-to be reverted.  (Even more preferential would be a fix, with no
-reverts, but whichever).
+Dave.
 -- 
-Thanks,
-~Nick Desaulniers
+Dave Chinner
+david@fromorbit.com
