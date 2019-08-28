@@ -2,89 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A07CA0CE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:55:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5A1A0CFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:55:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727559AbfH1VzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 17:55:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:48588 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727385AbfH1Vy6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:54:58 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i35u4-0005EZ-59; Wed, 28 Aug 2019 23:54:56 +0200
-Date:   Wed, 28 Aug 2019 23:54:55 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-cc:     x86@kernel.org, Song Liu <songliubraving@fb.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rik van Riel <riel@surriel.com>
-Subject: [patch V3 1/2] x86/mm/pti: Handle unaligned address gracefully in
- pti_clone_pagetable()
-In-Reply-To: <alpine.DEB.2.21.1908282252170.1938@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1908282352470.1938@nanos.tec.linutronix.de>
-References: <20190828142445.454151604@linutronix.de> <20190828143123.971884723@linutronix.de> <alpine.DEB.2.21.1908282252170.1938@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727763AbfH1Vzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 17:55:41 -0400
+Received: from ozlabs.org ([203.11.71.1]:34413 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727103AbfH1Vzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 17:55:40 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46JfgY6xPMz9sN4;
+        Thu, 29 Aug 2019 07:55:37 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1567029338;
+        bh=trV+YGvYxNvB9BN+5qQZbtfhppivJU4cFdm0cDK2+rI=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jndXLe5FjeSEkRjdoULkyHRs40O6jzy/1gv+zySqhMHPo56/IUUWPduUfgmD267jV
+         dg23MSc5wU35nhNVI3NOVWeBu7Aw6lDa/FGx53rolllkjK79GWvEfdm6mBE/30ebCu
+         si2tOf5BIfM/aZO4wflvM/PoSyGPsxwUPjiDxxuqKZpr5NZCUTU79/8PYcGGSHbZiQ
+         H9+0iF9SZpmOsja+bCpUvMMcxilqyJnKm7F5BQhU5sFdEd5LfXwEIjtHOx/XDPSsWS
+         IoUJRgd7rvWhyZYjNWmA1oQ6tGEFshmgwWvwVJOm5+mfPrdKF542aD6tPV/19ED4ep
+         23BWBWx3zsz9Q==
+Date:   Thu, 29 Aug 2019 07:55:30 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: linux-next: Fixes tags need some work in the mmc-fixes tree
+Message-ID: <20190829075530.6fb7341c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; boundary="Sig_/LLJXSgfWPEA/X.PWOIp2sfa";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
+--Sig_/LLJXSgfWPEA/X.PWOIp2sfa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-pti_clone_pmds() assumes that the supplied address is either:
+Hi all,
 
- - properly PUD/PMD aligned
-or
- - the address is actually mapped which means that independently
-   of the mapping level (PUD/PMD/PTE) the next higher mapping
-   exists.
+In commit
 
-If that's not the case the unaligned address can be incremented by PUD or
-PMD size incorrectly. All callers supply mapped and/or aligned addresses,
-but for the sake of robustness it's better to handle that case properly and
-to emit a warning.
+  f93be8a7a366 ("mmc: sdhci-sprd: clear the UHS-I modes read from registers=
+")
 
-[ tglx: Rewrote changelog and added WARN_ON_ONCE() ]
+Fixes tag
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-V2: Negate P[UM]D_MASK for checking whether the offset part is 0
-V3: Fix changelog
----
- arch/x86/mm/pti.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
 
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -330,13 +330,15 @@ pti_clone_pgtable(unsigned long start, u
- 
- 		pud = pud_offset(p4d, addr);
- 		if (pud_none(*pud)) {
--			addr += PUD_SIZE;
-+			WARN_ON_ONCE(addr & ~PUD_MASK);
-+			addr = round_up(addr + 1, PUD_SIZE);
- 			continue;
- 		}
- 
- 		pmd = pmd_offset(pud, addr);
- 		if (pmd_none(*pmd)) {
--			addr += PMD_SIZE;
-+			WARN_ON_ONCE(addr & ~PMD_MASK);
-+			addr = round_up(addr + 1, PMD_SIZE);
- 			continue;
- 		}
- 
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+In commit
+
+  218258427ce0 ("mms: sdhci-sprd: add SDHCI_QUIRK_BROKEN_CARD_DETECTION")
+
+Fixes tag
+
+  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+In commit
+
+  1236e62ef8de ("mmc: sdhci-sprd: add SDHCI_QUIRK2_PRESET_VALUE_BROKEN")
+
+Fixes tag
+
+  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+In commit
+
+  8180519b1be0 ("mmc: sdhci-sprd: add get_ro hook function")
+
+Fixes tag
+
+  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+In commit
+
+  b4e4296cc206 ("mmc: sdhci-sprd: fixed incorrect clock divider")
+
+Fixes tag
+
+  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
+
+has these problem(s):
+
+  - Subject has leading but no trailing parentheses
+  - Subject has leading but no trailing quotes
+
+Please do not split Fixes tags over more tha one line - even if the line
+is more than 80 characters.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LLJXSgfWPEA/X.PWOIp2sfa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1m+FIACgkQAVBC80lX
+0GyFQwgAgLkGu03CvO/syIVoC1fL7M2HVBIxP6yEF4I4GpW42kfTQ1NLT1weKlt7
+TPLWU2y/smCNKxzs5Z+phI4qO1z4eB1oN5zKSRLjzxwGYwIqHpgcphuPev5/XNoy
+0WZL7O6oMUxRjPGPcTnCF8Kl5Fr2R1IfIVmS0CY8cu6S3buITRNC3+jYNMWPiMQW
+sJGBneMrEQqQ43sK3cOWsIoNoEWxuCMidX00yZM/lthpWjpI90FExQDjPNOQ1jcK
+k+fzfA9qKTSo8N4AtVVDyVsfX0YSstfbQsSZH+kXEf54GfPQmobsY02+aN96i5OM
+D0vEQsO46VUVCT+y94ImOgjWQO0p1w==
+=JjJ1
+-----END PGP SIGNATURE-----
+
+--Sig_/LLJXSgfWPEA/X.PWOIp2sfa--
