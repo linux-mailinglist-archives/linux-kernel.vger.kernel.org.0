@@ -2,88 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41DAEA060D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0FE5A0620
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfH1PTw convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 28 Aug 2019 11:19:52 -0400
-Received: from mail.fireflyinternet.com ([109.228.58.192]:55500 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726415AbfH1PTw (ORCPT
+        id S1726989AbfH1PU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:20:26 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:41629 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726586AbfH1PUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:19:52 -0400
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 18292894-1500050 
-        for multiple; Wed, 28 Aug 2019 16:19:35 +0100
-Content-Type: text/plain; charset="utf-8"
+        Wed, 28 Aug 2019 11:20:23 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SF10NH021908;
+        Wed, 28 Aug 2019 17:20:07 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=PPbR2wLIawhk8Ml/k1+P15CZ+bHPxkPytEuN2gCnbfs=;
+ b=q6mm2xgdim5e3nSxnNumGIMirAAWPs8X9K7qqHeNbpsswhjc92dBij+cJTFBQBh5U4m8
+ QTFBvHjpj9Sh2xhJxhRzT73/9VqyM+KuFdmMLnkXkPcTD72IdxaEqG0+9/mqd0or/MKM
+ 26zuSi9Xv4DRQ+p7B822DLJ0vc3e/qh4C7Co1ZZnZFDjTVtAugmw/0tbFmUHIkAjslWi
+ FXk9L72mfqvU/oJr3hplXqDB1uOLSNn3YeAgnXkGr6FP1coyWMsYFt5b9kS5V4Ax8ceT
+ L24UbNRQBw7+BI6bxqVfPwaOzDE+elHka4DyWWYdU+fOjFhWpcuoZ/zkMas2MlBVKIKk 6A== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2unujk05vj-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 28 Aug 2019 17:20:06 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1E5DD22;
+        Wed, 28 Aug 2019 15:19:54 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas22.st.com [10.75.90.92])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 79A512B4F40;
+        Wed, 28 Aug 2019 17:19:53 +0200 (CEST)
+Received: from SAFEX1HUBCAS21.st.com (10.75.90.45) by Safex1hubcas22.st.com
+ (10.75.90.92) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 28 Aug
+ 2019 17:19:53 +0200
+Received: from localhost (10.48.0.131) by Webmail-ga.st.com (10.75.90.48) with
+ Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 28 Aug 2019 17:19:53 +0200
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        xiang xiao <xiaoxiang781216@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC:     <arnaud.pouliquen@st.com>, Suman Anna <s-anna@ti.com>,
+        Fabien DESSENNE <fabien.dessenne@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "Alan Cox" <gnomes@lxorguk.ukuu.org.uk>
+Subject: [PATCH v5 0/2] TTY: add rpmsg tty driver
+Date:   Wed, 28 Aug 2019 17:19:24 +0200
+Message-ID: <1567005566-10986-1-git-send-email-arnaud.pouliquen@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Chris Clayton <chris2553@googlemail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <c2706468-6f88-7276-b791-e9573394aa18@gmail.com>
-Cc:     tj@kernel.org, intel-gfx@lists.freedesktop.org
-References: <c2706468-6f88-7276-b791-e9573394aa18@gmail.com>
-Message-ID: <156700557283.15406.5823286371997423740@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [Intel-gfx] Workqueue - warning splat
-Date:   Wed, 28 Aug 2019 16:19:32 +0100
+Content-Type: text/plain
+X-Originating-IP: [10.48.0.131]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Chris Clayton (2019-08-28 16:14:20)
-> Hi,
-> 
-> I've just copying 319G of data from a partition on one USB-attached (/dev/sdb3) to a partition on another USB-attached
-> drive (/dev/sdc1). It's not quite finished but as it's progressed, I have been reading email and browsing web sites, so
-> switching between windows from time to time.
-> 
-> I found the splat below at the end the output from dmesg:
+This patch set introduces a TTY console on top of the RPMsg framework which
+enables the following use cases:
+- Provide a console to communicate easily with the remote processor
+  application.
+- Provide an interface to get the remote processor log traces without
+  ring buffer limitation.
+- Ease the migration from MPU + MCU processors to multi core processors
+  (MPU and MCU integrated in one processor)
 
-> [ 6048.070148] workqueue: PF_MEMALLOC task 148(kswapd0) is flushing !WQ_MEM_RECLAIM events:gen6_pm_rps_work [i915]
-> [ 6048.070152] WARNING: CPU: 6 PID: 148 at kernel/workqueue.c:2598 check_flush_dependency+0x105/0x120
-> [ 6048.070152] Modules linked in: uas rfcomm bnep iptable_filter xt_conntrack iptable_nat xt_MASQUERADE nf_nat
-> nf_conntrack nf_defrag_ipv4 coretemp hwmon snd_hda_codec_hdmi snd_hda_codec_generic iwlmvm mac80211 uvcvideo
-> videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common snd_hda_intel iwlwifi usbhid snd_hda_codec btusb
-> btintel snd_hwdep x86_pkg_temp_thermal snd_hda_core cfg80211 i915
-> [ 6048.070162] CPU: 6 PID: 148 Comm: kswapd0 Tainted: G     U            5.3.0-rc6+ #40
-> [ 6048.070163] Hardware name: PC Specialist LTD N8xxEZ                         /N8xxEZ                         , BIOS
-> 1.07.08 10/04/2018
-> [ 6048.070165] RIP: 0010:check_flush_dependency+0x105/0x120
-> [ 6048.070166] Code: 8d 8a c0 05 00 00 49 89 e8 48 c7 c7 90 61 b5 b0 48 8d 8b b0 00 00 00 4c 89 ca 48 89 04 24 c6 05 02
-> 8f 00 01 01 e8 b2 97 fe ff <0f> 0b 48 8b 04 24 e9 63 ff ff ff 80 3d eb 8e 00 01 00 0f 85 56 ff
-> [ 6048.070167] RSP: 0018:ffffa6e4003679a0 EFLAGS: 00010086
-> [ 6048.070167] RAX: 0000000000000000 RBX: ffff8a188d414000 RCX: 0000000000000000
-> [ 6048.070168] RDX: 0000000000000063 RSI: ffffffffb125f723 RDI: ffffffffb125d28c
-> [ 6048.070169] RBP: ffffffffc0466390 R08: 000005802d12a057 R09: 0000000000000063
-> [ 6048.070169] R10: ffffffffb125faa0 R11: 00000000b125f70b R12: ffff8a188c809a80
-> [ 6048.070170] R13: ffff8a1890a23e00 R14: 0000000000000001 R15: 0000000000000000
-> [ 6048.070170] FS:  0000000000000000(0000) GS:ffff8a1890b80000(0000) knlGS:0000000000000000
-> [ 6048.070171] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [ 6048.070172] CR2: 00000000025d1fa0 CR3: 00000004d700a004 CR4: 00000000003606e0
-> [ 6048.070172] Call Trace:
-> [ 6048.070175]  __flush_work+0x8d/0x1d0
-> [ 6048.070176]  ? try_to_wake_up+0x1b9/0x3b0
-> [ 6048.070177]  __cancel_work_timer+0xfb/0x180
-> [ 6048.070179]  ? synchronize_irq+0x30/0xa0
-> [ 6048.070204]  ? fwtable_write32+0xf1/0x180 [i915]
-> [ 6048.070212]  gen6_disable_rps_interrupts+0x79/0xa0 [i915]
-> [ 6048.070220]  gen6_rps_idle+0xe/0xd0 [i915]
-> [ 6048.070230]  intel_gt_park+0x4f/0x60 [i915]
-> [ 6048.070239]  __intel_wakeref_put_last+0x12/0x40 [i915]
-> [ 6048.070248]  __engine_park+0xb7/0xc0 [i915]
-> 
-> It might be difficult to create it again, but I guess a heads up might be useful.
+An alternative of this proposed solution would consist in using the virtio
+console:
+The drawback with that solution is that it requires a specific virtio buffer
+(in addition to the one already used for RPMsg) which does not fit with remote
+processors with little memory. The proposed solution allows to multiplex the
+console with the other rpmsg services, optimizing the memory.
 
-Should be fixed by 
+The first patch adds an API to the rpmsg framework ('get max transmission unit') and the
+second one is the rpmsg tty driver itself.
 
-commit c7302f204490f3eb4ef839bec228315bcd3ba43f
-Author: Chris Wilson <chris@chris-wilson.co.uk>
-Date:   Thu Aug 8 21:27:58 2019 +0100
+History:
+-V4 to V5: 
+	rework RPMSG channels to offer 2 modes: with and without flow control
+	  - remove the use of the first message byte to differentiate data and control
+	  - allow communication without flow control using a single RPMsg channel
+	  - implement flow control with creating of 2 endpoints
+		- default one for the control
+		- second one for the data
+	  - data endpoint address is transmitted to the remote side trougnt the control channel
 
-    drm/i915: Defer final intel_wakeref_put to process context
+-V3 to V4: 
+	- reformat documentation in rst format
+	- use tty_insert_flip_string_fixed_flag helper
+	- suppress some poinrter check (overprotection)
+	- move low_latency set from probe to activate ops. 
+	- various corrections and improvements relative to Jiri's comments 
 
--Chris
+-V2 to V3:
+	- suppress error return on rpmsg callback as not tested in rpmsg framework
+	- change some flow messages level to debug
+	- add missing out of memory checks
+
+-V1 to V2:
+	- modify message structure to allow to data transmission but also
+	flow control
+	- add documentation file to describe message structure for remote
+	  implementation
+	- add dtr/rts management
+	- disable termios modes that generates non optimized behavior on RPMsg
+	  transfers
+	- replace rpmsg_send by rpmsg_trysend to not block the write
+	- suppress useless spinlock on read
+	- miscellaneous fixes to improve robustness
+
+Arnaud Pouliquen (2):
+  rpmsg: core: add API to get message length
+  tty: add rpmsg driver
+
+ Documentation/serial/tty_rpmsg.rst |  45 ++++
+ drivers/rpmsg/rpmsg_core.c         |  21 ++
+ drivers/rpmsg/rpmsg_internal.h     |   2 +
+ drivers/rpmsg/virtio_rpmsg_bus.c   |  10 +
+ drivers/tty/Kconfig                |   9 +
+ drivers/tty/Makefile               |   1 +
+ drivers/tty/rpmsg_tty.c            | 418 +++++++++++++++++++++++++++++++++++++
+ include/linux/rpmsg.h              |  10 +
+ 8 files changed, 516 insertions(+)
+ create mode 100644 Documentation/serial/tty_rpmsg.rst
+ create mode 100644 drivers/tty/rpmsg_tty.c
+
+-- 
+2.7.4
+
