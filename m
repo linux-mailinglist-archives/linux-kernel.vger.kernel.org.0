@@ -2,111 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 64F0B9FD32
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A8B19FD41
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfH1Iez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:34:55 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38477 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbfH1Iey (ORCPT
+        id S1726421AbfH1IhA convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 28 Aug 2019 04:37:00 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34014 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbfH1Ig7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:34:54 -0400
-Received: by mail-oi1-f194.google.com with SMTP id q8so1460302oij.5;
-        Wed, 28 Aug 2019 01:34:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=U8FH7AFxalfo9kXqgzeqBM8w1kp/vA0EX4/dnehxzF8=;
-        b=TP06DYbD3V6ERHTB3g0KbjtgqWL9TuvRo0wmUzXGiDGjXKb3S3L4Mb2a/jtVlf2VmP
-         wioNJCGVxlZITAL0k7PPNPIdAr/7KSa7wvD2FvKUEaPfPJ4gFF46ZnXi49F+MOwodDHE
-         odc7xsPY51gjFc+ghK+35ZpYlu5JymD7y5dT9LxeZQJPCr5D45k+sUBfS7tgfeTCuuB5
-         b4BfOVEE7RxQAv/GGMsa3dRqzx8EaBvDD9rQ6Sw6rTuB9kj/+Dr+G8ORrBzRHG0ZMoWB
-         EEHYTIAdYESfcYmwuq272GcfrQmwEIxFkYSDbrQsqGTXXjdimdbmA8emXt+v76vaDsTN
-         hdOw==
+        Wed, 28 Aug 2019 04:36:59 -0400
+Received: by mail-ot1-f67.google.com with SMTP id c7so1992378otp.1;
+        Wed, 28 Aug 2019 01:36:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=U8FH7AFxalfo9kXqgzeqBM8w1kp/vA0EX4/dnehxzF8=;
-        b=Ri9P7KNua3Xts6sgt7uNghB3hrfmn3j/UrWKi5potBso8GTK4IJdl+HNU8L5wYu4l2
-         FNX9PpDjxocl12w5yy3zWfleFWtsi/I3n0rIVPtroEbUFmEzhaw1+nJyBpcb616azkbu
-         LSIinBNAjqs84D2dLMDnkMc0x3Ufa51S2BnELjVp7uwCEXnPrcGhyfcI5reoRNmw42bY
-         NzVGOpoaM5H/QkEDUctX++NlgxuYRzXJzuCV0xI8oSTDdagBkCxgb6w6vRTR+ClN80ei
-         4PxVqfLmbtPIl/6e90qPBwZnvHHea521b+4VlXK2EUTMM5mElxgdjtPs+7uMlzi4EFe4
-         p7zw==
-X-Gm-Message-State: APjAAAXGjZwYLsUnwk2dS9wap9z/W7DlRBR5WWt/lyzZ5DkBlIdiXKbf
-        GaaA8VQvKbisl5gyx/fkMGLkjSGo0sDBcJJcU5E=
-X-Google-Smtp-Source: APXvYqzmD3lOi71p/BZRzvw9jM1MKLJ3Zwe/887SQPAbbvl+RMdE0RaTkaVm1kIc+BH0REmOSCceeJdskb95k+RqEqI=
-X-Received: by 2002:a54:488e:: with SMTP id r14mr1922852oic.174.1566981293845;
- Wed, 28 Aug 2019 01:34:53 -0700 (PDT)
+        bh=2Erove1KI2K6GKd3UFaZlGI+A1u6CspqOGbjftwYs2o=;
+        b=RsOVHUV2rRGqeecVWFLG9J8HlcIjMgja8ncvY9XZYMOmqj2KbuMsTXW6ref0ZZpP8y
+         O2sS5+di2RzdaHXQYtEIPQb5ok7KmnTxE3WKc4YceBZgbDRxCwsqoq0gCMFk2+jnnuzf
+         l1HryWSif65yXT4d8xZATRsz/zGG6fWJOtq2S+VUBcWK8qh9ev9g/5dBjeChYh7nWdAx
+         xFWy3iKBPVB2c73orPP7ivNKWHm4Ts4fH4rZY8D1D5vcT/uJbFuGmAisv3rbUaUmtWUR
+         9d+C2SVBB6T3NfoMRVg4YmMWEx3YAsmlz3VNuX/ishcTDSlSWXSRGyu9lYshArLxZVa8
+         g01Q==
+X-Gm-Message-State: APjAAAVE0IS7InGjjN4TWjbhmOlxt6SEVZurGt01g+nMsCroWmPz4IbA
+        1dj4tqQ5L0OwnGwsQLqPLQCAmPTAcBrYmb/QZig=
+X-Google-Smtp-Source: APXvYqwTqVVwndN/cmFOt6L70c8aRtBjQJbRXGGSl1zhN+C4xJfXzPvGeTsPdgjseoyM2bIW2gDueQGp86hfFZCk314=
+X-Received: by 2002:a9d:2cc:: with SMTP id 70mr2261989otl.145.1566981418736;
+ Wed, 28 Aug 2019 01:36:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <1564643196-7797-1-git-send-email-wanpengli@tencent.com>
- <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com> <c3fe182f-627f-88ad-cb4d-a4189202b438@redhat.com>
- <20190803202058.GA9316@amt.cnet> <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
- <20190826204045.GA24697@amt.cnet> <CANRm+Cx0+V67Ek7FhSs61ZqZL3MgV88Wdy17Q6UA369RH7=dgQ@mail.gmail.com>
-In-Reply-To: <CANRm+Cx0+V67Ek7FhSs61ZqZL3MgV88Wdy17Q6UA369RH7=dgQ@mail.gmail.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 28 Aug 2019 16:35:30 +0800
-Message-ID: <CANRm+CxqYMzgvxYyhZLmEzYd6SLTyHdRzKVaSiHO-4SV+OwZUQ@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when dedicated
- physical CPUs are available
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>
+References: <20190724082508.27617-1-brgl@bgdev.pl> <CAMRc=Mex_Ricd+C4F7nGLmpBggO-hWwJDB6duX8kFpPEeaTDjQ@mail.gmail.com>
+ <CAMRc=Mci4ncbDmns=0uL8hsAGz1Wvd5bgK4yxTF8QQQitXDv0g@mail.gmail.com> <CAMRc=McUEgm6yH7enwHuHxVTL41dmb5KAY_pxTmSr3vctCs2xg@mail.gmail.com>
+In-Reply-To: <CAMRc=McUEgm6yH7enwHuHxVTL41dmb5KAY_pxTmSr3vctCs2xg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 28 Aug 2019 10:36:47 +0200
+Message-ID: <CAMuHMdV3obGtQ7qohNedQNgpvZvyL9xjH0HUiBKD6b8Ou5F+XA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] backlight: gpio: simplify the driver
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jacopo Mondi <jacopo@jmondi.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Aug 2019 at 08:43, Wanpeng Li <kernellwp@gmail.com> wrote:
->
-> Cc Michael S. Tsirkin,
-> On Tue, 27 Aug 2019 at 04:42, Marcelo Tosatti <mtosatti@redhat.com> wrote=
-:
-> >
-> > On Tue, Aug 13, 2019 at 08:55:29AM +0800, Wanpeng Li wrote:
-> > > On Sun, 4 Aug 2019 at 04:21, Marcelo Tosatti <mtosatti@redhat.com> wr=
-ote:
+CC the pour soul with the ecovec board.
+
+On Wed, Aug 28, 2019 at 9:33 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> pt., 16 sie 2019 o 17:48 Bartosz Golaszewski <brgl@bgdev.pl> napisał(a):
+> > czw., 8 sie 2019 o 10:17 Bartosz Golaszewski <brgl@bgdev.pl> napisał(a):
+> > > śr., 24 lip 2019 o 10:25 Bartosz Golaszewski <brgl@bgdev.pl> napisał(a):
+> > > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > > > >
-> > > > On Thu, Aug 01, 2019 at 06:54:49PM +0200, Paolo Bonzini wrote:
-> > > > > On 01/08/19 18:51, Rafael J. Wysocki wrote:
-> > > > > > On 8/1/2019 9:06 AM, Wanpeng Li wrote:
-> > > > > >> From: Wanpeng Li <wanpengli@tencent.com>
-> > > > > >>
-> > > > > >> The downside of guest side polling is that polling is performe=
-d even
-> > > > > >> with other runnable tasks in the host. However, even if poll i=
-n kvm
-> > > > > >> can aware whether or not other runnable tasks in the same pCPU=
-, it
-> > > > > >> can still incur extra overhead in over-subscribe scenario. Now=
- we can
-> > > > > >> just enable guest polling when dedicated pCPUs are available.
-> > > > > >>
-> > > > > >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > >> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > > > > >> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
-> > > > > >> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> > > > > >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > > > > >
-> > > > > > Paolo, Marcelo, any comments?
-> > > > >
-> > > > > Yes, it's a good idea.
-> > > > >
-> > > > > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+> > > > While working on my other series related to gpio-backlight[1] I noticed
+> > > > that we could simplify the driver if we made the only user of platform
+> > > > data use GPIO lookups and device properties. This series tries to do
+> > > > that.
+> > > >
+> > > > The first patch adds all necessary data structures to ecovec24. Patch
+> > > > 2/7 unifies much of the code for both pdata and non-pdata cases. Patches
+> > > > 3-4/7 remove unused platform data fields. Last three patches contain
+> > > > additional improvements for the GPIO backlight driver while we're already
+> > > > modifying it.
+> > > >
+> > > > I don't have access to this HW but hopefully this works. Only compile
+> > > > tested.
+> > > >
+> > > > [1] https://lkml.org/lkml/2019/6/25/900
+> > > >
+> > > > v1 -> v2:
+> > > > - rebased on top of v5.3-rc1 and adjusted to the recent changes from Andy
+> > > > - added additional two patches with minor improvements
+> > > >
+> > > > v2 -> v3:
+> > > > - in patch 7/7: used initializers to set values for pdata and dev local vars
+> > > >
+> > > > Bartosz Golaszewski (7):
+> > > >   sh: ecovec24: add additional properties to the backlight device
+> > > >   backlight: gpio: simplify the platform data handling
+> > > >   sh: ecovec24: don't set unused fields in platform data
+> > > >   backlight: gpio: remove unused fields from platform data
+> > > >   backlight: gpio: remove dev from struct gpio_backlight
+> > > >   backlight: gpio: remove def_value from struct gpio_backlight
+> > > >   backlight: gpio: use a helper variable for &pdev->dev
+> > > >
+> > > >  arch/sh/boards/mach-ecovec24/setup.c         | 33 ++++++--
+> > > >  drivers/video/backlight/gpio_backlight.c     | 82 +++++---------------
+> > > >  include/linux/platform_data/gpio_backlight.h |  3 -
+> > > >  3 files changed, 44 insertions(+), 74 deletions(-)
+> > > >
+> > > > --
+> > > > 2.21.0
+> > > >
+> > >
+> > > Hi Rich, Yoshinori,
+> > >
+> > > can you ack the sh patches in this series?
+> > >
+> > > Bart
+> >
+> > Ping.
+>
+> Hi,
+>
+> any chance of getting this reviewed for sh?
 
-Hi Marcelo,
+Gr{oetje,eeting}s,
 
-If you don't have more concern, I guess Rafael can apply this patch
-now since the merge window is not too far.
+                        Geert
 
-Regards,
-Wanpeng Li
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
