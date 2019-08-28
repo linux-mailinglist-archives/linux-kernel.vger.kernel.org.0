@@ -2,87 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09D799FB3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09B8E9FB43
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:15:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfH1HNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 03:13:48 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:45818 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbfH1HNr (ORCPT
+        id S1726438AbfH1HPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 03:15:45 -0400
+Received: from mail-yw1-f74.google.com ([209.85.161.74]:45934 "EHLO
+        mail-yw1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbfH1HPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 03:13:47 -0400
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1i2s9G-0001nS-3j; Wed, 28 Aug 2019 09:13:42 +0200
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andrea Parri <parri.andrea@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: numlist API Re: [RFC PATCH v4 1/9] printk-rb: add a new printk ringbuffer implementation
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
-        <20190807222634.1723-2-john.ogness@linutronix.de>
-        <20190823171802.eo2chwyktibeub7a@pathway.suse.cz>
-        <20190823171802.eo2chwyktibeub7a@pathway.suse.cz>
-        <87sgpnmqdo.fsf@linutronix.de>
-        <20190827130349.6mrnhdlqyqokgsfk@pathway.suse.cz>
-Date:   Wed, 28 Aug 2019 09:13:39 +0200
-In-Reply-To: <20190827130349.6mrnhdlqyqokgsfk@pathway.suse.cz> (Petr Mladek's
-        message of "Tue, 27 Aug 2019 15:03:49 +0200")
-Message-ID: <87o909lq3g.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Wed, 28 Aug 2019 03:15:45 -0400
+Received: by mail-yw1-f74.google.com with SMTP id c129so1249168ywf.12
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 00:15:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=pO6G2tJIWIc79GlfXyD7tYRlgpCJ3Wp5sfmQpLmODHQ=;
+        b=haoiuUv6FwAVdeyp7BVc3pDAqvPC/ds02yPDw/Lpq4KFYSLid/2T8oP3DA7sI/XnNp
+         bjngcL7mnMQro96+ZwOb1Gt25bxq37G4z/Ow3o6U0dzdJZjKslbNsk+zC9g7Qce0tV0u
+         BzgU5+IQ3ZGQGPfxagkcalDyaPCw7MxZ8hC62nXstPdNeOEigWogCgbHn1F5PP0d8gi+
+         b+oWiiRZHQW/ZFtAcJrlup+jI6vXsdVAs6VYfOH/lNmSeWyt3ukutR8MA5ibwX/IlN4L
+         9woWplT7Z01+fxXDw2GJRh4M3TQcaFmmsCLk5z9SrkRBcCglOyOyo78zPoRN6fq5d04T
+         Aaxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=pO6G2tJIWIc79GlfXyD7tYRlgpCJ3Wp5sfmQpLmODHQ=;
+        b=CzHo25kjtMNlfLyN8sZfs/DkXCy1ZsXGN1TGPpYOClsAdEibezWRXieu9O2uj+FAgg
+         POkIiKbRngfWXw6FztKwgjKLdjc6VrYOpW5SGEqt2mj4KNjUi/VIR/eqCqHqgRPS0YJI
+         Z+0YP6HpUjbdCoGbdeUaptbXfthzDWnMnvoOyjbhJQyUELcUZwXVQ/MCYHqhjeXcTxvo
+         Gi2worBLPAHjApU7r+BC+E+e7o/wkYp6duh2RcgulbWNgVzQSgGefNDJqv8WpFwn440M
+         3euVQ07G3Iutylqj1rRGmIFBhZDWNn1ArrT8JKSGPjgE/QLVDZR3fUiKylwNe1mQk1c+
+         MpDg==
+X-Gm-Message-State: APjAAAWHWo2iLZKFZvAbqGetrGHMDQa9rEs8WfbWWtNRc8rM14iJwqnj
+        xh9KMYkDfkoFUxeLuFWMROcEcemVOTE=
+X-Google-Smtp-Source: APXvYqzctMiFQlYF+UvzuyviUGwwek3BnAXSR8uVLG9IR+PqW/ao+bgQWKhtNMFcd7Hc/sZBH20B8YFhEug=
+X-Received: by 2002:a81:a68d:: with SMTP id d135mr2009010ywh.38.1566976544368;
+ Wed, 28 Aug 2019 00:15:44 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 09:15:36 +0200
+In-Reply-To: <20190819112207.57166-1-darekm@google.com>
+Message-Id: <20190828071536.56533-1-darekm@google.com>
+Mime-Version: 1.0
+References: <20190819112207.57166-1-darekm@google.com>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+Subject: [PATCH v7.2 5/9] drm: tda998x: use cec_notifier_conn_(un)register
+From:   Dariusz Marcinkiewicz <darekm@google.com>
+To:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        hverkuil-cisco@xs4all.nl
+Cc:     Dariusz Marcinkiewicz <darekm@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-27, Petr Mladek <pmladek@suse.com> wrote:
-> The API is complicated because of the callbacks. It depends on a logic
-> that is implemented externally. It makes it abstract to some extent.
->
-> My view is that the API would be much cleaner and easier to review
-> when the ID handling is "hardcoded" (helper functions). It could be
-> made abstract anytime later when there is another user.
->
-> There should always be a reason why to make a code more complicated
-> than necessary. It seems that the only reason is some theoretical
-> future user and its theoretical requirements.
+Use the new cec_notifier_conn_(un)register() functions to
+(un)register the notifier for the HDMI connector, and fill
+in the cec_connector_info.
 
-FWIW, I did _not_ create the numlist and dataring structures in order to
-support some theoretical future user. PeterZ helped[0] me realize that
-RFCv2 was actually using multiple internal data structures. Each of
-these internal data structures has their own set of memory barriers and
-semantics. By explicitly refactoring them behind strong APIs, the memory
-barriers could be clearly visible and the semantics clearly defined.
+Changes since v7.1:
+	- re-added if (!notifier)..
+Changes since v7:
+	- typo fix
+Changes since v6:
+        - move cec_notifier_conn_unregister to tda998x_bridge_detach,
+	- add a mutex protecting accesses to a CEC notifier.
+Changes since v2:
+	- cec_notifier_phys_addr_invalidate where appropriate,
+	- don't check for NULL notifier before calling
+	cec_notifier_conn_unregister.
+Changes since v1:
+	Add memory barrier to make sure that the notifier
+	becomes visible to the irq thread once it is
+	fully constructed.
 
-For me this was a great help in _simplifying_ the design. For me it also
-greatly simplified debugging, testing, and verifying because I could
-write tests for numlist and datalist that explicitly targeted those data
-structures. Once I believed they were bullet-proof, I could move on to
-higher-level tests of the printk_ringbuffer. And once I believed the
-printk_ringbuffer was bullet-proof, I could move on to the higher-level
-printk tests. When a problem was found, I could effectively isolate
-which component failed their job.
+Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+ drivers/gpu/drm/i2c/tda998x_drv.c | 37 ++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
-I understand that we disagree about the abstractions being a
-simplification. And I'm not sure how to proceed in this regard. (Maybe
-once we get everything bullet-proof, we can put everything back together
-into a monolith like RFCv2.) Either way, please understand that the
-abstractions were done for the benefit of printk_ringbuffer, not for any
-theoretical future user.
+diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+index 61e042918a7fc..2bc4f50458137 100644
+--- a/drivers/gpu/drm/i2c/tda998x_drv.c
++++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+@@ -82,6 +82,8 @@ struct tda998x_priv {
+ 	u8 audio_port_enable[AUDIO_ROUTE_NUM];
+ 	struct tda9950_glue cec_glue;
+ 	struct gpio_desc *calib;
++
++	struct mutex cec_notify_mutex;
+ 	struct cec_notifier *cec_notify;
+ };
+ 
+@@ -805,8 +807,11 @@ static irqreturn_t tda998x_irq_thread(int irq, void *data)
+ 				tda998x_edid_delay_start(priv);
+ 			} else {
+ 				schedule_work(&priv->detect_work);
+-				cec_notifier_set_phys_addr(priv->cec_notify,
+-						   CEC_PHYS_ADDR_INVALID);
++
++				mutex_lock(&priv->cec_notify_mutex);
++				cec_notifier_phys_addr_invalidate(
++						priv->cec_notify);
++				mutex_unlock(&priv->cec_notify_mutex);
+ 			}
+ 
+ 			handled = true;
+@@ -1331,6 +1336,8 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
+ 				  struct drm_device *drm)
+ {
+ 	struct drm_connector *connector = &priv->connector;
++	struct cec_connector_info conn_info;
++	struct cec_notifier *notifier;
+ 	int ret;
+ 
+ 	connector->interlace_allowed = 1;
+@@ -1347,6 +1354,17 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
+ 	if (ret)
+ 		return ret;
+ 
++	cec_fill_conn_info_from_drm(&conn_info, connector);
++
++	notifier = cec_notifier_conn_register(priv->cec_glue.parent,
++					      NULL, &conn_info);
++	if (!notifier)
++		return -ENOMEM;
++
++	mutex_lock(&priv->cec_notify_mutex);
++	priv->cec_notify = notifier;
++	mutex_unlock(&priv->cec_notify_mutex);
++
+ 	drm_connector_attach_encoder(&priv->connector,
+ 				     priv->bridge.encoder);
+ 
+@@ -1366,6 +1384,11 @@ static void tda998x_bridge_detach(struct drm_bridge *bridge)
+ {
+ 	struct tda998x_priv *priv = bridge_to_tda998x_priv(bridge);
+ 
++	mutex_lock(&priv->cec_notify_mutex);
++	cec_notifier_conn_unregister(priv->cec_notify);
++	priv->cec_notify = NULL;
++	mutex_unlock(&priv->cec_notify_mutex);
++
+ 	drm_connector_cleanup(&priv->connector);
+ }
+ 
+@@ -1789,9 +1812,6 @@ static void tda998x_destroy(struct device *dev)
+ 	cancel_work_sync(&priv->detect_work);
+ 
+ 	i2c_unregister_device(priv->cec);
+-
+-	if (priv->cec_notify)
+-		cec_notifier_put(priv->cec_notify);
+ }
+ 
+ static int tda998x_create(struct device *dev)
+@@ -1812,6 +1832,7 @@ static int tda998x_create(struct device *dev)
+ 	mutex_init(&priv->mutex);	/* protect the page access */
+ 	mutex_init(&priv->audio_mutex); /* protect access from audio thread */
+ 	mutex_init(&priv->edid_mutex);
++	mutex_init(&priv->cec_notify_mutex);
+ 	INIT_LIST_HEAD(&priv->bridge.list);
+ 	init_waitqueue_head(&priv->edid_delay_waitq);
+ 	timer_setup(&priv->edid_delay_timer, tda998x_edid_delay_done, 0);
+@@ -1916,12 +1937,6 @@ static int tda998x_create(struct device *dev)
+ 		cec_write(priv, REG_CEC_RXSHPDINTENA, CEC_RXSHPDLEV_HPD);
+ 	}
+ 
+-	priv->cec_notify = cec_notifier_get(dev);
+-	if (!priv->cec_notify) {
+-		ret = -ENOMEM;
+-		goto fail;
+-	}
+-
+ 	priv->cec_glue.parent = dev;
+ 	priv->cec_glue.data = priv;
+ 	priv->cec_glue.init = tda998x_cec_hook_init;
+-- 
+2.23.0.187.g17f5b7556c-goog
 
-John Ogness
-
-[0] https://lkml.kernel.org/r/20190628154435.GZ7905@worktop.programming.kicks-ass.net
