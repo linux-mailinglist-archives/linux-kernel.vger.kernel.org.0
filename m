@@ -2,168 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D20C49F99E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 06:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B31C9F9A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:00:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbfH1E5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 00:57:11 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33867 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfH1E5L (ORCPT
+        id S1726212AbfH1E75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 00:59:57 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:54958 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbfH1E74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 00:57:11 -0400
-Received: by mail-lf1-f65.google.com with SMTP id z21so957150lfe.1
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 21:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=aF4vQQPAnM4wrO+hnAOdMHydtR2sgfwjhXFlqwAQKCo=;
-        b=bu7mC2+faFWXe7ElbzYXC4F9BGrzhPTjTuR5R7atmVRuixXcXQIMK55jJdglGZGarv
-         p3bSO7Hh5vLAQSLwHeSMxNz5I7Z0C3hQcMlQfKqUdbeqSGt7LpTAHXrR9RlIlCiOr+fE
-         PCwHLSCO0sxawbCZI25fCHmWj4Rx48rFFtfW9zSEovtRponYsT7lAqiRZxtr/LGnyBIx
-         TQEKklWPkFPvIMJKrcggzitO44CHJjW8A20jc7rORk+bgtPGsYKRlQrdnWMefHdE5bD6
-         dN1lCPVxa8T+kBfFtAE5AHAO+QkV3AeDxc5mMwCyQ8tpQNndQjFdaIMcKtp137RRKUVW
-         w2SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=aF4vQQPAnM4wrO+hnAOdMHydtR2sgfwjhXFlqwAQKCo=;
-        b=RP7nqnKsPz6bQaMXS0fGoWfy9B5oMZ5rPzES9rrQQ8MMgMpV/ckd4ZrWXdmOpwXBOY
-         CBDc6R+T3J5r3Kax3rLMg7Lic6Q0mIjT+sTJO2iJS7aE6jckF+MPW13lEoYc6XOQ0WVy
-         JNNV5/y/ykabctSJTAibY3zV8FqMJzoBI4pMM8dwz5AOVl+Aeu2XsJV8vNaCCI8SUlNC
-         GxXVch2l/Mh1RKDupVFgw1URQJk12/pwJzWjPFeRbPbPWagKi4KHwnVCN6beXtLoZYXm
-         ePeeiD7OlyLqTSfpTTPrWAnwkoJSAIUmb1hvEct3Sqq9sOveddZw6DhxWL5C2tiVMMAh
-         Rhmg==
-X-Gm-Message-State: APjAAAV8JagpgvXn2zbF//puM9GRWbJN6OkpFRKExAF1ven1dvbY9fY7
-        whYNXEjYS2ros9nSjNJ48+H/zHashD4oCl1JMTSixQ==
-X-Google-Smtp-Source: APXvYqyFtKMBWetyIy6MzY35Sbc8VdpSv3o36q0twIoF8bsBySzZ01qszD/vrbc1VjBzQG3EiqsQkR1R6wZKUPVSRjM=
-X-Received: by 2002:a19:ef05:: with SMTP id n5mr1242292lfh.192.1566968229010;
- Tue, 27 Aug 2019 21:57:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190827072718.142728620@linuxfoundation.org>
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 28 Aug 2019 10:26:57 +0530
-Message-ID: <CA+G9fYsnw6XNbGKbAXNq662p2RiwtMH7O+yDLXz1pD6B7iDNLw@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/98] 4.19.69-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 28 Aug 2019 00:59:56 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id AC768153C954B;
+        Tue, 27 Aug 2019 21:59:55 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 21:59:55 -0700 (PDT)
+Message-Id: <20190827.215955.401060732796152198.davem@davemloft.net>
+To:     weifeng.voon@intel.com
+Cc:     mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joabreu@synopsys.com,
+        peppe.cavallaro@st.com, andrew@lunn.ch, alexandre.torgue@st.com,
+        boon.leong.ong@intel.com
+Subject: Re: [PATCH v1 net-next 0/4] Add EHL and TGL PCI info and PCI ID
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1566869891-29239-1-git-send-email-weifeng.voon@intel.com>
+References: <1566869891-29239-1-git-send-email-weifeng.voon@intel.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 27 Aug 2019 21:59:56 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Aug 2019 at 13:25, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.69 release.
-> There are 98 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu 29 Aug 2019 07:25:02 AM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.69-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+From: Voon Weifeng <weifeng.voon@intel.com>
+Date: Tue, 27 Aug 2019 09:38:07 +0800
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+> In order to keep PCI info simple and neat, this patch series have
+> introduced a 3 hierarchy of struct. First layer will be the
+> intel_mgbe_common_data struct which keeps all Intel common configuration.
+> Second layer will be xxx_common_data which keeps all the different Intel
+> microarchitecture, e.g tgl, ehl. The third layer will be configuration
+> that tied to the PCI ID only based on speed and RGMII/SGMII interface.
+> 
+> EHL and TGL will also having a higher system clock which is 200Mhz.
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.19.69-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: e944704d5a79f6d6506a872edebd16e2b93cb349
-git describe: v4.19.68-99-ge944704d5a79
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.68-99-ge944704d5a79
-
-
-No regressions (compared to build v4.19.67-86-gdef4c11b3131)
-
-
-No fixes (compared to build v4.19.67-86-gdef4c11b3131)
-
-Ran 25199 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libgpiod
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-* ltp-fs-tests
-* network-basic-tests
-* ltp-open-posix-tests
-* kvm-unit-tests
-* ssuite
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Series applied.
