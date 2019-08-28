@@ -2,126 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F9B3A0A91
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F19A0A94
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:39:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfH1Tii (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 15:38:38 -0400
-Received: from mga06.intel.com ([134.134.136.31]:28642 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbfH1Tih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 15:38:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 12:38:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
-   d="scan'208";a="381391122"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
-  by fmsmga006.fm.intel.com with ESMTP; 28 Aug 2019 12:38:35 -0700
-Subject: Re: [PATCH] ioat/dca: Use struct_size() helper
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        "Williams, Dan J" <dan.j.williams@intel.com>
-Cc:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190828184015.GA4273@embeddedor>
-From:   Dave Jiang <dave.jiang@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
- 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
- o6nmKbYpUAltQObU2w==
-Message-ID: <78eb4e9a-ec3d-f61e-1c7e-5f26a5608e9b@intel.com>
-Date:   Wed, 28 Aug 2019 12:38:35 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726991AbfH1Tit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 15:38:49 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33838 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbfH1Tiq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 15:38:46 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s49so1328721edb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 12:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mGPxPtRA1D+C9Lx3ecKYNHdNJ8rQlVmAMJe2O6XMN1o=;
+        b=MgNQWIW5jaNIZ+v28n88Cf6T294svtLxJZdXwXVamUX/+sr9l91TkrXK+FgKlMwbry
+         EPaEnzysbWIwA9j35sHyxxlGI2AlqJcLv0DksYPfmu7kxL5kj7JFqM770Ja98lKj9cBN
+         KHajg8E52NCpTHC1oRWQ+WJyyNZAroXzHXP8M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mGPxPtRA1D+C9Lx3ecKYNHdNJ8rQlVmAMJe2O6XMN1o=;
+        b=GMpmi9bnk9iRKeGlIMLSfYSBX3XEaYNo87AEhKsoz+ilozdGuUwA08towg798cYUPz
+         jUrLKfiS3Xma8DczNlbhX4HuCBKDqoa9/WK/g4bkcaB8kdQGOetSPMEgGnoME7iw2DcS
+         bmPthni35Iy/hDgvQG0lIEUznvvIlPOWtG+DZVZMbD/w5oVuMH8eVGlalZoCTmcTqGJJ
+         4jqZ8G5rafpEM1tF2AuVu+f3I2xpAglvr3dk9rXio6m7SM7s/FNzJbL/6tU3xV8V+Wv1
+         n/yc1v6Xlne9tH8cp3EfudOpcQIuflSoeVDi8RekgmdUK3O3FYU4+LVIPRRUBhea5AxM
+         X8UA==
+X-Gm-Message-State: APjAAAXAfsvLULnSKG5xYDZY5Rek7oOFqkHxe993I1h7dJfDUVypttHz
+        dAitxFasA+i8WetOvHsE0yktQgQRdOSi4lb8
+X-Google-Smtp-Source: APXvYqwZUHjFu8iHpa+MkvhDT19gzuQxbNAf7mpdYtbc6V4wQUM1HtedjY+kAqqFhFCfI0Jctp83Cw==
+X-Received: by 2002:a50:fc12:: with SMTP id i18mr6036132edr.23.1567021124863;
+        Wed, 28 Aug 2019 12:38:44 -0700 (PDT)
+Received: from prevas-ravi.prevas.se (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
+        by smtp.gmail.com with ESMTPSA id ni7sm38990ejb.57.2019.08.28.12.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 12:38:44 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] x86: mmu.h: move mm_context_t::ia32_compat member a bit down
+Date:   Wed, 28 Aug 2019 21:38:36 +0200
+Message-Id: <20190828193836.16791-2-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190828193836.16791-1-linux@rasmusvillemoes.dk>
+References: <20190828193836.16791-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-In-Reply-To: <20190828184015.GA4273@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+For CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS=n, there's both a
+6-byte hole after ia32_compat as well as a 4-byte hole after
+perf_rdpmc_allowed. So rearranging things a bit we cut 8 bytes of
+sizeof(struct mm_struct).
 
+For a CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS=y kernel, this patch
+just moves the 6-byte hole to another place in mm_context_t.
 
-On 8/28/19 11:40 AM, Gustavo A. R. Silva wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> 
-> struct ioat_dca_priv {
-> 	...
->         struct ioat_dca_slot     req_slots[0];
-> };
-> 
-> Make use of the struct_size() helper instead of an open-coded version
-> in order to avoid any potential type mistakes.
-> 
-> So, replace the following form:
-> 
-> sizeof(*ioatdca) + (sizeof(struct ioat_dca_slot) * slots)
-> 
-> with:
-> 
-> struct_size(ioatdca, req_slots, slots)
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Putting the ia32_compat member after the pkey members is deliberate to
+keep the latter two (when present) in the same 4-byte unit.
 
-Acked-by: Dave Jiang <dave.jiang@intel.com>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ arch/x86/include/asm/mmu.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> ---
->  drivers/dma/ioat/dca.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/ioat/dca.c b/drivers/dma/ioat/dca.c
-> index 70fd8454d002..be61c32a876f 100644
-> --- a/drivers/dma/ioat/dca.c
-> +++ b/drivers/dma/ioat/dca.c
-> @@ -286,8 +286,7 @@ struct dca_provider *ioat_dca_init(struct pci_dev *pdev, void __iomem *iobase)
->  		return NULL;
->  
->  	dca = alloc_dca_provider(&ioat_dca_ops,
-> -				 sizeof(*ioatdca)
-> -				      + (sizeof(struct ioat_dca_slot) * slots));
-> +				 struct_size(ioatdca, req_slots, slots));
->  	if (!dca)
->  		return NULL;
->  
-> 
+diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
+index b1bb47a3577b..ba3d22fcd507 100644
+--- a/arch/x86/include/asm/mmu.h
++++ b/arch/x86/include/asm/mmu.h
+@@ -32,10 +32,6 @@ typedef struct {
+ 	struct ldt_struct	*ldt;
+ 	struct mutex		lock;
+ #endif
+-#ifdef CONFIG_X86_64
+-	/* True if mm supports a task running in 32 bit compatibility mode. */
+-	unsigned short ia32_compat;
+-#endif
+ 
+ 	void __user *vdso;			/* vdso base address */
+ 	const struct vdso_image *vdso_image;	/* vdso image in use */
+@@ -49,6 +45,10 @@ typedef struct {
+ 	u16 pkey_allocation_map;
+ 	s16 execute_only_pkey;
+ #endif
++#ifdef CONFIG_X86_64
++	/* True if mm supports a task running in 32 bit compatibility mode. */
++	unsigned short ia32_compat;
++#endif
+ #ifdef CONFIG_X86_INTEL_MPX
+ 	/* address of the bounds directory */
+ 	void __user *bd_addr;
+-- 
+2.20.1
+
