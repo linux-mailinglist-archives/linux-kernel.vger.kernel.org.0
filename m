@@ -2,124 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D5AAA08C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD59A08CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:39:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbfH1Riu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:38:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43726 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbfH1Rit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:38:49 -0400
-Received: from sstabellini-ThinkPad-T480s.xilinx.com (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69D4F2077B;
-        Wed, 28 Aug 2019 17:38:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567013928;
-        bh=RIt/H8XgVifTEhugC1lEufb4AZAcq59OXKgKcWpAXrM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mFFmsoI2WrO9CnnAGYaAzhzpXYFxVVg9B1B5BCL83R/9wuur9d4dRBFfL8iMMd4hi
-         W+BLxOuQOCNffysulPuuGslQVUWOHw/40PAdmxLOV9uTxovYH9PTbypJI5oSdu+TUL
-         pr+4j0JgPlICgAjAu0M7l4Q5vmQfBvVbBboU8gl0=
-From:   Stefano Stabellini <sstabellini@kernel.org>
-To:     will@kernel.org
-Cc:     robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
-        michal.simek@xilinx.com, sstabellini@kernel.org, git@xilinx.com,
-        linux-kernel@vger.kernel.org,
-        Stefano Stabellini <stefano.stabellini@xilinx.com>
-Subject: [PATCH] arm-smmu: check for generic bindings first
-Date:   Wed, 28 Aug 2019 10:38:37 -0700
-Message-Id: <20190828173837.29617-1-sstabellini@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726941AbfH1Rjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:39:32 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39979 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726536AbfH1Rjb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 13:39:31 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so103977pgj.7
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:39:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GuCbGVwHRmEGqfMBjZZ+2u4NovL8Rt/IpkZfKDrFBI8=;
+        b=IGR9CiXHZQSh/xjQMoY6pRAdfAFxdTZNImDxml/hjjOXvJ+gRYKyeoRx8mYWbRhZvz
+         GrByy0qWFHCi/YCnq0nk0i2F0Uyh3zew2GKE8iw1N3pmmuOwEaPeSFiy1MRX8CzcMuRZ
+         mkQ13VgaMibRHsM8YDcSX84q45vyxMq3XHi0YOSc/Vn9seZ/HrhxmFEBsJMH50ohZon3
+         3GRUl2ipzTQISk5T0eHK9Exwck0dA+Y54K8x2HMFLy+sXXha95k9CGPrjVar0ijiCvgl
+         0MxX1s9Z/4QIb0NNa+jEur5DCeeV9hDAw3GHwjG97CDGBh3JGZBHUx3Qf5sn1ZCR17+h
+         +pvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GuCbGVwHRmEGqfMBjZZ+2u4NovL8Rt/IpkZfKDrFBI8=;
+        b=XT+1f5lsT/0fWXjvsbPDdoNb0zkQ0mQrRnvZYq955QEiawTfjIcAZGHH0sm1Vzy9pI
+         122T/C+yP1jtIOFLZU4fFnrgJOeTS78G8VCqx3SJxQF0vCqQHwGa9MKSGXtWtgl1OPN9
+         q2Z5LwsLR6dW7NClga8M9/LHgBlKFObDlVgXYrOIzy69ap2K+VIUVJHMP4H1D7obl2Lf
+         dzrsvrKXhGuJqFGrsZawUzwm24XBA4FtAQidRkcsJZX3zyQy02tNZkXWDXnSl4PsoycP
+         SgFbVt2IRGkN+9+c54GwCR25s06RVFkjQanhtw00zPoapveURmgWVh8mfGDlwMowxESK
+         PalA==
+X-Gm-Message-State: APjAAAVQIfdfSJhMb/9NdoDFeLFlLspUJepgk91nIE49RGWmd3/LBK6B
+        TIRVk3KcCC9TeFBrVO/rd40f7w1PrSDjxLg1rWZxJw==
+X-Google-Smtp-Source: APXvYqzdtkFSXhZjMKVoVzXBpdLNDINY5K3kMdUxm75M/4l37E4Q0dysGQ/lGI2Jnh2fcoAoGM+YptMYIOb8HnteoXE=
+X-Received: by 2002:a17:90a:c20f:: with SMTP id e15mr5304440pjt.123.1567013970427;
+ Wed, 28 Aug 2019 10:39:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190815225844.145726-1-nhuck@google.com> <20190827004155.11366-1-natechancellor@gmail.com>
+ <CAK7LNATHj5KrnFa0fvHjuC-=5mV8VBT14vrpPMfuNKWw7wabag@mail.gmail.com> <CANiq72ndWZWD-KBT1s-mUxQNa1jaD7oDaCB2+NPiT1chf14Z_g@mail.gmail.com>
+In-Reply-To: <CANiq72ndWZWD-KBT1s-mUxQNa1jaD7oDaCB2+NPiT1chf14Z_g@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 28 Aug 2019 10:39:19 -0700
+Message-ID: <CAKwvOdkuDPfOusJRneeTzg7tZ4VKxaRCNg2SgmjVas58cDwe8w@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: Do not enable -Wimplicit-fallthrough for clang
+ for now
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Huckleberry <nhuck@google.com>,
+        Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Stabellini <stefano.stabellini@xilinx.com>
+On Wed, Aug 28, 2019 at 9:45 AM Miguel Ojeda
+<miguel.ojeda.sandonis@gmail.com> wrote:
+>
+> On Wed, Aug 28, 2019 at 6:21 PM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > Applied to linux-kbuild. Thanks.
+> >
+> > (If other clang folks give tags, I will add them later.)
+>
+> Acked-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
 
-Today, the arm-smmu driver checks for mmu-masters on device tree, the
-legacy property, if it is absent it assumes that we are using the new
-bindings. If it is present it assumes that we are using the legacy
-bindings. All arm-smmus need to use the same bindings: legacy or new.
-
-There are two issues with this:
-
-- we are not actually checking for the new bindings explicitly
-It would be better to have an explicit check for the new bindings rather
-than assuming we must be using the new if the old are not there.
-
-- old and new bindings cannot coexist
-It would be nice to be able to provide both old and new bindings so
-that software that hasn't been updated yet is still able to get IOMMU
-information from the legacy bindings while at the same time newer
-software can get the latest information via the new bindings. (Xen has
-not been updated to use the new binding yet for instance.) The current
-code breaks under these circumstances because if the old bindings are
-present, the new are not even checked.
-
-This patch changes the scheme by checking for #iommu-cells, which is
-only present with the new bindings, before checking for mmu-masters.
-The new bindings are always favored when present. All SMMUs still need
-to use the same bindings: mix-and-matching new and old bindings between
-different SMMUs is not allowed.
-
-Signed-off-by: Stefano Stabellini <stefano.stabellini@xilinx.com>
----
-
-Let me know if you'd like me to turn the two using_*_binding variables
-into a single one.
-
-Also, please note that this is not meant as an excuse not to get Xen
-updated to use the new binding.
-
- drivers/iommu/arm-smmu.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 64977c131ee6..79b518ff215c 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2118,7 +2118,7 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
- {
- 	const struct arm_smmu_match_data *data;
- 	struct device *dev = &pdev->dev;
--	bool legacy_binding;
-+	bool legacy_binding, generic_binding;
- 
- 	if (of_property_read_u32(dev->of_node, "#global-interrupts",
- 				 &smmu->num_global_irqs)) {
-@@ -2132,16 +2132,20 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
- 
- 	parse_driver_options(smmu);
- 
--	legacy_binding = of_find_property(dev->of_node, "mmu-masters", NULL);
--	if (legacy_binding && !using_generic_binding) {
--		if (!using_legacy_binding)
--			pr_notice("deprecated \"mmu-masters\" DT property in use; DMA API support unavailable\n");
--		using_legacy_binding = true;
--	} else if (!legacy_binding && !using_legacy_binding) {
-+	generic_binding = of_find_property(dev->of_node, "#iommu-cells", NULL);
-+	if (generic_binding && !using_legacy_binding) {
- 		using_generic_binding = true;
- 	} else {
--		dev_err(dev, "not probing due to mismatched DT properties\n");
--		return -ENODEV;
-+		legacy_binding = of_find_property(dev->of_node, "mmu-masters",
-+						  NULL);
-+		if (legacy_binding && !using_generic_binding) {
-+			if (!using_legacy_binding)
-+				pr_notice("deprecated \"mmu-masters\" DT property in use; DMA API support unavailable\n");
-+			using_legacy_binding = true;
-+		} else {
-+			dev_err(dev, "not probing due to mismatched DT properties\n");
-+			return -ENODEV;
-+		}
- 	}
- 
- 	if (of_dma_is_coherent(dev->of_node))
+I verified that GCC didn't get support for -Wimplicit-fallthrough
+until GCC ~7.1 release, so the cc-option guard is still required.
+Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+Thanks for the patch Nathan.
 -- 
-2.17.1
-
+Thanks,
+~Nick Desaulniers
