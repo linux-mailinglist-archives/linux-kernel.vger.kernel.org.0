@@ -2,97 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F66FA01B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E9EA01D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:33:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726847AbfH1M3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 08:29:17 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51339 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbfH1M3P (ORCPT
+        id S1726421AbfH1Mdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 08:33:50 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34751 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbfH1Mdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 08:29:15 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 05AD9825D9; Wed, 28 Aug 2019 14:28:59 +0200 (CEST)
-Date:   Wed, 28 Aug 2019 14:29:13 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Pavel Machek <pavel@denx.de>, Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chen Yu <yu.c.chen@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 4.19 72/98] x86/CPU/AMD: Clear RDRAND CPUID bit on AMD
- family 15h/16h
-Message-ID: <20190828122913.GE8052@amd>
-References: <20190827072718.142728620@linuxfoundation.org>
- <20190827072722.020603090@linuxfoundation.org>
- <20190827113604.GB18218@amd>
- <alpine.DEB.2.21.1908271525480.1939@nanos.tec.linutronix.de>
- <20190828103113.GA14677@amd>
- <alpine.DEB.2.21.1908281231480.1869@nanos.tec.linutronix.de>
- <20190828114947.GC8052@amd>
- <20190828120024.GF4920@zn.tnic>
- <20190828120935.GD8052@amd>
- <20190828121628.GG4920@zn.tnic>
+        Wed, 28 Aug 2019 08:33:50 -0400
+Received: by mail-ed1-f68.google.com with SMTP id s49so2857918edb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 05:33:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=3unkaMrl/qzsX06autNLUdhronbmncl167htZAoTRjI=;
+        b=flQ0JHBst+ozyUQt8em/WQffA+bsrARJC3KNZkNezN9e60qC5iyUeBXk6uLV+etD1B
+         Pu6KhEIQez6s7FSPc0NAldkmlMRix3ojSDDRNzsREX2Z9pum8TY2w7RRqu2oUGbMGGl7
+         RyJthOPHE9UKx5p1q+KdAnVQZ5BpDFfoBaUulUOWkg48EOtP2hqThae9TS+ep8zRH+p1
+         Dty79pfdbOxQ5E1WSRg/R7+wHj+brHmqg6WCdSJQbuwt7GSVq8LW9/+2MFDIVVv0Wlvb
+         jxddECtedy/S7V33MVIIKmgm2vJDkDijyU+9ZHSgUD5p8SZr9K9hERqQlHxZ2GxUwIgp
+         9j+A==
+X-Gm-Message-State: APjAAAVCQXKb8nWL6ow8jvK1RVaAR1H7JCeRxudV1LSGxNlSNA+/5nrQ
+        6W2MqHQU9mR0NwSP6mrv2Ec=
+X-Google-Smtp-Source: APXvYqwvWhZKxywMO9CDSJJHbOso7S4Y8nuND+mNgXU/P+ZFkTLsUiLEZcwPu1th2bc8XZMVNgWMQg==
+X-Received: by 2002:a50:ee08:: with SMTP id g8mr3714065eds.291.1566995628892;
+        Wed, 28 Aug 2019 05:33:48 -0700 (PDT)
+Received: from [10.10.2.174] (bran.ispras.ru. [83.149.199.196])
+        by smtp.gmail.com with ESMTPSA id a16sm369829ejr.10.2019.08.28.05.33.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2019 05:33:48 -0700 (PDT)
+Reply-To: efremov@linux.com
+Subject: Re: [PATCH] scripts: coccinelle: check for !(un)?likely usage
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Joe Perches <joe@perches.com>, cocci@systeme.lip6.fr,
+        linux-kernel@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>
+References: <20190825130536.14683-1-efremov@linux.com>
+ <b5bae2981e27d133b61d99b08ee60244bf7aabe3.camel@perches.com>
+ <88f6e48e-1230-9488-a973-397f4e6dfbb5@linux.com>
+ <4E9DDF9E-C883-44F0-A3F4-CD49284DB60D@lip6.fr>
+ <95c32d19-eb4d-a214-6332-038610ec3dbd@rasmusvillemoes.dk>
+From:   Denis Efremov <efremov@linux.com>
+Message-ID: <16053035-655a-7d53-29d1-ea914e3a21dd@linux.com>
+Date:   Wed, 28 Aug 2019 15:33:46 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="mR8QP4gmHujQHb1c"
-Content-Disposition: inline
-In-Reply-To: <20190828121628.GG4920@zn.tnic>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <95c32d19-eb4d-a214-6332-038610ec3dbd@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 8/28/19 2:33 PM, Rasmus Villemoes wrote:
+> On 25/08/2019 21.19, Julia Lawall wrote:
+>>
+>>
+>>> On 26 Aug 2019, at 02:59, Denis Efremov <efremov@linux.com> wrote:
+>>>
+>>>
+>>>
+>>>> On 25.08.2019 19:37, Joe Perches wrote:
+>>>>> On Sun, 2019-08-25 at 16:05 +0300, Denis Efremov wrote:
+>>>>> This patch adds coccinelle script for detecting !likely and !unlikely
+>>>>> usage. It's better to use unlikely instead of !likely and vice versa.
+>>>>
+>>>> Please explain _why_ is it better in the changelog.
+>>>>
+>>>
+>>> In my naive understanding the negation (!) before the likely/unlikely
+>>> could confuse the compiler
+>>
+>> As a human I am confused. Is !likely(x) equivalent to x or !x?
+> 
+> #undef likely
+> #undef unlikely
+> #define likely(x) (x)
+> #define unlikely(x) (x)
+> 
+> should be a semantic no-op. So changing !likely(x) to unlikely(x) is
+> completely wrong. If anything, !likely(x) can be transformed to
+> unlikely(!x).
 
---mR8QP4gmHujQHb1c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As far as I could understand it:
 
-On Wed 2019-08-28 14:16:28, Borislav Petkov wrote:
-> On Wed, Aug 28, 2019 at 02:09:36PM +0200, Pavel Machek wrote:
-> > Yes, and now AMD has patch to break it on *all* machines.
->=20
-> It doesn't break all machines - you need to look at that patch again.
+# define likely(x)	__builtin_expect(!!(x), 1)
+# define unlikely(x)	__builtin_expect(!!(x), 0)
 
-This is not a way to have an inteligent conversation.
+From GCC doc:
+__builtin_expect compares the values. The semantics of the built-in are that it is expected that exp == c.
 
-The patch clearly breaks more machines than it has to. It is known to
-cause regression. You snipped the rest of the email with better ways
-to solve this.
+if (!likely(cond))
+if (!__builtin_expect(!!(cond), 1))
+if (!((!!(cond)) == 1))
+if ((!!(cond)) != 1) and since !! could result in 0 or 1
+if ((!!(cond)) == 0)
 
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+if (unlikely(cond))
+if (__builtin_expect(!!(cond), 0))
+if ((!!(cond)) == 0))
 
---mR8QP4gmHujQHb1c
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Thanks,
+Denis
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1mc5kACgkQMOfwapXb+vIz7QCgqGdVM5QcSn7YV7viJnMiuqQs
-H2kAn3NoOi6AbQxnnAtd3nKdvRrtQcrx
-=Kb80
------END PGP SIGNATURE-----
-
---mR8QP4gmHujQHb1c--
