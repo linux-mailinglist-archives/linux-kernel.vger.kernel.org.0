@@ -2,113 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 235FD9FD46
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 929FF9FD50
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:40:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfH1Iis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:38:48 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38731 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbfH1Iis (ORCPT
+        id S1726508AbfH1Ij5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:39:57 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44492 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726290AbfH1Ij5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:38:48 -0400
-Received: by mail-ot1-f68.google.com with SMTP id r20so1971932ota.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 01:38:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=LA42bpg7TE1ErDc8e8NGiPSnjc3LkGHxDTQOiKqpb4U=;
-        b=hfSMAmRpOdASqMo7kGDzwsaq1ugAqj8azpYiMW18Q4rIOyrsHZHB8eUQZRZWS6talu
-         aq8wdMiWdJYogvypSrLVo8nEOyX7ETgHotBuqD2xXAnkpsCEQmqAtVnK76LnFuTHD0cD
-         FS2jQLmBQtBHhcUeLjxcFGH23vM2ugltBi0mZl3AKifLrE4Dcfu82NYWTwduo8N9nF0o
-         POzqNyeGFRSXYaDTcJlIMhmKWlHMqhp7vxvqHNr1pZebgghxEoaQWhymlcp/WAey8P85
-         RlNvGjLrgQ2Vd4em5KUYRyhWldG9dH2oMv2LKV/t9kYF6I1+uP2ZwjPygwg7mHCxEuUe
-         vTBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=LA42bpg7TE1ErDc8e8NGiPSnjc3LkGHxDTQOiKqpb4U=;
-        b=XOrG2faJNLR67WxPVWAm4UNhXB3nBVSfwJc1faaQQjh7jZr/kd+NG58cUrHr5oMYDP
-         YIVfPGGCuqJ6peODo+gEmxZ0ampsCDL7c8pg3a6MXfZluW1BvCq5byOTiq2FAHwrpJsV
-         E+Di0zO593LeDDObvpQ12V+P81VONZkLpXquSC19qX9Z46jpOGv4L/Ljqu+NsigegjWi
-         9KF53Ag9p9mQMXL9zpQAXslN4nWaQvqvBuHyaoSZr6nO1FXdzfIUIfbkwSlGrIBN/SPr
-         JQvb23P3fV02fnfYeJBSJEaX4f8HcJs6DJ+sUCo7rqP1npnFZOAhYpqRXYW30MUN6VBH
-         /1LA==
-X-Gm-Message-State: APjAAAXidArwCiUA16CZAPU89sf72CxYysFsU1Y5BHg/3ZF1Ix6aG4HC
-        4eXjado66b02YUXG4T5YBNlKZnp6eyT6ZjHAPViTbiM4
-X-Google-Smtp-Source: APXvYqzr+/pBY3bba/FTj2fIGzqgeyy/JZsqIzuMeHwfBrHmod6PlFGij5uDPP1r6ct0mKAIXOz2O0gG2DETVBBY5pM=
-X-Received: by 2002:a9d:5551:: with SMTP id h17mr2372248oti.194.1566981527387;
- Wed, 28 Aug 2019 01:38:47 -0700 (PDT)
+        Wed, 28 Aug 2019 04:39:57 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190828083955euoutp028ef90bcf053553a8e644f39ef3335abb~-CXWO6L5M0690406904euoutp02h
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 08:39:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190828083955euoutp028ef90bcf053553a8e644f39ef3335abb~-CXWO6L5M0690406904euoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1566981595;
+        bh=nCO1CGbNKa5rvO48tD1eLJmbBQi/YQi3un/pIVM1ksQ=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=GyUvhO6HUlrozwZ+TG0uHeVIsHhZiuw7lkq26iTfRYh/mXQq/HVm2f0FZ4Q2Brefi
+         /go/dCadcvFZSwQaJ4kn/7fqD7oQyo9qjS24MxWdthRrAkgHTAx+NJqdHM7UHBHp5L
+         S0CF7Js9555sE7kx4Y1RZlliA8d1Tv4DUheaz7QA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190828083955eucas1p2c5ef161d4b0934ff1def119ebe330278~-CXVc2gpu2348323483eucas1p2z;
+        Wed, 28 Aug 2019 08:39:55 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 0A.DD.04374.ADD366D5; Wed, 28
+        Aug 2019 09:39:54 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190828083954eucas1p2b8dc8e6d795b984ec607a7e49911ff2b~-CXUm5jQe2349023490eucas1p2h;
+        Wed, 28 Aug 2019 08:39:54 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190828083953eusmtrp1093ab1005f1cbb6474ace28275f78049~-CXUYPHem2582525825eusmtrp1x;
+        Wed, 28 Aug 2019 08:39:53 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-b1-5d663dda61d3
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D7.07.04117.9DD366D5; Wed, 28
+        Aug 2019 09:39:53 +0100 (BST)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190828083953eusmtip198a24422c79bd0cf39db371dda376fb4~-CXTs6pHN0415604156eusmtip1z;
+        Wed, 28 Aug 2019 08:39:53 +0000 (GMT)
+Subject: Re: [PATCH v7 9/9] drm: exynos: exynos_hdmi: use
+ cec_notifier_conn_(un)register
+To:     Dariusz Marcinkiewicz <darekm@google.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        hverkuil-cisco@xs4all.nl
+Cc:     Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <6bbfb6f8-15c2-9ad2-8857-898f4c6435a3@samsung.com>
+Date:   Wed, 28 Aug 2019 10:39:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190827064629.90214-1-david@protonic.nl>
-In-Reply-To: <20190827064629.90214-1-david@protonic.nl>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 28 Aug 2019 10:38:36 +0200
-Message-ID: <CAMpxmJV2XC+CK1SfJnH2YuaD2Gh=fiBQY+WPbjnqkvxGW6ZH_w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: gpio-pca953x.c: Correct type of reg_direction
-To:     David Jander <david@protonic.nl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814104520.6001-10-darekm@google.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3bO2Y7D6WkavqybDfujIs2MOmVZQcSBIIIoYyW27KTSZrbT
+        uhJ5AfGy6XJRuVatErR102XzVkZqDZMaUoQpa5JCqUnknGBeltuZ5H+/532f93veFz4Sk/4g
+        ZGRm1hlWk6VUyYVi3P5u4uPanm0nUtZ1F8fS+o8dAtpnv4rRlY6HiP7s/S2kuypcOF3uNuD0
+        z29dOF3WP4zRTmeNiP6Q90tE2/q/EPSnJrOQ1tW8IOibzhYBfdM4KNwRzrwat+CMxaZlbNYi
+        IVM/3kcw7hKHgHleeYUprbMixmNbxrz3ekT7QhTircdZVeZZVhOXdFScca15lMhuCz1vnviJ
+        5aAqcTEKIYHaAK6rPYJiJCalVDUCS25xUIwheGvXI154EPwqdKK5EXf+oIhvVCG4Wz8UFCMI
+        XDN/cL8rglLAtOuR0N+IpIoQPNCPBwRGVWCQ224Q+F1CKh70b0sD70qoJDB+MBN+xqmVMGOb
+        CNQXUYdgtK+N4D0LoaNiIJAQQm0Coy434MGoKMgbe0jwvBzqR8yYPwyoIhKG/74KLr4L7M52
+        Ic8RMOSoE/G8BDqNOpwfyEega+4V8cKAwO2wBKcToc3RNRtBzkasgmdNcX4Eaif0vVDxGAbd
+        Iwv5HcKg3H4D48sSKCyQ8m/EwKT1hoBnGZQM+HADkpvmXWaad41p3jWm/7EWhFtRFKvl1Oks
+        l5DFnovllGpOm5Uem3ZKbUOz369zxuFtQC1Tx1oRRSJ5qKQwnE2REsqz3AV1KwISk0dKvsfM
+        liTHlRcusppTqRqtiuVa0WISl0dJLi3oOyyl0pVn2JMsm81q5roCMkSWg0JtUUeTahWjntKc
+        38k1BUmENe70Cvflgarke3dueauv9ywzNEq96w5M/tn7MmUqc+nmg7UmRVnbYEWe6xz96MmT
+        L0OpTRunDkfXDdsOJnZz62WNr/fcr6a2xzyd7k+IeOxTR2fcbX1sUPs+NfjSCm/3Kr6uMTX9
+        OJJt3r3/zZb+khw5zmUo41djGk75D83/noN6AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJIsWRmVeSWpSXmKPExsVy+t/xu7o3bdNiDV7M0bPoPXeSyeL/tonM
+        FkuOr2S0uPL1PZvFxZl3WSwm3Z/AYvHi3kUWi/7Hr5ktzp/fwG5xtukNu8Wmx9dYLS7vmsNm
+        0bNhK6vFjPP7mCxmTH7J5sDvsffbAhaPBZtKPTat6mTz2P7tAavH/e7jTB6bl9R79G1Zxejx
+        eZOcx6mvn9kDOKP0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLL
+        Uov07RL0Mqbs/sRacJinYs7PF8wNjMu5uhg5OSQETCTuN79k72Lk4hASWMoo8fHhHcYuRg6g
+        hJTE/BYliBphiT/Xutggal4zSnzfso8RJCEsECXx9+5qsISIQCejxK47t1lAHGaBmcwSu1b0
+        QI3dxijxZ8kWVpAWNgFDid6jfWDtvAJ2EpPPzgGLswioSvzb9BMsLioQIXF4xyyoGkGJkzOf
+        sIDYnALmEpN7GsHizALqEn/mXWKGsMUlmr6sZIWw5SW2v53DPIFRaBaS9llIWmYhaZmFpGUB
+        I8sqRpHU0uLc9NxiI73ixNzi0rx0veT83E2MwGjfduznlh2MXe+CDzEKcDAq8fB28KfGCrEm
+        lhVX5h5ilOBgVhLhfaQCFOJNSaysSi3Kjy8qzUktPsRoCvTcRGYp0eR8YCLKK4k3NDU0t7A0
+        NDc2NzazUBLn7RA4GCMkkJ5YkpqdmlqQWgTTx8TBKdXAWHk/8qHuefNNd5nnltxWXRTqWXXl
+        y2nn3wfm7brHqOHCeant5InlAk7si0tEVi09KF/4ZqOfC+P5kBei//tM4j9HL0+68izsilSt
+        /jzR4IYXEoeWcXqFRU75ylH0TVdjzkZ1ZptntxK0jj3dbphVotGx/j27adNijwOdrae2mmVq
+        Cx+LmLwnQYmlOCPRUIu5qDgRAAkeheoMAwAA
+X-CMS-MailID: 20190828083954eucas1p2b8dc8e6d795b984ec607a7e49911ff2b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190814104630epcas3p44755443f37e78b2613f7dda35d71bb71
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190814104630epcas3p44755443f37e78b2613f7dda35d71bb71
+References: <20190814104520.6001-1-darekm@google.com>
+        <CGME20190814104630epcas3p44755443f37e78b2613f7dda35d71bb71@epcas3p4.samsung.com>
+        <20190814104520.6001-10-darekm@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 27 sie 2019 o 08:46 David Jander <david@protonic.nl> napisa=C5=82(a):
->
-> The type of reg_direction needs to match the type of the regmap, which is
-> u8.
->
-> Signed-off-by: David Jander <david@protonic.nl>
-> ---
->  drivers/gpio/gpio-pca953x.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-> index 378b206d2dc9..30072a570bc2 100644
-> --- a/drivers/gpio/gpio-pca953x.c
-> +++ b/drivers/gpio/gpio-pca953x.c
-> @@ -604,7 +604,7 @@ static void pca953x_irq_bus_sync_unlock(struct irq_da=
-ta *d)
->         u8 new_irqs;
->         int level, i;
->         u8 invert_irq_mask[MAX_BANK];
-> -       int reg_direction[MAX_BANK];
-> +       u8 reg_direction[MAX_BANK];
->
->         regmap_bulk_read(chip->regmap, chip->regs->direction, reg_directi=
-on,
->                          NBANK(chip));
-> @@ -679,7 +679,7 @@ static bool pca953x_irq_pending(struct pca953x_chip *=
-chip, u8 *pending)
->         bool pending_seen =3D false;
->         bool trigger_seen =3D false;
->         u8 trigger[MAX_BANK];
-> -       int reg_direction[MAX_BANK];
-> +       u8 reg_direction[MAX_BANK];
->         int ret, i;
->
->         if (chip->driver_data & PCA_PCAL) {
-> @@ -768,7 +768,7 @@ static int pca953x_irq_setup(struct pca953x_chip *chi=
-p,
->  {
->         struct i2c_client *client =3D chip->client;
->         struct irq_chip *irq_chip =3D &chip->irq_chip;
-> -       int reg_direction[MAX_BANK];
-> +       u8 reg_direction[MAX_BANK];
->         int ret, i;
->
->         if (!client->irq)
-> --
-> 2.19.1
->
+On 8/14/19 12:45, Dariusz Marcinkiewicz wrote:
+> Use the new cec_notifier_conn_(un)register() functions to
+> (un)register the notifier for the HDMI connector, and fill in
+> the cec_connector_info.
+> 
+> Changes since v2:
+> 	- removed unnecessary call to invalidate phys address before
+> 	deregistering the notifier,
+> 	- use cec_notifier_phys_addr_invalidate instead of setting
+> 	invalid address on a notifier.
+> 
+> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+> Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-Applied for v5.4.
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Thanks!
-Bart
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index bc1565f1822ab..d532b468d9af5 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+
+> @@ -2006,12 +2020,6 @@ static int hdmi_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	hdata->notifier = cec_notifier_get(&pdev->dev);
+> -	if (hdata->notifier == NULL) {
+> -		ret = -ENOMEM;
+> -		goto err_hdmiphy;
+> -	}
+> -
+>  	pm_runtime_enable(dev);
+>  
+>  	audio_infoframe = &hdata->audio.infoframe;
+> @@ -2023,7 +2031,7 @@ static int hdmi_probe(struct platform_device *pdev)
+>  
+>  	ret = hdmi_register_audio_device(hdata);
+>  	if (ret)
+> -		goto err_notifier_put;
+> +		goto err_runtime_disable;
+
+
+> -err_notifier_put:
+> -	cec_notifier_put(hdata->notifier);
+> +err_runtime_disable:
+>  	pm_runtime_disable(dev);
+
+nit: I think err_rpm_disable or err_pm_runtime_disable could be better 
+     label names.
+
+-- 
+Thanks,
+Sylwester
