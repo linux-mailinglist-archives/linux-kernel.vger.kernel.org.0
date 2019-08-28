@@ -2,71 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A507E9FD66
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:46:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B93319FD69
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfH1IqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:46:02 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:38182 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbfH1IqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:46:01 -0400
-Received: from zn.tnic (p200300EC2F0A5300709FCF54A47702A2.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5300:709f:cf54:a477:2a2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 612F31EC058B;
-        Wed, 28 Aug 2019 10:46:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1566981960;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rVRBMbPy163RbzHyWyI7SHMNRU6wR9fy8f+dHHgyUC4=;
-        b=ZmHtKHNf44kbevGS5LTb2i1WfnrxRVYgRUREhVv+ygaQLJKjND4XQZpJaRO6uETglpIKCO
-        wLzHnJxM5IN8ZRe0XM8l2duVWwF9x+LrYvcawPfS/oyC/exFUy9Q+dhHcWAeHyH1OFdFZz
-        hFMVBvuMwertY4IynQ2NJlBjOTiG4P8=
-Date:   Wed, 28 Aug 2019 10:45:55 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas =?utf-8?Q?Hellstr=C3=B6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
-        linux-graphics-maintainer@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        dri-devel@lists.freedekstop.org, Doug Covelli <dcovelli@vmware.com>
-Subject: Re: [PATCH v2 1/4] x86/vmware: Update platform detection code for
- VMCALL/VMMCALL hypercalls
-Message-ID: <20190828084555.GD4920@zn.tnic>
-References: <20190823081316.28478-1-thomas_os@shipmail.org>
- <20190823081316.28478-2-thomas_os@shipmail.org>
- <20190827125636.GE29752@zn.tnic>
- <471e1f6b-56eb-281e-155d-3149f6915f81@shipmail.org>
+        id S1726504AbfH1IrZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:47:25 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34119 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726300AbfH1IrY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 04:47:24 -0400
+Received: by mail-oi1-f193.google.com with SMTP id g128so1503793oib.1;
+        Wed, 28 Aug 2019 01:47:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=wvXkpVgy6884rDBDub7GSrouN3alYy0RjubNjRU4D8c=;
+        b=fF1VTJyoZfOh/nue2zV6YK0gz/XCdIae5JY/qHfApx9B7F2xZT2NBmDMMpguRZNaZD
+         KPxZJa9DWjfbKJxoKa5zhA3DXFM8IWlFPzwTQ4omHTIo5ZCDmX1QCuQgvNTbo09iOvEp
+         yhAV8mM74MNFpQ8ezqwXpcITtWQAyzmryrBqw0digdqAFDZa0jNCBP9xCDw43BBeKr32
+         scty0zVhhc/5xdluSu6mvF6iBiSx+SNFOSlFOCmDhAISSHTA2q7YTEAX76RvzgkV93i+
+         VUUtDnDXVX8C2dqSyd6/tZIjHxJAFnDJqCsLkCK1euNorCqdpODqosOL+9CUkmkk7EXB
+         +NQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=wvXkpVgy6884rDBDub7GSrouN3alYy0RjubNjRU4D8c=;
+        b=qiRrWS/VQ3oYacHXTIkzAZ4LWlHDNbh6lE3kcpSSCdgXmQOHlakU3S/31qJF6Dqyvt
+         Up9eZFf8Nxxq+lu/Zefhj1VoANwk1gT0SYGIzrMSmX8ypqpheSY6cRd0r6sqz2E/0xr7
+         dNm+h2pTvHVt9r26vPAcUowXECsaIiiW6lWWLSyw8XXCIa7hMWT1Zy4xvGFvnrwYmpSb
+         0QGeHJ1uxbRJDON1m5gwtu3TAk30zsCuhHynF4+qdi81msPbm7zpZJYwI93mkag4td48
+         tEaNTym/ZI3XIm/woua71mYsS/nec+CQYf9NGAtU2z1/W3ar6SFi5/AnlSEgwRFro8/q
+         MCHg==
+X-Gm-Message-State: APjAAAXgPsFUwWMku4hRauOp8Q6PNBGlbjOZvzkv1cvso2Femtg4w6MV
+        ohXhyS43P+YXQNeLMJMSm2iVB7zT3obt+gwRTlg=
+X-Google-Smtp-Source: APXvYqypLx3K4rWNLLZYA/GQnRqFih0CeElXVoPUwwnmxm+jKccr7fsFsDB0jQwV9ey6FHJU6J/HlaktN6yEMFzdUmE=
+X-Received: by 2002:aca:d410:: with SMTP id l16mr1887721oig.141.1566982043664;
+ Wed, 28 Aug 2019 01:47:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <471e1f6b-56eb-281e-155d-3149f6915f81@shipmail.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1564643196-7797-1-git-send-email-wanpengli@tencent.com>
+ <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com> <c3fe182f-627f-88ad-cb4d-a4189202b438@redhat.com>
+ <20190803202058.GA9316@amt.cnet> <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
+ <20190826204045.GA24697@amt.cnet> <CANRm+Cx0+V67Ek7FhSs61ZqZL3MgV88Wdy17Q6UA369RH7=dgQ@mail.gmail.com>
+ <CANRm+CxqYMzgvxYyhZLmEzYd6SLTyHdRzKVaSiHO-4SV+OwZUQ@mail.gmail.com> <CAJZ5v0iQc0-WzqeyAh-6m5O-BLraRMj+Z7sqvRgGwh2u2Hp7cg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0iQc0-WzqeyAh-6m5O-BLraRMj+Z7sqvRgGwh2u2Hp7cg@mail.gmail.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Wed, 28 Aug 2019 16:48:00 +0800
+Message-ID: <CANRm+CyHwAKDGtEDkKz_u9e5pzrV=h8K5=9CWt7Fv+PzYUheHA@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when dedicated
+ physical CPUs are available
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Marcelo Tosatti <mtosatti@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 09:45:19AM +0200, Thomas Hellström (VMware) wrote:
-> Hmm, we're missing a return 0; here. The number of return points and the
-> moved up variable declarations worries me a little. I'll see if I can clean
-> this up a bit, but would prefer to make a follow-up patch in that case.
+On Wed, 28 Aug 2019 at 16:45, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Wed, Aug 28, 2019 at 10:34 AM Wanpeng Li <kernellwp@gmail.com> wrote:
+> >
+> > On Tue, 27 Aug 2019 at 08:43, Wanpeng Li <kernellwp@gmail.com> wrote:
+> > >
+> > > Cc Michael S. Tsirkin,
+> > > On Tue, 27 Aug 2019 at 04:42, Marcelo Tosatti <mtosatti@redhat.com> w=
+rote:
+> > > >
+> > > > On Tue, Aug 13, 2019 at 08:55:29AM +0800, Wanpeng Li wrote:
+> > > > > On Sun, 4 Aug 2019 at 04:21, Marcelo Tosatti <mtosatti@redhat.com=
+> wrote:
+> > > > > >
+> > > > > > On Thu, Aug 01, 2019 at 06:54:49PM +0200, Paolo Bonzini wrote:
+> > > > > > > On 01/08/19 18:51, Rafael J. Wysocki wrote:
+> > > > > > > > On 8/1/2019 9:06 AM, Wanpeng Li wrote:
+> > > > > > > >> From: Wanpeng Li <wanpengli@tencent.com>
+> > > > > > > >>
+> > > > > > > >> The downside of guest side polling is that polling is perf=
+ormed even
+> > > > > > > >> with other runnable tasks in the host. However, even if po=
+ll in kvm
+> > > > > > > >> can aware whether or not other runnable tasks in the same =
+pCPU, it
+> > > > > > > >> can still incur extra overhead in over-subscribe scenario.=
+ Now we can
+> > > > > > > >> just enable guest polling when dedicated pCPUs are availab=
+le.
+> > > > > > > >>
+> > > > > > > >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > > > > >> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> > > > > > > >> Cc: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@redhat.com>
+> > > > > > > >> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> > > > > > > >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+> > > > > > > >
+> > > > > > > > Paolo, Marcelo, any comments?
+> > > > > > >
+> > > > > > > Yes, it's a good idea.
+> > > > > > >
+> > > > > > > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+> >
+> > Hi Marcelo,
+> >
+> > If you don't have more concern, I guess Rafael can apply this patch
+> > now since the merge window is not too far.
+>
+> I will likely queue it up later today and it will go to linux-next
+> early next week.
 
-By all means.
+Thank you, Rafael.
 
-It was just a suggestion anyway - see if you prefer this better or would
-like to keep the old style.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Regards,
+Wanpeng Li
