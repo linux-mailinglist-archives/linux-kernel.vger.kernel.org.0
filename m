@@ -2,100 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD3439FCE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:27:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B98599FCFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:28:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbfH1I1v convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 28 Aug 2019 04:27:51 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:37394 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726253AbfH1I1v (ORCPT
+        id S1726454AbfH1I24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:28:56 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34870 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbfH1I2z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:27:51 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-44-7Eyd5yFUMV6GmCf8-LeV7A-1; Wed, 28 Aug 2019 09:27:48 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 28 Aug 2019 09:27:46 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 28 Aug 2019 09:27:46 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Joe Perches' <joe@perches.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     Bernard Metzler <bmt@zurich.ibm.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit due to
- u64/pointer abuse
-Thread-Topic: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit due to
- u64/pointer abuse
-Thread-Index: AQHVXQXl4BhhBlFhpEW57H2RBHAQPacQOptA
-Date:   Wed, 28 Aug 2019 08:27:45 +0000
-Message-ID: <ab04933a7dea42049d20597cb65d84f1@AcuMS.aculab.com>
-References: <20190819100526.13788-1-geert@linux-m68k.org>
-         <581e7d79ed75484beb227672b2695ff14e1f1e34.camel@perches.com>
-         <CAMuHMdVh8dwd=77mHTqG80_D8DK+EtVGewRUJuaJzK1qRYrB+w@mail.gmail.com>
-         <dbc03b4ac1ef4ba2a807409676cf8066@AcuMS.aculab.com>
-         <CAMuHMdWHGTMwK+PO_BgsNZMpqRat1SHE-_CP0UqxEALA_OJeNg@mail.gmail.com>
-         <20190827174639.GT1131@ZenIV.linux.org.uk>
-         <CAMuHMdW0jEpE3YrA5Znq8O9e4eswARwYYerEhRLSLWxeXMbsEQ@mail.gmail.com>
- <b0fe444622e32af6c34f3326e5dce3513adf5113.camel@perches.com>
-In-Reply-To: <b0fe444622e32af6c34f3326e5dce3513adf5113.camel@perches.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 28 Aug 2019 04:28:55 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 62F74310;
+        Wed, 28 Aug 2019 10:28:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1566980933;
+        bh=yHqVMSWrsJvlNfBnMTE1NjxeNpyXRWkgKkXyuwYbZDU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vmsSxbrA2kZqrww2uiRS3uDRX/7GAnSU0FPjyQmdGsgW0H8Wv6oM+JS6YMXe9mBMG
+         Lp2TVbmaR343IJXXXDq6m6MwnqN0YNI7c9H1PvDT52FhYLEQakJxYj2Anti4pSMXYG
+         yQqtESmSKJVDQrFps1jkMaToiaIYNz8bdtUtHvMk=
+Date:   Wed, 28 Aug 2019 11:28:46 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>, Ulrich Hecht <uli@fpond.eu>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3 02/14] dt-bindings: display, renesas,du: Document cmms
+ property
+Message-ID: <20190828082846.GA27842@pendragon.ideasonboard.com>
+References: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
+ <20190825135154.11488-3-jacopo+renesas@jmondi.org>
+ <20190827202945.GA3488@bogus>
+ <CAMuHMdUP1kZF4z=NkAb5LCV74dyCMw9pZACMYjOTFE=r2vvR3A@mail.gmail.com>
 MIME-Version: 1.0
-X-MC-Unique: 7Eyd5yFUMV6GmCf8-LeV7A-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUP1kZF4z=NkAb5LCV74dyCMw9pZACMYjOTFE=r2vvR3A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Perches
-> Sent: 27 August 2019 19:33
-> On Tue, 2019-08-27 at 19:59 +0200, Geert Uytterhoeven wrote:
-> > On Tue, Aug 27, 2019 at 7:46 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > On Tue, Aug 27, 2019 at 07:29:52PM +0200, Geert Uytterhoeven wrote:
-> > > > On Tue, Aug 27, 2019 at 4:17 PM David Laight <David.Laight@aculab.com> wrote:
-> > > > > From: Geert Uytterhoeven
-> > > > > > Sent: 19 August 2019 18:15
-> > > > > ...
-> > > > > > > I think a cast to unsigned long is rather more common.
-> > > > > > >
-> > > > > > > uintptr_t is used ~1300 times in the kernel.
-> > > > > > > I believe a cast to unsigned long is much more common.
+On Wed, Aug 28, 2019 at 09:32:23AM +0200, Geert Uytterhoeven wrote:
+> On Tue, Aug 27, 2019 at 10:29 PM Rob Herring <robh@kernel.org> wrote:
+> > On Sun, Aug 25, 2019 at 03:51:42PM +0200, Jacopo Mondi wrote:
+> > > Document the newly added 'cmms' property which accepts a list of phandle
+> > > and channel index pairs that point to the CMM units available for each
+> > > Display Unit output video channel.
+> > >
+> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/display/renesas,du.txt | 5 +++++
+> > >  1 file changed, 5 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+> > > index c97dfacad281..c2265e2a1af2 100644
+> > > --- a/Documentation/devicetree/bindings/display/renesas,du.txt
+> > > +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+> > > @@ -45,6 +45,10 @@ Required Properties:
+> > >      instance that serves the DU channel, and the channel index identifies the
+> > >      LIF instance in that VSP.
+> > >
+> > > +  - cmms: A list of phandles to the CMM instances present in the SoC, one
+> > > +    for each available DU channel. The property shall not be specified for
+> > > +    SoCs that do not provide any CMM (such as V3M and V3H).
+> >
+> > renesas,cmms
 > 
-> btw: apparently that's not true.
-> 
-> This grep may be incomplete but it seems there are fewer
-> kernel uses of a cast to unsigned long then pointer:
-> 
-> $ git grep -P '\(\s*\w+(\s+\w+){0,3}(\s*\*)+\s*\)\s*\(\s*unsigned\s+long\s*\)'|wc -l
-> 423
-> 
-> Maybe add a cast_to_ptr macro like
-> 
-> #define cast_to_ptr(type, val)	((type)(uintptr_t)(val))
-> 
-> though that may not save any horizontal space
+> So I guess we really wanted to have the prefix for the vsps property, too?
 
-And it is another bit of pointless obfuscation....
+Yes, we should have :-( My bad.
 
-	David
+-- 
+Regards,
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Laurent Pinchart
