@@ -2,142 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECE8BA03F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:59:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96846A03F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:59:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfH1N7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:59:06 -0400
-Received: from mga18.intel.com ([134.134.136.126]:26741 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726603AbfH1N7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:59:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 06:59:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
-   d="scan'208";a="332168480"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 28 Aug 2019 06:59:04 -0700
-Received: from [10.254.95.196] (kliang2-mobl.ccr.corp.intel.com [10.254.95.196])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 663C3580409;
-        Wed, 28 Aug 2019 06:59:03 -0700 (PDT)
-Subject: Re: [RESEND PATCH V3 2/8] perf/x86/intel: Basic support for metrics
- counters
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com
-References: <20190826144740.10163-1-kan.liang@linux.intel.com>
- <20190826144740.10163-3-kan.liang@linux.intel.com>
- <20190828075213.GB2369@hirez.programming.kicks-ass.net>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <ae6e095a-d041-4cde-b9e1-fd950160abfd@linux.intel.com>
-Date:   Wed, 28 Aug 2019 09:59:02 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726907AbfH1N7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:59:42 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36728 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbfH1N7l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 09:59:41 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f19so38426plr.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 06:59:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IdGG/Tv13HB/jDILsDDPH2sexv8IMLLCw/Cf3bLI1Rc=;
+        b=AbjIeNTJdvT8UsPdHGTT12NNasMgExZWYbimmHn3akOFWqZo5wgbHDHcXXpGroWQB2
+         uptGhkTezCH1ZayGgMAm+32q4TEMahdbAhHBxApgA/EJzqTfT3X+1/EzxAgoJCK2QhBr
+         VWfMYhFTKIVBBwHtx7miec3zKod/pMhBqXPMw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IdGG/Tv13HB/jDILsDDPH2sexv8IMLLCw/Cf3bLI1Rc=;
+        b=NLpR+oGieE7S36K/j8gOvgBLX22RXU7gmStvRth14han7IUr57Ab9zJbnzSEiXvO1k
+         OvbuwelH0Ro4nmI6KybZvyqPTH1UDlJaJ4eTvQBUXny+PP2zoCrcNLMlroifoqfu2ETp
+         yCGxRi7AEp3VR7BE+tB9wG2A5NPBRAUNjrst5XRGPNtXsoueZ0123aKMsTH6kmD+vvAm
+         C8opEFtSMreaBhEo4f4Tw7QwDiqwayGwsGsRd3wZ7vTx9Ev1iHtdPCRr8ZNLE0gyrIFe
+         wOdc4vcEU6XwxAyQ7G8UvYHqA7gmU0HHwobfDAb2ZSNM9LDWLJwW9VTfArGIG14B5N0l
+         UTfA==
+X-Gm-Message-State: APjAAAUGpvcOU5i7E88iIDG/vwITIxBfi9dylebFZrGtdmckKez9cqP5
+        x28iEIdrj/VO7ZZb4tsDie9RFrJacec=
+X-Google-Smtp-Source: APXvYqxMGITygSr180EJejsfC85vm5SPnD+i55kT87OMAn0hfj6rNlsyiPkEr7ix1LkXIo8NzDBvkQ==
+X-Received: by 2002:a17:902:e9:: with SMTP id a96mr4579817pla.169.1567000781303;
+        Wed, 28 Aug 2019 06:59:41 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id p5sm2805452pfg.184.2019.08.28.06.59.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 06:59:40 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 09:59:38 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     "Paul E. McKenney" <paulmck@kernel.org>,
+        Scott Wood <swood@redhat.com>, linux-rt-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>
+Subject: Re: [PATCH RT v2 2/3] sched: migrate_enable: Use sleeping_lock to
+ indicate involuntary sleep
+Message-ID: <20190828135938.GA230957@google.com>
+References: <20190823162024.47t7br6ecfclzgkw@linutronix.de>
+ <433936e4c720e6b81f9b297fefaa592fd8a961ad.camel@redhat.com>
+ <20190824031014.GB2731@google.com>
+ <20190826152523.dcjbsgyyir4zjdol@linutronix.de>
+ <20190826162945.GE28441@linux.ibm.com>
+ <20190827092333.jp3darw7teyyw67g@linutronix.de>
+ <20190827155306.GF26530@linux.ibm.com>
+ <20190828092739.46mrffvzjv6v3de5@linutronix.de>
+ <20190828125426.GO26530@linux.ibm.com>
+ <20190828131433.3gi4debho5zc7hgc@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20190828075213.GB2369@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828131433.3gi4debho5zc7hgc@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 28, 2019 at 03:14:33PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2019-08-28 05:54:26 [-0700], Paul E. McKenney wrote:
+> > On Wed, Aug 28, 2019 at 11:27:39AM +0200, Sebastian Andrzej Siewior wrote:
+> > > On 2019-08-27 08:53:06 [-0700], Paul E. McKenney wrote:
+> > > > Am I understanding this correctly?
+> > > 
+> > > Everything perfect except that it is not lockdep complaining but the
+> > > WARN_ON_ONCE() in rcu_note_context_switch().
+> > 
+> > This one, right?
+> > 
+> > 	WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0);
+> > 
+> > Another approach would be to change that WARN_ON_ONCE().  This fix might
+> > be too extreme, as it would suppress other issues:
+> > 
+> > 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PREEMPT_RT_BASE) && !preempt && t->rcu_read_lock_nesting > 0);
+> > 
+> > But maybe what is happening under the covers is that preempt is being
+> > set when sleeping on a spinlock.  Is that the case?
+> 
+> I would like to keep that check and that is why we have:
+> 
+> |   #if defined(CONFIG_PREEMPT_RT_FULL)
+> |         sleeping_l = t->sleeping_lock;
+> |   #endif
+> |         WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0 && !sleeping_l);
+> 
+> in -RT and ->sleeping_lock is that counter that is incremented in
+> spin_lock(). And the only reason why sleeping_lock_inc() was used in the
+> patch was to disable _this_ warning.
 
+Makes sense, Sebastian.
 
-On 8/28/2019 3:52 AM, Peter Zijlstra wrote:
-> On Mon, Aug 26, 2019 at 07:47:34AM -0700, kan.liang@linux.intel.com wrote:
-> 
->> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
->> index 81b005e4c7d9..54534ff00940 100644
->> --- a/arch/x86/events/core.c
->> +++ b/arch/x86/events/core.c
->> @@ -1033,18 +1033,30 @@ static inline void x86_assign_hw_event(struct perf_event *event,
->>   				struct cpu_hw_events *cpuc, int i)
->>   {
->>   	struct hw_perf_event *hwc = &event->hw;
->> +	int reg_idx;
->>   
->>   	hwc->idx = cpuc->assign[i];
->>   	hwc->last_cpu = smp_processor_id();
->>   	hwc->last_tag = ++cpuc->tags[i];
->>   
->> +	/*
->> +	 * Metrics counters use different indexes in the scheduler
->> +	 * versus the hardware.
->> +	 *
->> +	 * Map metrics to fixed counter 3 (which is the base count),
->> +	 * but the update event callback reads the extra metric register
->> +	 * and converts to the right metric.
->> +	 */
->> +	reg_idx = get_reg_idx(hwc->idx);
->> +
->>   	if (hwc->idx == INTEL_PMC_IDX_FIXED_BTS) {
->>   		hwc->config_base = 0;
->>   		hwc->event_base	= 0;
->>   	} else if (hwc->idx >= INTEL_PMC_IDX_FIXED) {
->>   		hwc->config_base = MSR_ARCH_PERFMON_FIXED_CTR_CTRL;
->> -		hwc->event_base = MSR_ARCH_PERFMON_FIXED_CTR0 + (hwc->idx - INTEL_PMC_IDX_FIXED);
->> -		hwc->event_base_rdpmc = (hwc->idx - INTEL_PMC_IDX_FIXED) | 1<<30;
->> +		hwc->event_base = MSR_ARCH_PERFMON_FIXED_CTR0 +
->> +				  (reg_idx - INTEL_PMC_IDX_FIXED);
->> +		hwc->event_base_rdpmc = (reg_idx - INTEL_PMC_IDX_FIXED) | 1<<30;
->>   	} else {
->>   		hwc->config_base = x86_pmu_config_addr(hwc->idx);
->>   		hwc->event_base  = x86_pmu_event_addr(hwc->idx);
-> 
-> That reg_idx is a pointless unconditional branch; better to write it
-> like:
-> 
-> static inline void x86_assign_hw_event(struct perf_event *event,
-> 				struct cpu_hw_events *cpuc, int i)
-> {
-> 	struct hw_perf_event *hwc = &event->hw;
-> 	int idx;
-> 
-> 	idx = hwc->idx = cpuc->assign[i];
-> 	hwc->last_cpu = smp_processor_id();
-> 	hwc->last_tag = ++cpuc->tags[i];
-> 
-> 	switch (hwc->idx) {
-> 	case INTEL_PMC_IDX_FIXED_BTS:
-> 		hwc->config_base = 0;
-> 		hwc->event_base	= 0;
-> 		break;
-> 
-> 	case INTEL_PMC_IDX_FIXED_METRIC_BASE ... INTEL_PMC_IDX_FIXED_METRIC_BASE+3:
-> 		/* All METRIC events are mapped onto the fixed SLOTS counter */
-> 		idx = INTEL_PMC_IDX_FIXED_SLOTS;
-> 
-> 	case INTEL_PMC_IDX_FIXED ... INTEL_PMC_IDX_FIXED_METRIC_BASE-1:
-> 		hwc->config_base = MSR_ARCH_PERFMON_FIXED_CTR_CTRL;
-> 		hwc->event_base = MSR_ARCH_PERFMON_FIXED_CTR0 +
-> 				  (idx - INTEL_PMC_IDX_FIXED);
-> 		hwc->event_base_rdpmc = (idx - INTEL_PMC_IDX_FIXED) | 1<<30;
-> 		break;
-> 
-> 	default:
-> 		hwc->config_base = x86_pmu_config_addr(hwc->idx);
-> 		hwc->event_base = x86_pmu_event_addr(hwc->idx);
-> 		hwc->event_base_rdpmc = x86_pmu_rdpmc_index(hwc->idx);
-> 		break;
-> 	}
-> }
-> 
-> On that; wth does this to the RDPMC userspace support!? Does that even
-> work with these counters?
-> 
+Paul, you meant "!" in front of the IS_ENABLED right in your code snippet right?
 
-The event_base_rdpmc is only for kernel usage now.
-But it seems we can update x86_pmu_event_idx() to use it as well.
+The other issue with:
+WARN_ON_ONCE(!IS_ENABLED(CONFIG_PREEMPT_RT_BASE) && !preempt && t->rcu_read_lock_nesting > 0);
 
-Thanks,
-Kan
+.. could be that, the warning will be disabled for -rt entirely, not just for
+sleeping locks. And we probably do want to keep this warning for the cases in
+-rt where we are blocking but it is not a sleeping lock. Right?
+
+thanks,
+
+ - Joel
 
 
