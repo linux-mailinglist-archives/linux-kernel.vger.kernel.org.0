@@ -2,164 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC56AA0452
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:12:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A983A045C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:13:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfH1OMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:12:06 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34284 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726569AbfH1OME (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:12:04 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s18so2702357wrn.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 07:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=x8fPXZy6s7fSXGNVXDgDu4BkBSj5SqALzh4Ghh1aBOk=;
-        b=CPajweGCAUD9yks8LzYgU2HerKglth8p0dRXSnKd+0ELtHs0MIqAHsPT8c1OAxPNer
-         QZoymlZV9WoD6Gf3xVrSUaq8m2vbN6l4I0C8xHu09J9LkZoBr22ZnFRiY87jCWBl3K4k
-         LCX23SLQAAWjkwSoa86nE9bLj4QuudhgePOlhKAqrlDiTXmQ8o8HaCvbmhAQ8NIrsn7H
-         rhdu++obGYqdrW9OMSmMEVQDggyl7fAMZuVXEYoqgrwc/ZvvhK6yyh9G+6JCCh9In2Xm
-         gX7qjCCxWhsdjVLp2zKoaICGeAhLK8BLtcLy7pyL62GLyN1pdUDq5rnqa3iiU8VQbfmp
-         JDfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=x8fPXZy6s7fSXGNVXDgDu4BkBSj5SqALzh4Ghh1aBOk=;
-        b=dGHa/J4uQNjWfPxW3mlcVB91VpVBx8QE5W/4gZAkWEfwM584486bhw3/KllSFE4N1Y
-         A6UE7xD4ez9yBwKWwvfalRdT9C9jS3B8D7zV6V2yqoexcUYuAizaqHeyzRBT7FrtTEHo
-         bwe3uCFmov0RghSs32VD+IeAwywM3LqgS/dnzQfR2IRo4G6vF0zz01URjccA54YkkPJT
-         uNUWnCIEA9Laxm+atRwOev3Hkj0u0lGWWIMkTTWXzNNF/132A6yA8f1viDT8w/VvPtKO
-         D8HpwoDXC8+YpbDRViOvs4Q+Ef167zyCP6j8/DMLArSSEHbViNJLtuVU2M8x/gh+nQr6
-         1rEA==
-X-Gm-Message-State: APjAAAUKHAhi8jKoPGcKGMcVhKepn8Emq0+Ii423/5UXlnvttNCQ6qoA
-        B7PFzIKFYi8n4JkDRFKAQaWxnw==
-X-Google-Smtp-Source: APXvYqwG1ZhyXVOn+IpEMzrwvxB5kMuQJ2oHDe9dj7LB12pG3Q2AZepM9ElxCTetUuJVFLowhhDcOg==
-X-Received: by 2002:adf:dec8:: with SMTP id i8mr4844927wrn.217.1567001523089;
-        Wed, 28 Aug 2019 07:12:03 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a11sm2774838wrx.59.2019.08.28.07.12.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 07:12:02 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] arm64: dts: khadas-vim3: add support for the SM1 based VIM3L
-Date:   Wed, 28 Aug 2019 16:11:57 +0200
-Message-Id: <20190828141157.15503-4-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190828141157.15503-1-narmstrong@baylibre.com>
-References: <20190828141157.15503-1-narmstrong@baylibre.com>
+        id S1726853AbfH1ONH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:13:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726341AbfH1ONH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 10:13:07 -0400
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32ADB22CED;
+        Wed, 28 Aug 2019 14:13:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567001586;
+        bh=gL7z5ChKllbLpdWmKIBPVig3m93sy76t12f/1Mh8DKY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WEhiCTXdi4fb4bZWj1AIjfZ73k7/5yYNOuYIcqLtiBfKEPCUGVbnSYg/nx6HXExhF
+         VlpXj/0+xzuk2nMM09kHUsLFHtd5NyGrS38Z8+spQewykKxHz5kdvV8tIVAqToHRAN
+         680fpIlJFP5rAlEo7HaKFYR2rg+bhz7Nyj+DxK34=
+Received: by mail-wm1-f54.google.com with SMTP id e8so4960234wme.1;
+        Wed, 28 Aug 2019 07:13:06 -0700 (PDT)
+X-Gm-Message-State: APjAAAU0OtRw7ERJ3trpa51tOlUCXMi4mT9/pg8JsOBlyKXSk7EAuQR+
+        uHZFJg269At9gizdKNdnNSTnpDSBj4bqtlaADBs=
+X-Google-Smtp-Source: APXvYqyvtZp0hGYOWR199wSoneS+urPpShsXAkZ5mBE0gaAAJUGXa5TM3Sm+zxrr1ZMa1J4BQm+mOEFz7NRW+khosGQ=
+X-Received: by 2002:a7b:c4d2:: with SMTP id g18mr5221745wmk.79.1567001584618;
+ Wed, 28 Aug 2019 07:13:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1566999319-8151-1-git-send-email-rppt@linux.ibm.com>
+In-Reply-To: <1566999319-8151-1-git-send-email-rppt@linux.ibm.com>
+From:   Guo Ren <guoren@kernel.org>
+Date:   Wed, 28 Aug 2019 22:12:52 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTF0W18kPzXP8hOA64FuOx=atxFnCk0syEhP7s7LOm0Kw@mail.gmail.com>
+Message-ID: <CAJF2gTTF0W18kPzXP8hOA64FuOx=atxFnCk0syEhP7s7LOm0Kw@mail.gmail.com>
+Subject: Re: [PATCH] csky: use generic free_initrd_mem()
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-csky@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the Amlogic SM1 based Khadas VIM3L, sharing all the same features
-as the G12B based VIM3, but:
-- a different DVFS support since only a single cluster is available
-- audio is still not available on SM1
+Acked-by: Guo Ren <guoren@kernel.org>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/Makefile          |  1 +
- .../dts/amlogic/meson-sm1-khadas-vim3l.dts    | 70 +++++++++++++++++++
- 2 files changed, 71 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+On Wed, Aug 28, 2019 at 9:35 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> The csky implementation of free_initrd_mem() is an open-coded version of
+> free_reserved_area() without poisoning.
+>
+> Remove it and make csky use the generic version of free_initrd_mem().
+>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>  arch/csky/mm/init.c | 16 ----------------
+>  1 file changed, 16 deletions(-)
+>
+> diff --git a/arch/csky/mm/init.c b/arch/csky/mm/init.c
+> index eb0dc9e..d4c2292 100644
+> --- a/arch/csky/mm/init.c
+> +++ b/arch/csky/mm/init.c
+> @@ -60,22 +60,6 @@ void __init mem_init(void)
+>         mem_init_print_info(NULL);
+>  }
+>
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -void free_initrd_mem(unsigned long start, unsigned long end)
+> -{
+> -       if (start < end)
+> -               pr_info("Freeing initrd memory: %ldk freed\n",
+> -                       (end - start) >> 10);
+> -
+> -       for (; start < end; start += PAGE_SIZE) {
+> -               ClearPageReserved(virt_to_page(start));
+> -               init_page_count(virt_to_page(start));
+> -               free_page(start);
+> -               totalram_pages_inc();
+> -       }
+> -}
+> -#endif
+> -
+>  extern char __init_begin[], __init_end[];
+>
+>  void free_initmem(void)
+> --
+> 2.7.4
+>
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index edbf128e7707..84afecba9ec0 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -35,3 +35,4 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q201.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-sm1-khadas-vim3l.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
-new file mode 100644
-index 000000000000..5233bd7cacfb
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 BayLibre, SAS
-+ * Author: Neil Armstrong <narmstrong@baylibre.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-sm1.dtsi"
-+#include "meson-khadas-vim3.dtsi"
-+
-+/ {
-+	compatible = "khadas,vim3l", "amlogic,sm1";
-+	model = "Khadas VIM3L";
-+
-+	vddcpu: regulator-vddcpu {
-+		/*
-+		 * Silergy SY8030DEC Regulator.
-+		 */
-+		compatible = "pwm-regulator";
-+
-+		regulator-name = "VDDCPU";
-+		regulator-min-microvolt = <690000>;
-+		regulator-max-microvolt = <1050000>;
-+
-+		vin-supply = <&vsys_3v3>;
-+
-+		pwms = <&pwm_AO_cd 1 1250 0>;
-+		pwm-dutycycle-range = <100 0>;
-+
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
-+&cpu0 {
-+	cpu-supply = <&vddcpu>;
-+	operating-points-v2 = <&cpu_opp_table>;
-+	clocks = <&clkc CLKID_CPU_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu1 {
-+	cpu-supply = <&vddcpu>;
-+	operating-points-v2 = <&cpu_opp_table>;
-+	clocks = <&clkc CLKID_CPU1_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu2 {
-+	cpu-supply = <&vddcpu>;
-+	operating-points-v2 = <&cpu_opp_table>;
-+	clocks = <&clkc CLKID_CPU2_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&cpu3 {
-+	cpu-supply = <&vddcpu>;
-+	operating-points-v2 = <&cpu_opp_table>;
-+	clocks = <&clkc CLKID_CPU3_CLK>;
-+	clock-latency = <50000>;
-+};
-+
-+&pwm_AO_cd {
-+	pinctrl-0 = <&pwm_ao_d_e_pins>;
-+	pinctrl-names = "default";
-+	clocks = <&xtal>;
-+	clock-names = "clkin1";
-+	status = "okay";
-+};
+
 -- 
-2.22.0
+Best Regards
+ Guo Ren
 
+ML: https://lore.kernel.org/linux-csky/
