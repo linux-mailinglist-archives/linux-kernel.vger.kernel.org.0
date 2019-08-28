@@ -2,203 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53F8EA0D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15FF2A0D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfH1V5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 17:57:00 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43669 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfH1V47 (ORCPT
+        id S1727101AbfH1V61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 17:58:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:23190 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726658AbfH1V60 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:56:59 -0400
-Received: by mail-pg1-f195.google.com with SMTP id k3so411201pgb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 14:56:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Nd+bPWlCXNocXiigb90jYgWHpu3MGjlLHt1H4GIPKsk=;
-        b=n+Iz3RNKIv2G78ZVZ1TXSEKF9j9dLXkEdNpnMNVoicyXdstnIuPLFqkCjqyGSH9iJY
-         o8gawdyeaRKIA7HYM9GwBrmZEUjqEqoQzGDPL6Qjj+hPvALZQLVeqdqiODiTzfmDwDgB
-         jXgqJyq703XAb4M2dMxq/L+kBPkok4Gcf/Gco=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Nd+bPWlCXNocXiigb90jYgWHpu3MGjlLHt1H4GIPKsk=;
-        b=EGDFOQ+4RMfRM2DTdS0tHZ3m78c3nNYEAgD8dkdnGd6AHF+ESP1KuT8odN9rTDj+m6
-         BP2AJlDgWHM1pTNZsCNZXcO/2C2R9nJOeqa+bKSVnMIJMIldsNnaLqIEkoK08p0T7tNK
-         s6bLKp+/+Zl2hibLh4wLq5RHSKdHDf+aeyc/upr1zRCFOJwJ1HhTbrD7XnxRsmOrTRLD
-         CeZREA1GBw1c18Vhk5uFAISNJeggr5ssYFPzUWhi2VV/z2y1dUWrfF6v4YgpLAwJ3vMD
-         fpCCpF4pFBOxV9h7L5qAA695FTulIhlMVwMPXMZcNmx+EjGoCF9VJyoOVFP0akwb2zcF
-         2EkA==
-X-Gm-Message-State: APjAAAVhw2RP8vjCMxxNJsQKUW1QZVEnjwNJY+IwZPnF1lRcjhdn0ghm
-        XuT92FF2UWgRc66FguT1aosrFQ==
-X-Google-Smtp-Source: APXvYqxBWzjFcxT5J+UW/brCQQfj77xr5PR8jRpUK60AFtolo6N4nAisXuYYuZDv08g7jCpB0ygItg==
-X-Received: by 2002:a17:90a:bb91:: with SMTP id v17mr6143826pjr.84.1567029418977;
-        Wed, 28 Aug 2019 14:56:58 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id p20sm144125pgj.47.2019.08.28.14.56.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 14:56:58 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 17:56:57 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
+        Wed, 28 Aug 2019 17:58:26 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SLpkLC096457;
+        Wed, 28 Aug 2019 17:57:52 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2up00dkf06-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 17:57:52 -0400
+Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7SLrBsw109245;
+        Wed, 28 Aug 2019 17:57:51 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2up00dkeyw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 17:57:51 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7SLtWRM019299;
+        Wed, 28 Aug 2019 21:57:51 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma02dal.us.ibm.com with ESMTP id 2un65k2fur-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 21:57:51 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SLvonB52232568
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 21:57:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1AB8AB2065;
+        Wed, 28 Aug 2019 21:57:50 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EFED7B205F;
+        Wed, 28 Aug 2019 21:57:49 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Aug 2019 21:57:49 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id B3F0016C65C1; Wed, 28 Aug 2019 14:57:51 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 14:57:51 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, byungchul.park@lge.com,
+        Josh Triplett <josh@joshtriplett.org>,
         Lai Jiangshan <jiangshanlai@gmail.com>,
         linux-doc@vger.kernel.org,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC v1 1/2] rcu/tree: Clean up dynticks counter usage
-Message-ID: <20190828215657.GA71365@google.com>
-References: <5d648895.1c69fb81.5e60a.fc6f@mx.google.com>
- <20190828201344.GR26530@linux.ibm.com>
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        kernel-team@android.com
+Subject: Re: [PATCH 3/5] rcu/tree: Add support for debug_objects debugging
+ for kfree_rcu()
+Message-ID: <20190828215751.GB26530@linux.ibm.com>
+Reply-To: paulmck@kernel.org
+References: <5d657e37.1c69fb81.54250.01df@mx.google.com>
+ <20190828213119.GY26530@linux.ibm.com>
+ <20190828214320.GE75931@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190828201344.GR26530@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190828214320.GE75931@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908280210
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 01:13:44PM -0700, Paul E. McKenney wrote:
-> On Mon, Aug 26, 2019 at 09:33:53PM -0400, Joel Fernandes (Google) wrote:
-> > The dynticks counter are confusing due to crowbar writes of
-> > DYNTICK_IRQ_NONIDLE whose purpose is to detect half-interrupts (i.e. we
-> > see rcu_irq_enter() but not rcu_irq_exit() due to a usermode upcall) and
-> > if so then do a reset of the dyntick_nmi_nesting counters. This patch
-> > tries to get rid of DYNTICK_IRQ_NONIDLE while still keeping the code
-> > working, fully functional, and less confusing. The confusion recently
-> > has even led to patches forgetting that DYNTICK_IRQ_NONIDLE was written
-> > to which wasted lots of time.
+On Wed, Aug 28, 2019 at 05:43:20PM -0400, Joel Fernandes wrote:
+> On Wed, Aug 28, 2019 at 02:31:19PM -0700, Paul E. McKenney wrote:
+> > On Tue, Aug 27, 2019 at 03:01:57PM -0400, Joel Fernandes (Google) wrote:
+> > > Make use of RCU's debug_objects debugging support
+> > > (CONFIG_DEBUG_OBJECTS_RCU_HEAD) similar to call_rcu() and other flavors.
 > > 
-> > The patch has the following changes:
-[snip]
-> >  /*
-> >   * Grace-period counter management.
-> >   */
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 68ebf0eb64c8..255cd6835526 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -81,7 +81,7 @@
-> >  
-> >  static DEFINE_PER_CPU_SHARED_ALIGNED(struct rcu_data, rcu_data) = {
-> >  	.dynticks_nesting = 1,
-> > -	.dynticks_nmi_nesting = DYNTICK_IRQ_NONIDLE,
-> > +	.dynticks_nmi_nesting = 0,
+> > Other flavors?  Ah, call_srcu(), rcu_barrier(), and srcu_barrier(),
+> > right?
 > 
-> C initializes to zero by default, so this can simply be deleted.
-
-Fixed.
-
-> >  	.dynticks = ATOMIC_INIT(RCU_DYNTICK_CTRL_CTR),
-> >  };
-> >  struct rcu_state rcu_state = {
-> > @@ -558,17 +558,18 @@ EXPORT_SYMBOL_GPL(rcutorture_get_gp_data);
-> >  /*
-> >   * Enter an RCU extended quiescent state, which can be either the
-> >   * idle loop or adaptive-tickless usermode execution.
-> > - *
-> > - * We crowbar the ->dynticks_nmi_nesting field to zero to allow for
-> > - * the possibility of usermode upcalls having messed up our count
-> > - * of interrupt nesting level during the prior busy period.
-> >   */
-> >  static void rcu_eqs_enter(bool user)
-> >  {
-> >  	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
-> >  
-> > -	WARN_ON_ONCE(rdp->dynticks_nmi_nesting != DYNTICK_IRQ_NONIDLE);
-> > -	WRITE_ONCE(rdp->dynticks_nmi_nesting, 0);
-> > +	/* Entering usermode/idle from interrupt is not handled. These would
-> > +	 * mean usermode upcalls or idle entry happened from interrupts. But,
-> > +	 * reset the counter if we warn.
-> > +	 */
+> Yes.
 > 
-> Please either put the "/*" on its own line or use "//"-style comments.
-
-I'll put "/*" on its own line.
-
-> >  	WARN_ON_ONCE(rdp->dynticks_nmi_nesting <= 0);
-> >  	WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs());
-> >  
-> > +	WRITE_ONCE(rdp->dynticks_nmi_nesting, /* No store tearing. */
-> > +		   rdp->dynticks_nmi_nesting - 1);
+> > > We queue the object during the kfree_rcu() call and dequeue it during
+> > > reclaim.
+> > > 
+> > > Tested that enabling CONFIG_DEBUG_OBJECTS_RCU_HEAD successfully detects
+> > > double kfree_rcu() calls.
+> > > 
+> > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > 
+> > The code looks good!
 > 
-> This is problematic.  The +/-1 and +/-2 dance is specifically for NMIs, so...
+> thanks, does that mean you'll ack/apply it? :-P
 
-This counter is deleted in the following patch so I hope its Ok to leave it
-here for this one. I just kept it split into different patch to make
-testing/review/development easier.
+Is it independent of 1/5 and 2/5?
 
-> >  	if (irq)
-> >  		rcu_prepare_for_idle();
-> > @@ -723,10 +728,6 @@ void rcu_irq_exit_irqson(void)
-> >  /*
-> >   * Exit an RCU extended quiescent state, which can be either the
-> >   * idle loop or adaptive-tickless usermode execution.
-> > - *
-> > - * We crowbar the ->dynticks_nmi_nesting field to DYNTICK_IRQ_NONIDLE to
-> > - * allow for the possibility of usermode upcalls messing up our count of
-> > - * interrupt nesting level during the busy period that is just now starting.
-> >   */
-> >  static void rcu_eqs_exit(bool user)
-> >  {
-> > @@ -747,8 +748,13 @@ static void rcu_eqs_exit(bool user)
-> >  	trace_rcu_dyntick(TPS("End"), rdp->dynticks_nesting, 1, rdp->dynticks);
-> >  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
-> >  	WRITE_ONCE(rdp->dynticks_nesting, 1);
-> > -	WARN_ON_ONCE(rdp->dynticks_nmi_nesting);
-> > -	WRITE_ONCE(rdp->dynticks_nmi_nesting, DYNTICK_IRQ_NONIDLE);
-> > +
-> > +	/* Exiting usermode/idle from interrupt is not handled. These would
-> > +	 * mean usermode upcalls or idle exit happened from interrupts. But,
-> > +	 * reset the counter if we warn.
-> > +	 */
-> > +	if (WARN_ON_ONCE(rdp->dynticks_nmi_nesting != 0))
-> > +		WRITE_ONCE(rdp->dynticks_nmi_nesting, 0);
+							Thanx, Paul
+
+>  - Joel
 > 
-> And here.  Plus this is adding a test and branch in the common case.
-> Given that the location being written to should be hot in the cache,
-> it is not clear that this is a win.
-
-The next patch removes the branch itself and just has the warning.
-
-> >  	WARN_ON_ONCE(rdp->dynticks_nmi_nesting < 0);
-> >  
-> >  	/*
-> > @@ -826,16 +833,21 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
-> >  
-> >  		incby = 1;
-> >  	} else if (tick_nohz_full_cpu(rdp->cpu) &&
-> > -		   rdp->dynticks_nmi_nesting == DYNTICK_IRQ_NONIDLE &&
-> > -		   rdp->rcu_urgent_qs && !rdp->rcu_forced_tick) {
-> > +		   !rdp->dynticks_nmi_nesting && rdp->rcu_urgent_qs &&
-> > +		   !rdp->rcu_forced_tick) {
-> 
-> OK.  Though you should be able to save a line by pulling the
-> "rdp->rcu_urgent_qs &&" onto the first line.
-
-Fixed.
-
-> >  		rdp->rcu_forced_tick = true;
-> >  		tick_dep_set_cpu(rdp->cpu, TICK_DEP_BIT_RCU);
-> >  	}
-> > +
-> 
-> Not clear that the added blank line is a win, here or below.
-
-Fixed,
-
-thanks!
-
- - Joel
-
-[snip]
+> > 
+> > 							Thanx, Paul
+> > 
+> > > ---
+> > >  kernel/rcu/tree.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > > 
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > index 9b9ae4db1c2d..64568f12641d 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -2757,6 +2757,7 @@ static void kfree_rcu_work(struct work_struct *work)
+> > >  	for (; head; head = next) {
+> > >  		next = head->next;
+> > >  		/* Could be possible to optimize with kfree_bulk in future */
+> > > +		debug_rcu_head_unqueue(head);
+> > >  		__rcu_reclaim(rcu_state.name, head);
+> > >  		cond_resched_tasks_rcu_qs();
+> > >  	}
+> > > @@ -2868,6 +2869,13 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
+> > >  	if (rcu_scheduler_active != RCU_SCHEDULER_RUNNING)
+> > >  		return kfree_call_rcu_nobatch(head, func);
+> > >  
+> > > +	if (debug_rcu_head_queue(head)) {
+> > > +		/* Probable double kfree_rcu() */
+> > > +		WARN_ONCE(1, "kfree_call_rcu(): Double-freed call. rcu_head %p\n",
+> > > +			  head);
+> > > +		return;
+> > > +	}
+> > > +
+> > >  	head->func = func;
+> > >  
+> > >  	local_irq_save(flags);	/* For safely calling this_cpu_ptr(). */
+> > > -- 
+> > > 2.23.0.187.g17f5b7556c-goog
+> > > 
