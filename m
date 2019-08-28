@@ -2,94 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 144C5A0024
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:46:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAC36A002A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:47:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfH1KqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 06:46:08 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43754 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726272AbfH1KqH (ORCPT
+        id S1726497AbfH1Krh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 06:47:37 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:46672 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbfH1Krh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 06:46:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xEk+7C1PeYR/dQCDWZ88puZD6TYZGeKl16GGfqOsMlE=; b=YaK6OBCmH+nTMmCNTe5KwcsNc
-        K1AaF0EoXYG4wJvyp20sq3QK0qUrshXEZza54GLmgqgJzISgbukntzkkGcFkiZd1PZidUbIiFPT6Z
-        +xK8S/7o5ZRs/0bzt49bTUqU4kDOVR9qc5/obE+R4dAJbpPy54r+L7eF8agGPv2N9eT+0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i2vSe-0003cz-AO; Wed, 28 Aug 2019 10:45:56 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 894632742A55; Wed, 28 Aug 2019 11:45:55 +0100 (BST)
-Date:   Wed, 28 Aug 2019 11:45:55 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <rfontana@redhat.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rtc@vger.kernel.org, srv_heupstream@mediatek.com
-Subject: Re: [PATCH v5 07/10] regulator: mt6358: Add support for MT6358
- regulator
-Message-ID: <20190828104555.GE4298@sirena.co.uk>
-References: <1566531931-9772-1-git-send-email-hsin-hsiung.wang@mediatek.com>
- <1566531931-9772-8-git-send-email-hsin-hsiung.wang@mediatek.com>
+        Wed, 28 Aug 2019 06:47:37 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i2vTw-0001Eg-Ko; Wed, 28 Aug 2019 12:47:16 +0200
+Date:   Wed, 28 Aug 2019 12:47:10 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Pavel Machek <pavel@denx.de>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andrew Cooper <andrew.cooper3@citrix.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chen Yu <yu.c.chen@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH 4.19 72/98] x86/CPU/AMD: Clear RDRAND CPUID bit on AMD
+ family 15h/16h
+In-Reply-To: <20190828103113.GA14677@amd>
+Message-ID: <alpine.DEB.2.21.1908281231480.1869@nanos.tec.linutronix.de>
+References: <20190827072718.142728620@linuxfoundation.org> <20190827072722.020603090@linuxfoundation.org> <20190827113604.GB18218@amd> <alpine.DEB.2.21.1908271525480.1939@nanos.tec.linutronix.de> <20190828103113.GA14677@amd>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="PPYy/fEw/8QCHSq3"
-Content-Disposition: inline
-In-Reply-To: <1566531931-9772-8-git-send-email-hsin-hsiung.wang@mediatek.com>
-X-Cookie: Oatmeal raisin.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Pavel,
 
---PPYy/fEw/8QCHSq3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, 28 Aug 2019, Pavel Machek wrote:
+> On Tue 2019-08-27 15:30:30, Thomas Gleixner wrote:
+> > There is no way to reinitialize RDRAND from the kernel otherwise we would
+> > have exactly done that. If you know how to do that please tell.
+> 
+> Would they? AMD is not exactly doing good job with communication
 
-On Fri, Aug 23, 2019 at 11:45:28AM +0800, Hsin-Hsiung Wang wrote:
-> The MT6358 is a regulator found on boards based on MediaTek MT8183 and
-> probably other SoCs. It is a so called pmic and connects as a slave to
-> SoC using SPI, wrapped inside the pmic-wrapper.
+Yes they would. Stop making up weird conspiracy theories.
 
-This looks good - since there was only one small issue with the example
-in the binding document I'll apply both patches, please send a followup
-fixing the binding document.
+> here. If BIOS can do it, kernel can do it, too...
 
---PPYy/fEw/8QCHSq3
-Content-Type: application/pgp-signature; name="signature.asc"
+May I recommend to read up on SMM and BIOS being able to lock down access
+to certain facilities?
 
------BEGIN PGP SIGNATURE-----
+> or do you have information saying otherwise?
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1mW2IACgkQJNaLcl1U
-h9BSkwf/dn5XU4gEVNtDS9XFnqmJE1/jcGPItKtO0MNfD3jrB/hUyBWMYoBhI+sU
-Vm45cGP+4DM/3BcJrj6qrmvgSmYZtpf6vn0RljmVuFlo5SOk4y4/HI8i+gdjcrER
-26tolRdFTgR3sbVDa2Wyzz6eCdz0UhoC69q4qQccEjgetw8GuXQHwGARR3NeXxVp
-4PCsUEKX5IxcOIKr2/1Y50W4HThACHgvoNAp/GK6zjSuyH17HKgZfSwh+p1sNZ4N
-a83mggDEu1rOgsiptGPtO/U+y2pNNnXNqX/+Xsnna6jkCkbM4hnGMLqvvMJlsGaC
-iVNyYaPdnO7o3Tqq6wzJbpXH6eKI+g==
-=VmT8
------END PGP SIGNATURE-----
+Yes. It was clearly stated by Tom that it can only be done in the BIOS.
 
---PPYy/fEw/8QCHSq3--
+> > Also disabling it for every BIOS is the only way which can be done because
+> > there is no way to know whether the BIOS is fixed or not at cold boot
+> > time. And it has to be known there because applications cache the
+> 
+> I'm pretty sure DMI-based whitelist would help here. It should be
+> reasonably to fill it with the common machines at least.
+
+Send patches to that effect.
+ 
+> Plus, where is the CVE, and does AMD do anything to make BIOS vendors
+> fix them?
+
+May I redirect you to: https://www.amd.com/en/corporate/contact
+
+Thanks,
+
+	tglx
