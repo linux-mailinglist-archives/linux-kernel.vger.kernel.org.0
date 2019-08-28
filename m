@@ -2,195 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC869A0615
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:20:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A25A0622
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:21:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfH1PUJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:20:09 -0400
-Received: from foss.arm.com ([217.140.110.172]:33142 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726586AbfH1PUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:20:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C77F28;
-        Wed, 28 Aug 2019 08:20:08 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B19D3F59C;
-        Wed, 28 Aug 2019 08:20:07 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 16:20:05 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
-        gustavo.pimentel@synopsys.com, digetx@gmail.com,
-        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V2 4/6] PCI: tegra: Add support to enable slot regulators
-Message-ID: <20190828152005.GY14582@e119886-lin.cambridge.arm.com>
-References: <20190828131505.28475-1-vidyas@nvidia.com>
- <20190828131505.28475-5-vidyas@nvidia.com>
+        id S1727014AbfH1PUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:20:44 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33585 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726586AbfH1PUo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:20:44 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7SFKN5S009354
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 11:20:24 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 66ABA42049E; Wed, 28 Aug 2019 11:20:23 -0400 (EDT)
+Date:   Wed, 28 Aug 2019 11:20:23 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yang Guo <guoyang2@huawei.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Eric Biggers <ebiggers@kernel.org>
+Subject: Re: [PATCH v2] ext4: use percpu_counters for extent_status cache
+ hits/misses
+Message-ID: <20190828152023.GG24857@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yang Guo <guoyang2@huawei.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Eric Biggers <ebiggers@kernel.org>
+References: <1566983957-6608-1-git-send-email-zhangshaokun@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190828131505.28475-5-vidyas@nvidia.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1566983957-6608-1-git-send-email-zhangshaokun@hisilicon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 06:45:03PM +0530, Vidya Sagar wrote:
-> Add support to get regulator information of 3.3V and 12V supplies of a PCIe
-> slot from the respective controller's device-tree node and enable those
-> supplies. This is required in platforms like p2972-0000 where the supplies
-> to x16 slot owned by C5 controller need to be enabled before attempting to
-> enumerate the devices.
+On Wed, Aug 28, 2019 at 05:19:17PM +0800, Shaokun Zhang wrote:
+> From: Yang Guo <guoyang2@huawei.com>
 > 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
-> ---
-> V2:
-> * Addressed review comments from Thierry Reding and Andrew Murray
-> * Handled failure case of devm_regulator_get_optional() for -ENODEV cleanly
+> @es_stats_cache_hits and @es_stats_cache_misses are accessed frequently in
+> ext4_es_lookup_extent function, it would influence the ext4 read/write
+> performance in NUMA system. Let's optimize it using percpu_counter,
+> it is profitable for the performance.
 > 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 80 ++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
+> The test command is as below:
+> fio -name=randwrite -numjobs=8 -filename=/mnt/test1 -rw=randwrite
+> -ioengine=libaio -direct=1 -iodepth=64 -sync=0 -norandommap
+> -group_reporting -runtime=120 -time_based -bs=4k -size=5G
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index 057ba4f9fbcd..6a66101ec83d 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -278,6 +278,8 @@ struct tegra_pcie_dw {
->  	u32 aspm_l0s_enter_lat;
->  
->  	struct regulator *pex_ctl_supply;
-> +	struct regulator *slot_ctl_3v3;
-> +	struct regulator *slot_ctl_12v;
->  
->  	unsigned int phy_count;
->  	struct phy **phys;
-> @@ -1047,6 +1049,72 @@ static void tegra_pcie_downstream_dev_to_D0(struct tegra_pcie_dw *pcie)
->  	}
->  }
->  
-> +static int tegra_pcie_get_slot_regulators(struct tegra_pcie_dw *pcie)
-> +{
-> +	pcie->slot_ctl_3v3 = devm_regulator_get_optional(pcie->dev, "vpcie3v3");
-> +	if (IS_ERR(pcie->slot_ctl_3v3)) {
-> +		if (PTR_ERR(pcie->slot_ctl_3v3) != -ENODEV)
-> +			return PTR_ERR(pcie->slot_ctl_3v3);
-> +
-> +		pcie->slot_ctl_3v3 = NULL;
-> +	}
-> +
-> +	pcie->slot_ctl_12v = devm_regulator_get_optional(pcie->dev, "vpcie12v");
-> +	if (IS_ERR(pcie->slot_ctl_12v)) {
-> +		if (PTR_ERR(pcie->slot_ctl_12v) != -ENODEV)
-> +			return PTR_ERR(pcie->slot_ctl_12v);
-> +
-> +		pcie->slot_ctl_12v = NULL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_pcie_enable_slot_regulators(struct tegra_pcie_dw *pcie)
-> +{
-> +	int ret;
-> +
-> +	if (pcie->slot_ctl_3v3) {
-> +		ret = regulator_enable(pcie->slot_ctl_3v3);
-> +		if (ret < 0) {
-> +			dev_err(pcie->dev,
-> +				"Failed to enable 3V3 slot supply: %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	if (pcie->slot_ctl_12v) {
-> +		ret = regulator_enable(pcie->slot_ctl_12v);
-> +		if (ret < 0) {
-> +			dev_err(pcie->dev,
-> +				"Failed to enable 12V slot supply: %d\n", ret);
-> +			goto fail_12v_enable;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * According to PCI Express Card Electromechanical Specification
-> +	 * Revision 1.1, Table-2.4, T_PVPERL (Power stable to PERST# inactive)
-> +	 * should be a minimum of 100ms.
-> +	 */
-> +	msleep(100);
-> +
-> +	return 0;
-> +
-> +fail_12v_enable:
-> +	if (pcie->slot_ctl_3v3)
-> +		regulator_disable(pcie->slot_ctl_3v3);
-> +	return ret;
-> +}
-> +
-> +static void tegra_pcie_disable_slot_regulators(struct tegra_pcie_dw *pcie)
-> +{
-> +	if (pcie->slot_ctl_12v)
-> +		regulator_disable(pcie->slot_ctl_12v);
-> +	if (pcie->slot_ctl_3v3)
-> +		regulator_disable(pcie->slot_ctl_3v3);
-> +}
-> +
->  static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  					bool en_hw_hot_rst)
->  {
-> @@ -1060,6 +1128,10 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  		return ret;
->  	}
->  
-> +	ret = tegra_pcie_enable_slot_regulators(pcie);
-> +	if (ret < 0)
-> +		goto fail_slot_reg_en;
-> +
->  	ret = regulator_enable(pcie->pex_ctl_supply);
->  	if (ret < 0) {
->  		dev_err(pcie->dev, "Failed to enable regulator: %d\n", ret);
-> @@ -1142,6 +1214,8 @@ static int tegra_pcie_config_controller(struct tegra_pcie_dw *pcie,
->  fail_core_clk:
->  	regulator_disable(pcie->pex_ctl_supply);
->  fail_reg_en:
-> +	tegra_pcie_disable_slot_regulators(pcie);
-> +fail_slot_reg_en:
->  	tegra_pcie_bpmp_set_ctrl_state(pcie, false);
->  
->  	return ret;
-> @@ -1174,6 +1248,8 @@ static int __deinit_controller(struct tegra_pcie_dw *pcie)
->  		return ret;
->  	}
->  
-> +	tegra_pcie_disable_slot_regulators(pcie);
-> +
->  	ret = tegra_pcie_bpmp_set_ctrl_state(pcie, false);
->  	if (ret) {
->  		dev_err(pcie->dev, "Failed to disable controller %d: %d\n",
-> @@ -1373,6 +1449,10 @@ static int tegra_pcie_dw_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	ret = tegra_pcie_get_slot_regulators(pcie);
-> +	if (ret < 0)
-> +		return ret;
-
-All of the functions called from tegra_pcie_dw_probe appear to dev_err if
-something goes wrong, is there any reason why you haven't done that here?
-
-Thanks,
-
-Andrew Murray
-
-> +
->  	pcie->pex_ctl_supply = devm_regulator_get(dev, "vddio-pex-ctl");
->  	if (IS_ERR(pcie->pex_ctl_supply)) {
->  		dev_err(dev, "Failed to get regulator: %ld\n",
-> -- 
-> 2.17.1
+> And the result is better 10% than the initial implement:
+> without the patch，IOPS=197k, BW=770MiB/s (808MB/s)(90.3GiB/120002msec)
+> with the patch,  IOPS=218k, BW=852MiB/s (894MB/s)(99.9GiB/120002msec)
 > 
+> Cc: "Theodore Ts'o" <tytso@mit.edu>
+> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+> Cc: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Yang Guo <guoyang2@huawei.com>
+> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+
+Thanks, applied.
+
+						- Ted
