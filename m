@@ -2,119 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19A44A03E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECE8BA03F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:59:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfH1N6T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:58:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37206 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726506AbfH1N6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:58:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7ED8EAC7D;
-        Wed, 28 Aug 2019 13:58:15 +0000 (UTC)
-Date:   Wed, 28 Aug 2019 15:58:22 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     lingyxu <lingyan.xu@nokia-sbell.com>
-Cc:     Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-        WladislavWiebe <wladislav.wiebe@nokia.com>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i801_smbus: clear SMBALERT status bit and disable
- SMBALERT interrupt
-Message-ID: <20190828155822.7cb13a7b@endymion>
-In-Reply-To: <1565577634-18264-1-git-send-email-lingyan.xu@nokia-sbell.com>
-References: <1565577634-18264-1-git-send-email-lingyan.xu@nokia-sbell.com>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1727208AbfH1N7G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:59:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:26741 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726603AbfH1N7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 09:59:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 06:59:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
+   d="scan'208";a="332168480"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 28 Aug 2019 06:59:04 -0700
+Received: from [10.254.95.196] (kliang2-mobl.ccr.corp.intel.com [10.254.95.196])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 663C3580409;
+        Wed, 28 Aug 2019 06:59:03 -0700 (PDT)
+Subject: Re: [RESEND PATCH V3 2/8] perf/x86/intel: Basic support for metrics
+ counters
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+References: <20190826144740.10163-1-kan.liang@linux.intel.com>
+ <20190826144740.10163-3-kan.liang@linux.intel.com>
+ <20190828075213.GB2369@hirez.programming.kicks-ass.net>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <ae6e095a-d041-4cde-b9e1-fd950160abfd@linux.intel.com>
+Date:   Wed, 28 Aug 2019 09:59:02 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190828075213.GB2369@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lingyan,
 
-On Mon, 12 Aug 2019 10:40:34 +0800, lingyxu wrote:
-> From: Lingyan Xu <lingyan.xu@nokia-sbell.com>
+
+On 8/28/2019 3:52 AM, Peter Zijlstra wrote:
+> On Mon, Aug 26, 2019 at 07:47:34AM -0700, kan.liang@linux.intel.com wrote:
 > 
-> In current i801 driver, SMBALERT interrupt is allowed
-> (Slave Command Register bit2 is 0).
-> But these is no handler for SMBALERT interrupt in i801_isr,
-> if there is SMBALERT interrupt asserted and deasserted,
-> i801 will have an irq flood for the related status bit is setted.
+>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+>> index 81b005e4c7d9..54534ff00940 100644
+>> --- a/arch/x86/events/core.c
+>> +++ b/arch/x86/events/core.c
+>> @@ -1033,18 +1033,30 @@ static inline void x86_assign_hw_event(struct perf_event *event,
+>>   				struct cpu_hw_events *cpuc, int i)
+>>   {
+>>   	struct hw_perf_event *hwc = &event->hw;
+>> +	int reg_idx;
+>>   
+>>   	hwc->idx = cpuc->assign[i];
+>>   	hwc->last_cpu = smp_processor_id();
+>>   	hwc->last_tag = ++cpuc->tags[i];
+>>   
+>> +	/*
+>> +	 * Metrics counters use different indexes in the scheduler
+>> +	 * versus the hardware.
+>> +	 *
+>> +	 * Map metrics to fixed counter 3 (which is the base count),
+>> +	 * but the update event callback reads the extra metric register
+>> +	 * and converts to the right metric.
+>> +	 */
+>> +	reg_idx = get_reg_idx(hwc->idx);
+>> +
+>>   	if (hwc->idx == INTEL_PMC_IDX_FIXED_BTS) {
+>>   		hwc->config_base = 0;
+>>   		hwc->event_base	= 0;
+>>   	} else if (hwc->idx >= INTEL_PMC_IDX_FIXED) {
+>>   		hwc->config_base = MSR_ARCH_PERFMON_FIXED_CTR_CTRL;
+>> -		hwc->event_base = MSR_ARCH_PERFMON_FIXED_CTR0 + (hwc->idx - INTEL_PMC_IDX_FIXED);
+>> -		hwc->event_base_rdpmc = (hwc->idx - INTEL_PMC_IDX_FIXED) | 1<<30;
+>> +		hwc->event_base = MSR_ARCH_PERFMON_FIXED_CTR0 +
+>> +				  (reg_idx - INTEL_PMC_IDX_FIXED);
+>> +		hwc->event_base_rdpmc = (reg_idx - INTEL_PMC_IDX_FIXED) | 1<<30;
+>>   	} else {
+>>   		hwc->config_base = x86_pmu_config_addr(hwc->idx);
+>>   		hwc->event_base  = x86_pmu_event_addr(hwc->idx);
 > 
-> So SMBALERT interrupt handler is needed, and also, SMBALERT interrupt
-> will be generated from time to time if slave chip have some fault.
-> So disable SMBALERT interrupt is also needed.
+> That reg_idx is a pointless unconditional branch; better to write it
+> like:
 > 
-> About the solution,
-> please see http://www.farnell.com/datasheets/1581967.pdf
-> Page632 P640 for more.
+> static inline void x86_assign_hw_event(struct perf_event *event,
+> 				struct cpu_hw_events *cpuc, int i)
+> {
+> 	struct hw_perf_event *hwc = &event->hw;
+> 	int idx;
 > 
-> Signed-off-by: Lingyan Xu <lingyan.xu@nokia-sbell.com>
-> ---
->  drivers/i2c/busses/i2c-i801.c |    7 ++++++-
->  1 files changed, 6 insertions(+), 1 deletions(-)
+> 	idx = hwc->idx = cpuc->assign[i];
+> 	hwc->last_cpu = smp_processor_id();
+> 	hwc->last_tag = ++cpuc->tags[i];
 > 
-> diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
-> index f295693..033bafe 100644
-> --- a/drivers/i2c/busses/i2c-i801.c
-> +++ b/drivers/i2c/busses/i2c-i801.c
-> @@ -661,9 +661,11 @@ static irqreturn_t i801_isr(int irq, void *dev_id)
->  	 * Clear irq sources and report transaction result.
->  	 * ->status must be cleared before the next transaction is started.
->  	 */
-> +
-> +	outb_p(status, SMBHSTSTS(priv));
-> +
->  	status &= SMBHSTSTS_INTR | STATUS_ERROR_FLAGS;
->  	if (status) {
-> -		outb_p(status, SMBHSTSTS(priv));
->  		priv->status = status;
->  		wake_up(&priv->waitq);
->  	}
+> 	switch (hwc->idx) {
+> 	case INTEL_PMC_IDX_FIXED_BTS:
+> 		hwc->config_base = 0;
+> 		hwc->event_base	= 0;
+> 		break;
+> 
+> 	case INTEL_PMC_IDX_FIXED_METRIC_BASE ... INTEL_PMC_IDX_FIXED_METRIC_BASE+3:
+> 		/* All METRIC events are mapped onto the fixed SLOTS counter */
+> 		idx = INTEL_PMC_IDX_FIXED_SLOTS;
+> 
+> 	case INTEL_PMC_IDX_FIXED ... INTEL_PMC_IDX_FIXED_METRIC_BASE-1:
+> 		hwc->config_base = MSR_ARCH_PERFMON_FIXED_CTR_CTRL;
+> 		hwc->event_base = MSR_ARCH_PERFMON_FIXED_CTR0 +
+> 				  (idx - INTEL_PMC_IDX_FIXED);
+> 		hwc->event_base_rdpmc = (idx - INTEL_PMC_IDX_FIXED) | 1<<30;
+> 		break;
+> 
+> 	default:
+> 		hwc->config_base = x86_pmu_config_addr(hwc->idx);
+> 		hwc->event_base = x86_pmu_event_addr(hwc->idx);
+> 		hwc->event_base_rdpmc = x86_pmu_rdpmc_index(hwc->idx);
+> 		break;
+> 	}
+> }
+> 
+> On that; wth does this to the RDPMC userspace support!? Does that even
+> work with these counters?
+> 
 
-Looks scary. Writing the whole value of SMBHSTSTS back to itself
-without selecting which bits you write is dangerous. Specifically,
-writing back SMBHSTSTS_BYTE_DONE, SMBHSTSTS_INUSE_STS and
-SMBHSTSTS_HOST_BUSY could have unexpected consequences. I would feel
-much better if you would just explicitly add SMBHSTSTS_SMBALERT_STS to
-the list.
+The event_base_rdpmc is only for kernel usage now.
+But it seems we can update x86_pmu_event_idx() to use it as well.
 
-> @@ -1810,6 +1812,9 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)
->  	/* Default timeout in interrupt mode: 200 ms */
->  	priv->adapter.timeout = HZ / 5;
->  
-> +	/* Disable SMBALERT interrupt */
-> +	outb_p(inb_p(SMBSLVCMD(priv)) | BIT(2), SMBSLVCMD(priv));
+Thanks,
+Kan
 
-Please give SMBSLVCMD's BIT(2) a name and define it after
-SMBSLVCMD_HST_NTFY_INTREN.
 
-Also it is mandatory to restore the value of SMBSLVCMD before returning
-the control back to the BIOS. Currently this is only being done when
-the FEATURE_HOST_NOTIFY bit is set because that's the only case where
-we change the value of that register, but if we change it
-unconditionally then it must be saved and restored unconditionally too.
-
-> +
->  	if (dev->irq == IRQ_NOTCONNECTED)
->  		priv->features &= ~FEATURE_IRQ;
->  
-
-That being said, if you see this interrupt flood, it means that at
-least one device on your SMBus would benefit from SMBus Alert being
-supported. The infrastructure is already there as we added support in a
-few I2C bus drivers already. So maybe instead of silencing the
-interrupts, we could add proper SMBus Alert support to the i2c-i801
-driver?
-
-Did you figure out which device is raising the SMBus Alert and why?
-
--- 
-Jean Delvare
-SUSE L3 Support
