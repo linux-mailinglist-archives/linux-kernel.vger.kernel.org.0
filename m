@@ -2,91 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D099FC9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:08:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC93E9FC9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbfH1IH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:07:57 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35091 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbfH1IH4 (ORCPT
+        id S1726513AbfH1IJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:09:37 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:57293 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726273AbfH1IJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:07:56 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d85so1209222pfd.2;
-        Wed, 28 Aug 2019 01:07:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=bzwq5Lzf2vOHlpsC8M2sMWZcNEUPweoUJnKhBuyOVxM=;
-        b=mUaAE+Sx+tTGqn6H09pLb6Q/VOdWhRgt5Li6uV9XKx4BWmwyuMYcARE6VgEyQ/SvhN
-         mTVf72562IkM0UYVZBKOTzIi+pDKPkbwbhyqdR8Eu06oNFf/jIbfZkRFehKsn97q2F1S
-         d2wcW3xXTQsegeEBOUBoqOr5g/MwWupqbbhMbgkJTgWpITh4toWXy/ctAyVn8ZxXI5Dq
-         uAnnHtGHLvh8oFR8go3I8DOjkPEnzyjyz5BrOMJJlBI1xcsf4mBH/FaYLt160zCa1DaO
-         0rLc9K96L0i6EnsrxG4c5pzXFuAPmECuHmNac/qb67JgHF3to+skYS5K/ppc5C/ilo+0
-         V4uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=bzwq5Lzf2vOHlpsC8M2sMWZcNEUPweoUJnKhBuyOVxM=;
-        b=lzd9q4Wg0cVdkHCWaM3PcOdsgEuNCdGWKJbQEdyPcly5g31BT2LVCmTj4g5gOrvYaa
-         7TsKCtmGCR9S8S+Y6ZDB2BJBh2gC2Ih00AXxpRK40trrsI3rc2TqGg9F/bZfP3cHpVuc
-         DSD60awWL+qc7z1IqgDznwhNT6yAiYxUCY5WlYAEgClAuA5jDcV7iGUkmdSyQ17OPnSL
-         ddvV81P9J7TdFc9qgYWgJmTxBuKxNz9NCA+rwYgKUl5CHoXy3F9KysIjdNtCB8gaib1Z
-         b8mGZXqAE0GCp/mvTu5vAzejuh+ZVTlRCwyySs9aD4isYBPqQvcLxRYQyHjb2JHcXaB5
-         Qqpg==
-X-Gm-Message-State: APjAAAXeXgNlDtJ6idTeDYNcB9/nKMQsgze6D/zvaxblQTHRkfLcqlog
-        w1RrxcvFxMw9P7aw1PRAPSc=
-X-Google-Smtp-Source: APXvYqwBYlxPa+/RhgNHwomSbYeuT6yPtD4Axsr/uaDwXTIOM9VPBkYOF+QX1PgeyswykqQ92DwU9Q==
-X-Received: by 2002:aa7:8f2e:: with SMTP id y14mr3197181pfr.113.1566979676296;
-        Wed, 28 Aug 2019 01:07:56 -0700 (PDT)
-Received: from localhost.corp.microsoft.com ([167.220.255.52])
-        by smtp.googlemail.com with ESMTPSA id z6sm4129360pgk.18.2019.08.28.01.07.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 28 Aug 2019 01:07:55 -0700 (PDT)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        sashal@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        michael.h.kelley@microsoft.com
-Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/Hyper-V: Fix reference of pv_ops with CONFIG_PARAVIRT=N
-Date:   Wed, 28 Aug 2019 16:07:47 +0800
-Message-Id: <20190828080747.204419-1-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.5
+        Wed, 28 Aug 2019 04:09:37 -0400
+Received: from [192.168.2.10] ([46.9.232.237])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id 2t1Gi8eHbzaKO2t1KiK1Bx; Wed, 28 Aug 2019 10:09:34 +0200
+Subject: Re: [PATCH v7 7/9] drm: tegra: use cec_notifier_conn_(un)register
+To:     Dariusz Marcinkiewicz <darekm@google.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190814104520.6001-1-darekm@google.com>
+ <20190814104520.6001-8-darekm@google.com>
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Message-ID: <f0e99db8-3329-f272-e139-a7c713f200ea@xs4all.nl>
+Date:   Wed, 28 Aug 2019 10:09:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <20190814104520.6001-8-darekm@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfN2SLzcWSOO1TeYiDuWm3FiX75qjJsGvgXoX1pwPRTKZ/cG5yJC28sXJWwAO+I967Ki1N2UQLkv9Ajgm/7RLCTZ9ACBucApyEtW22Ly1VAyxQ/KV/WCF
+ 5r5SuQzzIKC3C1WbZjkWinhnRCPWVNAN/cqva4ufTNqnxjdKSi29ppikdazMh+fnPBUReNX2sZq9SGXKw9b3P1Y+MTPOzbpYmWOqW7fLECZDwx22emctIrrd
+ I/2RwIBJqahb8GPFnLhxsAVnGjlbZ+nZnkdST6qJ9GIrsvaAneBjPHDFhcuWoFUhV01bwAx5aVyK0VNf8ro7HFUQc6tO4gjQnybN0zq2Q3On14YmJcQiCqkP
+ gUjs4Yf9o00VJzP0OpX7ErBDaCqTxjkDMJ2Lgyu4ab+Djk2Pj8qnu67wbh3i3J9c+pHUf7ElNPpSf/MPR32H19IZ+2DDDALRZnS+WRbgyBGt8Yci/GU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+Thierry,
 
-hv_setup_sched_clock() references pv_ops and this should
-be under CONFIG_PARAVIRT=Y. Fix it.
+Can you review this patch?
 
-Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
----
-This patch is based on git://git.kernel.org/pub/scm/linux/
-kernel/git/tip/tip.git timers/core.
+Thanks!
 
- arch/x86/kernel/cpu/mshyperv.c | 2 ++
- 1 file changed, 2 insertions(+)
+	Hans
 
-diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-index 53afd33990eb..267daad8c036 100644
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -346,7 +346,9 @@ static void __init ms_hyperv_init_platform(void)
- 
- void hv_setup_sched_clock(void *sched_clock)
- {
-+#ifdef CONFIG_PARAVIRT
- 	pv_ops.time.sched_clock = sched_clock;
-+#endif
- }
- 
- const __initconst struct hypervisor_x86 x86_hyper_ms_hyperv = {
--- 
-2.14.5
+On 8/14/19 12:45 PM, Dariusz Marcinkiewicz wrote:
+> Use the new cec_notifier_conn_(un)register() functions to
+> (un)register the notifier for the HDMI connector, and fill in
+> the cec_connector_info.
+> 
+> Changes since v4:
+> 	- only create a CEC notifier for HDMI connectors
+> 
+> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+> Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> ---
+>  drivers/gpu/drm/tegra/output.c | 28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+> index bdcaa4c7168cf..34373734ff689 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -70,6 +70,11 @@ tegra_output_connector_detect(struct drm_connector *connector, bool force)
+>  
+>  void tegra_output_connector_destroy(struct drm_connector *connector)
+>  {
+> +	struct tegra_output *output = connector_to_output(connector);
+> +
+> +	if (output->cec)
+> +		cec_notifier_conn_unregister(output->cec);
+> +
+>  	drm_connector_unregister(connector);
+>  	drm_connector_cleanup(connector);
+>  }
+> @@ -163,18 +168,11 @@ int tegra_output_probe(struct tegra_output *output)
+>  		disable_irq(output->hpd_irq);
+>  	}
+>  
+> -	output->cec = cec_notifier_get(output->dev);
+> -	if (!output->cec)
+> -		return -ENOMEM;
+> -
+>  	return 0;
+>  }
+>  
+>  void tegra_output_remove(struct tegra_output *output)
+>  {
+> -	if (output->cec)
+> -		cec_notifier_put(output->cec);
+> -
+>  	if (output->hpd_gpio)
+>  		free_irq(output->hpd_irq, output);
+>  
+> @@ -184,6 +182,7 @@ void tegra_output_remove(struct tegra_output *output)
+>  
+>  int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+>  {
+> +	int connector_type;
+>  	int err;
+>  
+>  	if (output->panel) {
+> @@ -199,6 +198,21 @@ int tegra_output_init(struct drm_device *drm, struct tegra_output *output)
+>  	if (output->hpd_gpio)
+>  		enable_irq(output->hpd_irq);
+>  
+> +	connector_type = output->connector.connector_type;
+> +	/*
+> +	 * Create a CEC notifier for HDMI connector.
+> +	 */
+> +	if (connector_type == DRM_MODE_CONNECTOR_HDMIA ||
+> +	    connector_type == DRM_MODE_CONNECTOR_HDMIB) {
+> +		struct cec_connector_info conn_info;
+> +
+> +		cec_fill_conn_info_from_drm(&conn_info, &output->connector);
+> +		output->cec = cec_notifier_conn_register(output->dev, NULL,
+> +							 &conn_info);
+> +		if (!output->cec)
+> +			return -ENOMEM;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> 
 
