@@ -2,75 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0A25A0622
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 012FCA061E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbfH1PUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:20:44 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:33585 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726586AbfH1PUo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:20:44 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7SFKN5S009354
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Aug 2019 11:20:24 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 66ABA42049E; Wed, 28 Aug 2019 11:20:23 -0400 (EDT)
-Date:   Wed, 28 Aug 2019 11:20:23 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Guo <guoyang2@huawei.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH v2] ext4: use percpu_counters for extent_status cache
- hits/misses
-Message-ID: <20190828152023.GG24857@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Guo <guoyang2@huawei.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Eric Biggers <ebiggers@kernel.org>
-References: <1566983957-6608-1-git-send-email-zhangshaokun@hisilicon.com>
+        id S1726960AbfH1PUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:20:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39886 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726923AbfH1PUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:20:23 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E780AAE00;
+        Wed, 28 Aug 2019 15:20:21 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id A9257DA809; Wed, 28 Aug 2019 17:20:42 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 17:20:41 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Pu Wen <puwen@hygon.cn>, Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [GIT pull] x86/urgent for 5.3-rc5
+Message-ID: <20190828152040.GC2752@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Pu Wen <puwen@hygon.cn>, Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <20190825182922.GC20639@zn.tnic>
+ <CAHk-=wjhyg-MndXHZGRD+ZKMK1UrcghyLH32rqQA=YmcxV7Z0Q@mail.gmail.com>
+ <20190825193218.GD20639@zn.tnic>
+ <CAHk-=wiBqmHTFYJWOehB=k3mC7srsx0DWMCYZ7fMOC0T7v1KHA@mail.gmail.com>
+ <20190825194912.GF20639@zn.tnic>
+ <CAHk-=wjcUQjK=SqPGdZCDEKntOZEv34n9wKJhBrPzcL6J7nDqQ@mail.gmail.com>
+ <20190825201723.GG20639@zn.tnic>
+ <20190826125342.GC28610@zn.tnic>
+ <CAHk-=wj_E58JskechbJyWwpzu5rwKFHEABr4dCZjS+JBvv67Uw@mail.gmail.com>
+ <20190827173955.GI29752@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1566983957-6608-1-git-send-email-zhangshaokun@hisilicon.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190827173955.GI29752@zn.tnic>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 05:19:17PM +0800, Shaokun Zhang wrote:
-> From: Yang Guo <guoyang2@huawei.com>
-> 
-> @es_stats_cache_hits and @es_stats_cache_misses are accessed frequently in
-> ext4_es_lookup_extent function, it would influence the ext4 read/write
-> performance in NUMA system. Let's optimize it using percpu_counter,
-> it is profitable for the performance.
-> 
-> The test command is as below:
-> fio -name=randwrite -numjobs=8 -filename=/mnt/test1 -rw=randwrite
-> -ioengine=libaio -direct=1 -iodepth=64 -sync=0 -norandommap
-> -group_reporting -runtime=120 -time_based -bs=4k -size=5G
-> 
-> And the result is better 10% than the initial implement:
-> without the patch，IOPS=197k, BW=770MiB/s (808MB/s)(90.3GiB/120002msec)
-> with the patch,  IOPS=218k, BW=852MiB/s (894MB/s)(99.9GiB/120002msec)
-> 
-> Cc: "Theodore Ts'o" <tytso@mit.edu>
-> Cc: Andreas Dilger <adilger.kernel@dilger.ca>
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Yang Guo <guoyang2@huawei.com>
-> Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+On Tue, Aug 27, 2019 at 07:39:55PM +0200, Borislav Petkov wrote:
+> @@ -42,5 +43,24 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
+>  			return;
+>  		}
+>  	}
+> +
+> +	/*
+> +	 * Stupid sanity-check whether RDRAND does *actually* generate
+> +	 * some at least random-looking data.
+> +	 */
+> +	prev = tmp;
+> +	for (i = 0; i < SANITY_CHECK_LOOPS; i++) {
+> +		if (rdrand_long(&tmp)) {
+> +			if (prev != tmp)
+> +				changed++;
 
-Thanks, applied.
+You could do some sort of weak statistical test like
 
-						- Ted
+		if (popcnt(prev ^ tmp) < BITS_PER_LONG / 3)
+			bad++;
+
+		if (bad > TOO_BAD)
+			WARN(...);
+
+this should catch same value, increments you mentioned and possibly
+other trivial classes of not-so-random values.
