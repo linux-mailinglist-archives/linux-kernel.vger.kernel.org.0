@@ -2,78 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A53E4A05DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60ED8A05DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:14:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfH1POR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:14:17 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:41108 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726395AbfH1POR (ORCPT
+        id S1726832AbfH1POY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:14:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26934 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726315AbfH1POS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:14:17 -0400
-Received: by mail-qk1-f195.google.com with SMTP id g17so44596qkk.8
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 08:14:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QQzVgkGastCCZFbFZ7g9sQmtqjgZSo1pYtQrF34ax5w=;
-        b=eyaRKuChPKUi+LBTUrprs6OthuFSyH44lX507bHnP3bS6LkI7bElz3L2jSYUnP/wdz
-         2UAg+c+r3vW/ZJGDXy8adcAubQp1/KPzNoluZRFXVflJUqd7nk8mJpKrLmITAeW20f1F
-         EGdDlAl2chxu7xEOyhZLu+6P8rAVF4ZCs+pvjPMe3z3FKseBl+CPLeyXdaJ3LtMCSwDc
-         0kvGFodXGLUSa/80XhyrHhWYssoluZ8yEZrBS/KUjKpReB7Aos9d7Ph6DUytCIGZ1iBo
-         31IUXTczBhpafaYSmm/KWBseIHDPC0RKNwaZPtDTt/tv+Cwtyc6pZCCAWE2/vcs+b3xD
-         cl8g==
-X-Gm-Message-State: APjAAAVCJnOWz+ZoKUqh4Y7qjsuiqEoJeRn/XZfeMxtRKr826kdud8D1
-        kFuUKPrx1Ns0+AF2lvucgtvtGi+LJp6r8SFk7kE=
-X-Google-Smtp-Source: APXvYqxq6dUQwoGZKS2NIPsvwPigFzVtSoqu+iRQ6eqrGgn5DZd+LVhTJIUy6Ir7QVrBMtq4t0rU/tb49Q0lPh6tNHM=
-X-Received: by 2002:a37:4fcf:: with SMTP id d198mr4454519qkb.394.1567005255266;
- Wed, 28 Aug 2019 08:14:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAK8P3a3G=GCpLtNztuoLR4BuugAB=zpa_Jrz5BSft6Yj-nok1g@mail.gmail.com>
- <20190827145102.p7lmkpytf3mngxbj@treble> <CAHFW8PRsmmCR6TWoXpQ9gyTA7azX9YOerPErCMggcQX-=fAqng@mail.gmail.com>
- <CAK8P3a2TeaMc_tWzzjuqO-eQjZwJdpbR1yH8yzSQbbVKdWCwSg@mail.gmail.com>
- <20190827192255.wbyn732llzckmqmq@treble> <CAK8P3a2DWh54eroBLXo+sPgJc95aAMRWdLB2n-pANss1RbLiBw@mail.gmail.com>
- <CAKwvOdnD1mEd-G9sWBtnzfe9oGTeZYws6zNJA7opS69DN08jPg@mail.gmail.com> <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
-In-Reply-To: <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 28 Aug 2019 17:13:59 +0200
-Message-ID: <CAK8P3a0bY9QfamCveE3P4H+Nrs1e6CTqWVgiY+MCd9hJmgMQZg@mail.gmail.com>
-Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ilie Halip <ilie.halip@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 28 Aug 2019 11:14:18 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SF18OA091241
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 11:14:17 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2unsw56e3j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 11:14:17 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Wed, 28 Aug 2019 16:14:15 +0100
+Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 28 Aug 2019 16:14:12 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SFDmeI17301832
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 15:13:48 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1E6E5204E;
+        Wed, 28 Aug 2019 15:14:10 +0000 (GMT)
+Received: from localhost.ibm.com (unknown [9.85.129.156])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 771A452050;
+        Wed, 28 Aug 2019 15:14:09 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Petr Vorel <pvorel@suse.cz>, Jessica Yu <jeyu@kernel.org>,
+        Dave Young <dyoung@redhat.com>, shuah <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v1] sefltest/ima: support appended signatures (modsig)
+Date:   Wed, 28 Aug 2019 11:14:00 -0400
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 19082815-0020-0000-0000-00000364EE75
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082815-0021-0000-0000-000021BA4256
+Message-Id: <1567005240-12912-1-git-send-email-zohar@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=702 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908280156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 11:00 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tue, Aug 27, 2019 at 11:22 PM 'Nick Desaulniers' via Clang Built Linux <clang-built-linux@googlegroups.com> wrote:
-I figured this one out as well:
+In addition to the PE/COFF and IMA xattr signatures, the kexec kernel
+image can be signed with an appended signature, using the same
+scripts/sign-file tool that is used to sign kernel modules.
 
-> http://paste.ubuntu.com/p/XjdDsypRxX/
-> 0x5BA1B7A1:arch/x86/ia32/ia32_signal.o: warning: objtool:
-> ia32_setup_rt_frame()+0x238: call to memset() with UACCESS enabled
-> 0x5BA1B7A1:arch/x86/kernel/signal.o: warning: objtool:
-> __setup_rt_frame()+0x5b8: call to memset() with UACCESS enabled
+This patch adds support for detecting a kernel image signed with an
+appended signature and updates the existing test messages
+appropriately.
 
-When CONFIG_KASAN is set, clang decides to use memset() to set
-the first two struct members in this function:
+Reviewed-by: Petr Vorel <pvorel@suse.cz>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ .../selftests/kexec/test_kexec_file_load.sh        | 38 +++++++++++++++++++---
+ 1 file changed, 34 insertions(+), 4 deletions(-)
 
- static inline void sas_ss_reset(struct task_struct *p)
- {
-        p->sas_ss_sp = 0;
-        p->sas_ss_size = 0;
-        p->sas_ss_flags = SS_DISABLE;
+diff --git a/tools/testing/selftests/kexec/test_kexec_file_load.sh b/tools/testing/selftests/kexec/test_kexec_file_load.sh
+index fa7c24e8eefb..2ff600388c30 100755
+--- a/tools/testing/selftests/kexec/test_kexec_file_load.sh
++++ b/tools/testing/selftests/kexec/test_kexec_file_load.sh
+@@ -37,11 +37,20 @@ is_ima_sig_required()
+ 	# sequentially.  As a result, a policy rule may be defined, but
+ 	# might not necessarily be used.  This test assumes if a policy
+ 	# rule is specified, that is the intent.
++
++	# First check for appended signature (modsig), then xattr
+ 	if [ $ima_read_policy -eq 1 ]; then
+ 		check_ima_policy "appraise" "func=KEXEC_KERNEL_CHECK" \
+-			"appraise_type=imasig"
++			"appraise_type=imasig|modsig"
+ 		ret=$?
+-		[ $ret -eq 1 ] && log_info "IMA signature required";
++		if [ $ret -eq 1 ]; then
++			log_info "IMA or appended(modsig) signature required"
++		else
++			check_ima_policy "appraise" "func=KEXEC_KERNEL_CHECK" \
++				"appraise_type=imasig"
++			ret=$?
++			[ $ret -eq 1 ] && log_info "IMA signature required";
++		fi
+ 	fi
+ 	return $ret
  }
+@@ -84,6 +93,22 @@ check_for_imasig()
+ 	return $ret
+ }
+ 
++# Return 1 for appended signature (modsig) found and 0 for not found.
++check_for_modsig()
++{
++	local module_sig_string="~Module signature appended~"
++	local sig="$(tail --bytes $((${#module_sig_string} + 1)) $KERNEL_IMAGE)"
++	local ret=0
++
++	if [ "$sig" == "$module_sig_string" ]; then
++		ret=1
++		log_info "kexec kernel image modsig signed"
++	else
++		log_info "kexec kernel image not modsig signed"
++	fi
++	return $ret
++}
++
+ kexec_file_load_test()
+ {
+ 	local succeed_msg="kexec_file_load succeeded"
+@@ -98,7 +123,8 @@ kexec_file_load_test()
+ 		# In secureboot mode with an architecture  specific
+ 		# policy, make sure either an IMA or PE signature exists.
+ 		if [ $secureboot -eq 1 ] && [ $arch_policy -eq 1 ] && \
+-			[ $ima_signed -eq 0 ] && [ $pe_signed -eq 0 ]; then
++			[ $ima_signed -eq 0 ] && [ $pe_signed -eq 0 ] \
++			  && [ $ima_modsig -eq 0 ]; then
+ 			log_fail "$succeed_msg (missing sig)"
+ 		fi
+ 
+@@ -107,7 +133,8 @@ kexec_file_load_test()
+ 			log_fail "$succeed_msg (missing PE sig)"
+ 		fi
+ 
+-		if [ $ima_sig_required -eq 1 ] && [ $ima_signed -eq 0 ]; then
++		if [ $ima_sig_required -eq 1 ] && [ $ima_signed -eq 0 ] \
++		     && [ $ima_modsig -eq 0 ]; then
+ 			log_fail "$succeed_msg (missing IMA sig)"
+ 		fi
+ 
+@@ -204,5 +231,8 @@ pe_signed=$?
+ check_for_imasig
+ ima_signed=$?
+ 
++check_for_modsig
++ima_modsig=$?
++
+ # Test loading the kernel image via kexec_file_load syscall
+ kexec_file_load_test
+-- 
+2.7.5
 
-and that is called from save_altstack_ex(). Adding a barrier() after
-the sas_ss_sp() works around the issue, but is certainly not the
-best solution. Any other ideas?
-
-       Arnd
