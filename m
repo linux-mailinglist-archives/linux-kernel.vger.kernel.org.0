@@ -2,139 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE05EA0459
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C149A0473
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:15:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfH1OM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:12:56 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43640 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726341AbfH1OM4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:12:56 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 16B1EAE92;
-        Wed, 28 Aug 2019 14:12:54 +0000 (UTC)
-Date:   Wed, 28 Aug 2019 16:12:53 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        kirill.shutemov@linux.intel.com, hannes@cmpxchg.org,
-        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH -mm] mm: account deferred split THPs into MemAvailable
-Message-ID: <20190828141253.GM28313@dhcp22.suse.cz>
-References: <20190826131538.64twqx3yexmhp6nf@box>
- <20190827060139.GM7538@dhcp22.suse.cz>
- <20190827110210.lpe36umisqvvesoa@box>
- <aaaf9742-56f7-44b7-c3db-ad078b7b2220@suse.cz>
- <20190827120923.GB7538@dhcp22.suse.cz>
- <20190827121739.bzbxjloq7bhmroeq@box>
- <20190827125911.boya23eowxhqmopa@box>
- <d76ec546-7ae8-23a3-4631-5c531c1b1f40@linux.alibaba.com>
- <20190828075708.GF7386@dhcp22.suse.cz>
- <20190828140329.qpcrfzg2hmkccnoq@box>
+        id S1726764AbfH1OO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:14:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34104 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfH1OO4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 10:14:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6rDsAjXtgHuoENe2BDRKRs4vEoPiD7Zi5fpWyf81iqE=; b=suUi86WsP4Cg2rN2Vo+u+2OHE
+        J8vy9p1eaA1Oew6VTAjT8CCrTFxU5g8fq37tY9DskhJKF/nlZA3q9vxu87LaV3kVlbCk9HRD6Ti+q
+        0QdJbvBwNZ8sV59cGXt4XML08AHjMkuBuC3xO7IUE33Qppl1w9qLFRy0iveSAHvqL2ccwi04MqU/W
+        S4q4Hud6bgCQmn4yYEhI+gSisfnAUsgS4ruvRMgX3/7nq78ZT0dR6oTXwHWNiRbFBkSlhDeCgZMv4
+        lztj5I3kT2eWZ2D0ULjCPCnH5KJw4B6XkWB6LWScmQ2GhdT8E69jn4v8Hp2b1Q+EoO/SkTZU5+stE
+        BollTDDAA==;
+Received: from [2001:4bb8:180:3f4c:863:2ead:e9d4:da9f] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2yij-0000T4-P7; Wed, 28 Aug 2019 14:14:46 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Keith Busch <kbusch@kernel.org>,
+        "Derrick, Jonathan" <jonathan.derrick@intel.com>
+Cc:     x86@kernel.org, joro@8bytes.org, linux-pci@vger.kernel.org,
+        bhelgaas@google.com, dwmw2@infradead.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: stop overriding dma_ops in vmd v2
+Date:   Wed, 28 Aug 2019 16:14:38 +0200
+Message-Id: <20190828141443.5253-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828140329.qpcrfzg2hmkccnoq@box>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 28-08-19 17:03:29, Kirill A. Shutemov wrote:
-> On Wed, Aug 28, 2019 at 09:57:08AM +0200, Michal Hocko wrote:
-> > On Tue 27-08-19 10:06:20, Yang Shi wrote:
-> > > 
-> > > 
-> > > On 8/27/19 5:59 AM, Kirill A. Shutemov wrote:
-> > > > On Tue, Aug 27, 2019 at 03:17:39PM +0300, Kirill A. Shutemov wrote:
-> > > > > On Tue, Aug 27, 2019 at 02:09:23PM +0200, Michal Hocko wrote:
-> > > > > > On Tue 27-08-19 14:01:56, Vlastimil Babka wrote:
-> > > > > > > On 8/27/19 1:02 PM, Kirill A. Shutemov wrote:
-> > > > > > > > On Tue, Aug 27, 2019 at 08:01:39AM +0200, Michal Hocko wrote:
-> > > > > > > > > On Mon 26-08-19 16:15:38, Kirill A. Shutemov wrote:
-> > > > > > > > > > Unmapped completely pages will be freed with current code. Deferred split
-> > > > > > > > > > only applies to partly mapped THPs: at least on 4k of the THP is still
-> > > > > > > > > > mapped somewhere.
-> > > > > > > > > Hmm, I am probably misreading the code but at least current Linus' tree
-> > > > > > > > > reads page_remove_rmap -> [page_remove_anon_compound_rmap ->\ deferred_split_huge_page even
-> > > > > > > > > for fully mapped THP.
-> > > > > > > > Well, you read correctly, but it was not intended. I screwed it up at some
-> > > > > > > > point.
-> > > > > > > > 
-> > > > > > > > See the patch below. It should make it work as intened.
-> > > > > > > > 
-> > > > > > > > It's not bug as such, but inefficientcy. We add page to the queue where
-> > > > > > > > it's not needed.
-> > > > > > > But that adding to queue doesn't affect whether the page will be freed
-> > > > > > > immediately if there are no more partial mappings, right? I don't see
-> > > > > > > deferred_split_huge_page() pinning the page.
-> > > > > > > So your patch wouldn't make THPs freed immediately in cases where they
-> > > > > > > haven't been freed before immediately, it just fixes a minor
-> > > > > > > inefficiency with queue manipulation?
-> > > > > > Ohh, right. I can see that in free_transhuge_page now. So fully mapped
-> > > > > > THPs really do not matter and what I have considered an odd case is
-> > > > > > really happening more often.
-> > > > > > 
-> > > > > > That being said this will not help at all for what Yang Shi is seeing
-> > > > > > and we need a more proactive deferred splitting as I've mentioned
-> > > > > > earlier.
-> > > > > It was not intended to fix the issue. It's fix for current logic. I'm
-> > > > > playing with the work approach now.
-> > > > Below is what I've come up with. It appears to be functional.
-> > > > 
-> > > > Any comments?
-> > > 
-> > > Thanks, Kirill and Michal. Doing split more proactive is definitely a choice
-> > > to eliminate huge accumulated deferred split THPs, I did think about this
-> > > approach before I came up with memcg aware approach. But, I thought this
-> > > approach has some problems:
-> > > 
-> > > First of all, we can't prove if this is a universal win for the most
-> > > workloads or not. For some workloads (as I mentioned about our usecase), we
-> > > do see a lot THPs accumulated for a while, but they are very short-lived for
-> > > other workloads, i.e. kernel build.
-> > > 
-> > > Secondly, it may be not fair for some workloads which don't generate too
-> > > many deferred split THPs or those THPs are short-lived. Actually, the cpu
-> > > time is abused by the excessive deferred split THPs generators, isn't it?
-> > 
-> > Yes this is indeed true. Do we have any idea on how much time that
-> > actually is?
-> 
-> For uncontented case, splitting 1G worth of pages (2MiB x 512) takes a bit
-> more than 50 ms in my setup. But it's best-case scenario: pages not shared
-> across multiple processes, no contention on ptl, page lock, etc.
+Hi all,
 
-Any idea about a bad case?
+this is a new version of the vmd dma_map_ops removal, which does not
+require vmd to be built in.  Instead we slightly expand the vmd-specific
+field in the x86 pci_sysdata to cover that information.
 
-> > > With memcg awareness, the deferred split THPs actually are isolated and
-> > > capped by memcg. The long-lived deferred split THPs can't be accumulated too
-> > > many due to the limit of memcg. And, cpu time spent in splitting them would
-> > > just account to the memcgs who generate that many deferred split THPs, who
-> > > generate them who pay for it. This sounds more fair and we could achieve
-> > > much better isolation.
-> > 
-> > On the other hand, deferring the split and free up a non trivial amount
-> > of memory is a problem I consider quite serious because it affects not
-> > only the memcg workload which has to do the reclaim but also other
-> > consumers of memory beucase large memory blocks could be used for higher
-> > order allocations.
-> 
-> Maybe instead of drive the split from number of pages on queue we can take
-> a hint from compaction that is struggles to get high order pages?
-
-This is still unbounded in time.
-
-> We can also try to use schedule_delayed_work() instead of plain
-> schedule_work() to give short-lived page chance to get freed before
-> splitting attempt.
-
-No problem with that as long as this is well bound in time.
--- 
-Michal Hocko
-SUSE Labs
+Note that I do not have a vmd-enable system, so some testing by the
+maintainers would be welcome.
