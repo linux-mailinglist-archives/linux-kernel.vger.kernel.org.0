@@ -2,253 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9A83A088F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:33:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54369A0897
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:35:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfH1Rdm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:33:42 -0400
-Received: from mga02.intel.com ([134.134.136.20]:19308 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbfH1Rdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:33:41 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 10:33:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
-   d="scan'208";a="182093730"
-Received: from glass.png.intel.com ([172.30.181.95])
-  by fmsmga007.fm.intel.com with ESMTP; 28 Aug 2019 10:33:37 -0700
-From:   Ong Boon Leong <boon.leong.ong@intel.com>
-To:     davem@davemloft.net, linux@armlinux.org.uk,
-        mcoquelin.stm32@gmail.com, joabreu@synopsys.com,
-        f.fainelli@gmail.com, andrew@lunn.ch
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peppe.cavallaro@st.comi, alexandre.torgue@st.com,
-        weifeng.voon@intel.com
-Subject: [RFC net-next v1 5/5] net: stmmac: add dwxpcs boardinfo for mdio_device registration
-Date:   Thu, 29 Aug 2019 01:33:21 +0800
-Message-Id: <20190828173321.25334-6-boon.leong.ong@intel.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20190828173321.25334-1-boon.leong.ong@intel.com>
-References: <20190828173321.25334-1-boon.leong.ong@intel.com>
+        id S1726882AbfH1Rer (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:34:47 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51160 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbfH1Rer (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 13:34:47 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <dan.streetman@canonical.com>)
+        id 1i31qG-0004QB-SE
+        for linux-kernel@vger.kernel.org; Wed, 28 Aug 2019 17:34:45 +0000
+Received: by mail-io1-f70.google.com with SMTP id g23so446129ioh.22
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:34:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=JDO/ZAWmDwqlIFQKgZ7irqNQBWEkXm9mnlvbokZ/EUI=;
+        b=O4xuN2J1nqMa+5gNbVgnjExYuYye1u350+uzKT8wo76g4c4AAPVo0CB8HPa8XM1RZK
+         JvGCHyA2Qs8yXH99xreXsEKvMPUcitugC6fcdwMju/kLU2aVMVP1SjeaUaCytRrKYiVq
+         YTdNNPwV5iVmPlwTTUnr1EQsOTkXYYWz35SKR8buvBUZ5ntTXRrRSzm4dkilaS9q+Yjn
+         gz0kkwJb2IKJ8pHg7SyRdZGRoGYDNI8JdKW+yJXHSl1CdXJ8ABGgssPwvvxs1IeaeeBd
+         afQyJl0op8xd8oFkpa7CerrYSLwQOWu1VsGT9b27fH/ni/v+ij4hl+eNcPAtuttRkS+s
+         nTow==
+X-Gm-Message-State: APjAAAWRNjb+11fkDHwzQ68pTsSttURStKmpxRYLr4JoX9yBSps7E/eT
+        /tQOnBIpjQZVK/C92PoaNjhxsoKbe/OoWMC/KbBBe0TDaGKNGsx9bYEIta97psHU0OHRzhbddPV
+        igUBB3R0++n65pa3VJ7FQGRKmSbFxg+8FlGWaSTvEHk7Fql8wFflkzDL8Ug==
+X-Received: by 2002:a5e:a80f:: with SMTP id c15mr2335635ioa.270.1567013683896;
+        Wed, 28 Aug 2019 10:34:43 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwReRHDJzBqbcjCQ9ykmP4NTlw5EHtIzg+irqu6rpg7RNmmuhDExVR/uYQLTliuqctvbpgIOdsecvTgW7hQ7aY=
+X-Received: by 2002:a5e:a80f:: with SMTP id c15mr2335603ioa.270.1567013683665;
+ Wed, 28 Aug 2019 10:34:43 -0700 (PDT)
+MIME-Version: 1.0
+From:   Dan Streetman <dan.streetman@canonical.com>
+Date:   Wed, 28 Aug 2019 13:34:07 -0400
+Message-ID: <CAOZ2QJOZStRYa=5fyod_AEJcJQw90_yX40dPYY3Dhvfso1e=RA@mail.gmail.com>
+Subject: Follow up on hid2hci: Fix udev rules for linux-4.14+
+To:     linux-bluetooth@vger.kernel.org, ville.syrjala@linux.intel.com
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Kay Sievers <kay.sievers@vrfy.org>,
+        systemd-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For EHL & TGL Ethernet PCS, the mdio bus address is the same across all
-TSN controller instances. External PHY is using default mdio bus address of
-0x0. As Ethernet DW PCS is only applicable for SGMII interface, we only
-register setup_intel_mgbe_phy_conv() for all TSN controller with SGMII
-interface only.
+It looks like this patch got lost at some point:
+https://lore.kernel.org/patchwork/patch/902126/#1138115
 
-Also introduce callback for remove mdio_device for unloading driver.
+but it seems to still be a problem and I'd like to pull it into Ubuntu:
+https://bugs.launchpad.net/ubuntu/+source/bluez/+bug/1759836
 
-Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
----
- drivers/net/ethernet/stmicro/stmmac/Kconfig   |  1 +
- drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  2 +
- .../net/ethernet/stmicro/stmmac/stmmac_main.c | 25 +++++++++++
- .../net/ethernet/stmicro/stmmac/stmmac_pci.c  | 45 ++++++++++++++++++-
- include/linux/stmmac.h                        |  3 ++
- 5 files changed, 75 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 2325b40dff6e..db4332863611 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -200,6 +200,7 @@ endif
- config STMMAC_PCI
- 	tristate "STMMAC PCI bus support"
- 	depends on STMMAC_ETH && PCI
-+	select DWXPCS
- 	---help---
- 	  This selects the platform specific bus support for the stmmac driver.
- 	  This driver was tested on XLINX XC2V3000 FF1152AMT0221
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index dcb2e29a5717..d4e232223941 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -29,6 +29,7 @@ struct stmmac_resources {
- 	int wol_irq;
- 	int lpi_irq;
- 	int irq;
-+	int phy_conv_irq;
- };
- 
- struct stmmac_tx_info {
-@@ -203,6 +204,7 @@ struct stmmac_priv {
- 	void __iomem *mmcaddr;
- 	void __iomem *ptpaddr;
- 	unsigned long active_vlans[BITS_TO_LONGS(VLAN_N_VID)];
-+	int phy_conv_irq;
- 
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *dbgfs_dir;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 06ccd216ae90..43e3d3799581 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2726,11 +2726,23 @@ static int stmmac_open(struct net_device *dev)
- 		}
- 	}
- 
-+	/* Start phy converter after MDIO bus IRQ handling is up */
-+	if (priv->plat->setup_phy_conv) {
-+		ret = priv->plat->setup_phy_conv(priv->mii, priv->phy_conv_irq);
-+		if (ret < 0) {
-+			netdev_err(priv->dev,
-+				   "%s: ERROR: setup phy conv (error: %d)\n",
-+				   __func__, ret);
-+			goto phy_conv_error;
-+		}
-+	}
-+
- 	stmmac_enable_all_queues(priv);
- 	stmmac_start_all_queues(priv);
- 
- 	return 0;
- 
-+phy_conv_error:
- lpiirq_error:
- 	if (priv->wol_irq != dev->irq)
- 		free_irq(priv->wol_irq, dev);
-@@ -2760,6 +2772,7 @@ static int stmmac_release(struct net_device *dev)
- {
- 	struct stmmac_priv *priv = netdev_priv(dev);
- 	u32 chan;
-+	int ret;
- 
- 	if (priv->eee_enabled)
- 		del_timer_sync(&priv->eee_ctrl_timer);
-@@ -2782,6 +2795,17 @@ static int stmmac_release(struct net_device *dev)
- 	if (priv->lpi_irq > 0)
- 		free_irq(priv->lpi_irq, dev);
- 
-+	/* Start phy converter after MDIO bus IRQ handling is up */
-+	if (priv->plat->remove_phy_conv) {
-+		ret = priv->plat->remove_phy_conv(priv->mii);
-+		if (ret < 0) {
-+			netdev_err(priv->dev,
-+				   "%s: ERROR: remove phy conv (error: %d)\n",
-+				   __func__, ret);
-+			return 0;
-+		}
-+	}
-+
- 	/* Stop TX/RX DMA and clear the descriptors */
- 	stmmac_stop_all_dma(priv);
- 
-@@ -4424,6 +4448,7 @@ int stmmac_dvr_probe(struct device *device,
- 	priv->dev->irq = res->irq;
- 	priv->wol_irq = res->wol_irq;
- 	priv->lpi_irq = res->lpi_irq;
-+	priv->phy_conv_irq = res->phy_conv_irq;
- 
- 	if (!IS_ERR_OR_NULL(res->mac))
- 		memcpy(priv->dev->dev_addr, res->mac, ETH_ALEN);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index 20906287b6d4..c3dfb0e9b025 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -10,9 +10,10 @@
- *******************************************************************************/
- 
- #include <linux/clk-provider.h>
-+#include <linux/phy.h>
- #include <linux/pci.h>
- #include <linux/dmi.h>
--
-+#include <linux/dwxpcs.h>
- #include "stmmac.h"
- 
- /*
-@@ -109,6 +110,42 @@ static const struct stmmac_pci_info stmmac_pci_info = {
- 	.setup = stmmac_default_data,
- };
- 
-+static struct dwxpcs_platform_data intel_mgbe_pdata = {
-+	.mode = DWXPCS_MODE_SGMII_AN,
-+	.ext_phy_addr = 0x0,
-+};
-+
-+static struct mdio_board_info intel_mgbe_bdinfo = {
-+	.bus_id = "stmmac-1",
-+	.modalias = "dwxpcs",
-+	.mdio_addr = 0x16,
-+	.platform_data = &intel_mgbe_pdata,
-+};
-+
-+static int setup_intel_mgbe_phy_conv(struct mii_bus *bus, int irq)
-+{
-+	struct dwxpcs_platform_data *pdata = &intel_mgbe_pdata;
-+
-+	pdata->irq = irq;
-+
-+	return mdiobus_create_device(bus, &intel_mgbe_bdinfo);
-+}
-+
-+static int remove_intel_mgbe_phy_conv(struct mii_bus *bus)
-+{
-+	struct mdio_board_info *bdinfo = &intel_mgbe_bdinfo;
-+	struct mdio_device *mdiodev;
-+
-+	mdiodev = mdiobus_get_mdio_device(bus, bdinfo->mdio_addr);
-+
-+	if (!mdiodev)
-+		return -1;
-+
-+	mdio_device_remove(mdiodev);
-+
-+	return 0;
-+}
-+
- static int intel_mgbe_common_data(struct pci_dev *pdev,
- 				  struct plat_stmmacenet_data *plat)
- {
-@@ -197,6 +234,11 @@ static int intel_mgbe_common_data(struct pci_dev *pdev,
- 	/* Set the maxmtu to a default of JUMBO_LEN */
- 	plat->maxmtu = JUMBO_LEN;
- 
-+	if (plat->interface == PHY_INTERFACE_MODE_SGMII) {
-+		plat->setup_phy_conv = setup_intel_mgbe_phy_conv;
-+		plat->remove_phy_conv = remove_intel_mgbe_phy_conv;
-+	}
-+
- 	return 0;
- }
- 
-@@ -441,6 +483,7 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- 	res.addr = pcim_iomap_table(pdev)[i];
- 	res.wol_irq = pdev->irq;
- 	res.irq = pdev->irq;
-+	res.phy_conv_irq = res.irq;
- 
- 	return stmmac_dvr_probe(&pdev->dev, plat, &res);
- }
-diff --git a/include/linux/stmmac.h b/include/linux/stmmac.h
-index 7ad7ae35cf88..9ffd0e9c21b1 100644
---- a/include/linux/stmmac.h
-+++ b/include/linux/stmmac.h
-@@ -12,6 +12,7 @@
- #ifndef __STMMAC_PLATFORM_DATA
- #define __STMMAC_PLATFORM_DATA
- 
-+#include <linux/phy.h>
- #include <linux/platform_device.h>
- 
- #define MTL_MAX_RX_QUEUES	8
-@@ -162,6 +163,8 @@ struct plat_stmmacenet_data {
- 	int (*init)(struct platform_device *pdev, void *priv);
- 	void (*exit)(struct platform_device *pdev, void *priv);
- 	struct mac_device_info *(*setup)(void *priv);
-+	int (*setup_phy_conv)(struct mii_bus *bus, int irq);
-+	int (*remove_phy_conv)(struct mii_bus *bus);
- 	void *bsp_priv;
- 	struct clk *stmmac_clk;
- 	struct clk *pclk;
--- 
-2.17.0
-
+Ville, did you ever follow up with a v2 for that patch and/or do you
+know if it will be accepted soon?
