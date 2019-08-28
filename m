@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF179FA1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 199B89FA1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:00:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726169AbfH1GAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 02:00:22 -0400
+        id S1726233AbfH1GAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 02:00:25 -0400
 Received: from mga12.intel.com ([192.55.52.136]:22123 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726052AbfH1GAV (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 02:00:21 -0400
+        id S1726052AbfH1GAX (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 02:00:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 23:00:21 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 23:00:23 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,440,1559545200"; 
-   d="scan'208";a="181924727"
+   d="scan'208";a="181924747"
 Received: from kbl.sh.intel.com ([10.239.159.163])
-  by fmsmga007.fm.intel.com with ESMTP; 27 Aug 2019 23:00:19 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 27 Aug 2019 23:00:21 -0700
 From:   Jin Yao <yao.jin@linux.intel.com>
 To:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
         mingo@redhat.com, alexander.shishkin@linux.intel.com
 Cc:     Linux-kernel@vger.kernel.org, ak@linux.intel.com,
         kan.liang@intel.com, yao.jin@intel.com,
         Jin Yao <yao.jin@linux.intel.com>
-Subject: [PATCH v1 0/4] perf: Fix uncore metric issue
-Date:   Wed, 28 Aug 2019 13:59:28 +0800
-Message-Id: <20190828055932.8269-1-yao.jin@linux.intel.com>
+Subject: [PATCH v1 1/4] perf util: Change convert_scale from static to global
+Date:   Wed, 28 Aug 2019 13:59:29 +0800
+Message-Id: <20190828055932.8269-2-yao.jin@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190828055932.8269-1-yao.jin@linux.intel.com>
+References: <20190828055932.8269-1-yao.jin@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some uncore metrics don't work as expected. For example, on cascadelakex,
+The function convert_scale() can be used to convert string
+to unit and scale. For example,
 
-root@lkp-csl-2sp2:~# perf stat -M UNC_M_PMM_BANDWIDTH.TOTAL -a -- sleep 1
+s = "6000000000ns";
+convert_scale(s, &unit, &scale);
 
- Performance counter stats for 'system wide':
+unit = "ns", scale = 6000000000.
 
-           1841092      unc_m_pmm_rpq_inserts
-           3680816      unc_m_pmm_wpq_inserts
+Currently this function is static. This patch renames the function
+to perf_pmu__convert_scale and changes the function to global.
+No functional change.
 
-       1.001775055 seconds time elapsed
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+---
+ tools/perf/util/pmu.c | 6 +++---
+ tools/perf/util/pmu.h | 2 ++
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-root@lkp-csl-2sp2:~# perf stat -M UNC_M_PMM_READ_LATENCY -a -- sleep 1
-
- Performance counter stats for 'system wide':
-
-         860649746      unc_m_pmm_rpq_occupancy.all
-           1840557      unc_m_pmm_rpq_inserts
-       12790627455      unc_m_clockticks
-
-       1.001773348 seconds time elapsed
-
-No metrics 'UNC_M_PMM_BANDWIDTH.TOTAL' or 'UNC_M_PMM_READ_LATENCY' are
-reported.
-
-The issue is, the case of an alias expanding to mulitple events is
-not supported, typically the uncore events.
-(see comments in find_evsel_group()). For detail, please check the
-description in patch 'perf util: Support multiple events for metricgroup'.
-
-With this patch set,
-
-root@lkp-csl-2sp2:~# perf stat -M UNC_M_PMM_BANDWIDTH.TOTAL -a -- sleep 1
-
- Performance counter stats for 'system wide':
-
-           1842108      unc_m_pmm_rpq_inserts     #    337.2 MB/sec  UNC_M_PMM_BANDWIDTH.TOTAL
-           3682209      unc_m_pmm_wpq_inserts
-
-       1.001819706 seconds time elapsed
-
-root@lkp-csl-2sp2:~# perf stat -M UNC_M_PMM_READ_LATENCY -a -- sleep 1
-
- Performance counter stats for 'system wide':
-
-         861970685      unc_m_pmm_rpq_occupancy.all #    219.4 ns  UNC_M_PMM_READ_LATENCY
-           1842772      unc_m_pmm_rpq_inserts
-       12790196356      unc_m_clockticks
-
-       1.001749103 seconds time elapsed
-
-Now we can see the correct metrics 'UNC_M_PMM_BANDWIDTH.TOTAL' and
-'UNC_M_PMM_READ_LATENCY'.
-
-Haiyan Song (1):
-  perf vendor events intel: Update cascadelakex uncore events to v1.04
-
-Jin Yao (3):
-  perf util: Change convert_scale from static to global
-  perf util: Scale the metric result
-  perf util: Support multiple events for metricgroup
-
- .../arch/x86/cascadelakex/uncore-memory.json  |  191 ++
- .../arch/x86/cascadelakex/uncore-other.json   | 1809 ++++++++++++++++-
- tools/perf/util/evsel.h                       |    1 +
- tools/perf/util/metricgroup.c                 |   87 +-
- tools/perf/util/metricgroup.h                 |    1 +
- tools/perf/util/pmu.c                         |    6 +-
- tools/perf/util/pmu.h                         |    2 +
- tools/perf/util/stat-shadow.c                 |   65 +-
- 8 files changed, 2075 insertions(+), 87 deletions(-)
-
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index 9807be6f09bb..8e35e97ecf90 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -101,7 +101,7 @@ static int pmu_format(const char *name, struct list_head *format)
+ 	return 0;
+ }
+ 
+-static int convert_scale(const char *scale, char **end, double *sval)
++int perf_pmu__convert_scale(const char *scale, char **end, double *sval)
+ {
+ 	char *lc;
+ 	int ret = 0;
+@@ -164,7 +164,7 @@ static int perf_pmu__parse_scale(struct perf_pmu_alias *alias, char *dir, char *
+ 	else
+ 		scale[sret] = '\0';
+ 
+-	ret = convert_scale(scale, NULL, &alias->scale);
++	ret = perf_pmu__convert_scale(scale, NULL, &alias->scale);
+ error:
+ 	close(fd);
+ 	return ret;
+@@ -372,7 +372,7 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
+ 				desc ? strdup(desc) : NULL;
+ 	alias->topic = topic ? strdup(topic) : NULL;
+ 	if (unit) {
+-		if (convert_scale(unit, &unit, &alias->scale) < 0)
++		if (perf_pmu__convert_scale(unit, &unit, &alias->scale) < 0)
+ 			return -1;
+ 		snprintf(alias->unit, sizeof(alias->unit), "%s", unit);
+ 	}
+diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
+index 3f8b79b1dd85..f36ade6df76d 100644
+--- a/tools/perf/util/pmu.h
++++ b/tools/perf/util/pmu.h
+@@ -96,4 +96,6 @@ struct perf_event_attr *perf_pmu__get_default_config(struct perf_pmu *pmu);
+ 
+ struct pmu_events_map *perf_pmu__find_map(struct perf_pmu *pmu);
+ 
++int perf_pmu__convert_scale(const char *scale, char **end, double *sval);
++
+ #endif /* __PMU_H */
 -- 
 2.17.1
 
