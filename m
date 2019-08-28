@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A67AA03D2
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF9EA03D3
 	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:57:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfH1N5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:57:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:6364 "EHLO mx1.redhat.com"
+        id S1726861AbfH1N5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:57:37 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58036 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726775AbfH1N5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:57:32 -0400
+        id S1726802AbfH1N5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 09:57:34 -0400
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C81F308429D;
-        Wed, 28 Aug 2019 13:57:32 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 10AD2308FC20;
+        Wed, 28 Aug 2019 13:57:34 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 768791001B00;
-        Wed, 28 Aug 2019 13:57:30 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6AB921001B00;
+        Wed, 28 Aug 2019 13:57:32 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,77 +27,112 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 06/23] libperf: Add PERF_RECORD_HEADER_BUILD_ID 'struct build_id_event' to perf/event.h
-Date:   Wed, 28 Aug 2019 15:57:00 +0200
-Message-Id: <20190828135717.7245-7-jolsa@kernel.org>
+Subject: [PATCH 07/23] libperf: Add PERF_RECORD_ID_INDEX 'struct id_index_event' to perf/event.h
+Date:   Wed, 28 Aug 2019 15:57:01 +0200
+Message-Id: <20190828135717.7245-8-jolsa@kernel.org>
 In-Reply-To: <20190828135717.7245-1-jolsa@kernel.org>
 References: <20190828135717.7245-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 28 Aug 2019 13:57:32 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 28 Aug 2019 13:57:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the PERF_RECORD_HEADER_BUILD_ID event definition to libperf's event.h.
+Move the PERF_RECORD_ID_INDEX event definition to libperf's event.h.
 
 In order to keep libperf simple, we switch 'u64/u32/u16/u8'
 types used events to their generic '__u*' versions.
 
-Adding the fix value for build_id variable,
-because it will never change.
+Adding PRI_ld64 define, so we can use it in printf output.
 
-Link: http://lkml.kernel.org/n/tip-k8qspx6f04gaveoe7qwpapw8@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-rfqlci30hjrzropnxjnwoz12@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/include/perf/event.h | 8 ++++++++
- tools/perf/util/event.h             | 7 -------
- 2 files changed, 8 insertions(+), 7 deletions(-)
+ tools/perf/lib/include/perf/event.h | 13 +++++++++++++
+ tools/perf/util/event.h             | 15 ++-------------
+ tools/perf/util/session.c           |  8 ++++----
+ 3 files changed, 19 insertions(+), 17 deletions(-)
 
 diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-index fa81fea8dc02..5e6b6d16793c 100644
+index 5e6b6d16793c..c68523c4fa01 100644
 --- a/tools/perf/lib/include/perf/event.h
 +++ b/tools/perf/lib/include/perf/event.h
-@@ -6,6 +6,7 @@
- #include <linux/types.h>
- #include <linux/limits.h>
- #include <linux/bpf.h>
-+#include <sys/types.h> /* pid_t */
- 
- struct perf_record_mmap {
- 	struct perf_event_header header;
-@@ -180,4 +181,11 @@ struct tracing_data_event {
- 	__u32			 size;
+@@ -188,4 +188,17 @@ struct build_id_event {
+ 	char			 filename[];
  };
  
-+struct build_id_event {
++struct id_index_entry {
++	__u64			 id;
++	__u64			 idx;
++	__u64			 cpu;
++	__u64			 tid;
++};
++
++struct id_index_event {
 +	struct perf_event_header header;
-+	pid_t			 pid;
-+	__u8			 build_id[24];
-+	char			 filename[];
++	__u64			 nr;
++	struct id_index_entry	 entries[0];
 +};
 +
  #endif /* __LIBPERF_EVENT_H */
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 67f6a67ad3b4..4b6cf89f31db 100644
+index 4b6cf89f31db..82315d2845fe 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -144,13 +144,6 @@ struct perf_sample {
- 	 PERF_MEM_S(LOCK, NA) |\
- 	 PERF_MEM_S(TLB, NA))
+@@ -22,9 +22,11 @@
+  */
+ #define PRI_lu64 "l" PRIu64
+ #define PRI_lx64 "l" PRIx64
++#define PRI_ld64 "l" PRId64
+ #else
+ #define PRI_lu64 PRIu64
+ #define PRI_lx64 PRIx64
++#define PRI_ld64 PRId64
+ #endif
  
--struct build_id_event {
--	struct perf_event_header header;
--	pid_t			 pid;
--	u8			 build_id[PERF_ALIGN(BUILD_ID_SIZE, sizeof(u64))];
--	char			 filename[];
+ #define PERF_SAMPLE_MASK				\
+@@ -330,19 +332,6 @@ struct events_stats {
+ 	u32 nr_proc_map_timeout;
+ };
+ 
+-struct id_index_entry {
+-	u64 id;
+-	u64 idx;
+-	u64 cpu;
+-	u64 tid;
 -};
 -
- enum perf_user_event_type { /* above any possible kernel type */
- 	PERF_RECORD_USER_TYPE_START		= 64,
- 	PERF_RECORD_HEADER_ATTR			= 64,
+-struct id_index_event {
+-	struct perf_event_header header;
+-	u64 nr;
+-	struct id_index_entry entries[0];
+-};
+-
+ struct auxtrace_info_event {
+ 	struct perf_event_header header;
+ 	u32 type;
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 5786e9c807c5..daa8aed27eae 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -2392,10 +2392,10 @@ int perf_event__process_id_index(struct perf_session *session,
+ 		struct perf_sample_id *sid;
+ 
+ 		if (dump_trace) {
+-			fprintf(stdout,	" ... id: %"PRIu64, e->id);
+-			fprintf(stdout,	"  idx: %"PRIu64, e->idx);
+-			fprintf(stdout,	"  cpu: %"PRId64, e->cpu);
+-			fprintf(stdout,	"  tid: %"PRId64"\n", e->tid);
++			fprintf(stdout,	" ... id: %"PRI_lu64, e->id);
++			fprintf(stdout,	"  idx: %"PRI_lu64, e->idx);
++			fprintf(stdout,	"  cpu: %"PRI_ld64, e->cpu);
++			fprintf(stdout,	"  tid: %"PRI_ld64"\n", e->tid);
+ 		}
+ 
+ 		sid = perf_evlist__id2sid(evlist, e->id);
 -- 
 2.21.0
 
