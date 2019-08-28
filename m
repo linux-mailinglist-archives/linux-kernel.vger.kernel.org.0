@@ -2,99 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32D5EA08E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:48:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1C2AA08F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbfH1RsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:48:12 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38167 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726853AbfH1RsK (ORCPT
+        id S1726861AbfH1RvG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:51:06 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:64386 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726541AbfH1RvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:48:10 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e16so687801wro.5;
-        Wed, 28 Aug 2019 10:48:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HvZagx7jvNM6KY8AxfC5tlWqGThqPd8JeCEOU1rlNEY=;
-        b=OvefXXdF67oN1ve7spB9g8oHbJcSYfACOpG8lblvcpBe7Lh7kdShyRKdzgsL910ePa
-         B5Fr92MPfmSf7dl7UHZDNopidSabiq3zZqM3KSWTcxI0BWcljpiZMqmk4PFSfDMHv1rH
-         k6zhx1/jTDVPj9TFLo/ZVyDtpJNH3iRqzQPjv6rCcTgJ6wAeGyNOrlYQ45lyunFZW83l
-         4kwAVMCReFGM3kGeoJp+yqlbV90ALRb/t6Ask5GaT+bo2KbW5/V3vVYJTkAdrdp4iVND
-         GeSQ0LmWWctlFVsTCxgPv+rlE8tIpnaqhTa2k71QmauiXGvKzVojz/+Cawu1Byj8TEFc
-         xolQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HvZagx7jvNM6KY8AxfC5tlWqGThqPd8JeCEOU1rlNEY=;
-        b=bjtTaHK2YrHhg/mS+I05DJWlfsLPQtSei1CBMOTLpVo2iPypgvzgEXhNalLWP2x0Gk
-         9zCr20uiUTLOKiNElrP9VFuaexLf0+GJ4OFwt30RgQaNce2TZsNHmEVJSMe2TcMPY7lF
-         JsrD4EeS4vJ1lavShiUF0MsUqB/qjgX3mj20Q/V7mX7YggLSyzTWjewV/knd98YQscEZ
-         kxW54HXGcmT5hqu/zxQThwyjzFO95j6JDTFV9KOXKNtUVmFWO7k18nrS+53UQA3hDFS7
-         Wcu/ZnKbIN62jHxUUJJ4nMc3ygkaF1jlIhm83DGlrKdKPbsovhgEcOIOoNNLt7wAdsxp
-         HZBA==
-X-Gm-Message-State: APjAAAWdaKA4BMWMLQbv9QKr6EVB02tzfX0YX/iWnwmfeATJqhRXXnlT
-        fk8yKg6S2huExIO/24C9y5I=
-X-Google-Smtp-Source: APXvYqzsgycsBiPbj0M7dIus4k509ElpquCfjEnXq1G43Yk0i2y0vAowaLgwLoA9RbGXk8TpueNRRg==
-X-Received: by 2002:a5d:4589:: with SMTP id p9mr5964621wrq.276.1567014488447;
-        Wed, 28 Aug 2019 10:48:08 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id w7sm4298079wrn.11.2019.08.28.10.48.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 10:48:07 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 19:48:05 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de
-Subject: Re: [GIT PULL rcu/next] Supplementary RCU commits for 5.4
-Message-ID: <20190828174805.GA77166@gmail.com>
-References: <20190828172557.GA30541@linux.ibm.com>
+        Wed, 28 Aug 2019 13:51:06 -0400
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7SHnHZC023664;
+        Wed, 28 Aug 2019 10:49:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=CVW4QWPO9RPkeojdAb/58KzrB2b63BhgxGQJ+d0kI4g=;
+ b=bVyH6FKfGwDXtsgpunAjkPb/mQssaKEd99jT7GQyedgvZ2NYWS4m87JK9cWIAsclxNbu
+ 0Lj26b5mU/P91QeLHGh5sG1ykuhSYJv9umGdSU0C01Uyiy8pjtmFzMmJsHZlqcGB4wD/
+ kzvEU+YaA6KFrCvKcLb4oAyk80nPUuu3Bno= 
+Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2unvfygntr-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 10:49:36 -0700
+Received: from prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 28 Aug 2019 10:49:31 -0700
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-mbx07.TheFacebook.com (2620:10d:c081:6::21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1713.5; Wed, 28 Aug 2019 10:49:30 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1713.5
+ via Frontend Transport; Wed, 28 Aug 2019 10:49:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oBjHxMNXHpOUDoX0Ic4nibjTKpFLdDCxtJzzoXD4s4CxleRk3ooV7Md79X8eSQ318EUaicML/KJ6s6zNaJJrMtYZHK0DtyC/OY0QsQfGzr1fKUw+FlIa3A1lnDGNCrg6sdzdlbRdp7BDjt4TW5Lrjmfacg06wRKxDsiL4CRYFFUlCd/NpMtxNEp08wmXCePX3xZSsuQqP8+TkQIrNA4UYiy9YhRYzw1Cp3WVg/vjMr8sKv1d/yPFFaViEmI27/AHmylZFvjSnrJD0Oj1M1Tp264DQZMCFx/NqjPffFtmvj8NbIDcTBCgAiVrYoz+D0Okck/cOG+fbgMDv3V1W5Q0KA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CVW4QWPO9RPkeojdAb/58KzrB2b63BhgxGQJ+d0kI4g=;
+ b=hixCcak+o1u13f5F3PA3ZuHBk4chJ2HmP+VEmQ/EHhD8RONeM77SMnXbVO87ljYSuzhi6+mXjj7oW/cofbr5W8V6sMtAnMdUnGa9ymI1+RH88NTiFkaIut1W4wlOa4uOsSpePYBpUs21CNXaVnIbVkVVmUAuCRbA3wlkk3eWx1y9PT0Rid2sYRJyBaHAzwyUcxA/nwcDJdFLe1WUbSxrsHQEJ4MybkjXnC7pQYENDnRs1L4kfMlXpAWsKHmPjsAC4wYBt535g8p+GHEgHcZnOc85Qynp2LRudfewmmAk+KeStHgiLqXYDKGsoK2yvaGVsJGo4eFnXjzzk0xnlQwHMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CVW4QWPO9RPkeojdAb/58KzrB2b63BhgxGQJ+d0kI4g=;
+ b=dloUOH+EleAbypL226NjUyoWNQ8UqwcBus2dMddYDGnFw76HplsMLRD0xPyYnqXZTe7jZruW66wpPr3NvNQfcIG/Cwg45WNAPS/sqOzBth0oH1N+IpP0009COBRtry8E/gA0oZi3ELcJC5J3jl8vhdjQw6Gy9/jRT/OVCpqPXA4=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
+ MWHPR15MB1854.namprd15.prod.outlook.com (10.174.96.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.20; Wed, 28 Aug 2019 17:49:24 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::45ee:bc50:acfa:60a5]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::45ee:bc50:acfa:60a5%3]) with mapi id 15.20.2199.021; Wed, 28 Aug 2019
+ 17:49:24 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [patch 2/2] x86/mm/pti: Do not invoke PTI functions when PTI is
+ disabled
+Thread-Topic: [patch 2/2] x86/mm/pti: Do not invoke PTI functions when PTI is
+ disabled
+Thread-Index: AQHVXa1fwgQObosxIkSWxQONTHvWuqcQ1n+A
+Date:   Wed, 28 Aug 2019 17:49:24 +0000
+Message-ID: <34AA7007-F41C-4EBB-8EF4-C9476078E03D@fb.com>
+References: <20190828142445.454151604@linutronix.de>
+ <20190828143124.063353972@linutronix.de>
+In-Reply-To: <20190828143124.063353972@linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.104.11)
+x-originating-ip: [2620:10d:c090:180::cae3]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3382f82d-3ab9-406f-bc63-08d72be01078
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1854;
+x-ms-traffictypediagnostic: MWHPR15MB1854:
+x-microsoft-antispam-prvs: <MWHPR15MB1854E9D5D5141F48023066D0B3A30@MWHPR15MB1854.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 014304E855
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(376002)(346002)(366004)(39860400002)(396003)(199004)(189003)(6512007)(11346002)(25786009)(7736002)(57306001)(102836004)(6436002)(305945005)(53936002)(4744005)(46003)(2906002)(5660300002)(8936002)(76116006)(8676002)(81156014)(81166006)(50226002)(478600001)(14454004)(66476007)(66556008)(64756008)(66446008)(66946007)(186003)(36756003)(6486002)(6116002)(33656002)(6246003)(6916009)(446003)(86362001)(316002)(2616005)(99286004)(4326008)(486006)(476003)(76176011)(71200400001)(54906003)(71190400001)(229853002)(256004)(6506007)(14444005)(53546011)(3714002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1854;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 2UmSrjU1EfaNteMP7iZc/6BW1LipBmr397hqoPrugqjF/mDpFkDnQLGDJjlhUrFupAD0Gwxylsp8S1ZNXbYoFVyQej6jw6djLzDYlg4C4Tm/y4u6nmaJjvkDZ7rbOdqh5iGdNZ2CBfMFYhZzG/MvbQlyg/ob9N9OFRO5eb4sWAaNfggC4EdnjvPVjMwY0PQSl0zkfZ90ZJv7trd6vPNK7vTtjcyxdhFezx3T4exXUyKGQ+deRRf+BE7B387ttBttAXxe5VV06I8usAaEaOOkzvpCeHdqZicLoCyb7oTM5boB0jd3LvxTdEOvge6JUuv3i201GHiMr0UXC2KMoP+ZEGxXYA4/x64CpFb16AXzrSNcZhcFaOIX0SIm7BkGl65RX81zpDZ93MW7dE4dHeIGhoWD/7JXlCfwmGlpZ78iMIo=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <FCE9FC2B5240504FA28E34827C186403@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828172557.GA30541@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3382f82d-3ab9-406f-bc63-08d72be01078
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2019 17:49:24.4101
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FqGmoFCVH/b7nzUdBd2IuhmAHKpGSLMZ4fY2f1a2SXm535Y4RbOWuVBJw0ld1g28UN/Zt9Niim9jyuxikbXJxA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1854
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-08-28_08:2019-08-28,2019-08-28 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0
+ priorityscore=1501 mlxscore=0 mlxlogscore=827 clxscore=1015 malwarescore=0
+ spamscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 impostorscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1908280174
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Paul E. McKenney <paulmck@kernel.org> wrote:
 
-> Hello, Ingo,
-> 
-> This pull request contains the following changes:
-> 
-> 1.	A one-line change that affects only Tiny RCU that is needed
-> 	by the RISC-V guys, courtesy of Christoph Hellwig.
-> 
-> 2.	An update to my email address.	The old one still works, at
-> 	least most of the time.
-> 
-> All of these changes have been subjected to 0day Test Robot and -next
-> testing, and are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git for-mingo
-> 
-> for you to fetch changes up to 049b405029c00f3fd9e4ffa269bdd29b429c4672:
-> 
->   MAINTAINERS: Update from paulmck@linux.ibm.com to paulmck@kernel.org (2019-08-26 16:27:08 -0700)
-> 
-> ----------------------------------------------------------------
-> Christoph Hellwig (1):
->       rcu: Don't include <linux/ktime.h> in rcutiny.h
-> 
-> Paul E. McKenney (1):
->       MAINTAINERS: Update from paulmck@linux.ibm.com to paulmck@kernel.org
-> 
->  MAINTAINERS             | 14 +++++++-------
->  include/linux/rcutiny.h |  2 +-
->  2 files changed, 8 insertions(+), 8 deletions(-)
+> On Aug 28, 2019, at 7:24 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
+>=20
+> When PTI is disabled at boot time either because the CPU is not affected =
+or
+> PTI has been disabled on the command line, the boot code still calls into
+> pti_finalize() which then unconditionally invokes:
+>=20
+>     pti_clone_entry_text()
+>     pti_clone_kernel_text()
+>=20
+> pti_clone_kernel_text() was called unconditionally before the 32bit suppo=
+rt
+> was added and 32bit added the call to pti_clone_entry_text().
+>=20
+> The call has no side effects as cloning the page tables into the availabl=
+e
+> second one, which was allocated for PTI does not create damage. But it do=
+es
+> not make sense either and in case that this functionality would be extend=
+ed
+> later this might actually lead to hard to diagnose issue.
+>=20
+> Neither function should be called when PTI is runtime disabled. Make the
+> invocation conditional.
+>=20
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Pulled, thanks a lot Paul!
+Acked-by: Song Liu <songliubraving@fb.com>
 
-	Ingo
