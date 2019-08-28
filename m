@@ -2,114 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D040CA09CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:41:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B231A09C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:40:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfH1SlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 14:41:20 -0400
-Received: from gateway22.websitewelcome.com ([192.185.46.224]:34911 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726400AbfH1SlU (ORCPT
+        id S1726767AbfH1Skd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 14:40:33 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36725 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfH1Skd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:41:20 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id D99ED1AADD
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 13:41:19 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 32shiAVLU2qH732shi7I1N; Wed, 28 Aug 2019 13:41:19 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9ehTI29T7w72VnCiJ4pfIoIouCCdrHpXCFm9DHTh2s4=; b=mkNi/cNFtVf0MNWH51wJwoX8Hr
-        mG2NK2idTEeFuEztzH2/JpZCo+lbmV5TBhJObknptd996kFtTFqdi6jvKTF8c9ZQdEe0K1JOX6gdK
-        mUr7ntIJPc+6Rhw8APEkbLysjJi/8ik4So+gakMQe6jt5CJUtAO97yG/HaxBL1nvKprmXSSPBWuzU
-        5pGO13cmmziszdg0R5mYt3ayJGalON46VY8iPTpRi104JOaEdXznNW+GvggkXAym4t4j/4XOyCRpm
-        CpMHI0ytgqa1FE4eJCVygP+Nr7/ll7+51OmVY/HLzQO9j8VxYfsKKMTpPQFHCS4rvzwRtjIMEmQCq
-        dAne+x5w==;
-Received: from [189.152.216.116] (port=43062 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1i32rf-004L4p-TI; Wed, 28 Aug 2019 13:40:15 -0500
-Date:   Wed, 28 Aug 2019 13:40:15 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ioat/dca: Use struct_size() helper
-Message-ID: <20190828184015.GA4273@embeddedor>
+        Wed, 28 Aug 2019 14:40:33 -0400
+Received: by mail-wm1-f68.google.com with SMTP id p13so1141501wmh.1;
+        Wed, 28 Aug 2019 11:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:message-id:in-reply-to:references
+         :mime-version;
+        bh=1ZQ5ojymViBrAruzvPsWbm4OehLwZlcgiZDLWBOPkfM=;
+        b=NAU7esjH2NV9GhK0Lz2BHZ+3nHLUsrrpH5KEinI+cgBB6OOMDv+05mIDKSszvqUnL9
+         VLyAkrMRInSdFJB6Xm3A6w1yl5FVtiswgPmYF6wIiyyigxfXAutOEd4m+4aC2w/hhAeK
+         9M8F0uvPPPZaN7rgrCqf5bjoVecefE5kUZQRtL4yXS8N2xh8OYfZvDsUQoGSlIL5c7+u
+         6NiE2eNs/qDsRCXUEy/ol0ucYicIu0c+Ng7j7/4c1WH8OtBQEgI38sv2AJ6iow7k8mU/
+         WBTit9nROwHCS6pN6Lfrf3f/qPf5n9pJ7onNZQ8FaDfJJr/XonrmcKtuOAi3b/QZrcM2
+         xevg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
+         :references:mime-version;
+        bh=1ZQ5ojymViBrAruzvPsWbm4OehLwZlcgiZDLWBOPkfM=;
+        b=oxEBdhnpZFcCSLsQfamBuUfJ3RsLCLT+95hwGqJwzbYltMZkfyJFNPs7QVqs6jds10
+         m7pXLDEzLyC3Mv6vxFKbytkPMqEKA7dbxkZeedDq7+ppr5/ZuMOmyzRlugaJqhf0Ten/
+         mNGNLEU7ZP7+x/kbyc3qil4mM5XDuQ2+JrabSYGjtrAkXSic4xysOURb/d620FjCr63V
+         vHKc0xGZLgCydbRSuZgcybx7FEVilnYh9nQhMkHRwBCNU6PPxcXj4/Ctszhs6JZKA9T+
+         4SMyLRotGRRcqSUqwYuDoJH+JMUg3GsgF4l23qams1jBfpAA6lgoQ6QNMJP6+x2fldcT
+         Vqqg==
+X-Gm-Message-State: APjAAAUCD15ug2ShjTJLnWsGxKN1mH+90cZt45xEHRA2Adt8jjkuCTtT
+        x3i/xnvIWPG28BdoX+sNtzQ=
+X-Google-Smtp-Source: APXvYqyRk1lLXpkl6DdhmfkGq0J29LE5Po5p5CYSB5sL6KGREpE8nu8iCeVVG6wMhSo7ndyr6HkZHw==
+X-Received: by 2002:a05:600c:24cf:: with SMTP id 15mr6641221wmu.76.1567017630452;
+        Wed, 28 Aug 2019 11:40:30 -0700 (PDT)
+Received: from [192.168.1.105] (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
+        by smtp.gmail.com with ESMTPSA id n8sm319052wma.7.2019.08.28.11.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 11:40:29 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 20:40:27 +0200
+From:   Krzysztof Wilczynski <kswilczynski@gmail.com>
+Subject: Re: [PATCH v2] x86/PCI: Add missing log facility and move to use pr_
+ macros in pcbios.c
+To:     Joe Perches <joe@perches.com>
+Cc:     Krzysztof Wilczynski <kw@linux.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <1567017627.3507.0@gmail.com>
+In-Reply-To: <a13a086c2dd6dd6259d28e5d1d360e2b4d04ca83.camel@perches.com>
+References: <20190825182557.23260-1-kw@linux.com>
+        <20190828175120.22164-1-kw@linux.com>
+        <a13a086c2dd6dd6259d28e5d1d360e2b4d04ca83.camel@perches.com>
+X-Mailer: geary/3.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.216.116
-X-Source-L: No
-X-Exim-ID: 1i32rf-004L4p-TI
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.152.216.116]:43062
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 33
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Hello Joe,
 
-struct ioat_dca_priv {
-	...
-        struct ioat_dca_slot     req_slots[0];
-};
+Thank you for feedback.
+[...]
+>>    Move to pr_debug() over using DBG() from 
+>> arch/x86/include/asm/pci_x86.h.
+> 
+> You might also consider the checkpatch output for this patch.
+> 
+> arch/x86/pci/pcbios.c:116: WARNING: line over 80 characters
+> arch/x86/pci/pcbios.c:116: WARNING: Prefer using '"%s...", __func__' 
+> to using 'bios32_service', this function's name, in a string
+> arch/x86/pci/pcbios.c:119: WARNING: Prefer using '"%s...", __func__' 
+> to using 'bios32_service', this function's name, in a string
+> arch/x86/pci/pcbios.c:391: WARNING: line over 80 characters
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes.
+Good point.
 
-So, replace the following form:
+The lines over 80 characters wide would be taken care of when
+moving to using the pr_ macros as the line length will now be
+shorter contrary to when the e.g., printk(KERNEL_INFO ...),
+etc., was used.
 
-sizeof(*ioatdca) + (sizeof(struct ioat_dca_slot) * slots)
+The other warnings I am going to address in v3.  I was thinking
+of replacing the following:
 
-with:
+pr_warn("bios32_service(0x%lx): not present\n", service);
 
-struct_size(ioatdca, req_slots, slots)
+With something that looks like this:
 
-This code was detected with the help of Coccinelle.
+pr_warn("BIOS32 Service(0x%lx): not present\n", service);
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/dma/ioat/dca.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Using "bios32_service" name directly or even moving to __func__
+feels a lot like an implementation detail is exposed to the
+end user.  I am not sure how useful that could be.  Also,
+we are already using log lines starting with "BIOS32", thus
+it seemed like following them would be the most sensible
+choice, especially to keep messages consistent.
 
-diff --git a/drivers/dma/ioat/dca.c b/drivers/dma/ioat/dca.c
-index 70fd8454d002..be61c32a876f 100644
---- a/drivers/dma/ioat/dca.c
-+++ b/drivers/dma/ioat/dca.c
-@@ -286,8 +286,7 @@ struct dca_provider *ioat_dca_init(struct pci_dev *pdev, void __iomem *iobase)
- 		return NULL;
- 
- 	dca = alloc_dca_provider(&ioat_dca_ops,
--				 sizeof(*ioatdca)
--				      + (sizeof(struct ioat_dca_slot) * slots));
-+				 struct_size(ioatdca, req_slots, slots));
- 	if (!dca)
- 		return NULL;
- 
--- 
-2.23.0
+What do you think?
+
+Krzysztof
+
 
