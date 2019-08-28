@@ -2,62 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6010D9FA22
+	by mail.lfdr.de (Postfix) with ESMTP id D44ED9FA23
 	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726209AbfH1GGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 02:06:40 -0400
+        id S1726259AbfH1GGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 02:06:42 -0400
 Received: from mga04.intel.com ([192.55.52.120]:22063 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbfH1GGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 02:06:39 -0400
+        id S1726100AbfH1GGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 02:06:41 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 23:06:39 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 23:06:41 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,440,1559545200"; 
-   d="scan'208";a="210034522"
+   d="scan'208";a="185518929"
 Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga002.fm.intel.com with ESMTP; 27 Aug 2019 23:06:37 -0700
+  by orsmga006.jf.intel.com with ESMTP; 27 Aug 2019 23:06:39 -0700
 From:   Wei Yang <richardw.yang@linux.intel.com>
 To:     akpm@linux-foundation.org, vbabka@suse.cz,
         kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Wei Yang <richardw.yang@linux.intel.com>
-Subject: [RESEND [PATCH] 0/2] mm/mmap.c: reduce subtree gap propagation a little
-Date:   Wed, 28 Aug 2019 14:06:12 +0800
-Message-Id: <20190828060614.19535-1-richardw.yang@linux.intel.com>
+Subject: [RESEND [PATCH] 1/2] mm/mmap.c: update *next* gap after itself
+Date:   Wed, 28 Aug 2019 14:06:13 +0800
+Message-Id: <20190828060614.19535-2-richardw.yang@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190828060614.19535-1-richardw.yang@linux.intel.com>
+References: <20190828060614.19535-1-richardw.yang@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When insert and delete a vma, it will compute and propagate related subtree
-gap. After some investigation, we can reduce subtree gap propagation a little.
+Since we link a vma to the leaf of a rb_tree, *next* must be a parent of
+vma if *next* is not NULL. This means if we update *next* gap first, it
+will be re-update again if vma's gap is bigger.
 
-[1]: This one reduce the propagation by update *next* gap after itself, since
-     *next* must be a parent in this case.
-[2]: This one achieve this by unlinking vma from list.
+For example, we have a vma tree like this:
 
-After applying these two patches, test shows it reduce 0.3% function call for
-vma_compute_subtree_gap.
+                a
+                [0x9000, 0x10000]
+            /            \
+        b                 c
+        [0x8000, 0x9000]  [0x10000, 0x11000]
 
-BTW, this series is based on some un-merged cleanup patched.
+The gap for each node is:
 
+  a's gap = 0x8000
+  b's gap = 0x8000
+  c's gap = 0x0
+
+Now we want to insert d [0x6000, 0x7000], then the tree look like this:
+
+                a
+                [0x9000, 0x10000]
+            /            \
+        b                 c
+        [0x8000, 0x9000]  [0x10000, 0x11000]
+     /
+    d
+    [0x6000, 0x7000]
+
+b is the *next* of d. If we update b's gap first, it would be 0x1000 and
+propagate to a. And then when update d's gap, which is 0x6000 and
+propagate through b to a again.
+
+If we update d's gap first, the un-consistent gap 0x1000 will not be
+propagated.
+
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 ---
-This version is rebased on current linus tree, whose last commit is
-commit 9e8312f5e160 ("Merge tag 'nfs-for-5.3-3' of
-git://git.linux-nfs.org/projects/trondmy/linux-nfs").
+ mm/mmap.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Wei Yang (2):
-  mm/mmap.c: update *next* gap after itself
-  mm/mmap.c: unlink vma before rb_erase
-
- mm/mmap.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
+diff --git a/mm/mmap.c b/mm/mmap.c
+index aa66753b175e..672ad7dc6b3c 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -587,12 +587,6 @@ static unsigned long count_vma_pages_range(struct mm_struct *mm,
+ void __vma_link_rb(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		struct rb_node **rb_link, struct rb_node *rb_parent)
+ {
+-	/* Update tracking information for the gap following the new vma. */
+-	if (vma->vm_next)
+-		vma_gap_update(vma->vm_next);
+-	else
+-		mm->highest_vm_end = vm_end_gap(vma);
+-
+ 	/*
+ 	 * vma->vm_prev wasn't known when we followed the rbtree to find the
+ 	 * correct insertion point for that vma. As a result, we could not
+@@ -605,6 +599,13 @@ void __vma_link_rb(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	rb_link_node(&vma->vm_rb, rb_parent, rb_link);
+ 	vma->rb_subtree_gap = 0;
+ 	vma_gap_update(vma);
++
++	/* Update tracking information for the gap following the new vma. */
++	if (vma->vm_next)
++		vma_gap_update(vma->vm_next);
++	else
++		mm->highest_vm_end = vm_end_gap(vma);
++
+ 	vma_rb_insert(vma, &mm->mm_rb);
+ }
+ 
 -- 
 2.17.1
 
