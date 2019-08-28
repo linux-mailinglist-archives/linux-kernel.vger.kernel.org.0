@@ -2,113 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6655FA05A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C54A05B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:07:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfH1PGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:06:06 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40846 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbfH1PGF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:06:05 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so1620751pgj.7;
-        Wed, 28 Aug 2019 08:06:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uQEfLMG3TnQ4c27LmLDMotrBwLZwv24Uyoxsstmog3Q=;
-        b=dbs47XKylRv5PUp5OgY8YWS8zONTkSXbHA9wmBWV2s2rOs0LjaSevk8oDjSs/vA+Iz
-         F3XtgUgrrit4fTDtzZAXbwO+xBrKIVPK+2dZbSN6BqEQUzdDeWnTy85E0DtagWKOunbG
-         sMrPu3K6CHA7Z7eQGwKml7IikFgEhi4T1fp5S8DBCiIQzsNjg+lPU62Bc82hyGrSoPmC
-         69dpdLXh2cLqLceBzZz/q4AaKOoh+jAOIdmDvgzjzCZ+40bQfoU8hp+F6YpB+90oNEU7
-         ZvplHvpZC9fSd1FHtpIXFpknz5eNIrNWEDuDAUw0t367ZKvuq8N7Uv1iWHTZ1zORjrqZ
-         lq4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uQEfLMG3TnQ4c27LmLDMotrBwLZwv24Uyoxsstmog3Q=;
-        b=Jai1vVaIOMtiUbJ4Ijg2P3LbRDtWtmSxnrHOOezKvuHBwF2ByVqlXVD69Hfw0/X+9t
-         Aln3e1GLn1q3JwtFEqOJ+pM2m4vaHIiDT6COQ/jItHK6mkV5dTAZxGLBO6R0WfLBx457
-         UQcXYvpxywiEYWqZR6poOFJJt3xnhIiEVglRdsctsuU73g3Gm17vAxqFh0hJpjuDPGBv
-         Fh/EmrzPHm+MSsBFrVroAR8RwrbjPf4SvynDtvl0ViYXckHpJsz0Q4c313ctSMmlbVDB
-         neA26FGt4PKlD3N1G2nvNTv2hDM3yudpF5k2oTVscLy8RirL2iSz9TYKvt0dK9riuLb7
-         j9rg==
-X-Gm-Message-State: APjAAAWsUsv8nYyF7+cRXu9+YOQqO1CXgWTWgt6BuatO7q7euk+/Tbq2
-        1dMXW4fKGuIZongzIqtaikU=
-X-Google-Smtp-Source: APXvYqyufDB4Uzqc91b/XtEIhS/sG3zG9APdnUA0Phsv3Vm1mGuepsBDdFEDeiwFuSa8c90GTsECSw==
-X-Received: by 2002:a63:2ec9:: with SMTP id u192mr3806345pgu.16.1567004764285;
-        Wed, 28 Aug 2019 08:06:04 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id l68sm3103530pfl.11.2019.08.28.08.06.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Aug 2019 08:06:03 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 08:06:02 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] driver core: platform: Introduce
- platform_get_irq_optional()
-Message-ID: <20190828150602.GB21494@roeck-us.net>
-References: <20190828083411.2496-1-thierry.reding@gmail.com>
- <20190828085724.GA31055@kroah.com>
+        id S1726711AbfH1PHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:07:44 -0400
+Received: from foss.arm.com ([217.140.110.172]:32890 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726437AbfH1PHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:07:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5FAC628;
+        Wed, 28 Aug 2019 08:07:42 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9DF093F59C;
+        Wed, 28 Aug 2019 08:07:41 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 16:07:40 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Vidya Sagar <vidyas@nvidia.com>
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
+        gustavo.pimentel@synopsys.com, digetx@gmail.com,
+        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V2 3/6] PCI: tegra: Add support to configure sideband pins
+Message-ID: <20190828150739.GX14582@e119886-lin.cambridge.arm.com>
+References: <20190828131505.28475-1-vidyas@nvidia.com>
+ <20190828131505.28475-4-vidyas@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190828085724.GA31055@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190828131505.28475-4-vidyas@nvidia.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 10:57:24AM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Aug 28, 2019 at 10:34:10AM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> > 
-> > In some cases the interrupt line of a device is optional. Introduce a
-> > new platform_get_irq_optional() that works much like platform_get_irq()
-> > but does not output an error on failure to find the interrupt.
-> > 
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  drivers/base/platform.c         | 22 ++++++++++++++++++++++
-> >  include/linux/platform_device.h |  1 +
-> >  2 files changed, 23 insertions(+)
-> > 
-> > diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> > index 8ad701068c11..0dda6ade50fd 100644
-> > --- a/drivers/base/platform.c
-> > +++ b/drivers/base/platform.c
-> > @@ -192,6 +192,28 @@ int platform_get_irq(struct platform_device *dev, unsigned int num)
-> >  }
-> >  EXPORT_SYMBOL_GPL(platform_get_irq);
-> >  
-> > +/**
-> > + * platform_get_irq_optional - get an optional IRQ for a device
-> > + * @dev: platform device
-> > + * @num: IRQ number index
-> > + *
-> > + * Gets an IRQ for a platform device. Device drivers should check the return
-> > + * value for errors so as to not pass a negative integer value to the
-> > + * request_irq() APIs. This is the same as platform_get_irq(), except that it
-> > + * does not print an error message if an IRQ can not be obtained.
+On Wed, Aug 28, 2019 at 06:45:02PM +0530, Vidya Sagar wrote:
+> Add support to configure sideband signal pins when information is present
+> in respective controller's device-tree node.
 > 
-> Kind of funny that the work people did to put error messages in a
-> central place needs to be worked around at times :)
+> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+> ---
+> V2:
+> * Addressed review comment from Andrew Murray
+> * Handled failure case of pinctrl_pm_select_default_state() cleanly
 > 
-> Anyway, I have no objection to this, but it looks like it has to go in
-> through my tree.  I can take the hwmon patch as well through my tree if
-> the hwmon maintainer(s) say it is ok to do so.
+>  drivers/pci/controller/dwc/pcie-tegra194.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
 > 
-Ok with me.
+> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
+> index fc0dbeb31d78..057ba4f9fbcd 100644
+> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
+> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
+> @@ -1304,8 +1304,13 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+>  	if (ret < 0) {
+>  		dev_err(dev, "Failed to get runtime sync for PCIe dev: %d\n",
+>  			ret);
+> -		pm_runtime_disable(dev);
+> -		return ret;
+> +		goto fail_pm_get_sync;
+> +	}
+> +
+> +	ret = pinctrl_pm_select_default_state(pcie->dev);
 
-Guenter
+This patch looks OK, though you're still using pcie->dev here instead of dev.
+
+Thanks,
+
+Andrew Murray
+
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to configure sideband pins: %d\n", ret);
+> +		goto fail_pinctrl;
+>  	}
+>  
+>  	tegra_pcie_init_controller(pcie);
+> @@ -1332,7 +1337,9 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
+>  
+>  fail_host_init:
+>  	tegra_pcie_deinit_controller(pcie);
+> +fail_pinctrl:
+>  	pm_runtime_put_sync(dev);
+> +fail_pm_get_sync:
+>  	pm_runtime_disable(dev);
+>  	return ret;
+>  }
+> -- 
+> 2.17.1
+> 
