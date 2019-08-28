@@ -2,76 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD7F6A02DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37F68A02E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:16:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbfH1NPE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:15:04 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53752 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726394AbfH1NPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:15:04 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9C991AFA4;
-        Wed, 28 Aug 2019 13:15:02 +0000 (UTC)
-Date:   Wed, 28 Aug 2019 15:15:01 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Bharath Vedartham <linux.bhar@gmail.com>
-Cc:     Khalid Aziz <khalid.aziz@oracle.com>, akpm@linux-foundation.org,
-        vbabka@suse.cz, mgorman@techsingularity.net,
-        dan.j.williams@intel.com, osalvador@suse.de,
-        richard.weiyang@gmail.com, hannes@cmpxchg.org,
-        arunks@codeaurora.org, rppt@linux.vnet.ibm.com, jgg@ziepe.ca,
-        amir73il@gmail.com, alexander.h.duyck@linux.intel.com,
-        linux-mm@kvack.org, linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] Add predictive memory reclamation and compaction
-Message-ID: <20190828131501.GK28313@dhcp22.suse.cz>
-References: <20190813140553.GK17933@dhcp22.suse.cz>
- <3cb0af00-f091-2f3e-d6cc-73a5171e6eda@oracle.com>
- <20190814085831.GS17933@dhcp22.suse.cz>
- <d3895804-7340-a7ae-d611-62913303e9c5@oracle.com>
- <20190815170215.GQ9477@dhcp22.suse.cz>
- <2668ad2e-ee52-8c88-22c0-1952243af5a1@oracle.com>
- <20190821140632.GI3111@dhcp22.suse.cz>
- <20190826204420.GA16800@bharath12345-Inspiron-5559>
- <20190827061606.GN7538@dhcp22.suse.cz>
- <20190828130922.GA10127@bharath12345-Inspiron-5559>
+        id S1726899AbfH1NPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:15:31 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:3245 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbfH1NPa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 09:15:30 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d667e730000>; Wed, 28 Aug 2019 06:15:31 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 28 Aug 2019 06:15:30 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 28 Aug 2019 06:15:30 -0700
+Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Aug
+ 2019 13:15:29 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by hqmail110.nvidia.com
+ (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 28 Aug
+ 2019 13:15:29 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 28 Aug 2019 13:15:29 +0000
+Received: from vidyas-desktop.nvidia.com (Not Verified[10.24.37.38]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d667e6c0009>; Wed, 28 Aug 2019 06:15:28 -0700
+From:   Vidya Sagar <vidyas@nvidia.com>
+To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <robh+dt@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <andrew.murray@arm.com>
+CC:     <kishon@ti.com>, <gustavo.pimentel@synopsys.com>,
+        <digetx@gmail.com>, <mperttunen@nvidia.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
+Subject: [PATCH V2 2/6] dt-bindings: PCI: tegra: Add PCIe slot supplies regulator entries
+Date:   Wed, 28 Aug 2019 18:45:01 +0530
+Message-ID: <20190828131505.28475-3-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190828131505.28475-1-vidyas@nvidia.com>
+References: <20190828131505.28475-1-vidyas@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828130922.GA10127@bharath12345-Inspiron-5559>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566998131; bh=KMMmGVGW4lBUib9Wwb7U+YdF0LFNEuCa5iHqfUQ2I9M=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=VgpwTBf0r9xOLkXeoDu95tNqEfLEj95sjCP4URh2+J9LWIsY2SZFwCaz1vAYev4rG
+         gbK79tyqKGDoYrZBNQVRrcgHk3rLihoHICqtTVX6NGCL5pIWxz57UYHOTrHNEdNf2E
+         jOy33taa173Kdwggsq12HGFpE+MJwvtoR68Uo2lUJ4m9KmEVMLSy3hkHyJsIi9CNh2
+         4vS52B+qqK3j/uIe9ZaFnqFnNwatIpi9Jk01WPYeFzZ1Rv0Mog00z44aK+QgGSYHtE
+         caPS/xKjWudmHKy8wg4qtPYxGABfLIz6+zjHVl0/AoP6g+8U+lJ4lAWkU689SZe57P
+         3B1clJPNUbZVQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 28-08-19 18:39:22, Bharath Vedartham wrote:
-[...]
-> > Therefore I would like to shift the discussion towards existing APIs and
-> > whether they are suitable for such an advance auto-tuning. I haven't
-> > heard any arguments about missing pieces.
-> I understand your concern here. Just confirming, by APIs you are
-> referring to sysctls, sysfs files and stuff like that right?
+Add optional bindings "vpcie3v3-supply" and "vpcie12v-supply" to describe
+regulators of a PCIe slot's supplies 3.3V and 12V provided the platform
+is designed to have regulator controlled slot supplies.
 
-Yup
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+---
+V2:
+* None
 
-> > > If memory exhaustion
-> > > occurs, we reclaim some more memory. kswapd stops reclaim when
-> > > hwmark is reached. hwmark is usually set to a fairly low percentage of
-> > > total memory, in my system for zone Normal hwmark is 13% of total pages.
-> > > So there is scope for reclaiming more pages to make sure system does not
-> > > suffer from a lack of pages. 
-> > 
-> > Yes and we have ways to control those watermarks that your monitoring
-> > tool can use to alter the reclaim behavior.
-> Just to confirm here, I am aware of one way which is to alter
-> min_kfree_bytes values. What other ways are there to alter watermarks
-> from user space? 
+ .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt      | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-/proc/sys/vm/watermark_*factor
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+index 0ac1b867ac24..b739f92da58e 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+@@ -104,6 +104,12 @@ Optional properties:
+    specified in microseconds
+ - nvidia,aspm-l0s-entrance-latency-us: ASPM L0s entrance latency to be
+    specified in microseconds
++- vpcie3v3-supply: A phandle to the regulator node that supplies 3.3V to the slot
++  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
++  in p2972-0000 platform).
++- vpcie12v-supply: A phandle to the regulator node that supplies 12V to the slot
++  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
++  in p2972-0000 platform).
+ 
+ Examples:
+ =========
+@@ -156,6 +162,8 @@ Tegra194:
+ 			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
+ 
+ 		vddio-pex-ctl-supply = <&vdd_1v8ao>;
++		vpcie3v3-supply = <&vdd_3v3_pcie>;
++		vpcie12v-supply = <&vdd_12v_pcie>;
+ 
+ 		phys = <&p2u_hsio_2>, <&p2u_hsio_3>, <&p2u_hsio_4>,
+ 		       <&p2u_hsio_5>;
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
