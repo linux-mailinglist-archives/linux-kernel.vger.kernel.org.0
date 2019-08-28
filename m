@@ -2,112 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3E40A095D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1343DA0966
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:26:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726603AbfH1SXY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 14:23:24 -0400
-Received: from emh04.mail.saunalahti.fi ([62.142.5.110]:41908 "EHLO
-        emh04.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfH1SXX (ORCPT
+        id S1726828AbfH1S0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 14:26:21 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42615 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbfH1S0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:23:23 -0400
-Received: from darkstar.musicnaut.iki.fi (85-76-76-175-nat.elisa-mobile.fi [85.76.76.175])
-        by emh04.mail.saunalahti.fi (Postfix) with ESMTP id 40CF5300A0;
-        Wed, 28 Aug 2019 21:23:19 +0300 (EEST)
-Date:   Wed, 28 Aug 2019 21:23:19 +0300
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 14/22] ARM: omap1: use pci_ioremap_io() for omap_cf
-Message-ID: <20190828182318.GL30291@darkstar.musicnaut.iki.fi>
-References: <20190813103605.GL52127@atomide.com>
- <CAK8P3a0E+QUn9wcP5Obv-FitWyXCFwcp+oPConeO2p-NV1rqsw@mail.gmail.com>
- <20190813181158.GA26798@darkstar.musicnaut.iki.fi>
- <CAK8P3a0LjKrc+7c5Ht9OL7LfYyLnG9=y7u+w24ujA1xAid_yCQ@mail.gmail.com>
- <20190814074918.GA52127@atomide.com>
- <CAK8P3a3k_HOGqzMGjtc+7NSaK0Bsa_vxxRFLzY8aP6ev4wa9iA@mail.gmail.com>
- <20190816083403.GB1952@darkstar.musicnaut.iki.fi>
- <CAK8P3a3jqNxoihQ+UFvOZMg=AcF2yzHXs5ay6X1TZX8L3zQ3rg@mail.gmail.com>
- <20190827190453.GJ30291@darkstar.musicnaut.iki.fi>
- <CAK8P3a1PeBMRuweAmzrTQC85CmwdZPirG3HPg9aJ99p2U7zknQ@mail.gmail.com>
+        Wed, 28 Aug 2019 14:26:20 -0400
+Received: by mail-pf1-f195.google.com with SMTP id i30so316184pfk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 11:26:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/2ELFCvPtWq7P/iBoFB+bDhTH6F6gZMcRs7pKSMkPZ0=;
+        b=WrZfzjuQAiJeyCbI6jHnj8D+AK+KMLOLl1eaVP4JgWwVLtgFI6iVBl8OFgwkGfopj1
+         XnLpMTHDNIci/IJ9m8znBva0rSgnEQ7GVHyIefiaQPdmIznyZCKl8Xc8ZuztfjSfin7+
+         xgiv6fhHWTpOuuzx57DiiF9XV4j2Udj36RqMUZgYj4Lm5rADTEicVClvrvxfPlxvznzz
+         OxAe0zMf8oUKsjq8B6KtuXljFFO+I5tN8krSxj2FyLoe9Gorb8N5n66A4SYP9/bInsEO
+         0oEdsvRDuXfsyd6MVyvqD5ALJ37EAU1g70cdYKZ0TPREQp/FzJ27PI0YpzXhOChNP0/L
+         Zjvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/2ELFCvPtWq7P/iBoFB+bDhTH6F6gZMcRs7pKSMkPZ0=;
+        b=h71skfktWG91/iZUcjRwye3AIP5xJcq7SVblTJIZhujjuFDsqdbte0cnZEthEdS4mK
+         FcZetaAYauSuM3L1Md8UrU0oTshH5f2dOGrTok0Uy7/ontFwHo2FLAC+I6NntO4AUK6H
+         Z2YeO2UcAq52S0uxid8xyIVTQSTr+9WFcv5RfKbLz3laiGLTczokv2KxJUWTQbbmauTc
+         lld+DIuaidu8O/3xTU/6/7zvrrwNqobNoUKdBu32A7A7yENZorCK9+a5deyEYzReOIG2
+         P8qx9mLuBjibTPNrqjWyJZmPhtInz8IJrNnWEci5JwMeeBJTsK3mDDZhifaslewdS/US
+         fFfg==
+X-Gm-Message-State: APjAAAVdrg/WjY25iTVoeg0KysVf8QTipTX0eRa6TQdhd5j9vGXAPvgD
+        5RKJemEx6TbPXB0foNUpEHVfTsCJpH6B00ztThgAaQ==
+X-Google-Smtp-Source: APXvYqwgq6GracV991sCW77HnUuRKoJAO+84cTfDtVfoqGVajWF/+QhM0kqUny8Jabemf0jwZfIKEvj1fo3VUHWGMi8=
+X-Received: by 2002:aa7:8085:: with SMTP id v5mr6354559pff.165.1567016779610;
+ Wed, 28 Aug 2019 11:26:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1PeBMRuweAmzrTQC85CmwdZPirG3HPg9aJ99p2U7zknQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190828055425.24765-1-yamada.masahiro@socionext.com> <CA+icZUWigJkh-VtJc4=xE06oMgE=ci2Mfdo2JaDv0fth8PKH+A@mail.gmail.com>
+In-Reply-To: <CA+icZUWigJkh-VtJc4=xE06oMgE=ci2Mfdo2JaDv0fth8PKH+A@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 28 Aug 2019 11:26:08 -0700
+Message-ID: <CAKwvOd=Zwkm33_8MTFKoVfs8XEEUKgzQFqJN3nar_ryKnbJTPw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kbuild: refactor scripts/Makefile.extrawarn
+To:     Sedat Dilek <sedat.dilek@gmail.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Clang-Built-Linux ML <clang-built-linux@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Wed, Aug 28, 2019 at 03:02:36PM +0200, Arnd Bergmann wrote:
-> On Tue, Aug 27, 2019 at 9:05 PM Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
-> > On Tue, Aug 27, 2019 at 06:33:01PM +0200, Arnd Bergmann wrote:
-> > > On Fri, Aug 16, 2019 at 10:34 AM Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
-> > > > However with earlyprintk it seems to hang as soon as kernel tries to print
-> > > > something. So something goes wrong with early DEBUG_LL mapping code when
-> > > > CONFIG_DEBUG_UART_VIRT=0xff000000 is used?
-> > >
-> > > I just redid the calculation and came out with the same address, so I
-> > > don't think I put the wrong one there. The address also does not
-> > > conflict with the PCI mapping, and the address is the same one that
-> > > is installed later, so that should also be fine.
-> > >
-> > > Are you sure you used the correct address in the .config file? If you
-> > > ran 'make oldconfig', the virtual address would not be changed here
-> > > as I just modify the default for a fresh 'make omap1_defconfig'
-> > > run or similar.
+On Wed, Aug 28, 2019 at 12:20 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
+>
+> On Wed, Aug 28, 2019 at 7:55 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
 > >
-> > Yes... You should be able to try this out also in QEMU to see the hang:
-> 
-> Haven't tried yet, but I took a look at the dump:
-> 
-> > $ qemu-system-arm -M sx1 -kernel sx1-zImage -nographic
+> > Instead of the warning-[123] magic, let's accumulate compiler options
+> > to KBUILD_CFLAGS directly as the top Makefile does. I think this makes
+> > easier to understand what is going on in this file.
 > >
-> > [ Hangs silently, press Ctrl-a c to enter monitor. ]
+> > This commit slightly changes the behavior, I think all of which are OK.
 > >
-> > QEMU 4.1.0 monitor - type 'help' for more information
-> > (qemu) info registers
-> > R00=c0379de1 R01=0000005b R02=00000000 R03=ff000000
-> > R04=00000000 R05=00000031 R06=c038f119 R07=00000000
-> > R08=00000000 R09=c038f50e R10=600001d3 R11=00000001
-> > R12=00000010 R13=c0379de0 R14=c000e07c R15=c000dfcc
-> > PSR=000001d3 ---- A svc32
-> > FPSCR: 00000000
+> > [1] Currently, cc-option calls are needlessly evaluated. For example,
+> >       warning-3 += $(call cc-option, -Wpacked-bitfield-compat)
+> >     needs evaluating only when W=3, but it is actually evaluated for
+> >     W=1, W=2 as well. With this commit, only relevant cc-option calls
+> >     will be evaluated. This is a slight optimization.
 > >
-> > from System.map:
-> > c000df7c T printascii
-> > c000dfe0 T printch
-> 
-> Ok, that is clearly the "busyloop" macro in
-> arch/arm/include/debug/8250.S, checking if the data got sent.
-> 
-> The 'r2' register contains zero, so UART_LSR_TEMT and
-> UART_LSR_THRE are not set, but presumably the mapping
-> was installed right since you did not get a page fault.
-> 
-> I assume you checked that the uart output wasn't already broken
-> by one of the earlier patches, right?
+> > [2] Currently, unsupported level like W=4 is checked by:
+> >       $(error W=$(KBUILD_ENABLE_EXTRA_GCC_CHECKS) is unknown)
+> >     This will no longer be checked, but I do not think it is a big
+> >     deal.
+> >
+>
+> Hi Masahiro Yamada,
+>
+> thanks for your patch series.
+>
+> If KBUILD_ENABLE_EXTRA_GCC_CHECKS does extra(-warning)-checks for GCC and Clang,
+> please rename the Kconfig into...
+>
+> KBUILD_ENABLE_EXTRA_CC_CHECKS
+>
+> ...or something similiar (and maybe with some notes in its Kconfig help-text?).
 
-Correct, it's only with the mapping change patch it hangs.
+I too would like to see that changed.
 
-> Also, looking at arch/arm/mach-omap1/include/mach/uncompress.h
-> it seems that SX1 normally uses UART3, not UART1.
-> Is that different in qemu?
-
-In QEMU all uarts can be used, trying with UART3 as early console
-hangs as well. (It prints Uncompressing... done. but I guess that's
-done with the physical address.)
-
-A.
+-- 
+Thanks,
+~Nick Desaulniers
