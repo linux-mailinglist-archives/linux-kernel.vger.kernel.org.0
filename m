@@ -2,138 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC9FFA0D53
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F03CA0D50
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:13:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727042AbfH1WO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 18:14:56 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:45880 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726658AbfH1WO4 (ORCPT
+        id S1726944AbfH1WNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 18:13:35 -0400
+Received: from mail-pl1-f175.google.com ([209.85.214.175]:38446 "EHLO
+        mail-pl1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbfH1WNf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 18:14:56 -0400
-Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7SMEjtR009561;
-        Wed, 28 Aug 2019 22:14:45 GMT
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2uns26v761-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Aug 2019 22:14:45 +0000
-Received: from g4t3433.houston.hpecorp.net (g4t3433.houston.hpecorp.net [16.208.49.245])
-        by g9t5008.houston.hpe.com (Postfix) with ESMTP id 36ACD6B;
-        Wed, 28 Aug 2019 22:10:49 +0000 (UTC)
-Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
-        by g4t3433.houston.hpecorp.net (Postfix) with ESMTP id A0C1348;
-        Wed, 28 Aug 2019 22:10:48 +0000 (UTC)
-Date:   Wed, 28 Aug 2019 17:10:48 -0500
-From:   Steve Wahl <steve.wahl@hpe.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Steve Wahl <steve.wahl@hpe.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, russ.anderson@hpe.com,
-        dimitri.sivanich@hpe.com, mike.travis@hpe.com
-Subject: Re: Purgatory compile flag changes apparently causing Kexec
- relocation overflows
-Message-ID: <20190828221048.GB29967@swahl-linux>
-References: <20190828194226.GA29967@swahl-linux>
- <CAKwvOdn0=7YabPD-5EUwkSoJgWjdYHY2mirM2LUz0TxZTBOf_Q@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdn0=7YabPD-5EUwkSoJgWjdYHY2mirM2LUz0TxZTBOf_Q@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Proofpoint-UnRewURL: 1 URL was un-rewritten
+        Wed, 28 Aug 2019 18:13:35 -0400
+Received: by mail-pl1-f175.google.com with SMTP id w11so596841plp.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 15:13:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=L46ONnOW0M6iW1Vp+WUrD6Jyzw4pGNakADqoU3eqTEQ=;
+        b=QVkB+vGs7ZPqhNeLypaISg2FgoUZvTzDsGkDzM3Q4dxt1d+lQS0icwsdmx/+L2tzvT
+         JcpIWn2yI3R2eiOg+z/pm0uPY5r4L+tW3gsgl1oEYb6Lov+xNdnq16KAr8UBcoSt6kJq
+         z/PLmYn+FL9Bi++DchRfTJm7vpCdrhsPjPSr2d4hKadR0P/vuO3BamuUMiF3ZeD0C8Eq
+         4x+AqadcjtLVJlGP1YmGCyMnIZxZKnNssBLeCNZ6oCUh1SYEX7vCnMxSEGwQ5tCa2GI9
+         Pxvb4FfkeO0n3ozeA2hDt5kEzkKoAAi/0/uHIEkmNPcu97BgsfY55f64LXWQ64Xe+TSj
+         NoYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=L46ONnOW0M6iW1Vp+WUrD6Jyzw4pGNakADqoU3eqTEQ=;
+        b=bvsGmdIQ3yOXaAASJ8uGXc03ApuN5xCHZnXC/5KbSCiADtwzov22jJb2iV3T6MiCfy
+         HGCZEGKzZVmqLeetND4fKCQltEzxtispU4efECOl1EJUCGUbkS8eDsiD59L5a5BkErYA
+         986qw63m06AklowKXEvZlfWwTP8NH+LbwmtbUyiQcQN14MzjN6uerMPnUQhNIwgxYPmS
+         CyGk4NC3WepYFQ8c2fp/nNm0l1Mkt5bsLo8+70Hq6lNEJskzz4NkZ4XyLEV3172jbWXi
+         f0n65B9jWwjhoK7+t7+T+hKwd0NUf/I4P7rwb/lwegh6jj/Sh4mHw2URi7170mZAalcZ
+         thvg==
+X-Gm-Message-State: APjAAAUMBXvFhNX8VlGver1QbN9D0n6ReTSVA6gjbyNCw0xYlJpf+LZs
+        Sc3D+++IiAEF/0hoV+VeNWY2pjy2e3GSB2W+0vYSFg==
+X-Google-Smtp-Source: APXvYqyjEXG8XXDQXpYhl8xEUXuWMAM6B3z1FvFP/Sf98kYWklfI9KWZ8mpEhqiMU2jh89GBpt1aV3aYfFvdaeddt0E=
+X-Received: by 2002:a17:902:a9c3:: with SMTP id b3mr6518760plr.179.1567030413776;
+ Wed, 28 Aug 2019 15:13:33 -0700 (PDT)
 MIME-Version: 1.0
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-08-28_11:2019-08-28,2019-08-28 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 mlxscore=0
- spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1908280213
+References: <CAK8P3a3G=GCpLtNztuoLR4BuugAB=zpa_Jrz5BSft6Yj-nok1g@mail.gmail.com>
+ <20190827145102.p7lmkpytf3mngxbj@treble> <CAHFW8PRsmmCR6TWoXpQ9gyTA7azX9YOerPErCMggcQX-=fAqng@mail.gmail.com>
+ <CAK8P3a2TeaMc_tWzzjuqO-eQjZwJdpbR1yH8yzSQbbVKdWCwSg@mail.gmail.com> <20190827192255.wbyn732llzckmqmq@treble>
+In-Reply-To: <20190827192255.wbyn732llzckmqmq@treble>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 28 Aug 2019 15:13:21 -0700
+Message-ID: <CAKwvOdkyvZf-oM6aXuCD6Aa4zDqZU-fKu5uUF6E05V6rWnxpKA@mail.gmail.com>
+Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
+To:     Josh Poimboeuf <jpoimboe@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Ilie Halip <ilie.halip@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Eli Friedman <efriedma@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 02:51:21PM -0700, Nick Desaulniers wrote:
-> On Wed, Aug 28, 2019 at 12:42 PM Steve Wahl <steve.wahl@hpe.com> wrote:
+On Tue, Aug 27, 2019 at 12:22 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> On Tue, Aug 27, 2019 at 09:00:52PM +0200, Arnd Bergmann wrote:
+> > On Tue, Aug 27, 2019 at 5:00 PM Ilie Halip <ilie.halip@gmail.com> wrote:
+> > >
+> > > > > $ clang-9 -c  crc32.i  -O2   ; objtool check  crc32.o
+> > > > > crc32.o: warning: objtool: fn1 uses BP as a scratch register
+> > >
+> > > Yes, I see it too. https://godbolt.org/z/N56HW1
+> > >
+> > > > Do you still see this warning with -fno-omit-frame-pointer (assuming
+> > > > clang has that option)?
+> > >
+> > > Using this makes the warning go away. Running objtool with --no-fp
+> > > also gets rid of it.
 > >
-> > Please CC me on responses to this.
+> > I still see the warning after adding back the -fno-omit-frame-pointer
+> > in my reduced test case:
 > >
-> > I normally would do more diligence on this, but the timing is such
-> > that I think it's better to get this out sooner.
-> >
-> > With the tip of the tree from https://github.com/torvalds/linux.git  (a
-> > few days old, most recent commit fetched is
-> > bb7ba8069de933d69cb45dd0a5806b61033796a3), I'm seeing "kexec: Overflow
-> > in relocation type 11 value 0x11fffd000" when I try to load a crash
-> > kernel with kdump. This seems to be caused by commit
-> > 059f801a937d164e03b33c1848bb3dca67c0b04, which changed the compiler
-> > flags used to compile purgatory.ro, apparently creating 32 bit
-> > relocations for things that aren't necessarily reachable with a 32 bit
-> > reference.  My guess is this only occurs when the crash kernel is
-> > located outside 32-bit addressable physical space.
-> >
-> > I have so far verified that the problem occurs with that commit, and
-> > does not occur with the previous commit.  For this commit, Thomas
-> > Gleixner mentioned a few of the changed flags should have been looked
-> > at twice.  I have not gone so far as to figure out which flags cause
-> > the problem.
-> >
-> > The hardware in use is a HPE Superdome Flex with 48 * 32GiB dimms
-> > (total 1536 GiB).
-> >
-> > One example of the exact error messages seen:
-> >
-> > 019-08-28T13:42:39.308110-05:00 uv4test14 kernel: [   45.137743] kexec: Overflow in relocation type 11 value 0x17f7affd000
-> > 2019-08-28T13:42:39.308123-05:00 uv4test14 kernel: [   45.137749] kexec-bzImage64: Loading purgatory failed
-> 
-> Thanks for the report and sorry for the breakage.  Can you please send
-> me more information for how to precisely reproduce the issue?  I'm
-> happy to look into fixing it.
+> > $ clang-9 -c  crc32.i -Werror -Wno-address-of-packed-member -Wall
+> > -Wno-pointer-sign -Wno-unused-value -Wno-constant-logical-operand -O2
+> > -Wno-unused -fno-omit-frame-pointer
+> > $ objtool check  crc32.o
+> > crc32.o: warning: objtool: fn1 uses BP as a scratch register
+>
+> This warning most likely means that clang is clobbering RBP in leaf
+> functions.  With -fno-omit-frame-pointer, leaf functions don't need to
+> set up the frame pointer, but they at least need to leave RBP untouched,
+> so that an interrupts/exceptions can unwind through the function.
 
-Here's the details I know might be important:
-
-Since this appears to be a problem with the result of a relocation not
-fitting within 32 bits, I think the location chosen to place the crash
-kernel needs to be above 4GiB; so you need a machine with more memory
-than that.
-
-At the moment I'm running SLES 12 sp 4 as the rest of the
-environment.  rpm says kdump is kdump-0.8.16-9.2.x86_64.  I've fetched
-the kernel sources and compiled directly on this system.  I believe I
-copied the kernel config from the SLES kernel and did a make
-olddefconfig for configuration.  Made and installed the kernel from
-the kernel tree.
-
-crashkernel=512M,high is set on the command line.
-
-As the system boots, and systemd initializes kdump, it tries to load
-the crash kernel, I believe through
-/usr/lib/systemd/system/kdump.service running /lib/kdump/load.sh
---update.
-
-Once that completes, 'systemctl status kdump' indicates a failure, and
-dmesg | grep kexec shows the error messages mentioned above.
-
-> Let me go dig up the different listed flags.  Steve, it may be fastest
-> for you to test re-adding them in your setup to see which one is
-> important.
-
-I will work through that tomorrow and let you know what I find.
-
-> Tglx, if you want to revert the above patches, I'm ok with that.  It's
-> important that we fix the issue eventually that my patches were meant
-> to address, but precisely *when* it's solved isn't critical; our
-> kernels can carry out of tree patches for now until the issue is
-> completely resolved worst case.
-> -- 
-> Thanks,
-> ~Nick Desaulniers
-
-Thank you!
-
---> Steve Wahl
-
+It sounds like clang has `-mno-omit-leaf-frame-pointer` (via
+https://bugs.llvm.org/show_bug.cgi?id=43128#c6).  Arnd, can you give
+that a shot?
 -- 
-Steve Wahl, Hewlett Packard Enterprise
+Thanks,
+~Nick Desaulniers
