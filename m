@@ -2,96 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C69BA02CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0688AA02D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:14:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfH1NNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:13:44 -0400
-Received: from mail-vs1-f74.google.com ([209.85.217.74]:37799 "EHLO
-        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbfH1NNn (ORCPT
+        id S1726796AbfH1NOg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:14:36 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34216 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbfH1NOf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:13:43 -0400
-Received: by mail-vs1-f74.google.com with SMTP id r17so481375vsp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 06:13:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=2uraJyf6YkQQQi+GjgA0Euznea67jY0h3NcNTgfEE6E=;
-        b=krpjyvPl4LV2Qp+9bxrX89f65tIa90HGC+HFV5rCeRCZ2Kify9kiCPez94yN8srqEe
-         lF+iaLa/UcZn4j756/FDjGcCZ0fi4GAImCz5nAKjfHbDVT4WihMlJOA0Oqe8/oU0YGwb
-         Ld33DNMmuOqncMmBjsxdkFdvO20z+TkgT4PefRIYKIBpXFcXzihDFcx0+HYRLWrzVt0z
-         Y7v7VnMqtFJ/H51CNlWRxy/3Fa6SCQyge9Dfc/AvqyjN+8IBUTQoqfTpv9OXaM4uCDMu
-         tTEYpdiWaBNUKVP37xirxcot4wu+OthQfooyIBAkDMtVrRe6c9qMKF2yFsg7vRx5S76T
-         eOQg==
+        Wed, 28 Aug 2019 09:14:35 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s49so6277edb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 06:14:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=2uraJyf6YkQQQi+GjgA0Euznea67jY0h3NcNTgfEE6E=;
-        b=QVMhtTreubGrX7LW063iXGJmkeKONvjrbHlInZqeXPXLYMnjCUDzpymzB6lqxxOBIG
-         Vz2zRQw/TOhTwMyc0/SdZ/hEuVp8D5BML7Qoi/6fSPATCGd/W4Pkm7nB+2ZG5+p4cUut
-         uOpL9g7wEbEnGtjb0+09Va7tQ/c7ck4uqYCZdQZHHV/7YKkbiXwBpaBVWsjMDwrKcbpC
-         LPK09noAmUINhVSQmBY+nWJn8/wXeKsQU3t4cDVjn1+ezZSp3jsGJZ2PQbb/wWCfoVGL
-         UNY8gg1XDGcq+2WAaP7Idp0F2fa+rXc560UZzf3dRy4JHKpJuEnX52wuQoTWCd3Ov1UH
-         OHpA==
-X-Gm-Message-State: APjAAAVXl1LOO24YnpzMFezkXVYQGETBqM93g6ZzNtPoDk9H/ETw4PiM
-        3GolDK2U42TOgr4qJTwI2LV3jogrZ8O1Gg==
-X-Google-Smtp-Source: APXvYqxwaE69Ih/IcaBEjoZYAtqpyYGYen7SRacn6ADCDqJa8PItgJpR3VuZvxi6a1jkwLHNsHIcq0P0fvxZJQ==
-X-Received: by 2002:a67:d02:: with SMTP id 2mr2090357vsn.43.1566998022308;
- Wed, 28 Aug 2019 06:13:42 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 06:13:38 -0700
-Message-Id: <20190828131338.89832-1-edumazet@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-Subject: [PATCH] iommu/iova: avoid false sharing on fq_timer_on
-From:   Eric Dumazet <edumazet@google.com>
-To:     Joerg Roedel <jroedel@suse.de>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Eric Dumazet <edumazet@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jinyu Qi <jinyuqi@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=KHeRGL4aqlYuS+QGDNpxxJ5B0TcroXeJiWbbnAbYbdk=;
+        b=lpFYCVjeh2P/Q4Vwrbf5hpMuniRWNxn2KpcwMblN/43yWZWFS9dG2Ytipj/lUyajGz
+         BWuzRbI1TKbqp8qOyB4lXp7WkA5/iPazQJRpxVsxDkMu/acUX83R61GIaeJS+2wV3QH0
+         u6Q34zETHThomTIEMA6n1Wx3txsH77Dp/de2IqKUdtbcgOBcmUq57e6PXaoPWjEiupNJ
+         xgF4WhlFfEki2A2O5yCRLKiKyJDIINehkx719qzdPDQlp9sJd5ole4ZmpYjdgyubopJM
+         NkMxxZ08fNVN7GYiRVDfpMop2CKasTAdji4ELFUi17GSp8A+zaf2WcCpyr8QXXk8rL5m
+         Ke3w==
+X-Gm-Message-State: APjAAAWVj/YRJePLHQyFiMjDABmyi4eoHqZ7N7O+gOI3WGHLvDcjkpOJ
+        izEolu4r+G0Az1X/kaw6J+VKBGCkVT4=
+X-Google-Smtp-Source: APXvYqxbn/sKxGYSWrREShM/LTA0onX3ygJknBIUAs5sGw4bIdelExi5i5FXcyQMNDSp1GeI+DFmSA==
+X-Received: by 2002:a50:f4b6:: with SMTP id s51mr3985246edm.204.1566998073884;
+        Wed, 28 Aug 2019 06:14:33 -0700 (PDT)
+Received: from [10.10.2.174] (bran.ispras.ru. [83.149.199.196])
+        by smtp.gmail.com with ESMTPSA id f22sm455742edr.15.2019.08.28.06.14.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2019 06:14:33 -0700 (PDT)
+Reply-To: efremov@linux.com
+Subject: Re: [PATCH] scripts: coccinelle: check for !(un)?likely usage
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>
+References: <20190825130536.14683-1-efremov@linux.com>
+ <b5bae2981e27d133b61d99b08ee60244bf7aabe3.camel@perches.com>
+ <88f6e48e-1230-9488-a973-397f4e6dfbb5@linux.com>
+ <4E9DDF9E-C883-44F0-A3F4-CD49284DB60D@lip6.fr>
+ <95c32d19-eb4d-a214-6332-038610ec3dbd@rasmusvillemoes.dk>
+ <16053035-655a-7d53-29d1-ea914e3a21dd@linux.com>
+ <75f5210f-43a3-ab0d-912a-6dff6163fd9a@rasmusvillemoes.dk>
+From:   Denis Efremov <efremov@linux.com>
+Message-ID: <40010cac-8a49-9d82-4cde-e14a0216c340@linux.com>
+Date:   Wed, 28 Aug 2019 16:14:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <75f5210f-43a3-ab0d-912a-6dff6163fd9a@rasmusvillemoes.dk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 14bd9a607f90 ("iommu/iova: Separate atomic variables
-to improve performance") Jinyu Qi identified that the atomic_cmpxchg()
-in queue_iova() was causing a performance loss and moved critical fields
-so that the false sharing would not impact them.
+On 8/28/19 4:05 PM, Rasmus Villemoes wrote:
+> On 28/08/2019 14.33, Denis Efremov wrote:
+>> On 8/28/19 2:33 PM, Rasmus Villemoes wrote:
+>>> On 25/08/2019 21.19, Julia Lawall wrote:
+>>>>
+>>>>
+>>>>> On 26 Aug 2019, at 02:59, Denis Efremov <efremov@linux.com> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>>> On 25.08.2019 19:37, Joe Perches wrote:
+>>>>>>> On Sun, 2019-08-25 at 16:05 +0300, Denis Efremov wrote:
+>>>>>>> This patch adds coccinelle script for detecting !likely and !unlikely
+>>>>>>> usage. It's better to use unlikely instead of !likely and vice versa.
+>>>>>>
+>>>>>> Please explain _why_ is it better in the changelog.
+>>>>>>
+>>>>>
+>>>>> In my naive understanding the negation (!) before the likely/unlikely
+>>>>> could confuse the compiler
+>>>>
+>>>> As a human I am confused. Is !likely(x) equivalent to x or !x?
+>>>
+>>> #undef likely
+>>> #undef unlikely
+>>> #define likely(x) (x)
+>>> #define unlikely(x) (x)
+>>>
+>>> should be a semantic no-op. So changing !likely(x) to unlikely(x) is
+>>> completely wrong. If anything, !likely(x) can be transformed to
+>>> unlikely(!x).
+>>
+>> As far as I could understand it:
+>>
+>> # define likely(x)	__builtin_expect(!!(x), 1)
+>> # define unlikely(x)	__builtin_expect(!!(x), 0)
+>>
+>> From GCC doc:
+>> __builtin_expect compares the values. The semantics of the built-in are that it is expected that exp == c.
+> 
+> When I said "semantic" I meant from the C language point of view. Yes,
+> of course, the whole reason for having these is that we can give hints
+> to gcc as to which branch is more likely. Replace the dummy defines by
+> #define likely(x) (!!(x)) if you like - it amounts to the same thing
+> when it's only ever used in a boolean context.
+> 
+>> if (!likely(cond))
+>> if (!__builtin_expect(!!(cond), 1))
+>> if (!((!!(cond)) == 1))
+> 
+> You're inventing this comparison to 1. It should be "if (!(!!(cond)))",
+> but it ends up being equivalent in C.
+> 
+>> if ((!!(cond)) != 1) and since !! could result in 0 or 1
+>> if ((!!(cond)) == 0)
+> 
+> which in turn is equivalent to !(cond).
+> 
+>>
+>> if (unlikely(cond))
+>> if (__builtin_expect(!!(cond), 0))
+>> if ((!!(cond)) == 0))
+> 
+> No, that last transformation is wrong. Yes, the _expectation_ is that
+> !!(cond) has the value 0, but that does not mean that the whole
+> condition turns into "does !!(cond) compare equal to 0?" - we _expect_
+> that it does, meaning that we expect not to enter the if block. Read the
+> docs, the value of __builtin_expect(whatever, foobar) is whatever, so a
+> correct third line above would be
+> 
+>   "if (!!(cond))"
+> 
+> which is of course not at all the same as
+> 
+>   "if (!!(cond) == 0)" aka "if (!(cond))"
 
-However, avoiding the false sharing in the first place seems easy.
-We should attempt the atomic_cmpxchg() no more than 100 times
-per second. Adding an atomic_read() will keep the cache
-line mostly shared.
+I get it, you are right. Thank you for the explanation.
 
-This false sharing came with commit 9a005a800ae8
-("iommu/iova: Add flush timer").
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Jinyu Qi <jinyuqi@huawei.com>
-Cc: Joerg Roedel <jroedel@suse.de>
----
- drivers/iommu/iova.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index 3e1a8a6755723a927a7942a7429ab7e6c19a0027..41c605b0058f9615c2dbdd83f1de2404a9b1d255 100644
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -577,7 +577,9 @@ void queue_iova(struct iova_domain *iovad,
- 
- 	spin_unlock_irqrestore(&fq->lock, flags);
- 
--	if (atomic_cmpxchg(&iovad->fq_timer_on, 0, 1) == 0)
-+	/* Avoid false sharing as much as possible. */
-+	if (!atomic_read(&iovad->fq_timer_on) &&
-+	    !atomic_cmpxchg(&iovad->fq_timer_on, 0, 1))
- 		mod_timer(&iovad->fq_timer,
- 			  jiffies + msecs_to_jiffies(IOVA_FQ_TIMEOUT));
- }
--- 
-2.23.0.187.g17f5b7556c-goog
-
+Denis
