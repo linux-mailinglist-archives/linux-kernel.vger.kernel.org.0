@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BBBC9FC6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:00:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91F169FC79
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfH1H76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 03:59:58 -0400
-Received: from shell.v3.sk ([90.176.6.54]:40563 "EHLO shell.v3.sk"
+        id S1726832AbfH1IAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:00:11 -0400
+Received: from shell.v3.sk ([90.176.6.54]:40580 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726272AbfH1H76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 03:59:58 -0400
+        id S1726693AbfH1IAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 04:00:03 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3DDE6D833F;
-        Wed, 28 Aug 2019 09:59:54 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 87A09D833D;
+        Wed, 28 Aug 2019 10:00:01 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 0PrU-wBeZB85; Wed, 28 Aug 2019 09:59:45 +0200 (CEST)
+        with ESMTP id 3yinYU-dRN-5; Wed, 28 Aug 2019 09:59:46 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 01FBCD833B;
-        Wed, 28 Aug 2019 09:59:45 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id DC1DCD8333;
+        Wed, 28 Aug 2019 09:59:43 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id AS_XgI9h5Oul; Wed, 28 Aug 2019 09:59:42 +0200 (CEST)
+        with ESMTP id vuMu0oR0fIL4; Wed, 28 Aug 2019 09:59:41 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id F20B3D8332;
-        Wed, 28 Aug 2019 09:59:41 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 0313BD832A;
+        Wed, 28 Aug 2019 09:59:40 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Russell King <linux@armlinux.org.uk>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v4 4/5] dt-bindings: display: armada: Add more compatible strings
-Date:   Wed, 28 Aug 2019 09:59:37 +0200
-Message-Id: <20190828075938.318028-5-lkundrak@v3.sk>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/5] dt-bindings: improve the Armada DRM bindings
+Date:   Wed, 28 Aug 2019 09:59:33 +0200
+Message-Id: <20190828075938.318028-1-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190828075938.318028-1-lkundrak@v3.sk>
-References: <20190828075938.318028-1-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -47,40 +44,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's a generic compatible string and the driver will work on a MMP2 as
-well, using the same binding.
+Hi,
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Rob Herring <robh@kernel.org>
+this is the fourth spin of a patch set that aims to complete the Armada
+DRM binding documentation. The only change from the last version is the
+addition of Reviewed-by tags.
 
----
-Changes since v3:
-- Collected Rob's Reviewed-by tag
+What is documented corresponds to the armada-devel branch of
+git://git.armlinux.org.uk/~rmk/linux-arm.git with these differencies:
 
-Changes since v2:
-- Order marvell,armada-lcdc after the model-specific strings.
+* Documentation of the bus-width property of the LCDC
+* The MMP2 compatible strings.
 
-Changes since v1:
-- Added marvell,armada-lcdc compatible string.
+Patches to the driver for the above were sent out separately.
 
- .../devicetree/bindings/display/marvell,armada-lcdc.txt        | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/display/marvell,armada-lcd=
-c.txt b/Documentation/devicetree/bindings/display/marvell,armada-lcdc.txt
-index 2606a8efc9568..0ea4cbe5a32ee 100644
---- a/Documentation/devicetree/bindings/display/marvell,armada-lcdc.txt
-+++ b/Documentation/devicetree/bindings/display/marvell,armada-lcdc.txt
-@@ -3,7 +3,8 @@ Marvell Armada LCD controller
-=20
- Required properties:
-=20
-- - compatible: value should be "marvell,dove-lcd".
-+ - compatible: value should be "marvell,dove-lcd" or "marvell,mmp2-lcd",
-+   depending on the exact SoC model, along with "marvell,armada-lcdc"
-  - reg: base address and size of the LCD controller
-  - interrupts: single interrupt number for the LCD controller
-=20
---=20
-2.21.0
+Lubo
 
