@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 879559FF40
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71F699FF63
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:17:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfH1KQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 06:16:42 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:46442 "EHLO
+        id S1727348AbfH1KRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 06:17:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:46441 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbfH1KQk (ORCPT
+        with ESMTP id S1726840AbfH1KQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 06:16:40 -0400
+        Wed, 28 Aug 2019 06:16:41 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2v0F-0000Kw-GA; Wed, 28 Aug 2019 12:16:35 +0200
+        id 1i2v0F-0000KU-7g; Wed, 28 Aug 2019 12:16:35 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 084FF1C0DE9;
-        Wed, 28 Aug 2019 12:16:32 +0200 (CEST)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 8ED2E1C0DE8;
+        Wed, 28 Aug 2019 12:16:31 +0200 (CEST)
 Date:   Wed, 28 Aug 2019 10:16:31 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-cpu-timers: Switch thread group sampling to array
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+Subject: [tip: timers/core] posix-cpu-timers: Restructure expiry array
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Frederic Weisbecker <frederic@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20190821192921.988426956@linutronix.de>
-References: <20190821192921.988426956@linutronix.de>
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <alpine.DEB.2.21.1908262021140.1939@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1908262021140.1939@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Message-ID: <156698739192.5774.13704611665497160820.tip-bot2@tip-bot2>
+Message-ID: <156698739147.5771.2454985201594571234.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,261 +48,361 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     b7be4ef1365dcb56fdffc6689e41058b23f5996d
-Gitweb:        https://git.kernel.org/tip/b7be4ef1365dcb56fdffc6689e41058b23f5996d
+Commit-ID:     87dc64480fb19a6a0fedbdff1e2557be50673287
+Gitweb:        https://git.kernel.org/tip/87dc64480fb19a6a0fedbdff1e2557be50673287
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 21 Aug 2019 21:09:16 +02:00
+AuthorDate:    Mon, 26 Aug 2019 20:22:24 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Wed, 28 Aug 2019 11:50:39 +02:00
 
-posix-cpu-timers: Switch thread group sampling to array
+posix-cpu-timers: Restructure expiry array
 
-That allows more simplifications in various places.
+Now that the abused struct task_cputime is gone, it's more natural to
+bundle the expiry cache and the list head of each clock into a struct and
+have an array of those structs.
 
+Follow the hrtimer naming convention of 'bases' and rename the expiry cache
+to 'nextevt' and adapt all usage sites.
+
+Generates also better code .text size shrinks by 80 bytes.
+
+Suggested-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lkml.kernel.org/r/20190821192921.988426956@linutronix.de
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1908262021140.1939@nanos.tec.linutronix.de
 
 ---
- include/linux/sched/cputime.h  |   2 +-
- kernel/time/itimer.c           |  11 +---
- kernel/time/posix-cpu-timers.c | 104 +++++++++++++-------------------
- 3 files changed, 49 insertions(+), 68 deletions(-)
+ include/linux/posix-timers.h   |  41 +++++++-----
+ kernel/time/posix-cpu-timers.c | 105 +++++++++++++++++---------------
+ 2 files changed, 83 insertions(+), 63 deletions(-)
 
-diff --git a/include/linux/sched/cputime.h b/include/linux/sched/cputime.h
-index 2638fd0..eefa5df 100644
---- a/include/linux/sched/cputime.h
-+++ b/include/linux/sched/cputime.h
-@@ -61,7 +61,7 @@ extern void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
-  * Thread group CPU time accounting.
-  */
- void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times);
--void thread_group_sample_cputime(struct task_struct *tsk, struct task_cputime *times);
-+void thread_group_sample_cputime(struct task_struct *tsk, u64 *samples);
- 
- /*
-  * The following are functions that support scheduler-internal time accounting.
-diff --git a/kernel/time/itimer.c b/kernel/time/itimer.c
-index ae04bc2..77f1e56 100644
---- a/kernel/time/itimer.c
-+++ b/kernel/time/itimer.c
-@@ -55,15 +55,10 @@ static void get_cpu_itimer(struct task_struct *tsk, unsigned int clock_id,
- 	val = it->expires;
- 	interval = it->incr;
- 	if (val) {
--		struct task_cputime cputime;
--		u64 t;
-+		u64 t, samples[CPUCLOCK_MAX];
- 
--		thread_group_sample_cputime(tsk, &cputime);
--		if (clock_id == CPUCLOCK_PROF)
--			t = cputime.utime + cputime.stime;
--		else
--			/* CPUCLOCK_VIRT */
--			t = cputime.utime;
-+		thread_group_sample_cputime(tsk, samples);
-+		t = samples[clock_id];
- 
- 		if (val < t)
- 			/* about to fire */
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 9ac601a..e62139a 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -225,22 +225,14 @@ static inline void __update_gt_cputime(atomic64_t *cputime, u64 sum_cputime)
- 	}
+diff --git a/include/linux/posix-timers.h b/include/linux/posix-timers.h
+index fd90984..64bd10d 100644
+--- a/include/linux/posix-timers.h
++++ b/include/linux/posix-timers.h
+@@ -63,24 +63,33 @@ static inline int clockid_to_fd(const clockid_t clk)
  }
  
--static void update_gt_cputime(struct task_cputime_atomic *cputime_atomic, struct task_cputime *sum)
-+static void update_gt_cputime(struct task_cputime_atomic *cputime_atomic,
-+			      struct task_cputime *sum)
- {
- 	__update_gt_cputime(&cputime_atomic->utime, sum->utime);
- 	__update_gt_cputime(&cputime_atomic->stime, sum->stime);
- 	__update_gt_cputime(&cputime_atomic->sum_exec_runtime, sum->sum_exec_runtime);
- }
- 
--/* Sample task_cputime_atomic values in "atomic_timers", store results in "times". */
--static inline void sample_cputime_atomic(struct task_cputime *times,
--					 struct task_cputime_atomic *atomic_times)
--{
--	times->utime = atomic64_read(&atomic_times->utime);
--	times->stime = atomic64_read(&atomic_times->stime);
--	times->sum_exec_runtime = atomic64_read(&atomic_times->sum_exec_runtime);
--}
--
- /**
-  * thread_group_sample_cputime - Sample cputime for a given task
-  * @tsk:	Task for which cputime needs to be started
-@@ -252,20 +244,19 @@ static inline void sample_cputime_atomic(struct task_cputime *times,
-  *
-  * Updates @times with an uptodate sample of the thread group cputimes.
-  */
--void thread_group_sample_cputime(struct task_struct *tsk,
--				struct task_cputime *times)
-+void thread_group_sample_cputime(struct task_struct *tsk, u64 *samples)
- {
- 	struct thread_group_cputimer *cputimer = &tsk->signal->cputimer;
- 
- 	WARN_ON_ONCE(!cputimer->running);
- 
--	sample_cputime_atomic(times, &cputimer->cputime_atomic);
-+	proc_sample_cputime_atomic(&cputimer->cputime_atomic, samples);
- }
- 
- /**
-  * thread_group_start_cputime - Start cputime and return a sample
-  * @tsk:	Task for which cputime needs to be started
-- * @iimes:	Storage for time samples
-+ * @samples:	Storage for time samples
-  *
-  * The thread group cputime accouting is avoided when there are no posix
-  * CPU timers armed. Before starting a timer it's required to check whether
-@@ -274,14 +265,14 @@ void thread_group_sample_cputime(struct task_struct *tsk,
-  *
-  * Updates @times with an uptodate sample of the thread group cputimes.
-  */
--static void
--thread_group_start_cputime(struct task_struct *tsk, struct task_cputime *times)
-+static void thread_group_start_cputime(struct task_struct *tsk, u64 *samples)
- {
- 	struct thread_group_cputimer *cputimer = &tsk->signal->cputimer;
--	struct task_cputime sum;
- 
- 	/* Check if cputimer isn't running. This is accessed without locking. */
- 	if (!READ_ONCE(cputimer->running)) {
-+		struct task_cputime sum;
+ #ifdef CONFIG_POSIX_TIMERS
 +
- 		/*
- 		 * The POSIX timer interface allows for absolute time expiry
- 		 * values through the TIMER_ABSTIME flag, therefore we have
-@@ -299,7 +290,15 @@ thread_group_start_cputime(struct task_struct *tsk, struct task_cputime *times)
- 		 */
- 		WRITE_ONCE(cputimer->running, true);
- 	}
--	sample_cputime_atomic(times, &cputimer->cputime_atomic);
-+	proc_sample_cputime_atomic(&cputimer->cputime_atomic, samples);
+ /**
+- * posix_cputimers - Container for posix CPU timer related data
+- * @expiries:		Earliest-expiration cache array based
++ * posix_cputimer_base - Container per posix CPU clock
++ * @nextevt:		Earliest-expiration cache
+  * @cpu_timers:		List heads to queue posix CPU timers
++ */
++struct posix_cputimer_base {
++	u64			nextevt;
++	struct list_head	cpu_timers;
++};
++
++/**
++ * posix_cputimers - Container for posix CPU timer related data
++ * @bases:		Base container for posix CPU clocks
+  *
+  * Used in task_struct and signal_struct
+  */
+ struct posix_cputimers {
+-	u64			expiries[CPUCLOCK_MAX];
+-	struct list_head	cpu_timers[CPUCLOCK_MAX];
++	struct posix_cputimer_base	bases[CPUCLOCK_MAX];
+ };
+ 
+ static inline void posix_cputimers_init(struct posix_cputimers *pct)
+ {
+-	memset(&pct->expiries, 0, sizeof(pct->expiries));
+-	INIT_LIST_HEAD(&pct->cpu_timers[0]);
+-	INIT_LIST_HEAD(&pct->cpu_timers[1]);
+-	INIT_LIST_HEAD(&pct->cpu_timers[2]);
++	memset(pct->bases, 0, sizeof(pct->bases));
++	INIT_LIST_HEAD(&pct->bases[0].cpu_timers);
++	INIT_LIST_HEAD(&pct->bases[1].cpu_timers);
++	INIT_LIST_HEAD(&pct->bases[2].cpu_timers);
+ }
+ 
+ void posix_cputimers_group_init(struct posix_cputimers *pct, u64 cpu_limit);
+@@ -88,19 +97,23 @@ void posix_cputimers_group_init(struct posix_cputimers *pct, u64 cpu_limit);
+ static inline void posix_cputimers_rt_watchdog(struct posix_cputimers *pct,
+ 					       u64 runtime)
+ {
+-	pct->expiries[CPUCLOCK_SCHED] = runtime;
++	pct->bases[CPUCLOCK_SCHED].nextevt = runtime;
+ }
+ 
+ /* Init task static initializer */
+-#define INIT_CPU_TIMERLISTS(c)	{					\
+-	LIST_HEAD_INIT(c.cpu_timers[0]),				\
+-	LIST_HEAD_INIT(c.cpu_timers[1]),				\
+-	LIST_HEAD_INIT(c.cpu_timers[2]),				\
++#define INIT_CPU_TIMERBASE(b) {						\
++	.cpu_timers = LIST_HEAD_INIT(b.cpu_timers),			\
 +}
 +
-+static void __thread_group_cputime(struct task_struct *tsk, u64 *samples)
-+{
-+	struct task_cputime ct;
-+
-+	thread_group_cputime(tsk, &ct);
-+	store_samples(samples, ct.stime, ct.utime, ct.sum_exec_runtime);
++#define INIT_CPU_TIMERBASES(b) {					\
++	INIT_CPU_TIMERBASE(b[0]),					\
++	INIT_CPU_TIMERBASE(b[1]),					\
++	INIT_CPU_TIMERBASE(b[2]),					\
+ }
+ 
+ #define INIT_CPU_TIMERS(s)						\
+ 	.posix_cputimers = {						\
+-		.cpu_timers = INIT_CPU_TIMERLISTS(s.posix_cputimers),	\
++		.bases = INIT_CPU_TIMERBASES(s.posix_cputimers.bases),	\
+ 	},
+ #else
+ struct posix_cputimers { };
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index ffd4918..9ac601a 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -24,13 +24,13 @@ void posix_cputimers_group_init(struct posix_cputimers *pct, u64 cpu_limit)
+ {
+ 	posix_cputimers_init(pct);
+ 	if (cpu_limit != RLIM_INFINITY)
+-		pct->expiries[CPUCLOCK_PROF] = cpu_limit * NSEC_PER_SEC;
++		pct->bases[CPUCLOCK_PROF].nextevt = cpu_limit * NSEC_PER_SEC;
  }
  
  /*
-@@ -313,28 +312,18 @@ static u64 cpu_clock_sample_group(const clockid_t clkid, struct task_struct *p,
- 				  bool start)
- {
- 	struct thread_group_cputimer *cputimer = &p->signal->cputimer;
--	struct task_cputime cputime;
-+	u64 samples[CPUCLOCK_MAX];
- 
- 	if (!READ_ONCE(cputimer->running)) {
- 		if (start)
--			thread_group_start_cputime(p, &cputime);
-+			thread_group_start_cputime(p, samples);
- 		else
--			thread_group_cputime(p, &cputime);
-+			__thread_group_cputime(p, samples);
- 	} else {
--		sample_cputime_atomic(&cputime, &cputimer->cputime_atomic);
-+		proc_sample_cputime_atomic(&cputimer->cputime_atomic, samples);
+  * Called after updating RLIMIT_CPU to run cpu timer and update
+- * tsk->signal->posix_cputimers.expiries expiration cache if
+- * necessary. Needs siglock protection since other code may update
++ * tsk->signal->posix_cputimers.bases[clock].nextevt expiration cache if
++ * necessary. Needs siglock protection since other code may update the
+  * expiration cache as well.
+  */
+ void update_rlimit_cpu(struct task_struct *task, unsigned long rlim_new)
+@@ -122,9 +122,11 @@ static void bump_cpu_timer(struct k_itimer *timer, u64 now)
  	}
- 
--	switch (clkid) {
--	case CPUCLOCK_PROF:
--		return cputime.utime + cputime.stime;
--	case CPUCLOCK_VIRT:
--		return cputime.utime;
--	case CPUCLOCK_SCHED:
--		return cputime.sum_exec_runtime;
--	default:
--		WARN_ON_ONCE(1);
--	}
--	return 0;
-+	return samples[clkid];
  }
  
- static int posix_cpu_clock_get(const clockid_t clock, struct timespec64 *tp)
-@@ -889,9 +878,7 @@ static void check_process_timers(struct task_struct *tsk,
+-static inline bool expiry_cache_is_zero(const u64 *ec)
++static inline bool expiry_cache_is_zero(const struct posix_cputimers *pct)
  {
- 	struct signal_struct *const sig = tsk->signal;
- 	struct posix_cputimer_base *base = sig->posix_cputimers.bases;
--	u64 utime, ptime, virt_expires, prof_expires;
--	u64 sum_sched_runtime, sched_expires;
--	struct task_cputime cputime;
-+	u64 virt_exp, prof_exp, sched_exp, samples[CPUCLOCK_MAX];
+-	return !(ec[CPUCLOCK_PROF] | ec[CPUCLOCK_VIRT] | ec[CPUCLOCK_SCHED]);
++	return !(pct->bases[CPUCLOCK_PROF].nextevt |
++		 pct->bases[CPUCLOCK_VIRT].nextevt |
++		 pct->bases[CPUCLOCK_SCHED].nextevt);
+ }
+ 
+ static int
+@@ -432,9 +434,9 @@ static void cleanup_timers_list(struct list_head *head)
+  */
+ static void cleanup_timers(struct posix_cputimers *pct)
+ {
+-	cleanup_timers_list(&pct->cpu_timers[CPUCLOCK_PROF]);
+-	cleanup_timers_list(&pct->cpu_timers[CPUCLOCK_VIRT]);
+-	cleanup_timers_list(&pct->cpu_timers[CPUCLOCK_SCHED]);
++	cleanup_timers_list(&pct->bases[CPUCLOCK_PROF].cpu_timers);
++	cleanup_timers_list(&pct->bases[CPUCLOCK_VIRT].cpu_timers);
++	cleanup_timers_list(&pct->bases[CPUCLOCK_SCHED].cpu_timers);
+ }
+ 
+ /*
+@@ -464,21 +466,19 @@ static void arm_timer(struct k_itimer *timer)
+ {
+ 	struct cpu_timer_list *const nt = &timer->it.cpu;
+ 	int clkidx = CPUCLOCK_WHICH(timer->it_clock);
+-	u64 *cpuexp, newexp = timer->it.cpu.expires;
+ 	struct task_struct *p = timer->it.cpu.task;
++	u64 newexp = timer->it.cpu.expires;
++	struct posix_cputimer_base *base;
+ 	struct list_head *head, *listpos;
+ 	struct cpu_timer_list *next;
+ 
+-	if (CPUCLOCK_PERTHREAD(timer->it_clock)) {
+-		head = p->posix_cputimers.cpu_timers + clkidx;
+-		cpuexp = p->posix_cputimers.expiries + clkidx;
+-	} else {
+-		head = p->signal->posix_cputimers.cpu_timers + clkidx;
+-		cpuexp = p->signal->posix_cputimers.expiries + clkidx;
+-	}
++	if (CPUCLOCK_PERTHREAD(timer->it_clock))
++		base = p->posix_cputimers.bases + clkidx;
++	else
++		base = p->signal->posix_cputimers.bases + clkidx;
+ 
+-	listpos = head;
+-	list_for_each_entry(next, head, entry) {
++	listpos = head = &base->cpu_timers;
++	list_for_each_entry(next,head, entry) {
+ 		if (nt->expires < next->expires)
+ 			break;
+ 		listpos = &next->entry;
+@@ -494,8 +494,8 @@ static void arm_timer(struct k_itimer *timer)
+ 	 * for process timers we share expiration cache with itimers
+ 	 * and RLIMIT_CPU and for thread timers with RLIMIT_RTTIME.
+ 	 */
+-	if (expires_gt(*cpuexp, newexp))
+-		*cpuexp = newexp;
++	if (expires_gt(base->nextevt, newexp))
++		base->nextevt = newexp;
+ 
+ 	if (CPUCLOCK_PERTHREAD(timer->it_clock))
+ 		tick_dep_set_task(p, TICK_DEP_BIT_POSIX_TIMER);
+@@ -783,9 +783,9 @@ static inline void check_dl_overrun(struct task_struct *tsk)
+ static void check_thread_timers(struct task_struct *tsk,
+ 				struct list_head *firing)
+ {
+-	struct list_head *timers = tsk->posix_cputimers.cpu_timers;
+-	u64 stime, utime, *expires = tsk->posix_cputimers.expiries;
++	struct posix_cputimer_base *base = tsk->posix_cputimers.bases;
  	unsigned long soft;
++	u64 stime, utime;
+ 
+ 	if (dl_task(tsk))
+ 		check_dl_overrun(tsk);
+@@ -794,14 +794,18 @@ static void check_thread_timers(struct task_struct *tsk,
+ 	 * If the expiry cache is zero, then there are no active per thread
+ 	 * CPU timers.
+ 	 */
+-	if (expiry_cache_is_zero(tsk->posix_cputimers.expiries))
++	if (expiry_cache_is_zero(&tsk->posix_cputimers))
+ 		return;
+ 
+ 	task_cputime(tsk, &utime, &stime);
+ 
+-	*expires++ = check_timers_list(timers, firing, utime + stime);
+-	*expires++ = check_timers_list(++timers, firing, utime);
+-	*expires = check_timers_list(++timers, firing, tsk->se.sum_exec_runtime);
++	base->nextevt = check_timers_list(&base->cpu_timers, firing,
++					  utime + stime);
++	base++;
++	base->nextevt = check_timers_list(&base->cpu_timers, firing, utime);
++	base++;
++	base->nextevt = check_timers_list(&base->cpu_timers, firing,
++					  tsk->se.sum_exec_runtime);
  
  	/*
-@@ -911,30 +898,29 @@ static void check_process_timers(struct task_struct *tsk,
- 	 * Collect the current process totals. Group accounting is active
- 	 * so the sample can be taken directly.
- 	 */
--	sample_cputime_atomic(&cputime, &sig->cputimer.cputime_atomic);
--	utime = cputime.utime;
--	ptime = utime + cputime.stime;
--	sum_sched_runtime = cputime.sum_exec_runtime;
--
--	prof_expires = check_timers_list(&base[CPUCLOCK_PROF].cpu_timers,
--					 firing, ptime);
--	virt_expires = check_timers_list(&base[CPUCLOCK_VIRT].cpu_timers,
--					 firing, utime);
--	sched_expires = check_timers_list(&base[CPUCLOCK_SCHED].cpu_timers,
--					  firing, sum_sched_runtime);
-+	proc_sample_cputime_atomic(&sig->cputimer.cputime_atomic, samples);
-+
-+	prof_exp = check_timers_list(&base[CPUCLOCK_PROF].cpu_timers,
-+				     firing, samples[CPUCLOCK_PROF]);
-+	virt_exp = check_timers_list(&base[CPUCLOCK_VIRT].cpu_timers,
-+				     firing, samples[CPUCLOCK_VIRT]);
-+	sched_exp = check_timers_list(&base[CPUCLOCK_SCHED].cpu_timers,
-+				      firing, samples[CPUCLOCK_SCHED]);
+ 	 * Check for the special case thread timers.
+@@ -840,7 +844,7 @@ static void check_thread_timers(struct task_struct *tsk,
+ 		}
+ 	}
+ 
+-	if (expiry_cache_is_zero(tsk->posix_cputimers.expiries))
++	if (expiry_cache_is_zero(&tsk->posix_cputimers))
+ 		tick_dep_clear_task(tsk, TICK_DEP_BIT_POSIX_TIMER);
+ }
+ 
+@@ -884,7 +888,7 @@ static void check_process_timers(struct task_struct *tsk,
+ 				 struct list_head *firing)
+ {
+ 	struct signal_struct *const sig = tsk->signal;
+-	struct list_head *timers = sig->posix_cputimers.cpu_timers;
++	struct posix_cputimer_base *base = sig->posix_cputimers.bases;
+ 	u64 utime, ptime, virt_expires, prof_expires;
+ 	u64 sum_sched_runtime, sched_expires;
+ 	struct task_cputime cputime;
+@@ -912,9 +916,12 @@ static void check_process_timers(struct task_struct *tsk,
+ 	ptime = utime + cputime.stime;
+ 	sum_sched_runtime = cputime.sum_exec_runtime;
+ 
+-	prof_expires = check_timers_list(timers, firing, ptime);
+-	virt_expires = check_timers_list(++timers, firing, utime);
+-	sched_expires = check_timers_list(++timers, firing, sum_sched_runtime);
++	prof_expires = check_timers_list(&base[CPUCLOCK_PROF].cpu_timers,
++					 firing, ptime);
++	virt_expires = check_timers_list(&base[CPUCLOCK_VIRT].cpu_timers,
++					 firing, utime);
++	sched_expires = check_timers_list(&base[CPUCLOCK_SCHED].cpu_timers,
++					  firing, sum_sched_runtime);
  
  	/*
  	 * Check for the special case process timers.
- 	 */
--	check_cpu_itimer(tsk, &sig->it[CPUCLOCK_PROF], &prof_expires, ptime,
--			 SIGPROF);
--	check_cpu_itimer(tsk, &sig->it[CPUCLOCK_VIRT], &virt_expires, utime,
--			 SIGVTALRM);
-+	check_cpu_itimer(tsk, &sig->it[CPUCLOCK_PROF], &prof_exp,
-+			 samples[CPUCLOCK_PROF], SIGPROF);
-+	check_cpu_itimer(tsk, &sig->it[CPUCLOCK_VIRT], &virt_exp,
-+			 samples[CPUCLOCK_PROF], SIGVTALRM);
-+
- 	soft = task_rlimit(tsk, RLIMIT_CPU);
- 	if (soft != RLIM_INFINITY) {
--		unsigned long psecs = div_u64(ptime, NSEC_PER_SEC);
-+		u64 softns, ptime = samples[CPUCLOCK_PROF];
- 		unsigned long hard = task_rlimit_max(tsk, RLIMIT_CPU);
--		u64 x;
-+		unsigned long psecs = div_u64(ptime, NSEC_PER_SEC);
-+
- 		if (psecs >= hard) {
- 			/*
- 			 * At the hard limit, we just die.
-@@ -961,14 +947,14 @@ static void check_process_timers(struct task_struct *tsk,
- 				sig->rlim[RLIMIT_CPU].rlim_cur = soft;
- 			}
- 		}
--		x = soft * NSEC_PER_SEC;
--		if (!prof_expires || x < prof_expires)
--			prof_expires = x;
-+		softns = soft * NSEC_PER_SEC;
-+		if (!prof_exp || softns < prof_exp)
-+			prof_exp = softns;
+@@ -959,11 +966,11 @@ static void check_process_timers(struct task_struct *tsk,
+ 			prof_expires = x;
  	}
  
--	base[CPUCLOCK_PROF].nextevt = prof_expires;
--	base[CPUCLOCK_VIRT].nextevt = virt_expires;
--	base[CPUCLOCK_SCHED].nextevt = sched_expires;
-+	base[CPUCLOCK_PROF].nextevt = prof_exp;
-+	base[CPUCLOCK_VIRT].nextevt = virt_exp;
-+	base[CPUCLOCK_SCHED].nextevt = sched_exp;
+-	sig->posix_cputimers.expiries[CPUCLOCK_PROF] = prof_expires;
+-	sig->posix_cputimers.expiries[CPUCLOCK_VIRT] = virt_expires;
+-	sig->posix_cputimers.expiries[CPUCLOCK_SCHED] = sched_expires;
++	base[CPUCLOCK_PROF].nextevt = prof_expires;
++	base[CPUCLOCK_VIRT].nextevt = virt_expires;
++	base[CPUCLOCK_SCHED].nextevt = sched_expires;
  
- 	if (expiry_cache_is_zero(&sig->posix_cputimers))
+-	if (expiry_cache_is_zero(sig->posix_cputimers.expiries))
++	if (expiry_cache_is_zero(&sig->posix_cputimers))
  		stop_process_timers(sig);
+ 
+ 	sig->cputimer.checking_timer = false;
+@@ -1028,20 +1035,21 @@ static void posix_cpu_timer_rearm(struct k_itimer *timer)
+ }
+ 
+ /**
+- * task_cputimers_expired - Compare two task_cputime entities.
++ * task_cputimers_expired - Check whether posix CPU timers are expired
+  *
+  * @samples:	Array of current samples for the CPUCLOCK clocks
+- * @expiries:	Array of expiry values for the CPUCLOCK clocks
++ * @pct:	Pointer to a posix_cputimers container
+  *
+- * Returns true if any mmember of @samples is greater than the corresponding
+- * member of @expiries if that member is non zero. False otherwise
++ * Returns true if any member of @samples is greater than the corresponding
++ * member of @pct->bases[CLK].nextevt. False otherwise
+  */
+-static inline bool task_cputimers_expired(const u64 *sample, const u64 *expiries)
++static inline bool
++task_cputimers_expired(const u64 *sample, struct posix_cputimers *pct)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < CPUCLOCK_MAX; i++) {
+-		if (expiries[i] && sample[i] >= expiries[i])
++		if (pct->bases[i].nextevt && sample[i] >= pct->bases[i].nextevt)
+ 			return true;
+ 	}
+ 	return false;
+@@ -1059,14 +1067,13 @@ static inline bool task_cputimers_expired(const u64 *sample, const u64 *expiries
+  */
+ static inline bool fastpath_timer_check(struct task_struct *tsk)
+ {
+-	u64 *expiries = tsk->posix_cputimers.expiries;
+ 	struct signal_struct *sig;
+ 
+-	if (!expiry_cache_is_zero(expiries)) {
++	if (!expiry_cache_is_zero(&tsk->posix_cputimers)) {
+ 		u64 samples[CPUCLOCK_MAX];
+ 
+ 		task_sample_cputime(tsk, samples);
+-		if (task_cputimers_expired(samples, expiries))
++		if (task_cputimers_expired(samples, &tsk->posix_cputimers))
+ 			return true;
+ 	}
+ 
+@@ -1092,8 +1099,7 @@ static inline bool fastpath_timer_check(struct task_struct *tsk)
+ 		proc_sample_cputime_atomic(&sig->cputimer.cputime_atomic,
+ 					   samples);
+ 
+-		if (task_cputimers_expired(samples,
+-					   sig->posix_cputimers.expiries))
++		if (task_cputimers_expired(samples, &sig->posix_cputimers))
+ 			return true;
+ 	}
+ 
+@@ -1176,11 +1182,12 @@ void run_posix_cpu_timers(void)
+ void set_process_cpu_timer(struct task_struct *tsk, unsigned int clkid,
+ 			   u64 *newval, u64 *oldval)
+ {
+-	u64 now, *expiry = tsk->signal->posix_cputimers.expiries + clkid;
++	u64 now, *nextevt;
+ 
+ 	if (WARN_ON_ONCE(clkid >= CPUCLOCK_SCHED))
+ 		return;
+ 
++	nextevt = &tsk->signal->posix_cputimers.bases[clkid].nextevt;
+ 	now = cpu_clock_sample_group(clkid, tsk, true);
+ 
+ 	if (oldval) {
+@@ -1207,8 +1214,8 @@ void set_process_cpu_timer(struct task_struct *tsk, unsigned int clkid,
+ 	 * Update expiration cache if this is the earliest timer. CPUCLOCK_PROF
+ 	 * expiry cache is also used by RLIMIT_CPU!.
+ 	 */
+-	if (expires_gt(*expiry, *newval))
+-		*expiry = *newval;
++	if (expires_gt(*nextevt, *newval))
++		*nextevt = *newval;
+ 
+ 	tick_dep_set_signal(tsk->signal, TICK_DEP_BIT_POSIX_TIMER);
+ }
