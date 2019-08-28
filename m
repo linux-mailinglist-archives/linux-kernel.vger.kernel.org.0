@@ -2,70 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D9FA0A3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A18A0A40
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:18:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbfH1TQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 15:16:20 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:51022 "EHLO mail.skyhub.de"
+        id S1726840AbfH1TR6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 15:17:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbfH1TQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 15:16:20 -0400
-Received: from zn.tnic (p200300EC2F0A5300A53AA9977BDEAF1A.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:5300:a53a:a997:7bde:af1a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726400AbfH1TR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 15:17:58 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 229831EC0503;
-        Wed, 28 Aug 2019 21:16:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1567019779;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=/IFK3pN48y0IrzamroRgDtjPL9FkQHX16Sbwg2AQAQQ=;
-        b=QY5wfUQfZsNY516pyvoe3XMOQqGGwPgAG3honOPILIjFvrIi4GJwPlNI9QlCZ9B9FUosPy
-        aSJDTv5tz9+m892d39f1gZeTiW1NDN2rm55rsjHq1u2z/tARLMm5UnO+7+jww+4ktAN23h
-        kZm0g5pMsjwmrTmTodmjxtu0CiqT6u4=
-Date:   Wed, 28 Aug 2019 21:16:18 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     "Raj, Ashok" <ashok.raj@intel.com>,
-        Mihai Carabas <mihai.carabas@oracle.com>,
-        linux-kernel@vger.kernel.org, konrad.wilk@oracle.com,
-        patrick.colp@oracle.com, kanth.ghatraju@oracle.com,
-        Jon.Grimm@amd.com, Thomas.Lendacky@amd.com
-Subject: Re: [PATCH 1/2] x86/microcode: Update late microcode in parallel
-Message-ID: <20190828191618.GO4920@zn.tnic>
-References: <1566506627-16536-1-git-send-email-mihai.carabas@oracle.com>
- <1566506627-16536-2-git-send-email-mihai.carabas@oracle.com>
- <20190824085156.GA16813@zn.tnic>
- <20190824085300.GB16813@zn.tnic>
- <2242cc6c-720d-e1bc-817b-c4bb7fddd420@oracle.com>
- <20190826203248.GB49895@otc-nc-03>
- <20190827194344.GA15361@bostrovs-us.us.oracle.com>
- <7d310cbd-ed4d-9a98-d8b0-4ac7dfd1ef93@oracle.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id D9A56214DA;
+        Wed, 28 Aug 2019 19:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567019877;
+        bh=JzG+dAL9CutFkCeaKxXi8FmvgK4eO6VPyeCKPmIpZNA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=hu/9hmn8Uytf9xJVkeHKHLxAvPP0sIw7IeW28Isam5+nMmPOUUo2BBiKcBtd2C4Tf
+         SsHIj+LggPH5MA/F+/h4W4SDQA2A7JSyrI2p1OYza6D/520xbhsKyPNo6N4zhSoAD3
+         04NXlSn3W+s274z++3shcmJf//ZxLE2/AK71yJaI=
+Subject: Re: [PATCH v2] doc: kselftest: update for clarity on running
+ kselftests in CI rings
+To:     Shuah Khan <skhan@linuxfoundation.org>, corbet@lwn.net
+Cc:     linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dan.rue@linaro.org,
+        anders.roxell@linaro.org, shuah <shuah@kernel.org>
+References: <20190827003709.26950-1-skhan@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <f5088365-68a1-6036-0037-b6e9af01391f@kernel.org>
+Date:   Wed, 28 Aug 2019 13:17:37 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7d310cbd-ed4d-9a98-d8b0-4ac7dfd1ef93@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190827003709.26950-1-skhan@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 05:24:07PM -0400, Boris Ostrovsky wrote:
-> This was a bit too aggressive with changes to arch-specific code, only
-> changes to __reload_late() would be needed.
+On 8/26/19 6:37 PM, Shuah Khan wrote:
+> Update to add clarity and recommendations on running newer kselftests
+> on older kernels vs. matching the kernel and kselftest revisions.
+> 
+> The recommendation is "Match kernel revision and kselftest."
+> 
+> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> ---
+> Changes since v1: Fixed "WARNING: Title underline too short."
 
-Yeah, it is not that ugly but the moment the microcode engine is not
-shared between the SMT threads anymore, this needs to go. And frankly,
-if there's nothing else speaking against the current variant, I'd like
-to keep it simple.
+I have a few more changes and would like to make and send a v3 after
+the LPC's Testing and Fuzzing kselftest discussion.
 
-Thx.
+Holding off on this patch for now.
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+thanks,
+-- Shuah
