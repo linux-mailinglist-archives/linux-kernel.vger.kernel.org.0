@@ -2,90 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADA59A06C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:56:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E08D0A06C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:57:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbfH1Pzw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:55:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbfH1Pzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:55:50 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 765322064A;
-        Wed, 28 Aug 2019 15:55:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567007749;
-        bh=tm23iPOHz5qNiVmbKBRthv6o0H14qpr8dY7bd4MTQKs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=pqTccn5JcnucNCAhPvukewbhK7LnqfZiA1JhrrT1FDFY4mCrVB8AZyQ8GN7mLjP8y
-         7s9EDdOPkKuIVFWDEaVrPbihjrm8teyPYUCsz+WciUJXkEpW4kr0ySk55f/ASUGrn8
-         zpEFoJeA5Hy5XDMtaE0vrkdWUVKHa2wWQhJO2xxg=
-Message-ID: <4da231cd52880991d8a038adb8fbb2ef3d724db9.camel@kernel.org>
-Subject: Re: [PATCH RESEND v11 7/8] open: openat2(2) syscall
-From:   Jeff Layton <jlayton@kernel.org>
-To:     sbaugh@catern.com, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@ozlabs.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org
-Date:   Wed, 28 Aug 2019 11:55:47 -0400
-In-Reply-To: <854l2366zp.fsf@catern.com>
-References: <20190820033406.29796-1-cyphar@cyphar.com>
-         <20190820033406.29796-8-cyphar@cyphar.com> <854l2366zp.fsf@catern.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1726843AbfH1P5H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:57:07 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:26895 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbfH1P5H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:57:07 -0400
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x7SFujdT012309;
+        Thu, 29 Aug 2019 00:56:45 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x7SFujdT012309
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567007806;
+        bh=WOq24sipo81zCaadKOitrcTEmGWmhSf63Aseozcvth4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=s/mlgRFC8JlsS8RKx3q5gkPZ/FgEQlIglWZ4C7FhPI61Tj14OfoMCV52TNuKgtLWD
+         +dmB5dnaNueaTeD8jQNlSAA9QqNNaz4tRwibip3yERyacGjoKUF4KO6abpn/FYaWyn
+         kVOG+MmBjbD7YQBm8WQVZFqm/+C8EfIqIo1OpfUU3aI4edfqrdubrJyDnh1MeR9Zao
+         8dimoJHA3G4c5+8GMI5fIXcpGPNSPybOxeiL6+2KrlsFBa+jQDd/pfOwR2kw5lmWka
+         dUS2Zpdi33q+Tr1aeNv32xfXAtwGFCmW6kxKmHuUUMWR8GK7pUQJjQjWpawPQhPOY4
+         sxPlkKRTRjl6g==
+X-Nifty-SrcIP: [209.85.222.51]
+Received: by mail-ua1-f51.google.com with SMTP id m8so150445uap.2;
+        Wed, 28 Aug 2019 08:56:45 -0700 (PDT)
+X-Gm-Message-State: APjAAAXsI4USpKHh1gUVMpqDKyKhr+I4Oi/JwILDDE5ceGzDx0bk42KL
+        r43kc8CfXRpUhYSmdJLCf+/sjx3V8HBvlUdMpUA=
+X-Google-Smtp-Source: APXvYqxCJTJMwAgad/wrd/Erm8vHTvEsfUwENUJFnK5ZpZbjks9UMh0JTq4OWQ3PDFeaiZLvIccFWiEl4uydZut6vsI=
+X-Received: by 2002:a9f:31cb:: with SMTP id w11mr2358004uad.40.1567007804525;
+ Wed, 28 Aug 2019 08:56:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190827122023.15086-1-efremov@linux.com>
+In-Reply-To: <20190827122023.15086-1-efremov@linux.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 29 Aug 2019 00:56:08 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASMc058_R4ewCQQ9KZJcZDckDw9EjJo-YyVne6hYGm-Zw@mail.gmail.com>
+Message-ID: <CAK7LNASMc058_R4ewCQQ9KZJcZDckDw9EjJo-YyVne6hYGm-Zw@mail.gmail.com>
+Subject: Re: [PATCH] modpost: add NOFAIL to strndup
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-08-26 at 19:50 +0000, sbaugh@catern.com wrote:
-> Aleksa Sarai <cyphar@cyphar.com> writes:
-> > To this end, we introduce the openat2(2) syscall. It provides all of the
-> > features of openat(2) through the @how->flags argument, but also
-> > also provides a new @how->resolve argument which exposes RESOLVE_* flags
-> > that map to our new LOOKUP_* flags. It also eliminates the long-standing
-> > ugliness of variadic-open(2) by embedding it in a struct.
-> 
-> I don't like this usage of a structure in memory to pass arguments that
-> would fit in registers. This would be quite inconvenient for me as a
-> userspace developer.
-> 
-> Others have brought up issues with this: the issue of seccomp, and the
-> issue of mismatch between the userspace interface and the kernel
-> interface, are the most important for me. I want to add another,
-> admittedly somewhat niche, concern.
-> 
-> This interfaces requires a program to allocate memory (even on the
-> stack) just to pass arguments to the kernel which could be passed
-> without allocating that memory. That makes it more difficult and less
-> efficient to use this syscall in any case where memory is not so easily
-> allocatable: such as early program startup or assembly, where the stack
-> may be limited in size or not even available yet, or when injecting a
-> syscall while ptracing.
-> 
-> A struct-passing interface was needed for clone, since we ran out of
-> registers; but we have not run out of registers yet for openat, so it
-> would be nice to avoid this if we can. We can always expand later...
-> 
+On Tue, Aug 27, 2019 at 9:20 PM Denis Efremov <efremov@linux.com> wrote:
+>
+> Add NOFAIL check for the strndup call, because the function
+> allocates memory and can return NULL. All calls to strdup in
+> modpost are checked with NOFAIL.
+>
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
 
-We can't really expand later like you suggest.
+Applied to linux-kbuild. Thanks.
 
-Suppose in a couple of years that we need to add some new argument to
-openat2 that isn't just a new flag. If all these values are passed by
-individual arguments, you can't add one later without adding yet another
-syscall.
 
-Using a struct for this allows this to be extended later, OTOH. You can
-extend it, and add a flag that tells the kernel that it can access the
-new field. No new syscall required.
+>  scripts/mod/modpost.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index f277e116e0eb..0255538528fe 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -795,9 +795,9 @@ static int match(const char *sym, const char * const pat[])
+>
+>                 /* "*foo*" */
+>                 if (*p == '*' && *endp == '*') {
+> -                       char *here, *bare = strndup(p + 1, strlen(p) - 2);
+> +                       char *bare = NOFAIL(strndup(p + 1, strlen(p) - 2));
+> +                       char *here = strstr(sym, bare);
+>
+> -                       here = strstr(sym, bare);
+>                         free(bare);
+>                         if (here != NULL)
+>                                 return 1;
+> --
+> 2.21.0
+>
+
+
 -- 
-Jeff Layton <jlayton@kernel.org>
-
+Best Regards
+Masahiro Yamada
