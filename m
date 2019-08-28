@@ -2,128 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F30AC9F7EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 03:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC8A79F7DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 03:36:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfH1Bhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 21:37:33 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41321 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbfH1Bhd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 21:37:33 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j16so692292wrr.8
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 18:37:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=q1/Ofde3eheBbpcLir1coN0/ebDNsE0zXOWBvpHEjoc=;
-        b=vR1vjiSpPZW3JK12HEFirAYTniqoi1mK2LGqy1PpfTvduc+Kkzvqyh0isFzQXQOXvo
-         M4+RlXD0or/R9nA6bwnjVW9ASbO9VLA7kMyEf+POqo2mlAG1sdz8sXuyQYU+CqJ9p5Y/
-         muDGCrbgEbOstsBLOwlUyYC3mBbQHbbJQ3zqIXEGrYeFVxfYzs6MDQ5NTLbBG9FK/VXo
-         CU3bEnBrxXhaIejcNDuHNCgkqrBLzWNkEpOY8RNGZzkHxCEqep6Of4IlxtjFn2QQrts+
-         1TffnfOTqHF11BXPlRLIcXCaS1i6vNmuUSfn3Z2Q26rynFegtE/hW81g7LhY6FjUhAAl
-         TTZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=q1/Ofde3eheBbpcLir1coN0/ebDNsE0zXOWBvpHEjoc=;
-        b=gtgRWqS7gbdpEU7Xc/R8eDS7HsvNnG5/n5i5Txmq4DJcfET7vgoXBK//Lh8fGZFpvY
-         VygCHpi72myjNTWu8vc83uKBarOTevrAYLyrMPgcDW8ahGY6G8IjmS3tF/PkAZWVGRAW
-         2AYbZ1pqe/oGHDR/xVyKzwiYU43KrDKJ3s5r8LoKi7XCv4gETLFBIV7+N2jLkHX70xIj
-         LX/oCqWybv5rcbYIbi07OswF5JU5if+1S0SKJwAZOSQWT/OcET+G4u/nGoNUVopfrVxC
-         4fYC5K+ANMNVCaOD+w9sYOLt32A8yftxGJost+FsTNL73R3JQ9W/Yiv/kVO4hZn9r1GA
-         FwTA==
-X-Gm-Message-State: APjAAAVe3qmgSiGo0kVeTwI3LieFMYv4yBjx0bBViDYE3xKINg+9SA3w
-        lM2CtotLcKjy/p+Rr8Ja0mrGww==
-X-Google-Smtp-Source: APXvYqzOcrkTop8niK2BOhZlj58NIXhE/aazQQJ0kmq+Yu7VCSQCGE5B2qpAF5K5+PPUrOnSA3vUgQ==
-X-Received: by 2002:adf:f54a:: with SMTP id j10mr1049430wrp.220.1566956250672;
-        Tue, 27 Aug 2019 18:37:30 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id c21sm648819wml.48.2019.08.27.18.37.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 18:37:30 -0700 (PDT)
-Message-ID: <5d65dada.1c69fb81.3bc78.3732@mx.google.com>
-Date:   Tue, 27 Aug 2019 18:37:30 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.19.68-99-ge944704d5a79
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: linux-4.19.y
-In-Reply-To: <20190827072718.142728620@linuxfoundation.org>
-References: <20190827072718.142728620@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 00/98] 4.19.69-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        id S1726339AbfH1BgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 21:36:12 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:32970 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726096AbfH1BgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 21:36:11 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 47AE71A064D;
+        Wed, 28 Aug 2019 03:36:09 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 163DD1A064B;
+        Wed, 28 Aug 2019 03:36:00 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C36D2402E7;
+        Wed, 28 Aug 2019 09:35:48 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     wim@linux-watchdog.org, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux@armlinux.org.uk,
+        otavio@ossystems.com.br, leonard.crestez@nxp.com,
+        u.kleine-koenig@pengutronix.de, schnitzeltony@gmail.com,
+        jan.tuerk@emtrion.com, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V5 1/4] dt-bindings: watchdog: Add i.MX7ULP bindings
+Date:   Wed, 28 Aug 2019 09:35:00 -0400
+Message-Id: <1566999303-18795-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.19.y boot: 133 boots: 2 failed, 122 passed with 9 offline=
- (v4.19.68-99-ge944704d5a79)
+Add the watchdog bindings for Freescale i.MX7ULP.
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.19.y/kernel/v4.19.68-99-ge944704d5a79/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
-y/kernel/v4.19.68-99-ge944704d5a79/
-
-Tree: stable-rc
-Branch: linux-4.19.y
-Git Describe: v4.19.68-99-ge944704d5a79
-Git Commit: e944704d5a79f6d6506a872edebd16e2b93cb349
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 73 unique boards, 25 SoC families, 15 builds out of 206
-
-Boot Failures Detected:
-
-arm64:
-    defconfig:
-        gcc-8:
-            meson-gxl-s905x-nexbox-a95x: 1 failed lab
-
-arm:
-    sama5_defconfig:
-        gcc-8:
-            at91-sama5d4_xplained: 1 failed lab
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-            sun7i-a20-bananapi: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Rob Herring <rohb@kernel.org>
 ---
-For more info write to <info@kernelci.org>
+Changes since V4:
+	- improve watchdog node name.
+---
+ .../bindings/watchdog/fsl-imx7ulp-wdt.txt          | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+
+diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+new file mode 100644
+index 0000000..f902508
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+@@ -0,0 +1,22 @@
++* Freescale i.MX7ULP Watchdog Timer (WDT) Controller
++
++Required properties:
++- compatible : Should be "fsl,imx7ulp-wdt"
++- reg : Should contain WDT registers location and length
++- interrupts : Should contain WDT interrupt
++- clocks: Should contain a phandle pointing to the gated peripheral clock.
++
++Optional properties:
++- timeout-sec : Contains the watchdog timeout in seconds
++
++Examples:
++
++wdog1: watchdog@403d0000 {
++	compatible = "fsl,imx7ulp-wdt";
++	reg = <0x403d0000 0x10000>;
++	interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
++	assigned-clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
++	assigned-clocks-parents = <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>;
++	timeout-sec = <40>;
++};
+-- 
+2.7.4
+
