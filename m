@@ -2,90 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51CC6A0E8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 02:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46514A0E91
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 02:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfH2AIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 20:08:35 -0400
-Received: from mail-ed1-f52.google.com ([209.85.208.52]:43806 "EHLO
-        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbfH2AIe (ORCPT
+        id S1727087AbfH2ANx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 20:13:53 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48630 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726825AbfH2ANw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 20:08:34 -0400
-Received: by mail-ed1-f52.google.com with SMTP id h13so1924296edq.10;
-        Wed, 28 Aug 2019 17:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:message-id:references:mime-version;
-        bh=xumOPnbGJ7cJyCLuLqJrCbBhj31yluZcv0TSABm5hIk=;
-        b=nmeB65EJ5fgm04f8+vY6gdupp0VzYKYF4aI+eQq5CPypfrXPu9BVwGB6vGXHMLE7qG
-         WuZGkaAxUDx9xCoD7p0tdgKDce8/jJDKHPvbeMwhEclDkQDOA6Ryl83jq7qEWyGgA6tx
-         yqShHQDtgNlcBZkuaF4BQpjst6+8iHTBPfzWWlGXGfElIAtMfk9L0G1+CCpobJf8xCnm
-         ElURu0OUyZXoVNXhV9Gx2vhp5oFfNBL/rs9qBJHG71Jv3oRFAzlDvd5x2Z6Q/sG7v4cf
-         nPW17JRaFXRzdQaORNebyvyzRKpuPUgeND5B4dQiYuMXtv+RwkG679BYdEldhWtXkASV
-         PXlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:message-id:references
-         :mime-version;
-        bh=xumOPnbGJ7cJyCLuLqJrCbBhj31yluZcv0TSABm5hIk=;
-        b=ira3mHqUtp2gv4MXxaImuTA46ZbvGli5YVX0EnueH+fwCBg4AqBijLoQ9vYCegz8KS
-         tIV2RyXGjO7TYiGbuU01TiiISIQvptgNhnKzzcRXwlyKc0FtQKvfLpR5Ksgf6ukCRPGC
-         iCiXvpG+Xa5+NEs98bV9ZU6FyeSy2u+rVUnjzifdS8UIsXsNHKHRtn3WV0FVxrZDoPbi
-         aNEvKqlPGr10VivJSSKjDcYTmtMvr2JHLBeC4yKdyvhCNiA17qOo5uAugqyvkmdWuS4E
-         8bMo1MumR52NqDm0EApV35or31Zs1gapzLU5ISDS1mro93fMI6qmso+2e9mgljys4J6V
-         9GbA==
-X-Gm-Message-State: APjAAAVqAcRA8DIG2tVoLQxaUyNLG8f/pJIDRtj4pW2QX2Nayyk0iWtP
-        W5iHXbp7TUbWuQ1v6FxbGpc=
-X-Google-Smtp-Source: APXvYqwnztlHP9wejSKsy5GjOEek1bCp/Na5WdTXLcyY0Ufnex1Cu88ug20O0hBMzgorn2dRL5G03A==
-X-Received: by 2002:a50:f19a:: with SMTP id x26mr6846144edl.144.1567037312658;
-        Wed, 28 Aug 2019 17:08:32 -0700 (PDT)
-Received: from [192.168.1.105] (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
-        by smtp.gmail.com with ESMTPSA id h6sm122868eds.48.2019.08.28.17.08.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 17:08:31 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 02:08:29 +0200
-From:   Krzysztof Wilczynski <kswilczynski@gmail.com>
-Subject: RE: [PATCH v2] PCI: hv: Make functions only used locally static in
- pci-hyperv.c
-To:     Haiyang Zhang <haiyangz@microsoft.com>
-Cc:     Krzysztof Wilczynski <kw@linux.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hyperv@vger.kernel.org
-Message-Id: <1567037309.11524.1@gmail.com>
-References: <20190826154159.9005-1-kw@linux.com>
-        <20190828221846.6672-1-kw@linux.com>
-        <DM6PR21MB133796BB3D4A41278C513332CAA30@DM6PR21MB1337.namprd21.prod.outlook.com>
-X-Mailer: geary/3.32.0
+        Wed, 28 Aug 2019 20:13:52 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7T0DNVB005044;
+        Thu, 29 Aug 2019 00:13:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=7wG5y7dKyypT4n5VfzMGBXRCZUmNViG9gJEJUq/OhLo=;
+ b=sctmNZVMbDTpDSLMErdcAI8t4Py/Pltzk73Oud6ZLkclBxdvkwOGuhTgeDT3au9c7tBr
+ 7ujUB8iiDY78b9DvgG8GbPKW+DSI3hs52BrtklO2I6WR2G47pA/7d9TL/pNsEGrpcZLn
+ DojgCf+4T23dJABggFF4eVPXRwWmEkqNoWc2MtdfdZh2bxFNvzMDZV0YiZzBjgLnT6M2
+ Qqvyxh+BQg+b4buhdTbRMNSPIbxjB37Z3VSxk3eFD0Wh3e+lGbhwlG/r+X+jZj1Y0Zps
+ w62kPSVnyZVKo1iE+CLFi6ukyKDzfWBE2mHJ5WdHtJDQ2pv6whZ0S2O7dFORd/hbzuJh ww== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2up3vmr0k6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 00:13:35 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7SMDOC0007324;
+        Wed, 28 Aug 2019 22:16:33 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2untetyqhw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 22:16:33 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7SMGWex020546;
+        Wed, 28 Aug 2019 22:16:32 GMT
+Received: from zissou.us.oracle.com (/10.152.34.58)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Aug 2019 15:16:32 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH v2 4/5] padata: always acquire cpu_hotplug_lock before pinst->lock
+Date:   Wed, 28 Aug 2019 18:14:24 -0400
+Message-Id: <20190828221425.22701-5-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190828221425.22701-1-daniel.m.jordan@oracle.com>
+References: <20190828221425.22701-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908280214
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Haiyang,
+lockdep complains when...
 
-Thank you for feedback.
+  # echo 0 > /sys/devices/system/cpu/cpu1/online
+  # echo ff > /sys/kernel/pcrypt/pencrypt/parallel_cpumask
 
-[...]
-> The second line should be aligned next to the "(" on the first line.
-> Also the first line is now over 80 chars.
+  ======================================================
+  WARNING: possible circular locking dependency detected
+  5.3.0-rc5-padata-base+ #6 Not tainted
+  ------------------------------------------------------
+  bash/258 is trying to acquire lock:
+  00000000c43f7f29 (cpu_hotplug_lock.rw_sem){++++}, at: padata_set_cpumask+0x30/0x130
 
-Sorry about this.  I will fix it in v3.  Thank you for pointing this 
-out.
+  but task is already holding lock:
+  00000000676aa31d (&pinst->lock){+.+.}, at: padata_set_cpumask+0x2b/0x130
 
-To address both the alignment and line length of 
-hv_register_block_invalidate(),
-I took a hint from the way how hv_compose_msi_req_v1() is current 
-formatted.  I
-hope that this would be acceptable.
+  which lock already depends on the new lock.
 
-Krzysztof
+padata doesn't take cpu_hotplug_lock and pinst->lock in a consistent
+order.  Which should be first?  CPU hotplug calls into padata with
+cpu_hotplug_lock already held, so it should have priority.
 
+Fixes: 6751fb3c0e0c ("padata: Use get_online_cpus/put_online_cpus")
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ kernel/padata.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 6adce3b203fe..75e668fedd8d 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -603,8 +603,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
+ 	struct cpumask *serial_mask, *parallel_mask;
+ 	int err = -EINVAL;
+ 
+-	mutex_lock(&pinst->lock);
+ 	get_online_cpus();
++	mutex_lock(&pinst->lock);
+ 
+ 	switch (cpumask_type) {
+ 	case PADATA_CPU_PARALLEL:
+@@ -622,8 +622,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
+ 	err =  __padata_set_cpumasks(pinst, parallel_mask, serial_mask);
+ 
+ out:
+-	put_online_cpus();
+ 	mutex_unlock(&pinst->lock);
++	put_online_cpus();
+ 
+ 	return err;
+ }
+-- 
+2.23.0
 
