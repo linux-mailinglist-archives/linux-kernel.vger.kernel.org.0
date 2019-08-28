@@ -2,65 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 283BAA0B32
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 22:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F7F3A0B43
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 22:24:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfH1UT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 16:19:58 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:53132 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbfH1UT6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 16:19:58 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gtucker)
-        with ESMTPSA id 5F8BF289CD5
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@collabora.com,
-        Guillaume Tucker <guillaume.tucker@collabora.com>
-Subject: [PATCH 1/1] merge_config.sh: ignore unwanted grep errors
-Date:   Wed, 28 Aug 2019 21:19:18 +0100
-Message-Id: <4f92e9b3a88e60c8b5962504d77bc596442b0a40.1567023309.git.guillaume.tucker@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726971AbfH1UYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 16:24:06 -0400
+Received: from venus.catern.com ([68.183.49.163]:44628 "EHLO venus.catern.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726725AbfH1UYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 16:24:04 -0400
+X-Greylist: delayed 408 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Aug 2019 16:24:03 EDT
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=34.206.19.101; helo=localhost; envelope-from=sbaugh@catern.com; receiver=<UNKNOWN> 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=catern.com; s=mail;
+        t=1567023434; bh=0ywMFKjMwE/uBXqaIPb34y8Q/aLLCmGU3C97TLkQvwo=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date;
+        b=REuwdRN9P9zoh6DHSLiK1nqu3i2wNZqBJCILEt+4b0yiKxgb0XYUJwKX2wRNDyDWc
+         JukKo1pvC54OaIX4CqMGz3OuGJLGPRfZ0csrkVnGcnxMd6oby8HYrRP9EeNU+sPgW7
+         McVdUazYCiNEMo/74xDeTcyWeiOv6iN9cpLaK4n8=
+Received: from localhost (ec2-34-206-19-101.compute-1.amazonaws.com [34.206.19.101])
+        by venus.catern.com (Postfix) with ESMTPSA id 0564E2C2971;
+        Wed, 28 Aug 2019 20:17:13 +0000 (UTC)
+From:   Spencer Baugh <sbaugh@catern.com>
+To:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@ozlabs.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH RESEND v11 7/8] open: openat2(2) syscall
+In-Reply-To: <4da231cd52880991d8a038adb8fbb2ef3d724db9.camel@kernel.org>
+References: <20190820033406.29796-1-cyphar@cyphar.com> <20190820033406.29796-8-cyphar@cyphar.com> <854l2366zp.fsf@catern.com> <4da231cd52880991d8a038adb8fbb2ef3d724db9.camel@kernel.org>
+Date:   Wed, 28 Aug 2019 20:17:07 +0000
+Message-ID: <85y2zd3v0c.fsf@catern.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The merge_config.sh script verifies that all the config options have
-their expected value in the resulting file and prints any issues as
-warnings.  These checks aren't intended to be treated as errors given
-the current implementation.  However, since "set -e" was added, if the
-grep command to look for a config option does not find it the script
-will then abort prematurely.
+Jeff Layton <jlayton@kernel.org> writes:
+> On Mon, 2019-08-26 at 19:50 +0000, sbaugh@catern.com wrote:
+>> Aleksa Sarai <cyphar@cyphar.com> writes:
+>> > To this end, we introduce the openat2(2) syscall. It provides all of the
+>> > features of openat(2) through the @how->flags argument, but also
+>> > also provides a new @how->resolve argument which exposes RESOLVE_* flags
+>> > that map to our new LOOKUP_* flags. It also eliminates the long-standing
+>> > ugliness of variadic-open(2) by embedding it in a struct.
+>> 
+>> I don't like this usage of a structure in memory to pass arguments that
+>> would fit in registers. This would be quite inconvenient for me as a
+>> userspace developer.
+>> 
+>> Others have brought up issues with this: the issue of seccomp, and the
+>> issue of mismatch between the userspace interface and the kernel
+>> interface, are the most important for me. I want to add another,
+>> admittedly somewhat niche, concern.
+>> 
+>> This interfaces requires a program to allocate memory (even on the
+>> stack) just to pass arguments to the kernel which could be passed
+>> without allocating that memory. That makes it more difficult and less
+>> efficient to use this syscall in any case where memory is not so easily
+>> allocatable: such as early program startup or assembly, where the stack
+>> may be limited in size or not even available yet, or when injecting a
+>> syscall while ptracing.
+>> 
+>> A struct-passing interface was needed for clone, since we ran out of
+>> registers; but we have not run out of registers yet for openat, so it
+>> would be nice to avoid this if we can. We can always expand later...
+>> 
+>
+> We can't really expand later like you suggest.
+>
+> Suppose in a couple of years that we need to add some new argument to
+> openat2 that isn't just a new flag. If all these values are passed by
+> individual arguments, you can't add one later without adding yet another
+> syscall.
 
-Handle the case where the grep exit status is non-zero by setting
-ACTUAL_VAL to an empty string to restore previous functionality.
+Sure we can. This new syscall doesn't need to use all 6 available
+arguments. It can enforce that the unused ones are 0. Then if we
+eventually run out of flags and need to switch to pass arguments via
+struct, we can just use one of the unused arguments for that purpose.
 
-Fixes: cdfca821571d ("merge_config.sh: Check error codes from make")
-Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
----
- scripts/kconfig/merge_config.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
-index d924c51d28b7..d673268d414b 100755
---- a/scripts/kconfig/merge_config.sh
-+++ b/scripts/kconfig/merge_config.sh
-@@ -177,7 +177,7 @@ make KCONFIG_ALLCONFIG=$TMP_FILE $OUTPUT_ARG $ALLTARGET
- for CFG in $(sed -n -e "$SED_CONFIG_EXP1" -e "$SED_CONFIG_EXP2" $TMP_FILE); do
- 
- 	REQUESTED_VAL=$(grep -w -e "$CFG" $TMP_FILE)
--	ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG")
-+	ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG" || echo)
- 	if [ "x$REQUESTED_VAL" != "x$ACTUAL_VAL" ] ; then
- 		echo "Value requested for $CFG not in final .config"
- 		echo "Requested value:  $REQUESTED_VAL"
--- 
-2.20.1
-
+Even if we used all 6 arguments, in the worst-case scenario, the last
+flag we add could change the interpretation of some other argument so it
+can be used to pass a pointer to a struct.
