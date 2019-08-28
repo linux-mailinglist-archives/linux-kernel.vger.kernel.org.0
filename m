@@ -2,44 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EB11A0ACC
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:56:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B29CA0AEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:57:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfH1Tzz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 15:55:55 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:35966 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfH1Tzz (ORCPT
+        id S1726947AbfH1T5e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 15:57:34 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45764 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfH1T5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 15:55:55 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id E6B2A15312648;
-        Wed, 28 Aug 2019 12:55:54 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 12:55:54 -0700 (PDT)
-Message-Id: <20190828.125554.1282892870259221491.davem@davemloft.net>
-To:     wang.yi59@zte.com.cn
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.liang82@zte.com.cn,
-        cheng.lin130@zte.com.cn
-Subject: Re: [PATCH v2] ipv6: Not to probe neighbourless routes
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1566958765-1686-1-git-send-email-wang.yi59@zte.com.cn>
-References: <1566958765-1686-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 28 Aug 2019 12:55:55 -0700 (PDT)
+        Wed, 28 Aug 2019 15:57:34 -0400
+Received: by mail-qt1-f193.google.com with SMTP id k13so930268qtm.12;
+        Wed, 28 Aug 2019 12:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L8TI0FYfNM24ppkJYFG6qOg+IUh+v/+7bkBCmbd/o1U=;
+        b=od89jVX6U1HTi2Ua0mQBqSe9vCA9lhvMN+NiX3sSQ2zqbFaFsl3Ec/OZ526tbAYWSI
+         JQAAoYmaSvdo2sKk4wMenaTTMKsWjXJu98MMUnyrWuc8AyJqtyU+dPCyKupXSYqgQw5F
+         cfdMgjSKfULJWwk0gLhPORT/Pix+JwjhE99314NnOCmFwxclFVlRvEKuPpFogSFHud3w
+         kwDH6+cpZYu/Yhn2xsHvNAe9E1bjetWXmrhm91Z+hLL+0dC3QK38d/2h4eFTuK4ni4RX
+         7pz/lcpXaMALM5cvu60lLXVkVfAjH+ezK/33OU/nCupZCsYdxyjoLggP3sJ5jK77gOo0
+         vrZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L8TI0FYfNM24ppkJYFG6qOg+IUh+v/+7bkBCmbd/o1U=;
+        b=n9zCzhtnQN4fap4PtQkpidY/hoz/IsZuHuVXB8f3CVmX9R3KvWWVCgrwlS3sfrrg95
+         uOhgWEzk3tr6DY/mzcLeu9/vNXvO47JNp5X3y9h2Qbo1yI3TqDCtAViVG2Lbgz9c5bJz
+         PKhf8xlWxIJFTf6gOIhG4+ONu8aQgOpaxpNVgJDhq/U0zTv8RrVRQlBDz+ynoKFB/2N1
+         Y6CbK2FwLLUEmtcK61i+ZQdiONwWyMGMs44mn1bpJRYawjjbzudPP6osM/txz/dhdBAJ
+         FJFhZF1a/WrWitNdTTj1HM19Qmi9BQa8KsNEWE1dFvq9OmaSh+e57acoOpT4MvX9XbuY
+         yEpw==
+X-Gm-Message-State: APjAAAUsV8qnoGmHJZSPqjRhmaBwNuc8gysNwr86NuPpaV/W+GZSosxM
+        nXHMj8S1X5OL0Z6fJ1eRcaY=
+X-Google-Smtp-Source: APXvYqzT87+RKNEsWkCNXwUBTwGxlha0v6Y5m9kSXMYf11Ty/t78K9JvfdUPECbHxaWLT//6zXsroA==
+X-Received: by 2002:ac8:4895:: with SMTP id i21mr6318407qtq.146.1567022253364;
+        Wed, 28 Aug 2019 12:57:33 -0700 (PDT)
+Received: from localhost.localdomain (mobile-166-170-30-28.mycingular.net. [166.170.30.28])
+        by smtp.googlemail.com with ESMTPSA id q6sm105689qtr.23.2019.08.28.12.57.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 12:57:32 -0700 (PDT)
+From:   Peter Vernia <peter.vernia@gmail.com>
+To:     peter.vernia@gmail.com
+Cc:     linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, poeschel@lemonage.de
+Subject: [PATCH] pinctrl-mcp23s08: Fix property-name in dt-example
+Date:   Wed, 28 Aug 2019 15:56:09 -0400
+Message-Id: <20190828195609.4176-1-peter.vernia@gmail.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The device-tree properties documentation-file specifies the property
+"microchip,spi-present-mask" as required for MCP23SXX chips. However,
+the device-tree-source example below it uses only "spi-present-mask".
+Without "microchip," on the front, the driver will print "missing
+spi-present-mask" when it initializes.
 
-I am tossing this patch.
+Update the device-tree example with the correct property-name.
 
-Resubmit it when you test it properly on current kernels.
+Signed-off-by: Peter Vernia <peter.vernia@gmail.com>
+---
+ Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+index 625a22e2f211..8b94aa8f5971 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+@@ -82,7 +82,7 @@ gpiom1: gpio@0 {
+         compatible = "microchip,mcp23s17";
+         gpio-controller;
+         #gpio-cells = <2>;
+-        spi-present-mask = <0x01>;
++        microchip,spi-present-mask = <0x01>;
+         reg = <0>;
+         spi-max-frequency = <1000000>;
+ };
+-- 
+2.20.1
+
