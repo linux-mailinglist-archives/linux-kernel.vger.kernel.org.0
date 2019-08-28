@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26EA9A0C9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A844A0CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:45:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfH1VpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 17:45:08 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43143 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbfH1VpG (ORCPT
+        id S1727051AbfH1VpK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 17:45:10 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33660 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbfH1VpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Aug 2019 17:45:06 -0400
-Received: by mail-ot1-f65.google.com with SMTP id e12so1327386otp.10;
-        Wed, 28 Aug 2019 14:45:05 -0700 (PDT)
+Received: by mail-ot1-f67.google.com with SMTP id p23so1393499oto.0;
+        Wed, 28 Aug 2019 14:45:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4wnrCQOU0UovoodpLBKXvpvoVYPF56aYnHH1OtT8mNs=;
-        b=hL2kkhZSDVDpgUg9fdfcXA/ab3p/cg5oetVNP5ndpgQ+DA0BNaJ0MquXZthLFUexNx
-         Mlc4QzivBqUFkrjOH1VF8vi/2o7hAwRz38HjtMyDs7LV2zvCDmZPJ7lEyQ5weiijWhtR
-         QzUXgkw9Tw+2KN+mSFQ/w/5WuwWcZ/n8j9XveTyL4fzVJRLlZNngFt3yHDQxOc1cJkQG
-         ShJhtukNm0YMmkeiReRABlFFb3urKUw6zXFjuWIi5hd0mfnXKVTQr/YiFBVE/A29LiFE
-         TnGLdfRsSSmeGT2pPfE1j6LBjBH87X9uvsP0y2dlf1dDkvlyvMAoSTotS4x6SLFP5Gdk
-         OlBA==
-X-Gm-Message-State: APjAAAW3wMQFZFjIfxWkmefo01I1LkiyYQ3IAwDVXVLTt2ez5KOBCXbw
-        TfoJJWNyY82kWm8BRsMWhhXKNe8=
-X-Google-Smtp-Source: APXvYqzrK6k8sg39gUnv1AKxB7J13YD4gaipCI+eE1ao5M/HmJGNcTA2rJjCAtW2AIhwa7odz5jZEg==
-X-Received: by 2002:a9d:5a85:: with SMTP id w5mr5071302oth.302.1567028704584;
-        Wed, 28 Aug 2019 14:45:04 -0700 (PDT)
+        bh=+GdPf0iIYksB6vJnkIfTHiZ19DnRdhQq4ceL0CJqUvs=;
+        b=TP1AKHvMFOmp7MEVLx9lbVMbogK2YyRwt+TFfGhP0ijTkce+UubWgCSiRb6k0G/ZZ0
+         wWFc/UU2c4iQ2JIwOjhs/DfWOlVWtOQrSgFkgK1zygE7yOi4rxUCuPm1ZZl1EQ9KSoPl
+         Es+yMIFU1GNrE75TrmgRr3030UpbnyhdkrFyXLS3z9QT/dZAEy0+1vFj+WGEsCZZDpOk
+         5q5HdtgifJpY0nRQyFEbZhqtmkckSz4Ms7LX+9ce7VHf3T4ZDTbiwhwNiQe45/4EYlMu
+         yHTW1kAPJVWRtChdLH82R8faHEyu3PwlY7JGbl8UkqX1q1RgVVZrv/RMsR4KkW0lkkw8
+         ZPHQ==
+X-Gm-Message-State: APjAAAVwhmVGi0UQDfqd39YgkzU61dyfkHIVhHHxjZOztg7oqYv1MWPy
+        c5lXLyJM75Kv2eq7fb1FuZOw8yM=
+X-Google-Smtp-Source: APXvYqxqYJ8C8IRSoAGvhoBc6yCPWpmQcgQ8AsqpC8MJp/swGsJs3xeVBM/BnYPG/fy03ZWTjIRoGQ==
+X-Received: by 2002:a9d:67d3:: with SMTP id c19mr5236808otn.338.1567028705709;
+        Wed, 28 Aug 2019 14:45:05 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id p11sm102431oto.4.2019.08.28.14.45.03
+        by smtp.googlemail.com with ESMTPSA id p11sm102431oto.4.2019.08.28.14.45.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 28 Aug 2019 14:45:04 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
@@ -40,9 +40,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 1/3] dt-bindings: Convert Arm Mali Midgard GPU to DT schema
-Date:   Wed, 28 Aug 2019 16:45:00 -0500
-Message-Id: <20190828214502.12293-2-robh@kernel.org>
+Subject: [PATCH v2 2/3] dt-bindings: Convert Arm Mali Bifrost GPU to DT schema
+Date:   Wed, 28 Aug 2019 16:45:01 -0500
+Message-Id: <20190828214502.12293-3-robh@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190828214502.12293-1-robh@kernel.org>
 References: <20190828214502.12293-1-robh@kernel.org>
@@ -53,7 +53,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the Arm Midgard GPU binding to DT schema format.
+Convert the Arm Bifrost GPU binding to DT schema format.
 
 The 'clocks' property is now required. This simplifies the schema as
 effectively all the users require 'clocks' already and the upstream
@@ -64,66 +64,46 @@ Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Acked-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/gpu/arm,mali-midgard.txt         | 119 -------------
- .../bindings/gpu/arm,mali-midgard.yaml        | 165 ++++++++++++++++++
- 2 files changed, 165 insertions(+), 119 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+ .../bindings/gpu/arm,mali-bifrost.txt         |  92 --------------
+ .../bindings/gpu/arm,mali-bifrost.yaml        | 116 ++++++++++++++++++
+ 2 files changed, 116 insertions(+), 92 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
+ create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
 deleted file mode 100644
-index 9b298edec5b2..000000000000
---- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+index b8be9dbc68b4..000000000000
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
 +++ /dev/null
-@@ -1,119 +0,0 @@
--ARM Mali Midgard GPU
+@@ -1,92 +0,0 @@
+-ARM Mali Bifrost GPU
 -====================
 -
 -Required properties:
 -
 -- compatible :
--  * Must contain one of the following:
--    + "arm,mali-t604"
--    + "arm,mali-t624"
--    + "arm,mali-t628"
--    + "arm,mali-t720"
--    + "arm,mali-t760"
--    + "arm,mali-t820"
--    + "arm,mali-t830"
--    + "arm,mali-t860"
--    + "arm,mali-t880"
+-  * Since Mali Bifrost GPU model/revision is fully discoverable by reading
+-    some determined registers, must contain the following:
+-    + "arm,mali-bifrost"
 -  * which must be preceded by one of the following vendor specifics:
--    + "allwinner,sun50i-h6-mali"
--    + "amlogic,meson-gxm-mali"
--    + "samsung,exynos5433-mali"
--    + "rockchip,rk3288-mali"
--    + "rockchip,rk3399-mali"
+-    + "amlogic,meson-g12a-mali"
 -
 -- reg : Physical base address of the device and length of the register area.
 -
--- interrupts : Contains the three IRQ lines required by Mali Midgard devices.
+-- interrupts : Contains the three IRQ lines required by Mali Bifrost devices,
+-  in the following defined order.
 -
--- interrupt-names : Contains the names of IRQ resources in the order they were
--  provided in the interrupts property. Must contain: "job", "mmu", "gpu".
--
+-- interrupt-names : Contains the names of IRQ resources in this exact defined
+-  order: "job", "mmu", "gpu".
 -
 -Optional properties:
 -
--- clocks : Phandle to clock for the Mali Midgard device.
--
--- clock-names : Specify the names of the clocks specified in clocks
--  when multiple clocks are present.
--    * core: clock driving the GPU itself (When only one clock is present,
--      assume it's this clock.)
--    * bus: bus clock for the GPU
+-- clocks : Phandle to clock for the Mali Bifrost device.
 -
 -- mali-supply : Phandle to regulator for the Mali device. Refer to
 -  Documentation/devicetree/bindings/regulator/regulator.txt for details.
 -
 -- operating-points-v2 : Refer to Documentation/devicetree/bindings/opp/opp.txt
--  for details.
--
--- #cooling-cells: Refer to Documentation/devicetree/bindings/thermal/thermal.txt
 -  for details.
 -
 -- resets : Phandle of the GPU reset line.
@@ -135,32 +115,25 @@ index 9b298edec5b2..000000000000
 -another. In order to accommodate those differences, you have the option
 -to specify one more vendor-specific compatible, among:
 -
--- "allwinner,sun50i-h6-mali"
--  Required properties:
--  - clocks : phandles to core and bus clocks
--  - clock-names : must contain "core" and "bus"
--  - resets: phandle to GPU reset line
--
--- "amlogic,meson-gxm-mali"
+-- "amlogic,meson-g12a-mali"
 -  Required properties:
 -  - resets : Should contain phandles of :
 -    + GPU reset line
 -    + GPU APB glue reset line
 -
--Example for a Mali-T760:
+-Example for a Mali-G31:
 -
 -gpu@ffa30000 {
--	compatible = "rockchip,rk3288-mali", "arm,mali-t760";
--	reg = <0xffa30000 0x10000>;
--	interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+-	compatible = "amlogic,meson-g12a-mali", "arm,mali-bifrost";
+-	reg = <0xffe40000 0x10000>;
+-	interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
 -	interrupt-names = "job", "mmu", "gpu";
--	clocks = <&cru ACLK_GPU>;
+-	clocks = <&clk CLKID_MALI>;
 -	mali-supply = <&vdd_gpu>;
 -	operating-points-v2 = <&gpu_opp_table>;
--	power-domains = <&power RK3288_PD_GPU>;
--	#cooling-cells = <2>;
+-	resets = <&reset RESET_DVALIN_CAPB3>, <&reset RESET_DVALIN>;
 -};
 -
 -gpu_opp_table: opp_table0 {
@@ -195,19 +168,19 @@ index 9b298edec5b2..000000000000
 -		opp-microvolt = <912500>;
 -	};
 -};
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
 new file mode 100644
-index 000000000000..b99a43bb471a
+index 000000000000..5f1fd6d7ee0f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-@@ -0,0 +1,165 @@
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
+@@ -0,0 +1,116 @@
 +# SPDX-License-Identifier: GPL-2.0-only
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/gpu/arm,mali-midgard.yaml#
++$id: http://devicetree.org/schemas/gpu/arm,mali-bifrost.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: ARM Mali Midgard GPU
++title: ARM Mali Bifrost GPU
 +
 +maintainers:
 +  - Rob Herring <robh@kernel.org>
@@ -215,34 +188,12 @@ index 000000000000..b99a43bb471a
 +properties:
 +  $nodename:
 +    pattern: '^gpu@[a-f0-9]+$'
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+             - allwinner,sun50i-h6-mali
-+          - const: arm,mali-t720
-+      - items:
-+          - enum:
-+             - amlogic,meson-gxm-mali
-+          - const: arm,mali-t820
-+      - items:
-+          - enum:
-+             - rockchip,rk3288-mali
-+          - const: arm,mali-t760
-+      - items:
-+          - enum:
-+             - rockchip,rk3399-mali
-+          - const: arm,mali-t860
-+      - items:
-+          - enum:
-+             - samsung,exynos5433-mali
-+          - const: arm,mali-t760
 +
-+          # "arm,mali-t604"
-+          # "arm,mali-t624"
-+          # "arm,mali-t628"
-+          # "arm,mali-t830"
-+          # "arm,mali-t880"
++  compatible:
++    items:
++      - enum:
++          - amlogic,meson-g12a-mali
++      - const: arm,mali-bifrost # Mali Bifrost GPU model/revision is fully discoverable
 +
 +  reg:
 +    maxItems: 1
@@ -260,26 +211,12 @@ index 000000000000..b99a43bb471a
 +      - const: gpu
 +
 +  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: core
-+      - const: bus
++    maxItems: 1
 +
 +  mali-supply:
 +    maxItems: 1
 +
-+  resets:
-+    minItems: 1
-+    maxItems: 2
-+
 +  operating-points-v2: true
-+
-+  "#cooling-cells":
-+    const: 2
 +
 +required:
 +  - compatible
@@ -293,19 +230,7 @@ index 000000000000..b99a43bb471a
 +      properties:
 +        compatible:
 +          contains:
-+            const: allwinner,sun50i-h6-mali
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+      required:
-+        - clock-names
-+        - resets
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: amlogic,meson-gxm-mali
++            const: amlogic,meson-g12a-mali
 +    then:
 +      properties:
 +        resets:
@@ -318,18 +243,17 @@ index 000000000000..b99a43bb471a
 +    #include <dt-bindings/interrupt-controller/irq.h>
 +    #include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+    gpu@ffa30000 {
-+      compatible = "rockchip,rk3288-mali", "arm,mali-t760";
-+      reg = <0xffa30000 0x10000>;
-+      interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++    gpu@ffe40000 {
++      compatible = "amlogic,meson-g12a-mali", "arm,mali-bifrost";
++      reg = <0xffe40000 0x10000>;
++      interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
++             <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
++             <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>;
 +      interrupt-names = "job", "mmu", "gpu";
-+      clocks = <&cru 0>;
++      clocks = <&clk 1>;
 +      mali-supply = <&vdd_gpu>;
 +      operating-points-v2 = <&gpu_opp_table>;
-+      power-domains = <&power 0>;
-+      #cooling-cells = <2>;
++      resets = <&reset 0>, <&reset 1>;
 +    };
 +
 +    gpu_opp_table: opp_table0 {
