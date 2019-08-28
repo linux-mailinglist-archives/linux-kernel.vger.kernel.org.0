@@ -2,167 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADEA0A0DC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D8AFA0DCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727042AbfH1Wvi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 18:51:38 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5870 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726828AbfH1Wvi (ORCPT
+        id S1727103AbfH1WxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 18:53:11 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36714 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbfH1WxK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 18:51:38 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SMlXMX108629;
-        Wed, 28 Aug 2019 18:51:34 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2up1m3hwb2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Aug 2019 18:51:33 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7SMn8s5112837;
-        Wed, 28 Aug 2019 18:51:33 -0400
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2up1m3hwap-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Aug 2019 18:51:33 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7SMj48P018800;
-        Wed, 28 Aug 2019 22:51:32 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma05wdc.us.ibm.com with ESMTP id 2ujvv78pdn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Aug 2019 22:51:32 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SMpVPD49021352
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Aug 2019 22:51:31 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0DFEEC6070;
-        Wed, 28 Aug 2019 22:51:31 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 735CBC6062;
-        Wed, 28 Aug 2019 22:51:30 +0000 (GMT)
-Received: from oc5348122405.ibm.com.austin.ibm.com (unknown [9.53.179.215])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Aug 2019 22:51:30 +0000 (GMT)
-From:   David Dai <zdai@linux.vnet.ibm.com>
-To:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     zdai@us.ibm.com, zdai@linux.vnet.ibm.com
-Subject: [v1] net_sched: act_police: add 2 new attributes to support police 64bit rate and peakrate
-Date:   Wed, 28 Aug 2019 17:51:27 -0500
-Message-Id: <1567032687-973-1-git-send-email-zdai@linux.vnet.ibm.com>
-X-Mailer: git-send-email 1.7.1
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908280218
+        Wed, 28 Aug 2019 18:53:10 -0400
+Received: by mail-pg1-f194.google.com with SMTP id l21so494797pgm.3;
+        Wed, 28 Aug 2019 15:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lf92TMYTkAV1HBDLrWcWD4AfkryDbwsg8QEPhVI9XqM=;
+        b=dw9E5NT/S5IlcMOY5dmeDbu5wcqYHjsGw0cuc+o8UKOktzI5Q/Q7ydVaehF/S46CRR
+         afjghwMDRWb/44PfOzEzuLNzinYgQ0fkr/mgyl0ixImwXIH8km+51Ux93z3y/m8CZaaa
+         IJGYuuL0HNuud3x0ud7+gV2kzfoCm/iyxC+BCsqWQjyCBS73b+urE8IzL7AEPhjyuRPn
+         8GM6UDqiBNFG75eEwdB8RwiqtP/H8V+idWCfI2nJO4rFmAJ2B8YOi1oDWo3kEBxbvEpm
+         20MpxakpWdmUInkF/vjCt7un5mc600k6oH18m/j3t4hE7siPtIqFnxVfcL4pnGmW11dV
+         p+fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lf92TMYTkAV1HBDLrWcWD4AfkryDbwsg8QEPhVI9XqM=;
+        b=RzfX8FN6nyhdQy4BI/5/sPMhxWS/DQUYYAxTrNA71rp4BwMHYsTyXK0TnS1dIkRvz2
+         zgMig+E+FWu2Io6tp/gvVmaxUvFoqnWVNwR347wNIe019rL8PS+GJWIZRCj/6Glsc0ru
+         t9YqZw/ME7r8wLj2CGC8dFKeMcNJqtcpih2A3BMuxUJJIFYOPOohxEUEktmZKOhIB1OK
+         n4HtAgKACfHluqS+MZjPHubCRxrM8wd2NOVChEw1OFkPvk4uLW3iYnxGpKi13/Bn1f6H
+         OSorkiDsmD14VOUyA1ysDi00dmexT/oRwL8kljHMQ1sAwuHCjhgTJBncJOMkBVFwxXpN
+         QLKA==
+X-Gm-Message-State: APjAAAXuVzuVgYsZJ00jRX6TmQjGwrT6WJ3qTVuECzG6/lRyatUkXw/+
+        9chCV+KdMbANAwTmI6g2Gv/dER03
+X-Google-Smtp-Source: APXvYqwWx3LE+RQwvhwpOmj6xk6DTFbtLSJHu+ErxmoykHugwDfmeeAtpVx0t1Q+G5DwsCf3TwRLpw==
+X-Received: by 2002:a65:684c:: with SMTP id q12mr5135156pgt.405.1567032789352;
+        Wed, 28 Aug 2019 15:53:09 -0700 (PDT)
+Received: from Gentoo ([103.231.91.66])
+        by smtp.gmail.com with ESMTPSA id ce7sm185960pjb.16.2019.08.28.15.53.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Aug 2019 15:53:08 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 04:22:56 +0530
+From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
+To:     Konstantin Ryabitsev <mricon@kernel.org>
+Cc:     Greg KH <greg@kroah.com>, StableKernel <stable@vger.kernel.org>,
+        LinuxKernel <linux-kernel@vger.kernel.org>
+Subject: Re: Latest kernel version no NOT reflecting on kernel.org
+Message-ID: <20190828225253.GA30806@Gentoo>
+References: <20190828135750.GA5841@Gentoo>
+ <20190828151353.GA9673@kroah.com>
+ <20190828160156.GB26001@chatter.i7.local>
+ <20190828170547.GA11688@kroah.com>
+ <20190828193908.GC26001@chatter.i7.local>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Disposition: inline
+In-Reply-To: <20190828193908.GC26001@chatter.i7.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For high speed adapter like Mellanox CX-5 card, it can reach upto
-100 Gbits per second bandwidth. Currently htb already supports 64bit rate
-in tc utility. However police action rate and peakrate are still limited
-to 32bit value (upto 32 Gbits per second). Add 2 new attributes
-TCA_POLICE_RATE64 and TCA_POLICE_RATE64 in kernel for 64bit support
-so that tc utility can use them for 64bit rate and peakrate value to
-break the 32bit limit, and still keep the backward binary compatibility.
 
-Tested-by: David Dai <zdai@linux.vnet.ibm.com>
-Signed-off-by: David Dai <zdai@linux.vnet.ibm.com>
----
- include/uapi/linux/pkt_cls.h |    2 ++
- net/sched/act_police.c       |   27 +++++++++++++++++++++++----
- 2 files changed, 25 insertions(+), 4 deletions(-)
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
-index b057aee..eb4ea4d 100644
---- a/include/uapi/linux/pkt_cls.h
-+++ b/include/uapi/linux/pkt_cls.h
-@@ -159,6 +159,8 @@ enum {
- 	TCA_POLICE_AVRATE,
- 	TCA_POLICE_RESULT,
- 	TCA_POLICE_TM,
-+	TCA_POLICE_RATE64,
-+	TCA_POLICE_PEAKRATE64,
- 	TCA_POLICE_PAD,
- 	__TCA_POLICE_MAX
- #define TCA_POLICE_RESULT TCA_POLICE_RESULT
-diff --git a/net/sched/act_police.c b/net/sched/act_police.c
-index 49cec3e..ed5372e 100644
---- a/net/sched/act_police.c
-+++ b/net/sched/act_police.c
-@@ -40,6 +40,8 @@ static int tcf_police_walker(struct net *net, struct sk_buff *skb,
- 	[TCA_POLICE_PEAKRATE]	= { .len = TC_RTAB_SIZE },
- 	[TCA_POLICE_AVRATE]	= { .type = NLA_U32 },
- 	[TCA_POLICE_RESULT]	= { .type = NLA_U32 },
-+	[TCA_POLICE_RATE64]     = { .type = NLA_U64 },
-+	[TCA_POLICE_PEAKRATE64] = { .type = NLA_U64 },
- };
- 
- static int tcf_police_init(struct net *net, struct nlattr *nla,
-@@ -58,6 +60,7 @@ static int tcf_police_init(struct net *net, struct nlattr *nla,
- 	struct tcf_police_params *new;
- 	bool exists = false;
- 	u32 index;
-+	u64 rate64, prate64;
- 
- 	if (nla == NULL)
- 		return -EINVAL;
-@@ -155,14 +158,18 @@ static int tcf_police_init(struct net *net, struct nlattr *nla,
- 	}
- 	if (R_tab) {
- 		new->rate_present = true;
--		psched_ratecfg_precompute(&new->rate, &R_tab->rate, 0);
-+		rate64 = tb[TCA_POLICE_RATE64] ?
-+			 nla_get_u64(tb[TCA_POLICE_RATE64]) : 0;
-+		psched_ratecfg_precompute(&new->rate, &R_tab->rate, rate64);
- 		qdisc_put_rtab(R_tab);
- 	} else {
- 		new->rate_present = false;
- 	}
- 	if (P_tab) {
- 		new->peak_present = true;
--		psched_ratecfg_precompute(&new->peak, &P_tab->rate, 0);
-+		prate64 = tb[TCA_POLICE_PEAKRATE64] ?
-+			  nla_get_u64(tb[TCA_POLICE_PEAKRATE64]) : 0;
-+		psched_ratecfg_precompute(&new->peak, &P_tab->rate, prate64);
- 		qdisc_put_rtab(P_tab);
- 	} else {
- 		new->peak_present = false;
-@@ -313,10 +320,22 @@ static int tcf_police_dump(struct sk_buff *skb, struct tc_action *a,
- 				      lockdep_is_held(&police->tcf_lock));
- 	opt.mtu = p->tcfp_mtu;
- 	opt.burst = PSCHED_NS2TICKS(p->tcfp_burst);
--	if (p->rate_present)
-+	if (p->rate_present) {
- 		psched_ratecfg_getrate(&opt.rate, &p->rate);
--	if (p->peak_present)
-+		if ((police->params->rate.rate_bytes_ps >= (1ULL << 32)) &&
-+		    nla_put_u64_64bit(skb, TCA_POLICE_RATE64,
-+				      police->params->rate.rate_bytes_ps,
-+				      TCA_POLICE_PAD))
-+			goto nla_put_failure;
-+	}
-+	if (p->peak_present) {
- 		psched_ratecfg_getrate(&opt.peakrate, &p->peak);
-+		if ((police->params->peak.rate_bytes_ps >= (1ULL << 32)) &&
-+		    nla_put_u64_64bit(skb, TCA_POLICE_PEAKRATE64,
-+				      police->params->peak.rate_bytes_ps,
-+				      TCA_POLICE_PAD))
-+			goto nla_put_failure;
-+	}
- 	if (nla_put(skb, TCA_POLICE_TBF, sizeof(opt), &opt))
- 		goto nla_put_failure;
- 	if (p->tcfp_result &&
--- 
-1.7.1
+On 15:39 Wed 28 Aug 2019, Konstantin Ryabitsev wrote:
+>On Wed, Aug 28, 2019 at 07:05:47PM +0200, Greg KH wrote:
+>>> > I think there's a way to see which cdn mirror you are hitting when
+>>> > you
+>>> > ask for "www.kernel.org".  Konstantin, any hints as to see if maybe o=
+ne
+>>> > of the mirrors is out of sync?
+>>>
+>>> Looks like the Singapore mirror was feeling out-of-sorts. It'll start
+>>> feeling better shortly.
+>>
+>>Great, thanks for looking into this!
+>
+>BTW, the easiest way to figure out which frontend you're hitting is to
+>look at the output of "host www.kernel.org", e.g.:
+>
+>$=A0host www.kernel.org
+>www.kernel.org is an alias for git.kernel.org.
+>git.kernel.org is an alias for ord.git.kernel.org.
+>ord.git.kernel.org has address 147.75.58.133
+>ord.git.kernel.org has IPv6 address 2604:1380:4020:600::1
+>
+>The three-letter airport code should indicate where the frontend is
+>located (in my case, ORD =3D Chicago). There are total of 6:
+>
+>sea.git.kernel.org - Seattle
+>lax.git.kernel.org - Los Angeles
+>ord.git.kernel.org - Chicago
+>fra.git.kernel.org - Frankfurt
+>sin.git.kernel.org - Singapore
+>syd.git.kernel.org - Sydney
+>
+>Geodns magic should send you to the nearest one, and if the monitoring
+>recognizes that one of them is down, it will be automatically removed
+>from the pool until it recovers.
+>
+>Best,
+>-K
 
+Hmmm...thanks a  bunch!
+
+-Bhaskar
+
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl1nBcIACgkQsjqdtxFL
+KRWi1wgAuvEXO/Ahnx4ym2L5zqYLR9yUyzXeqUorHqvw+idy/6U+blph1ziFurum
+DoxFhwbyWeMdIEFecN99GfUl/Qvvbla6JjdWE27SVDFdQjKzb/+Ias2jqPwwmulw
+lA2WAkXrbWhuLX3W3Y5VgpYrWvSVDxmmjbx+zzIQ7Iqdom3bFzvNScihrjeDHkW9
+/OMecNBD5F9lqz5OnjD/6GYPqK17hnObgej8oOq8GWsFwzjWHa4yuLCzSSPgCopc
++sezLuyiSXvCcW0fLkS/tjLU4APrtQZ21YyIv9q53GCJAcNxuBrl0ksAJBQocna5
+9phftZUy4rUrhw19lHA0mF/FS8ToTA==
+=uEaJ
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
