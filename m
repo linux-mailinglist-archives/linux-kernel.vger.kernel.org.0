@@ -2,216 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50D83A0263
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:00:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F39FA02AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfH1NAB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:00:01 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:42037 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbfH1NAA (ORCPT
+        id S1726603AbfH1NJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:09:23 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41847 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbfH1NJX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:00:00 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1i2xYI-0003uK-85; Wed, 28 Aug 2019 12:59:54 +0000
-Date:   Wed, 28 Aug 2019 14:59:53 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Hridya Valsaraju <hridya@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        kernel-team@android.com
-Subject: Re: [PATCH 3/4] binder: Make transaction_log available in binderfs
-Message-ID: <20190828125952.ivvlxybw35kj67rj@wittgenstein>
-References: <20190827204152.114609-1-hridya@google.com>
- <20190827204152.114609-4-hridya@google.com>
+        Wed, 28 Aug 2019 09:09:23 -0400
+Received: by mail-qk1-f194.google.com with SMTP id g17so2286274qkk.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 06:09:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bwuEgAE2RupXoQeOwdm0bnhsR6637Jokup42rsGe8NM=;
+        b=TRrIlcrlhCOoJYyBAoYqN7DW3d/ENCn39Bwt+SkwD16DhzGbKTJntaSmwZxTU6vLBG
+         HjqHEiD3EEHzuIFHWR1GRYSEk6fhtCr2XPSW+1MKqsuqH8WJAmps2rIiFl9Cga0b5XU3
+         vGBfF612t3uxVPcM9seCtxrOu1FzjLktCgXKm3EuB+gnBkH2JrP54ZqEAliECTS7XuIJ
+         QL0G4C9YZRUrfveq2aueqmXAY8L7GspRiEXR6rl0/edJg0mbsHwOTrsHdEizkMh5Z7J8
+         OPMp+Jzc7uo49t5WYOznRkJnxZHH6oHgXcC4hCmFQVdMn47IYcj/Jd0WwYw1wskb6hNw
+         H+5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bwuEgAE2RupXoQeOwdm0bnhsR6637Jokup42rsGe8NM=;
+        b=UIpGcV29zotQNG2zYtia4NJc6AnZJzyRjDfcveCQEE4vVl2lFDaaHJpAh6nljfwDQv
+         6FGe98xMwQmhugqJGlrrqiHC/iDkO9g7oAAGr3JOyn3AsCOC3StmZn/y4wt5K+UId2o8
+         qnAabFbMuzc8bgGulWsA4qFioq9NQ10FKrbwF2zKx8NwVBEAe8T/FEC/xJkJQFmKYr03
+         9CpPHiOKJtenYN1upq52lejTsM4Mm42SU3pUhXo+jbOE2lPZfg+J73CuZUJjgMsJ7+zD
+         nflnbGpHz4lYMetVdPz4DY0jl6Hqx2S3/TbjgwwVX23SdP13BDRWc5iaUvMAn4Y1nWQj
+         DK8A==
+X-Gm-Message-State: APjAAAWoF4GvKooSZg6CdV3cecFLnHID6F0BPJLySLGxtYhxUUo/ttFP
+        Dy+UfcNCQojVweMfST3oxKs=
+X-Google-Smtp-Source: APXvYqwiSwwj3uBq7aUx1P3/MdoBghYcg6O1hVA4yz7NhLEpy28e3Wdqvdt5D2exgUafUjbLr6kS4g==
+X-Received: by 2002:a37:4a88:: with SMTP id x130mr3791678qka.501.1566997762092;
+        Wed, 28 Aug 2019 06:09:22 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id q16sm610180qkj.125.2019.08.28.06.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 06:09:21 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 999F140916; Wed, 28 Aug 2019 09:49:49 -0300 (-03)
+Date:   Wed, 28 Aug 2019 09:49:49 -0300
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH 1/2] perf top: Decay all events in the evlist
+Message-ID: <20190828124949.GA14025@kernel.org>
+References: <20190827231555.121411-1-namhyung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190827204152.114609-4-hridya@google.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190827231555.121411-1-namhyung@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 01:41:51PM -0700, Hridya Valsaraju wrote:
-> Currently, the binder transaction log files 'transaction_log'
-> and 'failed_transaction_log' live in debugfs at the following locations:
+Em Wed, Aug 28, 2019 at 08:15:54AM +0900, Namhyung Kim escreveu:
+> Currently perf top only decays entries in a selected evsel.  I don't
+> know whether it's intended (maybe due to performance reason?) but
+> anyway it might show incorrect output when event group is used since
+> users will see leader event is decayed but others are not.
 > 
-> /sys/kernel/debug/binder/failed_transaction_log
-> /sys/kernel/debug/binder/transaction_log
+> This patch moves the decay code into evlist__resort_hists() so that
+> stdio and tui code shared the logic.
 > 
-> This patch makes these files also available in a binderfs instance
-> mounted with the mount option "stats=global".
-> It does not affect the presence of these files in debugfs.
-> If a binderfs instance is mounted at path /dev/binderfs, the location of
-> these files will be as follows:
-> 
-> /dev/binderfs/binder_logs/failed_transaction_log
-> /dev/binderfs/binder_logs/transaction_log
-> 
-> This change provides an alternate option to access these files when
-> debugfs is not mounted.
-> 
-> Signed-off-by: Hridya Valsaraju <hridya@google.com>
-
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 > ---
->  drivers/android/binder.c          | 34 +++++--------------------------
->  drivers/android/binder_internal.h | 30 +++++++++++++++++++++++++++
->  drivers/android/binderfs.c        | 19 +++++++++++++++++
->  3 files changed, 54 insertions(+), 29 deletions(-)
+>  tools/perf/builtin-top.c | 38 +++++++++++++-------------------------
+>  1 file changed, 13 insertions(+), 25 deletions(-)
 > 
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index de795bd229c4..bed217310197 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -197,30 +197,8 @@ static inline void binder_stats_created(enum binder_stat_types type)
->  	atomic_inc(&binder_stats.obj_created[type]);
+> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> index 5970723cd55a..9d3059d2029d 100644
+> --- a/tools/perf/builtin-top.c
+> +++ b/tools/perf/builtin-top.c
+> @@ -264,13 +264,23 @@ static void perf_top__show_details(struct perf_top *top)
+>  	pthread_mutex_unlock(&notes->lock);
 >  }
 >  
-> -struct binder_transaction_log_entry {
-> -	int debug_id;
-> -	int debug_id_done;
-> -	int call_type;
-> -	int from_proc;
-> -	int from_thread;
-> -	int target_handle;
-> -	int to_proc;
-> -	int to_thread;
-> -	int to_node;
-> -	int data_size;
-> -	int offsets_size;
-> -	int return_error_line;
-> -	uint32_t return_error;
-> -	uint32_t return_error_param;
-> -	const char *context_name;
-> -};
-> -struct binder_transaction_log {
-> -	atomic_t cur;
-> -	bool full;
-> -	struct binder_transaction_log_entry entry[32];
-> -};
-> -static struct binder_transaction_log binder_transaction_log;
-> -static struct binder_transaction_log binder_transaction_log_failed;
-> +struct binder_transaction_log binder_transaction_log;
-> +struct binder_transaction_log binder_transaction_log_failed;
->  
->  static struct binder_transaction_log_entry *binder_transaction_log_add(
->  	struct binder_transaction_log *log)
-> @@ -6166,7 +6144,7 @@ static void print_binder_transaction_log_entry(struct seq_file *m,
->  			"\n" : " (incomplete)\n");
->  }
->  
-> -static int transaction_log_show(struct seq_file *m, void *unused)
-> +int binder_transaction_log_show(struct seq_file *m, void *unused)
+> -static void evlist__resort_hists(struct evlist *evlist)
+> +static void evlist__resort_hists(struct perf_top *t)
+
+Since this now operates on the perf_top struct, I'll rename it to
+perf_top__resort_hists(), ok? No need to send an updated patch.
+
+- Arnaldo
+
 >  {
->  	struct binder_transaction_log *log = m->private;
->  	unsigned int log_cur = atomic_read(&log->cur);
-> @@ -6198,8 +6176,6 @@ const struct file_operations binder_fops = {
->  	.release = binder_release,
->  };
+> +	struct evlist *evlist = t->evlist;
+>  	struct evsel *pos;
 >  
-> -DEFINE_SHOW_ATTRIBUTE(transaction_log);
-> -
->  static int __init init_binder_device(const char *name)
->  {
->  	int ret;
-> @@ -6268,12 +6244,12 @@ static int __init binder_init(void)
->  				    0444,
->  				    binder_debugfs_dir_entry_root,
->  				    &binder_transaction_log,
-> -				    &transaction_log_fops);
-> +				    &binder_transaction_log_fops);
->  		debugfs_create_file("failed_transaction_log",
->  				    0444,
->  				    binder_debugfs_dir_entry_root,
->  				    &binder_transaction_log_failed,
-> -				    &transaction_log_fops);
-> +				    &binder_transaction_log_fops);
+>  	evlist__for_each_entry(evlist, pos) {
+>  		struct hists *hists = evsel__hists(pos);
+>  
+> +		if (evlist->enabled) {
+> +			if (t->zero) {
+> +				hists__delete_entries(hists);
+> +			} else {
+> +				hists__decay_entries(hists, t->hide_user_symbols,
+> +						     t->hide_kernel_symbols);
+> +			}
+> +		}
+> +
+>  		hists__collapse_resort(hists, NULL);
+>  
+>  		/* Non-group events are considered as leader */
+> @@ -319,16 +329,7 @@ static void perf_top__print_sym_table(struct perf_top *top)
+>  		return;
 >  	}
 >  
->  	if (!IS_ENABLED(CONFIG_ANDROID_BINDERFS) &&
-> diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
-> index 12ef96f256c6..b9be42d9464c 100644
-> --- a/drivers/android/binder_internal.h
-> +++ b/drivers/android/binder_internal.h
-> @@ -65,4 +65,34 @@ DEFINE_SHOW_ATTRIBUTE(binder_state);
+> -	if (top->evlist->enabled) {
+> -		if (top->zero) {
+> -			hists__delete_entries(hists);
+> -		} else {
+> -			hists__decay_entries(hists, top->hide_user_symbols,
+> -					     top->hide_kernel_symbols);
+> -		}
+> -	}
+> -
+> -	evlist__resort_hists(top->evlist);
+> +	evlist__resort_hists(top);
 >  
->  int binder_transactions_show(struct seq_file *m, void *unused);
->  DEFINE_SHOW_ATTRIBUTE(binder_transactions);
-> +
-> +int binder_transaction_log_show(struct seq_file *m, void *unused);
-> +DEFINE_SHOW_ATTRIBUTE(binder_transaction_log);
-> +
-> +struct binder_transaction_log_entry {
-> +	int debug_id;
-> +	int debug_id_done;
-> +	int call_type;
-> +	int from_proc;
-> +	int from_thread;
-> +	int target_handle;
-> +	int to_proc;
-> +	int to_thread;
-> +	int to_node;
-> +	int data_size;
-> +	int offsets_size;
-> +	int return_error_line;
-> +	uint32_t return_error;
-> +	uint32_t return_error_param;
-> +	const char *context_name;
-> +};
-> +
-> +struct binder_transaction_log {
-> +	atomic_t cur;
-> +	bool full;
-> +	struct binder_transaction_log_entry entry[32];
-> +};
-> +
-> +extern struct binder_transaction_log binder_transaction_log;
-> +extern struct binder_transaction_log binder_transaction_log_failed;
->  #endif /* _LINUX_BINDER_INTERNAL_H */
-> diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-> index d542f9b8d8ab..dc25a7d759c9 100644
-> --- a/drivers/android/binderfs.c
-> +++ b/drivers/android/binderfs.c
-> @@ -630,8 +630,27 @@ static int init_binder_logs(struct super_block *sb)
+>  	hists__output_recalc_col_len(hists, top->print_entries - printed);
+>  	putchar('\n');
+> @@ -576,24 +577,11 @@ static bool perf_top__handle_keypress(struct perf_top *top, int c)
+>  static void perf_top__sort_new_samples(void *arg)
+>  {
+>  	struct perf_top *t = arg;
+> -	struct evsel *evsel = t->sym_evsel;
+> -	struct hists *hists;
 >  
->  	file_dentry = binderfs_create_file(binder_logs_root_dir, "transactions",
->  					   &binder_transactions_fops, NULL);
-> +	if (IS_ERR(file_dentry)) {
-> +		ret = PTR_ERR(file_dentry);
-> +		goto out;
-> +	}
-> +
-> +	file_dentry = binderfs_create_file(binder_logs_root_dir,
-> +					   "transaction_log",
-> +					   &binder_transaction_log_fops,
-> +					   &binder_transaction_log);
-> +	if (IS_ERR(file_dentry)) {
-> +		ret = PTR_ERR(file_dentry);
-> +		goto out;
-> +	}
-> +
-> +	file_dentry = binderfs_create_file(binder_logs_root_dir,
-> +					   "failed_transaction_log",
-> +					   &binder_transaction_log_fops,
-> +					   &binder_transaction_log_failed);
->  	if (IS_ERR(file_dentry))
->  		ret = PTR_ERR(file_dentry);
-> +
->  out:
->  	return ret;
->  }
+>  	if (t->evlist->selected != NULL)
+>  		t->sym_evsel = t->evlist->selected;
+>  
+> -	hists = evsel__hists(evsel);
+> -
+> -	if (t->evlist->enabled) {
+> -		if (t->zero) {
+> -			hists__delete_entries(hists);
+> -		} else {
+> -			hists__decay_entries(hists, t->hide_user_symbols,
+> -					     t->hide_kernel_symbols);
+> -		}
+> -	}
+> -
+> -	evlist__resort_hists(t->evlist);
+> +	evlist__resort_hists(t);
+>  
+>  	if (t->lost || t->drop)
+>  		pr_warning("Too slow to read ring buffer (change period (-c/-F) or limit CPUs (-C)\n");
 > -- 
 > 2.23.0.187.g17f5b7556c-goog
-> 
+
+-- 
+
+- Arnaldo
