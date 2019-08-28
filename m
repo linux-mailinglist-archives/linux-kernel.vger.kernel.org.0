@@ -2,98 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F03CA0D50
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB8AA0D60
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:18:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfH1WNf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 18:13:35 -0400
-Received: from mail-pl1-f175.google.com ([209.85.214.175]:38446 "EHLO
-        mail-pl1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfH1WNf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 18:13:35 -0400
-Received: by mail-pl1-f175.google.com with SMTP id w11so596841plp.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 15:13:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L46ONnOW0M6iW1Vp+WUrD6Jyzw4pGNakADqoU3eqTEQ=;
-        b=QVkB+vGs7ZPqhNeLypaISg2FgoUZvTzDsGkDzM3Q4dxt1d+lQS0icwsdmx/+L2tzvT
-         JcpIWn2yI3R2eiOg+z/pm0uPY5r4L+tW3gsgl1oEYb6Lov+xNdnq16KAr8UBcoSt6kJq
-         z/PLmYn+FL9Bi++DchRfTJm7vpCdrhsPjPSr2d4hKadR0P/vuO3BamuUMiF3ZeD0C8Eq
-         4x+AqadcjtLVJlGP1YmGCyMnIZxZKnNssBLeCNZ6oCUh1SYEX7vCnMxSEGwQ5tCa2GI9
-         Pxvb4FfkeO0n3ozeA2hDt5kEzkKoAAi/0/uHIEkmNPcu97BgsfY55f64LXWQ64Xe+TSj
-         NoYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L46ONnOW0M6iW1Vp+WUrD6Jyzw4pGNakADqoU3eqTEQ=;
-        b=bvsGmdIQ3yOXaAASJ8uGXc03ApuN5xCHZnXC/5KbSCiADtwzov22jJb2iV3T6MiCfy
-         HGCZEGKzZVmqLeetND4fKCQltEzxtispU4efECOl1EJUCGUbkS8eDsiD59L5a5BkErYA
-         986qw63m06AklowKXEvZlfWwTP8NH+LbwmtbUyiQcQN14MzjN6uerMPnUQhNIwgxYPmS
-         CyGk4NC3WepYFQ8c2fp/nNm0l1Mkt5bsLo8+70Hq6lNEJskzz4NkZ4XyLEV3172jbWXi
-         f0n65B9jWwjhoK7+t7+T+hKwd0NUf/I4P7rwb/lwegh6jj/Sh4mHw2URi7170mZAalcZ
-         thvg==
-X-Gm-Message-State: APjAAAUMBXvFhNX8VlGver1QbN9D0n6ReTSVA6gjbyNCw0xYlJpf+LZs
-        Sc3D+++IiAEF/0hoV+VeNWY2pjy2e3GSB2W+0vYSFg==
-X-Google-Smtp-Source: APXvYqyjEXG8XXDQXpYhl8xEUXuWMAM6B3z1FvFP/Sf98kYWklfI9KWZ8mpEhqiMU2jh89GBpt1aV3aYfFvdaeddt0E=
-X-Received: by 2002:a17:902:a9c3:: with SMTP id b3mr6518760plr.179.1567030413776;
- Wed, 28 Aug 2019 15:13:33 -0700 (PDT)
+        id S1727022AbfH1WSG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 18:18:06 -0400
+Received: from mga17.intel.com ([192.55.52.151]:11611 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726658AbfH1WSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 18:18:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 15:18:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
+   d="scan'208";a="197662402"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by fmsmga001.fm.intel.com with ESMTP; 28 Aug 2019 15:18:05 -0700
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v7 0/7] Fix PF/VF dependency issue
+Date:   Wed, 28 Aug 2019 15:14:00 -0700
+Message-Id: <cover.1567029860.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <CAK8P3a3G=GCpLtNztuoLR4BuugAB=zpa_Jrz5BSft6Yj-nok1g@mail.gmail.com>
- <20190827145102.p7lmkpytf3mngxbj@treble> <CAHFW8PRsmmCR6TWoXpQ9gyTA7azX9YOerPErCMggcQX-=fAqng@mail.gmail.com>
- <CAK8P3a2TeaMc_tWzzjuqO-eQjZwJdpbR1yH8yzSQbbVKdWCwSg@mail.gmail.com> <20190827192255.wbyn732llzckmqmq@treble>
-In-Reply-To: <20190827192255.wbyn732llzckmqmq@treble>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 28 Aug 2019 15:13:21 -0700
-Message-ID: <CAKwvOdkyvZf-oM6aXuCD6Aa4zDqZU-fKu5uUF6E05V6rWnxpKA@mail.gmail.com>
-Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
-To:     Josh Poimboeuf <jpoimboe@redhat.com>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Ilie Halip <ilie.halip@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Eli Friedman <efriedma@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 12:22 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> On Tue, Aug 27, 2019 at 09:00:52PM +0200, Arnd Bergmann wrote:
-> > On Tue, Aug 27, 2019 at 5:00 PM Ilie Halip <ilie.halip@gmail.com> wrote:
-> > >
-> > > > > $ clang-9 -c  crc32.i  -O2   ; objtool check  crc32.o
-> > > > > crc32.o: warning: objtool: fn1 uses BP as a scratch register
-> > >
-> > > Yes, I see it too. https://godbolt.org/z/N56HW1
-> > >
-> > > > Do you still see this warning with -fno-omit-frame-pointer (assuming
-> > > > clang has that option)?
-> > >
-> > > Using this makes the warning go away. Running objtool with --no-fp
-> > > also gets rid of it.
-> >
-> > I still see the warning after adding back the -fno-omit-frame-pointer
-> > in my reduced test case:
-> >
-> > $ clang-9 -c  crc32.i -Werror -Wno-address-of-packed-member -Wall
-> > -Wno-pointer-sign -Wno-unused-value -Wno-constant-logical-operand -O2
-> > -Wno-unused -fno-omit-frame-pointer
-> > $ objtool check  crc32.o
-> > crc32.o: warning: objtool: fn1 uses BP as a scratch register
->
-> This warning most likely means that clang is clobbering RBP in leaf
-> functions.  With -fno-omit-frame-pointer, leaf functions don't need to
-> set up the frame pointer, but they at least need to leave RBP untouched,
-> so that an interrupts/exceptions can unwind through the function.
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-It sounds like clang has `-mno-omit-leaf-frame-pointer` (via
-https://bugs.llvm.org/show_bug.cgi?id=43128#c6).  Arnd, can you give
-that a shot?
+Current implementation of ATS, PASID, PRI does not handle VF dependencies
+correctly. Following patches addresses this issue.
+
+Changes since v6:
+ * Removed locking interfaces used in v6.
+ * Made necessary changes to PRI/PASID enable/disable calls to allow
+   register changes only for PF.
+
+Changes since v5:
+ * Created new patches for PRI/PASID capability caching.
+ * Removed individual locks (pri_lock, pasid_lock) and added common
+   resource lock to synchronize PRI/PASID updates between PF/VF.
+ * Addressed comments from Bjorn Helgaas.
+
+Changes since v4:
+ * Defined empty functions for pci_pri_init() and pci_pasid_init() for cases
+   where CONFIG_PCI_PRI and CONFIG_PCI_PASID are not enabled.
+
+Changes since v3:
+ * Fixed critical path (lock context) in pci_restore_*_state functions.
+
+Changes since v2:
+ * Added locking mechanism to synchronize accessing PF registers in VF.
+ * Removed spec compliance checks in patches.
+ * Addressed comments from Bjorn Helgaas.
+
+Changes since v1:
+ * Added more details about the patches in commit log.
+ * Removed bulk spec check patch.
+ * Addressed comments from Bjorn Helgaas.
+
+Kuppuswamy Sathyanarayanan (7):
+  PCI/ATS: Fix pci_prg_resp_pasid_required() dependency issues
+  PCI/ATS: Cache PRI capability check result
+  PCI/ATS: Cache PASID capability check result
+  PCI/ATS: Add PRI support for PCIe VF devices
+  PCI/ATS: Add PASID support for PCIe VF devices
+  PCI/ATS: Disable PF/VF ATS service independently
+  PCI: Skip Enhanced Allocation (EA) initialization for VF device
+
+ drivers/pci/ats.c       | 202 ++++++++++++++++++++++++++++------------
+ drivers/pci/pci.c       |   7 ++
+ include/linux/pci-ats.h |  12 ++-
+ include/linux/pci.h     |   3 +-
+ 4 files changed, 159 insertions(+), 65 deletions(-)
+
 -- 
-Thanks,
-~Nick Desaulniers
+2.21.0
+
