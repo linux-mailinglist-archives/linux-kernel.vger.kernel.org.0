@@ -2,159 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 472A89F78D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 02:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F07C9F79E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 02:57:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbfH1AuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 20:50:03 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46023 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfH1AuD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 20:50:03 -0400
-Received: by mail-qk1-f193.google.com with SMTP id m2so895759qki.12
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 17:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Y/1pz5SQ7hg1f+EhmBwif7l68UJ4QOsWMuYQ+9sbJjA=;
-        b=oJhyVsx3g1+lIuHDcEbcQe6uPD0tAP9Iojp6qyE+eyrT2sCuXPGqPbQQ1DJNMoU8TL
-         hMoy5Hqc5fumIeVfGZdSZhiI19uu9EubQmo7+3Wgvp+4cQViDpR8npuLzId968sjDtgm
-         D1xZTVoMTBBfCRT1bgA7kb3Kj0ADMsZA4Nf+Jx1IVzmlWf8Qce8AU9bloYe1o6HAuFCa
-         d+xCgZTniXfh25QL//GAv9TpMvYyCgRLkW3Wl0SLpjGPuLlUK3yKZQjavfSgctHovnPy
-         +PSetFpFAqALZNCM3tvyP0iL/J6wuhR8Xh7nOyL2gOBPHfPy2NSjKoKym4BSKjWyGQNP
-         MPjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=Y/1pz5SQ7hg1f+EhmBwif7l68UJ4QOsWMuYQ+9sbJjA=;
-        b=mln6+CUsNzToW8ER1fW15etp9GKkHcjfSVhP3u7sMN7dM0IjvrcaHPJEc+/w9lfxaw
-         1Jn9vvTdsJ+qPhuqi8w/dcHzXkqZtqO+nzmOqDEYt7wVCB2CmRGlhLhlT+IVWUGwy2Ei
-         FPzvm3H5gd2xYEQEsy/YxAwIrJIT8ldmZX2jUnho61A/ERDBtgon9IBp0arDeGX7gt11
-         LlhspuyIkmqRSpBMhBJlfKy+8eKuAIosOPHDac1idJY+Lng0YfiwirVBQoSIgQH85jca
-         eGwcBSCX28HkezqpudE3BFvA17/EbaEXb2nkvZxluVLau8IzkqiWkDNfczDaQ8nFla4h
-         HaIg==
-X-Gm-Message-State: APjAAAXwFkd9+8VfoXDuB3kQyTaZtX7VPsk2ulBk49b3/9+I9QJSRT2u
-        UcabTnMHiDZH765goOiOXgOZaA==
-X-Google-Smtp-Source: APXvYqyRfkZpX/5JpJzVIVIpQq9tGkKxIffeo4vymy2aUmomnGx2gtzE3vAA3cbhf5eke+EGWDjQMg==
-X-Received: by 2002:a37:aa04:: with SMTP id t4mr1443643qke.359.1566953402231;
-        Tue, 27 Aug 2019 17:50:02 -0700 (PDT)
-Received: from qians-mbp.fios-router.home (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id q123sm124429qkf.52.2019.08.27.17.50.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 27 Aug 2019 17:50:01 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH 00/10] OOM Debug print selection and additional
- information
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <CAM3twVQEMGWMQEC0dduri0JWt3gH6F2YsSqOmk55VQz+CZDVKg@mail.gmail.com>
-Date:   Tue, 27 Aug 2019 20:50:00 -0400
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <79FC3DA1-47F0-4FFC-A92B-9A7EBCE3F15F@lca.pw>
-References: <20190826193638.6638-1-echron@arista.com>
- <1566909632.5576.14.camel@lca.pw>
- <CAM3twVQEMGWMQEC0dduri0JWt3gH6F2YsSqOmk55VQz+CZDVKg@mail.gmail.com>
-To:     Edward Chron <echron@arista.com>
-X-Mailer: Apple Mail (2.3445.104.11)
+        id S1726331AbfH1A5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 20:57:37 -0400
+Received: from mga09.intel.com ([134.134.136.24]:45974 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726092AbfH1A5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 20:57:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 17:57:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,439,1559545200"; 
+   d="scan'208";a="380223132"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga005.fm.intel.com with ESMTP; 27 Aug 2019 17:57:35 -0700
+Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Micha=c5=82_Wajdeczko?= <michal.wajdeczko@intel.com>
+Subject: Re: [RFC PATCH] iommu/vt-d: Fix IOMMU field not populated on device
+ hot re-plug
+To:     Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
+References: <20190822142922.31526-1-janusz.krzysztofik@linux.intel.com>
+ <7536805.yzB8ZXLclH@jkrzyszt-desk.ger.corp.intel.com>
+ <790a4a20-7517-fe54-177d-850b9beeb88e@linux.intel.com>
+ <29020717.Hl6jQjRASr@jkrzyszt-desk.ger.corp.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <8f505c10-6256-c561-1aea-b3817388c5b2@linux.intel.com>
+Date:   Wed, 28 Aug 2019 08:56:18 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <29020717.Hl6jQjRASr@jkrzyszt-desk.ger.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Janusz,
 
+On 8/27/19 5:35 PM, Janusz Krzysztofik wrote:
+> Hi Lu,
+> 
+> On Monday, August 26, 2019 10:29:12 AM CEST Lu Baolu wrote:
+>> Hi Janusz,
+>>
+>> On 8/26/19 4:15 PM, Janusz Krzysztofik wrote:
+>>> Hi Lu,
+>>>
+>>> On Friday, August 23, 2019 3:51:11 AM CEST Lu Baolu wrote:
+>>>> Hi,
+>>>>
+>>>> On 8/22/19 10:29 PM, Janusz Krzysztofik wrote:
+>>>>> When a perfectly working i915 device is hot unplugged (via sysfs) and
+>>>>> hot re-plugged again, its dev->archdata.iommu field is not populated
+>>>>> again with an IOMMU pointer.  As a result, the device probe fails on
+>>>>> DMA mapping error during scratch page setup.
+>>>>>
+>>>>> It looks like that happens because devices are not detached from their
+>>>>> MMUIO bus before they are removed on device unplug.  Then, when an
+>>>>> already registered device/IOMMU association is identified by the
+>>>>> reinstantiated device's bus and function IDs on IOMMU bus re-attach
+>>>>> attempt, the device's archdata is not populated with IOMMU information
+>>>>> and the bad happens.
+>>>>>
+>>>>> I'm not sure if this is a proper fix but it works for me so at least it
+>>>>> confirms correctness of my analysis results, I believe.  So far I
+>>>>> haven't been able to identify a good place where the possibly missing
+>>>>> IOMMU bus detach on device unplug operation could be added.
+>>>>
+>>>> Which kernel version are you testing with? Does it contain below commit?
+>>>>
+>>>> commit 458b7c8e0dde12d140e3472b80919cbb9ae793f4
+>>>> Author: Lu Baolu <baolu.lu@linux.intel.com>
+>>>> Date:   Thu Aug 1 11:14:58 2019 +0800
+>>>
+>>> I was using an internal branch based on drm-tip which didn't contain this
+>>> commit yet.  Fortunately it has been already merged into drm-tip over last
+>>> weekend and has effectively fixed the issue.
+>>
+>> Thanks for testing this.
+> 
+> My testing appeared not sufficiently exhaustive. The fix indeed resolved my
+> initially discovered issue of not being able to rebind the i915 driver to a
+> re-plugged device, however it brought another, probably more serious problem
+> to light.
+> 
+> When an open i915 device is hot unplugged, IOMMU bus notifier now cleans up
+> IOMMU info for the device on PCI device remove while the i915 driver is still
+> not released, kept by open file descriptors.  Then, on last device close,
+> cleanup attempts lead to kernel panic raised from intel_unmap() on unresolved
+> IOMMU domain.
 
-> On Aug 27, 2019, at 8:23 PM, Edward Chron <echron@arista.com> wrote:
->=20
->=20
->=20
-> On Tue, Aug 27, 2019 at 5:40 AM Qian Cai <cai@lca.pw> wrote:
-> On Mon, 2019-08-26 at 12:36 -0700, Edward Chron wrote:
-> > This patch series provides code that works as a debug option through
-> > debugfs to provide additional controls to limit how much information
-> > gets printed when an OOM event occurs and or optionally print =
-additional
-> > information about slab usage, vmalloc allocations, user process =
-memory
-> > usage, the number of processes / tasks and some summary information
-> > about these tasks (number runable, i/o wait), system information
-> > (#CPUs, Kernel Version and other useful state of the system),
-> > ARP and ND Cache entry information.
-> >=20
-> > Linux OOM can optionally provide a lot of information, what's =
-missing?
-> > =
-----------------------------------------------------------------------
-> > Linux provides a variety of detailed information when an OOM event =
-occurs
-> > but has limited options to control how much output is produced. The
-> > system related information is produced unconditionally and limited =
-per
-> > user process information is produced as a default enabled option. =
-The
-> > per user process information may be disabled.
-> >=20
-> > Slab usage information was recently added and is output only if slab
-> > usage exceeds user memory usage.
-> >=20
-> > Many OOM events are due to user application memory usage sometimes =
-in
-> > combination with the use of kernel resource usage that exceeds what =
-is
-> > expected memory usage. Detailed information about how memory was =
-being
-> > used when the event occurred may be required to identify the root =
-cause
-> > of the OOM event.
-> >=20
-> > However, some environments are very large and printing all of the
-> > information about processes, slabs and or vmalloc allocations may
-> > not be feasible. For other environments printing as much information
-> > about these as possible may be needed to root cause OOM events.
-> >=20
->=20
-> For more in-depth analysis of OOM events, people could use kdump to =
-save a
-> vmcore by setting "panic_on_oom", and then use the crash utility to =
-analysis the
->  vmcore which contains pretty much all the information you need.
->=20
-> Certainly, this is the ideal. A full system dump would give you the =
-maximum amount of
-> information.=20
->=20
-> Unfortunately some environments may lack space to store the dump,
+We should avoid kernel panic when a intel_unmap() is called against
+a non-existent domain. But we shouldn't expect the IOMMU driver not
+cleaning up the domain info when a device remove notification comes and 
+wait until all file descriptors being closed, right?
 
-Kdump usually also support dumping to a remote target via NFS, SSH etc=20=
+Best regards,
+Baolu
 
-
-> let alone the time to dump the storage contents and restart the =
-system. Some
-
-There is also =E2=80=9Cmakedumpfile=E2=80=9D that could compress and =
-filter unwanted memory to reduce
-the vmcore size and speed up the dumping process by utilizing =
-multi-threads.
-
-> systems can take many minutes to fully boot up, to reset and =
-reinitialize all the
-> devices. So unfortunately this is not always an option, and we need an =
-OOM Report.
-
-I am not sure how the system needs some minutes to reboot would be =
-relevant  for the
-discussion here. The idea is to save a vmcore and it can be analyzed =
-offline even on=20
-another system as long as it having a matching =E2=80=9Cvmlinux.".=20
-
-
+> 
+> With commit 458b7c8e0dde reverted and my fix applied, both late device close
+> and device re-plug work for me.  However, I can realize that's probably still
+> not a complete solution, possibly missing some protection against reuse of a
+> removed device other than for cleanup.  If you think that's the right way to
+> go, I can work more on that.
+> 
+> I've had a look at other drivers and found AMD is using somehow similar
+> approach.  On the other hand, looking at the IOMMU common code I couldn't
+> identify any arrangement that would support deferred device cleanup.
+> 
+> If that approach is not acceptable for Intel IOMMU, please suggest a way you'd
+> like to have it resolved and I can try to implement it.
+> 
+> Thanks,
+> Janusz
+> 
+>> Best regards,
+>> Lu Baolu
+>>
