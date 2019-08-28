@@ -2,156 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24937A048A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:16:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D786FA0490
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfH1OPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:15:18 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35497 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726981AbfH1OPR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:15:17 -0400
-Received: by mail-wm1-f66.google.com with SMTP id l2so244129wmg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 07:15:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+9CZOUFm8zTKJkix/Sk4sWgmnEnSWrL/u+Po5bYM2uM=;
-        b=vrGG3ZUsWhEKjqafTtrdnofp/j2Rc/2RCw+93giM8R06NFgjeA3HpVXo3lFsGynICb
-         NcEqiIRhhdT5ScR0xkhKDt4VNJwp5vCIll+INWayK9VBZ1riOIZnVXGZbbmtNPTwxrmh
-         oPilI3gmLMVGocXKkn0XfO1w/eZSl5Jwpi8je/pl8a+d5K2JTsCyTN++YKkxo8oVLB79
-         xfP9yuvQA3umV2goB5PdYRPMKxlT+oIBkfLTIeYpr64LaGbZx7e/qFEWXYAXJ6xNBkKL
-         BZhjrsUrTLkrkuSg4URGURY/WTeA3R6nth81yRXK4yvadSt9tHTz5eLSn+scl+2uyPy4
-         qbWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+9CZOUFm8zTKJkix/Sk4sWgmnEnSWrL/u+Po5bYM2uM=;
-        b=XuuWfUT7TTHAlfmrocBYU0d2BJpEt9VTf+63vO+zDZAZMJa5VFgiLiOOWOUXYlEGMM
-         niFKIpDfE6H8t7Qn1AsS+z9KEA7Wid8elUc0leQBbr4AERq7Kyk9jR8xGgrkQQE4eaxK
-         PiaBWdxxMrp68Yl38Nb5M96S9wS7s8rubFr00dtRIpr6FiRnD80F+Sp6GkB6dubRVg2E
-         XfyDMmiCo7yKzKBMQxEStRlpczpt69UH1zxNG11bSbj11anbEq5sWZaNBBxQZG3M73xq
-         AtL4oHfhBJMa0vvYkgd9MSfyT5ikRnXVsIJgFu5vStVWKG3sGfhWvk89caHIye+RQLo9
-         M3Gg==
-X-Gm-Message-State: APjAAAWrmy3ktVVTx5L2M3ogRCrw+Jj1cexhG/6qPgySG54nlcU6lAMI
-        MQvwO/33j+bcpQa4YJ4NpGYSIXzJMiD3iA==
-X-Google-Smtp-Source: APXvYqwj8Y9XjvFV3TsumrH1qCCjipkcVhvhEqxYTBZ3649rTMswJpxe7Ztd5VfmJfroZN6v47VXug==
-X-Received: by 2002:a7b:ce02:: with SMTP id m2mr5398136wmc.7.1567001713961;
-        Wed, 28 Aug 2019 07:15:13 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id v6sm4196334wma.24.2019.08.28.07.15.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Aug 2019 07:15:13 -0700 (PDT)
-Subject: Re: [PATCH v2 2/3] amlogic: arm: add Amlogic SM1 based Khadas VIM3L
- bindings
-To:     khilman@baylibre.com, devicetree@vger.kernel.org
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190828141157.15503-1-narmstrong@baylibre.com>
- <20190828141157.15503-3-narmstrong@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <3ac50262-4991-0dcc-9b5d-a406c850562b@baylibre.com>
-Date:   Wed, 28 Aug 2019 16:15:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190828141157.15503-3-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+        id S1727058AbfH1OPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:15:42 -0400
+Received: from mail-eopbgr80054.outbound.protection.outlook.com ([40.107.8.54]:28798
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726449AbfH1OPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 10:15:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DZqcVlCLan3/+bLPZskwRqac0IqP+LojW2MhkLBeCH0=;
+ b=qHOkV4LBeMliPdoNBluQIvr4xyhvvzJFziLmPi/oWXS/s7fs4j8laWZVc/jC/6m6hE+W1hke6+wgeIiM5314XWLN3DnzHMpKj47vV/xZxBH38etGqf6mj2z7RiB2/yt0hm3dJ/c5AzW/ZZqOeXyiBvj+zVaNhffJYal4BpQsQhE=
+Received: from VI1PR08CA0272.eurprd08.prod.outlook.com (2603:10a6:803:dc::45)
+ by DB6PR0802MB2597.eurprd08.prod.outlook.com (2603:10a6:4:99::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2199.21; Wed, 28 Aug
+ 2019 14:15:34 +0000
+Received: from VE1EUR03FT059.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::206) by VI1PR08CA0272.outlook.office365.com
+ (2603:10a6:803:dc::45) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2199.14 via Frontend
+ Transport; Wed, 28 Aug 2019 14:15:34 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=temperror action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT059.mail.protection.outlook.com (10.152.19.60) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2220.16 via Frontend Transport; Wed, 28 Aug 2019 14:15:32 +0000
+Received: ("Tessian outbound f83cc93ed55d:v27"); Wed, 28 Aug 2019 14:15:24 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: f6fd50135d310d0b
+X-CR-MTA-TID: 64aa7808
+Received: from d5fa0f03b023.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.13.55])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 42BE70C4-5852-4A8B-8BE1-86D65CF91CAD.1;
+        Wed, 28 Aug 2019 14:15:18 +0000
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04lp2055.outbound.protection.outlook.com [104.47.13.55])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id d5fa0f03b023.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Wed, 28 Aug 2019 14:15:18 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KCaztgUMiYNXIdfgQ43le807idTIVgNTNu1fO/zdl9QhJs0idAgzKgBnb96b0ztNX8+zsRWK/n5CELWWCJGRCo6NFt8riYrYQ+br/CAJOzyKHJ78VjxrHO0OHKAc/60sT1+zk+muLXwBSb7QAUTMVo4SnWb2egbqA83HZEo1IR44wDUTXNBUVYwpAMd/g1d4vKCElvLfWcM1LmqopS7oCfBX5kR4Emcyo44rWGS0GHETyt73qqGTuEoMIOJWD2RjJtUVNUShlINdFBSz2mYMU60J8JLHU7GMgEypwrNK5N/i8CDDs8Y0ZGim79WfTkH1FrcrfVKxQ30vSjBqX/+Ikg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DZqcVlCLan3/+bLPZskwRqac0IqP+LojW2MhkLBeCH0=;
+ b=UHstXD2KJPih/AUbqrqC/vFcVakO+ps6N1hEb+ziAGzcVAdex+6olYW5HcIcRUAd+P9AtIoCBTsO8NGiPLjqSoEa3BFp8QtBuxgurPBfWfoBh0tZGpFySg6QrUmj6fF2l9B4gZB3B3iPv6uPOt9hpyzjPQJEgYriPnUPS+TUUeEyHPyT+FrCLlahZi5hd+Wc/bDV4J8HAMdjI2dE5jTvW7UOLe56OXPL17+tinQB1CkEJCv7LJunKT1mQsRw/MGC8NkhUQnpqdvr82XRo9PrIa1CyDGh9TPv8cWak3aOd7/DkBKbKOMcJ/YmHiyif+us90wxSJmsClt9TC32acnTbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DZqcVlCLan3/+bLPZskwRqac0IqP+LojW2MhkLBeCH0=;
+ b=qHOkV4LBeMliPdoNBluQIvr4xyhvvzJFziLmPi/oWXS/s7fs4j8laWZVc/jC/6m6hE+W1hke6+wgeIiM5314XWLN3DnzHMpKj47vV/xZxBH38etGqf6mj2z7RiB2/yt0hm3dJ/c5AzW/ZZqOeXyiBvj+zVaNhffJYal4BpQsQhE=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB4878.eurprd08.prod.outlook.com (10.255.113.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.21; Wed, 28 Aug 2019 14:15:16 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::d9f5:7cb8:41e8:17af]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::d9f5:7cb8:41e8:17af%7]) with mapi id 15.20.2199.021; Wed, 28 Aug 2019
+ 14:15:16 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Mihail Atanassov <Mihail.Atanassov@arm.com>
+CC:     nd <nd@arm.com>, Liviu Dudau <Liviu.Dudau@arm.com>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/komeda: Add ACLK rate to sysfs
+Thread-Topic: [PATCH] drm/komeda: Add ACLK rate to sysfs
+Thread-Index: AQHVXZBFvBwgvZ1PNEmL4p2YP+CqdacQmt0A
+Date:   Wed, 28 Aug 2019 14:15:15 +0000
+Message-ID: <20190828141508.GA6738@jamwan02-TSP300>
+References: <20190828110342.45936-1-mihail.atanassov@arm.com>
+In-Reply-To: <20190828110342.45936-1-mihail.atanassov@arm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.10.1 (2018-07-13)
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK2PR02CA0192.apcprd02.prod.outlook.com
+ (2603:1096:201:21::28) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: d18be38b-f981-4aa7-bccd-08d72bc23031
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam-Untrusted: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB4878;
+X-MS-TrafficTypeDiagnostic: VE1PR08MB4878:|DB6PR0802MB2597:
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <DB6PR0802MB2597A14CD1C306CED284EE62B3A30@DB6PR0802MB2597.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:478;OLM:478;
+x-forefront-prvs: 014304E855
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(346002)(396003)(376002)(136003)(366004)(39860400002)(199004)(189003)(33656002)(71200400001)(6486002)(305945005)(5660300002)(186003)(2906002)(7736002)(81166006)(14454004)(25786009)(8936002)(33716001)(4326008)(76176011)(81156014)(8676002)(6246003)(486006)(476003)(446003)(99286004)(86362001)(6636002)(478600001)(11346002)(229853002)(52116002)(53936002)(26005)(316002)(6116002)(58126008)(386003)(66946007)(6862004)(102836004)(6506007)(55236004)(54906003)(1076003)(66066001)(6436002)(71190400001)(3846002)(6512007)(256004)(66556008)(66446008)(64756008)(9686003)(66476007);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB4878;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info-Original: lUkPCCvL738cnEv/3KMkyI4dEGJ6xwPuSKlPypqCwodRpVXO7PBH7zaufUrH94xTZXtcuBcIgpSFSveDaALBHC2qsjcoUdHN1XJDyptEVzhNLsrJszn+3RMkr+LoadLQfzYcWZdGCY/+5KfIBJzDArL4BcLMA8V3PRA3lbnd4f+5P93dlw5+q8NLLsJ9V7HexlvWl6RPDsh4wk80C/SbUeH7aycaDRKVJ88GYK3S0974BuwNgA78b0lEVdsIflPBzYlKbSaKbZFuIdjRs+fHwcmET/0IFtFdOfWgyFdOs4tMmNdT7ab6i6dxPFdakQxbAH5Hxah/t6kzgjrqXYAefNgExmH8xmtKKknOOYWONP+ebD+J7CmkVYmfUlgY607cOiV/0YILKPGQTvHiSIQwrg7k6YS1qAcySaAV8yTJ368=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1C0F61E017C2E44C94A001AFC8D43881@eurprd08.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB4878
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT059.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(7916004)(396003)(376002)(346002)(136003)(39860400002)(2980300002)(189003)(199004)(6506007)(6862004)(446003)(316002)(386003)(50466002)(102836004)(6246003)(229853002)(11346002)(476003)(126002)(486006)(186003)(2906002)(36906005)(97756001)(76176011)(336012)(63350400001)(63370400001)(6486002)(4326008)(76130400001)(356004)(9686003)(6512007)(5660300002)(26005)(33716001)(70206006)(70586007)(1076003)(25786009)(8936002)(478600001)(26826003)(33656002)(14454004)(305945005)(46406003)(6636002)(81166006)(7736002)(81156014)(22756006)(23726003)(3846002)(6116002)(8746002)(58126008)(66066001)(54906003)(99286004)(47776003)(86362001)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0802MB2597;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 10d378bc-9074-43a2-e6e5-08d72bc2257f
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(710020)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB6PR0802MB2597;
+NoDisclaimer: True
+X-Forefront-PRVS: 014304E855
+X-Microsoft-Antispam-Message-Info: ZUZbBL+2J2ZlypxcllTIKr7T+OuVWOb8hmbJ8Hdlil1GRvgK3J7/w+WQfjB9+nwNGEWaYiKsb51tOHegE6T0dlITd0RFdzkUjVnRzrHmBxhPwqzG7CJDa8dvRY4DjUN4cYRxkVX6qnb58ETHUwXaX7wTeqLyW+QPhtcWAhzPMleLrmomWDyl3CB1sZfRLfrEN5Xj5HUiZFlPDjOGqABBtRroDiF6NTjB+lAnXgrlZzyzRaxDSAMUX/oIjFQzGCHyWM0BjBTdENatRQuIFAyqSX5T229JhKCSqOsDtMzN4krQ7w3jQ7RBMQQWEjgIV2oinZMu8igz9WGdxRnKJkTyaY92tIiMEyHa4iqM3BWMv/DFfbJ1iCpWHBkcwVUJYvXqsv2tbJgSJVtmHlX5/DZnnzxSJaDtFjAw/7Bzr6G0ZOg=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2019 14:15:32.6208
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d18be38b-f981-4aa7-bccd-08d72bc23031
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0802MB2597
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Damn wrong subject.. please ignore this one.
+Hi Mihail:
 
-Neil
+Looks good to me.
 
-On 28/08/2019 16:11, Neil Armstrong wrote:
-> The Khadas VIM3 is also available as VIM3L with the Pin-to-pin compatible
-> Amlogic SM1 SoC in the S905D3 variant package.
-> 
-> Change the description to match the S905X3/D3/Y3 variants like the G12A
-> description, and add the khadas,vim3l compatible.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: James Qian Wang (Arm Technology China) <james.qian.wang@arm.co=
+m>
+
+James.
+
+On Wed, Aug 28, 2019 at 11:03:49AM +0000, Mihail Atanassov wrote:
+> Expose node with the name 'aclk_hz'
+>=20
+> Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
 > ---
->  Documentation/devicetree/bindings/arm/amlogic.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
-> index b48ea1e4913a..99015cef8bb1 100644
-> --- a/Documentation/devicetree/bindings/arm/amlogic.yaml
-> +++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
-> @@ -150,9 +150,10 @@ properties:
->            - const: amlogic,s922x
->            - const: amlogic,g12b
->  
-> -      - description: Boards with the Amlogic Meson SM1 S905X3 SoC
-> +      - description: Boards with the Amlogic Meson SM1 S905X3/D3/Y3 SoC
->          items:
->            - enum:
->                - seirobotics,sei610
-> +              - khadas,vim3l
->            - const: amlogic,sm1
->  ...
-> 
-
-
+>  drivers/gpu/drm/arm/display/komeda/komeda_dev.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c b/drivers/gp=
+u/drm/arm/display/komeda/komeda_dev.c
+> index 0142ee991957..e8d67395a3b9 100644
+> --- a/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_dev.c
+> @@ -91,9 +91,19 @@ config_id_show(struct device *dev, struct device_attri=
+bute *attr, char *buf)
+>  }
+>  static DEVICE_ATTR_RO(config_id);
+> =20
+> +static ssize_t
+> +aclk_hz_show(struct device *dev, struct device_attribute *attr, char *bu=
+f)
+> +{
+> +	struct komeda_dev *mdev =3D dev_to_mdev(dev);
+> +
+> +	return snprintf(buf, PAGE_SIZE, "%lu\n", clk_get_rate(mdev->aclk));
+> +}
+> +static DEVICE_ATTR_RO(aclk_hz);
+> +
+>  static struct attribute *komeda_sysfs_entries[] =3D {
+>  	&dev_attr_core_id.attr,
+>  	&dev_attr_config_id.attr,
+> +	&dev_attr_aclk_hz.attr,
+>  	NULL,
+>  };
+> =20
+> --=20
+> 2.22.0
