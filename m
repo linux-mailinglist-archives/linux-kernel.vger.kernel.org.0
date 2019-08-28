@@ -2,199 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DF69A0B94
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 22:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C69BDA0B90
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 22:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbfH1Udg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 16:33:36 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:64124 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726400AbfH1Udf (ORCPT
+        id S1726881AbfH1UdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 16:33:03 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:41813 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726618AbfH1UdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 16:33:35 -0400
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id x7SKWa5X006609;
-        Wed, 28 Aug 2019 13:32:55 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=eg8uKao73Su5GWi2dwKstvWKvPQI2MaFov3khEMgkDs=;
- b=Gofb3zpqgA7w3foTmXK/Dve+DMPyq3ffhHTCQtIn04rWP6VjopK1/RiXObnN/fJvkf33
- kQb8WAebc3mDXn/Ml/gyyX/nSvkHOm/06EOzTU4WQbPRTT4IfUdr/H/xwG5NI9693AZh
- OjVepDrTqRJB0kEJ2PdHsmosM+pfhQM7064= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0001303.ppops.net with ESMTP id 2unuwq9m0v-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 28 Aug 2019 13:32:55 -0700
-Received: from ash-exhub104.TheFacebook.com (2620:10d:c0a8:82::d) by
- ash-exhub201.TheFacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 28 Aug 2019 13:32:54 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 28 Aug 2019 13:32:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cqf0NVRISpDe6OHrL4c6bbc0lsh06oPY5chbeLxrF9ylchEm96jZ4d/5cDfd8ZXPs6BtMY2WpU8JFVI0B3/C6o+X5meQqwaKglBcYoa193UJ2JLAqA8E2/q/ysumpel8/hCvGo9j1riaDpr43+oU3U7aH/9nePjxlEGculZrO9l7iBs9jZ6fIMkjmrrOXhTdQ/f9CNNGKtXZq2EO7uOl8X8yXs0jWt+0O+eqGdLHfFilGMGGvFyzFTIztXV5Z2i+JxCVJdSMBOUvSAsNsV5CctgKp4MNJuvklcVpwupgziX86lTAVBkrnF3ZGRDcxdNfVFpcsKuvISdqJJguY/cLVw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eg8uKao73Su5GWi2dwKstvWKvPQI2MaFov3khEMgkDs=;
- b=hAxfNbG7GvoO5k9u4dhUBCCQMLcdAxmPZnO1noLU2OUOEfmFiBicZCsHGx8j5pCiz/LRaMVooSry8z0Bya8gHLrcsld5WXEoq/ihapDg4MShs0XRgZU29DNxGLlKDr5L7KX7aJlMhSWAEgVhFnvG8wIC00eC33dJh1BIjdh8/a0gaNm73EFzYe5iBwb454nvApakWl9yvYw0N5hpk6F5Q6Z6znVWaCdVsf5rqgrjt+sEX6GeaGkLgeIWyhryELn+B5m/1nnU+MaK6UXFKLwn5bH3K9w22g3K3eT4siE6t2M2igusMyZ6EpSzcDpEhxeUtK5vxlKK6pKMgvlYtdc6HA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eg8uKao73Su5GWi2dwKstvWKvPQI2MaFov3khEMgkDs=;
- b=AO4Np6jZ/2VBGYTHsdHFgSSY+WcFDia/S7W5uxqt0K/WVLpJe8IDsxi32NqO5pJ6uw4r8iFMPEd8Xr8vV00DVlE1nsDGBnmMkeprRLrBXfWXYSNj0u6O4Y+gC3szUaYNyrKdTtM0RGx5UF4GbDdPgkug+Eg3wAcGTjsCChke5bw=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.3.22) by
- MWHPR15MB1680.namprd15.prod.outlook.com (10.175.141.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Wed, 28 Aug 2019 20:32:54 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::45ee:bc50:acfa:60a5]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::45ee:bc50:acfa:60a5%3]) with mapi id 15.20.2199.021; Wed, 28 Aug 2019
- 20:32:54 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     Dave Hansen <dave.hansen@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Joerg Roedel <jroedel@suse.de>,
-        "Andy Lutomirski" <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rik van Riel" <riel@surriel.com>
-Subject: Re: [patch 1/2] x86/mm/pti: Handle unaligned address gracefully in
- pti_clone_pagetable()
-Thread-Topic: [patch 1/2] x86/mm/pti: Handle unaligned address gracefully in
- pti_clone_pagetable()
-Thread-Index: AQHVXa1SnM+Gh7oAvk+r6MnSURCjbqcQtC2AgAABSwCAACOGgIAAI5IAgAAHnYA=
-Date:   Wed, 28 Aug 2019 20:32:54 +0000
-Message-ID: <9B34E971-20ED-4A58-B086-AB94990B5A26@fb.com>
-References: <20190828142445.454151604@linutronix.de>
- <20190828143123.971884723@linutronix.de>
- <55bb026c-5d54-6ebf-608f-3f376fbec4e5@intel.com>
- <alpine.DEB.2.21.1908281750410.1938@nanos.tec.linutronix.de>
- <309E5006-E869-4761-ADE2-ADB7A1A63FF1@fb.com>
- <alpine.DEB.2.21.1908282029550.1938@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1908282029550.1938@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.104.11)
-x-originating-ip: [2620:10d:c090:180::cae3]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f8d2d0e8-2346-4010-d979-08d72bf6e77f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR15MB1680;
-x-ms-traffictypediagnostic: MWHPR15MB1680:
-x-ms-exchange-purlcount: 1
-x-microsoft-antispam-prvs: <MWHPR15MB168014F63099ECB773320F51B3A30@MWHPR15MB1680.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2803;
-x-forefront-prvs: 014304E855
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(346002)(366004)(39860400002)(54534003)(189003)(199004)(53936002)(6506007)(14444005)(53546011)(4326008)(478600001)(102836004)(186003)(71200400001)(50226002)(76176011)(71190400001)(6916009)(99286004)(256004)(305945005)(229853002)(81166006)(81156014)(6306002)(54906003)(7736002)(66946007)(8676002)(25786009)(33656002)(6116002)(6436002)(966005)(57306001)(86362001)(6486002)(486006)(476003)(2616005)(14454004)(36756003)(5660300002)(46003)(316002)(8936002)(66446008)(2906002)(64756008)(76116006)(66476007)(446003)(66556008)(6512007)(6246003)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1680;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: V/VvpF2zBbswliPsotJZGhwTAbck7LYkbeHQMUNwgN7zIdbuDUu2Bqs0/HAtNrhABICftBJQzgX9skdZ2veVhlLiuehr9TPe4XlNgnXPjKBqWziTiWV72llO/wepKC9urnlTm+3s8mjT167/klpm0KtFN5+85jrNBEGo9WAjHWQTMgsdts2uT62VRebY98HQCG0BRffWauRSfXQeqeASd7vZJnyx6G+gvWoQkQ3wrUSj8bAXUy8OuVTRkNQMC9F3gWSufeDVbEC15FKeB/XfCI+tMfzBud2cDwbxJUdxd3FRRPifVCbebvau8y7BsA1Jz+YXkRNbR1K7iqTpJ++bZEZI5rLjS8ahHK6TbPfzgwiZazkQUDYEi5kH23sGpkO8E6Cch6vJJv2zmj3Ogm0AeJM4u9Zevx23XkrpLOPl3Wc=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <BFDEBCF37323BA46B5E8877AE7E95798@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 28 Aug 2019 16:33:03 -0400
+Received: by mail-wr1-f47.google.com with SMTP id j16so1100897wrr.8;
+        Wed, 28 Aug 2019 13:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TISg0muwB2M2Jy6luhj9/zvgyEU+woHzKtCqNGSYKTI=;
+        b=HcqbNyQHmf9ViGyfpvW68rz0SbDibwmKr1gY8yiqrYO3eiX4GhflOkCrC+KPqa4WZv
+         pJL+rIGRl2PU5cPMi6Vb1NO+HM2r7LovMxl2szuj0r3yCgVxe+/bJgMzInpWC4d86daw
+         5+HRlzoCXTCufoaIxlPQ7Frgnyo2/G3CNrpxSlgUdXEItJZUeu0ScGBUwxlL2EONU8Gg
+         lmtbEmOquEZA4BgC6VJhW4WVjDQiFyxK1GPcwQ4TbUoZGLZY5P4MHODolXYgrLGpLAVK
+         MfvswrouRzYta1BonQCK5ZCvtBOzdIQG68HNTwjtzQDFxVSIdmv3sRY+2ijtpqCAQu6R
+         YsDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=TISg0muwB2M2Jy6luhj9/zvgyEU+woHzKtCqNGSYKTI=;
+        b=H2Ik5Q5ctAvR9RuOL1xikvXHFi7tIArlpLGmXIlkF7eE16vXCQN2TjsPI23sDft6+h
+         HZc81J+wtd1BIE+c2NERyijTpTOyYRte7/oj+dz740IS5fmMiVyCft+2tlLDfKVRB6ZD
+         dkNNQ0u2EWYXWV0xQYKEZwb2HggU6EadHO34dZQ/5BrYEBf9vIjvv5I3XjpLBfW6pAhx
+         RF2AgtyVDGGaTCX31PgcgZzC/ZQvdetDl9flqdz7lSy8NjIqsJdWTKZh3wgTcEKvrArg
+         tt02pD9B7/GHn5tHTiJ43SQ+G9TuBWgp9c0xMg8c7AkjJB5dJy3pkYBU5TEcFM6s8DDG
+         xwDw==
+X-Gm-Message-State: APjAAAUeziV8l0QXP58KU3pdjdTEMxJXnl/p51FEMysjTIMeMtl1al6P
+        Apw3wmh3FIwp8uALVP8ui7KeaYti
+X-Google-Smtp-Source: APXvYqyI1O5W8Pflp/nPGRoUDkiOrgSPDd4wiXnnJf55xe7Nv0V2q7lqo7IIPndE/pqnQiUOa2MRPA==
+X-Received: by 2002:adf:9043:: with SMTP id h61mr6838369wrh.247.1567024379945;
+        Wed, 28 Aug 2019 13:32:59 -0700 (PDT)
+Received: from [192.168.1.19] (chg13.neoplus.adsl.tpnet.pl. [83.31.4.13])
+        by smtp.gmail.com with ESMTPSA id p11sm334335wrx.9.2019.08.28.13.32.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Aug 2019 13:32:59 -0700 (PDT)
+Subject: Re: [FYI] lm3532: right registration to work with LED-backlight
+To:     Pavel Machek <pavel@ucw.cz>, Tony Lindgren <tony@atomide.com>,
+        kernel list <linux-kernel@vger.kernel.org>, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Cc:     Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+References: <20190827215205.59677-1-tony@atomide.com>
+ <20190828085339.GB2923@amd>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c3ac1863-9cdb-1ba6-d5a4-df1c4cfecbe1@gmail.com>
+Date:   Wed, 28 Aug 2019 22:32:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8d2d0e8-2346-4010-d979-08d72bf6e77f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2019 20:32:54.0859
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XgIDyfthePOkY1IvmW0utijjtHa7JFe2HNfl6B0HwhGXMqtfTDh737sgHsT90NFeqZhVvzOnXkfatY+F6PjPTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1680
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-08-28_10:2019-08-28,2019-08-28 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 clxscore=1015
- priorityscore=1501 mlxscore=0 phishscore=0 mlxlogscore=999 impostorscore=0
- adultscore=0 lowpriorityscore=0 suspectscore=0 malwarescore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1908280202
-X-FB-Internal: deliver
+In-Reply-To: <20190828085339.GB2923@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 8/28/19 10:53 AM, Pavel Machek wrote:
+> Hi!
+> 
+> Eventually, these will be needed.
+> 
+> Best regards,
+> 								Pavel
+> 
+> commit 38d956977a7d6cbdc811676f9b4033da7487e045
+> Author: Pavel <pavel@ucw.cz>
+> Date:   Wed Aug 7 12:43:52 2019 +0200
+> 
+>     d4: lm3532 needs to use right register function for backlight to work.
+> 
+> diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+> index 365a22a5..f98e657 100644
+> --- a/drivers/leds/leds-lm3532.c
+> +++ b/drivers/leds/leds-lm3532.c
+> @@ -629,7 +629,7 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+>  
+>  		lm3532_init_registers(led);
+>  
+> -		ret = devm_led_classdev_register(priv->dev, &led->led_dev);
+> +		ret = devm_of_led_classdev_register(priv->dev, to_of_node(child), &led->led_dev);
 
+We no longer have devm_of_led_classdev_register(). You must use
+devm_led_classdev_register_ext().
 
-> On Aug 28, 2019, at 1:05 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
->=20
-> On Wed, 28 Aug 2019, Song Liu wrote:
->>> On Aug 28, 2019, at 8:51 AM, Thomas Gleixner <tglx@linutronix.de> wrote=
-:
->>>=20
->>> On Wed, 28 Aug 2019, Dave Hansen wrote:
->>>> On 8/28/19 7:24 AM, Thomas Gleixner wrote:
->>>>> From: Song Liu <songliubraving@fb.com>
->>>>>=20
->>>>> pti_clone_pmds() assumes that the supplied address is either:
->>>>>=20
->>>>> - properly PUD/PMD aligned
->>>>> or
->>>>> - the address is actually mapped which means that independent
->>>>>  of the mapping level (PUD/PMD/PTE) the next higher mapping
->>>>>  exist.
->>>>>=20
->>>>> If that's not the case the unaligned address can be incremented by PU=
-D or
->>>>> PMD size wrongly. All callers supply mapped and/or aligned addresses,=
- but
->>>>> for robustness sake, it's better to handle that case proper and to em=
-it a
->>>>> warning.
->>>>=20
->>>> Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
->>>>=20
->>>> Song, did you ever root-cause the performance regression?  I thought
->>>> there were still some mysteries there.
->>>=20
->>> See Peter's series to rework the ftrace code patching ...
->>=20
->> Thanks Thomas.=20
->>=20
->> Yes, in summary, enabling ftrace or kprobe-on-ftrace causes the kernel
->> to split PMDs in kernel text mapping.=20
->>=20
->> Related question: while Peter's patches fix it for 5.3 kernel, they don'=
-t=20
->> apply cleanly over 5.2 kernel (which we are using). So I wonder what is
->> the best solution for 5.2 kernel. May patch also fixes the issue:
->>=20
->> https://lore.kernel.org/lkml/20190823052335.572133-1-songliubraving@fb.c=
-om/
->>=20
->> How about we apply this patch to upstream 5.2 kernel?
->=20
-> That's not how it works. We fix stuff upstream and it gets backported to
-> all affected kernels not just to the one you care about.
-
-Agreed. I am trying to back port Peter's patch set to 5.2 kernel. There=20
-are 9 dependencies and some manual changes.=20
-
->=20
-> Aside of that I really disagree with that hack. You completely fail to
-> explain why that commit in question broke it and instead of fixing the
-> underlying issue you create a horrible workaround.
->=20
-> It took me ~10 minutes to analyze the root cause and I'm just booting the
-> test box with a proper fix which can be actually tagged for stable and ca=
-n
-> be removed from upstream again once ftrace got moved over to text poke.
->=20
-> I'll post it once it's confirmed to work and I wrote a comprehensible
-> changelog.
-
-This sounds great. Thanks!
-
-Song
-
+-- 
+Best regards,
+Jacek Anaszewski
