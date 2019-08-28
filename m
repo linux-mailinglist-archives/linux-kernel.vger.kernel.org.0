@@ -2,114 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47430A0E40
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 01:37:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30BF9A0E49
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 01:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbfH1Xht convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 28 Aug 2019 19:37:49 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42044 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbfH1Xhs (ORCPT
+        id S1727139AbfH1XjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 19:39:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28312 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726926AbfH1XjO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 19:37:48 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j7so1575123ota.9;
-        Wed, 28 Aug 2019 16:37:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=0WiNNlZ19WAx+O8CTTiGYwNeR0ZDw2Ysbv/e1WoYV9o=;
-        b=NzkWW2rEUGn2hm/+Q47nfXQgS+iditfvHFjoCGWPnNViisDyUh6UvUmPOb65gsI/lF
-         zuaC7Xxrb5ctQXyRUOOyy/h1IwuZvE+zN4e3+oNsKirgxmXjvDpQQXuozaSvDkdVg9Cp
-         yqPjw/dg3dbI5/Ygmw+SLiOVx47+r9hQ2+sKrFCE54kekC0uAUDSjJmNq6a5x6LsTtsu
-         t12qTTd4XdWTL3BcYPeHfY0uNf3s5O6GBh3ASBHgNsaucY/E2wgXzYBjfv4zt9AfAxZN
-         4SVn5aoXJzcyXIZnLGEEcgVqdSk4nwYWL5ekaqJR/FcezLmm0qPxIUvNLOvGGgnXydFk
-         38Lw==
-X-Gm-Message-State: APjAAAXVjpTOUYRSE1sEn6DzPM323ZmQx3fqTW7nN/MexHDcm2EkcxuP
-        D9oo/0mzQclC1WrxeqBTfNX2zuOryNHIvMGHkkM=
-X-Google-Smtp-Source: APXvYqxk5XxurJ7D0mvitMxzIf9FQRgo2vpruN5+wj43N/LYuGLxqqtW3SsJxC+VaDntTllf2UOHc/U87dV9dPOR7W8=
-X-Received: by 2002:a9d:12d1:: with SMTP id g75mr5311313otg.189.1567035467967;
- Wed, 28 Aug 2019 16:37:47 -0700 (PDT)
+        Wed, 28 Aug 2019 19:39:14 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SNcMW2108916;
+        Wed, 28 Aug 2019 19:39:03 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2up054dncw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 19:39:03 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7SNd2Km110429;
+        Wed, 28 Aug 2019 19:39:02 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2up054dncn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 19:39:02 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7SNZnOs031535;
+        Wed, 28 Aug 2019 23:39:01 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma01dal.us.ibm.com with ESMTP id 2unb3t123g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 23:39:01 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SNd0I639190984
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 23:39:00 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D0ABE112062;
+        Wed, 28 Aug 2019 23:39:00 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A5344112061;
+        Wed, 28 Aug 2019 23:38:58 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.85.128.122])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Wed, 28 Aug 2019 23:38:58 +0000 (GMT)
+References: <1567005240-12912-1-git-send-email-zohar@linux.ibm.com>
+User-agent: mu4e 1.2.0; emacs 26.2
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, Petr Vorel <pvorel@suse.cz>,
+        Jessica Yu <jeyu@kernel.org>, Dave Young <dyoung@redhat.com>,
+        shuah <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] sefltest/ima: support appended signatures (modsig)
+In-reply-to: <1567005240-12912-1-git-send-email-zohar@linux.ibm.com>
+Date:   Wed, 28 Aug 2019 20:38:54 -0300
+Message-ID: <87o908eu7l.fsf@morokweng.localdomain>
 MIME-Version: 1.0
-References: <1564643196-7797-1-git-send-email-wanpengli@tencent.com>
- <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com> <c3fe182f-627f-88ad-cb4d-a4189202b438@redhat.com>
- <20190803202058.GA9316@amt.cnet> <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
- <20190826204045.GA24697@amt.cnet> <CANRm+Cx0+V67Ek7FhSs61ZqZL3MgV88Wdy17Q6UA369RH7=dgQ@mail.gmail.com>
- <CANRm+CxqYMzgvxYyhZLmEzYd6SLTyHdRzKVaSiHO-4SV+OwZUQ@mail.gmail.com>
- <CAJZ5v0iQc0-WzqeyAh-6m5O-BLraRMj+Z7sqvRgGwh2u2Hp7cg@mail.gmail.com> <20190828143916.GA13725@amt.cnet>
-In-Reply-To: <20190828143916.GA13725@amt.cnet>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 29 Aug 2019 01:37:35 +0200
-Message-ID: <CAJZ5v0jiBprGrwLAhmLbZKpKUvmKwG9w4_R7+dQVqswptis5Qg@mail.gmail.com>
-Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when dedicated
- physical CPUs are available
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Wanpeng Li <kernellwp@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=762 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908280219
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 4:39 PM Marcelo Tosatti <mtosatti@redhat.com> wrote:
+
+Hello Mimi,
+
+Mimi Zohar <zohar@linux.ibm.com> writes:
+
+> In addition to the PE/COFF and IMA xattr signatures, the kexec kernel
+> image can be signed with an appended signature, using the same
+> scripts/sign-file tool that is used to sign kernel modules.
 >
-> On Wed, Aug 28, 2019 at 10:45:44AM +0200, Rafael J. Wysocki wrote:
-> > On Wed, Aug 28, 2019 at 10:34 AM Wanpeng Li <kernellwp@gmail.com> wrote:
-> > >
-> > > On Tue, 27 Aug 2019 at 08:43, Wanpeng Li <kernellwp@gmail.com> wrote:
-> > > >
-> > > > Cc Michael S. Tsirkin,
-> > > > On Tue, 27 Aug 2019 at 04:42, Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> > > > >
-> > > > > On Tue, Aug 13, 2019 at 08:55:29AM +0800, Wanpeng Li wrote:
-> > > > > > On Sun, 4 Aug 2019 at 04:21, Marcelo Tosatti <mtosatti@redhat.com> wrote:
-> > > > > > >
-> > > > > > > On Thu, Aug 01, 2019 at 06:54:49PM +0200, Paolo Bonzini wrote:
-> > > > > > > > On 01/08/19 18:51, Rafael J. Wysocki wrote:
-> > > > > > > > > On 8/1/2019 9:06 AM, Wanpeng Li wrote:
-> > > > > > > > >> From: Wanpeng Li <wanpengli@tencent.com>
-> > > > > > > > >>
-> > > > > > > > >> The downside of guest side polling is that polling is performed even
-> > > > > > > > >> with other runnable tasks in the host. However, even if poll in kvm
-> > > > > > > > >> can aware whether or not other runnable tasks in the same pCPU, it
-> > > > > > > > >> can still incur extra overhead in over-subscribe scenario. Now we can
-> > > > > > > > >> just enable guest polling when dedicated pCPUs are available.
-> > > > > > > > >>
-> > > > > > > > >> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > > > > >> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > > > > > > > >> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> > > > > > > > >> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> > > > > > > > >> Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
-> > > > > > > > >
-> > > > > > > > > Paolo, Marcelo, any comments?
-> > > > > > > >
-> > > > > > > > Yes, it's a good idea.
-> > > > > > > >
-> > > > > > > > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-> > >
-> > > Hi Marcelo,
-> > >
-> > > If you don't have more concern, I guess Rafael can apply this patch
-> > > now since the merge window is not too far.
-> >
-> > I will likely queue it up later today and it will go to linux-next
-> > early next week.
-> >
-> > Thanks!
+> This patch adds support for detecting a kernel image signed with an
+> appended signature and updates the existing test messages
+> appropriately.
 >
-> NACK patch.
+> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 
-I got an ACK from Paolo on it, though.  Convince Paolo to withdraw his
-ACK if you want it to not be applied.
+Thanks for doing this!
 
-> Just don't load the haltpoll driver.
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 
-And why would that be better?
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
