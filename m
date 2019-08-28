@@ -2,66 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FB18A0DFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 01:00:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4A8A0E03
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 01:03:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfH1XAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 19:00:33 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:38366 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726658AbfH1XAd (ORCPT
+        id S1727116AbfH1XDK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 19:03:10 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45768 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbfH1XDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 19:00:33 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8601614522EEF;
-        Wed, 28 Aug 2019 16:00:32 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 16:00:32 -0700 (PDT)
-Message-Id: <20190828.160032.599086044004802986.davem@davemloft.net>
-To:     benwei@fb.com
-Cc:     sam@mendozajonas.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
-Subject: Re: [PATCH net-next] net/ncsi: add response handlers for PLDM over
- NC-SI
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <CH2PR15MB3686302D8210855E5AB643B1A3A00@CH2PR15MB3686.namprd15.prod.outlook.com>
-References: <CH2PR15MB3686302D8210855E5AB643B1A3A00@CH2PR15MB3686.namprd15.prod.outlook.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Wed, 28 Aug 2019 19:03:10 -0400
+Received: by mail-ed1-f66.google.com with SMTP id x19so1765144eda.12
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 16:03:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=819swzQKe98LdzJrxDCxiGarxJHyCdbjjXG7zzq6Gf4=;
+        b=QubqZWHDcswIDRZ8UX5aJXD/sm3fEumW25hWHLvukFM819Yknc/uzen5kBObQFjrdN
+         XmFszcsJ+GPcabhUnQT1QZN/w+PEpinIsaoZaVN3ECc0kcf60/vQ8pnlJD8N6G5S45ds
+         U4nOHX9dKdLgiNdKat17I/2K1IKRnkemIE5FRUhHjwIWSZvpT49XEePRucm0LPPssiP/
+         eNrQgiMr4oO3n1I2TRi1W8epuOB/BSo2TQ4NXTwQ9tMoyIUsSMYyQOtgjCD4HdSNHI45
+         Q1uGRcf12BioBGyMHqAyd0jv/HvOl73jHciadrnImwkS3urwM1/v69qBrZiTpCMpl7ns
+         7hHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=819swzQKe98LdzJrxDCxiGarxJHyCdbjjXG7zzq6Gf4=;
+        b=ThKWyBjQCVWJYbU3KmQxgE0/ZExAuHZLzYZMDvq52lmSsbmt1x7aZxmuyIzo/hzhsj
+         90Yd+WrMGqbZxF16N4DAOqGODDCn3bs46LojwvRsiV0JAh/kmMVZ5r+XLdO1r/w6ZrdZ
+         QeE1+3KS4xF6FVsN+T9yC4osW0XjtWjOyYXTc3XnrfutMLT/xAVeYInLuKrCKa2y7TRV
+         JKQKZg2z8txVC5P/YPxJZc5sb3XnyxbPRQHnjvqcbIYcs5F3mmZen7T2E9ivJlDjXsLa
+         /C2IAS5BfvZqgmJpyM7EulietVHvrK79nfPtcHjRHkoxZ7vACUMqBXdFsbdV0fOXxlN3
+         jmKQ==
+X-Gm-Message-State: APjAAAWMs3XQssMLn8sAlhoK+tOeAQZZ39nWbRtNjeg3AVtJZ6DNMKVQ
+        /xOzfeuKn60JnbiLomUVDKF/7A==
+X-Google-Smtp-Source: APXvYqwBNeZBsZAb2QiHZ3ka+pGiYcIhUqd3Va0L+/ypOzKgUthP1oIon5KcXep4ANSKBdqvf6IDlg==
+X-Received: by 2002:a50:9116:: with SMTP id e22mr6723578eda.161.1567033388739;
+        Wed, 28 Aug 2019 16:03:08 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id f6sm96846edn.63.2019.08.28.16.03.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 16:03:08 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 16:02:46 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 06/15] net: sgi: ioc3-eth: get rid of
+ ioc3_clean_rx_ring()
+Message-ID: <20190828160246.7b211f8a@cakuba.netronome.com>
+In-Reply-To: <20190828140315.17048-7-tbogendoerfer@suse.de>
+References: <20190828140315.17048-1-tbogendoerfer@suse.de>
+        <20190828140315.17048-7-tbogendoerfer@suse.de>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 28 Aug 2019 16:00:32 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Wei <benwei@fb.com>
-Date: Tue, 27 Aug 2019 23:03:53 +0000
-
-> This patch adds handlers for PLDM over NC-SI command response.
+On Wed, 28 Aug 2019 16:03:05 +0200, Thomas Bogendoerfer wrote:
+> Clean rx ring is just called once after a new ring is allocated, which
+> is per definition clean. So there is not need for this function.
 > 
-> This enables NC-SI driver recognizes the packet type so the responses don't get dropped as unknown packet type.
+> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> ---
+>  drivers/net/ethernet/sgi/ioc3-eth.c | 21 ---------------------
+>  1 file changed, 21 deletions(-)
 > 
-> PLDM over NC-SI are not handled in kernel driver for now, but can be passed back to user space via Netlink for further handling.
-> 
-> Signed-off-by: Ben Wei <benwei@fb.com>
+> diff --git a/drivers/net/ethernet/sgi/ioc3-eth.c b/drivers/net/ethernet/sgi/ioc3-eth.c
+> index 6ca560d4ab79..39631e067b71 100644
+> --- a/drivers/net/ethernet/sgi/ioc3-eth.c
+> +++ b/drivers/net/ethernet/sgi/ioc3-eth.c
+> @@ -761,26 +761,6 @@ static void ioc3_mii_start(struct ioc3_private *ip)
+>  	add_timer(&ip->ioc3_timer);
+>  }
+>  
+> -static inline void ioc3_clean_rx_ring(struct ioc3_private *ip)
+> -{
+> -	struct ioc3_erxbuf *rxb;
+> -	struct sk_buff *skb;
+> -	int i;
+> -
+> -	for (i = ip->rx_ci; i & 15; i++) {
+> -		ip->rx_skbs[ip->rx_pi] = ip->rx_skbs[ip->rx_ci];
+> -		ip->rxr[ip->rx_pi++] = ip->rxr[ip->rx_ci++];
+> -	}
+> -	ip->rx_pi &= RX_RING_MASK;
+> -	ip->rx_ci &= RX_RING_MASK;
+> -
+> -	for (i = ip->rx_ci; i != ip->rx_pi; i = (i + 1) & RX_RING_MASK) {
+> -		skb = ip->rx_skbs[i];
+> -		rxb = (struct ioc3_erxbuf *)(skb->data - RX_OFFSET);
+> -		rxb->w0 = 0;
 
-I don't know why but patchwork puts part of your patch into the commit message, see:
+There's gotta be some purpose to setting this w0 word to zero no?
+ioc3_rx() uses that to see if the descriptor is done, and dutifully
+clears it after..
 
-https://patchwork.ozlabs.org/patch/1154104/
+> -	}
+> -}
+> -
+>  static inline void ioc3_clean_tx_ring(struct ioc3_private *ip)
+>  {
+>  	struct sk_buff *skb;
+> @@ -860,7 +840,6 @@ static void ioc3_init_rings(struct net_device *dev)
+>  	ioc3_free_rings(ip);
+>  	ioc3_alloc_rings(dev);
+>  
+> -	ioc3_clean_rx_ring(ip);
+>  	ioc3_clean_tx_ring(ip);
+>  
+>  	/* Now the rx ring base, consume & produce registers.  */
 
-It's probably an encoding issue or similar.
-
-> +static int ncsi_rsp_handler_pldm(struct ncsi_request *nr) {
-> +	return 0;
-> +}
-> +
->  static int ncsi_rsp_handler_netlink(struct ncsi_request *nr)  {
-
-I know other functions in this file do it, but please put the openning
-curly braces of a function on a separate line.
-
-Thank you.
