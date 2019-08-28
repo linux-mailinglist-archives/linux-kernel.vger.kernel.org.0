@@ -2,270 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67747A0224
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:48:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E4AA022C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfH1Mr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 08:47:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45820 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbfH1Mr5 (ORCPT
+        id S1726549AbfH1MtX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 08:49:23 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41457 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726410AbfH1MtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 08:47:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yo8ksqnEdWgOiS8sAppighLlFSGFqNAL1t3ArNRPpJo=; b=r2UC0aW9eqIw0+a2m7yQZmq/r
-        4c4MTWXyyZvHAzXtuaKaMHRgEfLkxiHfJ+sdktKPL/NOPc9W+JXWwfDY1S1Z4MsTog0HHOHrPQSj7
-        +uO2h5BdOAYxBExgrQ798Ap9wh+BCJe1lneyjdIpxY/yPQR5jmg7PTtHhGF6mA7Jowe20cbySGp72
-        sTiFapICYcQmY7lnuJ9HZRQmpWD9i+fjtzxuMz3IrC5BEkTN5KNBr9yOozWnjN3vPvdGCI2imFdbf
-        AkyzbTf9P3A5GXTfHAl6hMpHZM+n5U4UX75eE3LwvobhmE5QHIgVyUGKfavmIUBToI47wiFXlx5Av
-        akpIROLEQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i2xMT-0003s8-Nl; Wed, 28 Aug 2019 12:47:42 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BD2E03070F4;
-        Wed, 28 Aug 2019 14:47:04 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B3AF320C7995E; Wed, 28 Aug 2019 14:47:38 +0200 (CEST)
-Date:   Wed, 28 Aug 2019 14:47:38 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Kim Phillips <kim.phillips@amd.com>
-Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
-        Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Stephane Eranian <eranian@google.com>,
-        Martin Liska <mliska@suse.cz>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: Re: [RFC] perf/x86/amd: add support for Large Increment per Cycle
- Events
-Message-ID: <20190828124738.GN2332@hirez.programming.kicks-ass.net>
-References: <20190826195915.30680-1-kim.phillips@amd.com>
+        Wed, 28 Aug 2019 08:49:20 -0400
+Received: by mail-lf1-f68.google.com with SMTP id j4so2048361lfh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 05:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Zlkz8KUfDT8cC4jOhmIeSJINsnWdWSyOo+2Oixz/yYs=;
+        b=CEH/2rsPg2RAJzBYTHoa+XO5U2t7zjT6RLrxTXq1QnhwFU+qH7obrd3ZUvIGEJTKh9
+         jACanixwWe4ptM6SADDhk04KKtwebYbPeXduxEKbP/CxbjYK1beusXiHESDfbZj/ioT2
+         8GxAB6JIyk3PzqIhR/zXF51yfSVgc48MEJi+c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Zlkz8KUfDT8cC4jOhmIeSJINsnWdWSyOo+2Oixz/yYs=;
+        b=EM1lb5by5n3X5NuYKfOdZNhKOSAUgyFeeQvR2zAvGRFyOOC/vpWfnblfoH56v7T0Ba
+         PeRmwKIAK93KO3AZ42CQfU9wb8Psz8feQf/HGqE65GKPluVpP61lxpnc2u9VfHiuvyBz
+         L3FveESWYL0ew9C8sSy0BGBwBCd1idz3KWhIdQRWLcozvocvOqiThqaR/AeHAhAx2m1G
+         /NcNZr5jyQ7QAC9WXCe/68oahRBItODm5aw+zi4QssGy/ffUt5wULiTceRzz96M2cXv/
+         dinCKNNjD4BSwr3D+YBdv/dXETi/0WeGtdI3qBTzw8ECFUicEnqD+ZNdwZ0mMIEgjTln
+         qBUw==
+X-Gm-Message-State: APjAAAWqjiX5g/EW/tJZoCk/Y2scxqlB18JeeGaXVpNFZ9xJaQ7V/Y3S
+        q0M99I9nYI1dDtLThZR4FlBw3rUAVlmGCYwR
+X-Google-Smtp-Source: APXvYqyuyR7dqvFwYw4L2nqcfsgayKXert43eSrWPgU+L10hsDn9DiY2Z/FGPBUwry5rRf6lR4ufwQ==
+X-Received: by 2002:a19:6d02:: with SMTP id i2mr2502485lfc.191.1566996557855;
+        Wed, 28 Aug 2019 05:49:17 -0700 (PDT)
+Received: from [172.16.11.28] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id b30sm814534lfq.59.2019.08.28.05.49.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Aug 2019 05:49:17 -0700 (PDT)
+Subject: Re: [PATCH v2] vsprintf: introduce %dE for error constants
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Enrico@kleine-koenig.org,
+        Weigelt@kleine-koenig.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        metux IT consult <lkml@metux.net>,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190827211244.7210-1-uwe@kleine-koenig.org>
+ <20190828113216.p2yiha4xyupkbcbs@pathway.suse.cz> <87o9097bff.fsf@intel.com>
+ <20190828120246.GA31416@jagdpanzerIV>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <087e8e18-8044-27ef-b0bd-8a1093f53b32@rasmusvillemoes.dk>
+Date:   Wed, 28 Aug 2019 14:49:15 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826195915.30680-1-kim.phillips@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190828120246.GA31416@jagdpanzerIV>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 02:59:15PM -0500, Kim Phillips wrote:
-> The core AMD PMU has a 4-bit wide per-cycle increment for each
-> performance monitor counter.  That works for most counters, but
-> now with AMD Family 17h and above processors, for some, more than 15
-> events can occur in a cycle.  Those events are called "Large
-> Increment per Cycle" events, and one example is the number of
-> SSE/AVX FLOPs retired (event code 0x003).  In order to count these
-> events, two adjacent h/w PMCs get their count signals merged
-> to form 8 bits per cycle total. 
-
-*groan*
-
-> In addition, the PERF_CTR count
-> registers are merged to be able to count up to 64 bits.
-
-That is daft; why can't you extend the existing MSR to 64bit?
-
-> Normally, events like instructions retired, get programmed on a single
-> counter like so:
+On 28/08/2019 14.02, Sergey Senozhatsky wrote:
+> On (08/28/19 14:54), Jani Nikula wrote:
+> [..]
+>>> I personally think that this feature is not worth the code, data,
+>>> and bikeshedding.
+>>
+>> The obvious alternative, I think already mentioned, is to just add
+>> strerror() or similar as a function. I doubt there'd be much opposition
+>> to that. Folks could use %s and strerr(ret). And a follow-up could add
+>> the special format specifier if needed.
 > 
-> PERF_CTL0 (MSR 0xc0010200) 0x000000000053ff0c # event 0x0c, umask 0xff
-> PERF_CTR0 (MSR 0xc0010201) 0x0000800000000001 # r/w 48-bit count
-> 
-> The next counter at MSRs 0xc0010202-3 remains unused, or can be used
-> independently to count something else.
-> 
-> When counting Large Increment per Cycle events, such as FLOPs,
-> however, we now have to reserve the next counter and program the
-> PERF_CTL (config) register with the Merge event (0xFFF), like so:
-> 
-> PERF_CTL0 (msr 0xc0010200) 0x000000000053ff03 # FLOPs event, umask 0xff
-> PERF_CTR0 (msr 0xc0010201) 0x0000800000000001 # read 64-bit count, wr low 48b
-> PERF_CTL1 (msr 0xc0010202) 0x0000000f004000ff # Merge event, enable bit
-> PERF_CTR1 (msr 0xc0010203) 0x0000000000000000 # write higher 16-bits of count
-> 
-> The count is widened from the normal 48-bits to 64 bits by having the
-> second counter carry the higher 16 bits of the count in its lower 16
-> bits of its counter register.  Support for mixed 48- and 64-bit counting
-> is not supported in this version.
+> Yeah, I'd say that strerror() would be a better alternative
+> to vsprintf() specifier. (if we decide to add such functionality).
 
-This is diguisting.. please talk to your hardware people. I sort of
-understand the pairing, but that upper 16 bit split for writes is just
-woeful crap.
+Please no. The .text footprint of the changes at the call sites to do
+pr_err("...%s...", errcode(err)) instead of the current
+pr_err("...%d...", err) would very soon dwarf whatever is necessary to
+implement %pE or %dE. Also that would prevent any kind of graceful
+fallback in case err doesn't have a known value - errcode() would have
+to return some fixed "huh, unknown error number" string, so we'd lose
+the actual number.
 
-> For more details, search a Family 17h PPR for the "Large Increment per
-> Cycle Events" section, e.g., section 2.1.15.3 on p. 173 in this version:
-> 
-> https://www.amd.com/system/files/TechDocs/56176_ppr_Family_17h_Model_71h_B0_pub_Rev_3.06.zip
-
-My mama told me not to open random zip files of the interweb :-)
-
-Also; afaict the only additional information there is that it works in
-odd/even pairs and you have to program the odd one before the even one.
-Surely you could've included that here.
-
-> In order to support reserving the extra counter for a single Large
-> Increment per Cycle event in the perf core, we:
-> 
-> 1. Add a f17h get_event_constraints() that returns only an even counter
-> bitmask, since Large Increment events can only be placed on counters 0,
-> 2, and 4 out of the currently available 0-5.
-
-So hereby you promise that all LI events are unconstrained, right?
-Also, what marks the paired counter in the used mask? Aaah, you modify
-__perf_sched_find_counter(). Comments below.
-
-> 2. We add a commit_scheduler hook that adds the Merge event (0xFFF) to
-> any Large Increment event being scheduled.  If the event being scheduled
-> is not a Large Increment event, we check for, and remove any
-> pre-existing Large Increment events on the next counter.
-
-That is weird at best; the scheduling hooks shouldn't be the one doing
-the programming; that should be done in x86_pmu_enable(). Can't you do
-this by changing amd_pmu::{en,dis}able() ?
-
-(also; we really should rename some of those x86_pmu::ops :/)
-
-> 3. In the main x86 scheduler, we reduce the number of available
-> counters by the number of Large Increment per Cycle events being added.
-> This improves the counter scheduler success rate.
-> 
-> 4. In perf_assign_events(), if a counter is assigned to a Large
-> Increment event, we increment the current counter variable, so the
-> counter used for the Merge event is skipped.
-> 
-> 5. In find_counter(), if a counter has been found for the
-> Large Increment event, we set the next counter as used, to
-> prevent other events from using it.
-> 
-> A side-effect of assigning a new get_constraints function for f17h
-> disables calling the old (prior to f15h) amd_get_event_constraints
-> implementation left enabled by commit e40ed1542dd7 ("perf/x86: Add perf
-> support for AMD family-17h processors"), which is no longer
-> necessary since those North Bridge events are obsolete.
-
-> RFC because I'd like input on the approach, including how to add support
-> for mixed-width (48- and 64-bit) counting for a single PMU.
-
-Ideally I'd tell you to wait for sane hardware :/
-
-
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 325959d19d9a..4596c141f348 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -787,6 +787,18 @@ static bool __perf_sched_find_counter(struct perf_sched *sched)
->  		if (!__test_and_set_bit(idx, sched->state.used)) {
->  			if (sched->state.nr_gp++ >= sched->max_gp)
->  				return false;
-> +			if (c->flags & PERF_X86_EVENT_LARGE_INC) {
-
-Can we please call that something like:
-
-  PERF_X86_EVENT_PAIR
-
-> +				/*
-> +				 * merged events need the Merge event
-> +				 * on the next counter
-> +				 */
-> +				if (__test_and_set_bit(idx + 1,
-> +						       sched->state.used))
-> +					/* next counter already used */
-> +					return false;
-
-Coding Style wants { } there. Also, remove that line-break.
-
-> +
-> +				set_bit(idx + 1, sched->state.used);
-
-  __set_bit() surely
-
-> +			}
->  
->  			goto done;
->  		}
-> @@ -849,14 +861,20 @@ int perf_assign_events(struct event_constraint **constraints, int n,
->  			int wmin, int wmax, int gpmax, int *assign)
->  {
->  	struct perf_sched sched;
-> +	struct event_constraint *c;
-> +
->  
->  	perf_sched_init(&sched, constraints, n, wmin, wmax, gpmax);
->  
->  	do {
->  		if (!perf_sched_find_counter(&sched))
->  			break;	/* failed */
-> -		if (assign)
-> +		if (assign) {
->  			assign[sched.state.event] = sched.state.counter;
-> +			c = constraints[sched.state.event];
-> +			if (c->flags & PERF_X86_EVENT_LARGE_INC)
-> +				sched.state.counter++;
-> +		}
-
-How about you make __perf_sched_find_count() set the right value? That
-already knows it did this.
-
->  	} while (perf_sched_next_event(&sched));
->  
->  	return sched.state.unassigned;
-> @@ -952,6 +970,18 @@ int x86_schedule_events(struct cpu_hw_events *cpuc, int n, int *assign)
->  		    READ_ONCE(cpuc->excl_cntrs->exclusive_present))
->  			gpmax /= 2;
->  
-> +		/*
-> +		 * reduce the amount of available counters
-> +		 * to allow fitting the Merge event along
-> +		 * with their large increment event
-> +		 */
-> +		if (x86_pmu.flags & PMU_FL_MERGE) {
-> +			for (i = 0; i < n; i++) {
-> +				hwc = &cpuc->event_list[i]->hw;
-> +				if (is_lg_inc_event(hwc) && gpmax > 1)
-
-It should not be possible to hit !gpmax; make that a WARN.
-
-> +					gpmax--;
-> +			}
-
-Alternatively you could have collect_events() cound the number of
-'lg_inc' (we really have to come up with a better name) events on the
-cpuc. Then you can do a simple subtraction and avoid the loop.
-
-> +		}
->  		unsched = perf_assign_events(cpuc->event_constraint, n, wmin,
->  					     wmax, gpmax, assign);
->  	}
-> @@ -1210,6 +1240,13 @@ int x86_perf_event_set_period(struct perf_event *event)
->  
->  	wrmsrl(hwc->event_base, (u64)(-left) & x86_pmu.cntval_mask);
->  
-> +	/*
-> +	 * Clear the Merge event counter's upper 16 bits since
-> +	 * we currently declare a 48-bit counter width
-> +	 */
-> +	if (is_lg_inc_event(hwc))
-> +		wrmsrl(x86_pmu_event_addr(idx + 1), 0);
-> +
-
-*yuck*...
-
->  	/*
->  	 * Due to erratum on certan cpu we need
->  	 * a second write to be sure the register
+Rasmus
