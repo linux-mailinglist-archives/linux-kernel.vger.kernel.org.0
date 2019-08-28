@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 751B29FE1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4657A9FE05
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:12:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfH1JNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 05:13:01 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:25070 "EHLO
+        id S1726883AbfH1JMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 05:12:14 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:15642 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726586AbfH1JMF (ORCPT
+        with ESMTP id S1726829AbfH1JML (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 05:12:05 -0400
-X-UUID: 43435760c789432d9cf932b76ae369fb-20190828
-X-UUID: 43435760c789432d9cf932b76ae369fb-20190828
+        Wed, 28 Aug 2019 05:12:11 -0400
+X-UUID: 2ae563997998473bb4c35175723d4890-20190828
+X-UUID: 2ae563997998473bb4c35175723d4890-20190828
 Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 115752348; Wed, 28 Aug 2019 17:11:59 +0800
+        with ESMTP id 1484903483; Wed, 28 Aug 2019 17:12:05 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Wed, 28 Aug 2019 17:12:05 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Aug 2019 17:12:04 +0800
+ Transport; Wed, 28 Aug 2019 17:12:05 +0800
 From:   Weiyi Lu <weiyi.lu@mediatek.com>
 To:     Nicolas Boichat <drinkcat@chromium.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -35,97 +35,86 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
         Yong Wu <yong.wu@mediatek.com>
-Subject: [PATCH v7 07/13] soc: mediatek: Refactor bus protection control
-Date:   Wed, 28 Aug 2019 17:11:40 +0800
-Message-ID: <1566983506-26598-8-git-send-email-weiyi.lu@mediatek.com>
+Subject: [PATCH v7 08/13] soc: mediatek: Add basic_clk_id to scp_power_data
+Date:   Wed, 28 Aug 2019 17:11:41 +0800
+Message-ID: <1566983506-26598-9-git-send-email-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1566983506-26598-1-git-send-email-weiyi.lu@mediatek.com>
 References: <1566983506-26598-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: CECD0B24204F4528E02BAC5A3B092088CD14B0F68055E3EE39B9525D0F003D092000:8
+X-TM-SNTS-SMTP: E6B5C96125D7620786185AF5D1FF6231904B9FC270085098950D6576F90139692000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Put bus protection enable and disable control in separate functions.
+Try to stop extending the clk_id or clk_names if there are
+more and more new BASIC clocks. To get its own clocks by the
+basic_clk_id of each power domain.
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/soc/mediatek/mtk-scpsys.c | 44 ++++++++++++++++++++++++++-------------
- 1 file changed, 30 insertions(+), 14 deletions(-)
+ drivers/soc/mediatek/mtk-scpsys.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
-index ad0f619..fb2b027 100644
+index fb2b027..d31e1a4 100644
 --- a/drivers/soc/mediatek/mtk-scpsys.c
 +++ b/drivers/soc/mediatek/mtk-scpsys.c
-@@ -274,6 +274,30 @@ static int scpsys_sram_disable(struct scp_domain *scpd, void __iomem *ctl_addr)
- 			MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
- }
+@@ -117,6 +117,8 @@ enum clk_id {
+  * @sram_pdn_ack_bits: The mask for sram power control acked bits.
+  * @bus_prot_mask: The mask for single step bus protection.
+  * @clk_id: The basic clocks required by this power domain.
++ * @basic_clk_id: provide the same purpose with field "clk_id"
++ *                by declaring basic clock prefix name rather than clk_id.
+  * @caps: The flag for active wake-up action.
+  */
+ struct scp_domain_data {
+@@ -127,6 +129,7 @@ struct scp_domain_data {
+ 	u32 sram_pdn_ack_bits;
+ 	u32 bus_prot_mask;
+ 	enum clk_id clk_id[MAX_CLKS];
++	const char *basic_clk_id[MAX_CLKS];
+ 	u8 caps;
+ };
  
-+static int scpsys_bus_protect_enable(struct scp_domain *scpd)
-+{
-+	struct scp *scp = scpd->scp;
-+
-+	if (!scpd->data->bus_prot_mask)
-+		return 0;
-+
-+	return mtk_infracfg_set_bus_protection(scp->infracfg,
-+			scpd->data->bus_prot_mask,
-+			scp->bus_prot_reg_update);
-+}
-+
-+static int scpsys_bus_protect_disable(struct scp_domain *scpd)
-+{
-+	struct scp *scp = scpd->scp;
-+
-+	if (!scpd->data->bus_prot_mask)
-+		return 0;
-+
-+	return mtk_infracfg_clear_bus_protection(scp->infracfg,
-+			scpd->data->bus_prot_mask,
-+			scp->bus_prot_reg_update);
-+}
-+
- static int scpsys_power_on(struct generic_pm_domain *genpd)
- {
- 	struct scp_domain *scpd = container_of(genpd, struct scp_domain, genpd);
-@@ -316,13 +340,9 @@ static int scpsys_power_on(struct generic_pm_domain *genpd)
- 	if (ret < 0)
- 		goto err_pwr_ack;
+@@ -490,16 +493,26 @@ static struct scp *init_scp(struct platform_device *pdev,
  
--	if (scpd->data->bus_prot_mask) {
--		ret = mtk_infracfg_clear_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask,
--				scp->bus_prot_reg_update);
--		if (ret)
--			goto err_pwr_ack;
--	}
-+	ret = scpsys_bus_protect_disable(scpd);
-+	if (ret < 0)
-+		goto err_pwr_ack;
+ 		scpd->data = data;
  
- 	return 0;
+-		for (j = 0; j < MAX_CLKS && data->clk_id[j]; j++) {
+-			struct clk *c = clk[data->clk_id[j]];
++		if (data->clk_id[0]) {
++			WARN_ON(data->basic_clk_id[0]);
  
-@@ -344,13 +364,9 @@ static int scpsys_power_off(struct generic_pm_domain *genpd)
- 	u32 val;
- 	int ret, tmp;
+-			if (IS_ERR(c)) {
+-				dev_err(&pdev->dev, "%s: clk unavailable\n",
+-					data->name);
+-				return ERR_CAST(c);
+-			}
++			for (j = 0; j < MAX_CLKS && data->clk_id[j]; j++) {
++				struct clk *c = clk[data->clk_id[j]];
++
++				if (IS_ERR(c)) {
++					dev_err(&pdev->dev,
++						"%s: clk unavailable\n",
++						data->name);
++					return ERR_CAST(c);
++				}
  
--	if (scpd->data->bus_prot_mask) {
--		ret = mtk_infracfg_set_bus_protection(scp->infracfg,
--				scpd->data->bus_prot_mask,
--				scp->bus_prot_reg_update);
--		if (ret)
--			goto out;
--	}
-+	ret = scpsys_bus_protect_enable(scpd);
-+	if (ret < 0)
-+		goto out;
+-			scpd->clk[j] = c;
++				scpd->clk[j] = c;
++			}
++		} else if (data->basic_clk_id[0]) {
++			for (j = 0; j < MAX_CLKS &&
++					data->basic_clk_id[j]; j++)
++				scpd->clk[j] = devm_clk_get(&pdev->dev,
++						data->basic_clk_id[j]);
+ 		}
  
- 	ret = scpsys_sram_disable(scpd, ctl_addr);
- 	if (ret < 0)
+ 		genpd->name = data->name;
 -- 
 1.8.1.1.dirty
 
