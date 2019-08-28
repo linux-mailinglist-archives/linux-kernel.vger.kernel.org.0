@@ -2,96 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E66A9FFF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E03C9FFFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:35:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfH1Kce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 06:32:34 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44265 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbfH1Kcd (ORCPT
+        id S1726454AbfH1KfW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 06:35:22 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:9268 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726328AbfH1KfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 06:32:33 -0400
-Received: by mail-ed1-f66.google.com with SMTP id a21so2399070edt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 03:32:32 -0700 (PDT)
+        Wed, 28 Aug 2019 06:35:21 -0400
+Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
+  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="Tudor.Ambarus@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa6.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: bap3Z5+JViuosTgV+woFSqYaqXlR75JAZpx0xtJOzqEEuzFiu/gx7rz8i6JMxzl6skdIFMNLBd
+ 1YEj91QQxqeu8wffGLzm/U59uLzC0XtOxRc7nZtWGqO/17Btqa2MEOfWVyWekYk4FsmUC4S1ao
+ KMjkcH0LL2QeRjN6RzGG7dBmhE4O0urnvotOauAIjOHHsIGok/wlqMDIvt7LkzIYTP6goeyVj1
+ oLpl0zSCZEUM/dL43I7fhXnqXG/W/2d6U/qULzNt81TncZZNQrzyU6Tmh9OHCyg9spEsLx5H61
+ Jyg=
+X-IronPort-AV: E=Sophos;i="5.64,440,1559545200"; 
+   d="scan'208";a="43991246"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 28 Aug 2019 03:35:20 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 28 Aug 2019 03:35:19 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Wed, 28 Aug 2019 03:35:19 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ILEFVrg4kWG3wQpUWvH4u05YMo1nkLSBkofZICruwk6XqzyO5I59SlWyRSoCm0Ng1xsJUOGTi0N38gMWmwWiTTvTbHTW4KQGMFnPmr6E/Jd99t4SfyoMIx6AQucp2MrzB5DNyx0N1oUMGhIt5OP7gxhpIQf9Qg7lfyikrqKe0o/Z51DdxvH5p5hiGpfKEtuO5RU2g/R2Z1I3B4kIk28C+IMR9HXjhrjkxzAcub02VvuaDQegM5erTIbJt62AbCt/wPm9ZGRnuRcbhfMnNYA73uMrWI4RX4w1oFj4U0cIQDd+dRDO/JJcMrClCPwr8/+txFjQlgHvXm3Nkhepkgw1jA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m/tITCLgdK+8h8PCbWdZ60tSC6ptOCE/uUr+uAHlP5M=;
+ b=leMw8eJQzBSiv88Ju82nvEhrP4LeUOyQVpI6fon+cBH3yfUeyXlxrWnuBrRrydCOkiF4sUGvLHM7dMbA3aJvNhHAAwd4PAbAxND54bwV5ctno2Yyo5+EJWwN4QFuoiGTL7Rz9QoDgqwC7qHD5aR5yc8u2+syYCE3Z8coMSQgcONxTMp2iLVncRKL3xZTrGjSY54WNc5ur0Dbm48aZkgyX6aaXTMZ38rBZZ521rPzriuUKS2FiZ0zkqGFy8wzQMOS2sDXC0UeCDeRFqCt1r9mAm09/v5y35ckNZozkSInUgNouAubHw4tFwwpr8OGR3xE3V/6v8jJIG+ZUv/WVwk05A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=42lKVdjnjP4y6DAxlLSWlI9cd0CLM9DFEKL56/c6DVw=;
-        b=LdiAWQz8Af5L8jx+Wh3U4VqhqVfqQ2nc41g+8FcxYVXCVZgUhXbvRt4IkV8itEgTBW
-         gWFgViHvq+lZ9XXK7aoa9BEnyC+qauttQ/X34wCpfVIVMgf96bcioED+1DFVG6apguD4
-         AVpgddIDLb87Or3hp/EnVICZa3P1EsEx1sabaUWZQqJksQ1jHVZhpmquwmb10/Rhj/N8
-         tJ7arB02huszVrlcJtqiyIwF10FNfBxFNJSk26FXUdsPlH9Y/qsezyKWZXQ+2yLEYH8H
-         DdVYHdquI9Xu/lcf9SDLdVl9EFm8NhN5j4WM+wbL0e6zvmN0lUjIus1My77l9d9ihuhD
-         QpEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=42lKVdjnjP4y6DAxlLSWlI9cd0CLM9DFEKL56/c6DVw=;
-        b=nA68B1V0QIYAhbYJy1j6BB99bOJtGep1Mpgif1V7SvKUEhw8qVdFMuHNudOr3/9+uc
-         v4qJFpVvw0i2av7Ygf6+dm7t0tHaFXCGGVBtqKshPMC0V54enMuM2Q+H422k1spNhbWO
-         11D+xeZBxJj/r/dfpeLI6EsVV1fdtuCc4O5XFIRg975b9ux+iswzv6Tihmwi7nnORfWx
-         POu1XHF//vBVLRL3to03j8dOSp1MDox0avnGFuptkhp5GVkMZbndhEFdLmIfY2UddKGU
-         63uuriUMMg+vT5Ic6To0f2SZqkYyDW5Eo1p66ssrWj4xKtPLTqyONvWqu3RwrBOTbpYk
-         zzLQ==
-X-Gm-Message-State: APjAAAVX2WxUwU+zI0ejVBM8KygA8D3VB1l2HWca7KvaMu39/eo4OzVk
-        63Vz63t40X4NPDJnNFmELK1a8A==
-X-Google-Smtp-Source: APXvYqxtYAhqfsawL7tpy/qloMqvOXRgeb+f/jy3T/I1yom2OrgxLgDW7GEBfCJaXBk5T0R3jZNceg==
-X-Received: by 2002:a17:906:1944:: with SMTP id b4mr2528225eje.44.1566988351953;
-        Wed, 28 Aug 2019 03:32:31 -0700 (PDT)
-Received: from maco2.ams.corp.google.com (a83-162-234-235.adsl.xs4all.nl. [83.162.234.235])
-        by smtp.gmail.com with ESMTPSA id z9sm366543edr.54.2019.08.28.03.32.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 03:32:31 -0700 (PDT)
-From:   Martijn Coenen <maco@android.com>
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundatio.org, kernel-team@android.com,
-        narayan@google.com, dariofreni@google.com, ioffe@google.com,
-        jiyong@google.com, maco@google.com,
-        Martijn Coenen <maco@android.com>
-Subject: [PATCH] loop: change queue block size to match when using DIO.
-Date:   Wed, 28 Aug 2019 12:32:29 +0200
-Message-Id: <20190828103229.191853-1-maco@android.com>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m/tITCLgdK+8h8PCbWdZ60tSC6ptOCE/uUr+uAHlP5M=;
+ b=RiCGjpciRTEXgovCjQsFlOcEElLY6PV/d9FcFdVQlbJt7Tknyc4kI9O0PGSexJPSdnakYZjn+7KejgMfN8mVr3ogURpi+kNS+XkAqvZsxdW061ffvcQfH7OF7GP6t/wIB996r+ta+8kXj/4RvGB4txaNAbhUp9tfuSP/6yGcof8=
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
+ MN2PR11MB4333.namprd11.prod.outlook.com (10.255.90.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.21; Wed, 28 Aug 2019 10:35:17 +0000
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5]) by MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5%7]) with mapi id 15.20.2199.021; Wed, 28 Aug 2019
+ 10:35:17 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <marek.vasut@gmail.com>, <vigneshr@ti.com>,
+        <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC:     <Tudor.Ambarus@microchip.com>
+Subject: [PATCH] mtd: spi-nor: remove superfluous pass of
+ nor->info->sector_size
+Thread-Topic: [PATCH] mtd: spi-nor: remove superfluous pass of
+ nor->info->sector_size
+Thread-Index: AQHVXYxI0TEFgblBx06pcxDB5XcXng==
+Date:   Wed, 28 Aug 2019 10:35:17 +0000
+Message-ID: <20190828103423.8232-1-tudor.ambarus@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0501CA0042.eurprd05.prod.outlook.com
+ (2603:10a6:800:60::28) To MN2PR11MB4448.namprd11.prod.outlook.com
+ (2603:10b6:208:193::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.9.5
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e3ebab99-e779-4b87-021f-08d72ba36ae6
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR11MB4333;
+x-ms-traffictypediagnostic: MN2PR11MB4333:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR11MB43331FB7F0F7FF270C0C8327F0A30@MN2PR11MB4333.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1303;
+x-forefront-prvs: 014304E855
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(39860400002)(396003)(136003)(376002)(189003)(199004)(36756003)(2501003)(6116002)(3846002)(50226002)(66556008)(64756008)(102836004)(2906002)(8676002)(110136005)(107886003)(2201001)(81156014)(8936002)(7736002)(305945005)(14454004)(66066001)(478600001)(26005)(81166006)(6486002)(99286004)(486006)(6506007)(71190400001)(71200400001)(53936002)(256004)(52116002)(6512007)(86362001)(386003)(4326008)(25786009)(66946007)(1076003)(186003)(6436002)(5660300002)(476003)(316002)(2616005)(66476007)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB4333;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: a6GbMM/HNko2jGMhVOT+K+gpC/tacQPik1apbRQZGv1z1Yi17K87Hx4RE9GgHsKOn/7aR1ziQQ8YHX9ipfHsv2KNeFYA3tbVeWLXjCKu+pjml4Q9/x7nhyyvJRFc5oyzOQnnLbMh2EXNRReqfDR3iIVl4IRfhSY7fzq8sdRec/1T3vx3DuXS+DhZVaVDMMyO7nFYXkgqIoAXNMLbsAX0uPqgzvJ9gd3g6QQUACziY+3XxrP+twnQG0i2aWP09FpHXu+/4cHL9I7atb9fJgaHugKXdg8I2/we3URvBRodxGe65rPOi6gDW2f2DgIucoFyan2bO/ljziAajstrFgKoZZQ63qx6bZzyrTTauCdqHXFvgsdUHFdr0M5TOcOr9k0/+i4mYu+B9/rfe1Fd9PpuqcfW7CNFHE8G3DQTuCEICY4=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: e3ebab99-e779-4b87-021f-08d72ba36ae6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2019 10:35:17.3554
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SXj/95nFWPHStNSw7ZVyc8KBaD+C/tfrSkNzpjhec/H4Tkb8ViGdjbA9252YsFTm+/0D6tIQBfns67Z/MWN+r1pTWI4iblUfL6gGCust++Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4333
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The loop driver assumes that if the passed in fd is opened with
-O_DIRECT, the caller wants to use direct I/O on the loop device.
-However, if the underlying filesystem has a different block size than
-the loop block queue, direct I/O can't be enabled. Instead of requiring
-userspace to manually change the blocksize and re-enable direct I/O,
-just change the queue block size to match.
+From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-Signed-off-by: Martijn Coenen <maco@android.com>
+We already pass a pointer to nor, we can obtain the sector_size
+by dereferencing it.
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
 ---
- drivers/block/loop.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mtd/spi-nor/spi-nor.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index ab7ca5989097a..1138162ff6c4d 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -994,6 +994,12 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
- 	if (!(lo_flags & LO_FLAGS_READ_ONLY) && file->f_op->fsync)
- 		blk_queue_write_cache(lo->lo_queue, true, false);
- 
-+	if (io_is_direct(lo->lo_backing_file) && inode->i_sb->s_bdev) {
-+		/* In case of direct I/O, match underlying block size */
-+		blk_queue_logical_block_size(lo->lo_queue,
-+				bdev_logical_block_size(inode->i_sb->s_bdev));
-+	}
-+
- 	loop_update_rotational(lo);
- 	loop_update_dio(lo);
- 	set_capacity(lo->lo_disk, size);
--- 
-2.23.0.187.g17f5b7556c-goog
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 79c8f1dd8c6b..69532573dba9 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -4257,11 +4257,12 @@ spi_nor_select_uniform_erase(struct spi_nor_erase_m=
+ap *map,
+ 	return erase;
+ }
+=20
+-static int spi_nor_select_erase(struct spi_nor *nor, u32 wanted_size)
++static int spi_nor_select_erase(struct spi_nor *nor)
+ {
+ 	struct spi_nor_erase_map *map =3D &nor->params.erase_map;
+ 	const struct spi_nor_erase_type *erase =3D NULL;
+ 	struct mtd_info *mtd =3D &nor->mtd;
++	u32 wanted_size =3D nor->info->sector_size;
+ 	int i;
+=20
+ 	/*
+@@ -4355,7 +4356,7 @@ static int spi_nor_default_setup(struct spi_nor *nor,
+ 	}
+=20
+ 	/* Select the Sector Erase command. */
+-	err =3D spi_nor_select_erase(nor, nor->info->sector_size);
++	err =3D spi_nor_select_erase(nor);
+ 	if (err) {
+ 		dev_err(nor->dev,
+ 			"can't select erase settings supported by both the SPI controller and m=
+emory.\n");
+--=20
+2.9.5
 
