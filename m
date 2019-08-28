@@ -2,87 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54B68A0D35
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7F70A0D47
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:07:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfH1WGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 18:06:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:57203 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727175AbfH1WGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 18:06:38 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46JfwC0X4qz9sMr;
-        Thu, 29 Aug 2019 08:06:35 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567029997;
-        bh=PTTFXV1q8UF5UNG1JCDCm6SA8sLX3LbSw0/ECbtcDdM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=N+huXPqMqqG7I5uO7l9j2DWPXshWrM362tAujQft2NpuG5e9U5w54XYyrfMiwycka
-         yLR8aYvve/YIdguMvs4xDU/Qlar/6pLUs0T+VuQzbjd5M1TBuhqy3CWncdnaD5foVu
-         3K1eca3SE/dlEU4J2OVYRgbdcKUHJQZNpE0FxivyxcO1QeaBVQphOcHT3jdlp/efvq
-         LcPyi0ez7W2f3OjOfRdtIMsxna4zaAkmCxJ8IFUdSoyMhAixdTtZ46QfUaO08cnYyN
-         IrLUpxfEPhoCgYhapoRr5kG62RYNjEcqoW1nPDc14sgUoolhWrcPO+Vqo+KX+LFbGB
-         cGYqQGWABWiOQ==
-Date:   Thu, 29 Aug 2019 08:06:33 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bandan Das <bsd@redhat.com>
-Subject: linux-next: Fixes tag needs some work in the tip tree
-Message-ID: <20190829080633.07c7a422@canb.auug.org.au>
+        id S1727528AbfH1WHP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 18:07:15 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33483 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726907AbfH1WHO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 18:07:14 -0400
+Received: by mail-pl1-f193.google.com with SMTP id go14so599743plb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 15:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mt34mNKIrP8Htb1nVD5HqQKjSaQZQHcNYu8vWAeak1k=;
+        b=iH04IjDNGifHI7tT+hqPSbNJdrbhPMnWjA/w201hZzZdVVX/cuEXXNipMbU3zgzimK
+         Rr5MdpTySQRBJ/50mVA8WJQtJwIvYOvTLmCFYpMM5Xkl5xgpxwYV+k1WEoAZPv1tF9ea
+         W3XorqI6mJKqtfb3Yyr2rZuXFfy+EakKbjMzpqXPW9PdnSctAXvVU70zZygvKmli/uH2
+         J2sVWzdC+StG1KOXlEWjjicrCgkgVnE3RcpITVkUwk67za3DbaMgol3Voqrv4n83Mw7E
+         tQPmRKc1Qg+3qzEsFlCUyqK5yB4RrTirlGpbHpanixhj3zQMFJ5vGvCAaXU0kmDhSnw6
+         nBGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mt34mNKIrP8Htb1nVD5HqQKjSaQZQHcNYu8vWAeak1k=;
+        b=GeBrbJomDykDGE6K1NqnjeLGygECK6mqz/b8XdmqYzMuB3drfb7OTwT2o3pCYFI4ZA
+         SxUjsY79ETIq/3QMm37QoyqX06W5W609PCka5iXuDc+hrhex9QaJk4BGOantyfHNLjRC
+         s5gO0DBWIiy5FhG2Qak6K1cGEDfmnYzFMkDprJr+VvVMR+X1dn1lVMLiFAPj//TRJNMT
+         MjAh8JLaR+sLeP8sbUw6LIFkD8SVyf54E3pxlF3foTp295NK9hPmPewFNG/ae9fvYA3i
+         suwmLYAcdTQfhBAQ0kIKag9pBSUan+jCWcvW0iSc17BXgCAInNDVNQJs3JUYFydMZFt6
+         OsYg==
+X-Gm-Message-State: APjAAAW7Y3D1NamxN8/cSu/RpyhtxY35QYQLOsNFH9OCbTmTFc7iZUpV
+        dio/yUZV64jnne3f5WH0BPfBhCM3ktxWSQdNYDYOXA==
+X-Google-Smtp-Source: APXvYqwKJcTORr5goZNG/ZGtgIKGQ4s6FfLBg86jGM0y+Ml3Gw2WP/m1IL78gAQkHrFGa9CZYJrL1f7a4Z5llqj/Wik=
+X-Received: by 2002:a17:902:8484:: with SMTP id c4mr6500095plo.223.1567030033405;
+ Wed, 28 Aug 2019 15:07:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/zoEpqVYIPki7=lLLI8vgyUT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <20190828194226.GA29967@swahl-linux> <CAKwvOdn0=7YabPD-5EUwkSoJgWjdYHY2mirM2LUz0TxZTBOf_Q@mail.gmail.com>
+In-Reply-To: <CAKwvOdn0=7YabPD-5EUwkSoJgWjdYHY2mirM2LUz0TxZTBOf_Q@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 28 Aug 2019 15:07:02 -0700
+Message-ID: <CAKwvOdm3T1BBeDoXp=YftFKdWHkbdabCwzqx+O0HHZrO+4omag@mail.gmail.com>
+Subject: Re: Purgatory compile flag changes apparently causing Kexec
+ relocation overflows
+To:     Steve Wahl <steve.wahl@hpe.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vaibhav Rustagi <vaibhavrustagi@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, russ.anderson@hpe.com,
+        dimitri.sivanich@hpe.com, mike.travis@hpe.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/zoEpqVYIPki7=lLLI8vgyUT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Aug 28, 2019 at 2:51 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Wed, Aug 28, 2019 at 12:42 PM Steve Wahl <steve.wahl@hpe.com> wrote:
+> >
+> > Please CC me on responses to this.
+> >
+> > I normally would do more diligence on this, but the timing is such
+> > that I think it's better to get this out sooner.
+> >
+> > With the tip of the tree from https://github.com/torvalds/linux.git (a
+> > few days old, most recent commit fetched is
+> > bb7ba8069de933d69cb45dd0a5806b61033796a3), I'm seeing "kexec: Overflow
+> > in relocation type 11 value 0x11fffd000" when I try to load a crash
+> > kernel with kdump. This seems to be caused by commit
+> > 059f801a937d164e03b33c1848bb3dca67c0b04, which changed the compiler
 
-Hi all,
+is this the correct SHA from mainline?  I assume you meant
+commit b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than
+reset KBUILD_CFLAGS")
 
-In commit
+> > flags used to compile purgatory.ro, apparently creating 32 bit
+> > relocations for things that aren't necessarily reachable with a 32 bit
+> > reference.  My guess is this only occurs when the crash kernel is
+> > located outside 32-bit addressable physical space.
+> >
+> > I have so far verified that the problem occurs with that commit, and
+> > does not occur with the previous commit.  For this commit, Thomas
+> > Gleixner mentioned a few of the changed flags should have been looked
+> > at twice.  I have not gone so far as to figure out which flags cause
+> > the problem.
+> >
+> > The hardware in use is a HPE Superdome Flex with 48 * 32GiB dimms
+> > (total 1536 GiB).
+> >
+> > One example of the exact error messages seen:
+> >
+> > 019-08-28T13:42:39.308110-05:00 uv4test14 kernel: [   45.137743] kexec: Overflow in relocation type 11 value 0x17f7affd000
+> > 2019-08-28T13:42:39.308123-05:00 uv4test14 kernel: [   45.137749] kexec-bzImage64: Loading purgatory failed
+>
+> Thanks for the report and sorry for the breakage.  Can you please send
+> me more information for how to precisely reproduce the issue?  I'm
+> happy to look into fixing it.
+>
+> Let me go dig up the different listed flags.  Steve, it may be fastest
+> for you to test re-adding them in your setup to see which one is
+> important.
 
-  bae3a8d3308e ("x86/apic: Do not initialize LDR and DFR for bigsmp")
+https://lkml.org/lkml/2019/7/26/198 was the list.  The "ratpoutine"
+flags were added in the final version of the patch that landed.  It's
+not immediately clear to me which of those 4 changed flags would
+result in the error that you're observing, but if you could test them
+quickly to see which restores working behavior, we could triple check
+it on our end and submit it.
 
-Fixes tag
+>
+> Tglx, if you want to revert the above patches, I'm ok with that.  It's
+> important that we fix the issue eventually that my patches were meant
+> to address, but precisely *when* it's solved isn't critical; our
+> kernels can carry out of tree patches for now until the issue is
+> completely resolved worst case.
 
-  Fixes: db7b9e9f26b8 ("[PATCH] Clustered APIC setup for >8 CPU systems")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-I could not quickly find an obvious match.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zoEpqVYIPki7=lLLI8vgyUT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1m+ukACgkQAVBC80lX
-0GwVvQf/bzc1pRdnrmRabdGa59x9DXi8fGvhNmsXeh1P6/pzg9txVInrxMTeo3W+
-Gr36Qw7lJ3JqoztUM37lhcSeqmwRvXv2U4kcwOdOleXKkbf+BhGj/lAbZ91FWWVG
-iQ4lQ3QAOdV1JbjhLRd5S8X0XsHyQr5vz32dzJLm75/dS6TsyfeDvA+d5oszE1F5
-BxDepB+HuWEd0hbEM8kqmW7dAXLz1RKhdRNXvv3XcePXEAy4d75cI1bUDYtRBn1w
-jKf4sB253urLCTF0xgJiZ+d65EsPSX0HnCWaUPMxQ9QEihDMAU6HCw92xhSQSUnI
-d20F8FCqSN3nZ9DtdlT/gnh85MN49g==
-=y/zS
------END PGP SIGNATURE-----
-
---Sig_/zoEpqVYIPki7=lLLI8vgyUT--
+-- 
+Thanks,
+~Nick Desaulniers
