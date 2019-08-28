@@ -2,99 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B97EA064D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF3D2A0658
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:31:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfH1P3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:29:08 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43730 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbfH1P3I (ORCPT
+        id S1726816AbfH1Pbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:31:39 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49196 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbfH1Pbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:29:08 -0400
-Received: by mail-qk1-f196.google.com with SMTP id m2so75534qkd.10
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 08:29:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aAe1wjp9JN1ttLqqfLIB3tUk3jgO2VwykepSQ75JmU4=;
-        b=LKnsPJSaTlG4mZKZYKw5NaEql/fynIUSfIvqm7to6OjPXfDZpLJEiUE8Aiook8ryFf
-         ziGNiaq3pqodL2Xm5Z+L6aVUMCR6G5D6SYgFeajUXp5tTwFJELgmxTLIPi+gBnMSlfla
-         rEWk6+GJDDSMwnYiCOVJ/cnRZCwU1Yyg10WX7WK3rknEpE38b8WsBBq+fed55AFNotQu
-         kkvOlX1Vs3MelfyHUqXPMscXtaaTRabmvoRw1hFQtprSW4UfkdJGJqYRYR4mUsakUay7
-         O8pNyzTrLrXYz3ZVfHcTHUa7oRtfw9b601UVr/1WGNH/vNo8jKVHb4jdZbN4iAcYSuPa
-         9SeA==
-X-Gm-Message-State: APjAAAVQaWuNsUkJ1FYq7C9UGXkJa8K21lqNuMRTy9i7mNoKo7IuIItA
-        wAQqS6h5ZzRqRxaGnZA/B390ZEJKmEp9a1ItEy0=
-X-Google-Smtp-Source: APXvYqyBc7cLJzmMCd2Y39mzszTMAggeXra6JZI2DfOgfk96SVOch19MaiL98x8Ri9d7VL39d4izHLYG1D5eaQ6EYAs=
-X-Received: by 2002:a37:bd44:: with SMTP id n65mr4552576qkf.286.1567006147108;
- Wed, 28 Aug 2019 08:29:07 -0700 (PDT)
+        Wed, 28 Aug 2019 11:31:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+4RbtbadPeHDqkWHNeTqtGn6hIPGJnVJdxnnaB9xmZY=; b=Ur+Y+HO3NeJVf0WUmN6alVkTx
+        awzvqkfhHx5NAj5o8PhCN5egCiVC8tGf1oKNzZllH2zKiEblJfdcLnzIb8Gq1vp3W7YwhHXCLdoS7
+        t9Bi0ixv2Wt7HqOHvsyth5hW4a5caGSJEMu7PZu2uz+yW2NzHJKutwUYlBw645CYxKOLlLMmgz9tx
+        cO90OCokv2HuW8FkcbyWcD9tukBL4IoFwCwXzdJje1hePXpM2iTpos2Jv52GuvBus7A1HCGb2IaUp
+        48Ib0wN32leS3ObbNfrAg+l8FfaYttqVwHFDbgIJEe/W9dIB3XSgwNVypUCFo41JMzxxQJJBDqhvy
+        XvuOsPMxg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i2zv2-0007RL-HW; Wed, 28 Aug 2019 15:31:32 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9BA7C98040A; Wed, 28 Aug 2019 17:02:38 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 17:02:38 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+Subject: Re: [RESEND PATCH V3 3/8] perf/x86/intel: Support hardware TopDown
+ metrics
+Message-ID: <20190828150238.GC17205@worktop.programming.kicks-ass.net>
+References: <20190826144740.10163-1-kan.liang@linux.intel.com>
+ <20190826144740.10163-4-kan.liang@linux.intel.com>
 MIME-Version: 1.0
-References: <CAK8P3a3G=GCpLtNztuoLR4BuugAB=zpa_Jrz5BSft6Yj-nok1g@mail.gmail.com>
- <20190827145102.p7lmkpytf3mngxbj@treble> <CAHFW8PRsmmCR6TWoXpQ9gyTA7azX9YOerPErCMggcQX-=fAqng@mail.gmail.com>
- <CAK8P3a2TeaMc_tWzzjuqO-eQjZwJdpbR1yH8yzSQbbVKdWCwSg@mail.gmail.com>
- <20190827192255.wbyn732llzckmqmq@treble> <CAK8P3a2DWh54eroBLXo+sPgJc95aAMRWdLB2n-pANss1RbLiBw@mail.gmail.com>
- <CAKwvOdnD1mEd-G9sWBtnzfe9oGTeZYws6zNJA7opS69DN08jPg@mail.gmail.com>
- <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
- <CAK8P3a0bY9QfamCveE3P4H+Nrs1e6CTqWVgiY+MCd9hJmgMQZg@mail.gmail.com> <20190828152226.r6pl64ij5kol6d4p@treble>
-In-Reply-To: <20190828152226.r6pl64ij5kol6d4p@treble>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 28 Aug 2019 17:28:50 +0200
-Message-ID: <CAK8P3a2ATzqRSqVeeKNswLU74+bjvwK_GmG0=jbMymVaSp2ysw@mail.gmail.com>
-Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Ilie Halip <ilie.halip@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826144740.10163-4-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 5:22 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> On Wed, Aug 28, 2019 at 05:13:59PM +0200, Arnd Bergmann wrote:
-> > On Wed, Aug 28, 2019 at 11:00 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > On Tue, Aug 27, 2019 at 11:22 PM 'Nick Desaulniers' via Clang Built Linux <clang-built-linux@googlegroups.com> wrote:
-> > I figured this one out as well:
-> >
-> > > http://paste.ubuntu.com/p/XjdDsypRxX/
-> > > 0x5BA1B7A1:arch/x86/ia32/ia32_signal.o: warning: objtool:
-> > > ia32_setup_rt_frame()+0x238: call to memset() with UACCESS enabled
-> > > 0x5BA1B7A1:arch/x86/kernel/signal.o: warning: objtool:
-> > > __setup_rt_frame()+0x5b8: call to memset() with UACCESS enabled
-> >
-> > When CONFIG_KASAN is set, clang decides to use memset() to set
-> > the first two struct members in this function:
-> >
-> >  static inline void sas_ss_reset(struct task_struct *p)
-> >  {
-> >         p->sas_ss_sp = 0;
-> >         p->sas_ss_size = 0;
-> >         p->sas_ss_flags = SS_DISABLE;
-> >  }
-> >
-> > and that is called from save_altstack_ex(). Adding a barrier() after
-> > the sas_ss_sp() works around the issue, but is certainly not the
-> > best solution. Any other ideas?
->
-> Wow, is the compiler allowed to insert memset calls like that?  Seems a
-> bit overbearing, at least in a kernel context.  I don't recall GCC ever
-> doing it.
+On Mon, Aug 26, 2019 at 07:47:35AM -0700, kan.liang@linux.intel.com wrote:
 
-Yes, it's free to assume that any standard library function behaves
-as defined, so it can and will turn struct assignments into memcpy
-or back, or replace string operations with others depending on what
-seems better for optimization.
+> Groups
+> ======
+> 
+> To avoid reading the METRICS register multiple times, the metrics and
+> slots value can only be updated by the first slots/metrics event in a
+> group. All active slots and metrics events will be updated one time.
 
-clang is more aggressive than gcc here, and this has caused some
-other problems in the past, but it's usually harmless.
+Can't we require SLOTS to be the group leader for any Metric group?
 
-In theory, we could pass -ffreestanding to tell the compiler
-not to make assumptions about standard library function behavior,
-but that turns off all kinds of useful optimizations. The problem
-is really that the kernel is neither exactly hosted nor freestanding.
+Is there ever a case where we want to add other events to a metric
+group?
 
-       Arnd
+> Reset
+> ======
+> 
+> The PERF_METRICS and Fixed counter 3 have to be reset for each read,
+> because:
+> - The 8bit metrics ratio values lose precision when the measurement
+>   period gets longer.
+
+So it musn't be too hot,
+
+> - The PERF_METRICS may report wrong value if its delta was less than
+>   1/255 of SLOTS (Fixed counter 3).
+
+it also musn't be too cold. But that leaves it unspecified what exactly
+is the right range.
+
+IOW, you want a Goldilocks number of SLOTS.
+
+> Also, for counting, the -max_period is the initial value of the SLOTS.
+> The huge initial value will definitely trigger the issue mentioned
+> above. Force initial value as 0 for topdown and slots event counting.
+
+But you just told us that 0 is wrong too (too cold).
+
+I'm still confused by all this; when exactly does:
+
+> NMI
+> ======
+> 
+> The METRICS register may be overflow. The bit 48 of STATUS register
+> will be set. If so, update all active slots and metrics events.
+
+that happen? It would be useful to get that METRIC_OVF (can we please
+start naming them; 62,55,48 is past silly) at the exact point
+where PERF_METRICS is saturated.
+
+If this is so; then we can use this to update/reset PERF_METRICS and
+nothing else.
+
+That is; leave the SLOTS programming alone; use -max_period as usual.
+
+Then on METRIC_OVF, read PERF_METRICS and clear it, and update all the
+metric events by adding slots_delta * frac / 256 -- where slots_delta is
+the SLOTS count since the last METRIC_OVF.
+
+On read; read PERF_METRICS -- BUT DO NOT RESET -- and compute an
+intermediate delta and add that to whatever stable count we had.
+
+Maybe something like:
+
+	do {
+		count1 = local64_read(&event->count);
+		barrier();
+		metrics = read_perf_metrics();
+		barrier();
+		count2 = local64_read(event->count);
+	} while (count1 != count2);
+
+	/* no METRIC_OVF happened and {count,metrics} is consistent */
+
+	return count1 + (slots_delta * frac / 256);
+
+> The update_topdown_event() has to read two registers separately. The
+> values may be modify by a NMI. PMU has to be disabled before calling the
+> function.
+
+Then there is no mucking about with that odd counter/metrics msr pair
+reset nonsense. Becuase that really stinks.
