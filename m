@@ -2,141 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5A1A0CFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FFA1A0D0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbfH1Vzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 17:55:41 -0400
-Received: from ozlabs.org ([203.11.71.1]:34413 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727103AbfH1Vzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:55:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46JfgY6xPMz9sN4;
-        Thu, 29 Aug 2019 07:55:37 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567029338;
-        bh=trV+YGvYxNvB9BN+5qQZbtfhppivJU4cFdm0cDK2+rI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=jndXLe5FjeSEkRjdoULkyHRs40O6jzy/1gv+zySqhMHPo56/IUUWPduUfgmD267jV
-         dg23MSc5wU35nhNVI3NOVWeBu7Aw6lDa/FGx53rolllkjK79GWvEfdm6mBE/30ebCu
-         si2tOf5BIfM/aZO4wflvM/PoSyGPsxwUPjiDxxuqKZpr5NZCUTU79/8PYcGGSHbZiQ
-         H9+0iF9SZpmOsja+bCpUvMMcxilqyJnKm7F5BQhU5sFdEd5LfXwEIjtHOx/XDPSsWS
-         IoUJRgd7rvWhyZYjNWmA1oQ6tGEFshmgwWvwVJOm5+mfPrdKF542aD6tPV/19ED4ep
-         23BWBWx3zsz9Q==
-Date:   Thu, 29 Aug 2019 07:55:30 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: linux-next: Fixes tags need some work in the mmc-fixes tree
-Message-ID: <20190829075530.6fb7341c@canb.auug.org.au>
+        id S1727106AbfH1V5K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 17:57:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726875AbfH1V5J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 17:57:09 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SLpnN0091141;
+        Wed, 28 Aug 2019 17:56:36 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2up0etjs4e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 17:56:36 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7SLq4T3091562;
+        Wed, 28 Aug 2019 17:56:36 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2up0etjs42-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 17:56:36 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7SLtUCi019288;
+        Wed, 28 Aug 2019 21:56:35 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma02dal.us.ibm.com with ESMTP id 2un65k2fq7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 21:56:35 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SLuYsa46596428
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 21:56:34 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 61240B2068;
+        Wed, 28 Aug 2019 21:56:34 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 32D6AB205F;
+        Wed, 28 Aug 2019 21:56:34 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Aug 2019 21:56:34 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0929316C65C1; Wed, 28 Aug 2019 14:56:36 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 14:56:36 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, byungchul.park@lge.com,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        kernel-team@android.com
+Subject: Re: [PATCH 5/5] rcu: Remove kfree_call_rcu_nobatch()
+Message-ID: <20190828215636.GA26530@linux.ibm.com>
+Reply-To: paulmck@kernel.org
+References: <5d657e3b.1c69fb81.54250.01e2@mx.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LLJXSgfWPEA/X.PWOIp2sfa";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d657e3b.1c69fb81.54250.01e2@mx.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908280210
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/LLJXSgfWPEA/X.PWOIp2sfa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 27, 2019 at 03:01:59PM -0400, Joel Fernandes (Google) wrote:
+> Now that kfree_rcu() special casing have been removed from tree RCU,
+> remove kfree_call_rcu_nobatch() since it is not needed.
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-Hi all,
+Now -this- one qualifies as a nice negative delta!  ;-)
 
-In commit
+A few things below, please fix in next version.
 
-  f93be8a7a366 ("mmc: sdhci-sprd: clear the UHS-I modes read from registers=
-")
+							Thanx, Paul
 
-Fixes tag
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  4 ---
+>  include/linux/rcutiny.h                       |  5 ---
+>  include/linux/rcutree.h                       |  1 -
+>  kernel/rcu/rcuperf.c                          | 10 +-----
+>  kernel/rcu/tree.c                             | 33 ++++++++-----------
+>  5 files changed, 14 insertions(+), 39 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 24fe8aefb12c..56be0e30100b 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -3909,10 +3909,6 @@
+>  			Number of loops doing rcuperf.kfree_alloc_num number
+>  			of allocations and frees.
+>  
+> -	rcuperf.kfree_no_batch= [KNL]
+> -			Use the non-batching (less efficient) version of kfree_rcu().
+> -			This is useful for comparing with the batched version.
+> -
+>  	rcuperf.nreaders= [KNL]
+>  			Set number of RCU readers.  The value -1 selects
+>  			N, where N is the number of CPUs.  A value
+> diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
+> index 949841f52ec5..7aa93afa5d8d 100644
+> --- a/include/linux/rcutiny.h
+> +++ b/include/linux/rcutiny.h
+> @@ -39,11 +39,6 @@ static inline void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
+>  	call_rcu(head, func);
+>  }
+>  
+> -static inline void kfree_call_rcu_nobatch(struct rcu_head *head, rcu_callback_t func)
+> -{
+> -	call_rcu(head, func);
+> -}
+> -
+>  void rcu_qs(void);
+>  
+>  static inline void rcu_softirq_qs(void)
+> diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
+> index 961b7e05d141..0b68aa952f8b 100644
+> --- a/include/linux/rcutree.h
+> +++ b/include/linux/rcutree.h
+> @@ -34,7 +34,6 @@ static inline void rcu_virt_note_context_switch(int cpu)
+>  
+>  void synchronize_rcu_expedited(void);
+>  void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func);
+> -void kfree_call_rcu_nobatch(struct rcu_head *head, rcu_callback_t func);
+>  
+>  void rcu_barrier(void);
+>  bool rcu_eqs_special_set(int cpu);
+> diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+> index c1e25fd10f2a..da94b89cd531 100644
+> --- a/kernel/rcu/rcuperf.c
+> +++ b/kernel/rcu/rcuperf.c
+> @@ -593,7 +593,6 @@ rcu_perf_shutdown(void *arg)
+>  torture_param(int, kfree_nthreads, -1, "Number of threads running loops of kfree_rcu().");
+>  torture_param(int, kfree_alloc_num, 8000, "Number of allocations and frees done in an iteration.");
+>  torture_param(int, kfree_loops, 10, "Number of loops doing kfree_alloc_num allocations and frees.");
+> -torture_param(int, kfree_no_batch, 0, "Use the non-batching (slower) version of kfree_rcu().");
+>  
+>  static struct task_struct **kfree_reader_tasks;
+>  static int kfree_nrealthreads;
+> @@ -632,14 +631,7 @@ kfree_perf_thread(void *arg)
+>  			if (!alloc_ptr)
+>  				return -ENOMEM;
+>  
+> -			if (!kfree_no_batch) {
+> -				kfree_rcu(alloc_ptr, rh);
+> -			} else {
+> -				rcu_callback_t cb;
+> -
+> -				cb = (rcu_callback_t)(unsigned long)offsetof(struct kfree_obj, rh);
+> -				kfree_call_rcu_nobatch(&(alloc_ptr->rh), cb);
+> -			}
+> +			kfree_rcu(alloc_ptr, rh);
+>  		}
+>  
+>  		cond_resched();
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 12c17e10f2b4..c767973d62ac 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -2777,8 +2777,10 @@ static void kfree_rcu_work(struct work_struct *work)
+>  		rcu_lock_acquire(&rcu_callback_map);
+>  		trace_rcu_invoke_kfree_callback(rcu_state.name, head, offset);
+>  
+> -		/* Could be possible to optimize with kfree_bulk in future */
+> -		kfree((void *)head - offset);
+> +		if (!WARN_ON_ONCE(!__is_kfree_rcu_offset(offset))) {
+> +			/* Could be optimized with kfree_bulk() in future. */
+> +			kfree((void *)head - offset);
+> +		}
 
-  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
+This really needs to be in the previous patch until such time as Tiny RCU
+no longer needs the restriction.
 
-has these problem(s):
+>  		rcu_lock_release(&rcu_callback_map);
+>  		cond_resched_tasks_rcu_qs();
+> @@ -2856,16 +2858,6 @@ static void kfree_rcu_monitor(struct work_struct *work)
+>  		spin_unlock_irqrestore(&krcp->lock, flags);
+>  }
+>  
+> -/*
+> - * This version of kfree_call_rcu does not do batching of kfree_rcu() requests.
+> - * Used only by rcuperf torture test for comparison with kfree_rcu_batch().
+> - */
+> -void kfree_call_rcu_nobatch(struct rcu_head *head, rcu_callback_t func)
+> -{
+> -	__call_rcu(head, func);
+> -}
+> -EXPORT_SYMBOL_GPL(kfree_call_rcu_nobatch);
+> -
+>  /*
+>   * Queue a request for lazy invocation of kfree() after a grace period.
+>   *
+> @@ -2885,12 +2877,6 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
+>  	unsigned long flags;
+>  	struct kfree_rcu_cpu *krcp;
+>  
+> -	/* kfree_call_rcu() batching requires timers to be up. If the scheduler
+> -	 * is not yet up, just skip batching and do the non-batched version.
+> -	 */
+> -	if (rcu_scheduler_active != RCU_SCHEDULER_RUNNING)
+> -		return kfree_call_rcu_nobatch(head, func);
+> -
+>  	if (debug_rcu_head_queue(head)) {
+>  		/* Probable double kfree_rcu() */
+>  		WARN_ONCE(1, "kfree_call_rcu(): Double-freed call. rcu_head %p\n",
+> @@ -2909,8 +2895,15 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
+>  	krcp->head = head;
+>  
+>  	/* Schedule monitor for timely drain after KFREE_DRAIN_JIFFIES. */
+> -	if (!xchg(&krcp->monitor_todo, true))
+> -		schedule_delayed_work(&krcp->monitor_work, KFREE_DRAIN_JIFFIES);
+> +	if (!xchg(&krcp->monitor_todo, true)) {
+> +		/* Scheduling the monitor requires scheduler/timers to be up,
+> +		 * if it is not, just skip it. An eventual kfree_rcu() will
+> +		 * kick it again.
+> +		 */
+> +		if ((rcu_scheduler_active == RCU_SCHEDULER_RUNNING)) {
+> +			schedule_delayed_work(&krcp->monitor_work, KFREE_DRAIN_JIFFIES);
+> +		}
+> +	}
 
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
+And this also needs to be in an earlier patch.  Bisectability and all that!
 
-In commit
+Are we really guaranteed that there will be an eventual kfree_rcu()?
+More of a worry for Tiny RCU than for Tree RCU, but still could be
+annoying for someone trying to debug a memory leak.
 
-  218258427ce0 ("mms: sdhci-sprd: add SDHCI_QUIRK_BROKEN_CARD_DETECTION")
+							Thanx, Paul
 
-Fixes tag
-
-  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-In commit
-
-  1236e62ef8de ("mmc: sdhci-sprd: add SDHCI_QUIRK2_PRESET_VALUE_BROKEN")
-
-Fixes tag
-
-  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-In commit
-
-  8180519b1be0 ("mmc: sdhci-sprd: add get_ro hook function")
-
-Fixes tag
-
-  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-In commit
-
-  b4e4296cc206 ("mmc: sdhci-sprd: fixed incorrect clock divider")
-
-Fixes tag
-
-  Fixes: fb8bd90f83c4 ("mmc: sdhci-sprd: Add Spreadtrum's initial host
-
-has these problem(s):
-
-  - Subject has leading but no trailing parentheses
-  - Subject has leading but no trailing quotes
-
-Please do not split Fixes tags over more tha one line - even if the line
-is more than 80 characters.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LLJXSgfWPEA/X.PWOIp2sfa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1m+FIACgkQAVBC80lX
-0GyFQwgAgLkGu03CvO/syIVoC1fL7M2HVBIxP6yEF4I4GpW42kfTQ1NLT1weKlt7
-TPLWU2y/smCNKxzs5Z+phI4qO1z4eB1oN5zKSRLjzxwGYwIqHpgcphuPev5/XNoy
-0WZL7O6oMUxRjPGPcTnCF8Kl5Fr2R1IfIVmS0CY8cu6S3buITRNC3+jYNMWPiMQW
-sJGBneMrEQqQ43sK3cOWsIoNoEWxuCMidX00yZM/lthpWjpI90FExQDjPNOQ1jcK
-k+fzfA9qKTSo8N4AtVVDyVsfX0YSstfbQsSZH+kXEf54GfPQmobsY02+aN96i5OM
-D0vEQsO46VUVCT+y94ImOgjWQO0p1w==
-=JjJ1
------END PGP SIGNATURE-----
-
---Sig_/LLJXSgfWPEA/X.PWOIp2sfa--
+>  	spin_unlock(&krcp->lock);
+>  	local_irq_restore(flags);
+> -- 
+> 2.23.0.187.g17f5b7556c-goog
+> 
