@@ -2,93 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10FA5A0A2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:04:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A72A0A56
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfH1TEr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 15:04:47 -0400
-Received: from mga01.intel.com ([192.55.52.88]:21441 "EHLO mga01.intel.com"
+        id S1727056AbfH1TSW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 15:18:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726541AbfH1TEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 15:04:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 12:04:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
-   d="scan'208";a="171645852"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga007.jf.intel.com with ESMTP; 28 Aug 2019 12:04:46 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 0A3CD300FC7; Wed, 28 Aug 2019 12:04:46 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 12:04:45 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     kan.liang@linux.intel.com, acme@kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, jolsa@kernel.org,
-        eranian@google.com, alexander.shishkin@linux.intel.com
-Subject: Re: [RESEND PATCH V3 3/8] perf/x86/intel: Support hardware TopDown
- metrics
-Message-ID: <20190828190445.GQ5447@tassilo.jf.intel.com>
-References: <20190826144740.10163-1-kan.liang@linux.intel.com>
- <20190826144740.10163-4-kan.liang@linux.intel.com>
- <20190828150238.GC17205@worktop.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828150238.GC17205@worktop.programming.kicks-ass.net>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+        id S1726773AbfH1TSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 15:18:21 -0400
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B91D0214DA;
+        Wed, 28 Aug 2019 19:18:20 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1i33SV-0007dm-TI; Wed, 28 Aug 2019 15:18:19 -0400
+Message-Id: <20190828190527.680021737@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Wed, 28 Aug 2019 15:05:27 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 0/2] tools lib traceevent: Fixes for adding tasks to the tep descriptor
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 05:02:38PM +0200, Peter Zijlstra wrote:
-> > 
-> > To avoid reading the METRICS register multiple times, the metrics and
-> > slots value can only be updated by the first slots/metrics event in a
-> > group. All active slots and metrics events will be updated one time.
-> 
-> Can't we require SLOTS to be the group leader for any Metric group?
 
-Metrics are really useful to collect with any other sampling event
-to give you more context in the program behavior.
+Hi Arnaldo,
 
-> Is there ever a case where we want to add other events to a metric
-> group?
+Please pull in these patches as they fix the lib tools traceevent code
+that has issues with adding in new tasks on large data files.
 
-Yes. Any normal leader sampling case. You just collect metrics too.
+-- Steve
 
-> it also musn't be too cold. But that leaves it unspecified what exactly
-> is the right range.
-> 
-> IOW, you want a Goldilocks number of SLOTS.
 
-That's too strong. You probably don't want minutes, but seconds
-worth of measurement should be ok.
 
-> > NMI
-> > ======
-> > 
-> > The METRICS register may be overflow. The bit 48 of STATUS register
-> > will be set. If so, update all active slots and metrics events.
-> 
-> that happen? It would be useful to get that METRIC_OVF (can we please
+Steven Rostedt (VMware) (2):
+      tools lib traceevent: Do not free tep->cmdlines in add_new_comm() on failure
+      tools lib traceevent: Remove unneeded qsort and uses memmove instead
 
-This happens when the internal counters that feed the metrics
-overflow.
-
-> If this is so; then we can use this to update/reset PERF_METRICS and
-> nothing else.
-
-It has to be handled in the PMI.
-
-> Then there is no mucking about with that odd counter/metrics msr pair
-> reset nonsense. Becuase that really stinks.
-
-You have to write them to reset the internal counters.
-
--Andi
-
+----
+ tools/lib/traceevent/event-parse.c | 58 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 50 insertions(+), 8 deletions(-)
