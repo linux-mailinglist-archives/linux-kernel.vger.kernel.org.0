@@ -2,130 +2,251 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71176A095A
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8523AA0962
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbfH1SUW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 14:20:22 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34526 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfH1SUW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:20:22 -0400
-Received: by mail-wr1-f65.google.com with SMTP id s18so800301wrn.1;
-        Wed, 28 Aug 2019 11:20:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FmZWuyzXgdUwXVfXnARqmGSbKSR4TizqVD3AQkgzi7A=;
-        b=cjH5XczQkjoLXAo9dkBLhKq20RtyY9fv4ghF7e1qpWBvIxybqCfhA3qCAMgUQ8Rzkn
-         pj7rROP+H8jD6TarciOB4LYpgmkEzXuUHzYkXX/FBKSkQLUpDwvLuaEwYWFHNWIPENLi
-         lMySAoseWH5KlSvhgzeK+H7mwd0wRm8trpKfCft25wz8Lc3AWAAJR8YSoup0hJzj8P3d
-         uFM434Z3y9YdIy8LSeKV7dgtGAM7Dkr7xaixS2/Lstv6kHusOCLDM1a41mX+rTQYEz1t
-         GHVPbubqLxnLNltylFQ0ZaKbwS+WJhaWN46v4YL1fOBiKRBnlOfNM69poca9rpSyMUfI
-         qUhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FmZWuyzXgdUwXVfXnARqmGSbKSR4TizqVD3AQkgzi7A=;
-        b=snbQoSkZzK8C73sMt3xjpfJ9eMBK+udYtfnVe6gYIxIkjuNUINw++gmNGhG/smp+/F
-         nnabEDa5ysdi6fcGCTuIRUDYziRP1X0+LMvklKx+Af05JcrYp1A05DxeJS2ZavdekyRD
-         H+zQTA2HCYkS9xzQd0rrh7j+tt06w16v2AOnHKVm1P6ZmjX9gKAWfpawH/1Sb8G6BZPj
-         c+hWiq2Y5QUh6gFRbLAid0fa5190x561t/4NMofOZWSdEV2JNYB17XaOdFFB4gKp1Adx
-         6q+gj9E8ofEdcvqVd7BAYV0CTDofehjFx+sczg2hUuAlp0JnbFJsPUS7OsTagW/4L9hH
-         5u+A==
-X-Gm-Message-State: APjAAAU8m/SyT6AM8SYx81iYteOgdiH/XHZF7cIsYGwocYtWT7KzFWOI
-        81Si+iLp98dVRnrNb9awVvSG1GkR02iWSw==
-X-Google-Smtp-Source: APXvYqzyOhe5pZadZXuOughj4gdOcbLgb4B8mNrBuAbb8eqeqiyJQ+8aOy7wZdznJj6DwYHsBsMFuw==
-X-Received: by 2002:adf:8541:: with SMTP id 59mr6357653wrh.298.1567016419538;
-        Wed, 28 Aug 2019 11:20:19 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id o3sm2017589wrv.90.2019.08.28.11.20.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 11:20:18 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 11:20:17 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Sven Schnelle <svens@stackframe.org>,
-        Xiaozhou Liu <liuxiaozhou@bytedance.com>,
-        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] kbuild: allow Clang to find unused static inline
- functions for W=1 build
-Message-ID: <20190828182017.GB127646@archlinux-threadripper>
-References: <20190828055425.24765-1-yamada.masahiro@socionext.com>
- <20190828055425.24765-2-yamada.masahiro@socionext.com>
+        id S1726764AbfH1SYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 14:24:52 -0400
+Received: from mga04.intel.com ([192.55.52.120]:20397 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726315AbfH1SYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 14:24:51 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 11:24:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
+   d="scan'208";a="205450331"
+Received: from skuppusw-desk.jf.intel.com (HELO skuppusw-desk.amr.corp.intel.com) ([10.54.74.33])
+  by fmsmga004.fm.intel.com with ESMTP; 28 Aug 2019 11:24:50 -0700
+Date:   Wed, 28 Aug 2019 11:21:53 -0700
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        iommu@lists.linux-foundation.org
+Subject: Re: [PATCH v5 4/7] PCI/ATS: Add PRI support for PCIe VF devices
+Message-ID: <20190828182153.GH28404@skuppusw-desk.amr.corp.intel.com>
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+References: <cover.1564702313.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <827d051ef8c8bbfa815908ce927e607870780cb6.1564702313.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190815222049.GL253360@google.com>
+ <f05eb779-9f78-f20f-7626-16b8bd28af40@linux.intel.com>
+ <20190819141500.GQ253360@google.com>
+ <20190819225331.GB28404@skuppusw-desk.amr.corp.intel.com>
+ <20190819231925.GW253360@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190828055425.24765-2-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190819231925.GW253360@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 02:54:25PM +0900, Masahiro Yamada wrote:
-> GCC and Clang have different policy for -Wunused-function; GCC does not
-> warn unused static inline functions at all whereas Clang does if they
-> are defined in source files instead of included headers although it has
-> been suppressed since commit abb2ea7dfd82 ("compiler, clang: suppress
-> warning for unused static inline functions").
+On Mon, Aug 19, 2019 at 06:19:25PM -0500, Bjorn Helgaas wrote:
+> On Mon, Aug 19, 2019 at 03:53:31PM -0700, Kuppuswamy Sathyanarayanan wrote:
+> > On Mon, Aug 19, 2019 at 09:15:00AM -0500, Bjorn Helgaas wrote:
+> > > On Thu, Aug 15, 2019 at 03:39:03PM -0700, Kuppuswamy Sathyanarayanan wrote:
+> > > > On 8/15/19 3:20 PM, Bjorn Helgaas wrote:
+> > > > > [+cc Joerg, David, iommu list: because IOMMU drivers are the only
+> > > > > callers of pci_enable_pri() and pci_enable_pasid()]
+> > > > > 
+> > > > > On Thu, Aug 01, 2019 at 05:06:01PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> > > > > > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> > > > > > 
+> > > > > > When IOMMU tries to enable Page Request Interface (PRI) for VF device
+> > > > > > in iommu_enable_dev_iotlb(), it always fails because PRI support for
+> > > > > > PCIe VF device is currently broken. Current implementation expects
+> > > > > > the given PCIe device (PF & VF) to implement PRI capability before
+> > > > > > enabling the PRI support. But this assumption is incorrect. As per PCIe
+> > > > > > spec r4.0, sec 9.3.7.11, all VFs associated with PF can only use the
+> > > > > > PRI of the PF and not implement it. Hence we need to create exception
+> > > > > > for handling the PRI support for PCIe VF device.
+> > > > > > 
+> > > > > > Also, since PRI is a shared resource between PF/VF, following rules
+> > > > > > should apply.
+> > > > > > 
+> > > > > > 1. Use proper locking before accessing/modifying PF resources in VF
+> > > > > >     PRI enable/disable call.
+> > > > > > 2. Use reference count logic to track the usage of PRI resource.
+> > > > > > 3. Disable PRI only if the PRI reference count (pri_ref_cnt) is zero.
+> > > 
+> > > > > Wait, why do we need this at all?  I agree the spec says VFs may not
+> > > > > implement PRI or PASID capabilities and that VFs use the PRI and
+> > > > > PASID of the PF.
+> > > > > 
+> > > > > But why do we need to support pci_enable_pri() and pci_enable_pasid()
+> > > > > for VFs?  There's nothing interesting we can *do* in the VF, and
+> > > > > passing it off to the PF adds all this locking mess.  For VFs, can we
+> > > > > just make them do nothing or return -EINVAL?  What functionality would
+> > > > > we be missing if we did that?
+> > > > 
+> > > > Currently PRI/PASID capabilities are not enabled by default. IOMMU can
+> > > > enable PRI/PASID for VF first (and not enable it for PF). In this case,
+> > > > doing nothing for VF device will break the functionality.
+> > > 
+> > > What is the path where we can enable PRI/PASID for VF but not for the
+> > > PF?  The call chains leading to pci_enable_pri() go through the
+> > > iommu_ops.add_device interface, which makes me think this is part of
+> > > the device enumeration done by the PCI core, and in that case I would
+> > > think this it should be done for the PF before VFs.  But maybe this
+> > > path isn't exercised until a driver does a DMA map or something
+> > > similar?
 > 
-> We often miss to delete unused functions where 'static inline' is used
-> in *.c files since there is no tool to detect them. Unused code remains
-> until somebody notices. For example, commit 075ddd75680f ("regulator:
-> core: remove unused rdev_get_supply()").
+> > AFAIK, this path will only get exercised when the device does DMA and
+> > hence there is no specific order in which PRI/PASID is enabled in PF/VF.
+> > In fact, my v2 version of this patch set had a check to ensure PF
+> > PRI/PASID enable is happened before VF attempts PRI/PASID
+> > enable/disable. But I had to remove it in later version of this series
+> > due to failure case reported by one the tester of this code. 
 > 
-> Let's remove __maybe_unused from the inline macro to allow Clang to
-> start finding unused static inline functions. For now, we do this only
-> for W=1 build since it is not a good idea to sprinkle warnings for the
-> normal build.
+> What's the path?  And does that path make sense?
 > 
-> My initial attempt was to add -Wno-unused-function for no W=1 build
-> (https://lore.kernel.org/patchwork/patch/1120594/)
+> I got this far before giving up:
 > 
-> Nathan Chancellor pointed out that would weaken Clang's checks since
-> we would no longer get -Wunused-function without W=1. It is true GCC
-> would detect unused static non-inline functions, but it would weaken
-> Clang as a standalone compiler at least.
+>     iommu_go_to_state                           # AMD
+>       state_next
+>         amd_iommu_init_pci
+>           amd_iommu_init_api
+>             bus_set_iommu
+>               iommu_bus_init
+>                 bus_for_each_dev(..., add_iommu_group)
+>                   add_iommu_group
+>                     iommu_probe_device
+>                       amd_iommu_add_device                      # amd_iommu_ops.add_device
+>                         init_iommu_group
+>                           iommu_group_get_for_dev
+>                             iommu_group_add_device
+>                               __iommu_attach_device
+>                                 amd_iommu_attach_device         # amd_iommu_ops.attach_dev
+>                                   attach_device                 # amd_iommu
+>                                     pdev_iommuv2_enable
+>                                       pci_enable_pri
 > 
-> Here is a counter implementation. The current problem is, W=... only
-> controls compiler flags, which are globally effective. There is no way
-> to narrow the scope to only 'static inline' functions.
 > 
-> This commit defines KBUILD_EXTRA_WARN[123] corresponding to W=[123].
-> When KBUILD_EXTRA_WARN1 is defined, __maybe_unused is omitted from
-> the 'inline' macro.
+>     iommu_probe_device
+>       intel_iommu_add_device                    # intel_iommu_ops.add_device
+>         domain_add_dev_info
+>           dmar_insert_one_dev_info
+>             domain_context_mapping
+>               domain_context_mapping_one
+>                 iommu_enable_dev_iotlb
+>                   pci_enable_pri
 > 
-> This makes the code a bit uglier, so personally I do not want to carry
-> this forever. If we can manage to fix most of the warnings, we can
-> drop this entirely, then enable -Wunused-function all the time.
 > 
-> If you contribute to code clean-up, please run "make CC=clang W=1"
-> and check -Wunused-function warnings. You will find lots of unused
-> functions.
+> These *look* like enumeration paths, not DMA setup paths.  But I could
+> be wrong, since I gave up before getting to the source.
 > 
-> Some of them are false-positives because the call-sites are disabled
-> by #ifdef. I do not like to abuse the inline keyword for suppressing
-> unused-function warnings because it is intended to be a hint for the
-> compiler optimization. I prefer #ifdef around the definition, or
-> __maybe_unused if #ifdef would make the code too ugly.
+> I don't want to add all this complexity because we *think* we need it.
+> I want to think about whether it makes *sense*.  Maybe it's sensible
+> for the PF enumeration or a PF driver to enable the hardware it owns.
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> If we leave it to the VFs, then we have issues with coordinating
+> between VFs that want different settings, etc.
+> 
+> If we understand the whole picture and it needs to be in the VFs,
+> that's fine.  But I don't think we understand the whole picture yet.
 
-I can still see warnings from static unused functions and with W=1, I
-see plenty more. I agree that this is uglier because of the
-__inline_maybe_unused but I think this is better for regular developers.
-I will try to work on these unused-function warnings!
+After re-analyzing the code paths, I also could not find the use case
+where PF/VF PRI/PASID is enabled in out of order(VF first and then PF).
+Also, I had no luck in finding that old bug report email which triggered
+me to come up with this complicated fix. As per my current analysis, as
+you have mentioned, PF/VF PRI/PASID enable seems to happen only during
+device creation time.
 
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Following are some of the possible code paths:
+
+VF PRI/PASID enable path is,
+
+[ 8367.161880]  iommu_enable_dev_iotlb+0x83/0x180
+[ 8367.168061]  domain_context_mapping_one+0x44f/0x500
+[ 8367.174264]  ? domain_context_mapping_one+0x500/0x500
+[ 8367.180429]  pci_for_each_dma_alias+0x30/0x170
+[ 8367.186368]  dmar_insert_one_dev_info+0x43f/0x4d0
+[ 8367.192288]  domain_add_dev_info+0x50/0x90
+[ 8367.197973]  intel_iommu_attach_device+0x9c/0x130
+[ 8367.203726]  __iommu_attach_device+0x47/0xb0
+[ 8367.209292]  ? _cond_resched+0x15/0x40
+[ 8367.214643]  iommu_group_add_device+0x13a/0x2c0
+[ 8367.220102]  iommu_group_get_for_dev+0xa8/0x220
+[ 8367.225460]  intel_iommu_add_device+0x61/0x590
+[ 8367.230708]  iommu_bus_notifier+0xb1/0xe0
+[ 8367.235768]  notifier_call_chain+0x47/0x70
+[ 8367.240757]  blocking_notifier_call_chain+0x3e/0x60
+[ 8367.245854]  device_add+0x3ec/0x690
+[ 8367.250533]  pci_device_add+0x26b/0x660
+[ 8367.255207]  pci_iov_add_virtfn+0x1ce/0x3b0
+[ 8367.259873]  sriov_enable+0x254/0x410
+[ 8367.264323]  dev_fops_ioctl+0x1378/0x1520 [sad8]
+[ 8367.322115]  init_fops_ioctl+0x12c/0x150 [sad8]
+[ 8367.324921]  do_vfs_ioctl+0xa4/0x630
+[ 8367.327415]  ksys_ioctl+0x70/0x80
+[ 8367.329822]  __x64_sys_ioctl+0x16/0x20
+[ 8367.332310]  do_syscall_64+0x5b/0x1a0
+[ 8367.334771]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+PF PRI/PASID enable path is,
+
+[   11.084005] Call Trace:
+[   11.084005]  dump_stack+0x5c/0x7b
+[   11.084005]  iommu_enable_dev_iotlb+0x83/0x180
+[   11.084005]  domain_context_mapping_one+0x44f/0x500
+[   11.084005]  ? domain_context_mapping_one+0x500/0x500
+[   11.084005]  pci_for_each_dma_alias+0x30/0x170
+[   11.084005]  dmar_insert_one_dev_info+0x43f/0x4d0
+[   11.084005]  domain_add_dev_info+0x50/0x90
+[   11.084005]  intel_iommu_attach_device+0x9c/0x130
+[   11.084005]  __iommu_attach_device+0x47/0xb0
+[   11.084005]  ? _cond_resched+0x15/0x40
+[   11.084005]  iommu_group_add_device+0x13a/0x2c0
+[   11.084005]  iommu_group_get_for_dev+0xa8/0x220
+[   11.084005]  intel_iommu_add_device+0x61/0x590
+[   11.084005]  ? iommu_probe_device+0x40/0x40
+[   11.084005]  add_iommu_group+0xa/0x20
+[   11.084005]  bus_for_each_dev+0x76/0xc0
+[   11.084005]  bus_set_iommu+0x85/0xc0
+[   11.084005]  intel_iommu_init+0xfe5/0x11c1
+[   11.084005]  ? __fput+0x134/0x220
+[   11.084005]  ? set_debug_rodata+0x11/0x11
+[   11.084005]  ? e820__memblock_setup+0x60/0x60
+[   11.084005]  ? pci_iommu_init+0x16/0x3f
+[   11.084005]  pci_iommu_init+0x16/0x3f
+[   11.084005]  do_one_initcall+0x46/0x1f4
+[   11.084005]  kernel_init_freeable+0x1ba/0x283
+[   11.084005]  ? rest_init+0xb0/0xb0
+[   11.084005]  kernel_init+0xa/0x120
+[   11.084005]  ret_from_fork+0x1f/0x40
+
+Similarly PF/VF PRI/PASID possible disable paths are,
+
+iommu_hotplug_path->disable_dmar_iommu->__dmar_remove_one_dev_info->iommu_disable_dev_iotlb
+
+domain_exit()->domain_remove_dev_info->iommu_disable_dev_iotlb
+
+vfio_iommu_type1_detach_group()->iommu_detach_group()->intel_iommu_detach_device->dmar_remove_one_dev_info
+
+But even in all of these paths, PF/VF PRI/PASID disable have to happen
+in order (VF first and then PF).
+
+So we can implement the logic of not doing anything for VF when its
+related PRI/PASID calls. But my questions is, is it safe to go with
+these assumptions? Since all these dependencies we have found are not
+explicitly defined, if some one breaks it will also affect PRI/PASID
+logic. Let me know your comments.
+
+
+
+> 
+> Bjorn
+
+-- 
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
