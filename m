@@ -2,158 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C9329FD7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:52:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEF239FD81
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:53:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfH1IwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:52:16 -0400
-Received: from mga11.intel.com ([192.55.52.93]:20965 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbfH1IwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:52:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 01:52:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,440,1559545200"; 
-   d="scan'208";a="183060632"
-Received: from deyangko-mobl.ccr.corp.intel.com ([10.249.168.35])
-  by orsmga003.jf.intel.com with ESMTP; 28 Aug 2019 01:52:12 -0700
-Message-ID: <82458318837ed1154a183be0b96337fc7809c645.camel@intel.com>
-Subject: Re: [PATCH] thermal: rcar_gen3_thermal: Fix Wshift-negative-value
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Nathan Huckleberry <nhuck@google.com>, edubezval@gmail.com
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        wsa+renesas@sang-engineering.com
-Date:   Wed, 28 Aug 2019 16:52:20 +0800
-In-Reply-To: <fd8b8a48-dfb7-1478-2d8d-0953acee39d3@linaro.org>
-References: <20190613211228.34092-1-nhuck@google.com>
-         <fd8b8a48-dfb7-1478-2d8d-0953acee39d3@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726455AbfH1Ixm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:53:42 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52922 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbfH1Ixm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 04:53:42 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 40846825C1; Wed, 28 Aug 2019 10:53:26 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 10:53:39 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Tony Lindgren <tony@atomide.com>,
+        kernel list <linux-kernel@vger.kernel.org>, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org
+Subject: [FYI] lm3532: right registration to work with LED-backlight
+Message-ID: <20190828085339.GB2923@amd>
+References: <20190827215205.59677-1-tony@atomide.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
+Content-Disposition: inline
+In-Reply-To: <20190827215205.59677-1-tony@atomide.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-06-14 at 12:52 +0200, Daniel Lezcano wrote:
-> Hi Nathan,
-> 
-> On 13/06/2019 23:12, Nathan Huckleberry wrote:
-> > Clang produces the following warning
-> > 
-> > vers/thermal/rcar_gen3_thermal.c:147:33: warning: shifting a
-> > negative
-> > signed value is undefined [-Wshift-negative-value] / (ptat[0] -
-> > ptat[2])) +
-> > FIXPT_INT(TJ_3); ^~~~~~~~~~~~~~~
-> > drivers/thermal/rcar_gen3_thermal.c:126:29
-> > note: expanded from macro 'FIXPT_INT' #define FIXPT_INT(_x) ((_x)
-> > <<
-> > FIXPT_SHIFT) ~~~~ ^ drivers/thermal/rcar_gen3_thermal.c:150:18:
-> > warning:
-> > shifting a negative signed value is undefined [-Wshift-negative-
-> > value]
-> > tsc->tj_t - FIXPT_INT(TJ_3)); ~~~~~~~~~~~~^~~~~~~~~~~~~~~~
-> > 
-> > Upon further investigating it looks like there is no real reason
-> > for
-> > TJ_3 to be -41. Usages subtract -41, code would be cleaner to just
-> > add.
-> 
-> All the code seems broken regarding the negative value shifting as
-> the
-> macros pass an integer:
-> 
-> eg.
->         tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]),
->                                  tsc->tj_t - FIXPT_INT(ths_tj_1));
-> 
-> thcode[1] is always < than thcode[0],
-> 
-> thcode[1] - thcode[0] < 0
-> 
-> FIXPT_INT(thcode[1] - thcode[0]) is undefined
-> 
-> 
-> Is it done on purpose FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]) ?
-> 
-> Try developing the macro with the coef.a2 computation ...
-> 
-> The code quality of this driver could be better, it deserves a rework
-> IMHO ...
-> 
-> I suggest to revert:
-> 
-> 4eb39f79ef443fa566d36bd43f1f578d5c140305
-> bdc4480a669d476814061b4da6bb006f7048c8e5
-> 6a310f8f97bb8bc2e2bb9db6f49a1b8678c8d144
-> 
-> Rework the coefficient computation and re-introduce what was reverted
-> in
-> a nicer way.
 
-Sounds reasonable to me.
+--/NkBOFFp2J2Af1nK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yoshihiro,
-can you please clarify on this? Or else I will revert the above commits
-first?
+Hi!
 
-Also CC Wolfram Sang, the driver author.
+Eventually, these will be needed.
 
-thanks,
-rui
-> 
-> 
-> > Fixes: 4eb39f79ef44 ("thermal: rcar_gen3_thermal: Update value of
-> > Tj_1")
-> > Cc: clang-built-linux@googlegroups.com
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/531
-> > Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-> > ---
-> >  drivers/thermal/rcar_gen3_thermal.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/rcar_gen3_thermal.c
-> > b/drivers/thermal/rcar_gen3_thermal.c
-> > index a56463308694..f4b4558c08e9 100644
-> > --- a/drivers/thermal/rcar_gen3_thermal.c
-> > +++ b/drivers/thermal/rcar_gen3_thermal.c
-> > @@ -131,7 +131,7 @@ static inline void
-> > rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
-> >  #define RCAR3_THERMAL_GRAN 500 /* mili Celsius */
-> >  
-> >  /* no idea where these constants come from */
-> > -#define TJ_3 -41
-> > +#define TJ_3 41
-> >  
-> >  static void rcar_gen3_thermal_calc_coefs(struct
-> > rcar_gen3_thermal_tsc *tsc,
-> >  					 int *ptat, const int *thcode,
-> > @@ -144,11 +144,11 @@ static void
-> > rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
-> >  	 * the dividend (4095 * 4095 << 14 > INT_MAX) so keep it
-> > unscaled
-> >  	 */
-> >  	tsc->tj_t = (FIXPT_INT((ptat[1] - ptat[2]) * 157)
-> > -		     / (ptat[0] - ptat[2])) + FIXPT_INT(TJ_3);
-> > +		     / (ptat[0] - ptat[2])) - FIXPT_INT(TJ_3);
-> >  
-> >  	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[2]),
-> > -				 tsc->tj_t - FIXPT_INT(TJ_3));
-> > -	tsc->coef.b1 = FIXPT_INT(thcode[2]) - tsc->coef.a1 * TJ_3;
-> > +				 tsc->tj_t + FIXPT_INT(TJ_3));
-> > +	tsc->coef.b1 = FIXPT_INT(thcode[2]) + tsc->coef.a1 * TJ_3;
-> >  
-> >  	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]),
-> >  				 tsc->tj_t - FIXPT_INT(ths_tj_1));
-> > 
-> 
-> 
+Best regards,
+								Pavel
 
+commit 38d956977a7d6cbdc811676f9b4033da7487e045
+Author: Pavel <pavel@ucw.cz>
+Date:   Wed Aug 7 12:43:52 2019 +0200
+
+    d4: lm3532 needs to use right register function for backlight to work.
+
+diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+index 365a22a5..f98e657 100644
+--- a/drivers/leds/leds-lm3532.c
++++ b/drivers/leds/leds-lm3532.c
+@@ -629,7 +629,7 @@ static int lm3532_parse_node(struct lm3532_data *priv)
+=20
+ 		lm3532_init_registers(led);
+=20
+-		ret =3D devm_led_classdev_register(priv->dev, &led->led_dev);
++		ret =3D devm_of_led_classdev_register(priv->dev, to_of_node(child), &led=
+->led_dev);
+ 		if (ret) {
+ 			dev_err(&priv->client->dev, "led register err: %d\n",
+ 				ret);
+
+
+diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/o=
+map4-droid4-xt894.dts
+index 4454449..64abe87 100644
+--- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
++++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
+@@ -185,6 +185,14 @@
+ 		pwm-names =3D "enable", "direction";
+ 		direction-duty-cycle-ns =3D <10000000>;
+ 	};
++
++	backlight: backlight {
++	         compatible =3D "led-backlight";
++
++		 leds =3D <&backlight_led>;
++		 brightness-levels =3D <0 4 8 16 32 64 128 255>;
++		 default-brightness-level =3D <6>;
++	};
+ };
+=20
+ &dss {
+@@ -208,6 +216,8 @@
+ 		vddi-supply =3D <&lcd_regulator>;
+ 		reset-gpios =3D <&gpio4 5 GPIO_ACTIVE_HIGH>;	/* gpio101 */
+=20
++		backlight =3D <&backlight>;
++
+ 		width-mm =3D <50>;
+ 		height-mm =3D <89>;
+=20
+@@ -389,12 +427,11 @@
+ 		ramp-up-us =3D <1024>;
+ 		ramp-down-us =3D <8193>;
+=20
+-		led@0 {
++		backlight_led: led@0 {
+ 			reg =3D <0>;
+ 			led-sources =3D <2>;
+ 			ti,led-mode =3D <0>;
+ 			label =3D ":backlight";
+-			linux,default-trigger =3D "backlight";
+ 		};
+=20
+ 		led@1 {
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--/NkBOFFp2J2Af1nK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1mQRMACgkQMOfwapXb+vK0hACgtFoq2r7pDwvtVDCnYsULvPVW
+SPwAoIFNH+S+vjvcv++0lWkyUU92tEma
+=aEUJ
+-----END PGP SIGNATURE-----
+
+--/NkBOFFp2J2Af1nK--
