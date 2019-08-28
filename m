@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 932959FBCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D4B9FBCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:32:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfH1HcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 03:32:00 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:38792 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726603AbfH1Hb6 (ORCPT
+        id S1726767AbfH1HcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 03:32:06 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41125 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfH1HcA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 03:31:58 -0400
-Received: by mail-pl1-f194.google.com with SMTP id w11so818355plp.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 00:31:57 -0700 (PDT)
+        Wed, 28 Aug 2019 03:32:00 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x15so959546pgg.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 00:32:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=i8TvAllA57WxAU0LkM2JJVxBkvzCPw+8c6SMDZJxD/s=;
-        b=YSWGPbRpA2Y9JEkazRI50D5k08cgQ7pNtm7cZQlqCHV0r3RYGaLkStx9LOPsU3u1+l
-         P1RLLYRoW0aukw20NQ+wWSPF5SsH6Z+LNj/ryc/oHKb5RlkYMDL4XiJKO53gHDnq0+fh
-         y+NyEbrHijQY7HFq2ssYucCNqZhs/xSyhg5A6KqldoBPNikOvt6P/ZOIss7vccLF6yoj
-         Sv0agCOVkjxE9UmRwSEsv2MQhDDoCERbrgASdxKp4onhqzKKq9v8j5V3AZmK7l2giQ3+
-         eETzXr/Rf1RJ3eANnOagP3RZa3UhfZNsf5rm8ACF61huRkcFjN0w4w8VYgKbssPmXgT1
-         OdGQ==
+        bh=iqm7gsnClUPCYol6XTrH8aK9FY0Uk3Vdil6q8YYxpvU=;
+        b=VzVMk9S91NCS9Iq4DyaWU4vCrZdEg0If4z35xRfvaTp6i87D87jjE7ltyj256e0+NV
+         oKzea6sef4URjSDgJH9ssNzGaCz4Cu2U5dxlirhqu/2GsADVJ6xAgMUVenyqZqdbcETN
+         VepLKjd4nrTPhDsNojeF1TjSfRj3IhMM1REZNpIw2spdzv9bSGxoqdErCJ6pWj5owun/
+         v5XsL8qU7b1qcpHdGGKt0XsmrdY4+siJL3YLE2AaFkawz1kedKvovpxnao9nCaWO6T7g
+         Zd3wkGf2agNDV1ofVbYNFnWgb+on2DLJzq7/IWjmTvIKZKReqawHZjYn7+QDRRi5eDYq
+         b7Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=i8TvAllA57WxAU0LkM2JJVxBkvzCPw+8c6SMDZJxD/s=;
-        b=sdWQRBg8w9+pAFW1nMfFKhlZG557iTYjKm5Ac6XemxvDzgSldIJ5qkLL0/Q4yq91gJ
-         9U34M1RmD9EXZpWtV6UMrVXbdFmdYDSEy6Bt0sWpILDG/SmbnVCNlj5+/jiWktW0rmnW
-         IwijQ3BQGe+IxC2kFIhE6No9NA3LD7yG3aJr5KdgTBJG4BzUcqo4i2NUyu9xsWMthk8w
-         /RWfMi3HvA69sTqZIJM9cBzw+MrV5wqRZQf9UKsLjVLMHMZLrsIs2u0yyIJZBw9LBpvC
-         8UFFBcGAu6ED8hGC9mDJkT0xT2q05bhj1KcPLpq++tFLjBKLoWQhVfw6UUaTP2numjg3
-         tT0Q==
-X-Gm-Message-State: APjAAAXrngNswUjGPZIji3dGhi2kEcqdhJ5y7yjcgNAdn4+zM2lQg9gH
-        ZoRwe8FjWHT6gwEM4DWY8eQgZyaj
-X-Google-Smtp-Source: APXvYqy6ao2KgssHGppMCP8Jw7qe8uwp4jg10RK8Gw2ebnkaMSpv6rb0KqDGruYmF3rEkRFIk8okfQ==
-X-Received: by 2002:a17:902:1c7:: with SMTP id b65mr2842315plb.313.1566977517249;
-        Wed, 28 Aug 2019 00:31:57 -0700 (PDT)
+        bh=iqm7gsnClUPCYol6XTrH8aK9FY0Uk3Vdil6q8YYxpvU=;
+        b=Qcj8KTDmafQ5/QZagpQgmxYsmjG1C4kgrYjR5NDqGgQg9InZAIQKVxMq4XTuT9qF+d
+         rV45qRsjQeDTrx4idViqP9LuUO1O152ZM1XVRF1ZnOXzE21IkvLKGCQw6RCZtmWVH5dv
+         LWvVmS6bWAgWY45JtspkZ0nbO4N9ZqVDjHReMtt7dFd3di0xR3eCasni4XqRaQflGP7F
+         h87Bai4H8yejctUYGYySYF2GMQjRFgss6jKm9199HO32XYcT79TPSm+nZ2NwiyQpVTii
+         ZOEXIOnVtZdbcBhXeUF1pZ0QqWrOAYUqixVISKfpZI/K5p1Ponr1r/sq2e1sJllvglvR
+         LHNg==
+X-Gm-Message-State: APjAAAXTs4ojFc7UvfU/VJtJXvAnzTPLHtLAkbAAAdGxIASS/x4TpcVS
+        SzrC2RnF5m88AQjqIVaDRc7zF4se
+X-Google-Smtp-Source: APXvYqxIBm164wnB0Na5fbeYi3AcmSsdWf2rmI8tuYj6K3ppUnMD/UqNWyGIkCtmn30eYz5w1xB1dA==
+X-Received: by 2002:a62:31c3:: with SMTP id x186mr2976078pfx.97.1566977519820;
+        Wed, 28 Aug 2019 00:31:59 -0700 (PDT)
 Received: from gaurie.seo.corp.google.com ([2401:fa00:d:0:1034:ec6b:8056:9e93])
-        by smtp.gmail.com with ESMTPSA id v145sm1677054pfc.31.2019.08.28.00.31.54
+        by smtp.gmail.com with ESMTPSA id v145sm1677054pfc.31.2019.08.28.00.31.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 00:31:56 -0700 (PDT)
+        Wed, 28 Aug 2019 00:31:59 -0700 (PDT)
 From:   Namhyung Kim <namhyung@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
@@ -52,9 +52,9 @@ To:     Ingo Molnar <mingo@kernel.org>,
 Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Stephane Eranian <eranian@google.com>
-Subject: [PATCH 4/9] perf tools: Maintain cgroup hierarchy
-Date:   Wed, 28 Aug 2019 16:31:25 +0900
-Message-Id: <20190828073130.83800-5-namhyung@kernel.org>
+Subject: [PATCH 5/9] perf report: Add 'cgroup' sort key
+Date:   Wed, 28 Aug 2019 16:31:26 +0900
+Message-Id: <20190828073130.83800-6-namhyung@kernel.org>
 X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 In-Reply-To: <20190828073130.83800-1-namhyung@kernel.org>
 References: <20190828073130.83800-1-namhyung@kernel.org>
@@ -65,192 +65,177 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each cgroup is kept in the global cgroup_tree sorted by the inode
-number.  Hist entries have cgroup ino number can compare it directly
-and later it can be used to find a group name using this tree.
+The cgroup sort key is to show cgroup membership of each task.
+Currently it shows full path in the cgroupfs (not relative to the root
+of cgroup namespace) since it'd be more intuitive IMHO.  Otherwise
+root cgroup in different namespaces will all show same name - "/".
+
+The cgroup sort key should come before cgroup_id otherwise
+sort_dimension__add() will match it to cgroup_id as it only matches
+with the given substring.
+
+For example it will look like following.  Note that record patch
+adding --all-cgroups patch will come later.
+
+  $ perf record -a --namespace --all-cgroups  cgtest
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.208 MB perf.data (4090 samples) ]
+
+  $ perf report -s cgroup_id,cgroup,pid
+  ...
+  # Overhead  cgroup id (dev/inode)  cgroup          Pid:Command
+  # ........  .....................  ..........  ...............
+  #
+      93.96%  0/0x0                  /                 0:swapper
+       1.25%  3/0xeffffffb           /               278:looper0
+       0.86%  3/0xf000015f           /sub/cgrp1      280:cgtest
+       0.37%  3/0xf0000160           /sub/cgrp2      281:cgtest
+       0.34%  3/0xf0000163           /sub/cgrp3      282:cgtest
+       0.22%  3/0xeffffffb           /sub            278:looper0
+       0.20%  3/0xeffffffb           /               280:cgtest
+       0.15%  3/0xf0000163           /sub/cgrp3      285:looper3
 
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/util/cgroup.c  | 72 +++++++++++++++++++++++++++++++++++++++
- tools/perf/util/cgroup.h  | 15 +++++---
- tools/perf/util/machine.c |  7 ++++
- tools/perf/util/session.c |  4 +++
- 4 files changed, 94 insertions(+), 4 deletions(-)
+ tools/perf/Documentation/perf-report.txt |  1 +
+ tools/perf/util/hist.c                   |  7 ++++++
+ tools/perf/util/hist.h                   |  1 +
+ tools/perf/util/sort.c                   | 31 ++++++++++++++++++++++++
+ tools/perf/util/sort.h                   |  2 ++
+ 5 files changed, 42 insertions(+)
 
-diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
-index f73599f271ff..8e4c26ea5078 100644
---- a/tools/perf/util/cgroup.c
-+++ b/tools/perf/util/cgroup.c
-@@ -12,6 +12,8 @@
+diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+index 7315f155803f..4c22146ae8fe 100644
+--- a/tools/perf/Documentation/perf-report.txt
++++ b/tools/perf/Documentation/perf-report.txt
+@@ -95,6 +95,7 @@ OPTIONS
+ 	abort cost. This is the global weight.
+ 	- local_weight: Local weight version of the weight above.
+ 	- cgroup_id: ID derived from cgroup namespace device and inode numbers.
++	- cgroup: cgroup pathname in the cgroupfs.
+ 	- transaction: Transaction abort flags.
+ 	- overhead: Overhead percentage of sample
+ 	- overhead_sys: Overhead percentage of sample running in system mode
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 33702675073c..b1f0a7d2a951 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -5,6 +5,7 @@
+ #include "map.h"
+ #include "session.h"
+ #include "namespaces.h"
++#include "cgroup.h"
+ #include "sort.h"
+ #include "units.h"
+ #include "evlist.h"
+@@ -212,6 +213,11 @@ void hists__calc_col_len(struct hists *hists, struct hist_entry *h)
  
- int nr_cgroups;
- 
-+static struct rb_root cgroup_tree = RB_ROOT;
+ 	if (h->trace_output)
+ 		hists__new_col_len(hists, HISTC_TRACE, strlen(h->trace_output));
 +
- static int
- cgroupfs_find_mountpoint(char *buf, size_t maxlen)
- {
-@@ -249,3 +251,73 @@ int parse_cgroups(const struct option *opt, const char *str,
- 	}
- 	return 0;
++	if (h->cgroup) {
++		struct cgroup *cgrp = cgroup__findnew(h->cgroup, "<unknown>");
++		hists__new_col_len(hists, HISTC_CGROUP, strlen(cgrp->name));
++	}
  }
-+
-+struct cgroup *cgroup__findnew(uint64_t ino, const char *path)
-+{
-+	struct rb_node **p = &cgroup_tree.rb_node;
-+	struct rb_node *parent = NULL;
-+	struct cgroup *cgrp;
-+
-+	while (*p != NULL) {
-+		parent = *p;
-+		cgrp = rb_entry(parent, struct cgroup, node);
-+
-+		if (cgrp->ino == ino)
-+			return cgrp;
-+
-+		if (cgrp->ino < ino)
-+			p = &(*p)->rb_left;
-+		else
-+			p = &(*p)->rb_right;
-+	}
-+
-+	cgrp = malloc(sizeof(*cgrp));
-+	if (cgrp == NULL)
-+		return NULL;
-+
-+	cgrp->name = strdup(path);
-+	if (cgrp->name == NULL) {
-+		free(cgrp);
-+		return NULL;
-+	}
-+
-+	cgrp->fd = -1;
-+	cgrp->ino = ino;
-+	refcount_set(&cgrp->refcnt, 1);
-+
-+	rb_link_node(&cgrp->node, parent, p);
-+	rb_insert_color(&cgrp->node, &cgroup_tree);
-+
-+	return cgrp;
-+}
-+
-+struct cgroup *cgroup__find_by_path(const char *path)
-+{
-+	struct rb_node *node;
-+
-+	node = rb_first(&cgroup_tree);
-+	while (node) {
-+		struct cgroup *cgrp = rb_entry(node, struct cgroup, node);
-+
-+		if (!strcmp(cgrp->name, path))
-+			return cgrp;
-+
-+		node = rb_next(&cgrp->node);
-+	}
-+
-+	return NULL;
-+}
-+
-+void destroy_cgroups(void)
-+{
-+	struct rb_node *node;
-+	struct cgroup *cgrp;
-+
-+	while (!RB_EMPTY_ROOT(&cgroup_tree)) {
-+		node = rb_first(&cgroup_tree);
-+		cgrp = rb_entry(node, struct cgroup, node);
-+
-+		rb_erase(node, &cgroup_tree);
-+		cgroup__put(cgrp);
-+	}
-+}
-diff --git a/tools/perf/util/cgroup.h b/tools/perf/util/cgroup.h
-index 2ec11f01090d..11a8b187ec09 100644
---- a/tools/perf/util/cgroup.h
-+++ b/tools/perf/util/cgroup.h
-@@ -3,16 +3,18 @@
- #define __CGROUP_H__
  
- #include <linux/refcount.h>
-+#include <linux/rbtree.h>
+ void hists__output_recalc_col_len(struct hists *hists, int max_rows)
+@@ -681,6 +687,7 @@ __hists__add_entry(struct hists *hists,
+ 			.dev = ns ? ns->link_info[CGROUP_NS_INDEX].dev : 0,
+ 			.ino = ns ? ns->link_info[CGROUP_NS_INDEX].ino : 0,
+ 		},
++		.cgroup = sample->cgroup,
+ 		.ms = {
+ 			.map	= al->map,
+ 			.sym	= al->sym,
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 83d5fc15429c..1e5c4087391b 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -37,6 +37,7 @@ enum hist_column {
+ 	HISTC_THREAD,
+ 	HISTC_COMM,
+ 	HISTC_CGROUP_ID,
++	HISTC_CGROUP,
+ 	HISTC_PARENT,
+ 	HISTC_CPU,
+ 	HISTC_SOCKET,
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index 83eb3fa6f941..5524b10d7d38 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -20,6 +20,7 @@
+ #include "mem-events.h"
+ #include "annotate.h"
+ #include "time-utils.h"
++#include "cgroup.h"
+ #include <linux/kernel.h>
  
- struct option;
- 
- struct cgroup {
--	char *name;
--	int fd;
--	refcount_t refcnt;
-+	struct rb_node		node;
-+	u64			ino;
-+	char			*name;
-+	int			fd;
-+	refcount_t		refcnt;
+ regex_t		parent_regex;
+@@ -627,6 +628,35 @@ struct sort_entry sort_cgroup_id = {
+ 	.se_width_idx	= HISTC_CGROUP_ID,
  };
  
--
- extern int nr_cgroups; /* number of explicit cgroups defined */
- 
- struct cgroup *cgroup__get(struct cgroup *cgroup);
-@@ -26,4 +28,9 @@ void evlist__set_default_cgroup(struct evlist *evlist, struct cgroup *cgroup);
- 
- int parse_cgroups(const struct option *opt, const char *str, int unset);
- 
-+struct cgroup *cgroup__findnew(uint64_t ino, const char *path);
-+struct cgroup *cgroup__find_by_path(const char *path);
++/* --sort cgroup */
 +
-+void destroy_cgroups(void);
++static int64_t
++sort__cgroup_cmp(struct hist_entry *left, struct hist_entry *right)
++{
++	return right->cgroup - left->cgroup;
++}
 +
- #endif /* __CGROUP_H__ */
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 61c35eef616b..33554e745e6b 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -26,6 +26,7 @@
- #include "linux/hash.h"
- #include "asm/bug.h"
- #include "bpf-event.h"
-+#include "cgroup.h"
- 
- #include <linux/ctype.h>
- #include <symbol/kallsyms.h>
-@@ -646,9 +647,15 @@ int machine__process_cgroup_event(struct machine *machine __maybe_unused,
- 				  union perf_event *event,
- 				  struct perf_sample *sample __maybe_unused)
- {
-+	struct cgroup *cgrp;
++static int hist_entry__cgroup_snprintf(struct hist_entry *he,
++				       char *bf, size_t size,
++				       unsigned int width __maybe_unused)
++{
++	const char *cgrp_name = "N/A";
 +
- 	if (dump_trace)
- 		perf_event__fprintf_cgroup(event, stdout);
- 
-+	cgrp = cgroup__findnew(event->cgroup.ino, event->cgroup.path);
-+	if (cgrp == NULL)
-+		return -ENOMEM;
++	if (he->cgroup) {
++		struct cgroup *cgrp = cgroup__findnew(he->cgroup, cgrp_name);
++		cgrp_name = cgrp->name;
++	}
 +
- 	return 0;
- }
- 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 2cdce7ee228c..ffdd956d0a89 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -275,6 +275,8 @@ static void perf_session__release_decomp_events(struct perf_session *session)
- 	} while (1);
- }
- 
-+extern void destroy_cgroups(void);
++	return repsep_snprintf(bf, size, "%s", cgrp_name);
++}
 +
- void perf_session__delete(struct perf_session *session)
- {
- 	if (session == NULL)
-@@ -289,6 +291,8 @@ void perf_session__delete(struct perf_session *session)
- 	if (session->data)
- 		perf_data__close(session->data);
- 	free(session);
++struct sort_entry sort_cgroup = {
++	.se_header      = "cgroup",
++	.se_cmp	        = sort__cgroup_cmp,
++	.se_snprintf    = hist_entry__cgroup_snprintf,
++	.se_width_idx	= HISTC_CGROUP,
++};
 +
-+	destroy_cgroups();
- }
+ /* --sort socket */
  
- static int process_event_synth_tracing_data_stub(struct perf_session *session
+ static int64_t
+@@ -1667,6 +1697,7 @@ static struct sort_dimension common_sort_dimensions[] = {
+ 	DIM(SORT_TRACE, "trace", sort_trace),
+ 	DIM(SORT_SYM_SIZE, "symbol_size", sort_sym_size),
+ 	DIM(SORT_DSO_SIZE, "dso_size", sort_dso_size),
++	DIM(SORT_CGROUP, "cgroup", sort_cgroup),
+ 	DIM(SORT_CGROUP_ID, "cgroup_id", sort_cgroup_id),
+ 	DIM(SORT_SYM_IPC_NULL, "ipc_null", sort_sym_ipc_null),
+ 	DIM(SORT_TIME, "time", sort_time),
+diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
+index 3d7cef73924c..571092136e3b 100644
+--- a/tools/perf/util/sort.h
++++ b/tools/perf/util/sort.h
+@@ -98,6 +98,7 @@ struct hist_entry {
+ 	struct thread		*thread;
+ 	struct comm		*comm;
+ 	struct namespace_id	cgroup_id;
++	u64			cgroup;
+ 	u64			ip;
+ 	u64			transaction;
+ 	s32			socket;
+@@ -219,6 +220,7 @@ enum sort_type {
+ 	SORT_TRACE,
+ 	SORT_SYM_SIZE,
+ 	SORT_DSO_SIZE,
++	SORT_CGROUP,
+ 	SORT_CGROUP_ID,
+ 	SORT_SYM_IPC_NULL,
+ 	SORT_TIME,
 -- 
 2.23.0.187.g17f5b7556c-goog
 
