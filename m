@@ -2,141 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9185A097F
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:33:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BC7FA0985
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfH1Sd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 14:33:26 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39583 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfH1Sd0 (ORCPT
+        id S1726960AbfH1SeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 14:34:00 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39205 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbfH1Sd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:33:26 -0400
-Received: by mail-oi1-f194.google.com with SMTP id 16so493963oiq.6
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 11:33:25 -0700 (PDT)
+        Wed, 28 Aug 2019 14:33:58 -0400
+Received: by mail-io1-f67.google.com with SMTP id l7so1548039ioj.6;
+        Wed, 28 Aug 2019 11:33:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MRw4JAwMK/TegnyayQas2h0SadP2fic7Zv1TUKBel5o=;
-        b=VeBtF93wmFWp16gPmYOQv/sDqBZbOhNKDsEFS/r+1ujwicLkHIplTAeOkU/YhRf81U
-         iE//NvDEi7pyMMEhylzy9D5t+BM6uaUww6q7vfD2pt45cZ772YL9Q5ChveoiwVauphCz
-         tHCP8nw7jJgZIkjkReMrHLn/1r1pfE6A0fRcQ=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8hu0ssZ0oGIHsc6XK0+vNFtta74+suq/nbsPFXeUCzo=;
+        b=gOExUspZ43jLMuF+eKU6GV47d0erYUbZyKrYKRx3biAPGIachP/lZDr5vFrM7ph+Sw
+         shJydx+mpJs1RrkwMNxmJECY4wh7aA7ZKu2d5mA0P3sr7HYMgo5ybKOr2mPGlKDdZp30
+         7MhEdpd/5TcPxjlpD44R15158z8gKGN6ZD88QhHvYg+xnGrDm/RXuKuVoinN/WjSDYBd
+         VEkShaMh9qJLhxrQfM1EKfjC43RqqjIPrRMvlqTDlrYXW5m3DjhUqwV1z0XKmIM7KBar
+         abct8GgJIyTOCQIYegKpz+CXpOUpCR3AegIdWRO5vz88hIWhrDN/hGXah/6GhnMAOo6y
+         2rew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MRw4JAwMK/TegnyayQas2h0SadP2fic7Zv1TUKBel5o=;
-        b=sejR5uJ+hcWpchdR2rbLGst8w9YWr3lIL/7gODRu27Nfz3MovnAkNSh71PZgttrucr
-         yjVu4KKfjka4PExMhflB/ckoR7taqFn2t+9BvOpt+tNM4vdqH+6CgGE5pMqEPOtJpOgl
-         usF7NBJ8dgipnirb6TnNZHrcv+BUbsYNqtDNqTVhjVULr4sPS5Pv5Dl/4L9P3YTZbCdv
-         cJxkph/k+ISK2KxHW/kgP26E7tl1o3kB5sK17lG7F7hWhd4rzxvzzfKEWdvxSGNofpqu
-         uFQpDK/of3diGoR5ICvuf1THhDIfevegUc+i1YqMnR451EDnC5Ep2PC3T/cq5vrTlVfP
-         Yh8w==
-X-Gm-Message-State: APjAAAWE+J8+ctjoolhD9Izi5lcbqXGgv0UwRFpMvXRCxhbQRRpDOv9X
-        WCZ8LWWaYmVcdlUrc7RiBPWL6WNw/0MFfIejMQrnZA==
-X-Google-Smtp-Source: APXvYqxshs+IbUxVF7bX+CC6odwm6yUPhQaN60op/uAq3yyqpLy+0PZBoNClG3BYkaFZ3dYugoyTBC4HI+Obkt1XEV4=
-X-Received: by 2002:aca:6742:: with SMTP id b2mr3778581oiy.14.1567017205105;
- Wed, 28 Aug 2019 11:33:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190826201425.17547-1-daniel.vetter@ffwll.ch>
- <20190826201425.17547-4-daniel.vetter@ffwll.ch> <20190827225002.GB30700@ziepe.ca>
-In-Reply-To: <20190827225002.GB30700@ziepe.ca>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Wed, 28 Aug 2019 20:33:13 +0200
-Message-ID: <CAKMK7uHKiLwXLHd1xThZVM1dH-oKrtpDZ=FxLBBwtY7XmJKgtA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] kernel.h: Add non_block_start/end()
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wei Wang <wvw@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8hu0ssZ0oGIHsc6XK0+vNFtta74+suq/nbsPFXeUCzo=;
+        b=EYPwzy/1oztWmVzmRGlGq9FBEUpMlFMK1rOvvsgsaESFrzkwOhoIIgia0fCilOU+R3
+         7fJgJau1mQ6o/9V61223Vi2Xkm9uBRubnqboWHBPCnPG7ayFqFr11j+kaRSVZT7mfPpV
+         /51c4iFH1/ug9LzcJdXPq9l59r8Vmd5264LlzRi2DpWHPun3tDtBkr6b95bDtKvhK/mi
+         heouUZm/si7Ce02gLy9ROHaM2bhaTXMFJgIsf0dzNDOgf3Mif29hPTWi2ZcyZvCQQ7k6
+         hhJAyUKAnI3oFaum01gvSX3SZ0a3Oq79hvmGZi1C2dD+rX5WliOAZfw8QeANLseor3+N
+         G+Yw==
+X-Gm-Message-State: APjAAAV6EyWsNCeuGUCciVIldUcg/B0LGMEQjMkYNl90apW9An5GI3DS
+        yknQLgmaBEnOTWa3jhI85boG07VN54U=
+X-Google-Smtp-Source: APXvYqwEMGWFsgtbR4pzYu0QHQcSSHkT8AIV7Vx2F+xl54RWfWBWN+WSLiU9SH8fydowdo4lmRC4Ww==
+X-Received: by 2002:a05:6602:219a:: with SMTP id b26mr236370iob.55.1567017237339;
+        Wed, 28 Aug 2019 11:33:57 -0700 (PDT)
+Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id o3sm2494650ioo.74.2019.08.28.11.33.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 11:33:56 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-omap@vger.kernel.org
+Cc:     Adam Ford <aford173@gmail.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/3] ARM: omap2plus_defconfig: Fix missing video
+Date:   Wed, 28 Aug 2019 13:33:49 -0500
+Message-Id: <20190828183351.822-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 12:50 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> > diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> > index 4fa360a13c1e..82f84cfe372f 100644
-> > +++ b/include/linux/kernel.h
-> > @@ -217,7 +217,9 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
-> >   * might_sleep - annotation for functions that can sleep
-> >   *
-> >   * this macro will print a stack trace if it is executed in an atomic
-> > - * context (spinlock, irq-handler, ...).
-> > + * context (spinlock, irq-handler, ...). Additional sections where blocking is
-> > + * not allowed can be annotated with non_block_start() and non_block_end()
-> > + * pairs.
-> >   *
-> >   * This is a useful debugging help to be able to catch problems early and not
-> >   * be bitten later when the calling function happens to sleep when it is not
-> > @@ -233,6 +235,25 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
-> >  # define cant_sleep() \
-> >       do { __cant_sleep(__FILE__, __LINE__, 0); } while (0)
-> >  # define sched_annotate_sleep()      (current->task_state_change = 0)
-> > +/**
-> > + * non_block_start - annotate the start of section where sleeping is prohibited
-> > + *
-> > + * This is on behalf of the oom reaper, specifically when it is calling the mmu
-> > + * notifiers. The problem is that if the notifier were to block on, for example,
-> > + * mutex_lock() and if the process which holds that mutex were to perform a
-> > + * sleeping memory allocation, the oom reaper is now blocked on completion of
-> > + * that memory allocation. Other blocking calls like wait_event() pose similar
-> > + * issues.
-> > + */
-> > +# define non_block_start() \
-> > +     do { current->non_block_count++; } while (0)
-> > +/**
-> > + * non_block_end - annotate the end of section where sleeping is prohibited
-> > + *
-> > + * Closes a section opened by non_block_start().
-> > + */
-> > +# define non_block_end() \
-> > +     do { WARN_ON(current->non_block_count-- == 0); } while (0)
->
-> check-patch does not like these, and I agree
->
-> #101: FILE: include/linux/kernel.h:248:
-> +# define non_block_start() \
-> +       do { current->non_block_count++; } while (0)
->
-> /tmp/tmp1spfxufy/0006-kernel-h-Add-non_block_start-end-.patch:108: WARNING: Single statement macros should not use a do {} while (0) loop
-> #108: FILE: include/linux/kernel.h:255:
-> +# define non_block_end() \
-> +       do { WARN_ON(current->non_block_count-- == 0); } while (0)
->
-> Please use a static inline?
+When the panel-dpi driver was removed, the simple-panels driver
+was never enabled, so anyone who used the panel-dpi driver lost
+video, and those who used it inconjunction with simple-panels
+would have to manually enable CONFIG_DRM_PANEL_SIMPLE.
 
-We need get_current() plus the task_struct, so this gets real messy
-real fast. Not even sure which header this would fit in, or whether
-I'd need to create a new one. You're insisting on this or respinning
-with the do { } while (0) dropped ok.
+This patch makes CONFIG_DRM_PANEL_SIMPLE a module in the same
+way the deprecated panel-dpi was.
 
-Thanks, Daniel
+Fixes: 8bf4b1621178 ("drm/omap: Remove panel-dpi driver")
 
-> Also, can we get one more ack on this patch?
->
-> Jason
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-
-
+diff --git a/arch/arm/configs/omap2plus_defconfig b/arch/arm/configs/omap2plus_defconfig
+index c7bf9c493646..64eb896907bf 100644
+--- a/arch/arm/configs/omap2plus_defconfig
++++ b/arch/arm/configs/omap2plus_defconfig
+@@ -363,6 +363,7 @@ CONFIG_DRM_OMAP_PANEL_TPO_TD028TTEC1=m
+ CONFIG_DRM_OMAP_PANEL_TPO_TD043MTEA1=m
+ CONFIG_DRM_OMAP_PANEL_NEC_NL8048HL11=m
+ CONFIG_DRM_TILCDC=m
++CONFIG_DRM_PANEL_SIMPLE=m
+ CONFIG_FB=y
+ CONFIG_FIRMWARE_EDID=y
+ CONFIG_FB_MODE_HELPERS=y
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+2.17.1
+
