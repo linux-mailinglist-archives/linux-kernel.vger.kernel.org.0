@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBBAD9FD9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:55:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 776D79FD9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:55:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbfH1IzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:55:24 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40432 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbfH1IzX (ORCPT
+        id S1726851AbfH1Iz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:55:29 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33972 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726830AbfH1Iz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:55:23 -0400
-Received: by mail-pl1-f196.google.com with SMTP id h3so920849pls.7
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 01:55:22 -0700 (PDT)
+        Wed, 28 Aug 2019 04:55:27 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b24so1295824pfp.1
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 01:55:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K4ivBVU5Ss+sLpYS30yLEkqdAEqwtQS/JgJ+Fiby4j4=;
-        b=eKtsYmKJW0aXI/8/L6zIXUgqsErFCuAabhw6VyiEfl29rSzE77wDmpO1G75Pr/OCFl
-         KvIo42UO0xcqE2MOpGPBUJhwnU4MeJhS2RfUxKCfNDlkMDmMrvMKah1jy9vXj1e5HA+M
-         Mu31KEcxx1NlrT6ZkGUnO5inBWC6MkJ4ixjB0=
+        bh=4tt2ENFTFe5Eg7RyJm4kt1zaNDOy/8f5U31zRIZv65I=;
+        b=LcHIw+CZEXfRVziiWwb83Rl1r0BaJKLJakpIRvePqp2801Yn93HplPf6SiE/BVp/Ni
+         vPMFtI6MmuAgfVgSw+q3wnDjR7AVJ/DgNgi3zPk5YBJOOWaHu/B401LK4sGIeWjixoAg
+         35ksrf4zhBW6+Xndf50EnsM3qn6pSX8bcSSQY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=K4ivBVU5Ss+sLpYS30yLEkqdAEqwtQS/JgJ+Fiby4j4=;
-        b=IpdKvnDIjCtuIFCoPA474ZiFLmR5sZWX2Mra87omJ5yw4dlpKKDqBEVMs1T7eRusBX
-         PfztXLjUthaLqV1QsZDoGfOpPUVVtaWZvlpZ4vk1ZZtalPV2LUYAB9yzkYAaTU8/gUmU
-         b3mo+XiAx88v3UsXai6nZ7luqNqF15F6PI8k7MN8RlK4Ws8XH6wFS+vrrC+MGJFCEocg
-         a1IW5YdOzx0hBxEAFZaI7mKx5tPVYLvp4LQnZMm5T9GYJ5mN45PLqawqXJjOJNww3JeO
-         Z0KIayJtFAsPsuj+DolXu5kx2Sv+/db9Utuda83VrGWNKhBLezAoq4c/ccvYHXh0+wQ8
-         V7Qw==
-X-Gm-Message-State: APjAAAWrJ67QcBacCvhZU1oUS1yhGYolgW9yAuF8hl29VqjC57oSCC1A
-        7aVPHKGnjFm8NszURAgDPwJHAA==
-X-Google-Smtp-Source: APXvYqz+7LioVOAuI3QiU89rfrqiB0N93ADo1DKZMN2YenWqSAyLfoBhEt48lDz4CAnZm6xE4t3VDQ==
-X-Received: by 2002:a17:902:6a84:: with SMTP id n4mr3214093plk.109.1566982522329;
-        Wed, 28 Aug 2019 01:55:22 -0700 (PDT)
+        bh=4tt2ENFTFe5Eg7RyJm4kt1zaNDOy/8f5U31zRIZv65I=;
+        b=bl56YCkEn6gkzP4RXgIPPV2Mj1c+6i0c/hFwe+iaZRrLL29MG57+ukcvhnqq9NiX7U
+         BvBKBQv9R64uL2YRscdgqjVIFyZ3+Rfiqf8Bh/0KkineOs2jpz5siH59hFbxBaKs0aGH
+         8JeJe/ra+YMkoqR4fYqZ0somrSvib0bWvqDaACKgqnwszm/GuXXzOJQWNqATK7s+bwk/
+         Msck9UCL0b+2Ad0KC/vGTwp75gT5VST+ZtEBcrc/IelUz+DlChLtnhiFRZ0MC9G1CwAq
+         xY5z+MgMgth7HH5oODT4Ll7y88ZzjMJGKNscB2HvZs2Y5CrcWje+m1thhO6Ut0UQWo8i
+         v3iQ==
+X-Gm-Message-State: APjAAAXg4soUvlAZN5RolqQgJ37B6LcgaG/L5KUfr45dvYJ0HsBOEfCA
+        auH2cvoLojEd+WYLwKnrSb/MEw==
+X-Google-Smtp-Source: APXvYqzjmQDEnBY8EF8T2/7xO0+gEVIbuaFzBwd9SxiFVr28UeDbwHgrG+kry4Vz/9vqLf89/lFf4Q==
+X-Received: by 2002:a62:83c9:: with SMTP id h192mr3280891pfe.57.1566982526310;
+        Wed, 28 Aug 2019 01:55:26 -0700 (PDT)
 Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id z189sm2431386pfb.137.2019.08.28.01.55.18
+        by smtp.gmail.com with ESMTPSA id z189sm2431386pfb.137.2019.08.28.01.55.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 28 Aug 2019 01:55:21 -0700 (PDT)
+        Wed, 28 Aug 2019 01:55:25 -0700 (PDT)
 From:   Srinath Mannam <srinath.mannam@broadcom.com>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
@@ -52,9 +52,9 @@ Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>,
         Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH v2 5/6] arm: dts: Change PCIe INTx mapping for HR2
-Date:   Wed, 28 Aug 2019 14:24:47 +0530
-Message-Id: <1566982488-9673-6-git-send-email-srinath.mannam@broadcom.com>
+Subject: [PATCH v2 6/6] arm64: dts: Change PCIe INTx mapping for NS2
+Date:   Wed, 28 Aug 2019 14:24:48 +0530
+Message-Id: <1566982488-9673-7-git-send-email-srinath.mannam@broadcom.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1566982488-9673-1-git-send-email-srinath.mannam@broadcom.com>
 References: <1566982488-9673-1-git-send-email-srinath.mannam@broadcom.com>
@@ -71,19 +71,19 @@ IRQ domain of the iProc PCIe controller itself
 Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
 ---
- arch/arm/boot/dts/bcm-hr2.dtsi | 30 ++++++++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi | 28 ++++++++++++++++++++----
+ 1 file changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm-hr2.dtsi b/arch/arm/boot/dts/bcm-hr2.dtsi
-index e4d4973..eb449d0 100644
---- a/arch/arm/boot/dts/bcm-hr2.dtsi
-+++ b/arch/arm/boot/dts/bcm-hr2.dtsi
-@@ -299,8 +299,11 @@
- 		reg = <0x18012000 0x1000>;
+diff --git a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
+index 15f7b0e..d639928 100644
+--- a/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
++++ b/arch/arm64/boot/dts/broadcom/northstar2/ns2.dtsi
+@@ -117,8 +117,11 @@
+ 		dma-coherent;
  
  		#interrupt-cells = <1>;
 -		interrupt-map-mask = <0 0 0 0>;
--		interrupt-map = <0 0 0 0 &gic GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
 +		interrupt-map-mask = <0 0 0 7>;
 +		interrupt-map = <0 0 0 1 &pcie0_intc 1>,
 +				<0 0 0 2 &pcie0_intc 2>,
@@ -92,49 +92,48 @@ index e4d4973..eb449d0 100644
  
  		linux,pci-domain = <0>;
  
-@@ -328,6 +331,14 @@
- 				     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
- 			brcm,pcie-msi-inten;
- 		};
-+
+@@ -140,6 +143,13 @@
+ 		phy-names = "pcie-phy";
+ 
+ 		msi-parent = <&v2m0>;
 +		pcie0_intc: interrupt-controller {
 +			compatible = "brcm,iproc-intc";
 +			interrupt-controller;
 +			#interrupt-cells = <1>;
 +			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>;
 +		};
  	};
  
- 	pcie1: pcie@18013000 {
-@@ -335,8 +346,11 @@
- 		reg = <0x18013000 0x1000>;
+ 	pcie4: pcie@50020000 {
+@@ -148,8 +158,11 @@
+ 		dma-coherent;
  
  		#interrupt-cells = <1>;
 -		interrupt-map-mask = <0 0 0 0>;
--		interrupt-map = <0 0 0 0 &gic GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-map = <0 0 0 0 &gic 0 GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
 +		interrupt-map-mask = <0 0 0 7>;
-+		interrupt-map = <0 0 0 1 &pcie1_intc 1>,
-+				<0 0 0 2 &pcie1_intc 2>,
-+				<0 0 0 3 &pcie1_intc 3>,
-+				<0 0 0 4 &pcie1_intc 4>;
++		interrupt-map = <0 0 0 1 &pcie4_intc 1>,
++				<0 0 0 2 &pcie4_intc 2>,
++				<0 0 0 3 &pcie4_intc 3>,
++				<0 0 0 4 &pcie4_intc 4>;
  
- 		linux,pci-domain = <1>;
+ 		linux,pci-domain = <4>;
  
-@@ -364,5 +378,13 @@
- 				     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
- 			brcm,pcie-msi-inten;
- 		};
-+
-+		pcie1_intc: interrupt-controller {
+@@ -171,6 +184,13 @@
+ 		phy-names = "pcie-phy";
+ 
+ 		msi-parent = <&v2m0>;
++		pcie4_intc: interrupt-controller {
 +			compatible = "brcm,iproc-intc";
 +			interrupt-controller;
 +			#interrupt-cells = <1>;
 +			interrupt-parent = <&gic>;
-+			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
++			interrupts = <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
 +		};
  	};
- };
+ 
+ 	pcie8: pcie@60c00000 {
 -- 
 2.7.4
 
