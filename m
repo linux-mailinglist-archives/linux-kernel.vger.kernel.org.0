@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA0489FA65
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FD2D9FA5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:21:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfH1GVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 02:21:48 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:33861 "EHLO
+        id S1726449AbfH1GVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 02:21:35 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:5741 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726255AbfH1GVq (ORCPT
+        with ESMTP id S1726232AbfH1GVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 02:21:46 -0400
-X-UUID: 15f134b452c94c9a9087bac24143ef02-20190828
-X-UUID: 15f134b452c94c9a9087bac24143ef02-20190828
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        Wed, 28 Aug 2019 02:21:33 -0400
+X-UUID: 912eb4ade9a34facb4bf727e242203e4-20190828
+X-UUID: 912eb4ade9a34facb4bf727e242203e4-20190828
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 555759338; Wed, 28 Aug 2019 14:21:35 +0800
+        with ESMTP id 1422246930; Wed, 28 Aug 2019 14:21:37 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 28 Aug 2019 14:21:33 +0800
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 28 Aug 2019 14:21:35 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Aug 2019 14:21:33 +0800
+ Transport; Wed, 28 Aug 2019 14:21:34 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -35,157 +35,67 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/6] arm64: dts: mt8183: add usb and phy nodes
-Date:   Wed, 28 Aug 2019 14:21:00 +0800
-Message-ID: <1566973261-21677-6-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH 6/6] arm64: dts: mt8183: enable USB remote wakeup
+Date:   Wed, 28 Aug 2019 14:21:01 +0800
+Message-ID: <1566973261-21677-7-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1566973261-21677-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1566973261-21677-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 53D6CA82753AEEC1FC6F490F0EEC5A3268B2DE9F664A7B39C4DB9466082A3A8D2000:8
+X-TM-SNTS-SMTP: 22E3B909B89E165B91830DABF3469875FDA9C6DC94953577A2332E66565D7D712000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add USB related nodes for MT8183, set it as host mode by default.
+Enable USB remote wakeup for MT8183
 
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts | 22 +++++++++
- arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 55 +++++++++++++++++++++
- 2 files changed, 77 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts | 1 +
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-index d8e555cbb5d3..142ff52f0f42 100644
+index 142ff52f0f42..077256f3397b 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
 +++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-@@ -6,7 +6,9 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/gpio/gpio.h>
- #include "mt8183.dtsi"
-+#include "mt6358.dtsi"
- 
- / {
- 	model = "MediaTek MT8183 evaluation board";
-@@ -24,6 +26,16 @@
- 	chosen {
- 		stdout-path = "serial0:921600n8";
- 	};
-+
-+	usb_vbus: regulator@0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "p0_vbus";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&pio 42 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		regulator-always-on;
-+	};
- };
- 
- &auxadc {
-@@ -135,6 +147,16 @@
- 
- };
- 
-+&ssusb {
-+	vusb33-supply = <&mt6358_vusb_reg>;
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+&usb_host {
-+	status = "okay";
-+};
-+
- &uart0 {
+@@ -150,6 +150,7 @@
+ &ssusb {
+ 	vusb33-supply = <&mt6358_vusb_reg>;
+ 	dr_mode = "host";
++	wakeup-source;
  	status = "okay";
  };
+ 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index c2749c4631bc..28da334237c6 100644
+index 28da334237c6..c20cc0e8c2b4 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/phy/phy.h>
- #include "mt8183-pinfunc.h"
- 
- / {
-@@ -372,6 +373,35 @@
- 			status = "disabled";
+@@ -215,6 +215,13 @@
+ 			#clock-cells = <1>;
  		};
  
-+		ssusb: usb@11201000 {
-+			compatible = "mediatek,mt8183-mtu3", "mediatek,mtu3";
-+			reg = <0 0x11201000 0 0x2e00>,
-+			      <0 0x11203e00 0 0x0100>;
-+			reg-names = "mac", "ippc";
-+			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_LOW>;
-+			phys = <&u2port0 PHY_TYPE_USB2>,
-+			       <&u3port0 PHY_TYPE_USB3>;
-+			clocks = <&infracfg CLK_INFRA_UNIPRO_SCK>,
-+				 <&infracfg CLK_INFRA_USB>;
-+			clock-names = "sys_ck", "ref_ck";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+			status = "disabled";
-+
-+			usb_host: xhci@11200000 {
-+				compatible = "mediatek,mt8183-xhci",
-+					     "mediatek,mtk-xhci";
-+				reg = <0 0x11200000 0 0x1000>;
-+				reg-names = "mac";
-+				interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_LOW>;
-+				clocks = <&infracfg CLK_INFRA_UNIPRO_SCK>,
-+					 <&infracfg CLK_INFRA_USB>;
-+				clock-names = "sys_ck", "ref_ck";
-+				status = "disabled";
-+			};
++		pericfg: syscon@10003000 {
++			compatible = "mediatek,mt8183-pericfg", "syscon";
++			reg = <0 0x10003000 0 0x1000>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
 +		};
 +
- 		audiosys: syscon@11220000 {
- 			compatible = "mediatek,mt8183-audiosys", "syscon";
- 			reg = <0 0x11220000 0 0x1000>;
-@@ -384,6 +414,31 @@
- 			reg = <0 0x11f10000 0 0x1000>;
- 		};
- 
-+		u3phy: usb-phy@11f40000 {
-+			compatible = "mediatek,mt8183-tphy",
-+				     "mediatek,generic-tphy-v2";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0x11f40000 0x1000>;
-+			status = "okay";
-+
-+			u2port0: usb-phy@0 {
-+				reg = <0x0 0x700>;
-+				clocks = <&clk26m>;
-+				clock-names = "ref";
-+				#phy-cells = <1>;
-+				status = "okay";
-+			};
-+
-+			u3port0: usb-phy@0700 {
-+				reg = <0x0700 0x900>;
-+				clocks = <&clk26m>;
-+				clock-names = "ref";
-+				#phy-cells = <1>;
-+				status = "okay";
-+			};
-+		};
-+
- 		mfgcfg: syscon@13000000 {
- 			compatible = "mediatek,mt8183-mfgcfg", "syscon";
- 			reg = <0 0x13000000 0 0x1000>;
+ 		pio: pinctrl@10005000 {
+ 			compatible = "mediatek,mt8183-pinctrl";
+ 			reg = <0 0x10005000 0 0x1000>,
+@@ -384,6 +391,7 @@
+ 			clocks = <&infracfg CLK_INFRA_UNIPRO_SCK>,
+ 				 <&infracfg CLK_INFRA_USB>;
+ 			clock-names = "sys_ck", "ref_ck";
++			mediatek,syscon-wakeup = <&pericfg 0x400 0>;
+ 			#address-cells = <2>;
+ 			#size-cells = <2>;
+ 			ranges;
 -- 
 2.23.0
 
