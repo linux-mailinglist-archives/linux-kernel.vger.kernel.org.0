@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE9749FC8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 470699FC8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:04:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbfH1IEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:04:21 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:52936 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726382AbfH1IEV (ORCPT
+        id S1726603AbfH1IEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:04:22 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:24858 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfH1IEV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 28 Aug 2019 04:04:21 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 7ABA33FC0E;
-        Wed, 28 Aug 2019 10:04:18 +0200 (CEST)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=SMm+e2Yp;
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 665763F6BF;
+        Wed, 28 Aug 2019 10:04:19 +0200 (CEST)
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=nrys4i9N;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -26,24 +26,22 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id paMWwYcG49m7; Wed, 28 Aug 2019 10:04:17 +0200 (CEST)
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FxS2OzjsSHpP; Wed, 28 Aug 2019 10:04:18 +0200 (CEST)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id A6F0E3F4AF;
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 224053F685;
         Wed, 28 Aug 2019 10:04:16 +0200 (CEST)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 68DFB361119;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 8B33D36112D;
         Wed, 28 Aug 2019 10:04:16 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1566979456; bh=gfhDXt9MBI95XOYsL6vu6niVo4xFZOn80Pl5Fban694=;
+        t=1566979456; bh=4XtI0qHgeHp+CuBF0GkLJLEP5CmS3KUn7pLo3SYrBGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SMm+e2Yp6T0RfoQbxPnKIVdyHvsXPNGm6FxiULovbl4cyeknuC6rQ2VA61LJT2zTT
-         hkungsPmNQuREZVSQBANt2R0sUX1JLhNy7fnyfBO17Yy48WISltMj3pIVdq86JLcaf
-         N/V8rP8Ta00UDYBtMqJ6JP9h2k/aGKnAI4u/z5hk=
+        b=nrys4i9NkpsXODQrKk025hW/BJjijfmZAkO6xMeSHtg0Ik6QaupO8bBHeY0eoCddr
+         EuqBJxC0aLxL0IM603BM6ssZ4mg1PbtAxVPsOOhvFl1yfENCnbO1inaSEgfcuz6SkR
+         8eg11GE5Njm0caCWnIjYoYFVTBxhJA9EBb3dyLrQ=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-kernel@vger.kernel.org
@@ -53,9 +51,9 @@ Cc:     pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Doug Covelli <dcovelli@vmware.com>
-Subject: [PATCH v3 1/4] x86/vmware: Update platform detection code for VMCALL/VMMCALL hypercalls
-Date:   Wed, 28 Aug 2019 10:03:50 +0200
-Message-Id: <20190828080353.12658-2-thomas_os@shipmail.org>
+Subject: [PATCH v3 2/4] x86/vmware: Add a header file for hypercall definitions
+Date:   Wed, 28 Aug 2019 10:03:51 +0200
+Message-Id: <20190828080353.12658-3-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190828080353.12658-1-thomas_os@shipmail.org>
 References: <20190828080353.12658-1-thomas_os@shipmail.org>
@@ -68,171 +66,144 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-Vmware has historically used an "inl" instruction for this, but recent
-hardware versions support using VMCALL/VMMCALL instead, so use this method
-if supported at platform detection time. Explicitly code separate macro
-versions since the alternatives self-patching has not been performed at
-platform detection time.
+The new header is intended to be used by drivers using the backdoor.
+Follow the KVM example using alternatives self-patching to
+choose between vmcall, vmmcall and io instructions.
 
-Also put tighter constraints on the assembly input parameters.
+Also define two new CPU feature flags to indicate hypervisor support
+for vmcall- and vmmcall instructions. The new XF86_FEATURE_VMW_VMMCALL
+flag is needed because using XF86_FEATURE_VMMCALL might break QEMU/KVM
+setups using the vmmouse driver. They rely on XF86_FEATURE_VMMCALL
+on AMD to get the kvm_hypercall() right. But they do not yet implement
+vmmcall for the VMware hypercall used by the vmmouse driver.
 
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: <x86@kernel.org>
-Co-developed-by: Doug Covelli <dcovelli@vmware.com>
-Signed-off-by: Doug Covelli <dcovelli@vmware.com>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Reviewed-by: Doug Covelli <dcovelli@vmware.com>
 ---
- arch/x86/kernel/cpu/vmware.c | 88 +++++++++++++++++++++++++++++-------
- 1 file changed, 71 insertions(+), 17 deletions(-)
+ MAINTAINERS                        |  1 +
+ arch/x86/include/asm/cpufeatures.h |  2 ++
+ arch/x86/include/asm/vmware.h      | 50 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/vmware.c       |  6 +++-
+ 4 files changed, 58 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/include/asm/vmware.h
 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c2d975da561f..5bf65a49fa19 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -17203,6 +17203,7 @@ M:	"VMware, Inc." <pv-drivers@vmware.com>
+ L:	virtualization@lists.linux-foundation.org
+ S:	Supported
+ F:	arch/x86/kernel/cpu/vmware.c
++F:	arch/x86/include/asm/vmware.h
+ 
+ VMWARE PVRDMA DRIVER
+ M:	Adit Ranadive <aditr@vmware.com>
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 998c2cc08363..55fa3b3f0bac 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -232,6 +232,8 @@
+ #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
+ #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
+ #define X86_FEATURE_EPT_AD		( 8*32+17) /* Intel Extended Page Table access-dirty bit */
++#define X86_FEATURE_VMCALL		( 8*32+18) /* "" Hypervisor supports the VMCALL instruction */
++#define X86_FEATURE_VMW_VMMCALL		( 8*32+19) /* "" VMware prefers VMMCALL hypercall instruction */
+ 
+ /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
+ #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
+new file mode 100644
+index 000000000000..478bbc05746d
+--- /dev/null
++++ b/arch/x86/include/asm/vmware.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: GPL-2.0 or MIT */
++#ifndef _ASM_X86_VMWARE_H
++#define _ASM_X86_VMWARE_H
++
++#include <asm/cpufeatures.h>
++#include <asm/alternative.h>
++
++/*
++ * The hypercall definitions differ in the low word of the %edx argument in
++ * the following way: The old port base interface uses the port number to
++ * distinguish between high- and low bandwidth versions. The new vmcall
++ * interface instead uses a set of flags to select bandwidth mode and
++ * transfer direction. The flags should be loaded into %dx by any user
++ * and are automatically replaced by the port number if the
++ * VMWARE_HYPERVISOR_PORT method is used. In short, New driver code should
++ * strictly use the new definition of %dx content.
++ */
++
++/* Old port-based version */
++#define VMWARE_HYPERVISOR_PORT    "0x5658"
++#define VMWARE_HYPERVISOR_PORT_HB "0x5659"
++
++/* Current vmcall / vmmcall version */
++#define VMWARE_HYPERVISOR_HB   BIT(0)
++#define VMWARE_HYPERVISOR_OUT  BIT(1)
++
++/* The low bandwidth call. The low word of edx is presumed clear. */
++#define VMWARE_HYPERCALL						\
++	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT ", %%dx; inl (%%dx)", \
++		      "vmcall", X86_FEATURE_VMCALL,			\
++		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
++
++/*
++ * The high bandwidth out call. The low word of edx is presumed to have the
++ * HB and OUT bits set.
++ */
++#define VMWARE_HYPERCALL_HB_OUT						\
++	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep outsb", \
++		      "vmcall", X86_FEATURE_VMCALL,			\
++		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
++
++/*
++ * The high bandwidth in call. The low word of edx is presumed to have the
++ * HB bit set.
++ */
++#define VMWARE_HYPERCALL_HB_IN						\
++	ALTERNATIVE_2("movw $" VMWARE_HYPERVISOR_PORT_HB ", %%dx; rep insb", \
++		      "vmcall", X86_FEATURE_VMCALL,			\
++		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
++#endif
 diff --git a/arch/x86/kernel/cpu/vmware.c b/arch/x86/kernel/cpu/vmware.c
-index 3c648476d4fb..757dded223af 100644
+index 757dded223af..9735139cfdf8 100644
 --- a/arch/x86/kernel/cpu/vmware.c
 +++ b/arch/x86/kernel/cpu/vmware.c
-@@ -34,30 +34,65 @@
+@@ -30,6 +30,7 @@
+ #include <asm/hypervisor.h>
+ #include <asm/timer.h>
+ #include <asm/apic.h>
++#include <asm/vmware.h>
+ 
  #undef pr_fmt
  #define pr_fmt(fmt)	"vmware: " fmt
+@@ -40,7 +41,6 @@
+ #define CPUID_VMWARE_FEATURES_ECX_VMCALL     BIT(1)
  
--#define CPUID_VMWARE_INFO_LEAF	0x40000000
-+#define CPUID_VMWARE_INFO_LEAF               0x40000000
-+#define CPUID_VMWARE_FEATURES_LEAF           0x40000010
-+#define CPUID_VMWARE_FEATURES_ECX_VMMCALL    BIT(0)
-+#define CPUID_VMWARE_FEATURES_ECX_VMCALL     BIT(1)
-+
  #define VMWARE_HYPERVISOR_MAGIC	0x564D5868
- #define VMWARE_HYPERVISOR_PORT	0x5658
+-#define VMWARE_HYPERVISOR_PORT	0x5658
  
--#define VMWARE_PORT_CMD_GETVERSION	10
--#define VMWARE_PORT_CMD_GETHZ		45
--#define VMWARE_PORT_CMD_GETVCPU_INFO	68
--#define VMWARE_PORT_CMD_LEGACY_X2APIC	3
--#define VMWARE_PORT_CMD_VCPU_RESERVED	31
-+#define VMWARE_CMD_GETVERSION    10
-+#define VMWARE_CMD_GETHZ         45
-+#define VMWARE_CMD_GETVCPU_INFO  68
-+#define VMWARE_CMD_LEGACY_X2APIC  3
-+#define VMWARE_CMD_VCPU_RESERVED 31
- 
- #define VMWARE_PORT(cmd, eax, ebx, ecx, edx)				\
- 	__asm__("inl (%%dx)" :						\
--			"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :	\
--			"0"(VMWARE_HYPERVISOR_MAGIC),			\
--			"1"(VMWARE_PORT_CMD_##cmd),			\
--			"2"(VMWARE_HYPERVISOR_PORT), "3"(UINT_MAX) :	\
--			"memory");
-+		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
-+		"a"(VMWARE_HYPERVISOR_MAGIC),				\
-+		"c"(VMWARE_CMD_##cmd),					\
-+		"d"(VMWARE_HYPERVISOR_PORT), "b"(UINT_MAX) :		\
-+		"memory")
-+
-+#define VMWARE_VMCALL(cmd, eax, ebx, ecx, edx)				\
-+	__asm__("vmcall" :						\
-+		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
-+		"a"(VMWARE_HYPERVISOR_MAGIC),				\
-+		"c"(VMWARE_CMD_##cmd),					\
-+		"d"(0), "b"(UINT_MAX) :					\
-+		"memory")
-+
-+#define VMWARE_VMMCALL(cmd, eax, ebx, ecx, edx)                         \
-+	__asm__("vmmcall" :						\
-+		"=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :		\
-+		"a"(VMWARE_HYPERVISOR_MAGIC),				\
-+		"c"(VMWARE_CMD_##cmd),					\
-+		"d"(0), "b"(UINT_MAX) :					\
-+		"memory")
-+
-+#define VMWARE_CMD(cmd, eax, ebx, ecx, edx) do {		\
-+	switch (vmware_hypercall_mode) {			\
-+	case CPUID_VMWARE_FEATURES_ECX_VMCALL:			\
-+		VMWARE_VMCALL(cmd, eax, ebx, ecx, edx);		\
-+		break;						\
-+	case CPUID_VMWARE_FEATURES_ECX_VMMCALL:			\
-+		VMWARE_VMMCALL(cmd, eax, ebx, ecx, edx);	\
-+		break;						\
-+	default:						\
-+		VMWARE_PORT(cmd, eax, ebx, ecx, edx);		\
-+		break;						\
-+	}							\
-+	} while (0)
- 
- static unsigned long vmware_tsc_khz __ro_after_init;
-+static u8 vmware_hypercall_mode     __ro_after_init;
- 
- static inline int __vmware_platform(void)
+ #define VMWARE_CMD_GETVERSION    10
+ #define VMWARE_CMD_GETHZ         45
+@@ -164,6 +164,10 @@ static void __init vmware_set_capabilities(void)
  {
- 	uint32_t eax, ebx, ecx, edx;
--	VMWARE_PORT(GETVERSION, eax, ebx, ecx, edx);
-+	VMWARE_CMD(GETVERSION, eax, ebx, ecx, edx);
- 	return eax != (uint32_t)-1 && ebx == VMWARE_HYPERVISOR_MAGIC;
+ 	setup_force_cpu_cap(X86_FEATURE_CONSTANT_TSC);
+ 	setup_force_cpu_cap(X86_FEATURE_TSC_RELIABLE);
++	if (vmware_hypercall_mode == CPUID_VMWARE_FEATURES_ECX_VMCALL)
++		setup_force_cpu_cap(X86_FEATURE_VMCALL);
++	else if (vmware_hypercall_mode == CPUID_VMWARE_FEATURES_ECX_VMMCALL)
++		setup_force_cpu_cap(X86_FEATURE_VMW_VMMCALL);
  }
  
-@@ -136,7 +171,7 @@ static void __init vmware_platform_setup(void)
- 	uint32_t eax, ebx, ecx, edx;
- 	uint64_t lpj, tsc_khz;
- 
--	VMWARE_PORT(GETHZ, eax, ebx, ecx, edx);
-+	VMWARE_CMD(GETHZ, eax, ebx, ecx, edx);
- 
- 	if (ebx != UINT_MAX) {
- 		lpj = tsc_khz = eax | (((uint64_t)ebx) << 32);
-@@ -174,10 +209,21 @@ static void __init vmware_platform_setup(void)
- 	vmware_set_capabilities();
- }
- 
-+static u8 vmware_select_hypercall(void)
-+{
-+	int eax, ebx, ecx, edx;
-+
-+	cpuid(CPUID_VMWARE_FEATURES_LEAF, &eax, &ebx, &ecx, &edx);
-+	return (ecx & (CPUID_VMWARE_FEATURES_ECX_VMMCALL |
-+		       CPUID_VMWARE_FEATURES_ECX_VMCALL));
-+}
-+
- /*
-  * While checking the dmi string information, just checking the product
-  * serial key should be enough, as this will always have a VMware
-  * specific string when running under VMware hypervisor.
-+ * If !boot_cpu_has(X86_FEATURE_HYPERVISOR), vmware_hypercall_mode
-+ * intentionally defaults to 0.
-  */
- static uint32_t __init vmware_platform(void)
- {
-@@ -187,8 +233,16 @@ static uint32_t __init vmware_platform(void)
- 
- 		cpuid(CPUID_VMWARE_INFO_LEAF, &eax, &hyper_vendor_id[0],
- 		      &hyper_vendor_id[1], &hyper_vendor_id[2]);
--		if (!memcmp(hyper_vendor_id, "VMwareVMware", 12))
-+		if (!memcmp(hyper_vendor_id, "VMwareVMware", 12)) {
-+			if (eax >= CPUID_VMWARE_FEATURES_LEAF)
-+				vmware_hypercall_mode =
-+					vmware_select_hypercall();
-+
-+			pr_info("hypercall mode: 0x%02x\n",
-+				(unsigned int) vmware_hypercall_mode);
-+
- 			return CPUID_VMWARE_INFO_LEAF;
-+		}
- 	} else if (dmi_available && dmi_name_in_serial("VMware") &&
- 		   __vmware_platform())
- 		return 1;
-@@ -200,9 +254,9 @@ static uint32_t __init vmware_platform(void)
- static bool __init vmware_legacy_x2apic_available(void)
- {
- 	uint32_t eax, ebx, ecx, edx;
--	VMWARE_PORT(GETVCPU_INFO, eax, ebx, ecx, edx);
--	return (eax & (1 << VMWARE_PORT_CMD_VCPU_RESERVED)) == 0 &&
--	       (eax & (1 << VMWARE_PORT_CMD_LEGACY_X2APIC)) != 0;
-+	VMWARE_CMD(GETVCPU_INFO, eax, ebx, ecx, edx);
-+	return (eax & (1 << VMWARE_CMD_VCPU_RESERVED)) == 0 &&
-+	       (eax & (1 << VMWARE_CMD_LEGACY_X2APIC)) != 0;
- }
- 
- const __initconst struct hypervisor_x86 x86_hyper_vmware = {
+ static void __init vmware_platform_setup(void)
 -- 
 2.20.1
 
