@@ -2,92 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77ECDA06D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 18:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C425A06E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 18:04:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfH1QBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 12:01:33 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42172 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfH1QBd (ORCPT
+        id S1726605AbfH1QEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 12:04:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:49204 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbfH1QEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 12:01:33 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l14so22166ljj.9
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 09:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yR3tqYiTxpppS/HN0rTYfpt0BO2DjSod+qzn1YFlyUY=;
-        b=t82bo+7nReRN8qUwONp3FOyUNOQe+SJmGjj43nMjkurkeSF72Pd1VV3hRf1OgE66RR
-         KDWoG2kZQnBVJzkM8KDZCFy7mqz9bcKdJSmmEx2dYdkoTRZLvN6pnCl8E0pBhjwKdkJ4
-         sf49qG2yOviuQ4Fu1Tm1UKeNFc43o8A1iRxF9LdpIDyvUrr/EXGEZPFdILgnN8BLCa2n
-         KW3jLLC38MeV3yMp6xS8/rl6fTmU4XS6EpBjg41uqXmYE0AhDM2igs87zJIiHIANDVPC
-         XsI6R22UTUjfppFtkbsj92qJogfUbp92F2UjpP47UJCKAq9rZ+NXm3mNfnDYXCPxjkdA
-         RFnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yR3tqYiTxpppS/HN0rTYfpt0BO2DjSod+qzn1YFlyUY=;
-        b=WEo/8rEeQuhKTpBnvZe+9SVACV/uRId6GkItilRfJbI/fX8Ka3adtcF/McwlCOPhuG
-         VODWQIcwOp2uzruR+u4XWfXEYBtevkBIob3CpGiTzhgHn2yfmsjZ4qW80aYdKWsJ0/vb
-         8SpEkYsiSBpnkX/9FYyUb5xrUtuPJFolp27SCvpHk1XQfFeVBpBAEIophDw9+jZuydW8
-         BWBoNq/3SDAQntG630VzBxJeRL4xh+kzXsCN4ROTgBpWZWEYz7SdM11r90i80hdA6IAm
-         1XATxC6RugQw6htP4tR5/sacpX2Sj9vjDTPOQZ1d2wC8gZMW+EgGpKfy8bqiojx8ZJSz
-         R+RA==
-X-Gm-Message-State: APjAAAV7ny4WCP5Fn/p9/eUuRZ1x1LzEXJY6IrtHgjuALnwRAc71vx0U
-        iqSjMnocOYrVvkOhByi5P/VLi02Yu4yYyW4B1j4=
-X-Google-Smtp-Source: APXvYqyOP2EB8a83ZtqOJPUj3xY7/goLSp49RDBCXTtxODlPCxl+xIBbp0pHHEXIFG32IeOGVr0WeRsO6J9J5w8UT1g=
-X-Received: by 2002:a2e:978e:: with SMTP id y14mr2524405lji.10.1567008091865;
- Wed, 28 Aug 2019 09:01:31 -0700 (PDT)
+        Wed, 28 Aug 2019 12:04:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bOIekojUFEj898JUDDtIxKuFjB+CaTVdgSJI5KZZoBA=; b=mRi874JSj0JT/vnms6xBBVajH
+        251/PWqX2p4UIAYQLS7Dkflo8it6pE/L8Dmj/pYZpExAngoO4HZG/AA3NgPVEfo47OE+YgCYP21v/
+        yWtQt5HSOTxVvzR7AQ64XMDjkuPMb/myjdt6MBtlAb+L56JfqtFTQBi2g+s54xPp3q6l78429RDFi
+        2loS3SAVgmbemGEQ22sf85TMPcA7aubWR+8dXqIEEIC/07d2BHdN16YLC0tJmxRBCDRxzbwBdAaay
+        Z+9Sn2Y950b/beX+iu7z9ln3YzesFg3i57Zi+PsWsu0y/6048q+pt4znywkX/sjckdBsSAXAYT+EM
+        GLlapZ5fA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i30QC-0005bH-Vj; Wed, 28 Aug 2019 16:03:45 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CA92398040A; Wed, 28 Aug 2019 18:03:42 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 18:03:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Song Liu <songliubraving@fb.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Rik van Riel <riel@surriel.com>
+Subject: Re: [patch 0/2] x86/mm/pti: Robustness updates
+Message-ID: <20190828160342.GF17205@worktop.programming.kicks-ass.net>
+References: <20190828142445.454151604@linutronix.de>
 MIME-Version: 1.0
-References: <1567012817-12625-1-git-send-email-shengjiu.wang@nxp.com>
-In-Reply-To: <1567012817-12625-1-git-send-email-shengjiu.wang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 28 Aug 2019 13:02:32 -0300
-Message-ID: <CAOMZO5BF6M4McwGTuNU8jM41+N3jeaJp+U2ST5JY7e+yv8GO_A@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: fsl_ssi: Fix clock control issue in master mode
-To:     Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc:     Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828142445.454151604@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shengjiu,
+On Wed, Aug 28, 2019 at 04:24:45PM +0200, Thomas Gleixner wrote:
+> Following up on the discussions around the patch Song submitted to 'cure' a
+> iTLB related performance regression, I picked up Song's patch which makes
+> clone_page_tables() more robust by handling unaligned addresses proper and
+> added one which prevents calling into the PTI code when PTI is enabled
+> compile time, but disabled at runtime (command line or CPU not affected).
+> 
+> There is no point in calling into those PTI functions unconditionally. The
+> resulting page tables are the same before and after the change which makes
+> sense as the code clones the kernel page table into the secondary page
+> table space which is available but not used when PTI is boot time disabled.
+> 
+> But even if it does not do damage today, this could have nasty side effect
+> when the PTI code is changed, extended etc. later.
+> 
 
-On Wed, Aug 28, 2019 at 2:21 AM Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
->
-> The test case is
-> arecord -Dhw:0 -d 10 -f S16_LE -r 48000 -c 2 temp.wav &
-> aplay -Dhw:0 -d 30 -f S16_LE -r 48000 -c 2 test.wav
->
-> There will be error after end of arecord:
-> aplay: pcm_write:2051: write error: Input/output error
->
-> Capture and Playback work in parallel in master mode, one
-> substream stops, the other substream is impacted, the
-> reason is that clock is disabled wrongly.
->
-> The clock's reference count is not increased when second
-> substream starts, the hw_param() function returns in the
-> beginning because first substream is enabled, then in end
-> of first substream, the hw_free() disables the clock.
->
-> This patch is to move the clock enablement to the place
-> before checking of the device enablement in hw_param().
->
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-
-It would be nice if you could add a Fixes tag as well.
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
