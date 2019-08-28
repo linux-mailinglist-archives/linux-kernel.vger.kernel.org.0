@@ -2,110 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A795A09ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 167D7A09FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:52:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfH1Stq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 14:49:46 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40654 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfH1Stq (ORCPT
+        id S1726863AbfH1Sv7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 14:51:59 -0400
+Received: from gateway30.websitewelcome.com ([192.185.193.11]:42398 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726400AbfH1Sv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:49:46 -0400
-Received: by mail-pf1-f196.google.com with SMTP id w16so360883pfn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 11:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4uZspx4NWx0nFhhtAlnWtEbfBrasNUhrA/Iy70UI7ko=;
-        b=aesFtNLZCHVxwTTzHGcziFAJn9W0ws751gL42MQtSB5sT897fV8iCGwBYIeg048n3r
-         wfy+sK8h50KhNbMn2BX55hnizK6RYMhsYo3mH6zfxR6SduWeEjvFIHrdmAK/3+rPTInZ
-         fmiF0BDWMLuDEB1qH+5PtkyONcnts+vkiY6UD8dp03z/PIunlSU7IDSKMkZIWVD/W5CN
-         CTTd7DRpOboL3b4E0ah/0mQoG3QNvHMonSvbivAbig+7MyOjIkpfZDfJnJpedKGQZqNZ
-         0DpYu+pQ46NuD29OpjK0AJd/1CXt6NV+P72J1lvAJcUoD59JrNlAfE/XDtrfLwg3qqVA
-         UYRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4uZspx4NWx0nFhhtAlnWtEbfBrasNUhrA/Iy70UI7ko=;
-        b=itvjRaTNlz8KfZxQbwAklYf4jgLmxmvGjhLgUzY5TQNPAmH8yb5R21v1GG4jn1E/N3
-         vSsPfLPvqvhzP2oySJ+SsrGv+FZzSIa1bE67TrH39RM8Q8SJDDmf+mYAzT10if8GzCBP
-         aMBnYXxJ5wdrmrAKRz4MfA35lH5Wusi/xwVFRUpjaKTiC7HhPZvXkh4qOm+jcknyzXlq
-         o5ate8mL3udCP03hgV7CIDGnnoV59+l+tNQE5YUrcxNUWLsgBJx9k553mEdttElfyCRs
-         ontxMdLx6UFHBp2jAzudTiYY3uIc0hNDFrl5gisOWG0gzr+XmjLgV7i0+WYt4uS3zpV5
-         Frzg==
-X-Gm-Message-State: APjAAAWMl8MkZ4iFjU/XnL6uuiOHxazvyzdqOgjdNaFWiBaVcH7xfMku
-        SBEg8U3VaM3cqKOi+gAfYOI2Syy7UsuFJxBu9R7GVOrIPmcQ2w==
-X-Google-Smtp-Source: APXvYqzLT/GpLTIf3YXAybRqHLvDBymSGaNqO+J24tjnTmWcTbsfo3oTWe8/j33SPKMkONhxXM2yJh7xYFqJ2XFRkIQ=
-X-Received: by 2002:a17:90a:3ae7:: with SMTP id b94mr5745875pjc.73.1567018185100;
- Wed, 28 Aug 2019 11:49:45 -0700 (PDT)
+        Wed, 28 Aug 2019 14:51:59 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 4E320D108
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 13:29:19 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 32h5iRkYhdnCe32h5ipXiE; Wed, 28 Aug 2019 13:29:19 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ewILt52ANbAo0/SJyy4fWKVEQWsG7Vl+LCU+2RXicqU=; b=CsSzg4pFPdVgp+yZgmkWLU+yLP
+        7Oel84hpT38RBNEyMamLet85i08wdlPJJ2MQVFrbhR4GdHBooX1at7o+D4Si0F0SAJixI70a7M1N+
+        eBDEPdwbCZe9EYoUhpwubfLEymSGmmlqYfO0ic50dyW4GMSL/1OO14R/2fU9fpD+O+jg5ydvTO5TS
+        ePIHPWynjVvm39jd44MfuyL5HGDdgAttNru2JUyRzK0U7c1HBd6V7MFqa3XX21ZRBZnfTdFiYa+EM
+        RSzZAYU5NOqptdCmd2biDzHmRHr/kjzZ24ULj0O0bmDpTs66MR3YfIhz5r2/Z0pShCztlBT5O0e9r
+        ANAFurPw==;
+Received: from [189.152.216.116] (port=47944 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1i32h4-003pFp-Ox; Wed, 28 Aug 2019 13:29:18 -0500
+Subject: Re: [PATCH] ima: use struct_size() in kzalloc()
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190529165343.GA2584@embeddedor>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <671185b9-5c91-5235-b5ea-96d3449bf716@embeddedor.com>
+Date:   Wed, 28 Aug 2019 13:29:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190613184923.245935-1-nhuck@google.com> <27428324-129e-ee37-304a-0da2ed3810a0@linaro.org>
- <CAJkfWY4X-YwuansL1R5w0rQNmE_hVJZKrMBJmOLp9G2DJPkNow@mail.gmail.com>
- <CAKwvOdkEp=q+2B_iqqyHJLwwUaFH2jnO+Ey8t-hn=x4shTbdoA@mail.gmail.com>
- <c2b821f2-545a-9839-3de6-d68dfee5b5dc@linaro.org> <20190819102131.41da667b@xps13>
- <b94af6b2101f436c1bdeec744e164c78ee7c2682.camel@intel.com>
-In-Reply-To: <b94af6b2101f436c1bdeec744e164c78ee7c2682.camel@intel.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 28 Aug 2019 11:49:33 -0700
-Message-ID: <CAKwvOd=ej156MVjkVHAVbpWEew08YhCWpM-3BPYoLfeXHPJEMQ@mail.gmail.com>
-Subject: Re: [PATCH] thermal: armada: Fix -Wshift-negative-value
-To:     Zhang Rui <rui.zhang@intel.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        edubezval@gmail.com, linux-pm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Huckleberry <nhuck@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190529165343.GA2584@embeddedor>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.216.116
+X-Source-L: No
+X-Exim-ID: 1i32h4-003pFp-Ox
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.152.216.116]:47944
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 18
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 1:53 AM Zhang Rui <rui.zhang@intel.com> wrote:
->
-> On Mon, 2019-08-19 at 10:21 +0200, Miquel Raynal wrote:
-> > Hello,
-> >
-> > Daniel Lezcano <daniel.lezcano@linaro.org> wrote on Thu, 15 Aug 2019
-> > 01:06:21 +0200:
-> >
-> > > On 15/08/2019 00:12, Nick Desaulniers wrote:
-> > > > On Tue, Aug 13, 2019 at 10:28 AM 'Nathan Huckleberry' via Clang
-> > > > Built
-> > > > Linux <clang-built-linux@googlegroups.com> wrote:
-> > > > >
-> > > > > Following up to see if this patch is going to be accepted.
-> > > >
-> > > > Miquel is listed as the maintainer of this file in MAINTAINERS.
-> > > > Miquel, can you please pick this up?  Otherwise Zhang, Eduardo,
-> > > > and
-> > > > Daniel are listed as maintainers for drivers/thermal/.
-> > >
-> > > I'm listed as reviewer, it is up to Zhang or Eduardo to take the
-> > > patches.
-> > >
-> > >
-> >
-> > Sorry for the delay, I don't manage a tree for this driver, I'll let
-> > Zhang or Eduardo take the patch with my
-> >
-> > Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> >
->
-> Patch applied.
->
-> thanks,
-> rui
+Hi all,
 
-Thanks Rui, did you push the branch?  I guess I would have expected it
-in https://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git/log/?h=next?
-I'm trying to track where this lands in
-https://github.com/ClangBuiltLinux/linux/issues/532.
+Friendly ping:
 
--- 
-Thanks,
-~Nick Desaulniers
+Who can take this, please?
+
+Thanks
+--
+Gustavo
+
+On 5/29/19 11:53 AM, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+> 
+> struct foo {
+>    int stuff;
+>    struct boo entry[];
+> };
+> 
+> instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+> 
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  security/integrity/ima/ima_template.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+> index b631b8bc7624..b945dff2ed14 100644
+> --- a/security/integrity/ima/ima_template.c
+> +++ b/security/integrity/ima/ima_template.c
+> @@ -281,9 +281,8 @@ static int ima_restore_template_data(struct ima_template_desc *template_desc,
+>  	int ret = 0;
+>  	int i;
+>  
+> -	*entry = kzalloc(sizeof(**entry) +
+> -		    template_desc->num_fields * sizeof(struct ima_field_data),
+> -		    GFP_NOFS);
+> +	*entry = kzalloc(struct_size(*entry, template_data,
+> +				     template_desc->num_fields), GFP_NOFS);
+>  	if (!*entry)
+>  		return -ENOMEM;
+>  
+> 
