@@ -2,72 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AF25A1A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:29:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 140BBA1A38
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfH2M3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 08:29:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35468 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725782AbfH2M3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 08:29:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D8B80AC97;
-        Thu, 29 Aug 2019 12:29:10 +0000 (UTC)
-Date:   Thu, 29 Aug 2019 14:29:09 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     James Courtier-Dutton <james.dutton@gmail.com>
-Cc:     Daniel Drake <drake@endlessm.com>,
-        "Artem S. Tashkinov" <aros@gmx.com>,
-        LKML Mailing List <linux-kernel@vger.kernel.org>,
-        linux@endlessm.com, hadess@hadess.net,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: Let's talk about the elephant in the room - the Linux kernel's
- inability to gracefully handle low memory pressure
-Message-ID: <20190829122909.GG28313@dhcp22.suse.cz>
-References: <d9802b6a-949b-b327-c4a6-3dbca485ec20@gmx.com>
- <20190820064620.5119-1-drake@endlessm.com>
- <CAAMvbhH=ftMoh9eFVR3YgN9DVSLaN5tXa-vTsBocY8YuL0Rc1A@mail.gmail.com>
+        id S1727383AbfH2MjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 08:39:25 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45580 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfH2MjY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 08:39:24 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 77FB48A1A6; Wed, 28 Aug 2019 15:16:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567005368;
+        bh=+EwOCSrATTfaecERMGr7s8wbx3PWkrc30gIRhDZCi1A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=VrjuRwfm8DZtQigZQgTgHkacGaLb3S1IyYgj8Deg5Oy3mitdGf4UFK2t7XyRuTIqD
+         h4KWBeC1ksA7iJ6dcJsuLFOqa8wytoZh1aY8Wkkf20mBg6rS+epDCenYX27jaqep8s
+         9VamivGkRTlawfhG3bCPC4JREr4/mTrEsfB/AOsM=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED autolearn=no autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 82BCB782A7;
+        Wed, 28 Aug 2019 07:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1566978287;
+        bh=+EwOCSrATTfaecERMGr7s8wbx3PWkrc30gIRhDZCi1A=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aeeVAq6YhSYhMWz5IV7u9cU/D4kOmDQxphEmV2RiAkhT1SkP42Py3FRu9qpZkEGNG
+         RghbuZp6w/Row9bs6u7Hyyhn6yI4zf7ZGSoNTjQxL5kc8maOZhqdV7rU4MelYQ2Jy+
+         UqWQva2uAXCEWYF+vfLcIxVcjRGLUR2anHdGlsC0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAMvbhH=ftMoh9eFVR3YgN9DVSLaN5tXa-vTsBocY8YuL0Rc1A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 28 Aug 2019 10:44:46 +0300
+From:   merez@codeaurora.org
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        wil6210@qti.qualcomm.com, "David S. Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        linux-wireless-owner@vger.kernel.org
+Subject: Re: [PATCH] wil6210: Delete an unnecessary kfree() call in
+ wil_tid_ampdu_rx_alloc()
+In-Reply-To: <b9620e49-618d-b392-6456-17de5807df75@web.de>
+References: <b9620e49-618d-b392-6456-17de5807df75@web.de>
+Message-ID: <6eea96653c83cffe648465bc8b953913@codeaurora.org>
+X-Sender: merez@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21-08-19 22:42:29, James Courtier-Dutton wrote:
-> On Tue, 20 Aug 2019 at 07:47, Daniel Drake <drake@endlessm.com> wrote:
-> >
-> > Hi,
-> >
-> > And if there is a meaningful way to make the kernel behave better, that would
-> > obviously be of huge value too.
-> >
-> > Thanks
-> > Daniel
+On 2019-08-27 17:44, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Tue, 27 Aug 2019 16:39:02 +0200
 > 
-> Hi,
+> A null pointer would be passed to a call of the function “kfree”
+> directly after a call of the function “kcalloc” failed at one place.
+> Remove this superfluous function call.
 > 
-> Is there a way for an application to be told that there is a memory
-> pressure situation?
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
 
-PSI (CONFIG_PSI) measures global as well as per memcg pressure characteristics.
+Reviewed-by: Maya Erez <merez@codeaurora.org>
 
-[...]
-
-> I have also found, for the desktop, one of the biggest pressures on
-> the system is disk pressure. Accessing the disk causes the UI to be
-> less responsive.
-> For example, if I am in vim, and trying to type letters on the
-> keyboard, whether some other application is using the disk or not
-> should have no impact on my letter writing. Has anyone got any ideas
-> with regards to what we can do about that?
-
-This is what we have the page cache for.
 -- 
-Michal Hocko
-SUSE Labs
+Maya Erez
+Qualcomm Israel, Inc. on behalf of Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
+Linux Foundation Collaborative Project
