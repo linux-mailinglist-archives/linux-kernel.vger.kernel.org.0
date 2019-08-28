@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DF9EA03D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0DB1A03D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfH1N5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:57:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58036 "EHLO mx1.redhat.com"
+        id S1726891AbfH1N5j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:57:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51120 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726802AbfH1N5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:57:34 -0400
+        id S1726775AbfH1N5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 09:57:36 -0400
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 10AD2308FC20;
-        Wed, 28 Aug 2019 13:57:34 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id F1FC88980E7;
+        Wed, 28 Aug 2019 13:57:35 +0000 (UTC)
 Received: from krava.brq.redhat.com (unknown [10.43.17.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6AB921001B00;
-        Wed, 28 Aug 2019 13:57:32 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5AC551001B00;
+        Wed, 28 Aug 2019 13:57:34 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -27,112 +27,131 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
         Michael Petlan <mpetlan@redhat.com>
-Subject: [PATCH 07/23] libperf: Add PERF_RECORD_ID_INDEX 'struct id_index_event' to perf/event.h
-Date:   Wed, 28 Aug 2019 15:57:01 +0200
-Message-Id: <20190828135717.7245-8-jolsa@kernel.org>
+Subject: [PATCH 08/23] libperf: Add PERF_RECORD_AUXTRACE_INFO 'struct auxtrace_info_event' to perf/event.h
+Date:   Wed, 28 Aug 2019 15:57:02 +0200
+Message-Id: <20190828135717.7245-9-jolsa@kernel.org>
 In-Reply-To: <20190828135717.7245-1-jolsa@kernel.org>
 References: <20190828135717.7245-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 28 Aug 2019 13:57:34 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 28 Aug 2019 13:57:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the PERF_RECORD_ID_INDEX event definition to libperf's event.h.
+Move the PERF_RECORD_AUXTRACE_INFO event definition to libperf's event.h.
 
 In order to keep libperf simple, we switch 'u64/u32/u16/u8'
 types used events to their generic '__u*' versions.
 
-Adding PRI_ld64 define, so we can use it in printf output.
-
-Link: http://lkml.kernel.org/n/tip-rfqlci30hjrzropnxjnwoz12@git.kernel.org
+Link: http://lkml.kernel.org/n/tip-794xxtrbjexwc0o0p2o79b1y@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/lib/include/perf/event.h | 13 +++++++++++++
- tools/perf/util/event.h             | 15 ++-------------
- tools/perf/util/session.c           |  8 ++++----
- 3 files changed, 19 insertions(+), 17 deletions(-)
+ tools/perf/arch/x86/util/intel-pt.c | 2 +-
+ tools/perf/lib/include/perf/event.h | 7 +++++++
+ tools/perf/util/arm-spe.c           | 2 +-
+ tools/perf/util/event.h             | 7 -------
+ tools/perf/util/intel-bts.c         | 2 +-
+ tools/perf/util/intel-pt.c          | 4 ++--
+ 6 files changed, 12 insertions(+), 12 deletions(-)
 
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index 44cfe72c1a4c..d7125e331dda 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -327,7 +327,7 @@ static int intel_pt_info_fill(struct auxtrace_record *itr,
+ 	unsigned long max_non_turbo_ratio;
+ 	size_t filter_str_len;
+ 	const char *filter;
+-	u64 *info;
++	__u64 *info;
+ 	int err;
+ 
+ 	if (priv_size != ptr->priv_size)
 diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-index 5e6b6d16793c..c68523c4fa01 100644
+index c68523c4fa01..02da73491451 100644
 --- a/tools/perf/lib/include/perf/event.h
 +++ b/tools/perf/lib/include/perf/event.h
-@@ -188,4 +188,17 @@ struct build_id_event {
- 	char			 filename[];
+@@ -201,4 +201,11 @@ struct id_index_event {
+ 	struct id_index_entry	 entries[0];
  };
  
-+struct id_index_entry {
-+	__u64			 id;
-+	__u64			 idx;
-+	__u64			 cpu;
-+	__u64			 tid;
-+};
-+
-+struct id_index_event {
++struct auxtrace_info_event {
 +	struct perf_event_header header;
-+	__u64			 nr;
-+	struct id_index_entry	 entries[0];
++	__u32			 type;
++	__u32			 reserved__; /* For alignment */
++	__u64			 priv[];
 +};
 +
  #endif /* __LIBPERF_EVENT_H */
+diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+index a314e5b26e9d..cd26315bc9aa 100644
+--- a/tools/perf/util/arm-spe.c
++++ b/tools/perf/util/arm-spe.c
+@@ -181,7 +181,7 @@ static const char * const arm_spe_info_fmts[] = {
+ 	[ARM_SPE_PMU_TYPE]		= "  PMU Type           %"PRId64"\n",
+ };
+ 
+-static void arm_spe_print_info(u64 *arr)
++static void arm_spe_print_info(__u64 *arr)
+ {
+ 	if (!dump_trace)
+ 		return;
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 4b6cf89f31db..82315d2845fe 100644
+index 82315d2845fe..ca2cae332c43 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -22,9 +22,11 @@
-  */
- #define PRI_lu64 "l" PRIu64
- #define PRI_lx64 "l" PRIx64
-+#define PRI_ld64 "l" PRId64
- #else
- #define PRI_lu64 PRIu64
- #define PRI_lx64 PRIx64
-+#define PRI_ld64 PRId64
- #endif
- 
- #define PERF_SAMPLE_MASK				\
-@@ -330,19 +332,6 @@ struct events_stats {
+@@ -332,13 +332,6 @@ struct events_stats {
  	u32 nr_proc_map_timeout;
  };
  
--struct id_index_entry {
--	u64 id;
--	u64 idx;
--	u64 cpu;
--	u64 tid;
--};
--
--struct id_index_event {
+-struct auxtrace_info_event {
 -	struct perf_event_header header;
--	u64 nr;
--	struct id_index_entry entries[0];
+-	u32 type;
+-	u32 reserved__; /* For alignment */
+-	u64 priv[];
 -};
 -
- struct auxtrace_info_event {
+ struct auxtrace_event {
  	struct perf_event_header header;
- 	u32 type;
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index 5786e9c807c5..daa8aed27eae 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -2392,10 +2392,10 @@ int perf_event__process_id_index(struct perf_session *session,
- 		struct perf_sample_id *sid;
+ 	u64 size;
+diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
+index 8dc6408206b9..03c581a0d5d0 100644
+--- a/tools/perf/util/intel-bts.c
++++ b/tools/perf/util/intel-bts.c
+@@ -834,7 +834,7 @@ static const char * const intel_bts_info_fmts[] = {
+ 	[INTEL_BTS_SNAPSHOT_MODE]	= "  Snapshot mode      %"PRId64"\n",
+ };
  
- 		if (dump_trace) {
--			fprintf(stdout,	" ... id: %"PRIu64, e->id);
--			fprintf(stdout,	"  idx: %"PRIu64, e->idx);
--			fprintf(stdout,	"  cpu: %"PRId64, e->cpu);
--			fprintf(stdout,	"  tid: %"PRId64"\n", e->tid);
-+			fprintf(stdout,	" ... id: %"PRI_lu64, e->id);
-+			fprintf(stdout,	"  idx: %"PRI_lu64, e->idx);
-+			fprintf(stdout,	"  cpu: %"PRI_ld64, e->cpu);
-+			fprintf(stdout,	"  tid: %"PRI_ld64"\n", e->tid);
- 		}
+-static void intel_bts_print_info(u64 *arr, int start, int finish)
++static void intel_bts_print_info(__u64 *arr, int start, int finish)
+ {
+ 	int i;
  
- 		sid = perf_evlist__id2sid(evlist, e->id);
+diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
+index ea504fa9b623..c83a9a718c03 100644
+--- a/tools/perf/util/intel-pt.c
++++ b/tools/perf/util/intel-pt.c
+@@ -3044,7 +3044,7 @@ static const char * const intel_pt_info_fmts[] = {
+ 	[INTEL_PT_FILTER_STR_LEN]	= "  Filter string len.  %"PRIu64"\n",
+ };
+ 
+-static void intel_pt_print_info(u64 *arr, int start, int finish)
++static void intel_pt_print_info(__u64 *arr, int start, int finish)
+ {
+ 	int i;
+ 
+@@ -3076,7 +3076,7 @@ int intel_pt_process_auxtrace_info(union perf_event *event,
+ 	size_t min_sz = sizeof(u64) * INTEL_PT_PER_CPU_MMAPS;
+ 	struct intel_pt *pt;
+ 	void *info_end;
+-	u64 *info;
++	__u64 *info;
+ 	int err;
+ 
+ 	if (auxtrace_info->header.size < sizeof(struct auxtrace_info_event) +
 -- 
 2.21.0
 
