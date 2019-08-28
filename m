@@ -2,83 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03648A0408
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F26FCA043C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfH1ODq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:03:46 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47377 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbfH1ODo (ORCPT
+        id S1726618AbfH1OGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:06:49 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:45766 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbfH1OGt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:03:44 -0400
-Received: from localhost ([127.0.0.1] helo=vostro.local)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <john.ogness@linutronix.de>)
-        id 1i2yXz-0005Fc-Vf; Wed, 28 Aug 2019 16:03:40 +0200
-From:   John Ogness <john.ogness@linutronix.de>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: numlist API Re: [RFC PATCH v4 1/9] printk-rb: add a new printk ringbuffer implementation
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
-        <20190807222634.1723-2-john.ogness@linutronix.de>
-        <20190823171802.eo2chwyktibeub7a@pathway.suse.cz>
-        <20190823171802.eo2chwyktibeub7a@pathway.suse.cz>
-        <87sgpnmqdo.fsf@linutronix.de>
-        <20190827130349.6mrnhdlqyqokgsfk@pathway.suse.cz>
-        <20190827130349.6mrnhdlqyqokgsfk@pathway.suse.cz>
-        <87o909lq3g.fsf@linutronix.de>
-        <20190828085845.5k7ewfshbfed7txh@pathway.suse.cz>
-Date:   Wed, 28 Aug 2019 16:03:38 +0200
-In-Reply-To: <20190828085845.5k7ewfshbfed7txh@pathway.suse.cz> (Petr Mladek's
-        message of "Wed, 28 Aug 2019 10:58:45 +0200")
-Message-ID: <87k1axjsjp.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Wed, 28 Aug 2019 10:06:49 -0400
+Received: by mail-qt1-f195.google.com with SMTP id k13so3077668qtm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 07:06:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HCYlD95JsHarElAe+L4VlohLW1cThA2+xRRSBnbJqFM=;
+        b=B/srqm0ctCvfPe5ecd1L9osjFfvEawSLPgqEfrbJBR41YaASiXlyOkb1qq47wiYssE
+         N3sLA/eAI2YGt7DR+kYfO+x7Lm09QBq81UvBDpHO8xEPpq/DG2co60ngXKNKi6Zd6kFx
+         1ENvKecmfxy0Y7Z8aOzNOYWEVVAoYsGWZ4gs+CaAV0tVVnrfc5Gfb9usWzGuD2YpaCoR
+         diGXU8FWV09muhm0ohuqDFEfDpsvy/XiEiuInQOamoZsD01dfJBvbNeobzjRVD1E6u6g
+         G/1Fg63YT7zh3g0JkJaavuFareZHgsVdQrWKbojnJCbKJPTolCzD+2g7B4bvKOZ8qF2v
+         /IUA==
+X-Gm-Message-State: APjAAAVC3JqtEAhhmTfJvtol19zJagPmSnGK5VIybLoMBLDzc3MKt97y
+        sD0BJ/+uqL1lvG/gnL4uWDvj8pCAEl/sU3fgUVk=
+X-Google-Smtp-Source: APXvYqxsbJeBGM7IU7QJquPXMN7X7kVaWdKQyvaMU4eI2H116h4/4DWw85uMpMpeYhha+XgPxYfR3j/BGT7QlEQPzdA=
+X-Received: by 2002:a0c:e74b:: with SMTP id g11mr2805518qvn.62.1567001208190;
+ Wed, 28 Aug 2019 07:06:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+References: <CAK8P3a3G=GCpLtNztuoLR4BuugAB=zpa_Jrz5BSft6Yj-nok1g@mail.gmail.com>
+ <20190827145102.p7lmkpytf3mngxbj@treble> <CAHFW8PRsmmCR6TWoXpQ9gyTA7azX9YOerPErCMggcQX-=fAqng@mail.gmail.com>
+ <CAK8P3a2TeaMc_tWzzjuqO-eQjZwJdpbR1yH8yzSQbbVKdWCwSg@mail.gmail.com>
+ <20190827192255.wbyn732llzckmqmq@treble> <CAK8P3a2DWh54eroBLXo+sPgJc95aAMRWdLB2n-pANss1RbLiBw@mail.gmail.com>
+ <CAKwvOdnD1mEd-G9sWBtnzfe9oGTeZYws6zNJA7opS69DN08jPg@mail.gmail.com> <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
+In-Reply-To: <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 28 Aug 2019 16:06:32 +0200
+Message-ID: <CAK8P3a0XqxBwRH2mkge0Ah87BnqobNWGkE4rhpmvNxGxjgExww@mail.gmail.com>
+Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ilie Halip <ilie.halip@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-28, Petr Mladek <pmladek@suse.com> wrote:
-> I only think that, especially, numlist API is too generic in v4.
-> It is not selfcontained. The consistency depends on external barriers.
->
-> I believe that it might become fully self-contained and consistent
-> if we reduce possibilities of the generic usage. In particular,
-> the numlist should allow only linking of reusable structures
-> stored in an array.
+On Wed, Aug 28, 2019 at 11:00 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Aug 27, 2019 at 11:22 PM 'Nick Desaulniers' via Clang Built Linux <clang-built-linux@googlegroups.com> wrote:
 
-OK. I will make the numlist the master of the ID-to-node mapping. To
-implement the getdesc() callback of the dataring, the printk_ringbuffer
-can call a numlist mapping function. Also, numlist will need to provide
-a function to bump the descriptor version (as your previous idea already
-showed).
+> http://paste.ubuntu.com/p/XjdDsypRxX/
+> 0x5BA1B7A1:arch/x86/ia32/ia32_signal.o: warning: objtool:
+> ia32_setup_rt_frame()+0x238: call to memset() with UACCESS enabled
+> 0x5BA1B7A1:arch/x86/kernel/signal.o: warning: objtool:
+> __setup_rt_frame()+0x5b8: call to memset() with UACCESS enabled
+> 0x5BA1B7A1:mm/kasan/common.o: warning: objtool: kasan_report()+0x44:
+> call to __stack_chk_fail() with UACCESS enabled
+> 0x5BA1B7A1:kernel/trace/trace_selftest_dynamic.o: warning: objtool:
+> __llvm_gcov_writeout()+0x13: call without frame pointer save/setup
+> 0x5BA1B7A1:kernel/trace/trace_selftest_dynamic.o: warning: objtool:
+> __llvm_gcov_flush()+0x0: call without frame pointer save/setup
+> 0x5BA1B7A1:kernel/trace/trace_clock.o: warning: objtool:
+> __llvm_gcov_writeout()+0x14: call without frame pointer save/setup
+> 0x5BA1B7A1:kernel/trace/trace_clock.o: warning: objtool:
+> __llvm_gcov_flush()+0x0: call without frame pointer save/setup
+> 0x5BA1B7A1:kernel/trace/*: # many more of the same, all in this directory
+> 0x5BA1B7A1:kernel/trace/trace_uprobe.o: warning: objtool:
+> __llvm_gcov_flush()+0x0: call without frame pointer save/setup
 
-I plan to change the array to be numlist nodes. The ID would move into
-the numlist node structure and a void-pointer private would be added so
-that the numlist user can add private data (for printk_ringbuffer that
-would just be a pointer to the dataring structure). When the
-printk_ringbuffer gets a never-used numlist node, it can set the private
-field.
+I had a look here and opened
+https://bugs.llvm.org/show_bug.cgi?id=43141
 
-This has the added benefit of making it easy to detect accidental
-never-used descriptor usage when reading dataring garbage. This was
-non-trivial and I'm still not sure I solved it correctly. (I've already
-spent a week working on a definitive answer to your email[0] asking
-about this.)
+It seems that CONFIG_FRAME_POINTER is ignored for the functions
+that are generated with CONFIG_GCOV_KERNEL. See also:
 
-John Ogness
+$ clang-9 -fprofile-arcs -fno-omit-frame-pointer -c -xc /dev/null   -o null.o
+$ ./tools/objtool/objtool check null.o
+null.o: warning: objtool: __llvm_gcov_writeout()+0x3e: call without
+frame pointer save/setup
+null.o: warning: objtool: __llvm_gcov_flush()+0x1: call without frame
+pointer save/setup
+null.o: warning: objtool: __llvm_gcov_init()+0x15: call without frame
+pointer save/setup
 
-[0] https://lkml.kernel.org/r/20190820151239.yzdqz56yeldlknln@pathway.suse.cz
+       Arnd
