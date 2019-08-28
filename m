@@ -2,222 +2,221 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0777F9FE7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C9BB9FE84
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:32:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbfH1JaI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 05:30:08 -0400
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:36321 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726340AbfH1JaI (ORCPT
+        id S1726521AbfH1Jc3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 05:32:29 -0400
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:41465 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfH1Jc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 05:30:08 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 760E65A6;
-        Wed, 28 Aug 2019 05:30:06 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 28 Aug 2019 05:30:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=P8J9s2s8eH7Ar5wyBE89/+UKWMN
-        ppv9j293pWFZo1Yg=; b=HpYnOvau8zH3WqEcR/mx7lCU2Id+FHhUM084nNAPzee
-        XakZbK7BRuxW4w+rwluC5mi0LWlr34FaGlkEzAI3Zw6yxM131YJYP8pmB8yWONuV
-        oVdPVg3YLUlwMByM/rZPLsNf5acgjctfsa+qRYgaJMhbukWFaQwAkny+tjyIXr3R
-        0eWn6/85MzSEUhDvr2eljBHNQSKyl47jL0x/5kWW2A51XPD7j2hLCXtc5VEqycpi
-        R7fFFP17XpUvLyrMmJUQqD/Wre9DH73fm0XcVMnf8DtzkImtUaNK4RWRrPdio//l
-        lB2XVz24W56jpUmbRtvwXZGf0DRbrCrES2f4Sk8J99Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=P8J9s2
-        s8eH7Ar5wyBE89/+UKWMNppv9j293pWFZo1Yg=; b=DWggFqvhmPOa2rzdhiAREY
-        i5BOfDGYG70ClWrNzP1xpr38UChGoqCqz5/aefbYgQVGSvxOXaLUiumS3Fbf07K3
-        buifKTlirlWK8tBYLUdMQOJhrusxWsfGDJiReZEk1t3D8kRKjYi0lrgkm73c5EMF
-        YJ9X8L957ZyzzJ0WQugNHfydF7sZOT69c1+BPC5RLNNQ9pGhuZNc7ORkvbMCvuEb
-        3Nrl+8nTtVrrpL8lFHJqkLSFr8bz4h7Dt2zVxnPwIKiNEyaLW0xb2vV0KdK0UWop
-        OTbd4gjBVzaEMLx9zjXeMdoQ9ueFgNSeWMNfrALEeOxsaG8ozGKVL8Nh+++5pIrw
-        ==
-X-ME-Sender: <xms:nUlmXX-lZUmG2di96mKAMnSXwtpyi1p3Rbz-9imqfJrhKFhyUVSSug>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeitddgudeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehlkhhmlhdroh
-    hrghenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:nUlmXYxfDTMg8P0aGyJKcgsBWVXWB_PNLz5YjEXOmlkT_2q61uNIbQ>
-    <xmx:nUlmXSC8vygScdf3ZeQzc-z3lIhIYgl6-Vig8b7fF0Xtfmwc_vuWwA>
-    <xmx:nUlmXRJ7Vj-VTAQ4hsRBNkb46UxZjtTXP5R378zrwajcfSNM7Stggw>
-    <xmx:nklmXUd6Y1kv2dgVhrJ_Ym7WVg4XpfaUMzjAEUvYKQ3-zPBXxNTJwA>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8F038D6005E;
-        Wed, 28 Aug 2019 05:30:05 -0400 (EDT)
-Date:   Wed, 28 Aug 2019 11:30:04 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     gregkh@linuxfoundation.com, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rajatxjain@gmail.com
-Subject: Re: [PATCH v3 2/2] PCI/AER: Split the AER stats into multiple sysfs
- attributes
-Message-ID: <20190828093004.GC23192@kroah.com>
-References: <20190827062309.GA30987@kroah.com>
- <20190827222145.32642-1-rajatja@google.com>
- <20190827222145.32642-2-rajatja@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827222145.32642-2-rajatja@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        Wed, 28 Aug 2019 05:32:29 -0400
+Received: by mail-pf1-f202.google.com with SMTP id 191so1622908pfz.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 02:32:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=VrSJG1qLRq08HkXyX6gIPsC7lVivMGhOydit43IGTq0=;
+        b=TswDkIrTQgaJ9VzvD3+btGc/S/jYumeJyyBCresMJXTAFmHnVLJIYuxlphFpG9cpkx
+         YqoDwWn2KVpKJJFzEPaWccZJzcNr7Is9Ezzxvv+cOfG38aUZp9XhIEbUEi46oN7zIskx
+         P45XYZYD66WGu4AToy9tKGMS4XF5PcDcYEmOMJi9GRd8LzmGfoDY2cmEJ1wW18EjEToo
+         GAkIVBe//tJiaOqHSTjHHJuxJ/q71ULikLsNnL3ZD1k/TEjMUQ90IJpydHIwx0GzQsjk
+         dYWN0Y466D3C68ALXrcbyc87W4gd8f8yoL47v2flto9Gyu9tokI5tvQZIa9u9ue10lh5
+         rfew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=VrSJG1qLRq08HkXyX6gIPsC7lVivMGhOydit43IGTq0=;
+        b=rgsz3eO/39Yxv/tvybaNe9/ONqR67k7XSeB4kLiOhuPCWha0DUJRypULkVVXTrEzgM
+         CPYqefAh5UVAPHEGBV3BV/pDZKTajKsn+4egeLsmtgcMspH7FJ1Ffy7tQ/JRniBXwf6x
+         MuhkEpD0H3q4uSilVE/yf+dL6hyL6dYHYJD6YWQGO8Qlw8Cmosh7MNyHxVX2aE07oOVM
+         dHp9YBXwG7QehY4RNmnlwxMRClOgYcHb5hSBEeijrdS+aaHZQVhM8QgOvOaQKBcKHxzt
+         Z/LP3csQ/XlnFGOx98NzsE6D0dUSoyecUIKI9AswGpBAt16a4bgp5skvFXY2TwX0FfhO
+         +xeA==
+X-Gm-Message-State: APjAAAXzlAO0lNFwrCR+W4M3YOTNVVqz3KZtd4OHRN3vZHHIL+dnQGau
+        Wxa9KKpXf7gPd61kSDNKRengx4B44VPLubYrP6c9fA==
+X-Google-Smtp-Source: APXvYqyxnVF5mIbgiG1foc/RCXqDGnGXSIO4sJTjhf3Wj3DelUEERcjYM4JOBTHkNaE8vNKDz5SDoKCiBCP732mfcWYyAg==
+X-Received: by 2002:a65:5c02:: with SMTP id u2mr2613932pgr.367.1566984747724;
+ Wed, 28 Aug 2019 02:32:27 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 02:31:43 -0700
+Message-Id: <20190828093143.163302-1-brendanhiggins@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+Subject: [PATCH v2] kunit: fix failure to build without printk
+From:   Brendan Higgins <brendanhiggins@google.com>
+To:     shuah@kernel.org
+Cc:     kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, frowand.list@gmail.com,
+        sboyd@kernel.org, pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, Brendan Higgins <brendanhiggins@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 03:21:45PM -0700, Rajat Jain wrote:
-> Split the AER stats into multiple sysfs atributes. Note that
-> this changes the ABI of the AER stats, but hopefully, there
-> aren't active users that need to change. This is how the AERs
-> are being exposed now:
-> 
-> localhost /sys/devices/pci0000:00/0000:00:1c.0/aer_stats # ls -l
-> total 0
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit0_RxErr
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit12_Timeout
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit13_NonFatalErr
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit14_CorrIntErr
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit15_HeaderOF
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit6_BadTLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit7_BadDLLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit8_Rollover
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit0_Undefined
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit12_TLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit13_FCP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit14_CmpltTO
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit15_CmpltAbrt
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit16_UnxCmplt
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit17_RxOF
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit18_MalfTLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit19_ECRC
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit20_UnsupReq
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit21_ACSViol
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit22_UncorrIntErr
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit23_BlockedTLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit24_AtomicOpBlocked
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit25_TLPBlockedErr
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit26_PoisonTLPBlocked
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit4_DLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit5_SDES
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit0_Undefined
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit12_TLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit13_FCP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit14_CmpltTO
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit15_CmpltAbrt
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit16_UnxCmplt
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit17_RxOF
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit18_MalfTLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit19_ECRC
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit20_UnsupReq
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit21_ACSViol
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit22_UncorrIntErr
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit23_BlockedTLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit24_AtomicOpBlocked
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit25_TLPBlockedErr
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit26_PoisonTLPBlocked
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit4_DLP
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit5_SDES
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 total_device_err_cor
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 total_device_err_fatal
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 total_device_err_nonfatal
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 total_rootport_err_cor
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 total_rootport_err_fatal
-> -r--r--r--. 1 root root 4096 Aug 20 16:35 total_rootport_err_nonfatal
-> localhost /sys/devices/pci0000:00/0000:00:1c.0/aer_stats #
-> 
-> Each file is has a single counter value. Single file containing all
-> stats was frowned upon and discussed here:
-> https://lkml.org/lkml/2019/6/28/220
-> 
-> Signed-off-by: Rajat Jain <rajatja@google.com>
-> ---
-> v3: indent the sysfs attribute names in documentation.
-> v2: Also change the Documentation
-> 
->  .../testing/sysfs-bus-pci-devices-aer_stats   | 160 ++++++++---------
->  drivers/pci/pcie/aer.c                        | 166 +++++++++++++-----
->  2 files changed, 191 insertions(+), 135 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> index 3c9a8c4a25eb..8cd93acddf76 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> +++ b/Documentation/ABI/testing/sysfs-bus-pci-devices-aer_stats
-> @@ -9,89 +9,72 @@ errors may be "seen" / reported by the link partner and not the
->  problematic endpoint itself (which may report all counters as 0 as it never
->  saw any problems).
->  
-> -What:		/sys/bus/pci/devices/<dev>/aer_dev_correctable
-> -Date:		July 2018
-> -KernelVersion: 4.19.0
-> +What: Following files in /sys/bus/pci/devices/<dev>/aer_stats/
-> +	correctable_bit0_RxErr
-> +	correctable_bit12_Timeout
-> +	correctable_bit13_NonFatalErr
-> +	correctable_bit14_CorrIntErr
-> +	correctable_bit15_HeaderOF
-> +	correctable_bit6_BadTLP
-> +	correctable_bit7_BadDLLP
-> +	correctable_bit8_Rollover
-> +	fatal_bit0_Undefined
-> +	fatal_bit12_TLP
-> +	fatal_bit13_FCP
-> +	fatal_bit14_CmpltTO
-> +	fatal_bit15_CmpltAbrt
-> +	fatal_bit16_UnxCmplt
-> +	fatal_bit17_RxOF
-> +	fatal_bit18_MalfTLP
-> +	fatal_bit19_ECRC
-> +	fatal_bit20_UnsupReq
-> +	fatal_bit21_ACSViol
-> +	fatal_bit22_UncorrIntErr
-> +	fatal_bit23_BlockedTLP
-> +	fatal_bit24_AtomicOpBlocked
-> +	fatal_bit25_TLPBlockedErr
-> +	fatal_bit26_PoisonTLPBlocked
-> +	fatal_bit4_DLP
-> +	fatal_bit5_SDES
-> +	nonfatal_bit0_Undefined
-> +	nonfatal_bit12_TLP
-> +	nonfatal_bit13_FCP
-> +	nonfatal_bit14_CmpltTO
-> +	nonfatal_bit15_CmpltAbrt
-> +	nonfatal_bit16_UnxCmplt
-> +	nonfatal_bit17_RxOF
-> +	nonfatal_bit18_MalfTLP
-> +	nonfatal_bit19_ECRC
-> +	nonfatal_bit20_UnsupReq
-> +	nonfatal_bit21_ACSViol
-> +	nonfatal_bit22_UncorrIntErr
-> +	nonfatal_bit23_BlockedTLP
-> +	nonfatal_bit24_AtomicOpBlocked
-> +	nonfatal_bit25_TLPBlockedErr
-> +	nonfatal_bit26_PoisonTLPBlocked
-> +	nonfatal_bit4_DLP
-> +	nonfatal_bit5_SDES
+Previously KUnit assumed that printk would always be present, which is
+not a valid assumption to make. Fix that by removing call to
+vprintk_emit, and calling printk directly.
 
-{sigh}
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Link: https://lore.kernel.org/linux-kselftest/0352fae9-564f-4a97-715a-fabe016259df@kernel.org/T/#t
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+---
+ include/kunit/test.h | 11 ++++-----
+ kunit/test.c         | 57 +++++---------------------------------------
+ 2 files changed, 11 insertions(+), 57 deletions(-)
 
-Does this look good to you?  There's a whole lot of alignment in the
-original tags here, and you are not doing that here at all.
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index 8b7eb03d4971..efad2eacd6ba 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -339,9 +339,8 @@ static inline void *kunit_kzalloc(struct kunit *test, size_t size, gfp_t gfp)
+ 
+ void kunit_cleanup(struct kunit *test);
+ 
+-void __printf(3, 4) kunit_printk(const char *level,
+-				 const struct kunit *test,
+-				 const char *fmt, ...);
++#define kunit_print_level(KERN_LEVEL, test, fmt, ...) \
++	printk(KERN_LEVEL "\t# %s: " fmt, (test)->name, ##__VA_ARGS__)
+ 
+ /**
+  * kunit_info() - Prints an INFO level message associated with @test.
+@@ -353,7 +352,7 @@ void __printf(3, 4) kunit_printk(const char *level,
+  * Takes a variable number of format parameters just like printk().
+  */
+ #define kunit_info(test, fmt, ...) \
+-	kunit_printk(KERN_INFO, test, fmt, ##__VA_ARGS__)
++	kunit_print_level(KERN_INFO, test, fmt, ##__VA_ARGS__)
+ 
+ /**
+  * kunit_warn() - Prints a WARN level message associated with @test.
+@@ -364,7 +363,7 @@ void __printf(3, 4) kunit_printk(const char *level,
+  * Prints a warning level message.
+  */
+ #define kunit_warn(test, fmt, ...) \
+-	kunit_printk(KERN_WARNING, test, fmt, ##__VA_ARGS__)
++	kunit_print_level(KERN_WARNING, test, fmt, ##__VA_ARGS__)
+ 
+ /**
+  * kunit_err() - Prints an ERROR level message associated with @test.
+@@ -375,7 +374,7 @@ void __printf(3, 4) kunit_printk(const char *level,
+  * Prints an error level message.
+  */
+ #define kunit_err(test, fmt, ...) \
+-	kunit_printk(KERN_ERR, test, fmt, ##__VA_ARGS__)
++	kunit_print_level(KERN_ERR, test, fmt, ##__VA_ARGS__)
+ 
+ /**
+  * KUNIT_SUCCEED() - A no-op expectation. Only exists for code clarity.
+diff --git a/kunit/test.c b/kunit/test.c
+index b2ca9b94c353..c83c0fa59cbd 100644
+--- a/kunit/test.c
++++ b/kunit/test.c
+@@ -16,36 +16,12 @@ static void kunit_set_failure(struct kunit *test)
+ 	WRITE_ONCE(test->success, false);
+ }
+ 
+-static int kunit_vprintk_emit(int level, const char *fmt, va_list args)
+-{
+-	return vprintk_emit(0, level, NULL, 0, fmt, args);
+-}
+-
+-static int kunit_printk_emit(int level, const char *fmt, ...)
+-{
+-	va_list args;
+-	int ret;
+-
+-	va_start(args, fmt);
+-	ret = kunit_vprintk_emit(level, fmt, args);
+-	va_end(args);
+-
+-	return ret;
+-}
+-
+-static void kunit_vprintk(const struct kunit *test,
+-			  const char *level,
+-			  struct va_format *vaf)
+-{
+-	kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
+-}
+-
+ static void kunit_print_tap_version(void)
+ {
+ 	static bool kunit_has_printed_tap_version;
+ 
+ 	if (!kunit_has_printed_tap_version) {
+-		kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
++		pr_info("TAP version 14\n");
+ 		kunit_has_printed_tap_version = true;
+ 	}
+ }
+@@ -64,10 +40,8 @@ static size_t kunit_test_cases_len(struct kunit_case *test_cases)
+ static void kunit_print_subtest_start(struct kunit_suite *suite)
+ {
+ 	kunit_print_tap_version();
+-	kunit_printk_emit(LOGLEVEL_INFO, "\t# Subtest: %s\n", suite->name);
+-	kunit_printk_emit(LOGLEVEL_INFO,
+-			  "\t1..%zd\n",
+-			  kunit_test_cases_len(suite->test_cases));
++	pr_info("\t# Subtest: %s\n", suite->name);
++	pr_info("\t1..%zd\n", kunit_test_cases_len(suite->test_cases));
+ }
+ 
+ static void kunit_print_ok_not_ok(bool should_indent,
+@@ -87,9 +61,7 @@ static void kunit_print_ok_not_ok(bool should_indent,
+ 	else
+ 		ok_not_ok = "not ok";
+ 
+-	kunit_printk_emit(LOGLEVEL_INFO,
+-			  "%s%s %zd - %s\n",
+-			  indent, ok_not_ok, test_number, description);
++	pr_info("%s%s %zd - %s\n", indent, ok_not_ok, test_number, description);
+ }
+ 
+ static bool kunit_suite_has_succeeded(struct kunit_suite *suite)
+@@ -133,11 +105,11 @@ static void kunit_print_string_stream(struct kunit *test,
+ 		kunit_err(test,
+ 			  "Could not allocate buffer, dumping stream:\n");
+ 		list_for_each_entry(fragment, &stream->fragments, node) {
+-			kunit_err(test, fragment->fragment);
++			kunit_err(test, "%s", fragment->fragment);
+ 		}
+ 		kunit_err(test, "\n");
+ 	} else {
+-		kunit_err(test, buf);
++		kunit_err(test, "%s", buf);
+ 		kunit_kfree(test, buf);
+ 	}
+ }
+@@ -504,20 +476,3 @@ void kunit_cleanup(struct kunit *test)
+ 		kunit_resource_free(test, resource);
+ 	}
+ }
+-
+-void kunit_printk(const char *level,
+-		  const struct kunit *test,
+-		  const char *fmt, ...)
+-{
+-	struct va_format vaf;
+-	va_list args;
+-
+-	va_start(args, fmt);
+-
+-	vaf.fmt = fmt;
+-	vaf.va = &args;
+-
+-	kunit_vprintk(test, level, &vaf);
+-
+-	va_end(args);
+-}
+-- 
+2.23.0.187.g17f5b7556c-goog
 
-Yes, this is a trivial complaint, but please, these should be easy to
-read and understand, and you aren't makeing it that here...
-
-
-> +Date:		Aug 2019
-> +KernelVersion:  5.3.0
-
-I do not think this will hit 5.3, right?
-
-thanks,
-
-greg k-h
