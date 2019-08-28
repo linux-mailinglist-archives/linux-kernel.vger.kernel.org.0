@@ -2,356 +2,495 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67098A02B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCBA8A02D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:14:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfH1NKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:10:04 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51650 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfH1NKE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:10:04 -0400
-Received: by mail-wm1-f68.google.com with SMTP id k1so2744934wmi.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 06:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wawS8xHIKDb0yPoC13oIm4eE9WGYFE8ZkCGqZ4KzmTM=;
-        b=PgjblIhbdFAoU3mBjgZWNpRi1Yqomxe6F3clcVQZyP6C62dsakkJq5kdJSnjnCCi0I
-         ddkWfKQhekpCR724odl/5CUYO8pqUncytVCi0Rp2w1xzVM/NZbmW/6y7xjvPJEnR1Ax8
-         OMAMkhBgh7lozq30WG4loq5m5KRXXyBP59w4c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wawS8xHIKDb0yPoC13oIm4eE9WGYFE8ZkCGqZ4KzmTM=;
-        b=YZIpAZD09PQ0GKiLmtYmptUo78FDuf79OGcuiRbHm8DNsHLBJHgOMyGugEFZkdfS0s
-         7vz3/b9fQ904vJwfMTzFdW5+MCj1SDLozxuepP59QfpvIJzpqYlVFzQwOK85RAs1tldH
-         TfxtNbpl43f2JOkKVlOEG6tMxesR+TSD10oC62I7SJVvsFOOv5iZjN6vFclZvOP4Afci
-         c5nFLn1bsDYIxVvg6uXHOkkWzaGKr/NYdXZd+53iSUn1misabcdak6Bi78MCq1njnA25
-         k8ogW9l2afk2ZK06O/OEm2EiLdsk5hO/LhzchqiSpTuAgqp++kkR4W1iDkIHT9/SJgrD
-         F65A==
-X-Gm-Message-State: APjAAAXgBZvDTm5pq7dSNHDhy12MU6tiHe4Svv0WEUPPx5iYMG0bbxkI
-        YDAFzA3f7uwyNp286/8TKxs+z3IVfsmIw9cIBUUJ/g==
-X-Google-Smtp-Source: APXvYqzHlo1pAR56FBB/a/t3ecF/t59BjU8pZKjoSHTRON8xG/LvVhsLqjrZtCcYmUBx0eLLgy0DRgyXce4TJdKmHSY=
-X-Received: by 2002:a1c:f910:: with SMTP id x16mr4643906wmh.69.1566997799727;
- Wed, 28 Aug 2019 06:09:59 -0700 (PDT)
+        id S1726767AbfH1NOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:14:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:60641 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726253AbfH1NOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 09:14:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 06:14:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
+   d="scan'208";a="182025210"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
+  by fmsmga007.fm.intel.com with ESMTP; 28 Aug 2019 06:14:07 -0700
+Subject: Re: [PATCH V6 5/5] mmc: host: sdhci-pci: Add Genesys Logic GL975x
+ support
+To:     Ben Chuang <benchuanggli@gmail.com>, ulf.hansson@linaro.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        johnsonm@danlj.org, ben.chuang@genesyslogic.com.tw
+References: <20190827003335.2494-1-benchuanggli@gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <99735a03-c698-624d-f5cf-4feed7e6a9ca@intel.com>
+Date:   Wed, 28 Aug 2019 16:13:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190711100100.cty3s6rs3w27low6@flea> <CAOf5uw=3fiMuhcj3kDtCaGNTsxHKRrYb79MXZ+yUZtmf0jU10A@mail.gmail.com>
- <20190720065830.zn3txpyduakywcva@flea> <CAMty3ZDE1xiNgHVLihH378dY5szzkr14V-fwLZdvPs12tY+G1A@mail.gmail.com>
- <20190720093202.6fn6xmhvsgawscnu@flea> <CAMty3ZDpOA1mD77t3RB6hEG7o3+ws8y64m1DU8=3HdZ4zy4AUw@mail.gmail.com>
- <20190724090513.vqnlmya3nqkl6pmu@flea> <CAOf5uwkvCs62zHcUoFuJwau_ZZFdnVf8ua6JY_wzUb9m8rLTTw@mail.gmail.com>
- <20190813060502.teeevudz6cjn35tl@flea> <CAOf5uw=RcBHibiq735NiX452Jde4ZL7PpfwH+Pkc=hARJBudUw@mail.gmail.com>
- <20190828130341.s5z76wejulwdgxlc@flea>
-In-Reply-To: <20190828130341.s5z76wejulwdgxlc@flea>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Wed, 28 Aug 2019 15:09:47 +0200
-Message-ID: <CAOf5uwmT3-xn=nNeU-acKj8ZGSABEsUtOniPX9WuHe5gqp0BCg@mail.gmail.com>
-Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190827003335.2494-1-benchuanggli@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime
+On 27/08/19 3:33 AM, Ben Chuang wrote:
+> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> 
+> Add support for the GL9750 and GL9755 chipsets.
+> 
+> Enable v4 mode and wait 5ms after set 1.8V signal enable for GL9750/
+> GL9755. Fix the value of SDHCI_MAX_CURRENT register and use the vendor
+> tuning flow for GL9750.
 
-On Wed, Aug 28, 2019 at 3:03 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> Hi,
->
-> On Thu, Aug 15, 2019 at 02:25:57PM +0200, Michael Nazzareno Trimarchi wrote:
-> > On Tue, Aug 13, 2019 at 8:05 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > On Mon, Jul 29, 2019 at 08:59:04AM +0200, Michael Nazzareno Trimarchi wrote:
-> > > > Hi
-> > > >
-> > > > On Wed, Jul 24, 2019 at 11:05 AM Maxime Ripard
-> > > > <maxime.ripard@bootlin.com> wrote:
-> > > > >
-> > > > > On Mon, Jul 22, 2019 at 03:51:04PM +0530, Jagan Teki wrote:
-> > > > > > Hi Maxime,
-> > > > > >
-> > > > > > On Sat, Jul 20, 2019 at 3:02 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > > > >
-> > > > > > > On Sat, Jul 20, 2019 at 12:46:27PM +0530, Jagan Teki wrote:
-> > > > > > > > On Sat, Jul 20, 2019 at 12:28 PM Maxime Ripard
-> > > > > > > > <maxime.ripard@bootlin.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Thu, Jul 11, 2019 at 07:43:16PM +0200, Michael Nazzareno Trimarchi wrote:
-> > > > > > > > > > > > tcon-pixel clock is the rate that you want to achive on display side
-> > > > > > > > > > > > and if you have 4 lanes 32bit or lanes and different bit number that
-> > > > > > > > > > > > you need to have a clock that is able to put outside bits and speed
-> > > > > > > > > > > > equal to pixel-clock * bits / lanes. so If you want a pixel-clock of
-> > > > > > > > > > > > 40 mhz and you have 32bits and 4 lanes you need to have a clock of
-> > > > > > > > > > > > 40 * 32 / 4 in no-burst mode. I think that this is done but most of
-> > > > > > > > > > > > the display.
-> > > > > > > > > > >
-> > > > > > > > > > > So this is what the issue is then?
-> > > > > > > > > > >
-> > > > > > > > > > > This one does make sense, and you should just change the rate in the
-> > > > > > > > > > > call to clk_set_rate in sun4i_tcon0_mode_set_cpu.
-> > > > > > > > > > >
-> > > > > > > > > > > I'm still wondering why that hasn't been brought up in either the
-> > > > > > > > > > > discussion or the commit log before though.
-> > > > > > > > > > >
-> > > > > > > > > > Something like this?
-> > > > > > > > > >
-> > > > > > > > > > drivers/gpu/drm/sun4i/sun4i_tcon.c     | 20 +++++++++++---------
-> > > > > > > > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  2 --
-> > > > > > > > > >  2 files changed, 11 insertions(+), 11 deletions(-)
-> > > > > > > > > >
-> > > > > > > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > > > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > > > > > index 64c43ee6bd92..42560d5c327c 100644
-> > > > > > > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > > > > > @@ -263,10 +263,11 @@ static int sun4i_tcon_get_clk_delay(const struct
-> > > > > > > > > > drm_display_mode *mode,
-> > > > > > > > > >  }
-> > > > > > > > > >
-> > > > > > > > > >  static void sun4i_tcon0_mode_set_common(struct sun4i_tcon *tcon,
-> > > > > > > > > > -                                       const struct drm_display_mode *mode)
-> > > > > > > > > > +                                       const struct drm_display_mode *mode,
-> > > > > > > > > > +                                       u32 tcon_mul)
-> > > > > > > > > >  {
-> > > > > > > > > >         /* Configure the dot clock */
-> > > > > > > > > > -       clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
-> > > > > > > > > > +       clk_set_rate(tcon->dclk, mode->crtc_clock * tcon_mul * 1000);
-> > > > > > > > > >
-> > > > > > > > > >         /* Set the resolution */
-> > > > > > > > > >         regmap_write(tcon->regs, SUN4I_TCON0_BASIC0_REG,
-> > > > > > > > > > @@ -335,12 +336,13 @@ static void sun4i_tcon0_mode_set_cpu(struct
-> > > > > > > > > > sun4i_tcon *tcon,
-> > > > > > > > > >         u8 bpp = mipi_dsi_pixel_format_to_bpp(device->format);
-> > > > > > > > > >         u8 lanes = device->lanes;
-> > > > > > > > > >         u32 block_space, start_delay;
-> > > > > > > > > > -       u32 tcon_div;
-> > > > > > > > > > +       u32 tcon_div, tcon_mul;
-> > > > > > > > > >
-> > > > > > > > > > -       tcon->dclk_min_div = SUN6I_DSI_TCON_DIV;
-> > > > > > > > > > -       tcon->dclk_max_div = SUN6I_DSI_TCON_DIV;
-> > > > > > > > > > +       tcon->dclk_min_div = 4;
-> > > > > > > > > > +       tcon->dclk_max_div = 127;
-> > > > > > > > > >
-> > > > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
-> > > > > > > > > > +       tcon_mul = bpp / lanes;
-> > > > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, tcon_mul);
-> > > > > > > > > >
-> > > > > > > > > >         /* Set dithering if needed */
-> > > > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
-> > > > > > > > > > @@ -366,7 +368,7 @@ static void sun4i_tcon0_mode_set_cpu(struct
-> > > > > > > > > > sun4i_tcon *tcon,
-> > > > > > > > > >          */
-> > > > > > > > > >         regmap_read(tcon->regs, SUN4I_TCON0_DCLK_REG, &tcon_div);
-> > > > > > > > > >         tcon_div &= GENMASK(6, 0);
-> > > > > > > > > > -       block_space = mode->htotal * bpp / (tcon_div * lanes);
-> > > > > > > > > > +       block_space = mode->htotal * tcon_div * tcon_mul;
-> > > > > > > > > >         block_space -= mode->hdisplay + 40;
-> > > > > > > > > >
-> > > > > > > > > >         regmap_write(tcon->regs, SUN4I_TCON0_CPU_TRI0_REG,
-> > > > > > > > > > @@ -408,7 +410,7 @@ static void sun4i_tcon0_mode_set_lvds(struct
-> > > > > > > > > > sun4i_tcon *tcon,
-> > > > > > > > > >
-> > > > > > > > > >         tcon->dclk_min_div = 7;
-> > > > > > > > > >         tcon->dclk_max_div = 7;
-> > > > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
-> > > > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
-> > > > > > > > > >
-> > > > > > > > > >         /* Set dithering if needed */
-> > > > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
-> > > > > > > > > > @@ -487,7 +489,7 @@ static void sun4i_tcon0_mode_set_rgb(struct
-> > > > > > > > > > sun4i_tcon *tcon,
-> > > > > > > > > >
-> > > > > > > > > >         tcon->dclk_min_div = 6;
-> > > > > > > > > >         tcon->dclk_max_div = 127;
-> > > > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
-> > > > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
-> > > > > > > > > >
-> > > > > > > > > >         /* Set dithering if needed */
-> > > > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, connector);
-> > > > > > > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> > > > > > > > > > b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> > > > > > > > > > index 5c3ad5be0690..a07090579f84 100644
-> > > > > > > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> > > > > > > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> > > > > > > > > > @@ -13,8 +13,6 @@
-> > > > > > > > > >  #include <drm/drm_encoder.h>
-> > > > > > > > > >  #include <drm/drm_mipi_dsi.h>
-> > > > > > > > > >
-> > > > > > > > > > -#define SUN6I_DSI_TCON_DIV     4
-> > > > > > > > > > -
-> > > > > > > > > >  struct sun6i_dsi {
-> > > > > > > > > >         struct drm_connector    connector;
-> > > > > > > > > >         struct drm_encoder      encoder;
-> > > > > > > > >
-> > > > > > > > > I had more something like this in mind:
-> > > > > > > > > http://code.bulix.org/nlp5a4-803511
-> > > > > > > >
-> > > > > > > > Worth to look at it. was it working on your panel? meanwhile I will check it.
-> > > > > > >
-> > > > > > > I haven't tested it.
-> > > > > > >
-> > > > > > > > We have updated with below change [1], seems working on but is
-> > > > > > > > actually checking the each divider as before start with 4... till 127.
-> > > > > > > >
-> > > > > > > > This new approach, is start looking the best divider from 4.. based on
-> > > > > > > > the idea vs rounded it will ended up best divider like [2]
-> > > > > > >
-> > > > > > > But why?
-> > > > > > >
-> > > > > > > I mean, it's not like it's the first time I'm asking this...
-> > > > > > >
-> > > > > > > If the issue is what Micheal described, then the divider has nothing
-> > > > > > > to do with it. We've had that discussion over and over again.
-> > > > > >
-> > > > > > This is what Michael is mentioned in above mail "tcon-pixel clock is
-> > > > > > the rate that you want to achive on display side and if you have 4
-> > > > > > lanes 32bit or lanes and different bit number that you need to have
-> > > > > > a clock that is able to put outside bits and speed equal to
-> > > > > > pixel-clock * bits / lanes. so If you want a pixel-clock of 40 mhz
-> > > > > > and you have 32bits and 4 lanes you need to have a clock of 40 * 32
-> > > > > > / 4 in no-burst mode. "
-> > > > >
-> > > > > Yeah, so we need to change the clock rate.
-> > > > >
-> > > > > > He is trying to manage the bpp/lanes into dclk_mul (in last mail)
-> > > > > > and it can multiply with pixel clock which is rate argument in
-> > > > > > sun4i_dclk_round_rate.
-> > > > > >
-> > > > > > The solution I have mentioned in dclk_min, max is bpp/lanes also
-> > > > > > multiple rate in dotclock sun4i_dclk_round_rate.
-> > > > > >
-> > > > > > In both cases the overall pll_rate depends on dividers, the one that I
-> > > > > > have on this patch is based on BSP and the Michael one is more generic
-> > > > > > way so-that it can not to touch other functionalities and looping
-> > > > > > dividers to find the best one.
-> > > > > >
-> > > > > > If dclk_min/max is bpp/lanes then dotclock directly using divider 6
-> > > > > > (assuming 24-bit and 4 lanes) and return the pll_rate and divider 6
-> > > > > > associated.
-> > > > > >
-> > > > > > if dclk_mul is bpp/lanes, on Michael new change, the dividers start
-> > > > > > with 4 and end with 127 but the constant ideal rate which rate *
-> > > > > > bpp/lanes but the loop from sun4i_dclk_round_rate computed the divider
-> > > > > > as 6 only, ie what I'm mentioned on the above mail.
-> > > > >
-> > > > > We've been over this a couple of times already.
-> > > > >
-> > > > > The clock is generated like this:
-> > > > >
-> > > > > PLL -> TCON Module Clock -> TCON DCLK
-> > > > >
-> > > > > You want the TCON DCLK to be at the pixel clock rate * bpp /
-> > > > > lanes. Fine, that makes sense.
-> > > > >
-> > > > > Except that the patch you've sent, instead of changing the rate
-> > > > > itself, changes the ratio between the module clock and DCLK.
-> > > > >
-> > > > > And this is where the issue lies. First, from a logical viewpoint, it
-> > > > > doesn't make sense. If you want to change the clock rate, then just do
-> > > > > it. Don't hack around the multipliers trying to fall back to something
-> > > > > that works for you.
-> > > > >
-> > > > > Then, the ratio itself needs to be set to 4. This is the part that
-> > > > > we've discussed way too many times already, but in the Allwinner BSP,
-> > > > > that ratio is hardcoded to 4, and we've had panels that need it at
-> > > > > that value.
-> > > > >
-> > > > > So, what you want to do is to have:
-> > > > >
-> > > > > TCON DCLK = pixel clock * bpp / lanes
-> > > > > TCON Module Clock = DCLK * 4
-> > > > > PLL = Module Clock * Module Clock Divider (which I believe is 1 in most cases)
-> > > >
-> > > >   pll-mipi                       1        1        1   178200000
-> > > >    0     0  50000
-> > > >           tcon0                       2        2        1   178200000
-> > > >         0     0  50000
-> > > >              tcon-pixel-clock         1        1        1    29700000
-> > > >         0     0  50000
-> > >
-> > > Is this before or after your patches?
-> > >
-> >
-> > This is just an example of clock tree to be clear to everyone how they
-> > are connected
-> >
-> > > > This is an english problem from my side:
-> > > > tcon-pixel-clock is DCLK
-> > > > tcon0 must be tcon-pixel-clock * bpp / lanes, because the logic need to
-> > > > put a bit every cycle.
-> > >
-> > > Again, I'm not saying this is wrong, but each time I've looked at it
-> > > the BSP was using a 4 divider between the tcon module clock and the
-> > > dotclock.
-> >
-> > We have tested on 4-5 displays. Well I don't care on bsp but I care
-> > about if it works and if other SoC has similar approach on clock
-> > calculation.
->
-> Well, it's also breaking another panel.
->
+Looks good, one minor comment
 
-Agree but I need to have the panel. Do you know if we have users of this panel?
-I don't want to break the users off course. Can I have your clk_tree
-dbg of your devices
-the panel datasheet?
+> 
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> Co-developed-by: Michael K Johnson <johnsonm@danlj.org>
+> Signed-off-by: Michael K Johnson <johnsonm@danlj.org>
+> ---
+>  drivers/mmc/host/Makefile         |   2 +-
+>  drivers/mmc/host/sdhci-pci-core.c |   2 +
+>  drivers/mmc/host/sdhci-pci-gli.c  | 354 ++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci-pci.h      |   5 +
+>  4 files changed, 362 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/mmc/host/sdhci-pci-gli.c
+> 
+> diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> index 73578718f119..661445415090 100644
+> --- a/drivers/mmc/host/Makefile
+> +++ b/drivers/mmc/host/Makefile
+> @@ -13,7 +13,7 @@ obj-$(CONFIG_MMC_MXS)		+= mxs-mmc.o
+>  obj-$(CONFIG_MMC_SDHCI)		+= sdhci.o
+>  obj-$(CONFIG_MMC_SDHCI_PCI)	+= sdhci-pci.o
+>  sdhci-pci-y			+= sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
+> -				   sdhci-pci-dwc-mshc.o
+> +				   sdhci-pci-dwc-mshc.o sdhci-pci-gli.o
+>  obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))	+= sdhci-pci-data.o
+>  obj-$(CONFIG_MMC_SDHCI_ACPI)	+= sdhci-acpi.o
+>  obj-$(CONFIG_MMC_SDHCI_PXAV3)	+= sdhci-pxav3.o
+> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+> index 4154ee11b47d..e5835fbf73bc 100644
+> --- a/drivers/mmc/host/sdhci-pci-core.c
+> +++ b/drivers/mmc/host/sdhci-pci-core.c
+> @@ -1682,6 +1682,8 @@ static const struct pci_device_id pci_ids[] = {
+>  	SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
+>  	SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
+>  	SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC, snps),
+> +	SDHCI_PCI_DEVICE(GLI, 9750, gl9750),
+> +	SDHCI_PCI_DEVICE(GLI, 9755, gl9755),
+>  	SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
+>  	/* Generic SD host controller */
+>  	{PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
+> diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
+> new file mode 100644
+> index 000000000000..d0ca3c60f8de
+> --- /dev/null
+> +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> @@ -0,0 +1,354 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2019 Genesys Logic, Inc.
+> + *
+> + * Authors: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> + *
+> + * Version: v0.9.0 (2019-08-08)
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/bits.h>
+> +#include <linux/pci.h>
+> +#include <linux/mmc/mmc.h>
+> +#include <linux/delay.h>
+> +#include "sdhci.h"
+> +#include "sdhci-pci.h"
+> +
+> +/*  Genesys Logic extra registers */
+> +#define SDHCI_GLI_9750_WT         0x800
+> +#define   SDHCI_GLI_9750_WT_EN      BIT(0)
+> +#define   GLI_9750_WT_EN_ON	    0x1
+> +#define   GLI_9750_WT_EN_OFF	    0x0
+> +
+> +#define SDHCI_GLI_9750_DRIVING      0x860
+> +#define   SDHCI_GLI_9750_DRIVING_1    GENMASK(11, 0)
+> +#define   SDHCI_GLI_9750_DRIVING_2    GENMASK(27, 26)
+> +#define   GLI_9750_DRIVING_1_VALUE    0xFFF
+> +#define   GLI_9750_DRIVING_2_VALUE    0x3
+> +
+> +#define SDHCI_GLI_9750_PLL	      0x864
+> +#define   SDHCI_GLI_9750_PLL_TX2_INV    BIT(23)
+> +#define   SDHCI_GLI_9750_PLL_TX2_DLY    GENMASK(22, 20)
+> +#define   GLI_9750_PLL_TX2_INV_VALUE    0x1
+> +#define   GLI_9750_PLL_TX2_DLY_VALUE    0x0
+> +
+> +#define SDHCI_GLI_9750_SW_CTRL      0x874
+> +#define   SDHCI_GLI_9750_SW_CTRL_4    GENMASK(7, 6)
+> +#define   GLI_9750_SW_CTRL_4_VALUE    0x3
+> +
+> +#define SDHCI_GLI_9750_MISC            0x878
+> +#define   SDHCI_GLI_9750_MISC_TX1_INV    BIT(2)
+> +#define   SDHCI_GLI_9750_MISC_RX_INV     BIT(3)
+> +#define   SDHCI_GLI_9750_MISC_TX1_DLY    GENMASK(6, 4)
+> +#define   GLI_9750_MISC_TX1_INV_VALUE    0x0
+> +#define   GLI_9750_MISC_RX_INV_ON        0x1
+> +#define   GLI_9750_MISC_RX_INV_OFF       0x0
+> +#define   GLI_9750_MISC_RX_INV_VALUE     GLI_9750_MISC_RX_INV_OFF
+> +#define   GLI_9750_MISC_TX1_DLY_VALUE    0x5
+> +
+> +#define SDHCI_GLI_9750_TUNING_CONTROL	          0x540
+> +#define   SDHCI_GLI_9750_TUNING_CONTROL_EN          BIT(4)
+> +#define   GLI_9750_TUNING_CONTROL_EN_ON             0x1
+> +#define   GLI_9750_TUNING_CONTROL_EN_OFF            0x0
+> +#define   SDHCI_GLI_9750_TUNING_CONTROL_GLITCH_1    BIT(16)
+> +#define   SDHCI_GLI_9750_TUNING_CONTROL_GLITCH_2    GENMASK(20, 19)
+> +#define   GLI_9750_TUNING_CONTROL_GLITCH_1_VALUE    0x1
+> +#define   GLI_9750_TUNING_CONTROL_GLITCH_2_VALUE    0x2
+> +
+> +#define SDHCI_GLI_9750_TUNING_PARAMETERS           0x544
+> +#define   SDHCI_GLI_9750_TUNING_PARAMETERS_RX_DLY    GENMASK(2, 0)
+> +#define   GLI_9750_TUNING_PARAMETERS_RX_DLY_VALUE    0x1
+> +
+> +#define GLI_MAX_TUNING_LOOP 40
+> +
+> +/* Genesys Logic chipset */
+> +static inline void gl9750_wt_on(struct sdhci_host *host)
+> +{
+> +	u32 wt_value = 0;
+> +	u32 wt_enable = 0;
+> +
+> +	wt_value = sdhci_readl(host, SDHCI_GLI_9750_WT);
+> +	wt_enable = FIELD_GET(SDHCI_GLI_9750_WT_EN, wt_value);
+> +
+> +	if (wt_enable == GLI_9750_WT_EN_ON)
+> +		return;
+> +
+> +	wt_value &= ~SDHCI_GLI_9750_WT_EN;
+> +	wt_value |= FIELD_PREP(SDHCI_GLI_9750_WT_EN, GLI_9750_WT_EN_ON);
+> +
+> +	sdhci_writel(host, wt_value, SDHCI_GLI_9750_WT);
+> +}
+> +
+> +static inline void gl9750_wt_off(struct sdhci_host *host)
+> +{
+> +	u32 wt_value = 0;
+> +	u32 wt_enable = 0;
+> +
+> +	wt_value = sdhci_readl(host, SDHCI_GLI_9750_WT);
+> +	wt_enable = FIELD_GET(SDHCI_GLI_9750_WT_EN, wt_value);
+> +
+> +	if (wt_enable == GLI_9750_WT_EN_OFF)
+> +		return;
+> +
+> +	wt_value &= ~SDHCI_GLI_9750_WT_EN;
+> +	wt_value |= FIELD_PREP(SDHCI_GLI_9750_WT_EN, GLI_9750_WT_EN_OFF);
+> +
+> +	sdhci_writel(host, wt_value, SDHCI_GLI_9750_WT);
+> +}
+> +
+> +static void gli_set_9750(struct sdhci_host *host)
+> +{
+> +	u32 driving_value = 0;
+> +	u32 pll_value = 0;
+> +	u32 sw_ctrl_value = 0;
+> +	u32 misc_value = 0;
+> +	u32 parameter_value = 0;
+> +	u32 control_value = 0;
+> +
+> +	u16 ctrl2 = 0;
+> +
+> +	gl9750_wt_on(host);
+> +
+> +	driving_value = sdhci_readl(host, SDHCI_GLI_9750_DRIVING);
+> +	pll_value = sdhci_readl(host, SDHCI_GLI_9750_PLL);
+> +	sw_ctrl_value = sdhci_readl(host, SDHCI_GLI_9750_SW_CTRL);
+> +	misc_value = sdhci_readl(host, SDHCI_GLI_9750_MISC);
+> +	parameter_value = sdhci_readl(host, SDHCI_GLI_9750_TUNING_PARAMETERS);
+> +	control_value = sdhci_readl(host, SDHCI_GLI_9750_TUNING_CONTROL);
+> +
+> +	driving_value &= ~(SDHCI_GLI_9750_DRIVING_1);
+> +	driving_value &= ~(SDHCI_GLI_9750_DRIVING_2);
+> +	driving_value |= FIELD_PREP(SDHCI_GLI_9750_DRIVING_1,
+> +				    GLI_9750_DRIVING_1_VALUE);
+> +	driving_value |= FIELD_PREP(SDHCI_GLI_9750_DRIVING_2,
+> +				    GLI_9750_DRIVING_2_VALUE);
+> +	sdhci_writel(host, driving_value, SDHCI_GLI_9750_DRIVING);
+> +
+> +	sw_ctrl_value &= ~SDHCI_GLI_9750_SW_CTRL_4;
+> +	sw_ctrl_value |= FIELD_PREP(SDHCI_GLI_9750_SW_CTRL_4,
+> +				    GLI_9750_SW_CTRL_4_VALUE);
+> +	sdhci_writel(host, sw_ctrl_value, SDHCI_GLI_9750_SW_CTRL);
+> +
+> +	/* reset the tuning flow after reinit and before starting tuning */
+> +	pll_value &= ~SDHCI_GLI_9750_PLL_TX2_INV;
+> +	pll_value &= ~SDHCI_GLI_9750_PLL_TX2_DLY;
+> +	pll_value |= FIELD_PREP(SDHCI_GLI_9750_PLL_TX2_INV,
+> +				GLI_9750_PLL_TX2_INV_VALUE);
+> +	pll_value |= FIELD_PREP(SDHCI_GLI_9750_PLL_TX2_DLY,
+> +				GLI_9750_PLL_TX2_DLY_VALUE);
+> +
+> +	misc_value &= ~SDHCI_GLI_9750_MISC_TX1_INV;
+> +	misc_value &= ~SDHCI_GLI_9750_MISC_RX_INV;
+> +	misc_value &= ~SDHCI_GLI_9750_MISC_TX1_DLY;
+> +	misc_value |= FIELD_PREP(SDHCI_GLI_9750_MISC_TX1_INV,
+> +				 GLI_9750_MISC_TX1_INV_VALUE);
+> +	misc_value |= FIELD_PREP(SDHCI_GLI_9750_MISC_RX_INV,
+> +				 GLI_9750_MISC_RX_INV_VALUE);
+> +	misc_value |= FIELD_PREP(SDHCI_GLI_9750_MISC_TX1_DLY,
+> +				 GLI_9750_MISC_TX1_DLY_VALUE);
+> +
+> +	parameter_value &= ~SDHCI_GLI_9750_TUNING_PARAMETERS_RX_DLY;
+> +	parameter_value |= FIELD_PREP(SDHCI_GLI_9750_TUNING_PARAMETERS_RX_DLY,
+> +				      GLI_9750_TUNING_PARAMETERS_RX_DLY_VALUE);
+> +
+> +	control_value &= ~SDHCI_GLI_9750_TUNING_CONTROL_GLITCH_1;
+> +	control_value &= ~SDHCI_GLI_9750_TUNING_CONTROL_GLITCH_2;
+> +	control_value |= FIELD_PREP(SDHCI_GLI_9750_TUNING_CONTROL_GLITCH_1,
+> +				    GLI_9750_TUNING_CONTROL_GLITCH_1_VALUE);
+> +	control_value |= FIELD_PREP(SDHCI_GLI_9750_TUNING_CONTROL_GLITCH_2,
+> +				    GLI_9750_TUNING_CONTROL_GLITCH_2_VALUE);
+> +
+> +	sdhci_writel(host, pll_value, SDHCI_GLI_9750_PLL);
+> +	sdhci_writel(host, misc_value, SDHCI_GLI_9750_MISC);
+> +
+> +	/* disable tuned clk */
+> +	ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	ctrl2 &= ~SDHCI_CTRL_TUNED_CLK;
+> +	sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
+> +
+> +	/* enable tuning parameters control */
+> +	control_value &= ~SDHCI_GLI_9750_TUNING_CONTROL_EN;
+> +	control_value |= FIELD_PREP(SDHCI_GLI_9750_TUNING_CONTROL_EN,
+> +				    GLI_9750_TUNING_CONTROL_EN_ON);
+> +	sdhci_writel(host, control_value, SDHCI_GLI_9750_TUNING_CONTROL);
+> +
+> +	/* write tuning parameters */
+> +	sdhci_writel(host, parameter_value, SDHCI_GLI_9750_TUNING_PARAMETERS);
+> +
+> +	/* disable tuning parameters control */
+> +	control_value &= ~SDHCI_GLI_9750_TUNING_CONTROL_EN;
+> +	control_value |= FIELD_PREP(SDHCI_GLI_9750_TUNING_CONTROL_EN,
+> +				    GLI_9750_TUNING_CONTROL_EN_OFF);
+> +	sdhci_writel(host, control_value, SDHCI_GLI_9750_TUNING_CONTROL);
+> +
+> +	/* clear tuned clk */
+> +	ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +	ctrl2 &= ~SDHCI_CTRL_TUNED_CLK;
+> +	sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
+> +
+> +	udelay(1);
+> +
+> +	gl9750_wt_off(host);
+> +}
+> +
+> +static void gli_set_9750_rx_inv(struct sdhci_host *host, bool b)
+> +{
+> +	u32 misc_value = sdhci_readl(host, SDHCI_GLI_9750_MISC);
+> +
+> +	gl9750_wt_on(host);
+> +
+> +	misc_value = sdhci_readl(host, SDHCI_GLI_9750_MISC);
+> +	if (b) {
+> +		misc_value &= ~SDHCI_GLI_9750_MISC_RX_INV;
+> +		misc_value |= FIELD_PREP(SDHCI_GLI_9750_MISC_RX_INV,
+> +					 GLI_9750_MISC_RX_INV_ON);
+> +		sdhci_writel(host, misc_value, SDHCI_GLI_9750_MISC);
+> +	} else {
+> +		misc_value &= ~SDHCI_GLI_9750_MISC_RX_INV;
+> +		misc_value |= FIELD_PREP(SDHCI_GLI_9750_MISC_RX_INV,
+> +					 GLI_9750_MISC_RX_INV_OFF);
+> +		sdhci_writel(host, misc_value, SDHCI_GLI_9750_MISC);
+> +	}
+> +
+> +	gl9750_wt_off(host);
+> +}
+> +
+> +static int __sdhci_execute_tuning_9750(struct sdhci_host *host, u32 opcode)
+> +{
+> +	int i;
+> +	int rx_inv = 0;
+> +
+> +	for (rx_inv = 0; rx_inv < 2; rx_inv++) {
+> +		if (rx_inv & 0x1)
+> +			gli_set_9750_rx_inv(host, true);
+> +		else
+> +			gli_set_9750_rx_inv(host, false);
+> +
+> +		sdhci_start_tuning(host);
+> +
+> +		for (i = 0; i < GLI_MAX_TUNING_LOOP; i++) {
+> +			u16 ctrl;
+> +
+> +			sdhci_send_tuning(host, opcode);
+> +
+> +			if (!host->tuning_done) {
+> +				if (rx_inv == 1) {
+> +					pr_info("%s: Tuning timeout, falling back to fixed sampling clock\n",
+> +						mmc_hostname(host->mmc));
+> +					sdhci_abort_tuning(host, opcode);
+> +					return -ETIMEDOUT;
+> +				}
+> +				sdhci_abort_tuning(host, opcode);
+> +				break;
+> +			}
+> +
+> +			ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> +			if (!(ctrl & SDHCI_CTRL_EXEC_TUNING)) {
+> +				if (ctrl & SDHCI_CTRL_TUNED_CLK)
+> +					return 0; /* Success! */
+> +				break;
+> +			}
+> +		}
+> +	}
+> +
+> +	pr_info("%s: Tuning failed, falling back to fixed sampling clock\n",
+> +		mmc_hostname(host->mmc));
+> +	sdhci_reset_tuning(host);
+> +	return -EAGAIN;
+> +}
+> +
+> +static int gl9750_execute_tuning(struct sdhci_host *host, u32 opcode)
+> +{
+> +	host->mmc->retune_period = 0;
+> +	if (host->tuning_mode == SDHCI_TUNING_MODE_1)
+> +		host->mmc->retune_period = host->tuning_count;
+> +
+> +	gli_set_9750(host);
+> +	host->tuning_err = __sdhci_execute_tuning_9750(host, opcode);
+> +	sdhci_end_tuning(host);
+> +
+> +	return 0;
+> +}
+> +
+> +static int gli_probe_slot_gl9750(struct sdhci_pci_slot *slot)
+> +{
+> +	struct sdhci_host *host = slot->host;
+> +
+> +	slot->host->mmc->caps2 |= MMC_CAP2_NO_SDIO;
+> +	sdhci_enable_v4_mode(host);
+> +
+> +	return 0;
+> +}
+> +
+> +static int gli_probe_slot_gl9755(struct sdhci_pci_slot *slot)
+> +{
+> +	struct sdhci_host *host = slot->host;
+> +
+> +	slot->host->mmc->caps2 |= MMC_CAP2_NO_SDIO;
+> +	sdhci_enable_v4_mode(host);
+> +
+> +	return 0;
+> +}
+> +
+> +static void sdhci_gli_voltage_switch(struct sdhci_host *host)
+> +{
+> +	usleep_range(5000, 5500);
+> +}
+> +
+> +static void sdhci_gl9750_reset(struct sdhci_host *host, u8 mask)
+> +{
+> +	sdhci_reset(host, mask);
+> +	gli_set_9750(host);
+> +}
+> +
+> +#ifdef CONFIG_MMC_SDHCI_IO_ACCESSORS
 
-> > > So, please prove me wrong here.
-> >
-> > Having only 10 pages of documentation is a bit difficult.
->
-> The BSP source code will be a fine example too.
->
+Arguably CONFIG_MMC_SDHCI_IO_ACCESSORS needs to be removed altogether. i.e.
+making the accessors always available.  So for now, I'd prefer to select
+MMC_SDHCI_IO_ACCESSORS:
 
-Do you have any contact in allwinner?
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 14d89a108edd..c3bd967d8a1a 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -94,6 +94,7 @@ config MMC_SDHCI_PCI
+ 	depends on MMC_SDHCI && PCI
+ 	select MMC_CQHCI
+ 	select IOSF_MBI if X86
++	select MMC_SDHCI_IO_ACCESSORS
+ 	help
+ 	  This selects the PCI Secure Digital Host Controller Interface.
+ 	  Most controllers found today are PCI devices.
 
-Let's be this last email, I don't want to bother the people more.
-After I get the panel
-info and datasheet I will come back if I found a solution that does not break it
+> +static u32 sdhci_gl9750_readl(struct sdhci_host *host, int reg)
+> +{
+> +	u32 value;
+> +
+> +	value = readl(host->ioaddr + reg);
+> +	if (unlikely(reg == SDHCI_MAX_CURRENT)) {
+> +		if (!(value & 0xff))
+> +			value |= 0xc8;
+> +	}
+> +	return value;
+> +}
+> +#endif
+> +
+> +static const struct sdhci_ops sdhci_gl9755_ops = {
+> +	.set_clock		= sdhci_set_clock,
+> +	.enable_dma		= sdhci_pci_enable_dma,
+> +	.set_bus_width		= sdhci_set_bus_width,
+> +	.reset			= sdhci_reset,
+> +	.set_uhs_signaling	= sdhci_set_uhs_signaling,
+> +	.voltage_switch		= sdhci_gli_voltage_switch,
+> +};
+> +
+> +const struct sdhci_pci_fixes sdhci_gl9755 = {
+> +	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+> +	.quirks2	= SDHCI_QUIRK2_BROKEN_DDR50,
+> +	.probe_slot	= gli_probe_slot_gl9755,
+> +	.ops            = &sdhci_gl9755_ops,
+> +};
+> +
+> +static const struct sdhci_ops sdhci_gl9750_ops = {
+> +#ifdef CONFIG_MMC_SDHCI_IO_ACCESSORS
+> +	.read_l                 = sdhci_gl9750_readl,
+> +#endif
+> +	.set_clock		= sdhci_set_clock,
+> +	.enable_dma		= sdhci_pci_enable_dma,
+> +	.set_bus_width		= sdhci_set_bus_width,
+> +	.reset			= sdhci_gl9750_reset,
+> +	.set_uhs_signaling	= sdhci_set_uhs_signaling,
+> +	.voltage_switch		= sdhci_gli_voltage_switch,
+> +	.platform_execute_tuning = gl9750_execute_tuning,
+> +};
+> +
+> +const struct sdhci_pci_fixes sdhci_gl9750 = {
+> +	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+> +	.quirks2	= SDHCI_QUIRK2_BROKEN_DDR50,
+> +	.probe_slot	= gli_probe_slot_gl9750,
+> +	.ops            = &sdhci_gl9750_ops,
+> +};
+> +
+> diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+> index e5dc6e44c7a4..738ba5afcc20 100644
+> --- a/drivers/mmc/host/sdhci-pci.h
+> +++ b/drivers/mmc/host/sdhci-pci.h
+> @@ -65,6 +65,9 @@
+>  
+>  #define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xc202
+>  
+> +#define PCI_DEVICE_ID_GLI_9755		0x9755
+> +#define PCI_DEVICE_ID_GLI_9750		0x9750
+> +
+>  /*
+>   * PCI device class and mask
+>   */
+> @@ -185,5 +188,7 @@ int sdhci_pci_enable_dma(struct sdhci_host *host);
+>  extern const struct sdhci_pci_fixes sdhci_arasan;
+>  extern const struct sdhci_pci_fixes sdhci_snps;
+>  extern const struct sdhci_pci_fixes sdhci_o2;
+> +extern const struct sdhci_pci_fixes sdhci_gl9750;
+> +extern const struct sdhci_pci_fixes sdhci_gl9755;
+>  
+>  #endif /* __SDHCI_PCI_H */
+> 
 
-Michael
-
-> > > > One solution can be:
-> > > > - set_rate_exclusive to tcon0 and calculate as display pixel clock *
-> > > > bpp  / lanes
-> > >
-> > > I'm not sure what set_rate_exclusive has to do with it. I mean, it's a
-> > > good idea to use it, but it shouldn't really change anything to the
-> > > discussion.
-> >
-> > Well, this will just do a minimal change on source code and put the constrains
-> > to the tcon0
->
-> I agree, but again, this has nothing to do with the current discussion.
->
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
-
-
--- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
