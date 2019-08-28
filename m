@@ -2,99 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89087A0C37
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDD3DA0C41
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:17:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfH1VNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 17:13:49 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38393 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726400AbfH1VNt (ORCPT
+        id S1726845AbfH1VR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 17:17:28 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45240 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726400AbfH1VR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:13:49 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r12so1571326edo.5;
-        Wed, 28 Aug 2019 14:13:47 -0700 (PDT)
+        Wed, 28 Aug 2019 17:17:27 -0400
+Received: by mail-io1-f65.google.com with SMTP id t3so2414100ioj.12
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 14:17:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=arista.com; s=googlenew;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1Pid6vUuPUlJYXQ1gshe5GaMyymzgf1ptZw4JML3tNQ=;
+        b=WseL6QFZVj5hjD4LSdeRDxgvi8R9OrWhijXgU4dVjGt1oetpvN2AyHUnm4zOKs8iqo
+         at1k51orF9049/Ghe2jeEBeJmxckts5NjcvtT1cIG0yaAyYZEWumEgVeU71owQJjSuxV
+         r+v1ZAVuEBOBRavO0JllTktHLYLN4aNtNFMaWm8dNulMO+VvauX+Kt+HVLPbDYhqEJlM
+         1rW9s6pu2jiJxHyNKaOscZh63d6ouPB5aoh6Er2aGItp9wCPJ77A40bdtwAeyOjCFpKx
+         LIeuQHiz5et647Kxo1j7BqaWjOzdldFmGfxT/0+FE94fDgJoz8xj/x1zdQGnq12nGCTB
+         hjoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:cc:references:to:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=scK6EtL0VQwZVHWRtxKBD1vWCx0TbIgqwfjMtIULIk0=;
-        b=FSPd/nWqslwbGt9CLhe1VUgpL9sHFETICjfqNaCy9WzjDA8qjI3jVLJDv58xVmqRzy
-         Y4qNQlqBc05RdZVCavZ92clY8GTO+660b0QGlkUVa7SnupzWC87UQisOwQU35Kz5y9uU
-         aV5ZGubjAuOGlGYymFcYxZueS3URL4avM6rlUFXAwnJ2Kyo4NzTgZ0nHyU8aCsdoi/ig
-         oWpxJLSRU5wF/vUNCaPBC3IFf8aPVPdHzHz96/mpTbfBTeWBZYHgLt+quLT0dNT+zZM3
-         ChsVoc3rFVr6uDEDoyLGttU5VwSV3UOqW45QwcR6a11F3OBM38Ba/F69uzzzkU3q/vTN
-         h0HA==
-X-Gm-Message-State: APjAAAWCF/NNpUwEHk0PFimTNIV46oxft3DjehYeZEmQ8VQFItNyWjhk
-        hnrvgwVSWVEC3JzNDu9CUVzNYlmh
-X-Google-Smtp-Source: APXvYqyYf54WpAacmkMqduyg8ZjKz2tV4o5faV+CAveWMK5SZdnG0I32wU3kLLWYqFV/TqfSEtwd3Q==
-X-Received: by 2002:a17:906:2596:: with SMTP id m22mr5219849ejb.253.1567026827020;
-        Wed, 28 Aug 2019 14:13:47 -0700 (PDT)
-Received: from [10.68.32.192] (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
-        by smtp.gmail.com with ESMTPSA id g22sm66386ejr.87.2019.08.28.14.13.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2019 14:13:46 -0700 (PDT)
-Subject: Re: [PATCH] asm-generic: add unlikely to default BUG_ON(x)
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-References: <20190828210934.17711-1-efremov@linux.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-From:   Denis Efremov <efremov@linux.com>
-Message-ID: <4ad61875-f694-58a6-f5d8-fca52c093c1d@linux.com>
-Date:   Thu, 29 Aug 2019 00:13:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1Pid6vUuPUlJYXQ1gshe5GaMyymzgf1ptZw4JML3tNQ=;
+        b=peYPLQ3a/JOt+9ctXGvF2FONNEKPSDmUcwJSHr2LFGAV1vCnx+ksfsaPSvhp22QkiY
+         Ke99NSzBYn9BikERaBm+8+EebyVB4e65PJLLbZK81ye3Yv6jAPRGckfQeLEXKs4KE79A
+         ehRDFFncicPnj6MZ6UH01Pp+lIG3G/jIqAY+vkJiswalduUFQ6ni0BJqOZZNDTf8ihud
+         crzkBR7Y9yRNtFA6q4e8WFlf2N60vqHM2NZnQOQObeDmAMcHtn0EI+3fy00JX4rTreYS
+         /hl3JFeZ1hJJE4X0gNvT54egASJro3XX/PMDqPrChbBsbdWUb4fRH43koMTeVqgjDicb
+         7bSQ==
+X-Gm-Message-State: APjAAAU0wnDoTnbHtpTe4OzjSL9SxPmGwjEkJy9VX9FD0uMYLD/RBTfL
+        Mv8FGaHykR8snv3L2jSnp0DhRTJmIts6vaw7A3gIww==
+X-Google-Smtp-Source: APXvYqzVzRPzdAPeHNOQBlR1nvJV0H0d2CsA0hvt0BTy4EMMSJLTlGYVNwIrII+XDJqGKBCcN398iLPUM0AbEzlm8wE=
+X-Received: by 2002:a6b:3ed4:: with SMTP id l203mr6931699ioa.275.1567027046855;
+ Wed, 28 Aug 2019 14:17:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190828210934.17711-1-efremov@linux.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190826193638.6638-1-echron@arista.com> <20190827071523.GR7538@dhcp22.suse.cz>
+ <CAM3twVRZfarAP6k=LLWH0jEJXu8C8WZKgMXCFKBZdRsTVVFrUQ@mail.gmail.com>
+ <20190828065955.GB7386@dhcp22.suse.cz> <CAM3twVR_OLffQ1U-SgQOdHxuByLNL5sicfnObimpGpPQ1tJ0FQ@mail.gmail.com>
+ <1567023536.5576.19.camel@lca.pw>
+In-Reply-To: <1567023536.5576.19.camel@lca.pw>
+From:   Edward Chron <echron@arista.com>
+Date:   Wed, 28 Aug 2019 14:17:14 -0700
+Message-ID: <CAM3twVQ_J77-yxg+cakUJy9-oZw+j-9xdunaAJdJdfZfCb5GSA@mail.gmail.com>
+Subject: Re: [PATCH 00/10] OOM Debug print selection and additional information
+To:     Qian Cai <cai@lca.pw>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Maybe it will be better to move this define out of ifdef, i.e.:
+On Wed, Aug 28, 2019 at 1:18 PM Qian Cai <cai@lca.pw> wrote:
+>
+> On Wed, 2019-08-28 at 12:46 -0700, Edward Chron wrote:
+> > But with the caveat that running a eBPF script that it isn't standard Linux
+> > operating procedure, at this point in time any way will not be well
+> > received in the data center.
+>
+> Can't you get your eBPF scripts into the BCC project? As far I can tell, the BCC
+> has been included in several distros already, and then it will become a part of
+> standard linux toolkits.
+>
+> >
+> > Our belief is if you really think eBPF is the preferred mechanism
+> > then move OOM reporting to an eBPF.
+> > I mentioned this before but I will reiterate this here.
+>
+> On the other hand, it seems many people are happy with the simple kernel OOM
+> report we have here. Not saying the current situation is perfect. On the top of
+> that, some people are using kdump, and some people have resource monitoring to
+> warn about potential memory overcommits before OOM kicks in etc.
 
-#ifdef CONFIG_BUG
-...
--#define BUG_ON()...
-...
-#else
-...
--#define BUG_ON()...
-...
-#endif
-
-+#define BUG_ON()...
-
-I can prepare a patch if you think it worth it.
-
-Thanks,
-Denis
-
-On 29.08.2019 00:09, Denis Efremov wrote:
-> Add unlikely to default BUG_ON(x) in !CONFIG_BUG. It makes
-> the define consistent with BUG_ON(x) in CONFIG_BUG.
-> 
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: <linux-arch@vger.kernel.org>
-> ---
->  include/asm-generic/bug.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-> index aa6c093d9ce9..7357a3c942a0 100644
-> --- a/include/asm-generic/bug.h
-> +++ b/include/asm-generic/bug.h
-> @@ -185,7 +185,7 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
->  #endif
->  
->  #ifndef HAVE_ARCH_BUG_ON
-> -#define BUG_ON(condition) do { if (condition) BUG(); } while (0)
-> +#define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
->  #endif
->  
->  #ifndef HAVE_ARCH_WARN_ON
-> 
+Assuming you can implement your existing report in eBPF then those who like the
+current output would still get the current output. Same with the patches we sent
+upstream, nothing in the report changes by default. So no problems for those who
+are happy, they'll still be happy.
