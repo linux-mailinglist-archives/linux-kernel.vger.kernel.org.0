@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14564A0DED
+	by mail.lfdr.de (Postfix) with ESMTP id 80273A0DEE
 	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:57:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727176AbfH1W4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 18:56:08 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:39682 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727124AbfH1W4G (ORCPT
+        id S1727255AbfH1W4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 18:56:12 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:50111 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbfH1W4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 18:56:06 -0400
-Received: by mail-pg1-f202.google.com with SMTP id t19so774135pgh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 15:56:06 -0700 (PDT)
+        Wed, 28 Aug 2019 18:56:09 -0400
+Received: by mail-qk1-f201.google.com with SMTP id l14so1609847qke.16
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 15:56:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=qtui76zbZDjBR4fv6nr88v7Tjsdi7Bt5xxDWhf7dUos=;
-        b=hJ7AtSw7RjbmYX/4R+147PAQ5c/xVAItZshRqnnBzQSOhDicW/bPFv8afrFf/d1GbS
-         IKX+9zhUwUSqUKnOptDQ7uNuRc7loUh+PoppdolKnauSOl6afFZN+rECJ4kh2E3xymtD
-         NB76hryMlcotA7rkZtbtd4CNoL79uGkF/5gLe1WjYhStWWppuWUG8T05Q0I35bLgI8MV
-         PwpM6hhIu4pn0Q8JYY68lIQEh2KlBXC1y3rYsrkixwfa2XZPQ9WR4f64e+fhhsMGuqEb
-         Tr0aQAtVcRIWLZYDklwU3hnLdDaufp7pohDsNKsHn2GVExBpyrJTExR/NVUyAkr1v4KY
-         BNRQ==
+        bh=uqPQg6B/bO6e2oO0RWU/9KfcrqEBl402Sr4PpXrmZmI=;
+        b=wMbU2OyPf3rFonkJbQ0wnImMKCEnwBI6Fdc7hS1qKKi2qEZxBn80d7aA/5N5SpNbS6
+         kDYDXogL/j90hxIc0Nhh+DzSJ+yDX6GGzU396lafxavIFWPx2tCNAMrn75SidlcDcnhF
+         PmrYj+yT3bXJHTxMey43cZL4vxPAeEMlt61ylLqPRtHKxEtP6EUOMGmh73hSyh+twaAt
+         iOxHLhwoLPNYSw1kUsXwfR9BBlIe+UlbM/RgLS6kP6pOl5EVmssWclAvoiZQ486eyShj
+         FtqUYKsQyBSNaE5HpfHNEGAT2k3TK8uAmRtFvMLQqVe3ZcFKOrzFGJBj8R8mZPrEfG8y
+         kANQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=qtui76zbZDjBR4fv6nr88v7Tjsdi7Bt5xxDWhf7dUos=;
-        b=UnCMZ6bPdaF61gPFjkATNdd49NuNcoebTQLICF+ZPDX+LibtK37rj/n7p2Q77+MM/k
-         qehYiHUhfJE4DlVZhcvWUugbhWAsAsWHtyI0qSJHX2CTD2v222o+RpSFHZeYbv1kRBHS
-         NcTkL0Y275FjS3IjR9XC0x2iTZRT5Ya3UbrJvDK+EjZfWH8aO70zjoiN7nfvPiGUxmx8
-         UYAmpyJoCAeBio/KDKQgqGEUr31VJu0zT86LqFGV5V3XAcim9OJ1mI1lXSIaKXM4WqHM
-         x524ZtOdwA02RFeaxT3aFWl82Mb/tFt07ahyIspC1O6sc4v/gfFE6nfpIxicRD1K41bj
-         87/w==
-X-Gm-Message-State: APjAAAVtPX+Zh3mELsidGktvDczXTg3eaJFj4u5PV3m/A/v/Rn+jIB7a
-        Antn9xan9drx/vFu1vzG7/Obxhq4I38XnVU4XzI=
-X-Google-Smtp-Source: APXvYqxhDs3boqgtF/Mg/oAdDvf6XtcKt/phH2xyKxBDtEtbb0KHRKV02W+dZOFQry8G2yp9I/8fLNq03tWOqp5eC/o=
-X-Received: by 2002:a63:1020:: with SMTP id f32mr5719226pgl.203.1567032965505;
- Wed, 28 Aug 2019 15:56:05 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 15:55:24 -0700
+        bh=uqPQg6B/bO6e2oO0RWU/9KfcrqEBl402Sr4PpXrmZmI=;
+        b=W8uOdRGfNzWqaAjkZd4vtj+HPh/+11In2/9BiH4EOAGbvhpPL2gyYGSZvHKi/wDTyy
+         yole5SGq3kJZx44Fr0C4iHAsVniotKRG+tbCMI2s52tBnhGaJiYokF7Uzuzw3ntmOmaW
+         fYObc9mLmqKW3JK2xQVjXTazSqEHkXUO5jaI0zt1m/KL42yHN7NwVJOv43F1bTVGx4RE
+         iDomRqInx9y80xIPNu8vzEiI+Pn9HkEYMTAWPPRAgNTYyjfRN+qOmpK1IZkCl5c31TdN
+         oqstZxWWTsT2wFCUShlUp8RsZjhVYHYbHWUE51lerLBPJTyjMTjgTyLp1syv/2XBU2dT
+         GgKg==
+X-Gm-Message-State: APjAAAWABKgLG4VkOVHjMp/M6iSPsiE12xial0/Yt7N+yGUjsefpRtSt
+        zMFPGMsBvETAhFsALVYuXa7SsOb4dJqBob23KM0=
+X-Google-Smtp-Source: APXvYqwWjsha8W6OyYf4pMwADgdQ2nhnraNM8a2SWto7wuC2KJF92hySgl5TdLqNp5HskxLRVGLC+DH2XwoY4zMMOu0=
+X-Received: by 2002:ad4:4533:: with SMTP id l19mr4645199qvu.23.1567032968146;
+ Wed, 28 Aug 2019 15:56:08 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 15:55:25 -0700
 In-Reply-To: <20190828225535.49592-1-ndesaulniers@google.com>
-Message-Id: <20190828225535.49592-4-ndesaulniers@google.com>
+Message-Id: <20190828225535.49592-5-ndesaulniers@google.com>
 Mime-Version: 1.0
 References: <20190828225535.49592-1-ndesaulniers@google.com>
 X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-Subject: [PATCH v3 03/14] parisc: prefer __section from compiler_attributes.h
+Subject: [PATCH v3 04/14] um: prefer __section from compiler_attributes.h
 From:   Nick Desaulniers <ndesaulniers@google.com>
 To:     miguel.ojeda.sandonis@gmail.com
 Cc:     sedat.dilek@gmail.com, will@kernel.org, jpoimboe@redhat.com,
@@ -82,36 +82,26 @@ Reported-by: Sedat Dilek <sedat.dilek@gmail.com>
 Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 ---
- arch/parisc/include/asm/cache.h | 2 +-
- arch/parisc/include/asm/ldcw.h  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/um/kernel/um_arch.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/parisc/include/asm/cache.h b/arch/parisc/include/asm/cache.h
-index 73ca89a47f49..e5de3f897633 100644
---- a/arch/parisc/include/asm/cache.h
-+++ b/arch/parisc/include/asm/cache.h
-@@ -22,7 +22,7 @@
+diff --git a/arch/um/kernel/um_arch.c b/arch/um/kernel/um_arch.c
+index a818ccef30ca..18e0287dd97e 100644
+--- a/arch/um/kernel/um_arch.c
++++ b/arch/um/kernel/um_arch.c
+@@ -52,9 +52,9 @@ struct cpuinfo_um boot_cpu_data = {
+ 	.ipi_pipe		= { -1, -1 }
+ };
  
- #define ARCH_DMA_MINALIGN	L1_CACHE_BYTES
+-union thread_union cpu0_irqstack
+-	__attribute__((__section__(".data..init_irqstack"))) =
+-		{ .thread_info = INIT_THREAD_INFO(init_task) };
++union thread_union cpu0_irqstack __section(.data..init_irqstack) = {
++	.thread_info = INIT_THREAD_INFO(init_task)
++};
  
--#define __read_mostly __attribute__((__section__(".data..read_mostly")))
-+#define __read_mostly __section(.data..read_mostly)
- 
- void parisc_cache_init(void);	/* initializes cache-flushing */
- void disable_sr_hashing_asm(int); /* low level support for above */
-diff --git a/arch/parisc/include/asm/ldcw.h b/arch/parisc/include/asm/ldcw.h
-index 3eb4bfc1fb36..e080143e79a3 100644
---- a/arch/parisc/include/asm/ldcw.h
-+++ b/arch/parisc/include/asm/ldcw.h
-@@ -52,7 +52,7 @@
- })
- 
- #ifdef CONFIG_SMP
--# define __lock_aligned __attribute__((__section__(".data..lock_aligned")))
-+# define __lock_aligned __section(.data..lock_aligned)
- #endif
- 
- #endif /* __PARISC_LDCW_H */
+ /* Changed in setup_arch, which is called in early boot */
+ static char host_info[(__NEW_UTS_LEN + 1) * 5];
 -- 
 2.23.0.187.g17f5b7556c-goog
 
