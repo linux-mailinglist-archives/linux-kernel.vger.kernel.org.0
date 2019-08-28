@@ -2,91 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81F03A0A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E58A0A28
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbfH1S6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 14:58:49 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39619 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726935AbfH1S6t (ORCPT
+        id S1726830AbfH1TBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 15:01:53 -0400
+Received: from hera.iit.uni-miskolc.hu ([193.6.5.4]:43628 "EHLO
+        hera.iit.uni-miskolc.hu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726617AbfH1TBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:58:49 -0400
-Received: by mail-wm1-f67.google.com with SMTP id i63so1170230wmg.4;
-        Wed, 28 Aug 2019 11:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:message-id:in-reply-to:references
-         :mime-version;
-        bh=h3hPr3aReWTRAXA22oX/cJbYrvqfiIXXgWPGxnjPUAY=;
-        b=foJF6t8MzSyo7DTOjtVGVEZBUa3vP5j//fN2OglIXG/+wHl9CdiG6O6F9wvvRri2sF
-         DC4viGsEfwI1FFf0nI0IK4NTnmLztHfaKN1+trvpm3Xe6VVHSd5HLHTBXqQ+YmJv0MaM
-         l7uqqBtgUgM6a9CS8b0V4I9EXZTdwDKXbdh4DFWXA7hmlazvS2W1okEiOBw5k15lbh5i
-         vMvPRkYykWrBh9e5NcCVL0o+dxqpAkcKwEa4sf04BDntWfqJ0MoNuUa8xFuq06LlhGtr
-         rRfNY5wTZRq4H1/3LLEqY0p5wxIpjOM2+SkewsbgUmG9EyHA63hQSQISjWWkwjxP6c3J
-         pmAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:message-id:in-reply-to
-         :references:mime-version;
-        bh=h3hPr3aReWTRAXA22oX/cJbYrvqfiIXXgWPGxnjPUAY=;
-        b=KfEH2SQc03mHt2elMf0bfAZW1zlrvRLdmi/fAHOtFxj8CLGUFmUzoqhf47xaqUqjy0
-         E7aIfMd1WAaCebtqopDbrBqAxNLkuyiyimOVJzsnx5KyXcyci+RghTt6YvPa668kZR3s
-         BNWobdEHC+nRmyRyhucudtcDySId/xllJWCC4pQ+UnpiRVEZ/gohqAho/IwilBlcW8oZ
-         faizEVj4r6vEBS/kuYMXJKXTap/Ebouu0D25nw+UQzS2xWCpCoIk1ZtFWdcaAoXLlBRK
-         3aJMUq+TJ9j3nFmEIhtQp7MpWxA2c/OZtkcvR9mpuhyeZakqcX3HnAN0tEurWUTU9CyV
-         l5Tw==
-X-Gm-Message-State: APjAAAXqh563Ga20NSohK2sBlVVEohMae8ivSRUOnCAB8z2U5GUYStvX
-        h4L+WrPJhZdYq0LcfsvyynQ=
-X-Google-Smtp-Source: APXvYqyaFkLmHyhLTNCdux2+SjW3uOkMO7x5pN0naN68rph9wTC0NZQxCQtvczSTpP2qeYJZcHWGPg==
-X-Received: by 2002:a1c:9d15:: with SMTP id g21mr6929443wme.96.1567018727062;
-        Wed, 28 Aug 2019 11:58:47 -0700 (PDT)
-Received: from [192.168.1.105] (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
-        by smtp.gmail.com with ESMTPSA id q24sm7884609wmc.3.2019.08.28.11.58.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 11:58:46 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 20:58:44 +0200
-From:   Krzysztof Wilczynski <kswilczynski@gmail.com>
-Subject: Re: [PATCH v2] x86/PCI: Add missing log facility and move to use pr_
- macros in pcbios.c
-To:     Joe Perches <joe@perches.com>
-Cc:     Krzysztof Wilczynski <kw@linux.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <1567018724.3507.1@gmail.com>
-In-Reply-To: <082d21ef9effc015de671ff51d689dab740cea16.camel@perches.com>
-References: <20190825182557.23260-1-kw@linux.com>
-        <20190828175120.22164-1-kw@linux.com>
-        <a13a086c2dd6dd6259d28e5d1d360e2b4d04ca83.camel@perches.com>
-        <1567017627.3507.0@gmail.com>
-        <082d21ef9effc015de671ff51d689dab740cea16.camel@perches.com>
-X-Mailer: geary/3.32.0
+        Wed, 28 Aug 2019 15:01:52 -0400
+X-Greylist: delayed 338 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Aug 2019 15:01:50 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by hera.iit.uni-miskolc.hu (Postfix) with ESMTP id 2D963126;
+        Wed, 28 Aug 2019 20:56:10 +0200 (CEST)
+X-Virus-Scanned: Kamavis at iit.uni-miskolc.hu
+Received: from hera.iit.uni-miskolc.hu ([127.0.0.1])
+        by localhost (hera.iit.uni-miskolc.hu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 2IDgBeCV0yyp; Wed, 28 Aug 2019 20:56:01 +0200 (CEST)
+Received: from titan.hitronhub.home (unknown [IPv6:2a02:8109:a180:54c:226:9eff:fe30:2af8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: szucst@iit.uni-miskolc.hu)
+        by hera.iit.uni-miskolc.hu (Postfix) with ESMTPSA id 9121C125;
+        Wed, 28 Aug 2019 20:56:00 +0200 (CEST)
+From:   =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Tam=C3=A1s=20Sz=C5=B1cs?= <tszucs@protonmail.ch>
+Subject: [PATCH] mmc: sdhi: fill in actual_clock
+Date:   Wed, 28 Aug 2019 20:55:18 +0200
+Message-Id: <20190828185518.4340-1-tszucs@protonmail.ch>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Joe,
-[...]
->>  The lines over 80 characters wide would be taken care of when
->>  moving to using the pr_ macros as the line length will now be
->>  shorter contrary to when the e.g., printk(KERNEL_INFO ...),
->>  etc., was used.
-> 
-> Not really, those were the warnings checkpatch
-> emits on your actual patch.
+Save set clock in mmc_host actual_clock enabling exporting it via debugfs.
+This will indicate the precise SD clock in I/O settings rather than only the
+sometimes misleading requested clock.
 
-Ah! Yes, very true.  Sorry about that.  I will address these in v3,
-of course.
+Signed-off-by: Tamás Szűcs <tszucs@protonmail.ch>
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-Thank you for correcting me!
-
-Krzysztof
-
-
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 64d3b5fb7fe5..ae842d0b59f9 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -124,7 +124,7 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+ {
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+ 	unsigned int freq, diff, best_freq = 0, diff_min = ~0;
+-	int i, ret;
++	int i;
+ 
+ 	/* tested only on R-Car Gen2+ currently; may work for others */
+ 	if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+@@ -153,9 +153,11 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+ 		}
+ 	}
+ 
+-	ret = clk_set_rate(priv->clk, best_freq);
++	host->mmc->actual_clock =
++		clk_set_rate(priv->clk, best_freq) == 0 ?
++			best_freq : clk_get_rate(priv->clk);
+ 
+-	return ret == 0 ? best_freq : clk_get_rate(priv->clk);
++	return host->mmc->actual_clock;
+ }
+ 
+ static void renesas_sdhi_set_clock(struct tmio_mmc_host *host,
+-- 
+2.11.0
 
