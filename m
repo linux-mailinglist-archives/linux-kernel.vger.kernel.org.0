@@ -2,62 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7267A0C29
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7549FA0C2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:09:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbfH1VGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 17:06:48 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:36936 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726583AbfH1VGs (ORCPT
+        id S1726875AbfH1VJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 17:09:41 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:50735 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbfH1VJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:06:48 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 60C3C1539AF06;
-        Wed, 28 Aug 2019 14:06:47 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 14:06:44 -0700 (PDT)
-Message-Id: <20190828.140644.534529249197568915.davem@davemloft.net>
-To:     yash.shah@sifive.com
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        nicolas.ferre@microchip.com, palmer@sifive.com,
-        paul.walmsley@sifive.com, ynezz@true.cz, sachin.ghadi@sifive.com
-Subject: Re: [PATCH v2 0/2] Update ethernet compatible string for SiFive
- FU540
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1566882364-23891-1-git-send-email-yash.shah@sifive.com>
-References: <1566882364-23891-1-git-send-email-yash.shah@sifive.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 28 Aug 2019 14:06:47 -0700 (PDT)
+        Wed, 28 Aug 2019 17:09:40 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v15so1515136wml.0;
+        Wed, 28 Aug 2019 14:09:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6A42lJeJnLJ8M4juk0mvSEa+/hVqH6gniCUyxaWPy0A=;
+        b=tbXo7fiiWXcce8idgBc/4Sg0k08FJ+HEl2xGsD4axeBx4LfWmeRy2+O+jpwTbhJEJY
+         yF8CQ5Hk2uZiql+tCFT8013RRbqerIIfRy7JKxiGaAnZNCazhlepOxQA3jbTw3VGPMYW
+         Rg+9dNnOLUyOamO/18daMwGs0o4LC8sPMxPiT/l48z0NOXEMze4aewz+H/7/ci18hxJW
+         TFrnK3brF2BowYScErgGwaGerWRdzmMeNKwMuO0Q5aciOVrYfMUZ2IoXCK2VQCcQDFGy
+         lpvIJQ3pxq2rSjClGDMovtKLWbulL5HtUKeR9CovVe0HNIdl3yWIWQCbdusd+PonplVy
+         gidg==
+X-Gm-Message-State: APjAAAUjPJjy3D9Xsz5Ah9N00rQfwUJpvfP/lN9HlHB9GgdOZu5M6QfP
+        92Bjy/RNRvfa2dgTiUCXF6UxkZN6
+X-Google-Smtp-Source: APXvYqwc4xHIrq5qKlKgJdoBsf5Q+4XO0/+CNNVNc3mWRpkIp2gWgVpSe5zzuVu6KhJisRzt8ddKXQ==
+X-Received: by 2002:a05:600c:144:: with SMTP id w4mr7586256wmm.94.1567026578737;
+        Wed, 28 Aug 2019 14:09:38 -0700 (PDT)
+Received: from black.home (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
+        by smtp.googlemail.com with ESMTPSA id r1sm541838wro.13.2019.08.28.14.09.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 28 Aug 2019 14:09:37 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+Cc:     Denis Efremov <efremov@linux.com>, linux-kernel@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: [PATCH] asm-generic: add unlikely to default BUG_ON(x)
+Date:   Thu, 29 Aug 2019 00:09:34 +0300
+Message-Id: <20190828210934.17711-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yash Shah <yash.shah@sifive.com>
-Date: Tue, 27 Aug 2019 10:36:02 +0530
+Add unlikely to default BUG_ON(x) in !CONFIG_BUG. It makes
+the define consistent with BUG_ON(x) in CONFIG_BUG.
 
-> This patch series renames the compatible property to a more appropriate
-> string. The patchset is based on Linux-5.3-rc6 and tested on SiFive
-> Unleashed board
+Signed-off-by: Denis Efremov <efremov@linux.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: <linux-arch@vger.kernel.org>
+---
+ include/asm-generic/bug.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You should always base changes off of "net" or "net-next" and be explicitly
-in your Subject lines which of those two trees your changes are for f.e.:
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index aa6c093d9ce9..7357a3c942a0 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -185,7 +185,7 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
+ #endif
+ 
+ #ifndef HAVE_ARCH_BUG_ON
+-#define BUG_ON(condition) do { if (condition) BUG(); } while (0)
++#define BUG_ON(condition) do { if (unlikely(condition)) BUG(); } while (0)
+ #endif
+ 
+ #ifndef HAVE_ARCH_WARN_ON
+-- 
+2.21.0
 
-	Subject: [PATCH v2 net-next N/M] ...
-
-> 
-> Change history:
-> Since v1:
-> - Dropped PATCH3 because it's already merged
-> - Change the reference url in the patch descriptions to point to a
->   'lore.kernel.org' link instead of 'lkml.org'
-
-Series applied to 'net'.
