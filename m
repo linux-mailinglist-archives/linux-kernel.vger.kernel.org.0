@@ -2,149 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA0C59FE02
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:12:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8A59FDFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:12:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfH1JMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 05:12:12 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:25070 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726767AbfH1JMK (ORCPT
+        id S1726583AbfH1JL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 05:11:59 -0400
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:50261 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726246AbfH1JL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 05:12:10 -0400
-X-UUID: a7150fe064c544a9ae4aad5b0ff106f7-20190828
-X-UUID: a7150fe064c544a9ae4aad5b0ff106f7-20190828
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1395075743; Wed, 28 Aug 2019 17:11:59 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 28 Aug 2019 17:12:05 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Aug 2019 17:12:05 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
-        Yong Wu <yong.wu@mediatek.com>
-Subject: [PATCH v7 13/13] arm64: dts: Add power controller device node of MT8183
-Date:   Wed, 28 Aug 2019 17:11:46 +0800
-Message-ID: <1566983506-26598-14-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1566983506-26598-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1566983506-26598-1-git-send-email-weiyi.lu@mediatek.com>
+        Wed, 28 Aug 2019 05:11:59 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 097F9221;
+        Wed, 28 Aug 2019 05:11:57 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 28 Aug 2019 05:11:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=XyRqOnrqD71cZcZH6lyWmDZHlzV
+        Qv3sNOW0f756zkP0=; b=n+j1MU3U/SdvQLgLkjPNms/V97vc5raL94lABIJF5AR
+        dYG22AZwT54JKrINCuGCYGdTeXOxaL+ffo8I/kSKvl+4waWO+xhyRUcPNYvF5Rsi
+        pj+hD8zv9oD14eePaR7ASri4SHbaRKUnZoU1t3J4oc0Rrcyn4d6VgqHOWpfYs4oy
+        El5LG3R6VJOc2L2omhPt5jVbQlN5gfPnpYBY9lGRTvFdLt2jWK5LZM82DHxFmpXV
+        3Fs9vE1dqmWcilXb9Mc4Ukk56QO27zqhZWLUBa2DiZdr9t0tBwaGiM6MnW2yWVCr
+        PyLBLkI5gLJnB5CmwSwC+gfHV5m/GZUKNNe4iOs2uNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=XyRqOn
+        rqD71cZcZH6lyWmDZHlzVQv3sNOW0f756zkP0=; b=NTxQxvH3jOgjPjQ0NG9UhP
+        TvcBix003jfUtARwhb3dms8HQJa2Q4KxNmg22WEJzhkcn6vmeMRGo2OKDZcTXpQY
+        xSjlciU2yYVh8Dnimd3knligGPHj4B1NEe5p9eosAYO8re0ZvS8TRyDDG0xtpiXL
+        mmqwqj1HopLQr8pvixZz4L84L8XV+iIhNgp2aLFTTK4oQTkiR/v07HEZK261IXmx
+        n748ClKJpErz6e91wPh5/iMyHtYXJaje70guNMMm4Z0vvY9gNwPS3+Bef1mTTLDe
+        mBllqi0w427ee8C9Yjs/eRnWk2fP8JkA0+6hRULQsNXB4LApiDRtfeaP8rVWODQg
+        ==
+X-ME-Sender: <xms:XUVmXdJFRhcH6GwhblBJHo8OEQ52uFsdepimXvGKuB-WTbn25gNT3w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeitddguddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehkvghrnhgvlh
+    drohhrghenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhr
+    ohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:XUVmXWWb7li59A-Lbw070XT3dgO1PWNvKeAadNUWt5ObW3NGYe4nIQ>
+    <xmx:XUVmXeQ1VKnXPeoMHbZT2p47sb7PeYq33gr9rmCNGBQxUdGzMYr2dw>
+    <xmx:XUVmXeBnseH8vkyLyGxSaC_EtHmCVKfDWFv0xtIQ_Uy3_QZssdaIPA>
+    <xmx:XUVmXf3GRJ24YgdZlfEmmzO5fhb-aX6kS7hhrlmdfT1NMzP3OpwGpg>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id BB7878005A;
+        Wed, 28 Aug 2019 05:11:56 -0400 (EDT)
+Date:   Wed, 28 Aug 2019 11:11:55 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Yu Chen <yu.c.chen@intel.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable-commits@vger.kernel.org
+Subject: Re: Patch "x86/pm: Introduce quirk framework to save/restore extra
+ MSR registers around suspend/resume" has been added to the 4.4-stable tree
+Message-ID: <20190828091155.GA32011@kroah.com>
+References: <20190828041240.12F5221883@mail.kernel.org>
+ <20190828084351.GC29927@kroah.com>
+ <20190828090043.GA7589@chenyu-office.sh.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828090043.GA7589@chenyu-office.sh.intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add power controller node and smi-common node for MT8183
-In scpsys node, it contains clocks and regmapping of
-infracfg and smi-common for bus protection.
+On Wed, Aug 28, 2019 at 05:00:44PM +0800, Yu Chen wrote:
+> On Wed, Aug 28, 2019 at 10:43:51AM +0200, Greg KH wrote:
+> > On Wed, Aug 28, 2019 at 12:12:39AM -0400, Sasha Levin wrote:
+> > > This is a note to let you know that I've just added the patch titled
+> > > 
+> > >     x86/pm: Introduce quirk framework to save/restore extra MSR registers around suspend/resume
+> > > 
+> > > to the 4.4-stable tree which can be found at:
+> > >     http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+> > > 
+> > > The filename of the patch is:
+> > >      x86-pm-introduce-quirk-framework-to-save-restore-ext.patch
+> > > and it can be found in the queue-4.4 subdirectory.
+> > > 
+> > > If you, or anyone else, feels it should not be added to the stable tree,
+> > > please let <stable@vger.kernel.org> know about it.
+> > > 
+> > > 
+> > > 
+> > > commit d63273440aa0fdebc30d0c931f15f79beb213134
+> > > Author: Chen Yu <yu.c.chen@intel.com>
+> > > Date:   Wed Nov 25 01:03:41 2015 +0800
+> > > 
+> > >     x86/pm: Introduce quirk framework to save/restore extra MSR registers around suspend/resume
+> > >     
+> > >     A bug was reported that on certain Broadwell platforms, after
+> > >     resuming from S3, the CPU is running at an anomalously low
+> > >     speed.
+> > >     
+> > >     It turns out that the BIOS has modified the value of the
+> > >     THERM_CONTROL register during S3, and changed it from 0 to 0x10,
+> > >     thus enabled clock modulation(bit4), but with undefined CPU Duty
+> > >     Cycle(bit1:3) - which causes the problem.
+> > >     
+> > >     Here is a simple scenario to reproduce the issue:
+> > >     
+> > >      1. Boot up the system
+> > >      2. Get MSR 0x19a, it should be 0
+> > >      3. Put the system into sleep, then wake it up
+> > >      4. Get MSR 0x19a, it shows 0x10, while it should be 0
+> > >     
+> > >     Although some BIOSen want to change the CPU Duty Cycle during
+> > >     S3, in our case we don't want the BIOS to do any modification.
+> > >     
+> > >     Fix this issue by introducing a more generic x86 framework to
+> > >     save/restore specified MSR registers(THERM_CONTROL in this case)
+> > >     for suspend/resume. This allows us to fix similar bugs in a much
+> > >     simpler way in the future.
+> > >     
+> > >     When the kernel wants to protect certain MSRs during suspending,
+> > >     we simply add a quirk entry in msr_save_dmi_table, and customize
+> > >     the MSR registers inside the quirk callback, for example:
+> > >     
+> > >       u32 msr_id_need_to_save[] = {MSR_ID0, MSR_ID1, MSR_ID2...};
+> > >     
+> > >     and the quirk mechanism ensures that, once resumed from suspend,
+> > >     the MSRs indicated by these IDs will be restored to their
+> > >     original, pre-suspend values.
+> > >     
+> > >     Since both 64-bit and 32-bit kernels are affected, this patch
+> > >     covers the common 64/32-bit suspend/resume code path. And
+> > >     because the MSRs specified by the user might not be available or
+> > >     readable in any situation, we use rdmsrl_safe() to safely save
+> > >     these MSRs.
+> > >     
+> > >     Reported-and-tested-by: Marcin Kaszewski <marcin.kaszewski@intel.com>
+> > >     Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> > >     Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >     Acked-by: Pavel Machek <pavel@ucw.cz>
+> > >     Cc: Andy Lutomirski <luto@amacapital.net>
+> > >     Cc: Borislav Petkov <bp@alien8.de>
+> > >     Cc: Brian Gerst <brgerst@gmail.com>
+> > >     Cc: Denys Vlasenko <dvlasenk@redhat.com>
+> > >     Cc: H. Peter Anvin <hpa@zytor.com>
+> > >     Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> > >     Cc: Peter Zijlstra <peterz@infradead.org>
+> > >     Cc: Thomas Gleixner <tglx@linutronix.de>
+> > >     Cc: bp@suse.de
+> > >     Cc: len.brown@intel.com
+> > >     Cc: linux@horizon.com
+> > >     Cc: luto@kernel.org
+> > >     Cc: rjw@rjwysocki.net
+> > >     Link: http://lkml.kernel.org/r/c9abdcbc173dd2f57e8990e304376f19287e92ba.1448382971.git.yu.c.chen@intel.com
+> > >     [ More edits to the naming of data structures. ]
+> > >     Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> > 
+> > No git id of the patch in Linus's tree, or your signed-off-by?
+> >
+> I think the commit id in Linus'tree should be 7a9c2dd08eadd5c6943115dbbec040c38d2e0822
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 62 ++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+Ah, and Sasha added it because a later patch needed it :(
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index c2749c4..66aaa07 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/mt8183-power.h>
- #include "mt8183-pinfunc.h"
- 
- / {
-@@ -238,6 +239,62 @@
- 			#interrupt-cells = <2>;
- 		};
- 
-+		scpsys: syscon@10006000 {
-+			compatible = "mediatek,mt8183-scpsys", "syscon";
-+			#power-domain-cells = <1>;
-+			reg = <0 0x10006000 0 0x1000>;
-+			clocks = <&topckgen CLK_TOP_MUX_AUD_INTBUS>,
-+				 <&infracfg CLK_INFRA_AUDIO>,
-+				 <&infracfg CLK_INFRA_AUDIO_26M_BCLK>,
-+				 <&topckgen CLK_TOP_MUX_MFG>,
-+				 <&topckgen CLK_TOP_MUX_MM>,
-+				 <&topckgen CLK_TOP_MUX_CAM>,
-+				 <&topckgen CLK_TOP_MUX_IMG>,
-+				 <&topckgen CLK_TOP_MUX_IPU_IF>,
-+				 <&topckgen CLK_TOP_MUX_DSP>,
-+				 <&topckgen CLK_TOP_MUX_DSP1>,
-+				 <&topckgen CLK_TOP_MUX_DSP2>,
-+				 <&mmsys CLK_MM_SMI_COMMON>,
-+				 <&mmsys CLK_MM_SMI_LARB0>,
-+				 <&mmsys CLK_MM_SMI_LARB1>,
-+				 <&mmsys CLK_MM_GALS_COMM0>,
-+				 <&mmsys CLK_MM_GALS_COMM1>,
-+				 <&mmsys CLK_MM_GALS_CCU2MM>,
-+				 <&mmsys CLK_MM_GALS_IPU12MM>,
-+				 <&mmsys CLK_MM_GALS_IMG2MM>,
-+				 <&mmsys CLK_MM_GALS_CAM2MM>,
-+				 <&mmsys CLK_MM_GALS_IPU2MM>,
-+				 <&imgsys CLK_IMG_LARB5>,
-+				 <&imgsys CLK_IMG_LARB2>,
-+				 <&camsys CLK_CAM_LARB6>,
-+				 <&camsys CLK_CAM_LARB3>,
-+				 <&camsys CLK_CAM_SENINF>,
-+				 <&camsys CLK_CAM_CAMSV0>,
-+				 <&camsys CLK_CAM_CAMSV1>,
-+				 <&camsys CLK_CAM_CAMSV2>,
-+				 <&camsys CLK_CAM_CCU>,
-+				 <&ipu_conn CLK_IPU_CONN_IPU>,
-+				 <&ipu_conn CLK_IPU_CONN_AHB>,
-+				 <&ipu_conn CLK_IPU_CONN_AXI>,
-+				 <&ipu_conn CLK_IPU_CONN_ISP>,
-+				 <&ipu_conn CLK_IPU_CONN_CAM_ADL>,
-+				 <&ipu_conn CLK_IPU_CONN_IMG_ADL>;
-+			clock-names = "audio", "audio1", "audio2",
-+				      "mfg", "mm", "cam",
-+				      "isp", "vpu", "vpu1",
-+				      "vpu2", "vpu3", "mm-0",
-+				      "mm-1", "mm-2", "mm-3",
-+				      "mm-4", "mm-5", "mm-6",
-+				      "mm-7", "mm-8", "mm-9",
-+				      "isp-0", "isp-1", "cam-0",
-+				      "cam-1", "cam-2", "cam-3",
-+				      "cam-4", "cam-5", "cam-6",
-+				      "vpu-0", "vpu-1", "vpu-2",
-+				      "vpu-3", "vpu-4", "vpu-5";
-+			infracfg = <&infracfg>;
-+			smi_comm = <&smi_common>;
-+		};
-+
- 		apmixedsys: syscon@1000c000 {
- 			compatible = "mediatek,mt8183-apmixedsys", "syscon";
- 			reg = <0 0x1000c000 0 0x1000>;
-@@ -396,6 +453,11 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		smi_common: smi@14019000 {
-+			compatible = "mediatek,mt8183-smi-common", "syscon";
-+			reg = <0 0x14019000 0 0x1000>;
-+		};
-+
- 		imgsys: syscon@15020000 {
- 			compatible = "mediatek,mt8183-imgsys", "syscon";
- 			reg = <0 0x15020000 0 0x1000>;
--- 
-1.8.1.1.dirty
+Sasha, can you fix this patch's headers up to be in the "proper" format?
 
+thanks,
+
+greg k-h
