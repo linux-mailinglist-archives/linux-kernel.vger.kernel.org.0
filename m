@@ -2,120 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EE46A038E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:44:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0EAFA0394
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:46:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfH1Nn5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:43:57 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:15662 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726599AbfH1Nn4 (ORCPT
+        id S1726504AbfH1Np5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:45:57 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47324 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbfH1Nn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:43:56 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SDe3cu131836
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 09:43:55 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2unr92e8f1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 09:43:53 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Wed, 28 Aug 2019 14:43:51 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 28 Aug 2019 14:43:46 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SDhjxr37879864
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Aug 2019 13:43:45 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D0A311C052;
-        Wed, 28 Aug 2019 13:43:45 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A6C111C05C;
-        Wed, 28 Aug 2019 13:43:42 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.129.156])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 28 Aug 2019 13:43:42 +0000 (GMT)
-Subject: Re: [PATCH v12 00/11] Appended signatures support for IMA appraisal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jordan Hand <jorhand@linux.microsoft.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jessica Yu <jeyu@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "AKASHI, Takahiro" <takahiro.akashi@linaro.org>
-Date:   Wed, 28 Aug 2019 09:43:41 -0400
-In-Reply-To: <9682b5d0-1634-2dd0-2cbb-eb1fa8ba7423@linux.microsoft.com>
-References: <20190628021934.4260-1-bauerman@linux.ibm.com>
-         <9682b5d0-1634-2dd0-2cbb-eb1fa8ba7423@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19082813-4275-0000-0000-0000035E558B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19082813-4276-0000-0000-0000387089DF
-Message-Id: <1566999821.6115.14.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=895 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908280144
+        Wed, 28 Aug 2019 09:43:57 -0400
+Received: from localhost ([127.0.0.1] helo=vostro.local)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1i2yEq-0004f4-BX; Wed, 28 Aug 2019 15:43:52 +0200
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Andrea Parri <parri.andrea@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: dataring_push() barriers Re: [RFC PATCH v4 1/9] printk-rb: add a new printk ringbuffer implementation
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+        <20190807222634.1723-2-john.ogness@linutronix.de>
+        <20190820135004.7vatbrzphfsgsnw2@pathway.suse.cz>
+        <20190820135004.7vatbrzphfsgsnw2@pathway.suse.cz>
+        <87r25aklsy.fsf@linutronix.de>
+        <20190827143635.4taqjj6wjz7gdlea@pathway.suse.cz>
+Date:   Wed, 28 Aug 2019 15:43:50 +0200
+In-Reply-To: <20190827143635.4taqjj6wjz7gdlea@pathway.suse.cz> (Petr Mladek's
+        message of "Tue, 27 Aug 2019 16:36:35 +0200")
+Message-ID: <87pnkpjtgp.fsf@linutronix.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jordan,
+On 2019-08-27, Petr Mladek <pmladek@suse.com> wrote:
+>>>> +/**
+>>>> + * dataring_push() - Reserve a data block in the data array.
+>>>> + *
+>>>> + * @dr:   The data ringbuffer to reserve data in.
+>>>> + *
+>>>> + * @size: The size to reserve.
+>>>> + *
+>>>> + * @desc: A pointer to a descriptor to store the data block information.
+>>>> + *
+>>>> + * @id:   The ID of the descriptor to be associated.
+>>>> + *        The data block will not be set with @id, but rather initialized with
+>>>> + *        a value that is explicitly different than @id. This is to handle the
+>>>> + *        case when newly available garbage by chance matches the descriptor
+>>>> + *        ID.
+>>>> + *
+>>>> + * This function expects to move the head pointer forward. If this would
+>>>> + * result in overtaking the data array index of the tail, the tail data block
+>>>> + * will be invalidated.
+>>>> + *
+>>>> + * Return: A pointer to the reserved writer data, otherwise NULL.
+>>>> + *
+>>>> + * This will only fail if it was not possible to invalidate the tail data
+>>>> + * block.
+>>>> + */
+>>>> +char *dataring_push(struct dataring *dr, unsigned int size,
+>>>> +		    struct dr_desc *desc, unsigned long id)
+>>>> +{
+>>>> +	unsigned long begin_lpos;
+>>>> +	unsigned long next_lpos;
+>>>> +	struct dr_datablock *db;
+>>>> +	bool ret;
+>>>> +
+>>>> +	to_db_size(&size);
+>>>> +
+>>>> +	do {
+>>>> +		/* fA: */
+>>>> +		ret = get_new_lpos(dr, size, &begin_lpos, &next_lpos);
+>>>> +
+>>>> +		/*
+>>>> +		 * fB:
+>>>> +		 *
+>>>> +		 * The data ringbuffer tail may have been pushed (by this or
+>>>> +		 * any other task). The updated @tail_lpos must be visible to
+>>>> +		 * all observers before changes to @begin_lpos, @next_lpos, or
+>>>> +		 * @head_lpos by this task are visible in order to allow other
+>>>> +		 * tasks to recognize the invalidation of the data
+>>>> +		 * blocks.
+>>>
+>>> This sounds strange. The write barrier should be done only on CPU
+>>> that really modified tail_lpos. I.e. it should be in _dataring_pop()
+>>> after successful dr->tail_lpos modification.
+>> 
+>> The problem is that there are no data dependencies between the different
+>> variables. When a new datablock is being reserved, it is critical that
+>> all other observers see that the tail_lpos moved forward _before_ any
+>> other changes. _dataring_pop() uses an smp_rmb() to synchronize for
+>> tail_lpos movement.
+>
+> It should be symmetric. It makes sense that _dataring_pop() uses an
+> smp_rmb(). Then there should be wmb() in dataring_push().
 
-On Mon, 2019-08-26 at 15:46 -0700, Jordan Hand wrote:
-> On 6/27/19 7:19 PM, Thiago Jung Bauermann wrote:
-> > On the OpenPOWER platform, secure boot and trusted boot are being
-> > implemented using IMA for taking measurements and verifying signatures.
-> > Since the kernel image on Power servers is an ELF binary, kernels are
-> > signed using the scripts/sign-file tool and thus use the same signature
-> > format as signed kernel modules.
-> > 
-> > This patch series adds support in IMA for verifying those signatures.
-> > It adds flexibility to OpenPOWER secure boot, because it allows it to boot
-> > kernels with the signature appended to them as well as kernels where the
-> > signature is stored in the IMA extended attribute.
-> 
-> I know this is pretty late, but I just wanted to let you know that I
-> tested this patch set on x86_64 with QEMU.
-> 
-> That is, I enrolled a key to _ima keyring, signed my kernel and modules
-> with appended signatures (with scripts/sign-file), set the IMA policy to
-> appraise and measure my kernel and modules. Also tested kexec appraisal.
-> 
-> You can add my tested-by if you'd like.
+dataring_pop() is adjusting the tail. dataring_push() is adjusting the
+head. These operations are handled (ordered) separately. They do not
+need be happening in lockstep. They don't need to be happening on the
+same CPU.
 
-I really appreciate your testing.  Based on the recent
-Documentation/maintainer/rebasing-and-merging.rst,  I'm trying not to
-rebase patches already staged in linux-next.  Patches are first being
-staged in the next-queued-testing branch.
+> The wmb() should be done only by the CPU that actually did the write.
+> And it should be done after the write. This is why I suggested to
+> do it after cmpxchg(dr->head_lpos).
 
-FYI, I just posted a patch that adds IMA appended signature support to
-test_kexec_file_load.sh.
+If CPU0 issues an smp_wmb() after moving the tail and (after seeing the
+moved tail) CPU1 issues an smp_wmb() after updating the head, it is
+still possible for CPU2 to see the head move (and possibly even overtake
+the tail) before seeing the tail move.
 
-thanks,
+If a CPU didn't move the tail but _will_ move the head, only a full
+memory barrier will allow _all_ observers to see the tail move before
+seeing the head move.
 
-Mimi
+>> This CPU is about to make some changes and may have seen an updated
+>> tail_lpos. An smp_wmb() is useless if this is not the CPU that
+>> performed that update. The full memory barrier ensures that all other
+>> observers will see what this CPU sees before any of its future
+>> changes are seen.
+>
+> I do not understand it. Full memory barrier will not cause that all
+> CPUs will see the same.
 
+I did not write that. I wrote (emphasis added):
+
+    The full memory barrier ensures that all other observers will see
+    what _this_ CPU sees before any of _its_ future changes are seen.
+
+> These barriers need to be symmetric.
+
+They are. The comments for fB list the pairs (all being
+smp_mb()/smp_rmb() pairings).
+
+> Back to our situation:
+>
+>     + rmb() should not be needed here because get_new_lpos() provided
+>       a valid lpos.
+>
+>     + wmb() is not needed because we have not written anything yet
+>
+> If there was a race with another CPU than cmpxchg(dr->head_lpos)
+> would fail and we will need to repeat everything again.
+
+It's not about racing to update the head. It's about making sure that
+_all_ CPUs observe that a datablock was invalidated _before_ observing
+that _this_ CPU started modifying other shared variables. And again,
+this CPU might _not_ be the one that invalidated the datablock
+(i.e. moved the tail).
+
+John Ogness
