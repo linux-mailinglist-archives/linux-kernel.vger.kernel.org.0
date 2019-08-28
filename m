@@ -2,90 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECECAA0556
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E83EFA0552
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:49:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbfH1OtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:49:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51982 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726867AbfH1OtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:49:17 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6E6A02A09A7;
-        Wed, 28 Aug 2019 14:49:17 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-8.gru2.redhat.com [10.97.112.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 73B811001B00;
-        Wed, 28 Aug 2019 14:49:14 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id 2ED72105139;
-        Wed, 28 Aug 2019 11:49:00 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x7SEmxv8014289;
-        Wed, 28 Aug 2019 11:48:59 -0300
-Date:   Wed, 28 Aug 2019 11:48:58 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Wanpeng Li <kernellwp@gmail.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when
- dedicated physical CPUs are available
-Message-ID: <20190828144858.GA14215@amt.cnet>
-References: <1564643196-7797-1-git-send-email-wanpengli@tencent.com>
- <7b1e3025-f513-7068-32ac-4830d67b65ac@intel.com>
- <c3fe182f-627f-88ad-cb4d-a4189202b438@redhat.com>
- <20190803202058.GA9316@amt.cnet>
- <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
- <20190826204045.GA24697@amt.cnet>
- <CANRm+Cx0+V67Ek7FhSs61ZqZL3MgV88Wdy17Q6UA369RH7=dgQ@mail.gmail.com>
+        id S1726837AbfH1OtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:49:13 -0400
+Received: from mail-eopbgr20062.outbound.protection.outlook.com ([40.107.2.62]:25664
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726506AbfH1OtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 10:49:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Y3X7pVzUuno2nheJXPlytsbh8ZRVKbd6c7WPCrbns32weFi0UGwr0K4hL+3NXSxZf61jKNPVS++1QCLDZRr3yYaiiJHsL4VFk3RkNwUmtudW7jme4Xfw2Xyy5L3Pp5sRHTVSCNTvYMwmMo9yGeQExps8kB+dO9a1LrpWvnVMtKXCoHehLVsm68dsA8qjGO4QGQbUe+u0ffZK6aqxu73KRe8Tf0VeeVALatnMFeWteTc2oEDP2CZVgvzvAh5HRlqbcSzqvgl7j1RHkuzFJtoVcKRzeQILQPH1+0HnPNi0A54PeXYGlYV8bNPmWw5afNzLVq3trnNUKoY3PPb+IAkcow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qwx5txf2qT3QAH9pb6v1FpDIJuiD60SHzoN9kDRBcJE=;
+ b=SdIDdJnutc0oS1KWjqI0DadYc/ig3gkBG+cjrdjt4Ns2e5jeoudFbMsa6Edn6+XPfi08RgvsfthQkfvdhlWpIxwIqkHBUO5zmkn9YcezGaQTt9V+aWLwGpHwce33v1eEmjzaUqL5ODtVqvcCfw9zn2FXJ7YH5BTE5PpkQiR0FEtd/KLnPh54nHNLvoDs0F/B1JmgXcn3SLALqIEcjTjvGbEvSXE6hUrUbWsafy2Ochru7YFDdBDd+5Yl0mgKnMh8VuTvcpiyuXKet9tgjMSKeft11b7GMVVLVuufu5jlgYjpWQMyzo2wyFfXVs5wbOBQ3N/UeEBpJKM/ZsGISCjHJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qwx5txf2qT3QAH9pb6v1FpDIJuiD60SHzoN9kDRBcJE=;
+ b=KcX0hs9akdBxl3JQOWIqXI8HKvoWdwLRLy+ElFv4TxSyBEu/Bk/0m8VR2Y676LgNoAJAipjjxsK7gNlu12qXCtq4K5MVRXOAydENNBTG4jkF41+ATRUr9xRz/6Rekm/NHJuziRi3ZLDrigxggcHwFXAISFCjI7ypI63XVez1/FU=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
+ VI1PR05MB4624.eurprd05.prod.outlook.com (20.176.3.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.21; Wed, 28 Aug 2019 14:49:08 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1d6:9c67:ea2d:38a7]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1d6:9c67:ea2d:38a7%6]) with mapi id 15.20.2199.021; Wed, 28 Aug 2019
+ 14:49:08 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>
+Subject: Re: [PATCH] mm: remove the __mmu_notifier_invalidate_range_start/end
+ exports
+Thread-Topic: [PATCH] mm: remove the __mmu_notifier_invalidate_range_start/end
+ exports
+Thread-Index: AQHVXavZqxXcfLyzmkeft6WFMi/zb6cQobAAgAAB/gCAAABwAA==
+Date:   Wed, 28 Aug 2019 14:49:08 +0000
+Message-ID: <20190828144902.GK914@mellanox.com>
+References: <20190828142109.29012-1-hch@lst.de>
+ <20190828144020.GI914@mellanox.com> <20190828144728.GA30428@lst.de>
+In-Reply-To: <20190828144728.GA30428@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: YQXPR0101CA0071.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:14::48) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:4d::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [142.167.216.168]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b66c8561-4ee3-416c-44ff-08d72bc6e196
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB4624;
+x-ms-traffictypediagnostic: VI1PR05MB4624:
+x-microsoft-antispam-prvs: <VI1PR05MB462415A263D3A5B4A2ECB52BCFA30@VI1PR05MB4624.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 014304E855
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(39860400002)(366004)(376002)(396003)(199004)(189003)(4326008)(33656002)(7736002)(229853002)(8676002)(66446008)(64756008)(66556008)(66946007)(66476007)(6436002)(86362001)(8936002)(6486002)(256004)(2906002)(81166006)(81156014)(14454004)(6246003)(316002)(6916009)(5660300002)(99286004)(53936002)(1076003)(71190400001)(6116002)(3846002)(4744005)(71200400001)(25786009)(66066001)(36756003)(476003)(2616005)(486006)(11346002)(446003)(6506007)(386003)(478600001)(52116002)(76176011)(54906003)(6512007)(102836004)(305945005)(26005)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4624;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 73QEiwxg4M6S/1eEStQgnnhaQfhmWJsshWOcaUtWQ3C1IusLTH2vKXqW1CY62YpOUl6XLYx1GOrmWxQiucF0JPNa4PO1b9YRDJ0N/giI8uHBbr5lwlOcJkmW/OV0hM3+1PftGmLV1ok+23777XSHBFjvYxUGNEDPQsOfqVTeWoW8oRrZH0vvNv0KKQwmQJz224fXnh6u3pXDHIqdP1mfQBYsNDsqheRH6P5RP1rZibklRPcuTzQifJNBhGxx9BiB8WWhkdy1HkSXXpjxioZJIh0NtOukRAnsaq4t6VlXt9XwcrHfrZ8PDKPLH8v8DlxUpamFrRmTSnlFknNZxklMpPIQwIkVuRsI6h/nxeb7sWBJBqvizlp7dAPX9xkg6F0AtqVg/LSoMph6RrMn6mcRyGgHQYz2/s/0vt/MEjLjC3E=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BF50AE540214C24AA437B0DBD60624D1@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANRm+Cx0+V67Ek7FhSs61ZqZL3MgV88Wdy17Q6UA369RH7=dgQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 28 Aug 2019 14:49:17 +0000 (UTC)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b66c8561-4ee3-416c-44ff-08d72bc6e196
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2019 14:49:08.6134
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DwFL8wFntFo9y5eJAPxL0jYxkCzagyBC/BPw8J5jwq/j+JiBm8lDCu829F3lRuHVo02SPO70EX2qmYO9FkRXpA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4624
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 08:43:13AM +0800, Wanpeng Li wrote:
-> > > kvm adaptive halt-polling will compete with
-> > > vhost-kthreads, however, poll in guest unaware other runnable tasks in
-> > > the host which will defeat vhost-kthreads.
-> >
-> > It depends on how much work vhost-kthreads needs to do, how successful
-> > halt-poll in the guest is, and what improvement halt-polling brings.
-> > The amount of polling will be reduced to zero if polling
-> > is not successful.
-> 
-> We observe vhost-kthreads compete with vCPUs adaptive halt-polling in
-> kvm, it hurt performance in over-subscribe product environment,
-> polling in guest can make it worse.
-> 
-> Regards,
-> Wanpeng Li
+On Wed, Aug 28, 2019 at 04:47:28PM +0200, Christoph Hellwig wrote:
+> On Wed, Aug 28, 2019 at 02:40:25PM +0000, Jason Gunthorpe wrote:
+> > EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range);
+> >=20
+> > elixir suggest this is not called outside mm/ either?
+>=20
+> Yes, it seems like that one should go away as well.
 
-Wanpeng,
+I will amend this patch to drop it too and send it through 0-day
 
-Polling should not be performed if there is other work to do. For
-example, halt-polling could check a host/guest shared memory 
-region indicating whether there are other runnable tasks in the host.
-
-Disabling polling means you will not achieve the improvement 
-even in the transitional periods where the system is not
-overcommitted (which should be frequent given that idling 
-is common).
-
-Again, about your patch: it brings no benefit to anyone. 
-
-Guest halt polling should be already disabled by default
-(the driver has to be loaded for guest polling to take place).
-
+Thanks,
+Jason
