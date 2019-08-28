@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 393B09F750
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 02:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9910C9F752
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 02:31:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbfH1Aa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 20:30:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38036 "EHLO mail.kernel.org"
+        id S1726385AbfH1AbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 20:31:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbfH1Aa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 20:30:29 -0400
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        id S1725992AbfH1AbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 20:31:09 -0400
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A289722CED
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 00:30:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A515217F5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 00:31:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566952227;
-        bh=guXwvH65ETv/bxb6lRF99rLB1tu7BabmLyrDGcF0y+w=;
+        s=default; t=1566952268;
+        bh=BR0pZLbQIT1rTcthV11Ydo8XbtZWD3t67vobTnuBzu0=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xCub6oDn0iSssRBUmJzNckPGi85e2XITCkPU0HnjTmKrtlNAnwvkKEPs5JoMUBFRJ
-         r+c3Qz/UyqAxkPndO0MiWjE+/Fm5US9QPuje5SfWdkdQwZywfC74ifulp6YGYAfGNv
-         9xm9TKhLE0McojCIw9pSrvxxSHJ8knZpTLXIfum4=
-Received: by mail-wm1-f45.google.com with SMTP id d16so905020wme.2
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 17:30:27 -0700 (PDT)
-X-Gm-Message-State: APjAAAXQXbnjwLyz/AMs7amrTUPyJTsPBT9lr4HuqbUxTuZEBLg2Kybp
-        6pPgHLcs76g8pz52cTZcwvgH/8QQKtem/b7PFMyIUw==
-X-Google-Smtp-Source: APXvYqwvVc8QhkXw+RuJoHiXgn/qJm5c5ZdWsi6Ef6hOKFT54dvCXBOyepFT/A+rJs6A/9xBZruE+SDGBn04qsSCT+k=
-X-Received: by 2002:a1c:f910:: with SMTP id x16mr978886wmh.173.1566952226159;
- Tue, 27 Aug 2019 17:30:26 -0700 (PDT)
+        b=Pj+j/LXJ0tQcVtx3+fCSns1B/tDuOvyTNL03Vgwea46NOP8FvNR56N/O8gNQvGm6s
+         LEyRZAW7UwYHiYpzzVC3lYqkiRAq44I8T1ZSgTZoY1dNIqRRcI6VpOGiuHWav5l7bl
+         +vn/Vt5j0PSkGUe9VSPrSt174GYkwVFGWlTVJB3M=
+Received: by mail-wm1-f43.google.com with SMTP id o184so88270wme.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 17:31:08 -0700 (PDT)
+X-Gm-Message-State: APjAAAVeiZaZLMkUptl7UTT0LJ3fap1TZOcltPyKvIfX6cfs8Syh4MMT
+        UsBXJEhmGOrVEa//yNhaeYdJupslZjSj4JyGcygKmg==
+X-Google-Smtp-Source: APXvYqx6jri1APx4Odp/h8HwgdNltfyTzxQiffJV8pfyO4S3HL5FXexfoDSQoQi6iRENWzHetOB6M+NOfVcpRE1aTfI=
+X-Received: by 2002:a05:600c:22d7:: with SMTP id 23mr1161014wmg.0.1566952266642;
+ Tue, 27 Aug 2019 17:31:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190823225248.15597-1-namit@vmware.com> <20190823225248.15597-4-namit@vmware.com>
- <CALCETrXjqa6pWpAgh7v-sttOwY0V2RUqQ_Vs-JQr7nFDYvrBpQ@mail.gmail.com> <F9CA7AFA-D54B-4458-8248-CA52584C13CD@vmware.com>
-In-Reply-To: <F9CA7AFA-D54B-4458-8248-CA52584C13CD@vmware.com>
+References: <20190823225248.15597-1-namit@vmware.com> <20190823225248.15597-3-namit@vmware.com>
+ <CALCETrX91RqYsetbTjfrsMHH8LhTW=YMPuatHuo0bdTJeejP=Q@mail.gmail.com> <154B90AD-7EC3-4B86-8061-D737A948A77C@vmware.com>
+In-Reply-To: <154B90AD-7EC3-4B86-8061-D737A948A77C@vmware.com>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 27 Aug 2019 17:30:15 -0700
-X-Gmail-Original-Message-ID: <CALCETrWFprNc2V1nrg_y0RDhV_PkSnx6v_p=mUHvpv9E0C5zAw@mail.gmail.com>
-Message-ID: <CALCETrWFprNc2V1nrg_y0RDhV_PkSnx6v_p=mUHvpv9E0C5zAw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 3/3] x86/mm/tlb: Avoid deferring PTI flushes on shootdown
+Date:   Tue, 27 Aug 2019 17:30:55 -0700
+X-Gmail-Original-Message-ID: <CALCETrVTErOur1vkSp-5KDmHRXAdSCRjRmbsvQ44TFpqcx36GA@mail.gmail.com>
+Message-ID: <CALCETrVTErOur1vkSp-5KDmHRXAdSCRjRmbsvQ44TFpqcx36GA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/3] x86/mm/tlb: Defer PTI flushes
 To:     Nadav Amit <namit@vmware.com>
 Cc:     Andy Lutomirski <luto@kernel.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -47,56 +47,44 @@ Cc:     Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 4:57 PM Nadav Amit <namit@vmware.com> wrote:
+On Tue, Aug 27, 2019 at 4:55 PM Nadav Amit <namit@vmware.com> wrote:
 >
-> > On Aug 27, 2019, at 4:07 PM, Andy Lutomirski <luto@kernel.org> wrote:
+> > On Aug 27, 2019, at 4:13 PM, Andy Lutomirski <luto@kernel.org> wrote:
 > >
 > > On Fri, Aug 23, 2019 at 11:13 PM Nadav Amit <namit@vmware.com> wrote:
-> >> When a shootdown is initiated, the initiating CPU has cycles to burn a=
-s
-> >> it waits for the responding CPUs to receive the IPI and acknowledge it=
-.
-> >> In these cycles it is better to flush the user page-tables using
-> >> INVPCID, instead of deferring the TLB flush.
+> >> INVPCID is considerably slower than INVLPG of a single PTE. Using it to
+> >> flush the user page-tables when PTI is enabled therefore introduces
+> >> significant overhead.
 > >>
-> >> The best way to figure out whether there are cycles to burn is arguabl=
-y
-> >> to expose from the SMP layer when an acknowledgment is received.
-> >> However, this would break some abstractions.
-> >>
-> >> Instead, use a simpler solution: the initiating CPU of a TLB shootdown
-> >> would not defer PTI flushes. It is not always a win, relatively to
-> >> deferring user page-table flushes, but it prevents performance
-> >> regression.
-> >>
-> >> Signed-off-by: Nadav Amit <namit@vmware.com>
-> >> ---
-> >> arch/x86/include/asm/tlbflush.h |  1 +
-> >> arch/x86/mm/tlb.c               | 10 +++++++++-
-> >> 2 files changed, 10 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tl=
-bflush.h
-> >> index da56aa3ccd07..066b3804f876 100644
-> >> --- a/arch/x86/include/asm/tlbflush.h
-> >> +++ b/arch/x86/include/asm/tlbflush.h
-> >> @@ -573,6 +573,7 @@ struct flush_tlb_info {
-> >>        unsigned int            initiating_cpu;
-> >>        u8                      stride_shift;
-> >>        u8                      freed_tables;
-> >> +       u8                      shootdown;
+> >> Instead, unless page-tables are released, it is possible to defer the
+> >> flushing of the user page-tables until the time the code returns to
+> >> userspace. These page tables are not in use, so deferring them is not a
+> >> security hazard.
 > >
-> > I find the name "shootdown" to be confusing.  How about "more_than_one_=
-cpu=E2=80=9D?
+> > I agree and, in fact, I argued against ever using INVPCID in the
+> > original PTI code.
+> >
+> > However, I don't see what freeing page tables has to do with this.  If
+> > the CPU can actually do speculative page walks based on the contents
+> > of non-current-PCID TLB entries, then we have major problems, since we
+> > don't actively flush the TLB for non-running mms at all.
 >
-> I think the current semantic is more of =E2=80=9Cincludes remote cpus=E2=
-=80=9D. How about
-> calling it =E2=80=9Clocal_only=E2=80=9D, and negating its value?
+> That was not my concern.
+>
+> >
+> > I suppose that, if we free a page table, then we can't activate the
+> > PCID by writing to CR3 before flushing things.  But we can still defer
+> > the flush and just set the flush bit when we write to CR3.
+>
+> This was my concern. I can change the behavior so the code would flush the
+> whole TLB instead. I just tried not to change the existing behavior too
+> much.
+>
 
-Sure.
+We do this anyway if we don't have INVPCID_SINGLE, so it doesn't seem
+so bad to also do it if there's a freed page table.
