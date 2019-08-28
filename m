@@ -2,79 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F6019FC90
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D099FC9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:08:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfH1IE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:04:26 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56940 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726545AbfH1IEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:04:25 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C6AC9ECEE8D10C340F99;
-        Wed, 28 Aug 2019 16:04:22 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 28 Aug 2019 16:04:15 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <jonathan.cameron@huawei.com>, <wangzhou1@hisilicon.com>,
-        <liguozhu@hisilicon.com>, <john.garry@huawei.com>,
-        <Jonathan.Cameron@huawei.com>
-CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH v2 -next] crypto: hisilicon: select CRYPTO_LIB_DES while compiling SEC driver
-Date:   Wed, 28 Aug 2019 16:07:40 +0800
-Message-ID: <20190828080740.43244-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <affd8de1-ae35-a1d0-534a-d9cdfac90de8@huawei.com>
-References: <affd8de1-ae35-a1d0-534a-d9cdfac90de8@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1726410AbfH1IH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:07:57 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35091 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbfH1IH4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 04:07:56 -0400
+Received: by mail-pf1-f194.google.com with SMTP id d85so1209222pfd.2;
+        Wed, 28 Aug 2019 01:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=bzwq5Lzf2vOHlpsC8M2sMWZcNEUPweoUJnKhBuyOVxM=;
+        b=mUaAE+Sx+tTGqn6H09pLb6Q/VOdWhRgt5Li6uV9XKx4BWmwyuMYcARE6VgEyQ/SvhN
+         mTVf72562IkM0UYVZBKOTzIi+pDKPkbwbhyqdR8Eu06oNFf/jIbfZkRFehKsn97q2F1S
+         d2wcW3xXTQsegeEBOUBoqOr5g/MwWupqbbhMbgkJTgWpITh4toWXy/ctAyVn8ZxXI5Dq
+         uAnnHtGHLvh8oFR8go3I8DOjkPEnzyjyz5BrOMJJlBI1xcsf4mBH/FaYLt160zCa1DaO
+         0rLc9K96L0i6EnsrxG4c5pzXFuAPmECuHmNac/qb67JgHF3to+skYS5K/ppc5C/ilo+0
+         V4uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bzwq5Lzf2vOHlpsC8M2sMWZcNEUPweoUJnKhBuyOVxM=;
+        b=lzd9q4Wg0cVdkHCWaM3PcOdsgEuNCdGWKJbQEdyPcly5g31BT2LVCmTj4g5gOrvYaa
+         7TsKCtmGCR9S8S+Y6ZDB2BJBh2gC2Ih00AXxpRK40trrsI3rc2TqGg9F/bZfP3cHpVuc
+         DSD60awWL+qc7z1IqgDznwhNT6yAiYxUCY5WlYAEgClAuA5jDcV7iGUkmdSyQ17OPnSL
+         ddvV81P9J7TdFc9qgYWgJmTxBuKxNz9NCA+rwYgKUl5CHoXy3F9KysIjdNtCB8gaib1Z
+         b8mGZXqAE0GCp/mvTu5vAzejuh+ZVTlRCwyySs9aD4isYBPqQvcLxRYQyHjb2JHcXaB5
+         Qqpg==
+X-Gm-Message-State: APjAAAXeXgNlDtJ6idTeDYNcB9/nKMQsgze6D/zvaxblQTHRkfLcqlog
+        w1RrxcvFxMw9P7aw1PRAPSc=
+X-Google-Smtp-Source: APXvYqwBYlxPa+/RhgNHwomSbYeuT6yPtD4Axsr/uaDwXTIOM9VPBkYOF+QX1PgeyswykqQ92DwU9Q==
+X-Received: by 2002:aa7:8f2e:: with SMTP id y14mr3197181pfr.113.1566979676296;
+        Wed, 28 Aug 2019 01:07:56 -0700 (PDT)
+Received: from localhost.corp.microsoft.com ([167.220.255.52])
+        by smtp.googlemail.com with ESMTPSA id z6sm4129360pgk.18.2019.08.28.01.07.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Aug 2019 01:07:55 -0700 (PDT)
+From:   lantianyu1986@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+To:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        sashal@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com
+Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/Hyper-V: Fix reference of pv_ops with CONFIG_PARAVIRT=N
+Date:   Wed, 28 Aug 2019 16:07:47 +0800
+Message-Id: <20190828080747.204419-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CRYPTO_DEV_HISI_SEC=y, below compilation error is found after 
-'commit 894b68d8be4b ("crypto: hisilicon/des - switch to new verification routines")':
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
 
-drivers/crypto/hisilicon/sec/sec_algs.o: In function `sec_alg_skcipher_setkey_des_cbc':
-sec_algs.c:(.text+0x11f0): undefined reference to `des_expand_key'
-drivers/crypto/hisilicon/sec/sec_algs.o: In function `sec_alg_skcipher_setkey_des_ecb':
-sec_algs.c:(.text+0x1390): undefined reference to `des_expand_key'
-make: *** [vmlinux] Error 1
+hv_setup_sched_clock() references pv_ops and this should
+be under CONFIG_PARAVIRT=Y. Fix it.
 
-This because DES library has been moved to lib/crypto in this commit 
-'04007b0e6cbb ("crypto: des - split off DES library from generic DES cipher driver")'.
-Fix this by selecting CRYPTO_LIB_DES in CRYPTO_DEV_HISI_SEC.
-
-Fixes: 04007b0e6cbb ("crypto: des - split off DES library from generic DES cipher driver")
-Fixes: 894b68d8be4b ("crypto: hisilicon/des - switch to new verification routines")
-
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
 ---
- v2: remove fix tag 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver") 
- drivers/crypto/hisilicon/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This patch is based on git://git.kernel.org/pub/scm/linux/
+kernel/git/tip/tip.git timers/core.
 
-diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-index fa8aa06..ebaf91e 100644
---- a/drivers/crypto/hisilicon/Kconfig
-+++ b/drivers/crypto/hisilicon/Kconfig
-@@ -4,6 +4,7 @@ config CRYPTO_DEV_HISI_SEC
- 	tristate "Support for Hisilicon SEC crypto block cipher accelerator"
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_ALGAPI
-+	select CRYPTO_LIB_DES
- 	select SG_SPLIT
- 	depends on ARM64 || COMPILE_TEST
- 	depends on HAS_IOMEM
+ arch/x86/kernel/cpu/mshyperv.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
+index 53afd33990eb..267daad8c036 100644
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -346,7 +346,9 @@ static void __init ms_hyperv_init_platform(void)
+ 
+ void hv_setup_sched_clock(void *sched_clock)
+ {
++#ifdef CONFIG_PARAVIRT
+ 	pv_ops.time.sched_clock = sched_clock;
++#endif
+ }
+ 
+ const __initconst struct hypervisor_x86 x86_hyper_ms_hyperv = {
 -- 
-2.7.4
+2.14.5
 
