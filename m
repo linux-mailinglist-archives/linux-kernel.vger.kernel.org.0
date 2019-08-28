@@ -2,86 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 704D2A0846
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1981A084A
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:20:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbfH1RT3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:19:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:25004 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726400AbfH1RT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:19:29 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB35A807064;
-        Wed, 28 Aug 2019 17:19:28 +0000 (UTC)
-Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FB1360BEC;
-        Wed, 28 Aug 2019 17:19:26 +0000 (UTC)
-Date:   Wed, 28 Aug 2019 12:19:23 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: mmotm 2019-08-27-20-39 uploaded (objtool: xen)
-Message-ID: <20190828171923.4sir3sxwsnc2pvjy@treble>
-References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
- <8b09d93a-bc42-bd8e-29ee-cd37765f4899@infradead.org>
+        id S1726773AbfH1RU2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:20:28 -0400
+Received: from smtprelay0184.hostedemail.com ([216.40.44.184]:50963 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726397AbfH1RU2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 13:20:28 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 9762B180A812D;
+        Wed, 28 Aug 2019 17:20:26 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::,RULES_HIT:41:355:379:599:960:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1461:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2375:2393:2559:2562:2693:2828:3138:3139:3140:3141:3142:3353:3622:3866:3867:3868:3872:3873:4250:4321:4605:4823:5007:7903:9149:10004:10400:10848:11026:11232:11473:11658:11914:12297:12438:12555:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21162:21451:21627:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: road64_7821b4d3ac041
+X-Filterd-Recvd-Size: 2726
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 28 Aug 2019 17:20:25 +0000 (UTC)
+Message-ID: <6b17910acdb7259b16a65265e8a6a8bbcd6c86cd.camel@perches.com>
+Subject: Re: [PATCH v2 2/3] staging: rtl8192u: fix macro alignment in
+ ieee80211
+From:   Joe Perches <joe@perches.com>
+To:     Stephen Brennan <stephen@brennan.io>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        "Tobin C . Harding" <me@tobin.cc>
+Date:   Wed, 28 Aug 2019 10:20:24 -0700
+In-Reply-To: <20190821143540.4501-3-stephen@brennan.io>
+References: <20190821143540.4501-1-stephen@brennan.io>
+         <20190821143540.4501-3-stephen@brennan.io>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8b09d93a-bc42-bd8e-29ee-cd37765f4899@infradead.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.67]); Wed, 28 Aug 2019 17:19:29 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 09:58:37AM -0700, Randy Dunlap wrote:
-> On 8/27/19 8:40 PM, akpm@linux-foundation.org wrote:
-> > The mm-of-the-moment snapshot 2019-08-27-20-39 has been uploaded to
-> > 
-> >    http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > mmotm-readme.txt says
-> > 
-> > README for mm-of-the-moment:
-> > 
-> > http://www.ozlabs.org/~akpm/mmotm/
-> > 
-> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> > more than once a week.
-> > 
-> > You will need quilt to apply these patches to the latest Linus release (5.x
-> > or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> > http://ozlabs.org/~akpm/mmotm/series
-> > 
-> > The file broken-out.tar.gz contains two datestamp files: .DATE and
-> > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-> > followed by the base kernel version against which this patch series is to
-> > be applied.
-> 
-> 
-> 
-> drivers/xen/gntdev.o: warning: objtool: gntdev_copy()+0x229: call to __ubsan_handle_out_of_bounds() with UACCESS enabled
+On Wed, 2019-08-21 at 07:35 -0700, Stephen Brennan wrote:
+> Several macros display unaligned, due to mixes of tabs and spaces. These
+> can be fixed by making spacing consistent, do this.
+[]
+> @@ -452,18 +452,19 @@ do { if (ieee80211_debug_level & (level)) \
+>    printk(KERN_DEBUG "ieee80211: " fmt, ## args); } while (0)
+>  //wb added to debug out data buf
+>  //if you want print DATA buffer related BA, please set ieee80211_debug_level to DATA|BA
+> -#define IEEE80211_DEBUG_DATA(level, data, datalen)	\
+> -	do { if ((ieee80211_debug_level & (level)) == (level))	\
+> -		{	\
+> -			int i;					\
+> -			u8 *pdata = (u8 *) data;			\
+> -			printk(KERN_DEBUG "ieee80211: %s()\n", __func__);	\
+> -			for (i = 0; i < (int)(datalen); i++) {		\
+> -				printk("%2x ", pdata[i]);		\
+> -				if ((i + 1) % 16 == 0) printk("\n");	\
+> -			}				\
+> -			printk("\n");			\
+> -		}					\
+> +#define IEEE80211_DEBUG_DATA(level, data, datalen)                             \
+> +	do { if ((ieee80211_debug_level & (level)) == (level))                 \
+> +		{                                                              \
+> +			int i;                                                 \
+> +			u8 *pdata = (u8 *) data;                               \
+> +			printk(KERN_DEBUG "ieee80211: %s()\n", __func__);      \
+> +			for (i = 0; i < (int)(datalen); i++) {                 \
+> +				printk("%2x ", pdata[i]);                      \
+> +				if ((i + 1) % 16 == 0)                         \
+> +					printk("\n");                          \
+> +			}                                                      \
+> +			printk("\n");                                          \
 
-Easy one :-)
+without pr_cont/KERN_CONT, this will output a terrible mess.
 
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 0c8e17f946cd..6a935ab93149 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -483,6 +483,7 @@ static const char *uaccess_safe_builtin[] = {
- 	"ubsan_type_mismatch_common",
- 	"__ubsan_handle_type_mismatch",
- 	"__ubsan_handle_type_mismatch_v1",
-+	"__ubsan_handle_out_of_bounds",
- 	/* misc */
- 	"csum_partial_copy_generic",
- 	"__memcpy_mcsafe",
+It's probably better to use print_hex_dump_debug
+
+
