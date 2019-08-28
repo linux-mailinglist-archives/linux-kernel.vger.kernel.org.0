@@ -2,92 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8C8B9F81D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 04:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C20129F827
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 04:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726370AbfH1CBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 22:01:52 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40820 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbfH1CBw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 22:01:52 -0400
-Received: by mail-wr1-f66.google.com with SMTP id c3so735667wrd.7;
-        Tue, 27 Aug 2019 19:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+2IzGJMnVQs5Qv7zLsgC3sxUxxrgX8laKLcrZIr1izM=;
-        b=mmBYSj7lod3CKerFV4vxbNtOkgfWGARH6A/UeiefUS8sJB2kB2wapXaaAX37Xmk4ps
-         KuqmNLKxtk/TYkRZLSg1YSJ5nCfXwCypneONzSVLQ7vUaYOxAzgT9Wo0rA74yiWUGN79
-         +MMQZ68VX5lhpnPnsinrmXBSz3O9LiQVxguCe6bcSn/FzKH5h5de8a6s1zabky1axGL5
-         gHTFe6mmLYNvqi0StMFNjZHVHLQM7lfr9WLbPEbX/d5pdOGf61/HV0eDUrY794ORVEvA
-         z/3PiHifOC6F9ZbFi8ckUmJ+zSeXhD7SAfFUIrniUxh+hlPuT7zxyW3Pqr+SwYFnv/Z+
-         qoeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+2IzGJMnVQs5Qv7zLsgC3sxUxxrgX8laKLcrZIr1izM=;
-        b=OyITUNYVWuzfnnnTqMJlTdsqu4kyv8k2YN0NCk6rDnZIlq38e4KpiDpNNWdl76DreV
-         3iPIB4FnFCbMsYhbluWH7BlxkQUumtCPATVvwqUsTW2JVMtPWltf2c4ufksAND43L5Mb
-         fP8F/pMvX/rn/4OpSOiPUu7M9DsPuYvGZPoS0C8o7FgGKXyZ+gBiqyNQX8bZhKMTOJhJ
-         7xDbG8Lilg15Eq6XP59zIJO0dXYVbQHOXfo9Hf4yHMxIajOaAsAWmjX1V3LROh5fbcuy
-         /NxS2SgHNRWuJMKz7NoTMCRp1tZLSbUSDkrXc/DVoPbWVqFUOrvZP5XsGBNMRYGaXREr
-         KDrg==
-X-Gm-Message-State: APjAAAXPzBsSxU6MCd1SwNgCNM792o1xLXIiqYpZ+2w1ulEEwev7THtk
-        Z8VIgeF+TqQMdbem6ClQVHkj718feJ9qJtBW1kuqnQ==
-X-Google-Smtp-Source: APXvYqx49JoFKyK0pkGtf3HWx2PBZwNLAnsw6lY61TOZ57xqgQF5cyfmdwL/o1tk5wLRe1TsFfoQ37aVOEhaVTICNbw=
-X-Received: by 2002:a5d:610d:: with SMTP id v13mr1153885wrt.249.1566957710209;
- Tue, 27 Aug 2019 19:01:50 -0700 (PDT)
+        id S1726252AbfH1CNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 22:13:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60362 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726096AbfH1CNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 22:13:14 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7C4920674;
+        Wed, 28 Aug 2019 02:13:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566958392;
+        bh=z9cH+4cl9MeA/f7ur8vlDOxGaS3KL68qd9WMtzQrkVI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b8M7wDINZwo+GHxG2o6rCweuZViOOsTq4ZlAvlK9YmNKdBUHaLSssEfEprvyLJAx3
+         oPdemG/tVA0OFWwsEx8KaCOfm2oMJtYjibfKLed253i/fNiPfv6D7fi8u8BQq7/ILe
+         8gNCLrBwoCjx+zYfi9LlYHZfLo1oh1dwtFp7ruQA=
+Date:   Tue, 27 Aug 2019 22:13:11 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ricard Wanderlof <ricard.wanderlof@axis.com>,
+        Ricard Wanderlof <ricardw@axis.com>
+Subject: Re: [PATCH AUTOSEL 5.2 040/123] ASoC: Fail card instantiation if DAI
+ format setup fails
+Message-ID: <20190828021311.GV5281@sasha-vm>
+References: <20190814021047.14828-1-sashal@kernel.org>
+ <20190814021047.14828-40-sashal@kernel.org>
+ <20190814092213.GC4640@sirena.co.uk>
+ <20190826013515.GG5281@sasha-vm>
+ <20190827110014.GD23391@sirena.co.uk>
 MIME-Version: 1.0
-References: <20190826031830.30931-1-zhang.lyra@gmail.com> <CAPDyKFrpvtS9mHO7xN=cbrMHWN+ydPw08mF9oXtNW-TOMsP7Ew@mail.gmail.com>
-In-Reply-To: <CAPDyKFrpvtS9mHO7xN=cbrMHWN+ydPw08mF9oXtNW-TOMsP7Ew@mail.gmail.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Wed, 28 Aug 2019 10:01:14 +0800
-Message-ID: <CAAfSe-txS9MObU+ygxk5NA-FneDL7ftrDruvuou9PYhvXY0E=w@mail.gmail.com>
-Subject: Re: [PATCH 0/5] a few fixes for sprd's sd host controller
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190827110014.GD23391@sirena.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Aug 2019 at 21:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+On Tue, Aug 27, 2019 at 12:00:14PM +0100, Mark Brown wrote:
+>On Sun, Aug 25, 2019 at 09:35:15PM -0400, Sasha Levin wrote:
+>> On Wed, Aug 14, 2019 at 10:22:13AM +0100, Mark Brown wrote:
 >
-> On Mon, 26 Aug 2019 at 05:18, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
-> >
-> > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> >
-> > With this patch-set, both sd card and mmc can be setup.  This patch-set was
-> > verified on Unisoc's Whale2 and another mobile phone platform SC9863A.
-> >
-> > Chunyan Zhang (5):
-> >   mmc: sdhci-sprd: fixed incorrect clock divider
-> >   mmc: sdhci: sprd: add get_ro hook function
-> >   mmc: sdhci: sprd: add SDHCI_QUIRK2_PRESET_VALUE_BROKEN
-> >   mms: sdhci: sprd: add SDHCI_QUIRK_BROKEN_CARD_DETECTION
-> >   mmc: sdhci: sprd: clear the UHS-I modes read from registers
-> >
-> >  drivers/mmc/host/sdhci-sprd.c | 30 +++++++++++++++++++++++++-----
-> >  1 file changed, 25 insertions(+), 5 deletions(-)
-> >
-> > --
-> > 2.20.1
-> >
+>> > > If the DAI format setup fails, there is no valid communication format
+>> > > between CPU and CODEC, so fail card instantiation, rather than continue
+>> > > with a card that will most likely not function properly.
 >
-> Looks like the entire series should be tagged for stable and having
-> the same fixes tag as patch1. No?
+>> > This is another one where if nobody noticed a problem already and things
+>> > just happened to be working this might break things, it's vanishingly
+>> > unlikely to fix anything that was broken.
+>
+>> Same as the other patch: this patch suggests it fixes a real bug, and if
+>> this patch is broken let's fix it.
+>
+>If anyone ran into this on the older kernel and fixed or worked
+>around it locally there's a reasonable chance this will then
+>break what they're doing.  The patch itself is perfectly fine but
 
-Ok.
+But there's not much we can do here. We can't hold off on fixing
+breakage such as this because existing users have workarounds for this.
+Are we breaking kernel ABI with this patch then?
 
->
-> Kind regards
-> Uffe
+And what about new users? We'll let them get hit by the issue and
+develop their own workarounds?
+
+>that doesn't mean the rest of the changes it's being backported
+>into are also fine.
+
+This is fair, and we can always hold off on patches if you want more
+time for them to be tested/reviewed. Is it the case here?
+
+--
+Thanks,
+Sasha
