@@ -2,170 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B03E9F9F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:48:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F95D9F9FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:48:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726204AbfH1Fry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 01:47:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:36862 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725613AbfH1Fry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 01:47:54 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46JFBv58jFz9tyjN;
-        Wed, 28 Aug 2019 07:47:51 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=H7d56jgp; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ZYfzIFezkxn8; Wed, 28 Aug 2019 07:47:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46JFBv3rNBz9tyjM;
-        Wed, 28 Aug 2019 07:47:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566971271; bh=AmYiAtB5pIcz/P08jhfTvi4CrbWmoulSdtRcuEa5sPo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=H7d56jgpyX5Kf4QbM6cOYjGTtGYEwWLMazu8whUO3pJSpS7PdHbz4EGeBXDBEe9Xg
-         y9UEbe15Q5czkyEHzO6+CdBmqGkICEFK2lKF64ns1NY/fMeiERw4Zg9l5vu7t1geOs
-         +LfAGJuFdSBnpaaHCG3qCgdFe19/Lc9CcmNrX6Mw=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5CC868B861;
-        Wed, 28 Aug 2019 07:47:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 2f9EqKj2cyvq; Wed, 28 Aug 2019 07:47:52 +0200 (CEST)
-Received: from [172.25.230.105] (po15451.idsi0.si.c-s.fr [172.25.230.105])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1CB818B860;
-        Wed, 28 Aug 2019 07:47:52 +0200 (CEST)
-Subject: Re: [PATCH v6 06/12] powerpc/fsl_booke/32: implement KASLR
- infrastructure
-To:     Scott Wood <oss@buserror.net>, Jason Yan <yanaijie@huawei.com>
-Cc:     mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org,
-        diana.craciun@nxp.com, benh@kernel.crashing.org, paulus@samba.org,
-        npiggin@gmail.com, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com, wangkefeng.wang@huawei.com,
-        linux-kernel@vger.kernel.org, jingxiangfeng@huawei.com,
-        zhaohongjiang@huawei.com, thunder.leizhen@huawei.com,
-        fanchengyang@huawei.com, yebin10@huawei.com
-References: <20190809100800.5426-1-yanaijie@huawei.com>
- <20190809100800.5426-7-yanaijie@huawei.com>
- <20190828045454.GB17757@home.buserror.net>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <2db76c55-df5f-5ca8-f0a6-bcee75b8edaa@c-s.fr>
-Date:   Wed, 28 Aug 2019 07:47:51 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        id S1726278AbfH1FsT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 01:48:19 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:45838 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725613AbfH1FsS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 01:48:18 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7S5m72M090170;
+        Wed, 28 Aug 2019 00:48:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566971287;
+        bh=5iPmxBNFAmOe0sdDGNM9TCYJMd88VRMWnVdbR8bUhvg=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=A4qO+TJ0Jq9LOoJtcXrrEA6nfYdOBINWyppibfvcLKE6u6lwXaqYXu+6p1wbl4BFs
+         Mcna+9Kd7RlNkazujE6sMel6xxI7mgmQBY8y3hK/KpmEiuJdWG5ralYZyhoCoZjZIa
+         IvdNY5LZeOcPfoIt/asrRgHR92q9JO2Kz0EKCr0Q=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7S5m7Lo094179
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 28 Aug 2019 00:48:07 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 28
+ Aug 2019 00:48:06 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 28 Aug 2019 00:48:06 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7S5m4AD011070;
+        Wed, 28 Aug 2019 00:48:05 -0500
+Subject: Re: [PATCH] drm/bridge: tc358767: Expose test mode functionality via
+ debugfs
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     <dri-devel@lists.freedesktop.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20190826182524.5064-1-andrew.smirnov@gmail.com>
+ <20190826220807.GK5031@pendragon.ideasonboard.com>
+ <CAHQ1cqHuJNTH=HDfEP9de0Df_D45VV034riH4J3+ix23v=aM4Q@mail.gmail.com>
+ <20190827080644.GF5054@pendragon.ideasonboard.com>
+ <CAHQ1cqHqKvjB51UUbAHcm-=vp1O2-ncE23H8UuOz5gUJDP1wXQ@mail.gmail.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <75c9c9b2-b5b2-44bc-3ffa-e69e069cf2bd@ti.com>
+Date:   Wed, 28 Aug 2019 08:48:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190828045454.GB17757@home.buserror.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHQ1cqHqKvjB51UUbAHcm-=vp1O2-ncE23H8UuOz5gUJDP1wXQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 28/08/2019 01:51, Andrey Smirnov wrote:
 
-
-Le 28/08/2019 à 06:54, Scott Wood a écrit :
-> On Fri, Aug 09, 2019 at 06:07:54PM +0800, Jason Yan wrote:
->> This patch add support to boot kernel from places other than KERNELBASE.
->> Since CONFIG_RELOCATABLE has already supported, what we need to do is
->> map or copy kernel to a proper place and relocate. Freescale Book-E
->> parts expect lowmem to be mapped by fixed TLB entries(TLB1). The TLB1
->> entries are not suitable to map the kernel directly in a randomized
->> region, so we chose to copy the kernel to a proper place and restart to
->> relocate.
+>> The whole point of a
+>> driver is to avoid needing detailed knowledge of the device's internals
+>> in userspace.
 >>
->> The offset of the kernel was not randomized yet(a fixed 64M is set). We
->> will randomize it in the next patch.
->>
->> Signed-off-by: Jason Yan <yanaijie@huawei.com>
->> Cc: Diana Craciun <diana.craciun@nxp.com>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Christophe Leroy <christophe.leroy@c-s.fr>
->> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> Cc: Paul Mackerras <paulus@samba.org>
->> Cc: Nicholas Piggin <npiggin@gmail.com>
->> Cc: Kees Cook <keescook@chromium.org>
->> Tested-by: Diana Craciun <diana.craciun@nxp.com>
->> Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/Kconfig                          | 11 ++++
->>   arch/powerpc/kernel/Makefile                  |  1 +
->>   arch/powerpc/kernel/early_32.c                |  2 +-
->>   arch/powerpc/kernel/fsl_booke_entry_mapping.S | 17 +++--
->>   arch/powerpc/kernel/head_fsl_booke.S          | 13 +++-
->>   arch/powerpc/kernel/kaslr_booke.c             | 62 +++++++++++++++++++
->>   arch/powerpc/mm/mmu_decl.h                    |  7 +++
->>   arch/powerpc/mm/nohash/fsl_booke.c            |  7 ++-
->>   8 files changed, 105 insertions(+), 15 deletions(-)
->>   create mode 100644 arch/powerpc/kernel/kaslr_booke.c
->>
+> 
+> You won't avoid needing detailed knowledge of the device's internals
+> if you don't have a priori knowledge in the form of a agreed upon/well
+> known abstraction you are exposing from the driver. There is no such
+> abstraction in this case. Whether you present "tstctl" that takes a
+> magic value or "red", "green", "blue" and "pattern" taking numbers and
+> special strings, as a user, you still would have to go read the driver
+> code in order to figure out how that stuff works.
+> 
+> Given how this is an obscure _debug_ feature for a niche part, I think
+> exposing raw register and leaving a comment in the driver source code
+> explaining how it works is reasonably user-friendly (for all 10 - 15
+> unique users that this feature would ever have).
+> 
+> To avoid any further back and forth of this subject, how about the
+> following. If this is up to me, then I'd like to move forward to v2
+> with the interface as is. If you feel strongly about this and insist
+> on your vision of the interface, please let me know what it looks like
+> (e.g. is what I described above good enough) and I'll rework v2 to
+> have that.
 
-[...]
+I agree, I don't see a point in adding a pile of code to make a device 
+specific debug feature to hide the device internals. If someone is going 
+to use this feature, most likely he either has the datasheet or he has 
+been asked by someone with the datasheet to try the feature.
 
->> diff --git a/arch/powerpc/kernel/kaslr_booke.c b/arch/powerpc/kernel/kaslr_booke.c
->> new file mode 100644
->> index 000000000000..f8dc60534ac1
->> --- /dev/null
->> +++ b/arch/powerpc/kernel/kaslr_booke.c
-> 
-> Shouldn't this go under arch/powerpc/mm/nohash?
-> 
->> +/*
->> + * To see if we need to relocate the kernel to a random offset
->> + * void *dt_ptr - address of the device tree
->> + * phys_addr_t size - size of the first memory block
->> + */
->> +notrace void __init kaslr_early_init(void *dt_ptr, phys_addr_t size)
->> +{
->> +	unsigned long tlb_virt;
->> +	phys_addr_t tlb_phys;
->> +	unsigned long offset;
->> +	unsigned long kernel_sz;
->> +
->> +	kernel_sz = (unsigned long)_end - KERNELBASE;
-> 
-> Why KERNELBASE and not kernstart_addr?
-> 
->> +
->> +	offset = kaslr_choose_location(dt_ptr, size, kernel_sz);
->> +
->> +	if (offset == 0)
->> +		return;
->> +
->> +	kernstart_virt_addr += offset;
->> +	kernstart_addr += offset;
->> +
->> +	is_second_reloc = 1;
->> +
->> +	if (offset >= SZ_64M) {
->> +		tlb_virt = round_down(kernstart_virt_addr, SZ_64M);
->> +		tlb_phys = round_down(kernstart_addr, SZ_64M);
-> 
-> If kernstart_addr wasn't 64M-aligned before adding offset, then "offset
->> = SZ_64M" is not necessarily going to detect when you've crossed a
-> mapping boundary.
-> 
->> +
->> +		/* Create kernel map to relocate in */
->> +		create_tlb_entry(tlb_phys, tlb_virt, 1);
->> +	}
->> +
->> +	/* Copy the kernel to it's new location and run */
->> +	memcpy((void *)kernstart_virt_addr, (void *)KERNELBASE, kernel_sz);
->> +
->> +	reloc_kernel_entry(dt_ptr, kernstart_virt_addr);
->> +}
-> 
-> After copying, call flush_icache_range() on the destination.
+  Tomi
 
-Function copy_and_flush() does the copy and the flush. I think it should 
-be used instead of memcpy() + flush_icache_range()
-
-Christophe
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
