@@ -2,131 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE264A0CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:51:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 822A3A0CBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfH1Vv2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 17:51:28 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37056 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbfH1Vv1 (ORCPT
+        id S1727110AbfH1Vvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 17:51:40 -0400
+Received: from mail-pf1-f181.google.com ([209.85.210.181]:37471 "EHLO
+        mail-pf1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726887AbfH1Vve (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:51:27 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7SLn5WV098772;
-        Wed, 28 Aug 2019 21:51:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2019-08-05;
- bh=qbP4B9RqyD7liUs+1o7tdIzeaA+HMtSz5ktInxhdkkI=;
- b=bb9reuRFgCMjafPlW5yShn2sk6SIL3E/capUXjvmCIMV4Bb1pCHqfzRpD6p9WIuoiVJs
- IkCKJUZKJvAnUhf42Q18/DFcdaoBHzBUT+pZuLoICgcyOWYppY6IP/2kmBIuNfcoq1i7
- QOioid17dtxjEFTUlmT4EEPvkgPtkEbG/w5he0Xo5XzGASWURulDMziNyr5OZxsAX3fn
- WBrsyuFIpKQRjMJqn2bg+PtuyRgUAxqykrFsdLYV2DIqOBqnzoEQz2AaiS3Ng+Nv5SHC
- XbC6r8hlUBxMW4V/BINf4QGoOjowI2KpNyvu4fot/br1CgBccxb1hhW7v1ULP8NHmUwU AQ== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2up1ncg297-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Aug 2019 21:51:25 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7SLmKr1185020;
-        Wed, 28 Aug 2019 21:51:24 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2undw7x8qu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Aug 2019 21:51:24 +0000
-Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7SLpNfE016575;
-        Wed, 28 Aug 2019 21:51:23 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 28 Aug 2019 14:51:23 -0700
-Date:   Wed, 28 Aug 2019 14:51:18 -0700
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Austin Kim <austindh.kim@gmail.com>
-Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: Use WARN_ON rather than BUG() for bailout
- mount-operation
-Message-ID: <20190828215118.GH1037350@magnolia>
-References: <20190828064749.GA165571@LGEARND20B15>
- <20190828151411.GC1037350@magnolia>
- <CADLLry50iDrEfDrL3kZP_gku6jnO23qi5VVyuFY3g2BubWg0ww@mail.gmail.com>
+        Wed, 28 Aug 2019 17:51:34 -0400
+Received: by mail-pf1-f181.google.com with SMTP id y9so631664pfl.4
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 14:51:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PrzYg7JXc84NUm75qwtYToh12xfjeZszRpCSWoICFTU=;
+        b=brMKH/tswEBw/9zq7fE2Y/B++LJ/F0+REWIGmLdmoFh5cmcaXKybpri7zEqjsNGZyg
+         xK2O4wM72IP8dBD805nbCqHlxAMeGd5PWmFlGYYV/0UWt6856sS45d+egiPourYvjRWY
+         oJesqE5HBV0J71cqBBc9iLuL2TG+cqpk33ciC1uB7NzdnS7b1MZoGS8Du1F1ASASzlZY
+         edhb4v9mO3dQa+mq8X0xwysiubTUHhW/ImnK3b6AdvjIBSOLAbbNaA765nyhUkfvnrM2
+         zoGyP4Vjlv8QoV/4KQ1sI0w3xOcQQIPYSxaLLcLjUsWgfhBr/BX0A0xex/V+w2Eg4zrh
+         4eZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PrzYg7JXc84NUm75qwtYToh12xfjeZszRpCSWoICFTU=;
+        b=ZJS838fmtagvPphxAg8nAW9kgNFmLg1B9RO2aTvQ63wgRyR5VzmE4KuxQf9CCcP5DA
+         yYh4rDUbS6Nfebq/3MNTsN10QhQ9TCKk+OWLPGb6hWk6VxZFt25SZr9ZwKPnWJy4h3bB
+         XQTSpcjDBXVMf+/N3Mq4gxDaBATRkGry0LOvLbF+XS+ErCY6s/J5lQkNEYaVIANJ9+f2
+         UOCxk9o4b2zRCdtHTzejHd4B7RL8imY82bfXTjGamo4lO/LhhFN6Lwbs2Dxkxdhp7dKc
+         a4617W+sNgeqSf6Z/5De1HgQTP9BDwnD04fu26yFJKKIfOUb8GuNXF3EfjJOo3EmINOU
+         +P+w==
+X-Gm-Message-State: APjAAAXWrb43Z0pS5tx49QHVgYvSYU/xsxXCsjzwVwaMguwJ5ced8iCG
+        xqbCA7kTzinUhh9RV72UahdWHxc/gbKMdUNiPTfHRQ==
+X-Google-Smtp-Source: APXvYqya7yVQVpmy2ZPUictRvb/eeOwP4HO+1fG9LCVQaMT4ZtzN2SN8p3ADZxGLdBCTsF5nVW/1YOJo6UGJ4rtUzpc=
+X-Received: by 2002:a17:90a:3ae7:: with SMTP id b94mr6452243pjc.73.1567029092473;
+ Wed, 28 Aug 2019 14:51:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADLLry50iDrEfDrL3kZP_gku6jnO23qi5VVyuFY3g2BubWg0ww@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908280209
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908280209
+References: <20190828194226.GA29967@swahl-linux>
+In-Reply-To: <20190828194226.GA29967@swahl-linux>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 28 Aug 2019 14:51:21 -0700
+Message-ID: <CAKwvOdn0=7YabPD-5EUwkSoJgWjdYHY2mirM2LUz0TxZTBOf_Q@mail.gmail.com>
+Subject: Re: Purgatory compile flag changes apparently causing Kexec
+ relocation overflows
+To:     Steve Wahl <steve.wahl@hpe.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, russ.anderson@hpe.com,
+        dimitri.sivanich@hpe.com, mike.travis@hpe.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 06:30:43AM +0900, Austin Kim wrote:
-> Dear Mr. Darrick J. Wong
-> 
-> Thanks for reviewing patch. BTW, I have a question for you.
-> 
-> Do I have to update the patch again with 'a space before the brace'?
-> Or could I just wait for the patch to be imported?
-> 
-> It would be thankful if you give me a feedback.
+On Wed, Aug 28, 2019 at 12:42 PM Steve Wahl <steve.wahl@hpe.com> wrote:
+>
+> Please CC me on responses to this.
+>
+> I normally would do more diligence on this, but the timing is such
+> that I think it's better to get this out sooner.
+>
+> With the tip of the tree from https://github.com/torvalds/linux.git (a
+> few days old, most recent commit fetched is
+> bb7ba8069de933d69cb45dd0a5806b61033796a3), I'm seeing "kexec: Overflow
+> in relocation type 11 value 0x11fffd000" when I try to load a crash
+> kernel with kdump. This seems to be caused by commit
+> 059f801a937d164e03b33c1848bb3dca67c0b04, which changed the compiler
+> flags used to compile purgatory.ro, apparently creating 32 bit
+> relocations for things that aren't necessarily reachable with a 32 bit
+> reference.  My guess is this only occurs when the crash kernel is
+> located outside 32-bit addressable physical space.
+>
+> I have so far verified that the problem occurs with that commit, and
+> does not occur with the previous commit.  For this commit, Thomas
+> Gleixner mentioned a few of the changed flags should have been looked
+> at twice.  I have not gone so far as to figure out which flags cause
+> the problem.
+>
+> The hardware in use is a HPE Superdome Flex with 48 * 32GiB dimms
+> (total 1536 GiB).
+>
+> One example of the exact error messages seen:
+>
+> 019-08-28T13:42:39.308110-05:00 uv4test14 kernel: [   45.137743] kexec: Overflow in relocation type 11 value 0x17f7affd000
+> 2019-08-28T13:42:39.308123-05:00 uv4test14 kernel: [   45.137749] kexec-bzImage64: Loading purgatory failed
 
-I made the correction when I imported your patch into my testing tree,
-so you don't need to resubmit the patch just to fix that one thing.
+Thanks for the report and sorry for the breakage.  Can you please send
+me more information for how to precisely reproduce the issue?  I'm
+happy to look into fixing it.
 
-However, if you decide to send a new revision *for some other reason*,
-then please make the correction in your own tree before resubmitting.
+Let me go dig up the different listed flags.  Steve, it may be fastest
+for you to test re-adding them in your setup to see which one is
+important.
 
---D
-
-> BR,
-> Guillermo Austin Kim
-> 
-> 2019년 8월 29일 (목) 오전 12:14, Darrick J. Wong <darrick.wong@oracle.com>님이 작성:
-> >
-> > On Wed, Aug 28, 2019 at 03:47:49PM +0900, Austin Kim wrote:
-> > > If the CONFIG_BUG is enabled, BUG() is executed and then system is crashed.
-> > > However, the bailout for mount is no longer proceeding.
-> > >
-> > > For this reason, using WARN_ON rather than BUG() could prevent this situation.
-> > > ---
-> > >  fs/xfs/xfs_mount.c | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> > > index 322da69..10fe000 100644
-> > > --- a/fs/xfs/xfs_mount.c
-> > > +++ b/fs/xfs/xfs_mount.c
-> > > @@ -213,8 +213,7 @@ xfs_initialize_perag(
-> > >                       goto out_hash_destroy;
-> > >
-> > >               spin_lock(&mp->m_perag_lock);
-> > > -             if (radix_tree_insert(&mp->m_perag_tree, index, pag)) {
-> > > -                     BUG();
-> > > +             if (WARN_ON(radix_tree_insert(&mp->m_perag_tree, index, pag))){
-> >
-> > Need a space before the brace.
-> >
-> > Will fix on import,
-> > Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-> >
-> > --D
-> >
-> > >                       spin_unlock(&mp->m_perag_lock);
-> > >                       radix_tree_preload_end();
-> > >                       error = -EEXIST;
-> > > --
-> > > 2.6.2
-> > >
+Tglx, if you want to revert the above patches, I'm ok with that.  It's
+important that we fix the issue eventually that my patches were meant
+to address, but precisely *when* it's solved isn't critical; our
+kernels can carry out of tree patches for now until the issue is
+completely resolved worst case.
+-- 
+Thanks,
+~Nick Desaulniers
