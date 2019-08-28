@@ -2,147 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44A33A0783
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 18:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2EA4A0789
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 18:39:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfH1Qhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 12:37:38 -0400
-Received: from mga07.intel.com ([134.134.136.100]:12320 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726397AbfH1Qhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 12:37:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 09:37:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
-   d="scan'208";a="174970995"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.162]) ([10.54.74.162])
-  by orsmga008.jf.intel.com with ESMTP; 28 Aug 2019 09:37:37 -0700
-To:     Peter Zijlstra <peterz@infradead.org>, Phil Auld <pauld@redhat.com>
-Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        mingo@kernel.org, tglx@linutronix.de, pjt@google.com,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        subhra.mazumdar@oracle.com, fweisbec@gmail.com,
-        keescook@chromium.org, kerrnel@google.com,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <cover.1559129225.git.vpillai@digitalocean.com>
- <20190827211417.snpwgnhsu5t6u52y@srcf.ucam.org>
- <20190827215035.GH2332@hirez.programming.kicks-ass.net>
- <20190828153033.GA15512@pauld.bos.csb>
- <20190828160114.GE17205@worktop.programming.kicks-ass.net>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- mQINBE6ONugBEAC1c8laQ2QrezbYFetwrzD0v8rOqanj5X1jkySQr3hm/rqVcDJudcfdSMv0
- BNCCjt2dofFxVfRL0G8eQR4qoSgzDGDzoFva3NjTJ/34TlK9MMouLY7X5x3sXdZtrV4zhKGv
- 3Rt2osfARdH3QDoTUHujhQxlcPk7cwjTXe4o3aHIFbcIBUmxhqPaz3AMfdCqbhd7uWe9MAZX
- 7M9vk6PboyO4PgZRAs5lWRoD4ZfROtSViX49KEkO7BDClacVsODITpiaWtZVDxkYUX/D9OxG
- AkxmqrCxZxxZHDQos1SnS08aKD0QITm/LWQtwx1y0P4GGMXRlIAQE4rK69BDvzSaLB45ppOw
- AO7kw8aR3eu/sW8p016dx34bUFFTwbILJFvazpvRImdjmZGcTcvRd8QgmhNV5INyGwtfA8sn
- L4V13aZNZA9eWd+iuB8qZfoFiyAeHNWzLX/Moi8hB7LxFuEGnvbxYByRS83jsxjH2Bd49bTi
- XOsAY/YyGj6gl8KkjSbKOkj0IRy28nLisFdGBvgeQrvaLaA06VexptmrLjp1Qtyesw6zIJeP
- oHUImJltjPjFvyfkuIPfVIB87kukpB78bhSRA5mC365LsLRl+nrX7SauEo8b7MX0qbW9pg0f
- wsiyCCK0ioTTm4IWL2wiDB7PeiJSsViBORNKoxA093B42BWFJQARAQABtDRUaW0gQ2hlbiAo
- d29yayByZWxhdGVkKSA8dGltLmMuY2hlbkBsaW51eC5pbnRlbC5jb20+iQI+BBMBAgAoAhsD
- BgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCXFIuxAUJEYZe0wAKCRCiZ7WKota4STH3EACW
- 1jBRzdzEd5QeTQWrTtB0Dxs5cC8/P7gEYlYQCr3Dod8fG7UcPbY7wlZXc3vr7+A47/bSTVc0
- DhUAUwJT+VBMIpKdYUbvfjmgicL9mOYW73/PHTO38BsMyoeOtuZlyoUl3yoxWmIqD4S1xV04
- q5qKyTakghFa+1ZlGTAIqjIzixY0E6309spVTHoImJTkXNdDQSF0AxjW0YNejt52rkGXXSoi
- IgYLRb3mLJE/k1KziYtXbkgQRYssty3n731prN5XrupcS4AiZIQl6+uG7nN2DGn9ozy2dgTi
- smPAOFH7PKJwj8UU8HUYtX24mQA6LKRNmOgB290PvrIy89FsBot/xKT2kpSlk20Ftmke7KCa
- 65br/ExDzfaBKLynztcF8o72DXuJ4nS2IxfT/Zmkekvvx/s9R4kyPyebJ5IA/CH2Ez6kXIP+
- q0QVS25WF21vOtK52buUgt4SeRbqSpTZc8bpBBpWQcmeJqleo19WzITojpt0JvdVNC/1H7mF
- 4l7og76MYSTCqIKcLzvKFeJSie50PM3IOPp4U2czSrmZURlTO0o1TRAa7Z5v/j8KxtSJKTgD
- lYKhR0MTIaNw3z5LPWCCYCmYfcwCsIa2vd3aZr3/Ao31ZnBuF4K2LCkZR7RQgLu+y5Tr8P7c
- e82t/AhTZrzQowzP0Vl6NQo8N6C2fcwjSrkCDQROjjboARAAx+LxKhznLH0RFvuBEGTcntrC
- 3S0tpYmVsuWbdWr2ZL9VqZmXh6UWb0K7w7OpPNW1FiaWtVLnG1nuMmBJhE5jpYsi+yU8sbMA
- 5BEiQn2hUo0k5eww5/oiyNI9H7vql9h628JhYd9T1CcDMghTNOKfCPNGzQ8Js33cFnszqL4I
- N9jh+qdg5FnMHs/+oBNtlvNjD1dQdM6gm8WLhFttXNPn7nRUPuLQxTqbuoPgoTmxUxR3/M5A
- KDjntKEdYZziBYfQJkvfLJdnRZnuHvXhO2EU1/7bAhdz7nULZktw9j1Sp9zRYfKRnQdIvXXa
- jHkOn3N41n0zjoKV1J1KpAH3UcVfOmnTj+u6iVMW5dkxLo07CddJDaayXtCBSmmd90OG0Odx
- cq9VaIu/DOQJ8OZU3JORiuuq40jlFsF1fy7nZSvQFsJlSmHkb+cDMZDc1yk0ko65girmNjMF
- hsAdVYfVsqS1TJrnengBgbPgesYO5eY0Tm3+0pa07EkONsxnzyWJDn4fh/eA6IEUo2JrOrex
- O6cRBNv9dwrUfJbMgzFeKdoyq/Zwe9QmdStkFpoh9036iWsj6Nt58NhXP8WDHOfBg9o86z9O
- VMZMC2Q0r6pGm7L0yHmPiixrxWdW0dGKvTHu/DH/ORUrjBYYeMsCc4jWoUt4Xq49LX98KDGN
- dhkZDGwKnAUAEQEAAYkCJQQYAQIADwIbDAUCXFIulQUJEYZenwAKCRCiZ7WKota4SYqUEACj
- P/GMnWbaG6s4TPM5Dg6lkiSjFLWWJi74m34I19vaX2CAJDxPXoTU6ya8KwNgXU4yhVq7TMId
- keQGTIw/fnCv3RLNRcTAapLarxwDPRzzq2snkZKIeNh+WcwilFjTpTRASRMRy9ehKYMq6Zh7
- PXXULzxblhF60dsvi7CuRsyiYprJg0h2iZVJbCIjhumCrsLnZ531SbZpnWz6OJM9Y16+HILp
- iZ77miSE87+xNa5Ye1W1ASRNnTd9ftWoTgLezi0/MeZVQ4Qz2Shk0MIOu56UxBb0asIaOgRj
- B5RGfDpbHfjy3Ja5WBDWgUQGgLd2b5B6MVruiFjpYK5WwDGPsj0nAOoENByJ+Oa6vvP2Olkl
- gQzSV2zm9vjgWeWx9H+X0eq40U+ounxTLJYNoJLK3jSkguwdXOfL2/Bvj2IyU35EOC5sgO6h
- VRt3kA/JPvZK+6MDxXmm6R8OyohR8uM/9NCb9aDw/DnLEWcFPHfzzFFn0idp7zD5SNgAXHzV
- PFY6UGIm86OuPZuSG31R0AU5zvcmWCeIvhxl5ZNfmZtv5h8TgmfGAgF4PSD0x/Bq4qobcfaL
- ugWG5FwiybPzu2H9ZLGoaRwRmCnzblJG0pRzNaC/F+0hNf63F1iSXzIlncHZ3By15bnt5QDk
- l50q2K/r651xphs7CGEdKi1nU0YJVbQxJQ==
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <1a80f754-ff5b-353e-cc92-a5a4823976db@linux.intel.com>
-Date:   Wed, 28 Aug 2019 09:37:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726773AbfH1Qjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 12:39:48 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:34508 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbfH1Qjs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 12:39:48 -0400
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x7SGddci009079;
+        Thu, 29 Aug 2019 01:39:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x7SGddci009079
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567010380;
+        bh=KKMXcx4MZH2tCnMUy9VJb4+KWRBKpdSFPmo+egKRxug=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=O2uxCK584KDa5zjAS1KvztgnLko5ByIMMxnbQtPcP1hlrzFJCm1wP27yqIoM+63ab
+         YIdcSXXIflc8oS7IwRZujUG2qSlqdiIxeP4tEdFHN/kPFz1vg4U1+Zd/413eTBVerO
+         SERzzCmQ6jGmYdhKFnDCHN1IB+B6dkAft1e9YQayJqDvTdtJPW4+fT0yLSZMSbvmNc
+         7HfdRjXaXNOS4XaLXANWYACBNmzm3W4SB9GsO8NfKR8opwN+XN0uc/20MYyMixiEru
+         bitspcYt5sRKS4x5eWyxFQ5RJ+lbFCtKNVi4EaiOixUZqYy/x2Lr1ExCIHxai5nDw+
+         NvUFhIdvyEaYQ==
+X-Nifty-SrcIP: [209.85.217.53]
+Received: by mail-vs1-f53.google.com with SMTP id q16so424573vsm.2;
+        Wed, 28 Aug 2019 09:39:40 -0700 (PDT)
+X-Gm-Message-State: APjAAAWWE3ooCyuYu5CT1uN75dPWWRM+39mFsm9G1eQ8QXKYJfCDYyhg
+        bTBAAyK2OT1xiH08EI6orgIziuyud0xfTTqi/aA=
+X-Google-Smtp-Source: APXvYqylJxRgovoI/FO2he+HZEc0MINZbZg6vw5PL1+Sf9uToYVyptIgY5ZQcKCGC9u4cLt8HneBpiSVqlx1lIRj/MM=
+X-Received: by 2002:a05:6102:20c3:: with SMTP id i3mr3028094vsr.155.1567010379424;
+ Wed, 28 Aug 2019 09:39:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190828160114.GE17205@worktop.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190814105400.1339-1-yamada.masahiro@socionext.com> <20190814105400.1339-2-yamada.masahiro@socionext.com>
+In-Reply-To: <20190814105400.1339-2-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 29 Aug 2019 01:39:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASwnqxT6fyv+qHTVzx_7-vZX7Rk+9D1f219Yvw1hwrZgA@mail.gmail.com>
+Message-ID: <CAK7LNASwnqxT6fyv+qHTVzx_7-vZX7Rk+9D1f219Yvw1hwrZgA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] docs: kbuild: fix invalid ReST syntax
+To:     Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/28/19 9:01 AM, Peter Zijlstra wrote:
-> On Wed, Aug 28, 2019 at 11:30:34AM -0400, Phil Auld wrote:
->> On Tue, Aug 27, 2019 at 11:50:35PM +0200 Peter Zijlstra wrote:
-> 
->> The current core scheduler implementation, I believe, still has (theoretical?) 
->> holes involving interrupts, once/if those are closed it may be even less 
->> attractive.
-> 
-> No; so MDS leaks anything the other sibling (currently) does, this makes
-> _any_ privilidge boundary a synchronization context.
-> 
-> Worse still, the exploit doesn't require a VM at all, any other task can
-> get to it.
-> 
-> That means you get to sync the siblings on lovely things like system
-> call entry and exit, along with VMM and anything else that one would
-> consider a privilidge boundary. Now, system calls are not rare, they
-> are really quite common in fact. Trying to sync up siblings at the rate
-> of system calls is utter madness.
-> 
-> So under MDS, SMT is completely hosed. If you use VMs exclusively, then
-> it _might_ work because a 'pure' host doesn't schedule that often
-> (maybe, same assumption as for L1TF).
-> 
-> Now, there have been proposals of moving the privilidge boundary further
-> into the kernel. Just like PTI exposes the entry stack and code to
-> Meltdown, the thinking is, lets expose more. By moving the priv boundary
-> the hope is that we can do lots of common system calls without having to
-> sync up -- lots of details are 'pending'.
-> 
+On Wed, Aug 14, 2019 at 7:54 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> I see the following warnings when I open this document with a ReST
+> viewer, retext:
+>
+> /home/masahiro/ref/linux/Documentation/kbuild/makefiles.rst:1142: (WARNING/2) Inline emphasis start-string without end-string.
+> /home/masahiro/ref/linux/Documentation/kbuild/makefiles.rst:1152: (WARNING/2) Inline emphasis start-string without end-string.
+> /home/masahiro/ref/linux/Documentation/kbuild/makefiles.rst:1154: (WARNING/2) Inline emphasis start-string without end-string.
+>
+> These hunks were added by commit e846f0dc57f4 ("kbuild: add support
+> for ensuring headers are self-contained") and commit 1e21cbfada87
+> ("kbuild: support header-test-pattern-y"), respectively. They were
+> written not for ReST but for the plain text, and merged via the
+> kbuild tree.
+>
+> In the same development cycle, this document was converted to ReST
+> by commit cd238effefa2 ("docs: kbuild: convert docs to ReST and rename
+> to *.rst"), and merged via the doc sub-system.
+>
+> Merging them together into Linus' tree resulted in the current situation.
+>
+> To fix the syntax, surround the asterisks with back-quotes, and
+> use :: for the code sample.
+>
+> Fixes: 39ceda5ce1b0 ("Merge tag 'kbuild-v5.3' of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
 
-If are willing to consider the idea that we will sync with the sibling
-only if we touch potential user data, then a significant portion of
-syscalls may not need to sync.  Yeah, it still sucks because of the
-complexity added to audit all the places in kernel that may touch
-privileged data and require synchronization. 
 
-I did a prototype (without core sched), kernel build slow 2.5%.  
-So this use case still seem reasonable.
+Both applied to linux-kbuild.
 
-A worst case scenario is concurrent SMT FIO write to encrypted file,
-which have a lot of synchronizations due to extended access to privilege
-data by crypto, we slow by 9%.
 
-Tim
 
+
+
+>  Documentation/kbuild/makefiles.rst | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
+> index f4f0f7ffde2b..b4c28c543d72 100644
+> --- a/Documentation/kbuild/makefiles.rst
+> +++ b/Documentation/kbuild/makefiles.rst
+> @@ -1139,7 +1139,7 @@ When kbuild executes, the following steps are followed (roughly):
+>
+>      header-test-y
+>
+> -       header-test-y specifies headers (*.h) in the current directory that
+> +       header-test-y specifies headers (`*.h`) in the current directory that
+>         should be compile tested to ensure they are self-contained,
+>         i.e. compilable as standalone units. If CONFIG_HEADER_TEST is enabled,
+>         this builds them as part of extra-y.
+> @@ -1147,11 +1147,11 @@ When kbuild executes, the following steps are followed (roughly):
+>      header-test-pattern-y
+>
+>         This works as a weaker version of header-test-y, and accepts wildcard
+> -       patterns. The typical usage is:
+> +       patterns. The typical usage is::
+>
+> -                 header-test-pattern-y += *.h
+> +               header-test-pattern-y += *.h
+>
+> -       This specifies all the files that matches to '*.h' in the current
+> +       This specifies all the files that matches to `*.h` in the current
+>         directory, but the files in 'header-test-' are excluded.
+>
+>  6.7 Commands useful for building a boot image
+> --
+> 2.17.1
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
