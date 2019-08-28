@@ -2,189 +2,357 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A34D1A057C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553A2A0585
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:02:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfH1PBR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:01:17 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34427 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726394AbfH1PBR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:01:17 -0400
-Received: by mail-io1-f68.google.com with SMTP id s21so225724ioa.1;
-        Wed, 28 Aug 2019 08:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=I02anmGj4S9YRqFAlcHCi6doUcoEtL7IRdbmX6PMidk=;
-        b=W937E6M1/3aGD86pktze21hmWXVXnR5Q1jTQYOIHz1ME1/HCzrY4VoLPr5bXDtptJM
-         l0G6n8SS33Mt41/3NqSVimzOzaiY0ANI2qstCIZWvakBAlcoP8hjPT1DDEyGaiA2QagU
-         UzzcpZ5i3UKA8PAIn10G2nT0JEhoadrZCz2kGZ+uiAZygn3yuDmE1nOoX6E1VOethwtK
-         SmziPGXcE/lAKu8nANcYsI1cezKhsmDfl1nxPTtn0IUOkmZmNBvLj4iSxGmPY1HyDlWN
-         MllmQVzai4Fo2qjjLQx8duDt0QjTJ+6tUF8BPjUKEgRq4ypEJd+K+oF5ew4jsCp9kgvK
-         Xwiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=I02anmGj4S9YRqFAlcHCi6doUcoEtL7IRdbmX6PMidk=;
-        b=kiPULo+g9fxgSV0Px26qv/FSTjm5E1QVcaHplyE2nS3z9V/F8IiRHRXG5op1jUaR2J
-         BKLv//nifb05d/i5TFcptEN0SjL27eXP1Br5MJjkVeeVrnPAzCQ8rZBhBpL3EM4cuDCZ
-         auYAree8kRmqAIOcpVIo8Wofmhta7pqZ44C/ts/PbktSMpTu623z8TaJUJFa98yEqxNS
-         rKwOe02ftA0KncBaExpgNO08X1TiwbIXs3GyDYfyVvWrvt6rpJCyG6UxwDOipg5QCeuG
-         WJ4cL/Jvo8r5lu2QjMP63TasH0FueUfhOHaLN5fXxoNNe8ZMdd4HxFMH3UlPX1iuVtLe
-         D/VA==
-X-Gm-Message-State: APjAAAVoOGXo0KhsetWWb6LqYNTmQgevHpq/sL/c/CL7Q6nvdY8DJpaS
-        mJB0nHVbsgqoCOx6b4lvpNH0lAP1ksxLKQ==
-X-Google-Smtp-Source: APXvYqx5Aj1D6vL8dP3t9chNG93WuIFnEzdvfmVcbvK2YhKl8QfZue87AJSXNER131BK/7+PXrFCFQ==
-X-Received: by 2002:a5e:c101:: with SMTP id v1mr4819198iol.231.1567004475549;
-        Wed, 28 Aug 2019 08:01:15 -0700 (PDT)
-Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id i10sm2291519ioq.51.2019.08.28.08.01.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 08:01:14 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-omap@vger.kernel.org
-Cc:     pali.rohar@gmail.com, t-kristo@ti.com, aaro.koskinen@iki.fi,
-        adam.ford@logicpd.com, Adam Ford <aford173@gmail.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Paul Walmsley <paul@pwsan.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [RFC] ARM: omap3: Enable HWMODS for HW Random Number Generator
-Date:   Wed, 28 Aug 2019 10:00:37 -0500
-Message-Id: <20190828150037.2640-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726775AbfH1PCx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:02:53 -0400
+Received: from mga04.intel.com ([192.55.52.120]:2266 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbfH1PCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:02:53 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 08:02:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,441,1559545200"; 
+   d="scan'208";a="171567015"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga007.jf.intel.com with ESMTP; 28 Aug 2019 08:02:51 -0700
+Date:   Wed, 28 Aug 2019 09:01:06 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Derrick, Jonathan" <jonathan.derrick@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] PCI/vmd: Stop overriding dma_map_ops
+Message-ID: <20190828150106.GD23412@localhost.localdomain>
+References: <20190828141443.5253-1-hch@lst.de>
+ <20190828141443.5253-5-hch@lst.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828141443.5253-5-hch@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The datasheet for the AM3517 shows the RNG is connected to L4.
-It shows the module address for the RNG is 0x480A0000, and it
-matches the omap2.dtsi description.  Since the driver can support
-omap2 and omap4, it seems reasonable to assume the omap3 would
-use the same core for the RNG.
+On Wed, Aug 28, 2019 at 07:14:42AM -0700, Christoph Hellwig wrote:
+> With a little tweak to the intel-iommu code we should be able to work
+> around the VMD mess for the requester IDs without having to create giant
+> amounts of boilerplate DMA ops wrapping code.  The other advantage of
+> this scheme is that we can respect the real DMA masks for the actual
+> devices, and I bet it will only be a matter of time until we'll see the
+> first DMA challeneged NVMe devices.
 
-This RFC, mimics much of the omap2 hwmods on the OMAP3. It
-also adds the necessary clock for driving the RNG.  Unfortunately,
-it appears non-functional.  If anyone has any suggestions on how
-to finish the hwmod (or port it to the newer l4 device tree
-format), feedback is requested.
+This tests out fine on VMD hardware, but it's quite different than the
+previous patch. In v1, the original dev was used in iommu_need_mapping(),
+but this time it's the vmd device. Is this still using the actual device's
+DMA mask then?
 
-Currently the hwmods repond as follows:
 
-[    0.245697] omap_hwmod: rng: _wait_target_ready failed: -22
-[    0.245727] omap_hwmod: rng: cannot be enabled for reset (3)
-[    6.780792] omap_hwmod: rng: _wait_target_ready failed: -22
-
-Signed-off-by: Adam Ford <aford173@gmail.com>
-
-diff --git a/arch/arm/boot/dts/omap36xx-omap3430es2plus-clocks.dtsi b/arch/arm/boot/dts/omap36xx-omap3430es2plus-clocks.dtsi
-index 945537aee3ca..05891dff7fa1 100644
---- a/arch/arm/boot/dts/omap36xx-omap3430es2plus-clocks.dtsi
-+++ b/arch/arm/boot/dts/omap36xx-omap3430es2plus-clocks.dtsi
-@@ -189,7 +189,7 @@
- 			 <&mcspi2_ick>, <&mcspi1_ick>, <&i2c3_ick>, <&i2c2_ick>,
- 			 <&i2c1_ick>, <&uart2_ick>, <&uart1_ick>, <&gpt11_ick>,
- 			 <&gpt10_ick>, <&mcbsp5_ick>, <&mcbsp1_ick>,
--			 <&omapctrl_ick>, <&aes2_ick>, <&sha12_ick>,
-+			 <&omapctrl_ick>, <&aes2_ick>, <&sha12_ick>, <&rng_ick>,
- 			 <&ssi_ick>;
- 	};
- };
-diff --git a/arch/arm/mach-omap2/cm-regbits-34xx.h b/arch/arm/mach-omap2/cm-regbits-34xx.h
-index 037529a9e969..82330a66e35c 100644
---- a/arch/arm/mach-omap2/cm-regbits-34xx.h
-+++ b/arch/arm/mach-omap2/cm-regbits-34xx.h
-@@ -17,6 +17,7 @@
- #define OMAP3430_CLKACTIVITY_IVA2_MASK			(1 << 0)
- #define OMAP3430_CLKTRCTRL_MPU_MASK			(0x3 << 0)
- #define OMAP3430_ST_AES2_SHIFT				28
-+#define OMAP34XX_ST_RNG_SHIFT                           2
- #define OMAP3430_ST_SHA12_SHIFT				27
- #define AM35XX_ST_UART4_SHIFT				23
- #define OMAP3430_ST_HDQ_SHIFT				22
-diff --git a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-index f52438bdfc14..bae4487383b6 100644
---- a/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_3xxx_data.c
-@@ -1627,6 +1627,42 @@ static struct omap_hwmod omap3xxx_gpmc_hwmod = {
- 	.flags		= HWMOD_NO_IDLEST | DEBUG_OMAP_GPMC_HWMOD_FLAGS,
- };
- 
-+/* RNG */
-+
-+static struct omap_hwmod_class_sysconfig omap3_rng_sysc = {
-+	.rev_offs	= 0x3c,
-+	.sysc_offs	= 0x40,
-+	.syss_offs	= 0x44,
-+	.sysc_flags	= (SYSC_HAS_SOFTRESET | SYSC_HAS_AUTOIDLE |
-+			   SYSS_HAS_RESET_STATUS),
-+	.sysc_fields	= &omap_hwmod_sysc_type1,
-+};
-+
-+static struct omap_hwmod_class omap3_rng_hwmod_class = {
-+	.name		= "rng",
-+	.sysc		= &omap3_rng_sysc,
-+};
-+
-+struct omap_hwmod omap3xxx_rng_hwmod = {
-+	.name		= "rng",
-+	.main_clk	= "rng_ick",
-+	.prcm		= {
-+		.omap2 = {
-+			.module_offs = CORE_MOD,
-+			.idlest_reg_id = 4,
-+			.idlest_idle_bit = OMAP34XX_ST_RNG_SHIFT,
-+		},
-+	},
-+	/*
-+	 * XXX The first read from the SYSSTATUS register of the RNG
-+	 * after the SYSCONFIG SOFTRESET bit is set triggers an
-+	 * imprecise external abort.  It's unclear why this happens.
-+	 * Until this is analyzed, skip the IP block reset.
-+	 */
-+	.flags		= HWMOD_INIT_NO_RESET,
-+	.class		= &omap3_rng_hwmod_class,
-+};
-+
- /*
-  * interfaces
-  */
-@@ -2508,6 +2544,13 @@ static struct omap_hwmod omap3xxx_sham_hwmod = {
- 	.class		= &omap3xxx_sham_class,
- };
- 
-+/* l4_core -> rng */
-+struct omap_hwmod_ocp_if omap3xxx_l4_core__rng = {
-+	.master		= &omap3xxx_l4_core_hwmod,
-+	.slave		= &omap3xxx_rng_hwmod,
-+	.clk		= "rng_ick",
-+	.user		= OCP_USER_MPU | OCP_USER_SDMA,
-+};
- 
- static struct omap_hwmod_ocp_if omap3xxx_l4_core__sham = {
- 	.master		= &omap3xxx_l4_core_hwmod,
-@@ -2769,6 +2812,7 @@ static struct omap_hwmod_ocp_if *omap36xx_hwmod_ocp_ifs[] __initdata = {
- 	&omap3xxx_l4_core__mmu_isp,
- 	&omap3xxx_l3_main__mmu_iva,
- 	&omap3xxx_l4_core__ssi,
-+	&omap3xxx_l4_core__rng,
- 	NULL,
- };
- 
-@@ -2788,6 +2832,7 @@ static struct omap_hwmod_ocp_if *am35xx_hwmod_ocp_ifs[] __initdata = {
- 	&am35xx_l4_core__mdio,
- 	&am35xx_emac__l3,
- 	&am35xx_l4_core__emac,
-+	&omap3xxx_l4_core__rng,
- 	NULL,
- };
- 
--- 
-2.17.1
-
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  drivers/iommu/intel-iommu.c    |  25 ++++++
+>  drivers/pci/controller/Kconfig |   1 -
+>  drivers/pci/controller/vmd.c   | 150 ---------------------------------
+>  3 files changed, 25 insertions(+), 151 deletions(-)
+> 
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 12d094d08c0a..aaa35ac73956 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -373,6 +373,23 @@ EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
+>  static DEFINE_SPINLOCK(device_domain_lock);
+>  static LIST_HEAD(device_domain_list);
+>  
+> +/*
+> + * For VMD we need to use the VMD devices for mapping requests instead of the
+> + * actual device to get the proper PCIe requester ID.
+> + */
+> +static inline struct device *vmd_real_dev(struct device *dev)
+> +{
+> +#if IS_ENABLED(CONFIG_VMD)
+> +	if (dev_is_pci(dev)) {
+> +		struct pci_sysdata *sd = to_pci_dev(dev)->bus->sysdata;
+> +
+> +		if (sd->vmd_dev)
+> +			return sd->vmd_dev;
+> +	}
+> +#endif
+> +	return dev;
+> +}
+> +
+>  /*
+>   * Iterate over elements in device_domain_list and call the specified
+>   * callback @fn against each element.
+> @@ -3520,6 +3537,7 @@ static dma_addr_t intel_map_page(struct device *dev, struct page *page,
+>  				 enum dma_data_direction dir,
+>  				 unsigned long attrs)
+>  {
+> +	dev = vmd_real_dev(dev);
+>  	if (iommu_need_mapping(dev))
+>  		return __intel_map_single(dev, page_to_phys(page) + offset,
+>  				size, dir, *dev->dma_mask);
+> @@ -3530,6 +3548,7 @@ static dma_addr_t intel_map_resource(struct device *dev, phys_addr_t phys_addr,
+>  				     size_t size, enum dma_data_direction dir,
+>  				     unsigned long attrs)
+>  {
+> +	dev = vmd_real_dev(dev);
+>  	if (iommu_need_mapping(dev))
+>  		return __intel_map_single(dev, phys_addr, size, dir,
+>  				*dev->dma_mask);
+> @@ -3585,6 +3604,7 @@ static void intel_unmap_page(struct device *dev, dma_addr_t dev_addr,
+>  			     size_t size, enum dma_data_direction dir,
+>  			     unsigned long attrs)
+>  {
+> +	dev = vmd_real_dev(dev);
+>  	if (iommu_need_mapping(dev))
+>  		intel_unmap(dev, dev_addr, size);
+>  	else
+> @@ -3594,6 +3614,7 @@ static void intel_unmap_page(struct device *dev, dma_addr_t dev_addr,
+>  static void intel_unmap_resource(struct device *dev, dma_addr_t dev_addr,
+>  		size_t size, enum dma_data_direction dir, unsigned long attrs)
+>  {
+> +	dev = vmd_real_dev(dev);
+>  	if (iommu_need_mapping(dev))
+>  		intel_unmap(dev, dev_addr, size);
+>  }
+> @@ -3605,6 +3626,7 @@ static void *intel_alloc_coherent(struct device *dev, size_t size,
+>  	struct page *page = NULL;
+>  	int order;
+>  
+> +	dev = vmd_real_dev(dev);
+>  	if (!iommu_need_mapping(dev))
+>  		return dma_direct_alloc(dev, size, dma_handle, flags, attrs);
+>  
+> @@ -3641,6 +3663,7 @@ static void intel_free_coherent(struct device *dev, size_t size, void *vaddr,
+>  	int order;
+>  	struct page *page = virt_to_page(vaddr);
+>  
+> +	dev = vmd_real_dev(dev);
+>  	if (!iommu_need_mapping(dev))
+>  		return dma_direct_free(dev, size, vaddr, dma_handle, attrs);
+>  
+> @@ -3661,6 +3684,7 @@ static void intel_unmap_sg(struct device *dev, struct scatterlist *sglist,
+>  	struct scatterlist *sg;
+>  	int i;
+>  
+> +	dev = vmd_real_dev(dev);
+>  	if (!iommu_need_mapping(dev))
+>  		return dma_direct_unmap_sg(dev, sglist, nelems, dir, attrs);
+>  
+> @@ -3685,6 +3709,7 @@ static int intel_map_sg(struct device *dev, struct scatterlist *sglist, int nele
+>  	struct intel_iommu *iommu;
+>  
+>  	BUG_ON(dir == DMA_NONE);
+> +	dev = vmd_real_dev(dev);
+>  	if (!iommu_need_mapping(dev))
+>  		return dma_direct_map_sg(dev, sglist, nelems, dir, attrs);
+>  
+> diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
+> index fe9f9f13ce11..920546cb84e2 100644
+> --- a/drivers/pci/controller/Kconfig
+> +++ b/drivers/pci/controller/Kconfig
+> @@ -267,7 +267,6 @@ config PCIE_TANGO_SMP8759
+>  
+>  config VMD
+>  	depends on PCI_MSI && X86_64 && SRCU
+> -	select X86_DEV_DMA_OPS
+>  	tristate "Intel Volume Management Device Driver"
+>  	---help---
+>  	  Adds support for the Intel Volume Management Device (VMD). VMD is a
+> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+> index 785cb657c8c2..ba017ebba6a7 100644
+> --- a/drivers/pci/controller/vmd.c
+> +++ b/drivers/pci/controller/vmd.c
+> @@ -94,9 +94,6 @@ struct vmd_dev {
+>  	struct resource		resources[3];
+>  	struct irq_domain	*irq_domain;
+>  	struct pci_bus		*bus;
+> -
+> -	struct dma_map_ops	dma_ops;
+> -	struct dma_domain	dma_domain;
+>  };
+>  
+>  static inline struct vmd_dev *vmd_from_bus(struct pci_bus *bus)
+> @@ -291,151 +288,6 @@ static struct msi_domain_info vmd_msi_domain_info = {
+>  	.chip		= &vmd_msi_controller,
+>  };
+>  
+> -/*
+> - * VMD replaces the requester ID with its own.  DMA mappings for devices in a
+> - * VMD domain need to be mapped for the VMD, not the device requiring
+> - * the mapping.
+> - */
+> -static struct device *to_vmd_dev(struct device *dev)
+> -{
+> -	struct pci_dev *pdev = to_pci_dev(dev);
+> -	struct vmd_dev *vmd = vmd_from_bus(pdev->bus);
+> -
+> -	return &vmd->dev->dev;
+> -}
+> -
+> -static void *vmd_alloc(struct device *dev, size_t size, dma_addr_t *addr,
+> -		       gfp_t flag, unsigned long attrs)
+> -{
+> -	return dma_alloc_attrs(to_vmd_dev(dev), size, addr, flag, attrs);
+> -}
+> -
+> -static void vmd_free(struct device *dev, size_t size, void *vaddr,
+> -		     dma_addr_t addr, unsigned long attrs)
+> -{
+> -	return dma_free_attrs(to_vmd_dev(dev), size, vaddr, addr, attrs);
+> -}
+> -
+> -static int vmd_mmap(struct device *dev, struct vm_area_struct *vma,
+> -		    void *cpu_addr, dma_addr_t addr, size_t size,
+> -		    unsigned long attrs)
+> -{
+> -	return dma_mmap_attrs(to_vmd_dev(dev), vma, cpu_addr, addr, size,
+> -			attrs);
+> -}
+> -
+> -static int vmd_get_sgtable(struct device *dev, struct sg_table *sgt,
+> -			   void *cpu_addr, dma_addr_t addr, size_t size,
+> -			   unsigned long attrs)
+> -{
+> -	return dma_get_sgtable_attrs(to_vmd_dev(dev), sgt, cpu_addr, addr, size,
+> -			attrs);
+> -}
+> -
+> -static dma_addr_t vmd_map_page(struct device *dev, struct page *page,
+> -			       unsigned long offset, size_t size,
+> -			       enum dma_data_direction dir,
+> -			       unsigned long attrs)
+> -{
+> -	return dma_map_page_attrs(to_vmd_dev(dev), page, offset, size, dir,
+> -			attrs);
+> -}
+> -
+> -static void vmd_unmap_page(struct device *dev, dma_addr_t addr, size_t size,
+> -			   enum dma_data_direction dir, unsigned long attrs)
+> -{
+> -	dma_unmap_page_attrs(to_vmd_dev(dev), addr, size, dir, attrs);
+> -}
+> -
+> -static int vmd_map_sg(struct device *dev, struct scatterlist *sg, int nents,
+> -		      enum dma_data_direction dir, unsigned long attrs)
+> -{
+> -	return dma_map_sg_attrs(to_vmd_dev(dev), sg, nents, dir, attrs);
+> -}
+> -
+> -static void vmd_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
+> -			 enum dma_data_direction dir, unsigned long attrs)
+> -{
+> -	dma_unmap_sg_attrs(to_vmd_dev(dev), sg, nents, dir, attrs);
+> -}
+> -
+> -static void vmd_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
+> -				    size_t size, enum dma_data_direction dir)
+> -{
+> -	dma_sync_single_for_cpu(to_vmd_dev(dev), addr, size, dir);
+> -}
+> -
+> -static void vmd_sync_single_for_device(struct device *dev, dma_addr_t addr,
+> -				       size_t size, enum dma_data_direction dir)
+> -{
+> -	dma_sync_single_for_device(to_vmd_dev(dev), addr, size, dir);
+> -}
+> -
+> -static void vmd_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
+> -				int nents, enum dma_data_direction dir)
+> -{
+> -	dma_sync_sg_for_cpu(to_vmd_dev(dev), sg, nents, dir);
+> -}
+> -
+> -static void vmd_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
+> -				   int nents, enum dma_data_direction dir)
+> -{
+> -	dma_sync_sg_for_device(to_vmd_dev(dev), sg, nents, dir);
+> -}
+> -
+> -static int vmd_dma_supported(struct device *dev, u64 mask)
+> -{
+> -	return dma_supported(to_vmd_dev(dev), mask);
+> -}
+> -
+> -static u64 vmd_get_required_mask(struct device *dev)
+> -{
+> -	return dma_get_required_mask(to_vmd_dev(dev));
+> -}
+> -
+> -static void vmd_teardown_dma_ops(struct vmd_dev *vmd)
+> -{
+> -	struct dma_domain *domain = &vmd->dma_domain;
+> -
+> -	if (get_dma_ops(&vmd->dev->dev))
+> -		del_dma_domain(domain);
+> -}
+> -
+> -#define ASSIGN_VMD_DMA_OPS(source, dest, fn)	\
+> -	do {					\
+> -		if (source->fn)			\
+> -			dest->fn = vmd_##fn;	\
+> -	} while (0)
+> -
+> -static void vmd_setup_dma_ops(struct vmd_dev *vmd)
+> -{
+> -	const struct dma_map_ops *source = get_dma_ops(&vmd->dev->dev);
+> -	struct dma_map_ops *dest = &vmd->dma_ops;
+> -	struct dma_domain *domain = &vmd->dma_domain;
+> -
+> -	domain->domain_nr = vmd->sysdata.domain;
+> -	domain->dma_ops = dest;
+> -
+> -	if (!source)
+> -		return;
+> -	ASSIGN_VMD_DMA_OPS(source, dest, alloc);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, free);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, mmap);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, get_sgtable);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, map_page);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, unmap_page);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, map_sg);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, unmap_sg);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, sync_single_for_cpu);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, sync_single_for_device);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, sync_sg_for_cpu);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, sync_sg_for_device);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, dma_supported);
+> -	ASSIGN_VMD_DMA_OPS(source, dest, get_required_mask);
+> -	add_dma_domain(domain);
+> -}
+> -#undef ASSIGN_VMD_DMA_OPS
+> -
+>  static char __iomem *vmd_cfg_addr(struct vmd_dev *vmd, struct pci_bus *bus,
+>  				  unsigned int devfn, int reg, int len)
+>  {
+> @@ -690,7 +542,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+>  	}
+>  
+>  	vmd_attach_resources(vmd);
+> -	vmd_setup_dma_ops(vmd);
+>  	dev_set_msi_domain(&vmd->bus->dev, vmd->irq_domain);
+>  
+>  	pci_scan_child_bus(vmd->bus);
+> @@ -805,7 +656,6 @@ static void vmd_remove(struct pci_dev *dev)
+>  	pci_stop_root_bus(vmd->bus);
+>  	pci_remove_root_bus(vmd->bus);
+>  	vmd_cleanup_srcu(vmd);
+> -	vmd_teardown_dma_ops(vmd);
+>  	vmd_detach_resources(vmd);
+>  	irq_domain_remove(vmd->irq_domain);
+>  }
+> -- 
+> 2.20.1
+> 
