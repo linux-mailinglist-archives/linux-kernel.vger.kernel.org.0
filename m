@@ -2,216 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82A499FCC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:19:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94A3E9FCC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:21:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbfH1ITM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:19:12 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39551 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726292AbfH1ITK (ORCPT
+        id S1726394AbfH1IVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:21:53 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35901 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726273AbfH1IVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:19:10 -0400
-Received: by mail-pl1-f194.google.com with SMTP id z3so879175pln.6;
-        Wed, 28 Aug 2019 01:19:09 -0700 (PDT)
+        Wed, 28 Aug 2019 04:21:53 -0400
+Received: by mail-pg1-f196.google.com with SMTP id l21so1056029pgm.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 01:21:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=WVoeqiGiZ4nu6Q909wAoBPyYj23gPo7bnXC/Lr1ZM1k=;
-        b=khdDOmP7Jlqyxu80lp3fMRc3gx+AZcHSjPWLSQWOuweyruFtZGUWqGD+Oi7u2cyD4G
-         zK126fM6COHNKsWF7k8BdP71Tu0GxtvigSzXUFSJpVE2V6ngyV5U5eZTutMXQK3SW6Vk
-         vQDb+KJkdzxHLM0K8hgrM75Ormh2UkEu66rzq9KAXJgjduDEGh+D4nHgmjymqrPp8wz1
-         mK2ADCyWz/x+Q0OHH6XLoKa8SK39qbq3mzfxxxuK3BgVrDFe5KMd7aOxq8gT+vEOLmPC
-         DjhkxIpzHaeFMKO9+5WgM8drqYyCdzl2pArZSzS7eCALIJMudbll1w7f1tRskon328s5
-         VjBQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hf45YlPIP8ddQ+9IgXrDwMOTvaQuW/eJTBteOBX/I9Q=;
+        b=QarfX3x0RNlBXL5Ags3BPwGvEk2tmhISwqTlgLs+nnJdfUu8v9vBXxkfDrfYh5Vya2
+         43ggcvc2Mg3BdWJKUmTultr306gJ7l1jxLSgEWbl0YLd0GQhdtcp08Eq8UP045Ut/ZxD
+         gmwm6WnDGUw8iXqz+gmKwdYiT0w/Y19bKqw8k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WVoeqiGiZ4nu6Q909wAoBPyYj23gPo7bnXC/Lr1ZM1k=;
-        b=qikj7v4xS3DP6O3sT9k40Rg0Jv7DbO2CW/vGvX3n0ZwkpoRAHptjraTFBfgRzC592/
-         Zxd96aAHgF7IWXgO8MDxXvUeK4ZrrVJt6OWpkGPFCQDHNHlovNBoYaPnogA4t6Z6/oSm
-         Dwgz+6ZDmN5C5D+zdma+llGDpjKyINM1TmECKEGNUY1TGMqVO5mYznabMSu74yEtwFAe
-         +xZq66lgpj6N4JudgsxIMHFXxz+t7IQH7wSZ+85Ht+xDg1aybdHEeaPUXYCzWA+rbJ7q
-         ByddrJKe+7bh25pj/thiehgbImVhrQ4zlyWKuoLWAEQvOqOwfulEqIc9QgTy2LUz5NnS
-         Q/SA==
-X-Gm-Message-State: APjAAAW0A4nMKCO+fjX5MBF/PNLoeVdQ+KsP/krkD/DbcfZ0A+jUtcaM
-        5EAKK1V2pPfyyK58A5DDOXGR2eIF
-X-Google-Smtp-Source: APXvYqyRwfX45FcdIsLtQ+sxhz//pG/53RrYP2FeeekbCtG5PezSvfWU4+ViqAuDIuuJwfsyWVOYQg==
-X-Received: by 2002:a17:902:e30b:: with SMTP id cg11mr3106476plb.335.1566980349353;
-        Wed, 28 Aug 2019 01:19:09 -0700 (PDT)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id g1sm1787263pgg.27.2019.08.28.01.19.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 28 Aug 2019 01:19:08 -0700 (PDT)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH v3 2/2] KVM: LAPIC: Periodically revaluate to get conservative lapic_timer_advance_ns
-Date:   Wed, 28 Aug 2019 16:19:02 +0800
-Message-Id: <1566980342-22045-2-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566980342-22045-1-git-send-email-wanpengli@tencent.com>
-References: <1566980342-22045-1-git-send-email-wanpengli@tencent.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Hf45YlPIP8ddQ+9IgXrDwMOTvaQuW/eJTBteOBX/I9Q=;
+        b=pUBhji3Jo8A7qzH7Ld3TlQjuE6sNXipuMEys+ilgMeCQpovAHBn9QUN1dbj7nXWHpG
+         BOKpgd04yv1v8sYhwM8sjrmjpqFtIFcyvucr+Mzt2f0J4HZzh0MuQkEOCRKx2ybb7ru4
+         8fXxy5ITjC5S+B2X1CAe6fMfUydYNsS3HxnrkqoKZTX2m2gBfcoaFJecoiwm9ItZE0mR
+         nj7ypP8UF/7AYzeVHZEJr4rn6V7D8DgqU7R/2kwonvt+0VwrVp6zBOLoLmkrkWavBtqw
+         JNo5wtmJoRwCybZN40rH5Lr4fzyDqm/u5PrvtOzxURBjcRlzae5fazRDqdsdld0Cjojq
+         OuMQ==
+X-Gm-Message-State: APjAAAXxsHKlPpWTgndCCF1gFcRStOUYf8CnmA96N8E6EuR3M/Y6wmjx
+        IVWyRKbtaFzafvNjYgfxNHe2Lw==
+X-Google-Smtp-Source: APXvYqxCPCA1MOy9GycrKtPgCXdfjpa6uXiu0S0qmGw9WCDhKe6OzRKVoCmqWF8RYpNk1oM4LDzfcw==
+X-Received: by 2002:a17:90a:32a3:: with SMTP id l32mr3126610pjb.14.1566980511903;
+        Wed, 28 Aug 2019 01:21:51 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id y10sm1296959pjp.27.2019.08.28.01.21.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 01:21:51 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v5 0/4] tpm: Add driver for cr50
+Date:   Wed, 28 Aug 2019 01:21:46 -0700
+Message-Id: <20190828082150.42194-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
+This patch series adds support for the the H1 secure microcontroller
+running cr50 firmware found on various recent Chromebooks. This driver
+is necessary to boot into a ChromeOS userspace environment. It
+implements support for several functions, including TPM-like
+functionality over a SPI interface.
 
-Even if for realtime CPUs, cache line bounces, frequency scaling, presence 
-of higher-priority RT tasks, etc can still cause different response. These 
-interferences should be considered and periodically revaluate whether 
-or not the lapic_timer_advance_ns value is the best, do nothing if it is,
-otherwise recaluate again. Set lapic_timer_advance_ns to the minimal 
-conservative value from all the estimated values.
+The last time this was series sent looks to be [1]. I've looked over the
+patches and review comments and tried to address any feedback that
+Andrey didn't address (really minor things like newlines). I've reworked
+the patches from the last version to layer on top of the existing TPM
+TIS SPI implementation in tpm_tis_spi.c. Hopefully this is more
+palatable than combining the two drivers together into one file.
 
-Testing on Skylake server, cat vcpu*/lapic_timer_advance_ns, before patch:
-1628
-4161
-4321
-3236
-...
+Note, I wasn't sure exactly what was wanted in v4, so I've combined
+the two files but I wasn't able to avoid adding a bool indicating
+the phy is cr50 or not, because suspend/resume is a hook that attaches
+to the driver and not the device.
 
-Testing on Skylake server, cat vcpu*/lapic_timer_advance_ns, after patch:
-1553
-1499
-1509
-1489
-...
+Please review so we can get the approach to supporting this device
+sorted out.
 
-Testing on Haswell desktop, cat vcpu*/lapic_timer_advance_ns, before patch:
-4617
-3641
-4102
-4577
-...
-Testing on Haswell desktop, cat vcpu*/lapic_timer_advance_ns, after patch:
-2775
-2892
-2764
-2775
-...
+[1] https://lkml.kernel.org/r/1469757314-116169-1-git-send-email-apronin@chromium.org
 
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
- arch/x86/kvm/lapic.c | 37 ++++++++++++++++++++++++++++++-------
- arch/x86/kvm/lapic.h |  2 ++
- 2 files changed, 32 insertions(+), 7 deletions(-)
+TODO:
+ * Add a patch to spit out WARN_ON() when TPM is suspended and some
+   kernel code attempts to use it
+ * Rework the i2c driver per Alexander's comments on v2
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 181537a..4421583 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -70,6 +70,7 @@
- /* step-by-step approximation to mitigate fluctuation */
- #define LAPIC_TIMER_ADVANCE_ADJUST_STEP 8
- #define LAPIC_TIMER_ADVANCE_FILTER 10000
-+#define LAPIC_TIMER_ADVANCE_RECALC_PERIOD (600 * HZ)
- 
- static inline int apic_test_vector(int vec, void *bitmap)
- {
-@@ -1484,13 +1485,24 @@ static inline void __wait_lapic_expire(struct kvm_vcpu *vcpu, u64 guest_cycles)
- static inline void adjust_lapic_timer_advance(struct kvm_vcpu *vcpu,
- 					      s64 advance_expire_delta)
- {
--	struct kvm_lapic *apic = vcpu->arch.apic;
--	u32 timer_advance_ns = apic->lapic_timer.timer_advance_ns, ns;
-+	struct kvm_timer *ktimer = &vcpu->arch.apic->lapic_timer;
-+	u32 timer_advance_ns = ktimer->timer_advance_ns, ns;
- 
- 	if (abs(advance_expire_delta) > LAPIC_TIMER_ADVANCE_FILTER)
- 		/* filter out drastic flunctuations */
- 		return;
- 
-+	/* periodic revaluate */
-+	if (unlikely(ktimer->timer_advance_adjust_done)) {
-+		ktimer->recalc_timer_advance_ns = jiffies +
-+			LAPIC_TIMER_ADVANCE_RECALC_PERIOD;
-+		if (abs(advance_expire_delta) > LAPIC_TIMER_ADVANCE_ADJUST_DONE) {
-+			timer_advance_ns = LAPIC_TIMER_ADVANCE_ADJUST_INIT;
-+			ktimer->timer_advance_adjust_done = false;
-+		} else
-+			return;
-+	}
-+
- 	/* too early */
- 	if (advance_expire_delta < 0) {
- 		ns = -advance_expire_delta * 1000000ULL;
-@@ -1503,17 +1515,24 @@ static inline void adjust_lapic_timer_advance(struct kvm_vcpu *vcpu,
- 		timer_advance_ns += ns;
- 	}
- 
--	timer_advance_ns = (apic->lapic_timer.timer_advance_ns *
-+	timer_advance_ns = (ktimer->timer_advance_ns *
- 		(LAPIC_TIMER_ADVANCE_ADJUST_STEP - 1) + advance_expire_delta) /
- 		LAPIC_TIMER_ADVANCE_ADJUST_STEP;
- 
- 	if (abs(advance_expire_delta) < LAPIC_TIMER_ADVANCE_ADJUST_DONE)
--		apic->lapic_timer.timer_advance_adjust_done = true;
-+		ktimer->timer_advance_adjust_done = true;
- 	if (unlikely(timer_advance_ns > 5000)) {
- 		timer_advance_ns = LAPIC_TIMER_ADVANCE_ADJUST_INIT;
--		apic->lapic_timer.timer_advance_adjust_done = false;
-+		ktimer->timer_advance_adjust_done = false;
-+	}
-+
-+	ktimer->timer_advance_ns = timer_advance_ns;
-+
-+	if (ktimer->timer_advance_adjust_done) {
-+		if (ktimer->min_timer_advance_ns > timer_advance_ns)
-+			ktimer->min_timer_advance_ns = timer_advance_ns;
-+		ktimer->timer_advance_ns = ktimer->min_timer_advance_ns;
- 	}
--	apic->lapic_timer.timer_advance_ns = timer_advance_ns;
- }
- 
- static void __kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
-@@ -1532,7 +1551,8 @@ static void __kvm_wait_lapic_expire(struct kvm_vcpu *vcpu)
- 	if (guest_tsc < tsc_deadline)
- 		__wait_lapic_expire(vcpu, tsc_deadline - guest_tsc);
- 
--	if (unlikely(!apic->lapic_timer.timer_advance_adjust_done))
-+	if (unlikely(!apic->lapic_timer.timer_advance_adjust_done) ||
-+		time_before(apic->lapic_timer.recalc_timer_advance_ns, jiffies))
- 		adjust_lapic_timer_advance(vcpu, apic->lapic_timer.advance_expire_delta);
- }
- 
-@@ -2310,9 +2330,12 @@ int kvm_create_lapic(struct kvm_vcpu *vcpu, int timer_advance_ns)
- 	if (timer_advance_ns == -1) {
- 		apic->lapic_timer.timer_advance_ns = LAPIC_TIMER_ADVANCE_ADJUST_INIT;
- 		apic->lapic_timer.timer_advance_adjust_done = false;
-+		apic->lapic_timer.recalc_timer_advance_ns = jiffies;
-+		apic->lapic_timer.min_timer_advance_ns = UINT_MAX;
- 	} else {
- 		apic->lapic_timer.timer_advance_ns = timer_advance_ns;
- 		apic->lapic_timer.timer_advance_adjust_done = true;
-+		apic->lapic_timer.recalc_timer_advance_ns = MAX_JIFFY_OFFSET;
- 	}
- 
- 
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index 50053d2..56a05eb 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -31,6 +31,8 @@ struct kvm_timer {
- 	u32 timer_mode_mask;
- 	u64 tscdeadline;
- 	u64 expired_tscdeadline;
-+	unsigned long recalc_timer_advance_ns;
-+	u32 min_timer_advance_ns;
- 	u32 timer_advance_ns;
- 	s64 advance_expire_delta;
- 	atomic_t pending;			/* accumulated triggered timers */
+Changes from v4 (https://lkml.kernel.org/r/20190812223622.73297-1-swboyd@chromium.org):
+ * Dropped the 'pre-transfer' hook patch and added a 'ready' member instead
+ * Combined cr50_spi and tpm_tis_spi into one kernel module
+ * Introduced a swizzle in tpm_tis_spi probe routine to jump to cr50
+   probe path
+ * Moved binding to start of the thread
+ * Picked up Jarkko reviewed-by tag on new flag for suspend/resume
+ * Added a comment to flow control patch indicating what it's all about
+
+Changes from v3:
+ * Split out hooks into separate patches
+ * Update commit text to not say "libify"
+ * Collapse if statement into one for first patch
+ * Update commit text on first patch to mention flag
+ * Drop TIS_IS_CR50 as it's unused
+
+Changes from v2:
+ * Sent khwrng thread patch separately
+ * New patch to expose TPM SPI functionality from tpm_tis_spi.c
+ * Usage of that new patch in cr50 SPI driver
+ * Drop i2c version of cr50 SPI driver for now (will resend later)
+ * New patch to add a TPM chip flag indicating TPM shouldn't be reset
+   over suspend. Allows us to get rid of the cr50 suspend/resume functions
+   that are mostly generic
+
+Changes from v1:
+ * Dropped symlink and sysfs patches
+ * Removed 'is_suspended' bits
+ * Added new patch to freeze khwrng thread
+ * Moved binding to google,cr50.txt and added Reviewed-by tag from Rob
+
+Cc: Andrey Pronin <apronin@chromium.org>
+Cc: Duncan Laurie <dlaurie@chromium.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Guenter Roeck <groeck@chromium.org>
+Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+
+Andrey Pronin (1):
+  dt-bindings: tpm: document properties for cr50
+
+Stephen Boyd (3):
+  tpm: Add a flag to indicate TPM power is managed by firmware
+  tpm: tpm_tis_spi: Introduce a flow control callback
+  tpm: tpm_tis_spi: Support cr50 devices
+
+ .../bindings/security/tpm/google,cr50.txt     |  19 +
+ drivers/char/tpm/Kconfig                      |   7 +
+ drivers/char/tpm/Makefile                     |   4 +-
+ drivers/char/tpm/cr50_spi.c                   | 327 ++++++++++++++++++
+ drivers/char/tpm/tpm-interface.c              |   8 +-
+ drivers/char/tpm/tpm.h                        |   1 +
+ drivers/char/tpm/tpm_tis_spi.c                | 110 +++---
+ drivers/char/tpm/tpm_tis_spi.h                |  54 +++
+ 8 files changed, 486 insertions(+), 44 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/google,cr50.txt
+ create mode 100644 drivers/char/tpm/cr50_spi.c
+ create mode 100644 drivers/char/tpm/tpm_tis_spi.h
+
+
+base-commit: 0ecfebd2b52404ae0c54a878c872bb93363ada36
 -- 
-2.7.4
+Sent by a computer through tubes
 
