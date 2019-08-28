@@ -2,149 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12936A0654
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC709A065B
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:31:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfH1Paj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:30:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:7204 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726429AbfH1Pai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:30:38 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D6AAE308A9E0;
-        Wed, 28 Aug 2019 15:30:37 +0000 (UTC)
-Received: from pauld.bos.csb (dhcp-17-51.bos.redhat.com [10.18.17.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C2565100197A;
-        Wed, 28 Aug 2019 15:30:35 +0000 (UTC)
-Date:   Wed, 28 Aug 2019 11:30:34 -0400
-From:   Phil Auld <pauld@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>, mingo@kernel.org,
-        tglx@linutronix.de, pjt@google.com, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, subhra.mazumdar@oracle.com,
-        fweisbec@gmail.com, keescook@chromium.org, kerrnel@google.com,
-        Aaron Lu <aaron.lwe@gmail.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <20190828153033.GA15512@pauld.bos.csb>
-References: <cover.1559129225.git.vpillai@digitalocean.com>
- <20190827211417.snpwgnhsu5t6u52y@srcf.ucam.org>
- <20190827215035.GH2332@hirez.programming.kicks-ass.net>
+        id S1726899AbfH1Pbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:31:53 -0400
+Received: from forward104p.mail.yandex.net ([77.88.28.107]:51019 "EHLO
+        forward104p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726429AbfH1Pbx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:31:53 -0400
+Received: from mxback7o.mail.yandex.net (mxback7o.mail.yandex.net [IPv6:2a02:6b8:0:1a2d::21])
+        by forward104p.mail.yandex.net (Yandex) with ESMTP id D013B4B0094F;
+        Wed, 28 Aug 2019 18:31:48 +0300 (MSK)
+Received: from smtp1j.mail.yandex.net (smtp1j.mail.yandex.net [2a02:6b8:0:801::ab])
+        by mxback7o.mail.yandex.net (nwsmtp/Yandex) with ESMTP id ffjlMBsko1-VlremqIv;
+        Wed, 28 Aug 2019 18:31:48 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1567006308;
+        bh=7RA0sHF5D03f4tAZfj9rCdvuBWfcitbh3YPyvz8e+CI=;
+        h=In-Reply-To:Cc:To:Subject:From:Date:References:Message-ID;
+        b=eMmYwxIXwqY9HlvIBMIYRd49H7lhEAeOX2i3qqRcSXP5K2V0nBHs06yPe3mK8trzt
+         6/omZIndgJtP4AEB16Cim2Iz9aMzI9F9Y/xjR81E+DDJobtA7eFWJkDUYiNerlOfIp
+         uJQYGqzcDbpuCwZl+6eQRSqfPUcTOJ2vsI58TIkM=
+Authentication-Results: mxback7o.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by smtp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id gq3U0rBuMO-VcbGsZJ1;
+        Wed, 28 Aug 2019 18:31:45 +0300
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client certificate not present)
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH 04/13] irqchip: Add driver for Loongson-3 I/O interrupt
+ controller
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     linux-mips@vger.kernel.org, chenhc@lemote.com,
+        paul.burton@mips.com, tglx@linutronix.de, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.co, devicetree@vger.kernel.org
+References: <20190827085302.5197-1-jiaxun.yang@flygoat.com>
+ <20190827085302.5197-5-jiaxun.yang@flygoat.com>
+ <e6a5862f-0f6c-cab0-9f4a-51b7889d38e7@kernel.org>
+ <82c4b9ed-7270-74ce-6e10-165182e540dd@flygoat.com>
+ <20190828075940.549e1983@why>
+Message-ID: <619b1d35-7bc2-999f-5a51-fb2efdc63f60@flygoat.com>
+Date:   Wed, 28 Aug 2019 23:31:31 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827215035.GH2332@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 28 Aug 2019 15:30:38 +0000 (UTC)
+In-Reply-To: <20190828075940.549e1983@why>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 11:50:35PM +0200 Peter Zijlstra wrote:
-> On Tue, Aug 27, 2019 at 10:14:17PM +0100, Matthew Garrett wrote:
-> > Apple have provided a sysctl that allows applications to indicate that 
-> > specific threads should make use of core isolation while allowing 
-> > the rest of the system to make use of SMT, and browsers (Safari, Firefox 
-> > and Chrome, at least) are now making use of this. Trying to do something 
-> > similar using cgroups seems a bit awkward. Would something like this be 
-> > reasonable? 
-> 
-> Sure; like I wrote earlier; I only did the cgroup thing because I was
-> lazy and it was the easiest interface to hack on in a hurry.
-> 
-> The rest of the ABI nonsense can 'trivially' be done later; if when we
-> decide to actually do this.
 
-I think something that allows the tag to be set may be needed. One of 
-the use cases for this is virtualization stacks, where you really want
-to be able to keep the higher CPU count and to set up the isolation 
-from management processes on the host. 
+On 2019/8/28 下午2:59, Marc Zyngier wrote:
+> On Wed, 28 Aug 2019 08:27:05 +0800
+> Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+>
+>> On 2019/8/28 上午12:45, Marc Zyngier wrote:
+>>> On 27/08/2019 09:52, Jiaxun Yang wrote:
+>>>> +	chained_irq_enter(chip, desc);
+>>>> +
+>>>> +	pending = readl(priv->intc_base + LS3_REG_INTC_EN_STATUS) &
+>>>> +		readl(priv->intc_base + LS3_REG_INTC_STATUS);
+>>> Reading the enabled status from the HW on each interrupt? I'm sure
+>>> that's pretty cheap...
+>> Seems expensive but to deal with a buggy hardware... That's worthy.
+> How broken is it? You very much seem to rely on the HW being correct
+> here, since you trust it exclusively. I'd expect the enable mask to be
+> a SW construct if you didn't blindly trust it
+Hi Marc
 
-The current cgroup interface doesn't work for that because it doesn't 
-apply the tag to children. We've been unable to fully test it in a virt
-setup because our VMs are made of a child cgroup per vcpu. 
+Thanks for your answering.
 
-> 
-> And given MDS, I'm still not entirely convinced it all makes sense. If
-> it were just L1TF, then yes, but now...
+The vendor code did this and said there is a HW issue. I just don't have 
+the guts to remove this check.
+Seems like sometimes masked interrupt may get ISR set wrongly.
+> And if this is truly the right way to do it, please document the
+> various problems with the controller so that we don't break it at a
+> later time.
+Thanks, will do.
+>
+> Then how comes this comes from the irqchip's DT node? This should be
+> part of the endpoint's interrupt specifier.
 
-I was thinking MDS is really the reason for this. L1TF has mitigations but
-the only current mitigation for MDS for smt is ... nosmt. 
+In theory it should be, However if we set different interrupt 
+lines/cores on that controller, interrupts may get lost. It means we can 
+only have single parent core/interrupt.
 
-The current core scheduler implementation, I believe, still has (theoretical?) 
-holes involving interrupts, once/if those are closed it may be even less 
-attractive.
+So I'd prefer just set them uniformly by controller's dt-binding to 
+prevent confusing.
 
-> 
-> > Having spoken to the Chrome team, I believe that the 
-> > semantics we want are:
-> > 
-> > 1) A thread to be able to indicate that it should not run on the same 
-> > core as anything not in posession of the same cookie
-> > 2) Descendents of that thread to (by default) have the same cookie
-> > 3) No other thread be able to obtain the same cookie
-> > 4) Threads not be able to rejoin the global group (ie, threads can 
-> > segregate themselves from their parent and peers, but can never rejoin 
-> > that group once segregated)
-> > 
-> > but don't know if that's what everyone else would want.
-> > 
-> > diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> > index 094bb03b9cc2..5d411246d4d5 100644
-> > --- a/include/uapi/linux/prctl.h
-> > +++ b/include/uapi/linux/prctl.h
-> > @@ -229,4 +229,5 @@ struct prctl_mm_map {
-> >  # define PR_PAC_APDBKEY			(1UL << 3)
-> >  # define PR_PAC_APGAKEY			(1UL << 4)
-> >  
-> > +#define PR_CORE_ISOLATE			55
-> >  #endif /* _LINUX_PRCTL_H */
-> > diff --git a/kernel/sys.c b/kernel/sys.c
-> > index 12df0e5434b8..a054cfcca511 100644
-> > --- a/kernel/sys.c
-> > +++ b/kernel/sys.c
-> > @@ -2486,6 +2486,13 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
-> >  			return -EINVAL;
-> >  		error = PAC_RESET_KEYS(me, arg2);
-> >  		break;
-> > +	case PR_CORE_ISOLATE:
-> > +#ifdef CONFIG_SCHED_CORE
-> > +		current->core_cookie = (unsigned long)current;
-> 
-> This needs to then also force a reschedule of current. And there's the
-> little issue of what happens if 'current' dies while its children live
-> on, and current gets re-used for a new process and does this again.
-
-sched_core_get() too?
-
-
-Cheers,
-Phil
-
-> 
-> > +#else
-> > +		result = -EINVAL;
-> > +#endif
-> > +		break;
-> >  	default:
-> >  		error = -EINVAL;
-> >  		break;
-> > 
-> > 
-> > -- 
-> > Matthew Garrett | mjg59@srcf.ucam.org
-
--- 
+>> It's parent IRQ (mti,cpu-interrupt-controller) is a percpu IRQ.
+> But then why is that interrupt described using the "core" property? It
+> should be an interrupt specifier, just like any other interrupt.
+The same.
+>
+>> In design, it allows us to decide affinity at runtime but actually hardware is seriously broken.
+> I understand the HW is terrible. But the binding looks pretty bad too.
+> This needs fixing.
+>
+> 	M.
+--
+Jiaxun Yang
