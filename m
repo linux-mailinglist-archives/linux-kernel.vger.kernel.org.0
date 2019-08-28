@@ -2,45 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3557B9F92E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 06:24:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADFF49F95C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 06:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726199AbfH1EYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 00:24:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:52809 "EHLO ozlabs.org"
+        id S1726268AbfH1EY6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 00:24:58 -0400
+Received: from ozlabs.org ([203.11.71.1]:52953 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbfH1EYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 00:24:51 -0400
+        id S1726204AbfH1EYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 00:24:52 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 46JCM551djz9sNp; Wed, 28 Aug 2019 14:24:49 +1000 (AEST)
+        id 46JCM65tstz9sP9; Wed, 28 Aug 2019 14:24:50 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: f0f8d7ae3924ed93453e30123e4aaf6f888ca555
-In-Reply-To: <7b1668941ad1041d08b19167030868de5840b153.1566309262.git.christophe.leroy@c-s.fr>
+X-powerpc-patch-commit: b4645ffc49cfe34f67feda20c34bd7a859c78312
+In-Reply-To: <a8b567c569aa521a7cf1beb061d43d79070e850c.1566492229.git.christophe.leroy@c-s.fr>
 To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, npiggin@gmail.com,
-        hch@lst.de
+        Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/12] powerpc: remove the ppc44x ocm.c file
-Message-Id: <46JCM551djz9sNp@ozlabs.org>
-Date:   Wed, 28 Aug 2019 14:24:49 +1000 (AEST)
+Subject: Re: [PATCH] powerpc/64: don't select ARCH_HAS_SCALED_CPUTIME on book3E
+Message-Id: <46JCM65tstz9sP9@ozlabs.org>
+Date:   Wed, 28 Aug 2019 14:24:50 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-20 at 14:07:09 UTC, Christophe Leroy wrote:
-> From: Christoph Hellwig <hch@lst.de>
+On Thu, 2019-08-22 at 16:44:05 UTC, Christophe Leroy wrote:
+> Book3E doesn't have SPRN_SPURR/SPRN_PURR.
 > 
-> The on chip memory allocator is entirely unused in the kernel tree.
+> Activating ARCH_HAS_SCALED_CPUTIME is just wasting CPU time.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Acked-by: Christophe Leroy <christophe.leroy@c-s.fr>
 > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> Link: https://github.com/linuxppc/issues/issues/171
 
-Series applied to powerpc next, thanks.
+Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/f0f8d7ae3924ed93453e30123e4aaf6f888ca555
+https://git.kernel.org/powerpc/c/b4645ffc49cfe34f67feda20c34bd7a859c78312
 
 cheers
