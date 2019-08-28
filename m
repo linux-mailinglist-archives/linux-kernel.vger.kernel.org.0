@@ -2,55 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2A2A08D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09226A08DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:46:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfH1RpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:45:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44402 "EHLO mail.kernel.org"
+        id S1726829AbfH1RqK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:46:10 -0400
+Received: from fieldses.org ([173.255.197.46]:49346 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbfH1RpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:45:08 -0400
-Subject: Re: [GIT PULL] arm64: Fixes for -rc7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567014307;
-        bh=hc0bjImHvnq/IxCT5s4NZI7gpFd6msv+Pulf0AYrCR4=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=Oe2zFU4HpEJT04R+CubK1ZvFncH0jBu+Vkbguy2huLOriKL/CTUcTaDPCYgaKJKei
-         XVVJ3CUe00SyErsxbyAewrvodXJBzCciVlNo6Q9/Q8x3yallMOeG/uPT2Uo9GHA5NK
-         qqSIR8ONUMBj7/2inMxN8JMfs5yti7gQAUwK25iE=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190828173233.zqwm5nd4p5xa4jxi@willie-the-truck>
-References: <20190828173233.zqwm5nd4p5xa4jxi@willie-the-truck>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190828173233.zqwm5nd4p5xa4jxi@willie-the-truck>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
- tags/arm64-fixes
-X-PR-Tracked-Commit-Id: 82e40f558de566fdee214bec68096bbd5e64a6a4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9cf6b756cdf2cd38b8b0dac2567f7c6daf5e79d5
-Message-Id: <156701430762.19174.2439398136739791001.pr-tracker-bot@kernel.org>
-Date:   Wed, 28 Aug 2019 17:45:07 +0000
-To:     Will Deacon <will@kernel.org>
-Cc:     torvalds@linux-foundation.org, catalin.marinas@arm.com,
-        marc.zyngier@arm.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu
+        id S1726515AbfH1RqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 13:46:09 -0400
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 480341E3B; Wed, 28 Aug 2019 13:46:09 -0400 (EDT)
+Date:   Wed, 28 Aug 2019 13:46:09 -0400
+To:     Jason L Tibbitts III <tibbs@math.uh.edu>
+Cc:     linux-nfs@vger.kernel.org, km@cm4all.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: Regression in 5.1.20: Reading long directory fails
+Message-ID: <20190828174609.GB29148@fieldses.org>
+References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
+ <ufapnkxkn0x.fsf@epithumia.math.uh.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ufapnkxkn0x.fsf@epithumia.math.uh.edu>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+From:   bfields@fieldses.org (J. Bruce Fields)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 28 Aug 2019 18:32:33 +0100:
+On Thu, Aug 22, 2019 at 02:39:26PM -0500, Jason L Tibbitts III wrote:
+> I now have another user reporting the same failure of readdir on a long
+> directory which showed up in 5.1.20 and was traced to
+> 3536b79ba75ba44b9ac1a9f1634f2e833bbb735c.  I'm not sure what to do to
+> get more traction besides reposting and adding some addresses to the CC
+> list.  If there is any information I can provide which might help to get
+> to the bottom of this, please let me know.
+> 
+> To recap:
+> 
+> 5.1.20 introduced a regression reading some large directories.  In this
+> case, the directory should have 7800 files or so in it:
+> 
+> [root@ld00 ~]# ls -l ~dblecher|wc -l
+> ls: reading directory '/home/dblecher': Input/output error
+> 1844
+> [root@ld00 ~]# cat /proc/version Linux version 5.1.20-300.fc30.x86_64 (mockbuild@bkernel04.phx2.fedoraproject.org) (gcc version 9.1.1 20190503 (Red Hat 9.1.1-1) (GCC)) #1 SMP Fri Jul 26 15:03:11 UTC 2019
+> 
+> (The server is a Centos 7 machine running kernel 3.10.0-957.12.2.el7.x86_64.)
+> 
+> Building a kernel which reverts commit 3536b79ba75ba44b9ac1a9f1634f2e833bbb735c:
+>   Revert "NFS: readdirplus optimization by cache mechanism" (memleak)
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+Looks like that's db531db951f950b8 upstream.  (Do you know if it's
+reproduceable upstream as well?)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9cf6b756cdf2cd38b8b0dac2567f7c6daf5e79d5
+> fixes the issue, but of course that revert was fixing a real issue so
+> I'm not sure what to do.
+> 
+> I can trivially reproduce this by simply trying to list the problematic
+> directories but I'm not sure how to construct such a directory; simply
+> creating 10000 files doesn't cause the problem for me.
 
-Thank you!
+Maybe it depends on having names of the right length to place some bit
+of xdr on a boundary.  I wonder if it'd be possible to reproduce just by
+varying the name lengths randomly till you hit it.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+The fact that the problematic patch fixed a memory leak also makes me
+wonder if it might have gone to far and freed something out from under
+the readdir code.
+
+> I am willing to
+> test patches and can build my own kernels, and I'm happy to provide any
+> debugging information you might require.  Unfortunately I don't know
+> enough to dig in and figure out for myself what's going wrong.
+> 
+> I did file https://bugzilla.redhat.com/show_bug.cgi?id=1740954 just to
+> have this in a bug tracker somewhere.  I'm happy to file one somewhere
+> else if that would help.
+
+No clever debugging ideas off the top of my head, I'm afraid.  I might
+start by patching the kernel or doing some tracing to figure out exactly
+where that EIO is being generated?
+
+--b.
