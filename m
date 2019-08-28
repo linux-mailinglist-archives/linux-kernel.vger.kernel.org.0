@@ -2,50 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA29BA0CA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D75DA0CA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 23:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfH1VpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 17:45:11 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42124 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726658AbfH1VpJ (ORCPT
+        id S1726983AbfH1Vqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 17:46:30 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33478 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbfH1Vqa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 17:45:09 -0400
-Received: by mail-ot1-f68.google.com with SMTP id j7so1336399ota.9;
-        Wed, 28 Aug 2019 14:45:07 -0700 (PDT)
+        Wed, 28 Aug 2019 17:46:30 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g2so639099pfq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 14:46:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VMRVgNLfEWpj9ovY+tZTMFZ0giKQ7iTixMD9u9pTY5g=;
+        b=QHSaO6N1MxmnkJMyGtKgOxaFY5l/j7VNF5hjzO5D6E4XZUPwlNRfJqVTohwXZeX4qB
+         chCp93cIf1pb9alFldQg82rbRV08PjzibPT84disJENWbvr/Qil4fC2Fr9rLAfx2rX2C
+         eQUVh6GYmMSJA9U9bQLhTKhsDrn0wwDyIKEGE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=B4nnrHAyvMgvk0yYoG3+v+AY9L1WGcgLrX6WCAU79Kc=;
-        b=njcAE9jogFycOovERpFI9HJzKBUMjkHuau9qnBQTGcCBGlxB4H8LgDmymsO6yZsh4i
-         jlxykyEUqmFoI90PLIBW/HjmIlJv5MLpm78NZNnds29aX4FGQrDUaOt1QXlbKl6k6hCZ
-         Cenx4pBV331Lfk8fEPgkzHc4wwRzZ6xQj6Vv+0mZlaDlZw3fqfI7xFT14QCraQkQmtCE
-         MZXHc9ElZRsSAMDtR0CFD7K3AvtE7yAi8ipAmGZ/cxYTHyy7FWKTRgC2h6WQDoeva+ah
-         RuwtsJ1O/jm8O+z28SW/r41qV/c5PxCD2rKMbuYqTJ9yzeEakk2d+nSgi+rF25CXLjoZ
-         wcJg==
-X-Gm-Message-State: APjAAAVCKqn0uOU1lukANesSlU03OWSNtFVZgv48gnbB4rTji2WYoduR
-        O8vLJn/zEvHQaEtncyqAEg8H3TI=
-X-Google-Smtp-Source: APXvYqw+8kKFmgMyeR0jKXJqcDbq0JjRTg37xfi495LeYAs+CCyF8TKQ8VUEpgeWs74y3EnBdSDHuQ==
-X-Received: by 2002:a9d:6749:: with SMTP id w9mr5179289otm.293.1567028707002;
-        Wed, 28 Aug 2019 14:45:07 -0700 (PDT)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id p11sm102431oto.4.2019.08.28.14.45.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 14:45:06 -0700 (PDT)
-From:   Rob Herring <robh@kernel.org>
-To:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH v2 3/3] dt-bindings: Convert Arm Mali Utgard GPU to DT schema
-Date:   Wed, 28 Aug 2019 16:45:02 -0500
-Message-Id: <20190828214502.12293-4-robh@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190828214502.12293-1-robh@kernel.org>
-References: <20190828214502.12293-1-robh@kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VMRVgNLfEWpj9ovY+tZTMFZ0giKQ7iTixMD9u9pTY5g=;
+        b=LQKGn93LpArNzg4flzm9UdQf9W1pSo2xK20Q3NXN/vo0n6g9R/fIMxA5BlJM9BMaxB
+         NUSBbSu/SeAHgOYB4yvESnEdxC/XN5twPmy5zPrsvqdnG8L0zAnq2jHSiPXhry2Jw++0
+         Zy4oir7YE9Ldi7eC3j+nBelhBWygV/MlydW3/uU56+u4E184OeUh7KPQA7K++9ycFDc2
+         akcp1BfE4S8/Q4LOoUFzAepPmC6l7/TAnKtCSEqKc+h2qU7KS4zi7BMIUT4ccMTkeUWl
+         Vdle5mnOudy/oKlqyufny/rogmcgPj2WVmiQJ7BG03Obc4XcZ5vbVfB6xm72qCniHJX/
+         DsVQ==
+X-Gm-Message-State: APjAAAVmuAJw/TNoizUmLesV9QNK2umCcNYh3LifHQKwsQA0HOcpPauI
+        zC7inRAXrr8Bt98z56lfKiHMSc4hWcs=
+X-Google-Smtp-Source: APXvYqxO+lvLRFTlHRNGooSNlV/N4475zrCkgNKWk9GVoYJXBdfQxRmh9ssT5WYDJEFzTTAl5fQ6OA==
+X-Received: by 2002:a63:2b84:: with SMTP id r126mr5444915pgr.308.1567028789499;
+        Wed, 28 Aug 2019 14:46:29 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id a4sm352975pfi.55.2019.08.28.14.46.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2019 14:46:29 -0700 (PDT)
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH 1/2] mmc: sdio: Move code to get pending SDIO IRQs to a function
+Date:   Wed, 28 Aug 2019 14:46:19 -0700
+Message-Id: <20190828214620.66003-1-mka@chromium.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,334 +58,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the Arm Utgard GPU binding to DT schema format.
+Move the code to get pending SDIO interrupts from
+process_sdio_pending_irqs() to a dedicated function.
 
-'allwinner,sun8i-a23-mali' compatible was not documented, so add it.
-
-The 'clocks' property is now required. This simplifies the schema as
-effectively all the users require 'clocks' already and the upstream
-driver requires clocks.
-
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- .../bindings/gpu/arm,mali-utgard.txt          | 129 --------------
- .../bindings/gpu/arm,mali-utgard.yaml         | 168 ++++++++++++++++++
- 2 files changed, 168 insertions(+), 129 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
+ drivers/mmc/core/sdio_irq.c | 47 ++++++++++++++++++++++++-------------
+ include/linux/mmc/host.h    |  1 +
+ 2 files changed, 32 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-deleted file mode 100644
-index ba895efe3039..000000000000
---- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
-+++ /dev/null
-@@ -1,129 +0,0 @@
--ARM Mali Utgard GPU
--===================
--
--Required properties:
--  - compatible
--    * Must be one of the following:
--      + "arm,mali-300"
--      + "arm,mali-400"
--      + "arm,mali-450"
--    * And, optionally, one of the vendor specific compatible:
--      + allwinner,sun4i-a10-mali
--      + allwinner,sun7i-a20-mali
--      + allwinner,sun8i-h3-mali
--      + allwinner,sun50i-a64-mali
--      + allwinner,sun50i-h5-mali
--      + amlogic,meson8-mali
--      + amlogic,meson8b-mali
--      + amlogic,meson-gxbb-mali
--      + amlogic,meson-gxl-mali
--      + samsung,exynos4210-mali
--      + rockchip,rk3036-mali
--      + rockchip,rk3066-mali
--      + rockchip,rk3188-mali
--      + rockchip,rk3228-mali
--      + rockchip,rk3328-mali
--      + stericsson,db8500-mali
--      + hisilicon,hi6220-mali
--
--  - reg: Physical base address and length of the GPU registers
--
--  - interrupts: an entry for each entry in interrupt-names.
--    See ../interrupt-controller/interrupts.txt for details.
--
--  - interrupt-names:
--    * ppX: Pixel Processor X interrupt (X from 0 to 7)
--    * ppmmuX: Pixel Processor X MMU interrupt (X from 0 to 7)
--    * pp: Pixel Processor broadcast interrupt (mali-450 only)
--    * gp: Geometry Processor interrupt
--    * gpmmu: Geometry Processor MMU interrupt
--
--  - clocks: an entry for each entry in clock-names
--  - clock-names:
--    * bus: bus clock for the GPU
--    * core: clock driving the GPU itself
--
--Optional properties:
--  - interrupt-names and interrupts:
--    * pmu: Power Management Unit interrupt, if implemented in hardware
--
--  - memory-region:
--    Memory region to allocate from, as defined in
--    Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
--
--  - mali-supply:
--    Phandle to regulator for the Mali device, as defined in
--    Documentation/devicetree/bindings/regulator/regulator.txt for details.
--
--  - operating-points-v2:
--    Operating Points for the GPU, as defined in
--    Documentation/devicetree/bindings/opp/opp.txt
--
--  - power-domains:
--    A power domain consumer specifier as defined in
--    Documentation/devicetree/bindings/power/power_domain.txt
--
--Vendor-specific bindings
--------------------------
--
--The Mali GPU is integrated very differently from one SoC to
--another. In order to accomodate those differences, you have the option
--to specify one more vendor-specific compatible, among:
--
--  - allwinner,sun4i-a10-mali
--    Required properties:
--      * resets: phandle to the reset line for the GPU
--
--  - allwinner,sun7i-a20-mali
--    Required properties:
--      * resets: phandle to the reset line for the GPU
--
--  - allwinner,sun50i-a64-mali
--    Required properties:
--      * resets: phandle to the reset line for the GPU
--
--  - allwinner,sun50i-h5-mali
--    Required properties:
--      * resets: phandle to the reset line for the GPU
--
--  - amlogic,meson8-mali and amlogic,meson8b-mali
--    Required properties:
--      * resets: phandle to the reset line for the GPU
--
--  - Rockchip variants:
--    Required properties:
--      * resets: phandle to the reset line for the GPU
--
--  - stericsson,db8500-mali
--    Required properties:
--      * interrupt-names and interrupts:
--        + combined: combined interrupt of all of the above lines
--
--  - hisilicon,hi6220-mali
--    Required properties:
--      * resets: phandles to the reset lines for the GPU
--
--Example:
--
--mali: gpu@1c40000 {
--	compatible = "allwinner,sun7i-a20-mali", "arm,mali-400";
--	reg = <0x01c40000 0x10000>;
--	interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
--		     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
--	interrupt-names = "gp",
--			  "gpmmu",
--			  "pp0",
--			  "ppmmu0",
--			  "pp1",
--			  "ppmmu1",
--			  "pmu";
--	clocks = <&ccu CLK_BUS_GPU>, <&ccu CLK_GPU>;
--	clock-names = "bus", "core";
--	resets = <&ccu RST_BUS_GPU>;
--};
--
-diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-new file mode 100644
-index 000000000000..c5d93c5839d3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-@@ -0,0 +1,168 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpu/arm,mali-utgard.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/mmc/core/sdio_irq.c b/drivers/mmc/core/sdio_irq.c
+index 0bcc5e83bd1a..fedc49901efd 100644
+--- a/drivers/mmc/core/sdio_irq.c
++++ b/drivers/mmc/core/sdio_irq.c
+@@ -27,6 +27,35 @@
+ #include "core.h"
+ #include "card.h"
+ 
++int sdio_get_pending_irqs(struct mmc_host *host, u8 *pending)
++{
++	struct mmc_card *card = host->card;
++	int ret;
 +
-+title: ARM Mali Utgard GPU
++	WARN_ON(!host->claimed);
 +
-+maintainers:
-+  - Rob Herring <robh@kernel.org>
-+  - Maxime Ripard <maxime.ripard@free-electrons.com>
-+  - Heiko Stuebner <heiko@sntech.de>
++	ret = mmc_io_rw_direct(card, 0, 0, SDIO_CCCR_INTx, 0, pending);
++	if (ret) {
++		pr_debug("%s: error %d reading SDIO_CCCR_INTx\n",
++		       mmc_card_id(card), ret);
++		return ret;
++	}
 +
-+properties:
-+  $nodename:
-+    pattern: '^gpu@[a-f0-9]+$'
-+  compatible:
-+    oneOf:
-+      - items:
-+          - const: allwinner,sun8i-a23-mali
-+          - const: allwinner,sun7i-a20-mali
-+          - const: arm,mali-400
-+      - items:
-+          - enum:
-+              - allwinner,sun4i-a10-mali
-+              - allwinner,sun7i-a20-mali
-+              - allwinner,sun8i-h3-mali
-+              - allwinner,sun50i-a64-mali
-+              - rockchip,rk3036-mali
-+              - rockchip,rk3066-mali
-+              - rockchip,rk3188-mali
-+              - rockchip,rk3228-mali
-+              - samsung,exynos4210-mali
-+              - stericsson,db8500-mali
-+          - const: arm,mali-400
-+      - items:
-+          - enum:
-+              - allwinner,sun50i-h5-mali
-+              - amlogic,meson8-mali
-+              - amlogic,meson8b-mali
-+              - amlogic,meson-gxbb-mali
-+              - amlogic,meson-gxl-mali
-+              - hisilicon,hi6220-mali
-+              - rockchip,rk3328-mali
-+          - const: arm,mali-450
++	if (*pending && mmc_card_broken_irq_polling(card) &&
++	    !(host->caps & MMC_CAP_SDIO_IRQ)) {
++		unsigned char dummy;
 +
-+      # "arm,mali-300"
++		/* A fake interrupt could be created when we poll SDIO_CCCR_INTx
++		 * register with a Marvell SD8797 card. A dummy CMD52 read to
++		 * function 0 register 0xff can avoid this.
++		 */
++		mmc_io_rw_direct(card, 0, 0, 0xff, 0, &dummy);
++	}
 +
-+  reg:
-+    maxItems: 1
++	return 0;
++}
++EXPORT_SYMBOL_GPL(sdio_get_pending_irqs);
 +
-+  interrupts:
-+    minItems: 4
-+    maxItems: 20
-+
-+  interrupt-names:
-+    allOf:
-+      - additionalItems: true
-+        minItems: 4
-+        maxItems: 20
-+        items:
-+          # At least enforce the first 2 interrupts
-+          - const: gp
-+          - const: gpmmu
-+      - items:
-+          # Not ideal as any order and combination are allowed
-+          enum:
-+            - gp        # Geometry Processor interrupt
-+            - gpmmu     # Geometry Processor MMU interrupt
-+            - pp        # Pixel Processor broadcast interrupt (mali-450 only)
-+            - pp0       # Pixel Processor X interrupt (X from 0 to 7)
-+            - ppmmu0    # Pixel Processor X MMU interrupt (X from 0 to 7)
-+            - pp1
-+            - ppmmu1
-+            - pp2
-+            - ppmmu2
-+            - pp3
-+            - ppmmu3
-+            - pp4
-+            - ppmmu4
-+            - pp5
-+            - ppmmu5
-+            - pp6
-+            - ppmmu6
-+            - pp7
-+            - ppmmu7
-+            - pmu       # Power Management Unit interrupt (optional)
-+            - combined  # stericsson,db8500-mali only
-+
-+  clocks:
-+    maxItems: 2
-+
-+  clock-names:
-+    items:
-+      - const: bus
-+      - const: core
-+
-+  memory-region: true
-+
-+  mali-supply:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  operating-points-v2: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - interrupt-names
-+  - clocks
-+  - clock-names
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - allwinner,sun4i-a10-mali
-+              - allwinner,sun7i-a20-mali
-+              - allwinner,sun50i-a64-mali
-+              - allwinner,sun50i-h5-mali
-+              - amlogic,meson8-mali
-+              - amlogic,meson8b-mali
-+              - hisilicon,hi6220-mali
-+              - rockchip,rk3036-mali
-+              - rockchip,rk3066-mali
-+              - rockchip,rk3188-mali
-+              - rockchip,rk3228-mali
-+              - rockchip,rk3328-mali
-+    then:
-+      required:
-+        - resets
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    mali: gpu@1c40000 {
-+      compatible = "allwinner,sun7i-a20-mali", "arm,mali-400";
-+      reg = <0x01c40000 0x10000>;
-+      interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+             <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
-+      interrupt-names = "gp",
-+            "gpmmu",
-+            "pp0",
-+            "ppmmu0",
-+            "pp1",
-+            "ppmmu1",
-+            "pmu";
-+      clocks = <&ccu 1>, <&ccu 2>;
-+      clock-names = "bus", "core";
-+      resets = <&ccu 1>;
-+    };
-+
-+...
+ static int process_sdio_pending_irqs(struct mmc_host *host)
+ {
+ 	struct mmc_card *card = host->card;
+@@ -49,23 +78,9 @@ static int process_sdio_pending_irqs(struct mmc_host *host)
+ 		return 1;
+ 	}
+ 
+-	ret = mmc_io_rw_direct(card, 0, 0, SDIO_CCCR_INTx, 0, &pending);
+-	if (ret) {
+-		pr_debug("%s: error %d reading SDIO_CCCR_INTx\n",
+-		       mmc_card_id(card), ret);
++	ret = sdio_get_pending_irqs(host, &pending);
++	if (ret)
+ 		return ret;
+-	}
+-
+-	if (pending && mmc_card_broken_irq_polling(card) &&
+-	    !(host->caps & MMC_CAP_SDIO_IRQ)) {
+-		unsigned char dummy;
+-
+-		/* A fake interrupt could be created when we poll SDIO_CCCR_INTx
+-		 * register with a Marvell SD8797 card. A dummy CMD52 read to
+-		 * function 0 register 0xff can avoid this.
+-		 */
+-		mmc_io_rw_direct(card, 0, 0, 0xff, 0, &dummy);
+-	}
+ 
+ 	count = 0;
+ 	for (i = 1; i <= 7; i++) {
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 4a351cb7f20f..7ce0e98e3dbd 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -502,6 +502,7 @@ static inline void mmc_signal_sdio_irq(struct mmc_host *host)
+ }
+ 
+ void sdio_signal_irq(struct mmc_host *host);
++int sdio_get_pending_irqs(struct mmc_host *host, u8 *pending);
+ 
+ #ifdef CONFIG_REGULATOR
+ int mmc_regulator_set_ocr(struct mmc_host *mmc,
 -- 
-2.20.1
+2.23.0.187.g17f5b7556c-goog
 
