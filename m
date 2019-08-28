@@ -2,83 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E7E0A0B91
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 22:33:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47244A0B98
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 22:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726983AbfH1UdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 16:33:09 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:36522 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbfH1UdI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 16:33:08 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id B69FB1536B4CA;
-        Wed, 28 Aug 2019 13:33:07 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 13:33:07 -0700 (PDT)
-Message-Id: <20190828.133307.960183142304533364.davem@davemloft.net>
-To:     weifeng.voon@intel.com
-Cc:     mcoquelin.stm32@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joabreu@synopsys.com,
-        peppe.cavallaro@st.com, andrew@lunn.ch, alexandre.torgue@st.com,
-        boon.leong.ong@intel.com
-Subject: Re: [PATCH v1 net-next] net: stmmac: Add support for MDIO
- interrupts
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1566870320-9825-1-git-send-email-weifeng.voon@intel.com>
-References: <1566870320-9825-1-git-send-email-weifeng.voon@intel.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 28 Aug 2019 13:33:08 -0700 (PDT)
+        id S1727009AbfH1Ues (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 16:34:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726400AbfH1Ues (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 16:34:48 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D18B422CED;
+        Wed, 28 Aug 2019 20:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567024486;
+        bh=m18++XIKgvB3hDNAlvvRjgCQvsCS7XqYby0VuKAWQjU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Pfm3sQn8ORceEyEu8TAVaP0r9CNKytr+G0mcwxv3y+B9ZeliVX+IsGHPIzf/Gbe6r
+         sRZ4qd3S05wMwDrpGs5zATXUCFOCM259yBHSro6qXy6RWH5IBdjhMMQu7I9gHKa3Kv
+         rb6x2IHfybj/Gz5fwE8c30gBdpYr8IPTCgWEHolE=
+Date:   Wed, 28 Aug 2019 15:33:52 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Krzysztof Wilczynski <kw@linux.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] PCI/ACPI: Rename _HPP to _HPX and move of
+ ACPI-specific code from probe.c
+Message-ID: <20190828203352.GC7013@google.com>
+References: <20190827094951.10613-1-kw@linux.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190827094951.10613-1-kw@linux.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Voon Weifeng <weifeng.voon@intel.com>
-Date: Tue, 27 Aug 2019 09:45:20 +0800
-
-> From: "Chuah, Kim Tatt" <kim.tatt.chuah@intel.com>
+On Tue, Aug 27, 2019 at 11:49:48AM +0200, Krzysztof Wilczynski wrote:
+> This series of patches moves the ACPI-specific code currently included
+> as part of the drivers/pci/probe.c. First, the ACPI Hot Plug structs
+> for Type 0, 1 and 2, and any relevant variable names, structs, function
+> names, etc., will have their names changed to reflect that these are
+> related to _HPX rather than _HPP.  Second, all of the ACPI-specific
+> code will be moved to drivers/pci/pci-acpi.c for better organisation
+> and to keep ACPI-related code base together.  Third, remove the
+> now obsolete struct hotplug_program_ops from drivers/pci/pci-acpi.c.
 > 
-> DW EQoS v5.xx controllers added capability for interrupt generation
-> when MDIO interface is done (GMII Busy bit is cleared).
-> This patch adds support for this interrupt on supported HW to avoid
-> polling on GMII Busy bit.
+> Patches should be preferably merged in order as they build upon
+> one-another.
+
+This is always the case; it's one of the main reasons for grouping
+patches into a series.
+
+> Related:
+>   https://lore.kernel.org/lkml/20190419220220.GI173520@google.com
+>   https://lore.kernel.org/lkml/20190307213834.5914-3-mr.nuke.me@gmail.com
+>   https://lore.kernel.org/lkml/20190307213834.5914-2-mr.nuke.me@gmail.com
 > 
-> stmmac_mdio_read() & stmmac_mdio_write() will sleep until wake_up() is
-> called by the interrupt handler.
+> Krzysztof Wilczynski (3):
+>   PCI/ACPI: Rename ACPI Hot Plug structs for Type 0, 1 and 2 from _HPP
+>     to _HPX
+>   PCI/ACPI: Move ACPI-specific Hot Plug programming functions to
+>     pci-acpi.c
+>   PCI/ACPI: Remove unnecessary struct hotplug_program_ops from
+>     pci-acpi.c
 > 
-> Reviewed-by: Voon Weifeng <weifeng.voon@intel.com>
-> Reviewed-by: Kweh, Hock Leong <hock.leong.kweh@intel.com>
-> Reviewed-by: Ong Boon Leong <boon.leong.ong@intel.com>
-> Signed-off-by: Chuah, Kim Tatt <kim.tatt.chuah@intel.com>
-> Signed-off-by: Ong Boon Leong <boon.leong.ong@intel.com>
-> Signed-off-by: Voon Weifeng <weifeng.voon@intel.com>
+>  drivers/pci/pci-acpi.c      | 410 +++++++++++++++++++++++++++++++++---
+>  drivers/pci/pci.h           |   9 +
+>  drivers/pci/probe.c         | 278 +-----------------------
+>  include/linux/pci_hotplug.h | 100 ---------
+>  4 files changed, 389 insertions(+), 408 deletions(-)
 
-I know there are some design changes that will occur with this patch but
-coding style wise:
-
-> @@ -276,6 +284,10 @@ int stmmac_hwif_init(struct stmmac_priv *priv)
->  		mac->mode = mac->mode ? : entry->mode;
->  		mac->tc = mac->tc ? : entry->tc;
->  		mac->mmc = mac->mmc ? : entry->mmc;
-> +		mac->mdio_intr_en = mac->mdio_intr_en ? : entry->mdio_intr_en;
-> +
-> +		if (mac->mdio_intr_en)
-> +			init_waitqueue_head(&mac->mdio_busy_wait);
-
-I'd say always unconditionally initialize wait queues, mutexes, etc.
-
-> +static bool stmmac_mdio_intr_done(struct mii_bus *bus)
-> +{
-> +	struct net_device *ndev = bus->priv;
-> +	struct stmmac_priv *priv = netdev_priv(ndev);
-> +	unsigned int mii_address = priv->hw->mii.addr;
-
-Reverse christmas tree here, please.
-
+I applied these to pci/enumeration for v5.4, thanks!
