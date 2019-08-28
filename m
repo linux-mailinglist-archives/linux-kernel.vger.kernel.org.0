@@ -2,207 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E5C6A0A8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:37:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 075AEA0A92
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 21:38:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfH1Thb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 15:37:31 -0400
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:63712 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfH1Thb (ORCPT
+        id S1726961AbfH1Tip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 15:38:45 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39809 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbfH1Tip (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 15:37:31 -0400
+        Wed, 28 Aug 2019 15:38:45 -0400
+Received: by mail-ed1-f67.google.com with SMTP id g8so1292202edm.6
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 12:38:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1567021050; x=1598557050;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:mime-version:content-transfer-encoding;
-  bh=0/zETLT6OxlsuzV2h4cI2jALLd91yg4iSxzLtVcgnvs=;
-  b=VCY2K4RrpK6UMEW21DASV1UktYIj5ssljwK8Itd6VWYX+5QoOnKDt8xp
-   3WRMAgRzNO5EKVVNV/YGaFdUIX43dAZrWgqUFHEWyPeWw36ucIS2o+xvX
-   guVuIWp+iFLvjIy9xRgJhwxCGvj3I+UwHf2KcSa9LZihelPwjpgpWEctC
-   s=;
-X-IronPort-AV: E=Sophos;i="5.64,442,1559520000"; 
-   d="scan'208";a="824873404"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2c-168cbb73.us-west-2.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 28 Aug 2019 19:37:28 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2c-168cbb73.us-west-2.amazon.com (Postfix) with ESMTPS id 33854A269C;
-        Wed, 28 Aug 2019 19:37:28 +0000 (UTC)
-Received: from EX13D01EUA002.ant.amazon.com (10.43.165.199) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 28 Aug 2019 19:37:27 +0000
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13D01EUA002.ant.amazon.com (10.43.165.199) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 28 Aug 2019 19:37:26 +0000
-Received: from EX13D20UWC001.ant.amazon.com ([10.43.162.244]) by
- EX13D20UWC001.ant.amazon.com ([10.43.162.244]) with mapi id 15.00.1367.000;
- Wed, 28 Aug 2019 19:37:25 +0000
-From:   "Graf (AWS), Alexander" <graf@amazon.de>
-To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "Schoenherr, Jan H." <jschoenh@amazon.de>,
-        "Raslan, KarimAllah" <karahmed@amazon.de>,
-        "Lukaszewicz, Rimas" <rimasluk@amazon.com>,
-        "Grimm, Jon" <Jon.Grimm@amd.com>
-Subject: Re: [PATCH v2 11/15] svm: Temporary deactivate AVIC during ExtINT
- handling
-Thread-Topic: [PATCH v2 11/15] svm: Temporary deactivate AVIC during ExtINT
- handling
-Thread-Index: AQHVU4YZx2GIhsHgJkOSwpBQnjkrXqcCTLuAgA5zxoCAAEh7gA==
-Date:   Wed, 28 Aug 2019 19:37:24 +0000
-Message-ID: <82C8A08D-6CB3-4268-BF79-802E1015E365@amazon.de>
-References: <1565886293-115836-1-git-send-email-suravee.suthikulpanit@amd.com>
- <1565886293-115836-12-git-send-email-suravee.suthikulpanit@amd.com>
- <1ed5bf9c-177e-b41c-b5ac-4c76155ead2a@amazon.com>,<5aaef6f4-4bee-4cc4-8eb0-d9b4c412988b@amd.com>
-In-Reply-To: <5aaef6f4-4bee-4cc4-8eb0-d9b4c412988b@amd.com>
-Accept-Language: en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="us-ascii"
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v6I0NxJQJkD1JgL9Whr1E8kXbKnnwerSju7V9v+AMdA=;
+        b=DQgpMf8ao0gcsEtBQ7MRr/p3CHj1R5lHbOEo69FnLPGYitpp4vCxTy9KpNSIGqPaHS
+         FukOT0+NWkJm2PbBnj1hhcvBTdsWnKOnM6V+aF1EQ/b267OOWqzKVlprsDDJEEMg19e+
+         9VMRsZyhg5YF1lEupwdc0HAhuXSCI+n7hxm3E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v6I0NxJQJkD1JgL9Whr1E8kXbKnnwerSju7V9v+AMdA=;
+        b=SyLXsxZDWfyg+eWNs0d9ALfwSDWKpt0C7z4wPgpqnV6h9dkFnOPgtkYQAvNNRfHp+e
+         a9GLKmcJYNdrizpoJGNjJSm4ndgl9RurcN3WfOf0BxaN63lDHsxRgPSxSitQwkBIzyzJ
+         WHP3Mzrs12lyQ3QdyAbARQgG3n996yEFZDEzO/THAenO/saNpdyLbJzjc9klH8lZILPP
+         DieZ5htDF3QDSn7DUYfqWtYEkQLUdKNizHYC8cPTNHU6Ed93vtbYRx0PElwQq2r0ow7o
+         l6YH25Jv7pqrfJGJ2Da2DGbhOfGk7O5RFEX4kOcrXbaj9AGPkLQb2kgium89OSdHFLwr
+         s/KA==
+X-Gm-Message-State: APjAAAVvDPVk6lUvMtpr6FrB/47NKBcaQI4An9cSgSeqPd2ykE+hKsJK
+        4hwsFH92eDdhdfHSizY4W796Xw==
+X-Google-Smtp-Source: APXvYqwBlQWZhg2J452zDKYW5Hy49ik9wm4fiM1ibr/NRl10YSHYjbPZQkOkBKGwDg9H98uus9/xsQ==
+X-Received: by 2002:a50:b825:: with SMTP id j34mr6104619ede.58.1567021123668;
+        Wed, 28 Aug 2019 12:38:43 -0700 (PDT)
+Received: from prevas-ravi.prevas.se (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
+        by smtp.gmail.com with ESMTPSA id ni7sm38990ejb.57.2019.08.28.12.38.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 12:38:43 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] x86: mmu.h: move mm_context_t::lock member inside CONFIG_MODIFY_LDT_SYSCALL
+Date:   Wed, 28 Aug 2019 21:38:35 +0200
+Message-Id: <20190828193836.16791-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The placement of the lock member in mm_context_t suggests that it is
+used to protect the vdso* members, but AFAICT, it is only ever used
+under #ifdef CONFIG_MODIFY_LDT_SYSCALL. So guarding the member by the
+same config option is a cheap way to reduce sizeof(mm_struct) by 32
+bytes (only for !CONFIG_MODIFY_LDT_SYSCALL kernels, of course).
 
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ arch/x86/include/asm/mmu.h         | 11 ++++++++---
+ arch/x86/include/asm/mmu_context.h |  3 +--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-> Am 28.08.2019 um 17:19 schrieb Suthikulpanit, Suravee <Suravee.Suthikulpa=
-nit@amd.com>:
-> =
-
-> Alex,
-> =
-
->> On 8/19/19 5:35 AM, Alexander Graf wrote:
->> =
-
->> =
-
->>> On 15.08.19 18:25, Suthikulpanit, Suravee wrote:
->>> AMD AVIC does not support ExtINT. Therefore, AVIC must be temporary
->>> deactivated and fall back to using legacy interrupt injection via vINTR
->>> and interrupt window.
->>> =
-
->>> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
->>> ---
->>>   arch/x86/kvm/svm.c | 49 =
-
->>> +++++++++++++++++++++++++++++++++++++++++++++----
->>>   1 file changed, 45 insertions(+), 4 deletions(-)
->>> =
-
->>> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
->>> index cfa4b13..4690351 100644
->>> --- a/arch/x86/kvm/svm.c
->>> +++ b/arch/x86/kvm/svm.c
->>> @@ -384,6 +384,7 @@ struct amd_svm_iommu_ir {
->>>   static void svm_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0);
->>>   static void svm_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa);
->>>   static void svm_complete_interrupts(struct vcpu_svm *svm);
->>> +static void svm_request_activate_avic(struct kvm_vcpu *vcpu);
->>>   static bool svm_get_enable_apicv(struct kvm *kvm);
->>>   static inline void avic_post_state_restore(struct kvm_vcpu *vcpu);
->>> @@ -4494,6 +4495,15 @@ static int interrupt_window_interception(struct =
-
->>> vcpu_svm *svm)
->>>   {
->>>       kvm_make_request(KVM_REQ_EVENT, &svm->vcpu);
->>>       svm_clear_vintr(svm);
->>> +
->>> +    /*
->>> +     * For AVIC, the only reason to end up here is ExtINTs.
->>> +     * In this case AVIC was temporarily disabled for
->>> +     * requesting the IRQ window and we have to re-enable it.
->>> +     */
->>> +    if (svm_get_enable_apicv(svm->vcpu.kvm))
->>> +        svm_request_activate_avic(&svm->vcpu);
->> =
-
->> Would it make sense to add a trace point here and to the other call =
-
->> sites, so that it becomes obvious in a trace when and why exactly avic =
-
->> was active/inactive?
->> =
-
->> The trace point could add additional information on the why.
-> =
-
-> Sure, sounds good.
-> =
-
->>> ....
->>> @@ -5522,9 +5558,6 @@ static void enable_irq_window(struct kvm_vcpu =
-
->>> *vcpu)
->>>   {
->>>       struct vcpu_svm *svm =3D to_svm(vcpu);
->>> -    if (kvm_vcpu_apicv_active(vcpu))
->>> -        return;
->>> -
->>>       /*
->>>        * In case GIF=3D0 we can't rely on the CPU to tell us when GIF =
-
->>> becomes
->>>        * 1, because that's a separate STGI/VMRUN intercept.  The next =
-
->>> time we
->>> @@ -5534,6 +5567,14 @@ static void enable_irq_window(struct kvm_vcpu =
-
->>> *vcpu)
->>>        * window under the assumption that the hardware will set the GIF.
->>>        */
->>>       if ((vgif_enabled(svm) || gif_set(svm)) && nested_svm_intr(svm)) {
->>> +        /*
->>> +         * IRQ window is not needed when AVIC is enabled,
->>> +         * unless we have pending ExtINT since it cannot be injected
->>> +         * via AVIC. In such case, we need to temporarily disable AVIC,
->>> +         * and fallback to injecting IRQ via V_IRQ.
->>> +         */
->>> +        if (kvm_vcpu_apicv_active(vcpu))
->>> +            svm_request_deactivate_avic(&svm->vcpu);
->> =
-
->> Did you test AVIC with nesting? Did you actually run across this issue =
-
->> there?
-> =
-
-> Currently, we have not claimed that AVIC is supported w/ nested VM. =
-
-> That's why we have not enabled AVIC by default yet. We will be looking =
-
-> more into that next.
-
-If it's not supported, please suspend it when we enter a nested guest then?=
- In that case, the above change is also unnecessary, as it only affects nes=
-ted guests, no?
-
-Alex
-
-> =
-
-> Suravee
-
-
-
-Amazon Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
-Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
-Sitz: Berlin
-Ust-ID: DE 289 237 879
-
-
+diff --git a/arch/x86/include/asm/mmu.h b/arch/x86/include/asm/mmu.h
+index e78c7db87801..b1bb47a3577b 100644
+--- a/arch/x86/include/asm/mmu.h
++++ b/arch/x86/include/asm/mmu.h
+@@ -30,14 +30,13 @@ typedef struct {
+ #ifdef CONFIG_MODIFY_LDT_SYSCALL
+ 	struct rw_semaphore	ldt_usr_sem;
+ 	struct ldt_struct	*ldt;
++	struct mutex		lock;
+ #endif
+-
+ #ifdef CONFIG_X86_64
+ 	/* True if mm supports a task running in 32 bit compatibility mode. */
+ 	unsigned short ia32_compat;
+ #endif
+ 
+-	struct mutex lock;
+ 	void __user *vdso;			/* vdso base address */
+ 	const struct vdso_image *vdso_image;	/* vdso image in use */
+ 
+@@ -56,10 +55,16 @@ typedef struct {
+ #endif
+ } mm_context_t;
+ 
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++#define INIT_MM_CONTEXT_LOCK(mm) .lock = __MUTEX_INITIALIZER(mm.context.lock),
++#else
++#define INIT_MM_CONTEXT_LOCK(mm)
++#endif
++
+ #define INIT_MM_CONTEXT(mm)						\
+ 	.context = {							\
+ 		.ctx_id = 1,						\
+-		.lock = __MUTEX_INITIALIZER(mm.context.lock),		\
++		INIT_MM_CONTEXT_LOCK(mm)				\
+ 	}
+ 
+ void leave_mm(int cpu);
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 9024236693d2..ac8e3ef8a774 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -82,6 +82,7 @@ static inline void init_new_context_ldt(struct mm_struct *mm)
+ {
+ 	mm->context.ldt = NULL;
+ 	init_rwsem(&mm->context.ldt_usr_sem);
++	mutex_init(&mm->context.lock);
+ }
+ int ldt_dup_context(struct mm_struct *oldmm, struct mm_struct *mm);
+ void destroy_context_ldt(struct mm_struct *mm);
+@@ -186,8 +187,6 @@ void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk);
+ static inline int init_new_context(struct task_struct *tsk,
+ 				   struct mm_struct *mm)
+ {
+-	mutex_init(&mm->context.lock);
+-
+ 	mm->context.ctx_id = atomic64_inc_return(&last_mm_ctx_id);
+ 	atomic64_set(&mm->context.tlb_gen, 0);
+ 
+-- 
+2.20.1
 
