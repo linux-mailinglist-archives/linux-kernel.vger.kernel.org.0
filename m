@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E97B9FE0E
+	by mail.lfdr.de (Postfix) with ESMTP id 7D56E9FE0F
 	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:13:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfH1JMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 05:12:03 -0400
+        id S1726449AbfH1JMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 05:12:06 -0400
 Received: from mailgw02.mediatek.com ([210.61.82.184]:25511 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726504AbfH1JMC (ORCPT
+        with ESMTP id S1726408AbfH1JME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 05:12:02 -0400
-X-UUID: 53fc2922b1634b1492d6b88d40f85fa7-20190828
-X-UUID: 53fc2922b1634b1492d6b88d40f85fa7-20190828
+        Wed, 28 Aug 2019 05:12:04 -0400
+X-UUID: 4c1be4bdcdd8419ca0e2f7c55482f8f8-20190828
+X-UUID: 4c1be4bdcdd8419ca0e2f7c55482f8f8-20190828
 Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1113244299; Wed, 28 Aug 2019 17:11:58 +0800
+        with ESMTP id 525857148; Wed, 28 Aug 2019 17:11:58 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
  mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Wed, 28 Aug 2019 17:12:04 +0800
@@ -35,9 +35,9 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
         Yong Wu <yong.wu@mediatek.com>
-Subject: [PATCH v7 02/13] dt-bindings: soc: Add MT8183 power dt-bindings
-Date:   Wed, 28 Aug 2019 17:11:35 +0800
-Message-ID: <1566983506-26598-3-git-send-email-weiyi.lu@mediatek.com>
+Subject: [PATCH v7 03/13] soc: mediatek: Refactor polling timeout and documentation
+Date:   Wed, 28 Aug 2019 17:11:36 +0800
+Message-ID: <1566983506-26598-4-git-send-email-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1566983506-26598-1-git-send-email-weiyi.lu@mediatek.com>
 References: <1566983506-26598-1-git-send-email-weiyi.lu@mediatek.com>
@@ -49,96 +49,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add power dt-bindings of MT8183 and introduces "BASIC" and
-"SUBSYS" clock types in binding document.
-The "BASIC" type is compatible to the original power control with
-clock name [a-z]+[0-9]*, e.g. mm, vpu1.
-The "SUBSYS" type is used for bus protection control with clock
-name [a-z]+-[0-9]+, e.g. isp-0, cam-1.
+Use USEC_PER_SEC to indicate the polling timeout directly.
+And add documentation of scp_domain_data.
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- .../devicetree/bindings/soc/mediatek/scpsys.txt    | 14 ++++++++++++
- include/dt-bindings/power/mt8183-power.h           | 26 ++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
- create mode 100644 include/dt-bindings/power/mt8183-power.h
+ drivers/soc/mediatek/mtk-scpsys.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-index 876693a..00eab7e 100644
---- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-+++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-@@ -14,6 +14,7 @@ power/power_domain.txt. It provides the power domains defined in
- - include/dt-bindings/power/mt2701-power.h
- - include/dt-bindings/power/mt2712-power.h
- - include/dt-bindings/power/mt7622-power.h
-+- include/dt-bindings/power/mt8183-power.h
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index 503222d..e97fc0e 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -21,7 +21,7 @@
+ #include <dt-bindings/power/mt8173-power.h>
  
- Required properties:
- - compatible: Should be one of:
-@@ -25,18 +26,31 @@ Required properties:
- 	- "mediatek,mt7623a-scpsys": For MT7623A SoC
- 	- "mediatek,mt7629-scpsys", "mediatek,mt7622-scpsys": For MT7629 SoC
- 	- "mediatek,mt8173-scpsys"
-+	- "mediatek,mt8183-scpsys"
- - #power-domain-cells: Must be 1
- - reg: Address range of the SCPSYS unit
- - infracfg: must contain a phandle to the infracfg controller
- - clock, clock-names: clocks according to the common clock binding.
-                       These are clocks which hardware needs to be
-                       enabled before enabling certain power domains.
-+                      The new clock type "BASIC" belongs to the type above.
-+                      As to the new clock type "SUBSYS" needs to be
-+                      enabled before releasing bus protection.
- 	Required clocks for MT2701 or MT7623: "mm", "mfg", "ethif"
- 	Required clocks for MT2712: "mm", "mfg", "venc", "jpgdec", "audio", "vdec"
- 	Required clocks for MT6797: "mm", "mfg", "vdec"
- 	Required clocks for MT7622 or MT7629: "hif_sel"
- 	Required clocks for MT7623A: "ethif"
- 	Required clocks for MT8173: "mm", "mfg", "venc", "venc_lt"
-+	Required clocks for MT8183: BASIC: "audio", "mfg", "mm", "cam", "isp",
-+					   "vpu", "vpu1", "vpu2", "vpu3"
-+				    SUBSYS: "mm-0", "mm-1", "mm-2", "mm-3",
-+					    "mm-4", "mm-5", "mm-6", "mm-7",
-+					    "mm-8", "mm-9", "isp-0", "isp-1",
-+					    "cam-0", "cam-1", "cam-2", "cam-3",
-+					    "cam-4", "cam-5", "cam-6", "vpu-0",
-+					    "vpu-1", "vpu-2", "vpu-3", "vpu-4",
-+					    "vpu-5"
+ #define MTK_POLL_DELAY_US   10
+-#define MTK_POLL_TIMEOUT    (jiffies_to_usecs(HZ))
++#define MTK_POLL_TIMEOUT    USEC_PER_SEC
  
- Optional properties:
- - vdec-supply: Power supply for the vdec power domain
-diff --git a/include/dt-bindings/power/mt8183-power.h b/include/dt-bindings/power/mt8183-power.h
-new file mode 100644
-index 0000000..5c0c8c7
---- /dev/null
-+++ b/include/dt-bindings/power/mt8183-power.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright (c) 2018 MediaTek Inc.
-+ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
+ #define MTK_SCPD_ACTIVE_WAKEUP		BIT(0)
+ #define MTK_SCPD_FWAIT_SRAM		BIT(1)
+@@ -108,6 +108,17 @@ enum clk_id {
+ 
+ #define MAX_CLKS	3
+ 
++/**
++ * struct scp_domain_data - scp domain data for power on/off flow
++ * @name: The domain name.
++ * @sta_mask: The mask for power on/off status bit.
++ * @ctl_offs: The offset for main power control register.
++ * @sram_pdn_bits: The mask for sram power control bits.
++ * @sram_pdn_ack_bits: The mask for sram power control acked bits.
++ * @bus_prot_mask: The mask for single step bus protection.
++ * @clk_id: The basic clocks required by this power domain.
++ * @caps: The flag for active wake-up action.
 + */
-+
-+#ifndef _DT_BINDINGS_POWER_MT8183_POWER_H
-+#define _DT_BINDINGS_POWER_MT8183_POWER_H
-+
-+#define MT8183_POWER_DOMAIN_AUDIO	0
-+#define MT8183_POWER_DOMAIN_CONN	1
-+#define MT8183_POWER_DOMAIN_MFG_ASYNC	2
-+#define MT8183_POWER_DOMAIN_MFG		3
-+#define MT8183_POWER_DOMAIN_MFG_CORE0	4
-+#define MT8183_POWER_DOMAIN_MFG_CORE1	5
-+#define MT8183_POWER_DOMAIN_MFG_2D	6
-+#define MT8183_POWER_DOMAIN_DISP	7
-+#define MT8183_POWER_DOMAIN_CAM		8
-+#define MT8183_POWER_DOMAIN_ISP		9
-+#define MT8183_POWER_DOMAIN_VDEC	10
-+#define MT8183_POWER_DOMAIN_VENC	11
-+#define MT8183_POWER_DOMAIN_VPU_TOP	12
-+#define MT8183_POWER_DOMAIN_VPU_CORE0	13
-+#define MT8183_POWER_DOMAIN_VPU_CORE1	14
-+
-+#endif /* _DT_BINDINGS_POWER_MT8183_POWER_H */
+ struct scp_domain_data {
+ 	const char *name;
+ 	u32 sta_mask;
 -- 
 1.8.1.1.dirty
 
