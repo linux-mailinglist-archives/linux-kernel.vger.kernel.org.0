@@ -2,102 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C3029FC68
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 09:59:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74F6E9FC73
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:00:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfH1H7N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 03:59:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59852 "EHLO mx1.redhat.com"
+        id S1726802AbfH1IAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 04:00:05 -0400
+Received: from shell.v3.sk ([90.176.6.54]:40588 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726529AbfH1H7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 03:59:11 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 246278665A
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 07:59:11 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id f10so665707wmh.8
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 00:59:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HqAYNYe6Ug0GzLuBdmUlgIsXKA4zYv5rxY3t4CUPVFQ=;
-        b=nUi+n0j5Fx+5c8yxDtZwA0G3FDX8zKmFtWlOSisV+BE1+/p3K46hKMT5DXXAJXpvaV
-         DUCZy3Agw6MRPOxzAjXvvBod4gcGcHDM6svd9lEc/9XNG25eujh32jMZ53hBszO54Rd8
-         AtnWhoqo8NM5lYiLd9ReWtnJU07IlN8G5c/CC1sfA1lmC4CckIID1KOc20psq304AeEA
-         WjvBjqxRkl2QRUnp9ea0ss6CfwOLpggG4mK+PDTtsHCVg1HUlzySL+z3cjB+Hpai/ftf
-         N7DTgYXqz0NJ7BJqiQiZ1rTem14ewBqdJu3kXM/USXZAFXLupw0AfSay4VoI1NRNItp3
-         xrJg==
-X-Gm-Message-State: APjAAAX9ekAGk8kNkiZpmXECFW4gnnqq54OHPZLk/95NNuWUfLGFGFix
-        PliN4Zm8Wj47VpzCKtKoFL3en6qia4BCjlia3Gc0UsNs+GLmUGxj3dS44STO2iq9xv3eHXqUXlg
-        zrQTRA9YZOKBoW0zHDsTkO0oZ
-X-Received: by 2002:adf:82d4:: with SMTP id 78mr2668208wrc.85.1566979149800;
-        Wed, 28 Aug 2019 00:59:09 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyAgGjUe2XPR9J6yRmKjEXklPepwazpcGdHUVGFoBlK2l13Y0XcluoZTglZdM8C09USuZ9JBQ==
-X-Received: by 2002:adf:82d4:: with SMTP id 78mr2668192wrc.85.1566979149600;
-        Wed, 28 Aug 2019 00:59:09 -0700 (PDT)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id a190sm2448469wme.8.2019.08.28.00.59.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 00:59:08 -0700 (PDT)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jim Mattson <jmattson@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Roman Kagan <rkagan@virtuozzo.com>
-Subject: [PATCH v2 2/2] KVM: x86: announce KVM_CAP_HYPERV_ENLIGHTENED_VMCS support only when it is available
-Date:   Wed, 28 Aug 2019 09:59:05 +0200
-Message-Id: <20190828075905.24744-3-vkuznets@redhat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190828075905.24744-1-vkuznets@redhat.com>
-References: <20190828075905.24744-1-vkuznets@redhat.com>
+        id S1726658AbfH1IAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 04:00:02 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 885A9D833B;
+        Wed, 28 Aug 2019 09:59:59 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id r6NofhyOXIlp; Wed, 28 Aug 2019 09:59:45 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 3EC4BD8338;
+        Wed, 28 Aug 2019 09:59:44 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Cpeb35XJblvd; Wed, 28 Aug 2019 09:59:41 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 50102D832C;
+        Wed, 28 Aug 2019 09:59:41 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 1/5] dt-bindings: reserved-memory: Add binding for Armada framebuffer
+Date:   Wed, 28 Aug 2019 09:59:34 +0200
+Message-Id: <20190828075938.318028-2-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190828075938.318028-1-lkundrak@v3.sk>
+References: <20190828075938.318028-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was discovered that after commit 65efa61dc0d5 ("selftests: kvm: provide
-common function to enable eVMCS") hyperv_cpuid selftest is failing on AMD.
-The reason is that the commit changed _vcpu_ioctl() to vcpu_ioctl() in the
-test and this one can't fail.
+This is the binding for memory that is set aside for allocation of Marvel=
+l
+Armada framebuffer objects.
 
-Instead of fixing the test is seems to make more sense to not announce
-KVM_CAP_HYPERV_ENLIGHTENED_VMCS support if it is definitely missing
-(on svm and in case kvm_intel.nested=0).
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/kvm/x86.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Changes since v2:
+- Collected the Reviewed-by tag
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d1cd0fcff9e7..149511f47377 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -3106,7 +3106,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 	case KVM_CAP_HYPERV_EVENTFD:
- 	case KVM_CAP_HYPERV_TLBFLUSH:
- 	case KVM_CAP_HYPERV_SEND_IPI:
--	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
- 	case KVM_CAP_HYPERV_CPUID:
- 	case KVM_CAP_PCI_SEGMENT:
- 	case KVM_CAP_DEBUGREGS:
-@@ -3183,6 +3182,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 		r = kvm_x86_ops->get_nested_state ?
- 			kvm_x86_ops->get_nested_state(NULL, NULL, 0) : 0;
- 		break;
-+	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
-+		r = kvm_x86_ops->nested_enable_evmcs != NULL;
-+		break;
- 	default:
- 		break;
- 	}
--- 
-2.20.1
+Changes since v1:
+- Moved from bindings/display/armada/
+- Removed the marvell,dove-framebuffer string
+- Added to the MAINTAINERS entry
+
+ .../marvell,armada-framebuffer.txt            | 22 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reserved-memory/mar=
+vell,armada-framebuffer.txt
+
+diff --git a/Documentation/devicetree/bindings/reserved-memory/marvell,ar=
+mada-framebuffer.txt b/Documentation/devicetree/bindings/reserved-memory/=
+marvell,armada-framebuffer.txt
+new file mode 100644
+index 0000000000000..ab243e2bad454
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reserved-memory/marvell,armada-fr=
+amebuffer.txt
+@@ -0,0 +1,22 @@
++Marvell Armada framebuffer reserved memory
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++Memory set aside for allocation of Marvell Armada framebuffer objects.
++
++Required properties:
++
++ - compatible: must be "marvell,armada-framebuffer"
++
++Please refer to Documentation/devicetree/bindings/reserved-memory/reserv=
+ed-memory.txt
++for common reserved memory binding usage.
++
++Example:
++
++	reserved-memory {
++		display_reserved: framebuffer {
++			compatible =3D "marvell,armada-framebuffer";
++			size =3D <0x02000000>;
++			alignment =3D <0x02000000>;
++			no-map;
++		};
++	};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9cbcf167bdd08..3d824ecf96229 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9621,6 +9621,7 @@ T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git=
+ drm-armada-fixes
+ F:	drivers/gpu/drm/armada/
+ F:	include/uapi/drm/armada_drm.h
+ F:	Documentation/devicetree/bindings/display/armada/
++F:	Documentation/devicetree/bindings/reserved-memory/marvell,armada-fram=
+ebuffer.txt
+=20
+ MARVELL ARMADA 3700 PHY DRIVERS
+ M:	Miquel Raynal <miquel.raynal@bootlin.com>
+--=20
+2.21.0
 
