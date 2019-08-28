@@ -2,99 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 537B39F9C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DCBD9F9D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:30:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726147AbfH1FVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 01:21:24 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:41612 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726052AbfH1FVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 01:21:24 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D581C200274;
-        Wed, 28 Aug 2019 07:21:21 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 595BD2001A9;
-        Wed, 28 Aug 2019 07:21:16 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 65E74402C0;
-        Wed, 28 Aug 2019 13:21:09 +0800 (SGT)
-From:   Shengjiu Wang <shengjiu.wang@nxp.com>
-To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: fsl_ssi: Fix clock control issue in master mode
-Date:   Wed, 28 Aug 2019 13:20:17 -0400
-Message-Id: <1567012817-12625-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726207AbfH1Faq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 01:30:46 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34549 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfH1Faq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 01:30:46 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b24so936356pfp.1;
+        Tue, 27 Aug 2019 22:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=qecDIkMeHBFjm/kMW1gsobuyMP+gtivx3tLy17j70fI=;
+        b=jRSPoAMdEZqyMHgL4B0YmmMwy1VnO8QPUNCTSG7YqC93q88WjBS8hppPgCMqaLP/x/
+         bjMqp5/ikaBz4qEyk7Kdb4V/jRuG0PdAR1Eb8qd4jV5LxhxtCD1fp6oX3etXZDVCCO80
+         OvJL6+onURyXpTItyg2jJK2FjkorbCuD1sWItgz7vE4wd9GX7aKHp+YNs09MUOpqPSOs
+         cU70ZRllPME73UPe2ISdMl0yUnanoPR5QnUb2YSyS3IXcTBMP0x1SYnHAg0XceqAvMOs
+         Y1jSmX77POzPCBhagit4Bc/VbsqdHWGSgv7U9Wm1RbaYtmGJWxXO786gt6OCCnGr9ep0
+         akdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=qecDIkMeHBFjm/kMW1gsobuyMP+gtivx3tLy17j70fI=;
+        b=IYYPELN6IuFudi4ZXDpbH8b5k8BSm+9YkM9t02syAuuEBqnoydXBJClXVp7QB2oUhZ
+         MtEP2Acqb3bUgCg70FIE43/U8xThFrUEPlnQ1lH7MF1fyMDsN4uE/81JVqQxNrp1hVph
+         3b4J2yYY3N6AEK51MFzPDbUTdG3MJQX4J7sT0CA9BiiVkhTFMCAdTZ9y34jsLQmLKoqu
+         C5htid481P14Vu4kPqL2V6VjKVO3Fc9HosvZcm208Hsu/vjTI9MiKut0svVHndpkD4st
+         61xpPQ0eJv/FTRlewGKwyzQJUTltl2KgbtE9+MWNeYPpcXn5GgpVSBxnGaRuruFUVes5
+         4B4g==
+X-Gm-Message-State: APjAAAUQamxyk3h1LWFcKFgG323pWdhCm2b4LYvRhMXvvvErSvM4tQAH
+        4MjcGXSBD2/sY+GXkw+arDA=
+X-Google-Smtp-Source: APXvYqzs9qv8QyGAzL0ZrVFVOrYL3MkkQw8ssw8tigeK6949uy2jyvPhWTsxoNF16sIrw3nnfpLK6Q==
+X-Received: by 2002:a62:7912:: with SMTP id u18mr2740540pfc.254.1566970245542;
+        Tue, 27 Aug 2019 22:30:45 -0700 (PDT)
+Received: from localhost ([39.7.47.251])
+        by smtp.gmail.com with ESMTPSA id 4sm1212555pfn.118.2019.08.27.22.30.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 22:30:44 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 14:30:41 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: linux-next: Tree for Aug 27 (mm/zsmalloc.c)
+Message-ID: <20190828053041.GC526@jagdpanzerIV>
+References: <20190827190526.6f27e763@canb.auug.org.au>
+ <895d0324-3537-3d36-fa0f-5d61b733ef6e@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <895d0324-3537-3d36-fa0f-5d61b733ef6e@infradead.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The test case is
-arecord -Dhw:0 -d 10 -f S16_LE -r 48000 -c 2 temp.wav &
-aplay -Dhw:0 -d 30 -f S16_LE -r 48000 -c 2 test.wav
+On (08/27/19 08:37), Randy Dunlap wrote:
+> on x86_64:
+> 
+> In file included from ../include/linux/mmzone.h:10:0,
+>                  from ../include/linux/gfp.h:6,
+>                  from ../include/linux/umh.h:4,
+>                  from ../include/linux/kmod.h:9,
+>                  from ../include/linux/module.h:13,
+>                  from ../mm/zsmalloc.c:33:
+> ../mm/zsmalloc.c: In function ‘zs_create_pool’:
+> ../mm/zsmalloc.c:2416:27: error: ‘struct zs_pool’ has no member named ‘migration_wait’
+>   init_waitqueue_head(&pool->migration_wait);
+>                            ^
+> ../include/linux/wait.h:67:26: note: in definition of macro ‘init_waitqueue_head’
+>    __init_waitqueue_head((wq_head), #wq_head, &__key);  \
+>                           ^~~~~~~
 
-There will be error after end of arecord:
-aplay: pcm_write:2051: write error: Input/output error
+Thanks.
 
-Capture and Playback work in parallel in master mode, one
-substream stops, the other substream is impacted, the
-reason is that clock is disabled wrongly.
+I believe akpm has a patch for that build error.
 
-The clock's reference count is not increased when second
-substream starts, the hw_param() function returns in the
-beginning because first substream is enabled, then in end
-of first substream, the hw_free() disables the clock.
+===========
 
-This patch is to move the clock enablement to the place
-before checking of the device enablement in hw_param().
+--- a/mm/zsmalloc.c~mm-zsmallocc-fix-build-when-config_compaction=n
++++ a/mm/zsmalloc.c
+@@ -2412,7 +2412,9 @@ struct zs_pool *zs_create_pool(const cha
+        if (!pool->name)
+                goto err;
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- sound/soc/fsl/fsl_ssi.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
++#ifdef CONFIG_COMPACTION
+        init_waitqueue_head(&pool->migration_wait);
++#endif
 
-diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
-index b0a6fead1a6a..537dc69256f0 100644
---- a/sound/soc/fsl/fsl_ssi.c
-+++ b/sound/soc/fsl/fsl_ssi.c
-@@ -799,15 +799,6 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
- 	u32 wl = SSI_SxCCR_WL(sample_size);
- 	int ret;
- 
--	/*
--	 * SSI is properly configured if it is enabled and running in
--	 * the synchronous mode; Note that AC97 mode is an exception
--	 * that should set separate configurations for STCCR and SRCCR
--	 * despite running in the synchronous mode.
--	 */
--	if (ssi->streams && ssi->synchronous)
--		return 0;
--
- 	if (fsl_ssi_is_i2s_master(ssi)) {
- 		ret = fsl_ssi_set_bclk(substream, dai, hw_params);
- 		if (ret)
-@@ -823,6 +814,15 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
- 		}
- 	}
- 
-+	/*
-+	 * SSI is properly configured if it is enabled and running in
-+	 * the synchronous mode; Note that AC97 mode is an exception
-+	 * that should set separate configurations for STCCR and SRCCR
-+	 * despite running in the synchronous mode.
-+	 */
-+	if (ssi->streams && ssi->synchronous)
-+		return 0;
-+
- 	if (!fsl_ssi_is_ac97(ssi)) {
- 		/*
- 		 * Keep the ssi->i2s_net intact while having a local variable
--- 
-2.21.0
+===========
 
+	-ss
