@@ -2,67 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29344A06A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70EA0A06A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 17:53:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbfH1PxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 11:53:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbfH1PxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 11:53:17 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D10A22064A;
-        Wed, 28 Aug 2019 15:53:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567007596;
-        bh=6/85+MzB1JJmEyPqfvT2XU196VzVe0Da/hn+nwH94WI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=InFHVs6MWH1gnWoAc3XBoEGci7TX31v4oYyKXQyASPylb9B/f/f/NKujpijCRB9yq
-         HjTQRDEkRzEWeu09eK61jLdk8gHjL+8f9hjsuiCsKEMq2bJqiq8WnI74b34D1FqrK4
-         JC/Kvcpz6qgHIa019eKMcbL9hjFJtOnHuSGgbfxA=
-Subject: Re: [PATCH v1] sefltest/ima: support appended signatures (modsig)
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Petr Vorel <pvorel@suse.cz>, Jessica Yu <jeyu@kernel.org>,
-        Dave Young <dyoung@redhat.com>,
-        linux-kselftest@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, shuah <shuah@kernel.org>
-References: <1567005240-12912-1-git-send-email-zohar@linux.ibm.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <4a9f9cd3-c550-98e4-1513-14ef161c34c2@kernel.org>
-Date:   Wed, 28 Aug 2019 09:53:14 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726909AbfH1Pxa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 11:53:30 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48680 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726763AbfH1Pxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 11:53:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1F846AD85;
+        Wed, 28 Aug 2019 15:53:28 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 16F82DA809; Wed, 28 Aug 2019 17:53:49 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 17:53:49 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     dsterba@suse.cz, Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Pu Wen <puwen@hygon.cn>, Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [GIT pull] x86/urgent for 5.3-rc5
+Message-ID: <20190828155348.GD2752@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Pu Wen <puwen@hygon.cn>, Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+References: <CAHk-=wjhyg-MndXHZGRD+ZKMK1UrcghyLH32rqQA=YmcxV7Z0Q@mail.gmail.com>
+ <20190825193218.GD20639@zn.tnic>
+ <CAHk-=wiBqmHTFYJWOehB=k3mC7srsx0DWMCYZ7fMOC0T7v1KHA@mail.gmail.com>
+ <20190825194912.GF20639@zn.tnic>
+ <CAHk-=wjcUQjK=SqPGdZCDEKntOZEv34n9wKJhBrPzcL6J7nDqQ@mail.gmail.com>
+ <20190825201723.GG20639@zn.tnic>
+ <20190826125342.GC28610@zn.tnic>
+ <CAHk-=wj_E58JskechbJyWwpzu5rwKFHEABr4dCZjS+JBvv67Uw@mail.gmail.com>
+ <20190827173955.GI29752@zn.tnic>
+ <20190828152040.GC2752@twin.jikos.cz>
 MIME-Version: 1.0
-In-Reply-To: <1567005240-12912-1-git-send-email-zohar@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828152040.GC2752@twin.jikos.cz>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/28/19 9:14 AM, Mimi Zohar wrote:
-> In addition to the PE/COFF and IMA xattr signatures, the kexec kernel
-> image can be signed with an appended signature, using the same
-> scripts/sign-file tool that is used to sign kernel modules.
+On Wed, Aug 28, 2019 at 05:20:41PM +0200, David Sterba wrote:
+> On Tue, Aug 27, 2019 at 07:39:55PM +0200, Borislav Petkov wrote:
+> > @@ -42,5 +43,24 @@ void x86_init_rdrand(struct cpuinfo_x86 *c)
+> >  			return;
+> >  		}
+> >  	}
+> > +
+> > +	/*
+> > +	 * Stupid sanity-check whether RDRAND does *actually* generate
+> > +	 * some at least random-looking data.
+> > +	 */
+> > +	prev = tmp;
+> > +	for (i = 0; i < SANITY_CHECK_LOOPS; i++) {
+> > +		if (rdrand_long(&tmp)) {
+> > +			if (prev != tmp)
+> > +				changed++;
 > 
-> This patch adds support for detecting a kernel image signed with an
-> appended signature and updates the existing test messages
-> appropriately.
+> You could do some sort of weak statistical test like
 > 
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
+> 		if (popcnt(prev ^ tmp) < BITS_PER_LONG / 3)
+> 			bad++;
+> 
+> 		if (bad > TOO_BAD)
+> 			WARN(...);
+> 
+> this should catch same value, increments you mentioned and possibly
+> other trivial classes of not-so-random values.
 
-Thanks Mimi. This commit log looks good. My Ack for the patch
-to go through the IMA tree.
+So the average popcount seems to be a more reliable check as I don't
+have a good estimate for TOO_BAD. Ie. calculate average popcount and if
+it's less than third of bit width, consider it broken. The script below
+can be used to demonstrate the behaviour on a good random generator.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+---
+#!/usr/bin/python3
 
-thanks,
--- Shuah
+import random
+
+popsum = 0
+popcount = 0
+
+prev = random.randrange(0, 2**64)
+for i in range(16):
+    x = return random.randrange(0, 2**64)
+    pop = bin(x ^ prev).count("1")
+    popsum += pop
+    popcount += 1
+    print("PREV=%d X=%d popcnt=%d" % (prev, x, pop))
+    prev = x
+
+print("Average popcnt: %d" % (1.0 * popsum / popcount))
+---
+PREV=8900625479737950182 X=12846979731852325434 popcnt=32
+PREV=12846979731852325434 X=8887925161619955047 popcnt=35
+PREV=8887925161619955047 X=988349339658261072 popcnt=36
+PREV=988349339658261072 X=431141664953398919 popcnt=32
+PREV=431141664953398919 X=13830962168734488538 popcnt=33
+PREV=13830962168734488538 X=16591763919535693884 popcnt=33
+PREV=16591763919535693884 X=7388685098481568010 popcnt=22
+PREV=7388685098481568010 X=3526579832640281911 popcnt=33
+PREV=3526579832640281911 X=2069567414175453497 popcnt=27
+PREV=2069567414175453497 X=5562304115464083982 popcnt=28
+PREV=5562304115464083982 X=14604545499285704604 popcnt=31
+PREV=14604545499285704604 X=10602551277613833090 popcnt=31
+PREV=10602551277613833090 X=6431137842853826307 popcnt=32
+PREV=6431137842853826307 X=16231642336281616741 popcnt=41
+PREV=16231642336281616741 X=520921733225029500 popcnt=38
+PREV=520921733225029500 X=12014110422974389822 popcnt=21
+Average popcnt: 31
