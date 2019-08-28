@@ -2,83 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C20129F827
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 04:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BF879F82C
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 04:17:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbfH1CNO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 22:13:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726096AbfH1CNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 22:13:14 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7C4920674;
-        Wed, 28 Aug 2019 02:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566958392;
-        bh=z9cH+4cl9MeA/f7ur8vlDOxGaS3KL68qd9WMtzQrkVI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b8M7wDINZwo+GHxG2o6rCweuZViOOsTq4ZlAvlK9YmNKdBUHaLSssEfEprvyLJAx3
-         oPdemG/tVA0OFWwsEx8KaCOfm2oMJtYjibfKLed253i/fNiPfv6D7fi8u8BQq7/ILe
-         8gNCLrBwoCjx+zYfi9LlYHZfLo1oh1dwtFp7ruQA=
-Date:   Tue, 27 Aug 2019 22:13:11 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ricard Wanderlof <ricard.wanderlof@axis.com>,
-        Ricard Wanderlof <ricardw@axis.com>
-Subject: Re: [PATCH AUTOSEL 5.2 040/123] ASoC: Fail card instantiation if DAI
- format setup fails
-Message-ID: <20190828021311.GV5281@sasha-vm>
-References: <20190814021047.14828-1-sashal@kernel.org>
- <20190814021047.14828-40-sashal@kernel.org>
- <20190814092213.GC4640@sirena.co.uk>
- <20190826013515.GG5281@sasha-vm>
- <20190827110014.GD23391@sirena.co.uk>
+        id S1726278AbfH1CRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 22:17:53 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41143 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfH1CRw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 22:17:52 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 196so618679pfz.8;
+        Tue, 27 Aug 2019 19:17:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ME3wO/9v2at3HWePbC02aNBPfV17xnOv4AE/KalXLkQ=;
+        b=agEbRe70eEOAoV9YiDsgOViWppGehXERpHKcHVeF41mbZ/S/BwBWFURiSVabwSP6k1
+         4/NGCkD9RS9d6BuIDkoiv0wMwBKBNKYRVZFg4gfH7sF4ZJpNiunZ/WYIRqzbaD5J18eg
+         kkOXApacU+R6ELKjbYDfZrCs+DC02q0ZsxawhOkrgJDcS7Udasz31h4FxR/PMrqVCBhb
+         KTVPu8wSbEKtLMDhlNV5LQEZyZq5uJK/rOClEGKtupI9K1OWUK+kw1Nenvi06UDf0K4l
+         Oecbwe5D4vpA2Mg4Xh66nKgkjqswt2krvaiKd03wt+ZLdQpcakmeBAt0S6xa4+fMdk0h
+         rPpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ME3wO/9v2at3HWePbC02aNBPfV17xnOv4AE/KalXLkQ=;
+        b=NllRaQ9bt9LPuc+YTQJsWPw6YL0t+0O2Lovk+OHekZKPZF/CMtUy0Zy1pwCyvti8Ud
+         mJL5a7wJdWF0ZqIjKU2CuLmTOx+uwu/885IHuFaT6MbCwFyonYW9qtVl9atN3iveUuAr
+         zd0gJwcamJznLdAv98kxzwpycbx4mb2Lls+JWv86cs52ONQI48iBpwvQqNy3suQ2VvAA
+         OwkYh/VRB4eoxoZX22IicdSZZBzXcRA8VtpfkCXzt/E1Eo9FTfaCf9ZdeEoAsybm/Cxc
+         NWUrOywM5VPpqfbIyPPCwpT1bwxD55edwcKYv8S4cMbhX9riZFUg1cRSJQJ1kdRHguUN
+         aIjQ==
+X-Gm-Message-State: APjAAAWOVzdikCQiNNglmPiGldMhx/esgTYfq7RwiaNHiPkqp6KbZAqM
+        vCzJxvYOz6AlRI9buIYlQlk=
+X-Google-Smtp-Source: APXvYqwCyMHHYOU61NQBLGSTEds+GGJiCFwurDNNaYoBJdFI2T5xOtjSENBvXeh3WMNDAREQHp3OSg==
+X-Received: by 2002:a63:124a:: with SMTP id 10mr1371712pgs.254.1566958672069;
+        Tue, 27 Aug 2019 19:17:52 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id b18sm673249pfi.160.2019.08.27.19.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 19:17:51 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH v2 0/5] a few fixes for sprd's sd host controller
+Date:   Wed, 28 Aug 2019 10:17:31 +0800
+Message-Id: <20190828021736.22049-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190827110014.GD23391@sirena.co.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 12:00:14PM +0100, Mark Brown wrote:
->On Sun, Aug 25, 2019 at 09:35:15PM -0400, Sasha Levin wrote:
->> On Wed, Aug 14, 2019 at 10:22:13AM +0100, Mark Brown wrote:
->
->> > > If the DAI format setup fails, there is no valid communication format
->> > > between CPU and CODEC, so fail card instantiation, rather than continue
->> > > with a card that will most likely not function properly.
->
->> > This is another one where if nobody noticed a problem already and things
->> > just happened to be working this might break things, it's vanishingly
->> > unlikely to fix anything that was broken.
->
->> Same as the other patch: this patch suggests it fixes a real bug, and if
->> this patch is broken let's fix it.
->
->If anyone ran into this on the older kernel and fixed or worked
->around it locally there's a reasonable chance this will then
->break what they're doing.  The patch itself is perfectly fine but
+With this patch-set, both sd card and mmc can be setup.  This patch-set was
+verified on Unisoc's Whale2 and another mobile phone platform SC9863A.
 
-But there's not much we can do here. We can't hold off on fixing
-breakage such as this because existing users have workarounds for this.
-Are we breaking kernel ABI with this patch then?
+Changes from v1:
+- Added Reviewed-by and Tested-by of Baolin;
+- Added fixes tag for all patches in this series.
 
-And what about new users? We'll let them get hit by the issue and
-develop their own workarounds?
+Chunyan Zhang (5):
+  mmc: sdhci-sprd: fixed incorrect clock divider
+  mmc: sdhci-sprd: add get_ro hook function
+  mmc: sdhci-sprd: add SDHCI_QUIRK2_PRESET_VALUE_BROKEN
+  mms: sdhci-sprd: add SDHCI_QUIRK_BROKEN_CARD_DETECTION
+  mmc: sdhci-sprd: clear the UHS-I modes read from registers
 
->that doesn't mean the rest of the changes it's being backported
->into are also fine.
+ drivers/mmc/host/sdhci-sprd.c | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-This is fair, and we can always hold off on patches if you want more
-time for them to be tested/reviewed. Is it the case here?
+-- 
+2.20.1
 
---
-Thanks,
-Sasha
