@@ -2,78 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 658C69F9B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:08:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FE1B9F9C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:24:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbfH1FIm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 01:08:42 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:49262 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfH1FIm (ORCPT
+        id S1726177AbfH1FYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 01:24:11 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46748 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfH1FYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 01:08:42 -0400
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1i2qCA-0007Ui-Om; Wed, 28 Aug 2019 00:08:35 -0500
-Message-ID: <827cc152757906a0ebc04bbe56cdf44683721eb4.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com,
-        yebin10@huawei.com, thunder.leizhen@huawei.com,
-        jingxiangfeng@huawei.com, fanchengyang@huawei.com,
-        zhaohongjiang@huawei.com, Jason Yan <yanaijie@huawei.com>,
-        linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com,
-        christophe.leroy@c-s.fr, benh@kernel.crashing.org,
-        paulus@samba.org, npiggin@gmail.com, keescook@chromium.org,
-        kernel-hardening@lists.openwall.com
-Date:   Wed, 28 Aug 2019 00:08:33 -0500
-In-Reply-To: <878srf4cjk.fsf@concordia.ellerman.id.au>
-References: <20190809100800.5426-1-yanaijie@huawei.com>
-         <ed96199d-715c-3f1c-39db-10a569ba6601@huawei.com>
-         <529fd908-42d6-f96f-daa2-9010f3035879@huawei.com>
-         <878srf4cjk.fsf@concordia.ellerman.id.au>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: mpe@ellerman.id.au, linux-kernel@vger.kernel.org, wangkefeng.wang@huawei.com, yebin10@huawei.com, thunder.leizhen@huawei.com, jingxiangfeng@huawei.com, fanchengyang@huawei.com, zhaohongjiang@huawei.com, yanaijie@huawei.com, linuxppc-dev@lists.ozlabs.org, diana.craciun@nxp.com, christophe.leroy@c-s.fr, benh@kernel.crashing.org, paulus@samba.org, npiggin@gmail.com, keescook@chromium.org, kernel-hardening@lists.openwall.com
-X-SA-Exim-Mail-From: oss@buserror.net
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
-X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0000]
-        * -1.5 GREYLIST_ISWHITE The incoming server has been whitelisted for
-        *      this recipient and sender
-Subject: Re: [PATCH v6 00/12] implement KASLR for powerpc/fsl_booke/32
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Wed, 28 Aug 2019 01:24:10 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q139so887105pfc.13;
+        Tue, 27 Aug 2019 22:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dhdmXWrPSEQR4IZD4RGdgvn2ki148613KDqA6rGmWaI=;
+        b=i4noJJp/M0iD0dPteicCV8FGVXl2m1GkFp8vAJTAej0neka8LLxDZ3YK8WUC3H6g8N
+         vOqWi/cOcdC4U6RkntBrYPeqPxElNnIy+tIOqzea9nkpEjQXLZC6DnXOx0Ujd/WdYc34
+         78i43ywWSE3Q09hx06YRFdr0CbEQQnS+iWFWh9JLxQjUonYN0p0SEKJQCIGg6SjDWgdI
+         Vfn1pDIPbOVQ+/IHni7frGrYxu/VeJ32DsHnsM7wvnATAjDkdjO8HvPi6hjjB5xTrzEK
+         b0bTwvZpU6ripnoiRwhd6gsisBjXgHh4EU1YjhbyDB10sxuSwp9L6lt1ZbvXIrXC/wbn
+         vpNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dhdmXWrPSEQR4IZD4RGdgvn2ki148613KDqA6rGmWaI=;
+        b=Di6Ntv/T9vlZWC7ib+G2pu4MhxmsFjN70SHdXXG2QhpX03KyKcaqorHQ1HQil5m+p+
+         +QX5uBFm0gjViGjUrSjcdIn03A6xjdjXX8Ndewl0+Opm6innlVIC4XSSNRdmMrhFTyZL
+         D+175wwi1sLveYCPeA2ljPEw8ONFNjNmFxFNeuj7BPeqCPct3KZE3f95AEMUSTXxs5ZX
+         U9WIC10r/oP951xe2pN78P3zbPGdwEfkmEajrScY1uCcpPcI5AzCapZFcN7f0qq6hAEO
+         WPfaBIiyiZ52bcGphTMfgHe+C8qZJfSgE0uRiI+qi+qmA18YUzeKYDsVfT9Re2XmFMjB
+         5tKA==
+X-Gm-Message-State: APjAAAXrE0PLR+VvBbR93zJUJspqgM319wxP8rs/4eOVYB4UGhoXfkJc
+        S9PTCQvbTqsOm/+06SbmAXM=
+X-Google-Smtp-Source: APXvYqz/5YFoNR5M/xs4inkuDaLGA7dlFEHHBrYKZRgHiAKVZ9UdSKE7ntbJiGhDLAj/HBTM/tO2Ag==
+X-Received: by 2002:a62:144f:: with SMTP id 76mr2648466pfu.62.1566969849639;
+        Tue, 27 Aug 2019 22:24:09 -0700 (PDT)
+Received: from localhost ([39.7.47.251])
+        by smtp.gmail.com with ESMTPSA id e3sm920351pjr.9.2019.08.27.22.24.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Aug 2019 22:24:08 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 14:24:05 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        shuah@kernel.org, pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, kunit-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        frowand.list@gmail.com, sboyd@kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH v1] printk: add dummy vprintk_emit for when
+ CONFIG_PRINTK=n
+Message-ID: <20190828052405.GA526@jagdpanzerIV>
+References: <20190827234835.234473-1-brendanhiggins@google.com>
+ <20190828030231.GA24069@jagdpanzerIV>
+ <20190828044529.GA30152@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828044529.GA30152@google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-27 at 11:33 +1000, Michael Ellerman wrote:
-> Jason Yan <yanaijie@huawei.com> writes:
-> > A polite ping :)
-> > 
-> > What else should I do now?
+On (08/27/19 21:45), Brendan Higgins wrote:
+[..]
+> I actually use it in a very similar way as dev_printk() does. I am using
+> it to define an equivalent kunit_printk(), which takes a log level, and
+> adds its own test information to the log.
 > 
-> That's a good question.
+> What I have now is:
 > 
-> Scott, are you still maintaining FSL bits, 
+> static int kunit_vprintk_emit(int level, const char *fmt, va_list args)
+> {
+> 	return vprintk_emit(0, level, NULL, 0, fmt, args);
+> }
+> 
+> static int kunit_printk_emit(int level, const char *fmt, ...)
+> {
+> 	va_list args;
+> 	int ret;
+> 
+> 	va_start(args, fmt);
+> 	ret = kunit_vprintk_emit(level, fmt, args);
+> 	va_end(args);
+> 
+> 	return ret;
+> }
+> 
+> static void kunit_vprintk(const struct kunit *test,
+> 			  const char *level,
+> 			  struct va_format *vaf)
+> {
+> 	kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
+> }
 
-Sort of... now that it's become very low volume, it's easy to forget when
-something does show up (or miss it if I'm not CCed).  It'd probably help if I
-were to just ack patches instead of thinking "I'll do a pull request for this
-later" when it's just one or two patches per cycle.
+Basically, for prefixes we have pr_fmt().
 
--Scott
+#define pr_fmt(fmt) "module name: " fmt
 
+but pr_fmt() is mostly for static prefixes. If that doesn't work for
+you, then maybe you can tweak kunit_foo() macros?
 
+E.g. something like this
+
+#define kunit_info(test, fmt, ...)                                   \
+	printk(KERN_INFO "\t# %s: " pr_fmt(fmt), (test)->name, ##__VA_ARGS__)
+
+#define kunit_err(test, fmt, ...)                                    \
+	printk(KERN_ERR "\t# %s: " pr_fmt(fmt), (test)->name, ##__VA_ARGS__)
+
+#define kunit_debug(test, fmt, ...)                                  \
+	printk(KERN_DEBUG "\t# %s: " pr_fmt(fmt), (test)->name, ##__VA_ARGS__)
+
+Would that do the trick? Am I missing something?
+
+	-ss
