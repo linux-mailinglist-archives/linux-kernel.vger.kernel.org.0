@@ -2,102 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73C75A0F77
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 04:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DF7AA0FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 04:45:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbfH2C0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 22:26:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53314 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbfH2C0j (ORCPT
+        id S1726888AbfH2CpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 22:45:08 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46730 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbfH2CpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 22:26:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:
-        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cvhAYDXepFr1W9XWCommsvR9amxyOLa9CIfTaM40gzI=; b=dvr793nmEyuIwAJsP5Fl+MGYY
-        uvnb9faUYyG1neWulPIY9ZqRNcx7SjwX+FKIEfKqNBaq9RcsVdx+oknvaG6iuC9vm37zGhMyvQvSp
-        nJheZPzgfL7MJSOERDyF7B+MXxsLHKpsR2LFo2OMFICcizUrJHk3BSzURLc/JXfRSqhYSVDAbp0Dz
-        cz3cR7/pdDt9G7D/xrl5aDhIH/TOr7g14632wYtcz03Z7SVo120mKlQT+ZPrHNq6nrfB5BSpna5tq
-        iBgolawBjj8HZ+Oof7dNaGFrhrtQ92LUnI5Fms8FoSvTkrIZX17aaBVDTCZayHDWuIoXvsEx2ijEb
-        64O83mpTA==;
-Received: from [2601:1c0:6200:6e8::4f71]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3A8u-0005Xu-47; Thu, 29 Aug 2019 02:26:32 +0000
-Subject: Re: mmotm 2019-08-27-20-39 uploaded (sound/hda/intel-nhlt.c)
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        akpm@linux-foundation.org, broonie@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz,
-        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
-        moderated for non-subscribers <alsa-devel@alsa-project.org>
-References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
- <274054ef-8611-2661-9e67-4aabae5a7728@infradead.org>
- <5ac8a7a7-a9b4-89a5-e0a6-7c97ec1fabc6@linux.intel.com>
- <98ada795-4700-7fcc-6d14-fcc1ab25d509@infradead.org>
- <f0a62b08-cba9-d944-5792-8eac0ea39df1@linux.intel.com>
- <19edfb9a-f7b3-7a89-db5a-33289559aeef@linux.intel.com>
- <4725bbed-81e1-9724-b51c-47eba8e414d0@infradead.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d26c671b-fa17-e065-85f3-d6d187c4fc15@infradead.org>
-Date:   Wed, 28 Aug 2019 19:26:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 28 Aug 2019 22:45:08 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7T2ie4d110352;
+        Thu, 29 Aug 2019 02:44:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2019-08-05;
+ bh=vuXYwl4+3gT1SOY2ggdFx5WMHHwn7038nvwRZyo/0PA=;
+ b=VXXiIf7/w+pYHuyjIGgXRxxNT/6DGj8fLCYs39dpD7ma9jEcbnx3komF1t/CvJWbuQSz
+ ekV0RkK9Ltqm1oW18CnJLXsdblJ9b/aU39g6XZGtlSnAvLKvT7mA9cPz7uYuC1XZi4U2
+ W7bRwwbE7VZ0xYXyxzm50kojF6OQr5WEKDLuUcC52eRwPt6I4NoO5p0zPWbViU0HngB5
+ EH6Q9/Y4PPmRn+IOIeblKtvqobA0LtXSn7Ov9Ac9LRouel/4tw0RMVXzsbQZ/Jgv1LOU
+ T1Tbm8dMMx8RqfQO9roY4l/xISn4J89z03hGXL7UGQ8BjkdRYp0etul1SpUYTqhUZa3u YQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2up62pg0np-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 02:44:52 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7SMDLif011581;
+        Wed, 28 Aug 2019 22:16:32 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2unvtxxk9w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 22:16:31 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7SMGVLk020533;
+        Wed, 28 Aug 2019 22:16:31 GMT
+Received: from zissou.us.oracle.com (/10.152.34.58)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 28 Aug 2019 15:16:30 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Steffen Klassert <steffen.klassert@secunet.com>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH v2 2/5] padata: remove reorder_objects
+Date:   Wed, 28 Aug 2019 18:14:22 -0400
+Message-Id: <20190828221425.22701-3-daniel.m.jordan@oracle.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190828221425.22701-1-daniel.m.jordan@oracle.com>
+References: <20190828221425.22701-1-daniel.m.jordan@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <4725bbed-81e1-9724-b51c-47eba8e414d0@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908280214
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290029
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/28/19 3:59 PM, Randy Dunlap wrote:
-> On 8/28/19 3:45 PM, Pierre-Louis Bossart wrote:
->>
->>>>> I just checked with Mark Brown's for-next tree 8aceffa09b4b9867153bfe0ff6f40517240cee12
->>>>> and things are fine in i386 mode, see below.
->>>>>
->>>>> next-20190828 also works fine for me in i386 mode.
->>>>>
->>>>> if you can point me to a tree and configuration that don't work I'll look into this, I'd need more info to progress.
->>>>
->>>> Please try the attached randconfig file.
->>>>
->>>> Thanks for looking.
->>>
->>> Ack, I see some errors as well with this config. Likely a missing dependency somewhere, working on this now.
->>
->> My bad, I added a fallback with static inline functions in the .h file when ACPI is not defined, but the .c file was still compiled.
->>
->> The diff below makes next-20190828 compile with Randy's config.
->>
->> It looks like the alsa-devel server is down btw?
->>
->> diff --git a/sound/hda/Makefile b/sound/hda/Makefile
->> index 8560f6ef1b19..b3af071ce06b 100644
->> --- a/sound/hda/Makefile
->> +++ b/sound/hda/Makefile
->> @@ -14,5 +14,7 @@ obj-$(CONFIG_SND_HDA_CORE) += snd-hda-core.o
->>  #extended hda
->>  obj-$(CONFIG_SND_HDA_EXT_CORE) += ext/
->>
->> +ifdef CONFIG_ACPI
->>  snd-intel-nhlt-objs := intel-nhlt.o
->>  obj-$(CONFIG_SND_INTEL_NHLT) += snd-intel-nhlt.o
->> +endif
->>
-> 
-> works for me.  Thanks.
-> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
-> 
+reorder_objects is unused since the rework of padata's flushing, so
+remove it.
 
-although this Makefile change should not be needed
-and the dependencies should be handled correctly in Kconfig files.
+Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ include/linux/padata.h | 2 --
+ kernel/padata.c        | 3 ---
+ 2 files changed, 5 deletions(-)
 
+diff --git a/include/linux/padata.h b/include/linux/padata.h
+index 1c73f9cc7b72..720e970cda0a 100644
+--- a/include/linux/padata.h
++++ b/include/linux/padata.h
+@@ -103,7 +103,6 @@ struct padata_cpumask {
+  * @pinst: padata instance.
+  * @pqueue: percpu padata queues used for parallelization.
+  * @squeue: percpu padata queues used for serialuzation.
+- * @reorder_objects: Number of objects waiting in the reorder queues.
+  * @refcnt: Number of objects holding a reference on this parallel_data.
+  * @flushing_done: Wait for all objects to be sent out.
+  * @max_seq_nr:  Maximal used sequence number.
+@@ -116,7 +115,6 @@ struct parallel_data {
+ 	struct padata_instance		*pinst;
+ 	struct padata_parallel_queue	__percpu *pqueue;
+ 	struct padata_serial_queue	__percpu *squeue;
+-	atomic_t			reorder_objects;
+ 	atomic_t			refcnt;
+ 	struct completion		flushing_done;
+ 	atomic_t			seq_nr;
+diff --git a/kernel/padata.c b/kernel/padata.c
+index 958166e23123..2bfce01c5b85 100644
+--- a/kernel/padata.c
++++ b/kernel/padata.c
+@@ -179,7 +179,6 @@ static struct padata_priv *padata_get_next(struct parallel_data *pd)
+ 				    struct padata_priv, list);
+ 
+ 		list_del_init(&padata->list);
+-		atomic_dec(&pd->reorder_objects);
+ 
+ 		pd->cpu = cpumask_next_wrap(cpu, pd->cpumask.pcpu, -1,
+ 					    false);
+@@ -323,7 +322,6 @@ void padata_do_serial(struct padata_priv *padata)
+ 
+ 	spin_lock(&pqueue->reorder.lock);
+ 	list_add_tail(&padata->list, &pqueue->reorder.list);
+-	atomic_inc(&pd->reorder_objects);
+ 	spin_unlock(&pqueue->reorder.lock);
+ 
+ 	/*
+@@ -423,7 +421,6 @@ static struct parallel_data *padata_alloc_pd(struct padata_instance *pinst,
+ 	padata_init_pqueues(pd);
+ 	padata_init_squeues(pd);
+ 	atomic_set(&pd->seq_nr, -1);
+-	atomic_set(&pd->reorder_objects, 0);
+ 	/* Initial ref dropped in padata_flush_queues. */
+ 	atomic_set(&pd->refcnt, 1);
+ 	init_completion(&pd->flushing_done);
 -- 
-~Randy
+2.23.0
+
