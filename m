@@ -2,82 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A233A02D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:14:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AC1A02DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfH1NOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:14:39 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47186 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbfH1NOg (ORCPT
+        id S1726832AbfH1NPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:15:08 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:60812 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726394AbfH1NPH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:14:36 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1i2xmT-00045m-G8; Wed, 28 Aug 2019 15:14:33 +0200
-Date:   Wed, 28 Aug 2019 15:14:33 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Scott Wood <swood@redhat.com>, linux-rt-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Clark Williams <williams@redhat.com>
-Subject: Re: [PATCH RT v2 2/3] sched: migrate_enable: Use sleeping_lock to
- indicate involuntary sleep
-Message-ID: <20190828131433.3gi4debho5zc7hgc@linutronix.de>
-References: <20190821231906.4224-3-swood@redhat.com>
- <20190823162024.47t7br6ecfclzgkw@linutronix.de>
- <433936e4c720e6b81f9b297fefaa592fd8a961ad.camel@redhat.com>
- <20190824031014.GB2731@google.com>
- <20190826152523.dcjbsgyyir4zjdol@linutronix.de>
- <20190826162945.GE28441@linux.ibm.com>
- <20190827092333.jp3darw7teyyw67g@linutronix.de>
- <20190827155306.GF26530@linux.ibm.com>
- <20190828092739.46mrffvzjv6v3de5@linutronix.de>
- <20190828125426.GO26530@linux.ibm.com>
+        Wed, 28 Aug 2019 09:15:07 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1i2xmp-0008Gg-ES; Wed, 28 Aug 2019 09:14:55 -0400
+Message-ID: <a35dd83b9ecadf4e136b588d7696a23e36ff2e9a.camel@surriel.com>
+Subject: Re: [PATCH 13/15] sched,fair: propagate sum_exec_runtime up the
+ hierarchy
+From:   Rik van Riel <riel@surriel.com>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-team@fb.com, pjt@google.com, peterz@infradead.org,
+        mingo@redhat.com, morten.rasmussen@arm.com, tglx@linutronix.de,
+        mgorman@techsingularity.net, vincent.guittot@linaro.org
+Date:   Wed, 28 Aug 2019 09:14:54 -0400
+In-Reply-To: <f940abf6-3020-014c-74d7-d9be334e201c@arm.com>
+References: <20190822021740.15554-1-riel@surriel.com>
+         <20190822021740.15554-14-riel@surriel.com>
+         <f940abf6-3020-014c-74d7-d9be334e201c@arm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-YVLA9/K5jNpds7mVVwG8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190828125426.GO26530@linux.ibm.com>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-28 05:54:26 [-0700], Paul E. McKenney wrote:
-> On Wed, Aug 28, 2019 at 11:27:39AM +0200, Sebastian Andrzej Siewior wrote:
-> > On 2019-08-27 08:53:06 [-0700], Paul E. McKenney wrote:
-> > > Am I understanding this correctly?
-> > 
-> > Everything perfect except that it is not lockdep complaining but the
-> > WARN_ON_ONCE() in rcu_note_context_switch().
-> 
-> This one, right?
-> 
-> 	WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0);
-> 
-> Another approach would be to change that WARN_ON_ONCE().  This fix might
-> be too extreme, as it would suppress other issues:
-> 
-> 	WARN_ON_ONCE(IS_ENABLED(CONFIG_PREEMPT_RT_BASE) && !preempt && t->rcu_read_lock_nesting > 0);
-> 
-> But maybe what is happening under the covers is that preempt is being
-> set when sleeping on a spinlock.  Is that the case?
 
-I would like to keep that check and that is why we have:
+--=-YVLA9/K5jNpds7mVVwG8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-|   #if defined(CONFIG_PREEMPT_RT_FULL)
-|         sleeping_l = t->sleeping_lock;
-|   #endif
-|         WARN_ON_ONCE(!preempt && t->rcu_read_lock_nesting > 0 && !sleeping_l);
+On Wed, 2019-08-28 at 09:51 +0200, Dietmar Eggemann wrote:
+> On 22/08/2019 04:17, Rik van Riel wrote:
+> > Now that enqueue_task_fair and dequeue_task_fair no longer iterate
+> > up
+> > the hierarchy all the time, a method to lazily propagate
+> > sum_exec_runtime
+> > up the hierarchy is necessary.
+> >=20
+> > Once a tick, propagate the newly accumulated exec_runtime up the
+> > hierarchy,
+> > and feed it into CFS bandwidth control.
+> >=20
+> > Remove the pointless call to account_cfs_rq_runtime from
+> > update_curr,
+> > which is always called with a root cfs_rq.
+>=20
+> But what about the call to account_cfs_rq_runtime() in
+> set_curr_task_fair()? Here you always call it with the root cfs_rq.
+> Shouldn't this be called also in a loop over all se's until !se-
+> >parent
+> (like in propagate_exec_runtime() further below).
 
-in -RT and ->sleeping_lock is that counter that is incremented in
-spin_lock(). And the only reason why sleeping_lock_inc() was used in the
-patch was to disable _this_ warning.
+I believe that call should be only on the cgroup
+cfs_rq, with account_cfs_rq_runtime figuring out
+whether more runtime needs to be obtained from
+further up in the hierarchy.
 
-> 							Thanx, Paul
+By default we should probably work under the assumption
+that account_cfs_rq_runtime() will succeed at the current
+level, and no gymnastics are required to obtain CPU time.
 
-Sebastian
+--=20
+All Rights Reversed.
+
+--=-YVLA9/K5jNpds7mVVwG8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl1mfk8ACgkQznnekoTE
+3oMqrQf6A9CIcHBD91ysYlu6dqDA472OlW0Ml7c5n9B2nC6WM/+J7740PEMEZ2xv
+qnISoltSnfLcveWrykUn7UBsn4QZX+sCLDA4TSK/gkOsmhdyEvW7cleM4muKE5Ff
+t+6zoTRTs2KoLPtoMUi3q4Ew0I2521pwZ0HfUoFDEm5b1fE/LHil7oiOZGv5UVV+
+37b+SPUs4kZ1lbm9p28LQDd56Dck/TgFo3OlZA5O4IWP32U1MMl+qMls3YQSNbKk
+n1jgT7F8ftWjyEZhU4dH919suovk7qWUXB15Jdg/wFR/gUG+jbXqwmluIpF+/Zzq
+Wwtr2rWLnZHnbMQJVZIA/+9zq5g8Bg==
+=yfel
+-----END PGP SIGNATURE-----
+
+--=-YVLA9/K5jNpds7mVVwG8--
+
