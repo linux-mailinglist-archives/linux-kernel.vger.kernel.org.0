@@ -2,98 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61DF8A09D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2735A09D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 20:43:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfH1SnP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 14:43:15 -0400
-Received: from smtprelay0031.hostedemail.com ([216.40.44.31]:42354 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726515AbfH1SnO (ORCPT
+        id S1726980AbfH1Sne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 14:43:34 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38310 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfH1Snd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 14:43:14 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 128C5181D33FB;
-        Wed, 28 Aug 2019 18:43:13 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2693:2828:2900:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3872:3873:3874:4321:5007:8828:10004:10400:10848:11232:11658:11914:12043:12296:12297:12663:12740:12760:12895:13069:13255:13311:13357:13439:14180:14659:14721:21063:21080:21433:21451:21627:21795:30003:30029:30051:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
-X-HE-Tag: turn77_73231392da913
-X-Filterd-Recvd-Size: 2909
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf15.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 28 Aug 2019 18:43:11 +0000 (UTC)
-Message-ID: <082d21ef9effc015de671ff51d689dab740cea16.camel@perches.com>
-Subject: Re: [PATCH v2] x86/PCI: Add missing log facility and move to use
- pr_ macros in pcbios.c
-From:   Joe Perches <joe@perches.com>
-To:     Krzysztof Wilczynski <kswilczynski@gmail.com>
-Cc:     Krzysztof Wilczynski <kw@linux.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
+        Wed, 28 Aug 2019 14:43:33 -0400
+Received: by mail-qt1-f193.google.com with SMTP id q64so717583qtd.5
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 11:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=OjPkEOv+DLtOkFTqeu8lwQuWyFpGs0nrOsZbcx7SOSc=;
+        b=HbHXDrzLqc3lpVU55Nd/0BI2SIQ2x72GzuKH/C2UAiJOAp38bcuMdbQptguyCeoa8S
+         XtS6TSStn/7XppLzX0ltVtzjXABmeo1iBZlbJIsc4IjxoQVNK0XgHoe5qnT8leWBFLKp
+         ygUAeNgUsdCWiSK9m1VX/B1VNJIeObqWI6AHSZGYIK+Qowf5xQW46ccAvDBEfsckznWb
+         MmKN+mdFBQ6Nzf54I3ucE1GI2CyvGbcHp7ySqkRKMENGHCY7dCaaAu8QWTMfUcwQtNxa
+         Ro8JrnGi/uzzbWR34UB7mEtJw9KlHNFZfY2+dANrWQiodo233hpz5sMhLvpLGJJjf8W7
+         2liA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OjPkEOv+DLtOkFTqeu8lwQuWyFpGs0nrOsZbcx7SOSc=;
+        b=jThY1Y0IpxskVAgHEw4Wu3N1ExhczNkgIgSYI64t+oZgW2a4Pno6aM2GnrUZkgvsQV
+         QMpzLcLE+n657oljasZaTqgpIpVcx9ybCj0vSn1sZ742zpjfIDByJW67iFLwW/1z6FIT
+         Or9VKvxpXm0DpzktBytsyfIcOJx5KSmWn7PNMvzx8rJP38iU62rByUG1ZYHGkqyiUwOa
+         1ILdQFnwbmzx9OPmQIk3SNCxND+DI9HgtgoKohkiuyrI8iSZ49X/4eyhIOVAwqJBrfVX
+         bh3vDEXXBZsro7yVi7pbzdqrRrQHyN6drmp/3Ymzi7rWd+zMHGyPb/OnklNbLoJZbn3k
+         A/Fg==
+X-Gm-Message-State: APjAAAU8BwyWumH06R0jbx9ILDP5ODTNK960tHfOjpSa0wo06BDtbSIb
+        OYJ7Hj6ewQKf57MPqnKhVKcjCA==
+X-Google-Smtp-Source: APXvYqyEQcVWQf49+hXcQCirgyPBJnM1VH//y0tMVxtn+SNqmDh6w+F0CMCxwxOy8DpklWetu0fhmA==
+X-Received: by 2002:ac8:750e:: with SMTP id u14mr5800709qtq.282.1567017812387;
+        Wed, 28 Aug 2019 11:43:32 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-167-216-168.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.216.168])
+        by smtp.gmail.com with ESMTPSA id k11sm21089qtp.26.2019.08.28.11.43.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Aug 2019 11:43:31 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1i32uo-0006U8-Rg; Wed, 28 Aug 2019 15:43:30 -0300
+Date:   Wed, 28 Aug 2019 15:43:30 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wei Wang <wvw@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 28 Aug 2019 11:43:09 -0700
-In-Reply-To: <1567017627.3507.0@gmail.com>
-References: <20190825182557.23260-1-kw@linux.com>
-         <20190828175120.22164-1-kw@linux.com>
-         <a13a086c2dd6dd6259d28e5d1d360e2b4d04ca83.camel@perches.com>
-         <1567017627.3507.0@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 3/5] kernel.h: Add non_block_start/end()
+Message-ID: <20190828184330.GD933@ziepe.ca>
+References: <20190826201425.17547-1-daniel.vetter@ffwll.ch>
+ <20190826201425.17547-4-daniel.vetter@ffwll.ch>
+ <20190827225002.GB30700@ziepe.ca>
+ <CAKMK7uHKiLwXLHd1xThZVM1dH-oKrtpDZ=FxLBBwtY7XmJKgtA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uHKiLwXLHd1xThZVM1dH-oKrtpDZ=FxLBBwtY7XmJKgtA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-08-28 at 20:40 +0200, Krzysztof Wilczynski wrote:
-> Hello Joe,
+On Wed, Aug 28, 2019 at 08:33:13PM +0200, Daniel Vetter wrote:
+> On Wed, Aug 28, 2019 at 12:50 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > > diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+> > > index 4fa360a13c1e..82f84cfe372f 100644
+> > > +++ b/include/linux/kernel.h
+> > > @@ -217,7 +217,9 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
+> > >   * might_sleep - annotation for functions that can sleep
+> > >   *
+> > >   * this macro will print a stack trace if it is executed in an atomic
+> > > - * context (spinlock, irq-handler, ...).
+> > > + * context (spinlock, irq-handler, ...). Additional sections where blocking is
+> > > + * not allowed can be annotated with non_block_start() and non_block_end()
+> > > + * pairs.
+> > >   *
+> > >   * This is a useful debugging help to be able to catch problems early and not
+> > >   * be bitten later when the calling function happens to sleep when it is not
+> > > @@ -233,6 +235,25 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
+> > >  # define cant_sleep() \
+> > >       do { __cant_sleep(__FILE__, __LINE__, 0); } while (0)
+> > >  # define sched_annotate_sleep()      (current->task_state_change = 0)
+> > > +/**
+> > > + * non_block_start - annotate the start of section where sleeping is prohibited
+> > > + *
+> > > + * This is on behalf of the oom reaper, specifically when it is calling the mmu
+> > > + * notifiers. The problem is that if the notifier were to block on, for example,
+> > > + * mutex_lock() and if the process which holds that mutex were to perform a
+> > > + * sleeping memory allocation, the oom reaper is now blocked on completion of
+> > > + * that memory allocation. Other blocking calls like wait_event() pose similar
+> > > + * issues.
+> > > + */
+> > > +# define non_block_start() \
+> > > +     do { current->non_block_count++; } while (0)
+> > > +/**
+> > > + * non_block_end - annotate the end of section where sleeping is prohibited
+> > > + *
+> > > + * Closes a section opened by non_block_start().
+> > > + */
+> > > +# define non_block_end() \
+> > > +     do { WARN_ON(current->non_block_count-- == 0); } while (0)
+> >
+> > check-patch does not like these, and I agree
+> >
+> > #101: FILE: include/linux/kernel.h:248:
+> > +# define non_block_start() \
+> > +       do { current->non_block_count++; } while (0)
+> >
+> > /tmp/tmp1spfxufy/0006-kernel-h-Add-non_block_start-end-.patch:108: WARNING: Single statement macros should not use a do {} while (0) loop
+> > #108: FILE: include/linux/kernel.h:255:
+> > +# define non_block_end() \
+> > +       do { WARN_ON(current->non_block_count-- == 0); } while (0)
+> >
+> > Please use a static inline?
 > 
-> Thank you for feedback.
-> [...]
-> > >    Move to pr_debug() over using DBG() from 
-> > > arch/x86/include/asm/pci_x86.h.
-> > 
-> > You might also consider the checkpatch output for this patch.
-> > 
-> > arch/x86/pci/pcbios.c:116: WARNING: line over 80 characters
-> > arch/x86/pci/pcbios.c:116: WARNING: Prefer using '"%s...", __func__' 
-> > to using 'bios32_service', this function's name, in a string
-> > arch/x86/pci/pcbios.c:119: WARNING: Prefer using '"%s...", __func__' 
-> > to using 'bios32_service', this function's name, in a string
-> > arch/x86/pci/pcbios.c:391: WARNING: line over 80 characters
-> 
-> Good point.
-> 
-> The lines over 80 characters wide would be taken care of when
-> moving to using the pr_ macros as the line length will now be
-> shorter contrary to when the e.g., printk(KERNEL_INFO ...),
-> etc., was used.
+> We need get_current() plus the task_struct, so this gets real messy
+> real fast. Not even sure which header this would fit in, or whether
+> I'd need to create a new one. You're insisting on this or respinning
+> with the do { } while (0) dropped ok.
 
-Not really, those were the warnings checkpatch
-emits on your actual patch.
+My prefernce is always a static inline, but if the headers are so
+twisty we need to use #define to solve a missing include, then I
+wouldn't insist on it.
 
-> The other warnings I am going to address in v3.  I was thinking
-> of replacing the following:
-> 
-> pr_warn("bios32_service(0x%lx): not present\n", service);
-> 
-> With something that looks like this:
-> 
-> pr_warn("BIOS32 Service(0x%lx): not present\n", service);
-> 
-> Using "bios32_service" name directly or even moving to __func__
-> feels a lot like an implementation detail is exposed to the
-> end user.  I am not sure how useful that could be.  Also,
-> we are already using log lines starting with "BIOS32", thus
-> it seemed like following them would be the most sensible
-> choice, especially to keep messages consistent.
-> 
-> What do you think?
+If dropping do while is the only change then I can edit it in..
+I think we have the acks now
 
-Fine with me, your patch, your choices.
-
-
+Jason
