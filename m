@@ -2,97 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 503EC9FE8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:34:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7FB69FE8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 11:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726599AbfH1Jd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 05:33:56 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5678 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726378AbfH1Jdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 05:33:54 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id ABE88777571745BBBA9B;
-        Wed, 28 Aug 2019 17:33:51 +0800 (CST)
-Received: from szvp000203569.huawei.com (10.120.216.130) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Wed, 28 Aug 2019 17:33:42 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 4/4] f2fs: fix to add missing F2FS_IO_ALIGNED() condition
-Date:   Wed, 28 Aug 2019 17:33:38 +0800
-Message-ID: <20190828093338.29446-4-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20190828093338.29446-1-yuchao0@huawei.com>
-References: <20190828093338.29446-1-yuchao0@huawei.com>
+        id S1726743AbfH1JeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 05:34:19 -0400
+Received: from ns3.fnarfbargle.com ([103.4.19.87]:33284 "EHLO
+        ns3.fnarfbargle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfH1JeS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 05:34:18 -0400
+Received: from [10.8.0.1] (helo=srv.home ident=heh23050)
+        by ns3.fnarfbargle.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <lists2009@fnarfbargle.com>)
+        id 1i2uKp-0003lo-EM; Wed, 28 Aug 2019 17:33:47 +0800
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fnarfbargle.com; s=mail;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject; bh=oFsbM+2sxNCiyLL3O7L+BKL+AOPIvK7qg5RwQWkJJng=;
+        b=TAxvWLlAPGSnMX/l2uoVntE9RSKf1XwLEkMcN9099KZdDmwtcP/FzB8TT5qi4zK92P/iqgZNwS6Bv4BOkAFSVFLYPIxqUAyDg/L1FC2J0rN+2u4ry+XyFTiyTJWE+uSo4Aer1mYVqXUdpm9fr06dzvOB+GXy/E/XlwniR2OscCs=;
+Subject: Re: Thunderbolt DP oddity on v5.2.9 on iMac 12,2
+From:   Brad Campbell <lists2009@fnarfbargle.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, michael.jamet@intel.com,
+        YehezkelShB@gmail.com
+References: <472bee84-d62b-bfcb-eb83-db881165756b@fnarfbargle.com>
+ <20190828073302.GO3177@lahna.fi.intel.com>
+ <7c9474d2-d948-4d1d-6f7b-94335b8b1f15@fnarfbargle.com>
+Message-ID: <2efea088-fb11-0daf-8c39-f7691e2cf075@fnarfbargle.com>
+Date:   Wed, 28 Aug 2019 17:34:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+In-Reply-To: <7c9474d2-d948-4d1d-6f7b-94335b8b1f15@fnarfbargle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In f2fs_allocate_data_block(), we will reset fio.retry for IO
-alignment feature instead of IO serialization feature.
+On 28/8/19 5:12 pm, Brad Campbell wrote:
+> On 28/8/19 3:33 pm, Mika Westerberg wrote:
 
-In addition, spread F2FS_IO_ALIGNED() to check IO alignment
-feature status explicitly.
+>> I'm suspecting that the boot firmware does configure second DP path also
+>> and we either fail to discover it properly or the boot firmware fails to
+>> set it up.
+>>
+>> Also if you boot with one monitor connected and then connect another
+>> (when the system is up) does it work then?
+> 
+> Umm.. so this is where it gets weird. No it doesn't. Apparently it fails 
+> to configure the first monitor it finds. This is the one the Apple 
+> bootcamp firmware configures at boot.
+> 
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/data.c    | 6 +++++-
- fs/f2fs/segment.c | 4 +++-
- 2 files changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 777888ba171a..4764fdcb34d0 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -294,6 +294,9 @@ static inline void __submit_bio(struct f2fs_sb_info *sbi,
- 		if (test_opt(sbi, LFS) && current->plug)
- 			blk_finish_plug(current->plug);
- 
-+		if (F2FS_IO_ALIGNED(sbi))
-+			goto submit_io;
-+
- 		start = bio->bi_iter.bi_size >> F2FS_BLKSIZE_BITS;
- 		start %= F2FS_IO_SIZE(sbi);
- 
-@@ -607,7 +610,8 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
- 		__submit_merged_bio(io);
- alloc_new:
- 	if (io->bio == NULL) {
--		if ((fio->type == DATA || fio->type == NODE) &&
-+		if (F2FS_IO_ALIGNED(sbi) &&
-+				(fio->type == DATA || fio->type == NODE) &&
- 				fio->new_blkaddr & F2FS_IO_SIZE_MASK(sbi)) {
- 			dec_page_count(sbi, WB_DATA_TYPE(bio_page));
- 			fio->retry = true;
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 18584d4c078a..4887e2ff0ff8 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -3129,12 +3129,14 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 		f2fs_inode_chksum_set(sbi, page);
- 	}
- 
-+	if (F2FS_IO_ALIGNED(sbi))
-+		fio->retry = false;
-+
- 	if (add_list) {
- 		struct f2fs_bio_info *io;
- 
- 		INIT_LIST_HEAD(&fio->list);
- 		fio->in_list = true;
--		fio->retry = false;
- 		io = sbi->write_io[fio->type] + fio->temp;
- 		spin_lock(&io->io_lock);
- 		list_add_tail(&fio->list, &io->io_list);
--- 
-2.18.0.rc1
+Ok just to clarify it appears I've been booting EFI and bypassing the 
+Bootcamp BIOS emulation for a few years. So, that made no difference.
 
