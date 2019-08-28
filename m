@@ -2,96 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E05C8A03E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:58:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F784A03E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 15:59:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfH1N6K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 09:58:10 -0400
-Received: from mail-pf1-f175.google.com ([209.85.210.175]:40448 "EHLO
-        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbfH1N6G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 09:58:06 -0400
-Received: by mail-pf1-f175.google.com with SMTP id w16so1788689pfn.7;
+        id S1727164AbfH1N63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 09:58:29 -0400
+Received: from foss.arm.com ([217.140.110.172]:60038 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727064AbfH1N6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 09:58:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60EBC28;
         Wed, 28 Aug 2019 06:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=l000k2htpnRvRkCB+Wmu6cmx2Z5HU+VewOeFpWYlWGA=;
-        b=ZMiIyKORcwyRCkC5rskiys0McHKqTG6xXs5uYLEbUDcCyb5Bz7U4KKNUwAL6GOweM9
-         eSHEYDEhv7pZfxXSjdxLsL36zJOPM2AymiXilqkIsWBkcbw1du5j/rhKFGyWQkJhYU3i
-         EiTW2/ja8zlr6D8LZVY0Brai/UhjujxLHv1g1FntCzVK74bjMztly9eoj1le96LE+vzx
-         sra6Mv/HPiMD+0c9i/2NoTl4kQCF0Hd2NPuy5X4J+YYwz5IO44ExdIxUUjITRCNYzmOz
-         41jGQmRaaRHyZt+Q8W8fSHqY1UEDY9Ddu7nHxwrn/23q1fvj+mKOJ5eQI6hSx19gZ735
-         En5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=l000k2htpnRvRkCB+Wmu6cmx2Z5HU+VewOeFpWYlWGA=;
-        b=hSjcGEPJeIhrbBgwBBNDklmZ9ysiFjleCSXJ1T7ZJYYQYe34yhKXagnauKLGVbMpgM
-         G3xk4NlzwjTwSOCaOXUUmGlSzCLpLTHe4+BI+A5NksXQF+eGxsrwtqlZ8ExuIqEqOtTN
-         S3EBlm3VE2NwplNgkHsqbNlvZ/VHuprmWaIJ+miSThfp5dF7uI/Gq0mV0A315YhuGi3o
-         qvtxv6Xoo1NnOgtFagndcLP65pcuHHsBox9pBa0R5dNXLlpHz4XDKz5ckC7Rp69MgR4V
-         mrqbrzG9NVhu7JZIVmsfN4fHSZcKWkwYLdpa16Ij7yFxr4pMRH3tsIGMU1pf0i7dmorO
-         No5Q==
-X-Gm-Message-State: APjAAAVvX96hvEPGOcUJ1av4Qsd5BT9cZqyf6DjUvj2YTR6LnY+71kG5
-        FRlwdu4VqABT/iPCwbcbkNWgynw/
-X-Google-Smtp-Source: APXvYqxS9p+J/DoFSHmH4vAstAnmsgeKT+r0UC+FdPrYN4o/q8gCAcnIKyY4jboh3PuRvFPYSyiGyg==
-X-Received: by 2002:a17:90a:a46:: with SMTP id o64mr4389679pjo.90.1567000685593;
-        Wed, 28 Aug 2019 06:58:05 -0700 (PDT)
-Received: from Gentoo ([103.231.91.67])
-        by smtp.gmail.com with ESMTPSA id e19sm2943723pfh.114.2019.08.28.06.58.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E58733F246;
         Wed, 28 Aug 2019 06:58:04 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 19:27:53 +0530
-From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     StableKernel <stable@vger.kernel.org>
-Cc:     LinuxKernel <linux-kernel@vger.kernel.org>
-Subject: Latest kernel version no NOT reflecting on kernel.org
-Message-ID: <20190828135750.GA5841@Gentoo>
+Date:   Wed, 28 Aug 2019 14:58:02 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+        "andre.przywara@arm.com" <andre.przywara@arm.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: mailbox: add binding doc for the ARM
+ SMC/HVC mailbox
+Message-ID: <20190828135802.GB21614@e107155-lin>
+References: <1567004515-3567-1-git-send-email-peng.fan@nxp.com>
+ <1567004515-3567-2-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1567004515-3567-2-git-send-email-peng.fan@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 28, 2019 at 03:02:58AM +0000, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>
+> The ARM SMC/HVC mailbox binding describes a firmware interface to trigger
+> actions in software layers running in the EL2 or EL3 exception levels.
+> The term "ARM" here relates to the SMC instruction as part of the ARM
+> instruction set, not as a standard endorsed by ARM Ltd.
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  .../devicetree/bindings/mailbox/arm-smc.yaml       | 125 +++++++++++++++++++++
+>  1 file changed, 125 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/arm-smc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/mailbox/arm-smc.yaml b/Documentation/devicetree/bindings/mailbox/arm-smc.yaml
+> new file mode 100644
+> index 000000000000..f8eb28d5e307
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/arm-smc.yaml
+> @@ -0,0 +1,125 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/arm-smc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ARM SMC Mailbox Interface
+> +
+> +maintainers:
+> +  - Peng Fan <peng.fan@nxp.com>
+> +
+> +description: |
+> +  This mailbox uses the ARM smc (secure monitor call) and hvc (hypervisor
+> +  call) instruction to trigger a mailbox-connected activity in firmware,
+> +  executing on the very same core as the caller. By nature this operation
+> +  is synchronous and this mailbox provides no way for asynchronous messages
+> +  to be delivered the other way round, from firmware to the OS, but
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Am I the only one, who is not seeing it getting reflected on
-kernel.org???
+> +  asynchronous notification could also be supported.
 
-Well, I have tried it 2 different browsers.....cleared caches several
-times(heck) .....3 different devices .....and importantly 3 different
-networks.
+What do you mean by that ? I would prefer to drop the above line unless
+I am missing something. IMO it contradicts the previous statement less
+you elaborate more on this.
 
-Wondering!=20
+> However the value of
+> +  r0/w0/x0 the firmware returns after the smc call is delivered as a received
+> +  message to the mailbox framework, so a synchronous communication can be
+> +  established, for a asynchronous notification, no value will be returned.
 
-Thanks,
-Bhaskar
+I assume you refer to asynchronous communication from OS to firmware in the
+above statement and "not asynchronous notification" from firmware to OS.
 
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature; name="signature.asc"
+> +  The exact meaning of both the action the mailbox triggers as well as the
+> +  return value is defined by their users and is not subject to this binding.
+> +
+> +  One use case of this mailbox is the SCMI interface, which uses shared memory
+> +  to transfer commands and parameters, and a mailbox to trigger a function
+> +  call. This allows SoCs without a separate management processor (or when
+> +  such a processor is not available or used) to use this standardized
+> +  interface anyway.
+> +
 
------BEGIN PGP SIGNATURE-----
+Not sure if reference to SCMI is needed at all but I don't have any
+objections to it, just thought worth mentioning.
 
-iQEzBAABCAAdFiEEnwF+nWawchZUPOuwsjqdtxFLKRUFAl1miEMACgkQsjqdtxFL
-KRWu0ggArttx+uKUPpICaT94nUAUQAgW1BZ8wFRqJWZTXg+108YXj+fbxEsw935h
-CvFe3T75EMTeLEOoH1G0LbLZcUsIybWrBKM9Cd65KjDs0OPdkdlDHjcmQMRR1fAF
-dETtrs0jm3iJvFFGJjef+cC//gvk/x8GmbTV+JiMQga1ei6s0Q9UOKeVjXLxY6Qw
-tDL9lBcu8YeWkQeiyq60AOh7tX5wPJoTROwsi9rpReZSQVtxiK+nmJX5Pa/dotng
-0rdAs7cKL2T2whzUBw68/y1dkIRwLSZV9lhkYe9YYb+aESC/KDUVW9eeYP+5/klK
-A24CoquvyZAVS91PkYQNYpwBY7GhqA==
-=BzVG
------END PGP SIGNATURE-----
+> +  This binding describes no hardware, but establishes a firmware interface.
+> +  Upon receiving an SMC using one of the described SMC function identifiers,
+> +  the firmware is expected to trigger some mailbox connected functionality.
+> +  The communication follows the ARM SMC calling convention.
+> +  Firmware expects an SMC function identifier in r0 or w0. The supported
+> +  identifiers are passed from consumers, or listed in the the arm,func-ids
+> +  properties as described below. The firmware can return one value in
+> +  the first SMC result register, it is expected to be an error value,
+> +  which shall be propagated to the mailbox client.
+> +
+> +  Any core which supports the SMC or HVC instruction can be used, as long as
+> +  a firmware component running in EL3 or EL2 is handling these calls.
+> +
 
---PEIAKu/WMn1b1Hv9--
+
+Other than the above points, I am fine with it. Once fixed,
+
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+
+Note I haven't reviewed the yaml scheme, but just binding in general.
+
+--
+Regards,
+Sudeep
