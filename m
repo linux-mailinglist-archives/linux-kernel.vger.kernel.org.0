@@ -2,105 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6F38A08C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:39:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38F58A08D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 19:43:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfH1Rj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 13:39:26 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:42975 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726315AbfH1Rj0 (ORCPT
+        id S1726697AbfH1RnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 13:43:17 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32314 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726563AbfH1RnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 13:39:26 -0400
-Received: by mail-yw1-f68.google.com with SMTP id i207so173012ywc.9
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 10:39:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qFpGxWkuqJvzGEyaIhW5jLfEJosqdgJDRUmrRBBeYNs=;
-        b=MA7imn2ncsnCHudQTmqQ5VNmGP5xmFYdXGG3IQLhQSRJBwKfS7igz5Tj3J25Zl9xza
-         KU3CGRXXNayp++1iMedSJO1s4CBH6XYix460Ds56VGq3d0ZwGI9EzPhh9sUG6keZGuLx
-         rm+4kkgsTNggulY9ExRns+6vzU/YZE/bfWtXM6GUBPHYmbbMbHwEcNlCVNhMrxXGQyek
-         jeNBueGjMnKw9Pri3cmDJAiLZPSVg6XfDKQuq7UGs46jHubFTsyYZVGC1d4LYX0ubV0C
-         Nf0nom5s1riI86vEeEhTPzf3lNPNtewKpqTGthpXeceEptS+Pv92dEukR9Va11d7uU/V
-         irIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qFpGxWkuqJvzGEyaIhW5jLfEJosqdgJDRUmrRBBeYNs=;
-        b=IQcxqeNOt5+aPRNtWH/n1jVs6CfALcLXHoKv5Y+ZONJAfyIFkNQeq/92KLzzaLsXsN
-         VN3kg3hydmqRqXTG+RKOw4kRKkL/qvB7WS7g3P2uLVC3Y7hEApFwChPppVo/tNaZzFam
-         0p2a7evCatZaMXmd4fNa/ccrrUz7nnRl9xysF02oXWkCTs8CdXi55kZOCGp+HgQnUpyA
-         ifLhM14SkT8cNXP+lOFQ4NFQKO447U6Q/Mx4H+slOYlA53dhQisUnm4OPlm/BRaH4J21
-         kxyk/IYgKxoRKRIQGtS3DGV5D91Nl3orRgidyNLrR7tPaqpv4/4ZvfkVSTxUFOmJV0Q2
-         6oug==
-X-Gm-Message-State: APjAAAWXkDoKcOHrZFv/ToKFVj+1+WOl0HdhAXkxURJqLXy4N7Lt6PPy
-        135PLjLYgcK7MJbXylJk0U+EPw==
-X-Google-Smtp-Source: APXvYqyrVae82GONg6G6xNXh2GuQpBKNgcXrFoQjXLJtaTK9ENwDFPeV9rgnIhlfcztUqTBdkROW9Q==
-X-Received: by 2002:a81:2e0b:: with SMTP id u11mr3819761ywu.219.1567013965380;
-        Wed, 28 Aug 2019 10:39:25 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id d186sm614964ywf.28.2019.08.28.10.39.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 10:39:24 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 13:39:24 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bruce Wang <bzwang@chromium.org>,
-        Jayant Shekhar <jshekhar@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: remove stray "\n"
-Message-ID: <20190828173924.GD218215@art_vandelay>
-References: <20190827211016.18070-1-robdclark@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190827211016.18070-1-robdclark@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 28 Aug 2019 13:43:16 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7SHbmDR042508;
+        Wed, 28 Aug 2019 13:43:04 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2unuxk5ap3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 13:43:03 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7SHdaVT058445;
+        Wed, 28 Aug 2019 13:43:03 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2unuxk5anh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 13:43:03 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7SHdUP2030957;
+        Wed, 28 Aug 2019 17:43:02 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma05wdc.us.ibm.com with ESMTP id 2ujvv7799e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 28 Aug 2019 17:43:02 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7SHh1iW48103852
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 28 Aug 2019 17:43:01 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D9710112063;
+        Wed, 28 Aug 2019 17:43:01 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2DBF112062;
+        Wed, 28 Aug 2019 17:42:56 +0000 (GMT)
+Received: from [9.85.111.211] (unknown [9.85.111.211])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 28 Aug 2019 17:42:56 +0000 (GMT)
+Message-ID: <1567014175.5082.6.camel@abdul>
+Subject: Re: [linux-next][BUG][driver/scsi/lpfc][c00f62e6] Kernel panics
+ when booting next kernel on my Power 9 box
+From:   Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+To:     James Smart <jsmart2021@gmail.com>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        sachinp <sachinp@linux.vnet.ibm.com>,
+        manvanth <manvanth@linux.vnet.ibm.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        dick.kennedy@broadcom.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        dougmill <dougmill@linux.vnet.ibm.com>,
+        Brian King <brking@linux.vnet.ibm.com>
+Date:   Wed, 28 Aug 2019 23:12:55 +0530
+In-Reply-To: <601365f6-c753-96f6-5d61-481f54d95440@gmail.com>
+References: <1566968536.23670.9.camel@abdul>
+         <601365f6-c753-96f6-5d61-481f54d95440@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908280172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 02:10:09PM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
+On Wed, 2019-08-28 at 08:22 -0700, James Smart wrote:
+> On 8/27/2019 10:02 PM, Abdul Haleem wrote:
+> > Greetings,
+> > 
+> > linux-next kernel 5.3.0-rc1 failed to boot with kernel Oops on Power 9
+> > box
+> > 
+> > I see a recent changes to lpfc code was from commit
+> > 10541f03 scsi: lpfc: Update lpfc version to 12.4.0.0
+> > 
+> > Recent boot logs:
+> > 
+> > [..snip..]
 > 
-> The extra line-break in traces was annoying me.
+> see  https://www.spinics.net/lists/linux-scsi/msg133343.html
 > 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> It hasn't been tested yet, but appears to be the issue.
 
-Reviewed-by: Sean Paul <sean@poorly.run>
+Ah, commit c00f62e6 (scsi: lpfc: Merge per-protocol...) is the bad one
+and Yes the patch fixes it, System booted fine with below code change
 
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
-> index 765484437d11..eecfe9b3199e 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_trace.h
-> @@ -392,7 +392,7 @@ TRACE_EVENT(dpu_enc_rc,
->  		__entry->rc_state = rc_state;
->  		__assign_str(stage_str, stage);
->  	),
-> -	TP_printk("%s: id:%u, sw_event:%d, idle_pc_supported:%s, rc_state:%d\n",
-> +	TP_printk("%s: id:%u, sw_event:%d, idle_pc_supported:%s, rc_state:%d",
->  		  __get_str(stage_str), __entry->drm_id, __entry->sw_event,
->  		  __entry->idle_pc_supported ? "true" : "false",
->  		  __entry->rc_state)
-> -- 
-> 2.21.0
-> 
+--- a/drivers/scsi/lpfc/lpfc_sli.c    2019-08-23 13:55:18.253546775 -0700
++++ b/drivers/scsi/lpfc_sli.c    2019-08-27 17:04:51.095330056 -0700
+@@ -5553,7 +5553,7 @@ lpfc_sli4_arm_cqeq_intr(struct lpfc_hba
+         for (qidx = 0; qidx < phba->cfg_hdw_queue; qidx++) {
+             qp = &sli4_hba->hdwq[qidx];
+             /* ARM the corresponding CQ */
+-            sli4_hba->sli4_write_cq_db(phba, qp[qidx].io_cq, 0,
++            sli4_hba->sli4_write_cq_db(phba, qp->io_cq, 0,
+                         LPFC_QUEUE_REARM);
+
+
+Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
 
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Regard's
+
+Abdul Haleem
+IBM Linux Technology Centre
+
+
+
