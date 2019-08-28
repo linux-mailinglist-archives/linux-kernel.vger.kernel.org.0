@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB1469FF60
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:17:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DC49FF3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 12:16:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfH1KQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 06:16:41 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:46428 "EHLO
+        id S1726892AbfH1KQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 06:16:39 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:46412 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726796AbfH1KQf (ORCPT
+        with ESMTP id S1726706AbfH1KQe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 06:16:35 -0400
+        Wed, 28 Aug 2019 06:16:34 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i2v0D-0000Fk-7E; Wed, 28 Aug 2019 12:16:33 +0200
+        id 1i2v09-0000Gr-EB; Wed, 28 Aug 2019 12:16:29 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id C34041C0DE6;
-        Wed, 28 Aug 2019 12:16:26 +0200 (CEST)
-Date:   Wed, 28 Aug 2019 10:16:26 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id AD5FD1C0DE5;
+        Wed, 28 Aug 2019 12:16:27 +0200 (CEST)
+Date:   Wed, 28 Aug 2019 10:16:27 -0000
 From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] sched: Move struct task_cputime to types.h
+Subject: [tip: timers/core] posix-cpu-timers: Provide array based access to
+ expiry cache
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190821192920.909530418@linutronix.de>
-References: <20190821192920.909530418@linutronix.de>
+In-Reply-To: <20190821192921.105793824@linutronix.de>
+References: <20190821192921.105793824@linutronix.de>
 MIME-Version: 1.0
-Message-ID: <156698738671.5740.12669290463759417859.tip-bot2@tip-bot2>
+Message-ID: <156698738764.5747.1120683591684720795.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -47,87 +49,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     9eacb5c7e6607aba00a7322b21cad83fc8b101c8
-Gitweb:        https://git.kernel.org/tip/9eacb5c7e6607aba00a7322b21cad83fc8b101c8
+Commit-ID:     11b8462f7e1d25f639c88949a2746a9c2667a766
+Gitweb:        https://git.kernel.org/tip/11b8462f7e1d25f639c88949a2746a9c2667a766
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 21 Aug 2019 21:09:05 +02:00
+AuthorDate:    Wed, 21 Aug 2019 21:09:07 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 28 Aug 2019 11:50:34 +02:00
+CommitterDate: Wed, 28 Aug 2019 11:50:35 +02:00
 
-sched: Move struct task_cputime to types.h
+posix-cpu-timers: Provide array based access to expiry cache
 
-For upcoming posix-timer changes to avoid include recursion hell.
+Using struct task_cputime for the expiry cache is a pretty odd choice and
+comes with magic defines to rename the fields for usage in the expiry
+cache.
+
+struct task_cputime is basically a u64 array with 3 members, but it has
+distinct members.
+
+The expiry cache content is different than the content of task_cputime
+because
+
+  expiry[PROF]  = task_cputime.stime + task_cputime.utime
+  expiry[VIRT]  = task_cputime.utime
+  expiry[SCHED] = task_cputime.sum_exec_runtime
+
+So there is no direct mapping between task_cputime and the expiry cache and
+the #define based remapping is just a horrible hack.
+
+Having the expiry cache array based allows further simplification of the
+expiry code.
+
+To avoid an all in one cleanup which is hard to review add a temporary
+anonymous union into struct task_cputime which allows array based access to
+it. That requires to reorder the members. Add a build time sanity check to
+validate that the members are at the same place.
+
+The union and the build time checks will be removed after conversion.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190821192920.909530418@linutronix.de
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lkml.kernel.org/r/20190821192921.105793824@linutronix.de
 
 ---
- include/linux/sched.h       | 17 +----------------
- include/linux/sched/types.h | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+), 16 deletions(-)
- create mode 100644 include/linux/sched/types.h
+ include/linux/posix-timers.h   | 24 ++++++++++++++++++------
+ include/linux/sched/types.h    |  4 ++--
+ kernel/time/posix-cpu-timers.c | 12 +++++++++++-
+ 3 files changed, 31 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index fde844a..37c39df 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -25,6 +25,7 @@
- #include <linux/resource.h>
- #include <linux/latencytop.h>
- #include <linux/sched/prio.h>
-+#include <linux/sched/types.h>
- #include <linux/signal_types.h>
- #include <linux/mm_types_task.h>
- #include <linux/task_io_accounting.h>
-@@ -245,22 +246,6 @@ struct prev_cputime {
- #endif
+diff --git a/include/linux/posix-timers.h b/include/linux/posix-timers.h
+index a3731ba..ed0f6ec 100644
+--- a/include/linux/posix-timers.h
++++ b/include/linux/posix-timers.h
+@@ -65,27 +65,39 @@ static inline int clockid_to_fd(const clockid_t clk)
+ /*
+  * Alternate field names for struct task_cputime when used on cache
+  * expirations. Will go away soon.
++ *
++ * stime corresponds to CLOCKCPU_PROF
++ * utime corresponds to CLOCKCPU_VIRT
++ * sum_exex_runtime corresponds to CLOCKCPU_SCHED
++ *
++ * The ordering is currently enforced so struct task_cputime and the
++ * expiries array in struct posix_cputimers are equivalent.
+  */
+-#define virt_exp			utime
+ #define prof_exp			stime
++#define virt_exp			utime
+ #define sched_exp			sum_exec_runtime
+ 
+ #ifdef CONFIG_POSIX_TIMERS
+ /**
+  * posix_cputimers - Container for posix CPU timer related data
+- * @cputime_expires:	Earliest-expiration cache
++ * @cputime_expires:	Earliest-expiration cache task_cputime based
++ * @expiries:		Earliest-expiration cache array based
+  * @cpu_timers:		List heads to queue posix CPU timers
+  *
+  * Used in task_struct and signal_struct
+  */
+ struct posix_cputimers {
+-	struct task_cputime	cputime_expires;
+-	struct list_head	cpu_timers[CPUCLOCK_MAX];
++	/* Temporary union until all users are cleaned up */
++	union {
++		struct task_cputime	cputime_expires;
++		u64			expiries[CPUCLOCK_MAX];
++	};
++	struct list_head		cpu_timers[CPUCLOCK_MAX];
  };
  
--/**
-- * struct task_cputime - collected CPU time counts
-- * @utime:		time spent in user mode, in nanoseconds
-- * @stime:		time spent in kernel mode, in nanoseconds
-- * @sum_exec_runtime:	total time spent on the CPU, in nanoseconds
-- *
-- * This structure groups together three kinds of CPU time that are tracked for
-- * threads and thread groups.  Most things considering CPU time want to group
-- * these counts together and treat all three of them in parallel.
-- */
--struct task_cputime {
--	u64				utime;
--	u64				stime;
--	unsigned long long		sum_exec_runtime;
--};
--
- /* Alternate field names when used on cache expirations: */
- #define virt_exp			utime
- #define prof_exp			stime
+ static inline void posix_cputimers_init(struct posix_cputimers *pct)
+ {
+-	memset(&pct->cputime_expires, 0, sizeof(pct->cputime_expires));
++	memset(&pct->expiries, 0, sizeof(pct->expiries));
+ 	INIT_LIST_HEAD(&pct->cpu_timers[0]);
+ 	INIT_LIST_HEAD(&pct->cpu_timers[1]);
+ 	INIT_LIST_HEAD(&pct->cpu_timers[2]);
+@@ -96,7 +108,7 @@ void posix_cputimers_group_init(struct posix_cputimers *pct, u64 cpu_limit);
+ static inline void posix_cputimers_rt_watchdog(struct posix_cputimers *pct,
+ 					       u64 runtime)
+ {
+-	pct->cputime_expires.sched_exp = runtime;
++	pct->expiries[CPUCLOCK_SCHED] = runtime;
+ }
+ 
+ /* Init task static initializer */
 diff --git a/include/linux/sched/types.h b/include/linux/sched/types.h
-new file mode 100644
-index 0000000..2c5c28d
---- /dev/null
+index 2c5c28d..3c3e049 100644
+--- a/include/linux/sched/types.h
 +++ b/include/linux/sched/types.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_SCHED_TYPES_H
-+#define _LINUX_SCHED_TYPES_H
-+
-+#include <linux/types.h>
-+
-+/**
-+ * struct task_cputime - collected CPU time counts
+@@ -6,8 +6,8 @@
+ 
+ /**
+  * struct task_cputime - collected CPU time counts
+- * @utime:		time spent in user mode, in nanoseconds
+  * @stime:		time spent in kernel mode, in nanoseconds
 + * @utime:		time spent in user mode, in nanoseconds
-+ * @stime:		time spent in kernel mode, in nanoseconds
-+ * @sum_exec_runtime:	total time spent on the CPU, in nanoseconds
-+ *
-+ * This structure groups together three kinds of CPU time that are tracked for
-+ * threads and thread groups.  Most things considering CPU time want to group
-+ * these counts together and treat all three of them in parallel.
-+ */
-+struct task_cputime {
+  * @sum_exec_runtime:	total time spent on the CPU, in nanoseconds
+  *
+  * This structure groups together three kinds of CPU time that are tracked for
+@@ -15,8 +15,8 @@
+  * these counts together and treat all three of them in parallel.
+  */
+ struct task_cputime {
+-	u64				utime;
+ 	u64				stime;
 +	u64				utime;
-+	u64				stime;
-+	unsigned long long		sum_exec_runtime;
-+};
+ 	unsigned long long		sum_exec_runtime;
+ };
+ 
+diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
+index 3e29d16..a38b6d0 100644
+--- a/kernel/time/posix-cpu-timers.c
++++ b/kernel/time/posix-cpu-timers.c
+@@ -18,13 +18,23 @@
+ 
+ #include "posix-timers.h"
+ 
++static inline void temporary_check(void)
++{
++	BUILD_BUG_ON(offsetof(struct task_cputime, stime) !=
++		     CPUCLOCK_PROF * sizeof(u64));
++	BUILD_BUG_ON(offsetof(struct task_cputime, utime) !=
++		     CPUCLOCK_VIRT * sizeof(u64));
++	BUILD_BUG_ON(offsetof(struct task_cputime, sum_exec_runtime) !=
++		     CPUCLOCK_SCHED * sizeof(u64));
++}
 +
-+#endif
+ static void posix_cpu_timer_rearm(struct k_itimer *timer);
+ 
+ void posix_cputimers_group_init(struct posix_cputimers *pct, u64 cpu_limit)
+ {
+ 	posix_cputimers_init(pct);
+ 	if (cpu_limit != RLIM_INFINITY)
+-		pct->cputime_expires.prof_exp = cpu_limit * NSEC_PER_SEC;
++		pct->expiries[CPUCLOCK_PROF] = cpu_limit * NSEC_PER_SEC;
+ }
+ 
+ /*
