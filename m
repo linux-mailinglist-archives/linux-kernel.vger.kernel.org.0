@@ -2,138 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4EA99F9D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:28:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 537B39F9C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 07:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbfH1F2Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 01:28:25 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44701 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbfH1F2Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 01:28:24 -0400
-Received: by mail-lj1-f194.google.com with SMTP id e24so1339454ljg.11
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 22:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wuD+47oBthIHQumcqd0YN679T72WGLTDD4hOsKbpLxE=;
-        b=JxQ/DhDP05PNcJhHPHt2GrZ/B8VfZ53oE6THwxTahk32Tsn0TFdadeMPol+lFd4P1A
-         ZSNr/mSN4jHxlMDbHl9zDZxG22Ec4vfh7ClgirOkCZvTjA6NTfc7GF6QpnMJoq3yf1Tf
-         jZJPmiBUgmxrpi3fZHzpuAAhDEbJIGpkDmyqW77n0f4dC+Kdoog+2dPGysHFHolJFQYJ
-         dKWrRA+dbT0VHyb3+C39xtvli41mc53RQaVl4B3RnrOVhuH3KUKlLJ1X9oNXIVZroUOV
-         ysRIXcz2GlsRxWYVmoX0DOS+xB7rY3Uuf0nRqv9lrREvMrwVG+NiTKs3C3JiDAFCeUsa
-         253w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wuD+47oBthIHQumcqd0YN679T72WGLTDD4hOsKbpLxE=;
-        b=A+YF+OXS5CTkpfAnGeqI5g2k3KkiJ43OpOFGVC82OCNmpyuBEWN5xVGVB0ArPvc4tE
-         AF2wpDkyyUckY1kkJtOQAYDsOXr10hQtL2pFZ+YrzsRu6+y7bojfKcWL7ZCteeHeCWJi
-         zvwyocnxcUpEi5YnbGPnNIePQ5SxBwUqZ8YWQdE2YxBIHkuWA1hvZ9ageOvy778/pys7
-         ag4r9RdVIuejAnOEZ9rLbHcuz50l+uVC5ZfsgjA/sJf6psjxOyUtlLweM7mx4eQ+XO6o
-         06jFadwE0cW3W3E2vf8zz6ScsSyEZAp1o+AJkP66Pc+YrEj9JzI6yoGwu3XJ4sso71bN
-         PQVg==
-X-Gm-Message-State: APjAAAVo+g+JCQ0kgRuZa/YXLxK8zT94b5Jw4w52a/yAbwKGEqLh5Ov0
-        zdmYDPbXnKxFwSDntyVcGQII0Urt3LAdw6+zI1w+4A==
-X-Google-Smtp-Source: APXvYqzP6WVBc3SIpSbwvH+PA6Ta0a7UKTqmsXsZbvFWOoRZR8d2RevgeN/WfpPSOG2xP4CPkCq1nfyajuFEu/pawkk=
-X-Received: by 2002:a2e:819:: with SMTP id 25mr987414lji.142.1566970102465;
- Tue, 27 Aug 2019 22:28:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <1566392345-15419-1-git-send-email-sumit.garg@linaro.org>
- <1566392345-15419-5-git-send-email-sumit.garg@linaro.org> <20190827141742.6qxowsigqolxaod4@linux.intel.com>
-In-Reply-To: <20190827141742.6qxowsigqolxaod4@linux.intel.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Wed, 28 Aug 2019 10:58:11 +0530
-Message-ID: <CAFA6WYPnoDoMWd=PT4mgXPhg1Wp0=AFDnWd_44UMP7sijXzAZA@mail.gmail.com>
-Subject: Re: [PATCH v5 4/4] KEYS: trusted: move tpm2 trusted keys code
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726147AbfH1FVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 01:21:24 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:41612 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726052AbfH1FVY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 01:21:24 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D581C200274;
+        Wed, 28 Aug 2019 07:21:21 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 595BD2001A9;
+        Wed, 28 Aug 2019 07:21:16 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 65E74402C0;
+        Wed, 28 Aug 2019 13:21:09 +0800 (SGT)
+From:   Shengjiu Wang <shengjiu.wang@nxp.com>
+To:     timur@kernel.org, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        festevam@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
+        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: fsl_ssi: Fix clock control issue in master mode
+Date:   Wed, 28 Aug 2019 13:20:17 -0400
+Message-Id: <1567012817-12625-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 27 Aug 2019 at 19:47, Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Wed, Aug 21, 2019 at 06:29:05PM +0530, Sumit Garg wrote:
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2004 IBM Corporation
-> > + * Copyright (C) 2014 Intel Corporation
->
-> Everything below can be dropped from this new file. Git has the most
-> accurate authority information.
->
-> I'm not sure why I added the authors-list in the first place to the
-> header when I implemented these functions as none of those folks have
-> contributed to this particular piece of work.
->
-> > + * Authors:
-> > + * Leendert van Doorn <leendert@watson.ibm.com>
-> > + * Dave Safford <safford@watson.ibm.com>
-> > + * Reiner Sailer <sailer@watson.ibm.com>
-> > + * Kylene Hall <kjhall@us.ibm.com>
-> > + *
-> > + * Maintained by: <tpmdd-devel@lists.sourceforge.net>
-> > + *
-> > + * Trusted Keys code for TCG/TCPA TPM2 (trusted platform module).
-> > + */
->
-> To summarize, I think this would be sufficient:
->
-> // SPDX-License-Identifier: GPL-2.0-only
-> /*
->  * Copyright (C) 2004 IBM Corporation
->  * Copyright (C) 2014 Intel Corporation
->  */
+The test case is
+arecord -Dhw:0 -d 10 -f S16_LE -r 48000 -c 2 temp.wav &
+aplay -Dhw:0 -d 30 -f S16_LE -r 48000 -c 2 test.wav
 
-Sounds good to me.
+There will be error after end of arecord:
+aplay: pcm_write:2051: write error: Input/output error
 
->
-> I think there should never be such a rush that acronym could not be
-> written with the correct spelling. I'm referring to 'tpm2' in the short
-> summary.
+Capture and Playback work in parallel in master mode, one
+substream stops, the other substream is impacted, the
+reason is that clock is disabled wrongly.
 
-So you mean to say we should use upper-case letters for 'TPM2' acronym?
+The clock's reference count is not increased when second
+substream starts, the hw_param() function returns in the
+beginning because first substream is enabled, then in end
+of first substream, the hw_free() disables the clock.
 
-> I'm sorry, I had to say it, just can't help myself with those
-> kind of details :-) I can take care of fixing those once I apply these
-> patches.
->
-> You've done an awesome job. Thank you.
->
+This patch is to move the clock enablement to the place
+before checking of the device enablement in hw_param().
 
-You are welcome.
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ sound/soc/fsl/fsl_ssi.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
+diff --git a/sound/soc/fsl/fsl_ssi.c b/sound/soc/fsl/fsl_ssi.c
+index b0a6fead1a6a..537dc69256f0 100644
+--- a/sound/soc/fsl/fsl_ssi.c
++++ b/sound/soc/fsl/fsl_ssi.c
+@@ -799,15 +799,6 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
+ 	u32 wl = SSI_SxCCR_WL(sample_size);
+ 	int ret;
+ 
+-	/*
+-	 * SSI is properly configured if it is enabled and running in
+-	 * the synchronous mode; Note that AC97 mode is an exception
+-	 * that should set separate configurations for STCCR and SRCCR
+-	 * despite running in the synchronous mode.
+-	 */
+-	if (ssi->streams && ssi->synchronous)
+-		return 0;
+-
+ 	if (fsl_ssi_is_i2s_master(ssi)) {
+ 		ret = fsl_ssi_set_bclk(substream, dai, hw_params);
+ 		if (ret)
+@@ -823,6 +814,15 @@ static int fsl_ssi_hw_params(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
++	/*
++	 * SSI is properly configured if it is enabled and running in
++	 * the synchronous mode; Note that AC97 mode is an exception
++	 * that should set separate configurations for STCCR and SRCCR
++	 * despite running in the synchronous mode.
++	 */
++	if (ssi->streams && ssi->synchronous)
++		return 0;
++
+ 	if (!fsl_ssi_is_ac97(ssi)) {
+ 		/*
+ 		 * Keep the ssi->i2s_net intact while having a local variable
+-- 
+2.21.0
 
-Thanks for your review.
-
--Sumit
-
-> Unfortunately I'm not yet sure if I have time to test these before going
-> to Linux Plumbers but these would be anyway too close to the next merge
-> window to be added to the v5.4 PR.
->
-> /Jarkko
