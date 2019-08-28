@@ -2,140 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 924A9A0174
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF9A2A0192
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:24:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfH1MRL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 08:17:11 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33953 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfH1MRK (ORCPT
+        id S1726441AbfH1MYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 08:24:47 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:61706 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726413AbfH1MYr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 08:17:10 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c7so2539736otp.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 05:17:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8ucg4PVvFDJuY7IrX1BzjsG7jDMsSrlHH0nllnqOy1w=;
-        b=RaaIg11X9DM0RGWFrGEjc/ZFk/tHs7LC6sDd3cWu2S6dRraD/Y04AcW2iBpmNHrpfN
-         ea31HYHK7zF6k9yOf19OidqCKxqkJGzqh8D7XfnSPAomPgR/oThBI/dqteVcfc3R9RhS
-         N2Y62HIWCOLylC1GlCTTLLvMELu6Lp9qgGMrouRx9ZFaTb3d5D6zKoZ8zEpjts64ssve
-         1y1gh7m35Uhwr37MsFo0eluINZ7NKD9drFPWIQJuYClyc6+CkPQY1/UfizJhnXp6PhBx
-         yCYpcVgC4C6krmIsCHHQakFMfYNq2tJaM1VyjPWE31A2jr9Bo93dVG9vyFOY9I16GWJK
-         TpPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8ucg4PVvFDJuY7IrX1BzjsG7jDMsSrlHH0nllnqOy1w=;
-        b=S6KoY3LZ5Xl+wMBv2oDpkLoUIM7JoKq8gwilpzJWjc4wu1rlA+Gnf9Avbgy4K3ToRB
-         +M1RY9OyZ7gefy8AqAiIZpC/QppWjTMNCCikzYgK2hHANs+/B17VIdLWq1pY00g6eGCK
-         IGASP2mEqvriL4PDvR9WpKkl0vnsdxG/cFHIbodOIyTnQicF5hhUTOcIDtukEK58ixgl
-         JfWrfs5lRXheHFiSnv5efWepdR8YxGwb+nkFLnvl9bYdgSEgPV4j+OTSUEBQFdZ7+LRE
-         J41YHfZc5a2FHw7QXc6u0POrMKZKF1viQxxzjDOEu9mxXn10aecd3FOnHG7Qk3slYQ/+
-         N6cg==
-X-Gm-Message-State: APjAAAXAQQ95AK7pZlK8Qytz6uBxUWSvEy2OQ4FwsPGobnqf3SFJt3px
-        jHNgHarz/KTM9LpXfVWn90iImtqmiLkqigg6TEbJCg==
-X-Google-Smtp-Source: APXvYqxvaDhp/dkkcMw7DJJ3ub/Alcq2Wx3/cUgoCozs4WNtp8URsGvjmQq9zjow7okgb55DGZ/Unruq8ktrBx09lXw=
-X-Received: by 2002:a05:6830:144d:: with SMTP id w13mr3040072otp.85.1566994629759;
- Wed, 28 Aug 2019 05:17:09 -0700 (PDT)
+        Wed, 28 Aug 2019 08:24:47 -0400
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x7SCOKYn007536;
+        Wed, 28 Aug 2019 21:24:21 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x7SCOKYn007536
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566995061;
+        bh=QGwpmYKpkBfkJkR52bVEAkpX4zw0mwzUiEGIdCDkwxA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=uqNGtZWnszkj+EI17b6cYBIkgLT1pNqqjZ5vvXHhv3nOtkGhMLE3vL239iHJx8xOz
+         TSdYOHpkebqzZFAStQTcerRGirstT0XYJoVthR/5RvSg8EwIXbfT0K4YHHjnM2D9df
+         JXXCqO9Sr2ZFEdHKD7gxA7eX9ABdy7xMFqUuoAjc4LZbh1oHbeSw+NQJ4Ce2UY37OL
+         1txXvkAUycDvn0IT3BeWg+7kqZstKdDcVVmHGUVKjLtz+pcmN6rubDhCpA5S2OJHzV
+         Tbrl68C67rXttDBFRWfYe+B8o+XbJ2QlQQ11l4eNvd1Y5ZXbdFZLM/YI9cfIW6ibm1
+         bz9Dqz+XAfrPw==
+X-Nifty-SrcIP: [209.85.222.42]
+Received: by mail-ua1-f42.google.com with SMTP id k7so752114uao.6;
+        Wed, 28 Aug 2019 05:24:21 -0700 (PDT)
+X-Gm-Message-State: APjAAAW009682rJRH8tQEgv1Esk44krWyPnCSSItIdEAEpNfL4gr+Dv4
+        stBJkAS+9IfqSqP8HOJvw3ng6jijQ1SL4k4NYfA=
+X-Google-Smtp-Source: APXvYqzOQYU2Q+Xq/DN7mTcKzBb0P1kiiE+ggL4N1BaGeuzN90KCZ6nzT8nGJkbkDhur/ilmD52mrtpqBPxR1Kulykg=
+X-Received: by 2002:ab0:442:: with SMTP id 60mr1554937uav.109.1566995060173;
+ Wed, 28 Aug 2019 05:24:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190827064629.90214-1-david@protonic.nl> <CAMpxmJV2XC+CK1SfJnH2YuaD2Gh=fiBQY+WPbjnqkvxGW6ZH_w@mail.gmail.com>
- <CAMpxmJXQ=M9PeMFBf70aE5Jgg3c6P2=4QF5CxWpenh+2WXLhnA@mail.gmail.com> <20190828131330.6a28e5cc@erd988>
-In-Reply-To: <20190828131330.6a28e5cc@erd988>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 28 Aug 2019 14:16:58 +0200
-Message-ID: <CAMpxmJUrvu9f_+-3epZ4iafZ-t0YUAA8E3_Xangc_dBiiCc20A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] gpio: gpio-pca953x.c: Correct type of reg_direction
-To:     David Jander <david@protonic.nl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+References: <20190506223334.1834-1-nicoleotsuka@gmail.com> <20190506223334.1834-3-nicoleotsuka@gmail.com>
+ <CAK7LNARacEorb38mVBw_V-Zvz-znWgBma1AP1-z_5B_xZU4ogg@mail.gmail.com>
+ <CAK7LNAQfYBCoChMV=MOwcUyVoqRkrPWs7DaWdzDqjBe18gGiAQ@mail.gmail.com>
+ <20190825011025.GA23410@lst.de> <CAK7LNAQb1ZHr=DiHLNeNRaQExMuXdDOV4sFghoGbco_Q=Qzb8g@mail.gmail.com>
+ <20190826073320.GA11712@lst.de> <CAK7LNATYOLEboUTO4qPx2z7cqwDrHBO1HFHG8VzZEJ15STv+nw@mail.gmail.com>
+ <20190827075021.GA953@lst.de> <CAK7LNAQZ+bueZZzSoMADmgLjWNvijHRV=wLQzN_kvLG3b5Uu+w@mail.gmail.com>
+ <20190827115541.GB5921@lst.de> <CAK7LNAQ_nQcBt=xH1-h+=co85mTxFgbe+_46Gu4LaNsDSm+kYA@mail.gmail.com>
+In-Reply-To: <CAK7LNAQ_nQcBt=xH1-h+=co85mTxFgbe+_46Gu4LaNsDSm+kYA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 28 Aug 2019 21:23:43 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATvz=TTe+3OyLrtUqDuTUTn1dg9Sk-t3BD_OFZfViCPMw@mail.gmail.com>
+Message-ID: <CAK7LNATvz=TTe+3OyLrtUqDuTUTn1dg9Sk-t3BD_OFZfViCPMw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] dma-contiguous: Use fallback alloc_pages for
+ single pages
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>, vdumpa@nvidia.com,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thierry Reding <treding@nvidia.com>,
+        Kees Cook <keescook@chromium.org>, iamjoonsoo.kim@lge.com,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 28 sie 2019 o 13:13 David Jander <david@protonic.nl> napisa=C5=82=
-(a):
+On Wed, Aug 28, 2019 at 7:53 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> On Wed, 28 Aug 2019 12:56:28 +0200
-> Bartosz Golaszewski <bgolaszewski@baylibre.com> wrote:
+> Hi Christoph,
 >
-> > =C5=9Br., 28 sie 2019 o 10:38 Bartosz Golaszewski
-> > <bgolaszewski@baylibre.com> napisa=C5=82(a):
-> > >
-> > > wt., 27 sie 2019 o 08:46 David Jander <david@protonic.nl> napisa=C5=
-=82(a):
-> > > >
-> > > > The type of reg_direction needs to match the type of the regmap, wh=
-ich is
-> > > > u8.
-> > > >
-> > > > Signed-off-by: David Jander <david@protonic.nl>
-> > > > ---
-> > > >  drivers/gpio/gpio-pca953x.c | 6 +++---
-> > > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > >
-> > > > diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953=
-x.c
-> > > > index 378b206d2dc9..30072a570bc2 100644
-> > > > --- a/drivers/gpio/gpio-pca953x.c
-> > > > +++ b/drivers/gpio/gpio-pca953x.c
-> > > > @@ -604,7 +604,7 @@ static void pca953x_irq_bus_sync_unlock(struct =
-irq_data *d)
-> > > >         u8 new_irqs;
-> > > >         int level, i;
-> > > >         u8 invert_irq_mask[MAX_BANK];
-> > > > -       int reg_direction[MAX_BANK];
-> > > > +       u8 reg_direction[MAX_BANK];
-> > > >
-> > > >         regmap_bulk_read(chip->regmap, chip->regs->direction, reg_d=
-irection,
-> > > >                          NBANK(chip));
-> > > > @@ -679,7 +679,7 @@ static bool pca953x_irq_pending(struct pca953x_=
-chip *chip, u8 *pending)
-> > > >         bool pending_seen =3D false;
-> > > >         bool trigger_seen =3D false;
-> > > >         u8 trigger[MAX_BANK];
-> > > > -       int reg_direction[MAX_BANK];
-> > > > +       u8 reg_direction[MAX_BANK];
-> > > >         int ret, i;
-> > > >
-> > > >         if (chip->driver_data & PCA_PCAL) {
-> > > > @@ -768,7 +768,7 @@ static int pca953x_irq_setup(struct pca953x_chi=
-p *chip,
-> > > >  {
-> > > >         struct i2c_client *client =3D chip->client;
-> > > >         struct irq_chip *irq_chip =3D &chip->irq_chip;
-> > > > -       int reg_direction[MAX_BANK];
-> > > > +       u8 reg_direction[MAX_BANK];
-> > > >         int ret, i;
-> > > >
-> > > >         if (!client->irq)
-> > > > --
-> > > > 2.19.1
-> > > >
-> > >
-> > > Applied for v5.4.
+> On Tue, Aug 27, 2019 at 8:55 PM Christoph Hellwig <hch@lst.de> wrote:
 > >
-> > Actually the second patch depends on the first one, so moved it over to=
- fixes.
+> > On Tue, Aug 27, 2019 at 06:03:14PM +0900, Masahiro Yamada wrote:
+> > > Yes, this makes my driver working again
+> > > when CONFIG_DMA_CMA=y.
+> > >
+> > >
+> > > If I apply the following, my driver gets back working
+> > > irrespective of CONFIG_DMA_CMA.
+> >
+> > That sounds a lot like the device simply isn't 64-bit DMA capable, and
+> > previously always got CMA allocations under the limit it actually
+> > supported.  I suggest that you submit this quirk to the mmc maintainers.
 >
-> Btw, they are both bugfixes, IMHO it would be valuable to have them in 5.=
-3rc
-> if possible... there is some severe breakage there right now.
 >
-> Best regards,
+> I tested v5.2 and my MMC host controller works with
+> dma_address that exceeds 32-bit physical address.
 >
-> --
-> David Jander
+> So, I believe my MMC device is 64-bit DMA capable.
 >
+> I am still looking into the code
+> to find out what was changed.
 
-Yes, that's why I said I moved it to fixes.
 
-Bart
+I retract this comment.
+
+Prior to bd2e75633c8012fc8a7431c82fda66237133bf7e,
+the descriptor table for ADMA is placed within the
+32-bit phys address range, not exceeds the 32-bit limit.
+
+Probably, my device is not 64-bit capable.
+
+I will talk to the hardware engineer,
+and check the hardware spec just in case.
+
+Thanks.
+
+-- 
+Best Regards
+Masahiro Yamada
