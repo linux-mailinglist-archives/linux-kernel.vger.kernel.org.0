@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B562A01AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:29:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03CEBA01B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 14:29:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726697AbfH1M3D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 08:29:03 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:2747 "EHLO
+        id S1726830AbfH1M3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 08:29:17 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46449 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726300AbfH1M3A (ORCPT
+        with ESMTP id S1726566AbfH1M3E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 08:29:00 -0400
-X-UUID: fc4e47b6f0f34a869afc22311226a5df-20190828
-X-UUID: fc4e47b6f0f34a869afc22311226a5df-20190828
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        Wed, 28 Aug 2019 08:29:04 -0400
+X-UUID: aa0007ba038d434086a15393bb0e0ce8-20190828
+X-UUID: aa0007ba038d434086a15393bb0e0ce8-20190828
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <henryc.chen@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1769360818; Wed, 28 Aug 2019 20:28:52 +0800
+        with ESMTP id 762124500; Wed, 28 Aug 2019 20:28:53 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Wed, 28 Aug 2019 20:28:58 +0800
 Received: from mtksdaap41.mediatek.inc (172.21.77.4) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -39,9 +39,9 @@ CC:     Nicolas Boichat <drinkcat@google.com>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Henry Chen <henryc.chen@mediatek.com>
-Subject: [PATCH V3 02/10] dt-bindings: soc: Add opp table on scpsys bindings
-Date:   Wed, 28 Aug 2019 20:28:40 +0800
-Message-ID: <1566995328-15158-3-git-send-email-henryc.chen@mediatek.com>
+Subject: [PATCH V3 03/10] soc: mediatek: add support for the performance state
+Date:   Wed, 28 Aug 2019 20:28:41 +0800
+Message-ID: <1566995328-15158-4-git-send-email-henryc.chen@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1566995328-15158-1-git-send-email-henryc.chen@mediatek.com>
 References: <1566995328-15158-1-git-send-email-henryc.chen@mediatek.com>
@@ -53,78 +53,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add opp table on scpsys dt-bindings for Mediatek SoC.
+Support power domain performance state, add header file for scp event.
 
 Signed-off-by: Henry Chen <henryc.chen@mediatek.com>
 ---
- .../devicetree/bindings/soc/mediatek/scpsys.txt    | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/soc/mediatek/mtk-scpsys.c | 58 +++++++++++++++++++++++++++++++++++++++
+ drivers/soc/mediatek/mtk-scpsys.h | 22 +++++++++++++++
+ 2 files changed, 80 insertions(+)
+ create mode 100644 drivers/soc/mediatek/mtk-scpsys.h
 
-diff --git a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-index 00eab7e..134430a 100644
---- a/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-+++ b/Documentation/devicetree/bindings/soc/mediatek/scpsys.txt
-@@ -64,6 +64,10 @@ Optional properties:
- - mfg_2d-supply: Power supply for the mfg_2d power domain
- - mfg-supply: Power supply for the mfg power domain
+diff --git a/drivers/soc/mediatek/mtk-scpsys.c b/drivers/soc/mediatek/mtk-scpsys.c
+index e072810..50bc254 100644
+--- a/drivers/soc/mediatek/mtk-scpsys.c
++++ b/drivers/soc/mediatek/mtk-scpsys.c
+@@ -10,7 +10,9 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
++#include <linux/pm_opp.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/slab.h>
+ #include <linux/soc/mediatek/infracfg.h>
+ #include <linux/soc/mediatek/scpsys-ext.h>
  
-+- operating-points-v2: Phandle to the OPP table for the Power domain.
-+	Refer to Documentation/devicetree/bindings/power/power_domain.txt
-+	and Documentation/devicetree/bindings/opp/opp.txt for more details
-+
- Example:
+@@ -21,6 +23,7 @@
+ #include <dt-bindings/power/mt7623a-power.h>
+ #include <dt-bindings/power/mt8173-power.h>
+ #include <dt-bindings/power/mt8183-power.h>
++#include "mtk-scpsys.h"
  
- 	scpsys: scpsys@10006000 {
-@@ -76,6 +80,27 @@ Example:
- 			 <&topckgen CLK_TOP_VENC_SEL>,
- 			 <&topckgen CLK_TOP_VENC_LT_SEL>;
- 		clock-names = "mfg", "mm", "venc", "venc_lt";
-+		operating-points-v2 = <&dvfsrc_opp_table>;
-+
-+		dvfsrc_opp_table: opp-table {
-+			compatible = "operating-points-v2-level";
-+
-+			dvfsrc_vol_min: opp1 {
-+				opp,level = <MT8183_DVFSRC_LEVEL_1>;
-+			};
-+
-+			dvfsrc_freq_medium: opp2 {
-+				opp,level = <MT8183_DVFSRC_LEVEL_2>;
-+			};
-+
-+			dvfsrc_freq_max: opp3 {
-+				opp,level = <MT8183_DVFSRC_LEVEL_3>;
-+			};
-+
-+			dvfsrc_vol_max: opp4 {
-+				opp,level = <MT8183_DVFSRC_LEVEL_4>;
-+			};
-+		};
- 	};
+ #define MTK_POLL_DELAY_US   10
+ #define MTK_POLL_TIMEOUT    USEC_PER_SEC
+@@ -187,6 +190,18 @@ struct scp_soc_data {
+ 	bool bus_prot_reg_update;
+ };
  
- Example consumer:
-@@ -83,4 +108,21 @@ Example consumer:
- 	afe: mt8173-afe-pcm@11220000 {
- 		compatible = "mediatek,mt8173-afe-pcm";
- 		power-domains = <&scpsys MT8173_POWER_DOMAIN_AUDIO>;
-+		operating-points-v2 = <&aud_opp_table>;
-+	};
++static BLOCKING_NOTIFIER_HEAD(scpsys_notifier_list);
 +
-+	aud_opp_table: aud-opp-table {
-+		compatible = "operating-points-v2";
-+		opp1 {
-+			opp-hz = /bits/ 64 <793000000>;
-+			required-opps = <&dvfsrc_vol_min>;
-+		};
-+		opp2 {
-+			opp-hz = /bits/ 64 <910000000>;
-+			required-opps = <&dvfsrc_vol_max>;
-+		};
-+		opp3 {
-+			opp-hz = /bits/ 64 <1014000000>;
-+			required-opps = <&dvfsrc_vol_max>;
-+		};
- 	};
++int register_scpsys_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_register(&scpsys_notifier_list, nb);
++}
++
++int unregister_scpsys_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_unregister(&scpsys_notifier_list, nb);
++}
++
+ static int scpsys_domain_is_on(struct scp_domain *scpd)
+ {
+ 	struct scp *scp = scpd->scp;
+@@ -505,6 +520,41 @@ static void init_clks(struct platform_device *pdev, struct clk **clk)
+ 		clk[i] = devm_clk_get(&pdev->dev, clk_names[i]);
+ }
+ 
++static int mtk_pd_set_performance(struct generic_pm_domain *genpd,
++				  unsigned int state)
++{
++	int i;
++	struct scp_domain *scpd =
++		container_of(genpd, struct scp_domain, genpd);
++	struct scp_event_data scpe;
++	struct scp *scp = scpd->scp;
++	struct genpd_onecell_data *pd_data = &scp->pd_data;
++
++	for (i = 0; i < pd_data->num_domains; i++) {
++		if (genpd == pd_data->domains[i]) {
++			dev_dbg(scp->dev, "%d. %s = %d\n",
++				i, genpd->name, state);
++			break;
++		}
++	}
++
++	if (i == pd_data->num_domains)
++		return 0;
++
++	scpe.event_type = MTK_SCPSYS_PSTATE;
++	scpe.genpd = genpd;
++	scpe.domain_id = i;
++	blocking_notifier_call_chain(&scpsys_notifier_list, state, &scpe);
++
++	return 0;
++}
++
++static unsigned int mtk_pd_get_performance(struct generic_pm_domain *genpd,
++					   struct dev_pm_opp *opp)
++{
++	return dev_pm_opp_get_level(opp);
++}
++
+ static struct scp *init_scp(struct platform_device *pdev,
+ 			const struct scp_domain_data *scp_domain_data, int num,
+ 			const struct scp_ctrl_reg *scp_ctrl_reg,
+@@ -630,6 +680,14 @@ static struct scp *init_scp(struct platform_device *pdev,
+ 		genpd->power_on = scpsys_power_on;
+ 		if (MTK_SCPD_CAPS(scpd, MTK_SCPD_ACTIVE_WAKEUP))
+ 			genpd->flags |= GENPD_FLAG_ACTIVE_WAKEUP;
++
++		/* Add opp table check first to avoid OF runtime parse failed */
++		if (of_count_phandle_with_args(pdev->dev.of_node,
++		   "operating-points-v2", NULL) > 0) {
++			genpd->set_performance_state = mtk_pd_set_performance;
++			genpd->opp_to_performance_state =
++				mtk_pd_get_performance;
++		}
+ 	}
+ 
+ 	return scp;
+diff --git a/drivers/soc/mediatek/mtk-scpsys.h b/drivers/soc/mediatek/mtk-scpsys.h
+new file mode 100644
+index 0000000..c1e8325
+--- /dev/null
++++ b/drivers/soc/mediatek/mtk-scpsys.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright (c) 2018 MediaTek Inc.
++ */
++
++#ifndef __MTK_SCPSYS_H__
++#define __MTK_SCPSYS_H__
++
++struct scp_event_data {
++	int event_type;
++	int domain_id;
++	struct generic_pm_domain *genpd;
++};
++
++enum scp_event_type {
++	MTK_SCPSYS_PSTATE,
++};
++
++int register_scpsys_notifier(struct notifier_block *nb);
++int unregister_scpsys_notifier(struct notifier_block *nb);
++
++#endif /* __MTK_SCPSYS_H__ */
 -- 
 1.9.1
 
