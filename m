@@ -2,214 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91CCB9F848
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 04:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3D579F861
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 04:39:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726289AbfH1C0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 27 Aug 2019 22:26:31 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46355 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbfH1C0a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 27 Aug 2019 22:26:30 -0400
-Received: by mail-pg1-f195.google.com with SMTP id m3so506338pgv.13
-        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 19:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=tmS2mj3RDHe/s39Essdscd5laSqvRE7R4IrNZ/gvifA=;
-        b=RyOw9ueUKkbk6TrWRbwEFwcNS4LFrn375b4GoVirycvZxUNH/vhGayI9fepPDdP7Kh
-         2fiiR6e1rv5ckSB8GNLLifUDyOFLHZejQ/TN5cB0MFA5YoD/G3io3ym79OTgjod2nSbE
-         x3tgzVpk81adzHhexE6oD2pWtbLjA0OkLt/8TmOiVKDgkAJ5xeeVv4MLL4+nh2vXpM0A
-         WH4qBRWYSLSLInvy0i+N68gTCLMKrQQy4xBcExIYB5DjzTsw9QtpcBO0/6HRYKSfIF3u
-         obP0ByZRjGK/VSGHMpqEzxwoAABKiASYOCy/jA2Nc20qWYwP+gJi8FruYrS44CdmeYfc
-         XObA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=tmS2mj3RDHe/s39Essdscd5laSqvRE7R4IrNZ/gvifA=;
-        b=T6a6SDFAzIihJhhqg//O77y5Ug3DD5pcOlPFkwEUyb+C1MWeos614sROaYiFn8YMxj
-         KfP0ilOZyoF/++VwBc5MjIX3W2QYDVmWcEMudt8btbxQQeYEsrKQkSC44up/nhPqFoWP
-         dljtgWeTwluSGmovlxO5qjaWSsXe0zRiWoEVAaETM4e5CLBSMi2s4nfvVWK9egJ12SQA
-         8X1Xrrzp0Nja3yKOU9pJjIWUd1q8Jk/m5fhcV0woc1aRyrK5g9Z92ObQBeGuq0YLEMIA
-         fUFpbaJHxPnYYDBlT/6ENqOkRkoVPrm/CM+r5ovLQD9Pz7yKXRCynvd8/YyUb6tgrY7s
-         Q2og==
-X-Gm-Message-State: APjAAAVxCRqCJDdTtAk7RrHGWL11yYaUB1xMysV3jBHOuQvWFxcZnBfy
-        ey7juSXNdvhswJE0qj/zRV4=
-X-Google-Smtp-Source: APXvYqw9m/QdgDZJzb9IfXd730676Sx51gpVpAmZEOp1AdttXC5PZBFTGnGpwy1p1d0d7uLqQEmGsw==
-X-Received: by 2002:aa7:9a81:: with SMTP id w1mr1997209pfi.24.1566959189859;
-        Tue, 27 Aug 2019 19:26:29 -0700 (PDT)
-Received: from localhost (14-202-91-55.tpgi.com.au. [14.202.91.55])
-        by smtp.gmail.com with ESMTPSA id r27sm609522pgn.25.2019.08.27.19.26.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 19:26:28 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 12:25:33 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: a bug in genksysms/CONFIG_MODVERSIONS w/ __attribute__((foo))?
-To:     Ben Hutchings <ben@decadent.org.uk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        =?iso-8859-1?q?Debian=0A?= kernel maintainers 
-        <debian-kernel@lists.debian.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Will Deacon <will@kernel.org>
-References: <CAKwvOdnJAApaUhTQs7w_VjSeYBQa0c-TNxRB4xPLi0Y0sOQMMQ@mail.gmail.com>
-        <CAKwvOdkbY_XatVfRbZQ88p=nnrahZbvdjJ0OkU9m73G89_LRzg@mail.gmail.com>
-        <1566899033.o5acyopsar.astroid@bobo.none>
-        <CAK7LNARHacanVT6XjRDkFJDETWX6qHfUJCFhskCVG6aDL-bt1g@mail.gmail.com>
-        <1566908344.dio7j9zb2h.astroid@bobo.none>
-        <daacccf8e36132b6a747fa4b42626a8812906eaa.camel@decadent.org.uk>
-In-Reply-To: <daacccf8e36132b6a747fa4b42626a8812906eaa.camel@decadent.org.uk>
-MIME-Version: 1.0
-User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1566955930.uir50f8wen.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+        id S1726372AbfH1Cj1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 27 Aug 2019 22:39:27 -0400
+Received: from out1.zte.com.cn ([202.103.147.172]:42878 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726096AbfH1Cj1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 27 Aug 2019 22:39:27 -0400
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id 2AF0C45E1332F6B18411;
+        Wed, 28 Aug 2019 10:39:25 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id x7S2JCiK083635;
+        Wed, 28 Aug 2019 10:19:12 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019082810193054-3226640 ;
+          Wed, 28 Aug 2019 10:19:30 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     davem@davemloft.net
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
+        wang.liang82@zte.com.cn, Cheng Lin <cheng.lin130@zte.com.cn>
+Subject: [PATCH v2] ipv6: Not to probe neighbourless routes
+Date:   Wed, 28 Aug 2019 10:19:25 +0800
+Message-Id: <1566958765-1686-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-08-28 10:19:30,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-08-28 10:19:14,
+        Serialize complete at 2019-08-28 10:19:14
+X-MAIL: mse-fl2.zte.com.cn x7S2JCiK083635
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ben Hutchings's on August 28, 2019 1:34 am:
-> On Tue, 2019-08-27 at 22:42 +1000, Nicholas Piggin wrote:
->> Masahiro Yamada's on August 27, 2019 8:49 pm:
->> > Hi.
->> >=20
->> > On Tue, Aug 27, 2019 at 6:59 PM Nicholas Piggin <npiggin@gmail.com> wr=
-ote:
->> > > Nick Desaulniers's on August 27, 2019 8:57 am:
->> > > > On Mon, Aug 26, 2019 at 2:22 PM Nick Desaulniers
->> > > > <ndesaulniers@google.com> wrote:
->> > > > > I'm looking into a linkage failure for one of our device kernels=
-, and
->> > > > > it seems that genksyms isn't producing a hash value correctly fo=
-r
->> > > > > aggregate definitions that contain __attribute__s like
->> > > > > __attribute__((packed)).
->> > > > >=20
->> > > > > Example:
->> > > > > $ echo 'struct foo { int bar; };' | ./scripts/genksyms/genksyms =
--d
->> > > > > Defn for struct foo =3D=3D <struct foo { int bar ; } >
->> > > > > Hash table occupancy 1/4096 =3D 0.000244141
->> > > > > $ echo 'struct __attribute__((packed)) foo { int bar; };' |
->> > > > > ./scripts/genksyms/genksyms -d
->> > > > > Hash table occupancy 0/4096 =3D 0
->> > > > >=20
->> > > > > I assume the __attribute__ part isn't being parsed correctly (lo=
-oks
->> > > > > like genksyms is a lex/yacc based C parser).
->> > > > >=20
->> > > > > The issue we have in our out of tree driver (*sadface*) is basic=
-ally a
->> > > > > EXPORT_SYMBOL'd function whose signature contains a packed struc=
-t.
->> > > > >=20
->> > > > > Theoretically, there should be nothing wrong with exporting a fu=
-nction
->> > > > > that requires packed structs, and this is just a bug in the lex/=
-yacc
->> > > > > based parser, right?  I assume that not having CONFIG_MODVERSION=
-S
->> > > > > coverage of packed structs in particular could lead to potential=
-ly
->> > > > > not-fun bugs?  Or is using packed structs in exported function s=
-ymbols
->> > > > > with CONFIG_MODVERSIONS forbidden in some documentation somewher=
-e I
->> > > > > missed?
->> > > >=20
->> > > > Ah, looks like I'm late to the party:
->> > > > https://lwn.net/Articles/707520/
->> > >=20
->> > > Yeah, would be nice to do something about this.
->> >=20
->> > modversions is ugly, so it would be great if we could dump it.
->> >=20
->> > > IIRC (without re-reading it all), in theory distros would be okay
->> > > without modversions if they could just provide their own explicit
->> > > versioning. They take care about ABIs, so they can version things
->> > > carefully if they had to change.
->=20
-> Debian doesn't currently have any other way of detecting ABI changes
-> (other than eyeballing diffs).
->=20
-> I know there have been proposals of using libabigail for this instead,
-> but I'm not sure how far those progressed.
->=20
->> > We have not provided any alternative solution for this, haven't we?
->> >=20
->> > In your patch (https://lwn.net/Articles/707729/),
->> > you proposed CONFIG_MODULE_ABI_EXPLICIT.
->>=20
->> Right, that was just my first proposal, but I am not confident that I
->> understood everybody's requirements. I don't think the distro people
->> had much time to to test things out.
->>=20
->> One possible shortcoming with that patch is no per-symbol version. The=20
->> distro may break an ABI for a security fix, but they don't want to break
->> all out of tree modules if it's an obscure ABI.
->=20
-> Right, for example the KVM kABI is only meant for in-tree modules (like
-> kvm_intel) and in Debian we do not change the "ABI version" and require
-> rebuilding out-of-tree modules just because that ABI changes.=20
-> Currently we maintain explicit lists of exported symbols and exporting
-> modules for which we ignore ABI changes at build time.
->=20
->> The counter argument to=20
->> that is they should just rename the symbol in their kernel for such=20
->> cases, so I didn't implement it without somebody describing a good
->> requirement.
-> [...]
->=20
-> Sometimes it is just a single function that changes, but often a
-> structure change can affect large numbers of functions.  For example,
-> if KVM adds a member to an operations struct that can indirectly change
-> the ABI for most of its exported functions.  We wouldn't want to change
-> the ABI version but would still want to prevent loading mismatched kvm
-> and kvm_intel versions.  It would be a lot more work to change all of
-> the affected function names.
+From: Cheng Lin <cheng.lin130@zte.com.cn>
 
-You could change just a single symbol name though :)
+Originally, Router Reachability Probing require a neighbour entry
+existed. Commit 2152caea7196 ("ipv6: Do not depend on rt->n in
+rt6_probe().") removed the requirement for a neighbour entry. And
+commit f547fac624be ("ipv6: rate-limit probes for neighbourless
+routes") adds rate-limiting for neighbourless routes.
 
-> An alternative to symbol version matching that I think would work for
-> us is: if a module's exports or imports match the "changes ignored"
-> list then the module can only be loaded on the exact version of the
-> kernel, otherwise it only needs to match the ABI version.  I think that
-> would avoid the need for carrying symbol versions, but we would still
-> need a build-time ABI check and a way of flagging which symbols need
-> the tighter version match.
+And, the Neighbor Discovery for IP version 6 (IPv6)(rfc4861) says,
+"
+7.2.5.  Receipt of Neighbor Advertisements
 
-Just trying to think how best to express that.
+When a valid Neighbor Advertisement is received (either solicited or
+unsolicited), the Neighbor Cache is searched for the target's entry.
+If no entry exists, the advertisement SHOULD be silently discarded.
+There is no need to create an entry if none exists, since the
+recipient has apparently not initiated any communication with the
+target.
+".
 
-[ Aside, the whole symbol name resolution linking stuff does matching on=20
-  on any number of ~arbitrary strings that you can generate as you like,=20
-  and symbol tables are something that all existing tools and libs=20
-  understand.
+In rt6_probe(), just a Neighbor Solicitation message are transmited.
+When receiving a Neighbor Advertisement, the node does nothing in a
+Neighborless condition.
 
-  So I strongly favour using that as the back end for our "version"
-  resolution system _if at all possible_ rather than adding these extra
-  bits of crud that really just do the same thing. At least for a first
-  pass, I don't want to over-engineer things.
+Not sure it's needed to create a neighbor entry in Router
+Reachability Probing. And the Original way may be the right way.
 
-  Then it hopefully becomes a matter of adding some helper macros and
-  build facilities on top of that which can contain everyone's
-  requirements mostly within .config and perhaps a very small patch.
-  A bit more work with preprocessor macros etc is far preferable to
-  linking and loading "features" IMO]
+This patch recover the requirement for a neighbour entry.
 
-Back to your case, is it sufficient to have just an internal and an
-external module version where the kernel provides both and your in-tree
-modules match on the internal, others match on external?
+Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
+---
+ include/net/ip6_fib.h | 5 -----
+ net/ipv6/route.c      | 6 +-----
+ 2 files changed, 1 insertion(+), 10 deletions(-)
 
-Thanks,
-Nick
+diff --git a/include/net/ip6_fib.h b/include/net/ip6_fib.h
+index 4b5656c..8c2e022 100644
+--- a/include/net/ip6_fib.h
++++ b/include/net/ip6_fib.h
+@@ -124,11 +124,6 @@ struct rt6_exception {
+ 
+ struct fib6_nh {
+ 	struct fib_nh_common	nh_common;
+-
+-#ifdef CONFIG_IPV6_ROUTER_PREF
+-	unsigned long		last_probe;
+-#endif
+-
+ 	struct rt6_info * __percpu *rt6i_pcpu;
+ 	struct rt6_exception_bucket __rcu *rt6i_exception_bucket;
+ };
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index fd059e0..1839dd7 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -639,12 +639,12 @@ static void rt6_probe(struct fib6_nh *fib6_nh)
+ 	nh_gw = &fib6_nh->fib_nh_gw6;
+ 	dev = fib6_nh->fib_nh_dev;
+ 	rcu_read_lock_bh();
+-	idev = __in6_dev_get(dev);
+ 	neigh = __ipv6_neigh_lookup_noref(dev, nh_gw);
+ 	if (neigh) {
+ 		if (neigh->nud_state & NUD_VALID)
+ 			goto out;
+ 
++		idev = __in6_dev_get(dev);
+ 		write_lock(&neigh->lock);
+ 		if (!(neigh->nud_state & NUD_VALID) &&
+ 		    time_after(jiffies,
+@@ -654,13 +654,9 @@ static void rt6_probe(struct fib6_nh *fib6_nh)
+ 				__neigh_set_probe_once(neigh);
+ 		}
+ 		write_unlock(&neigh->lock);
+-	} else if (time_after(jiffies, fib6_nh->last_probe +
+-				       idev->cnf.rtr_probe_interval)) {
+-		work = kmalloc(sizeof(*work), GFP_ATOMIC);
+ 	}
+ 
+ 	if (work) {
+-		fib6_nh->last_probe = jiffies;
+ 		INIT_WORK(&work->work, rt6_probe_deferred);
+ 		work->target = *nh_gw;
+ 		dev_hold(dev);
+-- 
+1.8.3.1
 
-=
