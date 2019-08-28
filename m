@@ -2,128 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADBB3A0D74
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 554FFA0D7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 00:20:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfH1WSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 18:18:51 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50184 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbfH1WSv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 18:18:51 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v15so1655978wml.0;
-        Wed, 28 Aug 2019 15:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=EAM+t57qqYuwniU8bRaWennUhmMsaEkJJTB53gDhRV0=;
-        b=PzPFLhXrn053PrK+Im4s20CBgdlwWdD5vf7c2qvmraHFMtcRNGOax3ZxrfVOJLsNi3
-         RJxiH4tXGWBYfSPw6+3I8vtZeTD9tB4tL0CWcferER8wbL3pZmfcEHByNB++kckMWtm1
-         II4sQzdAzkx/TuyjLqLbRum/n+kGKqk1HoLpww7xpOX4pesNCxdw87AVciQtgsL0JmzZ
-         xmvPJQu0b6mL3cjmfkbnKxZMnd2hgW6BydXPxjMO+te/8BKnN0g44Zl5h0htIrgf01KB
-         5ohsIvfvswNN96W6dWfQD6sl2Iq0UoM2C4aBYqAqPzwEO1SQ/4UmYLuhm+PIBFWs/e7p
-         L2SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=EAM+t57qqYuwniU8bRaWennUhmMsaEkJJTB53gDhRV0=;
-        b=Shz/4ZIcs2eHXJcpaJQEO9tnJpU9DEZTExq+ZtmeeJzoo8VRUAkPFQcpfAzgE23nn1
-         dlOOWo2n+XnFqV+Xl8ZHHiyirXiEICBBa5DwjAl4w3GKKiYoMsVnvmwiJLIgGMA9ER6+
-         nokJIZwEAGzSw0RKAMJElivz6/TFKFsfXSv/5OMw91DMHcXpZRSPYXBeY8iNzgh82UsJ
-         0tAjQCzkOGpNz9sToXruanMG4CRoVRWlBm7Zu189PKkTMQ/s29q37W/PXnLVWYwCOKUN
-         TgSojQVEg40ER5/l39CZW6nVrIHzhlhWhl8kc+vwYf7EIC0kJ9SWYt6Rdrxz4gylcqpr
-         IhKA==
-X-Gm-Message-State: APjAAAW9TUFMuZULABqMlaH+ZpjkfOrv9s0tWRTZ5mhBI8GdL0B8yzhb
-        J6792m8AF3e6k8m3TuWwyUA=
-X-Google-Smtp-Source: APXvYqytiyMA527g+v36HgxoxNOILeUCUvgDIlxBt4nYEzP9HjFrZBhYtT/kswy2sO7/NmcFjIJFGg==
-X-Received: by 2002:a1c:f910:: with SMTP id x16mr7122619wmh.69.1567030729551;
-        Wed, 28 Aug 2019 15:18:49 -0700 (PDT)
-Received: from localhost.localdomain (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
-        by smtp.gmail.com with ESMTPSA id 7sm411012wmj.46.2019.08.28.15.18.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 15:18:48 -0700 (PDT)
-From:   Krzysztof Wilczynski <kw@linux.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hyperv@vger.kernel.org
-Subject: [PATCH v2] PCI: hv: Make functions only used locally static in pci-hyperv.c
-Date:   Thu, 29 Aug 2019 00:18:46 +0200
-Message-Id: <20190828221846.6672-1-kw@linux.com>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20190826154159.9005-1-kw@linux.com>
-References: <20190826154159.9005-1-kw@linux.com>
+        id S1727005AbfH1WUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 18:20:49 -0400
+Received: from mga05.intel.com ([192.55.52.43]:37028 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726828AbfH1WUs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 18:20:48 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Aug 2019 15:20:47 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
+   d="scan'208";a="380561193"
+Received: from amathu3-mobl1.amr.corp.intel.com (HELO [10.254.179.245]) ([10.254.179.245])
+  by fmsmga005.fm.intel.com with ESMTP; 28 Aug 2019 15:20:46 -0700
+Subject: Re: mmotm 2019-08-27-20-39 uploaded (sound/hda/intel-nhlt.c)
+To:     Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org,
+        broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>
+References: <20190828034012.sBvm81sYK%akpm@linux-foundation.org>
+ <274054ef-8611-2661-9e67-4aabae5a7728@infradead.org>
+ <5ac8a7a7-a9b4-89a5-e0a6-7c97ec1fabc6@linux.intel.com>
+ <98ada795-4700-7fcc-6d14-fcc1ab25d509@infradead.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <f0a62b08-cba9-d944-5792-8eac0ea39df1@linux.intel.com>
+Date:   Wed, 28 Aug 2019 17:20:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <98ada795-4700-7fcc-6d14-fcc1ab25d509@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Functions hv_read_config_block(), hv_write_config_block()
-and hv_register_block_invalidate() are not used anywhere
-else and are local to drivers/pci/controller/pci-hyperv.c,
-and do not need to be in global scope, so make these static.
 
-Resolve following compiler warning that can be seen when
-building with warnings enabled (W=1):
 
-drivers/pci/controller/pci-hyperv.c:933:5: warning: no previous prototype for ‘hv_read_config_block’ [-Wmissing-prototypes]
- int hv_read_config_block(struct pci_dev *pdev, void *buf, unsigned int len,
-     ^
-drivers/pci/controller/pci-hyperv.c:1013:5: warning: no previous prototype for ‘hv_write_config_block’ [-Wmissing-prototypes]
- int hv_write_config_block(struct pci_dev *pdev, void *buf, unsigned int len,
-     ^
-drivers/pci/controller/pci-hyperv.c:1082:5: warning: no previous prototype for ‘hv_register_block_invalidate’ [-Wmissing-prototypes]
- int hv_register_block_invalidate(struct pci_dev *pdev, void *context,
-     ^
-Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
----
-Changes in v2:
-  Update commit message to include compiler warning.
+On 8/28/19 4:06 PM, Randy Dunlap wrote:
+> On 8/28/19 12:28 PM, Pierre-Louis Bossart wrote:
+>>
+>>
+>> On 8/28/19 1:30 PM, Randy Dunlap wrote:
+> 
+>>>
+>>> (from linux-next tree, but problem found/seen in mmotm)
+>>>
+>>> Sorry, I don't know who is responsible for this driver.
+>>
+>> That would be me.
+>>
+>> I just checked with Mark Brown's for-next tree 8aceffa09b4b9867153bfe0ff6f40517240cee12
+>> and things are fine in i386 mode, see below.
+>>
+>> next-20190828 also works fine for me in i386 mode.
+>>
+>> if you can point me to a tree and configuration that don't work I'll look into this, I'd need more info to progress.
+> 
+> Please try the attached randconfig file.
+> 
+> Thanks for looking.
 
- drivers/pci/controller/pci-hyperv.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Ack, I see some errors as well with this config. Likely a missing 
+dependency somewhere, working on this now.
 
-diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-index f1f300218fab..c9642e429c2d 100644
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -930,7 +930,7 @@ static void hv_pci_read_config_compl(void *context, struct pci_response *resp,
-  *
-  * Return: 0 on success, -errno on failure
-  */
--int hv_read_config_block(struct pci_dev *pdev, void *buf, unsigned int len,
-+static int hv_read_config_block(struct pci_dev *pdev, void *buf, unsigned int len,
- 			 unsigned int block_id, unsigned int *bytes_returned)
- {
- 	struct hv_pcibus_device *hbus =
-@@ -1010,7 +1010,7 @@ static void hv_pci_write_config_compl(void *context, struct pci_response *resp,
-  *
-  * Return: 0 on success, -errno on failure
-  */
--int hv_write_config_block(struct pci_dev *pdev, void *buf, unsigned int len,
-+static int hv_write_config_block(struct pci_dev *pdev, void *buf, unsigned int len,
- 			  unsigned int block_id)
- {
- 	struct hv_pcibus_device *hbus =
-@@ -1079,7 +1079,7 @@ int hv_write_config_block(struct pci_dev *pdev, void *buf, unsigned int len,
-  *
-  * Return: 0 on success, -errno on failure
-  */
--int hv_register_block_invalidate(struct pci_dev *pdev, void *context,
-+static int hv_register_block_invalidate(struct pci_dev *pdev, void *context,
- 				 void (*block_invalidate)(void *context,
- 							  u64 block_mask))
- {
--- 
-2.22.1
-
+> 
+>> make ARCH=i386
+>>    Using /data/pbossart/ktest/broonie-next as source for kernel
+>>    GEN     Makefile
+>>    CALL    /data/pbossart/ktest/broonie-next/scripts/checksyscalls.sh
+>>    CALL    /data/pbossart/ktest/broonie-next/scripts/atomic/check-atomics.sh
+>>    CHK     include/generated/compile.h
+>>    CC [M]  sound/hda/ext/hdac_ext_bus.o
+>>    CC [M]  sound/hda/ext/hdac_ext_controller.o
+>>    CC [M]  sound/hda/ext/hdac_ext_stream.o
+>>    LD [M]  sound/hda/ext/snd-hda-ext-core.o
+>>    CC [M]  sound/hda/hda_bus_type.o
+>>    CC [M]  sound/hda/hdac_bus.o
+>>    CC [M]  sound/hda/hdac_device.o
+>>    CC [M]  sound/hda/hdac_sysfs.o
+>>    CC [M]  sound/hda/hdac_regmap.o
+>>    CC [M]  sound/hda/hdac_controller.o
+>>    CC [M]  sound/hda/hdac_stream.o
+>>    CC [M]  sound/hda/array.o
+>>    CC [M]  sound/hda/hdmi_chmap.o
+>>    CC [M]  sound/hda/trace.o
+>>    CC [M]  sound/hda/hdac_component.o
+>>    CC [M]  sound/hda/hdac_i915.o
+>>    LD [M]  sound/hda/snd-hda-core.o
+>>    CC [M]  sound/hda/intel-nhlt.o
+>>    LD [M]  sound/hda/snd-intel-nhlt.o
+>> Kernel: arch/x86/boot/bzImage is ready  (#18)
+>>    Building modules, stage 2.
+>>    MODPOST 156 modules
+>>    CC      sound/hda/ext/snd-hda-ext-core.mod.o
+>>    LD [M]  sound/hda/ext/snd-hda-ext-core.ko
+>>    CC      sound/hda/snd-hda-core.mod.o
+>>    LD [M]  sound/hda/snd-hda-core.ko
+>>    CC      sound/hda/snd-intel-nhlt.mod.o
+>>    LD [M]  sound/hda/snd-intel-nhlt.ko
+>>
+>>
+>>>
+>>> ~~~~~~~~~~~~~~~~~~~~~~
+>>> on i386:
+>>>
+>>>     CC      sound/hda/intel-nhlt.o
+>>> ../sound/hda/intel-nhlt.c:14:25: error: redefinition of ‘intel_nhlt_init’
+>>>    struct nhlt_acpi_table *intel_nhlt_init(struct device *dev)
+>>>                            ^~~~~~~~~~~~~~~
+>>> In file included from ../sound/hda/intel-nhlt.c:5:0:
+>>> ../include/sound/intel-nhlt.h:134:39: note: previous definition of ‘intel_nhlt_init’ was here
+>>>    static inline struct nhlt_acpi_table *intel_nhlt_init(struct device *dev)
+>>>                                          ^~~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c: In function ‘intel_nhlt_init’:
+>>> ../sound/hda/intel-nhlt.c:39:14: error: dereferencing pointer to incomplete type ‘struct nhlt_resource_desc’
+>>>     if (nhlt_ptr->length)
+>>>                 ^~
+>>> ../sound/hda/intel-nhlt.c:41:4: error: implicit declaration of function ‘memremap’; did you mean ‘ioremap’? [-Werror=implicit-function-declaration]
+>>>       memremap(nhlt_ptr->min_addr, nhlt_ptr->length,
+>>>       ^~~~~~~~
+>>>       ioremap
+>>> ../sound/hda/intel-nhlt.c:42:6: error: ‘MEMREMAP_WB’ undeclared (first use in this function)
+>>>         MEMREMAP_WB);
+>>>         ^~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:42:6: note: each undeclared identifier is reported only once for each function it appears in
+>>> ../sound/hda/intel-nhlt.c:45:25: error: dereferencing pointer to incomplete type ‘struct nhlt_acpi_table’
+>>>         (strncmp(nhlt_table->header.signature,
+>>>                            ^~
+>>> ../sound/hda/intel-nhlt.c:48:3: error: implicit declaration of function ‘memunmap’; did you mean ‘vunmap’? [-Werror=implicit-function-declaration]
+>>>      memunmap(nhlt_table);
+>>>      ^~~~~~~~
+>>>      vunmap
+>>> ../sound/hda/intel-nhlt.c: At top level:
+>>> ../sound/hda/intel-nhlt.c:56:6: error: redefinition of ‘intel_nhlt_free’
+>>>    void intel_nhlt_free(struct nhlt_acpi_table *nhlt)
+>>>         ^~~~~~~~~~~~~~~
+>>> In file included from ../sound/hda/intel-nhlt.c:5:0:
+>>> ../include/sound/intel-nhlt.h:139:20: note: previous definition of ‘intel_nhlt_free’ was here
+>>>    static inline void intel_nhlt_free(struct nhlt_acpi_table *addr)
+>>>                       ^~~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:62:5: error: redefinition of ‘intel_nhlt_get_dmic_geo’
+>>>    int intel_nhlt_get_dmic_geo(struct device *dev, struct nhlt_acpi_table *nhlt)
+>>>        ^~~~~~~~~~~~~~~~~~~~~~~
+>>> In file included from ../sound/hda/intel-nhlt.c:5:0:
+>>> ../include/sound/intel-nhlt.h:143:19: note: previous definition of ‘intel_nhlt_get_dmic_geo’ was here
+>>>    static inline int intel_nhlt_get_dmic_geo(struct device *dev,
+>>>                      ^~~~~~~~~~~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c: In function ‘intel_nhlt_get_dmic_geo’:
+>>> ../sound/hda/intel-nhlt.c:76:11: error: dereferencing pointer to incomplete type ‘struct nhlt_endpoint’
+>>>      if (epnt->linktype == NHLT_LINK_DMIC) {
+>>>              ^~
+>>> ../sound/hda/intel-nhlt.c:76:25: error: ‘NHLT_LINK_DMIC’ undeclared (first use in this function)
+>>>      if (epnt->linktype == NHLT_LINK_DMIC) {
+>>>                            ^~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:79:15: error: dereferencing pointer to incomplete type ‘struct nhlt_dmic_array_config’
+>>>       switch (cfg->array_type) {
+>>>                  ^~
+>>> ../sound/hda/intel-nhlt.c:80:9: error: ‘NHLT_MIC_ARRAY_2CH_SMALL’ undeclared (first use in this function)
+>>>       case NHLT_MIC_ARRAY_2CH_SMALL:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:81:9: error: ‘NHLT_MIC_ARRAY_2CH_BIG’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_SMALL’?
+>>>       case NHLT_MIC_ARRAY_2CH_BIG:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_2CH_SMALL
+>>> ../sound/hda/intel-nhlt.c:82:16: error: ‘MIC_ARRAY_2CH’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_BIG’?
+>>>        dmic_geo = MIC_ARRAY_2CH;
+>>>                   ^~~~~~~~~~~~~
+>>>                   NHLT_MIC_ARRAY_2CH_BIG
+>>> ../sound/hda/intel-nhlt.c:85:9: error: ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_2CH_BIG’?
+>>>       case NHLT_MIC_ARRAY_4CH_1ST_GEOM:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_2CH_BIG
+>>> ../sound/hda/intel-nhlt.c:86:9: error: ‘NHLT_MIC_ARRAY_4CH_L_SHAPED’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’?
+>>>       case NHLT_MIC_ARRAY_4CH_L_SHAPED:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_4CH_1ST_GEOM
+>>>     AR      sound/i2c/other/built-in.a
+>>> ../sound/hda/intel-nhlt.c:87:9: error: ‘NHLT_MIC_ARRAY_4CH_2ND_GEOM’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_1ST_GEOM’?
+>>>       case NHLT_MIC_ARRAY_4CH_2ND_GEOM:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_4CH_1ST_GEOM
+>>> ../sound/hda/intel-nhlt.c:88:16: error: ‘MIC_ARRAY_4CH’ undeclared (first use in this function); did you mean ‘MIC_ARRAY_2CH’?
+>>>        dmic_geo = MIC_ARRAY_4CH;
+>>>                   ^~~~~~~~~~~~~
+>>>                   MIC_ARRAY_2CH
+>>>     AR      sound/i2c/built-in.a
+>>>     CC      drivers/bluetooth/btmtksdio.o
+>>> ../sound/hda/intel-nhlt.c:90:9: error: ‘NHLT_MIC_ARRAY_VENDOR_DEFINED’ undeclared (first use in this function); did you mean ‘NHLT_MIC_ARRAY_4CH_L_SHAPED’?
+>>>       case NHLT_MIC_ARRAY_VENDOR_DEFINED:
+>>>            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>            NHLT_MIC_ARRAY_4CH_L_SHAPED
+>>> ../sound/hda/intel-nhlt.c:92:26: error: dereferencing pointer to incomplete type ‘struct nhlt_vendor_dmic_array_config’
+>>>        dmic_geo = cfg_vendor->nb_mics;
+>>>                             ^~
+>>> ../sound/hda/intel-nhlt.c: At top level:
+>>> ../sound/hda/intel-nhlt.c:106:16: error: expected declaration specifiers or ‘...’ before string constant
+>>>    MODULE_LICENSE("GPL v2");
+>>>                   ^~~~~~~~
+>>> ../sound/hda/intel-nhlt.c:107:20: error: expected declaration specifiers or ‘...’ before string constant
+>>>    MODULE_DESCRIPTION("Intel NHLT driver");
+>>>                       ^~~~~~~~~~~~~~~~~~~
+>>> cc1: some warnings being treated as errors
+>>> make[3]: *** [../scripts/Makefile.build:266: sound/hda/intel-nhlt.o] Error 1
+>>>
+>>>
+>>>
+> 
+> 
