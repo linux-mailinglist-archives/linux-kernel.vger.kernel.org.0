@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 978D0A049D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:18:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7774A049F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:18:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726576AbfH1OSY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:18:24 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52467 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbfH1OSW (ORCPT
+        id S1726882AbfH1OSc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:18:32 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37979 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726466AbfH1OSX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:18:22 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t17so256908wmi.2
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 07:18:20 -0700 (PDT)
+        Wed, 28 Aug 2019 10:18:23 -0400
+Received: by mail-wm1-f66.google.com with SMTP id o184so236805wme.3
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 07:18:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mcL3AvqHT7bRzBjlZdaYirVmcHrrTcNQrMrMxpM5Yus=;
-        b=WoMSFH+jbYdpYIJW/cgs8flobaRwChKfAONQD4wALEJE4gjSTlGakMSVfTGQDWzyV1
-         9rXkwTT5x8+p/jqtsNQq/CI6RgWtLm0uAPtYiaQasGq6yOm6HR+GcHa/TeY97+4J5u6J
-         /p+vB2taIXzf7Uuuz10JcpYmv5J6FJ7IeI/ye2w5TOHnhLqJ/NJyhU67GOquPMYWNZPO
-         BS9qD7I7a4hyiWR7DiY+U+X8DK8PRSm/gNWUNECJXfVFX0jUVTyTyiQlaxsf3a+enRkq
-         D2X82syf5DJtvmSeJydBaMGuD1AbP0YRdlUQeNf0y7wofl19LBruc8DtHC7oN5vd2kGC
-         ivgQ==
+        bh=x8fPXZy6s7fSXGNVXDgDu4BkBSj5SqALzh4Ghh1aBOk=;
+        b=z3RuttDMt3zQy24jOPCzgIyuqq+QsAtA5zyPntuqSomsBiTTNZfb/86imnzx/8ah5e
+         zYGzol3Lm6Mu0ZMr8k5Zh/0r40bfepyK2b23EV+Hj5f68+y7ocpHxwNXK5qu+rrZG1xd
+         ttyT+uwd5HdpesNRcNxZ6+pQYPg6AwOP89g0gNxz4gX3BFBMVBNHFjRSBWCYRBpAw7Fb
+         3nt27CVcWzGJ7LK9uVZOv9hHv6GufTEc0r67+PF16zBpYl1QMwD7BZ9lOzPXVympnp4I
+         wxW4uobb0WlmK+ZcP0YrmFE4a9CcKqVaV/U0hja6BhmT08HvOMiLDaQGiWjmUTOMYhDk
+         03Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mcL3AvqHT7bRzBjlZdaYirVmcHrrTcNQrMrMxpM5Yus=;
-        b=B5TYXcxdFVf1uZ18ni3dYDJD19EyRCYnZocXqkv4Tpa9oMmqg2gnhnoZsO4BfLNQto
-         7Bu24ve/T0jT382AYEW9PceWZm6sbtO3CdC2CjOtUJ87JbnQhSQaHeROIIvav9orwjNk
-         cTwpx04WWYkTlklFXnrF7qzJeYE6h3h2BhANIk8zohKpbzBa8MIDQhkfScAZYzlFAD2X
-         4Iqw0DmhlYsKnUM4e6v4uhBe6eHx2GuXPioeMvU5Wvb+bIQ/UHiVqYS1Kf7/LDEMfAAl
-         HJDVA1LtblY6kThreWn+CkzOt5cs1LYiayyr7knfVF/cTP20ioIb3jrojt2c+A9H6Y0K
-         3wfA==
-X-Gm-Message-State: APjAAAVmlpDmx9b+CaMy4k9VkyW6mTgHWQp4XfXFK5gvj98qdhawwZuW
-        AvpT96TEBdL4xWvKbGk0QrEs63M4xVTa7A==
-X-Google-Smtp-Source: APXvYqwn1R9gYJiKlQU8k/I2epaSnpNLgXrnH+gfIwXHbGoEEGtTexblMHvFit2KgcvAsHLnTvr1Sg==
-X-Received: by 2002:a05:600c:2487:: with SMTP id 7mr5302979wms.141.1567001900084;
-        Wed, 28 Aug 2019 07:18:20 -0700 (PDT)
+        bh=x8fPXZy6s7fSXGNVXDgDu4BkBSj5SqALzh4Ghh1aBOk=;
+        b=L92SN1aSBB57/C+ggn893vP3+J0HaMPb9NndK+zF8dTemYvmXoNr/Y6hT2l+5Z+2lg
+         lCR+Dwm67g7vkZiw0uiPtRetVn8xVH+r3NZt9jsds3pNv5XkbPM/5PSQW6CadpzKpVPQ
+         YZZ/c/CQTzHL2OGzoFqPB+tkqDa3675qJEFmtsNCF1GHNo3fydIUvatNP5jGZL6tXvYb
+         nnyz1ctNpMQGlULRmHv9ZJje0aZJVgn5k6aDLX1MS72jZEtIgHUuLMQOBYe/omoNdNLB
+         4A5+2N9pTOySwpyFgy9Yl0kqOa+H4+6LvURNSxf5n/fhmLVDpL/xYBf3ZuDH2tSuB3He
+         X7Ow==
+X-Gm-Message-State: APjAAAWRAi8kaVri2yjVqX9SKHxNC9Q2bbRNAnKiAluIYUvaZsG9NUHN
+        7qnM9NWHnGrhuolejvSAtLiRh0LmQp9lTg==
+X-Google-Smtp-Source: APXvYqz//1qAjYnMY49bdNYUBOzbmJ/xbIX+Ea4PZTRK756pvLSdafxWSsysjqRMaSATj4WVGPBi3A==
+X-Received: by 2002:a1c:1b58:: with SMTP id b85mr3858293wmb.95.1567001901362;
+        Wed, 28 Aug 2019 07:18:21 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id u8sm3022354wmj.3.2019.08.28.07.18.19
+        by smtp.gmail.com with ESMTPSA id u8sm3022354wmj.3.2019.08.28.07.18.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 07:18:19 -0700 (PDT)
+        Wed, 28 Aug 2019 07:18:20 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com, devicetree@vger.kernel.org
+To:     khilman@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/3] dt-bindings: arm: amlogic: add Amlogic SM1 based Khadas VIM3L bindings
-Date:   Wed, 28 Aug 2019 16:18:15 +0200
-Message-Id: <20190828141816.16328-3-narmstrong@baylibre.com>
+Subject: [PATCH v3 3/3] arm64: dts: khadas-vim3: add support for the SM1 based VIM3L
+Date:   Wed, 28 Aug 2019 16:18:16 +0200
+Message-Id: <20190828141816.16328-4-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190828141816.16328-1-narmstrong@baylibre.com>
 References: <20190828141816.16328-1-narmstrong@baylibre.com>
@@ -63,33 +63,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Khadas VIM3 is also available as VIM3L with the Pin-to-pin compatible
-Amlogic SM1 SoC in the S905D3 variant package.
-
-Change the description to match the S905X3/D3/Y3 variants like the G12A
-description, and add the khadas,vim3l compatible.
+Add the Amlogic SM1 based Khadas VIM3L, sharing all the same features
+as the G12B based VIM3, but:
+- a different DVFS support since only a single cluster is available
+- audio is still not available on SM1
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- Documentation/devicetree/bindings/arm/amlogic.yaml | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/amlogic/Makefile          |  1 +
+ .../dts/amlogic/meson-sm1-khadas-vim3l.dts    | 70 +++++++++++++++++++
+ 2 files changed, 71 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/amlogic.yaml b/Documentation/devicetree/bindings/arm/amlogic.yaml
-index b48ea1e4913a..99015cef8bb1 100644
---- a/Documentation/devicetree/bindings/arm/amlogic.yaml
-+++ b/Documentation/devicetree/bindings/arm/amlogic.yaml
-@@ -150,9 +150,10 @@ properties:
-           - const: amlogic,s922x
-           - const: amlogic,g12b
- 
--      - description: Boards with the Amlogic Meson SM1 S905X3 SoC
-+      - description: Boards with the Amlogic Meson SM1 S905X3/D3/Y3 SoC
-         items:
-           - enum:
-               - seirobotics,sei610
-+              - khadas,vim3l
-           - const: amlogic,sm1
- ...
+diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
+index edbf128e7707..84afecba9ec0 100644
+--- a/arch/arm64/boot/dts/amlogic/Makefile
++++ b/arch/arm64/boot/dts/amlogic/Makefile
+@@ -35,3 +35,4 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q201.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
+ dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
++dtb-$(CONFIG_ARCH_MESON) += meson-sm1-khadas-vim3l.dtb
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+new file mode 100644
+index 000000000000..5233bd7cacfb
+--- /dev/null
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1-khadas-vim3l.dts
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2019 BayLibre, SAS
++ * Author: Neil Armstrong <narmstrong@baylibre.com>
++ */
++
++/dts-v1/;
++
++#include "meson-sm1.dtsi"
++#include "meson-khadas-vim3.dtsi"
++
++/ {
++	compatible = "khadas,vim3l", "amlogic,sm1";
++	model = "Khadas VIM3L";
++
++	vddcpu: regulator-vddcpu {
++		/*
++		 * Silergy SY8030DEC Regulator.
++		 */
++		compatible = "pwm-regulator";
++
++		regulator-name = "VDDCPU";
++		regulator-min-microvolt = <690000>;
++		regulator-max-microvolt = <1050000>;
++
++		vin-supply = <&vsys_3v3>;
++
++		pwms = <&pwm_AO_cd 1 1250 0>;
++		pwm-dutycycle-range = <100 0>;
++
++		regulator-boot-on;
++		regulator-always-on;
++	};
++};
++
++&cpu0 {
++	cpu-supply = <&vddcpu>;
++	operating-points-v2 = <&cpu_opp_table>;
++	clocks = <&clkc CLKID_CPU_CLK>;
++	clock-latency = <50000>;
++};
++
++&cpu1 {
++	cpu-supply = <&vddcpu>;
++	operating-points-v2 = <&cpu_opp_table>;
++	clocks = <&clkc CLKID_CPU1_CLK>;
++	clock-latency = <50000>;
++};
++
++&cpu2 {
++	cpu-supply = <&vddcpu>;
++	operating-points-v2 = <&cpu_opp_table>;
++	clocks = <&clkc CLKID_CPU2_CLK>;
++	clock-latency = <50000>;
++};
++
++&cpu3 {
++	cpu-supply = <&vddcpu>;
++	operating-points-v2 = <&cpu_opp_table>;
++	clocks = <&clkc CLKID_CPU3_CLK>;
++	clock-latency = <50000>;
++};
++
++&pwm_AO_cd {
++	pinctrl-0 = <&pwm_ao_d_e_pins>;
++	pinctrl-names = "default";
++	clocks = <&xtal>;
++	clock-names = "clkin1";
++	status = "okay";
++};
 -- 
 2.22.0
 
