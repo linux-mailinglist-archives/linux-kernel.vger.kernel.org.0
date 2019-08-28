@@ -2,93 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 538BD9FA24
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F2129FA25
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726328AbfH1GGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 02:06:45 -0400
-Received: from mga04.intel.com ([192.55.52.120]:22063 "EHLO mga04.intel.com"
+        id S1726339AbfH1GHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 02:07:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:43486 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbfH1GGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 02:06:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Aug 2019 23:06:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,440,1559545200"; 
-   d="scan'208";a="185518935"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga006.jf.intel.com with ESMTP; 27 Aug 2019 23:06:42 -0700
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     akpm@linux-foundation.org, vbabka@suse.cz,
-        kirill.shutemov@linux.intel.com, yang.shi@linux.alibaba.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: [RESEND [PATCH] 2/2] mm/mmap.c: unlink vma before rb_erase
-Date:   Wed, 28 Aug 2019 14:06:14 +0800
-Message-Id: <20190828060614.19535-3-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190828060614.19535-1-richardw.yang@linux.intel.com>
-References: <20190828060614.19535-1-richardw.yang@linux.intel.com>
+        id S1726100AbfH1GHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 02:07:45 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C64DEA53264;
+        Wed, 28 Aug 2019 06:07:44 +0000 (UTC)
+Received: from thuth.com (ovpn-116-90.ams2.redhat.com [10.36.116.90])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D85581001956;
+        Wed, 28 Aug 2019 06:07:41 +0000 (UTC)
+From:   Thomas Huth <thuth@redhat.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        "Oliver O'Halloran" <oohall@gmail.com>
+Subject: [PATCH] powerpc: Replace GPL boilerplate with SPDX identifiers
+Date:   Wed, 28 Aug 2019 08:07:37 +0200
+Message-Id: <20190828060737.32531-1-thuth@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Wed, 28 Aug 2019 06:07:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current sequence to remove a vma is:
+The FSF does not reside in "675 Mass Ave, Cambridge" anymore...
+let's simply use proper SPDX identifiers instead.
 
-  vma_rb_erase_ignore()
-  __vma_unlink_list()
-  vma_gap_update()
-
-This may do some extra subtree_gap propagation due the vma is unlink
-from list after rb_erase.
-
-For example, we have a tree:
-
-                    a
-                    [0x9000, 0x10000]
-                /            \
-            b                 c
-            [0x8000, 0x9000]  [0x10000, 0x11000]
-         /
-        d
-        [0x6000, 0x7000]
-
-The gap for each node is:
-
-  a's gap = 0x6000
-  b's gap = 0x6000
-  c's gap = 0x0
-  d's gap = 0x6000
-
-Now we want to remove node d. Since we don't unlink d from link when
-doing rb_erase, b's gap would still be computed to 0x1000. This leads to
-the vma_gap_update() after list unlink would recompute b and a's gap.
-
-For this case, by unlink the list before rb_erase, we would have one
-time less of vma_compute_subtree_gap.
-
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
 ---
- mm/mmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/uapi/asm/spu_info.h   | 14 --------------
+ arch/powerpc/kernel/eeh_driver.c           | 18 +-----------------
+ arch/powerpc/kernel/eeh_sysfs.c            | 18 +-----------------
+ arch/powerpc/platforms/pseries/pci_dlpar.c | 18 +-----------------
+ 4 files changed, 3 insertions(+), 65 deletions(-)
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 672ad7dc6b3c..907939690a30 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -678,8 +678,8 @@ static __always_inline void __vma_unlink_common(struct mm_struct *mm,
- 						struct vm_area_struct *vma,
- 						struct vm_area_struct *ignore)
- {
--	vma_rb_erase_ignore(vma, &mm->mm_rb, ignore);
- 	__vma_unlink_list(mm, vma);
-+	vma_rb_erase_ignore(vma, &mm->mm_rb, ignore);
- 	/* Kill the cache */
- 	vmacache_invalidate(mm);
- }
+diff --git a/arch/powerpc/include/uapi/asm/spu_info.h b/arch/powerpc/include/uapi/asm/spu_info.h
+index cabfcbba9eac..45f97150587b 100644
+--- a/arch/powerpc/include/uapi/asm/spu_info.h
++++ b/arch/powerpc/include/uapi/asm/spu_info.h
+@@ -5,20 +5,6 @@
+  * (C) Copyright 2006 IBM Corp.
+  *
+  * Author: Dwayne Grant McConnell <decimal@us.ibm.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2, or (at your option)
+- * any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ 
+ #ifndef _UAPI_SPU_INFO_H
+diff --git a/arch/powerpc/kernel/eeh_driver.c b/arch/powerpc/kernel/eeh_driver.c
+index 89623962c727..3bb27ded9daa 100644
+--- a/arch/powerpc/kernel/eeh_driver.c
++++ b/arch/powerpc/kernel/eeh_driver.c
+@@ -1,25 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+  * PCI Error Recovery Driver for RPA-compliant PPC64 platform.
+  * Copyright IBM Corp. 2004 2005
+  * Copyright Linas Vepstas <linas@linas.org> 2004, 2005
+  *
+- * All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or (at
+- * your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
+- * NON INFRINGEMENT.  See the GNU General Public License for more
+- * details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- *
+  * Send comments and feedback to Linas Vepstas <linas@austin.ibm.com>
+  */
+ #include <linux/delay.h>
+diff --git a/arch/powerpc/kernel/eeh_sysfs.c b/arch/powerpc/kernel/eeh_sysfs.c
+index 3fa04dda1737..ab44d965a53c 100644
+--- a/arch/powerpc/kernel/eeh_sysfs.c
++++ b/arch/powerpc/kernel/eeh_sysfs.c
+@@ -1,25 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+  * Sysfs entries for PCI Error Recovery for PAPR-compliant platform.
+  * Copyright IBM Corporation 2007
+  * Copyright Linas Vepstas <linas@austin.ibm.com> 2007
+  *
+- * All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or (at
+- * your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
+- * NON INFRINGEMENT.  See the GNU General Public License for more
+- * details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- *
+  * Send comments and feedback to Linas Vepstas <linas@austin.ibm.com>
+  */
+ #include <linux/pci.h>
+diff --git a/arch/powerpc/platforms/pseries/pci_dlpar.c b/arch/powerpc/platforms/pseries/pci_dlpar.c
+index 561917fa54a8..361986e4354e 100644
+--- a/arch/powerpc/platforms/pseries/pci_dlpar.c
++++ b/arch/powerpc/platforms/pseries/pci_dlpar.c
+@@ -1,3 +1,4 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+  * PCI Dynamic LPAR, PCI Hot Plug and PCI EEH recovery code
+  * for RPA-compliant PPC64 platform.
+@@ -6,23 +7,6 @@
+  *
+  * Updates, 2005, John Rose <johnrose@austin.ibm.com>
+  * Updates, 2005, Linas Vepstas <linas@austin.ibm.com>
+- *
+- * All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or (at
+- * your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful, but
+- * WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE, GOOD TITLE or
+- * NON INFRINGEMENT.  See the GNU General Public License for more
+- * details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ 
+ #include <linux/pci.h>
 -- 
-2.17.1
+2.18.1
 
