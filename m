@@ -2,100 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD2D9FA5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 173439FA77
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 08:22:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfH1GVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 02:21:35 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:5741 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726232AbfH1GVd (ORCPT
+        id S1726603AbfH1GW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 02:22:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:59759 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbfH1GWZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 02:21:33 -0400
-X-UUID: 912eb4ade9a34facb4bf727e242203e4-20190828
-X-UUID: 912eb4ade9a34facb4bf727e242203e4-20190828
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1422246930; Wed, 28 Aug 2019 14:21:37 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 28 Aug 2019 14:21:35 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Aug 2019 14:21:34 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6/6] arm64: dts: mt8183: enable USB remote wakeup
-Date:   Wed, 28 Aug 2019 14:21:01 +0800
-Message-ID: <1566973261-21677-7-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1566973261-21677-1-git-send-email-chunfeng.yun@mediatek.com>
-References: <1566973261-21677-1-git-send-email-chunfeng.yun@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 22E3B909B89E165B91830DABF3469875FDA9C6DC94953577A2332E66565D7D712000:8
-X-MTK:  N
+        Wed, 28 Aug 2019 02:22:25 -0400
+Received: from mail-pl1-f200.google.com ([209.85.214.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1i2rLb-0006P8-9j
+        for linux-kernel@vger.kernel.org; Wed, 28 Aug 2019 06:22:23 +0000
+Received: by mail-pl1-f200.google.com with SMTP id z7so959285plo.3
+        for <linux-kernel@vger.kernel.org>; Tue, 27 Aug 2019 23:22:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:content-transfer-encoding:mime-version
+         :subject:message-id:date:cc:to;
+        bh=eErmgvLWpTvw79t37fqW5by++pBkMN7PzJVZAaJiWBc=;
+        b=mHWQ1wofbm3tDV2AQwTNyjlDBkkhxHlwAZ1xRZo3KQb1m1lcM0H/SMNPsOQFmi3DOP
+         xuZupPBqvIgi2hG9QBQ0bQPFKtuARqe5842NyzbhzEC9niH2dnwxU6JpyebpNM2thT2k
+         OdXGUvQ4j+MzqI5l5hd6dm5ucL99tVji4eEEtHhEDTPlUq6bdL2zO2u6rOyfvfqfL5Gz
+         GWx+s9pYvjjUmpMwYHVYC1IPC/bhO8L6OcALDOzvArCqm4TvLxstdmNaNAvgvcyt2pq9
+         tnoEcwFcJLmtIcr1nkrSWHz+2JZDwdk4OvkOUoNQ7f5zHARNiNCsYbdkz6IEkYp4viqf
+         Xp7A==
+X-Gm-Message-State: APjAAAUdYKHYbaGL8f8hNHBOMgkqbNSsimkYXymDjeTdOuvbqNBiM4+Y
+        wKPiPT+Aw48apshJDAMV8q9RwBq05rL/2bOwv8i/KxaGMQo0qRW2M53dxFHI8+t3sswwBqRBlXO
+        WP/aLP1h/vTO7R9AsAsyfbuI4bm5ZPvZ4thSxVSj5bQ==
+X-Received: by 2002:a65:464d:: with SMTP id k13mr1846281pgr.99.1566973341974;
+        Tue, 27 Aug 2019 23:22:21 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwzeZJ2AZhXpkhXpayJAnLK5l71RX5LcrFzSIL3dvryq9eP2qoVpnsbjyIl6xOIA9bblIN0nA==
+X-Received: by 2002:a65:464d:: with SMTP id k13mr1846256pgr.99.1566973341602;
+        Tue, 27 Aug 2019 23:22:21 -0700 (PDT)
+Received: from 2001-b011-380f-3c42-f8f8-a260-49a8-d1ed.dynamic-ip6.hinet.net (2001-b011-380f-3c42-f8f8-a260-49a8-d1ed.dynamic-ip6.hinet.net. [2001:b011:380f:3c42:f8f8:a260:49a8:d1ed])
+        by smtp.gmail.com with ESMTPSA id r75sm1524386pfc.18.2019.08.27.23.22.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 27 Aug 2019 23:22:21 -0700 (PDT)
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+Content-Type: text/plain;
+        charset=utf-8;
+        delsp=yes;
+        format=flowed
+Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Alps touchpad generates IRQ storm after S3
+Message-Id: <44F93018-5F13-4932-A5AC-9D288CDF68DD@canonical.com>
+Date:   Wed, 28 Aug 2019 14:22:18 +0800
+Cc:     Mario Limonciello <mario.limonciello@dell.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     masaki.ota@jp.alps.com
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable USB remote wakeup for MT8183
+Hi Masaki,
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts | 1 +
- arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 8 ++++++++
- 2 files changed, 9 insertions(+)
+The Alps touchpad (044E:1220) on Dell Precision 7530 causes IRQ storm after  
+system suspend (S3).
+Commit "HID: i2c-hid: Don't reset device upon system resume” which solves  
+the same issue for other vendors, cause the issue on Alps touchpad.
+So I’d like to know the correct command Alps touchpad expects after system  
+resume.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-index 142ff52f0f42..077256f3397b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-@@ -150,6 +150,7 @@
- &ssusb {
- 	vusb33-supply = <&mt6358_vusb_reg>;
- 	dr_mode = "host";
-+	wakeup-source;
- 	status = "okay";
- };
- 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 28da334237c6..c20cc0e8c2b4 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -215,6 +215,13 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		pericfg: syscon@10003000 {
-+			compatible = "mediatek,mt8183-pericfg", "syscon";
-+			reg = <0 0x10003000 0 0x1000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		pio: pinctrl@10005000 {
- 			compatible = "mediatek,mt8183-pinctrl";
- 			reg = <0 0x10005000 0 0x1000>,
-@@ -384,6 +391,7 @@
- 			clocks = <&infracfg CLK_INFRA_UNIPRO_SCK>,
- 				 <&infracfg CLK_INFRA_USB>;
- 			clock-names = "sys_ck", "ref_ck";
-+			mediatek,syscon-wakeup = <&pericfg 0x400 0>;
- 			#address-cells = <2>;
- 			#size-cells = <2>;
- 			ranges;
--- 
-2.23.0
+Also Cc Mario because this could relate to BIOS.
 
+Kai-Heng
