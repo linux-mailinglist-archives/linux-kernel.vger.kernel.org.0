@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F07F29FC72
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:00:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BBBC9FC6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 10:00:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfH1IAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 04:00:03 -0400
-Received: from shell.v3.sk ([90.176.6.54]:40580 "EHLO shell.v3.sk"
+        id S1726635AbfH1H76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 03:59:58 -0400
+Received: from shell.v3.sk ([90.176.6.54]:40563 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726292AbfH1IAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 04:00:00 -0400
+        id S1726272AbfH1H76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 03:59:58 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id BC4C7D832D;
-        Wed, 28 Aug 2019 09:59:57 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 3DDE6D833F;
+        Wed, 28 Aug 2019 09:59:54 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id S8cKjMhYL0Ji; Wed, 28 Aug 2019 09:59:45 +0200 (CEST)
+        with ESMTP id 0PrU-wBeZB85; Wed, 28 Aug 2019 09:59:45 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 9A0F4D833A;
-        Wed, 28 Aug 2019 09:59:44 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 01FBCD833B;
+        Wed, 28 Aug 2019 09:59:45 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ih7jdCbCCXrQ; Wed, 28 Aug 2019 09:59:42 +0200 (CEST)
+        with ESMTP id AS_XgI9h5Oul; Wed, 28 Aug 2019 09:59:42 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 88E7FD832D;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id F20B3D8332;
         Wed, 28 Aug 2019 09:59:41 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Russell King <linux@armlinux.org.uk>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v4 2/5] dt-bindings: display: armada: Rename the binding doc file
-Date:   Wed, 28 Aug 2019 09:59:35 +0200
-Message-Id: <20190828075938.318028-3-lkundrak@v3.sk>
+        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v4 4/5] dt-bindings: display: armada: Add more compatible strings
+Date:   Wed, 28 Aug 2019 09:59:37 +0200
+Message-Id: <20190828075938.318028-5-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190828075938.318028-1-lkundrak@v3.sk>
 References: <20190828075938.318028-1-lkundrak@v3.sk>
@@ -46,47 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use a more generic name, since it will document more compatible LCD
-controllers than just that of Dove. Also, there's no point putting it in
-a separate directory.
+There's a generic compatible string and the driver will work on a MMP2 as
+well, using the same binding.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
 ---
+Changes since v3:
+- Collected Rob's Reviewed-by tag
+
+Changes since v2:
+- Order marvell,armada-lcdc after the model-specific strings.
+
 Changes since v1:
-- Choose a better name than armada/marvell-armada-drm.txt, since
-  there will be no display-subsystem master node and thus it will
-  only document just the LCDC.
+- Added marvell,armada-lcdc compatible string.
 
- .../{armada/marvell,dove-lcd.txt =3D> marvell,armada-lcdc.txt}    | 0
- MAINTAINERS                                                     | 2 +-
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename Documentation/devicetree/bindings/display/{armada/marvell,dove-lc=
-d.txt =3D> marvell,armada-lcdc.txt} (100%)
+ .../devicetree/bindings/display/marvell,armada-lcdc.txt        | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/armada/marvell,dov=
-e-lcd.txt b/Documentation/devicetree/bindings/display/marvell,armada-lcdc=
-.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/display/armada/marvell,dove=
--lcd.txt
-rename to Documentation/devicetree/bindings/display/marvell,armada-lcdc.t=
-xt
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3d824ecf96229..d379acd4f69ce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9620,7 +9620,7 @@ T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git=
- drm-armada-devel
- T:	git git://git.armlinux.org.uk/~rmk/linux-arm.git drm-armada-fixes
- F:	drivers/gpu/drm/armada/
- F:	include/uapi/drm/armada_drm.h
--F:	Documentation/devicetree/bindings/display/armada/
-+F:	Documentation/devicetree/bindings/display/marvell,armada-lcdc.txt
- F:	Documentation/devicetree/bindings/reserved-memory/marvell,armada-fram=
-ebuffer.txt
+diff --git a/Documentation/devicetree/bindings/display/marvell,armada-lcd=
+c.txt b/Documentation/devicetree/bindings/display/marvell,armada-lcdc.txt
+index 2606a8efc9568..0ea4cbe5a32ee 100644
+--- a/Documentation/devicetree/bindings/display/marvell,armada-lcdc.txt
++++ b/Documentation/devicetree/bindings/display/marvell,armada-lcdc.txt
+@@ -3,7 +3,8 @@ Marvell Armada LCD controller
 =20
- MARVELL ARMADA 3700 PHY DRIVERS
+ Required properties:
+=20
+- - compatible: value should be "marvell,dove-lcd".
++ - compatible: value should be "marvell,dove-lcd" or "marvell,mmp2-lcd",
++   depending on the exact SoC model, along with "marvell,armada-lcdc"
+  - reg: base address and size of the LCD controller
+  - interrupts: single interrupt number for the LCD controller
+=20
 --=20
 2.21.0
 
