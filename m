@@ -2,132 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F9C9A0B56
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 22:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ACB7A0B61
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 22:27:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfH1UZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 16:25:34 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34166 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbfH1UZd (ORCPT
+        id S1726980AbfH1U1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 16:27:35 -0400
+Received: from mail-pl1-f169.google.com ([209.85.214.169]:38224 "EHLO
+        mail-pl1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726616AbfH1U1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 16:25:33 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n9so330001pgc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 13:25:33 -0700 (PDT)
+        Wed, 28 Aug 2019 16:27:33 -0400
+Received: by mail-pl1-f169.google.com with SMTP id w11so488420plp.5;
+        Wed, 28 Aug 2019 13:27:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=m9K6geHQslN19tGBbmOQDx2FY+2m9BB3O5M0ryJqK9c=;
-        b=bx1zz6Bghmx2cAm/3B3M1XQ5TzD9T6Shao6YQ/kAskDAzddvVphm3y/VszXyU8cVxt
-         GmrZL8kV6W5wHbTkcTKkqgx5rPnKlOZTZtpFqe0b87i6tjcwzIPvhnmQatdzfwt755AQ
-         /TbGEuYOWia2rpi1xfmsUoZAgfgNRQN8izYhI=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Oa6hwJmjbKjuqI8KO2uQ2NpWyR7vXRuA7cSnTsaDRIs=;
+        b=Uxdtln2knW+a66Nvahu7hXNoA79NZzi/SFnD3iimU/bnbJJwkFMf2VAlfAys0QIQmv
+         5EgHJcGm3vRv0rCXec46xJMD9cx5CHWlL87gsa3z2K61OXRvGmPdiLGZ8DhHQiO/Z7aM
+         0H//UheQy/CrJYQMYJjnX1Sv8J0AfEJI5XHlrpRh8rRY/0vYoVonNyEcZk+Pqbi8wZ54
+         kqecVYNYdkFdDaCy7iGpQXYbV3Qb8iW5Cw+snpvlcWNkD+NTmywWR9lb0JDKtEncTuZm
+         qIYWwYwbgBgnI00oxT/B6w3nfqR1pyn4AVXWpQ+2JbPce5p0P0baNP0c7sYb2gQ6FLKk
+         to1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=m9K6geHQslN19tGBbmOQDx2FY+2m9BB3O5M0ryJqK9c=;
-        b=j1R85rJVVwDFgjrFCiMLtwXm9yFXCBx8CTiZIkjZbA6eBPKHxAramuUtmw3vhTl8Vs
-         WX687iS9SDLudPgWXWK7qj0P/qRQaiTc1NelO0eTa/3tWNvNt4Kq39eyZmI/bi/Vpuxi
-         TCx4rOm1NieBEFp706oc1xbR7bun4St78QpW/D1oQ9SnA4JyuRBpPe13wgnzPgZZ5pio
-         3fWwaeAv0FseLE5DohFgwo/957piJGFm29nXSqUnQVul9cvNcvVQtssGYFHa4meE/U3c
-         p9VOT2Op9DgRAbT2WKcHyz6BuGaHCa/gUGlisRCPlfgBcZNPzhbxcjB/YMc/TrR1H7+I
-         UVMw==
-X-Gm-Message-State: APjAAAXUrblIBDQKPR3rHe5hJm1zO8dPrWBnjC2+b4suiEch7OJmcJr2
-        1O5LtSNAMrfZbd9Eff4GLevDOg==
-X-Google-Smtp-Source: APXvYqxQAENVpZgVbOZciL3QGjuq0yBD38cfywqNfv+zc8DilopsyfnAC3fYr1sECkiUbk2gzmgRoA==
-X-Received: by 2002:a63:5a0a:: with SMTP id o10mr5112466pgb.282.1567023932990;
-        Wed, 28 Aug 2019 13:25:32 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h17sm232891pfo.24.2019.08.28.13.25.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Oa6hwJmjbKjuqI8KO2uQ2NpWyR7vXRuA7cSnTsaDRIs=;
+        b=NFatfq5ELCnMVWlsJlEsGOAd9ufcxIldf/CyeQ+Y6vhDK40xUFeni1JxelLrWlWn5E
+         PgsjbBPIhwUaizB6YGOXIE1n84hppPD775gtURNieLFVs8CxjWJFcgIAA3OUVF9Wj9S/
+         U9H1OOzAoMtBX1ViJoRIdpyenPionBwHTJ0uOjMiX5Qwa7bSA6sTkx0BYf3yhQBE65tF
+         L4XskmJ7fzSxpg3krf53n+3+Snxvu8sAZAq+iPOY3PHJXFV1YkN9NYNBFJXPkmVSFZzy
+         W17Z964q/lbBlGSHtlcHEB3KznmwOhBUDS8YV3w0tq9PGvORnGsTixyFuccq57oku7BI
+         2hGg==
+X-Gm-Message-State: APjAAAXvGFg5IfQ5XhQ1hZZotNrMGJsWqFNJBlTna9TEIeKu2Fs18LdJ
+        W7Q9TS17++2m0FVYXZ7mafk=
+X-Google-Smtp-Source: APXvYqxuiA+0iXSqabEEiaHcDthz8NSS9AsGph/Zx11FbtNQgeEo36tT66h3LGF0XtVp+EJXHYEiQA==
+X-Received: by 2002:a17:902:1107:: with SMTP id d7mr6091471pla.184.1567024052408;
+        Wed, 28 Aug 2019 13:27:32 -0700 (PDT)
+Received: from localhost.localdomain ([103.51.74.111])
+        by smtp.gmail.com with ESMTPSA id g2sm253373pfq.88.2019.08.28.13.27.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 13:25:32 -0700 (PDT)
-Date:   Wed, 28 Aug 2019 13:25:31 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, linux-nvdimm@lists.01.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] libnvdimm, region: Use struct_size() in kzalloc()
-Message-ID: <201908281325.1E7C2A9@keescook>
-References: <20190610210613.GA21989@embeddedor>
- <3abfb317-76cc-f9a0-243f-9b493a524a98@embeddedor.com>
+        Wed, 28 Aug 2019 13:27:31 -0700 (PDT)
+From:   Anand Moon <linux.amoon@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCHv1 0/3] Odroid c2 missing regulator linking
+Date:   Wed, 28 Aug 2019 20:27:20 +0000
+Message-Id: <20190828202723.1145-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3abfb317-76cc-f9a0-243f-9b493a524a98@embeddedor.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 01:30:24PM -0500, Gustavo A. R. Silva wrote:
-> Hi all,
-> 
-> Friendly ping:
-> 
-> Who can take this, please?
-> 
-> Thanks
-> --
-> Gustavo
-> 
-> On 6/10/19 4:06 PM, Gustavo A. R. Silva wrote:
-> > One of the more common cases of allocation size calculations is finding
-> > the size of a structure that has a zero-sized array at the end, along
-> > with memory for some number of elements for that array. For example:
-> > 
-> > struct nd_region {
-> > 	...
-> >         struct nd_mapping mapping[0];
-> > };
-> > 
-> > instance = kzalloc(sizeof(struct nd_region) + sizeof(struct nd_mapping) *
-> >                           count, GFP_KERNEL);
-> > 
-> > Instead of leaving these open-coded and prone to type mistakes, we can
-> > now use the new struct_size() helper:
-> > 
-> > instance = kzalloc(struct_size(instance, mapping, count), GFP_KERNEL);
-> > 
-> > This code was detected with the help of Coccinelle.
-> > 
-> > Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Below small changes help re-configure or fix missing inter linking
+of regulator node.
 
-FWIW,
+Changes based top on my prevoius series.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+[0] https://patchwork.kernel.org/cover/11113091/
 
--Kees
+TOOD: Add support for DVFS GXBB odroid board in next series.
 
-> > ---
-> >  drivers/nvdimm/region_devs.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
-> > index b4ef7d9ff22e..88becc87e234 100644
-> > --- a/drivers/nvdimm/region_devs.c
-> > +++ b/drivers/nvdimm/region_devs.c
-> > @@ -1027,10 +1027,9 @@ static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
-> >  		}
-> >  		region_buf = ndbr;
-> >  	} else {
-> > -		nd_region = kzalloc(sizeof(struct nd_region)
-> > -				+ sizeof(struct nd_mapping)
-> > -				* ndr_desc->num_mappings,
-> > -				GFP_KERNEL);
-> > +		nd_region = kzalloc(struct_size(nd_region, mapping,
-> > +						ndr_desc->num_mappings),
-> > +				    GFP_KERNEL);
-> >  		region_buf = nd_region;
-> >  	}
-> >  
-> > 
+Best Regards
+-Anand
+
+Anand Moon (3):
+  arm64: dts: meson: odroid-c2: Add missing regulator linked to P5V0
+    regulator
+  arm64: dts: meson: odroid-c2: Add missing regulator linked to
+    VDDIO_AO3V3 regulator
+  arm64: dts: meson: odroid-c2: Add missing regulator linked to HDMI
+    supply
+
+ .../boot/dts/amlogic/meson-gxbb-odroidc2.dts  | 44 ++++++++++++++++---
+ 1 file changed, 38 insertions(+), 6 deletions(-)
 
 -- 
-Kees Cook
-
+2.23.0
 
