@@ -2,73 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50186A04B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:22:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1389A04C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2019 16:25:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726844AbfH1OWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 10:22:11 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53017 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbfH1OWL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 10:22:11 -0400
-Received: by mail-wm1-f65.google.com with SMTP id t17so270598wmi.2;
-        Wed, 28 Aug 2019 07:22:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=D4lwdLEb4QQKbZ9weOV4KhRYID3FQMV0ZKC/KJGyR5E=;
-        b=DOCxhZ0q5T2JQYg2s16hNNsaXELwXQE9uLBO4MCD4nqEzNQp6RFzjOV8sxkEei1gZ7
-         YphdelfVMwbNGQ7/HQgoPKGwdCOXbjzhtoEzqf5sS7mF5bzLU1flnPGWkre81cwDcCky
-         ZZ1BCEl47CtNdQbjA57jzTqRvaL3QGqLdqC9rZ8tPmFRyJXH7gd45UgY/GI6VKwWTYIK
-         Dj6oUl2aTmZUahvxrB6i3Dawr8JIsJcipgMkGOtfydBCL9Dfm0cPKflgxNO0rlBwpswZ
-         B9OAGr/2vtfYtYZ2tPmTEUbPYK3CZlxh4Ia7UFk9QiRM4GqydGAACs6qnSA4UhcDGvcx
-         WFgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=D4lwdLEb4QQKbZ9weOV4KhRYID3FQMV0ZKC/KJGyR5E=;
-        b=r0bIobuS5oTiTcbL0F0o/keOGEDWJG8GiyPQ9+Nt/PlTtdB51S2Pk3pEoyl0B7nxxG
-         pdCJnEhP+z4du1LegScWour6yrLPMuxewVKBCm0APuRWy8I9i0AAUUZ30EgnMDX10kOC
-         q/kDdMHxaGEZTNqWPbSGRMFqvq8SNkCR9pDk45wSq/koNWAz3gTSBe6FBSQa0XNFWRL0
-         ICoJV6m1p0qecIDRwldpCraG6OTzM3RCqw9fahNP61k16tbetXoCkqVm15LqGMHGVo9o
-         mLyIpcEfp79CLKcpLV+C/lty6JYHyriXhE6mAoE92Hs0N2JZYUJ0sZG1I0rR1rqJAwDH
-         wVNg==
-X-Gm-Message-State: APjAAAWhXVBgiBKRN+bbLpTdEeeXnlkTOzDBSan+lwdFA8FJyX/FUzS6
-        OhAhdCMpNAESKIoyr4kx7x/pz/zop+uo+Loj7g8=
-X-Google-Smtp-Source: APXvYqxCAlRy8ROXK9G2GnuDBTqcHC3Ggaq+VaNUfdOmWaUyVB1CNvvLV7q/83lqVw2NDK+hphCfpobr/nq5ilnbKME=
-X-Received: by 2002:a7b:cf21:: with SMTP id m1mr5533245wmg.150.1567002129167;
- Wed, 28 Aug 2019 07:22:09 -0700 (PDT)
+        id S1726805AbfH1OZk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 10:25:40 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5233 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726397AbfH1OZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 10:25:39 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1C7947BC4F351F1B1D10;
+        Wed, 28 Aug 2019 22:25:36 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 28 Aug 2019 22:25:29 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 00/12] net: hns3: add some cleanups and optimizations
+Date:   Wed, 28 Aug 2019 22:23:04 +0800
+Message-ID: <1567002196-63242-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190828055425.24765-1-yamada.masahiro@socionext.com>
- <CA+icZUWigJkh-VtJc4=xE06oMgE=ci2Mfdo2JaDv0fth8PKH+A@mail.gmail.com> <CA+icZUUhhOLfOgwoKP4nKOdPakNJF7XafJ09ERP6r7dOUduMsg@mail.gmail.com>
-In-Reply-To: <CA+icZUUhhOLfOgwoKP4nKOdPakNJF7XafJ09ERP6r7dOUduMsg@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Wed, 28 Aug 2019 16:21:58 +0200
-Message-ID: <CA+icZUUSVRURu-jQAnVnZwPp0qiWpostDz+WkTjxx8zunVKBgw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kbuild: refactor scripts/Makefile.extrawarn
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Clang-Built-Linux ML <clang-built-linux@googlegroups.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> build-time checking. For more details see <Documentation/kbuild/kbuild.rst>.
+This patch-set includes cleanups, optimizations and bugfix for
+the HNS3 ethernet controller driver.
 
-Grrr.
+[patch 01/12] adds code optimization for debugfs command "dump reg".
 
-s/ Documentation/kbuild/kbuild.rst / scripts/Makefile.extrawarn
+[patch 02/12] fixes magic number issues.
 
-- Sedat -
+[patch 03/12] modifies some parameters about hclge_dbg_dump_tm_map().
+
+[patch 04/12] removes some unused parameters.
+
+[patch 05/12] refactors some logs to make them more readable.
+
+[patch 06/12] makes some resusable codes into functions.
+
+[patch 07/12] fixes some type errors.
+
+[patch 08/12] reduces the waiting time for per TQP reset.
+
+[patch 09/12] implements .process_hw_error for hns3 client.
+
+[patch 10/12] adds phy selftest for HNS3 driver.
+
+[patch 11/12] adds checking for reset interrupt status when reset fails.
+
+[patch 12/12] prevents SSU loopback when running ethtool -t.
+
+Guojia Liao (2):
+  net: hns3: reduce the parameters of some functions
+  net: hns3: fix incorrect type in assignment.
+
+Huazhong Tan (3):
+  net: hns3: use macro instead of magic number
+  net: hns3: modify base parameter of kstrtouint in
+    hclge_dbg_dump_tm_map
+  net: hns3: check reset interrupt status when reset fails
+
+Weihang Li (1):
+  net: hns3: implement .process_hw_error for hns3 client
+
+Yonglong Liu (1):
+  net: hns3: make some reusable codes into a function
+
+Yufeng Mo (3):
+  net: hns3: optimize some log printings
+  net: hns3: add phy selftest function
+  net: hns3: not allow SSU loopback while execute ethtool -t dev
+
+Zhongzhu Liu (2):
+  net: hns3: code optimization for debugfs related to "dump reg"
+  net: hns3: optimize waiting time for TQP reset
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        |   9 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c |  25 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  24 ++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   5 +
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  16 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h |  28 +++
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c |  54 ++--
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c | 271 +++++++++++----------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.h |  19 +-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c |  42 ++--
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.h |   1 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 268 ++++++++++++++++----
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |   9 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_mbx.c   |  10 +-
+ 14 files changed, 546 insertions(+), 235 deletions(-)
+
+-- 
+2.7.4
+
