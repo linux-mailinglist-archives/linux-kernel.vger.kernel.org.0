@@ -2,185 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67A03A1875
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:28:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98480A1878
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbfH2L2Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:28:16 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:43729 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbfH2L2I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:28:08 -0400
-Received: by mail-io1-f71.google.com with SMTP id q26so3608056ioi.10
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 04:28:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=jm0AoHzXqdgzw5LLLgvxIqcYRxO7mGVi27Qk0d1O4E4=;
-        b=L7Bs+EDDQsZoqSiRpZHo1yJ1JsjOUxaoom6+/RejKxDmawQQOfeFoD0tUmOmOAI9Pp
-         d6Dp9FCLe6N4k0vQ071XAmDBjxa+aVdXdY/RRC7z8oOkValSZbv+QkWHc04slkQqWB6/
-         Q/lPjAP+sYt6YbsmOTvxNeQFc/J7ZsvvVTnZxqq8wLIfrD2So5qudT26S8C+YM4nw1dZ
-         QUy/HenWTnkDyvLi7Hb2OlCbNCttPfm4R1L+BFq9WfEDJByft9+oeUbA0DDlfYuf71Ut
-         yKnOP7v/CWQwhAnTwuCNAD3fcUm83WTkjP+hAxmRIzOtiEeakchJNWx9IC/sla6lqenP
-         QCTQ==
-X-Gm-Message-State: APjAAAUC0zaqWXrmSsh6/hvHfb1S7UZrKby4lYFclD//Is3pwBHwnrsV
-        +aTXBZ6BKQngp2PSfFrHdyCmmOgkh8biTaxKgVl1XN8JL/7U
-X-Google-Smtp-Source: APXvYqwqUCZfDytgW8WQRfldcOib9wfo8lV7j7B+lMVeBmVKUfAlZK8vs/1Md2nS+NvNXA4QlQN2sGnE1VwnDOlb/+2FnX8Ls433
+        id S1727960AbfH2L30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:29:26 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3540 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726379AbfH2L30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:29:26 -0400
+Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id AAFEA3C849874D2B6330;
+        Thu, 29 Aug 2019 19:29:24 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 29 Aug 2019 19:29:23 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 29 Aug 2019 19:29:20 +0800
+Date:   Thu, 29 Aug 2019 19:28:33 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 08/24] erofs: add namei functions
+Message-ID: <20190829112833.GE64893@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-9-gaoxiang25@huawei.com>
+ <20190829102838.GG20598@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a02:4e43:: with SMTP id r64mr6978224jaa.34.1567078087463;
- Thu, 29 Aug 2019 04:28:07 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 04:28:07 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bd21b205913fccfa@google.com>
-Subject: KASAN: use-after-free Read in nr_release (2)
-From:   syzbot <syzbot+fd05016a0b263a41eb33@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-hams@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        ralf@linux-mips.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190829102838.GG20598@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Aug 29, 2019 at 03:28:38AM -0700, Christoph Hellwig wrote:
+> On Fri, Aug 02, 2019 at 08:53:31PM +0800, Gao Xiang wrote:
+> > +struct erofs_qstr {
+> > +	const unsigned char *name;
+> > +	const unsigned char *end;
+> > +};
+> 
+> Maybe erofs_name?  The q in qstr stands for quick, because of the
+> existing hash and len, which this doesn't really provide.
+> 
+> Also I don't really see why you don't just pass the actual qstr and
+> just document that dirnamecmp does not look at the hash and thus
+> doesn't require it to be filled out.
 
-syzbot found the following crash on:
+q in erofs_qstr also means quick substring.
+If you have some time to look into it more, it uses a prefixed
+binary search algorithm (rather than linear traversal), which
+provides similar proformance with hashed approach but no need
+to save such hash field and it's natively sorted in alphabet
+order.
 
-HEAD commit:    6525771f Merge tag 'arc-5.3-rc7' of git://git.kernel.org/p..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f44d82600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2a6a2b9826fdadf9
-dashboard link: https://syzkaller.appspot.com/bug?extid=fd05016a0b263a41eb33
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16c627ca600000
+Thanks,
+Gao Xiang
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+fd05016a0b263a41eb33@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in atomic_read  
-include/asm-generic/atomic-instrumented.h:26 [inline]
-BUG: KASAN: use-after-free in refcount_inc_not_zero_checked+0x81/0x200  
-lib/refcount.c:123
-Read of size 4 at addr ffff888094849540 by task syz-executor.2/9817
-
-CPU: 1 PID: 9817 Comm: syz-executor.2 Not tainted 5.3.0-rc6+ #128
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_address_description.cold+0xd4/0x306 mm/kasan/report.c:351
-  __kasan_report.cold+0x1b/0x36 mm/kasan/report.c:482
-  kasan_report+0x12/0x17 mm/kasan/common.c:618
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
-  __kasan_check_read+0x11/0x20 mm/kasan/common.c:92
-  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
-  refcount_inc_not_zero_checked+0x81/0x200 lib/refcount.c:123
-  refcount_inc_checked+0x17/0x70 lib/refcount.c:156
-  sock_hold include/net/sock.h:649 [inline]
-  nr_release+0x62/0x3e0 net/netrom/af_netrom.c:520
-  __sock_release+0xce/0x280 net/socket.c:590
-  sock_close+0x1e/0x30 net/socket.c:1268
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x413561
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffcd6d6ea60 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000006 RCX: 0000000000413561
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000005
-RBP: 0000000000000001 R08: ffffffffffffffff R09: ffffffffffffffff
-R10: 00007ffcd6d6eb40 R11: 0000000000000293 R12: 000000000075c9a0
-R13: 000000000075c9a0 R14: 0000000000761aa0 R15: ffffffffffffffff
-
-Allocated by task 9818:
-  save_stack+0x23/0x90 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:493 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:466
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:507
-  __do_kmalloc mm/slab.c:3655 [inline]
-  __kmalloc+0x163/0x770 mm/slab.c:3664
-  kmalloc include/linux/slab.h:557 [inline]
-  sk_prot_alloc+0x23a/0x310 net/core/sock.c:1603
-  sk_alloc+0x39/0xf70 net/core/sock.c:1657
-  nr_create+0xb9/0x5e0 net/netrom/af_netrom.c:433
-  __sock_create+0x3d8/0x730 net/socket.c:1418
-  sock_create net/socket.c:1469 [inline]
-  __sys_socket+0x103/0x220 net/socket.c:1511
-  __do_sys_socket net/socket.c:1520 [inline]
-  __se_sys_socket net/socket.c:1518 [inline]
-  __x64_sys_socket+0x73/0xb0 net/socket.c:1518
-  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 9817:
-  save_stack+0x23/0x90 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:455
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:463
-  __cache_free mm/slab.c:3425 [inline]
-  kfree+0x10a/0x2c0 mm/slab.c:3756
-  sk_prot_free net/core/sock.c:1640 [inline]
-  __sk_destruct+0x4f7/0x6e0 net/core/sock.c:1726
-  sk_destruct+0x86/0xa0 net/core/sock.c:1734
-  __sk_free+0xfb/0x360 net/core/sock.c:1745
-  sk_free+0x42/0x50 net/core/sock.c:1756
-  sock_put include/net/sock.h:1725 [inline]
-  nr_release+0x356/0x3e0 net/netrom/af_netrom.c:554
-  __sock_release+0xce/0x280 net/socket.c:590
-  sock_close+0x1e/0x30 net/socket.c:1268
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:163
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x5a9/0x6a0 arch/x86/entry/common.c:299
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8880948494c0
-  which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 128 bytes inside of
-  2048-byte region [ffff8880948494c0, ffff888094849cc0)
-The buggy address belongs to the page:
-page:ffffea0002521200 refcount:1 mapcount:0 mapping:ffff8880aa400e00  
-index:0x0 compound_mapcount: 0
-flags: 0x1fffc0000010200(slab|head)
-raw: 01fffc0000010200 ffffea00024ff508 ffffea0002560088 ffff8880aa400e00
-raw: 0000000000000000 ffff8880948483c0 0000000100000003 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff888094849400: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff888094849480: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> ffff888094849500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                            ^
-  ffff888094849580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff888094849600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> 
