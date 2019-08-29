@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08974A13C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F61DA13D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbfH2Icy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:32:54 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34201 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727746AbfH2Icv (ORCPT
+        id S1727896AbfH2IdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:33:00 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33039 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727746AbfH2Ic4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:32:51 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b24so1594539pfp.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:51 -0700 (PDT)
+        Thu, 29 Aug 2019 04:32:56 -0400
+Received: by mail-pl1-f195.google.com with SMTP id go14so1251508plb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Y9B4vIKEkG7WXy/phP6YFI7YjChHBUGCsTMIBlPmEiQ=;
-        b=UetEJf1RJj6y7WkCUoLnGZwe6tuOeLPBq9CDt5Fcv0wzEO8uxDaUoNQrz3Tz9vF9Yk
-         kdlnVIAt1PvY/Na8/UVZ8bNk/9nte3kq8lRMC3iASNEQ3g1evWGVGraNzjTwTuHpwoj3
-         FnoR0oeKUbmxjgUV5vpv6k2xcl8MA+B625Y5NIXPNEzhfD9rsudgnRlmzLWktilPCcly
-         Mn7zrgyGaHJyj4yQQH8YLvUaPZyJ7yks2OIFW5IhRFuy8zpEVwNe5I7r1M9tYfWTyYK1
-         o1neNFv+MaNaRsu7vpCN3U20ROzFYoBhZMHsEyQel0mk78HYbe49QqAcfeXlGktvWfHj
-         m10A==
+        bh=zlq2IBLuceVbdXIR+sbqYK0JGHzJ0OSTvlG77al8JWo=;
+        b=X/G1nb0CpuyCr2vmt/DOG4mIhMEOEUjXfMvBys+/IGiUF0k6kUnuGuGLHnh3X4pnVT
+         NRujSQX1YQFG5dGedXWlF/01SrXfRBUrB7BVEUOLALNY4YQB7co6JbhIons6rdpHuC4M
+         4Z7mNXM3vCQCj3GWmRz7/mrjscfOw683/VyIFlRDr5oG33fmTJZrownWVwKMwmNQHU87
+         mpkz3zs1jpgoQi2KUfoyGAwnnAsOLYTylN8H7MV15NBn0j0Q1drjROO2+sro6zxuDyYy
+         buyWSZYDsxQ0X61IjGrW9eRdsDjetddKwFEU0nsF49GUX3HovMB0XYMF53KQTRHoItsP
+         c/Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Y9B4vIKEkG7WXy/phP6YFI7YjChHBUGCsTMIBlPmEiQ=;
-        b=Tr5Fb5g0p4mIYu73NypBmrrXa54kuGJoMjXuLUq4dVC0WWeRUNgp67duWGLS2NL+CQ
-         KQzNuD2djhOcQuRP1geV48JFTKMTP/nn4t7665PEZ3JrDD50uOZVbrDhtF5PLanOVNts
-         Nkdoe9kbkOnThhip3HcBqb8onFx8ZlEfRtYW27vew9mwCUhPF4HVULKbB3BYKgOwZlg/
-         8U2GoXqEvBYmaq/T4Qta7KBcGER5PklHhi/v/2Ub5sybvuVg4nIcdB6XpO7B+PUcPmYk
-         lLFoj/53ZGvvHtNzHb7etaT5lS5HTgHpGzmuS6Dz8iTUaCOEjdae2cCdzjVMXwuayxrQ
-         SVFA==
-X-Gm-Message-State: APjAAAWHGbFpsq5OPBOwwM0QeU305VqLVMqQyfLu2tKb8vQx8mFJ5Vj3
-        yzTx8gvoyj6F0zQcnuO3Yvs=
-X-Google-Smtp-Source: APXvYqwjK8S/+xQS3dDRG1a0gOUgZ85XUQ0bXEfbdmjyaxWwJ2F9vHBYngr3L54SDuMuqx5X2Q3+HA==
-X-Received: by 2002:aa7:9a81:: with SMTP id w1mr9930060pfi.24.1567067571141;
-        Thu, 29 Aug 2019 01:32:51 -0700 (PDT)
+        bh=zlq2IBLuceVbdXIR+sbqYK0JGHzJ0OSTvlG77al8JWo=;
+        b=tDVFGHuNNo2M/SuDCZFf9TQHKDVaP5wGfgJpQGPvj4gOepHunsPANvc0WrYAtsmfgN
+         wRbNdHjN54Lb1Vo42DN935ub/2E5Y3e+jrNvGMdglfs+K7PRySA01SJVdD48Hduys+WA
+         8ZS243E/HSNiGryk9GqQrkwGTngczjZROH46tIKyMN9JOofmx2YE2CF/INOYpHOE9R22
+         ISkW5y6BwcU5oQ52qyqULf/b3UGQ9V+/OE1jw4FWA8q9bk/wzxEWfmJe2PcGgAH6mQIf
+         raT8rKPK63YaCjyFWNn66+uKDE14vjRpqpkLUNvkWPN/sYUEuUJgr6qfuAn9CR1qbZ1V
+         l7iw==
+X-Gm-Message-State: APjAAAXF0dlVAPh7sT1MqNYS5erc2PaKZVrmz6h+mi19LHBGwy7t3XJH
+        1s+EmPGLZWy/MR+utRvkOO8=
+X-Google-Smtp-Source: APXvYqxqMAfbGmC0nk2I8KBtEU+uUwaElXic1ahMn3oG5486dMGvUStQIFNfXYRscPZ5vym3lFUrVQ==
+X-Received: by 2002:a17:902:8a87:: with SMTP id p7mr8633372plo.240.1567067575250;
+        Thu, 29 Aug 2019 01:32:55 -0700 (PDT)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id v22sm1260155pgk.69.2019.08.29.01.32.47
+        by smtp.gmail.com with ESMTPSA id v22sm1260155pgk.69.2019.08.29.01.32.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Aug 2019 01:32:50 -0700 (PDT)
+        Thu, 29 Aug 2019 01:32:54 -0700 (PDT)
 From:   Yuyang Du <duyuyang@gmail.com>
 To:     peterz@infradead.org, will.deacon@arm.com, mingo@kernel.org
 Cc:     bvanassche@acm.org, ming.lei@redhat.com, frederic@kernel.org,
         tglx@linutronix.de, linux-kernel@vger.kernel.org,
         longman@redhat.com, paulmck@linux.vnet.ibm.com,
         boqun.feng@gmail.com, Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH v4 17/30] locking/lockdep: Use lock type enum to explicitly specify read or write locks
-Date:   Thu, 29 Aug 2019 16:31:19 +0800
-Message-Id: <20190829083132.22394-18-duyuyang@gmail.com>
+Subject: [PATCH v4 18/30] ocking/lockdep: Add read-write type for a lock dependency
+Date:   Thu, 29 Aug 2019 16:31:20 +0800
+Message-Id: <20190829083132.22394-19-duyuyang@gmail.com>
 X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 In-Reply-To: <20190829083132.22394-1-duyuyang@gmail.com>
 References: <20190829083132.22394-1-duyuyang@gmail.com>
@@ -64,144 +64,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an enum to formally quantify lock types. No functional change.
+Direct dependencies need to keep track of their read-write lock types.
+Two bit fields, which share the distance field, are added to lock_list
+struct to store the types.
+
+With a dependecy lock1 -> lock2, lock_type1 has the type for lock1 and
+lock_type2 has the type for lock2, where the values are one of the
+lock_type enums.
 
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 ---
- include/linux/lockdep.h  | 27 ++++++++++++++++++++-------
- include/linux/rcupdate.h |  2 +-
- kernel/locking/lockdep.c | 19 +++++++++++--------
- 3 files changed, 32 insertions(+), 16 deletions(-)
+ include/linux/lockdep.h  | 15 ++++++++++++++-
+ kernel/locking/lockdep.c | 25 +++++++++++++++++++++++--
+ 2 files changed, 37 insertions(+), 3 deletions(-)
 
 diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index fcfc1dd..2335447 100644
+index 2335447..eab8a90 100644
 --- a/include/linux/lockdep.h
 +++ b/include/linux/lockdep.h
-@@ -350,10 +350,18 @@ static inline int lockdep_match_key(struct lockdep_map *lock,
-  *
-  * Values for "read":
-  *
-- *   0: exclusive (write) acquire
-- *   1: read-acquire (no recursion allowed)
-- *   2: read-acquire with same-instance recursion allowed
-- *
-+ *   LOCK_TYPE_EXCLUSIVE (LOCK_TYPE_WRITE): exclusive (write) acquire
-+ *   LOCK_TYPE_READ: read-acquire (no recursion allowed)
-+ *   LOCK_TYPE_RECURSIVE: read-acquire with same-instance recursion allowed
-+ */
-+enum lock_type {
-+	LOCK_TYPE_EXCLUSIVE	= 0,
-+	LOCK_TYPE_WRITE		= 0,
-+	LOCK_TYPE_READ,
-+	LOCK_TYPE_RECURSIVE,
-+};
-+
-+/*
-  * Values for check:
-  *
-  *   0: simple checks (freeing, held-at-exit-time, etc.)
-@@ -599,9 +607,14 @@ static inline void print_irqtrace_events(struct task_struct *curr)
-  * on the per lock-class debug mode:
-  */
- 
--#define lock_acquire_exclusive(l, s, t, n, i)		lock_acquire(l, s, t, 0, 1, n, i)
--#define lock_acquire_shared(l, s, t, n, i)		lock_acquire(l, s, t, 1, 1, n, i)
--#define lock_acquire_shared_recursive(l, s, t, n, i)	lock_acquire(l, s, t, 2, 1, n, i)
-+#define lock_acquire_exclusive(l, s, t, n, i)			\
-+	lock_acquire(l, s, t, LOCK_TYPE_EXCLUSIVE, 1, n, i)
-+
-+#define lock_acquire_shared(l, s, t, n, i)			\
-+	lock_acquire(l, s, t, LOCK_TYPE_READ, 1, n, i)
-+
-+#define lock_acquire_shared_recursive(l, s, t, n, i)		\
-+	lock_acquire(l, s, t, LOCK_TYPE_RECURSIVE, 1, n, i)
- 
- #define spin_acquire(l, s, t, i)		lock_acquire_exclusive(l, s, t, NULL, i)
- #define spin_acquire_nest(l, s, t, n, i)	lock_acquire_exclusive(l, s, t, n, i)
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index c4f76a3..09128d5 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -205,7 +205,7 @@ static inline void destroy_rcu_head_on_stack(struct rcu_head *head) { }
- 
- static inline void rcu_lock_acquire(struct lockdep_map *map)
- {
--	lock_acquire(map, 0, 0, 2, 0, NULL, _THIS_IP_);
-+	lock_acquire(map, 0, 0, LOCK_TYPE_RECURSIVE, 0, NULL, _THIS_IP_);
+@@ -182,6 +182,8 @@ static inline void lockdep_copy_map(struct lockdep_map *to,
+ 		to->class_cache[i] = NULL;
  }
  
- static inline void rcu_lock_release(struct lockdep_map *map)
++#define LOCK_TYPE_BITS	2
++
+ /*
+  * Every lock has a list of other locks that were taken after or before
+  * it as lock dependencies. These dependencies constitute a graph, which
+@@ -204,7 +206,17 @@ struct lock_list {
+ 	struct list_head		chains;
+ 	struct lock_class		*class[2];
+ 	const struct lock_trace		*trace;
+-	int				distance;
++
++	/*
++	 * The lock_type fields keep track of the lock type of this
++	 * dependency.
++	 *
++	 * With L1 -> L2, lock_type1 stores the lock type of L1, and
++	 * lock_type2 stores that of L2.
++	 */
++	unsigned int			lock_type1 : LOCK_TYPE_BITS,
++					lock_type2 : LOCK_TYPE_BITS,
++					distance   : 32 - 2*LOCK_TYPE_BITS;
+ 
+ 	/*
+ 	 * The parent field is used to implement breadth-first search.
+@@ -359,6 +371,7 @@ enum lock_type {
+ 	LOCK_TYPE_WRITE		= 0,
+ 	LOCK_TYPE_READ,
+ 	LOCK_TYPE_RECURSIVE,
++	NR_LOCK_TYPE,
+ };
+ 
+ /*
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 754a718..bdc7e94 100644
+index bdc7e94..18303ff 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -2430,7 +2430,10 @@ static inline void inc_chains(void)
-  * (Note that this has to be done separately, because the graph cannot
-  * detect such classes of deadlocks.)
-  *
-- * Returns: 0 on deadlock detected, 1 on OK, 2 on recursive read
-+ * Returns:
-+ *  0: on deadlock detected;
-+ *  1: on OK;
-+ *  LOCK_TYPE_RECURSIVE: on recursive read
-  */
- static int
- check_deadlock_current(struct task_struct *curr, struct held_lock *next)
-@@ -2452,15 +2455,15 @@ static inline void inc_chains(void)
- 		 * Allow read-after-read recursion of the same
- 		 * lock class (i.e. read_lock(lock)+read_lock(lock)):
- 		 */
--		if ((next->read == 2) && prev->read)
--			return 2;
-+		if ((next->read == LOCK_TYPE_RECURSIVE) && prev->read)
-+			return LOCK_TYPE_RECURSIVE;
+@@ -1379,9 +1379,17 @@ static int add_lock_to_list(struct lock_class *lock1,
+ 			    struct lock_class *lock2,
+ 			    unsigned long ip, int distance,
+ 			    const struct lock_trace *trace,
+-			    struct lock_chain *chain)
++			    struct lock_chain *chain,
++			    int lock_type1, int lock_type2)
+ {
+ 	struct lock_list *entry;
++
++	/*
++	 * The distance bit field in struct lock_list must be large
++	 * enough to hold the maximum lock depth.
++	 */
++	BUILD_BUG_ON((1 << (32 - 2*LOCK_TYPE_BITS)) < MAX_LOCK_DEPTH);
++
+ 	/*
+ 	 * Lock not present yet - get a new dependency struct and
+ 	 * add it to the list:
+@@ -1394,6 +1402,8 @@ static int add_lock_to_list(struct lock_class *lock1,
+ 	entry->class[1] = lock2;
+ 	entry->distance = distance;
+ 	entry->trace = trace;
++	entry->lock_type1 = lock_type1;
++	entry->lock_type2 = lock_type2;
  
- 		/*
- 		 * We're holding the nest_lock, which serializes this lock's
- 		 * nesting behaviour.
- 		 */
- 		if (nest)
--			return 2;
-+			return LOCK_TYPE_RECURSIVE;
+ 	/*
+ 	 * Both allocation and removal are done under the graph lock; but
+@@ -1537,6 +1547,16 @@ static inline struct list_head *get_dep_list(struct lock_list *lock, int forward
+ 	return &class->dep_list[forward];
+ }
  
- 		print_deadlock_bug(curr, prev, next);
++static inline int get_lock_type1(struct lock_list *lock)
++{
++	return lock->lock_type1;
++}
++
++static inline int get_lock_type2(struct lock_list *lock)
++{
++	return lock->lock_type2;
++}
++
+ /*
+  * Forward- or backward-dependency search, used for both circular dependency
+  * checking and hardirq-unsafe/softirq-unsafe checking.
+@@ -2580,7 +2600,8 @@ static inline void inc_chains(void)
+ 	 * dependency list of the previous lock <prev>:
+ 	 */
+ 	ret = add_lock_to_list(hlock_class(prev), hlock_class(next),
+-			       next->acquire_ip, distance, *trace, chain);
++			       next->acquire_ip, distance, *trace, chain,
++			       prev->read, next->read);
+ 	if (!ret)
  		return 0;
-@@ -2563,7 +2566,7 @@ static inline void inc_chains(void)
- 	 * write-lock never takes any other locks, then the reads are
- 	 * equivalent to a NOP.
- 	 */
--	if (next->read == 2 || prev->read == 2)
-+	if (next->read == LOCK_TYPE_RECURSIVE || prev->read == LOCK_TYPE_RECURSIVE)
- 		return 1;
  
- 	if (!*trace) {
-@@ -2946,7 +2949,7 @@ static int validate_chain(struct task_struct *curr, struct held_lock *next,
- 		 * chain, and if it's not a second recursive-read lock. If
- 		 * not, there is no need to check further.
- 		 */
--		if (!(chain->depth > 1 && ret != 2))
-+		if (!(chain->depth > 1 && ret != LOCK_TYPE_RECURSIVE))
- 			goto out_unlock;
- 	}
- 
-@@ -2955,7 +2958,7 @@ static int validate_chain(struct task_struct *curr, struct held_lock *next,
- 	 * added:
- 	 */
- 	if (chain) {
--		if (hlock->read != 2 && hlock->check) {
-+		if (hlock->read != LOCK_TYPE_RECURSIVE && hlock->check) {
- 			int distance = curr->lockdep_depth - depth + 1;
- 
- 			if (!check_prev_add(curr, hlock, next, distance,
-@@ -4208,7 +4211,7 @@ static int __lock_downgrade(struct lockdep_map *lock, unsigned long ip)
- 	curr->curr_chain_key = hlock->prev_chain_key;
- 
- 	WARN(hlock->read, "downgrading a read lock");
--	hlock->read = 1;
-+	hlock->read = LOCK_TYPE_READ;
- 	hlock->acquire_ip = ip;
- 
- 	if (reacquire_held_locks(curr, depth, i, &merged))
 -- 
 1.8.3.1
 
