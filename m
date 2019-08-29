@@ -2,124 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F77A1F8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B3A1A1F73
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:42:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727966AbfH2Ppy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:45:54 -0400
-Received: from esa1.mentor.iphmx.com ([68.232.129.153]:56739 "EHLO
-        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfH2Ppy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:45:54 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 11:45:52 EDT
-IronPort-SDR: kiHa/Oosnu7Ea9b/XkJZXA6lua53A8G/iXOGUR8RPOeIHoH4f2xzkjkhQBNf2a8UkECndWTrPf
- j/1HklCgSgTnjollSqxpe6ziEwZpnNl5hB6w+/sVU3jkRKSp/ePJoguzPYL8xZLeU3EQa7/94A
- Qq1dRbaKjgQpIRjwIT2/2HWpN+63qvixb0D45fIiuknPqLonhA/7zR0NbUk8OMXJDoKhY/8oyb
- 5srO6Q3i4qAD5xOEE7lDLBIwT32Jwqbz3HUYbAtqwoQ7a9YPBfIb88q8+7xaRBN/Ztcji8Eg9A
- Kjs=
-X-IronPort-AV: E=Sophos;i="5.64,443,1559548800"; 
-   d="scan'208";a="42686256"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa1.mentor.iphmx.com with ESMTP; 29 Aug 2019 07:38:46 -0800
-IronPort-SDR: B8Uc1qwoyjI0XWDom6ANkzkGpdNxBQDqWna/CNLxvDgZZ7LWBK5OX0c0ykNKAb/N0YKQvwRcot
- ZS9yZpP1H9eRekSubrwti2SU3UtRl8u0czbKMLdIAz3+3ZyUQl26aNEq+SRRGsXqL5H3lLTSDM
- 1+xBJqaIZ6/qxKjxnKcVNspjwZ3+CUP3GkGGwWkynmJbQwsLuHgI2lbI5MjYoEENwVKTDiixtt
- CYuP/wRW1pOi/ILV7+oly5imw87YbEQBlpRcleubhB9cvnfERH1IOl1V+HqDmrcybZpFvyOCoo
- /xU=
-Date:   Thu, 29 Aug 2019 11:38:43 -0400
-From:   "George G. Davis" <george_davis@mentor.com>
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-CC:     Shuah Khan <shuah@kernel.org>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH] selftests: watchdog: Add optional file argument
-Message-ID: <20190829153842.GC4028@mam-gdavis-lt>
-References: <1567053566-18971-1-git-send-email-george_davis@mentor.com>
- <20190829143814.GA3424@vmlxhi-102.adit-jv.com>
+        id S1727949AbfH2Pmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:42:32 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:3957 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727118AbfH2Pmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:42:31 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 4648CDBF252A50D01A48;
+        Thu, 29 Aug 2019 23:42:25 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 29 Aug 2019 23:42:24 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 29 Aug 2019 23:42:24 +0800
+Date:   Thu, 29 Aug 2019 23:41:37 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
+Message-ID: <20190829154136.GA129582@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-2-gaoxiang25@huawei.com>
+ <20190829095954.GB20598@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190829143814.GA3424@vmlxhi-102.adit-jv.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-ClientProxiedBy: svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) To
- svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
+In-Reply-To: <20190829095954.GB20598@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme703-chm.china.huawei.com (10.1.199.99) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Eugeniu,
+Hi Christoph,
 
-On Thu, Aug 29, 2019 at 04:38:14PM +0200, Eugeniu Rosca wrote:
-> Hi George,
+On Thu, Aug 29, 2019 at 02:59:54AM -0700, Christoph Hellwig wrote:
+
+[]
+
 > 
-> On Thu, Aug 29, 2019 at 12:39:25AM -0400, George G. Davis wrote:
-> > Some systems have multiple watchdog devices where the first device
-> > registered is assigned to the /dev/watchdog device file.
+> > +static bool erofs_inode_is_data_compressed(unsigned int datamode)
+> > +{
+> > +	if (datamode == EROFS_INODE_FLAT_COMPRESSION)
+> > +		return true;
+> > +	return datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
+> > +}
 > 
-> Confirmed on R-Car H3-Salvator-X:
+> This looks like a really obsfucated way to write:
 > 
-> root@rcar-gen3:~# ls -al /dev/watchdog*
-> crw-------    1 root     root       10, 130 Aug 21 09:38 /dev/watchdog
-> crw-------    1 root     root      247,   0 Aug 21 09:38 /dev/watchdog0
+> 	return datamode == EROFS_INODE_FLAT_COMPRESSION ||
+> 		datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
 
-What you see there is the typical case where there is only one watchdog in
-the system, /dev/watchdog0, which is registered as the default watchdog
-via /dev/watchdog. If you have another watchdog enabled, e.g. softdog, you
-will see:
+Add a word about this, the above approach is not horrible if more
+datamode add here and comments, e.g
 
-root@h3ulcb:~# ls -l /dev/watchdog*
-crw-------    1 root     root       10, 130 Mar 28 20:37 /dev/watchdog
-crw-------    1 root     root      247,   0 Mar 28 20:37 /dev/watchdog0
-crw-------    1 root     root      247,   1 Mar 28 20:37 /dev/watchdog1
+static bool erofs_inode_is_data_compressed(unsigned int datamode)
+{
+	/* has z_erofs_map_header */
+	if (datamode == EROFS_INODE_FLAT_COMPRESSION)
+		return true;
+	/* some blablabla */
+	if (datamode == (1) )
+		return true;
+	/* some blablablabla */
+	if (datamode == (2) )
+		return true;
+	/* no z_erofs_map_header */
+	return datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
+}
 
-In the above case, `watchdog0` is aliased to `watchdog` but you may prefer
-to test the non-default `watchdog1` instead (rather than changing your
-kernel config if one or more are built-in, preventing testing of the
-non-default watchdog).
+vs.
 
-> [..]
-> 
-> > -	fd = open("/dev/watchdog", O_WRONLY);
-> > +	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
-> > +		if (c == 'f')
-> > +			file = optarg;
-> > +	}
-> > +
-> > +	fd = open(file, O_WRONLY);
-> 
-> Would it be possible to improve below not so helpful and slightly
-> misleading printout:
-> 
-> $ ./watchdog-test -d -t 10 -p 5 -e -f /dev/watch
-> Watchdog device not enabled.
+static bool erofs_inode_is_data_compressed(unsigned int datamode)
+{
+	/* has z_erofs_map_header */
+	return datamode == EROFS_INODE_FLAT_COMPRESSION ||
+		/* some blablabla */
+	       datamode == (1) ||
+	       	/* some blablablabla */
+	       datamode == (2) ||
+	        /* no z_erofs_map_header */
+	       datamode == EROFS_INODE_FLAT_COMPRESSION_LEGACY;
+}
 
-Oops, right, thanks for that report.
+I have no idea which one is better.
+Anyway, if you still like the form, I will change it.
 
-I'll add the following in the next update:
-
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index ebeb684552b9..9f17cae61007 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
- 
- 	if (fd == -1) {
- 		if (errno == ENOENT)
--			printf("Watchdog device not enabled.\n");
-+			printf("Watchdog device (%s) not found.\n", file);
- 		else if (errno == EACCES)
- 			printf("Run watchdog as root.\n");
- 		else
-
-
-Thanks!
-
--- 
-Regards,
-George
+Thanks,
+Gao Xiang
