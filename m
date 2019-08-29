@@ -2,149 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CFCFA185B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE64A1867
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:26:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfH2LZL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:25:11 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45584 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbfH2LZK (ORCPT
+        id S1727991AbfH2L0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:26:37 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:59859 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726889AbfH2L0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:25:10 -0400
-Received: by mail-lj1-f193.google.com with SMTP id l1so2607817lji.12
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 04:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2SEXw+QRJoy/Zw++CiU1hS9QPCb+vnyFD+grq4TKD4o=;
-        b=ImzuAe+lRaaytGnmLlr3YyNIlg6wvfK0gNIW92d3yyBjapIQC8UYgkKKWJ+dOn8YlQ
-         PdbCEa6KjsZlie24Bp93fBjWnKXkmtIqOe9cQaj/ftpaorxjf1g8qgPS9lRxicumFXId
-         IOvMxDvTxIbDUbvAKazMmNTqtKP/JOFL7Hc3z0FajnBNxWDlhRLcZwTZu3QtWZfOibOf
-         yGmb/AoKeJOFVe7wKzzWQH8MvQRGM9Sbkebdem+EWPyXliHwCpBIzU5NBRfyxyK4ZCN2
-         b9SUjX1UQ2crrztiaMi+GRGxV3Z1vNj1U1ikJtfLzmjYStvkEpuy9pYKQksrpmBMQ7iT
-         DoXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2SEXw+QRJoy/Zw++CiU1hS9QPCb+vnyFD+grq4TKD4o=;
-        b=kCFyiK5JjTXYPTfAcZk1rOIIj8/kPhBuJjsMvGIxlMTMFFjcYnZdgzj8kT4O5QMCFf
-         Ib9/hIPSstAcia8B/WcUYgOnuVdLK/SvaVAkxYSql8trDjIxpRw/50yFF+suGBb3734k
-         S2CikWOjzhjI/kAqlTiWFkQPr8VzHisdjanxtpFdnU7SQjJjq/yoFT+IHoU6EEybcynx
-         hshCmwvHx3D8YkVS5uKAaOIMgsANG/aGDFP7LuY5SucPDQkrLY3N/Qaq9iW89FUe3oaJ
-         Etkdq5ORpgGhiaoJpq4UbaReYia8vb2JS3E5e6Vq5QbcnbWmyZ2J5sk4EEIaY/4Lnxk0
-         m1AA==
-X-Gm-Message-State: APjAAAUvxTN9qHuKy0BgVM9H+7U7f4tX64+W9tsWjurSswO5ltZLqkdA
-        HkrsXprHVBnLE9jHosUWEsdR7g==
-X-Google-Smtp-Source: APXvYqzFEDirmqHILvceN7+977cUfB9gBF3xZthSXyM/mJOqKv36EHwY2HAn0E5PLoIqaZTMM7emXQ==
-X-Received: by 2002:a2e:9a10:: with SMTP id o16mr5085094lji.104.1567077908566;
-        Thu, 29 Aug 2019 04:25:08 -0700 (PDT)
-Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id d21sm350092lfc.73.2019.08.29.04.25.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 04:25:07 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH] mfd: db8500-prcmu: Support the higher DB8520 ARMSS
-Date:   Thu, 29 Aug 2019 13:25:01 +0200
-Message-Id: <20190829112501.30185-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        Thu, 29 Aug 2019 07:26:36 -0400
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x7TBQUJE027328;
+        Thu, 29 Aug 2019 20:26:30 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x7TBQUJE027328
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567077991;
+        bh=+gWnDwatzEtFz3pSmoSNRZi/E0ncjcCGbNklL4Q7bw8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bUPMhAOjOMVOD5ong/7cFnJXL2QxN6br8RZcHq99lCblfPJIZXzhdWljEhbapf/kk
+         EGWujXPerOHEua9kKCJXFFvgxv0avmBYCDygjAIl4IaMRyPFHvJkYeprKkjgFH7jUb
+         j/ylys8yRTCKyjx9Kl0XxzmIbnKTbrpOwxBKzXzJ5W/iBwaknBM0yh8hnmP+rp4Gm8
+         7jcBy4SIkkVIvlu0CSdwwEl+FcH1fJNceB9nsjui9A6/fBnP2vhz3SfbEE/CskDVTr
+         iS0N6O4Qt28JWSDP4rHv14ecmVh/6mOmcrYdseXLUd/8mnmNUY4VlO7aesZ5ZJlbER
+         2E4UM088s3iKA==
+X-Nifty-SrcIP: [209.85.221.174]
+Received: by mail-vk1-f174.google.com with SMTP id p5so702557vkm.5;
+        Thu, 29 Aug 2019 04:26:30 -0700 (PDT)
+X-Gm-Message-State: APjAAAXiCyIN/PwQELTjiDH8Ez6d8YTVCe3V3rKuy0OtTfA6/fgBTJGI
+        KcdwYTUhqmLdf6dQlKfuEYFlPI/6RGhzAXreXZE=
+X-Google-Smtp-Source: APXvYqwVeMqrq1GjjeYPqj7sSg5OSlp6s6+m/Clv/TsHkJUb4kLYE6kE0BOseWjuUbLcYwRQG9Qi73X7q0c+7UciOD0=
+X-Received: by 2002:a1f:ee81:: with SMTP id m123mr4716816vkh.74.1567077989345;
+ Thu, 29 Aug 2019 04:26:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190828111453.4023-1-yamada.masahiro@socionext.com> <0d5da294-61f8-4b9f-1a6e-7212da40f572@intel.com>
+In-Reply-To: <0d5da294-61f8-4b9f-1a6e-7212da40f572@intel.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 29 Aug 2019 20:25:52 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATsw8=jc7tJpj3w120R0op6ZwquEmoB8UNg6giW4V_6Nw@mail.gmail.com>
+Message-ID: <CAK7LNATsw8=jc7tJpj3w120R0op6ZwquEmoB8UNg6giW4V_6Nw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci: use lower/upper_32_bits() macros for DMA addresses
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mmc <linux-mmc@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DB8520 used in a lot of Samsung phones has a slightly higher
-maximum ARMSS frequency than the DB8500. In order to not confuse
-the OPP framework and cpufreq, make sure the PRCMU driver
-returns the correct frequency.
+Hi.
 
-Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/mfd/db8500-prcmu.c | 40 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 35 insertions(+), 5 deletions(-)
+On Wed, Aug 28, 2019 at 10:02 PM Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 28/08/19 2:14 PM, Masahiro Yamada wrote:
+> > Currently, the DMA addresses are casted to (u64) for the upper 32bits
+> > to avoid "right shift count >= width of type" warning.
+> >
+> > <linux/kernel.h> provides macros to address this, and the macro names
+> > are self-documenting.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  drivers/mmc/host/sdhci.c | 14 ++++++++------
+> >  1 file changed, 8 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> > index a5dc5aae973e..07144a195a9f 100644
+> > --- a/drivers/mmc/host/sdhci.c
+> > +++ b/drivers/mmc/host/sdhci.c
+> > @@ -668,10 +668,10 @@ void sdhci_adma_write_desc(struct sdhci_host *host, void **desc,
+> >       /* 32-bit and 64-bit descriptors have these members in same position */
+> >       dma_desc->cmd = cpu_to_le16(cmd);
+> >       dma_desc->len = cpu_to_le16(len);
+> > -     dma_desc->addr_lo = cpu_to_le32((u32)addr);
+> > +     dma_desc->addr_lo = cpu_to_le32(lower_32_bits(addr));
+> >
+> >       if (host->flags & SDHCI_USE_64_BIT_DMA)
+> > -             dma_desc->addr_hi = cpu_to_le32((u64)addr >> 32);
+> > +             dma_desc->addr_hi = cpu_to_le32(upper_32_bits(addr));
+> >
+> >       *desc += host->desc_sz;
+> >  }
+> > @@ -827,9 +827,10 @@ static dma_addr_t sdhci_sdma_address(struct sdhci_host *host)
+> >  static void sdhci_set_sdma_addr(struct sdhci_host *host, dma_addr_t addr)
+> >  {
+> >       if (host->v4_mode) {
+>
+> To reduce line wrapping, how about using:
+>
+>                 u32 lo = lower_32_bits(addr);
+>                 u32 hi = upper_32_bits(addr);
+>
+> > -             sdhci_writel(host, addr, SDHCI_ADMA_ADDRESS);
+> > +             sdhci_writel(host, lower_32_bits(addr), SDHCI_ADMA_ADDRESS);
+> >               if (host->flags & SDHCI_USE_64_BIT_DMA)
+> > -                     sdhci_writel(host, (u64)addr >> 32, SDHCI_ADMA_ADDRESS_HI);
+> > +                     sdhci_writel(host, upper_32_bits(addr),
+> > +                                  SDHCI_ADMA_ADDRESS_HI);
+> >       } else {
+> >               sdhci_writel(host, addr, SDHCI_DMA_ADDRESS);
+> >       }
+> > @@ -1096,10 +1097,11 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+> >               } else if (host->flags & SDHCI_USE_ADMA) {
+>
+> To reduce line wrapping, how about using:
+>
+>                         u32 lo = lower_32_bits(host->adma_addr);
+>                         u32 hi = upper_32_bits(host->adma_addr);
+>
+> >                       sdhci_adma_table_pre(host, data, sg_cnt);
+> >
+> > -                     sdhci_writel(host, host->adma_addr, SDHCI_ADMA_ADDRESS);
+> > +                     sdhci_writel(host, lower_32_bits(host->adma_addr),
+> > +                                  SDHCI_ADMA_ADDRESS);
+> >                       if (host->flags & SDHCI_USE_64_BIT_DMA)
+> >                               sdhci_writel(host,
+> > -                                          (u64)host->adma_addr >> 32,
+> > +                                          upper_32_bits(host->adma_addr),
+> >                                            SDHCI_ADMA_ADDRESS_HI);
+> >               } else {
+> >                       WARN_ON(sg_cnt != 1);
+> >
+>
 
-diff --git a/drivers/mfd/db8500-prcmu.c b/drivers/mfd/db8500-prcmu.c
-index a1e09bf06977..6c9905652e08 100644
---- a/drivers/mfd/db8500-prcmu.c
-+++ b/drivers/mfd/db8500-prcmu.c
-@@ -1692,21 +1692,41 @@ static long round_clock_rate(u8 clock, unsigned long rate)
- 	return rounded_rate;
- }
- 
--static const unsigned long armss_freqs[] = {
-+static const unsigned long db8500_armss_freqs[] = {
- 	200000000,
- 	400000000,
- 	800000000,
- 	998400000
- };
- 
-+/* The DB8520 has slightly higher ARMSS max frequency */
-+static const unsigned long db8520_armss_freqs[] = {
-+	200000000,
-+	400000000,
-+	800000000,
-+	1152000000
-+};
-+
-+
-+
- static long round_armss_rate(unsigned long rate)
- {
- 	unsigned long freq = 0;
-+	const unsigned long *freqs;
-+	int nfreqs;
- 	int i;
- 
-+	if (fw_info.version.project == PRCMU_FW_PROJECT_U8520) {
-+		freqs = db8520_armss_freqs;
-+		nfreqs = ARRAY_SIZE(db8520_armss_freqs);
-+	} else {
-+		freqs = db8500_armss_freqs;
-+		nfreqs = ARRAY_SIZE(db8500_armss_freqs);
-+	}
-+
- 	/* Find the corresponding arm opp from the cpufreq table. */
--	for (i = 0; i < ARRAY_SIZE(armss_freqs); i++) {
--		freq = armss_freqs[i];
-+	for (i = 0; i < nfreqs; i++) {
-+		freq = freqs[i];
- 		if (rate <= freq)
- 			break;
- 	}
-@@ -1851,11 +1871,21 @@ static int set_armss_rate(unsigned long rate)
- {
- 	unsigned long freq;
- 	u8 opps[] = { ARM_EXTCLK, ARM_50_OPP, ARM_100_OPP, ARM_MAX_OPP };
-+	const unsigned long *freqs;
-+	int nfreqs;
- 	int i;
- 
-+	if (fw_info.version.project == PRCMU_FW_PROJECT_U8520) {
-+		freqs = db8520_armss_freqs;
-+		nfreqs = ARRAY_SIZE(db8520_armss_freqs);
-+	} else {
-+		freqs = db8500_armss_freqs;
-+		nfreqs = ARRAY_SIZE(db8500_armss_freqs);
-+	}
-+
- 	/* Find the corresponding arm opp from the cpufreq table. */
--	for (i = 0; i < ARRAY_SIZE(armss_freqs); i++) {
--		freq = armss_freqs[i];
-+	for (i = 0; i < nfreqs; i++) {
-+		freq = freqs[i];
- 		if (rate == freq)
- 			break;
- 	}
+
+I used another way to reduce the line wrapping in v2.
+I factored out the duplicated code into a new helper,
+sdhci_set_adma_addr().
+
+If you do not like it, I will adopt your suggestion,
+but anyway take a look at v2.
+
 -- 
-2.21.0
-
+Best Regards
+Masahiro Yamada
