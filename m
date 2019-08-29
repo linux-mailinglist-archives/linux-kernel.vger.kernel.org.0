@@ -2,62 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4723A24D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4031AA2461
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:23:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729991AbfH2S0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:26:15 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:58459 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729870AbfH2S0J (ORCPT
+        id S1730088AbfH2SWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:22:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53514 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728700AbfH2SWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:26:09 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 46K9zM0gLzz1rQBj;
-        Thu, 29 Aug 2019 20:26:07 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 46K9zL75jVz1qqkx;
-        Thu, 29 Aug 2019 20:26:06 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id U_MBfZAf4_hY; Thu, 29 Aug 2019 20:26:05 +0200 (CEST)
-X-Auth-Info: ijHftztuK6kPdwkwi6JWYpXS5BXnHp0fBad+qNPkLj4=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 29 Aug 2019 14:22:46 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 328F267898; Thu, 29 Aug 2019 18:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567102965;
+        bh=FeFaJUoDeHdLOh2OaUz0TWmkbjPXVH4svhWA764YwBA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VtycVrSAdkukL9EXA/Nj5URdtARJbT4f2tnn+5EZUFMr7WSmXL+rlzSDC7/jZnW6q
+         PmWt/aQspvB6mKZzr31y7ErivhOdwkR7I56EWnlrgWsnZsomBoI5zd1EM3HFSzJTHu
+         f0PgxHacny5Q09voOOsLnIBMP3UelpPagJ5nT1FU=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu, 29 Aug 2019 20:26:05 +0200 (CEST)
-Subject: Re: [PATCH] net: dsa: microchip: fill regmap_config name
-To:     George McCollister <george.mccollister@gmail.com>,
-        netdev@vger.kernel.org
-Cc:     Woojung Huh <woojung.huh@microchip.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Tristram Ha <Tristram.Ha@microchip.com>,
-        linux-kernel@vger.kernel.org
-References: <20190829141441.70063-1-george.mccollister@gmail.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <8ddc67de-22f8-ccfa-d6af-500d4c92935d@denx.de>
-Date:   Thu, 29 Aug 2019 17:06:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 74C0C6883B;
+        Thu, 29 Aug 2019 18:12:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567102334;
+        bh=FeFaJUoDeHdLOh2OaUz0TWmkbjPXVH4svhWA764YwBA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RPMpETOqN+zUgVJ54I7e6zv9LkccOW3ztM6OOrzzC/Te80+y/+TfMkno7u2x1u+eW
+         9yszoW44Ac6fym1pyMb3Kih+1Q9m07v+wgxqjqTMOrnmOAUN37/L63zmhihJPgyE1g
+         WgnM+oaXtWXMPeroZXKYlb2UcWn2urpwfCUkBwQA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 74C0C6883B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     swboyd@chromium.org, evgreen@chromium.org, marc.zyngier@arm.com,
+        linus.walleij@linaro.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, mkshah@codeaurora.org,
+        linux-gpio@vger.kernel.org, rnayak@codeaurora.org,
+        Lina Iyer <ilina@codeaurora.org>
+Subject: [PATCH RFC 02/14] drivers: irqchip: pdc: Do not toggle IRQ_ENABLE during mask/unmask
+Date:   Thu, 29 Aug 2019 12:11:51 -0600
+Message-Id: <20190829181203.2660-3-ilina@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190829181203.2660-1-ilina@codeaurora.org>
+References: <20190829181203.2660-1-ilina@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20190829141441.70063-1-george.mccollister@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/29/19 4:14 PM, George McCollister wrote:
-> Use the register value width as the regmap_config name to prevent the
-> following error when the second and third regmap_configs are
-> initialized.
->  "debugfs: Directory '${bus-id}' with parent 'regmap' already present!"
-> 
-> Signed-off-by: George McCollister <george.mccollister@gmail.com>
+When an interrupt is to be serviced, the convention is to mask the
+interrupt at the chip and unmask after servicing the interrupt. Enabling
+and disabling the interrupt at the PDC irqchip causes an interrupt storm
+due to the way dual edge interrupts are handled in hardware.
 
-Reviewed-by: Marek Vasut <marex@denx.de>
+Skip configuring the PDC when the IRQ is masked and unmasked, instead
+use the irq_enable/irq_disable callbacks to toggle the IRQ_ENABLE
+register at the PDC. The PDC's IRQ_ENABLE register is only used during
+the monitoring mode when the system is asleep and is not needed for
+active mode detection.
+
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+---
+ drivers/irqchip/qcom-pdc.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/irqchip/qcom-pdc.c b/drivers/irqchip/qcom-pdc.c
+index faa7d61b9d6c..338fae604af5 100644
+--- a/drivers/irqchip/qcom-pdc.c
++++ b/drivers/irqchip/qcom-pdc.c
+@@ -63,15 +63,25 @@ static void pdc_enable_intr(struct irq_data *d, bool on)
+ 	raw_spin_unlock(&pdc_lock);
+ }
+ 
+-static void qcom_pdc_gic_mask(struct irq_data *d)
++static void qcom_pdc_gic_disable(struct irq_data *d)
+ {
+ 	pdc_enable_intr(d, false);
++	irq_chip_disable_parent(d);
++}
++
++static void qcom_pdc_gic_enable(struct irq_data *d)
++{
++	pdc_enable_intr(d, true);
++	irq_chip_enable_parent(d);
++}
++
++static void qcom_pdc_gic_mask(struct irq_data *d)
++{
+ 	irq_chip_mask_parent(d);
+ }
+ 
+ static void qcom_pdc_gic_unmask(struct irq_data *d)
+ {
+-	pdc_enable_intr(d, true);
+ 	irq_chip_unmask_parent(d);
+ }
+ 
+@@ -148,6 +158,8 @@ static struct irq_chip qcom_pdc_gic_chip = {
+ 	.irq_eoi		= irq_chip_eoi_parent,
+ 	.irq_mask		= qcom_pdc_gic_mask,
+ 	.irq_unmask		= qcom_pdc_gic_unmask,
++	.irq_disable		= qcom_pdc_gic_disable,
++	.irq_enable		= qcom_pdc_gic_enable,
+ 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+ 	.irq_set_type		= qcom_pdc_gic_set_type,
+ 	.flags			= IRQCHIP_MASK_ON_SUSPEND |
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
