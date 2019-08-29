@@ -2,100 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2DCA261C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:35:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE3E4A2623
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:36:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbfH2Sft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:35:49 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41540 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfH2Sft (ORCPT
+        id S1728299AbfH2Sga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:36:30 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34491 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728061AbfH2Sga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:35:49 -0400
-Received: by mail-io1-f67.google.com with SMTP id j5so8875254ioj.8;
-        Thu, 29 Aug 2019 11:35:48 -0700 (PDT)
+        Thu, 29 Aug 2019 14:36:30 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n9so2053930pgc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 11:36:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dE7PRZQ345omAc8kJ4IwmsYptXobZW+/ikZLYjrE7WQ=;
-        b=tUNmQb+LFpYbL1cSRPf5bCe64L++eHLfZ3CowzYJsxcHu6DWB7Khliqd+0WFFTUkut
-         UgliUO5/JyqxYdKS3oPQorxRPZMGv/eyYDZinzXKZUFcL8wfTyTXE54NmzJF+Vo+c7C9
-         /6CxcG+neGPSPOpPtQfvL+hWLHQo3leLd6FTrsSEHeCFcPw6gCq5tkMfnr/hnLWY6L/x
-         hHQ9oTXwrZyOpp4pFqG1Ae7f1l91G0oPB0ISu+2CigxbB/+gg3e8WkinItIZ66L9sl3y
-         sod6Sj1WOSojNdn7hOqcp4ojk/QPz2fC6PhALJTTkADd14rbnYMIbd76D8s9Zygo3Bwj
-         /JgQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=KbKypMZEMo628Sx98GbFT2Lyxp3a3o8vbOSGro2hqs8=;
+        b=t3zQUyJMxStChnSzVBHngExmp8QsLonx59qyC0ffBqgubbjGeOyOFMOsHJf8uf6HkB
+         CojAknqMdbyB8D+o/RuZItXS57kNsGGjly1qq2ZpZ9joOvjLQ5RVfWeJcCMLtQBpw/zH
+         eepAT69hr+gc0hwxvBjbl90PN9iyk0QDzHp5MV7YLfKc5W0wOQ7zGHWbDhWf+GrfcdTh
+         wPK7Sxg25ZX5mWRup3BIgWX38rdvTV+rGjVQfpKopTCfmhGLIoh5TTogX8eiT9lPG+F4
+         t34bu1vWoK9BI1Ryd083tz1DsL+ZG6939oGqr1RuXw/GymWIu89dLRkNTx/6QIyGSRjj
+         NN8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dE7PRZQ345omAc8kJ4IwmsYptXobZW+/ikZLYjrE7WQ=;
-        b=lr/03c13JUt9Dh/Vfw2PZdxocDFZqmNwcbLL+1lKzB83Lk7QFrZS4E81c6GwA/uaGj
-         ehQq2V0nPGn10cXUtq9xn2OjFdIohMeXptyjmvXrBJGb4vz0Ia5km9iLkltDma4k7ebh
-         Q0C1euk3VtquhJh6FLMHRX1x6TApPVR4YeBVBqB9J/sn8fcAJ1PAuLVUuikJhlzCt83e
-         EsTpESg3oSA/U+4zzdV6fFqXWkeMDWKO4CFUFWLzX/XbTrOuFYWjbUOBya1lPXR/U9K2
-         H7POacCpNlSkRwxGAX1SZzI6dNfpvomfCdez8EQQBifExZLq4cFUWOr7i1QPKCT9tcmq
-         mm6A==
-X-Gm-Message-State: APjAAAWJOEulYxispJTf155z3E7tALGi9rLICiCKE2KJ2wb5ImfTXFB4
-        Dj3Ww6Fd3hAMFI5/S9el1P10wOdfbCvXfSS/60w=
-X-Google-Smtp-Source: APXvYqzg2TrSvQ2sGfxlX6InibTPJ6qPNmnESCZkxiQHWcDZTe8CGM/4kKFmZ8yqnYQphNmu4/FiJ2pT0Ndftf28zJ8=
-X-Received: by 2002:a5d:9bd4:: with SMTP id d20mr1721932ion.243.1567103748387;
- Thu, 29 Aug 2019 11:35:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190828202723.1145-1-linux.amoon@gmail.com> <8c40f334-c723-b524-857c-73734b7d0827@baylibre.com>
-In-Reply-To: <8c40f334-c723-b524-857c-73734b7d0827@baylibre.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Fri, 30 Aug 2019 00:05:37 +0530
-Message-ID: <CANAwSgShr-K-44UzdxFC7pvpTye_pbEMdS6ug1eWwYhnsVNGdQ@mail.gmail.com>
-Subject: Re: [PATCHv1 0/3] Odroid c2 missing regulator linking
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KbKypMZEMo628Sx98GbFT2Lyxp3a3o8vbOSGro2hqs8=;
+        b=o3S4lJxe/82Lu7LqHmIPl48nEe/yQBQ5pR3E4ov7a+sD6V+sEpj7WpQrUxeJh29lX0
+         Dmh7jyvW/Ur0h9NPp96AS5m88zfEfy9icgtuP3ZSk4O2eqx56ksO46vOFiSVkWfYJFRr
+         Tb9SfP15Bc5CJ8ljIOs0plNpN6ukGcO8HZJFgHa6bz8wHax+bedQzoIvh0Yx3jNLWIRN
+         hwln/Ema95qGAQH2X63vGaK5g7+2aPOOzOzf6Us/F/D6W7CdlH0b/TH2z8SKTc1QCZ5q
+         dqQGa5mNHGRJeDBTqThEfOwWfGMecWYv0SilofEG98ubTr5ZHB0EbJm2s9k8Z3VRK2by
+         zVCg==
+X-Gm-Message-State: APjAAAUXBlAc2iUfOAn2EEGiitwkOa8Ipdn+wAQNB0PR5d28/V0Lvjto
+        95vxOO8Wa8vURuiQpIn0x6JV8w==
+X-Google-Smtp-Source: APXvYqxpv+GziRN1zBpbr421YfeGoyK+5VQeDsDe4w/JmyFKe9EoDJcwIteI02M7WGql0t//MIrfew==
+X-Received: by 2002:a62:5c5:: with SMTP id 188mr13311302pff.227.1567103789574;
+        Thu, 29 Aug 2019 11:36:29 -0700 (PDT)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id ay7sm2840574pjb.4.2019.08.29.11.36.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2019 11:36:28 -0700 (PDT)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Srini Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] rpmsg: glink-smem: Name the edge based on parent remoteproc
+Date:   Thu, 29 Aug 2019 11:36:25 -0700
+Message-Id: <20190829183625.32244-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+Naming the glink edge device on the parent of_node short name causes
+collisions when multiple remoteproc instances with only different unit
+address are described on the platform_bus in DeviceTree.
 
-On Thu, 29 Aug 2019 at 13:58, Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> On 28/08/2019 22:27, Anand Moon wrote:
-> > Below small changes help re-configure or fix missing inter linking
-> > of regulator node.
-> >
-> > Changes based top on my prevoius series.
->
-> For the serie:
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
->
+Base the edge's name on the parent remoteproc's name instead, to ensure
+that it's unique.
 
-Thanks for your review.
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/rpmsg/qcom_glink_smem.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> >
-> > [0] https://patchwork.kernel.org/cover/11113091/
-> >
-> > TOOD: Add support for DVFS GXBB odroid board in next series.
->
-> I'm curious how you will do this !
+diff --git a/drivers/rpmsg/qcom_glink_smem.c b/drivers/rpmsg/qcom_glink_smem.c
+index 64a5ce324c7f..4238383d8685 100644
+--- a/drivers/rpmsg/qcom_glink_smem.c
++++ b/drivers/rpmsg/qcom_glink_smem.c
+@@ -201,7 +201,7 @@ struct qcom_glink *qcom_glink_smem_register(struct device *parent,
+ 	dev->parent = parent;
+ 	dev->of_node = node;
+ 	dev->release = qcom_glink_smem_release;
+-	dev_set_name(dev, "%pOFn:%pOFn", node->parent, node);
++	dev_set_name(dev, "%s:%pOFn", dev_name(parent->parent), node);
+ 	ret = device_register(dev);
+ 	if (ret) {
+ 		pr_err("failed to register glink edge\n");
+-- 
+2.18.0
 
-I was just studying you previous series on how you have implemented
-this feature for C1, N2 and VIM3 boards.
-
-[0] https://patchwork.kernel.org/cover/11114125/
-
-I started gathering key inputs needed for this ie *clk / pwm*
-like VDDCPU and VDDE clk changes.
-
-But it looks like of the complex clk framework needed, so I leave this to the
-expert like your team of developers to do this much quick and efficiently.
-
-Best Regards,
--Anand
