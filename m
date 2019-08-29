@@ -2,73 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BC9CA1502
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88FE0A1508
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfH2Jcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 05:32:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42802 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfH2Jcl (ORCPT
+        id S1727056AbfH2Jd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 05:33:59 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:39447 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfH2Jd7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 05:32:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jXWv6rxcD/Ytdxuw9oCBSvjHqSotwy8H8FiFgT6NRRg=; b=eNdor4/fygoZH6Xvs2bMeOvXp
-        tLJNYDfk1cimf7+kbTn2BtXDWxLqRI4BEoxvkM59QMQwbcBMvCELCNq/zJkLCXbTBzuB4qK60s7R/
-        haWdRVRaEqnJlYuCV4UwO8CFnpN8keiifEYRocm9hSV7hdJbuhyANoVbu4fvGSZZTtQWctl+4PkEQ
-        /oN+phe7MFMf78kAF3jl7VDQ4vwdv93FRJN87qRsxSrA+o2vNKwsWkTPjLWfJ6jdO987prP1KZI6Z
-        19zNadIV1LWue77KVSIM1O13lgtmraWBA1EkdjuK6SDKTpSqH94t7Ag5Ad+KKj2s3isfBEvJQ6hgD
-        xAZ0rNRsA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3GnG-0007NX-Pm; Thu, 29 Aug 2019 09:32:38 +0000
-Date:   Thu, 29 Aug 2019 02:32:38 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20190829093238.GA23102@infradead.org>
-References: <20190821175720.25901-1-vgoyal@redhat.com>
- <20190821175720.25901-2-vgoyal@redhat.com>
- <20190826115152.GA21051@infradead.org>
- <20190827163828.GA6859@redhat.com>
- <20190828065809.GA27426@infradead.org>
- <20190828175843.GB912@redhat.com>
- <20190828225322.GA7777@dread.disaster.area>
- <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+        Thu, 29 Aug 2019 05:33:59 -0400
+Received: by mail-vs1-f66.google.com with SMTP id y62so1966456vsb.6
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 02:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=DjToVb/2rWtC6lvGny/xx9mJjOcxwCdUzEwZGeLNY9A=;
+        b=YUB3YnKOdX4yxmXLdyDhTzMvbnKmjSC1QpQYX7KPLqE/8759VHKyHgHjJfYvlcw9JV
+         TGb0bitYdTg6DyioaDA/zxwa+MeIYAZjicFsP9Fku5V4BlSFvNjJNmwP9aYpg5YWf3YK
+         TVGTvPc6AQcvpASmwzGZyQ3ncPZcuOXGBxRMLEEvkWqn94MDQ7g9Lu5rODla3jyjIKMP
+         gEsnc+sNVqCLDLJLoymHiEdo9S/K9g7WnjjcfM1M96DHcPLpFXpdgZyaf2mWWQpNYCJ2
+         CEjNPqwljX/B+LoP/9L1iuIO+rlntY7dxI0dlXFdajZGxkQg7ERJufdPaRSHXX3Y5hjj
+         gRtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=DjToVb/2rWtC6lvGny/xx9mJjOcxwCdUzEwZGeLNY9A=;
+        b=bD+NOE2oPsDTle3Z8rPbM748yZGrRgAfwVJdN/KYEf4oVFKpEcxb1K6o+4l4VkSHKx
+         jaPNa1jdNK4DYtMQUX0fgQtCrnrQnPqXo32VV7+34p8NRfnh1N8dmZ5OjsrmlsNNojOV
+         T7USphVk80I7kX6DjrbdFjwydn/ATLYd20DiTc8rBoT5LYB6P3PMscYHbHOqpyT9bXNw
+         AHd7Y6mfjCrxmiMhRWVwVUIQKTDh0QyR4FL1kUP9aRqshElHQypudXARuAhU6guK83Nd
+         x6ZTEI1YCvp/8RgPONmQWPncmxYDFyJKCnd9BIidlYF4WurL1YOSHxSuKt/CLL1tCgDQ
+         EYDg==
+X-Gm-Message-State: APjAAAUYvY1eUw+uZCc3Onc2fl+wpPqrosOJFcgCBEijBkqrzeLqxsbH
+        OuVF+VZ1hGU0b/kYVZL/EO7HL4ZpZ7i0a4zmKwA=
+X-Google-Smtp-Source: APXvYqyuwEjXf52JL8zrPE6Nw+42nVDaQk3vWCT5ir3nQzABYNiQzYptsSZQYiMLaHJgeNhoGerM5ohmGYsfyYeuyxA=
+X-Received: by 2002:a67:ce83:: with SMTP id c3mr4802021vse.98.1567071238714;
+ Thu, 29 Aug 2019 02:33:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Received: by 2002:a05:6102:490:0:0:0:0 with HTTP; Thu, 29 Aug 2019 02:33:58
+ -0700 (PDT)
+Reply-To: haneefaabdel@gmail.com
+From:   Miss Haneefa <barranthony7777@gmail.com>
+Date:   Thu, 29 Aug 2019 02:33:58 -0700
+Message-ID: <CAPnyGgrDL_=mvD3puB4hsZoCfVEP+348nJcBFJO_HiD6nVYDgg@mail.gmail.com>
+Subject: Hi Dear
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 05:04:11PM -0700, Dan Williams wrote:
-> Agree. In retrospect it was my laziness in the dax-device
-> implementation to expect the block-device to be available.
-> 
-> It looks like fs_dax_get_by_bdev() is an intercept point where a
-> dax_device could be dynamically created to represent the subset range
-> indicated by the block-device partition. That would open up more
-> cleanup opportunities.
+-- 
 
-That seems like a decent short-term plan.  But in the long I'd just let
-dax call into the partition table parser directly, as we might want to
-support partitions without first having to create a block device on top
-of the dax device.  Same for the badblocks handling story.
+Hello My name is Haneefa, i am Arab girl. Contact me back
+i have something to tell you about
