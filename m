@@ -2,73 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EFC8A29FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E1D5A2A0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:46:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728207AbfH2Wpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 18:45:34 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36198 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727907AbfH2Wpe (ORCPT
+        id S1728629AbfH2WqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 18:46:01 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37507 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728581AbfH2Wp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:45:34 -0400
-Received: by mail-ot1-f67.google.com with SMTP id k18so5114914otr.3;
-        Thu, 29 Aug 2019 15:45:33 -0700 (PDT)
+        Thu, 29 Aug 2019 18:45:59 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 97so2245233otr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 15:45:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AIuig4xjj1okPm1v+nckMKBMxCFTk/w+YVlFEyiN+6I=;
+        b=UYQHthzH50nn10Fq77yoEj2YvcrNXNY6o18RXam9bIfpl1wHeEULO4yuuCSRI/Ru2K
+         RLreXb965cYq9f3IqoESXN6C24GqPvA0ZrmEimO02Cts4PIULu8eTSRXN1IJsCJpfuRT
+         +BxwrrliSYijoXLFR2JXb4Dd9dixmo7nx0t/SCzsYhC6j9bvK86j3oNNTrtP+EVJSHkr
+         99Pi3kPcsOf6m/wOqSI9Rwe2C2ZMhHPCJ4mFEsr7TfAmthneIydvqyFqOfcrDZTd1ej9
+         rYDVYNrMO2OaS4qmIqAoNyXXvTyMb6cGBOK+FkHL6xZJdSGVe9V9M57hTVctnR+W3nW/
+         RkxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z3MZ8AyPdUYVrg2y3uydcIMZSUELqZaas3HS02wvz+I=;
-        b=QNmbk7txwQ1MthXWZUmUSeJcgrZpiFd7oE3QwnzIf5N+gRLhLJVs63yqSSAeg/gp/7
-         5oTG+pdXyHFNMPYpdANSNyyDm7/kAnDqoq+/mkD58ihey18iB/MZ6Lrb6GkKuGqpq9yd
-         zHK+HEs+WUvkFi6AK14Md6EnaL2F5VSeI1yAqj4AQCQBi067RGo0yay9AdXvpuQ0K0Es
-         mKEdpwa0PVlU2iGms/zmhRhzTIiNAO6ySIKlOxJUSqKFl3FcCpfwNhC20quEqk56YdPl
-         hJ9qvJtrWYLsV6OggEm8K+zj4nFTdCBFiNtKp/vyabwVzK9UnM4QsNrzjp+e1Aa9g1Iv
-         BsYA==
-X-Gm-Message-State: APjAAAXexBysOdpmNum7CCjRD56chxw71QxSRKH+yvt1tclSYZLLzrOX
-        ni5xHE54tGNgA5zxqYVnmemIs+I=
-X-Google-Smtp-Source: APXvYqw08hxUksZnk+Z/aXJB+kDBH9rNUQIyw+xfm7lS1bkszIUlI8PcYNTsMz6OZ0Lj4Fh9S9QXRQ==
-X-Received: by 2002:a9d:5601:: with SMTP id e1mr10326552oti.370.1567118732666;
-        Thu, 29 Aug 2019 15:45:32 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 63sm1280975otr.75.2019.08.29.15.45.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 15:45:31 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 17:45:31 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     megous@megous.com
-Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-bluetooth@vger.kernel.org, Ondrej Jirman <megous@megous.com>
-Subject: Re: [RESEND PATCH 1/5] dt-bindings: net: Add compatible for
- BCM4345C5 bluetooth device
-Message-ID: <20190829224531.GA747@bogus>
-References: <20190823103139.17687-1-megous@megous.com>
- <20190823103139.17687-2-megous@megous.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AIuig4xjj1okPm1v+nckMKBMxCFTk/w+YVlFEyiN+6I=;
+        b=YMmXAa0JFW51anrQpkTOaz955Rahb7SayNVTB7EMhZSz8qeou0mUZ8S4OtqbX2zgh8
+         QFgmJyBFWNbCT16gEHlWHrB4R10L4GIy9iXjXCZQld7aicEbA38o43WUons+1ipcFZ3a
+         SryA8IAu70DK1jEAZoIqDXhcItY21g8o/GY0vQxbKwCD8lqJkv7QnCCjDnE1XFEOH3G2
+         ZM+1upL06RZ8L49ckWgY+Rzh38mF+uLEuJsAZvtwRZuo3rlYR8qNW6Y6uIbeHaJyY1qc
+         5NtZBau7YljfGPECsW/W1b46T6f1bFmTyQnD6ecaKPDg2AhzqSESTnjax+lBO2bkjOyi
+         7mHQ==
+X-Gm-Message-State: APjAAAVZ6NMkGxvlz4RCugola3oqMG9gl/mLzxWdRROdlNCYmvuw87kA
+        P624fIHp6HRiTC9xQtH3Pfba5kdauFBdz6EUqRYocw==
+X-Google-Smtp-Source: APXvYqy2RByDJRCk/msHyU5rudzz0l2j2S1qCHXaP4lkineatCLBMlR9sdECn9SSUKEhV7aUFLo14KwjqemHdp5tUtA=
+X-Received: by 2002:a05:6830:1e05:: with SMTP id s5mr9281786otr.247.1567118758900;
+ Thu, 29 Aug 2019 15:45:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190823103139.17687-2-megous@megous.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190830080855.45421fa0@canb.auug.org.au>
+In-Reply-To: <20190830080855.45421fa0@canb.auug.org.au>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 29 Aug 2019 15:45:48 -0700
+Message-ID: <CAPcyv4iWUa-HVoODtbj-G2jxS0Tm-x_=s4PNQ-M-FvDibYFgFw@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the nvdimm-fixes tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeff Moyer <jmoyer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Aug 2019 12:31:35 +0200, megous@megous.com wrote:
-> From: Ondrej Jirman <megous@megous.com>
-> 
-> This is present in the AP6526 WiFi/Bluetooth 5.0 module.
-> 
-> Signed-off-by: Ondrej Jirman <megous@megous.com>
-> ---
->  Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On Thu, Aug 29, 2019 at 3:09 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> In commit
+>
+>   dcbce3cd20be ("libnvdimm/pfn: Fix namespace creation on misaligned addresses")
+>
+> Fixes tag
+>
+>   Fixes: commit a3619190d62e ("libnvdimm/pfn: stop padding pmem namespaces ...")
+>
+> has these problem(s):
+>
+>   - leading word 'commit' unexpected
 
-Acked-by: Rob Herring <robh@kernel.org>
+"Fixes" fixed, thanks Stephen.
