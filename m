@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07080A24ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63141A24E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbfH2S04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:26:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57482 "EHLO mail.kernel.org"
+        id S1727228AbfH2S0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:26:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728558AbfH2SPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:42 -0400
+        id S1728690AbfH2SPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:15:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D2D42342C;
-        Thu, 29 Aug 2019 18:15:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33CA62339E;
+        Thu, 29 Aug 2019 18:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102541;
-        bh=mbc88SK90w/+Uoyl1A5Z9fHXLSXvvuFhUGHwFq5VEjA=;
+        s=default; t=1567102549;
+        bh=w6TWzwYQCOFc+SP0vuZbTqWNDsaU89e3UP1OXZwNXp8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LPxdlt4jc51i344ngRHxG5qcsbiAkd3xYeNa04aHazXAwxq1rwWkEKyE8j323ii7S
-         OyKjyxYreIXbPwZkqhKsdXkLScthARpfWsUlt/3YAxv9S3749QEhbayuSf6f16CP/i
-         CboIi1Pnpn4y3wotVCICF8d8EJW9B/Jo+JdCMmcM=
+        b=onv8fgW6gPNWG1JFpbtZfptnpG1DSW04tV5emaELytKz2vpkmCEd7kp00hQCLYcwX
+         s78A8ho+nk4nJwjnXuVUoCQcPMaxl4W/MPwE3ITGOy6jFoRplW8eFbl95DWpgWimtO
+         C79NipWYbeok6GvpD5WfKHjhhehs03X4l5sVHkOg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>, Sasha Levin <sashal@kernel.org>,
-        linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 75/76] gpio: Fix irqchip initialization order
-Date:   Thu, 29 Aug 2019 14:13:10 -0400
-Message-Id: <20190829181311.7562-75-sashal@kernel.org>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 02/45] netfilter: nf_tables: use-after-free in failing rule with bound set
+Date:   Thu, 29 Aug 2019 14:15:02 -0400
+Message-Id: <20190829181547.8280-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
-References: <20190829181311.7562-1-sashal@kernel.org>
+In-Reply-To: <20190829181547.8280-1-sashal@kernel.org>
+References: <20190829181547.8280-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -46,109 +44,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-[ Upstream commit 48057ed1840fde9239b1e000bea1a0a1f07c5e99 ]
+[ Upstream commit 6a0a8d10a3661a036b55af695542a714c429ab7c ]
 
-The new API for registering a gpio_irq_chip along with a
-gpio_chip has a different semantic ordering than the old
-API which added the irqchip explicitly after registering
-the gpio_chip.
+If a rule that has already a bound anonymous set fails to be added, the
+preparation phase releases the rule and the bound set. However, the
+transaction object from the abort path still has a reference to the set
+object that is stale, leading to a use-after-free when checking for the
+set->bound field. Add a new field to the transaction that specifies if
+the set is bound, so the abort path can skip releasing it since the rule
+command owns it and it takes care of releasing it. After this update,
+the set->bound field is removed.
 
-Move the calls to add the gpio_irq_chip *last* in the
-function, so that the different hooks setting up OF and
-ACPI and machine gpio_chips are called *before* we try
-to register the interrupts, preserving the elder semantic
-order.
+[   24.649883] Unable to handle kernel paging request at virtual address 0000000000040434
+[   24.657858] Mem abort info:
+[   24.660686]   ESR = 0x96000004
+[   24.663769]   Exception class = DABT (current EL), IL = 32 bits
+[   24.669725]   SET = 0, FnV = 0
+[   24.672804]   EA = 0, S1PTW = 0
+[   24.675975] Data abort info:
+[   24.678880]   ISV = 0, ISS = 0x00000004
+[   24.682743]   CM = 0, WnR = 0
+[   24.685723] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000428952000
+[   24.692207] [0000000000040434] pgd=0000000000000000
+[   24.697119] Internal error: Oops: 96000004 [#1] SMP
+[...]
+[   24.889414] Call trace:
+[   24.891870]  __nf_tables_abort+0x3f0/0x7a0
+[   24.895984]  nf_tables_abort+0x20/0x40
+[   24.899750]  nfnetlink_rcv_batch+0x17c/0x588
+[   24.904037]  nfnetlink_rcv+0x13c/0x190
+[   24.907803]  netlink_unicast+0x18c/0x208
+[   24.911742]  netlink_sendmsg+0x1b0/0x350
+[   24.915682]  sock_sendmsg+0x4c/0x68
+[   24.919185]  ___sys_sendmsg+0x288/0x2c8
+[   24.923037]  __sys_sendmsg+0x7c/0xd0
+[   24.926628]  __arm64_sys_sendmsg+0x2c/0x38
+[   24.930744]  el0_svc_common.constprop.0+0x94/0x158
+[   24.935556]  el0_svc_handler+0x34/0x90
+[   24.939322]  el0_svc+0x8/0xc
+[   24.942216] Code: 37280300 f9404023 91014262 aa1703e0 (f9401863)
+[   24.948336] ---[ end trace cebbb9dcbed3b56f ]---
 
-This cropped up in the PL061 driver which used to work
-fine with no special ACPI quirks, but started to misbehave
-using the new API.
-
-Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reported-by: Wei Xu <xuwei5@hisilicon.com>
-Tested-by: Wei Xu <xuwei5@hisilicon.com>
-Reported-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://lore.kernel.org/r/20190820080527.11796-1-linus.walleij@linaro.org
+Fixes: f6ac85858976 ("netfilter: nf_tables: unbind set in rule from commit path")
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpiolib.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ include/net/netfilter/nf_tables.h |  9 +++++++--
+ net/netfilter/nf_tables_api.c     | 15 ++++++++++-----
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 4f333d6f2e230..42f9e00ff4d1b 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -1371,21 +1371,13 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	if (status)
- 		goto err_remove_from_list;
+diff --git a/include/net/netfilter/nf_tables.h b/include/net/netfilter/nf_tables.h
+index f2be5d041ba3a..7685cbda9f28b 100644
+--- a/include/net/netfilter/nf_tables.h
++++ b/include/net/netfilter/nf_tables.h
+@@ -418,8 +418,7 @@ struct nft_set {
+ 	unsigned char			*udata;
+ 	/* runtime data below here */
+ 	const struct nft_set_ops	*ops ____cacheline_aligned;
+-	u16				flags:13,
+-					bound:1,
++	u16				flags:14,
+ 					genmask:2;
+ 	u8				klen;
+ 	u8				dlen;
+@@ -1337,12 +1336,15 @@ struct nft_trans_rule {
+ struct nft_trans_set {
+ 	struct nft_set			*set;
+ 	u32				set_id;
++	bool				bound;
+ };
  
--	status = gpiochip_irqchip_init_valid_mask(chip);
--	if (status)
--		goto err_remove_from_list;
--
- 	status = gpiochip_alloc_valid_mask(chip);
- 	if (status)
--		goto err_remove_irqchip_mask;
--
--	status = gpiochip_add_irqchip(chip, lock_key, request_key);
--	if (status)
--		goto err_free_gpiochip_mask;
-+		goto err_remove_from_list;
+ #define nft_trans_set(trans)	\
+ 	(((struct nft_trans_set *)trans->data)->set)
+ #define nft_trans_set_id(trans)	\
+ 	(((struct nft_trans_set *)trans->data)->set_id)
++#define nft_trans_set_bound(trans)	\
++	(((struct nft_trans_set *)trans->data)->bound)
  
- 	status = of_gpiochip_add(chip);
- 	if (status)
--		goto err_remove_chip;
-+		goto err_free_gpiochip_mask;
+ struct nft_trans_chain {
+ 	bool				update;
+@@ -1373,12 +1375,15 @@ struct nft_trans_table {
+ struct nft_trans_elem {
+ 	struct nft_set			*set;
+ 	struct nft_set_elem		elem;
++	bool				bound;
+ };
  
- 	status = gpiochip_init_valid_mask(chip);
- 	if (status)
-@@ -1411,6 +1403,14 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ #define nft_trans_elem_set(trans)	\
+ 	(((struct nft_trans_elem *)trans->data)->set)
+ #define nft_trans_elem(trans)	\
+ 	(((struct nft_trans_elem *)trans->data)->elem)
++#define nft_trans_elem_set_bound(trans)	\
++	(((struct nft_trans_elem *)trans->data)->bound)
  
- 	machine_gpiochip_add(chip);
+ struct nft_trans_obj {
+ 	struct nft_object		*obj;
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 29ff59dd99ace..2145581d7b3dc 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -121,9 +121,14 @@ static void nft_set_trans_bind(const struct nft_ctx *ctx, struct nft_set *set)
+ 		return;
  
-+	status = gpiochip_irqchip_init_valid_mask(chip);
-+	if (status)
-+		goto err_remove_acpi_chip;
-+
-+	status = gpiochip_add_irqchip(chip, lock_key, request_key);
-+	if (status)
-+		goto err_remove_irqchip_mask;
-+
- 	/*
- 	 * By first adding the chardev, and then adding the device,
- 	 * we get a device node entry in sysfs under
-@@ -1422,21 +1422,21 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
- 	if (gpiolib_initialized) {
- 		status = gpiochip_setup_dev(gdev);
- 		if (status)
--			goto err_remove_acpi_chip;
-+			goto err_remove_irqchip;
+ 	list_for_each_entry_reverse(trans, &net->nft.commit_list, list) {
+-		if (trans->msg_type == NFT_MSG_NEWSET &&
+-		    nft_trans_set(trans) == set) {
+-			set->bound = true;
++		switch (trans->msg_type) {
++		case NFT_MSG_NEWSET:
++			if (nft_trans_set(trans) == set)
++				nft_trans_set_bound(trans) = true;
++			break;
++		case NFT_MSG_NEWSETELEM:
++			if (nft_trans_elem_set(trans) == set)
++				nft_trans_elem_set_bound(trans) = true;
+ 			break;
+ 		}
  	}
- 	return 0;
- 
-+err_remove_irqchip:
-+	gpiochip_irqchip_remove(chip);
-+err_remove_irqchip_mask:
-+	gpiochip_irqchip_free_valid_mask(chip);
- err_remove_acpi_chip:
- 	acpi_gpiochip_remove(chip);
- err_remove_of_chip:
- 	gpiochip_free_hogs(chip);
- 	of_gpiochip_remove(chip);
--err_remove_chip:
--	gpiochip_irqchip_remove(chip);
- err_free_gpiochip_mask:
- 	gpiochip_free_valid_mask(chip);
--err_remove_irqchip_mask:
--	gpiochip_irqchip_free_valid_mask(chip);
- err_remove_from_list:
- 	spin_lock_irqsave(&gpio_lock, flags);
- 	list_del(&gdev->list);
+@@ -6656,7 +6661,7 @@ static int __nf_tables_abort(struct net *net)
+ 			break;
+ 		case NFT_MSG_NEWSET:
+ 			trans->ctx.table->use--;
+-			if (nft_trans_set(trans)->bound) {
++			if (nft_trans_set_bound(trans)) {
+ 				nft_trans_destroy(trans);
+ 				break;
+ 			}
+@@ -6668,7 +6673,7 @@ static int __nf_tables_abort(struct net *net)
+ 			nft_trans_destroy(trans);
+ 			break;
+ 		case NFT_MSG_NEWSETELEM:
+-			if (nft_trans_elem_set(trans)->bound) {
++			if (nft_trans_elem_set_bound(trans)) {
+ 				nft_trans_destroy(trans);
+ 				break;
+ 			}
 -- 
 2.20.1
 
