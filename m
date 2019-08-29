@@ -2,160 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB20CA2858
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:48:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7BEEA2876
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbfH2UsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:48:03 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44419 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726526AbfH2UsD (ORCPT
+        id S1727686AbfH2U4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:56:36 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36263 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbfH2U4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:48:03 -0400
-Received: by mail-io1-f65.google.com with SMTP id j4so9615422iog.11;
-        Thu, 29 Aug 2019 13:48:02 -0700 (PDT)
+        Thu, 29 Aug 2019 16:56:36 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p13so5217346wmh.1;
+        Thu, 29 Aug 2019 13:56:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=I1nzOTXRSvtsbJ+ewgmrwsmeWIh6DuCYG1u3Ks75aJ4=;
-        b=dqryB45JKi6c599K+mta/pUXZ+fUf5PjqzxsclCkbRqBj+c2qL8jh7cb7pe5txPSoK
-         I+G9tGjnpArIs5qMDd+vfi6ZzE2pKK9qWlI6JDl0dW7pne2y4G/oGvV+sCF66pQlrve/
-         LO9P+ZOi0skdAVJwSRvPHa6keJAmU8TJ1x9c/FVQa9MzjWQUX4vZhpbK1xg7Wa9QTtc6
-         0HVTlE/bTYj65fujkKuvOe2mW3oqSAyQKSi/txoBvBXAjXMOyNq9lQ58upjNmYooi3zW
-         djlydfuUwQEcZ5CmrepPandprZdtvcWLg/2l6JFyHz78Kv471UuCr7SIo6EERno4PNB9
-         mZLQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5OTD/ZF052UijPlaWHCU7Ea6/DP3zSnIydnyfbQXH7E=;
+        b=CwuTR8XUyaLrdcjJY8/b566IfEuB1F8FTncyUSw/jAoq8v+gWEvkj7YHi47i1uX/eq
+         a0OuCmIDRaosbb3VIoSMbiy/1/MdDR0H1cnkr/IhTXridpk2ZWFNLil18EUcIXrsXDU7
+         LMoVbc3C6/mRCWWjKN0MgWfhMCA7v12O7FJvXN6UHKZkKa8eAF5iwVcZCxSPfqE/stRn
+         J+WaL22jPUxTXElwUyjVHuXfqvwMVwyQjkq2TXn1BXC81WOjLzMFLWfGiFxVj04pb71l
+         NMp/yG8LRyqU9hR2bzSGDsTBWGwayFAsbpHhHeqer+JVT+j/zmno0ijiyEQxdOAutwkH
+         CqpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=I1nzOTXRSvtsbJ+ewgmrwsmeWIh6DuCYG1u3Ks75aJ4=;
-        b=LuRsoCiTW6TJaP9WXqYKn4CYuGIRf9AnVFc77HjQ4PYJQrj1Xi4WYOOE0GU5z+jBXB
-         xSmWllHj1u2rmIxWc8dOW3BpKKJNXRx9yhKByb5AM1hO8eUnb5hQg78PQMpnTP7DSp5t
-         1SQoAjDfINgeVJtS6Svx9tlgPyA8VSIcHYwqTXfqZBsGocKXIej2Hg/gj7NI7zdTE/tr
-         pgIH0nGKfUAR4S07KcY6ZtC81DKOJIHRKQqzgsGcFTgBKBsXFMXLGlvfFcZV/3wCxjP7
-         p4uN9634KFsZKSuwuunllDjOrE/9QAsxx61h9bHwal2Ok/syHULqJYNYx9DKKAO35dMQ
-         M2ZA==
-X-Gm-Message-State: APjAAAXPpYYWD7Fflfn9opyILZINpiTCGI/cYdf3EXSRSOhh1Jmx03Zs
-        O5YGcnWyXCgYCgZLpVmLNGoit+/cxtO5ALuu6SjHZv8+tfk=
-X-Google-Smtp-Source: APXvYqxzpsYrSjNMwic87+EkulVTAG0JIV9CVRFNncFp6ZgIwjvscM/KVpuk7eQkkxhu/nL6vWCyacvLlRGYsyv1QO4=
-X-Received: by 2002:a05:6638:3af:: with SMTP id z15mr12495908jap.39.1567111682445;
- Thu, 29 Aug 2019 13:48:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5OTD/ZF052UijPlaWHCU7Ea6/DP3zSnIydnyfbQXH7E=;
+        b=dTykIR+A0iNlXGLX1htXvIEMU735PE7ZmARPovdil5Xko542elSh/FOhEt0NfYKziz
+         cLcRaq/ZzOtKhDIB68nimfLP8f6ZOM4yof6f0GlqGWL5f1QYA05XxMEgP420Ns6Frkuy
+         d1g5hZ3t8imcFzho9fSw5wp/QVJ9zhyXgxmykk+zbNTkxqScjmlcCISw+vA40/tenCVB
+         HKvL13pdFuCbOQQ4ssby0NKyWMUuNZpSSrkb7w/jQ50RHu6rNQUJVnqv/xF9O9f3Gc+k
+         8f52+nFeu4wN7GyMTEQrGeAf61lggHFbRsUjijTxY95bxdDSIwlGaZP+sfFqZyzgHUql
+         XSpA==
+X-Gm-Message-State: APjAAAVDz83qWStviJOOl0goPI10+0aKU/yPgOIWWQ4ZvSWRsp7ddX9x
+        gy3X7KuP5vNiBNUPhJlRi+91oyNckeM=
+X-Google-Smtp-Source: APXvYqygssWtVylOkfeDXUlxBM6Q63NK3RvJdvkErdIKchX1tJ0I8+1y3Yzz+aHslkBbBxKFZdcCYw==
+X-Received: by 2002:a7b:c775:: with SMTP id x21mr14634755wmk.90.1567112193854;
+        Thu, 29 Aug 2019 13:56:33 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id e14sm3883812wme.35.2019.08.29.13.56.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 29 Aug 2019 13:56:32 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 22:56:31 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190829205631.uhz6jdboneej3j3c@pali>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20190829181311.7562-1-sashal@kernel.org> <20190829181311.7562-66-sashal@kernel.org>
-In-Reply-To: <20190829181311.7562-66-sashal@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 29 Aug 2019 22:51:04 +0200
-Message-ID: <CAOi1vP9-A-U6J15hT+XmtXzBw5WVRZECry8gPFzqp0CV36ecig@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.2 66/76] ceph: fix buffer free while holding
- i_ceph_lock in __ceph_setxattr()
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Luis Henriques <lhenriques@suse.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="22htbofgnb45e3kb"
+Content-Disposition: inline
+In-Reply-To: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 8:15 PM Sasha Levin <sashal@kernel.org> wrote:
->
-> From: Luis Henriques <lhenriques@suse.com>
->
-> [ Upstream commit 86968ef21596515958d5f0a40233d02be78ecec0 ]
->
-> Calling ceph_buffer_put() in __ceph_setxattr() may end up freeing the
-> i_xattrs.prealloc_blob buffer while holding the i_ceph_lock.  This can be
-> fixed by postponing the call until later, when the lock is released.
->
-> The following backtrace was triggered by fstests generic/117.
->
->   BUG: sleeping function called from invalid context at mm/vmalloc.c:2283
->   in_atomic(): 1, irqs_disabled(): 0, pid: 650, name: fsstress
->   3 locks held by fsstress/650:
->    #0: 00000000870a0fe8 (sb_writers#8){.+.+}, at: mnt_want_write+0x20/0x50
->    #1: 00000000ba0c4c74 (&type->i_mutex_dir_key#6){++++}, at: vfs_setxattr+0x55/0xa0
->    #2: 000000008dfbb3f2 (&(&ci->i_ceph_lock)->rlock){+.+.}, at: __ceph_setxattr+0x297/0x810
->   CPU: 1 PID: 650 Comm: fsstress Not tainted 5.2.0+ #437
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
->   Call Trace:
->    dump_stack+0x67/0x90
->    ___might_sleep.cold+0x9f/0xb1
->    vfree+0x4b/0x60
->    ceph_buffer_release+0x1b/0x60
->    __ceph_setxattr+0x2b4/0x810
->    __vfs_setxattr+0x66/0x80
->    __vfs_setxattr_noperm+0x59/0xf0
->    vfs_setxattr+0x81/0xa0
->    setxattr+0x115/0x230
->    ? filename_lookup+0xc9/0x140
->    ? rcu_read_lock_sched_held+0x74/0x80
->    ? rcu_sync_lockdep_assert+0x2e/0x60
->    ? __sb_start_write+0x142/0x1a0
->    ? mnt_want_write+0x20/0x50
->    path_setxattr+0xba/0xd0
->    __x64_sys_lsetxattr+0x24/0x30
->    do_syscall_64+0x50/0x1c0
->    entry_SYSCALL_64_after_hwframe+0x49/0xbe
->   RIP: 0033:0x7ff23514359a
->
-> Signed-off-by: Luis Henriques <lhenriques@suse.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/ceph/xattr.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 0619adbcbe14c..8382299fc2d84 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -1028,6 +1028,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
->         struct ceph_inode_info *ci = ceph_inode(inode);
->         struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
->         struct ceph_cap_flush *prealloc_cf = NULL;
-> +       struct ceph_buffer *old_blob = NULL;
->         int issued;
->         int err;
->         int dirty = 0;
-> @@ -1101,13 +1102,15 @@ int __ceph_setxattr(struct inode *inode, const char *name,
->                 struct ceph_buffer *blob;
->
->                 spin_unlock(&ci->i_ceph_lock);
-> -               dout(" preaallocating new blob size=%d\n", required_blob_size);
-> +               ceph_buffer_put(old_blob); /* Shouldn't be required */
-> +               dout(" pre-allocating new blob size=%d\n", required_blob_size);
->                 blob = ceph_buffer_new(required_blob_size, GFP_NOFS);
->                 if (!blob)
->                         goto do_sync_unlocked;
->                 spin_lock(&ci->i_ceph_lock);
-> +               /* prealloc_blob can't be released while holding i_ceph_lock */
->                 if (ci->i_xattrs.prealloc_blob)
-> -                       ceph_buffer_put(ci->i_xattrs.prealloc_blob);
-> +                       old_blob = ci->i_xattrs.prealloc_blob;
->                 ci->i_xattrs.prealloc_blob = blob;
->                 goto retry;
->         }
-> @@ -1123,6 +1126,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
->         }
->
->         spin_unlock(&ci->i_ceph_lock);
-> +       ceph_buffer_put(old_blob);
->         if (lock_snap_rwsem)
->                 up_read(&mdsc->snap_rwsem);
->         if (dirty)
 
-Hi Sasha,
+--22htbofgnb45e3kb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I didn't tag i_ceph_lock series for stable because this is a very old
-bug which no one ever hit in real life, at least to my knowledge.
+On Wednesday 28 August 2019 18:08:17 Greg Kroah-Hartman wrote:
+> From: Valdis Kl=C4=93tnieks <valdis.kletnieks@vt.edu>
+>=20
+> The exfat code needs a lot of work to get it into "real" shape for
+> the fs/ part of the kernel, so put it into drivers/staging/ for now so
+> that it can be worked on by everyone in the community.
+>=20
+> The full specification of the filesystem can be found at:
+>   https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specificati=
+on
+>=20
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Please note that each of these patches requires 5c498950f730 ("libceph:
-allow ceph_buffer_put() to receive a NULL ceph_buffer").
+Hi Greg!
 
-Thanks,
+I'm not really sure if this exfat implementation is fully suitable for
+mainline linux kernel.
 
-                Ilya
+In my opinion, proper way should be to implement exFAT support into
+existing fs/fat/ code instead of replacing whole vfat/msdosfs by this
+new (now staging) fat implementation.
+
+In linux kernel we really do not need two different implementation of
+VFAT32.
+
+So I'm a bit sceptical about usefulness of this exfat code/driver, if it
+makes any sense to have it even in staging.
+
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
+
+--22htbofgnb45e3kb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXWg7/QAKCRCL8Mk9A+RD
+UscXAJwPPJqKcOQjnAYTGn7FOoM5do7AtgCfVuTe+I2XcSSZjydWed7Afnz64cs=
+=Xup+
+-----END PGP SIGNATURE-----
+
+--22htbofgnb45e3kb--
