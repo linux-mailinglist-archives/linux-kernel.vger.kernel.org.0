@@ -2,141 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C4DBA1C48
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:03:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F82A1C50
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbfH2ODZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:03:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727063AbfH2ODY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:03:24 -0400
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5206123428;
-        Thu, 29 Aug 2019 14:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567087403;
-        bh=R+LyN7YD9OZpXktE/UY/Qz8u2pZtDP3m3LN1pHcseyI=;
+        id S1728043AbfH2OE6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:04:58 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:31526 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbfH2OE5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:04:57 -0400
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x7TE4hMT005980;
+        Thu, 29 Aug 2019 23:04:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x7TE4hMT005980
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567087484;
+        bh=V+lbFxqlT+wd+YZgxlyNRbBDlB7GpYlOVv7o2hTS5yQ=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=m6ug5skv5gxH6F4G4GkDURiWoP18bgo1JHj7WztwX/K2MQgE2CF5mnlhAst2NkOrb
-         TiCFHwQm7TGWYa97q6MUWMxuypUkfPCvavKaFKr4mwPIkztU/Znb1n/pC4TLIUjOPw
-         xauQiGLn1GsOaEpJBfyGCuzap8oRfeIp6kb/vitQ=
-Received: by mail-qk1-f170.google.com with SMTP id u190so3025115qkh.5;
-        Thu, 29 Aug 2019 07:03:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAVxkWpO2qst8iOooo/mVYv/bICAql9VvQvbgW2wMHqKveMF+GWF
-        9uDdA+m2T2SP6GkcqP4d4BRKoODZwC5jvbROyg==
-X-Google-Smtp-Source: APXvYqx5xw+mAnj9zcHLgq+uwCGaxqVFuAJs1Ey8vhaU2lN8XSiANKs27dzKuXkSmJeBs3wRFxU1yYSUwbwPSVITU9E=
-X-Received: by 2002:ae9:e212:: with SMTP id c18mr3499796qkc.254.1567087402375;
- Thu, 29 Aug 2019 07:03:22 -0700 (PDT)
+        b=vGtZwdNqugs7ZwQdGDWOMDjdUeOubga9J2nO4YdJJ91bdf3rSAcky03Ezi4jo3Fp0
+         uN3tOrkq03IXkzNnX14lsNN1FGd8Jh2MCgc4GmWa/WHELUDbPOBV4WSTgt1UsI3hUe
+         ZjsuSIa088Tmzezv9iAARNvhKXyAkzy2xEnbpT5V3miPAAggqxSsAVwiFiwjeQVQmo
+         XNRkqd+TyqilT9A5gU2MctK8FVDKDXjbcOECNFbDWC9od5ivUzhc6xf8aYMCFKYQ9C
+         UfxbdYB9TOT1v2Ip7USxXsciKX/YpPWfjHOquUHU8O22hwFtHUdb1ZnFX91a5xf/Yu
+         Y7I5w3IXZwpow==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id k7so1192145uao.6;
+        Thu, 29 Aug 2019 07:04:43 -0700 (PDT)
+X-Gm-Message-State: APjAAAWKY2xiJgszPCeGssTO2T/9OSDQ07n8AZBFgzHQ07UE3RsbNZvN
+        mQpgC5pnG8+cSSC/XKYS+S7qsxZAbj+BjFtWum8=
+X-Google-Smtp-Source: APXvYqyRDUJ3u5oUv/jHQhqE0k0YskLGM9awy7Nq6OtAJ1WmuhqZBF7BDBVIdGwEa3ued2ZdUIlx3DiF2CP1PVL3RXY=
+X-Received: by 2002:ab0:4261:: with SMTP id i88mr4930502uai.95.1567087482413;
+ Thu, 29 Aug 2019 07:04:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <1567017402-5895-1-git-send-email-fabrizio.castro@bp.renesas.com> <1567017402-5895-2-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1567017402-5895-2-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 29 Aug 2019 09:03:10 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKWWCpEeBd4UFaqBVffS-OxUNAHfvtJKcGsLDR+f=Uytg@mail.gmail.com>
-Message-ID: <CAL_JsqKWWCpEeBd4UFaqBVffS-OxUNAHfvtJKcGsLDR+f=Uytg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/8] dt-bindings: display: Add bindings for LVDS bus-timings
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Sam Ravnborg <sam@ravnborg.org>
+References: <20190829104928.27404-1-yamada.masahiro@socionext.com>
+ <CAPDyKFooFQgBgK3N1Ob9rsT_7-5kqC9i7PeMxkkeAbnDP+Fwnw@mail.gmail.com>
+ <CAK7LNASDfJQrMq4jjwDjrQF-4E9A_BZtgh+K-duTAo8zRVZA0g@mail.gmail.com> <CAPDyKFpnRbtVpYkpM7CDYfxvdBjqybB4SVWyuSrS1jpYduTbCw@mail.gmail.com>
+In-Reply-To: <CAPDyKFpnRbtVpYkpM7CDYfxvdBjqybB4SVWyuSrS1jpYduTbCw@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 29 Aug 2019 23:04:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARC_Y968UtXE3v72Dw=69-6jutFTVy54K=iT5o52udXSg@mail.gmail.com>
+Message-ID: <CAK7LNARC_Y968UtXE3v72Dw=69-6jutFTVy54K=iT5o52udXSg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mmc: sdhci-cadence: enable v4_mode to fix ADMA 64-bit addressing
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Piotr Sroka <piotrs@cadence.com>,
+        "# 4.0+" <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 1:36 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
+Hi Ulf,
+
+On Thu, Aug 29, 2019 at 10:27 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
-> Dual-LVDS connections need markers in the DT, this patch adds
-> some common documentation to be referenced by both panels and
-> bridges.
+> On Thu, 29 Aug 2019 at 14:05, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> >
+> > On Thu, Aug 29, 2019 at 8:48 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > >
+> > > On Thu, 29 Aug 2019 at 12:49, Masahiro Yamada
+> > > <yamada.masahiro@socionext.com> wrote:
+> > > >
+> > > > The IP datasheet says this controller is compatible with SD Host
+> > > > Specification Version v4.00.
+> > > >
+> > > > As it turned out, the ADMA of this IP does not work with 64-bit mode
+> > > > when it is in the Version 3.00 compatible mode; it understands the
+> > > > old 64-bit descriptor table (as defined in SDHCI v2), but the ADMA
+> > > > System Address Register (SDHCI_ADMA_ADDRESS) cannot point to the
+> > > > 64-bit address.
+> > > >
+> > > > I noticed this issue only after commit bd2e75633c80 ("dma-contiguous:
+> > > > use fallback alloc_pages for single pages"). Prior to that commit,
+> > > > dma_set_mask_and_coherent() returned the dma address that fits in
+> > > > 32-bit range, at least for the default arm64 configuration
+> > > > (arch/arm64/configs/defconfig). Now the host->adma_addr exceeds the
+> > > > 32-bit limit, causing the real problem for the Socionext SoCs.
+> > > > (As a side-note, I was also able to reproduce the issue for older
+> > > > kernels by turning off CONFIG_DMA_CMA.)
+> > > >
+> > > > Call sdhci_enable_v4_mode() to fix this.
+> > > >
+> > > > I think it is better to back-port this, but only possible for v4.20+.
+> > > >
+> > > > When this driver was merged (v4.10), the v4 mode support did not exist.
+> > > > It was added by commit b3f80b434f72 ("mmc: sdhci: Add sd host v4 mode")
+> > > > i.e. v4.20.
+> > > >
+> > > > Cc: <stable@vger.kernel.org> # v4.20+
+> > > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > >
+> > > Applied for fixes, by adding below tag, thanks!
+> > >
+> > > Fixes: b3f80b434f72 ("mmc: sdhci: Add sd host v4 mode")
+> >
+> > This is not a bug commit.
 >
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
->
-> ---
-> v2->v3:
-> * new patch
-> ---
->  .../bindings/display/bus-timings/lvds.yaml         | 38 ++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bus-timings/lvds.yaml
->
-> diff --git a/Documentation/devicetree/bindings/display/bus-timings/lvds.yaml b/Documentation/devicetree/bindings/display/bus-timings/lvds.yaml
-> new file mode 100644
-> index 0000000..f35b55a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bus-timings/lvds.yaml
-> @@ -0,0 +1,38 @@
-> +# SPDX-License-Identifier: GPL-2.0
+> Right, but it can't be applied before this commit, hence why I added
+> it. Not sure that it matters, but I can remove the tag if you
+> insists!?
 
-(GPL-2.0-only OR BSD-2-Clause) is preferred for new bindings.
+I hesitate to add Fixes to the commit that
+did nothing wrong.
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bus-timings/lvds.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Common Properties for bus timings of LVDS interfaces
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> +
-> +description: |
-> +  This document defines device tree properties common to LVDS and dual-LVDS
-> +  interfaces, where a dual-LVDS interface is a dual-link connection with even
-> +  pixels traveling on one connection, and with odd pixels traveling on the other
-> +  connection.
-> +  This document doesn't constitue a device tree binding specification by itself
 
-typo: constitute
+I added "Cc: <stable@vger.kernel.org> # v4.20+"
+so this is enough for the stable kernel maintainers.
 
-> +  but is meant to be referenced by device tree bindings.
-> +  When referenced from panel or bridge device tree bindings, the properties
-> +  defined in this document are defined as follows. The panel and bridge device
-> +  tree bindings are responsible for defining whether each property is required
-> +  or optional.
-> +
-> +properties:
-> +  dual-lvds-even-pixels:
-> +    type: boolean
-> +    description:
-> +      This property is specific to an input port of a sink device. When
 
-The schema should define what nodes these go in. The description seems
-to indicate in 'port' nodes (or endpoint?), but your use in the panel
-binding puts them in the parent.
 
-> +      specified, it marks the port as recipient of even-pixels.
-> +
-> +  dual-lvds-odd-pixels:
-> +    type: boolean
-> +    description:
-> +      This property is specific to an input port of a sink device. When
-> +      specified, it marks the port as recipient of odd-pixels.
 
-However, I don't think you even need these. A panel's port numbers are
-fixed can imply even or odd. For example port@0 can be even and port@1
-can be odd. The port numbering is typically panel specific, but we may
-be able to define the numbering generically if we don't already have
-panels with multiple ports.
-
-Also, aren't there dual link DSI panels?
-
-Rob
+-- 
+Best Regards
+Masahiro Yamada
