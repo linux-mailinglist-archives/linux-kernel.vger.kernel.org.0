@@ -2,83 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 835CBA0FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 05:29:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7C50A0FF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 05:32:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfH2D3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 23:29:04 -0400
-Received: from mail-pl1-f181.google.com ([209.85.214.181]:46635 "EHLO
-        mail-pl1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfH2D3E (ORCPT
+        id S1726971AbfH2Db7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 23:31:59 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44175 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbfH2Db7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 23:29:04 -0400
-Received: by mail-pl1-f181.google.com with SMTP id o3so889388plb.13
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 20:29:03 -0700 (PDT)
+        Wed, 28 Aug 2019 23:31:59 -0400
+Received: by mail-io1-f66.google.com with SMTP id j4so3915823iog.11
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 20:31:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JGxbE50uXwCgfhAfE1eTU8tNsVQiLS6htVfulohzZj4=;
-        b=YcVaHG7J8kEUDEEpnsah1aC33aFF/zVr9WtxqWBS/dVq90U/A5AgzuMSwi522I98nE
-         JO8rA9dtet4C9wMyT2ZBAADep7t6cOkCV8+4UOo6nfksXdT4Rd6v/g4xKys4wjTQvkAG
-         hhvxC14TXxXJauZWxqVQU8IzKF66W5niRk7fIdp8Ix9De6qGWEOhuAMoe6kKLhTxxf6t
-         TtHfwstOlHFEUJr66LCpaRJWxc52yQZRenzaX/zb/M98dxweJf6eqPo1jJ1hhg+UCw3G
-         Saes9+wAsSIoIkuN0nuZqPYVFo3jt6AceCpIOvGpk/p1tGh3dX2TQzyPA8xsqopw8kJA
-         0RqA==
+        d=arista.com; s=googlenew;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B23iPa66D7URMvvUFe3gpmMeFfyLo1kqn9vSUt4f+f8=;
+        b=Ybp1a8VunoVjZCvuid2Eup5bQav1rc25fFWRK06QHz3i33O2S2fVy8uMX6FMwBPJkb
+         yER0061k6laFWEIe1qX5nZCl78zI/ljtjFEjmJ3i5j8cst3pbsxMYimc1VwpcmkhDOrm
+         bX+afp1jR7gO6ZDEsDBafi6ycuZfQyBxQR/MOOQv/mtIRiUH6YNzEiCqC0j2LG8zOOKN
+         CklERWIMTG0pYraGDlZ/2jS9Jqda+G51I/Bv3ftHgrr8ztEJUEENSjc4pWZiQSKcwVf/
+         1qTi/7SryB1UVcuQHLi5j8deEHiDKDV03cAZro4zVyEWkV77Lnvj0rPu5PJnDObWw9Ng
+         6nmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JGxbE50uXwCgfhAfE1eTU8tNsVQiLS6htVfulohzZj4=;
-        b=lc1zavzMTRWcG4EX/tfKgwfa/jYNDbJLJf3Z9EJX00WXFU30TmzP5Ka7/oZ0NDn8NU
-         oQ6/Uec0FUomnqSy47sNm37D2yG9djvSbJwXHc+cQgYpiKqeDQDMlUa3krSVQzDGbmbk
-         MFx6Xyb31xsJUVWXWL/BWiW/PTs4jSYAY/Ypr/8utZNe8f2pXo0WsxSpo1njtOGzMywo
-         rviCzY48ZzPM7KtJnFC3WR72bfbBTMsKQ+tHvfhAaI0Q1FyeSmW7+XTET4cA8ncc+SSq
-         rszQ0OhcsVmYg3GGB0p/vc6PUES/E5tA6qSZzVgIGuza81w2pEPwd4x9nGKVY511gRRU
-         aabA==
-X-Gm-Message-State: APjAAAVlLsJFCNICYU35MCbIxIfRURDRYd5vM2RblD28NsBC4BeO6AGd
-        MvIRV1JVVnT5bnaAuny65A/nFQ==
-X-Google-Smtp-Source: APXvYqz+BYvMbypoZoZy80tENbu+/0EycC793rpafApGirMRqvp3VXLwhMl4+uoaKwWdC97/mFhG0w==
-X-Received: by 2002:a17:902:8543:: with SMTP id d3mr7863103plo.80.1567049343394;
-        Wed, 28 Aug 2019 20:29:03 -0700 (PDT)
-Received: from [192.168.1.188] (66.29.164.166.static.utbb.net. [66.29.164.166])
-        by smtp.gmail.com with ESMTPSA id 136sm859015pfz.123.2019.08.28.20.29.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 28 Aug 2019 20:29:02 -0700 (PDT)
-Subject: Re: [PATCHSET v3 block/for-linus] IO cost model based work-conserving
- porportional controller
-To:     Tejun Heo <tj@kernel.org>, newella@fb.com, clm@fb.com,
-        josef@toxicpanda.com, dennisz@fb.com, lizefan@huawei.com,
-        hannes@cmpxchg.org
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com, cgroups@vger.kernel.org
-References: <20190828220600.2527417-1-tj@kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f48b98fa-b33e-b3d3-2657-04f599e710fd@kernel.dk>
-Date:   Wed, 28 Aug 2019 21:29:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B23iPa66D7URMvvUFe3gpmMeFfyLo1kqn9vSUt4f+f8=;
+        b=SNJ++ZzfN/ZO2DJqpJbbOSUFNX3MlxtxUzIxW1A1LntiiQ8f2p4Dai2EwN5e+cJb/T
+         KIntKYoI/NPqPNROYsTork+95JhGZsadACcRxz/B2fbHN9Fhe+QnctoHWNO2mnvHEqG2
+         7iwuj20cbzRm+ERQ8chlfpfXJoka/RBgUriCv9hP6NThTx/KK38at/g4JvBs0E5qd+Og
+         7LpKekGYcdeapGwE5z+LJj3Ep1v8U03AcmgedwYed9DTHYPZvqnlEjICyL7Yt4S0H0i/
+         zUVH2QLlD6Rxyb7LQwKD/9bjIhwBY2X051Bme/gxGnZg03B+odTGTX6/0wN0r0aAGiFp
+         iO0A==
+X-Gm-Message-State: APjAAAXjknnZrFNqeSr88ha99fLzYjvztrnoEj1HtTRMNsz2t1Qw8nsn
+        EmvRZoBuZbUvVT2/pc+xHNxYA4AWQXjnEE+vmSFABg==
+X-Google-Smtp-Source: APXvYqwD3PhqzXGXFUlsVIX+XC4mOAcPePjIWM4fSB6vsF34yxpU5nB277d0sXQfPTy9gmoBZOFnw6fSlsuWtEw/kmQ=
+X-Received: by 2002:a6b:f803:: with SMTP id o3mr8481612ioh.187.1567049518377;
+ Wed, 28 Aug 2019 20:31:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190828220600.2527417-1-tj@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190826193638.6638-1-echron@arista.com> <1566909632.5576.14.camel@lca.pw>
+ <CAM3twVQEMGWMQEC0dduri0JWt3gH6F2YsSqOmk55VQz+CZDVKg@mail.gmail.com>
+ <79FC3DA1-47F0-4FFC-A92B-9A7EBCE3F15F@lca.pw> <CAM3twVSdxJaEpmWXu2m_F1MxFMB58C6=LWWCDYNn5yT3Ns+0sQ@mail.gmail.com>
+ <2A1D8FFC-9E9E-4D86-9A0E-28F8263CC508@lca.pw> <CAM3twVR5TVuuZSLM2qRJYnkCEKVZmA3XDNREaB+wdKH2Ne9vVA@mail.gmail.com>
+ <20190828070845.GC7386@dhcp22.suse.cz> <2e816b05-7b5b-4bc0-8d38-8415daea920d@i-love.sakura.ne.jp>
+ <CAM3twVRbhGL8pj0oa9NOu4pO2FWx3tTu928pW0g5CiE-K-meYw@mail.gmail.com>
+In-Reply-To: <CAM3twVRbhGL8pj0oa9NOu4pO2FWx3tTu928pW0g5CiE-K-meYw@mail.gmail.com>
+From:   Edward Chron <echron@arista.com>
+Date:   Wed, 28 Aug 2019 20:31:46 -0700
+Message-ID: <CAM3twVTueyGFv9YAH29xj1NAXfQUK56NBr9iucbkWUQ-bB7z6g@mail.gmail.com>
+Subject: Re: [PATCH 00/10] OOM Debug print selection and additional information
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Michal Hocko <mhocko@kernel.org>, Qian Cai <cai@lca.pw>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/28/19 4:05 PM, Tejun Heo wrote:
-> Changes from v2[2]:
-> 
-> * Fixed a divide-by-zero bug in current_hweight().
-> 
-> * pre_start_time and friends renamed to alloc_time and now has its own
->    CONFIG option which is selected by IOCOST.
+On Wed, Aug 28, 2019 at 1:04 PM Edward Chron <echron@arista.com> wrote:
+>
+> On Wed, Aug 28, 2019 at 3:12 AM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >
+> > On 2019/08/28 16:08, Michal Hocko wrote:
+> > > On Tue 27-08-19 19:47:22, Edward Chron wrote:
+> > >> For production systems installing and updating EBPF scripts may someday
+> > >> be very common, but I wonder how data center managers feel about it now?
+> > >> Developers are very excited about it and it is a very powerful tool but can I
+> > >> get permission to add or replace an existing EBPF on production systems?
+> > >
+> > > I am not sure I understand. There must be somebody trusted to take care
+> > > of systems, right?
+> > >
+> >
+> > Speak of my cases, those who take care of their systems are not developers.
+> > And they afraid changing code that runs in kernel mode. They unlikely give
+> > permission to install SystemTap/eBPF scripts. As a result, in many cases,
+> > the root cause cannot be identified.
+>
+> +1. Exactly. The only thing we could think of Tetsuo is if Linux OOM Reporting
+> uses a an eBPF script then systems have to load them to get any kind of
+> meaningful report. Frankly, if using eBPF is the route to go than essentially
+> the whole OOM reporting should go there. We can adjust as we need and
+> have precedent for wanting to load the script. That's the best we could come
+> up with.
+>
+> >
+> > Moreover, we are talking about OOM situations, where we can't expect userspace
+> > processes to work properly. We need to dump information we want, without
+> > counting on userspace processes, before sending SIGKILL.
+>
+> +1. We've tried and as you point out and for best results the kernel
+> has to provide
+>  the state.
+>
+> Again a full system dump would be wonderful, but taking a full dump for
+> every OOM event on production systems? I am not nearly a good enough salesman
+> to sell that one. So we need an alternate mechanism.
+>
+> If we can't agree on some sort of extensible, configurable approach then put
+> the standard OOM Report in eBPF and make it mandatory to load it so we can
+> justify having to do that. Linux should load it automatically.
+> We'll just make a few changes and additions as needed.
+>
+> Sounds like a plan that we could live with.
+> Would be interested if this works for others as well.
 
-This looks fine to me now, I've queued it up for 5.4.
+One further comment. In talking with my colleagues here who know eBPF
+much better
+than I do, it may not be possible to implement something this
+complicated with eBPF.
 
--- 
-Jens Axboe
-
+If that is in the fact the case, then we'd have to try and hook the
+OOM Reporting code
+with tracepoints similar to kprobes only we want to do more than add counters
+we want to change the flow to skip small output entries that aren't
+worth printing.
+If this isn't feasible with eBPF, then some derivative or our approach
+or enhancing
+the OOM output code directly seem like the best options. Will have to
+investigate
+this further.
