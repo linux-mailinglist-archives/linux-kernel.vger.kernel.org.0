@@ -2,174 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68093A2865
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:50:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB20CA2858
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:48:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfH2UuW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:50:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:38440 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728109AbfH2UuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:50:18 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4016E8CF1A3;
-        Thu, 29 Aug 2019 20:50:18 +0000 (UTC)
-Received: from cantor.redhat.com (ovpn-116-163.phx2.redhat.com [10.3.116.163])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DA9FF60C05;
-        Thu, 29 Aug 2019 20:50:17 +0000 (UTC)
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Alexey Klimov <aklimov@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: [PATCH 3/3 v3] tpm_tis: override durations for STM tpm with firmware 1.2.8.28
-Date:   Thu, 29 Aug 2019 13:49:47 -0700
-Message-Id: <20190829204947.2591-4-jsnitsel@redhat.com>
-In-Reply-To: <20190829204947.2591-1-jsnitsel@redhat.com>
-References: <20190829204947.2591-1-jsnitsel@redhat.com>
+        id S1728176AbfH2UsD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:48:03 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44419 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfH2UsD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 16:48:03 -0400
+Received: by mail-io1-f65.google.com with SMTP id j4so9615422iog.11;
+        Thu, 29 Aug 2019 13:48:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I1nzOTXRSvtsbJ+ewgmrwsmeWIh6DuCYG1u3Ks75aJ4=;
+        b=dqryB45JKi6c599K+mta/pUXZ+fUf5PjqzxsclCkbRqBj+c2qL8jh7cb7pe5txPSoK
+         I+G9tGjnpArIs5qMDd+vfi6ZzE2pKK9qWlI6JDl0dW7pne2y4G/oGvV+sCF66pQlrve/
+         LO9P+ZOi0skdAVJwSRvPHa6keJAmU8TJ1x9c/FVQa9MzjWQUX4vZhpbK1xg7Wa9QTtc6
+         0HVTlE/bTYj65fujkKuvOe2mW3oqSAyQKSi/txoBvBXAjXMOyNq9lQ58upjNmYooi3zW
+         djlydfuUwQEcZ5CmrepPandprZdtvcWLg/2l6JFyHz78Kv471UuCr7SIo6EERno4PNB9
+         mZLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I1nzOTXRSvtsbJ+ewgmrwsmeWIh6DuCYG1u3Ks75aJ4=;
+        b=LuRsoCiTW6TJaP9WXqYKn4CYuGIRf9AnVFc77HjQ4PYJQrj1Xi4WYOOE0GU5z+jBXB
+         xSmWllHj1u2rmIxWc8dOW3BpKKJNXRx9yhKByb5AM1hO8eUnb5hQg78PQMpnTP7DSp5t
+         1SQoAjDfINgeVJtS6Svx9tlgPyA8VSIcHYwqTXfqZBsGocKXIej2Hg/gj7NI7zdTE/tr
+         pgIH0nGKfUAR4S07KcY6ZtC81DKOJIHRKQqzgsGcFTgBKBsXFMXLGlvfFcZV/3wCxjP7
+         p4uN9634KFsZKSuwuunllDjOrE/9QAsxx61h9bHwal2Ok/syHULqJYNYx9DKKAO35dMQ
+         M2ZA==
+X-Gm-Message-State: APjAAAXPpYYWD7Fflfn9opyILZINpiTCGI/cYdf3EXSRSOhh1Jmx03Zs
+        O5YGcnWyXCgYCgZLpVmLNGoit+/cxtO5ALuu6SjHZv8+tfk=
+X-Google-Smtp-Source: APXvYqxzpsYrSjNMwic87+EkulVTAG0JIV9CVRFNncFp6ZgIwjvscM/KVpuk7eQkkxhu/nL6vWCyacvLlRGYsyv1QO4=
+X-Received: by 2002:a05:6638:3af:: with SMTP id z15mr12495908jap.39.1567111682445;
+ Thu, 29 Aug 2019 13:48:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Thu, 29 Aug 2019 20:50:18 +0000 (UTC)
+References: <20190829181311.7562-1-sashal@kernel.org> <20190829181311.7562-66-sashal@kernel.org>
+In-Reply-To: <20190829181311.7562-66-sashal@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 29 Aug 2019 22:51:04 +0200
+Message-ID: <CAOi1vP9-A-U6J15hT+XmtXzBw5WVRZECry8gPFzqp0CV36ecig@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.2 66/76] ceph: fix buffer free while holding
+ i_ceph_lock in __ceph_setxattr()
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There was revealed a bug in the STM TPM chipset used in Dell R415s.
-Bug is observed so far only on chipset firmware 1.2.8.28
-(1.2 TPM, device-id 0x0, rev-id 78). After some number of
-operations chipset hangs and stays in inconsistent state:
+On Thu, Aug 29, 2019 at 8:15 PM Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Luis Henriques <lhenriques@suse.com>
+>
+> [ Upstream commit 86968ef21596515958d5f0a40233d02be78ecec0 ]
+>
+> Calling ceph_buffer_put() in __ceph_setxattr() may end up freeing the
+> i_xattrs.prealloc_blob buffer while holding the i_ceph_lock.  This can be
+> fixed by postponing the call until later, when the lock is released.
+>
+> The following backtrace was triggered by fstests generic/117.
+>
+>   BUG: sleeping function called from invalid context at mm/vmalloc.c:2283
+>   in_atomic(): 1, irqs_disabled(): 0, pid: 650, name: fsstress
+>   3 locks held by fsstress/650:
+>    #0: 00000000870a0fe8 (sb_writers#8){.+.+}, at: mnt_want_write+0x20/0x50
+>    #1: 00000000ba0c4c74 (&type->i_mutex_dir_key#6){++++}, at: vfs_setxattr+0x55/0xa0
+>    #2: 000000008dfbb3f2 (&(&ci->i_ceph_lock)->rlock){+.+.}, at: __ceph_setxattr+0x297/0x810
+>   CPU: 1 PID: 650 Comm: fsstress Not tainted 5.2.0+ #437
+>   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58-prebuilt.qemu.org 04/01/2014
+>   Call Trace:
+>    dump_stack+0x67/0x90
+>    ___might_sleep.cold+0x9f/0xb1
+>    vfree+0x4b/0x60
+>    ceph_buffer_release+0x1b/0x60
+>    __ceph_setxattr+0x2b4/0x810
+>    __vfs_setxattr+0x66/0x80
+>    __vfs_setxattr_noperm+0x59/0xf0
+>    vfs_setxattr+0x81/0xa0
+>    setxattr+0x115/0x230
+>    ? filename_lookup+0xc9/0x140
+>    ? rcu_read_lock_sched_held+0x74/0x80
+>    ? rcu_sync_lockdep_assert+0x2e/0x60
+>    ? __sb_start_write+0x142/0x1a0
+>    ? mnt_want_write+0x20/0x50
+>    path_setxattr+0xba/0xd0
+>    __x64_sys_lsetxattr+0x24/0x30
+>    do_syscall_64+0x50/0x1c0
+>    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>   RIP: 0033:0x7ff23514359a
+>
+> Signed-off-by: Luis Henriques <lhenriques@suse.com>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/ceph/xattr.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 0619adbcbe14c..8382299fc2d84 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -1028,6 +1028,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>         struct ceph_inode_info *ci = ceph_inode(inode);
+>         struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
+>         struct ceph_cap_flush *prealloc_cf = NULL;
+> +       struct ceph_buffer *old_blob = NULL;
+>         int issued;
+>         int err;
+>         int dirty = 0;
+> @@ -1101,13 +1102,15 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>                 struct ceph_buffer *blob;
+>
+>                 spin_unlock(&ci->i_ceph_lock);
+> -               dout(" preaallocating new blob size=%d\n", required_blob_size);
+> +               ceph_buffer_put(old_blob); /* Shouldn't be required */
+> +               dout(" pre-allocating new blob size=%d\n", required_blob_size);
+>                 blob = ceph_buffer_new(required_blob_size, GFP_NOFS);
+>                 if (!blob)
+>                         goto do_sync_unlocked;
+>                 spin_lock(&ci->i_ceph_lock);
+> +               /* prealloc_blob can't be released while holding i_ceph_lock */
+>                 if (ci->i_xattrs.prealloc_blob)
+> -                       ceph_buffer_put(ci->i_xattrs.prealloc_blob);
+> +                       old_blob = ci->i_xattrs.prealloc_blob;
+>                 ci->i_xattrs.prealloc_blob = blob;
+>                 goto retry;
+>         }
+> @@ -1123,6 +1126,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>         }
+>
+>         spin_unlock(&ci->i_ceph_lock);
+> +       ceph_buffer_put(old_blob);
+>         if (lock_snap_rwsem)
+>                 up_read(&mdsc->snap_rwsem);
+>         if (dirty)
 
-tpm_tis 00:09: Operation Timed out
-tpm_tis 00:09: tpm_transmit: tpm_send: error -5
+Hi Sasha,
 
-Durations returned by the chip are the same like on other
-firmware revisions but apparently with specifically 1.2.8.28 fw
-durations should be reset to 2 minutes to enable tpm chip work
-properly. No working way of updating firmware was found.
+I didn't tag i_ceph_lock series for stable because this is a very old
+bug which no one ever hit in real life, at least to my knowledge.
 
-This patch adds implementation of ->update_durations method
-that matches only STM devices with specific firmware version.
+Please note that each of these patches requires 5c498950f730 ("libceph:
+allow ceph_buffer_put() to receive a NULL ceph_buffer").
 
-Cc: Peter Huewe <peterhuewe@gmx.de>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Signed-off-by: Alexey Klimov <aklimov@redhat.com>
-Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
----
-v3: Rework update_durations to make use of new version structs
-    from 1/3 patch, and move tpm1_getcap calls out of the loop.
-v2: Make suggested changes from Jarkko
-    - change struct field name to durations from durs
-    - formatting cleanups
-    - turn into void function like update_timeouts and
-      use chip->duration_adjusted to track whether adjustment occurred.
+Thanks,
 
- drivers/char/tpm/tpm_tis_core.c | 79 +++++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
-
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index c3181ea9f271..27c6ca031e23 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -506,6 +506,84 @@ static int tpm_tis_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 	return rc;
- }
- 
-+struct tis_vendor_durations_override {
-+	u32 did_vid;
-+	struct tpm1_version version;
-+	unsigned long durations[3];
-+};
-+
-+static const struct  tis_vendor_durations_override vendor_dur_overrides[] = {
-+	/* STMicroelectronics 0x104a */
-+	{ 0x0000104a,
-+	  { 1, 2, 8, 28 },
-+	  { (2 * 60 * HZ), (2 * 60 * HZ), (2 * 60 * HZ) } },
-+};
-+
-+static void tpm_tis_update_durations(struct tpm_chip *chip,
-+				     unsigned long *duration_cap)
-+{
-+	struct tpm_tis_data *priv = dev_get_drvdata(&chip->dev);
-+	struct tpm1_version *version;
-+	u32 did_vid;
-+	int i, rc;
-+	cap_t cap;
-+
-+	chip->duration_adjusted = false;
-+
-+	if (chip->ops->clk_enable != NULL)
-+		chip->ops->clk_enable(chip, true);
-+
-+	rc = tpm_tis_read32(priv, TPM_DID_VID(0), &did_vid);
-+	if (rc < 0) {
-+		dev_warn(&chip->dev, "%s: failed to read did_vid. %d\n",
-+			 __func__, rc);
-+		goto out;
-+	}
-+
-+	/* Try to get a TPM version 1.2 or 1.1 TPM_CAP_VERSION_INFO */
-+	rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
-+			 "attempting to determine the 1.2 version",
-+			 sizeof(cap.version2));
-+	if (!rc) {
-+		version = &cap.version2.version;
-+	} else {
-+		rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
-+				 "attempting to determine the 1.1 version",
-+				 sizeof(cap.version1));
-+
-+		if (rc)
-+			goto out;
-+
-+		version = &cap.version1;
-+	}
-+
-+	for (i = 0; i != ARRAY_SIZE(vendor_dur_overrides); i++) {
-+		if (vendor_dur_overrides[i].did_vid != did_vid)
-+			continue;
-+
-+		if ((version->major ==
-+		     vendor_dur_overrides[i].version.major) &&
-+		    (version->minor ==
-+		     vendor_dur_overrides[i].version.minor) &&
-+		    (version->rev_major ==
-+		     vendor_dur_overrides[i].version.rev_major) &&
-+		    (version->rev_minor ==
-+		     vendor_dur_overrides[i].version.rev_minor)) {
-+
-+			memcpy(duration_cap,
-+			       vendor_dur_overrides[i].durations,
-+			       sizeof(vendor_dur_overrides[i].durations));
-+
-+			chip->duration_adjusted = true;
-+			goto out;
-+		}
-+	}
-+
-+out:
-+	if (chip->ops->clk_enable != NULL)
-+		chip->ops->clk_enable(chip, false);
-+}
-+
- struct tis_vendor_timeout_override {
- 	u32 did_vid;
- 	unsigned long timeout_us[4];
-@@ -842,6 +920,7 @@ static const struct tpm_class_ops tpm_tis = {
- 	.send = tpm_tis_send,
- 	.cancel = tpm_tis_ready,
- 	.update_timeouts = tpm_tis_update_timeouts,
-+	.update_durations = tpm_tis_update_durations,
- 	.req_complete_mask = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
- 	.req_complete_val = TPM_STS_DATA_AVAIL | TPM_STS_VALID,
- 	.req_canceled = tpm_tis_req_canceled,
--- 
-2.21.0
-
+                Ilya
