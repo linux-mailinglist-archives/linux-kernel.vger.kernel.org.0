@@ -2,115 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B76EA1CD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4476EA1CD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:33:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfH2OdH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 29 Aug 2019 10:33:07 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40404 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfH2OdH (ORCPT
+        id S1727810AbfH2OdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:33:20 -0400
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:18328 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726739AbfH2OdT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:33:07 -0400
-Received: by mail-qk1-f194.google.com with SMTP id f10so3112588qkg.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 07:33:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=u90BzevMbaxyx55NRwOyXEZ+TCaloyf9Ga0nSNG0ILw=;
-        b=lDZKmAPiiPgIBc9Nrbmz2YRbWOcl5J0zxZRQ3eccux1CossJ3f+fQ5UYKktn+jcuNI
-         Ca2Yiwni2f54VSv7Taod61UhJS+n983LaSktN8ZFde86bbAfKdPVTc0ux1BKR6XvSMom
-         qZOGO8K9PFIiDW9feAsSVtvh5JU21s10zXKZhqJjQNNnqz+C9HSl60MytMSAEgjNIB7C
-         0jSs82zRPRSD5MElAH+f2//QpxHP3GbyLFYgpVbTV5DvAo/0nFU6mXby7oXkroly9g8z
-         XLGdO3R9Z5p3hFKxennCgmjgVAZ3z+eHNEapLoyOEEMEaO8H7MWtMSLOn9wQNPg9Xwdm
-         T1nw==
-X-Gm-Message-State: APjAAAWCjVyAq9T5YOKtz3yk+y05tEfZrVlkYsHDbZOtFfa6hWiKKRXv
-        ZSWe5xsb8uqReFmXEwDUV7ku+URC57zcxiGouI4=
-X-Google-Smtp-Source: APXvYqzK05kJtQELzAjwpofc7UfddmmDx8VQSbo2PS0jNh4V8Vc8Bi/ngrIFAioSJ4e107HuOrlcp0MS8Gpn1qE+q+w=
-X-Received: by 2002:a37:4051:: with SMTP id n78mr9499689qka.138.1567089186639;
- Thu, 29 Aug 2019 07:33:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1567072270.git.msuchanek@suse.de> <061a0de2042156669303f95526ec13476bf490c7.1567072270.git.msuchanek@suse.de>
- <CAK8P3a1wR-jzFSzdPqgfCG4vyAi_xBPVGhc6Nn4KaXpk3cUiJw@mail.gmail.com>
- <20190829143716.6e41b10e@naga> <CAK8P3a2DHP+8Vbc4yjq5-wT9GpSxvndCa8gnvx0WcD8YAUAsMw@mail.gmail.com>
- <20190829161923.101ff3eb@kitsune.suse.cz>
-In-Reply-To: <20190829161923.101ff3eb@kitsune.suse.cz>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 29 Aug 2019 16:32:50 +0200
-Message-ID: <CAK8P3a3DHqhbVToqRYqTmfCcSdT5sXb=1SO5jY9jDONDa6ORkA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] powerpc: make llseek 32bit-only.
-To:     =?UTF-8?Q?Michal_Such=C3=A1nek?= <msuchanek@suse.de>
-Cc:     Michael Neuling <mikey@neuling.org>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Nicolai Stange <nstange@suse.de>,
-        David Hildenbrand <david@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Christian Brauner <christian@brauner.io>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Breno Leitao <leitao@debian.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thu, 29 Aug 2019 10:33:19 -0400
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7TEQnDw028837;
+        Thu, 29 Aug 2019 14:33:07 GMT
+Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2upduehe61-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 14:33:07 +0000
+Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
+        by g2t2353.austin.hpe.com (Postfix) with ESMTP id 994DA8C;
+        Thu, 29 Aug 2019 14:33:06 +0000 (UTC)
+Received: from swahl-linux (swahl-linux.americas.hpqcorp.net [10.33.153.21])
+        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 1A59646;
+        Thu, 29 Aug 2019 14:33:06 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 09:33:05 -0500
+From:   Steve Wahl <steve.wahl@hpe.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Steve Wahl <steve.wahl@hpe.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Allison Randal <allison@lohutok.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        LKML <linux-kernel@vger.kernel.org>, russ.anderson@hpe.com,
+        dimitri.sivanich@hpe.com, mike.travis@hpe.com
+Subject: Re: Purgatory compile flag changes apparently causing Kexec
+ relocation overflows
+Message-ID: <20190829143305.GD29967@swahl-linux>
+References: <20190828194226.GA29967@swahl-linux>
+ <CAKwvOdn0=7YabPD-5EUwkSoJgWjdYHY2mirM2LUz0TxZTBOf_Q@mail.gmail.com>
+ <20190828221048.GB29967@swahl-linux>
+ <CAKwvOdnaxZuJHpbmMzdtKSZD10m3Rd52FdHeq2gvkas3XVmk7w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdnaxZuJHpbmMzdtKSZD10m3Rd52FdHeq2gvkas3XVmk7w@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-08-29_06:2019-08-29,2019-08-29 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=674
+ malwarescore=0 clxscore=1015 bulkscore=0 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 adultscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
+ definitions=main-1908290158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 4:19 PM Michal Suchánek <msuchanek@suse.de> wrote:
-> On Thu, 29 Aug 2019 14:57:39 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Thu, Aug 29, 2019 at 2:37 PM Michal Suchánek <msuchanek@suse.de> wrote:
-> > > On Thu, 29 Aug 2019 14:19:46 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
-> > > > On Thu, Aug 29, 2019 at 12:23 PM Michal Suchanek <msuchanek@suse.de> wrote:
-> > > > In particular, I don't see why you single out llseek here, but leave other
-> > > > syscalls that are not needed on 64-bit machines such as pread64().
-> > >
-> > > Because llseek is not built in fs/ when building 64bit only causing a
-> > > link error.
-> > >
-> > > I initially posted patch to build it always but it was pointed out it
-> > > is not needed, and  the interface does not make sense on 64bit, and
-> > > that platforms that don't have it on 64bit now don't want that useless
-> > > code.
-> >
-> > Ok, please put that into the changeset description then.
-> >
-> > I looked at uses of __NR__llseek in debian code search and
-> > found this one:
-> >
-> > https://codesearch.debian.net/show?file=umview_0.8.2-1.2%2Fxmview%2Fum_mmap.c&line=328
-> >
-> > It looks like this application will try to use llseek instead of lseek
-> > when built against kernel headers that define __NR_llseek.
-> >
->
-> The available documentation says this syscall is for 32bit only so
-> using it on 64bit is undefined. The interface is not well-defined in
-> that case either.
+On Wed, Aug 28, 2019 at 03:22:13PM -0700, Nick Desaulniers wrote:
+> 
+> One point that might be more useful first would be, is a revert of:
+> 
+> commit b059f801a937 ("x86/purgatory: Use CFLAGS_REMOVE rather than
+> reset KBUILD_CFLAGS")
+> 
+> good enough, or must:
+> 
+> commit 4ce97317f41d ("x86/purgatory: Do not use __builtin_memcpy and
+> __builtin_memset")
+> 
+> be reverted additionally?  They were part of a 2 patch patchset.  I
+> would prefer tglx to revert as few patches as necessary if possible
+> (to avoid "revert of revert" soup), and I doubt the latter patch needs
+> to be reverted.  (Even more preferential would be a fix, with no
+> reverts, but whichever).
 
-That's generally not how it works. If there is an existing application
-that relies on the behavior of the system call interface, we should not
-change it in a way that breaks the application, regardless of what the
-documentation says. Presumably nobody cares about umview on
-powerpc64, but there might be other applications doing the same
-thing.
+A revert of the single commit is sufficient.  Previously I have
+checked out and compiled the tree at commit b059f801a937 and
+b059f801a937^ (with caret, the previous commit).  It worked with the
+previous commit, but not with b059f801a937.
 
-It looks like sparc64 and parisc64 do the same thing as powerpc64,
-and provide llseek() calls that may or may not be used by
-applications.
+4ce97317f41d *is* the previous commit to b059f801a937, so it was in
+both kernels that I tested:
 
-I think your original approach of always building sys_llseek on
-powerpc64 is the safe choice here.
+$ git log -1 --oneline b059f801a937^ | cat
+4ce97317f41d x86/purgatory: Do not use __builtin_memcpy and __builtin_memset
+$ 
 
-     Arnd
+And, I also did an exploratory 'git revert b059f801a937' at the tip of
+the tree.  That corrects the problem as well.
+
+So both say that it's only the single commit that would need to be
+reverted *if* that's the route taken.
+
+Now, on to seeing if we can narrow this down to a fix with no reverts
+instead.
+
+--> Steve
+-- 
+Steve Wahl, Hewlett Packard Enterprise
