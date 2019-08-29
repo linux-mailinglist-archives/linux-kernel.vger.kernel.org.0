@@ -2,94 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 265C4A1A32
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:37:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC983A1A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfH2MhW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 08:37:22 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39552 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727014AbfH2MhW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 08:37:22 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EE906AC67;
-        Thu, 29 Aug 2019 12:37:20 +0000 (UTC)
-Date:   Thu, 29 Aug 2019 14:37:16 +0200
-From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Breno Leitao <leitao@debian.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Allison Randal <allison@lohutok.net>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Nicolai Stange <nstange@suse.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christian Brauner <christian@brauner.io>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v4 1/4] powerpc: make llseek 32bit-only.
-Message-ID: <20190829143716.6e41b10e@naga>
-In-Reply-To: <CAK8P3a1wR-jzFSzdPqgfCG4vyAi_xBPVGhc6Nn4KaXpk3cUiJw@mail.gmail.com>
-References: <cover.1567072270.git.msuchanek@suse.de>
-        <061a0de2042156669303f95526ec13476bf490c7.1567072270.git.msuchanek@suse.de>
-        <CAK8P3a1wR-jzFSzdPqgfCG4vyAi_xBPVGhc6Nn4KaXpk3cUiJw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        id S1727706AbfH2Mji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 08:39:38 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:50543 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725782AbfH2Mjh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 08:39:37 -0400
+X-UUID: d364c0196eef4773b0fb14c861edcb58-20190829
+X-UUID: d364c0196eef4773b0fb14c861edcb58-20190829
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 186969430; Thu, 29 Aug 2019 20:39:30 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs01n2.mediatek.inc
+ (172.21.101.79) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 29 Aug
+ 2019 20:39:34 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 29 Aug 2019 20:39:33 +0800
+Message-ID: <1567082367.30648.2.camel@mhfsdcap03>
+Subject: Re: [PATCH v4, 12/33] drm/mediatek: split DISP_REG_CONFIG_DSI_SEL
+ setting into another use case
+From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
+Reply-To: <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 29 Aug 2019 20:39:27 +0800
+In-Reply-To: <1563341736.29169.15.camel@mtksdaap41>
+References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1562625253-29254-13-git-send-email-yongqiang.niu@mediatek.com>
+         <1563341736.29169.15.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 1AB6CD6AEFA081CDD571265A6B6FA16D64076F9D817FB5E376E91E95D5153CED2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Aug 2019 14:19:46 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> On Thu, Aug 29, 2019 at 12:23 PM Michal Suchanek <msuchanek@suse.de> wrote:
-> >
-> > Fixes: aff850393200 ("powerpc: add system call table generation support")  
+On Wed, 2019-07-17 at 13:35 +0800, CK Hu wrote:
+> Hi, Yongqiang:
 > 
-> This patch needs a proper explanation. The Fixes tag doesn't seem right
-> here, since ppc64 has had llseek since the start in 2002 commit 3939e37587e7
-> ("Add ppc64 support. This includes both pSeries (RS/6000) and iSeries
-> (AS/400).").
+> On Tue, 2019-07-09 at 06:33 +0800, yongqiang.niu@mediatek.com wrote:
+> > From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> > 
+> > Here is two modifition in this patch:
+> > 1.bls->dpi0 and rdma1->dsi are differen usecase,
+> > Split DISP_REG_CONFIG_DSI_SEL setting into anther usecase
+> > 2.remove DISP_REG_CONFIG_DPI_SEL setting, DPI_SEL_IN_BLS is 0 and
+> > this is same with hardware defautl setting,
+> > 
 > 
-> > diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
-> > index 010b9f445586..53e427606f6c 100644
-> > --- a/arch/powerpc/kernel/syscalls/syscall.tbl
-> > +++ b/arch/powerpc/kernel/syscalls/syscall.tbl
-> > @@ -188,7 +188,7 @@
-> >  137    common  afs_syscall                     sys_ni_syscall
-> >  138    common  setfsuid                        sys_setfsuid
-> >  139    common  setfsgid                        sys_setfsgid
-> > -140    common  _llseek                         sys_llseek
-> > +140    32      _llseek                         sys_llseek
-> >  141    common  getdents                        sys_getdents                    compat_sys_getdents
-> >  142    common  _newselect                      sys_select                      compat_sys_select
-> >  143    common  flock                           sys_flock  
+> You move 2 register setting out of the path from BLS to DPI0, does this
+> path still work? Please make sure that all modification could work on
+> all supported SoC.
 > 
-> In particular, I don't see why you single out llseek here, but leave other
-> syscalls that are not needed on 64-bit machines such as pread64().
+> Regards,
+> CK
+> 
 
-Because llseek is not built in fs/ when building 64bit only causing a
-link error. 
+DPI_SEL_IN_BLS is 0 and this is same with hardware default setting as
+description in patch.
+the removed sentence is useless.
 
-I initially posted patch to build it always but it was pointed out it
-is not needed, and  the interface does not make sense on 64bit, and
-that platforms that don't have it on 64bit now don't want that useless
-code.
 
-Thanks
+> > Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > index d015c1a..47b3e35 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > @@ -400,10 +400,9 @@ static void mtk_ddp_sout_sel(void __iomem *config_regs,
+> >  	} else if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DPI0) {
+> >  		writel_relaxed(BLS_TO_DPI_RDMA1_TO_DSI,
+> >  			       config_regs + DISP_REG_CONFIG_OUT_SEL);
+> > +	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI0) {
+> >  		writel_relaxed(DSI_SEL_IN_RDMA,
+> >  			       config_regs + DISP_REG_CONFIG_DSI_SEL);
+> > -		writel_relaxed(DPI_SEL_IN_BLS,
+> > -			       config_regs + DISP_REG_CONFIG_DPI_SEL);
+> >  	}
+> >  }
+> >  
+> 
+> 
 
-Michal
+
