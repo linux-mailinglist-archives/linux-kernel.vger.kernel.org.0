@@ -2,80 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F03E1A230B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D903DA2355
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:15:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbfH2SMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:12:47 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46588 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbfH2SMr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:12:47 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q139so2580897pfc.13
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 11:12:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=A7u147Wje9ZAoxZSgxkGO16cCmIS7cio1ghCQtK3PnA=;
-        b=SNx8bxK8xYtZf3R7Yb6iVttjoaWALJFDJgJjneuJzwyKfowwLpbo5ms7zt9efOvBCy
-         miktAVtmawMZD4lK/vKTOCq9oWHw+IEfyM326Pv0UsQO1Hha7gZS6+dII3Idtc/EVdui
-         M9jFVFVUpx37kIz4OKg6Tb+629yPn9oyoaJdb30ZrIWEWHbQZoIw9/eYllSzStvW0Vvm
-         RKafHCsNAmWtNSyGBrwcS1/aImhOlwl1LWF5Llp6/JhdMMI7x+UjMzk5fXi6DXQ8mVrf
-         XpxJw1BB1gA9Hl1MY6VyWlijaUserMvM2vQVjuElJwkGufBSanZYzmw7yj3dTM1fLcXj
-         Ai8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=A7u147Wje9ZAoxZSgxkGO16cCmIS7cio1ghCQtK3PnA=;
-        b=W44HX/vVEOwRfNg2iUXKBNwhgqoCodhnKlDHHfc+fjSGGWAYQ9aTtQrVVtRQKvh9ek
-         6bAgy/3v9etFdXy+YbIr7VwQGnQuDeHvYQSAduTsWknx1dbxLNXVX4dcQrxJn4Ht8zs6
-         bP05uM2Kp4ZSJ8i3/rDTbqAEqqNPDk5RQvoODBq4NypvRU4u30v/azwGnIiD+cGlZM/Z
-         QI2YV5D6hzbAzLQ8u4hmnErLwZkEikLYuMnXKLwmqLaNcVx0PU5LSrLyXdnOFZTiK8z5
-         19qLx3Oe5csG4PJJ0P2GOWnCLXt8fw73aEitRBdHY1TJBMNpzenshcm5TphVcfC0mran
-         bDVw==
-X-Gm-Message-State: APjAAAV3stv+AxwO3+WTM0+62Mv8RxYiZWg3MCNfSaoU/ZSZIr3ILAdi
-        LsnwEwp5Q4umxIHNJ+isH6Es6YmKtC4=
-X-Google-Smtp-Source: APXvYqw15bSJm6EPYsc5pmdAEw1JAIB1W9K5w1rWrHlK7Wx3GTV7qbdBrmB0HKBLDd8e52fp2WCxzg==
-X-Received: by 2002:a62:6801:: with SMTP id d1mr12909483pfc.117.1567102366420;
-        Thu, 29 Aug 2019 11:12:46 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id 185sm4284988pff.54.2019.08.29.11.12.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Aug 2019 11:12:45 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH] arm64: dts: meson-sm1-sei610: add stdout-path property back
-In-Reply-To: <20190829132728.20042-1-narmstrong@baylibre.com>
-References: <20190829132728.20042-1-narmstrong@baylibre.com>
-Date:   Thu, 29 Aug 2019 11:12:45 -0700
-Message-ID: <7hv9ufrgbm.fsf@baylibre.com>
+        id S1729129AbfH2SPD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:15:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729082AbfH2SO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:14:58 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E534823405;
+        Thu, 29 Aug 2019 18:14:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567102497;
+        bh=cIBmie2SDl6fWDIBpvZGPqToFNOLY9z40Csdp2T6Pt0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ySz//tuwyBcxQVLhVK74jU6TYVKKyjYKBBAAYi7OxLYyA0r8eM/sDnEqoH5jhZgpG
+         0Y1DPR/b8UbQKH6dp7s5DYeeX+stdjH/+C6S5AJuPW9zpybqM2xYhCu/BksKBw/jsc
+         Rnp3GR7pa0aWL0klT1w0k65ykK+wg9819r6KRDeY=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
+        linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 50/76] HID: cp2112: prevent sleeping function called from invalid context
+Date:   Thu, 29 Aug 2019 14:12:45 -0400
+Message-Id: <20190829181311.7562-50-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
+References: <20190829181311.7562-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-> The commit d4609acce187 ("arm64: dts: meson-sm1-sei610: enable DVFS")
-> incorrectly removed the chosen node and the stdout-path property.
->
-> Add these back.
->
-> Fixes: d4609acce187 ("arm64: dts: meson-sm1-sei610: enable DVFS")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+[ Upstream commit 2d05dba2b25ecb0f8fc3a0b4eb2232da6454a47b ]
 
-Queued for v5.4,
+When calling request_threaded_irq() with a CP2112, the function
+cp2112_gpio_irq_startup() is called in a IRQ context.
 
-I'll probably squash with the original.
+Therefore we can not sleep, and we can not call
+cp2112_gpio_direction_input() there.
 
-Thanks,
+Move the call to cp2112_gpio_direction_input() earlier to have a working
+driver.
 
-Kevin
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hid/hid-cp2112.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hid/hid-cp2112.c b/drivers/hid/hid-cp2112.c
+index 8bbe3d0cbe5d9..8fd44407a0df7 100644
+--- a/drivers/hid/hid-cp2112.c
++++ b/drivers/hid/hid-cp2112.c
+@@ -1152,8 +1152,6 @@ static unsigned int cp2112_gpio_irq_startup(struct irq_data *d)
+ 
+ 	INIT_DELAYED_WORK(&dev->gpio_poll_worker, cp2112_gpio_poll_callback);
+ 
+-	cp2112_gpio_direction_input(gc, d->hwirq);
+-
+ 	if (!dev->gpio_poll) {
+ 		dev->gpio_poll = true;
+ 		schedule_delayed_work(&dev->gpio_poll_worker, 0);
+@@ -1201,6 +1199,12 @@ static int __maybe_unused cp2112_allocate_irq(struct cp2112_device *dev,
+ 		return PTR_ERR(dev->desc[pin]);
+ 	}
+ 
++	ret = cp2112_gpio_direction_input(&dev->gc, pin);
++	if (ret < 0) {
++		dev_err(dev->gc.parent, "Failed to set GPIO to input dir\n");
++		goto err_desc;
++	}
++
+ 	ret = gpiochip_lock_as_irq(&dev->gc, pin);
+ 	if (ret) {
+ 		dev_err(dev->gc.parent, "Failed to lock GPIO as interrupt\n");
+-- 
+2.20.1
+
