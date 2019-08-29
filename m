@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76AAAA1D4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B280A1D44
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:41:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbfH2Okp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:40:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44592 "EHLO mail.kernel.org"
+        id S1728717AbfH2Oks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:40:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728653AbfH2Okn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:40:43 -0400
+        id S1728668AbfH2Okq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:40:46 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C12522CED;
-        Thu, 29 Aug 2019 14:40:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6833723403;
+        Thu, 29 Aug 2019 14:40:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567089641;
-        bh=eLaGrTGsgZaXe/OR0bfIYNLE9wDIHPmyaNZGgp83mcA=;
+        s=default; t=1567089644;
+        bh=bf3B1ulwxFQIerLflS3Q+tRdvSzqx+XmCNO/BVtahZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=icQxrucSAoeJKXacuim2VkDfOqDJ1W7qwMo+CPBBknoKez9RuR8vzfuHGUuecnBwi
-         Vq1n1a1eQgWtTTidw/Tf2+9ifBxjoCEDw6gHfRXOWNUulvZVWGvjXD89sd1+Tr8RTA
-         j5J5O6yPea3fZnBm9Zi0pY/JACm5pJqi9LScr1HY=
+        b=r7FJ8Wok5fSoTrUwvQb0pd/PqtFQeNGUylh+A4c2/J8+dOyULGqWqRmB858r3FlOX
+         8Y8Wx8wv2R9OkYdDZIiyvAoID6/Akn73i9yt7J8jv/vo37iURobHRNYoshLoL/DHlv
+         or7svZtEi01QN+1bX4g8ba+0MDGuszXtIAXsuypY=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -33,9 +33,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Michael Petlan <mpetlan@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 20/37] libperf: Add PERF_RECORD_AUXTRACE 'struct auxtrace_event' to perf/event.h
-Date:   Thu, 29 Aug 2019 11:39:00 -0300
-Message-Id: <20190829143917.29745-21-acme@kernel.org>
+Subject: [PATCH 21/37] libperf: Add PERF_RECORD_AUXTRACE_ERROR 'struct auxtrace_error_event' to perf/event.h
+Date:   Thu, 29 Aug 2019 11:39:01 -0300
+Message-Id: <20190829143917.29745-22-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190829143917.29745-1-acme@kernel.org>
 References: <20190829143917.29745-1-acme@kernel.org>
@@ -48,79 +48,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiri Olsa <jolsa@kernel.org>
 
-Move the PERF_RECORD_AUXTRACE event definition to libperf's event.h.
+Move the PERF_RECORD_AUXTRACE_ERROR event definition to libperf's
+event.h.
 
-Ipn order to keep libperf simple, we switch 'u64/u32/u16/u8'
-types used events to their generic '__u*' versions.
+In order to keep libperf simple, we switch 'u64/u32/u16/u8' types used
+events to their generic '__u*' versions.
 
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Michael Petlan <mpetlan@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190828135717.7245-10-jolsa@kernel.org
+Link: http://lkml.kernel.org/r/20190828135717.7245-11-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/lib/include/perf/event.h | 11 +++++++++++
+ tools/perf/lib/include/perf/event.h | 15 +++++++++++++++
  tools/perf/util/auxtrace.c          |  2 +-
- tools/perf/util/event.h             | 11 -----------
- 3 files changed, 12 insertions(+), 12 deletions(-)
+ tools/perf/util/event.h             | 15 ---------------
+ 3 files changed, 16 insertions(+), 16 deletions(-)
 
 diff --git a/tools/perf/lib/include/perf/event.h b/tools/perf/lib/include/perf/event.h
-index 02da73491451..78001c2973b6 100644
+index 78001c2973b6..6292b7c41bac 100644
 --- a/tools/perf/lib/include/perf/event.h
 +++ b/tools/perf/lib/include/perf/event.h
-@@ -208,4 +208,15 @@ struct auxtrace_info_event {
- 	__u64			 priv[];
+@@ -219,4 +219,19 @@ struct auxtrace_event {
+ 	__u32			 reserved__; /* For alignment */
  };
  
-+struct auxtrace_event {
++#define MAX_AUXTRACE_ERROR_MSG 64
++
++struct auxtrace_error_event {
 +	struct perf_event_header header;
-+	__u64			 size;
-+	__u64			 offset;
-+	__u64			 reference;
-+	__u32			 idx;
-+	__u32			 tid;
++	__u32			 type;
++	__u32			 code;
 +	__u32			 cpu;
-+	__u32			 reserved__; /* For alignment */
++	__u32			 pid;
++	__u32			 tid;
++	__u32			 fmt;
++	__u64			 ip;
++	__u64			 time;
++	char			 msg[MAX_AUXTRACE_ERROR_MSG];
 +};
 +
  #endif /* __LIBPERF_EVENT_H */
 diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 112c24aa2cf2..5edec7123328 100644
+index 5edec7123328..c3da8a0e66b2 100644
 --- a/tools/perf/util/auxtrace.c
 +++ b/tools/perf/util/auxtrace.c
-@@ -943,7 +943,7 @@ s64 perf_event__process_auxtrace(struct perf_session *session,
- 	s64 err;
+@@ -1189,7 +1189,7 @@ size_t perf_event__fprintf_auxtrace_error(union perf_event *event, FILE *fp)
+ 	if (!e->fmt)
+ 		msg = (const char *)&e->time;
  
- 	if (dump_trace)
--		fprintf(stdout, " size: %#"PRIx64"  offset: %#"PRIx64"  ref: %#"PRIx64"  idx: %u  tid: %d  cpu: %d\n",
-+		fprintf(stdout, " size: %#"PRI_lx64"  offset: %#"PRI_lx64"  ref: %#"PRI_lx64"  idx: %u  tid: %d  cpu: %d\n",
- 			event->auxtrace.size, event->auxtrace.offset,
- 			event->auxtrace.reference, event->auxtrace.idx,
- 			event->auxtrace.tid, event->auxtrace.cpu);
+-	ret += fprintf(fp, " cpu %d pid %d tid %d ip %#"PRIx64" code %u: %s\n",
++	ret += fprintf(fp, " cpu %d pid %d tid %d ip %#"PRI_lx64" code %u: %s\n",
+ 		       e->cpu, e->pid, e->tid, e->ip, e->code, msg);
+ 	return ret;
+ }
 diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index ca2cae332c43..60895a3b2c85 100644
+index 60895a3b2c85..e334ecbe50a0 100644
 --- a/tools/perf/util/event.h
 +++ b/tools/perf/util/event.h
-@@ -332,17 +332,6 @@ struct events_stats {
+@@ -332,21 +332,6 @@ struct events_stats {
  	u32 nr_proc_map_timeout;
  };
  
--struct auxtrace_event {
+-#define MAX_AUXTRACE_ERROR_MSG 64
+-
+-struct auxtrace_error_event {
 -	struct perf_event_header header;
--	u64 size;
--	u64 offset;
--	u64 reference;
--	u32 idx;
--	u32 tid;
+-	u32 type;
+-	u32 code;
 -	u32 cpu;
--	u32 reserved__; /* For alignment */
+-	u32 pid;
+-	u32 tid;
+-	u32 fmt;
+-	u64 ip;
+-	u64 time;
+-	char msg[MAX_AUXTRACE_ERROR_MSG];
 -};
 -
- #define MAX_AUXTRACE_ERROR_MSG 64
- 
- struct auxtrace_error_event {
+ struct aux_event {
+ 	struct perf_event_header header;
+ 	u64	aux_offset;
 -- 
 2.21.0
 
