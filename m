@@ -2,122 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B46A2619
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:35:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A382DA25F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:34:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728527AbfH2SfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:35:01 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59502 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfH2SfB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:35:01 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2F1F9686A4; Thu, 29 Aug 2019 18:12:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567103699;
-        bh=rS68WLR481l1COMdQ2jk/qCVOqr85DyICDhl53r3iQE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KIgEPVQpEQaxoE3SnjaRFx8tjgi/VAre9a+7+dnPGm1pH33cptaNhOKvLnwXrDPNl
-         n2ciXi0FlxHIXKhmpXomZfU3sdQErwalP1QvJMOJzSXb1/mSl34lV0+Kn6hs9MDVFl
-         J4WHpPK4W1+xbMpsiyOnXx+0vn0U7WOBng0fr2Dc=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from codeaurora.org (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1728159AbfH2SNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:13:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727087AbfH2SNR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:13:17 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B8EB468997;
-        Thu, 29 Aug 2019 18:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567102347;
-        bh=rS68WLR481l1COMdQ2jk/qCVOqr85DyICDhl53r3iQE=;
+        by mail.kernel.org (Postfix) with ESMTPSA id 67AC12189D;
+        Thu, 29 Aug 2019 18:13:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567102396;
+        bh=hkBnbXIj4Ow5ukHzAWFpSqN0IRB8d7dNXP7A+zZpRBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nyzgyb8c62V8KHiqGWcqXJsfpL1vdt1tW7PnmZou0JbmKQjBHnp62ZrCDdtqj2IEA
-         Np6D7cjv8U7RSZyHLXtWsDuNyOVKmdldOclcfUiZgFMJmFFXI8j5P5eos4CH/92fYf
-         HuCM5eC1yOz4ftXxDl0BHN0nE5lciYqRV4VwP6ak=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8EB468997
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     swboyd@chromium.org, evgreen@chromium.org, marc.zyngier@arm.com,
-        linus.walleij@linaro.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, mkshah@codeaurora.org,
-        linux-gpio@vger.kernel.org, rnayak@codeaurora.org,
-        Lina Iyer <ilina@codeaurora.org>
-Subject: [PATCH RFC 09/14] drivers: pinctrl: msm: fix use of deprecated gpiolib APIs
-Date:   Thu, 29 Aug 2019 12:11:58 -0600
-Message-Id: <20190829181203.2660-10-ilina@codeaurora.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190829181203.2660-1-ilina@codeaurora.org>
-References: <20190829181203.2660-1-ilina@codeaurora.org>
+        b=Qtxi24umdUcuSRIwdfk7cQXF9cWXQuDwXySud/jP4Yb1VydCYv1vxcTVEmOFlYLix
+         DnOO0zrNtbjc7N5iw5smu2WgFVdqBeRRrn/pCf0RADLso02pyRUR40r5wgBvH7oqLr
+         NhoRCbGxY4kMc8AcjRPeclf+lUt1g1TI+QBbHrY8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Andrii Nakryiko <andriin@fb.com>, Andrey Ignatov <rdna@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 03/76] libbpf: set BTF FD for prog only when there is supported .BTF.ext data
+Date:   Thu, 29 Aug 2019 14:11:58 -0400
+Message-Id: <20190829181311.7562-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
+References: <20190829181311.7562-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace gpiochip_irqchip_add() and gpiochip_set_chained_irqchip() calls
-by populating the gpio_irq_chip data structures instead.
+From: Andrii Nakryiko <andriin@fb.com>
 
-Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+[ Upstream commit 3415ec643e7bd644b03026efbe2f2b36cbe9b34b ]
+
+5d01ab7bac46 ("libbpf: fix erroneous multi-closing of BTF FD")
+introduced backwards-compatibility issue, manifesting itself as -E2BIG
+error returned on program load due to unknown non-zero btf_fd attribute
+value for BPF_PROG_LOAD sys_bpf() sub-command.
+
+This patch fixes bug by ensuring that we only ever associate BTF FD with
+program if there is a BTF.ext data that was successfully loaded into
+kernel, which automatically means kernel supports func_info/line_info
+and associated BTF FD for progs (checked and ensured also by BTF
+sanitization code).
+
+Fixes: 5d01ab7bac46 ("libbpf: fix erroneous multi-closing of BTF FD")
+Reported-by: Andrey Ignatov <rdna@fb.com>
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c | 28 +++++++++++++---------------
- 1 file changed, 13 insertions(+), 15 deletions(-)
+ tools/lib/bpf/libbpf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 7f35c196bb3e..76e8528e4d0a 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1027,7 +1027,19 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 	pctrl->irq_chip.irq_request_resources = msm_gpio_irq_reqres;
- 	pctrl->irq_chip.irq_release_resources = msm_gpio_irq_relres;
- 
--	ret = gpiochip_add_data(&pctrl->chip, pctrl);
-+	chip->irq.chip = &pctrl->irq_chip;
-+	chip->irq.default_type = IRQ_TYPE_NONE;
-+	chip->irq.handler = handle_bad_irq;
-+	chip->irq.fwnode = pctrl->dev->fwnode;
-+	chip->irq.parent_handler = msm_gpio_irq_handler;
-+	chip->irq.num_parents = 1;
-+	chip->irq.parents = devm_kcalloc(pctrl->dev, 1,
-+					 sizeof(*chip->irq.parents),
-+					 GFP_KERNEL);
-+	if (!chip->irq.parents)
-+		return -ENOMEM;
-+
-+	ret = devm_gpiochip_add_data(pctrl->dev, chip, pctrl);
- 	if (ret) {
- 		dev_err(pctrl->dev, "Failed register gpiochip\n");
- 		return ret;
-@@ -1053,20 +1065,6 @@ static int msm_gpio_init(struct msm_pinctrl *pctrl)
- 		}
- 	}
- 
--	ret = gpiochip_irqchip_add(chip,
--				   &pctrl->irq_chip,
--				   0,
--				   handle_edge_irq,
--				   IRQ_TYPE_NONE);
--	if (ret) {
--		dev_err(pctrl->dev, "Failed to add irqchip to gpiochip\n");
--		gpiochip_remove(&pctrl->chip);
--		return -ENOSYS;
--	}
--
--	gpiochip_set_chained_irqchip(chip, &pctrl->irq_chip, pctrl->irq,
--				     msm_gpio_irq_handler);
--
- 	return 0;
- }
- 
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index e308fcf16cdd0..ce579e3654d60 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -2066,7 +2066,11 @@ load_program(struct bpf_program *prog, struct bpf_insn *insns, int insns_cnt,
+ 	load_attr.license = license;
+ 	load_attr.kern_version = kern_version;
+ 	load_attr.prog_ifindex = prog->prog_ifindex;
+-	btf_fd = bpf_object__btf_fd(prog->obj);
++	/* if .BTF.ext was loaded, kernel supports associated BTF for prog */
++	if (prog->obj->btf_ext)
++		btf_fd = bpf_object__btf_fd(prog->obj);
++	else
++		btf_fd = -1;
+ 	load_attr.prog_btf_fd = btf_fd >= 0 ? btf_fd : 0;
+ 	load_attr.func_info = prog->func_info;
+ 	load_attr.func_info_rec_size = prog->func_info_rec_size;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.20.1
 
