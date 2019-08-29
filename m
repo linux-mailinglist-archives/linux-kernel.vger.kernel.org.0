@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31869A23B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:18:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB988A23BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:18:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbfH2SRR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:17:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59262 "EHLO mail.kernel.org"
+        id S1730070AbfH2SR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:17:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729966AbfH2SRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:17:08 -0400
+        id S1729225AbfH2SRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:17:15 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 066D823403;
-        Thu, 29 Aug 2019 18:17:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A78C5233FF;
+        Thu, 29 Aug 2019 18:17:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102627;
-        bh=vxxTMYOAipxyhjvy5hgAYfi9s+xgn6FeHoUk5/8duwI=;
+        s=default; t=1567102634;
+        bh=QxZaXZ0zijJUWnGqXLJsdGGyfICNLhjFRpE5M0KDN0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=onW38VN1YjfxRHObzdTwnQ6NEOKNGmJV0EnAnMS2ZW/EUQ14l4Vv4JXyC4jLjF2Zk
-         GztWz/1m7VxfgZ6SKzD/51Dt9itTBujfIqiW9LWy4erYKT7vNVAkoXrXwnK0vWCLGu
-         +ne4K9zarwFmDqcnS8jvk7qZR1S/K+hjhB96KggQ=
+        b=K9PWQ1lXTWfYFzYI0DkBas47B87ahSU+uQJGxjGaO2X1v7WLWUmyXdM8rJqd9seRl
+         WtEyG0If35SfHgBQiE8+wCuxs+q0+rRRsSsmMrm5N+NA/imkcLOVfHCduAcVpdx+Cy
+         BeIzOHHzOFABECU5K1czt4dJ8wKR8g40CrlAJqlw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Courbot <acourbot@chromium.org>,
-        CK Hu <ck.hu@mediatek.com>, Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 08/27] drm/mediatek: use correct device to import PRIME buffers
-Date:   Thu, 29 Aug 2019 14:16:34 -0400
-Message-Id: <20190829181655.8741-8-sashal@kernel.org>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Bill O'Donnell <billodo@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 14/27] vfs: fix page locking deadlocks when deduping files
+Date:   Thu, 29 Aug 2019 14:16:40 -0400
+Message-Id: <20190829181655.8741-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181655.8741-1-sashal@kernel.org>
 References: <20190829181655.8741-1-sashal@kernel.org>
@@ -43,54 +44,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Courbot <acourbot@chromium.org>
+From: "Darrick J. Wong" <darrick.wong@oracle.com>
 
-[ Upstream commit 4c6f3196e6ea111c456c6086dc3f57d4706b0b2d ]
+[ Upstream commit edc58dd0123b552453a74369bd0c8d890b497b4b ]
 
-PRIME buffers should be imported using the DMA device. To this end, use
-a custom import function that mimics drm_gem_prime_import_dev(), but
-passes the correct device.
+When dedupe wants to use the page cache to compare parts of two files
+for dedupe, we must be very careful to handle locking correctly.  The
+current code doesn't do this.  It must lock and unlock the page only
+once if the two pages are the same, since the overlapping range check
+doesn't catch this when blocksize < pagesize.  If the pages are distinct
+but from the same file, we must observe page locking order and lock them
+in order of increasing offset to avoid clashing with writeback locking.
 
-Fixes: 119f5173628aa ("drm/mediatek: Add DRM Driver for Mediatek SoC MT8173.")
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Fixes: 876bec6f9bbfcb3 ("vfs: refactor clone/dedupe_file_range common functions")
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Reviewed-by: Bill O'Donnell <billodo@redhat.com>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ fs/read_write.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 41 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index cada1c75c41cd..4a89cd2e4f1c5 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -287,6 +287,18 @@ static const struct file_operations mtk_drm_fops = {
- 	.compat_ioctl = drm_compat_ioctl,
- };
+diff --git a/fs/read_write.c b/fs/read_write.c
+index d6f8bfb0f7942..38a8bcccf0dd0 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1882,10 +1882,7 @@ int vfs_clone_file_range(struct file *file_in, loff_t pos_in,
+ }
+ EXPORT_SYMBOL(vfs_clone_file_range);
+ 
+-/*
+- * Read a page's worth of file data into the page cache.  Return the page
+- * locked.
+- */
++/* Read a page's worth of file data into the page cache. */
+ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+ {
+ 	struct address_space *mapping;
+@@ -1901,10 +1898,32 @@ static struct page *vfs_dedupe_get_page(struct inode *inode, loff_t offset)
+ 		put_page(page);
+ 		return ERR_PTR(-EIO);
+ 	}
+-	lock_page(page);
+ 	return page;
+ }
  
 +/*
-+ * We need to override this because the device used to import the memory is
-+ * not dev->dev, as drm_gem_prime_import() expects.
++ * Lock two pages, ensuring that we lock in offset order if the pages are from
++ * the same file.
 + */
-+struct drm_gem_object *mtk_drm_gem_prime_import(struct drm_device *dev,
-+						struct dma_buf *dma_buf)
++static void vfs_lock_two_pages(struct page *page1, struct page *page2)
 +{
-+	struct mtk_drm_private *private = dev->dev_private;
++	/* Always lock in order of increasing index. */
++	if (page1->index > page2->index)
++		swap(page1, page2);
 +
-+	return drm_gem_prime_import_dev(dev, dma_buf, private->dma_dev);
++	lock_page(page1);
++	if (page1 != page2)
++		lock_page(page2);
 +}
 +
- static struct drm_driver mtk_drm_driver = {
- 	.driver_features = DRIVER_MODESET | DRIVER_GEM | DRIVER_PRIME |
- 			   DRIVER_ATOMIC,
-@@ -298,7 +310,7 @@ static struct drm_driver mtk_drm_driver = {
- 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
- 	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
- 	.gem_prime_export = drm_gem_prime_export,
--	.gem_prime_import = drm_gem_prime_import,
-+	.gem_prime_import = mtk_drm_gem_prime_import,
- 	.gem_prime_get_sg_table = mtk_gem_prime_get_sg_table,
- 	.gem_prime_import_sg_table = mtk_gem_prime_import_sg_table,
- 	.gem_prime_mmap = mtk_drm_gem_mmap_buf,
++/* Unlock two pages, being careful not to unlock the same page twice. */
++static void vfs_unlock_two_pages(struct page *page1, struct page *page2)
++{
++	unlock_page(page1);
++	if (page1 != page2)
++		unlock_page(page2);
++}
++
+ /*
+  * Compare extents of two files to see if they are the same.
+  * Caller must have locked both inodes to prevent write races.
+@@ -1942,10 +1961,24 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 		dest_page = vfs_dedupe_get_page(dest, destoff);
+ 		if (IS_ERR(dest_page)) {
+ 			error = PTR_ERR(dest_page);
+-			unlock_page(src_page);
+ 			put_page(src_page);
+ 			goto out_error;
+ 		}
++
++		vfs_lock_two_pages(src_page, dest_page);
++
++		/*
++		 * Now that we've locked both pages, make sure they're still
++		 * mapped to the file data we're interested in.  If not,
++		 * someone is invalidating pages on us and we lose.
++		 */
++		if (!PageUptodate(src_page) || !PageUptodate(dest_page) ||
++		    src_page->mapping != src->i_mapping ||
++		    dest_page->mapping != dest->i_mapping) {
++			same = false;
++			goto unlock;
++		}
++
+ 		src_addr = kmap_atomic(src_page);
+ 		dest_addr = kmap_atomic(dest_page);
+ 
+@@ -1957,8 +1990,8 @@ int vfs_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
+ 
+ 		kunmap_atomic(dest_addr);
+ 		kunmap_atomic(src_addr);
+-		unlock_page(dest_page);
+-		unlock_page(src_page);
++unlock:
++		vfs_unlock_two_pages(src_page, dest_page);
+ 		put_page(dest_page);
+ 		put_page(src_page);
+ 
 -- 
 2.20.1
 
