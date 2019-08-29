@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD8BCA1827
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7D41A1842
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:21:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbfH2LTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:19:32 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:43820 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728301AbfH2LTa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:19:30 -0400
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from parav@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 29 Aug 2019 14:19:24 +0300
-Received: from sw-mtx-036.mtx.labs.mlnx (sw-mtx-036.mtx.labs.mlnx [10.12.150.149])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id x7TBJ8v7020002;
-        Thu, 29 Aug 2019 14:19:22 +0300
-From:   Parav Pandit <parav@mellanox.com>
-To:     alex.williamson@redhat.com, jiri@mellanox.com,
-        kwankhede@nvidia.com, cohuck@redhat.com, davem@davemloft.net
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Parav Pandit <parav@mellanox.com>
-Subject: [PATCH v2 6/6] mtty: Optionally support mtty alias
-Date:   Thu, 29 Aug 2019 06:19:04 -0500
-Message-Id: <20190829111904.16042-7-parav@mellanox.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190829111904.16042-1-parav@mellanox.com>
-References: <20190826204119.54386-1-parav@mellanox.com>
- <20190829111904.16042-1-parav@mellanox.com>
+        id S1728499AbfH2LUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:20:24 -0400
+Received: from foss.arm.com ([217.140.110.172]:42790 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728070AbfH2LTN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:19:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B13115AB;
+        Thu, 29 Aug 2019 04:19:13 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A109F3F59C;
+        Thu, 29 Aug 2019 04:19:11 -0700 (PDT)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Cc:     catalin.marinas@arm.com, will@kernel.org, paul.burton@mips.com,
+        tglx@linutronix.de, salyzyn@android.com, 0x7f454c46@gmail.com,
+        luto@kernel.org
+Subject: [PATCH 3/7] mips: compat: vdso: Use legacy syscalls as fallback
+Date:   Thu, 29 Aug 2019 12:18:39 +0100
+Message-Id: <20190829111843.41003-4-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190829111843.41003-1-vincenzo.frascino@arm.com>
+References: <20190829111843.41003-1-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,68 +36,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a module parameter to set alias length to optionally generate
-mdev alias.
+The generic VDSO implementation uses the Y2038 safe clock_gettime64() and
+clock_getres_time64() syscalls as fallback for 32bit VDSO. This breaks
+seccomp setups because these syscalls might be not (yet) allowed.
 
-Example to request mdev alias.
-$ modprobe mtty alias_length=12
+Implement the 32bit variants which use the legacy syscalls and select the
+variant in the core library.
 
-Make use of mtty_alias() API when alias_length module parameter is set.
+The 64bit time variants are not removed because they are required for the
+time64 based vdso accessors.
 
-Signed-off-by: Parav Pandit <parav@mellanox.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Fixes: 00b26474c2f1 ("lib/vdso: Provide generic VDSO implementation")
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
-Changelog:
-v1->v2:
- - Added mdev_alias() usage sample
----
- samples/vfio-mdev/mtty.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/mips/include/asm/vdso/gettimeofday.h | 45 +++++++++++++++++++++++
+ arch/mips/vdso/config-n32-o32-env.c       |  1 +
+ 2 files changed, 46 insertions(+)
 
-diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-index 92e770a06ea2..075d65440bc0 100644
---- a/samples/vfio-mdev/mtty.c
-+++ b/samples/vfio-mdev/mtty.c
-@@ -150,6 +150,10 @@ static const struct file_operations vd_fops = {
- 	.owner          = THIS_MODULE,
- };
- 
-+static unsigned int mtty_alias_length;
-+module_param_named(alias_length, mtty_alias_length, uint, 0444);
-+MODULE_PARM_DESC(alias_length, "mdev alias length; default=0");
-+
- /* function prototypes */
- 
- static int mtty_trigger_interrupt(const guid_t *uuid);
-@@ -770,6 +774,9 @@ static int mtty_create(struct kobject *kobj, struct mdev_device *mdev)
- 	list_add(&mdev_state->next, &mdev_devices_list);
- 	mutex_unlock(&mdev_list_lock);
- 
-+	if (mtty_alias_length)
-+		dev_dbg(mdev_dev(mdev), "alias is %s\n", mdev_alias(mdev));
-+
- 	return 0;
+diff --git a/arch/mips/include/asm/vdso/gettimeofday.h b/arch/mips/include/asm/vdso/gettimeofday.h
+index c59fe08b0347..e78462e8ca2e 100644
+--- a/arch/mips/include/asm/vdso/gettimeofday.h
++++ b/arch/mips/include/asm/vdso/gettimeofday.h
+@@ -105,6 +105,51 @@ static __always_inline int clock_getres_fallback(
+ 	return error ? -ret : ret;
  }
  
-@@ -1410,6 +1417,11 @@ static struct attribute_group *mdev_type_groups[] = {
- 	NULL,
- };
- 
-+static unsigned int mtty_get_alias_length(void)
++#if _MIPS_SIM != _MIPS_SIM_ABI64
++
++#define VDSO_HAS_32BIT_FALLBACK	1
++
++static __always_inline long clock_gettime32_fallback(
++					clockid_t _clkid,
++					struct old_timespec32 *_ts)
 +{
-+	return mtty_alias_length;
++	register struct old_timespec32 *ts asm("a1") = _ts;
++	register clockid_t clkid asm("a0") = _clkid;
++	register long ret asm("v0");
++	register long nr asm("v0") = __NR_clock_gettime;
++	register long error asm("a3");
++
++	asm volatile(
++	"       syscall\n"
++	: "=r" (ret), "=r" (error)
++	: "r" (clkid), "r" (ts), "r" (nr)
++	: "$1", "$3", "$8", "$9", "$10", "$11", "$12", "$13",
++	  "$14", "$15", "$24", "$25", "hi", "lo", "memory");
++
++	return error ? -ret : ret;
 +}
 +
- static const struct mdev_parent_ops mdev_fops = {
- 	.owner                  = THIS_MODULE,
- 	.dev_attr_groups        = mtty_dev_groups,
-@@ -1422,6 +1434,7 @@ static const struct mdev_parent_ops mdev_fops = {
- 	.read                   = mtty_read,
- 	.write                  = mtty_write,
- 	.ioctl		        = mtty_ioctl,
-+	.get_alias_length	= mtty_get_alias_length
- };
++static __always_inline int clock_getres32_fallback(
++					clockid_t _clkid,
++					struct old_timespec32 *_ts)
++{
++	register struct old_timespec32 *ts asm("a1") = _ts;
++	register clockid_t clkid asm("a0") = _clkid;
++	register long ret asm("v0");
++	register long nr asm("v0") = __NR_clock_getres;
++	register long error asm("a3");
++
++	asm volatile(
++	"       syscall\n"
++	: "=r" (ret), "=r" (error)
++	: "r" (clkid), "r" (ts), "r" (nr)
++	: "$1", "$3", "$8", "$9", "$10", "$11", "$12", "$13",
++	  "$14", "$15", "$24", "$25", "hi", "lo", "memory");
++
++	return error ? -ret : ret;
++}
++#endif
++
+ #ifdef CONFIG_CSRC_R4K
  
- static void mtty_device_release(struct device *dev)
+ static __always_inline u64 read_r4k_count(void)
+diff --git a/arch/mips/vdso/config-n32-o32-env.c b/arch/mips/vdso/config-n32-o32-env.c
+index 7f8d957abd4a..0011a632aef2 100644
+--- a/arch/mips/vdso/config-n32-o32-env.c
++++ b/arch/mips/vdso/config-n32-o32-env.c
+@@ -10,6 +10,7 @@
+  */
+ #undef CONFIG_64BIT
+ 
++#define BUILD_VDSO32
+ #define CONFIG_32BIT 1
+ #define CONFIG_GENERIC_ATOMIC64 1
+ #define BUILD_VDSO32_64
 -- 
-2.19.2
+2.23.0
 
