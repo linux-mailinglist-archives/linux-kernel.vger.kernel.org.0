@@ -2,104 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 998BDA2287
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:40:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C02DA22B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:48:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbfH2RkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:40:02 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34274 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727483AbfH2RkB (ORCPT
+        id S1727726AbfH2RsL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:48:11 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.130]:28316 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727234AbfH2RsK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:40:01 -0400
-Received: by mail-io1-f67.google.com with SMTP id s21so8656757ioa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fy1EONJYFzvA6a2F757/vnVFBYdEDoPHNwTUWgsvybk=;
-        b=Z1cP/5ezzJ90NFU0M1U6zbk+KT4PjiIv172TBGDPGRStchob2kMIXvTBkcXqclue2c
-         Pshe76ei8DZxZd/hbugynKc/kZpkF6mSXg2hkUlUffI8nfmY6z5Dzime1bmwMJyrMckU
-         dAcjYiSXvN2cFOLrsXI5NPL7Vx0T7FS0VHjQI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fy1EONJYFzvA6a2F757/vnVFBYdEDoPHNwTUWgsvybk=;
-        b=VRlIZDLS2d4CzJrNozKtg2XLEhL3BabG0+LIa4BvX/V9kZV3ouV5xyrcCtMbXCKq5d
-         zRT8KzTSKYwvV88kjsIAyUhkY/QBCtA4HSaHxjuIwfEJt3Wc+EXBobvpGo/cGqnxROcG
-         +8fT00ujMCsddU38Nb5K1ynavUhV77MneTLKcivk8AHVUVKskzY4U11JjucVIt/5dHTF
-         HXFrQf++xwFDfyRqUwvpu6KYVs55IMlg7dSbrS9XgFXb4WaFxA1FF8BIHvQtdB/XwcVl
-         i7NFDcIHhiTNCi0GDkhadHPDgtWMg1Jq9P7skJOmVfvoK4Cv/qdffX6aMtF8KtbKbmrn
-         mi/A==
-X-Gm-Message-State: APjAAAXH3zYqYs55OrkIrB6o5/inlaEZuQT6VLLCh4GgLHAR0CdQk1Dc
-        rNf4aI25TgsNTuxzkFPwDdDvwTuQwBQ=
-X-Google-Smtp-Source: APXvYqzPLcuoChK4+ohjzd/bYAAvQoM6vL32z4Rx/578+kqXMnMkP402LjktFYmOmL3Uob0Hq4P1jQ==
-X-Received: by 2002:a5d:96cb:: with SMTP id r11mr12952159iol.200.1567100400664;
-        Thu, 29 Aug 2019 10:40:00 -0700 (PDT)
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com. [209.85.166.46])
-        by smtp.gmail.com with ESMTPSA id b17sm2698466ioh.6.2019.08.29.10.40.00
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2019 10:40:00 -0700 (PDT)
-Received: by mail-io1-f46.google.com with SMTP id s21so8656655ioa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:40:00 -0700 (PDT)
-X-Received: by 2002:a5e:db0a:: with SMTP id q10mr12308339iop.58.1567100399775;
- Thu, 29 Aug 2019 10:39:59 -0700 (PDT)
+        Thu, 29 Aug 2019 13:48:10 -0400
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id 2CF7657D57
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 12:29:19 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 3OEZiOJGn3Qi03OEZi3QAG; Thu, 29 Aug 2019 12:29:19 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=aJiyb7UI2K/+R2F5a3fw1EU55SbvNGjQFMYnPqg0Gq4=; b=L2GNazUZvM+5uFV9vAPkne/b+V
+        VCYDR6dk/keOSuL7t2Ng6N1LuKCPYSDSgz3Q29kbR5AbTVVHhqfnlixvTZ+l59IE2T416t9h/2Ehk
+        dPWLzEDR/sdRSe9+UUwp0iqG3rq7WkiU4O+jzUngKmVQBTcJJRyzPtGdmEh1gxVcjkRKtibbxpHau
+        Yq7XwKT+IRk9FTtAs0NtZfp1/0KuvasEG9iEbH5p8OxCYHbRZmiP+3OYkVrz104HNV+n16cLndP9Z
+        aaG3M/FVu/869oXP0fQ22APe6+XNNVUntMVC+DCeeU0zhbSW/WBIXLvwCkVT49oyH6kRqq3A0xjFk
+        ec85EGXA==;
+Received: from [189.152.216.116] (port=41274 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1i3OEX-000tZz-V9; Thu, 29 Aug 2019 12:29:18 -0500
+Date:   Thu, 29 Aug 2019 12:29:16 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ima: ima_api: Use struct_size() in kzalloc()
+Message-ID: <20190829172916.GA10261@embeddedor>
 MIME-Version: 1.0
-References: <20190828214620.66003-1-mka@chromium.org> <20190828214620.66003-2-mka@chromium.org>
- <CAPDyKFr2R-ta5Xob12-6k=+mXXt0NowJ=dpLGJu10qhn7cB1HQ@mail.gmail.com> <20190829171555.GD70797@google.com>
-In-Reply-To: <20190829171555.GD70797@google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 29 Aug 2019 10:39:47 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VhAFGZusYac8hqYNZ9t+ipTZ5EAo5qY5+A8jA4xjw2vg@mail.gmail.com>
-Message-ID: <CAD=FV=VhAFGZusYac8hqYNZ9t+ipTZ5EAo5qY5+A8jA4xjw2vg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: core: Run handlers for pending SDIO interrupts
- on resume
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.216.116
+X-Source-L: No
+X-Exim-ID: 1i3OEX-000tZz-V9
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.152.216.116]:41274
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 14
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-On Thu, Aug 29, 2019 at 10:16 AM Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> > In one way, this change makes sense as it adopts the legacy behavior,
-> > signaling "cached" SDIO IRQs also for the new SDIO irq work interface.
-> >
-> > However, there is at least one major concern I see with this approach.
-> > That is, in the execution path for sdio_signal_irq() (or calling
-> > wake_up_process() for the legacy path), we may end up invoking the
-> > SDIO func's ->irq_handler() callback, as to let the SDIO func driver
-> > to consume the SDIO IRQ.
-> >
-> > The problem with this is, that the corresponding SDIO func driver may
-> > not have been system resumed, when the ->irq_handler() callback is
-> > invoked.
->
-> While debugging the the problem with btmrvl I found that this is
-> already the case without the patch, just not during resume, but when
-> suspending. The func driver suspends before the SDIO bus and
-> interrupts can keep coming in. These are processed while the func
-> driver is suspended, until the SDIO core starts dropping the
-> interrupts.
->
-> And I think it is also already true at resume time: mmc_sdio_resume()
-> re-enables SDIO IRQs and disables dropping them.
+struct ima_template_entry {
+	...
+        struct ima_field_data template_data[0]; /* template related data */
+};
 
-I would also note that this matches the design of the normal system
-suspend/resume functions.  Interrupts continue to be enabled even
-after the "suspend" call is made for a device.  Presumably this is so
-that the suspend function can make use of interrupts even if there is
-no other reason.  If it's important for a device to stop getting
-interrupts after the "suspend" function is called then it's up to that
-device to re-configure the device to stop giving interrupts.
+instance = kzalloc(sizeof(struct ima_template_entry) + count * sizeof(struct ima_field_data), GFP_NOFS);
 
--Doug
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
+
+instance = kzalloc(struct_size(instance, entry, count), GFP_NOFS);
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ security/integrity/ima/ima_api.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 65224474675b..610759fe63b8 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -45,8 +45,8 @@ int ima_alloc_init_template(struct ima_event_data *event_data,
+ 	else
+ 		template_desc = ima_template_desc_current();
+ 
+-	*entry = kzalloc(sizeof(**entry) + template_desc->num_fields *
+-			 sizeof(struct ima_field_data), GFP_NOFS);
++	*entry = kzalloc(struct_size(*entry, template_data,
++				     template_desc->num_fields), GFP_NOFS);
+ 	if (!*entry)
+ 		return -ENOMEM;
+ 
+-- 
+2.23.0
+
