@@ -2,106 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA791A1468
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8DDA1460
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:08:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfH2JJi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 05:09:38 -0400
-Received: from mga11.intel.com ([192.55.52.93]:1913 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726038AbfH2JJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 05:09:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 02:09:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
-   d="scan'208";a="380707285"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Aug 2019 02:09:36 -0700
-Cc:     baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Micha=c5=82_Wajdeczko?= <michal.wajdeczko@intel.com>
-Subject: Re: [RFC PATCH] iommu/vt-d: Fix IOMMU field not populated on device
- hot re-plug
-To:     Janusz Krzysztofik <janusz.krzysztofik@linux.intel.com>
-References: <20190822142922.31526-1-janusz.krzysztofik@linux.intel.com>
- <3275480.HMaYE7B3nd@jkrzyszt-desk.ger.corp.intel.com>
- <0cf4e930-1132-1e7f-815b-57a08a1fe5de@linux.intel.com>
- <3255251.C7nBVfOIaa@jkrzyszt-desk.ger.corp.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <ccb1434d-281c-abae-0726-7fd924041315@linux.intel.com>
-Date:   Thu, 29 Aug 2019 17:08:18 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727046AbfH2JIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 05:08:46 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:46679 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbfH2JIq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 05:08:46 -0400
+Received: from [192.168.1.110] ([77.7.44.18]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N3bjH-1iBChO0vnX-010c52; Thu, 29 Aug 2019 11:08:41 +0200
+Subject: Re: leds: apu: drop obsolete support for apu>=2
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     pavel@ucw.cz, dmurphy@ti.com, linux-leds@vger.kernel.org
+References: <1563202653-20994-1-git-send-email-info@metux.net>
+ <bb7a338b-d86d-5016-7ae2-e893e1934d96@gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <12d2e12f-4157-eb64-6734-db7f1908200c@metux.net>
+Date:   Thu, 29 Aug 2019 11:08:40 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <3255251.C7nBVfOIaa@jkrzyszt-desk.ger.corp.intel.com>
+In-Reply-To: <bb7a338b-d86d-5016-7ae2-e893e1934d96@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:bk46UKSSJSsY5ewyTBOd84ZGPF1MXRbTg+pz0HEYQB8R+Bkc5yS
+ iScwJHPY8xCXrPCp8bLdsO9kD6JFQ/jYoWNvRoOH2/AKrxt5IePtaLfLHadluCEYBFbhbnP
+ cDyKKf6NYKKng80DD4VzIR/4U37rSgYOq+xACZUZnE1J4OYbYIq1cQ4ZDC5LypJGSyEELqw
+ d/WVgF+HfDyB+A+Yz5fYg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ZlS4e7wBA8c=:OPAMx9dodqVC8qHmOWnBDp
+ zTmhTBsTxYlfQ2BZfEVAIYxIidEQjp9SxVeFqNPgvjmU2Ga73t1VKrjbRI1rjJjQtNglgo/sa
+ KFLS7/AROFkIgnBo0t/HQfWhUdBXRBy7MGttdAlOWQy9WJBQinQwiLZbsToNyPRzOVT6SEzFK
+ agTPY18wJqVOD5OBz3nYoE9gZby/CtKNesLQfm656uC3CYEjkRohhwfcpsKu0aHiC2DZTFVrr
+ woYcQMjUvU1IAGsgQoVJdPoQ7t1hBP7czcDMKRAQlF9ESoJuxOOigqfdSOnNGf6oB8m0orHcn
+ JDwTy2klifp4TXdSZEdXcezsSKrfD6xrEnncJbEng5YKbu8UdDc8n/WzGTwwaF7hTTWHRhEuN
+ 5segvubd10V+G3Jh4wHJE9GUHUls/LEUvrDuqPXSA26M/66bcLeyhpjGDf+XQHhD4uaHK7VXK
+ ZM2iHCU94BUcCYkHXrQdMP/FybCll+TohCBI4K/7D/9KykdlpO2q+I4A5eW/h7bLqafo1G+Uo
+ sNusOySRzL5IFunCnpx9iqYVPTpIThXFLwwfT3sI+Rl7K5j2sB2Xa9e0/YXk5MXT8H+quMcZg
+ 0KVx0MYOEV+lxHeXK8D82nQ9SnIQgiX506FbPIglHAb3smr1EBf8yJJV7iycBJBuU4eJCE4/X
+ wBT31lxuWFd+jiepQShHgAcdyWZA9N0Tl6H1AIni9eA4AMPhTKogEyqEYgUCt9wADvTKmwyh4
+ TvWtPi0cR940o+x1UJ+S10/7VYwfAe8eVG7cqnZaqHu1LMhawpMdyHRVkTa5LlVIR0+pkRPah
+ S6j3LH9aSoSWlbhIP8j/JNt6nABgQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 22.07.19 22:12, Jacek Anaszewski wrote:
+
 Hi,
 
-On 8/29/19 3:58 PM, Janusz Krzysztofik wrote:
-> Hi Baolu,
-> 
-> On Thursday, August 29, 2019 3:43:31 AM CEST Lu Baolu wrote:
->> Hi Janusz,
->>
->> On 8/28/19 10:17 PM, Janusz Krzysztofik wrote:
->>>> We should avoid kernel panic when a intel_unmap() is called against
->>>> a non-existent domain.
->>> Does that mean you suggest to replace
->>> 	BUG_ON(!domain);
->>> with something like
->>> 	if (WARN_ON(!domain))
->>> 		return;
->>> and to not care of orphaned mappings left allocated?  Is there a way to
-> inform
->>> users that their active DMA mappings are no longer valid and they
-> shouldn't
->>> call dma_unmap_*()?
->>>
->>>> But we shouldn't expect the IOMMU driver not
->>>> cleaning up the domain info when a device remove notification comes and
->>>> wait until all file descriptors being closed, right?
->>> Shouldn't then the IOMMU driver take care of cleaning up resources still
->>> allocated on device remove before it invalidates and forgets their
-> pointers?
->>>
->>
->> You are right. We need to wait until all allocated resources (iova and
->> mappings) to be released.
->>
->> How about registering a callback for BUS_NOTIFY_UNBOUND_DRIVER, and
->> removing the domain info when the driver detachment completes?
-> 
-> Device core calls BUS_NOTIFY_UNBOUND_DRIVER on each driver unbind, regardless
-> of a device being removed or not.  As long as the device is not unplugged and
-> the BUS_NOTIFY_REMOVED_DEVICE notification not generated, an unbound driver is
-> not a problem here.
-> Morever, BUS_NOTIFY_UNBOUND_DRIVER  is called even before
-> BUS_NOTIFY_REMOVED_DEVICE so that wouldn't help anyway.
-> Last but not least, bus events are independent of the IOMMU driver use via
-> DMA-API it exposes.
+> Patch set applied along with the update for the patch 5/6.
 
-Fair enough.
+What's the status of this patch set ?
+Doesn't seem to have landed in Torvalds tree yet.
 
-> 
-> If keeping data for unplugged devices and reusing it on device re-plug is not
-> acceptable then maybe the IOMMU driver should perform reference counting of
-> its internal resources occupied by DMA-API users and perform cleanups on last
-> release?
 
-I am not saying that keeping data is not acceptable. I just want to
-check whether there are any other solutions.
+--mtx
 
-Best regards,
-Baolu
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
