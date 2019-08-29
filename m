@@ -2,72 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32DF7A1F14
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD14BA1F20
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfH2P12 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:27:28 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:52826 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbfH2P12 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:27:28 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1i3MKZ-00031b-0r; Thu, 29 Aug 2019 15:27:23 +0000
-Date:   Thu, 29 Aug 2019 17:27:22 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Peikan Tsai <peikantsai@gmail.com>, arve@android.com,
-        tkjos@android.com, maco@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] binder: Use kmem_cache for binder_thread
-Message-ID: <20190829152721.ttsyfwaeygmwmcu7@wittgenstein>
-References: <20190829054953.GA18328@mark-All-Series>
- <20190829064229.GA30423@kroah.com>
- <20190829135359.GB63638@google.com>
+        id S1727944AbfH2P26 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:28:58 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3541 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727115AbfH2P26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:28:58 -0400
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 405D78E21318C5D50E12;
+        Thu, 29 Aug 2019 23:28:45 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 29 Aug 2019 23:28:44 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 29 Aug 2019 23:28:44 +0800
+Date:   Thu, 29 Aug 2019 23:27:57 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        <devel@driverdev.osuosl.org>,
+        Valdis =?gbk?Q?Kl=A8=A5tnieks?= <valdis.kletnieks@vt.edu>,
+        <linux-kernel@vger.kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        <linux-fsdevel@vger.kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190829152757.GA125003@architecture4>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190828170022.GA7873@kroah.com>
+ <20190829062340.GB3047@infradead.org>
+ <20190829063955.GA30193@kroah.com>
+ <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com>
+ <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com>
+ <20190829151144.GJ23584@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190829135359.GB63638@google.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190829151144.GJ23584@kadam>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme703-chm.china.huawei.com (10.1.199.99) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 09:53:59AM -0400, Joel Fernandes wrote:
-> On Thu, Aug 29, 2019 at 08:42:29AM +0200, Greg KH wrote:
-> > On Thu, Aug 29, 2019 at 01:49:53PM +0800, Peikan Tsai wrote:
-> [snip] 
-> > > The allocated size for each binder_thread is 512 bytes by kzalloc.
-> > > Because the size of binder_thread is fixed and it's only 304 bytes.
-> > > It will save 208 bytes per binder_thread when use create a kmem_cache
-> > > for the binder_thread.
-> > 
-> > Are you _sure_ it really will save that much memory?  You want to do
-> > allocations based on a nice alignment for lots of good reasons,
-> > especially for something that needs quick accesses.
+Hi Dan,
+
+On Thu, Aug 29, 2019 at 06:11:44PM +0300, Dan Carpenter wrote:
+> On Thu, Aug 29, 2019 at 01:18:10PM +0200, Greg Kroah-Hartman wrote:
+> > It could always use more review, which the developers asked for
+> > numerous times.
 > 
-> Alignment can be done for slab allocations, kmem_cache_create() takes an
-> align argument. I am not sure what the default alignment of objects is
-> though (probably no default alignment). What is an optimal alignment in your
-> view?
+> I stopped commenting on erofs style because all the likely/unlikely()
+> nonsense is a pet peeve.
 
-Probably SLAB_HWCACHE_ALIGN would make most sense.
+I don't know what is wrong for EROFS to use unlikely for all error
+handling path (that is what IS_ERR implys).
+
+If you like, I will delete them all.
+p.s. There are 2947 (un)likely places in fs/ directory.
+
+Thanks,
+Gao Xiang
 
 > 
-> > Did you test your change on a system that relies on binder and find any
-> > speed improvement or decrease, and any actual memory savings?
-> > 
-> > If so, can you post your results?
+> regards,
+> dan carpenter
 > 
-> That's certainly worth it and I thought of asking for the same, but spoke too
-> soon!
-
-Yeah, it'd be interesting to see what difference this actually makes. 
-
-Christian
