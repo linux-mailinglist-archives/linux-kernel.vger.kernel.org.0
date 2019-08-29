@@ -2,94 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D47B5A25D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:32:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2DCA261C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:35:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbfH2Scv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:32:51 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42558 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbfH2Scu (ORCPT
+        id S1728243AbfH2Sft (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:35:49 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41540 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbfH2Sft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:32:50 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p3so2021609pgb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 11:32:50 -0700 (PDT)
+        Thu, 29 Aug 2019 14:35:49 -0400
+Received: by mail-io1-f67.google.com with SMTP id j5so8875254ioj.8;
+        Thu, 29 Aug 2019 11:35:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=PP12ZN4mSTKnf0MT7hUsqNIn9m+j13VzNu25K1FEDNA=;
-        b=Dg20y7RlR5lw3IrWb9kFXOXh3UDVfvJqh0MeNCYdV/1eNskEXHbrs3axnbFQeu4GZ8
-         vFmjGng4fJdYr0EVfjnDJQMJeVh8Wo4mARH6Aeb9PtJVMKWA11VVmX93rx/9dXPGgsvY
-         FxthrT/KIwHAPCTHk5xe9/pt6PCokLIvEdi/hS08sdAQp1r3q7AZLSLFBSyNbM+ZMbvl
-         jdT+SIaECfhHRfr2vcg+NsuZxc177fxwtSV8aaLMTXD3pfG1Y6o+78RCTUZZhI39TjtW
-         d33SNM+MR8spGoN+2NKJdC/pYKU02Tem9FYPj8xh2wOdI8Doud4CFRDFEUMtW9hqdPBS
-         szeQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dE7PRZQ345omAc8kJ4IwmsYptXobZW+/ikZLYjrE7WQ=;
+        b=tUNmQb+LFpYbL1cSRPf5bCe64L++eHLfZ3CowzYJsxcHu6DWB7Khliqd+0WFFTUkut
+         UgliUO5/JyqxYdKS3oPQorxRPZMGv/eyYDZinzXKZUFcL8wfTyTXE54NmzJF+Vo+c7C9
+         /6CxcG+neGPSPOpPtQfvL+hWLHQo3leLd6FTrsSEHeCFcPw6gCq5tkMfnr/hnLWY6L/x
+         hHQ9oTXwrZyOpp4pFqG1Ae7f1l91G0oPB0ISu+2CigxbB/+gg3e8WkinItIZ66L9sl3y
+         sod6Sj1WOSojNdn7hOqcp4ojk/QPz2fC6PhALJTTkADd14rbnYMIbd76D8s9Zygo3Bwj
+         /JgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=PP12ZN4mSTKnf0MT7hUsqNIn9m+j13VzNu25K1FEDNA=;
-        b=Dpt+cvt9FEmYr0/4z7gfA0xbruxavmHUxX6oHIS4UPqiAAHTeApTH6B+iStYtVK45h
-         ePD09bp7PSM+wkwVXDzzWOJtCWO3iT1Lb+KaihoKJBhyFHC0bSHhurm8WeBgFHhtM1nA
-         hTf4XVKcRTddYoOq4HZblWG/xnO3pN7nqFagetUEoffD4RhgDKU7H8aOtf0kAgN/gZ1W
-         MSe56OEn1d61alThWybFjoRlradVIh3pqNiHFzwoPy+Xo7HqqbePx/9tgddT5z5NTz+H
-         EgPzd5gabQdr7aQ5iqDQvauqrC4hY+7dCBWz0ttESCbGwO2jVS7M1mcRNwHrVc6MKDAL
-         EVoA==
-X-Gm-Message-State: APjAAAXhxVuX17eS1sZDOx2c2s4wR2km8aeF9DF5uwvyyYcbxjjIJFXZ
-        /e8Z5529ek3kg+Er9QI5RJRanw==
-X-Google-Smtp-Source: APXvYqybp8pL5qLXcsTDjwIcUXweNsYeikbXrqtzD5ZaFVHnl0f8HgRwGQ8oNuvWwwNDMokHpRBMaw==
-X-Received: by 2002:a63:6206:: with SMTP id w6mr9551512pgb.428.1567103569556;
-        Thu, 29 Aug 2019 11:32:49 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id g11sm3162127pgu.11.2019.08.29.11.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 29 Aug 2019 11:32:49 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH 0/3] arm64: dts: meson-g12: specify suspend OPP
-In-Reply-To: <7hy2zeuv9z.fsf@baylibre.com>
-References: <20190827100307.21661-1-narmstrong@baylibre.com> <7hy2zeuv9z.fsf@baylibre.com>
-Date:   Thu, 29 Aug 2019 11:32:48 -0700
-Message-ID: <7ha7brrfe7.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dE7PRZQ345omAc8kJ4IwmsYptXobZW+/ikZLYjrE7WQ=;
+        b=lr/03c13JUt9Dh/Vfw2PZdxocDFZqmNwcbLL+1lKzB83Lk7QFrZS4E81c6GwA/uaGj
+         ehQq2V0nPGn10cXUtq9xn2OjFdIohMeXptyjmvXrBJGb4vz0Ia5km9iLkltDma4k7ebh
+         Q0C1euk3VtquhJh6FLMHRX1x6TApPVR4YeBVBqB9J/sn8fcAJ1PAuLVUuikJhlzCt83e
+         EsTpESg3oSA/U+4zzdV6fFqXWkeMDWKO4CFUFWLzX/XbTrOuFYWjbUOBya1lPXR/U9K2
+         H7POacCpNlSkRwxGAX1SZzI6dNfpvomfCdez8EQQBifExZLq4cFUWOr7i1QPKCT9tcmq
+         mm6A==
+X-Gm-Message-State: APjAAAWJOEulYxispJTf155z3E7tALGi9rLICiCKE2KJ2wb5ImfTXFB4
+        Dj3Ww6Fd3hAMFI5/S9el1P10wOdfbCvXfSS/60w=
+X-Google-Smtp-Source: APXvYqzg2TrSvQ2sGfxlX6InibTPJ6qPNmnESCZkxiQHWcDZTe8CGM/4kKFmZ8yqnYQphNmu4/FiJ2pT0Ndftf28zJ8=
+X-Received: by 2002:a5d:9bd4:: with SMTP id d20mr1721932ion.243.1567103748387;
+ Thu, 29 Aug 2019 11:35:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190828202723.1145-1-linux.amoon@gmail.com> <8c40f334-c723-b524-857c-73734b7d0827@baylibre.com>
+In-Reply-To: <8c40f334-c723-b524-857c-73734b7d0827@baylibre.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Fri, 30 Aug 2019 00:05:37 +0530
+Message-ID: <CANAwSgShr-K-44UzdxFC7pvpTye_pbEMdS6ug1eWwYhnsVNGdQ@mail.gmail.com>
+Subject: Re: [PATCHv1 0/3] Odroid c2 missing regulator linking
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kevin Hilman <khilman@baylibre.com> writes:
+Hi Neil,
 
-> Neil Armstrong <narmstrong@baylibre.com> writes:
+On Thu, 29 Aug 2019 at 13:58, Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
->> Tag the 1,2GHz OPP as suspend OPP to be set before going in suspend mode,
->> for the G12A, G12B and SM1 SoCs.
->>
->> It has been reported that using various OPPs can lead to error or
->> resume with a different OPP from the ROM, thus use this safe OPP as
->> it is the default OPP used by the BL2 boot firmware.
->>
->> Neil Armstrong (3):
->>   arm64: dts: meson-g12a: specify suspend OPP
->>   arm64: dts: meson-sm1: specify suspend OPP
->>   arm64: dts: meson-g12b: specify suspend OPP
+> On 28/08/2019 22:27, Anand Moon wrote:
+> > Below small changes help re-configure or fix missing inter linking
+> > of regulator node.
+> >
+> > Changes based top on my prevoius series.
 >
-> Queued patches 1, 3 for v5.4.
+> For the serie:
+> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 >
-> The SM1 patch has a dependency on the SM1 DVFS series, which in turn has
-> a dependency on clock changes.  Once I get a stable tag for the SM1
-> clock changes, I'll queue up the rest.
 
-FYI... I decided not to queue these for v5.4.
+Thanks for your review.
 
-I'm pretty sure we'll need these, but I I think we need to do a bit more
-suspend/resume testing to be sure we have the right OPPs. here.
+> >
+> > [0] https://patchwork.kernel.org/cover/11113091/
+> >
+> > TOOD: Add support for DVFS GXBB odroid board in next series.
+>
+> I'm curious how you will do this !
 
-For now, this series is in my `v5.4/testing` branch, which is included
-in `integ` so it can get a bit broader testing.
+I was just studying you previous series on how you have implemented
+this feature for C1, N2 and VIM3 boards.
 
-Kevin
+[0] https://patchwork.kernel.org/cover/11114125/
+
+I started gathering key inputs needed for this ie *clk / pwm*
+like VDDCPU and VDDE clk changes.
+
+But it looks like of the complex clk framework needed, so I leave this to the
+expert like your team of developers to do this much quick and efficiently.
+
+Best Regards,
+-Anand
