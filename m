@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86A5BA2162
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 698E9A2166
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:51:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbfH2Qve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:51:34 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37453 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728079AbfH2Qvb (ORCPT
+        id S1728201AbfH2Qvl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:51:41 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37267 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728109AbfH2Qvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:51:31 -0400
-Received: by mail-wm1-f68.google.com with SMTP id d16so4551708wme.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 09:51:30 -0700 (PDT)
+        Thu, 29 Aug 2019 12:51:33 -0400
+Received: by mail-wr1-f65.google.com with SMTP id z11so4170157wrt.4;
+        Thu, 29 Aug 2019 09:51:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SKsJY57Vd8P380yZjRTYqZ29aNOB3lqsM0XLQ0UvZ90=;
-        b=dcPwbEzWsuDtrypRbAhxp57pQuc10tpytIBhz00FrsBqbK9fZHXIgTpVnVKGLNI4IC
-         CtyObWAoa5XzYcTBoegEMxY8kVC67ZxJmsuhd08Y8FuqTJxvTCEhEzWJ0pZV4p1QLT4A
-         8WHRPFrfbX3ne3AinoVNimqpuw3oYpF+yAtqvZRf1ITvK+BuIyost+lz3LYliBuly1sR
-         bWHH/MeUL3m/84CD5JHfprVt6RYo1tBuNdqUaJuSUl5IF9xvBqI4QsPn1Ee81GdpcWiI
-         BXvbY5xknp3PdOCfOgxYKrlS92wBM5HCiorWZ+WFSkuqx/9PAesBQTIl4aiW0yRXgtGf
-         gtuw==
-X-Gm-Message-State: APjAAAWZVH4IH1CQdf6h2z6bLMk1ixGWlVtAoFeptKPR+iPwXECBHicI
-        03QxfTvcNPZ4LEprXqpiWDbSPWWRNok=
-X-Google-Smtp-Source: APXvYqzXt0ZDuhoHOdja5D35iM9SDovMAdmyvo7iE8zCgrVqpSk9sdKplvVrsmD5u13Eqz0eyLlQDw==
-X-Received: by 2002:a1c:be15:: with SMTP id o21mr12560738wmf.140.1567097489839;
-        Thu, 29 Aug 2019 09:51:29 -0700 (PDT)
+        bh=1BnYpBfZLwpA0PUdACNai/emnPM3Y0NcYvtOEszcGUE=;
+        b=EIeLKmLcL0KJYL9wF2ooxeC8hphqrPj9AFFs5bS1DdJoCZIBJs/rnI3r0Hm5qhDceB
+         3bH6oQFBtZpbU6+MYkS3tbg4fwzipNwYmWE82LlPA5zVd1T11OulwVU4fqap70lHFObe
+         aiddbBMNiwZcj8obVH+Aqg1VKC8ZoDUxR+4uplhh3gsw1+uUR43KGcVMJVvkgm3zUrOv
+         4E7txLTPmo5UO5C0eo07oTvbSxeYfc+HVudv+k+yKzLeVU0KzXpny2NxMTjmhuRHZdMG
+         W7n/XaXfcKcdaNmnb5xi+nGeG8b5l9a5CGVEFdpTMTe0/yx6Nfg6dNsM2IcQAN5ahLM5
+         FONg==
+X-Gm-Message-State: APjAAAUtHusYk2mh0ssSEEAuX6G9DK6M0ZAGJwPkcxaBa8HslKVHjoLb
+        1AbY8TY5t0nDX0YWWNQHgWDC9E9YYyo=
+X-Google-Smtp-Source: APXvYqw6h0QF/9Cp8h4AVqAPs4yZPsk7HvUFQPF0LVIItR+ycMCqidhPckPzdmSWxM7kIZu0fL5qKg==
+X-Received: by 2002:adf:e708:: with SMTP id c8mr13068496wrm.25.1567097491287;
+        Thu, 29 Aug 2019 09:51:31 -0700 (PDT)
 Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
-        by smtp.googlemail.com with ESMTPSA id o14sm8340770wrg.64.2019.08.29.09.51.29
+        by smtp.googlemail.com with ESMTPSA id o14sm8340770wrg.64.2019.08.29.09.51.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 09:51:29 -0700 (PDT)
+        Thu, 29 Aug 2019 09:51:30 -0700 (PDT)
 From:   Denis Efremov <efremov@linux.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Denis Efremov <efremov@linux.com>,
-        Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Joe Perches <joe@perches.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linux-wimax@intel.com
-Subject: [PATCH v3 06/11] wimax/i2400m: remove unlikely() from WARN*() condition
-Date:   Thu, 29 Aug 2019 19:50:20 +0300
-Message-Id: <20190829165025.15750-6-efremov@linux.com>
+        linux-xfs@vger.kernel.org
+Subject: [PATCH v3 07/11] xfs: remove unlikely() from WARN_ON() condition
+Date:   Thu, 29 Aug 2019 19:50:21 +0300
+Message-Id: <20190829165025.15750-7-efremov@linux.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190829165025.15750-1-efremov@linux.com>
 References: <20190829165025.15750-1-efremov@linux.com>
@@ -58,28 +58,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 internally.
 
 Signed-off-by: Denis Efremov <efremov@linux.com>
-Cc: Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc: Joe Perches <joe@perches.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-wimax@intel.com
+Cc: linux-xfs@vger.kernel.org
 ---
- drivers/net/wimax/i2400m/tx.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/xfs/xfs_buf.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wimax/i2400m/tx.c b/drivers/net/wimax/i2400m/tx.c
-index ebd64e083726..1255302e251e 100644
---- a/drivers/net/wimax/i2400m/tx.c
-+++ b/drivers/net/wimax/i2400m/tx.c
-@@ -654,8 +654,7 @@ void i2400m_tx_close(struct i2400m *i2400m)
- 	padding = aligned_size - tx_msg_moved->size;
- 	if (padding > 0) {
- 		pad_buf = i2400m_tx_fifo_push(i2400m, padding, 0, 0);
--		if (unlikely(WARN_ON(pad_buf == NULL
--				     || pad_buf == TAIL_FULL))) {
-+		if (WARN_ON(pad_buf == NULL || pad_buf == TAIL_FULL)) {
- 			/* This should not happen -- append should verify
- 			 * there is always space left at least to append
- 			 * tx_block_size */
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index ca0849043f54..4389d87ff0f0 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -2096,7 +2096,7 @@ xfs_verify_magic(
+ 	int			idx;
+ 
+ 	idx = xfs_sb_version_hascrc(&mp->m_sb);
+-	if (unlikely(WARN_ON(!bp->b_ops || !bp->b_ops->magic[idx])))
++	if (WARN_ON(!bp->b_ops || !bp->b_ops->magic[idx]))
+ 		return false;
+ 	return dmagic == bp->b_ops->magic[idx];
+ }
+@@ -2114,7 +2114,7 @@ xfs_verify_magic16(
+ 	int			idx;
+ 
+ 	idx = xfs_sb_version_hascrc(&mp->m_sb);
+-	if (unlikely(WARN_ON(!bp->b_ops || !bp->b_ops->magic16[idx])))
++	if (WARN_ON(!bp->b_ops || !bp->b_ops->magic16[idx]))
+ 		return false;
+ 	return dmagic == bp->b_ops->magic16[idx];
+ }
 -- 
 2.21.0
 
