@@ -2,97 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92492A2A5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:56:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 486EFA2A66
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:57:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbfH2W4F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 18:56:05 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46158 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727992AbfH2W4E (ORCPT
+        id S1728300AbfH2W5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 18:57:21 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:41850 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727907AbfH2W5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:56:04 -0400
-Received: by mail-oi1-f195.google.com with SMTP id t24so3863730oij.13;
-        Thu, 29 Aug 2019 15:56:04 -0700 (PDT)
+        Thu, 29 Aug 2019 18:57:21 -0400
+Received: by mail-oi1-f194.google.com with SMTP id h4so490363oih.8;
+        Thu, 29 Aug 2019 15:57:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AcqAKzCkm/gS75dDEccyBh6Oz2jirMULmsO7hRuPRrg=;
-        b=T5Ma4Zd5bMuuEw+CVg0G0+KTxTlak/eE9IGR3c7wGom18bNtrFXK9C5fYpq0Y6fI1b
-         c8m4q6+QNm0bgpDuSHujRv/h5m235x8IZpmGtlExxhzs1KyICXXGYK/6z/07Qz98RUjE
-         0a/tlnQ5l/YWnulfhx9QN6PIKHyzcVOsJuQjnt93Rivhn9vuqITRNJGKHPeiYoCidoBY
-         DeOxp4DALlsTgH0ZcjmaPO5CVdD9Idr0+Vge32MnBnesTYYMbZGa3wWc0+m1AwSpgBpr
-         RcpS2/w56WBGtFltQTyE+ygJpVygVXRSmGqbQJME+5gtiNBKNOQDh+wMDTo70avPx5IN
-         RgnQ==
-X-Gm-Message-State: APjAAAVIb6FbGr6pVRwpYQxijh3bolRCZbBWmAJAphFu2QyPX9t8j0Wp
-        91k3yjKgTkA7R/FPGE/suA==
-X-Google-Smtp-Source: APXvYqwkvLByG+E3adSffoHfKaAwsMfaOUgusko2o61o2oZkDP5FVCtM+58yL1hGvRelXT0PjmhLBg==
-X-Received: by 2002:aca:f5c8:: with SMTP id t191mr8247459oih.61.1567119363695;
-        Thu, 29 Aug 2019 15:56:03 -0700 (PDT)
+        bh=Tt59Vai4nKcFOlf3kuJu+36rcTwUnw+ESfP2cPA8a9w=;
+        b=oKu7R06QbsBdaT25B01CUIevRx3l72ZwMHS/TKYjkZJT3WSpPbOMimRBypIvIE/47B
+         pBWJk+Q5/+QEW5Wu89HzM9+AqLTwULx149VXKevVqlH4PsZygKEzWeicbAVChuTIc6K3
+         9R2IPuowovw26jmT6dTDph9MJeg9lGyiIC9SIVou0m3xoAHmlEln7pI8orOFcerKpdPi
+         SlxtwySB2ZZ8CxAxPGWoi5TmEFtE/GQ6tiks6/0CQKTtKJ0kO4NzBSvG5pz9qnzvHYPB
+         2FX0Y68noAKEpoGLOPxYmcMNuuizhcfXcwTWjBzQ2Ys17686ACJVUUeKarC4H/1sBMy5
+         zjiQ==
+X-Gm-Message-State: APjAAAVc8AFevI3Uo9Ri0hZ8Upd1cxHJjoS+JNV0kY7mSYJoCGYWTIwP
+        /H7hKGrT8gGbtcPL6RKVgQ==
+X-Google-Smtp-Source: APXvYqzNLJ5SnSm+nMCobpcQcc3WHBIxdaTxiYCSwEw6M9n03lmG7rmmrOA9SRGSrxwhdyGE3uk1qQ==
+X-Received: by 2002:aca:3909:: with SMTP id g9mr192281oia.158.1567119440204;
+        Thu, 29 Aug 2019 15:57:20 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i22sm1253218oto.80.2019.08.29.15.56.02
+        by smtp.gmail.com with ESMTPSA id t21sm1026334oic.6.2019.08.29.15.57.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 15:56:02 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 17:56:02 -0500
+        Thu, 29 Aug 2019 15:57:19 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 17:57:19 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Ivan Mikhaylov <i.mikhaylov@yadro.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        linux-watchdog@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Alexander Amelkin <a.amelkin@yadro.com>,
-        openbmc@lists.ozlabs.org, Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] dt-bindings/watchdog: Add access_cs0 option for
- alt-boot
-Message-ID: <20190829225602.GA15783@bogus>
-References: <20190826104636.19324-1-i.mikhaylov@yadro.com>
- <20190826104636.19324-5-i.mikhaylov@yadro.com>
+To:     Fabien Dessenne <fabien.dessenne@st.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Loic Pallardy <loic.pallardy@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Subject: Re: [PATCH 1/2] dt-bindings: remoteproc: stm32: add wakeup-source
+Message-ID: <20190829225719.GA21954@bogus>
+References: <1566833923-16718-1-git-send-email-fabien.dessenne@st.com>
+ <1566833923-16718-2-git-send-email-fabien.dessenne@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190826104636.19324-5-i.mikhaylov@yadro.com>
+In-Reply-To: <1566833923-16718-2-git-send-email-fabien.dessenne@st.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 01:46:36PM +0300, Ivan Mikhaylov wrote:
-> The option for the ast2400/2500 to get access to CS0 at runtime.
+On Mon, 26 Aug 2019 17:38:42 +0200, Fabien Dessenne wrote:
+> Add the "wakeup-source" property: if the optional wdg interrupt is
+> defined, then this property may be defined too.
 > 
-> Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@st.com>
 > ---
->  Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt | 7 +++++++
->  1 file changed, 7 insertions(+)
+>  Documentation/devicetree/bindings/remoteproc/stm32-rproc.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt b/Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt
-> index c5077a1f5cb3..023a9b578df6 100644
-> --- a/Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/aspeed-wdt.txt
-> @@ -34,6 +34,13 @@ Optional properties:
->                  engine is responsible for this.
->  
->   - aspeed,alt-boot:    If property is present then boot from alternate block.
-> +                       At alternate side 'access_cs0' sysfs file provides:
 
-What's sysfs?
-
-Don't put Linux stuff in bindings.
-
-> +                       ast2400: a way to get access to the primary SPI flash
-> +                                chip at CS0 after booting from the alternate
-> +                                chip at CS1.
-> +                       ast2500: a way to restore the normal address mapping from
-> +                                (CS0->CS1, CS1->CS0) to (CS0->CS0, CS1->CS1).
-> +
->   - aspeed,external-signal: If property is present then signal is sent to
->  			external reset counter (only WDT1 and WDT2). If not
->  			specified no external signal is sent.
-> -- 
-> 2.20.1
-> 
+Acked-by: Rob Herring <robh@kernel.org>
