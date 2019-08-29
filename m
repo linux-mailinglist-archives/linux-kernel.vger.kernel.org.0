@@ -2,85 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94E5CA16A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:50:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BDBFA16A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:50:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbfH2KuK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 06:50:10 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:17272 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfH2KuJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 06:50:09 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x7TAnToh013730;
-        Thu, 29 Aug 2019 19:49:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x7TAnToh013730
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1567075773;
-        bh=lYozHE89Wu43zYr2OY/wYXUHm6PW8Z5Hu122oF77ydQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DVoeJBCfK1a2SJY98pTQua2p/4ENI6cD/18ReVMUkbiY1fGmE1j20A7KskiM7e887
-         ZIOs6yhheiTLUdIt2Sm4idniog4XTjm2fGapOO5WtIkFLTxA1npSBXnyEpo2aFIXQK
-         fyYTHLxSIqBjNTAgHoPsrjTCU6YVBeEUbQER5+2nnEhXULrokb8uk8LSE/kPKUBlZK
-         rdBE4rcE35S1QyM9sISGO0SHpngpMeX0mkeOnduXERg5QKKiCr0M5UyOYxZjR9kUFY
-         nwXjo/vlL/myi40n+XsikxPA8E5HRc/O2F3Upuy4/DiMja3fJUiJkr1HBLZFdthiQi
-         GwCM0HYlmUvBg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Piotr Sroka <piotrs@cadence.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] mmc: sdhci-cadence: override spec version
-Date:   Thu, 29 Aug 2019 19:49:28 +0900
-Message-Id: <20190829104928.27404-3-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190829104928.27404-1-yamada.masahiro@socionext.com>
-References: <20190829104928.27404-1-yamada.masahiro@socionext.com>
+        id S1727635AbfH2KuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 06:50:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbfH2KuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 06:50:12 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C892E2173E;
+        Thu, 29 Aug 2019 10:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567075811;
+        bh=PzTwA2pEqna/zzPNz2QZGbcV1R9WOr2kYGIXWC3dDt4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rVqKkXHj7k4Ku3WJMyn1JPCyltp9UO0uzWgqvYkQpqnClVPnN6TPRtXCCZ1DbhlXo
+         wP5Ba+1c+qyrMaS5GAMdzxjl+F+CKUapAC7vgI7Rcl5k5b1K9lPd9XnzBUL7H0haRn
+         l+lWcyyApr7bRmizrRKs7UQn+eRidH5DndEJRuFE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        Sunil Muthuswamy <sunilmut@microsoft.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH AUTOSEL 4.19 01/29] hv_sock: Fix hang when a connection is closed
+Date:   Thu, 29 Aug 2019 06:49:41 -0400
+Message-Id: <20190829105009.2265-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The datasheet of the IP (sd4hc) says it is compiatible with SDHCI v4,
-but the spec version field in the version register is read as 2
-(i.e. SDHCI_SPEC_300) based on the RTL provided by Cadence.
+From: Dexuan Cui <decui@microsoft.com>
 
-Socionext did not fix it up when it integrated the IP into the SoCs.
-So, it is working as SDHCI v3.
+[ Upstream commit 685703b497bacea8765bb409d6b73455b73c540e ]
 
-It is not a real problem because there is no difference in the program
-flow in sdhci.c between SDHCI_SPEC_300/400, but set the real version
-just in case.
+There is a race condition for an established connection that is being closed
+by the guest: the refcnt is 4 at the end of hvs_release() (Note: here the
+'remove_sock' is false):
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+1 for the initial value;
+1 for the sk being in the bound list;
+1 for the sk being in the connected list;
+1 for the delayed close_work.
+
+After hvs_release() finishes, __vsock_release() -> sock_put(sk) *may*
+decrease the refcnt to 3.
+
+Concurrently, hvs_close_connection() runs in another thread:
+  calls vsock_remove_sock() to decrease the refcnt by 2;
+  call sock_put() to decrease the refcnt to 0, and free the sk;
+  next, the "release_sock(sk)" may hang due to use-after-free.
+
+In the above, after hvs_release() finishes, if hvs_close_connection() runs
+faster than "__vsock_release() -> sock_put(sk)", then there is not any issue,
+because at the beginning of hvs_close_connection(), the refcnt is still 4.
+
+The issue can be resolved if an extra reference is taken when the
+connection is established.
+
+Fixes: a9eeb998c28d ("hv_sock: Add support for delayed close")
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Reviewed-by: Sunil Muthuswamy <sunilmut@microsoft.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ net/vmw_vsock/hyperv_transport.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
- drivers/mmc/host/sdhci-cadence.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-index 44139fceac24..9837214685b6 100644
---- a/drivers/mmc/host/sdhci-cadence.c
-+++ b/drivers/mmc/host/sdhci-cadence.c
-@@ -341,6 +341,7 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
- 	unsigned int nr_phy_params;
- 	int ret;
- 	struct device *dev = &pdev->dev;
-+	static const u16 version = SDHCI_SPEC_400 << SDHCI_SPEC_VER_SHIFT;
+diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
+index 9c7da811d130f..98f193fd5315e 100644
+--- a/net/vmw_vsock/hyperv_transport.c
++++ b/net/vmw_vsock/hyperv_transport.c
+@@ -320,6 +320,11 @@ static void hvs_close_connection(struct vmbus_channel *chan)
+ 	lock_sock(sk);
+ 	hvs_do_close_lock_held(vsock_sk(sk), true);
+ 	release_sock(sk);
++
++	/* Release the refcnt for the channel that's opened in
++	 * hvs_open_connection().
++	 */
++	sock_put(sk);
+ }
  
- 	clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(clk))
-@@ -370,6 +371,7 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
- 	host->mmc_host_ops.hs400_enhanced_strobe =
- 				sdhci_cdns_hs400_enhanced_strobe;
- 	sdhci_enable_v4_mode(host);
-+	__sdhci_read_caps(host, &version, NULL, NULL);
+ static void hvs_open_connection(struct vmbus_channel *chan)
+@@ -388,6 +393,9 @@ static void hvs_open_connection(struct vmbus_channel *chan)
+ 	}
  
- 	sdhci_get_of_property(pdev);
+ 	set_per_channel_state(chan, conn_from_host ? new : sk);
++
++	/* This reference will be dropped by hvs_close_connection(). */
++	sock_hold(conn_from_host ? new : sk);
+ 	vmbus_set_chn_rescind_callback(chan, hvs_close_connection);
  
+ 	/* Set the pending send size to max packet size to always get
 -- 
-2.17.1
+2.20.1
 
