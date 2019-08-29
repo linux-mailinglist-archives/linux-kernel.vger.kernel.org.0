@@ -2,161 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFF9DA14C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:24:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1CEDA14C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfH2JYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 05:24:22 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:41005 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfH2JYU (ORCPT
+        id S1727798AbfH2JXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 05:23:53 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:18450 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727066AbfH2JXS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 05:24:20 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Horatiu.Vultur@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Horatiu.Vultur@microchip.com";
-  x-sender="Horatiu.Vultur@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Horatiu.Vultur@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Horatiu.Vultur@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: dcw5HvdrWWW4kbMXgGxuMElWhsYPDEZ2r2ibGqZjytgKP860+4DfHv4CXfMD+ddtYGad9OBMgT
- 38QTqQVbl2yzZ+ozBONDV5w410Xbb6vA2BfRsO/us879/sNPHi9jBAt6k1gCLn1wweLlZ5pP7l
- NUY5jztFbtc1yKOaHBgYFju0MQRk+A3MIT/Ym64A7PEYgxPqLc1jx0+BMfbu14byb8OEAVjLHH
- O2iC7jC4Stuup5FZl7lCyFZx2Vkd45pwVLTGEoeLzSD/E9Jyac3BplEO9ava/k3m8vjOrXTab5
- pq8=
-X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
-   d="scan'208";a="44136216"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 Aug 2019 02:24:20 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 29 Aug 2019 02:24:16 -0700
-Received: from soft-dev3.microsemi.net (10.10.85.251) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Thu, 29 Aug 2019 02:24:17 -0700
-From:   Horatiu Vultur <horatiu.vultur@microchip.com>
-To:     <alexandre.belloni@bootlin.com>, <UNGLinuxDriver@microchip.com>,
-        <davem@davemloft.net>, <andrew@lunn.ch>,
-        <allan.nielsen@microchip.com>, <jiri@resnulli.us>,
-        <ivecera@redhat.com>, <f.fainelli@gmail.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     Horatiu Vultur <horatiu.vultur@microchip.com>
-Subject: [PATCH v3 2/2] net: mscc: Implement promisc mode.
-Date:   Thu, 29 Aug 2019 11:22:29 +0200
-Message-ID: <1567070549-29255-3-git-send-email-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567070549-29255-1-git-send-email-horatiu.vultur@microchip.com>
-References: <1567070549-29255-1-git-send-email-horatiu.vultur@microchip.com>
+        Thu, 29 Aug 2019 05:23:18 -0400
+X-UUID: ad62e95182944543bf4a72eb92fb8241-20190829
+X-UUID: ad62e95182944543bf4a72eb92fb8241-20190829
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1471104585; Thu, 29 Aug 2019 17:23:09 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 29 Aug 2019 17:23:07 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 29 Aug 2019 17:23:06 +0800
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Biju Das <biju.das@bp.renesas.com>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+        Li Jun <jun.li@nxp.com>,
+        Badhri Jagan Sridharan <badhri@google.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Min Guo <min.guo@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nagarjuna Kristam <nkristam@nvidia.com>
+Subject: [PATCH next v11 02/11] dt-bindings: connector: add optional properties for Type-B
+Date:   Thu, 29 Aug 2019 17:22:29 +0800
+Message-ID: <1567070558-29417-3-git-send-email-chunfeng.yun@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1567070558-29417-1-git-send-email-chunfeng.yun@mediatek.com>
+References: <1567070558-29417-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 9C2EC96B8B363E71A50C5F9C5D790CC677A301C1E33EDD6A18BE8FEB14A903AF2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a port is added to the bridge, the port is added in promisc mode. But
-the HW is capable of switching the frames therefore is not needed for the
-port to be added in promisc mode. In case a user space application requires
-for the port to enter promisc mode then is it needed to enter the promisc
-mode.
+Add id-gpios, vbus-gpios, vbus-supply and pinctrl properties for
+usb-b-connector
 
-Therefore listen in when the promiscuity on a dev is change and when the
-port enters or leaves a bridge. Having this information it is possible to
-know when to set the port in promisc mode and when not:
-If the port is part of bridge and promiscuity > 1 or if the port is not
-part of bridge and promiscuity is > 0 then add then add the port in promisc
-mode otherwise don't.
-
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/net/ethernet/mscc/ocelot.c | 47 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+v11 changes:
+ 1. add Reviewed-by Linus
 
-diff --git a/drivers/net/ethernet/mscc/ocelot.c b/drivers/net/ethernet/mscc/ocelot.c
-index 4d1bce4..292fcc1 100644
---- a/drivers/net/ethernet/mscc/ocelot.c
-+++ b/drivers/net/ethernet/mscc/ocelot.c
-@@ -1294,6 +1294,37 @@ static void ocelot_port_attr_mc_set(struct ocelot_port *port, bool mc)
- 	ocelot_write_gix(ocelot, val, ANA_PORT_CPU_FWD_CFG, port->chip_port);
- }
+v6~v10 no changes
+
+v5 changes:
+ 1. add reviewed by Rob
+
+v4 no changes
+
+v3 changes:
+ 1. add GPIO direction, and use fixed-regulator for GPIO controlled
+    VBUS regulator suggested by Rob;
+
+v2 changes:
+ 1. describe more clear for vbus-gpios and vbus-supply suggested by Hans
+---
+ .../bindings/connector/usb-connector.txt           | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/connector/usb-connector.txt b/Documentation/devicetree/bindings/connector/usb-connector.txt
+index cef556d4e5ee..d357987181ee 100644
+--- a/Documentation/devicetree/bindings/connector/usb-connector.txt
++++ b/Documentation/devicetree/bindings/connector/usb-connector.txt
+@@ -17,6 +17,20 @@ Optional properties:
+ - self-powered: Set this property if the usb device that has its own power
+   source.
  
-+static void ocelot_port_attr_promisc_set(struct ocelot_port *port,
-+					 unsigned int promisc,
-+					 bool is_bridge_port)
-+{
-+	struct ocelot *ocelot = port->ocelot;
-+	u32 val;
++Optional properties for usb-b-connector:
++- id-gpios: an input gpio for USB ID pin.
++- vbus-gpios: an input gpio for USB VBUS pin, used to detect presence of
++  VBUS 5V.
++  see gpio/gpio.txt.
++- vbus-supply: a phandle to the regulator for USB VBUS if needed when host
++  mode or dual role mode is supported.
++  Particularly, if use an output GPIO to control a VBUS regulator, should
++  model it as a regulator.
++  see regulator/fixed-regulator.yaml
++- pinctrl-names : a pinctrl state named "default" is optional
++- pinctrl-0 : pin control group
++  see pinctrl/pinctrl-bindings.txt
 +
-+	val = ocelot_read_gix(ocelot, ANA_PORT_CPU_FWD_CFG, port->chip_port);
-+
-+	/* When a port is added to a bridge, the port is added in promisc mode,
-+	 * by calling the function 'ndo_set_rx_mode'. But the HW is capable
-+	 * of switching the frames therefore is not needed for the port to
-+	 * enter in promisc mode.
-+	 * But a port needs to be added in promisc mode if an application
-+	 * requires it(pcap library). Therefore listen when the
-+	 * dev->promiscuity is change and when the port is added or removed from
-+	 * the bridge. Using this information, calculate if the promisc mode
-+	 * is required in the following way:
-+	 */
-+	if (!is_bridge_port && promisc > 0) {
-+		val |= ANA_PORT_CPU_FWD_CFG_CPU_SRC_COPY_ENA;
-+	} else {
-+		if (is_bridge_port && promisc > 1)
-+			val |= ANA_PORT_CPU_FWD_CFG_CPU_SRC_COPY_ENA;
-+		else
-+			val &= ~(ANA_PORT_CPU_FWD_CFG_CPU_SRC_COPY_ENA);
-+	}
-+
-+	ocelot_write_gix(ocelot, val, ANA_PORT_CPU_FWD_CFG, port->chip_port);
-+}
-+
- static int ocelot_port_attr_set(struct net_device *dev,
- 				const struct switchdev_attr *attr,
- 				struct switchdev_trans *trans)
-@@ -1316,6 +1347,10 @@ static int ocelot_port_attr_set(struct net_device *dev,
- 	case SWITCHDEV_ATTR_ID_BRIDGE_MC_DISABLED:
- 		ocelot_port_attr_mc_set(ocelot_port, !attr->u.mc_disabled);
- 		break;
-+	case SWITCHDEV_ATTR_ID_PORT_PROMISCUITY:
-+		ocelot_port_attr_promisc_set(ocelot_port, dev->promiscuity,
-+					     netif_is_bridge_port(dev));
-+		break;
- 	default:
- 		err = -EOPNOTSUPP;
- 		break;
-@@ -1688,6 +1723,18 @@ static int ocelot_netdevice_port_event(struct net_device *dev,
- 
- 			ocelot_vlan_port_apply(ocelot_port->ocelot,
- 					       ocelot_port);
-+
-+			/* In case the port is added or removed from the bridge
-+			 * is it needed to recaulculate the promiscuity. The
-+			 * reason is that when a port leaves the bridge first
-+			 * it decrease the promiscuity and then the flag
-+			 * IFF_BRIDGE_PORT is removed from dev. Therefor the
-+			 * function ocelot_port_attr_promisc is called with
-+			 * the wrong arguments.
-+			 */
-+			ocelot_port_attr_promisc_set(ocelot_port,
-+						     dev->promiscuity,
-+						     info->linking);
- 		}
- 		if (netif_is_lag_master(info->upper_dev)) {
- 			if (info->linking)
+ Optional properties for usb-c-connector:
+ - power-role: should be one of "source", "sink" or "dual"(DRP) if typec
+   connector has power support.
 -- 
-2.7.4
+2.23.0
 
