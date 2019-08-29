@@ -2,100 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41D15A29EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:42:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EFC8A29FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:45:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbfH2WmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 18:42:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58156 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbfH2WmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:42:23 -0400
-Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E98322CF5;
-        Thu, 29 Aug 2019 22:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567118542;
-        bh=jsdNyMNS/9pCKUS4waHlGlAetK7kzg37QE3T5eJP7R4=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-        b=sZ3f60S6o/hx1D+PzQj9Usp9jWfLr+K8KaWvP5+V3mJz4L40jUh100neirWk+vVmj
-         YKlbuibzZMwhUulE4H2bjLpkf4FOc80VYWYDgzKFyGxmUJuS8zlad8T1Z6ieOmqxJE
-         qDNi4a4/0L5kh0AgFCnknxJrA67Oa2Q1AxnuqogU=
-Date:   Thu, 29 Aug 2019 15:42:21 -0700 (PDT)
-From:   Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
-To:     Christoph Hellwig <hch@lst.de>
-cc:     Stefano Stabellini <sstabellini@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/11] xen: remove the exports for
- xen_{create,destroy}_contiguous_region
-In-Reply-To: <20190826121944.515-6-hch@lst.de>
-Message-ID: <alpine.DEB.2.21.1908281459000.8175@sstabellini-ThinkPad-T480s>
-References: <20190826121944.515-1-hch@lst.de> <20190826121944.515-6-hch@lst.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1728207AbfH2Wpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 18:45:34 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36198 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727907AbfH2Wpe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:45:34 -0400
+Received: by mail-ot1-f67.google.com with SMTP id k18so5114914otr.3;
+        Thu, 29 Aug 2019 15:45:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z3MZ8AyPdUYVrg2y3uydcIMZSUELqZaas3HS02wvz+I=;
+        b=QNmbk7txwQ1MthXWZUmUSeJcgrZpiFd7oE3QwnzIf5N+gRLhLJVs63yqSSAeg/gp/7
+         5oTG+pdXyHFNMPYpdANSNyyDm7/kAnDqoq+/mkD58ihey18iB/MZ6Lrb6GkKuGqpq9yd
+         zHK+HEs+WUvkFi6AK14Md6EnaL2F5VSeI1yAqj4AQCQBi067RGo0yay9AdXvpuQ0K0Es
+         mKEdpwa0PVlU2iGms/zmhRhzTIiNAO6ySIKlOxJUSqKFl3FcCpfwNhC20quEqk56YdPl
+         hJ9qvJtrWYLsV6OggEm8K+zj4nFTdCBFiNtKp/vyabwVzK9UnM4QsNrzjp+e1Aa9g1Iv
+         BsYA==
+X-Gm-Message-State: APjAAAXexBysOdpmNum7CCjRD56chxw71QxSRKH+yvt1tclSYZLLzrOX
+        ni5xHE54tGNgA5zxqYVnmemIs+I=
+X-Google-Smtp-Source: APXvYqw08hxUksZnk+Z/aXJB+kDBH9rNUQIyw+xfm7lS1bkszIUlI8PcYNTsMz6OZ0Lj4Fh9S9QXRQ==
+X-Received: by 2002:a9d:5601:: with SMTP id e1mr10326552oti.370.1567118732666;
+        Thu, 29 Aug 2019 15:45:32 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 63sm1280975otr.75.2019.08.29.15.45.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 15:45:31 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 17:45:31 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     megous@megous.com
+Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-bluetooth@vger.kernel.org, Ondrej Jirman <megous@megous.com>
+Subject: Re: [RESEND PATCH 1/5] dt-bindings: net: Add compatible for
+ BCM4345C5 bluetooth device
+Message-ID: <20190829224531.GA747@bogus>
+References: <20190823103139.17687-1-megous@megous.com>
+ <20190823103139.17687-2-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190823103139.17687-2-megous@megous.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Aug 2019, Christoph Hellwig wrote:
-> These routines are only used by swiotlb-xen, which cannot be modular.
+On Fri, 23 Aug 2019 12:31:35 +0200, megous@megous.com wrote:
+> From: Ondrej Jirman <megous@megous.com>
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
-
-
+> This is present in the AP6526 WiFi/Bluetooth 5.0 module.
+> 
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
 > ---
->  arch/arm/xen/mm.c     | 2 --
->  arch/x86/xen/mmu_pv.c | 2 --
->  2 files changed, 4 deletions(-)
+>  Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/arch/arm/xen/mm.c b/arch/arm/xen/mm.c
-> index 9b3a6c0ca681..b7d53415532b 100644
-> --- a/arch/arm/xen/mm.c
-> +++ b/arch/arm/xen/mm.c
-> @@ -155,13 +155,11 @@ int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
->  	*dma_handle = pstart;
->  	return 0;
->  }
-> -EXPORT_SYMBOL_GPL(xen_create_contiguous_region);
->  
->  void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int order)
->  {
->  	return;
->  }
-> -EXPORT_SYMBOL_GPL(xen_destroy_contiguous_region);
->  
->  int __init xen_mm_init(void)
->  {
-> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-> index 26e8b326966d..c8dbee62ec2a 100644
-> --- a/arch/x86/xen/mmu_pv.c
-> +++ b/arch/x86/xen/mmu_pv.c
-> @@ -2625,7 +2625,6 @@ int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
->  	*dma_handle = virt_to_machine(vstart).maddr;
->  	return success ? 0 : -ENOMEM;
->  }
-> -EXPORT_SYMBOL_GPL(xen_create_contiguous_region);
->  
->  void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int order)
->  {
-> @@ -2660,7 +2659,6 @@ void xen_destroy_contiguous_region(phys_addr_t pstart, unsigned int order)
->  
->  	spin_unlock_irqrestore(&xen_reservation_lock, flags);
->  }
-> -EXPORT_SYMBOL_GPL(xen_destroy_contiguous_region);
->  
->  static noinline void xen_flush_tlb_all(void)
->  {
-> -- 
-> 2.20.1
-> 
+
+Acked-by: Rob Herring <robh@kernel.org>
