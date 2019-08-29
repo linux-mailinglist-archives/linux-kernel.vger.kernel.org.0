@@ -2,152 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1532A215A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:51:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57259A2173
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:52:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbfH2QvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:51:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51460 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726973AbfH2QvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:51:15 -0400
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C399D23404;
-        Thu, 29 Aug 2019 16:51:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567097473;
-        bh=pq0GhKU46RrXmGHvJIz30TT4pz3IJZ1TJm+ViEdFWA0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=o6/1mtIqrrR6T7me9poL5iZetsESqc4Cbf6otJ0M/FH05hzqbNryL3rqW1SDMUu/U
-         PmoXbLr0xiHT3i8hqyYZo3GtC1NXe4LJNBXBonfjgJyxzFG2Pdgkv2s0i2otFDvFd7
-         FkpyVzxayL5cOiyg57xqutd8+dWy3DP6oarqEEyQ=
-Received: by mail-qt1-f178.google.com with SMTP id u34so4445387qte.2;
-        Thu, 29 Aug 2019 09:51:13 -0700 (PDT)
-X-Gm-Message-State: APjAAAXkkakvyiy3nuSP3c534mO7cBnskrW9WDFIxLAzO5FaepO5lWjP
-        9Nfb/kvIyi6WRnPjVklazeqelbKTyVhrcYysHA==
-X-Google-Smtp-Source: APXvYqx88vkppzQVgopkkJErHz6eK6IxHyPQD9TerBYZiF/oFpGMsL3uvtJP05UlabXYWftjosC0xsv140FrEy7XrwU=
-X-Received: by 2002:ac8:368a:: with SMTP id a10mr10808259qtc.143.1567097472930;
- Thu, 29 Aug 2019 09:51:12 -0700 (PDT)
+        id S1728141AbfH2Qw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:52:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37824 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727565AbfH2Qw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 12:52:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4C677AF95;
+        Thu, 29 Aug 2019 16:52:24 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 18:52:18 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     "Singh, Brijesh" <brijesh.singh@amd.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 10/11] mm: x86: Invoke hypercall when page encryption
+ status is changed
+Message-ID: <20190829165218.GD2132@zn.tnic>
+References: <20190710201244.25195-1-brijesh.singh@amd.com>
+ <20190710201244.25195-11-brijesh.singh@amd.com>
 MIME-Version: 1.0
-References: <20190829074603.70424-1-saravanak@google.com> <20190829074603.70424-3-saravanak@google.com>
-In-Reply-To: <20190829074603.70424-3-saravanak@google.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 29 Aug 2019 11:51:02 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ7U-kXZ9zYY+Appkh_D76oU+qzUOGz-2Zq05r3nZtCBw@mail.gmail.com>
-Message-ID: <CAL_JsqJ7U-kXZ9zYY+Appkh_D76oU+qzUOGz-2Zq05r3nZtCBw@mail.gmail.com>
-Subject: Re: [PATCH v10 2/7] of: property: Add functional dependency link from
- DT bindings
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-acpi@vger.kernel.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        David Collins <collinsd@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190710201244.25195-11-brijesh.singh@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 2:46 AM Saravana Kannan <saravanak@google.com> wrote:
->
-> Add device links after the devices are created (but before they are
-> probed) by looking at common DT bindings like clocks and
-> interconnects.
->
-> Automatically adding device links for functional dependencies at the
-> framework level provides the following benefits:
->
-> - Optimizes device probe order and avoids the useless work of
->   attempting probes of devices that will not probe successfully
->   (because their suppliers aren't present or haven't probed yet).
->
->   For example, in a commonly available mobile SoC, registering just
->   one consumer device's driver at an initcall level earlier than the
->   supplier device's driver causes 11 failed probe attempts before the
->   consumer device probes successfully. This was with a kernel with all
->   the drivers statically compiled in. This problem gets a lot worse if
->   all the drivers are loaded as modules without direct symbol
->   dependencies.
->
-> - Supplier devices like clock providers, interconnect providers, etc
->   need to keep the resources they provide active and at a particular
->   state(s) during boot up even if their current set of consumers don't
->   request the resource to be active. This is because the rest of the
->   consumers might not have probed yet and turning off the resource
->   before all the consumers have probed could lead to a hang or
->   undesired user experience.
->
->   Some frameworks (Eg: regulator) handle this today by turning off
->   "unused" resources at late_initcall_sync and hoping all the devices
->   have probed by then. This is not a valid assumption for systems with
->   loadable modules. Other frameworks (Eg: clock) just don't handle
->   this due to the lack of a clear signal for when they can turn off
->   resources. This leads to downstream hacks to handle cases like this
->   that can easily be solved in the upstream kernel.
->
->   By linking devices before they are probed, we give suppliers a clear
->   count of the number of dependent consumers. Once all of the
->   consumers are active, the suppliers can turn off the unused
->   resources without making assumptions about the number of consumers.
->
-> By default we just add device-links to track "driver presence" (probe
-> succeeded) of the supplier device. If any other functionality provided
-> by device-links are needed, it is left to the consumer/supplier
-> devices to change the link when they probe.
->
-> kbuild test robot reported clang error about missing const
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+On Wed, Jul 10, 2019 at 08:13:11PM +0000, Singh, Brijesh wrote:
+
+> Subject: Re: [PATCH v3 10/11] mm: x86: Invoke hypercall when page encryption status is changed
+
+Subject prefix: "x86/mm: Invoke ..."
+
+git log <filename> would usually show you how the prefixing should look
+like.
+
+> Invoke a hypercall when a memory region is changed from encrypted ->
+> decrypted and vice versa. Hypervisor need to know the page encryption
+> status during the guest migration.
+> 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+> Cc: Joerg Roedel <joro@8bytes.org>
+> Cc: Borislav Petkov <bp@suse.de>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: x86@kernel.org
+> Cc: kvm@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
 > ---
->  .../admin-guide/kernel-parameters.rst         |   1 +
->  .../admin-guide/kernel-parameters.txt         |   6 +
->  drivers/of/property.c                         | 241 ++++++++++++++++++
->  3 files changed, 248 insertions(+)
-
-
-> +static int of_link_to_phandle(struct device *dev, struct device_node *sup_np)
+>  arch/x86/include/asm/mem_encrypt.h |  3 ++
+>  arch/x86/mm/mem_encrypt.c          | 45 +++++++++++++++++++++++++++++-
+>  arch/x86/mm/pageattr.c             | 15 ++++++++++
+>  3 files changed, 62 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/mem_encrypt.h b/arch/x86/include/asm/mem_encrypt.h
+> index 0c196c47d621..6e654ab5a8e4 100644
+> --- a/arch/x86/include/asm/mem_encrypt.h
+> +++ b/arch/x86/include/asm/mem_encrypt.h
+> @@ -94,4 +94,7 @@ extern char __start_bss_decrypted[], __end_bss_decrypted[], __start_bss_decrypte
+>  
+>  #endif	/* __ASSEMBLY__ */
+>  
+> +extern void set_memory_enc_dec_hypercall(unsigned long vaddr,
+> +					 unsigned long size, bool enc);
+> +
+>  #endif	/* __X86_MEM_ENCRYPT_H__ */
+> diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
+> index e0df96fdfe46..f3fda1de2869 100644
+> --- a/arch/x86/mm/mem_encrypt.c
+> +++ b/arch/x86/mm/mem_encrypt.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/dma-direct.h>
+>  #include <linux/swiotlb.h>
+>  #include <linux/mem_encrypt.h>
+> +#include <linux/kvm_para.h>
+>  
+>  #include <asm/tlbflush.h>
+>  #include <asm/fixmap.h>
+> @@ -25,6 +26,7 @@
+>  #include <asm/processor-flags.h>
+>  #include <asm/msr.h>
+>  #include <asm/cmdline.h>
+> +#include <asm/kvm_para.h>
+>  
+>  #include "mm_internal.h"
+>  
+> @@ -192,6 +194,45 @@ void __init sme_early_init(void)
+>  		swiotlb_force = SWIOTLB_FORCE;
+>  }
+>  
+> +void set_memory_enc_dec_hypercall(unsigned long vaddr, unsigned long sz, bool enc)
 > +{
-> +       struct platform_device *sup_dev;
-> +       u32 dl_flags = DL_FLAG_AUTOPROBE_CONSUMER;
-> +       int ret = 0;
-> +       struct device_node *tmp_np = sup_np;
+> +	unsigned long vaddr_end, vaddr_next;
 > +
-> +       of_node_get(sup_np);
-> +       /*
-> +        * Find the device node that contains the supplier phandle.  It may be
-> +        * @sup_np or it may be an ancestor of @sup_np.
-> +        */
-> +       while (sup_np && !of_find_property(sup_np, "compatible", NULL))
-> +               sup_np = of_get_next_parent(sup_np);
-> +       if (!sup_np) {
-> +               dev_dbg(dev, "Not linking to %pOFP - No device\n", tmp_np);
-> +               return -ENODEV;
-> +       }
+> +	vaddr_end = vaddr + sz;
 > +
-> +       /*
-> +        * Don't allow linking a device node as a consumer of one of its
-> +        * descendant nodes. By definition, a child node can't be a functional
-> +        * dependency for the parent node.
-> +        */
-> +       if (!of_is_ancestor_of(dev->of_node, sup_np)) {
-> +               dev_dbg(dev, "Not linking to %pOFP - is descendant\n", sup_np);
-> +               of_node_put(sup_np);
-> +               return -EINVAL;
-> +       }
-> +       sup_dev = of_find_device_by_node(sup_np);
+> +	for (; vaddr < vaddr_end; vaddr = vaddr_next) {
+> +		int psize, pmask, level;
+> +		unsigned long pfn;
+> +		pte_t *kpte;
+> +
+> +		kpte = lookup_address(vaddr, &level);
+> +		if (!kpte || pte_none(*kpte))
+> +			return;
+> +
+> +		switch (level) {
+> +		case PG_LEVEL_4K:
+> +			pfn = pte_pfn(*kpte);
+> +			break;
+> +		case PG_LEVEL_2M:
+> +			pfn = pmd_pfn(*(pmd_t *)kpte);
+> +			break;
+> +		case PG_LEVEL_1G:
+> +			pfn = pud_pfn(*(pud_t *)kpte);
+> +			break;
+> +		default:
+> +			return;
+> +		}
+> +
+> +		psize = page_level_size(level);
+> +		pmask = page_level_mask(level);
+> +
+> +		kvm_sev_hypercall3(KVM_HC_PAGE_ENC_STATUS,
+> +				   pfn << PAGE_SHIFT, psize >> PAGE_SHIFT, enc);
+> +
+> +		vaddr_next = (vaddr & pmask) + psize;
+> +	}
+> +}
+> +
+>  static void __init __set_clr_pte_enc(pte_t *kpte, int level, bool enc)
+>  {
+>  	pgprot_t old_prot, new_prot;
+> @@ -249,12 +290,13 @@ static void __init __set_clr_pte_enc(pte_t *kpte, int level, bool enc)
+>  static int __init early_set_memory_enc_dec(unsigned long vaddr,
+>  					   unsigned long size, bool enc)
+>  {
+> -	unsigned long vaddr_end, vaddr_next;
+> +	unsigned long vaddr_end, vaddr_next, start;
+>  	unsigned long psize, pmask;
+>  	int split_page_size_mask;
+>  	int level, ret;
+>  	pte_t *kpte;
+>  
+> +	start = vaddr;
+>  	vaddr_next = vaddr;
+>  	vaddr_end = vaddr + size;
+>  
+> @@ -309,6 +351,7 @@ static int __init early_set_memory_enc_dec(unsigned long vaddr,
+>  
+>  	ret = 0;
+>  
+> +	set_memory_enc_dec_hypercall(start, size, enc);
 
-What if the supplier isn't a platform_device? A regulator supply is
-quite likely not.
+That function iterates the same way over the virtual addresses as
+early_set_memory_enc_dec() does. Please call kvm_sev_hypercall3(),
+wrapped of course, directly from early_set_memory_enc_dec(), for
+each iteration of the loop instead of iterating over all the virtual
+addresses a second time in set_memory_enc_dec_hypercall().
 
-Rob
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 247165, AG München
