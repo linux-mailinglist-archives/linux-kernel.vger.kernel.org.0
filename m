@@ -2,91 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E40C0A1B7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE715A1B7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:32:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfH2Nbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:31:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41930 "EHLO mga02.intel.com"
+        id S1727398AbfH2Ncm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:32:42 -0400
+Received: from mga05.intel.com ([192.55.52.43]:4996 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfH2Nbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:31:40 -0400
+        id S1727066AbfH2Ncm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 09:32:42 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 06:31:39 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 06:32:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,443,1559545200"; 
-   d="scan'208";a="192957950"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 29 Aug 2019 06:31:39 -0700
-Received: from [10.251.1.23] (kliang2-mobl.ccr.corp.intel.com [10.251.1.23])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 93B4458046E;
-        Thu, 29 Aug 2019 06:31:38 -0700 (PDT)
-Subject: Re: [RESEND PATCH V3 3/8] perf/x86/intel: Support hardware TopDown
- metrics
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com
-References: <20190826144740.10163-1-kan.liang@linux.intel.com>
- <20190826144740.10163-4-kan.liang@linux.intel.com>
- <20190828151921.GD17205@worktop.programming.kicks-ass.net>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <fd95a255-4499-2907-8af9-d340f157da68@linux.intel.com>
-Date:   Thu, 29 Aug 2019 09:31:37 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+   d="scan'208";a="197806262"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Aug 2019 06:32:40 -0700
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v2] software node: Fix use of potentially uninitialized variables
+Date:   Thu, 29 Aug 2019 16:32:39 +0300
+Message-Id: <20190829133239.77541-1-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20190828151921.GD17205@worktop.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+reported by smatch:
+drivers/base/swnode.c:656 software_node_find_by_name() error: uninitialized symbol 'swnode'.
+drivers/base/swnode.c:71 software_node_to_swnode() error: uninitialized symbol 'swnode'.
 
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---
+Hi,
 
-On 8/28/2019 11:19 AM, Peter Zijlstra wrote:
->> +static int icl_set_topdown_event_period(struct perf_event *event)
->> +{
->> +	struct hw_perf_event *hwc = &event->hw;
->> +	s64 left = local64_read(&hwc->period_left);
->> +
->> +	/*
->> +	 * Clear PERF_METRICS and Fixed counter 3 in initialization.
->> +	 * After that, both MSRs will be cleared for each read.
->> +	 * Don't need to clear them again.
->> +	 */
->> +	if (left == x86_pmu.max_period) {
->> +		wrmsrl(MSR_CORE_PERF_FIXED_CTR3, 0);
->> +		wrmsrl(MSR_PERF_METRICS, 0);
->> +		local64_set(&hwc->period_left, 0);
->> +	}
-> This really doesn't make sense to me; if you set FIXED_CTR3 := 0, you'll
-> never trigger the overflow there; this then seems to suggest the actual
-> counter value is irrelevant. Therefore you don't actually need this.
-> 
+I had separate patch for both errors in the first version.
 
-Could you please elaborate on why initialization to 0 never triggers an 
-overflow?
-As of my understanding, initialization to 0 only means that it will take 
-more time than initialization to -max_period (0x8000 0000 0001) to 
-trigger an overflow.
+thanks,
 
-Maybe 0 is too tricky. We can set the initial value to 1.
-I think the bottom line is that we need a small initial value for 
-FIXED_CTR3 here.
-PERF_METRICS reports an 8bit integer fraction which is something like 
-0xff * internal counters / FIXCTR3.
-The internal counters only start counting from 0. (SW cannot set an 
-arbitrary initial value for internal counters.)
-If the initial value of FIXED_CTR3 is too big, PERF_METRICS could always 
-remain constant, e.g. 0.
+---
+ drivers/base/swnode.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Kan
+diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+index ee2a405cca9a..a1f3f0994f9f 100644
+--- a/drivers/base/swnode.c
++++ b/drivers/base/swnode.c
+@@ -51,7 +51,7 @@ EXPORT_SYMBOL_GPL(is_software_node);
+ static struct swnode *
+ software_node_to_swnode(const struct software_node *node)
+ {
+-	struct swnode *swnode;
++	struct swnode *swnode = NULL;
+ 	struct kobject *k;
+ 
+ 	if (!node)
+@@ -633,7 +633,7 @@ static const struct fwnode_operations software_node_ops = {
+ const struct software_node *
+ software_node_find_by_name(const struct software_node *parent, const char *name)
+ {
+-	struct swnode *swnode;
++	struct swnode *swnode = NULL;
+ 	struct kobject *k;
+ 
+ 	if (!name)
+-- 
+2.23.0.rc1
+
