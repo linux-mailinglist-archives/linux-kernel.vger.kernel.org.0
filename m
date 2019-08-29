@@ -2,150 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9BF6A1BB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31AA0A1BBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:44:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfH2Nnc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:43:32 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34092 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfH2Nnc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:43:32 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b24so2105106pfp.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 06:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8O7lhnhs/GhozIcB1ugTpsDb2mr6pWMLBUeErvb3feM=;
-        b=nwXjlFGVUx1cFzlJ7gEBCuIaiKMJcA+hUBAomv/Z4pCZo4mPx8YhpLRN3g26xfxJ+7
-         9QRRfuJ7BfK9GgZinrN9mQAIurv2wZAQfQigVFvx9dR3umMCZnH9VgYVGTTrPoS+CKMs
-         aCTbJPRHsqOTXUNEwQh8uxQvWFhl3L94cGvok=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8O7lhnhs/GhozIcB1ugTpsDb2mr6pWMLBUeErvb3feM=;
-        b=YkLpWvT4gb+3vE37CDIkOb/rfeLNzd+EzNdJKKRmInWObUGqvawB6Z2EynHONx+A+7
-         992EQ9cdCJd0eWetzCS8JWd1GjzhJOMTRZd+PJTHRg39iJxQWM35osRbDFxj7eq6gceG
-         ohZva9gwOsS9xl/8hKbDNllgKFmxyegxMzssfsOUfrTRIgRPdvswXz8REa0pw1GCaogU
-         fp/YJ9UxsaCSeBtMRqwLu9Yg+/yH9CWJfN7kvPQ+hQiTQnvZEHQjDOsRnKgwsY+MMhyS
-         +ka/kCD3Yd5Y88b0kzu8u0Dk0apeRZkOL0Toigooxf6Hv4sn5kNfFzuneEHhsuxhbwDs
-         GE2w==
-X-Gm-Message-State: APjAAAWZJrs0IsJZLOP8fA2fqr0X1DwA3vEBfVRMxQmSLHW47RfXgaSl
-        M+OXdI8x3/wSHw9ZUqKfIgPGeA==
-X-Google-Smtp-Source: APXvYqzli0vhPeOpMg9J8oc5AVk7YRayffyKQ+wOsQHfxscS3A5S77unQugCEhiw9DVCPAWbqOUhXw==
-X-Received: by 2002:a62:64d4:: with SMTP id y203mr11362397pfb.91.1567086211473;
-        Thu, 29 Aug 2019 06:43:31 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id 136sm2961503pfz.123.2019.08.29.06.43.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 06:43:30 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 09:43:29 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Peikan Tsai <peikantsai@gmail.com>
-Cc:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, christian@brauner.io, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] binder: Use kmem_cache for binder_thread
-Message-ID: <20190829134329.GA63638@google.com>
-References: <20190829054953.GA18328@mark-All-Series>
+        id S1727505AbfH2Non (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:44:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49696 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727066AbfH2Nom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 09:44:42 -0400
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 404E92341B;
+        Thu, 29 Aug 2019 13:44:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567086281;
+        bh=mR7GA3c4mGRbLwLDIK+jRuWdNT4gDXNkRRI6mT85V6w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=nO/aoVqieSJBIcG8Q1+Ukaxbr8aB1UPguFn1lMmZhsf/sbrqA+r7ZtvKoOxFOXt6R
+         P6+qGYTzBPWW8jXYLcKpzu2eVYVOPYH4+olE+9leQGrL7R+7OJCID9RsHoB8rEp683
+         srC9yYQYiwILMQRhyzllWwssMBKCbzaeQERBmKGI=
+Received: by mail-qk1-f180.google.com with SMTP id p13so2896557qkg.13;
+        Thu, 29 Aug 2019 06:44:41 -0700 (PDT)
+X-Gm-Message-State: APjAAAV4BKnLNRmqCiKkKnMdJl6ASPZQomiL5Zj0WGH0w16EBhhNwE0s
+        mcQ+QWprhyHJNkM4Doojw1/mBS0Tx9dQ5iKYrA==
+X-Google-Smtp-Source: APXvYqxSE0YabCZbTGJEMY6IRxRqXQltQGwtj+w4DSTunRzVOnwmn8VB0XQkhKwOYkeqn97wvdZAYXR3bCf8AGd6bR0=
+X-Received: by 2002:a37:4941:: with SMTP id w62mr8752360qka.119.1567086280340;
+ Thu, 29 Aug 2019 06:44:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829054953.GA18328@mark-All-Series>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1567078713-29361-1-git-send-email-fabrizio.castro@bp.renesas.com> <1567078713-29361-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1567078713-29361-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 29 Aug 2019 08:44:28 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLikohkWAq7exzCuGfg2yVE1Wx6h7GZFP8-jaL31PLpmA@mail.gmail.com>
+Message-ID: <CAL_JsqLikohkWAq7exzCuGfg2yVE1Wx6h7GZFP8-jaL31PLpmA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: display: Add idk-1110wr binding
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        xu_shunji@hoperun.com, ebiharaml@si-linux.co.jp
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 01:49:53PM +0800, Peikan Tsai wrote:
-> Hi,
-> 
-> The allocated size for each binder_thread is 512 bytes by kzalloc.
-> Because the size of binder_thread is fixed and it's only 304 bytes.
-> It will save 208 bytes per binder_thread when use create a kmem_cache
-> for the binder_thread.
-
-Awesome change and observation!!!
-
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-
-(Another thought: how did you discover this? Are you using some tools to look
-into slab fragmentation?).
-
-thanks,
-
- - Joel
-
-> Signed-off-by: Peikan Tsai <peikantsai@gmail.com>
+On Thu, Aug 29, 2019 at 6:38 AM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+>
+> Add binding for the idk-1110wr LVDS panel from Advantech.
+>
+> Some panel-specific documentation can be found here:
+> https://buy.advantech.eu/Displays/Embedded-LCD-Kits-LCD-Kit-Modules/model-IDK-1110WR-55WSA1E.htm
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 > ---
->  drivers/android/binder.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index dc1c83eafc22..043e0ebd0fe7 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -87,6 +87,8 @@ static struct dentry *binder_debugfs_dir_entry_root;
->  static struct dentry *binder_debugfs_dir_entry_proc;
->  static atomic_t binder_last_id;
-> 
-> +static struct kmem_cache *binder_thread_cachep;
-> +
->  static int proc_show(struct seq_file *m, void *unused);
->  DEFINE_SHOW_ATTRIBUTE(proc);
-> 
-> @@ -4696,14 +4698,15 @@ static struct binder_thread *binder_get_thread(struct binder_proc *proc)
->  	thread = binder_get_thread_ilocked(proc, NULL);
->  	binder_inner_proc_unlock(proc);
->  	if (!thread) {
-> -		new_thread = kzalloc(sizeof(*thread), GFP_KERNEL);
-> +		new_thread = kmem_cache_zalloc(binder_thread_cachep,
-> +					       GFP_KERNEL);
->  		if (new_thread == NULL)
->  			return NULL;
->  		binder_inner_proc_lock(proc);
->  		thread = binder_get_thread_ilocked(proc, new_thread);
->  		binder_inner_proc_unlock(proc);
->  		if (thread != new_thread)
-> -			kfree(new_thread);
-> +			kmem_cache_free(binder_thread_cachep, new_thread);
->  	}
->  	return thread;
->  }
-> @@ -4723,7 +4726,7 @@ static void binder_free_thread(struct binder_thread *thread)
->  	BUG_ON(!list_empty(&thread->todo));
->  	binder_stats_deleted(BINDER_STAT_THREAD);
->  	binder_proc_dec_tmpref(thread->proc);
-> -	kfree(thread);
-> +	kmem_cache_free(binder_thread_cachep, thread);
->  }
-> 
->  static int binder_thread_release(struct binder_proc *proc,
-> @@ -6095,6 +6098,12 @@ static int __init binder_init(void)
->  	if (ret)
->  		return ret;
-> 
-> +	binder_thread_cachep = kmem_cache_create("binder_thread",
-> +						 sizeof(struct binder_thread),
-> +						 0, 0, NULL);
-> +	if (!binder_thread_cachep)
-> +		return -ENOMEM;
-> +
->  	atomic_set(&binder_transaction_log.cur, ~0U);
->  	atomic_set(&binder_transaction_log_failed.cur, ~0U);
-> 
-> @@ -6167,6 +6176,7 @@ static int __init binder_init(void)
-> 
->  err_alloc_device_names_failed:
->  	debugfs_remove_recursive(binder_debugfs_dir_entry_root);
-> +	kmem_cache_destroy(binder_thread_cachep);
-> 
->  	return ret;
->  }
-> --
-> 2.17.1
-> 
+> v1->v2:
+> * no change
+>
+>  .../display/panel/advantech,idk-1110wr.yaml        | 69 ++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
+
+Reviewed-by: Rob Herring <robh@kernel.org>
