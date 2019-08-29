@@ -2,101 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA1ACA2A47
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34535A29D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:41:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbfH2WuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 18:50:00 -0400
-Received: from mail.phunq.net ([66.183.183.73]:51320 "EHLO voyager.galaxy"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727686AbfH2WuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:50:00 -0400
-X-Greylist: delayed 1989 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 18:49:59 EDT
-Received: from [172.16.1.14]
-        by voyager.galaxy with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
-        (Exim 4.92.1)
-        (envelope-from <daniel@phunq.net>)
-        id 1i3Sim-00062X-Fo; Thu, 29 Aug 2019 15:16:48 -0700
-From:   Daniel Phillips <daniel@phunq.net>
-Subject: [ANNOUNCE] Three things.
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        daye <daye@dddancer.com>
-Message-ID: <8ccfa9b4-d76c-b25d-7eda-303d8faa0b79@phunq.net>
-Date:   Thu, 29 Aug 2019 15:16:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728146AbfH2WlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 18:41:14 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44873 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfH2WlN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:41:13 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i18so2358735pgl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 15:41:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x6nJOSi4D9t11ZjLGLX1URk37n+Py9rDA9nyBNP0uqE=;
+        b=HiTUd/SAL/dMFGev5Pow+VRZ9ogeTuj6uSem+jheeDsY8X00m4GPx9dtJteiRJ5ftV
+         N1JEqDZN357B7twtttg+p2lqZTrax6Armpdc0727nQz/JwW4ZbBGuMo6DKFkfNNrB3K9
+         1sWt3mInRrjx/9Czgqo/HKnpJktuc6mskEUIU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x6nJOSi4D9t11ZjLGLX1URk37n+Py9rDA9nyBNP0uqE=;
+        b=dE/OOApHT+1qPaG5UGBfUSNbfFbaUUsI+TbpGlO88USHWGIdTX7YAUdrSqwnMBM5aK
+         fATyKbWt7C5pRn8nTrNSH7yjdxRx6xkic1JcPw7Itet9fTU/DGJnHXk82ACNXwX7H7De
+         T02Stz+kaltmYxLAkJsL1RikHPA02+rumHOOjTydoXbjG1PEnmDF2Lj3hecvbnQwCeIJ
+         fjHkiYJxhjlfIFe5qnpRosSFzYlCq88qHsIkyUKiKwg0Vv6epWyqSMPxSG3WwbLXAsX0
+         wO/4QKEwyJpTJt/O5b/mpEvrKsw0rwQ86TtjrzPYMn0HVLJ9lI5uBaAw3zB6CIrGVAZX
+         LEag==
+X-Gm-Message-State: APjAAAUev0Q8aSyLg6caSZ48EbJxSulYceNyLm4e5e/UurEVK8u5UZ2P
+        ThMBGnw9SaWoxCHHOTfLAoiJhjofNZhZnQ==
+X-Google-Smtp-Source: APXvYqzFZVgQNBqCAAUglNY8AFSmHQvLxrgGkto0HqXqXUOxgYjee1fTFryzutevntEo79cvpRevvw==
+X-Received: by 2002:a17:90a:b908:: with SMTP id p8mr12311011pjr.65.1567118472392;
+        Thu, 29 Aug 2019 15:41:12 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id q8sm3882531pjd.28.2019.08.29.15.41.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 15:41:11 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH v6 0/4] tpm: Add driver for cr50
+Date:   Thu, 29 Aug 2019 15:41:06 -0700
+Message-Id: <20190829224110.91103-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi folks, how's it going? Over here, we have been rather busy lately,
-and for the last five years or so to be honest. Today it is my pleasure
-to be able to announce three GPL open source projects:
+This patch series adds support for the the H1 secure microcontroller
+running cr50 firmware found on various recent Chromebooks. This driver
+is necessary to boot into a ChromeOS userspace environment. It
+implements support for several functions, including TPM-like
+functionality over a SPI interface.
 
-1) Shardmap
+The last time this was series sent looks to be [1]. I've looked over the
+patches and review comments and tried to address any feedback that
+Andrey didn't address (really minor things like newlines). I've reworked
+the patches from the last version to layer on top of the existing TPM
+TIS SPI implementation in tpm_tis_spi.c. Hopefully this is more
+palatable than combining the two drivers together into one file.
 
-Shardmap is the next generation directory index developed for Tux3, and
-which we are now offering as a much needed replacement for Ext4 HTree.
-Shardmap meets but usually beats HTree at all scales, has way better
-readdir characteristics, and goes where HTree never did: up into the
-billions of files per directory, with ease. Shardmap also is well on
-its way to becoming a full blown standalone KVS in user space with sub
-microsecond ACID operations in persistent memory.[1]
+Please review so we can get the approach to supporting this device
+sorted out.
 
-Code for Shardmap is here:
+[1] https://lkml.kernel.org/r/1469757314-116169-1-git-send-email-apronin@chromium.org
 
-    https://github.com/danielbot/Shardmap
+TODO:
+ * Add a patch to spit out WARN_ON() when TPM is suspended and some
+   kernel code attempts to use it
+ * Rework the i2c driver per Alexander's comments on v2
 
-2) Teamachine
+Changes from v5 (https://lkml.kernel.org/r/20190828082150.42194-1-swboyd@chromium.org):
+ * Picked up Jarkko's ack/review tags
+ * Fixed bug with irqs happening before completion is initialized
+ * Dropped is_cr50 bool
+ * Moved wake_after to tpm_tis_spi struct
+ * Changed authorship of main cr50 patch to Andrey as I'm just shuffling
+   code here
 
-Teamachine is a direct threaded code virtual machine with a cycle time
-of .7 nanoseconds, which may just make it the fastest interpreter in the
-known universe. Teamachine embeds Shardmap as a set of micro ops. With
-Teamachine you can rapidly set up a set of Shardmap unit tests, or you
-can build a world-beating query engine. Or just kick back and script
-your game engine, the possibilities are endless.
+Changes from v4 (https://lkml.kernel.org/r/20190812223622.73297-1-swboyd@chromium.org):
+ * Dropped the 'pre-transfer' hook patch and added a 'ready' member instead
+ * Combined cr50_spi and tpm_tis_spi into one kernel module
+ * Introduced a swizzle in tpm_tis_spi probe routine to jump to cr50
+   probe path
+ * Moved binding to start of the thread
+ * Picked up Jarkko reviewed-by tag on new flag for suspend/resume
+ * Added a comment to flow control patch indicating what it's all about
 
-Code for Teamachine is here:
+Changes from v3:
+ * Split out hooks into separate patches
+ * Update commit text to not say "libify"
+ * Collapse if statement into one for first patch
+ * Update commit text on first patch to mention flag
+ * Drop TIS_IS_CR50 as it's unused
 
-    https://github.com/danielbot/TeaMachine
+Changes from v2:
+ * Sent khwrng thread patch separately
+ * New patch to expose TPM SPI functionality from tpm_tis_spi.c
+ * Usage of that new patch in cr50 SPI driver
+ * Drop i2c version of cr50 SPI driver for now (will resend later)
+ * New patch to add a TPM chip flag indicating TPM shouldn't be reset
+   over suspend. Allows us to get rid of the cr50 suspend/resume functions
+   that are mostly generic
 
-3) Tux3
+Changes from v1:
+ * Dropped symlink and sysfs patches
+ * Removed 'is_suspended' bits
+ * Added new patch to freeze khwrng thread
+ * Moved binding to google,cr50.txt and added Reviewed-by tag from Rob
 
-Tux3 is still alive, is still maintained against current mainline, and
-is still faster, lighter, and more ACID than any other general purpose
-Linux file system. Inasmuch as other devs have discovered that the same
-issue cited as the blocker for merging Tux3 (get user pages) is also
-problematic for kernel code that is already merged, I propose today that
-we merge Tux3 without further ado, so that we can proceed to develop
-a good solution together as is right, proper and just.
+Cc: Andrey Pronin <apronin@chromium.org>
+Cc: Duncan Laurie <dlaurie@chromium.org>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Guenter Roeck <groeck@chromium.org>
+Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
 
-Code for Tux3 is here:
+Andrey Pronin (2):
+  dt-bindings: tpm: document properties for cr50
+  tpm: tpm_tis_spi: Support cr50 devices
 
-    https://github.com/OGAWAHirofumi/tux3/tree/hirofumi
+Stephen Boyd (2):
+  tpm: Add a flag to indicate TPM power is managed by firmware
+  tpm: tpm_tis_spi: Introduce a flow control callback
 
-Everyone is welcome to join OFTC #tux3 and/or post to:
+ .../bindings/security/tpm/google,cr50.txt     |  19 ++
+ drivers/char/tpm/Makefile                     |   2 +-
+ drivers/char/tpm/cr50_spi.c                   | 321 ++++++++++++++++++
+ drivers/char/tpm/tpm-interface.c              |   8 +-
+ drivers/char/tpm/tpm.h                        |   1 +
+ drivers/char/tpm/tpm_tis_spi.c                | 130 ++++---
+ drivers/char/tpm/tpm_tis_spi.h                |  46 +++
+ 7 files changed, 478 insertions(+), 49 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/security/tpm/google,cr50.txt
+ create mode 100644 drivers/char/tpm/cr50_spi.c
+ create mode 100644 drivers/char/tpm/tpm_tis_spi.h
 
-   http://tux3.org/cgi-bin/mailman/listinfo/tux3
 
-to discuss these things, or anything at all. Fun times. See you there!
+base-commit: 0ecfebd2b52404ae0c54a878c872bb93363ada36
+-- 
+Sent by a computer through tubes
 
-STANDARD DISCLAIMER: SHARDMAP WILL EAT YOUR DATA[2] TEAMACHINE WILL HALT
-YOUR MACHINE AND SET IT ON FIRE. DOWNLOAD AND RUN OF YOUR OWN FREE WILL.
-
-[1] Big shoutout to Yahoo! Japan for supporting Shardmap work.
-
-[2] Tux3 is actually pretty good about not eating your data, but that is
-another thing.
-
-NB: followup posts are in the works re the detailed nature and status of
-Shardmap, Teamachine and Tux3.
-
-Regards,
-
-Daniel
