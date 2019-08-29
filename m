@@ -2,108 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E441A0FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 05:26:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15175A0FF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 05:29:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbfH2D0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 23:26:32 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38199 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbfH2D0b (ORCPT
+        id S1727252AbfH2D3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 23:29:24 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:13912 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbfH2D3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 23:26:31 -0400
-Received: by mail-wr1-f66.google.com with SMTP id e16so1835571wro.5
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 20:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4VXtdUN33mfInmL5wwfclcs21XFuQJDuRee8LI2f6Xo=;
-        b=MEFBjgMlGSuqfcOMN7uFDfidUYJwIBaB1Mtu3zVMqHFfHU9gVzku7oMjjFV5aUw9Kx
-         H2zFI1WGyGQ3nKD0fLm+QiZJiZgdbE6EULlVW064Y7dAg5HGsoNaGeUK0Nw7KbTbTE+R
-         XSWrl0DJE5yh+WMNEYhhifodgWcXjlo4uns2g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4VXtdUN33mfInmL5wwfclcs21XFuQJDuRee8LI2f6Xo=;
-        b=CkKM1q/1ONJL1tK51ixEitiajWYUrNjS+/hLcrha1Qn7ng841GmudwGxc98zrVEM4Y
-         D9fJECUa9BdVEKOT1XyzUtlJrDAPmT+FSRHGP03Gs+Trvg1NaENhlAxspUKnhqdTG/YC
-         lbFAvjFYJckONWc+36UNipBybft9Qq/i1i0hQ5RWpJPxjCL1rZGZepHWEBPtaoWtvbWd
-         yfbx3Bmojw3/YNO4gh1BKNfOPQx/OKl7G2V8h3XC5hSiqIgrw4bbREhkLI63OoWjOeMt
-         8Zmn9TFc2F6R0X50Hwl/GHVhqV4iZPzVeH3rFTsxT6QplXd3tMTaNOeDRhPwv1oY88hg
-         fM9g==
-X-Gm-Message-State: APjAAAXELBxlrTG6GEHazfzWm8tj43QTfzn/60g578LbMIdVmRdVHsmD
-        4tPZ3kZn5B4DQioeu3PImSMvT+MiPkuQCVO/A887kw==
-X-Google-Smtp-Source: APXvYqzBHim1x4cIaQbdne2bFTfS/GBlw3QsCk9quT3L6KA2YVmxiN0FWnixRTTK8IkD+SbUs20wWRp4WD0vpCdq2/E=
-X-Received: by 2002:adf:facc:: with SMTP id a12mr8284203wrs.205.1567049189131;
- Wed, 28 Aug 2019 20:26:29 -0700 (PDT)
+        Wed, 28 Aug 2019 23:29:24 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d6746950001>; Wed, 28 Aug 2019 20:29:25 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 28 Aug 2019 20:29:23 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 28 Aug 2019 20:29:23 -0700
+Received: from [10.2.174.243] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 29 Aug
+ 2019 03:29:22 +0000
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+To:     Ira Weiny <ira.weiny@intel.com>, Dave Chinner <david@fromorbit.com>
+CC:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
+        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <20190821180200.GA5965@iweiny-DESK2.sc.intel.com>
+ <20190821181343.GH8653@ziepe.ca>
+ <20190821185703.GB5965@iweiny-DESK2.sc.intel.com>
+ <20190821194810.GI8653@ziepe.ca>
+ <20190821204421.GE5965@iweiny-DESK2.sc.intel.com>
+ <20190823032345.GG1119@dread.disaster.area> <20190823120428.GA12968@ziepe.ca>
+ <20190824001124.GI1119@dread.disaster.area>
+ <20190824050836.GC1092@iweiny-DESK2.sc.intel.com>
+ <20190826055510.GL1119@dread.disaster.area>
+ <20190829020230.GA18249@iweiny-DESK2.sc.intel.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <3e5c5053-a74a-509c-660c-a6075ed87f11@nvidia.com>
+Date:   Wed, 28 Aug 2019 20:27:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <Pine.LNX.4.44L0.1908281155100.1302-100000@iolanthe.rowland.org> <bac067d344bef4e6fff7862fcad49cdbf4cd4ab5.camel@redhat.com>
-In-Reply-To: <bac067d344bef4e6fff7862fcad49cdbf4cd4ab5.camel@redhat.com>
-From:   Julius Werner <jwerner@chromium.org>
-Date:   Wed, 28 Aug 2019 20:26:15 -0700
-Message-ID: <CAODwPW-+c6Ty_gqEFEaE0YhtutMR2tFnhEFOQre81uyM3mfMVA@mail.gmail.com>
-Subject: Re: [PATCH] usb: storage: Add ums-cros-aoa driver
-To:     Dan Williams <dcbw@redhat.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Julius Werner <jwerner@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        USB Storage list <usb-storage@lists.one-eyed-alien.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190829020230.GA18249@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1567049365; bh=U2zxSkDmfFQFUW8ITCuFuqzogPoHzY3eUcatrjlA5a8=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=br5k4UQ1c3ttyAEINc727xSgtnH39dAWjWSCaXGTLwro1CU1YneuoppDXhLMmA4uD
+         aDQ3MTA6HOZLsrWjeRsmclmc+9VuPFDc3mjUYq5LVFTaiCoeFJ5fy4G3b324J/gsUa
+         1/2Te/7AfanbM290SQcF7x/TWeee+3u45vwvCyED11F/dogTN4V6SByz3yIloOJ3jT
+         cLvs8UFo3vWu0RzGtWuxTuxbTth7a/DwXWriVQxLCn7BVTFeq34iQK1UkdryZj/+oB
+         pVGut1zha9UABjnIclmX/RBYsT1gxtKg14OYbEVTjMUr+uzTVtNuUOwSxrEb1ZPXtX
+         CMDU/9O7s997Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Thanks for the reviews... I'll get back to the kernel code details
-after double-checking if this can be done from userspace.)
+On 8/28/19 7:02 PM, Ira Weiny wrote:
+> On Mon, Aug 26, 2019 at 03:55:10PM +1000, Dave Chinner wrote:
+>> On Fri, Aug 23, 2019 at 10:08:36PM -0700, Ira Weiny wrote:
+>>> On Sat, Aug 24, 2019 at 10:11:24AM +1000, Dave Chinner wrote:
+>>>> On Fri, Aug 23, 2019 at 09:04:29AM -0300, Jason Gunthorpe wrote:
+...
+>>
+>> Sure, that part works because the struct file is passed. It doesn't
+>> end up with the same fd number in the other process, though.
+>>
+>> The issue is that layout leases need to notify userspace when they
+>> are broken by the kernel, so a lease stores the owner pid/tid in the
+>> file->f_owner field via __f_setown(). It also keeps a struct fasync
+>> attached to the file_lock that records the fd that the lease was
+>> created on.  When a signal needs to be sent to userspace for that
+>> lease, we call kill_fasync() and that walks the list of fasync
+>> structures on the lease and calls:
+>>
+>> 	send_sigio(fown, fa->fa_fd, band);
+>>
+>> And it does for every fasync struct attached to a lease. Yes, a
+>> lease can track multiple fds, but it can only track them in a single
+>> process context. The moment the struct file is shared with another
+>> process, the lease is no longer capable of sending notifications to
+>> all the lease holders.
+>>
+>> Yes, you can change the owning process via F_SETOWNER, but that's
+>> still only a single process context, and you can't change the fd in
+>> the fasync list. You can add new fd to an existing lease by calling
+>> F_SETLEASE on the new fd, but you still only have a single process
+>> owner context for signal delivery.
+>>
+>> As such, leases that require callbacks to userspace are currently
+>> only valid within the process context the lease was taken in.
+> 
+> But for long term pins we are not requiring callbacks.
+> 
 
-> > Besides, what's wrong with binding to devices that weren't switched
-> > into AOA mode?  Would that just provoke a bunch of unnecessary error
-> > messages?
+Hi Ira,
 
-It's not about devices that aren't switched into AOA mode... it's
-about devices that are switched into AOA mode for other reasons
-(connecting to other Android apps). I don't think a kernel driver like
-that exists today, but it could be added, or people could use libusb
-to talk to an AOA device. AOA is just a general mechanism to talk to
-an Android app for whatever you want, and the descriptors sent during
-mode switch clarify what app it's talking to (and thereby what
-protocol it is using... it could be mass storage or it could be
-something entirely different). But a device switched into AOA mode for
-whatever app will always use that same well-known VID/PID (18d1:2d00).
-So if I just add that VID/PID to the IDs bound by the usb-storage
-driver, it would also grab a device that was mode-switched by
-userspace to talk to a completely different app. I need some way to
-make sure it only grabs the intended device, and there's no good
-identifier for that other than comparing the dev path to what you
-originally mode switched.
+If "require callbacks to userspace" means sending SIGIO, then actually
+FOLL_LONGTERM *does* require those callbacks. Because we've been, so
+far, equating FOLL_LONGTERM with the vaddr_pin struct and with a lease.
 
-> > > +     /*
-> > > +      * Only interface 0 connects to the AOA app. Android devices that have
-> > > +      * ADB enabled also export an interface 1. We don't want it.
-> > > +      */
-> > > +     if (us->pusb_intf->cur_altsetting->desc.bInterfaceNumber != 0)
-> > > +             return -ENODEV;
-> >
-> > Do you really need this test?  What would go wrong if you don't do it?
+What am I missing here?
 
-Yes, otherwise two separate usb-storage instances bind to the two
-interfaces. The second interface is meant for a special ADB debugging
-protocol and will not respond at all to USB mass storage packets, so
-eventually the first request to it times out and
-usb_stor_invoke_transport() will do a port reset to recover. That also
-kills the first interface asynchronously even though it was working
-fine.
-
-> > IMO the userspace approach would be better, unless you can provide a
-> > really compelling argument for why it won't suffice.
-
-Well... okay, let me think through that again. I just found the new_id
-sysfs API that I wasn't aware of before, maybe I could leverage that
-to bind this from userspace after doing the mode switch. But it looks
-like that only operates on whole devices... is there any way to force
-it to only bind one particular interface?
+thanks,
+-- 
+John Hubbard
+NVIDIA
