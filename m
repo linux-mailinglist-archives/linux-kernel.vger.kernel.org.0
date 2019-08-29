@@ -2,58 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08B8BA1C80
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32A44A1C8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:19:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbfH2OO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:14:58 -0400
-Received: from verein.lst.de ([213.95.11.211]:46641 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbfH2OO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:14:57 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 2351F68B20; Thu, 29 Aug 2019 16:14:54 +0200 (CEST)
-Date:   Thu, 29 Aug 2019 16:14:53 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        "Derrick, Jonathan" <jonathan.derrick@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] PCI/vmd: Stop overriding dma_map_ops
-Message-ID: <20190829141453.GC18677@lst.de>
-References: <20190828141443.5253-1-hch@lst.de> <20190828141443.5253-5-hch@lst.de> <20190828150106.GD23412@localhost.localdomain>
+        id S1727233AbfH2OT1 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 29 Aug 2019 10:19:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:37820 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727046AbfH2OT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:19:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 45BD3AEEE;
+        Thu, 29 Aug 2019 14:19:25 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 16:19:23 +0200
+From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Michael Neuling <mikey@neuling.org>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Nicolai Stange <nstange@suse.de>,
+        David Hildenbrand <david@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Christian Brauner <christian@brauner.io>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Breno Leitao <leitao@debian.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Allison Randal <allison@lohutok.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: Re: [PATCH v4 1/4] powerpc: make llseek 32bit-only.
+Message-ID: <20190829161923.101ff3eb@kitsune.suse.cz>
+In-Reply-To: <CAK8P3a2DHP+8Vbc4yjq5-wT9GpSxvndCa8gnvx0WcD8YAUAsMw@mail.gmail.com>
+References: <cover.1567072270.git.msuchanek@suse.de>
+        <061a0de2042156669303f95526ec13476bf490c7.1567072270.git.msuchanek@suse.de>
+        <CAK8P3a1wR-jzFSzdPqgfCG4vyAi_xBPVGhc6Nn4KaXpk3cUiJw@mail.gmail.com>
+        <20190829143716.6e41b10e@naga>
+        <CAK8P3a2DHP+8Vbc4yjq5-wT9GpSxvndCa8gnvx0WcD8YAUAsMw@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828150106.GD23412@localhost.localdomain>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 09:01:06AM -0600, Keith Busch wrote:
-> On Wed, Aug 28, 2019 at 07:14:42AM -0700, Christoph Hellwig wrote:
-> > With a little tweak to the intel-iommu code we should be able to work
-> > around the VMD mess for the requester IDs without having to create giant
-> > amounts of boilerplate DMA ops wrapping code.  The other advantage of
-> > this scheme is that we can respect the real DMA masks for the actual
-> > devices, and I bet it will only be a matter of time until we'll see the
-> > first DMA challeneged NVMe devices.
-> 
-> This tests out fine on VMD hardware, but it's quite different than the
-> previous patch. In v1, the original dev was used in iommu_need_mapping(),
-> but this time it's the vmd device. Is this still using the actual device's
-> DMA mask then?
+On Thu, 29 Aug 2019 14:57:39 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-True.  But then again I think the old one was broken as well, as it
-will pass the wrong dev to identity_mapping() or
-iommu_request_dma_domain_for_dev.   So I guess I'll need to respin it
-a bit to do the work in iommu_need_mapping again, and then factor
-that one to make it obvious what device we deal with.
+> On Thu, Aug 29, 2019 at 2:37 PM Michal Suchánek <msuchanek@suse.de> wrote:
+> > On Thu, 29 Aug 2019 14:19:46 +0200 Arnd Bergmann <arnd@arndb.de> wrote:  
+> > > On Thu, Aug 29, 2019 at 12:23 PM Michal Suchanek <msuchanek@suse.de> wrote:
+> > > In particular, I don't see why you single out llseek here, but leave other
+> > > syscalls that are not needed on 64-bit machines such as pread64().  
+> >
+> > Because llseek is not built in fs/ when building 64bit only causing a
+> > link error.
+> >
+> > I initially posted patch to build it always but it was pointed out it
+> > is not needed, and  the interface does not make sense on 64bit, and
+> > that platforms that don't have it on 64bit now don't want that useless
+> > code.  
+> 
+> Ok, please put that into the changeset description then.
+> 
+> I looked at uses of __NR__llseek in debian code search and
+> found this one:
+> 
+> https://codesearch.debian.net/show?file=umview_0.8.2-1.2%2Fxmview%2Fum_mmap.c&line=328
+> 
+> It looks like this application will try to use llseek instead of lseek
+> when built against kernel headers that define __NR_llseek.
+> 
+
+The available documentation says this syscall is for 32bit only so
+using it on 64bit is undefined. The interface is not well-defined in
+that case either.
+
+Thanks
+
+Michal
