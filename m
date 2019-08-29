@@ -2,236 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF89A110A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 07:42:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 982A7A1138
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 07:50:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfH2FlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 01:41:13 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:54543 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725855AbfH2FlN (ORCPT
+        id S1727315AbfH2Ft6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 01:49:58 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41390 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725855AbfH2Ft6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 01:41:13 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R421e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TakuPvd_1567057259;
-Received: from bn0418deMacBook-Pro.local(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TakuPvd_1567057259)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 29 Aug 2019 13:40:59 +0800
-Subject: Re: [PATCH v4 3/3] vfio/pci: make use of irq_update_devid and
- optimize irq ops
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        tao.ma@linux.alibaba.com, gerry@linux.alibaba.com,
-        nanhai.zou@linux.alibaba.com, linyunsheng@huawei.com
-References: <cover.1566486156.git.luoben@linux.alibaba.com>
- <8721e56f15dbcb1e0a1d8fc645def7b9bc752988.1566486156.git.luoben@linux.alibaba.com>
- <20190827143305.1ac826e1@x1.home>
- <429ae9ed-de9d-f8de-de65-a41c3a0c501d@linux.alibaba.com>
- <20190828112331.7178af1a@x1.home>
-From:   Ben Luo <luoben@linux.alibaba.com>
-Message-ID: <b260e7ff-e5fe-8911-cb43-fc010d6b1195@linux.alibaba.com>
-Date:   Thu, 29 Aug 2019 13:40:59 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        Thu, 29 Aug 2019 01:49:58 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 196so1288782pfz.8
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 22:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=sn18T6uMLTeD/3sTDPtUsx+jMMfL+K1l3kGQTvhv0uI=;
+        b=P8bPwDesXfZFakhgCIpWD7/icUFb4CELeLHTllKMNRPA/vHH+3GDVdMhh4HSp/2D0P
+         t5P+tMbua+DbBxFOzjP1i6KkM5eNnGgvCMgV0OT7oqmcGhUDoF9paKSso+LQj3aKu62f
+         NlKQeA6M/h+LzKU5RIeskY3pZSbQ8IUZGo1gaOGzGmB8dKLeWJwWx+QwK+IJ1VpfGq/f
+         56zxQLfuPtKEL2pH0brnbyoZvMw/t8CJ4oOxn3UuuO1V+wSm84TLXVAWLd4u9QsAn6/D
+         CPSzBvqoroYOgtL/HRDW3h51ZV+SVx2Q3b6+r/xQ/LpYhCGBsm7g8q+CdgQg7Gh7FQL4
+         rMYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=sn18T6uMLTeD/3sTDPtUsx+jMMfL+K1l3kGQTvhv0uI=;
+        b=JWnfC5Slu7ifDn1ROVs8BH5rnmSY1eNw9rM1HMwDmh+2QUXT4Ds5nQAmsqt3mkGrPW
+         gEdIXMs3G5qU4d0Wk2ElpwtEbK4D9fE8JFFcpcHME2Bd8lmrKeUJshN0xL3cTqtky1d6
+         Q7MPQJ7YJVCf5iboVR3JiPA3TQG00C/QXbHuut4qekxHk7C0wQxPIUmanHF1EJTNpCRO
+         VI8hwe2Xc46syzxpFAEcHXwPj9ZVuQOO1wfbALEuoz2Szcevmfd1eUboRTXXdItFh39p
+         +BM6TadVFNJvwsKzhCyTyaXyTBjYzDz7zWD7KFqX9b+yCP7AQ/jbmIACwCb6qt122Uo8
+         RXnA==
+X-Gm-Message-State: APjAAAUZ0q+yn8Jz6SHk53JMoC9o7k3zOMWwSF+Oqf3exYqOo5dk2FB0
+        HNr0DVWgV5dPpMokfP2b4g==
+X-Google-Smtp-Source: APXvYqww+w/+6/x7PHnaGwc7CyPWqgAjbP3WyGmOhEEx38YY/cvtJm4W+f9+KbtvMU/+rFm1SB/6mg==
+X-Received: by 2002:a63:3c5:: with SMTP id 188mr6567335pgd.394.1567057797661;
+        Wed, 28 Aug 2019 22:49:57 -0700 (PDT)
+Received: from mark-All-Series (114-32-231-59.HINET-IP.hinet.net. [114.32.231.59])
+        by smtp.gmail.com with ESMTPSA id v7sm1324033pff.87.2019.08.28.22.49.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 28 Aug 2019 22:49:57 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 13:49:53 +0800
+From:   Peikan Tsai <peikantsai@gmail.com>
+To:     gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+        maco@android.com, joel@joelfernandes.org, christian@brauner.io
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] binder: Use kmem_cache for binder_thread
+Message-ID: <20190829054953.GA18328@mark-All-Series>
 MIME-Version: 1.0
-In-Reply-To: <20190828112331.7178af1a@x1.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-在 2019/8/29 上午1:23, Alex Williamson 写道:
-> On Wed, 28 Aug 2019 18:08:02 +0800
-> Ben Luo <luoben@linux.alibaba.com> wrote:
->
->> 在 2019/8/28 上午4:33, Alex Williamson 写道:
->>> On Thu, 22 Aug 2019 23:34:43 +0800
->>> Ben Luo <luoben@linux.alibaba.com> wrote:
->>>   
->>>> When userspace (e.g. qemu) triggers a switch between KVM
->>>> irqfd and userspace eventfd, only dev_id of irq action
->>>> (i.e. the "trigger" in this patch's context) will be
->>>> changed, but a free-then-request-irq action is taken in
->>>> current code. And, irq affinity setting in VM will also
->>>> trigger a free-then-request-irq action, which actually
->>>> changes nothing, but only fires a producer re-registration
->>>> to update irte in case that posted-interrupt is in use.
->>>>
->>>> This patch makes use of irq_update_devid() and optimize
->>>> both cases above, which reduces the risk of losing interrupt
->>>> and also cuts some overhead.
->>>>
->>>> Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
->>>> ---
->>>>    drivers/vfio/pci/vfio_pci_intrs.c | 112 +++++++++++++++++++++++++-------------
->>>>    1 file changed, 74 insertions(+), 38 deletions(-)
->>>>
->>>> diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
->>>> index 3fa3f72..60d3023 100644
->>>> --- a/drivers/vfio/pci/vfio_pci_intrs.c
->>>> +++ b/drivers/vfio/pci/vfio_pci_intrs.c
->>>> @@ -284,70 +284,106 @@ static int vfio_msi_enable(struct vfio_pci_device *vdev, int nvec, bool msix)
->>>>    static int vfio_msi_set_vector_signal(struct vfio_pci_device *vdev,
->>>>    				      int vector, int fd, bool msix)
->>>>    {
->>>> +	struct eventfd_ctx *trigger = NULL;
->>>>    	struct pci_dev *pdev = vdev->pdev;
->>>> -	struct eventfd_ctx *trigger;
->>>>    	int irq, ret;
->>>>    
->>>>    	if (vector < 0 || vector >= vdev->num_ctx)
->>>>    		return -EINVAL;
->>>>    
->>>> +	if (fd >= 0) {
->>>> +		trigger = eventfd_ctx_fdget(fd);
->>>> +		if (IS_ERR(trigger))
->>>> +			return PTR_ERR(trigger);
->>>> +	}
->>> I think this is a user visible change.  Previously the vector is
->>> disabled first, then if an error occurs re-enabling, we return an errno
->>> with the vector disabled.  Here we instead fail the ioctl and leave the
->>> state as if it had never happened.  For instance with QEMU, if they
->>> were trying to change from KVM to userspace signaling and entered this
->>> condition, previously the interrupt would signal to neither eventfd, now
->>> it would continue signaling to KVM. If QEMU's intent was to emulate
->>> vector masking, this could induce unhandled interrupts in the guest.
->>> Maybe we need a tear-down on fault here to maintain that behavior, or
->>> do you see some justification for the change?
->> Thanks for your comments, this reminds me to think more about the
->> effects to users.
->>
->> After I reviewed the related code in Qemu and VFIO, I think maybe there
->> is a problem in current behavior
->> for the signal path changing case. Qemu has neither recovery nor retry
->> code in case that ioctl with
->> 'VFIO_DEVICE_SET_IRQS' command fails, so if the old signal path has been
->> disabled on fault of setting
->> up new path, the corresponding vector may be disabled forever. Following
->> is an example from qemu's
->> vfio_msix_vector_do_use():
->>
->>           ret = ioctl(vdev->vbasedev.fd, VFIO_DEVICE_SET_IRQS, irq_set);
->>           g_free(irq_set);
->>           if (ret) {
->>               error_report("vfio: failed to modify vector, %d", ret);
->>           }
->>
->> I think the singal path before changing should be still working at this
->> moment and the caller should keep it
->> working if the changing fails, so that at least we still have the old
->> path instead of no path.
->>
->> For masking vector case, the 'fd' should be -1, and the interrupt will
->> be freed as before this patch.
-> QEMU doesn't really have an opportunity to signal an error to the
-> guest, we're emulating the hardware masking of MSI and MSI-X.  The
-> guest is simply trying to write a mask bit in the vector, there's no
-> provision in the PCI spec that setting this bit can fail.  The current
-> behavior is that the vector is disabled on error.  We can argue whether
-> that's the optimal behavior, but it's the existing behavior and
-> changing it would require and evaluation of all existing users.
+The allocated size for each binder_thread is 512 bytes by kzalloc.
+Because the size of binder_thread is fixed and it's only 304 bytes.
+It will save 208 bytes per binder_thread when use create a kmem_cache
+for the binder_thread.
 
-I totally agree with you that masking of MSI and MSI-X should follow 
-current behavior, and my code does follow this behavior when 'fd' == -1, 
-the interrupt will surely be disabled.
+Signed-off-by: Peikan Tsai <peikantsai@gmail.com>
+---
+ drivers/android/binder.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-There is another case that 'fd' is not -1, means userspace just want to 
-change the singal path, this time we do have a chance of encountering 
-error on eventfd_ctx_fdget(fd). So, I think it is better to keep the old 
-path working in this case.
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index dc1c83eafc22..043e0ebd0fe7 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -87,6 +87,8 @@ static struct dentry *binder_debugfs_dir_entry_root;
+ static struct dentry *binder_debugfs_dir_entry_proc;
+ static atomic_t binder_last_id;
 
-But, as you said this may break the expectation of existing users, I 
-make it tear-down on fault in next version.
++static struct kmem_cache *binder_thread_cachep;
++
+ static int proc_show(struct seq_file *m, void *unused);
+ DEFINE_SHOW_ATTRIBUTE(proc);
 
->
->>>> +
->>>>    	irq = pci_irq_vector(pdev, vector);
->>>>    
->>>> +	/*
->>>> +	 * For KVM-VFIO case, interrupt from passthrough device will be directly
->>>> +	 * delivered to VM after producer and consumer connected successfully.
->>>> +	 * If producer and consumer are disconnected, this interrupt process
->>>> +	 * will fall back to remap mode, where interrupt handler uses 'trigger'
->>>> +	 * to find the right way to deliver the interrupt to VM. So, it is safe
->>>> +	 * to do irq_update_devid() before irq_bypass_unregister_producer() which
->>>> +	 * switches interrupt process to remap mode. To producer and consumer,
->>>> +	 * 'trigger' is only a token used for pairing them togather.
->>>> +	 */
->>>>    	if (vdev->ctx[vector].trigger) {
->>>> -		free_irq(irq, vdev->ctx[vector].trigger);
->>>> -		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
->>>> -		kfree(vdev->ctx[vector].name);
->>>> -		eventfd_ctx_put(vdev->ctx[vector].trigger);
->>>> -		vdev->ctx[vector].trigger = NULL;
->>>> +		if (vdev->ctx[vector].trigger == trigger) {
->>>> +			/* switch back to remap mode */
->>>> +			irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
->>> I think we leak the fd context we acquired above in this case.
->> Thanks for pointing it out, I will fix this in next version.
->>> Why do we do anything in this case, couldn't we just 'put' the extra ctx
->>> and return 0 here?
->> Sorry for confusing and I do this for a reason,  I will add some more
->> comments like this:
->>
->> Unregistration here is for re-resigtraion later, which will trigger the
->> reconnection of irq_bypass producer
->> and consumer, which in turn calls vmx_update_pi_irte() to update IRTE if
->> posted interrupt is in use.
->> (vmx_update_pi_irte() will modify IRTE based on the information
->> retrieved from KVM.)
->> Whether producer token changed or not, irq_bypass_register_producer() is
->> a way (seems the only way) to
->> update IRTE by VFIO for posted interrupt. The IRTE will be used by IOMMU
->> directly to find the target CPU
->> for an interrupt posted to VM, since hypervisor is bypassed.
-> This is only explaining what the bypass de-registration and
-> re-registration does, not why we need to perform those actions here.
-> If the trigger is the same as that already attached to this vector, why
-> is the IRTE changing?  Seems this ought to be a no-op for this vector.
+@@ -4696,14 +4698,15 @@ static struct binder_thread *binder_get_thread(struct binder_proc *proc)
+ 	thread = binder_get_thread_ilocked(proc, NULL);
+ 	binder_inner_proc_unlock(proc);
+ 	if (!thread) {
+-		new_thread = kzalloc(sizeof(*thread), GFP_KERNEL);
++		new_thread = kmem_cache_zalloc(binder_thread_cachep,
++					       GFP_KERNEL);
+ 		if (new_thread == NULL)
+ 			return NULL;
+ 		binder_inner_proc_lock(proc);
+ 		thread = binder_get_thread_ilocked(proc, new_thread);
+ 		binder_inner_proc_unlock(proc);
+ 		if (thread != new_thread)
+-			kfree(new_thread);
++			kmem_cache_free(binder_thread_cachep, new_thread);
+ 	}
+ 	return thread;
+ }
+@@ -4723,7 +4726,7 @@ static void binder_free_thread(struct binder_thread *thread)
+ 	BUG_ON(!list_empty(&thread->todo));
+ 	binder_stats_deleted(BINDER_STAT_THREAD);
+ 	binder_proc_dec_tmpref(thread->proc);
+-	kfree(thread);
++	kmem_cache_free(binder_thread_cachep, thread);
+ }
 
-Sorry, I think it cannot be a no-op here. The interrupt affinity setting 
-in guest also triggers the calling of this function and IRTE will be 
-modified with new affinity information retrieved from KVM's data 
-structure by vmx_update_pi_irte() when posted interrupt is in use, not 
-from the 'trigger'.
+ static int binder_thread_release(struct binder_proc *proc,
+@@ -6095,6 +6098,12 @@ static int __init binder_init(void)
+ 	if (ret)
+ 		return ret;
 
->   
->>>> +		} else if (trigger) {
->>>> +			ret = irq_update_devid(irq,
->>>> +					       vdev->ctx[vector].trigger, trigger);
->>>> +			if (unlikely(ret)) {
->>>> +				dev_info(&pdev->dev,
->>>> +					 "update devid of %d (token %p) failed: %d\n",
->>>> +					 irq, vdev->ctx[vector].trigger, ret);
->>>> +				eventfd_ctx_put(trigger);
->>>> +				return ret;
->>>> +			}
->>>> +			irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
->>> Can you explain this ordering, I would have expected that we'd
->>> unregister the bypass before we updated the devid.  Thanks,
->>>
->>> Alex
->> Actually, I have explained this in comments above this whole control
->> block. I think it is safe and better to
->> update devid before irq_bypass_unregister_producer() which switches
->> interrupt process from posted mode
->> to remap mode. So, if update fails, the posted interrupt can still work.
->>
->> Anyway, to producer and consumer,  'trigger' is only a token used for
->> pairing them togather.
-> The bypass is not a guaranteed mechanism, it's an opportunistic
-> accelerator.  If the devid update fails, what state are we left with?
-> The irq action may not work, but the bypass does; maybe; maybe not all
-> the time?  This seems to fall into the same consistency in userspace
-> behavior issue identified above.  The user ABI is that the vector is
-> disabled if an error is returned.  Thanks,
->
-> Alex
++	binder_thread_cachep = kmem_cache_create("binder_thread",
++						 sizeof(struct binder_thread),
++						 0, 0, NULL);
++	if (!binder_thread_cachep)
++		return -ENOMEM;
++
+ 	atomic_set(&binder_transaction_log.cur, ~0U);
+ 	atomic_set(&binder_transaction_log_failed.cur, ~0U);
 
-Thanks, now I see it is better to unregister the bypass before update 
-the devid, will change ordering in next version.
+@@ -6167,6 +6176,7 @@ static int __init binder_init(void)
 
-Ben
+ err_alloc_device_names_failed:
+ 	debugfs_remove_recursive(binder_debugfs_dir_entry_root);
++	kmem_cache_destroy(binder_thread_cachep);
+
+ 	return ret;
+ }
+--
+2.17.1
 
