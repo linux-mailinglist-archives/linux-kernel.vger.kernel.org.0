@@ -2,129 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7D42A1EF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 462EDA1EDC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:23:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbfH2PYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:24:18 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:45016 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727978AbfH2PX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:23:58 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 903CA767FA50CD1B8FE2;
-        Thu, 29 Aug 2019 23:23:54 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 29 Aug
- 2019 23:23:43 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>, <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 2/2] erofs: some marcos are much more readable as a function
-Date:   Thu, 29 Aug 2019 23:22:55 +0800
-Message-ID: <20190829152255.123594-2-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190829152255.123594-1-gaoxiang25@huawei.com>
-References: <20190829152255.123594-1-gaoxiang25@huawei.com>
+        id S1727578AbfH2PX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:23:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40884 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727125AbfH2PX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:23:26 -0400
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C42DC2341C
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 15:23:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567092205;
+        bh=2+HFlzM/yfynG5ANvTwsYTNcTosDJEfLB1NO1x5eKc8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GAVnAPkSxjpWAZC93k6hMInjPRKhvc39VTMjooTTdWO7dn7yisl64tavG1j2Q2ZLU
+         MPrSp8U6Vp6wzEg8iWg3R11+R4lOJYRZ6GR2hzR0ihp2fXafPxntv2PlfPsUBCso/C
+         z+0HR98BCFWc7g/gTOZ9HLJZmXNUr9gddpHfPWcA=
+Received: by mail-wm1-f50.google.com with SMTP id d16so4288458wme.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 08:23:24 -0700 (PDT)
+X-Gm-Message-State: APjAAAVwGFK0GqfPoEaXJJvHEHn8qCri5iGzQlhlZG091zBWcG1TrbkO
+        u0GuNXXOyweCvyhV/gyJ1MTTxTYv20sTJoinpdN6Aw==
+X-Google-Smtp-Source: APXvYqxvavrhFMLKkvBENomgDKP8QLeedIChXt62FYtW3S9te9FAf4UqqaK8w3TWd/JOSNU9JURf6QE1EcsgN2GtvFA=
+X-Received: by 2002:a05:600c:22d7:: with SMTP id 23mr12797740wmg.0.1567092203251;
+ Thu, 29 Aug 2019 08:23:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+References: <20190829111843.41003-1-vincenzo.frascino@arm.com> <20190829111843.41003-3-vincenzo.frascino@arm.com>
+In-Reply-To: <20190829111843.41003-3-vincenzo.frascino@arm.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 29 Aug 2019 08:23:11 -0700
+X-Gmail-Original-Message-ID: <CALCETrWNbMhYwpsKtutCTW4M7rMmOF0YUy-k1QgGEpY-Gd1xQw@mail.gmail.com>
+Message-ID: <CALCETrWNbMhYwpsKtutCTW4M7rMmOF0YUy-k1QgGEpY-Gd1xQw@mail.gmail.com>
+Subject: Re: [PATCH 2/7] lib: vdso: Build 32 bit specific functions in the
+ right context
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Christoph suggested [1], these marcos are much
-more readable as a function.
+On Thu, Aug 29, 2019 at 4:19 AM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
+>
+> clock_gettime32 and clock_getres_time32 should be compiled only with a
+> 32 bit vdso library.
+>
+> Exclude these symbols when BUILD_VDSO32 is not defined.
 
-[1] https://lore.kernel.org/r/20190829095954.GB20598@infradead.org/
-Reported-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- fs/erofs/erofs_fs.h | 24 ++++++++++++++++--------
- fs/erofs/inode.c    |  4 ++--
- fs/erofs/xattr.c    |  2 +-
- 3 files changed, 19 insertions(+), 11 deletions(-)
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
 
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-index 2447ad4d0920..41e53b49a11b 100644
---- a/fs/erofs/erofs_fs.h
-+++ b/fs/erofs/erofs_fs.h
-@@ -168,16 +168,24 @@ struct erofs_xattr_entry {
- 	char   e_name[0];       /* attribute name */
- } __packed;
- 
--#define ondisk_xattr_ibody_size(count)	({\
--	u32 __count = le16_to_cpu(count); \
--	((__count) == 0) ? 0 : \
--	sizeof(struct erofs_xattr_ibody_header) + \
--		sizeof(__u32) * ((__count) - 1); })
-+static inline unsigned int erofs_xattr_ibody_size(__le16 d_icount)
-+{
-+	unsigned int icount = le16_to_cpu(d_icount);
-+
-+	if (!icount)
-+		return 0;
-+
-+	return sizeof(struct erofs_xattr_ibody_header) +
-+		sizeof(__u32) * (icount - 1);
-+}
- 
- #define EROFS_XATTR_ALIGN(size) round_up(size, sizeof(struct erofs_xattr_entry))
--#define EROFS_XATTR_ENTRY_SIZE(entry) EROFS_XATTR_ALIGN( \
--	sizeof(struct erofs_xattr_entry) + \
--	(entry)->e_name_len + le16_to_cpu((entry)->e_value_size))
-+
-+static inline unsigned int erofs_xattr_entry_size(struct erofs_xattr_entry *e)
-+{
-+	return EROFS_XATTR_ALIGN(sizeof(struct erofs_xattr_entry) +
-+				 e->e_name_len + le16_to_cpu(e->e_value_size));
-+}
- 
- /* available compression algorithm types */
- enum {
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index 80f4fe919ee7..cf31554075c9 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -29,7 +29,7 @@ static int read_inode(struct inode *inode, void *data)
- 		struct erofs_inode_v2 *v2 = data;
- 
- 		vi->inode_isize = sizeof(struct erofs_inode_v2);
--		vi->xattr_isize = ondisk_xattr_ibody_size(v2->i_xattr_icount);
-+		vi->xattr_isize = erofs_xattr_ibody_size(v2->i_xattr_icount);
- 
- 		inode->i_mode = le16_to_cpu(v2->i_mode);
- 		if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
-@@ -62,7 +62,7 @@ static int read_inode(struct inode *inode, void *data)
- 		struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
- 
- 		vi->inode_isize = sizeof(struct erofs_inode_v1);
--		vi->xattr_isize = ondisk_xattr_ibody_size(v1->i_xattr_icount);
-+		vi->xattr_isize = erofs_xattr_ibody_size(v1->i_xattr_icount);
- 
- 		inode->i_mode = le16_to_cpu(v1->i_mode);
- 		if (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode) ||
-diff --git a/fs/erofs/xattr.c b/fs/erofs/xattr.c
-index a8286998a079..7ef8d4bb45cd 100644
---- a/fs/erofs/xattr.c
-+++ b/fs/erofs/xattr.c
-@@ -231,7 +231,7 @@ static int xattr_foreach(struct xattr_iter *it,
- 	 */
- 	entry = *(struct erofs_xattr_entry *)(it->kaddr + it->ofs);
- 	if (tlimit) {
--		unsigned int entry_sz = EROFS_XATTR_ENTRY_SIZE(&entry);
-+		unsigned int entry_sz = erofs_xattr_entry_size(&entry);
- 
- 		/* xattr on-disk corruption: xattr entry beyond xattr_isize */
- 		if (unlikely(*tlimit < entry_sz)) {
--- 
-2.17.1
-
+BTW, this is a great patch: it's either correct or it won't build.  I
+like patches like that.
