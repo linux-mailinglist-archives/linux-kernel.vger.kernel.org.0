@@ -2,104 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74413A16E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC379A16E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:52:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbfH2Kvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 06:51:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728598AbfH2KvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 06:51:19 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728752AbfH2Kvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 06:51:48 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59724 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728729AbfH2Kvq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 06:51:46 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E008423405;
-        Thu, 29 Aug 2019 10:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567075878;
-        bh=r2NLeZ554bhmZAOjT99GenY02RjdypTtJwuhqPonDkI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XeIQEed8rHRpNfMq2MCjcC1UQwXlR0HksGdPfub+ENFM1IDLcy7qebmrZvh6sZ86P
-         UwU1CpVW4PJBGgQIOV5ICSpdROxMA1dVKytH0UpN6m4iu2rK/Km9vfoXbAFzDqq7bR
-         XZx4IDCw1luMCxIj+fz0Dk3pcR+jLPS8pTro4RHs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 6/6] clk: s2mps11: Add used attribute to s2mps11_dt_match
-Date:   Thu, 29 Aug 2019 06:51:10 -0400
-Message-Id: <20190829105110.2748-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829105110.2748-1-sashal@kernel.org>
-References: <20190829105110.2748-1-sashal@kernel.org>
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5149428D325;
+        Thu, 29 Aug 2019 11:51:43 +0100 (BST)
+Date:   Thu, 29 Aug 2019 12:51:38 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Vitor Soares <Vitor.Soares@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-i3c@lists.infradead.org, bbrezillon@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, Joao.Pinto@synopsys.com
+Subject: Re: [PATCH 3/4] dt-bindings: i3c: Make 'assigned-address' valid if
+ static address != 0
+Message-ID: <20190829125138.4b36b8f6@collabora.com>
+In-Reply-To: <9d69c83c7193e377bbc77bea7f1812fc17dafaee.1567071213.git.vitor.soares@synopsys.com>
+References: <cover.1567071213.git.vitor.soares@synopsys.com>
+        <9d69c83c7193e377bbc77bea7f1812fc17dafaee.1567071213.git.vitor.soares@synopsys.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+On Thu, 29 Aug 2019 12:19:34 +0200
+Vitor Soares <Vitor.Soares@synopsys.com> wrote:
 
-[ Upstream commit 9c940bbe2bb47e03ca5e937d30b6a50bf9c0e671 ]
+> The I3C devices without a static address can require a specific dynamic
+> address for priority reasons.
+> 
+> Let's update the binding document to make the 'assigned-address' property
+> valid if static address != 0 and add an example with this use case.
 
-Clang warns after commit 8985167ecf57 ("clk: s2mps11: Fix matching when
-built as module and DT node contains compatible"):
+           ^ you mean static address == 0, right?
 
-drivers/clk/clk-s2mps11.c:242:34: warning: variable 's2mps11_dt_match'
-is not needed and will not be emitted [-Wunneeded-internal-declaration]
-static const struct of_device_id s2mps11_dt_match[] = {
-                                 ^
-1 warning generated.
+Yes, it makes sense to support that case and do our best to assign the
+requested address after DAA has taken place by explicitly executing
+SETDA.
 
-This warning happens when a variable is used in some construct that
-doesn't require a reference to that variable to be emitted in the symbol
-table; in this case, it's MODULE_DEVICE_TABLE, which only needs to hold
-the data of the variable, not the variable itself.
+> 
+> Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
+> ---
+>  Documentation/devicetree/bindings/i3c/i3c.txt | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/i3c/i3c.txt b/Documentation/devicetree/bindings/i3c/i3c.txt
+> index ab729a0..c851e75 100644
+> --- a/Documentation/devicetree/bindings/i3c/i3c.txt
+> +++ b/Documentation/devicetree/bindings/i3c/i3c.txt
+> @@ -98,9 +98,7 @@ Required properties
+>  
+>  Optional properties
+>  -------------------
+> -- assigned-address: dynamic address to be assigned to this device. This
+> -		    property is only valid if the I3C device has a static
+> -		    address (first cell of the reg property != 0).
+> +- assigned-address: dynamic address to be assigned to this device.
 
-$ nm -S drivers/clk/clk-s2mps11.o | rg s2mps11_dt_match
-00000078 000003d4 R __mod_of__s2mps11_dt_match_device_table
+We should probably mention that we don't provide strong guarantees
+here. We will try to assign this dynamic address to the device, but if
+something fails (like another device owning the address and refusing to
+give it up), the actual dynamic address will be different.
+This clarification can be done in a separate patch.
 
-Normally, with device ID table variables, it means that the variable
-just needs to be tied to the device declaration at the bottom of the
-file, like s2mps11_clk_id:
-
-$ nm -S drivers/clk/clk-s2mps11.o | rg s2mps11_clk_id
-00000000 00000078 R __mod_platform__s2mps11_clk_id_device_table
-00000000 00000078 r s2mps11_clk_id
-
-However, because the comment above this deliberately doesn't want this
-variable added to .of_match_table, we need to mark s2mps11_dt_match as
-__used to silence this warning. This makes it clear to Clang that the
-variable is used for something, even if a reference to it isn't being
-emitted.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Fixes: 8985167ecf57 ("clk: s2mps11: Fix matching when built as module and DT node contains compatible")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/clk-s2mps11.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 785864893f9a6..14af5c916c9ca 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -307,7 +307,7 @@ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
-  * This requires of_device_id table.  In the same time this will not change the
-  * actual *device* matching so do not add .of_match_table.
-  */
--static const struct of_device_id s2mps11_dt_match[] = {
-+static const struct of_device_id s2mps11_dt_match[] __used = {
- 	{
- 		.compatible = "samsung,s2mps11-clk",
- 		.data = (void *)S2MPS11X,
--- 
-2.20.1
+>  
+>  
+>  Example:
+> @@ -129,6 +127,15 @@ Example:
+>  
+>  		/*
+>  		 * I3C device without a static I2C address but requiring
+> +		 * specific dynamic address.
+> +		 */
+> +		sensor@0,39200154004 {
+> +			reg = <0x0 0x6072 0x303904d2>;
+> +			assigned-address = <0xb>;
+> +		};
+> +
+> +		/*
+> +		 * I3C device without a static I2C address but requiring
+>  		 * resources described in the DT.
+>  		 */
+>  		sensor@0,39200154004 {
 
