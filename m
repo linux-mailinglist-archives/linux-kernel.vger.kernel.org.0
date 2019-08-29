@@ -2,96 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC55FA2425
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AA97A243F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbfH2SVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:21:12 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52596 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729052AbfH2SVJ (ORCPT
+        id S1729246AbfH2SVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:21:48 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51220 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729743AbfH2SVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:21:09 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t17so4705395wmi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 11:21:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9wemDLG+al8uBFQtCufV5oYzqlZQzmNTZtOsaYBmOL4=;
-        b=mXix5R/GKhH05FxQiYlol0h1tWjIzt5XdJQ0MMUCI7ZstwYK6iNcBjk4rhx3juw+Xt
-         sSujIkJNknqbTKOgrZoxrPJQ5f5Gt2q3ooastPNh5U684/KIDMpkit7xJRalb7eNm7Sd
-         sVaxAOKly/ZaGLjXfqnClz7TBvfQC2F5iLkmROSSlrZF3uKsOfCvk7WibCKpOCphh/hB
-         xJDlqpBukLX8j0yuY1F1tRXZ86Kblsjd+39lB2cl3H52aOeoksicjVuce4wXcEVP3VlZ
-         r143+0osapSmwBqFdYnMj5s6p8GU99jh0ZcdurztswZOTYsOIONfaXlDJ6XN62GlzKXm
-         8f8w==
-X-Gm-Message-State: APjAAAWdG9wfSftwQrmMzFUV29m1HemipQqj5dQ8frSXUIuGYc0Ns8Rl
-        c1MLtRF7z4giyY/uhDp7HANX2HfL
-X-Google-Smtp-Source: APXvYqxs9hGhMd3GCtvD6OwjDmG0XpiTouttfQ4gQX2eJSe1yrPiPLw9KxNZ1T6jPMpg7kAE1PRLxw==
-X-Received: by 2002:a1c:2d4:: with SMTP id 203mr13320824wmc.105.1567102867216;
-        Thu, 29 Aug 2019 11:21:07 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id c187sm5655385wmd.39.2019.08.29.11.21.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Aug 2019 11:21:06 -0700 (PDT)
-Subject: Re: [PATCH v2 3/3] nvme: fire discovery log page change events to
- userspace
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>,
-        James Smart <james.smart@broadcom.com>,
-        linux-kernel@vger.kernel.org
-References: <20190712180211.26333-1-sagi@grimberg.me>
- <20190712180211.26333-4-sagi@grimberg.me> <20190822002328.GP9511@lst.de>
- <205d06ab-fedc-739d-323f-b358aff2cbfe@grimberg.me>
- <e4603511-6dae-e26d-12a9-e9fa727a8d03@grimberg.me>
- <20190826065639.GA11036@lst.de> <20190826075916.GA30396@kroah.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <ac168168-fed2-2b57-493e-e88261ead73b@grimberg.me>
-Date:   Thu, 29 Aug 2019 11:21:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 29 Aug 2019 14:21:44 -0400
+Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i3P38-0003sP-Me; Thu, 29 Aug 2019 20:21:34 +0200
+Date:   Thu, 29 Aug 2019 20:21:33 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Borislav Petkov <bp@suse.de>
+cc:     "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 10/11] mm: x86: Invoke hypercall when page encryption
+ status is changed
+In-Reply-To: <20190829180717.GF2132@zn.tnic>
+Message-ID: <alpine.DEB.2.21.1908292018500.1938@nanos.tec.linutronix.de>
+References: <20190710201244.25195-1-brijesh.singh@amd.com> <20190710201244.25195-11-brijesh.singh@amd.com> <20190829180717.GF2132@zn.tnic>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190826075916.GA30396@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 29 Aug 2019, Borislav Petkov wrote:
 
->>>> You are correct that this information can be derived from sysfs, but the
->>>> main reason why we add these here, is because in udev rule we can't
->>>> just go ahead and start looking these up and parsing these..
->>>>
->>>> We could send the discovery aen with NVME_CTRL_NAME and have
->>>> then have systemd run something like:
->>>>
->>>> nvme connect-all -d nvme0 --sysfs
->>>>
->>>> and have nvme-cli retrieve all this stuff from sysfs?
->>>
->>> Actually that may be a problem.
->>>
->>> There could be a hypothetical case where after the event was fired
->>> and before it was handled, the discovery controller went away and
->>> came back again with a different controller instance, and the old
->>> instance is now a different discovery controller.
->>>
->>> This is why we need this information in the event. And we verify this
->>> information in sysfs in nvme-cli.
->>
->> Well, that must be a usual issue with uevents, right?  Don't we usually
->> have a increasing serial number for that or something?
+> On Wed, Jul 10, 2019 at 08:13:11PM +0000, Singh, Brijesh wrote:
+> > @@ -2060,6 +2067,14 @@ static int __set_memory_enc_dec(unsigned long addr, int numpages, bool enc)
+> >  	 */
+> >  	cpa_flush(&cpa, 0);
+> >  
+> > +	/*
+> > +	 * When SEV is active, notify hypervisor that a given memory range is mapped
+> > +	 * encrypted or decrypted. Hypervisor will use this information during
+> > +	 * the VM migration.
+> > +	 */
+> > +	if (sev_active())
+> > +		set_memory_enc_dec_hypercall(addr, numpages << PAGE_SHIFT, enc);
 > 
-> Yes we do, userspace should use it to order events.  Does udev not
-> handle that properly today?
+> Btw, tglx has a another valid design concern here: why isn't this a
+> pv_ops thing? So that it is active only when the hypervisor is actually
+> present?
+> 
+> I know, I know, this will run on SEV guests only because it is all
+> (hopefully) behind "if (sev_active())" checks but the clean and accepted
+> design is a paravirt call, I'd say.
 
-The problem is not ordering of events, its really about the fact that
-the chardev can be removed and reallocated for a different controller
-(could be a completely different discovery controller) by the time
-that userspace handles the event.
+No. sev_active() has nothing to do with guest mode. It tells whether SEV is
+active or not. So yes, this calls into this function on both guest and
+host. The latter is beyond pointless.
+
+Thanks,
+
+	tglx
+
+
