@@ -2,102 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF1ECA17C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:09:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDD91A1796
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:59:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727294AbfH2LJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:09:48 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:55524 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727061AbfH2LJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:09:47 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0893F20033A;
-        Thu, 29 Aug 2019 13:09:43 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 839C020014F;
-        Thu, 29 Aug 2019 13:09:37 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8D2ED402DE;
-        Thu, 29 Aug 2019 19:09:30 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-devel@linux.nxdi.nxp.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     leoyang.li@nxp.com, liviu.dudau@arm.com, Wen He <wen.he_1@nxp.com>
-Subject: [v4 1/2] dt/bindings: clk: Add YAML schemas for LS1028A Display Clock bindings
-Date:   Thu, 29 Aug 2019 18:59:18 +0800
-Message-Id: <20190829105919.44363-1-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727530AbfH2K7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 06:59:23 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40792 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfH2K7X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 06:59:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=x0XZgx3t1UzfCJFBHVabtWw2MvCtyqf//s0QXH54R5M=; b=tOnffQYNciYRiqyeAqE5jtn7c
+        uAlj5rotHDwY8R7Mb4Z5UbWvoPZOlCTYdIwV04ObchSlBVue1FWGtnjtbQQgdyBP9pTlS2mtuTnVD
+        T92n6hh8q9gQpLV5J6VOcsmC+C6qTB4ws1wJMCSdmEovc2PVjg6HamYApJBpByUXd8PxlVCHaaKlP
+        xMVrHxpYYjl5alLD4cT4tz98Y1PEQ+3T8oti1KvBYNJ1NzgRLXAP2CT7Tznt9bn1i4DuYG/XUu4IN
+        qOdE3GtKdzv9tUDjY4yf9XvLQO5ibDYhhg8V4D7jZDthxoDsGQSLKVU+fnTpUj5UX8B91DpqbLi2L
+        nqeo/dYVw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3I99-0002ot-RM; Thu, 29 Aug 2019 10:59:19 +0000
+Date:   Thu, 29 Aug 2019 03:59:19 -0700
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Atish Patra <Atish.Patra@wdc.com>
+Cc:     "hch@infradead.org" <hch@infradead.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "alankao@andestech.com" <alankao@andestech.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
+        "gary@garyguo.net" <gary@garyguo.net>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 0/2] Add support for SBI version to 0.2
+Message-ID: <20190829105919.GB8968@infradead.org>
+References: <20190826233256.32383-1-atish.patra@wdc.com>
+ <20190827144624.GA18535@infradead.org>
+ <a31c39e8653bd04efe0051a5fd6f0238d33a80e7.camel@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a31c39e8653bd04efe0051a5fd6f0238d33a80e7.camel@wdc.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LS1028A has a clock domain PXLCLK0 used for provide pixel clocks to Display
-output interface. Add a YAML schema for this.
+On Tue, Aug 27, 2019 at 10:19:42PM +0000, Atish Patra wrote:
+> I did not understand this part. All the legacy SBI calls are defined as
+> a separate extension ID not single extension. How did it break the
+> backward compatibility ?
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/fsl,plldig.yaml | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+Yes, sorry I mistead this.  The way is is defined is rather
+non-intuitive, but actually backwards compatible.
 
-diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-new file mode 100644
-index 000000000000..32274e94aafc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-@@ -0,0 +1,43 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bindings/clock/fsl,plldig.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP QorIQ Layerscape LS1028A Display PIXEL Clock Binding
-+
-+maintainers:
-+  - Wen He <wen.he_1@nxp.com>
-+
-+description: |
-+  NXP LS1028A has a clock domain PXLCLK0 used for the Display output
-+  interface in the display core, as implemented in TSMC CLN28HPM PLL.
-+  which generate and offers pixel clocks to Display.
-+
-+properties:
-+  compatible:
-+    const: fsl,ls1028a-plldig
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+examples:
-+  # Display PIXEL Clock node:
-+  - |
-+    dpclk: clock-display@f1f0000 {
-+        compatible = "fsl,ls1028a-plldig";
-+        reg = <0x0 0xf1f0000 0x0 0xffff>;
-+        #clock-cells = <0>;
-+        clocks = <&osc_27m>;
-+    };
-+
-+...
--- 
-2.17.1
+> I think the confusion is because of legacy renaming. They are not
+> single legacy extension. They are all separate extensions. The spec
+> just called all those extensions as collectively as legacy. So I just
+> tried to make the patch sync with the spec.
+> 
+> If that's the source of confusion, I can rename it to sbi_0.1_x in
+> stead of legacy.
 
+I think we actually need to fix the spec instead, even if it just the
+naming and not the mechanism.
+
+> >  (1) actually board specific and have not place in a cpu abstraction
+> >      layer: getchar/putchar, these should just never be advertised in
+> > a
+> >       non-legacy setup, and the drivers using them should not probe
+> >       on a sbi 0.2+ system
+> 
+> In that case, we have to update the drivers(earlycon-riscv-sbi &
+> hvc_riscv_sbi) in kernel as well. Once these patches are merged, nobody
+> will be able to use earlycon=sbi feature in mainline kernel.
+> 
+> Personally, I am fine with it. But there were some interest during
+> RISC-V workshop in keeping these for now for easy debugging and early
+> bringup.
+
+The getchar/putchar calls unfortunately are fundamentally flawed, as
+they mean the sbi can still access the console after the host has taken
+it over using its own drivers.  Which will lead to bugs sooner or later.
+
+And if you can bring up a console driver in opensbi it should be just
+as trivial to bring up the kernel version.
