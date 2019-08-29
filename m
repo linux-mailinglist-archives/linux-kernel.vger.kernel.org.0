@@ -2,87 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 820C7A1B2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28CDFA1B26
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:15:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfH2NPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:15:52 -0400
-Received: from mga02.intel.com ([134.134.136.20]:40675 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726985AbfH2NPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:15:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 06:15:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,443,1559545200"; 
-   d="scan'208";a="197803586"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
-  by fmsmga001.fm.intel.com with ESMTP; 29 Aug 2019 06:15:48 -0700
-Subject: Re: [PATCH 3/3] mmc: sdhci-cadence: override spec version
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Piotr Sroka <piotrs@cadence.com>, linux-kernel@vger.kernel.org
-References: <20190829104928.27404-1-yamada.masahiro@socionext.com>
- <20190829104928.27404-3-yamada.masahiro@socionext.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <8c0d5889-6850-077f-4928-5e4b7f115b4f@intel.com>
-Date:   Thu, 29 Aug 2019 16:14:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727362AbfH2NPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:15:16 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:24065 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726985AbfH2NPQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 09:15:16 -0400
+X-UUID: 95ae08a863bb4e6e83b096b647869ae8-20190829
+X-UUID: 95ae08a863bb4e6e83b096b647869ae8-20190829
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <yongqiang.niu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1782353988; Thu, 29 Aug 2019 21:15:10 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs01n1.mediatek.inc
+ (172.21.101.68) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 29 Aug
+ 2019 21:15:14 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 29 Aug 2019 21:15:14 +0800
+Message-ID: <1567084508.30648.4.camel@mhfsdcap03>
+Subject: Re: [PATCH v4, 23/33] drm/mediatek: add ovl0/ovl_2l0 usecase
+From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
+Reply-To: <yongqiang.niu@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Thu, 29 Aug 2019 21:15:08 +0800
+In-Reply-To: <1563346064.29169.24.camel@mtksdaap41>
+References: <1562625253-29254-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1562625253-29254-24-git-send-email-yongqiang.niu@mediatek.com>
+         <1563346064.29169.24.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20190829104928.27404-3-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/08/19 1:49 PM, Masahiro Yamada wrote:
-> The datasheet of the IP (sd4hc) says it is compiatible with SDHCI v4,
-> but the spec version field in the version register is read as 2
-> (i.e. SDHCI_SPEC_300) based on the RTL provided by Cadence.
+On Wed, 2019-07-17 at 14:47 +0800, CK Hu wrote:
+> Hi, Yongqiang:
 > 
-> Socionext did not fix it up when it integrated the IP into the SoCs.
-> So, it is working as SDHCI v3.
+> On Tue, 2019-07-09 at 06:34 +0800, yongqiang.niu@mediatek.com wrote:
+> > From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> > 
+> > This patch add ovl0/ovl_2l0 usecase
+> > in ovl->ovl_2l0 direct link usecase:
+> > 1. the crtc support layer number will 4+2
+> > 2. ovl_2l0 background color input select ovl0 when crtc init
+> > and disable it when crtc finish
+> > 3. config ovl_2l0 layer, if crtc config layer number is
+> > bigger than ovl0 support layers(max is 4)
+> > 
+> > Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 38 +++++++++++++++++++++++++++++++--
+> >  1 file changed, 36 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> > index 5eac376..9ee9ce2 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+> > @@ -282,6 +282,15 @@ static int mtk_crtc_ddp_hw_init(struct mtk_drm_crtc *mtk_crtc)
+> >  
+> >  	for (i = 0; i < mtk_crtc->ddp_comp_nr; i++) {
+> >  		struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[i];
+> > +		enum mtk_ddp_comp_id prev;
+> > +
+> > +		if (i > 0)
+> > +			prev = mtk_crtc->ddp_comp[i - 1]->id;
+> > +		else
+> > +			prev = DDP_COMPONENT_ID_MAX;
+> > +
+> > +		if (prev == DDP_COMPONENT_OVL0)
+> > +			mtk_ddp_comp_bgclr_in_on(comp);
 > 
-> It is not a real problem because there is no difference in the program
-> flow in sdhci.c between SDHCI_SPEC_300/400, but set the real version
-> just in case.
+> I does not like to use a specific component id to check, that is not
+> general. For now, you could simply call mtk_ddp_comp_bgclr_in_on(comp);
+> for all component because only ovl_2l has implemented it.
 > 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Regards,
+> CK
+> 
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+both OVL0 and OVL_2L0 has the function mtk_ddp_comp_bgclr_in_on
 
-> ---
+> >  
+> >  		mtk_ddp_comp_config(comp, width, height, vrefresh, bpc);
+> >  		mtk_ddp_comp_start(comp);
+> > @@ -291,9 +300,18 @@ static int mtk_crtc_ddp_hw_init(struct mtk_drm_crtc *mtk_crtc)
+> >  	for (i = 0; i < mtk_crtc->layer_nr; i++) {
+> >  		struct drm_plane *plane = &mtk_crtc->planes[i];
+> >  		struct mtk_plane_state *plane_state;
+> > +		struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+> > +		unsigned int comp_layer_nr = mtk_ddp_comp_layer_nr(comp);
+> > +		unsigned int local_layer;
+> >  
+> >  		plane_state = to_mtk_plane_state(plane->state);
+> > -		mtk_ddp_comp_layer_config(mtk_crtc->ddp_comp[0], i,
+> > +
+> > +		if (i >= comp_layer_nr) {
+> > +			comp = mtk_crtc->ddp_comp[1];
+> > +			local_layer = i - comp_layer_nr;
+> > +		} else
+> > +			local_layer = i;
+> > +		mtk_ddp_comp_layer_config(comp , local_layer,
+> >  					  plane_state);
+> >  	}
+> >  
+> > @@ -319,6 +337,7 @@ static void mtk_crtc_ddp_hw_fini(struct mtk_drm_crtc *mtk_crtc)
+> >  					   mtk_crtc->ddp_comp[i]->id);
+> >  	mtk_disp_mutex_disable(mtk_crtc->mutex);
+> >  	for (i = 0; i < mtk_crtc->ddp_comp_nr - 1; i++) {
+> > +		mtk_ddp_comp_bgclr_in_off(mtk_crtc->ddp_comp[i]);
+> >  		mtk_ddp_remove_comp_from_path(mtk_crtc->config_regs,
+> >  					      mtk_crtc->mmsys_reg_data,
+> >  					      mtk_crtc->ddp_comp[i]->id,
+> > @@ -339,6 +358,8 @@ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
+> >  	struct mtk_crtc_state *state = to_mtk_crtc_state(mtk_crtc->base.state);
+> >  	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
+> >  	unsigned int i;
+> > +	unsigned int comp_layer_nr = mtk_ddp_comp_layer_nr(comp);
+> > +	unsigned int local_layer;
+> >  
+> >  	/*
+> >  	 * TODO: instead of updating the registers here, we should prepare
+> > @@ -361,7 +382,14 @@ static void mtk_crtc_ddp_config(struct drm_crtc *crtc)
+> >  			plane_state = to_mtk_plane_state(plane->state);
+> >  
+> >  			if (plane_state->pending.config) {
+> > -				mtk_ddp_comp_layer_config(comp, i, plane_state);
+> > +				if (i >= comp_layer_nr) {
+> > +					comp = mtk_crtc->ddp_comp[1];
+> > +					local_layer = i - comp_layer_nr;
+> > +				} else
+> > +					local_layer = i;
+> > +
+> > +				mtk_ddp_comp_layer_config(comp, local_layer,
+> > +							  plane_state);
+> >  				plane_state->pending.config = false;
+> >  			}
+> >  		}
+> > @@ -592,6 +620,12 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
+> >  	}
+> >  
+> >  	mtk_crtc->layer_nr = mtk_ddp_comp_layer_nr(mtk_crtc->ddp_comp[0]);
+> > +	if (mtk_crtc->ddp_comp_nr > 1) {
+> > +		struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[1];
+> > +
+> > +		if (comp->funcs->bgclr_in_on)
+> > +			mtk_crtc->layer_nr += mtk_ddp_comp_layer_nr(comp);
+> > +	}
+> >  	mtk_crtc->planes = devm_kcalloc(dev, mtk_crtc->layer_nr,
+> >  					sizeof(struct drm_plane),
+> >  					GFP_KERNEL);
 > 
->  drivers/mmc/host/sdhci-cadence.c | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-> index 44139fceac24..9837214685b6 100644
-> --- a/drivers/mmc/host/sdhci-cadence.c
-> +++ b/drivers/mmc/host/sdhci-cadence.c
-> @@ -341,6 +341,7 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
->  	unsigned int nr_phy_params;
->  	int ret;
->  	struct device *dev = &pdev->dev;
-> +	static const u16 version = SDHCI_SPEC_400 << SDHCI_SPEC_VER_SHIFT;
->  
->  	clk = devm_clk_get(dev, NULL);
->  	if (IS_ERR(clk))
-> @@ -370,6 +371,7 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
->  	host->mmc_host_ops.hs400_enhanced_strobe =
->  				sdhci_cdns_hs400_enhanced_strobe;
->  	sdhci_enable_v4_mode(host);
-> +	__sdhci_read_caps(host, &version, NULL, NULL);
->  
->  	sdhci_get_of_property(pdev);
->  
-> 
+
 
