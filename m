@@ -2,112 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F4DA22C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25509A22CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfH2Ruo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:50:44 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38492 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfH2Ruo (ORCPT
+        id S1727860AbfH2RxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:53:04 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39948 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727495AbfH2RxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:50:44 -0400
-Received: by mail-pf1-f195.google.com with SMTP id o70so2569047pfg.5;
-        Thu, 29 Aug 2019 10:50:44 -0700 (PDT)
+        Thu, 29 Aug 2019 13:53:04 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h8so4986124edv.7
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=C0c3Z1paEgDZynzXFK49rQPn2NcgrpyMRJRXJjSfdS0=;
-        b=EXqjVb4y/WwUgZeTgYtqQrj2s+pCQQ3Wd5fATC2hSxen/zrMsXPZ/8WjzNYuJYUotp
-         DxUq01LQs7mDdr3uRa7nxQ88FJYxvayxO+Op3t91FrFw47BggasnQWWmVP1WjZ36UPUB
-         gWcP84+R19b0xsQIaMhbY329hqAhc2rVpmEGFd8LXH9S9f/8S3KqrXJF7k2Ahsi6OO/Z
-         D31LZX7+vskardnB0PUtFvCPxfCt+RLH3uzDMFEmJceVCT4AAlbdWajSKHuVUTvnOLcu
-         dmPMH+H/HY4KpmRJKQSL5vqMpTlc8F4ac04iH3mW5oOkoHEQixwJOtei+ipQjOXJC3l9
-         toog==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=rQe28KLlHDvRerbTckpdwu9z06KjBNQSCvgEdw6K0Eg=;
+        b=tT4DAN9gN76+WHbhh4TG+YpgAKU/LKtZGbtUHvgNZpZPWwwxb3Pwgp9gY7KmU56bpy
+         Xv1Oq1K0lQufSYgylVI+058laygeoiV6N89ge00rHLiXwHGiNADSAFMw+IREzVPLdmbm
+         29QRSeWyqEjtFKzgmU/Oh4LEis0bpqKyTEXryAK2+G74ogQAz2rvUVehVUUgTm3guAGR
+         tc0wT9c1rWjzmZScMBFDvQx8095V+I/Peg6OfokDBFRF8hCJTN3fBKPdwPvp0YW3qq/0
+         OTHoEIVl0PKVOAilqTaxbMVHTpX3mKVBd8whSWyym6Whg2ycKCFrqVDXraFG8/Rltggo
+         Dqsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=C0c3Z1paEgDZynzXFK49rQPn2NcgrpyMRJRXJjSfdS0=;
-        b=ZvrZIao3UBlFgPt0+V+lwGxzp4wC9Xll24D5pESGC7VWij7LYi6tOQUSqQCPN/bC82
-         5+vd/2rm5tp3UxbFToOvETOlUEzWm5lwg9MrcXYk+YuEK0p3BP1esL5zGLs/kTPPmpf0
-         /hfwFIGRdk8zvqUSqSlLWkhAvWx+DVinG1GeiTY1l2E9Uq8Jg9+wyX8GCwu3hWyIdVAI
-         fFl0UjZ4EreCn3n8uv4TZOhdJiZLVP7yaLLuBWI7niuzRR1uUrXAJ2nEoPgJFJ22xFrh
-         9HkZSKHOuCfh4HUB1ah1f0YWGcVI0Sugo0FyrRwbroOeuvi8LySCjX6uboVoeMEe02bh
-         CbYA==
-X-Gm-Message-State: APjAAAWf0DCQ47ZeHGXVW1/62EyOtB+tNsV1VwqaT+8hC6aCm15g8Q4m
-        1fZy7LNEiLzx32Hl3mrZVsI=
-X-Google-Smtp-Source: APXvYqzz6aYtL303net0Q2XoobY3+IfZ+KjkTCCRv9mGfinoCAHvvn/eFJl3hSKth/9/3+Rithx5Ng==
-X-Received: by 2002:aa7:9112:: with SMTP id 18mr13054322pfh.127.1567101043175;
-        Thu, 29 Aug 2019 10:50:43 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id p10sm3618213pff.132.2019.08.29.10.50.41
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=rQe28KLlHDvRerbTckpdwu9z06KjBNQSCvgEdw6K0Eg=;
+        b=un5iAW32SwDOrHhUIp7iCs13SI0t+ajcAxHePT/HYd8xt5NDMQEEn0hjnjW+Mey42f
+         T2KijGpqLoMaArrQo9HIDRyLoc0XdkTt2YvhExB2iBh++HydZM3rKTYxNnl1c9hpq84G
+         sbWXY0wmloB8AKEhFEiJUL3j52oI1C0Y1OtT5xhrvjTlevbFPFZQOgnGCvXcFnCvQXxM
+         LuoHTKPtTjKgd1oJL9N9EH8Rv5iH7LV9P2TViUlNM97NXRQhRLD4IY4nQb4/x0GGukMB
+         6CPi3cUsrlxiPQaGsDB/1AUqexkc6mBQ7B0hZ8JauL5uX0Bk9pqXaCCRKor6fpg5LDxk
+         QafA==
+X-Gm-Message-State: APjAAAV+Y0MkJ1Jm4J7RBVIsrjdXu7GuOKD9oUHT7IZoH6rlJOum7Zgl
+        msjG/1ZTrqe/04tep2SriCR4AQ==
+X-Google-Smtp-Source: APXvYqxnC2uMVrjennbToNj8VdCMI+ckmVLgKgzd1CJo3FT41fg7GQyb9+ZSHDwMlxZVGV+MZnKiFQ==
+X-Received: by 2002:a50:b155:: with SMTP id l21mr11232219edd.186.1567101182497;
+        Thu, 29 Aug 2019 10:53:02 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id w3sm562294edq.12.2019.08.29.10.53.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 10:50:42 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 10:50:39 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH v3 09/11] Input: alps - remove unlikely() from IS_ERR*()
- condition
-Message-ID: <20190829175039.GA187474@dtor-ws>
-References: <20190829165025.15750-1-efremov@linux.com>
- <20190829165025.15750-9-efremov@linux.com>
+        Thu, 29 Aug 2019 10:53:02 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 10:52:37 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <thomas.lendacky@amd.com>, <davem@davemloft.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] amd-xgbe: Fix error path in xgbe_mod_init()
+Message-ID: <20190829105237.196722f9@cakuba.netronome.com>
+In-Reply-To: <20190829024600.16052-1-yuehaibing@huawei.com>
+References: <20190829024600.16052-1-yuehaibing@huawei.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190829165025.15750-9-efremov@linux.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 07:50:23PM +0300, Denis Efremov wrote:
-> "unlikely(IS_ERR_OR_NULL(x))" is excessive. IS_ERR_OR_NULL() already uses
-> unlikely() internally.
-
-The keyword here is _internally_.
-
-https://lore.kernel.org/lkml/20190821174857.GD76194@dtor-ws/
-
-So please no.
-
+On Thu, 29 Aug 2019 10:46:00 +0800, YueHaibing wrote:
+> In xgbe_mod_init(), we should do cleanup if some error occurs
 > 
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-> Cc: "Pali Rohár" <pali.rohar@gmail.com>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-input@vger.kernel.org
-> ---
->  drivers/input/mouse/alps.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/mouse/alps.c b/drivers/input/mouse/alps.c
-> index 34700eda0429..ed1661434899 100644
-> --- a/drivers/input/mouse/alps.c
-> +++ b/drivers/input/mouse/alps.c
-> @@ -1476,7 +1476,7 @@ static void alps_report_bare_ps2_packet(struct psmouse *psmouse,
->  		/* On V2 devices the DualPoint Stick reports bare packets */
->  		dev = priv->dev2;
->  		dev2 = psmouse->dev;
-> -	} else if (unlikely(IS_ERR_OR_NULL(priv->dev3))) {
-> +	} else if (IS_ERR_OR_NULL(priv->dev3)) {
->  		/* Register dev3 mouse if we received PS/2 packet first time */
->  		if (!IS_ERR(priv->dev3))
->  			psmouse_queue_work(psmouse, &priv->dev3_register_work,
-> -- 
-> 2.21.0
-> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: efbaa828330a ("amd-xgbe: Add support to handle device renaming")
+> Fixes: 47f164deab22 ("amd-xgbe: Add PCI device support")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
--- 
-Dmitry
+Looks correct.
+
+For networking fixes please try to use [PATCH net] as a tag ([PATCH
+net-next] for normal, non-fix patches).
