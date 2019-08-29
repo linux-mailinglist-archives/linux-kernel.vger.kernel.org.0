@@ -2,105 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46A2EA14F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:30:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0C00A14FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfH2J3y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 05:29:54 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37251 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbfH2J3m (ORCPT
+        id S1726526AbfH2JbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 05:31:02 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:56298 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfH2JbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 05:29:42 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z11so2681132wrt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 02:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=txsHPtmH/4H2/WnX6EiFrXzeHkL+qrKcHt+2DoU5kzQ=;
-        b=xRwJYrUXbrpjGAWB4+R5fH7G0mRDkrSB5nnGWG4+zYs587hY8Cesq2JqG0vUTu0shm
-         5pkphlWZMXlMveg2S4oPS4BdCQp2Mnchh4Ih0wV4GdImugyPNv/ZM0MA3she+V9WXGWU
-         BIretLX6+0BXSa3pOq9OZv9oxXVx8pLDf9VNglZBXBTOuIjqJQ63fAQnH8yB/WoV8lxJ
-         Q7aWiOA/e79K4dnGQJ0uBooFrp4oD2jiMo/YosYL+IqpZRMk9m18+GjoTP70snfB5NND
-         zZadvljCyol2fsr5UIoZl+vVT1xk+csmPx3MmyUoosgeuNBmiciKo4MlvIDgOc+ntJ54
-         g+HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=txsHPtmH/4H2/WnX6EiFrXzeHkL+qrKcHt+2DoU5kzQ=;
-        b=JoOMD5mvQWjDODTM1P6b747gH9+OquTU/qIXlMu3pStd/NorkFIdv53U7u6p+5YZ2D
-         oZFmBE8RlZtyPfXPktW5h1rFr5zW6tTYFu+65nFPx3cDmQx1Xwy7WF2KYpC9cs1EJyKH
-         VlXS/K1MiAnbP76YMcmqXJSZQTJI/tTY1//MLJocnI36SZqpQzbzL0AE3QUy2Av44PRE
-         F5pEcj/NXguwzFQvm0ufTIQLOMHiMzn4xn5Vc3PHSLuOO0QMtp/yyiOIbregdUeSrxLf
-         vfdhm8kkusTFmZEA7zQgk1a7KV9bTp3MMZgtWwU2Kk1Z1fPrzoSDGmc0fbxu09FbwnDK
-         r4uw==
-X-Gm-Message-State: APjAAAXTzFb1B2sr3jR3DUOjsm+TkspjZZPA4aVZxsRSSXVT5Qn4KKhG
-        Dq6+Y6PhHxu3NHSdo4g7jswIVA==
-X-Google-Smtp-Source: APXvYqwa7mal8tlwEcN4Id08ifjWX6FoVuVJXnw0+CZOqbxdmTAIG4v5DwpyXEOi1YCHISMEsJCWnw==
-X-Received: by 2002:adf:a55d:: with SMTP id j29mr9662074wrb.275.1567070980206;
-        Thu, 29 Aug 2019 02:29:40 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id f197sm3609512wme.22.2019.08.29.02.29.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 02:29:39 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     arnd@arndb.de, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mayank Chopra <mak.chopra@codeaurora.org>
-Subject: [PATCH v2 5/5] misc: fastrpc: free dma buf scatter list
-Date:   Thu, 29 Aug 2019 10:29:26 +0100
-Message-Id: <20190829092926.12037-6-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190829092926.12037-1-srinivas.kandagatla@linaro.org>
-References: <20190829092926.12037-1-srinivas.kandagatla@linaro.org>
+        Thu, 29 Aug 2019 05:31:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rCGISQyK/CqSKT+aR9Rsl5/9L4NcBCG9bnaseeSeY1Y=; b=18iUK6BiAKQ7aTuYvA36ir/D2
+        QTVoOmvI3b0nQn49YFDhLADhEXBOsvt2/sEDyBpWqI9XTZRDpAcZNWm6xDqz/kDt+xL/ZoPs8arGm
+        qHKWzieqhODRlc3qWvVa1XAcqN+goAcGqXnih9AhAT7LiQ6PRbz5JccICBNHkVbPU73tSz/xEKe0S
+        SCsmV5DwUDUzg0HfDICOswzc7/8pcH/9LropZKkJKpBnOxZk1RDiYaDAZSojA+Y4tmn+lKrG6CN+l
+        M43KU8hjS2cTUwC/b1d/cqF6KvGbzOprs+iAX+B6x1ri051YontGpJ1sLvump5rKKXsV8wsKfNSlS
+        ZPZ4f0NZw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3Gla-0000ms-Sa; Thu, 29 Aug 2019 09:30:55 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 40D11307138;
+        Thu, 29 Aug 2019 11:30:19 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 681352235E598; Thu, 29 Aug 2019 11:30:53 +0200 (CEST)
+Date:   Thu, 29 Aug 2019 11:30:53 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
+        x86@kernel.org
+Subject: Re: [PATCH] x86/math64: Provide a sane mul_u64_u32_div()
+ implementation for x86_64
+Message-ID: <20190829093053.GR2386@hirez.programming.kicks-ass.net>
+References: <20190826144740.10163-1-kan.liang@linux.intel.com>
+ <20190826144740.10163-4-kan.liang@linux.intel.com>
+ <20190828151921.GD17205@worktop.programming.kicks-ass.net>
+ <20190828161123.GQ2386@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828161123.GQ2386@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma buf scatter list is never freed, free it!
+On Wed, Aug 28, 2019 at 06:11:23PM +0200, Peter Zijlstra wrote:
+> On Wed, Aug 28, 2019 at 05:19:21PM +0200, Peter Zijlstra wrote:
+> > On Mon, Aug 26, 2019 at 07:47:35AM -0700, kan.liang@linux.intel.com wrote:
+> 
+> > > +	return  mul_u64_u32_div(slots, val, 0xff);
+> > 
+> > But also; x86_64 seems to lack a sane implementation of that function,
+> > and it currently compiles into utter crap (it can be 2 instructions).
 
-Orignally detected by kmemleak:
-  backtrace:
-    [<ffffff80088b7658>] kmemleak_alloc+0x50/0x84
-    [<ffffff8008373284>] sg_kmalloc+0x38/0x60
-    [<ffffff8008373144>] __sg_alloc_table+0x60/0x110
-    [<ffffff800837321c>] sg_alloc_table+0x28/0x58
-    [<ffffff800837336c>] __sg_alloc_table_from_pages+0xc0/0x1ac
-    [<ffffff800837346c>] sg_alloc_table_from_pages+0x14/0x1c
-    [<ffffff8008097a3c>] __iommu_get_sgtable+0x5c/0x8c
-    [<ffffff800850a1d0>] fastrpc_dma_buf_attach+0x84/0xf8
-    [<ffffff80085114bc>] dma_buf_attach+0x70/0xc8
-    [<ffffff8008509efc>] fastrpc_map_create+0xf8/0x1e8
-    [<ffffff80085086f4>] fastrpc_device_ioctl+0x508/0x900
-    [<ffffff80082428c8>] compat_SyS_ioctl+0x128/0x200
-    [<ffffff80080832c4>] el0_svc_naked+0x34/0x38
-    [<ffffffffffffffff>] 0xffffffffffffffff
+This one actually builds defconfig :-)
 
-Reported-by: Mayank Chopra <mak.chopra@codeaurora.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/misc/fastrpc.c | 1 +
- 1 file changed, 1 insertion(+)
+Subject: x86/math64: Provide a sane mul_u64_u32_div() implementation for x86_64
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Wed Aug 28 17:39:46 CEST 2019
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index eee2bb398947..47ae84afac2e 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -550,6 +550,7 @@ static void fastrpc_dma_buf_detatch(struct dma_buf *dmabuf,
- 	mutex_lock(&buffer->lock);
- 	list_del(&a->node);
- 	mutex_unlock(&buffer->lock);
-+	sg_free_table(&a->sgt);
- 	kfree(a);
- }
+On x86_64 we can do a u64 * u64 -> u128 widening multiply followed by
+a u128 / u64 -> u64 division to implement a sane version of
+mul_u64_u32_div().
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/include/asm/div64.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
+index 20a46150e0a8..9b8cb50768c2 100644
+--- a/arch/x86/include/asm/div64.h
++++ b/arch/x86/include/asm/div64.h
+@@ -73,6 +73,19 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
  
--- 
-2.21.0
-
+ #else
+ # include <asm-generic/div64.h>
++
++static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 div)
++{
++	u64 q;
++
++	asm ("mulq %2; divq %3" : "=a" (q)
++				: "a" (a), "rm" ((u64)mul), "rm" ((u64)div)
++				: "rdx");
++
++	return q;
++}
++#define mul_u64_u32_div	mul_u64_u32_div
++
+ #endif /* CONFIG_X86_32 */
+ 
+ #endif /* _ASM_X86_DIV64_H */
