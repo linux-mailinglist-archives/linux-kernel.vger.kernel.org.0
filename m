@@ -2,98 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4225DA1343
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C49BA136E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:12:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfH2ILF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 29 Aug 2019 04:11:05 -0400
-Received: from mga17.intel.com ([192.55.52.151]:53717 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbfH2ILF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:11:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 01:11:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
-   d="scan'208";a="380692792"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Aug 2019 01:11:04 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 29 Aug 2019 01:11:04 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 29 Aug 2019 01:11:03 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Thu, 29 Aug 2019 01:11:03 -0700
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.112]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.62]) with mapi id 14.03.0439.000;
- Thu, 29 Aug 2019 16:11:02 +0800
-From:   "Kang, Luwei" <luwei.kang@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC v1 0/9] PEBS enabling in KVM guest
-Thread-Topic: [RFC v1 0/9] PEBS enabling in KVM guest
-Thread-Index: AQHVXiwNBbYS5tWphkaKCUykcUkcJqcRNF2AgACP/hA=
-Date:   Thu, 29 Aug 2019 08:11:02 +0000
-Message-ID: <82D7661F83C1A047AF7DC287873BF1E1737F068B@SHSMSX104.ccr.corp.intel.com>
-References: <1567056849-14608-1-git-send-email-luwei.kang@intel.com>
- <20190829072853.GK2369@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190829072853.GK2369@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTljYzIyZWItNzE3ZS00OWJkLTk2ZmMtZWJhZjIyYmVkNGM2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiK3RWdFwvditkU1wvbExTU3BWNSt2c1wvMFU4d0N5Q21qZ0gyeTVieHp3NWR0T0tQWXVJM3dPdVo4bkVnVVwvZDVEcTAifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1726620AbfH2IMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:12:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57376 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725776AbfH2IMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 04:12:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 204D5AC8E;
+        Thu, 29 Aug 2019 08:12:51 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 10:12:49 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        metux IT consult Enrico Weigelt <lkml@metux.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] vsprintf: introduce %dE for error constants
+Message-ID: <20190829081249.3zvvsa4ggb5pfozl@pathway.suse.cz>
+References: <20190827211244.7210-1-uwe@kleine-koenig.org>
+ <20190828113216.p2yiha4xyupkbcbs@pathway.suse.cz>
+ <74303921-aa95-9962-2254-27e556af54f4@kleine-koenig.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74303921-aa95-9962-2254-27e556af54f4@kleine-koenig.org>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Thu, Aug 29, 2019 at 01:34:00PM +0800, Luwei Kang wrote:
-> > Intel new hardware introduces some Precise Event-Based Sampling (PEBS)
-> > extensions that output the PEBS record to Intel PT stream instead of
-> > DS area. The PEBS record will be packaged in a specific format when
-> > outputing to Intel PT.
-> >
-> > This patch set will enable PEBS functionality in KVM Guest by PEBS
-> > output to Intel PT. The native driver as [1] (still under review).
-> >
-> > [1] https://www.spinics.net/lists/kernel/msg3215354.html
+On Wed 2019-08-28 21:18:37, Uwe Kleine-König  wrote:
+> Hello Petr,
 > 
-> Please use:
-> 
->   https://lkml.kernel.org/r/$MSGID
-> 
-> then I don't have to touch a browser but can find the email in my MUA.
+> On 8/28/19 1:32 PM, Petr Mladek wrote:
+> > On Tue 2019-08-27 23:12:44, Uwe Kleine-König  wrote:
+> >> Petr Mladek had some concerns:
+> >>> There are ideas to make the code even more tricky to reduce
+> >>> the size, keep it fast.
+> >>
+> >> I think Enrico Weigelt's suggestion to use a case is the best
+> >> performance-wise so that's what I picked up. Also I hope that
+> >> performance isn't that important because the need to print an error
+> >> should not be so common that it really hurts in production.
 
-Thanks. The link of native driver should be:
-https://lkml.kernel.org/r/20190806084606.4021-1-alexander.shishkin@linux.intel.com
+This is contadicting. The "best" performance-wise solution was
+choosen in favor of space. The next sentence says that performance
+is not important.
 
-Luwei Kang
+> > I personally do not like switch/case. It is a lot of code.
+> > I wonder if it even saved some space.
+> 
+> I guess we have to die either way. Either it is quick or it is space
+> efficient.
+
+I am more concerned about the size. Well, array of strings will
+be both fast and size efficient.
+
+> With the big case I trust the compiler to pick something
+> sensible expecting that it adapts for example to -Osize.
+
+I am not sure what are the expectations here. I can't imagine
+another translation than:
+
+   if (val == 1)
+     str = "EPERM";
+   else if (val == 2)
+     str = "ENOENT"
+   else if (val == 3)
+     str = "ESRCH"
+   ...
+
+It means that all constans will be hardcoded in the code instead
+of in data section. Plus there will be instructions for each
+if/else part.
+
+> > If you want to safe space, I would use u16 to store the numbers.
+> > Or I would use array of strings. There will be only few holes.
+> > 
+> > You might also consider handling only the most commonly
+> > used codes from errno.h and errno-base.h (1..133). There will
+> > be no holes and the codes are stable.
+> 
+> I'd like to postpone the discussion about "how" until we agreed about
+> the "if at all".
+
+It seems that all people like this feature.
+
+BTW: I though more about generating or cut&pasting the arrary.
+I can't find any reasonable way how to generate it.
+
+But both, errno.h and errno-base.h, are super stable. Only
+comments were modified or new codes added. Most of them
+are defined by POSIX so they should remain stable.
+
+Therefore cut&pasted array of strings looks acceptable.
+We should only allow to easily check numbers for each code,
+e.g. by defining the array as
+
+const err_str * [] {
+	"0"			/*   0  Success */
+	"EPERM",		/*   1	Operation not permitted */
+	"ENOENT",		/*   2	No such file or directory */
+	"ESRCH",		/*   3	No such process */
+	...
+
+
+If there is a hole, we could use something like:
+
+	"-41",			/*  41  Skipped. EWOULDBLOCK is
+	defined as EAGAIN.  Operation would block */
+
+Best Regards,
+Petr
