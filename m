@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12D1FA1D9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9452DA1D9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:51:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbfH2OvL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:51:11 -0400
+        id S1727992AbfH2OvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:51:14 -0400
 Received: from mailgw01.mediatek.com ([210.61.82.183]:51287 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726739AbfH2OvL (ORCPT
+        with ESMTP id S1727189AbfH2OvM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:51:11 -0400
-X-UUID: 16ca94ffea0a4c748c2c6cfe44795b47-20190829
-X-UUID: 16ca94ffea0a4c748c2c6cfe44795b47-20190829
+        Thu, 29 Aug 2019 10:51:12 -0400
+X-UUID: 7d8f052ed16e4dbb8d74b3462cfeaf8c-20190829
+X-UUID: 7d8f052ed16e4dbb8d74b3462cfeaf8c-20190829
 Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1961116408; Thu, 29 Aug 2019 22:51:07 +0800
+        with ESMTP id 47930297; Thu, 29 Aug 2019 22:51:07 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
  mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 29 Aug 2019 22:51:11 +0800
+ 15.0.1395.4; Thu, 29 Aug 2019 22:51:12 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 29 Aug 2019 22:51:11 +0800
+ Transport; Thu, 29 Aug 2019 22:51:12 +0800
 From:   <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,9 +35,9 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v5, 05/32] dt-bindings: mediatek: add mutex description for mt8183 display
-Date:   Thu, 29 Aug 2019 22:50:27 +0800
-Message-ID: <1567090254-15566-6-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v5, 06/32] arm64: dts: add display nodes for mt8183
+Date:   Thu, 29 Aug 2019 22:50:28 +0800
+Message-ID: <1567090254-15566-7-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1567090254-15566-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1567090254-15566-1-git-send-email-yongqiang.niu@mediatek.com>
@@ -51,25 +51,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-This patch add mutex description for mt8183 display
+This patch add display nodes for mt8183
 
 Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
- Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 111 +++++++++++++++++++++++++++++++
+ 1 file changed, 111 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-index afd3c90..c7e2eb8 100644
---- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-+++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
-@@ -52,6 +52,7 @@ Required properties (all function blocks):
-   For most function blocks this is just a single clock input. Only the DSI and
-   DPI controller nodes have multiple clock inputs. These are documented in
-   mediatek,dsi.txt and mediatek,dpi.txt, respectively.
-+  An exception is that the mt8183 mutex is always free running with no clocks property.
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index 7cae10f..c07ee8c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -18,6 +18,14 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
  
- Required properties (DMA function blocks):
- - compatible: Should be one of
++	aliases {
++		ovl0 = &ovl0;
++		ovl_2l0 = &ovl_2l0;
++		ovl_2l1 = &ovl_2l1;
++		rdma0 = &rdma0;
++		rdma1 = &rdma1;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -463,6 +471,109 @@
+ 			#clock-cells = <1>;
+ 		};
+ 
++		display_components: dispsys@14000000 {
++			compatible = "mediatek,mt8183-display";
++			reg = <0 0x14000000 0 0x1000>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++		};
++
++		ovl0: ovl@14008000 {
++			compatible = "mediatek,mt8183-disp-ovl";
++			reg = <0 0x14008000 0 0x1000>;
++			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_OVL0>;
++			mediatek,larb = <&larb0>;
++		};
++
++		ovl_2l0: ovl@14009000 {
++			compatible = "mediatek,mt8183-disp-ovl-2l";
++			reg = <0 0x14009000 0 0x1000>;
++			interrupts = <GIC_SPI 226 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_OVL0_2L>;
++			mediatek,larb = <&larb0>;
++		};
++
++		ovl_2l1: ovl@1400a000 {
++			compatible = "mediatek,mt8183-disp-ovl-2l";
++			reg = <0 0x1400a000 0 0x1000>;
++			interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_OVL1_2L>;
++			mediatek,larb = <&larb0>;
++		};
++
++		rdma0: rdma@1400b000 {
++			compatible = "mediatek,mt8183-disp-rdma";
++			reg = <0 0x1400b000 0 0x1000>;
++			interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_RDMA0>;
++			mediatek,larb = <&larb0>;
++			mediatek,rdma_fifo_size = <5>;
++		};
++
++		rdma1: rdma@1400c000 {
++			compatible = "mediatek,mt8183-disp-rdma1";
++			reg = <0 0x1400c000 0 0x1000>;
++			interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_RDMA1>;
++			mediatek,larb = <&larb0>;
++			mediatek,rdma_fifo_size = <2>;
++		};
++
++		color0: color@1400e000 {
++			compatible = "mediatek,mt8183-disp-color",
++				     "mediatek,mt8173-disp-color";
++			reg = <0 0x1400e000 0 0x1000>;
++			interrupts = <GIC_SPI 231 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_COLOR0>;
++		};
++
++		ccorr0: ccorr@1400f000 {
++			compatible = "mediatek,mt8183-disp-ccorr";
++			reg = <0 0x1400f000 0 0x1000>;
++			interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_CCORR0>;
++		};
++
++		aal0: aal@14010000 {
++			compatible = "mediatek,mt8183-disp-aal",
++				     "mediatek,mt8173-disp-aal";
++			reg = <0 0x14010000 0 0x1000>;
++			interrupts = <GIC_SPI 233 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_AAL0>;
++		};
++
++		gamma0: gamma@14011000 {
++			compatible = "mediatek,mt8183-disp-gamma",
++				     "mediatek,mt8173-disp-gamma";
++			reg = <0 0x14011000 0 0x1000>;
++			interrupts = <GIC_SPI 234 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_GAMMA0>;
++		};
++
++		dither0: dither@14012000 {
++			compatible = "mediatek,mt8183-disp-dither";
++			reg = <0 0x14012000 0 0x1000>;
++			interrupts = <GIC_SPI 235 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++			clocks = <&mmsys CLK_MM_DISP_DITHER0>;
++		};
++
++		mutex: mutex@14016000 {
++			compatible = "mediatek,mt8183-disp-mutex";
++			reg = <0 0x14016000 0 0x1000>;
++			interrupts = <GIC_SPI 217 IRQ_TYPE_LEVEL_LOW>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_DISP>;
++		};
++
+ 		larb0: larb@14017000 {
+ 			compatible = "mediatek,mt8183-smi-larb";
+ 			reg = <0 0x14017000 0 0x1000>;
 -- 
 1.8.1.1.dirty
 
