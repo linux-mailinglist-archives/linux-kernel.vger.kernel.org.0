@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1BA5A278A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DF9DA2787
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:00:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbfH2UAW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:00:22 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:47083 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727919AbfH2UAG (ORCPT
+        id S1726343AbfH2UAM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:00:12 -0400
+Received: from mail-pf1-f182.google.com ([209.85.210.182]:36005 "EHLO
+        mail-pf1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728107AbfH2UAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:00:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id m3so2132929pgv.13
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 13:00:06 -0700 (PDT)
+        Thu, 29 Aug 2019 16:00:08 -0400
+Received: by mail-pf1-f182.google.com with SMTP id w2so2807543pfi.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 13:00:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=S9d3dFoh7F6gGH5LTQyJ8UyxGo/MvVuvj+hyEE/NkTM=;
-        b=CH3Z10dMKFNa5EUmXWfmO9kVZYBLmTzxs99xBrQZa34CnaWlLZ/e/TJGcWMmfgsVB6
-         fbGWYVF61zStU3OZ3c4J09h572gEWcekJS9a9s1STntCydJRS4S+bJjKr1GFFPevhKjB
-         uZXZuULcjvP9TNWnWZ5gUtJuhXkCpGo5Q1FylX1MGpXn4QIk5JEjXSX1Q1MWBWAsfSZh
-         Y3XGxXaszNMDvWfih8zVS5X6l5P1jhp0JnKuzXXsLsas1cnOI0l6wWvsEjPjBR0TMyLp
-         ZP5J3Hy4nDNsUH7UsCts6P9CduZTxfhth9z6VwRWe6YZX49SH0wun0MhB+e7V7D2e2kT
-         LlUw==
+        bh=leAjuo9QrYfGsQp+lWwGPaf44FJzdIsTdXXe6kBTcvQ=;
+        b=EwHFoY3nn78Ablhc+fvFTk63+ihmkRvuN2b9otTYYBLJ/20wMokgUtop/hP29hf8Ss
+         JdtCG3A2s67swE9FFPf0Jn+PmiCySXAL8wwZW4h1dWPNwTUU0OJvimlv7euDgKnQOI0H
+         dGcfTjNrOk+RUaAs/nmRNL6f5930YGwO+xPmerXZ3YLIx3T4GB15/JNvn/WKFJkiPNSh
+         JSGhphPYJfykXMMRch+fpjVH5JYudf5o7RljVoXQc8rIl3R5Wt9ClH9N90i/eEYtQIfH
+         U7UKjZIIr6lociKHiO8DTHScDkrVxuqSHtCT0pJuou4Ml1+ekF7rLvtgaf+1OlCmupbW
+         YbfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=S9d3dFoh7F6gGH5LTQyJ8UyxGo/MvVuvj+hyEE/NkTM=;
-        b=I4XLV+WJ0bbNnNvRLsHPtmESOTsG2/setGe0saP7cwBq29ie4N8CGP6mzeAdAKstQ3
-         RrRWIVtSzi5/NsRrfp09r3Jg18Zvm3c1u7Ib6VHLwZ+IQtBCGyd6VpOpw61DP/XrZrGG
-         REN6jQ2HMo0867XAo4sJMX5o1gGMVpMsCSMf2a+PTAaKPgkW+K4jkYnLsl80/4euQPeM
-         DGsPsAu2/2ZuKfCzYTzkUl/kYLalL0ncgvyiD+KdcIP//5L1VStjFGbpfjL/u8+B4B8p
-         U/r35xCeE1LiPlb2O0soXeHIeMP+wpNNqcoelFmp3xC8UaNjfdTRSvSr2FHTyPYKV1F5
-         RgRg==
-X-Gm-Message-State: APjAAAVUk1bTlcmmu8W7O3umjKOfnPoKXBtmfygCM8u18DdC+XuWhDOE
-        XRId+G1auUxxYNSMEUaMTNnkrg==
-X-Google-Smtp-Source: APXvYqwgfpvBc6rpBf/WbtITtoaWYyjizOJiXzMZpQhfc76Y+pvPxSdoJdzus+CAnHFnfaEjre9aBw==
-X-Received: by 2002:a63:5951:: with SMTP id j17mr9734953pgm.143.1567108805398;
-        Thu, 29 Aug 2019 13:00:05 -0700 (PDT)
+        bh=leAjuo9QrYfGsQp+lWwGPaf44FJzdIsTdXXe6kBTcvQ=;
+        b=mjr0jH3vzG4w2RdS/zVFDfLTWVS2/DGFHViyxVkoiwQApPr1XdCUb6OyjswZzEyQHP
+         IgEpVUTkWTDiAd70Jl7dzRmNpZoKibgg92NHKxIhUwPHnJL7t4Yyk/T+4USrE4mc+n3k
+         tBnC1mU+f2napuhotSuB7CntXGNseh3Loe0Zj9y7CezF/IL06wQWjOlCihHUArfIo950
+         OqR1wAq7+3vqHssUJ6IosSGY0YqHdZaOuvhBiLwkw+UBQiU3lmTqVC+0/WnML/YNFW3W
+         gBCRrk+jtAfLAloNzDY5ugxBETWHlpuYNa9tLvxdVI8pv2I6ADPYUn1G+OxiLIwQ8NLR
+         HEZg==
+X-Gm-Message-State: APjAAAXNKiAC/XOCBWAu1svFH3G6Kr5KquaW89nQw3InPuJsDyCn8qqI
+        ko6OoJKHTxVVCll0WZI17IS7Dw==
+X-Google-Smtp-Source: APXvYqxmRtZml8EdnZ16J1Jmfc6FgL+TVFfQC+dCMCvoM/+VMjg+z1xJm3jSCGVPmaKApRCFQG6kdw==
+X-Received: by 2002:a63:1f1b:: with SMTP id f27mr9740387pgf.233.1567108807182;
+        Thu, 29 Aug 2019 13:00:07 -0700 (PDT)
 Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id u7sm3053766pgr.94.2019.08.29.13.00.04
+        by smtp.gmail.com with ESMTPSA id u7sm3053766pgr.94.2019.08.29.13.00.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 13:00:04 -0700 (PDT)
+        Thu, 29 Aug 2019 13:00:06 -0700 (PDT)
 From:   Mathieu Poirier <mathieu.poirier@linaro.org>
 To:     stable@vger.kernel.org
 Cc:     architt@codeaurora.org, a.hajda@samsung.com,
@@ -52,9 +52,9 @@ Cc:     architt@codeaurora.org, a.hajda@samsung.com,
         jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         linux-scsi@vger.kernel.org
-Subject: [BACKPORT 4.19.y 1/3] drm/bridge: tfp410: fix memleak in get_modes()
-Date:   Thu, 29 Aug 2019 13:59:59 -0600
-Message-Id: <20190829200001.17092-2-mathieu.poirier@linaro.org>
+Subject: [BACKPORT 4.19.y 2/3] scsi: ufs: Fix RX_TERMINATION_FORCE_ENABLE define value
+Date:   Thu, 29 Aug 2019 14:00:00 -0600
+Message-Id: <20190829200001.17092-3-mathieu.poirier@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190829200001.17092-1-mathieu.poirier@linaro.org>
 References: <20190829200001.17092-1-mathieu.poirier@linaro.org>
@@ -63,40 +63,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Pedro Sousa <sousa@synopsys.com>
 
-commit c08f99c39083ab55a9c93b3e93cef48711294dad upstream
+commit ebcb8f8508c5edf428f52525cec74d28edea7bcb upstream
 
-We don't free the edid blob allocated by the call to drm_get_edid(),
-causing a memleak. Fix this by calling kfree(edid) at the end of the
-get_modes().
+Fix RX_TERMINATION_FORCE_ENABLE define value from 0x0089 to 0x00A9
+according to MIPI Alliance MPHY specification.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190610135739.6077-1-tomi.valkeinen@ti.com
+Fixes: e785060ea3a1 ("ufs: definitions for phy interface")
+Signed-off-by: Pedro Sousa <sousa@synopsys.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 ---
- drivers/gpu/drm/bridge/ti-tfp410.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/scsi/ufs/unipro.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/ti-tfp410.c b/drivers/gpu/drm/bridge/ti-tfp410.c
-index c3e32138c6bb..9dc109df0808 100644
---- a/drivers/gpu/drm/bridge/ti-tfp410.c
-+++ b/drivers/gpu/drm/bridge/ti-tfp410.c
-@@ -64,7 +64,12 @@ static int tfp410_get_modes(struct drm_connector *connector)
- 
- 	drm_connector_update_edid_property(connector, edid);
- 
--	return drm_add_edid_modes(connector, edid);
-+	ret = drm_add_edid_modes(connector, edid);
-+
-+	kfree(edid);
-+
-+	return ret;
-+
- fallback:
- 	/* No EDID, fallback on the XGA standard modes */
- 	ret = drm_add_modes_noedid(connector, 1920, 1200);
+diff --git a/drivers/scsi/ufs/unipro.h b/drivers/scsi/ufs/unipro.h
+index 23129d7b2678..c77e36526447 100644
+--- a/drivers/scsi/ufs/unipro.h
++++ b/drivers/scsi/ufs/unipro.h
+@@ -52,7 +52,7 @@
+ #define RX_HS_UNTERMINATED_ENABLE		0x00A6
+ #define RX_ENTER_HIBERN8			0x00A7
+ #define RX_BYPASS_8B10B_ENABLE			0x00A8
+-#define RX_TERMINATION_FORCE_ENABLE		0x0089
++#define RX_TERMINATION_FORCE_ENABLE		0x00A9
+ #define RX_MIN_ACTIVATETIME_CAPABILITY		0x008F
+ #define RX_HIBERN8TIME_CAPABILITY		0x0092
+ #define RX_REFCLKFREQ				0x00EB
 -- 
 2.17.1
 
