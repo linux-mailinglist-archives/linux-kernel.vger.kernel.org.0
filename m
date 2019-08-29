@@ -2,220 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 266C2A1AA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:04:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48567A1AAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:05:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbfH2NEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:04:39 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45600 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfH2NEj (ORCPT
+        id S1727398AbfH2NFA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:05:00 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58280 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbfH2NE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:04:39 -0400
-Received: by mail-yw1-f68.google.com with SMTP id n69so1080055ywd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 06:04:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jbt8QVuKSyj/sWQ72n57ax07Z6OSVIi5b7yOSbu/iaA=;
-        b=cnNhSiUI5Y8Aorow788RFQl6zZ3NHK14DJ8y8HvjApt1P5EMwS0HUx4q/gfDtXDqNw
-         lkpAaomVKvQ1tcAUf+q77rRaPCJJZKV/0rGryQWXskP/OBBCDrY+Nd89tqoxenRGQqLR
-         yDn9TS/LcOz3pYNOQcO9sObX7Rtc/YPSDIb6C6/IVjel/dSqJ9mGJzedqjbb9OL+N6+o
-         SrFnm9Wq9BsLPzjIrxBbiMAyTDAms2dmvCeJer+1LnLbxkChyf8x3Up7RNh1a69dGqu/
-         O67aNQa3bDPxRASG7Bt2kbInLkEp12AVR2/+iXvwpQGG27M+FzdcWE7hB6+M5znGCUsz
-         WNPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jbt8QVuKSyj/sWQ72n57ax07Z6OSVIi5b7yOSbu/iaA=;
-        b=A/HpZpzpeSGoJRG+S+zctp837buiJ9DvXdagIX3LIS4JK73sclJwukNf18Dm4QJiNg
-         K5Gqql+6cp8u3KryBouzZItg/rnrCEfu2hxBDTLxTASUItgdmI43F9Fp6E+v0/mJ/jcs
-         SsdTTxXbI11RCL5o1D6VcCDHEOaZF6ceEswwr2cVdXYkaYVMZdeCbfkaN3AsXw/OKVNm
-         PpNeWAMr1b0Y/OfAL766L+EmJ0NThnT5NtJFgc18sDSHxwz+8HQ4hKQA8yaUWMO30ePC
-         WFABrCxS6+PYI8U3axFDdUUh14F7JqQpPP/Yz9KZru/DRbIsMgKt5rMMoZQDlFEYxAC2
-         U4fg==
-X-Gm-Message-State: APjAAAVr9jNrmw+HQZ8/xT5Yq8pjZVIp53AWQuumoTGvBZW6yl9kTxFg
-        O7c6RlGOerFOhEQ9GGWRXKSKtA==
-X-Google-Smtp-Source: APXvYqxlv5dMHxddcEVgVm1vPth9+XsALvqjG1C8iU2wgMSOIhQ7CLZvCEH1dw0B9q1yyV85VcTGUQ==
-X-Received: by 2002:a81:a6c1:: with SMTP id d184mr6487059ywh.468.1567083878220;
-        Thu, 29 Aug 2019 06:04:38 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id d195sm450214ywb.101.2019.08.29.06.04.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 06:04:36 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 09:04:33 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Rob Clark <robdclark@chromium.org>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Bruce Wang <bzwang@chromium.org>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Enrico Weigelt <info@metux.net>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <freedreno@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/9] drm/msm: add kms->wait_flush()
-Message-ID: <20190829130433.GE218215@art_vandelay>
-References: <20190827213421.21917-1-robdclark@gmail.com>
- <20190827213421.21917-5-robdclark@gmail.com>
+        Thu, 29 Aug 2019 09:04:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AErEWstWk9AqOWm/GPKA3AadpNtUjz4m9BVSetCYmeU=; b=IY0+mtQkGxyw/kjhqsb4hVAjI
+        JflNvdzMQBcyyvehFneIEhId0CPFnnqLuQOaBP1BsWnEHR1hH190fTN7T7otVOjtjLTiCy0iWaBa8
+        Xzwt1m5fX11ndKtEqI+tH6nhuGaBHHetbvVi3gvPlwkLf+bwiLLmbO2ylU00ddMhcE74yYHjwbmPY
+        CrMOnNusfu0V3Do0XLgogo6NblYyZ7DzdeRj4DcR5+/NoKZgZ4vgK06vBg1MxAQnjULrjYY7JbuKB
+        W+20GqOZ93ysPtKj2mZdl5Va1gu/v31Q8grDG0ATwxjmvmVCEhXTnShkU8kQai+1GiwxONcVURGdI
+        5MmDbmgDA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3K6Z-0002iw-IF; Thu, 29 Aug 2019 13:04:47 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F33B6301176;
+        Thu, 29 Aug 2019 15:04:11 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B586A20CB9FE3; Thu, 29 Aug 2019 15:04:45 +0200 (CEST)
+Date:   Thu, 29 Aug 2019 15:04:45 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mac Chiang <mac.chiang@intel.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20190829130445.GT2369@hirez.programming.kicks-ass.net>
+References: <20190829162012.36ac9d7c@canb.auug.org.au>
+ <20190829074644.GL2369@hirez.programming.kicks-ass.net>
+ <alpine.DEB.2.21.1908291422520.1938@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190827213421.21917-5-robdclark@gmail.com>
+In-Reply-To: <alpine.DEB.2.21.1908291422520.1938@nanos.tec.linutronix.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 02:33:34PM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
+On Thu, Aug 29, 2019 at 02:24:24PM +0200, Thomas Gleixner wrote:
+> On Thu, 29 Aug 2019, Peter Zijlstra wrote:
+> > On Thu, Aug 29, 2019 at 04:20:12PM +1000, Stephen Rothwell wrote:
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Thu, 29 Aug 2019 16:08:49 +1000
+> > > Subject: [PATCH] ASoC: Intel: boards: merge fix for INTEL_FAM6_KABYLAKE_MOBILE -> INTEL_FAM6_KABYLAKE_L change
+> > > 
+> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > ---
+> > >  sound/soc/intel/common/soc-intel-quirks.h | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/sound/soc/intel/common/soc-intel-quirks.h b/sound/soc/intel/common/soc-intel-quirks.h
+> > > index e6357d306cb8..863a477d3405 100644
+> > > --- a/sound/soc/intel/common/soc-intel-quirks.h
+> > > +++ b/sound/soc/intel/common/soc-intel-quirks.h
+> > > @@ -36,7 +36,7 @@ SOC_INTEL_IS_CPU(byt, INTEL_FAM6_ATOM_SILVERMONT);
+> > >  SOC_INTEL_IS_CPU(cht, INTEL_FAM6_ATOM_AIRMONT);
+> > >  SOC_INTEL_IS_CPU(apl, INTEL_FAM6_ATOM_GOLDMONT);
+> > >  SOC_INTEL_IS_CPU(glk, INTEL_FAM6_ATOM_GOLDMONT_PLUS);
+> > > -SOC_INTEL_IS_CPU(cml, INTEL_FAM6_KABYLAKE_MOBILE);
+> > > +SOC_INTEL_IS_CPU(cml, INTEL_FAM6_KABYLAKE_L);
+> > 
+> > ARGHH... rebase again?
 > 
-> First step in re-working the atomic related internal API to prepare for
-> async updates pending.. ->wait_flush() is intended to block until there
-> is no in-progress flush.
-> 
-> A crtc_mask is used, rather than an atomic state object, as this will
-> later be used for async flush after the atomic state is destroyed.
-> 
-> This replaces ->wait_for_crtc_commit_done()
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> No. This is a conflict with the sound tree which added the MOBILE
+> thingy. So what you could do for now is
 
-Hi Rob,
-A few nits below, but lgtm overall
-
-
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c  | 11 ++++++-
->  drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c | 17 ++++++----
->  drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 17 ++++++----
->  drivers/gpu/drm/msm/msm_atomic.c         | 42 ++++++++++--------------
->  drivers/gpu/drm/msm/msm_kms.h            |  9 +++--
->  5 files changed, 54 insertions(+), 42 deletions(-)
-> 
-
-/snip
-
-> index e5aae1645933..639cc88c31a1 100644
-> --- a/drivers/gpu/drm/msm/msm_atomic.c
-> +++ b/drivers/gpu/drm/msm/msm_atomic.c
-> @@ -10,28 +10,6 @@
->  #include "msm_gem.h"
->  #include "msm_kms.h"
->  
-> -static void msm_atomic_wait_for_commit_done(struct drm_device *dev,
-> -		struct drm_atomic_state *old_state)
-> -{
-> -	struct drm_crtc *crtc;
-> -	struct drm_crtc_state *new_crtc_state;
-> -	struct msm_drm_private *priv = old_state->dev->dev_private;
-> -	struct msm_kms *kms = priv->kms;
-> -	int i;
-> -
-> -	for_each_new_crtc_in_state(old_state, crtc, new_crtc_state, i) {
-> -		if (!new_crtc_state->active)
-> -			continue;
-> -
-> -		if (drm_crtc_vblank_get(crtc))
-> -			continue;
-> -
-> -		kms->funcs->wait_for_crtc_commit_done(kms, crtc);
-> -
-> -		drm_crtc_vblank_put(crtc);
-> -	}
-> -}
-> -
->  int msm_atomic_prepare_fb(struct drm_plane *plane,
->  			  struct drm_plane_state *new_state)
->  {
-> @@ -51,11 +29,28 @@ int msm_atomic_prepare_fb(struct drm_plane *plane,
->  	return msm_framebuffer_prepare(new_state->fb, kms->aspace);
->  }
->  
-> +/* Get bitmask of crtcs that will need to be flushed.  The bitmask
-> + * can be used with for_each_crtc_mask() iterator, to iterate
-> + * effected crtcs without needing to preserve the atomic state.
-> + */
-> +static unsigned get_crtc_mask(struct drm_atomic_state *state)
-> +{
-> +	struct drm_crtc_state *crtc_state;
-> +	struct drm_crtc *crtc;
-> +	unsigned i, mask = 0;
-> +
-> +	for_each_new_crtc_in_state(state, crtc, crtc_state, i)
-> +		mask |= BIT(crtc->index);
-
-mask |= drm_crtc_mask(crtc);
-
-> +
-> +	return mask;
-> +}
-> +
->  void msm_atomic_commit_tail(struct drm_atomic_state *state)
->  {
->  	struct drm_device *dev = state->dev;
->  	struct msm_drm_private *priv = dev->dev_private;
->  	struct msm_kms *kms = priv->kms;
-> +	unsigned crtc_mask = get_crtc_mask(state);
->  
->  	kms->funcs->prepare_commit(kms, state);
->  
-> @@ -70,8 +65,7 @@ void msm_atomic_commit_tail(struct drm_atomic_state *state)
->  		kms->funcs->commit(kms, state);
->  	}
->  
-> -	msm_atomic_wait_for_commit_done(dev, state);
-> -
-> +	kms->funcs->wait_flush(kms, crtc_mask);
->  	kms->funcs->complete_commit(kms, state);
->  
->  	drm_atomic_helper_commit_hw_done(state);
-> diff --git a/drivers/gpu/drm/msm/msm_kms.h b/drivers/gpu/drm/msm/msm_kms.h
-> index c7588a42635e..8562bbfd5dca 100644
-> --- a/drivers/gpu/drm/msm/msm_kms.h
-> +++ b/drivers/gpu/drm/msm/msm_kms.h
-> @@ -34,9 +34,8 @@ struct msm_kms_funcs {
->  	void (*prepare_commit)(struct msm_kms *kms, struct drm_atomic_state *state);
->  	void (*commit)(struct msm_kms *kms, struct drm_atomic_state *state);
->  	void (*complete_commit)(struct msm_kms *kms, struct drm_atomic_state *state);
-> -	/* functions to wait for atomic commit completed on each CRTC */
-> -	void (*wait_for_crtc_commit_done)(struct msm_kms *kms,
-> -					struct drm_crtc *crtc);
-> +	void (*wait_flush)(struct msm_kms *kms, unsigned crtc_mask);
-> +
->  	/* get msm_format w/ optional format modifiers from drm_mode_fb_cmd2 */
->  	const struct msm_format *(*get_format)(struct msm_kms *kms,
->  					const uint32_t format,
-> @@ -98,4 +97,8 @@ struct msm_mdss {
->  int mdp5_mdss_init(struct drm_device *dev);
->  int dpu_mdss_init(struct drm_device *dev);
->  
-> +#define for_each_crtc_mask(dev, crtc, crtc_mask) \
-> +	list_for_each_entry(crtc, &(dev)->mode_config.crtc_list, head) \
-
-drm_for_each_crtc
-
-> +		for_each_if (BIT((crtc)->index) & (crtc_mask))
-> +
->  #endif /* __MSM_KMS_H__ */
-> -- 
-> 2.21.0
-> 
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Yes, SFR clarified that. This is a case of me doing email before waking
+up.
