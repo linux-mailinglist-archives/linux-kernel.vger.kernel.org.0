@@ -2,173 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E886AA27A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FC20A27A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:05:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbfH2UEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:04:24 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46264 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbfH2UEX (ORCPT
+        id S1728294AbfH2UFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:05:05 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36675 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728085AbfH2UFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:04:23 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h7so3347352wrt.13;
-        Thu, 29 Aug 2019 13:04:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HsxpJcZSI71PdCWjAkEI23BizxSa4mt7mKkj5knkHJs=;
-        b=Ez6J3AZe/WF5Yml9bO2ExN1KMW03AKxwOL3oBqgvWpWj6G84BtxInZGF/413TlfIgO
-         x+R55BiM8L3DgmrVXvvDSp4xGS8QJhJCWqK9krNlNhaghxkTUbA7L7nRyHe61SNbQoHC
-         6KkI1Zr1XadMUQ5ma5eHwAUaicqYIE5GXhWvgo8ilxrHE+5rNaRTUW5Glj4Fz+XF51tI
-         p02cW7PooE1ZUdj1v/StUN3mKTZMb9A6qN+azExuMTcwkJFEbmFhu7GLEj+rlz6XLX0K
-         TY9BdnJZgsTiLLqugA3UzQexI2eCQ7GgVzhs8wDwJp1f+ALAmg1nX4fZxZrKOdzkQylj
-         Brnw==
+        Thu, 29 Aug 2019 16:05:05 -0400
+Received: by mail-oi1-f193.google.com with SMTP id n1so3579400oic.3;
+        Thu, 29 Aug 2019 13:05:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=HsxpJcZSI71PdCWjAkEI23BizxSa4mt7mKkj5knkHJs=;
-        b=odGR2Ww9byKHfrztZDdyQFyFaLeo7YRxQ7YcPCyIg+t/zCZmn02WlhrCVb9uBTDeHD
-         elESAZhiivy17BrnhwD6y5HWxUXxSXOrZ6VL8sHNXapyCEQVKdpci1w8ABtDngwHC3TF
-         teArrO9GLE5nOi3Rp5qyEs/PzWrrgcsEL6BG4uIrMIZaeUHoqvZz8vKyxdC5/OKyicjA
-         iRd7ogwIGHoQ9LUrAS2OtQcovpjSokxMKrVkY80x+Gbs/HfUTJEqESz/Av77CUBLd+ZA
-         i2buhg+YO7xTIvnqgu+bage4ero57sZ3mzOZD7qfcrM/e9O48RC9aYMDZpuQQlFQvU1J
-         u9Ow==
-X-Gm-Message-State: APjAAAWoUFtMiJJJHTuU9g/Zw98gEbHLV3iP8DDYvDIlEkY2gcbsWj0T
-        3LWEIh+6OdrrbTczilZ+pcnN7bYL
-X-Google-Smtp-Source: APXvYqxtibjKrr/KvWr5UbETlkyol0MTxzoL3XGdEsYm7yknBbV/+FHTJNNthym+pRW1/5qwSy/LLA==
-X-Received: by 2002:adf:e74c:: with SMTP id c12mr13676906wrn.173.1567109060940;
-        Thu, 29 Aug 2019 13:04:20 -0700 (PDT)
-Received: from [192.168.1.19] (cjm4.neoplus.adsl.tpnet.pl. [83.31.62.4])
-        by smtp.gmail.com with ESMTPSA id j20sm6671531wre.65.2019.08.29.13.04.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Aug 2019 13:04:20 -0700 (PDT)
-Subject: Re: [PATCH] leds: lm3532: Fix optional led-max-microamp prop error
- handling
-To:     Dan Murphy <dmurphy@ti.com>, pavel@ucw.cz
-Cc:     linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190829191836.9648-1-dmurphy@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jacek.anaszewski@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <ff3a0662-a71b-79d5-6d28-a882f9f77f89@gmail.com>
-Date:   Thu, 29 Aug 2019 22:04:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=olD2mIH4m+P4tlheGqCEsNMbY7eNHE8lmUC8IgMGIBs=;
+        b=X+Bkf/yxgIk2/caIYMIFbkS4Ise/Aw6hqwhYqRwjrizB7Z5ATVOh5Snx3kfsMNAWVA
+         Y/KZruo/GAYisLkYaiONlH8bCe1/jiOnlMtz+vSAfn+5vqna7JAWZghXPwLb76YuLAlw
+         +iVz/87NBNGLWq+NzmAwjHZNn0ZJ84RFKm8Z6qVoVaW8rg+mJ7lx+bMdlihwh6uFrHuL
+         cPX/+59zy5+hlkYaehXbvA1/D/vDUJgN4fsZJAbcLlEThTRZTOWcQj/p+OKKZ51+EHzv
+         raBq6gZvqx5jCNz40QaK0Q/XaMB+LvVxYAqOoX1Hr41b7Sloj0+kabG7ZUPpmZyQohTD
+         cZ0Q==
+X-Gm-Message-State: APjAAAWgogj6km7eYk3qmapkJVEsiwkC+P276FwSbf0GJ14q6jw1Vo5P
+        tpXbWFls2zcpsNzux4G/g6npwCE=
+X-Google-Smtp-Source: APXvYqw25K1BL3gwLmn1i6McjlyIKHA3SA6g6v8scCo80RRzPLJIQGfYl6oq/ARM6ji1yUyJh172ig==
+X-Received: by 2002:aca:b445:: with SMTP id d66mr7924251oif.7.1567109104134;
+        Thu, 29 Aug 2019 13:05:04 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v1sm1055259ota.60.2019.08.29.13.05.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 13:05:03 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 15:05:03 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 04/11] dt-bindings: phy-mtk-tphy: add a new reference
+ clock
+Message-ID: <20190829200503.GA2542@bogus>
+References: <e99c0d7a55869a4425250c601b80a3331c9d0976.1566542696.git.chunfeng.yun@mediatek.com>
+ <f6ee7d33103b43b2f1e1331c23c36057ef20b20d.1566542697.git.chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20190829191836.9648-1-dmurphy@ti.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f6ee7d33103b43b2f1e1331c23c36057ef20b20d.1566542697.git.chunfeng.yun@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
-
-Thanks for the update.
-
-On 8/29/19 9:18 PM, Dan Murphy wrote:
-> Fix the error handling for the led-max-microamp property.
-> Need to check if the property is present and then if it is
-> retrieve the setting and its max boundary
+On Fri, Aug 23, 2019 at 03:00:11PM +0800, Chunfeng Yun wrote:
+> Usually the digital and anolog phys use the same reference clock,
+> but on some platforms, they are separated, so add another optional
+> clock to support it.
+> In order to keep the clock names consistent with PHY IP's, use
+> the da_ref for anolog phy and ref clock for digital phy.
 > 
-> Reported-by: Pavel Machek <pavel@ucw.cz>
-> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 > ---
->  drivers/leds/leds-lm3532.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+>  Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
-> index c5cfd8e3f15f..13b4265fb85a 100644
-> --- a/drivers/leds/leds-lm3532.c
-> +++ b/drivers/leds/leds-lm3532.c
-> @@ -601,11 +601,15 @@ static int lm3532_parse_node(struct lm3532_data *priv)
->  			goto child_out;
->  		}
->  
-> -		ret = fwnode_property_read_u32(child, "led-max-microamp",
-> -					       &led->full_scale_current);
-> -
-> -		if (led->full_scale_current > LM3532_FS_CURR_MAX)
-> -			led->full_scale_current = LM3532_FS_CURR_MAX;
-> +		if (fwnode_property_present(child, "led-max-microamp")) {
-> +			if (fwnode_property_read_u32(child, "led-max-microamp",
-> +						     &led->full_scale_current))
-> +				dev_err(&priv->client->dev,
-> +					"Failed getting led-max-microamp\n");
-> +
-> +			if (led->full_scale_current > LM3532_FS_CURR_MAX)
-> +				led->full_scale_current = LM3532_FS_CURR_MAX;
+> diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> index dbc143ed5999..ed9a2641f204 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> +++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> @@ -41,9 +41,12 @@ Optional properties (PHY_TYPE_USB2 port (child) node):
+>  - clocks	: a list of phandle + clock-specifier pairs, one for each
+>  		  entry in clock-names
+>  - clock-names	: may contain
+> -		  "ref": 48M reference clock for HighSpeed anolog phy; and 26M
+> -			reference clock for SuperSpeed anolog phy, sometimes is
+> +		  "ref": 48M reference clock for HighSpeed (digital) phy; and 26M
+> +			reference clock for SuperSpeed (digital) phy, sometimes is
+>  			24M, 25M or 27M, depended on platform.
+> +		  "da_ref": the reference clock of anolog phy, used if the clocks
+> +			of anolog and digital phys are separated, otherwise uses
 
-One more nit: we have min() macro in kernel.h for such things.
+s/amolog/analog/
 
-> +		}
+> +			"ref" clock only if need.
+
+needed.
+
 >  
->  		if (led->mode == LM3532_BL_MODE_ALS) {
->  			led->mode = LM3532_ALS_CTRL;
+>  - mediatek,eye-src	: u32, the value of slew rate calibrate
+>  - mediatek,eye-vrt	: u32, the selection of VRT reference voltage
+> -- 
+> 2.23.0
 > 
-
--- 
-Best regards,
-Jacek Anaszewski
