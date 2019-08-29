@@ -2,121 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F8EA13D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C8EBA13D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbfH2IdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:33:02 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38781 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727810AbfH2Ic5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:32:57 -0400
-Received: by mail-lj1-f194.google.com with SMTP id x3so2172792lji.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JgLR6Eqt8jfsgQZgs5aBVeUPiD11IsQFXRalFsn+2h4=;
-        b=BU4KkARm9AOg73ixkmQcodJmg2l9rT+7dX+UZ8Jw9ryRRFNzrHnsAuixQ+pL+oP051
-         XFKRDBQv4bD5G7uYzkiksRsBunaSAiB+YDMlwhKYgONropqpuRl0Qv9pAAX2dJv0U2a/
-         Mjnak4cemlkKbG3YV1McfAPLIXFEy29F/fLCQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JgLR6Eqt8jfsgQZgs5aBVeUPiD11IsQFXRalFsn+2h4=;
-        b=HLKk335xamvtTAKHwsO7d7Vi7E2u+TQrlbR5iVB+ts7HhapPXvQA9Bc8W79CTNGSgg
-         kNnreabr1sian+YX2z1i7bjmKUFmydbEbpPIXmviU5Ylk0Ghu7NAl8yKxUe0SuaE5fdX
-         /pqEAq3USvGj5VZHIwqP7koyvhEmJemObmJoKRYmX7B9IFgV6AFGTiVtG4GZeiONcx7p
-         4+t18W7s/yhU5LcpTKdPRPy7kIG0oeQQ5Q2OZWtC+3IRt219ZcVl+ByNbATP6DwMhlSE
-         gmu0ywpGX0ZQwF+W3iBCB7MXDS1nJDqQPGBLhq2zHo6qa+mRFuC27U4x2S4vetsHgYL7
-         fArQ==
-X-Gm-Message-State: APjAAAUhZMvx8XXASc1iNKursHub4gcic8wB+bJ2zeVyc6SrNoZdUh32
-        VBASEJyms1QK3Dg+kTArAxBhxQ==
-X-Google-Smtp-Source: APXvYqyiXnmDPZw3Wq01Z5lJf0JrUon18lAytn2k8k+m4ePo8H2XqV7q1jPIEaZVEQSOaAvVbqEQaA==
-X-Received: by 2002:a2e:9c91:: with SMTP id x17mr4517998lji.103.1567067575093;
-        Thu, 29 Aug 2019 01:32:55 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o20sm248087ljg.31.2019.08.29.01.32.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 01:32:54 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        ndesaulniers@google.com,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [RFC PATCH 5/5] x86: bug.h: use asm_inline in _BUG_FLAGS definitions
-Date:   Thu, 29 Aug 2019 10:32:33 +0200
-Message-Id: <20190829083233.24162-6-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
-References: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1727003AbfH2Idz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:33:55 -0400
+Received: from gate.crashing.org ([63.228.1.57]:37820 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727994AbfH2IdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 04:33:19 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x7T8X083006230;
+        Thu, 29 Aug 2019 03:33:00 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x7T8WxRj006229;
+        Thu, 29 Aug 2019 03:32:59 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Thu, 29 Aug 2019 03:32:59 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH] powerpc: Avoid clang warnings around setjmp and longjmp
+Message-ID: <20190829083259.GI31406@gate.crashing.org>
+References: <20190812023214.107817-1-natechancellor@gmail.com> <878srdv206.fsf@mpe.ellerman.id.au> <20190828175322.GA121833@archlinux-threadripper> <CAKwvOdmXbYrR6n-cxKt3XxkE4Lmj0sSoZBUtHVb0V2LTUFHmug@mail.gmail.com> <20190828184529.GC127646@archlinux-threadripper> <CAKwvOd=wdscd7smcKZk40zD_n1OUVkhYYd7ZnoK8r1Y+pkvYVg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOd=wdscd7smcKZk40zD_n1OUVkhYYd7ZnoK8r1Y+pkvYVg@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This helps preventing a BUG* or WARN* in some static inline from
-preventing that (or one of its callers) being inlined, so should allow
-gcc to make better informed inlining decisions.
+On Wed, Aug 28, 2019 at 03:16:19PM -0700, Nick Desaulniers wrote:
+> That's a good reason IMO.  IIRC, the -fno-builtin-* flags don't warn
+> if * is some unrecognized value, so -fno-builtin-setjmp may not
+> actually do anything, and you may need to scan the source (of clang or
+> llvm).
 
-For example, with gcc 9.2, tcp_fastopen_no_cookie() vanishes from
-net/ipv4/tcp_fastopen.o. It does not itself have any BUG or WARN, but
-it calls dst_metric() which has a WARN_ON_ONCE - and despite that
-WARN_ON_ONCE vanishing since the condition is compile-time false,
-dst_metric() is apparently sufficiently "large" that when it gets
-inlined into tcp_fastopen_no_cookie(), the latter becomes too large
-for inlining.
+-fno-builtin-foo makes the compiler not handle "foo" the same as it
+handles "__builtin_foo".  If the compiler has no idea about "foo", well,
+that is exactly what it does then anyhow, so why would it warn :-)
 
-Overall, if one asks size(1), .text decreases a little and .data
-increases by about the same amount (x86-64 defconfig)
 
-$ size vmlinux.{before,after}
-   text    data     bss     dec     hex filename
-19709726        5202600 1630280 26542606        195020e vmlinux.before
-19709330        5203068 1630280 26542678        1950256 vmlinux.after
-
-while bloat-o-meter says
-
-add/remove: 10/28 grow/shrink: 103/51 up/down: 3669/-2854 (815)
-...
-Total: Before=14783683, After=14784498, chg +0.01%
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- arch/x86/include/asm/bug.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-index 6804d6642767..facba9bc30ca 100644
---- a/arch/x86/include/asm/bug.h
-+++ b/arch/x86/include/asm/bug.h
-@@ -32,7 +32,7 @@
- 
- #define _BUG_FLAGS(ins, flags)						\
- do {									\
--	asm volatile("1:\t" ins "\n"					\
-+	asm_inline volatile("1:\t" ins "\n"				\
- 		     ".pushsection __bug_table,\"aw\"\n"		\
- 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
- 		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
-@@ -49,7 +49,7 @@ do {									\
- 
- #define _BUG_FLAGS(ins, flags)						\
- do {									\
--	asm volatile("1:\t" ins "\n"					\
-+	asm_inline volatile("1:\t" ins "\n"				\
- 		     ".pushsection __bug_table,\"aw\"\n"		\
- 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
- 		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
--- 
-2.20.1
-
+Segher
