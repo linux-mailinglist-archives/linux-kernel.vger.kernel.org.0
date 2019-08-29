@@ -2,137 +2,269 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0170BA1F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2049A1F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:28:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbfH2P06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:26:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44718 "EHLO mail.kernel.org"
+        id S1727997AbfH2P16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:27:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56576 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726739AbfH2P06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:26:58 -0400
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726283AbfH2P16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:27:58 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA2072342F;
-        Thu, 29 Aug 2019 15:26:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567092416;
-        bh=L+4ClaRi9fsykE32xB4xhDmYla9Xiavn1wqCMCMursM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YQI2zazxcGJYwGnMOBrNMMxEPo5oFzhrDk9+MilWCL+KAoP8rKKDgHfufr1foeqeP
-         QSCFvW+tV30oJMZ4OWJ7859VnJK4QUc5OXu2QgkA43Vr9CRTGzKR4KESa6U1OeOAye
-         5Sy2mg+SEmmRG4WYyimWY/ci+PiF1Z0X6j6cZpLI=
-Received: by mail-qk1-f170.google.com with SMTP id m2so3247725qki.12;
-        Thu, 29 Aug 2019 08:26:56 -0700 (PDT)
-X-Gm-Message-State: APjAAAUTWSWjguGAYuj+oDQ/VGykjE/PvAbm4MYvUx50g3GsNTZGpQOz
-        6eDuGW5praTMIT0FJ9K5dq6U2uybYBaiXL1BTQ==
-X-Google-Smtp-Source: APXvYqwpfIKijR3krvhxBbOcuXprzAlMFrP7pRI7j1UXKERObZYR+sKPh8ZKFsOblUy4X3oiWnIbSfzV1lql8lzhaiI=
-X-Received: by 2002:a37:4941:: with SMTP id w62mr9319300qka.119.1567092415814;
- Thu, 29 Aug 2019 08:26:55 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id A28641089045;
+        Thu, 29 Aug 2019 15:27:57 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-12.gru2.redhat.com [10.97.112.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4324284E2;
+        Thu, 29 Aug 2019 15:27:40 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 84A8B10513F;
+        Thu, 29 Aug 2019 12:27:20 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id x7TFRGAF015987;
+        Thu, 29 Aug 2019 12:27:16 -0300
+Date:   Thu, 29 Aug 2019 12:27:16 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Joao Martins <joao.m.martins@oracle.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: Re: [PATCH v2] cpuidle-haltpoll: vcpu hotplug support
+Message-ID: <20190829152714.GA15616@amt.cnet>
+References: <20190829151027.9930-1-joao.m.martins@oracle.com>
 MIME-Version: 1.0
-References: <1567017402-5895-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1567017402-5895-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 29 Aug 2019 10:26:43 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+5FMHK4W4UQU24g+rm3CLjnhRcB29skygRB++GaJyM0A@mail.gmail.com>
-Message-ID: <CAL_Jsq+5FMHK4W4UQU24g+rm3CLjnhRcB29skygRB++GaJyM0A@mail.gmail.com>
-Subject: Re: [PATCH v3 0/8] Add dual-LVDS panel support to EK874
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        xu_shunji@hoperun.com, ebiharaml@si-linux.co.jp
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829151027.9930-1-joao.m.martins@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Thu, 29 Aug 2019 15:27:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 1:36 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
->
-> Dear All,
->
-> this series adds support for dual-LVDS panel IDK-2121WR
-> from Advantech:
-> https://buy.advantech.eu/Displays/Embedded-LCD-Kits-High-Brightness/model-IDK-2121WR-K2FHA2E.htm
->
-> V3 approaches the problem in a completely different way, we now
-> have two new properties to mark the ports in the DT as receiving
-> even pixels and odd pixels: dual-lvds-even-pixels and dual-lvds-odd-pixels,
-> which means device drivers should not use bridge specific or panel
-> specific dual_link flags. Also, in this case the DT describes the
-> connection fully.
->
-> In order for the solution to be generic, I have exported a new helper
-> (drm_of_lvds_get_dual_link_configuration) to walk the device tree,
-> and figure out if the connection is dual-LVDS. The same helper gives
-> information about the configuration of the connection. If Px is connected
-> to a port expecting even pixels and Py is connected to a port expecting
-> odd pixels, then the helper returns DRM_LVDS_DUAL_LINK_EVEN_ODD_PIXELS
-> (like in the example below), otherwise it returns
-> DRM_LVDS_DUAL_LINK_ODD_EVEN_PIXELS.
->
->
->  --------            dual-lvds-even-pixels  --------
-> |        |----                         ----|        |
-> |        | Px |---------------------->| Pn |        |
-> |        |----                         ----|        |
-> | SOURCE |           dual-lvds-odd-pixels  |  SINK  |
-> |        |----                         ----|        |
-> |        | Py |---------------------->| Pm |        |
-> |        |----                         ----|        |
->  --------                                   --------
->
-> The device driver for the encoder then will work out if with the current
-> wiring the pixels need swapping or not.
->
-> The same solution works for both panels and bridges.
->
-> Since the DT describes the connection fully, driver
-> drivers/gpu/drm/panel/panel-lvds.c works out-of-the-box, no changes
-> required, however, this implementation opens up a problem with the
-> dt-bindings.
-> Driver drivers/gpu/drm/panel/panel-lvds.c can still be pleased by
-> a port node, but also by a ports node.
-> I have created Documentation/devicetree/bindings/display/bus-timings/lvds.yaml
-> with the idea of including it from panels and bridges dt-bindings
-> supporting dual-LVDS (and of course the dt-bindings for the specific
-> devices should say which port should be marked as what), but file
-> Documentation/devicetree/bindings/display/panel/lvds.yaml formally
-> requires property "port", while with this implementation it should require
-> OneOf "port" and "ports", and unfortunately I can't seem to find a neat way
-> aroud that, other than creating a new compatible string
+On Thu, Aug 29, 2019 at 04:10:27PM +0100, Joao Martins wrote:
+> When cpus != maxcpus cpuidle-haltpoll will fail to register all vcpus
+> past the online ones and thus fail to register the idle driver.
+> This is because cpuidle_add_sysfs() will return with -ENODEV as a
+> consequence from get_cpu_device() return no device for a non-existing
+> CPU.
+> 
+> Instead switch to cpuidle_register_driver() and manually register each
+> of the present cpus through cpuhp_setup_state() callback and future
+> ones that get onlined. This mimmics similar logic that intel_idle does.
+> 
+> Fixes: fa86ee90eb11 ("add cpuidle-haltpoll driver")
+> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> ---
+> v2:
+> * move cpus_read_unlock() right after unregistering all cpuidle_devices;
+> (Marcello Tosatti)
+> * redundant usage of cpuidle_unregister() when only
+> cpuidle_unregister_driver() suffices; (Marcelo Tosatti)
+> * cpuhp_setup_state() returns a state (> 0) on success with CPUHP_AP_ONLINE_DYN
+> thus we set @ret to 0
+> ---
+>  arch/x86/include/asm/cpuidle_haltpoll.h |  4 +-
+>  arch/x86/kernel/kvm.c                   | 18 +++----
+>  drivers/cpuidle/cpuidle-haltpoll.c      | 67 +++++++++++++++++++++++--
+>  include/linux/cpuidle_haltpoll.h        |  4 +-
+>  4 files changed, 72 insertions(+), 21 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/cpuidle_haltpoll.h b/arch/x86/include/asm/cpuidle_haltpoll.h
+> index ff8607d81526..c8b39c6716ff 100644
+> --- a/arch/x86/include/asm/cpuidle_haltpoll.h
+> +++ b/arch/x86/include/asm/cpuidle_haltpoll.h
+> @@ -2,7 +2,7 @@
+>  #ifndef _ARCH_HALTPOLL_H
+>  #define _ARCH_HALTPOLL_H
+>  
+> -void arch_haltpoll_enable(void);
+> -void arch_haltpoll_disable(void);
+> +void arch_haltpoll_enable(unsigned int cpu);
+> +void arch_haltpoll_disable(unsigned int cpu);
+>  
+>  #endif
+> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+> index 8d150e3732d9..a9b6c4e2446d 100644
+> --- a/arch/x86/kernel/kvm.c
+> +++ b/arch/x86/kernel/kvm.c
+> @@ -880,32 +880,26 @@ static void kvm_enable_host_haltpoll(void *i)
+>  	wrmsrl(MSR_KVM_POLL_CONTROL, 1);
+>  }
+>  
+> -void arch_haltpoll_enable(void)
+> +void arch_haltpoll_enable(unsigned int cpu)
+>  {
+>  	if (!kvm_para_has_feature(KVM_FEATURE_POLL_CONTROL)) {
+> -		printk(KERN_ERR "kvm: host does not support poll control\n");
+> -		printk(KERN_ERR "kvm: host upgrade recommended\n");
+> +		pr_err_once("kvm: host does not support poll control\n");
+> +		pr_err_once("kvm: host upgrade recommended\n");
+>  		return;
+>  	}
+>  
+> -	preempt_disable();
+>  	/* Enable guest halt poll disables host halt poll */
+> -	kvm_disable_host_haltpoll(NULL);
+> -	smp_call_function(kvm_disable_host_haltpoll, NULL, 1);
+> -	preempt_enable();
+> +	smp_call_function_single(cpu, kvm_disable_host_haltpoll, NULL, 1);
+>  }
+>  EXPORT_SYMBOL_GPL(arch_haltpoll_enable);
+>  
+> -void arch_haltpoll_disable(void)
+> +void arch_haltpoll_disable(unsigned int cpu)
+>  {
+>  	if (!kvm_para_has_feature(KVM_FEATURE_POLL_CONTROL))
+>  		return;
+>  
+> -	preempt_disable();
+>  	/* Enable guest halt poll disables host halt poll */
+> -	kvm_enable_host_haltpoll(NULL);
+> -	smp_call_function(kvm_enable_host_haltpoll, NULL, 1);
+> -	preempt_enable();
+> +	smp_call_function_single(cpu, kvm_enable_host_haltpoll, NULL, 1);
+>  }
+>  EXPORT_SYMBOL_GPL(arch_haltpoll_disable);
+>  #endif
+> diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
+> index 9ac093dcbb01..8baade23f8d0 100644
+> --- a/drivers/cpuidle/cpuidle-haltpoll.c
+> +++ b/drivers/cpuidle/cpuidle-haltpoll.c
+> @@ -11,12 +11,15 @@
+>   */
+>  
+>  #include <linux/init.h>
+> +#include <linux/cpu.h>
+>  #include <linux/cpuidle.h>
+>  #include <linux/module.h>
+>  #include <linux/sched/idle.h>
+>  #include <linux/kvm_para.h>
+>  #include <linux/cpuidle_haltpoll.h>
+>  
+> +static struct cpuidle_device __percpu *haltpoll_cpuidle_devices;
+> +
+>  static int default_enter_idle(struct cpuidle_device *dev,
+>  			      struct cpuidle_driver *drv, int index)
+>  {
+> @@ -46,6 +49,48 @@ static struct cpuidle_driver haltpoll_driver = {
+>  	.state_count = 2,
+>  };
+>  
+> +static int haltpoll_cpu_online(unsigned int cpu)
+> +{
+> +	struct cpuidle_device *dev;
+> +
+> +	dev = per_cpu_ptr(haltpoll_cpuidle_devices, cpu);
+> +	if (!dev->registered) {
+> +		dev->cpu = cpu;
+> +		if (cpuidle_register_device(dev)) {
+> +			pr_notice("cpuidle_register_device %d failed!\n", cpu);
+> +			return -EIO;
+> +		}
+> +		arch_haltpoll_enable(cpu);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void haltpoll_uninit(void)
+> +{
+> +	unsigned int cpu;
+> +
+> +	cpus_read_lock();
+> +
+> +	for_each_online_cpu(cpu) {
+> +		struct cpuidle_device *dev =
+> +			per_cpu_ptr(haltpoll_cpuidle_devices, cpu);
+> +
+> +		if (!dev->registered)
+> +			continue;
+> +
+> +		arch_haltpoll_disable(cpu);
+> +		cpuidle_unregister_device(dev);
+> +	}
+> +
+> +	cpus_read_unlock();
+> +
+> +	cpuidle_unregister_driver(&haltpoll_driver);
+> +
+> +	free_percpu(haltpoll_cpuidle_devices);
+> +	haltpoll_cpuidle_devices = NULL;
+> +}
+> +
+>  static int __init haltpoll_init(void)
+>  {
+>  	int ret;
+> @@ -56,17 +101,29 @@ static int __init haltpoll_init(void)
+>  	if (!kvm_para_available())
+>  		return 0;
+>  
+> -	ret = cpuidle_register(&haltpoll_driver, NULL);
+> -	if (ret == 0)
+> -		arch_haltpoll_enable();
+> +	ret = cpuidle_register_driver(drv);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	haltpoll_cpuidle_devices = alloc_percpu(struct cpuidle_device);
+> +	if (haltpoll_cpuidle_devices == NULL) {
+> +		cpuidle_unregister_driver(drv);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "idle/haltpoll:online",
+> +				haltpoll_cpu_online, NULL);
+> +	if (ret < 0)
+> +		haltpoll_uninit();
+> +	else
+> +		ret = 0;
+>  
+>  	return ret;
+>  }
+>  
+>  static void __exit haltpoll_exit(void)
+>  {
+> -	arch_haltpoll_disable();
+> -	cpuidle_unregister(&haltpoll_driver);
+> +	haltpoll_uninit();
+>  }
+>  
+>  module_init(haltpoll_init);
+> diff --git a/include/linux/cpuidle_haltpoll.h b/include/linux/cpuidle_haltpoll.h
+> index fe5954c2409e..d50c1e0411a2 100644
+> --- a/include/linux/cpuidle_haltpoll.h
+> +++ b/include/linux/cpuidle_haltpoll.h
+> @@ -5,11 +5,11 @@
+>  #ifdef CONFIG_ARCH_CPUIDLE_HALTPOLL
+>  #include <asm/cpuidle_haltpoll.h>
+>  #else
+> -static inline void arch_haltpoll_enable(void)
+> +static inline void arch_haltpoll_enable(unsigned int cpu)
+>  {
+>  }
+>  
+> -static inline void arch_haltpoll_disable(void)
+> +static inline void arch_haltpoll_disable(unsigned int cpu)
+>  {
+>  }
+>  #endif
+> -- 
+> 2.17.1
 
-Just add 'ports' and drop 'port' from being required in the common
-binding. Then it is up to the panel specific bindings to define which
-one is required. Or we just leave it to allow either form which the
-graph code can handle.
+Reviewed-by: Marcelo Tosatti <mtosatti@redhat.com>
 
-We could have this in the common binding:
-
-oneOf:
- - required: [ports]
- - required: [port]
-
-Rob
