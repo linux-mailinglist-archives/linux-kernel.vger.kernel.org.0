@@ -2,290 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 400D5A21D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9B3BA21A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:00:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbfH2RJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:09:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35815 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfH2RJn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:09:43 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 205so21464pfw.2;
-        Thu, 29 Aug 2019 10:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eEmKPzwT9bv7o8CkfrRMRoCWIPzPX+Wtzlq+YiN89VY=;
-        b=VZ8AYH9iN76SuESknMKirjo2gKbl2HPlfNjw1ibmxDTOa0YA66/Xwrxn7bnP6gU63d
-         iiAAew2DWbzfhORONOcenVC4W2Aw+VIRlVAe6OjjH3tj+XfE3mjkF+ChBGAlhZcIK/+b
-         PH2w6czHJgPKyc8jJvQkma3FugqpR9R5ofJs1VFG6szTnpnUvxkBxFRB2YWNI7+95S/D
-         ajuz6Gw3uNk2RfgduJeR3mcBGEqyzhGUxux6ceybFmLEajsOvPQ8dOf7FDFDurPUuAX/
-         41O0MR77gcbSQa6kZbesoLiKMRuz4AUFmr2XIy6Lwj3RzpZPPFzu80mu8kWYpFjhWiVG
-         AVOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eEmKPzwT9bv7o8CkfrRMRoCWIPzPX+Wtzlq+YiN89VY=;
-        b=bputggHffccIfuLk+Xbij3Z1Q/NSgsQf503SDbXiwKSVgzgGrXzSvxBN2n5YpWAY6/
-         npwlzEVpo7mAHF/Mcq5For2YaWbHoF96AoiJkVW8k+0LX9vVP4n3gi69XBW9lt5zsu9/
-         uHonj9hB60kp/kxmTM032IEErI9MTXVjmE29l4rre/Erg7tTJPSsdAYQ7qRqZEgwdxQQ
-         OR0E0W6fPZKTAfB9Hmap6Rp8nlbSsrDC4+ffNQfX8VWdo7Lt31ycyhGdCGLnC5xcZVyL
-         S2T4m0Gq/zdENcH+56evHCizQrisnKLoF/XeBPG5Ggx7KWlyz2aqhNwV7VY/4c3JTfIC
-         Civw==
-X-Gm-Message-State: APjAAAXwuAm0AURSN6q8aBFyiJrNrcfxy3bEVcpbBwGucFwc0lyeOBMR
-        mp2psHboPxATjVKOgxZdipk=
-X-Google-Smtp-Source: APXvYqyTfKps6m+4++JfDH8GZ12jQJtAw3a4L0Jx3QAKv+kd84UpqqoIfCexFj32pxP7y87orW+9yA==
-X-Received: by 2002:a63:c17:: with SMTP id b23mr2721153pgl.224.1567098582554;
-        Thu, 29 Aug 2019 10:09:42 -0700 (PDT)
-Received: from localhost ([100.118.89.196])
-        by smtp.gmail.com with ESMTPSA id j74sm2997612pje.14.2019.08.29.10.09.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 10:09:42 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Bruce Wang <bzwang@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Enrico Weigelt <info@metux.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
-        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
-        GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 09/10] drm/msm/dpu: async commit support
-Date:   Thu, 29 Aug 2019 09:45:17 -0700
-Message-Id: <20190829164601.11615-10-robdclark@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190829164601.11615-1-robdclark@gmail.com>
-References: <20190829164601.11615-1-robdclark@gmail.com>
+        id S1727966AbfH2RAp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:00:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44108 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726739AbfH2RAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 13:00:45 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 44AC3C05E740;
+        Thu, 29 Aug 2019 17:00:44 +0000 (UTC)
+Received: from [10.36.117.243] (ovpn-117-243.ams2.redhat.com [10.36.117.243])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C9339614C9;
+        Thu, 29 Aug 2019 17:00:42 +0000 (UTC)
+Subject: Re: [PATCH] mm, oom: consider present pages for the node size
+To:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+References: <20190829163443.899-1-mhocko@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <31ea8cf0-0552-52cd-a206-ef41fb018d44@redhat.com>
+Date:   Thu, 29 Aug 2019 19:00:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190829163443.899-1-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 29 Aug 2019 17:00:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+On 29.08.19 18:34, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> constrained_alloc calculates the size of the oom domain by using
+> node_spanned_pages which is incorrect because this is the full range of
+> the physical memory range that the numa node occupies rather than the
+> memory that backs that range which is represented by node_present_pages.
+> 
+> Sparsely populated nodes (e.g. after memory hot remove or simply sparse
+> due to memory layout) can have really a large difference between the
+> two. This shouldn't really cause any real user observable problems
+> because the oom calculates a ratio against totalpages and used memory
+> cannot exceed present pages but it is confusing and wrong from code
+> point of view.
+> 
+> Noticed-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/oom_kill.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index eda2e2a0bdc6..16af3da97d08 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -287,7 +287,7 @@ static enum oom_constraint constrained_alloc(struct oom_control *oc)
+>  	    !nodes_subset(node_states[N_MEMORY], *oc->nodemask)) {
+>  		oc->totalpages = total_swap_pages;
+>  		for_each_node_mask(nid, *oc->nodemask)
+> -			oc->totalpages += node_spanned_pages(nid);
+> +			oc->totalpages += node_present_pages(nid);
+>  		return CONSTRAINT_MEMORY_POLICY;
+>  	}
+>  
+> @@ -300,7 +300,7 @@ static enum oom_constraint constrained_alloc(struct oom_control *oc)
+>  	if (cpuset_limited) {
+>  		oc->totalpages = total_swap_pages;
+>  		for_each_node_mask(nid, cpuset_current_mems_allowed)
+> -			oc->totalpages += node_spanned_pages(nid);
+> +			oc->totalpages += node_present_pages(nid);
+>  		return CONSTRAINT_CPUSET;
+>  	}
+>  	return CONSTRAINT_NONE;>
 
-In addition, moving to kms->flush_commit() lets us drop the only user
-of kms->commit().
+Thanks!
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 13 ------
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c |  7 ++--
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  5 +++
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     | 46 +++++++++++----------
- drivers/gpu/drm/msm/msm_atomic.c            |  5 +--
- drivers/gpu/drm/msm/msm_kms.h               |  3 --
- 6 files changed, 34 insertions(+), 45 deletions(-)
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 31debd31ab8c..f38a7d27a1c0 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -606,7 +606,6 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc)
- 	struct dpu_crtc *dpu_crtc = to_dpu_crtc(crtc);
- 	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
- 	struct dpu_crtc_state *cstate = to_dpu_crtc_state(crtc->state);
--	int ret;
- 
- 	/*
- 	 * If no mixers has been allocated in dpu_crtc_atomic_check(),
-@@ -626,17 +625,6 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc)
- 				  crtc->state->encoder_mask)
- 		dpu_encoder_prepare_for_kickoff(encoder);
- 
--	/* wait for previous frame_event_done completion */
--	DPU_ATRACE_BEGIN("wait_for_frame_done_event");
--	ret = _dpu_crtc_wait_for_frame_done(crtc);
--	DPU_ATRACE_END("wait_for_frame_done_event");
--	if (ret) {
--		DPU_ERROR("crtc%d wait for frame done failed;frame_pending%d\n",
--				crtc->base.id,
--				atomic_read(&dpu_crtc->frame_pending));
--		goto end;
--	}
--
- 	if (atomic_inc_return(&dpu_crtc->frame_pending) == 1) {
- 		/* acquire bandwidth and other resources */
- 		DPU_DEBUG("crtc%d first commit\n", crtc->base.id);
-@@ -650,7 +638,6 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc)
- 	drm_for_each_encoder_mask(encoder, crtc->dev, crtc->state->encoder_mask)
- 		dpu_encoder_kickoff(encoder);
- 
--end:
- 	reinit_completion(&dpu_crtc->frame_done_comp);
- 	DPU_ATRACE_END("crtc_commit");
- }
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index ac2d534bf59e..3a69b93d8fb6 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -1678,8 +1678,7 @@ static u32 _dpu_encoder_calculate_linetime(struct dpu_encoder_virt *dpu_enc,
- 	return line_time;
- }
- 
--static int _dpu_encoder_wakeup_time(struct drm_encoder *drm_enc,
--		ktime_t *wakeup_time)
-+int dpu_encoder_vsync_time(struct drm_encoder *drm_enc, ktime_t *wakeup_time)
- {
- 	struct drm_display_mode *mode;
- 	struct dpu_encoder_virt *dpu_enc;
-@@ -1766,7 +1765,7 @@ static void dpu_encoder_vsync_event_work_handler(struct kthread_work *work)
- 		return;
- 	}
- 
--	if (_dpu_encoder_wakeup_time(&dpu_enc->base, &wakeup_time))
-+	if (dpu_encoder_vsync_time(&dpu_enc->base, &wakeup_time))
- 		return;
- 
- 	trace_dpu_enc_vsync_event_work(DRMID(&dpu_enc->base), wakeup_time);
-@@ -1840,7 +1839,7 @@ void dpu_encoder_kickoff(struct drm_encoder *drm_enc)
- 	}
- 
- 	if (dpu_enc->disp_info.intf_type == DRM_MODE_ENCODER_DSI &&
--			!_dpu_encoder_wakeup_time(drm_enc, &wakeup_time)) {
-+			!dpu_encoder_vsync_time(drm_enc, &wakeup_time)) {
- 		trace_dpu_enc_early_kickoff(DRMID(drm_enc),
- 					    ktime_to_ms(wakeup_time));
- 		mod_timer(&dpu_enc->vsync_event_timer,
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-index 8465b37adf3b..b4913465e602 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-@@ -85,6 +85,11 @@ void dpu_encoder_trigger_kickoff_pending(struct drm_encoder *encoder);
-  */
- void dpu_encoder_kickoff(struct drm_encoder *encoder);
- 
-+/**
-+ * dpu_encoder_wakeup_time - get the time of the next vsync
-+ */
-+int dpu_encoder_vsync_time(struct drm_encoder *drm_enc, ktime_t *wakeup_time);
-+
- /**
-  * dpu_encoder_wait_for_event - Waits for encoder events
-  * @encoder:	encoder pointer
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-index d54741f3ad9f..af41af1731c2 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -260,6 +260,20 @@ static void dpu_kms_disable_commit(struct msm_kms *kms)
- 	pm_runtime_put_sync(&dpu_kms->pdev->dev);
- }
- 
-+static ktime_t dpu_kms_vsync_time(struct msm_kms *kms, struct drm_crtc *crtc)
-+{
-+	struct drm_encoder *encoder;
-+
-+	drm_for_each_encoder_mask(encoder, crtc->dev, crtc->state->encoder_mask) {
-+		ktime_t vsync_time;
-+
-+		if (dpu_encoder_vsync_time(encoder, &vsync_time) == 0)
-+			return vsync_time;
-+	}
-+
-+	return ktime_get();
-+}
-+
- static void dpu_kms_prepare_commit(struct msm_kms *kms,
- 		struct drm_atomic_state *state)
- {
-@@ -291,7 +305,16 @@ static void dpu_kms_prepare_commit(struct msm_kms *kms,
- 
- static void dpu_kms_flush_commit(struct msm_kms *kms, unsigned crtc_mask)
- {
--	/* TODO */
-+	struct dpu_kms *dpu_kms = to_dpu_kms(kms);
-+	struct drm_crtc *crtc;
-+
-+	for_each_crtc_mask(dpu_kms->dev, crtc, crtc_mask) {
-+		if (!crtc->state->active)
-+			continue;
-+
-+		trace_dpu_kms_commit(DRMID(crtc));
-+		dpu_crtc_commit_kickoff(crtc);
-+	}
- }
- 
- /*
-@@ -314,25 +337,6 @@ void dpu_kms_encoder_enable(struct drm_encoder *encoder)
- 			continue;
- 
- 		trace_dpu_kms_enc_enable(DRMID(crtc));
--		dpu_crtc_commit_kickoff(crtc);
--	}
--}
--
--static void dpu_kms_commit(struct msm_kms *kms, struct drm_atomic_state *state)
--{
--	struct drm_crtc *crtc;
--	struct drm_crtc_state *crtc_state;
--	int i;
--
--	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
--		/* If modeset is required, kickoff is run in encoder_enable */
--		if (drm_atomic_crtc_needs_modeset(crtc_state))
--			continue;
--
--		if (crtc->state->active) {
--			trace_dpu_kms_commit(DRMID(crtc));
--			dpu_crtc_commit_kickoff(crtc);
--		}
- 	}
- }
- 
-@@ -693,9 +697,9 @@ static const struct msm_kms_funcs kms_funcs = {
- 	.irq             = dpu_irq,
- 	.enable_commit   = dpu_kms_enable_commit,
- 	.disable_commit  = dpu_kms_disable_commit,
-+	.vsync_time      = dpu_kms_vsync_time,
- 	.prepare_commit  = dpu_kms_prepare_commit,
- 	.flush_commit    = dpu_kms_flush_commit,
--	.commit          = dpu_kms_commit,
- 	.wait_flush      = dpu_kms_wait_flush,
- 	.complete_commit = dpu_kms_complete_commit,
- 	.enable_vblank   = dpu_kms_enable_vblank,
-diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-index 8f8f74337cb4..80536538967b 100644
---- a/drivers/gpu/drm/msm/msm_atomic.c
-+++ b/drivers/gpu/drm/msm/msm_atomic.c
-@@ -213,10 +213,7 @@ void msm_atomic_commit_tail(struct drm_atomic_state *state)
- 	/*
- 	 * Flush hardware updates:
- 	 */
--	if (kms->funcs->commit) {
--		DRM_DEBUG_ATOMIC("triggering commit\n");
--		kms->funcs->commit(kms, state);
--	}
-+	DRM_DEBUG_ATOMIC("triggering commit\n");
- 	kms->funcs->flush_commit(kms, crtc_mask);
- 	mutex_unlock(&kms->commit_lock);
- 
-diff --git a/drivers/gpu/drm/msm/msm_kms.h b/drivers/gpu/drm/msm/msm_kms.h
-index 5eafc9686d29..32ff2e070ea2 100644
---- a/drivers/gpu/drm/msm/msm_kms.h
-+++ b/drivers/gpu/drm/msm/msm_kms.h
-@@ -80,9 +80,6 @@ struct msm_kms_funcs {
- 	 */
- 	void (*flush_commit)(struct msm_kms *kms, unsigned crtc_mask);
- 
--	/* TODO remove ->commit(), use ->flush_commit() instead: */
--	void (*commit)(struct msm_kms *kms, struct drm_atomic_state *state);
--
- 	/**
- 	 * Wait for any in-progress flush to complete on the specified
- 	 * crtcs.  This should not block if there is no in-progress
 -- 
-2.21.0
 
+Thanks,
+
+David / dhildenb
