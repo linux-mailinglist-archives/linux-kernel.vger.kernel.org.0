@@ -2,125 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1863A2956
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E79E3A295E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbfH2WEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 18:04:05 -0400
-Received: from mail-lf1-f49.google.com ([209.85.167.49]:37910 "EHLO
-        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbfH2WEF (ORCPT
+        id S1728230AbfH2WFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 18:05:32 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36131 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727959AbfH2WFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:04:05 -0400
-Received: by mail-lf1-f49.google.com with SMTP id c12so3737869lfh.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 15:04:03 -0700 (PDT)
+        Thu, 29 Aug 2019 18:05:31 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g24so5740504edu.3
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 15:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=qmQAdDRYulUDjSpMspTEPnnb4TRIYFsZQNmhOKS11AU=;
-        b=olk4Y4iZag61wP1hPA3Br9s19D+SI48mrDe97epo/a7ja3nmIUJ1UW8dDTQEudnCot
-         1rnKEtiyP81Axb4ndf5Ni20lVk7FBuW1LOu7/V5wvu5s8axkfpD2k8Its1nqKDucVCrS
-         S8yMPZ8Nw6GPrdw3UkBvomVkp1MQw1CgvQh8WBMnqa5qO0lAfXIzXAi50aOm1UCbg2ai
-         GJ+LzdGBPdyjQ5Eb8a60J9SAQ2dB5ZNFSuvTeLhDZSArZX6uf03nNmd4KBwPQli0UcBZ
-         +8Ce2PdTca8oaDWDIc6NF2csNQVP0JO+LkIGg0U7Q/tgFjsOMYp40upVHb1DBhO4Ok42
-         ZRNA==
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=ZxGXwVeB3Ocxw6bgG5TMQclIXy8SsLYSgLmSszN4yuk=;
+        b=Qe9XDW3q/HEBxHI2C3p7LZdL3JTn45uGcMo5jJsgUfhnvmPG+hI3MIIp/6hRpRs5wq
+         FfIbBwBwNST/DiWiq+i//IMuNddnrGSGhjNLQwLYHh+/qpz0YznE8hVM6bgwqk+O2V8c
+         HIL6TU82DU0M5uhENSuwUBVKhXSSKlxb8im7RDC9m0+YDybghOwNj82jA6glalHO17fe
+         A5g0JuxeB56iz1vt5oKOcpxU83Eindw6ilz2rm064Wno3YtG6YW4xT6n+Fv3i9vFfa0k
+         XygARabs0k8b6y5xZ/woClO1eTf8LjVIKgB8sGzW9+PbSt+SAwmlpptyLgH1cfWmluAn
+         URbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=qmQAdDRYulUDjSpMspTEPnnb4TRIYFsZQNmhOKS11AU=;
-        b=MgaWRYJlbOtLzbIdk8Oj5IULgnd24L5VJFMZA5iyuqkh9hcT6ueu1RENZ9Ed4Yqdxc
-         Z7MJYCR6WUfY5Wzl2JENCyfNNMjbgO7xy+z1t3RQS4lx/lwLNfkceTSH6S/tVT8OPcu1
-         03T22FqY2dCqUKKtZ7DmVLucsCoRZCZdw6ovjzXt/bUoCdROrlx4HXkOYfPZgmJcQd7f
-         KJ3bep9VdFcONze3sc2/FYVqx36ez/uWgG4zWYDFvfpqJ0pCg9SD0Y0gZXmC2+ghLmK9
-         nnejQHw0Ic+PJtqi25kllxQVXhMuKNyY4/xnfICvMfnM2YHbAoOEpKH2b+t0ArwgA/91
-         ZvQw==
-X-Gm-Message-State: APjAAAUcRKfFiMWxfeOCAHXOI7U6l3ZJ/r0uxpRqdQuwzMayG/+bt9Cz
-        H/Ra6LOdQ36kjCmWapq1/6A=
-X-Google-Smtp-Source: APXvYqx5Rzds4epSb/bOTOocRGoYxAjXegirF5KGbnGG+NfeQNJOyfAEBiAXvG0M0ytaQNmDGCVGug==
-X-Received: by 2002:a19:6a12:: with SMTP id u18mr7345008lfu.133.1567116242773;
-        Thu, 29 Aug 2019 15:04:02 -0700 (PDT)
-Received: from localhost.localdomain ([178.214.243.78])
-        by smtp.gmail.com with ESMTPSA id e21sm575402lfj.10.2019.08.29.15.04.01
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=ZxGXwVeB3Ocxw6bgG5TMQclIXy8SsLYSgLmSszN4yuk=;
+        b=WuvZKS0yEIvlZ7ZzDpDbs3siwjmPXooRSrztL1PEGha8pTyRRhx/06U3wRw9JDasU2
+         PSXshbVdV3iDMtBsydGyoFSoedEx8h4bu/2BWNhi3S+OJ66cV4hPcr28wORCx/8BWDZU
+         +Rql+KU1y7h0jt0UV5Fvngg7DwJu6ICoGQcK7Lo3kHOA4Q1/8Cvn+l2CuGItew4b06To
+         ZNFGTpdrCxfRUEiOFZK3O6qq5ChvOPHQCNP27/2vevU0ncOl/DmYm5zJJC1fdVS4ELQo
+         jImHgRqfAn45lXn09ociMpqkEu8aCFoWLTfAr4wfzYQ/PhCQHd/s/5qm3Zt3fD8THJNL
+         sB9g==
+X-Gm-Message-State: APjAAAXFzMQ4unq+nmMUSxDDTDsGYP54C3I21xUbS2RDVpw3urFSbDG8
+        aTh5iMaH30kftp6oSUOhrwYYNA==
+X-Google-Smtp-Source: APXvYqzp7vhc8FlS7++q2xqaYVdE4JZ5G8h0HvL3Z6PzRN5SgOsDQCLCK6/YQKML+P5d/yDQ2PaQPA==
+X-Received: by 2002:a17:907:2102:: with SMTP id qn2mr4468380ejb.266.1567116329904;
+        Thu, 29 Aug 2019 15:05:29 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id m6sm533750eja.53.2019.08.29.15.05.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 15:04:02 -0700 (PDT)
-Message-ID: <a07be36905f145f2fb07beee73f9d3805c285022.camel@gmail.com>
-Subject: Re: gnome-shell stuck because of amdgpu driver [5.3 RC5]
-From:   mikhail.v.gavrilov@gmail.com
-To:     Daniel Vetter <daniel@ffwll.ch>, Hillf Danton <hdanton@sina.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Date:   Fri, 30 Aug 2019 03:03:58 +0500
-In-Reply-To: <20190826092408.GA2112@phenom.ffwll.local>
-References: <20190825141305.13984-1-hdanton@sina.com>
-         <20190826092408.GA2112@phenom.ffwll.local>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.33.91 (3.33.91-1.fc32) 
+        Thu, 29 Aug 2019 15:05:29 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 15:05:04 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH v2 net-next 05/15] net: sgi: ioc3-eth: allocate space
+ for desc rings only once
+Message-ID: <20190829150504.68a04fe4@cakuba.netronome.com>
+In-Reply-To: <20190830000058.882feb357058437cddc71315@suse.de>
+References: <20190829155014.9229-1-tbogendoerfer@suse.de>
+        <20190829155014.9229-6-tbogendoerfer@suse.de>
+        <20190829140537.68abfc9f@cakuba.netronome.com>
+        <20190830000058.882feb357058437cddc71315@suse.de>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 25, 2019 at 10:13:05PM +0800, Hillf Danton wrote:
-> Can we try to add the fallback timer manually?
+On Fri, 30 Aug 2019 00:00:58 +0200, Thomas Bogendoerfer wrote:
+> On Thu, 29 Aug 2019 14:05:37 -0700
+> Jakub Kicinski <jakub.kicinski@netronome.com> wrote:
 > 
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
-> @@ -322,6 +322,10 @@ int amdgpu_fence_wait_empty(struct amdgp
->         }
->         rcu_read_unlock();
->  
-> +       if (!timer_pending(&ring->fence_drv.fallback_timer))
-> +               mod_timer(&ring->fence_drv.fallback_timer,
-> +                       jiffies + (AMDGPU_FENCE_JIFFIES_TIMEOUT <<
-> 1));
-> +
->         r = dma_fence_wait(fence, false);
->         dma_fence_put(fence);
->         return r;
-> --
+> > On Thu, 29 Aug 2019 17:50:03 +0200, Thomas Bogendoerfer wrote:  
+> > > +		if (skb)
+> > > +			dev_kfree_skb_any(skb);  
+> > 
+> > I think dev_kfree_skb_any() accepts NULL  
 > 
-> Or simply wait with an ear on signal and timeout if adding timer
-> seems to go a bit too far?
+> yes, I'll drop the if
 > 
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fence.c
-> @@ -322,7 +322,12 @@ int amdgpu_fence_wait_empty(struct amdgp
->         }
->         rcu_read_unlock();
->  
-> -       r = dma_fence_wait(fence, false);
-> +       if (0 < dma_fence_wait_timeout(fence, true,
-> +                               AMDGPU_FENCE_JIFFIES_TIMEOUT +
-> +                               (AMDGPU_FENCE_JIFFIES_TIMEOUT >> 3)))
-> +               r = 0;
-> +       else
-> +               r = -EINVAL;
->         dma_fence_put(fence);
->         return r;
->  }
-
-I tested both patches on top of 5.3 RC6. Each patch I was tested more
-than 24 hours and I don't seen any regressions or problems with them.
-
-
-On Mon, 2019-08-26 at 11:24 +0200, Daniel Vetter wrote:
+> > > +
+> > > +	/* Allocate and rx ring.  4kb = 512 entries  */
+> > > +	ip->rxr = (unsigned long *)get_zeroed_page(GFP_ATOMIC);
+> > > +	if (!ip->rxr) {
+> > > +		pr_err("ioc3-eth: rx ring allocation failed\n");
+> > > +		err = -ENOMEM;
+> > > +		goto out_stop;
+> > > +	}
+> > > +
+> > > +	/* Allocate tx rings.  16kb = 128 bufs.  */
+> > > +	ip->txr = (struct ioc3_etxd *)__get_free_pages(GFP_KERNEL, 2);
+> > > +	if (!ip->txr) {
+> > > +		pr_err("ioc3-eth: tx ring allocation failed\n");
+> > > +		err = -ENOMEM;
+> > > +		goto out_stop;
+> > > +	}  
+> > 
+> > Please just use kcalloc()/kmalloc_array() here,  
 > 
-> This will paper over the issue, but won't fix it. dma_fences have to
-> complete, at least for normal operations, otherwise your desktop will
-> start feeling like the gpu hangs all the time.
+> both allocation will be replaced in patch 11 with dma_direct_alloc_pages.
+> So I hope I don't need to change it here.
+
+Ah, missed that!
+
+> Out of curiosity does kcalloc/kmalloc_array give me the same guarantees about
+> alignment ? rx ring needs to be 4KB aligned, tx ring 16KB aligned.
+
+I don't think so, actually, I was mostly worried you are passing
+address from get_page() into kfree() here ;) But patch 11 cures that,
+so that's good, too.
+
+> >, and make sure the flags
+> > are set to GFP_KERNEL whenever possible. Here and in ioc3_alloc_rings()
+> > it looks like GFP_ATOMIC is unnecessary.  
 > 
-> I think would be much more interesting to dump which fence isn't
-> completing here in time, i.e. not just the timeout, but lots of debug
-> printks.
-> -Daniel
-
-As I am understood none of these patches couldn't be merged because
-they do not fix the root cause they eliminate only the consequences?
-Eliminating consequences has any negative effects? And we will never
-know the root cause because not having enough debugging information.
-
+> yes, I'll change it
