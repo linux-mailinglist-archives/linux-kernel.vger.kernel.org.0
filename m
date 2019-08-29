@@ -2,140 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25535A227F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:38:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B869A224D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:32:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbfH2Riq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:38:46 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:54956 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfH2Rim (ORCPT
+        id S1727942AbfH2Rce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:32:34 -0400
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:48890 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727173AbfH2Rcd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:38:42 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7THXnmr134049;
-        Thu, 29 Aug 2019 17:38:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=dCNzWO/FXVDMwwImLRNfZxHktHml5H3w+6akEtHZx4s=;
- b=ELpX3mFgoUAmDW0wI07BKRQfphEC+5Iv8L9M4fQ+RSpQdUBXganuxRyOcdSts54mtdyW
- ssbyrpQrVfEyEoUi6zzcgzM8rvOUutK35EiLZCuTNU3lYf4+p94uaEhL0JfxFh0XZxeG
- 2HseAIxyUrED71QdV90a0blRudFmGpEUWjm44r2UsyuJt9NRoCBxuuGCWw4LpegWBY3R
- Rbw1wb4QTkb0CATgDOQ3Gsc2+3BZv5h8g7PdJNMUsfg9i68/7oq7T4GbmeG2jXTJHPmt
- q+/FtVNHz7WMGfHKdWCDpwLDl8lStTxO6XBteYU5C6fGvg4DWcswcqVBcUEYmfZ2BxYz lg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2upk4sr37n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 17:38:29 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7THWYcL057229;
-        Thu, 29 Aug 2019 17:33:28 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2upc8uy1ts-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 17:33:28 +0000
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7THWgJ2002163;
-        Thu, 29 Aug 2019 17:32:42 GMT
-Received: from zissou.us.oracle.com (/10.152.34.58)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Aug 2019 10:32:42 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH v2 9/9] padata: remove cpu_index from the parallel_queue
-Date:   Thu, 29 Aug 2019 13:30:38 -0400
-Message-Id: <20190829173038.21040-10-daniel.m.jordan@oracle.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190829173038.21040-1-daniel.m.jordan@oracle.com>
-References: <20190829173038.21040-1-daniel.m.jordan@oracle.com>
+        Thu, 29 Aug 2019 13:32:33 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7THWBEB023717;
+        Fri, 30 Aug 2019 02:32:12 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Fri, 30 Aug 2019 02:32:11 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from localhost.localdomain (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7THW6NM023682
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 30 Aug 2019 02:32:11 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+To:     Mark Brown <broonie@kernel.org>,
+        David Yang <yangxiaohua@everest-semi.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Subject: [PATCH 1/3] ASoC: es8316: judge PCM rate at later timing
+Date:   Fri, 30 Aug 2019 02:32:03 +0900
+Message-Id: <20190829173205.11805-1-katsuhiro@katsuster.net>
+X-Mailer: git-send-email 2.23.0.rc1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908290186
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908290186
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the removal of the ENODATA case from padata_get_next, the cpu_index
-field is no longer useful, so it can go away.
+This patch change the judge timing about playing/capturing PCM rate.
 
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Acked-by: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Original code set constraints list of PCM rate limits at set_sysclk.
+This strategy works well if system is using fixed rate clock.
+
+But some boards and SoC (such as RockPro64 and RockChip I2S) has
+connected SoC MCLK out to ES8316 MCLK in. In this case, SoC side I2S
+will choose suitable frequency of MCLK such as fs * mclk-fs when
+user starts playing or capturing.
+
+Bad scenario as follows (mclk-fs = 256):
+  - Initialize sysclk by correct value (Ex. 12.288MHz)
+    - ES8316 set constraints of PCM rate by sysclk
+      48kHz (1/256), 32kHz (1/384), 30.720kHz (1/400),
+      24kHz (1/512), 16kHz (1/768), 12kHz (1/1024)
+  - Play 48kHz sound, it's acceptable
+  - Sysclk is not changed
+
+  - Play 32kHz sound, it's acceptable
+  - Set sysclk by 8.192MHz (= fs * mclk-fs = 32k * 256)
+    - ES8316 set constraints of PCM rate by sysclk
+      32kHz (1/256), 21.33kHz (1/384), 20.48kHz (1/400),
+      16kHz (1/512), 10.66kHz (1/768), 8kHz (1/1024)
+
+  - Play 48kHz again, but it's NOT acceptable because constraints
+    list does not allow 48kHz
+
+Root cause of this strange behavior is changing constraints list at
+set_sysclk timing. It seems that is too early to determine. So this
+patch does not use constraints list and check PCM rate limit more
+later timing at hw_params.
+
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 ---
- include/linux/padata.h |  2 --
- kernel/padata.c        | 13 ++-----------
- 2 files changed, 2 insertions(+), 13 deletions(-)
+ sound/soc/codecs/es8316.c | 37 +++++++++++++++----------------------
+ 1 file changed, 15 insertions(+), 22 deletions(-)
 
-diff --git a/include/linux/padata.h b/include/linux/padata.h
-index 4d2ba38d99fc..edc1d63a91e7 100644
---- a/include/linux/padata.h
-+++ b/include/linux/padata.h
-@@ -76,14 +76,12 @@ struct padata_serial_queue {
-  * @swork: work struct for serialization.
-  * @work: work struct for parallelization.
-  * @num_obj: Number of objects that are processed by this cpu.
-- * @cpu_index: Index of the cpu.
-  */
- struct padata_parallel_queue {
-        struct padata_list    parallel;
-        struct padata_list    reorder;
-        struct work_struct    work;
-        atomic_t              num_obj;
--       int                   cpu_index;
- };
- 
- /**
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 83889e0bf1c4..cbb6bb924046 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -399,21 +399,12 @@ static void padata_init_squeues(struct parallel_data *pd)
- /* Initialize all percpu queues used by parallel workers */
- static void padata_init_pqueues(struct parallel_data *pd)
+diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
+index ed2959dbe1fb..229808fa627c 100644
+--- a/sound/soc/codecs/es8316.c
++++ b/sound/soc/codecs/es8316.c
+@@ -363,27 +363,12 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
  {
--	int cpu_index, cpu;
-+	int cpu;
- 	struct padata_parallel_queue *pqueue;
+ 	struct snd_soc_component *component = codec_dai->component;
+ 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
+-	int i;
+-	int count = 0;
  
--	cpu_index = 0;
--	for_each_possible_cpu(cpu) {
-+	for_each_cpu(cpu, pd->cpumask.pcpu) {
- 		pqueue = per_cpu_ptr(pd->pqueue, cpu);
+ 	es8316->sysclk = freq;
  
--		if (!cpumask_test_cpu(cpu, pd->cpumask.pcpu)) {
--			pqueue->cpu_index = -1;
--			continue;
--		}
+ 	if (freq == 0)
+ 		return 0;
+ 
+-	/* Limit supported sample rates to ones that can be autodetected
+-	 * by the codec running in slave mode.
+-	 */
+-	for (i = 0; i < NR_SUPPORTED_MCLK_LRCK_RATIOS; i++) {
+-		const unsigned int ratio = supported_mclk_lrck_ratios[i];
 -
--		pqueue->cpu_index = cpu_index;
--		cpu_index++;
+-		if (freq % ratio == 0)
+-			es8316->allowed_rates[count++] = freq / ratio;
+-	}
 -
- 		__padata_list_init(&pqueue->reorder);
- 		__padata_list_init(&pqueue->parallel);
- 		INIT_WORK(&pqueue->work, padata_parallel_worker);
+-	es8316->sysclk_constraints.list = es8316->allowed_rates;
+-	es8316->sysclk_constraints.count = count;
+-
+ 	return 0;
+ }
+ 
+@@ -449,13 +434,6 @@ static int es8316_pcm_startup(struct snd_pcm_substream *substream,
+ 		return -EINVAL;
+ 	}
+ 
+-	/* The set of sample rates that can be supported depends on the
+-	 * MCLK supplied to the CODEC.
+-	 */
+-	snd_pcm_hw_constraint_list(substream->runtime, 0,
+-				   SNDRV_PCM_HW_PARAM_RATE,
+-				   &es8316->sysclk_constraints);
+-
+ 	return 0;
+ }
+ 
+@@ -466,12 +444,27 @@ static int es8316_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_soc_component *component = dai->component;
+ 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
+ 	u8 wordlen = 0;
++	int i;
+ 
+ 	if (!es8316->sysclk) {
+ 		dev_err(component->dev, "No MCLK configured\n");
+ 		return -EINVAL;
+ 	}
+ 
++	/* Limit supported sample rates to ones that can be autodetected
++	 * by the codec running in slave mode.
++	 */
++	for (i = 0; i < NR_SUPPORTED_MCLK_LRCK_RATIOS; i++) {
++		const unsigned int ratio = supported_mclk_lrck_ratios[i];
++
++		if (es8316->sysclk % ratio != 0)
++			continue;
++		if (es8316->sysclk / ratio == params_rate(params))
++			break;
++	}
++	if (i == NR_SUPPORTED_MCLK_LRCK_RATIOS)
++		return -EINVAL;
++
+ 	switch (params_format(params)) {
+ 	case SNDRV_PCM_FORMAT_S16_LE:
+ 		wordlen = ES8316_SERDATA2_LEN_16;
 -- 
-2.23.0
+2.23.0.rc1
 
