@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3528BA25F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55A60A2603
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:34:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbfH2SNU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:13:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55074 "EHLO mail.kernel.org"
+        id S1728337AbfH2SNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:13:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728043AbfH2SNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:13:18 -0400
+        id S1728255AbfH2SNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:13:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A75C2339E;
-        Thu, 29 Aug 2019 18:13:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AF8A233FF;
+        Thu, 29 Aug 2019 18:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102397;
-        bh=/pHX4fSyz12zQkqBVAShv8MoRwtzNWYX+/zNi5Zr8bQ=;
+        s=default; t=1567102410;
+        bh=LA1osv1knb85aMWMeg3UWllHAUwn23d4BkvyaIAIuAI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jOyKfuGvtq1lrCITQjiQf9wkO5YR5cuu5PxFW1IrCt5nWovn5edJbwu3s23z9XrDs
-         OaX9ZX5WUhnmGFTlsi//mQ8SxRHp+sDnfR06q1gsn330pUOK+bAjKVECPDa8qMpHzA
-         zOjkpECQ9EHlvfWeIcF+4r9fBrFhDwz5WXkR50+Q=
+        b=I4+Ub0Pj88T4FASK4QKFaddBOBeguHsxqHkddktEAW34lIi0oVxN4XJAJdU4OBt7g
+         3h9jlHiioLXRgFU+pjlEWI8PtKU05OacgimRaIL0OjJfSFzOAgZsvuVLfFVnwt2Nv0
+         +5p1gMMNFPCoj+9K+IVuVawbIGETaZgu+6Y/pRTc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 04/76] netfilter: nf_flow_table: fix offload for flows that are subject to xfrm
-Date:   Thu, 29 Aug 2019 14:11:59 -0400
-Message-Id: <20190829181311.7562-4-sashal@kernel.org>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jaafar Ali <jaafarkhalaf@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 07/76] clk: samsung: exynos5800: Move MAU subsystem clocks to MAU sub-CMU
+Date:   Thu, 29 Aug 2019 14:12:02 -0400
+Message-Id: <20190829181311.7562-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -45,114 +45,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-[ Upstream commit 589b474a4b7ce409d6821ef17234a995841bd131 ]
+[ Upstream commit b6adeb6bc61c2567b9efd815d61a61b34a2e51a6 ]
 
-This makes the previously added 'encap test' pass.
-Because its possible that the xfrm dst entry becomes stale while such
-a flow is offloaded, we need to call dst_check() -- the notifier that
-handles this for non-tunneled traffic isn't sufficient, because SA or
-or policies might have changed.
+This patch fixes broken sound on Exynos5422/5800 platforms after
+system/suspend resume cycle in cases where the audio root clock
+is derived from MAU_EPLL_CLK.
 
-If dst becomes stale the flow offload entry will be tagged for teardown
-and packets will be passed to 'classic' forwarding path.
+In order to preserve state of the USER_MUX_MAU_EPLL_CLK clock mux
+during system suspend/resume cycle for Exynos5800 we group the MAU
+block input clocks in "MAU" sub-CMU and add the clock mux control
+bit to .suspend_regs.  This ensures that user configuration of the mux
+is not lost after the PMU block changes the mux setting to OSC_DIV
+when switching off the MAU power domain.
 
-Removing the entry right away is problematic, as this would
-introduce a race condition with the gc worker.
+Adding the SRC_TOP9 register to exynos5800_clk_regs[] array is not
+sufficient as at the time of the syscore_ops suspend call MAU power
+domain is already turned off and we already save and subsequently
+restore an incorrect register's value.
 
-In case flow is long-lived, it could eventually be offloaded again
-once the gc worker removes the entry from the flow table.
-
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+Reported-by: Jaafar Ali <jaafarkhalaf@gmail.com>
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Jaafar Ali <jaafarkhalaf@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Link: https://lkml.kernel.org/r/20190808144929.18685-2-s.nawrocki@samsung.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_flow_table_ip.c | 43 ++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ drivers/clk/samsung/clk-exynos5420.c | 54 ++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 11 deletions(-)
 
-diff --git a/net/netfilter/nf_flow_table_ip.c b/net/netfilter/nf_flow_table_ip.c
-index cdfc33517e85b..d68c801dd614b 100644
---- a/net/netfilter/nf_flow_table_ip.c
-+++ b/net/netfilter/nf_flow_table_ip.c
-@@ -214,6 +214,25 @@ static bool nf_flow_exceeds_mtu(const struct sk_buff *skb, unsigned int mtu)
- 	return true;
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index a6ea5d7e63d02..5eb0ce4b2648b 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -524,8 +524,6 @@ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
+ 				GATE_BUS_TOP, 24, 0, 0),
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+ 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+-	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
+-			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+@@ -567,8 +565,13 @@ static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
+ 
+ static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
+ 	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
++	/* Maudio Block */
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+ 			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
++		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
++		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+@@ -994,12 +997,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_DP1, "sclk_dp1", "dout_dp1",
+ 			GATE_TOP_SCLK_DISP1, 20, CLK_SET_RATE_PARENT, 0),
+ 
+-	/* Maudio Block */
+-	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
+-		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
+-		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+-
+ 	/* FSYS Block */
+ 	GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
+ 	GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
+@@ -1232,6 +1229,20 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
+ 	{ DIV4_RATIO, 0, 0x3 },			/* DIV dout_mfc_blk */
+ };
+ 
++
++static const struct samsung_gate_clock exynos5800_mau_gate_clks[] __initconst = {
++	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
++			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
++		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
++		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
++};
++
++static struct exynos5_subcmu_reg_dump exynos5800_mau_suspend_regs[] = {
++	{ SRC_TOP9, 0, BIT(8) },	/* MUX mout_user_mau_epll */
++};
++
+ static const struct exynos5_subcmu_info exynos5x_disp_subcmu = {
+ 	.div_clks	= exynos5x_disp_div_clks,
+ 	.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
+@@ -1262,12 +1273,27 @@ static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
+ 	.pd_name	= "MFC",
+ };
+ 
++static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
++	.gate_clks	= exynos5800_mau_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5800_mau_gate_clks),
++	.suspend_regs	= exynos5800_mau_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5800_mau_suspend_regs),
++	.pd_name	= "MAU",
++};
++
+ static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
+ 	&exynos5x_disp_subcmu,
+ 	&exynos5x_gsc_subcmu,
+ 	&exynos5x_mfc_subcmu,
+ };
+ 
++static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
++	&exynos5x_disp_subcmu,
++	&exynos5x_gsc_subcmu,
++	&exynos5x_mfc_subcmu,
++	&exynos5800_mau_subcmu,
++};
++
+ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
+ 	PLL_35XX_RATE(24 * MHZ, 2000000000, 250, 3, 0),
+ 	PLL_35XX_RATE(24 * MHZ, 1900000000, 475, 6, 0),
+@@ -1483,11 +1509,17 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 	samsung_clk_extended_sleep_init(reg_base,
+ 		exynos5x_clk_regs, ARRAY_SIZE(exynos5x_clk_regs),
+ 		exynos5420_set_clksrc, ARRAY_SIZE(exynos5420_set_clksrc));
+-	if (soc == EXYNOS5800)
++
++	if (soc == EXYNOS5800) {
+ 		samsung_clk_sleep_init(reg_base, exynos5800_clk_regs,
+ 				       ARRAY_SIZE(exynos5800_clk_regs));
+-	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
+-			     exynos5x_subcmus);
++
++		exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5800_subcmus),
++				     exynos5800_subcmus);
++	} else {
++		exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
++				     exynos5x_subcmus);
++	}
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
  }
- 
-+static int nf_flow_offload_dst_check(struct dst_entry *dst)
-+{
-+	if (unlikely(dst_xfrm(dst)))
-+		return dst_check(dst, 0) ? 0 : -1;
-+
-+	return 0;
-+}
-+
-+static unsigned int nf_flow_xmit_xfrm(struct sk_buff *skb,
-+				      const struct nf_hook_state *state,
-+				      struct dst_entry *dst)
-+{
-+	skb_orphan(skb);
-+	skb_dst_set_noref(skb, dst);
-+	skb->tstamp = 0;
-+	dst_output(state->net, state->sk, skb);
-+	return NF_STOLEN;
-+}
-+
- unsigned int
- nf_flow_offload_ip_hook(void *priv, struct sk_buff *skb,
- 			const struct nf_hook_state *state)
-@@ -254,6 +273,11 @@ nf_flow_offload_ip_hook(void *priv, struct sk_buff *skb,
- 	if (nf_flow_state_check(flow, ip_hdr(skb)->protocol, skb, thoff))
- 		return NF_ACCEPT;
- 
-+	if (nf_flow_offload_dst_check(&rt->dst)) {
-+		flow_offload_teardown(flow);
-+		return NF_ACCEPT;
-+	}
-+
- 	if (nf_flow_nat_ip(flow, skb, thoff, dir) < 0)
- 		return NF_DROP;
- 
-@@ -261,6 +285,13 @@ nf_flow_offload_ip_hook(void *priv, struct sk_buff *skb,
- 	iph = ip_hdr(skb);
- 	ip_decrease_ttl(iph);
- 
-+	if (unlikely(dst_xfrm(&rt->dst))) {
-+		memset(skb->cb, 0, sizeof(struct inet_skb_parm));
-+		IPCB(skb)->iif = skb->dev->ifindex;
-+		IPCB(skb)->flags = IPSKB_FORWARDED;
-+		return nf_flow_xmit_xfrm(skb, state, &rt->dst);
-+	}
-+
- 	skb->dev = outdev;
- 	nexthop = rt_nexthop(rt, flow->tuplehash[!dir].tuple.src_v4.s_addr);
- 	skb_dst_set_noref(skb, &rt->dst);
-@@ -467,6 +498,11 @@ nf_flow_offload_ipv6_hook(void *priv, struct sk_buff *skb,
- 				sizeof(*ip6h)))
- 		return NF_ACCEPT;
- 
-+	if (nf_flow_offload_dst_check(&rt->dst)) {
-+		flow_offload_teardown(flow);
-+		return NF_ACCEPT;
-+	}
-+
- 	if (skb_try_make_writable(skb, sizeof(*ip6h)))
- 		return NF_DROP;
- 
-@@ -477,6 +513,13 @@ nf_flow_offload_ipv6_hook(void *priv, struct sk_buff *skb,
- 	ip6h = ipv6_hdr(skb);
- 	ip6h->hop_limit--;
- 
-+	if (unlikely(dst_xfrm(&rt->dst))) {
-+		memset(skb->cb, 0, sizeof(struct inet6_skb_parm));
-+		IP6CB(skb)->iif = skb->dev->ifindex;
-+		IP6CB(skb)->flags = IP6SKB_FORWARDED;
-+		return nf_flow_xmit_xfrm(skb, state, &rt->dst);
-+	}
-+
- 	skb->dev = outdev;
- 	nexthop = rt6_nexthop(rt, &flow->tuplehash[!dir].tuple.src_v6);
- 	skb_dst_set_noref(skb, &rt->dst);
 -- 
 2.20.1
 
