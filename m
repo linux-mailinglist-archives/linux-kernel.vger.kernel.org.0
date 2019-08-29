@@ -2,140 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A4FEA20E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 529D1A210F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:37:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfH2Q3l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:29:41 -0400
-Received: from smtprelay0220.hostedemail.com ([216.40.44.220]:46344 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727046AbfH2Q3l (ORCPT
+        id S1728115AbfH2Qhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:37:31 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.142]:15633 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727949AbfH2Qh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:29:41 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 085D2AC08;
-        Thu, 29 Aug 2019 16:29:40 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 40,2.5,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::,RULES_HIT:41:355:379:599:857:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1543:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:2693:2731:2828:3138:3139:3140:3141:3142:3355:3622:3865:3866:3867:3868:3870:3871:3872:3874:4321:4605:5007:6119:6120:7875:7901:7903:10011:10400:10848:11026:11232:11657:11658:11914:12043:12294:12296:12297:12438:12679:12740:12760:12895:13161:13229:13439:14659:14721:21063:21080:21433:21451:21627:21773:21789:21939:30012:30029:30054:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:1:0,LFtime:27,LUA_SUMMARY:none
-X-HE-Tag: bun06_1836a53334c20
-X-Filterd-Recvd-Size: 4954
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 29 Aug 2019 16:29:25 +0000 (UTC)
-Message-ID: <4232843e9fe0444c1c975ac6be4cb81a67f9f6ef.camel@perches.com>
-Subject: Re: [RFC PATCH 1/5] treewide: replace __inline__ by inline
-From:   Joe Perches <joe@perches.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        ndesaulniers@google.com
-Date:   Thu, 29 Aug 2019 09:29:23 -0700
-In-Reply-To: <20190829083233.24162-2-linux@rasmusvillemoes.dk>
-References: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
-         <20190829083233.24162-2-linux@rasmusvillemoes.dk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Thu, 29 Aug 2019 12:37:29 -0400
+X-Greylist: delayed 1248 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 12:37:29 EDT
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 4E416D8A8
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 11:16:41 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 3N6HivFfKiQer3N6HiEaum; Thu, 29 Aug 2019 11:16:41 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=a8rjYnS9SnAenydNSMbeP8fAIqWeMKJbCEld4zbuKyg=; b=YImsHoaEb57QrRDBGNkDwNiQe5
+        PedtbVNWm+ldbhzT28tPDkRUQraLKZRWq0FUMOBqH8ESqnz523rUVD4RTTgoOeI0TE84OH8uL3JKf
+        fEh+Smm39COP1uXgd3b0jbnoSdt5/pmQEWOGTxRPKQIqgrSLNMgky+OcYMmfj9yrma9s9WCly1nEI
+        7pOQFTG7zgaD4PrUUFrayejnzUZbFumDuxOZ50RY5BxqM8sq+byD78+ZRAQICVAjJZEHVpXlEZa1Y
+        A6TnFZ3tNB4HTdqJlxlV91cblQACupkDMmgDT2RF+7M1gD+LK1ioLWro27mjP6C7ZiCyqP5du1OYo
+        WyylJQPg==;
+Received: from [189.152.216.116] (port=37814 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@linux.embeddedor.com>)
+        id 1i3N6F-000Bs2-VY; Thu, 29 Aug 2019 11:16:40 -0500
+Date:   Thu, 29 Aug 2019 11:16:39 -0500
+From:   "Gustavo A. R. Silva" <gustavo@linux.embeddedor.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc7
+Message-ID: <20190829161639.GA18147@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - linux.embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.216.116
+X-Source-L: No
+X-Exim-ID: 1i3N6F-000Bs2-VY
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.152.216.116]:37814
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-29 at 10:32 +0200, Rasmus Villemoes wrote:
-> Currently, compiler_types.h #defines __inline__ as inline. However,
-> that defeats the purpose of gcc providing __inline__ as an alternate
-> spelling of that keyword - namely, that it is always accessible under
-> that name, even if one chooses to #define inline, which we also do in
-> order to attach attribute(gnu_inline), and sometimes imply
-> attribute(always_inline), etc.
-> 
-> Note that it is quite possible that some header file defines a static
-> inline function before the include chain has reached compiler_types.h,
-> but in that case both the existing __inline__ as well as the new
-> inline spelling refer to gcc's keyword, and the redefinitions in
-> compiler_types.h have no effect anyway.
-> 
-> For those static inline definitions that appear after compiler_types.h
-> has been processed, this is obviously a no-op due to the #define
-> __inline__ inline.
-> 
-> We will need to be able to use the __inline__ keyword to make use of
-> the "asm inline()" feature from gcc 9. This is preparation for
-> removing the #define.
-> 
-> Generated by
-> 
->   git grep --files-with-matches -w __inline__ | \
->     grep -vE '^(usr|Documentation|scripts)/' | \
->     grep -v /uapi/ | \
->     xargs sed -i -e 's/static *__inline__/static inline/'
+The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
 
-bikeshed: Perhaps better to use
+  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
 
-	xargs sed -i -e 's/\b__inline__\b/inline/g'
+are available in the Git repository at:
 
-As static and __inline__ do not have to be on the same line.
+  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.3-rc7
 
-for instance: (and I didn't look thoroughly)
+for you to fetch changes up to 7c9eb2dbd770b7c9980d5839dd305a70fbc5df67:
 
-This misses one of the uses of __static__ in
-drivers/scsi/qla2xx/qla_os.c
+  nds32: Mark expected switch fall-throughs (2019-08-29 11:06:56 -0500)
 
-The patch has:
+----------------------------------------------------------------
+Wimplicit-fallthrough patches for 5.3-rc7
 
-> diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-[]
-> @@ -342,7 +342,7 @@ qla2x00_restart_timer(scsi_qla_host_t *vha, unsigned long interval)
->  	mod_timer(&vha->timer, jiffies + interval * HZ);
->  }
->  
-> -static __inline__ void
-> +static inline void
->  qla2x00_stop_timer(scsi_qla_host_t *vha)
->  {
->  	del_timer_sync(&vha->timer);
+Hi Linus,
 
-But the code is:
+Please, pull the following patches that mark switch cases where we are
+expecting to fall through.
 
-drivers/scsi/qla2xxx/qla_os.c-318-/* TODO Convert to inlines
-drivers/scsi/qla2xxx/qla_os.c-319- *
-drivers/scsi/qla2xxx/qla_os.c-320- * Timer routines
-drivers/scsi/qla2xxx/qla_os.c-321- */
-drivers/scsi/qla2xxx/qla_os.c-322-
-drivers/scsi/qla2xxx/qla_os.c:323:__inline__ void
-drivers/scsi/qla2xxx/qla_os.c-324-qla2x00_start_timer(scsi_qla_host_t *vha, unsigned long interval)
-drivers/scsi/qla2xxx/qla_os.c-325-{
-drivers/scsi/qla2xxx/qla_os.c-326-      timer_setup(&vha->timer, qla2x00_timer, 0);
-drivers/scsi/qla2xxx/qla_os.c-327-      vha->timer.expires = jiffies + interval * HZ;
-drivers/scsi/qla2xxx/qla_os.c-328-      add_timer(&vha->timer);
---
-drivers/scsi/qla2xxx/qla_os.c-340-      }
-drivers/scsi/qla2xxx/qla_os.c-341-
-drivers/scsi/qla2xxx/qla_os.c-342-      mod_timer(&vha->timer, jiffies + interval * HZ);
-drivers/scsi/qla2xxx/qla_os.c-343-}
-drivers/scsi/qla2xxx/qla_os.c-344-
-drivers/scsi/qla2xxx/qla_os.c:345:static __inline__ void
-drivers/scsi/qla2xxx/qla_os.c-346-qla2x00_stop_timer(scsi_qla_host_t *vha)
-drivers/scsi/qla2xxx/qla_os.c-347-{
-drivers/scsi/qla2xxx/qla_os.c-348-      del_timer_sync(&vha->timer);
-drivers/scsi/qla2xxx/qla_os.c-349-      vha->timer_active = 0;
-drivers/scsi/qla2xxx/qla_os.c-350-}
+ - Fix fall-through warnings on arc and nds32 for multiple
+   configurations.
 
-The possible impacted files using 's/\b__inline__\b/inline/'
+Thanks
 
-$ git grep -w '__inline__' -- '*.[ch]' | grep -vP 'static\s+__inline__'
-(only hand selected matches)
-arch/alpha/include/asm/compiler.h:#undef __inline__
-arch/alpha/include/asm/floppy.h:__inline__ void virtual_dma_init(void)
-arch/ia64/hp/common/sba_iommu.c:#define SBA_INLINE	__inline__
-drivers/parisc/sba_iommu.c:#define SBA_INLINE	__inline__
-drivers/scsi/qla2xxx/qla_os.c:__inline__ void
-drivers/video/fbdev/intelfb/intelfbdrv.c:__inline__ int intelfb_var_to_depth(const struct fb_var_screeninfo *var)
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
+----------------------------------------------------------------
+Gustavo A. R. Silva (2):
+      ARC: unwind: Mark expected switch fall-through
+      nds32: Mark expected switch fall-throughs
 
+ arch/arc/kernel/unwind.c     | 1 +
+ arch/nds32/kernel/signal.c   | 2 ++
+ include/math-emu/op-common.h | 5 +++++
+ 3 files changed, 8 insertions(+)
