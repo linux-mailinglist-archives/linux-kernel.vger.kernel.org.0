@@ -2,99 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A88BAA0F64
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 04:09:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDEAEA0F76
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 04:24:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfH2CJs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 22:09:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59842 "EHLO mx1.redhat.com"
+        id S1727059AbfH2CYZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 22:24:25 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40700 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbfH2CJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 22:09:47 -0400
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7E1AE85536
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 02:09:47 +0000 (UTC)
-Received: by mail-pg1-f197.google.com with SMTP id j9so1046053pgk.20
-        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 19:09:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cWz9sGB+WBliUQqYKGmTy4CKie+Spvd6Fx2kg3YzjVg=;
-        b=Xat7DY5WQy/U+GBEELWAda4zXDi/358UWpocV7nBVf7s/m8//6+xWdle6+6/RT3+Ja
-         xlbYxyfgzv2O13w9SgHtya2s2+VX/d1cWE2r7zYqbXBKT7uVV2mxhAlV+XEuluvqdxKb
-         D1SUFk4Mk8Fp9WtBmz6pV4XG6JRzcnJgAohTEClsStDV60A7ZNaZ4oRNX6O81+k99Bb6
-         kuJ/HDoZeGfBEY5jdkI7ZlaGbyz/vgcDjqOff4W301I0KjWfR2AXD4lJmIqOX5CfGH9h
-         Ftu3VlLs5aAbrXDNeF7wdVSSGmewOvzr4LA90Xbtm2mNJ5fhX1J9nO9/i5D7710A80zZ
-         MwrQ==
-X-Gm-Message-State: APjAAAU61IPpGC7o9XUhX2VKMHASfFzJH3MvjKdyfvokVs27pNAaOm5p
-        9Lu9OF/T7bBzNH36pRAlMJxWFra0xEn6m3gRtIt3qtPGy9CdHJFbJwGYPpqyR5LFVa0U4+gZPa5
-        fRY/fZTNsmyau6IBoUeQu6iMS
-X-Received: by 2002:a17:90a:fa95:: with SMTP id cu21mr7538034pjb.43.1567044586734;
-        Wed, 28 Aug 2019 19:09:46 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqydpBl4a4u3UFZMu8NHSxmpgKb5IpM9yElt8QSTfIHghvIUhueai7ynoRWwLrFVTt0WrknE2Q==
-X-Received: by 2002:a17:90a:fa95:: with SMTP id cu21mr7538021pjb.43.1567044586575;
-        Wed, 28 Aug 2019 19:09:46 -0700 (PDT)
-Received: from xz-x1 ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id x128sm772805pfd.52.2019.08.28.19.09.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 19:09:45 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 10:09:35 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Andrew Jones <drjones@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Huth <thuth@redhat.com>
-Subject: Re: [PATCH 4/4] KVM: selftests: Remove duplicate guest mode handling
-Message-ID: <20190829020935.GG8729@xz-x1>
-References: <20190827131015.21691-1-peterx@redhat.com>
- <20190827131015.21691-5-peterx@redhat.com>
- <20190828114613.a2rvpip45c3ywdnj@kamzik.brq.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190828114613.a2rvpip45c3ywdnj@kamzik.brq.redhat.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S1726245AbfH2CYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 22:24:25 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1FB56200267;
+        Thu, 29 Aug 2019 04:24:23 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E373E200264;
+        Thu, 29 Aug 2019 04:24:18 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 790BA402B1;
+        Thu, 29 Aug 2019 10:24:13 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        leoyang.li@nxp.com, broonie@kernel.org, nandor.han@vaisala.com
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biwen Li <biwen.li@nxp.com>
+Subject: [v5] rtc: pcf85363/pcf85263: fix error that failed to run hwclock -w
+Date:   Thu, 29 Aug 2019 10:14:18 +0800
+Message-Id: <20190829021418.4607-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 01:46:13PM +0200, Andrew Jones wrote:
+Issue:
+    - # hwclock -w
+      hwclock: RTC_SET_TIME: Invalid argument
 
-[...]
+Why:
+    - Relative commit: 8b9f9d4dc511309918c4f6793bae7387c0c638af, this patch
+      will always check for unwritable registers, it will compare reg
+      with max_register in regmap_writeable.
 
-> > +unsigned int vm_get_page_size(struct kvm_vm *vm)
-> > +{
-> > +	return vm->page_size;
-> > +}
-> > +
-> > +unsigned int vm_get_page_shift(struct kvm_vm *vm)
-> > +{
-> > +	return vm->page_shift;
-> > +}
-> 
-> We could get by with just one of the above two, but whatever
+    - The pcf85363/pcf85263 has the capability of address wrapping
+      which means if you access an address outside the allowed range
+      (0x00-0x2f) hardware actually wraps the access to a lower address.
+      The rtc-pcf85363 driver will use this feature to configure the time
+      and execute 2 actions in the same i2c write operation (stopping the
+      clock and configure the time). However the driver has also
+      configured the `regmap maxregister` protection mechanism that will
+      block accessing addresses outside valid range (0x00-0x2f).
 
-Right... and imho if we export kvm_vm struct we don't even any
-helpers. :) But I didn't touch that.
+How:
+    - Split of writing regs to two parts, first part writes control
+      registers about stop_enable and resets, second part writes
+      RTC time and date registers.
 
-> > +
-> > +unsigned int vm_get_max_gfn(struct kvm_vm *vm)
-> > +{
-> > +	return vm->max_gfn;
-> > +}
-> > -- 
-> > 2.21.0
-> >
-> 
-> Reviewed-by: Andrew Jones <drjones@redhat.com>
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+Change in v5:
+	- drop robust explanation
 
-Thanks!
+Change in v4:
+	- use old scheme
+	- replace link to lkml.org with commit
+	- add proper explanation
 
+Change in v3:
+	- replace old scheme with new scheme:
+	  increase max_register.
+
+Change in v2:
+	- add Why and How into commit message.
+
+ drivers/rtc/rtc-pcf85363.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
+index a075e77617dc..3450d615974d 100644
+--- a/drivers/rtc/rtc-pcf85363.c
++++ b/drivers/rtc/rtc-pcf85363.c
+@@ -166,7 +166,12 @@ static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	buf[DT_YEARS] = bin2bcd(tm->tm_year % 100);
+ 
+ 	ret = regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
+-				tmp, sizeof(tmp));
++				tmp, 2);
++	if (ret)
++		return ret;
++
++	ret = regmap_bulk_write(pcf85363->regmap, DT_100THS,
++				buf, sizeof(tmp) - 2);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
-Peter Xu
+2.17.1
+
