@@ -2,120 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A6A0A206D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0C3FA2074
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:13:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfH2QNG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:13:06 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:37450 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727118AbfH2QNF (ORCPT
+        id S1728143AbfH2QNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:13:50 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33794 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728074AbfH2QNt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:13:05 -0400
-Received: by mail-yb1-f196.google.com with SMTP id t5so1382436ybt.4;
-        Thu, 29 Aug 2019 09:13:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kNznxc1elQs9GK9cu3jq6YkqkQEUKZhFLbPtaGv0C7o=;
-        b=Kg0eD7aNyxUxwwHK5ETgxsz5XldzcAgvsJUzNfvpReGhHOVR2p+874TdwEXnXR9zQ2
-         K9h3T4xDrjrK8j4+dYWIXFkFPPpKRg7Tw76OfrkTNwwV8dzbGtTE3Vx9uSi7skwRwiXL
-         Wz7QG0/CBZ0++nKYNWMsl4mgSFICLzr7VLX1x7QbzZt5D2MEkkRQ8BE4A3Dk79c8I5dk
-         X8RHnt18Ofzeh3b9D7E8hnI97l58deFHhK+/NyftX5pRcqTaY/vRzCCLgAUiKT/SgEUF
-         1B5fixfjE4QImmhs+0/1xvvFK+xXN2T2wl+RZ0mjgVDw9NAr+w2vadGJqEGjDtVsYrY+
-         VaTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kNznxc1elQs9GK9cu3jq6YkqkQEUKZhFLbPtaGv0C7o=;
-        b=adk9d0Dwfc6Kew0WVc1tly3JbjLDW8Gd0Cv8QSnjCERA4Je0LwmMu2xOywhtcTpxaO
-         +zDQj3mQ+KKYp1SH6c7M56F9Jtbpgb1rybiNsRkn8i9R0eEm7d1fyn2BI6zW40FB6y3v
-         2PcysyDIh44skUBo8zDVL1UTc146AQe5nSuyLXNIDbU9iW3+NM/zXKn45QY/zEjTLcFO
-         YjP/WnbO+N61IU0rzHsx6n1zbNRgbN70a4kJwosmfOBQkvfO9KSOZs2lsOrL9Mz21vyr
-         Nwf6wDGbpnITkJ3O/NIsl39Z1bjjUe2tRhm0ZqJgS/KlgEKTqpywbWXD0MCNzQLiXgTF
-         GlBg==
-X-Gm-Message-State: APjAAAUsHXRtOD3RQSRIrxdRCbEI0b12rnwLipYxe5JYmXSXwlI0PKNo
-        XVfTUCK82yIpUfRd0vmpu9JFuA5qffvHnc3MiPA=
-X-Google-Smtp-Source: APXvYqxOiciOtyiybUGhnpKGmM1DjYJIs5IYPSDqHbwUFYOmyJV/fnnpTn6QkBGE0FEPgWf28bsP8P7NLrHxQy9Y8Rk=
-X-Received: by 2002:a25:9cc9:: with SMTP id z9mr7850415ybo.496.1567095184713;
- Thu, 29 Aug 2019 09:13:04 -0700 (PDT)
+        Thu, 29 Aug 2019 12:13:49 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7TGCWMO043855;
+        Thu, 29 Aug 2019 12:13:02 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uphtvrnmy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 12:13:02 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7TGCfDg044716;
+        Thu, 29 Aug 2019 12:13:02 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uphtvrnms-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 12:13:02 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7TG5qu0022885;
+        Thu, 29 Aug 2019 16:13:01 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma03wdc.us.ibm.com with ESMTP id 2ujvv6wc34-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 16:13:01 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7TGD15954395304
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 16:13:01 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17E3FB2066;
+        Thu, 29 Aug 2019 16:13:01 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D6188B205F;
+        Thu, 29 Aug 2019 16:13:00 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.151.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 29 Aug 2019 16:13:00 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 79B1C16C0A0E; Thu, 29 Aug 2019 09:13:01 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 09:13:01 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC v1 2/2] rcu/tree: Remove dynticks_nmi_nesting counter
+Message-ID: <20190829161301.GQ4125@linux.ibm.com>
+Reply-To: paulmck@kernel.org
+References: <20190828210525.GB75931@google.com>
+ <20190828211904.GX26530@linux.ibm.com>
+ <20190828214241.GD75931@google.com>
+ <20190828220108.GC26530@linux.ibm.com>
+ <20190828221444.GA100789@google.com>
+ <20190828231247.GE26530@linux.ibm.com>
+ <20190829015155.GB100789@google.com>
+ <20190829034336.GD4125@linux.ibm.com>
+ <20190829144355.GE63638@google.com>
+ <20190829151325.GF63638@google.com>
 MIME-Version: 1.0
-References: <20190826081752.57258-1-kkamagui@gmail.com> <CACdnJutomLNthYDzEc0wFBcBHK5iqnk0p-hkAkp57zQZ38oGPA@mail.gmail.com>
- <CAHjaAcSFhQsDYL2iRwwhyvxh9mH4DhxZ__DNzhtk=iiZZ5JdbA@mail.gmail.com>
- <CACdnJutfR2X-5ksXw4PNUdyH2MJs_mExNCcYPp8NLcPW2EDrYQ@mail.gmail.com>
- <CAHjaAcSpU0eW5PLsEpxTkycwi+wNS67xeizb6_BMM_-qUZYAmg@mail.gmail.com>
- <20190827171106.owkvt6slwwg5ypyl@srcf.ucam.org> <CAHjaAcSu04J3WqT_vnSnaQuYpFQ+xiXXWxhcCeLQccEq6eQGcQ@mail.gmail.com>
- <20190829153437.gjcqfolsc26vyt4x@linux.intel.com> <20190829153917.glq6eoka2eufy42w@linux.intel.com>
-In-Reply-To: <20190829153917.glq6eoka2eufy42w@linux.intel.com>
-From:   Seunghun Han <kkamagui@gmail.com>
-Date:   Fri, 30 Aug 2019 01:12:53 +0900
-Message-ID: <CAHjaAcQ2OmrFO2wWCXocR9xO_aTRYU4vLf3aBr4v5Fn2A89wvg@mail.gmail.com>
-Subject: Re: [PATCH] x86: tpm: Remove a busy bit of the NVS area for
- supporting AMD's fTPM
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829151325.GF63638@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-29_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908290171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->
-> On Thu, Aug 29, 2019 at 06:34:37PM +0300, Jarkko Sakkinen wrote:
-> > On Wed, Aug 28, 2019 at 06:36:04PM +0900, Seunghun Han wrote:
-> > > >
-> > > > On Wed, Aug 28, 2019 at 01:36:30AM +0900, Seunghun Han wrote:
-> > > >
-> > > > > I got your point. Is there any problem if some regions which don't
-> > > > > need to be handled in NVS area are saved and restored? If there is a
-> > > > > problem, how about adding code for ignoring the regions in NVS area to
-> > > > > the nvs.c file like Jarkko said? If we add the code, we can save and
-> > > > > restore NVS area without driver's interaction.
-> > > >
-> > > > The only thing that knows which regions should be skipped by the NVS
-> > > > driver is the hardware specific driver, so the TPM driver needs to ask
-> > > > the NVS driver to ignore that region and grant control to the TPM
-> > > > driver.
-> > > >
-> > > > --
-> > > > Matthew Garrett | mjg59@srcf.ucam.org
-> > >
-> > > Thank you, Matthew and Jarkko.
-> > > It seems that the TPM driver needs to handle the specific case that
-> > > TPM regions are in the NVS. I would make a patch that removes TPM
-> > > regions from the ACPI NVS by requesting to the NVS driver soon.
-> > >
-> > > Jarkko,
-> > > I would like to get some advice on it. What do you think about
-> > > removing TPM regions from the ACPI NVS in TPM CRB driver? If you don't
-> > > mind, I would make the patch about it.
-> >
-> > I'm not sure if ignoring is right call. Then the hibernation behaviour
-> > for TPM regions would break.
-> >
-> > Thus, should be "ask access" rather than "grant control".
+On Thu, Aug 29, 2019 at 11:13:25AM -0400, Joel Fernandes wrote:
+> On Thu, Aug 29, 2019 at 10:43:55AM -0400, Joel Fernandes wrote:
+> > On Wed, Aug 28, 2019 at 08:43:36PM -0700, Paul E. McKenney wrote:
+> > [snip]
+> > > > > > > This change is not fixing a bug, so there is no need for an emergency fix,
+> > > > > > > and thus no point in additional churn.  I understand that it is a bit
+> > > > > > > annoying to code and test something and have your friendly maintainer say
+> > > > > > > "sorry, wrong rocks", and the reason that I understand this is that I do
+> > > > > > > that to myself rather often.
+> > > > > > 
+> > > > > > The motivation for me for this change is to avoid future bugs such as with
+> > > > > > the following patch where "== 2" did not take the force write of
+> > > > > > DYNTICK_IRQ_NONIDLE into account:
+> > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/commit/?h=dev&id=13c4b07593977d9288e5d0c21c89d9ba27e2ea1f
+> > > > > 
+> > > > > Yes, the current code does need some simplification.
+> > > > > 
+> > > > > > I still don't see it as pointless churn, it is also a maintenance cost in its
+> > > > > > current form and the simplification is worth it IMHO both from a readability,
+> > > > > > and maintenance stand point.
+> > > > > > 
+> > > > > > I still don't see what's technically wrong with the patch. I could perhaps
+> > > > > > add the above "== 2" point in the patch?
+> > > > > 
+> > > > > I don't know of a crash or splat your patch would cause, if that is
+> > > > > your question.  But that is also true of the current code, so the point
+> > > > > is simplification, not bug fixing.  And from what I can see, there is an
+> > > > > opportunity to simplify quite a bit further.  And with something like
+> > > > > RCU, further simplification is worth -serious- consideration.
+> > > > > 
+> > > > > > We could also discuss f2f at LPC to see if we can agree about it?
+> > > > > 
+> > > > > That might make a lot of sense.
+> > > > 
+> > > > Sure. I am up for a further redesign / simplification. I will think more
+> > > > about your suggestions and can also further discuss at LPC.
+> > > 
+> > > One question that might (or might not) help:  Given the compound counter,
+> > > where the low-order hex digit indicates whether the corresponding CPU
+> > > is running in a non-idle kernel task and the rest of the hex digits
+> > > indicate the NMI-style nesting counter shifted up by four bits, what
+> > > could rcu_is_cpu_rrupt_from_idle() be reduced to?
+> > > 
+> > > > And this patch is on LKML archives and is not going anywhere so there's no
+> > > > rush I guess ;-)
+> > > 
+> > > True enough!  ;-)
+> > 
+> > Paul, do we also nuke rcu_eqs_special_set()?  Currently I don't see anyone
+> > using it. And also remove the bottom most bit of dynticks?
+> > 
+> > Also what happens if a TLB flush broadcast is needed? Do we IPI nohz or idle
+> > CPUs are the moment?
+> > 
+> > All of this was introduced in:
+> > b8c17e6664c4 ("rcu: Maintain special bits at bottom of ->dynticks counter")
+> 
+> 
+> Paul, also what what happens in the following scenario:
+> 
+> CPU0                                                 CPU1
+> 
+> A syscall causes rcu_eqs_exit()
+> rcu_read_lock();
+>                                                      ---> FQS loop waiting on
+> 						           dyntick_snap
+> usermode-upcall  entry -->causes rcu_eqs_enter();
+> 
+> usermode-upcall  exit  -->causes rcu_eqs_exit();
+> 
+>                                                      ---> FQS loop sees
+> 						          dyntick snap
+> 							  increment and
+> 							  declares CPU0 is
+> 							  in a QS state
+> 							  before the
+> 							  rcu_read_unlock!
+> 
+> rcu_read_unlock();
+> ---
+> 
+> Does the context tracking not call rcu_user_enter() in this case, or did I
+> really miss something?
 
-I agree with your idea. It seems to make trouble. So, I would like to
-do like your idea below.
+Holding rcu_read_lock() across usermode execution (in this case,
+the usermode upcall) is a bad idea.  Why is CPU 0 doing that?
 
-> Or "reserve access" as NVS driver does not have intelligence to do any
-> policy based decision here.
->
-> A function that gets region and then checks if NVS driver has matching
-> one and returns true/false based on that should be good enough. Then
-> you raw ioremap() in the TPM driver.
->
-> /Jarkko
-
-This solution is great and clear to me. I will make a new patch on
-your advice and test it in my machine. After that, I will send it
-again soon.
-I really appreciate it.
-
-Seunghun
+							Thanx, Paul
