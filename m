@@ -2,102 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB1CAA26C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:03:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29A55A26F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:04:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729266AbfH2TC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 15:02:59 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51585 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729229AbfH2TCz (ORCPT
+        id S1728955AbfH2TEh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 15:04:37 -0400
+Received: from mailoutvs50.siol.net ([185.57.226.241]:48668 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728227AbfH2TEh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 15:02:55 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i3Ph0-0005PD-6a; Thu, 29 Aug 2019 21:02:46 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id BAAD41C0DE6;
-        Thu, 29 Aug 2019 21:02:45 +0200 (CEST)
-Date:   Thu, 29 Aug 2019 19:02:45 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/pti] x86/mm/pti: Do not invoke PTI functions when PTI is disabled
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <20190828143124.063353972@linutronix.de>
-References: <20190828143124.063353972@linutronix.de>
+        Thu, 29 Aug 2019 15:04:37 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 79FA3521E5A;
+        Thu, 29 Aug 2019 21:04:32 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id w7XRHfaMZ7tm; Thu, 29 Aug 2019 21:04:32 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id DC64152437F;
+        Thu, 29 Aug 2019 21:04:31 +0200 (CEST)
+Received: from jernej-laptop.localnet (cpe-86-58-59-25.static.triera.net [86.58.59.25])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id D0323521E5A;
+        Thu, 29 Aug 2019 21:04:28 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Boris Brezillon <boris.brezillon@collabora.com>
+Cc:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        paul.kocialkowski@bootlin.com, mripard@kernel.org,
+        pawel@osciak.com, m.szyprowski@samsung.com,
+        kyungmin.park@samsung.com, tfiga@chromium.org, wens@csie.org,
+        acourbot@chromium.org, gregkh@linuxfoundation.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        ezequiel@collabora.com, jonas@kwiboo.se
+Subject: Re: [PATCH 5/8] media: cedrus: Detect first slice of a frame
+Date:   Thu, 29 Aug 2019 21:04:28 +0200
+Message-ID: <3132748.mYbjOY1tKM@jernej-laptop>
+In-Reply-To: <20190826202831.311c7c20@collabora.com>
+References: <20190822194500.2071-1-jernej.skrabec@siol.net> <20190822194500.2071-6-jernej.skrabec@siol.net> <20190826202831.311c7c20@collabora.com>
 MIME-Version: 1.0
-Message-ID: <156710536567.11135.4843469499808900617.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/pti branch of tip:
+Dne ponedeljek, 26. avgust 2019 ob 20:28:31 CEST je Boris Brezillon 
+napisal(a):
+> Hi Jernej,
+> 
+> On Thu, 22 Aug 2019 21:44:57 +0200
+> 
+> Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> > When codec supports multiple slices in one frame, VPU has to know when
+> > first slice of each frame is being processed, presumably to correctly
+> > clear/set data in auxiliary buffers.
+> > 
+> > Add first_slice field to cedrus_run structure and set it according to
+> > timestamps of capture and output buffers. If timestamps are different,
+> > it's first slice and viceversa.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/staging/media/sunxi/cedrus/cedrus.h     | 1 +
+> >  drivers/staging/media/sunxi/cedrus/cedrus_dec.c | 2 ++
+> >  2 files changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h
+> > b/drivers/staging/media/sunxi/cedrus/cedrus.h index
+> > 2f017a651848..32cb38e541c6 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus.h
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
+> > @@ -70,6 +70,7 @@ struct cedrus_mpeg2_run {
+> > 
+> >  struct cedrus_run {
+> >  
+> >  	struct vb2_v4l2_buffer	*src;
+> >  	struct vb2_v4l2_buffer	*dst;
+> > 
+> > +	bool first_slice;
+> > 
+> >  	union {
+> >  	
+> >  		struct cedrus_h264_run	h264;
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c index
+> > 56ca4c9ad01c..d7b54accfe83 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > @@ -31,6 +31,8 @@ void cedrus_device_run(void *priv)
+> > 
+> >  	run.src = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
+> >  	run.dst = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+> > 
+> > +	run.first_slice =
+> > +		run.src->vb2_buf.timestamp != run.dst-
+>vb2_buf.timestamp;
+> 
+> Can't we use slice->first_mb_in_slice to determine if a slice is the
+> first? I'd expect ->first_mb_in_slice to be 0 (unless we decide to
+> support ASO).
 
-Commit-ID:     990784b57731192b7d90c8d4049e6318d81e887d
-Gitweb:        https://git.kernel.org/tip/990784b57731192b7d90c8d4049e6318d81e887d
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 28 Aug 2019 16:24:47 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 29 Aug 2019 20:52:53 +02:00
+I looked in all VPU documentation available to me (which isn't much) and there 
+is no indication if ASO is supported or not. Do you have any sample video with 
+out-of-order slices? It's my understanding that this is uncommon. If it's 
+supported, I would leave code as-is.
 
-x86/mm/pti: Do not invoke PTI functions when PTI is disabled
+Best regards,
+Jernej
 
-When PTI is disabled at boot time either because the CPU is not affected or
-PTI has been disabled on the command line, the boot code still calls into
-pti_finalize() which then unconditionally invokes:
+> 
+> >  	/* Apply request(s) controls if needed. */
+> >  	src_req = run.src->vb2_buf.req_obj.req;
 
-     pti_clone_entry_text()
-     pti_clone_kernel_text()
 
-pti_clone_kernel_text() was called unconditionally before the 32bit support
-was added and 32bit added the call to pti_clone_entry_text().
 
-The call has no side effects as cloning the page tables into the available
-second one, which was allocated for PTI does not create damage. But it does
-not make sense either and in case that this functionality would be extended
-later this might actually lead to hard to diagnose issues.
 
-Neither function should be called when PTI is runtime disabled. Make the
-invocation conditional.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Song Liu <songliubraving@fb.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190828143124.063353972@linutronix.de
-
----
- arch/x86/mm/pti.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index a24487b..7f21404 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -668,6 +668,8 @@ void __init pti_init(void)
-  */
- void pti_finalize(void)
- {
-+	if (!boot_cpu_has(X86_FEATURE_PTI))
-+		return;
- 	/*
- 	 * We need to clone everything (again) that maps parts of the
- 	 * kernel image.
