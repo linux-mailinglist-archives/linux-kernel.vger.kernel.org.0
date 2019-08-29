@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75B95A252C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:29:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43CFFA24FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbfH2S25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:28:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56894 "EHLO mail.kernel.org"
+        id S1727546AbfH2SPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:15:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729184AbfH2SPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:11 -0400
+        id S1729307AbfH2SPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:15:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 409A82189D;
-        Thu, 29 Aug 2019 18:15:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09DAC23403;
+        Thu, 29 Aug 2019 18:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102511;
-        bh=ZRphFBhD0xKR03GxL0DcPOuwSe/QgK3Rp3TsN7hYc6c=;
+        s=default; t=1567102529;
+        bh=daF/PX4Ijm80cFU8SbPUPm1tciP79fQ1UuLIBgd+6cQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lRCAPTdOFpF/5TZ7HCW6Ddf8MuF967EaKBjZ/KtOJv8ry3pVuQ+nGTNf27Z0c7XDq
-         CkA3KMS7Nm7bW1u1vNo3yUaYNsg1bVVjn3xzpYOYKZGlJKVwF2mFouP2oimJr70DPC
-         P/I1Y5ksc60hnBUddi80FaWqE4ZtCsuFZ56WIZI8=
+        b=ekIR7PTNPIiLkcRN2lZpzqWOCTeHU+qlFkpxr2MdvtnRkJ6pn+/Nv/GQec1BcJWip
+         7yz0/Nn48qGiWXJxEscfPPH2sFkaJqQhSsXZHjNvL6i6qB1490zz0jq/mwEFD37Pgc
+         bJvC2HxvjJ3ARCH+/5yVhP9j76q5GRqLU9Z6YU+o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 59/76] RDMA/cma: fix null-ptr-deref Read in cma_cleanup
-Date:   Thu, 29 Aug 2019 14:12:54 -0400
-Message-Id: <20190829181311.7562-59-sashal@kernel.org>
+Cc:     =?UTF-8?q?Nicolai=20H=C3=A4hnle?= <nicolai.haehnle@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 65/76] drm/amdgpu: prevent memory leaks in AMDGPU_CS ioctl
+Date:   Thu, 29 Aug 2019 14:13:00 -0400
+Message-Id: <20190829181311.7562-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,49 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhengbin <zhengbin13@huawei.com>
+From: Nicolai Hähnle <nicolai.haehnle@amd.com>
 
-[ Upstream commit a7bfb93f0211b4a2f1ffeeb259ed6206bac30460 ]
+[ Upstream commit 1a701ea924815b0518733aa8d5d05c1f6fa87062 ]
 
-In cma_init, if cma_configfs_init fails, need to free the
-previously memory and return fail, otherwise will trigger
-null-ptr-deref Read in cma_cleanup.
+Error out if the AMDGPU_CS ioctl is called with multiple SYNCOBJ_OUT and/or
+TIMELINE_SIGNAL chunks, since otherwise the last chunk wins while the
+allocated array as well as the reference counts of sync objects are leaked.
 
-cma_cleanup
-  cma_configfs_exit
-    configfs_unregister_subsystem
-
-Fixes: 045959db65c6 ("IB/cma: Add configfs for rdma_cm")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Link: https://lore.kernel.org/r/1566188859-103051-1-git-send-email-zhengbin13@huawei.com
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Nicolai Hähnle <nicolai.haehnle@amd.com>
+Reviewed-by: Christian König <christian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/cma.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
-index 19f1730a4f244..a68d0ccf67a43 100644
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -4724,10 +4724,14 @@ static int __init cma_init(void)
- 	if (ret)
- 		goto err;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index fe028561dc0e6..bc40d6eabce7d 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@ -1192,6 +1192,9 @@ static int amdgpu_cs_process_syncobj_out_dep(struct amdgpu_cs_parser *p,
+ 	num_deps = chunk->length_dw * 4 /
+ 		sizeof(struct drm_amdgpu_cs_chunk_sem);
  
--	cma_configfs_init();
-+	ret = cma_configfs_init();
-+	if (ret)
-+		goto err_ib;
++	if (p->post_deps)
++		return -EINVAL;
++
+ 	p->post_deps = kmalloc_array(num_deps, sizeof(*p->post_deps),
+ 				     GFP_KERNEL);
+ 	p->num_post_deps = 0;
+@@ -1215,8 +1218,7 @@ static int amdgpu_cs_process_syncobj_out_dep(struct amdgpu_cs_parser *p,
  
- 	return 0;
  
-+err_ib:
-+	ib_unregister_client(&cma_client);
- err:
- 	unregister_netdevice_notifier(&cma_nb);
- 	ib_sa_unregister_client(&sa_client);
+ static int amdgpu_cs_process_syncobj_timeline_out_dep(struct amdgpu_cs_parser *p,
+-						      struct amdgpu_cs_chunk
+-						      *chunk)
++						      struct amdgpu_cs_chunk *chunk)
+ {
+ 	struct drm_amdgpu_cs_chunk_syncobj *syncobj_deps;
+ 	unsigned num_deps;
+@@ -1226,6 +1228,9 @@ static int amdgpu_cs_process_syncobj_timeline_out_dep(struct amdgpu_cs_parser *p
+ 	num_deps = chunk->length_dw * 4 /
+ 		sizeof(struct drm_amdgpu_cs_chunk_syncobj);
+ 
++	if (p->post_deps)
++		return -EINVAL;
++
+ 	p->post_deps = kmalloc_array(num_deps, sizeof(*p->post_deps),
+ 				     GFP_KERNEL);
+ 	p->num_post_deps = 0;
 -- 
 2.20.1
 
