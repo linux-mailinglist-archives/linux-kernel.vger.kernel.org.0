@@ -2,87 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 495C4A118C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 08:09:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3D38A118F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 08:10:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfH2GJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 02:09:53 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:52886 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbfH2GJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 02:09:52 -0400
-Received: from zn.tnic (p200300EC2F0D0C00C4AC36401DE27C46.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:c00:c4ac:3640:1de2:7c46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 716081EC0B6E;
-        Thu, 29 Aug 2019 08:09:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1567058991;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Jj3hmfHkutQGkUAabd2SGodGbh+Q3mOjtDk+Bx2jxgA=;
-        b=cu92urpLpwKFnxncJm4XSu8FXQ3eXvrVWuKHqcJ9FEtVBz6+JvFqHcTe7zRYHLMseQI19z
-        9f6eamT7a19dM7nu57xqwEAZ55sWzIExYAxveWd+aJ66vQ9AJ1QaWjHKbleW34F4OLEcof
-        QfglIoEvi8mr9UjFagS23991FM1UpsU=
-Date:   Thu, 29 Aug 2019 08:09:42 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ashok Raj <ashok.raj@intel.com>
-Cc:     Mihai Carabas <mihai.carabas@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jon Grimm <Jon.Grimm@amd.com>, kanth.ghatraju@oracle.com,
-        konrad.wilk@oracle.com, patrick.colp@oracle.com,
+        id S1727620AbfH2GKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 02:10:07 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:22584 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725883AbfH2GKG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 02:10:06 -0400
+X-UUID: 1eaec999b78146a1bfcc86fc0004392d-20190829
+X-UUID: 1eaec999b78146a1bfcc86fc0004392d-20190829
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        (envelope-from <hsin-hsiung.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1779642533; Thu, 29 Aug 2019 14:10:01 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 29 Aug 2019 14:10:05 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 29 Aug 2019 14:10:05 +0800
+Message-ID: <1567058998.31616.2.camel@mtksdaap41>
+Subject: Re: [PATCH v5 07/10] regulator: mt6358: Add support for MT6358
+ regulator
+From:   Hsin-hsiung Wang <hsin-hsiung.wang@mediatek.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Liam Girdwood" <lgirdwood@gmail.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        x86-ml <x86@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/microcode: Add an option to reload microcode even if
- revision is unchanged
-Message-ID: <20190829060942.GA1312@zn.tnic>
-References: <1567056803-6640-1-git-send-email-ashok.raj@intel.com>
+        Richard Fontana <rfontana@redhat.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>
+Date:   Thu, 29 Aug 2019 14:09:58 +0800
+In-Reply-To: <20190828104555.GE4298@sirena.co.uk>
+References: <1566531931-9772-1-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <1566531931-9772-8-git-send-email-hsin-hsiung.wang@mediatek.com>
+         <20190828104555.GE4298@sirena.co.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1567056803-6640-1-git-send-email-ashok.raj@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 3D21F7D16BC2B25CFE3E426405FDF82F479EDCE9532B4837AF176595204156AC2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 10:33:22PM -0700, Ashok Raj wrote:
-> During microcode development, its often required to test different versions
-> of microcode. Intel microcode loader enforces loading only if the revision is
-> greater than what is currently loaded on the cpu. Overriding this behavior
-> allows us to reuse the same revision during development cycles.
-> This facilty also allows us to share debug microcode with development
-> partners for getting feedback before microcode release.
-> 
-> Microcode developers should have other ways to check which
-> of their internal version is actually loaded. For e.g. checking a
-> temporary MSR for instance. In order to reload the same microcode do as
-> shown below.
-> 
->  # echo 2 > /sys/devices/system/cpu/microcode/reload
-> 
->  as root.
-> 
-> 
-> I tested this on top of the parallel ucode load patch
-> 
-> https://lore.kernel.org/r/1566506627-16536-2-git-send-email-mihai.carabas@oracle.com/
-> 
-> v2: [Mihai] Address comments from Boris
-> 	- Support for AMD
-> 	- add taint flag
-> 	- removed global force_ucode_load and parameterized it.
+Hi Mark,
 
-As I've said before, I don't like the churn in this version and how it
-turns out. I'll have a look at how to do this cleanly when I get some
-free cycles.
+On Wed, 2019-08-28 at 11:45 +0100, Mark Brown wrote:
+> On Fri, Aug 23, 2019 at 11:45:28AM +0800, Hsin-Hsiung Wang wrote:
+> > The MT6358 is a regulator found on boards based on MediaTek MT8183 and
+> > probably other SoCs. It is a so called pmic and connects as a slave to
+> > SoC using SPI, wrapped inside the pmic-wrapper.
+> 
+> This looks good - since there was only one small issue with the example
+> in the binding document I'll apply both patches, please send a followup
+> fixing the binding document.
 
--- 
-Regards/Gruss,
-    Boris.
+Thanks for your comment.
+I will update the binding document in the next patch.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
