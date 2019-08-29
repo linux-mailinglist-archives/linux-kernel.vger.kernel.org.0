@@ -2,85 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA41EA27EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B072A27FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:30:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbfH2U2T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:28:19 -0400
-Received: from sauhun.de ([88.99.104.3]:43298 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726661AbfH2U2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:28:19 -0400
-Received: from localhost (p54B33070.dip0.t-ipconnect.de [84.179.48.112])
-        by pokefinder.org (Postfix) with ESMTPSA id 85D682C001C;
-        Thu, 29 Aug 2019 22:28:17 +0200 (CEST)
-Date:   Thu, 29 Aug 2019 22:28:17 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Eugen.Hristev@microchip.com
-Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        pierre-yves.mordret@st.com, alexandre.belloni@bootlin.com,
-        robh+dt@kernel.org, peda@axentia.se, mark.rutland@arm.com,
-        Nicolas.Ferre@microchip.com
-Subject: Re: [PATCH v3 0/9] i2c: add support for filters
-Message-ID: <20190829202817.GT3740@ninjato>
-References: <1562678049-17581-1-git-send-email-eugen.hristev@microchip.com>
- <20190712082044.6eteunzehyptsibk@M43218.corp.atmel.com>
- <867070c3-02c8-da1b-04d9-0a1b628577de@microchip.com>
+        id S1728210AbfH2Uai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:30:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:62912 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726661AbfH2Uah (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 16:30:37 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7TKShen146787;
+        Thu, 29 Aug 2019 16:29:58 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2upjrupa29-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 16:29:58 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7TKPKjn025392;
+        Thu, 29 Aug 2019 20:29:56 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma01wdc.us.ibm.com with ESMTP id 2ujvv6pjca-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 20:29:56 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7TKTvWX52166930
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 20:29:57 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0194BAE062;
+        Thu, 29 Aug 2019 20:29:57 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 77A37AE05C;
+        Thu, 29 Aug 2019 20:29:55 +0000 (GMT)
+Received: from leobras.br.ibm.com (unknown [9.18.235.111])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 29 Aug 2019 20:29:55 +0000 (GMT)
+Message-ID: <b6585989069fd832a65b73d1c4f4319a10714165.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 1/1] netfilter: nf_tables: fib: Drop IPV6 packages if
+ IPv6 is disabled on boot
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Date:   Thu, 29 Aug 2019 17:29:51 -0300
+In-Reply-To: <db0f02c5b1a995fde174f036540a3d11008cf116.camel@linux.ibm.com>
+References: <20190821141505.2394-1-leonardo@linux.ibm.com>
+         <db0f02c5b1a995fde174f036540a3d11008cf116.camel@linux.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-MdIb0HamTTXKEH8vz6zh"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="MET8MpPxp2u2c48q"
-Content-Disposition: inline
-In-Reply-To: <867070c3-02c8-da1b-04d9-0a1b628577de@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-29_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=947 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908290205
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---MET8MpPxp2u2c48q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-MdIb0HamTTXKEH8vz6zh
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-> > I don't know if it will fit other vendors need concerning the binding
-> > but for Microchip it sounds good.
-> >=20
-> > Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-> > for the whole serie.
-> >=20
-> > Regards
-> >=20
-> > Ludovic
-> >=20
+On Thu, 2019-08-29 at 17:04 -0300, Leonardo Bras wrote:
+> > Thats a good point -- Leonardo, is the
+> > "net.bridge.bridge-nf-call-ip6tables" sysctl on?
 >=20
-> Hello Wolfram,
+> Running
+> # sudo sysctl -a
+> I can see:
+> net.bridge.bridge-nf-call-ip6tables =3D 1
+
+Also, doing
+# echo 0 >  /proc/sys/net/bridge/bridge-nf-call-ip6tables=20
+And then trying to boot the guest will not crash the host.
+
+Which would make sense, since host iptables is not dealing with guest
+IPv6 packets.
+
+So, the real cause of this bug is the bridge making host ip6tables deal
+with guest IPv6 packets ?=20
+If so, would it be ok if write a patch testing ipv6_mod_enabled()
+before passing guest ipv6 packets to host ip6tables?=20
+
+
+Best regards,
+
+> =20
+> So this packets are sent to host iptables for processing?
 >=20
-> What is the plan for this patch series?
+>=20
+> (Sorry for the delay, I did not received the previous e-mails.
+> Please include me in to/cc.)
 
-I hope to review it this weekend and my hope it is good to go for 5.4.
-
-
---MET8MpPxp2u2c48q
+--=-MdIb0HamTTXKEH8vz6zh
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1oNWAACgkQFA3kzBSg
-KbZrWw/9HqjOXK/IH1rLw2tSA9GN1022F4IumHkzV+65mZFNq21FwtEAjTScq2uv
-nIRFzhRtjtBlov0w3t5prkUAuSKqKXiGgue/cDannWVLvdk/pcrTCERvQsBc5rIe
-Jlhya4MgSnE3teHqrJy4XtKn3m1LUJ6I/XtTGzDl50KHsepFWGuITBXKIKpS+R1q
-XVG1reJyxec3oWGHh1V1L+klLIb1HHWickcmYM2djZXrpharb7D0fIsdQB+1jSNR
-qhOpL15ye5Gc/01JA/rkNsSz/TI7AQBekZrsVaSgehnvN24yG9JzP6jLhaNU+9Xw
-lR5YY2FY8ubdAtcfDLYa+pJYBBxAtPuNfCMpVqaT/9woLF0gsCX4S8ggGAzne/MN
-KfatKAkosRZhO2rnXfFDnnBpL/wCGFA4/xiECAjYv1kalCopR8dUeYCdWIMcI1g5
-7MRqq9c1HE95e3Sh2mEPR3BHgDD83YmEjsYU6TOyYFoa0FS/A7WaQ1iqX7FmqZbm
-WRLtrtD3aVGxUncuYxfjLpNRSmOGnowjcIVLrURVCSYMvYsU5ltn0t9xTDp9h6yf
-D+rfsiFxcKnoasaeLaPauHCXVrgbbDG28tI+GoNTJkLjTZmWHkH/hPdcam3N6Qcc
-hHQImfyLvBDp9ePMb8U8ombH/SLyT2cqdOXgSHTLflZuCazJWZo=
-=S1+3
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl1oNb8ACgkQlQYWtz9S
+ttTJExAApXmGPloLN1N0hwKRPP49xzh1v8ik/VVU7a6G/PprKe45kT3bdkjoMLpJ
+7T7yXMOH5yyUFOeXPnUpAYcKqjmS0y4gF/dtBMAM+2SRVwlTK5vDrKo+HtBOff0X
+DZ6TF7Q8lRzPMWrQBuAbAIoDqwpt1eaGf+UjFXGU2CXDNbRv1sxTZzsbc1EkScwO
+WFs/XbcZ2gLkz20i0btstEP7d8luGgEcvNG48i3BlgoczRWVacnkiWunAHsS39AQ
++Fq2Trw7N3gg1NVlZ8kOrGW+193ZdRswSbDnq7C3JUX/gcgzIo/flUV0AFwEXOqx
+/7fM8I5gqVWbJBqpRMHKtsO/4HMpaqiLWZMtUwt/MZQQWsCZX8eDO5VjcaXR8EMy
+MouFJMVi2R4rrJTOaq0d4klCk6YKYdlheBDq6ZzSF26BSd07gAywLODl9QyxnHiq
+SCLzQ23KI4N98xZiL2SpajR4ZEn8yGpv6Mgxexk/BC3Dc4jZ0YVDznd83sKZHhFh
+hP083MF6os74GEcRSpyYyOfqbZnvt7SwUEWxfCo1hyWp+Z/Ar+Z7GW0pmHJLXU6Z
+PsWneKVq85kb8Zl1Uzg55/rKhopWU6RUV1YJn+RaZOn9Z41FJkcX2kUmY1We+x/N
+y9xIJ4IRMrNfb06qZxkEbub5w8wvpid9CFyHjbdAzDIHapP2o1M=
+=ueqQ
 -----END PGP SIGNATURE-----
 
---MET8MpPxp2u2c48q--
+--=-MdIb0HamTTXKEH8vz6zh--
+
