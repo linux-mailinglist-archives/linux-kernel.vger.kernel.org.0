@@ -2,117 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2B6BA169C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:49:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A725A1772
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfH2Ktr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 06:49:47 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35221 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbfH2Ktq (ORCPT
+        id S1728248AbfH2Kzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 06:55:32 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:17274 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbfH2KuJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 06:49:46 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g7so2951398wrx.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 03:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jHeD3Kv+tcMAmS4H+Al9j1578BcUWQlA5QOhrftK1uI=;
-        b=SzqqW5aRW4Dk4d6Y6jVRNDP+Rh3WbyRh3k50TxR1LeEohULvTL9Bj5hdTjKoTWslIs
-         z/W5UBReyHzNQg80Xsmi4rwuXxQBvmYDHFqHTi/hZWkoL9/04zoHnejKiClOG8BrGxH+
-         /5UVeX4auI4tiLjKX8ERhmRthajmadmWorm2eKbV/cHck6rq2UQrRZl0pcLIpHq3LaoS
-         2V9BqJYyd8+EEbTP9JWGTrdPmHG+OjYTFM7Fq5bkaz8kXWPR1BIzfJgfAxYlnPpNOKW+
-         lQ6wdhg4GXen+v34r92oR+rVXG8sZog/5EOUXX7JmCrFw7EBFbzuU2vffUQdZcygASRr
-         y4dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jHeD3Kv+tcMAmS4H+Al9j1578BcUWQlA5QOhrftK1uI=;
-        b=OWbMKSnh7ujfZTT1dZJe3awJaLZo6H3nsdyExXUvXjrMTNXXXw6kSO2xkqq1fr8MsW
-         secBoxEOLEFysDZ+CJgzdZ0WZZIo5l4WWZa7bf79cYEIwPGPasWpvGIRAtf/u+yDhBNI
-         e1SZ9kOdF2p8FYIkAsICf/TBIGywCFK3vJT6hC02+zX+f25fkO8ogyDafMorH7YxzJDK
-         RnQjKqiUOD5yTxUsjpSS3ZzU0wsLOm8lcXeldWY+MryarvyfmNE64T2lDULkv/9nsJCW
-         +W5foBvkphEUj5xbPvwg+TkSFtg0gttSOZEBELwGVx3KoztK//0F+AyC2yWRqFOl3JEY
-         JMJw==
-X-Gm-Message-State: APjAAAV/po3PalRHOVDcDr4NK9APE8L8oza9RoLxNSZWWppiSgeydPxB
-        Q9NtIFv9H6DZS/gkXQfcQooT9A==
-X-Google-Smtp-Source: APXvYqz2qMe+fh3q/bTnYSOCuAtlMqCAz/KWKJ3lcS/jq5IqYKlKwb73QOH+7q7x/7umHXur6XZItg==
-X-Received: by 2002:adf:fc03:: with SMTP id i3mr5602097wrr.48.1567075784823;
-        Thu, 29 Aug 2019 03:49:44 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id s1sm4927621wrg.80.2019.08.29.03.49.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 03:49:44 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 11:49:42 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     mpm@selenic.com, herbert@gondor.apana.org.au, arnd@arndb.de,
-        gregkh@linuxfoundation.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, avifishman70@gmail.com,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com, sumit.garg@linaro.org,
-        jens.wiklander@linaro.org, vkoul@kernel.org, tglx@linutronix.de,
-        joel@jms.id.au, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-Subject: Re: [PATCH v1 1/2] dt-binding: hwrng: add NPCM RNG documentation
-Message-ID: <20190829104942.uyz5ms4m65hcqvmk@holly.lan>
-References: <20190828162617.237398-1-tmaimon77@gmail.com>
- <20190828162617.237398-2-tmaimon77@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828162617.237398-2-tmaimon77@gmail.com>
-User-Agent: NeoMutt/20180716
+        Thu, 29 Aug 2019 06:50:09 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x7TAnTof013730;
+        Thu, 29 Aug 2019 19:49:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x7TAnTof013730
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567075772;
+        bh=bONSGLTFaXqEMmGlC9jNWtPpXwIX2FvApbhg5YEacHY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=tf+IoCMZ8FnlxiyVUG2h+Gy5Y+i7OqvaRwxaxqL44y7HIrFVR5O1s87bCOlAVmSDO
+         0d6p10gASi9nIjm3tDfdhjHFq2KynTVYZMS2Hlvk3AOIz/8dDmc2vTMjKCG9jY/Brk
+         nC/tc+Qn1zmMeux84bhSFkZNsGLaRebjUI7E/tWaArsJJJPQcMMfr+cGQz6Zra2blq
+         xjYDwGglnO4+WpI83mNxsv5PgnG6GLm8JdX+aWaIfGZxr3u8WEm2BTUd/0T9kQwbOc
+         Sfuw5ClVm1CZS5pnCftjK0KGbta7/T3IeQ6x7tWiQPE0KlFFxJUwN87qtqg/vvZxqN
+         nGBUW9VnhYAYw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mmc@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Piotr Sroka <piotrs@cadence.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] mmc: sdhci-cadence: enable v4_mode to fix ADMA 64-bit addressing
+Date:   Thu, 29 Aug 2019 19:49:26 +0900
+Message-Id: <20190829104928.27404-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 07:26:16PM +0300, Tomer Maimon wrote:
-> Added device tree binding documentation for Nuvoton BMC
-> NPCM Random Number Generator (RNG).
-> 
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  .../bindings/rng/nuvoton,npcm-rng.txt           | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/rng/nuvoton,npcm-rng.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/rng/nuvoton,npcm-rng.txt b/Documentation/devicetree/bindings/rng/nuvoton,npcm-rng.txt
-> new file mode 100644
-> index 000000000000..a697b4425fb3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rng/nuvoton,npcm-rng.txt
-> @@ -0,0 +1,17 @@
-> +NPCM SoC Random Number Generator
-> +
-> +Required properties:
-> +- compatible  : "nuvoton,npcm750-rng" for the NPCM7XX BMC.
-> +- reg         : Specifies physical base address and size of the registers.
-> +
-> +Optional property:
-> +- quality : estimated number of bits of true entropy per 1024 bits
-> +			read from the rng.
-> +			If this property is not defined, it defaults to 1000.
+The IP datasheet says this controller is compatible with SD Host
+Specification Version v4.00.
 
-Having a controllable quality implies that the numeric quality of the
-peripheral changes when it is stamped out on different SoCs (otherwise
-the driver can confidently set the quality without needing any hint
-from the DT). Is that really true here?
+As it turned out, the ADMA of this IP does not work with 64-bit mode
+when it is in the Version 3.00 compatible mode; it understands the
+old 64-bit descriptor table (as defined in SDHCI v2), but the ADMA
+System Address Register (SDHCI_ADMA_ADDRESS) cannot point to the
+64-bit address.
 
+I noticed this issue only after commit bd2e75633c80 ("dma-contiguous:
+use fallback alloc_pages for single pages"). Prior to that commit,
+dma_set_mask_and_coherent() returned the dma address that fits in
+32-bit range, at least for the default arm64 configuration
+(arch/arm64/configs/defconfig). Now the host->adma_addr exceeds the
+32-bit limit, causing the real problem for the Socionext SoCs.
+(As a side-note, I was also able to reproduce the issue for older
+kernels by turning off CONFIG_DMA_CMA.)
 
-Daniel.
+Call sdhci_enable_v4_mode() to fix this.
 
-> +
-> +Example:
-> +
-> +rng: rng@f000b000 {
-> +	compatible = "nuvoton,npcm750-rng";
-> +	reg = <0xf000b000 0x8>;
-> +};
-> -- 
-> 2.18.0
-> 
+I think it is better to back-port this, but only possible for v4.20+.
+
+When this driver was merged (v4.10), the v4 mode support did not exist.
+It was added by commit b3f80b434f72 ("mmc: sdhci: Add sd host v4 mode")
+i.e. v4.20.
+
+Cc: <stable@vger.kernel.org> # v4.20+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/mmc/host/sdhci-cadence.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+index 163d1cf4367e..44139fceac24 100644
+--- a/drivers/mmc/host/sdhci-cadence.c
++++ b/drivers/mmc/host/sdhci-cadence.c
+@@ -369,6 +369,7 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
+ 	host->mmc_host_ops.execute_tuning = sdhci_cdns_execute_tuning;
+ 	host->mmc_host_ops.hs400_enhanced_strobe =
+ 				sdhci_cdns_hs400_enhanced_strobe;
++	sdhci_enable_v4_mode(host);
+ 
+ 	sdhci_get_of_property(pdev);
+ 
+-- 
+2.17.1
+
