@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82B6CA24CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACC95A24B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbfH2SZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:25:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57978 "EHLO mail.kernel.org"
+        id S1728713AbfH2SQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:16:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729545AbfH2SQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:16:03 -0400
+        id S1729537AbfH2SQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:16:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F7CF23404;
-        Thu, 29 Aug 2019 18:16:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECD832341C;
+        Thu, 29 Aug 2019 18:16:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102562;
-        bh=WaUZjMFC2+eTSyFl2GhEwcXqwZMd7tMSqzdr46zJLo8=;
+        s=default; t=1567102566;
+        bh=2WlVhwpjVf+d0EsxyMA5hTMnG+bbdycgMkaqW96cp8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g4JzKjXFuzRyF+ZjaMYThGbkzR+AcZZQy03L3hO+XvxtQ/xNMo3N1VDxcvVI3a9zY
-         91a2oRvwgy8I85CjmoNa9wMk9VdO4bz+6enDqcvaUgnZD1vpJ5Gv5TKU7OYvhIV9St
-         w7sd+MPKJJmJE5yrg4LNmkFPjyusM7YmEmv3hYmE=
+        b=YhqL6FtePM2SnaWn7lZG66iuOqWQ7Dh03c/Mdy5psQL0xACtVGyp0M17lswfjeSRP
+         afw6aqL74J+elDGE/A4xzSZXJbIPjcCoZYORu7k8e3CIuCrSaCou+1sqlqlmlFAAyX
+         7Y+ZPSy/wICTbWORb/y9zNSxrYjxQhQgAYhpH0do=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 09/45] ibmveth: Convert multicast list size for little-endian system
-Date:   Thu, 29 Aug 2019 14:15:09 -0400
-Message-Id: <20190829181547.8280-9-sashal@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        syzbot+78e71c5bab4f76a6a719@syzkaller.appspotmail.com,
+        Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 13/45] rxrpc: Fix read-after-free in rxrpc_queue_local()
+Date:   Thu, 29 Aug 2019 14:15:13 -0400
+Message-Id: <20190829181547.8280-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181547.8280-1-sashal@kernel.org>
 References: <20190829181547.8280-1-sashal@kernel.org>
@@ -45,59 +44,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Falcon <tlfalcon@linux.ibm.com>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 66cf4710b23ab2adda11155684a2c8826f4fe732 ]
+[ Upstream commit 06d9532fa6b34f12a6d75711162d47c17c1add72 ]
 
-The ibm,mac-address-filters property defines the maximum number of
-addresses the hypervisor's multicast filter list can support. It is
-encoded as a big-endian integer in the OF device tree, but the virtual
-ethernet driver does not convert it for use by little-endian systems.
-As a result, the driver is not behaving as it should on affected systems
-when a large number of multicast addresses are assigned to the device.
+rxrpc_queue_local() attempts to queue the local endpoint it is given and
+then, if successful, prints a trace line.  The trace line includes the
+current usage count - but we're not allowed to look at the local endpoint
+at this point as we passed our ref on it to the workqueue.
 
-Reported-by: Hangbin Liu <liuhangbin@gmail.com>
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Fix this by reading the usage count before queuing the work item.
+
+Also fix the reading of local->debug_id for trace lines, which must be done
+with the same consideration as reading the usage count.
+
+Fixes: 09d2bf595db4 ("rxrpc: Add a tracepoint to track rxrpc_local refcounting")
+Reported-by: syzbot+78e71c5bab4f76a6a719@syzkaller.appspotmail.com
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ibmveth.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ include/trace/events/rxrpc.h |  6 +++---
+ net/rxrpc/local_object.c     | 19 ++++++++++---------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/ibm/ibmveth.c b/drivers/net/ethernet/ibm/ibmveth.c
-index f70cb4d3c6846..40ad1e5032553 100644
---- a/drivers/net/ethernet/ibm/ibmveth.c
-+++ b/drivers/net/ethernet/ibm/ibmveth.c
-@@ -1618,7 +1618,7 @@ static int ibmveth_probe(struct vio_dev *dev, const struct vio_device_id *id)
- 	struct net_device *netdev;
- 	struct ibmveth_adapter *adapter;
- 	unsigned char *mac_addr_p;
--	unsigned int *mcastFilterSize_p;
-+	__be32 *mcastFilterSize_p;
- 	long ret;
- 	unsigned long ret_attr;
+diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
+index 147546e0c11bd..815dcfa647430 100644
+--- a/include/trace/events/rxrpc.h
++++ b/include/trace/events/rxrpc.h
+@@ -500,10 +500,10 @@ rxrpc_tx_points;
+ #define E_(a, b)	{ a, b }
  
-@@ -1640,8 +1640,9 @@ static int ibmveth_probe(struct vio_dev *dev, const struct vio_device_id *id)
- 		return -EINVAL;
+ TRACE_EVENT(rxrpc_local,
+-	    TP_PROTO(struct rxrpc_local *local, enum rxrpc_local_trace op,
++	    TP_PROTO(unsigned int local_debug_id, enum rxrpc_local_trace op,
+ 		     int usage, const void *where),
+ 
+-	    TP_ARGS(local, op, usage, where),
++	    TP_ARGS(local_debug_id, op, usage, where),
+ 
+ 	    TP_STRUCT__entry(
+ 		    __field(unsigned int,	local		)
+@@ -513,7 +513,7 @@ TRACE_EVENT(rxrpc_local,
+ 			     ),
+ 
+ 	    TP_fast_assign(
+-		    __entry->local = local->debug_id;
++		    __entry->local = local_debug_id;
+ 		    __entry->op = op;
+ 		    __entry->usage = usage;
+ 		    __entry->where = where;
+diff --git a/net/rxrpc/local_object.c b/net/rxrpc/local_object.c
+index 7f82c4e19bd1e..27f4bbe85e799 100644
+--- a/net/rxrpc/local_object.c
++++ b/net/rxrpc/local_object.c
+@@ -97,7 +97,7 @@ static struct rxrpc_local *rxrpc_alloc_local(struct rxrpc_net *rxnet,
+ 		local->debug_id = atomic_inc_return(&rxrpc_debug_id);
+ 		memcpy(&local->srx, srx, sizeof(*srx));
+ 		local->srx.srx_service = 0;
+-		trace_rxrpc_local(local, rxrpc_local_new, 1, NULL);
++		trace_rxrpc_local(local->debug_id, rxrpc_local_new, 1, NULL);
  	}
  
--	mcastFilterSize_p = (unsigned int *)vio_get_attribute(dev,
--						VETH_MCAST_FILTER_SIZE, NULL);
-+	mcastFilterSize_p = (__be32 *)vio_get_attribute(dev,
-+							VETH_MCAST_FILTER_SIZE,
-+							NULL);
- 	if (!mcastFilterSize_p) {
- 		dev_err(&dev->dev, "Can't find VETH_MCAST_FILTER_SIZE "
- 			"attribute\n");
-@@ -1658,7 +1659,7 @@ static int ibmveth_probe(struct vio_dev *dev, const struct vio_device_id *id)
+ 	_leave(" = %p", local);
+@@ -325,7 +325,7 @@ struct rxrpc_local *rxrpc_get_local(struct rxrpc_local *local)
+ 	int n;
  
- 	adapter->vdev = dev;
- 	adapter->netdev = netdev;
--	adapter->mcastFilterSize = *mcastFilterSize_p;
-+	adapter->mcastFilterSize = be32_to_cpu(*mcastFilterSize_p);
- 	adapter->pool_config = 0;
+ 	n = atomic_inc_return(&local->usage);
+-	trace_rxrpc_local(local, rxrpc_local_got, n, here);
++	trace_rxrpc_local(local->debug_id, rxrpc_local_got, n, here);
+ 	return local;
+ }
  
- 	netif_napi_add(netdev, &adapter->napi, ibmveth_poll, 16);
+@@ -339,7 +339,8 @@ struct rxrpc_local *rxrpc_get_local_maybe(struct rxrpc_local *local)
+ 	if (local) {
+ 		int n = atomic_fetch_add_unless(&local->usage, 1, 0);
+ 		if (n > 0)
+-			trace_rxrpc_local(local, rxrpc_local_got, n + 1, here);
++			trace_rxrpc_local(local->debug_id, rxrpc_local_got,
++					  n + 1, here);
+ 		else
+ 			local = NULL;
+ 	}
+@@ -347,16 +348,16 @@ struct rxrpc_local *rxrpc_get_local_maybe(struct rxrpc_local *local)
+ }
+ 
+ /*
+- * Queue a local endpoint unless it has become unreferenced and pass the
+- * caller's reference to the work item.
++ * Queue a local endpoint and pass the caller's reference to the work item.
+  */
+ void rxrpc_queue_local(struct rxrpc_local *local)
+ {
+ 	const void *here = __builtin_return_address(0);
++	unsigned int debug_id = local->debug_id;
++	int n = atomic_read(&local->usage);
+ 
+ 	if (rxrpc_queue_work(&local->processor))
+-		trace_rxrpc_local(local, rxrpc_local_queued,
+-				  atomic_read(&local->usage), here);
++		trace_rxrpc_local(debug_id, rxrpc_local_queued, n, here);
+ 	else
+ 		rxrpc_put_local(local);
+ }
+@@ -371,7 +372,7 @@ void rxrpc_put_local(struct rxrpc_local *local)
+ 
+ 	if (local) {
+ 		n = atomic_dec_return(&local->usage);
+-		trace_rxrpc_local(local, rxrpc_local_put, n, here);
++		trace_rxrpc_local(local->debug_id, rxrpc_local_put, n, here);
+ 
+ 		if (n == 0)
+ 			call_rcu(&local->rcu, rxrpc_local_rcu);
+@@ -458,7 +459,7 @@ static void rxrpc_local_processor(struct work_struct *work)
+ 		container_of(work, struct rxrpc_local, processor);
+ 	bool again;
+ 
+-	trace_rxrpc_local(local, rxrpc_local_processing,
++	trace_rxrpc_local(local->debug_id, rxrpc_local_processing,
+ 			  atomic_read(&local->usage), NULL);
+ 
+ 	do {
 -- 
 2.20.1
 
