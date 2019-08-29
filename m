@@ -2,247 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11004A2879
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:56:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0288A287D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:57:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbfH2U4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:56:42 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40623 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbfH2U4k (ORCPT
+        id S1728165AbfH2U5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:57:49 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45862 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726944AbfH2U5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:56:40 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w16so2899071pfn.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 13:56:40 -0700 (PDT)
+        Thu, 29 Aug 2019 16:57:48 -0400
+Received: by mail-pg1-f195.google.com with SMTP id o13so2215497pgp.12
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 13:57:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VpoCOiTqt2OXtuTEcfdRivemuSYVHt20AJpr4bHjRMs=;
-        b=wQAjOzxG38j3KShRalpKFUSlN2Pd78hXVqN+9h+m2yA6pPnRI46QIrqs8J0gjfS+Nr
-         W4i9JkH1kpAHAyb9gRQLmiXsdvrmmKmr9jGVak0Ba8JSGCk1WU1Xo1ODb+xrvxP5jnNh
-         KZVLf/gKNC0uoHJU1ZPxRMbddjjBqAzeD3EtM=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oeDSTDmCykdOboI0NlO40BAz1xd+JSb526zs42hsg2U=;
+        b=wWMz75BiWBHHLdLBIU+n9B/CTKoZ8dnq7ADjr5OGkRKToC9bRZONCKrh+s/7WxD7P7
+         Z3PvHQvDI/bCbDi3VZY+VBuWDE/OQMsYWdFaW948gYKyR6kSLUafPqt6V4FhN6A7wCIP
+         uVYhYBK9kBRw1O318HxJm2hltIhZlolHYQfOjz6V8gOleVd8jMrQyPQByQeWmVk9Sn2u
+         Auy3+9mHeWDUhVQ5kfe8o3iYFRgS5ETL2v5fuVn6ilMiDSsXtY7dMF16ndW4htSfXPV1
+         /+rImTVhTYSOsPQ55Q+dbV55VJlWRxSavFs1RoGuZNaMNfRveYw764+z2zbZ0XrxGaRt
+         Resw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VpoCOiTqt2OXtuTEcfdRivemuSYVHt20AJpr4bHjRMs=;
-        b=qu6QehNGsTlcBeaUaOli4Ah/PK8WEjEakokZmMwF8sXpiFvzIuM2PVhrYj26biIVPq
-         gdlbc4HO8h7N9ohcFSnIwlGqUP1YGsV5hi8ZZATUwVSE4k3E3IWvs0VYIGe6hxUgEnn8
-         cQiy00KQ4v5L4SHzp5FpJXD/Y+JlX4zFXdxfjOfiTByuDP2kUXT0skt6twnsXO7w5Oco
-         LdDsK8W1f9tHlK4Nl75jTJV3gK6QTPoJb4XpvghgcNLrZ9qvE+vGGEKI2K7yhLPVfWRD
-         HbtwhhF9BwbMF6avhckzp8Vmt5fKSc/XvEwdgh5jjk9LFotSoVdoD+FLUsKygOxvRU9+
-         LzQw==
-X-Gm-Message-State: APjAAAWra663AmKQb61aDBttx+O+xFDZRX5hjxQ8YRJqIra4iKY3Aa6m
-        4NZQOE824foKw6DWaVuYm+ALLQ==
-X-Google-Smtp-Source: APXvYqztHwoxkUqyVXeIXD9BZ7I5PAuVTbqWub9Vj1FWPwK1+v8pWWCY+5HJwBK5XS9ln01APQCHPQ==
-X-Received: by 2002:a17:90b:907:: with SMTP id bo7mr12095330pjb.107.1567112199751;
-        Thu, 29 Aug 2019 13:56:39 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id y13sm3901434pfm.164.2019.08.29.13.56.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 13:56:38 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 16:56:37 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, byungchul.park@lge.com,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 1/5] rcu/rcuperf: Add kfree_rcu() performance Tests
-Message-ID: <20190829205637.GA162830@google.com>
-References: <5d657e33.1c69fb81.54250.01dd@mx.google.com>
- <20190828211226.GW26530@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oeDSTDmCykdOboI0NlO40BAz1xd+JSb526zs42hsg2U=;
+        b=kilGqWMd9I1kE8R3lxlNdodVOd1JyY7e1UjT0lpw9XtqzgKrqlft9wh9HEz9vcjVi4
+         xBj44soMghVo+fKpcz2d0EpRZBcCLGbxY/wpKu8Dpq7DdqiaH4A8PXLKZnhwcICuLuPO
+         dKmPgqEbPybEOP/mB43HoBIS5dnJP82y7ypnia+BfKBTzQSwccIZU9mu2w5Z2YNM2QSW
+         hufb99rXMLsEYP2GKbCyYa8D8JAxuPuzqbYTjTjb7L+KSp9MTKmtfX5pLvil9fkhbY8S
+         PKZB9RxUJMC5gPxNytFR7XvPN5GVUofIuXmDEU1lez7B920gAIvC6/LZXLa7HaTBWXp0
+         UFBA==
+X-Gm-Message-State: APjAAAVTaitJ9gJHg6N1yN0uKTu2crAcIcH5/SKpewb2NYyUel2btrHb
+        jI8x39U21spoLbcPm8DVJgnzJnkkgjGTcLCG0XhOUQ==
+X-Google-Smtp-Source: APXvYqwxrHQNUffGYMlvpasEH3mMMVTH2bEhfBs7v/LPPVikgEwGiFF8NSyvBwuYvYRbOoHdgoVBcicPa9Xep4yIjgw=
+X-Received: by 2002:a17:90a:c20f:: with SMTP id e15mr11791171pjt.123.1567112267046;
+ Thu, 29 Aug 2019 13:57:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828211226.GW26530@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190829062635.45609-1-natechancellor@gmail.com>
+ <CAKwvOdkXSWE+_JCZsuQdkCSrK5pJSp9n_Cd27asFP0mHBfHg6w@mail.gmail.com>
+ <20190829193432.GA10138@archlinux-threadripper> <885bb20c11f0cb004e5eeda7b0ca6d16@agner.ch>
+In-Reply-To: <885bb20c11f0cb004e5eeda7b0ca6d16@agner.ch>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 29 Aug 2019 13:57:35 -0700
+Message-ID: <CAKwvOdm-9T5Mmys93VMK8HLUgPJa2HOpcmG96SAvH2EGLA=3Nw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Emit __gnu_mcount_nc when using Clang 10.0.0 or newer
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 02:12:26PM -0700, Paul E. McKenney wrote:
-> On Tue, Aug 27, 2019 at 03:01:55PM -0400, Joel Fernandes (Google) wrote:
-> > This test runs kfree_rcu() in a loop to measure performance of the new
-> > kfree_rcu() batching functionality.
-> > 
-> > The following table shows results when booting with arguments:
-> > rcuperf.kfree_loops=20000 rcuperf.kfree_alloc_num=8000 rcuperf.kfree_rcu_test=1
-> > 
-> > In addition, rcuperf.kfree_no_batch is used to toggle the batching of
-> > kfree_rcu()s for a test run.
-> > 
-> > patch applied		GPs	time (seconds)
-> >  yes			1732	14.5
-> >  no			9133 	11.5
-> 
-> This is really "rcuperf.kfree_no_batch" rather than "patch applied", right?
-> (Yes, we did discuss this last time around, but this table combined with
-> the prior paragraph is still ambiguous.)  Please make it unambiguous.
-> One way to do that is as follows:
-> 
-> ------------------------------------------------------------------------
-> 
-> The following table shows results when booting with arguments:
-> rcuperf.kfree_loops=20000 rcuperf.kfree_alloc_num=8000 rcuperf.kfree_rcu_test=1  rcuperf.kfree_no_batch=X
-> 
-> rcuperf.kfree_no_batch=X    # Grace Periods	Test Duration (s)
->  X=1 (old behavior)              9133                 11.5
->  X=0 (new behavior)              1732                 14.5
+On Thu, Aug 29, 2019 at 1:21 PM Stefan Agner <stefan@agner.ch> wrote:
+>
+> On 2019-08-29 21:34, Nathan Chancellor wrote:
+> > On Thu, Aug 29, 2019 at 10:55:28AM -0700, Nick Desaulniers wrote:
+> >> On Wed, Aug 28, 2019 at 11:27 PM Nathan Chancellor
+> >> <natechancellor@gmail.com> wrote:
+> >> >
+> >> > Currently, multi_v7_defconfig + CONFIG_FUNCTION_TRACER fails to build
+> >> > with clang:
+> >> >
+> >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `_local_bh_enable':
+> >> > softirq.c:(.text+0x504): undefined reference to `mcount'
+> >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `__local_bh_enable_ip':
+> >> > softirq.c:(.text+0x58c): undefined reference to `mcount'
+> >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `do_softirq':
+> >> > softirq.c:(.text+0x6c8): undefined reference to `mcount'
+> >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_enter':
+> >> > softirq.c:(.text+0x75c): undefined reference to `mcount'
+> >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_exit':
+> >> > softirq.c:(.text+0x840): undefined reference to `mcount'
+> >> > arm-linux-gnueabi-ld: kernel/softirq.o:softirq.c:(.text+0xa50): more undefined references to `mcount' follow
+> >> >
+> >> > clang can emit a working mcount symbol, __gnu_mcount_nc, when
+> >> > '-meabi gnu' is passed to it. Until r369147 in LLVM, this was
+> >> > broken and caused the kernel not to boot because the calling
+> >> > convention was not correct. Now that it is fixed, add this to
+> >> > the command line when clang is 10.0.0 or newer so everything
+> >> > works properly.
+> >> >
+> >> > Link: https://github.com/ClangBuiltLinux/linux/issues/35
+> >> > Link: https://bugs.llvm.org/show_bug.cgi?id=33845
+> >> > Link: https://github.com/llvm/llvm-project/commit/16fa8b09702378bacfa3d07081afe6b353b99e60
+> >> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> >> > ---
+> >> >  arch/arm/Makefile | 6 ++++++
+> >> >  1 file changed, 6 insertions(+)
+> >> >
+> >> > diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> >> > index c3624ca6c0bc..7b5a26a866fc 100644
+> >> > --- a/arch/arm/Makefile
+> >> > +++ b/arch/arm/Makefile
+> >> > @@ -112,6 +112,12 @@ ifeq ($(CONFIG_ARM_UNWIND),y)
+> >> >  CFLAGS_ABI     +=-funwind-tables
+> >> >  endif
+> >> >
+> >> > +ifeq ($(CONFIG_CC_IS_CLANG),y)
+> >> > +ifeq ($(shell test $(CONFIG_CLANG_VERSION) -ge 100000; echo $$?),0)
+> >> > +CFLAGS_ABI     +=-meabi gnu
+> >> > +endif
+> >> > +endif
+> >> > +
+> >>
+> >> Thanks for the patch!  I think this is one of the final issues w/ 32b
+> >> ARM configs when building w/ Clang.
+> >>
+> >> I'm not super enthused about the version check.  The flag is indeed
+> >> not recognized by GCC, but I think it would actually be more concise
+> >> with $(cc-option) and no compiler or version check.
+> >>
+> >> Further, I think that the working __gnu_mcount_nc in Clang would
+> >> better be represented as marking the arch/arm/KConfig option for
+> >> CONFIG_FUNCTION_TRACER for dependent on a version of Clang greater
+> >> than or equal to Clang 10, not conditionally adding this flag. (We
+> >> should always add the flag when supported, IMO.  __gnu_mcount_nc's
+> >> calling convention being broken is orthogonal to the choice of
+> >> __gnu_mcount_nc vs mcount, and it's the former's that should be
+> >> checked, not the latter as in this patch.
+> >
+> > I will test with or without CONFIG_AEABI like Matthias asked and I will
+> > implement your Kconfig suggestion if it passes all of my tests. The
+> > reason that I did it this way is because I didn't want a user to end up
+> > with a non-booting kernel since -meabi gnu works with older versions of
+> > clang at build time, the issue happens at boot time but the Kconfig
+> > suggestion + cc-option should fix that.
+>
+> I agree with Nathan here, I'd rather prefer the build system to fail
+> building rather than runtime error.
+>
+> If we decide we want to have it building despite it not building a
+> functional kernel, we should at least add a #warning...
 
-Yes you are right, will fix. The reason I changed it to 'patch applied' is
-because the last patch in the series removes kfree_no_batch. Will fix!
-thanks!
- 
-> > On a 16 CPU system with the above boot parameters, we see that the total
-> > number of grace periods that elapse during the test drops from 9133 when
-> > not batching to 1732 when batching (a 5X improvement). The kfree_rcu()
-> > flood itself slows down a bit when batching, though, as shown.
-> 
-> This last sentence would be more clear as something like: "However,
-> use of batching increases the duration of the kfree_rcu()-flood test."
-> 
-> > Note that the active memory consumption during the kfree_rcu() flood
-> > does increase to around 200-250MB due to the batching (from around 50MB
-> > without batching). However, this memory consumption is relatively
-> > constant. In other words, the system is able to keep up with the
-> > kfree_rcu() load. The memory consumption comes down considerably if
-> > KFREE_DRAIN_JIFFIES is increased from HZ/50 to HZ/80.
-> 
-> That would be a decrease rather than an increase in KFREE_DRAIN_JIFFIES,
-> correct?
-> 
-> This would also be a good place to mention that a later patch will
-> decrease consumption, but that is strictly optional.  However, you did
-> introduce the topic of changing KFREE_DRAIN_JIFFIES, so if a later patch
-> changes this value, this would be an excellent place to mention this.
-
-Fixed.
-
-[snip]
-> > +/*
-> > + * kfree_rcu() performance tests: Start a kfree_rcu() loop on all CPUs for number
-> > + * of iterations and measure total time and number of GP for all iterations to complete.
-> > + */
-> > +
-> > +torture_param(int, kfree_nthreads, -1, "Number of threads running loops of kfree_rcu().");
-> > +torture_param(int, kfree_alloc_num, 8000, "Number of allocations and frees done in an iteration.");
-> > +torture_param(int, kfree_loops, 10, "Number of loops doing kfree_alloc_num allocations and frees.");
-> > +torture_param(int, kfree_no_batch, 0, "Use the non-batching (slower) version of kfree_rcu().");
-> > +
-> > +static struct task_struct **kfree_reader_tasks;
-> > +static int kfree_nrealthreads;
-> > +static atomic_t n_kfree_perf_thread_started;
-> > +static atomic_t n_kfree_perf_thread_ended;
-> > +
-> > +struct kfree_obj {
-> > +	char kfree_obj[8];
-> > +	struct rcu_head rh;
-> > +};
-> > +
-> > +static int
-> > +kfree_perf_thread(void *arg)
-> > +{
-> > +	int i, loop = 0;
-> > +	long me = (long)arg;
-> > +	struct kfree_obj *alloc_ptr;
-> > +	u64 start_time, end_time;
-> > +
-> > +	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
-> > +	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
-> > +	set_user_nice(current, MAX_NICE);
-> > +
-> > +	start_time = ktime_get_mono_fast_ns();
-> > +
-> > +	if (atomic_inc_return(&n_kfree_perf_thread_started) >= kfree_nrealthreads) {
-> > +		if (gp_exp)
-> > +			b_rcu_gp_test_started = cur_ops->exp_completed() / 2;
-> 
-> At some point, it would be good to use the new grace-period
-> sequence-counter functions (rcuperf_seq_diff(), for example) instead of
-> the open-coded division by 2.  I freely admit that you are just copying
-> my obsolete hack in this case, so not needed in this patch.
-
-But I am using rcu_seq_diff() below in the pr_alert().
-
-Anyway, I agree this can be a follow-on since this pattern is borrowed from
-another part of rcuperf. However, I am also confused about the pattern
-itself.
-
-If I understand, you are doing the "/ 2" because expedited_sequence
-progresses by 2 for every expedited batch.
-
-But does rcu_seq_diff() really work on these expedited GP numbers, and will
-it be immune to changes in RCU_SEQ_STATE_MASK? Sorry for the silly questions,
-but admittedly I have not looked too much yet into expedited RCU so I could
-be missing the point.
-
-> > +		else
-> > +			b_rcu_gp_test_finished = cur_ops->get_gp_seq();
-> > +
-> > +		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld\n",
-> > +		       (unsigned long long)(end_time - start_time), kfree_loops,
-> > +		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started));
-> > +		if (shutdown) {
-> > +			smp_mb(); /* Assign before wake. */
-> > +			wake_up(&shutdown_wq);
-> > +		}
-> > +	}
-> > +
-> > +	torture_kthread_stopping("kfree_perf_thread");
-> > +	return 0;
-> > +}
-> > +
-> > +static void
-> > +kfree_perf_cleanup(void)
-> > +{
-> > +	int i;
-> > +
-> > +	if (torture_cleanup_begin())
-> > +		return;
-> > +
-> > +	if (kfree_reader_tasks) {
-> > +		for (i = 0; i < kfree_nrealthreads; i++)
-> > +			torture_stop_kthread(kfree_perf_thread,
-> > +					     kfree_reader_tasks[i]);
-> > +		kfree(kfree_reader_tasks);
-> > +	}
-> > +
-> > +	torture_cleanup_end();
-> > +}
-> > +
-> > +/*
-> > + * shutdown kthread.  Just waits to be awakened, then shuts down system.
-> > + */
-> > +static int
-> > +kfree_perf_shutdown(void *arg)
-> > +{
-> > +	do {
-> > +		wait_event(shutdown_wq,
-> > +			   atomic_read(&n_kfree_perf_thread_ended) >=
-> > +			   kfree_nrealthreads);
-> > +	} while (atomic_read(&n_kfree_perf_thread_ended) < kfree_nrealthreads);
-> > +
-> > +	smp_mb(); /* Wake before output. */
-> > +
-> > +	kfree_perf_cleanup();
-> > +	kernel_power_off();
-> > +	return -EINVAL;
-> 
-> These last four lines should be combined with those of
-> rcu_perf_shutdown().  Actually, you could fold the two functions together
-> with only a pair of arguments and two one-line wrapper functions, which
-> would be even better.
-
-But the cleanup() function is different in the 2 cases and will have to be
-passed in as a function pointer. I believe we discussed this last review as
-well.
-
-thanks,
-
- - Joel
-
+Just to be clear...I was suggesting a build failure, but for
+__gnu_mcount_nc not having the correct calling convention in older
+clang releases, which is orthogonal to passing `-meabi gnu`.  This
+patch uses the __gnu_mcount_nc calling convention problem to justify a
+version check for a flag that while closely related, is not actually
+the problem, IMO.
+-- 
+Thanks,
+~Nick Desaulniers
