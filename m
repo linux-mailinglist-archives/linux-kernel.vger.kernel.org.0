@@ -2,108 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 529D1A210F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 396B9A20EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:31:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbfH2Qhb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:37:31 -0400
-Received: from gateway34.websitewelcome.com ([192.185.148.142]:15633 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727949AbfH2Qh3 (ORCPT
+        id S1727565AbfH2Qbq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:31:46 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43471 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727046AbfH2Qbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:37:29 -0400
-X-Greylist: delayed 1248 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 12:37:29 EDT
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 4E416D8A8
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 11:16:41 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 3N6HivFfKiQer3N6HiEaum; Thu, 29 Aug 2019 11:16:41 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=a8rjYnS9SnAenydNSMbeP8fAIqWeMKJbCEld4zbuKyg=; b=YImsHoaEb57QrRDBGNkDwNiQe5
-        PedtbVNWm+ldbhzT28tPDkRUQraLKZRWq0FUMOBqH8ESqnz523rUVD4RTTgoOeI0TE84OH8uL3JKf
-        fEh+Smm39COP1uXgd3b0jbnoSdt5/pmQEWOGTxRPKQIqgrSLNMgky+OcYMmfj9yrma9s9WCly1nEI
-        7pOQFTG7zgaD4PrUUFrayejnzUZbFumDuxOZ50RY5BxqM8sq+byD78+ZRAQICVAjJZEHVpXlEZa1Y
-        A6TnFZ3tNB4HTdqJlxlV91cblQACupkDMmgDT2RF+7M1gD+LK1ioLWro27mjP6C7ZiCyqP5du1OYo
-        WyylJQPg==;
-Received: from [189.152.216.116] (port=37814 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@linux.embeddedor.com>)
-        id 1i3N6F-000Bs2-VY; Thu, 29 Aug 2019 11:16:40 -0500
-Date:   Thu, 29 Aug 2019 11:16:39 -0500
-From:   "Gustavo A. R. Silva" <gustavo@linux.embeddedor.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc7
-Message-ID: <20190829161639.GA18147@embeddedor>
+        Thu, 29 Aug 2019 12:31:46 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y8so4072487wrn.10;
+        Thu, 29 Aug 2019 09:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=jqnYRSvKeOuSAixyDcusNx1M9DoZEp8erc5mVI5qWgE=;
+        b=NBoWW2mhp51kNEP89n9VLK6HuCjPukG9v6gCPWmFDa0JLB2s6ZZV+D2N0S0vh9Xtx1
+         LgX3CuZ1VrmNNo1977am3s5BpdP6KO8S3mtDjOZtxLo+PZFs8pAT0FaGle7YXikiZSIM
+         YFzJECKKDh+V/pAzemsR/cgft2Qijab8ECQ7pxHKPSEfV2WaSn0fwrjkw2KzB1KJ06d+
+         ycY+BmG2T6tmJ/psfSuFK3u72FPAp7ri+UzVU6YdPJiddtAPlkKS/p063uN7Qn4Qk77C
+         wPGStOcWZ3G0gqtnpoqMW5nUMhhoUJVChAAUX8N2wY07QEcORkWnZZdczNNX12RsovJZ
+         jGvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=jqnYRSvKeOuSAixyDcusNx1M9DoZEp8erc5mVI5qWgE=;
+        b=EdREqwGJ3JmrTMGdAch9lTfbJDBwaNeyDrKsXE05TO14b17ARMr0q1TqHSMSRB2PeV
+         K4C2weDzjF6Xiu0YFplk0QNOJQ5+NTG4mHxO0+294HUDCDDVKp8rk0fHNHAoNJXnJp5Y
+         grnN6BM5tyPzAriFUyeQ6jwJ0hclubybk02aSEyR5WMgXvTcd33vInyn39w4w52zldpR
+         GCe7d3Tx4sHKVqBQfHDlxnWFAe9LoFIU3U+XmtpMHn+tu0cQTLZbE25f0iA1Fvo/v/MO
+         FEW9IHUdXwGY4KWrDuf3O0GXVV3WbkEQTDvrQqN+mCz56iwAcI0pHVCH5Jedb7+CnG9d
+         RxqQ==
+X-Gm-Message-State: APjAAAWDg+dkmITdCM9cWNaXAphePbBVbDyGQC34xB6HQkpVlMQC+mBI
+        GT5xu6Ghvj9efHmqqVPG5WrTdZRE
+X-Google-Smtp-Source: APXvYqy0OlmPcJKtuOcWVyz0aHf1x9iWwllcFS6mSV06J1X33SGzK8vEubBEhl/Bt6ruxSbLeqHwUw==
+X-Received: by 2002:a5d:4bc1:: with SMTP id l1mr13182866wrt.259.1567096303963;
+        Thu, 29 Aug 2019 09:31:43 -0700 (PDT)
+Received: from [192.168.8.147] (33.169.185.81.rev.sfr.net. [81.185.169.33])
+        by smtp.gmail.com with ESMTPSA id l62sm4911638wml.13.2019.08.29.09.31.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2019 09:31:43 -0700 (PDT)
+Subject: Re: [PATCH net-next] r8152: fix accessing skb after napi_gro_receive
+To:     Hayes Wang <hayeswang@realtek.com>, netdev@vger.kernel.org
+Cc:     nic_swsd@realtek.com, linux-kernel@vger.kernel.org
+References: <1394712342-15778-299-albertk@realtek.com>
+ <1394712342-15778-302-Taiwan-albertk@realtek.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <b39bc8a1-54c7-42d4-00ed-d48aa1bac734@gmail.com>
+Date:   Thu, 29 Aug 2019 18:31:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linux.embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.216.116
-X-Source-L: No
-X-Exim-ID: 1i3N6F-000Bs2-VY
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.152.216.116]:37814
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <1394712342-15778-302-Taiwan-albertk@realtek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
 
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
 
-are available in the Git repository at:
+On 8/19/19 5:15 AM, Hayes Wang wrote:
+> Fix accessing skb after napi_gro_receive which is caused by
+> commit 47922fcde536 ("r8152: support skb_add_rx_frag").
+> 
+> Fixes: 47922fcde536 ("r8152: support skb_add_rx_frag")
+> Signed-off-by: Hayes Wang <hayeswang@realtek.com>
+> ---
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.3-rc7
+It is customary to add a tag to credit the reporter...
 
-for you to fetch changes up to 7c9eb2dbd770b7c9980d5839dd305a70fbc5df67:
+Something like :
 
-  nds32: Mark expected switch fall-throughs (2019-08-29 11:06:56 -0500)
+Reported-by: ....
 
-----------------------------------------------------------------
-Wimplicit-fallthrough patches for 5.3-rc7
-
-Hi Linus,
-
-Please, pull the following patches that mark switch cases where we are
-expecting to fall through.
-
- - Fix fall-through warnings on arc and nds32 for multiple
-   configurations.
-
-Thanks
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-----------------------------------------------------------------
-Gustavo A. R. Silva (2):
-      ARC: unwind: Mark expected switch fall-through
-      nds32: Mark expected switch fall-throughs
-
- arch/arc/kernel/unwind.c     | 1 +
- arch/nds32/kernel/signal.c   | 2 ++
- include/math-emu/op-common.h | 5 +++++
- 3 files changed, 8 insertions(+)
+Thanks.
