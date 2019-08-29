@@ -2,185 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C4DBA14A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:23:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B34C5A1498
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:22:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727362AbfH2JXV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 05:23:21 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:40573 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727171AbfH2JXN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 05:23:13 -0400
-X-UUID: 3d281e9948874c93a30c2f260a93931c-20190829
-X-UUID: 3d281e9948874c93a30c2f260a93931c-20190829
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1100514765; Thu, 29 Aug 2019 17:23:15 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 29 Aug 2019 17:23:13 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 29 Aug 2019 17:23:12 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Biju Das <biju.das@bp.renesas.com>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>
-Subject: [PATCH next v11 06/11] device connection: Add fwnode_connection_find_match()
-Date:   Thu, 29 Aug 2019 17:22:33 +0800
-Message-ID: <1567070558-29417-7-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1567070558-29417-1-git-send-email-chunfeng.yun@mediatek.com>
-References: <1567070558-29417-1-git-send-email-chunfeng.yun@mediatek.com>
+        id S1726723AbfH2JWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 05:22:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54522 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725782AbfH2JWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 05:22:40 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2F792307D91F;
+        Thu, 29 Aug 2019 09:22:40 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B484B1001B05;
+        Thu, 29 Aug 2019 09:22:36 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 11:22:33 +0200
+From:   Andrew Jones <drjones@redhat.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Huth <thuth@redhat.com>
+Subject: Re: [PATCH 4/4] KVM: selftests: Remove duplicate guest mode handling
+Message-ID: <20190829092233.si7kuqu6436ttiaz@kamzik.brq.redhat.com>
+References: <20190827131015.21691-1-peterx@redhat.com>
+ <20190827131015.21691-5-peterx@redhat.com>
+ <20190828114613.a2rvpip45c3ywdnj@kamzik.brq.redhat.com>
+ <20190829020935.GG8729@xz-x1>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 965F2A2386B46DFC6D24578562BF751CB8E34E913743E0B6D0759159A3D44A2B2000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829020935.GG8729@xz-x1>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 29 Aug 2019 09:22:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+On Thu, Aug 29, 2019 at 10:09:35AM +0800, Peter Xu wrote:
+> On Wed, Aug 28, 2019 at 01:46:13PM +0200, Andrew Jones wrote:
+> 
+> [...]
+> 
+> > > +unsigned int vm_get_page_size(struct kvm_vm *vm)
+> > > +{
+> > > +	return vm->page_size;
+> > > +}
+> > > +
+> > > +unsigned int vm_get_page_shift(struct kvm_vm *vm)
+> > > +{
+> > > +	return vm->page_shift;
+> > > +}
+> > 
+> > We could get by with just one of the above two, but whatever
+> 
+> Right... and imho if we export kvm_vm struct we don't even any
+> helpers. :) But I didn't touch that.
 
-The fwnode_connection_find_match() function is exactly the
-same as device_connection_find_match(), except it takes
-struct fwnode_handle as parameter instead of struct device.
-That allows locating device connections before the device
-entries have been created.
+yeah, I'm starting to wonder if there's much value in keeping the vm and
+vcpu structures private. I've already had a couple cases where I wanted
+to write a quick+dirty test that needed the vcpu_fd, so I cheated and
+included the internal header to get to it.
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
-v11: no changes
+Thanks,
+drew
 
-v10:
-  revert changes of v9
-
-v9:
-  replace signed-off-by by suggested-by Heikki
-
-v8: no changes
-
-v7:
-  rebased on Rafael's tree [1] (after rc4), provided by Heikki
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=linux-next
-
-v6:
-  new patch
----
- drivers/base/devcon.c  | 43 ++++++++++++++++++++++++++++++------------
- include/linux/device.h | 10 +++++++---
- 2 files changed, 38 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index 1d488dc5dd0c..14e2178e09f8 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -12,9 +12,6 @@
- static DEFINE_MUTEX(devcon_lock);
- static LIST_HEAD(devcon_list);
- 
--typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
--				   void *data);
--
- static void *
- fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
- 			  void *data, devcon_match_fn_t match)
-@@ -60,6 +57,34 @@ fwnode_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
- 	return NULL;
- }
- 
-+/**
-+ * fwnode_connection_find_match - Find connection from a device node
-+ * @fwnode: Device node with the connection
-+ * @con_id: Identifier for the connection
-+ * @data: Data for the match function
-+ * @match: Function to check and convert the connection description
-+ *
-+ * Find a connection with unique identifier @con_id between @fwnode and another
-+ * device node. @match will be used to convert the connection description to
-+ * data the caller is expecting to be returned.
-+ */
-+void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
-+				   const char *con_id, void *data,
-+				   devcon_match_fn_t match)
-+{
-+	void *ret;
-+
-+	if (!fwnode || !match)
-+		return NULL;
-+
-+	ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
-+	if (ret)
-+		return ret;
-+
-+	return fwnode_devcon_match(fwnode, con_id, data, match);
-+}
-+EXPORT_SYMBOL_GPL(fwnode_connection_find_match);
-+
- /**
-  * device_connection_find_match - Find physical connection to a device
-  * @dev: Device with the connection
-@@ -83,15 +108,9 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 	if (!match)
- 		return NULL;
- 
--	if (fwnode) {
--		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
--		if (ret)
--			return ret;
--
--		ret = fwnode_devcon_match(fwnode, con_id, data, match);
--		if (ret)
--			return ret;
--	}
-+	ret = fwnode_connection_find_match(fwnode, con_id, data, match);
-+	if (ret)
-+		return ret;
- 
- 	mutex_lock(&devcon_lock);
- 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 8ae3f4b47293..93626476c9ae 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1009,10 +1009,14 @@ struct device_connection {
- 	struct list_head	list;
- };
- 
-+typedef void *(*devcon_match_fn_t)(struct device_connection *con, int ep,
-+				   void *data);
-+
-+void *fwnode_connection_find_match(struct fwnode_handle *fwnode,
-+				   const char *con_id, void *data,
-+				   devcon_match_fn_t match);
- void *device_connection_find_match(struct device *dev, const char *con_id,
--				void *data,
--				void *(*match)(struct device_connection *con,
--					       int ep, void *data));
-+				   void *data, devcon_match_fn_t match);
- 
- struct device *device_connection_find(struct device *dev, const char *con_id);
- 
--- 
-2.23.0
-
+> 
+> > > +
+> > > +unsigned int vm_get_max_gfn(struct kvm_vm *vm)
+> > > +{
+> > > +	return vm->max_gfn;
+> > > +}
+> > > -- 
+> > > 2.21.0
+> > >
+> > 
+> > Reviewed-by: Andrew Jones <drjones@redhat.com>
+> 
+> Thanks!
+> 
+> -- 
+> Peter Xu
