@@ -2,80 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1115AA28E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 23:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F040A28E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 23:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfH2V0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 17:26:03 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:39615 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728230AbfH2V0A (ORCPT
+        id S1728419AbfH2V0U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 17:26:20 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44746 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727792AbfH2V0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 17:26:00 -0400
-X-Originating-IP: 90.65.161.137
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 797EF1C000A;
-        Thu, 29 Aug 2019 21:25:58 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     linux-rtc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 5/5] rtc: pcf8563: let the core handle range offsetting
-Date:   Thu, 29 Aug 2019 23:25:47 +0200
-Message-Id: <20190829212547.19185-5-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190829212547.19185-1-alexandre.belloni@bootlin.com>
-References: <20190829212547.19185-1-alexandre.belloni@bootlin.com>
+        Thu, 29 Aug 2019 17:26:20 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t14so2176895plr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 14:26:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Ne4fb8rmErhHKddOiLagesqEGyy4GKWd57VmqftMrAE=;
+        b=CpRKjFU+Fp6R1GVUINYMequFSM8Um8fr63tWRRakTxcQeRjOKG+6RgenSV1JtTqFSi
+         psUdRAuIwx3v6J81J+lebdE1PygjlyCctXwOKYkgTy4+5QA/vDvajnNKsnUzqB1+6PBj
+         3OJBGVir/Qu5aDjQFmrL4T/sYuHevyWXWwFaE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ne4fb8rmErhHKddOiLagesqEGyy4GKWd57VmqftMrAE=;
+        b=G5uhkgCeOg35oVxKWVRadFRgLno08+8Zjyq+yVGEoRlzyZQAuVRJFV5NH0mQIXlQGI
+         rSGE8VPkbugIwlL6xfUxmS0sRZPBKebWYdtkGmnKVC7geHBzJuhwe16dzBZVcy5n44J2
+         FUMwpkFJJGIojWiJdlhw7Cui6kKwg5Kmrdoo1ylHkTYzZLHvwnttm99CqNbbk80DO8dk
+         EDBjQWvwxMwwNcdR/IAbtE6CDA5en7o04h6oBoxQtS4DI/XDqBbCOhTGW7tmeVlBiA7k
+         qAfS77G1/yd4XibfSKdTEgDQaShtCbXjd/m5L2DT3R/OxaxrUMyZ/bVzvARYUWtLL6dh
+         GUUw==
+X-Gm-Message-State: APjAAAUr6Oh/O2FsZVA+4rZkaDO2JSUVzYudvHwdMwTYubmfCFDoLEC8
+        N9+MDboYGgl15HFLlj/+XmkxYw==
+X-Google-Smtp-Source: APXvYqzyTJnwYTYKxMPRtDoPHgvzWEYG7ODL1oxifcC9iUay2BnI9eqzjbyA2iG+svfoAf+aQpNifw==
+X-Received: by 2002:a17:902:7d8b:: with SMTP id a11mr12143591plm.306.1567113979260;
+        Thu, 29 Aug 2019 14:26:19 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id m4sm3178732pgs.71.2019.08.29.14.26.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 14:26:18 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 17:26:17 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, byungchul.park@lge.com,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v2] rcu/tree: Add multiple in-flight batches of kfree_rcu
+ work
+Message-ID: <20190829212617.GA183862@google.com>
+References: <5d657e35.1c69fb81.54250.01de@mx.google.com>
+ <20190828140952.258739-1-joel@joelfernandes.org>
+ <20190828204521.GU26530@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190828204521.GU26530@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set the RTC range properly and use the core windowing and offsetting to
-(unfortunately) map back to a 1970-2069 range.
+On Wed, Aug 28, 2019 at 01:45:21PM -0700, Paul E. McKenney wrote:
+> On Wed, Aug 28, 2019 at 10:09:52AM -0400, Joel Fernandes (Google) wrote:
+> > During testing, it was observed that amount of memory consumed due
+> > kfree_rcu() batching is 300-400MB. Previously we had only a single
+> > head_free pointer pointing to the list of rcu_head(s) that are to be
+> > freed after a grace period. Until this list is drained, we cannot queue
+> > any more objects on it since such objects may not be ready to be
+> > reclaimed when the worker thread eventually gets to drainin g the
+> > head_free list.
+> > 
+> > We can do better by maintaining multiple lists as done by this patch.
+> > Testing shows that memory consumption came down by around 100-150MB with
+> > just adding another list. Adding more than 1 additional list did not
+> > show any improvement.
+[snip]
+> > @@ -2730,12 +2739,14 @@ static void kfree_rcu_work(struct work_struct *work)
+> >  {
+> >  	unsigned long flags;
+> >  	struct rcu_head *head, *next;
+> > -	struct kfree_rcu_cpu *krcp = container_of(to_rcu_work(work),
+> > -					struct kfree_rcu_cpu, rcu_work);
+> > +	struct kfree_rcu_work *krwp = container_of(to_rcu_work(work),
+> > +					struct kfree_rcu_work, rcu_work);
+> > +	struct kfree_rcu_cpu *krcp;
+> > +
+> > +	krcp = krwp->krcp;
+> >  
+> >  	spin_lock_irqsave(&krcp->lock, flags);
+> > -	head = krcp->head_free;
+> > -	krcp->head_free = NULL;
+> > +	head = xchg(&krwp->head_free, NULL);
+> 
+> Given that we hold the lock, why the xchg()?  Alternatively, why not
+> just acquire the lock in the other places you use xchg()?  This is a
+> per-CPU lock, so contention should not be a problem, should it?
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-pcf8563.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+I realized I was being silly :(. Was trying to reduce lines of code and hence
+implemented it like that as a one-liner. Locking protocol is not needed or
+intended for that xchg since as pointed, a lock is held.
 
-diff --git a/drivers/rtc/rtc-pcf8563.c b/drivers/rtc/rtc-pcf8563.c
-index 45462ec460a3..24baa4767b11 100644
---- a/drivers/rtc/rtc-pcf8563.c
-+++ b/drivers/rtc/rtc-pcf8563.c
-@@ -229,9 +229,7 @@ static int pcf8563_rtc_read_time(struct device *dev, struct rtc_time *tm)
- 	tm->tm_mday = bcd2bin(buf[PCF8563_REG_DM] & 0x3F);
- 	tm->tm_wday = buf[PCF8563_REG_DW] & 0x07;
- 	tm->tm_mon = bcd2bin(buf[PCF8563_REG_MO] & 0x1F) - 1; /* rtc mn 1-12 */
--	tm->tm_year = bcd2bin(buf[PCF8563_REG_YR]);
--	if (tm->tm_year < 70)
--		tm->tm_year += 100;	/* assume we are in 1970...2069 */
-+	tm->tm_year = bcd2bin(buf[PCF8563_REG_YR]) + 100;
- 	/* detect the polarity heuristically. see note above. */
- 	pcf8563->c_polarity = (buf[PCF8563_REG_MO] & PCF8563_MO_C) ?
- 		(tm->tm_year >= 100) : (tm->tm_year < 100);
-@@ -268,7 +266,7 @@ static int pcf8563_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	buf[PCF8563_REG_MO] = bin2bcd(tm->tm_mon + 1);
- 
- 	/* year and century */
--	buf[PCF8563_REG_YR] = bin2bcd(tm->tm_year % 100);
-+	buf[PCF8563_REG_YR] = bin2bcd(tm->tm_year - 100);
- 	if (pcf8563->c_polarity ? (tm->tm_year >= 100) : (tm->tm_year < 100))
- 		buf[PCF8563_REG_MO] |= PCF8563_MO_C;
- 
-@@ -590,6 +588,9 @@ static int pcf8563_probe(struct i2c_client *client,
- 	pcf8563->rtc->ops = &pcf8563_rtc_ops;
- 	/* the pcf8563 alarm only supports a minute accuracy */
- 	pcf8563->rtc->uie_unsupported = 1;
-+	pcf8563->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
-+	pcf8563->rtc->range_max = RTC_TIMESTAMP_END_2099;
-+	pcf8563->rtc->set_start_time = true;
- 
- 	if (client->irq > 0) {
- 		err = devm_request_threaded_irq(&client->dev, client->irq,
--- 
-2.21.0
+> >  	spin_unlock_irqrestore(&krcp->lock, flags);
+> >  
+> >  	/*
+> > @@ -2758,19 +2769,28 @@ static void kfree_rcu_work(struct work_struct *work)
+> >   */
+> >  static inline bool queue_kfree_rcu_work(struct kfree_rcu_cpu *krcp)
+> >  {
+> > +	int i = 0;
+> > +	struct kfree_rcu_work *krwp = NULL;
+> > +
+> >  	lockdep_assert_held(&krcp->lock);
+> > +	while (i < KFREE_N_BATCHES) {
+> > +		if (!krcp->krw_arr[i].head_free) {
+> > +			krwp = &(krcp->krw_arr[i]);
+> > +			break;
+> > +		}
+> > +		i++;
+> > +	}
+> >  
+> > -	/* If a previous RCU batch work is already in progress, we cannot queue
+> > +	/* If both RCU batches are already in progress, we cannot queue
+> >  	 * another one, just refuse the optimization and it will be retried
+> >  	 * again in KFREE_DRAIN_JIFFIES time.
+> >  	 */
+> 
+> If you are going to remove the traditional first "/*" line of a comment,
+> why not go all the way and cut the last one as well?  "//".
+
+Will add the /* in the beginning :)
+
+> > -	if (krcp->head_free)
+> > +	if (!krwp)
+> >  		return false;
+> >  
+> > -	krcp->head_free = krcp->head;
+> > -	krcp->head = NULL;
+> > -	INIT_RCU_WORK(&krcp->rcu_work, kfree_rcu_work);
+> > -	queue_rcu_work(system_wq, &krcp->rcu_work);
+> > +	krwp->head_free = xchg(&krcp->head, NULL);
+> 
+> This isn't anywhere near a fastpath, so just acquiring the lock is a
+> better choice here.
+
+My reasoning was same as above. Will change it to 2 statements since lock is
+already held.
+
+> > +	INIT_RCU_WORK(&krwp->rcu_work, kfree_rcu_work);
+> > +	queue_rcu_work(system_wq, &krwp->rcu_work);
+> >  
+> >  	return true;
+> >  }
+> > @@ -3736,8 +3756,11 @@ static void __init kfree_rcu_batch_init(void)
+> >  
+> >  	for_each_possible_cpu(cpu) {
+> >  		struct kfree_rcu_cpu *krcp = per_cpu_ptr(&krc, cpu);
+> > +		int i = KFREE_N_BATCHES;
+> >  
+> >  		spin_lock_init(&krcp->lock);
+> > +		while (i--)
+> > +			krcp->krw_arr[i].krcp = krcp;
+> 
+> This was indeed a nice trick back in the PDP-11 days of 64-kilobyte
+> address spaces, so thank you for the nostalgia!  However, a straight-up
+> "for" loop is less vulnerable to code being added between the declaration
+> of "i" and the "while" loop.
+
+Ok, will do.
+
+thanks,
+
+ - Joel
 
