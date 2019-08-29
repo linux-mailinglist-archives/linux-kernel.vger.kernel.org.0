@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD431A2546
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C9EA2549
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:29:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfH2SOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:14:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56332 "EHLO mail.kernel.org"
+        id S1729462AbfH2S3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:29:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728959AbfH2SOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:14:43 -0400
+        id S1728986AbfH2SOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:14:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65C8523403;
-        Thu, 29 Aug 2019 18:14:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9673F233FF;
+        Thu, 29 Aug 2019 18:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102482;
-        bh=qml2xfq2Vm0bbYh1zjkEGVJTy8eTz1McNIzEeQePNaY=;
+        s=default; t=1567102486;
+        bh=H7hw6DxGbtamZt0t1x6Acdh2B9KOhUSrzHM4QgelhzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j5xapk0u44rpB/F/JfNaWJpWSwhgQNoqzC0J/M6CgCgsuHecgI73GLvMGWkLiL06K
-         u4VQNvVeyMvS/wALYinN9jKVT5xNo847hFh4Cq5ACDm3HHaRAiLQix46wtoz3bV9Av
-         eBPxfeRd6u+Al0CurVacwf8zEVil5Aw76pDNgB5c=
+        b=Yr8nMhZ+GyRXTJpYKf9pkDjTB+XiNwm8o9OP7iQ/N6rPZgJi161RKRUqgzYpj1fk4
+         JOSzCkZ3dSecyodw6rYUV7vZTjTdhRkxB0O5GHDxSMmzmFAwnsd1fG7inU7K28gPhm
+         ayNFVAlTgdefhHisyPsWTWE6+D2rInJrYt9WBxy8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wenwen Wang <wenwen@cs.uga.edu>,
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 42/76] net: kalmia: fix memory leaks
-Date:   Thu, 29 Aug 2019 14:12:37 -0400
-Message-Id: <20190829181311.7562-42-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 44/76] net: cavium: fix driver name
+Date:   Thu, 29 Aug 2019 14:12:39 -0400
+Message-Id: <20190829181311.7562-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -44,46 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Stephen Hemminger <stephen@networkplumber.org>
 
-[ Upstream commit f1472cb09f11ddb41d4be84f0650835cb65a9073 ]
+[ Upstream commit 3434341004a380f4e47c3a03d4320d43982162a0 ]
 
-In kalmia_init_and_get_ethernet_addr(), 'usb_buf' is allocated through
-kmalloc(). In the following execution, if the 'status' returned by
-kalmia_send_init_packet() is not 0, 'usb_buf' is not deallocated, leading
-to memory leaks. To fix this issue, add the 'out' label to free 'usb_buf'.
+The driver name gets exposed in sysfs under /sys/bus/pci/drivers
+so it should look like other devices. Change it to be common
+format (instead of "Cavium PTP").
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+This is a trivial fix that was observed by accident because
+Debian kernels were building this driver into kernel (bug).
+
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/kalmia.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/cavium/common/cavium_ptp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/kalmia.c b/drivers/net/usb/kalmia.c
-index d62b6706a5376..fc5895f85cee2 100644
---- a/drivers/net/usb/kalmia.c
-+++ b/drivers/net/usb/kalmia.c
-@@ -113,16 +113,16 @@ kalmia_init_and_get_ethernet_addr(struct usbnet *dev, u8 *ethernet_addr)
- 	status = kalmia_send_init_packet(dev, usb_buf, ARRAY_SIZE(init_msg_1),
- 					 usb_buf, 24);
- 	if (status != 0)
--		return status;
-+		goto out;
+diff --git a/drivers/net/ethernet/cavium/common/cavium_ptp.c b/drivers/net/ethernet/cavium/common/cavium_ptp.c
+index 73632b8437498..b821c9e1604cf 100644
+--- a/drivers/net/ethernet/cavium/common/cavium_ptp.c
++++ b/drivers/net/ethernet/cavium/common/cavium_ptp.c
+@@ -10,7 +10,7 @@
  
- 	memcpy(usb_buf, init_msg_2, 12);
- 	status = kalmia_send_init_packet(dev, usb_buf, ARRAY_SIZE(init_msg_2),
- 					 usb_buf, 28);
- 	if (status != 0)
--		return status;
-+		goto out;
+ #include "cavium_ptp.h"
  
- 	memcpy(ethernet_addr, usb_buf + 10, ETH_ALEN);
--
-+out:
- 	kfree(usb_buf);
- 	return status;
- }
+-#define DRV_NAME	"Cavium PTP Driver"
++#define DRV_NAME "cavium_ptp"
+ 
+ #define PCI_DEVICE_ID_CAVIUM_PTP	0xA00C
+ #define PCI_DEVICE_ID_CAVIUM_RST	0xA00E
 -- 
 2.20.1
 
