@@ -2,164 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBB69A1F88
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:45:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAEA7A1F9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:47:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbfH2PpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:45:15 -0400
-Received: from mout.web.de ([212.227.15.4]:46381 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727454AbfH2PpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:45:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1567093501;
-        bh=bXJWF3tk3i4nXE+uokgXyj7lI9V3sCZKNmOFOxiGkHo=;
-        h=X-UI-Sender-Class:To:Cc:References:Subject:From:Date:In-Reply-To;
-        b=sOKrqC4bueOJXvz3mC5dNvtMiU5Fsg5iByTtkLq2uEEkxdqc2wNKv3z6i3mjsTfIZ
-         dWuaFhYOhdRFvnn0uS96Fx5pRw3rslKNFcAa6Xc/XUDBF5jCkpHeaU6rGBwOspvYIC
-         dspUI8WKKpntphU/eYdleZtUn5ipkhXy+YEAChaw=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.48.172.157]) by smtp.web.de (mrweb002
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0McnaL-1hlQDN3hNR-00Hze7; Thu, 29
- Aug 2019 17:45:01 +0200
-To:     devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
+        id S1728187AbfH2Pro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:47:44 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59761 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726283AbfH2Pro (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:47:44 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7TFj59e005976
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 11:45:07 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 3F15242049E; Thu, 29 Aug 2019 11:45:05 -0400 (EDT)
+Date:   Thu, 29 Aug 2019 11:45:05 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <maz@kernel.org>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <d5c289ef-6c5c-ecdc-0e73-c5bd410b3d26@web.de>
-Date:   Thu, 29 Aug 2019 17:44:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wei Li <liwei391@huawei.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@nokia.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Rik van Riel <riel@surriel.com>,
+        Waiman Long <longman@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Grzegorz Halat <ghalat@redhat.com>,
+        Len Brown <len.brown@intel.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Yury Norov <ynorov@marvell.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 2/3] fdt: add support for rng-seed
+Message-ID: <20190829154505.GB10779@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Kees Cook <keescook@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <maz@kernel.org>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wei Li <liwei391@huawei.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Aaro Koskinen <aaro.koskinen@nokia.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Rik van Riel <riel@surriel.com>, Waiman Long <longman@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Grzegorz Halat <ghalat@redhat.com>, Len Brown <len.brown@intel.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Yury Norov <ynorov@marvell.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, Jiri Kosina <jkosina@suse.cz>,
+        Mukesh Ojha <mojha@codeaurora.org>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <20190822071522.143986-1-hsinyi@chromium.org>
+ <20190822071522.143986-3-hsinyi@chromium.org>
+ <5d5ed368.1c69fb81.419fc.0803@mx.google.com>
+ <201908241203.92CC0BE8@keescook>
+ <CAJMQK-iDoPxbFUH3JUeJ7SehCptZOnjKZiUoFd1PqLjDdGHujA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190828160817.6250-1-gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SiioPfBZvgue4c8y1oMvSjEly2OccD75gLWn2AXYvJSCoSbrafc
- MAod5N8SDEBFEGx4E+K4cBKMwLm1xN2wY7tApjfosA0W73LAgxYAAFprnLZrsglijuIBkzI
- ZtpAtsAwF7AmwON+VSc/4trDy3TP/1NNTfKpP5BVXf+PCfFnwtd5GSCq90GFq8C414CZ/8g
- 7MIa58axNya8lYQbDPm5w==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ihi8zAPp8Qc=:VOZXQt4thrAHwgY/ANnzAZ
- Yqmdu7z09Fkz4wpGd0JFFxmn1wPUT2XsQpw+b8eGin7YHfbMtmtlRuKClqXNWMcY8I8Dyb+rH
- P7u/N0N+uvnI2ecTFPgs9BCmFBea0e7OQqWfOjQWcqZYC06W0mh0qfcw2+RtkpS4xEW2XF1Hr
- 7KkeFzoIwwzEDdNMpFYxF5HFtQ5uHSMQLzGPWWzBvLDTMqG2XesJ8amRQjX+EXRdfiIR3xQMj
- vUMzZJhcEgMqyJxgXnaJ+KAPeYsvSXC5TBHekRhkd0FRbg01DjfslijRkeIvbxmaDteJhA2ey
- 0V1l0Q+P8W8ec+LKly8C+8aoy/t1AVExesKCXiKYJcmwkaghGkU9DTf91VLavNMCEBP/mjbrf
- FWnDnv0vCukYpeD8vgJdtehkz3pGsWbkvR8LxvSoYdDKWvfUlkQNI683EQ7xIZlfm1LBm1rBQ
- X0oyyYcceZ9sZG/y0pIDXY4Kp1RuaxtcMMRZXizH0c7lPMzzB+Lj90QOF6tCBT/G9UOJe8Tok
- 2n1QYOI5vxKqsukjxzXEl/FpEoDTVJdIPuJal+A/Bhak9b9YRfoHA5WrVXUGDSIVYt1CeEs+L
- swO8Wh0LZjUkcOsgJQd0FQNUJP/etOJvtqfSYQ45+t+YfEz1u3NwsDjRVMhRvzoQ2eWTELh2p
- 3qpufflpXvnOmQmybLg56/E+P2OA7siHCqhLvyU9VGtliKp98D26nUgCfyzoK/mUpgZvIsu80
- 9otQyZ/0v6zDsD0/7s8age/pxbMZshPN3WULsob3QJRew/0Gm1MJhSN246z6AXIPsRebE2EkW
- y0ZzfssO7727K+G2scgQpAzKyxeWcaIU2wWdc5BW/VEYV0/V95TUWTQSe93kANaLhVFgCY4Ot
- Igzw/v8Vg9xnmHSIn5v83fm2RKXDfoOcgMJpyOmuwl6GfAA1ii4AhGcPWTVZO5B6rIYolPRjR
- ciuzv8bDlrQwk9vBW8pP2u6ZjQ8RXJkgJueYsP7jjdyau4/vOOtk6y5fOp/03uFTk2o/whDN+
- RsE/prG3XhFsBqeuzWDABCVb3VX3IAk4C3mU/VCmhPoyoKutKuLz3dos+js1n45H9cXIxpEjC
- dv9MLrtnyJkKmch3SAGk/hYSQR7wdesKthRlHAd5REyHiF2+FUx1+uojRgQ//fPDIIEqL9P1S
- LMO5N7TqzLZMhpmJdwznSeEjJufWKCd4EewLGr3q/OLilHhw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJMQK-iDoPxbFUH3JUeJ7SehCptZOnjKZiUoFd1PqLjDdGHujA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +++ b/drivers/staging/exfat/exfat_core.c
-> @@ -0,0 +1,3704 @@
-=E2=80=A6
-> +static s32 __load_upcase_table(struct super_block *sb, sector_t sector,
-> +			       u32 num_sectors, u32 utbl_checksum)
-> +{
-=E2=80=A6
-> +error:
+On Thu, Aug 29, 2019 at 06:03:57PM +0800, Hsin-Yi Wang wrote:
+> On Thu, Aug 29, 2019 at 1:36 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > Can this please be a boot param (with the default controlled by the
+> > CONFIG)? See how CONFIG_RANDOM_TRUST_CPU is wired up...
+> >
+>
+> Currently rng-seed read and added in setup_arch() -->
+> setup_machine_fdt().. -> early_init_dt_scan_chosen(), which is earlier
+> than parse_early_param() that initializes early_param.
+> 
+> If we want to set it as a boot param, add_bootloader_randomness() can
+> only be called after parse_early_param(). The seed can't be directly
+> added to pool after it's read in. We need to store into global
+> variable and load it later.
+> If this seems okay then I'll add a patch for this. Thanks
 
-An other label would be nicer, wouldn't it?
+I thought about asking for this, but we really want to do this as
+early as possible, so that it can be used by KASLR and other services
+that are run super early.  Also, whether or not we can trust the
+bootloader is going to be a system-level thing.  This should probably
+be defaulted to off, and only enabled by the system integrator if they
+are 100%, positively sure, that the entire system is one where we can
+trust the source of randomness which the bootloader is using --- or
+for that matter, that the bootloader is trustworthy!
 
+Is it really going to be that useful for a random system administrator
+to be able to flip this on or off from the command line?  Hopefully
+there will be an easy way to configure the firmware or the bootloader
+to simply not supply entropy, if for some reason it's not trustworthy.
 
-> +	if (tmp_bh)
-> +		brelse(tmp_bh);
-
-This inline function tolerates the passing of null pointers.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/in=
-clude/linux/buffer_head.h?id=3D9cf6b756cdf2cd38b8b0dac2567f7c6daf5e79d5#n2=
-92
-https://elixir.bootlin.com/linux/v5.3-rc6/source/include/linux/buffer_head=
-.h#L292
-
-Thus I suggest to omit the extra pointer check at affected places.
-
-
-> +++ b/drivers/staging/exfat/exfat_super.c
-> @@ -0,0 +1,4137 @@
-=E2=80=A6
-> +// FIXME use commented lines
-> +// static int exfat_default_codepage =3D CONFIG_EXFAT_DEFAULT_CODEPAGE;
-
-Is such information still relevant anyhow?
-
-
-> +static int exfat_fill_super(struct super_block *sb, void *data, int sil=
-ent)
-> +{
-=E2=80=A6
-> +out_fail:
-> +	if (root_inode)
-> +		iput(root_inode);
-
-I am informed in the way that this function tolerates the passing
-of null pointers.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs=
-/inode.c?id=3D9cf6b756cdf2cd38b8b0dac2567f7c6daf5e79d5#n1564
-https://elixir.bootlin.com/linux/v5.3-rc6/source/fs/inode.c#L1564
-
-Thus I suggest to omit the extra pointer check also at this place.
-
-Regards,
-Markus
+   	      	     	      	     - Ted
