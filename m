@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6014DA2530
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75B95A252C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:29:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729146AbfH2S3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:29:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56778 "EHLO mail.kernel.org"
+        id S1727943AbfH2S25 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:28:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728293AbfH2SPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:08 -0400
+        id S1729184AbfH2SPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:15:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75BFF2189D;
-        Thu, 29 Aug 2019 18:15:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 409A82189D;
+        Thu, 29 Aug 2019 18:15:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102508;
-        bh=5GRht+bIAa0hz22+5MeBH34xCjSsB4QkhPYcDHuiw80=;
+        s=default; t=1567102511;
+        bh=ZRphFBhD0xKR03GxL0DcPOuwSe/QgK3Rp3TsN7hYc6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i5QQ9ubKlBOvZqQV5UvFpfDzIU0eDuoaHG0BqF9UzHr/3f2m1seoD5jETrNHaAxKr
-         RxzaNnfHtGrIP0i02WYOXzQ6xGsO2Ag/MFFgSEroKvGGf6g4eJP5VxSNroacC6JSLW
-         cDK1C40y/Exeq/E498rbNeQvPXy1MLwaeBeNgtyE=
+        b=lRCAPTdOFpF/5TZ7HCW6Ddf8MuF967EaKBjZ/KtOJv8ry3pVuQ+nGTNf27Z0c7XDq
+         CkA3KMS7Nm7bW1u1vNo3yUaYNsg1bVVjn3xzpYOYKZGlJKVwF2mFouP2oimJr70DPC
+         P/I1Y5ksc60hnBUddi80FaWqE4ZtCsuFZ56WIZI8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 58/76] io_uring: don't enter poll loop if we have CQEs pending
-Date:   Thu, 29 Aug 2019 14:12:53 -0400
-Message-Id: <20190829181311.7562-58-sashal@kernel.org>
+Cc:     zhengbin <zhengbin13@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 59/76] RDMA/cma: fix null-ptr-deref Read in cma_cleanup
+Date:   Thu, 29 Aug 2019 14:12:54 -0400
+Message-Id: <20190829181311.7562-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -42,68 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: zhengbin <zhengbin13@huawei.com>
 
-[ Upstream commit a3a0e43fd77013819e4b6f55e37e0efe8e35d805 ]
+[ Upstream commit a7bfb93f0211b4a2f1ffeeb259ed6206bac30460 ]
 
-We need to check if we have CQEs pending before starting a poll loop,
-as those could be the events we will be spinning for (and hence we'll
-find none). This can happen if a CQE triggers an error, or if it is
-found by eg an IRQ before we get a chance to find it through polling.
+In cma_init, if cma_configfs_init fails, need to free the
+previously memory and return fail, otherwise will trigger
+null-ptr-deref Read in cma_cleanup.
 
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+cma_cleanup
+  cma_configfs_exit
+    configfs_unregister_subsystem
+
+Fixes: 045959db65c6 ("IB/cma: Add configfs for rdma_cm")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Link: https://lore.kernel.org/r/1566188859-103051-1-git-send-email-zhengbin13@huawei.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/infiniband/core/cma.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 5bb01d84f38d3..83e3cede11220 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -618,6 +618,13 @@ static void io_put_req(struct io_kiocb *req)
- 		io_free_req(req);
- }
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index 19f1730a4f244..a68d0ccf67a43 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -4724,10 +4724,14 @@ static int __init cma_init(void)
+ 	if (ret)
+ 		goto err;
  
-+static unsigned io_cqring_events(struct io_cq_ring *ring)
-+{
-+	/* See comment at the top of this file */
-+	smp_rmb();
-+	return READ_ONCE(ring->r.tail) - READ_ONCE(ring->r.head);
-+}
-+
- /*
-  * Find and free completed poll iocbs
-  */
-@@ -756,6 +763,14 @@ static int io_iopoll_check(struct io_ring_ctx *ctx, unsigned *nr_events,
- 	do {
- 		int tmin = 0;
+-	cma_configfs_init();
++	ret = cma_configfs_init();
++	if (ret)
++		goto err_ib;
  
-+		/*
-+		 * Don't enter poll loop if we already have events pending.
-+		 * If we do, we can potentially be spinning for commands that
-+		 * already triggered a CQE (eg in error).
-+		 */
-+		if (io_cqring_events(ctx->cq_ring))
-+			break;
-+
- 		/*
- 		 * If a submit got punted to a workqueue, we can have the
- 		 * application entering polling for a command before it gets
-@@ -2232,13 +2247,6 @@ static int io_ring_submit(struct io_ring_ctx *ctx, unsigned int to_submit)
- 	return submit;
- }
+ 	return 0;
  
--static unsigned io_cqring_events(struct io_cq_ring *ring)
--{
--	/* See comment at the top of this file */
--	smp_rmb();
--	return READ_ONCE(ring->r.tail) - READ_ONCE(ring->r.head);
--}
--
- /*
-  * Wait until events become available, if we don't already have some. The
-  * application must reap them itself, as they reside on the shared cq ring.
++err_ib:
++	ib_unregister_client(&cma_client);
+ err:
+ 	unregister_netdevice_notifier(&cma_nb);
+ 	ib_sa_unregister_client(&sa_client);
 -- 
 2.20.1
 
