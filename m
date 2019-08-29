@@ -2,108 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0C00A14FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB45A1507
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 11:33:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfH2JbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 05:31:02 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:56298 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfH2JbC (ORCPT
+        id S1727021AbfH2JdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 05:33:10 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:34611 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfH2JdJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 05:31:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rCGISQyK/CqSKT+aR9Rsl5/9L4NcBCG9bnaseeSeY1Y=; b=18iUK6BiAKQ7aTuYvA36ir/D2
-        QTVoOmvI3b0nQn49YFDhLADhEXBOsvt2/sEDyBpWqI9XTZRDpAcZNWm6xDqz/kDt+xL/ZoPs8arGm
-        qHKWzieqhODRlc3qWvVa1XAcqN+goAcGqXnih9AhAT7LiQ6PRbz5JccICBNHkVbPU73tSz/xEKe0S
-        SCsmV5DwUDUzg0HfDICOswzc7/8pcH/9LropZKkJKpBnOxZk1RDiYaDAZSojA+Y4tmn+lKrG6CN+l
-        M43KU8hjS2cTUwC/b1d/cqF6KvGbzOprs+iAX+B6x1ri051YontGpJ1sLvump5rKKXsV8wsKfNSlS
-        ZPZ4f0NZw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3Gla-0000ms-Sa; Thu, 29 Aug 2019 09:30:55 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 40D11307138;
-        Thu, 29 Aug 2019 11:30:19 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 681352235E598; Thu, 29 Aug 2019 11:30:53 +0200 (CEST)
-Date:   Thu, 29 Aug 2019 11:30:53 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
-        alexander.shishkin@linux.intel.com, ak@linux.intel.com,
-        x86@kernel.org
-Subject: Re: [PATCH] x86/math64: Provide a sane mul_u64_u32_div()
- implementation for x86_64
-Message-ID: <20190829093053.GR2386@hirez.programming.kicks-ass.net>
-References: <20190826144740.10163-1-kan.liang@linux.intel.com>
- <20190826144740.10163-4-kan.liang@linux.intel.com>
- <20190828151921.GD17205@worktop.programming.kicks-ass.net>
- <20190828161123.GQ2386@hirez.programming.kicks-ass.net>
+        Thu, 29 Aug 2019 05:33:09 -0400
+Received: by mail-ua1-f68.google.com with SMTP id r10so953797uam.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 02:33:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jwMS525ywtt6sOg3VAxDrxJAxwOW0CWRYuAHzYt0J9c=;
+        b=oS3dg9bS3cPrcgG3vOeds6Of/Z1OhxHH73UTSEEvjU7LQ1QpYpJ0chV+hWPiPMuxth
+         h7Awf8JulKMThePAbEgZUhZRbWVWQzNylBVGm90uwKXHvOIx5ZNbRzsohHMdpJg6gqJA
+         3QKuzxTcr+kvW+arPvTtiX5ufTTwT4Lly1rMnYwTDxk37yXuHjs1OUZebbBGXp9+0B6S
+         M/u5dKDxHju7704K8VWl5kP/MGnbJhnpXTZD/T4xXCmn2vgWEGTfmIP9+OOndzaVpDQz
+         uHTfQ9XH65cFSil6BEoX816DV/tqY9tQ3sigPeehTuGujw3ArKxmssehbbVEpXpUIthD
+         oITw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jwMS525ywtt6sOg3VAxDrxJAxwOW0CWRYuAHzYt0J9c=;
+        b=U5k3hr0IYTghuSZrm96UbL0N0BsgRt98sQYmBqL7WcgQDu2Kb+Awjaj99BvigDBtQb
+         YwJAGlyx+30iMnVXqlBoIQcO5OI3a8q8JQKK58pL+fX2TBSqeyHlDKLZm1p36lXQ0Elb
+         esSqK1wUHE3db1ja8Oyi2izE/yHCWYNL8enZ7oSS8PWLhJf2r+2ngSvJiyOwtD0xWGg2
+         1RCF6wdK83lIWZMb9nk1CoBDZftvyrRCetcy/V9kBkS/IDRioeTqYx0S7UjkroMdGEzO
+         CfNtYM4VD/v3EpDwRTb764CUsfOvJKfp+06E8XZrFP4ZZ+0w4P8y2MQEqd289L//t6n3
+         uufw==
+X-Gm-Message-State: APjAAAWx49XsoC0i4BRVi8bxIvykcMOB4ThTTa0x6JEC51SW55167t8J
+        lfkYUcB5WQj6SOzX6wDHe9RrxInYk5A+amiCaWSm7g==
+X-Google-Smtp-Source: APXvYqw4cMfDzwrNTgPt2rfd0EXbGJVRlkTiKDXTWWUi6fN0jj1iS+RcuKcfAvqHKkgKC3y15uSqQbomLBZcx4qiVk4=
+X-Received: by 2002:ab0:1562:: with SMTP id p31mr4257943uae.15.1567071188564;
+ Thu, 29 Aug 2019 02:33:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828161123.GQ2386@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190829014645.4479-1-zhang.lyra@gmail.com>
+In-Reply-To: <20190829014645.4479-1-zhang.lyra@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 29 Aug 2019 11:32:32 +0200
+Message-ID: <CAPDyKFp_+YuPOjURiE0YhT0uotZi=P2sRVYNr3ejgZmrMaN=tA@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2 0/5] a few fixes for sprd's sd host controller
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 06:11:23PM +0200, Peter Zijlstra wrote:
-> On Wed, Aug 28, 2019 at 05:19:21PM +0200, Peter Zijlstra wrote:
-> > On Mon, Aug 26, 2019 at 07:47:35AM -0700, kan.liang@linux.intel.com wrote:
-> 
-> > > +	return  mul_u64_u32_div(slots, val, 0xff);
-> > 
-> > But also; x86_64 seems to lack a sane implementation of that function,
-> > and it currently compiles into utter crap (it can be 2 instructions).
+On Thu, 29 Aug 2019 at 03:47, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+>
+> With this patch-set, both sd card and mmc can be setup.  This patch-set was
+> verified on Unisoc's Whale2 and another mobile phone platform SC9863A.
+>
+> Changes from v1:
+> - Added Reviewed-by and Tested-by of Baolin;
+> - Added fixes tag for all patches in this series.
+>
+> Chunyan Zhang (5):
+>   mmc: sdhci-sprd: fixed incorrect clock divider
+>   mmc: sdhci-sprd: add get_ro hook function
+>   mmc: sdhci-sprd: add SDHCI_QUIRK2_PRESET_VALUE_BROKEN
+>   mms: sdhci-sprd: add SDHCI_QUIRK_BROKEN_CARD_DETECTION
+>   mmc: sdhci-sprd: clear the UHS-I modes read from registers
+>
+>  drivers/mmc/host/sdhci-sprd.c | 30 +++++++++++++++++++++++++-----
+>  1 file changed, 25 insertions(+), 5 deletions(-)
+>
+> --
+> 2.20.1
+>
 
-This one actually builds defconfig :-)
+Thanks, but I amended the current applied patches, assuming the only
+change change you did was to put the fixes tag on one single line (for
+each patch).
 
----
-Subject: x86/math64: Provide a sane mul_u64_u32_div() implementation for x86_64
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Wed Aug 28 17:39:46 CEST 2019
-
-On x86_64 we can do a u64 * u64 -> u128 widening multiply followed by
-a u128 / u64 -> u64 division to implement a sane version of
-mul_u64_u32_div().
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- arch/x86/include/asm/div64.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
-index 20a46150e0a8..9b8cb50768c2 100644
---- a/arch/x86/include/asm/div64.h
-+++ b/arch/x86/include/asm/div64.h
-@@ -73,6 +73,19 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
- 
- #else
- # include <asm-generic/div64.h>
-+
-+static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 div)
-+{
-+	u64 q;
-+
-+	asm ("mulq %2; divq %3" : "=a" (q)
-+				: "a" (a), "rm" ((u64)mul), "rm" ((u64)div)
-+				: "rdx");
-+
-+	return q;
-+}
-+#define mul_u64_u32_div	mul_u64_u32_div
-+
- #endif /* CONFIG_X86_32 */
- 
- #endif /* _ASM_X86_DIV64_H */
+Kind regards
+Uffe
