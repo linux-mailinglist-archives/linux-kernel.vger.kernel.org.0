@@ -2,134 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F41FA1DAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B06E7A1E1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbfH2Ovi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:51:38 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43348 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728378AbfH2Ovc (ORCPT
+        id S1728098AbfH2O6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:58:03 -0400
+Received: from office2.cesnet.cz ([195.113.144.244]:56802 "EHLO
+        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727235AbfH2O6C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:51:32 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v12so2207310pfn.10
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 07:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:to:from:user-agent:date;
-        bh=os7g5YCFkp5+ztstInB9OjtEfDLOFJwY4UcZDxztTP0=;
-        b=W5Mq4jZ6OnI3djKJXoHup8cLbqgXTDsAAE2TRF9ZSV2Cr/h6sqogbMRnUJSUUitK1s
-         NWfXcDxhgnz1UUH/+NCk2WBDD/6MDwJgOW+IFXUOIGOmr3gtNLF6DEGVUkW9+rMDwcC7
-         kvPsZySJpT4wvpp7T/lIYNVWAK1MhXTqML2UI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
-         :user-agent:date;
-        bh=os7g5YCFkp5+ztstInB9OjtEfDLOFJwY4UcZDxztTP0=;
-        b=arkkkx40GuVR+k6qoFViB47Pdxcvc0toq3Foo+bIYFifwkBg+/j4vBrTzym9yQf7GI
-         UNAjYgtyhXDaf/86BDWG0T6fidGP1KACoOGuWKrb22U7e9IDYcPwxr6+u5IpaSkqo/Fb
-         TjpaL/eKRQ/70dKSAi6kEmJ1GGXskJr/w2SWq0sUoEABDKJ+qtJpgdV5fVYoMJxtpVtg
-         9n95J+9IUDRskn6g5I0hgRCQmw24hDPqDe2yU1m5ylUZjD5n0iOc1boMvGaucRJ2su9u
-         n6S5btTKoygJsqD3OiUXUvrleZMuUyMz0dxUUNyAAKGosWrckHYLGl0D9K5OEQ3Caf0B
-         0zaw==
-X-Gm-Message-State: APjAAAV9X4El+gdyIXk+3s2bDUMhou6ciU9vhm77LBo8sDI4f03yaDnn
-        ZL14OpCRsWfd0qF6/i9XVdS1ug==
-X-Google-Smtp-Source: APXvYqwbR0cZc/YmOKXENPhPJYGdkUuvFpj5SGbTdwPLno00gjgPGh6igtTOlA+nU1P8qab+3GVasQ==
-X-Received: by 2002:a63:f357:: with SMTP id t23mr8867138pgj.421.1567090291673;
-        Thu, 29 Aug 2019 07:51:31 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id t70sm2627916pjb.2.2019.08.29.07.51.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 07:51:31 -0700 (PDT)
-Message-ID: <5d67e673.1c69fb81.5f13b.62ee@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 29 Aug 2019 10:58:02 -0400
+X-Greylist: delayed 334 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 10:58:01 EDT
+Received: from localhost (unknown [IPv6:2001:718:1:2e:a5b5:770:4491:af45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by office2.cesnet.cz (Postfix) with ESMTPSA id C5050400090;
+        Thu, 29 Aug 2019 16:52:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+        s=office2; t=1567090346;
+        bh=3tXhnFz9DXpG4v0X5eDoi7gh3sGoIVP30uPeWkcdU20=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=dnjZYPl3pVtVYldh/uT1hu2d7uxI1b3CgI0Jwygo+nJxcGsDoGjlzP2qxCL/K907v
+         ijYbtkX9QYAvkiLHQnyV1lGFtaB9veCKl6vLLkiD6CJquGc/YMUbpO6gbxbe4f+rAc
+         hGnFJoUOdYGdaWsdKCfqMaCGAnVz9JnaX/+4ksBU=
+From:   =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
+To:     Peter Vernia <peter.vernia@gmail.com>
+Cc:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <poeschel@lemonage.de>
+Subject: Re: [PATCH] pinctrl-mcp23s08: Fix property-name in dt-example
+Date:   Thu, 29 Aug 2019 16:52:24 +0200
 MIME-Version: 1.0
+Message-ID: <eaa0f631-bf71-4ca9-b3ff-06d5d43cc58d@cesnet.cz>
+In-Reply-To: <20190828195609.4176-1-peter.vernia@gmail.com>
+References: <20190828195609.4176-1-peter.vernia@gmail.com>
+Organization: CESNET
+User-Agent: Trojita/v0.7-402-g90b417b1-dirty; Qt/5.13.0; xcb; Linux; Gentoo Base System release 2.4.1
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190829114547.9957-1-hungte@chromium.org>
-References: <20190829112407.GB23823@kroah.com> <20190829114547.9957-1-hungte@chromium.org>
-Cc:     hungte@chromium.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Allison Randal <allison@lohutok.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] firmware: google: check if size is valid when decoding VPD data
-To:     Hung-Te Lin <hungte@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 29 Aug 2019 07:51:30 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Hung-Te Lin (2019-08-29 04:45:43)
-> The VPD implementation from Chromium Vital Product Data project used to
-> parse data from untrusted input without checking if the meta data is
-> invalid or corrupted. For example, the size from decoded content may
-> be negative value, or larger than whole input buffer. Such invalid data
-> may cause buffer overflow.
->=20
-> To fix that, the size parameters passed to vpd_decode functions should
-> be changed to unsigned integer (u32) type, and the parsing of entry
-> header should be refactored so every size field is correctly verified
-> before starting to decode.
->=20
-> Fixes: ad2ac9d5c5e0 ("firmware: Google VPD: import lib_vpd source files")
-> Signed-off-by: Hung-Te Lin <hungte@chromium.org>
+On st=C5=99eda 28. srpna 2019 21:56:09 CEST, Peter Vernia wrote:
+> The device-tree properties documentation-file specifies the property
+> "microchip,spi-present-mask" as required for MCP23SXX chips. However,
+> the device-tree-source example below it uses only "spi-present-mask".
+> Without "microchip," on the front, the driver will print "missing
+> spi-present-mask" when it initializes.
+>
+> Update the device-tree example with the correct property-name.
+>
+> Signed-off-by: Peter Vernia <peter.vernia@gmail.com>
+
+Reviewed-by: Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz>
+
 > ---
-
-Two minor nitpicks, otherwise
-
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
-> diff --git a/drivers/firmware/google/vpd_decode.c b/drivers/firmware/goog=
-le/vpd_decode.c
-> index 92e3258552fc..7a5b0c72db00 100644
-> --- a/drivers/firmware/google/vpd_decode.c
-> +++ b/drivers/firmware/google/vpd_decode.c
-> @@ -9,8 +9,8 @@
-> =20
->  #include "vpd_decode.h"
-> =20
-> -static int vpd_decode_len(const s32 max_len, const u8 *in,
-> -                         s32 *length, s32 *decoded_len)
-> +static int vpd_decode_len(const u32 max_len, const u8 *in, u32 *length,
-> +                         u32 *decoded_len)
-
-Nitpick: Can you leave the first line alone? Just change types from s32
-to u32 on the same line so that this hunk clearly shows that the
-function name and other arguments aren't changing.
-
->  {
->         u8 more;
->         int i =3D 0;
-> diff --git a/drivers/firmware/google/vpd_decode.h b/drivers/firmware/goog=
-le/vpd_decode.h
-> index cf8c2ace155a..b65d246a6804 100644
-> --- a/drivers/firmware/google/vpd_decode.h
-> +++ b/drivers/firmware/google/vpd_decode.h
-> @@ -25,15 +25,14 @@ enum {
-[...]
-> =20
->  /*
->   * vpd_decode_string
->   *
->   * Given the encoded string, this function invokes callback with extract=
-ed
-> - * (key, value). The *consumed will be plused the number of bytes consum=
-ed in
-> + * (key, value). The *consumed will be plused by the number of bytes con=
-sumed in
->   * this function.
->   *
->   * The input_buf points to the first byte of the input buffer.
-
-This part can be a different patch that also converts this to kernel-doc
-style. See Documentation/doc-guide/kernel-doc.rst for more info.
+>  Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git=20
+> a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt=20
+> b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+> index 625a22e2f211..8b94aa8f5971 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+> @@ -82,7 +82,7 @@ gpiom1: gpio@0 {
+>          compatible =3D "microchip,mcp23s17";
+>          gpio-controller;
+>          #gpio-cells =3D <2>;
+> -        spi-present-mask =3D <0x01>;
+> +        microchip,spi-present-mask =3D <0x01>;
+>          reg =3D <0>;
+>          spi-max-frequency =3D <1000000>;
+>  };
 
