@@ -2,76 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C985A1B44
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DB1AA1B4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfH2NU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:20:26 -0400
-Received: from mga04.intel.com ([192.55.52.120]:40105 "EHLO mga04.intel.com"
+        id S1727891AbfH2NWT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:22:19 -0400
+Received: from mga07.intel.com ([134.134.136.100]:35724 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfH2NU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:20:26 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1727012AbfH2NWS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 09:22:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 06:20:25 -0700
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 06:22:18 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,443,1559545200"; 
-   d="scan'208";a="205714694"
-Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
-  by fmsmga004.fm.intel.com with ESMTP; 29 Aug 2019 06:20:23 -0700
-Date:   Thu, 29 Aug 2019 16:20:21 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm_tis: Fix interrupt probing
-Message-ID: <20190829132021.6vfc535ecb62jokf@linux.intel.com>
-References: <20190820122517.2086223-1-stefanb@linux.vnet.ibm.com>
- <20190827131400.qchcwa2act24c47b@linux.intel.com>
- <20190827151915.hb4xwr2vik2i5ryb@linux.intel.com>
- <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
+   d="scan'208";a="197804689"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Aug 2019 06:22:16 -0700
+Subject: Re: [PATCH V6 5/5] mmc: host: sdhci-pci: Add Genesys Logic GL975x
+ support
+To:     "Michael K. Johnson" <johnsonm@danlj.org>
+Cc:     Ben Chuang <benchuanggli@gmail.com>, ulf.hansson@linaro.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ben.chuang@genesyslogic.com.tw
+References: <20190827003335.2494-1-benchuanggli@gmail.com>
+ <99735a03-c698-624d-f5cf-4feed7e6a9ca@intel.com>
+ <20190828134714.GA30547@people.danlj.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <7fcd0fd5-97cb-1dab-7477-666838478541@intel.com>
+Date:   Thu, 29 Aug 2019 16:21:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <797ff54e-dceb-21d2-dd74-e5244f9c6dfd@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190828134714.GA30547@people.danlj.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 03:34:36PM -0400, Stefan Berger wrote:
-> On 8/27/19 11:19 AM, Jarkko Sakkinen wrote:
-> > On Tue, Aug 27, 2019 at 04:14:00PM +0300, Jarkko Sakkinen wrote:
-> > > On Tue, Aug 20, 2019 at 08:25:17AM -0400, Stefan Berger wrote:
-> > > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > > 
-> > > > The interrupt probing of the TPM TIS was broken since we are trying to
-> > > > run it without an active locality and without the TPM_CHIP_FLAG_IRQ set.
-> > > > 
-> > > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > Need these:
-> > > 
-> > > Cc: linux-stable@vger.kernel.org
-> > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> > > 
-> > > Thank you. I'll apply this to my tree.
-> > > 
-> > > Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > The commit went in the following form:
-> > 
-> > http://git.infradead.org/users/jjs/linux-tpmdd.git/commit/9b558deab2c5d7dc23d5f7a4064892ede482ad32
+On 28/08/19 4:47 PM, Michael K. Johnson wrote:
+> On Wed, Aug 28, 2019 at 04:13:03PM +0300, Adrian Hunter wrote:
+>> On 27/08/19 3:33 AM, Ben Chuang wrote:
+>> Looks good, one minor comment
+> ...
+>>> +#ifdef CONFIG_MMC_SDHCI_IO_ACCESSORS
+>>
+>> Arguably CONFIG_MMC_SDHCI_IO_ACCESSORS needs to be removed altogether. i.e.
+>> making the accessors always available.  So for now, I'd prefer to select
+>> MMC_SDHCI_IO_ACCESSORS:
+>>
+>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+>> index 14d89a108edd..c3bd967d8a1a 100644
+>> --- a/drivers/mmc/host/Kconfig
+>> +++ b/drivers/mmc/host/Kconfig
+>> @@ -94,6 +94,7 @@ config MMC_SDHCI_PCI
+>>  	depends on MMC_SDHCI && PCI
+>>  	select MMC_CQHCI
+>>  	select IOSF_MBI if X86
+>> +	select MMC_SDHCI_IO_ACCESSORS
+>>  	help
+>>  	  This selects the PCI Secure Digital Host Controller Interface.
+>>  	  Most controllers found today are PCI devices.
 > 
-> I saw you dropped the stetting of the IRQ flag - I needed it, otherwise it
-> wouldn't execute certain code paths.
+> Unless I'm missing something, this seems like a separate patch;
+> are you asking for it first, as a predecessor to the GLI patch?
+> 
 
-I explained why I removed that part. There was no any reasoning for
-it. Also, it cannot be in the same commit if it fixes a diffent
-issue.
-
-
-/Jarkko
+No, it is fine with this patch.
