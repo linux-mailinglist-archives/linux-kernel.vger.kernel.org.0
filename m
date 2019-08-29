@@ -2,77 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98155A2345
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:14:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2F4DA2317
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:13:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfH2SOf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:14:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728856AbfH2SOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:14:32 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 821E523428;
-        Thu, 29 Aug 2019 18:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102472;
-        bh=Ki7BrnVVae9IQ9BuydzsEIpn9xfYCx3NtewynpizYIY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aLqWkWDFZv+IFFq+p8o7D/P9Ava42JCdq2IIax852LRttL/IkJF0DujpuWXgqBHhX
-         D9C3lMPqB0cblzrCcEm7Ls+KkqqzuSMKiJ4Z3chEiS/Vl0Fwc/5/Zr+0q4rXL5LZME
-         Oy4ewt9E3ctWEmPFs9B/aKova9LImzk7jHyoYjeI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wenwen Wang <wenwen@cs.uga.edu>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 36/76] net: myri10ge: fix memory leaks
-Date:   Thu, 29 Aug 2019 14:12:31 -0400
-Message-Id: <20190829181311.7562-36-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
-References: <20190829181311.7562-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1728210AbfH2SNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:13:25 -0400
+Received: from conuserg-12.nifty.com ([210.131.2.79]:33804 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728153AbfH2SNX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:13:23 -0400
+Received: from grover.flets-west.jp (softbank126125143222.bbtec.net [126.125.143.222]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x7TICXKJ032077;
+        Fri, 30 Aug 2019 03:12:34 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x7TICXKJ032077
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567102354;
+        bh=Vwg+U6w4Ii1pxbM6Y26D6NAkhEdABFM43gdRvX4UWfQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EocEaH2YtTlHmE0fmeqxzWvgmOtvdjZuFxr32oh656EWqp07z0G4uzaDPXr4H4YG5
+         9XXcO+K1jXxYdqmThh8drJ5uHNz0MtXcwH89cdWqYH1VBNJN1kiMbcqFh4/TUiI8si
+         3AU/QwnDNxVGU4EQVzR7gvTNKlitHURfa1/71E4PalK5zzbI9una2CJyasy2pwn9jH
+         hTlWy5tmM/CEjONlr4OOLbcFxXXQe0KFJcI8uyP49GwvxJwhWwDPzWhh3BarhPtdjJ
+         3kgQGxpDuLOkXHWvKOH67LmzLVUGC01Db5NrzTCdLPEpQIlF0XWV9GKoJcFeuAAMRi
+         unDcEpHGlrtGg==
+X-Nifty-SrcIP: [126.125.143.222]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] kbuild: refactor scripts/Makefile.extrawarn
+Date:   Fri, 30 Aug 2019 03:12:31 +0900
+Message-Id: <20190829181231.5920-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+Instead of the warning-[123] magic, let's accumulate compiler options
+to KBUILD_CFLAGS directly as the top Makefile does. I think this makes
+easier to understand what is going on in this file.
 
-[ Upstream commit 20fb7c7a39b5c719e2e619673b5f5729ee7d2306 ]
+This commit slightly changes the behavior, I think all of which are OK.
 
-In myri10ge_probe(), myri10ge_alloc_slices() is invoked to allocate slices
-related structures. Later on, myri10ge_request_irq() is used to get an irq.
-However, if this process fails, the allocated slices related structures are
-not deallocated, leading to memory leaks. To fix this issue, revise the
-target label of the goto statement to 'abort_with_slices'.
+[1] Currently, cc-option calls are needlessly evaluated. For example,
+      warning-3 += $(call cc-option, -Wpacked-bitfield-compat)
+    needs evaluating only when W=3, but it is actually evaluated for
+    W=1, W=2 as well. With this commit, only relevant cc-option calls
+    will be evaluated. This is a slight optimization.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+[2] Currently, unsupported level like W=4 is checked by:
+      $(error W=$(KBUILD_ENABLE_EXTRA_GCC_CHECKS) is unknown)
+    This will no longer be checked, but I do not think it is a big
+    deal.
+
+[3] Currently, 4 Clang warnings (Winitializer-overrides, Wformat,
+    Wsign-compare, Wformat-zero-length) are shown by any of W=1, W=2,
+    and W=3. With this commit, they will be warned only by W=1. I
+    think this is a more correct behavior since each warning belongs
+    to only one group.
+
+For understanding this commit correctly:
+
+We have 3 warning groups, W=1, W=2, and W=3. You may think W=3 has a
+higher level than W=1, but they are actually independent. If you like,
+you can combine them like W=13. To enable all the warnings, you can
+pass W=123. This is shown by 'make help', but it is often missed
+unfortunately. Since we support W= combination, there should not exist
+intersection among the three groups. If we enable Winitializer-overrides
+for W=1, we do not need to for W=2 or W=3. This is why I believe the
+change [3] makes sense.
+
+The documentation says -Winitializer-overrides is enabled by default.
+(https://clang.llvm.org/docs/DiagnosticsReference.html#winitializer-overrides)
+We negate it by passing -Wno-initializer-overrides for the normal
+build, but we do not do that for W=1. This means, W=1 effectively
+enables -Winitializer-overrides by the clang's default. The same for
+the other three. I wonder if this logic needs detailed commenting,
+but I do not want to be bothered any more. I added comments.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-index d8b7fba96d58e..337b0cbfd153e 100644
---- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-+++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-@@ -3919,7 +3919,7 @@ static int myri10ge_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	 * setup (if available). */
- 	status = myri10ge_request_irq(mgp);
- 	if (status != 0)
--		goto abort_with_firmware;
-+		goto abort_with_slices;
- 	myri10ge_free_irq(mgp);
+Changes in v2:
+  - Added comments and more commit log
+
+ scripts/Makefile.extrawarn | 105 +++++++++++++++++++------------------
+ 1 file changed, 54 insertions(+), 51 deletions(-)
+
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index a74ce2e3c33e..3680445823b7 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -1,14 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ # ==========================================================================
+-#
+ # make W=... settings
+-#
+-# W=1 - warnings that may be relevant and does not occur too often
+-# W=2 - warnings that occur quite often but may still be relevant
+-# W=3 - the more obscure warnings, can most likely be ignored
+-#
+-# $(call cc-option, -W...) handles gcc -W.. options which
+-# are not supported by all versions of the compiler
+ # ==========================================================================
  
- 	/* Save configuration space to be restored if the
+ KBUILD_CFLAGS += $(call cc-disable-warning, packed-not-aligned)
+@@ -17,58 +9,69 @@ ifeq ("$(origin W)", "command line")
+   export KBUILD_ENABLE_EXTRA_GCC_CHECKS := $(W)
+ endif
+ 
+-ifdef KBUILD_ENABLE_EXTRA_GCC_CHECKS
+-warning-  := $(empty)
++#
++# W=1 - warnings that may be relevant and does not occur too often
++#
++ifneq ($(findstring 1, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)),)
+ 
+-warning-1 := -Wextra -Wunused -Wno-unused-parameter
+-warning-1 += -Wmissing-declarations
+-warning-1 += -Wmissing-format-attribute
+-warning-1 += -Wmissing-prototypes
+-warning-1 += -Wold-style-definition
+-warning-1 += -Wmissing-include-dirs
+-warning-1 += $(call cc-option, -Wunused-but-set-variable)
+-warning-1 += $(call cc-option, -Wunused-const-variable)
+-warning-1 += $(call cc-option, -Wpacked-not-aligned)
+-warning-1 += $(call cc-option, -Wstringop-truncation)
++KBUILD_CFLAGS += -Wextra -Wunused -Wno-unused-parameter
++KBUILD_CFLAGS += -Wmissing-declarations
++KBUILD_CFLAGS += -Wmissing-format-attribute
++KBUILD_CFLAGS += -Wmissing-prototypes
++KBUILD_CFLAGS += -Wold-style-definition
++KBUILD_CFLAGS += -Wmissing-include-dirs
++KBUILD_CFLAGS += $(call cc-option, -Wunused-but-set-variable)
++KBUILD_CFLAGS += $(call cc-option, -Wunused-const-variable)
++KBUILD_CFLAGS += $(call cc-option, -Wpacked-not-aligned)
++KBUILD_CFLAGS += $(call cc-option, -Wstringop-truncation)
+ # The following turn off the warnings enabled by -Wextra
+-warning-1 += -Wno-missing-field-initializers
+-warning-1 += -Wno-sign-compare
+-
+-warning-2 += -Wcast-align
+-warning-2 += -Wdisabled-optimization
+-warning-2 += -Wnested-externs
+-warning-2 += -Wshadow
+-warning-2 += $(call cc-option, -Wlogical-op)
+-warning-2 += -Wmissing-field-initializers
+-warning-2 += -Wsign-compare
+-warning-2 += $(call cc-option, -Wmaybe-uninitialized)
+-warning-2 += $(call cc-option, -Wunused-macros)
+-
+-warning-3 := -Wbad-function-cast
+-warning-3 += -Wcast-qual
+-warning-3 += -Wconversion
+-warning-3 += -Wpacked
+-warning-3 += -Wpadded
+-warning-3 += -Wpointer-arith
+-warning-3 += -Wredundant-decls
+-warning-3 += -Wswitch-default
+-warning-3 += $(call cc-option, -Wpacked-bitfield-compat)
+-
+-warning := $(warning-$(findstring 1, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)))
+-warning += $(warning-$(findstring 2, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)))
+-warning += $(warning-$(findstring 3, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)))
+-
+-ifeq ("$(strip $(warning))","")
+-        $(error W=$(KBUILD_ENABLE_EXTRA_GCC_CHECKS) is unknown)
+-endif
++KBUILD_CFLAGS += -Wno-missing-field-initializers
++KBUILD_CFLAGS += -Wno-sign-compare
+ 
+-KBUILD_CFLAGS += $(warning)
+ else
+ 
++# Some diagnostics such as -Winitializer-overrides are enabled by default.
++# We suppress them by using -Wno... except for W=1.
++
+ ifdef CONFIG_CC_IS_CLANG
+ KBUILD_CFLAGS += -Wno-initializer-overrides
+ KBUILD_CFLAGS += -Wno-format
+ KBUILD_CFLAGS += -Wno-sign-compare
+ KBUILD_CFLAGS += -Wno-format-zero-length
+ endif
++
++endif
++
++#
++# W=2 - warnings that occur quite often but may still be relevant
++#
++ifneq ($(findstring 2, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)),)
++
++KBUILD_CFLAGS += -Wcast-align
++KBUILD_CFLAGS += -Wdisabled-optimization
++KBUILD_CFLAGS += -Wnested-externs
++KBUILD_CFLAGS += -Wshadow
++KBUILD_CFLAGS += $(call cc-option, -Wlogical-op)
++KBUILD_CFLAGS += -Wmissing-field-initializers
++KBUILD_CFLAGS += -Wsign-compare
++KBUILD_CFLAGS += $(call cc-option, -Wmaybe-uninitialized)
++KBUILD_CFLAGS += $(call cc-option, -Wunused-macros)
++
++endif
++
++#
++# W=3 - the more obscure warnings, can most likely be ignored
++#
++ifneq ($(findstring 3, $(KBUILD_ENABLE_EXTRA_GCC_CHECKS)),)
++
++KBUILD_CFLAGS += -Wbad-function-cast
++KBUILD_CFLAGS += -Wcast-qual
++KBUILD_CFLAGS += -Wconversion
++KBUILD_CFLAGS += -Wpacked
++KBUILD_CFLAGS += -Wpadded
++KBUILD_CFLAGS += -Wpointer-arith
++KBUILD_CFLAGS += -Wredundant-decls
++KBUILD_CFLAGS += -Wswitch-default
++KBUILD_CFLAGS += $(call cc-option, -Wpacked-bitfield-compat)
++
+ endif
 -- 
-2.20.1
+2.17.1
 
