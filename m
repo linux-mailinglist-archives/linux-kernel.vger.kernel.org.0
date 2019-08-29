@@ -2,116 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5F5A139C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 353E7A139F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727025AbfH2I1H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:27:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34120 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725776AbfH2I1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:27:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EFD47AFF9;
-        Thu, 29 Aug 2019 08:27:05 +0000 (UTC)
-Subject: Re: [PATCH v2] vsprintf: introduce %dE for error constants
-To:     Petr Mladek <pmladek@suse.com>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        metux IT consult Enrico Weigelt <lkml@metux.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190827211244.7210-1-uwe@kleine-koenig.org>
- <20190828113216.p2yiha4xyupkbcbs@pathway.suse.cz>
- <74303921-aa95-9962-2254-27e556af54f4@kleine-koenig.org>
- <20190829081249.3zvvsa4ggb5pfozl@pathway.suse.cz>
-From:   Juergen Gross <jgross@suse.com>
-Message-ID: <45cd5b50-9854-fce7-5f08-f7660abb8691@suse.com>
-Date:   Thu, 29 Aug 2019 10:27:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726926AbfH2I2F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:28:05 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37845 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfH2I2E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 04:28:04 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z11so2483109wrt.4
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:28:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wzOzQ7ynNYPsf5UEf3oNVdWEvvfgnb0uEvn4yxU+dLs=;
+        b=QPNyl9bMqWt4Ql4fbNSFnjlCr6qZyRx72Wt1Cmuc/ixB6/sURqA0apu4dMeF95ssMH
+         z7Z52E5m0ZoGHzwad4fl9hFfZLe1KPqYa29im2xvPtD+RqsvLfRlGWc9tN5Taw5Lzzog
+         NOrUwBGhR4z3bRwYlKnvJzpRqR6DIXZpsVSl/3/JRBLEvZ0QoVtvmuObXYFCJ9jHB5pL
+         EfRzj+6ciBU9+Yc82c2SLft70V/uKGHcyx4GGFhUajRtlBaQ30eHJu/a2PcaIxihMV6y
+         c8cRLCU5eqJsKFNP05qxPNNvGnECK11TMuAbR2flOLod0XdSjD4L/fzhioCxei6Nd2Pq
+         SnTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wzOzQ7ynNYPsf5UEf3oNVdWEvvfgnb0uEvn4yxU+dLs=;
+        b=uGrdahAmbLlWrnJSqmSd11v/7lGlIQ11hImONEjqTpYZg/4tWaM8sMVWYCAVJc8tCx
+         UbFQ06ITV3VZVaGVu197wJoXHXHVGJMHCa09Ui9urKbATzzzoowypXOs+6IlSHBB7B6v
+         mapXe2B90g6yKOP2jfRaH68sBZjvoA9G+Ndtgf8jxXPQKX847h8HWo+61N/QmayrT3Gt
+         94Fg3c9V1OXmsXOc8qtSwnsaZEo7wiNwZY8Obh08BpI9VRoDGJR2OMFn+1Dps6GyESA6
+         MOlAhUuJmwCZWsGmfXqsNp4G0K+x0Xd76FN8X1PUErAv8f4bEWoAx+mb86941rSVht6P
+         INFw==
+X-Gm-Message-State: APjAAAUrKbvtlElzQgKEcD81G4Ib4kTb4rJCxPS6TtJc5bxIbBR1vuHD
+        dACF3/h82eM/1stgv6COVKy5+5dMW5k=
+X-Google-Smtp-Source: APXvYqzo/MzO7CuJCSuJyZul1Nz9EvB3vy9Skp24N4C+UVIfER7+lsH6iDc5xX2Ky69Od3DEsRhOBw==
+X-Received: by 2002:a05:6000:128d:: with SMTP id f13mr10054615wrx.241.1567067282414;
+        Thu, 29 Aug 2019 01:28:02 -0700 (PDT)
+Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
+        by smtp.gmail.com with ESMTPSA id f24sm1884489wmc.25.2019.08.29.01.28.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 29 Aug 2019 01:28:01 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
+        agross@kernel.org, jassisinghbrar@gmail.com
+Cc:     niklas.cassel@linaro.org, bjorn.andersson@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] mbox changes for QCS404 DVFS
+Date:   Thu, 29 Aug 2019 10:27:57 +0200
+Message-Id: <20190829082759.6256-1-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190829081249.3zvvsa4ggb5pfozl@pathway.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.08.19 10:12, Petr Mladek wrote:
-> On Wed 2019-08-28 21:18:37, Uwe Kleine-König  wrote:
->> Hello Petr,
->>
->> On 8/28/19 1:32 PM, Petr Mladek wrote:
->>> On Tue 2019-08-27 23:12:44, Uwe Kleine-König  wrote:
->>>> Petr Mladek had some concerns:
->>>>> There are ideas to make the code even more tricky to reduce
->>>>> the size, keep it fast.
->>>>
->>>> I think Enrico Weigelt's suggestion to use a case is the best
->>>> performance-wise so that's what I picked up. Also I hope that
->>>> performance isn't that important because the need to print an error
->>>> should not be so common that it really hurts in production.
-> 
-> This is contadicting. The "best" performance-wise solution was
-> choosen in favor of space. The next sentence says that performance
-> is not important.
-> 
->>> I personally do not like switch/case. It is a lot of code.
->>> I wonder if it even saved some space.
->>
->> I guess we have to die either way. Either it is quick or it is space
->> efficient.
-> 
-> I am more concerned about the size. Well, array of strings will
-> be both fast and size efficient.
-> 
->> With the big case I trust the compiler to pick something
->> sensible expecting that it adapts for example to -Osize.
-> 
-> I am not sure what are the expectations here. I can't imagine
-> another translation than:
-> 
->     if (val == 1)
->       str = "EPERM";
->     else if (val == 2)
->       str = "ENOENT"
->     else if (val == 3)
->       str = "ESRCH"
->     ...
-> 
-> It means that all constans will be hardcoded in the code instead
-> of in data section. Plus there will be instructions for each
-> if/else part.
-> 
->>> If you want to safe space, I would use u16 to store the numbers.
->>> Or I would use array of strings. There will be only few holes.
->>>
->>> You might also consider handling only the most commonly
->>> used codes from errno.h and errno-base.h (1..133). There will
->>> be no holes and the codes are stable.
->>
->> I'd like to postpone the discussion about "how" until we agreed about
->> the "if at all".
-> 
-> It seems that all people like this feature.
+These are the mailbox changes required to enable CPU frequency scaling on
+Qualcomm's QCS404.
 
-Hmm, what about already existing format strings conatining "%dE"?
+v2: sboyd review
+    replace if statement with a of_match_device
+    dont modify platform_set_drvdata
 
-Yes, I could find only one (drivers/staging/speakup/speakup_bns.c), but
-nevertheless...
+Jorge Ramirez-Ortiz (2):
+  mbox: qcom: add APCS child device for QCS404
+  mbox: qcom: replace integer with valid macro
 
-> 
-> BTW: I though more about generating or cut&pasting the arrary.
-> I can't find any reasonable way how to generate it.
+ drivers/mailbox/qcom-apcs-ipc-mailbox.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-Generate the array and errno.h/errno-base.h from the same source?
+-- 
+2.22.0
 
-
-Juergen
