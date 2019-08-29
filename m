@@ -2,100 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69C8EA1C2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:59:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5803A1C1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:58:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbfH2N7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:59:10 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42444 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfH2N7K (ORCPT
+        id S1727968AbfH2N5x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:57:53 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44318 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727947AbfH2N5v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:59:10 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y1so1607133plp.9
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 06:59:09 -0700 (PDT)
+        Thu, 29 Aug 2019 09:57:51 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t14so1603625plr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 06:57:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=40EqMQd0G4SVbrZfGPeA5SE4upLhPO04pKe2ongbivs=;
-        b=B7vedP+381Vda1eCJ1DpCKGye34MvOP4SaLRfcWFXrezjckDaL2DCJkysvbc5x6x9K
-         5ZHaAq8dolDDtXD5Emsjg2p4yLOStQjh6ER9RX2SxOPJPrpxQ9KcL7NtxmBaNUHUfkqr
-         9SWPCrsL1tOOGwTXDBiFQSW/yOhdLnH2Y9d3g=
+        bh=L/fpSI4uM40s3DtKV21QFlzEvXiHzEXWBGn7ZlQCExg=;
+        b=Zxlp/In8ihfnhFT7qhAH2R05a3spmau5U90iJ7hTdtkHjQZY3eF6Ow334HIBgk1z6q
+         Q671PJ/FC4BFrkm6pYSDFZfRUHxZABFe+DKE4gpwyc9RLdv2odedstcl2EWH7RlzCOtG
+         itlcxTQTa6o4RuvHRBTBpBB77xOyuEDEzMUAbcsvdFvWVLmSUWagjTD3Mkui+jCOIYae
+         gsnuy0nwI3xIXRsx/XSyJHhmAstMlBE/BONdafIFbpmAHqBexmGYAx2cUMqKC2//hdHC
+         yC9htbtyMjdoCTLIV47cBc89SgohGd4JxVY5W9LWLlN6P7i5ssCs8vrw7hY9DH+7pBNJ
+         n6ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=40EqMQd0G4SVbrZfGPeA5SE4upLhPO04pKe2ongbivs=;
-        b=JwMsukQQhlFnt/YsGx16J/jy4tWIf5Xngqskg4Afm1yGRBjWE/QtHifsxyoIApaWSA
-         UOVgBJ10LKjSE4XwZS5gBOr62H7KHJfM5hkww1nvZ5cPmPCHfjtwN8Ghoouv7uZVHZ13
-         8t+Fb3rfxjHhjdFfHOeYpdtD/WPMpaP0XFosN0Sf9ekebugy5SsAVSJT9arUpwyyxOJx
-         XQpC4mFtWU8b/qsz0R6WG+204xQIb/L5GuWK16jT35VRXw4nqhWmlEoICW5jRfCOkFOw
-         ZQP8nd4QyyBjg2tjgwTTL9sQ+y6Oh16xIomzVVKkbXOHk7mtw3TbP6onVDIw8eBftpFr
-         g/Dw==
-X-Gm-Message-State: APjAAAWDO6XhXJOv1xlktEBNIrvoovu7C16EmoeXs7duw50oR964hPju
-        bBud4TSECtbrK9Bff5cR0wu3OA==
-X-Google-Smtp-Source: APXvYqyN3H4PkVt4D8iZLYVpLv8rCMjL0d2y1VW3RXuJ+ApI39d4sYSpewllOECHNz60vokFKp1bBQ==
-X-Received: by 2002:a17:902:223:: with SMTP id 32mr10245894plc.220.1567087149497;
-        Thu, 29 Aug 2019 06:59:09 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id dw7sm2200431pjb.21.2019.08.29.06.59.08
+        bh=L/fpSI4uM40s3DtKV21QFlzEvXiHzEXWBGn7ZlQCExg=;
+        b=B13ikAVfQMUXBTO03tRNlO9ofNWuQfDtSYI02E5XtozMyOGU1T1T/Q3qtZ6S39VvEs
+         OvwgvwvtyhQsbGJ3y01WUMpgl699o5c6eQIANN3HWOPthwLdWRPUsWXchjwGOMx5xPUs
+         ke+aR3Zd0wMqD0WQjHXFfQrzYo3oaYFWsAX/zjE4n1uqiZxxbfAAwc28JunjBtuPsBrf
+         MUyNQRjWKhKBj35hO10SILXHuotYOQgqaIiqMw1rn9Cp2yDHM1/7wLmUVcv35s7PkJ3M
+         e/BckPESY34HP2A1wCI4hdqmoIf9jkj2cHobMO0Llh9/zKWcKlv24BOd5ksQX1x0J4vw
+         Y3+Q==
+X-Gm-Message-State: APjAAAVQQUXqj1bGk3ECOuCKh/3Gf+MG1Mwxwp9Tf9kjef9eOhKL6RF1
+        s+hbmams9ukmIInl2/aT1g53xA==
+X-Google-Smtp-Source: APXvYqxm+AgQTYebWGBMOQFJ9WB+XGmtaCiDndt9/NWaE7skuV6+wfzm+5jNo5nLCEF9aVYHKO6mtw==
+X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr9999672plq.108.1567087070623;
+        Thu, 29 Aug 2019 06:57:50 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id b30sm7138756pfr.117.2019.08.29.06.57.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 06:59:08 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 09:59:07 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC v1 2/2] rcu/tree: Remove dynticks_nmi_nesting counter
-Message-ID: <20190829135907.GC63638@google.com>
-References: <5d648897.1c69fb81.5e60a.fc70@mx.google.com>
- <20190828202330.GS26530@linux.ibm.com>
- <20190828210525.GB75931@google.com>
- <20190828211904.GX26530@linux.ibm.com>
- <20190828214241.GD75931@google.com>
- <20190828220108.GC26530@linux.ibm.com>
- <20190828221444.GA100789@google.com>
- <20190828231247.GE26530@linux.ibm.com>
- <20190829015155.GB100789@google.com>
- <20190829034336.GD4125@linux.ibm.com>
+        Thu, 29 Aug 2019 06:57:50 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 06:59:44 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Cc:     sboyd@kernel.org, agross@kernel.org, jassisinghbrar@gmail.com,
+        niklas.cassel@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mbox: qcom: add APCS child device for QCS404
+Message-ID: <20190829135944.GI26807@tuxbook-pro>
+References: <20190829082759.6256-1-jorge.ramirez-ortiz@linaro.org>
+ <20190829082759.6256-2-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829034336.GD4125@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190829082759.6256-2-jorge.ramirez-ortiz@linaro.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 08:43:36PM -0700, Paul E. McKenney wrote:
-[snip] 
-> On the tracing patch...  That patch might be a good idea regardless,
-> but I bet that the reason that you felt the sudden need for it was due
-> to the loss of information in your eventual ->dynticks_nesting field.
-> After all, the value 0x1 might be an interrupt from idle, or it might
-> just as easily be a task running in the kernel at process level.
+On Thu 29 Aug 01:27 PDT 2019, Jorge Ramirez-Ortiz wrote:
 
-True, however what really triggered me to do it was the existing code which
-does not distinguish between entry/exit from USER and IDLE.
+> There is clock controller functionality in the APCS hardware block of
+> qcs404 devices similar to msm8916.
+> 
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 
-> The reason the patch might nevertheless be a good idea is that redundant
-> information can be helpful when debugging.  Especially when debugging
-> new architecture-specific code, which is when RCU's dyntick-idle warnings
-> tend to find bugs.
+Nice, I like this version.
 
-Sure, and also that it is more readable to ordinary human beings than "++="
-and "--=" :-D.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-thanks,
-
- - Joel
-
+> ---
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> index 705e17a5479c..d3676fd3cf94 100644
+> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> @@ -47,7 +47,6 @@ static const struct mbox_chan_ops qcom_apcs_ipc_ops = {
+>  
+>  static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  {
+> -	struct device_node *np = pdev->dev.of_node;
+>  	struct qcom_apcs_ipc *apcs;
+>  	struct regmap *regmap;
+>  	struct resource *res;
+> @@ -55,6 +54,11 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  	void __iomem *base;
+>  	unsigned long i;
+>  	int ret;
+> +	const struct of_device_id apcs_clk_match_table[] = {
+> +		{ .compatible = "qcom,msm8916-apcs-kpss-global", },
+> +		{ .compatible = "qcom,qcs404-apcs-apps-global", },
+> +		{}
+> +	};
+>  
+>  	apcs = devm_kzalloc(&pdev->dev, sizeof(*apcs), GFP_KERNEL);
+>  	if (!apcs)
+> @@ -89,7 +93,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
+> +	if (of_match_device(apcs_clk_match_table, &pdev->dev)) {
+>  		apcs->clk = platform_device_register_data(&pdev->dev,
+>  							  "qcom-apcs-msm8916-clk",
+>  							  -1, NULL, 0);
+> -- 
+> 2.22.0
+> 
