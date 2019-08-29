@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A35DA2402
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00189A2401
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:20:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbfH2SUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:20:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60132 "EHLO mail.kernel.org"
+        id S1730069AbfH2SUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:20:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730268AbfH2SR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:17:56 -0400
+        id S1730271AbfH2SR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:17:57 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FECB2339E;
-        Thu, 29 Aug 2019 18:17:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA422233FF;
+        Thu, 29 Aug 2019 18:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102675;
-        bh=WvX0U4icaaEEXMxXwS+pXS/PsVEOeUNZ91BSFI8Xez0=;
+        s=default; t=1567102676;
+        bh=Wja6VqfCilwc3YHL7O41vyxi8Rnh2cRte0lRT6l2i8I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=liiaSk/qZPqhSEtXcaMwDc/aBvT0CogHszdDHF/qkDQLhlAdthCDa7x2CtmKx14fr
-         gJvZGwxB4LegtuKobu24JPLu+/Q3fzb0hb0zSV1n2RX2rBJPqNxtNQ+dVL/XoRn3+i
-         xw0QuFAuFeSC1V8pgsDTkvV3dr2M0B5+uonC9TJc=
+        b=VJiRZXXFNPWxKPtz2J15XIRBu7xUWm8ZS8gh0tOMu3c0MJNrA6koKQC+CvFOR6MWj
+         VnYj3ZjCsCOtzsfBAvH22LEmMRDp/ZUStOagrL204DCVamsB7y8gxRvHUR9VqHvses
+         QZpZfQEj0fmz6XCQheJVnlmXI5D+IHT24ivIfjjY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tho Vu <tho.vu.wh@rvc.renesas.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 11/16] ravb: Fix use-after-free ravb_tstamp_skb
-Date:   Thu, 29 Aug 2019 14:17:29 -0400
-Message-Id: <20190829181736.9040-11-sashal@kernel.org>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, devel@linuxdriverproject.org
+Subject: [PATCH AUTOSEL 4.9 12/16] Tools: hv: kvp: eliminate 'may be used uninitialized' warning
+Date:   Thu, 29 Aug 2019 14:17:30 -0400
+Message-Id: <20190829181736.9040-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181736.9040-1-sashal@kernel.org>
 References: <20190829181736.9040-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,69 +43,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tho Vu <tho.vu.wh@rvc.renesas.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[ Upstream commit cfef46d692efd852a0da6803f920cc756eea2855 ]
+[ Upstream commit 89eb4d8d25722a0a0194cf7fa47ba602e32a6da7 ]
 
-When a Tx timestamp is requested, a pointer to the skb is stored in the
-ravb_tstamp_skb struct. This was done without an skb_get. There exists
-the possibility that the skb could be freed by ravb_tx_free (when
-ravb_tx_free is called from ravb_start_xmit) before the timestamp was
-processed, leading to a use-after-free bug.
+When building hv_kvp_daemon GCC-8.3 complains:
 
-Use skb_get when filling a ravb_tstamp_skb struct, and add appropriate
-frees/consumes when a ravb_tstamp_skb struct is freed.
+hv_kvp_daemon.c: In function ‘kvp_get_ip_info.constprop’:
+hv_kvp_daemon.c:812:30: warning: ‘ip_buffer’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+  struct hv_kvp_ipaddr_value *ip_buffer;
 
-Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-Signed-off-by: Tho Vu <tho.vu.wh@rvc.renesas.com>
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+this seems to be a false positive: we only use ip_buffer when
+op == KVP_OP_GET_IP_INFO and it is only unset when op == KVP_OP_ENUMERATE.
+
+Silence the warning by initializing ip_buffer to NULL.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ tools/hv/hv_kvp_daemon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 480883a7a3e5e..545cb6262cffd 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1,6 +1,6 @@
- /* Renesas Ethernet AVB device driver
-  *
-- * Copyright (C) 2014-2015 Renesas Electronics Corporation
-+ * Copyright (C) 2014-2019 Renesas Electronics Corporation
-  * Copyright (C) 2015 Renesas Solutions Corp.
-  * Copyright (C) 2015-2016 Cogent Embedded, Inc. <source@cogentembedded.com>
-  *
-@@ -512,7 +512,10 @@ static void ravb_get_tx_tstamp(struct net_device *ndev)
- 			kfree(ts_skb);
- 			if (tag == tfa_tag) {
- 				skb_tstamp_tx(skb, &shhwtstamps);
-+				dev_consume_skb_any(skb);
- 				break;
-+			} else {
-+				dev_kfree_skb_any(skb);
- 			}
- 		}
- 		ravb_modify(ndev, TCCR, TCCR_TFR, TCCR_TFR);
-@@ -1537,7 +1540,7 @@ static netdev_tx_t ravb_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 					 DMA_TO_DEVICE);
- 			goto unmap;
- 		}
--		ts_skb->skb = skb;
-+		ts_skb->skb = skb_get(skb);
- 		ts_skb->tag = priv->ts_skb_tag++;
- 		priv->ts_skb_tag &= 0x3ff;
- 		list_add_tail(&ts_skb->list, &priv->ts_skb_list);
-@@ -1665,6 +1668,7 @@ static int ravb_close(struct net_device *ndev)
- 	/* Clear the timestamp list */
- 	list_for_each_entry_safe(ts_skb, ts_skb2, &priv->ts_skb_list, list) {
- 		list_del(&ts_skb->list);
-+		kfree_skb(ts_skb->skb);
- 		kfree(ts_skb);
- 	}
- 
+diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
+index 1774800668168..a3ac283a985ae 100644
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -878,7 +878,7 @@ kvp_get_ip_info(int family, char *if_name, int op,
+ 	int sn_offset = 0;
+ 	int error = 0;
+ 	char *buffer;
+-	struct hv_kvp_ipaddr_value *ip_buffer;
++	struct hv_kvp_ipaddr_value *ip_buffer = NULL;
+ 	char cidr_mask[5]; /* /xyz */
+ 	int weight;
+ 	int i;
 -- 
 2.20.1
 
