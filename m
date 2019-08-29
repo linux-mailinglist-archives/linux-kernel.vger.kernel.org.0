@@ -2,104 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FD06A1F86
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 987A8A1F7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:44:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbfH2PpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:45:03 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:54652 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfH2PpB (ORCPT
+        id S1727417AbfH2Po1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:44:27 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41387 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbfH2Po1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:45:01 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFhhH3030608;
-        Thu, 29 Aug 2019 15:44:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=HhSzXQLQd627KDCnwBWVZ5E6XXUHKUdsQ5GwPoAcuAE=;
- b=V5wFcW14Kl0+OKr/ow4fc0ZImGhrOYilc4OdgLOcbYK6MkUSHir0rGevnADz5fBL8bWN
- 1Xjs14uEsVd2AF/Wbw+exLDwm/pE7l0+JV/e9jdz09qjf3aBGtBC6r+5UoY8oqYNM1L0
- j9dCs87BOy9gI2RzPT1SBW8ajXxMZHSEFnw7ZSfUPEpskurHZtJRXB3yif8DXOZeOLA+
- s096OUmyvHGcYGnfbYxFpIcYaoWXex96DNn5rsmOk8fBHRY24D0dJgqpWYCT236eoKZt
- W90uevUmYteCJf3p0MmYPff+1AjueQpMpUnYcxivfUvhY7GFv1//3Eyexv/cwuVJnRzG mg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2uphcyg4gb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 15:44:40 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFiGWe129225;
-        Thu, 29 Aug 2019 15:44:39 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2upc8uukv9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 15:44:39 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TFhv6u023805;
-        Thu, 29 Aug 2019 15:43:57 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Aug 2019 08:43:56 -0700
-Date:   Thu, 29 Aug 2019 18:43:46 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     devel@driverdev.osuosl.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190829154346.GK23584@kadam>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190828170022.GA7873@kroah.com>
- <20190829062340.GB3047@infradead.org>
- <20190829063955.GA30193@kroah.com>
- <20190829094136.GA28643@infradead.org>
- <20190829095019.GA13557@kroah.com>
- <20190829103749.GA13661@infradead.org>
- <20190829111810.GA23393@kroah.com>
- <20190829151144.GJ23584@kadam>
- <20190829152757.GA125003@architecture4>
+        Thu, 29 Aug 2019 11:44:27 -0400
+Received: by mail-io1-f66.google.com with SMTP id j5so7786065ioj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 08:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=f1lRGiNGnAFYa5XXNIGTiXk0hopkLhl9sxqMWlR9OM8=;
+        b=x4Nmbn64+hq2nIrU/XYjpm+rG4twyu8Blfcu+IlpzaB+RCSvvti9s0rDB4rNwnSO/g
+         pscK8sz+ZlGHQ32SVq8nXpEkr+wi0AEpp8R5SS/jGGuER7Bg35kdcD89wMznt+l+gMQj
+         Cqq8g1+duLsJ6kFQpnncA8lJ6BP1byilELhIgm89abTEAFHwyq+GLqm7SU1w2LzkcRRL
+         c1uUtfuOyqjcpVGXM5ogwDAvyrzmeOS3kHv6gArmAvGD2+vLtl3cxAjZnEKJcPOmmUoI
+         B0CudP+UUSDMcZvils9x3G9sxawpvVVEbHELbdl06bkK98bSuW0huJ11mp16jJ+40Rbd
+         M8FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=f1lRGiNGnAFYa5XXNIGTiXk0hopkLhl9sxqMWlR9OM8=;
+        b=WbZ9x78Yl3J3CIjWfkqc8zCVYitO0EoDvl7EW4xXac2Ykps4+FPrg8HPtJ6Qaa8XXB
+         EE29YVtgISUHc40ybrjyM/RmFT+uFVVOLxWvpdqJBJXvc3aSQu52Dfh/uu70nqB1rOBK
+         HwXF7E2cxNPJZYwErsjXvQ8Dk+HucaSYRvWorNYEBzfve5fgZbm2ngabAttgBv7CRQ6O
+         qxOjmc7zCGos54lAiNVu2ZmX50M0jAhcOGStzse3g4j8zD5lYviLFzk/1fHNZFX+rzYM
+         dcAKU4u2e5GZdOrUbc3j5dChrbrF8AuufkJwWTjOTFCnaDzAbZHL5OQPO9eqKuj5ZH7z
+         nFeQ==
+X-Gm-Message-State: APjAAAV69cE2GNfHAzSThd3br2CJC6+ma79E41QD92SepuczWwZ8x4wF
+        DDkQKczETuOatESf4lRpKasIikioCGHqqg==
+X-Google-Smtp-Source: APXvYqyagCG2rTj4wmQ6PRtEAJ+LqcEKmF5YRjVZwMhX2y+RIf651JoqU7qk3QI3G2Egt69TIKoYaw==
+X-Received: by 2002:a5d:87c1:: with SMTP id q1mr8567565ios.291.1567093466029;
+        Thu, 29 Aug 2019 08:44:26 -0700 (PDT)
+Received: from [192.168.1.50] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id 80sm5740197iou.13.2019.08.29.08.44.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2019 08:44:25 -0700 (PDT)
+Subject: Re: linux-next: build warning after merge of the block tree
+To:     Tejun Heo <tj@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190829135150.4f0e533a@canb.auug.org.au>
+ <20190829140828.39e05c27@canb.auug.org.au>
+ <20190829154150.GS2263813@devbig004.ftw2.facebook.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <cf6b9cc0-1ae3-d10f-b5d5-7221b0e4a482@kernel.dk>
+Date:   Thu, 29 Aug 2019 09:44:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829152757.GA125003@architecture4>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=885
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908290168
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=945 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908290168
+In-Reply-To: <20190829154150.GS2263813@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> p.s. There are 2947 (un)likely places in fs/ directory.
+On 8/29/19 9:41 AM, Tejun Heo wrote:
+> On Thu, Aug 29, 2019 at 02:08:28PM +1000, Stephen Rothwell wrote:
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Thu, 29 Aug 2019 14:03:43 +1000
+>> Subject: [PATCH] blkcg: blk-iocost: predeclare used structs
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> 
+> Acked-by: Tejun Heo <tj@kernel.org>
+> 
+> Thanks.
+> 
+>> ---
+>>   include/trace/events/iocost.h | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/include/trace/events/iocost.h b/include/trace/events/iocost.h
+>> index ec2217dd57ac..7ecaa65b7106 100644
+>> --- a/include/trace/events/iocost.h
+>> +++ b/include/trace/events/iocost.h
+>> @@ -2,6 +2,10 @@
+>>   #undef TRACE_SYSTEM
+>>   #define TRACE_SYSTEM iocost
+>>   
+>> +struct ioc;
+>> +struct ioc_now;
+>> +struct ioc_gq;
+>> +
+>>   #if !defined(_TRACE_BLK_IOCOST_H) || defined(TRACE_HEADER_MULTI_READ)
+>>   #define _TRACE_BLK_IOCOST_H
 
-I was complaining about you adding new pointless ones, not existing
-ones.  The likely/unlikely annotations are supposed to be functional and
-not decorative.  I explained this very clearly.
+Added, thanks.
 
-Probably most of the annotations in fs/ are wrong but they are also
-harmless except for the slight messiness.  However there are definitely
-some which are important so removing them all isn't a good idea.
-
-> If you like, I will delete them all.
-
-But for erofs, I don't think that any of the likely/unlikely calls have
-been thought about so I'm fine with removing all of them in one go.
-
-regards,
-dan carpenter
+-- 
+Jens Axboe
 
