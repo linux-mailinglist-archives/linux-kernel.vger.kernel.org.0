@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F83AA2104
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26C57A210A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbfH2Qgm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:36:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44284 "EHLO
+        id S1728075AbfH2Qgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:36:54 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38897 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727787AbfH2Qgk (ORCPT
+        with ESMTP id S1727344AbfH2Qgl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:36:40 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b6so1315845wrv.11
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 09:36:38 -0700 (PDT)
+        Thu, 29 Aug 2019 12:36:41 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e16so4118686wro.5
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 09:36:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=0y/VQ+YRgpX5o2wxlaY+4cXYuAJOmCwTGDSCpRsawzo=;
-        b=SPqD7twGvwKp/3dAhbuIEpOkZ9eaeoucN5AdbkgdF4l5oJwK1hz+UjQBg4gOXRhsSw
-         uUEovH7aQyS6TaurJffN7ndkPrgHURGFkcxhxPuy1mqZAWZXbbCpdVH42AvFrbnECxGv
-         ymHg9IcprUCOxLa7gVLxYoJkucRxYFsqyQ/VjpNX51Jsi4VchHHAo1fxQfTNETLrBdMh
-         UMJo+o/eqMr5JyhOUayxGfsARNQ6V38hgnnPL3L79a3RKc1zu5+C86RsnIK/0LPwNvoP
-         yhXmmRr3rvBtawUA4kapypIc2cX6yar6nGq5TKsCIGIZ24QGky6MGJkz7uf8/FAa0XfY
-         jCCQ==
+        bh=uODZAlCkiSE/bKJhKAz8rlp7NCW9snJyiy8JBrR1VCw=;
+        b=mApPXG0XWA1gfN05UGmqu2X89CUhhEFqhFFUCJsa9sadnG82mtfokDvxwlYTDWpieO
+         F6SldFti2FnAMbHlNVojpVAr+OllpG7MgvdO/Z6LiSOUhWw6mdzFGLHOS8EnpoR81PxQ
+         Xa/GRf5fSw1R+iZXUFxSc7FUNN2XLgOvHXGZInynrzyDkyQC5LbpLHMjcbmf7mJE7FO6
+         HLh45DZxuXMzpiyQ89u9qsevOaSr/Iy651odrCGgVZeIJmtY3jOnPZu9pIQSU0wl97yX
+         o9w37UW7CZNmeahBINh9vKz3iSMA6h1TErX5v8Fg2wNTl4uG1MrE6z5fQI5qf2vhD0vt
+         /loQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=0y/VQ+YRgpX5o2wxlaY+4cXYuAJOmCwTGDSCpRsawzo=;
-        b=byXG7jEsabmvXPSHHHfvGXse/5MqMvaCKxlt09PsN0ifihWoFsaERsXpWRUgpzxkpo
-         jrxyjbA4xDphS4/As0fvnzuFrqqdDkuuiKueQyi5hypy1XhRCyfXDzXndF9WrE/i4gYo
-         tPbRdw29VHsSFvVDUvMghUbtn5IwhWoLLjIrmEleYoqnmnTqx3nedFBNftMmAZ80cCy+
-         y/wjQsP3oFaUyg6TFw1yMgFXl9dWVjmRHEeRlTMLI+9IOkJxSHueq2tczs87KPswm+Jx
-         4gNWuFnE2+Y7+m1NBwR8fFIkU5xGip4DDs4gB2PvUL0JEYiigQZz4MJtDQCkOoSSjBLD
-         rBnQ==
-X-Gm-Message-State: APjAAAUOM+GWVI3XB0g5macfYh7A2b+yOKAf93lelVMEvE4/IUPoJh2z
-        G80QiVURNvCX5Cb1iLcNGfUXpQ==
-X-Google-Smtp-Source: APXvYqxvtmZUogvHXPqiYxAGddjYnxODN6Beze5/yBnrfXMIqABIfOyxUyI7Dt9l7ZDVsWl1bPiyWA==
-X-Received: by 2002:a5d:4e08:: with SMTP id p8mr10168260wrt.20.1567096598266;
-        Thu, 29 Aug 2019 09:36:38 -0700 (PDT)
+        bh=uODZAlCkiSE/bKJhKAz8rlp7NCW9snJyiy8JBrR1VCw=;
+        b=fsjEuf94vhewyWDsH5E6EVSYphfS2oUiXUx29v8YPlj4nhYw6ZYPJ6OeiaHzMt4SnU
+         k0BccaiCNPKRCSHecwE6hAiNE9zB5yCCyqT+xPO3P+1dtDX5XNSFZc/AWD/CQciC033b
+         N07UFWzEUfDERAnHXHtcATcsp1wQIj9zVYWtD2T6MF1X1eF4BnosZ1DT+Tk5khkwphb8
+         PNb/He+pv13rzSXkt2wCzsIToUxX8R3eGGseVg6p3t9IUEs6CLqL5mbVbZOLLvxP+g5v
+         gBBunmKyqMjrp7KILx3D9guj6oOkggXoweqduHFbbmQl+R4LD707RyzOy9XurFTiu66w
+         jhTw==
+X-Gm-Message-State: APjAAAW5jW9Itaj28KQsl6J+LZ0Lcnr9c5B1oyNeujEpJBYXsY+6QMWa
+        cxsearO5IFjH5UC8aGHWNdDFng==
+X-Google-Smtp-Source: APXvYqzGyFneHpcFhMPPomV4ePM5ce4JBgHf2enu6MOATiDfOAfr/WVqucexAtZ9BMn2awNiWQ3KiQ==
+X-Received: by 2002:adf:e50b:: with SMTP id j11mr12682651wrm.65.1567096599459;
+        Thu, 29 Aug 2019 09:36:39 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id k9sm4398243wrq.15.2019.08.29.09.36.37
+        by smtp.gmail.com with ESMTPSA id k9sm4398243wrq.15.2019.08.29.09.36.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 09:36:37 -0700 (PDT)
+        Thu, 29 Aug 2019 09:36:38 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     broonie@kernel.org, robh+dt@kernel.org, vkoul@kernel.org
 Cc:     spapothi@codeaurora.org, bgoswami@codeaurora.org,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         lgirdwood@gmail.com, devicetree@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v6 2/4] soundwire: core: add device tree support for slave devices
-Date:   Thu, 29 Aug 2019 17:35:12 +0100
-Message-Id: <20190829163514.11221-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v6 3/4] dt-bindings: ASoC: Add WSA881x bindings
+Date:   Thu, 29 Aug 2019 17:35:13 +0100
+Message-Id: <20190829163514.11221-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190829163514.11221-1-srinivas.kandagatla@linaro.org>
 References: <20190829163514.11221-1-srinivas.kandagatla@linaro.org>
@@ -64,115 +64,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to parsing device tree based
-SoundWire slave devices.
+This patch adds bindings for WSA8810/WSA8815 Class-D Smart Speaker
+Amplifier. This Amplifier also has a simple thermal sensor for
+over temperature and speaker protection.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/soundwire/bus.c   |  2 ++
- drivers/soundwire/bus.h   |  1 +
- drivers/soundwire/slave.c | 52 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 55 insertions(+)
+ .../bindings/sound/qcom,wsa881x.yaml          | 62 +++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
 
-diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 728db3ebad6e..d83d89b3b15a 100644
---- a/drivers/soundwire/bus.c
-+++ b/drivers/soundwire/bus.c
-@@ -79,6 +79,8 @@ int sdw_add_bus_master(struct sdw_bus *bus)
- 	 */
- 	if (IS_ENABLED(CONFIG_ACPI) && ACPI_HANDLE(bus->dev))
- 		ret = sdw_acpi_find_slaves(bus);
-+	else if (IS_ENABLED(CONFIG_OF) && bus->dev->of_node)
-+		ret = sdw_of_find_slaves(bus);
- 	else
- 		ret = -ENOTSUPP; /* No ACPI/DT so error out */
- 
-diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
-index 9d6ea7e447ff..cb482da914da 100644
---- a/drivers/soundwire/bus.h
-+++ b/drivers/soundwire/bus.h
-@@ -15,6 +15,7 @@ static inline int sdw_acpi_find_slaves(struct sdw_bus *bus)
- }
- #endif
- 
-+int sdw_of_find_slaves(struct sdw_bus *bus);
- void sdw_extract_slave_id(struct sdw_bus *bus,
- 			  u64 addr, struct sdw_slave_id *id);
- 
-diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
-index 4b522f6d1238..48a63ca130d2 100644
---- a/drivers/soundwire/slave.c
-+++ b/drivers/soundwire/slave.c
-@@ -2,6 +2,7 @@
- // Copyright(c) 2015-17 Intel Corporation.
- 
- #include <linux/acpi.h>
-+#include <linux/of.h>
- #include <linux/soundwire/sdw.h>
- #include <linux/soundwire/sdw_type.h>
- #include "bus.h"
-@@ -35,6 +36,7 @@ static int sdw_slave_add(struct sdw_bus *bus,
- 
- 	slave->dev.release = sdw_slave_release;
- 	slave->dev.bus = &sdw_bus_type;
-+	slave->dev.of_node = of_node_get(to_of_node(fwnode));
- 	slave->bus = bus;
- 	slave->status = SDW_SLAVE_UNATTACHED;
- 	slave->dev_num = 0;
-@@ -113,3 +115,53 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
- }
- 
- #endif
+diff --git a/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml b/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+new file mode 100644
+index 000000000000..faa90966a33a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/qcom,wsa881x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/*
-+ * sdw_of_find_slaves() - Find Slave devices in master device tree node
-+ * @bus: SDW bus instance
-+ *
-+ * Scans Master DT node for SDW child Slave devices and registers it.
-+ */
-+int sdw_of_find_slaves(struct sdw_bus *bus)
-+{
-+	struct device *dev = bus->dev;
-+	struct device_node *node;
++title: Bindings for Qualcomm WSA8810/WSA8815 Class-D Smart Speaker Amplifier
 +
-+	for_each_child_of_node(bus->dev->of_node, node) {
-+		int link_id, sdw_version, ret, len;
-+		const char *compat = NULL;
-+		struct sdw_slave_id id;
-+		const __be32 *addr;
++maintainers:
++  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 +
-+		compat = of_get_property(node, "compatible", NULL);
-+		if (!compat)
-+			continue;
++description: |
++  WSA8810 is a class-D smart speaker amplifier and WSA8815
++  is a high-output power class-D smart speaker amplifier.
++  Their primary operating mode uses a SoundWire digital audio
++  interface. This binding is for SoundWire interface.
 +
-+		ret = sscanf(compat, "sdw%01x%04hx%04hx%02hhx", &sdw_version,
-+			     &id.mfg_id, &id.part_id, &id.class_id);
++properties:
++  compatible:
++    const: sdw10217201000
 +
-+		if (ret != 4) {
-+			dev_err(dev, "Invalid compatible string found %s\n",
-+				compat);
-+			continue;
-+		}
++  reg:
++    maxItems: 1
 +
-+		addr = of_get_property(node, "reg", &len);
-+		if (!addr || (len < 2 * sizeof(u32))) {
-+			dev_err(dev, "Invalid Link and Instance ID\n");
-+			continue;
-+		}
++  powerdown-gpios:
++    description: GPIO spec for Powerdown/Shutdown line to use
++    maxItems: 1
 +
-+		link_id = be32_to_cpup(addr++);
-+		id.unique_id = be32_to_cpup(addr);
-+		id.sdw_version = sdw_version;
++  '#thermal-sensor-cells':
++    const: 0
 +
-+		/* Check for link_id match */
-+		if (link_id != bus->link_id)
-+			continue;
++required:
++  - compatible
++  - reg
++  - powerdown-gpios
++  - "#thermal-sensor-cells"
 +
-+		sdw_slave_add(bus, &id, of_fwnode_handle(node));
-+	}
++additionalProperties: false
 +
-+	return 0;
-+}
++examples:
++  - |
++    soundwire@c2d0000 {
++        #address-cells = <2>;
++        #size-cells = <0>;
++        reg = <0x0c2d0000 0x2000>;
++
++        speaker@0,1 {
++            compatible = "sdw10217201000";
++            reg = <0 1>;
++            powerdown-gpios = <&wcdpinctrl 2 0>;
++            #thermal-sensor-cells = <0>;
++        };
++
++        speaker@0,2 {
++            compatible = "sdw10217201000";
++            reg = <0 2>;
++            powerdown-gpios = <&wcdpinctrl 2 0>;
++            #thermal-sensor-cells = <0>;
++        };
++    };
++
++...
 -- 
 2.21.0
 
