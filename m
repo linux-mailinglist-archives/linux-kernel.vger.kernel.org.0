@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 119EEA24EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07080A24ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:27:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbfH2SPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:15:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57424 "EHLO mail.kernel.org"
+        id S1728798AbfH2S04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:26:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729392AbfH2SPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:40 -0400
+        id S1728558AbfH2SPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:15:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DE8623426;
-        Thu, 29 Aug 2019 18:15:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D2D42342C;
+        Thu, 29 Aug 2019 18:15:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102539;
-        bh=loIvfXxJrf4NnIrQL+3Q5C5MQVuqdI6QAgWsWx7KpkI=;
+        s=default; t=1567102541;
+        bh=mbc88SK90w/+Uoyl1A5Z9fHXLSXvvuFhUGHwFq5VEjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EWqzyOoPT4goMXfx+Kt39TfL85PyvRwTuzy895mBm1fCv+ASCfadrEh1WTU6eSi6c
-         dvjolowhRkaqITsxHIfHDpMCEkZaN8vOfveHLGzfEiH4Dbcr7jGithnIjib8fDm/X4
-         wEdoO0C8fDQ0o2bdhPu6GFhyAnSoy+tATPnisUVw=
+        b=LPxdlt4jc51i344ngRHxG5qcsbiAkd3xYeNa04aHazXAwxq1rwWkEKyE8j323ii7S
+         OyKjyxYreIXbPwZkqhKsdXkLScthARpfWsUlt/3YAxv9S3749QEhbayuSf6f16CP/i
+         CboIi1Pnpn4y3wotVCICF8d8EJW9B/Jo+JdCMmcM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Sagi Grimberg <sagi@grimberg.me>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 74/76] io_uring: add need_resched() check in inner poll loop
-Date:   Thu, 29 Aug 2019 14:13:09 -0400
-Message-Id: <20190829181311.7562-74-sashal@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Wei Xu <xuwei5@hisilicon.com>, Sasha Levin <sashal@kernel.org>,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 75/76] gpio: Fix irqchip initialization order
+Date:   Thu, 29 Aug 2019 14:13:10 -0400
+Message-Id: <20190829181311.7562-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -43,54 +46,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Linus Walleij <linus.walleij@linaro.org>
 
-[ Upstream commit 08f5439f1df25a6cf6cf4c72cf6c13025599ce67 ]
+[ Upstream commit 48057ed1840fde9239b1e000bea1a0a1f07c5e99 ]
 
-The outer poll loop checks for whether we need to reschedule, and
-returns to userspace if we do. However, it's possible to get stuck
-in the inner loop as well, if the CPU we are running on needs to
-reschedule to finish the IO work.
+The new API for registering a gpio_irq_chip along with a
+gpio_chip has a different semantic ordering than the old
+API which added the irqchip explicitly after registering
+the gpio_chip.
 
-Add the need_resched() check in the inner loop as well. This fixes
-a potential hang if the kernel is configured with
-CONFIG_PREEMPT_VOLUNTARY=y.
+Move the calls to add the gpio_irq_chip *last* in the
+function, so that the different hooks setting up OF and
+ACPI and machine gpio_chips are called *before* we try
+to register the interrupts, preserving the elder semantic
+order.
 
-Reported-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Tested-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This cropped up in the PL061 driver which used to work
+fine with no special ACPI quirks, but started to misbehave
+using the new API.
+
+Fixes: e0d897289813 ("gpio: Implement tighter IRQ chip integration")
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Reported-by: Wei Xu <xuwei5@hisilicon.com>
+Tested-by: Wei Xu <xuwei5@hisilicon.com>
+Reported-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/20190820080527.11796-1-linus.walleij@linaro.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/io_uring.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpio/gpiolib.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 83e3cede11220..03cd8f5bba850 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -716,7 +716,7 @@ static int io_do_iopoll(struct io_ring_ctx *ctx, unsigned int *nr_events,
- static int io_iopoll_getevents(struct io_ring_ctx *ctx, unsigned int *nr_events,
- 				long min)
- {
--	while (!list_empty(&ctx->poll_list)) {
-+	while (!list_empty(&ctx->poll_list) && !need_resched()) {
- 		int ret;
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 4f333d6f2e230..42f9e00ff4d1b 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -1371,21 +1371,13 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	if (status)
+ 		goto err_remove_from_list;
  
- 		ret = io_do_iopoll(ctx, nr_events, min);
-@@ -743,6 +743,12 @@ static void io_iopoll_reap_events(struct io_ring_ctx *ctx)
- 		unsigned int nr_events = 0;
+-	status = gpiochip_irqchip_init_valid_mask(chip);
+-	if (status)
+-		goto err_remove_from_list;
+-
+ 	status = gpiochip_alloc_valid_mask(chip);
+ 	if (status)
+-		goto err_remove_irqchip_mask;
+-
+-	status = gpiochip_add_irqchip(chip, lock_key, request_key);
+-	if (status)
+-		goto err_free_gpiochip_mask;
++		goto err_remove_from_list;
  
- 		io_iopoll_getevents(ctx, &nr_events, 1);
+ 	status = of_gpiochip_add(chip);
+ 	if (status)
+-		goto err_remove_chip;
++		goto err_free_gpiochip_mask;
+ 
+ 	status = gpiochip_init_valid_mask(chip);
+ 	if (status)
+@@ -1411,6 +1403,14 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 
+ 	machine_gpiochip_add(chip);
+ 
++	status = gpiochip_irqchip_init_valid_mask(chip);
++	if (status)
++		goto err_remove_acpi_chip;
 +
-+		/*
-+		 * Ensure we allow local-to-the-cpu processing to take place,
-+		 * in this case we need to ensure that we reap all events.
-+		 */
-+		cond_resched();
++	status = gpiochip_add_irqchip(chip, lock_key, request_key);
++	if (status)
++		goto err_remove_irqchip_mask;
++
+ 	/*
+ 	 * By first adding the chardev, and then adding the device,
+ 	 * we get a device node entry in sysfs under
+@@ -1422,21 +1422,21 @@ int gpiochip_add_data_with_key(struct gpio_chip *chip, void *data,
+ 	if (gpiolib_initialized) {
+ 		status = gpiochip_setup_dev(gdev);
+ 		if (status)
+-			goto err_remove_acpi_chip;
++			goto err_remove_irqchip;
  	}
- 	mutex_unlock(&ctx->uring_lock);
- }
+ 	return 0;
+ 
++err_remove_irqchip:
++	gpiochip_irqchip_remove(chip);
++err_remove_irqchip_mask:
++	gpiochip_irqchip_free_valid_mask(chip);
+ err_remove_acpi_chip:
+ 	acpi_gpiochip_remove(chip);
+ err_remove_of_chip:
+ 	gpiochip_free_hogs(chip);
+ 	of_gpiochip_remove(chip);
+-err_remove_chip:
+-	gpiochip_irqchip_remove(chip);
+ err_free_gpiochip_mask:
+ 	gpiochip_free_valid_mask(chip);
+-err_remove_irqchip_mask:
+-	gpiochip_irqchip_free_valid_mask(chip);
+ err_remove_from_list:
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 	list_del(&gdev->list);
 -- 
 2.20.1
 
