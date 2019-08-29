@@ -2,343 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99AADA21E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:12:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 449FBA21D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:10:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbfH2RL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:11:59 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36477 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfH2RL6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:11:58 -0400
-Received: by mail-pf1-f195.google.com with SMTP id w2so2497618pfi.3;
-        Thu, 29 Aug 2019 10:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jS5pHxiuZzzwI5bJqpF22mVfJqpldppDHKL3mSY0vqE=;
-        b=LJfbr0D7f5YzZ+QrRF8C7f85g0y2RO+vjR1VqWi1G2IUsGO9jOePtV/N6uFXZGK0eo
-         U6SuAjpZf2bIzPE4XJu6dRSVJexjNMVn8/GCVCy/ukXvonfECBIyYNEUf+wjW6PRV+pn
-         N8WR04My2B5xA1W7fTjo37rJI8ZI0YbZXg8Abv7eqVONv2wI7jlwm/3XNXkZsapZL/WL
-         ys2bssJv+fWriIJssEiCBjb4ICXHWowye5LXcRhXRX1Bah++0qHdW1lyVvARBSgUxqJu
-         bQ3A7ZzNQBqLYTGEPOtfHvP6EQZuN+AoHU2A+mLzmTevPZ73rnponFdrw4DJ47AHWVbN
-         5MSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jS5pHxiuZzzwI5bJqpF22mVfJqpldppDHKL3mSY0vqE=;
-        b=JfHZIWOhEkLh65fJGBPA/KRMH6xt9ayzcYAp5uKiO0g0QsSbvyMswNpLzovHXNFznK
-         lVRZItj3UqeYLYro+TmcpdrcSWVhaD4rHH4qlloJzYFnKo4+toxJ558t5/rKs2r4NcZs
-         awi/wy46SRAZBEPPL0apcS/Hw2UCoTpW263euthnGp7JuJRYvZG1Whaj17/HnS0OryiN
-         oyDr3JwIdUqLxf0WMy44rMrwyTNhReMHKfFFCNQzzTd9rZSqnWojo7MWum7GVfwQFULP
-         qE/eqylvTfdx6cUbCCWAfrw9H6kQcY2GD7xbec2oP/ibLaYdl99920mmgbK6zrEXVoAK
-         BLQg==
-X-Gm-Message-State: APjAAAWS3NfQ+to8Hdcii9CoZnutSEExPObrJj4fOVsaIPpjX9GBJ4x1
-        kBxCmCz7W3X8E9oWKhPlwpQ=
-X-Google-Smtp-Source: APXvYqyQAmS21+aUqk33WgOu4hVs/D8gcy1swXDIgGuyutKZghpZX1heSOHf9YSrvxJjYjQeVl4oXA==
-X-Received: by 2002:a65:6415:: with SMTP id a21mr8817507pgv.98.1567098717772;
-        Thu, 29 Aug 2019 10:11:57 -0700 (PDT)
-Received: from localhost ([100.118.89.196])
-        by smtp.gmail.com with ESMTPSA id x10sm2381540pjo.4.2019.08.29.10.11.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 10:11:57 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
-        freedreno@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
-        GPU)
-Subject: [PATCH 10/10] drm/msm: add atomic traces
-Date:   Thu, 29 Aug 2019 09:45:18 -0700
-Message-Id: <20190829164601.11615-11-robdclark@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190829164601.11615-1-robdclark@gmail.com>
-References: <20190829164601.11615-1-robdclark@gmail.com>
+        id S1727830AbfH2RKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:10:11 -0400
+Received: from mx1.volatile.bz ([185.163.46.97]:38298 "EHLO mx1.volatile.bz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726739AbfH2RKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 13:10:11 -0400
+Received: from TheDarkness.local (unknown [IPv6:2600:6c5d:4200:1e2a:a077:9bc9:2f0:8eb9])
+        by mx1.volatile.bz (Postfix) with ESMTPSA id C72EB590;
+        Thu, 29 Aug 2019 17:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=volatile.bz;
+        s=default; t=1567098606;
+        bh=S+o2J+owdblBkkWC9LHtU/ruSRBVwfwplyhgfA2Ch4E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=d0uj69xoJI1nnoh2dMn+f6LJn2KwnUep+KVGsYedDdqJwM1oLZAg8nihhIcv3hfId
+         Ocxad7wXbbWNCT8DDTmvaJViquVM/1eB+UiOOsxhkM73BKDYT7aOfv/S6KfFeOquCR
+         +De78K+qoZKmkd3qZPOGRiLomi8bKD1bWiEFb0kY=
+Date:   Thu, 29 Aug 2019 13:10:01 -0400
+From:   Dark <dark@volatile.bz>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        anton ivanov <anton.ivanov@cambridgegreys.com>,
+        linux-um <linux-um@lists.infradead.org>
+Subject: Re: [PATCH] um: Rewrite host RNG driver.
+Message-ID: <20190829130804.5e644540@TheDarkness>
+In-Reply-To: <1851013915.76434.1567092659763.JavaMail.zimbra@nod.at>
+References: <20190828204609.02a7ff70@TheDarkness>
+ <CAFLxGvyiviQxr_Bj57ibTU4DQ1H5wQC4DE5DNFBtAFoohcgbsg@mail.gmail.com>
+ <20190829103628.61953f50@thedarkness.local>
+ <1851013915.76434.1567092659763.JavaMail.zimbra@nod.at>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+> Well, it does not block but passing -EAGAIN directly back is not nice.
+> Or does the hw_random framework handle this?
 
-This was useful for debugging fps drops.  I suspect it will be useful
-again.
+The framework is passing -EAGAIN to userspace which isn't very nice at
+all. Luckily, handling it is pretty trival so I went ahead and made an
+updated patch to address this. (I'm unsure of how to submit an update
+to my patch so I'll need a bit of guidence on this.)
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/msm/Makefile                 |   1 +
- drivers/gpu/drm/msm/msm_atomic.c             |  24 +++-
- drivers/gpu/drm/msm/msm_atomic_trace.h       | 110 +++++++++++++++++++
- drivers/gpu/drm/msm/msm_atomic_tracepoints.c |   3 +
- drivers/gpu/drm/msm/msm_gpu_trace.h          |   2 +-
- 5 files changed, 136 insertions(+), 4 deletions(-)
- create mode 100644 drivers/gpu/drm/msm/msm_atomic_trace.h
- create mode 100644 drivers/gpu/drm/msm/msm_atomic_tracepoints.c
+> Maybe our -EAGAIN handling is buggy.
+> That said I'm all for changing the driver to use the right framework
+> but please make sure that we don't drop useful stuff like -EAGAIN handlin=
+g.
 
-diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
-index 7a05cbf2f820..1579cf0d828f 100644
---- a/drivers/gpu/drm/msm/Makefile
-+++ b/drivers/gpu/drm/msm/Makefile
-@@ -75,6 +75,7 @@ msm-y := \
- 	disp/dpu1/dpu_rm.o \
- 	disp/dpu1/dpu_vbif.o \
- 	msm_atomic.o \
-+	msm_atomic_tracepoints.o \
- 	msm_debugfs.o \
- 	msm_drv.o \
- 	msm_fb.o \
-diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-index 80536538967b..fb247aa1081e 100644
---- a/drivers/gpu/drm/msm/msm_atomic.c
-+++ b/drivers/gpu/drm/msm/msm_atomic.c
-@@ -6,6 +6,7 @@
- 
- #include <drm/drm_atomic_uapi.h>
- 
-+#include "msm_atomic_trace.h"
- #include "msm_drv.h"
- #include "msm_gem.h"
- #include "msm_kms.h"
-@@ -33,11 +34,13 @@ static void msm_atomic_async_commit(struct msm_kms *kms, int crtc_idx)
- {
- 	unsigned crtc_mask = BIT(crtc_idx);
- 
-+	trace_msm_atomic_async_commit_start(crtc_mask);
-+
- 	mutex_lock(&kms->commit_lock);
- 
- 	if (!(kms->pending_crtc_mask & crtc_mask)) {
- 		mutex_unlock(&kms->commit_lock);
--		return;
-+		goto out;
- 	}
- 
- 	kms->pending_crtc_mask &= ~crtc_mask;
-@@ -47,19 +50,24 @@ static void msm_atomic_async_commit(struct msm_kms *kms, int crtc_idx)
- 	/*
- 	 * Flush hardware updates:
- 	 */
--	DRM_DEBUG_ATOMIC("triggering async commit\n");
-+	trace_msm_atomic_flush_commit(crtc_mask);
- 	kms->funcs->flush_commit(kms, crtc_mask);
- 	mutex_unlock(&kms->commit_lock);
- 
- 	/*
- 	 * Wait for flush to complete:
- 	 */
-+	trace_msm_atomic_wait_flush_start(crtc_mask);
- 	kms->funcs->wait_flush(kms, crtc_mask);
-+	trace_msm_atomic_wait_flush_finish(crtc_mask);
- 
- 	mutex_lock(&kms->commit_lock);
- 	kms->funcs->complete_commit(kms, crtc_mask);
- 	mutex_unlock(&kms->commit_lock);
- 	kms->funcs->disable_commit(kms);
-+
-+out:
-+	trace_msm_atomic_async_commit_finish(crtc_mask);
- }
- 
- static enum hrtimer_restart msm_atomic_pending_timer(struct hrtimer *t)
-@@ -144,13 +152,17 @@ void msm_atomic_commit_tail(struct drm_atomic_state *state)
- 	bool async = kms->funcs->vsync_time &&
- 			can_do_async(state, &async_crtc);
- 
-+	trace_msm_atomic_commit_tail_start(async, crtc_mask);
-+
- 	kms->funcs->enable_commit(kms);
- 
- 	/*
- 	 * Ensure any previous (potentially async) commit has
- 	 * completed:
- 	 */
-+	trace_msm_atomic_wait_flush_start(crtc_mask);
- 	kms->funcs->wait_flush(kms, crtc_mask);
-+	trace_msm_atomic_wait_flush_finish(crtc_mask);
- 
- 	mutex_lock(&kms->commit_lock);
- 
-@@ -201,6 +213,8 @@ void msm_atomic_commit_tail(struct drm_atomic_state *state)
- 		drm_atomic_helper_commit_hw_done(state);
- 		drm_atomic_helper_cleanup_planes(dev, state);
- 
-+		trace_msm_atomic_commit_tail_finish(async, crtc_mask);
-+
- 		return;
- 	}
- 
-@@ -213,14 +227,16 @@ void msm_atomic_commit_tail(struct drm_atomic_state *state)
- 	/*
- 	 * Flush hardware updates:
- 	 */
--	DRM_DEBUG_ATOMIC("triggering commit\n");
-+	trace_msm_atomic_flush_commit(crtc_mask);
- 	kms->funcs->flush_commit(kms, crtc_mask);
- 	mutex_unlock(&kms->commit_lock);
- 
- 	/*
- 	 * Wait for flush to complete:
- 	 */
-+	trace_msm_atomic_wait_flush_start(crtc_mask);
- 	kms->funcs->wait_flush(kms, crtc_mask);
-+	trace_msm_atomic_wait_flush_finish(crtc_mask);
- 
- 	mutex_lock(&kms->commit_lock);
- 	kms->funcs->complete_commit(kms, crtc_mask);
-@@ -229,4 +245,6 @@ void msm_atomic_commit_tail(struct drm_atomic_state *state)
- 
- 	drm_atomic_helper_commit_hw_done(state);
- 	drm_atomic_helper_cleanup_planes(dev, state);
-+
-+	trace_msm_atomic_commit_tail_finish(async, crtc_mask);
- }
-diff --git a/drivers/gpu/drm/msm/msm_atomic_trace.h b/drivers/gpu/drm/msm/msm_atomic_trace.h
-new file mode 100644
-index 000000000000..b4ca0ed3b4a3
---- /dev/null
-+++ b/drivers/gpu/drm/msm/msm_atomic_trace.h
-@@ -0,0 +1,110 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#if !defined(_MSM_GPU_TRACE_H_) || defined(TRACE_HEADER_MULTI_READ)
-+#define _MSM_GPU_TRACE_H_
-+
-+#include <linux/tracepoint.h>
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM drm_msm_atomic
-+#define TRACE_INCLUDE_FILE msm_atomic_trace
-+
-+TRACE_EVENT(msm_atomic_commit_tail_start,
-+	    TP_PROTO(bool async, unsigned crtc_mask),
-+	    TP_ARGS(async, crtc_mask),
-+	    TP_STRUCT__entry(
-+		    __field(bool, async)
-+		    __field(u32, crtc_mask)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->async = async;
-+		    __entry->crtc_mask = crtc_mask;
-+		    ),
-+	    TP_printk("async=%d crtc_mask=%x",
-+		    __entry->async, __entry->crtc_mask)
-+);
-+
-+TRACE_EVENT(msm_atomic_commit_tail_finish,
-+	    TP_PROTO(bool async, unsigned crtc_mask),
-+	    TP_ARGS(async, crtc_mask),
-+	    TP_STRUCT__entry(
-+		    __field(bool, async)
-+		    __field(u32, crtc_mask)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->async = async;
-+		    __entry->crtc_mask = crtc_mask;
-+		    ),
-+	    TP_printk("async=%d crtc_mask=%x",
-+		    __entry->async, __entry->crtc_mask)
-+);
-+
-+TRACE_EVENT(msm_atomic_async_commit_start,
-+	    TP_PROTO(unsigned crtc_mask),
-+	    TP_ARGS(crtc_mask),
-+	    TP_STRUCT__entry(
-+		    __field(u32, crtc_mask)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->crtc_mask = crtc_mask;
-+		    ),
-+	    TP_printk("crtc_mask=%x",
-+		    __entry->crtc_mask)
-+);
-+
-+TRACE_EVENT(msm_atomic_async_commit_finish,
-+	    TP_PROTO(unsigned crtc_mask),
-+	    TP_ARGS(crtc_mask),
-+	    TP_STRUCT__entry(
-+		    __field(u32, crtc_mask)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->crtc_mask = crtc_mask;
-+		    ),
-+	    TP_printk("crtc_mask=%x",
-+		    __entry->crtc_mask)
-+);
-+
-+TRACE_EVENT(msm_atomic_wait_flush_start,
-+	    TP_PROTO(unsigned crtc_mask),
-+	    TP_ARGS(crtc_mask),
-+	    TP_STRUCT__entry(
-+		    __field(u32, crtc_mask)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->crtc_mask = crtc_mask;
-+		    ),
-+	    TP_printk("crtc_mask=%x",
-+		    __entry->crtc_mask)
-+);
-+
-+TRACE_EVENT(msm_atomic_wait_flush_finish,
-+	    TP_PROTO(unsigned crtc_mask),
-+	    TP_ARGS(crtc_mask),
-+	    TP_STRUCT__entry(
-+		    __field(u32, crtc_mask)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->crtc_mask = crtc_mask;
-+		    ),
-+	    TP_printk("crtc_mask=%x",
-+		    __entry->crtc_mask)
-+);
-+
-+TRACE_EVENT(msm_atomic_flush_commit,
-+	    TP_PROTO(unsigned crtc_mask),
-+	    TP_ARGS(crtc_mask),
-+	    TP_STRUCT__entry(
-+		    __field(u32, crtc_mask)
-+		    ),
-+	    TP_fast_assign(
-+		    __entry->crtc_mask = crtc_mask;
-+		    ),
-+	    TP_printk("crtc_mask=%x",
-+		    __entry->crtc_mask)
-+);
-+
-+#endif
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH ../../drivers/gpu/drm/msm
-+#include <trace/define_trace.h>
-diff --git a/drivers/gpu/drm/msm/msm_atomic_tracepoints.c b/drivers/gpu/drm/msm/msm_atomic_tracepoints.c
-new file mode 100644
-index 000000000000..011dc881f391
---- /dev/null
-+++ b/drivers/gpu/drm/msm/msm_atomic_tracepoints.c
-@@ -0,0 +1,3 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define CREATE_TRACE_POINTS
-+#include "msm_atomic_trace.h"
-diff --git a/drivers/gpu/drm/msm/msm_gpu_trace.h b/drivers/gpu/drm/msm/msm_gpu_trace.h
-index 1155118a27a1..122b84789238 100644
---- a/drivers/gpu/drm/msm/msm_gpu_trace.h
-+++ b/drivers/gpu/drm/msm/msm_gpu_trace.h
-@@ -5,7 +5,7 @@
- #include <linux/tracepoint.h>
- 
- #undef TRACE_SYSTEM
--#define TRACE_SYSTEM drm_msm
-+#define TRACE_SYSTEM drm_msm_gpu
- #define TRACE_INCLUDE_FILE msm_gpu_trace
- 
- TRACE_EVENT(msm_gpu_submit,
--- 
-2.21.0
+Most of the old code was pulled from the framework anyway so it's very
+unlikely that anything else would be dropped here.
+
+On Thu, 29 Aug 2019 17:30:59 +0200 (CEST), Richard Weinberger <richard@nod.=
+at> wrote:
+
+> ----- Urspr=C3=BCngliche Mail -----
+> > Von: "Dark" <dark@volatile.bz>
+> > An: "Richard Weinberger" <richard.weinberger@gmail.com>, "linux-kernel"=
+ <linux-kernel@vger.kernel.org>
+> > CC: "richard" <richard@nod.at>, "anton ivanov" <anton.ivanov@cambridgeg=
+reys.com>, "linux-um"
+> > <linux-um@lists.infradead.org>
+> > Gesendet: Donnerstag, 29. August 2019 16:36:28
+> > Betreff: Re: [PATCH] um: Rewrite host RNG driver. =20
+>=20
+> > On Thu, 29 Aug 2019 15:26:24 +0200, Richard Weinberger
+> > <richard.weinberger@gmail.com> wrote: =20
+> >> So, you removed -EAGAIN handling, made everything synchronous,
+> >> and changed the interface.t
+> >> I'm not sure if this really a much better option. =20
+> >=20
+> > I should have been more clear here that I'm using the interfaces
+> > provided by `drivers/char/hw_random/core.c` for consistency with the
+> > other hardware RNG drivers and to avoid reimplementing stuff that's
+> > already there. =20
+>=20
+> I got this, and this is a good thing!
+> =20
+> > It might be a bit hard to see in the diff, but I pass the file
+> > descriptor to `os_set_fd_async()` to prevent it from blocking. =20
+>=20
+> Well, it does not block but passing -EAGAIN directly back is not nice.
+> Or does the hw_random framework handle this?
+>=20
+> > For the -EAGAIN handling, I'm passing it onto the caller. Since you
+> > mentioned it, It would be better to handle it in the driver itself
+> > so I'll update the patch to address that.
+> >  =20
+> >> Rewriting the driver in a modern manner is a good thing, but throwing =
+the
+> >> old one way with a little hand weaving just because of a unspecified i=
+ssue
+> >> is a little harsh.
+> >> Can you at lest provide more infos what problem you're facing with the
+> >> old driver? =20
+> >=20
+> > Most of it boiled down to it silently breaking if /dev/random on the
+> > host were to block for any reason, and there was the userspace tool
+> > requirement to properly make use of it. With that said, the interface
+> > was also inconsistent with the other hardware RNG drivers which would
+> > require a rewrite to address anyway. =20
+>=20
+> Maybe our -EAGAIN handling is buggy.
+> That said I'm all for changing the driver to use the right framework
+> but please make sure that we don't drop useful stuff like -EAGAIN handlin=
+g.
+>=20
+> Thanks,
+> //richard
 
