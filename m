@@ -2,72 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A081A173E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:54:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 731F8A1775
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:57:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbfH2KyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 06:54:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:3732 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727075AbfH2KyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 06:54:06 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BE03C3C93E;
-        Thu, 29 Aug 2019 10:54:05 +0000 (UTC)
-Received: from thuth.com (ovpn-116-53.ams2.redhat.com [10.36.116.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 676CD5C1D6;
-        Thu, 29 Aug 2019 10:54:00 +0000 (UTC)
-From:   Thomas Huth <thuth@redhat.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org
-Cc:     David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: s390: Test for bad access register at the start of S390_MEM_OP
-Date:   Thu, 29 Aug 2019 12:53:56 +0200
-Message-Id: <20190829105356.27805-1-thuth@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 29 Aug 2019 10:54:05 +0000 (UTC)
+        id S1728042AbfH2K4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 06:56:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38976 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfH2K4U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 06:56:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zGhLBR0A7qfv6CWZPkKZEbt0N93fufawom5jHSXyEHI=; b=RK7ysFeiNsDXvG/kes172+IWv
+        LMy2DudogAzRVGxvCcqIqdLWIUn7xAhwMJ+rrZhs3zy/czK+l3s7wItfCqxBfqG24W3ss+2Kz530V
+        Gg3lImidY9uYIJ5fOccCQZ8UdPAM4PRWGoTPHqntfjQ3nqqR325acokq2EXI2NcjO+c2eW4c4vI2K
+        weMfwpqRA8ZlOaKgvQG8Va4MI9MJEeMxrA5/NnEeDXtO+pf1xIZAzb6Pb7WpKXtow4NgSOHVM4lv4
+        HqOKuTDV5gXr/LFW7KpA+hdYXtc3BHs2z61F7AVTrU8wWLan8pqRash+CUwMKQugvHrhHE6HndtZZ
+        V5oDci1+w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3I6B-0002Mc-Gt; Thu, 29 Aug 2019 10:56:15 +0000
+Date:   Thu, 29 Aug 2019 03:56:15 -0700
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Atish Patra <Atish.Patra@wdc.com>
+Cc:     "hch@infradead.org" <hch@infradead.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "alankao@andestech.com" <alankao@andestech.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
+        "gary@garyguo.net" <gary@garyguo.net>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 1/2] RISC-V: Mark existing SBI as legacy SBI.
+Message-ID: <20190829105615.GA8968@infradead.org>
+References: <20190826233256.32383-1-atish.patra@wdc.com>
+ <20190826233256.32383-2-atish.patra@wdc.com>
+ <20190827140304.GA21855@infradead.org>
+ <ac3cfe4502090354a7c49fae277adb757ad900d5.camel@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ac3cfe4502090354a7c49fae277adb757ad900d5.camel@wdc.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the KVM_S390_MEM_OP ioctl is called with an access register >= 16,
-then there is certainly a bug in the calling userspace application.
-We check for wrong access registers, but only if the vCPU was already
-in the access register mode before (i.e. the SIE block has recorded
-it). The check is also buried somewhere deep in the calling chain (in
-the function ar_translation()), so this is somewhat hard to find.
+On Tue, Aug 27, 2019 at 08:37:27PM +0000, Atish Patra wrote:
+> That would split the implementation between C file & assembly file for
+> no good reason.
+> 
+> How about moving everything in sbi.c and just write everything inline
+> assembly there.
 
-It's better to always report an error to the userspace in case this
-field is set wrong, and it's safer in the KVM code if we block wrong
-values here early instead of relying on a check somewhere deep down
-the calling chain, so let's add another check to kvm_s390_guest_mem_op()
-directly.
-
-Signed-off-by: Thomas Huth <thuth@redhat.com>
----
- arch/s390/kvm/kvm-s390.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index f329dcb3f44c..725690853cbd 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -4255,7 +4255,7 @@ static long kvm_s390_guest_mem_op(struct kvm_vcpu *vcpu,
- 	const u64 supported_flags = KVM_S390_MEMOP_F_INJECT_EXCEPTION
- 				    | KVM_S390_MEMOP_F_CHECK_ONLY;
- 
--	if (mop->flags & ~supported_flags)
-+	if (mop->flags & ~supported_flags || mop->ar >= NUM_ACRS)
- 		return -EINVAL;
- 
- 	if (mop->size > MEM_OP_MAX_SIZE)
--- 
-2.18.1
-
+Well, if we implement it in pure assembly that would be the entire
+implementation, wouldn't it?
