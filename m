@@ -2,34 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDC7AA1A1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:32:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D12A1A1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:32:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbfH2McT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 08:32:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36414 "EHLO mx1.suse.de"
+        id S1727763AbfH2McK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 08:32:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36436 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727315AbfH2McG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727437AbfH2McG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Aug 2019 08:32:06 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E9C05B023;
-        Thu, 29 Aug 2019 12:32:04 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 64EC4AE74;
+        Thu, 29 Aug 2019 12:32:05 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
-        "Manoj N. Kumar" <manoj@linux.ibm.com>,
-        "Matthew R. Ochs" <mrochs@linux.ibm.com>,
-        Uma Krishnan <ukrishn@linux.ibm.com>,
         "James E.J. Bottomley" <jejb@linux.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Tyrel Datwyler <tyreld@linux.ibm.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] scsi: cxlflash: Fix fallthrough warnings.
-Date:   Thu, 29 Aug 2019 14:32:00 +0200
-Message-Id: <279d33f05007e9f3e3fb4e6ea19634b2608ffbd3.1567081143.git.msuchanek@suse.de>
+Subject: [PATCH 2/3] scsi: ibmvfc: Fix fallthrough warnings.
+Date:   Thu, 29 Aug 2019 14:32:01 +0200
+Message-Id: <1302692ee9813ba49e647b7e6203db5e99e65007.1567081143.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <cover.1567081143.git.msuchanek@suse.de>
 References: <cover.1567081143.git.msuchanek@suse.de>
@@ -40,58 +38,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add fallthrough comments where missing.
+Add fallthrough comments where they are missing.
 
 Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- drivers/scsi/cxlflash/main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/scsi/ibmvscsi/ibmvfc.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/cxlflash/main.c b/drivers/scsi/cxlflash/main.c
-index b1f4724efde2..f402fa9a7bec 100644
---- a/drivers/scsi/cxlflash/main.c
-+++ b/drivers/scsi/cxlflash/main.c
-@@ -753,10 +753,13 @@ static void term_intr(struct cxlflash_cfg *cfg, enum undo_level level,
- 		/* SISL_MSI_ASYNC_ERROR is setup only for the primary HWQ */
- 		if (index == PRIMARY_HWQ)
- 			cfg->ops->unmap_afu_irq(hwq->ctx_cookie, 3, hwq);
-+		/* fall through */
- 	case UNMAP_TWO:
- 		cfg->ops->unmap_afu_irq(hwq->ctx_cookie, 2, hwq);
-+		/* fall through */
- 	case UNMAP_ONE:
- 		cfg->ops->unmap_afu_irq(hwq->ctx_cookie, 1, hwq);
-+		/* fall through */
- 	case FREE_IRQ:
- 		cfg->ops->free_afu_irqs(hwq->ctx_cookie);
- 		/* fall through */
-@@ -973,14 +976,18 @@ static void cxlflash_remove(struct pci_dev *pdev)
- 	switch (cfg->init_state) {
- 	case INIT_STATE_CDEV:
- 		cxlflash_release_chrdev(cfg);
-+		/* fall through */
- 	case INIT_STATE_SCSI:
- 		cxlflash_term_local_luns(cfg);
- 		scsi_remove_host(cfg->host);
-+		/* fall through */
- 	case INIT_STATE_AFU:
- 		term_afu(cfg);
-+		/* fall through */
- 	case INIT_STATE_PCI:
- 		cfg->ops->destroy_afu(cfg->afu_cookie);
- 		pci_disable_device(pdev);
-+		/* fall through */
- 	case INIT_STATE_NONE:
- 		free_mem(cfg);
- 		scsi_host_put(cfg->host);
-@@ -3017,6 +3024,7 @@ static ssize_t num_hwqs_store(struct device *dev,
- 		wait_event(cfg->reset_waitq, cfg->state != STATE_RESET);
- 		if (cfg->state == STATE_NORMAL)
- 			goto retry;
-+		/* fall through */
- 	default:
- 		/* Ideally should not happen */
- 		dev_err(dev, "%s: Device is not ready, state=%d\n",
+diff --git a/drivers/scsi/ibmvscsi/ibmvfc.c b/drivers/scsi/ibmvscsi/ibmvfc.c
+index 8cdbac076a1b..2a06a5b4d3a5 100644
+--- a/drivers/scsi/ibmvscsi/ibmvfc.c
++++ b/drivers/scsi/ibmvscsi/ibmvfc.c
+@@ -1830,6 +1830,7 @@ static int ibmvfc_bsg_request(struct bsg_job *job)
+ 		port_id = (bsg_request->rqst_data.h_els.port_id[0] << 16) |
+ 			(bsg_request->rqst_data.h_els.port_id[1] << 8) |
+ 			bsg_request->rqst_data.h_els.port_id[2];
++		/* fallthrough */
+ 	case FC_BSG_RPT_ELS:
+ 		fc_flags = IBMVFC_FC_ELS;
+ 		break;
+@@ -1838,6 +1839,7 @@ static int ibmvfc_bsg_request(struct bsg_job *job)
+ 		port_id = (bsg_request->rqst_data.h_ct.port_id[0] << 16) |
+ 			(bsg_request->rqst_data.h_ct.port_id[1] << 8) |
+ 			bsg_request->rqst_data.h_ct.port_id[2];
++		/* fallthrough */
+ 	case FC_BSG_RPT_CT:
+ 		fc_flags = IBMVFC_FC_CT_IU;
+ 		break;
+@@ -4020,6 +4022,7 @@ static void ibmvfc_npiv_login_done(struct ibmvfc_event *evt)
+ 		return;
+ 	case IBMVFC_MAD_CRQ_ERROR:
+ 		ibmvfc_retry_host_init(vhost);
++		/* fallthrough */
+ 	case IBMVFC_MAD_DRIVER_FAILED:
+ 		ibmvfc_free_event(evt);
+ 		return;
 -- 
 2.12.3
 
