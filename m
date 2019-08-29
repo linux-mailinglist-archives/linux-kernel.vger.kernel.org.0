@@ -2,196 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7CF2A1A05
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:27:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19542A1A0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbfH2M1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 08:27:24 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:53146 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727205AbfH2M1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 08:27:23 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 938B4308AA11;
-        Thu, 29 Aug 2019 12:27:22 +0000 (UTC)
-Received: from thuth.remote.csb (ovpn-116-53.ams2.redhat.com [10.36.116.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D77691001B14;
-        Thu, 29 Aug 2019 12:27:14 +0000 (UTC)
-Subject: Re: [PATCH v2] KVM: selftests: Add a test for the KVM_S390_MEM_OP
- ioctl
-To:     Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-References: <20190829121412.30194-1-thuth@redhat.com>
- <1d3eb743-464f-58d6-9a0e-3bb2515f1744@linux.ibm.com>
-From:   Thomas Huth <thuth@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=thuth@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Red Hat
-Message-ID: <f04624eb-1c96-cdc6-7f86-a2109f1cc5b7@redhat.com>
-Date:   Thu, 29 Aug 2019 14:27:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727195AbfH2M3Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 08:29:24 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38782 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbfH2M3Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 08:29:24 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TCTDlM006209;
+        Thu, 29 Aug 2019 12:29:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
+ bh=ZwaW5u32DIdchmsLgCGFR9Gv4QDILMv0PoINBiFI9gU=;
+ b=pRKUe+NHAsjffKU34frQv42lohqc8NrwjAz6T6ZytXK8jCRqu5CwkGnWFjdraLAefTNF
+ RdUBUtq78+eY9xR0/IqDqTCSn7GCNk5trIJVDYH4O2Lts0fAwhhkz6zuk/4t5jLNFZD1
+ Pqi/M2C1D6iKH3Qv1SkC3ZUQexUwNYzp+gQD93ldOQbApAcIJr7u4Zdykf7XcSIxaYmO
+ CDvksh67QgylAF/nqqyj9bnDhJfwx5OMVYjkziwULCFMSeF5OzBlC1D2TwO7F0yongJE
+ 5qm9Wi8FDimfk50bHV49lqcGGWoRQ1qovB6W/1SByrz7NHuhQlBdJSgNWXtpvj2bfFlB nw== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2upem8g1xp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 12:29:17 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TCSDue032045;
+        Thu, 29 Aug 2019 12:29:17 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2unvtyvw2r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 12:29:17 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7TCSmIj005841;
+        Thu, 29 Aug 2019 12:28:48 GMT
+Received: from mwanda (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Aug 2019 05:28:47 -0700
+Date:   Thu, 29 Aug 2019 15:28:39 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Rui Miguel Silva <rmfrfs@gmail.com>
+Cc:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] staging: greybus: light: fix a couple double frees
+Message-ID: <20190829122839.GA20116@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <1d3eb743-464f-58d6-9a0e-3bb2515f1744@linux.ibm.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="OkFalos8lQQjDlYYFWlDnPC9G6Att1Gri"
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 29 Aug 2019 12:27:22 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908290137
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---OkFalos8lQQjDlYYFWlDnPC9G6Att1Gri
-Content-Type: multipart/mixed; boundary="cDDaWW4PZAqPC6U7miDKHizLTNuYgmHhC";
- protected-headers="v1"
-From: Thomas Huth <thuth@redhat.com>
-To: Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org,
- Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- David Hildenbrand <david@redhat.com>, Cornelia Huck <cohuck@redhat.com>,
- =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Message-ID: <f04624eb-1c96-cdc6-7f86-a2109f1cc5b7@redhat.com>
-Subject: Re: [PATCH v2] KVM: selftests: Add a test for the KVM_S390_MEM_OP
- ioctl
-References: <20190829121412.30194-1-thuth@redhat.com>
- <1d3eb743-464f-58d6-9a0e-3bb2515f1744@linux.ibm.com>
-In-Reply-To: <1d3eb743-464f-58d6-9a0e-3bb2515f1744@linux.ibm.com>
+The problem is in gb_lights_request_handler().  If we get a request to
+change the config then we release the light with gb_lights_light_release()
+and re-allocated it.  However, if the allocation fails part way through
+then we call gb_lights_light_release() again.  This can lead to a couple
+different double frees where we haven't cleared out the original values:
 
---cDDaWW4PZAqPC6U7miDKHizLTNuYgmHhC
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+	gb_lights_light_v4l2_unregister(light);
+	...
+	kfree(light->channels);
+	kfree(light->name);
 
-On 29/08/2019 14.21, Janosch Frank wrote:
-> On 8/29/19 2:14 PM, Thomas Huth wrote:
->> Check that we can write and read the guest memory with this s390x
->> ioctl, and that some error cases are handled correctly.
->>
->> Signed-off-by: Thomas Huth <thuth@redhat.com>
->> ---
->>  v2: Check the ioctl also with "size" set to 0
->>
-> [...]
->> +
->> +	/* Zero size: */
->> +	ksmo.gaddr =3D (uintptr_t)mem1;
->> +	ksmo.flags =3D 0;
->> +	ksmo.size =3D 0;
->> +	ksmo.op =3D KVM_S390_MEMOP_LOGICAL_WRITE;
->> +	ksmo.buf =3D (uintptr_t)mem1;
->> +	ksmo.ar =3D 0;
->> +	rv =3D _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
->> +	TEST_ASSERT(rv =3D=3D -1, "ioctl allows 0 as size");
->=20
-> Test for errno =3D=3D -EINVAL?
+I also made a small change to how we set "light->channels_count = 0;".
+The original code handled this part fine and did not cause a use after
+free but it was sort of complicated to read.
 
-Assuming that my "Test for bad access register and size at the start
- of S390_MEM_OP" goes in first, yes, I can add that check.
+Fixes: 2870b52bae4c ("greybus: lights: add lights implementation")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/staging/greybus/light.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Otherwise, the current kernel still returns ENOMEM.
+diff --git a/drivers/staging/greybus/light.c b/drivers/staging/greybus/light.c
+index 010ae1e9c7fb..40680eaf3974 100644
+--- a/drivers/staging/greybus/light.c
++++ b/drivers/staging/greybus/light.c
+@@ -1098,21 +1098,21 @@ static void gb_lights_channel_release(struct gb_channel *channel)
+ static void gb_lights_light_release(struct gb_light *light)
+ {
+ 	int i;
+-	int count;
+ 
+ 	light->ready = false;
+ 
+-	count = light->channels_count;
+-
+ 	if (light->has_flash)
+ 		gb_lights_light_v4l2_unregister(light);
++	light->has_flash = false;
+ 
+-	for (i = 0; i < count; i++) {
++	for (i = 0; i < light->channels_count; i++)
+ 		gb_lights_channel_release(&light->channels[i]);
+-		light->channels_count--;
+-	}
++	light->channels_count = 0;
++
+ 	kfree(light->channels);
++	light->channels = NULL;
+ 	kfree(light->name);
++	light->name = NULL;
+ }
+ 
+ static void gb_lights_release(struct gb_lights *glights)
+-- 
+2.20.1
 
->> +
->> +	/* Bad flags: */
->> +	ksmo.gaddr =3D (uintptr_t)mem1;
->> +	ksmo.flags =3D -1;
->> +	ksmo.size =3D maxsize;
->> +	ksmo.op =3D KVM_S390_MEMOP_LOGICAL_WRITE;
->> +	ksmo.buf =3D (uintptr_t)mem1;
->> +	ksmo.ar =3D 0;
->> +	rv =3D _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
->> +	TEST_ASSERT(rv =3D=3D -1 && errno =3D=3D EINVAL, "ioctl allows all f=
-lags?");
->> +
->> +	/* Bad operation: */
->> +	ksmo.gaddr =3D (uintptr_t)mem1;
->> +	ksmo.flags =3D 0;
->> +	ksmo.size =3D maxsize;
->> +	ksmo.op =3D -1;
->> +	ksmo.buf =3D (uintptr_t)mem1;
->> +	ksmo.ar =3D 0;
->> +	rv =3D _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
->> +	TEST_ASSERT(rv =3D=3D -1 && errno =3D=3D EINVAL, "ioctl allows all f=
-lags?");
->=20
-> Wrong report string
-Oops, stupid copy-n-paste bug ... I'll fix it in v3...
-
- Thanks,
-  Thomas
-
-
---cDDaWW4PZAqPC6U7miDKHizLTNuYgmHhC--
-
---OkFalos8lQQjDlYYFWlDnPC9G6Att1Gri
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEJ7iIR+7gJQEY8+q5LtnXdP5wLbUFAl1nxJ0ACgkQLtnXdP5w
-LbW8sw//Qj5XBPlZ6OpwwCOMRqTagd5Eknde5AKOlN/GtmRrsTgK4FVhd/p9K1mm
-caxdAQKZ+LlJo+pQP79PEJ/NlTGjhtGrdu34sMJjeiHSGP+VySxJeg7E5EZOe2b0
-ur8rBVJVgHik1kY2kMjHCsqYYTOGoa6XSLcQEY9p2rWroVJtpSZnzhxKA9rKbCvq
-IOOXK40Etfhs34pmjhDtqaCPoMvDfaVFviJmFtqGORJ/NLN2/34y781UzU2vUWD3
-Jo8eKh5jExX/PZhrVXrSCQyf+GyVYnvpoFeys05uySUI0Yc+NVdZ4r8Xj7AGcEPH
-UEQLzAmbzifW5vR/Cm2Qthr+5jercfQZ0QrCYWS9+2bJ4jlRqADfLUWEK7sje5E1
-8t33gUaAsHcST0F0IYABEIEwHYACHH3uuWMS2THEPhVkLWVUr9iwuEyMmY3SjBTY
-wWTpA6iqxkUFZ+ILCMBIhWYq7ZbymylCOgFhkSix+L2vpPtq/LeoHgUwq0n2itjQ
-z7tPfUIADgspNCP/pRjAdOPqIl6FViJ0wHW4R+ONyfVz8zqh5g1nDGqmiEYZ+s/6
-dkgrIv6jVDKI5cvgaxz3QDut3Pekl+NfaSZifnCq1xC3kM9GJs+u7UUuSa6LVNNT
-HOI/RNotuCxAtLtWDcBCF0mw7TEqeJHeuQ7M0b8flfaXfAUFdvI=
-=8/GR
------END PGP SIGNATURE-----
-
---OkFalos8lQQjDlYYFWlDnPC9G6Att1Gri--
