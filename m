@@ -2,92 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D42AAA2857
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01B9FA2861
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:50:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfH2UrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:47:19 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32992 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726619AbfH2UrT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:47:19 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g2so2908710pfq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 13:47:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MJayklqdWT6csEYdYMiQVvZMqRpC466630ChpVCkdxQ=;
-        b=CadrU8ghFwM/MmiEU93P/EsB+k0qrlc83o+7qya6T5tZ+i7E3oeIb1GUYIzwpF1eu7
-         ngEIGAi8KJbKpNuzegOuyqiN95pmVfJww9DCfNB3Ju+Bz8h1NJ7osLc+08K2rHE9HMci
-         k8EWAuD9KijnDszcJUE9t6KVEx8YkAsCxW5i6CBZTGuUoka6+FvmttBS195aj3VDHZsK
-         WSq0Gv6lZao/vQn8yQWEYN9kiBXoopzqku7eM5IMd5KBbYD9R8mPxZNLgx/M2KgJ36RJ
-         Nc6PcwyesQg/rIYwDARgAXvbivH910n2Cn1u78p6KAITchdHsvVPe0aO3WhsNTF0MxC6
-         B5Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MJayklqdWT6csEYdYMiQVvZMqRpC466630ChpVCkdxQ=;
-        b=mVOpSqY7w3T5ECiJB5qZ3kvy/C6RUa9gvAMclhy4IPOXkELPdIj2MGXkMKrV66RnBQ
-         fsQppQpRusc9eiIOHawVMci7w2EtxeVkHeopCiLJhijPwyTuZTEN99w17n7L7RkaWxl4
-         F8E83oWCR4Y8PpgCr/mm57tZrDVkTsgm1xzph6+IHDEOmxv2vLpqNQq0uRVPlVYx5JZc
-         xtdukjTQMWtJiS6ydoeOUkB3K7AlftktfE/BDsvmc03sgjIZvc0m33dkLmm97eFDs6mb
-         T6KcLo+JxgYY5nVzTvqvkybtabvtvTZM7q38ZcD1v49y12bMZcSdsyawS/GMSjQzFG7Q
-         kkUA==
-X-Gm-Message-State: APjAAAXcq8ByvyAPBcamVqR5cFFar1UngbxsZQPwPMbv3ZqgcPGt9fB+
-        /jhsuLcoGjGcwMy4AHSKZbSGOth4ODMz/CvBBGFK4A==
-X-Google-Smtp-Source: APXvYqzbv9mK6xtLscOvP00n/83YqjbqNkKSGGml7xd6V/X/DbMR9yUcaVYkok+Zm+5A9jArVW0I0nS2OLmtBjvs42o=
-X-Received: by 2002:a17:90a:ac02:: with SMTP id o2mr12093307pjq.134.1567111637649;
- Thu, 29 Aug 2019 13:47:17 -0700 (PDT)
+        id S1727820AbfH2UuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:50:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56844 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726512AbfH2UuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 16:50:17 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 00D9430872CA;
+        Thu, 29 Aug 2019 20:50:17 +0000 (UTC)
+Received: from cantor.redhat.com (ovpn-116-163.phx2.redhat.com [10.3.116.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A5B8060BF7;
+        Thu, 29 Aug 2019 20:50:16 +0000 (UTC)
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Alexey Klimov <aklimov@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: [PATCH 0/3 v3] tpm: add update_durations class op to allow override of chip supplied values
+Date:   Thu, 29 Aug 2019 13:49:44 -0700
+Message-Id: <20190829204947.2591-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
-References: <20190828225535.49592-1-ndesaulniers@google.com>
- <CANiq72niUcQv-TFn=_0Ui7nEM9ESKNC7n6GPQs2AKXVsg6ZV=A@mail.gmail.com> <CA+icZUUi9Tsjha+unG+DasXZ9oBb6XcuZvj+N9h=b4XH7cHmqg@mail.gmail.com>
-In-Reply-To: <CA+icZUUi9Tsjha+unG+DasXZ9oBb6XcuZvj+N9h=b4XH7cHmqg@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 29 Aug 2019 13:47:06 -0700
-Message-ID: <CAKwvOdmF0D0vfoXdJgUxmc_Zszuid+QPL+LT5CUiaYUSA9Lp4A@mail.gmail.com>
-Subject: Re: [PATCH v3 00/14] treewide: prefer __section from compiler_attributes.h
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Will Deacon <will@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        naveen.n.rao@linux.vnet.ibm.com,
-        David Miller <davem@davemloft.net>,
-        Paul Burton <paul.burton@mips.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 29 Aug 2019 20:50:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 1:37 PM Sedat Dilek <sedat.dilek@gmail.com> wrote:
->
-> On Thu, Aug 29, 2019 at 10:24 PM Miguel Ojeda
-> <miguel.ojeda.sandonis@gmail.com> wrote:
-> >
-> > On Thu, Aug 29, 2019 at 12:55 AM Nick Desaulniers
-> > <ndesaulniers@google.com> wrote:
-> > >
-> > > Changes V2 -> V3:
-> > > * s/__attribute__((__section/__attribute__((__section__ in commit
-> > >   messages as per Joe.
-> >
-> > I have uploaded to -next v3 so that we get some feedback tomorrow
-> > rather than waiting for Monday.
-> >
-> > I added a few changes, please take a look at the commits:
-> >
-> >   https://github.com/ojeda/linux/commits/compiler-attributes
-> >
->
-> Thanks for taking care and bringing this to linux-next asap.
+We've run into a case where a customer has an STM TPM 1.2 chip
+(version 1.2.8.28), that is getting into an inconsistent state and
+they end up getting tpm transmit errors.  In really old tpm code this
+wasn't seen because the code that grabbed the duration values from the
+chip could fail silently, and would proceed to just use default values
+and move forward. More recent code though successfully gets the
+duration values from the chip, and using those values this particular
+chip version gets into the state seen by the customer.
 
-LGTM, thanks Miguel, ship it!
+The idea with this patchset is to provide a facility like the
+update_timeouts operation to allow the override of chip supplied
+values.
 
--- 
-Thanks,
-~Nick Desaulniers
+v3: Rework update_durations to make use of new version structs
+    and pull tpm1_getcap calls out of loop.
+v2: Update Alexey's v1 submission with suggestions made by Jarkko
+
+
+
