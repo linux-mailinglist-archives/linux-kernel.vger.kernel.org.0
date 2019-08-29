@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6306A233B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:14:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D2DDA2336
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbfH2SOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:14:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55714 "EHLO mail.kernel.org"
+        id S1728773AbfH2SOJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:14:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728153AbfH2SOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:14:00 -0400
+        id S1728715AbfH2SOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:14:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AC4823427;
-        Thu, 29 Aug 2019 18:13:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D292723405;
+        Thu, 29 Aug 2019 18:14:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102440;
-        bh=u2HAGG7hT+Bcz8+BAkrHj6sRlGaGgfU6rFtQSDz5A+g=;
+        s=default; t=1567102443;
+        bh=pVx0+T0uMre9RGLRRffv8Dz/qSSmktN8JSDjH9TDMuI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XkB/9n2uGbTac40D81tk1ciyh7hKal+d7lDcYKVLp18775TVi9DWvNBpOEoBxThCx
-         vC4+GPHJ/xQbzDRZTm0yin3cwyZ5u7gHVDI6jPiHhCwVpJO94kLbE7YpoDj9LA7axC
-         o7IFsOLoS93s/2lwlRz3uO+ChEK/yrT918DzUpag=
+        b=jqhjaBLSCGu8bS2rEFrsewaYFKp/2Vs45ykjurG/djkR87TemeMi1fEWKA0MiABNk
+         1mfiD9/Iz+U3JEYpWigKQkZ/hr146PrTqgVF4Qf0KBxGrSFBwlCzJF79X1QDNnQDB3
+         MLyKE6HQ3GJ8B/QMeEwfHf+MQXlSUXd1OR3RLBjQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Courbot <acourbot@chromium.org>,
-        Tomasz Figa <tfiga@chromium.org>, CK Hu <ck.hu@mediatek.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 28/76] drm/mediatek: set DMA max segment size
-Date:   Thu, 29 Aug 2019 14:12:23 -0400
-Message-Id: <20190829181311.7562-28-sashal@kernel.org>
+Cc:     Wenwen Wang <wenwen@cs.uga.edu>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 31/76] cxgb4: fix a memory leak bug
+Date:   Thu, 29 Aug 2019 14:12:26 -0400
+Message-Id: <20190829181311.7562-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -44,112 +43,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Courbot <acourbot@chromium.org>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 070955558e820b9a89c570b91b1f21762f62b288 ]
+[ Upstream commit c554336efa9bbc28d6ec14efbee3c7d63c61a34f ]
 
-This driver requires imported PRIME buffers to appear contiguously in
-its IO address space. Make sure this is the case by setting the maximum
-DMA segment size to a more suitable value than the default 64KB.
+In blocked_fl_write(), 't' is not deallocated if bitmap_parse_user() fails,
+leading to a memory leak bug. To fix this issue, free t before returning
+the error.
 
-Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Signed-off-by: CK Hu <ck.hu@mediatek.com>
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 35 ++++++++++++++++++++++++--
- drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
- 2 files changed, 35 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 8b18a00a58c7e..c021d4c8324f5 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -213,6 +213,7 @@ static int mtk_drm_kms_init(struct drm_device *drm)
- 	struct mtk_drm_private *private = drm->dev_private;
- 	struct platform_device *pdev;
- 	struct device_node *np;
-+	struct device *dma_dev;
- 	int ret;
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+index 02959035ed3f2..d692251ee252c 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+@@ -3236,8 +3236,10 @@ static ssize_t blocked_fl_write(struct file *filp, const char __user *ubuf,
+ 		return -ENOMEM;
  
- 	if (!iommu_present(&platform_bus_type))
-@@ -275,7 +276,29 @@ static int mtk_drm_kms_init(struct drm_device *drm)
- 		goto err_component_unbind;
- 	}
- 
--	private->dma_dev = &pdev->dev;
-+	dma_dev = &pdev->dev;
-+	private->dma_dev = dma_dev;
-+
-+	/*
-+	 * Configure the DMA segment size to make sure we get contiguous IOVA
-+	 * when importing PRIME buffers.
-+	 */
-+	if (!dma_dev->dma_parms) {
-+		private->dma_parms_allocated = true;
-+		dma_dev->dma_parms =
-+			devm_kzalloc(drm->dev, sizeof(*dma_dev->dma_parms),
-+				     GFP_KERNEL);
-+	}
-+	if (!dma_dev->dma_parms) {
-+		ret = -ENOMEM;
-+		goto err_component_unbind;
-+	}
-+
-+	ret = dma_set_max_seg_size(dma_dev, (unsigned int)DMA_BIT_MASK(32));
-+	if (ret) {
-+		dev_err(dma_dev, "Failed to set DMA segment size\n");
-+		goto err_unset_dma_parms;
+ 	err = bitmap_parse_user(ubuf, count, t, adap->sge.egr_sz);
+-	if (err)
++	if (err) {
++		kvfree(t);
+ 		return err;
 +	}
  
- 	/*
- 	 * We don't use the drm_irq_install() helpers provided by the DRM
-@@ -285,13 +308,16 @@ static int mtk_drm_kms_init(struct drm_device *drm)
- 	drm->irq_enabled = true;
- 	ret = drm_vblank_init(drm, MAX_CRTC);
- 	if (ret < 0)
--		goto err_component_unbind;
-+		goto err_unset_dma_parms;
- 
- 	drm_kms_helper_poll_init(drm);
- 	drm_mode_config_reset(drm);
- 
- 	return 0;
- 
-+err_unset_dma_parms:
-+	if (private->dma_parms_allocated)
-+		dma_dev->dma_parms = NULL;
- err_component_unbind:
- 	component_unbind_all(drm->dev, drm);
- err_config_cleanup:
-@@ -302,9 +328,14 @@ static int mtk_drm_kms_init(struct drm_device *drm)
- 
- static void mtk_drm_kms_deinit(struct drm_device *drm)
- {
-+	struct mtk_drm_private *private = drm->dev_private;
-+
- 	drm_kms_helper_poll_fini(drm);
- 	drm_atomic_helper_shutdown(drm);
- 
-+	if (private->dma_parms_allocated)
-+		private->dma_dev->dma_parms = NULL;
-+
- 	component_unbind_all(drm->dev, drm);
- 	drm_mode_config_cleanup(drm);
- }
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-index 598ff3e704465..e03fea12ff598 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-@@ -51,6 +51,8 @@ struct mtk_drm_private {
- 	} commit;
- 
- 	struct drm_atomic_state *suspend_state;
-+
-+	bool dma_parms_allocated;
- };
- 
- extern struct platform_driver mtk_ddp_driver;
+ 	bitmap_copy(adap->sge.blocked_fl, t, adap->sge.egr_sz);
+ 	kvfree(t);
 -- 
 2.20.1
 
