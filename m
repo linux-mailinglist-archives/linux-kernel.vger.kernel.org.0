@@ -2,127 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7135DA1C83
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1227FA1C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:14:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfH2OPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:15:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:50278 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727046AbfH2OPp (ORCPT
+        id S1727359AbfH2OOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:14:16 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41888 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727066AbfH2OOP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:15:45 -0400
-Received: from mail-pf1-f197.google.com ([209.85.210.197])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1i3LBF-0003Tp-Tp
-        for linux-kernel@vger.kernel.org; Thu, 29 Aug 2019 14:13:42 +0000
-Received: by mail-pf1-f197.google.com with SMTP id w30so2604395pfj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 07:13:41 -0700 (PDT)
+        Thu, 29 Aug 2019 10:14:15 -0400
+Received: by mail-lj1-f194.google.com with SMTP id m24so3191208ljg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 07:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZZPXqqYLvYN4nDDMAMbMyVJNvSWypAmknhRGtnG9An0=;
+        b=KlL2hAotI+Z9cY+vLTcjRK2l4vLCniCUDB73rwQchP635EqH94J6VH3zfuR8gkDpcU
+         exeYmRnofhSEHsgOWkZZNKFKPwlmx1UvpU7pYWQGScpMo9rKeZJEETGuARcjSqCIg96Z
+         LQnehM2j8IsT0eoi/Tl2XOReGvz4z6CZSpvr3tG6oToGwEKfm+UvVAwNVBeoGwU1tbx6
+         4Yd70kNlyZdZZ2yp/3oatnErKk+9I97u/mctJDo4I/h605iqsUDJ6HCfLwK6s0LS/Z/e
+         u4oj3Fk4ShYtQWxQUsQdcDkWKRDCen898Mr+X1Ohapkbrx0EuqgICYR8N9k7SKhuF/vr
+         fBjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=GYvTdCfNIJLEcLEkMMRAs0zx2HzNWruXtOTwWsJt6vs=;
-        b=abwSaSpZqebjwHdPv9/4ps72SU4ZLzImo5DolK+Csax72fiFHLJ8FN/90K1bi9zlRz
-         l46VL2LQ7396aO/LlPuLtx7NHkLnhsF5vcUrVPhPy9dGtS+Rf25Kpz4BjtvZZO0Rva2+
-         oZk62u0ZLcRzyf9CmcalHXyIGd/QX2qcTuMIR8wR4jts79I140fP9Cvmb15uk1ByCAGp
-         q6gIEVEMb2swwWJLwswkHnUVGgPjTNi9XlPR1Ad0f6sRkrl9ShLYKgTTDBMCRO+/0HrY
-         CAADs8vZsjGvphCWSxRWCkONNEEl8JgUkqREScAQ6ZKTicJ20Wb6O0S09QwxAWqttGiz
-         uLng==
-X-Gm-Message-State: APjAAAX9tq43/gZVgRFWdmOunFY//dp9M0VxYyB5/RUl7WjvmS82nzhZ
-        F3EmHKA31+q/OsFMZxyIZays6liFrOmtmQbJRzYI13Jy6v2GdjoqXrQE2WKf3ZmNrVZ72IGTj+o
-        U5sVbV1ZdQdXFbKDZm8yV+J72UTKwgAXacHsfax/Aog==
-X-Received: by 2002:a17:902:d24:: with SMTP id 33mr10186221plu.133.1567088020649;
-        Thu, 29 Aug 2019 07:13:40 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzG8az5f+H61s4CqgSdjR3nbpHUIAS23J32uOtPQjF70pRytAWrQUSbH0WgnbNSEVsjwoCXfQ==
-X-Received: by 2002:a17:902:d24:: with SMTP id 33mr10186190plu.133.1567088020335;
-        Thu, 29 Aug 2019 07:13:40 -0700 (PDT)
-Received: from 2001-b011-380f-3c42-c1f6-ed57-34d8-2c76.dynamic-ip6.hinet.net (2001-b011-380f-3c42-c1f6-ed57-34d8-2c76.dynamic-ip6.hinet.net. [2001:b011:380f:3c42:c1f6:ed57:34d8:2c76])
-        by smtp.gmail.com with ESMTPSA id m125sm3373273pfm.139.2019.08.29.07.13.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Aug 2019 07:13:39 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8;
-        delsp=yes;
-        format=flowed
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
-Subject: Re: [PATCH] x86/hpet: Disable HPET on Intel Coffe Lake
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <alpine.DEB.2.21.1908291351510.1938@nanos.tec.linutronix.de>
-Date:   Thu, 29 Aug 2019 22:13:32 +0800
-Cc:     Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, harry.pan@intel.com,
-        x86@kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Content-Transfer-Encoding: 8bit
-Message-Id: <793CCD4F-35E0-46B9-B5D4-3D3233BA5D35@canonical.com>
-References: <20190829091232.15065-1-kai.heng.feng@canonical.com>
- <alpine.DEB.2.21.1908291351510.1938@nanos.tec.linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-X-Mailer: Apple Mail (2.3445.104.11)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZZPXqqYLvYN4nDDMAMbMyVJNvSWypAmknhRGtnG9An0=;
+        b=pSWfj7Gyx+SD8p4cML4X1tahgKEr/R85vo511no0itPEA7IMGkwh7gSdhUtOItMQ5Z
+         iWANgA84RrwqVwk+IvKuCPWgwBbNkIy/7OHmNll7q5sY9NLgGuaMXdxveSdeUdsMW4AI
+         m42Bkwb180dnlI0nM63ZXsw2hj+OWNEX7RmVkDYueYVUFtM5a3MVnvU7/9NkwoLFnkMq
+         kw73MvVJA6COrxvhMW/OOX2KTeczQkUVuBeVt89iXl+kNYeHg9GglFrb5hr983G2SRWc
+         2P2F8M1H8PVo8B3GNy2wPTjwrqdQZo2foPIScTEgn7crF3VkwzxtvVmEO2CEnmWn2frQ
+         VdoQ==
+X-Gm-Message-State: APjAAAXqIHPqDtP7uUUcZDPmSXDA9K8WOO0vCUOc3ySsVU3vLJHZO8jO
+        s1e+RJ2MUlz0Wv9bHgAlT7ldyhbu+53DLepdNVg=
+X-Google-Smtp-Source: APXvYqwVXF45iA4SPxnty9W9MtJC/8yxJzML9QIFcOs4Sg0ut209ynRlBwkOKugQgTb11H/Q4VpLVg3ZVRphVg0IX5c=
+X-Received: by 2002:a2e:2b0a:: with SMTP id q10mr5433518lje.203.1567088053585;
+ Thu, 29 Aug 2019 07:14:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190828225535.49592-1-ndesaulniers@google.com> <20190828225535.49592-11-ndesaulniers@google.com>
+In-Reply-To: <20190828225535.49592-11-ndesaulniers@google.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 29 Aug 2019 16:14:02 +0200
+Message-ID: <CANiq72mQihii6xaP1pBfyDin3wZOOuMdh9PGAKbmuAPovhV7gQ@mail.gmail.com>
+Subject: Re: [PATCH v3 10/14] x86: prefer __section from compiler_attributes.h
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Sedat Dilek <sedat.dilek@gmail.com>, Will Deacon <will@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        naveen.n.rao@linux.vnet.ibm.com,
+        David Miller <davem@davemloft.net>,
+        Paul Burton <paul.burton@mips.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 20:13, Thomas Gleixner <tglx@linutronix.de> wrote:
-
-> On Thu, 29 Aug 2019, Kai-Heng Feng wrote:
+On Thu, Aug 29, 2019 at 12:56 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
 >
->> Some Coffee Lake platforms have skewed HPET timer once the SoCs entered
->> PC10, and marked TSC as unstable clocksource as result.
+> diff --git a/arch/x86/include/asm/iommu_table.h b/arch/x86/include/asm/iommu_table.h
+> index 1fb3fd1a83c2..7d190710eb92 100644
+> --- a/arch/x86/include/asm/iommu_table.h
+> +++ b/arch/x86/include/asm/iommu_table.h
+> @@ -50,9 +50,8 @@ struct iommu_table_entry {
 >
-> So here you talk about Coffee Lake and in the patch you use KABYLAKE.
+>  #define __IOMMU_INIT(_detect, _depend, _early_init, _late_init, _finish)\
+>         static const struct iommu_table_entry                           \
+> -               __iommu_entry_##_detect __used                          \
+> -       __attribute__ ((unused, __section__(".iommu_table"),            \
+> -                       aligned((sizeof(void *)))))     \
+> +               __iommu_entry_##_detect __used __section(.iommu_table)  \
+> +               __aligned((sizeof(void *)))                             \
+>         = {_detect, _depend, _early_init, _late_init,                   \
+>            _finish ? IOMMU_FINISH_IF_DETECTED : 0}
+>  /*
 
-Coffeelake has the same model number as Kabylake.
+I see other patches that reduce unused -> to __unused, but is this
+unused -> __used intended?
 
->
->> Harry Pan identified it's a firmware bug [1].
->>
->> To prevent creating a circular dependency between HPET and TSC, let's
->> disable HPET on affected platforms.
->>
->> [1]:  
->> https://lore.kernel.org/lkml/20190516090651.1396-1-harry.pan@intel.com/
->> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203183
->
-> Please use Link:// for reference not [1] and not Bugzilla:
-
-Ok.
-
->
->> +static const struct x86_cpu_id hpet_blacklist[] __initconst = {
->> +	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_KABYLAKE_MOBILE },
->> +	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_KABYLAKE_DESKTOP },
->
-> So this disables HPET on all Kaby Lake variants not just on the affected
-> Coffee Lakes. I know that I rejected the initial patch with the random
-> stepping cutoff...
->
->   https://lore.kernel.org/lkml/alpine.DEB.2.21.1904081403220.1748@nanos.tec.linutronix.de
->
-> In the other attempt to 'fix' this I asked for clarification, but silence
-> from Intel after this:
->
->   https://lore.kernel.org/lkml/alpine.DEB.2.21.1905182015320.3019@nanos.tec.linutronix.de
->
-> Can Intel please provide some useful information about this finally?
-
-Hopefully Intel can provide more info.
-
-I know we should find the root cause rather than stopping at "it’s a  
-firmware bug”, but users are already affected by this issue [1].
-Is there any better short-term workaround?
-
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=204537
-
-Kai-Heng
-
->
-> Thanks,
->
-> 	tglx
-
-
+Cheers,
+Miguel
