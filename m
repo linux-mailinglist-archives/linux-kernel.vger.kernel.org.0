@@ -2,106 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01207A1979
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:00:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEE00A197C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:02:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbfH2MAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 08:00:25 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:49910 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbfH2MAX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 08:00:23 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i3J6B-0001zx-Bn; Thu, 29 Aug 2019 14:00:19 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9DD1A1C07C3;
-        Thu, 29 Aug 2019 14:00:18 +0200 (CEST)
-Date:   Thu, 29 Aug 2019 12:00:18 -0000
-From:   "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] posix-cpu-timers: Make expiry_active check
- actually work correctly
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        id S1727109AbfH2MCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 08:02:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50698 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725782AbfH2MCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 08:02:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 255E6B679;
+        Thu, 29 Aug 2019 12:02:21 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org
+Subject: [PATCH] Makefile: Convert -Wimplicit-fallthrough to -Wimplicit-fallthrough=2
+Date:   Thu, 29 Aug 2019 14:02:15 +0200
+Message-Id: <20190829120215.1977-1-msuchanek@suse.de>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Message-ID: <156708001844.5526.1400646883200520277.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the timers/core branch of tip:
+From gcc documentation:
 
-Commit-ID:     a2ed4fd685cd23e98922f933d5dbccfbe82a4f08
-Gitweb:        https://git.kernel.org/tip/a2ed4fd685cd23e98922f933d5dbccfbe82a4f08
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Thu, 29 Aug 2019 12:52:28 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 29 Aug 2019 12:52:28 +02:00
+-Wimplicit-fallthrough=0
+  disables the warning altogether.
+-Wimplicit-fallthrough=1
+  matches .* regular expression, any comment is used as fallthrough comment.
+-Wimplicit-fallthrough=2
+  case insensitively matches .*falls?[ \t-]*thr(ough|u).* regular expression.
+-Wimplicit-fallthrough=3
+  case sensitively matches one of the following regular expressions:
+   -fallthrough
+   @fallthrough@
+   lint -fallthrough[ \t]*
+   [ \t.!]*(ELSE,? |INTENTIONAL(LY)? )?
+   FALL(S | |-)?THR(OUGH|U)[ \t.!]*(-[^\n\r]*)?
+   [ \t.!]*(Else,? |Intentional(ly)? )?
+   Fall((s | |-)[Tt]|t)hr(ough|u)[ \t.!]*(-[^\n\r]*)?
+   [ \t.!]*([Ee]lse,? |[Ii]ntentional(ly)? )?
+   fall(s | |-)?thr(ough|u)[ \t.!]*(-[^\n\r]*)?
+-Wimplicit-fallthrough=4
+  case sensitively matches one of the following regular expressions:
+   -fallthrough
+   @fallthrough@
+   lint -fallthrough[ \t]*
+   [ \t]*FALLTHR(OUGH|U)[ \t]*
+-Wimplicit-fallthrough=5
+  doesn’t recognize any comments as fallthrough comments, only attributes disable the warning.
 
-posix-cpu-timers: Make expiry_active check actually work correctly
+In particular the default value of 3 does not match the comments like
+/* falls through to do foobar */
+generating suprious warnings on properly annotated code.
 
-The state tracking changes broke the expiry active check by not writing to
-it and instead sitting timers_active, which is already set.
-
-That's not a big issue as the actual expiry is protected by sighand lock,
-so concurrent handling is not possible. That means that the second task
-which invokes that function executes the expiry code for nothing.
-
-Write to the proper flag.
-
-Also add a check whether the flag is set into check_process_timers(). That
-check had been missing in the code before the rework already. The check for
-another task handling the expiry of process wide timers was only done in
-the fastpath check. If the fastpath check returns true because a per task
-timer expired, then the checking of process wide timers was done in
-parallel which is as explained above just a waste of cycles.
-
-Fixes: 244d49e30653 ("posix-cpu-timers: Move state tracking to struct posix_cputimers")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
 ---
- kernel/time/posix-cpu-timers.c |  9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/time/posix-cpu-timers.c b/kernel/time/posix-cpu-timers.c
-index 73c492c..c3a95b1 100644
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -884,16 +884,17 @@ static void check_process_timers(struct task_struct *tsk,
+diff --git a/Makefile b/Makefile
+index f125625efd60..641ec413c2a6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -846,7 +846,7 @@ NOSTDINC_FLAGS += -nostdinc -isystem $(shell $(CC) -print-file-name=include)
+ KBUILD_CFLAGS += -Wdeclaration-after-statement
  
- 	/*
- 	 * If there are no active process wide timers (POSIX 1.b, itimers,
--	 * RLIMIT_CPU) nothing to check.
-+	 * RLIMIT_CPU) nothing to check. Also skip the process wide timer
-+	 * processing when there is already another task handling them.
- 	 */
--	if (!READ_ONCE(pct->timers_active))
-+	if (!READ_ONCE(pct->timers_active) || pct->expiry_active)
- 		return;
+ # Warn about unmarked fall-throughs in switch statement.
+-KBUILD_CFLAGS += $(call cc-option,-Wimplicit-fallthrough,)
++KBUILD_CFLAGS += $(call cc-option,-Wimplicit-fallthrough=2,)
  
--       /*
-+	/*
- 	 * Signify that a thread is checking for process timers.
- 	 * Write access to this field is protected by the sighand lock.
- 	 */
--	pct->timers_active = true;
-+	pct->expiry_active = true;
- 
- 	/*
- 	 * Collect the current process totals. Group accounting is active
+ # Variable Length Arrays (VLAs) should not be used anywhere in the kernel
+ KBUILD_CFLAGS += -Wvla
+-- 
+2.22.0
+
