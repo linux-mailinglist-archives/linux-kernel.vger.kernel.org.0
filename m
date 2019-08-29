@@ -2,66 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5D4DA182C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:20:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88811A1807
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbfH2LTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:19:51 -0400
-Received: from foss.arm.com ([217.140.110.172]:42860 "EHLO foss.arm.com"
+        id S1727976AbfH2LSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:18:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54710 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728194AbfH2LTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:19:20 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F23F71570;
-        Thu, 29 Aug 2019 04:19:19 -0700 (PDT)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 801123F59C;
-        Thu, 29 Aug 2019 04:19:18 -0700 (PDT)
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Cc:     catalin.marinas@arm.com, will@kernel.org, paul.burton@mips.com,
-        tglx@linutronix.de, salyzyn@android.com, 0x7f454c46@gmail.com,
-        luto@kernel.org
-Subject: [PATCH 7/7] x86: vdso: Remove unused VDSO_HAS_32BIT_FALLBACK
-Date:   Thu, 29 Aug 2019 12:18:43 +0100
-Message-Id: <20190829111843.41003-8-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190829111843.41003-1-vincenzo.frascino@arm.com>
-References: <20190829111843.41003-1-vincenzo.frascino@arm.com>
+        id S1726232AbfH2LSw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:18:52 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2C72B18C426B;
+        Thu, 29 Aug 2019 11:18:52 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3898D600C1;
+        Thu, 29 Aug 2019 11:18:48 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 13:18:45 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Thomas Huth <thuth@redhat.com>
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: s390: Test for bad access register at the start of
+ S390_MEM_OP
+Message-ID: <20190829131845.5a72231a.cohuck@redhat.com>
+In-Reply-To: <20190829105356.27805-1-thuth@redhat.com>
+References: <20190829105356.27805-1-thuth@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 29 Aug 2019 11:18:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a consequence of Commit 623fa33f7bd6 ("lib:vdso: Remove
-VDSO_HAS_32BIT_FALLBACK") VDSO_HAS_32BIT_FALLBACK define is not
-required anymore hence can be removed.
+On Thu, 29 Aug 2019 12:53:56 +0200
+Thomas Huth <thuth@redhat.com> wrote:
 
-Remove unused VDSO_HAS_32BIT_FALLBACK from x86 vdso.
+> If the KVM_S390_MEM_OP ioctl is called with an access register >= 16,
+> then there is certainly a bug in the calling userspace application.
+> We check for wrong access registers, but only if the vCPU was already
+> in the access register mode before (i.e. the SIE block has recorded
+> it). The check is also buried somewhere deep in the calling chain (in
+> the function ar_translation()), so this is somewhat hard to find.
+> 
+> It's better to always report an error to the userspace in case this
+> field is set wrong, and it's safer in the KVM code if we block wrong
+> values here early instead of relying on a check somewhere deep down
+> the calling chain, so let's add another check to kvm_s390_guest_mem_op()
+> directly.
+> 
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
+> ---
+>  arch/s390/kvm/kvm-s390.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index f329dcb3f44c..725690853cbd 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -4255,7 +4255,7 @@ static long kvm_s390_guest_mem_op(struct kvm_vcpu *vcpu,
+>  	const u64 supported_flags = KVM_S390_MEMOP_F_INJECT_EXCEPTION
+>  				    | KVM_S390_MEMOP_F_CHECK_ONLY;
+>  
+> -	if (mop->flags & ~supported_flags)
+> +	if (mop->flags & ~supported_flags || mop->ar >= NUM_ACRS)
+>  		return -EINVAL;
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
----
- arch/x86/include/asm/vdso/gettimeofday.h | 2 --
- 1 file changed, 2 deletions(-)
+This also matches the value that ar_translation would return, so seems
+sane.
 
-diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/vdso/gettimeofday.h
-index e9ee139cf29e..52c3bcd672cf 100644
---- a/arch/x86/include/asm/vdso/gettimeofday.h
-+++ b/arch/x86/include/asm/vdso/gettimeofday.h
-@@ -96,8 +96,6 @@ long clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
- 
- #else
- 
--#define VDSO_HAS_32BIT_FALLBACK	1
--
- static __always_inline
- long clock_gettime_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
- {
--- 
-2.23.0
+>  
+>  	if (mop->size > MEM_OP_MAX_SIZE)
 
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+
+Btw: should Documentation/virt/kvm/api.txt spell out the valid range
+for ar explicitly?
