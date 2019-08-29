@@ -2,106 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 623DDA273F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:25:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACF68A274A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728212AbfH2TZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 15:25:53 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43413 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727146AbfH2TZw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 15:25:52 -0400
-Received: by mail-oi1-f196.google.com with SMTP id y8so3454960oih.10;
-        Thu, 29 Aug 2019 12:25:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lZ2BYe42I9MJ0wayu5k+436nxyRI7BnkkEeIXJqYPPY=;
-        b=obapb+hOCb4MQ2c7EakepKWZjWg8f1j8M9ujLt9grPoH3SXxNL/9vskA4actWLXK/Z
-         z/PSuHCAPTm66AXx0KAKHscVxAHdFkUSkVQbrr+pm4mDzgcJCPvqBtHhGBIERBxpOSr7
-         0SbBOKF2/ME8s33rHyp4BWGNMFIGkFQzQ1Q4E8dafMNMJSggYBIWrieDn3NeC/EGUATq
-         r7lNOGwiTiIXlAvnyZP8Jo8C1nlg9KJw492qmozfyV2zNHodK6Q7LOJqqrt4TJeP0Ens
-         i3v/esQNBYLon54rIYA7viFqPZKQc9LFIWWdhqJYjIwKf/LH1vP6S3q09WygEZl2x6LA
-         Y9rg==
-X-Gm-Message-State: APjAAAVjK61EdlYTjAX3lv4wQvXW9sirnmnj50y1AXExKVMCIM5qtxvs
-        u+1TOdg/3l4+e3ae8qiydQ==
-X-Google-Smtp-Source: APXvYqxg9o4u0friAhLIFb1wO376me4+33exQL8RzM7lAtGBzLxeG67AR60+ryEQemuydVobqBKytA==
-X-Received: by 2002:a54:4893:: with SMTP id r19mr7711912oic.91.1567106751513;
-        Thu, 29 Aug 2019 12:25:51 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z26sm839164oih.16.2019.08.29.12.25.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 12:25:51 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 14:25:50 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 02/11] dt-bindings: phy-mtk-tphy: make the ref clock
- optional
-Message-ID: <20190829192550.GA29881@bogus>
-References: <e99c0d7a55869a4425250c601b80a3331c9d0976.1566542696.git.chunfeng.yun@mediatek.com>
- <a31d78484b64f853a16e7dcb16fae9fc0de45ebb.1566542696.git.chunfeng.yun@mediatek.com>
+        id S1727045AbfH2Tae (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 15:30:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726245AbfH2Tae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 15:30:34 -0400
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9062922CF5;
+        Thu, 29 Aug 2019 19:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567107032;
+        bh=P8Okz1ioDyQ5iQhhZdadmnrkWaz9o8uYiuS0d0WDRvU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KCEFp0U6rFSC8fIUYAgYeOAPSqvJeCAi1y4HpyDJjcC/XELXgJd3q28f97XeSRotf
+         Em3O6VdjKFphBdvLxx3GLXXZNZpPYp4m0Z7KIPGkz+TYVqOVaWAZ2Fp82r0uZfPa+g
+         tciw54shUTMXr6RuyRkAt88LL65IrR7IyWGV+GuE=
+Received: by mail-qk1-f180.google.com with SMTP id c189so2471341qkg.2;
+        Thu, 29 Aug 2019 12:30:32 -0700 (PDT)
+X-Gm-Message-State: APjAAAXzHHdhLk/WuawXfnXLuqY/PWDL5c/rGa80PwxKKGnKJ+TlIt4Y
+        jdnTWOdqH10B33wj5PNI4d6iBMUh6V0WVbN87g==
+X-Google-Smtp-Source: APXvYqzkIC+v5aIBr2WVnHist8Ob0TXXTVPct/ifT/ce+i4zRLnYa43TF25d7xt3ZDfB1IBglTWwTXNJUva+39sy1q0=
+X-Received: by 2002:ae9:e212:: with SMTP id c18mr5379641qkc.254.1567107031751;
+ Thu, 29 Aug 2019 12:30:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a31d78484b64f853a16e7dcb16fae9fc0de45ebb.1566542696.git.chunfeng.yun@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190829144442.6210-1-srinivas.kandagatla@linaro.org>
+ <20190829144442.6210-4-srinivas.kandagatla@linaro.org> <CAL_JsqLOHA+r9UCTwyvj+_BzWSrsVDZw5vp-1XhYYvQxncx0sw@mail.gmail.com>
+ <ef01465e-25d6-059c-1f5d-8e8ebd6b887d@linaro.org>
+In-Reply-To: <ef01465e-25d6-059c-1f5d-8e8ebd6b887d@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 29 Aug 2019 14:30:19 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL9p9fF4KZ4DSfhC0+XTDe0OaR8CZ0mmDNPTxaoi38FFA@mail.gmail.com>
+Message-ID: <CAL_JsqL9p9fF4KZ4DSfhC0+XTDe0OaR8CZ0mmDNPTxaoi38FFA@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] dt-bindings: ASoC: Add WSA881x bindings
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Mark Brown <broonie@kernel.org>, Vinod <vkoul@kernel.org>,
+        spapothi@codeaurora.org, Banajit Goswami <bgoswami@codeaurora.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 03:00:09PM +0800, Chunfeng Yun wrote:
-> Make the ref clock optional, then we no need refer to a fixed-clock
-> in DTS anymore when the clock of USB3 PHY comes from oscillator
-> directly
-> 
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> ---
->  .../devicetree/bindings/phy/phy-mtk-tphy.txt        | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> index d5b327f85fa2..1c18bf10b2fe 100644
-> --- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> +++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> @@ -34,12 +34,6 @@ Optional properties (controller (parent) node):
->  
->  Required properties (port (child) node):
->  - reg		: address and length of the register set for the port.
-> -- clocks	: a list of phandle + clock-specifier pairs, one for each
-> -		  entry in clock-names
-> -- clock-names	: must contain
-> -		  "ref": 48M reference clock for HighSpeed analog phy; and 26M
-> -			reference clock for SuperSpeed analog phy, sometimes is
-> -			24M, 25M or 27M, depended on platform.
->  - #phy-cells	: should be 1 (See second example)
->  		  cell after port phandle is phy type from:
->  			- PHY_TYPE_USB2
-> @@ -48,6 +42,13 @@ Required properties (port (child) node):
->  			- PHY_TYPE_SATA
->  
->  Optional properties (PHY_TYPE_USB2 port (child) node):
-> +- clocks	: a list of phandle + clock-specifier pairs, one for each
-> +		  entry in clock-names
-> +- clock-names	: may contain
-> +		  "ref": 48M reference clock for HighSpeed anolog phy; and 26M
-> +			reference clock for SuperSpeed anolog phy, sometimes is
-> +			24M, 25M or 27M, depended on platform.
+On Thu, Aug 29, 2019 at 10:52 AM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+> Thanks for the review!
+>
+> On 29/08/2019 16:46, Rob Herring wrote:
+> > On Thu, Aug 29, 2019 at 9:45 AM Srinivas Kandagatla
+> > <srinivas.kandagatla@linaro.org> wrote:
+> >>
+> >> This patch adds bindings for WSA8810/WSA8815 Class-D Smart Speaker
+> >> Amplifier. This Amplifier also has a simple thermal sensor for
+> >> over temperature and speaker protection.
+> >>
+> >> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> >> ---
+> >>   .../bindings/sound/qcom,wsa881x.yaml          | 41 +++++++++++++++++++
+> >>   1 file changed, 41 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml b/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+> >> new file mode 100644
+> >> index 000000000000..7a486c024732
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+> >> @@ -0,0 +1,41 @@
+> >> +# SPDX-License-Identifier: GPL-2.0
+> >
+> > Dual license please.
+> >
+> Will do that!
+>
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/sound/qcom,wsa881x.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Bindings for Qualcomm WSA8810/WSA8815 Class-D Smart Speaker Amplifier
+> >> +
+> >> +maintainers:
+> >> +  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> >> +
+> >> +description: |
+> >> +  WSA8810 is a class-D smart speaker amplifier and WSA8815
+> >> +  is a high-output power class-D smart speaker amplifier.
+> >> +  Their primary operating mode uses a SoundWire digital audio
+> >> +  interface. This binding is for SoundWire interface.
+> >> +
+> >> +properties:
+> >> +  compatible:
+> >> +    const: "sdw10217201000"
+> >
+> > No need for quotes.
+>
+> Did not knew that! Still getting used to yaml stuff :-)
+>
+> >
+> >> +
+> >> +  reg:
+> >> +    maxItems: 1
+> >> +
+> >
+> >> +  powerdown-gpios:
+> >> +    description: GPIO spec for Powerdown/Shutdown line to use
+> >> +    maxItems: 1
+> >> +
+> >> +  '#thermal-sensor-cells':
+> >> +    const: 0
+> >
+> > Either of these required?
+> >
+>
+> "make dt_binding_check" was complaining when I added this! Let me retry it!
 
-How do you know the frequency when it is not present?
-
-> +
->  - mediatek,eye-src	: u32, the value of slew rate calibrate
->  - mediatek,eye-vrt	: u32, the selection of VRT reference voltage
->  - mediatek,eye-term	: u32, the selection of HS_TX TERM reference voltage
-> -- 
-> 2.23.0
-> 
+Because the example in soundwire-controller.yaml will no longer be valid... :)
