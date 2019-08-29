@@ -2,82 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC94A12F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 09:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E07DA12F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 09:47:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbfH2HrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 03:47:10 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55466 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbfH2HrJ (ORCPT
+        id S1728120AbfH2Hro convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 29 Aug 2019 03:47:44 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42747 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfH2Hrn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 03:47:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=VfCL8t+OBcNr47iwQjcm8aKmg01bRT6fUprt393rbFE=; b=RKlYtgLnNcmEBlMNdfBERNNH17
-        XQZN1PTq0irN0Eed0aOQdq9CrQ05+BhXZinDz+zkVcEhU7ZQ1Bo04+JxcCOOw1hTCWW3mmDU2wDwj
-        sxUO1icRtv73irjHzKaU6lPr6RwKM2rG+iiHHouc0d9HHDh8ZhN/Y+ZYxEphHdXkdf8CcL4IgVtfc
-        HHLQnKxuwqjQaVuxU6pV03GRHYdZZCq1nIh7cy7gKdbf8pYLWyU/yf0pD4w3DersV1pCpP5doxMET
-        RZTPV6H+vkx5RdUwKL56cgDawzcnJjjOkP3D0qdZ9JrvtbC3B3JNM2oywn0IJcd2oP/m0HiS5lKW0
-        7pA2HWqg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3F8q-0008HC-S5; Thu, 29 Aug 2019 07:46:49 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AAC5B30775B;
-        Thu, 29 Aug 2019 09:46:10 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B48C420C743FC; Thu, 29 Aug 2019 09:46:44 +0200 (CEST)
-Date:   Thu, 29 Aug 2019 09:46:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mac Chiang <mac.chiang@intel.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20190829074644.GL2369@hirez.programming.kicks-ass.net>
-References: <20190829162012.36ac9d7c@canb.auug.org.au>
+        Thu, 29 Aug 2019 03:47:43 -0400
+Received: by mail-oi1-f196.google.com with SMTP id o6so1811700oic.9;
+        Thu, 29 Aug 2019 00:47:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=p4LEbbLsvpFF7jH9kHTSE0avC1YlCtP3CflXztbc43s=;
+        b=kM4GiVQRNujKYhPPpy/Gu6uzAI9jcPNg3CnFexP6VLJ+1NX44666LnA+XVfDSfjXKu
+         nWazwPMwyD8W/JO3CALvZyibaP638HXxGcHl3orKuBQZ77+eFQWicWs4mKa3ShMsyIWe
+         mhd0se0DUswxj+wfEm6j97OQS/k6ZHgBTnOzgSSkirM4RHeuKAf6V3PdSseTDrdFJvPC
+         Tqb2+BdCDbd8bvTXMoUFxF/VOLjyhIMV4LkgTbjCnWxoRO5LxGIpr3oTYY56Ytp/st0J
+         tpv81W6T2dEDXaLFUv72CEdxfnF8x/+adCAtp3oc2sVH4bnXG3Hr8V9kGh8NflxAIQaG
+         lfbw==
+X-Gm-Message-State: APjAAAV0B9XNZVdHhPxW0o8xMrNvqUQfLgLDCQpUAUAssIMtv7g7TK/A
+        goUzVhzWGocHIZkkNdBhV7P897MAjdi76SfXw0wal9hA
+X-Google-Smtp-Source: APXvYqyQyUkjAPJJp2g82LOpwiPdkN4Na5zs21h0McVF0Ksd8Ij+wdlFfUg7ih9GsQPN9znYKcpLlmod1GCOFsRIY+M=
+X-Received: by 2002:aca:ea82:: with SMTP id i124mr5292700oih.153.1567064862697;
+ Thu, 29 Aug 2019 00:47:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190829162012.36ac9d7c@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190828185518.4340-1-tszucs@protonmail.ch>
+In-Reply-To: <20190828185518.4340-1-tszucs@protonmail.ch>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 29 Aug 2019 09:47:31 +0200
+Message-ID: <CAMuHMdWcp-3B7ZZjbyo02ECyzDX_rQxXF645OCutCkjUu_jWaA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhi: fill in actual_clock
+To:     =?UTF-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@protonmail.ch>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 04:20:12PM +1000, Stephen Rothwell wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 29 Aug 2019 16:08:49 +1000
-> Subject: [PATCH] ASoC: Intel: boards: merge fix for INTEL_FAM6_KABYLAKE_M=
-OBILE -> INTEL_FAM6_KABYLAKE_L change
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  sound/soc/intel/common/soc-intel-quirks.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/sound/soc/intel/common/soc-intel-quirks.h b/sound/soc/intel/=
-common/soc-intel-quirks.h
-> index e6357d306cb8..863a477d3405 100644
-> --- a/sound/soc/intel/common/soc-intel-quirks.h
-> +++ b/sound/soc/intel/common/soc-intel-quirks.h
-> @@ -36,7 +36,7 @@ SOC_INTEL_IS_CPU(byt, INTEL_FAM6_ATOM_SILVERMONT);
->  SOC_INTEL_IS_CPU(cht, INTEL_FAM6_ATOM_AIRMONT);
->  SOC_INTEL_IS_CPU(apl, INTEL_FAM6_ATOM_GOLDMONT);
->  SOC_INTEL_IS_CPU(glk, INTEL_FAM6_ATOM_GOLDMONT_PLUS);
-> -SOC_INTEL_IS_CPU(cml, INTEL_FAM6_KABYLAKE_MOBILE);
-> +SOC_INTEL_IS_CPU(cml, INTEL_FAM6_KABYLAKE_L);
+Hi Tamás,
 
-ARGHH... rebase again?
+On Wed, Aug 28, 2019 at 9:02 PM Tamás Szűcs <tszucs@protonmail.ch> wrote:
+> Save set clock in mmc_host actual_clock enabling exporting it via debugfs.
+> This will indicate the precise SD clock in I/O settings rather than only the
+> sometimes misleading requested clock.
+>
+> Signed-off-by: Tamás Szűcs <tszucs@protonmail.ch>
+
+Thanks for your patch!
+
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -124,7 +124,7 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+>  {
+>         struct renesas_sdhi *priv = host_to_priv(host);
+>         unsigned int freq, diff, best_freq = 0, diff_min = ~0;
+> -       int i, ret;
+> +       int i;
+>
+>         /* tested only on R-Car Gen2+ currently; may work for others */
+>         if (!(host->pdata->flags & TMIO_MMC_MIN_RCAR2))
+> @@ -153,9 +153,11 @@ static unsigned int renesas_sdhi_clk_update(struct tmio_mmc_host *host,
+>                 }
+>         }
+>
+> -       ret = clk_set_rate(priv->clk, best_freq);
+> +       host->mmc->actual_clock =
+> +               clk_set_rate(priv->clk, best_freq) == 0 ?
+> +                       best_freq : clk_get_rate(priv->clk);
+
+When clk_set_rate() returns 0 to indicate success, it may still have
+rounded the requested clock rate, no?
+So wouldn't it be better to always call clk_get_rate()?
+>
+> -       return ret == 0 ? best_freq : clk_get_rate(priv->clk);
+> +       return host->mmc->actual_clock;
+>  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
