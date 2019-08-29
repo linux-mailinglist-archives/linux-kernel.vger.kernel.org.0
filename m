@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E808A13C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7652EA13C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbfH2IdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:33:19 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42054 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbfH2IdP (ORCPT
+        id S1728041AbfH2IdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:33:23 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46836 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728001AbfH2IdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:33:15 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y1so1231760plp.9
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:33:15 -0700 (PDT)
+        Thu, 29 Aug 2019 04:33:20 -0400
+Received: by mail-pl1-f196.google.com with SMTP id o3so1221560plb.13
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:33:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=quESet5Kw5IYsWIdcIIRqLkrcTZZW6u8dYTNYlJvYZo=;
-        b=o7LxmTTN/pqIMAj9GiqC/CQ/Psrz6vHtIpmrnnW5zZ2e/8vmv0YOhOPOKZiY6FYMX1
-         bg2YwyNKfLCIHbPe9OlbN4CAlzHC+8QDPoRugWvKGgZiBogKVJlnPNF4aH7er0XXtglx
-         aJYgycnBW6JqQqj/6enfCrb2kXVpuu0cYyfBqk2UW8z+wYgC5YkZJi2gVAJZ8pZXbTvy
-         B/krVLv7TPM/k9FdH96xnrn4BzlQ/dUXmvMteNU4hSTl9Lx9xYFL3b0la4KlE4GmrjDt
-         sRr5EoBbKXDGeuD1lZ8kr8vl2fuCj1KeCoIBWFOJGyeVZNGElkEDIaJOU6u67F8fGJd/
-         zl1g==
+        bh=X3Mpoa28HRV2CbAklNxtFTIMv2MG+cYnu2krqqPguKE=;
+        b=cepdjLCilmQYJangL3v2zqDoTLcXZ2M/TWmixhOuyX97eUlKG02QpsEcsWKUJ3sGJY
+         e02QVH7tUzNl0U+36ZMj0hY8z/FbGKoMNHX44oOJpREuOA0w+TVOJVZvqRe4XsJkUznk
+         JkXkfR/0alaDL9ax/j/zeHchcmVzWSVtMhm+R0+DgUTclQnysJFwQEt5MBtYOPrVSRl7
+         MMlNJW9EMp4v7xCCVGRdtyvDviVZ5y7gpDwANVuCMl5HP2xcstsISVQwanHXNpLjEaFh
+         Q7Q7cNhg6Dd6aUaP4168gah6c2LxXbXJROZ4MjxO8ra0dfvvXmuNqV4OxJpK7YTmxpXY
+         yr/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=quESet5Kw5IYsWIdcIIRqLkrcTZZW6u8dYTNYlJvYZo=;
-        b=QAyahqYkKC5LMVYfrcMzKQcOsR1PblhuT2HT4Lj1v9dwhL76T+KT7biGLQdbc1h45x
-         AbklALzqaJAlfQbjixXUjMrutRjDeHU924fDkZ1Lx3iPUP3sJiegcDU1BlBdmqlcQqMF
-         taUjNU/x/gPBlqd5DYg8rEE74Ip+v6zUgvYhgxxynFAXtDMXfhvLiUuqBT3zk1NCdScC
-         oh3lPM18zDKLJzLhwPcw0ja5JFB2pZwnoHnTV2Etik5UCMsxPJp72+x9vPTwvKqbenmH
-         lFkB8GvGmSyVy4762o/uweujQsYQsZDhbeN19NaDdGWWxvREKmcFqc5Ojcmq//SjNkzu
-         /+1g==
-X-Gm-Message-State: APjAAAUaWJkbWVtGWaPaUbLM2MNMzmjm+YKQ2HLOb/tnTnhq9OHxkaQU
-        9yHBnYk329q1XUHUGoYI+lg=
-X-Google-Smtp-Source: APXvYqwi0KjCokl9JXhCypIYN5/G0gMKnC6W0Wt1MAAXx2bp63hrUAJTmATq1z2IkArYMZfjtHhyFQ==
-X-Received: by 2002:a17:902:20ec:: with SMTP id v41mr8487897plg.117.1567067594852;
-        Thu, 29 Aug 2019 01:33:14 -0700 (PDT)
+        bh=X3Mpoa28HRV2CbAklNxtFTIMv2MG+cYnu2krqqPguKE=;
+        b=Nb9Vckc/rjVzPRMIVF3lxqH6wwFdyPSKA+jBhsIi3hmJK2T4iQo44inKLRup+bgn0G
+         5OdtyHq3mBom58tKJi4W4P5VnsoOUh8zg8KZ9gaL3CUBE2A+olGLkBBnjWEAlpVtojRp
+         xERIO/T+sOHDmR/LgP4RjfZwhDlODSNekuqAEWHGqULl5WmeScdTEWh2zvLgQB/cdCBY
+         kG8t0uCeGrtkX6MoFoIiVDmM6SiwfTFlgddkFh+Wcc7VDV1rAc/Jpj06tKEpsJ/c+8ZQ
+         2CSJDzPjeKEc0WTaAUCm6GYWs90WVCFDpKyZ8ErJZV2F45ulPS7hQhh85BTiw0Ch9PoB
+         iM2Q==
+X-Gm-Message-State: APjAAAXPHg448ewf7GIMBNlyNsVAtfDMC7Ey5Rparq+XOMPSTzHCRaLD
+        DJNFXKIc5dNKryYXyNLi4Jc=
+X-Google-Smtp-Source: APXvYqxLq+kSrSa4+X0qHzDyJtkP2o36aATbImXUHVvC/+OI/QvuhTmVysTWR2KbaKJSC76unGMU2g==
+X-Received: by 2002:a17:902:aa09:: with SMTP id be9mr8373871plb.52.1567067598903;
+        Thu, 29 Aug 2019 01:33:18 -0700 (PDT)
 Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id v22sm1260155pgk.69.2019.08.29.01.33.11
+        by smtp.gmail.com with ESMTPSA id v22sm1260155pgk.69.2019.08.29.01.33.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Aug 2019 01:33:14 -0700 (PDT)
+        Thu, 29 Aug 2019 01:33:18 -0700 (PDT)
 From:   Yuyang Du <duyuyang@gmail.com>
 To:     peterz@infradead.org, will.deacon@arm.com, mingo@kernel.org
 Cc:     bvanassche@acm.org, ming.lei@redhat.com, frederic@kernel.org,
         tglx@linutronix.de, linux-kernel@vger.kernel.org,
         longman@redhat.com, paulmck@linux.vnet.ibm.com,
         boqun.feng@gmail.com, Yuyang Du <duyuyang@gmail.com>
-Subject: [PATCH v4 23/30] locking/lockdep: Adjust BFS algorithm to support multiple matches
-Date:   Thu, 29 Aug 2019 16:31:25 +0800
-Message-Id: <20190829083132.22394-24-duyuyang@gmail.com>
+Subject: [PATCH v4 24/30] locking/lockdep: Define the two task model for lockdep checks formally
+Date:   Thu, 29 Aug 2019 16:31:26 +0800
+Message-Id: <20190829083132.22394-25-duyuyang@gmail.com>
 X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 In-Reply-To: <20190829083132.22394-1-duyuyang@gmail.com>
 References: <20190829083132.22394-1-duyuyang@gmail.com>
@@ -64,157 +64,237 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With recursive-read locks, a circle is not sufficient condition for
-deadlocks. As a result, we need to continue the search after a match but
-the match is not wanted. __bfs() is adjusted to that end. The basic idea
-is to enqueue a node's children before matching the node.
+Lockdep effectively uses a two-task model to track workload's locking
+behavior and then do the checking to find inversion deadlock scenarios
+based on such model. Lets explain it in detail.
 
-No functional change.
+When there is a new lock dependency L1 -> L2 (i.e., the current task
+attempts to acquire L2 while holding L1), which is from a new lock
+chain's latest two locks, lockdep's view of the world is composed of two
+virtual tasks:
+
+ - Task1: the entire previous locking behavior depicted by the forward
+   lock dependency graph.
+
+ - Task2: the current task's new locking behavior, i.e., the L1 -> L2 dependency.
+
+Whenever a Task2 comes, lockdep tries to find in Task1 whether there exists
+the inverse locking order of L1 -> L2, namely L2 -> L1. If this inverse
+locking order exists, then lockdep has found the typical inversion deadlock
+scenario, a.k.a, ABBA deadlock. And if not, Task2 will be merged into Task1
+to become a new bigger Task1 with a bigger graph. Then this track and check
+cycle goes on and on.
+
+There is some nuances between this two-task model and the real workload
+locking behavior. Some examples:
+
+(The following Tx denotes concrete tasks)
+
+    T1
+    --
+
+    L1
+    L2
+
+    (L1 and L2 released)
+
+    L2
+    L3
+
+    T2
+    --
+
+    L1
+    L2
+    L3
+
+T1 and T2 will produce the same Task1 from the perspective of lockdep's
+two-task model. However, this model does not actually reflect the reality in
+full length. In T1, L1 -> L3 actually has no "real" dependency while in T2
+it is "real" (a real X -> Y lock dependency is defined as a task is
+attempting to acquire Y while holding X). This may result in false positive
+deadlock scenarios. For example:
+
+Case #1.1:
+
+    T1        T2
+    --        --
+
+    L1
+    L2        L3
+    L3        L1   [Deadlock]
+
+Case #1.2 (T1 is a singular task):
+
+    T1        T2
+    --        --
+
+    L1
+    L2
+
+    (L1 L2 released)
+
+    L2        L3
+    L3        L1   [No deadlock]
+
+Case #1.3:
+
+    T1a       T1b       T2
+    ---       ---       --
+
+    L1        L1
+    L2        L2
+
+    (L1 L2 released
+     in T1a and T1b)
+
+    L2        L2        L3
+    L3        L3        L1   [Deadlock]
+
+From Case #1.2 (no deadlock) to Case #1.3 (deadlock), we can see that
+lockdep is also assuming there can be multiple Task1's on top of the
+two-task model, and from pragmatic point of view, this assumption is not
+unrealistic to make.
+
+However, with read locks that can be fully concurrent with read locks
+and not be blocked by write locks (such as the rwlock). Lockdep's such
+model is flawed. For example (the following read locks, denoted as RR,
+and write locks are of type rwlock):
+
+Case #2.1:
+
+    T1        T2
+    --        --
+
+    W1
+    RR2       W3
+    W3        W1   [Deadlock]
+
+Case #2.2:
+
+    T1a       T1b       T2
+    ---       ---       --
+
+    W1        RR2       W3
+    RR2       W3        W1   [No deadlock]
+
+Case #2.3:
+
+    T1a       T1b       T2
+    ---       ---       --
+
+    W1        W1
+    RR2       RR2
+
+    (W1 RR2 released
+     in T1a and T1b)
+
+    RR2       RR2       W3
+    W3        W3        W1   [No deadlock]
+
+Lockdep cannot differentiate Case #2.1 from Case #2.2 and Case #2.3 or
+vice versa. This is because when modeling Task1, it cannot tell whether
+two neighboring direct dependencies in the graph are in the same real
+task and hence create a "real" dependency.
+
+To make up for this, the two-task model needs to be strengthened. We
+previously mapped lock chains to lock dependency graph and added
+read-write lock types into dependencies. This patch finally modifies the
+graph traversing algorithm (__bfs()) to stop when two neighboring direct
+dependencies are not in the same lock chain and the middle lock is a
+recursive-read lock (rwlock).
 
 Signed-off-by: Yuyang Du <duyuyang@gmail.com>
 ---
- kernel/locking/lockdep.c | 51 ++++++++++++++++++++++++------------------------
- 1 file changed, 26 insertions(+), 25 deletions(-)
+ kernel/locking/lockdep.c | 68 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index d13b6b7..3ad97bc 100644
+index 3ad97bc..05c70be 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -1623,7 +1623,7 @@ static inline void set_lock_type2(struct lock_list *lock, int read)
- static int __bfs(struct lock_list *source_entry,
- 		 void *data,
- 		 int (*match)(struct lock_list *entry, void *data),
--		 struct lock_list **target_entry, int forward)
-+		 struct lock_list **target_entry, int forward, bool init)
- {
- 	struct lock_list *entry;
- 	struct lock_list *lock;
-@@ -1631,19 +1631,11 @@ static int __bfs(struct lock_list *source_entry,
- 	struct circular_queue *cq = &lock_cq;
- 	int ret = 1;
+@@ -1617,6 +1617,71 @@ static inline void set_lock_type2(struct lock_list *lock, int read)
+ }
  
--	if (match(source_entry, data)) {
--		*target_entry = source_entry;
--		ret = 0;
--		goto exit;
-+	if (init) {
-+		__cq_init(cq);
-+		__cq_enqueue(cq, source_entry);
- 	}
- 
--	head = get_dep_list(source_entry, forward);
--	if (list_empty(head))
--		goto exit;
--
--	__cq_init(cq);
--	__cq_enqueue(cq, source_entry);
--
- 	while ((lock = __cq_dequeue(cq))) {
- 
- 		if (!lock->class[forward]) {
-@@ -1655,25 +1647,34 @@ static int __bfs(struct lock_list *source_entry,
- 
- 		DEBUG_LOCKS_WARN_ON(!irqs_disabled());
- 
-+		/*
-+		 * Enqueue a node's children before match() so that even
-+		 * this node matches but is not wanted, we can continue
-+		 * the search.
-+		 */
- 		list_for_each_entry_rcu(entry, head, entry[forward]) {
+ /*
++ * A lock stopper in the dependency graph is a read lock that stops the
++ * graph traversal passing through it even if the two dependencies are
++ * linked in a path. A stopper sits in such two lock dependencies:
++ *
++ *     X -> RR (stopper) -> X (where RR is recursive-read lock)
++ *
++ * and these two dependencies are NOT from one lock chain.
++ */
++static inline bool
++read_lock_stopper(struct lock_list *parent, struct lock_list *child, int forward)
++{
++	struct lock_chain *chain1, *chain2;
++	struct lock_list *list[2] = { child, parent };
++	u64 key1, key2;
++	int distance, other = 1 - forward;
++
++	/* This is the source entry */
++	if (!get_lock_parent(parent))
++		return false;
++
++	if (!(get_lock_type1(list[other]) == LOCK_TYPE_RECURSIVE &&
++	      get_lock_type2(list[forward]) == LOCK_TYPE_RECURSIVE))
++		return false;
++
++	distance = list[forward]->distance;
++
++	list_for_each_entry_rcu(chain1, &list[forward]->chains, chain_entry) {
++		key1 = chain1->chain_key;
++
++		list_for_each_entry_rcu(chain2, &list[other]->chains, chain_entry) {
++			/*
++			 * If the two chains are in the same task lock stack,
++			 * we should be able to calculate key2 from key1 if
++			 * distance is 1, or calculate key1 from key2 if
++			 * distance is larger than 1.
++			 */
++			if (distance == 1) {
++				int class_idx = fw_dep_class(list[other]) - lock_classes;
++				key1 = iterate_chain_key(key1, class_idx,
++							 get_lock_type2(list[other]));
++				key2 = chain2->chain_key;
++
++				if (key1 == key2)
++					return false;
++			}
++			else {
++				int i = chain1->base, j = chain2->base;
++
++				if (chain1->depth != chain2->depth - distance)
++					continue;
++
++				for (; i < chain1->depth - 1; i++, j++)
++					if (chain_hlocks[i] != chain_hlocks[j] ||
++					    chain_hlocks_type[i] != chain_hlocks_type[i])
++						continue;
++
++				return false;
++			}
++		}
++	}
++
++	return true;
++}
++
++/*
+  * Forward- or backward-dependency search, used for both circular dependency
+  * checking and hardirq-unsafe/softirq-unsafe checking.
+  */
+@@ -1656,6 +1721,9 @@ static int __bfs(struct lock_list *source_entry,
  			if (!lock_accessed(entry, forward)) {
  				unsigned int cq_depth;
+ 
++				if (read_lock_stopper(lock, entry, forward))
++					continue;
 +
  				mark_lock_accessed(entry, lock, forward);
--				if (match(entry, data)) {
--					*target_entry = entry;
--					ret = 0;
--					goto exit;
--				}
  
  				if (__cq_enqueue(cq, entry)) {
- 					ret = -1;
- 					goto exit;
- 				}
-+
- 				cq_depth = __cq_get_elem_count(cq);
- 				if (max_bfs_queue_depth < cq_depth)
- 					max_bfs_queue_depth = cq_depth;
- 			}
- 		}
-+
-+		if (match(lock, data)) {
-+			*target_entry = lock;
-+			ret = 0;
-+			goto exit;
-+		}
-+
- 	}
- exit:
- 	return ret;
-@@ -1682,9 +1683,9 @@ static int __bfs(struct lock_list *source_entry,
- static inline int __bfs_forwards(struct lock_list *src_entry,
- 			void *data,
- 			int (*match)(struct lock_list *entry, void *data),
--			struct lock_list **target_entry)
-+			struct lock_list **target_entry, bool init)
- {
--	return __bfs(src_entry, data, match, target_entry, 1);
-+	return __bfs(src_entry, data, match, target_entry, 1, init);
- }
- 
- static inline int __bfs_backwards(struct lock_list *src_entry,
-@@ -1692,7 +1693,7 @@ static inline int __bfs_backwards(struct lock_list *src_entry,
- 			int (*match)(struct lock_list *entry, void *data),
- 			struct lock_list **target_entry)
- {
--	return __bfs(src_entry, data, match, target_entry, 0);
-+	return __bfs(src_entry, data, match, target_entry, 0, true);
- }
- 
- static void print_lock_trace(const struct lock_trace *trace,
-@@ -1864,7 +1865,7 @@ static unsigned long __lockdep_count_forward_deps(struct lock_list *this)
- 	unsigned long  count = 0;
- 	struct lock_list *uninitialized_var(target_entry);
- 
--	__bfs_forwards(this, (void *)&count, noop_count, &target_entry);
-+	__bfs_forwards(this, (void *)&count, noop_count, &target_entry, true);
- 
- 	return count;
- }
-@@ -1918,12 +1919,12 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
-  */
- static noinline int
- check_path(struct lock_class *target, struct lock_list *src_entry,
--	   struct lock_list **target_entry)
-+	   struct lock_list **target_entry, bool init)
- {
- 	int ret;
- 
- 	ret = __bfs_forwards(src_entry, (void *)target, class_equal,
--			     target_entry);
-+			     target_entry, init);
- 
- 	if (unlikely(ret < 0))
- 		print_bfs_bug(ret);
-@@ -1951,7 +1952,7 @@ unsigned long lockdep_count_backward_deps(struct lock_class *class)
- 
- 	debug_atomic_inc(nr_cyclic_checks);
- 
--	ret = check_path(hlock_class(target), &src_entry, &target_entry);
-+	ret = check_path(hlock_class(target), &src_entry, &target_entry, true);
- 
- 	if (unlikely(!ret)) {
- 		if (!*trace) {
-@@ -2012,7 +2013,7 @@ static inline int usage_match_backward(struct lock_list *entry, void *mask)
- 	debug_atomic_inc(nr_find_usage_forwards_checks);
- 
- 	result = __bfs_forwards(root, &usage_mask, usage_match_forward,
--				target_entry);
-+				target_entry, true);
- 
- 	return result;
- }
 -- 
 1.8.3.1
 
