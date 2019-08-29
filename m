@@ -2,91 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20FE6A279B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:03:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88EBDA27A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:04:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbfH2UDt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:03:49 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35413 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728116AbfH2UDr (ORCPT
+        id S1728236AbfH2UEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:04:51 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:21970 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726512AbfH2UEv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:03:47 -0400
-Received: by mail-wm1-f68.google.com with SMTP id l2so5070697wmg.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 13:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=p680zAEryobKlt4lW3L6CDRlAanEpxTFkLsO4D5mjF0=;
-        b=vSraP6xrw5G/N4zBQME8wvMKp2bSNx6/o6PF97n8Wb9WL6K8mrsLG5h96E7t1zyzo0
-         uV8gLIzWQNCNLTZP72+mnB5U+B/dFXuz/iNHmdCx/f6SMZw/CdELkIfRw5zK2BOl9bsZ
-         4UW7Ih7x0utEorDXwoOG5eXTafjn5xaJGH+bDPCHdpqGtFiQePDCIHMqNVvNT0pP1Zvy
-         wL0kTgU3yyvt+gVOuy1O4sPwF+H/5Aycg6WUIw9VC0nwLVaflGZZ4LqAFU9R0mluJKl3
-         qQ2T46wUnWu6C2qpSPyOQJakgsExPvFVcCKLxh93GN5Sty5PhnIY/2hmmLuDUkVS8zXb
-         bHUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=p680zAEryobKlt4lW3L6CDRlAanEpxTFkLsO4D5mjF0=;
-        b=VTmOl/3aplA5rwdY4y+QGjki1aONSV4gkRDrFpeksbDWCtkEDF5XYz2aicM8jh6KWc
-         qP0elhygtoD+WOiRiMnNGFWVVpOKw86dFNHe8GjKv1zuIN4mQyEkEERmuqslFnihGb9F
-         DMq/kSBPOl55ygQsCbibwhW0sW0yDVohbcqvVDQdELcISMIKz1cHMdnvuGiw/u1/oSj0
-         b76DPU/BK4/l0o1dxGaZtAOct37tJGrdJwnr7ndjuUoxHJm8thY4H2WhlYS6bfZ/Xwc8
-         dqvii7Hnb3z2s21jXSvKxnbcyhJq9ywiUhofZzcDca4A24FeDKMCF/il9OW5oGYCExW6
-         8p+A==
-X-Gm-Message-State: APjAAAWjsTMlh4UkuFcS9o0D8xh2fLtaFnJUQO8cHPXB3KQ4qV2NbCSY
-        uExhegkdWVxqc+F7vz4LGp1Xag==
-X-Google-Smtp-Source: APXvYqxEwqKarTekylYsSy42tncYr3cgdA8AaeAKY+NPrXroOaDE+8nIBsqNnKY0aBgP4aku1hqwaA==
-X-Received: by 2002:a1c:cb83:: with SMTP id b125mr6655160wmg.43.1567109025744;
-        Thu, 29 Aug 2019 13:03:45 -0700 (PDT)
-Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
-        by smtp.gmail.com with ESMTPSA id w8sm15584995wmc.1.2019.08.29.13.03.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 29 Aug 2019 13:03:45 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, bjorn.andersson@linaro.org,
-        agross@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] arm64: dts: qcom: qcs404: add the watchdog node
-Date:   Thu, 29 Aug 2019 22:03:40 +0200
-Message-Id: <20190829200340.15498-2-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190829200340.15498-1-jorge.ramirez-ortiz@linaro.org>
-References: <20190829200340.15498-1-jorge.ramirez-ortiz@linaro.org>
+        Thu, 29 Aug 2019 16:04:51 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7TK233X040496;
+        Thu, 29 Aug 2019 16:04:10 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2upna189g9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 16:04:10 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7TK3CUI024417;
+        Thu, 29 Aug 2019 20:04:09 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma02wdc.us.ibm.com with ESMTP id 2ujvv6xcru-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Aug 2019 20:04:09 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7TK49RY51642816
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 20:04:09 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 564A2112062;
+        Thu, 29 Aug 2019 20:04:09 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE290112061;
+        Thu, 29 Aug 2019 20:04:07 +0000 (GMT)
+Received: from leobras.br.ibm.com (unknown [9.18.235.111])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 29 Aug 2019 20:04:07 +0000 (GMT)
+Message-ID: <db0f02c5b1a995fde174f036540a3d11008cf116.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 1/1] netfilter: nf_tables: fib: Drop IPV6 packages if
+ IPv6 is disabled on boot
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Date:   Thu, 29 Aug 2019 17:04:03 -0300
+In-Reply-To: <20190821141505.2394-1-leonardo@linux.ibm.com>
+References: <20190821141505.2394-1-leonardo@linux.ibm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-FHDAs17k+gbMZaWPCpYr"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-29_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=845 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908290200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allows QCS404 based designs to enable watchdog support
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+--=-FHDAs17k+gbMZaWPCpYr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 131d8046d3be..17d4dd54c53a 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -875,6 +875,12 @@
- 			#mbox-cells = <1>;
- 		};
- 
-+		watchdog@b017000 {
-+			compatible = "qcom,kpss-wdt";
-+			reg = <0x0b017000 0x1000>;
-+			clocks = <&sleep_clk>;
-+		};
-+
- 		timer@b120000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--- 
-2.22.0
+> Thats a good point -- Leonardo, is the
+> "net.bridge.bridge-nf-call-ip6tables" sysctl on?
+
+Running
+# sudo sysctl -a
+I can see:
+net.bridge.bridge-nf-call-ip6tables =3D 1
+=20
+So this packets are sent to host iptables for processing?
+
+
+(Sorry for the delay, I did not received the previous e-mails.
+Please include me in to/cc.)
+
+--=-FHDAs17k+gbMZaWPCpYr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl1oL7MACgkQlQYWtz9S
+ttSUbA/5AUisorNqlRZnWcdh7AysMoIkbIMEP9J2EMxnJap4lGlqu2SG/C1SSRFK
+zOkU8AeQWHoGIwktUdJGxaux1os6s9mY3NQNmwKeQvr6Hc2IjmUfwjxNiDJMHvyE
+oSH5BuAmP8o/DDDRDmH1MHDJVdmBabmnegjxip+II14jj+gOZ9XzyMeNmBIozaYv
+y9puT0TSpYkR0QiwJ4BKOi2/zPlT1wuvDMdK66ywakTwzqNPVgA89X4e8c3EwBcM
+TjBArAtxAD1P7sm8bN00s/Tm7i1E+DTO2McHwUJdpoFbH0K4UTUxjvkhgE5LhFXH
+2aHGIErLQrTiCX7xmqMPNO3/fVC67Y1TW+AOhKWLZaYtwS82WncSzeRMsnOr0TaH
+UqVsqqZS2H56G5kBRypF5iKvf5dMLDPmWiHru7YVupMEb5oKJaofvy0HPUQ5FLam
+6tMT+xC0DUUFyZkc1t+KCxyZr/zD8yxGck7qOQJqsJn0uM3sQZ54W31iYgpr/q0H
+TUoxRZJS9J/rpoJyryVmE7V2tWJmpyP7sMvcNbu6o8odvrRvzjCZXKXN7r6r5ghG
+iTNe70wJMeHrgamx95Xbj3LAXRD7HNAVrIxh0S3nWo5Cc76ByOk3IN0SBTMpxt5G
+D0nlzyVzNorW76LvMIEfxMECpG5KtTC7OInYlnZue0zLblJR9ZU=
+=Idus
+-----END PGP SIGNATURE-----
+
+--=-FHDAs17k+gbMZaWPCpYr--
 
