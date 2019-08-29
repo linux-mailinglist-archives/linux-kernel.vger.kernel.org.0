@@ -2,76 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E1D5A2A0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21580A2A1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:47:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfH2WqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 18:46:01 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37507 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728581AbfH2Wp7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:45:59 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 97so2245233otr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 15:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=AIuig4xjj1okPm1v+nckMKBMxCFTk/w+YVlFEyiN+6I=;
-        b=UYQHthzH50nn10Fq77yoEj2YvcrNXNY6o18RXam9bIfpl1wHeEULO4yuuCSRI/Ru2K
-         RLreXb965cYq9f3IqoESXN6C24GqPvA0ZrmEimO02Cts4PIULu8eTSRXN1IJsCJpfuRT
-         +BxwrrliSYijoXLFR2JXb4Dd9dixmo7nx0t/SCzsYhC6j9bvK86j3oNNTrtP+EVJSHkr
-         99Pi3kPcsOf6m/wOqSI9Rwe2C2ZMhHPCJ4mFEsr7TfAmthneIydvqyFqOfcrDZTd1ej9
-         rYDVYNrMO2OaS4qmIqAoNyXXvTyMb6cGBOK+FkHL6xZJdSGVe9V9M57hTVctnR+W3nW/
-         RkxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=AIuig4xjj1okPm1v+nckMKBMxCFTk/w+YVlFEyiN+6I=;
-        b=YMmXAa0JFW51anrQpkTOaz955Rahb7SayNVTB7EMhZSz8qeou0mUZ8S4OtqbX2zgh8
-         QFgmJyBFWNbCT16gEHlWHrB4R10L4GIy9iXjXCZQld7aicEbA38o43WUons+1ipcFZ3a
-         SryA8IAu70DK1jEAZoIqDXhcItY21g8o/GY0vQxbKwCD8lqJkv7QnCCjDnE1XFEOH3G2
-         ZM+1upL06RZ8L49ckWgY+Rzh38mF+uLEuJsAZvtwRZuo3rlYR8qNW6Y6uIbeHaJyY1qc
-         5NtZBau7YljfGPECsW/W1b46T6f1bFmTyQnD6ecaKPDg2AhzqSESTnjax+lBO2bkjOyi
-         7mHQ==
-X-Gm-Message-State: APjAAAVZ6NMkGxvlz4RCugola3oqMG9gl/mLzxWdRROdlNCYmvuw87kA
-        P624fIHp6HRiTC9xQtH3Pfba5kdauFBdz6EUqRYocw==
-X-Google-Smtp-Source: APXvYqy2RByDJRCk/msHyU5rudzz0l2j2S1qCHXaP4lkineatCLBMlR9sdECn9SSUKEhV7aUFLo14KwjqemHdp5tUtA=
-X-Received: by 2002:a05:6830:1e05:: with SMTP id s5mr9281786otr.247.1567118758900;
- Thu, 29 Aug 2019 15:45:58 -0700 (PDT)
+        id S1728599AbfH2Wqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 18:46:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728135AbfH2Wqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:46:55 -0400
+Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A007921874;
+        Thu, 29 Aug 2019 22:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567118814;
+        bh=5i8UCHTKfxI1RiMfkzSc2sP1EbSS0hZk+I67qfUo5Vk=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=nByf2uix/jKaDvvUZ1qwUvvrxJTXcNbZh5hDsGTEjOY4Jt22C9npxp8mXinRLNkdh
+         Ng+zNwUuJ/ZBTQDt7J+XMvSaC6k/RUWNR4LtRYT4no+c2PpjB1n5k0rxg9rEf88n1e
+         eJGIHBop60nSe3P/MlgsYuNqtBD9h718EzAH7onw=
+Date:   Thu, 29 Aug 2019 15:46:53 -0700 (PDT)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
+To:     Christoph Hellwig <hch@lst.de>
+cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, jgross@suse.com,
+        boris.ostrovsky@oracle.com
+Subject: Re: [PATCH 06/11] swiotlb-xen: always use dma-direct helpers to
+ alloc coherent pages
+In-Reply-To: <20190826121944.515-7-hch@lst.de>
+Message-ID: <alpine.DEB.2.21.1908281501120.8175@sstabellini-ThinkPad-T480s>
+References: <20190826121944.515-1-hch@lst.de> <20190826121944.515-7-hch@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190830080855.45421fa0@canb.auug.org.au>
-In-Reply-To: <20190830080855.45421fa0@canb.auug.org.au>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 29 Aug 2019 15:45:48 -0700
-Message-ID: <CAPcyv4iWUa-HVoODtbj-G2jxS0Tm-x_=s4PNQ-M-FvDibYFgFw@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the nvdimm-fixes tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeff Moyer <jmoyer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 3:09 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> In commit
->
->   dcbce3cd20be ("libnvdimm/pfn: Fix namespace creation on misaligned addresses")
->
-> Fixes tag
->
->   Fixes: commit a3619190d62e ("libnvdimm/pfn: stop padding pmem namespaces ...")
->
-> has these problem(s):
->
->   - leading word 'commit' unexpected
++ Boris, Juergen
 
-"Fixes" fixed, thanks Stephen.
+On Mon, 26 Aug 2019, Christoph Hellwig wrote:
+> x86 currently calls alloc_pages, but using dma-direct works as well
+> there, with the added benefit of using the CMA pool if available.
+> The biggest advantage is of course to remove a pointless bit of
+> architecture specific code.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/x86/include/asm/xen/page-coherent.h | 16 ----------------
+>  drivers/xen/swiotlb-xen.c                |  7 +++----
+>  include/xen/arm/page-coherent.h          | 12 ------------
+>  3 files changed, 3 insertions(+), 32 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/xen/page-coherent.h b/arch/x86/include/asm/xen/page-coherent.h
+> index 116777e7f387..8ee33c5edded 100644
+> --- a/arch/x86/include/asm/xen/page-coherent.h
+> +++ b/arch/x86/include/asm/xen/page-coherent.h
+> @@ -5,22 +5,6 @@
+>  #include <asm/page.h>
+>  #include <linux/dma-mapping.h>
+>  
+> -static inline void *xen_alloc_coherent_pages(struct device *hwdev, size_t size,
+> -		dma_addr_t *dma_handle, gfp_t flags,
+> -		unsigned long attrs)
+> -{
+> -	void *vstart = (void*)__get_free_pages(flags, get_order(size));
+> -	*dma_handle = virt_to_phys(vstart);
+
+This is where we need Boris and Juergen's opinion. From an ARM POV it
+looks OK.
+
+
+> -	return vstart;
+> -}
+> -
+> -static inline void xen_free_coherent_pages(struct device *hwdev, size_t size,
+> -		void *cpu_addr, dma_addr_t dma_handle,
+> -		unsigned long attrs)
+> -{
+> -	free_pages((unsigned long) cpu_addr, get_order(size));
+> -}
+> -
+>  static inline void xen_dma_map_page(struct device *hwdev, struct page *page,
+>  	     dma_addr_t dev_addr, unsigned long offset, size_t size,
+>  	     enum dma_data_direction dir, unsigned long attrs) { }
+> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+> index b8808677ae1d..f9dd4cb6e4b3 100644
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -299,8 +299,7 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+>  	 * address. In fact on ARM virt_to_phys only works for kernel direct
+>  	 * mapped RAM memory. Also see comment below.
+>  	 */
+> -	ret = xen_alloc_coherent_pages(hwdev, size, dma_handle, flags, attrs);
+> -
+> +	ret = dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
+>  	if (!ret)
+>  		return ret;
+>  
+> @@ -319,7 +318,7 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
+>  	else {
+>  		if (xen_create_contiguous_region(phys, order,
+>  						 fls64(dma_mask), dma_handle) != 0) {
+> -			xen_free_coherent_pages(hwdev, size, ret, (dma_addr_t)phys, attrs);
+> +			dma_direct_free(hwdev, size, ret, (dma_addr_t)phys, attrs);
+>  			return NULL;
+>  		}
+>  		SetPageXenRemapped(virt_to_page(ret));
+> @@ -351,7 +350,7 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+>  	    TestClearPageXenRemapped(virt_to_page(vaddr)))
+>  		xen_destroy_contiguous_region(phys, order);
+>  
+> -	xen_free_coherent_pages(hwdev, size, vaddr, (dma_addr_t)phys, attrs);
+> +	dma_direct_free(hwdev, size, vaddr, (dma_addr_t)phys, attrs);
+>  }
+>  
+>  /*
+> diff --git a/include/xen/arm/page-coherent.h b/include/xen/arm/page-coherent.h
+> index a840d6949a87..0e244f4fec1a 100644
+> --- a/include/xen/arm/page-coherent.h
+> +++ b/include/xen/arm/page-coherent.h
+> @@ -16,18 +16,6 @@ void __xen_dma_sync_single_for_cpu(struct device *hwdev,
+>  void __xen_dma_sync_single_for_device(struct device *hwdev,
+>  		dma_addr_t handle, size_t size, enum dma_data_direction dir);
+>  
+> -static inline void *xen_alloc_coherent_pages(struct device *hwdev, size_t size,
+> -		dma_addr_t *dma_handle, gfp_t flags, unsigned long attrs)
+> -{
+> -	return dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
+> -}
+> -
+> -static inline void xen_free_coherent_pages(struct device *hwdev, size_t size,
+> -		void *cpu_addr, dma_addr_t dma_handle, unsigned long attrs)
+> -{
+> -	dma_direct_free(hwdev, size, cpu_addr, dma_handle, attrs);
+> -}
+> -
+>  static inline void xen_dma_sync_single_for_cpu(struct device *hwdev,
+>  		dma_addr_t handle, size_t size, enum dma_data_direction dir)
+>  {
+> -- 
+> 2.20.1
+> 
