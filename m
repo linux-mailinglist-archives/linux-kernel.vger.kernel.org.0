@@ -2,94 +2,311 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D670A2278
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:38:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16A5DA2282
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:39:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbfH2Ri2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:38:28 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46135 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727697AbfH2Ri2 (ORCPT
+        id S1727746AbfH2Rjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:39:32 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46397 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727228AbfH2Rjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:38:28 -0400
-Received: by mail-pl1-f194.google.com with SMTP id o3so1886989plb.13
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:38:27 -0700 (PDT)
+        Thu, 29 Aug 2019 13:39:32 -0400
+Received: by mail-ed1-f67.google.com with SMTP id z51so4889302edz.13
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:39:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xX6NnJBlZc5HyDgcExXc1+tZLWs5dKl2iDR8wStwjWU=;
-        b=OAVX0H28lnD1pzeaJLYvwWm5h6edzg+3fsQQobLecwv+hfmSzOI3+ovBUb5NBY03iF
-         /Bu42a0DxZD1qhadBjv+kGAuHzm7q5GE7+HkzqFcHA5oIPlcztdPte689QtMchhD/KM5
-         ZvnCR768ysjg6tbZvKN6zs/qQ/0kPg24/10wPJT4PsfkBE19vMGGgVwBpIE1pX8T+n8u
-         EqG5H/FmeI5rS2dRXMfvLSSsmcLN4xy7lY3Q3iYMNOrDjNzvpmxFUbjOqB51D21NR+Bv
-         A9wNcSbM4FuaqWWTFtjoE8qPffjg8P5Qo+7q0cy1A54tZGw3rcwuLMtLwfJ6d0TEGmQm
-         bXBg==
+        bh=vWvompOB9P3qSUAQt3RGkWbjvpOgrGjuuiR+hcj9nz0=;
+        b=cGl12q3btanfNBIfBGgNS4OEaxSll4YH3jpxfoItAFYfLShzkFsQFe/Zi6WPHuCUB5
+         wnyh5sS0NdIw2bhi5WjVqDWtlaWM4nwHwZVdfj8Z8tioAq3mf/HTivEIBFvf5kdpnqF9
+         0GsDpqdOawZDOvghZj/hJnGZ7i/MFSS/bSEhts/OQRxp4Ms/cMPmgVnp6tZM1xFYuyIv
+         AvvSPgY+DQ1TGxg/6BRJ18Eqvtdl+edRhgNbYBY02bS2c/qfSCApUwsbei9uNwuF0unj
+         luOVI25PBjZDI6JTS0uJLaTBj2B4svdX5lXvscrozuHUU5EM9zJHkErLhJtn2eD/SlI7
+         cnVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xX6NnJBlZc5HyDgcExXc1+tZLWs5dKl2iDR8wStwjWU=;
-        b=il5bUrbV2hvVR+28N88i0Dsnz7vDZH7lLe3+m34qreizY12TrknxWqIhkZQdkqq5wk
-         LHqe0NffMQoeJI5VVrQdsqnXbJ1tKLcDVrbMGrRXBjlOwu8EZbjFFAalkOQsmmv5mnx9
-         Kanvh0G6Mh3VROoetpn6Eww33fvHoPKM/x89ozqAyiHo784MoLtpLJVpcYBkglJ9cJ3a
-         g2Ot6xxRYexHFaM1YvhDaiGsORo8UKNpQNS0NhtV84AR3pywkMbnyAuVE9Vnb85IJbVT
-         BQEYug6l0Y530Th1orNTbF8nymfaGGhdHiHKXfI3p7zY9KlrmQo8kGojWM/VC8J9xrZ1
-         57jA==
-X-Gm-Message-State: APjAAAVknlySgRgqQfypupEv15S+MWD785FBY4Wd5fvdsOGoh6KmX6vE
-        68KsnvQ45osukTAcnnicxjMVPL00wlAHgDJo8f4Tyw==
-X-Google-Smtp-Source: APXvYqwksNqEcTrnH+ZrQavgttKCKAjHSGreuaQWdmSfn4jOEMB3aEr+s+RPTyvo8LnLDVUaPK8Vc48/rizytJj4UfA=
-X-Received: by 2002:a17:902:169:: with SMTP id 96mr10710000plb.297.1567100306938;
- Thu, 29 Aug 2019 10:38:26 -0700 (PDT)
+        bh=vWvompOB9P3qSUAQt3RGkWbjvpOgrGjuuiR+hcj9nz0=;
+        b=o3NMIR7z/+yMjTj/It4TuKLeK3JX7y3zqYkDXOHbc5hSMcaXX1K1jR0jqWQs3HMI2Y
+         9ldFCfBR1w2RUiOxPJ1FEkLkewVmKCFKDLsqat7RdfiV5izHlFKoAO5JhPvdwXJ9FxlH
+         Y+Ld9C22M++6DxrHtakCrxG2Ej9YNn1I0jAdSRmxrEK3Wf+8hfNQH9+3VJw5oqW1U/XS
+         /XVcuryXcfHNtCQOWxmYtZ7xQiLLccZvjJYwJ+tCOEa7XRv0Q8AsbCHCCtzy9EfOtmv5
+         GDm40BcBNnCmnjjTyXZjqa9f7E4j/5I3f8zmUbSiZeEWcdM8qPCLuzZGg0ew+JCXjeR9
+         SN5A==
+X-Gm-Message-State: APjAAAWhQUGi1NwSWMVpeUBtANJDID+Z3oWedOAiCgx1YLuXCMeC41Hk
+        wZ21a6F8mFkP1ar8JnE+tEgMctvtBY+SFkvmrdI=
+X-Google-Smtp-Source: APXvYqw0dTgLE2E3lYLOddKp9RHLShKkrEGWc3qWj/KUwq93H6wlWpEC6wNZ/syjoFr1eFEB/Mfak6Emj2EJWOp1cOU=
+X-Received: by 2002:a17:906:6bc4:: with SMTP id t4mr9666690ejs.256.1567100368758;
+ Thu, 29 Aug 2019 10:39:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190827003709.26950-1-skhan@linuxfoundation.org> <f5088365-68a1-6036-0037-b6e9af01391f@kernel.org>
-In-Reply-To: <f5088365-68a1-6036-0037-b6e9af01391f@kernel.org>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 29 Aug 2019 10:38:15 -0700
-Message-ID: <CAFd5g44bYBjrp3XrUAmkDN5o-oD92G9GxVYnF6Y+2fLrodDTTA@mail.gmail.com>
-Subject: Re: [PATCH v2] doc: kselftest: update for clarity on running
- kselftests in CI rings
-To:     shuah <shuah@kernel.org>
-Cc:     Shuah Khan <skhan@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dan.rue@linaro.org, anders.roxell@linaro.org
+References: <20190829060550.62095-1-john.stultz@linaro.org>
+In-Reply-To: <20190829060550.62095-1-john.stultz@linaro.org>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Thu, 29 Aug 2019 10:39:17 -0700
+Message-ID: <CAF6AEGvborwLmjfC6_vgZ-ZbfvF3HEFFyb_NHSLRoYWF35bw+g@mail.gmail.com>
+Subject: Re: [RFC][PATCH] drm: kirin: Fix dsi probe/attach logic
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Matt Redfearn <matt.redfearn@thinci.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 12:18 PM shuah <shuah@kernel.org> wrote:
+On Wed, Aug 28, 2019 at 11:06 PM John Stultz <john.stultz@linaro.org> wrote:
 >
-> On 8/26/19 6:37 PM, Shuah Khan wrote:
-> > Update to add clarity and recommendations on running newer kselftests
-> > on older kernels vs. matching the kernel and kselftest revisions.
-> >
-> > The recommendation is "Match kernel revision and kselftest."
-> >
-> > Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-> > ---
-> > Changes since v1: Fixed "WARNING: Title underline too short."
+> Since commit 83f35bc3a852 ("drm/bridge: adv7511: Attach to DSI
+> host at probe time") landed in -next the HiKey board would fail
+> to boot, looping:
+
+No, please revert 83f35bc3a852.. that is going in the *complete* wrong
+direction.  We actually should be moving panels to not require dsi
+host until attach time, similar to how bridges work, not the other way
+around.
+
+The problem is that, when dealing with bootloader enabled display, we
+need to be really careful not to touch the hardware until the display
+driver knows the bridge/panel is present.  If the bridge/panel probes
+after the display driver, we could end up killing scanout
+(efifb/simplefb).. if the bridge/panel is missing some dependency and
+never probes, it is rather unpleasant to be stuck trying to debug what
+went wrong with no display.
+
+Sorry I didn't notice that adv7511 patch before it landed, but the
+right thing to do now is to revert it.
+
+BR,
+-R
+
+>   adv7511 2-0039: failed to find dsi host
 >
-> I have a few more changes and would like to make and send a v3 after
-> the LPC's Testing and Fuzzing kselftest discussion.
+> messages over and over. Andrzej Hajda suggested this is due to a
+> circular dependency issue, and that the adv7511 change is
+> correcting the improper order used earlier.
 >
-> Holding off on this patch for now.
-
-Is this just because you are busy, or because you expect what you want
-to say to change after the discussion?
-
-If it is because you expect what you want to say here to change, I am
-surprised. This seems like pretty good, straightforward advice. From
-where I stand this seems like it makes the documentation better
-without making anything worse, and so this change should probably be
-included.
-
-In anycase, your call. I just don't think anyone is going to dispute
-what you are saying here :-)
-
-Cheers!
+> Unfortunately this means the DSI drivers that use adv7511 need
+> to also need to be updated to use the proper ordering to
+> continue to work.
+>
+> This patch tries to reorder the initialization to register the
+> dsi_host first, and then call component_add via dsi_host_attach,
+> instead of doing that at probe time.
+>
+> This seems to resolve the issue with the HiKey board.
+>
+> Cc: Andrzej Hajda <a.hajda@samsung.com>
+> Cc: Matt Redfearn <matt.redfearn@thinci.com>
+> Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
+> Cc: Rongrong Zou <zourongrong@gmail.com>
+> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Jonas Karlman <jonas@kwiboo.se>
+> Cc: Jernej Skrabec <jernej.skrabec@siol.net>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: David Airlie <airlied@linux.ie>,
+> Cc: Sean Paul <seanpaul@chromium.org>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+> Fixes: 83f35bc3a852 ("drm/bridge: adv7511: Attach to DSI host at probe time")
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+> Note: I'm really not super familiar with the DSI code here,
+> and am mostly just trying to refactor the existing code in a
+> similar fashion to the suggested dw-mipi-dsi-rockchip.c
+> implementation. Careful review would be greatly appreciated!
+>
+> Also there is an outstanding regression on the db410c since it
+> similarly uses the adv7511 and probably needs a similar rework.
+> ---
+>  drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c | 111 ++++++++++---------
+>  1 file changed, 56 insertions(+), 55 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
+> index 5bf8138941de..696cee1a1219 100644
+> --- a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
+> +++ b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
+> @@ -79,6 +79,7 @@ struct dsi_hw_ctx {
+>  };
+>
+>  struct dw_dsi {
+> +       struct device *dev;
+>         struct drm_encoder encoder;
+>         struct drm_bridge *bridge;
+>         struct mipi_dsi_host host;
+> @@ -724,51 +725,6 @@ static int dw_drm_encoder_init(struct device *dev,
+>         return 0;
+>  }
+>
+> -static int dsi_host_attach(struct mipi_dsi_host *host,
+> -                          struct mipi_dsi_device *mdsi)
+> -{
+> -       struct dw_dsi *dsi = host_to_dsi(host);
+> -
+> -       if (mdsi->lanes < 1 || mdsi->lanes > 4) {
+> -               DRM_ERROR("dsi device params invalid\n");
+> -               return -EINVAL;
+> -       }
+> -
+> -       dsi->lanes = mdsi->lanes;
+> -       dsi->format = mdsi->format;
+> -       dsi->mode_flags = mdsi->mode_flags;
+> -
+> -       return 0;
+> -}
+> -
+> -static int dsi_host_detach(struct mipi_dsi_host *host,
+> -                          struct mipi_dsi_device *mdsi)
+> -{
+> -       /* do nothing */
+> -       return 0;
+> -}
+> -
+> -static const struct mipi_dsi_host_ops dsi_host_ops = {
+> -       .attach = dsi_host_attach,
+> -       .detach = dsi_host_detach,
+> -};
+> -
+> -static int dsi_host_init(struct device *dev, struct dw_dsi *dsi)
+> -{
+> -       struct mipi_dsi_host *host = &dsi->host;
+> -       int ret;
+> -
+> -       host->dev = dev;
+> -       host->ops = &dsi_host_ops;
+> -       ret = mipi_dsi_host_register(host);
+> -       if (ret) {
+> -               DRM_ERROR("failed to register dsi host\n");
+> -               return ret;
+> -       }
+> -
+> -       return 0;
+> -}
+> -
+>  static int dsi_bridge_init(struct drm_device *dev, struct dw_dsi *dsi)
+>  {
+>         struct drm_encoder *encoder = &dsi->encoder;
+> @@ -796,10 +752,6 @@ static int dsi_bind(struct device *dev, struct device *master, void *data)
+>         if (ret)
+>                 return ret;
+>
+> -       ret = dsi_host_init(dev, dsi);
+> -       if (ret)
+> -               return ret;
+> -
+>         ret = dsi_bridge_init(drm_dev, dsi);
+>         if (ret)
+>                 return ret;
+> @@ -817,13 +769,22 @@ static const struct component_ops dsi_ops = {
+>         .unbind = dsi_unbind,
+>  };
+>
+> -static int dsi_parse_dt(struct platform_device *pdev, struct dw_dsi *dsi)
+> +static int dsi_host_attach(struct mipi_dsi_host *host,
+> +                          struct mipi_dsi_device *mdsi)
+>  {
+> -       struct dsi_hw_ctx *ctx = dsi->ctx;
+> -       struct device_node *np = pdev->dev.of_node;
+> -       struct resource *res;
+> +       struct dw_dsi *dsi = host_to_dsi(host);
+> +       struct device_node *np = dsi->dev->of_node;
+>         int ret;
+>
+> +       if (mdsi->lanes < 1 || mdsi->lanes > 4) {
+> +               DRM_ERROR("dsi device params invalid\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       dsi->lanes = mdsi->lanes;
+> +       dsi->format = mdsi->format;
+> +       dsi->mode_flags = mdsi->mode_flags;
+> +
+>         /*
+>          * Get the endpoint node. In our case, dsi has one output port1
+>          * to which the external HDMI bridge is connected.
+> @@ -832,6 +793,42 @@ static int dsi_parse_dt(struct platform_device *pdev, struct dw_dsi *dsi)
+>         if (ret)
+>                 return ret;
+>
+> +       return component_add(dsi->dev, &dsi_ops);
+> +}
+> +
+> +static int dsi_host_detach(struct mipi_dsi_host *host,
+> +                          struct mipi_dsi_device *mdsi)
+> +{
+> +       /* do nothing */
+> +       return 0;
+> +}
+> +
+> +static const struct mipi_dsi_host_ops dsi_host_ops = {
+> +       .attach = dsi_host_attach,
+> +       .detach = dsi_host_detach,
+> +};
+> +
+> +static int dsi_host_init(struct device *dev, struct dw_dsi *dsi)
+> +{
+> +       struct mipi_dsi_host *host = &dsi->host;
+> +       int ret;
+> +
+> +       host->dev = dev;
+> +       host->ops = &dsi_host_ops;
+> +       ret = mipi_dsi_host_register(host);
+> +       if (ret) {
+> +               DRM_ERROR("failed to register dsi host\n");
+> +               return ret;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int dsi_parse_dt(struct platform_device *pdev, struct dw_dsi *dsi)
+> +{
+> +       struct dsi_hw_ctx *ctx = dsi->ctx;
+> +       struct resource *res;
+> +
+>         ctx->pclk = devm_clk_get(&pdev->dev, "pclk");
+>         if (IS_ERR(ctx->pclk)) {
+>                 DRM_ERROR("failed to get pclk clock\n");
+> @@ -862,15 +859,19 @@ static int dsi_probe(struct platform_device *pdev)
+>         }
+>         dsi = &data->dsi;
+>         ctx = &data->ctx;
+> +       dsi->dev = &pdev->dev;
+>         dsi->ctx = ctx;
+>
+>         ret = dsi_parse_dt(pdev, dsi);
+>         if (ret)
+>                 return ret;
+>
+> -       platform_set_drvdata(pdev, data);
+> +       ret = dsi_host_init(&pdev->dev, dsi);
+> +       if (ret)
+> +               return ret;
+>
+> -       return component_add(&pdev->dev, &dsi_ops);
+> +       platform_set_drvdata(pdev, data);
+> +       return 0;
+>  }
+>
+>  static int dsi_remove(struct platform_device *pdev)
+> --
+> 2.17.1
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
