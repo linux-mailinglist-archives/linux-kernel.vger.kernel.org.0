@@ -2,122 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF4DEA12EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 09:46:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BC94A12F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 09:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfH2Hqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 03:46:34 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:56003 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728046AbfH2Hqc (ORCPT
+        id S1728103AbfH2HrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 03:47:10 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:55466 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfH2HrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 03:46:32 -0400
-Received: by mail-pf1-f201.google.com with SMTP id 22so1823363pfn.22
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 00:46:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=nhjHwCHt3mcz+mHDiVxN7s8L1KuUZ7MDwDAfLe16I50=;
-        b=G+4eBBbE8eR+JweFO/MTbU/JiiK//ZmQj8k/LyrXbCGTThb38w/Z2lUm+J9+GnNM0R
-         ILZAbYqpRKL7TOIZvfQiUJ2cF39/iD9rfGRzN/JPmUP0imOiTAzvaNMocnkNuQkRpez1
-         TeFD7m5SShMLKZ99sCn6+3Jk0GWByzZ/IZjTTkJhmHdk/U8KSb8jext129vtnUphdVPK
-         3Og8DoR1JhhS8QHP8PSei9z2OIoEIJgw7WByG4I5s8EIdtWDrfnC1s2xxQI7P6I0R2oo
-         vZCWREqieybOCkNKb7WgvgWuO6NUQORyGlcpSxF+myfSq3RilEg/tbt3CAbeESXosLmc
-         vLfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=nhjHwCHt3mcz+mHDiVxN7s8L1KuUZ7MDwDAfLe16I50=;
-        b=PS41R+vXS5PIAaGQVvCXaN1rvZ4a60kse2qCcAjjz/C8W/olh+kL2qL2yRswK/kY3m
-         MQJu9op+6F8E6kjPAWjedeShSf5ApIQV3i0CdVgClaRGjcSc8boLN4Ft20zGKoFNtyQ3
-         DwvEJxv6VApzET+6XvA5rSplgRy2XViXCM72+yFINrEHB6LWpltgzKXz1DhT4R4BdhT1
-         0h4nIZW2M+zpGhHqD/uoec9B2obLw3Hr6pLmH43c/0wiQHPS7pXKQuSKN6sxQU+KEBk3
-         x2CLqyvxqnEtSnawUW3cOGguwqRQT0Yiz2XBOQnWvXwBceAz3tYMgSa5Y3QrM/Y/J3yt
-         KbnQ==
-X-Gm-Message-State: APjAAAUxLRQ2S072tyI7X2TcgyUrJCe80U+6UGncq+/eShwyYK+FCsur
-        Wl1cfbiaWJ+VWSHktoB1kqqjnitgkwF8Q0M=
-X-Google-Smtp-Source: APXvYqxjRrI7v0tAcH4lDhIBqUhl0wBMcJY40NePOKQ5MWBcbB/tbpokA1E16lgkYG8HCTLquA1Ns3qi+HNbWZE=
-X-Received: by 2002:a65:690f:: with SMTP id s15mr6855732pgq.432.1567064791199;
- Thu, 29 Aug 2019 00:46:31 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 00:46:03 -0700
-In-Reply-To: <20190829074603.70424-1-saravanak@google.com>
-Message-Id: <20190829074603.70424-8-saravanak@google.com>
-Mime-Version: 1.0
-References: <20190829074603.70424-1-saravanak@google.com>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-Subject: [PATCH v10 7/7] of: property: Add "depends-on" parsing support to of_fwnode_add_links()
-From:   Saravana Kannan <saravanak@google.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>
-Cc:     Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-acpi@vger.kernel.org, clang-built-linux@googlegroups.com,
-        David Collins <collinsd@codeaurora.org>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 29 Aug 2019 03:47:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=VfCL8t+OBcNr47iwQjcm8aKmg01bRT6fUprt393rbFE=; b=RKlYtgLnNcmEBlMNdfBERNNH17
+        XQZN1PTq0irN0Eed0aOQdq9CrQ05+BhXZinDz+zkVcEhU7ZQ1Bo04+JxcCOOw1hTCWW3mmDU2wDwj
+        sxUO1icRtv73irjHzKaU6lPr6RwKM2rG+iiHHouc0d9HHDh8ZhN/Y+ZYxEphHdXkdf8CcL4IgVtfc
+        HHLQnKxuwqjQaVuxU6pV03GRHYdZZCq1nIh7cy7gKdbf8pYLWyU/yf0pD4w3DersV1pCpP5doxMET
+        RZTPV6H+vkx5RdUwKL56cgDawzcnJjjOkP3D0qdZ9JrvtbC3B3JNM2oywn0IJcd2oP/m0HiS5lKW0
+        7pA2HWqg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3F8q-0008HC-S5; Thu, 29 Aug 2019 07:46:49 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id AAC5B30775B;
+        Thu, 29 Aug 2019 09:46:10 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id B48C420C743FC; Thu, 29 Aug 2019 09:46:44 +0200 (CEST)
+Date:   Thu, 29 Aug 2019 09:46:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>, Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mac Chiang <mac.chiang@intel.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20190829074644.GL2369@hirez.programming.kicks-ass.net>
+References: <20190829162012.36ac9d7c@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190829162012.36ac9d7c@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If dependencies inferred by of_fwnode_add_links() result in a cycle, it
-can prevent the probing of all the devices in the cycle. The depends-on
-property has been added to explicitly override inferred dependencies
-when they create a cycle.
+On Thu, Aug 29, 2019 at 04:20:12PM +1000, Stephen Rothwell wrote:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 29 Aug 2019 16:08:49 +1000
+> Subject: [PATCH] ASoC: Intel: boards: merge fix for INTEL_FAM6_KABYLAKE_M=
+OBILE -> INTEL_FAM6_KABYLAKE_L change
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  sound/soc/intel/common/soc-intel-quirks.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/sound/soc/intel/common/soc-intel-quirks.h b/sound/soc/intel/=
+common/soc-intel-quirks.h
+> index e6357d306cb8..863a477d3405 100644
+> --- a/sound/soc/intel/common/soc-intel-quirks.h
+> +++ b/sound/soc/intel/common/soc-intel-quirks.h
+> @@ -36,7 +36,7 @@ SOC_INTEL_IS_CPU(byt, INTEL_FAM6_ATOM_SILVERMONT);
+>  SOC_INTEL_IS_CPU(cht, INTEL_FAM6_ATOM_AIRMONT);
+>  SOC_INTEL_IS_CPU(apl, INTEL_FAM6_ATOM_GOLDMONT);
+>  SOC_INTEL_IS_CPU(glk, INTEL_FAM6_ATOM_GOLDMONT_PLUS);
+> -SOC_INTEL_IS_CPU(cml, INTEL_FAM6_KABYLAKE_MOBILE);
+> +SOC_INTEL_IS_CPU(cml, INTEL_FAM6_KABYLAKE_L);
 
-Add depends-on parsing support to of_fwnode_add_links() so that
-platforms with cyclic dependencies can use "depends-on" to break the
-cycle and continue successfully probing devices.
-
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/of/property.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 420c2d428184..78a262e24686 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -1106,6 +1106,12 @@ static struct device_node *parse_interconnects(struct device_node *np,
- 				"#interconnect-cells");
- }
- 
-+static struct device_node *parse_depends_on(struct device_node *np,
-+					    const char *prop_name, int index)
-+{
-+	return parse_prop_cells(np, prop_name, index, "depends-on", NULL);
-+}
-+
- static int strcmp_suffix(const char *str, const char *suffix)
- {
- 	unsigned int len, suffix_len;
-@@ -1151,6 +1157,7 @@ static const struct supplier_bindings bindings[] = {
- 	{ .parse_prop = parse_clocks, },
- 	{ .parse_prop = parse_interconnects, },
- 	{ .parse_prop = parse_regulators, },
-+	{ .parse_prop = parse_depends_on, },
- 	{},
- };
- 
-@@ -1203,6 +1210,12 @@ static int __of_link_to_suppliers(struct device *dev,
- 	struct property *p;
- 	int ret = 0;
- 
-+	if (of_find_property(con_np, "depends-on", NULL)) {
-+		if (of_link_property(dev, con_np, "depends-on"))
-+			ret = -EAGAIN;
-+		return ret;
-+	}
-+
- 	for_each_property_of_node(con_np, p)
- 		if (of_link_property(dev, con_np, p->name))
- 			ret = -EAGAIN;
--- 
-2.23.0.187.g17f5b7556c-goog
-
+ARGHH... rebase again?
