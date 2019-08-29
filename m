@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F0BDA25F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F57EA25EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:33:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbfH2Sdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:33:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55424 "EHLO mail.kernel.org"
+        id S1729606AbfH2SdU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:33:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728468AbfH2SNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:13:44 -0400
+        id S1728519AbfH2SNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:13:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B7692189D;
-        Thu, 29 Aug 2019 18:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3D332189D;
+        Thu, 29 Aug 2019 18:13:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102423;
-        bh=UpQsW1BGMX/sSqWtk8tg+B0ZE33BOytp6YJxphMj69k=;
+        s=default; t=1567102427;
+        bh=Pz4Kz4xMKzKn93rEbrxC6NhO/2r1MDyu0V05BdXdxNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NZ3xDZIvGgO4sAvxAnaGbMvljZTMUmb1eRSY/PvoWcwDiiBeRs/9XzblNq2QBeDl9
-         ac17zDL4W14TvIWmOqK9G66UshU3w9QLy4paxlTstwfEBPGN3HOnp05qdLzfl4CroU
-         g+JK7uqT2ozFpralsP0FGfWAKjNGvzMR9wO0hcQ8=
+        b=PvrhxKAE8daqUVUk4RfLduAHJjGXWzZSgZKcI++RNQlU7VN7fE6XtLRgeGd4Ob70L
+         eve/0msQuW5RV25saHVAypopTod5Ghxz3RCmgR0hNSmyN+zt3OXprJkhLVP/bd3tCs
+         hPCSxgVRaKon3Y3GX7KsG9ZJOeEwcGUk2WQd2tVQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 15/76] ixgbe: fix possible deadlock in ixgbe_service_task()
-Date:   Thu, 29 Aug 2019 14:12:10 -0400
-Message-Id: <20190829181311.7562-15-sashal@kernel.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 18/76] Bluetooth: btqca: Add a short delay before downloading the NVM
+Date:   Thu, 29 Aug 2019 14:12:13 -0400
+Message-Id: <20190829181311.7562-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -45,41 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-[ Upstream commit 8b6381600d59871fbe44d36522272f961ab42410 ]
+[ Upstream commit 8059ba0bd0e4694e51c2ee6438a77b325f06c0d5 ]
 
-ixgbe_service_task() calls unregister_netdev() under rtnl_lock().
-But unregister_netdev() internally calls rtnl_lock().
-So deadlock would occur.
+On WCN3990 downloading the NVM sometimes fails with a "TLV response
+size mismatch" error:
 
-Fixes: 59dd45d550c5 ("ixgbe: firmware recovery mode")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+[  174.949955] Bluetooth: btqca.c:qca_download_firmware() hci0: QCA Downloading qca/crnv21.bin
+[  174.958718] Bluetooth: btqca.c:qca_tlv_send_segment() hci0: QCA TLV response size mismatch
+
+It seems the controller needs a short time after downloading the
+firmware before it is ready for the NVM. A delay as short as 1 ms
+seems sufficient, make it 10 ms just in case. No event is received
+during the delay, hence we don't just silently drop an extra event.
+
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/bluetooth/btqca.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 57fd9ee6de665..f7c049559c1a5 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -7893,11 +7893,8 @@ static void ixgbe_service_task(struct work_struct *work)
- 		return;
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index aff1d22223bd4..0ee5acb685a10 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -350,6 +350,9 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+ 		return err;
  	}
- 	if (ixgbe_check_fw_error(adapter)) {
--		if (!test_bit(__IXGBE_DOWN, &adapter->state)) {
--			rtnl_lock();
-+		if (!test_bit(__IXGBE_DOWN, &adapter->state))
- 			unregister_netdev(adapter->netdev);
--			rtnl_unlock();
--		}
- 		ixgbe_service_event_complete(adapter);
- 		return;
- 	}
+ 
++	/* Give the controller some time to get ready to receive the NVM */
++	msleep(10);
++
+ 	/* Download NVM configuration */
+ 	config.type = TLV_TYPE_NVM;
+ 	if (qca_is_wcn399x(soc_type))
 -- 
 2.20.1
 
