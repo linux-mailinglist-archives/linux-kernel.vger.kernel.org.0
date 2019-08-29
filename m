@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9218AA1EF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 990D1A1EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:24:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbfH2PYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:24:30 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40266 "EHLO
+        id S1728156AbfH2PYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:24:00 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39620 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728012AbfH2PXz (ORCPT
+        with ESMTP id S1728042AbfH2PXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 29 Aug 2019 11:23:55 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c3so3864136wrd.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 08:23:53 -0700 (PDT)
+Received: by mail-wr1-f68.google.com with SMTP id t16so3863378wra.6
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 08:23:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=+0JxMEcHFS4bD0DZNCQjjDFLTS/cdSPkBWCvGgTlb44=;
-        b=voUAvq+bWRwwNVo2zmuIwa7IrCEcc0R46b3t6lVI6BYtf1zAf4ncx8f7efTli46KxO
-         L48IIzurEgsdYVyyOV+CnSU/JmPlOyVq4NIcO0Fyd4CIq2vR8DI/nHPx1pn40JPLkhf7
-         XMHHQeZa3ZR7xk+kjD9MDvRsH589FYMv3Tx4Wx9fi4NRRg9Sr3p1UJ7CgXUHWR4SldWb
-         dhkXjqRwJMZ5wo5+BtigmO3Jmeg21muktkzl9wlZKWaG45z0OcUYjD5n93IcU2bAtRrC
-         zaNES8vzeK4x7L3dCzvRYrJJY55Mblxaw7sgkry4ttZ4f0fvX5bNA38vtWLary0P6ZNn
-         PL2A==
+        bh=SiL45R060WCezmhZNNgvA5GD6ew6UdT9naA5+iprxJs=;
+        b=iz3w00oMmhwELo5mlz7WH3W3SCHzbt/CfLJWsAoY91Ld9m+Ysai9qYSacAS3GizB4m
+         kMqlbOhOXjDfHq3XiJ7j2dIERqKE5plX/KZAqA4D8uhnrPgKCxQZAgBB34yhvh2HkRk7
+         s85NcR6XFFCR8/xbuJmgHX0afclGzVCVvvOaKrjxUDjOta6Vasf7+nVMTDtdeFeV3Exd
+         cNWIYk8yN8i8yO5NnE1RKT7IDu9D9DglTndbLtMGjppQioO0LjofVRQBIHBIHrwJP0bX
+         n4LQyboRqzBjgrOFllI97n6xmZJZX9WPG8Hc41rAyQ4LDx5ExOfvsmAg+uD3+0BSgnG8
+         +0vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=+0JxMEcHFS4bD0DZNCQjjDFLTS/cdSPkBWCvGgTlb44=;
-        b=m0wh5BosMigjvq8If8NIasFB9cHdgb7I3sdhZAERR02vdjFJvdtKpQgbIwTiCsw+e2
-         yodq9z56RSydT8NZByF5h5dl7xWX6wmcRUqDBOqeuW+0lHfQS6NnBB6Pl2xSPrIa6Bt7
-         T/A9WHybJSh7ZO13k++t+IPn+YtJCP2d1bKeHz1rzX8X8h11FVt0NOsxTGrL3pj720x2
-         tNjp28V3DQ5n3FRIRTefaGGBhrkagQmnxAMhtaoDm/1G8sLB6I06OiF8v2pnEmRu2ZgA
-         RjEJjaUgzXgBWvVYn2zDNPjjk5nn4pJpKyVxBvHaOCQ7Iq0q38egvRrZ1FBUWn9DJH0L
-         c51g==
-X-Gm-Message-State: APjAAAXkvoDPM+roBRGJfpvRJYzEW9CdxcnNpeCR9j4fo8Olz/9Dr9JO
-        nvCCuG3VrNoemg3kTIoxPC7VY8sZ/GS2/g==
-X-Google-Smtp-Source: APXvYqwrHBq50xm/y/QTlunBrzrR+U+SgWq6jx3rfG7lMEfW9JRChVyC8aRFObf7j+g60i7WJ5zjiA==
-X-Received: by 2002:adf:d852:: with SMTP id k18mr3251493wrl.88.1567092232975;
-        Thu, 29 Aug 2019 08:23:52 -0700 (PDT)
+        bh=SiL45R060WCezmhZNNgvA5GD6ew6UdT9naA5+iprxJs=;
+        b=ZcwisXZYfHIPFS6zfNpTdQgsxDa1Qafp3zO/Is16NdXEUc7L5jeWLjEgf4iUaMBYj6
+         +xWLW3Fy+JYC8WA34NBJxLa5rFvtGcj3SuV9gcosGmfXGiiYeVUgegBFrSfM3H+THkX0
+         YsPykURqxauaqkh8Fh2DXWwZlgOHc7I/X6SXcPYizdwuVf/pJ3P+jy02hoyQYpnrkK5V
+         vn2fwoIRwsOywdUKyB8vsLEwuWiemPeJ0sPqr6WfF3mAUYCyJKL7DBfa3GGXEkd7eyiU
+         393Ri6Vb4IYSuHkV9eePQbJRKCU54BXwGJZv/W4Hk4QeB5zX3lpjBApE/6HSozTYrUm/
+         ZoEw==
+X-Gm-Message-State: APjAAAVS8+dM1BnQusLfJCODV9hIBT5dPaEY6uB3BK6aNGHGlFOVQA2p
+        HG9VGUGT6b8epNJdjuRLvSh78g==
+X-Google-Smtp-Source: APXvYqw4kFKc52LDFXq9PBL0wPfc+IrjPgZFhUUCyDOFG0eZ0v47NcbuorEHE2HuyIfF3ef4eLIGkg==
+X-Received: by 2002:a5d:45cb:: with SMTP id b11mr12837183wrs.117.1567092233542;
+        Thu, 29 Aug 2019 08:23:53 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id d17sm4866871wre.27.2019.08.29.08.23.52
+        by smtp.gmail.com with ESMTPSA id d17sm4866871wre.27.2019.08.29.08.23.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 08:23:52 -0700 (PDT)
+        Thu, 29 Aug 2019 08:23:53 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 12/15] arm64: dts: meson-gxl-s905x-p212: add keep-power-in-suspend property in SDIO node
-Date:   Thu, 29 Aug 2019 17:23:39 +0200
-Message-Id: <20190829152342.27794-13-narmstrong@baylibre.com>
+Subject: [PATCH 13/15] arm64: dts: meson-gxm-khadas-vim2: add keep-power-in-suspend property in SDIO node
+Date:   Thu, 29 Aug 2019 17:23:40 +0200
+Message-Id: <20190829152342.27794-14-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190829152342.27794-1-narmstrong@baylibre.com>
 References: <20190829152342.27794-1-narmstrong@baylibre.com>
@@ -69,14 +69,14 @@ suspend state.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi | 3 +++
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-index e3c16f50814b..43eb7d149e36 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-p212.dtsi
-@@ -119,6 +119,9 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index f25ddd18a607..5fc38788610f 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -332,6 +332,9 @@
  	non-removable;
  	disable-wp;
  
