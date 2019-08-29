@@ -2,113 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40656A2708
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60ADFA2717
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:14:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbfH2TJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 15:09:59 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:32879 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbfH2TJ6 (ORCPT
+        id S1728599AbfH2TOu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 15:14:50 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36610 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728227AbfH2TOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 15:09:58 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n190so2102494pgn.0
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 12:09:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=REnHj/EWqJBFRPAqiny/Na+szdlJ2JK7cCM/8YDJ4Wc=;
-        b=MFWmCdLF+LwePY3Zth/JgwrB6iisib3W48GnTPFjr8rFBaiyaqlfqL664fwmmfrMar
-         UjFDKUDVtYc9Tr0x9PYJn2DlKlWeWu6qcpMz8QfbdRPiJEBOfRzfY/B3ZJZ9MYDQIj36
-         RTx5Lyz26OhXT2oFBeTNM5LY0x/fcQfTZAi+rAb8tCAZW9eVBsfO051/OHO1zCd2at80
-         qPgMx3f2IaNBnxbsmxOPBGlADw6HDFRWRc00Nzfuk282+DJqcGd43P/ImMY2A73C5ptP
-         XPn/JoznaW+iw/z2UK4e2QC4Ph6BTxsrocfXtiBrorLxkW4nc8vZo55adXGSuXCAc8h9
-         0vVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=REnHj/EWqJBFRPAqiny/Na+szdlJ2JK7cCM/8YDJ4Wc=;
-        b=B5m5O2gIGexgbMuICeMFfkZEthar97j5tt/D3InNpwFOzed15c+Ll7R+CqvB4fIRXj
-         AJZqMo12snXsQS82Mz0nutFb85O8Y8y2fexMgKBGcx4zRvP2xTr0dflZiPigUZhvARNd
-         HEkpD3houfvTz9L7Zqp8i1QhsePRDWrdLda1L7+RrfbVPtKrMu3Qpiw16FLlvIV7es+c
-         /OR63z6if1QV46TuNKH/D7Fn+mUNA5qGLhSBBlPYoEKYqmraidCWvAAUGwUuPPShGr/3
-         LRjCgidMMZWWi+8v21n7yk3+qiTSihQ0B8ADqQPtj88RG1LCedbcNcSAgVXR0bnWv+Cx
-         XLIg==
-X-Gm-Message-State: APjAAAU1ibdyeHhoWZTcoRlWZnSdrr9RtL+cYps507re0be+VGhbSsCD
-        VvBgQDoMKEvjNOgFJoJpTQuMPg==
-X-Google-Smtp-Source: APXvYqxOlXUr8Ltf38dWyE0JRNEtXL3FY/R3/1FGtaqR11AgbcZU9BVM8q2BE+w45XKeozEms02+XA==
-X-Received: by 2002:a17:90a:f011:: with SMTP id bt17mr11500065pjb.21.1567105797871;
-        Thu, 29 Aug 2019 12:09:57 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b24sm2710244pgw.66.2019.08.29.12.09.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 12:09:57 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 12:09:55 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rpmsg: glink: Use struct_size() helper
-Message-ID: <20190829190955.GP6167@minitux>
-References: <20190829181721.GA22554@embeddedor>
+        Thu, 29 Aug 2019 15:14:48 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TJ40KS034828;
+        Thu, 29 Aug 2019 19:13:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=HDqYptse7XTuOdarL5HzbWxP1cx0etkvW0uT3q6k4FU=;
+ b=qMMgBLKYWS0iKRhL+ko4K1YHhAxyLysyywSHqu/wV1PrtGlGMMr/9QKHpqQcek7maxC+
+ t23vpJ6L/dbj8DUlwGlBnXIXzA/zAsM/XLlB1B+oq1gYxDdz8Tf20LIBtMxaazvJFQi8
+ y/iRS1zILCYEHJC50nhqGWxHJjIXCTz8rXe2+oCggXJqACCUYTrlFTb+m9ZMLPKQ1YXO
+ 6Qk2ALVRQkRNywSV8u7vdApi1y2OonMCvLryp77xijaAX04Cuqi7l2mK0qMR3LiSOEeI
+ OPHDzMxamPwGQjiqRMGEO3o2fOenNSkaZVfgER81TFoyL5B1wy27xeS8X2bnJggF0Lpf 8g== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2upm94r5jx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 19:13:15 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TJ3P9e152200;
+        Thu, 29 Aug 2019 19:11:14 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2uphau7cw1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 19:11:14 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TJBDjY022810;
+        Thu, 29 Aug 2019 19:11:13 GMT
+Received: from [10.175.160.184] (/10.175.160.184)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Aug 2019 12:11:12 -0700
+Subject: Re: Default governor regardless of cpuidle driver
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-pm@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20190829151027.9930-1-joao.m.martins@oracle.com>
+ <c8cf8dcc-76a3-3e15-f514-2cb9df1bbbdc@oracle.com>
+ <d1d4ade5-04a5-4288-d994-3963bb80fb6b@linaro.org>
+ <6c8816af-934a-5bf7-6fb9-f67c05e2c8aa@oracle.com>
+ <901ab688-5548-cf96-1dcb-ce50e617e917@linaro.org>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <722bd6f6-6eee-b24b-9704-c9aecc06302f@oracle.com>
+Date:   Thu, 29 Aug 2019 20:11:08 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829181721.GA22554@embeddedor>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <901ab688-5548-cf96-1dcb-ce50e617e917@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908290191
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 29 Aug 11:17 PDT 2019, Gustavo A. R. Silva wrote:
+On 8/29/19 7:28 PM, Daniel Lezcano wrote:
+> On 29/08/2019 20:07, Joao Martins wrote:
+>> On 8/29/19 6:42 PM, Daniel Lezcano wrote:
+>>> On 29/08/2019 19:16, Joao Martins wrote:
+>>>> On 8/29/19 4:10 PM, Joao Martins wrote:
+>>>>> When cpus != maxcpus cpuidle-haltpoll will fail to register all vcpus
+>>>>> past the online ones and thus fail to register the idle driver.
+>>>>> This is because cpuidle_add_sysfs() will return with -ENODEV as a
+>>>>> consequence from get_cpu_device() return no device for a non-existing
+>>>>> CPU.
+>>>>>
+>>>>> Instead switch to cpuidle_register_driver() and manually register each
+>>>>> of the present cpus through cpuhp_setup_state() callback and future
+>>>>> ones that get onlined. This mimmics similar logic that intel_idle does.
+>>>>>
+>>>>> Fixes: fa86ee90eb11 ("add cpuidle-haltpoll driver")
+>>>>> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+>>>>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>>> ---
+>>>>
+>>>> While testing the above, I found out another issue on the haltpoll series.
+>>>> But I am not sure what is best suited to cpuidle framework, hence requesting
+>>>> some advise if below is a reasonable solution or something else is preferred.
+>>>>
+>>>> Essentially after haltpoll governor got introduced and regardless of the cpuidle
+>>>> driver the default governor is gonna be haltpoll for a guest (given haltpoll
+>>>> governor doesn't get registered for baremetal). Right now, for a KVM guest, the
+>>>> idle governors have these ratings:
+>>>>
+>>>>  * ladder            -> 10
+>>>>  * teo               -> 19
+>>>>  * menu              -> 20
+>>>>  * haltpoll          -> 21
+>>>>  * ladder + nohz=off -> 25
+>>>>
+>>>> When a guest is booted with MWAIT and intel_idle is probed and sucessfully
+>>>> registered, we will end up with a haltpoll governor being used as opposed to
+>>>> 'menu' (which used to be the default case). This would prevent IIUC that other
+>>>> C-states get used other than poll_state (state 0) and state 1.
+>>>>
+>>>> Given that haltpoll governor is largely only useful with a cpuidle-haltpoll
+>>>> it doesn't look reasonable to be the default? What about using haltpoll governor
+>>>> as default when haltpoll idle driver registers or modload.
+>>>
+>>> Are the guest and host kernel the same? IOW compiled with the same
+>>> kernel config?
+>>>
+>> You just need to toggle this (regardless off CONFIG_HALTPOLL_CPUIDLE):
+>>
+>> 	CONFIG_CPU_IDLE_GOV_HALTPOLL=y
+>>
+>> And *if you are a KVM guest* it will be the default (unless using nohz=off in
+>> which case ladder gets the highest rating -- see the listing right above).
+>>
+>> Host will just behave differently because the haltpoll governor is checking if
+>> it is running as kvm guest, and only registering in that case.
+> 
+> I understood the problem. Actually my question was about if the kernels
+> are compiled for host and guest, and can be run indifferently. 
 
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
-> 
-> struct {
-> 	...
-> 	struct intent_pair intents[];
-> } __packed * msg;
-> 
-> Make use of the struct_size() helper instead of an open-coded version
-> in order to avoid any potential type mistakes.
-> 
-> So, replace the following form:
-> 
-> sizeof(*msg) + sizeof(struct intent_pair) * count
-> 
-> with:
-> 
-> struct_size(msg, intents, count)
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+/nods Correct.
 
-Applied, thanks!
-
-> ---
->  drivers/rpmsg/qcom_glink_native.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> In this
+> case a runtime detection must be done as you propose, otherwise that can
+> be done at config time. I pretty sure it is the former but before
+> thinking about the runtime side, I wanted to double check.
 > 
-> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-> index f46c787733e8..621f1afd4d6b 100644
-> --- a/drivers/rpmsg/qcom_glink_native.c
-> +++ b/drivers/rpmsg/qcom_glink_native.c
-> @@ -892,7 +892,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
->  		struct intent_pair intents[];
->  	} __packed * msg;
->  
-> -	const size_t msglen = sizeof(*msg) + sizeof(struct intent_pair) * count;
-> +	const size_t msglen = struct_size(msg, intents, count);
->  	int ret;
->  	int i;
->  	unsigned long flags;
-> -- 
-> 2.23.0
+Hmm, but even with separate kernels/configs for guest and host I think we would
+still have the same issue.
+
+What I was trying to convey is that even when running with a config solely for
+KVM guests (that is different than baremetal) you can have today various ways of
+idling. An Intel x86 kvm guest can have no idle driver (but arch-specific),
+intel_idle (like baremetal config) and haltpoll. There are usecases for these
+three, and makes sense to consolidate all.
+
+Say you wanted to have a kvm specific config, you would still see the same
+problem if you happen to compile intel_idle together with haltpoll
+driver+governor. Creating two separate configs here, with and without haltpoll
+for VMs doesn't sound effective for distros. Perhaps decreasing the rating of
+haltpoll governor, but while a short term fix it wouldn't give much sensible
+defaults without the one-off runtime switch.
+
+Unless ofc I am missing something.
+
+> 
+>>>> My idea to achieve the above would be to decrease the rating to 9 (before the
+>>>> lowest rated governor) and retain old defaults before haltpoll. Then we would
+>>>> allow a cpuidle driver to define a preferred governor to switch on idle driver
+>>>> registration. Naturally all of would be ignored if overidden by
+>>>> cpuidle.governor=.
+> 
 > 
