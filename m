@@ -2,91 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBDF2A1BD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:51:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CA87A1BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:53:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbfH2Nv1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:51:27 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42338 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfH2NvY (ORCPT
+        id S1727729AbfH2NxJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:53:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58844 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbfH2NxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:51:24 -0400
-Received: by mail-qt1-f196.google.com with SMTP id t12so3694569qtp.9
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 06:51:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=KrzCEKKNAi4VHbtHRw7x95sb6UYGohg8TR20YevudW8=;
-        b=CW91Qg5X9VDKVEUs6SGcwws+rIhmQfjiPVAxjZxPn+aN58G2uyUmYjJOWD7VaemjSa
-         T0LxG+g9ZtgnMiqm2yvENw66bx2hZgQzHxujLU2liAspqIZSqGLPaoFFiOisAYQE6PfN
-         uSt5yWkF6J0NLlTyDf+OXG4BE7gYZNmyI8lJVVJR5w7QgZF/zcL8Q2HPCOB+2i02KYtA
-         2PqBCBTBVyaYKxLIJgx1KH4obcgoyF0TC4PbWl90LOziN5ejvDw1qZz2rY0ckOhURjpD
-         nsBLglB6rEKuMkAbOH4qWugQ+lNqrteLbrZFCFxj91ecOKl+c5mT+lXyVLiE/974DzfA
-         3uNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=KrzCEKKNAi4VHbtHRw7x95sb6UYGohg8TR20YevudW8=;
-        b=dfFZrIBwd26QYJBl/7Fwd4Fnd8R5xWb99NZ/2rHbw4x+iq/x+jWnbg6cE44a210Ziq
-         SJl7lZWaL4n+pzB6GChruR/oaaZXwsMJMDv/BPk0IdX/Grkvu0uQ5EsSgIZD7jqsuZV2
-         tLwFlWHitj7JML8K06fB3wDO1W5sREkJe4vWgkjYi1V7RkvRyUEIcTwE9IgEdHAGvYhb
-         JhXDSEvUoAu8u/7SqpRprJEgI+i844EurPcVBpOxZFRQz6av3chw9JlFjvPZzwlOpfY0
-         xgU5EEhKWUu/V1r3wl/Oo/vVNX5wQP7kYxiR7hL6x1bVMzSK2yiPyMgMQnKh0R9AAvvt
-         e1Lw==
-X-Gm-Message-State: APjAAAXOWvIm1D+eWZirXBQ372HONdyLwTBU+mYY2H7TZgXEWbA/TBeb
-        PpLL2qUkYZ5xu4FmTT0wjNJMq/KIeZJVDt4JB6A=
-X-Google-Smtp-Source: APXvYqyOOSefB7FXx2RWUFf4qV/+2+PyFA0D3HJpZpLP9x7qqXq1OSfWujHiolBHL+HMeIMTvuqikgcErK/oRSpcxI4=
-X-Received: by 2002:a0c:b192:: with SMTP id v18mr6639478qvd.163.1567086683107;
- Thu, 29 Aug 2019 06:51:23 -0700 (PDT)
+        Thu, 29 Aug 2019 09:53:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zZ5dIDLPt1Nso49/uiRsureRpg7rvs2R4X3SF+2XaOA=; b=n/5qsmvgT6yVyYOrprJemW4eO
+        K/p/fUfTe9nfZ77ynJ2k5zM8QZ9pzTT07SGpBYJhtYl1AY/cjB2Fi/9LsngmyDGOmvtDX2FfVQhV4
+        qLkZfuLv+5rzYF4UlMlmu99VJw8iPmw2jVGh/FlbYuf6JqF5wyg1nSMQrhExi2EbguGS2NX/0nBm+
+        ih0OQShQ5Tc7ftsvLbdMqUGD5nlN/gb3b6DJ4A9PtKc4SAq7H0Q4ah9V3GO749icczvAygC4JzAbS
+        ZaBz7zT3E08ltBVLqkbjQ+ZZz7b09yHWkKPWXqnawXIsl6iuzE7JUZEpUkUDmEKYz4wCQVlW0LYmd
+        AVb0fQEAg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3KrD-0003DJ-9b; Thu, 29 Aug 2019 13:52:59 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6C6FA301174;
+        Thu, 29 Aug 2019 15:52:22 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A73E320CA3889; Thu, 29 Aug 2019 15:52:56 +0200 (CEST)
+Date:   Thu, 29 Aug 2019 15:52:56 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+Subject: Re: [RESEND PATCH V3 3/8] perf/x86/intel: Support hardware TopDown
+ metrics
+Message-ID: <20190829135256.GW2369@hirez.programming.kicks-ass.net>
+References: <20190826144740.10163-1-kan.liang@linux.intel.com>
+ <20190826144740.10163-4-kan.liang@linux.intel.com>
+ <20190828151921.GD17205@worktop.programming.kicks-ass.net>
+ <fd95a255-4499-2907-8af9-d340f157da68@linux.intel.com>
 MIME-Version: 1.0
-References: <20190730134704.44515-1-tzungbi@google.com> <CA+Px+wXetT1mQZW+3zc2vNDP4Jf3zKqGNz=Hq0yHn0Fvf=y-FQ@mail.gmail.com>
- <106711f8-117a-d0df-9b66-dc6be6431d07@collabora.com> <CA+Px+wU=V0cGZeAxoqSJeVTLcO+v9=tPQKxKBTp-npsgqXo3yQ@mail.gmail.com>
- <89aac768-b096-c51c-2ec7-5c135b089a31@collabora.com> <20190801145050.GA154523@google.com>
- <CA+Px+wUzyFB6vRM91PTFkY_fBfp2xybegy34rbW_D9zzNX6-8Q@mail.gmail.com> <a75bd837-6b24-6a64-00d8-0b3fe9d5a784@collabora.com>
-In-Reply-To: <a75bd837-6b24-6a64-00d8-0b3fe9d5a784@collabora.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Thu, 29 Aug 2019 15:51:11 +0200
-Message-ID: <CAFqH_51HLLDfJHheAOid9N6WYHHDrNxg1QOtDOOVLNLH_kRDXg@mail.gmail.com>
-Subject: Re: [PATCH v4] platform/chrome: cros_ec_trace: update generating script
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Tzung-Bi Shih <tzungbi@google.com>,
-        Raul Rangel <rrangel@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>,
-        Dylan Reid <dgreid@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd95a255-4499-2907-8af9-d340f157da68@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Missatge de Enric Balletbo i Serra <enric.balletbo@collabora.com> del
-dia dj., 29 d=E2=80=99ag. 2019 a les 15:44:
->
-> Hi Tzung-Bi,
->
-> On 29/8/19 6:19, Tzung-Bi Shih wrote:
-> > Hi Enric and Raul,
-> >
-> > Do you have any further concerns on this patch?
->
-> This patch will conflict with [2] which hopefully will be merged on next =
-merge
-> window through Lee's tree. As this patch is only changing the doc I'm wil=
-ling to
-> wait after [2] lands. It's on my radar and don't need to resend, I'll do =
-the
-> required changes.
->
-> Best Regards,
->  Enric
+On Thu, Aug 29, 2019 at 09:31:37AM -0400, Liang, Kan wrote:
+> On 8/28/2019 11:19 AM, Peter Zijlstra wrote:
+> > > +static int icl_set_topdown_event_period(struct perf_event *event)
+> > > +{
+> > > +	struct hw_perf_event *hwc = &event->hw;
+> > > +	s64 left = local64_read(&hwc->period_left);
+> > > +
+> > > +	/*
+> > > +	 * Clear PERF_METRICS and Fixed counter 3 in initialization.
+> > > +	 * After that, both MSRs will be cleared for each read.
+> > > +	 * Don't need to clear them again.
+> > > +	 */
+> > > +	if (left == x86_pmu.max_period) {
+> > > +		wrmsrl(MSR_CORE_PERF_FIXED_CTR3, 0);
+> > > +		wrmsrl(MSR_PERF_METRICS, 0);
+> > > +		local64_set(&hwc->period_left, 0);
+> > > +	}
+> > This really doesn't make sense to me; if you set FIXED_CTR3 := 0, you'll
+> > never trigger the overflow there; this then seems to suggest the actual
+> > counter value is irrelevant. Therefore you don't actually need this.
+> > 
+> 
+> Could you please elaborate on why initialization to 0 never triggers an
+> overflow?
 
-I missed the patch link
+Well, 'never' as in a 'long' time.
 
-[2] https://lkml.org/lkml/2019/8/23/475
+> As of my understanding, initialization to 0 only means that it will take
+> more time than initialization to -max_period (0x8000 0000 0001) to trigger
+> an overflow.
+
+Only twice as long. And why do we care about that?
+
+The problem with it is though that you get the overflow at the end of
+the whole period, instead of halfway through, so reconstruction is
+trickier.
+
+> Maybe 0 is too tricky. We can set the initial value to 1.
+
+That's even worse. I'm still not understanding why we can't use the
+normal code.
+
+> I think the bottom line is that we need a small initial value for FIXED_CTR3
+> here.
+
+But why?!
+
+> PERF_METRICS reports an 8bit integer fraction which is something like 0xff *
+> internal counters / FIXCTR3.
+> The internal counters only start counting from 0. (SW cannot set an
+> arbitrary initial value for internal counters.)
+> If the initial value of FIXED_CTR3 is too big, PERF_METRICS could always
+> remain constant, e.g. 0.
+
+What what? The PERF_METRICS contents depends on the FIXCTR3 value ?!
+That's bloody insane. /me goes find the SDM. The SDM is bloody useless
+:-(.
+
+Please give a complete and coherent description of all of this. I can't
+very well review any of this until I know how the hardware works, now
+can I.
+
+In this write-up, include the exact condition for METRICS_OVF (the SDM
+states: 'it indicates that PERF_METRIC counter has overflowed', which is
+gramatically incorrect and makes no sense even with the missing article
+injected).
