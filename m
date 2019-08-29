@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAD62A17EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90499A17EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:18:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbfH2LR4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:17:56 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35191 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfH2LRz (ORCPT
+        id S1727222AbfH2LR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:17:59 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45724 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfH2LR6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:17:55 -0400
-Received: by mail-ed1-f66.google.com with SMTP id t50so3670015edd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 04:17:54 -0700 (PDT)
+        Thu, 29 Aug 2019 07:17:58 -0400
+Received: by mail-ed1-f67.google.com with SMTP id x19so3589630eda.12
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 04:17:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Qw9TI/oO75bsTCfpr+cHjs+CGmEWrEJqDhW1Nr5mPhI=;
-        b=S8Ri4oDngL/CuKTznOuFJut4kaqtLc9m6OEPBmcrmC9PTg98R4l6Ntojeqare4DfFw
-         Ue+QAiofTOSeEn3E0/BxjOQLgEcmVTFzWxXf/RbFaYze8UQYLYXsmo8idr+2My4VQVHO
-         xiQyF7kbM5iv+RsDvCU/qFLiwosQ4qE2PgBErmbwLqhtHhVnhy9ZxvLpK5PvWZK8+ra5
-         TqQdfoKN+BbrZfXu4iysVRj4aZPP5GWU7rDJ2seuoGic6i98kGKTZABTaRT9p4b2Clsk
-         wvL2evwLuZbxEu0B6knoORNMtSB0oGq3Ul3kTNAEVFmJUdo/iu0piqtwO8RTCzpdtAta
-         +sNA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fWFDdsSRIYNKrRBdDSN7KSj6FUeTwnbHluq8rixbTiU=;
+        b=QK7F3ESU41SJHkKfAxVhUhnoObCMRcjDeVy8XBXAejYxpeOt+AeNnLB5DhxnGzPZTP
+         2SVCtoiYV0imTE3QaoiCdK93Uwz0ghTmT7C4bje7vpBjSbEj461Af+y8MbSZYrnR6OJc
+         90jH6lwG2R68n8P70gZi9ZMrBnrrvn3X/lr7gT8ZcpnVRJWvoUB3IsrVky/rmi5AEBSW
+         uWKkPfVSMlrHQs78MPEAgySdqXX9uf6SRW4UXQWzrh58WYWx7THUHN3dpksbqXawdh+D
+         SVcbZtPGdWRnNhIS7772iNUia2YtTK4d3vb0INvBEj7VNgQecAAkl7abEQ0zMCnH3ec2
+         RGpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Qw9TI/oO75bsTCfpr+cHjs+CGmEWrEJqDhW1Nr5mPhI=;
-        b=l7s5YAZ5QYznTH2EG/H4HqSLIt91YqptPUy8a6GbjWD4kg297Ezm01w6UB9NPtfAZ2
-         tj7Tw21BIwtLUh9gUY/Lp5/XkbXKiP85avchyQn8UZp+d3WHa/b1u7iIJrokpZO/tlPM
-         yGDpZIW/T52fwlzU4Ewf4qzlZYl1KF07NKOjowHF8P4QYZNfQ5SDQGkFZFmxxl5L480Y
-         onC1zreGP3EF7/YYbN//WKXAG/S4OpvdAf+lTStWo1fhNqub8zU2nLTZWAPhxkCdZc5t
-         Q45Qt6P7JhaqWbqQUEvbuZIa0a6RVacSzcSKQlUIQ0m9Ey0uk9zh9InvSr71t0ZY6Orj
-         sk+w==
-X-Gm-Message-State: APjAAAVPNfaXaf48dpTC1m+j4s8Atx9CIM4HTMXzK3S094pvSG3x7AtA
-        KII6hFIrPjtTHfZsdaxNu5oSZPOd
-X-Google-Smtp-Source: APXvYqzf3VpKDNdxCgnDwyw+83rYA047IH5YU4ry9v57vAHMKEZsuLCcwInPPOQgF729h0A10YkaTw==
-X-Received: by 2002:aa7:c81a:: with SMTP id a26mr9175586edt.26.1567077473918;
-        Thu, 29 Aug 2019 04:17:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fWFDdsSRIYNKrRBdDSN7KSj6FUeTwnbHluq8rixbTiU=;
+        b=LZ7KK78cwJPMvntQ8a4ZJwhq+iMDoSNfvnEqY9j3GjaEYh9VYr16qJpK0lYAcJ0VFO
+         sB5+HyggJZ22lW8yTHy/GgO+4r6APGnKNvsjIwBIHw6hvi5DXZHTPwW1UQHm1siYAGHZ
+         HhwoyfqC7HSjJgooOeJa8yY3ryCjTnU9qEOEqpk24qfEFuDx3Mx2KlqIEYG9YOPCchpt
+         FQp6+4CoSmRNIupg3sVHxOlvzK7U0bxKoX2drWs4bpIzoQ8fpnsXWPIQZ7Jw816E4efs
+         up/x3R71O1+O7BhRLFzZIhy0FKqtf8NG1kqUK3TOkmYNlypzb6urkCfZa4laOWJBSok5
+         3mtw==
+X-Gm-Message-State: APjAAAUN8pN7+3dYu7RP1uzE/Z6qywnpitdU0z8nevJHJ3jvPTX420wD
+        dTc+0A0r2laJaXWJAwuKQ0c=
+X-Google-Smtp-Source: APXvYqwUQQWr7opeC82ffN614dN4qfpRwQm9wEqpQ2QRcIIdZGIO8kDGPJZeUP/x70eq+7DhXC+pxw==
+X-Received: by 2002:a50:c19a:: with SMTP id m26mr9023066edf.184.1567077476308;
+        Thu, 29 Aug 2019 04:17:56 -0700 (PDT)
 Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
-        by smtp.gmail.com with ESMTPSA id y19sm385592edu.90.2019.08.29.04.17.52
+        by smtp.gmail.com with ESMTPSA id a16sm341890ejr.10.2019.08.29.04.17.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 04:17:53 -0700 (PDT)
+        Thu, 29 Aug 2019 04:17:54 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
@@ -54,10 +54,12 @@ Cc:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
         linux-arm-kernel@lists.infradead.org,
         virtualization@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/5] iommu: Implement iommu_put_resv_regions_simple()
-Date:   Thu, 29 Aug 2019 13:17:47 +0200
-Message-Id: <20190829111752.17513-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/5] iommu: Implement iommu_put_resv_regions_simple()
+Date:   Thu, 29 Aug 2019 13:17:48 +0200
+Message-Id: <20190829111752.17513-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190829111752.17513-1-thierry.reding@gmail.com>
+References: <20190829111752.17513-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,29 +69,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-Most IOMMU drivers only need to free the memory allocated for each
-reserved region. Instead of open-coding the loop to do this in each
-driver, extract the code into a common function that can be used by
-all these drivers.
+Implement a generic function for removing reserved regions. This can be
+used by drivers that don't do anything fancy with these regions other
+than allocating memory for them.
 
-Thierry
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/iommu/iommu.c | 19 +++++++++++++++++++
+ include/linux/iommu.h |  2 ++
+ 2 files changed, 21 insertions(+)
 
-Thierry Reding (5):
-  iommu: Implement iommu_put_resv_regions_simple()
-  iommu: arm: Use iommu_put_resv_regions_simple()
-  iommu: amd: Use iommu_put_resv_regions_simple()
-  iommu: intel: Use iommu_put_resv_regions_simple()
-  iommu: virt: Use iommu_put_resv_regions_simple()
-
- drivers/iommu/amd_iommu.c    | 11 +----------
- drivers/iommu/arm-smmu-v3.c  | 11 +----------
- drivers/iommu/arm-smmu.c     | 11 +----------
- drivers/iommu/intel-iommu.c  | 11 +----------
- drivers/iommu/iommu.c        | 19 +++++++++++++++++++
- drivers/iommu/virtio-iommu.c | 14 +++-----------
- include/linux/iommu.h        |  2 ++
- 7 files changed, 28 insertions(+), 51 deletions(-)
-
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 0f585b614657..73a2a6b13507 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -2170,6 +2170,25 @@ void iommu_put_resv_regions(struct device *dev, struct list_head *list)
+ 		ops->put_resv_regions(dev, list);
+ }
+ 
++/**
++ * iommu_put_resv_regions_simple - Reserved region driver helper
++ * @dev: device for which to free reserved regions
++ * @list: reserved region list for device
++ *
++ * IOMMU drivers can use this to implement their .put_resv_regions() callback
++ * for simple reservations. Memory allocated for each reserved region will be
++ * freed. If an IOMMU driver allocates additional resources per region, it is
++ * going to have to implement a custom callback.
++ */
++void iommu_put_resv_regions_simple(struct device *dev, struct list_head *list)
++{
++	struct iommu_resv_region *entry, *next;
++
++	list_for_each_entry_safe(entry, next, list, list)
++		kfree(entry);
++}
++EXPORT_SYMBOL(iommu_put_resv_regions_simple);
++
+ struct iommu_resv_region *iommu_alloc_resv_region(phys_addr_t start,
+ 						  size_t length, int prot,
+ 						  enum iommu_resv_type type)
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 29bac5345563..d9c91e37ac2e 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -434,6 +434,8 @@ extern void iommu_set_fault_handler(struct iommu_domain *domain,
+ 
+ extern void iommu_get_resv_regions(struct device *dev, struct list_head *list);
+ extern void iommu_put_resv_regions(struct device *dev, struct list_head *list);
++extern void iommu_put_resv_regions_simple(struct device *dev,
++					  struct list_head *list);
+ extern int iommu_request_dm_for_dev(struct device *dev);
+ extern int iommu_request_dma_domain_for_dev(struct device *dev);
+ extern void iommu_set_default_passthrough(bool cmd_line);
 -- 
 2.22.0
 
