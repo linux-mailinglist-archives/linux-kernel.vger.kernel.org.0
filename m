@@ -2,81 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB33FA2778
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D266AA278F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfH2Tzv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 15:55:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38130 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbfH2Tzv (ORCPT
+        id S1728228AbfH2UBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:01:36 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33303 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727673AbfH2UBf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 15:55:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rQDwJ/pUgO2PMo4xWp2a3K1Ft7ANpvHQUdLFS/MqplA=; b=idNpuRm7+zlOk6k3zofeadAe5
-        YiVDTlRH9f6XBEsQhKRLfgM0su3Bliz7Cd8xb9NAt4/dxlKrPGALE7Fv/PGokWWLirX8Y2y5R3p8z
-        TW39drfKRRmSsySWYZIeAeRIw9M7bW0Di8vxuD1729reSHwZEYgUihIHm0VD2xKdzrMQhkuvY5MJC
-        fP4L3zqkbh8FJDI73gE8y+yUKviCYpdgDFQd5ylJzHnTDyGL4ZgEhRGrddofA5Ho/MbxPkS1j/2OA
-        o+SvPZ+mkj+vdI62gaOXP4EfV7+/WcPW8sgS5LUHqMzlEvirP0M6HGVOr5HlB9ratyURWVcZ2+j8P
-        Ou7oZMKxg==;
-Received: from [2601:1c0:6200:6e8::4f71]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3QWM-0001Uk-HX; Thu, 29 Aug 2019 19:55:50 +0000
-Subject: Re: linux-next: Tree for Aug 29 (mlx5)
-From:   Randy Dunlap <rdunlap@infradead.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-References: <20190829210845.41a9e193@canb.auug.org.au>
- <3cbf3e88-53b5-0eb3-9863-c4031b9aed9f@infradead.org>
-Message-ID: <52bcddef-fcf2-8de5-d15a-9e7ee2d5b14d@infradead.org>
-Date:   Thu, 29 Aug 2019 12:55:49 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 29 Aug 2019 16:01:35 -0400
+Received: by mail-ed1-f67.google.com with SMTP id l26so4768755edr.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 13:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aYf/lCZC1gwMIR9/lhwT5M/JPgKzeUqjFNgwUcFRWFg=;
+        b=U75GJORVMHIr0iUVnntJaP5CkG0L6J04X+1V/ZPN5uW3dQqnBj8pdaROlXs8b4Z1SG
+         DR1yBHet2NvJnJhuzP0i5c/qQ5sBWpaG0KlB9URDDEL2UqurL8fMaEild5hR6irruZ3I
+         WwlNUWnUuDyL8bRkDmAo8qYqSmnG/ayXfekSo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aYf/lCZC1gwMIR9/lhwT5M/JPgKzeUqjFNgwUcFRWFg=;
+        b=nKOWf4xA4rLNcJ1IasjUSTSTaJOXWhXBoQgwRaMJflIaHPHWgijM/eyMmXffdNyNTJ
+         9c+IIoSF1xZXK42Sp+9d7vBdc5RSJiht50MLeTUOEdU4SgKjOW0xNKZ5b4X6WolKuc78
+         zdUpU5RN+2fH9C+ulM5GmsA2xWjk28JOWzWr1oGHUkL9mxKemLs8+rn+m+Jv08OrKBFu
+         TWzHUV1dnDtDtcZVBr9B0LI7z+Y0b7eDhY4arwdu9YwxaTWmtO0Dba+hPZ2e3dPDt/PP
+         8hFhNRwwAhxdImgUQkqGZ4kU8aJel2cD2h+CcMgeOlbryAthq5Acl5krf737orFA9Ji8
+         ozJA==
+X-Gm-Message-State: APjAAAVvKGPZcNeMEsN9HNHjlIC2fRXVR0JmcCPuMtn3VvENEejTGfkk
+        quKazs+GubQI4vdASyHWKkFgsn74uOc=
+X-Google-Smtp-Source: APXvYqyZ5IVTcYYxurSb7YO5OyoqWD8iqL1THpWc7J6e9gaRjQAWEaYJzGxUrzpvqQNKJ6K7AmjRZg==
+X-Received: by 2002:a17:906:7c49:: with SMTP id g9mr9842509ejp.262.1567108893616;
+        Thu, 29 Aug 2019 13:01:33 -0700 (PDT)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id g17sm613013edy.26.2019.08.29.13.01.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2019 13:01:33 -0700 (PDT)
+Received: by mail-wr1-f49.google.com with SMTP id s18so4710013wrn.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 13:01:33 -0700 (PDT)
+X-Received: by 2002:a5d:4a4e:: with SMTP id v14mr13235010wrs.200.1567108513590;
+ Thu, 29 Aug 2019 12:55:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <3cbf3e88-53b5-0eb3-9863-c4031b9aed9f@infradead.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190730191303.206365-1-thgarnie@chromium.org>
+ <20190806154347.GD25897@zn.tnic> <20190806155034.GP2349@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190806155034.GP2349@hirez.programming.kicks-ass.net>
+From:   Thomas Garnier <thgarnie@chromium.org>
+Date:   Thu, 29 Aug 2019 12:55:00 -0700
+X-Gmail-Original-Message-ID: <CAJcbSZETvvQYmh6U_Oauptdsrp-emmSG_QsAZzKLv+0-b2Yxig@mail.gmail.com>
+Message-ID: <CAJcbSZETvvQYmh6U_Oauptdsrp-emmSG_QsAZzKLv+0-b2Yxig@mail.gmail.com>
+Subject: Re: [PATCH v9 00/11] x86: PIE support to extend KASLR randomization
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Nadav Amit <namit@vmware.com>, Jann Horn <jannh@google.com>,
+        Feng Tang <feng.tang@intel.com>,
+        Maran Wilson <maran.wilson@oracle.com>,
+        Enrico Weigelt <info@metux.net>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/29/19 12:54 PM, Randy Dunlap wrote:
-> On 8/29/19 4:08 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20190828:
->>
-> 
-> 
-> on x86_64:
-> when CONFIG_PCI_HYPERV=m
+On Tue, Aug 6, 2019 at 8:51 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Aug 06, 2019 at 05:43:47PM +0200, Borislav Petkov wrote:
+> > On Tue, Jul 30, 2019 at 12:12:44PM -0700, Thomas Garnier wrote:
+> > > These patches make some of the changes necessary to build the kernel as
+> > > Position Independent Executable (PIE) on x86_64. Another patchset will
+> > > add the PIE option and larger architecture changes.
+> >
+> > Yeah, about this: do we have a longer writeup about the actual benefits
+> > of all this and why we should take this all? After all, after looking
+> > at the first couple of asm patches, it is posing restrictions to how
+> > we deal with virtual addresses in asm (only RIP-relative addressing in
+> > 64-bit mode, MOVs with 64-bit immediates, etc, for example) and I'm
+> > willing to bet money that some future unrelated change will break PIE
+> > sooner or later.
 
-and CONFIG_PCI_HYPERV_INTERFACE=m
+The goal is being able to extend the range of addresses where the
+kernel can be placed with KASLR. I will look at clarifying that in the
+future.
 
-> and mxlx5 is builtin (=y).
-> 
-> ld: drivers/net/ethernet/mellanox/mlx5/core/main.o: in function `mlx5_unload':
-> main.c:(.text+0x5d): undefined reference to `mlx5_hv_vhca_cleanup'
-> ld: drivers/net/ethernet/mellanox/mlx5/core/main.o: in function `mlx5_cleanup_once':
-> main.c:(.text+0x158): undefined reference to `mlx5_hv_vhca_destroy'
-> ld: drivers/net/ethernet/mellanox/mlx5/core/main.o: in function `mlx5_load_one':
-> main.c:(.text+0x4191): undefined reference to `mlx5_hv_vhca_create'
-> ld: main.c:(.text+0x4772): undefined reference to `mlx5_hv_vhca_init'
-> ld: main.c:(.text+0x4b07): undefined reference to `mlx5_hv_vhca_cleanup'
-> 
-> 
+>
+> Possibly objtool can help here; it should be possible to teach it about
+> these rules, and then it will yell when violated. That should avoid
+> regressions.
+>
 
-
--- 
-~Randy
+I will look into that as well.
