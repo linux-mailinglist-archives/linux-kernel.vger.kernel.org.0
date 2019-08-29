@@ -2,94 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B43BEA18F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62DE3A18FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:38:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbfH2Lhg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:37:36 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44533 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbfH2Lhf (ORCPT
+        id S1727906AbfH2Lin (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:38:43 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:5115 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727176AbfH2Lin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:37:35 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b6so273602wrv.11
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 04:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=wi+aEk/lw/SC/EWGJj1b2gUv3dj2gmXZvpclD3XWmxM=;
-        b=h680x9OGpM5D0HrHC0ResvENTHF6DUz9UMMsvEad9yRxXJxJ2pjr+CWYAeXvbwzS9F
-         i9dZjIlg5bMGzRIp+RmUFAuq3/xqzNKT8g+JGxOwBjaImT7Js5daWRH3QFb2uO1pURan
-         PBBc/11pFcKYs2TkLApCthIChjZPDNk/z3gY1yYOvFvHlM9pBbMRY38KbcX1Qa99R+7k
-         h7rHySUJcocyvK0Nd9HjME9/RLiaBVF4GxeE++2aMudRkgxh3IZHl7etfEqX2jwcpddC
-         D9O4/+K/j4RqzGO4qnq2nC2S7jM111uS5TsSe4CYwsm7T/b8VDjJ6gfhH2VYU9WP+m2x
-         YHcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=wi+aEk/lw/SC/EWGJj1b2gUv3dj2gmXZvpclD3XWmxM=;
-        b=G4rbtuCaVkFcRua9I10Qx6AuRCfxnMpCIIE5RkfOJ6eS0QgyrKE+NjMjgaXYWEQW7m
-         wvvyNWV43Gq2E0QcT4D/6sFnEc6BUE8USxPVpNZ6p7UVI9sKCaXVxGWhMEoE2w8gdW86
-         gCtYIP4aYxdHgEWXkeAMgGL4a9CzSoFJ1L+xUkbzOY7AGfuJYQ+peNJu7ovCxXdHltuL
-         11OMZPr+d6tp5axRzoQtgaBSfSW1GKlz/JUYPGIgr4oD6PDmYmwMqb0AUNbpjTfGg2/a
-         MMUXgdXyxWphwD+3C7nEdF7zzOm3FlfisVDwkRs2kSWYP6bmVtghJGRDoYfV3kUs0X7g
-         UgyQ==
-X-Gm-Message-State: APjAAAX5s7Wkwt2rrdOAwxtNEQkAtRFUL1PccTNvDPZPqx7/Iz96cVNp
-        BzTiw6ZnM6FIsYpBTEJ1KTdGJOPKlBEe9jC5ouw=
-X-Google-Smtp-Source: APXvYqwp0esAayMYR7QeT6qJZa7H6Kht3QsdHVcep8OrxN4J+qQh8oblAaUjk/f/vf9Wep6v/haceClU1LQfsday0ko=
-X-Received: by 2002:a5d:4a11:: with SMTP id m17mr675507wrq.40.1567078653582;
- Thu, 29 Aug 2019 04:37:33 -0700 (PDT)
-MIME-Version: 1.0
-From:   zhigang lu <luzhigang001@gmail.com>
-Date:   Thu, 29 Aug 2019 19:37:22 +0800
-Message-ID: <CABNBeK+6C9ToJcjhGBJQm5dDaddA0USOoRFmRckZ27PhLGUfQg@mail.gmail.com>
-Subject: [PATCH] mm/hugetlb: avoid looping to the same hugepage if !pages and !vmas
-To:     mike.kravetz@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     tonnylu@tencent.com, hzhongzhang@tencent.com,
-        knightzhang@tencent.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 29 Aug 2019 07:38:43 -0400
+X-IronPort-AV: E=Sophos;i="5.64,442,1559487600"; 
+   d="scan'208";a="25249611"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 29 Aug 2019 20:38:40 +0900
+Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2C7A94002C30;
+        Thu, 29 Aug 2019 20:38:35 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        xu_shunji@hoperun.com, ebiharaml@si-linux.co.jp
+Subject: [PATCH v2 0/2] Add LVDS panel support to HiHope RZ/G2M
+Date:   Thu, 29 Aug 2019 12:38:31 +0100
+Message-Id: <1567078713-29361-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhigang Lu <tonnylu@tencent.com>
+Dear All,
 
-This change greatly decrease the time of mmaping a file in hugetlbfs.
-With MAP_POPULATE flag, it takes about 50 milliseconds to mmap a
-existing 128GB file in hugetlbfs. With this change, it takes less
-then 1 millisecond.
+the HiHope RZ/G2M is advertised as supporting panel idk-1110wr from
+Advantech, but the panel doesn't come with the board, it has to purchased
+separatey, therefore this series adds panel support to a new DT.
 
-Signed-off-by: Zhigang Lu <tonnylu@tencent.com>
-Reviewed-by: Haozhong Zhang <hzhongzhang@tencent.com>
-Reviewed-by: Zongming Zhang <knightzhang@tencent.com>
----
- mm/hugetlb.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+v1->v2
+* fixed a space according to Geert's feedback.
 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6d7296d..2df941a 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4391,6 +4391,17 @@ long follow_hugetlb_page(struct mm_struct *mm,
-struct vm_area_struct *vma,
-  break;
-  }
-  }
-+
-+ if (!pages && !vmas && !pfn_offset &&
-+     (vaddr + huge_page_size(h) < vma->vm_end) &&
-+     (remainder >= pages_per_huge_page(h))) {
-+ vaddr += huge_page_size(h);
-+ remainder -= pages_per_huge_page(h);
-+ i += pages_per_huge_page(h);
-+ spin_unlock(ptl);
-+ continue;
-+ }
-+
- same_page:
-  if (pages) {
-  pages[i] = mem_map_offset(page, pfn_offset);
+Thanks,
+Fab
+
+Fabrizio Castro (2):
+  dt-bindings: display: Add idk-1110wr binding
+  arm64: dts: renesas: Add HiHope RZ/G2M board with idk-1110wr display
+
+ .../display/panel/advantech,idk-1110wr.yaml        | 69 +++++++++++++++++
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ .../r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts        | 86 ++++++++++++++++++++++
+ 3 files changed, 156 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts
+
 -- 
-1.8.3.1
+2.7.4
+
