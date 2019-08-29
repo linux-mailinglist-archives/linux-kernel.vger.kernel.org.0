@@ -2,239 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ECEEA1AE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:07:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6BAFA1ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728068AbfH2NHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:07:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41016 "EHLO mx1.redhat.com"
+        id S1727309AbfH2NHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:07:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40816 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbfH2NHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:07:42 -0400
+        id S1725990AbfH2NHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 09:07:35 -0400
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7AA35308FB82;
-        Thu, 29 Aug 2019 13:07:41 +0000 (UTC)
-Received: from thuth.com (ovpn-116-53.ams2.redhat.com [10.36.116.53])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3CE1110016EB;
-        Thu, 29 Aug 2019 13:07:35 +0000 (UTC)
-From:   Thomas Huth <thuth@redhat.com>
-To:     kvm@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH v3] KVM: selftests: Add a test for the KVM_S390_MEM_OP ioctl
-Date:   Thu, 29 Aug 2019 15:07:32 +0200
-Message-Id: <20190829130732.580-1-thuth@redhat.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id DB1392A09CA;
+        Thu, 29 Aug 2019 13:07:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A5B810016EB;
+        Thu, 29 Aug 2019 13:07:33 +0000 (UTC)
+Subject: [PATCH net 0/7] rxrpc: Fix use of skb_cow_data()
+From:   David Howells <dhowells@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 29 Aug 2019 14:07:33 +0100
+Message-ID: <156708405310.26102.7954021163316252673.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 29 Aug 2019 13:07:41 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 29 Aug 2019 13:07:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that we can write and read the guest memory with this s390x
-ioctl, and that some error cases are handled correctly.
 
-Signed-off-by: Thomas Huth <thuth@redhat.com>
+Here's a series of patches that replaces the use of skb_cow_data() in rxrpc
+with skb_unshare() early on in the input process.  The problem that is
+being seen is that skb_cow_data() indirectly requires that the maximum
+usage count on an sk_buff be 1, and it may generate an assertion failure in
+pskb_expand_head() if not.
+
+This can occur because rxrpc_input_data() may be still holding a ref when
+it has just attached the sk_buff to the rx ring and given that attachment
+its own ref.  If recvmsg happens fast enough, skb_cow_data() can see the
+ref still held by the softirq handler.
+
+Further, a packet may contain multiple subpackets, each of which gets its
+own attachment to the ring and its own ref - also making skb_cow_data() go
+bang.
+
+Fix this by:
+
+ (1) The DATA packet is currently parsed for subpackets twice by the input
+     routines.  Parse it just once instead and make notes in the sk_buff
+     private data.
+
+ (2) Use the notes from (1) when attaching the packet to the ring multiple
+     times.  Once the packet is attached to the ring, recvmsg can see it
+     and start modifying it, so the softirq handler is not permitted to
+     look inside it from that point.
+
+ (3) Pass the ref from the input code to the ring rather than getting an
+     extra ref.  rxrpc_input_data() uses a ref on the second refcount to
+     prevent the packet from evaporating under it.
+
+ (4) Call skb_unshare() on secured DATA packets in rxrpc_input_packet()
+     before we take call->input_lock.  Other sorts of packets don't get
+     modified and so can be left.
+
+     A trace is emitted if skb_unshare() eats the skb.  Note that
+     skb_share() for our accounting in this regard as we can't see the
+     parameters in the packet to log in a trace line if it releases it.
+
+ (5) Remove the calls to skb_cow_data().  These are then no longer
+     necessary.
+
+There are also patches to improve the rxrpc_skb tracepoint to make sure
+that Tx-derived buffers are identified separately from Rx-derived buffers
+in the trace.
+
+The patches are tagged here:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git
+	rxrpc-fixes-20190827
+
+and can also be found on the following branch:
+
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=rxrpc-fixes
+
+David
 ---
- v3:
- - Replaced wrong copy-n-pasted report string with a proper one
- - Check for errno after calling the ioctl with size = 0
- 
- tools/testing/selftests/kvm/Makefile      |   1 +
- tools/testing/selftests/kvm/s390x/memop.c | 166 ++++++++++++++++++++++
- 2 files changed, 167 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/s390x/memop.c
+David Howells (7):
+      rxrpc: Improve jumbo packet counting
+      rxrpc: Use info in skbuff instead of reparsing a jumbo packet
+      rxrpc: Pass the input handler's data skb reference to the Rx ring
+      rxrpc: Abstract out rxtx ring cleanup
+      rxrpc: Add a private skb flag to indicate transmission-phase skbs
+      rxrpc: Use the tx-phase skb flag to simplify tracing
+      rxrpc: Use skb_unshare() rather than skb_cow_data()
 
-diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
-index 1b48a94b4350..62c591f87dab 100644
---- a/tools/testing/selftests/kvm/Makefile
-+++ b/tools/testing/selftests/kvm/Makefile
-@@ -32,6 +32,7 @@ TEST_GEN_PROGS_aarch64 += clear_dirty_log_test
- TEST_GEN_PROGS_aarch64 += dirty_log_test
- TEST_GEN_PROGS_aarch64 += kvm_create_max_vcpus
- 
-+TEST_GEN_PROGS_s390x = s390x/memop
- TEST_GEN_PROGS_s390x += s390x/sync_regs_test
- TEST_GEN_PROGS_s390x += dirty_log_test
- TEST_GEN_PROGS_s390x += kvm_create_max_vcpus
-diff --git a/tools/testing/selftests/kvm/s390x/memop.c b/tools/testing/selftests/kvm/s390x/memop.c
-new file mode 100644
-index 000000000000..9edaa9a134ce
---- /dev/null
-+++ b/tools/testing/selftests/kvm/s390x/memop.c
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Test for s390x KVM_S390_MEM_OP
-+ *
-+ * Copyright (C) 2019, Red Hat, Inc.
-+ */
-+
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+
-+#include "test_util.h"
-+#include "kvm_util.h"
-+
-+#define VCPU_ID 1
-+
-+static uint8_t mem1[65536];
-+static uint8_t mem2[65536];
-+
-+static void guest_code(void)
-+{
-+	int i;
-+
-+	for (;;) {
-+		for (i = 0; i < sizeof(mem2); i++)
-+			mem2[i] = mem1[i];
-+		GUEST_SYNC(0);
-+	}
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	struct kvm_vm *vm;
-+	struct kvm_run *run;
-+	struct kvm_s390_mem_op ksmo;
-+	int rv, i, maxsize;
-+
-+	setbuf(stdout, NULL);	/* Tell stdout not to buffer its content */
-+
-+	maxsize = kvm_check_cap(KVM_CAP_S390_MEM_OP);
-+	if (!maxsize) {
-+		fprintf(stderr, "CAP_S390_MEM_OP not supported -> skip test\n");
-+		exit(KSFT_SKIP);
-+	}
-+	if (maxsize > sizeof(mem1))
-+		maxsize = sizeof(mem1);
-+
-+	/* Create VM */
-+	vm = vm_create_default(VCPU_ID, 0, guest_code);
-+	run = vcpu_state(vm, VCPU_ID);
-+
-+	for (i = 0; i < sizeof(mem1); i++)
-+		mem1[i] = i * i + i;
-+
-+	/* Set the first array */
-+	ksmo.gaddr = addr_gva2gpa(vm, (uintptr_t)mem1);
-+	ksmo.flags = 0;
-+	ksmo.size = maxsize;
-+	ksmo.op = KVM_S390_MEMOP_LOGICAL_WRITE;
-+	ksmo.buf = (uintptr_t)mem1;
-+	ksmo.ar = 0;
-+	vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+
-+	/* Let the guest code copy the first array to the second */
-+	vcpu_run(vm, VCPU_ID);
-+	TEST_ASSERT(run->exit_reason == KVM_EXIT_S390_SIEIC,
-+		    "Unexpected exit reason: %u (%s)\n",
-+		    run->exit_reason,
-+		    exit_reason_str(run->exit_reason));
-+
-+	memset(mem2, 0xaa, sizeof(mem2));
-+
-+	/* Get the second array */
-+	ksmo.gaddr = (uintptr_t)mem2;
-+	ksmo.flags = 0;
-+	ksmo.size = maxsize;
-+	ksmo.op = KVM_S390_MEMOP_LOGICAL_READ;
-+	ksmo.buf = (uintptr_t)mem2;
-+	ksmo.ar = 0;
-+	vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+
-+	TEST_ASSERT(!memcmp(mem1, mem2, maxsize),
-+		    "Memory contents do not match!");
-+
-+	/* Check error conditions - first bad size: */
-+	ksmo.gaddr = (uintptr_t)mem1;
-+	ksmo.flags = 0;
-+	ksmo.size = -1;
-+	ksmo.op = KVM_S390_MEMOP_LOGICAL_WRITE;
-+	ksmo.buf = (uintptr_t)mem1;
-+	ksmo.ar = 0;
-+	rv = _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+	TEST_ASSERT(rv == -1 && errno == E2BIG, "ioctl allows insane sizes");
-+
-+	/* Zero size: */
-+	ksmo.gaddr = (uintptr_t)mem1;
-+	ksmo.flags = 0;
-+	ksmo.size = 0;
-+	ksmo.op = KVM_S390_MEMOP_LOGICAL_WRITE;
-+	ksmo.buf = (uintptr_t)mem1;
-+	ksmo.ar = 0;
-+	rv = _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+	TEST_ASSERT(rv == -1 && (errno == EINVAL || errno == ENOMEM),
-+		    "ioctl allows 0 as size");
-+
-+	/* Bad flags: */
-+	ksmo.gaddr = (uintptr_t)mem1;
-+	ksmo.flags = -1;
-+	ksmo.size = maxsize;
-+	ksmo.op = KVM_S390_MEMOP_LOGICAL_WRITE;
-+	ksmo.buf = (uintptr_t)mem1;
-+	ksmo.ar = 0;
-+	rv = _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+	TEST_ASSERT(rv == -1 && errno == EINVAL, "ioctl allows all flags");
-+
-+	/* Bad operation: */
-+	ksmo.gaddr = (uintptr_t)mem1;
-+	ksmo.flags = 0;
-+	ksmo.size = maxsize;
-+	ksmo.op = -1;
-+	ksmo.buf = (uintptr_t)mem1;
-+	ksmo.ar = 0;
-+	rv = _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+	TEST_ASSERT(rv == -1 && errno == EINVAL, "ioctl allows bad operations");
-+
-+	/* Bad guest address: */
-+	ksmo.gaddr = ~0xfffUL;
-+	ksmo.flags = KVM_S390_MEMOP_F_CHECK_ONLY;
-+	ksmo.size = maxsize;
-+	ksmo.op = KVM_S390_MEMOP_LOGICAL_WRITE;
-+	ksmo.buf = (uintptr_t)mem1;
-+	ksmo.ar = 0;
-+	rv = _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+	TEST_ASSERT(rv > 0, "ioctl does not report bad guest memory access");
-+
-+	/* Bad host address: */
-+	ksmo.gaddr = (uintptr_t)mem1;
-+	ksmo.flags = 0;
-+	ksmo.size = maxsize;
-+	ksmo.op = KVM_S390_MEMOP_LOGICAL_WRITE;
-+	ksmo.buf = 0;
-+	ksmo.ar = 0;
-+	rv = _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+	TEST_ASSERT(rv == -1 && errno == EFAULT,
-+		    "ioctl does not report bad host memory address");
-+
-+	/* Bad access register: */
-+	run->psw_mask &= ~(3UL << (63 - 17));
-+	run->psw_mask |= 1UL << (63 - 17);  /* Enable AR mode */
-+	vcpu_run(vm, VCPU_ID);              /* To sync new state to SIE block */
-+	ksmo.gaddr = (uintptr_t)mem1;
-+	ksmo.flags = 0;
-+	ksmo.size = maxsize;
-+	ksmo.op = KVM_S390_MEMOP_LOGICAL_WRITE;
-+	ksmo.buf = (uintptr_t)mem1;
-+	ksmo.ar = 17;
-+	rv = _vcpu_ioctl(vm, VCPU_ID, KVM_S390_MEM_OP, &ksmo);
-+	TEST_ASSERT(rv == -1 && errno == EINVAL, "ioctl allows ARs > 15");
-+	run->psw_mask &= ~(3UL << (63 - 17));   /* Disable AR mode */
-+	vcpu_run(vm, VCPU_ID);                  /* Run to sync new state */
-+
-+	kvm_vm_free(vm);
-+
-+	return 0;
-+}
--- 
-2.18.1
+
+ include/trace/events/rxrpc.h |   59 ++++----
+ net/rxrpc/ar-internal.h      |   16 ++
+ net/rxrpc/call_event.c       |    8 +
+ net/rxrpc/call_object.c      |   33 ++---
+ net/rxrpc/conn_event.c       |    6 -
+ net/rxrpc/input.c            |  304 +++++++++++++++++++++++-------------------
+ net/rxrpc/local_event.c      |    4 -
+ net/rxrpc/output.c           |    6 -
+ net/rxrpc/peer_event.c       |   10 +
+ net/rxrpc/protocol.h         |    9 +
+ net/rxrpc/recvmsg.c          |   47 ++++--
+ net/rxrpc/rxkad.c            |   32 +---
+ net/rxrpc/sendmsg.c          |   13 +-
+ net/rxrpc/skbuff.c           |   40 ++++--
+ 14 files changed, 319 insertions(+), 268 deletions(-)
 
