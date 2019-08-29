@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B264A247D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9202A2487
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:24:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbfH2SQm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:16:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58638 "EHLO mail.kernel.org"
+        id S1729978AbfH2SYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:24:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729808AbfH2SQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:16:37 -0400
+        id S1728464AbfH2SQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:16:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C72023429;
-        Thu, 29 Aug 2019 18:16:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 448D823404;
+        Thu, 29 Aug 2019 18:16:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102596;
-        bh=xsvxJCthlLanLZJABP2L2TiicScc0UTWZw5aZ2Af/4k=;
+        s=default; t=1567102598;
+        bh=ui0X0IpgiHCNlLnHuOQmNBQikGn7U/h3HqEeFUTRqWk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uxVrAAQnvyN+XeiMAkLmIC5WHxtOAWR+wuptytfS4HDZRYlnRQgo3F3okepqHg0eT
-         c+Y6wWX0S2Obv25PLX8N2xYDQI3oPBGfz4dnTI9eBUhxBYhDlwkwHdGQIbqjhZDVCH
-         nah+Rl6Ik05RW2ChMrgixYz1kYueX0ASedvRN+nc=
+        b=09VIwfI3Rd6D0wg/Mzc6QKRx/RQ6YFBGySHQlFmCUg5EkiZ+jl/hOz1z5xGXJloFH
+         bIMEEDQ3dc90Wu01jzjInrz4Dob0aIPmXc9X2JbyETKhHD4dYb5QDjz4w1Ri2ov8R1
+         5jmvv+ulxEKn++LP6hP710NTku20NC/H2uKC0oVo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-hyperv@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 32/45] Input: hyperv-keyboard: Use in-place iterator API in the channel callback
-Date:   Thu, 29 Aug 2019 14:15:32 -0400
-Message-Id: <20190829181547.8280-32-sashal@kernel.org>
+Cc:     Anton Eidelman <anton@lightbitslabs.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 34/45] nvme-multipath: fix possible I/O hang when paths are updated
+Date:   Thu, 29 Aug 2019 14:15:34 -0400
+Message-Id: <20190829181547.8280-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181547.8280-1-sashal@kernel.org>
 References: <20190829181547.8280-1-sashal@kernel.org>
@@ -44,71 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Anton Eidelman <anton@lightbitslabs.com>
 
-[ Upstream commit d09bc83640d524b8467a660db7b1d15e6562a1de ]
+[ Upstream commit 504db087aaccdb32af61539916409f7dca31ceb5 ]
 
-Simplify the ring buffer handling with the in-place API.
+nvme_state_set_live() making a path available triggers requeue_work
+in order to resubmit requests that ended up on requeue_list when no
+paths were available.
 
-Also avoid the dynamic allocation and the memory leak in the channel
-callback function.
+This requeue_work may race with concurrent nvme_ns_head_make_request()
+that do not observe the live path yet.
+Such concurrent requests may by made by either:
+- New IO submission.
+- Requeue_work triggered by nvme_failover_req() or another ana_work.
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+A race may cause requeue_work capture the state of requeue_list before
+more requests get onto the list. These requests will stay on the list
+forever unless requeue_work is triggered again.
+
+In order to prevent such race, nvme_state_set_live() should
+synchronize_srcu(&head->srcu) before triggering the requeue_work and
+prevent nvme_ns_head_make_request referencing an old snapshot of the
+path list.
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Anton Eidelman <anton@lightbitslabs.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/serio/hyperv-keyboard.c | 35 +++++----------------------
- 1 file changed, 6 insertions(+), 29 deletions(-)
+ drivers/nvme/host/multipath.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
-index a8b9be3e28db7..7d0a5ccf57751 100644
---- a/drivers/input/serio/hyperv-keyboard.c
-+++ b/drivers/input/serio/hyperv-keyboard.c
-@@ -245,40 +245,17 @@ static void hv_kbd_handle_received_packet(struct hv_device *hv_dev,
- 
- static void hv_kbd_on_channel_callback(void *context)
- {
-+	struct vmpacket_descriptor *desc;
- 	struct hv_device *hv_dev = context;
--	void *buffer;
--	int bufferlen = 0x100; /* Start with sensible size */
- 	u32 bytes_recvd;
- 	u64 req_id;
--	int error;
- 
--	buffer = kmalloc(bufferlen, GFP_ATOMIC);
--	if (!buffer)
--		return;
--
--	while (1) {
--		error = vmbus_recvpacket_raw(hv_dev->channel, buffer, bufferlen,
--					     &bytes_recvd, &req_id);
--		switch (error) {
--		case 0:
--			if (bytes_recvd == 0) {
--				kfree(buffer);
--				return;
--			}
--
--			hv_kbd_handle_received_packet(hv_dev, buffer,
--						      bytes_recvd, req_id);
--			break;
-+	foreach_vmbus_pkt(desc, hv_dev->channel) {
-+		bytes_recvd = desc->len8 * 8;
-+		req_id = desc->trans_id;
- 
--		case -ENOBUFS:
--			kfree(buffer);
--			/* Handle large packet */
--			bufferlen = bytes_recvd;
--			buffer = kmalloc(bytes_recvd, GFP_ATOMIC);
--			if (!buffer)
--				return;
--			break;
--		}
-+		hv_kbd_handle_received_packet(hv_dev, desc, bytes_recvd,
-+					      req_id);
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index a11e210d173e4..9e24ef3bd0f29 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -293,6 +293,7 @@ static void nvme_mpath_set_live(struct nvme_ns *ns)
+ 				 "failed to create id group.\n");
  	}
+ 
++	synchronize_srcu(&ns->head->srcu);
+ 	kblockd_schedule_work(&ns->head->requeue_work);
  }
  
 -- 
