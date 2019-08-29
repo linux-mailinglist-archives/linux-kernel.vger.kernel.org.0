@@ -2,133 +2,239 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46514A0E91
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 02:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF87A0E8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 02:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfH2ANx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 20:13:53 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:48630 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbfH2ANw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 20:13:52 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7T0DNVB005044;
-        Thu, 29 Aug 2019 00:13:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=7wG5y7dKyypT4n5VfzMGBXRCZUmNViG9gJEJUq/OhLo=;
- b=sctmNZVMbDTpDSLMErdcAI8t4Py/Pltzk73Oud6ZLkclBxdvkwOGuhTgeDT3au9c7tBr
- 7ujUB8iiDY78b9DvgG8GbPKW+DSI3hs52BrtklO2I6WR2G47pA/7d9TL/pNsEGrpcZLn
- DojgCf+4T23dJABggFF4eVPXRwWmEkqNoWc2MtdfdZh2bxFNvzMDZV0YiZzBjgLnT6M2
- Qqvyxh+BQg+b4buhdTbRMNSPIbxjB37Z3VSxk3eFD0Wh3e+lGbhwlG/r+X+jZj1Y0Zps
- w62kPSVnyZVKo1iE+CLFi6ukyKDzfWBE2mHJ5WdHtJDQ2pv6whZ0S2O7dFORd/hbzuJh ww== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2up3vmr0k6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 00:13:35 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7SMDOC0007324;
-        Wed, 28 Aug 2019 22:16:33 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2untetyqhw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 28 Aug 2019 22:16:33 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7SMGWex020546;
-        Wed, 28 Aug 2019 22:16:32 GMT
-Received: from zissou.us.oracle.com (/10.152.34.58)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 28 Aug 2019 15:16:32 -0700
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH v2 4/5] padata: always acquire cpu_hotplug_lock before pinst->lock
-Date:   Wed, 28 Aug 2019 18:14:24 -0400
-Message-Id: <20190828221425.22701-5-daniel.m.jordan@oracle.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190828221425.22701-1-daniel.m.jordan@oracle.com>
-References: <20190828221425.22701-1-daniel.m.jordan@oracle.com>
+        id S1727024AbfH2AKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 20:10:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38871 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725873AbfH2AKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 28 Aug 2019 20:10:12 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 03E3E821C3;
+        Thu, 29 Aug 2019 00:10:11 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 70B9719D7A;
+        Thu, 29 Aug 2019 00:10:03 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org, Sean Paul <sean@poorly.run>
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/dp_mst: Clear all payload id tables downstream when initializing
+Date:   Wed, 28 Aug 2019 20:09:44 -0400
+Message-Id: <20190829000944.20722-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908280214
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908290001
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 29 Aug 2019 00:10:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lockdep complains when...
+From: Sean Paul <seanpaul@chromium.org>
 
-  # echo 0 > /sys/devices/system/cpu/cpu1/online
-  # echo ff > /sys/kernel/pcrypt/pencrypt/parallel_cpumask
+It seems that on certain MST hubs, namely the CableMatters USB-C 2x DP
+hub, using the DP_PAYLOAD_ALLOCATE_SET and DP_PAYLOAD_TABLE_UPDATE_STATUS
+register ranges to clear any pre-existing payload allocations on the hub isn't
+always enough to reset things if the source device has been reset unexpectedly.
 
-  ======================================================
-  WARNING: possible circular locking dependency detected
-  5.3.0-rc5-padata-base+ #6 Not tainted
-  ------------------------------------------------------
-  bash/258 is trying to acquire lock:
-  00000000c43f7f29 (cpu_hotplug_lock.rw_sem){++++}, at: padata_set_cpumask+0x30/0x130
+Or at least, that's the current running theory. The precise behavior appears to
+be that when the source device gets reset unexpectedly, the hub begins reporting
+an available_pbn value of 0 for all of its ports. This is a bit inconsistent
+with the our theory, since this seems to happen even if previously set PBN
+allocations should have resulted in a non-zero available_pbn value. So, it's
+possible that something else may be going on here.
 
-  but task is already holding lock:
-  00000000676aa31d (&pinst->lock){+.+.}, at: padata_set_cpumask+0x2b/0x130
+Strangely though, sending a CLEAR_PAYLOAD_ID_TABLE broadcast request when
+initializing the MST topology seems to bring things into working order and make
+available_pbn work again. Since this is a pretty safe solution, let's go ahead
+and implement it.
 
-  which lock already depends on the new lock.
+Changes since v1:
+* Change indenting on drm_dp_send_clear_payload_id_table() prototype
+* Remove some braces in drm_dp_send_clear_payload_id_table()
+* Reorganize some variable declarations in drm_dp_send_clear_payload_id_table()
+* Don't forget to handle DP_CLEAR_PAYLOAD_ID_TABLE in
+  drm_dp_sideband_parse_reply()
+* Move drm_dp_send_clear_payload_id_table() call into
+  drm_dp_mst_link_probe_work(), since we can't send sideband messages
+  while under lock in drm_dp_mst_topology_mgr_set_mst()
+* Change commit message
 
-padata doesn't take cpu_hotplug_lock and pinst->lock in a consistent
-order.  Which should be first?  CPU hotplug calls into padata with
-cpu_hotplug_lock already held, so it should have priority.
-
-Fixes: 6751fb3c0e0c ("padata: Use get_online_cpus/put_online_cpus")
-Signed-off-by: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Change-Id: I2c763e8dae3844eca76033a41f264080052fbbfc
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- kernel/padata.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/padata.c b/kernel/padata.c
-index 6adce3b203fe..75e668fedd8d 100644
---- a/kernel/padata.c
-+++ b/kernel/padata.c
-@@ -603,8 +603,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
- 	struct cpumask *serial_mask, *parallel_mask;
- 	int err = -EINVAL;
+A heads up to anyone looking at this patch: it's quite possible this
+won't be the final solution that we go with. Me and Sean would like to
+do a bit more investigation to try to figure out what exactly is
+happening here before we go ahead and push it, and hopefully figure out
+why available_pbn is being set to 0 instead of some other leftover
+non-zero allocation.
+
+ drivers/gpu/drm/drm_dp_mst_topology.c | 63 +++++++++++++++++++++++++--
+ include/drm/drm_dp_mst_helper.h       | 16 +++++--
+ 2 files changed, 72 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+index 82add736e17d..969e43b7eb4c 100644
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -64,6 +64,11 @@ static int drm_dp_send_dpcd_write(struct drm_dp_mst_topology_mgr *mgr,
  
--	mutex_lock(&pinst->lock);
- 	get_online_cpus();
-+	mutex_lock(&pinst->lock);
- 
- 	switch (cpumask_type) {
- 	case PADATA_CPU_PARALLEL:
-@@ -622,8 +622,8 @@ int padata_set_cpumask(struct padata_instance *pinst, int cpumask_type,
- 	err =  __padata_set_cpumasks(pinst, parallel_mask, serial_mask);
- 
- out:
--	put_online_cpus();
- 	mutex_unlock(&pinst->lock);
-+	put_online_cpus();
- 
- 	return err;
+ static void drm_dp_send_link_address(struct drm_dp_mst_topology_mgr *mgr,
+ 				     struct drm_dp_mst_branch *mstb);
++
++static void
++drm_dp_send_clear_payload_id_table(struct drm_dp_mst_topology_mgr *mgr,
++				   struct drm_dp_mst_branch *mstb);
++
+ static int drm_dp_send_enum_path_resources(struct drm_dp_mst_topology_mgr *mgr,
+ 					   struct drm_dp_mst_branch *mstb,
+ 					   struct drm_dp_mst_port *port);
+@@ -657,6 +662,8 @@ static bool drm_dp_sideband_parse_reply(struct drm_dp_sideband_msg_rx *raw,
+ 	case DP_POWER_DOWN_PHY:
+ 	case DP_POWER_UP_PHY:
+ 		return drm_dp_sideband_parse_power_updown_phy_ack(raw, msg);
++	case DP_CLEAR_PAYLOAD_ID_TABLE:
++		return true; /* since there's nothing to parse */
+ 	default:
+ 		DRM_ERROR("Got unknown reply 0x%02x (%s)\n", msg->req_type,
+ 			  drm_dp_mst_req_type_str(msg->req_type));
+@@ -755,6 +762,15 @@ static int build_link_address(struct drm_dp_sideband_msg_tx *msg)
+ 	return 0;
  }
+ 
++static int build_clear_payload_id_table(struct drm_dp_sideband_msg_tx *msg)
++{
++	struct drm_dp_sideband_msg_req_body req;
++
++	req.req_type = DP_CLEAR_PAYLOAD_ID_TABLE;
++	drm_dp_encode_sideband_req(&req, msg);
++	return 0;
++}
++
+ static int build_enum_path_resources(struct drm_dp_sideband_msg_tx *msg, int port_num)
+ {
+ 	struct drm_dp_sideband_msg_req_body req;
+@@ -1877,8 +1893,12 @@ static void drm_dp_mst_link_probe_work(struct work_struct *work)
+ 	struct drm_dp_mst_topology_mgr *mgr = container_of(work, struct drm_dp_mst_topology_mgr, work);
+ 	struct drm_dp_mst_branch *mstb;
+ 	int ret;
++	bool clear_payload_id_table;
+ 
+ 	mutex_lock(&mgr->lock);
++	clear_payload_id_table = !mgr->payload_id_table_cleared;
++	mgr->payload_id_table_cleared = true;
++
+ 	mstb = mgr->mst_primary;
+ 	if (mstb) {
+ 		ret = drm_dp_mst_topology_try_get_mstb(mstb);
+@@ -1886,10 +1906,24 @@ static void drm_dp_mst_link_probe_work(struct work_struct *work)
+ 			mstb = NULL;
+ 	}
+ 	mutex_unlock(&mgr->lock);
+-	if (mstb) {
+-		drm_dp_check_and_send_link_address(mgr, mstb);
+-		drm_dp_mst_topology_put_mstb(mstb);
++	if (!mstb)
++		return;
++
++	/*
++	 * Certain branch devices seem to incorrectly report an available_pbn
++	 * of 0 on downstream sinks, even after clearing the
++	 * DP_PAYLOAD_ALLOCATE_* registers in
++	 * drm_dp_mst_topology_mgr_set_mst(). Namely, the CableMatters USB-C
++	 * 2x DP hub. Sending a CLEAR_PAYLOAD_ID_TABLE message seems to make
++	 * things work again.
++	 */
++	if (clear_payload_id_table) {
++		DRM_DEBUG_KMS("Clearing payload ID table\n");
++		drm_dp_send_clear_payload_id_table(mgr, mstb);
+ 	}
++
++	drm_dp_check_and_send_link_address(mgr, mstb);
++	drm_dp_mst_topology_put_mstb(mstb);
+ }
+ 
+ static bool drm_dp_validate_guid(struct drm_dp_mst_topology_mgr *mgr,
+@@ -2156,6 +2190,28 @@ static void drm_dp_send_link_address(struct drm_dp_mst_topology_mgr *mgr,
+ 	kfree(txmsg);
+ }
+ 
++void drm_dp_send_clear_payload_id_table(struct drm_dp_mst_topology_mgr *mgr,
++					struct drm_dp_mst_branch *mstb)
++{
++	struct drm_dp_sideband_msg_tx *txmsg;
++	int len, ret;
++
++	txmsg = kzalloc(sizeof(*txmsg), GFP_KERNEL);
++	if (!txmsg)
++		return;
++
++	txmsg->dst = mstb;
++	len = build_clear_payload_id_table(txmsg);
++
++	drm_dp_queue_down_tx(mgr, txmsg);
++
++	ret = drm_dp_mst_wait_tx_reply(mstb, txmsg);
++	if (ret > 0 && txmsg->reply.reply_type == DP_SIDEBAND_REPLY_NAK)
++		DRM_DEBUG_KMS("clear payload table id nak received\n");
++
++	kfree(txmsg);
++}
++
+ static int drm_dp_send_enum_path_resources(struct drm_dp_mst_topology_mgr *mgr,
+ 					   struct drm_dp_mst_branch *mstb,
+ 					   struct drm_dp_mst_port *port)
+@@ -2756,6 +2812,7 @@ int drm_dp_mst_topology_mgr_set_mst(struct drm_dp_mst_topology_mgr *mgr, bool ms
+ 		mgr->payload_mask = 0;
+ 		set_bit(0, &mgr->payload_mask);
+ 		mgr->vcpi_mask = 0;
++		mgr->payload_id_table_cleared = false;
+ 	}
+ 
+ out_unlock:
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+index 2ba6253ea6d3..ee4093c1bba3 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -494,15 +494,23 @@ struct drm_dp_mst_topology_mgr {
+ 	struct drm_dp_sideband_msg_rx up_req_recv;
+ 
+ 	/**
+-	 * @lock: protects mst state, primary, dpcd.
++	 * @lock: protects @mst_state, @mst_primary, @dpcd, and
++	 * @payload_id_table_cleared.
+ 	 */
+ 	struct mutex lock;
+ 
+ 	/**
+-	 * @mst_state: If this manager is enabled for an MST capable port. False
+-	 * if no MST sink/branch devices is connected.
++	 * @mst_state: If this manager is enabled for an MST capable port.
++	 * False if no MST sink/branch devices is connected.
+ 	 */
+-	bool mst_state;
++	bool mst_state : 1;
++
++	/**
++	 * @payload_id_table_cleared: Whether or not we've cleared the payload
++	 * ID table for @mst_primary. Protected by @lock.
++	 */
++	bool payload_id_table_cleared : 1;
++
+ 	/**
+ 	 * @mst_primary: Pointer to the primary/first branch device.
+ 	 */
 -- 
-2.23.0
+2.21.0
 
