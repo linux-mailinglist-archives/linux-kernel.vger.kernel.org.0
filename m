@@ -2,105 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84CC2A13BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:32:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 770C2A13D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbfH2Ick (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:32:40 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44990 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727400AbfH2Icg (ORCPT
+        id S1727798AbfH2IeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:34:08 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43750 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727788AbfH2Ic4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:32:36 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j11so2443902wrp.11;
-        Thu, 29 Aug 2019 01:32:34 -0700 (PDT)
+        Thu, 29 Aug 2019 04:32:56 -0400
+Received: by mail-lf1-f65.google.com with SMTP id q27so1807511lfo.10
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TLcjEAYdtAfZ2IRKdNGNYpywlsNLbG2mqtC2Fue66Yc=;
-        b=QJxXPKf/Cg9KTx27UkHrkQS6ltF9PXHtxV3So9AJZ3YdbRVZ7QhBAft6mEVczkhzYF
-         n3FHou9injbx8mXgBd6MwmQ1s9z5IrRQW9ymkowZ+1YaSfWjr2VOd5XBjNmfT5XVY63Y
-         /F2ezWgMx+8Pm7T7I83lhTUhjgZFGlBBP/VgY8Pp9hVkkE+LDqbZrGZBUiopAWynhbUM
-         aW0M+QsTkjiep24QWsIY4HJZsIvLdfz9oVvYwkaXovkv/BJuDAbIMfP7MD88Q+WMJ4nk
-         848vROF+kVBToD962VFAZJ9c3+IvvHy/wdECBasAP1fBcPQG7BuRVXbXYTJMhmCiPbNX
-         +HBA==
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=6P0N9+OtzBQ/+pWxgapquiOAPv3FZmW3I9CzZ8KtwA0=;
+        b=YEkpOy3y52sYFpekXF5SsnslyuHmOvVTH8W30KxlWAeLUPrCxTbcMPCtmShJaWANVF
+         UXHh8crLiDMyDxwPz00RvTLUQN3xxGftGCvtBOQ8uc6+y7Ak4vTynsLyUtaK0djb0e2M
+         KRJ8469XXV8VOgk/5naodAqkWR2fZuxzY28yM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TLcjEAYdtAfZ2IRKdNGNYpywlsNLbG2mqtC2Fue66Yc=;
-        b=BAQ1yC0YcmyS3QJzf2sbNaND98XSkUk57IbiM9YOTpP5VclbXyo1ttjzJ0QguyyZtS
-         aMAqVlZ1JkBaPwbFWCQdiO+nGSsyCU+DXtBZsmPQhSgcRBTzJoNvbwK46PbiDu6Vuzjj
-         JN8ySmz5mavVjzeBz5GkCOdn+UeQBoKIFWWQFkKu+koIrqawwjt6x788yAF0qZWKI6ph
-         BiFHo+S/gcLxjrGHFozj0B2giqcpqRP7YcL3xprurj5dgRQ0gyUiWqGswD8r5ipvkDGm
-         UcMiZSTyn8+P7Pcmy8a0uBdAwn2p8jEMp2iBynUMjcNyX9mf15Mizy9F3qHrfdrPnnZi
-         xaug==
-X-Gm-Message-State: APjAAAVs0CE88axcvUf4EPY1L8tP6AE7X1VtJavxHOv7JYmviobRISKp
-        qu7p8F9UI+bne3ifHDF4dv+Yien2
-X-Google-Smtp-Source: APXvYqxvedUZQokkdwPwIOVPjaDcbedfAWkWLITg5V4Mob8IXBhl45k79LQCPRLYcJ/MhjRlvzp1Qg==
-X-Received: by 2002:adf:82d4:: with SMTP id 78mr9182142wrc.85.1567067554017;
-        Thu, 29 Aug 2019 01:32:34 -0700 (PDT)
-Received: from [192.168.8.147] (33.169.185.81.rev.sfr.net. [81.185.169.33])
-        by smtp.gmail.com with ESMTPSA id n14sm4882149wra.75.2019.08.29.01.32.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2019 01:32:33 -0700 (PDT)
-Subject: Re: [v1] net_sched: act_police: add 2 new attributes to support
- police 64bit rate and peakrate
-To:     David Dai <zdai@linux.vnet.ibm.com>, jhs@mojatatu.com,
-        xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     zdai@us.ibm.com
-References: <1567032687-973-1-git-send-email-zdai@linux.vnet.ibm.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <7a8a5024-bbff-7443-71b3-9e3976af269f@gmail.com>
-Date:   Thu, 29 Aug 2019 10:32:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6P0N9+OtzBQ/+pWxgapquiOAPv3FZmW3I9CzZ8KtwA0=;
+        b=MVLAnrHj3W7iwgJFe5okR49Ftox9g9pJErJr5LBCDKrTUYyWKAwRAm6fdJIIMA1bKd
+         MO2SkL2FdHgttx1CTDfUpLBafRokvVHDK37gWXCfRDWLlWtxlyqMlLKUjS+DLNMaMPn1
+         GXeg1D8a2AnGh09ftpCfzn9mVHhWbjdJ93Cm4cXyh5xenACAcQx3Fu6Uvg2PvezauYcj
+         0/peC5dNYaz5kmoLd/3ubSmUpzyjhlDYJEGJYql4INLY7ByA3lC1On6FpC0Xb4txPva/
+         KgRey5t6W0pNBnLU4lOkujUEIu6ZDcD3nyhLsis43Rj0seGoitZrwxBgbJWG+BMXPrZH
+         SK2g==
+X-Gm-Message-State: APjAAAXwMx8+5LuJtEwMCb5VqKBPsSVyrnLnWt7m+a7etwK7gEKT8Xye
+        EEvzREqo4PvZ5zlhjlZOV1AgRg==
+X-Google-Smtp-Source: APXvYqyf1Lzadr9tMyJSzoWA+LFKwx5oiJj5n4TOy6bd0AYG5wf7UjgXqtCn9rgmhc/yaRiu8MruZw==
+X-Received: by 2002:a19:6a12:: with SMTP id u18mr5260201lfu.133.1567067573970;
+        Thu, 29 Aug 2019 01:32:53 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id o20sm248087ljg.31.2019.08.29.01.32.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 01:32:53 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        ndesaulniers@google.com,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [RFC PATCH 4/5] x86: alternative.h: use asm_inline for all alternative variants
+Date:   Thu, 29 Aug 2019 10:32:32 +0200
+Message-Id: <20190829083233.24162-5-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
+References: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
 MIME-Version: 1.0
-In-Reply-To: <1567032687-973-1-git-send-email-zdai@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Most, if not all, uses of the alternative* family just provide one or
+two instructions in .text, but the string literal can be quite large,
+causing gcc to overestimate the size of the generated code. That in
+turn affects its decisions about inlining of the function containing
+the alternative() asm statement.
 
+gcc >= 9.1 allows one to overrule the estimated size by using "asm
+inline" instead of just "asm". So replace asm by the helper
+asm_inline, which for older gccs just expands to asm.
 
-On 8/29/19 12:51 AM, David Dai wrote:
-> For high speed adapter like Mellanox CX-5 card, it can reach upto
-> 100 Gbits per second bandwidth. Currently htb already supports 64bit rate
-> in tc utility. However police action rate and peakrate are still limited
-> to 32bit value (upto 32 Gbits per second). Add 2 new attributes
-> TCA_POLICE_RATE64 and TCA_POLICE_RATE64 in kernel for 64bit support
-> so that tc utility can use them for 64bit rate and peakrate value to
-> break the 32bit limit, and still keep the backward binary compatibility.
-> 
-> Tested-by: David Dai <zdai@linux.vnet.ibm.com>
-> Signed-off-by: David Dai <zdai@linux.vnet.ibm.com>
-> ---
->  include/uapi/linux/pkt_cls.h |    2 ++
->  net/sched/act_police.c       |   27 +++++++++++++++++++++++----
->  2 files changed, 25 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
-> index b057aee..eb4ea4d 100644
-> --- a/include/uapi/linux/pkt_cls.h
-> +++ b/include/uapi/linux/pkt_cls.h
-> @@ -159,6 +159,8 @@ enum {
->  	TCA_POLICE_AVRATE,
->  	TCA_POLICE_RESULT,
->  	TCA_POLICE_TM,
-> +	TCA_POLICE_RATE64,
-> +	TCA_POLICE_PEAKRATE64,
->  	TCA_POLICE_PAD,
->  	__TCA_POLICE_MAX
->  #define TCA_POLICE_RESULT TCA_POLICE_RESULT
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ arch/x86/include/asm/alternative.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Never insert new attributes, as this breaks compatibility with old binaries (including
-old kernels)
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 094fbc9c0b1c..13adca37c99a 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -201,10 +201,10 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  * without volatile and memory clobber.
+  */
+ #define alternative(oldinstr, newinstr, feature)			\
+-	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
++	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
+ 
+ #define alternative_2(oldinstr, newinstr1, feature1, newinstr2, feature2) \
+-	asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
++	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
+ 
+ /*
+  * Alternative inline assembly with input.
+@@ -218,7 +218,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  * Leaving an unused argument 0 to keep API compatibility.
+  */
+ #define alternative_input(oldinstr, newinstr, feature, input...)	\
+-	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
++	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature)	\
+ 		: : "i" (0), ## input)
+ 
+ /*
+@@ -231,18 +231,18 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  */
+ #define alternative_input_2(oldinstr, newinstr1, feature1, newinstr2,	     \
+ 			   feature2, input...)				     \
+-	asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1,	     \
++	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1,     \
+ 		newinstr2, feature2)					     \
+ 		: : "i" (0), ## input)
+ 
+ /* Like alternative_input, but with a single output argument */
+ #define alternative_io(oldinstr, newinstr, feature, output, input...)	\
+-	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
++	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature)	\
+ 		: output : "i" (0), ## input)
+ 
+ /* Like alternative_io, but for replacing a direct call with another one. */
+ #define alternative_call(oldfunc, newfunc, feature, output, input...)	\
+-	asm volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
++	asm_inline volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
+ 		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
+ 
+ /*
+@@ -253,7 +253,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  */
+ #define alternative_call_2(oldfunc, newfunc1, feature1, newfunc2, feature2,   \
+ 			   output, input...)				      \
+-	asm volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
++	asm_inline volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
+ 		"call %P[new2]", feature2)				      \
+ 		: output, ASM_CALL_CONSTRAINT				      \
+ 		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
+-- 
+2.20.1
 
-Keep TCA_POLICE_PAD value the same, thanks.
