@@ -2,108 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDA8EA1BC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ABFFA1BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:51:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfH2NtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:49:04 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51675 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727360AbfH2NtE (ORCPT
+        id S1727697AbfH2Nvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:51:55 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38072 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbfH2Nvz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:49:04 -0400
-Received: by mail-wm1-f66.google.com with SMTP id k1so3805747wmi.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 06:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HsA5AiZYcLjGaOwF7llG2D8YWXDZ7fAurDyqgUx22cQ=;
-        b=Smiubh10AZvy1V5/a3s9ngk74AY/Gn/dplsTUfPlBGrWfI2iXfguDSeowO4ocsHvk1
-         Iz+4/Mi4Xw3NAVZOltljgx6/2szcMQU35rLITwq+mgDElGosjMdWZyCDI4EgM6ccSCNl
-         h5fVC2owNRY4l4bPEpamPDVdadJ0VgkVCIsbTlRhX4xdpmw0YobpQiZDPL0YmieOrN1D
-         Oi1pyQLxw/E4EBp6rwFro1h8IKA/hEemLSIV0p/mxQALFuCVJ/cu48RD/p9zHZvsCwcp
-         +sPWyM/cK29se/O5RDe3bbIfVoawGXs+KdKYbiSL4EO6b3DcjLCilTYi8sS1NLLBkHk4
-         zVgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HsA5AiZYcLjGaOwF7llG2D8YWXDZ7fAurDyqgUx22cQ=;
-        b=odXKiCF7LkVDwQYL2OXSNgA7IQ9QrSqT70Dqqu6f10rYKaiCyJcpu2vbpc691FUV0g
-         k+VD3I+7FzU/MvE5S2h8POrH0r8vOoxA6m+vrbWYITyrkPraVwFv5tToVU7xI3RnCe80
-         oQV8Vz4P8dX/9RNamvBZH2IdmdHDprI7mrUbAMUijkEMnEpBga3a6bpNEGipZv9nwyoz
-         Uoywn/mgwU4PfgBHosPocwhV7bIPbx3Ilk1rJHXb+zijn2qmiLRZs0BzISii/fN40jNn
-         4lR/FvKiJj62QcXeE34qE068ovXdyEAloZky/U9mJOh16LL/1XCHHW/ksHMVE/VEhcsU
-         wJ4w==
-X-Gm-Message-State: APjAAAVPUFSyZdd8tKVTwVyeGETviGKsDZ5KxbipfabxS7iASVJz6/8h
-        roqnZKufbsy41S4tQaa9MMtnRQ==
-X-Google-Smtp-Source: APXvYqyMdHJOwSyphJQegodWp0CqprlA/IWiOz3w8db3EETvDyHh6uUV9K/25pu/R3AqXMHpRimViA==
-X-Received: by 2002:a1c:f604:: with SMTP id w4mr11797299wmc.169.1567086541944;
-        Thu, 29 Aug 2019 06:49:01 -0700 (PDT)
-Received: from localhost (ip-78-45-163-186.net.upcbroadband.cz. [78.45.163.186])
-        by smtp.gmail.com with ESMTPSA id x10sm3671157wrn.39.2019.08.29.06.49.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 06:49:01 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 15:49:01 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Horatiu Vultur <horatiu.vultur@microchip.com>,
-        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
-        davem@davemloft.net, allan.nielsen@microchip.com,
-        ivecera@redhat.com, f.fainelli@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] net: core: Notify on changes to dev->promiscuity.
-Message-ID: <20190829134901.GJ2312@nanopsycho>
-References: <1567070549-29255-1-git-send-email-horatiu.vultur@microchip.com>
- <1567070549-29255-2-git-send-email-horatiu.vultur@microchip.com>
- <20190829095100.GH2312@nanopsycho>
- <20190829132611.GC6998@lunn.ch>
+        Thu, 29 Aug 2019 09:51:55 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TDnNxP095592;
+        Thu, 29 Aug 2019 13:50:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=Fd9hv6LyJBtuu9ZkSbuId7vkAVpMFdpT9DAMePfpKUs=;
+ b=LlGZy+/DG+OXEKjb+xgSZmFbX6eKUKcb8gVa0bmQ4CG/Nft6uZ7A55vWkTZ8J8gf0Jqv
+ bkwlXEK43cZ2rRynMhqsvtgTcWlgbG0SnaCO9mEcW679IAmJ2y5yRRe9nv/5zXCrtYC5
+ dLPADKS7e9opjOwx3OC2auQu9H58xe6zqbkGOziog91lNWaYK+/jv4vGXxfKcuc0JAdW
+ a443/QnB0NWV0yYwTQYGeO9hHwIP/ZQSp7KLoXxg/y898dqdKsyvKlgKksvfhXGc7uAc
+ KTezwu6PkHpNnf1VTzILbXK/dJWSaNpbKPgsS2B4mGv0ZOn6xo0+pzpaCNPiljXiJR4y wg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2upfwx808j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 13:50:31 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TDm7t2074044;
+        Thu, 29 Aug 2019 13:50:30 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2untev2f8a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 13:50:30 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TDoRYU028608;
+        Thu, 29 Aug 2019 13:50:27 GMT
+Received: from [10.175.160.184] (/10.175.160.184)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Aug 2019 13:50:27 +0000
+Subject: Re: [PATCH v1] cpuidle-haltpoll: vcpu hotplug support
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20190828185650.16923-1-joao.m.martins@oracle.com>
+ <20190829115634.GA4949@amt.cnet>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <8c459d91-bc47-2ff4-7d3b-243ed4e466cb@oracle.com>
+Date:   Thu, 29 Aug 2019 14:50:21 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829132611.GC6998@lunn.ch>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <20190829115634.GA4949@amt.cnet>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=978
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908290152
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=5 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thu, Aug 29, 2019 at 03:26:11PM CEST, andrew@lunn.ch wrote:
->> NACK
->> 
->> This is invalid usecase for switchdev infra. Switchdev is there for
->> bridge offload purposes only.
->
->Hi Jiri
->
->I would argue this is for bridge offload. In another email, you say
->promisc is promisc. Does that mean the Mellonox hardware forwards
->every frame ingressing a port to the CPU by default as soon as it is
->enslaved to a bridge and promisc mode turned on? Or course not. At the
->moment, every switchdev driver wrongly implement promisc mode.
->
->This patchset is about correctly implementing promisc mode, so that
->applications can use it as expected. And that means configuring the
->hardware bridge to also forward a copy of frames to the CPU.
+On 8/29/19 12:56 PM, Marcelo Tosatti wrote:
+> Hi Joao,
+> 
+> On Wed, Aug 28, 2019 at 07:56:50PM +0100, Joao Martins wrote:
+>> +static void haltpoll_uninit(void)
+>> +{
+>> +	unsigned int cpu;
+>> +
+>> +	cpus_read_lock();
+>> +
+>> +	for_each_online_cpu(cpu) {
+>> +		struct cpuidle_device *dev =
+>> +			per_cpu_ptr(haltpoll_cpuidle_devices, cpu);
+>> +
+>> +		if (!dev->registered)
+>> +			continue;
+>> +
+>> +		arch_haltpoll_disable(cpu);
+>> +		cpuidle_unregister_device(dev);
+>> +	}
+> 
+> 1)
+> 
+>> +
+>> +	cpuidle_unregister(&haltpoll_driver);
+> 
+> cpuidle_unregister_driver.
 
-Wait, I believe there has been some misundestanding. Promisc mode is NOT
-about getting packets to the cpu. It's about setting hw filters in a way
-that no rx packet is dropped. For normal nics it means that all packets
-get to the cpu, but that is just because it is the only direction they
-can make.
+Will fix -- this was an oversight.
 
-If you want to get packets from the hw forwarding dataplane to cpu, you
-should not use promisc mode for that. That would be incorrect.
+> 
+>> +	free_percpu(haltpoll_cpuidle_devices);
+>> +	haltpoll_cpuidle_devices = NULL;
+>> +
+>> +	cpus_read_unlock();
+> 
+> Any reason you can't cpus_read_unlock() at 1) ?
+> 
+No, let me adjust that too.
 
-If you want to get packets from the hw forwarding dataplane to cpu, you
-should use tc trap action. It is there exactly for this purpose.
+> Looks good otherwise.
+> 
+> Thanks!
+> 
+Thanks for the review!
 
-Promisc is for setting rx filters.
-
-
->
->I see trap as a different use case. tcpdump/pcap is not going to use
->traps.
->
->	Andrew
+	Joao
