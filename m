@@ -2,129 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8ABFFA1BD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB35A1BD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:50:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbfH2Nvz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:51:55 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:38072 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfH2Nvz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:51:55 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TDnNxP095592;
-        Thu, 29 Aug 2019 13:50:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=Fd9hv6LyJBtuu9ZkSbuId7vkAVpMFdpT9DAMePfpKUs=;
- b=LlGZy+/DG+OXEKjb+xgSZmFbX6eKUKcb8gVa0bmQ4CG/Nft6uZ7A55vWkTZ8J8gf0Jqv
- bkwlXEK43cZ2rRynMhqsvtgTcWlgbG0SnaCO9mEcW679IAmJ2y5yRRe9nv/5zXCrtYC5
- dLPADKS7e9opjOwx3OC2auQu9H58xe6zqbkGOziog91lNWaYK+/jv4vGXxfKcuc0JAdW
- a443/QnB0NWV0yYwTQYGeO9hHwIP/ZQSp7KLoXxg/y898dqdKsyvKlgKksvfhXGc7uAc
- KTezwu6PkHpNnf1VTzILbXK/dJWSaNpbKPgsS2B4mGv0ZOn6xo0+pzpaCNPiljXiJR4y wg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2upfwx808j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 13:50:31 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TDm7t2074044;
-        Thu, 29 Aug 2019 13:50:30 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2untev2f8a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 13:50:30 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TDoRYU028608;
-        Thu, 29 Aug 2019 13:50:27 GMT
-Received: from [10.175.160.184] (/10.175.160.184)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 29 Aug 2019 13:50:27 +0000
-Subject: Re: [PATCH v1] cpuidle-haltpoll: vcpu hotplug support
-To:     Marcelo Tosatti <mtosatti@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-References: <20190828185650.16923-1-joao.m.martins@oracle.com>
- <20190829115634.GA4949@amt.cnet>
-From:   Joao Martins <joao.m.martins@oracle.com>
-Message-ID: <8c459d91-bc47-2ff4-7d3b-243ed4e466cb@oracle.com>
-Date:   Thu, 29 Aug 2019 14:50:21 +0100
+        id S1727639AbfH2NuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:50:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbfH2NuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 09:50:25 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3C092189D;
+        Thu, 29 Aug 2019 13:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567086623;
+        bh=Uh2uOq4Ob8d47W0KPG477Y07xsJB4CFrYSm7rfe/lpk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gnpWWrivvds3zCSxR7lT5mO2TVEjBrvDyEubxdQQAEQnUSQyMiQqQQyxGOE+jpNQR
+         4rHTs2rgPcr1vbx3N77UeqLyrbklguPRfTZv0h/WXZA9n0uzFe8HgP8IYePfD/tdfv
+         PkNRjFnKaPmyOg1+uoAtsdYKTedgNq9AU2Fdl0b8=
+Date:   Thu, 29 Aug 2019 09:50:22 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH 2/2] software node: Fix use of potentially uninitialized
+ variable
+Message-ID: <20190829135022.GI5281@sasha-vm>
+References: <20190829132116.76120-1-heikki.krogerus@linux.intel.com>
+ <20190829132116.76120-3-heikki.krogerus@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190829115634.GA4949@amt.cnet>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=5 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=978
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908290152
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9363 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=5 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908290152
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190829132116.76120-3-heikki.krogerus@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/29/19 12:56 PM, Marcelo Tosatti wrote:
-> Hi Joao,
-> 
-> On Wed, Aug 28, 2019 at 07:56:50PM +0100, Joao Martins wrote:
->> +static void haltpoll_uninit(void)
->> +{
->> +	unsigned int cpu;
->> +
->> +	cpus_read_lock();
->> +
->> +	for_each_online_cpu(cpu) {
->> +		struct cpuidle_device *dev =
->> +			per_cpu_ptr(haltpoll_cpuidle_devices, cpu);
->> +
->> +		if (!dev->registered)
->> +			continue;
->> +
->> +		arch_haltpoll_disable(cpu);
->> +		cpuidle_unregister_device(dev);
->> +	}
-> 
-> 1)
-> 
->> +
->> +	cpuidle_unregister(&haltpoll_driver);
-> 
-> cpuidle_unregister_driver.
+On Thu, Aug 29, 2019 at 04:21:16PM +0300, Heikki Krogerus wrote:
+>reported by smatch:
+>drivers/base/swnode.c:71 software_node_to_swnode() error: uninitialized symbol 'swnode'.
 
-Will fix -- this was an oversight.
+Could you describe the actual problem it fixes? Under what scenario
+would this issue occur and how would it manifest?
 
-> 
->> +	free_percpu(haltpoll_cpuidle_devices);
->> +	haltpoll_cpuidle_devices = NULL;
->> +
->> +	cpus_read_unlock();
-> 
-> Any reason you can't cpus_read_unlock() at 1) ?
-> 
-No, let me adjust that too.
+We're not here to fix smatch warnings, we're here to fix bugs that
+smatch warns us about :)
 
-> Looks good otherwise.
-> 
-> Thanks!
-> 
-Thanks for the review!
-
-	Joao
+--
+Thanks,
+Sasha
