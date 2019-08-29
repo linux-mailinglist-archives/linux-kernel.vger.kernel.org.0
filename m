@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E53DBA13D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8FCEA13CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfH2IeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:34:15 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44963 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfH2Icx (ORCPT
+        id S1727867AbfH2Ic6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:32:58 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39561 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727773AbfH2Icy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:32:53 -0400
-Received: by mail-lf1-f66.google.com with SMTP id v16so1799493lfg.11
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:52 -0700 (PDT)
+        Thu, 29 Aug 2019 04:32:54 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x4so2171554ljj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XkUWp3b3ycOUyoALBiZbxKCqXUbdVPy7VrhNLZLe71M=;
-        b=X0VNkjtTYFpdhzRXW5Ikf4F64e7hLmV9geeqcqjmVbLli1ohj7crDdQpVTqziWFiek
-         8yuqeH8nUEG5x2W9IgZOwy+eUO3oRgWgH3TQdFbfHa8T0uoxODaTDAxtqAtMboL05N7o
-         5b+z+KQ3FDyeqcqXjT9QAVaizjqH8qfhDqeOw=
+        bh=YYbyB5kFUWf6dqvDXhjjxb+wzo/FqiSnAfPyprR2IAE=;
+        b=R9QUMRrN65bwRnO9px8s4xj14f+pTyMo5vcqnpvdOmG1rcZUGAyrtBEnN5flG942eX
+         t92t/xKLbVatDl4D+ZBDCE0Lb+K99LS04XpDFApSlgrxo1U9zGyXvGBigB9fLdH1sCK/
+         n32IxO9Is/VSOTbXdS+kz3rq0GNhjFMjkZXpY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XkUWp3b3ycOUyoALBiZbxKCqXUbdVPy7VrhNLZLe71M=;
-        b=A+szBUnttUMOxaJ17h8cWp1uRrkHI4S7iOh3fOGwDfI51xq8Qmpzg3blcf5auajp5f
-         y7aZxHACnSre06p0y4kcgCm93Vw0K5IM5r44oi49HUkPi3qrfNl7kFBdg99NVX0G9tx9
-         G6vBLAHP71RsJfhJmZmQ9UsmyIOsFZMH+34JGDte5q+x3DCOJgGKiq9kxK8NxEOeULRZ
-         sOX+kND70jasJC817qSttF7Kc1tG48jVSu0lFWkeANguIPxq7miuJbVobmVvpPOPenZO
-         VPbOpmvKgaxB73ugh6Nsa7AbpGulTNFqIIc40GnQitTvwdicURtGJTEnr6L47bp9c+JG
-         tZ4Q==
-X-Gm-Message-State: APjAAAULQU3J0gWb4OGonpDDodf2TD9j+/2wtp4EZJVxFBgI+QIdUhFB
-        s29Mt9/wWsYFHmPD4XVyhZAHIA==
-X-Google-Smtp-Source: APXvYqziDCjW82KRY3HmNyGsmWvb0YOERBJNUwhGClcxiRmgJYCU4R95yEOKmdgCTXRwBw/zzFg5yA==
-X-Received: by 2002:a19:4b0d:: with SMTP id y13mr5481811lfa.128.1567067571941;
-        Thu, 29 Aug 2019 01:32:51 -0700 (PDT)
+        bh=YYbyB5kFUWf6dqvDXhjjxb+wzo/FqiSnAfPyprR2IAE=;
+        b=GV6vd/7K3wSi4YxNVrPrAriW8qsHlb1Ys42UVdkBSPGjzzfzBN9W2h5cbo1FHzXs9m
+         RQ19BbWsIHYu8f2Y/jWXmLF5enDaKkZYMyd1UVQoEzJXd+tS1kBQbe+BQ/UJBJ/PNoEd
+         KwVyKAke6QLVSsgXaFee6GL83P3KEtG3cZ6qCxIRV5tTbs8a16aVlV+9sPLGFQ84+9Ym
+         HamQm9DPgsg2THkXu8W49Ex1+Rz8bWGlO4ThXI3rHldNOi8pkY0Ux5BJClFzYcan7P28
+         fCrP7gI1mINLAunpuwH6KWyLv8xM/CM3pWdTfGmboATyFQSZpkFTUl8NUlg3yXIEUYZN
+         i/yA==
+X-Gm-Message-State: APjAAAVaxMGoT8NbVMm/IrRrLZFyG+3Gm6Buh/6PGiiaV8dbJtRD6F0/
+        6dorkODyR73AwNWZurFolsy4/w==
+X-Google-Smtp-Source: APXvYqwsHFI0WZ9GyKF8WpFJ1pt/ZVBy4yrgqqH9LCd3BkKb1rBspeYGAL8EvgrI6/YsX020f9mEoQ==
+X-Received: by 2002:a2e:3a0e:: with SMTP id h14mr4606426lja.180.1567067572941;
+        Thu, 29 Aug 2019 01:32:52 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o20sm248087ljg.31.2019.08.29.01.32.50
+        by smtp.gmail.com with ESMTPSA id o20sm248087ljg.31.2019.08.29.01.32.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 01:32:51 -0700 (PDT)
+        Thu, 29 Aug 2019 01:32:52 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     x86@kernel.org, linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -51,9 +51,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
         ndesaulniers@google.com,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [RFC PATCH 2/5] compiler_types.h: don't #define __inline__
-Date:   Thu, 29 Aug 2019 10:32:30 +0200
-Message-Id: <20190829083233.24162-3-linux@rasmusvillemoes.dk>
+Subject: [RFC PATCH 3/5] compiler-gcc.h: add asm_inline definition
+Date:   Thu, 29 Aug 2019 10:32:31 +0200
+Message-Id: <20190829083233.24162-4-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
 References: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
@@ -64,29 +64,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The spelling __inline__ should be reserved for uses where one really
-wants to refer to the inline keyword, regardless of whether or not the
-spelling "inline" has been #defined to something else. Most users of
-__inline__ have been converted to inline, for the remaining, this
-represents a small change of semantics.
+This adds an asm_inline macro which expands to "asm inline" when gcc
+is new enough (>= 9.1), and just asm for older gccs and other
+compilers.
+
+Using asm inline("foo") instead of asm("foo") overrules gcc's
+heuristic estimate of the size of the code represented by the asm()
+statement, and makes gcc use the minimum possible size instead. That
+can in turn affect gcc's inlining decisions.
+
+I wasn't sure whether to make this a function-like macro or not - this
+way, it can be combined with volatile as
+
+  asm_inline volatile()
+
+but perhaps we'd prefer to spell that
+
+  asm_inline_volatile()
+
+anyway.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/linux/compiler_types.h | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/compiler-gcc.h   | 4 ++++
+ include/linux/compiler_types.h | 4 ++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 599c27b56c29..4a8b63e3a31d 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -150,7 +150,6 @@ struct ftrace_likely_data {
- 	__maybe_unused notrace
+diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+index d7ee4c6bad48..abd7abf7d06b 100644
+--- a/include/linux/compiler-gcc.h
++++ b/include/linux/compiler-gcc.h
+@@ -172,3 +172,7 @@
  #endif
  
--#define __inline__ inline
- #define __inline   inline
+ #define __no_fgcse __attribute__((optimize("-fno-gcse")))
++
++#if GCC_VERSION >= 90100
++#define asm_inline __asm__ __inline__
++#endif
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 4a8b63e3a31d..3d354b166a94 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -188,6 +188,10 @@ struct ftrace_likely_data {
+ #define asm_volatile_goto(x...) asm goto(x)
+ #endif
  
- /*
++#ifndef asm_inline
++#define asm_inline __asm__
++#endif
++
+ #ifndef __no_fgcse
+ # define __no_fgcse
+ #endif
 -- 
 2.20.1
 
