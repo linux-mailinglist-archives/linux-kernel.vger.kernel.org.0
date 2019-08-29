@@ -2,136 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5B03A264A
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:44:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0783A2666
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:48:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbfH2SoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:44:08 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:45607 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728595AbfH2SoF (ORCPT
+        id S1728677AbfH2Ssk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:48:40 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:44323 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728599AbfH2Ssk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:44:05 -0400
-Received: by mail-qk1-f195.google.com with SMTP id m2so3852381qki.12
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 11:44:04 -0700 (PDT)
+        Thu, 29 Aug 2019 14:48:40 -0400
+Received: by mail-io1-f68.google.com with SMTP id j4so8915907iog.11;
+        Thu, 29 Aug 2019 11:48:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:message-id:in-reply-to:references:subject
          :mime-version:content-transfer-encoding;
-        bh=QDRi/Xd9XfnkQ5sOxj7EVRPPb6YjOhNvBvKil4zJw/0=;
-        b=dl9qohKF185MJTvsc/xIx5y2bsPkyUgeQyPr5ffE0hZoRxnas8wTSWNEjE47IMjSQt
-         ClxH/8EVTw9Ka+9M0wwX+9B/tIxd5c9tbC4bJVP6ZwyImFCUqm28A7X+yPLCqQJFBBAV
-         3DR877YtrSKP77RLHhkN9aaVXjjdSnAuMQixQQV6IvlbzoGtwvQjTLJTjwZMLpdTQDgx
-         ewvCMg70knxrpix/UuQ1dzA8dmHi5pooHb91SW/yA0O3o0XTnVkP1+7DUQVBU/n2yWRZ
-         YvrEv8swmwRvi3EEp2XB0vErOGppjRla558g1r6lB4UaSNmoXh8pnI+WpxL6iTq7jsfA
-         L4Hg==
+        bh=O0QhddbAdq0Wm1USCsTevVqQjpQsCQKOsNsCDnEPcso=;
+        b=BqVgmw6nSwZ1wSmuNPTwUOlZrrd87vsrisy6QCkqsDFrdXOrv6CYHIGoEKqBGzdwo0
+         JMbbiWRYjLdpBjT03o+NWP9LQClG46SibBIkmwpI/dLnZJLzjx+IY44OQs750DU5IwbR
+         XhaFhNaGn1PfAwx78jfbSSnetv3qcGnS6MAd56WsIY3yNQ9cbDZPeJ2p5tVAD92VgNP7
+         dGthY0llK+y0NnfFxibli9+5ElPl5I/Hc3CQPTzdXb5vQofFnzoDV/vqBxbhYcgyLQoV
+         hGbR5Qkz2a9f7jrXajUf83pJHxtOtWS9FIjvZWMv0jOroU1tEIJZvxCIec21678Q3Gzs
+         5iiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QDRi/Xd9XfnkQ5sOxj7EVRPPb6YjOhNvBvKil4zJw/0=;
-        b=CJlcpzquIv0katJMVe48iu3EiJFELHGJKDJKjXySaFxgjDbdPVFVHwThp5L5QaioB9
-         ZYLyhv0AYL5MA58EPlAldVMN8T0hwX5t6B7NEjV3vBmx+VEj2BebvwFnrRIBozW7lGqQ
-         vR+zpw4BYJs1xx1i0LePafKadkw5SaFhsT39RjAy41aje+OnYZrpCLAOZj6nhNvA+J9M
-         LQmlre4Fciz0+mk77H9B+UE5WfrabJvJG8q0jqSTDQ/939pmIOgyuGFbf3tKALr7uuW2
-         8y48XohkNkFkfJD7Lw4xsOcUKeujW01IzVaco8VV8iV4701O6vqNsHGQQ9TwoxiCFA4j
-         8ang==
-X-Gm-Message-State: APjAAAXwf3O3wztAO1WRD1fc1fhn/pE3OFpKV7bUVIyidymxSjh0ZXNC
-        zOZeHqBpWmHOHr7lF2hpgp7w/w==
-X-Google-Smtp-Source: APXvYqzKqT4R8SObC1LwMgc7oT0iO2TSaMYUPaXWhrxP6+vgf7kWzLYoE22jClWrLF5LNRYQJ+U22A==
-X-Received: by 2002:a37:98f:: with SMTP id 137mr11278917qkj.188.1567104244278;
-        Thu, 29 Aug 2019 11:44:04 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id u7sm1494346qkj.113.2019.08.29.11.44.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Aug 2019 11:44:03 -0700 (PDT)
-Message-ID: <1567104241.5576.30.camel@lca.pw>
-Subject: Re: [PATCH 00/10] OOM Debug print selection and additional
- information
-From:   Qian Cai <cai@lca.pw>
-To:     Edward Chron <echron@arista.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
-Date:   Thu, 29 Aug 2019 14:44:01 -0400
-In-Reply-To: <CAM3twVSgJdFKbzkg1V+7voFMi-SYQTCz6jCBobLBQ72Cg8k5VQ@mail.gmail.com>
-References: <20190826193638.6638-1-echron@arista.com>
-         <20190827071523.GR7538@dhcp22.suse.cz>
-         <CAM3twVRZfarAP6k=LLWH0jEJXu8C8WZKgMXCFKBZdRsTVVFrUQ@mail.gmail.com>
-         <20190828065955.GB7386@dhcp22.suse.cz>
-         <CAM3twVR_OLffQ1U-SgQOdHxuByLNL5sicfnObimpGpPQ1tJ0FQ@mail.gmail.com>
-         <20190829071105.GQ28313@dhcp22.suse.cz>
-         <297cf049-d92e-f13a-1386-403553d86401@i-love.sakura.ne.jp>
-         <20190829115608.GD28313@dhcp22.suse.cz>
-         <CAM3twVSZm69U8Sg+VxQ67DeycHUMC5C3_f2EpND4_LC4UHx7BA@mail.gmail.com>
-         <1567093344.5576.23.camel@lca.pw>
-         <CAM3twVSgJdFKbzkg1V+7voFMi-SYQTCz6jCBobLBQ72Cg8k5VQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+        h=x-gm-message-state:date:from:to:cc:message-id:in-reply-to
+         :references:subject:mime-version:content-transfer-encoding;
+        bh=O0QhddbAdq0Wm1USCsTevVqQjpQsCQKOsNsCDnEPcso=;
+        b=EQzTqe0iST/Tgwb8vAYEDcLhBLDgi7i8KWZ6+I6C8s04owmjY/jvTXnsAN9Xw3Uj2t
+         D+ss//ZjzG7H2ZSEiF/bcsx0YhpLCYZg870MSPcf21o1iFAUnUJXKDwSvaqhMM7t0yH4
+         t+uKXl02FYsBIMQGuWhT8FouxqZxFVj84lFOr43bI2WiGMZemePF0svO8saY55uoXXKl
+         Uwsk6e3cmPZRROhGXJhFapZHLlTda1l1MABhSb54eWNWLJ45SuLRPBK6V9W31cj2bOSj
+         vxEvOD8+whDi3ww4dPcpBhNAAMU43xCCNBNGZE1SfS4FHmPdBCUZUa67ynJDoToVQOQ2
+         QkkA==
+X-Gm-Message-State: APjAAAULlx3gE81vFtZHhttEm1ECq+9D7lVAGA4U4ic+l+RJ8feJPu/p
+        4DEk+S/o7gYpNGCJoxn+p8A=
+X-Google-Smtp-Source: APXvYqxsUdCcITpTpmmaIl49H//+cqifoiuFNtkIlv8j7yDIvsH1unuZqY3sqxDmuUkoArx/cMF9eg==
+X-Received: by 2002:a5d:9b96:: with SMTP id r22mr13265627iom.17.1567104519093;
+        Thu, 29 Aug 2019 11:48:39 -0700 (PDT)
+Received: from localhost ([184.63.162.180])
+        by smtp.gmail.com with ESMTPSA id h9sm4832191ior.9.2019.08.29.11.48.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 11:48:38 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 11:48:32 -0700
+From:   John Fastabend <john.fastabend@gmail.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Hillf Danton <hdanton@sina.com>
+Cc:     john.fastabend@gmail.com,
+        syzbot <syzbot+7a6ee4d0078eac6bf782@syzkaller.appspotmail.com>,
+        aviadye@mellanox.com, borisp@mellanox.com, daniel@iogearbox.net,
+        davejwatson@fb.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Message-ID: <5d681e0011c7b_6b462ad11252c5c084@john-XPS-13-9370.notmuch>
+In-Reply-To: <20190829094343.0248c61c@cakuba.netronome.com>
+References: <000000000000c3c461059127a1c4@google.com>
+ <20190829035200.3340-1-hdanton@sina.com>
+ <20190829094343.0248c61c@cakuba.netronome.com>
+Subject: Re: general protection fault in tls_sk_proto_close (2)
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-29 at 09:09 -0700, Edward Chron wrote:
-
-> > Feel like you are going in circles to "sell" without any new information. If
-> > you
-> > need to deal with OOM that often, it might also worth working with FB on
-> > oomd.
+Jakub Kicinski wrote:
+> On Thu, 29 Aug 2019 11:52:00 +0800, Hillf Danton wrote:
+> > Alternatively work is done if sock is closed again. Anyway ctx is reset
+> > under sock's callback lock in write mode.
 > > 
-> > https://github.com/facebookincubator/oomd
-> > 
-> > It is well-known that kernel OOM could be slow and painful to deal with, so
-> > I
-> > don't buy-in the argument that kernel OOM recover is better/faster than a
-> > kdump
-> > reboot.
-> > 
-> > It is not unusual that when the system is triggering a kernel OOM, it is
-> > almost
-> > trashed/dead. Although developers are working hard to improve the recovery
-> > after
-> > OOM, there are still many error-paths that are not going to survive which
-> > would
-> > leak memories, introduce undefined behaviors, corrupt memory etc.
+> > --- a/net/tls/tls_main.c
+> > +++ b/net/tls/tls_main.c
+> > @@ -295,6 +295,8 @@ static void tls_sk_proto_close(struct so
+> >  	long timeo = sock_sndtimeo(sk, 0);
+> >  	bool free_ctx;
+> >  
+> > +	if (!ctx)
+> > +		return;
+> >  	if (ctx->tx_conf == TLS_SW)
+> >  		tls_sw_cancel_work_tx(ctx);
 > 
-> But as you have pointed out many people are happy with current OOM processing
-> which is the report and recovery so for those people a kdump reboot is
-> overkill.
-> Making the OOM report at least optionally a bit more informative has value.
-> Also
-> making sure it doesn't produce excessive output is desirable.
-> 
-> I do agree for developers having to have all the system state a kdump
-> provides that
-> and as long as you can reproduce the OOM event that works well. But
-> that is not the
-> common case as has already been discussed.
-> 
-> Also, OOM events that are due to kernel bugs could leak memory and over time
-> and cause a crash, true. But that is not what we typically see. In
-> fact we've had
-> customers come back and report issues on systems that have been in continuous
-> operation for years. No point in crashing their system. Linux if
-> properly maintained
-> is thankfully quite stable. But OOMs do happen and root causing them to
-> prevent
-> future occurrences is desired.
+> That's no bueno, the real socket's close will never get called.
 
-This is not what I meant. After an OOM event happens, many kernel memory
-allocations could fail. Since very few people are testing those error-paths due
-to allocation failures, it is considered one of those most buggy areas in the
-kernel. Developers have mostly been focus on making sure the kernel OOM should
-not happen in the first place.
+Seems when we refactored BPF side we dropped the check for ULP on one
+path so I'll add that back now. It would be nice and seems we are
+getting closer now that tls side is a bit more dynamic if the ordering
+didn't matter.
 
-I still think the time is better spending on improving things like eBPF, oomd
-and kdump etc to solve your problem, but leave the kernel OOM report code alone.
+diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+index 1330a7442e5b..30d11558740e 100644
+--- a/net/core/sock_map.c
++++ b/net/core/sock_map.c
+@@ -666,6 +666,8 @@ static int sock_hash_update_common(struct bpf_map *map, void *key,
+        WARN_ON_ONCE(!rcu_read_lock_held());
+        if (unlikely(flags > BPF_EXIST))
+                return -EINVAL;
++       if (unlikely(icsk->icsk_ulp_data))
++               return -EINVAL;
 
+        link = sk_psock_init_link();
+        if (!link)
