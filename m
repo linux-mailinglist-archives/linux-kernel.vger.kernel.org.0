@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1E7A26B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:02:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4065DA26BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 21:02:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729111AbfH2TCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 15:02:37 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51557 "EHLO
+        id S1729248AbfH2TCy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 15:02:54 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51582 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728928AbfH2TCR (ORCPT
+        with ESMTP id S1729201AbfH2TCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 15:02:17 -0400
+        Thu, 29 Aug 2019 15:02:51 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i3PgO-0005I3-NO; Thu, 29 Aug 2019 21:02:08 +0200
+        id 1i3Pgz-0005PB-Ks; Thu, 29 Aug 2019 21:02:45 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4CD531C0DEF;
-        Thu, 29 Aug 2019 21:02:03 +0200 (CEST)
-Date:   Thu, 29 Aug 2019 19:02:03 -0000
-From:   "tip-bot2 for Steven Rostedt (VMware)" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 4EE851C07C3;
+        Thu, 29 Aug 2019 21:02:45 +0200 (CEST)
+Date:   Thu, 29 Aug 2019 19:02:45 -0000
+From:   "tip-bot2 for Song Liu" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] tools lib traceevent: Do not free tep->cmdlines in
- add_new_comm() on failure
-Cc:     "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-trace-devel@vger.kernel.org, stable@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20190828191819.970121417@goodmis.org>
-References: <20190828191819.970121417@goodmis.org>
+Subject: [tip: x86/pti] x86/mm/pti: Handle unaligned address gracefully in
+ pti_clone_pagetable()
+Cc:     Song Liu <songliubraving@fb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
+In-Reply-To: <alpine.DEB.2.21.1908282352470.1938@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1908282352470.1938@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Message-ID: <156710532322.10616.13881273316209901553.tip-bot2@tip-bot2>
+Message-ID: <156710536517.11132.5891479982921579440.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -51,57 +48,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/core branch of tip:
+The following commit has been merged into the x86/pti branch of tip:
 
-Commit-ID:     b0215e2d6a18d8331b2d4a8b38ccf3eff783edb1
-Gitweb:        https://git.kernel.org/tip/b0215e2d6a18d8331b2d4a8b38ccf3eff783edb1
-Author:        Steven Rostedt (VMware) <rostedt@goodmis.org>
-AuthorDate:    Wed, 28 Aug 2019 15:05:28 -04:00
-Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Thu, 29 Aug 2019 08:36:12 -03:00
+Commit-ID:     825d0b73cd7526b0bb186798583fae810091cbac
+Gitweb:        https://git.kernel.org/tip/825d0b73cd7526b0bb186798583fae810091cbac
+Author:        Song Liu <songliubraving@fb.com>
+AuthorDate:    Wed, 28 Aug 2019 23:54:55 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 29 Aug 2019 20:52:52 +02:00
 
-tools lib traceevent: Do not free tep->cmdlines in add_new_comm() on failure
+x86/mm/pti: Handle unaligned address gracefully in pti_clone_pagetable()
 
-If the re-allocation of tep->cmdlines succeeds, then the previous
-allocation of tep->cmdlines will be freed. If we later fail in
-add_new_comm(), we must not free cmdlines, and also should assign
-tep->cmdlines to the new allocation. Otherwise when freeing tep, the
-tep->cmdlines will be pointing to garbage.
+pti_clone_pmds() assumes that the supplied address is either:
 
-Fixes: a6d2a61ac653a ("tools lib traceevent: Remove some die() calls")
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-trace-devel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190828191819.970121417@goodmis.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ - properly PUD/PMD aligned
+or
+ - the address is actually mapped which means that independently
+   of the mapping level (PUD/PMD/PTE) the next higher mapping
+   exists.
+
+If that's not the case the unaligned address can be incremented by PUD or
+PMD size incorrectly. All callers supply mapped and/or aligned addresses,
+but for the sake of robustness it's better to handle that case properly and
+to emit a warning.
+
+[ tglx: Rewrote changelog and added WARN_ON_ONCE() ]
+
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1908282352470.1938@nanos.tec.linutronix.de
+
 ---
- tools/lib/traceevent/event-parse.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/mm/pti.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index b36b536..13fd9fd 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -269,10 +269,10 @@ static int add_new_comm(struct tep_handle *tep,
- 		errno = ENOMEM;
- 		return -1;
- 	}
-+	tep->cmdlines = cmdlines;
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index b196524..a24487b 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -330,13 +330,15 @@ pti_clone_pgtable(unsigned long start, unsigned long end,
  
- 	cmdlines[tep->cmdline_count].comm = strdup(comm);
- 	if (!cmdlines[tep->cmdline_count].comm) {
--		free(cmdlines);
- 		errno = ENOMEM;
- 		return -1;
- 	}
-@@ -283,7 +283,6 @@ static int add_new_comm(struct tep_handle *tep,
- 		tep->cmdline_count++;
+ 		pud = pud_offset(p4d, addr);
+ 		if (pud_none(*pud)) {
+-			addr += PUD_SIZE;
++			WARN_ON_ONCE(addr & ~PUD_MASK);
++			addr = round_up(addr + 1, PUD_SIZE);
+ 			continue;
+ 		}
  
- 	qsort(cmdlines, tep->cmdline_count, sizeof(*cmdlines), cmdline_cmp);
--	tep->cmdlines = cmdlines;
+ 		pmd = pmd_offset(pud, addr);
+ 		if (pmd_none(*pmd)) {
+-			addr += PMD_SIZE;
++			WARN_ON_ONCE(addr & ~PMD_MASK);
++			addr = round_up(addr + 1, PMD_SIZE);
+ 			continue;
+ 		}
  
- 	return 0;
- }
