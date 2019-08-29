@@ -2,170 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7674EA216F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:52:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1532A215A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:51:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfH2Qvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:51:52 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37508 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728227AbfH2Qvr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:51:47 -0400
-Received: by mail-wm1-f66.google.com with SMTP id d16so4552508wme.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 09:51:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=WRm9Dlayh6LoOp5c/Pq7/z+hWsqAetw4GK4CPNMVmzM=;
-        b=R24AMfsw6a00hT+u7Dxn05otu4djZi3JvrThgF+M7q2jLozuE+NJJAxbYe6Sc4bkY6
-         r2XAAbBhftfj6ZxgiGDxOwxfrxHT/GQPFS3ZVJka/6JP/mwekU1p8xhCIiu32r+ByrGX
-         OtgG2PngpjkzZqdW/KljzgBIYjGOONzS9OhH/HptLY9xfqUWGJxk1SnmGrz5UeERsKBV
-         b6KWhzsF/tS8feqlAI2ktfPkPJPNjFXDdZXpDc6RkJOun+us9PiUAe6Cqf8W59eInqBO
-         JPGVRIeybYnpxSeIWDKIFUQuqCqNK3ssDSCo8tztwNLyyfHzziyYHBDPpy+oA1lfFpbk
-         iAgw==
-X-Gm-Message-State: APjAAAW334KvZH/XykbmupuhY9MnhbrscAJFQUB41BdLj4Wt9j5a4YQc
-        I75eW7gLbyN4MOi4E9laBn8L6gqpSHg=
-X-Google-Smtp-Source: APXvYqxS8+iLPfnMOsQV2WHXPP0Xm+FMBUv/lN9MF07WLkCm1A7Ap2UXdrdTCdBt6n09CFaXPCIcHQ==
-X-Received: by 2002:a1c:be15:: with SMTP id o21mr12562188wmf.140.1567097505283;
-        Thu, 29 Aug 2019 09:51:45 -0700 (PDT)
-Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
-        by smtp.googlemail.com with ESMTPSA id o14sm8340770wrg.64.2019.08.29.09.51.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 09:51:44 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Denis Efremov <efremov@linux.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Joe Perches <joe@perches.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-ntfs-dev@lists.sourceforge.net
-Subject: [PATCH v3 11/11] ntfs: remove (un)?likely() from IS_ERR() conditions
-Date:   Thu, 29 Aug 2019 19:50:25 +0300
-Message-Id: <20190829165025.15750-11-efremov@linux.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190829165025.15750-1-efremov@linux.com>
-References: <20190829165025.15750-1-efremov@linux.com>
+        id S1727942AbfH2QvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:51:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726973AbfH2QvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 12:51:15 -0400
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C399D23404;
+        Thu, 29 Aug 2019 16:51:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567097473;
+        bh=pq0GhKU46RrXmGHvJIz30TT4pz3IJZ1TJm+ViEdFWA0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=o6/1mtIqrrR6T7me9poL5iZetsESqc4Cbf6otJ0M/FH05hzqbNryL3rqW1SDMUu/U
+         PmoXbLr0xiHT3i8hqyYZo3GtC1NXe4LJNBXBonfjgJyxzFG2Pdgkv2s0i2otFDvFd7
+         FkpyVzxayL5cOiyg57xqutd8+dWy3DP6oarqEEyQ=
+Received: by mail-qt1-f178.google.com with SMTP id u34so4445387qte.2;
+        Thu, 29 Aug 2019 09:51:13 -0700 (PDT)
+X-Gm-Message-State: APjAAAXkkakvyiy3nuSP3c534mO7cBnskrW9WDFIxLAzO5FaepO5lWjP
+        9Nfb/kvIyi6WRnPjVklazeqelbKTyVhrcYysHA==
+X-Google-Smtp-Source: APXvYqx88vkppzQVgopkkJErHz6eK6IxHyPQD9TerBYZiF/oFpGMsL3uvtJP05UlabXYWftjosC0xsv140FrEy7XrwU=
+X-Received: by 2002:ac8:368a:: with SMTP id a10mr10808259qtc.143.1567097472930;
+ Thu, 29 Aug 2019 09:51:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190829074603.70424-1-saravanak@google.com> <20190829074603.70424-3-saravanak@google.com>
+In-Reply-To: <20190829074603.70424-3-saravanak@google.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 29 Aug 2019 11:51:02 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ7U-kXZ9zYY+Appkh_D76oU+qzUOGz-2Zq05r3nZtCBw@mail.gmail.com>
+Message-ID: <CAL_JsqJ7U-kXZ9zYY+Appkh_D76oU+qzUOGz-2Zq05r3nZtCBw@mail.gmail.com>
+Subject: Re: [PATCH v10 2/7] of: property: Add functional dependency link from
+ DT bindings
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>, Len Brown <lenb@kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-acpi@vger.kernel.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        David Collins <collinsd@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        kbuild test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"likely(!IS_ERR(x))" is excessive. IS_ERR() already uses
-unlikely() internally.
+On Thu, Aug 29, 2019 at 2:46 AM Saravana Kannan <saravanak@google.com> wrote:
+>
+> Add device links after the devices are created (but before they are
+> probed) by looking at common DT bindings like clocks and
+> interconnects.
+>
+> Automatically adding device links for functional dependencies at the
+> framework level provides the following benefits:
+>
+> - Optimizes device probe order and avoids the useless work of
+>   attempting probes of devices that will not probe successfully
+>   (because their suppliers aren't present or haven't probed yet).
+>
+>   For example, in a commonly available mobile SoC, registering just
+>   one consumer device's driver at an initcall level earlier than the
+>   supplier device's driver causes 11 failed probe attempts before the
+>   consumer device probes successfully. This was with a kernel with all
+>   the drivers statically compiled in. This problem gets a lot worse if
+>   all the drivers are loaded as modules without direct symbol
+>   dependencies.
+>
+> - Supplier devices like clock providers, interconnect providers, etc
+>   need to keep the resources they provide active and at a particular
+>   state(s) during boot up even if their current set of consumers don't
+>   request the resource to be active. This is because the rest of the
+>   consumers might not have probed yet and turning off the resource
+>   before all the consumers have probed could lead to a hang or
+>   undesired user experience.
+>
+>   Some frameworks (Eg: regulator) handle this today by turning off
+>   "unused" resources at late_initcall_sync and hoping all the devices
+>   have probed by then. This is not a valid assumption for systems with
+>   loadable modules. Other frameworks (Eg: clock) just don't handle
+>   this due to the lack of a clear signal for when they can turn off
+>   resources. This leads to downstream hacks to handle cases like this
+>   that can easily be solved in the upstream kernel.
+>
+>   By linking devices before they are probed, we give suppliers a clear
+>   count of the number of dependent consumers. Once all of the
+>   consumers are active, the suppliers can turn off the unused
+>   resources without making assumptions about the number of consumers.
+>
+> By default we just add device-links to track "driver presence" (probe
+> succeeded) of the supplier device. If any other functionality provided
+> by device-links are needed, it is left to the consumer/supplier
+> devices to change the link when they probe.
+>
+> kbuild test robot reported clang error about missing const
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> ---
+>  .../admin-guide/kernel-parameters.rst         |   1 +
+>  .../admin-guide/kernel-parameters.txt         |   6 +
+>  drivers/of/property.c                         | 241 ++++++++++++++++++
+>  3 files changed, 248 insertions(+)
 
-Signed-off-by: Denis Efremov <efremov@linux.com>
-Cc: Anton Altaparmakov <anton@tuxera.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-ntfs-dev@lists.sourceforge.net
----
- fs/ntfs/mft.c     | 12 ++++++------
- fs/ntfs/namei.c   |  2 +-
- fs/ntfs/runlist.c |  2 +-
- fs/ntfs/super.c   |  2 +-
- 4 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ntfs/mft.c b/fs/ntfs/mft.c
-index 20c841a906f2..3aac5c917afe 100644
---- a/fs/ntfs/mft.c
-+++ b/fs/ntfs/mft.c
-@@ -71,7 +71,7 @@ static inline MFT_RECORD *map_mft_record_page(ntfs_inode *ni)
- 	}
- 	/* Read, map, and pin the page. */
- 	page = ntfs_map_page(mft_vi->i_mapping, index);
--	if (likely(!IS_ERR(page))) {
-+	if (!IS_ERR(page)) {
- 		/* Catch multi sector transfer fixup errors. */
- 		if (likely(ntfs_is_mft_recordp((le32*)(page_address(page) +
- 				ofs)))) {
-@@ -154,7 +154,7 @@ MFT_RECORD *map_mft_record(ntfs_inode *ni)
- 	mutex_lock(&ni->mrec_lock);
- 
- 	m = map_mft_record_page(ni);
--	if (likely(!IS_ERR(m)))
-+	if (!IS_ERR(m))
- 		return m;
- 
- 	mutex_unlock(&ni->mrec_lock);
-@@ -271,7 +271,7 @@ MFT_RECORD *map_extent_mft_record(ntfs_inode *base_ni, MFT_REF mref,
- 		m = map_mft_record(ni);
- 		/* map_mft_record() has incremented this on success. */
- 		atomic_dec(&ni->count);
--		if (likely(!IS_ERR(m))) {
-+		if (!IS_ERR(m)) {
- 			/* Verify the sequence number. */
- 			if (likely(le16_to_cpu(m->sequence_number) == seq_no)) {
- 				ntfs_debug("Done 1.");
-@@ -1303,7 +1303,7 @@ static int ntfs_mft_bitmap_extend_allocation_nolock(ntfs_volume *vol)
- 	read_unlock_irqrestore(&mftbmp_ni->size_lock, flags);
- 	rl = ntfs_attr_find_vcn_nolock(mftbmp_ni,
- 			(ll - 1) >> vol->cluster_size_bits, NULL);
--	if (unlikely(IS_ERR(rl) || !rl->length || rl->lcn < 0)) {
-+	if (IS_ERR(rl) || unlikely(!rl->length || rl->lcn < 0)) {
- 		up_write(&mftbmp_ni->runlist.lock);
- 		ntfs_error(vol->sb, "Failed to determine last allocated "
- 				"cluster of mft bitmap attribute.");
-@@ -1734,7 +1734,7 @@ static int ntfs_mft_data_extend_allocation_nolock(ntfs_volume *vol)
- 	read_unlock_irqrestore(&mft_ni->size_lock, flags);
- 	rl = ntfs_attr_find_vcn_nolock(mft_ni,
- 			(ll - 1) >> vol->cluster_size_bits, NULL);
--	if (unlikely(IS_ERR(rl) || !rl->length || rl->lcn < 0)) {
-+	if (IS_ERR(rl) || unlikely(!rl->length || rl->lcn < 0)) {
- 		up_write(&mft_ni->runlist.lock);
- 		ntfs_error(vol->sb, "Failed to determine last allocated "
- 				"cluster of mft data attribute.");
-@@ -1776,7 +1776,7 @@ static int ntfs_mft_data_extend_allocation_nolock(ntfs_volume *vol)
- 	do {
- 		rl2 = ntfs_cluster_alloc(vol, old_last_vcn, nr, lcn, MFT_ZONE,
- 				true);
--		if (likely(!IS_ERR(rl2)))
-+		if (!IS_ERR(rl2))
- 			break;
- 		if (PTR_ERR(rl2) != -ENOSPC || nr == min_nr) {
- 			ntfs_error(vol->sb, "Failed to allocate the minimal "
-diff --git a/fs/ntfs/namei.c b/fs/ntfs/namei.c
-index 2d3cc9e3395d..4e6a44bc654c 100644
---- a/fs/ntfs/namei.c
-+++ b/fs/ntfs/namei.c
-@@ -115,7 +115,7 @@ static struct dentry *ntfs_lookup(struct inode *dir_ino, struct dentry *dent,
- 		dent_ino = MREF(mref);
- 		ntfs_debug("Found inode 0x%lx. Calling ntfs_iget.", dent_ino);
- 		dent_inode = ntfs_iget(vol->sb, dent_ino);
--		if (likely(!IS_ERR(dent_inode))) {
-+		if (!IS_ERR(dent_inode)) {
- 			/* Consistency check. */
- 			if (is_bad_inode(dent_inode) || MSEQNO(mref) ==
- 					NTFS_I(dent_inode)->seq_no ||
-diff --git a/fs/ntfs/runlist.c b/fs/ntfs/runlist.c
-index 508744a93180..97932fb5179c 100644
---- a/fs/ntfs/runlist.c
-+++ b/fs/ntfs/runlist.c
-@@ -951,7 +951,7 @@ runlist_element *ntfs_mapping_pairs_decompress(const ntfs_volume *vol,
- 	}
- 	/* Now combine the new and old runlists checking for overlaps. */
- 	old_rl = ntfs_runlists_merge(old_rl, rl);
--	if (likely(!IS_ERR(old_rl)))
-+	if (!IS_ERR(old_rl))
- 		return old_rl;
- 	ntfs_free(rl);
- 	ntfs_error(vol->sb, "Failed to merge runlists.");
-diff --git a/fs/ntfs/super.c b/fs/ntfs/super.c
-index 29621d40f448..7dc3bc604f78 100644
---- a/fs/ntfs/super.c
-+++ b/fs/ntfs/super.c
-@@ -1475,7 +1475,7 @@ static bool load_and_init_usnjrnl(ntfs_volume *vol)
- 	kfree(name);
- 	/* Get the inode. */
- 	tmp_ino = ntfs_iget(vol->sb, MREF(mref));
--	if (unlikely(IS_ERR(tmp_ino) || is_bad_inode(tmp_ino))) {
-+	if (IS_ERR(tmp_ino) || unlikely(is_bad_inode(tmp_ino))) {
- 		if (!IS_ERR(tmp_ino))
- 			iput(tmp_ino);
- 		ntfs_error(vol->sb, "Failed to load $UsnJrnl.");
--- 
-2.21.0
+> +static int of_link_to_phandle(struct device *dev, struct device_node *sup_np)
+> +{
+> +       struct platform_device *sup_dev;
+> +       u32 dl_flags = DL_FLAG_AUTOPROBE_CONSUMER;
+> +       int ret = 0;
+> +       struct device_node *tmp_np = sup_np;
+> +
+> +       of_node_get(sup_np);
+> +       /*
+> +        * Find the device node that contains the supplier phandle.  It may be
+> +        * @sup_np or it may be an ancestor of @sup_np.
+> +        */
+> +       while (sup_np && !of_find_property(sup_np, "compatible", NULL))
+> +               sup_np = of_get_next_parent(sup_np);
+> +       if (!sup_np) {
+> +               dev_dbg(dev, "Not linking to %pOFP - No device\n", tmp_np);
+> +               return -ENODEV;
+> +       }
+> +
+> +       /*
+> +        * Don't allow linking a device node as a consumer of one of its
+> +        * descendant nodes. By definition, a child node can't be a functional
+> +        * dependency for the parent node.
+> +        */
+> +       if (!of_is_ancestor_of(dev->of_node, sup_np)) {
+> +               dev_dbg(dev, "Not linking to %pOFP - is descendant\n", sup_np);
+> +               of_node_put(sup_np);
+> +               return -EINVAL;
+> +       }
+> +       sup_dev = of_find_device_by_node(sup_np);
 
+What if the supplier isn't a platform_device? A regulator supply is
+quite likely not.
+
+Rob
