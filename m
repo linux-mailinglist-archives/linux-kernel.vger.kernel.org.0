@@ -2,101 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E2DCA188B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:30:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C816A189D
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:31:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbfH2Laj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:30:39 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:49608 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728171AbfH2Lac (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:30:32 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4960020033A;
-        Thu, 29 Aug 2019 13:30:30 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3CAAF200336;
-        Thu, 29 Aug 2019 13:30:30 +0200 (CEST)
-Received: from fsr-ub1664-120.ea.freescale.net (fsr-ub1664-120.ea.freescale.net [10.171.82.81])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 506AA20613;
-        Thu, 29 Aug 2019 13:30:29 +0200 (CEST)
-From:   Robert Chiras <robert.chiras@nxp.com>
-To:     =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 14/14] drm/mxsfb: Add support for live pixel format change
-Date:   Thu, 29 Aug 2019 14:30:15 +0300
-Message-Id: <1567078215-31601-15-git-send-email-robert.chiras@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567078215-31601-1-git-send-email-robert.chiras@nxp.com>
-References: <1567078215-31601-1-git-send-email-robert.chiras@nxp.com>
+        id S1728485AbfH2LbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:31:14 -0400
+Received: from regular1.263xmail.com ([211.150.70.203]:39944 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728041AbfH2LbK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:31:10 -0400
+Received: from zhangzj?rock-chips.com (unknown [192.168.167.73])
+        by regular1.263xmail.com (Postfix) with ESMTP id 2B4EF38D;
+        Thu, 29 Aug 2019 19:30:58 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.9.224] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P18543T140265176168192S1567078256984205_;
+        Thu, 29 Aug 2019 19:30:57 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <658534ad7c1ca7df45c972965d3d6d09>
+X-RL-SENDER: zhangzj@rock-chips.com
+X-SENDER: zhangzj@rock-chips.com
+X-LOGIN-NAME: zhangzj@rock-chips.com
+X-FST-TO: linux-rockchip@lists.infradead.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH v1 1/1] ARM: dts: rockchip: set crypto default disabled on
+ rk3288
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     mark.rutland@arm.com, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20190827071439.14767-1-zhangzj@rock-chips.com>
+ <4806912.UyKsYhR33o@phil>
+From:   Elon Zhang <zhangzj@rock-chips.com>
+Message-ID: <3b9cbffa-291e-fc95-bce6-5b24f5fd860d@rock-chips.com>
+Date:   Thu, 29 Aug 2019 19:31:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <4806912.UyKsYhR33o@phil>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This IP requires full stop and re-start when changing display timings,
-but we can change the pixel format while running.
+Hi Heiko,
 
-Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
-Tested-by: Guido Günther <agx@sigxcpu.org>
----
- drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+On 8/27/2019 22:28, Heiko Stuebner wrote:
+> Hi,
+>
+> Am Dienstag, 27. August 2019, 09:14:39 CEST schrieb Elon Zhang:
+>> Not every board needs to enable crypto node, so the node should
+>> be set default disabled in rk3288.dtsi and enabled in specific
+>> board dts file.
+> Can you give a bit more rationale here? There would need to be a very
+> specific reason because of the following:
+>
+> The crypto module is not wired to some board-specific components,
+> so its usability does not depend on the specific board at all.
+> Instead every board can just use it out of the box and the devicetree
+> is supposed to describe the hardware and is _not_ meant as a space
+> for user configuration.
 
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-index 317575e..5607fc0 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-@@ -494,6 +494,7 @@ void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
- 	struct drm_crtc *crtc = &pipe->crtc;
- 	struct drm_plane_state *new_state = pipe->plane.state;
- 	struct drm_framebuffer *fb = pipe->plane.state->fb;
-+	struct drm_framebuffer *old_fb = state->fb;
- 	struct drm_pending_vblank_event *event;
- 	u32 fb_addr, src_off, src_w, stride, cpp = 0;
- 
-@@ -510,7 +511,7 @@ void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
- 	}
- 	spin_unlock_irq(&crtc->dev->event_lock);
- 
--	if (!fb)
-+	if (!fb || !old_fb)
- 		return;
- 
- 	fb_addr = mxsfb_get_fb_paddr(mxsfb);
-@@ -533,4 +534,17 @@ void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
- 		src_w = new_state->src_w >> 16;
- 		mxsfb_set_fb_hcrop(mxsfb, src_w, stride);
- 	}
-+
-+	if (old_fb->format->format != fb->format->format) {
-+		struct drm_format_name_buf old_fmt_buf;
-+		struct drm_format_name_buf new_fmt_buf;
-+
-+		DRM_DEV_DEBUG_DRIVER(crtc->dev->dev,
-+				"Switching pixel format: %s -> %s\n",
-+				drm_get_format_name(old_fb->format->format,
-+						    &old_fmt_buf),
-+				drm_get_format_name(fb->format->format,
-+						    &new_fmt_buf));
-+		mxsfb_set_pixel_fmt(mxsfb, true);
-+	}
- }
--- 
-2.7.4
+Right for almost all normal hardware modules but the crypto module was 
+designed
+
+for secure world. As a result,  the crypto module will become 
+inaccessible for linux
+
+kernel if secure world enable it.
+
+We plan to enable the crypto module in secure world so we should set 
+crypto module
+
+default disabled in linux kernel.
+
+>
+> So in fact the status property should probably go away completely from
+> the crypto node, as it's usable out of the box in all cases.
+>
+>
+> Heiko
+>
+>
+>
+>> Signed-off-by: Elon Zhang <zhangzj@rock-chips.com>
+>> ---
+>>   arch/arm/boot/dts/rk3288.dtsi | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/rk3288.dtsi b/arch/arm/boot/dts/rk3288.dtsi
+>> index cc893e154fe5..d509aa24177c 100644
+>> --- a/arch/arm/boot/dts/rk3288.dtsi
+>> +++ b/arch/arm/boot/dts/rk3288.dtsi
+>> @@ -984,7 +984,7 @@
+>>   		clock-names = "aclk", "hclk", "sclk", "apb_pclk";
+>>   		resets = <&cru SRST_CRYPTO>;
+>>   		reset-names = "crypto-rst";
+>> -		status = "okay";
+>> +		status = "disabled";
+>>   	};
+>>   
+>>   	iep_mmu: iommu@ff900800 {
+>>
+>
+>
+>
+>
+>
+>
+
 
