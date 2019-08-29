@@ -2,164 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3E4A1E98
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:13:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0985A1EC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbfH2PN3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:13:29 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36551 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727910AbfH2PN1 (ORCPT
+        id S1727709AbfH2PTZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:19:25 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:13794 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726739AbfH2PTZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:13:27 -0400
-Received: by mail-pg1-f195.google.com with SMTP id l21so1759032pgm.3
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 08:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oSA8ov+ZxGfOeyM4FKYs2Nid/DuJCRG23ZrZB7IrRWk=;
-        b=kIyNWK9fUMDTw74XfJRQvKDDXXMI+4+u8Mb3UgLkbeO9AtQutIbyr3q7ZYrPTqU/7l
-         dvNmKn/90EnJpoT+sxpfrKnAwyFTz1VTXzhjPusaW2wFnTS0q8oGRhjn7sq48aJt1HEa
-         nG2bRVYSFr61hhnkqIXTOH6mRObiPBD3yBr5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oSA8ov+ZxGfOeyM4FKYs2Nid/DuJCRG23ZrZB7IrRWk=;
-        b=Db+TWAlCFL9yuJh+AJleJLWxfx6uPt3cj3qrdS1ovfijugkTLHmxTQGIl44aN15PDi
-         brFBDzWOevUtyqV+MiKf1cwE2y7vGGKZN6T81tdcB5gNLSGxuwEt288fH+YGDREnl3td
-         eY6f72zOawWIDL7n3uwxMYHB86KhGdblHboYYkOjXJ8/vTqpWvvOKpfHEdrICFr5A5ro
-         jKSDbUP6Z8QiNil7RuSD1dHW+lgt32A8aYr46vX2WymdZLPFU3yE3LxbypoBrdQebp2D
-         XDHboN8pR7ICdQ7xUahx7VqUSy4xSDPbGuPtf+C5y21mcUxlrOWRweuIv9EAC7+iHdjI
-         Fbag==
-X-Gm-Message-State: APjAAAWZjGyDzjL9PglVoYZ0ZnDtjtOR5eqwisBDxz0mraZP2YWzpmE8
-        P4TxA8Z+xs7zA470rLVTkctbEA==
-X-Google-Smtp-Source: APXvYqwZ+9eI5ixnxeA/rtjx1osCzSkGw+gcQIjqdo4tYUVQoxqDPvPP187SHGhlp425Z9X+8DcBfw==
-X-Received: by 2002:a65:48c3:: with SMTP id o3mr8733095pgs.372.1567091606893;
-        Thu, 29 Aug 2019 08:13:26 -0700 (PDT)
-Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id x11sm7454257pfj.83.2019.08.29.08.13.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 08:13:26 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 11:13:25 -0400
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [RFC v1 2/2] rcu/tree: Remove dynticks_nmi_nesting counter
-Message-ID: <20190829151325.GF63638@google.com>
-References: <20190828202330.GS26530@linux.ibm.com>
- <20190828210525.GB75931@google.com>
- <20190828211904.GX26530@linux.ibm.com>
- <20190828214241.GD75931@google.com>
- <20190828220108.GC26530@linux.ibm.com>
- <20190828221444.GA100789@google.com>
- <20190828231247.GE26530@linux.ibm.com>
- <20190829015155.GB100789@google.com>
- <20190829034336.GD4125@linux.ibm.com>
- <20190829144355.GE63638@google.com>
+        Thu, 29 Aug 2019 11:19:25 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d67ecfb0003>; Thu, 29 Aug 2019 08:19:23 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 29 Aug 2019 08:19:22 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 29 Aug 2019 08:19:22 -0700
+Received: from [10.25.75.254] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 29 Aug
+ 2019 15:18:42 +0000
+Subject: Re: [PATCH V3 2/6] dt-bindings: PCI: tegra: Add PCIe slot supplies
+ regulator entries
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <robh+dt@kernel.org>, <jonathanh@nvidia.com>,
+        <andrew.murray@arm.com>, <kishon@ti.com>,
+        <gustavo.pimentel@synopsys.com>, <digetx@gmail.com>,
+        <mperttunen@nvidia.com>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kthota@nvidia.com>,
+        <mmaddireddy@nvidia.com>, <sagar.tv@gmail.com>
+References: <20190828172850.19871-1-vidyas@nvidia.com>
+ <20190828172850.19871-3-vidyas@nvidia.com> <20190829120329.GC13187@ulmo>
+X-Nvconfidentiality: public
+From:   Vidya Sagar <vidyas@nvidia.com>
+Message-ID: <cd106d64-e06c-e7a2-d807-f5f080625363@nvidia.com>
+Date:   Thu, 29 Aug 2019 20:48:39 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829144355.GE63638@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190829120329.GC13187@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1567091963; bh=26NeoQlEq36/bfgv16BwS5qeIh/4BBTWDJHJLCUv198=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=qD3OIyS/DUj7JJzCiNQrZXALOWvZUrW3IkW+LfcC2aBJi0hVvJ3ybkjO1QZletTa5
+         xcoKk0bpSfnPkFNO6IKr/dXJlIV3ps1koC/7QqHqRnrEHH9+BMysNvxl0Ih2whZZF6
+         bBsSdXcsH8DBcqgFjTJa8vgzjk5j2BVI9QHD1BVwGNWrcFT0XYIBhw4sWqnFmWsYAt
+         ef+UmZetjTLW4UtCeAlGagfbpPDGf/Jsr8p7oEYFxhvvR56mE7wmWDDhOzjbKCJJcQ
+         FY75nqBB+CZyocyU8VDhJQRb3gO7kZiBVmNPqmUZ9jC8ubUYGZEe9imw4xU5bj0OyQ
+         RRwrhWYzA9KPQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 10:43:55AM -0400, Joel Fernandes wrote:
-> On Wed, Aug 28, 2019 at 08:43:36PM -0700, Paul E. McKenney wrote:
-> [snip]
-> > > > > > This change is not fixing a bug, so there is no need for an emergency fix,
-> > > > > > and thus no point in additional churn.  I understand that it is a bit
-> > > > > > annoying to code and test something and have your friendly maintainer say
-> > > > > > "sorry, wrong rocks", and the reason that I understand this is that I do
-> > > > > > that to myself rather often.
-> > > > > 
-> > > > > The motivation for me for this change is to avoid future bugs such as with
-> > > > > the following patch where "== 2" did not take the force write of
-> > > > > DYNTICK_IRQ_NONIDLE into account:
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/commit/?h=dev&id=13c4b07593977d9288e5d0c21c89d9ba27e2ea1f
-> > > > 
-> > > > Yes, the current code does need some simplification.
-> > > > 
-> > > > > I still don't see it as pointless churn, it is also a maintenance cost in its
-> > > > > current form and the simplification is worth it IMHO both from a readability,
-> > > > > and maintenance stand point.
-> > > > > 
-> > > > > I still don't see what's technically wrong with the patch. I could perhaps
-> > > > > add the above "== 2" point in the patch?
-> > > > 
-> > > > I don't know of a crash or splat your patch would cause, if that is
-> > > > your question.  But that is also true of the current code, so the point
-> > > > is simplification, not bug fixing.  And from what I can see, there is an
-> > > > opportunity to simplify quite a bit further.  And with something like
-> > > > RCU, further simplification is worth -serious- consideration.
-> > > > 
-> > > > > We could also discuss f2f at LPC to see if we can agree about it?
-> > > > 
-> > > > That might make a lot of sense.
-> > > 
-> > > Sure. I am up for a further redesign / simplification. I will think more
-> > > about your suggestions and can also further discuss at LPC.
-> > 
-> > One question that might (or might not) help:  Given the compound counter,
-> > where the low-order hex digit indicates whether the corresponding CPU
-> > is running in a non-idle kernel task and the rest of the hex digits
-> > indicate the NMI-style nesting counter shifted up by four bits, what
-> > could rcu_is_cpu_rrupt_from_idle() be reduced to?
-> > 
-> > > And this patch is on LKML archives and is not going anywhere so there's no
-> > > rush I guess ;-)
-> > 
-> > True enough!  ;-)
+On 8/29/2019 5:33 PM, Thierry Reding wrote:
+> On Wed, Aug 28, 2019 at 10:58:46PM +0530, Vidya Sagar wrote:
+>> Add optional bindings "vpcie3v3-supply" and "vpcie12v-supply" to describe
+>> regulators of a PCIe slot's supplies 3.3V and 12V provided the platform
+>> is designed to have regulator controlled slot supplies.
+>>
+>> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+>> ---
+>> V3:
+>> * None
+>>
+>> V2:
+>> * None
+>>
+>>   .../devicetree/bindings/pci/nvidia,tegra194-pcie.txt      | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>> index 0ac1b867ac24..b739f92da58e 100644
+>> --- a/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>> +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra194-pcie.txt
+>> @@ -104,6 +104,12 @@ Optional properties:
+>>      specified in microseconds
+>>   - nvidia,aspm-l0s-entrance-latency-us: ASPM L0s entrance latency to be
+>>      specified in microseconds
+>> +- vpcie3v3-supply: A phandle to the regulator node that supplies 3.3V to the slot
+>> +  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
+>> +  in p2972-0000 platform).
+>> +- vpcie12v-supply: A phandle to the regulator node that supplies 12V to the slot
+>> +  if the platform has one such slot. (Ex:- x16 slot owned by C5 controller
+>> +  in p2972-0000 platform).
 > 
-> Paul, do we also nuke rcu_eqs_special_set()?  Currently I don't see anyone
-> using it. And also remove the bottom most bit of dynticks?
+> There's an ongoing discussion regarding the use of optional power
+> supplies and I'm wondering if we're not abusing this here. Why exactly
+> are these regulators optional?
+I made them optional because, the number and type of supplies typically depend on the
+kind of slot the controller is owning. If it is a CEM slot, then, it needs 3.3V & 12V
+supplies and if it is an M.2 Key-E/M slot, it needs only 3.3V supply. Also, if there are
+on-board PCIe endpoint devices, supplies may vary again from vendor to vendor.
+Considering all these, I made them optional instead of mandatory.
+Also, I agree that regulator framework supplies a dummy regulator if we make them mandatory
+but doesn't supply one, but it does so with a warning print in the log which I feel is
+an unwanted alert and to avoid that one has to supply dummy/fixed regulators which again
+seems an overkill when all of this can be addressed by making slot regulators optional.
+
 > 
-> Also what happens if a TLB flush broadcast is needed? Do we IPI nohz or idle
-> CPUs are the moment?
+> The distinction is somewhat subtle, but the other way to look at
+> modelling this in DT is that the supplies are in fact required, but may
+> be connected to an always-on regulator with a fixed voltage. Or in some
+> cases they may also be shorted to ground. In both cases the PCI
+> controller, or rather the slot that the controller connects to, actually
+> "requires" the supplies, it's just that we can get away without
+> describing them because they can't be controlled anyway.
 > 
-> All of this was introduced in:
-> b8c17e6664c4 ("rcu: Maintain special bits at bottom of ->dynticks counter")
-
-
-Paul, also what what happens in the following scenario:
-
-CPU0                                                 CPU1
-
-A syscall causes rcu_eqs_exit()
-rcu_read_lock();
-                                                     ---> FQS loop waiting on
-						           dyntick_snap
-usermode-upcall  entry -->causes rcu_eqs_enter();
-
-usermode-upcall  exit  -->causes rcu_eqs_exit();
-
-                                                     ---> FQS loop sees
-						          dyntick snap
-							  increment and
-							  declares CPU0 is
-							  in a QS state
-							  before the
-							  rcu_read_unlock!
-
-rcu_read_unlock();
----
-
-Does the context tracking not call rcu_user_enter() in this case, or did I
-really miss something?
-
-thanks,
-
- - Joel
+> Looking at the PCI connector pinout for PCI Express, I do see a bunch of
+> +3.3 V and +12 V pins. To me that indicates that the 3.3 V and 12 V
+> supplies are indeed required for PCI slots. I'm not sure about devices
+> that are directly connected to the PCI controller, though. I'll need to
+> go look at some schematics to get a better understanding of these.
+> 
+> Bottom line: I'm wondering if we shouldn't really make these supplies
+> mandatory and in case where we don't care either just leave them away
+> (the regulator framework will supply a dummy regulator in that case) or
+> hook them up to a fixed regulator if that matches the hardware design.
+> 
+> Any thoughts?
+> 
+> Thierry
+> 
+>>   
+>>   Examples:
+>>   =========
+>> @@ -156,6 +162,8 @@ Tegra194:
+>>   			  0xc2000000 0x18 0x00000000 0x18 0x00000000 0x4 0x00000000>;  /* prefetchable memory (16GB) */
+>>   
+>>   		vddio-pex-ctl-supply = <&vdd_1v8ao>;
+>> +		vpcie3v3-supply = <&vdd_3v3_pcie>;
+>> +		vpcie12v-supply = <&vdd_12v_pcie>;
+>>   
+>>   		phys = <&p2u_hsio_2>, <&p2u_hsio_3>, <&p2u_hsio_4>,
+>>   		       <&p2u_hsio_5>;
+>> -- 
+>> 2.17.1
+>>
 
