@@ -2,80 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F09DAA2A59
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F20A2A60
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfH2Wyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 18:54:44 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41570 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728109AbfH2Wyo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:54:44 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m24so4625094ljg.8;
-        Thu, 29 Aug 2019 15:54:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ODFwBKXEJby8/axHQ491Cj935/vgeg5Rtq8hBOWXT5A=;
-        b=tpQmj5o0esbfwzNR6/lYEFCYpXhkd2hTrjyqgO+xREtNdN4nsDAoexEsoByO0bvrLH
-         lJkAf4up3H/xrzzThM8sQ/B7QU3osuKZ8HzvvAO/3H+B46tUTHAV02tvtrnciqLrJpDj
-         KFP3jzFWn1ZkYGCd1xjAz7OEeZG2vvSvlTTotMvmirBU5tZ8UJmMP1KzubIaHzTxfPrh
-         r9R4ubY2jFL+3To25Qqw4MB4jXIBce8qPZxauNvRUAN5/wlm+44GDXjeELZOdqrZA3Pe
-         NyWMhPG/2/EoZKVSByIvaltvkMNELo8PhCAyVrgNXOBaxP/JmQ1enIDFmI0d3ykCYRt7
-         LVmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ODFwBKXEJby8/axHQ491Cj935/vgeg5Rtq8hBOWXT5A=;
-        b=PZTeo3M0y81IiHe2Lt3Su/3H5+165sWef+xHIguW6qI3hjmKJMIkZwz+BY6THi0Ajv
-         f461NRPjZ6nbla4DAMUZK8Jxh0hin9ADcO5jjRtduNC+NoEHy2m4OjYdfiBYh/kpiZST
-         e/ylDao7YTDDcq2bo2lvSLBYJI4qBlLqLagmrnou/8aFU3jWUIp84KgawatDm7P9GpcG
-         rDSxsl3Mda+FUVMOxTOCCzy8w9uEWHOZpMcBwaClOwr+hwW46HCuht/uNuYIjT42nZjQ
-         Ix7Qbzd0rO/44uy7Fjz77cClIZU/cBuAsys0YYCl86Ulj5DNEnFGJXQg/39Mxpq0SqIf
-         46rw==
-X-Gm-Message-State: APjAAAUoNekJ8/OWhBhiWkI7M2nC6pU6iMtvHrJiupznu+3/RBFAvK/k
-        mm3ZDZ9oXTDmTbeUdSA19aEcP6NOO6RMWmQrshQ=
-X-Google-Smtp-Source: APXvYqzuZeA3LZah+99HaXy1Jwpe+cuNjCdc+HL68/L4HKkLpq6BkUcRkjNaT2VjwUu5I5qY/WeY5vM72q1ib1yJ1Kw=
-X-Received: by 2002:a05:651c:ca:: with SMTP id 10mr6842840ljr.144.1567119282320;
- Thu, 29 Aug 2019 15:54:42 -0700 (PDT)
+        id S1728373AbfH2W4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 18:56:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34556 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727912AbfH2W4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:56:07 -0400
+Received: from localhost (c-67-164-102-47.hsd1.ca.comcast.net [67.164.102.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11A082189D;
+        Thu, 29 Aug 2019 22:56:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567119366;
+        bh=0kUMYx7gzVlJowquO77IfOfcqdoB3q98qT54dRfDbCg=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=EqimipHf7BH6EosF+GwoK6BM8E2syjcI0kMZftzMiYm6rAZSnLaWOt686dkvfGR/T
+         9IkxHwg9ivTMCQi2vw/hoW7Ups6jtlB+W006m6+Xm+1RpSUCK4StjNRtFJvRRfnwIg
+         in2Z0zXILN00ru92/mCbUQrfTw7f3x/nZElUXS60=
+Date:   Thu, 29 Aug 2019 15:55:59 -0700 (PDT)
+From:   Stefano Stabellini <sstabellini@kernel.org>
+X-X-Sender: sstabellini@sstabellini-ThinkPad-T480s
+To:     Christoph Hellwig <hch@lst.de>
+cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: swiotlb-xen cleanups v2
+In-Reply-To: <20190826121944.515-1-hch@lst.de>
+Message-ID: <alpine.DEB.2.21.1908291554270.4927@sstabellini-ThinkPad-T480s>
+References: <20190826121944.515-1-hch@lst.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190830085227.01676c93@canb.auug.org.au>
-In-Reply-To: <20190830085227.01676c93@canb.auug.org.au>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 30 Aug 2019 00:54:31 +0200
-Message-ID: <CANiq72mGhn0q=hEJMQ=E7HoMrOEhW=Mgvgtc=mqRCo_twUHD_w@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the compiler-attributes tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 12:52 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Caused by commit
->
->   e81c903fb9e2 ("powerpc: prefer __section and __printf from compiler_attributes.h")
->
-> I have reverted that commit for today.
->
-> gcc v9.2.1 (in case that matters)
->
-> The above error is from the PowerPC boot wrapper that is built without
-> the kernel headers (mainly, I think).
+On Mon, 26 Aug 2019, Christoph Hellwig wrote:
+> Hi Xen maintainers and friends,
+> 
+> please take a look at this series that cleans up the parts of swiotlb-xen
+> that deal with non-coherent caches.
+> 
+> Changes since v1:
+>  - rewrite dma_cache_maint to be much simpler
+>  - improve various comments and commit logs
+>  - remove page-coherent.h entirely
 
-Yeah, we just saw it, I was about to drop it from the queue. It is
-indeed because we don't have those __* defines within the compilation
-environment of the kernel.
-
-Cheers,
-Miguel
+Thanks for your work on this, it really makes the code better. I tested
+it on ARM64 with a non-coherent network device and verified it works as
+intended (Cadence GEM on ZynqMP).
