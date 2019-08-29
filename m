@@ -2,110 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62CC0A1D42
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFE2FA1D51
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:42:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbfH2Okj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:40:39 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33508 "EHLO mx1.redhat.com"
+        id S1728697AbfH2Okq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:40:46 -0400
+Received: from mga11.intel.com ([192.55.52.93]:28271 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727420AbfH2Oke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:40:34 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D5CF3102504A;
-        Thu, 29 Aug 2019 14:40:33 +0000 (UTC)
-Received: from amt.cnet (ovpn-112-4.gru2.redhat.com [10.97.112.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4731D5C1D6;
-        Thu, 29 Aug 2019 14:40:33 +0000 (UTC)
-Received: from amt.cnet (localhost [127.0.0.1])
-        by amt.cnet (Postfix) with ESMTP id B6F20105140;
-        Thu, 29 Aug 2019 11:40:18 -0300 (BRT)
-Received: (from marcelo@localhost)
-        by amt.cnet (8.14.7/8.14.7/Submit) id x7TEeEe7014394;
-        Thu, 29 Aug 2019 11:40:14 -0300
-Date:   Thu, 29 Aug 2019 11:40:14 -0300
-From:   Marcelo Tosatti <mtosatti@redhat.com>
-To:     Joao Martins <joao.m.martins@oracle.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: [PATCH v1] cpuidle-haltpoll: vcpu hotplug support
-Message-ID: <20190829144011.GA14365@amt.cnet>
-References: <20190828185650.16923-1-joao.m.martins@oracle.com>
- <20190829115634.GA4949@amt.cnet>
- <8c459d91-bc47-2ff4-7d3b-243ed4e466cb@oracle.com>
- <311c2ffe-f840-9990-c1a7-5561cc5a0f54@oracle.com>
+        id S1728671AbfH2Okp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:40:45 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 07:40:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,443,1559545200"; 
+   d="scan'208";a="380788306"
+Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
+  by fmsmga005.fm.intel.com with ESMTP; 29 Aug 2019 07:40:41 -0700
+Date:   Thu, 29 Aug 2019 17:40:40 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jerry Snitselaar <jsnitsel@redhat.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Alexey Klimov <aklimov@redhat.com>
+Subject: Re: [PATCH 2/2 v2] tpm_tis: override durations for STM tpm with
+ firmware 1.2.8.28
+Message-ID: <20190829144002.zhuqxnsswgl65pnm@linux.intel.com>
+References: <20190828004621.29050-1-jsnitsel@redhat.com>
+ <20190828004621.29050-3-jsnitsel@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <311c2ffe-f840-9990-c1a7-5561cc5a0f54@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Thu, 29 Aug 2019 14:40:34 +0000 (UTC)
+In-Reply-To: <20190828004621.29050-3-jsnitsel@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 03:24:31PM +0100, Joao Martins wrote:
-> On 8/29/19 2:50 PM, Joao Martins wrote:
-> > On 8/29/19 12:56 PM, Marcelo Tosatti wrote:
-> >> Hi Joao,
-> >>
-> >> On Wed, Aug 28, 2019 at 07:56:50PM +0100, Joao Martins wrote:
-> >>> +static void haltpoll_uninit(void)
-> >>> +{
-> >>> +	unsigned int cpu;
-> >>> +
-> >>> +	cpus_read_lock();
-> >>> +
-> >>> +	for_each_online_cpu(cpu) {
-> >>> +		struct cpuidle_device *dev =
-> >>> +			per_cpu_ptr(haltpoll_cpuidle_devices, cpu);
-> >>> +
-> >>> +		if (!dev->registered)
-> >>> +			continue;
-> >>> +
-> >>> +		arch_haltpoll_disable(cpu);
-> >>> +		cpuidle_unregister_device(dev);
-> >>> +	}
-> >>
-> >> 1)
-> >>
-> >>> +
-> >>> +	cpuidle_unregister(&haltpoll_driver);
-> >>
-> >> cpuidle_unregister_driver.
-> > 
-> > Will fix -- this was an oversight.
-> > 
-> >>
-> >>> +	free_percpu(haltpoll_cpuidle_devices);
-> >>> +	haltpoll_cpuidle_devices = NULL;
-> >>> +
-> >>> +	cpus_read_unlock();
-> >>
-> >> Any reason you can't cpus_read_unlock() at 1) ?
-> >>
-> > No, let me adjust that too.
-> > 
-> >> Looks good otherwise.
-> >>
+On Tue, Aug 27, 2019 at 05:46:21PM -0700, Jerry Snitselaar wrote:
+> There was revealed a bug in the STM TPM chipset used in Dell R415s.
+> Bug is observed so far only on chipset firmware 1.2.8.28
+> (1.2 TPM, device-id 0x0, rev-id 78). After some number of
+> operations chipset hangs and stays in inconsistent state:
 > 
-> BTW, should I take this as a Acked-by, Reviewed-by, or neither? :)
+> tpm_tis 00:09: Operation Timed out
+> tpm_tis 00:09: tpm_transmit: tpm_send: error -5
 > 
-> 	Joao
+> Durations returned by the chip are the same like on other
+> firmware revisions but apparently with specifically 1.2.8.28 fw
+> durations should be reset to 2 minutes to enable tpm chip work
+> properly. No working way of updating firmware was found.
+> 
+> This patch adds implementation of ->update_durations method
+> that matches only STM devices with specific firmware version.
+> 
+> Cc: Peter Huewe <peterhuewe@gmx.de>
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Signed-off-by: Alexey Klimov <aklimov@redhat.com>
+> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+> ---
+> v2: Make suggested changes from Jarkko
+>     - change struct field name to durations from durs
+>     - formatting cleanups
+>     - turn into void function like update_timeouts and
+>       use chip->duration_adjusted to track whether adjustment occurred.
 
-I'll ACK -v2 once you send it.
+The code repetition looks horrible so I wrote a patch that should help:
 
+https://patchwork.kernel.org/patch/11121475/
+
+Read the remar that prepends the diffstat.
+
+/Jarkko
