@@ -2,165 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB03CA24E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:26:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1A98A2483
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:24:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbfH2SPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:15:45 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:38625 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729408AbfH2SPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:43 -0400
-Received: by mail-oi1-f195.google.com with SMTP id q8so3305160oij.5
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 11:15:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EU1ws418Vc4Zys0H3+cXP7S7nl66dSX59rq7bwwsB9E=;
-        b=uCcz6yYxLJGBv9xsUU025u9c/HplwdEBy5W1hfzlyXJvM7CobJHv/bePeJHJg5tpDI
-         4XXsMVqENr+uALDs29HLEtazP3lmRr8p+CHIPcyg5qVhomGS7eiJZGZrPhA4Ehysoa9L
-         llqD5RrrJhubFSpf4RxldkVUhM1izBTZPpRTM3nGZDUmHWut/oFDNwX/iq5AXvLLrWux
-         lIgZq47OqAQhqDihMmR03Dm92IoriZNzk2GG8bnqz1yMOhnd2ljgPIuea/GO4f6dYQCG
-         qOxqbi9v4b4B2gRI7T2T2lXV+fWBVUz7hCpQi0PSj8tgTefw2MIE+LAOJMuQ/Hnt4DGp
-         HWQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to
-         :user-agent;
-        bh=EU1ws418Vc4Zys0H3+cXP7S7nl66dSX59rq7bwwsB9E=;
-        b=RwCpScrwdypml7tzFel9XgbGEtkskptmfQsYg3aaHTY++DIzR1xks3CzLd/g0gj4RN
-         MHA3AFmE0A29mFfD/5ecuVI0n1n5WFEz43y0rZ+S8oO8E6pnWOF0bzh9gzn1rod0no0a
-         b/Tu0mlUSw+zTQe+rtrIEOlFqtNIGqnebzVfBuJx392CdpNjNShKZUyjaD86uZHXF5zi
-         5SWSMG+NhLUfton2H2F7JWMS8M9b7KBJJAfbtz/BMXO41cGtHF+613L0oixNXDdB8FmW
-         1Ug79pNYgv3t6mvALYmoEl7orFhov5jb2ZihvjOQbaikQ1cwrUBp+ySP3OeHaNT7wRn/
-         BDVQ==
-X-Gm-Message-State: APjAAAWrRq/gMmwsfps7aaewc831F8jFDkQU7eJ99EV5F/wCp7Ms83IT
-        UkTRn+uLT2tWEYLpMhBH+w==
-X-Google-Smtp-Source: APXvYqx/dFackw5CizdKplQqChsLhoBrm8Y7UFCg7Cn8vkFBIAWv9ktdMr/OCEOPrJ61xX4IzzHIJQ==
-X-Received: by 2002:aca:6044:: with SMTP id u65mr7792941oib.16.1567102541630;
-        Thu, 29 Aug 2019 11:15:41 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.136.59])
-        by smtp.gmail.com with ESMTPSA id m6sm167909ote.74.2019.08.29.11.15.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 11:15:40 -0700 (PDT)
-Received: from t560 (unknown [156.39.10.47])
-        by serve.minyard.net (Postfix) with ESMTPSA id 9475E1800D0;
-        Thu, 29 Aug 2019 18:15:39 +0000 (UTC)
-Date:   Thu, 29 Aug 2019 13:15:36 -0500
-From:   Corey Minyard <minyard@acm.org>
-To:     Jes Sorensen <jes.sorensen@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, kernel-team@fb.com
-Subject: Re: [PATCH 0/1] Fix race in ipmi timer cleanup
-Message-ID: <20190829181536.GC3294@t560>
-Reply-To: minyard@acm.org
-References: <20190828203625.32093-1-Jes.Sorensen@gmail.com>
- <20190828223238.GB3294@t560>
- <15517bfc-3022-509d-15ea-c2b8e7a91e0a@gmail.com>
+        id S1729683AbfH2SXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:23:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58706 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729825AbfH2SQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:16:41 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D995233FF;
+        Thu, 29 Aug 2019 18:16:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567102600;
+        bh=ZMYfwV9pRcY90yyM8n7BaLjvLIpcsobYXfb7dZJOOlY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IlnXDfCLb9sgAQGiCfqeKE1NTDSxFVvcnlu1yz+TLXCqRx8o2T2q3EXTnf6P0VVfQ
+         ZnKfPBik6+ArpKgpakhGsMi+hlox1rMnehe5wpWQ4HPnFOWCh8wk1t/0U8eJ4WMtVF
+         EmVH4wcns/8u+r8cZlKp5f6eOsOV4koG4I0jnmGQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Wenwen Wang <wenwen@cs.uga.edu>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 36/45] infiniband: hfi1: fix a memory leak bug
+Date:   Thu, 29 Aug 2019 14:15:36 -0400
+Message-Id: <20190829181547.8280-36-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190829181547.8280-1-sashal@kernel.org>
+References: <20190829181547.8280-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15517bfc-3022-509d-15ea-c2b8e7a91e0a@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 08:53:47PM -0400, Jes Sorensen wrote:
-> On 8/28/19 6:32 PM, Corey Minyard wrote:
-> > On Wed, Aug 28, 2019 at 04:36:24PM -0400, Jes Sorensen wrote:
-> >> From: Jes Sorensen <jsorensen@fb.com>
-> >>
-> >> I came across this in 4.16, but I believe the bug is still present
-> >> in current 5.x, even if it is less likely to trigger.
-> >>
-> >> Basially stop_timer_and_thread() only calls del_timer_sync() if
-> >> timer_running == true. However smi_mod_timer enables the timer before
-> >> setting timer_running = true.
-> > 
-> > All the modifications/checks for timer_running should be done under
-> > the si_lock.  It looks like a lock is missing in shutdown_smi(),
-> > probably starting before setting interrupt_disabled to true and
-> > after stop_timer_and_thread.  I think that is the right fix for
-> > this problem.
-> 
-> Hi Corey,
-> 
-> I agree a spin lock could deal with this specific issue too, but calling
-> del_timer_sync() is safe to call on an already disabled timer. The whole
-> flagging of timer_running really doesn't make much sense in the first
-> place either.
-> 
-> As for interrupt_disabled that is even worse. There's multiple places in
-> the code where interrupt_disabled is checked, some of them are not
-> protected by a spin lock, including shutdown_smi() where you have this
-> sequence:
-> 
->         while (smi_info->curr_msg || (smi_info->si_state != SI_NORMAL)){
->                 poll(smi_info);
->                 schedule_timeout_uninterruptible(1);
->         }
->         if (smi_info->handlers)
->                 disable_si_irq(smi_info);
->         while (smi_info->curr_msg || (smi_info->si_state != SI_NORMAL)){
->                 poll(smi_info);
->                 schedule_timeout_uninterruptible(1);
->         }
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-This one doesn't matter.  At this point the driver is single-threaded,
-no interrupts, timeouts, or calls from the upper layer can happen.
+[ Upstream commit b08afa064c320e5d85cdc27228426b696c4c8dae ]
 
-> 
-> In this case you'll have to drop and retake the long several times.
-> 
-> You also have this call sequence which leads to disable_si_irq() which
-> checks interrupt_disabled:
-> 
->   flush_messages()
->     smi_event_handler()
->       handle_transaction_done()
->         handle_flags()
->           alloc_msg_handle_irq()
->             disable_si_irq()
+In fault_opcodes_read(), 'data' is not deallocated if debugfs_file_get()
+fails, leading to a memory leak. To fix this bug, introduce the 'free_data'
+label to free 'data' before returning the error.
 
-This one only happens in run-to-completion mode.  Which is strange,
-but a number of people had issues with getting into a new kernel before
-the watchdog timeout went off, so the run-to-completion mode runs at
-panic time so the driver can run without scheduling so it can extend
-the watchdog and store panic information in the IPMI log.
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Acked-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Link: https://lore.kernel.org/r/1566156571-4335-1-git-send-email-wenwen@cs.uga.edu
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/infiniband/hw/hfi1/fault.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-So you actually *don't* want a lock here, since the panic may have
-occurred when the IPMI driver was holding the lock.
+diff --git a/drivers/infiniband/hw/hfi1/fault.c b/drivers/infiniband/hw/hfi1/fault.c
+index 7eaff4dcbfd77..72ca0dc5f3b59 100644
+--- a/drivers/infiniband/hw/hfi1/fault.c
++++ b/drivers/infiniband/hw/hfi1/fault.c
+@@ -214,7 +214,7 @@ static ssize_t fault_opcodes_read(struct file *file, char __user *buf,
+ 		return -ENOMEM;
+ 	ret = debugfs_file_get(file->f_path.dentry);
+ 	if (unlikely(ret))
+-		return ret;
++		goto free_data;
+ 	bit = find_first_bit(fault->opcodes, bitsize);
+ 	while (bit < bitsize) {
+ 		zero = find_next_zero_bit(fault->opcodes, bitsize, bit);
+@@ -232,6 +232,7 @@ static ssize_t fault_opcodes_read(struct file *file, char __user *buf,
+ 	data[size - 1] = '\n';
+ 	data[size] = '\0';
+ 	ret = simple_read_from_buffer(buf, len, pos, data, size);
++free_data:
+ 	kfree(data);
+ 	return ret;
+ }
+-- 
+2.20.1
 
-> 
-> {disable,enable}_si_irq() themselves are racy:
-> 
-> static inline bool disable_si_irq(struct smi_info *smi_info)
-> {
->         if ((smi_info->io.irq) && (!smi_info->interrupt_disabled)) {
->                 smi_info->interrupt_disabled = true;
-> 
-> Basically interrupt_disabled need to be atomic here to have any value,
-> unless you ensure to have a spin lock around every access to it.
-
-It needs to be atomic, yes, but I think just adding the spinlock like
-I suggested will work.  You are right, the check for timer_running is
-not necessary here, and I'm fine with removing it, but there are other
-issues with interrupt_disabled (as you said) and with memory ordering
-in the timer case.  So even if you remove the timer running check, the
-lock is still required here.
-
-It also might be a good idea to add a WARN_ON() to smi_mod_timer() and
-alloc_msg_handle_irq() if the lock is not held, just to be sure.
-
-Thanks,
-
--corey
-
-> 
-> Cheers,
-> Jes
