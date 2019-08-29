@@ -2,102 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 461E8A21A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:01:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E49CBA21B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:03:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbfH2RB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:01:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726739AbfH2RB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:01:27 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B9FF21726;
-        Thu, 29 Aug 2019 17:01:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567098084;
-        bh=wBHheJcf0m1hNSCx9WaNoXmRMBlMJkFkSTAD62zxQXc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=m8iAap6KIvI0VP/V3DIBBy43SPrKlEiKYwcg/DCgjayaEgWAFYCCoU8mgmDKsGRpO
-         UXh7/TW4n79p1MN4UVopT+8X09zzYmgf2kjBFwav1qBIQuSf080T50SJnmAtH+H0Pw
-         gWHHOWx23iKv4a3Xh1lbqdYF32NPDNgRg9FFRox4=
-Subject: Re: [PATCH v2] kunit: fix failure to build without printk
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Joe Perches <joe@perches.com>
-Cc:     kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, frowand.list@gmail.com,
-        sboyd@kernel.org, pmladek@suse.com, sergey.senozhatsky@gmail.com,
-        rostedt@goodmis.org, Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        shuah <shuah@kernel.org>
-References: <20190828093143.163302-1-brendanhiggins@google.com>
- <20190828094929.GA14038@jagdpanzerIV>
-From:   shuah <shuah@kernel.org>
-Message-ID: <8b2d63bf-56cd-e8f5-e8ee-2891c2c1be8f@kernel.org>
-Date:   Thu, 29 Aug 2019 11:01:08 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727922AbfH2RDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:03:18 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3982 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727735AbfH2RDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 13:03:18 -0400
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id 4EE0AB0F9047B018262E;
+        Fri, 30 Aug 2019 01:03:13 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Fri, 30 Aug 2019 01:03:12 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Fri, 30 Aug 2019 01:03:12 +0800
+Date:   Fri, 30 Aug 2019 01:02:25 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Joe Perches <joe@perches.com>
+CC:     Dan Carpenter <dan.carpenter@oracle.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Valdis =?gbk?Q?Kl=A8=A5tnieks?= <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "OGAWA Hirofumi" <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190829170225.GA215901@architecture4>
+References: <20190829063955.GA30193@kroah.com>
+ <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com>
+ <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com>
+ <20190829151144.GJ23584@kadam>
+ <20190829152757.GA125003@architecture4>
+ <20190829154346.GK23584@kadam>
+ <20190829164442.GA203852@architecture4>
+ <74c4784319b40deabfbaea92468f7e3ef44f1c96.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <20190828094929.GA14038@jagdpanzerIV>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <74c4784319b40deabfbaea92468f7e3ef44f1c96.camel@perches.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme715-chm.china.huawei.com (10.1.199.111) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/28/19 3:49 AM, Sergey Senozhatsky wrote:
-> On (08/28/19 02:31), Brendan Higgins wrote:
-> [..]
->> Previously KUnit assumed that printk would always be present, which is
->> not a valid assumption to make. Fix that by removing call to
->> vprintk_emit, and calling printk directly.
->>
->> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->> Link: https://lore.kernel.org/linux-kselftest/0352fae9-564f-4a97-715a-fabe016259df@kernel.org/T/#t
->> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
->> Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
->> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+Hi Joe,
+
+On Thu, Aug 29, 2019 at 09:59:21AM -0700, Joe Perches wrote:
+> On Fri, 2019-08-30 at 00:44 +0800, Gao Xiang wrote:
+> > Hi Dan,
+> > 
+> > On Thu, Aug 29, 2019 at 11:43:46PM +0800, Dan Carpenter wrote:
+> > > > p.s. There are 2947 (un)likely places in fs/ directory.
+> > > 
+> > > I was complaining about you adding new pointless ones, not existing
+> > > ones.  The likely/unlikely annotations are supposed to be functional and
+> > > not decorative.  I explained this very clearly.
+> > > 
+> > > Probably most of the annotations in fs/ are wrong but they are also
+> > > harmless except for the slight messiness.  However there are definitely
+> > > some which are important so removing them all isn't a good idea.
+> > > 
+> > > > If you like, I will delete them all.
+> > > 
+> > > But for erofs, I don't think that any of the likely/unlikely calls have
+> > > been thought about so I'm fine with removing all of them in one go.
+> > 
+> > Anyway, I have removed them all in
+> > https://lore.kernel.org/r/20190829163827.203274-1-gaoxiang25@huawei.com/
+> > 
+> > Does it look good to you?
 > 
-> [..]
+> Unrelated bikeshed from a trivial look:
 > 
->> -static void kunit_vprintk(const struct kunit *test,
->> -			  const char *level,
->> -			  struct va_format *vaf)
->> -{
->> -	kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
->> -}
+> There's a block there that looks like:
 > 
-> This patch looks good to me. I like the removal of recursive
-> vsprintf() (%pV).
+> diff --git a/fs/erofs/data.c b/fs/erofs/data.c
+> []
+> @@ -70,7 +70,7 @@ struct page *__erofs_get_meta_page(struct super_block *sb,
+>  		}
+>  
+>  		err = bio_add_page(bio, page, PAGE_SIZE, 0);
+> -		if (unlikely(err != PAGE_SIZE)) {
+> +		if (err != PAGE_SIZE) {
+>  			err = -EFAULT;
+>  			goto err_out;
+>  		}
 > 
-> 	-ss
+> The initial assignment to err is odd as it's not
+> actually an error value -E<FOO> but a int size
+> from a unsigned int len.
 > 
+> Here the return is either 0 or PAGE_SIZE.
+> 
+> This would be more legible to me as:
+> 
+> 		if (bio_add_page(bio, page, PAGE_SIZE, 0) != PAGE_SIZE) {
+> 			err = -EFAULT;
+> 			goto err_out;
+> 		}
 
-Hi Sergey,
+Okay, that is more reasonable, I will update the original patch as you suggested.
 
-What are the guidelines for using printk(). I recall some discussion
-about not using printk(). I am seeing the following from checkpatch
-script:
+Thanks,
+Gao Xiang
 
-
-WARNING: Prefer [subsystem eg: netdev]_level([subsystem]dev, ... then 
-dev_level(dev, ... then pr_level(...  to printk(KERN_LEVEL ...
-#105: FILE: include/kunit/test.h:343:
-+	printk(KERN_LEVEL "\t# %s: " fmt, (test)->name, ##__VA_ARGS__)
-
-
-Is there supposed to be pr_level() - I can find dev_level()
-
-cc'ing Joe Perches for his feedback on this message recommending
-pr_level() which isn't in 5.3.
-
-thanks,
--- Shuah
-
-thanks,
--- Shuah
+> 
+> 
