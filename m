@@ -2,114 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49F9DA2443
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:22:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 393B8A240A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729335AbfH2SWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:22:02 -0400
-Received: from gateway36.websitewelcome.com ([192.185.193.12]:27858 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730054AbfH2SR0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:17:26 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id EFD86400C8B55
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 12:43:20 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 3Oz6il1COdnCe3Oz6i8d5f; Thu, 29 Aug 2019 13:17:24 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=4R26aKYoB1gosSniDsCUeeu1fuM8QS65KD+ZkxX9Q0w=; b=HuIvn3lcsdwyR/f1i9X91ECcI9
-        31/RWsd7s3uQhgTA14Tk2hOiISCr68MOB/sPnDVZBFRVk7ZhdbPnUmNPQBn/RX1MwzfMMvuvXmwXY
-        LOyhitd3yDVcuPpPJgkW5TNZYUXcae/dAV453ICHa+Shpl74zx1QyPkWjiQNWwjw+hfgqzJEKNolc
-        CXQXym+S1+JHMlQDeG/HYmDt8TkndLmUo74cjz7aEhy8jjwxIK9/ARBqtSypvv8GQcAOBhG7cw2VP
-        tULZXU4OoaiYeovDoqTQJPv2hrXszkJvL+GN038uotf/P0FbaJzLxOo75iYb0W7D55TjlTSWDjIqC
-        iqQX6mBg==;
-Received: from [189.152.216.116] (port=42850 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1i3Oz5-001MoD-I0; Thu, 29 Aug 2019 13:17:23 -0500
-Date:   Thu, 29 Aug 2019 13:17:21 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Andy Gross <agross@kernel.org>, Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] rpmsg: glink: Use struct_size() helper
-Message-ID: <20190829181721.GA22554@embeddedor>
+        id S1730235AbfH2SRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:17:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729311AbfH2SRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:17:43 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C17692189D;
+        Thu, 29 Aug 2019 18:17:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567102662;
+        bh=JxVNULd1CA1rsypPdOENJE1D+WISPcOAWfG98oKxSiI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XV5WrA99l3Sb8+QkK2Xpsh5qGf7FAzhW9EOH8zZGowNtOeQW+LDf8/33evY1CxsG/
+         3QG9H3FErYjaix8LKU4fcHd1sYgloex0VPEDP08yc/PnwlM06WqCyrj+j8lORexOxi
+         ZadDlSBIVtMHChchfQmwWvp8sj1pt7J1T1vrTViY=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 03/16] Bluetooth: btqca: Add a short delay before downloading the NVM
+Date:   Thu, 29 Aug 2019 14:17:21 -0400
+Message-Id: <20190829181736.9040-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190829181736.9040-1-sashal@kernel.org>
+References: <20190829181736.9040-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.216.116
-X-Source-L: No
-X-Exim-ID: 1i3Oz5-001MoD-I0
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.152.216.116]:42850
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+From: Matthias Kaehlcke <mka@chromium.org>
 
-struct {
-	...
-	struct intent_pair intents[];
-} __packed * msg;
+[ Upstream commit 8059ba0bd0e4694e51c2ee6438a77b325f06c0d5 ]
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes.
+On WCN3990 downloading the NVM sometimes fails with a "TLV response
+size mismatch" error:
 
-So, replace the following form:
+[  174.949955] Bluetooth: btqca.c:qca_download_firmware() hci0: QCA Downloading qca/crnv21.bin
+[  174.958718] Bluetooth: btqca.c:qca_tlv_send_segment() hci0: QCA TLV response size mismatch
 
-sizeof(*msg) + sizeof(struct intent_pair) * count
+It seems the controller needs a short time after downloading the
+firmware before it is ready for the NVM. A delay as short as 1 ms
+seems sufficient, make it 10 ms just in case. No event is received
+during the delay, hence we don't just silently drop an extra event.
 
-with:
-
-struct_size(msg, intents, count)
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rpmsg/qcom_glink_native.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/bluetooth/btqca.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index f46c787733e8..621f1afd4d6b 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -892,7 +892,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
- 		struct intent_pair intents[];
- 	} __packed * msg;
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index 28afd5d585f95..b7dfa4afd5169 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -363,6 +363,9 @@ int qca_uart_setup_rome(struct hci_dev *hdev, uint8_t baudrate)
+ 		return err;
+ 	}
  
--	const size_t msglen = sizeof(*msg) + sizeof(struct intent_pair) * count;
-+	const size_t msglen = struct_size(msg, intents, count);
- 	int ret;
- 	int i;
- 	unsigned long flags;
++	/* Give the controller some time to get ready to receive the NVM */
++	msleep(10);
++
+ 	/* Download NVM configuration */
+ 	config.type = TLV_TYPE_NVM;
+ 	snprintf(config.fwname, sizeof(config.fwname), "qca/nvm_%08x.bin",
 -- 
-2.23.0
+2.20.1
 
