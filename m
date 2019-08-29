@@ -2,76 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25509A22CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:53:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4491DA22D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:55:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbfH2RxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:53:04 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39948 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbfH2RxE (ORCPT
+        id S1728001AbfH2Rzl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:55:41 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41538 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727314AbfH2Rzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:53:04 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h8so4986124edv.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:53:03 -0700 (PDT)
+        Thu, 29 Aug 2019 13:55:41 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 196so2565012pfz.8
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:55:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=rQe28KLlHDvRerbTckpdwu9z06KjBNQSCvgEdw6K0Eg=;
-        b=tT4DAN9gN76+WHbhh4TG+YpgAKU/LKtZGbtUHvgNZpZPWwwxb3Pwgp9gY7KmU56bpy
-         Xv1Oq1K0lQufSYgylVI+058laygeoiV6N89ge00rHLiXwHGiNADSAFMw+IREzVPLdmbm
-         29QRSeWyqEjtFKzgmU/Oh4LEis0bpqKyTEXryAK2+G74ogQAz2rvUVehVUUgTm3guAGR
-         tc0wT9c1rWjzmZScMBFDvQx8095V+I/Peg6OfokDBFRF8hCJTN3fBKPdwPvp0YW3qq/0
-         OTHoEIVl0PKVOAilqTaxbMVHTpX3mKVBd8whSWyym6Whg2ycKCFrqVDXraFG8/Rltggo
-         Dqsg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nTiBhHkHMJRRmQp07hUV0eTzQBNN9VPe28f+dHC32dM=;
+        b=NS3pQoXOlk00UmrmHrPEqnCHWkBOdmybZhoBYlRrrTrQU4XeHRJlHepqqzCHaudweq
+         nozNVhD6dU3HvOMUJoSosGKcZo6Wml/oo8lo9ByhvBDc9FIAZvk+KRHuZ1v9VevA9gLk
+         td8G6R4rcfnAMfcTDBIonCHxcHaG5Vb3j4Emd0gBswHlS687CitNrP2YSbdbSgYfBIxt
+         2DQY8vQG8buTm7B9zF8YNNBk4101xhrLsWIaZYvYPWwpNqmfPN8qFw0wV9R/FG12jye6
+         JzcEXtr3XUPcJxQSIG5ggs3ue0i0/ZPXIsurvTwkPoc92xzUuSmx4H0wzpdohrk1GZOq
+         If6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=rQe28KLlHDvRerbTckpdwu9z06KjBNQSCvgEdw6K0Eg=;
-        b=un5iAW32SwDOrHhUIp7iCs13SI0t+ajcAxHePT/HYd8xt5NDMQEEn0hjnjW+Mey42f
-         T2KijGpqLoMaArrQo9HIDRyLoc0XdkTt2YvhExB2iBh++HydZM3rKTYxNnl1c9hpq84G
-         sbWXY0wmloB8AKEhFEiJUL3j52oI1C0Y1OtT5xhrvjTlevbFPFZQOgnGCvXcFnCvQXxM
-         LuoHTKPtTjKgd1oJL9N9EH8Rv5iH7LV9P2TViUlNM97NXRQhRLD4IY4nQb4/x0GGukMB
-         6CPi3cUsrlxiPQaGsDB/1AUqexkc6mBQ7B0hZ8JauL5uX0Bk9pqXaCCRKor6fpg5LDxk
-         QafA==
-X-Gm-Message-State: APjAAAV+Y0MkJ1Jm4J7RBVIsrjdXu7GuOKD9oUHT7IZoH6rlJOum7Zgl
-        msjG/1ZTrqe/04tep2SriCR4AQ==
-X-Google-Smtp-Source: APXvYqxnC2uMVrjennbToNj8VdCMI+ckmVLgKgzd1CJo3FT41fg7GQyb9+ZSHDwMlxZVGV+MZnKiFQ==
-X-Received: by 2002:a50:b155:: with SMTP id l21mr11232219edd.186.1567101182497;
-        Thu, 29 Aug 2019 10:53:02 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id w3sm562294edq.12.2019.08.29.10.53.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 10:53:02 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 10:52:37 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     <thomas.lendacky@amd.com>, <davem@davemloft.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] amd-xgbe: Fix error path in xgbe_mod_init()
-Message-ID: <20190829105237.196722f9@cakuba.netronome.com>
-In-Reply-To: <20190829024600.16052-1-yuehaibing@huawei.com>
-References: <20190829024600.16052-1-yuehaibing@huawei.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nTiBhHkHMJRRmQp07hUV0eTzQBNN9VPe28f+dHC32dM=;
+        b=I43NA0/wnRQpJrb0AeCcQiivCOgcPAhjDcyXG9ejqIlBhsju15gVJrprKq1lje9dvq
+         2Rx3JlbdgAkKYOuyem+g2GYM75XWT6hw7oytAYIbVppHLfS0jtwkEA/1o2kEHYfv219M
+         cG+XOXL5kCYFuDuJQmg9w+5LdpprVCQTGQXgYYGq1DertXNVvEqkAb7cwVhWk7ZTzSZ1
+         R9tmVmjD5Vl5imfxl6VQLVKEzUtUkzSVGaFDR7DSpOUdHey944Q0lodLuDJB+Y+pTnZx
+         B4fHEeAywH8fUNmIKOMspOAmeiZIiWr8EDTOJlgbajVnilttQSReqc70lACd3ehOXksF
+         PW3Q==
+X-Gm-Message-State: APjAAAUQKukITjn9M9WNMgiCcZDvWo04AHRTK3ozVgxEH+RaqcFV7naN
+        Sz3IEnj+ZTz/nbfCv99405swVuAgOjn2C43DKIfETQ==
+X-Google-Smtp-Source: APXvYqwmiSojdNKlubI2KCVcr3kC3Pv2OqAeJD8KlOzXov8+oindrhkau4GKVBYmSkoU6p6dVPaOPeMV5OZOmuzhjtg=
+X-Received: by 2002:a62:cec4:: with SMTP id y187mr12922205pfg.84.1567101339951;
+ Thu, 29 Aug 2019 10:55:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190829062635.45609-1-natechancellor@gmail.com>
+In-Reply-To: <20190829062635.45609-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 29 Aug 2019 10:55:28 -0700
+Message-ID: <CAKwvOdkXSWE+_JCZsuQdkCSrK5pJSp9n_Cd27asFP0mHBfHg6w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Emit __gnu_mcount_nc when using Clang 10.0.0 or newer
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, Stefan Agner <stefan@agner.ch>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Aug 2019 10:46:00 +0800, YueHaibing wrote:
-> In xgbe_mod_init(), we should do cleanup if some error occurs
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: efbaa828330a ("amd-xgbe: Add support to handle device renaming")
-> Fixes: 47f164deab22 ("amd-xgbe: Add PCI device support")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+On Wed, Aug 28, 2019 at 11:27 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Currently, multi_v7_defconfig + CONFIG_FUNCTION_TRACER fails to build
+> with clang:
+>
+> arm-linux-gnueabi-ld: kernel/softirq.o: in function `_local_bh_enable':
+> softirq.c:(.text+0x504): undefined reference to `mcount'
+> arm-linux-gnueabi-ld: kernel/softirq.o: in function `__local_bh_enable_ip':
+> softirq.c:(.text+0x58c): undefined reference to `mcount'
+> arm-linux-gnueabi-ld: kernel/softirq.o: in function `do_softirq':
+> softirq.c:(.text+0x6c8): undefined reference to `mcount'
+> arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_enter':
+> softirq.c:(.text+0x75c): undefined reference to `mcount'
+> arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_exit':
+> softirq.c:(.text+0x840): undefined reference to `mcount'
+> arm-linux-gnueabi-ld: kernel/softirq.o:softirq.c:(.text+0xa50): more undefined references to `mcount' follow
+>
+> clang can emit a working mcount symbol, __gnu_mcount_nc, when
+> '-meabi gnu' is passed to it. Until r369147 in LLVM, this was
+> broken and caused the kernel not to boot because the calling
+> convention was not correct. Now that it is fixed, add this to
+> the command line when clang is 10.0.0 or newer so everything
+> works properly.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/35
+> Link: https://bugs.llvm.org/show_bug.cgi?id=33845
+> Link: https://github.com/llvm/llvm-project/commit/16fa8b09702378bacfa3d07081afe6b353b99e60
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  arch/arm/Makefile | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> index c3624ca6c0bc..7b5a26a866fc 100644
+> --- a/arch/arm/Makefile
+> +++ b/arch/arm/Makefile
+> @@ -112,6 +112,12 @@ ifeq ($(CONFIG_ARM_UNWIND),y)
+>  CFLAGS_ABI     +=-funwind-tables
+>  endif
+>
+> +ifeq ($(CONFIG_CC_IS_CLANG),y)
+> +ifeq ($(shell test $(CONFIG_CLANG_VERSION) -ge 100000; echo $$?),0)
+> +CFLAGS_ABI     +=-meabi gnu
+> +endif
+> +endif
+> +
 
-Looks correct.
+Thanks for the patch!  I think this is one of the final issues w/ 32b
+ARM configs when building w/ Clang.
 
-For networking fixes please try to use [PATCH net] as a tag ([PATCH
-net-next] for normal, non-fix patches).
+I'm not super enthused about the version check.  The flag is indeed
+not recognized by GCC, but I think it would actually be more concise
+with $(cc-option) and no compiler or version check.
+
+Further, I think that the working __gnu_mcount_nc in Clang would
+better be represented as marking the arch/arm/KConfig option for
+CONFIG_FUNCTION_TRACER for dependent on a version of Clang greater
+than or equal to Clang 10, not conditionally adding this flag. (We
+should always add the flag when supported, IMO.  __gnu_mcount_nc's
+calling convention being broken is orthogonal to the choice of
+__gnu_mcount_nc vs mcount, and it's the former's that should be
+checked, not the latter as in this patch.
+
+>  # Accept old syntax despite ".syntax unified"
+>  AFLAGS_NOWARN  :=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
+>
+> --
+> 2.23.0
+>
+
+
+-- 
+Thanks,
+~Nick Desaulniers
