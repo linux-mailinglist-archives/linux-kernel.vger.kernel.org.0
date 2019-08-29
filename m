@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC34EA231D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF08FA2320
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:13:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbfH2SNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:13:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55188 "EHLO mail.kernel.org"
+        id S1728394AbfH2SNj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:13:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726661AbfH2SNa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:13:30 -0400
+        id S1728303AbfH2SNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:13:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 665C82189D;
-        Thu, 29 Aug 2019 18:13:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB135233FF;
+        Thu, 29 Aug 2019 18:13:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102409;
-        bh=bCGZzDx5LUXzU8phWTW20IhX0zBK1LJRnCUKc57hfpI=;
+        s=default; t=1567102414;
+        bh=HLY5Zfs3P3knoYqKm1BqmPQwJ3CmGXEce1/gN1ZH0bI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QcR5BFRSH2L8xumDKMH0/dj65eiXb8YPNCHweTqRezzMwpRAfv4BaRAa1W+h8bCSy
-         yJMuz084YaZE43+sYcv+PQmsWBtmAZ+pT5ausIOXoX904QpXZTmdSXZSShq0FR4sh5
-         LZKqdoKZwnPfLpur+D9HGUuxV5pyQQ9pDWZ6uTaY=
+        b=s4NYKwECKMQv+4D1o6nWxvutBHo9crRhS5NOl2Fk7nhhdi6PAXbjIFa04/XNRUyrT
+         r/fcjzr5cMFoOp11G9tP5PvvQHGcT3l89GZgIHTqY8ohncql2vHmDNDIRr/ovL3l0x
+         BvT2Urq4xKGBFtD6upWHzU+8Z25q8GY9aeooGZjo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Jaafar Ali <jaafarkhalaf@gmail.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 06/76] clk: samsung: Change signature of exynos5_subcmus_init() function
-Date:   Thu, 29 Aug 2019 14:12:01 -0400
-Message-Id: <20190829181311.7562-6-sashal@kernel.org>
+Cc:     Fuqian Huang <huangfq.daxian@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 09/76] net: tundra: tsi108: use spin_lock_irqsave instead of spin_lock_irq in IRQ context
+Date:   Thu, 29 Aug 2019 14:12:04 -0400
+Message-Id: <20190829181311.7562-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -45,184 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Fuqian Huang <huangfq.daxian@gmail.com>
 
-[ Upstream commit bf32e7dbfce87d518c0ca77af890eae9ab8d6ab9 ]
+[ Upstream commit 8c25d0887a8bd0e1ca2074ac0c6dff173787a83b ]
 
-In order to make it easier in subsequent patch to create different subcmu
-lists for exynos5420 and exynos5800 SoCs the code is rewritten so we pass
-an array of pointers to the subcmus initialization function.
+As spin_unlock_irq will enable interrupts.
+Function tsi108_stat_carry is called from interrupt handler tsi108_irq.
+Interrupts are enabled in interrupt handler.
+Use spin_lock_irqsave/spin_unlock_irqrestore instead of spin_(un)lock_irq
+in IRQ context to avoid this.
 
-Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
-Tested-by: Jaafar Ali <jaafarkhalaf@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Link: https://lkml.kernel.org/r/20190808144929.18685-1-s.nawrocki@samsung.com
-Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5-subcmu.c | 16 +++----
- drivers/clk/samsung/clk-exynos5-subcmu.h |  2 +-
- drivers/clk/samsung/clk-exynos5250.c     |  7 ++-
- drivers/clk/samsung/clk-exynos5420.c     | 60 ++++++++++++++----------
- 4 files changed, 49 insertions(+), 36 deletions(-)
+ drivers/net/ethernet/tundra/tsi108_eth.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index 91db7894125df..65c82d922b05c 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -14,7 +14,7 @@
- #include "clk-exynos5-subcmu.h"
- 
- static struct samsung_clk_provider *ctx;
--static const struct exynos5_subcmu_info *cmu;
-+static const struct exynos5_subcmu_info **cmu;
- static int nr_cmus;
- 
- static void exynos5_subcmu_clk_save(void __iomem *base,
-@@ -56,17 +56,17 @@ static void exynos5_subcmu_defer_gate(struct samsung_clk_provider *ctx,
-  * when OF-core populates all device-tree nodes.
-  */
- void exynos5_subcmus_init(struct samsung_clk_provider *_ctx, int _nr_cmus,
--			  const struct exynos5_subcmu_info *_cmu)
-+			  const struct exynos5_subcmu_info **_cmu)
+diff --git a/drivers/net/ethernet/tundra/tsi108_eth.c b/drivers/net/ethernet/tundra/tsi108_eth.c
+index 78a7de3fb622f..c62f474b6d08e 100644
+--- a/drivers/net/ethernet/tundra/tsi108_eth.c
++++ b/drivers/net/ethernet/tundra/tsi108_eth.c
+@@ -371,9 +371,10 @@ tsi108_stat_carry_one(int carry, int carry_bit, int carry_shift,
+ static void tsi108_stat_carry(struct net_device *dev)
  {
- 	ctx = _ctx;
- 	cmu = _cmu;
- 	nr_cmus = _nr_cmus;
+ 	struct tsi108_prv_data *data = netdev_priv(dev);
++	unsigned long flags;
+ 	u32 carry1, carry2;
  
- 	for (; _nr_cmus--; _cmu++) {
--		exynos5_subcmu_defer_gate(ctx, _cmu->gate_clks,
--					  _cmu->nr_gate_clks);
--		exynos5_subcmu_clk_save(ctx->reg_base, _cmu->suspend_regs,
--					_cmu->nr_suspend_regs);
-+		exynos5_subcmu_defer_gate(ctx, (*_cmu)->gate_clks,
-+					  (*_cmu)->nr_gate_clks);
-+		exynos5_subcmu_clk_save(ctx->reg_base, (*_cmu)->suspend_regs,
-+					(*_cmu)->nr_suspend_regs);
- 	}
+-	spin_lock_irq(&data->misclock);
++	spin_lock_irqsave(&data->misclock, flags);
+ 
+ 	carry1 = TSI_READ(TSI108_STAT_CARRY1);
+ 	carry2 = TSI_READ(TSI108_STAT_CARRY2);
+@@ -441,7 +442,7 @@ static void tsi108_stat_carry(struct net_device *dev)
+ 			      TSI108_STAT_TXPAUSEDROP_CARRY,
+ 			      &data->tx_pause_drop);
+ 
+-	spin_unlock_irq(&data->misclock);
++	spin_unlock_irqrestore(&data->misclock, flags);
  }
  
-@@ -163,9 +163,9 @@ static int __init exynos5_clk_probe(struct platform_device *pdev)
- 		if (of_property_read_string(np, "label", &name) < 0)
- 			continue;
- 		for (i = 0; i < nr_cmus; i++)
--			if (strcmp(cmu[i].pd_name, name) == 0)
-+			if (strcmp(cmu[i]->pd_name, name) == 0)
- 				exynos5_clk_register_subcmu(&pdev->dev,
--							    &cmu[i], np);
-+							    cmu[i], np);
- 	}
- 	return 0;
- }
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.h b/drivers/clk/samsung/clk-exynos5-subcmu.h
-index 755ee8aaa3de5..9ae5356f25aa4 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.h
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.h
-@@ -21,6 +21,6 @@ struct exynos5_subcmu_info {
- };
- 
- void exynos5_subcmus_init(struct samsung_clk_provider *ctx, int nr_cmus,
--			  const struct exynos5_subcmu_info *cmu);
-+			  const struct exynos5_subcmu_info **cmu);
- 
- #endif
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index f2b8968817682..931c70a4da196 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -681,6 +681,10 @@ static const struct exynos5_subcmu_info exynos5250_disp_subcmu = {
- 	.pd_name	= "DISP1",
- };
- 
-+static const struct exynos5_subcmu_info *exynos5250_subcmus[] = {
-+	&exynos5250_disp_subcmu,
-+};
-+
- static const struct samsung_pll_rate_table vpll_24mhz_tbl[] __initconst = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
-@@ -843,7 +847,8 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 
- 	samsung_clk_sleep_init(reg_base, exynos5250_clk_regs,
- 			       ARRAY_SIZE(exynos5250_clk_regs));
--	exynos5_subcmus_init(ctx, 1, &exynos5250_disp_subcmu);
-+	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5250_subcmus),
-+			     exynos5250_subcmus);
- 
- 	samsung_clk_of_add_provider(np, ctx);
- 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 12d800fd95286..a6ea5d7e63d02 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -1232,32 +1232,40 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
- 	{ DIV4_RATIO, 0, 0x3 },			/* DIV dout_mfc_blk */
- };
- 
--static const struct exynos5_subcmu_info exynos5x_subcmus[] = {
--	{
--		.div_clks	= exynos5x_disp_div_clks,
--		.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
--		.gate_clks	= exynos5x_disp_gate_clks,
--		.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
--		.suspend_regs	= exynos5x_disp_suspend_regs,
--		.nr_suspend_regs = ARRAY_SIZE(exynos5x_disp_suspend_regs),
--		.pd_name	= "DISP",
--	}, {
--		.div_clks	= exynos5x_gsc_div_clks,
--		.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
--		.gate_clks	= exynos5x_gsc_gate_clks,
--		.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
--		.suspend_regs	= exynos5x_gsc_suspend_regs,
--		.nr_suspend_regs = ARRAY_SIZE(exynos5x_gsc_suspend_regs),
--		.pd_name	= "GSC",
--	}, {
--		.div_clks	= exynos5x_mfc_div_clks,
--		.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
--		.gate_clks	= exynos5x_mfc_gate_clks,
--		.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
--		.suspend_regs	= exynos5x_mfc_suspend_regs,
--		.nr_suspend_regs = ARRAY_SIZE(exynos5x_mfc_suspend_regs),
--		.pd_name	= "MFC",
--	},
-+static const struct exynos5_subcmu_info exynos5x_disp_subcmu = {
-+	.div_clks	= exynos5x_disp_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
-+	.gate_clks	= exynos5x_disp_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5x_disp_gate_clks),
-+	.suspend_regs	= exynos5x_disp_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5x_disp_suspend_regs),
-+	.pd_name	= "DISP",
-+};
-+
-+static const struct exynos5_subcmu_info exynos5x_gsc_subcmu = {
-+	.div_clks	= exynos5x_gsc_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(exynos5x_gsc_div_clks),
-+	.gate_clks	= exynos5x_gsc_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5x_gsc_gate_clks),
-+	.suspend_regs	= exynos5x_gsc_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5x_gsc_suspend_regs),
-+	.pd_name	= "GSC",
-+};
-+
-+static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
-+	.div_clks	= exynos5x_mfc_div_clks,
-+	.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
-+	.gate_clks	= exynos5x_mfc_gate_clks,
-+	.nr_gate_clks	= ARRAY_SIZE(exynos5x_mfc_gate_clks),
-+	.suspend_regs	= exynos5x_mfc_suspend_regs,
-+	.nr_suspend_regs = ARRAY_SIZE(exynos5x_mfc_suspend_regs),
-+	.pd_name	= "MFC",
-+};
-+
-+static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
-+	&exynos5x_disp_subcmu,
-+	&exynos5x_gsc_subcmu,
-+	&exynos5x_mfc_subcmu,
- };
- 
- static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
+ /* Read a stat counter atomically with respect to carries.
 -- 
 2.20.1
 
