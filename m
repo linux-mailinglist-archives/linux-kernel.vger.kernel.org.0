@@ -2,166 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A57A1D0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3E07A1D07
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbfH2Oic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:38:32 -0400
-Received: from mga02.intel.com ([134.134.136.20]:47943 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728079AbfH2Oi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:38:29 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 07:38:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,443,1559545200"; 
-   d="scan'208";a="171913213"
-Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
-  by orsmga007.jf.intel.com with ESMTP; 29 Aug 2019 07:38:09 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Alexey Klimov <aklimov@redhat.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] tpm: Remove duplicate code from caps_show() in tpm-sysfs.c
-Date:   Thu, 29 Aug 2019 17:38:07 +0300
-Message-Id: <20190829143807.30647-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728074AbfH2Oi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:38:26 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:34308 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727985AbfH2OiZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:38:25 -0400
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 19BEC3C057C;
+        Thu, 29 Aug 2019 16:38:23 +0200 (CEST)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id e8BMcyfaoqr8; Thu, 29 Aug 2019 16:38:17 +0200 (CEST)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id A18393C0579;
+        Thu, 29 Aug 2019 16:38:17 +0200 (CEST)
+Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Thu, 29 Aug
+ 2019 16:38:17 +0200
+Date:   Thu, 29 Aug 2019 16:38:14 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     "George G. Davis" <george_davis@mentor.com>
+CC:     Shuah Khan <shuah@kernel.org>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH] selftests: watchdog: Add optional file argument
+Message-ID: <20190829143814.GA3424@vmlxhi-102.adit-jv.com>
+References: <1567053566-18971-1-git-send-email-george_davis@mentor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1567053566-18971-1-git-send-email-george_davis@mentor.com>
+User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace existing TPM 1.x version structs with new structs that consolidate
-the common parts into a single struct so that code duplication is no longer
-needed in caps_show().
+Hi George,
 
-Cc: Alexey Klimov <aklimov@redhat.com>
-Cc: Jerry Snitselaar <jsnitsel@redhat.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-Jerry, Alexey: Plese include this to the next version of your patches.
-This a low priority patch alone so it does not need to be merge upfront.
- drivers/char/tpm/tpm-sysfs.c | 44 ++++++++++++++++++------------------
- drivers/char/tpm/tpm.h       | 23 ++++++++-----------
- 2 files changed, 32 insertions(+), 35 deletions(-)
+On Thu, Aug 29, 2019 at 12:39:25AM -0400, George G. Davis wrote:
+> Some systems have multiple watchdog devices where the first device
+> registered is assigned to the /dev/watchdog device file.
 
-diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
-index edfa89160010..8064fea2de59 100644
---- a/drivers/char/tpm/tpm-sysfs.c
-+++ b/drivers/char/tpm/tpm-sysfs.c
-@@ -217,6 +217,7 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
- 			 char *buf)
- {
- 	struct tpm_chip *chip = to_tpm_chip(dev);
-+	struct tpm1_version *version;
- 	ssize_t rc = 0;
- 	char *str = buf;
- 	cap_t cap;
-@@ -232,31 +233,30 @@ static ssize_t caps_show(struct device *dev, struct device_attribute *attr,
- 	str += sprintf(str, "Manufacturer: 0x%x\n",
- 		       be32_to_cpu(cap.manufacturer_id));
- 
--	/* Try to get a TPM version 1.2 TPM_CAP_VERSION_INFO */
--	rc = tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
-+	/* TPM 1.2 */
-+	if (!tpm1_getcap(chip, TPM_CAP_VERSION_1_2, &cap,
- 			 "attempting to determine the 1.2 version",
--			 sizeof(cap.tpm_version_1_2));
--	if (!rc) {
--		str += sprintf(str,
--			       "TCG version: %d.%d\nFirmware version: %d.%d\n",
--			       cap.tpm_version_1_2.Major,
--			       cap.tpm_version_1_2.Minor,
--			       cap.tpm_version_1_2.revMajor,
--			       cap.tpm_version_1_2.revMinor);
--	} else {
--		/* Otherwise just use TPM_STRUCT_VER */
--		if (tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
--				"attempting to determine the 1.1 version",
--				sizeof(cap.tpm_version)))
--			goto out_ops;
--		str += sprintf(str,
--			       "TCG version: %d.%d\nFirmware version: %d.%d\n",
--			       cap.tpm_version.Major,
--			       cap.tpm_version.Minor,
--			       cap.tpm_version.revMajor,
--			       cap.tpm_version.revMinor);
-+			 sizeof(cap.version2))) {
-+		version = &cap.version2.version;
-+		goto out_print;
- 	}
-+
-+	/* TPM 1.1 */
-+	if (tpm1_getcap(chip, TPM_CAP_VERSION_1_1, &cap,
-+			"attempting to determine the 1.1 version",
-+			sizeof(cap.version1))) {
-+		version = &cap.version1;
-+		goto out_ops;
-+	}
-+
-+out_print:
-+	str += sprintf(str,
-+		       "TCG version: %d.%d\nFirmware version: %d.%d\n",
-+		       version->major, version->minor,
-+		       version->rev_major, version->rev_minor);
-+
- 	rc = str - buf;
-+
- out_ops:
- 	tpm_put_ops(chip);
- 	return rc;
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index a7fea3e0ca86..a4f74dd02a35 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -186,19 +186,16 @@ struct	stclear_flags_t {
- 	u8	bGlobalLock;
- } __packed;
- 
--struct	tpm_version_t {
--	u8	Major;
--	u8	Minor;
--	u8	revMajor;
--	u8	revMinor;
-+struct tpm1_version {
-+	u8 major;
-+	u8 minor;
-+	u8 rev_major;
-+	u8 rev_minor;
- } __packed;
- 
--struct	tpm_version_1_2_t {
--	__be16	tag;
--	u8	Major;
--	u8	Minor;
--	u8	revMajor;
--	u8	revMinor;
-+struct tpm1_version2 {
-+	__be16 tag;
-+	struct tpm1_version version;
- } __packed;
- 
- struct	timeout_t {
-@@ -243,8 +240,8 @@ typedef union {
- 	struct	stclear_flags_t	stclear_flags;
- 	__u8	owned;
- 	__be32	num_pcrs;
--	struct	tpm_version_t	tpm_version;
--	struct	tpm_version_1_2_t tpm_version_1_2;
-+	struct tpm1_version version1;
-+	struct tpm1_version2 version2;
- 	__be32	manufacturer_id;
- 	struct timeout_t  timeout;
- 	struct duration_t duration;
+Confirmed on R-Car H3-Salvator-X:
+
+root@rcar-gen3:~# ls -al /dev/watchdog*
+crw-------    1 root     root       10, 130 Aug 21 09:38 /dev/watchdog
+crw-------    1 root     root      247,   0 Aug 21 09:38 /dev/watchdog0
+
+[..]
+
+> -	fd = open("/dev/watchdog", O_WRONLY);
+> +	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
+> +		if (c == 'f')
+> +			file = optarg;
+> +	}
+> +
+> +	fd = open(file, O_WRONLY);
+
+Would it be possible to improve below not so helpful and slightly
+misleading printout:
+
+$ ./watchdog-test -d -t 10 -p 5 -e -f /dev/watch
+Watchdog device not enabled.
+
+Thanks!
+
 -- 
-2.20.1
-
+Best Regards,
+Eugeniu.
