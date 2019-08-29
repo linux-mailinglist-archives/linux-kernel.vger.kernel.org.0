@@ -2,168 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0195FA1D2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3BA3A1D29
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:39:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbfH2Oj6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:39:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43430 "EHLO mail.kernel.org"
+        id S1728248AbfH2Ojl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:39:41 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52689 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728032AbfH2Oj4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:39:56 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727899AbfH2Ojl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:39:41 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AAB823426;
-        Thu, 29 Aug 2019 14:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567089594;
-        bh=TochmD8e7qzqFLR0WCPOK49a7FZE2iB3hCnR623HysY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MHb+YqYZ+60lmJgO25DJPhW/tocErLs2GmdmguqP7VVgb2yoVFm+Ss3H7x/sALLOf
-         4/FlmUVMLsyMTmZaJq6ZCFYOXs6mC4rr04+wn1Th2vyA/im/MpAi1GA8o2LIcpdf0g
-         4E53zwssAc8nYmeeHwqANZEajFDENHhKw7gz1dOQ=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Igor Lubashev <ilubashe@akamai.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 04/37] perf evsel: Kernel profiling is disallowed only when perf_event_paranoid > 1
-Date:   Thu, 29 Aug 2019 11:38:44 -0300
-Message-Id: <20190829143917.29745-5-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190829143917.29745-1-acme@kernel.org>
-References: <20190829143917.29745-1-acme@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id B31A820ABB;
+        Thu, 29 Aug 2019 14:39:40 +0000 (UTC)
+Received: from amt.cnet (ovpn-112-4.gru2.redhat.com [10.97.112.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 724BB196B2;
+        Thu, 29 Aug 2019 14:39:38 +0000 (UTC)
+Received: from amt.cnet (localhost [127.0.0.1])
+        by amt.cnet (Postfix) with ESMTP id 6614A105140;
+        Thu, 29 Aug 2019 11:39:11 -0300 (BRT)
+Received: (from marcelo@localhost)
+        by amt.cnet (8.14.7/8.14.7/Submit) id x7TEd7P8014097;
+        Thu, 29 Aug 2019 11:39:07 -0300
+Date:   Thu, 29 Aug 2019 11:39:06 -0300
+From:   Marcelo Tosatti <mtosatti@redhat.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: [PATCH] cpuidle-haltpoll: Enable kvm guest polling when
+ dedicated physical CPUs are available
+Message-ID: <20190829143904.GA13983@amt.cnet>
+References: <CANRm+CwtHBOVWFcn+6Z3Ds7dEcNL2JP+b6hLRS=oeUW98A24MQ@mail.gmail.com>
+ <20190826204045.GA24697@amt.cnet>
+ <CANRm+Cx0+V67Ek7FhSs61ZqZL3MgV88Wdy17Q6UA369RH7=dgQ@mail.gmail.com>
+ <CANRm+CxqYMzgvxYyhZLmEzYd6SLTyHdRzKVaSiHO-4SV+OwZUQ@mail.gmail.com>
+ <CAJZ5v0iQc0-WzqeyAh-6m5O-BLraRMj+Z7sqvRgGwh2u2Hp7cg@mail.gmail.com>
+ <20190828143916.GA13725@amt.cnet>
+ <CAJZ5v0jiBprGrwLAhmLbZKpKUvmKwG9w4_R7+dQVqswptis5Qg@mail.gmail.com>
+ <20190829120422.GC4949@amt.cnet>
+ <CANRm+CwYq7NZeKffioWcHy_oWGyeHqXsygF_cppMD17mHuVgYw@mail.gmail.com>
+ <20190829125304.GA12214@amt.cnet>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829125304.GA12214@amt.cnet>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 29 Aug 2019 14:39:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Lubashev <ilubashe@akamai.com>
+On Thu, Aug 29, 2019 at 09:53:04AM -0300, Marcelo Tosatti wrote:
+> On Thu, Aug 29, 2019 at 08:16:41PM +0800, Wanpeng Li wrote:
+> > > Current situation regarding haltpoll driver is:
+> > >
+> > > overcommit group: haltpoll driver is not loaded by default, they are
+> > > happy.
+> > >
+> > > non overcommit group: boots without "realtime hints" flag, loads haltpoll driver,
+> > > happy.
+> > >
+> > > Situation with patch above:
+> > >
+> > > overcommit group: haltpoll driver is not loaded by default, they are
+> > > happy.
+> > >
+> > > non overcommit group: boots without "realtime hints" flag, haltpoll driver
+> > > cannot be loaded.
+> > 
+> > non overcommit group, if they don't care latency/performance, they
+> > don't need to enable haltpoll, "realtime hints" etc. Otherwise, they
+> > should better tune.
+> 
+> As mentioned before, "being overcommitted" is a property which is transitional.
+> 
+> A static true/false scheme reflects this poorly.
+> 
+> Therefore the OS should detect it and act accordingly.
 
-Perf was too restrictive about sysctl kernel.perf_event_paranoid. The
-kernel only disallows profiling when perf_event_paranoid > 1. Make perf
-do the same.
+Hi Wanpeng Li,
 
-Committer testing:
+One suggestion for a dynamic "is overcommited" scheme:
 
-For a non-root user:
+If the amount of stolen time, in the past record_steal_time window, 
+is more than 20% of the time in that window, then mark system
+as overcommitted. Otherwise, clear it.
 
-  $ id
-  uid=1000(acme) gid=1000(acme) groups=1000(acme),10(wheel) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-  $
+Make that 20% configurable by as kvm module parameter.
 
-Before:
+Use that info to enable/disable overcommit features.
 
-We were restricting it to just userspace (:u suffix) even for a
-workload started by the user:
+That should work, right?
 
-  $ perf record sleep 1
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.001 MB perf.data (8 samples) ]
-  $ perf evlist
-  cycles:u
-  $ perf evlist -v
-  cycles:u: size: 112, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|PERIOD, read_format: ID, disabled: 1, inherit: 1, exclude_kernel: 1, mmap: 1, comm: 1, freq: 1, enable_on_exec: 1, task: 1, precise_ip: 3, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-  $ perf report --stdio
-  # To display the perf.data header info, please use --header/--header-only options.
-  #
-  # Total Lost Samples: 0
-  #
-  # Samples: 8  of event 'cycles:u'
-  # Event count (approx.): 1040396
-  #
-  # Overhead  Command  Shared Object     Symbol
-  # ........  .......  ................  ......................
-  #
-      68.36%  sleep    libc-2.29.so      [.] _dl_addr
-      27.33%  sleep    ld-2.29.so        [.] dl_main
-       3.80%  sleep    ld-2.29.so        [.] _dl_setup_hash
-  #
-  # (Tip: Order by the overhead of source file name and line number: perf report -s srcline)
-  #
-  $
-  $
 
-After:
 
-When the kernel allows profiling the kernel in that scenario:
-
-  $ perf record sleep 1
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.023 MB perf.data (11 samples) ]
-  $ perf evlist
-  cycles
-  $ perf evlist -v
-  cycles: size: 112, { sample_period, sample_freq }: 4000, sample_type: IP|TID|TIME|PERIOD, read_format: ID, disabled: 1, inherit: 1, mmap: 1, comm: 1, freq: 1, enable_on_exec: 1, task: 1, precise_ip: 3, sample_id_all: 1, exclude_guest: 1, mmap2: 1, comm_exec: 1, ksymbol: 1, bpf_event: 1
-  $
-  $ perf report --stdio
-  # To display the perf.data header info, please use --header/--header-only options.
-  #
-  # Total Lost Samples: 0
-  #
-  # Samples: 11  of event 'cycles'
-  # Event count (approx.): 1601964
-  #
-  # Overhead  Command  Shared Object     Symbol
-  # ........  .......  ................  ..........................
-  #
-      28.14%  sleep    [kernel.vmlinux]  [k] __rb_erase_color
-      27.21%  sleep    [kernel.vmlinux]  [k] unmap_page_range
-      27.20%  sleep    ld-2.29.so        [.] __tunable_get_val
-      15.24%  sleep    [kernel.vmlinux]  [k] thp_get_unmapped_area
-       1.96%  perf     [kernel.vmlinux]  [k] perf_event_exec
-       0.22%  perf     [kernel.vmlinux]  [k] native_sched_clock
-       0.02%  perf     [kernel.vmlinux]  [k] intel_bts_enable_local
-       0.00%  perf     [kernel.vmlinux]  [k] native_write_msr
-  #
-  # (Tip: Boolean options have negative forms, e.g.: perf report --no-children)
-  #
-  $
-
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1566869956-7154-4-git-send-email-ilubashe@akamai.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/evsel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 7c704b8f0e5c..d4540bfe4574 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -282,7 +282,7 @@ struct evsel *perf_evsel__new_idx(struct perf_event_attr *attr, int idx)
- 
- static bool perf_event_can_profile_kernel(void)
- {
--	return perf_event_paranoid_check(-1);
-+	return perf_event_paranoid_check(1);
- }
- 
- struct evsel *perf_evsel__new_cycles(bool precise)
--- 
-2.21.0
 
