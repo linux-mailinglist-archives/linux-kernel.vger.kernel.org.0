@@ -2,148 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66ED5A1C40
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:02:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C4DBA1C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:03:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbfH2OCl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:02:41 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45543 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727309AbfH2OCk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:02:40 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l1so3116609lji.12
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 07:02:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dg3waXVhGBOhHjSyELaZhZ1UjdRtnKIsZjLbc8wGGk0=;
-        b=nQyfMz0rrIB7W4KOr8ftop9bYn7B4EJBAeM7qcy/8CD0hq1IQw7UHG/0pcdTT8nXmS
-         lpNCkUPn/MvnHkcTjxwokWTRmIgfKDtpRhTkCW+mBkiN9nWe6g7TobZRF1kAgK7u0Kh3
-         T9wy3PEeNQSDvqPP528u/uSUEyAvUmRVxyEl/tOoFTdU9qfejLAHaT+IZ+An8l5Fismw
-         x32AooA4j0IHIXRdQ3ktDIvLwTBFN+ikdwkm4rwHoteKCr34oPKmQTdTNFZKscwUowkD
-         2Z2KVlh8ZJNClGp+2fzl0Wwb1f5L/P9jgVZFXDXb30ZrFCgCmUFc2pDWj7k42JacCeO9
-         Uqlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dg3waXVhGBOhHjSyELaZhZ1UjdRtnKIsZjLbc8wGGk0=;
-        b=m4+cqoDWWcp1WFqqtOPWWHC/QnDpOv3ZRPLXWjRiZo8BpwjVIq7ILGR8fyGrRnFpkd
-         Ljx+OroIJqIYyIoglUIBIO8l9/4o/r9jyLmNXJQhswnir6gzgokph3I3SwbVhVlQMJeB
-         p283tUruuswDgyiA/pgG9txkKBcv4qZQOow8KUL+MlYL3Fn/fC7RNRMH3QQCokpK3J/h
-         UxEw+uJzW5OfAEClj+4gZQl9G58cvDBakEexWCkOOxWFrFpQwdvvPFH9NWnjdF4tF4xT
-         7sXa5L/5l1hoVK8aqQ8NI2BoKTFhkeMOu43KeUHNCK3MD3+Qnq/y/jDTRhUvtJQImSOq
-         LpsQ==
-X-Gm-Message-State: APjAAAWeXIL23KCJULHsclChVdnQ25Rm4+CzfloBhBS1w6nfdhmxxg6X
-        fZj8conti9IqCHVFuMpbC8kqYBoazpb6vpsvMfKRUA==
-X-Google-Smtp-Source: APXvYqz7jaLnW8arwTpP0kHVBtETPT7wrAXZG0RObWqv2gyY67Sy8idWOyzSlgruh6H2DYTZjheygwOwqk29INSjbTA=
-X-Received: by 2002:a2e:8ec6:: with SMTP id e6mr363229ljl.192.1567087358119;
- Thu, 29 Aug 2019 07:02:38 -0700 (PDT)
+        id S1728070AbfH2ODZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:03:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727063AbfH2ODY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:03:24 -0400
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5206123428;
+        Thu, 29 Aug 2019 14:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567087403;
+        bh=R+LyN7YD9OZpXktE/UY/Qz8u2pZtDP3m3LN1pHcseyI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=m6ug5skv5gxH6F4G4GkDURiWoP18bgo1JHj7WztwX/K2MQgE2CF5mnlhAst2NkOrb
+         TiCFHwQm7TGWYa97q6MUWMxuypUkfPCvavKaFKr4mwPIkztU/Znb1n/pC4TLIUjOPw
+         xauQiGLn1GsOaEpJBfyGCuzap8oRfeIp6kb/vitQ=
+Received: by mail-qk1-f170.google.com with SMTP id u190so3025115qkh.5;
+        Thu, 29 Aug 2019 07:03:23 -0700 (PDT)
+X-Gm-Message-State: APjAAAVxkWpO2qst8iOooo/mVYv/bICAql9VvQvbgW2wMHqKveMF+GWF
+        9uDdA+m2T2SP6GkcqP4d4BRKoODZwC5jvbROyg==
+X-Google-Smtp-Source: APXvYqx5xw+mAnj9zcHLgq+uwCGaxqVFuAJs1Ey8vhaU2lN8XSiANKs27dzKuXkSmJeBs3wRFxU1yYSUwbwPSVITU9E=
+X-Received: by 2002:ae9:e212:: with SMTP id c18mr3499796qkc.254.1567087402375;
+ Thu, 29 Aug 2019 07:03:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190822021740.15554-1-riel@surriel.com> <20190822021740.15554-9-riel@surriel.com>
- <CAKfTPtDxHijR3PCOFfxA-r02rf2hVP4LpB=y-9emHS7znTPxTA@mail.gmail.com> <d703071084dadb477b8248b041d0d1aa730d65cd.camel@surriel.com>
-In-Reply-To: <d703071084dadb477b8248b041d0d1aa730d65cd.camel@surriel.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 29 Aug 2019 16:02:26 +0200
-Message-ID: <CAKfTPtDX+keNfNxf78yMoF3QaXSG_fZHJ_nqCFKYDMYGa84A6Q@mail.gmail.com>
-Subject: Re: [PATCH 08/15] sched,fair: simplify timeslice length code
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>, Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mel Gorman <mgorman@techsingularity.net>
+References: <1567017402-5895-1-git-send-email-fabrizio.castro@bp.renesas.com> <1567017402-5895-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1567017402-5895-2-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 29 Aug 2019 09:03:10 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKWWCpEeBd4UFaqBVffS-OxUNAHfvtJKcGsLDR+f=Uytg@mail.gmail.com>
+Message-ID: <CAL_JsqKWWCpEeBd4UFaqBVffS-OxUNAHfvtJKcGsLDR+f=Uytg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/8] dt-bindings: display: Add bindings for LVDS bus-timings
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Sam Ravnborg <sam@ravnborg.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Aug 2019 at 01:19, Rik van Riel <riel@surriel.com> wrote:
+On Wed, Aug 28, 2019 at 1:36 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
 >
-> On Wed, 2019-08-28 at 19:32 +0200, Vincent Guittot wrote:
-> > On Thu, 22 Aug 2019 at 04:18, Rik van Riel <riel@surriel.com> wrote:
-> > > The idea behind __sched_period makes sense, but the results do not
-> > > always.
-> > >
-> > > When a CPU has one high priority task and a large number of low
-> > > priority
-> > > tasks, __sched_period will return a value larger than
-> > > sysctl_sched_latency,
-> > > and the one high priority task may end up getting a timeslice all
-> > > for itself
-> > > that is also much larger than sysctl_sched_latency.
-> >
-> > note that unless you enable sched_feat(HRTICK), the sched_slice is
-> > mainly used to decide how fast we preempt running task at tick but a
-> > newly wake up task can preempt it before
-> >
-> > > The low priority tasks will have their time slices rounded up to
-> > > sysctl_sched_min_granularity, resulting in an even larger
-> > > scheduling
-> > > latency than targeted by __sched_period.
-> >
-> > Will this not break the fairness between a always running task and a
-> > short sleeping one with this changes ?
+> Dual-LVDS connections need markers in the DT, this patch adds
+> some common documentation to be referenced by both panels and
+> bridges.
 >
-> In what way?
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 >
-> The vruntime for the always running task will continue
-> to advance the same way it always has.
+> ---
+> v2->v3:
+> * new patch
+> ---
+>  .../bindings/display/bus-timings/lvds.yaml         | 38 ++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/bus-timings/lvds.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/display/bus-timings/lvds.yaml b/Documentation/devicetree/bindings/display/bus-timings/lvds.yaml
+> new file mode 100644
+> index 0000000..f35b55a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bus-timings/lvds.yaml
+> @@ -0,0 +1,38 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Ok so 1st, my brain is probably not yet fully back from vacations as I
-have read sysctl_sched_min_granularity instead of sysctl_sched_latency
- and wrongly thought that you were setting
-sysctl_sched_min_granularity for all tasks.
-That being said, sched_slice is used to prevent other tasks to preempt
-the running task before it get a chances to run its ideal time
-compared to others and before new tasks modify the ideal sched_slice
-of each. By capping this max value, the task can be preempted earlier
-than before by newly wake up task and don't get the amount of running
-time it could have expect before the situation is changing
+(GPL-2.0-only OR BSD-2-Clause) is preferred for new bindings.
 
->
-> > > Simplify the code by simply ripping out __sched_period and always
-> > > taking
-> > > fractions of sysctl_sched_latency.
-> > >
-> > > If a high priority task ends up getting a "too small" time slice
-> > > compared
-> > > to low priority tasks, the vruntime scaling ensures that it will
-> > > simply
-> > > get scheduled more frequently than low priority tasks.
-> >
-> > Will you not increase the number of context switch ?
->
-> It should actually decrease the number of context
-> switches. If a nice +19 task gets a longer time slice
-> than it would today, its vruntime will be advanced by
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bus-timings/lvds.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common Properties for bus timings of LVDS interfaces
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> +
+> +description: |
+> +  This document defines device tree properties common to LVDS and dual-LVDS
+> +  interfaces, where a dual-LVDS interface is a dual-link connection with even
+> +  pixels traveling on one connection, and with odd pixels traveling on the other
+> +  connection.
+> +  This document doesn't constitue a device tree binding specification by itself
 
-In fact that's already the case today, when a task is scheduled, it
-runs a full jiffy even if its sched_slice is smaller than a jiffy
-(unless you have enabled sched_feat(HRTICK)).
+typo: constitute
 
-> more than sysctl_sched_latency, and it will not get
-> to run again until another task has caught up with its
-> vruntime.
->
-> That means the regular (or high) priority task that
-> shares the CPU with that nice +19 task might get
-> several time slices in a row until the nice +19 task
-> gets to run again.
->
-> What am I overlooking?
+> +  but is meant to be referenced by device tree bindings.
+> +  When referenced from panel or bridge device tree bindings, the properties
+> +  defined in this document are defined as follows. The panel and bridge device
+> +  tree bindings are responsible for defining whether each property is required
+> +  or optional.
+> +
+> +properties:
+> +  dual-lvds-even-pixels:
+> +    type: boolean
+> +    description:
+> +      This property is specific to an input port of a sink device. When
 
-My point is more for task that runs several ticks in a row. Their
-sched_slice will be shorter in some cases with your changes so they
-can be preempted earlier by other runnable tasks with a lower vruntime
-and there will be more context switch
+The schema should define what nodes these go in. The description seems
+to indicate in 'port' nodes (or endpoint?), but your use in the panel
+binding puts them in the parent.
 
->
-> --
-> All Rights Reversed.
+> +      specified, it marks the port as recipient of even-pixels.
+> +
+> +  dual-lvds-odd-pixels:
+> +    type: boolean
+> +    description:
+> +      This property is specific to an input port of a sink device. When
+> +      specified, it marks the port as recipient of odd-pixels.
+
+However, I don't think you even need these. A panel's port numbers are
+fixed can imply even or odd. For example port@0 can be even and port@1
+can be odd. The port numbering is typically panel specific, but we may
+be able to define the numbering generically if we don't already have
+panels with multiple ports.
+
+Also, aren't there dual link DSI panels?
+
+Rob
