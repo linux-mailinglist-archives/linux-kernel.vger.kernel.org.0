@@ -2,119 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16467A1C63
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:09:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3179A1C67
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfH2OJL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:09:11 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46071 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727073AbfH2OJK (ORCPT
+        id S1727830AbfH2OJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:09:17 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:65367 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727578AbfH2OJN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:09:10 -0400
-Received: by mail-wr1-f67.google.com with SMTP id q12so3540943wrj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 07:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=IkHNgNXF6D7gCyp+RTOcFkFjmwHzwHacGQCef/fkUxY=;
-        b=xFOj/svuT22SFm97iQcFsK0oNFWzU154jPyVuCgNRf5gyBEcfHhZ2ZsekaoCHfHUm9
-         s6hPxGLyB/81mzV7lVqSs/AUJShAiedtr5S85sXwK3ra0J54ydcopngIC6im8ct3ziDM
-         jCXSqPriXn4lrUAtUn2oU1+EIn67VeCKSLM5ljZ7yJHmM4TooBhQ7O3TFc3hWlzQsWf6
-         HKmgS8YkGFWZwEV79UeejLszdVZJPS7YT+OMKbBA8/OUuPwvsJIhQ69adRXIwa68KfKP
-         9MtDV92BUEiGX36sbnzNHwQGQdXswpSiKsjsQGwbJ15TNO2d3vyDdGf5aHTv1C+li7Oz
-         uvBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=IkHNgNXF6D7gCyp+RTOcFkFjmwHzwHacGQCef/fkUxY=;
-        b=WhxMneRKTjd6cj0ip+m8xszfSet4tg4sm36/rkIRnP6++TUZ537qXBzDJtXCiAgFeb
-         1y2nrxoFguHHWNEun50vPI8WnDjGMh8LUwrodcySpF4Bzai+SNBoQdeU0f4So/Yv0Ct6
-         /D6ak2vA4beqBW5pTUlIE02skFIxw4INIYnmBorCGrpdyBiz8FblgH7GpcgU8rWt03PH
-         2CLu/PE7Xd4emt0pGi05buxRiZ6diV8gWSUAw35otoUG1MJYaV9uAw21JDgIR9Ren2N1
-         KjbbD5W6GMDF0K/rMtcgtBl+lnpWHpuQJeHKJMlXJx8G5UVSRu//mlJDDVK/nau0nyZX
-         9hRQ==
-X-Gm-Message-State: APjAAAU+MWsvPNmzovvfJayqChcCnzkLNPIT+rhQb2FShBrn9F0UnPeV
-        D6MdITZyRzqJ8ov6cXkZoKgZZw==
-X-Google-Smtp-Source: APXvYqwiMxS8OI3sVqHrlxU2MXj7Dr8WUNvrh5fZlS6vkfDCaJgvdL8CdRuYQ0wj2AMCRBXiyNGY7g==
-X-Received: by 2002:a5d:4403:: with SMTP id z3mr12172324wrq.29.1567087748452;
-        Thu, 29 Aug 2019 07:09:08 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id x10sm3753474wrn.39.2019.08.29.07.09.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 07:09:07 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 15:09:05 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 2/4] backlight: Expose brightness curve type through
- sysfs
-Message-ID: <20190829140905.wkv2pwzmhhfyzan4@holly.lan>
-References: <20190709190007.91260-1-mka@chromium.org>
- <20190709190007.91260-3-mka@chromium.org>
- <20190807201528.GO250418@google.com>
- <510f6d8a-71a0-fa6e-33ea-c4a4bfa96607@linaro.org>
- <20190816175317.GU250418@google.com>
- <20190819100241.5pctjxmsq6crlale@holly.lan>
- <20190819185049.GZ250418@google.com>
- <20190820135617.64urowbu2kwdynib@holly.lan>
- <20190827094459.GB4804@dell>
+        Thu, 29 Aug 2019 10:09:13 -0400
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7TE9A90061951;
+        Thu, 29 Aug 2019 23:09:10 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Thu, 29 Aug 2019 23:09:10 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7TE9AZZ061947
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Thu, 29 Aug 2019 23:09:10 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 00/10] OOM Debug print selection and additional
+ information
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Edward Chron <echron@arista.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
+References: <20190826193638.6638-1-echron@arista.com>
+ <20190827071523.GR7538@dhcp22.suse.cz>
+ <CAM3twVRZfarAP6k=LLWH0jEJXu8C8WZKgMXCFKBZdRsTVVFrUQ@mail.gmail.com>
+ <20190828065955.GB7386@dhcp22.suse.cz>
+ <CAM3twVR_OLffQ1U-SgQOdHxuByLNL5sicfnObimpGpPQ1tJ0FQ@mail.gmail.com>
+ <20190829071105.GQ28313@dhcp22.suse.cz>
+ <297cf049-d92e-f13a-1386-403553d86401@i-love.sakura.ne.jp>
+ <20190829115608.GD28313@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <a8979b50-b8db-55c1-996b-6d86736513f5@i-love.sakura.ne.jp>
+Date:   Thu, 29 Aug 2019 23:09:08 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190829115608.GD28313@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190827094459.GB4804@dell>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 10:44:59AM +0100, Lee Jones wrote:
-> [...]
+On 2019/08/29 20:56, Michal Hocko wrote:
+>> But please be aware that, I REPEAT AGAIN, I don't think neither eBPF nor
+>> SystemTap will be suitable for dumping OOM information. OOM situation means
+>> that even single page fault event cannot complete, and temporary memory
+>> allocation for reading from kernel or writing to files cannot complete.
 > 
-> > > IIUC the conclusion is that there is no need for a string attribute
-> > > because we only need to distinguish between 'perceptual' and
-> > > 'non-perceptual'. If that is correct, do you have any preference for
-> > > the attribute name ('perceptual_scale', 'perceptual', ...)?
-> > 
-> > More a summary than a conclusion! There is a reason I have left a bit or
-> > space for others to comment on this over the last month (and a bit).
-> > 
-> > To be clear my Reviewed-by: means that I believe that the kernel is better
-> > with "non-linear/linear/unknown" than without it and that I am comfortable
-> > the API isn't likely to be a millstone for us.
-> > 
-> > Lee, Jingoo: Either of you care to offer $0.02
-> 
-> No, not really.  Happy to leave it to your good judgement.
+> And I repeat that no such reporting is going to write to files. This is
+> an OOM path afterall.
 
-In that case... the patch has my reviewed-by and although the concerns
-raised in the associated threads have merit I don't think they are
-enough to stop the patch.
-
-Please merge.
-
-
-Daniel.
+The process who fetches from e.g. eBPF event cannot involve page fault.
+The front-end for iovisor/bcc is a python userspace process. But I think
+that such process can't run under OOM situation.
 
 > 
-> -- 
-> Lee Jones [李琼斯]
-> Linaro Services Technical Lead
-> Linaro.org │ Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+>> Therefore, we will need to hold all information in kernel memory (without
+>> allocating any memory when OOM event happened). Dynamic hooks could hold
+>> a few lines of output, but not all lines we want. The only possible buffer
+>> which is preallocated and large enough would be printk()'s buffer. Thus,
+>> I believe that we will have to use printk() in order to dump OOM information.
+>> At that point,
+> 
+> Yes, this is what I've had in mind.
+
+Probably I incorrectly shortcut.
+
+Dynamic hooks could hold a few lines of output, but dynamic hooks can not hold
+all lines when dump_tasks() reports 32000+ processes. We have to buffer all output
+in kernel memory because we can't complete even a page fault event triggered by
+the python process monitoring eBPF event (and writing the result to some log file
+or something) while out_of_memory() is in flight.
+
+And "set /proc/sys/vm/oom_dump_tasks to 0" is not the right reaction. What I'm
+saying is "we won't be able to hold output from dump_tasks() if output from
+dump_tasks() goes to buffer preallocated for dynamic hooks". We have to find
+a way that can handle the worst case.
