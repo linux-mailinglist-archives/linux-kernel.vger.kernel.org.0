@@ -2,71 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C7C7A137D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4225DA1343
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfH2IS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:18:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57998 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfH2ISY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:18:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=+nN7LOG/9+PKf4MO2yNXSDt1shVfEIbqMZtjoPPRqmk=; b=BuQpb4bI2JGUOh8Mn3/Sw74zB
-        RPpCQpwnQA8gJQRLqYO7yK1qZcgp/nG0UTmo3zkcc62gOoKwMvFKJsgcxpR1xwlEji7BFq0yxinAE
-        ABzTl2OgPgOyL5PrlA38UwwJ9E5Ts27dPHEfOSSelBEfMMYYNcqwsCn/aDEKMPKw55Y1D2p4ADzLV
-        tiBf2ZlKvZd2YjjOEp2MMSq4YH4E7F8ZHK+hA77KrzjNkkL4NBOpcnqxlgpcNCuIhv3qgRpxYAxfF
-        4LyqdFgbRtjyi3rNJDWKt7LWjek+HhaDe/j+L40gQcQ9h6kR8Q2ScU2S8tNERxyR0gnZB26Q0ZFfL
-        r6yYYtT7w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3FId-0004Td-4D; Thu, 29 Aug 2019 07:56:55 +0000
-Date:   Thu, 29 Aug 2019 00:56:55 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Austin Kim <austindh.kim@gmail.com>
-Cc:     darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: Use WARN_ON rather than BUG() for bailout
- mount-operation
-Message-ID: <20190829075655.GD18966@infradead.org>
-References: <20190828064749.GA165571@LGEARND20B15>
+        id S1726926AbfH2ILF convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 29 Aug 2019 04:11:05 -0400
+Received: from mga17.intel.com ([192.55.52.151]:53717 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725990AbfH2ILF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 04:11:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 01:11:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,442,1559545200"; 
+   d="scan'208";a="380692792"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by fmsmga005.fm.intel.com with ESMTP; 29 Aug 2019 01:11:04 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 29 Aug 2019 01:11:04 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 29 Aug 2019 01:11:03 -0700
+Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Thu, 29 Aug 2019 01:11:03 -0700
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.112]) by
+ SHSMSX152.ccr.corp.intel.com ([169.254.6.62]) with mapi id 14.03.0439.000;
+ Thu, 29 Aug 2019 16:11:02 +0800
+From:   "Kang, Luwei" <luwei.kang@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC v1 0/9] PEBS enabling in KVM guest
+Thread-Topic: [RFC v1 0/9] PEBS enabling in KVM guest
+Thread-Index: AQHVXiwNBbYS5tWphkaKCUykcUkcJqcRNF2AgACP/hA=
+Date:   Thu, 29 Aug 2019 08:11:02 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E1737F068B@SHSMSX104.ccr.corp.intel.com>
+References: <1567056849-14608-1-git-send-email-luwei.kang@intel.com>
+ <20190829072853.GK2369@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190829072853.GK2369@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTljYzIyZWItNzE3ZS00OWJkLTk2ZmMtZWJhZjIyYmVkNGM2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiK3RWdFwvditkU1wvbExTU3BWNSt2c1wvMFU4d0N5Q21qZ0gyeTVieHp3NWR0T0tQWXVJM3dPdVo4bkVnVVwvZDVEcTAifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.2.0.6
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828064749.GA165571@LGEARND20B15>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 03:47:49PM +0900, Austin Kim wrote:
-> If the CONFIG_BUG is enabled, BUG() is executed and then system is crashed.
-> However, the bailout for mount is no longer proceeding.
+> On Thu, Aug 29, 2019 at 01:34:00PM +0800, Luwei Kang wrote:
+> > Intel new hardware introduces some Precise Event-Based Sampling (PEBS)
+> > extensions that output the PEBS record to Intel PT stream instead of
+> > DS area. The PEBS record will be packaged in a specific format when
+> > outputing to Intel PT.
+> >
+> > This patch set will enable PEBS functionality in KVM Guest by PEBS
+> > output to Intel PT. The native driver as [1] (still under review).
+> >
+> > [1] https://www.spinics.net/lists/kernel/msg3215354.html
 > 
-> For this reason, using WARN_ON rather than BUG() could prevent this situation.
-> ---
->  fs/xfs/xfs_mount.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Please use:
 > 
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index 322da69..10fe000 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -213,8 +213,7 @@ xfs_initialize_perag(
->  			goto out_hash_destroy;
->  
->  		spin_lock(&mp->m_perag_lock);
-> -		if (radix_tree_insert(&mp->m_perag_tree, index, pag)) {
-> -			BUG();
-> +		if (WARN_ON(radix_tree_insert(&mp->m_perag_tree, index, pag))){
+>   https://lkml.kernel.org/r/$MSGID
+> 
+> then I don't have to touch a browser but can find the email in my MUA.
 
-Please make this a WARN_ON_ONCE so that we don't see a flodding of
-messages in case of this error.
+Thanks. The link of native driver should be:
+https://lkml.kernel.org/r/20190806084606.4021-1-alexander.shishkin@linux.intel.com
 
+Luwei Kang
