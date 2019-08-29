@@ -2,126 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFF8BA2265
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D670A2278
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbfH2Rgf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:36:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61578 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727437AbfH2Rgf (ORCPT
+        id S1728061AbfH2Ri2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:38:28 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46135 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727697AbfH2Ri2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:36:35 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7THXtuB003259;
-        Thu, 29 Aug 2019 13:36:29 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2upgfd74qa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Aug 2019 13:36:28 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7THZaVl007325;
-        Thu, 29 Aug 2019 13:36:28 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2upgfd74pu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Aug 2019 13:36:28 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7THUwAE013821;
-        Thu, 29 Aug 2019 17:36:27 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma04dal.us.ibm.com with ESMTP id 2ujvv75gjt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Aug 2019 17:36:27 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7THaQTM31981944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 17:36:26 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B482FAE062;
-        Thu, 29 Aug 2019 17:36:26 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1FC97AE060;
-        Thu, 29 Aug 2019 17:36:26 +0000 (GMT)
-Received: from [9.53.179.215] (unknown [9.53.179.215])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Aug 2019 17:36:26 +0000 (GMT)
-Subject: Re: [v1] net_sched: act_police: add 2 new attributes to support
- police 64bit rate and peakrate
-From:   "David Z. Dai" <zdai@linux.vnet.ibm.com>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zdai@us.ibm.com
-In-Reply-To: <7a8a5024-bbff-7443-71b3-9e3976af269f@gmail.com>
-References: <1567032687-973-1-git-send-email-zdai@linux.vnet.ibm.com>
-         <7a8a5024-bbff-7443-71b3-9e3976af269f@gmail.com>
+        Thu, 29 Aug 2019 13:38:28 -0400
+Received: by mail-pl1-f194.google.com with SMTP id o3so1886989plb.13
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:38:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xX6NnJBlZc5HyDgcExXc1+tZLWs5dKl2iDR8wStwjWU=;
+        b=OAVX0H28lnD1pzeaJLYvwWm5h6edzg+3fsQQobLecwv+hfmSzOI3+ovBUb5NBY03iF
+         /Bu42a0DxZD1qhadBjv+kGAuHzm7q5GE7+HkzqFcHA5oIPlcztdPte689QtMchhD/KM5
+         ZvnCR768ysjg6tbZvKN6zs/qQ/0kPg24/10wPJT4PsfkBE19vMGGgVwBpIE1pX8T+n8u
+         EqG5H/FmeI5rS2dRXMfvLSSsmcLN4xy7lY3Q3iYMNOrDjNzvpmxFUbjOqB51D21NR+Bv
+         A9wNcSbM4FuaqWWTFtjoE8qPffjg8P5Qo+7q0cy1A54tZGw3rcwuLMtLwfJ6d0TEGmQm
+         bXBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xX6NnJBlZc5HyDgcExXc1+tZLWs5dKl2iDR8wStwjWU=;
+        b=il5bUrbV2hvVR+28N88i0Dsnz7vDZH7lLe3+m34qreizY12TrknxWqIhkZQdkqq5wk
+         LHqe0NffMQoeJI5VVrQdsqnXbJ1tKLcDVrbMGrRXBjlOwu8EZbjFFAalkOQsmmv5mnx9
+         Kanvh0G6Mh3VROoetpn6Eww33fvHoPKM/x89ozqAyiHo784MoLtpLJVpcYBkglJ9cJ3a
+         g2Ot6xxRYexHFaM1YvhDaiGsORo8UKNpQNS0NhtV84AR3pywkMbnyAuVE9Vnb85IJbVT
+         BQEYug6l0Y530Th1orNTbF8nymfaGGhdHiHKXfI3p7zY9KlrmQo8kGojWM/VC8J9xrZ1
+         57jA==
+X-Gm-Message-State: APjAAAVknlySgRgqQfypupEv15S+MWD785FBY4Wd5fvdsOGoh6KmX6vE
+        68KsnvQ45osukTAcnnicxjMVPL00wlAHgDJo8f4Tyw==
+X-Google-Smtp-Source: APXvYqwksNqEcTrnH+ZrQavgttKCKAjHSGreuaQWdmSfn4jOEMB3aEr+s+RPTyvo8LnLDVUaPK8Vc48/rizytJj4UfA=
+X-Received: by 2002:a17:902:169:: with SMTP id 96mr10710000plb.297.1567100306938;
+ Thu, 29 Aug 2019 10:38:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190827003709.26950-1-skhan@linuxfoundation.org> <f5088365-68a1-6036-0037-b6e9af01391f@kernel.org>
+In-Reply-To: <f5088365-68a1-6036-0037-b6e9af01391f@kernel.org>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 29 Aug 2019 10:38:15 -0700
+Message-ID: <CAFd5g44bYBjrp3XrUAmkDN5o-oD92G9GxVYnF6Y+2fLrodDTTA@mail.gmail.com>
+Subject: Re: [PATCH v2] doc: kselftest: update for clarity on running
+ kselftests in CI rings
+To:     shuah <shuah@kernel.org>
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dan.rue@linaro.org, anders.roxell@linaro.org
 Content-Type: text/plain; charset="UTF-8"
-Date:   Thu, 29 Aug 2019 12:36:25 -0500
-Message-ID: <1567100185.20025.3.camel@oc5348122405>
-Mime-Version: 1.0
-X-Mailer: Evolution 2.32.3 (2.32.3-36.el6) 
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-29_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908290186
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-29 at 10:32 +0200, Eric Dumazet wrote:
-> 
-> On 8/29/19 12:51 AM, David Dai wrote:
-> > For high speed adapter like Mellanox CX-5 card, it can reach upto
-> > 100 Gbits per second bandwidth. Currently htb already supports 64bit rate
-> > in tc utility. However police action rate and peakrate are still limited
-> > to 32bit value (upto 32 Gbits per second). Add 2 new attributes
-> > TCA_POLICE_RATE64 and TCA_POLICE_RATE64 in kernel for 64bit support
-> > so that tc utility can use them for 64bit rate and peakrate value to
-> > break the 32bit limit, and still keep the backward binary compatibility.
-> > 
-> > Tested-by: David Dai <zdai@linux.vnet.ibm.com>
-> > Signed-off-by: David Dai <zdai@linux.vnet.ibm.com>
+On Wed, Aug 28, 2019 at 12:18 PM shuah <shuah@kernel.org> wrote:
+>
+> On 8/26/19 6:37 PM, Shuah Khan wrote:
+> > Update to add clarity and recommendations on running newer kselftests
+> > on older kernels vs. matching the kernel and kselftest revisions.
+> >
+> > The recommendation is "Match kernel revision and kselftest."
+> >
+> > Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
 > > ---
-> >  include/uapi/linux/pkt_cls.h |    2 ++
-> >  net/sched/act_police.c       |   27 +++++++++++++++++++++++----
-> >  2 files changed, 25 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
-> > index b057aee..eb4ea4d 100644
-> > --- a/include/uapi/linux/pkt_cls.h
-> > +++ b/include/uapi/linux/pkt_cls.h
-> > @@ -159,6 +159,8 @@ enum {
-> >  	TCA_POLICE_AVRATE,
-> >  	TCA_POLICE_RESULT,
-> >  	TCA_POLICE_TM,
-> > +	TCA_POLICE_RATE64,
-> > +	TCA_POLICE_PEAKRATE64,
-> >  	TCA_POLICE_PAD,
-> >  	__TCA_POLICE_MAX
-> >  #define TCA_POLICE_RESULT TCA_POLICE_RESULT
-> 
-> Never insert new attributes, as this breaks compatibility with old binaries (including
-> old kernels)
-Thanks for reviewing it!
-My change is only contained within the police part. I am trying to
-follow the same way htb and tbf support their 64 bit rate.
+> > Changes since v1: Fixed "WARNING: Title underline too short."
+>
+> I have a few more changes and would like to make and send a v3 after
+> the LPC's Testing and Fuzzing kselftest discussion.
+>
+> Holding off on this patch for now.
 
-I tested the old tc binary with the newly patched kernel. It works fine.
+Is this just because you are busy, or because you expect what you want
+to say to change after the discussion?
 
-I agree the newly compiled tc binary that has these 2 new attributes can
-cause backward compatibility issue when running on the old kernel.
+If it is because you expect what you want to say here to change, I am
+surprised. This seems like pretty good, straightforward advice. From
+where I stand this seems like it makes the documentation better
+without making anything worse, and so this change should probably be
+included.
 
-If can't insert new attribute, is there any
-comment/suggestion/alternative on how to support 64bit police rate and
-still keep the backward compatibility?
+In anycase, your call. I just don't think anyone is going to dispute
+what you are saying here :-)
 
-> Keep TCA_POLICE_PAD value the same, thanks.
-
-
+Cheers!
