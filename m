@@ -2,84 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E4DCA224C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82C58A225B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbfH2Rcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:32:31 -0400
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:48886 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbfH2Rcb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:32:31 -0400
-Received: from fsav301.sakura.ne.jp (fsav301.sakura.ne.jp [153.120.85.132])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7THWCqf023729;
-        Fri, 30 Aug 2019 02:32:12 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav301.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp);
- Fri, 30 Aug 2019 02:32:12 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav301.sakura.ne.jp)
-Received: from localhost.localdomain (118.153.231.153.ap.dti.ne.jp [153.231.153.118])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7THW6NO023682
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 30 Aug 2019 02:32:12 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-To:     Mark Brown <broonie@kernel.org>,
-        David Yang <yangxiaohua@everest-semi.com>,
-        Daniel Drake <drake@endlessm.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Subject: [PATCH 3/3] ASoC: es8316: add DT-bindings
-Date:   Fri, 30 Aug 2019 02:32:05 +0900
-Message-Id: <20190829173205.11805-3-katsuhiro@katsuster.net>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20190829173205.11805-1-katsuhiro@katsuster.net>
-References: <20190829173205.11805-1-katsuhiro@katsuster.net>
+        id S1728148AbfH2ReK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:34:10 -0400
+Received: from sauhun.de ([88.99.104.3]:41424 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727410AbfH2ReJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 13:34:09 -0400
+Received: from localhost (p54B33070.dip0.t-ipconnect.de [84.179.48.112])
+        by pokefinder.org (Postfix) with ESMTPSA id 56C322C001C;
+        Thu, 29 Aug 2019 19:34:07 +0200 (CEST)
+Date:   Thu, 29 Aug 2019 19:34:06 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     =?utf-8?B?VGFtw6FzIFN6xbFjcw==?= <tszucs@protonmail.ch>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] mmc: sdhi: fill in actual_clock
+Message-ID: <20190829173406.GA1127@kunai>
+References: <20190828185518.4340-1-tszucs@protonmail.ch>
+ <CAMuHMdWcp-3B7ZZjbyo02ECyzDX_rQxXF645OCutCkjUu_jWaA@mail.gmail.com>
+ <FaBiPuw0MFfdsj60MQTULROSN-8cSV7sNRlgO5SSVPo5jfQopmm9zTq4JT71VxaO32qdcAhisOrhFYG_QLByLNHcBrMgshsI_WwP9rlH2ms=@protonmail.ch>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="BXVAT5kNtrzKuDFl"
+Content-Disposition: inline
+In-Reply-To: <FaBiPuw0MFfdsj60MQTULROSN-8cSV7sNRlgO5SSVPo5jfQopmm9zTq4JT71VxaO32qdcAhisOrhFYG_QLByLNHcBrMgshsI_WwP9rlH2ms=@protonmail.ch>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds missing DT-bindings document for Everest ES8316.
 
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
----
- .../bindings/sound/everest,es8316.txt         | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/everest,es8316.txt
+--BXVAT5kNtrzKuDFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.txt b/Documentation/devicetree/bindings/sound/everest,es8316.txt
-new file mode 100644
-index 000000000000..aefcff9c48a2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/everest,es8316.txt
-@@ -0,0 +1,20 @@
-+Everest ES8316 audio CODEC
-+
-+This device supports both I2C and SPI.
-+
-+Required properties:
-+
-+  - compatible  : should be "everest,es8316"
-+  - reg : the I2C address of the device for I2C
-+  - clocks : a list of phandle, should contain entries for clock-names
-+  - clock-names : should include as follows:
-+         "mclk" : master clock (MCLK) of the device
-+
-+Example:
-+
-+es8316: codec@11 {
-+	compatible = "everest,es8316";
-+	reg = <0x11>;
-+	clocks = <&clks 10>;
-+	clock-names = "mclk";
-+};
--- 
-2.23.0.rc1
 
+> It would be possible to call clk_get_rate() unconditionally but
+> there's usually no need, thus the ternary. Are you in favor of that
+> though?
+
+I like Geert's suggestion. Even if it is "usually" not needed, I think
+it is better to be always proper. This is not a hot code path.
+
+
+--BXVAT5kNtrzKuDFl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1oDIoACgkQFA3kzBSg
+KbbqQxAAkEIlIUR/pH7ns6rpMdSMyadvSmUCzGCB0JMIOOCsQvvEg5jdC3cP+9+x
+p2ynHXyxOVKmMPGy6zKeGfv2AgMoa6rCGnDSX7v1Yuj2vLC6y+a+dkw3dZILXvtQ
+15aAGYOpGNqMqWYyuj3O7Q/AELjh7oDYbovJyqL19pQd7SdFpJ3BEPwdbSMgPT+L
+dU5fqll6UvpstB+U1S6m5wBLOnNkCUBciIPoTvjC/YOde8jbJEWgTgnlH0ZDvZnx
+lX63Yigqn/jLgUG2XMV7E7VzLhH/CUFGNFNBn7RqoPbqO20nPrIIrbd19WmXwlkU
+piEh+mEPtLpzIoUXJu28x8MUQiQyOu9OhlbePBQij2Vjhh+ki98LJF2qbHajCBIt
+rnTO9BOtZjlt4UnHbe3sDnnHQxdu0zGeXdI++ieUqZ+GqJQvBKwdoiIWqVvs3Yc9
+9ccDwUARByNOTJf3icbzMnZWfnP3jiTgRWeggJM/n+4s1l0ds89QS2cyGCDTfZnt
+jAjw2pUz3Xwz5aQ23/FSBbNtQF9IRvH4rWDYeAuDU4Ek2hBd0hT/HpK9R1XNyqFe
+KnnadHFlPGJiWeEBLjmYS6wQlMYPoLpa8aw5LjgpQE1NNfGMVoYG9pEnJtlLrFm+
+rQt1gbAeAWqrNKKu7R/G9inj85a67I0pxNZxGnGrGHHbputXWkA=
+=KOsZ
+-----END PGP SIGNATURE-----
+
+--BXVAT5kNtrzKuDFl--
