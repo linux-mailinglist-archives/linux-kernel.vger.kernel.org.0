@@ -2,79 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7D6DA1930
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06050A193F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:48:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfH2LrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:47:01 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3956 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727014AbfH2LrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:47:01 -0400
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 2BEB912594CBE9FD61FD;
-        Thu, 29 Aug 2019 19:46:59 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 29 Aug 2019 19:46:58 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Thu, 29 Aug 2019 19:46:57 +0800
-Date:   Thu, 29 Aug 2019 19:46:11 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Dave Chinner" <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v6 04/24] erofs: add raw address_space operations
-Message-ID: <20190829114610.GF64893@architecture4>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-5-gaoxiang25@huawei.com>
- <20190829101721.GD20598@infradead.org>
+        id S1727474AbfH2LsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:48:24 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:37757 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbfH2LsY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:48:24 -0400
+Received: by mail-vs1-f65.google.com with SMTP id q188so2203565vsa.4
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 04:48:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s/UJems08T/e/rVWLn74/4KxusO+sjRC5wAOV+EnKhk=;
+        b=H+j5n2T6jtb6MwAMzHofdA21fuRGODOcXiTYmfqYykH8AI8+EWEVZdRtn93zzmiATq
+         udC9h4dfqPtFy2IqgaU05NHnCFEXDH1Cfuvb/QQKnuznz5UZkCJCr+JJrgGev2bGJ0rA
+         rzHXDijZvxRtWIpJyvYl+HQ/5KWOoMT81qH9fdtCrz/oa50tdIr7mv1iBHjWOGxwKJzS
+         MoM+Srm0rNbZhmZBpDzhZHgILudvPlkE19MwVGrNyjs+c9Sg/6PHgDbuQc9SeyWqOoJr
+         uoewzCmcxNaM/N8FHAMfrnqhoLFzAVGctOE7Fz7qhFamwDsyjaiIRzJJCtIiv9miVXR+
+         z65g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s/UJems08T/e/rVWLn74/4KxusO+sjRC5wAOV+EnKhk=;
+        b=Z4rakuezC+mmUGd2mY7PZkOUoIBp9RpsJ6D1LLas04jLxNY2rqR5QlCgrjs240qZLA
+         tj1Hpri9/DO98/L5kfwKDENF/5cMbhaH71OgkVvyGnxvso0/Rvx388dhEAwGB58a+91J
+         mFchagn9vxv1RzXf+C2S7OH80KbEu7Vz0vDNfTlelvewRWpDeymRtd/UpiK35iVgaX+4
+         7arcdOVKGPkhceoOVIsN8UvT3IRjImcReCSgGtHPTHEFTRgLCkBgQ/1qNOePznvEYg93
+         u2f4In9foPMqvgkGRAKwosKyTjiC70xwaBEhYCro0fiF8P2z8l3E1RS6UdYOz28zWXv1
+         cjRQ==
+X-Gm-Message-State: APjAAAU+Ltab2EeGqvB2SWSX0kx4gsdW2cOQtx8g7vimz3VzlLID/AE1
+        S/aw8SWyqvTE/1+ScCXOHHbOTfvLRYbqF6yfmAG9qA==
+X-Google-Smtp-Source: APXvYqyg1IFDOT7WWebRNY7RJ6UtG+ER8Z41eJQOQjNZsUNVdCjdRynrBHgIgliKUfU02boEkrdRE+zsaPUvVJY6MPU=
+X-Received: by 2002:a67:347:: with SMTP id 68mr5223627vsd.35.1567079303139;
+ Thu, 29 Aug 2019 04:48:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190829101721.GD20598@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme709-chm.china.huawei.com (10.1.199.105) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+References: <20190829104928.27404-1-yamada.masahiro@socionext.com>
+In-Reply-To: <20190829104928.27404-1-yamada.masahiro@socionext.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 29 Aug 2019 13:47:47 +0200
+Message-ID: <CAPDyKFooFQgBgK3N1Ob9rsT_7-5kqC9i7PeMxkkeAbnDP+Fwnw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mmc: sdhci-cadence: enable v4_mode to fix ADMA 64-bit addressing
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Piotr Sroka <piotrs@cadence.com>,
+        "# 4.0+" <stable@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On Thu, 29 Aug 2019 at 12:49, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> The IP datasheet says this controller is compatible with SD Host
+> Specification Version v4.00.
+>
+> As it turned out, the ADMA of this IP does not work with 64-bit mode
+> when it is in the Version 3.00 compatible mode; it understands the
+> old 64-bit descriptor table (as defined in SDHCI v2), but the ADMA
+> System Address Register (SDHCI_ADMA_ADDRESS) cannot point to the
+> 64-bit address.
+>
+> I noticed this issue only after commit bd2e75633c80 ("dma-contiguous:
+> use fallback alloc_pages for single pages"). Prior to that commit,
+> dma_set_mask_and_coherent() returned the dma address that fits in
+> 32-bit range, at least for the default arm64 configuration
+> (arch/arm64/configs/defconfig). Now the host->adma_addr exceeds the
+> 32-bit limit, causing the real problem for the Socionext SoCs.
+> (As a side-note, I was also able to reproduce the issue for older
+> kernels by turning off CONFIG_DMA_CMA.)
+>
+> Call sdhci_enable_v4_mode() to fix this.
+>
+> I think it is better to back-port this, but only possible for v4.20+.
+>
+> When this driver was merged (v4.10), the v4 mode support did not exist.
+> It was added by commit b3f80b434f72 ("mmc: sdhci: Add sd host v4 mode")
+> i.e. v4.20.
+>
+> Cc: <stable@vger.kernel.org> # v4.20+
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Thu, Aug 29, 2019 at 03:17:21AM -0700, Christoph Hellwig wrote:
-> The actual address_space operations seem to largely duplicate
-> the iomap versions.  Please use those instead.  Also I don't think
-> any new file system should write up ->bmap these days.
+Applied for fixes, by adding below tag, thanks!
 
-iomap doesn't support tail-end packing inline data till now,
-I think Chao and I told you and Andreas before [1].
+Fixes: b3f80b434f72 ("mmc: sdhci: Add sd host v4 mode")
 
-Since EROFS keeps a self-contained driver for now, we will use
-iomap if it supports tail-end packing inline data later.
+Kind regards
+Uffe
 
-[1] https://lore.kernel.org/linux-fsdevel/90fca1c4-c142-992d-ebf3-03c8017f95b7@huawei.com/
-
-Thanks,
-Gao Xiang
-
+> ---
+>
+>  drivers/mmc/host/sdhci-cadence.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+> index 163d1cf4367e..44139fceac24 100644
+> --- a/drivers/mmc/host/sdhci-cadence.c
+> +++ b/drivers/mmc/host/sdhci-cadence.c
+> @@ -369,6 +369,7 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
+>         host->mmc_host_ops.execute_tuning = sdhci_cdns_execute_tuning;
+>         host->mmc_host_ops.hs400_enhanced_strobe =
+>                                 sdhci_cdns_hs400_enhanced_strobe;
+> +       sdhci_enable_v4_mode(host);
+>
+>         sdhci_get_of_property(pdev);
+>
+> --
+> 2.17.1
+>
