@@ -2,374 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07353A2070
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 97539A2077
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728070AbfH2QNd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:13:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47114 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727008AbfH2QN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:13:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7225CAFF9;
-        Thu, 29 Aug 2019 16:13:28 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Evgeniy Polyakov <zbr@ioremap.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] w1: add DS2501, DS2502, DS2505 EPROM device driver
-Date:   Thu, 29 Aug 2019 18:13:16 +0200
-Message-Id: <20190829161317.10618-3-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20190829161317.10618-1-tbogendoerfer@suse.de>
-References: <20190829161317.10618-1-tbogendoerfer@suse.de>
+        id S1728173AbfH2QOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:14:17 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41350 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727810AbfH2QOR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 12:14:17 -0400
+Received: by mail-qt1-f193.google.com with SMTP id i4so4270568qtj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 09:14:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HdsbyusGiMRkq6kSVVJ1Tni1iJ0D5Lbbif3gwg/K05I=;
+        b=rwH2W+E9cpx2iUbbR7UKUGi/jJ6G+nWXtKfJWQvfIh0dWzORi2lxzSjWDUtlwhjDDt
+         u0Z+A9YIB1GzPOnTHPPY3i7BDquPMoJs4nu+mpurcn+a10tVRAsAMHCb8KLywlqlEUq8
+         o1HgP+Z2B3/laH1886ucMyl55HHZBKdx+nrNEpFCC40oz37OGfIiRkeWfqE5xeEQ/PH1
+         /+V3V/fVNEAUTMK0aajSgJffJLVB0iQx2TviNLCuyUoQ5F7+aBqM9iKiKVfGBs9l+z/S
+         zqP5ijZOw6SuO5gbwOZfiO3zywp9PewKIkRlQ7eftXdJTauLMWQpmMdJrLXYEh5ghwmV
+         VIDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HdsbyusGiMRkq6kSVVJ1Tni1iJ0D5Lbbif3gwg/K05I=;
+        b=BUgdt4pHaaVdKs2jbb642KeNGr9AUP9QA8WcnT+gwWm5kei4mrv3/FVfy1RMVJL0CC
+         H4HfptUjuzYBSWvXsxFVOUdLmM8CwJilsPmkB9Kh8vAMjJtDkmVyNaY6FAQPBapbAwH6
+         Qne29lqy1kGYp9PPIjRxJWHqqDVxn+p+9bosi31dLzSH1362NMr0OnASJB16WlUR7Pw3
+         tWR/chf5W0kQc8AO1czZf9p7rs2ZW3QKOh7HKmPO/FV+s/KXHK83YwUJnSE95AmF1QuI
+         MGs4H1PN0yhaBtq/SYYXKHGRxwHWZQPck5zqRGiufZdcuGvVh9055tK76kJAEa1rkiKg
+         g7Zg==
+X-Gm-Message-State: APjAAAXC0MH5a3aPqQYBRpkAUUYcaexKb3VuoXzAF67q4S3J6jfBlehL
+        PhqtnC68vrsq9Z9rqM/+uKZ++OOhJWpfeTatGu5wrA==
+X-Google-Smtp-Source: APXvYqzj6FfEUctPCaUrep4Pr2nFnlVE+D9Q0UCJJ9LCNcByKgj2f+9/1JxEaBfdMrP14mUMcPjz6vkLNAQTrT9ghSI=
+X-Received: by 2002:ac8:4612:: with SMTP id p18mr10715186qtn.49.1567095255854;
+ Thu, 29 Aug 2019 09:14:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1566907161.git.amit.kucheria@linaro.org>
+ <93fa782bde9c66845993ff883532b3f1f02d99e4.1566907161.git.amit.kucheria@linaro.org>
+ <20190829140459.szauzhennltrwvg4@holly.lan> <CAHLCerNuycWTLmCvdffM0=GdG7UZ7zNoj0Jb0CeLTULzVmfSJw@mail.gmail.com>
+ <20190829151912.z6cflsaox2qnmqxw@holly.lan>
+In-Reply-To: <20190829151912.z6cflsaox2qnmqxw@holly.lan>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Thu, 29 Aug 2019 21:44:04 +0530
+Message-ID: <CAP245DWqbFnKVW9BYCzUMH=Ub+0j=3ycj-=MiPzRRW1Zv5LUmw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/15] drivers: thermal: tsens: Add __func__ identifier
+ to debug statements
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a 1-Wire slave driver to support DS250x EPROM deivces. This
-slave driver attaches the devices to the NVMEM subsystem for
-an easy in-kernel usage.
+On Thu, Aug 29, 2019 at 8:49 PM Daniel Thompson
+<daniel.thompson@linaro.org> wrote:
+>
+> On Thu, Aug 29, 2019 at 07:58:45PM +0530, Amit Kucheria wrote:
+> > On Thu, Aug 29, 2019 at 7:35 PM Daniel Thompson
+> > <daniel.thompson@linaro.org> wrote:
+> > >
+> > > On Tue, Aug 27, 2019 at 05:43:59PM +0530, Amit Kucheria wrote:
+> > > > Printing the function name when enabling debugging makes logs easier to
+> > > > read.
+> > > >
+> > > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > > Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+> > > > Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > >
+> > > This should need to be manually added at each call site; it is already
+> > > built into the logging system (the f flag for dynamic debug)?
+> >
+> > I assume you meant "shouldn't".
+>
+> Quite so. Sorry about that.
+>
+> > I haven't yet integrated dynamic debug into my daily workflow.
+> >
+> > Last time I looked at it, it was a bit bothersome to use because I
+> > needed to lookup exact line numbers to trigger useful information. And
+> > those line numbers constantly keep changing as I work on the driver,
+> > so it was a bit painful to script. Not to mention the syntax to frob
+> > the correct files in debugfs to enable this functionality.
+> >
+> > As opposed to this, adding the following to the makefile is so easy. :-)
+> >
+> > CFLAGS_tsens-common.o          := -DDEBUG
+> >
+> > Perhaps I am using it all wrong? How would I go about using dynamic
+> > debug instead of this patch?
+>
+> Throwing dyndbg="file <fname>.c +pf" onto the kernel command line is a
+> good start (+p enables debug level prints, +f causes messages to include
+> the function name).
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
----
- drivers/w1/slaves/Kconfig     |   6 +
- drivers/w1/slaves/Makefile    |   1 +
- drivers/w1/slaves/w1_ds250x.c | 293 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 300 insertions(+)
- create mode 100644 drivers/w1/slaves/w1_ds250x.c
+That's useful to know.
 
-diff --git a/drivers/w1/slaves/Kconfig b/drivers/w1/slaves/Kconfig
-index 37aaad26b373..ebed495b9e69 100644
---- a/drivers/w1/slaves/Kconfig
-+++ b/drivers/w1/slaves/Kconfig
-@@ -101,6 +101,12 @@ config W1_SLAVE_DS2438
- 	  Say Y here if you want to use a 1-wire
- 	  DS2438 Smart Battery Monitor device support
- 
-+config W1_SLAVE_DS250X
-+	tristate "512b/1kb/16kb EPROM family support"
-+	help
-+	  Say Y here if you want to use a 1-wire
-+	  512b/1kb/16kb EPROM family device (DS250x).
-+
- config W1_SLAVE_DS2780
- 	tristate "Dallas 2780 battery monitor chip"
- 	help
-diff --git a/drivers/w1/slaves/Makefile b/drivers/w1/slaves/Makefile
-index eab29f151413..8e9655eaa478 100644
---- a/drivers/w1/slaves/Makefile
-+++ b/drivers/w1/slaves/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_W1_SLAVE_DS2431)	+= w1_ds2431.o
- obj-$(CONFIG_W1_SLAVE_DS2805)	+= w1_ds2805.o
- obj-$(CONFIG_W1_SLAVE_DS2433)	+= w1_ds2433.o
- obj-$(CONFIG_W1_SLAVE_DS2438)	+= w1_ds2438.o
-+obj-$(CONFIG_W1_SLAVE_DS250X)	+= w1_ds250x.o
- obj-$(CONFIG_W1_SLAVE_DS2780)	+= w1_ds2780.o
- obj-$(CONFIG_W1_SLAVE_DS2781)	+= w1_ds2781.o
- obj-$(CONFIG_W1_SLAVE_DS28E04)	+= w1_ds28e04.o
-diff --git a/drivers/w1/slaves/w1_ds250x.c b/drivers/w1/slaves/w1_ds250x.c
-new file mode 100644
-index 000000000000..78da3774bbbe
---- /dev/null
-+++ b/drivers/w1/slaves/w1_ds250x.c
-@@ -0,0 +1,293 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * w1_ds250x.c - w1 family 09/0b/89/91 (DS250x) driver
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/device.h>
-+#include <linux/types.h>
-+#include <linux/delay.h>
-+#include <linux/slab.h>
-+#include <linux/crc16.h>
-+
-+#include <linux/w1.h>
-+#include <linux/nvmem-provider.h>
-+
-+#define W1_DS2501_UNW_FAMILY    0x91
-+#define W1_DS2501_SIZE          64
-+
-+#define W1_DS2502_FAMILY        0x09
-+#define W1_DS2502_UNW_FAMILY    0x89
-+#define W1_DS2502_SIZE          128
-+
-+#define W1_DS2505_FAMILY	0x0b
-+#define W1_DS2505_SIZE		2048
-+
-+#define W1_PAGE_SIZE		32
-+
-+#define W1_EXT_READ_MEMORY	0xA5
-+#define W1_READ_DATA_CRC        0xC3
-+
-+#define OFF2PG(off)	((off) / W1_PAGE_SIZE)
-+
-+#define CRC16_INIT		0
-+#define CRC16_VALID		0xb001
-+
-+struct w1_eprom_data {
-+	size_t size;
-+	int (*read)(struct w1_slave *sl, int pageno);
-+	u8 eprom[W1_DS2505_SIZE];
-+	DECLARE_BITMAP(page_present, W1_DS2505_SIZE / W1_PAGE_SIZE);
-+	char nvmem_name[64];
-+};
-+
-+static int w1_ds2502_read_page(struct w1_slave *sl, int pageno)
-+{
-+	struct w1_eprom_data *data = sl->family_data;
-+	int pgoff = pageno * W1_PAGE_SIZE;
-+	int ret = -EIO;
-+	u8 buf[3];
-+	u8 crc8;
-+
-+	if (test_bit(pageno, data->page_present))
-+		return 0; /* page already present */
-+
-+	mutex_lock(&sl->master->bus_mutex);
-+
-+	if (w1_reset_select_slave(sl))
-+		goto err;
-+
-+	buf[0] = W1_READ_DATA_CRC;
-+	buf[1] = pgoff & 0xff;
-+	buf[2] = pgoff >> 8;
-+	w1_write_block(sl->master, buf, 3);
-+
-+	crc8 = w1_read_8(sl->master);
-+	if (w1_calc_crc8(buf, 3) != crc8)
-+		goto err;
-+
-+	w1_read_block(sl->master, &data->eprom[pgoff], W1_PAGE_SIZE);
-+
-+	crc8 = w1_read_8(sl->master);
-+	if (w1_calc_crc8(&data->eprom[pgoff], W1_PAGE_SIZE) != crc8)
-+		goto err;
-+
-+	set_bit(pageno, data->page_present); /* mark page present */
-+	ret = 0;
-+err:
-+	mutex_unlock(&sl->master->bus_mutex);
-+	return ret;
-+}
-+
-+static int w1_ds2505_read_page(struct w1_slave *sl, int pageno)
-+{
-+	struct w1_eprom_data *data = sl->family_data;
-+	int redir_retries = 16;
-+	int pgoff, epoff;
-+	int ret = -EIO;
-+	u8 buf[6];
-+	u8 redir;
-+	u16 crc;
-+
-+	if (test_bit(pageno, data->page_present))
-+		return 0; /* page already present */
-+
-+	epoff = pgoff = pageno * W1_PAGE_SIZE;
-+	mutex_lock(&sl->master->bus_mutex);
-+
-+retry:
-+	if (w1_reset_select_slave(sl))
-+		goto err;
-+
-+	buf[0] = W1_EXT_READ_MEMORY;
-+	buf[1] = pgoff & 0xff;
-+	buf[2] = pgoff >> 8;
-+	w1_write_block(sl->master, buf, 3);
-+	w1_read_block(sl->master, buf + 3, 3); /* redir, crc16 */
-+	redir = buf[3];
-+	crc = crc16(CRC16_INIT, buf, 6);
-+
-+	if (crc != CRC16_VALID)
-+		goto err;
-+
-+
-+	if (redir != 0xff) {
-+		redir_retries--;
-+		if (redir_retries < 0)
-+			goto err;
-+
-+		pgoff = (redir ^ 0xff) * W1_PAGE_SIZE;
-+		goto retry;
-+	}
-+
-+	w1_read_block(sl->master, &data->eprom[epoff], W1_PAGE_SIZE);
-+	w1_read_block(sl->master, buf, 2); /* crc16 */
-+	crc = crc16(CRC16_INIT, &data->eprom[epoff], W1_PAGE_SIZE);
-+	crc = crc16(crc, buf, 2);
-+
-+	if (crc != CRC16_VALID)
-+		goto err;
-+
-+	set_bit(pageno, data->page_present);
-+	ret = 0;
-+err:
-+	mutex_unlock(&sl->master->bus_mutex);
-+	return ret;
-+}
-+
-+static int w1_nvmem_read(void *priv, unsigned int off, void *buf, size_t count)
-+{
-+	struct w1_slave *sl = priv;
-+	struct w1_eprom_data *data = sl->family_data;
-+	size_t eprom_size = data->size;
-+	int ret;
-+	int i;
-+
-+	if (off > eprom_size)
-+		return -EINVAL;
-+
-+	if ((off + count) > eprom_size)
-+		count = eprom_size - off;
-+
-+	i = OFF2PG(off);
-+	do {
-+		ret = data->read(sl, i++);
-+		if (ret < 0)
-+			return ret;
-+	} while (i < OFF2PG(off + count));
-+
-+	memcpy(buf, &data->eprom[off], count);
-+	return 0;
-+}
-+
-+static int w1_eprom_add_slave(struct w1_slave *sl)
-+{
-+	struct w1_eprom_data *data;
-+	struct nvmem_device *nvmem;
-+	struct nvmem_config nvmem_cfg = {
-+		.dev = &sl->dev,
-+		.reg_read = w1_nvmem_read,
-+		.type = NVMEM_TYPE_OTP,
-+		.read_only = true,
-+		.word_size = 1,
-+		.priv = sl,
-+		.id = -1
-+	};
-+
-+	data = devm_kzalloc(&sl->dev, sizeof(struct w1_eprom_data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	sl->family_data = data;
-+	switch (sl->family->fid) {
-+	case W1_DS2501_UNW_FAMILY:
-+		data->size = W1_DS2501_SIZE;
-+		data->read = w1_ds2502_read_page;
-+		break;
-+	case W1_DS2502_FAMILY:
-+	case W1_DS2502_UNW_FAMILY:
-+		data->size = W1_DS2502_SIZE;
-+		data->read = w1_ds2502_read_page;
-+		break;
-+	case W1_DS2505_FAMILY:
-+		data->size = W1_DS2505_SIZE;
-+		data->read = w1_ds2505_read_page;
-+		break;
-+	}
-+
-+	if (sl->master->bus_master->dev_id)
-+		snprintf(data->nvmem_name, sizeof(data->nvmem_name),
-+			 "%s-%02x-%012llx",
-+			 sl->master->bus_master->dev_id, sl->reg_num.family,
-+			 (unsigned long long)sl->reg_num.id);
-+	else
-+		snprintf(data->nvmem_name, sizeof(data->nvmem_name),
-+			 "%02x-%012llx",
-+			 sl->reg_num.family,
-+			 (unsigned long long)sl->reg_num.id);
-+
-+	nvmem_cfg.name = data->nvmem_name;
-+	nvmem_cfg.size = data->size;
-+
-+	nvmem = devm_nvmem_register(&sl->dev, &nvmem_cfg);
-+	if (IS_ERR(nvmem))
-+		return PTR_ERR(nvmem);
-+
-+	return 0;
-+}
-+
-+static struct w1_family_ops w1_eprom_fops = {
-+	.add_slave	= w1_eprom_add_slave,
-+};
-+
-+static struct w1_family w1_family_09 = {
-+	.fid = W1_DS2502_FAMILY,
-+	.fops = &w1_eprom_fops,
-+};
-+
-+static struct w1_family w1_family_0b = {
-+	.fid = W1_DS2505_FAMILY,
-+	.fops = &w1_eprom_fops,
-+};
-+
-+static struct w1_family w1_family_89 = {
-+	.fid = W1_DS2502_UNW_FAMILY,
-+	.fops = &w1_eprom_fops,
-+};
-+
-+static struct w1_family w1_family_91 = {
-+	.fid = W1_DS2501_UNW_FAMILY,
-+	.fops = &w1_eprom_fops,
-+};
-+
-+static int __init w1_ds250x_init(void)
-+{
-+	int err;
-+
-+	err = w1_register_family(&w1_family_09);
-+	if (err)
-+		return err;
-+
-+	err = w1_register_family(&w1_family_0b);
-+	if (err)
-+		goto err_0b;
-+
-+	err = w1_register_family(&w1_family_89);
-+	if (err)
-+		goto err_89;
-+
-+	err = w1_register_family(&w1_family_91);
-+	if (err)
-+		goto err_91;
-+
-+	return 0;
-+
-+err_91:
-+	w1_unregister_family(&w1_family_89);
-+err_89:
-+	w1_unregister_family(&w1_family_0b);
-+err_0b:
-+	w1_unregister_family(&w1_family_09);
-+	return err;
-+}
-+
-+static void __exit w1_ds250x_exit(void)
-+{
-+	w1_unregister_family(&w1_family_09);
-+	w1_unregister_family(&w1_family_0b);
-+	w1_unregister_family(&w1_family_89);
-+	w1_unregister_family(&w1_family_91);
-+}
-+
-+module_init(w1_ds250x_init);
-+module_exit(w1_ds250x_exit);
-+
-+MODULE_AUTHOR("Thomas Bogendoerfer <tbogendoerfe@suse.de>");
-+MODULE_DESCRIPTION("w1 family driver for DS250x Add Only Memory");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("w1-family-" __stringify(W1_DS2502_FAMILY));
-+MODULE_ALIAS("w1-family-" __stringify(W1_DS2505_FAMILY));
-+MODULE_ALIAS("w1-family-" __stringify(W1_DS2501_UNW_FAMILY));
-+MODULE_ALIAS("w1-family-" __stringify(W1_DS2502_UNW_FAMILY));
--- 
-2.13.7
+$ git grep __func__ | wc -l
+30914
 
+Want to send some patches? :-)
+
+> When the C files map to module names (whether the modules are actually
+> built-in or not) then <module>.dyndbg=+pf is a bit cleaner and allows
+> you to debug the whole of a driver without how it is decomposed into
+> files.
+
+And if changing the kernel cmdline options isn't possible or is inconvenient?
+
+> There are (many) other controls to play with[1] but the above should be
+> sufficient to simulate -DDEBUG .
+
+The "hard" bit is explicitly poking the line number in a file to
+activate a paricular pr_dbg statement. Even if I scripted it, those
+lines numbers keep changing in an actively developed driver.
+
+Somehow, I've always felt dyndbg was more useful to debug a production
+system where recompiling the kernel wasn't an option e.g. reporting an
+issue back to a distro-kernel vendor.
+
+> Daniel.
+>
+> [1]
+> https://www.kernel.org/doc/html/latest/admin-guide/dynamic-debug-howto.html
