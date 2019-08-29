@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BFF63A0F2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 03:50:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66512A0F1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 03:48:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbfH2BtB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 21:49:01 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45669 "EHLO
+        id S1727478AbfH2Bsi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 21:48:38 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:54558 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726982AbfH2Bsd (ORCPT
+        with ESMTP id S1727285AbfH2Bsg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 21:48:33 -0400
-X-UUID: ab46a67059f94e19b69c922bbe2527da-20190829
-X-UUID: ab46a67059f94e19b69c922bbe2527da-20190829
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        Wed, 28 Aug 2019 21:48:36 -0400
+X-UUID: 048fa878a4ba460ba9c01c7fee2cc37a-20190829
+X-UUID: 048fa878a4ba460ba9c01c7fee2cc37a-20190829
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 790020012; Thu, 29 Aug 2019 09:48:26 +0800
+        with ESMTP id 860642394; Thu, 29 Aug 2019 09:48:26 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Thu, 29 Aug 2019 09:48:32 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -36,9 +36,9 @@ CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
         Houlong Wei <houlong.wei@mediatek.com>,
         Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v14 06/10] mailbox: mediatek: cmdq: clear the event in cmdq initial flow
-Date:   Thu, 29 Aug 2019 09:48:12 +0800
-Message-ID: <20190829014817.25482-7-bibby.hsieh@mediatek.com>
+Subject: [PATCH v14 06/10] soc: mediatek: cmdq: clear the event in cmdq initial flow
+Date:   Thu, 29 Aug 2019 09:48:13 +0800
+Message-ID: <20190829014817.25482-8-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190829014817.25482-1-bibby.hsieh@mediatek.com>
 References: <20190829014817.25482-1-bibby.hsieh@mediatek.com>
@@ -64,12 +64,11 @@ Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 ---
  drivers/mailbox/mtk-cmdq-mailbox.c       | 5 +++++
- include/linux/mailbox/mtk-cmdq-mailbox.h | 3 +++
+ include/linux/mailbox/mtk-cmdq-mailbox.h | 2 ++
  include/linux/soc/mediatek/mtk-cmdq.h    | 3 ---
- 3 files changed, 8 insertions(+), 3 deletions(-)
+ 3 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
 index 69daaadc3a5f..9a6ce9f5a7db 100644
@@ -97,19 +96,18 @@ index 69daaadc3a5f..9a6ce9f5a7db 100644
  }
  
 diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
-index ccb73422c2fa..e6f54ef6698b 100644
+index ccb73422c2fa..911475da7a53 100644
 --- a/include/linux/mailbox/mtk-cmdq-mailbox.h
 +++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
-@@ -20,6 +20,9 @@
+@@ -19,6 +19,8 @@
+ #define CMDQ_WFE_UPDATE			BIT(31)
  #define CMDQ_WFE_WAIT			BIT(15)
  #define CMDQ_WFE_WAIT_VALUE		0x1
- 
 +/** cmdq event maximum */
 +#define CMDQ_MAX_EVENT			0x3ff
-+
+ 
  /*
   * CMDQ_CODE_MASK:
-  *   set write mask
 diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
 index f3ae45d02e80..9618debb9ceb 100644
 --- a/include/linux/soc/mediatek/mtk-cmdq.h
