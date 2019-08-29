@@ -2,33 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD62CA1840
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5137A183B
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:21:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728459AbfH2LUU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:20:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:42806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbfH2LTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:19:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E194A15AD;
-        Thu, 29 Aug 2019 04:19:14 -0700 (PDT)
-Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 546C63F59C;
-        Thu, 29 Aug 2019 04:19:13 -0700 (PDT)
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Cc:     catalin.marinas@arm.com, will@kernel.org, paul.burton@mips.com,
-        tglx@linutronix.de, salyzyn@android.com, 0x7f454c46@gmail.com,
-        luto@kernel.org
-Subject: [PATCH 4/7] lib: vdso: Remove VDSO_HAS_32BIT_FALLBACK
-Date:   Thu, 29 Aug 2019 12:18:40 +0100
-Message-Id: <20190829111843.41003-5-vincenzo.frascino@arm.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190829111843.41003-1-vincenzo.frascino@arm.com>
-References: <20190829111843.41003-1-vincenzo.frascino@arm.com>
+        id S1728445AbfH2LUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:20:04 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:43768 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728176AbfH2LTT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:19:19 -0400
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from parav@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 29 Aug 2019 14:19:17 +0300
+Received: from sw-mtx-036.mtx.labs.mlnx (sw-mtx-036.mtx.labs.mlnx [10.12.150.149])
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id x7TBJ8v4020002;
+        Thu, 29 Aug 2019 14:19:15 +0300
+From:   Parav Pandit <parav@mellanox.com>
+To:     alex.williamson@redhat.com, jiri@mellanox.com,
+        kwankhede@nvidia.com, cohuck@redhat.com, davem@davemloft.net
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Parav Pandit <parav@mellanox.com>
+Subject: [PATCH v2 3/6] mdev: Expose mdev alias in sysfs tree
+Date:   Thu, 29 Aug 2019 06:19:01 -0500
+Message-Id: <20190829111904.16042-4-parav@mellanox.com>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190829111904.16042-1-parav@mellanox.com>
+References: <20190826204119.54386-1-parav@mellanox.com>
+ <20190829111904.16042-1-parav@mellanox.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -36,58 +36,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VDSO_HAS_32BIT_FALLBACK was introduced to address a regression which
-caused seccomp to deny access to the applications to clock_gettime64()
-and clock_getres64() because they are not enabled in the existing
-filters.
+Expose the optional alias for an mdev device as a sysfs attribute.
+This way, userspace tools such as udev may make use of the alias, for
+example to create a netdevice name for the mdev.
 
-The purpose of VDSO_HAS_32BIT_FALLBACK was to simplify the conditional
-implementation of __cvdso_clock_get*time32() variants.
+Signed-off-by: Parav Pandit <parav@mellanox.com>
 
-Now that all the architectures that support the generic vDSO library
-have been converted to support the 32 bit fallbacks the conditional
-can be removed.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-CC: Andy Lutomirski <luto@kernel.org>
-References: c60a32ea4f45 ("lib/vdso/32: Provide legacy syscall fallbacks")
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 ---
- lib/vdso/gettimeofday.c | 10 ----------
- 1 file changed, 10 deletions(-)
+Changelog:
+v0->v1:
+ - Addressed comments from Cornelia Huck
+ - Updated commit description
+---
+ drivers/vfio/mdev/mdev_sysfs.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index a86e89e6dedc..2c4b311c226d 100644
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -126,13 +126,8 @@ __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
+diff --git a/drivers/vfio/mdev/mdev_sysfs.c b/drivers/vfio/mdev/mdev_sysfs.c
+index 43afe0e80b76..59f4e3cc5233 100644
+--- a/drivers/vfio/mdev/mdev_sysfs.c
++++ b/drivers/vfio/mdev/mdev_sysfs.c
+@@ -246,7 +246,20 @@ static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
  
- 	ret = __cvdso_clock_gettime_common(clock, &ts);
+ static DEVICE_ATTR_WO(remove);
  
--#ifdef VDSO_HAS_32BIT_FALLBACK
- 	if (unlikely(ret))
- 		return clock_gettime32_fallback(clock, res);
--#else
--	if (unlikely(ret))
--		ret = clock_gettime_fallback(clock, &ts);
--#endif
- 
- 	if (likely(!ret)) {
- 		res->tv_sec = ts.tv_sec;
-@@ -240,13 +235,8 @@ __cvdso_clock_getres_time32(clockid_t clock, struct old_timespec32 *res)
- 
- 	ret = __cvdso_clock_getres_common(clock, &ts);
- 
--#ifdef VDSO_HAS_32BIT_FALLBACK
- 	if (unlikely(ret))
- 		return clock_getres32_fallback(clock, res);
--#else
--	if (unlikely(ret))
--		ret = clock_getres_fallback(clock, &ts);
--#endif
- 
- 	if (likely(!ret)) {
- 		res->tv_sec = ts.tv_sec;
++static ssize_t alias_show(struct device *device,
++			  struct device_attribute *attr, char *buf)
++{
++	struct mdev_device *dev = mdev_from_dev(device);
++
++	if (!dev->alias)
++		return -EOPNOTSUPP;
++
++	return sprintf(buf, "%s\n", dev->alias);
++}
++static DEVICE_ATTR_RO(alias);
++
+ static const struct attribute *mdev_device_attrs[] = {
++	&dev_attr_alias.attr,
+ 	&dev_attr_remove.attr,
+ 	NULL,
+ };
 -- 
-2.23.0
+2.19.2
 
