@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D12D7A1EFE
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84F4CA1EF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:25:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfH2PXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:23:48 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34266 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbfH2PXr (ORCPT
+        id S1727973AbfH2PXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:23:52 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35404 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727161AbfH2PXs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:23:47 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y135so2321344wmc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 08:23:46 -0700 (PDT)
+        Thu, 29 Aug 2019 11:23:48 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g7so3890267wrx.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 08:23:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tYP9GFJZ0QFKzqxWJbg4GUUkUmcZCZkrYKJIkvHiNWk=;
-        b=Fbztu1QrcR5B3nPkxILJF/td8lbixGBXFQcrN2ejlLKJwYhvY7u+cqiw9cOtcamT4T
-         FEOsOl1ssHSc+4Z4HGmWWG/vrJbliAUSAq5H5A9p8VGYi2Ov6cN7Reurg/BPYAfB8hnG
-         FblMIm20VEUPX7bzpp78oGqTUReqVFr0Ucx8bgBIRpGbVP6ZhphES1E4noOfv97pTbUC
-         PntIXhknVINUqZDfU0u4sh0d5sbcvuAOhWXTXwFVvgcjtk+lI/0031f6sfpUe7HCR5iT
-         KsdFLGC7EsjbpD4swscN/sNTwQ8wVBkhID4sgl/OeYTX0cUKD1AIz+i4VEvkfoUCzvMf
-         ypWg==
+        bh=7s8XMIK1ADDSwZv8wtPDqa4O7M6uLq+I4bE0RIGmcEU=;
+        b=lm+R47r8Kmpg0fcSiVVqBAUz5TJdRxQtY69fXCLqNtPrai2qyCdQVHuBqsuHh64jJ7
+         Tjkz2dTkfZqSmobqpCNEsabD3L1OE5q6yZOduPppAVV+oFR25R+0c2b32fZ2VS4j7moX
+         fu6SRno4oB4Mve7wLphj9nCGwuP8jKyOrQeQyYDwpJfMb3w8yW/fcGzMFi9PMtXEMgU8
+         Yn27dcCkk+U99x7NqpXRP49LufDMrsil4ZgqUPtyR7m+/AcWOkPGM+vMUsddAYi/Fgeh
+         5TCnsPLetVnYNjMGEA7gwD8FOxUqeM/g/IWa6F536foYkG6xFO0UKWa8lPN/QWX2+w/0
+         zY+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tYP9GFJZ0QFKzqxWJbg4GUUkUmcZCZkrYKJIkvHiNWk=;
-        b=aEcs41Fv76VxLlXP6HDIzFlJIsgS27yPpJxd4lG0yoSCmWZyM9nULU+K5/+VfVr+qo
-         T0Dhs0egQyOytKhmNE8CSD1T52db0G55aAH3cG2hgE5wIkfzAyxKR3oBePpW0dRdSDus
-         pAtkGMkgUwPFrkrO0dV06QDVRAIc3QuXmkYS2PSQPGl3tDYpWuyhQSgAEjD0BWR/U1pm
-         vSNoacMfuhVYLFA4/4T+QkRrazvUXh/0tLVTv/cVqn8u4S8H4dKb3W4qcOpLjnq74vUb
-         JgoP7iYyQpRbnAliUmLcARbblcbnu0GhRMpDNvCAmc5hmOmFx3GIp45AhD2oy/v2sd1Z
-         5isw==
-X-Gm-Message-State: APjAAAUq5soGsG60kU28QMXqS071tu6whv2DUgTG0CtUySiRzhgExVr/
-        7eAnKs7BZ8zWjM2UWyCOqiJZdg==
-X-Google-Smtp-Source: APXvYqxN5V7NJodBKWG/AvkjSt+uzMe3XdB0D2IodxjvrLvBBQ9uzK+GDDMvesObgwhQRev+LGSArg==
-X-Received: by 2002:a05:600c:292:: with SMTP id 18mr12560799wmk.51.1567092225839;
-        Thu, 29 Aug 2019 08:23:45 -0700 (PDT)
+        bh=7s8XMIK1ADDSwZv8wtPDqa4O7M6uLq+I4bE0RIGmcEU=;
+        b=oM7xZbeCksKjWN6e2h1vcynRsg5vucaJ76kndl84psHqOnU0/rPD1HxBcQ/jIdk/ws
+         zz+NzFmCdULfw0gJ3IDEQCBPL/M2itvGWY01lBvnbDVFdJl6rjAvuj7z2C2BWODetwA3
+         2r2gxRO9OKxXCOj19JtV8L0hLiMsuL8WL36W7qQJYqajlqYqRtf+OAsp3PYuXyDMTTeW
+         RzJMDVXv55iq3oZ4gpU6ZzCumB/8OiPXPva5YLnrsV2yI1EAQMVjAddw/y+Uga9yMmS7
+         tdE+ki6/PY3AJ06jil2GtbsaT3+0WXnDNukGy35Zac2PyPZIb5Ou9cYKCKabrEYP46PT
+         kFqQ==
+X-Gm-Message-State: APjAAAVkKd4tn0rQPtWWsglbuCnupM7NsSFQUy91uCpkHNtKUP9LcjnU
+        RmPRUvshHnzk70+YZKrax2+8cw==
+X-Google-Smtp-Source: APXvYqwFLT41DeScFhlvt4emDzNWRXlIfn7uKN3hZ5D3QZDhRaeGQz6cTcK38nnK/nmCOCgIJBfEGQ==
+X-Received: by 2002:adf:ee4f:: with SMTP id w15mr12361490wro.337.1567092226498;
+        Thu, 29 Aug 2019 08:23:46 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
         by smtp.gmail.com with ESMTPSA id d17sm4866871wre.27.2019.08.29.08.23.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 08:23:45 -0700 (PDT)
+        Thu, 29 Aug 2019 08:23:46 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 01/15] arm64: dts: meson-g12a-sei510: add keep-power-in-suspend property in SDIO node
-Date:   Thu, 29 Aug 2019 17:23:28 +0200
-Message-Id: <20190829152342.27794-2-narmstrong@baylibre.com>
+Subject: [PATCH 02/15] arm64: dts: meson-g12a-x96-max: add keep-power-in-suspend property in SDIO node
+Date:   Thu, 29 Aug 2019 17:23:29 +0200
+Message-Id: <20190829152342.27794-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190829152342.27794-1-narmstrong@baylibre.com>
 References: <20190829152342.27794-1-narmstrong@baylibre.com>
@@ -69,14 +69,14 @@ suspend state.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts | 3 +++
+ arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-index 35d2ebbd6d4e..b31502727d4a 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts
-@@ -508,6 +508,9 @@
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
+index 17155fb73fce..4f2596d82989 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a-x96-max.dts
+@@ -409,6 +409,9 @@
  	non-removable;
  	disable-wp;
  
