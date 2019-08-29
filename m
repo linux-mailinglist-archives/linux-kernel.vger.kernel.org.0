@@ -2,88 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB194A1801
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 693ECA1811
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:19:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfH2LSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:18:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50508 "EHLO mail.kernel.org"
+        id S1728056AbfH2LTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:19:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:42750 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbfH2LSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:18:40 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BE292189D;
-        Thu, 29 Aug 2019 11:18:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567077519;
-        bh=JQtNUh7qNDLWcxdyjDm3BBzByZeQKwMS+SSkLoxQodM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yqtbZ88ABfdZ9RN4GuefAC+ALscE6vMxl+0MPD59YrtSAr9Du5eDjuO1E162mutBg
-         7q8+OtpqhfroNvAuGOqGE2xjytsVqA6JFYCBJtekwFOfqDsUImnd8GylDlgZcSM4Yl
-         YptKdYXQFKDVvuJLdhpL/dStQIy55eTjOUKom9gI=
-Date:   Thu, 29 Aug 2019 13:18:37 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Christoph Hellwig <hch@infradead.org>, devel@driverdev.osuosl.org,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190829111837.GB23393@kroah.com>
-References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
- <20190828170022.GA7873@kroah.com>
- <20190829062340.GB3047@infradead.org>
- <20190829063955.GA30193@kroah.com>
- <20190829094136.GA28643@infradead.org>
- <20190829095019.GA13557@kroah.com>
- <20190829103749.GA13661@infradead.org>
- <20190829110443.GD64893@architecture4>
+        id S1726232AbfH2LTK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:19:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC30F360;
+        Thu, 29 Aug 2019 04:19:09 -0700 (PDT)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 441B93F59C;
+        Thu, 29 Aug 2019 04:19:08 -0700 (PDT)
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+To:     linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
+Cc:     catalin.marinas@arm.com, will@kernel.org, paul.burton@mips.com,
+        tglx@linutronix.de, salyzyn@android.com, 0x7f454c46@gmail.com,
+        luto@kernel.org
+Subject: [PATCH 1/7] arm64: compat: vdso: Expose BUILD_VDSO32
+Date:   Thu, 29 Aug 2019 12:18:37 +0100
+Message-Id: <20190829111843.41003-2-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190829111843.41003-1-vincenzo.frascino@arm.com>
+References: <20190829111843.41003-1-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829110443.GD64893@architecture4>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 07:04:43PM +0800, Gao Xiang wrote:
-> On Thu, Aug 29, 2019 at 03:37:49AM -0700, Christoph Hellwig wrote:
-> > On Thu, Aug 29, 2019 at 11:50:19AM +0200, Greg Kroah-Hartman wrote:
-> > > I did try just that, a few years ago, and gave up on it.  I don't think
-> > > it can be added to the existing vfat code base but I am willing to be
-> > > proven wrong.
-> > 
-> > And what exactly was the problem?
-> > 
-> > > 
-> > > Now that we have the specs, it might be easier, and the vfat spec is a
-> > > subset of the exfat spec, but to get stuff working today, for users,
-> > > it's good to have it in staging.  We can do the normal, "keep it in
-> > > stable, get a clean-room implementation merged like usual, and then
-> > > delete the staging version" three step process like we have done a
-> > > number of times already as well.
-> > > 
-> > > I know the code is horrible, but I will gladly take horrible code into
-> > > staging.  If it bothers you, just please ignore it.  That's what staging
-> > > is there for :)
-> > 
-> > And then after a while you decide it's been long enough and force move
-> > it out of staging like the POS erofs code?
-> 
-> The problem is that EROFS has been there for a year and
-> I sent v1-v8 patches here, You didn't review or reply it
-> once until now.
-> 
-> And I have no idea what is the relationship between EROFS
-> and the current exfat implementation.
+clock_gettime32 and clock_getres_time32 should be compiled only with the
+32 bit vdso library.
 
-There isn't any, other than it too is a filesystem that was in the
-staging directory :)
+Expose BUILD_VDSO32 when arm64 compat is compiled, to provide an
+indication to the generic library to include these symbols.
 
-greg k-h
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+---
+ arch/arm64/include/asm/vdso/compat_gettimeofday.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/include/asm/vdso/compat_gettimeofday.h b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
+index c50ee1b7d5cd..fe7afe0f1a3d 100644
+--- a/arch/arm64/include/asm/vdso/compat_gettimeofday.h
++++ b/arch/arm64/include/asm/vdso/compat_gettimeofday.h
+@@ -17,6 +17,7 @@
+ #define VDSO_HAS_CLOCK_GETRES		1
+ 
+ #define VDSO_HAS_32BIT_FALLBACK		1
++#define BUILD_VDSO32			1
+ 
+ static __always_inline
+ int gettimeofday_fallback(struct __kernel_old_timeval *_tv,
+-- 
+2.23.0
+
