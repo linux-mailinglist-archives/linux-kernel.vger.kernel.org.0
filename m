@@ -2,72 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B33FFA1994
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:07:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 524C3A1995
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 14:07:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfH2MHo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 08:07:44 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:36558 "EHLO inva020.nxp.com"
+        id S1727285AbfH2MHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 08:07:48 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:37470 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725990AbfH2MHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 08:07:44 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D214B1A002D;
-        Thu, 29 Aug 2019 14:07:42 +0200 (CEST)
+        id S1726973AbfH2MHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 08:07:45 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1EB45200767;
+        Thu, 29 Aug 2019 14:07:43 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E3C801A015C;
-        Thu, 29 Aug 2019 14:07:36 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 98460200336;
+        Thu, 29 Aug 2019 14:07:37 +0200 (CEST)
 Received: from lsv03124.swis.in-blr01.nxp.com (lsv03124.swis.in-blr01.nxp.com [92.120.146.121])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CB7F9402BE;
-        Thu, 29 Aug 2019 20:07:29 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 92A3B402DE;
+        Thu, 29 Aug 2019 20:07:30 +0800 (SGT)
 From:   Ashish Kumar <Ashish.Kumar@nxp.com>
 To:     tudor.ambarus@microchip.com, marek.vasut@gmail.com,
         dwmw2@infradead.org, computersforpeace@gmail.com,
         miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
         linux-mtd@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, Ashish Kumar <Ashish.Kumar@nxp.com>,
-        Kuldeep Singh <kuldeep.singh@nxp.com>,
-        Ashish Kumar <ashish.kumar@nxp.com>
-Subject: [PATCH v4] mtd: spi-nor: Add flash property for mt35xu02g
-Date:   Thu, 29 Aug 2019 17:37:24 +0530
-Message-Id: <1567080445-32695-1-git-send-email-Ashish.Kumar@nxp.com>
+        Kuldeep Singh <kuldeep.singh@nxp.com>
+Subject: [PATCH v4] mtd: spi-nor: Rename n25q512a to mt25qu512a(n25q512a)
+Date:   Thu, 29 Aug 2019 17:37:25 +0530
+Message-Id: <1567080445-32695-2-git-send-email-Ashish.Kumar@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1567080445-32695-1-git-send-email-Ashish.Kumar@nxp.com>
+References: <1567080445-32695-1-git-send-email-Ashish.Kumar@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mt35xu02g is Octal flash supporting Single I/O and QCTAL I/O
-and it has been tested on LS1028ARDB
+mt25qu512a is rebranded after its spinoff from STM, so it is
+different only in term of operating frequency, JEDEC id
+is same as that of n25q512a.
+SPI_NOR_4B_OPCODES is appended to flash property.
+This flash is tested for Single I/O and QUAD I/O mode on LS1046FRWY.
 
 Signed-off-by: Kuldeep Singh <kuldeep.singh@nxp.com>
-Signed-off-by: Ashish Kumar <ashish.kumar@nxp.com>
+Signed-off-by: Ashish Kumar <Ashish.Kumar@nxp.com>
 Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
 ---
 v4:
-split into seperate patch
+-Reword commit message as per review comments from
+tudor.
+- split into seperate patch 
 v3:
+-Reword commits msg
+-rebase to top of mtd-linux spi-nor/next
 v2:
-did not exist
+Incorporate review comments from Vignesh
 
- drivers/mtd/spi-nor/spi-nor.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mtd/spi-nor/spi-nor.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index b585f3fee4f0..409e81153525 100644
+index 73172d7f512b..b585f3fee4f0 100644
 --- a/drivers/mtd/spi-nor/spi-nor.c
 +++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1899,6 +1899,9 @@ static const struct flash_info spi_nor_ids[] = {
- 			SECT_4K | USE_FSR | SPI_NOR_OCTAL_READ |
- 			SPI_NOR_4B_OPCODES)
- 	},
-+	{ "mt35xu02g",  INFO(0x2c5b1c, 0, 128 * 1024, 2048,
-+			SECT_4K | USE_FSR | SPI_NOR_OCTAL_READ |
-+			SPI_NOR_4B_OPCODES) },
- 
- 	/* PMC */
- 	{ "pm25lv512",   INFO(0,        0, 32 * 1024,    2, SECT_4K_PMC) },
+@@ -1876,7 +1876,18 @@ static const struct flash_info spi_nor_ids[] = {
+ 	{ "n25q128a13",  INFO(0x20ba18, 0, 64 * 1024,  256, SECT_4K | SPI_NOR_QUAD_READ) },
+ 	{ "n25q256a",    INFO(0x20ba19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
+ 	{ "n25q256ax1",  INFO(0x20bb19, 0, 64 * 1024,  512, SECT_4K | SPI_NOR_QUAD_READ) },
+-	{ "n25q512a",    INFO(0x20bb20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
++
++	/* Micron */
++	/* n25q512a is rebraned as mt25qu512a after spin-off from ST,
++	 * JEDEC id remains same.
++	 * Operational frequency and Read Performance has increased
++	 */
++	{
++		"mt25qu512a(n25q512a)", INFO(0x20bb20, 0, 64 * 1024, 1024,
++			SECT_4K | USE_FSR | SPI_NOR_DUAL_READ |
++			SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES)
++	},
++
+ 	{ "n25q512ax3",  INFO(0x20ba20, 0, 64 * 1024, 1024, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ) },
+ 	{ "n25q00",      INFO(0x20ba21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
+ 	{ "n25q00a",     INFO(0x20bb21, 0, 64 * 1024, 2048, SECT_4K | USE_FSR | SPI_NOR_QUAD_READ | NO_CHIP_ERASE) },
 -- 
 2.17.1
 
