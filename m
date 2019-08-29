@@ -2,88 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0B01A289D
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 23:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 620E5A28A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 23:10:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbfH2VGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 17:06:04 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:46611 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbfH2VGE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 17:06:04 -0400
-X-Originating-IP: 90.65.161.137
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 284A84000E;
-        Thu, 29 Aug 2019 21:06:00 +0000 (UTC)
-Date:   Thu, 29 Aug 2019 23:05:54 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Biwen Li <biwen.li@nxp.com>
-Cc:     a.zummo@towertech.it, leoyang.li@nxp.com, broonie@kernel.org,
-        nandor.han@vaisala.com, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v5] rtc: pcf85363/pcf85263: fix error that failed to run
- hwclock -w
-Message-ID: <20190829210554.GN21922@piout.net>
-References: <20190829021418.4607-1-biwen.li@nxp.com>
+        id S1727763AbfH2VKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 17:10:16 -0400
+Received: from mga06.intel.com ([134.134.136.31]:11325 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726343AbfH2VKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 17:10:16 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 14:10:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
+   d="scan'208";a="332646511"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by orsmga004.jf.intel.com with ESMTP; 29 Aug 2019 14:10:15 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 5271730121D; Thu, 29 Aug 2019 14:10:15 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 14:10:15 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Luwei Kang <luwei.kang@intel.com>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com,
+        sean.j.christopherson@intel.com, vkuznets@redhat.com,
+        wanpengli@tencent.com, jmattson@google.com, joro@8bytes.org,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v1 1/9] KVM: x86: Add base address parameter for
+ get_fixed_pmc function
+Message-ID: <20190829211015.GU5447@tassilo.jf.intel.com>
+References: <1567056849-14608-1-git-send-email-luwei.kang@intel.com>
+ <1567056849-14608-2-git-send-email-luwei.kang@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829021418.4607-1-biwen.li@nxp.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <1567056849-14608-2-git-send-email-luwei.kang@intel.com>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/08/2019 10:14:18+0800, Biwen Li wrote:
-> Issue:
->     - # hwclock -w
->       hwclock: RTC_SET_TIME: Invalid argument
-> 
-> Why:
->     - Relative commit: 8b9f9d4dc511309918c4f6793bae7387c0c638af, this patch
->       will always check for unwritable registers, it will compare reg
->       with max_register in regmap_writeable.
-> 
->     - The pcf85363/pcf85263 has the capability of address wrapping
->       which means if you access an address outside the allowed range
->       (0x00-0x2f) hardware actually wraps the access to a lower address.
->       The rtc-pcf85363 driver will use this feature to configure the time
->       and execute 2 actions in the same i2c write operation (stopping the
->       clock and configure the time). However the driver has also
->       configured the `regmap maxregister` protection mechanism that will
->       block accessing addresses outside valid range (0x00-0x2f).
-> 
-> How:
->     - Split of writing regs to two parts, first part writes control
->       registers about stop_enable and resets, second part writes
->       RTC time and date registers.
-> 
-> Signed-off-by: Biwen Li <biwen.li@nxp.com>
-> ---
-> Change in v5:
-> 	- drop robust explanation
-> 
-> Change in v4:
-> 	- use old scheme
-> 	- replace link to lkml.org with commit
-> 	- add proper explanation
-> 
-> Change in v3:
-> 	- replace old scheme with new scheme:
-> 	  increase max_register.
-> 
-> Change in v2:
-> 	- add Why and How into commit message.
-> 
->  drivers/rtc/rtc-pcf85363.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-Applied, thanks.
+>  /* returns fixed PMC with the specified MSR */
+> -static inline struct kvm_pmc *get_fixed_pmc(struct kvm_pmu *pmu, u32 msr)
+> +static inline struct kvm_pmc *get_fixed_pmc(struct kvm_pmu *pmu, u32 msr,
+> +								int base)
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Better define a __get_fixed_pmc just for this case, with the existing
+get_fixed_pmc being a wrapper.
+
+This would avoid changing all the callers below.
+
+
+-Andi
