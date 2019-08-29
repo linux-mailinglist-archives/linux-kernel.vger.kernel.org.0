@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CB2CA1DBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BBA1A1DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728692AbfH2OwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:52:07 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40703 "EHLO
+        id S1728171AbfH2Ovw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:51:52 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:63704 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728512AbfH2Ovs (ORCPT
+        with ESMTP id S1727228AbfH2Ovu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:51:48 -0400
-X-UUID: d82e0857806041a09bc42d05df8a9dac-20190829
-X-UUID: d82e0857806041a09bc42d05df8a9dac-20190829
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        Thu, 29 Aug 2019 10:51:50 -0400
+X-UUID: d208ac30a404405d9a90ee7629185990-20190829
+X-UUID: d208ac30a404405d9a90ee7629185990-20190829
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1593532237; Thu, 29 Aug 2019 22:51:43 +0800
+        with ESMTP id 1126044740; Thu, 29 Aug 2019 22:51:44 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 29 Aug 2019 22:51:47 +0800
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 29 Aug 2019 22:51:48 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 29 Aug 2019 22:51:46 +0800
+ Transport; Thu, 29 Aug 2019 22:51:47 +0800
 From:   <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,15 +35,14 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v5, 30/32] drm/mediatek: add connection from DITHER0 to DSI0
-Date:   Thu, 29 Aug 2019 22:50:52 +0800
-Message-ID: <1567090254-15566-31-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v5, 31/32] drm/mediatek: add connection from RDMA0 to DSI0
+Date:   Thu, 29 Aug 2019 22:50:53 +0800
+Message-ID: <1567090254-15566-32-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1567090254-15566-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1567090254-15566-1-git-send-email-yongqiang.niu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 07DD8AE2514D3D31AD74B3F4672ABE9F70E8D0B41FDA91903211C6785465914E2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,37 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yongqiang Niu <yongqiang.niu@mediatek.com>
 
-This patch add connection from DITHER0 to DSI0
+This patch add connection from RDMA0 to DSI0
 
 Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
 ---
- drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-index 237824f..fd38658 100644
+index fd38658..6a7cb15 100644
 --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
 +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-@@ -35,10 +35,12 @@
- 
- #define MT8183_DISP_OVL0_2L_MOUT_EN		0xf04
- #define MT8183_DISP_OVL1_2L_MOUT_EN		0xf08
-+#define MT8183_DISP_DITHER0_MOUT_EN		0xf0c
- #define MT8183_DISP_PATH0_SEL_IN		0xf24
- 
- #define OVL0_2L_MOUT_EN_DISP_PATH0			BIT(0)
+@@ -42,6 +42,7 @@
  #define OVL1_2L_MOUT_EN_RDMA1				BIT(4)
-+#define DITHER0_MOUT_IN_DSI0				BIT(0)
+ #define DITHER0_MOUT_IN_DSI0				BIT(0)
  #define DISP_PATH0_SEL_IN_OVL0_2L			0x1
++#define DSI0_SEL_IN_RDMA0				0x1
  
  #define MT2701_DISP_MUTEX0_MOD0			0x2c
-@@ -323,6 +325,9 @@ static unsigned int mtk_ddp_mout_en(const struct mtk_mmsys_reg_data *data,
- 		   next == DDP_COMPONENT_RDMA1) {
- 		*addr = MT8183_DISP_OVL1_2L_MOUT_EN;
- 		value = OVL1_2L_MOUT_EN_RDMA1;
-+	} else if (cur == DDP_COMPONENT_DITHER && next == DDP_COMPONENT_DSI0) {
-+		*addr = MT8183_DISP_DITHER0_MOUT_EN;
-+		value = DITHER0_MOUT_IN_DSI0;
+ #define MT2701_DISP_MUTEX0_SOF0			0x30
+@@ -391,6 +392,9 @@ static unsigned int mtk_ddp_sel_in(const struct mtk_mmsys_reg_data *data,
+ 		   next == DDP_COMPONENT_RDMA0) {
+ 		*addr = MT8183_DISP_PATH0_SEL_IN;
+ 		value = DISP_PATH0_SEL_IN_OVL0_2L;
++	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI0) {
++		*addr = data->dsi0_sel_in;
++		value = DSI0_SEL_IN_RDMA0;
  	} else {
  		value = 0;
  	}
