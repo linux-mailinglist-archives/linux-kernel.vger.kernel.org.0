@@ -2,96 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0C5BA1F7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:43:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FD06A1F86
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:45:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfH2Pnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:43:42 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40866 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbfH2Pnm (ORCPT
+        id S1727986AbfH2PpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:45:03 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54652 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbfH2PpB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:43:42 -0400
-Received: by mail-qt1-f196.google.com with SMTP id g4so4152152qtq.7;
-        Thu, 29 Aug 2019 08:43:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CqwCR92AMmjVYXHP7t59EX+jlAdzhnsJr6HfrLhRRVM=;
-        b=ODTqtLtVa7hDa2Czg8NAJLdKjgXn5m5qdq4KmSlV81udeaxSfT400wmfiGbSX/kI47
-         wCjpbJZioV/O2MA8cGnsNP61pg5ZthxJK8GF+EEKQmibdoNljA9toPeRhz8bu/MhMzPq
-         Wj97l7gcAViSokNRCrej0Q/RWHMrqtogGokMV15fuDkIa5DKDIzpUS8DlIGDPWtPrOop
-         kWOP/l+E6TrsDiXSnIOOii7vaTlO6RNr56uuPqsYy49B7SkG5FBmtuiqN+BoD363oxyB
-         RilTZSTV1CQICNIfrk2aQE0tOkRmbFdVDdDBK1hHlJysQvXDh6r1a3qngKk4Ql/gghR0
-         CQFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CqwCR92AMmjVYXHP7t59EX+jlAdzhnsJr6HfrLhRRVM=;
-        b=Jm0Pu6WrMHTKfgI4mj4a+a81p/iiicq6t5cFcE8KR/22muePxBYUFbDXSwnfcbVcRb
-         OrY3pr4NVROO34jKXpGZC4/p78waWYURqYDsleOA0MszJsOTvB6mnCaDJNeLbNiwLzGl
-         YP4sSxcgKE4CWZSEdleS2eLzbq1sQGsAHJ+pw0JO8OKQbS7XsWtIUAHC8I8Ho8WnP6Co
-         3gwG2F220LLMWqvnUkHSeJhkyH2jDPDlRbQiP/45Uc6fReCpOubP1xnAGswqJPP/J0rG
-         +XQD2B6vHUdEwjuSYvEkNV0j5Kov+oWp7BgPtjV+Q53wgU5jxCWzZMB/CZYmbgUgigq0
-         EMyg==
-X-Gm-Message-State: APjAAAVeY4ekC0aaQW6cQ0tryVwk7BuzSz39IYj9Aph4kcFWoygaoam0
-        I4t3NUoc/b1k2TfKCc5cRYQ=
-X-Google-Smtp-Source: APXvYqyb8pkjLWnxIS6I0Zi8fRdzp0rfQPWYf4MGwsQRjVqj8I70gUzu84gh1zq6bCW5CJ1qIM9D6A==
-X-Received: by 2002:ac8:3043:: with SMTP id g3mr10360219qte.37.1567093420826;
-        Thu, 29 Aug 2019 08:43:40 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::1:7e32])
-        by smtp.gmail.com with ESMTPSA id h4sm78499qtn.62.2019.08.29.08.43.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 29 Aug 2019 08:43:40 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 08:43:38 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     axboe@kernel.dk, newella@fb.com, clm@fb.com, josef@toxicpanda.com,
-        dennisz@fb.com, lizefan@huawei.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        kernel-team@fb.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH 07/10] blk-mq: add optional request->alloc_time_ns
-Message-ID: <20190829154338.GT2263813@devbig004.ftw2.facebook.com>
-References: <20190828220600.2527417-1-tj@kernel.org>
- <20190829082248.6464-1-hdanton@sina.com>
+        Thu, 29 Aug 2019 11:45:01 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFhhH3030608;
+        Thu, 29 Aug 2019 15:44:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=HhSzXQLQd627KDCnwBWVZ5E6XXUHKUdsQ5GwPoAcuAE=;
+ b=V5wFcW14Kl0+OKr/ow4fc0ZImGhrOYilc4OdgLOcbYK6MkUSHir0rGevnADz5fBL8bWN
+ 1Xjs14uEsVd2AF/Wbw+exLDwm/pE7l0+JV/e9jdz09qjf3aBGtBC6r+5UoY8oqYNM1L0
+ j9dCs87BOy9gI2RzPT1SBW8ajXxMZHSEFnw7ZSfUPEpskurHZtJRXB3yif8DXOZeOLA+
+ s096OUmyvHGcYGnfbYxFpIcYaoWXex96DNn5rsmOk8fBHRY24D0dJgqpWYCT236eoKZt
+ W90uevUmYteCJf3p0MmYPff+1AjueQpMpUnYcxivfUvhY7GFv1//3Eyexv/cwuVJnRzG mg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2uphcyg4gb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 15:44:40 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7TFiGWe129225;
+        Thu, 29 Aug 2019 15:44:39 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3020.oracle.com with ESMTP id 2upc8uukv9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 15:44:39 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7TFhv6u023805;
+        Thu, 29 Aug 2019 15:43:57 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Aug 2019 08:43:56 -0700
+Date:   Thu, 29 Aug 2019 18:43:46 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190829154346.GK23584@kadam>
+References: <20190828160817.6250-1-gregkh@linuxfoundation.org>
+ <20190828170022.GA7873@kroah.com>
+ <20190829062340.GB3047@infradead.org>
+ <20190829063955.GA30193@kroah.com>
+ <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com>
+ <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com>
+ <20190829151144.GJ23584@kadam>
+ <20190829152757.GA125003@architecture4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829082248.6464-1-hdanton@sina.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190829152757.GA125003@architecture4>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=885
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908290168
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=945 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+> p.s. There are 2947 (un)likely places in fs/ directory.
 
-On Thu, Aug 29, 2019 at 04:22:48PM +0800, Hillf Danton wrote:
-> >  static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
-> > -		unsigned int tag, unsigned int op)
-> > +		unsigned int tag, unsigned int op, u64 alloc_time_ns)
-> >  {
-> >  	struct blk_mq_tags *tags = blk_mq_tags_from_data(data);
-> >  	struct request *rq = tags->static_rqs[tag];
-> > @@ -325,6 +325,9 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
-> >  	RB_CLEAR_NODE(&rq->rb_node);
-> >  	rq->rq_disk = NULL;
-> >  	rq->part = NULL;
-> > +#ifdef CONFIG_BLK_RQ_ALLOC_TIME
-> 
-> Not only matches start_time, but everal hunks may collapse into one
-> if checking alloc_time is lifted up.
-> 
-> 	if (blk_queue_rq_alloc_time(rq->q))
-> 		rq->alloc_time_ns = ktime_get_ns();
-> 	else
-> 		rq->alloc_time_ns = 0;
+I was complaining about you adding new pointless ones, not existing
+ones.  The likely/unlikely annotations are supposed to be functional and
+not decorative.  I explained this very clearly.
 
-Can you please elaborate?  Lifted up where?
+Probably most of the annotations in fs/ are wrong but they are also
+harmless except for the slight messiness.  However there are definitely
+some which are important so removing them all isn't a good idea.
 
-Thanks.
+> If you like, I will delete them all.
 
--- 
-tejun
+But for erofs, I don't think that any of the likely/unlikely calls have
+been thought about so I'm fine with removing all of them in one go.
+
+regards,
+dan carpenter
+
