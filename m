@@ -2,87 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A13FA255F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:30:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7B0CA255A
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:30:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729801AbfH2SaQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:30:16 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:41730 "EHLO vps0.lunn.ch"
+        id S1729866AbfH2SaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:30:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47228 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730019AbfH2SaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:30:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=SxqYvv49yqmIIqleMdsHFqKFHskcW+8pUjR7rwMTuP0=; b=oUA4l5+HGnWxmXp/tiI7FHZZEh
-        s1vQyf/zy8GyvMEe32SQXw/YV4dSxoMd3p7rknNMcTgQ/NZQCtn7jEEAvW0NHy+bRPFAfk5wLi0WL
-        dCFZLLDKmQSpccVrnR234OJdaFEGCLGRFtkL9q40/NC1BM8/CFIqk6IBIkCB4O30O2PA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1i3PBF-0004wy-Lu; Thu, 29 Aug 2019 20:29:57 +0200
-Date:   Thu, 29 Aug 2019 20:29:57 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Ido Schimmel <idosch@idosch.org>
-Cc:     Jiri Pirko <jiri@resnulli.us>,
-        Horatiu Vultur <horatiu.vultur@microchip.com>,
-        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
-        davem@davemloft.net, allan.nielsen@microchip.com,
-        ivecera@redhat.com, f.fainelli@gmail.com, netdev@vger.kernel.org,
+        id S1728826AbfH2SaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:30:03 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 268188CF1A5;
+        Thu, 29 Aug 2019 18:30:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 540D754527;
+        Thu, 29 Aug 2019 18:29:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 01/11] uapi: General notification ring definitions [ver #6]
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.dichtel@6wind.com, raven@themaw.net,
+        Christian Brauner <christian@brauner.io>, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] net: core: Notify on changes to dev->promiscuity.
-Message-ID: <20190829182957.GA17530@lunn.ch>
-References: <1567070549-29255-1-git-send-email-horatiu.vultur@microchip.com>
- <1567070549-29255-2-git-send-email-horatiu.vultur@microchip.com>
- <20190829095100.GH2312@nanopsycho>
- <20190829132611.GC6998@lunn.ch>
- <20190829134901.GJ2312@nanopsycho>
- <20190829143732.GB17864@lunn.ch>
- <20190829175759.GA19471@splinter>
+Date:   Thu, 29 Aug 2019 19:29:58 +0100
+Message-ID: <156710339856.10009.1556595458056359912.stgit@warthog.procyon.org.uk>
+In-Reply-To: <156710338860.10009.12524626894838499011.stgit@warthog.procyon.org.uk>
+References: <156710338860.10009.12524626894838499011.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829175759.GA19471@splinter>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.69]); Thu, 29 Aug 2019 18:30:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hi Andrew,
-> 
-> What happens when you run tcpdump on a routed interface without putting
-> it in promiscuous mode ('-p')? If it is a pure software switch, then you
-> see all unicast packets addressed to your interface's MAC address. What
-> happens when the same is done on a hardware switch? With the proposed
-> solution you will not get the same result.
-> 
-> On a software switch, when you run tcpdump without '-p', do you incur
-> major packet loss? No. Will this happen when you punt several Tbps to
-> your CPU on the hardware switch? Yes.
+Add UAPI definitions for the general notification ring, including the
+following pieces:
 
-Hi Ido
+ (1) struct watch_notification.
 
-Please think about the general case, not your hardware. A DSA switch
-generally has 1G ports. And the connection to the host is generally
-1G, maybe 2.5G. So if i put one interface into promisc mode, i will
-probably receive the majority of the traffic on that port, so long as
-there is not too much traffic from other ports towards the CPU.
+     This is the metadata header for each entry in the ring.  It includes a
+     type and subtype that indicate the source of the message
+     (eg. WATCH_TYPE_MOUNT_NOTIFY) and the kind of the message
+     (eg. NOTIFY_MOUNT_NEW_MOUNT).
 
-I also don't expect any major packet loss in the switch. It is still
-hardware switching, but also sending a copy to the CPU. That copy will
-have the offload_fwd_mark bit set, so the bridge will discard the
-frame. The switch egress queue towards the CPU might overflow, but
-that means tcpdump does not get to see all the frames, and some
-traffic which is actually heading to the CPU is lost. But that can
-happen anyway.
+     The header also contains an information field that conveys the
+     following information:
 
-We should also think about the different classes of users. Somebody
-using a TOR switch with a NOS is very different to a user of a SOHO
-switch in their WiFi access point. The first probably knows tc very
-well, the second has probably never heard of it, and just wants
-tcpdump to work like on their desktop.
+	- WATCH_INFO_LENGTH.  The size of the entry (entries are variable
+          length).
 
-	 Andrew
+	- WATCH_INFO_ID.  The watch ID specified when the watchpoint was
+          set.
+
+	- WATCH_INFO_TYPE_INFO.  (Sub)type-specific information.
+
+	- WATCH_INFO_FLAG_*.  Flag bits overlain on the type-specific
+          information.  For use by the type.
+
+     All the information in the header can be used in filtering messages at
+     the point of writing into the buffer.
+
+ (2) struct watch_queue_buffer.
+
+     This describes the layout of the ring.  Note that the first slots in
+     the ring contain a special metadata entry that contains the ring
+     pointers.  The producer in the kernel knows to skip this and it has a
+     proper header (WATCH_TYPE_META, WATCH_META_SKIP_NOTIFICATION) that
+     indicates the size so that the ring consumer can handle it the same as
+     any other record and just skip it.
+
+     Note that this means that ring entries can never be split over the end
+     of the ring, so if an entry would need to be split, a skip record is
+     inserted to wrap the ring first; this is also WATCH_TYPE_META,
+     WATCH_META_SKIP_NOTIFICATION.
+
+ (3) WATCH_INFO_NOTIFICATIONS_LOST.
+
+     This is a flag that can be set in the metadata header by the kernel to
+     indicate that at least one message was lost since it was last cleared
+     by userspace.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+
+ include/uapi/linux/watch_queue.h |   67 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 include/uapi/linux/watch_queue.h
+
+diff --git a/include/uapi/linux/watch_queue.h b/include/uapi/linux/watch_queue.h
+new file mode 100644
+index 000000000000..70f575099968
+--- /dev/null
++++ b/include/uapi/linux/watch_queue.h
+@@ -0,0 +1,67 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _UAPI_LINUX_WATCH_QUEUE_H
++#define _UAPI_LINUX_WATCH_QUEUE_H
++
++#include <linux/types.h>
++
++enum watch_notification_type {
++	WATCH_TYPE_META		= 0,	/* Special record */
++	WATCH_TYPE___NR		= 1
++};
++
++enum watch_meta_notification_subtype {
++	WATCH_META_SKIP_NOTIFICATION	= 0,	/* Just skip this record */
++	WATCH_META_REMOVAL_NOTIFICATION	= 1,	/* Watched object was removed */
++};
++
++#define WATCH_LENGTH_GRANULARITY sizeof(__u64)
++
++/*
++ * Notification record header.  This is aligned to 64-bits so that subclasses
++ * can contain __u64 fields.
++ */
++struct watch_notification {
++	__u32			type:24;	/* enum watch_notification_type */
++	__u32			subtype:8;	/* Type-specific subtype (filterable) */
++	__u32			info;
++#define WATCH_INFO_LENGTH	0x0000003f	/* Length of record / sizeof(watch_notification) */
++#define WATCH_INFO_LENGTH__SHIFT 0
++#define WATCH_INFO_ID		0x0000ff00	/* ID of watchpoint, if type-appropriate */
++#define WATCH_INFO_ID__SHIFT	8
++#define WATCH_INFO_TYPE_INFO	0xffff0000	/* Type-specific info */
++#define WATCH_INFO_TYPE_INFO__SHIFT 16
++#define WATCH_INFO_FLAG_0	0x00010000	/* Type-specific info, flag bit 0 */
++#define WATCH_INFO_FLAG_1	0x00020000	/* ... */
++#define WATCH_INFO_FLAG_2	0x00040000
++#define WATCH_INFO_FLAG_3	0x00080000
++#define WATCH_INFO_FLAG_4	0x00100000
++#define WATCH_INFO_FLAG_5	0x00200000
++#define WATCH_INFO_FLAG_6	0x00400000
++#define WATCH_INFO_FLAG_7	0x00800000
++} __attribute__((aligned(WATCH_LENGTH_GRANULARITY)));
++
++struct watch_queue_buffer {
++	union {
++		/* The first few entries are special, containing the
++		 * ring management variables.
++		 */
++		struct {
++			struct watch_notification watch; /* WATCH_TYPE_META */
++			__u32		head;		/* Ring head index */
++			__u32		tail;		/* Ring tail index */
++			__u32		mask;		/* Ring index mask */
++			__u32		__reserved;
++		} meta;
++		struct watch_notification slots[0];
++	};
++};
++
++/*
++ * The Metadata pseudo-notification message uses a flag bits in the information
++ * field to convey the fact that messages have been lost.  We can only use a
++ * single bit in this manner per word as some arches that support SMP
++ * (eg. parisc) have no kernel<->user atomic bit ops.
++ */
++#define WATCH_INFO_NOTIFICATIONS_LOST WATCH_INFO_FLAG_0
++
++#endif /* _UAPI_LINUX_WATCH_QUEUE_H */
+
