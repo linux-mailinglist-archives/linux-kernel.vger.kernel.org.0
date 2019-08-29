@@ -2,432 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D95DCA27B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:05:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA623A27B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 22:08:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbfH2UFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 16:05:42 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:54410 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727916AbfH2UFk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 16:05:40 -0400
-Received: from prsriva-Precision-Tower-5810.corp.microsoft.com (unknown [167.220.2.18])
-        by linux.microsoft.com (Postfix) with ESMTPSA id C0BF620B7187;
-        Thu, 29 Aug 2019 13:05:39 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C0BF620B7187
-From:   Prakhar Srivastava <prsriva@linux.microsoft.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Cc:     jmorris@namei.org, zohar@linux.ibm.com, bauerman@linux.ibm.com
-Subject: [RFC][PATCH 1/1] Carry ima measurement log for arm64 via kexec_file_load
-Date:   Thu, 29 Aug 2019 13:05:32 -0700
-Message-Id: <20190829200532.13545-2-prsriva@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190829200532.13545-1-prsriva@linux.microsoft.com>
-References: <20190829200532.13545-1-prsriva@linux.microsoft.com>
+        id S1727885AbfH2UIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 16:08:22 -0400
+Received: from mout.web.de ([212.227.15.14]:41831 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726619AbfH2UIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 16:08:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1567109282;
+        bh=tHlQSTvFPjb5vEY3OYaAGbIzMXF9u1cOmRv3w4Fed5M=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=Q8jx13Q/Hy5zREYos3a/qcTBJjJR4DzoZqXh3Fx886zPNUiyEf+/bHmY+vM7onWks
+         L+A9HKoe8EPxOiBM257jPtMU1l6d29plmmSfH6MMvMwIC6S3q0FLii2HFlxnEUIgtK
+         EZ5aMI3RQroemtvEAmZVARFoTsV2qhA9mMfg1vik=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.172.157]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0Lecda-1iXmJg0nSo-00qRnW; Thu, 29
+ Aug 2019 22:08:02 +0200
+Subject: Re: [PATCH v2] scripts: coccinelle: check for !(un)?likely usage
+To:     Denis Efremov <efremov@linux.com>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Joe Perches <joe@perches.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        cocci@systeme.lip6.fr
+Cc:     linux-kernel@vger.kernel.org
+References: <20190825130536.14683-1-efremov@linux.com>
+ <20190829171013.22956-1-efremov@linux.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <f7dad682-a251-ba8f-4c25-874f511295fc@web.de>
+Date:   Thu, 29 Aug 2019 22:07:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190829171013.22956-1-efremov@linux.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:ZSrA0zj1x92Ry8CYKvtBVsiM+kFL1Go0TYbXyXBiHukWDB+qf6k
+ MjpLqC2wM/w9AUrAYXuMMAZwp7vjViKNS1iSkvsjfhRxBTouP+7xlzF2kTUbdl8wKlkcZwQ
+ Y7OfSUhUWwJsR0NLQsnqMSDOFpdjs035Kbm35xzAdGH/Iln3y3c4cwCUOUydNIqMvq74bw5
+ vKGnyFiFcxjJAS6MkpFxQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:tVxR4kwytlY=:f63uY9COG/AufpFOvjqA1j
+ 2gL+TIK9ASRkkAgExyCYa+N+Z8QHC8RsviTM1xJWAFIfaiDYD5ToeLR7DbUfoO4zjq8NoyXOf
+ CsekE0EWfBvmNLbuH07L3j+PV281V045az8+1LURkMdIFuALI7h8uM/zXybQBgsATJDy8BN1a
+ uXHlWKr5wzcKQIQUi+h4dtUTgCFRbULwtlbGdgJ7QGK++8jFIVPx0CPWL60XVUlGzpleydIfY
+ +ohf0Gri9mpPdYctPE9Bn5UzFVxO2t5N00rSk+BpimF1Xgpj6Y92boIbLwcaqV+Bv34w0o9Wy
+ rTSYEX8qkvcVF83WqRqRtQ1RZayK4dZ6IF8CHq1R5QYqgP4jixzImtOZfH784D69J2Rl6G9xs
+ 6Mq5XYCCffgohUt+/dVw4zbta7af1nyI8/e3EwTHT5+yKkyxXM0LPrhhnKMpM5E6b878phD2s
+ LWm0P1U/7hJtGJYbRijW9xTZ4mWb+2f6ptjpPrw9IDBBkxto3m4T6fj/XRvSSAqmr0u7eCiDt
+ 3rirApK8X/v0Ag7xhZwHEcTj38SIVYab9lVzW6n+pMzjOEodrR9RjbwQQWry9ZUQnv8Hy+Vbu
+ Oc8Mw7hwWxRtEY24ZEhdcWs3ZdmIw/vuCBcpjgrsw5NKh5SHVJJ9TyXk0qULeHbYNoYwNTkGq
+ mJOhKfJppA6W9nAkK81Og26BYq+9xuVivr2j7syAA6sQiBrNarXMWjtQoefV191e95/B+ex/7
+ qgTD30dQXADU2GwTwIKjf8hT/Dl81yHYklbXdQO176Fi8m/DzfpaB2N6keLc4hwz2wvw1eMzd
+ jIRwfAFh0CLByg+91SrFcNC54zeE9Mwyf6mbv/fe1TPSXdaNwiVmEoeS5HIlTiPs+brsAJfAP
+ cVRL/ffKRYwVGXQiWsfLT4OZil/FOUx2On7CCFVI/9UimAekczpqfHYEuoNLVuYVK2PdoLnzQ
+ 2hq0vzBP6jy3Jt5DqBWHdSeBo7aNLlh443B8bo7EAGc3VbkHCfVBBUvPriyMf/yIoo/ydbhgg
+ pCqFipQjdz3WxbR569xH1OFgZLt+nzjb1f4vyTOlb5UyQl+xN9WH2p0ugats+0UUiZEMbSK/r
+ /yFVCeGyIMTPliFZdfrMbuCkZHG2sjxUDNzjWd3G1zIJl41dUt4eV567/ru7rEzQ4kXFhHqWZ
+ xcmAqMOF5P9Cu+VZwlQiCrui6WUq21qXqFoSCPwU6tk6nYWA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Carry ima measurement log for arm64 via kexec_file_load.
-add support to kexec_file_load to pass the ima measurement log
+> +@script:python depends on report && r1@
+> +p << r1.p;
+> +@@
+> +
+> +coccilib.report.print_report(p[0],
+> +	"unlikely(!x) is more readable than !likely(x)")
 
-This patch adds entry for the ima measurement log in the
-dtb which is then used in the kexec'ed session to fetch the
-segment and then load the ima measurement log.
+Can alignment matter for the string literal together with
+the first method parameter?
 
-Signed-off-by: Prakhar Srivastava <prsriva@linux.microsoft.com>
----
- arch/arm64/Kconfig                     |   7 +
- arch/arm64/include/asm/ima.h           |  31 ++++
- arch/arm64/include/asm/kexec.h         |   4 +
- arch/arm64/kernel/Makefile             |   1 +
- arch/arm64/kernel/ima_kexec.c          | 219 +++++++++++++++++++++++++
- arch/arm64/kernel/machine_kexec_file.c |  39 +++++
- 6 files changed, 301 insertions(+)
- create mode 100644 arch/arm64/include/asm/ima.h
- create mode 100644 arch/arm64/kernel/ima_kexec.c
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 3adcec05b1f6..9e1b831e7baa 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -964,6 +964,13 @@ config KEXEC_FILE
- 	  for kernel and initramfs as opposed to list of segments as
- 	  accepted by previous system call.
- 
-+config HAVE_IMA_KEXEC
-+	bool "enable arch specific ima buffer pass"
-+	depends on KEXEC_FILE
-+	help
-+		This adds support to carry ima log to the next kernel in case
-+		of kexec_file_load
-+
- config KEXEC_VERIFY_SIG
- 	bool "Verify kernel signature during kexec_file_load() syscall"
- 	depends on KEXEC_FILE
-diff --git a/arch/arm64/include/asm/ima.h b/arch/arm64/include/asm/ima.h
-new file mode 100644
-index 000000000000..2c504281028d
---- /dev/null
-+++ b/arch/arm64/include/asm/ima.h
-@@ -0,0 +1,31 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_ARM64_IMA_H
-+#define _ASM_ARM64_IMA_H
-+
-+#define FDT_PROP_KEXEC_BUFFER	"linux,ima-kexec-buffer"
-+
-+struct kimage;
-+
-+int ima_get_kexec_buffer(void **addr, size_t *size);
-+int ima_free_kexec_buffer(void);
-+
-+#ifdef CONFIG_IMA
-+void remove_ima_buffer(void *fdt, int chosen_node);
-+#else
-+static inline void remove_ima_buffer(void *fdt, int chosen_node) {}
-+#endif
-+
-+#ifdef CONFIG_IMA_KEXEC
-+int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
-+			      size_t size);
-+
-+int setup_ima_buffer(const struct kimage *image, void *fdt, int chosen_node);
-+#else
-+static inline int setup_ima_buffer(const struct kimage *image, void *fdt,
-+				   int chosen_node)
-+{
-+	remove_ima_buffer(fdt, chosen_node);
-+	return 0;
-+}
-+#endif /* CONFIG_IMA_KEXEC */
-+#endif /* _ASM_ARM64_IMA_H */
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index 12a561a54128..ca1f9ad5c4d4 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -96,6 +96,8 @@ static inline void crash_post_resume(void) {}
- struct kimage_arch {
- 	void *dtb;
- 	unsigned long dtb_mem;
-+	phys_addr_t ima_buffer_addr;
-+	size_t ima_buffer_size;
- };
- 
- extern const struct kexec_file_ops kexec_image_ops;
-@@ -107,6 +109,8 @@ extern int load_other_segments(struct kimage *image,
- 		unsigned long kernel_load_addr, unsigned long kernel_size,
- 		char *initrd, unsigned long initrd_len,
- 		char *cmdline);
-+extern int delete_fdt_mem_rsv(void *fdt, unsigned long start,
-+		unsigned long size);
- #endif
- 
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 478491f07b4f..9620f90bd0e1 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -63,6 +63,7 @@ obj-$(CONFIG_CRASH_CORE)		+= crash_core.o
- obj-$(CONFIG_ARM_SDE_INTERFACE)		+= sdei.o
- obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
- obj-$(CONFIG_ARM64_PTR_AUTH)		+= pointer_auth.o
-+obj-$(CONFIG_HAVE_IMA_KEXEC)		+= ima_kexec.o
- 
- obj-y					+= vdso/ probes/
- obj-$(CONFIG_COMPAT_VDSO)		+= vdso32/
-diff --git a/arch/arm64/kernel/ima_kexec.c b/arch/arm64/kernel/ima_kexec.c
-new file mode 100644
-index 000000000000..5ae0d776ec42
---- /dev/null
-+++ b/arch/arm64/kernel/ima_kexec.c
-@@ -0,0 +1,219 @@
-+/*
-+ * Copyright (C) 2016 IBM Corporation
-+ *
-+ * Authors:
-+ * Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/kexec.h>
-+#include <linux/of.h>
-+#include <linux/memblock.h>
-+#include <linux/libfdt.h>
-+#include <asm/kexec.h>
-+#include <asm/ima.h>
-+
-+static int get_addr_size_cells(int *addr_cells, int *size_cells)
-+{
-+	struct device_node *root;
-+
-+	root = of_find_node_by_path("/");
-+	if (!root)
-+		return -EINVAL;
-+
-+	*addr_cells = of_n_addr_cells(root);
-+	*size_cells = of_n_size_cells(root);
-+
-+	of_node_put(root);
-+
-+	return 0;
-+}
-+
-+static int do_get_kexec_buffer(const void *prop, int len, unsigned long *addr,
-+			       size_t *size)
-+{
-+
-+	int ret, addr_cells, size_cells;
-+
-+	ret = get_addr_size_cells(&addr_cells, &size_cells);
-+	if (ret)
-+		return ret;
-+
-+	if (len < 4 * (addr_cells + size_cells))
-+		return -ENOENT;
-+
-+	*addr = of_read_number(prop, addr_cells);
-+	*size = of_read_number(prop + 4 * addr_cells, size_cells);
-+
-+	return 0;
-+}
-+
-+/**
-+ * ima_get_kexec_buffer - get IMA buffer from the previous kernel
-+ * @addr:	On successful return, set to point to the buffer contents.
-+ * @size:	On successful return, set to the buffer size.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+int ima_get_kexec_buffer(void **addr, size_t *size)
-+{
-+	int ret, len;
-+	unsigned long tmp_addr;
-+	size_t tmp_size;
-+	const void *prop;
-+
-+	prop = of_get_property(of_chosen, FDT_PROP_KEXEC_BUFFER, &len);
-+	if (!prop)
-+		return -ENOENT;
-+
-+	ret = do_get_kexec_buffer(prop, len, &tmp_addr, &tmp_size);
-+	if (ret)
-+		return ret;
-+
-+	*addr = __va(tmp_addr);
-+	*size = tmp_size;
-+	return 0;
-+}
-+
-+/**
-+ * ima_free_kexec_buffer - free memory used by the IMA buffer
-+ */
-+int ima_free_kexec_buffer(void)
-+{
-+	int ret;
-+	unsigned long addr;
-+	size_t size;
-+	struct property *prop;
-+
-+	prop = of_find_property(of_chosen, FDT_PROP_KEXEC_BUFFER, NULL);
-+	if (!prop)
-+		return -ENOENT;
-+
-+	ret = do_get_kexec_buffer(prop->value, prop->length, &addr, &size);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_remove_property(of_chosen, prop);
-+	if (ret)
-+		return ret;
-+
-+	return memblock_free(addr, size);
-+}
-+
-+#ifdef CONFIG_IMA
-+/**
-+ * remove_ima_buffer - remove the IMA buffer property and reservation from @fdt
-+ *
-+ * The IMA measurement buffer is of no use to a subsequent kernel, so we always
-+ * remove it from the device tree.
-+ */
-+void remove_ima_buffer(void *fdt, int chosen_node)
-+{
-+	int ret, len;
-+	unsigned long addr;
-+	size_t size;
-+	const void *prop;
-+
-+	prop = fdt_getprop(fdt, chosen_node, FDT_PROP_KEXEC_BUFFER, &len);
-+	if (!prop)
-+		return;
-+
-+	ret = do_get_kexec_buffer(prop, len, &addr, &size);
-+	fdt_delprop(fdt, chosen_node, FDT_PROP_KEXEC_BUFFER);
-+	if (ret)
-+		return;
-+
-+	ret = delete_fdt_mem_rsv(fdt, addr, size);
-+	if (!ret)
-+		pr_debug("Removed old IMA buffer reservation.\n");
-+}
-+#endif /* CONFIG_IMA */
-+
-+#ifdef CONFIG_IMA_KEXEC
-+/**
-+ * arch_ima_add_kexec_buffer - do arch-specific steps to add the IMA buffer
-+ *
-+ * Architectures should use this function to pass on the IMA buffer
-+ * information to the next kernel.
-+ *
-+ * Return: 0 on success, negative errno on error.
-+ */
-+int arch_ima_add_kexec_buffer(struct kimage *image, unsigned long load_addr,
-+			      size_t size)
-+{
-+	image->arch.ima_buffer_addr = load_addr;
-+	image->arch.ima_buffer_size = size;
-+	return 0;
-+}
-+
-+static int write_number(void *p, u64 value, int cells)
-+{
-+	if (cells == 1) {
-+		u32 tmp;
-+
-+		if (value > U32_MAX)
-+			return -EINVAL;
-+
-+		tmp = cpu_to_be32(value);
-+		memcpy(p, &tmp, sizeof(tmp));
-+	} else if (cells == 2) {
-+		u64 tmp;
-+
-+		tmp = cpu_to_be64(value);
-+		memcpy(p, &tmp, sizeof(tmp));
-+	} else
-+		return -EINVAL;
-+	return 0;
-+}
-+
-+/**
-+ * setup_ima_buffer - add IMA buffer information to the fdt
-+ * @image:		kexec image being loaded.
-+ * @dtb:		Flattened device tree for the next kernel.
-+ * @chosen_node:	Offset to the chosen node.
-+ *
-+ * Return: 0 on success, or negative errno on error.
-+ */
-+int setup_ima_buffer(const struct kimage *image, void *dtb, int chosen_node)
-+{
-+	int ret, addr_cells, size_cells, entry_size;
-+	u8 value[16];
-+
-+	remove_ima_buffer(dtb, chosen_node);
-+
-+	ret = get_addr_size_cells(&addr_cells, &size_cells);
-+	if (ret)
-+		return ret;
-+
-+	entry_size = 4 * (addr_cells + size_cells);
-+
-+	if (entry_size > sizeof(value))
-+		return -EINVAL;
-+
-+	ret = write_number(value, image->arch.ima_buffer_addr, addr_cells);
-+	if (ret)
-+		return ret;
-+
-+	ret = write_number(value + 4 * addr_cells, image->arch.ima_buffer_size,
-+			size_cells);
-+	if (ret)
-+		return ret;
-+
-+	ret = fdt_setprop(dtb, chosen_node, FDT_PROP_KEXEC_BUFFER, value,
-+			  entry_size);
-+	if (ret < 0)
-+		return -EINVAL;
-+
-+	ret = fdt_add_mem_rsv(dtb, image->segment[0].mem,
-+			      image->segment[0].memsz);
-+	if (ret)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+#endif /* CONFIG_IMA_KEXEC */
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 58871333737a..c05ad6b74b62 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -21,6 +21,7 @@
- #include <linux/types.h>
- #include <linux/vmalloc.h>
- #include <asm/byteorder.h>
-+#include <asm/ima.h>
- 
- /* relevant device tree properties */
- #define FDT_PROP_INITRD_START	"linux,initrd-start"
-@@ -85,6 +86,11 @@ static int setup_dtb(struct kimage *image,
- 			goto out;
- 	}
- 
-+	/* add ima_buffer */
-+	ret = setup_ima_buffer(image, dtb, off);
-+	if (ret)
-+		goto out;
-+
- 	/* add kaslr-seed */
- 	ret = fdt_delprop(dtb, off, FDT_PROP_KASLR_SEED);
- 	if  (ret == -FDT_ERR_NOTFOUND)
-@@ -114,6 +120,39 @@ static int setup_dtb(struct kimage *image,
-  */
- #define DTB_EXTRA_SPACE 0x1000
- 
-+
-+/**
-+ * delete_fdt_mem_rsv - delete memory reservation with given address and size
-+ *
-+ * Return: 0 on success, or negative errno on error.
-+ */
-+int delete_fdt_mem_rsv(void *fdt, unsigned long start, unsigned long size)
-+{
-+	int i, ret, num_rsvs = fdt_num_mem_rsv(fdt);
-+
-+	for (i = 0; i < num_rsvs; i++) {
-+		uint64_t rsv_start, rsv_size;
-+
-+		ret = fdt_get_mem_rsv(fdt, i, &rsv_start, &rsv_size);
-+		if (ret) {
-+			pr_err("Malformed device tree.\n");
-+			return -EINVAL;
-+		}
-+
-+		if (rsv_start == start && rsv_size == size) {
-+			ret = fdt_del_mem_rsv(fdt, i);
-+			if (ret) {
-+				pr_err("Error deleting device tree reservation.\n");
-+				return -EINVAL;
-+			}
-+
-+			return 0;
-+		}
-+	}
-+
-+	return -ENOENT;
-+}
-+
- static int create_dtb(struct kimage *image,
- 		      unsigned long initrd_load_addr, unsigned long initrd_len,
- 		      char *cmdline, void **dtb)
--- 
-2.17.1
-
+Regards,
+Markus
