@@ -2,200 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5754A0E8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 02:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 955CDA0E94
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 02:15:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbfH2AMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 28 Aug 2019 20:12:48 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50482 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726926AbfH2AMs (ORCPT
+        id S1727026AbfH2APa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 28 Aug 2019 20:15:30 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44335 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbfH2APa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 28 Aug 2019 20:12:48 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7T0Bt63119998;
-        Wed, 28 Aug 2019 20:12:05 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2umnmwje9n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Aug 2019 20:12:05 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7T0C4Cd120342;
-        Wed, 28 Aug 2019 20:12:04 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2umnmwje8n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 28 Aug 2019 20:12:04 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7T0A5xV031574;
-        Thu, 29 Aug 2019 00:12:02 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma03dal.us.ibm.com with ESMTP id 2umpctmvq9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Aug 2019 00:12:02 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7T0C1sg26739146
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Aug 2019 00:12:01 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 44F57AE05C;
-        Thu, 29 Aug 2019 00:12:01 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BDD9AAE060;
-        Thu, 29 Aug 2019 00:11:59 +0000 (GMT)
-Received: from oc6857751186.ibm.com (unknown [9.80.202.51])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Aug 2019 00:11:59 +0000 (GMT)
-Subject: Re: [PATCH] PCI: hotplug: Remove surplus return from a void function
-To:     Krzysztof Wilczynski <kw@linux.com>,
-        Scott Murray <scott@spiteful.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Lukas Wunner <lukas@wunner.de>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Sebastian Ott <sebott@linux.ibm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20190826095143.21353-1-kw@linux.com>
-From:   Tyrel Datwyler <tyreld@linux.ibm.com>
-Message-ID: <064f3f5e-cf53-b6c8-654f-4654bf146428@linux.ibm.com>
-Date:   Wed, 28 Aug 2019 17:11:59 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 28 Aug 2019 20:15:30 -0400
+Received: by mail-ed1-f68.google.com with SMTP id a21so1930888edt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2019 17:15:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=HXiTUrgTpySDqJ2z0IlxRdwN/AdZPM9PRJWDyYhpIx4=;
+        b=e45AO9NpuZXfOGepMifc4AUPa3t0G9HNLJF47YLc7KvpKfDYlLUXsWbDH+Ox2bJk6K
+         VYy4b4AsZ1P8MUQAX9P+ezN47AUeq4yQEIO8yWmcoZ5roCARG2MvUVt3rD5qpLpuo4PI
+         Rb7wyAGeBjWQaPMW9syxyBJdgbrXVULFUPptgKkOwB7lcJ21Mf1mBowRdOBTTtNivoLA
+         nvjyehZPuY3TxuXV0xG+lYuwG3uMhwkGteIC1vedzAobSccRI73X3BexTK1oY22C4Hm5
+         CYDDVXMYV99y0ImBhz0mhyOktBWHEl8PPOep3vvSJZliHZfT0ZJkCJ4T5+r7kcW4L9Gy
+         o10A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=HXiTUrgTpySDqJ2z0IlxRdwN/AdZPM9PRJWDyYhpIx4=;
+        b=ntRZfYI4eaZHHkoKv4NVfsLfCYw3RG8Iog60VoDOZJud1298JDNeMPouiJ+dKwi+pC
+         Typ8yR0tesiRCajK/3FIAtrcDIHxtnP2hUuaEwTXr/oNjQm06kHPvGLtPTTQrzb4NBMW
+         b5rYgTaqgcAt4A+6zbARMxJFrHwP7ONsgys5xFYi+fW29PpqP/uM9lCJrDnNyD66pVlT
+         feqIF7A5o/b9qHzN2CibA7BVRZ3Kju0I9qWj47M/eOAHngXHxYbyYkyGve+RyykYIHAz
+         7r18hIY7W9OR3bMn9Z4qybc/gkTsoG1zyrJch4RhvJcZ1AT8O7Vck+423ZBJs60IpeD4
+         q4Ng==
+X-Gm-Message-State: APjAAAX2IYiTqqVTaIeb8pDkceX/mN/BLcVZUiKdYK9C3IrIbTr/Gwc8
+        /2rRbVkM4as9byNx3PD1eS2FTA==
+X-Google-Smtp-Source: APXvYqz4W1FQHE5dUOt5X8/Pj/tl8Yb2m0qydnOk+JGjbcp4O6ydKYlpMp4kKWu4l3Teq2GOsVaL/g==
+X-Received: by 2002:aa7:da4a:: with SMTP id w10mr6942046eds.74.1567037728472;
+        Wed, 28 Aug 2019 17:15:28 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id sa25sm124124ejb.37.2019.08.28.17.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 17:15:27 -0700 (PDT)
+Date:   Wed, 28 Aug 2019 17:15:05 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Masanari Iida <standby24x7@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
+        bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        kafai@fb.com
+Subject: Re: [PATCH] selftests/bpf: Fix a typo in test_offload.py
+Message-ID: <20190828171505.105c2cf7@cakuba.netronome.com>
+In-Reply-To: <20190829000130.7845-1-standby24x7@gmail.com>
+References: <20190829000130.7845-1-standby24x7@gmail.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-In-Reply-To: <20190826095143.21353-1-kw@linux.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-28_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908290001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/26/19 2:51 AM, Krzysztof Wilczynski wrote:
-> Remove unnecessary empty return statement at the end of a void
-> function in the following:
+On Thu, 29 Aug 2019 09:01:30 +0900, Masanari Iida wrote:
+> This patch fix a spelling typo in test_offload.py
 > 
->   - drivers/pci/hotplug/cpci_hotplug_core.c: cleanup_slots()
->   - drivers/pci/hotplug/cpqphp_core.c: pci_print_IRQ_route()
->   - drivers/pci/hotplug/cpqphp_ctrl.c: cpqhp_pushbutton_thread()
->   - drivers/pci/hotplug/cpqphp_ctrl.c: interrupt_event_handler()
->   - drivers/pci/hotplug/cpqphp_nvram.h: compaq_nvram_init()
->   - drivers/pci/hotplug/rpadlpar_core.c: rpadlpar_io_init()
->   - drivers/pci/hotplug/rpaphp_core.c: cleanup_slots()
-> 
-> Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+> Signed-off-by: Masanari Iida <standby24x7@gmail.com>
 
-For rpa*_core.c portions,
-
-Acked-by: Tyrel Datwyler <tyreld@linux.ibm.com>
-
-> ---
->  drivers/pci/hotplug/cpci_hotplug_core.c | 1 -
->  drivers/pci/hotplug/cpqphp_core.c       | 1 -
->  drivers/pci/hotplug/cpqphp_ctrl.c       | 4 ----
->  drivers/pci/hotplug/cpqphp_nvram.h      | 5 +----
->  drivers/pci/hotplug/rpadlpar_core.c     | 1 -
->  drivers/pci/hotplug/rpaphp_core.c       | 1 -
->  6 files changed, 1 insertion(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pci/hotplug/cpci_hotplug_core.c b/drivers/pci/hotplug/cpci_hotplug_core.c
-> index 603eadf3d965..d0559d2faf50 100644
-> --- a/drivers/pci/hotplug/cpci_hotplug_core.c
-> +++ b/drivers/pci/hotplug/cpci_hotplug_core.c
-> @@ -563,7 +563,6 @@ cleanup_slots(void)
->  	}
->  cleanup_null:
->  	up_write(&list_rwsem);
-> -	return;
->  }
->  
->  int
-> diff --git a/drivers/pci/hotplug/cpqphp_core.c b/drivers/pci/hotplug/cpqphp_core.c
-> index 16bbb183695a..b8aacb41a83c 100644
-> --- a/drivers/pci/hotplug/cpqphp_core.c
-> +++ b/drivers/pci/hotplug/cpqphp_core.c
-> @@ -173,7 +173,6 @@ static void pci_print_IRQ_route(void)
->  		dbg("%d %d %d %d\n", tbus, tdevice >> 3, tdevice & 0x7, tslot);
->  
->  	}
-> -	return;
->  }
->  
->  
-> diff --git a/drivers/pci/hotplug/cpqphp_ctrl.c b/drivers/pci/hotplug/cpqphp_ctrl.c
-> index b7f4e1f099d9..68de958a9be8 100644
-> --- a/drivers/pci/hotplug/cpqphp_ctrl.c
-> +++ b/drivers/pci/hotplug/cpqphp_ctrl.c
-> @@ -1872,8 +1872,6 @@ static void interrupt_event_handler(struct controller *ctrl)
->  			}
->  		}		/* End of FOR loop */
->  	}
-> -
-> -	return;
->  }
->  
->  
-> @@ -1943,8 +1941,6 @@ void cpqhp_pushbutton_thread(struct timer_list *t)
->  
->  		p_slot->state = STATIC_STATE;
->  	}
-> -
-> -	return;
->  }
->  
->  
-> diff --git a/drivers/pci/hotplug/cpqphp_nvram.h b/drivers/pci/hotplug/cpqphp_nvram.h
-> index 918ff8dbfe62..70e879b6a23f 100644
-> --- a/drivers/pci/hotplug/cpqphp_nvram.h
-> +++ b/drivers/pci/hotplug/cpqphp_nvram.h
-> @@ -16,10 +16,7 @@
->  
->  #ifndef CONFIG_HOTPLUG_PCI_COMPAQ_NVRAM
->  
-> -static inline void compaq_nvram_init(void __iomem *rom_start)
-> -{
-> -	return;
-> -}
-> +static inline void compaq_nvram_init(void __iomem *rom_start) { }
->  
->  static inline int compaq_nvram_load(void __iomem *rom_start, struct controller *ctrl)
->  {
-> diff --git a/drivers/pci/hotplug/rpadlpar_core.c b/drivers/pci/hotplug/rpadlpar_core.c
-> index 182f9e3443ee..977946e4e613 100644
-> --- a/drivers/pci/hotplug/rpadlpar_core.c
-> +++ b/drivers/pci/hotplug/rpadlpar_core.c
-> @@ -473,7 +473,6 @@ int __init rpadlpar_io_init(void)
->  void rpadlpar_io_exit(void)
->  {
->  	dlpar_sysfs_exit();
-> -	return;
->  }
->  
->  module_init(rpadlpar_io_init);
-> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
-> index c3899ee1db99..18627bb21e9e 100644
-> --- a/drivers/pci/hotplug/rpaphp_core.c
-> +++ b/drivers/pci/hotplug/rpaphp_core.c
-> @@ -408,7 +408,6 @@ static void __exit cleanup_slots(void)
->  		pci_hp_deregister(&slot->hotplug_slot);
->  		dealloc_slot_struct(slot);
->  	}
-> -	return;
->  }
->  
->  static int __init rpaphp_init(void)
-> 
-
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
