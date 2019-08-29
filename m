@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41D0EA2358
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:15:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9D45A235E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 20:15:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfH2SPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 14:15:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56632 "EHLO mail.kernel.org"
+        id S1729238AbfH2SPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 14:15:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729055AbfH2SPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:15:01 -0400
+        id S1729194AbfH2SPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:15:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F00F233FF;
-        Thu, 29 Aug 2019 18:14:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EF092339E;
+        Thu, 29 Aug 2019 18:15:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102500;
-        bh=UawKxel9NpXxg9oacRYyoPRRnVT7c7gYBtipihZk+NQ=;
+        s=default; t=1567102512;
+        bh=koxCPy5DUegL9f1JbTv6u/+jKYiW7/zmbZvd+ZOA9lQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=da25sV5KMmt/x3ExG0jyioeOvL+g07wk0FuGkDfcrsMeRP5nYxiNbEHWsIOo00HLL
-         jPU5cOg2UHILt/HhFulsdc5vvJJVmcVriNRw4ZacV5w+SSEvHv1MU6C1MCitq7cWyA
-         9E1XDxfN7deEZju3TukEz8+U/cn6rdUolWU7F1Xc=
+        b=nzNzCH3SPq9bWTHecob1o5QITF1REMHQQHN7nZABCVh0z4Y/+SApAuZ1iIRMNwOHa
+         P7ZxEejjVjHmxKz6uW1IV04SaNRwCI3V5AILHOsv8sG0SxhBzFw8UxodtzuMgqBiTx
+         oleYp4Nn4PVwcGqk1qwlNTTynKFnSQgRmwM9URJY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 51/76] x86/boot/compressed/64: Fix boot on machines with broken E820 table
-Date:   Thu, 29 Aug 2019 14:12:46 -0400
-Message-Id: <20190829181311.7562-51-sashal@kernel.org>
+Cc:     Wenwen Wang <wenwen@cs.uga.edu>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 60/76] IB/mlx4: Fix memory leaks
+Date:   Thu, 29 Aug 2019 14:12:55 -0400
+Message-Id: <20190829181311.7562-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -46,74 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-[ Upstream commit 0a46fff2f9108c2c44218380a43a736cf4612541 ]
+[ Upstream commit 5c1baaa82cea2c815a5180ded402a7cd455d1810 ]
 
-BIOS on Samsung 500C Chromebook reports very rudimentary E820 table that
-consists of 2 entries:
+In mlx4_ib_alloc_pv_bufs(), 'tun_qp->tx_ring' is allocated through
+kcalloc(). However, it is not always deallocated in the following execution
+if an error occurs, leading to memory leaks. To fix this issue, free
+'tun_qp->tx_ring' whenever an error occurs.
 
-  BIOS-e820: [mem 0x0000000000000000-0x0000000000000fff] usable
-  BIOS-e820: [mem 0x00000000fffff000-0x00000000ffffffff] reserved
-
-It breaks logic in find_trampoline_placement(): bios_start lands on the
-end of the first 4k page and trampoline start gets placed below 0.
-
-Detect underflow and don't touch bios_start for such cases. It makes
-kernel ignore E820 table on machines that doesn't have two usable pages
-below BIOS_START_MAX.
-
-Fixes: 1b3a62643660 ("x86/boot/compressed/64: Validate trampoline placement against E820")
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203463
-Link: https://lkml.kernel.org/r/20190813131654.24378-1-kirill.shutemov@linux.intel.com
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Acked-by: Leon Romanovsky <leonro@mellanox.com>
+Link: https://lore.kernel.org/r/1566159781-4642-1-git-send-email-wenwen@cs.uga.edu
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/boot/compressed/pgtable_64.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx4/mad.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index f8debf7aeb4c1..f0537a1f7fc25 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -73,6 +73,8 @@ static unsigned long find_trampoline_placement(void)
- 
- 	/* Find the first usable memory region under bios_start. */
- 	for (i = boot_params->e820_entries - 1; i >= 0; i--) {
-+		unsigned long new;
-+
- 		entry = &boot_params->e820_table[i];
- 
- 		/* Skip all entries above bios_start. */
-@@ -85,15 +87,20 @@ static unsigned long find_trampoline_placement(void)
- 
- 		/* Adjust bios_start to the end of the entry if needed. */
- 		if (bios_start > entry->addr + entry->size)
--			bios_start = entry->addr + entry->size;
-+			new = entry->addr + entry->size;
- 
- 		/* Keep bios_start page-aligned. */
--		bios_start = round_down(bios_start, PAGE_SIZE);
-+		new = round_down(new, PAGE_SIZE);
- 
- 		/* Skip the entry if it's too small. */
--		if (bios_start - TRAMPOLINE_32BIT_SIZE < entry->addr)
-+		if (new - TRAMPOLINE_32BIT_SIZE < entry->addr)
- 			continue;
- 
-+		/* Protect against underflow. */
-+		if (new - TRAMPOLINE_32BIT_SIZE > bios_start)
-+			break;
-+
-+		bios_start = new;
- 		break;
+diff --git a/drivers/infiniband/hw/mlx4/mad.c b/drivers/infiniband/hw/mlx4/mad.c
+index 68c951491a08a..57079110af9b5 100644
+--- a/drivers/infiniband/hw/mlx4/mad.c
++++ b/drivers/infiniband/hw/mlx4/mad.c
+@@ -1677,8 +1677,6 @@ static int mlx4_ib_alloc_pv_bufs(struct mlx4_ib_demux_pv_ctx *ctx,
+ 				    tx_buf_size, DMA_TO_DEVICE);
+ 		kfree(tun_qp->tx_ring[i].buf.addr);
  	}
- 
+-	kfree(tun_qp->tx_ring);
+-	tun_qp->tx_ring = NULL;
+ 	i = MLX4_NUM_TUNNEL_BUFS;
+ err:
+ 	while (i > 0) {
+@@ -1687,6 +1685,8 @@ static int mlx4_ib_alloc_pv_bufs(struct mlx4_ib_demux_pv_ctx *ctx,
+ 				    rx_buf_size, DMA_FROM_DEVICE);
+ 		kfree(tun_qp->ring[i].addr);
+ 	}
++	kfree(tun_qp->tx_ring);
++	tun_qp->tx_ring = NULL;
+ 	kfree(tun_qp->ring);
+ 	tun_qp->ring = NULL;
+ 	return -ENOMEM;
 -- 
 2.20.1
 
