@@ -2,185 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26D57A1B39
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBC7EA1B47
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:20:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbfH2NTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:19:42 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:52156 "EHLO mx2.mailbox.org"
+        id S1727421AbfH2NUk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:20:40 -0400
+Received: from mga06.intel.com ([134.134.136.31]:38061 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726283AbfH2NTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:19:41 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id C76B2A10EE;
-        Thu, 29 Aug 2019 15:19:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id YERUiiJJutp0; Thu, 29 Aug 2019 15:19:27 +0200 (CEST)
-Date:   Thu, 29 Aug 2019 23:19:04 +1000
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Daniel Colascione <dancol@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>,
-        David Drysdale <drysdale@google.com>,
-        Chanho Min <chanho.min@lge.com>,
-        Oleg Nesterov <oleg@redhat.com>, Aleksa Sarai <asarai@suse.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        containers@lists.linux-foundation.org, linux-alpha@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-ia64@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        sparclinux@vger.kernel.org
-Subject: Re: [PATCH RESEND v11 7/8] open: openat2(2) syscall
-Message-ID: <20190829131904.bkbalbtqt6j3gwcp@yavin>
-References: <20190820033406.29796-1-cyphar@cyphar.com>
- <20190820033406.29796-8-cyphar@cyphar.com>
- <CAKOZuesfxRBJe314rkTKXtjXdz6ki3uAUBYVbu5Q2rd3=ADphQ@mail.gmail.com>
- <20190829121527.u2uvdyeatme5cgkb@yavin>
- <899401fa-ff0a-2ce9-8826-09904efab2d2@rasmusvillemoes.dk>
+        id S1726518AbfH2NUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 09:20:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 06:20:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,443,1559545200"; 
+   d="scan'208";a="197804381"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.66]) ([10.237.72.66])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Aug 2019 06:20:38 -0700
+Subject: Re: [PATCH v2] mmc: sdhci: use lower/upper_32_bits() macros for DMA
+ addresses
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Piotr Sroka <piotrs@cadence.com>, linux-kernel@vger.kernel.org
+References: <20190829112206.22213-1-yamada.masahiro@socionext.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <20e6bfc4-b56a-780f-2dd8-d80af1fd1947@intel.com>
+Date:   Thu, 29 Aug 2019 16:19:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="itirvnprc6jjrbl3"
-Content-Disposition: inline
-In-Reply-To: <899401fa-ff0a-2ce9-8826-09904efab2d2@rasmusvillemoes.dk>
+In-Reply-To: <20190829112206.22213-1-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 29/08/19 2:22 PM, Masahiro Yamada wrote:
+> Currently, the DMA addresses are casted to (u64) for the upper 32bits
+> to avoid "right shift count >= width of type" warning.
+> 
+> <linux/kernel.h> provides macros to address this, and I like the macro
+> names are self-documenting.
+> 
+> I introduced a new helper, sdhci_set_adma_addr() to avoid the code
+> duplication.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
---itirvnprc6jjrbl3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Even better, thanks!
 
-On 2019-08-29, Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
-> On 29/08/2019 14.15, Aleksa Sarai wrote:
-> > On 2019-08-24, Daniel Colascione <dancol@google.com> wrote:
->=20
-> >> Why pad the structure when new functionality (perhaps accommodated via
-> >> a larger structure) could be signaled by passing a new flag? Adding
-> >> reserved fields to a structure with a size embedded in the ABI makes a
-> >> lot of sense --- e.g., pthread_mutex_t can't grow. But this structure
-> >> can grow, so the reservation seems needless to me.
-> >=20
-> > Quite a few folks have said that ->reserved is either unnecessary or
-> > too big. I will be changing this, though I am not clear what the best
-> > way of extending the structure is. If anyone has a strong opinion on
-> > this (or an alternative to the ones listed below), please chime in. I
-> > don't have any really strong attachment to this aspect of the API.
-> >=20
-> > There appear to be a few ways we can do it (that all have precedence
-> > with other syscalls):
-> >=20
-> >  1. Use O_* flags to indicate extensions.
-> >  2. A separate "version" field that is incremented when we change.
-> >  3. Add a size_t argument to openat2(2).
-> >  4. Reserve space (as in this patchset).
-> >=20
-> > (My personal preference would be (3), followed closely by (2).)
->=20
-> 3, definitely, and instead of having to invent a new scheme for every
-> new syscall, make that the default pattern by providing a helper
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Sure (though hopefully I don't need to immediately go and refactor all
-the existing size_t syscalls). I will be presenting about this patchset
-at the containers microconference at LPC (in a few weeks), so I'll hold
-of on any API-related rewrites until after that.
+> ---
+> 
+> Changes in v2:
+>   - Another way to reduce linu wrapping
+> 
+>  drivers/mmc/host/sdhci.c | 27 +++++++++++++--------------
+>  1 file changed, 13 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 08cc0792c174..66c2cf89ee22 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -668,10 +668,10 @@ void sdhci_adma_write_desc(struct sdhci_host *host, void **desc,
+>  	/* 32-bit and 64-bit descriptors have these members in same position */
+>  	dma_desc->cmd = cpu_to_le16(cmd);
+>  	dma_desc->len = cpu_to_le16(len);
+> -	dma_desc->addr_lo = cpu_to_le32((u32)addr);
+> +	dma_desc->addr_lo = cpu_to_le32(lower_32_bits(addr));
+>  
+>  	if (host->flags & SDHCI_USE_64_BIT_DMA)
+> -		dma_desc->addr_hi = cpu_to_le32((u64)addr >> 32);
+> +		dma_desc->addr_hi = cpu_to_le32(upper_32_bits(addr));
+>  
+>  	*desc += host->desc_sz;
+>  }
+> @@ -816,6 +816,13 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
+>  	}
+>  }
+>  
+> +static void sdhci_set_adma_addr(struct sdhci_host *host, dma_addr_t addr)
+> +{
+> +	sdhci_writel(host, lower_32_bits(addr), SDHCI_ADMA_ADDRESS);
+> +	if (host->flags & SDHCI_USE_64_BIT_DMA)
+> +		sdhci_writel(host, upper_32_bits(addr), SDHCI_ADMA_ADDRESS_HI);
+> +}
+> +
+>  static dma_addr_t sdhci_sdma_address(struct sdhci_host *host)
+>  {
+>  	if (host->bounce_buffer)
+> @@ -826,13 +833,10 @@ static dma_addr_t sdhci_sdma_address(struct sdhci_host *host)
+>  
+>  static void sdhci_set_sdma_addr(struct sdhci_host *host, dma_addr_t addr)
+>  {
+> -	if (host->v4_mode) {
+> -		sdhci_writel(host, addr, SDHCI_ADMA_ADDRESS);
+> -		if (host->flags & SDHCI_USE_64_BIT_DMA)
+> -			sdhci_writel(host, (u64)addr >> 32, SDHCI_ADMA_ADDRESS_HI);
+> -	} else {
+> +	if (host->v4_mode)
+> +		sdhci_set_adma_addr(host, addr);
+> +	else
+>  		sdhci_writel(host, addr, SDHCI_DMA_ADDRESS);
+> -	}
+>  }
+>  
+>  static unsigned int sdhci_target_timeout(struct sdhci_host *host,
+> @@ -1095,12 +1099,7 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+>  			host->flags &= ~SDHCI_REQ_USE_DMA;
+>  		} else if (host->flags & SDHCI_USE_ADMA) {
+>  			sdhci_adma_table_pre(host, data, sg_cnt);
+> -
+> -			sdhci_writel(host, host->adma_addr, SDHCI_ADMA_ADDRESS);
+> -			if (host->flags & SDHCI_USE_64_BIT_DMA)
+> -				sdhci_writel(host,
+> -					     (u64)host->adma_addr >> 32,
+> -					     SDHCI_ADMA_ADDRESS_HI);
+> +			sdhci_set_adma_addr(host, host->adma_addr);
+>  		} else {
+>  			WARN_ON(sg_cnt != 1);
+>  			sdhci_set_sdma_addr(host, sdhci_sdma_address(host));
+> 
 
-> int __copy_abi_struct(void *kernel, size_t ksize, const void __user
-> *user, size_t usize)
-> {
-> 	size_t copy =3D min(ksize, usize);
->=20
-> 	if (copy_from_user(kernel, user, copy))
-> 		return -EFAULT;
->=20
-> 	if (usize > ksize) {
-> 		/* maybe a separate "return user_is_zero(user + ksize, usize -
-> ksize);" helper */
-> 		char c;
-> 		user +=3D ksize;
-> 		usize -=3D ksize;
-> 		while (usize--) {
-> 			if (get_user(c, user++))
-> 				return -EFAULT;
-> 			if (c)
-> 				return -EINVAL;
-
-This part would probably be better done with memchr_inv() and
-copy_from_user() (and probably should put an upper limit on usize), but
-I get what you mean.
-
-> 		}
-> 	} else if (ksize > usize) {
-> 		memset(kernel + usize, 0, ksize - usize);
-> 	}
-> 	return 0;
-> }
-> #define copy_abi_struct(kernel, user, usize)	\
-> 	__copy_abi_struct(kernel, sizeof(*kernel), user, usize)
->
-> > Both (1) and (2) have the problem that the "struct version" is inside
-> > the struct so we'd need to copy_from_user() twice. This isn't the end of
-> > the world, it just feels a bit less clean than is ideal. (3) fixes that
-> > problem, at the cost of making the API slightly more cumbersome to use
-> > directly (though again glibc could wrap that away).
->=20
-> I don't see how 3 is cumbersome to use directly. Userspace code does
-> struct openat_of_the_day args =3D {.field1 =3D x, .field3 =3D y} and pass=
-es
-> &args, sizeof(args). What does glibc need to do beyond its usual munging
-> of the userspace ABI registers to the syscall ABI registers?
-
-I'd argue that
-
-    ret =3D openat2(AT_FDCWD, "foo", &how, sizeof(how)); // (3)
-
-is slightly less pretty than
-
-    ret =3D openat2(AT_FDCWD, "foo", &how); // (1), (2), (4)
-
-But it's not really that bad. Forget I said anything.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---itirvnprc6jjrbl3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXWfQxQAKCRCdlLljIbnQ
-EoMSAP9J0uy3xcD3flC3cANph5LKQ2g0JWnMb61ew5LWDORVogD/UGWciY+tdPiy
-YNHs2UcBt9SEH1MNpEIgf2GN6RoyaQI=
-=ne2z
------END PGP SIGNATURE-----
-
---itirvnprc6jjrbl3--
