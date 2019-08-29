@@ -2,63 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35E1DA1BCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDA8EA1BC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 15:49:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbfH2NtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 09:49:09 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39093 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfH2NtH (ORCPT
+        id S1727420AbfH2NtE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 09:49:04 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51675 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727360AbfH2NtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 09:49:07 -0400
-Received: by mail-io1-f66.google.com with SMTP id d25so4487172iob.6
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 06:49:07 -0700 (PDT)
+        Thu, 29 Aug 2019 09:49:04 -0400
+Received: by mail-wm1-f66.google.com with SMTP id k1so3805747wmi.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 06:49:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0Q3HOIVTiQQjN2WQrPLYQE1BmRGFiieaz+rA81DvnjU=;
-        b=ZZWD9OpNRL0XtYFi2lFZlHxSZinqyJ8TpyLRrYC9iPu82pocpeGILmNJueXE79tL46
-         Hx3iIG3SHdJuf3SlJEy1VlbhChjRlBUg7MhHjF0H71LlBWYxfvIQWax+sVjsQt5WUM/v
-         VduNLbytEHMvZQWgrRu0W2b2t0rKniNs6zLPs=
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HsA5AiZYcLjGaOwF7llG2D8YWXDZ7fAurDyqgUx22cQ=;
+        b=Smiubh10AZvy1V5/a3s9ngk74AY/Gn/dplsTUfPlBGrWfI2iXfguDSeowO4ocsHvk1
+         Iz+4/Mi4Xw3NAVZOltljgx6/2szcMQU35rLITwq+mgDElGosjMdWZyCDI4EgM6ccSCNl
+         h5fVC2owNRY4l4bPEpamPDVdadJ0VgkVCIsbTlRhX4xdpmw0YobpQiZDPL0YmieOrN1D
+         Oi1pyQLxw/E4EBp6rwFro1h8IKA/hEemLSIV0p/mxQALFuCVJ/cu48RD/p9zHZvsCwcp
+         +sPWyM/cK29se/O5RDe3bbIfVoawGXs+KdKYbiSL4EO6b3DcjLCilTYi8sS1NLLBkHk4
+         zVgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0Q3HOIVTiQQjN2WQrPLYQE1BmRGFiieaz+rA81DvnjU=;
-        b=Jz4dR4l5Cm7afUCyipz1Mgj0Obvqu5RRiWcPLNzOqb1moaWC9zahasKqllBSRcrtmW
-         sSlhW0Cliiyuxy4nytDVtqHXKu2gIuV+kw6vNDD3Jy5Utbyq03cHdkvM6OzlW+j2w/D0
-         /HPqp/NR925l2XGX+IGLsMOVDUuOpyk+z0trlgbPQ2d/YaNgCooukN5x+wirVBgeph1M
-         eeyH/YqJrS11zwX9uhwWZ+/qOeQqLbjYL27JLyBGBb7NEJ95i4d+6/r3jMpLrLugRlHU
-         dgV64/JlmSbAC53WtH5qe2WS3JVuUqaLg49xir9J46+0NSRIWTS+katMlFT05QBVktgU
-         Q8Kw==
-X-Gm-Message-State: APjAAAXtGVqDrd55m3LvDVm/tsV0EHaZkMPLt+XEVxaSPS8xcA6Ju/Ew
-        bpVzeAFJCGp+FdQEVPoDjLY6/24gpD3eyw59lFmdDg==
-X-Google-Smtp-Source: APXvYqzW2n25R0aKrJKpGkCfaBBX65DnLGmBlfFac1mmX3iIfD8YBhimr86nLnQnYes5p3+3pE+/AtLQSkscAssggNI=
-X-Received: by 2002:a6b:da1a:: with SMTP id x26mr11000610iob.285.1567086547127;
- Thu, 29 Aug 2019 06:49:07 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HsA5AiZYcLjGaOwF7llG2D8YWXDZ7fAurDyqgUx22cQ=;
+        b=odXKiCF7LkVDwQYL2OXSNgA7IQ9QrSqT70Dqqu6f10rYKaiCyJcpu2vbpc691FUV0g
+         k+VD3I+7FzU/MvE5S2h8POrH0r8vOoxA6m+vrbWYITyrkPraVwFv5tToVU7xI3RnCe80
+         oQV8Vz4P8dX/9RNamvBZH2IdmdHDprI7mrUbAMUijkEMnEpBga3a6bpNEGipZv9nwyoz
+         Uoywn/mgwU4PfgBHosPocwhV7bIPbx3Ilk1rJHXb+zijn2qmiLRZs0BzISii/fN40jNn
+         4lR/FvKiJj62QcXeE34qE068ovXdyEAloZky/U9mJOh16LL/1XCHHW/ksHMVE/VEhcsU
+         wJ4w==
+X-Gm-Message-State: APjAAAVPUFSyZdd8tKVTwVyeGETviGKsDZ5KxbipfabxS7iASVJz6/8h
+        roqnZKufbsy41S4tQaa9MMtnRQ==
+X-Google-Smtp-Source: APXvYqyMdHJOwSyphJQegodWp0CqprlA/IWiOz3w8db3EETvDyHh6uUV9K/25pu/R3AqXMHpRimViA==
+X-Received: by 2002:a1c:f604:: with SMTP id w4mr11797299wmc.169.1567086541944;
+        Thu, 29 Aug 2019 06:49:01 -0700 (PDT)
+Received: from localhost (ip-78-45-163-186.net.upcbroadband.cz. [78.45.163.186])
+        by smtp.gmail.com with ESMTPSA id x10sm3671157wrn.39.2019.08.29.06.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 06:49:01 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 15:49:01 +0200
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Horatiu Vultur <horatiu.vultur@microchip.com>,
+        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+        davem@davemloft.net, allan.nielsen@microchip.com,
+        ivecera@redhat.com, f.fainelli@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] net: core: Notify on changes to dev->promiscuity.
+Message-ID: <20190829134901.GJ2312@nanopsycho>
+References: <1567070549-29255-1-git-send-email-horatiu.vultur@microchip.com>
+ <1567070549-29255-2-git-send-email-horatiu.vultur@microchip.com>
+ <20190829095100.GH2312@nanopsycho>
+ <20190829132611.GC6998@lunn.ch>
 MIME-Version: 1.0
-References: <20190829134104.23653-1-stefanha@redhat.com>
-In-Reply-To: <20190829134104.23653-1-stefanha@redhat.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 29 Aug 2019 15:48:56 +0200
-Message-ID: <CAJfpegsMwGLryccnOR5a0RTFKjv3jH4g0DQt-HpkSQTwZgHyKw@mail.gmail.com>
-Subject: Re: [PATCH] virtio-fs: add Documentation/filesystems/virtiofs.rst
-To:     Stefan Hajnoczi <stefanha@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>,
-        linux-kernel@vger.kernel.org, virtio-fs@redhat.com,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829132611.GC6998@lunn.ch>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 3:41 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
+Thu, Aug 29, 2019 at 03:26:11PM CEST, andrew@lunn.ch wrote:
+>> NACK
+>> 
+>> This is invalid usecase for switchdev infra. Switchdev is there for
+>> bridge offload purposes only.
 >
-> Add information about the new "virtiofs" file system.
+>Hi Jiri
+>
+>I would argue this is for bridge offload. In another email, you say
+>promisc is promisc. Does that mean the Mellonox hardware forwards
+>every frame ingressing a port to the CPU by default as soon as it is
+>enslaved to a bridge and promisc mode turned on? Or course not. At the
+>moment, every switchdev driver wrongly implement promisc mode.
+>
+>This patchset is about correctly implementing promisc mode, so that
+>applications can use it as expected. And that means configuring the
+>hardware bridge to also forward a copy of frames to the CPU.
 
-Thanks, applied.
+Wait, I believe there has been some misundestanding. Promisc mode is NOT
+about getting packets to the cpu. It's about setting hw filters in a way
+that no rx packet is dropped. For normal nics it means that all packets
+get to the cpu, but that is just because it is the only direction they
+can make.
 
-Miklos
+If you want to get packets from the hw forwarding dataplane to cpu, you
+should not use promisc mode for that. That would be incorrect.
+
+If you want to get packets from the hw forwarding dataplane to cpu, you
+should use tc trap action. It is there exactly for this purpose.
+
+Promisc is for setting rx filters.
+
+
+>
+>I see trap as a different use case. tcpdump/pcap is not going to use
+>traps.
+>
+>	Andrew
