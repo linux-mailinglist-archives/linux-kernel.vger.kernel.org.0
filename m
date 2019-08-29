@@ -2,121 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8FCEA13CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84CC2A13BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:32:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfH2Ic6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:32:58 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39561 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727773AbfH2Icy (ORCPT
+        id S1727563AbfH2Ick (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:32:40 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44990 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727400AbfH2Icg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:32:54 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x4so2171554ljj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:53 -0700 (PDT)
+        Thu, 29 Aug 2019 04:32:36 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j11so2443902wrp.11;
+        Thu, 29 Aug 2019 01:32:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YYbyB5kFUWf6dqvDXhjjxb+wzo/FqiSnAfPyprR2IAE=;
-        b=R9QUMRrN65bwRnO9px8s4xj14f+pTyMo5vcqnpvdOmG1rcZUGAyrtBEnN5flG942eX
-         t92t/xKLbVatDl4D+ZBDCE0Lb+K99LS04XpDFApSlgrxo1U9zGyXvGBigB9fLdH1sCK/
-         n32IxO9Is/VSOTbXdS+kz3rq0GNhjFMjkZXpY=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TLcjEAYdtAfZ2IRKdNGNYpywlsNLbG2mqtC2Fue66Yc=;
+        b=QJxXPKf/Cg9KTx27UkHrkQS6ltF9PXHtxV3So9AJZ3YdbRVZ7QhBAft6mEVczkhzYF
+         n3FHou9injbx8mXgBd6MwmQ1s9z5IrRQW9ymkowZ+1YaSfWjr2VOd5XBjNmfT5XVY63Y
+         /F2ezWgMx+8Pm7T7I83lhTUhjgZFGlBBP/VgY8Pp9hVkkE+LDqbZrGZBUiopAWynhbUM
+         aW0M+QsTkjiep24QWsIY4HJZsIvLdfz9oVvYwkaXovkv/BJuDAbIMfP7MD88Q+WMJ4nk
+         848vROF+kVBToD962VFAZJ9c3+IvvHy/wdECBasAP1fBcPQG7BuRVXbXYTJMhmCiPbNX
+         +HBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YYbyB5kFUWf6dqvDXhjjxb+wzo/FqiSnAfPyprR2IAE=;
-        b=GV6vd/7K3wSi4YxNVrPrAriW8qsHlb1Ys42UVdkBSPGjzzfzBN9W2h5cbo1FHzXs9m
-         RQ19BbWsIHYu8f2Y/jWXmLF5enDaKkZYMyd1UVQoEzJXd+tS1kBQbe+BQ/UJBJ/PNoEd
-         KwVyKAke6QLVSsgXaFee6GL83P3KEtG3cZ6qCxIRV5tTbs8a16aVlV+9sPLGFQ84+9Ym
-         HamQm9DPgsg2THkXu8W49Ex1+Rz8bWGlO4ThXI3rHldNOi8pkY0Ux5BJClFzYcan7P28
-         fCrP7gI1mINLAunpuwH6KWyLv8xM/CM3pWdTfGmboATyFQSZpkFTUl8NUlg3yXIEUYZN
-         i/yA==
-X-Gm-Message-State: APjAAAVaxMGoT8NbVMm/IrRrLZFyG+3Gm6Buh/6PGiiaV8dbJtRD6F0/
-        6dorkODyR73AwNWZurFolsy4/w==
-X-Google-Smtp-Source: APXvYqwsHFI0WZ9GyKF8WpFJ1pt/ZVBy4yrgqqH9LCd3BkKb1rBspeYGAL8EvgrI6/YsX020f9mEoQ==
-X-Received: by 2002:a2e:3a0e:: with SMTP id h14mr4606426lja.180.1567067572941;
-        Thu, 29 Aug 2019 01:32:52 -0700 (PDT)
-Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o20sm248087ljg.31.2019.08.29.01.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 01:32:52 -0700 (PDT)
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To:     x86@kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        ndesaulniers@google.com,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [RFC PATCH 3/5] compiler-gcc.h: add asm_inline definition
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TLcjEAYdtAfZ2IRKdNGNYpywlsNLbG2mqtC2Fue66Yc=;
+        b=BAQ1yC0YcmyS3QJzf2sbNaND98XSkUk57IbiM9YOTpP5VclbXyo1ttjzJ0QguyyZtS
+         aMAqVlZ1JkBaPwbFWCQdiO+nGSsyCU+DXtBZsmPQhSgcRBTzJoNvbwK46PbiDu6Vuzjj
+         JN8ySmz5mavVjzeBz5GkCOdn+UeQBoKIFWWQFkKu+koIrqawwjt6x788yAF0qZWKI6ph
+         BiFHo+S/gcLxjrGHFozj0B2giqcpqRP7YcL3xprurj5dgRQ0gyUiWqGswD8r5ipvkDGm
+         UcMiZSTyn8+P7Pcmy8a0uBdAwn2p8jEMp2iBynUMjcNyX9mf15Mizy9F3qHrfdrPnnZi
+         xaug==
+X-Gm-Message-State: APjAAAVs0CE88axcvUf4EPY1L8tP6AE7X1VtJavxHOv7JYmviobRISKp
+        qu7p8F9UI+bne3ifHDF4dv+Yien2
+X-Google-Smtp-Source: APXvYqxvedUZQokkdwPwIOVPjaDcbedfAWkWLITg5V4Mob8IXBhl45k79LQCPRLYcJ/MhjRlvzp1Qg==
+X-Received: by 2002:adf:82d4:: with SMTP id 78mr9182142wrc.85.1567067554017;
+        Thu, 29 Aug 2019 01:32:34 -0700 (PDT)
+Received: from [192.168.8.147] (33.169.185.81.rev.sfr.net. [81.185.169.33])
+        by smtp.gmail.com with ESMTPSA id n14sm4882149wra.75.2019.08.29.01.32.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2019 01:32:33 -0700 (PDT)
+Subject: Re: [v1] net_sched: act_police: add 2 new attributes to support
+ police 64bit rate and peakrate
+To:     David Dai <zdai@linux.vnet.ibm.com>, jhs@mojatatu.com,
+        xiyou.wangcong@gmail.com, jiri@resnulli.us, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     zdai@us.ibm.com
+References: <1567032687-973-1-git-send-email-zdai@linux.vnet.ibm.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <7a8a5024-bbff-7443-71b3-9e3976af269f@gmail.com>
 Date:   Thu, 29 Aug 2019 10:32:31 +0200
-Message-Id: <20190829083233.24162-4-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
-References: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1567032687-973-1-git-send-email-zdai@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an asm_inline macro which expands to "asm inline" when gcc
-is new enough (>= 9.1), and just asm for older gccs and other
-compilers.
 
-Using asm inline("foo") instead of asm("foo") overrules gcc's
-heuristic estimate of the size of the code represented by the asm()
-statement, and makes gcc use the minimum possible size instead. That
-can in turn affect gcc's inlining decisions.
 
-I wasn't sure whether to make this a function-like macro or not - this
-way, it can be combined with volatile as
+On 8/29/19 12:51 AM, David Dai wrote:
+> For high speed adapter like Mellanox CX-5 card, it can reach upto
+> 100 Gbits per second bandwidth. Currently htb already supports 64bit rate
+> in tc utility. However police action rate and peakrate are still limited
+> to 32bit value (upto 32 Gbits per second). Add 2 new attributes
+> TCA_POLICE_RATE64 and TCA_POLICE_RATE64 in kernel for 64bit support
+> so that tc utility can use them for 64bit rate and peakrate value to
+> break the 32bit limit, and still keep the backward binary compatibility.
+> 
+> Tested-by: David Dai <zdai@linux.vnet.ibm.com>
+> Signed-off-by: David Dai <zdai@linux.vnet.ibm.com>
+> ---
+>  include/uapi/linux/pkt_cls.h |    2 ++
+>  net/sched/act_police.c       |   27 +++++++++++++++++++++++----
+>  2 files changed, 25 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
+> index b057aee..eb4ea4d 100644
+> --- a/include/uapi/linux/pkt_cls.h
+> +++ b/include/uapi/linux/pkt_cls.h
+> @@ -159,6 +159,8 @@ enum {
+>  	TCA_POLICE_AVRATE,
+>  	TCA_POLICE_RESULT,
+>  	TCA_POLICE_TM,
+> +	TCA_POLICE_RATE64,
+> +	TCA_POLICE_PEAKRATE64,
+>  	TCA_POLICE_PAD,
+>  	__TCA_POLICE_MAX
+>  #define TCA_POLICE_RESULT TCA_POLICE_RESULT
 
-  asm_inline volatile()
+Never insert new attributes, as this breaks compatibility with old binaries (including
+old kernels)
 
-but perhaps we'd prefer to spell that
-
-  asm_inline_volatile()
-
-anyway.
-
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- include/linux/compiler-gcc.h   | 4 ++++
- include/linux/compiler_types.h | 4 ++++
- 2 files changed, 8 insertions(+)
-
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index d7ee4c6bad48..abd7abf7d06b 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -172,3 +172,7 @@
- #endif
- 
- #define __no_fgcse __attribute__((optimize("-fno-gcse")))
-+
-+#if GCC_VERSION >= 90100
-+#define asm_inline __asm__ __inline__
-+#endif
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 4a8b63e3a31d..3d354b166a94 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -188,6 +188,10 @@ struct ftrace_likely_data {
- #define asm_volatile_goto(x...) asm goto(x)
- #endif
- 
-+#ifndef asm_inline
-+#define asm_inline __asm__
-+#endif
-+
- #ifndef __no_fgcse
- # define __no_fgcse
- #endif
--- 
-2.20.1
-
+Keep TCA_POLICE_PAD value the same, thanks.
