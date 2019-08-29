@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DDBA1608
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:33:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB78EA1620
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:33:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfH2KdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 06:33:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56572 "EHLO mx1.redhat.com"
+        id S1727992AbfH2Kdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 06:33:47 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42258 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727330AbfH2KdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 06:33:09 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1727308AbfH2KdI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 06:33:08 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B25073695F;
+        by mx1.redhat.com (Postfix) with ESMTPS id 4996330832DC;
         Thu, 29 Aug 2019 10:33:08 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-95.ams2.redhat.com [10.36.116.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AEEC1001B07;
-        Thu, 29 Aug 2019 10:33:08 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F13C45D772;
+        Thu, 29 Aug 2019 10:33:07 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id BB64631F04; Thu, 29 Aug 2019 12:33:03 +0200 (CEST)
+        id DC66131F1F; Thu, 29 Aug 2019 12:33:03 +0200 (CEST)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
@@ -29,146 +29,91 @@ Cc:     olvaffe@gmail.com, gurchetansingh@chromium.org,
         Daniel Vetter <daniel@ffwll.ch>,
         virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v9 12/18] drm/virtio: rework virtio_gpu_cmd_context_{attach,detach}_resource
-Date:   Thu, 29 Aug 2019 12:32:55 +0200
-Message-Id: <20190829103301.3539-13-kraxel@redhat.com>
+Subject: [PATCH v9 13/18] drm/virtio: drop virtio_gpu_object_list_validate/virtio_gpu_unref_list
+Date:   Thu, 29 Aug 2019 12:32:56 +0200
+Message-Id: <20190829103301.3539-14-kraxel@redhat.com>
 In-Reply-To: <20190829103301.3539-1-kraxel@redhat.com>
 References: <20190829103301.3539-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 29 Aug 2019 10:33:08 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 29 Aug 2019 10:33:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to the virtio_gpu_array_* helper workflow.
+No users left.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/virtio/virtgpu_drv.h |  4 ++--
- drivers/gpu/drm/virtio/virtgpu_gem.c | 24 +++++++++++-------------
- drivers/gpu/drm/virtio/virtgpu_vq.c  | 12 ++++++++----
- 3 files changed, 21 insertions(+), 19 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_drv.h   |  3 --
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 39 --------------------------
+ 2 files changed, 42 deletions(-)
 
 diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 4f54bf7c02af..d5ef2514d2bd 100644
+index d5ef2514d2bd..1266a8e64961 100644
 --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
 +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -313,10 +313,10 @@ void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
- 				    uint32_t id);
- void virtio_gpu_cmd_context_attach_resource(struct virtio_gpu_device *vgdev,
- 					    uint32_t ctx_id,
--					    uint32_t resource_id);
-+					    struct virtio_gpu_object_array *objs);
- void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
- 					    uint32_t ctx_id,
--					    uint32_t resource_id);
-+					    struct virtio_gpu_object_array *objs);
- void virtio_gpu_cmd_submit(struct virtio_gpu_device *vgdev,
- 			   void *data, uint32_t data_size,
- 			   uint32_t ctx_id,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
-index fd60b45aabd2..fd4eeeedaf75 100644
---- a/drivers/gpu/drm/virtio/virtgpu_gem.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
-@@ -136,19 +136,18 @@ int virtio_gpu_gem_object_open(struct drm_gem_object *obj,
- {
- 	struct virtio_gpu_device *vgdev = obj->dev->dev_private;
- 	struct virtio_gpu_fpriv *vfpriv = file->driver_priv;
--	struct virtio_gpu_object *qobj = gem_to_virtio_gpu_obj(obj);
--	int r;
-+	struct virtio_gpu_object_array *objs;
+@@ -223,9 +223,6 @@ struct virtio_gpu_fpriv {
+ /* virtio_ioctl.c */
+ #define DRM_VIRTIO_NUM_IOCTLS 10
+ extern struct drm_ioctl_desc virtio_gpu_ioctls[DRM_VIRTIO_NUM_IOCTLS];
+-int virtio_gpu_object_list_validate(struct ww_acquire_ctx *ticket,
+-				    struct list_head *head);
+-void virtio_gpu_unref_list(struct list_head *head);
  
- 	if (!vgdev->has_virgl_3d)
- 		return 0;
- 
--	r = virtio_gpu_object_reserve(qobj);
--	if (r)
--		return r;
-+	objs = virtio_gpu_array_alloc(1);
-+	if (!objs)
-+		return -ENOMEM;
-+	virtio_gpu_array_add_obj(objs, obj);
- 
- 	virtio_gpu_cmd_context_attach_resource(vgdev, vfpriv->ctx_id,
--					       qobj->hw_res_handle);
--	virtio_gpu_object_unreserve(qobj);
-+					       objs);
- 	return 0;
+ /* virtio_kms.c */
+ int virtio_gpu_init(struct drm_device *dev);
+diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+index 677d844d88bc..e36ab3d6d162 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
++++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
+@@ -56,45 +56,6 @@ static int virtio_gpu_map_ioctl(struct drm_device *dev, void *data,
+ 					 &virtio_gpu_map->offset);
  }
  
-@@ -157,19 +156,18 @@ void virtio_gpu_gem_object_close(struct drm_gem_object *obj,
- {
- 	struct virtio_gpu_device *vgdev = obj->dev->dev_private;
- 	struct virtio_gpu_fpriv *vfpriv = file->driver_priv;
--	struct virtio_gpu_object *qobj = gem_to_virtio_gpu_obj(obj);
--	int r;
-+	struct virtio_gpu_object_array *objs;
- 
- 	if (!vgdev->has_virgl_3d)
- 		return;
- 
--	r = virtio_gpu_object_reserve(qobj);
--	if (r)
-+	objs = virtio_gpu_array_alloc(1);
-+	if (!objs)
- 		return;
-+	virtio_gpu_array_add_obj(objs, obj);
- 
- 	virtio_gpu_cmd_context_detach_resource(vgdev, vfpriv->ctx_id,
--						qobj->hw_res_handle);
--	virtio_gpu_object_unreserve(qobj);
-+					       objs);
- }
- 
- struct virtio_gpu_object_array *virtio_gpu_array_alloc(u32 nents)
-diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
-index 20714094dddc..d00439ce0ef7 100644
---- a/drivers/gpu/drm/virtio/virtgpu_vq.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
-@@ -838,34 +838,38 @@ void virtio_gpu_cmd_context_destroy(struct virtio_gpu_device *vgdev,
- 
- void virtio_gpu_cmd_context_attach_resource(struct virtio_gpu_device *vgdev,
- 					    uint32_t ctx_id,
--					    uint32_t resource_id)
-+					    struct virtio_gpu_object_array *objs)
- {
-+	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(objs->objs[0]);
- 	struct virtio_gpu_ctx_resource *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
- 
- 	cmd_p = virtio_gpu_alloc_cmd(vgdev, &vbuf, sizeof(*cmd_p));
- 	memset(cmd_p, 0, sizeof(*cmd_p));
-+	vbuf->objs = objs;
- 
- 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_CTX_ATTACH_RESOURCE);
- 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
--	cmd_p->resource_id = cpu_to_le32(resource_id);
-+	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
- 
- }
- 
- void virtio_gpu_cmd_context_detach_resource(struct virtio_gpu_device *vgdev,
- 					    uint32_t ctx_id,
--					    uint32_t resource_id)
-+					    struct virtio_gpu_object_array *objs)
- {
-+	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(objs->objs[0]);
- 	struct virtio_gpu_ctx_resource *cmd_p;
- 	struct virtio_gpu_vbuffer *vbuf;
- 
- 	cmd_p = virtio_gpu_alloc_cmd(vgdev, &vbuf, sizeof(*cmd_p));
- 	memset(cmd_p, 0, sizeof(*cmd_p));
-+	vbuf->objs = objs;
- 
- 	cmd_p->hdr.type = cpu_to_le32(VIRTIO_GPU_CMD_CTX_DETACH_RESOURCE);
- 	cmd_p->hdr.ctx_id = cpu_to_le32(ctx_id);
--	cmd_p->resource_id = cpu_to_le32(resource_id);
-+	cmd_p->resource_id = cpu_to_le32(bo->hw_res_handle);
- 	virtio_gpu_queue_ctrl_buffer(vgdev, vbuf);
- }
- 
+-int virtio_gpu_object_list_validate(struct ww_acquire_ctx *ticket,
+-				    struct list_head *head)
+-{
+-	struct ttm_operation_ctx ctx = { false, false };
+-	struct ttm_validate_buffer *buf;
+-	struct ttm_buffer_object *bo;
+-	struct virtio_gpu_object *qobj;
+-	int ret;
+-
+-	ret = ttm_eu_reserve_buffers(ticket, head, true, NULL, true);
+-	if (ret != 0)
+-		return ret;
+-
+-	list_for_each_entry(buf, head, head) {
+-		bo = buf->bo;
+-		qobj = container_of(bo, struct virtio_gpu_object, tbo);
+-		ret = ttm_bo_validate(bo, &qobj->placement, &ctx);
+-		if (ret) {
+-			ttm_eu_backoff_reservation(ticket, head);
+-			return ret;
+-		}
+-	}
+-	return 0;
+-}
+-
+-void virtio_gpu_unref_list(struct list_head *head)
+-{
+-	struct ttm_validate_buffer *buf;
+-	struct ttm_buffer_object *bo;
+-	struct virtio_gpu_object *qobj;
+-
+-	list_for_each_entry(buf, head, head) {
+-		bo = buf->bo;
+-		qobj = container_of(bo, struct virtio_gpu_object, tbo);
+-
+-		drm_gem_object_put_unlocked(&qobj->gem_base);
+-	}
+-}
+-
+ /*
+  * Usage of execbuffer:
+  * Relocations need to take into account the full VIRTIO_GPUDrawable size.
 -- 
 2.18.1
 
