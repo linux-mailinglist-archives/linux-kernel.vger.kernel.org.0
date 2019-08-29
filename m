@@ -2,62 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 303EDA218E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F134A2197
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 18:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfH2Q4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 12:56:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39288 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728007AbfH2Q4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 12:56:15 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 763CFAF78;
-        Thu, 29 Aug 2019 16:56:14 +0000 (UTC)
-Date:   Thu, 29 Aug 2019 18:56:14 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     "Singh, Brijesh" <brijesh.singh@amd.com>
-Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 09/11] KVM: x86: Introduce KVM_GET_PAGE_ENC_BITMAP
- ioctl
-Message-ID: <20190829165613.GE2132@zn.tnic>
-References: <20190710201244.25195-1-brijesh.singh@amd.com>
- <20190710201244.25195-10-brijesh.singh@amd.com>
- <20190829162641.GB2132@zn.tnic>
- <f347e7f3-133f-2199-eeec-583a10c43e3c@amd.com>
+        id S1727686AbfH2Q62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 12:58:28 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:38548 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727087AbfH2Q62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 12:58:28 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R901e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0TanJx0D_1567097902;
+Received: from bn0418deMacBook-Pro.local(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TanJx0D_1567097902)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 30 Aug 2019 00:58:23 +0800
+Subject: Re: [PATCH v2] vfio/type1: avoid redundant PageReserved checking
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
+        Andrea Arcangeli <aarcange@redhat.com>
+References: <20190827124041.4f986005@x1.home>
+ <3517844d6371794cff59b13bf9c2baf1dcbe571c.1566966365.git.luoben@linux.alibaba.com>
+ <20190828095501.12e71bd3@x1.home>
+From:   Ben Luo <luoben@linux.alibaba.com>
+Message-ID: <6c234632-b7e9-45c7-3d70-51a4c83161f6@linux.alibaba.com>
+Date:   Fri, 30 Aug 2019 00:58:22 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20190828095501.12e71bd3@x1.home>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f347e7f3-133f-2199-eeec-583a10c43e3c@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 04:41:50PM +0000, Singh, Brijesh wrote:
-> I have been waiting for some feedback before refreshing it. If you want
-> then I can refresh the patch with latest from Linus and send v4.
 
-That's Paolo's call but we're at -rc6 now and if it were me, I'd take
-them the next round so that stuff gets tested longer as -rc6 is pretty
-late in the game. IMO, of course.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Software Solutions Germany GmbH, GF: Felix ImendÃ¶rffer, HRB 247165, AG MÃ¼nchen
+ÔÚ 2019/8/28 ÏÂÎç11:55, Alex Williamson Ð´µÀ:
+> On Wed, 28 Aug 2019 12:28:04 +0800
+> Ben Luo <luoben@linux.alibaba.com> wrote:
+>
+>> currently, if the page is not a tail of compound page, it will be
+>> checked twice for the same thing.
+>>
+>> Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
+>> ---
+>>   drivers/vfio/vfio_iommu_type1.c | 3 +--
+>>   1 file changed, 1 insertion(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+>> index 054391f..d0f7346 100644
+>> --- a/drivers/vfio/vfio_iommu_type1.c
+>> +++ b/drivers/vfio/vfio_iommu_type1.c
+>> @@ -291,11 +291,10 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
+>>   static bool is_invalid_reserved_pfn(unsigned long pfn)
+>>   {
+>>   	if (pfn_valid(pfn)) {
+>> -		bool reserved;
+>>   		struct page *tail = pfn_to_page(pfn);
+>>   		struct page *head = compound_head(tail);
+>> -		reserved = !!(PageReserved(head));
+>>   		if (head != tail) {
+>> +			bool reserved = PageReserved(head);
+>>   			/*
+>>   			 * "head" is not a dangling pointer
+>>   			 * (compound_head takes care of that)
+> Thinking more about this, the code here was originally just a copy of
+> kvm_is_mmio_pfn() which was simplified in v3.12 with the commit below.
+> Should we instead do the same thing here?  Thanks,
+>
+> Alex
+ok, and kvm_is_mmio_pfn() has also been updated since then, I will take 
+a look at that and compose a new patch
+>
+> commit 11feeb498086a3a5907b8148bdf1786a9b18fc55
+> Author: Andrea Arcangeli <aarcange@redhat.com>
+> Date:   Thu Jul 25 03:04:38 2013 +0200
+>
+>      kvm: optimize away THP checks in kvm_is_mmio_pfn()
+>      
+>      The checks on PG_reserved in the page structure on head and tail pages
+>      aren't necessary because split_huge_page wouldn't transfer the
+>      PG_reserved bit from head to tail anyway.
+>      
+>      This was a forward-thinking check done in the case PageReserved was
+>      set by a driver-owned page mapped in userland with something like
+>      remap_pfn_range in a VM_PFNMAP region, but using hugepmds (not
+>      possible right now). It was meant to be very safe, but it's overkill
+>      as it's unlikely split_huge_page could ever run without the driver
+>      noticing and tearing down the hugepage itself.
+>      
+>      And if a driver in the future will really want to map a reserved
+>      hugepage in userland using an huge pmd it should simply take care of
+>      marking all subpages reserved too to keep KVM safe. This of course
+>      would require such a hypothetical driver to tear down the huge pmd
+>      itself and splitting the hugepage itself, instead of relaying on
+>      split_huge_page, but that sounds very reasonable, especially
+>      considering split_huge_page wouldn't currently transfer the reserved
+>      bit anyway.
+>      
+>      Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+>      Signed-off-by: Gleb Natapov <gleb@redhat.com>
+>
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index d2836788561e..0fc25aed79a8 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -102,28 +102,8 @@ static bool largepages_enabled = true;
+>   
+>   bool kvm_is_mmio_pfn(pfn_t pfn)
+>   {
+> -       if (pfn_valid(pfn)) {
+> -               int reserved;
+> -               struct page *tail = pfn_to_page(pfn);
+> -               struct page *head = compound_trans_head(tail);
+> -               reserved = PageReserved(head);
+> -               if (head != tail) {
+> -                       /*
+> -                        * "head" is not a dangling pointer
+> -                        * (compound_trans_head takes care of that)
+> -                        * but the hugepage may have been splitted
+> -                        * from under us (and we may not hold a
+> -                        * reference count on the head page so it can
+> -                        * be reused before we run PageReferenced), so
+> -                        * we've to check PageTail before returning
+> -                        * what we just read.
+> -                        */
+> -                       smp_rmb();
+> -                       if (PageTail(tail))
+> -                               return reserved;
+> -               }
+> -               return PageReserved(tail);
+> -       }
+> +       if (pfn_valid(pfn))
+> +               return PageReserved(pfn_to_page(pfn));
+>   
+>          return true;
+>   }
