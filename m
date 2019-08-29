@@ -2,92 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE61A1EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE86DA1F00
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:25:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728455AbfH2PYu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:24:50 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:34316 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbfH2PYs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:24:48 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727688AbfH2PZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:25:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43014 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727207AbfH2PZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 11:25:15 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 7925F28D609;
-        Thu, 29 Aug 2019 16:24:46 +0100 (BST)
-Date:   Thu, 29 Aug 2019 17:24:41 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "Joao.Pinto@synopsys.com" <Joao.Pinto@synopsys.com>
-Subject: Re: [PATCH 2/4] i3c: master: Check if devices have
- i3c_dev_boardinfo on i3c_master_add_i3c_dev_locked()
-Message-ID: <20190829172441.3a76385e@collabora.com>
-In-Reply-To: <SN6PR12MB2655B08176E14BE9DF2BACA2AEA20@SN6PR12MB2655.namprd12.prod.outlook.com>
-References: <cover.1567071213.git.vitor.soares@synopsys.com>
-        <3e21481ddf53ea58f5899df6ec542b79b8cbcd68.1567071213.git.vitor.soares@synopsys.com>
-        <20190829124457.3a750932@collabora.com>
-        <SN6PR12MB265551F73B9B516CACB5B807AEA20@SN6PR12MB2655.namprd12.prod.outlook.com>
-        <20190829163918.571fd0d8@collabora.com>
-        <20190829163941.45380b19@collabora.com>
-        <SN6PR12MB2655B08176E14BE9DF2BACA2AEA20@SN6PR12MB2655.namprd12.prod.outlook.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEC6F2342F
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 15:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567092315;
+        bh=izoNkph/QjwkRYkXPZQmm9ytluYnjBoc9TYsmIgqnSU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iUFipIVZ1HFIrEALnAF/EnoEcF209ZLWvRC4PEWbszkw/lCP9Yvj37ci8J+w7/hxQ
+         zi/3IdAUX14zyQDtjJ0thyL4mPt5cSWzBq103mHEZpUO2EBt91zBEDCvu4xzO9SOzg
+         6Vbq+bL+ekh6s4QH3C1lVJ97BVS4YmMDzILHOYCc=
+Received: by mail-wm1-f52.google.com with SMTP id l2so4306365wmg.0
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 08:25:14 -0700 (PDT)
+X-Gm-Message-State: APjAAAVds5Hcr2hucHzv8NZROY/HVd090qTDetfT1LZnyamfpgR1XK8m
+        RjOoca62mDNUMowAUj2ljSPakxbWhqBeCTefgPLcew==
+X-Google-Smtp-Source: APXvYqw9u1fu+EHt/4WAojvjLjQ7rKpFezaEHESzZAnb7jZ2raRq1MIbYw3eQuXsuFrZUlLqFJAlw9hQa1Rszg/FXvs=
+X-Received: by 2002:a05:600c:22d7:: with SMTP id 23mr12807622wmg.0.1567092313279;
+ Thu, 29 Aug 2019 08:25:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190829111843.41003-1-vincenzo.frascino@arm.com> <20190829111843.41003-5-vincenzo.frascino@arm.com>
+In-Reply-To: <20190829111843.41003-5-vincenzo.frascino@arm.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 29 Aug 2019 08:25:02 -0700
+X-Gmail-Original-Message-ID: <CALCETrVprrrR3TSVSAnHfLW4HDQG=gcVrdjmsk6ss6Z3+vKOBg@mail.gmail.com>
+Message-ID: <CALCETrVprrrR3TSVSAnHfLW4HDQG=gcVrdjmsk6ss6Z3+vKOBg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] lib: vdso: Remove VDSO_HAS_32BIT_FALLBACK
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mips@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrew Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Aug 2019 15:07:08 +0000
-Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+On Thu, Aug 29, 2019 at 4:19 AM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
+>
+> VDSO_HAS_32BIT_FALLBACK was introduced to address a regression which
+> caused seccomp to deny access to the applications to clock_gettime64()
+> and clock_getres64() because they are not enabled in the existing
+> filters.
+>
+> The purpose of VDSO_HAS_32BIT_FALLBACK was to simplify the conditional
+> implementation of __cvdso_clock_get*time32() variants.
+>
+> Now that all the architectures that support the generic vDSO library
+> have been converted to support the 32 bit fallbacks the conditional
+> can be removed.
+>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> CC: Andy Lutomirski <luto@kernel.org>
+> References: c60a32ea4f45 ("lib/vdso/32: Provide legacy syscall fallbacks")
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>  lib/vdso/gettimeofday.c | 10 ----------
+>  1 file changed, 10 deletions(-)
+>
+> diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
+> index a86e89e6dedc..2c4b311c226d 100644
+> --- a/lib/vdso/gettimeofday.c
+> +++ b/lib/vdso/gettimeofday.c
+> @@ -126,13 +126,8 @@ __cvdso_clock_gettime32(clockid_t clock, struct old_timespec32 *res)
+>
+>         ret = __cvdso_clock_gettime_common(clock, &ts);
+>
+> -#ifdef VDSO_HAS_32BIT_FALLBACK
+>         if (unlikely(ret))
+>                 return clock_gettime32_fallback(clock, res);
+> -#else
+> -       if (unlikely(ret))
+> -               ret = clock_gettime_fallback(clock, &ts);
+> -#endif
+>
+>         if (likely(!ret)) {
+>                 res->tv_sec = ts.tv_sec;
 
-> From: Boris Brezillon <boris.brezillon@collabora.com>
-> Date: Thu, Aug 29, 2019 at 15:39:41
-> 
-> > On Thu, 29 Aug 2019 16:39:18 +0200
-> > Boris Brezillon <boris.brezillon@collabora.com> wrote:
-> >   
-> > > On Thu, 29 Aug 2019 14:00:44 +0000
-> > > Vitor Soares <Vitor.Soares@synopsys.com> wrote:
-> > >   
-> > > > Hi Boris,
-> > > > 
-> > > > From: Boris Brezillon <boris.brezillon@collabora.com>
-> > > > Date: Thu, Aug 29, 2019 at 11:44:57
-> > > >     
-> > > > > On Thu, 29 Aug 2019 12:19:33 +0200
-> > > > > Vitor Soares <Vitor.Soares@synopsys.com> wrote:
-> > > > >       
-> > > > > > The I3C devices described in DT might not be attached to the master which
-> > > > > > doesn't allow to assign a specific dynamic address.      
-> > > > > 
-> > > > > I remember testing this when developing the framework, so, unless
-> > > > > another patch regressed it, it should already work. I suspect patch 1
-> > > > > is actually the regressing this use case.      
-> > > > 
-> > > > For today it doesn't address the case where the device is described with 
-> > > > static address = 0, which isn't attached to the controller.    
-> > > 
-> > > Hm, I'm pretty sure I had designed the code to support that case (see
-> > > [1]). It might be buggy, but nothing we can't fix I guess.
-> > >   
-> > 
-> > [1]https://urldefense.proofpoint.com/v2/url?u=https-3A__elixir.bootlin.com_linux_v5.3-2Drc6_source_drivers_i3c_master.c-23L1898&d=DwICAg&c=DPL6_X_6JkXFx7AXWqB0tg&r=qVuU64u9x77Y0Kd0PhDK_lpxFgg6PK9PateHwjb_DY0&m=IXS1ygIgEo5vwajk0iwd5aBDVBzRnVTjO3cg4iBmGNc&s=HC-AcYm-AZPrUBoALioej_BDnqOtJHltr39Z2yPkuU4&e=   
-> 
-> That is only valid if you have olddev which will only exist if static 
-> address != 0.
+I think you could have a little follow-up patch to remove the if
+statement -- by the time you get here, it's guaranteed that ret == 0.
 
-Hm, if you revert patch 1 (and assuming the device is properly defined
-in the DT), you should have olddev != NULL when reaching that point. If
-that's not the case there's a bug somewhere that should be fixed.
+--Andy
