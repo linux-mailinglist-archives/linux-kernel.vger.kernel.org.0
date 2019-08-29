@@ -2,101 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC379A16E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A081A173E
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 12:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728752AbfH2Kvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 06:51:48 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59724 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728729AbfH2Kvq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 06:51:46 -0400
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728799AbfH2KyH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 06:54:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:3732 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727075AbfH2KyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 06:54:06 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5149428D325;
-        Thu, 29 Aug 2019 11:51:43 +0100 (BST)
-Date:   Thu, 29 Aug 2019 12:51:38 +0200
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Vitor Soares <Vitor.Soares@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-i3c@lists.infradead.org, bbrezillon@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, Joao.Pinto@synopsys.com
-Subject: Re: [PATCH 3/4] dt-bindings: i3c: Make 'assigned-address' valid if
- static address != 0
-Message-ID: <20190829125138.4b36b8f6@collabora.com>
-In-Reply-To: <9d69c83c7193e377bbc77bea7f1812fc17dafaee.1567071213.git.vitor.soares@synopsys.com>
-References: <cover.1567071213.git.vitor.soares@synopsys.com>
-        <9d69c83c7193e377bbc77bea7f1812fc17dafaee.1567071213.git.vitor.soares@synopsys.com>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        by mx1.redhat.com (Postfix) with ESMTPS id BE03C3C93E;
+        Thu, 29 Aug 2019 10:54:05 +0000 (UTC)
+Received: from thuth.com (ovpn-116-53.ams2.redhat.com [10.36.116.53])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 676CD5C1D6;
+        Thu, 29 Aug 2019 10:54:00 +0000 (UTC)
+From:   Thomas Huth <thuth@redhat.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>, kvm@vger.kernel.org
+Cc:     David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] KVM: s390: Test for bad access register at the start of S390_MEM_OP
+Date:   Thu, 29 Aug 2019 12:53:56 +0200
+Message-Id: <20190829105356.27805-1-thuth@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 29 Aug 2019 10:54:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Aug 2019 12:19:34 +0200
-Vitor Soares <Vitor.Soares@synopsys.com> wrote:
+If the KVM_S390_MEM_OP ioctl is called with an access register >= 16,
+then there is certainly a bug in the calling userspace application.
+We check for wrong access registers, but only if the vCPU was already
+in the access register mode before (i.e. the SIE block has recorded
+it). The check is also buried somewhere deep in the calling chain (in
+the function ar_translation()), so this is somewhat hard to find.
 
-> The I3C devices without a static address can require a specific dynamic
-> address for priority reasons.
-> 
-> Let's update the binding document to make the 'assigned-address' property
-> valid if static address != 0 and add an example with this use case.
+It's better to always report an error to the userspace in case this
+field is set wrong, and it's safer in the KVM code if we block wrong
+values here early instead of relying on a check somewhere deep down
+the calling chain, so let's add another check to kvm_s390_guest_mem_op()
+directly.
 
-           ^ you mean static address == 0, right?
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ arch/s390/kvm/kvm-s390.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, it makes sense to support that case and do our best to assign the
-requested address after DAA has taken place by explicitly executing
-SETDA.
-
-> 
-> Signed-off-by: Vitor Soares <vitor.soares@synopsys.com>
-> ---
->  Documentation/devicetree/bindings/i3c/i3c.txt | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/i3c/i3c.txt b/Documentation/devicetree/bindings/i3c/i3c.txt
-> index ab729a0..c851e75 100644
-> --- a/Documentation/devicetree/bindings/i3c/i3c.txt
-> +++ b/Documentation/devicetree/bindings/i3c/i3c.txt
-> @@ -98,9 +98,7 @@ Required properties
->  
->  Optional properties
->  -------------------
-> -- assigned-address: dynamic address to be assigned to this device. This
-> -		    property is only valid if the I3C device has a static
-> -		    address (first cell of the reg property != 0).
-> +- assigned-address: dynamic address to be assigned to this device.
-
-We should probably mention that we don't provide strong guarantees
-here. We will try to assign this dynamic address to the device, but if
-something fails (like another device owning the address and refusing to
-give it up), the actual dynamic address will be different.
-This clarification can be done in a separate patch.
-
->  
->  
->  Example:
-> @@ -129,6 +127,15 @@ Example:
->  
->  		/*
->  		 * I3C device without a static I2C address but requiring
-> +		 * specific dynamic address.
-> +		 */
-> +		sensor@0,39200154004 {
-> +			reg = <0x0 0x6072 0x303904d2>;
-> +			assigned-address = <0xb>;
-> +		};
-> +
-> +		/*
-> +		 * I3C device without a static I2C address but requiring
->  		 * resources described in the DT.
->  		 */
->  		sensor@0,39200154004 {
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index f329dcb3f44c..725690853cbd 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -4255,7 +4255,7 @@ static long kvm_s390_guest_mem_op(struct kvm_vcpu *vcpu,
+ 	const u64 supported_flags = KVM_S390_MEMOP_F_INJECT_EXCEPTION
+ 				    | KVM_S390_MEMOP_F_CHECK_ONLY;
+ 
+-	if (mop->flags & ~supported_flags)
++	if (mop->flags & ~supported_flags || mop->ar >= NUM_ACRS)
+ 		return -EINVAL;
+ 
+ 	if (mop->size > MEM_OP_MAX_SIZE)
+-- 
+2.18.1
 
