@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 770C2A13D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88F8EA13D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 10:34:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbfH2IeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 04:34:08 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43750 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727788AbfH2Ic4 (ORCPT
+        id S1727923AbfH2IdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 04:33:02 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38781 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727810AbfH2Ic5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 04:32:56 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q27so1807511lfo.10
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:54 -0700 (PDT)
+        Thu, 29 Aug 2019 04:32:57 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x3so2172792lji.5
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 01:32:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6P0N9+OtzBQ/+pWxgapquiOAPv3FZmW3I9CzZ8KtwA0=;
-        b=YEkpOy3y52sYFpekXF5SsnslyuHmOvVTH8W30KxlWAeLUPrCxTbcMPCtmShJaWANVF
-         UXHh8crLiDMyDxwPz00RvTLUQN3xxGftGCvtBOQ8uc6+y7Ak4vTynsLyUtaK0djb0e2M
-         KRJ8469XXV8VOgk/5naodAqkWR2fZuxzY28yM=
+        bh=JgLR6Eqt8jfsgQZgs5aBVeUPiD11IsQFXRalFsn+2h4=;
+        b=BU4KkARm9AOg73ixkmQcodJmg2l9rT+7dX+UZ8Jw9ryRRFNzrHnsAuixQ+pL+oP051
+         XFKRDBQv4bD5G7uYzkiksRsBunaSAiB+YDMlwhKYgONropqpuRl0Qv9pAAX2dJv0U2a/
+         Mjnak4cemlkKbG3YV1McfAPLIXFEy29F/fLCQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6P0N9+OtzBQ/+pWxgapquiOAPv3FZmW3I9CzZ8KtwA0=;
-        b=MVLAnrHj3W7iwgJFe5okR49Ftox9g9pJErJr5LBCDKrTUYyWKAwRAm6fdJIIMA1bKd
-         MO2SkL2FdHgttx1CTDfUpLBafRokvVHDK37gWXCfRDWLlWtxlyqMlLKUjS+DLNMaMPn1
-         GXeg1D8a2AnGh09ftpCfzn9mVHhWbjdJ93Cm4cXyh5xenACAcQx3Fu6Uvg2PvezauYcj
-         0/peC5dNYaz5kmoLd/3ubSmUpzyjhlDYJEGJYql4INLY7ByA3lC1On6FpC0Xb4txPva/
-         KgRey5t6W0pNBnLU4lOkujUEIu6ZDcD3nyhLsis43Rj0seGoitZrwxBgbJWG+BMXPrZH
-         SK2g==
-X-Gm-Message-State: APjAAAXwMx8+5LuJtEwMCb5VqKBPsSVyrnLnWt7m+a7etwK7gEKT8Xye
-        EEvzREqo4PvZ5zlhjlZOV1AgRg==
-X-Google-Smtp-Source: APXvYqyf1Lzadr9tMyJSzoWA+LFKwx5oiJj5n4TOy6bd0AYG5wf7UjgXqtCn9rgmhc/yaRiu8MruZw==
-X-Received: by 2002:a19:6a12:: with SMTP id u18mr5260201lfu.133.1567067573970;
-        Thu, 29 Aug 2019 01:32:53 -0700 (PDT)
+        bh=JgLR6Eqt8jfsgQZgs5aBVeUPiD11IsQFXRalFsn+2h4=;
+        b=HLKk335xamvtTAKHwsO7d7Vi7E2u+TQrlbR5iVB+ts7HhapPXvQA9Bc8W79CTNGSgg
+         kNnreabr1sian+YX2z1i7bjmKUFmydbEbpPIXmviU5Ylk0Ghu7NAl8yKxUe0SuaE5fdX
+         /pqEAq3USvGj5VZHIwqP7koyvhEmJemObmJoKRYmX7B9IFgV6AFGTiVtG4GZeiONcx7p
+         4+t18W7s/yhU5LcpTKdPRPy7kIG0oeQQ5Q2OZWtC+3IRt219ZcVl+ByNbATP6DwMhlSE
+         gmu0ywpGX0ZQwF+W3iBCB7MXDS1nJDqQPGBLhq2zHo6qa+mRFuC27U4x2S4vetsHgYL7
+         fArQ==
+X-Gm-Message-State: APjAAAUhZMvx8XXASc1iNKursHub4gcic8wB+bJ2zeVyc6SrNoZdUh32
+        VBASEJyms1QK3Dg+kTArAxBhxQ==
+X-Google-Smtp-Source: APXvYqyiXnmDPZw3Wq01Z5lJf0JrUon18lAytn2k8k+m4ePo8H2XqV7q1jPIEaZVEQSOaAvVbqEQaA==
+X-Received: by 2002:a2e:9c91:: with SMTP id x17mr4517998lji.103.1567067575093;
+        Thu, 29 Aug 2019 01:32:55 -0700 (PDT)
 Received: from prevas-ravi.prevas.se ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id o20sm248087ljg.31.2019.08.29.01.32.52
+        by smtp.gmail.com with ESMTPSA id o20sm248087ljg.31.2019.08.29.01.32.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 01:32:53 -0700 (PDT)
+        Thu, 29 Aug 2019 01:32:54 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     x86@kernel.org, linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -51,9 +51,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
         ndesaulniers@google.com,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [RFC PATCH 4/5] x86: alternative.h: use asm_inline for all alternative variants
-Date:   Thu, 29 Aug 2019 10:32:32 +0200
-Message-Id: <20190829083233.24162-5-linux@rasmusvillemoes.dk>
+Subject: [RFC PATCH 5/5] x86: bug.h: use asm_inline in _BUG_FLAGS definitions
+Date:   Thu, 29 Aug 2019 10:32:33 +0200
+Message-Id: <20190829083233.24162-6-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
 References: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
@@ -64,78 +64,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most, if not all, uses of the alternative* family just provide one or
-two instructions in .text, but the string literal can be quite large,
-causing gcc to overestimate the size of the generated code. That in
-turn affects its decisions about inlining of the function containing
-the alternative() asm statement.
+This helps preventing a BUG* or WARN* in some static inline from
+preventing that (or one of its callers) being inlined, so should allow
+gcc to make better informed inlining decisions.
 
-gcc >= 9.1 allows one to overrule the estimated size by using "asm
-inline" instead of just "asm". So replace asm by the helper
-asm_inline, which for older gccs just expands to asm.
+For example, with gcc 9.2, tcp_fastopen_no_cookie() vanishes from
+net/ipv4/tcp_fastopen.o. It does not itself have any BUG or WARN, but
+it calls dst_metric() which has a WARN_ON_ONCE - and despite that
+WARN_ON_ONCE vanishing since the condition is compile-time false,
+dst_metric() is apparently sufficiently "large" that when it gets
+inlined into tcp_fastopen_no_cookie(), the latter becomes too large
+for inlining.
+
+Overall, if one asks size(1), .text decreases a little and .data
+increases by about the same amount (x86-64 defconfig)
+
+$ size vmlinux.{before,after}
+   text    data     bss     dec     hex filename
+19709726        5202600 1630280 26542606        195020e vmlinux.before
+19709330        5203068 1630280 26542678        1950256 vmlinux.after
+
+while bloat-o-meter says
+
+add/remove: 10/28 grow/shrink: 103/51 up/down: 3669/-2854 (815)
+...
+Total: Before=14783683, After=14784498, chg +0.01%
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- arch/x86/include/asm/alternative.h | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/bug.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 094fbc9c0b1c..13adca37c99a 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -201,10 +201,10 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  * without volatile and memory clobber.
-  */
- #define alternative(oldinstr, newinstr, feature)			\
--	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
-+	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index 6804d6642767..facba9bc30ca 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -32,7 +32,7 @@
  
- #define alternative_2(oldinstr, newinstr1, feature1, newinstr2, feature2) \
--	asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
-+	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
+ #define _BUG_FLAGS(ins, flags)						\
+ do {									\
+-	asm volatile("1:\t" ins "\n"					\
++	asm_inline volatile("1:\t" ins "\n"				\
+ 		     ".pushsection __bug_table,\"aw\"\n"		\
+ 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+ 		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
+@@ -49,7 +49,7 @@ do {									\
  
- /*
-  * Alternative inline assembly with input.
-@@ -218,7 +218,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  * Leaving an unused argument 0 to keep API compatibility.
-  */
- #define alternative_input(oldinstr, newinstr, feature, input...)	\
--	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
-+	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature)	\
- 		: : "i" (0), ## input)
- 
- /*
-@@ -231,18 +231,18 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  */
- #define alternative_input_2(oldinstr, newinstr1, feature1, newinstr2,	     \
- 			   feature2, input...)				     \
--	asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1,	     \
-+	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1,     \
- 		newinstr2, feature2)					     \
- 		: : "i" (0), ## input)
- 
- /* Like alternative_input, but with a single output argument */
- #define alternative_io(oldinstr, newinstr, feature, output, input...)	\
--	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
-+	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature)	\
- 		: output : "i" (0), ## input)
- 
- /* Like alternative_io, but for replacing a direct call with another one. */
- #define alternative_call(oldfunc, newfunc, feature, output, input...)	\
--	asm volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
-+	asm_inline volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
- 		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
- 
- /*
-@@ -253,7 +253,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  */
- #define alternative_call_2(oldfunc, newfunc1, feature1, newfunc2, feature2,   \
- 			   output, input...)				      \
--	asm volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
-+	asm_inline volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
- 		"call %P[new2]", feature2)				      \
- 		: output, ASM_CALL_CONSTRAINT				      \
- 		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
+ #define _BUG_FLAGS(ins, flags)						\
+ do {									\
+-	asm volatile("1:\t" ins "\n"					\
++	asm_inline volatile("1:\t" ins "\n"				\
+ 		     ".pushsection __bug_table,\"aw\"\n"		\
+ 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
+ 		     "\t.word %c0"        "\t# bug_entry::flags\n"	\
 -- 
 2.20.1
 
