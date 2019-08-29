@@ -2,62 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A3FA29C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1ACA2A47
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 00:50:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbfH2W3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 18:29:38 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51873 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728300AbfH2W3f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 18:29:35 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i3Suw-0008OT-7i; Fri, 30 Aug 2019 00:29:23 +0200
-Date:   Fri, 30 Aug 2019 00:29:21 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-cc:     Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning from Linus' tree
-In-Reply-To: <20190830082357.4650d243@canb.auug.org.au>
-Message-ID: <alpine.DEB.2.21.1908300028360.1938@nanos.tec.linutronix.de>
-References: <20190830082357.4650d243@canb.auug.org.au>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1728282AbfH2WuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 18:50:00 -0400
+Received: from mail.phunq.net ([66.183.183.73]:51320 "EHLO voyager.galaxy"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727686AbfH2WuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 18:50:00 -0400
+X-Greylist: delayed 1989 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 18:49:59 EDT
+Received: from [172.16.1.14]
+        by voyager.galaxy with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+        (Exim 4.92.1)
+        (envelope-from <daniel@phunq.net>)
+        id 1i3Sim-00062X-Fo; Thu, 29 Aug 2019 15:16:48 -0700
+From:   Daniel Phillips <daniel@phunq.net>
+Subject: [ANNOUNCE] Three things.
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        daye <daye@dddancer.com>
+Message-ID: <8ccfa9b4-d76c-b25d-7eda-303d8faa0b79@phunq.net>
+Date:   Thu, 29 Aug 2019 15:16:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen,
+Hi folks, how's it going? Over here, we have been rather busy lately,
+and for the last five years or so to be honest. Today it is my pleasure
+to be able to announce three GPL open source projects:
 
-On Fri, 30 Aug 2019, Stephen Rothwell wrote:
+1) Shardmap
 
-> Hi all,
-> 
-> From Linus tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> arch/x86/boot/edd.c: In function 'query_edd':
-> arch/x86/boot/edd.c:148:11: warning: taking address of packed member of 'struct boot_params' may result in an unaligned pointer value [-Waddress-of-packed-member]
->   148 |  mbrptr = boot_params.edd_mbr_sig_buffer;
->       |           ^~~~~~~~~~~
-> 
-> I assume this is a result of upgrading my x86_64 cross compiler to v9.2.1
-> (from v8.3.0).
+Shardmap is the next generation directory index developed for Tux3, and
+which we are now offering as a much needed replacement for Ext4 HTree.
+Shardmap meets but usually beats HTree at all scales, has way better
+readdir characteristics, and goes where HTree never did: up into the
+billions of files per directory, with ease. Shardmap also is well on
+its way to becoming a full blown standalone KVS in user space with sub
+microsecond ACID operations in persistent memory.[1]
 
-Yes. We have a fix queued which should hit next tomorrow.
+Code for Shardmap is here:
 
-Thanks,
+    https://github.com/danielbot/Shardmap
 
-	tglx
+2) Teamachine
+
+Teamachine is a direct threaded code virtual machine with a cycle time
+of .7 nanoseconds, which may just make it the fastest interpreter in the
+known universe. Teamachine embeds Shardmap as a set of micro ops. With
+Teamachine you can rapidly set up a set of Shardmap unit tests, or you
+can build a world-beating query engine. Or just kick back and script
+your game engine, the possibilities are endless.
+
+Code for Teamachine is here:
+
+    https://github.com/danielbot/TeaMachine
+
+3) Tux3
+
+Tux3 is still alive, is still maintained against current mainline, and
+is still faster, lighter, and more ACID than any other general purpose
+Linux file system. Inasmuch as other devs have discovered that the same
+issue cited as the blocker for merging Tux3 (get user pages) is also
+problematic for kernel code that is already merged, I propose today that
+we merge Tux3 without further ado, so that we can proceed to develop
+a good solution together as is right, proper and just.
+
+Code for Tux3 is here:
+
+    https://github.com/OGAWAHirofumi/tux3/tree/hirofumi
+
+Everyone is welcome to join OFTC #tux3 and/or post to:
+
+   http://tux3.org/cgi-bin/mailman/listinfo/tux3
+
+to discuss these things, or anything at all. Fun times. See you there!
+
+STANDARD DISCLAIMER: SHARDMAP WILL EAT YOUR DATA[2] TEAMACHINE WILL HALT
+YOUR MACHINE AND SET IT ON FIRE. DOWNLOAD AND RUN OF YOUR OWN FREE WILL.
+
+[1] Big shoutout to Yahoo! Japan for supporting Shardmap work.
+
+[2] Tux3 is actually pretty good about not eating your data, but that is
+another thing.
+
+NB: followup posts are in the works re the detailed nature and status of
+Shardmap, Teamachine and Tux3.
+
+Regards,
+
+Daniel
