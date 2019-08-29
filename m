@@ -2,74 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AADC6A1966
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C235CA1968
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 13:56:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfH2LzJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 07:55:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48980 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbfH2LzJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 07:55:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6C+YEpbQ+waKyTLvUFM30EjlYR6OQ3V9fS2IPIYVcZ8=; b=LmksJQcAughQww7l67qvJ+/Wj
-        IOK/JVbNb6jkDTD5bY4yF15Fm6JRtltuVZxG+gXSwS78yHBGt2UTJ9XXJET2Hiut/IpIsb1EDBltP
-        dmUwPbum4RXe1zrqCun7DRWku4oGQlfdDDmKrCZFxpZz01H5QdTD2HRiuCELwHtloHiBCN2FH9uhS
-        W29srtx1aTU1Qy8y6BFOf6ZAxzHd5j/9F/vYpwZ5NSgDYnE0hCMFZSUvNiyDzuy/aSKOEQrsYE3DH
-        7eOsbmwYKZZoxzYy/CcBqR0W0QfF6cqwQJ+AqLvZL9lKRhpJFS2gpp1fG1wXn8wwkvwHaHryBfKl2
-        RZwXSrCdA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3J0z-0007OA-IZ; Thu, 29 Aug 2019 11:54:57 +0000
-Date:   Thu, 29 Aug 2019 04:54:57 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     zhigang lu <luzhigang001@gmail.com>
-Cc:     mike.kravetz@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, tonnylu@tencent.com,
-        hzhongzhang@tencent.com, knightzhang@tencent.com
-Subject: Re: [PATCH] mm/hugetlb: avoid looping to the same hugepage if !pages
- and !vmas
-Message-ID: <20190829115457.GC6590@bombadil.infradead.org>
-References: <CABNBeK+6C9ToJcjhGBJQm5dDaddA0USOoRFmRckZ27PhLGUfQg@mail.gmail.com>
+        id S1727124AbfH2L4M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 07:56:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48806 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726379AbfH2L4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 07:56:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2026AB680;
+        Thu, 29 Aug 2019 11:56:09 +0000 (UTC)
+Date:   Thu, 29 Aug 2019 13:56:08 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Edward Chron <echron@arista.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
+Subject: Re: [PATCH 00/10] OOM Debug print selection and additional
+ information
+Message-ID: <20190829115608.GD28313@dhcp22.suse.cz>
+References: <20190826193638.6638-1-echron@arista.com>
+ <20190827071523.GR7538@dhcp22.suse.cz>
+ <CAM3twVRZfarAP6k=LLWH0jEJXu8C8WZKgMXCFKBZdRsTVVFrUQ@mail.gmail.com>
+ <20190828065955.GB7386@dhcp22.suse.cz>
+ <CAM3twVR_OLffQ1U-SgQOdHxuByLNL5sicfnObimpGpPQ1tJ0FQ@mail.gmail.com>
+ <20190829071105.GQ28313@dhcp22.suse.cz>
+ <297cf049-d92e-f13a-1386-403553d86401@i-love.sakura.ne.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CABNBeK+6C9ToJcjhGBJQm5dDaddA0USOoRFmRckZ27PhLGUfQg@mail.gmail.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <297cf049-d92e-f13a-1386-403553d86401@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 07:37:22PM +0800, zhigang lu wrote:
-> This change greatly decrease the time of mmaping a file in hugetlbfs.
-> With MAP_POPULATE flag, it takes about 50 milliseconds to mmap a
-> existing 128GB file in hugetlbfs. With this change, it takes less
-> then 1 millisecond.
+On Thu 29-08-19 19:14:46, Tetsuo Handa wrote:
+> On 2019/08/29 16:11, Michal Hocko wrote:
+> > On Wed 28-08-19 12:46:20, Edward Chron wrote:
+> >> Our belief is if you really think eBPF is the preferred mechanism
+> >> then move OOM reporting to an eBPF.
+> > 
+> > I've said that all this additional information has to be dynamically
+> > extensible rather than a part of the core kernel. Whether eBPF is the
+> > suitable tool, I do not know. I haven't explored that. There are other
+> > ways to inject code to the kernel. systemtap/kprobes, kernel modules and
+> > probably others.
+> 
+> As for SystemTap, guru mode (an expert mode which disables protection provided
+> by SystemTap; allowing kernel to crash when something went wrong) could be used
+> for holding spinlock. However, as far as I know, holding mutex (or doing any
+> operation that might sleep) from such dynamic hooks is not allowed. Also we will
+> need to export various symbols in order to allow access from such dynamic hooks.
 
-You're going to need to find a new way of sending patches; this patch is
-mangled by your mail system.
+This is the oom path and it should better not use any sleeping locks in
+the first place.
 
-> @@ -4391,6 +4391,17 @@ long follow_hugetlb_page(struct mm_struct *mm,
-> struct vm_area_struct *vma,
->   break;
+> I'm not familiar with eBPF, but I guess that eBPF is similar.
+> 
+> But please be aware that, I REPEAT AGAIN, I don't think neither eBPF nor
+> SystemTap will be suitable for dumping OOM information. OOM situation means
+> that even single page fault event cannot complete, and temporary memory
+> allocation for reading from kernel or writing to files cannot complete.
+
+And I repeat that no such reporting is going to write to files. This is
+an OOM path afterall.
+
+> Therefore, we will need to hold all information in kernel memory (without
+> allocating any memory when OOM event happened). Dynamic hooks could hold
+> a few lines of output, but not all lines we want. The only possible buffer
+> which is preallocated and large enough would be printk()'s buffer. Thus,
+> I believe that we will have to use printk() in order to dump OOM information.
+> At that point,
+
+Yes, this is what I've had in mind.
+
+> 
+>   static bool (*oom_handler)(struct oom_control *oc) = default_oom_killer;
+> 
+>   bool out_of_memory(struct oom_control *oc)
+>   {
+>           return oom_handler(oc);
 >   }
->   }
-> +
-> + if (!pages && !vmas && !pfn_offset &&
-> +     (vaddr + huge_page_size(h) < vma->vm_end) &&
-> +     (remainder >= pages_per_huge_page(h))) {
-> + vaddr += huge_page_size(h);
-> + remainder -= pages_per_huge_page(h);
-> + i += pages_per_huge_page(h);
-> + spin_unlock(ptl);
-> + continue;
-> + }
+> 
+> and let in-tree kernel modules override current OOM killer would be
+> the only practical choice (if we refuse adding many knobs).
 
-The concept seems good to me.  The description above could do with some
-better explanation though.
+Or simply provide a hook with the oom_control to be called to report
+without replacing the whole oom killer behavior. That is not necessary.
+-- 
+Michal Hocko
+SUSE Labs
