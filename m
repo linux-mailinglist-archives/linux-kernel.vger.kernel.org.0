@@ -2,282 +2,272 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C8E2A2B05
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 01:38:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B967BA2B24
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 01:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfH2Xiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 19:38:54 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40803 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbfH2Xiy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 19:38:54 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so2450264pgj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 16:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=MhwlPzIY2kWdj4huKVrX0QedBuBaf5TUkq7wJBwSziA=;
-        b=AjbYn0rj8UN1t0FpZhBmRkqOqbbIpSyRF97SiXdd323h7jqjLTxHrT2CURedxxVGyJ
-         RopFDkKd7XDYAb3INqyhjgV6Yz+AOQnkl9c9y4m4FsQR3n5MNpSSGgMLJPL0f+SnFVzf
-         rHyM7FCGbstRrPIoI0w4x+hzphrG+kS13qKDxTNahqjhS6xhsvEkyCPkyTzL9HaeskGX
-         KvL1a8X16f4c0JGi9Coi3lfRTMGAgbmxnYPLnlGAtOA4y4elVcWv/cu1DSnHUNqhT4Qy
-         ojx63ov5E7LdzIm46wX3AP+/tyUMlOVQULWaXzy2l6tUWzHxyS59dt0S0EBgC2EbaSU+
-         fAcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=MhwlPzIY2kWdj4huKVrX0QedBuBaf5TUkq7wJBwSziA=;
-        b=TZbSCcrG/RB+/8UMRc4MlHNYhosuAleEsh/0r54beY6lq9IlKdArkcKqS3Mq7UpNvj
-         LV3rqYuP5XT45GD4X7tKMKKKOkjZN12ZIGzdII+XHUZJ81CfjadTGZf6L/MpMN6uQZUB
-         zFq2mSsSmDmtlEDvFEWexYWmRXcRfuaiE4U+3PQNEdchlumZmu4jqCTayuPfYtFZ/yCY
-         4K2ZkmRJtdL8/vNWwd5bhnNhVWMDZPq/1pXmuUrFPUgaUeHdU6wFl//iZgi7qUpxMVzD
-         t4CjwFDvgRUM0QLNFTusw6UzVUlT06kcv4E8MSov74sbzuoNvwuy65PVMzUew0e3GyWo
-         MPsQ==
-X-Gm-Message-State: APjAAAVVMKn/MaY6gsDNp2W7EHZDn10KryExut/08519kizqsEMFbBeD
-        FtRVwuiQhxcM8YUV0pvzJyXa7Q==
-X-Google-Smtp-Source: APXvYqyKyJFMV4QNWMqW6ChFYPOX0fBiVWJM8o9mEdQt2BxufNattcY7BM6Mgq9CbYsoGq04plM9/w==
-X-Received: by 2002:a17:90a:22f0:: with SMTP id s103mr13216264pjc.56.1567121933242;
-        Thu, 29 Aug 2019 16:38:53 -0700 (PDT)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id a1sm2881310pgh.61.2019.08.29.16.38.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 16:38:52 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 16:38:51 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Logan Gunthorpe <logang@deltatee.com>
-cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Rob Herring <robh@kernel.org>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andrew Waterman <andrew@sifive.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Zong Li <zong@andestech.com>,
-        Michael Clark <michaeljclark@mac.com>,
-        Olof Johansson <olof@lixom.net>,
-        Greentime Hu <greentime.hu@sifive.com>,
-        Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v6] RISC-V: Implement sparsemem
-In-Reply-To: <20190828214054.3562-1-logang@deltatee.com>
-Message-ID: <alpine.DEB.2.21.9999.1908291542160.12266@viisi.sifive.com>
-References: <20190828214054.3562-1-logang@deltatee.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1727144AbfH2Xox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 19:44:53 -0400
+Received: from mga04.intel.com ([192.55.52.120]:29080 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726416AbfH2Xow (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 19:44:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 16:44:51 -0700
+X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
+   d="scan'208";a="356613811"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 16:44:51 -0700
+Subject: [PATCH v3] libata/ahci: Drop PCS quirk for Denverton and beyond
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     axboe@kernel.dk
+Cc:     Stephen Douthit <stephend@silicom-usa.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 29 Aug 2019 16:30:34 -0700
+Message-ID: <156712139395.1614755.3489977733530873708.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Logan,
+The Linux ahci driver has historically implemented a configuration fixup
+for platforms / platform-firmware that fails to enable the ports prior
+to OS hand-off at boot. The fixup was originally implemented way back
+before ahci moved from drivers/scsi/ to drivers/ata/, and was updated in
+2007 via commit 49f290903935 "ahci: update PCS programming". The quirk
+sets a port-enable bitmap in the PCS register at offset 0x92.
 
-On Wed, 28 Aug 2019, Logan Gunthorpe wrote:
+This quirk could be applied generically up until the arrival of the
+Denverton (DNV) platform. The DNV AHCI controller architecture supports
+more than 6 ports and along with that the PCS register location and
+format were updated to allow for more possible ports in the bitmap. DNV
+AHCI expands the register to 32-bits and moves it to offset 0x94.
 
-> Implement sparsemem support for Risc-v which helps pave the
-> way for memory hotplug and eventually P2P support.
+As it stands there are no known problem reports with existing Linux
+trying to set bits at offset 0x92 which indicates that the quirk is not
+applicable. Likely it is not applicable on a wider range of platforms,
+but it is difficult to discern which platforms if any still depend on
+the quirk.
 
-Thanks very much for following up on this patch set.
+Rather than try to fix the PCS quirk to consider the DNV register layout
+instead require explicit opt-in. The assumption is that the OS driver
+need not touch this register, and platforms can be added with a new
+boad_ahci_pcs7 board-id when / if problematic platforms are found in the
+future. The logic in ahci_intel_pcs_quirk() looks for all Intel AHCI
+instances with "legacy" board-ids and otherwise skips the quirk if the
+board was matched by class-code.
 
-One question:
-
-> diff --git a/arch/riscv/include/asm/sparsemem.h b/arch/riscv/include/asm/sparsemem.h
-> new file mode 100644
-> index 000000000000..b58ba2d9ed6e
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/sparsemem.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef __ASM_SPARSEMEM_H
-> +#define __ASM_SPARSEMEM_H
-> +
-> +#ifdef CONFIG_SPARSEMEM
-> +#define MAX_PHYSMEM_BITS	CONFIG_PA_BITS
-> +#define SECTION_SIZE_BITS	27
-
-Do you have a specific rationale behind this selection, or is this simply 
-a reasonable starting point?
-
-> +#endif /* CONFIG_SPARSEMEM */
-> +
-> +#endif /* __ASM_SPARSEMEM_H */
-
-The following is what I'm getting ready to queue.
-
-
-- Paul
-
-
-From: Logan Gunthorpe <logang@deltatee.com>
-Date: Wed, 28 Aug 2019 15:40:54 -0600
-Subject: [PATCH] RISC-V: Implement sparsemem
-
-Implement sparsemem support for Risc-v which helps pave the
-way for memory hotplug and eventually P2P support.
-
-Introduce Kconfig options for virtual and physical address bits which
-are used to calculate the size of the vmemmap and set the
-MAX_PHYSMEM_BITS.
-
-The vmemmap is located directly before the VMALLOC region and sized
-such that we can allocate enough pages to populate all the virtual
-address space in the system (similar to the way it's done in arm64).
-
-During initialization, call memblocks_present() and sparse_init(),
-and provide a stub for vmemmap_populate() (all of which is similar to
-arm64).
-
-[greentime.hu@sifive.com: fixed pfn_valid, FIXADDR_TOP and fixed a bug
- rebasing onto v5.3]
-Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: Albert Ou <aou@eecs.berkeley.edu>
-Cc: Andrew Waterman <andrew@sifive.com>
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Michael Clark <michaeljclark@mac.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Zong Li <zong@andestech.com>
-Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
-[paul.walmsley@sifive.com: updated to apply; minor commit message
- reformat]
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Reported-by: Stephen Douthit <stephend@silicom-usa.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- arch/riscv/Kconfig                 | 21 +++++++++++++++++++++
- arch/riscv/include/asm/page.h      |  2 ++
- arch/riscv/include/asm/pgtable.h   | 13 +++++++++++++
- arch/riscv/include/asm/sparsemem.h | 11 +++++++++++
- arch/riscv/mm/init.c               | 10 ++++++++++
- 5 files changed, 57 insertions(+)
- create mode 100644 arch/riscv/include/asm/sparsemem.h
+Changes since v2:
+- Use board_ahci_pcs7 to opt Denverton out of the PCS quirk.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 59a4727ecd6c..53b7556beb4a 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -54,6 +54,7 @@ config RISCV
- 	select EDAC_SUPPORT
- 	select ARCH_HAS_GIGANTIC_PAGE
- 	select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
-+	select SPARSEMEM_STATIC if 32BIT
+ drivers/ata/ahci.c |  116 +++++++++++++++++++++++++++++++---------------------
+ drivers/ata/ahci.h |    2 +
+ 2 files changed, 71 insertions(+), 47 deletions(-)
+
+diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+index f7652baa6337..3e63294304c7 100644
+--- a/drivers/ata/ahci.c
++++ b/drivers/ata/ahci.c
+@@ -65,6 +65,12 @@ enum board_ids {
+ 	board_ahci_sb700,	/* for SB700 and SB800 */
+ 	board_ahci_vt8251,
  
- config MMU
- 	def_bool y
-@@ -62,12 +63,32 @@ config ZONE_DMA32
- 	bool
- 	default y if 64BIT
++	/*
++	 * board IDs for Intel chipsets that support more than 6 ports
++	 * *and* end up needing the PCS quirk.
++	 */
++	board_ahci_pcs7,
++
+ 	/* aliases */
+ 	board_ahci_mcp_linux	= board_ahci_mcp65,
+ 	board_ahci_mcp67	= board_ahci_mcp65,
+@@ -220,6 +226,12 @@ static const struct ata_port_info ahci_port_info[] = {
+ 		.udma_mask	= ATA_UDMA6,
+ 		.port_ops	= &ahci_vt8251_ops,
+ 	},
++	[board_ahci_pcs7] = {
++		.flags		= AHCI_FLAG_COMMON,
++		.pio_mask	= ATA_PIO4,
++		.udma_mask	= ATA_UDMA6,
++		.port_ops	= &ahci_ops,
++	},
+ };
  
-+config VA_BITS
-+	int
-+	default 32 if 32BIT
-+	default 39 if 64BIT
-+
-+config PA_BITS
-+	int
-+	default 34 if 32BIT
-+	default 56 if 64BIT
-+
- config PAGE_OFFSET
- 	hex
- 	default 0xC0000000 if 32BIT && MAXPHYSMEM_2GB
- 	default 0xffffffff80000000 if 64BIT && MAXPHYSMEM_2GB
- 	default 0xffffffe000000000 if 64BIT && MAXPHYSMEM_128GB
- 
-+config ARCH_FLATMEM_ENABLE
-+	def_bool y
-+
-+config ARCH_SPARSEMEM_ENABLE
-+	def_bool y
-+	select SPARSEMEM_VMEMMAP_ENABLE
-+
-+config ARCH_SELECT_MEMORY_MODEL
-+	def_bool ARCH_SPARSEMEM_ENABLE
-+
- config ARCH_WANT_GENERAL_HUGETLB
- 	def_bool y
- 
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index 707e00a8430b..3db261c4810f 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -110,8 +110,10 @@ extern unsigned long min_low_pfn;
- #define page_to_bus(page)	(page_to_phys(page))
- #define phys_to_page(paddr)	(pfn_to_page(phys_to_pfn(paddr)))
- 
-+#ifdef CONFIG_FLATMEM
- #define pfn_valid(pfn) \
- 	(((pfn) >= pfn_base) && (((pfn)-pfn_base) < max_mapnr))
-+#endif
- 
- #define ARCH_PFN_OFFSET		(pfn_base)
- 
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index c24a083b3e12..80905b27ee98 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -83,6 +83,19 @@ extern pgd_t swapper_pg_dir[];
- #define __S110	PAGE_SHARED_EXEC
- #define __S111	PAGE_SHARED_EXEC
- 
-+/*
-+ * Roughly size the vmemmap space to be large enough to fit enough
-+ * struct pages to map half the virtual address space. Then
-+ * position vmemmap directly below the VMALLOC region.
-+ */
-+#define VMEMMAP_SHIFT \
-+	(CONFIG_VA_BITS - PAGE_SHIFT - 1 + STRUCT_PAGE_MAX_SHIFT)
-+#define VMEMMAP_SIZE	BIT(VMEMMAP_SHIFT)
-+#define VMEMMAP_END	(VMALLOC_START - 1)
-+#define VMEMMAP_START	(VMALLOC_START - VMEMMAP_SIZE)
-+
-+#define vmemmap		((struct page *)VMEMMAP_START)
-+
- /*
-  * ZERO_PAGE is a global shared page that is always zero,
-  * used for zero-mapped memory areas, etc.
-diff --git a/arch/riscv/include/asm/sparsemem.h b/arch/riscv/include/asm/sparsemem.h
-new file mode 100644
-index 000000000000..b58ba2d9ed6e
---- /dev/null
-+++ b/arch/riscv/include/asm/sparsemem.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef __ASM_SPARSEMEM_H
-+#define __ASM_SPARSEMEM_H
-+
-+#ifdef CONFIG_SPARSEMEM
-+#define MAX_PHYSMEM_BITS	CONFIG_PA_BITS
-+#define SECTION_SIZE_BITS	27
-+#endif /* CONFIG_SPARSEMEM */
-+
-+#endif /* __ASM_SPARSEMEM_H */
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 42bf939693d3..73f40c9d3dee 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -442,6 +442,16 @@ static void __init setup_vm_final(void)
- void __init paging_init(void)
- {
- 	setup_vm_final();
-+	memblocks_present();
-+	sparse_init();
- 	setup_zero_page();
- 	zone_sizes_init();
+ static const struct pci_device_id ahci_pci_tbl[] = {
+@@ -264,26 +276,26 @@ static const struct pci_device_id ahci_pci_tbl[] = {
+ 	{ PCI_VDEVICE(INTEL, 0x3b2b), board_ahci }, /* PCH RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x3b2c), board_ahci_mobile }, /* PCH M RAID */
+ 	{ PCI_VDEVICE(INTEL, 0x3b2f), board_ahci }, /* PCH AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19b0), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19b1), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19b2), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19b3), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19b4), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19b5), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19b6), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19b7), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19bE), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19bF), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19c0), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19c1), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19c2), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19c3), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19c4), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19c5), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19c6), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19c7), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19cE), board_ahci }, /* DNV AHCI */
+-	{ PCI_VDEVICE(INTEL, 0x19cF), board_ahci }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19b0), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19b1), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19b2), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19b3), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19b4), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19b5), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19b6), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19b7), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19bE), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19bF), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19c0), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19c1), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19c2), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19c3), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19c4), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19c5), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19c6), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19c7), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19cE), board_ahci_pcs7 }, /* DNV AHCI */
++	{ PCI_VDEVICE(INTEL, 0x19cF), board_ahci_pcs7 }, /* DNV AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x1c02), board_ahci }, /* CPT AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x1c03), board_ahci_mobile }, /* CPT M AHCI */
+ 	{ PCI_VDEVICE(INTEL, 0x1c04), board_ahci }, /* CPT RAID */
+@@ -623,30 +635,6 @@ static void ahci_pci_save_initial_config(struct pci_dev *pdev,
+ 	ahci_save_initial_config(&pdev->dev, hpriv);
  }
-+
-+#ifdef CONFIG_SPARSEMEM
-+int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
-+			       struct vmem_altmap *altmap)
+ 
+-static int ahci_pci_reset_controller(struct ata_host *host)
+-{
+-	struct pci_dev *pdev = to_pci_dev(host->dev);
+-	int rc;
+-
+-	rc = ahci_reset_controller(host);
+-	if (rc)
+-		return rc;
+-
+-	if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
+-		struct ahci_host_priv *hpriv = host->private_data;
+-		u16 tmp16;
+-
+-		/* configure PCS */
+-		pci_read_config_word(pdev, 0x92, &tmp16);
+-		if ((tmp16 & hpriv->port_map) != hpriv->port_map) {
+-			tmp16 |= hpriv->port_map;
+-			pci_write_config_word(pdev, 0x92, tmp16);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+ static void ahci_pci_init_controller(struct ata_host *host)
+ {
+ 	struct ahci_host_priv *hpriv = host->private_data;
+@@ -849,7 +837,7 @@ static int ahci_pci_device_runtime_resume(struct device *dev)
+ 	struct ata_host *host = pci_get_drvdata(pdev);
+ 	int rc;
+ 
+-	rc = ahci_pci_reset_controller(host);
++	rc = ahci_reset_controller(host);
+ 	if (rc)
+ 		return rc;
+ 	ahci_pci_init_controller(host);
+@@ -884,7 +872,7 @@ static int ahci_pci_device_resume(struct device *dev)
+ 		ahci_mcp89_apple_enable(pdev);
+ 
+ 	if (pdev->dev.power.power_state.event == PM_EVENT_SUSPEND) {
+-		rc = ahci_pci_reset_controller(host);
++		rc = ahci_reset_controller(host);
+ 		if (rc)
+ 			return rc;
+ 
+@@ -1619,6 +1607,34 @@ static void ahci_update_initial_lpm_policy(struct ata_port *ap,
+ 		ap->target_lpm_policy = policy;
+ }
+ 
++static void ahci_intel_pcs_quirk(struct pci_dev *pdev, struct ahci_host_priv *hpriv)
 +{
-+	return vmemmap_populate_basepages(start, end, node);
++	const struct pci_device_id *id = pci_match_id(ahci_pci_tbl, pdev);
++	u16 tmp16;
++
++	/*
++	 * Only apply the 6-port PCS quirk for known legacy platforms.
++	 */
++	if (!id || id->vendor != PCI_VENDOR_ID_INTEL)
++		return;
++	if (((enum board_ids) id->driver_data) < board_ahci_pcs7)
++		return;
++
++	/*
++	 * port_map is determined from PORTS_IMPL PCI register which is
++	 * implemented as write or write-once register.  If the register
++	 * isn't programmed, ahci automatically generates it from number
++	 * of ports, which is good enough for PCS programming. It is
++	 * otherwise expected that platform firmware enables the ports
++	 * before the OS boots.
++	 */
++	pci_read_config_word(pdev, PCS_6, &tmp16);
++	if ((tmp16 & hpriv->port_map) != hpriv->port_map) {
++		tmp16 |= hpriv->port_map;
++		pci_write_config_word(pdev, PCS_6, tmp16);
++	}
 +}
-+#endif
--- 
-2.23.0
++
+ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ {
+ 	unsigned int board_id = ent->driver_data;
+@@ -1731,6 +1747,12 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	/* save initial config */
+ 	ahci_pci_save_initial_config(pdev, hpriv);
+ 
++	/*
++	 * If platform firmware failed to enable ports, try to enable
++	 * them here.
++	 */
++	ahci_intel_pcs_quirk(pdev, hpriv);
++
+ 	/* prepare host */
+ 	if (hpriv->cap & HOST_CAP_NCQ) {
+ 		pi.flags |= ATA_FLAG_NCQ;
+@@ -1840,7 +1862,7 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (rc)
+ 		return rc;
+ 
+-	rc = ahci_pci_reset_controller(host);
++	rc = ahci_reset_controller(host);
+ 	if (rc)
+ 		return rc;
+ 
+diff --git a/drivers/ata/ahci.h b/drivers/ata/ahci.h
+index 0570629d719d..3dbf398c92ea 100644
+--- a/drivers/ata/ahci.h
++++ b/drivers/ata/ahci.h
+@@ -247,6 +247,8 @@ enum {
+ 					  ATA_FLAG_ACPI_SATA | ATA_FLAG_AN,
+ 
+ 	ICH_MAP				= 0x90, /* ICH MAP register */
++	PCS_6				= 0x92, /* 6 port PCS */
++	PCS_7				= 0x94, /* 7+ port PCS (Denverton) */
+ 
+ 	/* em constants */
+ 	EM_MAX_SLOTS			= 8,
 
