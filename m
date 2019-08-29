@@ -2,154 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAEA7A1F9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7384A1F91
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 17:46:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbfH2Pro (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 11:47:44 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:59761 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726283AbfH2Pro (ORCPT
+        id S1728141AbfH2PqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 11:46:14 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38573 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbfH2PqN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 11:47:44 -0400
-Received: from callcc.thunk.org (guestnat-104-133-0-111.corp.google.com [104.133.0.111] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7TFj59e005976
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Aug 2019 11:45:07 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 3F15242049E; Thu, 29 Aug 2019 11:45:05 -0400 (EDT)
-Date:   Thu, 29 Aug 2019 11:45:05 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <maz@kernel.org>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wei Li <liwei391@huawei.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Rik van Riel <riel@surriel.com>,
-        Waiman Long <longman@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        Grzegorz Halat <ghalat@redhat.com>,
-        Len Brown <len.brown@intel.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Yury Norov <ynorov@marvell.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 2/3] fdt: add support for rng-seed
-Message-ID: <20190829154505.GB10779@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <maz@kernel.org>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Wei Li <liwei391@huawei.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Rik van Riel <riel@surriel.com>, Waiman Long <longman@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Armijn Hemel <armijn@tjaldur.nl>,
-        Grzegorz Halat <ghalat@redhat.com>, Len Brown <len.brown@intel.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Yury Norov <ynorov@marvell.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, Jiri Kosina <jkosina@suse.cz>,
-        Mukesh Ojha <mojha@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <20190822071522.143986-1-hsinyi@chromium.org>
- <20190822071522.143986-3-hsinyi@chromium.org>
- <5d5ed368.1c69fb81.419fc.0803@mx.google.com>
- <201908241203.92CC0BE8@keescook>
- <CAJMQK-iDoPxbFUH3JUeJ7SehCptZOnjKZiUoFd1PqLjDdGHujA@mail.gmail.com>
+        Thu, 29 Aug 2019 11:46:13 -0400
+Received: by mail-qt1-f194.google.com with SMTP id b2so695561qtq.5;
+        Thu, 29 Aug 2019 08:46:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aegqxwkNQfcl+Wg+uXNzhfA96N2TVnZEqWU/pVTp7O0=;
+        b=SYTOMOQY9y4DHxazFL0VJ5Esl3I6kjkjeY0wH2mN1HPH/S+CJKwCkJ9ApmUWzpIltd
+         7mJTwhspOUW+Xq1yyt6HsCav03dKy3i8mHcOeUt+mYUBpY0Scdy6du0IdP5UGhKYWKR4
+         uO9gCZM6CksSTlpE/JECpZ/UtrIVw4ggrkWHKzVoykbTt3IfBI/zajFxcXk5E/VTWwHz
+         RHQBykyBHBb/8qCtJR6BCiUAf21PHnWpn6uGQvPH2tRR/eEiZQhk+FPlqF/+32rRDSgD
+         WwxUJYxcBZ4ZLQbdgQJDNQyHCJ1vtyy7JdkUZ9bxQdOZd2BI7CS43lRjQqsx224uAh4h
+         F56w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aegqxwkNQfcl+Wg+uXNzhfA96N2TVnZEqWU/pVTp7O0=;
+        b=RzGAA9/t1uy9W4FmUE7fpNbp6L0B8Eg8hCEz85gcX1y52xNxBoVj52j2faeNuNRkIp
+         izC/Ey/quYQ2emuYsRvPm9tw5Enwk1hVCNsyu1P88UVlLl5FQaLiSEXTjjvmRSsbyMcd
+         384vF/LKyNHiFmcs+bR4ipVC5C4orTGtuFd40ENaTUBQ/A0+Wdnu48B2bok5dcF8g9TF
+         HJwwipEEpb0YWgb4RtwqrcvuqGZGR7kHzut0VCsjC3Q0cDvUg6+L1fuuV71mCDqQ6v1o
+         rNb+QKwepDjnde0wE0gyR9NfIs8NDKz5w6ipMYdMEuldBSOg6HiSyR4TJ4PXMbzrvfxm
+         pk2g==
+X-Gm-Message-State: APjAAAUzyTH1bW73y1+fP+R3gi+gwiZdGAXUuGx2UfCY1A+lsErj7Sbm
+        vXJR8NFW27jXttfHcld/28k=
+X-Google-Smtp-Source: APXvYqzjcJkE7617DYDqIr3PG4ZNC8XGG7HEcgfFWkDmRvAS0Ibl+uE1pNYw7GOE8LHelm+6jWMe2A==
+X-Received: by 2002:ac8:3449:: with SMTP id v9mr10473377qtb.163.1567093572550;
+        Thu, 29 Aug 2019 08:46:12 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:500::1:7e32])
+        by smtp.gmail.com with ESMTPSA id k11sm1194357qtp.26.2019.08.29.08.46.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2019 08:46:10 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 08:46:09 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     axboe@kernel.dk, newella@fb.com, clm@fb.com, josef@toxicpanda.com,
+        dennisz@fb.com, lizefan@huawei.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        kernel-team@fb.com, cgroups@vger.kernel.org,
+        Josef Bacik <jbacik@fb.com>, Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH 08/10] blkcg: implement blk-iocost
+Message-ID: <20190829154609.GU2263813@devbig004.ftw2.facebook.com>
+References: <20190828220600.2527417-1-tj@kernel.org>
+ <20190829133928.16192-1-hdanton@sina.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJMQK-iDoPxbFUH3JUeJ7SehCptZOnjKZiUoFd1PqLjDdGHujA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190829133928.16192-1-hdanton@sina.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 06:03:57PM +0800, Hsin-Yi Wang wrote:
-> On Thu, Aug 29, 2019 at 1:36 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > Can this please be a boot param (with the default controlled by the
-> > CONFIG)? See how CONFIG_RANDOM_TRUST_CPU is wired up...
-> >
->
-> Currently rng-seed read and added in setup_arch() -->
-> setup_machine_fdt().. -> early_init_dt_scan_chosen(), which is earlier
-> than parse_early_param() that initializes early_param.
+Hello,
+
+On Thu, Aug 29, 2019 at 09:39:28PM +0800, Hillf Danton wrote:
+> > +	on_q_ns = ktime_get_ns() - rq->alloc_time_ns;
+> > +	rq_wait_ns = rq->start_time_ns - rq->alloc_time_ns;
+> > +
+> ehm... alloc_time makes no sense wrt start_time if this is their only
+> use. What are you trying to measure with the two stamps if they are
+> meaningfully apart?
+
+Queue depth depletion.
+
+> > +	rq_qos_add(q, rqos);
+> > +	ret = blkcg_activate_policy(q, &blkcg_policy_iocost);
+> > +	if (ret) {
+> > +		rq_qos_del(q, rqos);
 > 
-> If we want to set it as a boot param, add_bootloader_randomness() can
-> only be called after parse_early_param(). The seed can't be directly
-> added to pool after it's read in. We need to store into global
-> variable and load it later.
-> If this seems okay then I'll add a patch for this. Thanks
+> 		free_percpu(ioc->pcpu_stat);
 
-I thought about asking for this, but we really want to do this as
-early as possible, so that it can be used by KASLR and other services
-that are run super early.  Also, whether or not we can trust the
-bootloader is going to be a system-level thing.  This should probably
-be defaulted to off, and only enabled by the system integrator if they
-are 100%, positively sure, that the entire system is one where we can
-trust the source of randomness which the bootloader is using --- or
-for that matter, that the bootloader is trustworthy!
+Good catch.  Will send a follow up patch.
 
-Is it really going to be that useful for a random system administrator
-to be able to flip this on or off from the command line?  Hopefully
-there will be an easy way to configure the firmware or the bootloader
-to simply not supply entropy, if for some reason it's not trustworthy.
+Thanks.
 
-   	      	     	      	     - Ted
+-- 
+tejun
