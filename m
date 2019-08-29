@@ -2,158 +2,290 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBB39A21F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C422BA2201
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbfH2RQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:16:00 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:40156 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726973AbfH2RQA (ORCPT
+        id S1727684AbfH2RRq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:17:46 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:53804 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbfH2RRq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:16:00 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w10so1926097pgj.7
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 10:15:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v9QIC9uqWuh335lvbA5rrf8b+cViWD5hzPNIv1CMU/w=;
-        b=e1+GxIGE2miaSf8ZW4+1g6xP5pAOGsKxYDXgwRImxxPExwzEjMUAgrYi/cqAbwasI1
-         eKSIvq1Ch0ihNhgbm8lprYEZCdZQVAsCuy2/2byfzSHEuSU5dkLL9CFycxP7m3ofNddh
-         0nX5TMYJS679JL2tNOdAO74fkerjaKmM1Sze8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v9QIC9uqWuh335lvbA5rrf8b+cViWD5hzPNIv1CMU/w=;
-        b=LZsGdKzN320VhXCrSq6vbJHVZ0uTIyM/O9ZEoBKG1wao/dNrNUdUbIwLem4oEuUwQH
-         F7v4k9I9tYUQ+RMGuiP1AUFkHkW+sajN/8ApatJ3Y245CMD2HGt3M1b1RzrboUOcOEJO
-         KsInZO2X/RUJ5L3XYdNyOfDwHiECgacVa47zqynfGvI4vJACEjLszukXcE+abh0Bfe3L
-         DA8Jq2+reVL3HPqhsmaHQSmnt8x+StW4eTb9rdR34RPL6oK9TwsXBcQASTZ3HLumNj0L
-         jb4MLbwxCDe2mYWPF9ZjGj70cReYvFsK/yhNvi1W7EVh1QYqS6KxT1rbXU4Gpz01NHEi
-         HNZw==
-X-Gm-Message-State: APjAAAW1dFUQdLZ4+gMiee2Xs6qUNQ3VxJi2/OLBgDnZ51r/GgztYAf8
-        hGw+OjAphxqfDuHMVy9yGYlUCg==
-X-Google-Smtp-Source: APXvYqyffBBor/+6EeLCqrmL1gEoek3Q0TR8w35ZfJMYLUYqpXAFRGScFK2JXzJeUQrD8UOcC7Cp5g==
-X-Received: by 2002:a65:5183:: with SMTP id h3mr9380839pgq.250.1567098959224;
-        Thu, 29 Aug 2019 10:15:59 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id y6sm2413295pjp.15.2019.08.29.10.15.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2019 10:15:58 -0700 (PDT)
-Date:   Thu, 29 Aug 2019 10:15:55 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 2/2] mmc: core: Run handlers for pending SDIO interrupts
- on resume
-Message-ID: <20190829171555.GD70797@google.com>
-References: <20190828214620.66003-1-mka@chromium.org>
- <20190828214620.66003-2-mka@chromium.org>
- <CAPDyKFr2R-ta5Xob12-6k=+mXXt0NowJ=dpLGJu10qhn7cB1HQ@mail.gmail.com>
+        Thu, 29 Aug 2019 13:17:46 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7THDj1p103579;
+        Thu, 29 Aug 2019 17:16:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=ZdWf5nAKch2sAxvuPQKTnzRVXVUZevXhS0HZrqLFMAc=;
+ b=je3kftSxptgJIpWxFn1l6IvYKMirQ/nXSXbrQHs6R3kHlwtm5+htT8dzIn438Mu61l0C
+ R2lNW+mFAeEbTjlghAY5KYqB8Q4vQEZF+e61obUOe0G0vuW3a59mLvizN1vkFjCZH2zp
+ LEtaLf+mC85Lit0Pb5qZ5tbqhzsgcZtOWkGUFd1PPPIjRQAf+emvrP/UIRRNhNw/k/i+
+ uvLTtICXl5eSwVFvAeqMVuxekjTIJpuikYxzc5LJQnhFzjDXCcS8tpY00WK4sGRNbDuY
+ RqL2vbh00Tv1O695LxqY8Di+BLhqqdF9l58QEuwUZd+GIxwU9udXk575AXkXK//4EUjV eg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2upjss82qt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 17:16:13 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7THCw8M145631;
+        Thu, 29 Aug 2019 17:16:13 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2unvu0aarh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Aug 2019 17:16:13 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7THGBkE006501;
+        Thu, 29 Aug 2019 17:16:11 GMT
+Received: from [10.175.160.184] (/10.175.160.184)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 29 Aug 2019 10:16:10 -0700
+Subject: Is: Default governor regardless of cpuidle driver Was: [PATCH v2]
+ cpuidle-haltpoll: vcpu hotplug support
+To:     Marcelo Tosatti <mtosatti@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20190829151027.9930-1-joao.m.martins@oracle.com>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <c8cf8dcc-76a3-3e15-f514-2cb9df1bbbdc@oracle.com>
+Date:   Thu, 29 Aug 2019 18:16:05 +0100
 MIME-Version: 1.0
+In-Reply-To: <20190829151027.9930-1-joao.m.martins@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFr2R-ta5Xob12-6k=+mXXt0NowJ=dpLGJu10qhn7cB1HQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908290182
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908290183
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ulf,
-
-On Thu, Aug 29, 2019 at 10:48:58AM +0200, Ulf Hansson wrote:
-> On Wed, 28 Aug 2019 at 23:46, Matthias Kaehlcke <mka@chromium.org> wrote:
-> >
-> > With commit 83293386bc95 ("mmc: core: Prevent processing SDIO IRQs
-> > when the card is suspended") SDIO interrupts are dropped if they
-> > occur while the card is suspended. Dropping the interrupts can cause
-> > problems after resume with cards that remain powered during suspend
-> > and preserve their state. These cards may end up in an inconsistent
-> > state since the event that triggered the interrupt is never processed
-> > and remains pending. One example is the Bluetooth function of the
-> > Marvell 8997, SDIO is broken on resume (for both Bluetooth and WiFi)
-> > when processing of a pending HCI event is skipped.
-> >
-> > For cards that remained powered during suspend check on resume if
-> > SDIO interrupts are pending, and trigger interrupt processing if
-> > needed.
+On 8/29/19 4:10 PM, Joao Martins wrote:
+> When cpus != maxcpus cpuidle-haltpoll will fail to register all vcpus
+> past the online ones and thus fail to register the idle driver.
+> This is because cpuidle_add_sysfs() will return with -ENODEV as a
+> consequence from get_cpu_device() return no device for a non-existing
+> CPU.
 > 
-> Thanks for the detailed changelog, much appreciated!
+> Instead switch to cpuidle_register_driver() and manually register each
+> of the present cpus through cpuhp_setup_state() callback and future
+> ones that get onlined. This mimmics similar logic that intel_idle does.
 > 
-> >
-> > Fixes: 83293386bc95 ("mmc: core: Prevent processing SDIO IRQs when the card is suspended")
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >  drivers/mmc/core/sdio.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/drivers/mmc/core/sdio.c b/drivers/mmc/core/sdio.c
-> > index 8dd8fc32ecca..a6b4742a91c6 100644
-> > --- a/drivers/mmc/core/sdio.c
-> > +++ b/drivers/mmc/core/sdio.c
-> > @@ -975,6 +975,7 @@ static int mmc_sdio_suspend(struct mmc_host *host)
-> >  static int mmc_sdio_resume(struct mmc_host *host)
-> >  {
-> >         int err = 0;
-> > +       u8 pending = 0;
-> >
-> >         /* Basic card reinitialization. */
-> >         mmc_claim_host(host);
-> > @@ -1009,6 +1010,14 @@ static int mmc_sdio_resume(struct mmc_host *host)
-> >         /* Allow SDIO IRQs to be processed again. */
-> >         mmc_card_clr_suspended(host->card);
-> >
-> > +       if (!mmc_card_keep_power(host))
-> > +               goto skip_pending_irqs;
-> > +
-> > +       if (!sdio_get_pending_irqs(host, &pending) &&
-> > +           pending != 0)
-> > +               sdio_signal_irq(host);
-> 
-> In one way, this change makes sense as it adopts the legacy behavior,
-> signaling "cached" SDIO IRQs also for the new SDIO irq work interface.
-> 
-> However, there is at least one major concern I see with this approach.
-> That is, in the execution path for sdio_signal_irq() (or calling
-> wake_up_process() for the legacy path), we may end up invoking the
-> SDIO func's ->irq_handler() callback, as to let the SDIO func driver
-> to consume the SDIO IRQ.
-> 
-> The problem with this is, that the corresponding SDIO func driver may
-> not have been system resumed, when the ->irq_handler() callback is
-> invoked.
+> Fixes: fa86ee90eb11 ("add cpuidle-haltpoll driver")
+> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> ---
 
-While debugging the the problem with btmrvl I found that this is
-already the case without the patch, just not during resume, but when
-suspending. The func driver suspends before the SDIO bus and
-interrupts can keep coming in. These are processed while the func
-driver is suspended, until the SDIO core starts dropping the
-interrupts.
+While testing the above, I found out another issue on the haltpoll series.
+But I am not sure what is best suited to cpuidle framework, hence requesting
+some advise if below is a reasonable solution or something else is preferred.
 
-And I think it is also already true at resume time: mmc_sdio_resume()
-re-enables SDIO IRQs and disables dropping them.
+Essentially after haltpoll governor got introduced and regardless of the cpuidle
+driver the default governor is gonna be haltpoll for a guest (given haltpoll
+governor doesn't get registered for baremetal). Right now, for a KVM guest, the
+idle governors have these ratings:
 
-> If the SDIO func driver would have configured the IRQ as a
-> wakeup, then I would expect this to work, but not just by having a
-> maintained power to the card.
+ * ladder            -> 10
+ * teo               -> 19
+ * menu              -> 20
+ * haltpoll          -> 21
+ * ladder + nohz=off -> 25
 
-Is the assumption that no IRQs are generated after SDIO func suspend
-unless wakeup is enabled?
+When a guest is booted with MWAIT and intel_idle is probed and sucessfully
+registered, we will end up with a haltpoll governor being used as opposed to
+'menu' (which used to be the default case). This would prevent IIUC that other
+C-states get used other than poll_state (state 0) and state 1.
 
-On the system I'm currently debugging OOB wakeup is not working,
-which might be part of the problem.
+Given that haltpoll governor is largely only useful with a cpuidle-haltpoll
+it doesn't look reasonable to be the default? What about using haltpoll governor
+as default when haltpoll idle driver registers or modloads.
 
-> In the end, I think we need to deal with synchronizations for this,
-> through the mmc/sdio core, in one way or the other - before we kick
-> SDIO IRQs during system resume.
-> 
-> > +
-> > +skip_pending_irqs:
-> >         if (host->sdio_irqs) {
-> >                 if (!(host->caps2 & MMC_CAP2_SDIO_IRQ_NOTHREAD))
-> >                         wake_up_process(host->sdio_irq_thread);
+My idea to achieve the above would be to decrease the rating to 9 (before the
+lowest rated governor) and retain old defaults before haltpoll. Then we would
+allow a cpuidle driver to define a preferred governor to switch on idle driver
+registration. Naturally all of would be ignored if overidden by
+cpuidle.governor=.
+
+The diff below the scissors line is an example of that.
+
+Thoughts?
+
+---------------------------------- >8 --------------------------------
+
+From: Joao Martins <joao.m.martins@oracle.com>
+Subject: [PATCH] cpuidle: switch to prefered governor on registration
+
+Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+---
+ drivers/cpuidle/cpuidle-haltpoll.c   |  1 +
+ drivers/cpuidle/cpuidle.h            |  1 +
+ drivers/cpuidle/driver.c             | 26 ++++++++++++++++++++++++++
+ drivers/cpuidle/governor.c           |  6 +++---
+ drivers/cpuidle/governors/haltpoll.c |  2 +-
+ include/linux/cpuidle.h              |  3 +++
+ 6 files changed, 35 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
+index 8baade23f8d0..88a38c3c35e4 100644
+--- a/drivers/cpuidle/cpuidle-haltpoll.c
++++ b/drivers/cpuidle/cpuidle-haltpoll.c
+@@ -33,6 +33,7 @@ static int default_enter_idle(struct cpuidle_device *dev,
+
+ static struct cpuidle_driver haltpoll_driver = {
+ 	.name = "haltpoll",
++	.governor = "haltpoll",
+ 	.owner = THIS_MODULE,
+ 	.states = {
+ 		{ /* entry 0 is for polling */ },
+diff --git a/drivers/cpuidle/cpuidle.h b/drivers/cpuidle/cpuidle.h
+index d6613101af92..c046f49c1920 100644
+--- a/drivers/cpuidle/cpuidle.h
++++ b/drivers/cpuidle/cpuidle.h
+@@ -22,6 +22,7 @@ extern void cpuidle_install_idle_handler(void);
+ extern void cpuidle_uninstall_idle_handler(void);
+
+ /* governors */
++extern struct cpuidle_governor *cpuidle_find_governor(const char *str);
+ extern int cpuidle_switch_governor(struct cpuidle_governor *gov);
+
+ /* sysfs */
+diff --git a/drivers/cpuidle/driver.c b/drivers/cpuidle/driver.c
+index dc32f34e68d9..8b8b9d89ce58 100644
+--- a/drivers/cpuidle/driver.c
++++ b/drivers/cpuidle/driver.c
+@@ -87,6 +87,7 @@ static inline int __cpuidle_set_driver(struct cpuidle_driver *drv)
+ #else
+
+ static struct cpuidle_driver *cpuidle_curr_driver;
++static struct cpuidle_governor *cpuidle_default_governor = NULL;
+
+ /**
+  * __cpuidle_get_cpu_driver - return the global cpuidle driver pointer.
+@@ -254,12 +255,25 @@ static void __cpuidle_unregister_driver(struct
+cpuidle_driver *drv)
+  */
+ int cpuidle_register_driver(struct cpuidle_driver *drv)
+ {
++	struct cpuidle_governor *gov;
+ 	int ret;
+
+ 	spin_lock(&cpuidle_driver_lock);
+ 	ret = __cpuidle_register_driver(drv);
+ 	spin_unlock(&cpuidle_driver_lock);
+
++	if (!ret && !strlen(param_governor) && drv->governor &&
++	    (cpuidle_get_driver() == drv)) {
++		mutex_lock(&cpuidle_lock);
++		gov = cpuidle_find_governor(drv->governor);
++		if (gov) {
++			cpuidle_default_governor = cpuidle_curr_governor;
++			if (cpuidle_switch_governor(gov) < 0)
++				cpuidle_default_governor = NULL;
++		}
++		mutex_unlock(&cpuidle_lock);
++	}
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(cpuidle_register_driver);
+@@ -274,9 +288,21 @@ EXPORT_SYMBOL_GPL(cpuidle_register_driver);
+  */
+ void cpuidle_unregister_driver(struct cpuidle_driver *drv)
+ {
++	bool enabled = (cpuidle_get_driver() == drv);
++
+ 	spin_lock(&cpuidle_driver_lock);
+ 	__cpuidle_unregister_driver(drv);
+ 	spin_unlock(&cpuidle_driver_lock);
++
++	if (!enabled)
++		return;
++
++	mutex_lock(&cpuidle_lock);
++	if (cpuidle_default_governor) {
++		if (!cpuidle_switch_governor(cpuidle_default_governor))
++			cpuidle_default_governor = NULL;
++	}
++	mutex_unlock(&cpuidle_lock);
+ }
+ EXPORT_SYMBOL_GPL(cpuidle_unregister_driver);
+
+diff --git a/drivers/cpuidle/governor.c b/drivers/cpuidle/governor.c
+index 2e3e14192bee..e93c11dc8304 100644
+--- a/drivers/cpuidle/governor.c
++++ b/drivers/cpuidle/governor.c
+@@ -22,12 +22,12 @@ LIST_HEAD(cpuidle_governors);
+ struct cpuidle_governor *cpuidle_curr_governor;
+
+ /**
+- * __cpuidle_find_governor - finds a governor of the specified name
++ * cpuidle_find_governor - finds a governor of the specified name
+  * @str: the name
+  *
+  * Must be called with cpuidle_lock acquired.
+  */
+-static struct cpuidle_governor * __cpuidle_find_governor(const char *str)
++struct cpuidle_governor * cpuidle_find_governor(const char *str)
+ {
+ 	struct cpuidle_governor *gov;
+
+@@ -87,7 +87,7 @@ int cpuidle_register_governor(struct cpuidle_governor *gov)
+ 		return -ENODEV;
+
+ 	mutex_lock(&cpuidle_lock);
+-	if (__cpuidle_find_governor(gov->name) == NULL) {
++	if (cpuidle_find_governor(gov->name) == NULL) {
+ 		ret = 0;
+ 		list_add_tail(&gov->governor_list, &cpuidle_governors);
+ 		if (!cpuidle_curr_governor ||
+diff --git a/drivers/cpuidle/governors/haltpoll.c
+b/drivers/cpuidle/governors/haltpoll.c
+index 797477bda486..7a703d2e0064 100644
+--- a/drivers/cpuidle/governors/haltpoll.c
++++ b/drivers/cpuidle/governors/haltpoll.c
+@@ -133,7 +133,7 @@ static int haltpoll_enable_device(struct cpuidle_driver *drv,
+
+ static struct cpuidle_governor haltpoll_governor = {
+ 	.name =			"haltpoll",
+-	.rating =		21,
++	.rating =		9,
+ 	.enable =		haltpoll_enable_device,
+ 	.select =		haltpoll_select,
+ 	.reflect =		haltpoll_reflect,
+diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+index 1a9f54eb3aa1..2dc4c6b19c25 100644
+--- a/include/linux/cpuidle.h
++++ b/include/linux/cpuidle.h
+@@ -121,6 +121,9 @@ struct cpuidle_driver {
+
+ 	/* the driver handles the cpus in cpumask */
+ 	struct cpumask		*cpumask;
++
++	/* preferred governor to switch at register time */
++	const char		*governor;
+ };
+
+ #ifdef CONFIG_CPU_IDLE
+-- 
+2.17.1
