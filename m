@@ -2,135 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ECD7A2AF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 01:34:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B59EA2AFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 01:35:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfH2XeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 19:34:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:30261 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725847AbfH2XeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 19:34:10 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 16:34:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
-   d="scan'208";a="172060373"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga007.jf.intel.com with ESMTP; 29 Aug 2019 16:34:08 -0700
-Date:   Thu, 29 Aug 2019 16:34:08 -0700
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 02/19] fs/locks: Add Exclusive flag to user Layout
- lease
-Message-ID: <20190829233408.GD18249@iweiny-DESK2.sc.intel.com>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-3-ira.weiny@intel.com>
- <fde2959db776616008fc5d31df700f5d7d899433.camel@kernel.org>
- <20190814215630.GQ6129@dread.disaster.area>
- <e6f4f619967f4551adb5003d0364770fde2b8110.camel@kernel.org>
+        id S1727726AbfH2XfN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 19:35:13 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42120 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727600AbfH2XfM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 19:35:12 -0400
+Received: by mail-ot1-f65.google.com with SMTP id g111so2136041otg.9
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 16:35:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w7I+vTCF8MoRhaFpK08T7rrw/DewwWxf4o+4A7aaGhM=;
+        b=biWGoeyfg87WAVV9jfzPsO0CvuI+vFgmGePiq3Ubf5qve9suqY4yqgfZnPY8o8Q0iT
+         ldqbICZnsF2Z0PcJJv2YH3XLpdVsolvfwJKa93jFo1FNW745Zj62Y68Db8HP69B8yI25
+         FhG4qRqeJbCGxQ393M/TXty/F9pEEPrqLGEgDfA3uIL9CbNCSU0hB6KNTZrks1TU3TWB
+         N+hF1FIw9xfqtVHhstS7aQVZ8LNPNoJxBZvklZrW/o0fwLvD6NMJO014nVOsKc6jM+1X
+         7N27G0dsJ+Vqt3bcnxmg7RIHC0eUgH2lx8ZBSQmf49kc4EMM9HJShs4e9+O7yLgHbDhk
+         vFkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w7I+vTCF8MoRhaFpK08T7rrw/DewwWxf4o+4A7aaGhM=;
+        b=n3X7BHdjadyQJ5DM6fqJ7AiMmT4iJqIB+vWwUiiMausoCQokQhPwgrfZsgbS7flgAQ
+         0x29AiZCcvA/ayZGAO5o18ixmr/V+em7/2+IQZ9YHaLW7c+2DkNVLDffe1g+CMudjjKk
+         54XlVU9P+URVDbo/6qUWWH6Az27deXZvVl+bb0GZbklb620TZLeIvUx8lTNiUs4xDMPg
+         g3xZuQgTe/0w8Hzd/p6QvJ4JqEJVq9uxDm5+mx51GrGhqXhfz1YwjcjCgwAS22m6uBau
+         cwiDdsPyd99mxe2HfefmarYZdhkNUvZ5rPA0/mT11vvOYMXqAXweQq+So8/CVCopbvbT
+         IV/w==
+X-Gm-Message-State: APjAAAUHscdG3dNR3YujuncNS41Dyfkyf4x6RWs8/h2yz0Fd4jgcnfN2
+        XlgyFUElCYQAzEGpt0bM8CF+XgIFHVVohQqE0keI7w==
+X-Google-Smtp-Source: APXvYqyCgFlGZVk6JvnxAvkATHGZWNhCzYn7EP5r7tl1z1c7LpgffQZCiIV9wIvV+Z/O+Cof0dtgknD1/eoqnT+gXWU=
+X-Received: by 2002:a05:6830:1e05:: with SMTP id s5mr9416289otr.247.1567121711247;
+ Thu, 29 Aug 2019 16:35:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6f4f619967f4551adb5003d0364770fde2b8110.camel@kernel.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <156712072444.1601704.7392596435870876837.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <156712072444.1601704.7392596435870876837.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 29 Aug 2019 16:35:00 -0700
+Message-ID: <CAPcyv4jGOy+WsdFrPfS9Pr9UiJHrogfdYqUcXxC0GxBsFefpWw@mail.gmail.com>
+Subject: Re: [PATCH v2] libata/ahci: Drop PCS quirk for Denverton and beyond
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stephen Douthit <stephend@silicom-usa.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "IDE/ATA development list" <linux-ide@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Missed this.  sorry.
+On Thu, Aug 29, 2019 at 4:33 PM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> The Linux ahci driver has historically implemented a configuration fixup
+> for platforms / platform-firmware that fails to enable the ports prior
+> to OS hand-off at boot. The fixup was originally implemented way back
+> before ahci moved from drivers/scsi/ to drivers/ata/, and was updated in
+> 2007 via commit 49f290903935 "ahci: update PCS programming". The quirk
+> sets a port-enable bitmap in the PCS register at offset 0x92.
+>
+> This quirk could be applied generically up until the arrival of the
+> Denverton (DNV) platform. The DNV AHCI controller architecture supports
+> more than 6 ports and along with that the PCS register location and
+> format were updated to allow for more possible ports in the bitmap. DNV
+> AHCI expands the register to 32-bits and moves it to offset 0x94.
+>
+> As it stands there are no known problem reports with existing Linux
+> trying to set bits at offset 0x92 which indicates that the quirk is not
+> applicable. Likely it is not applicable on a wider range of platforms,
+> but it is difficult to discern which platforms if any still depend on
+> the quirk.
+>
+> Rather than try to fix the PCS quirk to consider the DNV register layout
+> instead require explicit opt-in. The assumption is that the OS driver
+> need not touch this register, and platforms can be added with a new
+> boad_ahci_pcs7 board-id when / if problematic platforms are found in the
+> future. The logic in ahci_intel_pcs_quirk() looks for all Intel AHCI
+> instances with "legacy" board-ids and otherwise skips the quirk if the
+> board was matched by class-code.
+>
+> Reported-by: Stephen Douthit <stephend@silicom-usa.com>
+> Cc: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+> Changes since v1 [1]:
+> - Find a way to not duplicate a large portion of the ahci_pci_tbl[]
+>   array (Stephen).
+> - Add a definition for the PCS register offset rather than hard code
+>   (Stephen)
+>
+> [1]: https://lore.kernel.org/r/a04c0ae7-ef4d-4275-de05-b74beaeef86c@silicom-usa.com/
+>
+>  drivers/ata/ahci.c |   70 ++++++++++++++++++++++++++++++++--------------------
+>  drivers/ata/ahci.h |    2 +
+>  2 files changed, 45 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+> index f7652baa6337..847e3796d505 100644
+> --- a/drivers/ata/ahci.c
+> +++ b/drivers/ata/ahci.c
+> @@ -65,6 +65,12 @@ enum board_ids {
+>         board_ahci_sb700,       /* for SB700 and SB800 */
+>         board_ahci_vt8251,
+>
+> +       /*
+> +        * board IDs for Intel chipsets that support more than 6 ports
+> +        * *and* end up needing the PCS quirk.
+> +        */
 
-On Mon, Aug 26, 2019 at 06:41:07AM -0400, Jeff Layton wrote:
-> On Thu, 2019-08-15 at 07:56 +1000, Dave Chinner wrote:
-> > On Wed, Aug 14, 2019 at 10:15:06AM -0400, Jeff Layton wrote:
-> > > On Fri, 2019-08-09 at 15:58 -0700, ira.weiny@intel.com wrote:
-> > > > From: Ira Weiny <ira.weiny@intel.com>
-> > > > 
-> > > > Add an exclusive lease flag which indicates that the layout mechanism
-> > > > can not be broken.
-> > > > 
-> > > > Exclusive layout leases allow the file system to know that pages may be
-> > > > GUP pined and that attempts to change the layout, ie truncate, should be
-> > > > failed.
-> > > > 
-> > > > A process which attempts to break it's own exclusive lease gets an
-> > > > EDEADLOCK return to help determine that this is likely a programming bug
-> > > > vs someone else holding a resource.
-> > .....
-> > > > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-> > > > index baddd54f3031..88b175ceccbc 100644
-> > > > --- a/include/uapi/asm-generic/fcntl.h
-> > > > +++ b/include/uapi/asm-generic/fcntl.h
-> > > > @@ -176,6 +176,8 @@ struct f_owner_ex {
-> > > >  
-> > > >  #define F_LAYOUT	16      /* layout lease to allow longterm pins such as
-> > > >  				   RDMA */
-> > > > +#define F_EXCLUSIVE	32      /* layout lease is exclusive */
-> > > > +				/* FIXME or shoudl this be F_EXLCK??? */
-> > > >  
-> > > >  /* operations for bsd flock(), also used by the kernel implementation */
-> > > >  #define LOCK_SH		1	/* shared lock */
-> > > 
-> > > This interface just seems weird to me. The existing F_*LCK values aren't
-> > > really set up to be flags, but are enumerated values (even if there are
-> > > some gaps on some arches). For instance, on parisc and sparc:
-> > 
-> > I don't think we need to worry about this - the F_WRLCK version of
-> > the layout lease should have these exclusive access semantics (i.e
-> > other ops fail rather than block waiting for lease recall) and hence
-> > the API shouldn't need a new flag to specify them.
-> > 
-> > i.e. the primary difference between F_RDLCK and F_WRLCK layout
-> > leases is that the F_RDLCK is a shared, co-operative lease model
-> > where only delays in operations will be seen, while F_WRLCK is a
-> > "guarantee exclusive access and I don't care what it breaks"
-> > model... :)
-> > 
-> 
-> Not exactly...
-> 
-> F_WRLCK and F_RDLCK leases can both be broken, and will eventually time
-> out if there is conflicting access. The F_EXCLUSIVE flag on the other
-> hand is there to prevent any sort of lease break from 
-
-Right EXCLUSIVE will not break for any reason.  It will fail truncate and hole
-punch as we discussed back in June.  This is for the use case where the user
-has handed this file/pages off to some hardware for which removing the lease
-would be impossible.  _And_ we don't anticipate any valid use case that someone
-will need to truncate short of killing the process to free up file system
-space.
-
-> 
-> I'm guessing what Ira really wants with the F_EXCLUSIVE flag is
-> something akin to what happens when we set fl_break_time to 0 in the
-> nfsd code. nfsd never wants the locks code to time out a lease of any
-> sort, since it handles that timeout itself.
-> 
-> If you're going to add this functionality, it'd be good to also convert
-> knfsd to use it as well, so we don't end up with multiple ways to deal
-> with that situation.
-
-Could you point me at the source for knfsd?  I looked in 
-
-git://git.linux-nfs.org/projects/steved/nfs-utils.git
-
-but I don't see anywhere leases are used in that source?
-
-Thanks,
-Ira
-
+Ugh, sorry, I just realized I did not opt Denverton out of this... v3
+on the way.
