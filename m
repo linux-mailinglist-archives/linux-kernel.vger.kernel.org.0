@@ -2,86 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08331A1D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:42:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50FD4A1D75
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbfH2OmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:42:03 -0400
-Received: from mga11.intel.com ([192.55.52.93]:28334 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727794AbfH2OmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:42:01 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 07:42:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,443,1559545200"; 
-   d="scan'208";a="332533478"
-Received: from friedlmi-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.26])
-  by orsmga004.jf.intel.com with ESMTP; 29 Aug 2019 07:41:56 -0700
-Date:   Thu, 29 Aug 2019 17:41:54 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Alexey Klimov <aklimov@redhat.com>
-Subject: Re: [PATCH 2/2 v2] tpm_tis: override durations for STM tpm with
- firmware 1.2.8.28
-Message-ID: <20190829144140.6xaygqkfhsnmm67s@linux.intel.com>
-References: <20190828004621.29050-1-jsnitsel@redhat.com>
- <20190828004621.29050-3-jsnitsel@redhat.com>
- <20190829144002.zhuqxnsswgl65pnm@linux.intel.com>
+        id S1727115AbfH2On7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:43:59 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45926 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbfH2On6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 10:43:58 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y8so1670466plr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 07:43:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1jbNDnatKqrZZbvhaAxgomk5lFvDz0GUQU4rtuS0hzg=;
+        b=pws3InZSGoRYhnY0msy/KI8nH8nUy9PWXFaj3FcNG/GZCigAofnwgs5fjrQ8Da9fqU
+         LNpQeOlxbcmYSt6Uaj1LSagZSEqFQ2qS4K/en9qTys+ZgKZrM0ZGqrZ4NHMOsNDFBuXF
+         4uZe3hiSoi6hgUH6GDDOvCVr2tIEgef6i48qQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1jbNDnatKqrZZbvhaAxgomk5lFvDz0GUQU4rtuS0hzg=;
+        b=TO38Hnd55KMW6h+AU3njrovPhSrVzVGM23mqI2VPQDwcFVrxL4AXFkzCSbLYSRQP+S
+         lhVJ2fGr8WBxkwG5QWcG/n7CA4upIUTmSIgxNCoGSNpEOAEBGWBgjUPoKDEgY0DMMefG
+         CRJKejEJbr29oV8GS3lXQGV4AUH0EdgDLg5N0sXKNmJky/eKIUZF/k5xdVfZq5cg+nR4
+         AXen1qgEFyTkfZb8pgsnrTUdmxJBUCLL8hN2OPLZ+Xa9c2ZNDGO7FACHnS+Zt214QhJX
+         1qgRt0WVr05sbhnSZFwJpq5Yc65cftpDmS4rLcufloALetjKZRlS3cZYGSOm+lfc/E4B
+         SCnA==
+X-Gm-Message-State: APjAAAVRRNvBuUZlRBCaPdAnOrCJXZLa4nGrymIyo7iqUWZWxpe6zKpU
+        avAW3SAWDjbmGl4NKhqVMgEMyQ==
+X-Google-Smtp-Source: APXvYqxMzTPU8bK6VjApFdjKL0gEBlWweOLhLYTEdCnvF7eVDYTr1s/5dEscVTxlZWsL0uFq/aCAzw==
+X-Received: by 2002:a17:902:126:: with SMTP id 35mr2476290plb.76.1567089837473;
+        Thu, 29 Aug 2019 07:43:57 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id ev3sm16452782pjb.3.2019.08.29.07.43.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 07:43:56 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 10:43:55 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC v1 2/2] rcu/tree: Remove dynticks_nmi_nesting counter
+Message-ID: <20190829144355.GE63638@google.com>
+References: <5d648897.1c69fb81.5e60a.fc70@mx.google.com>
+ <20190828202330.GS26530@linux.ibm.com>
+ <20190828210525.GB75931@google.com>
+ <20190828211904.GX26530@linux.ibm.com>
+ <20190828214241.GD75931@google.com>
+ <20190828220108.GC26530@linux.ibm.com>
+ <20190828221444.GA100789@google.com>
+ <20190828231247.GE26530@linux.ibm.com>
+ <20190829015155.GB100789@google.com>
+ <20190829034336.GD4125@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829144002.zhuqxnsswgl65pnm@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190829034336.GD4125@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 05:40:40PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 27, 2019 at 05:46:21PM -0700, Jerry Snitselaar wrote:
-> > There was revealed a bug in the STM TPM chipset used in Dell R415s.
-> > Bug is observed so far only on chipset firmware 1.2.8.28
-> > (1.2 TPM, device-id 0x0, rev-id 78). After some number of
-> > operations chipset hangs and stays in inconsistent state:
+On Wed, Aug 28, 2019 at 08:43:36PM -0700, Paul E. McKenney wrote:
+[snip]
+> > > > > This change is not fixing a bug, so there is no need for an emergency fix,
+> > > > > and thus no point in additional churn.  I understand that it is a bit
+> > > > > annoying to code and test something and have your friendly maintainer say
+> > > > > "sorry, wrong rocks", and the reason that I understand this is that I do
+> > > > > that to myself rather often.
+> > > > 
+> > > > The motivation for me for this change is to avoid future bugs such as with
+> > > > the following patch where "== 2" did not take the force write of
+> > > > DYNTICK_IRQ_NONIDLE into account:
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/commit/?h=dev&id=13c4b07593977d9288e5d0c21c89d9ba27e2ea1f
+> > > 
+> > > Yes, the current code does need some simplification.
+> > > 
+> > > > I still don't see it as pointless churn, it is also a maintenance cost in its
+> > > > current form and the simplification is worth it IMHO both from a readability,
+> > > > and maintenance stand point.
+> > > > 
+> > > > I still don't see what's technically wrong with the patch. I could perhaps
+> > > > add the above "== 2" point in the patch?
+> > > 
+> > > I don't know of a crash or splat your patch would cause, if that is
+> > > your question.  But that is also true of the current code, so the point
+> > > is simplification, not bug fixing.  And from what I can see, there is an
+> > > opportunity to simplify quite a bit further.  And with something like
+> > > RCU, further simplification is worth -serious- consideration.
+> > > 
+> > > > We could also discuss f2f at LPC to see if we can agree about it?
+> > > 
+> > > That might make a lot of sense.
 > > 
-> > tpm_tis 00:09: Operation Timed out
-> > tpm_tis 00:09: tpm_transmit: tpm_send: error -5
-> > 
-> > Durations returned by the chip are the same like on other
-> > firmware revisions but apparently with specifically 1.2.8.28 fw
-> > durations should be reset to 2 minutes to enable tpm chip work
-> > properly. No working way of updating firmware was found.
-> > 
-> > This patch adds implementation of ->update_durations method
-> > that matches only STM devices with specific firmware version.
-> > 
-> > Cc: Peter Huewe <peterhuewe@gmx.de>
-> > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > Signed-off-by: Alexey Klimov <aklimov@redhat.com>
-> > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
-> > ---
-> > v2: Make suggested changes from Jarkko
-> >     - change struct field name to durations from durs
-> >     - formatting cleanups
-> >     - turn into void function like update_timeouts and
-> >       use chip->duration_adjusted to track whether adjustment occurred.
+> > Sure. I am up for a further redesign / simplification. I will think more
+> > about your suggestions and can also further discuss at LPC.
 > 
-> The code repetition looks horrible so I wrote a patch that should help:
+> One question that might (or might not) help:  Given the compound counter,
+> where the low-order hex digit indicates whether the corresponding CPU
+> is running in a non-idle kernel task and the rest of the hex digits
+> indicate the NMI-style nesting counter shifted up by four bits, what
+> could rcu_is_cpu_rrupt_from_idle() be reduced to?
 > 
-> https://patchwork.kernel.org/patch/11121475/
+> > And this patch is on LKML archives and is not going anywhere so there's no
+> > rush I guess ;-)
 > 
-> Read the remar that prepends the diffstat.
+> True enough!  ;-)
 
-Forgot from that remark that I did not have TPM 1.x available at hand
-(WFH today) so please also review and test it.
+Paul, do we also nuke rcu_eqs_special_set()?  Currently I don't see anyone
+using it. And also remove the bottom most bit of dynticks?
 
-/Jrakko
+Also what happens if a TLB flush broadcast is needed? Do we IPI nohz or idle
+CPUs are the moment?
+
+All of this was introduced in:
+b8c17e6664c4 ("rcu: Maintain special bits at bottom of ->dynticks counter")
+
+thanks,
+
+ - Joel
+
