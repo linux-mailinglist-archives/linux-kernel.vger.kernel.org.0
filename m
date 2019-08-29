@@ -2,80 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B06E7A1E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:58:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26B01A1DE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 16:53:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbfH2O6D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 10:58:03 -0400
-Received: from office2.cesnet.cz ([195.113.144.244]:56802 "EHLO
-        office2.cesnet.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbfH2O6C (ORCPT
+        id S1728870AbfH2OxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 10:53:06 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40556 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728852AbfH2OxF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 10:58:02 -0400
-X-Greylist: delayed 334 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Aug 2019 10:58:01 EDT
-Received: from localhost (unknown [IPv6:2001:718:1:2e:a5b5:770:4491:af45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by office2.cesnet.cz (Postfix) with ESMTPSA id C5050400090;
-        Thu, 29 Aug 2019 16:52:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
-        s=office2; t=1567090346;
-        bh=3tXhnFz9DXpG4v0X5eDoi7gh3sGoIVP30uPeWkcdU20=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=dnjZYPl3pVtVYldh/uT1hu2d7uxI1b3CgI0Jwygo+nJxcGsDoGjlzP2qxCL/K907v
-         ijYbtkX9QYAvkiLHQnyV1lGFtaB9veCKl6vLLkiD6CJquGc/YMUbpO6gbxbe4f+rAc
-         hGnFJoUOdYGdaWsdKCfqMaCGAnVz9JnaX/+4ksBU=
-From:   =?iso-8859-1?Q?Jan_Kundr=E1t?= <jan.kundrat@cesnet.cz>
-To:     Peter Vernia <peter.vernia@gmail.com>
-Cc:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <poeschel@lemonage.de>
-Subject: Re: [PATCH] pinctrl-mcp23s08: Fix property-name in dt-example
-Date:   Thu, 29 Aug 2019 16:52:24 +0200
+        Thu, 29 Aug 2019 10:53:05 -0400
+Received: by mail-pl1-f194.google.com with SMTP id h3so1686588pls.7
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 07:53:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:subject:to:from:user-agent:date;
+        bh=IVt1U8oT+FQK7aUwrMR2Tp9XbQQNNH4JQiQH6Rt7qf4=;
+        b=cP79UUZk928DGL+GxphxoDqthoR4vlD+VEpiHJe8dJnI74dSK5hHZDn/8xoNtlwaLH
+         IkL9g+CPoO3ERIm4twApQ3fSHH+/cFNlISlAnPCINnupwLmEXMmKVkw35ldVMfLUUOXK
+         yToPL4+v5EmLSwhPC+E3qcL0teiSDB+eD/bXw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
+         :user-agent:date;
+        bh=IVt1U8oT+FQK7aUwrMR2Tp9XbQQNNH4JQiQH6Rt7qf4=;
+        b=eS0JBJRoXBqPfOuG2rgB3RyStlEQE1PJRrMRUwjd76RNXh53d+h+df0MV6e0UzLdgs
+         sFYCP+PIBVJDf+grlzgN2xuZZU49G+64hhPvRgy2zF3RoXNy28e0jNwPQuMKoxdV9jzm
+         uBByBTzlpr+gtirvF0Q+k7SUWHFu3II2tqmJ18ElHIYoby/OQjODtWuI4fR1D0XAt+Or
+         uuwbbHvyhTA3ZkpmC+dMXQl8fTBmTPXm5CSsrJJOSFZk/WphL7OApzU+E37xkR/vZzFg
+         5092M2c3eweS2R1zY93RpCYovAsn6UUDqdXDEL0IY7sD/z5nKOpKjaSnDiIqFLrn5ZW+
+         AneA==
+X-Gm-Message-State: APjAAAUNomCta6lROlBsqSGsgaulFGiw9mBHSYOYVAfR/fVi9fqfH+Fb
+        i0qFocUAcwDVz4DTkTtjNdZOSA==
+X-Google-Smtp-Source: APXvYqxCLdj3EhSbQwuRFHN9HLXmn0KH0bqkF8GZwr3xBMF5lOEAwyd/+Ll4gbD0AERbHDMcrTdDfg==
+X-Received: by 2002:a17:902:f217:: with SMTP id gn23mr10280979plb.21.1567090384357;
+        Thu, 29 Aug 2019 07:53:04 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id ev3sm16476457pjb.3.2019.08.29.07.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 07:53:03 -0700 (PDT)
+Message-ID: <5d67e6cf.1c69fb81.5aec9.3b71@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Message-ID: <eaa0f631-bf71-4ca9-b3ff-06d5d43cc58d@cesnet.cz>
-In-Reply-To: <20190828195609.4176-1-peter.vernia@gmail.com>
-References: <20190828195609.4176-1-peter.vernia@gmail.com>
-Organization: CESNET
-User-Agent: Trojita/v0.7-402-g90b417b1-dirty; Qt/5.13.0; xcb; Linux; Gentoo Base System release 2.4.1
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAP245DWWKsZBHnvSqC40XOH48kGd-hykd+fr-UZfWTmvuG2KaA@mail.gmail.com>
+References: <cover.1566907161.git.amit.kucheria@linaro.org> <66ac3d3707d6296ef85bf1fa321f7f1ee0c02131.1566907161.git.amit.kucheria@linaro.org> <5d65cbe9.1c69fb81.1ceb.2374@mx.google.com> <CAP245DWWKsZBHnvSqC40XOH48kGd-hykd+fr-UZfWTmvuG2KaA@mail.gmail.com>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Brian Masney <masneyb@onstation.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 07/15] dt: thermal: tsens: Document interrupt support in tsens driver
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 29 Aug 2019 07:53:02 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On st=C5=99eda 28. srpna 2019 21:56:09 CEST, Peter Vernia wrote:
-> The device-tree properties documentation-file specifies the property
-> "microchip,spi-present-mask" as required for MCP23SXX chips. However,
-> the device-tree-source example below it uses only "spi-present-mask".
-> Without "microchip," on the front, the driver will print "missing
-> spi-present-mask" when it initializes.
->
-> Update the device-tree example with the correct property-name.
->
-> Signed-off-by: Peter Vernia <peter.vernia@gmail.com>
+Quoting Amit Kucheria (2019-08-29 01:48:27)
+> On Wed, Aug 28, 2019 at 6:03 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > Quoting Amit Kucheria (2019-08-27 05:14:03)
+> > > Define two new required properties to define interrupts and
+> > > interrupt-names for tsens.
+> > >
+> > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/thermal/qcom-tsens.txt | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt=
+ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> > > index 673cc1831ee9d..686bede72f846 100644
+> > > --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> > > +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> > > @@ -22,6 +22,8 @@ Required properties:
+> > >
+> > >  - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a descr=
+iption.
+> > >  - #qcom,sensors: Number of sensors in tsens block
+> > > +- interrupts: Interrupts generated from Always-On subsystem (AOSS)
+> >
+> > Is it always one? interrupt-names makes it sound like it.
+> >
+> > > +- interrupt-names: Must be one of the following: "uplow", "critical"
+>=20
+> Will fix to "one or more of the following"
+>=20
 
-Reviewed-by: Jan Kundr=C3=A1t <jan.kundrat@cesnet.cz>
-
-> ---
->  Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git=20
-> a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt=20
-> b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-> index 625a22e2f211..8b94aa8f5971 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-> @@ -82,7 +82,7 @@ gpiom1: gpio@0 {
->          compatible =3D "microchip,mcp23s17";
->          gpio-controller;
->          #gpio-cells =3D <2>;
-> -        spi-present-mask =3D <0x01>;
-> +        microchip,spi-present-mask =3D <0x01>;
->          reg =3D <0>;
->          spi-max-frequency =3D <1000000>;
->  };
+Can we get a known quantity of interrupts for a particular compatible
+string instead? Let's be as specific as possible. The index matters too,
+so please list them in the order that is desired.
 
