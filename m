@@ -2,308 +2,296 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19F2AA21E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:11:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29474A21EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 29 Aug 2019 19:12:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbfH2RLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 13:11:52 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:38344 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726661AbfH2RLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 13:11:51 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7FEFAA2D04148C798350;
-        Fri, 30 Aug 2019 01:11:45 +0800 (CST)
-Received: from [10.177.249.225] (10.177.249.225) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 30 Aug
- 2019 01:11:37 +0800
-Reply-To: <miaoxie@huawei.com>
-Subject: Re: [PATCH v8 00/24] erofs: promote erofs from staging v8
-To:     Gao Xiang <gaoxiang25@huawei.com>, <linux-fsdevel@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-References: <20190815044155.88483-1-gaoxiang25@huawei.com>
-From:   Miao Xie <miaoxie@huawei.com>
-Organization: Huawei Technologies Co., LTD.
-Message-ID: <6e21095b-ede3-70d4-abd9-376ed8e89816@huawei.com>
-Date:   Fri, 30 Aug 2019 01:11:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1728007AbfH2RMG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 13:12:06 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39615 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbfH2RMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 13:12:06 -0400
+Received: by mail-wm1-f65.google.com with SMTP id n2so3222746wmk.4;
+        Thu, 29 Aug 2019 10:12:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=sV+dOekBkFxZr+hFc3/RA8RiShlL0pkkBR29uK5vHNI=;
+        b=iAecnhLoY3EqD9cUGIB6sa4i8HpoaYF7STxxOxBt6zdJfROfOBTpCg1NW0ah0xAoAB
+         xAfuRqPIJmVJEIm+KT113W2GqdTFC8/m2PeP3r5PCtNRUH+2pAbFn3PRKex9AuANdO8x
+         QGzGhpnGDGGMThFqwBOc7115MiTXqkHF8SBFSesYhwnm512QkLuEQYCsTZC4qH0HUe6v
+         Kt+UzxLNEDSutNHp9vfjyt4s3TLDctMEQlQX9wpWyAVL7omjUnxEeoGdxQCa84GwV5YO
+         FJjraT5y8nm4icN/fAOXPHelTFtoObgaIbZzyhbnsnwtYh6fOF8LGLziOxonhbDj59pM
+         y6KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=sV+dOekBkFxZr+hFc3/RA8RiShlL0pkkBR29uK5vHNI=;
+        b=GvU/fKuqatjGkIIN+lPUohstk8zqOWTNyIMP9wHYyJ3/cghMPI/E4gByvLpjA8myh2
+         dL8OedvYCmp92Wzrn7M1oR14tub2ZcYyUKluMMPjvBDO5t7lqw05W1B+aM6rTReohHyq
+         uUnQsFjRsPvcQHaTuOV/rVgeOLqV+Lwo06OKDtkO1XNScARzoKwEvNjqabutq85gDzTJ
+         IAc5zOTsqIvLGm7Prr6Pt1cGuOC0uZdIgS8kmIEZxvxS+AetgGpF6M09aZEmAQh0A7Fi
+         +6x7u95I9vdOjejZ7771En4jj2bVmVQxyZyqwMagEoedKfMr0mAiHpsAyKuL2lmbQDZd
+         0ivw==
+X-Gm-Message-State: APjAAAWLuuOp/17OQz9a9TduzzE5Z75tL2LEG4B16KH65hMagEoXNL3x
+        WLuucvc37qZh81srfmS/Hw0=
+X-Google-Smtp-Source: APXvYqwuPU1pcnomP9EBGIGmtCYdVMRzfBptAbh1+lsyl3+XSyCMa4IsK9zqtHAGer6igJYhWGeJoQ==
+X-Received: by 2002:a05:600c:228e:: with SMTP id 14mr13514039wmf.101.1567098722950;
+        Thu, 29 Aug 2019 10:12:02 -0700 (PDT)
+Received: from localhost.localdomain (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
+        by smtp.gmail.com with ESMTPSA id 16sm4413308wmx.45.2019.08.29.10.12.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 10:12:01 -0700 (PDT)
+From:   Krzysztof Wilczynski <kw@linux.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] x86/PCI: Add missing log facility and move to use pr_ macros
+Date:   Thu, 29 Aug 2019 19:11:59 +0200
+Message-Id: <20190829171159.18707-1-kw@linux.com>
+X-Mailer: git-send-email 2.22.1
+In-Reply-To: <20190828175120.22164-1-kw@linux.com>
+References: <20190828175120.22164-1-kw@linux.com>
 MIME-Version: 1.0
-In-Reply-To: <20190815044155.88483-1-gaoxiang25@huawei.com>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.249.225]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add missing log facility where two instances of printk() that did not
+use any (so it would be using MESSAGE_LOGLEVEL_DEFAULT set in Kconfig)
+to make all the warnings in the arch/x86/pci/pcbios.c to be printed
+consistently at the same log facility.  This resolves the following
+checkpatch.pl script warning:
 
+WARNING: printk() should include KERN_<LEVEL> facility level
 
-on 2019/8/15 at 12:41, Gao Xiang wrote:
-> [I strip the previous cover letter, the old one can be found in v6:
->  https://lore.kernel.org/r/20190802125347.166018-1-gaoxiang25@huawei.com/]
-> 
-> We'd like to submit a formal moving patch applied to staging tree
-> for 5.4, before that we'd like to hear if there are some ACKs,
-> suggestions or NAKs, objections of EROFS. Therefore, we can improve
-> it in this round or rethink about the whole thing.
+While adding the missing log facility move over to using pr_ macros
+over using printk(KERN_<level> ...) and DBG().
 
-ACK since it is stable enough and doesn't affect vfs or other filesystems.
-And then, it could attract more users, we can get more feedback, and they
-can help us to further improve it.
+Also resolve the additional errors and warnings reported by the
+checkpatch.pl script:
 
-Thanks
-Miao
+ERROR: trailing whitespace
+ERROR: "foo * bar" should be "foo *bar"
+ERROR: switch and case should be at the same indent
 
-> 
-> As related materials mentioned [1] [2], the goal of EROFS is to
-> save extra storage space with guaranteed end-to-end performance
-> for read-only files, which has better performance over exist Linux
-> compression filesystems based on fixed-sized output compression
-> and inplace decompression. It even has better performance in
-> a large compression ratio range compared with generic uncompressed
-> filesystems with proper CPU-storage combinations. And we think this
-> direction is correct and a dedicated kernel team is continuously /
-> actively working on improving it, enough testers and beta / end
-> users using it.
-> 
-> EROFS has been applied to almost all in-service HUAWEI smartphones
-> (Yes, the number is still increasing by time) and it seems like
-> a success. It can be used in more wider scenarios. We think it's
-> useful for Linux / Android OS community and it's the time moving
-> out of staging.
-> 
-> In order to get started, latest stable mkfs.erofs is available at
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git -b dev
-> 
-> with README in the repository.
-> 
-> We are still tuning sequential read performance for ultra-fast
-> speed NVME SSDs like Samsung 970PRO, but at least now you can
-> try on your PC with some data with proper compression ratio,
-> the latest Linux kernel, USB stick for convenience sake and
-> a not very old-fashioned CPU. There are also benchmarks available
-> in the above materials mentioned.
-> 
-> EROFS is a self-contained filesystem driver. Although there are
-> still some TODOs to be more generic, we will actively keep on
-> developping / tuning EROFS with the evolution of Linux kernel
-> as the other in-kernel filesystems.
-> 
-> As I mentioned before in LSF/MM 2019, in the future, we'd like
-> to generalize the decompression engine into a library for other
-> fses to use after the whole system is mature like fscrypt.
-> However, such metadata should be designed respectively for
-> each fs, and synchronous metadata read cost will be larger
-> than EROFS because of those ondisk limitation. Therefore EROFS
-> is still a better choice for read-only scenarios.
-> 
-> EROFS is now ready for reviewing and moving, and the code is
-> already cleaned up as shiny floors... Please kindly take some
-> precious time, share your comments about EROFS and let us know
-> your opinion about this. It's really important for us since
-> generally speaking, we like to use Linux _in-tree_ stuffs rather
-> than lack of supported out-of-tree / orphan stuffs as well.
-> 
-> Thank you in advance,
-> Gao Xiang
-> 
-> [1] https://kccncosschn19eng.sched.com/event/Nru2/erofs-an-introduction-and-our-smartphone-practice-xiang-gao-huawei
-> [2] https://www.usenix.org/conference/atc19/presentation/gao
-> 
-> Changelog from v7:
->  o keep up with the latest staging tree in addition to
->    the latest staging patch:
->    https://lore.kernel.org/r/20190814103705.60698-1-gaoxiang25@huawei.com/
->    - use EUCLEAN for fs corruption cases suggested by Pavel;
->    - turn EIO into EOPNOTSUPP for unsupported on-disk format;
->    - fix all misused ENOTSUPP into EOPNOTSUPP pointed out by Chao;
->  o update cover letter
-> 
-> It can also be found in git at tag "erofs_2019-08-15" (will be shown later) at:
->  https://git.kernel.org/pub/scm/linux/kernel/git/xiang/linux.git/
-> 
-> and the latest fs code is available at:
->  https://git.kernel.org/pub/scm/linux/kernel/git/xiang/linux.git/tree/fs/erofs?h=erofs-outofstaging
-> 
-> Changelog from v6:
->  o keep up with the latest staging patchset
->    https://lore.kernel.org/linux-fsdevel/20190813023054.73126-1-gaoxiang25@huawei.com/
->    in order to fix the following cases:
->    - inline erofs_inode_is_data_compressed() in erofs_fs.h;
->    - remove incomplete cleancache;
->    - remove all BUG_ON in EROFS.
->  o Removing the file names from the comments at the top of the files
->    suggested by Stephen will be applied to the real moving patch later.
-> 
-> Changelog from v5:
->  o keep up with "[PATCH v2] staging: erofs: updates according to erofs-outofstaging v4"
->     https://lore.kernel.org/lkml/20190731155752.210602-1-gaoxiang25@huawei.com/
->    which mainly addresses review comments from Chao:
->   - keep the marco EROFS_IO_MAX_RETRIES_NOFAIL in internal.h;
->   - kill a redundant NULL check in "__stagingpage_alloc";
->   - add some descriptions in document about "use_vmap";
->   - rearrange erofs_vmap of "staging: erofs: kill CONFIG_EROFS_FS_USE_VM_MAP_RAM";
-> 
->  o all changes have been merged into staging tree, which are under staging-testing:
->     https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/log/?h=staging-testing
-> 
-> Changelog from v4:
->  o rebase on Linux 5.3-rc1;
-> 
->  o keep up with "staging: erofs: updates according to erofs-outofstaging v4"
->    in order to get main code bit-for-bit identical with staging tree:
->     https://lore.kernel.org/lkml/20190729065159.62378-1-gaoxiang25@huawei.com/
-> 
-> Changelog from v3:
->  o use GPL-2.0-only for SPDX-License-Identifier suggested by Stephen;
-> 
->  o kill all kconfig cache strategies and turn them into mount options
->    "cache_strategy={disable|readahead|readaround}" suggested by Ted.
->    As the first step, cached pages can still be usable after cache is
->    disabled by remounting, and these pages will be fallen out over
->    time, which can be refined in the later version if some requirement
->    is needed. Update related document as well;
-> 
->  o turn on CONFIG_EROFS_FS_SECURITY by default suggested by David;
-> 
->  o kill CONFIG_EROFS_FS_IO_MAX_RETRIES and fold it into code; turn
->    EROFS_FS_USE_VM_MAP_RAM into a module parameter ("use_vmap")
->    suggested by David.
-> 
-> Changelog from v2:
->  o kill sbi->dev_name and clean up all failure handling in
->    fill_super() suggested by Al.
->    Note that the initialzation of managed_cache is now moved
->    after s_root is assigned since it's more preferred to iput()
->    in .put_super() and all inodes should be evicted before
->    the end of generic_shutdown_super(sb);
-> 
->  o fold in the following staging patches (and thanks):
->    staging: erofs:converting all 'unsigned' to 'unsigned int'
->    staging: erofs: Remove function erofs_kill_sb()
->     - However it was revoked due to erofs_kill_sb reused...
->    staging: erofs: avoid opened loop codes
->    staging: erofs: support bmap
-> 
->  o move EROFS_SUPER_MAGIC_V1 from linux/fs/erofs/erofs_fs.h to
->    include/uapi/linux/magic.h for userspace utilities.
-> 
-> Changelog from v1:
->  o resend the whole filesystem into a patchset suggested by Greg;
->  o code is more cleaner, especially for decompression frontend.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: Pavel Machek <pavel@denx.de>
-> Cc: David Sterba <dsterba@suse.cz>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Darrick J . Wong <darrick.wong@oracle.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> Cc: Jan Kara <jack@suse.cz> 
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: Chao Yu <yuchao0@huawei.com>
-> Cc: Miao Xie <miaoxie@huawei.com>
-> Cc: Li Guifu <bluce.liguifu@huawei.com>
-> Cc: Fang Wei <fangwei1@huawei.com>
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> 
-> 
-> Gao Xiang (24):
->   erofs: add on-disk layout
->   erofs: add erofs in-memory stuffs
->   erofs: add super block operations
->   erofs: add raw address_space operations
->   erofs: add inode operations
->   erofs: support special inode
->   erofs: add directory operations
->   erofs: add namei functions
->   erofs: support tracepoint
->   erofs: update Kconfig and Makefile
->   erofs: introduce xattr & posixacl support
->   erofs: introduce tagged pointer
->   erofs: add compression indexes support
->   erofs: introduce superblock registration
->   erofs: introduce erofs shrinker
->   erofs: introduce workstation for decompression
->   erofs: introduce per-CPU buffers implementation
->   erofs: introduce pagevec for decompression subsystem
->   erofs: add erofs_allocpage()
->   erofs: introduce generic decompression backend
->   erofs: introduce LZ4 decompression inplace
->   erofs: introduce the decompression frontend
->   erofs: introduce cached decompression
->   erofs: add document
-> 
->  Documentation/filesystems/erofs.txt |  225 +++++
->  fs/Kconfig                          |    1 +
->  fs/Makefile                         |    1 +
->  fs/erofs/Kconfig                    |   98 ++
->  fs/erofs/Makefile                   |   11 +
->  fs/erofs/compress.h                 |   62 ++
->  fs/erofs/data.c                     |  425 ++++++++
->  fs/erofs/decompressor.c             |  360 +++++++
->  fs/erofs/dir.c                      |  148 +++
->  fs/erofs/erofs_fs.h                 |  316 ++++++
->  fs/erofs/inode.c                    |  333 +++++++
->  fs/erofs/internal.h                 |  555 +++++++++++
->  fs/erofs/namei.c                    |  253 +++++
->  fs/erofs/super.c                    |  666 +++++++++++++
->  fs/erofs/tagptr.h                   |  110 +++
->  fs/erofs/utils.c                    |  335 +++++++
->  fs/erofs/xattr.c                    |  705 ++++++++++++++
->  fs/erofs/xattr.h                    |   94 ++
->  fs/erofs/zdata.c                    | 1405 +++++++++++++++++++++++++++
->  fs/erofs/zdata.h                    |  195 ++++
->  fs/erofs/zmap.c                     |  463 +++++++++
->  fs/erofs/zpvec.h                    |  159 +++
->  include/trace/events/erofs.h        |  256 +++++
->  include/uapi/linux/magic.h          |    1 +
->  24 files changed, 7177 insertions(+)
->  create mode 100644 Documentation/filesystems/erofs.txt
->  create mode 100644 fs/erofs/Kconfig
->  create mode 100644 fs/erofs/Makefile
->  create mode 100644 fs/erofs/compress.h
->  create mode 100644 fs/erofs/data.c
->  create mode 100644 fs/erofs/decompressor.c
->  create mode 100644 fs/erofs/dir.c
->  create mode 100644 fs/erofs/erofs_fs.h
->  create mode 100644 fs/erofs/inode.c
->  create mode 100644 fs/erofs/internal.h
->  create mode 100644 fs/erofs/namei.c
->  create mode 100644 fs/erofs/super.c
->  create mode 100644 fs/erofs/tagptr.h
->  create mode 100644 fs/erofs/utils.c
->  create mode 100644 fs/erofs/xattr.c
->  create mode 100644 fs/erofs/xattr.h
->  create mode 100644 fs/erofs/zdata.c
->  create mode 100644 fs/erofs/zdata.h
->  create mode 100644 fs/erofs/zmap.c
->  create mode 100644 fs/erofs/zpvec.h
->  create mode 100644 include/trace/events/erofs.h
-> 
+WARNING: please, no space before tabs
+WARNING: line over 80 characters
+WARNING: quoted string split across lines
+WARNING: __packed is preferred over __attribute__((packed))
+WARNING: Prefer using '"%s...", __func__' to using 'bios32_service',
+  this function's name, in a string
+
+Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+---
+Changes in v3:
+  Remove name of the file from the subject.
+  Address review feedback of v2, and resolve more checkpatch.pl
+  script errors and warnings.
+
+Changes in v2:
+  Change wording and include checkpatch.pl script warning.
+  Leverage pr_fmt and remove "PCI: " prefix used throught.
+  Move to pr_debug() over using DBG() from arch/x86/include/asm/pci_x86.h.
+
+ arch/x86/pci/pcbios.c | 77 +++++++++++++++++++++++--------------------
+ 1 file changed, 41 insertions(+), 36 deletions(-)
+
+diff --git a/arch/x86/pci/pcbios.c b/arch/x86/pci/pcbios.c
+index 9c97d814125e..dd8ca5636953 100644
+--- a/arch/x86/pci/pcbios.c
++++ b/arch/x86/pci/pcbios.c
+@@ -3,6 +3,8 @@
+  * BIOS32 and PCI BIOS handling.
+  */
+ 
++#define pr_fmt(fmt) "PCI: " fmt
++
+ #include <linux/pci.h>
+ #include <linux/init.h>
+ #include <linux/slab.h>
+@@ -47,15 +49,15 @@ static inline void set_bios_x(void)
+ 	pcibios_enabled = 1;
+ 	set_memory_x(PAGE_OFFSET + BIOS_BEGIN, (BIOS_END - BIOS_BEGIN) >> PAGE_SHIFT);
+ 	if (__supported_pte_mask & _PAGE_NX)
+-		printk(KERN_INFO "PCI: PCI BIOS area is rw and x. Use pci=nobios if you want it NX.\n");
++		pr_info("PCI BIOS area is rw and x. Use pci=nobios if you want it NX.\n");
+ }
+ 
+ /*
+  * This is the standard structure used to identify the entry point
+  * to the BIOS32 Service Directory, as documented in
+- * 	Standard BIOS 32-bit Service Directory Proposal
+- * 	Revision 0.4 May 24, 1993
+- * 	Phoenix Technologies Ltd.
++ *	Standard BIOS 32-bit Service Directory Proposal
++ *	Revision 0.4 May 24, 1993
++ *	Phoenix Technologies Ltd.
+  *	Norwood, MA
+  * and the PCI BIOS specification.
+  */
+@@ -67,7 +69,7 @@ union bios32 {
+ 		unsigned char revision;		/* Revision level, 0 */
+ 		unsigned char length;		/* Length in paragraphs should be 01 */
+ 		unsigned char checksum;		/* All bytes must add up to zero */
+-		unsigned char reserved[5]; 	/* Must be zero */
++		unsigned char reserved[5];	/* Must be zero */
+ 	} fields;
+ 	char chars[16];
+ };
+@@ -108,15 +110,16 @@ static unsigned long __init bios32_service(unsigned long service)
+ 	local_irq_restore(flags);
+ 
+ 	switch (return_code) {
+-		case 0:
+-			return address + entry;
+-		case 0x80:	/* Not present */
+-			printk(KERN_WARNING "bios32_service(0x%lx): not present\n", service);
+-			return 0;
+-		default: /* Shouldn't happen */
+-			printk(KERN_WARNING "bios32_service(0x%lx): returned 0x%x -- BIOS bug!\n",
+-				service, return_code);
+-			return 0;
++	case 0:
++		return address + entry;
++	case 0x80:	/* Not present */
++		pr_warn("%s(0x%lx): not present\n",
++			__func__, service);
++		return 0;
++	default: /* Shouldn't happen */
++		pr_warn("%s(0x%lx): returned 0x%x -- BIOS bug!\n",
++			__func__, service, return_code);
++		return 0;
+ 	}
+ }
+ 
+@@ -140,8 +143,7 @@ static int __init check_pcibios(void)
+ 		pci_indirect.address = pcibios_entry + PAGE_OFFSET;
+ 
+ 		local_irq_save(flags);
+-		__asm__(
+-			"lcall *(%%edi); cld\n\t"
++		__asm__("lcall *(%%edi); cld\n\t"
+ 			"jc 1f\n\t"
+ 			"xor %%ah, %%ah\n"
+ 			"1:"
+@@ -160,14 +162,15 @@ static int __init check_pcibios(void)
+ 		minor_ver = ebx & 0xff;
+ 		if (pcibios_last_bus < 0)
+ 			pcibios_last_bus = ecx & 0xff;
+-		DBG("PCI: BIOS probe returned s=%02x hw=%02x ver=%02x.%02x l=%02x\n",
+-			status, hw_mech, major_ver, minor_ver, pcibios_last_bus);
++		pr_debug("BIOS probe returned s=%02x hw=%02x ver=%02x.%02x l=%02x\n",
++			 status, hw_mech, major_ver, minor_ver,
++			 pcibios_last_bus);
+ 		if (status || signature != PCI_SIGNATURE) {
+-			printk (KERN_ERR "PCI: BIOS BUG #%x[%08x] found\n",
+-				status, signature);
++			pr_err("BIOS BUG #%x[%08x] found\n",
++			       status, signature);
+ 			return 0;
+ 		}
+-		printk(KERN_INFO "PCI: PCI BIOS revision %x.%02x entry at 0x%lx, last bus=%d\n",
++		pr_info("PCI BIOS revision %x.%02x entry at 0x%lx, last bus=%d\n",
+ 			major_ver, minor_ver, pcibios_entry, pcibios_last_bus);
+ #ifdef CONFIG_PCI_DIRECT
+ 		if (!(hw_mech & PCIBIOS_HW_TYPE1))
+@@ -239,7 +242,7 @@ static int pci_bios_write(unsigned int seg, unsigned int bus,
+ 	u16 number = 0;
+ 
+ 	WARN_ON(seg);
+-	if ((bus > 255) || (devfn > 255) || (reg > 255)) 
++	if ((bus > 255) || (devfn > 255) || (reg > 255))
+ 		return -EINVAL;
+ 
+ 	raw_spin_lock_irqsave(&pci_config_lock, flags);
+@@ -316,19 +319,19 @@ static const struct pci_raw_ops *__init pci_find_bios(void)
+ 		if (sum != 0)
+ 			continue;
+ 		if (check->fields.revision != 0) {
+-			printk("PCI: unsupported BIOS32 revision %d at 0x%p\n",
++			pr_warn("unsupported BIOS32 revision %d at 0x%p\n",
+ 				check->fields.revision, check);
+ 			continue;
+ 		}
+-		DBG("PCI: BIOS32 Service Directory structure at 0x%p\n", check);
++		pr_debug("BIOS32 Service Directory structure at 0x%p\n", check);
+ 		if (check->fields.entry >= 0x100000) {
+-			printk("PCI: BIOS32 entry (0x%p) in high memory, "
+-					"cannot use.\n", check);
++			pr_warn("BIOS32 entry (0x%p) in high memory, cannot use.\n",
++				check);
+ 			return NULL;
+ 		} else {
+ 			unsigned long bios32_entry = check->fields.entry;
+-			DBG("PCI: BIOS32 Service Directory entry at 0x%lx\n",
+-					bios32_entry);
++			pr_debug("BIOS32 Service Directory entry at 0x%lx\n",
++				 bios32_entry);
+ 			bios32_indirect.address = bios32_entry + PAGE_OFFSET;
+ 			set_bios_x();
+ 			if (check_pcibios())
+@@ -348,9 +351,9 @@ struct irq_routing_options {
+ 	u16 size;
+ 	struct irq_info *table;
+ 	u16 segment;
+-} __attribute__((packed));
++} __packed;
+ 
+-struct irq_routing_table * pcibios_get_irq_routing_table(void)
++struct irq_routing_table *pcibios_get_irq_routing_table(void)
+ {
+ 	struct irq_routing_options opt;
+ 	struct irq_routing_table *rt = NULL;
+@@ -366,7 +369,7 @@ struct irq_routing_table * pcibios_get_irq_routing_table(void)
+ 	opt.size = PAGE_SIZE;
+ 	opt.segment = __KERNEL_DS;
+ 
+-	DBG("PCI: Fetching IRQ routing table... ");
++	pr_debug("Fetching IRQ routing table... ");
+ 	__asm__("push %%es\n\t"
+ 		"push %%ds\n\t"
+ 		"pop  %%es\n\t"
+@@ -384,17 +387,19 @@ struct irq_routing_table * pcibios_get_irq_routing_table(void)
+ 		  "S" (&pci_indirect),
+ 		  "m" (opt)
+ 		: "memory");
+-	DBG("OK  ret=%d, size=%d, map=%x\n", ret, opt.size, map);
++	pr_debug("OK  ret=%d, size=%d, map=%x\n", ret, opt.size, map);
+ 	if (ret & 0xff00)
+-		printk(KERN_ERR "PCI: Error %02x when fetching IRQ routing table.\n", (ret >> 8) & 0xff);
++		pr_err("Error %02x when fetching IRQ routing table.\n",
++		       (ret >> 8) & 0xff);
+ 	else if (opt.size) {
+-		rt = kmalloc(sizeof(struct irq_routing_table) + opt.size, GFP_KERNEL);
++		rt = kmalloc(sizeof(struct irq_routing_table) + opt.size,
++			     GFP_KERNEL);
+ 		if (rt) {
+ 			memset(rt, 0, sizeof(struct irq_routing_table));
+ 			rt->size = opt.size + sizeof(struct irq_routing_table);
+ 			rt->exclusive_irqs = map;
+ 			memcpy(rt->slots, (void *) page, opt.size);
+-			printk(KERN_INFO "PCI: Using BIOS Interrupt Routing Table\n");
++			pr_info("Using BIOS Interrupt Routing Table\n");
+ 		}
+ 	}
+ 	free_page(page);
+@@ -421,7 +426,7 @@ EXPORT_SYMBOL(pcibios_set_irq_routing);
+ 
+ void __init pci_pcbios_init(void)
+ {
+-	if ((pci_probe & PCI_PROBE_BIOS) 
++	if ((pci_probe & PCI_PROBE_BIOS)
+ 		&& ((raw_pci_ops = pci_find_bios()))) {
+ 		pci_bios_present = 1;
+ 	}
+-- 
+2.22.1
+
