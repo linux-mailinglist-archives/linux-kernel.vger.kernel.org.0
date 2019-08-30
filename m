@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BBD0A3131
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 831C6A3155
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbfH3HlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:41:13 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:10160 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727854AbfH3HlL (ORCPT
+        id S1728576AbfH3Hl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:41:57 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:6834 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727850AbfH3HlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Aug 2019 03:41:11 -0400
-X-UUID: 89e8f8ff514044f780f222ecb40ce195-20190830
-X-UUID: 89e8f8ff514044f780f222ecb40ce195-20190830
-Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+X-UUID: ce7d44543744417aa03c9ca28e5b5118-20190830
+X-UUID: ce7d44543744417aa03c9ca28e5b5118-20190830
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 615170812; Fri, 30 Aug 2019 15:41:09 +0800
+        with ESMTP id 1227119480; Fri, 30 Aug 2019 15:41:07 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 30 Aug 2019 15:41:03 +0800
+ MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 30 Aug 2019 15:41:04 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 30 Aug 2019 15:41:03 +0800
+ Transport; Fri, 30 Aug 2019 15:41:04 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -35,15 +35,15 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 1/7] dt-bindings: usb: mtu3: support USB wakeup for MT8183
-Date:   Fri, 30 Aug 2019 15:40:48 +0800
-Message-ID: <1567150854-30033-2-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH v3 2/7] dt-bindings: usb: mtk-xhci: support USB wakeup for MT8183
+Date:   Fri, 30 Aug 2019 15:40:49 +0800
+Message-ID: <1567150854-30033-3-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1567150854-30033-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1567150854-30033-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 5648F664D3A45E38B21BD09BCDABB7717E65D2A36ED442D7A15BE200D4CF5ECA2000:8
+X-TM-SNTS-SMTP: 6C9C836D67E7B14D202054BEF9E7889287F1D85743C99B776EFFA6FE2D7BBD872000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -56,14 +56,14 @@ Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
 v2~v3: no changes
 ---
- Documentation/devicetree/bindings/usb/mediatek,mtu3.txt | 1 +
+ Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
-index 3382b5cb471d..ed954bedcd2f 100644
---- a/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
-+++ b/Documentation/devicetree/bindings/usb/mediatek,mtu3.txt
-@@ -48,6 +48,7 @@ Optional properties:
+diff --git a/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt b/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt
+index 266c2d917a28..9a0a9eb0456f 100644
+--- a/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt
++++ b/Documentation/devicetree/bindings/usb/mediatek,mtk-xhci.txt
+@@ -41,6 +41,7 @@ Optional properties:
  	"wakeup-source", and has two arguments:
  	- the first one : register base address of the glue layer in syscon;
  	- the second one : hardware version of the glue layer
