@@ -2,94 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A3DAA38D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:09:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01204A38CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbfH3OJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 10:09:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46668 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbfH3OJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 10:09:31 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96DBD22CE9;
-        Fri, 30 Aug 2019 14:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567174170;
-        bh=p5AjW3xVDRxCRokQLJsTqv+1lmdRB2z4uTAo1OGwa4Q=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=E/heTaWMHie+f9aeljhO/1yfl9cSU7vcNF/AqUhGNPWL/KPpd7dNvx0UyWaxDk1k2
-         VFXySM1rPovDrqpfURtsc0Qw49mjuDC3qFcbeYuFqQRddu0yUujxGnbUUQ6uBdz0AY
-         Fg6wPEqFXmdOf/n5IqZABnc7lopIyAgMoMkspmt4=
-Subject: Re: [PATCH] seccomp: fix compilation errors in seccomp-bpf kselftest
-To:     Alakesh Haloi <alakesh.haloi@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>
-Cc:     linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <20190822215823.GA11292@ip-172-31-44-144.us-west-2.compute.internal>
-From:   shuah <shuah@kernel.org>
-Message-ID: <30e993fe-de76-9831-7ecc-61fcbcd51ae0@kernel.org>
-Date:   Fri, 30 Aug 2019 08:09:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728079AbfH3OIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 10:08:18 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50519 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727756AbfH3OIR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 10:08:17 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so7504218wml.0;
+        Fri, 30 Aug 2019 07:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bFUHC/+EATNzZGS6Qv9osJUqzQ4/Jabg74pmuJQG+ao=;
+        b=orkgkJvizZDLkJHjRmYVCQyak58OJtxEFodoeD5wP4g5hcIRU2NClViYSeiCUDQVZ5
+         kHZ+az6cSmiWVuvzqU86OO3nYF8+In07z4i8THkk0NFy7k7+j0ETGb6ibebuI+kltY4w
+         nU036TNydz9tFvEG206ol/HQdvzDKEkRx1hZhXHx5PWLt+7nJCFEy+HLtpREtGYoq9dF
+         d4sMK8QwdeshG9Y0GxpoTvxJDQqXZBLvAAbh1BoJkwDNK+NiDSnyCy9AQRazrpk/WUvX
+         0Dw21sv2XjZXkRuqR3mv1sIZ7aBvhDwMRgzGDwh/tG5vpuGhfCnU4aLe7ovWKkDuFjqZ
+         OG2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bFUHC/+EATNzZGS6Qv9osJUqzQ4/Jabg74pmuJQG+ao=;
+        b=ZyfgLMaVMOej4Gfe9XmoRUMmXDElgSBv9T8x4eNUdUvuhWEDxehHU2h5ORv5aLDZUt
+         hws6D/OEPCBZ9KfrjPGt8WOUFo3/kUHJ8wptuaHl91WQ2Po8+W5oID//dcqGzLv4QEgN
+         b9P1mpbpyR1NEpnOcpCHfn6xvtu0U54vJuP0j6nXdtnVWLm3Fep4qzHTuy4m59sgQlS0
+         TCdF5WEjIUufmfLuHuE9IZx3QXx5P+RRQFphN7Owj45lIMvxYFgBVsI4lXh6biKpY6Me
+         EJWPc66s4KRmP5vpAug663FVbWxqfOEiMHvhJtENx6UVY3joAgl7UQESZjj8o36VqUcu
+         K1RA==
+X-Gm-Message-State: APjAAAV8p6L/sHQb8X9njWl1LAAsxqRgvzfx8n0OSzbP+/uhoyqm/p+c
+        EqRSrqIAvkIb7SN8K34cLW7Pp0OQmCc=
+X-Google-Smtp-Source: APXvYqwyFcHyRzTsY7Z+1TShzWkeVl765NQ9a6hgjs0odCoqrdfASrTPsCXgcMxa1532uD86QsG8kQ==
+X-Received: by 2002:a1c:b342:: with SMTP id c63mr18699850wmf.84.1567174095533;
+        Fri, 30 Aug 2019 07:08:15 -0700 (PDT)
+Received: from kwango.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id a17sm7458822wmm.47.2019.08.30.07.08.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 07:08:15 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.3-rc7
+Date:   Fri, 30 Aug 2019 16:11:15 +0200
+Message-Id: <20190830141115.8049-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <20190822215823.GA11292@ip-172-31-44-144.us-west-2.compute.internal>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/22/19 3:58 PM, Alakesh Haloi wrote:
-> Without this patch we see following error while building and kselftest
-> for secccomp_bpf fails.
-> 
-> seccomp_bpf.c:1787:20: error: ‘PTRACE_EVENTMSG_SYSCALL_ENTRY’ undeclared (first use in this function);
-> seccomp_bpf.c:1788:6: error: ‘PTRACE_EVENTMSG_SYSCALL_EXIT’ undeclared (first use in this function);
-> 
-> Signed-off-by: Alakesh Haloi <alakesh.haloi@gmail.com>
-> ---
->   tools/testing/selftests/seccomp/seccomp_bpf.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> index 6ef7f16c4cf5..2e619760fc3e 100644
-> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-> @@ -1353,6 +1353,14 @@ TEST_F(precedence, log_is_fifth_in_any_order)
->   #define PTRACE_EVENT_SECCOMP 7
->   #endif
->   
-> +#ifndef PTRACE_EVENTMSG_SYSCALL_ENTRY
-> +#define PTRACE_EVENTMSG_SYSCALL_ENTRY 1
-> +#endif
-> +
-> +#ifndef PTRACE_EVENTMSG_SYSCALL_EXIT
-> +#define PTRACE_EVENTMSG_SYSCALL_EXIT 2
-> +#endif
-> +
->   #define IS_SECCOMP_EVENT(status) ((status >> 16) == PTRACE_EVENT_SECCOMP)
->   bool tracer_running;
->   void tracer_stop(int sig)
-> 
+Hi Linus,
 
-Hi Kees,
+The following changes since commit a55aa89aab90fae7c815b0551b07be37db359d76:
 
-Okay to apply this one for 5.4-rc1. Or is this going through bpf tree?
-If it is going through bpf tree:
+  Linux 5.3-rc6 (2019-08-25 12:01:23 -0700)
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+are available in the Git repository at:
 
-thanks,
--- Shuah
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.3-rc7
+
+for you to fetch changes up to d435c9a7b85be1e820668d2f3718c2d9f24d5548:
+
+  rbd: restore zeroing past the overlap when reading from parent (2019-08-28 12:34:11 +0200)
+
+----------------------------------------------------------------
+A fix for a -rc1 regression in rbd and a trivial static checker fix.
+
+----------------------------------------------------------------
+Ilya Dryomov (1):
+      rbd: restore zeroing past the overlap when reading from parent
+
+Jia-Ju Bai (1):
+      libceph: don't call crypto_free_sync_skcipher() on a NULL tfm
+
+ drivers/block/rbd.c | 11 +++++++++++
+ net/ceph/crypto.c   |  6 ++++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
