@@ -2,92 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B916A3F00
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 22:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED960A3F03
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 22:31:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728161AbfH3Uau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 16:30:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46720 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727963AbfH3Uau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 16:30:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0F6DFB6CE;
-        Fri, 30 Aug 2019 20:30:49 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Allison Randal <allison@lohutok.net>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: 
-Date:   Fri, 30 Aug 2019 22:29:59 +0200
-Message-Id: <20190830202959.3539-1-msuchanek@suse.de>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <CAK8P3a16=ktJm5B3c5-XS7SqVuHBY5+E2FwVUqbdOdWK-AUgSA@mail.gmail.com>
-References: 
+        id S1728255AbfH3Ubd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 16:31:33 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:39646 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727963AbfH3Ubc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 16:31:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G81S00ak0iTh6ncTJpTj7KNc/WBOF1FWlEXXOPN/t0w=; b=JEE1bJ9lA/X9HwwUO/pEriXmr
+        vrUzeFcjyw7bUtJIXrLLQFNRv0mzvcGkOgor6R2/9wfw8+nr95J+9d3ug803jjdw8mDrfNfhEzlL0
+        iRZ6JkzEi0LvVfQvV8cQLGI3yuV3z62dlrWpSIE5DpQmKFkECFTBptVwjt2Do3DmsxntmSVNpH4fO
+        Jqa1LdTsAU3NRxMpKhMNBRyCji8EjHXIVcUGkUAASygDEDSTICrQhJ/q2vQagFEK7qHFKTo5pi2d/
+        B3+wc7gaRNEXQDlcMNCPS4aBGeFd+H0WCOzXEvh0qph5UJcMw7G6Yzz30upmJdKiJXzUxzTgaUf2w
+        w27uGAcpQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39462)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1i3nXv-0000XF-2k; Fri, 30 Aug 2019 21:30:59 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1i3nXo-0000Q9-M8; Fri, 30 Aug 2019 21:30:52 +0100
+Date:   Fri, 30 Aug 2019 21:30:52 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Jing Xiangfeng <jingxiangfeng@huawei.com>,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, bhelgaas@google.com, tglx@linutronix.de,
+        sakari.ailus@linux.intel.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] arm: fix page faults in do_alignment
+Message-ID: <20190830203052.GG13294@shell.armlinux.org.uk>
+References: <1567171877-101949-1-git-send-email-jingxiangfeng@huawei.com>
+ <20190830133522.GZ13294@shell.armlinux.org.uk>
+ <87d0gmwi73.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d0gmwi73.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject: [PATCH] powerpc: Add back __ARCH_WANT_SYS_LLSEEK macro
+On Fri, Aug 30, 2019 at 02:45:36PM -0500, Eric W. Biederman wrote:
+> Russell King - ARM Linux admin <linux@armlinux.org.uk> writes:
+> 
+> > On Fri, Aug 30, 2019 at 09:31:17PM +0800, Jing Xiangfeng wrote:
+> >> The function do_alignment can handle misaligned address for user and
+> >> kernel space. If it is a userspace access, do_alignment may fail on
+> >> a low-memory situation, because page faults are disabled in
+> >> probe_kernel_address.
+> >> 
+> >> Fix this by using __copy_from_user stead of probe_kernel_address.
+> >> 
+> >> Fixes: b255188 ("ARM: fix scheduling while atomic warning in alignment handling code")
+> >> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+> >
+> > NAK.
+> >
+> > The "scheduling while atomic warning in alignment handling code" is
+> > caused by fixing up the page fault while trying to handle the
+> > mis-alignment fault generated from an instruction in atomic context.
+> >
+> > Your patch re-introduces that bug.
+> 
+> And the patch that fixed scheduling while atomic apparently introduced a
+> regression.  Admittedly a regression that took 6 years to track down but
+> still.
 
-This partially reverts commit caf6f9c8a326 ("asm-generic: Remove
-unneeded __ARCH_WANT_SYS_LLSEEK macro")
+Right, and given the number of years, we are trading one regression for
+a different regression.  If we revert to the original code where we
+fix up, we will end up with people complaining about a "new" regression
+caused by reverting the previous fix.  Follow this policy and we just
+end up constantly reverting the previous revert.
 
-When CONFIG_COMPAT is disabled on ppc64 the kernel does not build.
+The window is very small - the page in question will have had to have
+instructions read from it immediately prior to the handler being entered,
+and would have had to be made "old" before subsequently being unmapped.
 
-There is resistance to both removing the llseek syscall from the 64bit
-syscall tables and building the llseek interface unconditionally.
+Rather than excessively complicating the code and making it even more
+inefficient (as in your patch), we could instead retry executing the
+instruction when we discover that the page is unavailable, which should
+cause the page to be paged back in.
 
-Link: https://lore.kernel.org/lkml/20190828151552.GA16855@infradead.org/
-Link: https://lore.kernel.org/lkml/20190829214319.498c7de2@naga/
+If the page really is unavailable, the prefetch abort should cause a
+SEGV to be raised, otherwise the re-execution should replace the page.
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- arch/powerpc/include/asm/unistd.h | 1 +
- fs/read_write.c                   | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+The danger to that approach is we page it back in, and it gets paged
+back out before we're able to read the instruction indefinitely.
 
-diff --git a/arch/powerpc/include/asm/unistd.h b/arch/powerpc/include/asm/unistd.h
-index b0720c7c3fcf..700fcdac2e3c 100644
---- a/arch/powerpc/include/asm/unistd.h
-+++ b/arch/powerpc/include/asm/unistd.h
-@@ -31,6 +31,7 @@
- #define __ARCH_WANT_SYS_SOCKETCALL
- #define __ARCH_WANT_SYS_FADVISE64
- #define __ARCH_WANT_SYS_GETPGRP
-+#define __ARCH_WANT_SYS_LLSEEK
- #define __ARCH_WANT_SYS_NICE
- #define __ARCH_WANT_SYS_OLD_GETRLIMIT
- #define __ARCH_WANT_SYS_OLD_UNAME
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 5bbf587f5bc1..89aa2701dbeb 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -331,7 +331,8 @@ COMPAT_SYSCALL_DEFINE3(lseek, unsigned int, fd, compat_off_t, offset, unsigned i
- }
- #endif
- 
--#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT)
-+#if !defined(CONFIG_64BIT) || defined(CONFIG_COMPAT) || \
-+	defined(__ARCH_WANT_SYS_LLSEEK)
- SYSCALL_DEFINE5(llseek, unsigned int, fd, unsigned long, offset_high,
- 		unsigned long, offset_low, loff_t __user *, result,
- 		unsigned int, whence)
+However, as it's impossible for me to contact the submitter, anything
+I do will be poking about in the dark and without any way to validate
+that it does fix the problem, so I think apart from reviewing of any
+patches, there's not much I can do.
+
 -- 
-2.22.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
