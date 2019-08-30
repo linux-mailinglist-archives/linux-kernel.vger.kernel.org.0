@@ -2,98 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B17EA2D10
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 05:01:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA54AA2D20
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 05:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727635AbfH3DB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 23:01:27 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:33483 "EHLO ozlabs.org"
+        id S1728021AbfH3DCH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 23:02:07 -0400
+Received: from mga14.intel.com ([192.55.52.115]:47135 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727270AbfH3DB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 23:01:27 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46KPPv3vlSz9sBp;
-        Fri, 30 Aug 2019 13:01:21 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567134084;
-        bh=ZGcKQcDuLMAiiPzUKHhHVk5LoTnjwVnTJ40ll8PejpY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=eUSyPKkafOP5F0QPRq7X7JbSs5ehS5OlG1Ce6yIXgFXNJilHobUjJfc9XPZt/7VJi
-         pxtDV+wI8L77CS+eyQLhKgQ8f3JXWl4IJW1z3IOfpKzXR9X+FvfXaX7tod/UqtbC/2
-         6brk6EsUrTtSfzcbYMprPda/1d+mTRsRsnW3WafPTmyCEUuhBeIWEvTB000P/BrRwj
-         792srkFzT6eyNl8k52KO4cifK4fMesAmTrWZzPQSiR73M/4ggbAn1XstGBpNQQmIBY
-         r5JWjq64UvT0n8WLTbd5rVg1pMinag+SYRUCE5cl4PCyhoEC2Dzyk+G5VWKf+bPjNZ
-         wV+jlGsGcNyfg==
-Date:   Fri, 30 Aug 2019 13:01:19 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: manual merge of the vfs tree with the fuse tree
-Message-ID: <20190830130119.446e7389@canb.auug.org.au>
+        id S1727986AbfH3DCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 23:02:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 20:02:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
+   d="scan'208";a="193184999"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 29 Aug 2019 20:02:02 -0700
+Received: from [10.226.39.5] (leichuan-mobl.gar.corp.intel.com [10.226.39.5])
+        by linux.intel.com (Postfix) with ESMTP id A8C6958046E;
+        Thu, 29 Aug 2019 20:02:00 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] reset: Reset controller driver for Intel LGM SoC
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     eswara.kota@linux.intel.com, cheol.yong.kim@intel.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de, qi-ming.wu@intel.com, robh@kernel.org,
+        Hauke Mehrtens <hauke@hauke-m.de>
+References: <90cc600d6f7ded68f5a618b626bd9cffa5edf5c3.1566531960.git.eswara.kota@linux.intel.com>
+ <20190824211158.5900-1-martin.blumenstingl@googlemail.com>
+ <3813e658-1600-d878-61a4-29b4fe51b281@linux.intel.com>
+ <CAFBinCA_B9psNGBeDyhkewhoutNh6HsLUN+TRfO_8vuNqhis4Q@mail.gmail.com>
+ <48b90943-e23d-a27a-c743-f321345c9151@linux.intel.com>
+ <CAFBinCD1oKxYm8QD7XfZUWq_HC5A4GLMmLCnZrcRvpTxrKo30w@mail.gmail.com>
+ <19719490-178a-18fd-64f2-f77d955897f7@linux.intel.com>
+ <CAFBinCDmi4HN4Ayg4T8aKUeu4hrUmVQ+z-hTN-6XMhiOCUcHjg@mail.gmail.com>
+ <34336c9a-8e87-8f84-2ae8-032b7967928f@linux.intel.com>
+ <CAFBinCDfM3ssHisMBKXZUFkfoAFw51TaUuKt_aBgtD-mN+9fhg@mail.gmail.com>
+From:   "Chuan Hua, Lei" <chuanhua.lei@linux.intel.com>
+Message-ID: <657d796d-cb1b-472d-fe67-f7b9bf12fd79@linux.intel.com>
+Date:   Fri, 30 Aug 2019 11:01:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Tn=2ZLbKUMqhULSfKru47vA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <CAFBinCDfM3ssHisMBKXZUFkfoAFw51TaUuKt_aBgtD-mN+9fhg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Tn=2ZLbKUMqhULSfKru47vA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Martin,
 
-Hi all,
+On 8/30/2019 5:40 AM, Martin Blumenstingl wrote:
+> Hi,
+>
+> On Thu, Aug 29, 2019 at 4:51 AM Chuan Hua, Lei
+> <chuanhua.lei@linux.intel.com> wrote:
+>
+>>> I'm not surprised that we got some of the IP block layout for the
+>>> VRX200 RCU "wrong" - all "documentation" we have is the old Lantiq UGW
+>>> (BSP).
+>>> with proper documentation (as in a "public datasheet for the SoC") it
+>>> would be easy to spot these mistakes (at least I assume that the
+>>> quality of the Infineon / Lantiq datasheets is excellent).
+>>>
+>>> back to reset-intel-syscon:
+>>> assigning only one job to the RCU hardware is a good idea (in my opinion).
+>>> that brings up a question: why do we need the "syscon" compatible for
+>>> the RCU node?
+>>> this is typically used when registers are accessed by another IP block
+>>> and the other driver has to access these registers as well. does this
+>>> mean that there's more hidden in the RCU registers?
+>> As I mentioned, some other misc registers are put into RCU even they
+>> don't belong to reset functions.
+> OK, just be aware that there are also rules for syscon compatible
+> drivers, see for example: [0]
+> if Rob (dt-bindings maintainer) is happy with the documentation in
+> patch 1 then I'm fine with it as well.
+> for my own education I would appreciate if you could describe these
+> "other misc registers" with a few sentences (I assume that this can
+> also help Rob)
+For LGM, RCU is clean. There would be no MISC register after software's 
+feedback. These misc registers will be moved to chiptop/misc 
+groups(implemented by syscon). For legacy SoC, we do have a lot MISC 
+registers for different SoCs.
+>
+> [...]
+>>>>>>>> 4. Code not optimized and intel internal review not assessed.
+>>>>>>> insights from you (like the issue with the reset callback) are very
+>>>>>>> valuable - this shows that we should focus on having one driver.
+>>>>>>>
+>>>>>>>> Based on the above findings, I would suggest reset-lantiq.c to move to
+>>>>>>>> reset-intel-syscon.c
+>>>>>>> my concern with having two separate drivers is that it will be hard to
+>>>>>>> migrate from reset-lantiq to the "optimized" reset-intel-syscon
+>>>>>>> driver.
+>>>>>>> I don't have access to the datasheets for the any Lantiq/Intel SoC
+>>>>>>> (VRX200 and even older).
+>>>>>>> so debugging issues after switching from one driver to another is
+>>>>>>> tedious because I cannot tell which part of the driver is causing a
+>>>>>>> problem (it's either "all code from driver A" vs "all code from driver
+>>>>>>> B", meaning it's hard to narrow it down).
+>>>>>>> with separate commits/patches that are improving the reset-lantiq
+>>>>>>> driver I can do git bisect to find the cause of a problem on the older
+>>>>>>> SoCs (VRX200 for example)
+>>>>>> Our internal version supports XRX350/XRX500/PRX300(MIPS based) and
+>>>>>> latest Lighting Mountain(X86 based). Migration to reset-intel-syscon.c
+>>>>>> should be straight forward.
+>>>>> what about the _reset callback on the XRX350/XRX500/PRX300 SoCs - do
+>>>>> they only use level resets (_assert and _deassert) or are some reset
+>>>>> lines using reset pulses (_reset)?
+>>>>>
+>>>>> when we wanted to switch from reset-lantiq.c to reset-intel-syscon.c
+>>>>> we still had to add support for the _reset callback as this is missing
+>>>>> in reset-intel-syscon.c currently
+>>>> Yes. We have reset pulse(assert, then check the reset status).
+>>> only now I realized that the reset-intel-syscon driver does not seem
+>>> to use the status registers (instead it's looking at the reset
+>>> registers when checking the status).
+>>> what happened to the status registers - do they still exist in newer
+>>> SoCs (like LGM)? why are they not used?
+>> Reset status check is there. regmap_read_poll_timeout to check status
+>> big. Status register offset <4) from request register. For legacy, there
+>> is one exception, we can add soc specific data to handle it.
+> I see, thank you for the explanation
+> this won't work on VRX200 for example because the status register is
+> not always at (reset register - 0x4)
 
-Today's linux-next merge of the vfs tree got a conflict in:
+As I mentioned, VRX200 and all legacy SoCs (MIPS based) can be solved 
+with one soc data in the compatible array.
 
-  fs/fuse/inode.c
+For example(not same as upstream, but idea is similar)
 
-between commit:
+static u32 intel_stat_reg_off(struct intel_reset_data *data, u32 req_off)
+{
+     if (data->soc_data->legacy && req_off == RCU_RST_REQ)
+         return RCU_RST_STAT;
+     else
+         return req_off + 0x4;
+}
 
-  1458e5e9f99a ("fuse: extract fuse_fill_super_common()")
-
-from the fuse tree and commit:
-
-  2ad9ab0f7429 ("vfs: Convert fuse to use the new mount API")
-  48ceb15f98c8 ("vfs: Move the subtype parameter into fuse")
-
-from the vfs tree.
-
-This is too much to work out, so I have effectively reverted the 2 vfs
-tree commits.
-
-I fixed it up (see above) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Tn=2ZLbKUMqhULSfKru47vA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1okX8ACgkQAVBC80lX
-0GzQuwf/bnDmW+NPdNxJXTcgZ9hm3O+JmDYt53J7xpjGVs8/t1oI5lki5r2r6iwJ
-5VlrVmIy6q90RSSNbXrPcjEitdi/sNuTyYsQw9gG5NBs7VkxQAneQnCQEmG26Gss
-LPBjkh1Mxtp90I5s12PJPBvlOiC2H++sqwpEfQalJFHQZU5Q5Uuzs8u8yjiLJZJD
-io8n+aM1K1XSMYKTC60fnwgWT8sT7H4sqYLHqPuZmnmR0eJqxw6+JUp+zQpXuBUz
-pAFBrGT1cypjbw75hrYIt7uu8UawpIUZ4Sx/AZVteOF5GaM2EoOl6bP0EoSkNzbL
-tGEJOxtnzhSeOiAeKrS4FM8yPDCs5A==
-=t/LM
------END PGP SIGNATURE-----
-
---Sig_/Tn=2ZLbKUMqhULSfKru47vA--
+>
+>>> on VRX200 for example there seem to be some cases where the bits in
+>>> the reset and status registers are different (for example: the first
+>>> GPHY seems to use reset bit 31 but status bit 30)
+>>> this is currently not supported in reset-intel-syscon
+>> This is most tricky and ugly part for VRX200/Danube. Do you have any
+>> idea to handle this nicely?
+> with reset-lantiq we have the following register information:
+> a) reset offset: first reg property
+> b) status offset: second reg property
+> c) reset bit: first #reset-cell
+> d) status bit: second #reset-cell
+>
+> reset-intel-syscon derives half of this information from the two #reset-cells:
+> a) reset offset: first #reset-cell
+> b) status offset: reset offset - 0x4
+> c) reset bit: second #reset-cell
+> d) status bit: same as reset bit
+>
+> I cannot make any suggestion (yet) how to handle VRX200 and LGM in one
+> driver because I don't know enough about LGM (yet).
+> on VRX200 my understanding is that we have 64 reset bits (2x 32bit
+> registers) and 64 status bits (also 2x 32bit registers). each reset
+> bit has a corresponding status bit but the numbering may be different
+> it's not clear to me how many resets LGM supports and how they are
+> organized. for example: I think it makes a difference if "there are 64
+> registers with each one reset bit" versus "there are two registers
+> with 32 bits each"
+> please share some details how it's organized internally, then I can
+> try to come up with a suggestion.
+LGM reset organization is more clean compared with legacy SoCs. We have 
+8 x 32bit reset and status registers(more modules need to be reset, 
+overall ideas are similar without big change). Their request and status 
+bit is at the same register bit position.  Hope this will help you.
+>
+> ... after writing this I noticed that we are discussing the binding.
+> we definitely need to share a summary with Rob on patch #1 and check
+> with him if he sees any problems with the approach that we may come up
+> with
+>
+>
+> Martin
+>
+>
+> [0] https://lkml.org/lkml/2019/8/27/849
