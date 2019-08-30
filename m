@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E495A3132
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3512A3145
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:42:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbfH3HlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:41:15 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:3067 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727887AbfH3HlO (ORCPT
+        id S1728378AbfH3HlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:41:19 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:31927 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727854AbfH3HlQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:41:14 -0400
-X-UUID: f42814d68111448c986f6cefe92d81fa-20190830
-X-UUID: f42814d68111448c986f6cefe92d81fa-20190830
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        Fri, 30 Aug 2019 03:41:16 -0400
+X-UUID: 31e272001e6647b7b7f64196f730eacb-20190830
+X-UUID: 31e272001e6647b7b7f64196f730eacb-20190830
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1839471834; Fri, 30 Aug 2019 15:41:11 +0800
+        with ESMTP id 9569756; Fri, 30 Aug 2019 15:41:14 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 30 Aug 2019 15:41:09 +0800
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 30 Aug 2019 15:41:10 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 30 Aug 2019 15:41:08 +0800
+ Transport; Fri, 30 Aug 2019 15:41:09 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -35,70 +35,45 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 6/7] arm64: dts: mt8183: enable USB remote wakeup
-Date:   Fri, 30 Aug 2019 15:40:53 +0800
-Message-ID: <1567150854-30033-7-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH v3 7/7] arm64: dts: mt8183: tune disconnect threshold of u2phy
+Date:   Fri, 30 Aug 2019 15:40:54 +0800
+Message-ID: <1567150854-30033-8-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1567150854-30033-1-git-send-email-chunfeng.yun@mediatek.com>
 References: <1567150854-30033-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 1E1B670F99A285A7C3CB3FC2D312BC2B75886602C36DDB7B6204CBAE04CE82E32000:8
+X-TM-SNTS-SMTP: CCBFA59E6DD3D401F653311DC00B6A03FCCB12A28648BE00ECCE3A8A1C5C85292000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable USB remote wakeup for MT8183
+Set DISCTH to max-15, replace the default value 8, due to
+default disconnect threshold is lower than USB SPEC define
 
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
-v3: remove '#reset-cells'
+v3: no changes
 
-v2: no changes
+v2: new patch
 ---
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts | 1 +
- arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 7 +++++++
- 2 files changed, 8 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-index 142ff52f0f42..077256f3397b 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-@@ -150,6 +150,7 @@
- &ssusb {
- 	vusb33-supply = <&mt6358_vusb_reg>;
- 	dr_mode = "host";
-+	wakeup-source;
- 	status = "okay";
- };
- 
 diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 28da334237c6..dc3e859849c7 100644
+index dc3e859849c7..5168e345ea3f 100644
 --- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -215,6 +215,12 @@
- 			#clock-cells = <1>;
- 		};
+@@ -434,6 +434,7 @@
+ 				clocks = <&clk26m>;
+ 				clock-names = "ref";
+ 				#phy-cells = <1>;
++				mediatek,discth = <15>;
+ 				status = "okay";
+ 			};
  
-+		pericfg: syscon@10003000 {
-+			compatible = "mediatek,mt8183-pericfg", "syscon";
-+			reg = <0 0x10003000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
- 		pio: pinctrl@10005000 {
- 			compatible = "mediatek,mt8183-pinctrl";
- 			reg = <0 0x10005000 0 0x1000>,
-@@ -384,6 +390,7 @@
- 			clocks = <&infracfg CLK_INFRA_UNIPRO_SCK>,
- 				 <&infracfg CLK_INFRA_USB>;
- 			clock-names = "sys_ck", "ref_ck";
-+			mediatek,syscon-wakeup = <&pericfg 0x400 0>;
- 			#address-cells = <2>;
- 			#size-cells = <2>;
- 			ranges;
 -- 
 2.23.0
 
