@@ -2,116 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70ED4A3A34
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D71BA3A3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:23:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbfH3PUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:20:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47746 "EHLO mail.kernel.org"
+        id S1727922AbfH3PXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:23:17 -0400
+Received: from foss.arm.com ([217.140.110.172]:33928 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbfH3PUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:20:18 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B70523407;
-        Fri, 30 Aug 2019 15:20:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567178416;
-        bh=qyV0RCZJt0JTNnsp/PHNLEf674aXY77Jj6dQJAqmFmg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kqYiYTxN/HlygbqB9rmptMSjs8Z8Y58lJfAEwgaYbn/xMzQuZki1khG63g3bmX9yx
-         UD9FCjQOdMUd+uccyJiPFHj0+T0D5IzBrlQolLucmUX2zoYvWXpEjitzo/VROlC2sN
-         4qsfJtWmDyhWQkS2Hq9QlPdFubWuV3zg4S5SzzFI=
-Date:   Sat, 31 Aug 2019 00:20:04 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 0/4] objtool,perf: Use shared x86 insn decoder
-Message-Id: <20190831002004.d570fcb7b611860e025dbdb2@kernel.org>
-In-Reply-To: <cover.1567118001.git.jpoimboe@redhat.com>
-References: <cover.1567118001.git.jpoimboe@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1727135AbfH3PXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:23:17 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53209344;
+        Fri, 30 Aug 2019 08:23:16 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C7973F703;
+        Fri, 30 Aug 2019 08:23:14 -0700 (PDT)
+Subject: Re: [PATCH 3/7] iommu/arm-smmu: Add tlb_sync implementation hook
+To:     Krishna Reddy <vdumpa@nvidia.com>
+Cc:     snikam@nvidia.com, thomasz@nvidia.com, jtukkinen@nvidia.com,
+        mperttunen@nvidia.com, praithatha@nvidia.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        talho@nvidia.com, yhsu@nvidia.com, linux-tegra@vger.kernel.org,
+        treding@nvidia.com, avanbrunt@nvidia.com,
+        linux-arm-kernel@lists.infradead.org
+References: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
+ <1567118827-26358-4-git-send-email-vdumpa@nvidia.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <554f8de1-1638-4eb9-59ae-8e1f0d786c44@arm.com>
+Date:   Fri, 30 Aug 2019 16:23:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <1567118827-26358-4-git-send-email-vdumpa@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Aug 2019 17:41:17 -0500
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-
-> It's kind of silly that we have *three* identical copies of the x86 insn
-> decoder in the kernel tree.  Make it approximately 50% less silly by
-> reducing that number to two.
+On 29/08/2019 23:47, Krishna Reddy wrote:
+> tlb_sync hook allows nvidia smmu handle tlb sync
+> across multiple SMMUs as necessary.
 > 
-
-Sounds good to me ;)
-
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thanks,
-
-> Josh Poimboeuf (4):
->   objtool: Move x86 insn decoder to a common location
->   perf: Update .gitignore file
->   perf intel-pt: Remove inat.c from build dependency list
->   perf intel-pt: Use shared x86 insn decoder
+> Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
+> ---
+>   drivers/iommu/arm-smmu-nvidia.c | 32 ++++++++++++++++++++++++++++++++
+>   drivers/iommu/arm-smmu.c        |  8 +++++---
+>   drivers/iommu/arm-smmu.h        |  4 ++++
+>   3 files changed, 41 insertions(+), 3 deletions(-)
 > 
->  .../{objtool => }/arch/x86/include/asm/inat.h |    0
->  .../arch/x86/include/asm/inat_types.h         |    0
->  .../{objtool => }/arch/x86/include/asm/insn.h |    0
->  .../arch/x86/include/asm/orc_types.h          |    0
->  tools/{objtool => }/arch/x86/lib/inat.c       |    0
->  tools/{objtool => }/arch/x86/lib/insn.c       |    0
->  .../arch/x86/lib/x86-opcode-map.txt           |    0
->  .../arch/x86/tools/gen-insn-attr-x86.awk      |    0
->  tools/objtool/Makefile                        |    4 +-
->  tools/objtool/arch/x86/Build                  |    4 +-
->  tools/objtool/arch/x86/decode.c               |    4 +-
->  tools/objtool/sync-check.sh                   |   12 +-
->  tools/perf/.gitignore                         |    3 +
->  tools/perf/arch/x86/tests/insn-x86.c          |    2 +-
->  tools/perf/arch/x86/util/archinsn.c           |    2 +-
->  tools/perf/check-headers.sh                   |   11 +-
->  tools/perf/util/intel-pt-decoder/Build        |   22 +-
->  .../intel-pt-decoder/gen-insn-attr-x86.awk    |  392 ------
->  tools/perf/util/intel-pt-decoder/inat.c       |   82 --
->  tools/perf/util/intel-pt-decoder/inat.h       |  230 ----
->  tools/perf/util/intel-pt-decoder/inat_types.h |   15 -
->  tools/perf/util/intel-pt-decoder/insn.c       |  593 ---------
->  tools/perf/util/intel-pt-decoder/insn.h       |  216 ----
->  .../intel-pt-decoder/intel-pt-insn-decoder.c  |   10 +-
->  .../util/intel-pt-decoder/x86-opcode-map.txt  | 1072 -----------------
->  25 files changed, 34 insertions(+), 2640 deletions(-)
->  rename tools/{objtool => }/arch/x86/include/asm/inat.h (100%)
->  rename tools/{objtool => }/arch/x86/include/asm/inat_types.h (100%)
->  rename tools/{objtool => }/arch/x86/include/asm/insn.h (100%)
->  rename tools/{objtool => }/arch/x86/include/asm/orc_types.h (100%)
->  rename tools/{objtool => }/arch/x86/lib/inat.c (100%)
->  rename tools/{objtool => }/arch/x86/lib/insn.c (100%)
->  rename tools/{objtool => }/arch/x86/lib/x86-opcode-map.txt (100%)
->  rename tools/{objtool => }/arch/x86/tools/gen-insn-attr-x86.awk (100%)
->  delete mode 100644 tools/perf/util/intel-pt-decoder/gen-insn-attr-x86.awk
->  delete mode 100644 tools/perf/util/intel-pt-decoder/inat.c
->  delete mode 100644 tools/perf/util/intel-pt-decoder/inat.h
->  delete mode 100644 tools/perf/util/intel-pt-decoder/inat_types.h
->  delete mode 100644 tools/perf/util/intel-pt-decoder/insn.c
->  delete mode 100644 tools/perf/util/intel-pt-decoder/insn.h
->  delete mode 100644 tools/perf/util/intel-pt-decoder/x86-opcode-map.txt
-> 
-> -- 
-> 2.20.1
-> 
+> diff --git a/drivers/iommu/arm-smmu-nvidia.c b/drivers/iommu/arm-smmu-nvidia.c
+> index d93ceda..a429b2c 100644
+> --- a/drivers/iommu/arm-smmu-nvidia.c
+> +++ b/drivers/iommu/arm-smmu-nvidia.c
+> @@ -56,11 +56,43 @@ static void nsmmu_write_reg64(struct arm_smmu_device *smmu,
+>   		writeq_relaxed(val, nsmmu_page(smmu, i, page) + offset);
+>   }
+>   
+> +static void nsmmu_tlb_sync_wait(struct arm_smmu_device *smmu, int page,
+> +				int sync, int status, int inst)
+> +{
+> +	u32 reg;
+> +	unsigned int spin_cnt, delay;
+> +
+> +	for (delay = 1; delay < TLB_LOOP_TIMEOUT; delay *= 2) {
+> +		for (spin_cnt = TLB_SPIN_COUNT; spin_cnt > 0; spin_cnt--) {
+> +			reg = readl_relaxed(
+> +			      nsmmu_page(smmu, inst, page) + status);
+> +			if (!(reg & sTLBGSTATUS_GSACTIVE))
+> +				return;
+> +			cpu_relax();
+> +		}
+> +		udelay(delay);
+> +	}
+> +	dev_err_ratelimited(smmu->dev,
+> +			    "TLB sync timed out -- SMMU may be deadlocked\n");
+> +}
+> +
+> +static void nsmmu_tlb_sync(struct arm_smmu_device *smmu, int page,
+> +			   int sync, int status)
+> +{
+> +	int i;
+> +
+> +	arm_smmu_writel(smmu, page, sync, 0);
+> +
+> +	for (i = 0; i < to_nsmmu(smmu)->num_inst; i++)
 
+It might make more sense to make this the innermost loop, i.e.:
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+	for (i = 0; i < nsmmu->num_inst; i++)
+		reg &= readl_relaxed(nsmmu_page(smmu, i, page)...
+
+since polling the instances in parallel rather than in series seems like 
+it might be a bit more efficient.
+
+> +		nsmmu_tlb_sync_wait(smmu, page, sync, status, i);
+> +}
+> +
+>   static const struct arm_smmu_impl nsmmu_impl = {
+>   	.read_reg = nsmmu_read_reg,
+>   	.write_reg = nsmmu_write_reg,
+>   	.read_reg64 = nsmmu_read_reg64,
+>   	.write_reg64 = nsmmu_write_reg64,
+> +	.tlb_sync = nsmmu_tlb_sync,
+>   };
+>   
+>   struct arm_smmu_device *nvidia_smmu_impl_init(struct arm_smmu_device *smmu)
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 46e1641..f5454e71 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -52,9 +52,6 @@
+>    */
+>   #define QCOM_DUMMY_VAL -1
+>   
+> -#define TLB_LOOP_TIMEOUT		1000000	/* 1s! */
+> -#define TLB_SPIN_COUNT			10
+> -
+>   #define MSI_IOVA_BASE			0x8000000
+>   #define MSI_IOVA_LENGTH			0x100000
+>   
+> @@ -244,6 +241,11 @@ static void __arm_smmu_tlb_sync(struct arm_smmu_device *smmu, int page,
+>   	unsigned int spin_cnt, delay;
+>   	u32 reg;
+>   
+> +	if (smmu->impl->tlb_sync) {
+> +		smmu->impl->tlb_sync(smmu, page, sync, status);
+
+What I'd hoped is that rather than needing a hook for this, you could 
+just override smmu_domain->tlb_ops from .init_context to wire up the 
+alternate .sync method directly. That would save this extra level of 
+indirection.
+
+Robin.
+
+> +		return;
+> +	}
+> +
+>   	arm_smmu_writel(smmu, page, sync, QCOM_DUMMY_VAL);
+>   	for (delay = 1; delay < TLB_LOOP_TIMEOUT; delay *= 2) {
+>   		for (spin_cnt = TLB_SPIN_COUNT; spin_cnt > 0; spin_cnt--) {
+> diff --git a/drivers/iommu/arm-smmu.h b/drivers/iommu/arm-smmu.h
+> index 9645bf1..d3217f1 100644
+> --- a/drivers/iommu/arm-smmu.h
+> +++ b/drivers/iommu/arm-smmu.h
+> @@ -207,6 +207,8 @@ enum arm_smmu_cbar_type {
+>   /* Maximum number of context banks per SMMU */
+>   #define ARM_SMMU_MAX_CBS		128
+>   
+> +#define TLB_LOOP_TIMEOUT		1000000	/* 1s! */
+> +#define TLB_SPIN_COUNT			10
+>   
+>   /* Shared driver definitions */
+>   enum arm_smmu_arch_version {
+> @@ -336,6 +338,8 @@ struct arm_smmu_impl {
+>   	int (*cfg_probe)(struct arm_smmu_device *smmu);
+>   	int (*reset)(struct arm_smmu_device *smmu);
+>   	int (*init_context)(struct arm_smmu_domain *smmu_domain);
+> +	void (*tlb_sync)(struct arm_smmu_device *smmu, int page, int sync,
+> +			 int status);
+>   };
+>   
+>   static inline void __iomem *arm_smmu_page(struct arm_smmu_device *smmu, int n)
+> 
