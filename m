@@ -2,100 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F337A39D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B455A39ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbfH3PEg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:04:36 -0400
-Received: from mga11.intel.com ([192.55.52.93]:10371 "EHLO mga11.intel.com"
+        id S1728166AbfH3PJZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:09:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727603AbfH3PEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:04:36 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 08:04:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="175634219"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
-  by orsmga008.jf.intel.com with ESMTP; 30 Aug 2019 08:04:31 -0700
-Date:   Fri, 30 Aug 2019 23:08:56 +0800
-From:   Philip Li <philip.li@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        kbuild test robot <lkp@intel.com>,
-        linux-input@vger.kernel.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        x86-ml <x86@kernel.org>, linux-tip-commits@vger.kernel.org,
-        pv-drivers@vmware.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        tip-bot2 for Thomas Hellstrom <tip-bot2@linutronix.de>,
-        Doug Covelli <dcovelli@vmware.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        kbuild-all@01.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [kbuild-all] [tip: x86/vmware] input/vmmouse: Update the
- backdoor call with support for new instructions
-Message-ID: <20190830150856.GB6931@intel.com>
-References: <156699905611.5321.15444519862547054670.tip-bot2@tip-bot2>
- <201908292325.aLXyyzEx%lkp@intel.com>
- <20190829163353.GC2132@zn.tnic>
- <20190830010349.GD857@intel.com>
- <alpine.DEB.2.21.1908300802390.1938@nanos.tec.linutronix.de>
- <20190830062053.GA2598@intel.com>
- <20190830080650.GA30413@zn.tnic>
- <20190830143645.GA4784@intel.com>
- <20190830144628.GC30413@zn.tnic>
- <20190830150002.GA6931@intel.com>
+        id S1727603AbfH3PJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:09:25 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E21D523407;
+        Fri, 30 Aug 2019 15:09:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567177764;
+        bh=urqI24R4Tky6Gl0utQFu04g6HRXBk4eUkS4cN9ptgqE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nIt7IS5UstXqE2AIgqF915TRB0tiOWUjSeLWr+jeroLIuyWfNjb7/qhyGi+bWi03r
+         Fn8pgtY+IRy3SOn3d0g27EWRLoc4bxgvk1zcPgqdF9DE+VqK0xopnlprkAbQtyvvq7
+         xOC+X48s/txWo5ahh/NmKmwkR1z6gt3NXvcwfgwA=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Simon Horman <horms@verge.net.au>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 00/12] Convert some basic type clks to new parent way
+Date:   Fri, 30 Aug 2019 08:09:11 -0700
+Message-Id: <20190830150923.259497-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830150002.GA6931@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 11:00:02PM +0800, Philip Li wrote:
-> On Fri, Aug 30, 2019 at 04:46:28PM +0200, Borislav Petkov wrote:
-> > On Fri, Aug 30, 2019 at 10:36:45PM +0800, Philip Li wrote:
-> > > yes, we monitor the repo pub/scm/linux/kernel/git/tip/tip.git, and will
-> > > send build status of head
-> > 
-> > ... and what you call "head" is the "master" branch on that repo, right?
-> Hi Boris, you are right. It is the head of monitored branch, here master branch is
-> one of the branches on this repo that we monitor.
-> 
-> Early on, there's requirement to blacklist a few branches, which is configured
-> as below
-> 	blacklist_branch: auto-.*|tmp-.*|base-.*|test.*|.*-for-linus
-> 
-> Except the blacklist branches, we will monitor all other branches. We also
-> support pull request to update the configuration or email us to update.
-> Refer to https://github.com/intel/lkp-tests/blob/master/repo/linux/tip.
-> 
-> Thanks
-> 
-> > Just making sure you got that right.
-> > 
-> > > (like BUILD SUCCESS or REGRESSION), also provide bisect report of
-> > > unique error for first bad commit.
-> > 
-> > Perfect!
-hi Boris, for the build status notification, we currently send to below
-address, is it still valid? If not, can you suggest one for us?
+This series converts most of the basic clk types to support the new way
+of specifying parents. There's still the composite and fixed-factor
+types to convert. Sending now because I'm internally debating having the
+big multiplexer function take only arguments that would correspond to
+the parent_data structure instead of passing down the three different
+ways of specifying parents.
 
-tip build status <tipbuild@zytor.com>
+Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Magnus Damm <magnus.damm@gmail.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: Simon Horman <horms@verge.net.au>
+Cc: Tony Lindgren <tony@atomide.com>
 
-> > 
-> > Thx.
-> > 
-> > -- 
-> > Regards/Gruss,
-> >     Boris.
-> > 
-> > Good mailing practices for 400: avoid top-posting and trim the reply.
+Stephen Boyd (12):
+  clk: gpio: Use DT way of specifying parents
+  clk: fixed-rate: Convert to clk_hw based APIs
+  clk: fixed-rate: Remove clk_register_fixed_rate_with_accuracy()
+  clk: fixed-rate: Move to_clk_fixed_rate() to C file
+  clk: fixed-rate: Document accuracy member
+  clk: fixed-rate: Add support for specifying parents via DT/pointers
+  clk: fixed-rate: Add clk flags for parent accuracy
+  clk: fixed-rate: Document that accuracy isn't a rate
+  clk: asm9260: Use parent accuracy in fixed rate clk
+  clk: mux: Add support for specifying parents via DT/pointers
+  clk: gate: Add support for specifying parents via DT/pointers
+  clk: divider: Add support for specifying parents via DT/pointers
+
+ drivers/clk/clk-asm9260.c                  |   8 +-
+ drivers/clk/clk-divider.c                  |  84 +----
+ drivers/clk/clk-fixed-rate.c               | 113 +++---
+ drivers/clk/clk-gate.c                     |  35 +-
+ drivers/clk/clk-gpio.c                     | 171 +++------
+ drivers/clk/clk-mux.c                      |  58 +--
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c |   4 +-
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_28nm.c |   4 +-
+ include/linux/clk-provider.h               | 416 +++++++++++++++++----
+ 9 files changed, 490 insertions(+), 403 deletions(-)
+
+
+base-commit: 5f9e832c137075045d15cd6899ab0505cfb2ca4b
+-- 
+Sent by a computer through tubes
+
