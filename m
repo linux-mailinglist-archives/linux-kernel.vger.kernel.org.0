@@ -2,127 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3A70A3EC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 22:09:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DFFA3ECA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 22:09:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbfH3UJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 16:09:04 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:44694 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727963AbfH3UJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 16:09:04 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 52F54200033;
-        Fri, 30 Aug 2019 22:09:02 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 450E0200423;
-        Fri, 30 Aug 2019 22:09:02 +0200 (CEST)
-Received: from fsr-ub1864-103.ea.freescale.net (fsr-ub1864-103.ea.freescale.net [10.171.82.17])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id AF43C2061E;
-        Fri, 30 Aug 2019 22:09:01 +0200 (CEST)
-From:   Daniel Baluta <daniel.baluta@nxp.com>
-To:     broonie@kernel.org
-Cc:     festevam@gmail.com, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        shengjiu.wang@nxp.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, timur@kernel.org,
-        mihai.serban@gmail.com, Mihai Serban <mihai.serban@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH] ASoC: fsl_sai: Fix noise when using EDMA
-Date:   Fri, 30 Aug 2019 23:09:00 +0300
-Message-Id: <20190830200900.19668-1-daniel.baluta@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728225AbfH3UJm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 16:09:42 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33582 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727963AbfH3UJm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 16:09:42 -0400
+Received: by mail-pl1-f195.google.com with SMTP id go14so3835879plb.0;
+        Fri, 30 Aug 2019 13:09:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iUyLbFrRRfn8yBr4b5/WswzF/k/TMDXNh3dYn/pQ9TI=;
+        b=VUYWYHJQ7vIBHao0CvJlTLxuG3skA829TGT4qURdUfeQ5SKl/E91DiysBDzaoTs2r3
+         s10spdHjlEEqEctwWePmoFBNwvr4doLUu0TROUbIrpctRauR4rMk8XW4Tzl9Cb4rNFpu
+         zTijlEjKRFUzGYRM4wwQl8bHMgJLT4M1Dbo9x+66hEf8LMTrBiY9UB4lUpR/ZTxHC2Tg
+         9Y+9CufCjhWhzPNGylcK/HEP8yCIa5KKNOon4riEuEZSshcHLMqeVSn2ZRtIAN6Yy1oE
+         Uk3h8zXzwDHoZfoLDhF1/tZ0ZBHHAo4jwa66cmyJccnmsUaUOf00a3VaVgpvWCEIDwvp
+         iVyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iUyLbFrRRfn8yBr4b5/WswzF/k/TMDXNh3dYn/pQ9TI=;
+        b=fgQrIkMoM2Fk6OSJjbLxn1wbFECr/2Bl/0AZRdmY+OEVQ4EiuTk9oRKoeiX5oxVFTW
+         ZLeY+bMqXYox1vWaUjUDNWstqNGSf8y+hrDsqq7uyVybuEZ0Btu9reWtJ4cIiu7zGBCk
+         YlnzpgpZA7fzQWJaNJ6xE0L61tlFQTHuC2jpgL/CsOfWsUF6/P9yfbo1tyYTX7dh94u0
+         g+XQfZHoGkwW34qWL89Vti2rstpBgR2GFkdZbj/XPH2oODDpAf05WKLNB4nZzkd2fHsC
+         RC90LeCOeVpbBSzmffBmYAs6ZoOw67uF63zlcovWKn656e11FqzVS+RUduyqaFqc2UBK
+         rkyw==
+X-Gm-Message-State: APjAAAXpUrY4QK0IUSHRYz5kNQ7ohrbRghkrpvIb8nWpmM1I08MbYOnM
+        nBbAVfnVctLjjodFtTWLcJiReVi1gwvmViYZSjU=
+X-Google-Smtp-Source: APXvYqxoPxx7Ty+7NNRV2ZwlZygvtNhIEFwB7150clgIgwejwOIGPA+6QbNCp5AT0pl3Fj8AIu6cs0g0yOB4qqWMy08=
+X-Received: by 2002:a17:902:26b:: with SMTP id 98mr17601048plc.61.1567195781332;
+ Fri, 30 Aug 2019 13:09:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <1567191974-11578-1-git-send-email-zdai@linux.vnet.ibm.com>
+ <CAM_iQpVMYQUdQN5L+ntXZTffZkW4q659bvXoZ8+Ar+zeud7Y4Q@mail.gmail.com> <1567195432.20025.18.camel@oc5348122405>
+In-Reply-To: <1567195432.20025.18.camel@oc5348122405>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Fri, 30 Aug 2019 13:09:29 -0700
+Message-ID: <CAM_iQpX-pBBQ=AEzogmZowWm6=XJWnuMeOOxRWKYT0KTD3PnLw@mail.gmail.com>
+Subject: Re: [v2] net_sched: act_police: add 2 new attributes to support
+ police 64bit rate and peakrate
+To:     "David Z. Dai" <zdai@linux.vnet.ibm.com>
+Cc:     Jamal Hadi Salim <jhs@mojatatu.com>, Jiri Pirko <jiri@resnulli.us>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, zdai@us.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mihai Serban <mihai.serban@nxp.com>
+On Fri, Aug 30, 2019 at 1:03 PM David Z. Dai <zdai@linux.vnet.ibm.com> wrote:
+>
+> On Fri, 2019-08-30 at 12:11 -0700, Cong Wang wrote:
+> > On Fri, Aug 30, 2019 at 12:06 PM David Dai <zdai@linux.vnet.ibm.com> wrote:
+> > > -       if (p->peak_present)
+> > > +               if ((police->params->rate.rate_bytes_ps >= (1ULL << 32)) &&
+> > > +                   nla_put_u64_64bit(skb, TCA_POLICE_RATE64,
+> > > +                                     police->params->rate.rate_bytes_ps,
+> > > +                                     __TCA_POLICE_MAX))
+> >
+> > I think the last parameter should be TCA_POLICE_PAD.
+> Thanks for reviewing it!
+> I have the impression that last parameter num value should be larger
+> than the attribute num value in 2nd parameter (TC_POLICE_RATE64 in this
 
-EDMA requires the period size to be multiple of maxburst. Otherwise the
-remaining bytes are not transferred and thus noise is produced.
+Why do you have this impression?
 
-We can handle this issue by adding a constraint on
-SNDRV_PCM_HW_PARAM_PERIOD_SIZE to be multiple of tx/rx maxburst value.
+> case). This is the reason I changed the last parameter value to
+> __TCA_POLICE_MAX after I moved the new attributes after TC_POLICE_PAD in
+> pkt_cls.h header.
 
-Cc: NXP Linux Team <linux-imx@nxp.com>
-Signed-off-by: Mihai Serban <mihai.serban@nxp.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
----
- sound/soc/fsl/fsl_sai.c | 15 +++++++++++++++
- sound/soc/fsl/fsl_sai.h |  1 +
- 2 files changed, 16 insertions(+)
+The prototype clearly shows it must be a padding attribute:
 
-diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
-index 728307acab90..fe126029f4e3 100644
---- a/sound/soc/fsl/fsl_sai.c
-+++ b/sound/soc/fsl/fsl_sai.c
-@@ -612,6 +612,16 @@ static int fsl_sai_startup(struct snd_pcm_substream *substream,
- 			   FSL_SAI_CR3_TRCE_MASK,
- 			   FSL_SAI_CR3_TRCE);
- 
-+	/*
-+	 * some DMA controllers need period size to be a multiple of
-+	 * tx/rx maxburst
-+	 */
-+	if (sai->soc_data->use_constraint_period_size)
-+		snd_pcm_hw_constraint_step(substream->runtime, 0,
-+					   SNDRV_PCM_HW_PARAM_PERIOD_SIZE,
-+					   tx ? sai->dma_params_tx.maxburst :
-+					   sai->dma_params_rx.maxburst);
-+
- 	ret = snd_pcm_hw_constraint_list(substream->runtime, 0,
- 			SNDRV_PCM_HW_PARAM_RATE, &fsl_sai_rate_constraints);
- 
-@@ -1011,30 +1021,35 @@ static const struct fsl_sai_soc_data fsl_sai_vf610_data = {
- 	.use_imx_pcm = false,
- 	.fifo_depth = 32,
- 	.reg_offset = 0,
-+	.use_constraint_period_size = false,
- };
- 
- static const struct fsl_sai_soc_data fsl_sai_imx6sx_data = {
- 	.use_imx_pcm = true,
- 	.fifo_depth = 32,
- 	.reg_offset = 0,
-+	.use_constraint_period_size = false,
- };
- 
- static const struct fsl_sai_soc_data fsl_sai_imx7ulp_data = {
- 	.use_imx_pcm = true,
- 	.fifo_depth = 16,
- 	.reg_offset = 8,
-+	.use_constraint_period_size = false,
- };
- 
- static const struct fsl_sai_soc_data fsl_sai_imx8mq_data = {
- 	.use_imx_pcm = true,
- 	.fifo_depth = 128,
- 	.reg_offset = 8,
-+	.use_constraint_period_size = false,
- };
- 
- static const struct fsl_sai_soc_data fsl_sai_imx8qm_data = {
- 	.use_imx_pcm = true,
- 	.fifo_depth = 64,
- 	.reg_offset = 0,
-+	.use_constraint_period_size = true,
- };
- 
- static const struct of_device_id fsl_sai_ids[] = {
-diff --git a/sound/soc/fsl/fsl_sai.h b/sound/soc/fsl/fsl_sai.h
-index b89b0ca26053..3a3f6f8e5595 100644
---- a/sound/soc/fsl/fsl_sai.h
-+++ b/sound/soc/fsl/fsl_sai.h
-@@ -157,6 +157,7 @@
- 
- struct fsl_sai_soc_data {
- 	bool use_imx_pcm;
-+	bool use_constraint_period_size;
- 	unsigned int fifo_depth;
- 	unsigned int reg_offset;
- };
--- 
-2.17.1
-
+static inline int nla_put_u64_64bit(struct sk_buff *skb, int attrtype,
+                                    u64 value, int padattr)
