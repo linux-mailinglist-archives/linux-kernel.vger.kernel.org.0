@@ -2,130 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 709AFA2F6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:11:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B749AA2F81
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:12:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbfH3GLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 02:11:16 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:46068 "EHLO mxhk.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726236AbfH3GLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 02:11:15 -0400
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id F1867EBCD69760BD4332;
-        Fri, 30 Aug 2019 14:11:12 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id x7U6B1Mg089976;
-        Fri, 30 Aug 2019 14:11:01 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019083014113696-3292051 ;
-          Fri, 30 Aug 2019 14:11:36 +0800 
-From:   Cheng Lin <wang.yi59@zte.com.cn>
-To:     davem@davemloft.net
-Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        wang.liang82@zte.com.cn, Cheng Lin <cheng.lin130@zte.com.cn>
-Subject: [PATCH v3] ipv6: Not to probe neighbourless routes
-Date:   Fri, 30 Aug 2019 14:11:16 +0800
-Message-Id: <1567145476-33802-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-08-30 14:11:37,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-08-30 14:11:06,
-        Serialize complete at 2019-08-30 14:11:06
-X-MAIL: mse-fl2.zte.com.cn x7U6B1Mg089976
+        id S1727603AbfH3GMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 02:12:47 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:64684 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727156AbfH3GMq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 02:12:46 -0400
+X-UUID: f23dc1529da6496e8313aee092cad3a8-20190830
+X-UUID: f23dc1529da6496e8313aee092cad3a8-20190830
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 885994755; Fri, 30 Aug 2019 14:11:49 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 30 Aug 2019 14:11:47 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 30 Aug 2019 14:11:47 +0800
+Message-ID: <1567145502.5942.15.camel@mtksdaap41>
+Subject: Re: [PATCH v5, 24/32] drm/mediatek: add clock property check before
+ get it
+From:   CK Hu <ck.hu@mediatek.com>
+To:     <yongqiang.niu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>
+Date:   Fri, 30 Aug 2019 14:11:42 +0800
+In-Reply-To: <1567090254-15566-25-git-send-email-yongqiang.niu@mediatek.com>
+References: <1567090254-15566-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1567090254-15566-25-git-send-email-yongqiang.niu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: AC63B56FAA0B5FFE3064F062EFE487F75FF6A0918ACADC649B94CFF7E07E14872000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cheng Lin <cheng.lin130@zte.com.cn>
+Hi, Yongqiang:
 
-Originally, Router Reachability Probing require a neighbour entry
-existed. Commit 2152caea7196 ("ipv6: Do not depend on rt->n in
-rt6_probe().") removed the requirement for a neighbour entry. And
-commit f547fac624be ("ipv6: rate-limit probes for neighbourless
-routes") adds rate-limiting for neighbourless routes.
+On Thu, 2019-08-29 at 22:50 +0800, yongqiang.niu@mediatek.com wrote:
+> From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> 
+> This patch add clock property check before get it
+> 
+> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index a5a6689..effc24a 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -657,10 +657,12 @@ static int mtk_ddp_probe(struct platform_device *pdev)
+>  	for (i = 0; i < 10; i++)
+>  		ddp->mutex[i].id = i;
+>  
+> -	ddp->clk = devm_clk_get(dev, NULL);
+> -	if (IS_ERR(ddp->clk)) {
+> -		dev_err(dev, "Failed to get clock\n");
+> -		return PTR_ERR(ddp->clk);
+> +	if (of_find_property(dev->of_node, "clocks", &i)) {
+> +		ddp->clk = devm_clk_get(dev, NULL);
+> +		if (IS_ERR(ddp->clk)) {
+> +			dev_err(dev, "Failed to get clock\n");
+> +			return PTR_ERR(ddp->clk);
+> +		}
 
-And, the Neighbor Discovery for IP version 6 (IPv6)(rfc4861) says,
-"
-7.2.5.  Receipt of Neighbor Advertisements
+Only "mediatek,mt8133-disp-mutex" has no clock property. For other SoC,
+clock property is required. So I think this exception is just for
+mt8183.
 
-When a valid Neighbor Advertisement is received (either solicited or
-unsolicited), the Neighbor Cache is searched for the target's entry.
-If no entry exists, the advertisement SHOULD be silently discarded.
-There is no need to create an entry if none exists, since the
-recipient has apparently not initiated any communication with the
-target.
-".
+Regards,
+CK
 
-In rt6_probe(), just a Neighbor Solicitation message are transmited.
-When receiving a Neighbor Advertisement, the node does nothing in a
-Neighborless condition.
+>  	}
+>  
+>  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 
-Not sure it's needed to create a neighbor entry in Router
-Reachability Probing. And the Original way may be the right way.
-
-This patch recover the requirement for a neighbour entry.
-
-Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
----
- include/net/ip6_fib.h | 5 -----
- net/ipv6/route.c      | 6 +-----
- 2 files changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/include/net/ip6_fib.h b/include/net/ip6_fib.h
-index 4b5656c..8c2e022 100644
---- a/include/net/ip6_fib.h
-+++ b/include/net/ip6_fib.h
-@@ -124,11 +124,6 @@ struct rt6_exception {
- 
- struct fib6_nh {
- 	struct fib_nh_common	nh_common;
--
--#ifdef CONFIG_IPV6_ROUTER_PREF
--	unsigned long		last_probe;
--#endif
--
- 	struct rt6_info * __percpu *rt6i_pcpu;
- 	struct rt6_exception_bucket __rcu *rt6i_exception_bucket;
- };
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index fd059e0..1839dd7 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -639,12 +639,12 @@ static void rt6_probe(struct fib6_nh *fib6_nh)
- 	nh_gw = &fib6_nh->fib_nh_gw6;
- 	dev = fib6_nh->fib_nh_dev;
- 	rcu_read_lock_bh();
--	idev = __in6_dev_get(dev);
- 	neigh = __ipv6_neigh_lookup_noref(dev, nh_gw);
- 	if (neigh) {
- 		if (neigh->nud_state & NUD_VALID)
- 			goto out;
- 
-+		idev = __in6_dev_get(dev);
- 		write_lock(&neigh->lock);
- 		if (!(neigh->nud_state & NUD_VALID) &&
- 		    time_after(jiffies,
-@@ -654,13 +654,9 @@ static void rt6_probe(struct fib6_nh *fib6_nh)
- 				__neigh_set_probe_once(neigh);
- 		}
- 		write_unlock(&neigh->lock);
--	} else if (time_after(jiffies, fib6_nh->last_probe +
--				       idev->cnf.rtr_probe_interval)) {
--		work = kmalloc(sizeof(*work), GFP_ATOMIC);
- 	}
- 
- 	if (work) {
--		fib6_nh->last_probe = jiffies;
- 		INIT_WORK(&work->work, rt6_probe_deferred);
- 		work->target = *nh_gw;
- 		dev_hold(dev);
--- 
-1.8.3.1
 
