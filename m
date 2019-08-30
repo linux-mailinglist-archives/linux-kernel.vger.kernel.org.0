@@ -2,117 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B54EA393F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EC17A3939
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:28:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728155AbfH3O3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 10:29:20 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:35062 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727850AbfH3O3U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 10:29:20 -0400
-Received: by mail-io1-f67.google.com with SMTP id b10so14431134ioj.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 07:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kepstin.ca; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=nALWCT0w/4IgpkaPDMmW8i7xojZhX1BM8LFM2iLzr84=;
-        b=eejwfPGzhvImQ5rQ6Qj0W1VGx7GEXZl6+k/BQeUXMgIcYSW8X/erRCeCoiphXyK6Ms
-         3Wn3R2Zq8EkiIfdBcro5M3vcicP7/F4L07CDl6HrsdF9iKAOJ8Ozz3r1UD81mVcaYIwj
-         B3k/MLM5xCtj582jfHxUPhV7Tch/rEE3VhCfw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=nALWCT0w/4IgpkaPDMmW8i7xojZhX1BM8LFM2iLzr84=;
-        b=q6CAtEDcxYw1ftFd3ypi8OaDH+v3qFNWpMBD4y39F8bpHFM39Xohf3/Gvdr2mqJcfr
-         A6xFY/i0+I4rQy+JvdyDfhpupYKnvoFNMspSVYIJTHfHDzUG6k0VY9VflxaPkkjBvZRU
-         tCDIJpgZQ7cCbznTEwcaxPStnOfYys+xeGjlGSRJYIWhkGPUHKZg8TSw/2rAl2fnwAHv
-         o7eFwOgGz+z3CPDDK/6X8hHr2EqFFFjbD1eRqu9sXT9lsjil3YlbNdJdZtloVEnYzKqb
-         b9rWTlnb5ibtWnn+2n9OxHrcE0TWymck2DzeAmrtimunl9XUwR8SbiaJIXPu+MdqqmiV
-         JfKA==
-X-Gm-Message-State: APjAAAUTFwKoIghk/P5DOLgtjCwdLt487gQBU1zu87WoTl55XPq6pbbA
-        PTLhL308YU8FDdl0gDNrGTR2oQ==
-X-Google-Smtp-Source: APXvYqzMABslZm35OP2emany0n3ZDwgvDigPTjq3wXTQbTIjv/iS/DZ11voTizEK44QEZ7S59HLxCA==
-X-Received: by 2002:a05:6602:c7:: with SMTP id z7mr19125822ioe.130.1567175359361;
-        Fri, 30 Aug 2019 07:29:19 -0700 (PDT)
-Received: from rocky (CPEac1f6b45e387-CM9050ca1e1520.cpe.net.cable.rogers.com. [174.114.230.157])
-        by smtp.gmail.com with ESMTPSA id k9sm5491455ioa.10.2019.08.30.07.29.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 07:29:18 -0700 (PDT)
-Message-ID: <fea87715422ac21ca5d439e91ff45074069ada20.camel@kepstin.ca>
-Subject: Re: [RFC PATCH] tools/power turbostat: Add support for Hygon Fam
- 18h (Dhyana) RAPL
-From:   Calvin Walton <calvin.walton@kepstin.ca>
-To:     Pu Wen <puwen@hygon.cn>, lenb@kernel.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 30 Aug 2019 10:27:46 -0400
-In-Reply-To: <1567157008-29679-1-git-send-email-puwen@hygon.cn>
-References: <1567157008-29679-1-git-send-email-puwen@hygon.cn>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1728031AbfH3O2B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 10:28:01 -0400
+Received: from foss.arm.com ([217.140.110.172]:33102 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727751AbfH3O2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 10:28:01 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 743A0344;
+        Fri, 30 Aug 2019 07:28:00 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A12BC3F703;
+        Fri, 30 Aug 2019 07:27:56 -0700 (PDT)
+Subject: Re: [PATCH v8 7/7] iommu/vt-d: Use bounce buffer for untrusted
+ devices
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Lu Baolu' <baolu.lu@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        "jacob.jun.pan@intel.com" <jacob.jun.pan@intel.com>,
+        "alan.cox@intel.com" <alan.cox@intel.com>,
+        "kevin.tian@intel.com" <kevin.tian@intel.com>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "pengfei.xu@intel.com" <pengfei.xu@intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <20190830071718.16613-1-baolu.lu@linux.intel.com>
+ <20190830071718.16613-8-baolu.lu@linux.intel.com>
+ <4dee1bcef8474ebb95a7826a58bb72aa@AcuMS.aculab.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <af54fa85-440a-52e4-cf6c-d2052ee9f385@arm.com>
+Date:   Fri, 30 Aug 2019 15:27:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
+In-Reply-To: <4dee1bcef8474ebb95a7826a58bb72aa@AcuMS.aculab.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-08-30 at 17:23 +0800, Pu Wen wrote:
-> Commit 9392bd98bba760be96ee ("tools/power turbostat: Add support for
-> AMD
-> Fam 17h (Zen) RAPL") and the commit 3316f99a9f1b68c578c5
-> ("tools/power
-> turbostat: Also read package power on AMD F17h (Zen)") add AMD Fam
-> 17h
-> RAPL support.
+On 30/08/2019 14:39, David Laight wrote:
+> From: Lu Baolu
+>> Sent: 30 August 2019 08:17
 > 
-> Hygon Family 18h(Dhyana) support RAPL in bit 14 of CPUID 0x80000007
-> EDX,
-> and has MSRs RAPL_PWR_UNIT/CORE_ENERGY_STAT/PKG_ENERGY_STAT. So add
-> Hygon
-> Dhyana Family 18h support for RAPL.
+>> The Intel VT-d hardware uses paging for DMA remapping.
+>> The minimum mapped window is a page size. The device
+>> drivers may map buffers not filling the whole IOMMU
+>> window. This allows the device to access to possibly
+>> unrelated memory and a malicious device could exploit
+>> this to perform DMA attacks. To address this, the
+>> Intel IOMMU driver will use bounce pages for those
+>> buffers which don't fill whole IOMMU pages.
 > 
-> Already tested on Hygon multi-node systems and it shows correct per-
-> core
-> energy usage and the total package power.
+> Won't this completely kill performance?
 
-I was a bit worried about these two chunks, since as far as I know AMD
-has not yet released any processor with family 0x18, so there might be
-future conflicts:
+Yes it will.
 
-> @@ -3803,6 +3804,7 @@ double get_tdp_amd(unsigned int family)
->  {
->  	switch (family) {
->  	case 0x17:
-> +	case 0x18:
->  	default:
+Though hopefully by now we're all well aware that speed and security 
+being inversely proportional is the universal truth of modern computing.
+
+> I'd expect to see something for dma_alloc_coherent() (etc)
+> that tries to give the driver page sized buffers.
+
+Coherent DMA already works in PAGE_SIZE units under the covers (at least 
+in the DMA API implementations relevant here) - that's not an issue. The 
+problem is streaming DMA, where we have to give the device access to, 
+say, some pre-existing 64-byte data packet, from right in the middle of 
+who knows what else. Since we do not necessarily have control over the 
+who knows what else, the only universally-practical way to isolate the 
+DMA data is to copy it away to some safe sanitised page which we *do* 
+control, and make the actual DMA accesses target that.
+
+> Either that or the driver could allocate page sized buffers
+> even though it only passes fragments of these buffers to
+> the dma functions (to avoid excessive cache invalidates).
+
+Where, since we can't easily second-guess users' systems, "the driver" 
+turns out to be every DMA-capable driver, every subsystem-level buffer 
+manager, every userspace application which could possibly make use of 
+some kind of zero-copy I/O call...
+
+Compared to a single effectively-transparent implementation in a single 
+place at the lowest level with a single switch for the user to turn it 
+on or off depending on how security-critical their particular system is, 
+I know which approach I'd rather review, maintain and rely on.
+
+Robin.
+
+> Since you have to trust the driver, why not actually trust it?
 > 
-
-> @@ -3982,6 +3984,7 @@ void rapl_probe_amd(unsigned int family,
-> unsigned int model)
->  
->  	switch (family) {
->  	case 0x17: /* Zen, Zen+ */
-> +	case 0x18:
->  		do_rapl = RAPL_AMD_F17H | RAPL_PER_CORE_ENERGY;
->  		if (rapl_joules) {
->  			BIC_PRESENT(BIC_Pkg_J);
-
-But the second switch is already guarded by the CPUID check for the
-rapl support, so it will either "just work" if AMD's family 0x18 chip
-uses the same RAPL registers - or cleanly skip the CPU if they changed
-it.
-
-Please add a comment on the 0x18 case in the rapl_probe_amd function,
-something like:
-	case 0x18: /* Hygon Dhyana */
-
-Feel free to add a
-Reviewed-by: Calvin Walton <calvin.walton@kepstin.ca>
-
--- 
-Calvin Walton <calvin.walton@kepstin.ca>
-
+> 	David
+> 
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+> Registration No: 1397386 (Wales)
+> 
