@@ -2,161 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A176A306C
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D0DEA3070
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:12:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbfH3HMR convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 30 Aug 2019 03:12:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47778 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726510AbfH3HMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:12:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DB971B6DB;
-        Fri, 30 Aug 2019 07:12:14 +0000 (UTC)
-Date:   Fri, 30 Aug 2019 09:12:12 +0200
-From:   Michal =?UTF-8?B?U3VjaMOhbmVr?= <msuchanek@suse.de>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Breno Leitao <leitao@debian.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Allison Randal <allison@lohutok.net>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christian Brauner <christian@brauner.io>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v5 5/5] powerpc/perf: split callchain.c by bitness
-Message-ID: <20190830091212.4d1d619f@naga>
-In-Reply-To: <20190830084225.527f4265@naga>
-References: <c77eec3d99fd0251edf725a3d9e1b79f396eba6e.1567117050.git.msuchanek@suse.de>
-        <4d996b0a225ca5b7d287ae46825d7da4a1d6e509.1567146554.git.christophe.leroy@c-s.fr>
-        <20190830084225.527f4265@naga>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1728169AbfH3HM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:12:27 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:59572 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726510AbfH3HM1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 03:12:27 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::642])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id D60F01544E2D5;
+        Fri, 30 Aug 2019 00:12:25 -0700 (PDT)
+Date:   Fri, 30 Aug 2019 00:12:23 -0700 (PDT)
+Message-Id: <20190830.001223.669650763835949848.davem@davemloft.net>
+To:     jiri@resnulli.us
+Cc:     idosch@idosch.org, andrew@lunn.ch, horatiu.vultur@microchip.com,
+        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+        allan.nielsen@microchip.com, ivecera@redhat.com,
+        f.fainelli@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] net: core: Notify on changes to
+ dev->promiscuity.
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190830063624.GN2312@nanopsycho>
+References: <20190830053940.GL2312@nanopsycho>
+        <20190829.230233.287975311556641534.davem@davemloft.net>
+        <20190830063624.GN2312@nanopsycho>
+X-Mailer: Mew version 6.8 on Emacs 26.2
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Aug 2019 00:12:26 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Aug 2019 08:42:25 +0200
-Michal Suchánek <msuchanek@suse.de> wrote:
+From: Jiri Pirko <jiri@resnulli.us>
+Date: Fri, 30 Aug 2019 08:36:24 +0200
 
-> On Fri, 30 Aug 2019 06:35:11 +0000 (UTC)
-> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
-> 
-> > On 08/29/2019 10:28 PM, Michal Suchanek wrote:  
+> The promiscuity is a way to setup the rx filter. So promics == rx filter
+> off. For normal nics, where there is no hw fwd datapath,
+> this coincidentally means all received packets go to cpu.
 
-> >  obj-$(CONFIG_PPC_PERF_CTRS)	+= core-book3s.o bhrb.o
-> > diff --git a/arch/powerpc/perf/callchain_32.c b/arch/powerpc/perf/callchain_32.c
-> > index 0bd4484eddaa..17c43ae03084 100644
-> > --- a/arch/powerpc/perf/callchain_32.c
-> > +++ b/arch/powerpc/perf/callchain_32.c
-> > @@ -15,50 +15,13 @@
-> >  #include <asm/sigcontext.h>
-> >  #include <asm/ucontext.h>
-> >  #include <asm/vdso.h>
-> > -#ifdef CONFIG_PPC64
-> > -#include "../kernel/ppc32.h"
-> > -#endif
-> >  #include <asm/pte-walk.h>
-> >  
-> >  #include "callchain.h"
-> >  
-> >  #ifdef CONFIG_PPC64
-> > -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-> > -{
-> > -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-> > -	    ((unsigned long)ptr & 3))
-> > -		return -EFAULT;
-> > -
-> > -	pagefault_disable();
-> > -	if (!__get_user_inatomic(*ret, ptr)) {
-> > -		pagefault_enable();
-> > -		return 0;
-> > -	}
-> > -	pagefault_enable();
-> > -
-> > -	return read_user_stack_slow(ptr, ret, 4);
-> > -}
-> > -#else /* CONFIG_PPC64 */
-> > -/*
-> > - * On 32-bit we just access the address and let hash_page create a
-> > - * HPTE if necessary, so there is no need to fall back to reading
-> > - * the page tables.  Since this is called at interrupt level,
-> > - * do_page_fault() won't treat a DSI as a page fault.
-> > - */
-> > -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-> > -{
-> > -	int rc;
-> > -
-> > -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-> > -	    ((unsigned long)ptr & 3))
-> > -		return -EFAULT;
-> > -
-> > -	pagefault_disable();
-> > -	rc = __get_user_inatomic(*ret, ptr);
-> > -	pagefault_enable();
-> > -
-> > -	return rc;
-> > -}
-> > +#include "../kernel/ppc32.h"
-> > +#else
-> >  
-> >  #define __SIGNAL_FRAMESIZE32	__SIGNAL_FRAMESIZE
-> >  #define sigcontext32		sigcontext
-> > @@ -95,6 +58,30 @@ struct rt_signal_frame_32 {
-> >  	int			abigap[56];
-> >  };
-> >  
-> > +/*
-> > + * On 32-bit we just access the address and let hash_page create a
-> > + * HPTE if necessary, so there is no need to fall back to reading
-> > + * the page tables.  Since this is called at interrupt level,
-> > + * do_page_fault() won't treat a DSI as a page fault.
-> > + */
-> > +static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
-> > +{
-> > +	int rc;
-> > +
-> > +	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-> > +	    ((unsigned long)ptr & 3))
-> > +		return -EFAULT;
-> > +
-> > +	pagefault_disable();
-> > +	rc = __get_user_inatomic(*ret, ptr);
-> > +	pagefault_enable();
-> > +
-> > +	if (IS_ENABLED(CONFIG_PPC32) || !rc)
-> > +		return rc;
-> > +
-> > +	return read_user_stack_slow(ptr, ret, 4);
-> > +}
-> > +
-> >  static int is_sigreturn_32_address(unsigned int nip, unsigned int fp)
-> >  {
-> >  	if (nip == fp + offsetof(struct signal_frame_32, mctx.mc_pad))  
-> 
-> I will leave consolidating this function to somebody who knows what the
-> desired semantic is. With a short ifdef section at the top of the file
-> it is a low-hanging fruit.
-
-It looks ok if done as a separate patch.
-
-Thanks
-
-Michal
+You cannot convince me that the HW datapath isn't a "rx filter" too, sorry.
