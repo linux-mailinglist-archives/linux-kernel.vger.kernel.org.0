@@ -2,106 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D161A3FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 23:45:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFD5AA3FEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 23:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbfH3Vpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 17:45:47 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:47069 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728122AbfH3Vpq (ORCPT
+        id S1728240AbfH3VrS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 17:47:18 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37585 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727304AbfH3VrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 17:45:46 -0400
-Received: by mail-ed1-f67.google.com with SMTP id z51so9503687edz.13
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 14:45:45 -0700 (PDT)
+        Fri, 30 Aug 2019 17:47:17 -0400
+Received: by mail-io1-f66.google.com with SMTP id r4so1807495iop.4;
+        Fri, 30 Aug 2019 14:47:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cBz0MMX0JgyAHjwyE8I1352iGkSxJIlsmG5ztl+6roE=;
-        b=SaLyfj4vRd7n2LDFFQRahUDf4PcSzy7K79IMAxpqyV4LzQALLJ5uUvekBkwAr72dpS
-         7ayWBlDt0ahoDU1k002ECX1qUVqL8sw5R3Hl6b11PWdt/YaebFSUeHs6b3Gl3Jxo5ok2
-         Zph2ANDm+Cdq46G6qrE6+s+NoOVsjK6AaoCS4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Zobn1PfaWdiFKh+2AJisvXaXaN9Pv4+pvGnHv+s5H4g=;
+        b=PqoH0U6MfwrpAsH2I8tyCEQptXVIiBeTnOsXbU8Ar8ranL1XpLus6OwSuKVJ3vvw1t
+         NyOIEgheKhfIOyWmzehIPpcCMBCbnVBmqAVaIYK8uOQz9qbtKYu743+vuP5K3vLLB86u
+         92/oafOaYMZXZ6I/YRq9y0ful6k7Y4g0CFxQwnrPo4oQFzD45FVBN0X23i9z6JCYEP4v
+         0AGR2TKK1ckUBolAcqZvVz2e/uzlYquJb61tIlX7sV6wqla4vfB8rVCR9x432k+17SsJ
+         cTIu4QtXSiaGkEKed2pxOdm30n1pukvCPAAew81YizAWchrT7FrirRpuA84mqm1+0Jyw
+         fDRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=cBz0MMX0JgyAHjwyE8I1352iGkSxJIlsmG5ztl+6roE=;
-        b=d0kQ1WXEnQxBqh55LUt+2ig4Fxe+UAytlkfb54GQ//sov4PernV8+9euDh+Rc7WPjB
-         Vxu8TtJutv2tXJjB7FrNuILZpEPwlBNgp6OQtGs/Fh2jGkCZki7eVoat3sx6zSOGg/gU
-         ZC1y5kl9olIjrgQaW33sQ8k7UeX3V9QaaraBlHEVraJ1KGIon8JjgSz5eejWl1TbdFmP
-         7SAN3nLw5NdR+wT231vqilXy86/nCIbMW9x98PTIEAuGxHrvXSrkW8c+3sLAuhoZ8gg9
-         hljFme+3635u9wBD2jVcP71EJbEobG9sgDKkgO4UEkuPQqLOuNaCtkbrZsedTu6uqOL6
-         wGbg==
-X-Gm-Message-State: APjAAAUmgo9QPvgQ3WNFAMolPiXBwHU7LMjT8B9YWVhEHoWdboUW3jLQ
-        nhwOaIAKyynMh/hzk8CLzRgwfFcoZ0nTyap3
-X-Google-Smtp-Source: APXvYqyUMuKdzY/FFg+N2C4z43XxYZzTyHfyt1kARxcF6rQuLUR39CDEOTIT5F3KhAgvAnwKa2ylTg==
-X-Received: by 2002:aa7:c490:: with SMTP id m16mr18062490edq.156.1567201545118;
-        Fri, 30 Aug 2019 14:45:45 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
-        by smtp.gmail.com with ESMTPSA id qx4sm920543ejb.11.2019.08.30.14.45.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Aug 2019 14:45:44 -0700 (PDT)
-Subject: Re: [PATCH v2] vsprintf: introduce %dE for error constants
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Juergen Gross <jgross@suse.com>, Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        metux IT consult Enrico Weigelt <lkml@metux.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190827211244.7210-1-uwe@kleine-koenig.org>
- <20190828113216.p2yiha4xyupkbcbs@pathway.suse.cz>
- <74303921-aa95-9962-2254-27e556af54f4@kleine-koenig.org>
- <20190829081249.3zvvsa4ggb5pfozl@pathway.suse.cz>
- <45cd5b50-9854-fce7-5f08-f7660abb8691@suse.com>
- <a83449cf-3a4a-f3e0-210a-dc7c39505355@rasmusvillemoes.dk>
- <002dc2a7-40a3-f52a-c8fa-5dbb42e6dd7b@kleine-koenig.org>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <7eb732b3-eca5-34c0-ed1f-6814deab60d9@rasmusvillemoes.dk>
-Date:   Fri, 30 Aug 2019 23:45:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        bh=Zobn1PfaWdiFKh+2AJisvXaXaN9Pv4+pvGnHv+s5H4g=;
+        b=QLRyj++d9O9UP47p/4OFHiKpcUMkPLJcWwKpKHUlg9H/hRw37mdcqVzgxy6v5bcnXG
+         Y4aIwtX76XzT3fePR0Asr8XAmjhe7q7oFFHvjmPmzSoZjN7rD+vScYoUAnDrxF3eACoY
+         ncuvEpjLKBTVzT7gweiBy+qtYc7PvwY1493DTiz8epK0amItFnCMeg2FzJP267d7ZhHt
+         Tc5W0f034aYeDZjq9TAvJVDrxfrWUpsQJ8Hc6ZxfhrcBn2Cuiw9uUDGOqEgspAZmbBv8
+         pvgqa3MNZctjv/i3pPgxs7LCqGFl5WJASBMLdb9pBjJipD1yT0HsgvyCRGmM13pfvvkf
+         QM+A==
+X-Gm-Message-State: APjAAAVH0zCaRGdvwaPtQ5OVdoRgA95qXzcxF4JGcxO4C+/5Mh5JRuPb
+        suzo/DQ7u4uHNzdm4sBUkg8cOkeVm/kWeA==
+X-Google-Smtp-Source: APXvYqzDz5V/Q5AiD+cZ2p5/0vLITIFai9ECVqT6mDBjH8GdVUW+FMbMKnbyxabOxzlGVMoewVzgcA==
+X-Received: by 2002:a02:c992:: with SMTP id b18mr18578961jap.128.1567201636655;
+        Fri, 30 Aug 2019 14:47:16 -0700 (PDT)
+Received: from peng.science.purdue.edu (cos-128-210-107-27.science.purdue.edu. [128.210.107.27])
+        by smtp.googlemail.com with ESMTPSA id m10sm5951564ioj.75.2019.08.30.14.47.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 14:47:16 -0700 (PDT)
+From:   Hui Peng <benquike@gmail.com>
+To:     stable@vger.kernel.org
+Cc:     Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wenwen Wang <wang6495@umn.edu>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] Fix an OOB bug in parse_audio_mixer_unit
+Date:   Fri, 30 Aug 2019 17:46:49 -0400
+Message-Id: <20190830214649.27761-1-benquike@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <002dc2a7-40a3-f52a-c8fa-5dbb42e6dd7b@kleine-koenig.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/08/2019 19.39, Uwe Kleine-König wrote:
-> On 8/29/19 11:09 AM, Rasmus Villemoes wrote:
+The `uac_mixer_unit_descriptor` shown as below is read from the
+device side. In `parse_audio_mixer_unit`, `baSourceID` field is
+accessed from index 0 to `bNrInPins` - 1, the current implementation
+assumes that descriptor is always valid (the length  of descriptor
+is no shorter than 5 + `bNrInPins`). If a descriptor read from
+the device side is invalid, it may trigger out-of-bound memory
+access.
 
->> still prefer making it %pE, both because it's easier to convert integers
->> to ERR_PTRs than having to worry about the type of PTR_ERR() being long
->> and not int, and because alphanumerics after %p have been ignored for a
->> long time (10 years?) whether or not those characters have been
->> recognized as a %p extension, so nobody relies on %pE putting an E after
->> the %p output. It also keeps the non-standard extensions in the same
->> "namespace", so to speak.
->>
->> Oh, 'E' is taken, well, make it 'e' then.
-> 
-> I like having %pe to print error valued pointers. Then maybe we could
-> have both %de for ints and %pe for pointers. :-)
+```
+struct uac_mixer_unit_descriptor {
+	__u8 bLength;
+	__u8 bDescriptorType;
+	__u8 bDescriptorSubtype;
+	__u8 bUnitID;
+	__u8 bNrInPins;
+	__u8 baSourceID[];
+}
+```
 
-Oh no. And actually, come to think of it, we don't even need to extend
-%p at all (taking away yet another letter for future expansion...), we
-should simply make %p DTRT when passed an ERR_PTR - currently, if it's
-some %p<extension> that would normally derefence it, there's sanity
-checking in place which makes it print (efault), while if it's plain %p,
-it just does the hashing, making it impossible to figure out that it was
-an errno value (or which it was).
+This patch fixes the bug by add a sanity check on the length of
+the descriptor.
 
-I've cooked up what I mean, sending in separate thread.
+CVE: CVE-2018-15117
 
-Rasmus
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+---
+ sound/usb/mixer.c | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 1f7eb3816cd7..10ddec76f906 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1628,6 +1628,7 @@ static int parse_audio_mixer_unit(struct mixer_build *state, int unitid,
+ 	int pin, ich, err;
+ 
+ 	if (desc->bLength < 11 || !(input_pins = desc->bNrInPins) ||
++	    desc->bLength < sizeof(*desc) + desc->bNrInPins ||
+ 	    !(num_outs = uac_mixer_unit_bNrChannels(desc))) {
+ 		usb_audio_err(state->chip,
+ 			      "invalid MIXER UNIT descriptor %d\n",
+-- 
+2.17.1
 
