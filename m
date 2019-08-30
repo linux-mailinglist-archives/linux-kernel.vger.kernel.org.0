@@ -2,107 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80088A3C42
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:41:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB8EA3C47
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbfH3Qki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:40:38 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:46701 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbfH3Qkh (ORCPT
+        id S1728182AbfH3QmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:42:19 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49882 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727976AbfH3QmT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:40:37 -0400
-Received: by mail-vs1-f66.google.com with SMTP id x20so5113702vsx.13
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 09:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FFEm8wnPyI70hvEmm2P3x6q7Jm7rJLu+QxiBEYWlIyU=;
-        b=Az1Gi5TnAI4hFvybyYWbK+kY5uHpzIYo+o2d4fFMkAR8JxEWt1+SHjs8JUveORST6i
-         Gd64ynQza92S8iVFSgaTo8l3iE4CvAdDU2coF4oOsqwwJfBiYQJKYwbUX8LujJTsiWTN
-         wi/cOSOreMTOdb7b3mAoHJSXPGD6fzpyWxLIT329lNx6TGkuBvPre2rtLkRs/tnbRsd1
-         +yM5KS/siWcWBOs/K2sslc+UzXBGW+Zc0vw3iaR0/r09ZilQiD9lJiKOkOw3ErAyZMNg
-         K/AIETEuQOm1nWHlRnf0RDYI2pN+ijMN3IZ8pd95grX2lJr0DFw7Bg6DqEyWjwEnWykb
-         pryQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FFEm8wnPyI70hvEmm2P3x6q7Jm7rJLu+QxiBEYWlIyU=;
-        b=b56oX76IS1mGlt+uXhOSHAjJFjZq7itCfSjjsOUoo1UoVS3WsWKwNhUs6nSMr4kRYs
-         sD7xks+MSNaVVQ22pY67iamZBuif8GY/ruFg5ui+4C50PZrffevYYnalIPcVm3k/FaQJ
-         ta2heelkUJsxKnyCnpr8R5K/5zEu94bjMPffXs4enaZiNrjd99EEDR8Ru7YO0XqicFgh
-         a5MVfq8JiC979ETtjVRrUo4F+JMqqaE80o1ED4zNumNyBoFvy8yJQtoyb6bUomtTOPm8
-         QxLTeaqHvsgTrIob2UokyYYQD2wg2cSX06DnOOjZDOlxZGolCah91uyz/3eXJGaQmKrY
-         dF1Q==
-X-Gm-Message-State: APjAAAX4QGnpYYxLLG22uC/LG1wgnOw7l4RohKEw9yFhdRfC/3GSwT2M
-        4YOPlGvD6skClbKmyXr5UGvoJfAdcMECpQrLtVNpUA==
-X-Google-Smtp-Source: APXvYqxSX6rgglBoPn04e5TToAhGtd/FXdxa1G/PbV8Cm/B9SvCHsyiX8a3uGPV5I0xaid3Rv899mDqEZOJRM5dDNMs=
-X-Received: by 2002:a67:b445:: with SMTP id c5mr4384433vsm.182.1567183236380;
- Fri, 30 Aug 2019 09:40:36 -0700 (PDT)
+        Fri, 30 Aug 2019 12:42:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zT6Sffc7p6dXxr/DqLVZuPlm0esCLyE+d/3ikz+/jqI=; b=Nb5baDLHs6tOVMnZ2y1xUxHzs
+        MhSwjOCDGxy8BvtXnOfjEW35qlNWyTbB5J8UoRl4zzLn+YSkRG+J46vsn972X8NpB8I7gKz1i1ZcD
+        Bi2JWKJq4ZUANCc0oWI11+X0jE7gzpS3IFc1UfQGoD9Mk+ov4ZRJqRweV6Ek2FRGvomWDP7hd3ryu
+        oaPu2QpDsqEh4GwblDsXtaPgKEHbndclLqmmnGyF5+5JhqE/2wMWTx6zkz1YCrd3bEALL5KVNQKUQ
+        WpHREdtO/JtxBC5fHQ2repjFQJhEBNYaFxOJln6YisDqgjlMrFlhxRGO4FqgfssIOHIyKIy5OFC+0
+        f9lySr1Cg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3jyP-0002rX-Ku; Fri, 30 Aug 2019 16:42:05 +0000
+Date:   Fri, 30 Aug 2019 09:42:05 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 05/24] erofs: add inode operations
+Message-ID: <20190830164205.GD29603@infradead.org>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-6-gaoxiang25@huawei.com>
+ <20190829102426.GE20598@infradead.org>
+ <20190829115922.GG64893@architecture4>
 MIME-Version: 1.0
-References: <cover.1566907161.git.amit.kucheria@linaro.org>
- <66ac3d3707d6296ef85bf1fa321f7f1ee0c02131.1566907161.git.amit.kucheria@linaro.org>
- <5d65cbe9.1c69fb81.1ceb.2374@mx.google.com> <CAP245DWWKsZBHnvSqC40XOH48kGd-hykd+fr-UZfWTmvuG2KaA@mail.gmail.com>
- <5d67e6cf.1c69fb81.5aec9.3b71@mx.google.com> <CAP245DVjgnwGn5rUgbYrkBOi3vtyShz0Qbx_opx80xiOV7uXeA@mail.gmail.com>
- <CAHLCerMmBmS-59eywxkUJ+5-zSccx8Twx2=NELgBgShYhM7TOw@mail.gmail.com> <5d6946fa.1c69fb81.44ab7.8d72@mx.google.com>
-In-Reply-To: <5d6946fa.1c69fb81.44ab7.8d72@mx.google.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Fri, 30 Aug 2019 22:10:24 +0530
-Message-ID: <CAHLCerNJpOEevZBvN6s4FiaD5C=1C4xNRHYjVNM=0HpGCuf9RQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/15] dt: thermal: tsens: Document interrupt support
- in tsens driver
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Brian Masney <masneyb@onstation.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829115922.GG64893@architecture4>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 9:25 PM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Amit Kucheria (2019-08-30 04:32:54)
-> > On Thu, Aug 29, 2019 at 10:04 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> > >
-> > > On Thu, Aug 29, 2019 at 8:23 PM Stephen Boyd <swboyd@chromium.org> wrote:
-> > > >
-> > > > Can we get a known quantity of interrupts for a particular compatible
-> > > > string instead? Let's be as specific as possible. The index matters too,
-> > > > so please list them in the order that is desired.
-> > >
-> > > I *think* we can predict what platforms have uplow and critical
-> > > interrupts based on IP version currently[1]. For newer interrupt
-> > > types, we might need more fine-grained platform compatibles.
-> > >
-> > > [1] Caveat: this is based only on the list of platforms I've currently
-> > > looked at, there might be something internally that breaks these
-> > > rules.
-> >
-> > What do you think if we changed the wording to something like the following,
-> >
-> > - interrupt-names: Must be one of the following depending on IP version:
-> >    For compatibles qcom,msm8916-tsens, qcom,msm8974-tsens,
-> > qcom,qcs404-tsens, qcom,tsens-v1, use
-> >               interrupt-names = "uplow";
-> >    For compatibles qcom,msm8996-tsens, qcom,msm8998-tsens,
-> > qcom,sdm845-tsens, qcom,tsens-v2, use
-> >               interrupt-names = "uplow", "critical";
->
-> Ok. I would still prefer YAML/JSON schema for this binding so that it's
-> much more explicit about numbers and the order of interrupts, etc.
+On Thu, Aug 29, 2019 at 07:59:22PM +0800, Gao Xiang wrote:
+> On Thu, Aug 29, 2019 at 03:24:26AM -0700, Christoph Hellwig wrote:
+> 
+> []
+> 
+> > 
+> > > +
+> > > +		/* fill last page if inline data is available */
+> > > +		err = fill_inline_data(inode, data, ofs);
+> > 
+> > Well, I think you should move the is_inode_flat_inline and
+> > (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) checks from that
+> > helper here, as otherwise you make everyone wonder why you'd always
+> > fill out the inline data.
+> 
+> Currently, fill_inline_data() only fills for fast symlink,
+> later we can fill any tail-end block (such as dir block)
+> for our requirements.
 
-OK, I'll look around for some examples.
+So change it when that later changes actually come in.  And even then
+having the checks outside the function is a lot more obvious.
+
+> And I think that is minor.
+
+The problem is that each of these issues might appear minor on their
+own.  But combined a lot of the coding style choices lead to code that
+is more suitable an obsfucated code contest than the Linux kernel as
+trying to understand even just a few places requires jumping through
+tons of helpers with misleading names and spread over various files.
+
+> The consideration is simply because iget_locked performs better
+> than iget5_locked.
+
+In what benchmark do the differences show up?
