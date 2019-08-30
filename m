@@ -2,104 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23611A3936
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:27:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B54EA393F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbfH3O0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 10:26:54 -0400
-Received: from foss.arm.com ([217.140.110.172]:33052 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727751AbfH3O0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 10:26:54 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7556D344;
-        Fri, 30 Aug 2019 07:26:53 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 868E83F703;
-        Fri, 30 Aug 2019 07:26:51 -0700 (PDT)
-Subject: Re: [PATCH v2 00/20] Initial support for Marvell MMP3 SoC
-To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-References: <20190822092643.593488-1-lkundrak@v3.sk>
- <244fdc87-0fe5-be79-d9cd-2395d0ac3f57@kernel.org>
- <424d2881edcaf7cedbfa5cbbf2e73aaff5355df3.camel@v3.sk>
- <08a0e65e-4a80-f611-e36e-8e3f70fa8113@kernel.org>
- <481e832401c148baf222639f10f494b90dcd23c9.camel@v3.sk>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <faf7b7e8-48b0-ba58-51e6-cb6a5ee44dfc@kernel.org>
-Date:   Fri, 30 Aug 2019 15:26:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728155AbfH3O3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 10:29:20 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35062 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727850AbfH3O3U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 10:29:20 -0400
+Received: by mail-io1-f67.google.com with SMTP id b10so14431134ioj.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 07:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kepstin.ca; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=nALWCT0w/4IgpkaPDMmW8i7xojZhX1BM8LFM2iLzr84=;
+        b=eejwfPGzhvImQ5rQ6Qj0W1VGx7GEXZl6+k/BQeUXMgIcYSW8X/erRCeCoiphXyK6Ms
+         3Wn3R2Zq8EkiIfdBcro5M3vcicP7/F4L07CDl6HrsdF9iKAOJ8Ozz3r1UD81mVcaYIwj
+         B3k/MLM5xCtj582jfHxUPhV7Tch/rEE3VhCfw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=nALWCT0w/4IgpkaPDMmW8i7xojZhX1BM8LFM2iLzr84=;
+        b=q6CAtEDcxYw1ftFd3ypi8OaDH+v3qFNWpMBD4y39F8bpHFM39Xohf3/Gvdr2mqJcfr
+         A6xFY/i0+I4rQy+JvdyDfhpupYKnvoFNMspSVYIJTHfHDzUG6k0VY9VflxaPkkjBvZRU
+         tCDIJpgZQ7cCbznTEwcaxPStnOfYys+xeGjlGSRJYIWhkGPUHKZg8TSw/2rAl2fnwAHv
+         o7eFwOgGz+z3CPDDK/6X8hHr2EqFFFjbD1eRqu9sXT9lsjil3YlbNdJdZtloVEnYzKqb
+         b9rWTlnb5ibtWnn+2n9OxHrcE0TWymck2DzeAmrtimunl9XUwR8SbiaJIXPu+MdqqmiV
+         JfKA==
+X-Gm-Message-State: APjAAAUTFwKoIghk/P5DOLgtjCwdLt487gQBU1zu87WoTl55XPq6pbbA
+        PTLhL308YU8FDdl0gDNrGTR2oQ==
+X-Google-Smtp-Source: APXvYqzMABslZm35OP2emany0n3ZDwgvDigPTjq3wXTQbTIjv/iS/DZ11voTizEK44QEZ7S59HLxCA==
+X-Received: by 2002:a05:6602:c7:: with SMTP id z7mr19125822ioe.130.1567175359361;
+        Fri, 30 Aug 2019 07:29:19 -0700 (PDT)
+Received: from rocky (CPEac1f6b45e387-CM9050ca1e1520.cpe.net.cable.rogers.com. [174.114.230.157])
+        by smtp.gmail.com with ESMTPSA id k9sm5491455ioa.10.2019.08.30.07.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 07:29:18 -0700 (PDT)
+Message-ID: <fea87715422ac21ca5d439e91ff45074069ada20.camel@kepstin.ca>
+Subject: Re: [RFC PATCH] tools/power turbostat: Add support for Hygon Fam
+ 18h (Dhyana) RAPL
+From:   Calvin Walton <calvin.walton@kepstin.ca>
+To:     Pu Wen <puwen@hygon.cn>, lenb@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 30 Aug 2019 10:27:46 -0400
+In-Reply-To: <1567157008-29679-1-git-send-email-puwen@hygon.cn>
+References: <1567157008-29679-1-git-send-email-puwen@hygon.cn>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <481e832401c148baf222639f10f494b90dcd23c9.camel@v3.sk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/08/2019 12:59, Lubomir Rintel wrote:
-> On Fri, 2019-08-23 at 10:42 +0100, Marc Zyngier wrote:
->> On 23/08/2019 08:21, Lubomir Rintel wrote:
->>> On Thu, 2019-08-22 at 11:31 +0100, Marc Zyngier wrote:
->>>> On 22/08/2019 10:26, Lubomir Rintel wrote:
->>>>> Hi, 
->>>>>
->>>>> this is a second spin of a patch set that adds support for the Marvell
->>>>> MMP3 processor. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad
->>>>> FZ-A1 tablet and Dell Wyse 3020 Tx0D thin clients. 
->>>>>
->>>>> Compared to v1, there's a handful of fixes in response to reviews. Patch
->>>>> 02/20 is new. Details in individual patches.
->>>>>  
->>>>> Apart from the adjustments in mach-mmp/, the patch makes necessary 
->>>>> changes to the irqchip driver and adds an USB2 PHY driver. The latter 
->>>>> has a dependency on the mach-mmp/ changes, so it can't be submitted 
->>>>> separately.
->>>>>  
->>>>> The patch set has been tested to work on Wyse Tx0D and not ruin MMP2 
->>>>> support on XO-1.75. 
->>>>
->>>> How do you want this series to be merged? I'm happy to take the irqchip
->>>> related patches as well as the corresponding DT change (once reviewed)
->>>> through my tree.
->>>
->>> I was hoping for the Arm SoC tree, because there are some dependencies
->>> (MMP3 USB PHY depends on MMP3 SoC).
->>>
->>> That said, the irqchip patches are rather independent and the only
->>> downside of them going in via a different tree will be that the other
->>> tree that will lack them won't boot on MMP3 (things will compile
->>> though). I don't know if that's okay. What's typically done in cases
->>> like these?
->>
->> I usually take the irqchip patches that can be built standalone (without
->> dependency on header files, for example). If you want them to go via
->> another tree, stick my
->>
->> 	Acked-by: Marc Zyngier <maz@kernel.org>
->>
->> on patches #6 through #9.
+On Fri, 2019-08-30 at 17:23 +0800, Pu Wen wrote:
+> Commit 9392bd98bba760be96ee ("tools/power turbostat: Add support for
+> AMD
+> Fam 17h (Zen) RAPL") and the commit 3316f99a9f1b68c578c5
+> ("tools/power
+> turbostat: Also read package power on AMD F17h (Zen)") add AMD Fam
+> 17h
+> RAPL support.
 > 
-> Actually, please go ahead and pick the irqchip patches into your tree.
+> Hygon Family 18h(Dhyana) support RAPL in bit 14 of CPUID 0x80000007
+> EDX,
+> and has MSRs RAPL_PWR_UNIT/CORE_ENERGY_STAT/PKG_ENERGY_STAT. So add
+> Hygon
+> Dhyana Family 18h support for RAPL.
 > 
-> The rest of the patch set may need a couple more spins, and it will be
-> nice if it gets shorter.
+> Already tested on Hygon multi-node systems and it shows correct per-
+> core
+> energy usage and the total package power.
 
-Applied to irqchip-next.
+I was a bit worried about these two chunks, since as far as I know AMD
+has not yet released any processor with family 0x18, so there might be
+future conflicts:
 
-	M.
+> @@ -3803,6 +3804,7 @@ double get_tdp_amd(unsigned int family)
+>  {
+>  	switch (family) {
+>  	case 0x17:
+> +	case 0x18:
+>  	default:
+> 
+
+> @@ -3982,6 +3984,7 @@ void rapl_probe_amd(unsigned int family,
+> unsigned int model)
+>  
+>  	switch (family) {
+>  	case 0x17: /* Zen, Zen+ */
+> +	case 0x18:
+>  		do_rapl = RAPL_AMD_F17H | RAPL_PER_CORE_ENERGY;
+>  		if (rapl_joules) {
+>  			BIC_PRESENT(BIC_Pkg_J);
+
+But the second switch is already guarded by the CPUID check for the
+rapl support, so it will either "just work" if AMD's family 0x18 chip
+uses the same RAPL registers - or cleanly skip the CPU if they changed
+it.
+
+Please add a comment on the 0x18 case in the rapl_probe_amd function,
+something like:
+	case 0x18: /* Hygon Dhyana */
+
+Feel free to add a
+Reviewed-by: Calvin Walton <calvin.walton@kepstin.ca>
+
 -- 
-Jazz is not dead, it just smells funny...
+Calvin Walton <calvin.walton@kepstin.ca>
+
