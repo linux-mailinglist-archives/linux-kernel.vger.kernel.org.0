@@ -2,84 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F14A2C09
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 03:04:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D973A2C19
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 03:11:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfH3BEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 21:04:35 -0400
-Received: from mga03.intel.com ([134.134.136.65]:39798 "EHLO mga03.intel.com"
+        id S1727387AbfH3BLp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 21:11:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbfH3BEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 21:04:35 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 18:04:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
-   d="scan'208";a="183649891"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
-  by orsmga003.jf.intel.com with ESMTP; 29 Aug 2019 18:04:32 -0700
-Date:   Fri, 30 Aug 2019 09:08:56 +0800
-From:   Philip Li <philip.li@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     kbuild test robot <lkp@intel.com>,
-        linux-tip-commits@vger.kernel.org,
-        Frederic Weisbecker <frederic@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        tip-bot2 for Thomas Gleixner <tip-bot2@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, kbuild-all@01.org,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [kbuild-all] [tip: timers/core] posix-cpu-timers: Use common
- permission check in posix_cpu_clock_get()
-Message-ID: <20190830010856.GE857@intel.com>
-References: <156698737946.5688.8980349129135194974.tip-bot2@tip-bot2>
- <201908291858.PW3xOkIL%lkp@intel.com>
- <alpine.DEB.2.21.1908291320010.1938@nanos.tec.linutronix.de>
+        id S1726825AbfH3BLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 21:11:45 -0400
+Received: from localhost (c-67-180-165-146.hsd1.ca.comcast.net [67.180.165.146])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15A1021726;
+        Fri, 30 Aug 2019 01:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567127504;
+        bh=cxG/Csv0dO0dzHh0hw8hEJaJviptwRvJ+VuvpnA+zQ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=l/e54Qwqc4S7T7xLPRTF6aL4Jp+Ft+XfOURSQfTJJcFanYajZm4eXqJvTB/OWotdG
+         e/Z4n40q+Lpn5mGyt7s9me5IKpUekh65VHkFqGcCsx0O7PwtDupXtBV+/1hsbyShOO
+         lxQPHtbVUafs469dKHT7RY8OanI7Fq4cbzJy4+hM=
+From:   Andy Lutomirski <luto@kernel.org>
+To:     Theodore Tso <tytso@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH 0/7] Rework random blocking
+Date:   Thu, 29 Aug 2019 18:11:35 -0700
+Message-Id: <cover.1567126741.git.luto@kernel.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1908291320010.1938@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 01:21:59PM +0200, Thomas Gleixner wrote:
-> On Thu, 29 Aug 2019, kbuild test robot wrote:
-> > Thank you for the patch! Yet something to improve:
-> > 
-> > [auto build test ERROR on linus/master]
-> > [cannot apply to v5.3-rc6 next-20190828]
-> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> I have no idea what you are testing there.
-oops, looks we have missed some info in report. We actually test patches
-from mailing list we monitor.
-> 
-> >    kernel/time/posix-cpu-timers.c: In function 'posix_cpu_clock_get':
-> > >> kernel/time/posix-cpu-timers.c:275:8: error: implicit declaration of function 'get_task_for_clock'; did you mean 'get_task_struct'? [-Werror=implicit-function-declaration]
-> >      tsk = get_task_for_clock(clock);
-> >            ^~~~~~~~~~~~~~~~~~
-> >            get_task_struct
-> > >> kernel/time/posix-cpu-timers.c:275:6: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-> >      tsk = get_task_for_clock(clock);
-> >          ^
-> >    cc1: some warnings being treated as errors
-> 
-> That commit comes _after_ the commit which introduced the function and
-> get_task_for_clock() is defined above posix_cpu_clock_get(), so I assume
-> you missed to apply the commit on which this depends on.
-thanks for info, currently the bot can't figure out the dependency if two
-patches are not in one series, or we didn't find the right base repo to
-apply, which we will improve continuously.
+This makes two major semantic changes to Linux's random APIs:
 
-> 
-> Thanks,
-> 
-> 	tglx
-> _______________________________________________
-> kbuild-all mailing list
-> kbuild-all@lists.01.org
-> https://lists.01.org/mailman/listinfo/kbuild-all
+It adds getentropy(..., GRND_INSECURE).  This causes getentropy to
+always return *something*.  There is no guarantee whatsoever that
+the result will be cryptographically random or even unique, but the
+kernel will give the best quality random output it can.  The name is
+a big hint: the resulting output is INSECURE.
+
+The purpose of this is to allow programs that genuinely want
+best-effort entropy to get it without resorting to /dev/urandom.
+Plenty of programs do this because they need to do *something*
+during boot and they can't afford to wait.  Calling it "INSECURE" is
+probably the best we can do to discourage using this API for things
+that need security.
+
+This series also removes the blocking pool and makes /dev/random
+work just like getentropy(..., 0) and makes GRND_RANDOM a no-op.  I
+believe that Linux's blocking pool has outlived its usefulness.
+Linux's CRNG generates output that is good enough to use even for
+key generation.  The blocking pool is not stronger in any material
+way, and keeping it around requires a lot of infrastructure of
+dubious value.
+
+This series should not break any existing programs.  /dev/urandom is
+unchanged.  /dev/random will still block just after booting, but it
+will block less than it used to.  getentropy() with existing flags
+will return output that is, for practical purposes, just as strong
+as before.
+
+Andy Lutomirski (7):
+  random: Don't wake crng_init_wait when crng_init == 1
+  random: Add GRND_INSECURE to return best-effort non-cryptographic
+    bytes
+  random: Ignore GRND_RANDOM in getentropy(2)
+  random: Make /dev/random be almost like /dev/urandom
+  random: Remove the blocking pool
+  random: Delete code to pull data into pools
+  random: Remove kernel.random.read_wakeup_threshold
+
+ drivers/char/random.c       | 234 ++++--------------------------------
+ include/uapi/linux/random.h |   4 +-
+ 2 files changed, 27 insertions(+), 211 deletions(-)
+
+-- 
+2.21.0
+
