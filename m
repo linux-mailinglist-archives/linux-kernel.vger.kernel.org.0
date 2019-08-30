@@ -2,208 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28811A3546
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 12:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA9CFA354B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 12:58:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbfH3K5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 06:57:08 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46134 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726902AbfH3K5H (ORCPT
+        id S1727914AbfH3K6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 06:58:15 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51165 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbfH3K6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 06:57:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h7so5180928wrt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 03:57:05 -0700 (PDT)
+        Fri, 30 Aug 2019 06:58:14 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v15so6852161wml.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 03:58:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Zs6CLLBMUT4QHyCFCyblC6g2rYX67ALZuTK/huwV0BM=;
-        b=VWDUYlb5ESSj+c73n1p452K6wxB4/ZqBlK49YYZ7gyQ0REpms/iH0AEnOXeseGtsVU
-         TPh2F4G2dlhKPawp4WdKic0Un+lZAWOqadh7wWhd1bLDYX4HLzPvIeTTSeEXMXWwmzcF
-         ICvovHJprKjFTVKgljAdfNZFrGXSmrt3CH43A/SGJdu1DLz8D6lUSrD7E/lIpHqF86vI
-         LdW27LDPd7a0dWnECe7+FjQ+JlXNaRcb46qVcVEvJd3Ua/5OWvTzITkrYQFy565PO2bO
-         hxEZOXuLStqJ/vnGjyXHhZwPsYoQIpzrTAkGwU11UY4Zt2pvdv22Mv/n7FtKfdRyFUOi
-         L7eQ==
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=reply-to:subject:to:cc:references:from:openpgp:autocrypt:message-id
+         :date:user-agent:mime-version:in-reply-to;
+        bh=m31OTTmU9nCFliwvSe4IxzHQbcVGDTW05lQC3jWd7f4=;
+        b=Y0K4ISF+xUZ6WtIPrIyzpO/sQYSK9PFd2YBmm0DZK586kjfT+e5SQ7ku6IBO1CnFek
+         NRHn4UAh85rIEVL1MxKN8dWW7TmfOwq+UJdzAAIqmrDlmapHT7KbsmwgZgy0Wku/QlZO
+         pMovwZAaFGpapS9NbIUrZdtUTg0GRjOljTrEgtXS0zp8/QA+S8egj5dVVMqBVfAzYGI9
+         tfD5fo5e/Dul+pr6PitrHLu/6qOticTgtj2syGCTE+2s/YMSX+S4YHIXqf3bK5FpJf3b
+         lf8D3n1AGzLThKWusNdMesOn9wBQbyAajZEK+NbeZgtHRh31vHWx9TAbSHEcS+fxIeuj
+         gwGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Zs6CLLBMUT4QHyCFCyblC6g2rYX67ALZuTK/huwV0BM=;
-        b=Rgcl75IGY4LJIoenVJqA/QZ+r/0zhiRHnp6CwrWi4rcQDtO1Js+H6tg9K4K0gE1Z7Z
-         p36LiL7KAeBixddU1kwRXuBxsOslj1dvJed4TFbevb5ibj2ThTe34LiNmQUu/4c/5zrw
-         F9FhB0+8aFo1F48E/A1ji7fSCgmi+I+N7SXv3/0vR0xXmlVG0SRnv35TnvMtmFAG05/7
-         7IJLPpnP8KcEBkvzdkA8O4jRQw0yyaOXCPrJY2J5r1x2aBXJjwgzRFBD8wXFmsjwIWCL
-         NcOawXTwooKn1XwvNZdqI3sGZ1XokjulRKMrQApxHKTfztjwPerTmhXdtH2NKQlmKB4a
-         z9kg==
-X-Gm-Message-State: APjAAAWMSNBwrPbb9e8/xK3wYnUB8tHkNst00jnBCp7QZFcA3TWDaJeU
-        KOeOIqqaAVcUl+maZ/eV0WNWMilc
-X-Google-Smtp-Source: APXvYqwQIhNVXGnShzdWSUDjad/PmkNRh2mTyVqXs2hGVKfeXhPSgtEoLlYCCkKD5QA4JPwfrAqnpQ==
-X-Received: by 2002:a05:6000:12:: with SMTP id h18mr713500wrx.156.1567162624541;
-        Fri, 30 Aug 2019 03:57:04 -0700 (PDT)
-Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id 74sm7930892wma.15.2019.08.30.03.57.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 03:57:04 -0700 (PDT)
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-To:     linux-kernel@vger.kernel.org, oshpigelman@habana.ai,
-        ttayar@habana.ai
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH 2/2] habanalabs: add uapi to retrieve aggregate H/W events
-Date:   Fri, 30 Aug 2019 13:57:00 +0300
-Message-Id: <20190830105700.8781-2-oded.gabbay@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190830105700.8781-1-oded.gabbay@gmail.com>
-References: <20190830105700.8781-1-oded.gabbay@gmail.com>
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from:openpgp
+         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to;
+        bh=m31OTTmU9nCFliwvSe4IxzHQbcVGDTW05lQC3jWd7f4=;
+        b=fwqB4XXfRzKtox5+jMlh47mL9fMVCHAXsgg3+6ZVVwV0qNyLrl2eYb/vADZzwCLcOY
+         YUVjnTBu4o/MzsoMgNmym/OFT06BjBsyQlxNbEXU77Ac80wgNJFfhq14uU21Cgl6aGGS
+         aXpJVvs61oRsftkRg5NgMY7Yr6ZLDCB3d1DE/Ox3gLs88I2FoZtfs59GUqlgwHqY5jM5
+         MqnXGfVufsavVA34b8sRGJHDRygHrNTGKg9bny9COM0pSLuUSV0swv/eUE5WoqFXCup6
+         iHji8geu2tlaClntlRoEXu+63THKimu0BUxJHNwogto4AnNpJP8GCDUSCCNKiMVi+jbE
+         cGqA==
+X-Gm-Message-State: APjAAAVPmxDXkCRAjOx7ZUpvyjoSuUFBdjjdGZ7bzf91YnZIadkzmNgF
+        WnLam4lQsrS1x3bpSGjE9g5oqZt3rv3tmA==
+X-Google-Smtp-Source: APXvYqybcnIaJBSiXWOPneUuksCJfftFBHTR5DX1bmyi6tCPHrNH62v+Gp5ZKnm+G8uSc5ODDgd8Cw==
+X-Received: by 2002:a1c:f106:: with SMTP id p6mr16217216wmh.148.1567162691487;
+        Fri, 30 Aug 2019 03:58:11 -0700 (PDT)
+Received: from [64.233.167.109] ([149.199.62.129])
+        by smtp.gmail.com with ESMTPSA id e9sm6630051wmd.25.2019.08.30.03.58.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Aug 2019 03:58:10 -0700 (PDT)
+Reply-To: monstr@monstr.eu
+Subject: Re: convert microblaze to the generic dma remap allocator
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+References: <20190814140348.3339-1-hch@lst.de>
+From:   Michal Simek <monstr@monstr.eu>
+Openpgp: preference=signencrypt
+Autocrypt: addr=monstr@monstr.eu; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1462b1c4-2517-0506-20b4-b4ee9d26eb20@monstr.eu>
+Date:   Fri, 30 Aug 2019 12:58:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190814140348.3339-1-hch@lst.de>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="c8VXBJUQbaDAyxsFtJGj9FVefA4ela5DP"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new opcode to INFO IOCTL to retrieve aggregate H/W events. i.e. the
-events counters are NOT cleared upon device reset, but count from the
-loading of the driver.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--c8VXBJUQbaDAyxsFtJGj9FVefA4ela5DP
+Content-Type: multipart/mixed; boundary="5UqjWIYYQ0bFjEvBnUzsENLWU8VyR6Vdp";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: Christoph Hellwig <hch@lst.de>
+Cc: iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Message-ID: <1462b1c4-2517-0506-20b4-b4ee9d26eb20@monstr.eu>
+Subject: Re: convert microblaze to the generic dma remap allocator
+References: <20190814140348.3339-1-hch@lst.de>
+In-Reply-To: <20190814140348.3339-1-hch@lst.de>
 
-Add the code to support it in the device event handling function.
+--5UqjWIYYQ0bFjEvBnUzsENLWU8VyR6Vdp
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
----
- drivers/misc/habanalabs/goya/goya.c        |  9 +++++++--
- drivers/misc/habanalabs/goya/goyaP.h       |  3 ++-
- drivers/misc/habanalabs/habanalabs.h       |  3 ++-
- drivers/misc/habanalabs/habanalabs_ioctl.c | 11 ++++++++---
- include/uapi/misc/habanalabs.h             |  3 +++
- 5 files changed, 22 insertions(+), 7 deletions(-)
+Hi Christoph,
 
-diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 0dd0b4429fee..1267ec75b19f 100644
---- a/drivers/misc/habanalabs/goya/goya.c
-+++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -4469,6 +4469,7 @@ void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
- 	struct goya_device *goya = hdev->asic_specific;
- 
- 	goya->events_stat[event_type]++;
-+	goya->events_stat_aggregate[event_type]++;
- 
- 	switch (event_type) {
- 	case GOYA_ASYNC_EVENT_ID_PCIE_IF:
-@@ -4550,12 +4551,16 @@ void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
- 	}
- }
- 
--void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
-+void *goya_get_events_stat(struct hl_device *hdev, bool aggregate, u32 *size)
- {
- 	struct goya_device *goya = hdev->asic_specific;
- 
--	*size = (u32) sizeof(goya->events_stat);
-+	if (aggregate) {
-+		*size = (u32) sizeof(goya->events_stat_aggregate);
-+		return goya->events_stat_aggregate;
-+	}
- 
-+	*size = (u32) sizeof(goya->events_stat);
- 	return goya->events_stat;
- }
- 
-diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
-index d7f48c9c41cd..f830cfd5c04d 100644
---- a/drivers/misc/habanalabs/goya/goyaP.h
-+++ b/drivers/misc/habanalabs/goya/goyaP.h
-@@ -162,6 +162,7 @@ struct goya_device {
- 
- 	u64		ddr_bar_cur_addr;
- 	u32		events_stat[GOYA_ASYNC_EVENT_ID_SIZE];
-+	u32		events_stat_aggregate[GOYA_ASYNC_EVENT_ID_SIZE];
- 	u32		hw_cap_initialized;
- 	u8		device_cpu_mmu_mappings_done;
- };
-@@ -215,7 +216,7 @@ int goya_suspend(struct hl_device *hdev);
- int goya_resume(struct hl_device *hdev);
- 
- void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry);
--void *goya_get_events_stat(struct hl_device *hdev, u32 *size);
-+void *goya_get_events_stat(struct hl_device *hdev, bool aggregate, u32 *size);
- 
- void goya_add_end_of_cb_packets(struct hl_device *hdev, u64 kernel_address,
- 				u32 len, u64 cq_addr, u32 cq_val, u32 msix_vec);
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 23b86b7f9732..aa7aaa710f12 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -558,7 +558,8 @@ struct hl_asic_funcs {
- 				struct hl_eq_entry *eq_entry);
- 	void (*set_pll_profile)(struct hl_device *hdev,
- 			enum hl_pll_frequency freq);
--	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
-+	void* (*get_events_stat)(struct hl_device *hdev, bool aggregate,
-+				u32 *size);
- 	u64 (*read_pte)(struct hl_device *hdev, u64 addr);
- 	void (*write_pte)(struct hl_device *hdev, u64 addr, u64 val);
- 	void (*mmu_invalidate_cache)(struct hl_device *hdev, bool is_hard);
-diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
-index 6325e98a5ae9..bb84b6dc2223 100644
---- a/drivers/misc/habanalabs/habanalabs_ioctl.c
-+++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
-@@ -75,7 +75,8 @@ static int hw_ip_info(struct hl_device *hdev, struct hl_info_args *args)
- 		min((size_t)size, sizeof(hw_ip))) ? -EFAULT : 0;
- }
- 
--static int hw_events_info(struct hl_device *hdev, struct hl_info_args *args)
-+static int hw_events_info(struct hl_device *hdev, bool aggregate,
-+			struct hl_info_args *args)
- {
- 	u32 size, max_size = args->return_size;
- 	void __user *out = (void __user *) (uintptr_t) args->return_pointer;
-@@ -84,7 +85,7 @@ static int hw_events_info(struct hl_device *hdev, struct hl_info_args *args)
- 	if ((!max_size) || (!out))
- 		return -EINVAL;
- 
--	arr = hdev->asic_funcs->get_events_stat(hdev, &size);
-+	arr = hdev->asic_funcs->get_events_stat(hdev, aggregate, &size);
- 
- 	return copy_to_user(out, arr, min(max_size, size)) ? -EFAULT : 0;
- }
-@@ -251,7 +252,7 @@ static int _hl_info_ioctl(struct hl_fpriv *hpriv, void *data,
- 
- 	switch (args->op) {
- 	case HL_INFO_HW_EVENTS:
--		rc = hw_events_info(hdev, args);
-+		rc = hw_events_info(hdev, false, args);
- 		break;
- 
- 	case HL_INFO_DRAM_USAGE:
-@@ -266,6 +267,10 @@ static int _hl_info_ioctl(struct hl_fpriv *hpriv, void *data,
- 		rc = device_utilization(hdev, args);
- 		break;
- 
-+	case HL_INFO_HW_EVENTS_AGGREGATE:
-+		rc = hw_events_info(hdev, true, args);
-+		break;
-+
- 	default:
- 		dev_err(dev, "Invalid request %d\n", args->op);
- 		rc = -ENOTTY;
-diff --git a/include/uapi/misc/habanalabs.h b/include/uapi/misc/habanalabs.h
-index 73ee212d7fa6..19f8039db2ea 100644
---- a/include/uapi/misc/habanalabs.h
-+++ b/include/uapi/misc/habanalabs.h
-@@ -93,6 +93,8 @@ enum hl_device_status {
-  *                              The period can be between 100ms to 1s, in
-  *                              resolution of 100ms. The return value is a
-  *                              percentage of the utilization rate.
-+ * HL_INFO_HW_EVENTS_AGGREGATE - Receive an array describing how many times each
-+ *                               event occurred since the driver was loaded.
-  */
- #define HL_INFO_HW_IP_INFO		0
- #define HL_INFO_HW_EVENTS		1
-@@ -100,6 +102,7 @@ enum hl_device_status {
- #define HL_INFO_HW_IDLE			3
- #define HL_INFO_DEVICE_STATUS		4
- #define HL_INFO_DEVICE_UTILIZATION	6
-+#define HL_INFO_HW_EVENTS_AGGREGATE	7
- 
- #define HL_INFO_VERSION_MAX_LEN	128
- 
--- 
-2.17.1
+On 14. 08. 19 16:03, Christoph Hellwig wrote:
+> Hi Michal,
+>=20
+> can you take a look at this patch that moves microblaze over to the
+> generic DMA remap allocator?  I've been trying to slowly get all
+> architectures over to the generic code, and microblaze is one that
+> seems very straightfoward to convert.
+>=20
 
+I took at look at this series and tested it on kc705 and I can't see any
+issue.
+Patches applied.
+
+Thanks,
+Michal
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal SoCs
+
+
+
+--5UqjWIYYQ0bFjEvBnUzsENLWU8VyR6Vdp--
+
+--c8VXBJUQbaDAyxsFtJGj9FVefA4ela5DP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EARECAB0WIQQbPNTMvXmYlBPRwx7KSWXLKUoMIQUCXWkBOwAKCRDKSWXLKUoM
+IV0FAJ47oWIU3FJI2E3P8YVK38sKjc88tQCfd6MvuoMu/cddeKexWSHk/7Z4pCM=
+=64F7
+-----END PGP SIGNATURE-----
+
+--c8VXBJUQbaDAyxsFtJGj9FVefA4ela5DP--
