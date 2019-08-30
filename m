@@ -2,91 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2897A33A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C8CA33AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbfH3JUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 05:20:11 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38437 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbfH3JUJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 05:20:09 -0400
-Received: by mail-pg1-f196.google.com with SMTP id e11so3250371pga.5
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 02:20:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iZqgNQFAGZFiAL+MaQauEs39+uIHNVqT3urPZ1OfwvY=;
-        b=vEEMZErjrqbkE0Yt2O0M3pSZapLdQhKFR6Jz5LV86q7cH0uJZmqmSn4UxyeR201COp
-         t3B6qRntiLYgA+1MM5JpQpQnA4+WGVyFeGb+b1QgOLONuEoeviEyzTo4mIlQU93a1cyP
-         U7NKYVgViyjNKl6VAWDhM6ToSI2koxMxpXeC1NY4mItJl2YHEEHp0tTJrYrbsgtD6JEE
-         2pzRxpKMONBU8+8Vp5/uO59LhyHzyL1cVOIb6hUmdqwFxrrzMUpe0jXUjvi/rel9OMRy
-         RLuNThpYJNgLmIKuZd5POYNg07J5G0fODzVn5Oj4u/8XsYVAoYbIStDGTV+la2PeUpD6
-         BUxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iZqgNQFAGZFiAL+MaQauEs39+uIHNVqT3urPZ1OfwvY=;
-        b=RAWnu3z/7xQYUOhzoCsDLcWCBGOCPXEDhipD7kPWPeyw/iGARPFHcxIefLa3taLnkD
-         I+w0szvpTjoChHMqhqczVUjBbeJWPGq7XctHJl0TT8k4cVMIEJoDXf7PtFY7uUv67BWX
-         OkcJUH6nOLrSriy2TGSYuHyUL5josR4WPZaeoD0e1YpAtBHbgO2W3hPZSXJqwEi/NjCK
-         epgcj8RsXKsWj8gpse1WM/VoKRsga89lela6qO3cY5xFZU1bgRijg5G6g1qsJ+EEywrT
-         xhQsxo56V7GpX+dFOrfilOZifLGcltCSusrflsugfqSuq9wAgkZ8/OWdQImSMzCFYGrK
-         +PQw==
-X-Gm-Message-State: APjAAAXYyGWzxBNLSaKgdUg1btbUxjvfK17WN3ggEG/n/1WNDN9IKgB+
-        jXyPp/61ZUN2s6/jkplzZDPy
-X-Google-Smtp-Source: APXvYqzRFHNDr9oad7voBnS6/n543GjlV3A1iB44aDSh9qfP+WzcmpPz9MGSnjRwedesjP+mvAADmQ==
-X-Received: by 2002:a17:90a:ad84:: with SMTP id s4mr15052314pjq.32.1567156808627;
-        Fri, 30 Aug 2019 02:20:08 -0700 (PDT)
-Received: from localhost.localdomain ([103.59.132.163])
-        by smtp.googlemail.com with ESMTPSA id g202sm3142676pfb.155.2019.08.30.02.20.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 02:20:08 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     mchehab@kernel.org, robh+dt@kernel.org, sakari.ailus@iki.fi
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        c.barrett@framos.com, a.brela@framos.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 3/3] MAINTAINERS: Add entry for IMX290 CMOS image sensor driver
-Date:   Fri, 30 Aug 2019 14:49:43 +0530
-Message-Id: <20190830091943.22646-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190830091943.22646-1-manivannan.sadhasivam@linaro.org>
-References: <20190830091943.22646-1-manivannan.sadhasivam@linaro.org>
+        id S1728195AbfH3JVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 05:21:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59974 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbfH3JVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 05:21:08 -0400
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 301FB23426;
+        Fri, 30 Aug 2019 09:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567156867;
+        bh=3GufUtVPDW9HriFeClZCJbc5zRagccTM02azG30ED2s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bGyZtmRs0b4Fxnur3ZChQTe3ktJskBmByqsK+yxfB7FdIL+Uh06hPDvKO2tBvxUs2
+         vLV9cE1Ubcz2f8fnnb2TSe3PgjfSXD+6sU67fjRkl13gI1sm+JyGlBeKHDPGcq2ROY
+         YXJsOb4xjBWPyFkTwemYMp+Iq9qfKXZ+68kxV7x8=
+Date:   Fri, 30 Aug 2019 11:21:04 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     megous@megous.com, Chen-Yu Tsai <wens@csie.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-bluetooth@vger.kernel.org
+Subject: Re: [RESEND PATCH 0/5] Add bluetooth support for Orange Pi 3
+Message-ID: <20190830092104.odipmbflounqpffo@flea>
+References: <20190823103139.17687-1-megous@megous.com>
+ <5524D5E9-FA82-4244-A91F-78CF1C3FB3FB@holtmann.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zvsfua4pdi5vswnn"
+Content-Disposition: inline
+In-Reply-To: <5524D5E9-FA82-4244-A91F-78CF1C3FB3FB@holtmann.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for Sony IMX290 CMOS image sensor driver.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+--zvsfua4pdi5vswnn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f7c84004187d..0ee261fca602 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14962,6 +14962,14 @@ S:	Maintained
- F:	drivers/media/i2c/imx274.c
- F:	Documentation/devicetree/bindings/media/i2c/imx274.txt
- 
-+SONY IMX290 SENSOR DRIVER
-+M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+L:	linux-media@vger.kernel.org
-+T:	git git://linuxtv.org/media_tree.git
-+S:	Maintained
-+F:	drivers/media/i2c/imx290.c
-+F:	Documentation/devicetree/bindings/media/i2c/imx290.txt
-+
- SONY IMX319 SENSOR DRIVER
- M:	Bingbu Cao <bingbu.cao@intel.com>
- L:	linux-media@vger.kernel.org
--- 
-2.17.1
+Hi Marcel,
 
+On Fri, Aug 30, 2019 at 09:53:16AM +0200, Marcel Holtmann wrote:
+> > (Resend to add missing lists, sorry for the noise.)
+> >
+> > This series implements bluetooth support for Xunlong Orange Pi 3 board.
+> >
+> > The board uses AP6256 WiFi/BT 5.0 chip.
+> >
+> > Summary of changes:
+> >
+> > - add more delay to let initialize the chip
+> > - let the kernel detect firmware file path
+> > - add new compatible and update dt-bindings
+> > - update Orange Pi 3 / H6 DTS
+> >
+> > Please take a look.
+> >
+> > thank you and regards,
+> >  Ondrej Jirman
+> >
+> > Ondrej Jirman (5):
+> >  dt-bindings: net: Add compatible for BCM4345C5 bluetooth device
+> >  bluetooth: bcm: Add support for loading firmware for BCM4345C5
+> >  bluetooth: hci_bcm: Give more time to come out of reset
+> >  arm64: dts: allwinner: h6: Add pin configs for uart1
+> >  arm64: dts: allwinner: orange-pi-3: Enable UART1 / Bluetooth
+> >
+> > .../bindings/net/broadcom-bluetooth.txt       |  1 +
+> > .../dts/allwinner/sun50i-h6-orangepi-3.dts    | 19 +++++++++++++++++++
+> > arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 10 ++++++++++
+> > drivers/bluetooth/btbcm.c                     |  3 +++
+> > drivers/bluetooth/hci_bcm.c                   |  3 ++-
+> > 5 files changed, 35 insertions(+), 1 deletion(-)
+>
+> all 5 patches have been applied to bluetooth-next tree.
+
+The DTS patches (last 2) should go through the arm-soc tree, can you
+drop them?
+
+Thanks!
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--zvsfua4pdi5vswnn
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXWjqgAAKCRDj7w1vZxhR
+xV8CAP417aV0QNmWtbn2xiBjkD9flY36PSlMOjyVjsX2zxv2GgEAyCygOXXu4S1z
+X+AQg5RIlPCGhi8UpGGBfw2i1qEr5gQ=
+=bUKu
+-----END PGP SIGNATURE-----
+
+--zvsfua4pdi5vswnn--
