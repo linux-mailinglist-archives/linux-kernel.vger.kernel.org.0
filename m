@@ -2,125 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D52EA3C84
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:48:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0555AA3C8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbfH3Qsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:48:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41446 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfH3Qsm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:48:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id 196so4983840pfz.8;
-        Fri, 30 Aug 2019 09:48:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pk5V+7zqa1A7jxjsbjG2uhSw9j6dlDFBclUGejhv4g8=;
-        b=hfeV8ETA4/yFa7bnnUmPSGglA2PvpWL9uUl3aKK022l+hcIbP8E6R/qPOZbY9pNDD+
-         AxE4b4DseTq++lqUwXI7aDU4Wkgj5zpdyJJlZ4IfKRFEJaT04tnN0BoNUmUsHF4z85Gp
-         pWYW/ZzMZYmxd92O4B/NsqYYQgcUlzHSLi7dLUjyLlYf70qseir0uLP1rqHnULm2SCnf
-         6cITvevC3zCQLtWE9SYu9h+xQpC6Kg3ozhIc1spvom4ojR4FEtWvTHlikm1C3QbjBhSo
-         PimITd09AuIgjF2R0Fv49MOiTsyBy8bhEsWgEv53TH5NPWTPshXzgpeN3ils3IE2nR7M
-         ETwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pk5V+7zqa1A7jxjsbjG2uhSw9j6dlDFBclUGejhv4g8=;
-        b=jE50o7Es1aEeqRaAeWU8ITSqUZsNCgYf2wiT7UJ48RB/JYmmntWJnZQubsFrbZBsd3
-         OP3sLo0PWg0+AXw2JXLmYVgh+lZuvn2Iv7bEFK4hn6uMMOKH/ToRZuKJrHDeYFPG3Ybi
-         /dlKdEmyLm66ww1FT5oMNjfIbeoTqiQ/s6pk+UOXBeikFMTrru/rv7D0ywJI8MUqJicP
-         8rJmXYlAoGHfm9pl0rtsx+FWgRWiRYjrwaSbAoKyVxvfcbZk9N+PTdI2owCQOyORbzFn
-         Q+R6LaGU4LCxhPsGIlMhLR8H3hlFrwnTNeiKIuX9o2jwln/jRqhYzKK/8giLwsGEcBZY
-         fAXw==
-X-Gm-Message-State: APjAAAUCV0GFfkuxQQTnQSDVBUiE6Ob9EFxIDAyIFDJSa7ZUCWeoEfvT
-        Bz2YBegR+6CIvMRB/QMIe40PtXFK
-X-Google-Smtp-Source: APXvYqzSW1fwYGfO9+zh5OWaAop3/qR5bz8ZgiTXNWF4yiHCTa+UfVOG4jLlpNMeZiTPPwjn+OHX8Q==
-X-Received: by 2002:a62:4ed1:: with SMTP id c200mr19076386pfb.218.1567183722041;
-        Fri, 30 Aug 2019 09:48:42 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b14sm6882987pfo.15.2019.08.30.09.48.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Aug 2019 09:48:41 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 09:48:40 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     wim@linux-watchdog.org, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH RESEND v2 4/6] dt-bindings: watchdog: sun4i: Add the
- watchdog clock
-Message-ID: <20190830164840.GD7911@roeck-us.net>
-References: <20190821143835.7294-1-mripard@kernel.org>
- <20190821143835.7294-4-mripard@kernel.org>
+        id S1728299AbfH3Qta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:49:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36966 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727883AbfH3Qta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:49:30 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3346B2A09CC;
+        Fri, 30 Aug 2019 16:49:30 +0000 (UTC)
+Received: from treble (ovpn-123-26.rdu2.redhat.com [10.10.123.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3DD6360605;
+        Fri, 30 Aug 2019 16:49:29 +0000 (UTC)
+Date:   Fri, 30 Aug 2019 11:49:27 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Ilie Halip <ilie.halip@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
+Message-ID: <20190830164927.a2czlphx4ho3rhhf@treble>
+References: <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
+ <CAK8P3a0bY9QfamCveE3P4H+Nrs1e6CTqWVgiY+MCd9hJmgMQZg@mail.gmail.com>
+ <20190828152226.r6pl64ij5kol6d4p@treble>
+ <CAK8P3a2ATzqRSqVeeKNswLU74+bjvwK_GmG0=jbMymVaSp2ysw@mail.gmail.com>
+ <20190829173458.skttfjlulbiz5s25@treble>
+ <CAHk-=wi-epJZfBHDbKKDZ64us7WkF=LpUfhvYBmZSteO8Q0RAg@mail.gmail.com>
+ <CAK8P3a1K5HgfACmJXr4dTTwDJFz5BeSCCa3RQWYbXGE-2q4TJQ@mail.gmail.com>
+ <CAHk-=whuUdqrh2=LLNfRiW6oadx0zzGVkvqyx_O1cGLa2U6Jjg@mail.gmail.com>
+ <20190830150208.jyk7tfzznqimc6ow@treble>
+ <CAHk-=wgqAcRU99Dp20+ZAux7Mdgbnw5deOguwOjdCJY0eNnSkA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190821143835.7294-4-mripard@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAHk-=wgqAcRU99Dp20+ZAux7Mdgbnw5deOguwOjdCJY0eNnSkA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 30 Aug 2019 16:49:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 04:38:33PM +0200, Maxime Ripard wrote:
-> From: Maxime Ripard <maxime.ripard@bootlin.com>
+On Fri, Aug 30, 2019 at 08:48:49AM -0700, Linus Torvalds wrote:
+> On Fri, Aug 30, 2019 at 8:02 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> >
+> > For KASAN, the Clang threshold for inserting memset() is *2* consecutive
+> > writes instead of 17.  Isn't that likely to cause tearing-related
+> > surprises?
 > 
-> The Allwinner watchdog has a clock that has been described in some DT, but
-> not all of them.
+> Tearing isn't likely to be a problem.
 > 
-> The binding is also completely missing that description. Let's add that
-> property to be consistent.
+> It's not like memcpy() does byte-by-byte copies. If you pass it a
+> word-aligned pointer, it will do word-aligned accesses simply for
+> performance reasons.
 > 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> Even on x86, where we use "rep movsb", we (a) tend to disable it for
+> small copies and (b) it turns out that microcode that does the
+> optimized movsb (which is the only case we use it) probably ends up
+> doing atomic things anyway. Note the "probably". I don't have
+> microcode source code, but there are other indications like "we know
+> it doesn't take interrupts on a byte-per-byte level, only on the
+> cacheline level".
 
-> ---
-> 
-> Changes from v1:
->   - New patch
-> ---
->  .../bindings/watchdog/allwinner,sun4i-a10-wdt.yaml           | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
-> index 31c95c404619..3a54f58683a0 100644
-> --- a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
-> +++ b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
-> @@ -31,12 +31,16 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  clocks:
-> +    maxItems: 1
-> +
->    interrupts:
->      maxItems: 1
->  
->  required:
->    - compatible
->    - reg
-> +  - clocks
->    - interrupts
->  
->  unevaluatedProperties: false
-> @@ -47,6 +51,7 @@ examples:
->          compatible = "allwinner,sun4i-a10-wdt";
->          reg = <0x01c20c90 0x10>;
->          interrupts = <24>;
-> +        clocks = <&osc24M>;
->          timeout-sec = <10>;
->      };
->  
-> -- 
-> 2.21.0
-> 
+The microcode argument is not all that comforting :-)
+
+Also what about unaligned accesses, e.g. if a struct member isn't on a
+word boundary?  Arnd's godbolt link showed those can get combined too.
+
+I don't see x86 memcpy() doing any destination alignment checks.
+
+Have we audited other arches' memset/memcpy implementations?
+
+> So it's probably not an issue from a tearing standpoint - but it
+> worries me because of "this has to be a leaf function" kind of issues
+> where we may be using individual stores on purpose. We do have things
+> like that.
+
+It sounds like everybody's in agreement that replacing accesses with
+memset/memcpy is bad in a kernel context.  Should we push for a new
+fine-grained compiler option to disable it?
+
+-- 
+Josh
