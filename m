@@ -2,61 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCEFDA4019
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C441A401A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbfH3WGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 18:06:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43442 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728094AbfH3WGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 18:06:50 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2B7923431;
-        Fri, 30 Aug 2019 22:06:48 +0000 (UTC)
-Date:   Fri, 30 Aug 2019 18:06:47 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     shuah <shuah@kernel.org>
-Cc:     Masanari Iida <standby24x7@gmail.com>,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH] selftest/ftrace: Fix typo in trigger-snapshot.tc
-Message-ID: <20190830180647.118523b4@gandalf.local.home>
-In-Reply-To: <2484ed4e-2a59-07f3-3f00-4ac3d1178621@kernel.org>
-References: <20190803000126.23200-1-standby24x7@gmail.com>
-        <20190830173154.467d9335@gandalf.local.home>
-        <2484ed4e-2a59-07f3-3f00-4ac3d1178621@kernel.org>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1728334AbfH3WHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 18:07:11 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:42656 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728094AbfH3WHL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 18:07:11 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 35B5E154FFAFD;
+        Fri, 30 Aug 2019 15:07:10 -0700 (PDT)
+Date:   Fri, 30 Aug 2019 15:07:09 -0700 (PDT)
+Message-Id: <20190830.150709.478421783835117542.davem@davemloft.net>
+To:     dhowells@redhat.com
+Cc:     netdev@vger.kernel.org, marc.dionne@auristor.com,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rxrpc: Fix lack of conn cleanup when local
+ endpoint is cleaned up [ver #2]
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <156708433176.26714.15112030261308314860.stgit@warthog.procyon.org.uk>
+References: <156708433176.26714.15112030261308314860.stgit@warthog.procyon.org.uk>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Aug 2019 15:07:10 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Aug 2019 15:47:01 -0600
-shuah <shuah@kernel.org> wrote:
+From: David Howells <dhowells@redhat.com>
+Date: Thu, 29 Aug 2019 14:12:11 +0100
 
-> On 8/30/19 3:31 PM, Steven Rostedt wrote:
-> > On Sat,  3 Aug 2019 09:01:26 +0900
-> > Masanari Iida <standby24x7@gmail.com> wrote:
-> >   
-> >> This patch fixes a spelling typo in tigger-snapshot.tc
-> >>  
-> > 
-> > As Randy said: "trigger-snapshot.tc"
-> > 
-> > Shuah, can you take this?
-> > 
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> >   
+> When a local endpoint is ceases to be in use, such as when the kafs module
+> is unloaded, the kernel will emit an assertion failure if there are any
+> outstanding client connections:
 > 
-> Done. Applied with typo fix to the commit log.
+> 	rxrpc: Assertion failed
+> 	------------[ cut here ]------------
+> 	kernel BUG at net/rxrpc/local_object.c:433!
 > 
+> and even beyond that, will evince other oopses if there are service
+> connections still present.
+> 
+> Fix this by:
+ ...
+> Only after destroying the connections can we close the socket lest we get
+> an oops in a workqueue that's looking at a connection or a peer.
+> 
+> Fixes: 3d18cbb7fd0c ("rxrpc: Fix conn expiry timers")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Tested-by: Marc Dionne <marc.dionne@auristor.com>
 
-Thanks Shuah!
-
--- Steve
+Applied.
