@@ -2,68 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56D26A2EEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 07:32:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7797BA2F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 07:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfH3Fcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 01:32:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbfH3Fcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 01:32:51 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D772A21897;
-        Fri, 30 Aug 2019 05:32:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567143171;
-        bh=0bCUCOe9JrT9J4vZlQHLm2jLYT2lBAJOVkLa79zh0sg=;
-        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=gMxOGEp16fYHUr2YlQpldiMD08oslWv5R+hSAL98lpYlqNVuGDa4pvGdBqBES6zpK
-         HUSFudiTftAlH6BKsQCIUMPSzcfMK+UHhMIWi7H2Fi9/ErPe2uzb+NL5HQimlQFG6C
-         +IxTpKiwQeaKaOazOecBkaDnhw+oGR+PDuFZFlmo=
-Content-Type: text/plain; charset="utf-8"
+        id S1727741AbfH3FhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 01:37:13 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39345 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfH3FhM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 01:37:12 -0400
+Received: by mail-pg1-f196.google.com with SMTP id u17so2935699pgi.6;
+        Thu, 29 Aug 2019 22:37:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=w7YEtGvCAOlZwrqQsoF3/LXuqZDGNstU9nE89n8+OrQ=;
+        b=OoqvZ/vUxFI6labySN8wIMZm111YgA8EMKBCc/9d+kIVWKKSin8fyuSZnHLsWgLCew
+         ucpeOlhTMWY/3XccH57aPaaRSUs/diAwe3Uq5tnKvbXz2YWI2XLJwYvjHYugLOL7dcJ5
+         z2S2kVX3VITtcrRpOpGi7VBGg9/ni0MaTzvjHq+s4BVlghaZ42k7q2+v37oDlSj4vbgn
+         ELIwuPI2Dy1pDMHiFEAUPGdDyX/KmZnFi5sAW3sW7ndbb1BTdrN9BEvy4VG/8Enz7sQt
+         IqrOIk/goJQAIVCLOZ3JvQPylCAWWLjCOp2sOFDSS2+2yKrNw8WynGCl7eXDBZ+KDT18
+         LeeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=w7YEtGvCAOlZwrqQsoF3/LXuqZDGNstU9nE89n8+OrQ=;
+        b=VGFdsB8gFfBgrJwy7o1Hyj0R61tKsgN39mXGBwru/oG/VQMJvhVP+XRFl89P1LoHI+
+         4btrbvq9+4WlH1Rb3QaLk601RWrY3AUn9/lnEzliz5sEQ+FJaqll/LsL0IWVqHONXLkn
+         KwVrHn/tXe+XXuMBRnMlXNhffUO8AnimVKu19dmr9IlJZ80WG0AC1sCYxGxpl/e6XkOn
+         d0Ix419XvfeKEsIqG4IDBaogKkK4UM7d6IZByCFuN+9+Wwbe0+ObvJMeDdR46GxW4iCL
+         MkL+GTZGMAv+RFLgQLqi+TCOI5QUyhkJF0LTnMwjXTVF6YqqTim3CIjr3AUaUV5HCBmv
+         NXcg==
+X-Gm-Message-State: APjAAAVRVTP7urfnZui2N33YdkwMgc8kaE8mR4csu+GdZI4eDe8GyrmR
+        6z2FdRqC4hzDsgZDKM+KTiZhalk90X8=
+X-Google-Smtp-Source: APXvYqyvlY5W7ohXFLAalwW3xB8x2eN8NPb55vlospRd7LBCyNqXx91dMIigqQ9sWAOQd24JrosIeA==
+X-Received: by 2002:a62:8344:: with SMTP id h65mr16090697pfe.85.1567143431949;
+        Thu, 29 Aug 2019 22:37:11 -0700 (PDT)
+Received: from LGEARND20B15 ([27.122.242.75])
+        by smtp.gmail.com with ESMTPSA id e129sm11854174pfa.92.2019.08.29.22.37.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2019 22:37:11 -0700 (PDT)
+Date:   Fri, 30 Aug 2019 14:37:07 +0900
+From:   Austin Kim <austindh.kim@gmail.com>
+To:     darrick.wong@oracle.com
+Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        austindh.kim@gmail.com
+Subject: [PATCH] xfs: Initialize label array properly
+Message-ID: <20190830053707.GA69101@LGEARND20B15>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190824152411.21757-2-sibis@codeaurora.org>
-References: <20190824152411.21757-1-sibis@codeaurora.org> <20190824152411.21757-2-sibis@codeaurora.org>
-Cc:     agross@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: Re: [RESEND PATCH v2 1/2] dt-bindings: reset: aoss: Add AOSS reset binding for SC7180 SoCs
-To:     Sibi Sankar <sibis@codeaurora.org>, bjorn.andersson@linaro.org,
-        p.zabel@pengutronix.de, robh+dt@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 29 Aug 2019 22:32:50 -0700
-Message-Id: <20190830053250.D772A21897@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Sibi Sankar (2019-08-24 08:24:10)
-> Add SC7180 AOSS reset to the list of possible bindings.
->=20
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt | 4 ++--
+In case kernel stack variable is not initialized properly,
+there is a risk of kernel information disclosure.
 
-Can you convert this binding to YAML/JSON schema? Would help to describe
-the 'one of' requirement below in a more structured way.
+So, initialize 'char label[]' array with null characters.
 
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt =
-b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> index 510c748656ec5..3eb6a22ced4bc 100644
-> --- a/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> +++ b/Documentation/devicetree/bindings/reset/qcom,aoss-reset.txt
-> @@ -8,8 +8,8 @@ Required properties:
->  - compatible:
->         Usage: required
->         Value type: <string>
-> -       Definition: must be:
-> -                   "qcom,sdm845-aoss-cc"
-> +       Definition: must be one of:
+Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+---
+ fs/xfs/xfs_ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 9ea5166..09b3bee 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -2037,7 +2037,7 @@ xfs_ioc_setlabel(
+ 	char			__user *newlabel)
+ {
+ 	struct xfs_sb		*sbp = &mp->m_sb;
+-	char			label[XFSLABEL_MAX + 1];
++	char			label[XFSLABEL_MAX + 1] = {0};
+ 	size_t			len;
+ 	int			error;
+ 
+-- 
+2.6.2
+
