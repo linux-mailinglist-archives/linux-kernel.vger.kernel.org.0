@@ -2,92 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A79EBA39A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:55:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38C52A39B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:01:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfH3Ozl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 10:55:41 -0400
-Received: from mga06.intel.com ([134.134.136.31]:18314 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbfH3Ozl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 10:55:41 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 07:55:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="210946213"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Aug 2019 07:55:37 -0700
-Date:   Fri, 30 Aug 2019 23:00:02 +0800
-From:   Philip Li <philip.li@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        kbuild test robot <lkp@intel.com>,
-        linux-input@vger.kernel.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        x86-ml <x86@kernel.org>, linux-tip-commits@vger.kernel.org,
-        pv-drivers@vmware.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        tip-bot2 for Thomas Hellstrom <tip-bot2@linutronix.de>,
-        Doug Covelli <dcovelli@vmware.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        kbuild-all@01.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [kbuild-all] [tip: x86/vmware] input/vmmouse: Update the
- backdoor call with support for new instructions
-Message-ID: <20190830150002.GA6931@intel.com>
-References: <156699905611.5321.15444519862547054670.tip-bot2@tip-bot2>
- <201908292325.aLXyyzEx%lkp@intel.com>
- <20190829163353.GC2132@zn.tnic>
- <20190830010349.GD857@intel.com>
- <alpine.DEB.2.21.1908300802390.1938@nanos.tec.linutronix.de>
- <20190830062053.GA2598@intel.com>
- <20190830080650.GA30413@zn.tnic>
- <20190830143645.GA4784@intel.com>
- <20190830144628.GC30413@zn.tnic>
+        id S1727958AbfH3PB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:01:28 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39500 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727754AbfH3PB2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:01:28 -0400
+Received: by mail-io1-f67.google.com with SMTP id d25so12070534iob.6
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:01:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kepstin.ca; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=+6AS1wxaosaOlU3Xtuxu0RL5HXDYhQrxbAdoPZ19vYs=;
+        b=pSVl9bYd1QooTuZSyeNmhaOBRtjqTSbV2cgcRm38IMnu3KcnhSyrSo+3S3EKYdRY8t
+         t/NyMeiG+PxGw2spFgAHwQHqxjbRJReIeH96l5s+Q7LD+Gs8rBCq9R5EdnHugT++kidy
+         FLK4veATSyOFDVPTE4PCQXVI89ldXKA56Gdts=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=+6AS1wxaosaOlU3Xtuxu0RL5HXDYhQrxbAdoPZ19vYs=;
+        b=hgDvgiUjtjdvhTmy6zQt0ZWoRja8Pvfrx64Ja9F29AnhzVl81XA0xlHm42mZ0T/Wvu
+         ozRzsPpIdCLeCRTL+X/J6hf5XLZkjo2MfMzl/lnMQZZyccMUH/VSGgo0qLScU+gfHJNd
+         1/XmAnL83CjOz7TAcNI+TOxfF+Qps/MMJY/MdAy965L5sPjajNEI6Bu0Ko/kAXxBeDCh
+         QAwhd9jzSSwNNcbatIjXlEYxwzeP4S2NH3Xv8kmSS/0ntQwWQEGKjZDO+jDfakp2hSkd
+         w+NOo04Kxe4A2pMvLZg/TVI/j1OyWKFhyohQf/s05ij7GbGSXKEOOjs34dh5vmu1Pnaf
+         u/VQ==
+X-Gm-Message-State: APjAAAX6WRtYHvQf5h7Vu6cFiTCqsdKyTvNvDDkYH0lsa4pnxoLDz5PI
+        gEOmchiUOwZWDRsbX1BnGTEeNg==
+X-Google-Smtp-Source: APXvYqxq+wRB1RyW9v8NRY8Y3CdZkE2gv/yw5RLu0LHoRhnGJPWY7GmO8OWIDwmh5HDMIuzUuwty6g==
+X-Received: by 2002:a02:6a68:: with SMTP id m40mr16174861jaf.135.1567177287137;
+        Fri, 30 Aug 2019 08:01:27 -0700 (PDT)
+Received: from rocky ([2607:fea8:bea0:e11:9410:aa2:6ab7:15b])
+        by smtp.gmail.com with ESMTPSA id c18sm4580330iod.19.2019.08.30.08.01.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 08:01:26 -0700 (PDT)
+Message-ID: <13610f1bd1c248848611fbf2d46f351bed9ee7f0.camel@kepstin.ca>
+Subject: Re: [RFC PATCH] tools/power turbostat: Fix caller parameter of
+ get_tdp_amd()
+From:   Calvin Walton <calvin.walton@kepstin.ca>
+To:     Pu Wen <puwen@hygon.cn>, lenb@kernel.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Fri, 30 Aug 2019 11:01:16 -0400
+In-Reply-To: <1567156956-29634-1-git-send-email-puwen@hygon.cn>
+References: <1567156956-29634-1-git-send-email-puwen@hygon.cn>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830144628.GC30413@zn.tnic>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 04:46:28PM +0200, Borislav Petkov wrote:
-> On Fri, Aug 30, 2019 at 10:36:45PM +0800, Philip Li wrote:
-> > yes, we monitor the repo pub/scm/linux/kernel/git/tip/tip.git, and will
-> > send build status of head
-> 
-> ... and what you call "head" is the "master" branch on that repo, right?
-Hi Boris, you are right. It is the head of monitored branch, here master branch is
-one of the branches on this repo that we monitor.
+On Fri, 2019-08-30 at 17:22 +0800, Pu Wen wrote:
+> Commit 9392bd98bba760be96ee ("tools/power turbostat: Add support for
+> AMD
+> Fam 17h (Zen) RAPL") add a function get_tdp_amd(), the parameter is
+> CPU
+> family. But the rapl_probe_amd() function use wrong model parameter.
+> Fix the wrong caller parameter of get_tdp_amd() to use family.
 
-Early on, there's requirement to blacklist a few branches, which is configured
-as below
-	blacklist_branch: auto-.*|tmp-.*|base-.*|test.*|.*-for-linus
+Whoops, good catch. Before, this code was only working because the
+switch statement in get_tdp_amd() has a default case.
 
-Except the blacklist branches, we will monitor all other branches. We also
-support pull request to update the configuration or email us to update.
-Refer to https://github.com/intel/lkp-tests/blob/master/repo/linux/tip.
+That said, this patch is effectively a no-op, since the get_tdp_amd()
+function returns the value "250" no matter what argument is passed. The
+only reason the function exists in the first place is that I thought
+there might be a way to read the configured TDP from the CPU, but I
+couldn't find any documentation on how to do that at the time.
 
-Thanks
+Reviewed-by: Calvin Walton <calvin.walton@kepstin.ca>
 
-> Just making sure you got that right.
-> 
-> > (like BUILD SUCCESS or REGRESSION), also provide bisect report of
-> > unique error for first bad commit.
-> 
-> Perfect!
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+-- 
+Calvin Walton <calvin.walton@kepstin.ca>
+
