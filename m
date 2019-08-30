@@ -2,57 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A71DA39B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A79EBA39A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:55:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbfH3O7l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 10:59:41 -0400
-Received: from verein.lst.de ([213.95.11.211]:56266 "EHLO verein.lst.de"
+        id S1728120AbfH3Ozl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 10:55:41 -0400
+Received: from mga06.intel.com ([134.134.136.31]:18314 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbfH3O7j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 10:59:39 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8244E68BFE; Fri, 30 Aug 2019 16:59:35 +0200 (CEST)
-Date:   Fri, 30 Aug 2019 16:59:35 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-xtensa@linux-xtensa.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] vmalloc: lift the arm flag for coherent mappings
- to common code
-Message-ID: <20190830145935.GA19838@lst.de>
-References: <20190830062924.21714-1-hch@lst.de> <20190830062924.21714-2-hch@lst.de> <20190830092918.GV13294@shell.armlinux.org.uk>
+        id S1727791AbfH3Ozl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 10:55:41 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 07:55:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
+   d="scan'208";a="210946213"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
+  by fmsmga002.fm.intel.com with ESMTP; 30 Aug 2019 07:55:37 -0700
+Date:   Fri, 30 Aug 2019 23:00:02 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        kbuild test robot <lkp@intel.com>,
+        linux-input@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        x86-ml <x86@kernel.org>, linux-tip-commits@vger.kernel.org,
+        pv-drivers@vmware.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        tip-bot2 for Thomas Hellstrom <tip-bot2@linutronix.de>,
+        Doug Covelli <dcovelli@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        kbuild-all@01.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [kbuild-all] [tip: x86/vmware] input/vmmouse: Update the
+ backdoor call with support for new instructions
+Message-ID: <20190830150002.GA6931@intel.com>
+References: <156699905611.5321.15444519862547054670.tip-bot2@tip-bot2>
+ <201908292325.aLXyyzEx%lkp@intel.com>
+ <20190829163353.GC2132@zn.tnic>
+ <20190830010349.GD857@intel.com>
+ <alpine.DEB.2.21.1908300802390.1938@nanos.tec.linutronix.de>
+ <20190830062053.GA2598@intel.com>
+ <20190830080650.GA30413@zn.tnic>
+ <20190830143645.GA4784@intel.com>
+ <20190830144628.GC30413@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190830092918.GV13294@shell.armlinux.org.uk>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190830144628.GC30413@zn.tnic>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 10:29:18AM +0100, Russell King - ARM Linux admin wrote:
-> On Fri, Aug 30, 2019 at 08:29:21AM +0200, Christoph Hellwig wrote:
-> > The arm architecture had a VM_ARM_DMA_CONSISTENT flag to mark DMA
-> > coherent remapping for a while.  Lift this flag to common code so
-> > that we can use it generically.  We also check it in the only place
-> > VM_USERMAP is directly check so that we can entirely replace that
-> > flag as well (although I'm not even sure why we'd want to allow
-> > remapping DMA appings, but I'd rather not change behavior).
+On Fri, Aug 30, 2019 at 04:46:28PM +0200, Borislav Petkov wrote:
+> On Fri, Aug 30, 2019 at 10:36:45PM +0800, Philip Li wrote:
+> > yes, we monitor the repo pub/scm/linux/kernel/git/tip/tip.git, and will
+> > send build status of head
 > 
-> Good, because if you did change that behaviour, you'd break almost
-> every ARM framebuffer and cripple ARM audio drivers.
+> ... and what you call "head" is the "master" branch on that repo, right?
+Hi Boris, you are right. It is the head of monitored branch, here master branch is
+one of the branches on this repo that we monitor.
 
-How would that break them?  All the usual video and audio drivers that
-use dma_alloc_* then use dma_mmap_* which never end up in the only place
-that actually checks VM_USERMAP (remap_vmalloc_range_partial) as they
-end up in the dma_map_ops mmap methods which contain what is effecitvely
-open coded versions of that routine.  There are very few callers of
-remap_vmalloc_range_partial / remap_vmalloc_range, and while a few of
-those actually are in media drivers and the virtual frame buffer video
-driver, none of these seems to be called on dma memory (which would
-be a layering violation anyway).
+Early on, there's requirement to blacklist a few branches, which is configured
+as below
+	blacklist_branch: auto-.*|tmp-.*|base-.*|test.*|.*-for-linus
+
+Except the blacklist branches, we will monitor all other branches. We also
+support pull request to update the configuration or email us to update.
+Refer to https://github.com/intel/lkp-tests/blob/master/repo/linux/tip.
+
+Thanks
+
+> Just making sure you got that right.
+> 
+> > (like BUILD SUCCESS or REGRESSION), also provide bisect report of
+> > unique error for first bad commit.
+> 
+> Perfect!
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> Good mailing practices for 400: avoid top-posting and trim the reply.
