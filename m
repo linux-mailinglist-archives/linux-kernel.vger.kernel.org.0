@@ -2,105 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 745B0A32BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 10:36:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FACBA32B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 10:35:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbfH3IgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 04:36:00 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:35952 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbfH3IgA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 04:36:00 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7U8Y1Q7157966;
-        Fri, 30 Aug 2019 08:35:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=5qQDKREBIOpHdjcAhX41kOtTEKTT3PXvNeLkBeWr4GA=;
- b=DOBICrS+B9+nyFrqwktq0ryaroZKDA4Aep2xBK1TDM5+z5c6fMjptnDvB7CUNbtVbprJ
- mp3QngjZFhyO/F4qxi+dAogd8t95pI2MBDUInDKOL2fzUH5NsoptABZrOwh4SPnxFhK/
- vX1zpV+Plarl+TMJ2xtEk1vMBiBeQFdJxY6Sm3M5EDACU1Xp+ee0PZ/qJ6xIkeWjZr0b
- TreacrSB+0XSv63gvHjiVT5HNGk4jRZwsgOZ2YlhXVT4l0Qq0xd4kPNyi09CVvyCESRi
- dhOgmH6qR+Wlw5Y5ayOYnqQ3dUDVVdxVHMWhzO01oFtt1atDFdT+mUkAMCnI1xkuYB/n lg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2uq009g5pj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 08:35:00 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7U8Xlk6004822;
-        Fri, 30 Aug 2019 08:35:00 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2upc8x6487-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 08:34:59 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7U8Yrwu012117;
-        Fri, 30 Aug 2019 08:34:53 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 30 Aug 2019 01:34:53 -0700
-Date:   Fri, 30 Aug 2019 11:34:45 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     devel@driverdev.osuosl.org, Christoph Hellwig <hch@infradead.org>,
-        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        linux-fsdevel@vger.kernel.org,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
-Message-ID: <20190830083445.GL23584@kadam>
-References: <20190829063955.GA30193@kroah.com>
- <20190829094136.GA28643@infradead.org>
- <20190829095019.GA13557@kroah.com>
- <20190829103749.GA13661@infradead.org>
- <20190829111810.GA23393@kroah.com>
- <20190829151144.GJ23584@kadam>
- <20190829152757.GA125003@architecture4>
- <20190829154346.GK23584@kadam>
- <20190829155127.GA136563@architecture4>
- <20190829160441.GA141079@architecture4>
+        id S1727792AbfH3Iew (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 04:34:52 -0400
+Received: from ozlabs.org ([203.11.71.1]:60069 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727043AbfH3Iew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 04:34:52 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46KXpb5KJPz9sML;
+        Fri, 30 Aug 2019 18:34:47 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1567154089;
+        bh=9OJ8AufYKE/UYQvEH07V3RR2Rg0rrMtuziIYoRJkZRY=;
+        h=Date:From:To:Cc:Subject:From;
+        b=jTGtFZaae6vOUJlJTlW3fE0MeJlXfebAsIB3NRVa5uclMZX5B5Pzkd23/Wg7EjAQ2
+         A810/uiJUAJNJPYn+MxdLU4gun4B5NMcnND3vNPx3YzRT3GTcqAmZWWX+S+sOGOqqD
+         kHUDPkJcyK8VVt2uG2XCLXffE88IhQknEqB+ZxJnTKbwRdbztwkoyN0pocHXnqRLQI
+         EFhLTutebx+UlngX1FGnCUCBSeM7Ib1sKjHsCJF8hcGHPItiEVhC+jNOTY1fmJudJz
+         VggozfMorXdIoWq1PrL/sELIuvix5aj6JVw6EEA/IBa7jq4yrtVW2vI47HoLx9j1MX
+         mKXBku1GyIuUw==
+Date:   Fri, 30 Aug 2019 18:34:45 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Benjamin Poirier <bpoirier@suse.com>,
+        Valdis =?UTF-8?B?S2zEk3RuaWVrcw==?= <valdis.kletnieks@vt.edu>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: linux-next: manual merge of the staging tree with the net-next and
+ usb trees
+Message-ID: <20190830183445.7ee30c35@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829160441.GA141079@architecture4>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908300092
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908300092
+Content-Type: multipart/signed; boundary="Sig_/7Rz0+Y84nhStRS26SvAVNmn";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 12:04:41AM +0800, Gao Xiang wrote:
-> Anyway, I'm fine to delete them all if you like, but I think majority of these
-> are meaningful.
-> 
-> data.c-		/* page is already locked */
-> data.c-		DBG_BUGON(PageUptodate(page));
-> data.c-
-> data.c:		if (unlikely(err))
-> data.c-			SetPageError(page);
-> data.c-		else
-> data.c-			SetPageUptodate(page);
+--Sig_/7Rz0+Y84nhStRS26SvAVNmn
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If we cared about speed here then we would delete the DBG_BUGON() check
-because that's going to be expensive.  The likely/unlikely annotations
-should be used in places a reasonable person thinks it will make a
-difference to benchmarks.
+Hi all,
 
-regards,
-dan carpenter
+Today's linux-next merge of the staging tree got conflicts in:
 
+  drivers/staging/Kconfig
+  drivers/staging/Makefile
+
+between commits:
+
+  955315b0dc8c ("qlge: Move drivers/net/ethernet/qlogic/qlge/ to drivers/st=
+aging/qlge/")
+  71ed79b0e4be ("USB: Move wusbcore and UWB to staging as it is obsolete")
+
+from the net-next and usb trees and commit:
+
+  c48c9f7ff32b ("staging: exfat: add exfat filesystem code to staging")
+
+from the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/staging/Kconfig
+index fc1420f2a949,fbdc33874780..000000000000
+--- a/drivers/staging/Kconfig
++++ b/drivers/staging/Kconfig
+@@@ -120,9 -118,6 +118,11 @@@ source "drivers/staging/kpc2000/Kconfig
+ =20
+  source "drivers/staging/isdn/Kconfig"
+ =20
+ +source "drivers/staging/qlge/Kconfig"
+ +
+ +source "drivers/staging/wusbcore/Kconfig"
+ +source "drivers/staging/uwb/Kconfig"
+ +
++ source "drivers/staging/exfat/Kconfig"
++=20
+  endif # STAGING
+diff --cc drivers/staging/Makefile
+index b08ab677e49b,ca13f87b1e1b..000000000000
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@@ -49,7 -49,4 +49,7 @@@ obj-$(CONFIG_XIL_AXIS_FIFO)	+=3D axis-fif
+  obj-$(CONFIG_FIELDBUS_DEV)     +=3D fieldbus/
+  obj-$(CONFIG_KPC2000)		+=3D kpc2000/
+  obj-$(CONFIG_ISDN_CAPI)		+=3D isdn/
+ +obj-$(CONFIG_QLGE)		+=3D qlge/
+ +obj-$(CONFIG_UWB)		+=3D uwb/
+ +obj-$(CONFIG_USB_WUSB)		+=3D wusbcore/
++ obj-$(CONFIG_EXFAT_FS)		+=3D exfat/
+
+--Sig_/7Rz0+Y84nhStRS26SvAVNmn
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1o36UACgkQAVBC80lX
+0GzgUggAlvhyLRTs12ZYfRL8uP2FsACfLiGBGKs7py8Acj/onxEI84OuCspxe8VH
+TlsRWV2Sf9JeFOsDv2tLGphZKM5rdXLSgxJIm5yVKpbMJmptOcVGyHaUbTzHg9X7
+oD2TpyMkFr1neO4nV+NAp9vKMyPe89IfLJz2ZSw5IrfyQ4ysW4//sAaieTdcC8Jy
+OGuUYlxRWs+D3Kwz3pGKGlD9WoTMtuX55AWBYDu1DLM23F/FPtGtJyfB7WSzrqZ4
+iVYDyG0dEuhvZyy7afPbuAI7O6kPeITddrt0uQwEOyO4FZg4n/C7UabtLLoYxETw
+Pb5HvjE5R4yHfe1OwSIx5lVJlrfO+A==
+=yPvP
+-----END PGP SIGNATURE-----
+
+--Sig_/7Rz0+Y84nhStRS26SvAVNmn--
