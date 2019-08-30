@@ -2,80 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B549BA394A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:32:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C67DA395E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:38:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfH3Oc1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 10:32:27 -0400
-Received: from mga07.intel.com ([134.134.136.100]:61224 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727170AbfH3Oc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 10:32:26 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 07:32:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="175625020"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
-  by orsmga008.jf.intel.com with ESMTP; 30 Aug 2019 07:32:20 -0700
-Date:   Fri, 30 Aug 2019 22:36:45 +0800
-From:   Philip Li <philip.li@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        kbuild test robot <lkp@intel.com>,
-        linux-input@vger.kernel.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        x86-ml <x86@kernel.org>, linux-tip-commits@vger.kernel.org,
-        pv-drivers@vmware.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        tip-bot2 for Thomas Hellstrom <tip-bot2@linutronix.de>,
-        Doug Covelli <dcovelli@vmware.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        kbuild-all@01.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [kbuild-all] [tip: x86/vmware] input/vmmouse: Update the
- backdoor call with support for new instructions
-Message-ID: <20190830143645.GA4784@intel.com>
-References: <156699905611.5321.15444519862547054670.tip-bot2@tip-bot2>
- <201908292325.aLXyyzEx%lkp@intel.com>
- <20190829163353.GC2132@zn.tnic>
- <20190830010349.GD857@intel.com>
- <alpine.DEB.2.21.1908300802390.1938@nanos.tec.linutronix.de>
- <20190830062053.GA2598@intel.com>
- <20190830080650.GA30413@zn.tnic>
+        id S1727930AbfH3Oiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 10:38:55 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42837 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbfH3Oiz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 10:38:55 -0400
+Received: by mail-io1-f66.google.com with SMTP id n197so12457068iod.9
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 07:38:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jgvuX3mMmDJc/ezKItSFjRT6UTB3DxucqcXRUOj/zcI=;
+        b=GXget5QqWcoVV20hrVl8z/734YXraq2fUD3DzCUj4gl3uabBS3UFzNf0ba0+YCbay7
+         vog1JwlLXNOx8mQxUYV/a6YYm26t8RUPUGzw0MK0LVwAOcTOOB21n0qyBcqS0UjvNlOC
+         kQgMcdNGGedkmoMSRrFZGpqfeWpLuSSe3EF8GyZyi/wEJCPDdTvPpw17Wht04TveC1LX
+         qHFRlVmfR9Oic2M2iuBThZOXT14BchHEbKos5E0eQUDBc1ZjuuEjPVy+8VloXQnBs3p8
+         dvN5ignrb8HBn2yxAA7tN9/746wKC7bfpUsRVbEfGj8+U3HevUHZ+FMJhQl6rzi+eMRR
+         bNng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jgvuX3mMmDJc/ezKItSFjRT6UTB3DxucqcXRUOj/zcI=;
+        b=QBChnFSxpd2ob7MCx1Urt8v/P40IcBmgGvXWEnmmP8WNj7WpxppSGXVHiJN5lHKTuG
+         MkGB948+QJTJT25U7bE2Xtk4pfZ+VtqjD1GSmw8KOSbLm07IGSVPYKFpbgqpfvufCWEG
+         5qfGX6yxUm8FCFQom6VTsrvHG9ftIQ38Y822yq8pJU7UFvmeVj1uYJtOykwxiFd8+Rea
+         hIjvR8ho1c5kiSmcscmmjPCyQAiLzbwR5xCoj1yUCKwdsd52K/l3PJD7bgw/8eNPIzOV
+         lcnCubcAgmECjvoL77cMgsCizNYTo/mi8vul/L5HbUOaPp0N+KiWo+kELq6tv2/WjH/L
+         k2ww==
+X-Gm-Message-State: APjAAAX+Zixg95B/ybo7s/0NWWLo48OBbxmtzlyt3QUTdAzoEEHJtU3r
+        yQnzSfngk+zpzCsAAIKOTgPkOw==
+X-Google-Smtp-Source: APXvYqwqV4sqIOnC5JkzIybJh2aOhL5g7B/SiCPWu7FObtesW0RDKSiaWPbQGgAkjnQniKe/QwNt5w==
+X-Received: by 2002:a5d:9282:: with SMTP id s2mr4066iom.283.1567175934280;
+        Fri, 30 Aug 2019 07:38:54 -0700 (PDT)
+Received: from ziepe.ca ([142.177.133.130])
+        by smtp.gmail.com with ESMTPSA id z9sm8093916ior.79.2019.08.30.07.38.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 30 Aug 2019 07:38:53 -0700 (PDT)
+Received: from jgg by LT-JGG-7470.mtl.com with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1i3i3A-00005B-SD; Fri, 30 Aug 2019 11:38:52 -0300
+Date:   Fri, 30 Aug 2019 11:38:52 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Seunghun Han <kkamagui@gmail.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] tpm: tpm_crb: enhance resource mapping mechanism for
+ supporting AMD's fTPM
+Message-ID: <20190830143852.GA302@ziepe.ca>
+References: <20190830095639.4562-1-kkamagui@gmail.com>
+ <20190830095639.4562-3-kkamagui@gmail.com>
+ <20190830124334.GA10004@ziepe.ca>
+ <CAHjaAcQ0MrPCZUit7s0Rmqpwpp0w5jiYjNUNEEm2yc1AejZ3ng@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190830080650.GA30413@zn.tnic>
+In-Reply-To: <CAHjaAcQ0MrPCZUit7s0Rmqpwpp0w5jiYjNUNEEm2yc1AejZ3ng@mail.gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 10:06:50AM +0200, Borislav Petkov wrote:
-> On Fri, Aug 30, 2019 at 02:20:53PM +0800, Philip Li wrote:
-> > thanks for your patience. I just realize we actually block tip-bot, but
-> > not tip-bot2. I will update the logic to avoid this issue, and we will
-> > keep monitor for a while to fix new issue if any.
-> 
-> ... and just to reiterate: it would be a *lot-lot* more useful if you
-> guys tested the single tip branches or the combined tip/master on a
-> daily basis as that is the x86 queue that goes to Linus eventually. That
-yes, we monitor the repo pub/scm/linux/kernel/git/tip/tip.git, and will
-send build status of head (like BUILD SUCCESS or REGRESSION), also provide
-bisect report of unique error for first bad commit.
+On Fri, Aug 30, 2019 at 10:54:59PM +0900, Seunghun Han wrote:
 
-> is, if you do not test it already. But we don't get any "we tested this
-> branch" email so I'm thinking you don't...
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+> When I tested this patch in my machine, it seemed that ACPI NVS was
+> saved after TPM CRB driver sent "TPM2_Shutdown(STATE)" to the fTPM
+> while suspending. Then, ACPI NVS was restored while resuming.
+> After resuming, PCRs didn't change and TPM2 tools such as
+> tpm2_pcrlist, tpm2_extend, tpm2_getrandoms worked well.
+> So, according to my test result, it seems that the patch doesn't
+> create bugs and race during resume.
+
+I have a feeling that is shear luck of link time ordering and not guarenteed??	
+
+Jason
