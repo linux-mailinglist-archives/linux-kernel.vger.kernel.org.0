@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05A18A4069
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:17:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DBE0A403D
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:16:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728309AbfH3WQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 18:16:19 -0400
-Received: from shell.v3.sk ([90.176.6.54]:56357 "EHLO shell.v3.sk"
+        id S1728398AbfH3WQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 18:16:20 -0400
+Received: from shell.v3.sk ([90.176.6.54]:56356 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728180AbfH3WQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728178AbfH3WQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Aug 2019 18:16:18 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 2A90DD880F;
-        Sat, 31 Aug 2019 00:08:33 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 94935D880C;
+        Sat, 31 Aug 2019 00:08:29 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id S9MhM_I0F1f3; Sat, 31 Aug 2019 00:08:11 +0200 (CEST)
+        with ESMTP id iywFacxOvjfh; Sat, 31 Aug 2019 00:08:11 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 4E6C0D87F9;
-        Sat, 31 Aug 2019 00:07:59 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 9B2DFD86FF;
+        Sat, 31 Aug 2019 00:07:58 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id I3jYT7iCk-jZ; Sat, 31 Aug 2019 00:07:55 +0200 (CEST)
+        with ESMTP id YaEl1zR3-S6U; Sat, 31 Aug 2019 00:07:55 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 13918D87E7;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 7D28AD87E8;
         Sat, 31 Aug 2019 00:07:50 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     "To : Olof Johansson" <olof@lixom.net>
@@ -38,11 +38,10 @@ Cc:     "Cc : Rob Herring" <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 05/16] dt-bindings: phy-mmp3-usb: Add bindings
-Date:   Sat, 31 Aug 2019 00:07:32 +0200
-Message-Id: <20190830220743.439670-6-lkundrak@v3.sk>
+        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v3 06/16] ARM: l2c: add definition for FWA in PL310 aux register
+Date:   Sat, 31 Aug 2019 00:07:33 +0200
+Message-Id: <20190830220743.439670-7-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190830220743.439670-1-lkundrak@v3.sk>
 References: <20190830220743.439670-1-lkundrak@v3.sk>
@@ -53,44 +52,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the PHY chip for USB OTG on MMP3 platform.
+The PL310 also has a "Force write allocate" bits in the Auxiliary
+Control Register.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Rob Herring <robh@kernel.org>
-
 ---
-Changes since v2:
-- Add Rob's Reviewed-by tag
+ arch/arm/include/asm/hardware/cache-l2x0.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changes since v1:
-- s/usbphy@/usb-phy@/
-- Dropped a reference to Documentation/phy.txt
-
- .../devicetree/bindings/phy/phy-mmp3-usb.txt        | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-mmp3-usb.tx=
-t
-
-diff --git a/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt b/Doc=
-umentation/devicetree/bindings/phy/phy-mmp3-usb.txt
-new file mode 100644
-index 0000000000000..7183b9102f917
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt
-@@ -0,0 +1,13 @@
-+Marvell MMP3 USB PHY
-+--------------------
-+
-+Required properties:
-+- compatible: must be "marvell,mmp3-usb-phy"
-+- #phy-cells: must be 0
-+
-+Example:
-+	usb-phy: usb-phy@d4207000 {
-+		compatible =3D "marvell,mmp3-usb-phy";
-+		reg =3D <0xd4207000 0x40>;
-+		#phy-cells =3D <0>;
-+	};
+diff --git a/arch/arm/include/asm/hardware/cache-l2x0.h b/arch/arm/includ=
+e/asm/hardware/cache-l2x0.h
+index 32edfadb15935..a6d4ee86ba543 100644
+--- a/arch/arm/include/asm/hardware/cache-l2x0.h
++++ b/arch/arm/include/asm/hardware/cache-l2x0.h
+@@ -118,6 +118,8 @@
+ #define L310_AUX_CTRL_STORE_LIMITATION		BIT(11)	/* R2P0+ */
+ #define L310_AUX_CTRL_EXCLUSIVE_CACHE		BIT(12)
+ #define L310_AUX_CTRL_ASSOCIATIVITY_16		BIT(16)
++#define L310_AUX_CTRL_FWA_SHIFT			23
++#define L310_AUX_CTRL_FWA_MASK			(3 << 23)
+ #define L310_AUX_CTRL_CACHE_REPLACE_RR		BIT(25)	/* R2P0+ */
+ #define L310_AUX_CTRL_NS_LOCKDOWN		BIT(26)
+ #define L310_AUX_CTRL_NS_INT_CTRL		BIT(27)
 --=20
 2.21.0
 
