@@ -2,220 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E716A3D03
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:28:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A2E5A3D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:38:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfH3R2a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 13:28:30 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51594 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727434AbfH3R23 (ORCPT
+        id S1728021AbfH3RiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 13:38:15 -0400
+Received: from mx0b-002c1b01.pphosted.com ([148.163.155.12]:20944 "EHLO
+        mx0b-002c1b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727888AbfH3RiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:28:29 -0400
-Received: by mail-wm1-f68.google.com with SMTP id k1so8166961wmi.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 10:28:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eu7o1tjFJuoZ/R7GMzAcbzkgVT62tsYAxGmizjWMX1g=;
-        b=vNqfRzTuHbAvVsS3zUpvAVib5iQ1fToXe25SMvEN3IZ6lKxyl1nk3LVqLbPT52L/e7
-         h5mm7R83u/TOPgVcrOKY1IAXFwIjRRAQshoHym8JYlqKKxQuWVW/y+y0GzXPPWaXhypD
-         JAXnmHSBwMRF3livuug96Ox1F2DepxnFINXLI647jrPR+/9V5SWrnkMp3vrlwzQ9iIL6
-         Le2BVyhDYv4T3IUHcVPAJl1wBL9qxXtmERxOu1SHy+TeDexMl6Fj1Yp3rfOYlrGdwkDR
-         s3mzYAmvCqoBCBYppE9lZ25q9wkH5AopP8ZqFJ5+XkmKByr9b6v2Z7ipZy4L351Sk/DB
-         g6Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eu7o1tjFJuoZ/R7GMzAcbzkgVT62tsYAxGmizjWMX1g=;
-        b=DYDfPJrVHcNALyhau32ncIVew5RokrRvXyTkzP9dmhZG8IypvCaoAmpsM5Q8fHXCbm
-         jmq/ROZvTfkCc/eErHgWv+gTXUgYF/DUr02Q55bKEAXQfdEo3a7O5FhTiSQFDp9YkCW0
-         oSx7uxMM2dwGkKklaIw7tSDpkW6LZVBwnTBltV82J8ZIRUdd261O3gOIyWT3R5Xg8Hcx
-         TIu/RygrV799WU+Wdzs4E1thSsQUuAr4StHjSs4WrKgPJwzQ5ZUQEWIle1RETT/LhsKu
-         xYeeXpgMPbDHBsIC5RPALMVxiJP/SxJnX/+I+z3sMOaUn63kftbnVQDeGd7Za3G5fG1t
-         WOAg==
-X-Gm-Message-State: APjAAAV2dzGCmPAz62Z31WqZbTzhSqhpRTgkr2PBu93ZnCJOPmaz5ooI
-        afzmkGsYN7DI+YO+/Hl90HE=
-X-Google-Smtp-Source: APXvYqz/4etEtnnJmT0nqV9j3YE+c03EhkYjYG1flkPxaetZUPtf48FALOgc5C5NoMqOsBgY4e48ig==
-X-Received: by 2002:a1c:f910:: with SMTP id x16mr18881080wmh.173.1567186106390;
-        Fri, 30 Aug 2019 10:28:26 -0700 (PDT)
-Received: from archlinux-threadripper ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id p9sm7465898wru.61.2019.08.30.10.28.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 10:28:25 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 10:28:24 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Stefan Agner <stefan@agner.ch>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] ARM: Emit __gnu_mcount_nc when using Clang 10.0.0 or
- newer
-Message-ID: <20190830172824.GA119107@archlinux-threadripper>
-References: <20190829062635.45609-1-natechancellor@gmail.com>
- <CAKwvOdkXSWE+_JCZsuQdkCSrK5pJSp9n_Cd27asFP0mHBfHg6w@mail.gmail.com>
- <20190829193432.GA10138@archlinux-threadripper>
- <885bb20c11f0cb004e5eeda7b0ca6d16@agner.ch>
- <CAKwvOdm-9T5Mmys93VMK8HLUgPJa2HOpcmG96SAvH2EGLA=3Nw@mail.gmail.com>
+        Fri, 30 Aug 2019 13:38:15 -0400
+X-Greylist: delayed 679 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Aug 2019 13:38:14 EDT
+Received: from pps.filterd (m0127842.ppops.net [127.0.0.1])
+        by mx0b-002c1b01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7UHP3qT029501;
+        Fri, 30 Aug 2019 10:26:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=from : to : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=proofpoint20171006;
+ bh=qoaOUv7QkNWJF+1OoNMctCK3JMA4sWtLp52UExdemGc=;
+ b=Bb+INQh7aWGIXPKFaqYcSXbcAywOIAWHh684ko4G2Y4l57w9ZDNJ4QiiNOSLbyr6wSZX
+ elJ5BMSqiBGQKY4+IvfE3ORKaGPRHh1D+SMzBXjMLHn9Zhw6giZpI4dtX7mgo5427NmZ
+ wzm1UMScO5CBQhZGPmemppo8KkkhzVwRhBAnbGVDcsg2p4QnW7kHb2bIuVhTsQZnZHZU
+ S9xA8AbT6HFobZ9nK2g0rNnlL5M5EvUmH+66VrkRuip9arbgtjCvprWLrUItY3is0aAC
+ g0C7MxDmWpNbSuoL12G25bpkTe0TBZHDMiHk3qeqzRXISTpNlYULdoiJbkylsnhRQ1JQ mQ== 
+Received: from nam01-by2-obe.outbound.protection.outlook.com (mail-by2nam01lp2058.outbound.protection.outlook.com [104.47.34.58])
+        by mx0b-002c1b01.pphosted.com with ESMTP id 2uk4jen495-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Aug 2019 10:26:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nB7ZxrZjsD7BMWttIjvvOW6ENBYnVo9pdyLngjbUIOu+rrUoJ79VzUwv5YATJUyKLqP/oPrkuH7ZabT9Pjys1vZvdqgpZ2ZGkouxMHrpae9DgPFEc9XBqnzaQkaEIZKrkGizLyWwjl7JrT4c5mZ+Xx8o3zuqR+/fIzHkhuDmLFtQpzZdMjaP49+DCS4nuf+wAVa/AuvH1wXyK7oywe1m4P0nIsk2yQaK4MzXkkQ2fHwViAUyeiOlhdpDxdAHjG/tEhtgqdMQL6wdoV60pMNH3CnmGg9MkOo/eTBONgPQi03HbNdRYk1fncoW/hk8GukYsOdnQdV03tqq+31exZNtdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qoaOUv7QkNWJF+1OoNMctCK3JMA4sWtLp52UExdemGc=;
+ b=G0W6SIlJh8jnaulp7dh8bo1snEVp1QyJy6uHcwxc4bMgrIwuMlPUKZUAQnDBBnDn+g2VQk42AHv/jZg0ZQ1s1qCKE2jZp6AVRcvKJZjMeJrcpc+I3lKICqy1WaAmLayNPSispy6RNQXWBtljyG5VtQAIDUZ2vof8SjeDByGhGIEW13uGExAX768qte1EABuyrzdRPPt41Enn8zU81IEEOqfesu0SuciqwiF+H44v61RP9LS/lDtniyFJTEJr2tyukYml53bYmwynzanzYeLSXlXzUs43gftfzaw3RuhMAUi9i4t+q7y/QTdIaPjuBtm4zdSe/SLYF9uGwST5TVFGzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
+ dkim=pass header.d=nutanix.com; arc=none
+Received: from BL0PR02MB3634.namprd02.prod.outlook.com (52.132.27.154) by
+ BL0PR02MB3860.namprd02.prod.outlook.com (52.132.9.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.21; Fri, 30 Aug 2019 17:26:47 +0000
+Received: from BL0PR02MB3634.namprd02.prod.outlook.com
+ ([fe80::c9b1:7869:4f3f:713f]) by BL0PR02MB3634.namprd02.prod.outlook.com
+ ([fe80::c9b1:7869:4f3f:713f%6]) with mapi id 15.20.2199.021; Fri, 30 Aug 2019
+ 17:26:47 +0000
+From:   Matej Genci <matej.genci@nutanix.com>
+To:     Jason Wang <jasowang@redhat.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] virtio: Change typecasts in vring_init()
+Thread-Topic: [PATCH] virtio: Change typecasts in vring_init()
+Thread-Index: AQHVXOsGnWphIXIpHkCP5ncx23ivmacTEcCAgADknAA=
+Date:   Fri, 30 Aug 2019 17:26:47 +0000
+Message-ID: <25df690f-0f0c-baf9-2a8f-392e46468b42@nutanix.com>
+References: <20190827152000.53920-1-matej.genci@nutanix.com>
+ <e6aa7fa1-8f41-fc55-51b2-5f0052cfb2d0@redhat.com>
+In-Reply-To: <e6aa7fa1-8f41-fc55-51b2-5f0052cfb2d0@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [62.254.189.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 45287d94-2d6e-4f5d-fcd2-08d72d6f3c52
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BL0PR02MB3860;
+x-ms-traffictypediagnostic: BL0PR02MB3860:
+x-microsoft-antispam-prvs: <BL0PR02MB386020FCDC187019B475DD49FBBD0@BL0PR02MB3860.namprd02.prod.outlook.com>
+x-proofpoint-crosstenant: true
+x-ms-oob-tlc-oobclassifiers: OLM:3383;
+x-forefront-prvs: 0145758B1D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(376002)(396003)(136003)(366004)(199004)(189003)(229853002)(86362001)(5660300002)(446003)(53936002)(186003)(26005)(305945005)(7736002)(53546011)(6506007)(71200400001)(71190400001)(102836004)(2201001)(110136005)(256004)(76176011)(14454004)(6512007)(316002)(11346002)(81166006)(508600001)(44832011)(2616005)(81156014)(6246003)(476003)(31696002)(486006)(6486002)(8676002)(6436002)(66556008)(66476007)(76116006)(66446008)(91956017)(36756003)(25786009)(3846002)(6116002)(99286004)(8936002)(2906002)(31686004)(2501003)(66066001)(66946007)(64756008)(64030200001);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR02MB3860;H:BL0PR02MB3634.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nutanix.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IA8T7vb6LSVzNbmWRR8UkdUTcQymCn2h0drdsqT1G7RgL78vGOBQIOhJCw3Vg0rRVB06VVpdevjN550IrYgL/v7vClzsbgvCeu07o5Z5SauaNU3XuReMdEnsDZj5VE9Z3y+uFPS6o5bWnrE38208iCTadT8HtyUr2rkg3mCXLKH8IZFh0QRh4BzyDTBjHj505Uc1c5g/k5QV5ULnGuqng9/MuZvb/G8x/UaLCG/xcab9E6cZZI7JCD2Soi0iBckFJgYb73DB4ik4rJRn1soTGH/g71TBlw2RCEPyOFgAUMAruqpID4DZr2v7G2rVtnZmOUAwOkxtSUp8Ans8i3DBAzlIowPfMuGzZ7rsPEePy6p/NLZb1Yg5gqvnuoSS/idZEd0iH6IcU0/tvQ9wapUe6xBhSpeCl4XuDMcigqTpBYw=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2DACFA90AD637948B9C522C208AF3E22@namprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdm-9T5Mmys93VMK8HLUgPJa2HOpcmG96SAvH2EGLA=3Nw@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-OriginatorOrg: nutanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45287d94-2d6e-4f5d-fcd2-08d72d6f3c52
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2019 17:26:47.1206
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: bb047546-786f-4de1-bd75-24e5b6f79043
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4SP9serV2JrGi5v2qa7xsFU8pQDm/fErNp2FqgCy3zi2VVAOCBS5yXJ9w+8z7pCANjruMH6hVYWhQ8c6udpcWw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB3860
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-08-30_06:2019-08-29,2019-08-30 signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 01:57:35PM -0700, Nick Desaulniers wrote:
-> On Thu, Aug 29, 2019 at 1:21 PM Stefan Agner <stefan@agner.ch> wrote:
-> >
-> > On 2019-08-29 21:34, Nathan Chancellor wrote:
-> > > On Thu, Aug 29, 2019 at 10:55:28AM -0700, Nick Desaulniers wrote:
-> > >> On Wed, Aug 28, 2019 at 11:27 PM Nathan Chancellor
-> > >> <natechancellor@gmail.com> wrote:
-> > >> >
-> > >> > Currently, multi_v7_defconfig + CONFIG_FUNCTION_TRACER fails to build
-> > >> > with clang:
-> > >> >
-> > >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `_local_bh_enable':
-> > >> > softirq.c:(.text+0x504): undefined reference to `mcount'
-> > >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `__local_bh_enable_ip':
-> > >> > softirq.c:(.text+0x58c): undefined reference to `mcount'
-> > >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `do_softirq':
-> > >> > softirq.c:(.text+0x6c8): undefined reference to `mcount'
-> > >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_enter':
-> > >> > softirq.c:(.text+0x75c): undefined reference to `mcount'
-> > >> > arm-linux-gnueabi-ld: kernel/softirq.o: in function `irq_exit':
-> > >> > softirq.c:(.text+0x840): undefined reference to `mcount'
-> > >> > arm-linux-gnueabi-ld: kernel/softirq.o:softirq.c:(.text+0xa50): more undefined references to `mcount' follow
-> > >> >
-> > >> > clang can emit a working mcount symbol, __gnu_mcount_nc, when
-> > >> > '-meabi gnu' is passed to it. Until r369147 in LLVM, this was
-> > >> > broken and caused the kernel not to boot because the calling
-> > >> > convention was not correct. Now that it is fixed, add this to
-> > >> > the command line when clang is 10.0.0 or newer so everything
-> > >> > works properly.
-> > >> >
-> > >> > Link: https://github.com/ClangBuiltLinux/linux/issues/35
-> > >> > Link: https://bugs.llvm.org/show_bug.cgi?id=33845
-> > >> > Link: https://github.com/llvm/llvm-project/commit/16fa8b09702378bacfa3d07081afe6b353b99e60
-> > >> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > >> > ---
-> > >> >  arch/arm/Makefile | 6 ++++++
-> > >> >  1 file changed, 6 insertions(+)
-> > >> >
-> > >> > diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> > >> > index c3624ca6c0bc..7b5a26a866fc 100644
-> > >> > --- a/arch/arm/Makefile
-> > >> > +++ b/arch/arm/Makefile
-> > >> > @@ -112,6 +112,12 @@ ifeq ($(CONFIG_ARM_UNWIND),y)
-> > >> >  CFLAGS_ABI     +=-funwind-tables
-> > >> >  endif
-> > >> >
-> > >> > +ifeq ($(CONFIG_CC_IS_CLANG),y)
-> > >> > +ifeq ($(shell test $(CONFIG_CLANG_VERSION) -ge 100000; echo $$?),0)
-> > >> > +CFLAGS_ABI     +=-meabi gnu
-> > >> > +endif
-> > >> > +endif
-> > >> > +
-> > >>
-> > >> Thanks for the patch!  I think this is one of the final issues w/ 32b
-> > >> ARM configs when building w/ Clang.
-> > >>
-> > >> I'm not super enthused about the version check.  The flag is indeed
-> > >> not recognized by GCC, but I think it would actually be more concise
-> > >> with $(cc-option) and no compiler or version check.
-> > >>
-> > >> Further, I think that the working __gnu_mcount_nc in Clang would
-> > >> better be represented as marking the arch/arm/KConfig option for
-> > >> CONFIG_FUNCTION_TRACER for dependent on a version of Clang greater
-> > >> than or equal to Clang 10, not conditionally adding this flag. (We
-> > >> should always add the flag when supported, IMO.  __gnu_mcount_nc's
-> > >> calling convention being broken is orthogonal to the choice of
-> > >> __gnu_mcount_nc vs mcount, and it's the former's that should be
-> > >> checked, not the latter as in this patch.
-> > >
-> > > I will test with or without CONFIG_AEABI like Matthias asked and I will
-> > > implement your Kconfig suggestion if it passes all of my tests. The
-> > > reason that I did it this way is because I didn't want a user to end up
-> > > with a non-booting kernel since -meabi gnu works with older versions of
-> > > clang at build time, the issue happens at boot time but the Kconfig
-> > > suggestion + cc-option should fix that.
-> >
-> > I agree with Nathan here, I'd rather prefer the build system to fail
-> > building rather than runtime error.
-> >
-> > If we decide we want to have it building despite it not building a
-> > functional kernel, we should at least add a #warning...
-> 
-> Just to be clear...I was suggesting a build failure, but for
-> __gnu_mcount_nc not having the correct calling convention in older
-> clang releases, which is orthogonal to passing `-meabi gnu`.  This
-> patch uses the __gnu_mcount_nc calling convention problem to justify a
-> version check for a flag that while closely related, is not actually
-> the problem, IMO.
-
-I am not entirely sure what you mean. -meabi gnu has always produced a
-buildable kernel (see Stefan's original report [1]), it just doesn't
-boot and that all happens silently.
-
-[1]: https://lore.kernel.org/linux-arm-kernel/35ae3d464c7b77a5fe86a732079e32bc@agner.ch/
-
-Okay, after doing some further testing...
-
-Disabling CONFIG_AEABI does not work with clang, I get a ton of failures
-around undefined references to __aeabi_idivmod and __aeabi_uidivmod. I
-don't think this is worth looking into given that CONFIG_AEABI is not
-selectable when CONFIG_CPU_V6 or CONFIG_CPU_V7 is selected, which is
-what we primarily care about.. We currently build and boot
-multi_v5_defconfig but it has CONFIG_AEABI set in it. As a result, I
-don't think we need to care about it with this patch.
-
-This diff would also solve the issue without the need for the version
-check in the Makefile, as it is the combination of -meabi gnu and -pg
-that causes the boot issue and -pg gets added when
-CONFIG_FUNCTION_TRACER is enabled. Would that be preferred? I do not
-think adding cc-option is necessary given that we know GCC universally
-does not support this flag; there is no point in adding a small penalty
-with cc-option to either compiler.
-
-Cheers,
-Nathan
-
-================================================
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index a98c7af50bf0..440ad41e77e4 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -83,7 +83,7 @@ config ARM
- 	select HAVE_FAST_GUP if ARM_LPAE
- 	select HAVE_FTRACE_MCOUNT_RECORD if !XIP_KERNEL
- 	select HAVE_FUNCTION_GRAPH_TRACER if !THUMB2_KERNEL && !CC_IS_CLANG
--	select HAVE_FUNCTION_TRACER if !XIP_KERNEL
-+	select HAVE_FUNCTION_TRACER if !XIP_KERNEL && (CC_IS_GCC || CLANG_VERSION >= 100000)
- 	select HAVE_GCC_PLUGINS
- 	select HAVE_HW_BREAKPOINT if PERF_EVENTS && (CPU_V6 || CPU_V6K || CPU_V7)
- 	select HAVE_IDE if PCI || ISA || PCMCIA
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index a43fc753aa53..23c2bf0fbd30 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -115,6 +115,10 @@ ifeq ($(CONFIG_ARM_UNWIND),y)
- CFLAGS_ABI	+=-funwind-tables
- endif
- 
-+ifeq ($(CONFIG_CC_IS_CLANG),y)
-+CFLAGS_ABI	+=-meabi gnu
-+endif
-+
- # Accept old syntax despite ".syntax unified"
- AFLAGS_NOWARN	:=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
- 
+T24gOC8zMC8yMDE5IDQ6NDggQU0sIEphc29uIFdhbmcgd3JvdGU6DQo+IA0KPiBPbiAyMDE5Lzgv
+Mjcg5LiL5Y2IMTE6MjAsIE1hdGVqIEdlbmNpIHdyb3RlOg0KPj4gQ29tcGlsZXJzIHN1Y2ggYXMg
+ZysrIDcuMyBjb21wbGFpbiBhYm91dCBhc3NpZ25pbmcgdm9pZCogdmFyaWFibGUgdG8NCj4+IGEg
+bm9uLXZvaWQqIHZhcmlhYmxlIChsaWtlIHN0cnVjdCBwb2ludGVycykgYW5kIHBvaW50ZXIgYXJp
+dGhtZXRpY3MNCj4+IG9uIHZvaWQqLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IE1hdGVqIEdlbmNp
+IDxtYXRlai5nZW5jaUBudXRhbml4LmNvbT4NCj4+IC0tLQ0KPj4gICBpbmNsdWRlL3VhcGkvbGlu
+dXgvdmlydGlvX3JpbmcuaCB8IDkgKysrKystLS0tDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA1IGlu
+c2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUv
+dWFwaS9saW51eC92aXJ0aW9fcmluZy5oIGIvaW5jbHVkZS91YXBpL2xpbnV4L3ZpcnRpb19yaW5n
+LmgNCj4+IGluZGV4IDRjNGUyNGMyOTFhNS4uMmMzMzliOWUyOTIzIDEwMDY0NA0KPj4gLS0tIGEv
+aW5jbHVkZS91YXBpL2xpbnV4L3ZpcnRpb19yaW5nLmgNCj4+ICsrKyBiL2luY2x1ZGUvdWFwaS9s
+aW51eC92aXJ0aW9fcmluZy5oDQo+PiBAQCAtMTY4LDEwICsxNjgsMTEgQEAgc3RhdGljIGlubGlu
+ZSB2b2lkIHZyaW5nX2luaXQoc3RydWN0IHZyaW5nICp2ciwgdW5zaWduZWQgaW50IG51bSwgdm9p
+ZCAqcCwNCj4+ICAgCQkJICAgICAgdW5zaWduZWQgbG9uZyBhbGlnbikNCj4+ICAgew0KPj4gICAJ
+dnItPm51bSA9IG51bTsNCj4+IC0JdnItPmRlc2MgPSBwOw0KPj4gLQl2ci0+YXZhaWwgPSBwICsg
+bnVtKnNpemVvZihzdHJ1Y3QgdnJpbmdfZGVzYyk7DQo+PiAtCXZyLT51c2VkID0gKHZvaWQgKiko
+KCh1aW50cHRyX3QpJnZyLT5hdmFpbC0+cmluZ1tudW1dICsgc2l6ZW9mKF9fdmlydGlvMTYpDQo+
+PiAtCQkrIGFsaWduLTEpICYgfihhbGlnbiAtIDEpKTsNCj4+ICsJdnItPmRlc2MgPSAoc3RydWN0
+IHZyaW5nX2Rlc2MgKilwOw0KPj4gKwl2ci0+YXZhaWwgPSAoc3RydWN0IHZyaW5nX2F2YWlsICop
+KCh1aW50cHRyX3QpcA0KPj4gKwkJKyBudW0qc2l6ZW9mKHN0cnVjdCB2cmluZ19kZXNjKSk7DQo+
+IA0KPiANCj4gSXQncyBiZXR0ZXIgdG8gbGV0IHRoZSBjb2RlIHBhc3MgY2hlY2twYXRoLnBsIGhl
+cmUuDQo+IA0KSXQgcGFzc2VzIGZvciBtZQ0KDQotLS0tLS0tLTg8LS0tLS0tLS0NCi4vc2NyaXB0
+cy9jaGVja3BhdGNoLnBsIDAwMDEtdmlydGlvLUNoYW5nZS10eXBlY2FzdHMtaW4tdnJpbmdfaW5p
+dC5wYXRjaA0KdG90YWw6IDAgZXJyb3JzLCAwIHdhcm5pbmdzLCAxNSBsaW5lcyBjaGVja2VkDQoN
+CjAwMDEtdmlydGlvLUNoYW5nZS10eXBlY2FzdHMtaW4tdnJpbmdfaW5pdC5wYXRjaCBoYXMgbm8g
+b2J2aW91cyBzdHlsZSBwcm9ibGVtcyBhbmQgaXMgcmVhZHkgZm9yIHN1Ym1pc3Npb24uDQotLS0t
+LS0tLTg8LS0tLS0tLS0NCg0KSXMgdGhlcmUgc29tZXRoaW5nIEknbSBtaXNzaW5nPw0KDQo+IE90
+aGVyIGxvb2tzIGdvb2QuDQo+IA0KPiBUaGFua3MNCj4gDQo+IA0KPj4gKwl2ci0+dXNlZCA9IChz
+dHJ1Y3QgdnJpbmdfdXNlZCAqKSgoKHVpbnRwdHJfdCkmdnItPmF2YWlsLT5yaW5nW251bV0NCj4+
+ICsJCSsgc2l6ZW9mKF9fdmlydGlvMTYpICsgYWxpZ24tMSkgJiB+KGFsaWduIC0gMSkpOw0KPj4g
+ICB9DQo+PiAgIA0KPj4gICBzdGF0aWMgaW5saW5lIHVuc2lnbmVkIHZyaW5nX3NpemUodW5zaWdu
+ZWQgaW50IG51bSwgdW5zaWduZWQgbG9uZyBhbGlnbikNCg0K
