@@ -2,144 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ABBAA3455
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:45:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB94CA345A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:45:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfH3JpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 05:45:03 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:55717 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726653AbfH3JpD (ORCPT
+        id S1727938AbfH3JpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 05:45:09 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:58203 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfH3JpI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 05:45:03 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id 3dShiYEL4DqPe3dSkiRS9z; Fri, 30 Aug 2019 11:45:00 +0200
-Subject: Re: [PATCH 2/8] videodev2.h: add V4L2_DEC_CMD_FLUSH
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        mripard@kernel.org, Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>, Chen-Yu Tsai <wens@csie.org>,
-        gregkh@linuxfoundation.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, devel@driverdev.osuosl.org,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Ezequiel Garcia <ezequiel@collabora.com>, jonas@kwiboo.se
-References: <20190822194500.2071-1-jernej.skrabec@siol.net>
- <20190822194500.2071-3-jernej.skrabec@siol.net>
- <CAPBb6MUChtZcNSTa2uT50k6uPU9T68wofLYGUFRJntDhjH8+iw@mail.gmail.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <907f3c43-b994-f1c7-a15b-116566e19003@xs4all.nl>
-Date:   Fri, 30 Aug 2019 11:44:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 30 Aug 2019 05:45:08 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id BEBA1E000E;
+        Fri, 30 Aug 2019 09:45:04 +0000 (UTC)
+Date:   Fri, 30 Aug 2019 11:44:56 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Biwen Li <biwen.li@nxp.com>
+Cc:     a.zummo@towertech.it, robh+dt@kernel.org, mark.rutland@arm.com,
+        leoyang.li@nxp.com, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Martin Fuzzey <mfuzzey@parkeon.com>
+Subject: Re: [1/2] dt-bindings: rtc: pcf85263/pcf85363: add some properties
+Message-ID: <20190830094456.GO21922@piout.net>
+References: <20190830091720.41156-1-biwen.li@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MUChtZcNSTa2uT50k6uPU9T68wofLYGUFRJntDhjH8+iw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfB4Iwpuxa4ZWt3WM5IScwN1zIREASBWnbgJamG02lqSTKf0f6j1jls/icFEBpt/+ljEr/9Y5Sq5Zd9sZVR6ANFlk/wmVSJVnMrssJpDPeJBWRqvn+U/p
- LVEEMt39B1UHj6sOC490LO9wF2NWibQ78kCPGnUAWmwR3oWf++lVNsd1bmDFh4tBqyCG4RjLtz+vPkfOYhbPEeoOa7+xOnaCdbl4H7IhWoAAXXIgl9IflOxH
- cc1PFgWU6u4fVCy3OJoqsgnYEWRFujH3WodDTFiTFlKM51XUi7nVSeigAS14/3E1BU4EqYrOkJlGmcgQzLN8XJmQ52J74mkYg7qSyzrmKWZ/4ZC2CEjeWQJZ
- XJk0wPWGnvRKw2bb+tiHbwkRY6r6CgAGmm8bu2mUaN/SZrqw4TVAHQuJtb8WvnSsKaijD5bREj07kRg4iflyy8L5MAAme/LpzwT2IMXyRsoSyuqOu3NBP1Z3
- tzjcdWh2vLp/fcnK+DOELBvNwrvpRn6J6U4UKgf4j0MER/dsnK8hbKKzzMDwaQcSsCCZC1cHXRbDbrgZEY7hKCb/jdU5vyAdLncmCfmQDUGUajlV4vm07AF6
- 1RitpU4Y+gnyKJ6XOCngTKZ91X4yTPrdGy//Ui2pdXkitnE+yvdwRjlIcSjHYCwjGNoXohLW8KGcEHXZslxfljBBeBnZoRiHWZhS3dzUqz9aQkvfaq3E2a8N
- p4F05ydyvQwCdZKvYLxrSfrlWaxEa7nP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190830091720.41156-1-biwen.li@nxp.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/19 11:38 AM, Alexandre Courbot wrote:
-> On Fri, Aug 23, 2019 at 4:45 AM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->>
->> From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->>
->> Add this new V4L2_DEC_CMD_FLUSH decoder command and document it.
->>
->> Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->> ---
->>  Documentation/media/uapi/v4l/vidioc-decoder-cmd.rst | 11 ++++++++++-
->>  Documentation/media/videodev2.h.rst.exceptions      |  1 +
->>  include/uapi/linux/videodev2.h                      |  1 +
->>  3 files changed, 12 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/media/uapi/v4l/vidioc-decoder-cmd.rst b/Documentation/media/uapi/v4l/vidioc-decoder-cmd.rst
->> index 57f0066f4cff..0bffef6058f7 100644
->> --- a/Documentation/media/uapi/v4l/vidioc-decoder-cmd.rst
->> +++ b/Documentation/media/uapi/v4l/vidioc-decoder-cmd.rst
->> @@ -208,7 +208,16 @@ introduced in Linux 3.3. They are, however, mandatory for stateful mem2mem decod
->>         been started yet, the driver will return an ``EPERM`` error code. When
->>         the decoder is already running, this command does nothing. No
->>         flags are defined for this command.
->> -
->> +    * - ``V4L2_DEC_CMD_FLUSH``
->> +      - 4
->> +      - Flush any held capture buffers. Only valid for stateless decoders,
->> +        and only if ``V4L2_BUF_CAP_SUPPORTS_M2M_HOLD_CAPTURE_BUF`` was set.
->> +       This command is typically used when the application reached the
->> +       end of the stream and the last output buffer had the
->> +       ``V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF`` flag set. This would prevent
->> +       dequeueing the last capture buffer containing the last decoded frame.
->> +       So this command can be used to explicitly flush that last decoded
->> +       frame.
+On 30/08/2019 17:17:19+0800, Biwen Li wrote:
+> Add some properties for pcf85263/pcf85363 as follows:
+>   - interrupt-output-pin: string type
+>   - quartz-load-capacitance: integer type
+>   - quartz-drive-strength: integer type
+>   - quartz-low-jitter: bool type
+>   - wakeup-source: bool type
 > 
-> Just for safety, can we also specify that it is valid to call this
-> command even if no buffer was held (in which case it is a no-op), as
-> this can help make user-space code simpler?
-
-Ah yes, thanks for the reminder.
-
-Jernej, when you post the next version of this series, can you change the text
-above to:
-
-- Flush any held capture buffers. Only valid for stateless decoders.
-  This command is typically used when the application reached the
-  end of the stream and the last output buffer had the
-  ``V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF`` flag set. This would prevent
-  dequeueing the capture buffer containing the last decoded frame.
-  So this command can be used to explicitly flush that final decoded
-  frame. This command does nothing if there are no held capture buffers.
-
-Regards,
-
-	Hans
-
+> Signed-off-by: Martin Fuzzey <mfuzzey@parkeon.com>
+> Signed-off-by: Biwen Li <biwen.li@nxp.com>
+> ---
+>  .../devicetree/bindings/rtc/pcf85363.txt      | 31 +++++++++++++++++++
+>  include/dt-bindings/rtc/pcf85363.h            | 15 +++++++++
+>  2 files changed, 46 insertions(+)
+>  create mode 100644 include/dt-bindings/rtc/pcf85363.h
 > 
->>
->>  Return Value
->>  ============
->> diff --git a/Documentation/media/videodev2.h.rst.exceptions b/Documentation/media/videodev2.h.rst.exceptions
->> index adeb6b7a15cb..a79028e4d929 100644
->> --- a/Documentation/media/videodev2.h.rst.exceptions
->> +++ b/Documentation/media/videodev2.h.rst.exceptions
->> @@ -434,6 +434,7 @@ replace define V4L2_DEC_CMD_START decoder-cmds
->>  replace define V4L2_DEC_CMD_STOP decoder-cmds
->>  replace define V4L2_DEC_CMD_PAUSE decoder-cmds
->>  replace define V4L2_DEC_CMD_RESUME decoder-cmds
->> +replace define V4L2_DEC_CMD_FLUSH decoder-cmds
->>
->>  replace define V4L2_DEC_CMD_START_MUTE_AUDIO decoder-cmds
->>  replace define V4L2_DEC_CMD_PAUSE_TO_BLACK decoder-cmds
->> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->> index 4fa9f543742d..91a79e16089c 100644
->> --- a/include/uapi/linux/videodev2.h
->> +++ b/include/uapi/linux/videodev2.h
->> @@ -1978,6 +1978,7 @@ struct v4l2_encoder_cmd {
->>  #define V4L2_DEC_CMD_STOP        (1)
->>  #define V4L2_DEC_CMD_PAUSE       (2)
->>  #define V4L2_DEC_CMD_RESUME      (3)
->> +#define V4L2_DEC_CMD_FLUSH       (4)
->>
->>  /* Flags for V4L2_DEC_CMD_START */
->>  #define V4L2_DEC_CMD_START_MUTE_AUDIO  (1 << 0)
->> --
->> 2.22.1
->>
+> diff --git a/Documentation/devicetree/bindings/rtc/pcf85363.txt b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+> index 94adc1cf93d9..d83359990bd7 100644
+> --- a/Documentation/devicetree/bindings/rtc/pcf85363.txt
+> +++ b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+> @@ -8,10 +8,41 @@ Required properties:
+>  Optional properties:
+>  - interrupts: IRQ line for the RTC (not implemented).
+>  
+> +- interrupt-output-pin: The interrupt output pin must be
+> +  "NONE", "INTA" or "INTB", default value is "NONE"
+> +
 
+default value can't be none if there is an interrupts property. Also,
+both pins can be enabled at the same time and this binding would prevent
+that.
+Finally, it may also be desirable to have some interrupts on one pin and
+other interrupts on another pin e.g. alarms and timestamping on INTA
+going to the SoC and only alarms on INTB going to a PMIC.
+
+> +- quartz-load-capacitance: The internal capacitor to select for the quartz:
+> +	PCF85263_QUARTZCAP_7pF		[0]
+> +	PCF85263_QUARTZCAP_6pF		[1]
+> +	PCF85263_QUARTZCAP_12p5pF	[2] DEFAULT
+> +
+
+The correct generic property is quartz-load-femtofarads.
+
+> +- quartz-drive-strength: Drive strength for the quartz:
+> +	PCF85263_QUARTZDRIVE_NORMAL	[0] DEFAULT
+> +	PCF85263_QUARTZDRIVE_LOW	[1]
+> +	PCF85263_QUARTZDRIVE_HIGH	[2]
+> +
+
+This has to take a value in ohm to be generic and then you don't need
+the include file.
+
+> +- quartz-low-jitter: Boolean property, if present enables low jitter mode
+> +  which reduces jitter at the cost of increased power consumption.
+> +
+
+I think that property needs to be nxp specific.
+
+> +- wakeup-source: Boolean property, mark the chip as a wakeup source,
+> +  independently of the availability of an IRQ line connected to the SoC.
+> +  This is useful if the IRQ line is connected to a PMIC or other circuit
+> +  that can power up the device rather than to a normal SOC interrupt.
+> +
+
+This is already defined in bindings/power/wakeup-source.txt I guess you
+can simply refer to it.
+
+>  Example:
+>  
+>  pcf85363: pcf85363@51 {
+>  	compatible = "nxp,pcf85363";
+>  	reg = <0x51>;
+> +
+> +	interrupt-parent = <&gpio1>;
+> +	interrupts = <18 IRQ_TYPE_EDGE_FALLING>;
+> +
+> +	#include <dt-bindings/rtc/pcf85363.h>
+> +	wakeup-source;
+> +	interrupt-output-pin = "INTA";
+> +	quartz-load-capacitance = <PCF85363_QUARTZCAP_12p5pF>;
+> +	quartz-drive-strength = <PCF85363_QUARTZDRIVE_LOW>;
+> +	quartz-low-jitter;
+>  };
+>  
+> diff --git a/include/dt-bindings/rtc/pcf85363.h b/include/dt-bindings/rtc/pcf85363.h
+> new file mode 100644
+> index 000000000000..2c06c28eb5ff
+> --- /dev/null
+> +++ b/include/dt-bindings/rtc/pcf85363.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _DT_BINDINGS_RTC_PCF85363_H
+> +#define _DT_BINDINGS_RTC_PCF85363_H
+> +
+> +/* Quartz capacitance */
+> +#define PCF85363_QUARTZCAP_7pF		0
+> +#define PCF85363_QUARTZCAP_6pF		1
+> +#define PCF85363_QUARTZCAP_12p5pF	2
+> +
+> +/* Quartz drive strength */
+> +#define PCF85363_QUARTZDRIVE_NORMAL	0
+> +#define PCF85363_QUARTZDRIVE_LOW	1
+> +#define PCF85363_QUARTZDRIVE_HIGH	2
+> +
+> +#endif /* _DT_BINDINGS_RTC_PCF85363_H */
+> -- 
+> 2.17.1
+> 
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
