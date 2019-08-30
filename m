@@ -2,42 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC67BA35EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 13:45:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1139DA35EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 13:45:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbfH3Lpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 07:45:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42628 "EHLO
+        id S1728217AbfH3Lpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 07:45:36 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42726 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbfH3Lpb (ORCPT
+        with ESMTP id S1728086AbfH3Lpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 07:45:31 -0400
+        Fri, 30 Aug 2019 07:45:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=qOFpB5UPbiKiX8RMxbq6Ldvho7XhUA2d06eEcpddECA=; b=HVRtwbF/1Ipo
-        6RUmKgxKBk0Jfa6aE+v7H6V4U57Cjo8jVOqZ1VsVNNIHVU4yeUhfO8DARYU99du+IyDc+27M3slWO
-        WTMFmILHh5KGoM0YvglmonoOkNo+Afk6QVx5rYhJWBxvRX0dnZp05/cUELahPEtmDjc2294+ye4Bb
-        O4zlo=;
+        List-Archive; bh=iHEaQREeCsrnNxG2lXosrPwKiXi4CVnAiAtQwzI/tcE=; b=ESKEtOEp+oUi
+        R0coxKnXRUy9/RX4jnZ1miE/qeaYQdxhREemvlpE6Ula0pxc4BUb9cC2VszDdasLniw1iS+KWJ3NU
+        ducJ0YZYAvdfglRHFomiw3wjXeXmfRTyfhByDarJqOUPGH1ZR163nkqMO09cCsILELOwJDlIm2s6c
+        A9XG0=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i3fLL-0006KA-7u; Fri, 30 Aug 2019 11:45:27 +0000
+        id 1i3fLQ-0006KM-Ah; Fri, 30 Aug 2019 11:45:32 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id B4D282742BD3; Fri, 30 Aug 2019 12:45:26 +0100 (BST)
+        id D3C672742B61; Fri, 30 Aug 2019 12:45:31 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Applied "regulator: mt6358: Add BROKEN dependency while waiting for MFD to merge" to the regulator tree
-In-Reply-To: 
+To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: bcm-qspi: Make BSPI default mode" to the spi tree
+In-Reply-To: <1567139325-7912-1-git-send-email-rayagonda.kokatanur@broadcom.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190830114526.B4D282742BD3@ypsilon.sirena.org.uk>
-Date:   Fri, 30 Aug 2019 12:45:26 +0100 (BST)
+Message-Id: <20190830114531.D3C672742B61@ypsilon.sirena.org.uk>
+Date:   Fri, 30 Aug 2019 12:45:31 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -45,11 +47,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: mt6358: Add BROKEN dependency while waiting for MFD to merge
+   spi: bcm-qspi: Make BSPI default mode
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -70,35 +72,36 @@ to this mail.
 Thanks,
 Mark
 
-From 50bc5731f7fc086693d78e42b7d252b97a35cda1 Mon Sep 17 00:00:00 2001
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 30 Aug 2019 12:29:22 +0100
-Subject: [PATCH] regulator: mt6358: Add BROKEN dependency while waiting for
- MFD to merge
+From ca105398430de8c11e5e56a7bbfb00746ac5a268 Mon Sep 17 00:00:00 2001
+From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Date: Fri, 30 Aug 2019 09:58:45 +0530
+Subject: [PATCH] spi: bcm-qspi: Make BSPI default mode
 
-The mt6358 driver was merged in error, it depends on an existing MFD
-rather than a newly added one and needs updates to that driver.  Disable
-the build until those are merged.
+The spi-nor controller defaults to BSPI mode, hence switch back
+to its default mode after MSPI operations (write or erase)
+are completed.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Kamal Dasu <kdasu.kdev@gmail.com>
+Link: https://lore.kernel.org/r/1567139325-7912-1-git-send-email-rayagonda.kokatanur@broadcom.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-bcm-qspi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index d6d8785630b1..3ee63531f6d5 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -621,7 +621,7 @@ config REGULATOR_MT6323
+diff --git a/drivers/spi/spi-bcm-qspi.c b/drivers/spi/spi-bcm-qspi.c
+index 0dbfd2496ab8..7a3531856491 100644
+--- a/drivers/spi/spi-bcm-qspi.c
++++ b/drivers/spi/spi-bcm-qspi.c
+@@ -897,6 +897,7 @@ static int bcm_qspi_transfer_one(struct spi_master *master,
  
- config REGULATOR_MT6358
- 	tristate "MediaTek MT6358 PMIC"
--	depends on MFD_MT6397
-+	depends on MFD_MT6397 && BROKEN
- 	help
- 	  Say y here to select this option to enable the power regulator of
- 	  MediaTek MT6358 PMIC.
+ 		read_from_hw(qspi, slots);
+ 	}
++	bcm_qspi_enable_bspi(qspi);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
