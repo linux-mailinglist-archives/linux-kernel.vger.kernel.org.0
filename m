@@ -2,78 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3512A3145
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BDF9A314F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728378AbfH3HlT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:41:19 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:31927 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727854AbfH3HlQ (ORCPT
+        id S1728519AbfH3Hlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:41:46 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:44103 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727916AbfH3HlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:41:16 -0400
-X-UUID: 31e272001e6647b7b7f64196f730eacb-20190830
-X-UUID: 31e272001e6647b7b7f64196f730eacb-20190830
-Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 9569756; Fri, 30 Aug 2019 15:41:14 +0800
+        Fri, 30 Aug 2019 03:41:12 -0400
+X-UUID: f3c10d97fafc4736a9ddd3c83fd1ab3b-20190830
+X-UUID: f3c10d97fafc4736a9ddd3c83fd1ab3b-20190830
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <bibby.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 229470610; Fri, 30 Aug 2019 15:41:06 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Fri, 30 Aug 2019 15:41:10 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 30 Aug 2019 15:41:09 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
+ Transport; Fri, 30 Aug 2019 15:41:10 +0800
+From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
+To:     David Airlie <airlied@linux.ie>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 7/7] arm64: dts: mt8183: tune disconnect threshold of u2phy
-Date:   Fri, 30 Aug 2019 15:40:54 +0800
-Message-ID: <1567150854-30033-8-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1567150854-30033-1-git-send-email-chunfeng.yun@mediatek.com>
-References: <1567150854-30033-1-git-send-email-chunfeng.yun@mediatek.com>
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-mediatek@lists.infradead.org>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        YT Shen <yt.shen@mediatek.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        CK Hu <ck.hu@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>, <tfiga@chromium.org>,
+        <drinkcat@chromium.org>, <linux-kernel@vger.kernel.org>,
+        Bibby Hsieh <bibby.hsieh@mediatek.com>
+Subject: [PATCH 0/2] Support CMDQ interface and control flow
+Date:   Fri, 30 Aug 2019 15:41:01 +0800
+Message-ID: <20190830074103.16671-1-bibby.hsieh@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: CCBFA59E6DD3D401F653311DC00B6A03FCCB12A28648BE00ECCE3A8A1C5C85292000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set DISCTH to max-15, replace the default value 8, due to
-default disconnect threshold is lower than USB SPEC define
+The CMDQ (Command Queue) in MT8183 is used to help
+update all relevant display controller registers
+with critical time limation.
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
-v3: no changes
+These patched add CMDQ interface in ddp_comp interface
+and add CMDQ control flow.
 
-v2: new patch
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+This patch depends on ptach:
+drm/mediatek: fixup cursor moving unsmooth issue
+(https://patchwork.kernel.org/cover/11123119/)
+add drm support for MT8183
+(https://patchwork.kernel.org/cover/11121519/)
+support gce on mt8183 platform
+(https://patchwork.kernel.org/cover/11120153/)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index dc3e859849c7..5168e345ea3f 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -434,6 +434,7 @@
- 				clocks = <&clk26m>;
- 				clock-names = "ref";
- 				#phy-cells = <1>;
-+				mediatek,discth = <15>;
- 				status = "okay";
- 			};
- 
+Bibby Hsieh (2):
+  drm/mediatek: Support CMDQ interface in ddp component
+  drm/mediatek: Apply CMDQ control flow
+
+ drivers/gpu/drm/mediatek/mtk_disp_color.c   |   7 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c     |  78 ++++----
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c    |  66 +++----
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c     | 190 +++++++++++++++++---
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.h     |   2 +
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 144 +++++++++++----
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  55 ++++--
+ drivers/gpu/drm/mediatek/mtk_drm_plane.c    |   4 +
+ 8 files changed, 393 insertions(+), 153 deletions(-)
+
 -- 
-2.23.0
+2.18.0
 
