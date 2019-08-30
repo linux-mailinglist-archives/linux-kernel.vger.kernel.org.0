@@ -2,57 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DFF4A379D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE5FBA379B
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:16:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbfH3NQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 09:16:14 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:59780 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727620AbfH3NQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 09:16:14 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1i3gkq-00032B-LZ; Fri, 30 Aug 2019 23:15:53 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 30 Aug 2019 23:15:47 +1000
-Date:   Fri, 30 Aug 2019 23:15:47 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Iuliana Prodan <iuliana.prodan@nxp.com>
+        id S1727857AbfH3NQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 09:16:07 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36078 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbfH3NQH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 09:16:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y19so6957786wrd.3;
+        Fri, 30 Aug 2019 06:16:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=/S9eKzefNd7RMHB9sZJ0C1DeLdzhViGsRQEhurBvj1g=;
+        b=A+3XGo8eLt+CGtuybCO9ryzkFPRMsbxbjBkOf4VjPVt2rsCOYMfHDej1Di6DOKJXly
+         SpSQu6uRxWh3yGTnqY1ZE16DixxGObQ/e2iV7A5lzp6yvh9nQAybLebOV5lsWnA9zy/d
+         3/pImBjcK0C0w8gI+jLlA1cbQc8PJ6c+leWm9ZvucIikXtKUEv04Hv3mLGU6IunDmYTN
+         6xBR+ITWi02Y8kNVUdiPsCSFBhSGHWKa3AnrM/2VlEvnccV09yikcVhwKlZt5AHqTeSK
+         4SG8eG0rDij/3dA363LL084hvv3/seTWBYIIvRXDIV1CNS2Q+3B4uRTdpw/0gMbalxGN
+         PBpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/S9eKzefNd7RMHB9sZJ0C1DeLdzhViGsRQEhurBvj1g=;
+        b=MT5jBdo5clXM813seWcMF9utNlgCbpYuyG4K5NJfu7kou9mBB2E3cb+ksOMQ9d9NMi
+         YiY2MX798FiLRMEZTpyeJNSq9ueOm3ft5nL97RuWHkbzcvkPHvPdlJ81JsP5Jq02DRuz
+         81IZL1qPhA79gOZoWuKdoVG8aGjgP0om2lMb3otlfmQGm5t/eHD1LWXkigP40jMF53h/
+         o/yJaBCl669Y69hFBsCanmNBMtdoPjoX2916U/2oeG0clchbmYR9zqqJ2YIo2KM/HzSe
+         c1oBoKJtlfnlp5Xd1Py5buXr+0Z4kO/84EvnEVhGDy20qaDBjMPmily6v2AVpZyR2dZG
+         pxHg==
+X-Gm-Message-State: APjAAAViB2yMaIQA+WkP154h/t1PL49rsxr/uxBrr45cJXmXoaBdHxGS
+        itcUj1kirDxmfq1bOrhhq4k=
+X-Google-Smtp-Source: APXvYqwXJjWiBE6NwdOXRxtwcsABPge0Ls8aIICSf4qJIPRfYa8/4rruesJBhd011tmXjtH1LkfrYA==
+X-Received: by 2002:adf:dfc8:: with SMTP id q8mr19146221wrn.121.1567170965131;
+        Fri, 30 Aug 2019 06:16:05 -0700 (PDT)
+Received: from 5WDYG62.mdi (static-css-cqn-143221.business.bouyguestelecom.com. [176.149.143.221])
+        by smtp.gmail.com with ESMTPSA id t19sm6384517wmi.29.2019.08.30.06.16.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 06:16:04 -0700 (PDT)
+From:   Romain Izard <romain.izard.pro@gmail.com>
+To:     Sebastian Reichel <sre@kernel.org>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "christopher.spencer@sea.co.uk" <christopher.spencer@sea.co.uk>,
-        "cory.tusar@zii.aero" <cory.tusar@zii.aero>,
-        "cphealy@gmail.com" <cphealy@gmail.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 00/16] crypto: caam - Add i.MX8MQ support
-Message-ID: <20190830131547.GA27480@gondor.apana.org.au>
-References: <20190830082320.GA8729@gondor.apana.org.au>
- <VI1PR04MB444580B237A9F57A7BAAF32B8CBD0@VI1PR04MB4445.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB444580B237A9F57A7BAAF32B8CBD0@VI1PR04MB4445.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Guenter Roeck <linux@roeck-us.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Romain Izard <romain.izard.pro@gmail.com>
+Subject: [PATCH v2] power: supply: register HWMON devices with valid names
+Date:   Fri, 30 Aug 2019 15:15:56 +0200
+Message-Id: <20190830131556.10021-1-romain.izard.pro@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 09:15:12AM +0000, Iuliana Prodan wrote:
->
-> Can you, please, add, also, the device tree patch ("arm64: dts: imx8mq: 
-> Add CAAM node") in cryptodev tree?
-> Unfortunately Shawn Guo wasn't cc-ed on this patch and, to have the 
-> complete support for imx8mq, in kernel v5.4, we need the node in dts.
+With the introduction of the HWMON compatibility layer to the power
+supply framework in Linux 5.3, all power supply devices' names can be
+used directly to create HWMON devices with the same names.
 
-If Shawn can ack this then I'm happy to apply this patch.
+But HWMON has rules on allowable names that are different from those
+used in the power supply framework. The dash character is forbidden, as
+it is used by the libsensors library in userspace as a separator,
+whereas this character is used in the device names in more than half of
+the existing power supply drivers. This last case is consistent with the
+typical naming usage with MFD and Device Tree.
 
-Thanks,
+This leads to warnings in the kernel log, with the format:
+
+power_supply gpio-charger: hwmon: \
+	'gpio-charger' is not a valid name attribute, please fix
+
+Add a protection to power_supply_add_hwmon_sysfs() that replaces any
+dash in the device name with an underscore when registering with the
+HWMON framework. Other forbidden characters (star, slash, space, tab,
+newline) are not replaced, as they are not in common use.
+
+Fixes: e67d4dfc9ff1 ("power: supply: Add HWMON compatibility layer")
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+---
+
+v2: Remove a superfluous cast
+
+ drivers/power/supply/power_supply_hwmon.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/supply/power_supply_hwmon.c
+index 51fe60440d12..75cf861ba492 100644
+--- a/drivers/power/supply/power_supply_hwmon.c
++++ b/drivers/power/supply/power_supply_hwmon.c
+@@ -284,6 +284,7 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
+ 	struct device *dev = &psy->dev;
+ 	struct device *hwmon;
+ 	int ret, i;
++	const char *name;
+ 
+ 	if (!devres_open_group(dev, power_supply_add_hwmon_sysfs,
+ 			       GFP_KERNEL))
+@@ -334,7 +335,19 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
+ 		}
+ 	}
+ 
+-	hwmon = devm_hwmon_device_register_with_info(dev, psy->desc->name,
++	name = psy->desc->name;
++	if (strchr(name, '-')) {
++		char *new_name;
++
++		new_name = devm_kstrdup(dev, name, GFP_KERNEL);
++		if (!new_name) {
++			ret = -ENOMEM;
++			goto error;
++		}
++		strreplace(new_name, '-', '_');
++		name = new_name;
++	}
++	hwmon = devm_hwmon_device_register_with_info(dev, name,
+ 						psyhw,
+ 						&power_supply_hwmon_chip_info,
+ 						NULL);
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
+
