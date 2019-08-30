@@ -2,134 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBA0BA3C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:37:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B62FDA3C27
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:38:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728330AbfH3QhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:37:06 -0400
-Received: from mga18.intel.com ([134.134.136.126]:65262 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727926AbfH3QhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:37:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 09:37:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="265369630"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by orsmga001.jf.intel.com with ESMTP; 30 Aug 2019 09:37:01 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH] checkpatch: Validate Fixes: tag using 'commit' checks
-Date:   Fri, 30 Aug 2019 09:36:58 -0700
-Message-Id: <20190830163658.17043-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
+        id S1728333AbfH3Qhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:37:55 -0400
+Received: from smtprelay0089.hostedemail.com ([216.40.44.89]:40152 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727914AbfH3Qhz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:37:55 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id C4F3018224D7B;
+        Fri, 30 Aug 2019 16:37:53 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 90,9,0,,d41d8cd98f00b204,joe@perches.com,:::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1963:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3653:3865:3866:3867:3868:3870:3871:3872:3874:4321:4362:5007:10004:10400:10450:10455:10848:11026:11232:11658:11914:12043:12050:12297:12555:12740:12760:12895:12986:13069:13095:13181:13229:13311:13357:13439:14181:14659:14721:19904:19999:21080:21433:21627:21740:21741:30054:30064:30070:30080:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: wind21_a98b898a015f
+X-Filterd-Recvd-Size: 2175
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 30 Aug 2019 16:37:52 +0000 (UTC)
+Message-ID: <19c9b30b3d77a65c6c4289a2eeeb6cbe40594aab.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: Remove obsolete period from "ambiguous
+ SHA1" query
+From:   Joe Perches <joe@perches.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Date:   Fri, 30 Aug 2019 09:37:51 -0700
+In-Reply-To: <20190830163103.15914-1-sean.j.christopherson@intel.com>
+References: <20190830163103.15914-1-sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rework checkpatch's commit checking to explicitly include the Fixes:
-tag so that it catches errors like too short[1] or fat fingered[2] SHA1
-references.
+On Fri, 2019-08-30 at 09:31 -0700, Sean Christopherson wrote:
+> Git dropped the period from its "ambiguous SHA1" error message in commit
+> 0c99171ad2 ("get_short_sha1: mark ambiguity error for translation"),
+> circa 2016.  Drop the period from checkpatch's associated query so as to
+> match both the old and new error messages.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  scripts/checkpatch.pl | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 93a7edfe0f05..ef3642c53100 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -962,7 +962,7 @@ sub git_commit_info {
+>  
+>  	return ($id, $desc) if ($#lines < 0);
+>  
+> -	if ($lines[0] =~ /^error: short SHA1 $commit is ambiguous\./) {
+> +	if ($lines[0] =~ /^error: short SHA1 $commit is ambiguous/) {
+>  # Maybe one day convert this block of bash into something that returns
+>  # all matching commit ids, but it's very slow...
+>  #
 
-Add a new Fixes-only check to verify the fixed commit is a valid object
-in the repository.
+Thanks.
 
-[1] https://lkml.kernel.org/r/20190830010615.GC27970@linux.intel.com
-[2] https://lkml.kernel.org/r/20190825233120.18ac25e4@canb.auug.org.au
+Did git ever change to actually support human readable
+messages in multiple languages?
 
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- scripts/checkpatch.pl | 39 +++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+If so, this won't work for non-english output.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 93a7edfe0f05..dead0eb41007 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2756,10 +2756,10 @@ sub process {
- 		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
- 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
- 		    ($line =~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
-+		     $line =~ /\bfixes:\s*[0-9a-f]{5,}\b/i ||
- 		     ($line =~ /(?:\s|^)[0-9a-f]{12,40}(?:[\s"'\(\[]|$)/i &&
--		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i &&
--		      $line !~ /\bfixes:\s*[0-9a-f]{12,40}/i))) {
--			my $init_char = "c";
-+		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i))) {
-+			my $init_tag = "";
- 			my $orig_commit = "";
- 			my $short = 1;
- 			my $long = 0;
-@@ -2771,29 +2771,31 @@ sub process {
- 			my $orig_desc = "commit description";
- 			my $description = "";
- 
--			if ($line =~ /\b(c)ommit\s+([0-9a-f]{5,})\b/i) {
--				$init_char = $1;
-+			if ($line =~ /\b(commit)\s+([0-9a-f]{5,})\b/i ||
-+			    $line =~ /\b(fixes:)\s*([0-9a-f]{5,})\b/i) {
-+				$init_tag = $1;
- 				$orig_commit = lc($2);
- 			} elsif ($line =~ /\b([0-9a-f]{12,40})\b/i) {
-+				$init_tag = "commit";
- 				$orig_commit = lc($1);
- 			}
- 
--			$short = 0 if ($line =~ /\bcommit\s+[0-9a-f]{12,40}/i);
--			$long = 1 if ($line =~ /\bcommit\s+[0-9a-f]{41,}/i);
--			$space = 0 if ($line =~ /\bcommit [0-9a-f]/i);
--			$case = 0 if ($line =~ /\b[Cc]ommit\s+[0-9a-f]{5,40}[^A-F]/);
--			if ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
-+			$short = 0 if ($line =~ /\b$init_tag\s+[0-9a-f]{12,40}/i);
-+			$long = 1 if ($line =~ /\b$init_tag\s+[0-9a-f]{41,}/i);
-+			$space = 0 if ($line =~ /\b$init_tag [0-9a-f]/i);
-+			$case = 0 if ($line =~ /\b$init_tag\s+[0-9a-f]{5,40}[^A-F]/);
-+			if ($line =~ /\b$init_tag\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
- 				$orig_desc = $1;
- 				$hasparens = 1;
--			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s*$/i &&
-+			} elsif ($line =~ /\b$init_tag\s+[0-9a-f]{5,}\s*$/i &&
- 				 defined $rawlines[$linenr] &&
- 				 $rawlines[$linenr] =~ /^\s*\("([^"]+)"\)/) {
- 				$orig_desc = $1;
- 				$hasparens = 1;
--			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
-+			} elsif ($line =~ /\b$init_tag\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
- 				 defined $rawlines[$linenr] &&
- 				 $rawlines[$linenr] =~ /^\s*[^"]+"\)/) {
--				$line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
-+				$line =~ /\b$init_tag\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
- 				$orig_desc = $1;
- 				$rawlines[$linenr] =~ /^\s*([^"]+)"\)/;
- 				$orig_desc .= " " . $1;
-@@ -2803,10 +2805,15 @@ sub process {
- 			($id, $description) = git_commit_info($orig_commit,
- 							      $id, $orig_desc);
- 
--			if (defined($id) &&
--			   ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens)) {
-+
-+			if (!defined($id)) {
-+				if ($init_tag =~ /fixes:/i) {
-+					ERROR("GIT_COMMIT_ID",
-+					      "Target SHA1 '$orig_commit' does not exist\n" . $herecurr);
-+				}
-+			} elsif ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens) {
- 				ERROR("GIT_COMMIT_ID",
--				      "Please use git commit description style 'commit <12+ chars of sha1> (\"<title line>\")' - ie: '${init_char}ommit $id (\"$description\")'\n" . $herecurr);
-+				      "Please use git commit description style '$init_tag <12+ chars of sha1> (\"<title line>\")' - ie: '$init_tag $id (\"$description\")'\n" . $herecurr);
- 			}
- 		}
- 
--- 
-2.22.0
+It probably doesn't matter though.
+
+Acked-by: Joe Perches <joe@perches.com>
+
 
