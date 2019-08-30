@@ -2,78 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB365A2DBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 05:56:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59118A2DC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 05:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbfH3D4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 23:56:21 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42668 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728221AbfH3D4P (ORCPT
+        id S1728141AbfH3D51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 23:57:27 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:17552 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727392AbfH3D51 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 23:56:15 -0400
-Received: by mail-wr1-f67.google.com with SMTP id b16so5449799wrq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 20:56:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ocQtEStflZxIuihvafAK7EGGQ6iNiCmKabe8FgYSRcU=;
-        b=pgDyR5n0vEWcyF4mK7B7JKw1Kak17VHQbj2M3Hp3PitZ+iA4H+9RNGB3Su4xwKM8yp
-         rbZCHB4Ul0uL2tKLqapP79SpQ7jkWzC/NnhR/QKnv1HKjlBEFizhi3RttLgk+K6ykmf7
-         kPbzJzfMe9rfXBT1UhoI4j6O05/3luLRnngWs2Hc+NmfIWi02eyT0JsdDBvzCnioAFHy
-         hAZ/9QNvaxyJ1nkq320+KlNgGq+lizl0BOYrnNXluk+12xyuaJs4bg+iHALQumOAYuiR
-         Luz/P83qlayytWmxmAtL66P/Va0YzIZbNd2uXqo8zw1tUCc9jaLZoNB6gD7yjSBoYVTM
-         Iu8w==
-X-Gm-Message-State: APjAAAVxb7fc/imqHBoI5A6aN3SveMGwAekkWJxbTVNuwrmWaO11wmLS
-        dXzamlwi9xq9IcL7X4rP4LlP4iLVdlhp1UeAZjc=
-X-Google-Smtp-Source: APXvYqx+KNemY0Dhr16K2V2ol6cAIcXgp6k2ocV8ZDHoGaivPd7xRhrs9zz3tkQorUlQxGLFDUQ5sTLRN0BUqS0Rvx0=
-X-Received: by 2002:adf:f0ce:: with SMTP id x14mr15650857wro.31.1567137373367;
- Thu, 29 Aug 2019 20:56:13 -0700 (PDT)
+        Thu, 29 Aug 2019 23:57:27 -0400
+X-UUID: fefe565595ed48edb3adb77924f16125-20190830
+X-UUID: fefe565595ed48edb3adb77924f16125-20190830
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 546792957; Fri, 30 Aug 2019 11:57:21 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 30 Aug 2019 11:57:25 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 30 Aug 2019 11:57:25 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Ryder Lee <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>, <linux-pwm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Sam Shih <sam.shih@mediatek.com>
+Subject: [RESEND, PATCH v7 0/11] Add mt7629 and fix mt7628 pwm
+Date:   Fri, 30 Aug 2019 11:57:06 +0800
+Message-ID: <1567137437-10041-1-git-send-email-sam.shih@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <20190828073130.83800-1-namhyung@kernel.org> <20190828073130.83800-2-namhyung@kernel.org>
- <20190828144830.GQ2263813@devbig004.ftw2.facebook.com>
-In-Reply-To: <20190828144830.GQ2263813@devbig004.ftw2.facebook.com>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Fri, 30 Aug 2019 12:56:02 +0900
-Message-ID: <CAM9d7cgFAc7WyZY4n82YLU=5yAifrVqoCtHh2iE-aLKx=uC4=w@mail.gmail.com>
-Subject: Re: [PATCH 1/9] perf/core: Add PERF_RECORD_CGROUP event
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: F7BDBA47FF00EC61B619D606C371BCB2892B5403477FFFBA9C3B3A2986E6A3682000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun,
+Changes since v7:
+  1. PATCH v7 10/11: Add a missed Reviewed-by tag
 
-On Wed, Aug 28, 2019 at 11:48 PM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello, Namhyung.
->
-> On Wed, Aug 28, 2019 at 04:31:22PM +0900, Namhyung Kim wrote:
-> > +      * struct {
-> > +      *      struct perf_event_header        header;
-> > +      *      u64                             ino;
-> > +      *      u64                             path_len;
-> > +      *      char                            path[];
->
-> ino and path aren't great identifers for cgroups because both can get
-> recycled pretty quickly.  Can you please take a look at
-> KERNFS_ROOT_SUPPORT_EXPORTOP?  That's the fhandle that cgroup uses,
-> currently the standard ino+gen which isn't ideal but good enough.
-> Another benefit is that the path can also be resolved efficiently from
-> userspace given the handle.
+Changes since v6:
+  1. Due to we can use fixed-clock in DT
+     We removed has_clks and fixed-clock properties 
 
-Thanks for the info, I'll take a look at it.
-Namhyung
+Changes since v5:
+- Follow reviewer's comments:
+  1. the license stuff is a separate change
+  2. split fix mt7628 pwm into a single patch
+  3. to ensure to not use mtk_pwm_clk_name[10] 
+     (After dynamic allocate clock array patch, 
+      this is no need to check)
+  4. Use clock-frequency property to replace 
+     the use of has_clks
+
+Changes since v4:
+- Follow reviewer's comments (v3: pwm: mediatek: add a property "num-pwms")
+  Move the changes of droping the check for of_device_get_match_data
+  returning non-NULL to next patch
+- Follow reviewers's comments 
+  (v3: pwm: mediatek: allocate the clks array dynamically)
+  1. use pc->soc->has_clks to check clocks exist or not.
+  2. Add error message when probe() unable to get clks
+- Fixes bug when SoC is old mips which has no complex clock tree.
+if clocks not exist, use the new property from DT to apply period 
+calculation; otherwise, use clk_get_rate to get clock frequency and 
+apply period calculation.
+
+Changes since v3:
+- add a new property "clock-frequency" and fix mt7628 pwm
+- add mt7629 pwm support
+
+Changes since v2:
+- use num-pwms instead of mediatek,num-pwms.
+- rename the member from num_pwms to fallback_num_pwms to make it 
+  more obvious that it doesn't represent the actually used value.
+- add a dev_warn and a expressive comment to help other developers 
+  to not start adding num_pwms in the compatible_data.
+
+Changes since v1:
+- add some checks for backwards compatibility.
+
+
+Ryder Lee (5):
+  pwm: mediatek: add a property "num-pwms"
+  dt-bindings: pwm: add a property "num-pwms"
+  arm64: dts: mt7622: add a property "num-pwms" for PWM
+  arm: dts: mt7623: add a property "num-pwms" for PWM
+  dt-bindings: pwm: update bindings for MT7629 SoC
+
+Sam Shih (6):
+  pwm: mediatek: droping the check for of_device_get_match_data
+  pwm: mediatek: remove a property "has-clks"
+  pwm: mediatek: allocate the clks array dynamically
+  pwm: mediatek: use pwm_mediatek as common prefix
+  pwm: mediatek: update license and switch to SPDX tag
+  arm: dts: mediatek: add mt7629 pwm support
+
+ .../devicetree/bindings/pwm/pwm-mediatek.txt  |   8 +-
+ arch/arm/boot/dts/mt7623.dtsi                 |   1 +
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi      |   1 +
+ drivers/pwm/pwm-mediatek.c                    | 245 +++++++++---------
+ arch/arm/boot/dts/mt7629.dtsi                 | 16 ++++++++++++++++
+ 5 files changed, 149 insertions(+), 122 deletions(-)
+
+-- 
+2.17.1
+
