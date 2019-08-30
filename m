@@ -2,79 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84771A3C46
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E73FA3C4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:42:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbfH3QmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:42:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41120 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727976AbfH3QmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:42:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A5864B696;
-        Fri, 30 Aug 2019 16:42:11 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 6CA5F1E099F; Fri, 30 Aug 2019 18:42:11 +0200 (CEST)
-Date:   Fri, 30 Aug 2019 18:42:11 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH block/for-next] writeback: add tracepoints for cgroup
- foreign writebacks
-Message-ID: <20190830164211.GD25069@quack2.suse.cz>
-References: <20190829224701.GX2263813@devbig004.ftw2.facebook.com>
- <20190830154023.GC25069@quack2.suse.cz>
- <20190830154921.GZ2263813@devbig004.ftw2.facebook.com>
+        id S1728241AbfH3Qme (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:42:34 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:49953 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727976AbfH3Qme (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:42:34 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-117-W1tnBhGoOWa2nq3fOcF08g-1; Fri, 30 Aug 2019 17:42:31 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 30 Aug 2019 17:42:30 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 30 Aug 2019 17:42:30 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Linus Torvalds' <torvalds@linux-foundation.org>
+CC:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Nick Desaulniers" <ndesaulniers@google.com>,
+        Ilie Halip <ilie.halip@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: RE: objtool warning "uses BP as a scratch register" with clang-9
+Thread-Topic: objtool warning "uses BP as a scratch register" with clang-9
+Thread-Index: AQHVX0pqqj9VEXOMQ0SdqQ13OMpYJacT10cw///xooCAABloAA==
+Date:   Fri, 30 Aug 2019 16:42:30 +0000
+Message-ID: <108518fd630642468e5c6e0274485a93@AcuMS.aculab.com>
+References: <CAK8P3a2DWh54eroBLXo+sPgJc95aAMRWdLB2n-pANss1RbLiBw@mail.gmail.com>
+ <CAKwvOdnD1mEd-G9sWBtnzfe9oGTeZYws6zNJA7opS69DN08jPg@mail.gmail.com>
+ <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
+ <CAK8P3a0bY9QfamCveE3P4H+Nrs1e6CTqWVgiY+MCd9hJmgMQZg@mail.gmail.com>
+ <20190828152226.r6pl64ij5kol6d4p@treble>
+ <CAK8P3a2ATzqRSqVeeKNswLU74+bjvwK_GmG0=jbMymVaSp2ysw@mail.gmail.com>
+ <20190829173458.skttfjlulbiz5s25@treble>
+ <CAHk-=wi-epJZfBHDbKKDZ64us7WkF=LpUfhvYBmZSteO8Q0RAg@mail.gmail.com>
+ <CAK8P3a1K5HgfACmJXr4dTTwDJFz5BeSCCa3RQWYbXGE-2q4TJQ@mail.gmail.com>
+ <CAHk-=whuUdqrh2=LLNfRiW6oadx0zzGVkvqyx_O1cGLa2U6Jjg@mail.gmail.com>
+ <20190830150208.jyk7tfzznqimc6ow@treble>
+ <CAHk-=wgqAcRU99Dp20+ZAux7Mdgbnw5deOguwOjdCJY0eNnSkA@mail.gmail.com>
+ <d1af87f139b54346b420d06855297cfa@AcuMS.aculab.com>
+ <CAHk-=wh33ouqv7UNovQn8WWXGA_kXEHDY3_H7x5-_j33AHYPwg@mail.gmail.com>
+In-Reply-To: <CAHk-=wh33ouqv7UNovQn8WWXGA_kXEHDY3_H7x5-_j33AHYPwg@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830154921.GZ2263813@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MC-Unique: W1tnBhGoOWa2nq3fOcF08g-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 30-08-19 08:49:21, Tejun Heo wrote:
-> Hello, Jan.
-> 
-> On Fri, Aug 30, 2019 at 05:40:23PM +0200, Jan Kara wrote:
-> > > +	TP_fast_assign(
-> > > +		strncpy(__entry->name,	dev_name(wb->bdi->dev), 32);
-> > > +		__entry->bdi_id		= wb->bdi->id;
-> > > +		__entry->ino		= page->mapping->host->i_ino;
-> > > +		__entry->memcg_id	= wb->memcg_css->id;
-> > > +		__entry->cgroup_ino	= __trace_wb_assign_cgroup(wb);
-> > > +		__entry->page_cgroup_ino = page->mem_cgroup->css.cgroup->kn->id.ino;
-> > > +	),
-> > 
-> > Are the page dereferences above safe? I suppose lock_page_memcg() protects
-> > the page->mem_cgroup->css.cgroup->kn->id dereference? But page->mapping
-> > does not seem to be protected by page lock?
-> 
-> Hah, I assumed it would work because there are preceding if
-> (page_mapping()) tests in the dirty paths -
-> e.g. __set_page_dirty_nobuffers().  Oh, regardless of that assumption,
-> I should have used page_mapping().
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMzAgQXVndXN0IDIwMTkgMTc6MDENCj4gT24g
+RnJpLCBBdWcgMzAsIDIwMTkgYXQgODo1NSBBTSBEYXZpZCBMYWlnaHQgPERhdmlkLkxhaWdodEBh
+Y3VsYWIuY29tPiB3cm90ZToNCi4uLg0KPiBCdXQgeWVhaCwgaW4gZ2VuZXJhbCBpdCdzIGp1c3Qg
+bm90IG9idmlvdXNseSBzYWZlIHRvIHR1cm4gaW5kaXZpZHVhbA0KPiBhY2Nlc3NlcyBpbnRvIG1l
+bXNldC9tZW1jcHkuIEluIGNvbnRyYXN0LCB0aGUgcmV2ZXJzZSBpcyBvYnZpb3VzbHkNCj4gZmlu
+ZSAoYW5kIF9yZXF1aXJlZF8gZm9yIGFueSBraW5kIG9mIGhhbGYtd2F5IGdvb2QgcGVyZm9ybWFu
+Y2Ugd2hlbg0KPiB5b3UgZG8gc21hbGwgY29uc3RhbnQtc2l6ZWQgbWVtb3J5IGNvcGllcywgd2hp
+Y2ggaXMgYWN0dWFsbHkgYSBjb21tb24NCj4gcGF0dGVybiBwYXJ0bHkgYmVjYXVzZSB0aGUgaW5z
+YW5lIEMgYWxpYXNpbmcgcnVsZXMgaGF2ZSB0YXVnaHQgcGVvcGxlDQo+IHRoYXQgaXQncyB0aGUg
+X29ubHlfIHNhZmUgcGF0dGVybiBpbiBzb21lIHNpdHVhdGlvbnMpLg0KDQpJIHdvbmRlciB3aGVy
+ZSB0aGUgYWN0dWFsIGN1dG9mZiBpcyBmb3IgY29udmVydGluZyBhIHNlcXVlbmNlIG9mIHdyaXRl
+cw0Kb2YgemVybyBpbnRvIGEgY2FsbCB0byBtZW1zZXQoKT8NCg0KSWYgeW91IGFzc3VtZSBlaXRo
+ZXI6DQoxKSBjb2xkIGNhY2hlIChmb3IgbWVtc2V0KS4NCjIpIGJyYW5jaCBwcmVkaWN0b3Igbm90
+IHNldCBmb3IgemVyb2luZyBhIHNtYWxsIG51bWJlciBvZiB3b3Jkcy4NCkkgc3VzcGVjdCB0aGF0
+IGl0IGlzIGNvbnNpZGVyYWJsZS4NCg0KPiBUaGlzIGlzIHdoeSBJIHRoaW5rICItZmZyZWVzdGFu
+ZGluZyIgYW5kICItZm5vLWJ1aWx0aW4tbWVtY3B5IiBhcmUNCj4gY29tcGxldGVseSBicm9rZW4g
+YXMtaXM6IHRoZXkgYXJlIGFuIGFsbC1vci1ub3RoaW5nIHRoaW5nLCB0aGV5IGRvbid0DQo+IHVu
+ZGVyc3RhbmQgdGhhdCBpdCdzIGRpcmVjdGlvbmFsLg0KDQpZZXAsIGFuZCBzb21lIG9mIHRoZSBj
+b252ZXJzaW9ucyBhcmUgYSBqdXN0IGEgUElUQS4NCmVnIHByaW50ZigiJXMiLCBzdHJpbmcpID0+
+IHB1dHMoc3RyaW5nKS4NCg0KSSB3YXMgYWxzbyB0cnlpbmcgdG8gZ2V0IGFyb3VuZCB0aGUgbWVt
+Y3B5QEdMSUJDNCBmdWJhciBzbyBJIGNvdWxkDQpjb21waWxlIGNvZGUgdGhhdCB3b3VsZCBydW4g
+b24gYW4gb2xkIHN5c3RlbS4NCkkgbWFuYWdlZCBldmVyeXRoaW5nIGV4Y2VwdCB0aGUgbWVtY3B5
+KCkgY2FsbHMgdGhhdCBnY2MgZW1pdHMgZm9yDQpzdHJ1Y3R1cmUgY29waWVzIChpdCBtaWdodCBl
+dmVuIGRvIHRoYXQgZXZlbiBmb3IgJ2ZyZWVzdGFuZGluZycpLg0KSXQgcmVhbGx5IG91Z2h0IHRv
+IGVtaXQgYSBjYWxsIHRvIGEgZGlmZmVyZW50IHN5bWJvbCB0aGF0IHdvdWxkIG5vcm1hbGx5DQpi
+ZSBhbGlhc2VkIHRvIG1lbWNweSgpIChvciBiZXR0ZXIgYSBtZW1jcHlfd29yZHMoKSBmdW5jdGlv
+bikuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkg
+Um9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlv
+biBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
-Well, but if you look at __set_page_dirty_nobuffers() it is careful. It
-does:
-
-struct address_space *mapping = page_mapping(page);
-
-if (!mapping) {
-	bail
-}
-... use mapping
-
-Exactly because page->mapping can become NULL under your hands if you don't
-hold page lock. So I think you either need something similar in your
-tracepoint or handle this in the caller.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
