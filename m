@@ -2,98 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DEE5A35B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 13:31:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 148D9A35B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 13:32:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfH3Lbb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 07:31:31 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:55752 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbfH3Lba (ORCPT
+        id S1727876AbfH3Lcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 07:32:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55124 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfH3Lcf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 07:31:30 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UBSsfh121102;
-        Fri, 30 Aug 2019 11:31:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=MXQpf7u6DFSQNCxl5IHEXZn/5OVokPF0N7A//Laqfbw=;
- b=LpaGfx4NaQDz2XRxK++uChttGyGz/XEwB5wkXXnSpyfGOJwYACnzke3qDuXFh/Y4rAbc
- jR8sRMQmqS8MMUY7UAJXfAxF3xmclOGRXjyzqLUZKjOjNw1awSJPU75nwff06DkvMaWV
- ll9oK8dNGPtLG1XXpnZ3i68qiPIHxDEAX0NLMd9YiGmzJFTgHeD7FrbXPeqAmvrRtWkW
- 9izG10MNteHfh4KTsHGFGIZqD3woOUSmSkxEOhP7IsXoK7nKS2zjeKWPx+tgtYN6lo7i
- lakGsdEyEf2YAZcNAkSwNMjhWb/CzM+rS+tvYqMd7/X8/QpnNolx1sH0BgA8SwPVz+fT OQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2uq2wm00vy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 11:31:07 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UBSqlN057236;
-        Fri, 30 Aug 2019 11:31:07 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2uphav2fq9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 11:31:06 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7UBUx1t024903;
-        Fri, 30 Aug 2019 11:31:00 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 30 Aug 2019 04:30:58 -0700
-Date:   Fri, 30 Aug 2019 14:30:47 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     Chao Yu <yuchao0@huawei.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Joe Perches <joe@perches.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, weidu.du@huawei.com,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v3 6/7] erofs: remove all likely/unlikely annotations
-Message-ID: <20190830113047.GG8372@kadam>
-References: <20190830032006.GA20217@architecture4>
- <20190830033643.51019-1-gaoxiang25@huawei.com>
- <20190830033643.51019-6-gaoxiang25@huawei.com>
+        Fri, 30 Aug 2019 07:32:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YGyzX7o+0kt4KwDAVePl6jt5JfthEYZLjGAK6qAsuCg=; b=V2r8Xy3yxoPkd6XGDjTOp8joX
+        RhTqwqBI37l5VwDVnTCed//97hYrKG4mr3jynHcCXCDzScrt5BdUke4p4ysRn8CrVZ/prUsZrF27K
+        JZrflsUbI+kUw68BZ67TIx03i81RN/sjF5XVDMkPO0Co6LXgY29k8Q7bXo+p4G1uSjDv0s8wnJpSN
+        t5tBIq3puLcZaSFlSmGMv8rPY9nKbo7RbjLUbyo09ghwrxOFGxBgQAy4BPnUhyvB+H5vkfRDH6M0n
+        06wB/A0Vs5rKK30DHv81Sig6dfjGVEZ6fIHShsOWYmjL4D29V5ST265og9WYvgj0n83qFyIvLFdbY
+        yjA+4XRMQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3f8f-0000vu-Ui; Fri, 30 Aug 2019 11:32:22 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id F259B300489;
+        Fri, 30 Aug 2019 13:31:41 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7B238200AB64F; Fri, 30 Aug 2019 13:32:16 +0200 (CEST)
+Date:   Fri, 30 Aug 2019 13:32:16 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Akira Yokosawa <akiyks@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will@kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Ingo Molnar <mingo@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        SeongJae Park <sj38.park@gmail.com>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH] tools: memory-model: add it to the Documentation body
+Message-ID: <20190830113216.GE2369@hirez.programming.kicks-ass.net>
+References: <Pine.LNX.4.44L0.1907310947340.1497-100000@iolanthe.rowland.org>
+ <cb9785b7-ed43-b91a-7392-e50216bd5771@gmail.com>
+ <20190731202517.GF5913@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190830033643.51019-6-gaoxiang25@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908300125
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908300125
+In-Reply-To: <20190731202517.GF5913@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 11:36:42AM +0800, Gao Xiang wrote:
-> As Dan Carpenter suggested [1], I have to remove
-> all erofs likely/unlikely annotations.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20190829154346.GK23584@kadam/
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> ---
+On Wed, Jul 31, 2019 at 01:25:17PM -0700, Paul E. McKenney wrote:
+> Looks like a pretty clear consensus thus far.  Any objections to keeping
+> these .txt for the time being?
 
-Thanks!
-
-This is a nice readability improvement and I'm so sure it won't impact
-benchmarking at all.
-
-Acked-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-regards,
-dan carpenter
-
+Obviously I'm a huge proponent of abandoning RST and an advocate for
+normal .txt files ;-)
