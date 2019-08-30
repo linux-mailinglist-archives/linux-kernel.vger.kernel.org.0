@@ -2,109 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D155A2FB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:22:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD93A2FBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbfH3GWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 02:22:50 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:44507 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726090AbfH3GWt (ORCPT
+        id S1727945AbfH3GX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 02:23:56 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:19197 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726978AbfH3GXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 02:22:49 -0400
-X-UUID: 9c6850f9bd614fb3a57d21a7a3a9077a-20190830
-X-UUID: 9c6850f9bd614fb3a57d21a7a3a9077a-20190830
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
+        Fri, 30 Aug 2019 02:23:55 -0400
+X-UUID: be59b7b98b384e11bbfdd4a7c4bf4645-20190830
+X-UUID: be59b7b98b384e11bbfdd4a7c4bf4645-20190830
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1531351212; Fri, 30 Aug 2019 14:22:36 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32DR.mediatek.inc
- (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Aug
- 2019 14:22:34 +0800
-Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 30 Aug 2019 14:22:34 +0800
-Message-ID: <1567146149.7317.40.camel@mhfsdcap03>
-Subject: Re: [PATCH 02/11] dt-bindings: phy-mtk-tphy: make the ref clock
- optional
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
+        with ESMTP id 1084025278; Fri, 30 Aug 2019 14:23:42 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 30 Aug 2019 14:23:38 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 30 Aug 2019 14:23:32 +0800
+Message-ID: <1567146206.5942.17.camel@mtksdaap41>
+Subject: Re: [PATCH v5, 26/32] drm/mediatek: add connection from RDMA0 to
+ COLOR0
+From:   CK Hu <ck.hu@mediatek.com>
+To:     <yongqiang.niu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Date:   Fri, 30 Aug 2019 14:22:29 +0800
-In-Reply-To: <20190829192550.GA29881@bogus>
-References: <e99c0d7a55869a4425250c601b80a3331c9d0976.1566542696.git.chunfeng.yun@mediatek.com>
-         <a31d78484b64f853a16e7dcb16fae9fc0de45ebb.1566542696.git.chunfeng.yun@mediatek.com>
-         <20190829192550.GA29881@bogus>
+        <linux-mediatek@lists.infradead.org>
+Date:   Fri, 30 Aug 2019 14:23:26 +0800
+In-Reply-To: <1567090254-15566-27-git-send-email-yongqiang.niu@mediatek.com>
+References: <1567090254-15566-1-git-send-email-yongqiang.niu@mediatek.com>
+         <1567090254-15566-27-git-send-email-yongqiang.niu@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 98DB08F7F53AF6863050E9819BDD5FA46007C836A76BD5835C75A269FC4EE4DF2000:8
+X-TM-SNTS-SMTP: 90CFDD7BE289D8F53A9415F306A9B989ED8B297FE8AD0D097BA97BD393BD3FD12000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-29 at 14:25 -0500, Rob Herring wrote:
-> On Fri, Aug 23, 2019 at 03:00:09PM +0800, Chunfeng Yun wrote:
-> > Make the ref clock optional, then we no need refer to a fixed-clock
-> > in DTS anymore when the clock of USB3 PHY comes from oscillator
-> > directly
-> > 
-> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> > ---
-> >  .../devicetree/bindings/phy/phy-mtk-tphy.txt        | 13 +++++++------
-> >  1 file changed, 7 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> > index d5b327f85fa2..1c18bf10b2fe 100644
-> > --- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> > +++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-> > @@ -34,12 +34,6 @@ Optional properties (controller (parent) node):
-> >  
-> >  Required properties (port (child) node):
-> >  - reg		: address and length of the register set for the port.
-> > -- clocks	: a list of phandle + clock-specifier pairs, one for each
-> > -		  entry in clock-names
-> > -- clock-names	: must contain
-> > -		  "ref": 48M reference clock for HighSpeed analog phy; and 26M
-> > -			reference clock for SuperSpeed analog phy, sometimes is
-> > -			24M, 25M or 27M, depended on platform.
-> >  - #phy-cells	: should be 1 (See second example)
-> >  		  cell after port phandle is phy type from:
-> >  			- PHY_TYPE_USB2
-> > @@ -48,6 +42,13 @@ Required properties (port (child) node):
-> >  			- PHY_TYPE_SATA
-> >  
-> >  Optional properties (PHY_TYPE_USB2 port (child) node):
-> > +- clocks	: a list of phandle + clock-specifier pairs, one for each
-> > +		  entry in clock-names
-> > +- clock-names	: may contain
-> > +		  "ref": 48M reference clock for HighSpeed anolog phy; and 26M
-> > +			reference clock for SuperSpeed anolog phy, sometimes is
-> > +			24M, 25M or 27M, depended on platform.
-> 
-> How do you know the frequency when it is not present?
-It's always present, but sometimes it's always on by default (e.g. 48Mhz
-of U2 PHY), or comes from oscillator directly  (e.g. 26Mhz of U3 PHY),
-so not controlled by CCF, of course we can use a fixed-clock in latter
-case, it's useful to make it optional for these two cases.
+Hi, Yongqiang:
 
-Thanks
+On Thu, 2019-08-29 at 22:50 +0800, yongqiang.niu@mediatek.com wrote:
+> From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> 
+> This patch add connection from RDMA0 to COLOR0
+
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
 > 
-> > +
-> >  - mediatek,eye-src	: u32, the value of slew rate calibrate
-> >  - mediatek,eye-vrt	: u32, the selection of VRT reference voltage
-> >  - mediatek,eye-term	: u32, the selection of HS_TX TERM reference voltage
-> > -- 
-> > 2.23.0
-> > 
+> Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 42a130a..03a46ec 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -171,6 +171,8 @@ struct mtk_ddp {
+>  
+>  struct mtk_mmsys_reg_data {
+>  	u32 ovl0_mout_en;
+> +	u32 rdma0_sout_sel_in;
+> +	u32 rdma0_sout_color0;
+>  	u32 rdma1_sout_sel_in;
+>  	u32 rdma1_sout_dpi0;
+>  	u32 dpi0_sel_in;
+> @@ -428,6 +430,9 @@ static unsigned int mtk_ddp_sout_sel(const struct mtk_mmsys_reg_data *data,
+>  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI3) {
+>  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+>  		value = RDMA2_SOUT_DSI3;
+> +	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_COLOR0) {
+> +		*addr = data->rdma0_sout_sel_in;
+> +		value = data->rdma0_sout_color0;
+>  	} else {
+>  		value = 0;
+>  	}
 
 
