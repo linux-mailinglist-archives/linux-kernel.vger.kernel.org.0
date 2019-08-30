@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42987A39F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:10:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84B51A39EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:09:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbfH3PJ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:09:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42540 "EHLO mail.kernel.org"
+        id S1728294AbfH3PJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:09:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727603AbfH3PJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:09:26 -0400
+        id S1728195AbfH3PJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:09:27 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 870132342B;
-        Fri, 30 Aug 2019 15:09:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 765FC2342A;
+        Fri, 30 Aug 2019 15:09:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567177765;
-        bh=/hnuajz4jZZo0tGrLg5f+zF+jCL6MFUKdWmwpFV9keM=;
+        s=default; t=1567177766;
+        bh=Ei+UUuI2bjs9MCSyFZ3sjrySi931/9VchlR6vlNSp5E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U20X+7lB/NHeQ4emHTkTmhQlvT5181BW1tE0zMyXVAHJQYzvAqhRJZBcZjnymOZH0
-         Ea3apXK8hGJXYaDzP/IdnADijDyzniLDuvTYwJ0FCaXu2Cx5uwqv0nOaVmwHz8s9ka
-         bL9QSeFNCVQ5ZH2bWa2yEyfcB0z3igr5s5sVjvAw=
+        b=B1CKzGdB4sF99gq98msmqUSBmQuG0RmHrf8M4uvLeAH6qzKDqLaMZSsAOCvzd4Pv2
+         N6OW+6++0D8JjgLbfu7nEpuIAFmD4kZsj4OxTl30XBLg+gayj4S6CxuFhk4M6vqHFl
+         VvTKMNM07iYuoZ9MtxB00lpeENkYDzR4EHl2A4EU=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 04/12] clk: fixed-rate: Move to_clk_fixed_rate() to C file
-Date:   Fri, 30 Aug 2019 08:09:15 -0700
-Message-Id: <20190830150923.259497-5-sboyd@kernel.org>
+Subject: [PATCH 07/12] clk: fixed-rate: Add clk flags for parent accuracy
+Date:   Fri, 30 Aug 2019 08:09:18 -0700
+Message-Id: <20190830150923.259497-8-sboyd@kernel.org>
 X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 In-Reply-To: <20190830150923.259497-1-sboyd@kernel.org>
 References: <20190830150923.259497-1-sboyd@kernel.org>
@@ -41,42 +41,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only user of this macro is the fixed rate basic type. Move it there
-to avoid polluting provider drivers.
+Some clk providers want to use the accuracy of the parent clk and use
+the fixed rate basic type clk to do that. This requires getting the
+parent clk and extracting the accuracy before registering the fixed rate
+clk. Let's add a flag for this and update the clk_ops to support this.
 
 Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk-fixed-rate.c | 2 ++
- include/linux/clk-provider.h | 2 --
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-fixed-rate.c | 7 ++++++-
+ include/linux/clk-provider.h | 6 ++++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index f4044091907f..ba626661535b 100644
+index 6ee25e2dae76..f6d9eb982c20 100644
 --- a/drivers/clk/clk-fixed-rate.c
 +++ b/drivers/clk/clk-fixed-rate.c
-@@ -24,6 +24,8 @@
-  * parent - fixed parent.  No clk_set_parent support
-  */
- 
-+#define to_clk_fixed_rate(_hw) container_of(_hw, struct clk_fixed_rate, hw)
-+
- static unsigned long clk_fixed_rate_recalc_rate(struct clk_hw *hw,
- 		unsigned long parent_rate)
+@@ -35,7 +35,12 @@ static unsigned long clk_fixed_rate_recalc_rate(struct clk_hw *hw,
+ static unsigned long clk_fixed_rate_recalc_accuracy(struct clk_hw *hw,
+ 		unsigned long parent_accuracy)
  {
+-	return to_clk_fixed_rate(hw)->fixed_accuracy;
++	struct clk_fixed_rate *fixed = to_clk_fixed_rate(hw);
++
++	if (fixed->flags & CLK_FIXED_RATE_PARENT_ACCURACY)
++		return parent_accuracy;
++
++	return fixed->fixed_accuracy;
+ }
+ 
+ const struct clk_ops clk_fixed_rate_ops = {
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 52c08fd0211c..028f7d3cea85 100644
+index 9acafd9de216..b1ed4b840476 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -327,8 +327,6 @@ struct clk_fixed_rate {
- 	unsigned long	fixed_accuracy;
+@@ -322,6 +322,10 @@ struct clk_hw {
+  * @fixed_rate:	constant frequency of clock
+  * @fixed_accuracy: constant accuracy of clock in ppb (parts per billion)
+  * @flags:	hardware specific flags
++ *
++ * Flags:
++ * CLK_FIXED_RATE_PARENT_ACCURACY - Use the accuracy of the parent clk
++ * 	instead of what's set in @fixed_accuracy.
+  */
+ struct clk_fixed_rate {
+ 	struct		clk_hw hw;
+@@ -330,6 +334,8 @@ struct clk_fixed_rate {
+ 	unsigned long	flags;
  };
  
--#define to_clk_fixed_rate(_hw) container_of(_hw, struct clk_fixed_rate, hw)
--
++#define CLK_FIXED_RATE_PARENT_ACCURACY		BIT(0)
++
  extern const struct clk_ops clk_fixed_rate_ops;
- struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
+ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
+ 		struct device_node *np, const char *name,
 -- 
 Sent by a computer through tubes
 
