@@ -2,93 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D744A36BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 14:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D148A36B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 14:22:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbfH3MZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 08:25:22 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:55690 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727751AbfH3MZW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 08:25:22 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x7UCPFGC027683, This message is accepted by code: ctloc85258
-Received: from RS-CAS02.realsil.com.cn (ms1.realsil.com.cn[172.29.17.3](maybeforged))
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x7UCPFGC027683
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 30 Aug 2019 20:25:15 +0800
-Received: from laptop-alex (172.29.36.155) by RS-CAS02.realsil.com.cn
- (172.29.17.3) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 30 Aug
- 2019 20:05:45 +0800
-Date:   Fri, 30 Aug 2019 20:05:30 +0800
-From:   Alex Lu <alex_lu@realsil.com.cn>
-To:     Marcel Holtmann <marcel@holtmann.org>
-CC:     Johan Hedberg <johan.hedberg@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Max Chou <max.chou@realtek.com>
-Subject: [PATCH 2/2] Bluetooth: btrtl: Add firmware version print
-Message-ID: <20190830120530.GA3299@laptop-alex>
+        id S1727888AbfH3MWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 08:22:42 -0400
+Received: from mga06.intel.com ([134.134.136.31]:6770 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727455AbfH3MWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 08:22:42 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 05:22:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
+   d="scan'208";a="182639240"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga007.fm.intel.com with ESMTP; 30 Aug 2019 05:22:38 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1i3fvJ-0007OT-SD; Fri, 30 Aug 2019 15:22:37 +0300
+Date:   Fri, 30 Aug 2019 15:22:37 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, linux-acpi@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 01/10] software node: Get reference to parent swnode
+ in get_parent op
+Message-ID: <20190830122237.GY2680@smile.fi.intel.com>
+References: <20190829101043.24963-1-sakari.ailus@linux.intel.com>
+ <20190829101043.24963-2-sakari.ailus@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190829101043.24963-2-sakari.ailus@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [172.29.36.155]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Lu <alex_lu@realsil.com.cn>
+On Thu, Aug 29, 2019 at 01:10:34PM +0300, Sakari Ailus wrote:
+> The software_node_get_parent() returned a pointer to the parent swnode,
+> but did not take a reference to it, leading the caller to put a reference
+> that was not taken. Take that reference now.
+> 
 
-This patch is used to print fw version for debug convenience
+> Fixes: 59abd83672f7 ("drivers: base: Introducing software nodes to the
+> 		      firmware node framework")
 
-Signed-off-by: Alex Lu <alex_lu@realsil.com.cn>
----
- drivers/bluetooth/btrtl.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+I dunno if scripts parse the split line like above.
 
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index b7487ab99eed..7219eb98d02d 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -151,6 +151,8 @@ static const struct id_table ic_id_table[] = {
- 	  .cfg_name = "rtl_bt/rtl8822b_config" },
- 	};
- 
-+static struct sk_buff *btrtl_read_local_version(struct hci_dev *hdev);
-+
- static const struct id_table *btrtl_match_ic(u16 lmp_subver, u16 hci_rev,
- 					     u8 hci_ver, u8 hci_bus)
- {
-@@ -368,6 +370,8 @@ static int rtl_download_firmware(struct hci_dev *hdev,
- 	int frag_len = RTL_FRAG_LEN;
- 	int ret = 0;
- 	int i;
-+	struct sk_buff *skb;
-+	struct hci_rp_read_local_version *rp;
- 
- 	dl_cmd = kmalloc(sizeof(struct rtl_download_cmd), GFP_KERNEL);
- 	if (!dl_cmd)
-@@ -406,6 +410,18 @@ static int rtl_download_firmware(struct hci_dev *hdev,
- 		data += RTL_FRAG_LEN;
- 	}
- 
-+	skb = btrtl_read_local_version(hdev);
-+	if (IS_ERR(skb)) {
-+		ret = PTR_ERR(skb);
-+		rtl_dev_err(hdev, "read local version failed");
-+		goto out;
-+	}
-+
-+	rp = (struct hci_rp_read_local_version *)skb->data;
-+	rtl_dev_info(hdev, "rtl: fw version 0x%04x%04x",
-+		     __le16_to_cpu(rp->hci_rev), __le16_to_cpu(rp->lmp_subver));
-+	kfree_skb(skb);
-+
- out:
- 	kfree(dl_cmd);
- 	return ret;
+Nevertheless, for the code prospective looks good to me. Though you probably
+would like to Cc it to Heikki.
+
 -- 
-2.21.0
+With Best Regards,
+Andy Shevchenko
+
 
