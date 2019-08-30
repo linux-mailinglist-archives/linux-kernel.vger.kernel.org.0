@@ -2,44 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AEBDA3D4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FE41A3D43
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:55:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbfH3R53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 13:57:29 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:36118 "EHLO
+        id S1728138AbfH3Rzt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 13:55:49 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:34032 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfH3R53 (ORCPT
+        with ESMTP id S1727924AbfH3Rzs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:57:29 -0400
+        Fri, 30 Aug 2019 13:55:48 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UHt6ZN088774;
-        Fri, 30 Aug 2019 17:55:16 GMT
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UHt6R1088743;
+        Fri, 30 Aug 2019 17:55:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2019-08-05;
- bh=P+esqZlZhoTixDu4MiNwQEcjlm78p9B1JBsdoAW4q5o=;
- b=VfcsN85j7DI3n75Xw9Tyvq/bmGAy11lABRO/Ept4clOTo0z6gWyvTG1XYDjOfCE6c5J6
- VW4zSLBXcqBATNEdEwbysp7stGE9RTmPckglJh8BDMRnwvFMjqV042pvNirHGAv3dF8i
- xh4BjD+g30aG9HNzQjbbOq0/uhOa2sOfWVjatRpndeypdZe/wov9JofUJCd2aDD0B1zN
- 3tzs5XZoZVWXNT/4bVJlePjYazZeJ/T15iUcyZHltjybXhA+GTOe0u6XGIyaXilgbKmS
- Ae7OQxOslK7gaLJYMOQ9exO+cU+suShnHQenbKnObMpWiIFGie0LKfuBbliSwrXo/sXx Ig== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2uq8fsg20u-1
+ subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
+ bh=Uiw8kLTHQwxH8dGS2dfqHcGpsWdogXJPScxnKcD/EgM=;
+ b=c70EPeV1uOvaCjfvKoqlkwncy+7/Ff7aIbWIZKbPsI8Jf/qVhwgITnGZJM/bVX50znuE
+ InKy2W2Y9h/IZKqwlRvKPBgqipb0FjtDtU2VVj2YJjnheqiek36hb+tVCIQLys5nmy5D
+ m0qeTkqEBVz9ELY1LTOEVP9nitKlRpSL3keKsjQ7MXlT9c/KygeO9GEV65o5sdCFivwq
+ d6lqB7rY0OU9+oIdpDrbltzDbQtgxjMG5xYapyUIkMLTCa5hMAaQVfItW81LofLkDOE4
+ 9Nj/T7VQ/OomInrfzghuzcUOr1/YRDF08h8a3Naazul9ogX+rMMb+3mHMj40PVdD6ACV aQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2uq8fsg212-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 17:55:16 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UHrd3H017963;
-        Fri, 30 Aug 2019 17:54:35 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3030.oracle.com with ESMTP id 2upxabkvrj-1
+        Fri, 30 Aug 2019 17:55:14 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UHrW9A135784;
+        Fri, 30 Aug 2019 17:54:36 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2uphavh0h2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Fri, 30 Aug 2019 17:54:35 +0000
 Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7UHsVdk018950;
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7UHsW39014823;
         Fri, 30 Aug 2019 17:54:32 GMT
 Received: from smazumda-Precision-T1600.us.oracle.com (/10.132.91.113)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 30 Aug 2019 10:54:31 -0700
+        with ESMTP ; Fri, 30 Aug 2019 10:54:32 -0700
 From:   subhra mazumdar <subhra.mazumdar@oracle.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
@@ -48,19 +48,21 @@ Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
         viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
         mgorman@techsingularity.net, parth@linux.ibm.com,
         patrick.bellasi@arm.com
-Subject: [RFC PATCH 0/9] Task latency-nice
-Date:   Fri, 30 Aug 2019 10:49:35 -0700
-Message-Id: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
+Subject: [RFC PATCH 1/9] sched,cgroup: Add interface for latency-nice
+Date:   Fri, 30 Aug 2019 10:49:36 -0700
+Message-Id: <20190830174944.21741-2-subhra.mazumdar@oracle.com>
 X-Mailer: git-send-email 2.9.3
+In-Reply-To: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
+References: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9365 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=543
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1906280000 definitions=main-1908300174
 X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9365 signatures=668685
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=595 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
  definitions=main-1908300174
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,56 +70,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce new per task property latency-nice for controlling scalability
-in scheduler idle CPU search path. Valid latency-nice values are from 1 to
-100 indicating 1% to 100% search of the LLC domain in select_idle_cpu. New
-CPU cgroup file cpu.latency-nice is added as an interface to set and get.
-All tasks in the same cgroup share the same latency-nice value. Using a
-lower latency-nice value can help latency intolerant tasks e.g very short
-running OLTP threads where full LLC search cost can be significant compared
-to run time of the threads. The default latency-nice value is 5.
+Add Cgroup interface for latency-nice. Each CPU Cgroup adds a new file
+"latency-nice" which is shared by all the threads in that Cgroup.
 
-In addition to latency-nice, it also adds a new sched feature SIS_CORE to
-be able to disable idle core search altogether which is costly and hurts
-more than it helps in short running workloads.
+Signed-off-by: subhra mazumdar <subhra.mazumdar@oracle.com>
+---
+ include/linux/sched.h |  1 +
+ kernel/sched/core.c   | 40 ++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/fair.c   |  1 +
+ kernel/sched/sched.h  |  8 ++++++++
+ 4 files changed, 50 insertions(+)
 
-Finally it also introduces a new per-cpu variable next_cpu to track
-the limit of search so that every time search starts from where it ended.
-This rotating search window over cpus in LLC domain ensures that idle
-cpus are eventually found in case of high load.
-
-Uperf pingpong on 2 socket, 44 core and 88 threads Intel x86 machine with
-message size = 8k (higher is better):
-threads baseline   latency-nice=5,SIS_CORE     latency-nice=5,NO_SIS_CORE 
-8       64.66      64.38 (-0.43%)              64.79 (0.2%)
-16      123.34     122.88 (-0.37%)             125.87 (2.05%)
-32      215.18     215.55 (0.17%)              247.77 (15.15%)
-48      278.56     321.6 (15.45%)              321.2 (15.3%)
-64      259.99     319.45 (22.87%)             333.95 (28.44%)
-128     431.1      437.69 (1.53%)              431.09 (0%)
-
-subhra mazumdar (9):
-  sched,cgroup: Add interface for latency-nice
-  sched: add search limit as per latency-nice
-  sched: add sched feature to disable idle core search
-  sched: SIS_CORE to disable idle core search
-  sched: Define macro for number of CPUs in core
-  x86/smpboot: Optimize cpumask_weight_sibling macro for x86
-  sched: search SMT before LLC domain
-  sched: introduce per-cpu var next_cpu to track search limit
-  sched: rotate the cpu search window for better spread
-
- arch/x86/include/asm/smp.h      |  1 +
- arch/x86/include/asm/topology.h |  1 +
- arch/x86/kernel/smpboot.c       | 17 ++++++++++++++++-
- include/linux/sched.h           |  1 +
- include/linux/topology.h        |  4 ++++
- kernel/sched/core.c             | 42 +++++++++++++++++++++++++++++++++++++++++
- kernel/sched/fair.c             | 34 +++++++++++++++++++++------------
- kernel/sched/features.h         |  1 +
- kernel/sched/sched.h            |  9 +++++++++
- 9 files changed, 97 insertions(+), 13 deletions(-)
-
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 1183741..b4a79c3 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -631,6 +631,7 @@ struct task_struct {
+ 	int				static_prio;
+ 	int				normal_prio;
+ 	unsigned int			rt_priority;
++	u64				latency_nice;
+ 
+ 	const struct sched_class	*sched_class;
+ 	struct sched_entity		se;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 874c427..47969bc 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5976,6 +5976,7 @@ void __init sched_init(void)
+ 		init_dl_rq(&rq->dl);
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 		root_task_group.shares = ROOT_TASK_GROUP_LOAD;
++		root_task_group.latency_nice = LATENCY_NICE_DEFAULT;
+ 		INIT_LIST_HEAD(&rq->leaf_cfs_rq_list);
+ 		rq->tmp_alone_branch = &rq->leaf_cfs_rq_list;
+ 		/*
+@@ -6345,6 +6346,7 @@ static void sched_change_group(struct task_struct *tsk, int type)
+ 	 */
+ 	tg = container_of(task_css_check(tsk, cpu_cgrp_id, true),
+ 			  struct task_group, css);
++	tsk->latency_nice = tg->latency_nice;
+ 	tg = autogroup_task_group(tsk, tg);
+ 	tsk->sched_task_group = tg;
+ 
+@@ -6812,6 +6814,34 @@ static u64 cpu_rt_period_read_uint(struct cgroup_subsys_state *css,
+ }
+ #endif /* CONFIG_RT_GROUP_SCHED */
+ 
++static u64 cpu_latency_nice_read_u64(struct cgroup_subsys_state *css,
++				     struct cftype *cft)
++{
++	struct task_group *tg = css_tg(css);
++
++	return tg->latency_nice;
++}
++
++static int cpu_latency_nice_write_u64(struct cgroup_subsys_state *css,
++				      struct cftype *cft, u64 latency_nice)
++{
++	struct task_group *tg = css_tg(css);
++	struct css_task_iter it;
++	struct task_struct *p;
++
++	if (latency_nice < LATENCY_NICE_MIN || latency_nice > LATENCY_NICE_MAX)
++		return -ERANGE;
++
++	tg->latency_nice = latency_nice;
++
++	css_task_iter_start(css, 0, &it);
++	while ((p = css_task_iter_next(&it)))
++		p->latency_nice = latency_nice;
++	css_task_iter_end(&it);
++
++	return 0;
++}
++
+ static struct cftype cpu_legacy_files[] = {
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	{
+@@ -6848,6 +6878,11 @@ static struct cftype cpu_legacy_files[] = {
+ 		.write_u64 = cpu_rt_period_write_uint,
+ 	},
+ #endif
++	{
++		.name = "latency-nice",
++		.read_u64 = cpu_latency_nice_read_u64,
++		.write_u64 = cpu_latency_nice_write_u64,
++	},
+ 	{ }	/* Terminate */
+ };
+ 
+@@ -7015,6 +7050,11 @@ static struct cftype cpu_files[] = {
+ 		.write = cpu_max_write,
+ 	},
+ #endif
++	{
++		.name = "latency-nice",
++		.read_u64 = cpu_latency_nice_read_u64,
++		.write_u64 = cpu_latency_nice_write_u64,
++	},
+ 	{ }	/* terminate */
+ };
+ 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index f35930f..b08d00c 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -10479,6 +10479,7 @@ int alloc_fair_sched_group(struct task_group *tg, struct task_group *parent)
+ 		goto err;
+ 
+ 	tg->shares = NICE_0_LOAD;
++	tg->latency_nice = LATENCY_NICE_DEFAULT;
+ 
+ 	init_cfs_bandwidth(tg_cfs_bandwidth(tg));
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b52ed1a..365c928 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -143,6 +143,13 @@ static inline void cpu_load_update_active(struct rq *this_rq) { }
+ #define NICE_0_LOAD		(1L << NICE_0_LOAD_SHIFT)
+ 
+ /*
++ * Latency-nice default value
++ */
++#define	LATENCY_NICE_DEFAULT	5
++#define	LATENCY_NICE_MIN	1
++#define	LATENCY_NICE_MAX	100
++
++/*
+  * Single value that decides SCHED_DEADLINE internal math precision.
+  * 10 -> just above 1us
+  * 9  -> just above 0.5us
+@@ -362,6 +369,7 @@ struct cfs_bandwidth {
+ /* Task group related information */
+ struct task_group {
+ 	struct cgroup_subsys_state css;
++	u64 latency_nice;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 	/* schedulable entities of this group on each CPU */
 -- 
 2.9.3
 
