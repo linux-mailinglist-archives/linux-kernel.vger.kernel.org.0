@@ -2,75 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E680A366B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 14:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B636EA367D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 14:14:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfH3MMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 08:12:36 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41677 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbfH3MMg (ORCPT
+        id S1728067AbfH3MOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 08:14:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51897 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727326AbfH3MOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 08:12:36 -0400
-Received: by mail-lf1-f65.google.com with SMTP id j4so5169668lfh.8;
-        Fri, 30 Aug 2019 05:12:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uo5QXx6OVi+EZsgsiMtZvW49jMucnNQYYVHnbYIyY8U=;
-        b=poj5ucJzEB3RlxQNN2VKdSWVhlVJn43CM7RgD7jgcF1O0y4zs09/5l0iZPv+HjA06I
-         uTRCXTMCO9O4bSpwSemT6PATKcl62yRE5y/q1Csg1sQeSiws5nRALTsMY7MVgMK5aagY
-         UeumT7bWJFB7FUm+OBtdOhxYWzlR8mu6wXD6HOGWyGAvi/ParAPjowS3Z53n0aV5mJbT
-         1rgPAF33HbSZOYI9kFo9Z7UMbeE264b1kipMQsPwcvbqtawLKQK66Ga35aHqbZHBOs6j
-         nBsZTcUb1LfOcCHh410j3yiksDd0S+KmKC09g9u8DdJuDpdIQaJLURsxqdaNzAJrfn1W
-         Kx0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uo5QXx6OVi+EZsgsiMtZvW49jMucnNQYYVHnbYIyY8U=;
-        b=awmIqbPcDqXMYgOEUhA1S1PBRXSLPDIsj+w2jclnPI6k1gGiBEWmIKdb9QZZGKA1zK
-         OBq4cGsMn/TNpNdNHhkcAQMJHkREyLJloWvPpaVPHLe3t0TR89DAlOsuRR1sBlGph3Ht
-         I2cht62DvUjDVtQYrUeU6WHF8PizuwOb+lod7jtMoHgMqQ82j0qF5sr7r/i+GxtMW9b+
-         P7oW7qTiRDLITFA/nk+mZQjfBfu1IsfDoRJGBI9EumAKHsVKRAfKmyPdANzOE9S2tlQV
-         6aXF6KCkG5mhy16XI9vSWhQdmQNMnYWFYGZ8FPjrxMMsst84ubo3erdJlE2FeS6q2s7G
-         s1Fw==
-X-Gm-Message-State: APjAAAX872a2bUNXmgOy1V8gkjMCVujjSxAYhUAzo80v5OEn3/d/oGm6
-        +Xc6V1zFbtw3Bp+As1Pb22YTDCD6bUu9GcyJyN8=
-X-Google-Smtp-Source: APXvYqyvByj1EWem56d4TT79u5U4Bo0K8ITf8OGgAh/fkFMqhtRgseWc/gRi6O2mWlxBT6jTP5ReG3KH835Ea17Cg30=
-X-Received: by 2002:ac2:43ad:: with SMTP id t13mr9877625lfl.66.1567167154263;
- Fri, 30 Aug 2019 05:12:34 -0700 (PDT)
+        Fri, 30 Aug 2019 08:14:41 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1i3flt-0003iW-0H; Fri, 30 Aug 2019 12:12:53 +0000
+Date:   Fri, 30 Aug 2019 14:12:52 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Peikan Tsai <peikantsai@gmail.com>, arve@android.com,
+        tkjos@android.com, maco@android.com, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] binder: Use kmem_cache for binder_thread
+Message-ID: <20190830121251.rvdhohyykekhh25r@wittgenstein>
+References: <20190829054953.GA18328@mark-All-Series>
+ <20190829064229.GA30423@kroah.com>
+ <20190829135359.GB63638@google.com>
+ <20190829152721.ttsyfwaeygmwmcu7@wittgenstein>
+ <20190830063851.GG15257@kroah.com>
 MIME-Version: 1.0
-References: <20190829120215.1977-1-msuchanek@suse.de> <ccc65bd29747f8ad4d0ba1b3eda6c9d230f03c70.camel@perches.com>
-In-Reply-To: <ccc65bd29747f8ad4d0ba1b3eda6c9d230f03c70.camel@perches.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 30 Aug 2019 14:12:23 +0200
-Message-ID: <CANiq72=ND-czaeKS9qUpEfrFj_SrUWBrmGQHVKCvV=dG8S=-XA@mail.gmail.com>
-Subject: Re: [PATCH] Makefile: Convert -Wimplicit-fallthrough to -Wimplicit-fallthrough=2
-To:     Joe Perches <joe@perches.com>
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190830063851.GG15257@kroah.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 1:09 PM Joe Perches <joe@perches.com> wrote:
->
-> On Thu, 2019-08-29 at 14:02 +0200, Michal Suchanek wrote:
-> > In particular the default value of 3 does not match the comments like
-> > /* falls through to do foobar */
->
-> How many comments are there like this in the kernel?
+On Fri, Aug 30, 2019 at 08:38:51AM +0200, Greg KH wrote:
+> On Thu, Aug 29, 2019 at 05:27:22PM +0200, Christian Brauner wrote:
+> > On Thu, Aug 29, 2019 at 09:53:59AM -0400, Joel Fernandes wrote:
+> > > On Thu, Aug 29, 2019 at 08:42:29AM +0200, Greg KH wrote:
+> > > > On Thu, Aug 29, 2019 at 01:49:53PM +0800, Peikan Tsai wrote:
+> > > [snip] 
+> > > > > The allocated size for each binder_thread is 512 bytes by kzalloc.
+> > > > > Because the size of binder_thread is fixed and it's only 304 bytes.
+> > > > > It will save 208 bytes per binder_thread when use create a kmem_cache
+> > > > > for the binder_thread.
+> > > > 
+> > > > Are you _sure_ it really will save that much memory?  You want to do
+> > > > allocations based on a nice alignment for lots of good reasons,
+> > > > especially for something that needs quick accesses.
+> > > 
+> > > Alignment can be done for slab allocations, kmem_cache_create() takes an
+> > > align argument. I am not sure what the default alignment of objects is
+> > > though (probably no default alignment). What is an optimal alignment in your
+> > > view?
+> > 
+> > Probably SLAB_HWCACHE_ALIGN would make most sense.
+> 
+> This isn't memory accessing hardware, so I don't think it would, right?
 
-+1 Given we are trying to move to attr-only and therefore
--Wimplicit-fallthrough=5, going back a level needs to be backed by a
-good argument. It would be way better to fix those comments instead.
-
-Cheers,
-Miguel
+I was more thinking of cacheline bouncing under contention. But maybe
+that's not worth it in this case...
