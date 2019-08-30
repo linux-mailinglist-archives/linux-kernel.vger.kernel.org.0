@@ -2,165 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F0C0A3560
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 13:06:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF5D2A356E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 13:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfH3LGM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 07:06:12 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38868 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbfH3LGM (ORCPT
+        id S1728086AbfH3LJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 07:09:23 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:47488 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726660AbfH3LJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 07:06:12 -0400
-Received: by mail-io1-f68.google.com with SMTP id p12so13159033iog.5
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 04:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zwNhN1p6avAlABQ0FE3RzGWqr1EKAn8Ee3Sq+b9iapM=;
-        b=Fdwy4WjscO6JMK19LicZEN8tlENGXzTGewvH5f2etd/GCjgEQx4txnK9PGiENOCFyx
-         BlSxZK9zNyKkxdyrsU61uMtLU6lPRelnTWShqWsFRR4xujDkNSB2QG85UzRPppj4iR8n
-         KEMJpDidPP3+uXyRySEdqs7VLty/sofsw0bA+NYTWUIPGvyWbm1IqZvzZVbhHYzffUqb
-         Xqjx7BqA6KG3SltCy4IrrXsEEc0FIx+320Mr3UXDu++s4k0xkPy7TgM1dklf0PGxJ0W4
-         kRHnrG7ZMO9p9VBe0lyZyFYdWCsVFJ2Qd4lm/IHa2ilgfe61Lknr0WvVcnehwnA0oPk/
-         R2+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zwNhN1p6avAlABQ0FE3RzGWqr1EKAn8Ee3Sq+b9iapM=;
-        b=F40VErCGS8CB8AQialND2EP1KAznH5v7f97sz2zFGUFD9zVNQcEfcpnu8JwqiY2tXS
-         7wD8/e6KTNz1tFHGfTu9uDzAqBhwXEuPwVBUWiqqv9Zo4e7rjjtQhBIO3vT3LLuHXvkB
-         NkL3KN+FzNy4L52AshGOKrm9Gl91xe/3tL3OBEWpctrjKSarmPpl25u4VeM1nrGNwKSY
-         uy02R0TA+ws31qc9k6/E7XsFLAetS3Zfo/40T9GKi7rsbUjS9Yaai/IyJua1w0jPSAa/
-         rMa2IbWWAE1aweFwZjIfkaUtGsRa4cA6/u64ikUoCme8Qr8600MKNyFDbeTXQ4AnqO1P
-         K/zA==
-X-Gm-Message-State: APjAAAX3ZHzEVbLOUeIvxVKToofUPEw69wHirCBQT8fpxnL9/AtwcVjO
-        QP7dnqNNQQRG1Bp+1w2WWKHbY88aHAgI85ovq6Jdgw==
-X-Google-Smtp-Source: APXvYqylm4Up8RXPIhWPT+SgfZH+oQfAZKwEGG5UEhfkqY+YKNGlk/9jA5jsCoU2dyy65GqCzf8nPI9kcZgA8mxnx6A=
-X-Received: by 2002:a5d:9746:: with SMTP id c6mr16181879ioo.235.1567163171116;
- Fri, 30 Aug 2019 04:06:11 -0700 (PDT)
+        Fri, 30 Aug 2019 07:09:21 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UB7w6i107234;
+        Fri, 30 Aug 2019 11:08:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=WxH5c0AO/ppWqHS1hPmVJ/ebozPUhe7msAT0OzNYuVE=;
+ b=Y/JS0lJ40hk3QYTWq1xwWGw9rjSc7JoY3MHqcpR00edYeHJQz4RE9GQ+9p4zHs2k7Jdv
+ nichp2/QDARf6t0NwVvKnifdU+W5oWVUNB973KViWooKQbxWfTn9lrOw5UcVbn8YhQZp
+ lVZ//+ojXfrIUd8Nvg/W2VlCNdPBBgW51Szi8oO5zKk4qd6TUW5FQ6B6jvhZzIr+xo/1
+ dsi/ksiwmukPKQn1br8yhX1lIMPVSya+Ss3aJPbHeRo2uP/zBg6W8LLte4WxzAETxAA+
+ tgR8cOqzYD79ftwx3CZwsIOuXRurTWGMcdVOQjegULjC2rkNuZ/jx0QwfW9cXEk4B1zL Tw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2uq2nc0036-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 11:08:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UB40Lb177359;
+        Fri, 30 Aug 2019 11:07:10 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2uphav1gmr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 11:07:10 +0000
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7UB750V029324;
+        Fri, 30 Aug 2019 11:07:06 GMT
+Received: from [10.175.203.89] (/10.175.203.89)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 30 Aug 2019 04:07:05 -0700
+Subject: Re: Default governor regardless of cpuidle driver
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Marcelo Tosatti <mtosatti@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>, linux-pm@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20190829151027.9930-1-joao.m.martins@oracle.com>
+ <c8cf8dcc-76a3-3e15-f514-2cb9df1bbbdc@oracle.com>
+ <d1d4ade5-04a5-4288-d994-3963bb80fb6b@linaro.org>
+ <6c8816af-934a-5bf7-6fb9-f67c05e2c8aa@oracle.com>
+ <901ab688-5548-cf96-1dcb-ce50e617e917@linaro.org>
+ <722bd6f6-6eee-b24b-9704-c9aecc06302f@oracle.com>
+ <2e2a35c8-7f03-d7c8-4701-3bc9d91c1255@linaro.org>
+ <f8c63af5-2509-310d-7ba0-7687b20e3b44@oracle.com>
+ <b759d5a9-f418-817e-eefa-2302d17cb6ea@linaro.org>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <b164bd75-bc9a-0f07-e831-004a0bb5fe1b@oracle.com>
+Date:   Fri, 30 Aug 2019 12:07:00 +0100
 MIME-Version: 1.0
-References: <20190830071740.4267-1-brgl@bgdev.pl> <20190830081550.GA25502@ulmo>
-In-Reply-To: <20190830081550.GA25502@ulmo>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 30 Aug 2019 13:06:00 +0200
-Message-ID: <CAMRc=Mdy-MX6+hsrvErioUg=38s9Hspp7+2mT7nDYbjL9uQ9uQ@mail.gmail.com>
-Subject: Re: [PATCH 0/4] regulator: add and use a helper for setting supply names
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        JC Kuo <jckuo@nvidia.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-ide@vger.kernel.org, linux-tegra@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-usb@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b759d5a9-f418-817e-eefa-2302d17cb6ea@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908300120
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908300120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 30 sie 2019 o 10:15 Thierry Reding <thierry.reding@gmail.com> napisa=
-=C5=82(a):
->
-> On Fri, Aug 30, 2019 at 09:17:36AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > There are ~80 users of regulator bulk APIs that set the supply names
-> > in a for loop before using the bulk helpers.
-> >
-> > This series proposes to add a helper function for setting supply names
-> > and uses it in a couple tegra drivers. If accepted: a coccinelle script
-> > should be easy to develop that would address this in other drivers.
-> >
-> > Bartosz Golaszewski (4):
-> >   regulator: provide regulator_bulk_set_supply_names()
-> >   ahci: tegra: use regulator_bulk_set_supply_names()
-> >   phy: tegra: use regulator_bulk_set_supply_names()
-> >   usb: host: xhci-tegra: use regulator_bulk_set_supply_names()
-> >
-> >  drivers/ata/ahci_tegra.c           |  6 +++---
-> >  drivers/phy/tegra/xusb.c           |  6 +++---
-> >  drivers/regulator/helpers.c        | 21 +++++++++++++++++++++
-> >  drivers/usb/host/xhci-tegra.c      |  5 +++--
-> >  include/linux/regulator/consumer.h | 12 ++++++++++++
-> >  5 files changed, 42 insertions(+), 8 deletions(-)
->
-> The diffstat here suggests that this isn't really helpful. Even if you
-> subtract the regulator code that adds the new helper, you actually have
-> a zero diffstat (and a positive one in one case).
->
+On 8/29/19 10:51 PM, Daniel Lezcano wrote:
+> On 29/08/2019 23:12, Joao Martins wrote:
+> 
+> [ ... ]
+> 
+>>>> Say you wanted to have a kvm specific config, you would still see the same
+>>>> problem if you happen to compile intel_idle together with haltpoll
+>>>> driver+governor. 
+>>>
+>>> Can a guest work with an intel_idle driver?
+>>>
+>> Yes.
+>>
+>> If you use Qemu you would add '-overcommit cpu-pm=on' to try it out. ofc,
+>> assuming you're on a relatively recent Qemu (v3.0+) and a fairly recent kernel
+>> version as host (v4.17+).
+> 
+> Ok, thanks for the clarification.
+> 
+>>>> Creating two separate configs here, with and without haltpoll
+>>>> for VMs doesn't sound effective for distros.
+>>>
+>>> Agree
+>>>
+>>>> Perhaps decreasing the rating of
+>>>> haltpoll governor, but while a short term fix it wouldn't give much sensible
+>>>> defaults without the one-off runtime switch.
+> 
+> The rating has little meaning because each governor fits a specific
+> situation (server, desktop, etc...) and it would probably make sense to
+> remove it and add a default governor in the config file like the cpufreq.
+> 
+ICYM, I had attached a patch in the first message of this thread [0] right below
+the scissors mark. It's not based on config file, but it's the same thing you're
+saying (IIUC) but at runtime and thus allowing a driver to state a 'preferred'
+governor to switch to at idle registration -- let me know if you think that
+looks a sensible approach. Note that the intent of that patch follows the
+thinking of leaving all defaults as before haltpoll governor was introduced, but
+once user modloads/uses cpuidle-haltpoll this governor then gets switched on.
 
-You are right when it comes to LoC stats, but bloat-o-meter says it's
-quite useful when it comes to actual code size.
+[0] https://lore.kernel.org/kvm/c8cf8dcc-76a3-3e15-f514-2cb9df1bbbdc@oracle.com/
 
-This is what we're adding:
+I would think a config-based preference on a governor would be good *if* one
+could actually switch idle governors at runtime like you can with cpufreq -- in
+case userspace wants something else other than the default. Right now we can't
+do that unless you toggle 'cpuidle_sysfs_switch', or picking one at boot with
+'cpuidle.governor='.
 
-$ ./scripts/bloat-o-meter drivers/regulator/helpers.o.old
-drivers/regulator/helpers.o
-add/remove: 3/0 grow/shrink: 0/0 up/down: 72/0 (72)
-Function                                     old     new   delta
-regulator_bulk_set_supply_names                -      32     +32
-__kstrtab_regulator_bulk_set_supply_names       -      32     +32
-__ksymtab_regulator_bulk_set_supply_names       -       8      +8
-Total: Before=3D4438, After=3D4510, chg +1.62%
+> May be I missed the point from some previous discussion but IMHO the
+> problem you are facing is coming from the design: there is no need to
+> create a halt governor but move the code inside the cpuidle-halt driver
+> instead and ignore the state asked by the governor and return the state
+> the driver entered.
+> 
+Marcello's original patch series (first 3 revisions to be exact) actually had
+everything in the idle driver, but after some revisions (v4+) Rafael asked him
+to split the logic into a governor and unify it with poll state[1].
 
-And this is what we're removing just from one driver:
+[1]
+https://lore.kernel.org/kvm/CAJZ5v0gPbSXB3r71XaT-4Q7LsiFO_UVymBwOmU8J1W5+COk_1g@mail.gmail.com/
 
-$ ./scripts/bloat-o-meter ./drivers/ata/ahci_tegra.o.old
-./drivers/ata/ahci_tegra.o
-add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-52 (-52)
-Function                                     old     new   delta
-tegra_ahci_probe                            1688    1636     -52
-Total: Before=3D3474, After=3D3422, chg -1.50%
-
-> Instead, why don't we take this one step further and roll a bit more of
-> the boilerplate into the new helper, something along these lines:
->
->         struct regulator_bulk_data *
->         devm_regulator_bulk_get_from_names(struct device *dev,
->                                            const char * const *supply_nam=
-es,
->                                            unsigned int num_supplies)
->         {
->                 struct regulator_bulk_data *data;
->                 unsigned int i;
->                 int err;
->
->                 data =3D devm_kcalloc(dev, num_supplies, sizeof(*data));
->                 if (!data)
->                         return ERR_PTR(-ENOMEM);
->
->                 for (i =3D 0; i < num_supplies; i++)
->                         data[i].supply =3D supply_names[i];
->
->                 err =3D devm_regulator_bulk_get(dev, num_supplies, data);
->                 if (err < 0)
->                         return ERR_PTR(err);
->
->                 return data;
->         }
->
-> That seems to be still a very common pattern and gets rid of a lot more
-> boilerplate, so your diffstat will actually start to be negative at some
-> point.
->
-
-This looks like a good candidate for the next step, but I'd say this
-change is still worth applying.
-
-Bart
-
-> I suppose one could add a non-managed variant for this as well, but I'm
-> counting 6 uses of regulator_bulk_get() vs. ~140 uses of the managed
-> variant, so I'm not sure it's worth it.
->
-> Thierry
+	Joao
