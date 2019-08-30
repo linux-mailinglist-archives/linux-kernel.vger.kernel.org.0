@@ -2,79 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCCAEA2FB9
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:23:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2080A2FC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbfH3GXx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 02:23:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726716AbfH3GXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 02:23:52 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 650872186A;
-        Fri, 30 Aug 2019 06:23:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567146231;
-        bh=PRUhatSeU/3T/AMs4GtzyoWnaRohArYodojMqtzoabU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=swdgx3EeSI3MsNB2JN+gyh2gKdV4OMK7dXbAeJgOizr6RUJr++DN4edDVGSPIbQxt
-         thdqo0EL1GE5KzHAAuHu40kZs6M/USeadSEQHm4yQV1xz8Nq6639uJSH9VzKlKnA0z
-         +R6kl9HxgSSj7hszfCA3EUQyb1tRogq6pGuEYJdw=
-Date:   Fri, 30 Aug 2019 08:23:49 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tyler Hicks <tyhicks@canonical.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Todd Kjos <tkjos@android.com>,
-        devel@driverdev.osuosl.org
-Subject: Re: [PATCH AUTOSEL 4.14 05/14] binder: take read mode of mmap_sem in
- binder_alloc_free_page()
-Message-ID: <20190830062349.GB15257@kroah.com>
-References: <20190829105043.2508-1-sashal@kernel.org>
- <20190829105043.2508-5-sashal@kernel.org>
- <20190829151052.GB27650@elm>
+        id S1728031AbfH3GYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 02:24:07 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:8318 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726978AbfH3GYH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 02:24:07 -0400
+X-UUID: 26dd957eabfa4ed9b9597dce4e283d37-20190830
+X-UUID: 26dd957eabfa4ed9b9597dce4e283d37-20190830
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 239738293; Fri, 30 Aug 2019 14:24:00 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32DR.mediatek.inc
+ (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Aug
+ 2019 14:23:56 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 30 Aug 2019 14:23:56 +0800
+Message-ID: <1567146231.7317.41.camel@mhfsdcap03>
+Subject: Re: [PATCH 04/11] dt-bindings: phy-mtk-tphy: add a new reference
+ clock
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Date:   Fri, 30 Aug 2019 14:23:51 +0800
+In-Reply-To: <20190829200503.GA2542@bogus>
+References: <e99c0d7a55869a4425250c601b80a3331c9d0976.1566542696.git.chunfeng.yun@mediatek.com>
+         <f6ee7d33103b43b2f1e1331c23c36057ef20b20d.1566542697.git.chunfeng.yun@mediatek.com>
+         <20190829200503.GA2542@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829151052.GB27650@elm>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 9D29D17FAA54D1AE255DE995E26BF8FEA1AEFE9EE094F78B2839206ECE2E9EEE2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 10:10:52AM -0500, Tyler Hicks wrote:
-> Hello, Sasha!
+On Thu, 2019-08-29 at 15:05 -0500, Rob Herring wrote:
+> On Fri, Aug 23, 2019 at 03:00:11PM +0800, Chunfeng Yun wrote:
+> > Usually the digital and anolog phys use the same reference clock,
+> > but on some platforms, they are separated, so add another optional
+> > clock to support it.
+> > In order to keep the clock names consistent with PHY IP's, use
+> > the da_ref for anolog phy and ref clock for digital phy.
+> > 
+> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> > ---
+> >  Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> > index dbc143ed5999..ed9a2641f204 100644
+> > --- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> > +++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> > @@ -41,9 +41,12 @@ Optional properties (PHY_TYPE_USB2 port (child) node):
+> >  - clocks	: a list of phandle + clock-specifier pairs, one for each
+> >  		  entry in clock-names
+> >  - clock-names	: may contain
+> > -		  "ref": 48M reference clock for HighSpeed anolog phy; and 26M
+> > -			reference clock for SuperSpeed anolog phy, sometimes is
+> > +		  "ref": 48M reference clock for HighSpeed (digital) phy; and 26M
+> > +			reference clock for SuperSpeed (digital) phy, sometimes is
+> >  			24M, 25M or 27M, depended on platform.
+> > +		  "da_ref": the reference clock of anolog phy, used if the clocks
+> > +			of anolog and digital phys are separated, otherwise uses
 > 
-> On 2019-08-29 06:50:34, Sasha Levin wrote:
-> > From: Tyler Hicks <tyhicks@canonical.com>
-> > 
-> > [ Upstream commit 60d4885710836595192c42d3e04b27551d30ec91 ]
-> > 
-> > Restore the behavior of locking mmap_sem for reading in
-> > binder_alloc_free_page(), as was first done in commit 3013bf62b67a
-> > ("binder: reduce mmap_sem write-side lock"). That change was
-> > inadvertently reverted by commit 5cec2d2e5839 ("binder: fix race between
-> > munmap() and direct reclaim").
-> > 
-> > In addition, change the name of the label for the error path to
-> > accurately reflect that we're taking the lock for reading.
-> > 
-> > Backporting note: This fix is only needed when *both* of the commits
-> > mentioned above are applied. That's an unlikely situation since they
-> > both landed during the development of v5.1 but only one of them is
-> > targeted for stable.
+> s/amolog/analog/
+will fix it
 > 
-> This patch isn't meant to be applied to 4.14 since commit 3013bf62b67a
-> ("binder: reduce mmap_sem write-side lock") was never brought back to
-> 4.14.
+> > +			"ref" clock only if need.
+> 
+> needed.
+also here
 
-But the patch says:
-	Fixes: 5cec2d2e5839 ("binder: fix race between munmap() and direct reclaim")
-and that commit is in 4.14.124.
+Thanks a lot
 
-thanks,
+> 
+> >  
+> >  - mediatek,eye-src	: u32, the value of slew rate calibrate
+> >  - mediatek,eye-vrt	: u32, the selection of VRT reference voltage
+> > -- 
+> > 2.23.0
+> > 
 
-greg k-h
+
