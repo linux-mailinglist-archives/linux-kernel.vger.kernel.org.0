@@ -2,100 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2C1CA3359
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:06:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA7C9A3365
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727464AbfH3JG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 05:06:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46406 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726461AbfH3JG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 05:06:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6B268AF93;
-        Fri, 30 Aug 2019 09:06:25 +0000 (UTC)
-Date:   Fri, 30 Aug 2019 11:06:24 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Juergen Gross <jgross@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        metux IT consult Enrico Weigelt <lkml@metux.net>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] vsprintf: introduce %dE for error constants
-Message-ID: <20190830090624.tb2tmhbt3wzwz6rp@pathway.suse.cz>
-References: <20190827211244.7210-1-uwe@kleine-koenig.org>
- <20190828113216.p2yiha4xyupkbcbs@pathway.suse.cz>
- <74303921-aa95-9962-2254-27e556af54f4@kleine-koenig.org>
- <20190829081249.3zvvsa4ggb5pfozl@pathway.suse.cz>
- <45cd5b50-9854-fce7-5f08-f7660abb8691@suse.com>
- <a83449cf-3a4a-f3e0-210a-dc7c39505355@rasmusvillemoes.dk>
- <002dc2a7-40a3-f52a-c8fa-5dbb42e6dd7b@kleine-koenig.org>
+        id S1727850AbfH3JJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 05:09:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47291 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfH3JJQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 05:09:16 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i3csC-0003NG-1k; Fri, 30 Aug 2019 09:07:12 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
+        linux-wimax@intel.com, "David S . Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] wimax/i2400m: remove debug containing bogus calculation of index
+Date:   Fri, 30 Aug 2019 10:07:11 +0100
+Message-Id: <20190830090711.15300-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <002dc2a7-40a3-f52a-c8fa-5dbb42e6dd7b@kleine-koenig.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2019-08-29 19:39:45, Uwe Kleine-König  wrote:
-> On 8/29/19 11:09 AM, Rasmus Villemoes wrote:
-> > On 29/08/2019 10.27, Juergen Gross wrote:
-> >> On 29.08.19 10:12, Petr Mladek wrote:
-> >>> On Wed 2019-08-28 21:18:37, Uwe Kleine-König  wrote:
-> >>>>
-> >>>> I'd like to postpone the discussion about "how" until we agreed about
-> >>>> the "if at all".
-> >>>
-> >>> It seems that all people like this feature.
-> >>
-> >> Hmm, what about already existing format strings conatining "%dE"?
-> >>
-> >> Yes, I could find only one (drivers/staging/speakup/speakup_bns.c), but
-> >> nevertheless...
-> > 
-> > Indeed, Uwe still needs to respond to how he wants to handle that. I
-> 
-> This is indeed bad and I didn't expect that. I just took a quick look
-> and this string is indeed used as sprintf format string.
+From: Colin Ian King <colin.king@canonical.com>
 
-Hmm, it seems that solving this might be pretty tricky.
+The subtraction of the two pointers is automatically scaled by the
+size of the size of the object the pointers point to, so the division
+by sizeof(*i2400m->barker) is incorrect.  This has been broken since
+day one of the driver and is only debug, so remove the debug completely.
 
-I see this as a warning that we should not play with fire.
-There might be a reason why all format modifiers are put
-between % and the format identifier.
+Also move && in condition to clean up a checkpatch warning.
 
-> > still prefer making it %pE, both because it's easier to convert integers
-> > to ERR_PTRs than having to worry about the type of PTR_ERR() being long
-> > and not int, and because alphanumerics after %p have been ignored for a
-> > long time (10 years?) whether or not those characters have been
-> > recognized as a %p extension, so nobody relies on %pE putting an E after
-> > the %p output. It also keeps the non-standard extensions in the same
-> > "namespace", so to speak.
->
-> > Oh, 'E' is taken, well, make it 'e' then.
-> 
-> I like having %pe to print error valued pointers. Then maybe we could
-> have both %de for ints and %pe for pointers. :-)
+Addresses-Coverity: ("Extra sizeof expression")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
 
-I would prefer to avoid %pe. It would make sense only when the value
-really contains error id. It means that it has to be used as:
+V2: completely remove debug, clean up checkpatch warning, change subject line
 
-    if (IS_ERR(p)) {
-       pr_warn(...);
+---
+ drivers/net/wimax/i2400m/fw.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-The error path might handle the error using PTR_ERR() also
-on other locations. Also PTR_ERR() will make it clear that we
-are trying to print the error code.
+diff --git a/drivers/net/wimax/i2400m/fw.c b/drivers/net/wimax/i2400m/fw.c
+index 489cba9b284d..6c9a41bff2e0 100644
+--- a/drivers/net/wimax/i2400m/fw.c
++++ b/drivers/net/wimax/i2400m/fw.c
+@@ -397,14 +397,9 @@ int i2400m_is_boot_barker(struct i2400m *i2400m,
+ 
+ 	/* Short circuit if we have already discovered the barker
+ 	 * associated with the device. */
+-	if (i2400m->barker
+-	    && !memcmp(buf, i2400m->barker, sizeof(i2400m->barker->data))) {
+-		unsigned index = (i2400m->barker - i2400m_barker_db)
+-			/ sizeof(*i2400m->barker);
+-		d_printf(2, dev, "boot barker cache-confirmed #%u/%08x\n",
+-			 index, le32_to_cpu(i2400m->barker->data[0]));
++	if (i2400m->barker &&
++	    !memcmp(buf, i2400m->barker, sizeof(i2400m->barker->data)))
+ 		return 0;
+-	}
+ 
+ 	for (i = 0; i < i2400m_barker_db_used; i++) {
+ 		barker = &i2400m_barker_db[i];
+-- 
+2.20.1
 
-Best Regards,
-Petr
