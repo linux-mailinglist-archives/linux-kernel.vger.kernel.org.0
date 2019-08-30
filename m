@@ -2,60 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C82DEA3C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:37:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBA0BA3C25
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:37:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728263AbfH3Qg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:36:56 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45812 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728230AbfH3Qgx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:36:53 -0400
-Received: by mail-pf1-f195.google.com with SMTP id w26so4950975pfq.12
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 09:36:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TViz/uEfbOEpUzpTGIb4VAmFAq4QMSx9O81NrsKCuu4=;
-        b=yZYEjORQokx0B2GT1yT24lWUwOnxfga4krCgK+5Q4NbTIhprOYfyP9pUR0j4mqLxZK
-         VrmPj33kz6NcKz4cZ4D7752udnhATqSZRnndrEhCzKgni4d4u5ukv/1A1iyYnB+QX0oA
-         HfLFNkPdbBhYcdJwPwN1qwlT1PhB4SzhJiJrM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TViz/uEfbOEpUzpTGIb4VAmFAq4QMSx9O81NrsKCuu4=;
-        b=ccS1hkAcm9QX6dzE3dAz9sjK+vRYWe9C3Zfeo2kg1gWD3o6jvLDWGilHPvz15U8CQL
-         nMKfLoFE6Lw6e60OzNxA2CEgiViMdtZZ6M4Jd9h6Jy9XBpKr0qtKLWyRvcGZVN+ejCGC
-         df7ByT6BvUMNs4IcCCqUOAjGrnRh6jI1y1sL/tZGQEmDwOe0YnZn9EPB18llOa2pqyFt
-         hHbx5oeFGVdzUxSjFKCpVjgT+w7DncM2W2btwCFyCsMLTwDnZ5Yz8xE2aPuxw6VPvDts
-         dz/LCLRLTwXBPpvO3WSNRvHpV/LKTSI8iTFyzGKPZDJT4t6q3VbyGOdjlgda4KAqyGEV
-         TKCQ==
-X-Gm-Message-State: APjAAAUkvwOCCdtTce7bPHHYzZhsLdkDxDBJVXxteQRkdgGIxutiAwFw
-        RONbAGrsuvqO+XipzRQ2W7gg4IFBDSQ=
-X-Google-Smtp-Source: APXvYqzMFutjCIXOhhdAJ0KrwGE/+N3XG40IdxseUnqxCDZz1f2DOhSYq+Jce275lA9FhpNDRHxnkg==
-X-Received: by 2002:a62:38d7:: with SMTP id f206mr19357850pfa.102.1567183012573;
-        Fri, 30 Aug 2019 09:36:52 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id j74sm6114080pje.14.2019.08.30.09.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 09:36:51 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        byungchul.park@lge.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH v2 -rcu dev 5/5] rcu: Remove kfree_call_rcu_nobatch()
-Date:   Fri, 30 Aug 2019 12:36:33 -0400
-Message-Id: <20190830163633.104099-6-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-In-Reply-To: <20190830163633.104099-1-joel@joelfernandes.org>
-References: <20190830163633.104099-1-joel@joelfernandes.org>
+        id S1728330AbfH3QhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:37:06 -0400
+Received: from mga18.intel.com ([134.134.136.126]:65262 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727926AbfH3QhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:37:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 09:37:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
+   d="scan'208";a="265369630"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by orsmga001.jf.intel.com with ESMTP; 30 Aug 2019 09:37:01 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] checkpatch: Validate Fixes: tag using 'commit' checks
+Date:   Fri, 30 Aug 2019 09:36:58 -0700
+Message-Id: <20190830163658.17043-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,155 +35,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that kfree_rcu() special casing have been removed from tree RCU,
-remove kfree_call_rcu_nobatch() since it is not needed.
+Rework checkpatch's commit checking to explicitly include the Fixes:
+tag so that it catches errors like too short[1] or fat fingered[2] SHA1
+references.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Add a new Fixes-only check to verify the fixed commit is a valid object
+in the repository.
+
+[1] https://lkml.kernel.org/r/20190830010615.GC27970@linux.intel.com
+[2] https://lkml.kernel.org/r/20190825233120.18ac25e4@canb.auug.org.au
+
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
- .../admin-guide/kernel-parameters.txt         |  4 ---
- include/linux/rcutiny.h                       |  5 ---
- include/linux/rcutree.h                       |  1 -
- kernel/rcu/rcuperf.c                          | 10 +-----
- kernel/rcu/tree.c                             | 34 ++++++++-----------
- 5 files changed, 15 insertions(+), 39 deletions(-)
+ scripts/checkpatch.pl | 39 +++++++++++++++++++++++----------------
+ 1 file changed, 23 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 24fe8aefb12c..56be0e30100b 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3909,10 +3909,6 @@
- 			Number of loops doing rcuperf.kfree_alloc_num number
- 			of allocations and frees.
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 93a7edfe0f05..dead0eb41007 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2756,10 +2756,10 @@ sub process {
+ 		    $line !~ /^\s*(?:Link|Patchwork|http|https|BugLink):/i &&
+ 		    $line !~ /^This reverts commit [0-9a-f]{7,40}/ &&
+ 		    ($line =~ /\bcommit\s+[0-9a-f]{5,}\b/i ||
++		     $line =~ /\bfixes:\s*[0-9a-f]{5,}\b/i ||
+ 		     ($line =~ /(?:\s|^)[0-9a-f]{12,40}(?:[\s"'\(\[]|$)/i &&
+-		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i &&
+-		      $line !~ /\bfixes:\s*[0-9a-f]{12,40}/i))) {
+-			my $init_char = "c";
++		      $line !~ /[\<\[][0-9a-f]{12,40}[\>\]]/i))) {
++			my $init_tag = "";
+ 			my $orig_commit = "";
+ 			my $short = 1;
+ 			my $long = 0;
+@@ -2771,29 +2771,31 @@ sub process {
+ 			my $orig_desc = "commit description";
+ 			my $description = "";
  
--	rcuperf.kfree_no_batch= [KNL]
--			Use the non-batching (less efficient) version of kfree_rcu().
--			This is useful for comparing with the batched version.
--
- 	rcuperf.nreaders= [KNL]
- 			Set number of RCU readers.  The value -1 selects
- 			N, where N is the number of CPUs.  A value
-diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
-index b7607e2667ae..37b6f0c2b79d 100644
---- a/include/linux/rcutiny.h
-+++ b/include/linux/rcutiny.h
-@@ -39,11 +39,6 @@ static inline void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
- 	call_rcu(head, func);
- }
+-			if ($line =~ /\b(c)ommit\s+([0-9a-f]{5,})\b/i) {
+-				$init_char = $1;
++			if ($line =~ /\b(commit)\s+([0-9a-f]{5,})\b/i ||
++			    $line =~ /\b(fixes:)\s*([0-9a-f]{5,})\b/i) {
++				$init_tag = $1;
+ 				$orig_commit = lc($2);
+ 			} elsif ($line =~ /\b([0-9a-f]{12,40})\b/i) {
++				$init_tag = "commit";
+ 				$orig_commit = lc($1);
+ 			}
  
--static inline void kfree_call_rcu_nobatch(struct rcu_head *head, rcu_callback_t func)
--{
--	call_rcu(head, func);
--}
--
- void rcu_qs(void);
+-			$short = 0 if ($line =~ /\bcommit\s+[0-9a-f]{12,40}/i);
+-			$long = 1 if ($line =~ /\bcommit\s+[0-9a-f]{41,}/i);
+-			$space = 0 if ($line =~ /\bcommit [0-9a-f]/i);
+-			$case = 0 if ($line =~ /\b[Cc]ommit\s+[0-9a-f]{5,40}[^A-F]/);
+-			if ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
++			$short = 0 if ($line =~ /\b$init_tag\s+[0-9a-f]{12,40}/i);
++			$long = 1 if ($line =~ /\b$init_tag\s+[0-9a-f]{41,}/i);
++			$space = 0 if ($line =~ /\b$init_tag [0-9a-f]/i);
++			$case = 0 if ($line =~ /\b$init_tag\s+[0-9a-f]{5,40}[^A-F]/);
++			if ($line =~ /\b$init_tag\s+[0-9a-f]{5,}\s+\("([^"]+)"\)/i) {
+ 				$orig_desc = $1;
+ 				$hasparens = 1;
+-			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s*$/i &&
++			} elsif ($line =~ /\b$init_tag\s+[0-9a-f]{5,}\s*$/i &&
+ 				 defined $rawlines[$linenr] &&
+ 				 $rawlines[$linenr] =~ /^\s*\("([^"]+)"\)/) {
+ 				$orig_desc = $1;
+ 				$hasparens = 1;
+-			} elsif ($line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
++			} elsif ($line =~ /\b$init_tag\s+[0-9a-f]{5,}\s+\("[^"]+$/i &&
+ 				 defined $rawlines[$linenr] &&
+ 				 $rawlines[$linenr] =~ /^\s*[^"]+"\)/) {
+-				$line =~ /\bcommit\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
++				$line =~ /\b$init_tag\s+[0-9a-f]{5,}\s+\("([^"]+)$/i;
+ 				$orig_desc = $1;
+ 				$rawlines[$linenr] =~ /^\s*([^"]+)"\)/;
+ 				$orig_desc .= " " . $1;
+@@ -2803,10 +2805,15 @@ sub process {
+ 			($id, $description) = git_commit_info($orig_commit,
+ 							      $id, $orig_desc);
  
- static inline void rcu_softirq_qs(void)
-diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-index 961b7e05d141..0b68aa952f8b 100644
---- a/include/linux/rcutree.h
-+++ b/include/linux/rcutree.h
-@@ -34,7 +34,6 @@ static inline void rcu_virt_note_context_switch(int cpu)
- 
- void synchronize_rcu_expedited(void);
- void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func);
--void kfree_call_rcu_nobatch(struct rcu_head *head, rcu_callback_t func);
- 
- void rcu_barrier(void);
- bool rcu_eqs_special_set(int cpu);
-diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-index c1e25fd10f2a..da94b89cd531 100644
---- a/kernel/rcu/rcuperf.c
-+++ b/kernel/rcu/rcuperf.c
-@@ -593,7 +593,6 @@ rcu_perf_shutdown(void *arg)
- torture_param(int, kfree_nthreads, -1, "Number of threads running loops of kfree_rcu().");
- torture_param(int, kfree_alloc_num, 8000, "Number of allocations and frees done in an iteration.");
- torture_param(int, kfree_loops, 10, "Number of loops doing kfree_alloc_num allocations and frees.");
--torture_param(int, kfree_no_batch, 0, "Use the non-batching (slower) version of kfree_rcu().");
- 
- static struct task_struct **kfree_reader_tasks;
- static int kfree_nrealthreads;
-@@ -632,14 +631,7 @@ kfree_perf_thread(void *arg)
- 			if (!alloc_ptr)
- 				return -ENOMEM;
- 
--			if (!kfree_no_batch) {
--				kfree_rcu(alloc_ptr, rh);
--			} else {
--				rcu_callback_t cb;
--
--				cb = (rcu_callback_t)(unsigned long)offsetof(struct kfree_obj, rh);
--				kfree_call_rcu_nobatch(&(alloc_ptr->rh), cb);
--			}
-+			kfree_rcu(alloc_ptr, rh);
+-			if (defined($id) &&
+-			   ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens)) {
++
++			if (!defined($id)) {
++				if ($init_tag =~ /fixes:/i) {
++					ERROR("GIT_COMMIT_ID",
++					      "Target SHA1 '$orig_commit' does not exist\n" . $herecurr);
++				}
++			} elsif ($short || $long || $space || $case || ($orig_desc ne $description) || !$hasparens) {
+ 				ERROR("GIT_COMMIT_ID",
+-				      "Please use git commit description style 'commit <12+ chars of sha1> (\"<title line>\")' - ie: '${init_char}ommit $id (\"$description\")'\n" . $herecurr);
++				      "Please use git commit description style '$init_tag <12+ chars of sha1> (\"<title line>\")' - ie: '$init_tag $id (\"$description\")'\n" . $herecurr);
+ 			}
  		}
  
- 		cond_resched();
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index cd7bbc74ae20..72550343843f 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2770,8 +2770,10 @@ static void kfree_rcu_work(struct work_struct *work)
- 		rcu_lock_acquire(&rcu_callback_map);
- 		trace_rcu_invoke_kfree_callback(rcu_state.name, head, offset);
- 
--		/* Could be possible to optimize with kfree_bulk in future */
--		kfree((void *)head - offset);
-+		if (!WARN_ON_ONCE(!__is_kfree_rcu_offset(offset))) {
-+			/* Could be optimized with kfree_bulk() in future. */
-+			kfree((void *)head - offset);
-+		}
- 
- 		rcu_lock_release(&rcu_callback_map);
- 		cond_resched_tasks_rcu_qs();
-@@ -2857,16 +2859,6 @@ static void kfree_rcu_monitor(struct work_struct *work)
- 	}
- }
- 
--/*
-- * This version of kfree_call_rcu does not do batching of kfree_rcu() requests.
-- * Used only by rcuperf torture test for comparison with kfree_rcu_batch().
-- */
--void kfree_call_rcu_nobatch(struct rcu_head *head, rcu_callback_t func)
--{
--	__call_rcu(head, func);
--}
--EXPORT_SYMBOL_GPL(kfree_call_rcu_nobatch);
--
- /*
-  * Queue a request for lazy invocation of kfree() after a grace period.
-  *
-@@ -2886,12 +2878,6 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
- 	unsigned long flags;
- 	struct kfree_rcu_cpu *krcp;
- 
--	/* kfree_call_rcu() batching requires timers to be up. If the scheduler
--	 * is not yet up, just skip batching and do the non-batched version.
--	 */
--	if (rcu_scheduler_active != RCU_SCHEDULER_RUNNING)
--		return kfree_call_rcu_nobatch(head, func);
--
- 	if (debug_rcu_head_queue(head)) {
- 		/* Probable double kfree_rcu() */
- 		WARN_ONCE(1, "kfree_call_rcu(): Double-freed call. rcu_head %p\n",
-@@ -2910,8 +2896,16 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
- 	krcp->head = head;
- 
- 	/* Schedule monitor for timely drain after KFREE_DRAIN_JIFFIES. */
--	if (!xchg(&krcp->monitor_todo, true))
--		schedule_delayed_work(&krcp->monitor_work, KFREE_DRAIN_JIFFIES);
-+	if (!krcp->monitor_todo) {
-+		krcp->monitor_todo = true;
-+		/* Scheduling the monitor requires scheduler/timers to be up,
-+		 * if it is not, just skip it. An eventual kfree_rcu() will
-+		 * kick it again.
-+		 */
-+		if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING) {
-+			schedule_delayed_work(&krcp->monitor_work, KFREE_DRAIN_JIFFIES);
-+		}
-+	}
- 
- 	spin_unlock(&krcp->lock);
- 	local_irq_restore(flags);
 -- 
-2.23.0.187.g17f5b7556c-goog
+2.22.0
 
