@@ -2,201 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD75A308F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:16:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07BEAA3095
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728337AbfH3HPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:15:42 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:60193 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbfH3HPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:15:39 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46KW3D0ccGzB09b8;
-        Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=BS0mtFoK; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 2C6Rtg4AawvA; Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46KW3C6ZyRzB09b5;
-        Fri, 30 Aug 2019 09:15:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1567149335; bh=vSEytOVoZ5keHAZCvAZ/DinQj7vIgFYcS1io54Z3+tU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BS0mtFoKnRJMesbXjxNGLSIvPsi98iQW/vYk/eEoM/T4IvUO81vMSExUigyRLmm2i
-         pf6Einld3hQhIqFE0wxO0isMLL5SMCAPaQjnBMWpTexWafyHd2RtPgP1RArWG+8Gkt
-         +bheON78Wg0Yx1g970Shcz91Z4+PB7cZOAIbadvA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E05118B8E5;
-        Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id xl3wQ1xbNZLj; Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
-Received: from [172.25.230.105] (po15451.idsi0.si.c-s.fr [172.25.230.105])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 88A2F8B8E3;
-        Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
-Subject: Re: [PATCH v5 5/5] powerpc/perf: split callchain.c by bitness
-To:     =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Breno Leitao <leitao@debian.org>,
-        Michael Neuling <mikey@neuling.org>,
-        Nicolai Stange <nstange@suse.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Allison Randal <allison@lohutok.net>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Christian Brauner <christian@brauner.io>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-References: <c77eec3d99fd0251edf725a3d9e1b79f396eba6e.1567117050.git.msuchanek@suse.de>
- <4d996b0a225ca5b7d287ae46825d7da4a1d6e509.1567146554.git.christophe.leroy@c-s.fr>
- <20190830084225.527f4265@naga> <20190830091212.4d1d619f@naga>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <d6272d53-69a7-9238-d717-17574c859ce7@c-s.fr>
-Date:   Fri, 30 Aug 2019 09:15:36 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728425AbfH3HQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:16:15 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:49195 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727133AbfH3HQO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 03:16:14 -0400
+Received-SPF: Pass (esa1.microchip.iphmx.com: domain of
+  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="Tudor.Ambarus@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa1.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa1.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa1.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 7WEKOwVZLtxPerzVZsPZA+G/AHqFTyAwOLeI0TyyoXgdB41o/jj0oj5ILcPNTFdnLKLmB440ZW
+ yCEBaAsJ62loqXytaMsmA5bWywVWH0X6lLNNzItIsnvte2e612JHCrI357647FRZNG7R2BRvb2
+ ibZtA7XC/7JfVrhW6iJLhB1tBqm5XtHUeSZfTNYqX84q0ut59OwxjsCsRNu1olMHoiZ92vL2xW
+ mzMe/csJD3MTFlpjn7qWz5v1AM2UgFSuhup3jG0xXc7fzvHxjYlA3oh49z9FYuDwiDphD0LOvS
+ Kss=
+X-IronPort-AV: E=Sophos;i="5.64,446,1559545200"; 
+   d="scan'208";a="48616412"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Aug 2019 00:16:13 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 30 Aug 2019 00:16:12 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Fri, 30 Aug 2019 00:16:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gJk8tQ6QaPjA2sAYjXaGuqcICQQIqUvadjxTzoPBANBsk7Yk3de/UwSCgPoZGA1DtMC1t9VrEigWBZ1Z0X4roQvBhj6Omls9Dgth8gghVI7xyW5NfCt/+QvfY2AYV1hlZPpr4tKOy7DbZCvMPU/H5Kq0UstDl4Z129bkuObgsVCHOJRfOWXWspYUVWUVcKHTnry9KRavaCQ68nKoHwT7jmczKIFuwSOmD43Ma3uK8y3/uchy8eNFaDbt0eaXLXpuaI+FYP4vx33LkrkfEYksnMtOvosL+STFDjiAe3q9WWFfomsih53AoZWJE+cH+7fAxpcVCeWoNiayZPgyVRbRFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mpAKWpWXCgxdYQxCvMFaaQd/99azXb3kIgdnRp7cEFY=;
+ b=O+yN6vEid7rKE4FRYU3rwywVjgxwv4eD/bf6nYYUwZv67FF0q4HNZIuLvonlD6v9qn4IWoG86ErQhPGjEmb6tJhMef1x3OKKdwCpPByzJ5rkwNzeI0spknQ82HjHr71p/cCugAp6hyzfy1qqKYXmlCpl/JW5CrEkgZC1ySF4/SC8RuXzeqCYnxJFZz6R0xVxmn2c1orC62pSxIv5rSxxAY+G+VJzVWcgo6ZNG/v+TWQHWWywJgpyj6P/cZjXpbNp3n5+5NHkQYoUMPgG+iDfUmA47BZXA4kEy/qyY3Z17iihryNDvDwcfLXMknRRbQm1dzYXaqFjwQtqBR/8Ewiorg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mpAKWpWXCgxdYQxCvMFaaQd/99azXb3kIgdnRp7cEFY=;
+ b=PSS6ARUbesd0CurnjvHXt+709H88zCiTh6ncpWnou2bYJpk+xZuyur7SJpI9iMouMCRNJV2r8TvneDDe+lNn3sntwNgzLRgd60Qb1d5v62zecg2zH+YDmy4aJYdzWXXS50Mx4bnmH2C2imCLaSTeIxkkCH5naIL1vqhjRN/xiGw=
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
+ MN2PR11MB3583.namprd11.prod.outlook.com (20.178.250.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.21; Fri, 30 Aug 2019 07:16:10 +0000
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5]) by MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5%7]) with mapi id 15.20.2199.021; Fri, 30 Aug 2019
+ 07:16:10 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <Ashish.Kumar@nxp.com>, <marek.vasut@gmail.com>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
+        <linux-mtd@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <kuldeep.singh@nxp.com>
+Subject: Re: [PATCH v4] mtd: spi-nor: Rename n25q512a to mt25qu512a(n25q512a)
+Thread-Topic: [PATCH v4] mtd: spi-nor: Rename n25q512a to mt25qu512a(n25q512a)
+Thread-Index: AQHVXmJrKLsGvTkXLUmH+yAw5Ce1FKcTSMuA
+Date:   Fri, 30 Aug 2019 07:16:10 +0000
+Message-ID: <f8e546e3-c175-33e8-f691-963a75fae2f4@microchip.com>
+References: <1567080445-32695-1-git-send-email-Ashish.Kumar@nxp.com>
+ <1567080445-32695-2-git-send-email-Ashish.Kumar@nxp.com>
+In-Reply-To: <1567080445-32695-2-git-send-email-Ashish.Kumar@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P195CA0019.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:800:d0::29) To MN2PR11MB4448.namprd11.prod.outlook.com
+ (2603:10b6:208:193::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f8748605-6afb-424e-8d09-08d72d19eef5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR11MB3583;
+x-ms-traffictypediagnostic: MN2PR11MB3583:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <MN2PR11MB35835ED5CBA048C6D6540559F0BD0@MN2PR11MB3583.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:747;
+x-forefront-prvs: 0145758B1D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(376002)(346002)(39860400002)(199004)(189003)(31696002)(99286004)(6486002)(316002)(53546011)(6506007)(36756003)(54906003)(52116002)(31686004)(76176011)(6436002)(53936002)(102836004)(110136005)(2501003)(386003)(64756008)(4326008)(66556008)(66446008)(25786009)(66476007)(66946007)(256004)(14444005)(6512007)(26005)(186003)(229853002)(476003)(6306002)(486006)(8936002)(81166006)(2616005)(11346002)(2201001)(3846002)(6246003)(6116002)(71200400001)(71190400001)(305945005)(4744005)(7416002)(966005)(7736002)(5660300002)(2906002)(86362001)(14454004)(446003)(66066001)(8676002)(478600001)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3583;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nNL4SXdknwuugaA3nEsgvGAZJ4c6ckQFmbwKsU+R/FauZGEUD7gAuYcS1Jdvk3gsDs9RvIQHu5rqkMtqDQ/YfQaTooYkInKg7N2F+NAuPCtpZ+JEPL6MKLc/tPUZXjZ1oHHW84J2kianKf5cbznAnnF9nF8O3qIQ1ssdSc3XQjvSupd4WpSFdVAFDmliQyzocS4rg90ITOGrLo0/i+B7Ry3/y9XuGPSTvDO/Q7mnlQsGrwgVapLQt1BnYMht6DUanNLl4d1jegiqFWGdk/8q+s3vUJVvUbOk3NKPbmPuE3MHRX/x2Zbc43mq8gexUni4h/DEpRCIbgf7/EHmND7FmM2Z+y4+8irR1PdNQcOQnZ74xmfroSX4IddqcvVy54B81TRRNbafCkOeOQwId4k4/l1mcRZwPq8ikPHgBRjBbLQ=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <560C3BD64ADFEB43AFB83F6A598A5270@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20190830091212.4d1d619f@naga>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8748605-6afb-424e-8d09-08d72d19eef5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2019 07:16:10.3836
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IpQt38IJmlje6+0zWtoNB341JPU9+BMFDPLISbGp6kil+bE+S0Mry+0P8R7zHKFmALXiTWJ1Hv7wyXiMXwuP8CaP4/tGXidXRnsdpoqQ9j0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3583
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 30/08/2019 à 09:12, Michal Suchánek a écrit :
-> On Fri, 30 Aug 2019 08:42:25 +0200
-> Michal Suchánek <msuchanek@suse.de> wrote:
-> 
->> On Fri, 30 Aug 2019 06:35:11 +0000 (UTC)
->> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
->>
->>> On 08/29/2019 10:28 PM, Michal Suchanek wrote:
-> 
->>>   obj-$(CONFIG_PPC_PERF_CTRS)	+= core-book3s.o bhrb.o
->>> diff --git a/arch/powerpc/perf/callchain_32.c b/arch/powerpc/perf/callchain_32.c
->>> index 0bd4484eddaa..17c43ae03084 100644
->>> --- a/arch/powerpc/perf/callchain_32.c
->>> +++ b/arch/powerpc/perf/callchain_32.c
->>> @@ -15,50 +15,13 @@
->>>   #include <asm/sigcontext.h>
->>>   #include <asm/ucontext.h>
->>>   #include <asm/vdso.h>
->>> -#ifdef CONFIG_PPC64
->>> -#include "../kernel/ppc32.h"
->>> -#endif
->>>   #include <asm/pte-walk.h>
->>>   
->>>   #include "callchain.h"
->>>   
->>>   #ifdef CONFIG_PPC64
->>> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->>> -{
->>> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
->>> -	    ((unsigned long)ptr & 3))
->>> -		return -EFAULT;
->>> -
->>> -	pagefault_disable();
->>> -	if (!__get_user_inatomic(*ret, ptr)) {
->>> -		pagefault_enable();
->>> -		return 0;
->>> -	}
->>> -	pagefault_enable();
->>> -
->>> -	return read_user_stack_slow(ptr, ret, 4);
->>> -}
->>> -#else /* CONFIG_PPC64 */
->>> -/*
->>> - * On 32-bit we just access the address and let hash_page create a
->>> - * HPTE if necessary, so there is no need to fall back to reading
->>> - * the page tables.  Since this is called at interrupt level,
->>> - * do_page_fault() won't treat a DSI as a page fault.
->>> - */
->>> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->>> -{
->>> -	int rc;
->>> -
->>> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
->>> -	    ((unsigned long)ptr & 3))
->>> -		return -EFAULT;
->>> -
->>> -	pagefault_disable();
->>> -	rc = __get_user_inatomic(*ret, ptr);
->>> -	pagefault_enable();
->>> -
->>> -	return rc;
->>> -}
->>> +#include "../kernel/ppc32.h"
->>> +#else
->>>   
->>>   #define __SIGNAL_FRAMESIZE32	__SIGNAL_FRAMESIZE
->>>   #define sigcontext32		sigcontext
->>> @@ -95,6 +58,30 @@ struct rt_signal_frame_32 {
->>>   	int			abigap[56];
->>>   };
->>>   
->>> +/*
->>> + * On 32-bit we just access the address and let hash_page create a
->>> + * HPTE if necessary, so there is no need to fall back to reading
->>> + * the page tables.  Since this is called at interrupt level,
->>> + * do_page_fault() won't treat a DSI as a page fault.
->>> + */
->>> +static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->>> +{
->>> +	int rc;
->>> +
->>> +	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
->>> +	    ((unsigned long)ptr & 3))
->>> +		return -EFAULT;
->>> +
->>> +	pagefault_disable();
->>> +	rc = __get_user_inatomic(*ret, ptr);
->>> +	pagefault_enable();
->>> +
->>> +	if (IS_ENABLED(CONFIG_PPC32) || !rc)
->>> +		return rc;
->>> +
->>> +	return read_user_stack_slow(ptr, ret, 4);
->>> +}
->>> +
->>>   static int is_sigreturn_32_address(unsigned int nip, unsigned int fp)
->>>   {
->>>   	if (nip == fp + offsetof(struct signal_frame_32, mctx.mc_pad))
->>
->> I will leave consolidating this function to somebody who knows what the
->> desired semantic is. With a short ifdef section at the top of the file
->> it is a low-hanging fruit.
-> 
-> It looks ok if done as a separate patch.
-
-Yes, doing it as a separate patch is good.
-
-And if you do it before patch 3, then you don't need anymore this ugly 
-hack to hide read_user_stack_32()
-
-Christphe
-
-> 
-> Thanks
-> 
-> Michal
-> 
+DQoNCk9uIDA4LzI5LzIwMTkgMDM6MDcgUE0sIEFzaGlzaCBLdW1hciB3cm90ZToNCj4gRXh0ZXJu
+YWwgRS1NYWlsDQo+IA0KPiANCj4gbXQyNXF1NTEyYSBpcyByZWJyYW5kZWQgYWZ0ZXIgaXRzIHNw
+aW5vZmYgZnJvbSBTVE0sIHNvIGl0IGlzDQo+IGRpZmZlcmVudCBvbmx5IGluIHRlcm0gb2Ygb3Bl
+cmF0aW5nIGZyZXF1ZW5jeSwgSkVERUMgaWQNCj4gaXMgc2FtZSBhcyB0aGF0IG9mIG4yNXE1MTJh
+Lg0KPiBTUElfTk9SXzRCX09QQ09ERVMgaXMgYXBwZW5kZWQgdG8gZmxhc2ggcHJvcGVydHkuDQo+
+IFRoaXMgZmxhc2ggaXMgdGVzdGVkIGZvciBTaW5nbGUgSS9PIGFuZCBRVUFEIEkvTyBtb2RlIG9u
+IExTMTA0NkZSV1kuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBLdWxkZWVwIFNpbmdoIDxrdWxkZWVw
+LnNpbmdoQG54cC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEFzaGlzaCBLdW1hciA8QXNoaXNoLkt1
+bWFyQG54cC5jb20+DQo+IFJldmlld2VkLWJ5OiBWaWduZXNoIFJhZ2hhdmVuZHJhIDx2aWduZXNo
+ckB0aS5jb20+DQo+IA0KDQpSZW5hbWVkIGVudHJ5IHRvICJtdDI1cXU1MTJhIChuMjVxNTEyYSki
+LCByZXdvcmRlZCBjb21taXQgbWVzc2FnZSwgb3JkZXJlZCBlbnRyeQ0KYnkgc2l6ZSwgZHJvcHBl
+ZCBjb21tZW50IGFzIGl0IGxvb2tlZCByZWR1bmRhbnQgYW5kDQpBcHBsaWVkIHRvIGh0dHBzOi8v
+Z2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L210ZC9saW51eC5naXQsDQpz
+cGktbm9yL25leHQgYnJhbmNoLg0KDQpUaGFua3MsDQp0YQ0KDQo=
