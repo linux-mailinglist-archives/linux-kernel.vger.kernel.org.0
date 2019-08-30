@@ -2,92 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34AE2A3F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 22:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A60FA3F23
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 22:50:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbfH3Urb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 16:47:31 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41605 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728145AbfH3Urb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 16:47:31 -0400
-Received: by mail-pf1-f194.google.com with SMTP id 196so5363149pfz.8
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 13:47:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=b8u2magLfJVwljZAGYTURbma2mpmy7TrJLGdd0rfPWc=;
-        b=BLGMZDX18kpe0sWfZwyNEN/x3wCg+PtSQX4ScBTDAaLkBAWub1CujNM5iGHBliKpEU
-         ZrPu9ZzDjWPu5GHyQ7cmon0yZhz9fIJ+8H+HoH7SsGtQ4F++HJxCiy/VyWKWt+Xzw1WX
-         O1OneofCTD2sRQcU4Aw0RD+89IEooAKz8I5pI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b8u2magLfJVwljZAGYTURbma2mpmy7TrJLGdd0rfPWc=;
-        b=titPgnizg04l68KfosfaL5ebRjeKYuT4Vn6icd+XBztQAWI8W5c2YAQubdedpHXX+k
-         5QOx4u908KJA1v7pnA+rWmiulGWi7dy5lVNd1lOPF8PWp8buAdfMJvueMjCFeR5AQ1L3
-         QYaWA4V++rwaCgb/y5aXKcEErfSNe7pIzOaedenHxrcQvCAu+9boFislWUcH13/Iwdur
-         iBZRLWGtkfQ1j3+0Mvo9qi4UOAGD25NGpENy12K9WTpmKzqtkvY+qShzYGGcFGawHOb2
-         7Oj8oJP07s3i+04vYEtsxRQ5ChDDZDSp1WBqt48yBsMsb0y3Sm0Cgky0QA3oNL9gcSSM
-         LciA==
-X-Gm-Message-State: APjAAAUPReKxyDBlniL5kcfENj06C1XlfEMUCPZzFhQ7x11+JmBzwJ3z
-        oVHuJZ6GQtqbhN4z2rV0pS/TmA==
-X-Google-Smtp-Source: APXvYqxMOrhTqkjdQCttFc7yV364Iys+Pb9Un4josyE2DbcbQpgmEtzeoZMjp+DQvlyXdnZOZftg4g==
-X-Received: by 2002:aa7:9d8d:: with SMTP id f13mr5969012pfq.196.1567198050541;
-        Fri, 30 Aug 2019 13:47:30 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t4sm8770187pfd.109.2019.08.30.13.47.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 13:47:29 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 13:47:28 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Denis Efremov <efremov@linux.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] asm-generic: add unlikely to default BUG_ON(x)
-Message-ID: <201908301347.60905D1675@keescook>
-References: <20190828210934.17711-1-efremov@linux.com>
- <CAK8P3a3T3r3b2uW977HiuMi0uYKs4V_d4e=PDnkWDpqs+wrLww@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3T3r3b2uW977HiuMi0uYKs4V_d4e=PDnkWDpqs+wrLww@mail.gmail.com>
+        id S1728129AbfH3UuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 16:50:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727246AbfH3UuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 16:50:09 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 258C123439;
+        Fri, 30 Aug 2019 20:50:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567198208;
+        bh=+F7ljiSg6p5FWNKeDI6T/1PPD+xSpDlAYKC1QB46hI0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=2d7DVqD9TskavURNZTbEB1iY1v0A5qusBehdR9V9DI2GTRw1T9+qOWAhs5lRRkDuN
+         8/s1Z64FbnjVvdSZO8S7ndWxbXSBfupq+SQ6/57SQ3/F0j/M8ygAy0TvGdy81uPh41
+         LrAPQ5tECRaUSOjvulcECL1rd1t31LTP5Fk6pAOg=
+Date:   Fri, 30 Aug 2019 13:50:07 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Austin Kim <austindh.kim@gmail.com>
+Cc:     urezki@gmail.com, guro@fb.com, rpenyaev@suse.de, mhocko@suse.com,
+        rick.p.edgecombe@intel.com, rppt@linux.ibm.com,
+        aryabinin@virtuozzo.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/vmalloc: move 'area->pages' after if statement
+Message-Id: <20190830135007.8b5949bd57975d687ff0a3f8@linux-foundation.org>
+In-Reply-To: <20190830035716.GA190684@LGEARND20B15>
+References: <20190830035716.GA190684@LGEARND20B15>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 10:08:49PM +0200, Arnd Bergmann wrote:
-> On Wed, Aug 28, 2019 at 11:09 PM Denis Efremov <efremov@linux.com> wrote:
-> >
-> > Add unlikely to default BUG_ON(x) in !CONFIG_BUG. It makes
-> > the define consistent with BUG_ON(x) in CONFIG_BUG.
-> >
-> > Signed-off-by: Denis Efremov <efremov@linux.com>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: <linux-arch@vger.kernel.org>
-> 
-> This makes sense, I've applied it to the asm-generic tree for now.
-> 
-> Two concerns though:
-> 
-> - adding unlikely() can cause new (usually false-postive) compile time
->   warnings to show up in random configurations, so we'll have to see what
->   the build bots think
-> 
-> - Kees Cook has recently sent a series for asm/bug.h that was merged by
->   Andrew Morton. If there are is a conflict with your patch, it may be better
->   to merge both through the same tree, either linux-mm or asm-generic.
+On Fri, 30 Aug 2019 12:57:16 +0900 Austin Kim <austindh.kim@gmail.com> wrote:
 
-FWIW, this patch looks sensible to me. :)
+> If !area->pages statement is true where memory allocation fails, 
+> area is freed.
+> 
+> In this case 'area->pages = pages' should not executed.
+> So move 'area->pages = pages' after if statement.
+> 
+> ...
+>
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2416,13 +2416,15 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  	} else {
+>  		pages = kmalloc_node(array_size, nested_gfp, node);
+>  	}
+> -	area->pages = pages;
+> -	if (!area->pages) {
+> +
+> +	if (!pages) {
+>  		remove_vm_area(area->addr);
+>  		kfree(area);
+>  		return NULL;
+>  	}
+>  
+> +	area->pages = pages;
+> +
+>  	for (i = 0; i < area->nr_pages; i++) {
+>  		struct page *page;
+>  
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Fair enough.  But we can/should also do this?
 
--- 
-Kees Cook
+--- a/mm/vmalloc.c~mm-vmalloc-move-area-pages-after-if-statement-fix
++++ a/mm/vmalloc.c
+@@ -2409,7 +2409,6 @@ static void *__vmalloc_area_node(struct
+ 	nr_pages = get_vm_area_size(area) >> PAGE_SHIFT;
+ 	array_size = (nr_pages * sizeof(struct page *));
+ 
+-	area->nr_pages = nr_pages;
+ 	/* Please note that the recursion is strictly bounded. */
+ 	if (array_size > PAGE_SIZE) {
+ 		pages = __vmalloc_node(array_size, 1, nested_gfp|highmem_mask,
+@@ -2425,6 +2424,7 @@ static void *__vmalloc_area_node(struct
+ 	}
+ 
+ 	area->pages = pages;
++	area->nr_pages = nr_pages;
+ 
+ 	for (i = 0; i < area->nr_pages; i++) {
+ 		struct page *page;
+_
+
