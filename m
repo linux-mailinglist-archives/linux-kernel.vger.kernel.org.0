@@ -2,54 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1B1A3C38
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87656A3C3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:40:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbfH3QkN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:40:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728159AbfH3QkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:40:10 -0400
-Subject: Re: [PULL REQUEST] Please pull rdma.git
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567183209;
-        bh=DwJ5QL1IgRhDoDed8hrJO9utYSBqhOTG7di5yDCqf/E=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=nOvjo2Z2qJhdbf2ztkxPlOx4/WJH13FAEyH7+3rRhS9VqyU7fCN0gMDGlLD1Sumjp
-         MqFC0xRWkTjnx7O39BLbofTh8ZYwlAqb50qAonvm+9mdbj1p4txhZgyz5NYOq36+rR
-         WIPFnLSIYTiC+/ETlypvIUNwu8zo01/UW4IuQ2OI=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <cef8e627336f4a85b2860fd9bde25c71aef7e194.camel@redhat.com>
-References: <cef8e627336f4a85b2860fd9bde25c71aef7e194.camel@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <cef8e627336f4a85b2860fd9bde25c71aef7e194.camel@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-X-PR-Tracked-Commit-Id: 531a64e4c35bb9844b0cf813a6c9a87e00be05ff
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8fb8e9e46261e0117cb3cffb6dd8bb7e08f8649b
-Message-Id: <156718320971.32023.18221065529586097085.pr-tracker-bot@kernel.org>
-Date:   Fri, 30 Aug 2019 16:40:09 +0000
-To:     Doug Ledford <dledford@redhat.com>
-Cc:     "Torvalds, Linus" <torvalds@linux-foundation.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Gunthorpe, Jason" <jgg@ziepe.ca>
+        id S1728395AbfH3QkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:40:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:48524 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728129AbfH3QkY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:40:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AT7c8Uf6oRKSCvH0T7rxwpH4EoIuzd5Fl8xv/gJGnw4=; b=XKxQMKVi9kAdTU+vbb0Unuz1w
+        1OC04HlMkxRWKs69JYntBAUF4Vq2rS9l2rajiJty/VLSOfmjDMy+0igRW96PttjZ1sVU4ZpTv/387
+        URunnMETnkxIuM82Rxm4Ch3c6EgKekyOk6PUM01SL5x0M70Gwdlqg/fz3lOS1cSnIsj0jJQEAQopu
+        LkT2Rihs462KZRs+vsR+k/TmnMtkm28eZgXiXoUJwS2Ll1xhYkJN1fpn+44WyZolCVtFv+DYTc6JK
+        F7IsP1hyzpQH9I9Ix7oOpfg+bKAuiOZusNnDVQsLRBCmrqavz6liyImmftILLHQIWu8d4n01QmuYH
+        J05OeGxHA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3jwb-0002a3-O7; Fri, 30 Aug 2019 16:40:13 +0000
+Date:   Fri, 30 Aug 2019 09:40:13 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 04/24] erofs: add raw address_space operations
+Message-ID: <20190830164013.GC29603@infradead.org>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-5-gaoxiang25@huawei.com>
+ <20190829101721.GD20598@infradead.org>
+ <20190829114610.GF64893@architecture4>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829114610.GF64893@architecture4>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 30 Aug 2019 11:42:36 -0400:
+On Thu, Aug 29, 2019 at 07:46:11PM +0800, Gao Xiang wrote:
+> Hi Christoph,
+> 
+> On Thu, Aug 29, 2019 at 03:17:21AM -0700, Christoph Hellwig wrote:
+> > The actual address_space operations seem to largely duplicate
+> > the iomap versions.  Please use those instead.  Also I don't think
+> > any new file system should write up ->bmap these days.
+> 
+> iomap doesn't support tail-end packing inline data till now,
+> I think Chao and I told you and Andreas before [1].
+> 
+> Since EROFS keeps a self-contained driver for now, we will use
+> iomap if it supports tail-end packing inline data later.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8fb8e9e46261e0117cb3cffb6dd8bb7e08f8649b
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Well, so work with the maintainers to enhance the core kernel.  That
+is how Linux development works.  We've added various iomap enhancements
+for gfs in the last merge windows, and we've added more for the brand
+new zonefs file system we plan to merge for 5.4.
