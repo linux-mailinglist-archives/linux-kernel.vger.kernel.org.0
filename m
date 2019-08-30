@@ -2,71 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09EADA4071
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:18:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6C06A407A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:21:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbfH3WSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 18:18:20 -0400
-Received: from mga14.intel.com ([192.55.52.115]:3805 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbfH3WSU (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 18:18:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 15:18:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="182772067"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.213.244]) ([10.254.213.244])
-  by fmsmga007.fm.intel.com with ESMTP; 30 Aug 2019 15:18:18 -0700
-Subject: Re: [PATCH v1 2/4] perf vendor events intel: Update cascadelakex
- uncore events to v1.04
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     jolsa@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, Linux-kernel@vger.kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com,
-        Haiyan Song <haiyanx.song@intel.com>
-References: <20190828055932.8269-1-yao.jin@linux.intel.com>
- <20190828055932.8269-3-yao.jin@linux.intel.com>
- <20190830182242.GF28011@kernel.org>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <273f82b2-530a-baaf-1f2d-2f8f89641914@linux.intel.com>
-Date:   Sat, 31 Aug 2019 06:18:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728257AbfH3WVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 18:21:05 -0400
+Received: from smtprelay0187.hostedemail.com ([216.40.44.187]:33339 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728122AbfH3WVF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 18:21:05 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 7F6FA180A68BC;
+        Fri, 30 Aug 2019 22:21:03 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1540:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3871:3874:4321:5007:6119:6691:7903:10004:10400:10848:11026:11232:11658:11914:12048:12297:12740:12760:12895:13069:13311:13357:13439:14659:14721:21080:21627:30012:30054:30091,0,RBL:47.151.137.30:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: heart65_6059c6a33e92b
+X-Filterd-Recvd-Size: 2060
+Received: from XPS-9350.home (unknown [47.151.137.30])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 30 Aug 2019 22:21:01 +0000 (UTC)
+Message-ID: <92108c09c37a9355566b579db152a05e19f54ccf.camel@perches.com>
+Subject: Re: [PATCH] printf: add support for printing symbolic error codes
+From:   Joe Perches <joe@perches.com>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        Petr Mladek <pmladek@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
+Date:   Fri, 30 Aug 2019 15:21:00 -0700
+In-Reply-To: <9fecd3a9-e1ae-a1f9-a0c5-f5db3430c81d@rasmusvillemoes.dk>
+References: <20190830214655.6625-1-linux@rasmusvillemoes.dk>
+         <64a000cc3b0fcd7c99b5cd41b0db7f1b5e9e6db7.camel@perches.com>
+         <9fecd3a9-e1ae-a1f9-a0c5-f5db3430c81d@rasmusvillemoes.dk>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-In-Reply-To: <20190830182242.GF28011@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/31/2019 2:22 AM, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Aug 28, 2019 at 01:59:30PM +0800, Jin Yao escreveu:
->> From: Haiyan Song <haiyanx.song@intel.com>
+On Sat, 2019-08-31 at 00:03 +0200, Rasmus Villemoes wrote:
+> On 30/08/2019 23.53, Joe Perches wrote:
+> > > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
+> > []
+> > > @@ -2178,8 +2204,6 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
+> > >  		return flags_string(buf, end, ptr, spec, fmt);
+> > >  	case 'O':
+> > >  		return kobject_string(buf, end, ptr, spec, fmt);
+> > > -	case 'x':
+> > > -		return pointer_string(buf, end, ptr, spec);
+> > >  	}
+> > >  
+> > >  	/* default is to _not_ leak addresses, hash before printing */
+> > 
+> > why remove this?
+> > 
 > 
-> Not applying, please check, will apply the other 3 patches in the
-> series, next time please try to collect some Acked-by in advance.
-> 
-> - Arnaldo
->   
+> The handling of %px is moved above the test for ptr being an ERR_PTR, so
+> that %px, ptr continues to be (roughly) equivalent to %08lx, (long)ptr.
 
-Hi Arnaldo,
+Ah.
+Pity the flow of the switch/case is disrupted.
+That now deserves a separate comment.
 
-Sorry, any issue you found when applying this patch? Is it truncated by 
-the email system?
-
-Or the applying is no problem at your side but this patch needs some 
-Acked-by before applying, right?
-
-Thanks
-Jin Yao
-
+But why not just extend check_pointer_msg?
 
 
