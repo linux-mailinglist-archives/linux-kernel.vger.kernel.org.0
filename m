@@ -2,228 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9257EA33B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:22:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A50EA33C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:24:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbfH3JWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 05:22:43 -0400
-Received: from foss.arm.com ([217.140.110.172]:56928 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726461AbfH3JWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 05:22:43 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB8EC344;
-        Fri, 30 Aug 2019 02:22:41 -0700 (PDT)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E6983F718;
-        Fri, 30 Aug 2019 02:22:41 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 11:22:40 +0200
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     Steven Price <steven.price@arm.com>
-Cc:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-doc@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v3 01/10] KVM: arm64: Document PV-time interface
-Message-ID: <20190830092240.GA5307@e113682-lin.lund.arm.com>
-References: <20190821153656.33429-1-steven.price@arm.com>
- <20190821153656.33429-2-steven.price@arm.com>
- <20190827085706.GB6541@e113682-lin.lund.arm.com>
- <37eaf54b-8a22-8483-a372-419bfa1475f1@arm.com>
+        id S1727904AbfH3JYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 05:24:37 -0400
+Received: from [110.188.70.11] ([110.188.70.11]:6051 "EHLO spam1.hygon.cn"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726461AbfH3JYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 05:24:36 -0400
+Received: from MK-DB.hygon.cn ([172.23.18.60])
+        by spam1.hygon.cn with ESMTP id x7U9Nl0h068530;
+        Fri, 30 Aug 2019 17:23:47 +0800 (GMT-8)
+        (envelope-from puwen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-DB.hygon.cn with ESMTP id x7U9NP3W062188;
+        Fri, 30 Aug 2019 17:23:26 +0800 (GMT-8)
+        (envelope-from puwen@hygon.cn)
+Received: from pw-vbox.hygon.cn (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Fri, 30 Aug
+ 2019 17:23:44 +0800
+From:   Pu Wen <puwen@hygon.cn>
+To:     <lenb@kernel.org>, <calvin.walton@kepstin.ca>
+CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Pu Wen <puwen@hygon.cn>
+Subject: [RFC PATCH] tools/power turbostat: Add support for Hygon Fam 18h (Dhyana) RAPL
+Date:   Fri, 30 Aug 2019 17:23:28 +0800
+Message-ID: <1567157008-29679-1-git-send-email-puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37eaf54b-8a22-8483-a372-419bfa1475f1@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam1.hygon.cn x7U9Nl0h068530
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 01:09:15PM +0100, Steven Price wrote:
-> On 27/08/2019 09:57, Christoffer Dall wrote:
-> > On Wed, Aug 21, 2019 at 04:36:47PM +0100, Steven Price wrote:
-> >> Introduce a paravirtualization interface for KVM/arm64 based on the
-> >> "Arm Paravirtualized Time for Arm-Base Systems" specification DEN 0057A.
-> >>
-> >> This only adds the details about "Stolen Time" as the details of "Live
-> >> Physical Time" have not been fully agreed.
-> >>
-> >> User space can specify a reserved area of memory for the guest and
-> >> inform KVM to populate the memory with information on time that the host
-> >> kernel has stolen from the guest.
-> >>
-> >> A hypercall interface is provided for the guest to interrogate the
-> >> hypervisor's support for this interface and the location of the shared
-> >> memory structures.
-> >>
-> >> Signed-off-by: Steven Price <steven.price@arm.com>
-> >> ---
-> >>  Documentation/virt/kvm/arm/pvtime.txt | 100 ++++++++++++++++++++++++++
-> >>  1 file changed, 100 insertions(+)
-> >>  create mode 100644 Documentation/virt/kvm/arm/pvtime.txt
-> >>
-> >> diff --git a/Documentation/virt/kvm/arm/pvtime.txt b/Documentation/virt/kvm/arm/pvtime.txt
-> >> new file mode 100644
-> >> index 000000000000..1ceb118694e7
-> >> --- /dev/null
-> >> +++ b/Documentation/virt/kvm/arm/pvtime.txt
-> >> @@ -0,0 +1,100 @@
-> >> +Paravirtualized time support for arm64
-> >> +======================================
-> >> +
-> >> +Arm specification DEN0057/A defined a standard for paravirtualised time
-> >> +support for AArch64 guests:
-> >> +
-> >> +https://developer.arm.com/docs/den0057/a
-> >> +
-> >> +KVM/arm64 implements the stolen time part of this specification by providing
-> >> +some hypervisor service calls to support a paravirtualized guest obtaining a
-> >> +view of the amount of time stolen from its execution.
-> >> +
-> >> +Two new SMCCC compatible hypercalls are defined:
-> >> +
-> >> +PV_FEATURES 0xC5000020
-> >> +PV_TIME_ST  0xC5000022
-> >> +
-> >> +These are only available in the SMC64/HVC64 calling convention as
-> >> +paravirtualized time is not available to 32 bit Arm guests. The existence of
-> >> +the PV_FEATURES hypercall should be probed using the SMCCC 1.1 ARCH_FEATURES
-> >> +mechanism before calling it.
-> >> +
-> >> +PV_FEATURES
-> >> +    Function ID:  (uint32)  : 0xC5000020
-> >> +    PV_func_id:   (uint32)  : Either PV_TIME_LPT or PV_TIME_ST
-> >> +    Return value: (int32)   : NOT_SUPPORTED (-1) or SUCCESS (0) if the relevant
-> >> +                              PV-time feature is supported by the hypervisor.
-> >> +
-> >> +PV_TIME_ST
-> >> +    Function ID:  (uint32)  : 0xC5000022
-> >> +    Return value: (int64)   : IPA of the stolen time data structure for this
-> >> +                              (V)CPU. On failure:
-> >> +                              NOT_SUPPORTED (-1)
-> >> +
-> >> +The IPA returned by PV_TIME_ST should be mapped by the guest as normal memory
-> >> +with inner and outer write back caching attributes, in the inner shareable
-> >> +domain. A total of 16 bytes from the IPA returned are guaranteed to be
-> >> +meaningfully filled by the hypervisor (see structure below).
-> >> +
-> >> +PV_TIME_ST returns the structure for the calling VCPU.
-> >> +
-> >> +Stolen Time
-> >> +-----------
-> >> +
-> >> +The structure pointed to by the PV_TIME_ST hypercall is as follows:
-> >> +
-> >> +  Field       | Byte Length | Byte Offset | Description
-> >> +  ----------- | ----------- | ----------- | --------------------------
-> >> +  Revision    |      4      |      0      | Must be 0 for version 0.1
-> >> +  Attributes  |      4      |      4      | Must be 0
-> >> +  Stolen time |      8      |      8      | Stolen time in unsigned
-> >> +              |             |             | nanoseconds indicating how
-> >> +              |             |             | much time this VCPU thread
-> >> +              |             |             | was involuntarily not
-> >> +              |             |             | running on a physical CPU.
-> >> +
-> >> +The structure will be updated by the hypervisor prior to scheduling a VCPU. It
-> >> +will be present within a reserved region of the normal memory given to the
-> >> +guest. The guest should not attempt to write into this memory. There is a
-> >> +structure per VCPU of the guest.
-> >> +
-> >> +User space interface
-> >> +====================
-> >> +
-> >> +User space can request that KVM provide the paravirtualized time interface to
-> >> +a guest by creating a KVM_DEV_TYPE_ARM_PV_TIME device, for example:
-> >> +
-> >> +    struct kvm_create_device pvtime_device = {
-> >> +            .type = KVM_DEV_TYPE_ARM_PV_TIME,
-> >> +            .attr = 0,
-> >> +            .flags = 0,
-> >> +    };
-> >> +
-> >> +    pvtime_fd = ioctl(vm_fd, KVM_CREATE_DEVICE, &pvtime_device);
-> >> +
-> >> +Creation of the device should be done after creating the vCPUs of the virtual
-> >> +machine.
-> >> +
-> >> +The IPA of the structures must be given to KVM. This is the base address
-> >> +of an array of stolen time structures (one for each VCPU). The base address
-> >> +must be page aligned. The size must be at least 64 * number of VCPUs and be a
-> >> +multiple of PAGE_SIZE.
-> >> +
-> >> +The memory for these structures should be added to the guest in the usual
-> >> +manner (e.g. using KVM_SET_USER_MEMORY_REGION).
-> >> +
-> >> +For example:
-> >> +
-> >> +    struct kvm_dev_arm_st_region region = {
-> >> +            .gpa = <IPA of guest base address>,
-> >> +            .size = <size in bytes>
-> >> +    };
-> > 
-> > This feel fragile; how are you handling userspace creating VCPUs after
-> > setting this up,
-> 
-> In this case as long as the structures all fit within the region created
-> VCPUs can be created/destroyed at will. If the VCPU index is too high
-> then the kernel will bail out in kvm_update_stolen_time() so the
-> structure will not be written. I consider this case as user space
-> messing up, so beyond protecting the host from the mess, user space gets
-> to keep the pieces.
-> 
-> > the GPA overlapping guest memory, etc.
-> 
-> Again, the (host) kernel is protected against this, but clearly this
-> will end badly for the guest.
-> 
-> > Is the
-> > philosophy here that the VMM can mess up the VM if it wants, but that
-> > this should never lead attacks on the host (we better hope not) and so
-> > we don't care?
-> 
-> Yes. For things like GPA overlapping guest memory it's not really the
-> host's position to work out what is "guest memory". It's quite possible
-> that user space could decide to place the stolen time structures right
-> in the middle of guest memory - it's just up to user space to inform the
-> guest what memory is usable. Obviously the expectation is that the
-> shared structures would be positioned "out of the way" in GPA space in
-> any normal arrangement.
-> 
-> > It seems to me setting the IPA per vcpu throught the VCPU device would
-> > avoid a lot of these issues.  See
-> > Documentation/virt/kvm/devices/vcpu.txt.
-> 
-> That is certainly a possibility, I'm not really sure what the benefit is
-> though? It would still lead to corner cases:
-> 
->  * What if only some VCPUs had stolen time setup on them?
->  * What if multiple VCPUs pointed to the same location?
->  * The structures can still overlap with guest memory
-> 
-> It's also more work to setup in user space with the only "benefit" being
-> that user space could choose to organise the structures however it sees
-> fit (e.g. no need for them to be contiguous in memory). But I'm not sure
-> I see a use case for that flexibility.
-> 
-> Perhaps there's some benefit I'm not seeing?
-> 
+Commit 9392bd98bba760be96ee ("tools/power turbostat: Add support for AMD
+Fam 17h (Zen) RAPL") and the commit 3316f99a9f1b68c578c5 ("tools/power
+turbostat: Also read package power on AMD F17h (Zen)") add AMD Fam 17h
+RAPL support.
 
-So this is now mostly moot as you said you were going to change this,
-but overall I think the assumption that it's trivial to maintain an
-interface such the one proposed here to never be an attack vector for
-the host is not as easy as it may sound.  In the past, we've had
-numerous bugs related to things like calculating an offset into some
-region based on some index and a size, because suddenly someone changed
-how an index is calculated, and it had unintended side-effects etc.
+Hygon Family 18h(Dhyana) support RAPL in bit 14 of CPUID 0x80000007 EDX,
+and has MSRs RAPL_PWR_UNIT/CORE_ENERGY_STAT/PKG_ENERGY_STAT. So add Hygon
+Dhyana Family 18h support for RAPL.
 
-So if an API is used to specify something which is effectively per-CPU,
-it's better to use the per-CPU handles (VCPU fds) to directly describe
-this relationship.
+Already tested on Hygon multi-node systems and it shows correct per-core
+energy usage and the total package power.
 
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+---
+ tools/power/x86/turbostat/turbostat.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Thanks,
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 1cd28eb..f2629b1 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -60,6 +60,7 @@ unsigned int do_irtl_hsw;
+ unsigned int units = 1000000;	/* MHz etc */
+ unsigned int genuine_intel;
+ unsigned int authentic_amd;
++unsigned int hygon_genuine;
+ unsigned int max_level, max_extended_level;
+ unsigned int has_invariant_tsc;
+ unsigned int do_nhm_platform_info;
+@@ -1714,7 +1715,7 @@ void get_apic_id(struct thread_data *t)
+ 	if (!DO_BIC(BIC_X2APIC))
+ 		return;
+ 
+-	if (authentic_amd) {
++	if (authentic_amd || hygon_genuine) {
+ 		unsigned int topology_extensions;
+ 
+ 		if (max_extended_level < 0x8000001e)
+@@ -3803,6 +3804,7 @@ double get_tdp_amd(unsigned int family)
+ {
+ 	switch (family) {
+ 	case 0x17:
++	case 0x18:
+ 	default:
+ 		/* This is the max stock TDP of HEDT/Server Fam17h chips */
+ 		return 250.0;
+@@ -3982,6 +3984,7 @@ void rapl_probe_amd(unsigned int family, unsigned int model)
+ 
+ 	switch (family) {
+ 	case 0x17: /* Zen, Zen+ */
++	case 0x18:
+ 		do_rapl = RAPL_AMD_F17H | RAPL_PER_CORE_ENERGY;
+ 		if (rapl_joules) {
+ 			BIC_PRESENT(BIC_Pkg_J);
+@@ -4018,7 +4021,7 @@ void rapl_probe(unsigned int family, unsigned int model)
+ {
+ 	if (genuine_intel)
+ 		rapl_probe_intel(family, model);
+-	if (authentic_amd)
++	if (authentic_amd || hygon_genuine)
+ 		rapl_probe_amd(family, model);
+ }
+ 
+@@ -4600,6 +4603,8 @@ void process_cpuid()
+ 		genuine_intel = 1;
+ 	else if (ebx == 0x68747541 && ecx == 0x444d4163 && edx == 0x69746e65)
+ 		authentic_amd = 1;
++	else if (ebx == 0x6f677948 && ecx == 0x656e6975 && edx == 0x6e65476e)
++		hygon_genuine = 1;
+ 
+ 	if (!quiet)
+ 		fprintf(outf, "CPUID(0): %.4s%.4s%.4s ",
+-- 
+2.7.4
 
-    Christoffer
