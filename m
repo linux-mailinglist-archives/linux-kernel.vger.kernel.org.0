@@ -2,86 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C9C2A3485
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BDDAA348D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:57:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727595AbfH3J4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 05:56:43 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:53541 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726653AbfH3J4m (ORCPT
+        id S1728076AbfH3J5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 05:57:09 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44162 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfH3J5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 05:56:42 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-130-P6GY7liWP8u9PLRWlkmegQ-1; Fri, 30 Aug 2019 10:56:39 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Fri, 30 Aug 2019 10:56:39 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 30 Aug 2019 10:56:39 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Torvalds' <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>
-CC:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Linux List Kernel Mailing" <linux-kernel@vger.kernel.org>,
-        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
-Subject: RE: [PATCH] /dev/mem: Bail out upon SIGKILL when reading memory.
-Thread-Topic: [PATCH] /dev/mem: Bail out upon SIGKILL when reading memory.
-Thread-Index: AQHVV6Op4hc1jesckEO2Njx8G6LSv6cHrBeAgAC6ywCAAHvDAIABi1YAgAAYGYCAAC0oAIAACaQAgAi0npA=
-Date:   Fri, 30 Aug 2019 09:56:38 +0000
-Message-ID: <0eb1d644d233432b8e62d87bd470d7d5@AcuMS.aculab.com>
-References: <1566338811-4464-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <CAHk-=wjFsF6zmcDaBdpYEvCWiq=x7_NuQWEm=OinZ9TuQd4ZZQ@mail.gmail.com>
- <20190823091636.GA10064@gmail.com>
- <CAHk-=wj=HcHWjrrNRmZ_hxEdBBrvUnPNFCw37EAu8_qJn71saQ@mail.gmail.com>
- <20190824161432.GA25950@gmail.com>
- <CAHk-=whFQNkqPJ5zA1xAyvgtCPLN2C4xeJ181rU3k6bG+2zugg@mail.gmail.com>
- <20190824202224.GA5286@gmail.com>
- <CAHk-=wjD5MMbAm0OkbKadzerwG3yGr9SvE7mrsCnhmiqRRdxMw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjD5MMbAm0OkbKadzerwG3yGr9SvE7mrsCnhmiqRRdxMw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 30 Aug 2019 05:57:08 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i18so3288044pgl.11;
+        Fri, 30 Aug 2019 02:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=fy06+AemNIV2gCe3GVN+rRCnIQVGYZ4AUqkeTUjjHyw=;
+        b=NuCttfCZy0ZS1kR7cSkGFdVOY98JlEfbLJXoVFGhP+U7MR1Ff2SR1k2G6OLcZlGkot
+         goeVOJdxdjAKqO2nBzkCuoP2Cxl3mpB4kQj0MOreMFi36z7ufj/6YiRK+iMhQNkuYM/L
+         w6O+OfqYEYbsaYUpu36Az6hTJwYKrMN4hhTh3pRjVSZNrdDz1XcAigXCw5/XKotAmUjg
+         62mGuAn5SLfHBbmHE/leeeWeoWf2c9qYO5AvBOCF0XU4mVp7j1P3sFqC4bIvwupzOgtn
+         eC0mWTFBFtMe3mHNP+ySrkz/4eQVM1gz6/URwDuc0Goal8j9iav8ejXkqxmMeZqivoWZ
+         jVSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=fy06+AemNIV2gCe3GVN+rRCnIQVGYZ4AUqkeTUjjHyw=;
+        b=GqzTlPGq3d2P+znL4pgyrgiwIuOaAUtI89uW8gu7J8zjG/rcigGFkv3NNtxBo36UhR
+         rg7kA2qWgmV9/fFTTjs2HUI9XllGl/sc6/HBm3CrDOgCBfaoO4fQv8U3pLpEo66q2YLc
+         fwREKSOEPioWFMY6KikwgKWwaplEenA+fX9/93z5kzzx++GOSxECIO8Znalh1CxhkKce
+         c+XV9al4IsNiEZH+TA9LHcfLHXZLXjhFPOXSOCYe/T61hP3kKDAqLzLOyRT4krEpKuMc
+         lGnqEtw6CfzbTnrBnEAYAw0jQxXgV0UOdIeRLVgGOCMvqC3CZ+4pZRWTIJg60CopgRlo
+         SKSQ==
+X-Gm-Message-State: APjAAAXdgzHjeYDxzSH4rkBsYwYgwkPADwcY17VsSVJigfk3fVFQ8XNN
+        J5J66mtPdIWHnCQhCqKPteQ=
+X-Google-Smtp-Source: APXvYqwE6swxiaYetHF650SEUEqiqNIW0JpPSu/0ZgIq+LbjwJNbop9b7jYNzfAi69ZtkIWT74lmZQ==
+X-Received: by 2002:a62:52d0:: with SMTP id g199mr442074pfb.120.1567159027247;
+        Fri, 30 Aug 2019 02:57:07 -0700 (PDT)
+Received: from localhost.localdomain ([175.203.71.146])
+        by smtp.googlemail.com with ESMTPSA id k64sm8329447pge.65.2019.08.30.02.57.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 02:57:06 -0700 (PDT)
+From:   Seunghun Han <kkamagui@gmail.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        linux-integrity@vger.kernel.org (open list:TPM DEVICE DRIVER),
+        linux-kernel@vger.kernel.org, Seunghun Han <kkamagui@gmail.com>
+Subject: [PATCH 2/2] tpm: tpm_crb: enhance resource mapping mechanism for supporting AMD's fTPM
+Date:   Fri, 30 Aug 2019 18:56:39 +0900
+Message-Id: <20190830095639.4562-3-kkamagui@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190830095639.4562-1-kkamagui@gmail.com>
+References: <20190830095639.4562-1-kkamagui@gmail.com>
 MIME-Version: 1.0
-X-MC-Unique: P6GY7liWP8u9PLRWlkmegQ-1
-X-Mimecast-Spam-Score: 0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMjQgQXVndXN0IDIwMTkgMjE6NTcNCj4gT24g
-U2F0LCBBdWcgMjQsIDIwMTkgYXQgMToyMiBQTSBJbmdvIE1vbG5hciA8bWluZ29Aa2VybmVsLm9y
-Zz4gd3JvdGU6DQo+ID4NCj4gPiBUaGF0IG1ha2VzIHNlbnNlOiBJIG1lYXN1cmVkIDE3IHNlY29u
-ZHMgcGVyIDEwMCBNQiBvZiBkYXRhLCB3aGljaCBpcyBpcw0KPiA+IDAuMTYgdXNlY3MgcGVyIGJ5
-dGUuIFRoZSBpbnN0cnVjdGlvbiB1c2VkIGJ5DQo+ID4gY29weV91c2VyX2VuaGFuY2VkX2Zhc3Rf
-c3RyaW5nKCkgaXMgUkVQIE1PVlNCIC0gd2hpY2ggc3VwcG9zZWRseSBnb2VzIGFzDQo+ID4gaGln
-aCBhcyBjYWNoZWxpbmUgc2l6ZSBhY2Nlc3NlcyAtIGJ1dCBwZXJoYXBzIHRob3NlIGdldCBicm9r
-ZW4gZG93biBmb3INCj4gPiBwaHlzaWNhbCBtZW1vcnkgdGhhdCBoYXMgbm8gZGV2aWNlIGNsYWlt
-aW5nIGl0Pw0KPiANCj4gQWxsIHRoZSAicmVwIHN0cmluZyIgb3B0aW1pemF0aW9ucyBhcmUgX29u
-bHlfIGRvbmUgZm9yIHJlZ3VsYXIgbWVtb3J5Lg0KDQpNb3JlIGxpa2VseSBmb3IgcGFnZXMgdGhh
-dCB1c2VzIHRoZSBkYXRhIGNhY2hlLg0KSXQgb3VnaHQgdG8gYmUgcG9zc2libGUgdG8gbWFwIFBD
-SWUgbWVtb3J5IHRocm91Z2ggdGhlIGRhdGEgY2FjaGUuDQpXaXRoIGNhcmUgdGhhdCB3b3VsZCBh
-bGxvdyBsb25nZXIgVExQcyAoZXNwZWNpYWxseSByZWFkIFRMUCkgZm9yDQpjcHUgJ3BpbycgYnVm
-ZmVyIHRyYW5zZmVycy4NCg0KPiBXaGVuIGl0IGhpdHMgYW55IElPIGFjY2Vzc2VzLCBpdCB3aWxs
-IGRvIHRoZSBhY2Nlc3NlcyBhdCB0aGUgc3BlY2lmaWVkDQo+IHNpemUgKHNvICJtb3ZzYiIgd2ls
-bCBkbyBpdCBhIGJ5dGUgYXQgYSB0aW1lKS4NCj4gDQo+IDAuMTYgdXNlYyBwZXIgYnl0ZSBpcyBm
-YXN0ZXIgdGhhbiB0aGUgdHJhZGl0aW9uYWwgSVNBICdpbmInLCBidXQgbm90DQo+IGJ5IGEgaHVn
-ZSBmYWN0b3IuDQoNClRoYXQgc3BlZWQgZGVwZW5kcyBvbiB0aGUgdGFyZ2V0LCBJSVJDIG91ciBm
-cGdhIHRhcmdldCB0YWtlcyAxMjggY2xvY2tzDQphdCA2Mi41TUh6IHRvIHByb2Nlc3MgYSBQQ0ll
-IHJlYWQgcmVxdWVzdC4NCk5vbmUgb2YgdGhlIGN1cnJlbnQgSW50ZWwgeDg2IGNwdXMgd2lsbCBp
-c3N1ZSBtdWx0aXBsZSByZWFkIFRMUCBmcm9tDQphIHNpbmdsZSBjb3JlLCBzbyByZWFkcyBuZXZl
-ciBnZXQgYW55IG92ZXJsYXBwaW5nIGFuZCBzdWZmZXIgdGhlDQpmdWxsIGxhdGVuY3kuDQoNCglE
-YXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91
-bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5
-NzM4NiAoV2FsZXMpDQo=
+I got an AMD system which had a Ryzen Threadripper 1950X and MSI
+mainboard, and I had a problem with AMD's fTPM. My machine showed an error
+message below, and the fTPM didn't work because of it.
+
+[  5.732084] tpm_crb MSFT0101:00: can't request region for resource
+             [mem 0x79b4f000-0x79b4ffff]
+[  5.732089] tpm_crb: probe of MSFT0101:00 failed with error -16
+
+When I saw the iomem, I found two fTPM regions were in the ACPI NVS area. 
+The regions are below.
+
+79a39000-79b6afff : ACPI Non-volatile Storage
+  79b4b000-79b4bfff : MSFT0101:00
+  79b4f000-79b4ffff : MSFT0101:00
+
+After analyzing this issue, I found that crb_map_io() function called
+devm_ioremap_resource() and it failed. The ACPI NVS didn't allow the TPM
+CRB driver to assign a resource in it because a busy bit was set to
+the ACPI NVS area.
+
+To support AMD's fTPM, I added a function to check intersects between
+the TPM region and ACPI NVS before it mapped the region. If some
+intersects are detected, the function just calls devm_ioremap() for
+a workaround. If there is no intersect, it calls devm_ioremap_resource().
+
+Signed-off-by: Seunghun Han <kkamagui@gmail.com>
+---
+ drivers/char/tpm/tpm_crb.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 14f486c23af2..7b60cd594b92 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -450,6 +450,27 @@ static int crb_check_resource(struct acpi_resource *ares, void *data)
+ 	return 1;
+ }
+ 
++static void __iomem *crb_ioremap_resource(struct device *dev,
++					  const struct resource *res)
++{
++	int rc;
++	resource_size_t size = res->end - res->start;
++
++	/* Broken BIOS assigns command and response buffers in ACPI NVS region.
++	 * Check intersections between a resource and ACPI NVS for W/A.
++	 */
++	rc = region_intersects(res->start, size, IORESOURCE_MEM |
++			       IORESOURCE_BUSY, IORES_DESC_ACPI_NV_STORAGE);
++	if (rc != REGION_DISJOINT) {
++		dev_err(dev,
++			FW_BUG "Resource overlaps with a ACPI NVS. %pr\n",
++			res);
++		return devm_ioremap(dev, res->start, size);
++	}
++
++	return devm_ioremap_resource(dev, res);
++}
++
+ static void __iomem *crb_map_res(struct device *dev, struct crb_priv *priv,
+ 				 struct resource *io_res, u64 start, u32 size)
+ {
+@@ -464,7 +485,7 @@ static void __iomem *crb_map_res(struct device *dev, struct crb_priv *priv,
+ 		return (void __iomem *) ERR_PTR(-EINVAL);
+ 
+ 	if (!resource_contains(io_res, &new_res))
+-		return devm_ioremap_resource(dev, &new_res);
++		return crb_ioremap_resource(dev, &new_res);
+ 
+ 	return priv->iobase + (new_res.start - io_res->start);
+ }
+@@ -536,7 +557,7 @@ static int crb_map_io(struct acpi_device *device, struct crb_priv *priv,
+ 		goto out_early;
+ 	}
+ 
+-	priv->iobase = devm_ioremap_resource(dev, &io_res);
++	priv->iobase = crb_ioremap_resource(dev, &io_res);
+ 	if (IS_ERR(priv->iobase)) {
+ 		ret = PTR_ERR(priv->iobase);
+ 		goto out_early;
+-- 
+2.21.0
 
