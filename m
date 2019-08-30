@@ -2,67 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 626B1A3239
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 10:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91881A3246
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 10:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbfH3IZ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 04:25:28 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:59702 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbfH3IZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 04:25:27 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1i3cDe-0005jc-1a; Fri, 30 Aug 2019 18:25:19 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 30 Aug 2019 18:25:16 +1000
-Date:   Fri, 30 Aug 2019 18:25:16 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Mao Wenan <maowenan@huawei.com>
-Cc:     davem@davemloft.net, jonathan.cameron@huawei.com,
-        wangzhou1@hisilicon.com, liguozhu@hisilicon.com,
-        john.garry@huawei.com, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2 -next] crypto: hisilicon: select CRYPTO_LIB_DES while
- compiling SEC driver
-Message-ID: <20190830082516.GJ8033@gondor.apana.org.au>
-References: <affd8de1-ae35-a1d0-534a-d9cdfac90de8@huawei.com>
- <20190828080740.43244-1-maowenan@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828080740.43244-1-maowenan@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728279AbfH3I0h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 04:26:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42954 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbfH3I0g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 04:26:36 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 686366155C; Fri, 30 Aug 2019 08:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567153594;
+        bh=fe+1CIFsLrsFmj7GnadvoGOHiiGzQrdsXLHYlpV+vnM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=b18bVQjK0tujCHtmNVN7r2uJvzBYrVzIEND/NqFYiponvrWVncdoFvGUewLCFt+hr
+         i5FWd3mfndhPExuUKD+DtyopBFJAqM/xDKSSHRE3RqJ0n/YF0vb1Dj6YD9r2Tl6BNL
+         2MiNFmcExEjQMbDS9yZW7jv6386j9+dVn+MD0/7E=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from c-hbandi-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: c-hbandi@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DF1876333C;
+        Fri, 30 Aug 2019 08:26:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567153591;
+        bh=fe+1CIFsLrsFmj7GnadvoGOHiiGzQrdsXLHYlpV+vnM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Y5BEWXLjOCPvhsZGooH78akW+LC0OFO32rHaVS3BdJf4WgOtuUVzL9euDsFqlDTjB
+         ItOz53j7ogyCFylAvNVbSW6wUL2C7jcAIXKK4qaascaLjOrQaKtmmCqi9BoWUg+QaF
+         WUabcHePRtcPdhyiuInrTKHEE6ToJKB2/NG2F8hk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DF1876333C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=c-hbandi@codeaurora.org
+From:   Harish Bandi <c-hbandi@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
+        anubhavg@codeaurora.org, Harish Bandi <c-hbandi@codeaurora.org>
+Subject: [PATCH v2] Bluetooth: hci_qca: wait for Pre shutdown complete event before sending the Power off pulse
+Date:   Fri, 30 Aug 2019 13:56:16 +0530
+Message-Id: <1567153576-16895-1-git-send-email-c-hbandi@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 04:07:40PM +0800, Mao Wenan wrote:
-> When CRYPTO_DEV_HISI_SEC=y, below compilation error is found after 
-> 'commit 894b68d8be4b ("crypto: hisilicon/des - switch to new verification routines")':
-> 
-> drivers/crypto/hisilicon/sec/sec_algs.o: In function `sec_alg_skcipher_setkey_des_cbc':
-> sec_algs.c:(.text+0x11f0): undefined reference to `des_expand_key'
-> drivers/crypto/hisilicon/sec/sec_algs.o: In function `sec_alg_skcipher_setkey_des_ecb':
-> sec_algs.c:(.text+0x1390): undefined reference to `des_expand_key'
-> make: *** [vmlinux] Error 1
-> 
-> This because DES library has been moved to lib/crypto in this commit 
-> '04007b0e6cbb ("crypto: des - split off DES library from generic DES cipher driver")'.
-> Fix this by selecting CRYPTO_LIB_DES in CRYPTO_DEV_HISI_SEC.
-> 
-> Fixes: 04007b0e6cbb ("crypto: des - split off DES library from generic DES cipher driver")
-> Fixes: 894b68d8be4b ("crypto: hisilicon/des - switch to new verification routines")
-> 
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  v2: remove fix tag 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver") 
->  drivers/crypto/hisilicon/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+When SoC receives pre shut down command, it share the same
+with other COEX shared clients. So SoC needs a short time
+after sending VS pre shutdown command before turning off
+the regulators and sending the power off pulse. Along with
+short delay, needs to wait for command complete event for
+Pre shutdown VS command
 
-Patch applied.  Thanks.
+Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
+Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+---
+Changes in V2:
+- Modified commit text.
+---
+ drivers/bluetooth/btqca.c   | 22 ++++++++++++++++++++++
+ drivers/bluetooth/hci_qca.c |  5 +++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+index 8b33128..d48dc9e 100644
+--- a/drivers/bluetooth/btqca.c
++++ b/drivers/bluetooth/btqca.c
+@@ -99,6 +99,28 @@ static int qca_send_reset(struct hci_dev *hdev)
+ 	return 0;
+ }
+ 
++int qca_send_pre_shutdown_cmd(struct hci_dev *hdev)
++{
++	struct sk_buff *skb;
++	int err;
++
++	bt_dev_dbg(hdev, "QCA pre shutdown cmd");
++
++	skb = __hci_cmd_sync_ev(hdev, QCA_PRE_SHUTDOWN_CMD, 0,
++				NULL, HCI_EV_CMD_COMPLETE, HCI_INIT_TIMEOUT);
++
++	if (IS_ERR(skb)) {
++		err = PTR_ERR(skb);
++		bt_dev_err(hdev, "QCA preshutdown_cmd failed (%d)", err);
++		return err;
++	}
++
++	kfree_skb(skb);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(qca_send_pre_shutdown_cmd);
++
+ static void qca_tlv_check_data(struct rome_config *config,
+ 				const struct firmware *fw)
+ {
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index ab4c18e..43df13c 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -1367,6 +1367,11 @@ static int qca_power_off(struct hci_dev *hdev)
+ {
+ 	struct hci_uart *hu = hci_get_drvdata(hdev);
+ 
++	/* Perform pre shutdown command */
++	qca_send_pre_shutdown_cmd(hdev);
++
++	usleep_range(8000, 10000);
++
+ 	qca_power_shutdown(hu);
+ 	return 0;
+ }
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
