@@ -2,71 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CE4BA2F66
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D94A2F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:11:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbfH3GJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 02:09:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55258 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726978AbfH3GI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 02:08:59 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB4E030832C6;
-        Fri, 30 Aug 2019 06:08:58 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-95.ams2.redhat.com [10.36.116.95])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BB755C1D6;
-        Fri, 30 Aug 2019 06:08:58 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id A32B317536; Fri, 30 Aug 2019 08:08:57 +0200 (CEST)
-Date:   Fri, 30 Aug 2019 08:08:57 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     David Riley <davidriley@chromium.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        =?utf-8?B?U3TDqXBoYW5l?= Marchesin <marcheu@chromium.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/virtio: Use vmalloc for command buffer allocations.
-Message-ID: <20190830060857.tzrzgoi2hrmchdi5@sirius.home.kraxel.org>
-References: <20190829212417.257397-1-davidriley@chromium.org>
+        id S1727864AbfH3GLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 02:11:22 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57158 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727783AbfH3GLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 02:11:22 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 243BDC970D4FE45035EC;
+        Fri, 30 Aug 2019 14:11:18 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 30 Aug
+ 2019 14:11:11 +0800
+Subject: Re: [PATCH v3 2/7] erofs: some macros are much more readable as a
+ function
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Joe Perches" <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+References: <20190830032006.GA20217@architecture4>
+ <20190830033643.51019-1-gaoxiang25@huawei.com>
+ <20190830033643.51019-2-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <4904b5a1-8e10-7c43-6be1-6191958c021d@huawei.com>
+Date:   Fri, 30 Aug 2019 14:11:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829212417.257397-1-davidriley@chromium.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 30 Aug 2019 06:08:58 +0000 (UTC)
+In-Reply-To: <20190830033643.51019-2-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+On 2019/8/30 11:36, Gao Xiang wrote:
+> As Christoph suggested [1], these marcos are much
+> more readable as a function.
+> 
+> [1] https://lore.kernel.org/r/20190829095954.GB20598@infradead.org/
+> Reported-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
->  {
->  	if (vbuf->resp_size > MAX_INLINE_RESP_SIZE)
->  		kfree(vbuf->resp_buf);
-> -	kfree(vbuf->data_buf);
-> +	kvfree(vbuf->data_buf);
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-if (is_vmalloc_addr(vbuf->data_buf)) ...
-
-needed here I gues?
-
-> +/* Create sg_table from a vmalloc'd buffer. */
-> +static struct sg_table *vmalloc_to_sgt(char *data, uint32_t size)
-
-Hmm, isn't there an existing function for that?
-I'd be surprised if virtio-gpu is the first driver needing this ...
-
-And it case there really isn't one this should probably added to the
-vmalloc or scatterlist code, not the virtio-gpu driver.
-
-cheers,
-  Gerd
-
+Thanks,
