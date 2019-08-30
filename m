@@ -2,73 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7A3A2BFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 02:56:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 445E5A2C01
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 02:59:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfH3A4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 20:56:31 -0400
-Received: from mga02.intel.com ([134.134.136.20]:32915 "EHLO mga02.intel.com"
+        id S1727697AbfH3A73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 20:59:29 -0400
+Received: from mga11.intel.com ([192.55.52.93]:14759 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbfH3A4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 20:56:30 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1726991AbfH3A72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 20:59:28 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 17:56:30 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 17:59:28 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
-   d="scan'208";a="332700916"
+   d="scan'208";a="188724488"
 Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
-  by orsmga004.jf.intel.com with ESMTP; 29 Aug 2019 17:56:27 -0700
-Date:   Fri, 30 Aug 2019 09:00:51 +0800
+  by FMSMGA003.fm.intel.com with ESMTP; 29 Aug 2019 17:59:25 -0700
+Date:   Fri, 30 Aug 2019 09:03:49 +0800
 From:   Philip Li <philip.li@intel.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     lkp@intel.com, wang.yi59@zte.com.cn, wang.liang82@zte.com.cn,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, cheng.lin130@zte.com.cn,
-        kbuild-all@01.org, xue.zhihong@zte.com.cn, kuznet@ms2.inr.ac.ru
-Subject: Re: [kbuild-all] [PATCH] ipv6: Not to probe neighbourless routes
-Message-ID: <20190830010051.GB857@intel.com>
-References: <1566896907-5121-1-git-send-email-wang.yi59@zte.com.cn>
- <201908300657.DY647BSw%lkp@intel.com>
- <20190829.163742.2109211377942652910.davem@davemloft.net>
+To:     Borislav Petkov <bp@suse.de>
+Cc:     kbuild test robot <lkp@intel.com>, linux-input@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        x86-ml <x86@kernel.org>, linux-tip-commits@vger.kernel.org,
+        pv-drivers@vmware.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        tip-bot2 for Thomas Hellstrom <tip-bot2@linutronix.de>,
+        Doug Covelli <dcovelli@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        kbuild-all@01.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [kbuild-all] [tip: x86/vmware] input/vmmouse: Update the
+ backdoor call with support for new instructions
+Message-ID: <20190830010349.GD857@intel.com>
+References: <156699905611.5321.15444519862547054670.tip-bot2@tip-bot2>
+ <201908292325.aLXyyzEx%lkp@intel.com>
+ <20190829163353.GC2132@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190829.163742.2109211377942652910.davem@davemloft.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190829163353.GC2132@zn.tnic>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 04:37:42PM -0700, David Miller wrote:
+On Thu, Aug 29, 2019 at 06:33:53PM +0200, Borislav Petkov wrote:
+> On Fri, Aug 30, 2019 at 12:01:48AM +0800, kbuild test robot wrote:
+> > Hi tip-bot2,
+> > 
+> > Thank you for the patch! Yet something to improve:
+> > 
+> > [auto build test ERROR on linus/master]
+> > [cannot apply to v5.3-rc6 next-20190829]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 > 
-> So yeah, this is one instance where the kbuild test robot's report is
-> making more rather than less work for us.
-sorry for the inconvenience caused. We monitor the lkml, and as you
-point out, we will continuously improve to provide faster response.
+> Yes, it looks like it.
+> 
+> > url:    https://github.com/0day-ci/linux/commits/tip-bot2-for-Thomas-Hellstrom/input-vmmouse-Update-the-backdoor-call-with-support-for-new-instructions/20190829-205315
+> 
+> This patch is part of a series which are here:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/log/?h=x86/vmware
+> 
+> so you need the patches before it.
+> 
+> I don't know what you guys are doing to track patches but if you really
+> wanna test trees, I'd suggest simply testing TIP's tip/master branch
+> which gets redone on a daily basis instead of testing patches in the
+> tip-bot{,2} notification mails.
+Thanks Boris for the input. Besides the repo monitoring, we also check the patches
+in mailing lists, and try to apply patch to a suitable base. Do you think we can
+skip the mailing list of tip-bot{,2}?
 
 > 
-> We identified the build problem within hours of this patch being
-> posted and the updated version was posted more than 24 hours ago.
+> Thx.
 > 
-> The kbuild robot should really have a way to either:
+> -- 
+> Regards/Gruss,
+>     Boris.
 > 
-> 1) Report build problems faster, humans find the obvious cases like
->    this one within a day or less.
-thanks, we will continue working on this to speed up
-
-> 
-> 2) Notice that a new version of the patch was posted or that a human
->    responded to the patch pointing out the build problem.
-thanks, we will enhance the patch testing to consider these ideas.
-
-> 
-> Otherwise we get postings like this which is just more noise to
-> delete.
-> 
-> Thanks.
+> SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 247165, AG München
 > _______________________________________________
 > kbuild-all mailing list
 > kbuild-all@lists.01.org
