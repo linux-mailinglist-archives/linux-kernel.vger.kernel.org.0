@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA3EA40D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 01:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C22C2A40D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 01:15:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728509AbfH3XPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 19:15:42 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:32973 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728420AbfH3XPj (ORCPT
+        id S1727708AbfH3XPw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 19:15:52 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44846 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728468AbfH3XPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 19:15:39 -0400
-Received: by mail-ed1-f65.google.com with SMTP id l26so9116031edr.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 16:15:38 -0700 (PDT)
+        Fri, 30 Aug 2019 19:15:40 -0400
+Received: by mail-ed1-f66.google.com with SMTP id a21so9695880edt.11
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 16:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=rasmusvillemoes.dk; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8cz7uF/ZnFNso4QfEvcj/HoNYUQhTLdxA2/ZapBbiuA=;
-        b=OzS0K7LXPv7kdg0gaC4aaajPRCQ+oDjZz1mx22oIuxiEou8DV4pC8zE3kQRSQBu3Nn
-         FtmcH3Dkk72l1+PKl7ZWe0W8lVlHwdZVO09qzh+wAcnn5Fs6PCQHlDGNzOUfnll5dE3c
-         rYCulrsMmdnkowgqDN5xyQDfNGeS3p3i7BZxY=
+        bh=6P0N9+OtzBQ/+pWxgapquiOAPv3FZmW3I9CzZ8KtwA0=;
+        b=boJouUw78n75bFxQRuRR8zbkuteRj6NjF5ukCY3vk1vAP3W5UUvRAzwPJ7M4qRF0b1
+         VhaNF6RFkQm01KXbbHye45S5UxAtRndhVKlvQI6um+I2GuQ4yAYDuGEytSKxDbBA9bPf
+         r8Ack5+2qynx6L1DM68lp3PCdFRZ7Nv04qnQA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8cz7uF/ZnFNso4QfEvcj/HoNYUQhTLdxA2/ZapBbiuA=;
-        b=sJ7e3a6RLT3QmMRUxMans+WY+MqvQ++IPCRNbl0rKYyNZu3xx5fgYuJgGvgUf9VZ25
-         V5P7EDhhOg6UziLJL4okRswCJ7lrLa1+NlP9TFLcFLYiwqKieF6pZ420TVRYogchX3rU
-         r6sOq9SWc21nSWW05OSjhvEyT3H9GKaCWBmtMe9uICYuiMY8EWYPH+OtqDZQPSK1xocR
-         Udyc7JCUPiyDntFdVjdX6LIiaadFnzJzXZyysPbZvH4LsEYAE2EAkd62Tx47qRUzrk3P
-         nk/yfNrGbfPbsQ/qxyo7C/VIdSNQnW54tmDl9uwkC5NnczqBmDa3RGpl/cBMLcMUrjrQ
-         kvDQ==
-X-Gm-Message-State: APjAAAXfndN7Z/TZEJDOpyHfmci9EKeD9Gpc3Imun9H0jrkaRDA86VIm
-        S7acNm6/aL0gGtmzO/8FJrG/2w==
-X-Google-Smtp-Source: APXvYqwZoDbhV2WcBa/+3EzQw7TbJHQnBAJxMlA3g8VAp87i0F/MNrkAC/HxD9nKWnuC1Z5Zn26+zw==
-X-Received: by 2002:a17:906:94d3:: with SMTP id d19mr15230618ejy.298.1567206937359;
-        Fri, 30 Aug 2019 16:15:37 -0700 (PDT)
+        bh=6P0N9+OtzBQ/+pWxgapquiOAPv3FZmW3I9CzZ8KtwA0=;
+        b=c+Yr4lXks06oRozEv89kMql98kL3Jonj5M6xssaOsNlYOiaSq13CP/xXZr8sEaT9h5
+         Q7G4mVyL7ovhPRxKqo2lmrhD54xbnAgb8tZK4c//OZ+TmevPA/hXFLPpNZdZTnxIF+5w
+         A2Hf6YOI6lmdcTQ2PcbMhZcgLVSWrpxFDbRPY3S7IVI1K3hBtsWz+ta4VczDc7HcB3RU
+         DJ2z9q+7e7YCyOClOPcta80bhj/L6DwIAFpudaniF9U3hZTdFtU+AOh7YhnkNOcnprK7
+         qZCQg8UT2oDJlEhRfHhCB3hVUdfYAHlBFtbc1KULDWfqwpph3VVoixOII2eF7ZWii7Au
+         ht3Q==
+X-Gm-Message-State: APjAAAX6WGM+L9DVtLAyuPUGs5hWOXoevFbNd6EdpQwAtlPofQqU5Slu
+        0k/5CMJHWmwUZMsfML+dP5bPbg==
+X-Google-Smtp-Source: APXvYqxDn9oW7XVGPRMon5L9MXdlUpj2LtGtNsSOwcfNtJ1/yjaDHjJNDf6/aG6ezAwBa1tFvn/hlg==
+X-Received: by 2002:a50:ba81:: with SMTP id x1mr17958640ede.257.1567206938426;
+        Fri, 30 Aug 2019 16:15:38 -0700 (PDT)
 Received: from prevas-ravi.prevas.se (ip-5-186-115-35.cgn.fibianet.dk. [5.186.115.35])
-        by smtp.gmail.com with ESMTPSA id s4sm875457ejx.33.2019.08.30.16.15.36
+        by smtp.gmail.com with ESMTPSA id s4sm875457ejx.33.2019.08.30.16.15.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 16:15:36 -0700 (PDT)
+        Fri, 30 Aug 2019 16:15:37 -0700 (PDT)
 From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
 To:     x86@kernel.org, linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -51,9 +51,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
         ndesaulniers@google.com,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH v2 4/6] compiler-gcc.h: add asm_inline definition
-Date:   Sat, 31 Aug 2019 01:15:25 +0200
-Message-Id: <20190830231527.22304-5-linux@rasmusvillemoes.dk>
+Subject: [PATCH v2 5/6] x86: alternative.h: use asm_inline for all alternative variants
+Date:   Sat, 31 Aug 2019 01:15:26 +0200
+Message-Id: <20190830231527.22304-6-linux@rasmusvillemoes.dk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190830231527.22304-1-linux@rasmusvillemoes.dk>
 References: <20190829083233.24162-1-linux@rasmusvillemoes.dk>
@@ -65,64 +65,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an asm_inline macro which expands to "asm inline" [1] when gcc
-is new enough (>= 9.1), and just asm for older gccs and other
-compilers.
+Most, if not all, uses of the alternative* family just provide one or
+two instructions in .text, but the string literal can be quite large,
+causing gcc to overestimate the size of the generated code. That in
+turn affects its decisions about inlining of the function containing
+the alternative() asm statement.
 
-Using asm inline("foo") instead of asm("foo") overrules gcc's
-heuristic estimate of the size of the code represented by the asm()
-statement, and makes gcc use the minimum possible size instead. That
-can in turn affect gcc's inlining decisions.
-
-I wasn't sure whether to make this a function-like macro or not - this
-way, it can be combined with volatile as
-
-  asm_inline volatile()
-
-but perhaps we'd prefer to spell that
-
-  asm_inline_volatile()
-
-anyway.
-
-[1] Technically, asm __inline, since both inline and __inline__
-are macros that attach various attributes, making gcc barf if one
-literally does "asm inline()". However, the third spelling __inline is
-available for referring to the bare keyword.
+gcc >= 9.1 allows one to overrule the estimated size by using "asm
+inline" instead of just "asm". So replace asm by the helper
+asm_inline, which for older gccs just expands to asm.
 
 Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- include/linux/compiler-gcc.h   | 4 ++++
- include/linux/compiler_types.h | 4 ++++
- 2 files changed, 8 insertions(+)
+ arch/x86/include/asm/alternative.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index d7ee4c6bad48..544b87b41b58 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -172,3 +172,7 @@
- #endif
+diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
+index 094fbc9c0b1c..13adca37c99a 100644
+--- a/arch/x86/include/asm/alternative.h
++++ b/arch/x86/include/asm/alternative.h
+@@ -201,10 +201,10 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  * without volatile and memory clobber.
+  */
+ #define alternative(oldinstr, newinstr, feature)			\
+-	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
++	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
  
- #define __no_fgcse __attribute__((optimize("-fno-gcse")))
-+
-+#if GCC_VERSION >= 90100
-+#define asm_inline asm __inline
-+#endif
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index ee49be6d6088..ba8d81b716c7 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -198,6 +198,10 @@ struct ftrace_likely_data {
- #define asm_volatile_goto(x...) asm goto(x)
- #endif
+ #define alternative_2(oldinstr, newinstr1, feature1, newinstr2, feature2) \
+-	asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
++	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
  
-+#ifndef asm_inline
-+#define asm_inline asm
-+#endif
-+
- #ifndef __no_fgcse
- # define __no_fgcse
- #endif
+ /*
+  * Alternative inline assembly with input.
+@@ -218,7 +218,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  * Leaving an unused argument 0 to keep API compatibility.
+  */
+ #define alternative_input(oldinstr, newinstr, feature, input...)	\
+-	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
++	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature)	\
+ 		: : "i" (0), ## input)
+ 
+ /*
+@@ -231,18 +231,18 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  */
+ #define alternative_input_2(oldinstr, newinstr1, feature1, newinstr2,	     \
+ 			   feature2, input...)				     \
+-	asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1,	     \
++	asm_inline volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1,     \
+ 		newinstr2, feature2)					     \
+ 		: : "i" (0), ## input)
+ 
+ /* Like alternative_input, but with a single output argument */
+ #define alternative_io(oldinstr, newinstr, feature, output, input...)	\
+-	asm volatile (ALTERNATIVE(oldinstr, newinstr, feature)		\
++	asm_inline volatile (ALTERNATIVE(oldinstr, newinstr, feature)	\
+ 		: output : "i" (0), ## input)
+ 
+ /* Like alternative_io, but for replacing a direct call with another one. */
+ #define alternative_call(oldfunc, newfunc, feature, output, input...)	\
+-	asm volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
++	asm_inline volatile (ALTERNATIVE("call %P[old]", "call %P[new]", feature) \
+ 		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
+ 
+ /*
+@@ -253,7 +253,7 @@ static inline int alternatives_text_reserved(void *start, void *end)
+  */
+ #define alternative_call_2(oldfunc, newfunc1, feature1, newfunc2, feature2,   \
+ 			   output, input...)				      \
+-	asm volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
++	asm_inline volatile (ALTERNATIVE_2("call %P[old]", "call %P[new1]", feature1,\
+ 		"call %P[new2]", feature2)				      \
+ 		: output, ASM_CALL_CONSTRAINT				      \
+ 		: [old] "i" (oldfunc), [new1] "i" (newfunc1),		      \
 -- 
 2.20.1
 
