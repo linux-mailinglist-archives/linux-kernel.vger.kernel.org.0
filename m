@@ -2,86 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90178A2DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 05:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 211C6A2DE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 05:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbfH3D6s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 23:58:48 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:5445 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727454AbfH3D6r (ORCPT
+        id S1728408AbfH3D6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 23:58:22 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42848 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728188AbfH3D6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 23:58:47 -0400
-X-UUID: 27cf3a1fe5384e1e9c639b102bb8f450-20190830
-X-UUID: 27cf3a1fe5384e1e9c639b102bb8f450-20190830
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 505007506; Fri, 30 Aug 2019 11:58:44 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 30 Aug 2019 11:58:48 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 30 Aug 2019 11:58:48 +0800
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     Ryder Lee <ryder.lee@mediatek.com>,
-        John Crispin <john@phrozen.org>, <linux-pwm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Sam Shih <sam.shih@mediatek.com>
-Subject: [PATCH v7 11/11] arm: dts: mediatek: add mt7629 pwm support
-Date:   Fri, 30 Aug 2019 11:57:17 +0800
-Message-ID: <1567137437-10041-12-git-send-email-sam.shih@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1567137437-10041-1-git-send-email-sam.shih@mediatek.com>
-References: <1567137437-10041-1-git-send-email-sam.shih@mediatek.com>
+        Thu, 29 Aug 2019 23:58:19 -0400
+Received: by mail-wr1-f66.google.com with SMTP id b16so5452430wrq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 20:58:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U2YaSC8htOogtAiuH3jBHv8w0nOA/yz+9vWbbSSDAyE=;
+        b=gbt8SgME57II7HvM5157UQKk6DP+mARVtSJon99aKdG89rLwo1Iozlweg+1BCIqt2/
+         vCmdt1LEf67ivHfIlj9j1VoM1SNqyYA61aqpNAwMLnVxJT19ub8FIPJGFIUY6QMGmkwY
+         tDzdjS3DsB5ixz3FSir76x+ZAR9RiA+5ViYYuEQu1rnpEnOu4A+ehTGchU/FZEYl/sVT
+         aIUMb5tFm/a/txBSpj/UWGZ0URocHLWDkgUxnt+1TcE09Sy57eKSeCAE1/VyC1IIxvGs
+         LLYE+Nc9I4kK55h42dZyv0MuO3w+pcBSyvVliIv4pEUKMMyK+k2WBu/ROfTk9NLpiGcO
+         iBsQ==
+X-Gm-Message-State: APjAAAXepACW0MKRNj2lJWOdEiMCq+wCpLK9nTlFUFIsAvnm87Kac5It
+        3OGGd22v2dTWrgOpc1aaj9nqcTWjdCvDeEmpiOU=
+X-Google-Smtp-Source: APXvYqzC+DoqDgf5IDWkK1sZ6dEho3io0fbRiyOerOUdA7IYhEipziUqUJI3dzg7UtsiBGjHbnKqEnY3ILf5dUqlFfo=
+X-Received: by 2002:adf:e5c4:: with SMTP id a4mr16452387wrn.87.1567137497299;
+ Thu, 29 Aug 2019 20:58:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20190827231555.121411-1-namhyung@kernel.org> <20190828124949.GA14025@kernel.org>
+In-Reply-To: <20190828124949.GA14025@kernel.org>
+From:   Namhyung Kim <namhyung@kernel.org>
+Date:   Fri, 30 Aug 2019 12:58:06 +0900
+Message-ID: <CAM9d7cgKBH_s44n0n5fOqCuuEGktRrFMW27Jae=ViaT20SESAw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf top: Decay all events in the evlist
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds pwm support for MT7629.
+Hi Arnaldo,
 
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
----
- arch/arm/boot/dts/mt7629.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+On Wed, Aug 28, 2019 at 9:49 PM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> Em Wed, Aug 28, 2019 at 08:15:54AM +0900, Namhyung Kim escreveu:
+> > Currently perf top only decays entries in a selected evsel.  I don't
+> > know whether it's intended (maybe due to performance reason?) but
+> > anyway it might show incorrect output when event group is used since
+> > users will see leader event is decayed but others are not.
+> >
+> > This patch moves the decay code into evlist__resort_hists() so that
+> > stdio and tui code shared the logic.
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/builtin-top.c | 38 +++++++++++++-------------------------
+> >  1 file changed, 13 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> > index 5970723cd55a..9d3059d2029d 100644
+> > --- a/tools/perf/builtin-top.c
+> > +++ b/tools/perf/builtin-top.c
+> > @@ -264,13 +264,23 @@ static void perf_top__show_details(struct perf_top *top)
+> >       pthread_mutex_unlock(&notes->lock);
+> >  }
+> >
+> > -static void evlist__resort_hists(struct evlist *evlist)
+> > +static void evlist__resort_hists(struct perf_top *t)
+>
+> Since this now operates on the perf_top struct, I'll rename it to
+> perf_top__resort_hists(), ok? No need to send an updated patch.
 
-diff --git a/arch/arm/boot/dts/mt7629.dtsi b/arch/arm/boot/dts/mt7629.dtsi
-index 9608bc2ccb3f..493be9a9453b 100644
---- a/arch/arm/boot/dts/mt7629.dtsi
-+++ b/arch/arm/boot/dts/mt7629.dtsi
-@@ -241,6 +241,22 @@
- 			status = "disabled";
- 		};
- 
-+		pwm: pwm@11006000 {
-+			compatible = "mediatek,mt7629-pwm",
-+				     "mediatek,mt7622-pwm";
-+			reg = <0 0x11006000 0 0x1000>;
-+			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_PWM_SEL>,
-+				 <&pericfg CLK_PERI_PWM_PD>,
-+				 <&pericfg CLK_PERI_PWM1_PD>;
-+			clock-names = "top", "main", "pwm1";
-+			assigned-clocks = <&topckgen CLK_TOP_PWM_SEL>;
-+			assigned-clock-parents =
-+					<&topckgen CLK_TOP_UNIVPLL2_D4>;
-+			num-pwms = <1>;
-+			status = "disabled";
-+		};
-+
- 		i2c: i2c@11007000 {
- 			compatible = "mediatek,mt7629-i2c",
- 				     "mediatek,mt2712-i2c";
--- 
-2.17.1
+Right.  Thanks for doing this!
 
+Namhyung
