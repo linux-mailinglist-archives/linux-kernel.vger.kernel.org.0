@@ -2,108 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB5A2A349F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 12:08:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0EC1A3493
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 12:02:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727922AbfH3KId convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 30 Aug 2019 06:08:33 -0400
-Received: from is-comm2.is-ol.de ([159.69.231.212]:59856 "EHLO
-        is-comm2.is-ol.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbfH3KIc (ORCPT
+        id S1727635AbfH3KCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 06:02:03 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:45455 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbfH3KCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 06:08:32 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by is-comm2.is-ol.de (Postfix) with ESMTP id 4935D15F57F;
-        Fri, 30 Aug 2019 09:59:21 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at is-comm2.is-ol.de
-Received: from SSSDEEX.i.sigma-surface-science.com (p50937f79.dip0.t-ipconnect.de [80.147.127.121])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by is-comm2.is-ol.de (Postfix) with ESMTPS;
-        Fri, 30 Aug 2019 11:59:02 +0200 (CEST)
-Received: from SSSDEEX.i.sigma-surface-science.com (172.27.0.81) by
- SSSDEEX.i.sigma-surface-science.com (172.27.0.81) with Microsoft SMTP Server
- (TLS) id 15.0.913.22; Fri, 30 Aug 2019 11:58:42 +0200
-Received: from SSSDEEX.i.sigma-surface-science.com ([::1]) by
- SSSDEEX.i.sigma-surface-science.com ([::1]) with mapi id 15.00.0913.011; Fri,
- 30 Aug 2019 11:58:42 +0200
-From:   =?iso-8859-1?Q?Christoph_Vogtl=E4nder?= 
-        <Christoph.Vogtlaender@sigma-surface-science.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Christoph_Vogtl=E4nder?= 
-        <Christoph.Vogtlaender@sigma-surface-science.com>
-Subject: [PATCH] serial: max310x: turn off transmitter before activating
- AutoCTS or auto transmitter flow control
-Thread-Topic: [PATCH] serial: max310x: turn off transmitter before
- activating AutoCTS or auto transmitter flow control
-Thread-Index: AdVfGB6E5SXElxQNQ2i0pQLfeo3BQw==
-Date:   Fri, 30 Aug 2019 09:58:41 +0000
-Message-ID: <bd9fb8e75d0e45218eb110c25bb539ef@SSSDEEX.i.sigma-surface-science.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.27.0.74]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Fri, 30 Aug 2019 06:02:03 -0400
+Received: by mail-yw1-f68.google.com with SMTP id n69so2172949ywd.12;
+        Fri, 30 Aug 2019 03:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BIMw0qKaytre7FG6jFJWV4iDfNINre/R6oO7ZIuT+RM=;
+        b=a/iH+APt7PbRkzLKE6KRlBQQvNjly6EgIh2Equ0T3wdPNvBCM9eYU3/uElXpVQVpJP
+         fIvORJDofPBr7LkutP4IBsVTrLCIsU0t10urIJmElXgiOXH4e9q1yYzyFv3+K2IuvN7P
+         /Ri6HQg6AofF4T7y54qZ8rGDJnhYQ1axF/RdpptNCVAXHT7zXuUpoiPM7qmzBIXPDxkc
+         yz43N32iSTODuXLhklnvg4xO3pFOf4iekY9g7XtUsy8MNVjxoZFssoP7e0AC4xiwpx7w
+         LhUzFXBsgsK2+Z7kNAbqDpvfakxDCbYzgiv5ZQqwOCQA3uq2h0SksKwaWhinmCGs9EZi
+         g2Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BIMw0qKaytre7FG6jFJWV4iDfNINre/R6oO7ZIuT+RM=;
+        b=o7467a9hQ2wg4Zp3nDa1ingY56rPNguUXkiOeQydiaOiCGeAk8zo5CPMRD1sti7E2t
+         7wrBY6KN0LS5NZXGIUCloFJHNGUSgOsGkR2CX9yPJGE460MJh5p+HdJ23LuherNrHSba
+         ruTpdc0PMy+HRgZ0nfNUVbExIiz/1GRj0q+MKeJHtNjJRzOj4tLsm27V60wezjbO9rcw
+         XVOhN+0/sPQ3iQL51+7/rRSofc1w/RZOrIAO/yMDm4maWJwYNvei2+Z1IIuFfME5LHty
+         On0bY991M5Vf4KR2HnbTnY9PLcZ1vaC27UDdwAPSL8S/K1ryUQs2CkPj8dljKXRItGjL
+         Ihlg==
+X-Gm-Message-State: APjAAAXX6aMTQp0ipPVje9gl0oY5TJVbQ/wUzm/CYedTRwgajvcqP5Zj
+        K9PH+renSiOV5TFuaOXrquhHpRaUtnBUvSYIL+4=
+X-Google-Smtp-Source: APXvYqzYIhbifbnfgdIKzmR3aU+cJzCuIaJQl3BUNyvyAZVabAy2aY3yZydYfvfnALekrK7oN9gYZXu8g0KQgBdsQKs=
+X-Received: by 2002:a0d:d596:: with SMTP id x144mr9971364ywd.69.1567159321875;
+ Fri, 30 Aug 2019 03:02:01 -0700 (PDT)
 MIME-Version: 1.0
-To:     unlisted-recipients:; (no To-header on input)
+References: <20190826081752.57258-1-kkamagui@gmail.com> <CACdnJutomLNthYDzEc0wFBcBHK5iqnk0p-hkAkp57zQZ38oGPA@mail.gmail.com>
+ <CAHjaAcSFhQsDYL2iRwwhyvxh9mH4DhxZ__DNzhtk=iiZZ5JdbA@mail.gmail.com>
+ <CACdnJutfR2X-5ksXw4PNUdyH2MJs_mExNCcYPp8NLcPW2EDrYQ@mail.gmail.com>
+ <CAHjaAcSpU0eW5PLsEpxTkycwi+wNS67xeizb6_BMM_-qUZYAmg@mail.gmail.com>
+ <20190827171106.owkvt6slwwg5ypyl@srcf.ucam.org> <CAHjaAcSu04J3WqT_vnSnaQuYpFQ+xiXXWxhcCeLQccEq6eQGcQ@mail.gmail.com>
+ <20190829153437.gjcqfolsc26vyt4x@linux.intel.com> <20190829153917.glq6eoka2eufy42w@linux.intel.com>
+ <CAHjaAcQ2OmrFO2wWCXocR9xO_aTRYU4vLf3aBr4v5Fn2A89wvg@mail.gmail.com>
+In-Reply-To: <CAHjaAcQ2OmrFO2wWCXocR9xO_aTRYU4vLf3aBr4v5Fn2A89wvg@mail.gmail.com>
+From:   Seunghun Han <kkamagui@gmail.com>
+Date:   Fri, 30 Aug 2019 19:01:50 +0900
+Message-ID: <CAHjaAcQv+8ZqYwcYLj57rM9wMRvsoUczzE8uXjsTY+yxNB7vFw@mail.gmail.com>
+Subject: Re: [PATCH] x86: tpm: Remove a busy bit of the NVS area for
+ supporting AMD's fTPM
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Matthew Garrett <mjg59@srcf.ucam.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As documented in the data-sheet, the transmitter must be disabled before
-activating AutoCTS or auto transmitter flow control. Accordingly, the
-transmitter must be enabled after AutoCTS or auto transmitter flow
-control gets deactivated.
+> > On Thu, Aug 29, 2019 at 06:34:37PM +0300, Jarkko Sakkinen wrote:
+> > > On Wed, Aug 28, 2019 at 06:36:04PM +0900, Seunghun Han wrote:
+> > > > >
+> > > > > On Wed, Aug 28, 2019 at 01:36:30AM +0900, Seunghun Han wrote:
+> > > > >
+> > > > > > I got your point. Is there any problem if some regions which don't
+> > > > > > need to be handled in NVS area are saved and restored? If there is a
+> > > > > > problem, how about adding code for ignoring the regions in NVS area to
+> > > > > > the nvs.c file like Jarkko said? If we add the code, we can save and
+> > > > > > restore NVS area without driver's interaction.
+> > > > >
+> > > > > The only thing that knows which regions should be skipped by the NVS
+> > > > > driver is the hardware specific driver, so the TPM driver needs to ask
+> > > > > the NVS driver to ignore that region and grant control to the TPM
+> > > > > driver.
+> > > > >
+> > > > > --
+> > > > > Matthew Garrett | mjg59@srcf.ucam.org
+> > > >
+> > > > Thank you, Matthew and Jarkko.
+> > > > It seems that the TPM driver needs to handle the specific case that
+> > > > TPM regions are in the NVS. I would make a patch that removes TPM
+> > > > regions from the ACPI NVS by requesting to the NVS driver soon.
+> > > >
+> > > > Jarkko,
+> > > > I would like to get some advice on it. What do you think about
+> > > > removing TPM regions from the ACPI NVS in TPM CRB driver? If you don't
+> > > > mind, I would make the patch about it.
+> > >
+> > > I'm not sure if ignoring is right call. Then the hibernation behaviour
+> > > for TPM regions would break.
+> > >
+> > > Thus, should be "ask access" rather than "grant control".
+>
+> I agree with your idea. It seems to make trouble. So, I would like to
+> do like your idea below.
+>
+> > Or "reserve access" as NVS driver does not have intelligence to do any
+> > policy based decision here.
+> >
+> > A function that gets region and then checks if NVS driver has matching
+> > one and returns true/false based on that should be good enough. Then
+> > you raw ioremap() in the TPM driver.
+> >
+> > /Jarkko
+>
+> This solution is great and clear to me. I will make a new patch on
+> your advice and test it in my machine. After that, I will send it
+> again soon.
+> I really appreciate it.
+>
+> Seunghun
 
-Signed-off-by: Christoph Vogtländer <c.vogtlaender@sigma-surface-science.com>
----
- drivers/tty/serial/max310x.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+I have made and sent patches on your advice.
+The patch links are below and please review them.
+[PATCH 0/2] https://lkml.org/lkml/2019/8/30/372
+[PATCH 1/2] https://lkml.org/lkml/2019/8/30/373
+[PATCH 2/2] https://lkml.org/lkml/2019/8/30/374
 
-diff --git a/drivers/tty/serial/max310x.c b/drivers/tty/serial/max310x.c
-index fb5a7e0e58e9..adfef6dae4a7 100644
---- a/drivers/tty/serial/max310x.c
-+++ b/drivers/tty/serial/max310x.c
-@@ -860,6 +860,15 @@ static void max310x_set_termios(struct uart_port *port,
- max310x_port_write(port, MAX310X_XON1_REG, termios->c_cc[VSTART]);
- max310x_port_write(port, MAX310X_XOFF1_REG, termios->c_cc[VSTOP]);
+Thank you again for your sincere advice.
 
-+/* Disable transmitter before enabling AutoCTS or auto transmitter
-+ * flow control
-+ */
-+if (termios->c_cflag & CRTSCTS || termios->c_iflag & IXOFF) {
-+max310x_port_update(port, MAX310X_MODE1_REG,
-+    MAX310X_MODE1_TXDIS_BIT,
-+    MAX310X_MODE1_TXDIS_BIT);
-+}
-+
- port->status &= ~(UPSTAT_AUTOCTS | UPSTAT_AUTORTS | UPSTAT_AUTOXOFF);
-
- if (termios->c_cflag & CRTSCTS) {
-@@ -878,6 +887,15 @@ static void max310x_set_termios(struct uart_port *port,
- }
- max310x_port_write(port, MAX310X_FLOWCTRL_REG, flow);
-
-+/* Enable transmitter after disabling AutoCTS and auto transmitter
-+ * flow control
-+ */
-+if (!(termios->c_cflag & CRTSCTS) && !(termios->c_iflag & IXOFF)) {
-+max310x_port_update(port, MAX310X_MODE1_REG,
-+    MAX310X_MODE1_TXDIS_BIT,
-+    0);
-+}
-+
- /* Get baud rate generator configuration */
- baud = uart_get_baud_rate(port, termios, old,
-   port->uartclk / 16 / 0xffff,
---
-2.22.1
-
-
-Sigma Surface Science GmbH, Idsteiner Str. 78, 65232 Taunusstein. Amtsgericht Wiesbaden, HRB 27422. Geschäftsführer: Norbert Nold
+Seunghun
