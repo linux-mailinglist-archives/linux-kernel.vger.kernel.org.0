@@ -2,136 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D14D5A408B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:27:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 845C7A4090
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:29:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbfH3W1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 18:27:23 -0400
-Received: from mx2.ucr.edu ([138.23.62.3]:23601 "EHLO mx2.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbfH3W1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 18:27:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1567204042; x=1598740042;
-  h=mime-version:references:in-reply-to:from:date:message-id:
-   subject:to:cc;
-  bh=+AxKleiBOotn72mRXxY/KudOmnLMJMiIcrvaqwrtHdw=;
-  b=OzpFioaXHjOs1ZkOfgehhLN6JksrEiWwHw4FAr5GnMYaegARhvBpoG3L
-   96Nvl7QtXZrxM4C/sHmjvQKJnPQWswqJ7G1wVFmvs9wjYWtmv2qVQLLvc
-   4XcnLYIwmQr6mSXEY1PscQUoBjGOssX6kfUFvFI9Ho/XZw9eNDRlp2nGz
-   3wHZwDiLvKnRFKoasyD+sHLuKxp/+psLpqYaFC+ohNQx4zDfmrzxxHNuP
-   kJ73TP+V7K6scPeAfcf33oJbV5bbNUv4FQxHzPOTetin46Oy6oxFQLME6
-   o9y8H7fAxY873hkMBbZWjp4FHUIbHD9MR7FxKq8dsmEnwd68t+DXfwGoE
-   g==;
-IronPort-SDR: SAHogo5alGY6w/WNw6T0bCA49MkQmmBCVIYw67MLI2OLURyjcfWF5pvPcJImrGUc39JbmRo2PF
- OIVf3Mh5MoKgH1UwoMvuT8srEwYfv/ruxPGzglIjWJ8So7gd8huFNlf8/R709LhTakKK19P/PX
- GbBAtUMgbxqI5o+/f8oOFkEuN4A80PwJSjR+vtQjrp/z34FbAWPA7TPdkrXnlhtxVKmiafLkeH
- Bv8Pr7gbxz1ja8x+N7IUyLShMOgafv7dcelaLGJRxlvLMRz95iNIX1vmH5LKLnKgSQeXGGPaH2
- EYo=
-IronPort-PHdr: =?us-ascii?q?9a23=3A10fCyhKFckbbzuHm8dmcpTZWNBhigK39O0sv0r?=
- =?us-ascii?q?FitYgRLfjxwZ3uMQTl6Ol3ixeRBMOHsqgC0rSL+PixEUU7or+5+EgYd5JNUx?=
- =?us-ascii?q?JXwe43pCcHRPC/NEvgMfTxZDY7FskRHHVs/nW8LFQHUJ2mPw6arXK99yMdFQ?=
- =?us-ascii?q?viPgRpOOv1BpTSj8Oq3Oyu5pHfeQpFiCejbb9oMRm7rAXcusYKjYZmN6081g?=
- =?us-ascii?q?bHrnxUdupM2GhmP0iTnxHy5sex+J5s7SFdsO8/+sBDTKv3Yb02QaRXAzo6PW?=
- =?us-ascii?q?814tbrtQTYQguU+nQcSGQWnQFWDAXD8Rr3Q43+sir+tup6xSmaIcj7Rq06VD?=
- =?us-ascii?q?i+86tmTgLjhTwZPDAl7m7Yls1wjLpaoB2/oRx/35XUa5yROPZnY6/RYc8WSW?=
- =?us-ascii?q?9HU81MVSJOH5m8YpMAAOoPP+lWr4fzqVgToxWgGQahH//vxiNSi3PqwaE2z+?=
- =?us-ascii?q?YsHAfb1wIgBdIOt3HUoc33O6cTUOG1zLTIzTLeZPxV2Tfy8onIeQ0mrPCMXL?=
- =?us-ascii?q?NwcdDeyUgzGw/ZgFidspHlMC+P1ugXrWeU8vdgWPuphmU6qA9xuiCiytkwho?=
- =?us-ascii?q?TNnI4YyVDJ+T9kzIs0J9C0Ukx2bcCiHZBNrS+VLZF2TdknQ2xwvSY6zaAJto?=
- =?us-ascii?q?CjcSgRzZQn2wbfa/uac4iU+h7jVPieITN/hH99fbKwnRey8Uy5xu34WMm4zU?=
- =?us-ascii?q?9GriRHn9XSrHwN2BvT6s+ISvt54EitwyqA1wfW6u1cIEA0k7TUK4I5z7Iuip?=
- =?us-ascii?q?YetV7PEyz2lUnskaObd0cp9vKq5uj5ernmo4WTN45wigHwKKQuncm/DPw4Mw?=
- =?us-ascii?q?kPX2iU4+W82KH/8UD3W7hKk+E5krPDvJ/EOMsbu7a1AxVJ3YY79xa/EzCm3c?=
- =?us-ascii?q?wcnXkGKlJFZR2Gg5HqO17QOvD4C+mwg1C3nTd1yPDJIKfhDo/OLnfdirfhe6?=
- =?us-ascii?q?hy60pGxAo019Bf6MEcNrZUBfP4Wkb1/PzfBRw+e1ixw+HsC9JV1Y4EX2+LRK?=
- =?us-ascii?q?iDP/WBn0WP47ceIvuMeYhdijb0KrBx9uzuhH5hwQQ1YKKzm5YbdSbrTbxdP0?=
- =?us-ascii?q?yFbC+00Z86GmAQs197FbSyhQ=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2E8AACKoWldhkinVdFmHgEGBwaBVQc?=
- =?us-ascii?q?LAYNWMyqEIY8MgW0FHZN2hSSBewEIAQEBDi8BAYQ/AoJhIzYHDgIDCAEBBQE?=
- =?us-ascii?q?BAQEBBgQBAQIQAQEBCAsLCCmFQYI6KQGCaAEBAQMSEQRSEAsLAwoCAiYCAiI?=
- =?us-ascii?q?SAQUBHAYTCBqDAIILoWiBAzyLJH8ziG8BCAyBSRJ6KIt4gheBEYMSPodPglg?=
- =?us-ascii?q?EgS4BAQGUVJYJAQYCgg0UjCuILBuYYi2mIg8hgTUBggozGiV/BmeBToJODgk?=
- =?us-ascii?q?Vji0iMI84AQE?=
-X-IPAS-Result: =?us-ascii?q?A2E8AACKoWldhkinVdFmHgEGBwaBVQcLAYNWMyqEIY8Mg?=
- =?us-ascii?q?W0FHZN2hSSBewEIAQEBDi8BAYQ/AoJhIzYHDgIDCAEBBQEBAQEBBgQBAQIQA?=
- =?us-ascii?q?QEBCAsLCCmFQYI6KQGCaAEBAQMSEQRSEAsLAwoCAiYCAiISAQUBHAYTCBqDA?=
- =?us-ascii?q?IILoWiBAzyLJH8ziG8BCAyBSRJ6KIt4gheBEYMSPodPglgEgS4BAQGUVJYJA?=
- =?us-ascii?q?QYCgg0UjCuILBuYYi2mIg8hgTUBggozGiV/BmeBToJODgkVji0iMI84AQE?=
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="5435203"
-Received: from mail-lf1-f72.google.com ([209.85.167.72])
-  by smtp2.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 15:27:21 -0700
-Received: by mail-lf1-f72.google.com with SMTP id y24so1865011lfh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 15:27:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zLm09boqVLNebbJn0KRM9g9k9tAtM8q9U95oJU1h0L0=;
-        b=nsYNggDZWYFRdjvmYKw810pu7CDpC4YZQZDWHIrIsgl8lMDNtzx7PtgL0WEGMLMJ1j
-         i2w4ARzFFgwaEuC3ss+Qh8vd6YaJr2XRcK+Hf2I7x9aJjjdl3o9VexHhDxWZU6gvdXSH
-         yecth/BiWN2aMU90d7Q3v16Wy6vpa9NlCbmOYBazYDF19zhy29h9tGwYowM08UgcnAe7
-         RYAdPmnBNoAVsRzVgOqGn9z5nI37CqEyhUuTNc1d6HdK1Zdpjd9P/O0Q2WubqKS1oqVn
-         38Y50z7HTTHe9PFH6tJ+7V3QkD4rqEOwnT9rxC/MfDio1joWHDFomdWYFC28w/h3m08f
-         /tCg==
-X-Gm-Message-State: APjAAAXoLoSEctA8FuiZAqqdOwY/XsV7pCfLlnyWXym7tJAh/h1QnSYC
-        wR/c9YzIm4i44k9/IGuv0JLLKAMvAj5eYXrq/OWZZiPyjWDM9b94yvfvLGVw8NMqgB7DRfvgk1R
-        5YB8jZviaoF+0/625kkEn9K7i3zD+jUQvG36Fye5QDw==
-X-Received: by 2002:a19:2d19:: with SMTP id k25mr11524771lfj.76.1567204039625;
-        Fri, 30 Aug 2019 15:27:19 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxNwVPvOdN/tveaY5mDrcDGRnQDZr8owb4Bj/v//Ng1I8rWXAU6aT8pAFp3c8BU1Pct5O5eSmP/cI28qOpREA4=
-X-Received: by 2002:a19:2d19:: with SMTP id k25mr11524763lfj.76.1567204039450;
- Fri, 30 Aug 2019 15:27:19 -0700 (PDT)
+        id S1728395AbfH3W3k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 18:29:40 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:41070 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728143AbfH3W3k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 18:29:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BWWRszBDY8GYUUZj497FcR9Z0dm6vMXF/gAZdr1ItkU=; b=folcv0CYTG/fwfjtFT9od8gVs
+        LmEkdhrber88LNPUMfbnmY4rZ5fcd6bEa4DdOxmDoMu8xDExn/Ah5NsTeoI67i87J4KX+zvMgMHIb
+        Ws9JXOfrWIwDKAxjHZQtmgeB4RYPXtOCted2vh317YUbPEILBPMVpm3trknP9hAJMv6/Y2wgPA+WP
+        wNCmXpqm4dfbnsqB6hRtF87ZAG3KuEF6wLqrmulnjvI4Q/59G99z2HxGzlO9ADkFfPthetXTJumhD
+        23Mnjr5oNCzxiwqoWuV2HZnjQQPp2jL64KL9cYbdk5DXvRG6sWjdB3OTqaVm3UT3YlCBvws4YFgZW
+        XWmelzPCA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39464)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1i3pOJ-00013m-HY; Fri, 30 Aug 2019 23:29:11 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1i3pOE-0000Tw-MP; Fri, 30 Aug 2019 23:29:06 +0100
+Date:   Fri, 30 Aug 2019 23:29:06 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Jing Xiangfeng <jingxiangfeng@huawei.com>,
+        kstewart@linuxfoundation.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, bhelgaas@google.com, tglx@linutronix.de,
+        sakari.ailus@linux.intel.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] arm: fix page faults in do_alignment
+Message-ID: <20190830222906.GH13294@shell.armlinux.org.uk>
+References: <1567171877-101949-1-git-send-email-jingxiangfeng@huawei.com>
+ <20190830133522.GZ13294@shell.armlinux.org.uk>
+ <87d0gmwi73.fsf@x220.int.ebiederm.org>
+ <20190830203052.GG13294@shell.armlinux.org.uk>
+ <87y2zav01z.fsf@x220.int.ebiederm.org>
 MIME-Version: 1.0
-References: <20190822062210.18649-1-yzhai003@ucr.edu> <20190822070550.GA12785@dhcp22.suse.cz>
- <CABvMjLRCt4gC3GKzBehGppxfyMOb6OGQwW-6Yu_+MbMp5tN3tg@mail.gmail.com> <20190822201200.GP12785@dhcp22.suse.cz>
-In-Reply-To: <20190822201200.GP12785@dhcp22.suse.cz>
-From:   Yizhuo Zhai <yzhai003@ucr.edu>
-Date:   Fri, 30 Aug 2019 15:27:50 -0700
-Message-ID: <CABvMjLRFm5ghgXJYuuNOOSzg01EgE1MazAY7c6HXZaa6wogF8g@mail.gmail.com>
-Subject: Re: [PATCH] mm/memcg: return value of the function
- mem_cgroup_from_css() is not checked
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Chengyu Song <csong@cs.ucr.edu>, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87y2zav01z.fsf@x220.int.ebiederm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Our tool did not trace back the whole path, so, now we could say it
-might happen.
+On Fri, Aug 30, 2019 at 04:02:48PM -0500, Eric W. Biederman wrote:
+> Russell King - ARM Linux admin <linux@armlinux.org.uk> writes:
+> 
+> > On Fri, Aug 30, 2019 at 02:45:36PM -0500, Eric W. Biederman wrote:
+> >> Russell King - ARM Linux admin <linux@armlinux.org.uk> writes:
+> >> 
+> >> > On Fri, Aug 30, 2019 at 09:31:17PM +0800, Jing Xiangfeng wrote:
+> >> >> The function do_alignment can handle misaligned address for user and
+> >> >> kernel space. If it is a userspace access, do_alignment may fail on
+> >> >> a low-memory situation, because page faults are disabled in
+> >> >> probe_kernel_address.
+> >> >> 
+> >> >> Fix this by using __copy_from_user stead of probe_kernel_address.
+> >> >> 
+> >> >> Fixes: b255188 ("ARM: fix scheduling while atomic warning in alignment handling code")
+> >> >> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+> >> >
+> >> > NAK.
+> >> >
+> >> > The "scheduling while atomic warning in alignment handling code" is
+> >> > caused by fixing up the page fault while trying to handle the
+> >> > mis-alignment fault generated from an instruction in atomic context.
+> >> >
+> >> > Your patch re-introduces that bug.
+> >> 
+> >> And the patch that fixed scheduling while atomic apparently introduced a
+> >> regression.  Admittedly a regression that took 6 years to track down but
+> >> still.
+> >
+> > Right, and given the number of years, we are trading one regression for
+> > a different regression.  If we revert to the original code where we
+> > fix up, we will end up with people complaining about a "new" regression
+> > caused by reverting the previous fix.  Follow this policy and we just
+> > end up constantly reverting the previous revert.
+> >
+> > The window is very small - the page in question will have had to have
+> > instructions read from it immediately prior to the handler being entered,
+> > and would have had to be made "old" before subsequently being unmapped.
+> 
+> > Rather than excessively complicating the code and making it even more
+> > inefficient (as in your patch), we could instead retry executing the
+> > instruction when we discover that the page is unavailable, which should
+> > cause the page to be paged back in.
+> 
+> My patch does not introduce any inefficiencies.  It onlys moves the
+> check for user_mode up a bit.  My patch did duplicate the code.
+> 
+> > If the page really is unavailable, the prefetch abort should cause a
+> > SEGV to be raised, otherwise the re-execution should replace the page.
+> >
+> > The danger to that approach is we page it back in, and it gets paged
+> > back out before we're able to read the instruction indefinitely.
+> 
+> I would think either a little code duplication or a function that looks
+> at user_mode(regs) and picks the appropriate kind of copy to do would be
+> the best way to go.  Because what needs to happen in the two cases for
+> reading the instruction are almost completely different.
 
-On Thu, Aug 22, 2019 at 1:12 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Thu 22-08-19 13:07:17, Yizhuo Zhai wrote:
-> > This will happen if variable "wb->memcg_css" is NULL. This case is reported
-> > by our analysis tool.
->
-> Does your tool report the particular call path and conditions when that
-> happen? Or is it just a "it mignt happen" kinda thing?
->
-> > Since the function mem_cgroup_wb_domain() is visible to the global, we
-> > cannot control caller's behavior.
->
-> I am sorry but I do not understand what is this supposed to mean.
-> --
-> Michal Hocko
-> SUSE Labs
+That is what I mean.  I'd prefer to avoid that with the large chunk of
+code.  How about instead adding a local replacement for
+probe_kernel_address() that just sorts out the reading, rather than
+duplicating all the code to deal with thumb fixup. 
 
+> > However, as it's impossible for me to contact the submitter, anything
+> > I do will be poking about in the dark and without any way to validate
+> > that it does fix the problem, so I think apart from reviewing of any
+> > patches, there's not much I can do.
+> 
+> I didn't realize your emails to him were bouncing.  That is odd.  Mine
+> don't appear to be.
 
+Hmm, so the fact I posted publically in reply to my reply with the MTA
+bounce message didn't give you a clue?
 
 -- 
-Kind Regards,
-
-Yizhuo Zhai
-
-Computer Science, Graduate Student
-University of California, Riverside
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
