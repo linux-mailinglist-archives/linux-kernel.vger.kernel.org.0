@@ -2,182 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA953A3C7B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6044A3C88
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:49:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfH3QsY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:48:24 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33221 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfH3QsX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:48:23 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n190so3833799pgn.0;
-        Fri, 30 Aug 2019 09:48:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X7EDJjP3/P5ucP5sd8p8wuc1drYUxSpuIcMdq/6dO0M=;
-        b=Sddob+AJCKGltY0Zsrisq3Z1TRnqs0+05kJFI4B56UHJuVOSilol58uW+WFEBOjc5m
-         W8aV5M/V5Sl2Jl+w/HGeek+X4CpCFoXvfyYd2lY5dNnJDhDfN9IRI5pq+MgGa5xaKvv6
-         nCh9ja4loFd0AZwPpLePl+oIiTlwFwSWc5gMqa9IYSblkDtCtRpmu9NopAepr5hg0g+K
-         O4LPrd1EhLbsJ270lkPEPWjrsl9vhVsYXsc8JzZTQFEkCVZzN+Xyzpgq7hpckewbiGIC
-         EjA+391h5NZlNiX5C6k7y44+xV/82NDK+G7Sts48BBNMm5SQeY5Lfp5ERBj0iGEPy9Ny
-         Fdcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X7EDJjP3/P5ucP5sd8p8wuc1drYUxSpuIcMdq/6dO0M=;
-        b=nTMyrT6XgZU2aOwc9ZSrRTlEAW+uPuBaxz/ibvQ8/rahCQ5J4+4ie12gbj3/qfOfPM
-         W7Kn/84IwFtLd3U5LC8d+/to3WOWGl3tVZezKZRuCweFNtPSILbmtWhk9M3b4MkEb3Xd
-         pWfizOj2vGLohZEG6sOXVzyZ7OYioYSgk3NSX08FBH05oO7dlrZ+qyRisVGpgIQKdSGJ
-         fpb1iJdWtA6z73/jeas85XnJ8TvrT7U/QVRwQqozSJIDwFbC3oot7df0Iawmz9Rt41LR
-         GWleEp6lqM9xBcrYUDlMkx2smKz6cKegNbnvTAIBeCGvTl5BdGQ7HWbWioYys+D7xM+X
-         bE7g==
-X-Gm-Message-State: APjAAAUumA+jobEmeSoULJyTGPo/W2wNMzhJ9fQGDLkRSsCdQas87eyE
-        6EQiPDJZNNqW7XDXeYEsdII=
-X-Google-Smtp-Source: APXvYqzPPf2dUoFRMdmXRU3rc61sMZX9+mXPDGqgD+nEdBzoVzjxT08cS8auaqYT6Wxdf0dEv0wl+g==
-X-Received: by 2002:aa7:9524:: with SMTP id c4mr19821409pfp.225.1567183703055;
-        Fri, 30 Aug 2019 09:48:23 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id q4sm6952325pff.183.2019.08.30.09.48.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Aug 2019 09:48:22 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 09:48:21 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     wim@linux-watchdog.org, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH RESEND v2 2/6] dt-bindings: watchdog: Convert Allwinner
- watchdog to a schema
-Message-ID: <20190830164821.GB7911@roeck-us.net>
-References: <20190821143835.7294-1-mripard@kernel.org>
- <20190821143835.7294-2-mripard@kernel.org>
+        id S1728255AbfH3QtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:49:18 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:3962 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727883AbfH3QtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:49:18 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 6662DE36B8648C21C1E2;
+        Sat, 31 Aug 2019 00:49:16 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sat, 31 Aug 2019 00:49:15 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Sat, 31 Aug 2019 00:49:15 +0800
+Date:   Sat, 31 Aug 2019 00:48:27 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Chao Yu <yuchao0@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Joe Perches <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        "Fang Wei" <fangwei1@huawei.com>
+Subject: Re: [PATCH v3 7/7] erofs: redundant assignment in
+ __erofs_get_meta_page()
+Message-ID: <20190830164827.GA107220@architecture4>
+References: <20190830032006.GA20217@architecture4>
+ <20190830033643.51019-1-gaoxiang25@huawei.com>
+ <20190830033643.51019-7-gaoxiang25@huawei.com>
+ <20190830162812.GA10694@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190821143835.7294-2-mripard@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190830162812.GA10694@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme705-chm.china.huawei.com (10.1.199.101) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 04:38:31PM +0200, Maxime Ripard wrote:
-> From: Maxime Ripard <maxime.ripard@bootlin.com>
-> 
-> The Allwinner SoCs have a watchdog supported in Linux, with a matching
-> Device Tree binding.
-> 
-> Now that we have the DT validation in place, let's convert the device tree
-> bindings for that controller over to a YAML schemas.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Hi Christoph,
 
-> ---
+On Fri, Aug 30, 2019 at 09:28:12AM -0700, Christoph Hellwig wrote:
+> > -		err = bio_add_page(bio, page, PAGE_SIZE, 0);
+> > -		if (err != PAGE_SIZE) {
+> > +		if (bio_add_page(bio, page, PAGE_SIZE, 0) != PAGE_SIZE) {
+> >  			err = -EFAULT;
+> >  			goto err_out;
+> >  		}
 > 
-> Changes from v1:
->   - Use generic watchdog schema
->   - Use unevaluatedProperties instead of additionalProperties
-> ---
->  .../watchdog/allwinner,sun4i-a10-wdt.yaml     | 48 +++++++++++++++++++
->  .../bindings/watchdog/sunxi-wdt.txt           | 22 ---------
->  2 files changed, 48 insertions(+), 22 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
->  delete mode 100644 Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
+> This patch looks like an improvement.  But looking at that whole
+> area just makes me cringe.
+
+OK, I agree with you, I will improve it or just kill them all with
+new iomap approach after it supports tail-end packing inline.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
-> new file mode 100644
-> index 000000000000..dc7553f57708
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/watchdog/allwinner,sun4i-a10-wdt.yaml
-> @@ -0,0 +1,48 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/watchdog/allwinner,sun4i-a10-wdt.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allwinner A10 Watchdog Device Tree Bindings
-> +
-> +allOf:
-> +  - $ref: "watchdog.yaml#"
-> +
-> +maintainers:
-> +  - Chen-Yu Tsai <wens@csie.org>
-> +  - Maxime Ripard <maxime.ripard@bootlin.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: allwinner,sun4i-a10-wdt
-> +      - const: allwinner,sun6i-a31-wdt
-> +      - items:
-> +          - const: allwinner,sun50i-a64-wdt
-> +          - const: allwinner,sun6i-a31-wdt
-> +      - items:
-> +          - const: allwinner,sun50i-h6-wdt
-> +          - const: allwinner,sun6i-a31-wdt
-> +      - items:
-> +          - const: allwinner,suniv-f1c100s-wdt
-> +          - const: allwinner,sun4i-a10-wdt
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    wdt: watchdog@1c20c90 {
-> +        compatible = "allwinner,sun4i-a10-wdt";
-> +        reg = <0x01c20c90 0x10>;
-> +        timeout-sec = <10>;
-> +    };
-> +
-> +...
-> diff --git a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt b/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
-> deleted file mode 100644
-> index e65198d82a2b..000000000000
-> --- a/Documentation/devicetree/bindings/watchdog/sunxi-wdt.txt
-> +++ /dev/null
-> @@ -1,22 +0,0 @@
-> -Allwinner SoCs Watchdog timer
-> -
-> -Required properties:
-> -
-> -- compatible : should be one of
-> -	"allwinner,sun4i-a10-wdt"
-> -	"allwinner,sun6i-a31-wdt"
-> -	"allwinner,sun50i-a64-wdt","allwinner,sun6i-a31-wdt"
-> -	"allwinner,sun50i-h6-wdt","allwinner,sun6i-a31-wdt"
-> -	"allwinner,suniv-f1c100s-wdt", "allwinner,sun4i-a10-wdt"
-> -- reg : Specifies base physical address and size of the registers.
-> -
-> -Optional properties:
-> -- timeout-sec : Contains the watchdog timeout in seconds
-> -
-> -Example:
-> -
-> -wdt: watchdog@1c20c90 {
-> -	compatible = "allwinner,sun4i-a10-wdt";
-> -	reg = <0x01c20c90 0x10>;
-> -	timeout-sec = <10>;
-> -};
-> -- 
-> 2.21.0
+> Why is there __erofs_get_meta_page with the two weird booleans instead
+> of a single erofs_get_meta_page that gets and gfp_t for additional
+> flags and an unsigned int for additional bio op flags.
+
+I agree with you. Thanks for your suggestion.
+
 > 
+> Why do need ioprio support to start with?  Seeing that in a new
+> fs look kinda odd.  Do you have benchmarks that show the difference?
+
+I don't have some benchmark for all of these, can I just set
+REQ_PRIO for all metadata? is that reasonable?
+Could you kindly give some suggestion on this?
+
+> 
+> That function then calls erofs_grab_bio, which tries to handle a
+> bio_alloc failure, except that the function will not actually fail
+> due the mempool backing it.  It also seems like and awfully
+> huge function to inline.
+
+OK, I will simplify it. Thanks for your suggestion.
+
+> 
+> Why is there __submit_bio which really just obsfucates what is
+> going on?  Also why is __submit_bio using bio_set_op_attrs instead
+> of opencode it as the comment right next to it asks you to?
+
+Originally, mainly due to backport consideration since some
+of our smartphones use 3.x kernel as well...
+
+> 
+> Also I really don't understand why you can't just use read_cache_page
+> or even read_cache_page_gfp instead of __erofs_get_meta_page.
+> That function is a whole lot of duplication of functionality shared
+> by a lot of other file systems.
+
+OK, I have to admit, that code was originally just copied from f2fs
+with some modification (maybe it's not a good example for us).
+
+Thanks,
+Gao Xiang
+
