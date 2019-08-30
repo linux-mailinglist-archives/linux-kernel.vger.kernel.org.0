@@ -2,96 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19271A3A4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB690A3A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:21:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbfH3PZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:25:32 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44499 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727938AbfH3PZc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:25:32 -0400
-Received: by mail-qk1-f195.google.com with SMTP id i78so5007514qke.11
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:25:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uAGNj/k9sxhyWPF4gW8v9ANxItk70JmBhK3Bz890W+M=;
-        b=j+V6+/Z819VI1YZCoOnBj/oMDBF8SifHtR2Py7Q6rcAn92pGtORGovoGCON3Xa0lEX
-         mxAwlsSE96mMR4c61G9G8QRLocu2g29Ge8DsiPpZhLQtBn5g7rnvG1bZS0vRFyLLpUTi
-         KFDkNrI8kkq2QeMA60xq6RRi5XmiTP6vF7tokvFja6/cKXod0up2/W3LB6o9eFp4H/yY
-         LJ6JRhF31aQpNRTjiSXK9uHJasLwOO4iLkUiazLH6+SWDJCh1fQVNiKgaHLXlY6vO7W/
-         cdjf95wdC7m+IpXiXMrUqxD3WZVng2GUkXt8H/YEuy8WtKiRq/pMEFgtNh71FTkAJy5g
-         TwQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uAGNj/k9sxhyWPF4gW8v9ANxItk70JmBhK3Bz890W+M=;
-        b=cA3v8wCyiDjKAiz//WlcSH5oJsKSqTZW9ehffLLvndwhsxZ4oFjwcbF094M2WQ/zUG
-         qSUcgsl/DmBraMYxH5Q6YQBVJOvCt8eCx9iYSKVYPttleLNMoNV4ioXfVrOXV8gL4dbB
-         12kxQFLhY0BAdOfNYDzHPeMAWCJEiE5ced2e4e/c5mq3iDxekn4tFG3JzKZKkbRzg4Fn
-         Ifwjz74tAuP86r8gI7EjNPsOBtyUMOov2uBw5v/c+R4dajbJ1i4GRjzZRXmf8jLH9R4B
-         zLECOSD+FkMB7xe0/huBDw+UrjlVqz9D7sOR1xZX3WdSEOe6R3NaENMz8BoIr/ygoj/s
-         iPdA==
-X-Gm-Message-State: APjAAAVbMlLfePD+SzDKFCdrv4n1DKbRc0GxORal7MpLmQjl+6QhqpUI
-        XFrMAAYGbtKeTK4hRHu5u/yTAQ==
-X-Google-Smtp-Source: APXvYqw0EhdXHc1wpLtFj5TejUK0OxSVjZ2aoiu/qaTO83bFRR+7CanolrCjPltbXW/VvIZh7EuyQg==
-X-Received: by 2002:a37:4d0c:: with SMTP id a12mr15819201qkb.214.1567178731214;
-        Fri, 30 Aug 2019 08:25:31 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id l8sm3559996qti.65.2019.08.30.08.25.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Aug 2019 08:25:30 -0700 (PDT)
-Message-ID: <1567178728.5576.32.camel@lca.pw>
-Subject: Re: [PATCH] net/skbuff: silence warnings under memory pressure
-From:   Qian Cai <cai@lca.pw>
-To:     Eric Dumazet <eric.dumazet@gmail.com>, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 30 Aug 2019 11:25:28 -0400
-In-Reply-To: <6109dab4-4061-8fee-96ac-320adf94e130@gmail.com>
-References: <1567177025-11016-1-git-send-email-cai@lca.pw>
-         <6109dab4-4061-8fee-96ac-320adf94e130@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728107AbfH3PVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:21:54 -0400
+Received: from mga05.intel.com ([192.55.52.43]:57755 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727135AbfH3PVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:21:54 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 08:21:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
+   d="scan'208";a="186329765"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
+  by orsmga006.jf.intel.com with ESMTP; 30 Aug 2019 08:21:50 -0700
+Date:   Fri, 30 Aug 2019 23:26:15 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        kbuild test robot <lkp@intel.com>,
+        linux-input@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        x86-ml <x86@kernel.org>, linux-tip-commits@vger.kernel.org,
+        pv-drivers@vmware.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        tip-bot2 for Thomas Hellstrom <tip-bot2@linutronix.de>,
+        Doug Covelli <dcovelli@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        kbuild-all@01.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [kbuild-all] [tip: x86/vmware] input/vmmouse: Update the
+ backdoor call with support for new instructions
+Message-ID: <20190830152615.GA13754@intel.com>
+References: <201908292325.aLXyyzEx%lkp@intel.com>
+ <20190829163353.GC2132@zn.tnic>
+ <20190830010349.GD857@intel.com>
+ <alpine.DEB.2.21.1908300802390.1938@nanos.tec.linutronix.de>
+ <20190830062053.GA2598@intel.com>
+ <20190830080650.GA30413@zn.tnic>
+ <20190830143645.GA4784@intel.com>
+ <20190830144628.GC30413@zn.tnic>
+ <20190830150002.GA6931@intel.com>
+ <20190830150653.GD30413@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190830150653.GD30413@zn.tnic>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-08-30 at 17:11 +0200, Eric Dumazet wrote:
+On Fri, Aug 30, 2019 at 05:06:53PM +0200, Borislav Petkov wrote:
+> On Fri, Aug 30, 2019 at 11:00:02PM +0800, Philip Li wrote:
+> > Early on, there's requirement to blacklist a few branches, which is configured
+> > as below
+> > 	blacklist_branch: auto-.*|tmp-.*|base-.*|test.*|.*-for-linus
 > 
-> On 8/30/19 4:57 PM, Qian Cai wrote:
-> > When running heavy memory pressure workloads, the system is throwing
-> > endless warnings below due to the allocation could fail from
-> > __build_skb(), and the volume of this call could be huge which may
-> > generate a lot of serial console output and cosumes all CPUs as
-> > warn_alloc() could be expensive by calling dump_stack() and then
-> > show_mem().
-> > 
-> > Fix it by silencing the warning in this call site. Also, it seems
-> > unnecessary to even print a warning at all if the allocation failed in
-> > __build_skb(), as it may just retransmit the packet and retry.
-> > 
+> Looks about right.
 > 
-> Same patches are showing up there and there from time to time.
+> > Except the blacklist branches, we will monitor all other branches.
 > 
-> Why is this particular spot interesting, against all others not adding
-> __GFP_NOWARN ?
-> 
-> Are we going to have hundred of patches adding __GFP_NOWARN at various points,
-> or should we get something generic to not flood the syslog in case of memory
-> pressure ?
-> 
+> Ok, good to know. Just as an optimization to your workflow, in case
+> you're interested: the tip/master branch merges all tip branches so if
+> you're trying to prioritize which branches to test first due to resource
+> constraints, I'd go with tip/master first and then, when I have free
+> cycles, I'd do the topic branches.
+thanks a lot for the advice. Meanwhile, the internal logic merges branches
+to test once to speed up, most of time, more branches will not increase the
+build testing workload. Of course, for the non merged branches, we need
+test individually, and we will take this information into consideration
+to add to our TODO.
 
-From my testing which uses LTP oom* tests. There are only 3 places need to be
-patched. The other two are in IOMMU code for both Intel and AMD. The place is
-particular interesting because it could cause the system with floating serial
-console output for days without making progress in OOM. I suppose it ends up in
-a looping condition that warn_alloc() would end up generating more calls into
-__build_skb() via ksoftirqd.
+> 
+> Just as an idea...
+> 
+> > We also support pull request to update the
+> > configuration or email us to update. Refer to
+> > https://github.com/intel/lkp-tests/blob/master/repo/linux/tip.
+> 
+> Ok, cool. I'll talk to tglx about it and might even send you a pull
+> request.
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> Good mailing practices for 400: avoid top-posting and trim the reply.
