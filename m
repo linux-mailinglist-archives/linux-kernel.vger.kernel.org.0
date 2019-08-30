@@ -2,158 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D127A2E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 06:30:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D22B1A2EA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 06:45:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727066AbfH3Ear (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 00:30:47 -0400
-Received: from mga03.intel.com ([134.134.136.65]:53164 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbfH3Ear (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 00:30:47 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 21:30:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
-   d="scan'208";a="183686808"
-Received: from xsang-optiplex-9020.sh.intel.com (HELO xsang-OptiPlex-9020) ([10.239.159.135])
-  by orsmga003.jf.intel.com with ESMTP; 29 Aug 2019 21:30:44 -0700
-Date:   Fri, 30 Aug 2019 12:37:04 +0800
-From:   Oliver Sang <oliver.sang@intel.com>
-To:     Shaokun Zhang <zhangshaokun@hisilicon.com>
-Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Guo <guoyang2@huawei.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>, lkp@01.org,
-        ltp@lists.linux.it
-Subject: Re: [ext4] [confidence: ] 2f7f60cf9f:
- WARNING:at_lib/list_debug.c:#__list_add_valid
-Message-ID: <20190830043704.GE22468@xsang-OptiPlex-9020>
-References: <20190830031108.GZ22468@xsang-OptiPlex-9020>
- <05df5668-d67f-6125-9786-3855626f495b@hisilicon.com>
+        id S1726486AbfH3EpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 00:45:05 -0400
+Received: from smtprelay0128.hostedemail.com ([216.40.44.128]:54796 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725774AbfH3EpF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 00:45:05 -0400
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave02.hostedemail.com (Postfix) with ESMTP id 7BBF318027675;
+        Fri, 30 Aug 2019 04:45:03 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 80AE78368F12;
+        Fri, 30 Aug 2019 04:45:02 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::,RULES_HIT:2:41:69:355:379:599:800:960:966:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1535:1593:1594:1605:1730:1747:1777:1792:2196:2199:2393:2525:2559:2563:2682:2685:2828:2859:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3622:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4049:4119:4250:4321:4385:4605:5007:6119:6690:7514:7862:7875:7903:8603:8660:9025:9389:9592:10004:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12555:12663:12683:12740:12760:12895:13148:13230:13439:14659:21060:21063:21080:21324:21433:21451:21611:21627:21740:21749:21939:30012:30029:30034:30054:30075:30091,0,RBL:error,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:31,LUA_SUMMARY:none
+X-HE-Tag: skin65_2ba1ffce8e74c
+X-Filterd-Recvd-Size: 8183
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf13.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 30 Aug 2019 04:44:59 +0000 (UTC)
+Message-ID: <f2d5b474411b2940d62198490f06e77890fbdb32.camel@perches.com>
+Subject: Re: [PATCH v2] kunit: fix failure to build without printk
+From:   Joe Perches <joe@perches.com>
+To:     shuah <shuah@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>
+Cc:     kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, frowand.list@gmail.com,
+        sboyd@kernel.org, pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Date:   Thu, 29 Aug 2019 21:44:58 -0700
+In-Reply-To: <8b2d63bf-56cd-e8f5-e8ee-2891c2c1be8f@kernel.org>
+References: <20190828093143.163302-1-brendanhiggins@google.com>
+         <20190828094929.GA14038@jagdpanzerIV>
+         <8b2d63bf-56cd-e8f5-e8ee-2891c2c1be8f@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <05df5668-d67f-6125-9786-3855626f495b@hisilicon.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 11:33:22AM +0800, Shaokun Zhang wrote:
-> Hi Oliver,
-> 
-> On 2019/8/30 11:11, kernel test robot wrote:
-> > FYI, we noticed the following commit (built with gcc-7):
+On Thu, 2019-08-29 at 11:01 -0600, shuah wrote:
+> On 8/28/19 3:49 AM, Sergey Senozhatsky wrote:
+> > On (08/28/19 02:31), Brendan Higgins wrote:
+> > [..]
+> > > Previously KUnit assumed that printk would always be present, which is
+> > > not a valid assumption to make. Fix that by removing call to
+> > > vprintk_emit, and calling printk directly.
+> > > 
+> > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > > Link: https://lore.kernel.org/linux-kselftest/0352fae9-564f-4a97-715a-fabe016259df@kernel.org/T/#t
+> > > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+> > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 > > 
-> > commit: 2f7f60cf9fbcd80200edee8c29b9b35681c63c3e ("[PATCH] ext4: change the type of ext4 cache stats to percpu_counter to improve performance")
+> > [..]
+> > 
+> > > -static void kunit_vprintk(const struct kunit *test,
+> > > -			  const char *level,
+> > > -			  struct va_format *vaf)
+> > > -{
+> > > -	kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
+> > > -}
+> > 
+> > This patch looks good to me. I like the removal of recursive
+> > vsprintf() (%pV).
+> > 
+> > 	-ss
+> > 
 > 
-> Thanks for the report.
+> Hi Sergey,
 > 
-> This patch has been dropped and the updated patch has been sent to community.
-> https://lkml.org/lkml/2019/8/28/286
+> What are the guidelines for using printk(). I recall some discussion
+> about not using printk(). I am seeing the following from checkpatch
+> script:
+> 
+> 
+> WARNING: Prefer [subsystem eg: netdev]_level([subsystem]dev, ... then 
+> dev_level(dev, ... then pr_level(...  to printk(KERN_LEVEL ...
+> #105: FILE: include/kunit/test.h:343:
+> +	printk(KERN_LEVEL "\t# %s: " fmt, (test)->name, ##__VA_ARGS__)
+> 
+> 
+> Is there supposed to be pr_level() - I can find dev_level()
+> 
+> cc'ing Joe Perches for his feedback on this message recommending
+> pr_level() which isn't in 5.3.
 
-Thanks for information!
+I don't care for pr_level or KERN_LEVEL in a printk.
 
-> 
-> Thanks,
-> Shaokun
-> 
-> > url: https://github.com/0day-ci/linux/commits/Shaokun-Zhang/ext4-change-the-type-of-ext4-cache-stats-to-percpu_counter-to-improve-performance/20190825-123505
-> > 
-> > 
-> > in testcase: ltp
-> > with following parameters:
-> > 
-> > 	test: quickhit
-> > 
-> > test-description: The LTP testsuite contains a collection of tools for testing the Linux kernel and related features.
-> > test-url: http://linux-test-project.github.io/
-> > 
-> > 
-> > on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 8G
-> > 
-> > caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> > 
-> > 
-> > +-----------------------------------------------------+------------+------------+
-> > |                                                     | e67095fd2f | 2f7f60cf9f |
-> > +-----------------------------------------------------+------------+------------+
-> > | boot_successes                                      | 25         | 12         |
-> > | boot_failures                                       | 0          | 17         |
-> > | WARNING:at_lib/list_debug.c:#__list_add_valid       | 0          | 17         |
-> > | RIP:__list_add_valid                                | 0          | 17         |
-> > | WARNING:at_lib/list_debug.c:#__list_del_entry_valid | 0          | 3          |
-> > | RIP:__list_del_entry_valid                          | 0          | 3          |
-> > +-----------------------------------------------------+------------+------------+
-> > 
-> > 
-> > If you fix the issue, kindly add following tag
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > 
-> > 
-> > [   62.458944] WARNING: CPU: 1 PID: 2533 at lib/list_debug.c:25 __list_add_valid+0x36/0x70
-> > [   62.460445] Modules linked in: fuse vfat fat btrfs xor zstd_decompress zstd_compress raid6_pq xfs libcrc32c ext4 mbcache jbd2 loop intel_rapl_msr intel_rapl_common crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel sr_mod bochs_drm cdrom drm_vram_helper sg ttm ppdev drm_kms_helper ata_generic pata_acpi syscopyarea sysfillrect sysimgblt snd_pcm fb_sys_fops drm snd_timer snd aesni_intel crypto_simd cryptd glue_helper soundcore pcspkr joydev serio_raw ata_piix libata i2c_piix4 floppy parport_pc parport ip_tables
-> > [   62.468134] CPU: 1 PID: 2533 Comm: fsync01 Not tainted 5.3.0-rc5-00283-g2f7f60cf9fbcd #1
-> > [   62.469707] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> > [   62.471293] RIP: 0010:__list_add_valid+0x36/0x70
-> > [   62.472332] Code: 48 8b 10 4c 39 c2 75 27 48 39 f8 74 39 48 39 fa 74 34 b8 01 00 00 00 c3 48 89 d1 48 c7 c7 28 ce d2 82 48 89 c2 e8 ba 47 c2 ff <0f> 0b 31 c0 c3 48 89 c1 4c 89 c6 48 c7 c7 a0 ce d2 82 e8 a3 47 c2
-> > [   62.475779] RSP: 0018:ffffb815c0497cc0 EFLAGS: 00010082
-> > [   62.477028] RAX: 0000000000000000 RBX: ffff9ab02e61c418 RCX: 0000000000000006
-> > [   62.478540] RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff9ab0bfd17770
-> > [   62.480096] RBP: ffff9ab02e61c428 R08: 0000000000000510 R09: 0000000000aaaaaa
-> > [   62.481707] R10: 0000000000000007 R11: ffff9ab097f6b8b0 R12: ffff9ab02e61c450
-> > [   62.483231] R13: ffffffff8314ce80 R14: 0000000000000202 R15: 0000000000000000
-> > [   62.484861] FS:  00007f8b236e0500(0000) GS:ffff9ab0bfd00000(0000) knlGS:0000000000000000
-> > [   62.486641] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   62.488103] CR2: 000055b3435d0a60 CR3: 000000019b8d2000 CR4: 00000000000406e0
-> > [   62.489798] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > [   62.491343] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > [   62.492925] Call Trace:
-> > [   62.494524]  __percpu_counter_init+0x64/0xa0
-> > [   62.495780]  ext4_es_register_shrinker+0x53/0x130 [ext4]
-> > [   62.497235]  ext4_fill_super+0x1cd4/0x3ad0 [ext4]
-> > [   62.498521]  ? ext4_calculate_overhead+0x4a0/0x4a0 [ext4]
-> > [   62.499946]  mount_bdev+0x173/0x1b0
-> > [   62.501120]  legacy_get_tree+0x27/0x40
-> > [   62.502315]  vfs_get_tree+0x25/0xf0
-> > [   62.503421]  do_mount+0x691/0x9c0
-> > [   62.504516]  ? memdup_user+0x4b/0x70
-> > [   62.505793]  ksys_mount+0x80/0xd0
-> > [   62.506858]  __x64_sys_mount+0x21/0x30
-> > [   62.507979]  do_syscall_64+0x5b/0x1f0
-> > [   62.509194]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > [   62.510491] RIP: 0033:0x7f8b2320f48a
-> > [   62.511589] Code: 48 8b 0d 11 fa 2a 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d de f9 2a 00 f7 d8 64 89 01 48
-> > [   62.515429] RSP: 002b:00007ffdcb5920e8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-> > [   62.517274] RAX: ffffffffffffffda RBX: 00005564e2fd94d5 RCX: 00007f8b2320f48a
-> > [   62.518865] RDX: 00005564e2fd94d5 RSI: 00005564e2fd6b08 RDI: 00007ffdcb593edf
-> > [   62.520461] RBP: 00007ffdcb593edf R08: 0000000000000000 R09: 00005564e2fd94d5
-> > [   62.522183] R10: 0000000000000000 R11: 0000000000000206 R12: 00005564e2fd6b08
-> > [   62.523770] R13: 00005564e2fd6b67 R14: 00000000000002f5 R15: 0000000000000000
-> > [   62.525457] ---[ end trace 6c35045d811b284c ]---
-> > 
-> > 
-> > To reproduce:
-> > 
-> >         # build kernel
-> > 	cd linux
-> > 	cp config-5.3.0-rc5-00283-g2f7f60cf9fbcd .config
-> > 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 olddefconfig prepare modules_prepare bzImage modules
-> > 	make HOSTCC=gcc-7 CC=gcc-7 ARCH=x86_64 INSTALL_MOD_PATH=<mod-install-dir> modules_install
-> > 	cd <mod-install-dir>
-> > 	find lib/ | cpio -o -H newc --quiet | gzip > modules.cgz
-> > 
-> > 
-> >         git clone https://github.com/intel/lkp-tests.git
-> >         cd lkp-tests
-> >         bin/lkp qemu -k <bzImage> -m modules.cgz job-script # job-script is attached in this email
-> > 
-> > 
-> > 
-> > Thanks,
-> > Oliver Sang
-> > 
-> 
+I think this is somewhat overly complicated.
+
+I think I'd write it like:
+---
+ include/kunit/test.h | 11 ++++-----
+ kunit/test.c         | 69 ++++++++++++++++------------------------------------
+ 2 files changed, 26 insertions(+), 54 deletions(-)
+
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index 8b7eb03d4971..aa4abf0a22a5 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -339,9 +339,8 @@ static inline void *kunit_kzalloc(struct kunit *test, size_t size, gfp_t gfp)
+ 
+ void kunit_cleanup(struct kunit *test);
+ 
+-void __printf(3, 4) kunit_printk(const char *level,
+-				 const struct kunit *test,
+-				 const char *fmt, ...);
++__printf(2, 3)
++void kunit_printk(const struct kunit *test, const char *fmt, ...);
+ 
+ /**
+  * kunit_info() - Prints an INFO level message associated with @test.
+@@ -353,7 +352,7 @@ void __printf(3, 4) kunit_printk(const char *level,
+  * Takes a variable number of format parameters just like printk().
+  */
+ #define kunit_info(test, fmt, ...) \
+-	kunit_printk(KERN_INFO, test, fmt, ##__VA_ARGS__)
++	kunit_printk(test, KERN_INFO fmt, ##__VA_ARGS__)
+ 
+ /**
+  * kunit_warn() - Prints a WARN level message associated with @test.
+@@ -364,7 +363,7 @@ void __printf(3, 4) kunit_printk(const char *level,
+  * Prints a warning level message.
+  */
+ #define kunit_warn(test, fmt, ...) \
+-	kunit_printk(KERN_WARNING, test, fmt, ##__VA_ARGS__)
++	kunit_printk(test, KERN_WARNING fmt, ##__VA_ARGS__)
+ 
+ /**
+  * kunit_err() - Prints an ERROR level message associated with @test.
+@@ -375,7 +374,7 @@ void __printf(3, 4) kunit_printk(const char *level,
+  * Prints an error level message.
+  */
+ #define kunit_err(test, fmt, ...) \
+-	kunit_printk(KERN_ERR, test, fmt, ##__VA_ARGS__)
++	kunit_printk(test, KERN_ERR fmt, ##__VA_ARGS__)
+ 
+ /**
+  * KUNIT_SUCCEED() - A no-op expectation. Only exists for code clarity.
+diff --git a/kunit/test.c b/kunit/test.c
+index b2ca9b94c353..ddb9bffb5a5d 100644
+--- a/kunit/test.c
++++ b/kunit/test.c
+@@ -16,40 +16,6 @@ static void kunit_set_failure(struct kunit *test)
+ 	WRITE_ONCE(test->success, false);
+ }
+ 
+-static int kunit_vprintk_emit(int level, const char *fmt, va_list args)
+-{
+-	return vprintk_emit(0, level, NULL, 0, fmt, args);
+-}
+-
+-static int kunit_printk_emit(int level, const char *fmt, ...)
+-{
+-	va_list args;
+-	int ret;
+-
+-	va_start(args, fmt);
+-	ret = kunit_vprintk_emit(level, fmt, args);
+-	va_end(args);
+-
+-	return ret;
+-}
+-
+-static void kunit_vprintk(const struct kunit *test,
+-			  const char *level,
+-			  struct va_format *vaf)
+-{
+-	kunit_printk_emit(level[1] - '0', "\t# %s: %pV", test->name, vaf);
+-}
+-
+-static void kunit_print_tap_version(void)
+-{
+-	static bool kunit_has_printed_tap_version;
+-
+-	if (!kunit_has_printed_tap_version) {
+-		kunit_printk_emit(LOGLEVEL_INFO, "TAP version 14\n");
+-		kunit_has_printed_tap_version = true;
+-	}
+-}
+-
+ static size_t kunit_test_cases_len(struct kunit_case *test_cases)
+ {
+ 	struct kunit_case *test_case;
+@@ -63,11 +29,9 @@ static size_t kunit_test_cases_len(struct kunit_case *test_cases)
+ 
+ static void kunit_print_subtest_start(struct kunit_suite *suite)
+ {
+-	kunit_print_tap_version();
+-	kunit_printk_emit(LOGLEVEL_INFO, "\t# Subtest: %s\n", suite->name);
+-	kunit_printk_emit(LOGLEVEL_INFO,
+-			  "\t1..%zd\n",
+-			  kunit_test_cases_len(suite->test_cases));
++	pr_info_once("TAP version 14\n");
++	pr_info("\t# Subtest: %s\n", suite->name);
++	pr_info("\t1..%zd\n", kunit_test_cases_len(suite->test_cases));
+ }
+ 
+ static void kunit_print_ok_not_ok(bool should_indent,
+@@ -87,9 +51,8 @@ static void kunit_print_ok_not_ok(bool should_indent,
+ 	else
+ 		ok_not_ok = "not ok";
+ 
+-	kunit_printk_emit(LOGLEVEL_INFO,
+-			  "%s%s %zd - %s\n",
+-			  indent, ok_not_ok, test_number, description);
++	pr_info("%s%s %zd - %s\n",
++		indent, ok_not_ok, test_number, description);
+ }
+ 
+ static bool kunit_suite_has_succeeded(struct kunit_suite *suite)
+@@ -133,11 +96,11 @@ static void kunit_print_string_stream(struct kunit *test,
+ 		kunit_err(test,
+ 			  "Could not allocate buffer, dumping stream:\n");
+ 		list_for_each_entry(fragment, &stream->fragments, node) {
+-			kunit_err(test, fragment->fragment);
++			kunit_err(test, "%s", fragment->fragment);
+ 		}
+ 		kunit_err(test, "\n");
+ 	} else {
+-		kunit_err(test, buf);
++		kunit_err(test, "%s", buf);
+ 		kunit_kfree(test, buf);
+ 	}
+ }
+@@ -505,19 +468,29 @@ void kunit_cleanup(struct kunit *test)
+ 	}
+ }
+ 
+-void kunit_printk(const char *level,
+-		  const struct kunit *test,
+-		  const char *fmt, ...)
++void kunit_printk(const struct kunit *test, const char *fmt, ...)
+ {
++	char lvl[PRINTK_MAX_SINGLE_HEADER_LEN + 1] = "\0";
+ 	struct va_format vaf;
+ 	va_list args;
++	int kern_level;
+ 
+ 	va_start(args, fmt);
+ 
++	while ((kern_level = printk_get_level(fmt)) != 0) {
++		size_t size = printk_skip_level(fmt) - fmt;
++
++		if (kern_level >= '0' && kern_level <= '7') {
++			memcpy(lvl, fmt,  size);
++			lvl[size] = '\0';
++		}
++		fmt += size;
++	}
++
+ 	vaf.fmt = fmt;
+ 	vaf.va = &args;
+ 
+-	kunit_vprintk(test, level, &vaf);
++	printk("%s\t# %s %pV\n", lvl, test->name, &vaf);
+ 
+ 	va_end(args);
+ }
+
+
