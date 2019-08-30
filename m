@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7B33A307A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B815A307D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfH3HPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:15:11 -0400
-Received: from mailgw02.mediatek.com ([1.203.163.81]:20045 "EHLO
+        id S1728143AbfH3HPQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:15:16 -0400
+Received: from mailgw02.mediatek.com ([1.203.163.81]:16879 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726716AbfH3HPL (ORCPT
+        with ESMTP id S1726510AbfH3HPM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:15:11 -0400
-X-UUID: b84a351636644f3391af877f8ddfc563-20190830
-X-UUID: b84a351636644f3391af877f8ddfc563-20190830
-Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        Fri, 30 Aug 2019 03:15:12 -0400
+X-UUID: e318ecf4567044b8a0d6100d45966329-20190830
+X-UUID: e318ecf4567044b8a0d6100d45966329-20190830
+Received: from mtkcas32.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
         (envelope-from <chunfeng.yun@mediatek.com>)
         (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 134829063; Fri, 30 Aug 2019 15:15:07 +0800
+        with ESMTP id 1741576079; Fri, 30 Aug 2019 15:15:08 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 30 Aug 2019 15:15:05 +0800
+ MTKMBS31N1.mediatek.inc (172.27.4.69) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 30 Aug 2019 15:15:06 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 30 Aug 2019 15:15:04 +0800
+ Transport; Fri, 30 Aug 2019 15:15:05 +0800
 From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -33,42 +33,63 @@ CC:     Mark Rutland <mark.rutland@arm.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 01/11] dt-bindings: phy-mtk-tphy: add two optional properties for u2phy
-Date:   Fri, 30 Aug 2019 15:14:48 +0800
-Message-ID: <1567149298-29366-1-git-send-email-chunfeng.yun@mediatek.com>
+Subject: [PATCH v2 02/11] dt-bindings: phy-mtk-tphy: make the ref clock optional
+Date:   Fri, 30 Aug 2019 15:14:49 +0800
+Message-ID: <1567149298-29366-2-git-send-email-chunfeng.yun@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
+In-Reply-To: <1567149298-29366-1-git-send-email-chunfeng.yun@mediatek.com>
+References: <1567149298-29366-1-git-send-email-chunfeng.yun@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: F7427991E1A9FF5535CB290EFDEC4A20F3A6D211891F1FC97EF0EBA84DCA307E2000:8
+X-TM-SNTS-SMTP: 8AA4EE7C93101D4575B204A05C0D3FBBCF809858BAA0767AF37DB9BC4E6BA8B72000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add two optional properties, one for tuning J-K voltage, another for
-disconnect threshold, both of them are related with connect detection
+Make the ref clock optional, then we no need refer to a fixed-clock
+in DTS anymore when the clock of USB3 PHY comes from oscillator
+directly
 
 Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
 ---
-v2: change description
+v2: no changes
 ---
- Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/phy/phy-mtk-tphy.txt        | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-index a5f7a4f0dbc1..ce6abfbdfbe1 100644
+index ce6abfbdfbe1..1f4a36dd80e0 100644
 --- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
 +++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
-@@ -52,6 +52,8 @@ Optional properties (PHY_TYPE_USB2 port (child) node):
+@@ -34,12 +34,6 @@ Optional properties (controller (parent) node):
+ 
+ Required properties (port (child) node):
+ - reg		: address and length of the register set for the port.
+-- clocks	: a list of phandle + clock-specifier pairs, one for each
+-		  entry in clock-names
+-- clock-names	: must contain
+-		  "ref": 48M reference clock for HighSpeed analog phy; and 26M
+-			reference clock for SuperSpeed analog phy, sometimes is
+-			24M, 25M or 27M, depended on platform.
+ - #phy-cells	: should be 1 (See second example)
+ 		  cell after port phandle is phy type from:
+ 			- PHY_TYPE_USB2
+@@ -48,6 +42,13 @@ Required properties (port (child) node):
+ 			- PHY_TYPE_SATA
+ 
+ Optional properties (PHY_TYPE_USB2 port (child) node):
++- clocks	: a list of phandle + clock-specifier pairs, one for each
++		  entry in clock-names
++- clock-names	: may contain
++		  "ref": 48M reference clock for HighSpeed anolog phy; and 26M
++			reference clock for SuperSpeed anolog phy, sometimes is
++			24M, 25M or 27M, depended on platform.
++
+ - mediatek,eye-src	: u32, the value of slew rate calibrate
  - mediatek,eye-vrt	: u32, the selection of VRT reference voltage
  - mediatek,eye-term	: u32, the selection of HS_TX TERM reference voltage
- - mediatek,bc12	: bool, enable BC12 of u2phy if support it
-+- mediatek,discth	: u32, the selection of disconnect threshold
-+- mediatek,intr	: u32, the selection of internal R (resistance)
- 
- Example:
- 
 -- 
 2.23.0
 
