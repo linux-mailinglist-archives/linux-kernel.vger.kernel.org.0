@@ -2,180 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E7CBA3AEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE72A3AF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbfH3Psh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:48:37 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40743 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbfH3Psg (ORCPT
+        id S1728336AbfH3Pt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:49:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58220 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727135AbfH3Pt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:48:36 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so3745662pgj.7;
-        Fri, 30 Aug 2019 08:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4oHQ/J6gD7m5a2hZJIzg30k30/iTJHkHY5qB+o+D4cE=;
-        b=h7oWCY6wHIupyilklhVw3zKKmS4N6rNYStKFd6M4mXY2zoBod9UZ8VCkDGXpvOwPEx
-         y0aASnlb2KjG+wF+/aUT2biKn+NEObcgE8m7DGPrZYueZa0oebuiKl0kXOBZW/YvAFgG
-         wiNfxFX1BU+QMvruLmfNr9RwuUgTVgZhni7EzWpQBGg9w69s5GjxRS3CR8rDUkEmFDvX
-         StbzvePxJ6JAeogsEcWDy1lOLEazKGBM7XSWMidYvC4oTqL+OIaD7n27qxye/p6T0bld
-         MAh4tx6oguKUb4RPv6qhdVfxJi3jyYGLfFoX32P7ntEtN8+5CPxBMCDh7sUKz71y0419
-         8ZHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=4oHQ/J6gD7m5a2hZJIzg30k30/iTJHkHY5qB+o+D4cE=;
-        b=Rz2IvZhXVmR270TP1rqP+bsFbqlAzUFU+ogsw0a3zcwY73Ays/M2RoDIJGwjPEAIqb
-         VYIwMfiipdHXcn9UC5yDpmbdtlCxpSodv34k2jMbhAMUb4I1D1yTK97Vu+tKBIsc37s8
-         GSCCNIKpF+abp2YA7U7eDhepIydRU1+LGf+acYScrkZkAfI3Hsr9G0xmS6leWTO9GV1P
-         qKDUHC9/gYZhX6lYFYRG/Xe02tstyg3JDXt3BT27nS1ahs9QQ9wMYFFB/h96WRjXfAq2
-         cbwSTh8hXhQ9zOW+8zNECzDG6byv/+l0qNgvc+1tAE4pTmC0mHYePB1ZZAf5EqhfCUie
-         a90g==
-X-Gm-Message-State: APjAAAW5HNQUG6kwZYONGxLATMVAklsEp4QxQYDrVtQ9vXyJEDMlefx4
-        CC+IzJtV3xgw4tuO/Q2bDZk=
-X-Google-Smtp-Source: APXvYqw+TTjvl6C13mK+Kx+U+c7BoLzOucbYEU3GqDfQjm5bxaW7IFfh1q/TNPR40tNdaKG3mocNEw==
-X-Received: by 2002:a17:90a:c386:: with SMTP id h6mr16090687pjt.122.1567180114546;
-        Fri, 30 Aug 2019 08:48:34 -0700 (PDT)
-Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id z28sm8093085pfj.74.2019.08.30.08.48.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 08:48:33 -0700 (PDT)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     arnd@arndb.de, viro@zeniv.linux.org.uk
-Cc:     adilger@dilger.ca, aivazian.tigran@gmail.com,
-        darrick.wong@oracle.com, deepa.kernel@gmail.com, dsterba@suse.com,
-        gregkh@linuxfoundation.org, jlayton@kernel.org,
-        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        me@bobcopeland.com, y2038@lists.linaro.org,
-        adrian.hunter@intel.com, al@alarsen.net, anna.schumaker@netapp.com,
-        anton@enomsg.org, asmadeus@codewreck.org, ccross@android.com,
-        ceph-devel@vger.kernel.org, coda@cs.cmu.edu,
-        codalist@coda.cs.cmu.edu, dedekind1@gmail.com,
-        devel@lists.orangefs.org, dushistov@mail.ru, dwmw2@infradead.org,
-        ericvh@gmail.com, hch@infradead.org, hch@lst.de,
-        hirofumi@mail.parknet.co.jp, hubcap@omnibond.com,
-        idryomov@gmail.com, jack@suse.com, jaegeuk@kernel.org,
-        jaharkes@cs.cmu.edu, jfs-discussion@lists.sourceforge.net,
-        jlbec@evilplan.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-karma-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        lucho@ionkov.net, luisbg@kernel.org, martin@omnibond.com,
-        mikulas@artax.karlin.mff.cuni.cz, nico@fluxnic.net,
-        phillip@squashfs.org.uk, reiserfs-devel@vger.kernel.org,
-        richard@nod.at, sage@redhat.com, salah.triki@gmail.com,
-        sfrench@samba.org, shaggy@kernel.org, tj@kernel.org,
-        tony.luck@intel.com, trond.myklebust@hammerspace.com,
-        tytso@mit.edu, v9fs-developer@lists.sourceforge.net,
-        yuchao0@huawei.com, zyan@redhat.com
-Subject: [GIT PULL RESEND] vfs: Add support for timestamp limits
-Date:   Fri, 30 Aug 2019 08:47:44 -0700
-Message-Id: <20190830154744.4868-1-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAK8P3a1XjOMpuS12Xao1xqOLFOuz1Jb8dTAfrhLcE643sSkC5g@mail.gmail.com>
-References: <CAK8P3a1XjOMpuS12Xao1xqOLFOuz1Jb8dTAfrhLcE643sSkC5g@mail.gmail.com>
+        Fri, 30 Aug 2019 11:49:57 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7UFmKhi135060;
+        Fri, 30 Aug 2019 11:48:20 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uq6cd8w4h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Aug 2019 11:48:20 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7UFg72J028795;
+        Fri, 30 Aug 2019 15:48:19 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma02dal.us.ibm.com with ESMTP id 2un65kg9dm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Aug 2019 15:48:19 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7UFmInU42729834
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 15:48:18 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6FEF6AE05C;
+        Fri, 30 Aug 2019 15:48:18 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D75B3AE05F;
+        Fri, 30 Aug 2019 15:48:15 +0000 (GMT)
+Received: from LeoBras (unknown [9.85.151.141])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 30 Aug 2019 15:48:15 +0000 (GMT)
+Message-ID: <4b3b52d0f73aeb1437b4b2a46325b36e9c41f92b.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 1/1] netfilter: nf_tables: fib: Drop IPV6 packages if
+ IPv6 is disabled on boot
+From:   Leonardo Bras <leonardo@linux.ibm.com>
+To:     Florian Westphal <fw@strlen.de>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Date:   Fri, 30 Aug 2019 12:48:11 -0300
+In-Reply-To: <20190829205832.GM20113@breakpoint.cc>
+References: <20190821141505.2394-1-leonardo@linux.ibm.com>
+         <db0f02c5b1a995fde174f036540a3d11008cf116.camel@linux.ibm.com>
+         <b6585989069fd832a65b73d1c4f4319a10714165.camel@linux.ibm.com>
+         <20190829205832.GM20113@breakpoint.cc>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-oQxTJclox6vwlEkEdc9g"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-30_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908300157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[resending, rebased onto linux v5.3-rc6, and dropped orangefs patch from the series]
 
-Hi Al, Arnd,
+--=-oQxTJclox6vwlEkEdc9g
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a pull request for filling in min and max timestamps for filesystems.
-I've added all the acks, and dropped the adfs patch. That will be merged through
-Russell's tree.
+On Thu, 2019-08-29 at 22:58 +0200, Florian Westphal wrote:
+[...]
+> 1. add a patch to BREAK in nft_fib_netdev.c for !ipv6_mod_enabled()
+[...]
 
-Dropped orangefs until the maintainers decide what its limits should be.
+But this is still needed? I mean, in nft_fib_netdev_eval there are only
+2 functions being called for IPv6 protocol : nft_fib6_eval and
+nft_fib6_eval_type. Both are already protected by this current patch.
 
-The following changes since commit a55aa89aab90fae7c815b0551b07be37db359d76:
+Is your 1st suggestion about this patch, or you think it's better to
+move this change to nft_fib_netdev_eval ?
 
-  Linux 5.3-rc6 (2019-08-25 12:01:23 -0700)
+Best regards,
+Leonardo Bras
 
-are available in the Git repository at:
+--=-oQxTJclox6vwlEkEdc9g
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-  https://github.com/deepa-hub/vfs limits
+-----BEGIN PGP SIGNATURE-----
 
-for you to fetch changes up to 5ad32b3acded06183f40806f76b030c3143017bb:
+iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl1pRTsACgkQlQYWtz9S
+ttR8vg//bORcfn9a17NfB/LSQtdMIyP0xefyHbkTJ3ZpRcj7XLzdkqrnAoksLzEG
+z0EP0HoNn1M2I8WDglih/B+pLqyc9vaCn73+7cem61/+Uhcqzb/7z8zvmn6HLdI2
+G8cpXJeOL+vOG2YXb1kX+FfJ7BtLyalCJ/KyJvLtpy+J0UVTILvXD/ag0huemWs1
+xHpzVEDys4Gwh+EPF9hOpFDCnQDbp6QdmOxXKXkq/C4ArLHrSok5mZQOsHo6BFrh
+SpPGZsStPVWPIx/Xt+2H4AxkP3VpSr332sWViTh94YX6rTGDMMaWCm0bH4/aIAF/
+J0Nj9ig2i1eKrKNXcg21dzcw0AgqXOdts4I1DJfi9aNflB8sOu9+/VgMLiz36mjl
+463rg6Lc/Rx16HQ3w3g2usaaVWM7qSSYw7AvWbccIJjYHQHO6Sw4o60ErJkE0mie
+W2KCD+pYRjmbF0pRmcsuFPlVMFa+u1aM2iwNbE47XYiXBBwHC5cvGBupj5KLanSy
+fsFQQX2qLpC5Wc67M1xGv6SE+1PuKza3sH3w/z0WzeKewAJ38BsEZtOF7mfdwrHw
+ZNKRpjUFimwQz1QjlSd7wki2nzrNj4REDQ1xMjdEZQpBnHN7jctb0AlpuI24VbMR
+pkhAqZE+qzGgoeT5j7fVg7ow487ckU9/mScTImeIRmHArgNGJVw=
+=cgry
+-----END PGP SIGNATURE-----
 
-  isofs: Initialize filesystem timestamp ranges (2019-08-30 08:11:25 -0700)
+--=-oQxTJclox6vwlEkEdc9g--
 
-----------------------------------------------------------------
-
-- Deepa
-
-Deepa Dinamani (18):
-      vfs: Add file timestamp range support
-      vfs: Add timestamp_truncate() api
-      timestamp_truncate: Replace users of timespec64_trunc
-      mount: Add mount warning for impending timestamp expiry
-      utimes: Clamp the timestamps before update
-      fs: Fill in max and min timestamps in superblock
-      9p: Fill min and max timestamps in sb
-      ext4: Initialize timestamps limits
-      fs: nfs: Initialize filesystem timestamp ranges
-      fs: cifs: Initialize filesystem timestamp ranges
-      fs: fat: Initialize filesystem timestamp ranges
-      fs: affs: Initialize filesystem timestamp ranges
-      fs: sysv: Initialize filesystem timestamp ranges
-      fs: ceph: Initialize filesystem timestamp ranges
-      fs: hpfs: Initialize filesystem timestamp ranges
-      fs: omfs: Initialize filesystem timestamp ranges
-      pstore: fs superblock limits
-      isofs: Initialize filesystem timestamp ranges
-
- fs/9p/vfs_super.c        |  6 +++++-
- fs/affs/amigaffs.c       |  2 +-
- fs/affs/amigaffs.h       |  3 +++
- fs/affs/inode.c          |  4 ++--
- fs/affs/super.c          |  4 ++++
- fs/attr.c                | 21 ++++++++++++---------
- fs/befs/linuxvfs.c       |  2 ++
- fs/bfs/inode.c           |  2 ++
- fs/ceph/super.c          |  2 ++
- fs/cifs/cifsfs.c         | 22 ++++++++++++++++++++++
- fs/cifs/netmisc.c        | 14 +++++++-------
- fs/coda/inode.c          |  3 +++
- fs/configfs/inode.c      | 12 ++++++------
- fs/cramfs/inode.c        |  2 ++
- fs/efs/super.c           |  2 ++
- fs/ext2/super.c          |  2 ++
- fs/ext4/ext4.h           | 10 +++++++++-
- fs/ext4/super.c          | 17 +++++++++++++++--
- fs/f2fs/file.c           | 21 ++++++++++++---------
- fs/fat/inode.c           | 12 ++++++++++++
- fs/freevxfs/vxfs_super.c |  2 ++
- fs/hpfs/hpfs_fn.h        |  6 ++----
- fs/hpfs/super.c          |  2 ++
- fs/inode.c               | 33 ++++++++++++++++++++++++++++++++-
- fs/isofs/inode.c         |  7 +++++++
- fs/jffs2/fs.c            |  3 +++
- fs/jfs/super.c           |  2 ++
- fs/kernfs/inode.c        |  7 +++----
- fs/minix/inode.c         |  2 ++
- fs/namespace.c           | 33 ++++++++++++++++++++++++++++++++-
- fs/nfs/super.c           | 20 +++++++++++++++++++-
- fs/ntfs/inode.c          | 21 ++++++++++++---------
- fs/omfs/inode.c          |  4 ++++
- fs/pstore/ram.c          |  2 ++
- fs/qnx4/inode.c          |  2 ++
- fs/qnx6/inode.c          |  2 ++
- fs/reiserfs/super.c      |  3 +++
- fs/romfs/super.c         |  2 ++
- fs/squashfs/super.c      |  2 ++
- fs/super.c               |  2 ++
- fs/sysv/super.c          |  5 ++++-
- fs/ubifs/file.c          | 21 ++++++++++++---------
- fs/ufs/super.c           |  7 +++++++
- fs/utimes.c              |  6 ++----
- fs/xfs/xfs_super.c       |  2 ++
- include/linux/fs.h       |  5 +++++
- include/linux/time64.h   |  2 ++
- 47 files changed, 296 insertions(+), 72 deletions(-)
