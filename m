@@ -2,136 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9E5A408D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:28:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B2FA4097
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:31:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbfH3W2j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 18:28:39 -0400
-Received: from mx4.ucr.edu ([138.23.248.66]:7952 "EHLO mx4.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728271AbfH3W2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 18:28:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1567204118; x=1598740118;
-  h=mime-version:references:in-reply-to:from:date:message-id:
-   subject:to:cc;
-  bh=wgVygESRDZ4+rg/c5sOJBi+QyyM3UkHfyRMFo8KoCxI=;
-  b=RAfZLisjzOUh7Cl2P/SoSGgX729miO4NgJDkxPlcrmKnLEB4pyzRIEpq
-   TSS8UBMdPt5f0tdcgMIZL43olTbxqhVforFl8AP0PRPPXEUXOPrg9qHsr
-   LOpL6rNwONiYay1Zcj0Xq5bqXGtRpgDlYuSzmSZV0xKbgTWMgr1jIIZmc
-   Wx1DLhRRO95ohg1Sw107MTb5oa54StQnCEmt19R5rDKkj0/rUCWeB/alG
-   Xx+MWfZHF1FIYWIvZ/0S1SxTsQUJZkIKxBjz5NC29fhuti/EDu+xXwpsA
-   G23aLjQZkmBmFffB1eHpyQyemk4ggSBEk0EWYKSa/oVKVEkPV8RoYHD9H
-   A==;
-IronPort-SDR: kr0Q9TL0/kFdncT9926ysFvpQAaMqrp2mUz2jFwkWhZ64JBHoNi9WdmR0AIRfFseROYXFwTv8G
- CXW8JpfyleoIQmG0eRz6Pl9dr6+L1vBgAW8MsW0biZepJVxB3XZm+cPYi+3ivks2sW5yAdZ/v0
- 1ZdXwA60Ru5FSRfLBFN37IfJOZ8IFRiMpAc/3lqmGVG2ZR8bmypbv/zBUU3pfI3eoaVduxPhhh
- ECLcgrQsFnterhoGvfL+rvqTrdKE1kZH5CddHclWbNHbOwfpZZsgdllVtrW6gVdyngKcH7Auxo
- e5Y=
-IronPort-PHdr: =?us-ascii?q?9a23=3AXoLW3B9YxSDOgv9uRHKM819IXTAuvvDOBiVQ1K?=
- =?us-ascii?q?B41OwcTK2v8tzYMVDF4r011RmVBN+dsqwZwLOP+4nbGkU4qa6bt34DdJEeHz?=
- =?us-ascii?q?Qksu4x2zIaPcieFEfgJ+TrZSFpVO5LVVti4m3peRMNQJW2aFLduGC94iAPER?=
- =?us-ascii?q?vjKwV1Ov71GonPhMiryuy+4ZLebxhWiDanfL9/LRW7oQrMusULnIBvNrs/xh?=
- =?us-ascii?q?zVr3VSZu9Y33loJVWdnxb94se/4ptu+DlOtvwi6sBNT7z0c7w3QrJEAjsmNX?=
- =?us-ascii?q?s15NDwuhnYUQSP/HocXX4InRdOHgPI8Qv1Xpb1siv9q+p9xCyXNtD4QLwoRT?=
- =?us-ascii?q?iv6bpgRQT2gykbKTE27GDXitRxjK1FphKhuwd/yJPQbI2MKfZyYr/RcdYcSG?=
- =?us-ascii?q?FcXMheSjZBD5uzYIsBDeUPPehWoYrgqVUQsRSzHhWsCP/1xzNUmnP6wa833u?=
- =?us-ascii?q?I8Gg/GxgwgGNcOvWzWo9X0NaYSUf21zK7VxjrAb/NZwzb945XPfxEhoPCMXa?=
- =?us-ascii?q?h/ccvNxUUzGQ7IlUiQppD/Pz+PyOsCrnWb4vNmWOmyiGAnsxl8riazysookI?=
- =?us-ascii?q?XEhYIYxkrZ+Sh4wos5P9+1RFJ9bNW5CpVfrTuaOJFzQs46RmFovzs1xaMetJ?=
- =?us-ascii?q?6geSgK1IwnxxnCa/yba4SI4gzsVOKWITpggXJqYrO/hxKr/UikxO3wS9C40F?=
- =?us-ascii?q?hIoyZZiNXMuXcN1xvc6siDVPRx5Fuu2TGK1wzL6+FEJ147lbbDJpI/3rI9ko?=
- =?us-ascii?q?AfvEfDEyPshUn7ja2bel8m9+S08+jnZ6/ppp6YN496kAH+NaEul9S/AOU5Mg?=
- =?us-ascii?q?gBRWmb9fig2LDt5kD5XalFjucsnqbHrZ/aONwXprSlDA9NzoYj9xG/Ai+i0N?=
- =?us-ascii?q?QZm3kHMV1EdAuEj4f3IVHOJu73DfOkjlSynzdk2erGMqfiAprTNHjDlqnufb?=
- =?us-ascii?q?Jn505b0gozwoMX25UBJrgfIf67f071sNHCRks1OhK5xs7rActw04cZV37JBK?=
- =?us-ascii?q?KFZvD8q1iNs9MuMemRY8cnuD/8Y6w09f7njCdhwncAdrPv0JcKPiPrVs96Kl?=
- =?us-ascii?q?mUNCK/yuwKFn0H609nFLTn?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EPAACxomldf0anVdFmHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBUwcBAQsBg1YzKoQhiByGb4IPk3aFJIF7AQgBAQEOLwEBhD8CgmEjNAk?=
- =?us-ascii?q?OAgMIAQEFAQEBAQEGBAEBAhABAQkLCwgnhUOCOikBgmcBAQEBAxIRVhALCwM?=
- =?us-ascii?q?GAQMCAh8HAgIiEgEFARwGEyKFCwWhY4EDPIskgTKIbgEIDIFJEnooAYt3ghe?=
- =?us-ascii?q?DbjU+h0+CWASBLgEBAY1AhxSWCQEGAoINFIwriCwbmGItpiIPIYEvghEzGiV?=
- =?us-ascii?q?/BmeBToJ6ji0iMI84AQE?=
-X-IPAS-Result: =?us-ascii?q?A2EPAACxomldf0anVdFmHAEBAQQBAQcEAQGBUwcBAQsBg?=
- =?us-ascii?q?1YzKoQhiByGb4IPk3aFJIF7AQgBAQEOLwEBhD8CgmEjNAkOAgMIAQEFAQEBA?=
- =?us-ascii?q?QEGBAEBAhABAQkLCwgnhUOCOikBgmcBAQEBAxIRVhALCwMGAQMCAh8HAgIiE?=
- =?us-ascii?q?gEFARwGEyKFCwWhY4EDPIskgTKIbgEIDIFJEnooAYt3gheDbjU+h0+CWASBL?=
- =?us-ascii?q?gEBAY1AhxSWCQEGAoINFIwriCwbmGItpiIPIYEvghEzGiV/BmeBToJ6ji0iM?=
- =?us-ascii?q?I84AQE?=
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="73993447"
-Received: from mail-lf1-f70.google.com ([209.85.167.70])
-  by smtpmx4.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 15:28:37 -0700
-Received: by mail-lf1-f70.google.com with SMTP id b30so1860355lfq.6
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 15:28:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/OqUmnBUo2TwngZckoAVX/16b3P4Ti0vmh5QbNPt/qI=;
-        b=Ha+/QoMDWGIzxLFFkhLjdMT/DcINnuktvBQdUPNVVQbcXHvmCYvTHvbYxuOsWhgUr3
-         S3yEBO3+xEH/RR0SQ/fD2ea3/w4cJEhywr8i+xbx4WCGY6kZg3Lx/Hkj04Gc8gbRfLbF
-         kW6uUWfucaTbfC9J42VZ2StV2ild/B44EadHZfMsMoAMge+AtMbuou/7XzhwTrC+/qU9
-         ffQd5wLeozn9tZfbTOpglGTNXiPhVv3BtHq7+BNIc/7uAOBswW18NvkT5aRxZ7Zi7cO2
-         OfClZ0Vskv1HxkMqSN738Kb6vWhRUHT4Y4EBr35+v6+ZL6r2eZiI6PdfOa5KCuMtVwss
-         FfKg==
-X-Gm-Message-State: APjAAAVNX38ooxkpM35AojGBX8b+aFO4cl6P1sTaoeuAF3DYgVXe5SDe
-        kgg7XCpD0+g7RLr1ytvklIzzwcwRqBggoWI0NlsRfc9TtP0CSgex6Xbazpd7xFF+56cZ6Je8xUF
-        zkrT56cpBr1SovecCV5XAne+0CjmVwxKi4UL7IHqwNw==
-X-Received: by 2002:a05:6512:304:: with SMTP id t4mr11134405lfp.15.1567204115690;
-        Fri, 30 Aug 2019 15:28:35 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwa33Y9Bu9hA8LxhW9Vg/wJim85Pk0no7AsHr9XFg9pLsGspx5AJcu+yjlmeSKNUIJl9tL56jCgdsQd0GJsEII=
-X-Received: by 2002:a05:6512:304:: with SMTP id t4mr11134392lfp.15.1567204115524;
- Fri, 30 Aug 2019 15:28:35 -0700 (PDT)
+        id S1728353AbfH3Wbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 18:31:41 -0400
+Received: from esa4.mentor.iphmx.com ([68.232.137.252]:12348 "EHLO
+        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728176AbfH3Wbl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 18:31:41 -0400
+IronPort-SDR: O05l+jUxCjmHsNnF4cxKCr8VXWBTKAFC8Gt2oD2R9os82WupN4uWgwtTMvGFRAK6aC/AT/xzYs
+ FzQYoY8LpXIZV7Zf2rkAmFo2DGEXxXQudUihYOkLtisI97iGJBAoc66jot8oBGxVkqSrB3NgME
+ YqjOP/QKpZBh+HiR3No+/M1ckKlKSbsNJbZXrUEYUfzKCdeDdngL/h/NEVee0gWT0I7grmBytB
+ KHtLOYtLPMmWarE3qprSJ6k3gTgCwhbdGpB1rWUzt5VfeQ7gv9z11Uaa/Q7rJHESLNg3I9JBey
+ 5xU=
+X-IronPort-AV: E=Sophos;i="5.64,447,1559548800"; 
+   d="scan'208";a="40928797"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa4.mentor.iphmx.com with ESMTP; 30 Aug 2019 14:31:40 -0800
+IronPort-SDR: Hhsgt2LVcsTRNobsyoISTMBeOSJZieSPCWyRNFLMy1hsywW6cmFcaqWUXH10I335KUWuOhbbxD
+ 0fZf++EvhI0MPbm5r23d7tfd+gb8SMlrZfmXYU0Z20Qlq6loZ4ezQf8kF7mcCipN1wyU19wORd
+ 8K+Ovc+OlFfui1qNsmC/SuiX0h+Vxo/gszHEdECWs4HckiTo6pxv0x0JsIrMQmfoj1seZlSsOy
+ jqoT383wp+HsoiKrNwQt3qaF6Mx59hW+LRrZGr/EmYctq/ITxKwn91AM4+1Gimkdrt/ch8P6QA
+ 510=
+From:   "George G. Davis" <george_davis@mentor.com>
+To:     <shuah@kernel.org>, Jerry Hoemann <jerry.hoemann@hpe.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: [PATCH] selftests: watchdog: cleanup whitespace in usage options
+Date:   Fri, 30 Aug 2019 18:31:33 -0400
+Message-ID: <1567204294-8840-1-git-send-email-george_davis@mentor.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20190207174623.16712-1-yzhai003@ucr.edu> <20190208.230117.1867217574108955553.davem@davemloft.net>
-In-Reply-To: <20190208.230117.1867217574108955553.davem@davemloft.net>
-From:   Yizhuo Zhai <yzhai003@ucr.edu>
-Date:   Fri, 30 Aug 2019 15:29:07 -0700
-Message-ID: <CABvMjLRzuUVh7FxVQj2O40Sbr+VygwSG8spMv0fW2RZVvaJ8rQ@mail.gmail.com>
-Subject: Re: [PATCH] net: stmmac: Variable "val" in function
- sun8i_dwmac_set_syscon() could be uninitialized
-To:     David Miller <davem@davemloft.net>
-Cc:     Chengyu Song <csong@cs.ucr.edu>, Zhiyun Qian <zhiyunq@cs.ucr.edu>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David:
+Convert hard spaces to tabs in usage options.
 
-Thanks for your feedback, this patch should work for v4.14.
+Suggested-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+---
+ tools/testing/selftests/watchdog/watchdog-test.c | 25 ++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
+diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+index c35989ffbc6b..3fff1ee20a7f 100644
+--- a/tools/testing/selftests/watchdog/watchdog-test.c
++++ b/tools/testing/selftests/watchdog/watchdog-test.c
+@@ -70,18 +70,19 @@ static void term(int sig)
+ static void usage(char *progname)
+ {
+ 	printf("Usage: %s [options]\n", progname);
+-	printf(" -f, --file          Open watchdog device file\n");
+-	printf("                     Default is /dev/watchdog\n");
+-	printf(" -b, --bootstatus    Get last boot status (Watchdog/POR)\n");
+-	printf(" -d, --disable       Turn off the watchdog timer\n");
+-	printf(" -e, --enable        Turn on the watchdog timer\n");
+-	printf(" -h, --help          Print the help message\n");
+-	printf(" -p, --pingrate=P    Set ping rate to P seconds (default %d)\n", DEFAULT_PING_RATE);
+-	printf(" -t, --timeout=T     Set timeout to T seconds\n");
+-	printf(" -T, --gettimeout    Get the timeout\n");
+-	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
+-	printf(" -N, --getpretimeout Get the pretimeout\n");
+-	printf(" -L, --gettimeleft   Get the time left until timer expires\n");
++	printf(" -f, --file\t\tOpen watchdog device file\n");
++	printf("\t\t\tDefault is /dev/watchdog\n");
++	printf(" -b, --bootstatus\tGet last boot status (Watchdog/POR)\n");
++	printf(" -d, --disable\t\tTurn off the watchdog timer\n");
++	printf(" -e, --enable\t\tTurn on the watchdog timer\n");
++	printf(" -h, --help\t\tPrint the help message\n");
++	printf(" -p, --pingrate=P\tSet ping rate to P seconds (default %d)\n",
++	       DEFAULT_PING_RATE);
++	printf(" -t, --timeout=T\tSet timeout to T seconds\n");
++	printf(" -T, --gettimeout\tGet the timeout\n");
++	printf(" -n, --pretimeout=T\tSet the pretimeout to T seconds\n");
++	printf(" -N, --getpretimeout\tGet the pretimeout\n");
++	printf(" -L, --gettimeleft\tGet the time left until timer expires\n");
+ 	printf("\n");
+ 	printf("Parameters are parsed left-to-right in real-time.\n");
+ 	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
+-- 
+2.7.4
 
-On Fri, Feb 8, 2019 at 11:01 PM David Miller <davem@davemloft.net> wrote:
->
-> From: Yizhuo <yzhai003@ucr.edu>
-> Date: Thu,  7 Feb 2019 09:46:23 -0800
->
-> > In function sun8i_dwmac_set_syscon(), local variable "val" could
-> > be uninitialized if function regmap_read() returns -EINVAL.
-> > However, it will be used directly in the if statement, which
-> > is potentially unsafe.
-> >
-> > Signed-off-by: Yizhuo <yzhai003@ucr.edu>
->
-> This doesn't apply to any of my trees.
-
-
-
---
-Kind Regards,
-
-Yizhuo Zhai
-
-Computer Science, Graduate Student
-University of California, Riverside
