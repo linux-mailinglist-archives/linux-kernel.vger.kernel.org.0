@@ -2,103 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF5CDA3794
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:13:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DFF4A379D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:16:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbfH3NNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 09:13:54 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36948 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727718AbfH3NNx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 09:13:53 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z11so6938562wrt.4;
-        Fri, 30 Aug 2019 06:13:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JqpdhCNElm8Ik1HxewZXY9EY8Fd3DEXFwvJVx75KrYE=;
-        b=n50sbYC+FgutUT7ECCoEMtCug2yBV6K89ro+gQqT6r1hIcdSjVf15jSwbB8hUCOvLP
-         yZLK+P0vmE9jkvdq5ldZbdx4hSEPJCCytNdGmBacEpRTTw1qkYW//YwY7S6Q1UuB31a/
-         dm6Ij3rD8rVxb1CxacJC8Ak2E0UCED4sB1R+Odygxmoh3SLjPHsV3sz57t/I/AkdnT4C
-         cSrRgRFlzS/PIeUcokSHgOIxdoQzFd1MvL6OORmv8y685F4xHpFyarX8iieHU1PN2qel
-         o98HwNeJ1U4ysDW4uIIAIQm6g8vWqxK4YzmC+uisxozec9BF0RdHTNDjzc1+g1wApTwF
-         C3Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=JqpdhCNElm8Ik1HxewZXY9EY8Fd3DEXFwvJVx75KrYE=;
-        b=hGMJpa1ktkuvjdRKLYCBjd2sYLxpmTitSHejnCbrl3P0zqpVyw5F3xr52tYpNayWK3
-         c68WlgGiDBpX/2Jf7K6GiL89gaj+jsWtQeHmIqCt8/yCz97oaCXKBSzWY6u1y70k4Mxl
-         +a7q4aGO8KTfU8lrJNp8Zcn+aLFphe3yFhSQ2VKHjluA0z++Q1XfQNxiUD1+c5Ul3et+
-         nFl3+e4f8GdiMrVU5RZgFxEettvHQZzqP21wiBKRvx93++qlhQZke2Vzk139lXBlFUZ2
-         ODTj78mIYxO1VJwcNFVLsNpgui5sik9UtnkzYdGAC6eniTjzORwnKXLnnpcferHdb9NE
-         T8aw==
-X-Gm-Message-State: APjAAAXOTi6InGcZl8hHp4u5qoz2Eh1zLP48v1h3RPsGYWCZtKmuzCu/
-        4G34WTFgRoP/r4rnQ76BMrhkQPl1z0A=
-X-Google-Smtp-Source: APXvYqz6EC78MzgkBTxKRKjQA9m/g4eSPMCtfmGenxFJAPq755Flmn2cDtfuHwFVmUL3368buS/NAA==
-X-Received: by 2002:adf:f304:: with SMTP id i4mr20016620wro.61.1567170831384;
-        Fri, 30 Aug 2019 06:13:51 -0700 (PDT)
-Received: from localhost.localdomain (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
-        by smtp.gmail.com with ESMTPSA id a141sm18323244wmd.0.2019.08.30.06.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 06:13:50 -0700 (PDT)
-From:   Krzysztof Wilczynski <kw@linux.com>
-To:     Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] unicode: Move static keyword to the front of declarations
-Date:   Fri, 30 Aug 2019 15:13:49 +0200
-Message-Id: <20190830131349.14074-1-kw@linux.com>
-X-Mailer: git-send-email 2.22.1
+        id S1727991AbfH3NQO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 09:16:14 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:59780 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727620AbfH3NQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 09:16:14 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
+        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
+        id 1i3gkq-00032B-LZ; Fri, 30 Aug 2019 23:15:53 +1000
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 30 Aug 2019 23:15:47 +1000
+Date:   Fri, 30 Aug 2019 23:15:47 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "christopher.spencer@sea.co.uk" <christopher.spencer@sea.co.uk>,
+        "cory.tusar@zii.aero" <cory.tusar@zii.aero>,
+        "cphealy@gmail.com" <cphealy@gmail.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v8 00/16] crypto: caam - Add i.MX8MQ support
+Message-ID: <20190830131547.GA27480@gondor.apana.org.au>
+References: <20190830082320.GA8729@gondor.apana.org.au>
+ <VI1PR04MB444580B237A9F57A7BAAF32B8CBD0@VI1PR04MB4445.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB444580B237A9F57A7BAAF32B8CBD0@VI1PR04MB4445.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the static keyword to the front of declarations of nfdi_test_data
-and nfdicf_test_data, and resolve the following compiler warnings that
-can be seen when building with warnings enabled (W=1):
+On Fri, Aug 30, 2019 at 09:15:12AM +0000, Iuliana Prodan wrote:
+>
+> Can you, please, add, also, the device tree patch ("arm64: dts: imx8mq: 
+> Add CAAM node") in cryptodev tree?
+> Unfortunately Shawn Guo wasn't cc-ed on this patch and, to have the 
+> complete support for imx8mq, in kernel v5.4, we need the node in dts.
 
-fs/unicode/utf8-selftest.c:38:1: warning:
-  ‘static’ is not at beginning of declaration [-Wold-style-declaration]
+If Shawn can ack this then I'm happy to apply this patch.
 
-fs/unicode/utf8-selftest.c:92:1: warning:
-  ‘static’ is not at beginning of declaration [-Wold-style-declaration]
-
-Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
----
-Related: https://lore.kernel.org/r/20190827233017.GK9987@google.com
-
- fs/unicode/utf8-selftest.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/unicode/utf8-selftest.c b/fs/unicode/utf8-selftest.c
-index 6c1a36bbf6ad..6fe8af7edccb 100644
---- a/fs/unicode/utf8-selftest.c
-+++ b/fs/unicode/utf8-selftest.c
-@@ -35,7 +35,7 @@ unsigned int total_tests;
- #define test_f(cond, fmt, ...) _test(cond, __func__, __LINE__, fmt, ##__VA_ARGS__)
- #define test(cond) _test(cond, __func__, __LINE__, "")
- 
--const static struct {
-+static const struct {
- 	/* UTF-8 strings in this vector _must_ be NULL-terminated. */
- 	unsigned char str[10];
- 	unsigned char dec[10];
-@@ -89,7 +89,7 @@ const static struct {
- 
- };
- 
--const static struct {
-+static const struct {
- 	/* UTF-8 strings in this vector _must_ be NULL-terminated. */
- 	unsigned char str[30];
- 	unsigned char ncf[30];
+Thanks,
 -- 
-2.22.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
