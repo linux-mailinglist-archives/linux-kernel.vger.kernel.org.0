@@ -2,69 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35004A30C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0AD4A3102
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:29:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbfH3HTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:19:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:49668 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727715AbfH3HTQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:19:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=w1SF78Kk0E6HLyNwS5UYNieyf6tAgGpx5WCCw58u+14=; b=TmdCTuadbEDWKBDjPAR48Zg9k
-        IvIl/cF5dZhNltgANev4nrj8oAQmTddvp3eLwX3tLVmDYIV7fB4Hy3dzVP+oQPg7udwTsgl8ov94k
-        UelhkrFj+kxkoTwq+fKHHUWLVhaZfq+K9l0wJjZ6xup/HwZv8HL18gky+vkDe+Ns0fiy78WC+ENyu
-        UVJdO/sQsu+7SmF0zsYBNzjNFok/bxyqzDViZz/uQ5EcfhcjjQidZJYBLXOP1zl6e8WOJ5s3Kn/kn
-        ZO4MNXBeMFzjqdK9KKCpmZXGiOR0+QLLvjU1vcjsVuZbMWwOoin0UABc6PYcxG02SRZ8htQc5u/fK
-        kjTVIKLcw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3bBf-0000Qt-AB; Fri, 30 Aug 2019 07:19:12 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5D53C305615;
-        Fri, 30 Aug 2019 09:18:34 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A47A4202411AD; Fri, 30 Aug 2019 09:19:08 +0200 (CEST)
-Date:   Fri, 30 Aug 2019 09:19:08 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 0/4] objtool,perf: Use shared x86 insn decoder
-Message-ID: <20190830071908.GY2369@hirez.programming.kicks-ass.net>
-References: <cover.1567118001.git.jpoimboe@redhat.com>
+        id S1727883AbfH3H3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:29:38 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6144 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726716AbfH3H3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 03:29:37 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id F26753916B59F0EEA57D;
+        Fri, 30 Aug 2019 15:09:00 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 30 Aug 2019 15:08:54 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <tglx@linutronix.de>, <mingo@redhat.com>,
+        <catalin.marinas@arm.com>, <will@kernel.org>,
+        <james.morse@arm.com>, <dyoung@redhat.com>, <bhsharma@redhat.com>
+CC:     <horms@verge.net.au>, <guohanjun@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
+        Chen Zhou <chenzhou10@huawei.com>
+Subject: [PATCH v6 4/4] kdump: update Documentation about crashkernel on arm64
+Date:   Fri, 30 Aug 2019 15:12:00 +0800
+Message-ID: <20190830071200.56169-5-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190830071200.56169-1-chenzhou10@huawei.com>
+References: <20190830071200.56169-1-chenzhou10@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1567118001.git.jpoimboe@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 05:41:17PM -0500, Josh Poimboeuf wrote:
-> It's kind of silly that we have *three* identical copies of the x86 insn
-> decoder in the kernel tree.  Make it approximately 50% less silly by
-> reducing that number to two.
-> 
-> Josh Poimboeuf (4):
->   objtool: Move x86 insn decoder to a common location
->   perf: Update .gitignore file
->   perf intel-pt: Remove inat.c from build dependency list
->   perf intel-pt: Use shared x86 insn decoder
+Now we support crashkernel=X,[low] on arm64, update the Documentation.
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ Documentation/admin-guide/kdump/kdump.rst       | 13 +++++++++++--
+ Documentation/admin-guide/kernel-parameters.txt | 12 +++++++++++-
+ 2 files changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
+index ac7e131..e55173e 100644
+--- a/Documentation/admin-guide/kdump/kdump.rst
++++ b/Documentation/admin-guide/kdump/kdump.rst
+@@ -299,7 +299,13 @@ Boot into System Kernel
+    "crashkernel=64M@16M" tells the system kernel to reserve 64 MB of memory
+    starting at physical address 0x01000000 (16MB) for the dump-capture kernel.
+ 
+-   On x86 and x86_64, use "crashkernel=64M@16M".
++   On x86 use "crashkernel=64M@16M".
++
++   On x86_64, use "crashkernel=Y[@X]" to select a region under 4G first, and
++   fall back to reserve region above 4G when '@offset' hasn't been specified.
++   We can also use "crashkernel=X,high" to select a region above 4G, which
++   also tries to allocate at least 256M below 4G automatically and
++   "crashkernel=Y,low" can be used to allocate specified size low memory.
+ 
+    On ppc64, use "crashkernel=128M@32M".
+ 
+@@ -316,8 +322,11 @@ Boot into System Kernel
+    kernel will automatically locate the crash kernel image within the
+    first 512MB of RAM if X is not given.
+ 
+-   On arm64, use "crashkernel=Y[@X]".  Note that the start address of
++   On arm64, use "crashkernel=Y[@X]". Note that the start address of
+    the kernel, X if explicitly specified, must be aligned to 2MiB (0x200000).
++   If crashkernel=Z,low is specified simultaneously, reserve spcified size
++   low memory for crash kdump kernel devices firstly and then reserve memory
++   above 4G.
+ 
+ Load the Dump-capture Kernel
+ ============================
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 4c19719..069a122 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -708,6 +708,9 @@
+ 			[KNL, x86_64] select a region under 4G first, and
+ 			fall back to reserve region above 4G when '@offset'
+ 			hasn't been specified.
++			[KNL, arm64] If crashkernel=X,low is specified, reserve
++			spcified size low memory for crash kdump kernel devices
++			firstly, and then reserve memory above 4G.
+ 			See Documentation/admin-guide/kdump/kdump.rst for further details.
+ 
+ 	crashkernel=range1:size1[,range2:size2,...][@offset]
+@@ -732,12 +735,19 @@
+ 			requires at least 64M+32K low memory, also enough extra
+ 			low memory is needed to make sure DMA buffers for 32-bit
+ 			devices won't run out. Kernel would try to allocate at
+-			at least 256M below 4G automatically.
++			least 256M below 4G automatically.
+ 			This one let user to specify own low range under 4G
+ 			for second kernel instead.
+ 			0: to disable low allocation.
+ 			It will be ignored when crashkernel=X,high is not used
+ 			or memory reserved is below 4G.
++			[KNL, arm64] range under 4G.
++			This one let user to specify own low range under 4G
++			for crash dump kernel instead.
++			Different with x86_64, kernel allocates specified size
++			physical memory region only when this parameter is specified
++			instead of trying to allocate at least 256M below 4G
++			automatically.
+ 
+ 	cryptomgr.notests
+ 			[KNL] Disable crypto self-tests
+-- 
+2.7.4
+
