@@ -2,86 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A484A2EB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 07:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EBB5A2EB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 07:04:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbfH3FCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 01:02:15 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34105 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbfH3FCO (ORCPT
+        id S1727455AbfH3FDp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 01:03:45 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35761 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfH3FDp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 01:02:14 -0400
-Received: by mail-lf1-f68.google.com with SMTP id z21so4338041lfe.1
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 22:02:13 -0700 (PDT)
+        Fri, 30 Aug 2019 01:03:45 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n4so2903093pgv.2
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 22:03:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:from:date:message-id:subject:to;
-        bh=WGgEYCWgZXji+vHjNuzFMD738jFfCCD95nKu7Eh05bE=;
-        b=k2f7fr1Y3wZJPTKsVJfXCaBDHs3i4myl1G6Wuf3qGElFPscWyTw6bjX9kCkQ5bUo+o
-         Stgl2BkqGGIEQO1THJxlOJB3RSqFPHcv433JBLeXLNk4zbm4JRt4wh/qD18jtkOHYmu3
-         PIpbVJ8BZPlxOflNARFg3/mjkE1zQTh5+FHMriKojuO865A+GN7+v661LWb8yj+kTU9P
-         eTorBo7U5segEsyT1ZwqOGTS8g8DMwo+d3gh1sLlSI7DSzXbF63QBBdyPoV1XHVnKNo8
-         KBJ2TtyA9EpUdfbMEfE2+8yVSQDe2NKKxMMniE24cn+fOgoZ/BZyigj+3jK0/Ups9Kuj
-         o+XQ==
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:subject:to:from:user-agent:date;
+        bh=l/SRc+T1+zG8Df0Y2qbqNAsBTtdjYH2T4Q4ixAT4EFU=;
+        b=OFE56oXW+++O90cUO7iBwxo6K51w+Om1VsIaoaHHQzpKaHBWZSLC+rswzE/DZVQi9R
+         5iAuTGDv3jBkFheNGCta6YauJ0qHNTP4Gr1MnVYiVBBeWvwd0p/QO9Aw4bWGHhN4fsml
+         buetKU86nGkMZHK3VJQGLHSdJjpInmuogEc20=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
-         :to;
-        bh=WGgEYCWgZXji+vHjNuzFMD738jFfCCD95nKu7Eh05bE=;
-        b=csTcvPkeCRP93UPENMVEIbLyRVXOxdW2wnh5gQYo4StSIMwcOB0r23rLNv6Q+HAGo3
-         IRYvoRanAxY7nVend7RVFakj6JIewPpLxRJDGlyv+b6/iqW3uErD1C/ISwvrp0Uomisj
-         0TnsDbdFw5PDSGZ5U7zuDvOWMBStdiPTivrz4FqwbsT4lAWY7ZTQzy3KiR6rMjl5sVWF
-         59Cybzc/dK6r/0QpeLHLNLNyP4kuBwbejp33RzbhEPGBODKUq/tNHc8p7sn2zJ2/ekTb
-         mi+7bjrhXbfNGb1V7+29RG3voD9pM4hfNizzCSQgoJ5OFC2sNWv6EDfWoYvPg4Us8tLR
-         fSxg==
-X-Gm-Message-State: APjAAAVz+w0kNFBot4y0gLO1w7RwS46mYDah6n7/L+IUy5KqjLK0asaE
-        wqtrogsf8KRQUmZquKVs12xoYm5rUNF7hc+/F1E=
-X-Google-Smtp-Source: APXvYqwRNXv7G0zvqwWuTbraD3DEOH3Nq6rJi84mMH1i55GCgY5ciuIR39Z3rj4CykCFNyEh1sumAvrUlFkXNhMq/Gk=
-X-Received: by 2002:ac2:52b6:: with SMTP id r22mr8485532lfm.19.1567141332248;
- Thu, 29 Aug 2019 22:02:12 -0700 (PDT)
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
+         :user-agent:date;
+        bh=l/SRc+T1+zG8Df0Y2qbqNAsBTtdjYH2T4Q4ixAT4EFU=;
+        b=gFPdKHUePX8qKYVrYIEVNHO6nelS1ZWMoV1FyaMBgJQ6sJPbAWeUNx6BrsPIS6zuv1
+         GO/bRhiCU9eCoXqy3MdSsxMN7A1lWOrqIdsfpUUWst0jmCGXbdCfQS5N+aeq29qn3Mdh
+         25pGQ3t31vLA9Wt81FJCs22R/OTRwtKoU+yKAQMxQQ6f9alJH3JIvi08lvkvq8duzyhR
+         WWRhARqkaDoeuizd0lJyLDtcdUZ/LolmcGjmlBVvfKX/v8kRKQWZ/wDKUZRS+3yJkpzM
+         RMfbM1w2Gj11cqnc5mPKS00U5KTb78j854egk4QHQ5OumXHpnVhfnJ4MDViN80L9rjcU
+         Yg/A==
+X-Gm-Message-State: APjAAAXUoJ/iTd7hyqOU+SkrwBlYLKgegLdJQP/gCIhMhhm7mvfi2Qgm
+        neTTy2nzSCc5QVCfjx8hgfledQ==
+X-Google-Smtp-Source: APXvYqwqwBeN7KOSBghQiwN4xU+AiQkM1MRwhVSZNyPb3TA+PAAnyHv0/vecV7H7NX6Irh9G/XdLvg==
+X-Received: by 2002:a62:aa13:: with SMTP id e19mr15256774pff.37.1567141424316;
+        Thu, 29 Aug 2019 22:03:44 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id m16sm1512892pff.140.2019.08.29.22.03.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 22:03:43 -0700 (PDT)
+Message-ID: <5d68ae2f.1c69fb81.bc783.5e84@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Received: by 2002:ab3:6a8e:0:0:0:0:0 with HTTP; Thu, 29 Aug 2019 22:02:11
- -0700 (PDT)
-From:   "Mr.Patrick Joseph" <mrpatrickjo09@gmail.com>
-Date:   Fri, 30 Aug 2019 07:02:11 +0200
-X-Google-Sender-Auth: yBCxMK-FtLMBWJZ_9D9nXSK5Vg4
-Message-ID: <CALqhW2+e0iwGxBqz9m_PjuLYt6pL1uJU+S9t_41YrfXwDxu22w@mail.gmail.com>
-Subject: Hoping to hear from you
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190830022402.214442-1-hungte@chromium.org>
+References: <5d67e673.1c69fb81.5f13b.62ee@mx.google.com> <20190830022402.214442-1-hungte@chromium.org>
+Cc:     hungte@chromium.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Samuel Holland <samuel@sholland.org>,
+        Allison Randal <allison@lohutok.net>,
+        Colin Ian King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] firmware: google: check if size is valid when decoding VPD data
+To:     Hung-Te Lin <hungte@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 29 Aug 2019 22:03:42 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Sir/Madam,
+Quoting Hung-Te Lin (2019-08-29 19:23:58)
+> The VPD implementation from Chromium Vital Product Data project used to
+> parse data from untrusted input without checking if the meta data is
+> invalid or corrupted. For example, the size from decoded content may
+> be negative value, or larger than whole input buffer. Such invalid data
+> may cause buffer overflow.
+>=20
+> To fix that, the size parameters passed to vpd_decode functions should
+> be changed to unsigned integer (u32) type, and the parsing of entry
+> header should be refactored so every size field is correctly verified
+> before starting to decode.
+>=20
+> Fixes: ad2ac9d5c5e0 ("firmware: Google VPD: import lib_vpd source files")
+> Signed-off-by: Hung-Te Lin <hungte@chromium.org>
 
-Although you might be apprehensive about my email as we have never met
-before. I am Mr.Patrick Joseph, a Banker and Head of Operations with
-Bank here in Burkina Faso West Africa, there is the sum of
-$28.500,000.00 Million Dollars currently in my branch, there were no
-beneficiary stated concerning these funds which means no one would
-ever come to claim it.
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-That is why I ask that can we work together, I will be pleased to work
-with you as trusted person and see that the fund is transferred out of
-my Bank into another Bank Account, Once the funds have been
-transferred to your nominated Bank account we shall then share it in
-the ratio of 60% for me, 40% for you.
-
-If you agree to my business proposal.further details of the transfer
-will be forwarded to you as soon as i receive your return mail,
-sending the below information
-
-1. Full Name.
-2: Your Private telephone and Fax numbers.
-3. Occupations.
-4. Date Of Birth
-5. Country of Residence.
-6. Your full address.
-
-Hoping to hear from you as soon as possible.
-
-Regards,
-Mr.Patrick Joseph.
