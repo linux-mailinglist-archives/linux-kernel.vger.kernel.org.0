@@ -2,151 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 745DEA3FF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 23:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE068A3FEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 23:47:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728490AbfH3VsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 17:48:09 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44289 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728461AbfH3VsG (ORCPT
+        id S1728399AbfH3Vrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 17:47:35 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41600 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728247AbfH3Vrf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 17:48:06 -0400
-Received: by mail-qt1-f193.google.com with SMTP id u40so652960qth.11
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 14:48:06 -0700 (PDT)
+        Fri, 30 Aug 2019 17:47:35 -0400
+Received: by mail-io1-f66.google.com with SMTP id j5so16998730ioj.8;
+        Fri, 30 Aug 2019 14:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PMUUfqR9qni5WdKHQ/oyNL+2UIChMAX4UeIkA9AQdwY=;
-        b=SSOL+gON3Po0oJ1FWWKWJE4v8adc9L0tmmyq8gb22o6mW9oof0uGkwarODWjUdauXk
-         iS7iqFR0IN/mVkHlsKMEhEs6bM4D60o39lWHVDI/P4fscGqOy72Qa/pymH4W4JWidSyk
-         PD3eYZdl2W90J2MJGLgihT+i1t+eKPXlJXaeGZrVZ1p5GF/6rp0z/P+fLBcvKOO8IbfO
-         +3/1gKa3qw69tbr+oiveMPSvxQwkZ/bHkSROHl2Y44V2acsiYLk1mp70KgxfvQhpfLag
-         hsNLHzQvwK2Iri7YLGA8aJF3qU53Xz2G8PuZzUPHaKryR9ddhlhuTa4/o+2yBkOnrBxo
-         XVaA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ktj9ijOXrDlsClzwNjZ3ksaxYmWqZ56FuwuOhvsPKKo=;
+        b=gd9mO68eLPusJAzfzxl4zLc8gKbKmfkQ7af1kIyZebpDXbHObeZ0TtAcr7+/gXb065
+         wz6v1UFCUc+PlNoolMSw/7RKrxDAQ0CBN8TbBN/dGfbJf/diJxWpIRaeUTj+DMxdb5Hp
+         rnU7Hmv6RUAKnVozjfs2IaL0UJBIGb0RwXDeUU9klT4aJGkO1HIqrN8leDReJ2jOh2sO
+         ePCIl6WCFnhVoL6ytAH46sZmFC/mZJLldqLzVDUvoOBTezvVcuXF0C9Nu5dyPG6L5Z85
+         I7xgtw2L0KUEGgpRb2nn566RDyB+6ExIzCEIMdbrLeE+ex9oLl0Ul2i4bLr5Pt9+Pzo3
+         Jy1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PMUUfqR9qni5WdKHQ/oyNL+2UIChMAX4UeIkA9AQdwY=;
-        b=CNBVxQ1YH6H/JFKMHCoXzHYWjpfeqMZdD0nLrhojow5uzumhG9mXr7LkRG/6sV1x2O
-         Xe4TapYtPVFEI8cE8zNHY0tp4u2v/Qou4socwQsinSrf0SeNnihGItVWrv9Sryj9muXU
-         lRZoxbruvICbGzDNkoKE6FtSOgeRvoS7EA2k2QLLtXRnuWRbQyW3iN5YHkQxWgdR3CRT
-         2WaoB402kXigeL4Ts4OK+vPXOhk1BlvmS7p782qyx1iIogTdU4bQ6cxsQO0bXNXBzDhT
-         6YPvJVaLMD60wfsHWn9Iy9xKtQRcJ3fIv83FBwkd9pOMMc7x37UlDToxjSwMZw0S70qU
-         rXow==
-X-Gm-Message-State: APjAAAXFNNezzy1d/W9vb2ZAyWmDJHLTtQu23Ogh7RrN3bMtHLZKFXEx
-        GKLhn4IBG14rCAvswPBOQQ==
-X-Google-Smtp-Source: APXvYqxheb9X3q7fxWX/eZYOC0xWA8+EeUSIaZ98LhsuxehOSb/HGH3heo2WqwM/DCQiPysK8L32YA==
-X-Received: by 2002:ac8:7951:: with SMTP id r17mr318089qtt.238.1567201685629;
-        Fri, 30 Aug 2019 14:48:05 -0700 (PDT)
-Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id a4sm4857834qtb.17.2019.08.30.14.48.04
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ktj9ijOXrDlsClzwNjZ3ksaxYmWqZ56FuwuOhvsPKKo=;
+        b=dgOj37ebvBE3FtF0ObI2dj9VdDCbeo6q9e5p0K/h3dGPHn+sJJV2Ob143+IozR5EqU
+         Tk3hh0nlcUvn/Dk5fFDTPbr0+HuGsF/RVTIywvvFoUs5LyI7tZJe69lb86RJBtVUGaOg
+         TzDaNWzDCADspBg1H5IEetLgIC5gYjge71Xa4NaV061qzKTYIuAtfEHJbqgad3AljfuM
+         7nKYWQi2xin+3q6hbTwFlZmYhz37yZl/Zd5CvoxkPL/ipLd5q7FrtrZsIKTnbiFQIoEF
+         ivVVu5qR8S63FZpHkSqje8hRYfMZWpk1ew6Bu7BAwtUWq58pd1nKK9IWAyECMPBjFOvm
+         JHSg==
+X-Gm-Message-State: APjAAAVAA7olvZlG2PwqrI326jY+XIdTSDIHhcuG1Kfqc6UX98eYFmaS
+        Mw9aLhmbML3dZKJvrSlOeWzYsFM6327Dyw==
+X-Google-Smtp-Source: APXvYqyeFTplYCjFE+3c/w8BqfcYCdDNh+VGXtKXRugkIy1aYSS1whlWxjgPreD2EGxux4fx2zZztg==
+X-Received: by 2002:a5d:974d:: with SMTP id c13mr2090159ioo.87.1567201654419;
+        Fri, 30 Aug 2019 14:47:34 -0700 (PDT)
+Received: from peng.science.purdue.edu (cos-128-210-107-27.science.purdue.edu. [128.210.107.27])
+        by smtp.googlemail.com with ESMTPSA id i14sm328004ioi.47.2019.08.30.14.47.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 14:48:05 -0700 (PDT)
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Baoquan He <bhe@redhat.com>
-Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
-        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        Fri, 30 Aug 2019 14:47:34 -0700 (PDT)
+From:   Hui Peng <benquike@gmail.com>
+To:     stable@vger.kernel.org
+Cc:     Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wenwen Wang <wang6495@umn.edu>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] x86/mm/KASLR: Adjust the padding size for the direct mapping.
-Date:   Fri, 30 Aug 2019 17:47:07 -0400
-Message-Id: <20190830214707.1201-6-msys.mizuma@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190830214707.1201-1-msys.mizuma@gmail.com>
-References: <20190830214707.1201-1-msys.mizuma@gmail.com>
+Subject: [PATCH 2/2] Fix a stack buffer overflow bug in check_input_term
+Date:   Fri, 30 Aug 2019 17:47:29 -0400
+Message-Id: <20190830214730.27842-1-benquike@gmail.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+`check_input_term` recursively calls itself with input from
+device side (e.g., uac_input_terminal_descriptor.bCSourceID)
+as argument (id). In `check_input_term`, if `check_input_term`
+is called with the same `id` argument as the caller, it triggers
+endless recursive call, resulting kernel space stack overflow.
 
-The system sometimes crashes while memory hot-adding on KASLR
-enabled system. The crash happens because the regions pointed by
-kaslr_regions[].base are overwritten by the hot-added memory.
+This patch fixes the bug by adding a bitmap to `struct mixer_build`
+to keep track of the checked ids and stop the execution if some id
+has been checked (similar to how parse_audio_unit handles unitid
+argument).
 
-It happens because of the padding size for kaslr_regions[].base isn't
-enough for the system whose physical memory layout has huge space for
-memory hotplug. kaslr_regions[].base points "actual installed
-memory size + padding" or higher address. So, if the "actual + padding"
-is lower address than the maximum memory address, which means the memory
-address reachable by memory hot-add, kaslr_regions[].base is destroyed by
-the overwritten.
+CVE: CVE-2018-15118
 
-  address
-    ^
-    |------- maximum memory address (Hotplug)
-    |                                    ^
-    |------- kaslr_regions[0].base       | Hotadd-able region
-    |     ^                              |
-    |     | padding                      |
-    |     V                              V
-    |------- actual memory address (Installed on boot)
-    |
-
-Fix it by getting the maximum memory address from SRAT and store
-the value in boot_param, then set the padding size while KASLR
-initializing if the default padding size isn't enough.
-
-Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
 ---
- arch/x86/mm/kaslr.c | 31 +++++++++++++++++++++++++++++--
- 1 file changed, 29 insertions(+), 2 deletions(-)
+ sound/usb/mixer.c | 29 ++++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 8e5f3642e..a78844c57 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -70,6 +70,34 @@ static inline bool kaslr_memory_enabled(void)
- 	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 10ddec76f906..e24572fd6e30 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -81,6 +81,7 @@ struct mixer_build {
+ 	unsigned char *buffer;
+ 	unsigned int buflen;
+ 	DECLARE_BITMAP(unitbitmap, MAX_ID_ELEMS);
++	DECLARE_BITMAP(termbitmap, MAX_ID_ELEMS);
+ 	struct usb_audio_term oterm;
+ 	const struct usbmix_name_map *map;
+ 	const struct usbmix_selector_map *selector_map;
+@@ -709,15 +710,24 @@ static int get_term_name(struct mixer_build *state, struct usb_audio_term *iterm
+  * parse the source unit recursively until it reaches to a terminal
+  * or a branched unit.
+  */
+-static int check_input_term(struct mixer_build *state, int id,
++static int __check_input_term(struct mixer_build *state, int id,
+ 			    struct usb_audio_term *term)
+ {
+ 	int err;
+ 	void *p1;
++	unsigned char *hdr;
+ 
+ 	memset(term, 0, sizeof(*term));
+-	while ((p1 = find_audio_control_unit(state, id)) != NULL) {
+-		unsigned char *hdr = p1;
++	for (;;) {
++		/* a loop in the terminal chain? */
++		if (test_and_set_bit(id, state->termbitmap))
++			return -EINVAL;
++
++		p1 = find_audio_control_unit(state, id);
++		if (!p1)
++			break;
++
++		hdr = p1;
+ 		term->id = id;
+ 		switch (hdr[2]) {
+ 		case UAC_INPUT_TERMINAL:
+@@ -732,7 +742,7 @@ static int check_input_term(struct mixer_build *state, int id,
+ 
+ 				/* call recursively to verify that the
+ 				 * referenced clock entity is valid */
+-				err = check_input_term(state, d->bCSourceID, term);
++				err = __check_input_term(state, d->bCSourceID, term);
+ 				if (err < 0)
+ 					return err;
+ 
+@@ -764,7 +774,7 @@ static int check_input_term(struct mixer_build *state, int id,
+ 		case UAC2_CLOCK_SELECTOR: {
+ 			struct uac_selector_unit_descriptor *d = p1;
+ 			/* call recursively to retrieve the channel info */
+-			err = check_input_term(state, d->baSourceID[0], term);
++			err = __check_input_term(state, d->baSourceID[0], term);
+ 			if (err < 0)
+ 				return err;
+ 			term->type = d->bDescriptorSubtype << 16; /* virtual type */
+@@ -811,6 +821,15 @@ static int check_input_term(struct mixer_build *state, int id,
+ 	return -ENODEV;
  }
  
-+static inline unsigned long phys_memmap_size(void)
++
++static int check_input_term(struct mixer_build *state, int id,
++			    struct usb_audio_term *term)
 +{
-+	unsigned long padding = CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-+#ifdef CONFIG_MEMORY_HOTPLUG
-+	unsigned long actual, maximum, base;
-+
-+	if (!boot_params.max_addr)
-+		goto out;
-+
-+	/*
-+	 * The padding size should set to get for kaslr_regions[].base
-+	 * bigger address than the maximum memory address the system can
-+	 * have. kaslr_regions[].base points "actual size + padding" or
-+	 * higher address. If "actual size + padding" points the lower
-+	 * address than the maximum memory size, fix the padding size.
-+	 */
-+	actual = roundup(PFN_PHYS(max_pfn), 1UL << TB_SHIFT);
-+	maximum = roundup(boot_params.max_addr, 1UL << TB_SHIFT);
-+	base = actual + (padding << TB_SHIFT);
-+
-+	if (maximum > base)
-+		padding = (maximum - actual) >> TB_SHIFT;
-+out:
-+#endif
-+	return DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
-+			padding;
++	memset(term, 0, sizeof(*term));
++	memset(state->termbitmap, 0, sizeof(state->termbitmap));
++	return __check_input_term(state, id, term);
 +}
 +
  /*
-  * Even though a huge virtual address space is reserved for the direct
-  * mapping of physical memory, e.g in 4-level paging mode, it's 64TB,
-@@ -87,8 +115,7 @@ static inline unsigned long calc_direct_mapping_size(void)
- 	 * Update Physical memory mapping to available and
- 	 * add padding if needed (especially for memory hotplug support).
- 	 */
--	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
--		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
-+	memory_tb = phys_memmap_size();
- 
- 	size_tb = 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
- 
+  * Feature Unit
+  */
 -- 
-2.18.1
+2.17.1
 
