@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB3A9A4059
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:17:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05A18A4069
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:17:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728652AbfH3WQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 18:16:59 -0400
-Received: from shell.v3.sk ([90.176.6.54]:56361 "EHLO shell.v3.sk"
+        id S1728309AbfH3WQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 18:16:19 -0400
+Received: from shell.v3.sk ([90.176.6.54]:56357 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728180AbfH3WQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 18:16:21 -0400
+        id S1728180AbfH3WQS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 18:16:18 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 448D5D87C5;
-        Sat, 31 Aug 2019 00:08:22 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 2A90DD880F;
+        Sat, 31 Aug 2019 00:08:33 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id X5asfx9c0zVr; Sat, 31 Aug 2019 00:08:04 +0200 (CEST)
+        with ESMTP id S9MhM_I0F1f3; Sat, 31 Aug 2019 00:08:11 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id EE9C1D873B;
-        Sat, 31 Aug 2019 00:07:54 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 4E6C0D87F9;
+        Sat, 31 Aug 2019 00:07:59 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id iVSFb6QHU_Vq; Sat, 31 Aug 2019 00:07:50 +0200 (CEST)
+        with ESMTP id I3jYT7iCk-jZ; Sat, 31 Aug 2019 00:07:55 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id B2F3ED87E6;
-        Sat, 31 Aug 2019 00:07:49 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 13918D87E7;
+        Sat, 31 Aug 2019 00:07:50 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     "To : Olof Johansson" <olof@lixom.net>
 Cc:     "Cc : Rob Herring" <robh+dt@kernel.org>,
@@ -40,9 +40,9 @@ Cc:     "Cc : Rob Herring" <robh+dt@kernel.org>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
         Rob Herring <robh@kernel.org>
-Subject: [PATCH v3 04/16] dt-bindings: mrvl,intc: Add a MMP3 interrupt controller
-Date:   Sat, 31 Aug 2019 00:07:31 +0200
-Message-Id: <20190830220743.439670-5-lkundrak@v3.sk>
+Subject: [PATCH v3 05/16] dt-bindings: phy-mmp3-usb: Add bindings
+Date:   Sat, 31 Aug 2019 00:07:32 +0200
+Message-Id: <20190830220743.439670-6-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190830220743.439670-1-lkundrak@v3.sk>
 References: <20190830220743.439670-1-lkundrak@v3.sk>
@@ -53,8 +53,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to MMP2 one, but has an extra range for the other core. The
-muxes stay the same.
+This is the PHY chip for USB OTG on MMP3 platform.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 Reviewed-by: Rob Herring <robh@kernel.org>
@@ -64,50 +63,34 @@ Changes since v2:
 - Add Rob's Reviewed-by tag
 
 Changes since v1:
-- Reformat the compatible property documentation to higlight the valid
-  combinations
-- Drop an unneeded mmp3-intc example
+- s/usbphy@/usb-phy@/
+- Dropped a reference to Documentation/phy.txt
 
- .../bindings/interrupt-controller/mrvl,intc.txt    | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ .../devicetree/bindings/phy/phy-mmp3-usb.txt        | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-mmp3-usb.tx=
+t
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/mrvl,=
-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/mrvl,in=
-tc.txt
-index 608fee15a4cfc..a0ed02725a9d7 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.tx=
-t
-+++ b/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.tx=
-t
-@@ -1,13 +1,17 @@
- * Marvell MMP Interrupt controller
-=20
- Required properties:
--- compatible : Should be "mrvl,mmp-intc", "mrvl,mmp2-intc" or
--  "mrvl,mmp2-mux-intc"
-+- compatible : Should be
-+               "mrvl,mmp-intc" on Marvel MMP,
-+               "mrvl,mmp2-intc" along with "mrvl,mmp2-mux-intc" on MMP2 =
-or
-+               "marvell,mmp3-intc" with "mrvl,mmp2-mux-intc" on MMP3
- - reg : Address and length of the register set of the interrupt controll=
-er.
-   If the interrupt controller is intc, address and length means the rang=
-e
--  of the whole interrupt controller. If the interrupt controller is mux-=
-intc,
--  address and length means one register. Since address of mux-intc is in=
- the
--  range of intc. mux-intc is secondary interrupt controller.
-+  of the whole interrupt controller. The "marvell,mmp3-intc" controller
-+  also has a secondary range for the second CPU core.  If the interrupt
-+  controller is mux-intc, address and length means one register. Since
-+  address of mux-intc is in the range of intc. mux-intc is secondary
-+  interrupt controller.
- - reg-names : Name of the register set of the interrupt controller. It's
-   only required in mux-intc interrupt controller.
- - interrupts : Should be the port interrupt shared by mux interrupts. It=
-'s
+diff --git a/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt b/Doc=
+umentation/devicetree/bindings/phy/phy-mmp3-usb.txt
+new file mode 100644
+index 0000000000000..7183b9102f917
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt
+@@ -0,0 +1,13 @@
++Marvell MMP3 USB PHY
++--------------------
++
++Required properties:
++- compatible: must be "marvell,mmp3-usb-phy"
++- #phy-cells: must be 0
++
++Example:
++	usb-phy: usb-phy@d4207000 {
++		compatible =3D "marvell,mmp3-usb-phy";
++		reg =3D <0xd4207000 0x40>;
++		#phy-cells =3D <0>;
++	};
 --=20
 2.21.0
 
