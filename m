@@ -2,126 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE5FBA379B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:16:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F881A379F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:16:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbfH3NQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 09:16:07 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36078 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727620AbfH3NQH (ORCPT
+        id S1728143AbfH3NQd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 09:16:33 -0400
+Received: from mail-io1-f43.google.com ([209.85.166.43]:33492 "EHLO
+        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727994AbfH3NQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 09:16:07 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y19so6957786wrd.3;
-        Fri, 30 Aug 2019 06:16:05 -0700 (PDT)
+        Fri, 30 Aug 2019 09:16:32 -0400
+Received: by mail-io1-f43.google.com with SMTP id z3so13949055iog.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 06:16:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=/S9eKzefNd7RMHB9sZJ0C1DeLdzhViGsRQEhurBvj1g=;
-        b=A+3XGo8eLt+CGtuybCO9ryzkFPRMsbxbjBkOf4VjPVt2rsCOYMfHDej1Di6DOKJXly
-         SpSQu6uRxWh3yGTnqY1ZE16DixxGObQ/e2iV7A5lzp6yvh9nQAybLebOV5lsWnA9zy/d
-         3/pImBjcK0C0w8gI+jLlA1cbQc8PJ6c+leWm9ZvucIikXtKUEv04Hv3mLGU6IunDmYTN
-         6xBR+ITWi02Y8kNVUdiPsCSFBhSGHWKa3AnrM/2VlEvnccV09yikcVhwKlZt5AHqTeSK
-         4SG8eG0rDij/3dA363LL084hvv3/seTWBYIIvRXDIV1CNS2Q+3B4uRTdpw/0gMbalxGN
-         PBpA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ao7Wdofaa1sKJzWGbAawdHt4adOohg/VMTdip0vQIa4=;
+        b=lgZ6msSPYo88sZa7ohX40wFMd3R9PsCKmRzFiRBVGvPEXWMUsGmTNK/bJNOMRsj8ZY
+         WXeeZfOewC/GXAZFxEMiiN6P/Am+zJTjqZinv1txwUjp8aNd590Kl5fYCgOZ+zUZ0czY
+         ZD/aT5v1ON/tS5f5hfu8TujR454GHVSfiTqeZpx2YLxG2WsIntIRy1IrsfGSmLuE/PR1
+         anFGybLfMZbEsbMWKi52Lc0Lc4p1TDrpcit8uv+X6hV39EZMs7OJztcsb4aZcufQiAOj
+         wJ3LztiUU7V0AIYp8KeRpZaeMl2TjKeRJoy0deDf5vgEa8gM/Tyf5dlQ065BHPCvywVz
+         xn1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/S9eKzefNd7RMHB9sZJ0C1DeLdzhViGsRQEhurBvj1g=;
-        b=MT5jBdo5clXM813seWcMF9utNlgCbpYuyG4K5NJfu7kou9mBB2E3cb+ksOMQ9d9NMi
-         YiY2MX798FiLRMEZTpyeJNSq9ueOm3ft5nL97RuWHkbzcvkPHvPdlJ81JsP5Jq02DRuz
-         81IZL1qPhA79gOZoWuKdoVG8aGjgP0om2lMb3otlfmQGm5t/eHD1LWXkigP40jMF53h/
-         o/yJaBCl669Y69hFBsCanmNBMtdoPjoX2916U/2oeG0clchbmYR9zqqJ2YIo2KM/HzSe
-         c1oBoKJtlfnlp5Xd1Py5buXr+0Z4kO/84EvnEVhGDy20qaDBjMPmily6v2AVpZyR2dZG
-         pxHg==
-X-Gm-Message-State: APjAAAViB2yMaIQA+WkP154h/t1PL49rsxr/uxBrr45cJXmXoaBdHxGS
-        itcUj1kirDxmfq1bOrhhq4k=
-X-Google-Smtp-Source: APXvYqwXJjWiBE6NwdOXRxtwcsABPge0Ls8aIICSf4qJIPRfYa8/4rruesJBhd011tmXjtH1LkfrYA==
-X-Received: by 2002:adf:dfc8:: with SMTP id q8mr19146221wrn.121.1567170965131;
-        Fri, 30 Aug 2019 06:16:05 -0700 (PDT)
-Received: from 5WDYG62.mdi (static-css-cqn-143221.business.bouyguestelecom.com. [176.149.143.221])
-        by smtp.gmail.com with ESMTPSA id t19sm6384517wmi.29.2019.08.30.06.16.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 06:16:04 -0700 (PDT)
-From:   Romain Izard <romain.izard.pro@gmail.com>
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH v2] power: supply: register HWMON devices with valid names
-Date:   Fri, 30 Aug 2019 15:15:56 +0200
-Message-Id: <20190830131556.10021-1-romain.izard.pro@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ao7Wdofaa1sKJzWGbAawdHt4adOohg/VMTdip0vQIa4=;
+        b=lWY7JaXTfSBuDTkQXY29NMnxOjMBSJxkQuI4YtakH44on6h0ej3m4Go+ttS7KuxwBJ
+         Gm5rurkzKJNrsTcH1cuV2eSM0ig1klzRXDRANkZJeyEUwSBdEshexrJ+JYTM6TkyN+Cb
+         gF9eDaFQRUAAoTXc8TtG+mJogI2XFol1AVH+xoiDdfApJSwVfkbZkAR+6hsj6Zd0KDR1
+         usdCjslwILTZpR4IDSPG7FqA1FbvmScC3+qtc6qbEabKrIVvoexrzY10wBSfxxICZRMg
+         W5jBK0VLfM45eZW6e9Yxm3wJ91eCS0k1ExpcR5uxf8es651+V6cIb/MBYctN5/3+/QR0
+         QTBQ==
+X-Gm-Message-State: APjAAAVHaPilTCz7b/4ZWj62Hvo7WvBd9/NuVVwHMquejZvr6pxo7hh/
+        pXTGRjoRzmM25byY1LBGbExQr25oWNP0RQ==
+X-Google-Smtp-Source: APXvYqyZwQo3R9eCAX7RKQJl8KgsD+8eb15pZBdtUzfE/XNeCx4wyJxuH9bF237vIg2miKtu62M59g==
+X-Received: by 2002:a05:6602:c7:: with SMTP id z7mr18714299ioe.130.1567170991487;
+        Fri, 30 Aug 2019 06:16:31 -0700 (PDT)
+Received: from [192.168.1.50] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id l13sm5866169iob.73.2019.08.30.06.16.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Aug 2019 06:16:30 -0700 (PDT)
+Subject: Re: [PATCH block/for-next] blkcg: add missing NULL check in
+ ioc_cpd_alloc()
+To:     Tejun Heo <tj@kernel.org>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190830131058.GY2263813@devbig004.ftw2.facebook.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <24a39d46-5c3e-9e45-bfaf-6d92448aea99@kernel.dk>
+Date:   Fri, 30 Aug 2019 07:16:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190830131058.GY2263813@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the introduction of the HWMON compatibility layer to the power
-supply framework in Linux 5.3, all power supply devices' names can be
-used directly to create HWMON devices with the same names.
+On 8/30/19 7:10 AM, Tejun Heo wrote:
+> ioc_cpd_alloc() forgot to check NULL return from kzalloc().  Add it.
 
-But HWMON has rules on allowable names that are different from those
-used in the power supply framework. The dash character is forbidden, as
-it is used by the libsensors library in userspace as a separator,
-whereas this character is used in the device names in more than half of
-the existing power supply drivers. This last case is consistent with the
-typical naming usage with MFD and Device Tree.
+Applied, thanks.
 
-This leads to warnings in the kernel log, with the format:
-
-power_supply gpio-charger: hwmon: \
-	'gpio-charger' is not a valid name attribute, please fix
-
-Add a protection to power_supply_add_hwmon_sysfs() that replaces any
-dash in the device name with an underscore when registering with the
-HWMON framework. Other forbidden characters (star, slash, space, tab,
-newline) are not replaced, as they are not in common use.
-
-Fixes: e67d4dfc9ff1 ("power: supply: Add HWMON compatibility layer")
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
-
-v2: Remove a superfluous cast
-
- drivers/power/supply/power_supply_hwmon.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/power/supply/power_supply_hwmon.c b/drivers/power/supply/power_supply_hwmon.c
-index 51fe60440d12..75cf861ba492 100644
---- a/drivers/power/supply/power_supply_hwmon.c
-+++ b/drivers/power/supply/power_supply_hwmon.c
-@@ -284,6 +284,7 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
- 	struct device *dev = &psy->dev;
- 	struct device *hwmon;
- 	int ret, i;
-+	const char *name;
- 
- 	if (!devres_open_group(dev, power_supply_add_hwmon_sysfs,
- 			       GFP_KERNEL))
-@@ -334,7 +335,19 @@ int power_supply_add_hwmon_sysfs(struct power_supply *psy)
- 		}
- 	}
- 
--	hwmon = devm_hwmon_device_register_with_info(dev, psy->desc->name,
-+	name = psy->desc->name;
-+	if (strchr(name, '-')) {
-+		char *new_name;
-+
-+		new_name = devm_kstrdup(dev, name, GFP_KERNEL);
-+		if (!new_name) {
-+			ret = -ENOMEM;
-+			goto error;
-+		}
-+		strreplace(new_name, '-', '_');
-+		name = new_name;
-+	}
-+	hwmon = devm_hwmon_device_register_with_info(dev, name,
- 						psyhw,
- 						&power_supply_hwmon_chip_info,
- 						NULL);
 -- 
-2.17.1
+Jens Axboe
 
