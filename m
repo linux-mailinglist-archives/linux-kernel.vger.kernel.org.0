@@ -2,82 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 211C6A2DE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 05:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3706BA2DF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 06:03:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbfH3D6W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 23:58:22 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42848 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728188AbfH3D6T (ORCPT
+        id S1726405AbfH3EDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 00:03:31 -0400
+Received: from gateway21.websitewelcome.com ([192.185.45.2]:34183 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725854AbfH3EDb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 23:58:19 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b16so5452430wrq.9
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 20:58:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U2YaSC8htOogtAiuH3jBHv8w0nOA/yz+9vWbbSSDAyE=;
-        b=gbt8SgME57II7HvM5157UQKk6DP+mARVtSJon99aKdG89rLwo1Iozlweg+1BCIqt2/
-         vCmdt1LEf67ivHfIlj9j1VoM1SNqyYA61aqpNAwMLnVxJT19ub8FIPJGFIUY6QMGmkwY
-         tDzdjS3DsB5ixz3FSir76x+ZAR9RiA+5ViYYuEQu1rnpEnOu4A+ehTGchU/FZEYl/sVT
-         aIUMb5tFm/a/txBSpj/UWGZ0URocHLWDkgUxnt+1TcE09Sy57eKSeCAE1/VyC1IIxvGs
-         LLYE+Nc9I4kK55h42dZyv0MuO3w+pcBSyvVliIv4pEUKMMyK+k2WBu/ROfTk9NLpiGcO
-         iBsQ==
-X-Gm-Message-State: APjAAAXepACW0MKRNj2lJWOdEiMCq+wCpLK9nTlFUFIsAvnm87Kac5It
-        3OGGd22v2dTWrgOpc1aaj9nqcTWjdCvDeEmpiOU=
-X-Google-Smtp-Source: APXvYqzC+DoqDgf5IDWkK1sZ6dEho3io0fbRiyOerOUdA7IYhEipziUqUJI3dzg7UtsiBGjHbnKqEnY3ILf5dUqlFfo=
-X-Received: by 2002:adf:e5c4:: with SMTP id a4mr16452387wrn.87.1567137497299;
- Thu, 29 Aug 2019 20:58:17 -0700 (PDT)
+        Fri, 30 Aug 2019 00:03:31 -0400
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 1D1C4400C2F41
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 23:03:30 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id 3Y8IiZvFq90on3Y8IiLho5; Thu, 29 Aug 2019 23:03:30 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
+        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=zz/0wpgN2ENh4FQXIHSRXfkBLUkCd7zskZL3on01EzE=; b=oQs0gzkJRMLi3VddvYsTgCuCS2
+        Zy0BSVb2v7chIF0n9k5a8APzIDvlfVkgmuxK85a6V5yOo4cvNNvw4sQ9mDVD3ODts8EPYTgWg64kq
+        NUaWGu0+9nvpU16wqnYE79GWGWmyAw/bwMh1ah2OIripkNO/tYtKzrSqeZ3eAYCLtIdAZPN0NJX75
+        okpqlC+fUwKLL4ouyLhKhshhNyqsyqDv/sXMC/+ZFVfxXzlQaLQiaFOOU7brW1GhZmL2D6cskj7iq
+        3X7yDXdgPiwx8OF+6Wn/Pv+M6e7KtUmlYr1jkuhT9VbiYAR8xGyVn6OELg47IbTzK3652Fnb85JsA
+        uVHdlg8A==;
+Received: from [189.152.216.116] (port=55676 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.92)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1i3Y8G-002GKz-VA; Thu, 29 Aug 2019 23:03:29 -0500
+Date:   Thu, 29 Aug 2019 23:03:27 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Rob Clark <robdclark@gmail.com>, Andy Gross <agross@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     iommu@lists.linux-foundation.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] iommu/qcom_iommu: Use struct_size() helper
+Message-ID: <20190830040327.GA6483@embeddedor>
 MIME-Version: 1.0
-References: <20190827231555.121411-1-namhyung@kernel.org> <20190828124949.GA14025@kernel.org>
-In-Reply-To: <20190828124949.GA14025@kernel.org>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Fri, 30 Aug 2019 12:58:06 +0900
-Message-ID: <CAM9d7cgKBH_s44n0n5fOqCuuEGktRrFMW27Jae=ViaT20SESAw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf top: Decay all events in the evlist
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.152.216.116
+X-Source-L: No
+X-Exim-ID: 1i3Y8G-002GKz-VA
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.152.216.116]:55676
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-On Wed, Aug 28, 2019 at 9:49 PM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> Em Wed, Aug 28, 2019 at 08:15:54AM +0900, Namhyung Kim escreveu:
-> > Currently perf top only decays entries in a selected evsel.  I don't
-> > know whether it's intended (maybe due to performance reason?) but
-> > anyway it might show incorrect output when event group is used since
-> > users will see leader event is decayed but others are not.
-> >
-> > This patch moves the decay code into evlist__resort_hists() so that
-> > stdio and tui code shared the logic.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/builtin-top.c | 38 +++++++++++++-------------------------
-> >  1 file changed, 13 insertions(+), 25 deletions(-)
-> >
-> > diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-> > index 5970723cd55a..9d3059d2029d 100644
-> > --- a/tools/perf/builtin-top.c
-> > +++ b/tools/perf/builtin-top.c
-> > @@ -264,13 +264,23 @@ static void perf_top__show_details(struct perf_top *top)
-> >       pthread_mutex_unlock(&notes->lock);
-> >  }
-> >
-> > -static void evlist__resort_hists(struct evlist *evlist)
-> > +static void evlist__resort_hists(struct perf_top *t)
->
-> Since this now operates on the perf_top struct, I'll rename it to
-> perf_top__resort_hists(), ok? No need to send an updated patch.
+struct qcom_iommu_dev {
+	...
+        struct qcom_iommu_ctx   *ctxs[0];   /* indexed by asid-1 */
+};
 
-Right.  Thanks for doing this!
+Make use of the struct_size() helper instead of an open-coded version
+in order to avoid any potential type mistakes.
 
-Namhyung
+So, replace the following form:
+
+sizeof(*qcom_iommu) + (max_asid * sizeof(qcom_iommu->ctxs[0]))
+
+with:
+
+struct_size(qcom_iommu, ctxs, max_asid)
+
+Also, notice that, in this case, variable sz is not necessary,
+hence it is removed.
+
+This code was detected with the help of Coccinelle.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/iommu/qcom_iommu.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/iommu/qcom_iommu.c b/drivers/iommu/qcom_iommu.c
+index 3608f58f1ea8..c18168fd7fe7 100644
+--- a/drivers/iommu/qcom_iommu.c
++++ b/drivers/iommu/qcom_iommu.c
+@@ -801,7 +801,7 @@ static int qcom_iommu_device_probe(struct platform_device *pdev)
+ 	struct qcom_iommu_dev *qcom_iommu;
+ 	struct device *dev = &pdev->dev;
+ 	struct resource *res;
+-	int ret, sz, max_asid = 0;
++	int ret, max_asid = 0;
+ 
+ 	/* find the max asid (which is 1:1 to ctx bank idx), so we know how
+ 	 * many child ctx devices we have:
+@@ -809,9 +809,8 @@ static int qcom_iommu_device_probe(struct platform_device *pdev)
+ 	for_each_child_of_node(dev->of_node, child)
+ 		max_asid = max(max_asid, get_asid(child));
+ 
+-	sz = sizeof(*qcom_iommu) + (max_asid * sizeof(qcom_iommu->ctxs[0]));
+-
+-	qcom_iommu = devm_kzalloc(dev, sz, GFP_KERNEL);
++	qcom_iommu = devm_kzalloc(dev, struct_size(qcom_iommu, ctxs, max_asid),
++				  GFP_KERNEL);
+ 	if (!qcom_iommu)
+ 		return -ENOMEM;
+ 	qcom_iommu->num_ctxs = max_asid;
+-- 
+2.23.0
+
