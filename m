@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4C9A3FF2
+	by mail.lfdr.de (Postfix) with ESMTP id 08ABCA3FF0
 	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 23:48:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbfH3VsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 17:48:18 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:44692 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728424AbfH3VsE (ORCPT
+        id S1728472AbfH3VsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 17:48:07 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45960 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728455AbfH3VsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 17:48:04 -0400
-Received: by mail-qk1-f193.google.com with SMTP id i78so6050376qke.11
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 14:48:03 -0700 (PDT)
+        Fri, 30 Aug 2019 17:48:05 -0400
+Received: by mail-qt1-f193.google.com with SMTP id r15so3594564qtn.12
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 14:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sVV2lnPwOeX0GLUaJ7vmcH2fqnxehztPL1uAZs7p67k=;
-        b=UsO5zQPFVoEncEhyBWusu7AbBJG0hM5eKksQ5djE5aKLAhKfy7+vWv2eCIxIheWe3I
-         s4QoGnOPidtTbwF1cL+W2bC7g/EGoeZJQxaAC+s3GEDlyaRKlsGDlVSBJYIaq1niVQhQ
-         005UqMPzL1TC+r5CuMTb0fmifJnw1dTLm5D3LgVJyP8d+TwbJP5kdpckG27JOWVRT66/
-         zfHbu3nF3zsunx/nW8xSNq0yUzNn3zzrO4rZKKyCIKi1AAq9G5QZg908kuHy4E7iByUT
-         AhOAd8mhX2UY6GbJ4DhDaNUEsuMejaZGeXkCGSiE4cpxVXMJY2jV8NUdq5ni/+QogGMv
-         ONoA==
+        bh=4w/5foUOWsGiIALhc9FkX1i52x/QwOcQXv5vExOoBOQ=;
+        b=uHXoLyNPT7g+1xR6937SaYsBmR7HeBZDJ89JU2W4k2H/qnX8OkvNHYZgN9lq8JNRIb
+         MoNfjR4nzlVMgyCqp2ClBfhU16UUhKZKFNQEW1yGnpA++xAWBZrBiwtX1w2HNfcM+rgM
+         xKu6O4AP2AV0rzPzWOJfTwzYVBcVdiJ4UfpXeGw3RqjBFegxYjql8Swlr4fRUG486CcI
+         wRq/v59BYWvutChVlIr1wjptEOAQkAp6da6UVV3ne7yw2FfLwMkCifDL4Rx6mApBaK68
+         df/oDRTW7F2ALlUq55UiIDKMSfF6Cjr91mst4WkKcgDHgl+sHp1VaxAwrMmmyJYDpmBA
+         Rgeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sVV2lnPwOeX0GLUaJ7vmcH2fqnxehztPL1uAZs7p67k=;
-        b=IW7q1jwJ9xJpu0OUEurH6TL0VpJE4B3qV3s4VheL+AsopjEya7K209g4kKEE29fKHD
-         k71du76QhxKRway/M5W9JCVIuz/fC/QwdR70laUKmu3deuFVKUOb6vtzw9IrA/9Mlmx1
-         bCVE6bkkOiK8fo+3IIghQLHrT+YRWQbNUUd3hIB/yQVz9aH/9CEsExwr3RTXiVgE+R4x
-         XCuiD6dHJVaXv2vErsfxo1dvU1m4e3kMksYwbcrR1aQJTtNfwk0lzUFcxKVp9vNOTR9o
-         U6pBZbDbsLov/anS5xy1GvBkEpfiUU3mqPqu9Ns35dTIQM6sPV0Udh6U+2qujNXHjiWc
-         LUJQ==
-X-Gm-Message-State: APjAAAUFpHAdv4ghE0X5GZDHjAiTk9rjg1ID1yhkwtL0RcDL+hlbpwBg
-        e7zMeakv34zXdaBup88eZg==
-X-Google-Smtp-Source: APXvYqy67RFjdYEffeMRZhf/gnFZYzoLg8yOTGwCBTYZfKG1V4FwmMif6ic04AMJsnI2yqKwghwViQ==
-X-Received: by 2002:a05:620a:126c:: with SMTP id b12mr18299361qkl.177.1567201683411;
-        Fri, 30 Aug 2019 14:48:03 -0700 (PDT)
+        bh=4w/5foUOWsGiIALhc9FkX1i52x/QwOcQXv5vExOoBOQ=;
+        b=bFHUQOTYiTqPY2uJhTqiiJP5szzj00fKU/wVlWBIRT9xZF+kEPIPAckfmCH4GhpKw+
+         l387KgTqx3+vB5abyD7rN0Fd31Nz8zXqXPsr3OLwq3BRbUEYoUaLD3PdBKG+aLYVqUQn
+         Vr8/QCrQ3Mgfg5HnIQW1fkE1Z7/oPpS4KZ+6eaAkWpQaqFIUVPjn8av4mTQA6Y5Hy1aa
+         dtNnzFRGEWX+mozYpBgTTNYLyNBd4EKgC4u0Lo+bdoSe+FUAHPMrEJL5W3/u2MO8qbKE
+         BD7Y5DnaZBotSty24IR/je8dVzJ62Jhcz0rk187QTNnHzWmaldliqN3Tn7vfi6vM5OEO
+         7fjw==
+X-Gm-Message-State: APjAAAWocVzoJJgL2P9PqwMWMxyaaVygWnoFOgBIgP6EdqRTFdx8dUth
+        xYca24hGAcbCSgWM6MlzNw==
+X-Google-Smtp-Source: APXvYqxpjkeboMJNaq6exwkGx/ymWx+cjmBRwLwt2mSOwfZHSXQmJ+7yikFJJ9x5Y1PCxpJZOHA2iQ==
+X-Received: by 2002:a0c:fec4:: with SMTP id z4mr11930335qvs.101.1567201684588;
+        Fri, 30 Aug 2019 14:48:04 -0700 (PDT)
 Received: from gabell.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id a4sm4857834qtb.17.2019.08.30.14.48.01
+        by smtp.gmail.com with ESMTPSA id a4sm4857834qtb.17.2019.08.30.14.48.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 14:48:02 -0700 (PDT)
+        Fri, 30 Aug 2019 14:48:04 -0700 (PDT)
 From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
 To:     Borislav Petkov <bp@alien8.de>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -53,9 +53,9 @@ To:     Borislav Petkov <bp@alien8.de>,
 Cc:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
         Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/5] x86/boot: Get the max address from SRAT
-Date:   Fri, 30 Aug 2019 17:47:05 -0400
-Message-Id: <20190830214707.1201-4-msys.mizuma@gmail.com>
+Subject: [PATCH v3 4/5] x86/mm/KASLR: Cleanup calculation for direct mapping size
+Date:   Fri, 30 Aug 2019 17:47:06 -0400
+Message-Id: <20190830214707.1201-5-msys.mizuma@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190830214707.1201-1-msys.mizuma@gmail.com>
 References: <20190830214707.1201-1-msys.mizuma@gmail.com>
@@ -66,74 +66,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 
-Get the max address from SRAT and write it into boot_params->max_addr.
+Cleanup calculation for direct mapping size.
 
+Signed-off-by: Baoquan He <bhe@redhat.com>
 Signed-off-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
 ---
- arch/x86/boot/compressed/acpi.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ arch/x86/mm/kaslr.c | 50 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 15 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index 908a1bfab..ba2bc5ab9 100644
---- a/arch/x86/boot/compressed/acpi.c
-+++ b/arch/x86/boot/compressed/acpi.c
-@@ -362,16 +362,24 @@ static unsigned long get_acpi_srat_table(void)
- 	return 0;
+diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+index dc6182eec..8e5f3642e 100644
+--- a/arch/x86/mm/kaslr.c
++++ b/arch/x86/mm/kaslr.c
+@@ -70,15 +70,45 @@ static inline bool kaslr_memory_enabled(void)
+ 	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
  }
  
--static void subtable_parse(struct acpi_subtable_header *sub_table, int *num)
-+static void subtable_parse(struct acpi_subtable_header *sub_table, int *num,
-+		unsigned long *max_addr)
++/*
++ * Even though a huge virtual address space is reserved for the direct
++ * mapping of physical memory, e.g in 4-level paging mode, it's 64TB,
++ * rare system can own enough physical memory to use it up, most are
++ * even less than 1TB. So with KASLR enabled, we adapt the size of
++ * direct mapping area to the size of actual physical memory plus the
++ * configured padding CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
++ * The left part will be taken out to join memory randomization.
++ */
++static inline unsigned long calc_direct_mapping_size(void)
++{
++	unsigned long size_tb, memory_tb;
++
++	/*
++	 * Update Physical memory mapping to available and
++	 * add padding if needed (especially for memory hotplug support).
++	 */
++	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
++		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
++
++	size_tb = 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
++
++	/*
++	 * Adapt physical memory region size based on available memory
++	 */
++	if (memory_tb < size_tb)
++		size_tb = memory_tb;
++
++	return size_tb;
++}
++
+ /* Initialize base and padding for each memory region randomized with KASLR */
+ void __init kernel_randomize_memory(void)
  {
- 	struct acpi_srat_mem_affinity *ma;
-+	unsigned long addr;
+-	size_t i;
+-	unsigned long vaddr_start, vaddr;
+-	unsigned long rand, memory_tb;
+-	struct rnd_state rand_state;
++	unsigned long vaddr_start, vaddr, rand;
+ 	unsigned long remain_entropy;
+ 	unsigned long vmemmap_size;
++	struct rnd_state rand_state;
++	size_t i;
  
- 	ma = (struct acpi_srat_mem_affinity *)sub_table;
+ 	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
+ 	vaddr = vaddr_start;
+@@ -95,20 +125,10 @@ void __init kernel_randomize_memory(void)
+ 	if (!kaslr_memory_enabled())
+ 		return;
  
--	if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) && ma->length) {
--		immovable_mem[*num].start = ma->base_address;
--		immovable_mem[*num].size = ma->length;
--		(*num)++;
-+	if (ma->length) {
-+		if (ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) {
-+			addr = ma->base_address + ma->length;
-+			if (addr > *max_addr)
-+				*max_addr = addr;
-+		} else {
-+			immovable_mem[*num].start = ma->base_address;
-+			immovable_mem[*num].size = ma->length;
-+			(*num)++;
-+		}
- 	}
- }
+-	kaslr_regions[0].size_tb = 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
++	kaslr_regions[0].size_tb = calc_direct_mapping_size();
+ 	kaslr_regions[1].size_tb = VMALLOC_SIZE_TB;
  
-@@ -391,6 +399,7 @@ int count_immovable_mem_regions(void)
- 	struct acpi_subtable_header *sub_table;
- 	struct acpi_table_header *table_header;
- 	char arg[MAX_ACPI_ARG_LENGTH];
-+	unsigned long max_addr = 0;
- 	int num = 0;
+-	/*
+-	 * Update Physical memory mapping to available and
+-	 * add padding if needed (especially for memory hotplug support).
+-	 */
+ 	BUG_ON(kaslr_regions[0].base != &page_offset_base);
+-	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+-		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+-
+-	/* Adapt phyiscal memory region size based on available memory */
+-	if (memory_tb < kaslr_regions[0].size_tb)
+-		kaslr_regions[0].size_tb = memory_tb;
  
- 	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
-@@ -409,7 +418,7 @@ int count_immovable_mem_regions(void)
- 		sub_table = (struct acpi_subtable_header *)table;
- 		if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
- 
--			subtable_parse(sub_table, &num);
-+			subtable_parse(sub_table, &num, &max_addr);
- 
- 			if (num >= MAX_NUMNODES*2) {
- 				debug_putstr("Too many immovable memory regions, aborting.\n");
-@@ -418,6 +427,9 @@ int count_immovable_mem_regions(void)
- 		}
- 		table += sub_table->length;
- 	}
-+
-+	boot_params->max_addr = max_addr;
-+
- 	return num;
- }
- #endif /* CONFIG_RANDOMIZE_BASE && CONFIG_MEMORY_HOTREMOVE */
+ 	/*
+ 	 * Calculate the vmemmap region size in TBs, aligned to a TB
 -- 
 2.18.1
 
