@@ -2,40 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5D9A37E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:38:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 302F1A37ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:43:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbfH3Nik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 09:38:40 -0400
-Received: from mga04.intel.com ([192.55.52.120]:61411 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727455AbfH3Nik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 09:38:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 06:38:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="181207600"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by fmsmga008.fm.intel.com with ESMTP; 30 Aug 2019 06:38:37 -0700
-Subject: Re: [PATCH] xhci: fix memleak on setup address fails.
-To:     Ikjoon Jang <ikjn@chromium.org>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190811082259.48176-1-ikjn@chromium.org>
- <5883d03d-31c4-206a-26c1-ca641dbf845c@linux.intel.com>
- <CAATdQgA4z+hqM=U+1dRLQOq7obH3kq7C+pR8BzmzfvskxNKRng@mail.gmail.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <ddcb3b03-90c6-876e-31ee-005be6eebd1a@linux.intel.com>
-Date:   Fri, 30 Aug 2019 16:40:25 +0300
+        id S1727884AbfH3NnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 09:43:19 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36806 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727751AbfH3NnS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 09:43:18 -0400
+Received: by mail-io1-f68.google.com with SMTP id o9so14069051iom.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 06:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zYGH3fN4v8plY5qOryvWCm0ZkkSEcqIXPLFE0LXF1xM=;
+        b=S4xlxo1McUe3ODbG6lFGApEUyreIy3lVJLjs+cn9444a0h0+Rw/NY4ZYuiUhvrjZPo
+         DmB3w8J5vYckaTr6NsZa5XfN94OcZxbrVgulnZbOWhB6mRLpe4+kLyv43tswN/kHk4GG
+         9UHMiIN5cFXivXPg3y9OVT9Tg1EsF/bMJHpgPMOgiv6k4nDTt2wvthKF6hoO3GMwReXK
+         fIQpZ2YrA/op7HljEdDrnfM3cap4cNptn4aIL7Tiiue5UgTXJiAZOyYcBEvGwX4MJfyC
+         kYCa9ot7vwFWEc/WqwgS2OomWM/Ed1tsIkDvT7jB8a7sXwHTnKsiDO4uIU9ToiEeWM30
+         Hlww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zYGH3fN4v8plY5qOryvWCm0ZkkSEcqIXPLFE0LXF1xM=;
+        b=UnGrmdalhPoMXGr55PgeudHvB0dqafSWzHnERfdyAZTCx6s0kf/qCdxGtEK/ymzw6p
+         YBZdF1/9jmTtQm+QqUXKB7VnyQQq7RkhDELc2SfZXN0L2ACtyWVzO+p0lt6hkxhlGewK
+         b0upd7BeYojeroR9rPrNy72hmNR6OYoL+MHSrnZ4t0eUnT4TH9lwAPmX2GFmuWcphEF6
+         9m2hUUuNJnDXvdanu0mQJeHq8+ubR9E4G1XNqhxGAEeZxPwwvcB7xKcNQC5KuShScS+n
+         IWkCvVRpudSbN7PNDxNThuU+WpBaZVPzy354jOOuRnVqIDcx+F9aeUG0K42RtC3x6831
+         z+jQ==
+X-Gm-Message-State: APjAAAUujGe0iUVLvacfoNutXSrZIF7TIqurvkxn2NK3LpaSTk4/i3+k
+        jAtX80HMQo9hewtTZPrQuDzZEA==
+X-Google-Smtp-Source: APXvYqxv98ySoIehWYfQrkiVnKQ7682zkf1UCD2MmgpAND0sCQpnfidFJwrCLdPl9ybmgBa1NkKwWw==
+X-Received: by 2002:a6b:3c0a:: with SMTP id k10mr12501340iob.282.1567172597938;
+        Fri, 30 Aug 2019 06:43:17 -0700 (PDT)
+Received: from [192.168.1.50] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id o2sm5032889iob.64.2019.08.30.06.43.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Aug 2019 06:43:16 -0700 (PDT)
+Subject: Re: [PATCH block/for-next] writeback: add tracepoints for cgroup
+ foreign writebacks
+To:     Tejun Heo <tj@kernel.org>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>
+References: <20190829224701.GX2263813@devbig004.ftw2.facebook.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <a54af97b-b9c2-3e31-d7e5-bacd40e74711@kernel.dk>
+Date:   Fri, 30 Aug 2019 07:43:14 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAATdQgA4z+hqM=U+1dRLQOq7obH3kq7C+pR8BzmzfvskxNKRng@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190829224701.GX2263813@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -43,37 +67,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.8.2019 9.41, Ikjoon Jang wrote:
-> On Wed, Aug 14, 2019 at 9:57 PM Mathias Nyman
-> <mathias.nyman@linux.intel.com> wrote:
->>
->> On 11.8.2019 11.22, Ikjoon Jang wrote:
->>> Xhci re-enables a slot on transaction error in set_address using
->>> xhci_disable_slot() + xhci_alloc_dev().
->>>
->>> But in this case, xhci_alloc_dev() creates debugfs entries upon an
->>> existing device without cleaning up old entries, thus memory leaks.
->>>
->>> So this patch simply moves calling xhci_debugfs_free_dev() from
->>> xhci_free_dev() to xhci_disable_slot().
->>>
->>
->> Othwerwise this looks good, but xhci_alloc_dev() will call xhci_disable_slot()
->> in some failure cases before the slot debugfs entry is created.
->>
->> In these cases xhci_debugfs_remove_slot() will be called without
->> xhci_debugfs_create_slot() ever being called.
->>
->> This might not be an issue as xhci_debugfs_remove_slot() checks
->> if (!dev || !dev->debugfs_private) before doing anything, but should
->> be checked out.
->>
-> 
-> I checked out the case by adding simple fault injection on xhci_alloc_dev(),
-> to simulate xhci_debugfs_remove_slot() can be called without
-> xhci_debugfs_create_slot() being called.
-> 
+On 8/29/19 4:47 PM, Tejun Heo wrote:
+> cgroup foreign inode handling has quite a bit of heuristics and
+> internal states which sometimes makes it difficult to understand
+> what's going on.  Add tracepoints to improve visibility.
 
-Thanks, patch sent forward
+LGTM, applied.
 
--Mathias
+-- 
+Jens Axboe
+
