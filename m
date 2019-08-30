@@ -2,129 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 915CCA2EB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 07:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A484A2EB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 07:02:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbfH3FCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 01:02:17 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49362 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbfH3FCQ (ORCPT
+        id S1726480AbfH3FCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 01:02:15 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34105 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbfH3FCO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 01:02:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7AB7961B14; Fri, 30 Aug 2019 05:02:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567141334;
-        bh=fe+1CIFsLrsFmj7GnadvoGOHiiGzQrdsXLHYlpV+vnM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DF35DWi/vcIha8ZdCxzYGat7OgmKEDoWJ9P16AGIJunFqUn8gDuZY6RzkK1YBvQXc
-         OyzXUZlhXMt3ZkhRluU+RMIKQvCCnZL3QzcSJHghAiMqdzjXYjAdvWUm4jaKC9hywP
-         oxorZWI2p1t24zo3fb3J5k5M4pIcb3UjLU0ViFPg=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from c-hbandi-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: c-hbandi@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 65CF3602FC;
-        Fri, 30 Aug 2019 05:02:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567141333;
-        bh=fe+1CIFsLrsFmj7GnadvoGOHiiGzQrdsXLHYlpV+vnM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cq6tFOjrdTDeySUCvbiv+pnJOqt1EA0f/z2kgaQPmN973eij2IW0UMUzos6pQ8aIZ
-         Dyj0sVSZ34RKvan+TEX75lLPeQqCeD70ezOD2PTF1BL6S9FMfmm0jI6fKZdlVzQeAV
-         zuAmz7WnqM0Xb9GteUde4UCbbtVEvZTEGsV+AQoE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 65CF3602FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=c-hbandi@codeaurora.org
-From:   Harish Bandi <c-hbandi@codeaurora.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, bgodavar@codeaurora.org,
-        anubhavg@codeaurora.org, Harish Bandi <c-hbandi@codeaurora.org>
-Subject: [PATCH v2] Bluetooth: hci_qca: wait for Pre shutdown complete event before sending the Power off pulse
-Date:   Fri, 30 Aug 2019 10:31:44 +0530
-Message-Id: <1567141304-24600-1-git-send-email-c-hbandi@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 30 Aug 2019 01:02:14 -0400
+Received: by mail-lf1-f68.google.com with SMTP id z21so4338041lfe.1
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 22:02:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=WGgEYCWgZXji+vHjNuzFMD738jFfCCD95nKu7Eh05bE=;
+        b=k2f7fr1Y3wZJPTKsVJfXCaBDHs3i4myl1G6Wuf3qGElFPscWyTw6bjX9kCkQ5bUo+o
+         Stgl2BkqGGIEQO1THJxlOJB3RSqFPHcv433JBLeXLNk4zbm4JRt4wh/qD18jtkOHYmu3
+         PIpbVJ8BZPlxOflNARFg3/mjkE1zQTh5+FHMriKojuO865A+GN7+v661LWb8yj+kTU9P
+         eTorBo7U5segEsyT1ZwqOGTS8g8DMwo+d3gh1sLlSI7DSzXbF63QBBdyPoV1XHVnKNo8
+         KBJ2TtyA9EpUdfbMEfE2+8yVSQDe2NKKxMMniE24cn+fOgoZ/BZyigj+3jK0/Ups9Kuj
+         o+XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=WGgEYCWgZXji+vHjNuzFMD738jFfCCD95nKu7Eh05bE=;
+        b=csTcvPkeCRP93UPENMVEIbLyRVXOxdW2wnh5gQYo4StSIMwcOB0r23rLNv6Q+HAGo3
+         IRYvoRanAxY7nVend7RVFakj6JIewPpLxRJDGlyv+b6/iqW3uErD1C/ISwvrp0Uomisj
+         0TnsDbdFw5PDSGZ5U7zuDvOWMBStdiPTivrz4FqwbsT4lAWY7ZTQzy3KiR6rMjl5sVWF
+         59Cybzc/dK6r/0QpeLHLNLNyP4kuBwbejp33RzbhEPGBODKUq/tNHc8p7sn2zJ2/ekTb
+         mi+7bjrhXbfNGb1V7+29RG3voD9pM4hfNizzCSQgoJ5OFC2sNWv6EDfWoYvPg4Us8tLR
+         fSxg==
+X-Gm-Message-State: APjAAAVz+w0kNFBot4y0gLO1w7RwS46mYDah6n7/L+IUy5KqjLK0asaE
+        wqtrogsf8KRQUmZquKVs12xoYm5rUNF7hc+/F1E=
+X-Google-Smtp-Source: APXvYqwRNXv7G0zvqwWuTbraD3DEOH3Nq6rJi84mMH1i55GCgY5ciuIR39Z3rj4CykCFNyEh1sumAvrUlFkXNhMq/Gk=
+X-Received: by 2002:ac2:52b6:: with SMTP id r22mr8485532lfm.19.1567141332248;
+ Thu, 29 Aug 2019 22:02:12 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ab3:6a8e:0:0:0:0:0 with HTTP; Thu, 29 Aug 2019 22:02:11
+ -0700 (PDT)
+From:   "Mr.Patrick Joseph" <mrpatrickjo09@gmail.com>
+Date:   Fri, 30 Aug 2019 07:02:11 +0200
+X-Google-Sender-Auth: yBCxMK-FtLMBWJZ_9D9nXSK5Vg4
+Message-ID: <CALqhW2+e0iwGxBqz9m_PjuLYt6pL1uJU+S9t_41YrfXwDxu22w@mail.gmail.com>
+Subject: Hoping to hear from you
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When SoC receives pre shut down command, it share the same
-with other COEX shared clients. So SoC needs a short time
-after sending VS pre shutdown command before turning off
-the regulators and sending the power off pulse. Along with
-short delay, needs to wait for command complete event for
-Pre shutdown VS command
+Dear Sir/Madam,
 
-Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
-Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
----
-Changes in V2:
-- Modified commit text.
----
- drivers/bluetooth/btqca.c   | 22 ++++++++++++++++++++++
- drivers/bluetooth/hci_qca.c |  5 +++++
- 2 files changed, 27 insertions(+)
+Although you might be apprehensive about my email as we have never met
+before. I am Mr.Patrick Joseph, a Banker and Head of Operations with
+Bank here in Burkina Faso West Africa, there is the sum of
+$28.500,000.00 Million Dollars currently in my branch, there were no
+beneficiary stated concerning these funds which means no one would
+ever come to claim it.
 
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index 8b33128..d48dc9e 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -99,6 +99,28 @@ static int qca_send_reset(struct hci_dev *hdev)
- 	return 0;
- }
- 
-+int qca_send_pre_shutdown_cmd(struct hci_dev *hdev)
-+{
-+	struct sk_buff *skb;
-+	int err;
-+
-+	bt_dev_dbg(hdev, "QCA pre shutdown cmd");
-+
-+	skb = __hci_cmd_sync_ev(hdev, QCA_PRE_SHUTDOWN_CMD, 0,
-+				NULL, HCI_EV_CMD_COMPLETE, HCI_INIT_TIMEOUT);
-+
-+	if (IS_ERR(skb)) {
-+		err = PTR_ERR(skb);
-+		bt_dev_err(hdev, "QCA preshutdown_cmd failed (%d)", err);
-+		return err;
-+	}
-+
-+	kfree_skb(skb);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(qca_send_pre_shutdown_cmd);
-+
- static void qca_tlv_check_data(struct rome_config *config,
- 				const struct firmware *fw)
- {
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index ab4c18e..43df13c 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1367,6 +1367,11 @@ static int qca_power_off(struct hci_dev *hdev)
- {
- 	struct hci_uart *hu = hci_get_drvdata(hdev);
- 
-+	/* Perform pre shutdown command */
-+	qca_send_pre_shutdown_cmd(hdev);
-+
-+	usleep_range(8000, 10000);
-+
- 	qca_power_shutdown(hu);
- 	return 0;
- }
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+That is why I ask that can we work together, I will be pleased to work
+with you as trusted person and see that the fund is transferred out of
+my Bank into another Bank Account, Once the funds have been
+transferred to your nominated Bank account we shall then share it in
+the ratio of 60% for me, 40% for you.
 
+If you agree to my business proposal.further details of the transfer
+will be forwarded to you as soon as i receive your return mail,
+sending the below information
+
+1. Full Name.
+2: Your Private telephone and Fax numbers.
+3. Occupations.
+4. Date Of Birth
+5. Country of Residence.
+6. Your full address.
+
+Hoping to hear from you as soon as possible.
+
+Regards,
+Mr.Patrick Joseph.
