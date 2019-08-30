@@ -2,93 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0903AA2FA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D155A2FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfH3GUl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 02:20:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbfH3GUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 02:20:40 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9DD4F2087F;
-        Fri, 30 Aug 2019 06:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567146039;
-        bh=FXijohpD1xppY/Izswf5sHL2hci61FgO5kTCmkEc/7Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JOn8NYBJdF+nYZk35tKx1gQbjgVNO4Q23JKoMz8AtE9l31oifYcJ2t0+OjDXXvrcv
-         yShLLClcyqW1Y+rBw7sg3u++MbBTXHPHfp2B6Vl/dFtdMJrBHsy/ybWYhB2Z4YhKib
-         xroYwIZOsz/2Drf5WkfiL0nCLbIziN4Fw4mVsTmo=
-Date:   Fri, 30 Aug 2019 08:20:36 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sagi Grimberg <sagi@grimberg.me>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>,
-        James Smart <james.smart@broadcom.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] nvme: fire discovery log page change events to
- userspace
-Message-ID: <20190830062036.GA15257@kroah.com>
-References: <20190712180211.26333-1-sagi@grimberg.me>
- <20190712180211.26333-4-sagi@grimberg.me>
- <20190822002328.GP9511@lst.de>
- <205d06ab-fedc-739d-323f-b358aff2cbfe@grimberg.me>
- <e4603511-6dae-e26d-12a9-e9fa727a8d03@grimberg.me>
- <20190826065639.GA11036@lst.de>
- <20190826075916.GA30396@kroah.com>
- <ac168168-fed2-2b57-493e-e88261ead73b@grimberg.me>
+        id S1727447AbfH3GWu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 02:22:50 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:44507 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726090AbfH3GWt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 02:22:49 -0400
+X-UUID: 9c6850f9bd614fb3a57d21a7a3a9077a-20190830
+X-UUID: 9c6850f9bd614fb3a57d21a7a3a9077a-20190830
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <chunfeng.yun@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1531351212; Fri, 30 Aug 2019 14:22:36 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32DR.mediatek.inc
+ (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 30 Aug
+ 2019 14:22:34 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 30 Aug 2019 14:22:34 +0800
+Message-ID: <1567146149.7317.40.camel@mhfsdcap03>
+Subject: Re: [PATCH 02/11] dt-bindings: phy-mtk-tphy: make the ref clock
+ optional
+From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Date:   Fri, 30 Aug 2019 14:22:29 +0800
+In-Reply-To: <20190829192550.GA29881@bogus>
+References: <e99c0d7a55869a4425250c601b80a3331c9d0976.1566542696.git.chunfeng.yun@mediatek.com>
+         <a31d78484b64f853a16e7dcb16fae9fc0de45ebb.1566542696.git.chunfeng.yun@mediatek.com>
+         <20190829192550.GA29881@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac168168-fed2-2b57-493e-e88261ead73b@grimberg.me>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 98DB08F7F53AF6863050E9819BDD5FA46007C836A76BD5835C75A269FC4EE4DF2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 11:21:02AM -0700, Sagi Grimberg wrote:
-> 
-> > > > > You are correct that this information can be derived from sysfs, but the
-> > > > > main reason why we add these here, is because in udev rule we can't
-> > > > > just go ahead and start looking these up and parsing these..
-> > > > > 
-> > > > > We could send the discovery aen with NVME_CTRL_NAME and have
-> > > > > then have systemd run something like:
-> > > > > 
-> > > > > nvme connect-all -d nvme0 --sysfs
-> > > > > 
-> > > > > and have nvme-cli retrieve all this stuff from sysfs?
-> > > > 
-> > > > Actually that may be a problem.
-> > > > 
-> > > > There could be a hypothetical case where after the event was fired
-> > > > and before it was handled, the discovery controller went away and
-> > > > came back again with a different controller instance, and the old
-> > > > instance is now a different discovery controller.
-> > > > 
-> > > > This is why we need this information in the event. And we verify this
-> > > > information in sysfs in nvme-cli.
-> > > 
-> > > Well, that must be a usual issue with uevents, right?  Don't we usually
-> > > have a increasing serial number for that or something?
+On Thu, 2019-08-29 at 14:25 -0500, Rob Herring wrote:
+> On Fri, Aug 23, 2019 at 03:00:09PM +0800, Chunfeng Yun wrote:
+> > Make the ref clock optional, then we no need refer to a fixed-clock
+> > in DTS anymore when the clock of USB3 PHY comes from oscillator
+> > directly
 > > 
-> > Yes we do, userspace should use it to order events.  Does udev not
-> > handle that properly today?
+> > Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/phy/phy-mtk-tphy.txt        | 13 +++++++------
+> >  1 file changed, 7 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> > index d5b327f85fa2..1c18bf10b2fe 100644
+> > --- a/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> > +++ b/Documentation/devicetree/bindings/phy/phy-mtk-tphy.txt
+> > @@ -34,12 +34,6 @@ Optional properties (controller (parent) node):
+> >  
+> >  Required properties (port (child) node):
+> >  - reg		: address and length of the register set for the port.
+> > -- clocks	: a list of phandle + clock-specifier pairs, one for each
+> > -		  entry in clock-names
+> > -- clock-names	: must contain
+> > -		  "ref": 48M reference clock for HighSpeed analog phy; and 26M
+> > -			reference clock for SuperSpeed analog phy, sometimes is
+> > -			24M, 25M or 27M, depended on platform.
+> >  - #phy-cells	: should be 1 (See second example)
+> >  		  cell after port phandle is phy type from:
+> >  			- PHY_TYPE_USB2
+> > @@ -48,6 +42,13 @@ Required properties (port (child) node):
+> >  			- PHY_TYPE_SATA
+> >  
+> >  Optional properties (PHY_TYPE_USB2 port (child) node):
+> > +- clocks	: a list of phandle + clock-specifier pairs, one for each
+> > +		  entry in clock-names
+> > +- clock-names	: may contain
+> > +		  "ref": 48M reference clock for HighSpeed anolog phy; and 26M
+> > +			reference clock for SuperSpeed anolog phy, sometimes is
+> > +			24M, 25M or 27M, depended on platform.
 > 
-> The problem is not ordering of events, its really about the fact that
-> the chardev can be removed and reallocated for a different controller
-> (could be a completely different discovery controller) by the time
-> that userspace handles the event.
+> How do you know the frequency when it is not present?
+It's always present, but sometimes it's always on by default (e.g. 48Mhz
+of U2 PHY), or comes from oscillator directly  (e.g. 26Mhz of U3 PHY),
+so not controlled by CCF, of course we can use a fixed-clock in latter
+case, it's useful to make it optional for these two cases.
 
-So?  You will have gotten the remove and then new addition uevent in
-order showing you this.  So your userspace code knows that something
-went away and then came back properly so you should be kept in sync.
+Thanks
 
-thanks,
+> 
+> > +
+> >  - mediatek,eye-src	: u32, the value of slew rate calibrate
+> >  - mediatek,eye-vrt	: u32, the selection of VRT reference voltage
+> >  - mediatek,eye-term	: u32, the selection of HS_TX TERM reference voltage
+> > -- 
+> > 2.23.0
+> > 
 
-greg k-h
+
