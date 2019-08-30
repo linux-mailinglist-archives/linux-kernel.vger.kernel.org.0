@@ -2,136 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2B92A3DD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 20:40:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B21BA3DE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 20:47:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbfH3Skb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 14:40:31 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:37298 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbfH3Skb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 14:40:31 -0400
-Received: by mail-qt1-f196.google.com with SMTP id y26so8688454qto.4
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 11:40:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DqUAZl3KHcHwDI7BBwIPsUwofAQrOC22PyB1XbUvzD4=;
-        b=cIwpHcZUdzajJ/0Q6r+KJxBBce2sfi/UZUN9f0k/T+JYuJWtg/Q3o8fN30V2u9t9SQ
-         VMEuzJtM2/ulBzPjs9pGlDobK62+mGZ6KfnmZQfVrlV1SxE52oPcWPDT7oyZVchIhndN
-         8RlOeC20cl3VJbnt1VGHMNo8SznWQ/y9T3w8uPxucRQXjarX46+BMDMD2yqsaPRx2dm+
-         ajWft400BkWhoLbLXXP+QcrklPIZ3dDcXlDJVl99PN6nZi09KTmT/FGru8um9D8eQPSA
-         9GlH9eWbVhoG15+Z8C2JHbFo4aNJahiTp2BYp27kxoAwv+v06l/+pcpojvQs/rqajrBq
-         wv/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DqUAZl3KHcHwDI7BBwIPsUwofAQrOC22PyB1XbUvzD4=;
-        b=CN5QJEbA9HEqkEbD9P6YcmLnodmFBPxYhxJzURJqQK7lGdoH0ChlkGu+ezGDc4H+s2
-         tRKmXq7rs04YaqP6tLS2VTlp3kOZZnfCZIcEWzHcxwtYIZCHg7HCOXFGRlRwaRDr3tXn
-         Bcj6PlndgOSRuVFHSu6kFguuuz0MZPfMe+EyZ0zthcb1A4z8c7OUNIYQHQez76niUhHQ
-         /iTO45CxX26PCEDwoe86w07IxYLDhBEDrpf1amhjU4oe9az8bNu+G0EQ4Yyj7GAxVNPq
-         iF8DEF0P+38cvSMBSWeMzG2Oiyjy1lW8cPEbi6/4bKaohJEhoAd718yLhTrZG73svGCL
-         VNhA==
-X-Gm-Message-State: APjAAAWf8LJE1xuGcf6Jxu7nOkIMDD1TbWaVICc4WiBabYyJPza3exyH
-        j/xuuoejbioHK1QsRXvV3NYLOwhK
-X-Google-Smtp-Source: APXvYqzP+KoFn5mH/l4co+N53FcZuLIMUoXGl5qXpxm+E57KJQIQixyo97q28mgxclF0dHe7LyKaBQ==
-X-Received: by 2002:ac8:397c:: with SMTP id t57mr16993623qtb.21.1567190430244;
-        Fri, 30 Aug 2019 11:40:30 -0700 (PDT)
-Received: from quaco.ghostprotocols.net (179-240-168-86.3g.claro.net.br. [179.240.168.86])
-        by smtp.gmail.com with ESMTPSA id i9sm3157474qkk.82.2019.08.30.11.40.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 11:40:29 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 3CE4F41146; Fri, 30 Aug 2019 15:40:20 -0300 (-03)
-Date:   Fri, 30 Aug 2019 15:40:20 -0300
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 0/4] objtool,perf: Use shared x86 insn decoder
-Message-ID: <20190830184020.GG28011@kernel.org>
-References: <cover.1567118001.git.jpoimboe@redhat.com>
+        id S1728151AbfH3Sq7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 14:46:59 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:42968 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727304AbfH3Sq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 14:46:59 -0400
+Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.55])
+        by Forcepoint Email with ESMTP id 6A8539DBA69EB7AA3A3A;
+        Sat, 31 Aug 2019 02:46:56 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sat, 31 Aug 2019 02:46:55 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Sat, 31 Aug 2019 02:46:54 +0800
+Date:   Sat, 31 Aug 2019 02:46:06 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 05/24] erofs: add inode operations
+Message-ID: <20190830184606.GA175612@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-6-gaoxiang25@huawei.com>
+ <20190829102426.GE20598@infradead.org>
+ <20190829115922.GG64893@architecture4>
+ <20190830164205.GD29603@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <cover.1567118001.git.jpoimboe@redhat.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190830164205.GD29603@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme708-chm.china.huawei.com (10.1.199.104) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Aug 29, 2019 at 05:41:17PM -0500, Josh Poimboeuf escreveu:
-> It's kind of silly that we have *three* identical copies of the x86 insn
-> decoder in the kernel tree.  Make it approximately 50% less silly by
-> reducing that number to two.
+Hi Christoph,
 
-Ok, I fixed up some minor conflicts with my perf/core branch and will
-submit this together with the other things to the container builds and
-then push it upstream, collected Peter and Masami's Acks.
-
-- Arnaldo
- 
-> Josh Poimboeuf (4):
->   objtool: Move x86 insn decoder to a common location
->   perf: Update .gitignore file
->   perf intel-pt: Remove inat.c from build dependency list
->   perf intel-pt: Use shared x86 insn decoder
+On Fri, Aug 30, 2019 at 09:42:05AM -0700, Christoph Hellwig wrote:
+> On Thu, Aug 29, 2019 at 07:59:22PM +0800, Gao Xiang wrote:
+> > On Thu, Aug 29, 2019 at 03:24:26AM -0700, Christoph Hellwig wrote:
+> > 
+> > []
+> > 
+> > > 
+> > > > +
+> > > > +		/* fill last page if inline data is available */
+> > > > +		err = fill_inline_data(inode, data, ofs);
+> > > 
+> > > Well, I think you should move the is_inode_flat_inline and
+> > > (S_ISLNK(inode->i_mode) && inode->i_size < PAGE_SIZE) checks from that
+> > > helper here, as otherwise you make everyone wonder why you'd always
+> > > fill out the inline data.
+> > 
+> > Currently, fill_inline_data() only fills for fast symlink,
+> > later we can fill any tail-end block (such as dir block)
+> > for our requirements.
 > 
->  .../{objtool => }/arch/x86/include/asm/inat.h |    0
->  .../arch/x86/include/asm/inat_types.h         |    0
->  .../{objtool => }/arch/x86/include/asm/insn.h |    0
->  .../arch/x86/include/asm/orc_types.h          |    0
->  tools/{objtool => }/arch/x86/lib/inat.c       |    0
->  tools/{objtool => }/arch/x86/lib/insn.c       |    0
->  .../arch/x86/lib/x86-opcode-map.txt           |    0
->  .../arch/x86/tools/gen-insn-attr-x86.awk      |    0
->  tools/objtool/Makefile                        |    4 +-
->  tools/objtool/arch/x86/Build                  |    4 +-
->  tools/objtool/arch/x86/decode.c               |    4 +-
->  tools/objtool/sync-check.sh                   |   12 +-
->  tools/perf/.gitignore                         |    3 +
->  tools/perf/arch/x86/tests/insn-x86.c          |    2 +-
->  tools/perf/arch/x86/util/archinsn.c           |    2 +-
->  tools/perf/check-headers.sh                   |   11 +-
->  tools/perf/util/intel-pt-decoder/Build        |   22 +-
->  .../intel-pt-decoder/gen-insn-attr-x86.awk    |  392 ------
->  tools/perf/util/intel-pt-decoder/inat.c       |   82 --
->  tools/perf/util/intel-pt-decoder/inat.h       |  230 ----
->  tools/perf/util/intel-pt-decoder/inat_types.h |   15 -
->  tools/perf/util/intel-pt-decoder/insn.c       |  593 ---------
->  tools/perf/util/intel-pt-decoder/insn.h       |  216 ----
->  .../intel-pt-decoder/intel-pt-insn-decoder.c  |   10 +-
->  .../util/intel-pt-decoder/x86-opcode-map.txt  | 1072 -----------------
->  25 files changed, 34 insertions(+), 2640 deletions(-)
->  rename tools/{objtool => }/arch/x86/include/asm/inat.h (100%)
->  rename tools/{objtool => }/arch/x86/include/asm/inat_types.h (100%)
->  rename tools/{objtool => }/arch/x86/include/asm/insn.h (100%)
->  rename tools/{objtool => }/arch/x86/include/asm/orc_types.h (100%)
->  rename tools/{objtool => }/arch/x86/lib/inat.c (100%)
->  rename tools/{objtool => }/arch/x86/lib/insn.c (100%)
->  rename tools/{objtool => }/arch/x86/lib/x86-opcode-map.txt (100%)
->  rename tools/{objtool => }/arch/x86/tools/gen-insn-attr-x86.awk (100%)
->  delete mode 100644 tools/perf/util/intel-pt-decoder/gen-insn-attr-x86.awk
->  delete mode 100644 tools/perf/util/intel-pt-decoder/inat.c
->  delete mode 100644 tools/perf/util/intel-pt-decoder/inat.h
->  delete mode 100644 tools/perf/util/intel-pt-decoder/inat_types.h
->  delete mode 100644 tools/perf/util/intel-pt-decoder/insn.c
->  delete mode 100644 tools/perf/util/intel-pt-decoder/insn.h
->  delete mode 100644 tools/perf/util/intel-pt-decoder/x86-opcode-map.txt
+> So change it when that later changes actually come in.  And even then
+> having the checks outside the function is a lot more obvious.
+
+Okay.
+
 > 
-> -- 
-> 2.20.1
+> > And I think that is minor.
+> 
+> The problem is that each of these issues might appear minor on their
+> own.  But combined a lot of the coding style choices lead to code that
+> is more suitable an obsfucated code contest than the Linux kernel as
+> trying to understand even just a few places requires jumping through
+> tons of helpers with misleading names and spread over various files.
+> 
+> > The consideration is simply because iget_locked performs better
+> > than iget5_locked.
+> 
+> In what benchmark do the differences show up?
 
--- 
+In a word, no benchmark here, just because
+"unsigned long on 32-bit platforms is 4 bytes."
+but erofs nid is a 64-bit number.
 
-- Arnaldo
+iget_locked will do find_inode_fast (no callback at all)
+rather than iget5_locked --> find_inode (test callback) ->
+            inode_insert5(set callback) for each new inode.
+
+For most 64-bit platforms, iget_locked is enough,
+32-bit platforms become rare...
+
+Thanks,
+Gao Xiang
+
