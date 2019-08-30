@@ -2,213 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE9EA39FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CAC9A3A01
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:10:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbfH3PJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:09:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728236AbfH3PJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:09:29 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1B622342C;
-        Fri, 30 Aug 2019 15:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567177767;
-        bh=MJlkPCYkMD+Y4plwpCnKgMza3JHPd1xCzxfWRQinRPY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A3eaj/gfSXqT12nTZlrstVUXIce3wQVBSETDlIcLybRHyum1IS0MDZytDZzrmdGap
-         ygOu1zJMWe26WMuwznYqEpAY9a9qNRxyD6n29sLtduHMhNu1IlEcxXgoha27ZqZziG
-         xVwIs+TyMxvMjyEU0NiQ9Ac50T+Ihxw4mtm3bs+Q=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 11/12] clk: gate: Add support for specifying parents via DT/pointers
-Date:   Fri, 30 Aug 2019 08:09:22 -0700
-Message-Id: <20190830150923.259497-12-sboyd@kernel.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-In-Reply-To: <20190830150923.259497-1-sboyd@kernel.org>
-References: <20190830150923.259497-1-sboyd@kernel.org>
+        id S1728512AbfH3PKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:10:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46194 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728463AbfH3PKA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:10:00 -0400
+Received: by mail-wr1-f65.google.com with SMTP id h7so5985713wrt.13
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:09:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IX37xBGf5R5k6PbsX8zWqg1WxUYZJX8p+B51wVl4L5c=;
+        b=q36KFh9FWXeiY7g0nLMvI/C8mlM9r6+D7Pq1xIxoB4DYMyN3UJNWG1qQbbXyBj90w4
+         j6TBYQEcVNvNYbRKrHUydZ+Ftz1xUB9yoRW5NvDlliv5GoD90h/oOXxzgBfKKZdVV883
+         c9xOUk2sVtI+M8K6+4nUA+dfyr/Bci3jUglrB5CpaGLw0BlCH8bya8kEOxGxQsSlJOEF
+         QUCxobPT0A6LguDpYz0FFZeqCw9F6aU5Hxav/NPi5Ci1Y6XwUjL6h9gfkIZeorZQkgx0
+         Vb/an/BD/1au+NHGmQUdTSq87ZrC4DihinhaWnj9lZRSdTN5sTOXfg9+KIBqpxinXbV7
+         xVzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IX37xBGf5R5k6PbsX8zWqg1WxUYZJX8p+B51wVl4L5c=;
+        b=DC18jusB70sTXd6Xg7TLYmUtYc18UDJKmdcpM2dRFKh+l4/wPQ8Umztpk6eQs2FYQC
+         3Pel7EIPk9iARvr9rtj7ab5vN4R0eDjHOSK+sb1fDT8J84iUVVKjVVVmJTpNlYszXKYl
+         0PrTACYT5cP00S47+zh99ZeyOREAf5wkndJ4VaGaU2vPwlL1GwNoz4dy5S5kVD3q0G++
+         QruJOnOVMfBLF+IW7e2z2QlEeOme9L249B0Mt7d5Y8RpSCZDnQWlj/yM6Uq0duJhifHf
+         IaJUTLDkADKhOcMWgx9pAHqpp3+A8ElxQ48x38hOqHldSy8w6WEv1AsbEMH/RIUlpfIS
+         aAMw==
+X-Gm-Message-State: APjAAAUUVlKQln6JHVk3LNpeZU64jST7TYDXU143yx0SEh1hVi4xv+wZ
+        icX2TKBFYW3kZ4GwAb3nOQnAWXs/1Y1RffxU58s=
+X-Google-Smtp-Source: APXvYqzZWxQhU7m8QEFCBHKWxT0rNy/0O2XDxDnWFdaE5Ry3PnbMsh2r9rE7CU+9Q7ik5LA8xZXXt54YpijGAL/MkYQ=
+X-Received: by 2002:adf:8004:: with SMTP id 4mr18038118wrk.341.1567177798350;
+ Fri, 30 Aug 2019 08:09:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190830080704.GA29599@LGEARND20B15>
+In-Reply-To: <20190830080704.GA29599@LGEARND20B15>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 30 Aug 2019 11:09:43 -0400
+Message-ID: <CADnq5_PZ8cuQBVXAAH8mefHbnbK9M4QexbTN_9X-yyqdeaLcbw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Move null pointer dereference check
+To:     Austin Kim <austindh.kim@gmail.com>
+Cc:     Rex Zhu <rex.zhu@amd.com>, "Quan, Evan" <evan.quan@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After commit fc0c209c147f ("clk: Allow parents to be specified without
-string names") we can use DT or direct clk_hw pointers to specify
-parents. Create a generic function that shouldn't be used very often to
-encode the multitude of ways of registering a gate clk with different
-parent information. Then add a bunch of wrapper macros that only pass
-down what needs to be passed down to the generic function to support
-this with less arguments.
+On Fri, Aug 30, 2019 at 8:43 AM Austin Kim <austindh.kim@gmail.com> wrote:
+>
+> Null pointer dereference check should have been checked,
+> ahead of below routine.
+>         struct amdgpu_device *adev = hwmgr->adev;
+>
+> With this commit, it could avoid potential NULL dereference.
+>
+> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
 
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
+Applied.  thanks!
 
-I'm debating having the multiplexer function take a DT index, clk_hw
-pointer, fw_name and name as different parameters. Then we can just
-always use the parent_data approach and cover all bases.
+Alex
 
- drivers/clk/clk-gate.c       | 35 ++++++++++-----------
- include/linux/clk-provider.h | 59 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 74 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 1b99fc962745..4296bb012abf 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -123,26 +123,18 @@ const struct clk_ops clk_gate_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_gate_ops);
- 
--/**
-- * clk_hw_register_gate - register a gate clock with the clock framework
-- * @dev: device that is registering this clock
-- * @name: name of this clock
-- * @parent_name: name of this clock's parent
-- * @flags: framework-specific flags for this clock
-- * @reg: register address to control gating of this clock
-- * @bit_idx: which bit in the register controls gating of this clock
-- * @clk_gate_flags: gate-specific flags for this clock
-- * @lock: shared register lock for this clock
-- */
--struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
--		const char *parent_name, unsigned long flags,
-+struct clk_hw *__clk_hw_register_gate(struct device *dev,
-+		struct device_node *np, const char *name,
-+		const char *parent_name, const struct clk_hw *parent_hw,
-+		const struct clk_parent_data *parent_data,
-+		unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock)
- {
- 	struct clk_gate *gate;
- 	struct clk_hw *hw;
- 	struct clk_init_data init;
--	int ret;
-+	int ret = -EINVAL;
- 
- 	if (clk_gate_flags & CLK_GATE_HIWORD_MASK) {
- 		if (bit_idx > 15) {
-@@ -160,7 +152,12 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- 	init.ops = &clk_gate_ops;
- 	init.flags = flags;
- 	init.parent_names = parent_name ? &parent_name : NULL;
--	init.num_parents = parent_name ? 1 : 0;
-+	init.parent_hws = parent_hw ? &parent_hw : NULL;
-+	init.parent_data = parent_data;
-+	if (parent_name || parent_hw || parent_data)
-+		init.num_parents = 1;
-+	else
-+		init.num_parents = 0;
- 
- 	/* struct clk_gate assignments */
- 	gate->reg = reg;
-@@ -170,15 +167,19 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- 	gate->hw.init = &init;
- 
- 	hw = &gate->hw;
--	ret = clk_hw_register(dev, hw);
-+	if (dev || !np)
-+		ret = clk_hw_register(dev, hw);
-+	else if (np)
-+		ret = of_clk_hw_register(np, hw);
- 	if (ret) {
- 		kfree(gate);
- 		hw = ERR_PTR(ret);
- 	}
- 
- 	return hw;
-+
- }
--EXPORT_SYMBOL_GPL(clk_hw_register_gate);
-+EXPORT_SYMBOL_GPL(__clk_hw_register_gate);
- 
- struct clk *clk_register_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 47dd0efce416..04576a7a0f37 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -475,14 +475,67 @@ struct clk_gate {
- #define CLK_GATE_BIG_ENDIAN		BIT(2)
- 
- extern const struct clk_ops clk_gate_ops;
--struct clk *clk_register_gate(struct device *dev, const char *name,
--		const char *parent_name, unsigned long flags,
-+struct clk_hw *__clk_hw_register_gate(struct device *dev,
-+		struct device_node *np, const char *name,
-+		const char *parent_name, const struct clk_hw *parent_hw,
-+		const struct clk_parent_data *parent_data,
-+		unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock);
--struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
-+struct clk *clk_register_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock);
-+/**
-+ * clk_hw_register_gate - register a gate clock with the clock framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_name: name of this clock's parent
-+ * @flags: framework-specific flags for this clock
-+ * @reg: register address to control gating of this clock
-+ * @bit_idx: which bit in the register controls gating of this clock
-+ * @clk_gate_flags: gate-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define clk_hw_register_gate(dev, name, parent_name, flags, reg, bit_idx,     \
-+			     clk_gate_flags, lock)			      \
-+	__clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL,      \
-+			       NULL, (flags), (reg), (bit_idx),		      \
-+			       (clk_gate_flags), (lock))
-+/**
-+ * clk_hw_register_gate_parent_hw - register a gate clock with the clock
-+ * framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_hw: pointer to parent clk
-+ * @flags: framework-specific flags for this clock
-+ * @reg: register address to control gating of this clock
-+ * @bit_idx: which bit in the register controls gating of this clock
-+ * @clk_gate_flags: gate-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define clk_hw_register_gate_parent_hw(dev, name, parent_name, flags, reg,    \
-+				       bit_idx, clk_gate_flags, lock)	      \
-+	__clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL,      \
-+			       NULL, (flags), (reg), (bit_idx),		      \
-+			       (clk_gate_flags), (lock))
-+/**
-+ * clk_hw_register_gate_parent_data - register a gate clock with the clock
-+ * framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_data: parent clk data
-+ * @flags: framework-specific flags for this clock
-+ * @reg: register address to control gating of this clock
-+ * @bit_idx: which bit in the register controls gating of this clock
-+ * @clk_gate_flags: gate-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define clk_hw_register_gate_parent_data(dev, name, parent_name, flags, reg,  \
-+				       bit_idx, clk_gate_flags, lock)	      \
-+	__clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL,      \
-+			       NULL, (flags), (reg), (bit_idx),		      \
-+			       (clk_gate_flags), (lock))
- void clk_unregister_gate(struct clk *clk);
- void clk_hw_unregister_gate(struct clk_hw *hw);
- int clk_gate_is_enabled(struct clk_hw *hw);
--- 
-Sent by a computer through tubes
-
+> ---
+>  drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
+> index 8189fe4..4728aa2 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
+> @@ -722,16 +722,17 @@ static int smu8_request_smu_load_fw(struct pp_hwmgr *hwmgr)
+>
+>  static int smu8_start_smu(struct pp_hwmgr *hwmgr)
+>  {
+> -       struct amdgpu_device *adev = hwmgr->adev;
+> +       struct amdgpu_device *adev;
+>
+>         uint32_t index = SMN_MP1_SRAM_START_ADDR +
+>                          SMU8_FIRMWARE_HEADER_LOCATION +
+>                          offsetof(struct SMU8_Firmware_Header, Version);
+>
+> -
+>         if (hwmgr == NULL || hwmgr->device == NULL)
+>                 return -EINVAL;
+>
+> +       adev = hwmgr->adev;
+> +
+>         cgs_write_register(hwmgr->device, mmMP0PUB_IND_INDEX, index);
+>         hwmgr->smu_version = cgs_read_register(hwmgr->device, mmMP0PUB_IND_DATA);
+>         pr_info("smu version %02d.%02d.%02d\n",
+> --
+> 2.6.2
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
