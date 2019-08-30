@@ -2,125 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93110A3D37
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AEBDA3D4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:57:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbfH3Rtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 13:49:40 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34452 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727246AbfH3Rtj (ORCPT
+        id S1728067AbfH3R53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 13:57:29 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:36118 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727883AbfH3R53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:49:39 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y135so4894113wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 10:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a9y5rfT6nLtA1XdTe+7F8mFNtN6YI5hHOXo6XezMGeM=;
-        b=MHOAWosS69n1MZDxUnmAZoQlakafemLqnOX8xOYY8UiBq/bvmqmNbOLhBAEZGOx/H3
-         EppFwORAEbQmjiKohgFOV1fCDNDfgXbB/5fpFe0bcwhibf+L5BgSkJ4IsPQsKiDRwwO5
-         ORSa/SlDl7oy4nJLHwtYjPeFduAKi9JbeFOoM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a9y5rfT6nLtA1XdTe+7F8mFNtN6YI5hHOXo6XezMGeM=;
-        b=rIz4TjAn0HkaBqQ8eCKxIyflgjAd7+PC9rP1JvMts6gHiRuEASfHiuXSMuBOOxo24g
-         lQFKbIGjGQqM9CDFP+fcAle2SYSblSVlbwIJVkG/kIKwYsiZIoB0IEg5w/oDTIV0VWBb
-         InjSUj6iKtgmzqtC7k9OELQUbgGcrxDT768Ilj9eEtpXdaoA+JN9JeUp78xIaQPns9AE
-         1F3m7RhI+PHpzAZYkZpewQ9d4qtPHozaj/PYO5nrki+VckeesJg1wgOjNrOOtRvhgVH8
-         P/S+M9Az7C74yj77OuWuWEexBgwCRMo5f+U3AIQ21tGnGmfCc/5BTmRAs/O4jiqrtGX4
-         fS8Q==
-X-Gm-Message-State: APjAAAVdg6byUSNapT1f5lX5MILa1B/6tI36aHUyEEHI//1AD3wn7cVT
-        mypyFDeg9KXjp41RbmXH+tpqNa9hk4p6+Z5zvgwJ9g==
-X-Google-Smtp-Source: APXvYqys1bqBF6qilHbFw8ePP8Oz0kqMCC/OyqNSyE71nRg4AfWBpT/ltc4wsYnBZWUacn7ta7ZaDkRg7iZTRYkT488=
-X-Received: by 2002:a1c:f702:: with SMTP id v2mr20309772wmh.114.1567187377255;
- Fri, 30 Aug 2019 10:49:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190829212417.257397-1-davidriley@chromium.org>
- <20190830060857.tzrzgoi2hrmchdi5@sirius.home.kraxel.org> <CAASgrz2v0DYb_5A3MnaWFM4Csx1DKkZe546v7DG7R+UyLOA8og@mail.gmail.com>
- <20190830111605.twzssycagmjhfa45@sirius.home.kraxel.org>
-In-Reply-To: <20190830111605.twzssycagmjhfa45@sirius.home.kraxel.org>
-From:   David Riley <davidriley@chromium.org>
-Date:   Fri, 30 Aug 2019 10:49:25 -0700
-Message-ID: <CAASgrz0SXc2bEXq4xPCry_oHMXNbau36Q9i20anbFq1X0FsoMQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/virtio: Use vmalloc for command buffer allocations.
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Gurchetan Singh <gurchetansingh@chromium.org>,
-        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@chromium.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 30 Aug 2019 13:57:29 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UHt6ZN088774;
+        Fri, 30 Aug 2019 17:55:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=P+esqZlZhoTixDu4MiNwQEcjlm78p9B1JBsdoAW4q5o=;
+ b=VfcsN85j7DI3n75Xw9Tyvq/bmGAy11lABRO/Ept4clOTo0z6gWyvTG1XYDjOfCE6c5J6
+ VW4zSLBXcqBATNEdEwbysp7stGE9RTmPckglJh8BDMRnwvFMjqV042pvNirHGAv3dF8i
+ xh4BjD+g30aG9HNzQjbbOq0/uhOa2sOfWVjatRpndeypdZe/wov9JofUJCd2aDD0B1zN
+ 3tzs5XZoZVWXNT/4bVJlePjYazZeJ/T15iUcyZHltjybXhA+GTOe0u6XGIyaXilgbKmS
+ Ae7OQxOslK7gaLJYMOQ9exO+cU+suShnHQenbKnObMpWiIFGie0LKfuBbliSwrXo/sXx Ig== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2uq8fsg20u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 17:55:16 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7UHrd3H017963;
+        Fri, 30 Aug 2019 17:54:35 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3030.oracle.com with ESMTP id 2upxabkvrj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 17:54:35 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7UHsVdk018950;
+        Fri, 30 Aug 2019 17:54:32 GMT
+Received: from smazumda-Precision-T1600.us.oracle.com (/10.132.91.113)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 30 Aug 2019 10:54:31 -0700
+From:   subhra mazumdar <subhra.mazumdar@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        steven.sistare@oracle.com, dhaval.giani@oracle.com,
+        daniel.lezcano@linaro.org, vincent.guittot@linaro.org,
+        viresh.kumar@linaro.org, tim.c.chen@linux.intel.com,
+        mgorman@techsingularity.net, parth@linux.ibm.com,
+        patrick.bellasi@arm.com
+Subject: [RFC PATCH 0/9] Task latency-nice
+Date:   Fri, 30 Aug 2019 10:49:35 -0700
+Message-Id: <20190830174944.21741-1-subhra.mazumdar@oracle.com>
+X-Mailer: git-send-email 2.9.3
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9365 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=543
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908300174
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9365 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=595 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908300174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gerd,
+Introduce new per task property latency-nice for controlling scalability
+in scheduler idle CPU search path. Valid latency-nice values are from 1 to
+100 indicating 1% to 100% search of the LLC domain in select_idle_cpu. New
+CPU cgroup file cpu.latency-nice is added as an interface to set and get.
+All tasks in the same cgroup share the same latency-nice value. Using a
+lower latency-nice value can help latency intolerant tasks e.g very short
+running OLTP threads where full LLC search cost can be significant compared
+to run time of the threads. The default latency-nice value is 5.
 
-On Fri, Aug 30, 2019 at 4:16 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
->
->   Hi,
->
-> > > > -     kfree(vbuf->data_buf);
-> > > > +     kvfree(vbuf->data_buf);
-> > >
-> > > if (is_vmalloc_addr(vbuf->data_buf)) ...
-> > >
-> > > needed here I gues?
-> > >
-> >
-> > kvfree() handles vmalloc/kmalloc/kvmalloc internally by doing that check.
->
-> Ok.
->
-> > - videobuf_vmalloc_to_sg in drivers/media/v4l2-core/videobuf-dma-sg.c,
-> > assumes contiguous array of scatterlist and that the buffer being converted
-> > is page aligned
->
-> Well, vmalloc memory _is_ page aligned.
+In addition to latency-nice, it also adds a new sched feature SIS_CORE to
+be able to disable idle core search altogether which is costly and hurts
+more than it helps in short running workloads.
 
-True, but this function gets called for all potential enqueuings (eg
-resource_create_3d, resource_attach_backing) and I was concerned that
-some other usage in the future might not have that guarantee.  But if
-that's overly being paranoid, I'm willing to backtrack on that.
+Finally it also introduces a new per-cpu variable next_cpu to track
+the limit of search so that every time search starts from where it ended.
+This rotating search window over cpus in LLC domain ensures that idle
+cpus are eventually found in case of high load.
 
-> sg_alloc_table_from_pages() does alot of what you need, you just need a
-> small loop around vmalloc_to_page() create a struct page array
-> beforehand.
+Uperf pingpong on 2 socket, 44 core and 88 threads Intel x86 machine with
+message size = 8k (higher is better):
+threads baseline   latency-nice=5,SIS_CORE     latency-nice=5,NO_SIS_CORE 
+8       64.66      64.38 (-0.43%)              64.79 (0.2%)
+16      123.34     122.88 (-0.37%)             125.87 (2.05%)
+32      215.18     215.55 (0.17%)              247.77 (15.15%)
+48      278.56     321.6 (15.45%)              321.2 (15.3%)
+64      259.99     319.45 (22.87%)             333.95 (28.44%)
+128     431.1      437.69 (1.53%)              431.09 (0%)
 
-That feels like an extra allocation when under memory pressure and
-more work, to not gain much -- there still needs to be a function that
-iterates through all the pages.  But I don't feel super strongly about
-it and can change it if you think that it will be less maintenance
-overhead.
+subhra mazumdar (9):
+  sched,cgroup: Add interface for latency-nice
+  sched: add search limit as per latency-nice
+  sched: add sched feature to disable idle core search
+  sched: SIS_CORE to disable idle core search
+  sched: Define macro for number of CPUs in core
+  x86/smpboot: Optimize cpumask_weight_sibling macro for x86
+  sched: search SMT before LLC domain
+  sched: introduce per-cpu var next_cpu to track search limit
+  sched: rotate the cpu search window for better spread
 
-> Completely different approach: use get_user_pages() and don't copy the
-> execbuffer at all.
+ arch/x86/include/asm/smp.h      |  1 +
+ arch/x86/include/asm/topology.h |  1 +
+ arch/x86/kernel/smpboot.c       | 17 ++++++++++++++++-
+ include/linux/sched.h           |  1 +
+ include/linux/topology.h        |  4 ++++
+ kernel/sched/core.c             | 42 +++++++++++++++++++++++++++++++++++++++++
+ kernel/sched/fair.c             | 34 +++++++++++++++++++++------------
+ kernel/sched/features.h         |  1 +
+ kernel/sched/sched.h            |  9 +++++++++
+ 9 files changed, 97 insertions(+), 13 deletions(-)
 
-This one I'd rather not do unless we can show that the copy is
-actually a problem.  As it stands I expect this to be a fallback
-instead of the regular case, and if it's not then the VMs need to
-revisit how long the control queue size is.  Right now most
-execbuffers end up being copied into a single contiguous buffer which
-results in 3 descriptors of the virtio queue.  If vmalloc ends up
-being used (which is only a fallback because vmemdup_user tries
-kmalloc first still), then there'll be 66 descriptors for a 256KB
-buffer.   I think that's fine for exceptional cases, but not ideal if
-it was commonplace.
+-- 
+2.9.3
 
-Chia-I suggested that we could have a flag for the ioctl execbuffer
-indicating that the buffer is BO to solve that, but again I'd prefer
-to see that it's actually a problem.
-
-I'll also be moving the sg table construction out of the critical
-section and properly accounting for the required number of descriptors
-before entering it in response to his comments.
-
-Thanks,
-Dave
