@@ -2,59 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9BA7A3E73
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 21:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E413BA3E78
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 21:36:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbfH3Tch (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 15:32:37 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:40514 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728180AbfH3Tcf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 15:32:35 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 79143154F93C5;
-        Fri, 30 Aug 2019 12:32:34 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 12:32:31 -0700 (PDT)
-Message-Id: <20190830.123231.792067088434189707.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     inaky.perez-gonzalez@intel.com, linux-wimax@intel.com,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2] wimax/i2400m: remove debug containing bogus
- calculation of index
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190830090711.15300-1-colin.king@canonical.com>
-References: <20190830090711.15300-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Aug 2019 12:32:34 -0700 (PDT)
+        id S1728160AbfH3TgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 15:36:05 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:60330 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727888AbfH3TgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 15:36:05 -0400
+Received: from zn.tnic (p200300EC2F0AAA0065BEA12EFE5D4E65.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:aa00:65be:a12e:fe5d:4e65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 55C261EC0819;
+        Fri, 30 Aug 2019 21:36:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1567193763;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=FTGKhVuj3U6v9FsAz7Xts6Aci6B1WqfD2IhDMm4Gyy4=;
+        b=ggwKB1p6KENXFxHZSrgTtJiNNhKCXZMkBEY4L1zRwZ22OYNJJwG+V5PBzwgtRUr3rZ/Ln5
+        KFoDXfx3ZYSpj6CbIJeCFDRz0DEvYtpqQdz90bgHQ2q9VNy5vNB/hnLSB7tQxgKSR/5oS2
+        isbzRBLmzDN+PqDVpx+4VFmBBF6fn+8=
+Date:   Fri, 30 Aug 2019 21:35:57 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Philip Li <philip.li@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        kbuild test robot <lkp@intel.com>,
+        linux-input@vger.kernel.org,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        x86-ml <x86@kernel.org>, linux-tip-commits@vger.kernel.org,
+        pv-drivers@vmware.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        tip-bot2 for Thomas Hellstrom <tip-bot2@linutronix.de>,
+        Doug Covelli <dcovelli@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        kbuild-all@01.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [kbuild-all] [tip: x86/vmware] input/vmmouse: Update the
+ backdoor call with support for new instructions
+Message-ID: <20190830193557.GF30413@zn.tnic>
+References: <201908292325.aLXyyzEx%lkp@intel.com>
+ <20190829163353.GC2132@zn.tnic>
+ <20190830010349.GD857@intel.com>
+ <alpine.DEB.2.21.1908300802390.1938@nanos.tec.linutronix.de>
+ <20190830062053.GA2598@intel.com>
+ <20190830080650.GA30413@zn.tnic>
+ <20190830143645.GA4784@intel.com>
+ <20190830144628.GC30413@zn.tnic>
+ <20190830150002.GA6931@intel.com>
+ <20190830150856.GB6931@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190830150856.GB6931@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Fri, 30 Aug 2019 10:07:11 +0100
+On Fri, Aug 30, 2019 at 11:08:56PM +0800, Philip Li wrote:
+> hi Boris, for the build status notification, we currently send to below
+> address, is it still valid? If not, can you suggest one for us?
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The subtraction of the two pointers is automatically scaled by the
-> size of the size of the object the pointers point to, so the division
-> by sizeof(*i2400m->barker) is incorrect.  This has been broken since
-> day one of the driver and is only debug, so remove the debug completely.
-> 
-> Also move && in condition to clean up a checkpatch warning.
-> 
-> Addresses-Coverity: ("Extra sizeof expression")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: completely remove debug, clean up checkpatch warning, change subject line
+Sure, here's an update patch ontop of your master branch:
 
-Applied to net-next, thanks Colin.
+---
+From: Borislav Petkov <bp@suse.de>
+Date: Fri, 30 Aug 2019 21:33:29 +0200
+Subject: [PATCH] repo/linux/tip: Update tip tree contact information
+
+Replace hpa with Borislav and change contact mail address.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+---
+ repo/linux/tip | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/repo/linux/tip b/repo/linux/tip
+index 4fc5d88176fd..96a7dec66f97 100644
+--- a/repo/linux/tip
++++ b/repo/linux/tip
+@@ -2,11 +2,11 @@ url: https://kernel.googlesource.com/pub/scm/linux/kernel/git/tip/tip.git
+ integration_testing_branches: auto-latest
+ mail_cc:
+ - linux-kernel@vger.kernel.org
+-- tipbuild@zytor.com
++- x86@kernel.org
+ owner:
+ - Ingo Molnar <mingo@kernel.org>
+-- H. Peter Anvin <hpa@zytor.com>
+ - Thomas Gleixner <tglx@linutronix.de>
++- Borislav Petkov <bp@suse.de>
+ subsystems:
+ - x86
+ - fpu
+@@ -16,4 +16,4 @@ subsystems:
+ - locking
+ blacklist_branch: auto-.*|tmp-.*|base-.*|test.*|.*-for-linus
+ notify_build_success_branch: .*
+-build_success_mail_to: tip build status <tipbuild@zytor.com>
++build_success_mail_to: x86-ml <x86@kernel.org>
+-- 
+2.21.0
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
