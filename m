@@ -2,86 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24D25A40A0
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66FA1A40A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:46:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbfH3WjR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 18:39:17 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:37356 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728143AbfH3WjR (ORCPT
+        id S1728258AbfH3WqS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 18:46:18 -0400
+Received: from smtprelay0153.hostedemail.com ([216.40.44.153]:60114 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728143AbfH3WqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 18:39:17 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y9so5503729pfl.4
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 15:39:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=lYEdR7OIDmrYXbk4LsKiDmBX9nCzp/LrQYMbm64bufM=;
-        b=WF1KfJ49hDOc8AAWwIr2x8c8W1VoJ45wRR/+jocFol+ez9T/GPhK3vHYwWOB6hCPc4
-         oCrSjcO6b7imhN76Z92f2auVNFr+qC+uiaVxRz6jZdDq7Yuv4x/CWxbKx5QOl5O/KqLD
-         r4EZEEZnGDVEF4gERFq+22WUxFnZDrTwXLYhi01PUVF6R6QeNv6v1R9US56yDI7LcMBc
-         COf2IuQf0M3TJwCkBL4MJZ9EzcQzL5e6NiVAQ3MZif20UCy6hPgnmsYZJTKQvJ1plTm+
-         aIQsNt/o/XfCazaCkOe/VQiRXB8PM6EHVBAfYXh+h6zy+6RN+2nT+yrn443kZXbvLaaD
-         pG+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=lYEdR7OIDmrYXbk4LsKiDmBX9nCzp/LrQYMbm64bufM=;
-        b=nBqI41WJa///wc2HSqzgz/2mA2R1vwZvRgCDJtHBCjPtPoGiUG9Zvmgn6ADvozsenV
-         goWAl0tewaPfNLewEO0Zr5VmWiwrvdX5WWZCH9fXNJCykS2O1Dfyn3h9ZLOKaIC3248j
-         rg1eDYbxISJxtkdk7K53xZqiYTem6wp+H/WP92oTb6aSDPjDVP3q0iJX1d+tUjhJN0NL
-         UtFdsDYNouNpZ6B7bNGx3z97QbA9E40k3xRpk/DPI4Af+KWeBHq9J4eotsocHQTyuwzO
-         Y3Rl3Z7UrtzWOL8ZN76Fp24DkljAw7nOPxeZNSgU+yyd2cA0r/kf16I2+fIWTVCcqhPt
-         Gk0w==
-X-Gm-Message-State: APjAAAUZZQHAtaGB10XFYUiWoJ1EVSqDlP2OkLl+ZayIexdz159iDXQq
-        8mP/rLiIRajY0PyDE4OTs3pXlw==
-X-Google-Smtp-Source: APXvYqzbISoGZhwQ49KJKWsevd9L4dZaH5WH0hKG0FbEsF/ss34J7wAO/LJhXWAZ49+xbJGNEvONPg==
-X-Received: by 2002:a17:90a:b108:: with SMTP id z8mr870586pjq.108.1567204756814;
-        Fri, 30 Aug 2019 15:39:16 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id m9sm10956448pgr.24.2019.08.30.15.39.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 15:39:16 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 15:38:54 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        oss-drivers@netronome.com, Divya Indi <divya.indi@oracle.com>
-Subject: Re: [PATCH 0/3] tracing: fix minor build warnings
-Message-ID: <20190830153854.7b524cf8@cakuba.netronome.com>
-In-Reply-To: <20190830180150.687f3ec8@gandalf.local.home>
-References: <20190828052549.2472-1-jakub.kicinski@netronome.com>
-        <20190830180150.687f3ec8@gandalf.local.home>
-Organization: Netronome Systems, Ltd.
+        Fri, 30 Aug 2019 18:46:18 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 30292837F24A;
+        Fri, 30 Aug 2019 22:46:17 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::,RULES_HIT:41:305:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1539:1593:1594:1711:1730:1747:1777:1792:2393:2559:2562:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3873:3874:4321:5007:6742:7576:7807:8603:10004:10400:10848:11232:11658:11914:12297:12663:12740:12760:12895:13069:13311:13357:13439:14181:14659:14721:21080:21094:21627:21796:30036:30054:30091,0,RBL:47.151.137.30:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:24,LUA_SUMMARY:none
+X-HE-Tag: cream33_197a4f8aa505a
+X-Filterd-Recvd-Size: 2154
+Received: from XPS-9350.home (unknown [47.151.137.30])
+        (Authenticated sender: joe@perches.com)
+        by omf14.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 30 Aug 2019 22:46:14 +0000 (UTC)
+Message-ID: <ca01d8c4823c63db52fc0f18d62334aeb5634a50.camel@perches.com>
+Subject: Re: [PATCH v2] kunit: fix failure to build without printk
+From:   Joe Perches <joe@perches.com>
+To:     Tim.Bird@sony.com, brendanhiggins@google.com
+Cc:     shuah@kernel.org, sergey.senozhatsky.work@gmail.com,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, frowand.list@gmail.com,
+        sboyd@kernel.org, pmladek@suse.com, sergey.senozhatsky@gmail.com,
+        rostedt@goodmis.org, rdunlap@infradead.org, sfr@canb.auug.org.au
+Date:   Fri, 30 Aug 2019 15:46:13 -0700
+In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF977A8392@USCULXMSG01.am.sony.com>
+References: <20190828093143.163302-1-brendanhiggins@google.com>
+         <20190828094929.GA14038@jagdpanzerIV>
+         <8b2d63bf-56cd-e8f5-e8ee-2891c2c1be8f@kernel.org>
+         <f2d5b474411b2940d62198490f06e77890fbdb32.camel@perches.com>
+         <20190830183821.GA30306@google.com>
+         <bc688b00b2995e4b11229c3d4d90f532e00792c7.camel@perches.com>
+         <ECADFF3FD767C149AD96A924E7EA6EAF977A8392@USCULXMSG01.am.sony.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Aug 2019 18:01:50 -0400, Steven Rostedt wrote:
-> On Tue, 27 Aug 2019 22:25:46 -0700
-> Jakub Kicinski <jakub.kicinski@netronome.com> wrote:
-> 
-> > Hi!
-> > 
-> > trace.o gets rebuild on every make run when tracing is enabled,
-> > which makes all warnings particularly noisy. This patchset fixes
-> > some low-hanging fruit on W=1 C=1 builds.
-> > 
-> > Jakub Kicinski (3):
-> >   tracing: correct kdoc formats  
-> 
-> I took the first one, but the two below, I wont take. Those changes
-> were added in preparation of the kernel access to tracing code.
-> 
-> See:
-> 
->   http://lkml.kernel.org/r/1565805327-579-1-git-send-email-divya.indi@oracle.com
+On Fri, 2019-08-30 at 21:58 +0000, Tim.Bird@sony.com wrote:
+> > From: Joe Perches
+[]
+> IMHO %pV should be avoided if possible.  Just because people are
+> doing it doesn't mean it should be used when it is not necessary.
 
-Sounds good, thanks!
+Well, as the guy that created %pV, I of course
+have a different opinion.
+
+> >  then wouldn't it be easier to pass in the
+> > > kernel level as a separate parameter and then strip off all printk
+> > > headers like this:
+> > 
+> > Depends on whether or not you care for overall
+> > object size.  Consolidated formats with the
+> > embedded KERN_<LEVEL> like suggested are smaller
+> > overall object size.
+> 
+> This is an argument I can agree with.  I'm generally in favor of
+> things that lessen kernel size creep. :-)
+
+As am I.
+
