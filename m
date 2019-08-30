@@ -2,110 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CAC9A3A01
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:10:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A127A3A0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:12:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbfH3PKG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:10:06 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46194 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728463AbfH3PKA (ORCPT
+        id S1727993AbfH3PMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:12:02 -0400
+Received: from mail-wr1-f45.google.com ([209.85.221.45]:36478 "EHLO
+        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfH3PMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:10:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h7so5985713wrt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:09:59 -0700 (PDT)
+        Fri, 30 Aug 2019 11:12:01 -0400
+Received: by mail-wr1-f45.google.com with SMTP id y19so7355335wrd.3;
+        Fri, 30 Aug 2019 08:12:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IX37xBGf5R5k6PbsX8zWqg1WxUYZJX8p+B51wVl4L5c=;
-        b=q36KFh9FWXeiY7g0nLMvI/C8mlM9r6+D7Pq1xIxoB4DYMyN3UJNWG1qQbbXyBj90w4
-         j6TBYQEcVNvNYbRKrHUydZ+Ftz1xUB9yoRW5NvDlliv5GoD90h/oOXxzgBfKKZdVV883
-         c9xOUk2sVtI+M8K6+4nUA+dfyr/Bci3jUglrB5CpaGLw0BlCH8bya8kEOxGxQsSlJOEF
-         QUCxobPT0A6LguDpYz0FFZeqCw9F6aU5Hxav/NPi5Ci1Y6XwUjL6h9gfkIZeorZQkgx0
-         Vb/an/BD/1au+NHGmQUdTSq87ZrC4DihinhaWnj9lZRSdTN5sTOXfg9+KIBqpxinXbV7
-         xVzg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=76/UUed01Y3Y8i/aDowNMkQyy3LjmrVlq62x46O+5HI=;
+        b=B0Mtxovh7YJ1xZ64U7SiGekZ9o7RHn1C7kzg4weTyPz+1pkpuPjKUVgY8eY5lVYl9K
+         1S2+Z8UC8ZqTjtRFrfs9dnjTkEHQ/jZ13wgyzCCDCd7LBw+leUHYVLUPX5nTew6aZedz
+         VwQWtr3NeciSNUMC69YBebngNsOpYL2Ha3bz8IYfAB91TUQyd/E5LC20BK8ghQZ82IGO
+         x5HdFpGbpa+yvnKS5TBBj1ed6fr++5lxlFQ7N+0nnkILxUuQL4soAXP0u2WhLJHsuLi3
+         C7Fv/QuxM3LVzCFX/s3ankIJGLWRkQZo/APO6QBQezDPGzVoCdm1yO+t9ZlkOkxzAo0o
+         +M2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IX37xBGf5R5k6PbsX8zWqg1WxUYZJX8p+B51wVl4L5c=;
-        b=DC18jusB70sTXd6Xg7TLYmUtYc18UDJKmdcpM2dRFKh+l4/wPQ8Umztpk6eQs2FYQC
-         3Pel7EIPk9iARvr9rtj7ab5vN4R0eDjHOSK+sb1fDT8J84iUVVKjVVVmJTpNlYszXKYl
-         0PrTACYT5cP00S47+zh99ZeyOREAf5wkndJ4VaGaU2vPwlL1GwNoz4dy5S5kVD3q0G++
-         QruJOnOVMfBLF+IW7e2z2QlEeOme9L249B0Mt7d5Y8RpSCZDnQWlj/yM6Uq0duJhifHf
-         IaJUTLDkADKhOcMWgx9pAHqpp3+A8ElxQ48x38hOqHldSy8w6WEv1AsbEMH/RIUlpfIS
-         aAMw==
-X-Gm-Message-State: APjAAAUUVlKQln6JHVk3LNpeZU64jST7TYDXU143yx0SEh1hVi4xv+wZ
-        icX2TKBFYW3kZ4GwAb3nOQnAWXs/1Y1RffxU58s=
-X-Google-Smtp-Source: APXvYqzZWxQhU7m8QEFCBHKWxT0rNy/0O2XDxDnWFdaE5Ry3PnbMsh2r9rE7CU+9Q7ik5LA8xZXXt54YpijGAL/MkYQ=
-X-Received: by 2002:adf:8004:: with SMTP id 4mr18038118wrk.341.1567177798350;
- Fri, 30 Aug 2019 08:09:58 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=76/UUed01Y3Y8i/aDowNMkQyy3LjmrVlq62x46O+5HI=;
+        b=Rw53OwmwE+GNKDpPIDqx1rrQIOgBzt01qh7RF4LMHj6gzxWbipFZCNcd1EWUDbhmLx
+         pp56RtkR39V4NXp6KcESrmsAhyCxTfrHjw8l3hdeEccsZ8jOra5WiydEMAWjh3c6EQAG
+         oSFgk2NyLlogQBI4/qMlADFtGbatQsEC4CLdWW80JRuw/rso1mIIDqDpRjpljhsmVB9S
+         6KlVrr2+HuMaxyMQj4t9QRcBPKSnZoZbZhevyn5ykDTVQZRGjA43k2Xl7l1u8dJFU6Yl
+         sUU0iSV+pStkj6PEFCmKzPnxa8OsCQq7r38FE9jlwb06yI7x9Nux+QMSfBdgshsy3aY3
+         zhMw==
+X-Gm-Message-State: APjAAAVIvahWxmDlOVb5IISZAEx5GXxO/b0dfxV2b6iz2+wqzzq/fP3P
+        0GSRhtCfh8YrVtzy+dcyPEdsZ60I
+X-Google-Smtp-Source: APXvYqzKBXu6wZXLHUG8+KW0xkXVfuQI1179U3Ts3qO5WmEIh6+JXMocNScNDvnxocLwtNECOiHZ4A==
+X-Received: by 2002:adf:e846:: with SMTP id d6mr19068750wrn.263.1567177919401;
+        Fri, 30 Aug 2019 08:11:59 -0700 (PDT)
+Received: from [192.168.8.147] (95.168.185.81.rev.sfr.net. [81.185.168.95])
+        by smtp.gmail.com with ESMTPSA id d69sm5515728wmd.4.2019.08.30.08.11.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2019 08:11:58 -0700 (PDT)
+Subject: Re: [PATCH] net/skbuff: silence warnings under memory pressure
+To:     Qian Cai <cai@lca.pw>, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1567177025-11016-1-git-send-email-cai@lca.pw>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <6109dab4-4061-8fee-96ac-320adf94e130@gmail.com>
+Date:   Fri, 30 Aug 2019 17:11:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190830080704.GA29599@LGEARND20B15>
-In-Reply-To: <20190830080704.GA29599@LGEARND20B15>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 30 Aug 2019 11:09:43 -0400
-Message-ID: <CADnq5_PZ8cuQBVXAAH8mefHbnbK9M4QexbTN_9X-yyqdeaLcbw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Move null pointer dereference check
-To:     Austin Kim <austindh.kim@gmail.com>
-Cc:     Rex Zhu <rex.zhu@amd.com>, "Quan, Evan" <evan.quan@amd.com>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1567177025-11016-1-git-send-email-cai@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 8:43 AM Austin Kim <austindh.kim@gmail.com> wrote:
->
-> Null pointer dereference check should have been checked,
-> ahead of below routine.
->         struct amdgpu_device *adev = hwmgr->adev;
->
-> With this commit, it could avoid potential NULL dereference.
->
-> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
 
-Applied.  thanks!
 
-Alex
+On 8/30/19 4:57 PM, Qian Cai wrote:
+> When running heavy memory pressure workloads, the system is throwing
+> endless warnings below due to the allocation could fail from
+> __build_skb(), and the volume of this call could be huge which may
+> generate a lot of serial console output and cosumes all CPUs as
+> warn_alloc() could be expensive by calling dump_stack() and then
+> show_mem().
+> 
+> Fix it by silencing the warning in this call site. Also, it seems
+> unnecessary to even print a warning at all if the allocation failed in
+> __build_skb(), as it may just retransmit the packet and retry.
+> 
 
-> ---
->  drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
-> index 8189fe4..4728aa2 100644
-> --- a/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/smu8_smumgr.c
-> @@ -722,16 +722,17 @@ static int smu8_request_smu_load_fw(struct pp_hwmgr *hwmgr)
->
->  static int smu8_start_smu(struct pp_hwmgr *hwmgr)
->  {
-> -       struct amdgpu_device *adev = hwmgr->adev;
-> +       struct amdgpu_device *adev;
->
->         uint32_t index = SMN_MP1_SRAM_START_ADDR +
->                          SMU8_FIRMWARE_HEADER_LOCATION +
->                          offsetof(struct SMU8_Firmware_Header, Version);
->
-> -
->         if (hwmgr == NULL || hwmgr->device == NULL)
->                 return -EINVAL;
->
-> +       adev = hwmgr->adev;
-> +
->         cgs_write_register(hwmgr->device, mmMP0PUB_IND_INDEX, index);
->         hwmgr->smu_version = cgs_read_register(hwmgr->device, mmMP0PUB_IND_DATA);
->         pr_info("smu version %02d.%02d.%02d\n",
-> --
-> 2.6.2
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Same patches are showing up there and there from time to time.
+
+Why is this particular spot interesting, against all others not adding __GFP_NOWARN ?
+
+Are we going to have hundred of patches adding __GFP_NOWARN at various points,
+or should we get something generic to not flood the syslog in case of memory pressure ?
+
