@@ -2,110 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC10A2D0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 04:59:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10E98A2D12
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 05:01:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbfH3C7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 22:59:23 -0400
-Received: from pb-smtp20.pobox.com ([173.228.157.52]:63313 "EHLO
-        pb-smtp20.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727213AbfH3C7X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 22:59:23 -0400
-Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 65F156F6EF;
-        Thu, 29 Aug 2019 22:59:21 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=date:from:to
-        :cc:subject:in-reply-to:message-id:references:mime-version
-        :content-type; s=sasl; bh=l4QL4FpUZNiWb9/l08DglR4Jbac=; b=IYBBHe
-        Dkdt7TJuCtYVXxSj0PSFwLx7PhjJoDATWE8yxJicVrs9mPK4JC4Pk4PwdFutL853
-        Q6D1J0ZQHbeHi/Hq5rqE5/q/XrJ/KsEDt7UeIfyo/504b/hlfuShzaL8uBM33TZR
-        8Wieu44bKbnT2kQ53nzJFp0n68xm1irFqgcBA=
-Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp20.pobox.com (Postfix) with ESMTP id 5CED46F6EE;
-        Thu, 29 Aug 2019 22:59:21 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=fluxnic.net;
- h=date:from:to:cc:subject:in-reply-to:message-id:references:mime-version:content-type; s=2016-12.pbsmtp; bh=056AWXTPXdma/lTN2ricI7xgmYosmePSD2y0+f9HBTQ=; b=Yvao/Qm+JO9ZUzBs5wXHtktXnKX1AxMDNu+h8mOqR4iYYYran1R55i0UIQ7QRcO1JVnl+yIp/lqlrOIp86MsZz6VZwmiShwg+sO0iNx9kq2PpEvE6e5FmrzeKc0axRENGgrJIXHPDjFztRTQTM+rqxBfMW40kndkf8FuYHbtyu4=
-Received: from yoda.home (unknown [24.203.50.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 4318B6F6E4;
-        Thu, 29 Aug 2019 22:59:18 -0400 (EDT)
-        (envelope-from nico@fluxnic.net)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTPSA id 6BFEA2DA05E1;
-        Thu, 29 Aug 2019 22:59:16 -0400 (EDT)
-Date:   Thu, 29 Aug 2019 22:59:16 -0400 (EDT)
-From:   Nicolas Pitre <nico@fluxnic.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] __div64_const32(): improve the generic C version
-In-Reply-To: <nycvar.YSQ.7.76.1908202301490.19480@knanqh.ubzr>
-Message-ID: <nycvar.YSQ.7.76.1908292256290.3091@knanqh.ubzr>
-References: <nycvar.YSQ.7.76.1908202301490.19480@knanqh.ubzr>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        id S1727814AbfH3DBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 23:01:52 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35098 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727270AbfH3DBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 23:01:50 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C5D7AB25534BC45C9B96;
+        Fri, 30 Aug 2019 11:01:45 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 30 Aug
+ 2019 11:01:38 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2 1/7] erofs: on-disk format should have explicitly assigned numbers
+Date:   Fri, 30 Aug 2019 11:00:34 +0800
+Message-ID: <20190830030040.10599-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Pobox-Relay-ID: 287F9F62-CAD2-11E9-B01E-B0405B776F7B-78420484!pb-smtp20.pobox.com
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As Christoph claimed [1], on-disk format should have
+explicitly assigned numbers. I have to change it.
 
-Ping.
+[1] https://lore.kernel.org/r/20190829095954.GB20598@infradead.org/
+Reported-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+v2: no change, just resend in case of dependency problem;
 
-On Tue, 20 Aug 2019, Nicolas Pitre wrote:
+I have to say one word "all patches are trivial".
 
-> Let's rework that code to avoid large immediate values and convert some
-> 64-bit variables to 32-bit ones when possible. This allows gcc to
-> produce smaller and better code. This even produces optimal code on
-> RISC-V.
-> 
-> Signed-off-by: Nicolas Pitre <nico@fluxnic.net>
-> 
-> diff --git a/include/asm-generic/div64.h b/include/asm-generic/div64.h
-> index dc9726fdac..33358245b4 100644
-> --- a/include/asm-generic/div64.h
-> +++ b/include/asm-generic/div64.h
-> @@ -178,7 +178,8 @@ static inline uint64_t __arch_xprod_64(const uint64_t m, uint64_t n, bool bias)
->  	uint32_t m_hi = m >> 32;
->  	uint32_t n_lo = n;
->  	uint32_t n_hi = n >> 32;
-> -	uint64_t res, tmp;
-> +	uint64_t res;
-> +	uint32_t res_lo, res_hi, tmp;
->  
->  	if (!bias) {
->  		res = ((uint64_t)m_lo * n_lo) >> 32;
-> @@ -187,8 +188,9 @@ static inline uint64_t __arch_xprod_64(const uint64_t m, uint64_t n, bool bias)
->  		res = (m + (uint64_t)m_lo * n_lo) >> 32;
->  	} else {
->  		res = m + (uint64_t)m_lo * n_lo;
-> -		tmp = (res < m) ? (1ULL << 32) : 0;
-> -		res = (res >> 32) + tmp;
-> +		res_lo = res >> 32;
-> +		res_hi = (res_lo < m_hi);
-> +		res = res_lo | ((uint64_t)res_hi << 32);
->  	}
->  
->  	if (!(m & ((1ULL << 63) | (1ULL << 31)))) {
-> @@ -197,10 +199,12 @@ static inline uint64_t __arch_xprod_64(const uint64_t m, uint64_t n, bool bias)
->  		res += (uint64_t)m_hi * n_lo;
->  		res >>= 32;
->  	} else {
-> -		tmp = res += (uint64_t)m_lo * n_hi;
-> +		res += (uint64_t)m_lo * n_hi;
-> +		tmp = res >> 32;
->  		res += (uint64_t)m_hi * n_lo;
-> -		tmp = (res < tmp) ? (1ULL << 32) : 0;
-> -		res = (res >> 32) + tmp;
-> +		res_lo = res >> 32;
-> +		res_hi = (res_lo < tmp);
-> +		res = res_lo | ((uint64_t)res_hi << 32);
->  	}
->  
->  	res += (uint64_t)m_hi * n_hi;
-> 
+ fs/erofs/erofs_fs.h | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
+index afa7d45ca958..2447ad4d0920 100644
+--- a/fs/erofs/erofs_fs.h
++++ b/fs/erofs/erofs_fs.h
+@@ -52,10 +52,10 @@ struct erofs_super_block {
+  * 4~7 - reserved
+  */
+ enum {
+-	EROFS_INODE_FLAT_PLAIN,
+-	EROFS_INODE_FLAT_COMPRESSION_LEGACY,
+-	EROFS_INODE_FLAT_INLINE,
+-	EROFS_INODE_FLAT_COMPRESSION,
++	EROFS_INODE_FLAT_PLAIN			= 0,
++	EROFS_INODE_FLAT_COMPRESSION_LEGACY	= 1,
++	EROFS_INODE_FLAT_INLINE			= 2,
++	EROFS_INODE_FLAT_COMPRESSION		= 3,
+ 	EROFS_INODE_LAYOUT_MAX
+ };
+ 
+@@ -181,7 +181,7 @@ struct erofs_xattr_entry {
+ 
+ /* available compression algorithm types */
+ enum {
+-	Z_EROFS_COMPRESSION_LZ4,
++	Z_EROFS_COMPRESSION_LZ4	= 0,
+ 	Z_EROFS_COMPRESSION_MAX
+ };
+ 
+@@ -239,10 +239,10 @@ struct z_erofs_map_header {
+  *                (di_advise could be 0, 1 or 2)
+  */
+ enum {
+-	Z_EROFS_VLE_CLUSTER_TYPE_PLAIN,
+-	Z_EROFS_VLE_CLUSTER_TYPE_HEAD,
+-	Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD,
+-	Z_EROFS_VLE_CLUSTER_TYPE_RESERVED,
++	Z_EROFS_VLE_CLUSTER_TYPE_PLAIN		= 0,
++	Z_EROFS_VLE_CLUSTER_TYPE_HEAD		= 1,
++	Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD	= 2,
++	Z_EROFS_VLE_CLUSTER_TYPE_RESERVED	= 3,
+ 	Z_EROFS_VLE_CLUSTER_TYPE_MAX
+ };
+ 
+-- 
+2.17.1
+
