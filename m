@@ -2,151 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75CC1A308B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:16:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FD75A308F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:16:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbfH3HPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:15:30 -0400
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:56993 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728201AbfH3HPW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:15:22 -0400
-X-UUID: 4e69472a1fb04066878f32c626d107df-20190830
-X-UUID: 4e69472a1fb04066878f32c626d107df-20190830
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 2008193538; Fri, 30 Aug 2019 15:15:20 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 30 Aug 2019 15:15:16 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 30 Aug 2019 15:15:16 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 11/11] arm64: dts: mt2712: use non-empty ranges for usb-phy
-Date:   Fri, 30 Aug 2019 15:14:58 +0800
-Message-ID: <1567149298-29366-11-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1567149298-29366-1-git-send-email-chunfeng.yun@mediatek.com>
-References: <1567149298-29366-1-git-send-email-chunfeng.yun@mediatek.com>
+        id S1728337AbfH3HPm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:15:42 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:60193 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727156AbfH3HPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 03:15:39 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46KW3D0ccGzB09b8;
+        Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=BS0mtFoK; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 2C6Rtg4AawvA; Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46KW3C6ZyRzB09b5;
+        Fri, 30 Aug 2019 09:15:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1567149335; bh=vSEytOVoZ5keHAZCvAZ/DinQj7vIgFYcS1io54Z3+tU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=BS0mtFoKnRJMesbXjxNGLSIvPsi98iQW/vYk/eEoM/T4IvUO81vMSExUigyRLmm2i
+         pf6Einld3hQhIqFE0wxO0isMLL5SMCAPaQjnBMWpTexWafyHd2RtPgP1RArWG+8Gkt
+         +bheON78Wg0Yx1g970Shcz91Z4+PB7cZOAIbadvA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id E05118B8E5;
+        Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id xl3wQ1xbNZLj; Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
+Received: from [172.25.230.105] (po15451.idsi0.si.c-s.fr [172.25.230.105])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 88A2F8B8E3;
+        Fri, 30 Aug 2019 09:15:36 +0200 (CEST)
+Subject: Re: [PATCH v5 5/5] powerpc/perf: split callchain.c by bitness
+To:     =?UTF-8?Q?Michal_Such=c3=a1nek?= <msuchanek@suse.de>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Breno Leitao <leitao@debian.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Nicolai Stange <nstange@suse.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Allison Randal <allison@lohutok.net>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Joel Stanley <joel@jms.id.au>, Arnd Bergmann <arnd@arndb.de>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christian Brauner <christian@brauner.io>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+References: <c77eec3d99fd0251edf725a3d9e1b79f396eba6e.1567117050.git.msuchanek@suse.de>
+ <4d996b0a225ca5b7d287ae46825d7da4a1d6e509.1567146554.git.christophe.leroy@c-s.fr>
+ <20190830084225.527f4265@naga> <20190830091212.4d1d619f@naga>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <d6272d53-69a7-9238-d717-17574c859ce7@c-s.fr>
+Date:   Fri, 30 Aug 2019 09:15:36 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: BD036BF71A2114EE1D0769FF267A80CF60102E115BE80E3E7B8EE655C728DD512000:8
-X-MTK:  N
+In-Reply-To: <20190830091212.4d1d619f@naga>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use non-empty ranges for usb-phy to make the layout of
-its registers clearer;
-Replace deprecated compatible by generic
 
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
-v2: use generic compatible
----
- arch/arm64/boot/dts/mediatek/mt2712e.dtsi | 42 ++++++++++++-----------
- 1 file changed, 22 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-index 43307bad3f0d..e24f2f2f6004 100644
---- a/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt2712e.dtsi
-@@ -697,30 +697,31 @@
- 	};
- 
- 	u3phy0: usb-phy@11290000 {
--		compatible = "mediatek,mt2712-u3phy";
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
-+		compatible = "mediatek,mt2712-tphy",
-+			     "mediatek,generic-tphy-v2";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0x11290000 0x9000>;
- 		status = "okay";
- 
--		u2port0: usb-phy@11290000 {
--			reg = <0 0x11290000 0 0x700>;
-+		u2port0: usb-phy@0 {
-+			reg = <0x0 0x700>;
- 			clocks = <&clk26m>;
- 			clock-names = "ref";
- 			#phy-cells = <1>;
- 			status = "okay";
- 		};
- 
--		u2port1: usb-phy@11298000 {
--			reg = <0 0x11298000 0 0x700>;
-+		u2port1: usb-phy@8000 {
-+			reg = <0x8000 0x700>;
- 			clocks = <&clk26m>;
- 			clock-names = "ref";
- 			#phy-cells = <1>;
- 			status = "okay";
- 		};
- 
--		u3port0: usb-phy@11298700 {
--			reg = <0 0x11298700 0 0x900>;
-+		u3port0: usb-phy@8700 {
-+			reg = <0x8700 0x900>;
- 			clocks = <&clk26m>;
- 			clock-names = "ref";
- 			#phy-cells = <1>;
-@@ -760,30 +761,31 @@
- 	};
- 
- 	u3phy1: usb-phy@112e0000 {
--		compatible = "mediatek,mt2712-u3phy";
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
-+		compatible = "mediatek,mt2712-tphy",
-+			     "mediatek,generic-tphy-v2";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0x112e0000 0x9000>;
- 		status = "okay";
- 
--		u2port2: usb-phy@112e0000 {
--			reg = <0 0x112e0000 0 0x700>;
-+		u2port2: usb-phy@0 {
-+			reg = <0x0 0x700>;
- 			clocks = <&clk26m>;
- 			clock-names = "ref";
- 			#phy-cells = <1>;
- 			status = "okay";
- 		};
- 
--		u2port3: usb-phy@112e8000 {
--			reg = <0 0x112e8000 0 0x700>;
-+		u2port3: usb-phy@8000 {
-+			reg = <0x8000 0x700>;
- 			clocks = <&clk26m>;
- 			clock-names = "ref";
- 			#phy-cells = <1>;
- 			status = "okay";
- 		};
- 
--		u3port1: usb-phy@112e8700 {
--			reg = <0 0x112e8700 0 0x900>;
-+		u3port1: usb-phy@8700 {
-+			reg = <0x8700 0x900>;
- 			clocks = <&clk26m>;
- 			clock-names = "ref";
- 			#phy-cells = <1>;
--- 
-2.23.0
+Le 30/08/2019 à 09:12, Michal Suchánek a écrit :
+> On Fri, 30 Aug 2019 08:42:25 +0200
+> Michal Suchánek <msuchanek@suse.de> wrote:
+> 
+>> On Fri, 30 Aug 2019 06:35:11 +0000 (UTC)
+>> Christophe Leroy <christophe.leroy@c-s.fr> wrote:
+>>
+>>> On 08/29/2019 10:28 PM, Michal Suchanek wrote:
+> 
+>>>   obj-$(CONFIG_PPC_PERF_CTRS)	+= core-book3s.o bhrb.o
+>>> diff --git a/arch/powerpc/perf/callchain_32.c b/arch/powerpc/perf/callchain_32.c
+>>> index 0bd4484eddaa..17c43ae03084 100644
+>>> --- a/arch/powerpc/perf/callchain_32.c
+>>> +++ b/arch/powerpc/perf/callchain_32.c
+>>> @@ -15,50 +15,13 @@
+>>>   #include <asm/sigcontext.h>
+>>>   #include <asm/ucontext.h>
+>>>   #include <asm/vdso.h>
+>>> -#ifdef CONFIG_PPC64
+>>> -#include "../kernel/ppc32.h"
+>>> -#endif
+>>>   #include <asm/pte-walk.h>
+>>>   
+>>>   #include "callchain.h"
+>>>   
+>>>   #ifdef CONFIG_PPC64
+>>> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+>>> -{
+>>> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+>>> -	    ((unsigned long)ptr & 3))
+>>> -		return -EFAULT;
+>>> -
+>>> -	pagefault_disable();
+>>> -	if (!__get_user_inatomic(*ret, ptr)) {
+>>> -		pagefault_enable();
+>>> -		return 0;
+>>> -	}
+>>> -	pagefault_enable();
+>>> -
+>>> -	return read_user_stack_slow(ptr, ret, 4);
+>>> -}
+>>> -#else /* CONFIG_PPC64 */
+>>> -/*
+>>> - * On 32-bit we just access the address and let hash_page create a
+>>> - * HPTE if necessary, so there is no need to fall back to reading
+>>> - * the page tables.  Since this is called at interrupt level,
+>>> - * do_page_fault() won't treat a DSI as a page fault.
+>>> - */
+>>> -static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+>>> -{
+>>> -	int rc;
+>>> -
+>>> -	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+>>> -	    ((unsigned long)ptr & 3))
+>>> -		return -EFAULT;
+>>> -
+>>> -	pagefault_disable();
+>>> -	rc = __get_user_inatomic(*ret, ptr);
+>>> -	pagefault_enable();
+>>> -
+>>> -	return rc;
+>>> -}
+>>> +#include "../kernel/ppc32.h"
+>>> +#else
+>>>   
+>>>   #define __SIGNAL_FRAMESIZE32	__SIGNAL_FRAMESIZE
+>>>   #define sigcontext32		sigcontext
+>>> @@ -95,6 +58,30 @@ struct rt_signal_frame_32 {
+>>>   	int			abigap[56];
+>>>   };
+>>>   
+>>> +/*
+>>> + * On 32-bit we just access the address and let hash_page create a
+>>> + * HPTE if necessary, so there is no need to fall back to reading
+>>> + * the page tables.  Since this is called at interrupt level,
+>>> + * do_page_fault() won't treat a DSI as a page fault.
+>>> + */
+>>> +static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+>>> +{
+>>> +	int rc;
+>>> +
+>>> +	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+>>> +	    ((unsigned long)ptr & 3))
+>>> +		return -EFAULT;
+>>> +
+>>> +	pagefault_disable();
+>>> +	rc = __get_user_inatomic(*ret, ptr);
+>>> +	pagefault_enable();
+>>> +
+>>> +	if (IS_ENABLED(CONFIG_PPC32) || !rc)
+>>> +		return rc;
+>>> +
+>>> +	return read_user_stack_slow(ptr, ret, 4);
+>>> +}
+>>> +
+>>>   static int is_sigreturn_32_address(unsigned int nip, unsigned int fp)
+>>>   {
+>>>   	if (nip == fp + offsetof(struct signal_frame_32, mctx.mc_pad))
+>>
+>> I will leave consolidating this function to somebody who knows what the
+>> desired semantic is. With a short ifdef section at the top of the file
+>> it is a low-hanging fruit.
+> 
+> It looks ok if done as a separate patch.
 
+Yes, doing it as a separate patch is good.
+
+And if you do it before patch 3, then you don't need anymore this ugly 
+hack to hide read_user_stack_32()
+
+Christphe
+
+> 
+> Thanks
+> 
+> Michal
+> 
