@@ -2,91 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63A02A3482
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9766A3489
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:57:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbfH3Jwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 05:52:39 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53348 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbfH3Jwi (ORCPT
+        id S1727836AbfH3J5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 05:57:01 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41642 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfH3J5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 05:52:38 -0400
-Received: by mail-wm1-f65.google.com with SMTP id 10so6611582wmp.3;
-        Fri, 30 Aug 2019 02:52:37 -0700 (PDT)
+        Fri, 30 Aug 2019 05:57:00 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 196so4318231pfz.8;
+        Fri, 30 Aug 2019 02:57:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=tc17SwiXpDz1kgEk0p61gpWwIWAbuTeHVLdYo1NejAk=;
-        b=DsCXS5AlfL8N6Pd/BW1O50jCajoaMNCX6Gh/ZpcI750WV99gdv/GDDQQOuhc+g7kQj
-         PrR2UciBC/udBCeDc7zmvV0pv/IQag9tJFcZjNccdyoDyzV5Vli8kp00xaGABHm+22CJ
-         QGjM5QwY08jOwBpS1IXIFSuNTqnPk6gv4KTDzPM3MfNPZATg578eAznzEnMbiYPhnIRm
-         Bt8derDP1APJB4thdBFtrh4Qg5+sjwi5qq6M5nqQPWTRl35KDxRRkkH1lmZCzPhRiFG5
-         hfF8Z3GoA4Kl6FR/fEmQPtAMX6hEUUaE5IqlzT4QBHyVfZWzz2wYNplNIvk7wtpXfEk3
-         67qg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b6Jx4LeznDroJv1V+MqGkH6wNyfdO6arDu3vh6OGwO4=;
+        b=P5LKAoNydxCLwtKPaKlmm7sBYONkLrbXlHqGeby2MQ2qjUeH1kDN3RHregechZ7LWZ
+         MNczFl/OgDe2P7FfBdABcIydjZu5zcYZILY96v0w+Q4X+FfdB54nZF+RnZZ5+ok4QkyJ
+         /wH3hsODHOExIQhlI1Vm5DdvMb5y+1XLuCu4vo64nK34T0lMNKIzWiB3NKD1uRfbieHU
+         4T9MPEQuu5va2i3u/X9B2erEG1w5YSUuAMfPY/ZpabnMzDgOZmaWapp4hv0KhmUruMc7
+         +g0uriOnfxwTl6QJmJDv8xUiRMqUlJSlJqnM6iW3beSkMhI8rA1dZIJJxfPKciaExPeh
+         x5pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=tc17SwiXpDz1kgEk0p61gpWwIWAbuTeHVLdYo1NejAk=;
-        b=CxDaPOMN920h2wjotR27TudvViRynfs/5zCZBnMGtFaPMlTtlw+Xlwks8yb6iRjlIy
-         mdJJ16nhIEqVLS8dWRzr/b9+k+HyDd3yuL/65UIqNSd+AyT55qFPUycmvnoalqWhammr
-         lFqETx6v3GpVeR7KaCNkXDcyBUBer0Qjmot3twDPY2AJ1nkX7AQsmtyQNJXYbzpKjAsD
-         oruKeMvjQrDtE1AkHLxYovrciKP6aM7hHPSXD+v/z/0fevcPcEED6vm/br0zNAn4wtxc
-         LTb9N4E+DctGh35X7USPGTHwX8teOJVQealrxaLTjyXITtmT/ax9U6rzT6TfeA93CxwV
-         wA2Q==
-X-Gm-Message-State: APjAAAXbmy4Lou1uIQRwE9FwoNVQlKe3wPAj/ZAgX/Tt65QHPriFz2qa
-        Zk+XkR2Sqb6QZCcR2vCmK3wCQ576Z7knJC6RhxQ=
-X-Google-Smtp-Source: APXvYqypzwcOYYLIG7MVcOC8GJ2qXLrEkr2UlocT3ycDPxkWToyVuADTLoF3SbWMPb4REfw4xL2k75Z4f6QA6ctcV+w=
-X-Received: by 2002:a7b:c013:: with SMTP id c19mr9625630wmb.118.1567158756429;
- Fri, 30 Aug 2019 02:52:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b6Jx4LeznDroJv1V+MqGkH6wNyfdO6arDu3vh6OGwO4=;
+        b=YQ8y5NVESEFLxhwGg6n6/O8BGJscv4vwoTn1NYYAnG0SWZcDWrWOU/w4gQGmXKXYoA
+         hEXSnDi4eje023exWWynX4tvfLOpgeRAWS5bdvMeYEQ3mfmB9tbrLn/afSJZjlJs+Um8
+         OuPu3cCuJMEkfdak+aNuitMBib+2GFURclqd1y7x/d2s36Lqt0Sr9eD2wsl4AUm/Sy9X
+         Bk0BgFbFEr06cp2Ge1N06OKSS9jCyHurJ3Az0i7i0almWgJbq4J12qTgMtfDOAcL13EV
+         amyNt2p3M7tJ+aqYZvgbB6WJGMLd0xVkWhW29o5YHYkHu72/tfTWU4JnewR+sAY8e2t0
+         R2vg==
+X-Gm-Message-State: APjAAAXPP305BlEg1IPYDK1xQBZM9a7EoyzCaFVUKJsdT3dI5fK7QSs8
+        0PbIp7HwUNL0lknTB0YZJsc=
+X-Google-Smtp-Source: APXvYqxyXu8ZJM7570mg2e1+B9zCrvxJQmX/n5HI+hvj/AuetrcdvC78kRTlj9/wupB0AsWm6fhikw==
+X-Received: by 2002:a65:6859:: with SMTP id q25mr12086276pgt.181.1567159019466;
+        Fri, 30 Aug 2019 02:56:59 -0700 (PDT)
+Received: from localhost.localdomain ([175.203.71.146])
+        by smtp.googlemail.com with ESMTPSA id k64sm8329447pge.65.2019.08.30.02.56.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 02:56:59 -0700 (PDT)
+From:   Seunghun Han <kkamagui@gmail.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>,
+        linux-integrity@vger.kernel.org (open list:TPM DEVICE DRIVER),
+        linux-kernel@vger.kernel.org, Seunghun Han <kkamagui@gmail.com>
+Subject: [PATCH 0/2] Enhance support for the AMD's fTPM
+Date:   Fri, 30 Aug 2019 18:56:37 +0900
+Message-Id: <20190830095639.4562-1-kkamagui@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20190828055425.24765-1-yamada.masahiro@socionext.com>
- <20190828055425.24765-2-yamada.masahiro@socionext.com> <20190828182017.GB127646@archlinux-threadripper>
- <CAKwvOd=r5Y8hQQBeKZ6zAokPdyeT2AVKFsdviTvwV5AyDQQHrw@mail.gmail.com> <CA+icZUWmmC7CruvXx6U0cdXMLaMWJadU=T61E0om1rOuW3==pw@mail.gmail.com>
-In-Reply-To: <CA+icZUWmmC7CruvXx6U0cdXMLaMWJadU=T61E0om1rOuW3==pw@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Fri, 30 Aug 2019 11:52:24 +0200
-Message-ID: <CA+icZUXX6YG7=4n60A3_HiTYE0SkNXd8yr4-pqfOsqg66QvXzw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kbuild: allow Clang to find unused static inline
- functions for W=1 build
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Sven Schnelle <svens@stackframe.org>,
-        Xiaozhou Liu <liuxiaozhou@bytedance.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just as a sidenote:
+This patch series enhances the support for the AMD's fTPM. 
+The AMD system assigned a command buffer and response buffer 
+independently in ACPI NVS region. ACPI NVS region allowed nothing to 
+assign a resource in it. 
 
-From [PATCH v2] kbuild: enable unused-function warnings for W= build with Clang:
+For supporting AMD's fTPM, I made a patch to enhance the code of command 
+and response buffer size calculation. I also made a patch to detect TPM 
+regions in ACPI NVS and work around it. 
 
-"Per the documentation [1], -Wno-unused-function will also disable
--Wunneeded-internal-declaration, which can help find bugs like
-commit 8289c4b6f2e5 ("platform/x86: mlx-platform: Properly use
-mlxplat_mlxcpld_msn201x_items"). (pointed out by Nathan Chancellor)
-I added -Wunneeded-internal-declaration to address it.
+Seunghun Han (2):
+  tpm: tpm_crb: enhance command and response buffer size calculation
+    code
+  tpm: tpm_crb: enhance resource mapping mechanism for supporting AMD's
+    fTPM
 
-If you contribute to code clean-up, please run "make CC=clang W=1"
-and check -Wunused-function warnings. You will find lots of unused
-functions."
+ drivers/char/tpm/tpm_crb.c | 69 ++++++++++++++++++++++++++++++++------
+ 1 file changed, 59 insertions(+), 10 deletions(-)
 
-Isn't that missing in your double?
+-- 
+2.21.0
 
-- Sedat -
-
-[1] https://lkml.org/lkml/2019/8/27/729
