@@ -2,105 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A3AA3A95
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:41:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25BEAA3A90
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:41:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbfH3Pl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:41:27 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41968 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728410AbfH3PlY (ORCPT
+        id S1728331AbfH3PlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:41:08 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33585 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727850AbfH3PlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:41:24 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m24so6902156ljg.8
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:41:23 -0700 (PDT)
+        Fri, 30 Aug 2019 11:41:08 -0400
+Received: by mail-qt1-f195.google.com with SMTP id r5so2796371qtd.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:41:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6l/MmER3LwxVChdeaRYIf4zH/5/oimVEhwZA0gfAJeA=;
-        b=hTMNumX8xZr51jZ2e8ioodaU7fZy7Zox0fVt25oHPu+ey/m2I7q6COdJTUw30VC209
-         kek6cE7p7Qc23NCmn25ahHuKo8wmqd/NbB/BBSNT1Jghi4IFJZOM6sr/9MWX6bHULgBL
-         qQFYDc/r1Z1RMajEzSGvyz2pVtBdstCLYcf3M=
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=djD1pQ1U7LhQ/148ZQfZebehfdvHuL8mZ2td74QG7gA=;
+        b=Ff/syI5yLdu0ja4Kdyq9aVwjjyIDV2gJiItT4pZn2Zw9XrWofLZe/+bmXAvq0gc4Vc
+         f3EJcvfXbnJ4yVU7HYTqFkhNhRx/6A8/4PA3tN1pM7WB0T7diXqFsyWWffTh6Hyeuhdp
+         rNiPJKpku7NB6WN1ViS3WrjHvXz/EaRsCmOq2mvhs/7Z+gRwMGFydPcSELrfmY99e5GU
+         1YbQr89iBNUmJVXd+Iztt/v6wQQsqtUuY6KqCiah5jACppnM1bC9Y04NeoJbSUh7ZxCt
+         WajM3rZQfE1B6OKJjXAL83Oi+l6852bNBY5LqJ+0RdAlFHeCx1Bw57I/fY+1++dt6/Dc
+         jqbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6l/MmER3LwxVChdeaRYIf4zH/5/oimVEhwZA0gfAJeA=;
-        b=U0giGfAcruum4bvRqaqxDcoqLBdWEifPb3GXwmZqdhrfqfQWOrZDFyISxJBpu4eQ3n
-         xbMFaO5kBk+VgxUIEJrzIpOx93m2x/j12qaic2s1f9Y5YGdkzSETxaWubxX/uWf4InGF
-         G4/zWT83tg4gFDOAwAYzmXsGoCWIth1SE6aK8Yf5tRXxdAXzpwnYoiTJuayz30PfZ6hD
-         LzUcI6GroGOdEW82dVvrsF1mqppMbDHs8QmMNvQy0yJhFmOLdd6pDvhwEz8FRCcWkQtj
-         lcFDwXPNqPHbZZtlx8pyGvbHA5K0aT7Yu7/0NAuQunFRSBjToB6QnB7YsnLMPqxurjz2
-         n4CA==
-X-Gm-Message-State: APjAAAW4Bx2gNTB4xHnRJZnzADJSZJQxjbrWa0fbwQnZw0xEq4QKf0ZD
-        16PoYYjtAcE57ncWkWe7x2E88gYHheo=
-X-Google-Smtp-Source: APXvYqxZrQVf5i33if9LPT98syLUwpRedS3t3CK51XnC+kKzyZ/1+PyMTeXgR0UtCS1AdBizFyprUw==
-X-Received: by 2002:a2e:7018:: with SMTP id l24mr8740705ljc.165.1567179681873;
-        Fri, 30 Aug 2019 08:41:21 -0700 (PDT)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
-        by smtp.gmail.com with ESMTPSA id b7sm912806ljk.80.2019.08.30.08.41.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2019 08:41:20 -0700 (PDT)
-Received: by mail-lj1-f181.google.com with SMTP id l14so6916937lje.2
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:41:19 -0700 (PDT)
-X-Received: by 2002:a2e:9702:: with SMTP id r2mr8837586lji.84.1567179679653;
- Fri, 30 Aug 2019 08:41:19 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190830140805.GD13294@shell.armlinux.org.uk> <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
-In-Reply-To: <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 30 Aug 2019 08:41:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
-Message-ID: <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
-Subject: Re: [BUG] Use of probe_kernel_address() in task_rcu_dereference()
- without checking return value
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=djD1pQ1U7LhQ/148ZQfZebehfdvHuL8mZ2td74QG7gA=;
+        b=uXXTzc8Tq+7jxSr6LC6LiCnsVaVE+i0qK/GqOeZwp34uvfU445Fnw1lJw5d8squWuY
+         viQJC+p6uMnryXxhsZfvxG20tueGJEMoX717G064sirYjoJ5EDkSuQmu61wSWzjwvUr6
+         e/fwyn+/6yzqPNoFXZVC9mpZwdl6fRqYKsjrFSggLgAra7QCVgIg/c0G5ZDh8suL9p10
+         8Tn/renxMF901PhHPbiB7/zPV4gczssE2dXFSM1z7Hl3GOA4SiQHH8dVF7XiU9ETCsZl
+         RrJX3RIv+vzeioapMD7MW1PymCma+V2B89+YvoawP/Y4VZNvxl3DdXsFkygF9Uq0S0F3
+         Q9aw==
+X-Gm-Message-State: APjAAAUyxVqbRoRnI5ghJmx3yCHGdQmPwmaD4PkzWQaJpQ1dvCpn8z+b
+        6gjbPRbOAxjzycQ2K1j6Y58=
+X-Google-Smtp-Source: APXvYqw/7somUTQTd2TTBc+L0G94eZDim5rIR3AA3axbBqLZAD07MbIMr2Cvs7OFOJdtTHKEkNIrzw==
+X-Received: by 2002:ac8:31cc:: with SMTP id i12mr16178711qte.170.1567179666815;
+        Fri, 30 Aug 2019 08:41:06 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id k49sm3064292qtc.9.2019.08.30.08.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 08:41:06 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 3F24041146; Fri, 30 Aug 2019 12:41:03 -0300 (-03)
+Date:   Fri, 30 Aug 2019 12:41:03 -0300
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>
+Subject: Re: [PATCH 0/4] objtool,perf: Use shared x86 insn decoder
+Message-ID: <20190830154103.GA8994@kernel.org>
+References: <cover.1567118001.git.jpoimboe@redhat.com>
+ <20190831002004.d570fcb7b611860e025dbdb2@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190831002004.d570fcb7b611860e025dbdb2@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 8:30 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Do you actually see that behavior?
->
-> Because the foillowing lines:
->
->         smp_rmb();
->         if (unlikely(task != READ_ONCE(*ptask)))
->                 goto retry;
+Em Sat, Aug 31, 2019 at 12:20:04AM +0900, Masami Hiramatsu escreveu:
+> On Thu, 29 Aug 2019 17:41:17 -0500
+> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> 
+> > It's kind of silly that we have *three* identical copies of the x86 insn
+> > decoder in the kernel tree.  Make it approximately 50% less silly by
+> > reducing that number to two.
+> > 
+> 
+> Sounds good to me ;)
+> 
+> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-Side note: that code had better not be performance-critical, because
-"probe_kernel_address()" is actually really really slow.
+Good, two already, Adrian?
 
-We really should do a real set of "read kernel with fault handling" functions.
+- Arnaldo
+ 
+> Thanks,
+> 
+> > Josh Poimboeuf (4):
+> >   objtool: Move x86 insn decoder to a common location
+> >   perf: Update .gitignore file
+> >   perf intel-pt: Remove inat.c from build dependency list
+> >   perf intel-pt: Use shared x86 insn decoder
+> > 
+> >  .../{objtool => }/arch/x86/include/asm/inat.h |    0
+> >  .../arch/x86/include/asm/inat_types.h         |    0
+> >  .../{objtool => }/arch/x86/include/asm/insn.h |    0
+> >  .../arch/x86/include/asm/orc_types.h          |    0
+> >  tools/{objtool => }/arch/x86/lib/inat.c       |    0
+> >  tools/{objtool => }/arch/x86/lib/insn.c       |    0
+> >  .../arch/x86/lib/x86-opcode-map.txt           |    0
+> >  .../arch/x86/tools/gen-insn-attr-x86.awk      |    0
+> >  tools/objtool/Makefile                        |    4 +-
+> >  tools/objtool/arch/x86/Build                  |    4 +-
+> >  tools/objtool/arch/x86/decode.c               |    4 +-
+> >  tools/objtool/sync-check.sh                   |   12 +-
+> >  tools/perf/.gitignore                         |    3 +
+> >  tools/perf/arch/x86/tests/insn-x86.c          |    2 +-
+> >  tools/perf/arch/x86/util/archinsn.c           |    2 +-
+> >  tools/perf/check-headers.sh                   |   11 +-
+> >  tools/perf/util/intel-pt-decoder/Build        |   22 +-
+> >  .../intel-pt-decoder/gen-insn-attr-x86.awk    |  392 ------
+> >  tools/perf/util/intel-pt-decoder/inat.c       |   82 --
+> >  tools/perf/util/intel-pt-decoder/inat.h       |  230 ----
+> >  tools/perf/util/intel-pt-decoder/inat_types.h |   15 -
+> >  tools/perf/util/intel-pt-decoder/insn.c       |  593 ---------
+> >  tools/perf/util/intel-pt-decoder/insn.h       |  216 ----
+> >  .../intel-pt-decoder/intel-pt-insn-decoder.c  |   10 +-
+> >  .../util/intel-pt-decoder/x86-opcode-map.txt  | 1072 -----------------
+> >  25 files changed, 34 insertions(+), 2640 deletions(-)
+> >  rename tools/{objtool => }/arch/x86/include/asm/inat.h (100%)
+> >  rename tools/{objtool => }/arch/x86/include/asm/inat_types.h (100%)
+> >  rename tools/{objtool => }/arch/x86/include/asm/insn.h (100%)
+> >  rename tools/{objtool => }/arch/x86/include/asm/orc_types.h (100%)
+> >  rename tools/{objtool => }/arch/x86/lib/inat.c (100%)
+> >  rename tools/{objtool => }/arch/x86/lib/insn.c (100%)
+> >  rename tools/{objtool => }/arch/x86/lib/x86-opcode-map.txt (100%)
+> >  rename tools/{objtool => }/arch/x86/tools/gen-insn-attr-x86.awk (100%)
+> >  delete mode 100644 tools/perf/util/intel-pt-decoder/gen-insn-attr-x86.awk
+> >  delete mode 100644 tools/perf/util/intel-pt-decoder/inat.c
+> >  delete mode 100644 tools/perf/util/intel-pt-decoder/inat.h
+> >  delete mode 100644 tools/perf/util/intel-pt-decoder/inat_types.h
+> >  delete mode 100644 tools/perf/util/intel-pt-decoder/insn.c
+> >  delete mode 100644 tools/perf/util/intel-pt-decoder/insn.h
+> >  delete mode 100644 tools/perf/util/intel-pt-decoder/x86-opcode-map.txt
+> > 
+> > -- 
+> > 2.20.1
+> > 
+> 
+> 
+> -- 
+> Masami Hiramatsu <mhiramat@kernel.org>
 
-We have *one* right now: load_unaligned_zeropad(), but that one
-assumes that at least the first byte is valid and that the fault can
-only be because of unaligned page crossers.
+-- 
 
-The problem with "probe_kernel_address()" is that it really just
-re-uses the user access functions, and then plays games to make them
-work for kernel addresses. Games we shouldn't play, and it's all very
-expensive when it really shouldn't need to be. Including changing
-limits, but also doing all the system instructions to allow user
-accesses (PAN on ARM, clac/stac on x86).
-
-Doing a set of "access kernel with error handling" should be trivial,
-it's just that every architecture needs to do it. So we'd probably
-need to do something where architectures can say "I have it", and fall
-back on the silly legacy implementation otherwise..
-
-             Linus
+- Arnaldo
