@@ -2,84 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E6EA3CDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:17:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0712A3CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728094AbfH3RRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 13:17:32 -0400
-Received: from mga06.intel.com ([134.134.136.31]:29746 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727922AbfH3RRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:17:32 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 10:17:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="332917307"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by orsmga004.jf.intel.com with ESMTP; 30 Aug 2019 10:17:31 -0700
-Date:   Fri, 30 Aug 2019 10:17:31 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] checkpatch: Remove obsolete period from "ambiguous SHA1"
- query
-Message-ID: <20190830171731.GB15405@linux.intel.com>
-References: <20190830163103.15914-1-sean.j.christopherson@intel.com>
- <19c9b30b3d77a65c6c4289a2eeeb6cbe40594aab.camel@perches.com>
+        id S1728143AbfH3RT6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 13:19:58 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36093 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727791AbfH3RT6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 13:19:58 -0400
+Received: by mail-qt1-f195.google.com with SMTP id z4so8416991qtc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 10:19:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eREbuz0j2yx01SeF7umXo65Zd8gunKI6vNp3hTkMlVc=;
+        b=MJZKcpJYpb1ogC/0tY9Sxq390Y2Em4aBYTWlMT7jlRk1Kgozl6H+ltqDYsQC8EsMuk
+         5o+85F0A08rsSETs/376eoYjBc/b4Q739AEzFVxm1S1ME25dPttphaG+Ks9pwC8CcXq7
+         oWJJo/3TqDIrK/o1LydMbkx/RDcqd05XLD2reXkAEgx/MaGO6R2PFN7eSQvtrqgIJrWt
+         DH5fn4qiT64tSeKijkx0ilFBitsOkoN61SQXQaGdCQuXnUeLFIJxop1YROYAsBSIGbaQ
+         cghPky0xc+tFi2BUwPD/pBYL3ciOhjyKe/mCdlEO9NEed+NKGJZ+vFJVjLc+jO1/b2TR
+         Uyog==
+X-Gm-Message-State: APjAAAWM4zk4LsTegD47An12EuL5w4T6GsmjDNz5/DZ+kRKjUaDUFihj
+        Es8HUTcsBdzd96rx8metisvqEXjZldQyjQBhkog=
+X-Google-Smtp-Source: APXvYqwVevCuvuH2sy338AJ2V2IsQ6SavmSFH2Vz3yo29gW/Ty69n6T+cSn11lboWM0ZqxXySp5bXRiU47TYVhw1fhY=
+X-Received: by 2002:aed:3363:: with SMTP id u90mr16473668qtd.7.1567185597224;
+ Fri, 30 Aug 2019 10:19:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <19c9b30b3d77a65c6c4289a2eeeb6cbe40594aab.camel@perches.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <CAK8P3a2OZPybUQ=2xXcF4Qft-Gpe3a1mvgPncJZugETnaOxsvw@mail.gmail.com>
+ <CAHk-=wgq71zNZtcb7vAsgb0EEozJsBDrLC0L+91tmMCBG=8FiQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wgq71zNZtcb7vAsgb0EEozJsBDrLC0L+91tmMCBG=8FiQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 30 Aug 2019 19:19:40 +0200
+Message-ID: <CAK8P3a1WQn67D2L1pBwF-L=HeodjgJNhAKfMM4BC99bXiO9t5g@mail.gmail.com>
+Subject: Re: [GIT PULL] ARM: SoC fixes for Linux-5.3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     SoC Team <soc@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        John Garry <john.garry@huawei.com>,
+        Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 09:37:51AM -0700, Joe Perches wrote:
-> On Fri, 2019-08-30 at 09:31 -0700, Sean Christopherson wrote:
-> > Git dropped the period from its "ambiguous SHA1" error message in commit
-> > 0c99171ad2 ("get_short_sha1: mark ambiguity error for translation"),
-> > circa 2016.  Drop the period from checkpatch's associated query so as to
-> > match both the old and new error messages.
-> > 
-> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > ---
-> >  scripts/checkpatch.pl | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > index 93a7edfe0f05..ef3642c53100 100755
-> > --- a/scripts/checkpatch.pl
-> > +++ b/scripts/checkpatch.pl
-> > @@ -962,7 +962,7 @@ sub git_commit_info {
-> >  
-> >  	return ($id, $desc) if ($#lines < 0);
-> >  
-> > -	if ($lines[0] =~ /^error: short SHA1 $commit is ambiguous\./) {
-> > +	if ($lines[0] =~ /^error: short SHA1 $commit is ambiguous/) {
-> >  # Maybe one day convert this block of bash into something that returns
-> >  # all matching commit ids, but it's very slow...
-> >  #
-> 
-> Thanks.
-> 
-> Did git ever change to actually support human readable
-> messages in multiple languages?
+On Fri, Aug 30, 2019 at 6:34 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Fri, Aug 30, 2019 at 9:26 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git armsoc-fixes
+> >
+> > for you to fetch changes up to 7a6c9dbb36a415c5901313fc89871fd19f533656:
+>
+> Nope. That's a stale tag for me, pointing to commit 7bd9d465140a. Your
+> old pull request from end of July, it looks like.
+>
+> Forgot to push out? Or forgot to use "-f" to overwrite the old tag?
 
-Yep, e.g.:
+Wrong tree: I pushed it to soc.git, but passed the old tree to 'git
+request-pull'
 
-  error: Kurzer SHA-1 745f ist mehrdeutig.
+Correct URL is
 
-> If so, this won't work for non-english output.
+git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
 
-Yep again.  The next check for 'fatal: ambiguous argument' obviously fails
-as well and checkpatch ends up using git's error message as the id and
-description.
+I guess we should just delete the old tree now to avoid confusion like this.
 
-  ERROR: Please use git ... - ie: 'commit error: Kurze ("")'
+        Arnd
