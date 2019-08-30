@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0751A2BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 02:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D810DA2BCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 02:51:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbfH3Auo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 20:50:44 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34871 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbfH3Aun (ORCPT
+        id S1727781AbfH3Auw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 20:50:52 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46674 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727126AbfH3Aup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 20:50:43 -0400
-Received: by mail-lj1-f194.google.com with SMTP id l14so4830436lje.2
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 17:50:42 -0700 (PDT)
+        Thu, 29 Aug 2019 20:50:45 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f9so4756354ljc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 17:50:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=xMuXLxwuJeSWopT/f8dXFbI5jVuji3StpvlKwxHupj4=;
-        b=rnr4X0TQdkwszhW4r53DgSGbfSyqjshLRLQ9ru9r0hiQjF6Pmzl6cFSGIXGZDyX8FM
-         kO4l69Gy3FILbmNq5bSUGsIpaZ9XaIHD/+YK6HPdgABmplST2YZNTLJo9RawuaCo+ute
-         7rBOt9fScpmIQdED0bS9ysnX6D/5oXmASshjL3akOMkCpUlDb0m3RuUipo7CfFf44g5O
-         NT/ccLrrYb5iZAFECZ3wB98QbOk+AWPIlhlBT8BwE0+tWyGIst3jCLaW5eI5KnWey2hK
-         qT8PWkNXjiYDmWcUscqudRpRLzArq1rvEq/ytQzRBj7ZXjV1OCAHSjD94QTSqLHQkDUW
-         ogiA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Uyna4IYOJol121SLmRwAZvx/NaOoPDVjYK6GTYbGUpc=;
+        b=kCLWWa8CrxMwJCc3us4OMb8Z4KxeYvEnIDyQFEEyN+J2uzU3tej/3tlqELGg51s510
+         Hx6FevFLPM/rW9mn0TSPGLrFyZdU6GgtFt0G6VlDwBwg2z9T4kV5uiNUBxi6zOGGGkJi
+         EM8Wepqm3ulk4jB04e2UspjIt0F9jNtMphdz7dcZNmhdaQOLOKo4Ib3a8U488jLM5PK4
+         f+21fUenLBmLcDN/uGf5mOGRC8y6460M/FviJOCMebLC2pF4tXTUBvvZhDmDPVSv28Mk
+         BI73jiSk0NojKt3fQTjexjSwQHhZf+i/x5gkVDbVmTy1jSWDE1mgCJu/E1vKe4LXDflk
+         cS6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=xMuXLxwuJeSWopT/f8dXFbI5jVuji3StpvlKwxHupj4=;
-        b=TjpvYewI+6Wk0PNyndmVbIKzLS7dV0LTMJYBoYezLBUBCqa9WjWWauMzFYBw1U+pYB
-         ZH+ktZPiib9CoaT+dLWdnE51mYP/oBs6WOXlWqqNorb6tXWlvVMjcI0zSh2aaNJT2z0O
-         KOMW5/1Jb/qNujkqlVqeOToxuBuQPWzw0mEg4vKH/YCbFmsnBj1wQzpk+Vkoq98uEb6c
-         /bIpdj6XwtzbaaLFp5pNeUNG2MVJcEYJyyvnarJJF7brElKbnjmW0DQUd3xD2LX4oG6L
-         oqP67TlqwR2Pzm+PSyyMaX8/h3CnpmwXVqjVW6h1ErOZqy12wpTuh9o9wNq6580Kx72b
-         S/Gw==
-X-Gm-Message-State: APjAAAWj6B8nGzr3LUP4fI9hbBRN0Cqt4pWcFBA9DFSmxJmpWl3GblDq
-        rmOMOrrqN27xnQt/AExjQCPmwA==
-X-Google-Smtp-Source: APXvYqxL710fHxqeBsIPyilVGaM4NIUyDBx68X3IEtdE/LKXFPKtMM8GtBcX4pfo/aWdd1ZNaV62/g==
-X-Received: by 2002:a2e:9d9a:: with SMTP id c26mr7203774ljj.56.1567126241817;
-        Thu, 29 Aug 2019 17:50:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Uyna4IYOJol121SLmRwAZvx/NaOoPDVjYK6GTYbGUpc=;
+        b=QeKTep21twesdi2iTKqra0EGC3mlqsCt1HFYpE7bgpx5ma0O3d21jNAVa8HJ/Mg7Qy
+         AUH+qWV2iJE7O/Ws2tNx1UTcXngHQRP/u+9SQZ/MD3IB7Mn3ihIa7p7mVNzVfoUkWpsK
+         eKrcCyvzvGEGgQYdhOZbSySZX6KSvls3M5MHlpAZVVLKnPtp1ShY/h3A91/J/p+IKN+y
+         r3zY+I7x8NC75mrgdnC9RVl4RqpFNSwUF6KMZBDNsAbFilQYsYoaa7ERTowhY8TWLCnO
+         BlCo22+PscGC3tjnBwLKhY5GoEJJvczzkqC1nM15DPF5E6OJYqBIPOpT0elxoZt8R80h
+         W7hg==
+X-Gm-Message-State: APjAAAWelsDl3PBzH5FJvRNh4alYagdlNFoXvmG8loPI/64bTUm/mRa1
+        1/gx3wXo+H5vd8F8TYb5RV/WGg==
+X-Google-Smtp-Source: APXvYqwczd6nt8u3EfpPxDPMTye3gjY7N3FR/dqe8OYgFULHyQXUnfqd7PQD/tD94qNCi+yyNnGlYQ==
+X-Received: by 2002:a2e:8455:: with SMTP id u21mr6903469ljh.20.1567126243059;
+        Thu, 29 Aug 2019 17:50:43 -0700 (PDT)
 Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id f19sm628149lfk.43.2019.08.29.17.50.40
+        by smtp.gmail.com with ESMTPSA id f19sm628149lfk.43.2019.08.29.17.50.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2019 17:50:41 -0700 (PDT)
+        Thu, 29 Aug 2019 17:50:42 -0700 (PDT)
 From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 To:     linux@armlinux.org.uk, ast@kernel.org, daniel@iogearbox.net,
         yhs@fb.com, davem@davemloft.net, jakub.kicinski@netronome.com,
@@ -51,55 +52,39 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org, bpf@vger.kernel.org,
         clang-built-linux@googlegroups.com,
         Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH RFC bpf-next 00/10] improve/fix cross-compilation for bpf samples
-Date:   Fri, 30 Aug 2019 03:50:27 +0300
-Message-Id: <20190830005037.24004-1-ivan.khoronzhuk@linaro.org>
+Subject: [PATCH RFC bpf-next 01/10] samples: bpf: Makefile: use --target from cross-compile
+Date:   Fri, 30 Aug 2019 03:50:28 +0300
+Message-Id: <20190830005037.24004-2-ivan.khoronzhuk@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190830005037.24004-1-ivan.khoronzhuk@linaro.org>
+References: <20190830005037.24004-1-ivan.khoronzhuk@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series contains mainly fixes/improvements for cross-compilation
-(also verified on native platform build), tested on arm, but intended
-for any arch.
+For cross compiling the target triple can be inherited from
+cross-compile prefix as it's done in CLANG_FLAGS from kernel makefile.
+So copy-paste this decision from kernel Makefile.
 
-The several patches are related to llvm clang and should be out of this
-series or even fixed in another way, and here just to get comments:
-  arm: include: asm: swab: mask rev16 instruction for clang
-  arm: include: asm: unified: mask .syntax unified for clang
+Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+---
+ samples/bpf/Makefile | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Also, only for armv7, there is one more problem related to long and
-void type sizes for 32 bits, while the BPF LLVM back end still
-operates in 64 bit, but that's another story.
-
-Smth related not only for cross-compilation and can have impact on other
-archs and build environments, so might be good idea to verify it in order
-to add appropriate changes, some warn options can be tuned, so comment.
-
-Ivan Khoronzhuk (10):
-  samples: bpf: Makefile: use --target from cross-compile
-  samples: bpf: Makefile: remove target for native build
-  libbpf: Makefile: add C/CXX/LDFLAGS to libbpf.so and test_libpf
-    targets
-  samples: bpf: use own EXTRA_CFLAGS for clang commands
-  samples: bpf: Makefile: use vars from KBUILD_CFLAGS to handle linux
-    headers
-  samples: bpf: makefile: fix HDR_PROBE
-  samples: bpf: add makefile.prog for separate CC build
-  samples: bpf: Makefile: base progs build on Makefile.progs
-  arm: include: asm: swab: mask rev16 instruction for clang
-  arm: include: asm: unified: mask .syntax unified for clang
-
- arch/arm/include/asm/swab.h    |   3 +
- arch/arm/include/asm/unified.h |   6 +-
- samples/bpf/Makefile           | 177 +++++++++++++++++++--------------
- samples/bpf/Makefile.prog      |  77 ++++++++++++++
- samples/bpf/README.rst         |   7 ++
- tools/lib/bpf/Makefile         |  11 +-
- 6 files changed, 205 insertions(+), 76 deletions(-)
- create mode 100644 samples/bpf/Makefile.prog
-
+diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
+index 1d9be26b4edd..61b7394b811e 100644
+--- a/samples/bpf/Makefile
++++ b/samples/bpf/Makefile
+@@ -196,6 +196,8 @@ BTF_PAHOLE ?= pahole
+ # Detect that we're cross compiling and use the cross compiler
+ ifdef CROSS_COMPILE
+ HOSTCC = $(CROSS_COMPILE)gcc
++CLANG_ARCH_ARGS = --target=$(notdir $(CROSS_COMPILE:%-=%))
++else
+ CLANG_ARCH_ARGS = -target $(ARCH)
+ endif
+ 
 -- 
 2.17.1
 
