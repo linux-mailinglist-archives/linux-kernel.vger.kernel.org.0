@@ -2,185 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84B26A3C6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25EB3A3C51
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbfH3QpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:45:19 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:37338 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727304AbfH3QpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:45:19 -0400
-Received: from zn.tnic (p200300EC2F0AAA00B4BCDAC90C3E20C3.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:aa00:b4bc:dac9:c3e:20c3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 85D001EC0959;
-        Fri, 30 Aug 2019 18:45:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1567183517;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=WMl6FqrCGGFKUtU/ehcmIWhYaPXfT9KQz+RU6G4D4NY=;
-        b=aeMzdkieaJDnTF8lR/wP6brKjs1KZi6UM7ZApCw+MKJbcZ0PcETlALV41pmWxotKuakI7u
-        j5KbDsbFtoIEZnjksPMDwGnYt/BfJPlpo3a/bavonsMhcJVQtGPO09rgIDp5PPivxL7S45
-        5Wjq13AwqXpZGikCRAhEAFKMRXnC2ig=
-Date:   Fri, 30 Aug 2019 18:45:13 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Kairui Song <kasong@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>,
-        Dave Young <dyoung@redhat.com>, x86@kernel.org,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
-Subject: Re: [PATCH v2] x86/kdump: Reserve extra memory when SME or SEV is
- active
-Message-ID: <20190830164513.GE30413@zn.tnic>
-References: <20190826044535.9646-1-kasong@redhat.com>
+        id S1728350AbfH3Qn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:43:27 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43258 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728086AbfH3Qn1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:43:27 -0400
+Received: by mail-pf1-f196.google.com with SMTP id v12so4970469pfn.10
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 09:43:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=q5gzUFH+LLr1GeRh8d61wQ5ZxK6DUtBvBFz6N7zeYQ8=;
+        b=nJl4ZiCxYAu6twY2dIZpt6JBzmYgk4PbodtyM2DHZYiWFm3VZFwCvg9Zw15krklbGj
+         eaWHPK+cFBBCGA0j/4A0Yfzho/8xw6VmQkabo5OzbrYcK6qaR5aXh3iUDQWfcbGoSu4Z
+         poGclGdOBZhYYd8+6uSeM3dZ20P5jKdpWSYWZDeWh0gjHX+CjnUJf5w/keLKJbxMc+Db
+         kBHpAtM1aMNqaSEcg0LPKmRILXrjtbQDjXBBGQeb07g4YwZYcaIKzfRZ4xBW+3ZkhVds
+         zzBzYUC+cW02dZjQEYEUijUVJcsCfQkm2xhgu3ItpChGSLeorMLGu1WORzMS/Er5okqr
+         2pyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=q5gzUFH+LLr1GeRh8d61wQ5ZxK6DUtBvBFz6N7zeYQ8=;
+        b=iQN2VmCgyf4wCG13oYewGq1ilZWtIHZSUvXYAYhRzINwliWGZmbLSB2+15zkVZP0uO
+         bEfJgq8hjbuHOjW1SHOLD6dPPyJLRjiBeytb5acnkPSWSX8MMNL2baVjbgG0+LSSKpqd
+         77oIxM+DgEg2dJlK2jg78TSG9/KLCqTJrhIx9mWZ0zAHpNMDYXjoEU9f496eobFqiUGz
+         rygY7mb02ZPG8MN4MR3Zvejo5nKIXl8mEf04yxww4gSU9+AwFU1Q6iwZ6vJe1TIXqHX8
+         YuqxdHiovY3F+FG9bJ+CEXawCdQnP+T3B8fI2Vc+lHM4MrcrgqkjzQxzeAvHMH7B6WAs
+         0J3g==
+X-Gm-Message-State: APjAAAUGXPClpOd8B69QKOkdHsLgJzvtVxjHjVCVstUyZw4McElUvzpB
+        q8n8nLi5wT9BI6Jca14RjHRv9w==
+X-Google-Smtp-Source: APXvYqyWTZbyunakxQlyU8+azoFn/fVvPZoIev3hecPMzx3XNAaoIo+T2UrpOj7TfS4xJn93lMOOzQ==
+X-Received: by 2002:a63:188:: with SMTP id 130mr13572573pgb.231.1567183406399;
+        Fri, 30 Aug 2019 09:43:26 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c9sm8573589pfb.43.2019.08.30.09.43.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 09:43:25 -0700 (PDT)
+Date:   Fri, 30 Aug 2019 09:45:20 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>, robh@kernel.org,
+        andy.gross@linaro.org, shawn.guo@linaro.org,
+        gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
+        jackp@codeaurora.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        khasim.mohammed@linaro.org
+Subject: Re: [PATCH v4 3/4] dt-bindings: Add Qualcomm USB SuperSpeed PHY
+ bindings
+Message-ID: <20190830164520.GK26807@tuxbook-pro>
+References: <20190207111734.24171-1-jorge.ramirez-ortiz@linaro.org>
+ <20190207111734.24171-4-jorge.ramirez-ortiz@linaro.org>
+ <20190223165218.GB572@tuxbook-pro>
+ <6dc0957d-5806-7643-4454-966015865d38@linaro.org>
+ <5d694878.1c69fb81.5f13b.ec4f@mx.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190826044535.9646-1-kasong@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5d694878.1c69fb81.5f13b.ec4f@mx.google.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 26, 2019 at 12:45:35PM +0800, Kairui Song wrote:
-> Since commit c7753208a94c ("x86, swiotlb: Add memory encryption support"),
-> SWIOTLB will be enabled even if there is less than 4G of memory when SME
-> is active, to support DMA of devices that not support address with the
-> encrypt bit.
+On Fri 30 Aug 09:01 PDT 2019, Stephen Boyd wrote:
+
+> Quoting Jorge Ramirez (2019-08-29 00:03:48)
+> > On 2/23/19 17:52, Bjorn Andersson wrote:
+> > > On Thu 07 Feb 03:17 PST 2019, Jorge Ramirez-Ortiz wrote:
+> > >> +
+> > >> +Required child nodes:
+> > >> +
+> > >> +- usb connector node as defined in bindings/connector/usb-connector.txt
+> > >> +  containing the property vbus-supply.
+> > >> +
+> > >> +Example:
+> > >> +
+> > >> +usb3_phy: usb3-phy@78000 {
+> > >> +    compatible = "qcom,snps-usb-ssphy";
+> > >> +    reg = <0x78000 0x400>;
+> > >> +    #phy-cells = <0>;
+> > >> +    clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
+> > >> +             <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
+> > >> +             <&gcc GCC_USB3_PHY_PIPE_CLK>;
+> > >> +    clock-names = "ref", "phy", "pipe";
+> > >> +    resets = <&gcc GCC_USB3_PHY_BCR>,
+> > >> +             <&gcc GCC_USB3PHY_PHY_BCR>;
+> > >> +    reset-names = "com", "phy";
+> > >> +    vdd-supply = <&vreg_l3_1p05>;
+> > >> +    vdda1p8-supply = <&vreg_l5_1p8>;
+> > >> +    usb3_c_connector: usb3-c-connector {
 > 
-> And commit aba2d9a6385a ("iommu/amd: Do not disable SWIOTLB if SME is
-> active") make the kernel keep SWIOTLB enabled even if there is an IOMMU.
+> Node name should be 'connector', not usb3-c-connector.
 > 
-> Then commit d7b417fa08d1 ("x86/mm: Add DMA support for SEV memory
-> encryption") will always force SWIOTLB to be enabled when SEV is active
-> in all cases.
+
+It probably has to be usb-c-connector, because we have a
+micro-usb-connector on the same board.
+
+> > > 
+> > > The USB-C connector is attached both to the HS and SS PHYs, so I think
+> > > you should represent this external to this node and use of_graph to
+> > > query it.
+> > 
+> > but AFAICS we wont be able to retrieve the vbux-supply from an external
+> > node (that interface does not exist).
+> > 
+> > rob, do you have a suggestion?
 > 
-> Now, when either SME or SEV is active, SWIOTLB will be force enabled,
-> and this is also true for kdump kernel. As a result kdump kernel will
-> run out of already scarce pre-reserved memory easily.
+> Shouldn't the vbus supply be in the phy? Or is this a situation where
+> the phy itself doesn't have the vbus supply going to it because the PMIC
+> gets in the way and handles the vbus for the connector by having the SoC
+> communicate with the PMIC about when to turn the vbus on and off, etc?
 > 
-> So when SME/SEV is active, reserve extra memory for SWIOTLB to ensure
-> kdump kernel have enough memory, except when "crashkernel=size[KMG],high"
-> is specified or any offset is used. As for the high reservation case, an
-> extra low memory region will always be reserved and that is enough for
-> SWIOTLB. Else if the offset format is used, user should be fully aware
-> of any possible kdump kernel memory requirement and have to organize the
-> memory usage carefully.
-> 
-> Signed-off-by: Kairui Song <kasong@redhat.com>
-> 
-> ---
-> Update from V1:
-> - Use mem_encrypt_active() instead of "sme_active() || sev_active()"
-> - Don't reserve extra memory when ",high" or "@offset" is used, and
->   don't print redundant message.
-> - Fix coding style problem
-> 
->  arch/x86/kernel/setup.c | 31 ++++++++++++++++++++++++++++---
->  1 file changed, 28 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index bbe35bf879f5..221beb10c55d 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -528,7 +528,7 @@ static int __init reserve_crashkernel_low(void)
->  
->  static void __init reserve_crashkernel(void)
->  {
-> -	unsigned long long crash_size, crash_base, total_mem;
-> +	unsigned long long crash_size, crash_base, total_mem, mem_enc_req;
->  	bool high = false;
->  	int ret;
->  
-> @@ -550,6 +550,15 @@ static void __init reserve_crashkernel(void)
->  		return;
->  	}
->  
-> +	/*
-> +	 * When SME/SEV is active, it will always required an extra SWIOTLB
-> +	 * region.
-> +	 */
-> +	if (mem_encrypt_active())
-> +		mem_enc_req = ALIGN(swiotlb_size_or_default(), SZ_1M);
-> +	else
-> +		mem_enc_req = 0;
 
-Hmm, ugly.
+That's correct, the VBUS comes out of the PMIC and goes directly to the
+connector.
 
-You set mem_enc_reg here ...
+The additional complicating factor here is that the connector is wired
+to a USB2 phy as well, so we need to wire up detection and vbus control
+to both of them - but I think this will be fine, if we can only figure
+out a sane way of getting hold of the vbus-supply.
 
-> +
->  	/* 0 means: find the address automatically */
->  	if (!crash_base) {
->  		/*
-> @@ -563,11 +572,19 @@ static void __init reserve_crashkernel(void)
->  		if (!high)
->  			crash_base = memblock_find_in_range(CRASH_ALIGN,
->  						CRASH_ADDR_LOW_MAX,
-> -						crash_size, CRASH_ALIGN);
-> -		if (!crash_base)
-> +						crash_size + mem_enc_req,
-> +						CRASH_ALIGN);
-> +		/*
-> +		 * For high reservation, an extra low memory for SWIOTLB will
-> +		 * always be reserved later, so no need to reserve extra
-> +		 * memory for memory encryption case here.
-> +		 */
-> +		if (!crash_base) {
-> +			mem_enc_req = 0;
-
-... but you clear it here...
-
->  			crash_base = memblock_find_in_range(CRASH_ALIGN,
->  						CRASH_ADDR_HIGH_MAX,
->  						crash_size, CRASH_ALIGN);
-> +		}
->  		if (!crash_base) {
->  			pr_info("crashkernel reservation failed - No suitable area found.\n");
->  			return;
-> @@ -575,6 +592,7 @@ static void __init reserve_crashkernel(void)
->  	} else {
->  		unsigned long long start;
->  
-> +		mem_enc_req = 0;
-
-... and here...
-
->  		start = memblock_find_in_range(crash_base,
->  					       crash_base + crash_size,
->  					       crash_size, 1 << 20);
-> @@ -583,6 +601,13 @@ static void __init reserve_crashkernel(void)
->  			return;
->  		}
->  	}
-> +
-> +	if (mem_enc_req) {
-> +		pr_info("Memory encryption is active, crashkernel needs %ldMB extra memory\n",
-> +			(unsigned long)(mem_enc_req >> 20));
-> +		crash_size += mem_enc_req;
-> +	}
-
-... and then you report only when it is still set.
-
-How about you carve out that if (!crash_base) { ... } else { } piece
-into a separate function without any further changes - only code
-movement? That is your patch 1.
-
-Your patch 2 is then adding the mem_encrypt_active() check in the if
-(!crash_base && !high) case, i.e., only where you need it and issuing
-the pr_info from there instead of stretching that logic throughout the
-whole function and twisting my brain unnecessarily?
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Regards,
+Bjorn
