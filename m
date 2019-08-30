@@ -2,130 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D85D2A377D
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00A34A3784
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:06:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbfH3NEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 09:04:33 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58636 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727417AbfH3NEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 09:04:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 06:04:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="182646301"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga007.fm.intel.com with ESMTP; 30 Aug 2019 06:04:31 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i3gZq-0007iM-4Q; Fri, 30 Aug 2019 16:04:30 +0300
-Date:   Fri, 30 Aug 2019 16:04:30 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 10/10] lib/test_printf: Add tests for %pfw printk
- modifier
-Message-ID: <20190830130430.GK2680@smile.fi.intel.com>
-References: <20190829101043.24963-1-sakari.ailus@linux.intel.com>
- <20190829101043.24963-11-sakari.ailus@linux.intel.com>
+        id S1727967AbfH3NGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 09:06:14 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:50185 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfH3NGN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 09:06:13 -0400
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id AEF02100004;
+        Fri, 30 Aug 2019 13:06:10 +0000 (UTC)
+Date:   Fri, 30 Aug 2019 15:06:03 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH 1/2] rtc: max77686: convert to devm_i2c_new_dummy_device()
+Message-ID: <20190830130603.GQ21922@piout.net>
+References: <20190820154239.8230-1-wsa+renesas@sang-engineering.com>
+ <20190820154239.8230-2-wsa+renesas@sang-engineering.com>
+ <20190829205752.GL21922@piout.net>
+ <20190830124554.GB2870@ninjato>
+ <20190830125338.GP21922@piout.net>
+ <20190830130035.GF2870@ninjato>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190829101043.24963-11-sakari.ailus@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190830130035.GF2870@ninjato>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 01:10:43PM +0300, Sakari Ailus wrote:
-> Add a test for the %pfw printk modifier using software nodes.
+On 30/08/2019 15:00:35+0200, Wolfram Sang wrote:
 > 
+> > > > I'm confused because I already applied:
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git/commit/?h=rtc-next&id=7150710f3084de8d35ce3221eeae2caee8813f92
+> > > 
+> > > The above was a mass conversion to i2c_new_dummy_device() to make sure
+> > > all in-kernel users use the API returning an ERRPTR. Mass conversion to
+> > > the devm_ variant of the same function was too troublesome.
+> > > 
+> > > With another series, I wanted to remove superfluous error checking of
+> > > i2c_unregister_device() because it is NULL-ptr safe, like here:
+> > > 
+> > > > > -	if (info->rtc)
+> > > > > -		i2c_unregister_device(info->rtc);
+> > > 
+> > > But for these two RTC drivers, I figured moving to devm_* is way easier
+> > > than fixing up the mass conversion result from coccinelle.
+> > > 
+> > 
+> > Ok so should I drop the previous patches and apply those instead?
+> 
+> Nope, they should be incremental, aren't they?
+> 
+No, your patches don't apply on top of rtc-next
 
-Having tests is always a good thing!
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
->  lib/test_printf.c | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
-> 
-> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> index 944eb50f38625..9c6d716979fb1 100644
-> --- a/lib/test_printf.c
-> +++ b/lib/test_printf.c
-> @@ -22,6 +22,8 @@
->  #include <linux/gfp.h>
->  #include <linux/mm.h>
->  
-> +#include <linux/property.h>
-> +
->  #include "../tools/testing/selftests/kselftest_module.h"
->  
->  #define BUF_SIZE 256
-> @@ -588,6 +590,40 @@ flags(void)
->  	kfree(cmp_buffer);
->  }
->  
-> +static void __init fwnode_pointer(void)
-> +{
-> +	const struct software_node softnodes[] = {
-> +		{ .name = "first", },
-> +		{ .name = "second", .parent = &softnodes[0], },
-> +		{ .name = "third", .parent = &softnodes[1], },
-> +		{ NULL /* Guardian */ },
-> +	};
-> +	const char * const full_name = "/second/third";
-> +	const char * const full_name_second = "/second";
-> +	const char * const second_name = "second";
-> +	const char * const third_name = "third";
-> +	int rval;
-> +
-> +	rval = software_node_register_nodes(softnodes);
-> +	if (rval) {
-> +		pr_warn("cannot register softnodes; rval %d\n", rval);
-> +		return;
-> +	}
-> +
-> +	test(full_name_second, "%pfw",
-> +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-> +	test(full_name, "%pfw",
-> +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> +	test(full_name, "%pfwf",
-> +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> +	test(second_name, "%pfwP",
-> +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-> +	test(third_name, "%pfwP",
-> +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> +
-> +	software_node_unregister_nodes(softnodes);
-> +}
-> +
->  static void __init
->  test_pointer(void)
->  {
-> @@ -610,6 +646,7 @@ test_pointer(void)
->  	bitmap();
->  	netdev_features();
->  	flags();
-> +	fwnode_pointer();
->  }
->  
->  static void __init selftest(void)
-> -- 
-> 2.20.1
-> 
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
