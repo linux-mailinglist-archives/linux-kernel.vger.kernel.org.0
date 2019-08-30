@@ -2,65 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F046FA2F9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD4FA2FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbfH3GRi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 02:17:38 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37014 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726452AbfH3GRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 02:17:38 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 17F0D92207381C1165EC;
-        Fri, 30 Aug 2019 14:17:34 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 30 Aug
- 2019 14:17:28 +0800
-Subject: Re: [PATCH v3 5/7] erofs: kill erofs_{init,exit}_inode_cache
-To:     Gao Xiang <gaoxiang25@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Joe Perches" <joe@perches.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-References: <20190830032006.GA20217@architecture4>
- <20190830033643.51019-1-gaoxiang25@huawei.com>
- <20190830033643.51019-5-gaoxiang25@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <1188f42d-af41-1104-a7a9-37c237463869@huawei.com>
-Date:   Fri, 30 Aug 2019 14:17:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190830033643.51019-5-gaoxiang25@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+        id S1727738AbfH3GSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 02:18:51 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:59124 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbfH3GSu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 02:18:50 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E27BA15448094;
+        Thu, 29 Aug 2019 23:18:49 -0700 (PDT)
+Date:   Thu, 29 Aug 2019 23:18:49 -0700 (PDT)
+Message-Id: <20190829.231849.163267210593234149.davem@davemloft.net>
+To:     jiri@resnulli.us
+Cc:     andrew@lunn.ch, horatiu.vultur@microchip.com,
+        alexandre.belloni@bootlin.com, UNGLinuxDriver@microchip.com,
+        allan.nielsen@microchip.com, ivecera@redhat.com,
+        f.fainelli@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] net: core: Notify on changes to
+ dev->promiscuity.
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190830061327.GM2312@nanopsycho>
+References: <20190829134901.GJ2312@nanopsycho>
+        <20190829143732.GB17864@lunn.ch>
+        <20190830061327.GM2312@nanopsycho>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 29 Aug 2019 23:18:50 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/30 11:36, Gao Xiang wrote:
-> As Christoph said [1] "having this function
-> seems entirely pointless", I have to kill those.
-> 
-> filesystem                              function name
-> ext2,f2fs,ext4,isofs,squashfs,cifs,...  init_inodecache
-> 
-> In addition, add a "rcu_barrier()" when exit_fs();
-> 
-> [1] https://lore.kernel.org/r/20190829101545.GC20598@infradead.org/
-> Reported-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+From: Jiri Pirko <jiri@resnulli.us>
+Date: Fri, 30 Aug 2019 08:13:27 +0200
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+> In fact, I have usecase where I need to see only slow-path traffic by
+> wireshark, not all packets going through hw.
 
-Thanks,
+This could be an attribute in the descriptor entries for the packets
+provided to userspace, and BPF filters could act on these as well.
+
+Switch network devices aren't special, promiscuous mode means all
+packets on the wire that you are attached.
+
+This talk about special handling of "trapping" is a strawman.
