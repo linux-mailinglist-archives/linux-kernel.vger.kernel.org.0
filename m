@@ -2,137 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8B6EA339E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C3D3A33FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728072AbfH3JUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 05:20:03 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43777 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727888AbfH3JUC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 05:20:02 -0400
-Received: by mail-pl1-f194.google.com with SMTP id 4so3087095pld.10
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 02:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mF/OnrJ00SbahU15HvzXY+I7DAqSAdHto9JRdxhPxic=;
-        b=Ux+jFtwdTk9Ronis0odb2Ycgp0S8vbePlVivVxngSn0nWhes+7VjYfxqI7v38XNJAq
-         z+L5xNuAA2giKtmAcBW78A7RMcdyvoy57MuKHKukH36N/z4WPVhWysQdDAkW9LuCdz2T
-         XUxGYTUK0VAhAHj20aNla4/UKJDnBUqLk0xWFFI5oSDzx48wqtTtk0xJtMvqvpkgurNM
-         eHqQVSWE9gqvLdAJh4mZvqpqiEoYLVJGLLtBLQKuwy0g0U9crR/G+hqVjqQNXO9K+0Wh
-         uWonQsDM7nfyk96SON7K1ri2/YJhyEOSS5yQNm2NVphighYDB8AvbP6A2BJdlAaKfjtY
-         XIXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=mF/OnrJ00SbahU15HvzXY+I7DAqSAdHto9JRdxhPxic=;
-        b=eqw/HpsNTFctz52558Xq7mJ4u2w24BD9vOMAorE8Bia+M5/Ljk3f/fTK/J8s34j9ky
-         2yMrbNlkBaPhEnwimJxJyzb0Wmdto6y9ihV1dhroSLgea+yLbpr7QUIeF/1XVe/eO2KG
-         2Q/U5CqbQ4rW/9QpCvWBHWYCVsCN+4oDPFylS0L47m+i7KTHVifVVqv1R3kjMEsqNPCV
-         4mb6elpkuUbg5GqAULKTcqwOB9nVMULA5m7oUiYpVcbDE0pcVMLcVJi/vjdE3byrym3R
-         atI8g+mG5Dh1odEDSU6iG2abb9gQ3JF8Jt1Xv6XJ8x5aLP41vzo5X1oOPuPrzYaDdbU1
-         PGvw==
-X-Gm-Message-State: APjAAAVsA7U7U7LpNecZz3U232d2O4NoY2ctm9s4TZKML6WiZ6GS+ea9
-        S0TRmGpV2prpTi9vck8Dwy0taykFSmYG
-X-Google-Smtp-Source: APXvYqz5A+CcX7gq9fWKGI9UWFItRu3q1idaB7iqtUj4bbysDpItsyNSNqG0GqxsFoPU+L2K5PUflw==
-X-Received: by 2002:a17:902:e506:: with SMTP id ck6mr14969628plb.132.1567156801843;
-        Fri, 30 Aug 2019 02:20:01 -0700 (PDT)
-Received: from localhost.localdomain ([103.59.132.163])
-        by smtp.googlemail.com with ESMTPSA id g202sm3142676pfb.155.2019.08.30.02.19.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 02:20:01 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     mchehab@kernel.org, robh+dt@kernel.org, sakari.ailus@iki.fi
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        c.barrett@framos.com, a.brela@framos.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 1/3] dt-bindings: media: i2c: Add IMX290 CMOS sensor binding
-Date:   Fri, 30 Aug 2019 14:49:41 +0530
-Message-Id: <20190830091943.22646-2-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190830091943.22646-1-manivannan.sadhasivam@linaro.org>
-References: <20190830091943.22646-1-manivannan.sadhasivam@linaro.org>
+        id S1728366AbfH3J1e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 05:27:34 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50538 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726461AbfH3J1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 05:27:33 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C9E9D1A03CC;
+        Fri, 30 Aug 2019 11:27:30 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 395DE1A00A9;
+        Fri, 30 Aug 2019 11:27:26 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4B845402D7;
+        Fri, 30 Aug 2019 17:27:20 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, leoyang.li@nxp.com
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>,
+        Martin Fuzzey <mfuzzey@parkeon.com>
+Subject: [1/2] dt-bindings: rtc: pcf85263/pcf85363: add some properties
+Date:   Fri, 30 Aug 2019 17:17:19 +0800
+Message-Id: <20190830091720.41156-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add devicetree binding for IMX290 CMOS image sensor.
+Add some properties for pcf85263/pcf85363 as follows:
+  - interrupt-output-pin: string type
+  - quartz-load-capacitance: integer type
+  - quartz-drive-strength: integer type
+  - quartz-low-jitter: bool type
+  - wakeup-source: bool type
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Martin Fuzzey <mfuzzey@parkeon.com>
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
 ---
- .../devicetree/bindings/media/i2c/imx290.txt  | 57 +++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/imx290.txt
+ .../devicetree/bindings/rtc/pcf85363.txt      | 31 +++++++++++++++++++
+ include/dt-bindings/rtc/pcf85363.h            | 15 +++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 include/dt-bindings/rtc/pcf85363.h
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/imx290.txt b/Documentation/devicetree/bindings/media/i2c/imx290.txt
+diff --git a/Documentation/devicetree/bindings/rtc/pcf85363.txt b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+index 94adc1cf93d9..d83359990bd7 100644
+--- a/Documentation/devicetree/bindings/rtc/pcf85363.txt
++++ b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+@@ -8,10 +8,41 @@ Required properties:
+ Optional properties:
+ - interrupts: IRQ line for the RTC (not implemented).
+ 
++- interrupt-output-pin: The interrupt output pin must be
++  "NONE", "INTA" or "INTB", default value is "NONE"
++
++- quartz-load-capacitance: The internal capacitor to select for the quartz:
++	PCF85263_QUARTZCAP_7pF		[0]
++	PCF85263_QUARTZCAP_6pF		[1]
++	PCF85263_QUARTZCAP_12p5pF	[2] DEFAULT
++
++- quartz-drive-strength: Drive strength for the quartz:
++	PCF85263_QUARTZDRIVE_NORMAL	[0] DEFAULT
++	PCF85263_QUARTZDRIVE_LOW	[1]
++	PCF85263_QUARTZDRIVE_HIGH	[2]
++
++- quartz-low-jitter: Boolean property, if present enables low jitter mode
++  which reduces jitter at the cost of increased power consumption.
++
++- wakeup-source: Boolean property, mark the chip as a wakeup source,
++  independently of the availability of an IRQ line connected to the SoC.
++  This is useful if the IRQ line is connected to a PMIC or other circuit
++  that can power up the device rather than to a normal SOC interrupt.
++
+ Example:
+ 
+ pcf85363: pcf85363@51 {
+ 	compatible = "nxp,pcf85363";
+ 	reg = <0x51>;
++
++	interrupt-parent = <&gpio1>;
++	interrupts = <18 IRQ_TYPE_EDGE_FALLING>;
++
++	#include <dt-bindings/rtc/pcf85363.h>
++	wakeup-source;
++	interrupt-output-pin = "INTA";
++	quartz-load-capacitance = <PCF85363_QUARTZCAP_12p5pF>;
++	quartz-drive-strength = <PCF85363_QUARTZDRIVE_LOW>;
++	quartz-low-jitter;
+ };
+ 
+diff --git a/include/dt-bindings/rtc/pcf85363.h b/include/dt-bindings/rtc/pcf85363.h
 new file mode 100644
-index 000000000000..a3cc21410f7c
+index 000000000000..2c06c28eb5ff
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/imx290.txt
-@@ -0,0 +1,57 @@
-+* Sony IMX290 1/2.8-Inch CMOS Image Sensor
++++ b/include/dt-bindings/rtc/pcf85363.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _DT_BINDINGS_RTC_PCF85363_H
++#define _DT_BINDINGS_RTC_PCF85363_H
 +
-+The Sony IMX290 is a 1/2.8-Inch CMOS Solid-state image sensor with
-+Square Pixel for Color Cameras. It is programmable through I2C and 4-wire
-+interfaces. The sensor output is available via CMOS logic parallel SDR output,
-+Low voltage LVDS DDR output and CSI-2 serial data output. The CSI-2 bus is the
-+default. No bindings have been defined for the other busses.
++/* Quartz capacitance */
++#define PCF85363_QUARTZCAP_7pF		0
++#define PCF85363_QUARTZCAP_6pF		1
++#define PCF85363_QUARTZCAP_12p5pF	2
 +
-+Required Properties:
-+- compatible: Should be "sony,imx290"
-+- reg: I2C bus address of the device
-+- clocks: Reference to the xclk clock.
-+- clock-names: Should be "xclk".
-+- clock-frequency: Frequency of the xclk clock in Hz.
-+- vdddo-supply: Sensor digital IO regulator.
-+- vdda-supply: Sensor analog regulator.
-+- vddd-supply: Sensor digital core regulator.
++/* Quartz drive strength */
++#define PCF85363_QUARTZDRIVE_NORMAL	0
++#define PCF85363_QUARTZDRIVE_LOW	1
++#define PCF85363_QUARTZDRIVE_HIGH	2
 +
-+Optional Properties:
-+- reset-gpios: Sensor reset GPIO
-+
-+The imx290 device node should contain one 'port' child node with
-+an 'endpoint' subnode. For further reading on port node refer to
-+Documentation/devicetree/bindings/media/video-interfaces.txt.
-+
-+Required Properties on endpoint:
-+- data-lanes: check ../video-interfaces.txt
-+- link-frequencies: check ../video-interfaces.txt
-+- remote-endpoint: check ../video-interfaces.txt
-+
-+Example:
-+	&i2c1 {
-+		...
-+		imx290: camera-sensor@1a {
-+			compatible = "sony,imx290";
-+			reg = <0x1a>;
-+
-+			reset-gpios = <&msmgpio 35 GPIO_ACTIVE_LOW>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&camera_rear_default>;
-+
-+			clocks = <&gcc GCC_CAMSS_MCLK0_CLK>;
-+			clock-names = "xclk";
-+			clock-frequency = <37125000>;
-+
-+			vdddo-supply = <&camera_vdddo_1v8>;
-+			vdda-supply = <&camera_vdda_2v8>;
-+			vddd-supply = <&camera_vddd_1v5>;
-+
-+			port {
-+				imx290_ep: endpoint {
-+					data-lanes = <1 2 3 4>;
-+					link-frequencies = /bits/ 64 <445500000>;
-+					remote-endpoint = <&csiphy0_ep>;
-+				};
-+			};
-+		};
++#endif /* _DT_BINDINGS_RTC_PCF85363_H */
 -- 
 2.17.1
 
