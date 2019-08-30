@@ -2,89 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B068EA37E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53097A37E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 15:40:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbfH3NiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 09:38:24 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:41455 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbfH3NiY (ORCPT
+        id S1727958AbfH3Nj4 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 30 Aug 2019 09:39:56 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:25633 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727729AbfH3Nj4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 09:38:24 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 42A593C0579;
-        Fri, 30 Aug 2019 15:38:22 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id xi7ekeR7DieB; Fri, 30 Aug 2019 15:38:16 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 89A243C04C0;
-        Fri, 30 Aug 2019 15:38:16 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Fri, 30 Aug
- 2019 15:38:16 +0200
-Date:   Fri, 30 Aug 2019 15:38:13 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     "George G. Davis" <george_davis@mentor.com>
-CC:     Shuah Khan <shuah@kernel.org>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v2] selftests: watchdog: Add optional file argument
-Message-ID: <20190830133813.GA23613@vmlxhi-102.adit-jv.com>
-References: <1567169597-10330-1-git-send-email-george_davis@mentor.com>
+        Fri, 30 Aug 2019 09:39:56 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-210-F1QPlVPsMbqytrDM-jSL6w-1; Fri, 30 Aug 2019 14:39:52 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 30 Aug 2019 14:39:51 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 30 Aug 2019 14:39:51 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Lu Baolu' <baolu.lu@linux.intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>
+CC:     "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        "jacob.jun.pan@intel.com" <jacob.jun.pan@intel.com>,
+        "alan.cox@intel.com" <alan.cox@intel.com>,
+        "kevin.tian@intel.com" <kevin.tian@intel.com>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "pengfei.xu@intel.com" <pengfei.xu@intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        "Robin Murphy" <robin.murphy@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: RE: [PATCH v8 7/7] iommu/vt-d: Use bounce buffer for untrusted
+ devices
+Thread-Topic: [PATCH v8 7/7] iommu/vt-d: Use bounce buffer for untrusted
+ devices
+Thread-Index: AQHVXwNAt0TkSHwjwEWfpppIl7udg6cTsWfA
+Date:   Fri, 30 Aug 2019 13:39:51 +0000
+Message-ID: <4dee1bcef8474ebb95a7826a58bb72aa@AcuMS.aculab.com>
+References: <20190830071718.16613-1-baolu.lu@linux.intel.com>
+ <20190830071718.16613-8-baolu.lu@linux.intel.com>
+In-Reply-To: <20190830071718.16613-8-baolu.lu@linux.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1567169597-10330-1-git-send-email-george_davis@mentor.com>
-User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
-X-Originating-IP: [10.72.93.184]
+X-MC-Unique: F1QPlVPsMbqytrDM-jSL6w-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi George,
+From: Lu Baolu
+> Sent: 30 August 2019 08:17
 
-On Fri, Aug 30, 2019 at 08:53:16AM -0400, George G. Davis wrote:
-> Some systems have multiple watchdog devices where the first device
-> registered is assigned to the /dev/watchdog device file. In order
-> to test other watchdog devices, add an optional file argument for
-> selecting non-default watchdog devices for testing.
-> 
-> Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> Signed-off-by: George G. Davis <george_davis@mentor.com>
-> ---
-> v1:
-> - https://lkml.org/lkml/2019/8/29/16
-> v2:
-> - Update printf for ENOENT case based on report from Eugeniu Rosca
+> The Intel VT-d hardware uses paging for DMA remapping.
+> The minimum mapped window is a page size. The device
+> drivers may map buffers not filling the whole IOMMU
+> window. This allows the device to access to possibly
+> unrelated memory and a malicious device could exploit
+> this to perform DMA attacks. To address this, the
+> Intel IOMMU driver will use bounce pages for those
+> buffers which don't fill whole IOMMU pages.
 
-Below interdiff [1] matches my expectations. Thanks!
+Won't this completely kill performance?
 
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+I'd expect to see something for dma_alloc_coherent() (etc)
+that tries to give the driver page sized buffers.
 
-[1] interdiff <(git show patch_v1) <(git show patch_v2)  
-diff -u b/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
---- b/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -107,7 +107,7 @@
- 
- 	if (fd == -1) {
- 		if (errno == ENOENT)
--			printf("Watchdog device not enabled.\n");
-+			printf("Watchdog device (%s) not found.\n", file);
- 		else if (errno == EACCES)
- 			printf("Run watchdog as root.\n");
- 		else
+Either that or the driver could allocate page sized buffers
+even though it only passes fragments of these buffers to
+the dma functions (to avoid excessive cache invalidates).
 
--- 
-Best Regards,
-Eugeniu.
+Since you have to trust the driver, why not actually trust it?
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
