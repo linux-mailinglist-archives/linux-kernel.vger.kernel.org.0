@@ -2,129 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF74AA3147
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 198B1A3154
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728426AbfH3Hla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:41:30 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:61267 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728308AbfH3HlQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:41:16 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46KWcn5Kyhz9vBmW;
-        Fri, 30 Aug 2019 09:41:13 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=gVny2wTn; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 14Tt15Z7pa5g; Fri, 30 Aug 2019 09:41:13 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46KWcn4H8Dz9vBmK;
-        Fri, 30 Aug 2019 09:41:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1567150873; bh=Z3bd6wODPz5wA7uTANAowrL/V9jIt/k9bKsgaQKc7cY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gVny2wTndz/RHEcUKBQ8YjZjNNOj9ulkkSXsovq+Rg2W6RWn7fycH3f2mjz71nXKK
-         qEsOJItpmlghns5c65IYr5NutqFw6o0Rhkq8o6ON2T1TooQW5VBxanrx2ZIMICXcpb
-         y4AQoEAkaNf39a6nGn5tHIC7XqHvPE4RrkThtK4s=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9DA558B8E8;
-        Fri, 30 Aug 2019 09:41:14 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id WDKejOP-RFqE; Fri, 30 Aug 2019 09:41:14 +0200 (CEST)
-Received: from [172.25.230.105] (po15451.idsi0.si.c-s.fr [172.25.230.105])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E1218B8E3;
-        Fri, 30 Aug 2019 09:41:14 +0200 (CEST)
-Subject: Re: [PATCH] powerpc/mm: tell if a bad page fault on data is read or
- write.
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <4f88d7e6fda53b5f80a71040ab400242f6c8cb93.1566400889.git.christophe.leroy@c-s.fr>
- <87o908tbgx.fsf@mpe.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <79e4ebad-7fef-7f9b-69f4-f9065b0dbde4@c-s.fr>
-Date:   Fri, 30 Aug 2019 09:41:14 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <87o908tbgx.fsf@mpe.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1728548AbfH3Hl4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:41:56 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33509 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728242AbfH3Hlw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 03:41:52 -0400
+Received: by mail-lj1-f196.google.com with SMTP id z17so5597180ljz.0
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 00:41:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=PHzpuIcTRjA1mq8KL5MN0wJTgcqsL2rY6mp+YXB52Ls=;
+        b=hfPabs5hMPL1EJxJkAJjbgTZUMT+5b1e3bLviGhv9lgFwvTGdleR3fO8EI20ZW4355
+         UEEbFWGrQNXnAtb4gagdSUl261WsGq6GKEeen2ycendY/OatHM5RrjTlDDLYkatxbdlW
+         B/NR9cK4bMa3SvLVZ4ec+BKSX1KFNshlwWvc1oX3IbwEEHkFGnDpnHNlYdiNotdOUN3R
+         NEtZIU35z9GnyGsAVjQSdVzYzcjoY0SViHowyfnc2t/no0u5E26YbmChxVnLwpvYEh+E
+         Vt2KVQEByvtuJ+duAeYBHa6BZEyPNj7/4M8vDOiWZQGSCDSFVIpvJn7wsqGahqXx+874
+         50Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PHzpuIcTRjA1mq8KL5MN0wJTgcqsL2rY6mp+YXB52Ls=;
+        b=f2VS2guCwZU3k2QWhdMQX5SwmLSUPBQr/9sEtBJRo4SNVaVrE1csBRH6Mqkd8k77yY
+         CeooYb9aE6VwxQ/KkL0pbxv741GxLAI7qop3E6aSDnUa3KOK7p5+H9Cn7XXgVl4kStLG
+         f/KcTaPOFgntns+JX7UHboeHtJxecOYbw6/HIlZIUP4ewilRWpsWKVsZCDoFbx0vo6/g
+         R+UflsPVDMv8CWsceNblm8MEFEhai3jf1WEHzkxoghVyqLu5cHe97z4Q2sRqT1RDthzx
+         EJTpvEb4zZ5wlA6GUb1FwgMX1PZB4NM8ixRQ4AUzHq/XnQY4ROPxw418NNHJGBfO0YIE
+         YhTw==
+X-Gm-Message-State: APjAAAW6Wh9igre5CytSf021IfOMjRtenMIv3B854fF9uPRKRoexiFN0
+        uHFy3PGvMqP0HKk1ZX8qc4vQaA==
+X-Google-Smtp-Source: APXvYqyMKbsWiChlmyh4S1z7TBoAjspNNmohTUFxHh0jW3nfrhk/M/R0o7Ru4+/2nY1j8l+PByVLjQ==
+X-Received: by 2002:a2e:8085:: with SMTP id i5mr7888581ljg.23.1567150909990;
+        Fri, 30 Aug 2019 00:41:49 -0700 (PDT)
+Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
+        by smtp.gmail.com with ESMTPSA id u13sm714119ljj.40.2019.08.30.00.41.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2019 00:41:49 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC fixes for v5.3-rc7
+Date:   Fri, 30 Aug 2019 09:41:47 +0200
+Message-Id: <20190830074147.3691-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
+
+Here's a PR with a couple of MMC fixes intended for v5.3-rc7. Details about the
+highlights are as usual found in the signed tag.
+
+Please pull this in!
+
+Kind regards
+Ulf Hansson
 
 
-Le 29/08/2019 à 14:14, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> DSISR has a bit to tell if the fault is due to a read or a write.
-> 
-> Except some CPUs don't have a DSISR?
-> 
-> Which is why we have page_fault_is_write() that's used in
-> __do_page_fault().
+The following changes since commit d1abaeb3be7b5fa6d7a1fbbd2e14e3310005c4c1:
 
+  Linux 5.3-rc5 (2019-08-18 14:31:08 -0700)
 
-And that's why I'm also using page_fault_is_write() in my patch.
+are available in the Git repository at:
 
-> 
-> Or is that old cruft?
-> 
-> I see eg. in head_40x.S we pass r5=0 for error code, and we don't set
-> regs->dsisr anywhere AFAICS. So it might just contain some junk.
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.3-rc5
 
+for you to fetch changes up to e73a3896eaca95ea5fc895720502a3f040eb4b39:
 
-We pass r5=0 in ISI but r5=SPRN_ESR in DSI.
-And r5 is also saved into _ESR(r11)
+  mmc: sdhci-cadence: enable v4_mode to fix ADMA 64-bit addressing (2019-08-30 09:17:53 +0200)
 
-And in asm-offset.c, we have:
+----------------------------------------------------------------
+MMC core:
+ - Fix init of SD cards reporting an invalid VDD range
 
-	STACK_PT_REGS_OFFSET(_ESR, dsisr);
+MMC host:
+ - sdhci-sprd: Fixes for clocks, card-detect, write-protect etc
+ - sdhci-cadence: Fix ADMA 64-bit addressing
+ - sdhci-tegra: Re-allow writing to SD card when GPIO pin is absent
+ - sdhci-of-at91: Fix eMMC init by clearing HS200 cap as it's not supported
 
-So regs->dsisr has the expected content.
+----------------------------------------------------------------
+Chunyan Zhang (5):
+      mmc: sdhci-sprd: fixed incorrect clock divider
+      mmc: sdhci-sprd: add get_ro hook function
+      mmc: sdhci-sprd: add SDHCI_QUIRK2_PRESET_VALUE_BROKEN
+      mms: sdhci-sprd: add SDHCI_QUIRK_BROKEN_CARD_DETECTION
+      mmc: sdhci-sprd: clear the UHS-I modes read from registers
 
-Christophe
+Dmitry Osipenko (1):
+      Revert "mmc: sdhci-tegra: drop ->get_ro() implementation"
 
+Eugen Hristev (1):
+      mmc: sdhci-of-at91: add quirk for broken HS200
 
-> 
-> cheers
-> 
->> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
->> index 8432c281de92..b5047f9b5dec 100644
->> --- a/arch/powerpc/mm/fault.c
->> +++ b/arch/powerpc/mm/fault.c
->> @@ -645,6 +645,7 @@ NOKPROBE_SYMBOL(do_page_fault);
->>   void bad_page_fault(struct pt_regs *regs, unsigned long address, int sig)
->>   {
->>   	const struct exception_table_entry *entry;
->> +	int is_write = page_fault_is_write(regs->dsisr);
->>   
->>   	/* Are we prepared to handle this fault?  */
->>   	if ((entry = search_exception_tables(regs->nip)) != NULL) {
->> @@ -658,9 +659,10 @@ void bad_page_fault(struct pt_regs *regs, unsigned long address, int sig)
->>   	case 0x300:
->>   	case 0x380:
->>   	case 0xe00:
->> -		pr_alert("BUG: %s at 0x%08lx\n",
->> +		pr_alert("BUG: %s on %s at 0x%08lx\n",
->>   			 regs->dar < PAGE_SIZE ? "Kernel NULL pointer dereference" :
->> -			 "Unable to handle kernel data access", regs->dar);
->> +			 "Unable to handle kernel data access",
->> +			 is_write ? "write" : "read", regs->dar);
-> 
->>   		break;
->>   	case 0x400:
->>   	case 0x480:
->> -- 
->> 2.13.3
+Masahiro Yamada (1):
+      mmc: sdhci-cadence: enable v4_mode to fix ADMA 64-bit addressing
+
+Ulf Hansson (1):
+      mmc: core: Fix init of SD cards reporting an invalid VDD range
+
+ drivers/mmc/core/sd.c            |  6 ++++++
+ drivers/mmc/host/sdhci-cadence.c |  1 +
+ drivers/mmc/host/sdhci-of-at91.c |  3 +++
+ drivers/mmc/host/sdhci-sprd.c    | 30 +++++++++++++++++++++++++-----
+ drivers/mmc/host/sdhci-tegra.c   | 14 ++++++++++++++
+ 5 files changed, 49 insertions(+), 5 deletions(-)
