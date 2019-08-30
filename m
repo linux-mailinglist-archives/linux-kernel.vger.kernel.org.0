@@ -2,94 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08404A39BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 021E7A39C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:02:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbfH3PCE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:02:04 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:50176 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727729AbfH3PCE (ORCPT
+        id S1728152AbfH3PCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:02:11 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:54142 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727792AbfH3PCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:02:04 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1i3iPL-0006pL-6U; Fri, 30 Aug 2019 11:01:47 -0400
-Message-ID: <2d3af2a8b6a433ea44a4605fc8b43bd0758102eb.camel@surriel.com>
-Subject: Re: [PATCH 08/15] sched,fair: simplify timeslice length code
-From:   Rik van Riel <riel@surriel.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Kernel Team <kernel-team@fb.com>, Paul Turner <pjt@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mel Gorman <mgorman@techsingularity.net>
-Date:   Fri, 30 Aug 2019 11:01:46 -0400
-In-Reply-To: <CAKfTPtCAU7bT3sJ_FPexqKrfFzd8Yk0hVTEB5Da=+VbqPViXpA@mail.gmail.com>
-References: <20190822021740.15554-1-riel@surriel.com>
-         <20190822021740.15554-9-riel@surriel.com>
-         <CAKfTPtDxHijR3PCOFfxA-r02rf2hVP4LpB=y-9emHS7znTPxTA@mail.gmail.com>
-         <d703071084dadb477b8248b041d0d1aa730d65cd.camel@surriel.com>
-         <CAKfTPtDX+keNfNxf78yMoF3QaXSG_fZHJ_nqCFKYDMYGa84A6Q@mail.gmail.com>
-         <2a87463e8a51c34733e9c1fcf63380f9caa7afc4.camel@surriel.com>
-         <CAKfTPtCAU7bT3sJ_FPexqKrfFzd8Yk0hVTEB5Da=+VbqPViXpA@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-1cm7ri3PMAtO68E1OP46"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Fri, 30 Aug 2019 11:02:11 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7UF24Tx029341;
+        Fri, 30 Aug 2019 10:02:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1567177324;
+        bh=nfAqihWPleHpBk8WT3uGomvNKMkRIo6InAHlWj0/L1w=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=S/gQ6c4WLLRF2MztR9tQ1NwHCcKq2OoxS36NLA2Y30XFZe0VrCgIzu1ZieAKLTpc8
+         rftRKplxGQLU5KU0FW2WAWOCbZY1fvxZsDch8Q+ZCWAE1lyK1Sr0aJYNTEKMctIg1J
+         lYVcPvlvVDaPXCoJzdlRQ5hyddfwNXeOLqGZwtXI=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7UF247V103254
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 30 Aug 2019 10:02:04 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 30
+ Aug 2019 10:02:03 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 30 Aug 2019 10:02:03 -0500
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7UF23cT101772;
+        Fri, 30 Aug 2019 10:02:03 -0500
+Subject: Re: [PATCH] leds: Move static keyword to the front of declarations
+To:     Krzysztof Wilczynski <kw@linux.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+CC:     Pavel Machek <pavel@ucw.cz>, <linux-leds@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20190830090958.27108-1-kw@linux.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <bdf6bc22-bc82-68ac-d3f2-4f3954d9e9e0@ti.com>
+Date:   Fri, 30 Aug 2019 10:02:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190830090958.27108-1-kw@linux.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Krzystof
 
---=-1cm7ri3PMAtO68E1OP46
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Thanks for the patch
 
-On Fri, 2019-08-30 at 08:41 +0200, Vincent Guittot wrote:
+On 8/30/19 4:09 AM, Krzysztof Wilczynski wrote:
+> Move the static keyword to the front of declarations.
+>
+> In drivers/leds/leds-lm3532.c for ramp_table, als_avrg_table
+> and als_imp_table, and in drivers/leds/leds-lm3532.c for
+> ramp_table.
+>
+> This will resolve the following compiler warnings that can
+> be seen when building with warnings enabled (W=1):
+>
+> drivers/leds/leds-lm3532.c:209:1: warning:
+>    ‘static’ is not at beginning of declaration [-Wold-style-declaration]
+>
+> drivers/leds/leds-lm3532.c:266:1: warning:
+>    ‘static’ is not at beginning of declaration [-Wold-style-declaration]
+>
+> drivers/leds/leds-lm3532.c:281:1: warning:
+>    ‘static’ is not at beginning of declaration [-Wold-style-declaration]
+>
+> drivers/leds/leds-ti-lmu-common.c:14:1: warning:
+>    ‘static’ is not at beginning of declaration [-Wold-style-declaration]
+>
+> Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+> ---
+> Related: https://lore.kernel.org/r/20190827233017.GK9987@google.com
+>
+>   drivers/leds/leds-lm3532.c        | 6 +++---
+>   drivers/leds/leds-ti-lmu-common.c | 2 +-
 
-> > When tasks get their timeslice rounded up, that will increase
-> > the total sched period in a similar way the old code did by
-> > returning a longer period from __sched_period.
->=20
-> sched_slice is not a strict value and scheduler will not schedule out
-> the task after the sched_slice (unless you enable HRTICK which is
-> disable by default). Instead it will wait for next tick to change the
-> running task
->=20
-> sched_slice is mainly use to ensure a minimum running time in a row.
-> With this change, the running time of the high priority task will
-> most
-> probably be split in several slice instead of one
+This file is missing in the subject.
 
-I would be more than happy to drop this patch if you
-prefer. Just let me know.
+Maybe break it out into a separate patch since they do not have 
+dependencies on each other.
 
---=20
-All Rights Reversed.
+Dan
 
---=-1cm7ri3PMAtO68E1OP46
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl1pOloACgkQznnekoTE
-3oMoMgf9G3CzXr2Yjj4ri4V3/EKyeQ2NMMnm7mbNPCuBvopRHJubKB01vZMR3ZT7
-hYoyoab1egyAPUiBmobv4sgQRFI83Snf/ZyenWrU0X49LBFsYevZSyKFr+fY8Hac
-hdWaTOQe6qDMTs0MNcL0+qzzfAweBI7g0babqzYzAuWvUGlDmqcdLRmqG1ixf5Zl
-e9zuLe99KseYZmfR+RNy9CXJT1k1pPpo0AoKzQA8WVEfxTAWlyKKaxdS39NezVnY
-lLziwMQYv+1F80z4hJKj+MietlT/VkU6dTLzxj1U9CYKcpB/fAs+Dr1fX2RaCbPT
-WYu2uXk7z7YQa8MHoLuqM+cPAO+tBA==
-=YYvF
------END PGP SIGNATURE-----
-
---=-1cm7ri3PMAtO68E1OP46--
 
