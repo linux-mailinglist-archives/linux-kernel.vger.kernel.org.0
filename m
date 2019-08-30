@@ -2,63 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C441A401A
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:07:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24D4CA4047
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 00:16:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbfH3WHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 18:07:11 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:42656 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728094AbfH3WHL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 18:07:11 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 35B5E154FFAFD;
-        Fri, 30 Aug 2019 15:07:10 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 15:07:09 -0700 (PDT)
-Message-Id: <20190830.150709.478421783835117542.davem@davemloft.net>
-To:     dhowells@redhat.com
-Cc:     netdev@vger.kernel.org, marc.dionne@auristor.com,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] rxrpc: Fix lack of conn cleanup when local
- endpoint is cleaned up [ver #2]
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <156708433176.26714.15112030261308314860.stgit@warthog.procyon.org.uk>
-References: <156708433176.26714.15112030261308314860.stgit@warthog.procyon.org.uk>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Aug 2019 15:07:10 -0700 (PDT)
+        id S1728481AbfH3WQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 18:16:24 -0400
+Received: from shell.v3.sk ([90.176.6.54]:56362 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728399AbfH3WQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 18:16:21 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 1767CD87E9;
+        Sat, 31 Aug 2019 00:08:10 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id a5rZfM7YaGHz; Sat, 31 Aug 2019 00:07:55 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 74FFAD87F5;
+        Sat, 31 Aug 2019 00:07:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id GBElljx_XOIP; Sat, 31 Aug 2019 00:07:49 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 37B4CD87C5;
+        Sat, 31 Aug 2019 00:07:48 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     "To : Olof Johansson" <olof@lixom.net>
+Cc:     "Cc : Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 00/16] Initial support for Marvell MMP3 SoC
+Date:   Sat, 31 Aug 2019 00:07:27 +0200
+Message-Id: <20190830220743.439670-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
-Date: Thu, 29 Aug 2019 14:12:11 +0100
+Hi,=20
 
-> When a local endpoint is ceases to be in use, such as when the kafs module
-> is unloaded, the kernel will emit an assertion failure if there are any
-> outstanding client connections:
-> 
-> 	rxrpc: Assertion failed
-> 	------------[ cut here ]------------
-> 	kernel BUG at net/rxrpc/local_object.c:433!
-> 
-> and even beyond that, will evince other oopses if there are service
-> connections still present.
-> 
-> Fix this by:
- ...
-> Only after destroying the connections can we close the socket lest we get
-> an oops in a workqueue that's looking at a connection or a peer.
-> 
-> Fixes: 3d18cbb7fd0c ("rxrpc: Fix conn expiry timers")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Tested-by: Marc Dionne <marc.dionne@auristor.com>
+this is the third spin of a patch set that adds support for the Marvell
+MMP3 processor, that I'd eventually love to see land in the Arm SoC
+tree. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad FZ-A1 tablet
+and Dell Wyse 3020/Tx0D thin clients.=20
 
-Applied.
+Compared to v2, there's a handful of fixes in response to reviews. Four
+irqchip patches have been removed because they've been applied to the
+irqchip-next tree. Details in individual patches.
+=20
+Thank you
+Lubo
+
+
