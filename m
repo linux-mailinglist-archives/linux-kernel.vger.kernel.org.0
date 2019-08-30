@@ -2,246 +2,228 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA939A3382
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E4A6A338A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 11:17:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728058AbfH3JPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 05:15:20 -0400
-Received: from mail-eopbgr50071.outbound.protection.outlook.com ([40.107.5.71]:14017
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727904AbfH3JPT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 05:15:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fAAeoKsletD97ly+GED9hgGxYOB9cg/eEKtlnELJDbx+nATtmHt2qAPf9UmH66KJSrOLDd7XGsrChHeYuhhYAAmgdHIJcq+UMpAhSQkFbXW7jTObREyLfewrfznTXUmt1rrHjWDngPpTecWZdz4RLNyCZbFdvRP9vX6q799UfIikn8Gcx0drSHxgbfF9mgCLHb6cz4of3YWPyLy09Ko0muLp1Q21ECIpvGA/ixYmP7C130sGKEEWjLBZnc4XegR/hwZAgw5J/SsjHtRym9VU0ex3Rz4kDSMpEHGKdPPilLjf0L0FxB2RHDgFu2P+2B6jHbEKonZ1xAE25Y1E0cBXNA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fCU/30t0Wf+n/x59SKNRdVEXEj1VVIRDu0lkDEkHAns=;
- b=gEZE/n3AsG1dDFumH6HadHXxOkV6qc5fHLWOPR6ygRGwEFyN9/cG/LKV3OBpt29HDNxkE6OCR+Mpx1CAw4smqGxNlr90ldoMZukumweUmuoWWohZ8n/Uvk0CYZ8kcQi7AW0Ey8xLU7Su+TV9XK+27/A0YhoCXsUkTGqDwLhUeBJcs4Nb8ph2lGXW8THmhbTQnKbQiINp37CFfkDWQIbziBFvgRtbCxalUq4ki7nf7mk85jINUvTXo1BeDws6e7aV/T7R8lmaoG3o/WQcx6bhIgYKxBH1mVV6ZLnFWKymg1aFf7leTYkwbcOYHz482c1Ow8RMDTsOl74YnaRzbZEisQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fCU/30t0Wf+n/x59SKNRdVEXEj1VVIRDu0lkDEkHAns=;
- b=pk5YcKP5GthNvzEcy/7uYth41U9i+1ELY0e7xN2XrZRi9bDVBxgRZ8lTI9amBWfKphQzGL20wvTg9KLjhmchu4Kk0jac3Qlh9se5/o5QBzskpRYpTcwkXQShoFg50NsQA0PaAh9kKpeHXCz6NSyWM/pdTTV8EdP2nS4DGvCJKrs=
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com (20.177.55.161) by
- VI1PR04MB4463.eurprd04.prod.outlook.com (20.177.53.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.21; Fri, 30 Aug 2019 09:15:13 +0000
-Received: from VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::8d42:8283:ede8:9abf]) by VI1PR04MB4445.eurprd04.prod.outlook.com
- ([fe80::8d42:8283:ede8:9abf%7]) with mapi id 15.20.2199.021; Fri, 30 Aug 2019
- 09:15:13 +0000
-From:   Iuliana Prodan <iuliana.prodan@nxp.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "christopher.spencer@sea.co.uk" <christopher.spencer@sea.co.uk>,
-        "cory.tusar@zii.aero" <cory.tusar@zii.aero>,
-        "cphealy@gmail.com" <cphealy@gmail.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 00/16] crypto: caam - Add i.MX8MQ support
-Thread-Topic: [PATCH v8 00/16] crypto: caam - Add i.MX8MQ support
-Thread-Index: AQHVV5VB3CgVSzdtsUuKFBe5Nr//dA==
-Date:   Fri, 30 Aug 2019 09:15:12 +0000
-Message-ID: <VI1PR04MB444580B237A9F57A7BAAF32B8CBD0@VI1PR04MB4445.eurprd04.prod.outlook.com>
-References: <20190830082320.GA8729@gondor.apana.org.au>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=iuliana.prodan@nxp.com; 
-x-originating-ip: [212.146.100.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f886d9c6-9707-4475-5a79-08d72d2a9068
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4463;
-x-ms-traffictypediagnostic: VI1PR04MB4463:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB4463A91DB8476ED7A2C331128CBD0@VI1PR04MB4463.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0145758B1D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(136003)(366004)(346002)(376002)(199004)(189003)(81156014)(54906003)(305945005)(110136005)(66946007)(14444005)(6436002)(76176011)(76116006)(5660300002)(229853002)(86362001)(25786009)(66446008)(66476007)(91956017)(66556008)(6506007)(53546011)(102836004)(256004)(26005)(486006)(44832011)(476003)(2906002)(186003)(74316002)(446003)(81166006)(33656002)(6246003)(9686003)(71190400001)(71200400001)(6306002)(99286004)(55016002)(53936002)(7696005)(64756008)(66066001)(3846002)(8936002)(6116002)(8676002)(966005)(7736002)(45080400002)(4326008)(14454004)(52536014)(316002)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4463;H:VI1PR04MB4445.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: sYntJzJ8u3SFqJ8I6tsH4+tRynH+sCvpNRv2pi2WWbInUASaXgzkLVgmQZ3DDS35mgSRCWeQr3yuCjnxY/PqQ9HVsMKNNwywWBki2VusMvg3WCLcBg4L3Vr5BHmpnGCDCGhYJ7UsuEmChYwYpq0+LRlEwAkUnrFvY9ErKOLM5N+wyynOKHR1Svq9/9iaDuwQgANX1CoaKRzmDf6tto8n9yhuB3/JtYO6omeJW2ZXZW9MLvx/r4YmAD4BjvEhETqRD6gPdjLA9kBEntTtZ1xNsD2P40WKZGDleG9QsCMW2UQYOxXSkmwwW9h4KBwNYSX6U8jBTzRKOdAwhNSBDrnIQ1AbKgZfcd02XL2VKiGccSWfZmb0i/WQhfkN3GjefaOZ5X7qAWcguNBawSc8d6VmT9FuQt4xo0LZzAp7/YpCvjE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727823AbfH3JRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 05:17:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45400 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725780AbfH3JR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 05:17:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1CB3D30860A5;
+        Fri, 30 Aug 2019 09:17:29 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 05C475C1D6;
+        Fri, 30 Aug 2019 09:17:22 +0000 (UTC)
+Date:   Fri, 30 Aug 2019 11:17:20 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Parav Pandit <parav@mellanox.com>
+Cc:     alex.williamson@redhat.com, jiri@mellanox.com,
+        kwankhede@nvidia.com, davem@davemloft.net, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] mdev: Introduce sha1 based mdev alias
+Message-ID: <20190830111720.04aa54e9.cohuck@redhat.com>
+In-Reply-To: <20190829111904.16042-2-parav@mellanox.com>
+References: <20190826204119.54386-1-parav@mellanox.com>
+        <20190829111904.16042-1-parav@mellanox.com>
+        <20190829111904.16042-2-parav@mellanox.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f886d9c6-9707-4475-5a79-08d72d2a9068
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2019 09:15:12.8999
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 55GO1WQLYLTHEZwHLmkT1F4i2dR8BVSquDtE8fVQ6qUez+dOcV/15E251IDZkRO0xjWbg4sPr3tCaE9zRzXKfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4463
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 30 Aug 2019 09:17:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/2019 11:23 AM, Herbert Xu wrote:=0A=
-> Andrey Smirnov <andrew.smirnov@gmail.com> wrote:=0A=
->> Everyone:=0A=
->>=0A=
->> Picking up where Chris left off (I chatted with him privately=0A=
->> beforehead), this series adds support for i.MX8MQ to CAAM driver. Just=
-=0A=
->> like [v1], this series is i.MX8MQ only.=0A=
->>=0A=
->> Feedback is welcome!=0A=
->> Thanks,=0A=
->> Andrey Smirnov=0A=
->>=0A=
->> Changes since [v7]:=0A=
->>=0A=
->>   - Series rebase on latest cryptodev-2.6 (198429631a85)=0A=
->>=0A=
->>   - "crypto: caam - force DMA address to 32-bit on 64-bit i.MX SoCs"=0A=
->>     converted to use CTPR and MCFGR to determine CAAM pointer width=0A=
->>     and renamed to "crypto: caam - select DMA address size at runtime"=
-=0A=
->>=0A=
->>   - Patch adding corresponding DT node added to the series=0A=
->>=0A=
->> Changes since [v6]:=0A=
->>=0A=
->>   - Fixed build problems in "crypto: caam - make CAAM_PTR_SZ dynamic"=0A=
->>=0A=
->>   - Collected Reviewied-by from Horia=0A=
->>=0A=
->>   - "crypto: caam - force DMA address to 32-bit on 64-bit i.MX SoCs"=0A=
->>     is changed to check 'caam_ptr_sz' instead of using 'caam_imx'=0A=
->>     =0A=
->>   - Incorporated feedback for "crypto: caam - request JR IRQ as the=0A=
->>     last step" and "crypto: caam - simplfy clock initialization"=0A=
->>=0A=
->> Changes since [v5]:=0A=
->>=0A=
->>   - Hunk replacing sizeof(*jrp->inpring) to SIZEOF_JR_INPENTRY in=0A=
->>     "crypto: caam - don't hardcode inpentry size", lost in [v5], is=0A=
->>     back=0A=
->>=0A=
->>   - Collected Tested-by from Iuliana=0A=
->>=0A=
->> Changes since [v4]:=0A=
->>=0A=
->>   - Fixed missing sentinel element in "crypto: caam - simplfy clock=0A=
->>     initialization"=0A=
->>     =0A=
->>   - Squashed all of the devers related patches into a single one and=0A=
->>     converted IRQ allocation to use devres while at it=0A=
->>=0A=
->>   - Added "crypto: caam - request JR IRQ as the last step" as=0A=
->>     discussed=0A=
->>=0A=
->> Changes since [v3]:=0A=
->>=0A=
->>   - Patchset changed to select DMA size at runtime in order to enable=0A=
->>     support for both i.MX8MQ and Layerscape at the same time. I only=0A=
->>     tested the patches on i.MX6,7 and 8MQ, since I don't have access=0A=
->>     to any of the Layerscape HW. Any help in that regard would be=0A=
->>     appareciated.=0A=
->>=0A=
->>   - Bulk clocks and their number are now stored as a part of struct=0A=
->>     caam_drv_private to simplify allocation and cleanup code (no=0A=
->>     special context needed)=0A=
->>     =0A=
->>   - Renamed 'soc_attr' -> 'imx_soc_match' for clarity=0A=
->>=0A=
->> Changes since [v2]:=0A=
->>=0A=
->>   - Dropped "crypto: caam - do not initialise clocks on the i.MX8" and=
-=0A=
->>     replaced it with "crypto: caam - simplfy clock initialization" and=
-=0A=
->>     "crypto: caam - add clock entry for i.MX8MQ"=0A=
->>=0A=
->>=0A=
->> Changes since [v1]=0A=
->>=0A=
->>   - Series reworked to continue using register based interface for=0A=
->>     queueing RNG initialization job, dropping "crypto: caam - use job=0A=
->>     ring for RNG instantiation instead of DECO"=0A=
->>=0A=
->>   - Added a patch to share DMA mask selection code=0A=
->>=0A=
->>   - Added missing Signed-off-by for authors of original NXP tree=0A=
->>     commits that this sereis is based on=0A=
->>=0A=
->> [v7] lore.kernel.org/r/20190812200739.30389-1-andrew.smirnov@gmail.com=
-=0A=
->> [v6] lore.kernel.org/r/20190717152458.22337-1-andrew.smirnov@gmail.com=
-=0A=
->> [v5] lore.kernel.org/r/20190715201942.17309-1-andrew.smirnov@gmail.com=
-=0A=
->> [v4] lore.kernel.org/r/20190703081327.17505-1-andrew.smirnov@gmail.com=
-=0A=
->> [v3] lore.kernel.org/r/20190617160339.29179-1-andrew.smirnov@gmail.com=
-=0A=
->> [v2] lore.kernel.org/r/20190607200225.21419-1-andrew.smirnov@gmail.com=
-=0A=
->> [v1] https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2=
-Fpatchwork.kernel.org%2Fcover%2F10825625%2F&amp;data=3D02%7C01%7Ciuliana.pr=
-odan%40nxp.com%7C33d82b783fe44b7397a108d72d2361d7%7C686ea1d3bc2b4c6fa92cd99=
-c5c301635%7C0%7C0%7C637027502298978288&amp;sdata=3DTc%2FSuS60cL8%2FLisYBtfa=
-rPAVmcx7ITpNgaiLMq5YLIs%3D&amp;reserved=3D0=0A=
->>=0A=
->> Andrey Smirnov (16):=0A=
->>   crypto: caam - move DMA mask selection into a function=0A=
->>   crypto: caam - simplfy clock initialization=0A=
->>   crypto: caam - convert caam_jr_init() to use devres=0A=
->>   crypto: caam - request JR IRQ as the last step=0A=
->>   crytpo: caam - make use of iowrite64*_hi_lo in wr_reg64=0A=
->>   crypto: caam - use ioread64*_hi_lo in rd_reg64=0A=
->>   crypto: caam - drop 64-bit only wr/rd_reg64()=0A=
->>   crypto: caam - share definition for MAX_SDLEN=0A=
->>   crypto: caam - make CAAM_PTR_SZ dynamic=0A=
->>   crypto: caam - move cpu_to_caam_dma() selection to runtime=0A=
->>   crypto: caam - drop explicit usage of struct jr_outentry=0A=
->>   crypto: caam - don't hardcode inpentry size=0A=
->>   crypto: caam - select DMA address size at runtime=0A=
->>   crypto: caam - always select job ring via RSR on i.MX8MQ=0A=
->>   crypto: caam - add clock entry for i.MX8MQ=0A=
->>   arm64: dts: imx8mq: Add CAAM node=0A=
->>=0A=
->> arch/arm64/boot/dts/freescale/imx8mq.dtsi |  30 +++=0A=
->> drivers/crypto/caam/caamalg.c             |   2 +-=0A=
->> drivers/crypto/caam/caamalg_qi2.h         |  27 ---=0A=
->> drivers/crypto/caam/caamhash.c            |   2 +-=0A=
->> drivers/crypto/caam/caampkc.c             |   8 +-=0A=
->> drivers/crypto/caam/caamrng.c             |   2 +-=0A=
->> drivers/crypto/caam/ctrl.c                | 221 ++++++++++------------=
-=0A=
->> drivers/crypto/caam/desc_constr.h         |  47 ++++-=0A=
->> drivers/crypto/caam/error.c               |   3 +=0A=
->> drivers/crypto/caam/intern.h              |  32 +++-=0A=
->> drivers/crypto/caam/jr.c                  |  93 +++------=0A=
->> drivers/crypto/caam/pdb.h                 |  16 +-=0A=
->> drivers/crypto/caam/pkc_desc.c            |   8 +-=0A=
->> drivers/crypto/caam/qi.h                  |  26 ---=0A=
->> drivers/crypto/caam/regs.h                | 140 ++++++++++----=0A=
->> 15 files changed, 359 insertions(+), 298 deletions(-)=0A=
-> =0A=
-> Patches 1-15 applied.  Thanks.=0A=
-> =0A=
-Hi Herbert,=0A=
-=0A=
-Can you, please, add, also, the device tree patch ("arm64: dts: imx8mq: =0A=
-Add CAAM node") in cryptodev tree?=0A=
-Unfortunately Shawn Guo wasn't cc-ed on this patch and, to have the =0A=
-complete support for imx8mq, in kernel v5.4, we need the node in dts.=0A=
-=0A=
-Thank you,=0A=
-Iulia=0A=
+On Thu, 29 Aug 2019 06:18:59 -0500
+Parav Pandit <parav@mellanox.com> wrote:
+
+> Some vendor drivers want an identifier for an mdev device that is
+> shorter than the UUID, due to length restrictions in the consumers of
+> that identifier.
+> 
+> Add a callback that allows a vendor driver to request an alias of a
+> specified length to be generated for an mdev device. If generated,
+> that alias is checked for collisions.
+> 
+> It is an optional attribute.
+> mdev alias is generated using sha1 from the mdev name.
+> 
+> Signed-off-by: Parav Pandit <parav@mellanox.com>
+> 
+> ---
+> Changelog:
+> v1->v2:
+>  - Kept mdev_device naturally aligned
+>  - Added error checking for crypt_*() calls
+>  - Corrected a typo from 'and' to 'an'
+>  - Changed return type of generate_alias() from int to char*
+> v0->v1:
+>  - Moved alias length check outside of the parent lock
+>  - Moved alias and digest allocation from kvzalloc to kzalloc
+>  - &alias[0] changed to alias
+>  - alias_length check is nested under get_alias_length callback check
+>  - Changed comments to start with an empty line
+>  - Fixed cleaunup of hash if mdev_bus_register() fails
+>  - Added comment where alias memory ownership is handed over to mdev device
+>  - Updated commit log to indicate motivation for this feature
+> ---
+>  drivers/vfio/mdev/mdev_core.c    | 123 ++++++++++++++++++++++++++++++-
+>  drivers/vfio/mdev/mdev_private.h |   5 +-
+>  drivers/vfio/mdev/mdev_sysfs.c   |  13 ++--
+>  include/linux/mdev.h             |   4 +
+>  4 files changed, 135 insertions(+), 10 deletions(-)
+> 
+
+(...)
+
+> +static const char *
+> +generate_alias(const char *uuid, unsigned int max_alias_len)
+> +{
+> +	struct shash_desc *hash_desc;
+> +	unsigned int digest_size;
+> +	unsigned char *digest;
+> +	unsigned int alias_len;
+> +	char *alias;
+> +	int ret;
+> +
+> +	/*
+> +	 * Align to multiple of 2 as bin2hex will generate
+> +	 * even number of bytes.
+> +	 */
+> +	alias_len = roundup(max_alias_len, 2);
+> +	alias = kzalloc(alias_len + 1, GFP_KERNEL);
+
+This function allocates alias...
+
+> +	if (!alias)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	/* Allocate and init descriptor */
+> +	hash_desc = kvzalloc(sizeof(*hash_desc) +
+> +			     crypto_shash_descsize(alias_hash),
+> +			     GFP_KERNEL);
+> +	if (!hash_desc) {
+> +		ret = -ENOMEM;
+> +		goto desc_err;
+> +	}
+> +
+> +	hash_desc->tfm = alias_hash;
+> +
+> +	digest_size = crypto_shash_digestsize(alias_hash);
+> +
+> +	digest = kzalloc(digest_size, GFP_KERNEL);
+> +	if (!digest) {
+> +		ret = -ENOMEM;
+> +		goto digest_err;
+> +	}
+> +	ret = crypto_shash_init(hash_desc);
+> +	if (ret)
+> +		goto hash_err;
+> +
+> +	ret = crypto_shash_update(hash_desc, uuid, UUID_STRING_LEN);
+> +	if (ret)
+> +		goto hash_err;
+> +
+> +	ret = crypto_shash_final(hash_desc, digest);
+> +	if (ret)
+> +		goto hash_err;
+> +
+> +	bin2hex(alias, digest, min_t(unsigned int, digest_size, alias_len / 2));
+> +	/*
+> +	 * When alias length is odd, zero out an additional last byte
+> +	 * that bin2hex has copied.
+> +	 */
+> +	if (max_alias_len % 2)
+> +		alias[max_alias_len] = 0;
+> +
+> +	kfree(digest);
+> +	kvfree(hash_desc);
+> +	return alias;
+
+...and returns it here on success...
+
+> +
+> +hash_err:
+> +	kfree(digest);
+> +digest_err:
+> +	kvfree(hash_desc);
+> +desc_err:
+> +	kfree(alias);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +int mdev_device_create(struct kobject *kobj, struct device *dev,
+> +		       const char *uuid_str, const guid_t *uuid)
+>  {
+>  	int ret;
+>  	struct mdev_device *mdev, *tmp;
+>  	struct mdev_parent *parent;
+>  	struct mdev_type *type = to_mdev_type(kobj);
+> +	const char *alias = NULL;
+>  
+>  	parent = mdev_get_parent(type->parent);
+>  	if (!parent)
+>  		return -EINVAL;
+>  
+> +	if (parent->ops->get_alias_length) {
+> +		unsigned int alias_len;
+> +
+> +		alias_len = parent->ops->get_alias_length();
+> +		if (alias_len) {
+> +			alias = generate_alias(uuid_str, alias_len);
+
+...to be saved into a local variable here...
+
+> +			if (IS_ERR(alias)) {
+> +				ret = PTR_ERR(alias);
+> +				goto alias_fail;
+> +			}
+> +		}
+> +	}
+>  	mutex_lock(&mdev_list_lock);
+>  
+>  	/* Check for duplicate */
+> @@ -300,6 +398,12 @@ int mdev_device_create(struct kobject *kobj,
+>  	}
+>  
+>  	guid_copy(&mdev->uuid, uuid);
+> +	mdev->alias = alias;
+
+...and reassigned to the mdev member here...
+
+> +	/*
+> +	 * At this point alias memory is owned by the mdev.
+> +	 * Mark it NULL, so that only mdev can free it.
+> +	 */
+> +	alias = NULL;
+
+...and detached from the local variable here. Who is freeing it? The
+comment states that it is done by the mdev, but I don't see it?
+
+This detour via the local variable looks weird to me. Can you either
+create the alias directly in the mdev (would need to happen later in
+the function, but I'm not sure why you generate the alias before
+checking for duplicates anyway), or do an explicit copy?
+
+>  	list_add(&mdev->next, &mdev_list);
+>  	mutex_unlock(&mdev_list_lock);
+>  
+> @@ -346,6 +450,8 @@ int mdev_device_create(struct kobject *kobj,
+>  	up_read(&parent->unreg_sem);
+>  	put_device(&mdev->dev);
+>  mdev_fail:
+> +	kfree(alias);
+> +alias_fail:
+>  	mdev_put_parent(parent);
+>  	return ret;
+>  }
+
+(...)
