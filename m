@@ -2,120 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0AD4A3102
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:29:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19D35A30DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 09:21:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbfH3H3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 03:29:38 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:6144 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726716AbfH3H3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 03:29:37 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F26753916B59F0EEA57D;
-        Fri, 30 Aug 2019 15:09:00 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 30 Aug 2019 15:08:54 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <tglx@linutronix.de>, <mingo@redhat.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <james.morse@arm.com>, <dyoung@redhat.com>, <bhsharma@redhat.com>
-CC:     <horms@verge.net.au>, <guohanjun@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
-        Chen Zhou <chenzhou10@huawei.com>
-Subject: [PATCH v6 4/4] kdump: update Documentation about crashkernel on arm64
-Date:   Fri, 30 Aug 2019 15:12:00 +0800
-Message-ID: <20190830071200.56169-5-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190830071200.56169-1-chenzhou10@huawei.com>
-References: <20190830071200.56169-1-chenzhou10@huawei.com>
+        id S1728160AbfH3HVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 03:21:44 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:32814 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbfH3HVo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 03:21:44 -0400
+Received: by mail-io1-f67.google.com with SMTP id z3so12194310iog.0;
+        Fri, 30 Aug 2019 00:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AlhFgQeL/mYiQX6p6gp6sv+Yu6hpMLWLNkdRBnpDQiA=;
+        b=QrowYFp5jRyggiMNrPIzMypbBgTVm25Yb91NkmJgbZPFHT3+eqflmDIpgaXs9Ja+Sb
+         0SaId/XviBrbPr9ra3Q1ryqGt923GWhcBPA2YkrkoACGObI7CLSF7nwtayBSVvyivIGi
+         Ij+pCG1oX+tSO4KL2tbwP1WxwVaDsGcf0qzgP7R8e/B4KHVlIPD4AN8aXaON1ppV47HD
+         cxDxkQbMKFsYy4aqhwvzL33/Mb3wgkj/Tl4tZ7lAZXVxq5d58qUyEQZlamIfnAG/JlhK
+         3Y7noHEHERn2uzFp8REzI8xn9s0oPLeM0+gRB/PtFppOdAeb4rsjxbLP3Tlvel4v+VaS
+         HYog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AlhFgQeL/mYiQX6p6gp6sv+Yu6hpMLWLNkdRBnpDQiA=;
+        b=gvgUu4TLlE7L6gPRuf66n81zLxJF1d3ZwraBswf4rdjzp0dgq8jyeRM6B3mdxKB8uh
+         RdqBz2zj5vw0UdJK38fH2bcycl5pQ1j/uRgywnIPf/mqzJX0sVhuqrfCDZNdmq+5Vxnl
+         Y9PO0CpWFclMaRB00bvVBmBg5rkLgbSWPlwWIcoVILSp0lB7s3Z01nLaBq0ZGLy/Ruhl
+         g+5mObVxM1e/fKnmvubBjEkT657DNXuxFvK4/ede9ns/ZyHzvDYJv5+3S7xXZQy/Pt/a
+         5yk9oheWct+KPqWxh9Zes4bB2trEKvcomaMC1wI9aejICHFURLKgk2u/OAfGGKkvACi3
+         vn/w==
+X-Gm-Message-State: APjAAAWPjCJq9lbCa5iROmqFR5ia/xGQL0dmqSSjZc7QM0+hZFSRU6lO
+        Mfz/xDkK0fX6Ady1FkLIfrds/XmvsQaWmiSWLfQ=
+X-Google-Smtp-Source: APXvYqxdEUCSeILyh2pFmXq4fHzi6CcocAFis6vG7eX8iNXSYZsq2LtQPx3otlCh1YNNK3ymTfJiHprCHskaedRe/kE=
+X-Received: by 2002:a5d:9aca:: with SMTP id x10mr15481830ion.11.1567149702961;
+ Fri, 30 Aug 2019 00:21:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <1567004515-3567-1-git-send-email-peng.fan@nxp.com>
+ <1567004515-3567-2-git-send-email-peng.fan@nxp.com> <CABb+yY2tRjazjaogpM7irqgTD+PdwsfqCxk5hP-_czrET3V5xQ@mail.gmail.com>
+ <AM0PR04MB4481785CABB44A8C71CFB8D788BD0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB4481785CABB44A8C71CFB8D788BD0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Fri, 30 Aug 2019 02:21:32 -0500
+Message-ID: <CABb+yY2TREpO7+TFcGgsgQrkmMWwFAgtuJ4GnLPPQ+GEBuh07w@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: mailbox: add binding doc for the ARM
+ SMC/HVC mailbox
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "andre.przywara@arm.com" <andre.przywara@arm.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now we support crashkernel=X,[low] on arm64, update the Documentation.
+On Fri, Aug 30, 2019 at 1:28 AM Peng Fan <peng.fan@nxp.com> wrote:
 
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- Documentation/admin-guide/kdump/kdump.rst       | 13 +++++++++++--
- Documentation/admin-guide/kernel-parameters.txt | 12 +++++++++++-
- 2 files changed, 22 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
-index ac7e131..e55173e 100644
---- a/Documentation/admin-guide/kdump/kdump.rst
-+++ b/Documentation/admin-guide/kdump/kdump.rst
-@@ -299,7 +299,13 @@ Boot into System Kernel
-    "crashkernel=64M@16M" tells the system kernel to reserve 64 MB of memory
-    starting at physical address 0x01000000 (16MB) for the dump-capture kernel.
- 
--   On x86 and x86_64, use "crashkernel=64M@16M".
-+   On x86 use "crashkernel=64M@16M".
-+
-+   On x86_64, use "crashkernel=Y[@X]" to select a region under 4G first, and
-+   fall back to reserve region above 4G when '@offset' hasn't been specified.
-+   We can also use "crashkernel=X,high" to select a region above 4G, which
-+   also tries to allocate at least 256M below 4G automatically and
-+   "crashkernel=Y,low" can be used to allocate specified size low memory.
- 
-    On ppc64, use "crashkernel=128M@32M".
- 
-@@ -316,8 +322,11 @@ Boot into System Kernel
-    kernel will automatically locate the crash kernel image within the
-    first 512MB of RAM if X is not given.
- 
--   On arm64, use "crashkernel=Y[@X]".  Note that the start address of
-+   On arm64, use "crashkernel=Y[@X]". Note that the start address of
-    the kernel, X if explicitly specified, must be aligned to 2MiB (0x200000).
-+   If crashkernel=Z,low is specified simultaneously, reserve spcified size
-+   low memory for crash kdump kernel devices firstly and then reserve memory
-+   above 4G.
- 
- Load the Dump-capture Kernel
- ============================
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 4c19719..069a122 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -708,6 +708,9 @@
- 			[KNL, x86_64] select a region under 4G first, and
- 			fall back to reserve region above 4G when '@offset'
- 			hasn't been specified.
-+			[KNL, arm64] If crashkernel=X,low is specified, reserve
-+			spcified size low memory for crash kdump kernel devices
-+			firstly, and then reserve memory above 4G.
- 			See Documentation/admin-guide/kdump/kdump.rst for further details.
- 
- 	crashkernel=range1:size1[,range2:size2,...][@offset]
-@@ -732,12 +735,19 @@
- 			requires at least 64M+32K low memory, also enough extra
- 			low memory is needed to make sure DMA buffers for 32-bit
- 			devices won't run out. Kernel would try to allocate at
--			at least 256M below 4G automatically.
-+			least 256M below 4G automatically.
- 			This one let user to specify own low range under 4G
- 			for second kernel instead.
- 			0: to disable low allocation.
- 			It will be ignored when crashkernel=X,high is not used
- 			or memory reserved is below 4G.
-+			[KNL, arm64] range under 4G.
-+			This one let user to specify own low range under 4G
-+			for crash dump kernel instead.
-+			Different with x86_64, kernel allocates specified size
-+			physical memory region only when this parameter is specified
-+			instead of trying to allocate at least 256M below 4G
-+			automatically.
- 
- 	cryptomgr.notests
- 			[KNL] Disable crypto self-tests
--- 
-2.7.4
-
+> > > +examples:
+> > > +  - |
+> > > +    sram@910000 {
+> > > +      compatible = "mmio-sram";
+> > > +      reg = <0x0 0x93f000 0x0 0x1000>;
+> > > +      #address-cells = <1>;
+> > > +      #size-cells = <1>;
+> > > +      ranges = <0 0x0 0x93f000 0x1000>;
+> > > +
+> > > +      cpu_scp_lpri: scp-shmem@0 {
+> > > +        compatible = "arm,scmi-shmem";
+> > > +        reg = <0x0 0x200>;
+> > > +      };
+> > > +
+> > > +      cpu_scp_hpri: scp-shmem@200 {
+> > > +        compatible = "arm,scmi-shmem";
+> > > +        reg = <0x200 0x200>;
+> > > +      };
+> > > +    };
+> > > +
+> > > +    firmware {
+> > > +      smc_mbox: mailbox {
+> > > +        #mbox-cells = <1>;
+> > > +        compatible = "arm,smc-mbox";
+> > > +        method = "smc";
+> > > +        arm,num-chans = <0x2>;
+> > > +        transports = "mem";
+> > > +        /* Optional */
+> > > +        arm,func-ids = <0xc20000fe>, <0xc20000ff>;
+> > >
+> > SMC/HVC is synchronously(block) running in "secure mode", i.e, there can
+> > only be one instance running platform wide. Right?
+>
+> I think there could be channel for TEE, and channel for Linux.
+> For virtualization case, there could be dedicated channel for each VM.
+>
+I am talking from Linux pov. Functions 0xfe and 0xff above, can't both
+be active at the same time, right?
