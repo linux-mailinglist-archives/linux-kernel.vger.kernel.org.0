@@ -2,19 +2,19 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BD4EA3E08
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 20:58:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C8F2A3E06
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 20:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfH3S6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 14:58:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42382 "EHLO mx1.suse.de"
+        id S1728248AbfH3S6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 14:58:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42452 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727304AbfH3S6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727888AbfH3S6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 30 Aug 2019 14:58:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B4572ABD6;
-        Fri, 30 Aug 2019 18:58:04 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id B3993ABE9;
+        Fri, 30 Aug 2019 18:58:05 +0000 (UTC)
 From:   Michal Suchanek <msuchanek@suse.de>
 To:     linuxppc-dev@lists.ozlabs.org
 Cc:     Michal Suchanek <msuchanek@suse.de>,
@@ -42,10 +42,12 @@ Cc:     Michal Suchanek <msuchanek@suse.de>,
         Allison Randal <allison@lohutok.net>,
         David Hildenbrand <david@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/6] Disable compat cruft on ppc64le v6
-Date:   Fri, 30 Aug 2019 20:57:51 +0200
-Message-Id: <cover.1567188299.git.msuchanek@suse.de>
+Subject: [PATCH v6 1/6] powerpc: make llseek 32bit-only.
+Date:   Fri, 30 Aug 2019 20:57:52 +0200
+Message-Id: <bb6d25c6baae315d05b571d8c508f0e8fa90027c.1567188299.git.msuchanek@suse.de>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <cover.1567188299.git.msuchanek@suse.de>
+References: <cover.1567188299.git.msuchanek@suse.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,57 +55,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Less code means less bugs so add a knob to skip the compat stuff.
+The llseek syscall is not built in fs/read_write.c when !64bit && !COMPAT
+With the syscall marked as common in syscall.tbl build fails in this
+case.
 
-This is tested on ppc64le top of
+The llseek interface does not make sense on 64bit and it is explicitly
+described as 32bit interface. Use on 64bit is not well-defined so just
+drop it for 64bit.
 
-https://patchwork.ozlabs.org/cover/1153556/
+Fixes: caf6f9c8a326 ("asm-generic: Remove unneeded __ARCH_WANT_SYS_LLSEEK macro")
+Link: https://lore.kernel.org/lkml/20190828151552.GA16855@infradead.org/
+Link: https://lore.kernel.org/lkml/20190829214319.498c7de2@naga/
 
-Changes in v2: saner CONFIG_COMPAT ifdefs
-Changes in v3:
- - change llseek to 32bit instead of builing it unconditionally in fs
- - clanup the makefile conditionals
- - remove some ifdefs or convert to IS_DEFINED where possible
-Changes in v4:
- - cleanup is_32bit_task and current_is_64bit
- - more makefile cleanup
-Changes in v5:
- - more current_is_64bit cleanup
- - split off callchain.c 32bit and 64bit parts
-Changes in v6:
- - cleanup makefile after split
- - consolidate read_user_stack_32
- - fix some checkpatch warnings
+Signed-off-by: Michal Suchanek <msuchanek@suse.de>
+---
+v5: update commit message.
+---
+ arch/powerpc/kernel/syscalls/syscall.tbl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Michal Suchanek (6):
-  powerpc: make llseek 32bit-only.
-  powerpc: move common register copy functions from signal_32.c to
-    signal.c
-  powerpc/perf: consolidate read_user_stack_32
-  powerpc/64: make buildable without CONFIG_COMPAT
-  powerpc/64: Make COMPAT user-selectable disabled on littleendian by
-    default.
-  powerpc/perf: split callchain.c by bitness
-
- arch/powerpc/Kconfig                     |   5 +-
- arch/powerpc/include/asm/thread_info.h   |   4 +-
- arch/powerpc/kernel/Makefile             |   7 +-
- arch/powerpc/kernel/entry_64.S           |   2 +
- arch/powerpc/kernel/signal.c             | 144 ++++++++-
- arch/powerpc/kernel/signal_32.c          | 140 ---------
- arch/powerpc/kernel/syscall_64.c         |   6 +-
- arch/powerpc/kernel/syscalls/syscall.tbl |   2 +-
- arch/powerpc/kernel/vdso.c               |   5 +-
- arch/powerpc/perf/Makefile               |   5 +-
- arch/powerpc/perf/callchain.c            | 377 +----------------------
- arch/powerpc/perf/callchain.h            |  11 +
- arch/powerpc/perf/callchain_32.c         | 204 ++++++++++++
- arch/powerpc/perf/callchain_64.c         | 185 +++++++++++
- 14 files changed, 564 insertions(+), 533 deletions(-)
- create mode 100644 arch/powerpc/perf/callchain.h
- create mode 100644 arch/powerpc/perf/callchain_32.c
- create mode 100644 arch/powerpc/perf/callchain_64.c
-
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index 010b9f445586..53e427606f6c 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -188,7 +188,7 @@
+ 137	common	afs_syscall			sys_ni_syscall
+ 138	common	setfsuid			sys_setfsuid
+ 139	common	setfsgid			sys_setfsgid
+-140	common	_llseek				sys_llseek
++140	32	_llseek				sys_llseek
+ 141	common	getdents			sys_getdents			compat_sys_getdents
+ 142	common	_newselect			sys_select			compat_sys_select
+ 143	common	flock				sys_flock
 -- 
 2.22.0
 
