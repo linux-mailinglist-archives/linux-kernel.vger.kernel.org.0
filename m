@@ -2,99 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB690A3A38
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19AD4A3A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:30:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbfH3PVy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:21:54 -0400
-Received: from mga05.intel.com ([192.55.52.43]:57755 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727135AbfH3PVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:21:54 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 08:21:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="186329765"
-Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
-  by orsmga006.jf.intel.com with ESMTP; 30 Aug 2019 08:21:50 -0700
-Date:   Fri, 30 Aug 2019 23:26:15 +0800
-From:   Philip Li <philip.li@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        kbuild test robot <lkp@intel.com>,
-        linux-input@vger.kernel.org,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        x86-ml <x86@kernel.org>, linux-tip-commits@vger.kernel.org,
-        pv-drivers@vmware.com, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        tip-bot2 for Thomas Hellstrom <tip-bot2@linutronix.de>,
-        Doug Covelli <dcovelli@vmware.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        kbuild-all@01.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [kbuild-all] [tip: x86/vmware] input/vmmouse: Update the
- backdoor call with support for new instructions
-Message-ID: <20190830152615.GA13754@intel.com>
-References: <201908292325.aLXyyzEx%lkp@intel.com>
- <20190829163353.GC2132@zn.tnic>
- <20190830010349.GD857@intel.com>
- <alpine.DEB.2.21.1908300802390.1938@nanos.tec.linutronix.de>
- <20190830062053.GA2598@intel.com>
- <20190830080650.GA30413@zn.tnic>
- <20190830143645.GA4784@intel.com>
- <20190830144628.GC30413@zn.tnic>
- <20190830150002.GA6931@intel.com>
- <20190830150653.GD30413@zn.tnic>
+        id S1728026AbfH3PaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:30:22 -0400
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:34524 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727792AbfH3PaW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:30:22 -0400
+Received: by mail-lf1-f54.google.com with SMTP id z21so5693245lfe.1
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:30:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W/o6qGSsxejf0yS82rNr/PkS8E0j6uONKAzqFB+iPGo=;
+        b=Ppje7GIrcvaI++RZmoqAeR91vtmzSIPUQXE0/2FnoGfyi4mDiUOehZuyYrYgZQPmd0
+         GCG+p/p7oXOOWCu5fmhdV+bYwW10kLzpFoOybgucGti1ZxQ03Z07jFu1U8dNpYu5+5U8
+         qTiZuk9alIANGLyB+ibMYrSYdVQTM/w8LlCiM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W/o6qGSsxejf0yS82rNr/PkS8E0j6uONKAzqFB+iPGo=;
+        b=SgMNrW/NQnTEsHXIBX1G/XdZxWMuKp5KCidu6SoDmLHsWW9t2nIF9vrayKuM2JB29b
+         lbW5ik5G2YSm+C09wfYyAMNGqkav2Qi6WQ9fpUy7+AaC+8UwhNLL9UC8kEYH9J9m+RbW
+         mQgYPvkbQnhe4k44pn9QJEmeFtLx4PXDkcapgVKjd1Gq9n6kcWFRK6Yzmb6IdAh9+TOU
+         H2YxdF9cARN5fvX5XAamcLFW93LLehmT80z6SDsNjaVPO+HoNpdaMs/JQXHYnhv8pGws
+         GY8UnPuabONM5BB5mxLflFKDW1ah9eXI4tUeQR1zZIwshz0d2JAk3axV+YMhOd2a9yqC
+         2pFA==
+X-Gm-Message-State: APjAAAXQDS36AxLzsoRieG2TK1RQURnAOxKj4FVQ2irhUEyu05KA6f9Y
+        7GUwy1MIMBBSAuuKWkGbeefp0thyFOY=
+X-Google-Smtp-Source: APXvYqwJmz9uplwOeyvtW8Dl3Lv9szwj6ysSedClhpBFRpO5vba0CKR/Xu5N1C0BHrX13NjAUjDbqQ==
+X-Received: by 2002:a19:428f:: with SMTP id p137mr10023327lfa.149.1567179019456;
+        Fri, 30 Aug 2019 08:30:19 -0700 (PDT)
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
+        by smtp.gmail.com with ESMTPSA id a20sm894202ljk.34.2019.08.30.08.30.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2019 08:30:17 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id m24so6868725ljg.8
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:30:16 -0700 (PDT)
+X-Received: by 2002:a05:651c:1104:: with SMTP id d4mr1597943ljo.90.1567179016569;
+ Fri, 30 Aug 2019 08:30:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830150653.GD30413@zn.tnic>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190830140805.GD13294@shell.armlinux.org.uk>
+In-Reply-To: <20190830140805.GD13294@shell.armlinux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 30 Aug 2019 08:30:00 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+Message-ID: <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+Subject: Re: [BUG] Use of probe_kernel_address() in task_rcu_dereference()
+ without checking return value
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vladimir Davydov <vdavydov@parallels.com>,
+        Kirill Tkhai <ktkhai@parallels.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 05:06:53PM +0200, Borislav Petkov wrote:
-> On Fri, Aug 30, 2019 at 11:00:02PM +0800, Philip Li wrote:
-> > Early on, there's requirement to blacklist a few branches, which is configured
-> > as below
-> > 	blacklist_branch: auto-.*|tmp-.*|base-.*|test.*|.*-for-linus
-> 
-> Looks about right.
-> 
-> > Except the blacklist branches, we will monitor all other branches.
-> 
-> Ok, good to know. Just as an optimization to your workflow, in case
-> you're interested: the tip/master branch merges all tip branches so if
-> you're trying to prioritize which branches to test first due to resource
-> constraints, I'd go with tip/master first and then, when I have free
-> cycles, I'd do the topic branches.
-thanks a lot for the advice. Meanwhile, the internal logic merges branches
-to test once to speed up, most of time, more branches will not increase the
-build testing workload. Of course, for the non merged branches, we need
-test individually, and we will take this information into consideration
-to add to our TODO.
+On Fri, Aug 30, 2019 at 7:08 AM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+>
+> which means that when probe_kernel_address() returns -EFAULT, the
+> destination is left uninitialised.  In the case of
+> task_rcu_dereference(), this means that "siginfo" can be used without
+> having been initialised, resulting in this function returning an
+> indeterminant result (based on the value of an uninitialised variable
+> on the stack.)
 
-> 
-> Just as an idea...
-> 
-> > We also support pull request to update the
-> > configuration or email us to update. Refer to
-> > https://github.com/intel/lkp-tests/blob/master/repo/linux/tip.
-> 
-> Ok, cool. I'll talk to tglx about it and might even send you a pull
-> request.
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+Do you actually see that behavior?
+
+Because the foillowing lines:
+
+        smp_rmb();
+        if (unlikely(task != READ_ONCE(*ptask)))
+                goto retry;
+
+are what is supposed to protect it - yes, it could have faulted, but
+only if 'task' isn't valid any more, and we just re-checked it.
+
+              Linus
