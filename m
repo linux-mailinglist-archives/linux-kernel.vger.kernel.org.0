@@ -2,97 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D13EA2C44
+	by mail.lfdr.de (Postfix) with ESMTP id 9B53EA2C45
 	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 03:30:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbfH3B2Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 21:28:24 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45937 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727110AbfH3B2Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 21:28:24 -0400
-Received: by mail-yw1-f68.google.com with SMTP id n69so1827400ywd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 18:28:24 -0700 (PDT)
+        id S1727478AbfH3B2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 21:28:36 -0400
+Received: from mail-eopbgr1320057.outbound.protection.outlook.com ([40.107.132.57]:31430
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727110AbfH3B2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 21:28:35 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hQR33ggK2hy7kOLlJQ+kPK1oSxL0SnjtHuZj6PhS5sTbANtZeVB37zGi5BR4dd/0by9DYHaScU8my5X2DcuqMaL4vld8QlPoU+9/f1aCfsFemo4U0WtYTqeGmoegg5HntXYDutaTJ8rKlPx57ydw0NdjDk9lzTw9tsmj3MH8x89+XDYLQWs7exlCDSZ6+lxgCBdgKVD+vv2JI1wFAN6Xb4rI2IDClvAjtUAoRp9lTklde+BL00zILapW0KufFTuJ6VqsZFuJn+v31AgH+qKsjKLYdFjQWt13G86Xt0lZMMT2+0HVui4/V/JMOUXXdofx/2XKtFgU4TCe7D8u9RsMLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e7j4jaYZDamlzFOBVKaoDB0rWlCpjILeEr//VXMV8vc=;
+ b=CB08R7R3v1v/8alHheSHeGC5diiEOmdylOqRBcSya4N0Ew/Lri4Zm5nLqpYH5xXUjkj8m0PS6Wi6+O6siE09WltA/dOmOk7cW554z8irk8DlfItcutHt+r9elPNYsg23OfhjrKBP9Y2H8rJfo2wxNpwd60xqlju2IadVuQ9CprLFmzBqF1dCSReEcSCpQ3WkJ9JpxRII8BpCR9TbHT1YEjySsTUS+359+VB36x9fgUjjPXKHsAE2efSGtJTGye9APZEC/t0+LZdE97RfndDrf0GhBaJmht5VR4+4WodXvXv81EkAmI/oOtI8ZYlDLNg/2V/Zd/aE83GlIaL4YxRNMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=teo-en-ming-corp.com; dmarc=pass action=none
+ header.from=teo-en-ming-corp.com; dkim=pass header.d=teo-en-ming-corp.com;
+ arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1NLtIL4mp2qHTi5hOVwYkkuVD4cT9jE/SqJqjf/988o=;
-        b=VG0l1vYyTezDPmlCvZndRIN9LUTbWs54StnMoM5QDy30R0ucZcLzwxswfDoZtpnlOK
-         1Cn9bB+eo4i0CRn4cIw+rkjxoattmez+qzoUIwYTnUwZ3PrFjH+lSqxGM91y3T/L34PQ
-         PfUfgNwwPbaHkWk+jPiQLcVFmTLRnk6rBWI9J+dmL5xrFrcvgcTKZTVqfTpBOEGW2g44
-         7S7FxyM9Q82HBm0zDP68iNu7Hqv6I19hJhprYadc8KLBGhokzbTe/k3V/E2GtBx4H1E+
-         +6pZI0RNf392b8ubW4W6QhPl7i/M2W8TIlUBUF4Jc3Ddz9hn+VqKeomr1VwbGFgMINpx
-         YRKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1NLtIL4mp2qHTi5hOVwYkkuVD4cT9jE/SqJqjf/988o=;
-        b=q6TFCf6x7Zd3yC8viAUvD2RYhbtyINPaz6tlxKRwEHkL+jQUj1qyy3sqOH52HwqY6x
-         51FnqzMd2Rch9EbSWC3cAu5Dc+EK6Jtdbgsbcd3581UgCtERwvMYdp0CjmLtQey1kg4J
-         TEapl0h4raX0Tm9LCgYBez2ukTOVybCpn2oJJ908mqWswWuagZ9F9+s2dr9nUusM+ed2
-         Ra91ibXmzA+sne+OhkoHjdvoS1/YcuT/j8p6SX2l/HQJLJYdIwuSfyk3qjBjhQEUPe5T
-         teuNX1KTGCYV9oF7rjeIyYydE/C3QiixR9CMpXjXwsobNoWrhzTUVHA1cmdTa+4w+qd+
-         qNKw==
-X-Gm-Message-State: APjAAAWARNfHeHk2BIjszmLCCJ7QMmRyCN4JsAcgCAy1SYnj9Me3D4oX
-        fHEPdgCAKyIh/x8o1fyGgimDrh57kZTmF/ePN5uacQ==
-X-Google-Smtp-Source: APXvYqxkzIoMrgZQcoeF5OyznXISdWtNE6TK2VXrJ5iLriqjHOYy8eIx/6czv4xAZj/ROALVBLVs+udVCrq/v//vKKQ=
-X-Received: by 2002:a81:6a8a:: with SMTP id f132mr9756614ywc.358.1567128503715;
- Thu, 29 Aug 2019 18:28:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <CGME20190813105359eucas1p2c4fecf74be23d3e7739a61c55050bc89@eucas1p2.samsung.com>
- <20190813105337.3065-1-a.swigon@partner.samsung.com>
-In-Reply-To: <20190813105337.3065-1-a.swigon@partner.samsung.com>
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Thu, 29 Aug 2019 21:28:12 -0400
-Message-ID: <CAOg9mSTCwb6fd0SfWYgVGoQ9gsSjPGNYwBDHMV3b9hBzGFHQgg@mail.gmail.com>
-Subject: Re: [PATCH] orangefs: Add octal zero prefix
-To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>
-Cc:     devel@lists.orangefs.org, LKML <linux-kernel@vger.kernel.org>,
-        Martin Brandenburg <martin@omnibond.com>
-Content-Type: text/plain; charset="UTF-8"
+ d=teoenmingcorp.onmicrosoft.com; s=selector1-teoenmingcorp-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e7j4jaYZDamlzFOBVKaoDB0rWlCpjILeEr//VXMV8vc=;
+ b=nF9bjMMmvyQm9yGMgKXsxLX05tNzm0Y/tllEkd0ALlIvJPDg/fVxS8e20Ws535lM1+AnIG/9BCLovr1tokEy0ALY+bGVrsKEpMTqepeWVkaFc723cEcvQXvwomIXoq0VyYNPNjgfXVA6de+fVTe/v0HTFo+d8M8J1hGc76TEwfo=
+Received: from SG2PR01MB2141.apcprd01.prod.exchangelabs.com (10.170.143.19) by
+ SG2PR01MB2096.apcprd01.prod.exchangelabs.com (10.170.143.17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Fri, 30 Aug 2019 01:28:30 +0000
+Received: from SG2PR01MB2141.apcprd01.prod.exchangelabs.com
+ ([fe80::508e:ee77:4ba7:9278]) by SG2PR01MB2141.apcprd01.prod.exchangelabs.com
+ ([fe80::508e:ee77:4ba7:9278%7]) with mapi id 15.20.2199.021; Fri, 30 Aug 2019
+ 01:28:30 +0000
+From:   Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming-corp.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Turritopsis Dohrnii Teo En Ming <ceo@teo-en-ming-corp.com>
+Subject: Singaporean Mr. Teo En Ming's Refugee Seeking Attempts
+Thread-Topic: Singaporean Mr. Teo En Ming's Refugee Seeking Attempts
+Thread-Index: AdVe0hjv30vVgDr1RnGYd41Um8dUZg==
+Date:   Fri, 30 Aug 2019 01:28:30 +0000
+Message-ID: <SG2PR01MB21417D4F1B6B73C720AF640D87BD0@SG2PR01MB2141.apcprd01.prod.exchangelabs.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ceo@teo-en-ming-corp.com; 
+x-originating-ip: [118.189.211.120]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 86b7fcaf-0992-46d0-087b-08d72ce95d94
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:SG2PR01MB2096;
+x-ms-traffictypediagnostic: SG2PR01MB2096:
+x-ms-exchange-purlcount: 7
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <SG2PR01MB20962569E9D994503D9EC98E87BD0@SG2PR01MB2096.apcprd01.prod.exchangelabs.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0145758B1D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39830400003)(376002)(366004)(136003)(199004)(189003)(66946007)(81166006)(6116002)(81156014)(7736002)(9686003)(107886003)(71190400001)(14444005)(6916009)(2351001)(14454004)(476003)(305945005)(6506007)(53936002)(5640700003)(256004)(102836004)(99286004)(26005)(52536014)(5660300002)(55016002)(2501003)(66446008)(33656002)(86362001)(316002)(966005)(76116006)(71200400001)(508600001)(486006)(8936002)(8676002)(66066001)(66556008)(2906002)(74316002)(64756008)(7696005)(6436002)(4326008)(6306002)(66476007)(25786009)(3846002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:SG2PR01MB2096;H:SG2PR01MB2141.apcprd01.prod.exchangelabs.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: teo-en-ming-corp.com does not
+ designate permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 7GnROIebyd1eXujieNofeEronO2tgrNVzxeHwXwWYm5Q/FSm0BPLnT5r0+SD+D14iguYNG/IHQ6rn172x8mr/qfCikQR3QfebzK0Cd0xmO6+Dzu0GGBjrrRLP3MRK7KnvPqq02iNN2v0MBt8AnnilU3amZ/XYABFueJLNJDhQl5mhYRXQvI7f+VsEn/homDifiO1VNp90fJTxY5C0GeMqX+QwgIYj+WVE6pp5ug4PRvyjxdFlO8qLlej1hFjU83CrzGK8G9ZoQLpEAaH6lQal010sZKuJfN+p8+zGEQZS/3W+StOlZv23dQtRgWPGshCxV8ORbOuGK4a189s9Bl3BmVUlKyF57vMtrzozN+ofF5nH8EshbLIxsHe1jODEQWkC9GXAZ438ZSTz8dSSbSXuhUXEN+V0g9c0ODbORhMxho=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: teo-en-ming-corp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86b7fcaf-0992-46d0-087b-08d72ce95d94
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2019 01:28:30.4559
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 23b3f6ae-c453-4b93-aec9-f17508e5885c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dNY4oiA9JIUQup6VE5UhunkjpfHNLsu88KcQxgp3BXH+l8JSXO0OqrAuMM9eNpbsO+/+kMXHGvpMJSTuPx97K9VZ0kMqzfVjmqivNJVGJik=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR01MB2096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for catching this, I added this patch on top of Linux 5.3-rc6 and
-ran xfstests on orangefs with no regressions.
+Subject: Singaporean Mr. Teo En Ming's Refugee Seeking Attempts
 
-Acked-by: Mike Marshall <hubcap@omnibond.com>
+In reverse chronological order:
 
--Mike
+[1] Petition to the Government of Taiwan for Refugee Status, 5th August 201=
+9 Monday
+
+Photo #1: At the building of the National Immigration Agency, Ministry of t=
+he Interior, Taipei, Taiwan, 5th August 2019
+
+Photo #2: Queue ticket at the National Immigration Agency, Ministry of the =
+Interior, Taipei, Taiwan, 5th August 2019
+
+Photo #3: Submission of documents/petition to the National Immigration Agen=
+cy, Ministry of the Interior, Taipei, Taiwan, 5th August 2019
+
+Photos #4 and #5: Acknowledgement of Receipt for the submission of document=
+s/petition from the National Immigration Agency, Ministry of the Interior, =
+Taipei, Taiwan, 5th August 2019
+
+References:
+
+(a) Petition to the Government of Taiwan for Refugee Status, 5th August 201=
+9 Monday (Blogspot)
+
+Link: https://tdtemcerts.blogspot.sg/2019/08/petition-to-government-of-taiw=
+an-for.html
+
+(b) Petition to the Government of Taiwan for Refugee Status, 5th August 201=
+9 Monday (Wordpress)
+
+Link: https://tdtemcerts.wordpress.com/2019/08/23/petition-to-the-governmen=
+t-of-taiwan-for-refugee-status/
+
+[2] Application for Refugee Status at the United Nations Refugee Agency, Ba=
+ngkok, Thailand, 21st March 2017 Tuesday
+
+References:
+
+(a) [YOUTUBE] Vlog: The Road to Application for Refugee Status at UNHCR Ban=
+gkok
+
+Link: https://www.youtube.com/watch?v=3DutpuAa1eUNI
+
+YouTube video Published on March 22nd, 2017
 
 
+-----BEGIN EMAIL SIGNATURE-----
 
-On Tue, Aug 13, 2019 at 6:54 AM Artur =C5=9Awigo=C5=84
-<a.swigon@partner.samsung.com> wrote:
->
-> This patch adds a missing zero to mode 755 specification required to
-> express it in octal numeral system.
->
-> Reported-by: =C5=81ukasz Wrochna <l.wrochna@samsung.com>
-> Signed-off-by: Artur =C5=9Awigo=C5=84 <a.swigon@partner.samsung.com>
-> ---
->  fs/orangefs/namei.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/orangefs/namei.c b/fs/orangefs/namei.c
-> index 1dd710e5f376..3e7cf3d0a494 100644
-> --- a/fs/orangefs/namei.c
-> +++ b/fs/orangefs/namei.c
-> @@ -224,7 +224,7 @@ static int orangefs_symlink(struct inode *dir,
->         struct orangefs_object_kref ref;
->         struct inode *inode;
->         struct iattr iattr;
-> -       int mode =3D 755;
-> +       int mode =3D 0755;
->         int ret;
->
->         gossip_debug(GOSSIP_NAME_DEBUG, "%s: called\n", __func__);
-> --
-> 2.17.1
->
+The Gospel for all Targeted Individuals (TIs):
+
+[The New York Times] Microwave Weapons Are Prime Suspect in Ills of
+U.S. Embassy Workers
+
+Link: https://www.nytimes.com/2018/09/01/science/sonic-attack-cuba-microwav=
+e.html
+
+***************************************************************************=
+*****************
+
+Singaporean Mr. Turritopsis Dohrnii Teo En Ming's Academic
+Qualifications as at 14 Feb 2019
+
+[1] https://tdtemcerts.wordpress.com/
+
+[2] https://tdtemcerts.blogspot.sg/
+
+[3] https://www.scribd.com/user/270125049/Teo-En-Ming
+
+-----END EMAIL SIGNATURE-----
+
