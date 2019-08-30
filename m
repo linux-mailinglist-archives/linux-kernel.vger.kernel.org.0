@@ -2,98 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D154A3BD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 576D8A3BD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbfH3QU0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:20:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727434AbfH3QU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:20:26 -0400
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 063132341B;
-        Fri, 30 Aug 2019 16:20:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567182025;
-        bh=7MOipqKt2Wmhp8etEhAUF9iImbxmzYm8rI9O4cKGm/c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GOjHZLU8Epe54Oc+cpo+LHgMFF42/oSRz1S3EhcKAnb5S8ffa8d0DWdVVIdCHQv46
-         iusD8tsuBtfNUpvwo6sHzgX+noKayeaZY9sIyXqhaVkIsL5gfvhRjb6nW7EvQQ/fDS
-         XJgPwxCKgfKqJHniuvLRgw/9hDmZyMRQ1gMNljVY=
-Subject: Re: [PATCH v2] selftests: watchdog: Add optional file argument
-To:     "George G. Davis" <george_davis@mentor.com>
-Cc:     Jerry Hoemann <jerry.hoemann@hpe.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>, shuah <shuah@kernel.org>
-References: <1567169597-10330-1-git-send-email-george_davis@mentor.com>
- <197ee603-6ea7-a3c8-6b62-e3ba95433053@kernel.org>
- <20190830161320.GD23419@mam-gdavis-lt>
-From:   shuah <shuah@kernel.org>
-Message-ID: <ff4527a1-3b94-9b4a-b785-507eb861379c@kernel.org>
-Date:   Fri, 30 Aug 2019 10:20:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728122AbfH3QVw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:21:52 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35069 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727792AbfH3QVv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:21:51 -0400
+Received: by mail-lj1-f196.google.com with SMTP id l14so7030492lje.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 09:21:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RvJUWzwbWtDmNfFQPDYtgd/VNd2rt9lHRibndGJEDe0=;
+        b=FBYvMKEjQ5sSOW9ZgPodQd+BPDSjMhYQvOJAseRwiwhf9FwP3UC43tsYloFXNii+na
+         Lz3/FkQuzQFH17j9WrzdMHgvnYnwKX+YDkPnlTlkvOfiUDptQubG6jlibQE2kI0gEQlX
+         2WNRV8a0AozFaDMEhf0NzVdPBaHQpM2DDVYTY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RvJUWzwbWtDmNfFQPDYtgd/VNd2rt9lHRibndGJEDe0=;
+        b=F1asdqgB6G1MvxSVMQd9ezKArgpZN//nLhocREhbX5sd5IhQc7m1+Xc5Wjc42r4AOQ
+         EWd7XKx3Ia7rgxEYWlQH1UUWvdeHrDHEMeUcwNzStZ07vr30Szd4G6tijuuKV26l3po2
+         lbkBqnglHyDsn8heK7WUQivmM43FP3wcgVH26VBvCkcA6qYpc0lPMxWd8NR0/dplTu/t
+         tEogpfhBctH4NaNGpGG5RAopyoHszq+vSJHqNzFzvAapYhipmKzwubaP5+K3U5iJ603m
+         oHxjf3lCWZtk3xR4ol37i99fuwBCxfpPOUUE/KWb1A36hCu6ycKJAfdkyTQurvmya/Ar
+         108Q==
+X-Gm-Message-State: APjAAAUauJJasFUucbx7cYMqOa9f1ISCZ8vb/30qD/lqqVo7oD8Bt6Hr
+        iL9c32o+TxwXGOtscC5hdOp5BSdvKd8=
+X-Google-Smtp-Source: APXvYqwIRFQcCP6iiPpYU+ERSlcui/1CbSp4YLv5f5ROjZVq30QItkeOWKt9IoFBWHKkHcrabUUYNg==
+X-Received: by 2002:a2e:1518:: with SMTP id s24mr8416921ljd.205.1567182108992;
+        Fri, 30 Aug 2019 09:21:48 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id r8sm980958lfc.39.2019.08.30.09.21.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2019 09:21:47 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id j16so846191ljg.6
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 09:21:47 -0700 (PDT)
+X-Received: by 2002:a05:651c:1104:: with SMTP id d4mr1719479ljo.90.1567182107201;
+ Fri, 30 Aug 2019 09:21:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190830161320.GD23419@mam-gdavis-lt>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190830140805.GD13294@shell.armlinux.org.uk> <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+ <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com> <20190830160957.GC2634@redhat.com>
+In-Reply-To: <20190830160957.GC2634@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 30 Aug 2019 09:21:31 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
+Message-ID: <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
+Subject: Re: [BUG] Use of probe_kernel_address() in task_rcu_dereference()
+ without checking return value
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/30/19 10:13 AM, George G. Davis wrote:
-> On Fri, Aug 30, 2019 at 09:12:10AM -0600, shuah wrote:
->> On 8/30/19 6:53 AM, George G. Davis wrote:
->>> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
->>> @@ -69,6 +70,7 @@ static void term(int sig)
->>>   static void usage(char *progname)
->>>   {
->>>   	printf("Usage: %s [options]\n", progname);
->>> +	printf(" -f, --file          Open watchdog device file (default is /dev/watchdog)\n");
->>
->> Can you split this line into two printf's. Checkpatch doesn't like
->> it.
->>
->> printf(" -f, --file          Open watchdog device file\n");
->> A second one below for default.
-> 
-> Sure, I'll add the following interdiff in v3:
-> 
-> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-> index 9f17cae61007..6a68b486dd61 100644
-> --- a/tools/testing/selftests/watchdog/watchdog-test.c
-> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
-> @@ -70,7 +70,8 @@ static void term(int sig)
->   static void usage(char *progname)
->   {
->   	printf("Usage: %s [options]\n", progname);
-> -	printf(" -f, --file          Open watchdog device file (default is /dev/watchdog)\n");
-> +	printf(" -f, --file          Open watchdog device file\n");
-> +	printf("                     Default is /dev/watchdog\n");
+On Fri, Aug 30, 2019 at 9:10 AM Oleg Nesterov <oleg@redhat.com> wrote:
+>
+>
+> Yes, please see
+>
+>         [PATCH 2/3] introduce probe_slab_address()
+>         https://lore.kernel.org/lkml/20141027195425.GC11736@redhat.com/
+>
+> I sent 5 years ago ;) Do you think
+>
+>         /*
+>          * Same as probe_kernel_address(), but @addr must be the valid pointer
+>          * to a slab object, potentially freed/reused/unmapped.
+>          */
+>         #ifdef CONFIG_DEBUG_PAGEALLOC
+>         #define probe_slab_address(addr, retval)        \
+>                 probe_kernel_address(addr, retval)
+>         #else
+>         #define probe_slab_address(addr, retval)        \
+>                 ({                                                      \
+>                         (retval) = *(typeof(retval) *)(addr);           \
+>                         0;                                              \
+>                 })
+>         #endif
+>
+> can work?
 
-Thanks. This is what I am looking for. Please send v3 with thsi change.
+Ugh. I would much rather handle the general case, because honestly,
+tracing has had a lot of issues with our hacky "probe_kernel_read()"
+stuff that bases itself on user addresses.
 
->   	printf(" -b, --bootstatus    Get last boot status (Watchdog/POR)\n");
->   	printf(" -d, --disable       Turn off the watchdog timer\n");
->   	printf(" -e, --enable        Turn on the watchdog timer\n");
-> 
->> On a separate note, I wish this usage block uses \t instead of spacing
->> things out.
-> 
-> I noticed that most of those lines are hard spaced with only one using tabs.
-> To remain consistent with existing CodingStyle, I used hard spaces.
-> 
+It's also one of the few remaining users of "set_fs()" in core code,
+and we really should try to get rid of those.
 
-yes. My comment about using "\t" can be done later and if you would like
-to send for that patch, I will be happy to take it.
+So your code would work for this particular case, but not for other
+cases that can trap simply because the pointer isn't reliable (tracing
+being the main case for that - but if the source of the pointer itself
+might have been free'd, you would also have that situation).
 
-thanks,
--- Shuah
+So I'd really prefer to have something a bit fancier. On most
+architectures, doing a good exception fixup for kernel addresses is
+really not that hard.
+
+On x86, for example, we actually have *exactly* that. The
+"__get_user_asm()" macro is basically it. It purely does a load
+instruction from an unchecked address.
+
+(It's a really odd syntax, but you could remove the __chk_user_ptr()
+from the __get_user_size() macro, and now you'd have basically a "any
+regular size kernel access with exception handlng").
+
+But yes, your hack is I guess optimal for this particular case where
+you simply can depend on "we know the pointer was valid, we just don't
+know if it was freed".
+
+Hmm. Don't we RCU-free the task struct? Because then we don't even
+need to care about CONFIG_DEBUG_PAGEALLOC. We can just always access
+the pointer as long as we have the RCU read lock. We do that in other
+cases.
+
+                    Linus
