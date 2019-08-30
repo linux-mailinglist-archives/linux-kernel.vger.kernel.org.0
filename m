@@ -2,119 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFE72A3AF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24E0CA3AEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbfH3Pt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:49:58 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58220 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727135AbfH3Pt5 (ORCPT
+        id S1728386AbfH3PtK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:49:10 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46963 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727999AbfH3PtK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:49:57 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7UFmKhi135060;
-        Fri, 30 Aug 2019 11:48:20 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2uq6cd8w4h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Aug 2019 11:48:20 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7UFg72J028795;
-        Fri, 30 Aug 2019 15:48:19 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma02dal.us.ibm.com with ESMTP id 2un65kg9dm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 30 Aug 2019 15:48:19 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7UFmInU42729834
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 15:48:18 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6FEF6AE05C;
-        Fri, 30 Aug 2019 15:48:18 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D75B3AE05F;
-        Fri, 30 Aug 2019 15:48:15 +0000 (GMT)
-Received: from LeoBras (unknown [9.85.151.141])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 30 Aug 2019 15:48:15 +0000 (GMT)
-Message-ID: <4b3b52d0f73aeb1437b4b2a46325b36e9c41f92b.camel@linux.ibm.com>
-Subject: Re: [PATCH v2 1/1] netfilter: nf_tables: fib: Drop IPV6 packages if
- IPv6 is disabled on boot
-From:   Leonardo Bras <leonardo@linux.ibm.com>
-To:     Florian Westphal <fw@strlen.de>
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Date:   Fri, 30 Aug 2019 12:48:11 -0300
-In-Reply-To: <20190829205832.GM20113@breakpoint.cc>
-References: <20190821141505.2394-1-leonardo@linux.ibm.com>
-         <db0f02c5b1a995fde174f036540a3d11008cf116.camel@linux.ibm.com>
-         <b6585989069fd832a65b73d1c4f4319a10714165.camel@linux.ibm.com>
-         <20190829205832.GM20113@breakpoint.cc>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-oQxTJclox6vwlEkEdc9g"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        Fri, 30 Aug 2019 11:49:10 -0400
+Received: by mail-lf1-f67.google.com with SMTP id n19so5670481lfe.13
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vxocWBxPoSE7XWEgraDs2g3LtET7UTFJLMjvpVmaI8A=;
+        b=TqP98Es77k0/+rmmz3Uc6wMjpz2tzkZWjHrSzsSBeBrfuUyZCOzu0EHDKBLcDbkhDy
+         nUVmu9IOeafqbIRFVnLQ+x4s8ZIULtIlYgs6y9oYYYKUxEfSnMP5R09XMsNMjgKkfslw
+         9YGKytetf9RH2e53eyPma+gAp9CBNVGWeh/80=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vxocWBxPoSE7XWEgraDs2g3LtET7UTFJLMjvpVmaI8A=;
+        b=Ao8olDubPpupDb5ZsdLEj7vCUywJjIqQm6vDZ258ITlTodHWnjrdWovI/Zn0aSqt7f
+         0slg4Ldq7NNcmlBmcwFF+GtwsIqLEkMjS1LzDlZPfm6RHeuTTJPiyK3CJNPM0ZYTj7Us
+         e/kbcpDCEPDy8qm2atKLP+gJ7bo1JPSo8w1MAXpZe7EN6UXHUG8dHB+j6LqfyGSu4C0M
+         emkNn6Zs6+FvaBCreQfEj8DLQPCXeT5AcUx/HkZOpOmNiExvWu4xJ2ClgBPwyUjLQC6x
+         R1WGIh1ziiTHP2cMhl0cYjHL7Dx1MrYydT5+Wy9locqch9mW2cZD7i+yg92DexqvDBP6
+         T3qw==
+X-Gm-Message-State: APjAAAUXDPBEhEvktcKR+dZbWoPyT3UHcXsI34RKzCJMlxvkN2XxRMAD
+        LK8ZuKkCmctb1EnCDF9t+JDtxRCWOkU=
+X-Google-Smtp-Source: APXvYqy5TXeX82wjdwJ6N9qKZGbQiAdOgRf+Asq2aBm4MYvEeFYTG6VHjrXTzHIWrdfux4eXRctX+w==
+X-Received: by 2002:ac2:53a3:: with SMTP id j3mr4791419lfh.155.1567180148071;
+        Fri, 30 Aug 2019 08:49:08 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id s7sm900079lji.26.2019.08.30.08.49.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2019 08:49:06 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id l11so5717415lfk.6
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:49:06 -0700 (PDT)
+X-Received: by 2002:ac2:5976:: with SMTP id h22mr2633464lfp.79.1567180145802;
+ Fri, 30 Aug 2019 08:49:05 -0700 (PDT)
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-30_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908300157
+References: <CAK8P3a2DWh54eroBLXo+sPgJc95aAMRWdLB2n-pANss1RbLiBw@mail.gmail.com>
+ <CAKwvOdnD1mEd-G9sWBtnzfe9oGTeZYws6zNJA7opS69DN08jPg@mail.gmail.com>
+ <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
+ <CAK8P3a0bY9QfamCveE3P4H+Nrs1e6CTqWVgiY+MCd9hJmgMQZg@mail.gmail.com>
+ <20190828152226.r6pl64ij5kol6d4p@treble> <CAK8P3a2ATzqRSqVeeKNswLU74+bjvwK_GmG0=jbMymVaSp2ysw@mail.gmail.com>
+ <20190829173458.skttfjlulbiz5s25@treble> <CAHk-=wi-epJZfBHDbKKDZ64us7WkF=LpUfhvYBmZSteO8Q0RAg@mail.gmail.com>
+ <CAK8P3a1K5HgfACmJXr4dTTwDJFz5BeSCCa3RQWYbXGE-2q4TJQ@mail.gmail.com>
+ <CAHk-=whuUdqrh2=LLNfRiW6oadx0zzGVkvqyx_O1cGLa2U6Jjg@mail.gmail.com> <20190830150208.jyk7tfzznqimc6ow@treble>
+In-Reply-To: <20190830150208.jyk7tfzznqimc6ow@treble>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 30 Aug 2019 08:48:49 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgqAcRU99Dp20+ZAux7Mdgbnw5deOguwOjdCJY0eNnSkA@mail.gmail.com>
+Message-ID: <CAHk-=wgqAcRU99Dp20+ZAux7Mdgbnw5deOguwOjdCJY0eNnSkA@mail.gmail.com>
+Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Ilie Halip <ilie.halip@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Aug 30, 2019 at 8:02 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> For KASAN, the Clang threshold for inserting memset() is *2* consecutive
+> writes instead of 17.  Isn't that likely to cause tearing-related
+> surprises?
 
---=-oQxTJclox6vwlEkEdc9g
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Tearing isn't likely to be a problem.
 
-On Thu, 2019-08-29 at 22:58 +0200, Florian Westphal wrote:
-[...]
-> 1. add a patch to BREAK in nft_fib_netdev.c for !ipv6_mod_enabled()
-[...]
+It's not like memcpy() does byte-by-byte copies. If you pass it a
+word-aligned pointer, it will do word-aligned accesses simply for
+performance reasons.
 
-But this is still needed? I mean, in nft_fib_netdev_eval there are only
-2 functions being called for IPv6 protocol : nft_fib6_eval and
-nft_fib6_eval_type. Both are already protected by this current patch.
+Even on x86, where we use "rep movsb", we (a) tend to disable it for
+small copies and (b) it turns out that microcode that does the
+optimized movsb (which is the only case we use it) probably ends up
+doing atomic things anyway. Note the "probably". I don't have
+microcode source code, but there are other indications like "we know
+it doesn't take interrupts on a byte-per-byte level, only on the
+cacheline level".
 
-Is your 1st suggestion about this patch, or you think it's better to
-move this change to nft_fib_netdev_eval ?
+So it's probably not an issue from a tearing standpoint - but it
+worries me because of "this has to be a leaf function" kind of issues
+where we may be using individual stores on purpose. We do have things
+like that.
 
-Best regards,
-Leonardo Bras
-
---=-oQxTJclox6vwlEkEdc9g
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEMdeUgIzgjf6YmUyOlQYWtz9SttQFAl1pRTsACgkQlQYWtz9S
-ttR8vg//bORcfn9a17NfB/LSQtdMIyP0xefyHbkTJ3ZpRcj7XLzdkqrnAoksLzEG
-z0EP0HoNn1M2I8WDglih/B+pLqyc9vaCn73+7cem61/+Uhcqzb/7z8zvmn6HLdI2
-G8cpXJeOL+vOG2YXb1kX+FfJ7BtLyalCJ/KyJvLtpy+J0UVTILvXD/ag0huemWs1
-xHpzVEDys4Gwh+EPF9hOpFDCnQDbp6QdmOxXKXkq/C4ArLHrSok5mZQOsHo6BFrh
-SpPGZsStPVWPIx/Xt+2H4AxkP3VpSr332sWViTh94YX6rTGDMMaWCm0bH4/aIAF/
-J0Nj9ig2i1eKrKNXcg21dzcw0AgqXOdts4I1DJfi9aNflB8sOu9+/VgMLiz36mjl
-463rg6Lc/Rx16HQ3w3g2usaaVWM7qSSYw7AvWbccIJjYHQHO6Sw4o60ErJkE0mie
-W2KCD+pYRjmbF0pRmcsuFPlVMFa+u1aM2iwNbE47XYiXBBwHC5cvGBupj5KLanSy
-fsFQQX2qLpC5Wc67M1xGv6SE+1PuKza3sH3w/z0WzeKewAJ38BsEZtOF7mfdwrHw
-ZNKRpjUFimwQz1QjlSd7wki2nzrNj4REDQ1xMjdEZQpBnHN7jctb0AlpuI24VbMR
-pkhAqZE+qzGgoeT5j7fVg7ow487ckU9/mScTImeIRmHArgNGJVw=
-=cgry
------END PGP SIGNATURE-----
-
---=-oQxTJclox6vwlEkEdc9g--
-
+               Linus
