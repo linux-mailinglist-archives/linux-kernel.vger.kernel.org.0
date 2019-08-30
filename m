@@ -2,135 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D503FA3E05
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 20:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BD4EA3E08
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 20:58:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbfH3S5X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 14:57:23 -0400
-Received: from gateway31.websitewelcome.com ([192.185.143.234]:25337 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727888AbfH3S5X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 14:57:23 -0400
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 688BF8599B
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 13:57:22 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 3m5KiHitBiQer3m5KiarFA; Fri, 30 Aug 2019 13:57:22 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=cPkR+sjQETckei88bj4J3c37q+XYl3hWNTjp7VyXbZ0=; b=oABKnLPqx/CkQNLn7fGJAdolHe
-        EIcYU6kFVYE/porHtSK1snbeKvFjYfqU/ek5Gqkqsw++Ge8fOHMrzxmqyMU8xQjDApdRB3dKOfYUz
-        I3TFUcU8m5vQAmF9cPvzATIXC8K1PaFhkJn3UrDuMn3UNGZG2c6AKxEBt4i2hfyON9FR9O0cfEh50
-        CR4fqc5WVuurWn5GkYQjiRMqotoF2VbnLjcVRHxk7MFLsi70DakRzWtATYPcXE3boldfPxBr0ZgCv
-        f67/hFI/y7MNIo6a3e18pk9gSCviRUM0S3Ma1M5BUAt/aB/0WO3sAh7fIID/vT3iIlQBxcPecAxKH
-        qyWpbZRA==;
-Received: from [189.152.216.116] (port=39024 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1i3m5J-002Gwo-7r; Fri, 30 Aug 2019 13:57:21 -0500
-Date:   Fri, 30 Aug 2019 13:57:16 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Daniel Drake <dsd@gentoo.org>, Ulrich Kunitz <kune@deine-taler.de>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH][next] zd1211rw: zd_usb: Use struct_size() helper
-Message-ID: <20190830185716.GA10044@embeddedor>
+        id S1728194AbfH3S6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 14:58:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42382 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727304AbfH3S6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 14:58:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B4572ABD6;
+        Fri, 30 Aug 2019 18:58:04 +0000 (UTC)
+From:   Michal Suchanek <msuchanek@suse.de>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     Michal Suchanek <msuchanek@suse.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        Breno Leitao <leitao@debian.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Nicolai Stange <nstange@suse.de>,
+        Michael Neuling <mikey@neuling.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Brauner <christian@brauner.io>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        David Hildenbrand <david@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/6] Disable compat cruft on ppc64le v6
+Date:   Fri, 30 Aug 2019 20:57:51 +0200
+Message-Id: <cover.1567188299.git.msuchanek@suse.de>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.152.216.116
-X-Source-L: No
-X-Exim-ID: 1i3m5J-002Gwo-7r
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.152.216.116]:39024
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Less code means less bugs so add a knob to skip the compat stuff.
 
-struct usb_int_regs {
-	...
-        struct reg_data regs[0];
-} __packed;
+This is tested on ppc64le top of
 
-Make use of the struct_size() helper instead of an open-coded version
-in order to avoid any potential type mistakes.
+https://patchwork.ozlabs.org/cover/1153556/
 
-So, replace the following function:
+Changes in v2: saner CONFIG_COMPAT ifdefs
+Changes in v3:
+ - change llseek to 32bit instead of builing it unconditionally in fs
+ - clanup the makefile conditionals
+ - remove some ifdefs or convert to IS_DEFINED where possible
+Changes in v4:
+ - cleanup is_32bit_task and current_is_64bit
+ - more makefile cleanup
+Changes in v5:
+ - more current_is_64bit cleanup
+ - split off callchain.c 32bit and 64bit parts
+Changes in v6:
+ - cleanup makefile after split
+ - consolidate read_user_stack_32
+ - fix some checkpatch warnings
 
-static int usb_int_regs_length(unsigned int count)
-{
-       return sizeof(struct usb_int_regs) + count * sizeof(struct reg_data);
-}
+Michal Suchanek (6):
+  powerpc: make llseek 32bit-only.
+  powerpc: move common register copy functions from signal_32.c to
+    signal.c
+  powerpc/perf: consolidate read_user_stack_32
+  powerpc/64: make buildable without CONFIG_COMPAT
+  powerpc/64: Make COMPAT user-selectable disabled on littleendian by
+    default.
+  powerpc/perf: split callchain.c by bitness
 
-with:
+ arch/powerpc/Kconfig                     |   5 +-
+ arch/powerpc/include/asm/thread_info.h   |   4 +-
+ arch/powerpc/kernel/Makefile             |   7 +-
+ arch/powerpc/kernel/entry_64.S           |   2 +
+ arch/powerpc/kernel/signal.c             | 144 ++++++++-
+ arch/powerpc/kernel/signal_32.c          | 140 ---------
+ arch/powerpc/kernel/syscall_64.c         |   6 +-
+ arch/powerpc/kernel/syscalls/syscall.tbl |   2 +-
+ arch/powerpc/kernel/vdso.c               |   5 +-
+ arch/powerpc/perf/Makefile               |   5 +-
+ arch/powerpc/perf/callchain.c            | 377 +----------------------
+ arch/powerpc/perf/callchain.h            |  11 +
+ arch/powerpc/perf/callchain_32.c         | 204 ++++++++++++
+ arch/powerpc/perf/callchain_64.c         | 185 +++++++++++
+ 14 files changed, 564 insertions(+), 533 deletions(-)
+ create mode 100644 arch/powerpc/perf/callchain.h
+ create mode 100644 arch/powerpc/perf/callchain_32.c
+ create mode 100644 arch/powerpc/perf/callchain_64.c
 
-struct_size(regs, regs, count)
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wireless/zydas/zd1211rw/zd_usb.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-index 1965cd0fafc4..4e44ea8c652d 100644
---- a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-+++ b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
-@@ -1597,11 +1597,6 @@ static int zd_ep_regs_out_msg(struct usb_device *udev, void *data, int len,
- 	}
- }
- 
--static int usb_int_regs_length(unsigned int count)
--{
--	return sizeof(struct usb_int_regs) + count * sizeof(struct reg_data);
--}
--
- static void prepare_read_regs_int(struct zd_usb *usb,
- 				  struct usb_req_read_regs *req,
- 				  unsigned int count)
-@@ -1636,10 +1631,10 @@ static bool check_read_regs(struct zd_usb *usb, struct usb_req_read_regs *req,
- 	/* The created block size seems to be larger than expected.
- 	 * However results appear to be correct.
- 	 */
--	if (rr->length < usb_int_regs_length(count)) {
-+	if (rr->length < struct_size(regs, regs, count)) {
- 		dev_dbg_f(zd_usb_dev(usb),
--			 "error: actual length %d less than expected %d\n",
--			 rr->length, usb_int_regs_length(count));
-+			 "error: actual length %d less than expected %ld\n",
-+			 rr->length, struct_size(regs, regs, count));
- 		return false;
- 	}
- 
 -- 
-2.23.0
+2.22.0
 
