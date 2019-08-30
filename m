@@ -2,101 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F3AA3930
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C221A391F
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 16:23:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfH3O0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 10:26:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37948 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727751AbfH3O0f (ORCPT
+        id S1727963AbfH3OXa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 10:23:30 -0400
+Received: from mail-io1-f44.google.com ([209.85.166.44]:45948 "EHLO
+        mail-io1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727751AbfH3OX3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 10:26:35 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7UEI1qn169137
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 10:26:34 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uq0kt2jdj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 10:26:33 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <prudo@linux.ibm.com>;
-        Fri, 30 Aug 2019 15:26:28 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 30 Aug 2019 15:26:24 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7UEQNcA60489974
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 30 Aug 2019 14:26:23 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4E73E52050;
-        Fri, 30 Aug 2019 14:26:23 +0000 (GMT)
-Received: from laptop-ibm (unknown [9.152.212.29])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 051935204E;
-        Fri, 30 Aug 2019 14:26:22 +0000 (GMT)
-Date:   Fri, 30 Aug 2019 16:26:22 +0200
-From:   Philipp Rudo <prudo@linux.ibm.com>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, Jiri Bohac <jbohac@suse.cz>,
-        linux-api@vger.kernel.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Matthew Garrett <mjg59@google.com>,
-        David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH V40 08/29] kexec_file: split KEXEC_VERIFY_SIG into
- KEXEC_SIG and KEXEC_SIG_FORCE
-In-Reply-To: <20190820001805.241928-9-matthewgarrett@google.com>
-References: <20190820001805.241928-1-matthewgarrett@google.com>
-        <20190820001805.241928-9-matthewgarrett@google.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Fri, 30 Aug 2019 10:23:29 -0400
+Received: by mail-io1-f44.google.com with SMTP id t3so14232616ioj.12;
+        Fri, 30 Aug 2019 07:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bAKN2+5gOLPMPuf7BlJbUSjK0cWgyfFP2uN2z8ewCJg=;
+        b=dGeJ+U42tAGk9rSl2hMfBIfQAJpAlT/1/zDEnfF05khwqumThOytKi8gtwnEtRZbN9
+         LixkjUHYfb/WITvZ01c21aFhxGgvRafaohxZlh9Y3ZX6JuYlTsa32WkGdW5DtyKMyZ4h
+         9WqxA4H+3+tSLWstQpXbrWWwzljRFSo6hH2S3QQzTuDTioSbAo/ljkOExntlHY5n+VtO
+         GhWE27ZLeMduZS0yLIiThQNDilngVjYxPI60gupwzrc2Aedl9o5dVxq4aZV8uxoFdvgc
+         u7V/acNyPMIDx+4BVh9Ezws3DUmQSIBKr7938W8S4Y/Yq6xmlpYFouV2U2WFsfFUHKam
+         1tgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bAKN2+5gOLPMPuf7BlJbUSjK0cWgyfFP2uN2z8ewCJg=;
+        b=iWvuf8iJpulQrnPz29hied7+iC/FcbXVqPy58gx6xE5mEDZCXWwhkhdxJM8IXZ90cq
+         kMeJhQZFqh/PYF6SgtNOQnJkYoor/59/Y51/P9YoaarLcKw/37hOgiwDHo/sZM+SwS5B
+         NtTPLlzLcvcDHd8pEhwg17lqFzXHNsCZF4ScDDvhTPhIVd9Q1V+6JoVNortxgG1V1SgL
+         HAwPX9io9DkFwUkcoNwbU45Lf3fUyYpebFDa8jh6WIAYyLydWKBi6KGekjTXUO+bMPET
+         +GbYs7lbk5iRiKk4QqLYFYX4Mjf4o/kWEp5ZxTXtjqS1iKKoOR9vuwFNHVcn06pzwrER
+         UsFw==
+X-Gm-Message-State: APjAAAWiPguvsjhPUjUYucs71Keba95vizh1ZO9w5JgxTPzrnBGXC6ya
+        3KRhfhFUGs87DD4p/dLiiMVj8M1gkPQ3MCSmD5o=
+X-Google-Smtp-Source: APXvYqwpFvalYsCne/ND6Uu8f0n9Qhicy+mp0atcatB2VB0PQJvW2LXDJmPSYERIVaKNF1rr6SuUVYo83e7pGmfkkU0=
+X-Received: by 2002:a5d:8444:: with SMTP id w4mr13537606ior.51.1567175008927;
+ Fri, 30 Aug 2019 07:23:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19083014-0008-0000-0000-0000030F0C7D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19083014-0009-0000-0000-00004A2D5471
-Message-Id: <20190830162622.534a0b8f@laptop-ibm>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-30_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908300147
+References: <3a4ff829-7302-7201-81c2-a557fe35afc8@canonical.com>
+In-Reply-To: <3a4ff829-7302-7201-81c2-a557fe35afc8@canonical.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Fri, 30 Aug 2019 16:26:33 +0200
+Message-ID: <CAOi1vP9x1SS9YGFgHuZcpga5fTYac-y3vazsAKr9N8WJB7-hpA@mail.gmail.com>
+Subject: Re: bug report: libceph: follow redirect replies from osds
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, Sage Weil <sage@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthew,
+On Fri, Aug 30, 2019 at 4:05 PM Colin Ian King <colin.king@canonical.com> wrote:
+>
+> Hi,
+>
+> Static analysis with Coverity has picked up an issue with commit:
+>
+> commit 205ee1187a671c3b067d7f1e974903b44036f270
+> Author: Ilya Dryomov <ilya.dryomov@inktank.com>
+> Date:   Mon Jan 27 17:40:20 2014 +0200
+>
+>     libceph: follow redirect replies from osds
+>
+> Specifically in function ceph_redirect_decode in net/ceph/osd_client.c:
+>
+> 3485
+> 3486        len = ceph_decode_32(p);
+>
+> CID 17904: Unused value (UNUSED_VALUE)
+>
+> 3487        *p += len; /* skip osd_instructions */
+> 3488
+> 3489        /* skip the rest */
+> 3490        *p = struct_end;
+>
+> The double write to *p looks wrong, I suspect the *p += len; should be
+> just incrementing pointer p as in: p += len.  Am I correct to assume
+> this is the correct fix?
 
-found a typo ...
+Hi Colin,
 
-On Mon, 19 Aug 2019 17:17:44 -0700
-Matthew Garrett <matthewgarrett@google.com> wrote:
+No, the double write to *p is correct.  It skips over len bytes and
+then skips to the end of the redirect reply.  There is no bug here but
+we could drop
 
-[...]
+  len = ceph_decode_32(p);
+  *p += len; /* skip osd_instructions */
 
-> index 6d0635ceddd0..9b4f37a4edf1 100644
-> --- a/arch/s390/kernel/kexec_elf.c
-> +++ b/arch/s390/kernel/kexec_elf.c
-> @@ -130,7 +130,7 @@ static int s390_elf_probe(const char *buf, unsigned long len)
->  const struct kexec_file_ops s390_kexec_elf_ops = {
->  	.probe = s390_elf_probe,
->  	.load = s390_elf_load,
-> -#ifdef CONFIG_KEXEC_VERIFY_SIG
-> +#ifdef CONFIG_KEXEC__SIG
-		      ^^
-... here.
->  	.verify_sig = s390_verify_sig,
-> -#endif /* CONFIG_KEXEC_VERIFY_SIG */
-> +#endif /* CONFIG_KEXEC_SIG */
->  };
+and skip to the end directly to make Coverity happier.
 
-Thanks
-Philipp
+Thanks,
 
+                Ilya
