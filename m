@@ -2,135 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 219FBA3A66
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:33:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FA74A3A6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:34:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbfH3Pc7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:32:59 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:47081 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727991AbfH3Pc7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:32:59 -0400
-Received: by mail-pg1-f196.google.com with SMTP id m3so3704106pgv.13
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=typeblog-net.20150623.gappssmtp.com; s=20150623;
-        h=date:user-agent:in-reply-to:references:mime-version
-         :content-transfer-encoding:subject:to:cc:from:message-id;
-        bh=akL/vzGq+lNV9YkALeJQ4aXXX3G8w5n79bs7dYEdyvc=;
-        b=jA2jg3EMAc+Z03EJefu2AjTGWyurMgUv5WPaiMUdJetx9G66cfmRCPao9YkhUXW5n9
-         n2XKm2WJJbb97jOllhEGi7VRlR7QnwJ1xq37V9tFvUZx4fdikRK9fPInZWbh9G7Vo6C3
-         xWkaoZyMRnrop1UzkWtTJi2icL4lA7W/HlkCHVZ1NaKVVgwdyLUE1k683xiNtTOW8sCu
-         LCHVIQ7wJRWo0enwCii8AJSZn/OmXumOkwFLbmfhc9pJJgivF6tCRiapM5rbB3vpwkkY
-         O+PnsETVQc9vtlYmmgqdUTogb3AWHgj+Ol9L6TdOaDaJme/1KvKrzSsREjcIzMqDMOaB
-         pRAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=akL/vzGq+lNV9YkALeJQ4aXXX3G8w5n79bs7dYEdyvc=;
-        b=sqWQhwR2wzQfQlW0i/g5ewHAP6/UhQVA69ERZXKlMTBE590PJl+1ZAxK9E8WoxZxPS
-         5RjdjJzcsT6ibOll4L7XbN0qiyJUs/IPXbnyXBNn+UP+lHnXoNpp8Vnbn3YYFVqovSW6
-         FYPyY6uuNjeLnl601YU1cBTDIt0MjkGWF7mBxt4m65cEEejyPPOl5g08/xtPjMg8vO6d
-         d8wvx/edLHCczmWZXaHaIq9qoBLHjVqrfazzuimjlNufp2oquGTiq8nZMEYmra/0U1Wg
-         axwgMnm5LfdUtcQ2QpNFhlIemxuuKmkmeu68pGoeAiYCjzRAp8RvuDMTyWKcQWhgZ6vK
-         ZEHg==
-X-Gm-Message-State: APjAAAUJw9HN7ZA6E/NimqGr85HTIbGO6iOi7Yn3ain1kRr5Ws59g4CQ
-        mfv47IPsSXAZdfsqzuKyRrOOEw==
-X-Google-Smtp-Source: APXvYqwCk3b/JUPn4IzgflSH3AD53+n85ervNpkFp1wYSX70ki280dLNL7xph+UzpG0nQUx7mcn6Yg==
-X-Received: by 2002:a62:640e:: with SMTP id y14mr18441295pfb.222.1567179178862;
-        Fri, 30 Aug 2019 08:32:58 -0700 (PDT)
-Received: from [172.19.0.1] ([91.207.174.229])
-        by smtp.gmail.com with ESMTPSA id a13sm6572268pfn.104.2019.08.30.08.32.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Aug 2019 08:32:58 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 23:32:53 +0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190830115505.GX2680@smile.fi.intel.com>
-References: <20190830000024.20384-1-peter@typeblog.net> <20190830000024.20384-2-peter@typeblog.net> <20190830115505.GX2680@smile.fi.intel.com>
+        id S1728209AbfH3Pe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:34:28 -0400
+Received: from [110.188.70.11] ([110.188.70.11]:3540 "EHLO spam2.hygon.cn"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727751AbfH3Pe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:34:27 -0400
+Received: from MK-DB.hygon.cn ([172.23.18.60])
+        by spam2.hygon.cn with ESMTP id x7UFXCjY038545;
+        Fri, 30 Aug 2019 23:33:12 +0800 (GMT-8)
+        (envelope-from puwen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-DB.hygon.cn with ESMTP id x7UFWrRJ011867;
+        Fri, 30 Aug 2019 23:32:53 +0800 (GMT-8)
+        (envelope-from puwen@hygon.cn)
+Received: from [192.168.1.193] (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Fri, 30 Aug
+ 2019 23:33:12 +0800
+Subject: Re: [RFC PATCH] tools/power turbostat: Add support for Hygon Fam 18h
+ (Dhyana) RAPL
+To:     Calvin Walton <calvin.walton@kepstin.ca>, <lenb@kernel.org>
+CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1567157008-29679-1-git-send-email-puwen@hygon.cn>
+ <fea87715422ac21ca5d439e91ff45074069ada20.camel@kepstin.ca>
+From:   Pu Wen <puwen@hygon.cn>
+Message-ID: <0817315b-7e5a-cadc-af95-cc067cb2620c@hygon.cn>
+Date:   Fri, 30 Aug 2019 23:33:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] touchscreen: goodix: define GPIO mapping for GPD P2 Max
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-input@vger.kernel.org
-From:   Peter Cai <peter@typeblog.net>
-Message-ID: <D5227099-6120-446B-A39D-6AE437F5E11E@typeblog.net>
+In-Reply-To: <fea87715422ac21ca5d439e91ff45074069ada20.camel@kepstin.ca>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex01.Hygon.cn (172.23.18.10) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam2.hygon.cn x7UFXCjY038545
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On August 30, 2019 7:55:05 PM GMT+08:00, Andy Shevchenko <andriy=2Eshevchen=
-ko@linux=2Eintel=2Ecom> wrote:
->On Fri, Aug 30, 2019 at 08:00:24AM +0800, Peter Cai wrote:
->> The firmware of GPD P2 Max could not handle panel resets although
->code
->> is present in DSDT=2E The kernel needs to take on this job instead, but
->> the DSDT does not provide _DSD, rendering kernel helpless when trying
->to
->> find the respective GPIO pins=2E
->>=20
->> Fortunately, this time GPD has proper DMI vendor / product strings
->that
->> we could match against=2E We simply apply an acpi_gpio_mapping table
->when
->> GPD P2 Max is matched=2E
->>=20
->> Additionally, the DSDT definition of the irq pin specifies a wrong
->> polarity=2E The new quirk introduced in the previous patch
->> (ACPI_GPIO_QUIRK_OVERRIDE_POLARITY) is applied to correct this=2E
->
->> +#ifdef CONFIG_ACPI
->
->I guess most of these #ifdef:s makes code less readable for exchange of
->saving
->few bytes in the module footprint=2E
->
->> +	{ "irq-gpios", &irq_gpios_default, 1,
->> +		ACPI_GPIO_QUIRK_OVERRIDE_POLARITY },
->
->One line?
->
->> +		=2Ematches =3D {
->> +			DMI_MATCH(DMI_SYS_VENDOR, "GPD"),
->> +			DMI_MATCH(DMI_PRODUCT_NAME, "P2 MAX")
->
->Comma at the end?
->
->> +		},
->> +		=2Edriver_data =3D &gpio_mapping_force_irq_active_high
->
->Ditto=2E
+On 2019/8/30 22:27, Calvin Walton wrote:
+> I was a bit worried about these two chunks, since as far as I know AMD
+> has not yet released any processor with family 0x18, so there might be
+> future conflicts:
 
-> I guess most of these #ifdef:s makes code less readable for exchange of =
-saving
-few bytes in the module footprint=2E
+Hygon negotiated with AMD to make sure that only Hygon will use family
+18h.
 
-Since they can only be used when ACPI is supported (devm_acpi_dev_add_driv=
-er_gpios does not exist without ACPI defined, thus the last guard must exis=
-t), if they were not guarded then we would be left with a bunch of unused v=
-ariables warnings when building without ACPI which doesn't seem good=2E
+> Please add a comment on the 0x18 case in the rapl_probe_amd function,
+> something like:
+> 	case 0x18: /* Hygon Dhyana */
 
-Should we use __maybe_unused here instead of #ifdef guards?
+Okay, thanks for the suggestion.
 
-> Comma at the end?
+> Feel free to add a
+> Reviewed-by: Calvin Walton <calvin.walton@kepstin.ca>
 
-I was trying to follow the style of this driver but it doesn't seem to be =
-really consistent within itself=2E Another dmi_system_id definition in the =
-same file mixed both styles so I was kind of confused=2E
+Thanks a lot.
 
---=20
+-- 
 Regards,
-Xiyu Cai
+Pu Wen
