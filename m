@@ -2,159 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D97AA3AB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:44:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B875FA3A8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:40:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfH3Pnv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:43:51 -0400
-Received: from mx0b-00176a03.pphosted.com ([67.231.157.48]:50670 "EHLO
-        mx0a-00176a03.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727883AbfH3Pnu (ORCPT
+        id S1728325AbfH3Pkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:40:42 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:36194 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727434AbfH3Pkl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:43:50 -0400
-X-Greylist: delayed 4977 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Aug 2019 11:43:49 EDT
-Received: from pps.filterd (m0048205.ppops.net [127.0.0.1])
-        by m0048205.ppops.net-00176a03. (8.16.0.27/8.16.0.27) with SMTP id x7UEJM78038302;
-        Fri, 30 Aug 2019 10:20:52 -0400
-From:   "Safford, David (GE Global Research, US)" <david.safford@ge.com>
-To:     Seunghun Han <kkamagui@gmail.com>, Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "open list:TPM DEVICE DRIVER" <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Thread-Topic: Re: [PATCH 2/2] tpm: tpm_crb: enhance resource mapping
- mechanism for supporting AMD's fTPM
-Thread-Index: AQHVXxlOrNmKX2KHXEaevQ/odv4D9acT5e0AgAAT9ID//79NoA==
-Date:   Fri, 30 Aug 2019 14:20:49 +0000
-Message-ID: <BCA04D5D9A3B764C9B7405BBA4D4A3C035F1CC59@ALPMBAPA12.e2k.ad.ge.com>
-References: <20190830095639.4562-1-kkamagui@gmail.com>
- <20190830095639.4562-3-kkamagui@gmail.com> <20190830124334.GA10004@ziepe.ca>
- <CAHjaAcQ0MrPCZUit7s0Rmqpwpp0w5jiYjNUNEEm2yc1AejZ3ng@mail.gmail.com>
-In-Reply-To: <CAHjaAcQ0MrPCZUit7s0Rmqpwpp0w5jiYjNUNEEm2yc1AejZ3ng@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jTWpFeU5EY3pPVFV3WEdGd2NHUmhkR0ZjY205aGJXbHVaMXd3T1dRNE5E?=
- =?utf-8?B?bGlOaTB6TW1RekxUUmhOREF0T0RWbFpTMDJZamcwWW1FeU9XVXpOV0pjYlhO?=
- =?utf-8?B?bmMxeHRjMmN0TldNek9HSmpPRFl0WTJJek1TMHhNV1U1TFRobE16WXRZVFJq?=
- =?utf-8?B?TTJZd1lqVTVPR0V6WEdGdFpTMTBaWE4wWERWak16aGlZemc0TFdOaU16RXRN?=
- =?utf-8?B?VEZsT1MwNFpUTTJMV0UwWXpObU1HSTFPVGhoTTJKdlpIa3VkSGgwSWlCemVq?=
- =?utf-8?B?MGlOREV5TVNJZ2REMGlNVE15TVRFMk5EZzBORGd5T0RneE16a3lJaUJvUFNK?=
- =?utf-8?B?QmFEWlljSEowYkc0MmMwOHdWbkZHTVROelFUUTRhRlk1UmtFOUlpQnBaRDBp?=
- =?utf-8?B?SWlCaWJEMGlNQ0lnWW04OUlqRWlJR05wUFNKalFVRkJRVVZTU0ZVeFVsTlNW?=
- =?utf-8?B?VVpPUTJkVlFVRkZiME5CUVVKM1ZqVk5aVkJzTDFaQlpYVlhVSFZrWjFCUGNY?=
- =?utf-8?B?bzJOVmtyTlRKQk9EWnlUVVJCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJTRUZCUVVGRVlVRlJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlJVRkJVVUZDUVVGQlFVWjBSMlZSZDBGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VW8wUVVGQlFtNUJSMVZCV0hkQ2FrRkhPRUZpWjBKdFFVZHJRVnBCUW14QlJ6?=
- =?utf-8?B?UkJaRUZDY0VGSFJVRmlRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGRlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFXZEJRVUZCUVVGdVowRkJRVWRqUVZwUlFtWkJSMmRCWVZGQ2JrRkhaMEZp?=
- =?utf-8?B?UVVJMVFVZE5RV0ozUW5WQlIxbEJZVkZDYTBGSFZVRmlaMEl3UVVkclFWbFJR?=
- =?utf-8?B?bk5CUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJV?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVU5CUVVGQlFVRkRaVUZCUVVGYWQwSnNRVVk0UVdKblFu?=
- =?utf-8?B?WkJSelJCWTBGQ01VRkhTVUZpUVVKd1FVZE5RVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUWtGQlFVRkJRVUZCUVVGSlFVRkJRVUZCUVQwOUlpOCtQQzl0?=
- =?utf-8?B?WlhSaFBnPT0=?=
-x-dg-rorf: 
-x-originating-ip: [3.159.19.191]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 30 Aug 2019 11:40:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nWeznoNOHC7eIO8idSq6ZsE2oyJk7EYgheduVj5P/f4=; b=pXtUORslal1YVkihVrcQfATE4
+        SelbnkDdJPT/EYiYQrkKfDkCnZ24KOq6J8o0W+DCH6H1/G91tsVk0a1+DxRF4UmeVoxh/n3s6fkxy
+        mbwGmhTQzVf/G6Y8kHo2Wx25TNCglnLNp980PWVCiztYhHhq2ai2oJkeumNz56lo477pAzs8FNtHb
+        4+l0FhF1gWqCoABv2Tv82qDiSm5yTiHsCyPWu7JSjRMhPQavWVL9eCn2pKsPCdDOLYgU0GkTMkUjK
+        Nd5X8hQfUmYMSAHWHghQdEJd/L9ju2a91IiJ1eFU4jnD0TvJpw9CNsS2tY7gO5EEjsKJWHyS9REZR
+        F8IydN1kA==;
+Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:56034)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1i3j0k-0007hK-6j; Fri, 30 Aug 2019 16:40:26 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1i3j0h-0000Fk-5q; Fri, 30 Aug 2019 16:40:23 +0100
+Date:   Fri, 30 Aug 2019 16:40:23 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vladimir Davydov <vdavydov@parallels.com>,
+        Kirill Tkhai <ktkhai@parallels.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [BUG] Use of probe_kernel_address() in task_rcu_dereference()
+ without checking return value
+Message-ID: <20190830154023.GF13294@shell.armlinux.org.uk>
+References: <20190830140805.GD13294@shell.armlinux.org.uk>
+ <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
 MIME-Version: 1.0
-Subject: [PATCH 2/2] tpm: tpm_crb: enhance resource mapping mechanism for supporting
- AMD's fTPM
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-30_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908300147
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBsaW51eC1pbnRlZ3JpdHktb3duZXJAdmdlci5rZXJuZWwub3JnIDxsaW51eC1pbnRl
-Z3JpdHktDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZz4gT24gQmVoYWxmIE9mIFNldW5naHVuIEhh
-bg0KPiBTZW50OiBGcmlkYXksIEF1Z3VzdCAzMCwgMjAxOSA5OjU1IEFNDQo+IFRvOiBKYXNvbiBH
-dW50aG9ycGUgPGpnZ0B6aWVwZS5jYT4NCj4gQ2M6IEphcmtrbyBTYWtraW5lbiA8amFya2tvLnNh
-a2tpbmVuQGxpbnV4LmludGVsLmNvbT47IFBldGVyIEh1ZXdlDQo+IDxwZXRlcmh1ZXdlQGdteC5k
-ZT47IG9wZW4gbGlzdDpUUE0gREVWSUNFIERSSVZFUiA8bGludXgtDQo+IGludGVncml0eUB2Z2Vy
-Lmtlcm5lbC5vcmc+OyBMaW51eCBLZXJuZWwgTWFpbGluZyBMaXN0IDxsaW51eC0NCj4ga2VybmVs
-QHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogRVhUOiBSZTogW1BBVENIIDIvMl0gdHBtOiB0
-cG1fY3JiOiBlbmhhbmNlIHJlc291cmNlIG1hcHBpbmcNCj4gbWVjaGFuaXNtIGZvciBzdXBwb3J0
-aW5nIEFNRCdzIGZUUE0NCj4gDQo+ID4NCj4gPiBPbiBGcmksIEF1ZyAzMCwgMjAxOSBhdCAwNjo1
-NjozOVBNICswOTAwLCBTZXVuZ2h1biBIYW4gd3JvdGU6DQo+ID4gPiBJIGdvdCBhbiBBTUQgc3lz
-dGVtIHdoaWNoIGhhZCBhIFJ5emVuIFRocmVhZHJpcHBlciAxOTUwWCBhbmQgTVNJDQo+ID4gPiBt
-YWluYm9hcmQsIGFuZCBJIGhhZCBhIHByb2JsZW0gd2l0aCBBTUQncyBmVFBNLiBNeSBtYWNoaW5l
-IHNob3dlZA0KPiBhbg0KPiA+ID4gZXJyb3IgbWVzc2FnZSBiZWxvdywgYW5kIHRoZSBmVFBNIGRp
-ZG4ndCB3b3JrIGJlY2F1c2Ugb2YgaXQuDQo+ID4gPg0KPiA+ID4gWyAgNS43MzIwODRdIHRwbV9j
-cmIgTVNGVDAxMDE6MDA6IGNhbid0IHJlcXVlc3QgcmVnaW9uIGZvciByZXNvdXJjZQ0KPiA+ID4g
-ICAgICAgICAgICAgIFttZW0gMHg3OWI0ZjAwMC0weDc5YjRmZmZmXSBbICA1LjczMjA4OV0gdHBt
-X2NyYjogcHJvYmUNCj4gPiA+IG9mIE1TRlQwMTAxOjAwIGZhaWxlZCB3aXRoIGVycm9yIC0xNg0K
-PiA+ID4NCj4gPiA+IFdoZW4gSSBzYXcgdGhlIGlvbWVtLCBJIGZvdW5kIHR3byBmVFBNIHJlZ2lv
-bnMgd2VyZSBpbiB0aGUgQUNQSSBOVlMNCj4gYXJlYS4NCj4gPiA+IFRoZSByZWdpb25zIGFyZSBi
-ZWxvdy4NCj4gPiA+DQo+ID4gPiA3OWEzOTAwMC03OWI2YWZmZiA6IEFDUEkgTm9uLXZvbGF0aWxl
-IFN0b3JhZ2UNCj4gPiA+ICAgNzliNGIwMDAtNzliNGJmZmYgOiBNU0ZUMDEwMTowMA0KPiA+ID4g
-ICA3OWI0ZjAwMC03OWI0ZmZmZiA6IE1TRlQwMTAxOjAwDQo+ID4gPg0KPiA+ID4gQWZ0ZXIgYW5h
-bHl6aW5nIHRoaXMgaXNzdWUsIEkgZm91bmQgdGhhdCBjcmJfbWFwX2lvKCkgZnVuY3Rpb24NCj4g
-PiA+IGNhbGxlZA0KPiA+ID4gZGV2bV9pb3JlbWFwX3Jlc291cmNlKCkgYW5kIGl0IGZhaWxlZC4g
-VGhlIEFDUEkgTlZTIGRpZG4ndCBhbGxvdyB0aGUNCj4gPiA+IFRQTSBDUkIgZHJpdmVyIHRvIGFz
-c2lnbiBhIHJlc291cmNlIGluIGl0IGJlY2F1c2UgYSBidXN5IGJpdCB3YXMgc2V0DQo+ID4gPiB0
-byB0aGUgQUNQSSBOVlMgYXJlYS4NCj4gPiA+DQo+ID4gPiBUbyBzdXBwb3J0IEFNRCdzIGZUUE0s
-IEkgYWRkZWQgYSBmdW5jdGlvbiB0byBjaGVjayBpbnRlcnNlY3RzDQo+ID4gPiBiZXR3ZWVuIHRo
-ZSBUUE0gcmVnaW9uIGFuZCBBQ1BJIE5WUyBiZWZvcmUgaXQgbWFwcGVkIHRoZSByZWdpb24uIElm
-DQo+ID4gPiBzb21lIGludGVyc2VjdHMgYXJlIGRldGVjdGVkLCB0aGUgZnVuY3Rpb24ganVzdCBj
-YWxscyBkZXZtX2lvcmVtYXAoKQ0KPiA+ID4gZm9yIGEgd29ya2Fyb3VuZC4gSWYgdGhlcmUgaXMg
-bm8gaW50ZXJzZWN0LCBpdCBjYWxscw0KPiBkZXZtX2lvcmVtYXBfcmVzb3VyY2UoKS4NCj4gPiA+
-DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBTZXVuZ2h1biBIYW4gPGtrYW1hZ3VpQGdtYWlsLmNvbT4N
-Cj4gPiA+IC0tLQ0KPiA+ID4gIGRyaXZlcnMvY2hhci90cG0vdHBtX2NyYi5jIHwgMjUgKysrKysr
-KysrKysrKysrKysrKysrKystLQ0KPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNlcnRpb25z
-KCspLCAyIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gVGhpcyBzdGlsbCBzZWVtcyB0byByZXN1bHQg
-aW4gdHdvIGRyaXZlcnMgY29udHJvbGxpbmcgdGhlIHNhbWUgbWVtb3J5Lg0KPiA+IERvZXMgdGhp
-cyBjcmVhdGUgYnVncyBhbmQgcmFjZXMgZHVyaW5nIHJlc3VtZT8NCj4gPg0KPiA+IEphc29uDQo+
-IA0KPiBXaGVuIEkgdGVzdGVkIHRoaXMgcGF0Y2ggaW4gbXkgbWFjaGluZSwgaXQgc2VlbWVkIHRo
-YXQgQUNQSSBOVlMgd2FzIHNhdmVkDQo+IGFmdGVyIFRQTSBDUkIgZHJpdmVyIHNlbnQgIlRQTTJf
-U2h1dGRvd24oU1RBVEUpIiB0byB0aGUgZlRQTSB3aGlsZQ0KPiBzdXNwZW5kaW5nLiBUaGVuLCBB
-Q1BJIE5WUyB3YXMgcmVzdG9yZWQgd2hpbGUgcmVzdW1pbmcuDQo+IEFmdGVyIHJlc3VtaW5nLCBQ
-Q1JzIGRpZG4ndCBjaGFuZ2UgYW5kIFRQTTIgdG9vbHMgc3VjaCBhcyB0cG0yX3Bjcmxpc3QsDQo+
-IHRwbTJfZXh0ZW5kLCB0cG0yX2dldHJhbmRvbXMgd29ya2VkIHdlbGwuDQo+IFNvLCBhY2NvcmRp
-bmcgdG8gbXkgdGVzdCByZXN1bHQsIGl0IHNlZW1zIHRoYXQgdGhlIHBhdGNoIGRvZXNuJ3QgY3Jl
-YXRlIGJ1Z3MNCj4gYW5kIHJhY2UgZHVyaW5nIHJlc3VtZS4NCj4gDQo+IFNldW5naHVuDQoNClRo
-aXMgd2FzIGRpc2N1c3NlZCBlYXJsaWVyIG9uIHRoZSBsaXN0Lg0KVGhlIGNvbnNlbnN1cyB3YXMg
-dGhhdCwgd2hpbGUgc2FmZSBub3csIHRoaXMgd291bGQgYmUgZnJhZ2lsZSwgYW5kIHN1YmplY3Qg
-dG8gDQp1bmV4cGVjdGVkIGNoYW5nZXMgaW4gQUNQSS9OVlMsIGFuZCB3ZSByZWFsbHkgbmVlZCB0
-byB0ZWxsIE5WUyB0byBleGNsdWRlIHRoZQ0KcmVnaW9ucyBmb3IgbG9uZyB0ZXJtIHNhZmV0eS4N
-Cg0KQXMgc2VwYXJhdGUgaXNzdWVzLCB0aGUgcGF0Y2hlcyBkbyBub3Qgd29yayBhdCBhbGwgb24g
-c29tZSBvZiBteSBBTUQgc3lzdGVtcy4NCkZpcnN0LCB5b3Ugb25seSBmb3JjZSB0aGUgcmVtYXAg
-aWYgdGhlIG92ZXJsYXAgaXMgd2l0aCBOVlMsIGJ1dCBJIGhhdmUgc3lzdGVtcw0Kd2hlcmUgdGhl
-IG92ZXJsYXAgaXMgd2l0aCBvdGhlciByZXNlcnZlZCByZWdpb25zLiBZb3Ugc2hvdWxkIGZvcmNl
-IHRoZSByZW1hcA0KcmVnYXJkbGVzcywgYnV0IGlmIGl0IGlzIE5WUywgZ3JhYiB0aGUgc3BhY2Ug
-YmFjayBmcm9tIE5WUy4NCg0KU2Vjb25kLCB0aGUgcGF0Y2ggZXh0ZW5kcyB0aGUgd3JvbmcgYmVo
-YXZpb3Igb2YgdGhlIGN1cnJlbnQgZHJpdmVyIHRvIGJvdGgNCmJ1ZmZlciByZWdpb25zLiBJZiB0
-aGVyZSBpcyBhIGNvbmZsaWN0IGJldHdlZW4gd2hhdCB0aGUgZGV2aWNlJ3MgY29udHJvbA0KcmVn
-aXN0ZXIgc2F5cywgYW5kIHdoYXQgQUNQSSBzYXlzLCB0aGUgZXhpc3RpbmcgZHJpdmVyIGV4cGxp
-Y2l0bHkgInRydXN0cyB0aGUgQUNQSSIuDQpUaGlzIGlzIGp1c3Qgd3JvbmcuIFRoZSBhY3R1YWwg
-ZGV2aWNlIHdpbGwgdXNlIHRoZSBhcmVhcyBhcyBkZWZpbmVkIGJ5IGl0cw0KY29udHJvbCByZWdp
-c3RlcnMgcmVnYXJkbGVzcyBvZiB3aGF0IEFDUEkgc2F5cy4gSSB0YWxrZWQgdG8gTWljcm9zb2Z0
-LCBhbmQNCnRoZWlyIGRyaXZlciB0cnVzdHMgdGhlIGNvbnRyb2wgcmVnaXN0ZXIgdmFsdWVzLCBh
-bmQgZG9lc24ndCBldmVuIGxvb2sgYXQgdGhlDQpBQ1BJIHZhbHVlcy4NCg0KSW4gcHJhY3RpY2Us
-IEkgaGF2ZSB0ZXN0ZWQgc2V2ZXJhbCBzeXN0ZW1zIGluIHdoaWNoIHRoZSBkZXZpY2UgcmVnaXN0
-ZXJzIHNob3cNClRoZSBjb3JyZWN0IDRLIGJ1ZmZlcnMsIGJ1dCB0aGUgZHJpdmVyIGluc3RlYWQg
-dHJ1c3RzIHRoZSBBQ1BJIHZhbHVlcywgd2hpY2gNCmxpc3QganVzdCAxSyBidWZmZXJzLiAxSyBi
-dWZmZXJzIHdpbGwgbm90IHdvcmsgZm9yIGxhcmdlIHJlcXVlc3RzLCBhbmQgdGhlIA0KZGV2aWNl
-IGlzIGdvaW5nIHRvIHJlYWQgYW5kIHdyaXRlIHRoZSA0SyBidWZmZXJzIHJlZ2FyZGxlc3MuDQoN
-CmRhdmUNCg==
+On Fri, Aug 30, 2019 at 08:30:00AM -0700, Linus Torvalds wrote:
+> On Fri, Aug 30, 2019 at 7:08 AM Russell King - ARM Linux admin
+> <linux@armlinux.org.uk> wrote:
+> >
+> > which means that when probe_kernel_address() returns -EFAULT, the
+> > destination is left uninitialised.  In the case of
+> > task_rcu_dereference(), this means that "siginfo" can be used without
+> > having been initialised, resulting in this function returning an
+> > indeterminant result (based on the value of an uninitialised variable
+> > on the stack.)
+> 
+> Do you actually see that behavior?
+
+No, it was an observation of the code.
+
+> Because the foillowing lines:
+> 
+>         smp_rmb();
+>         if (unlikely(task != READ_ONCE(*ptask)))
+>                 goto retry;
+> 
+> are what is supposed to protect it - yes, it could have faulted, but
+> only if 'task' isn't valid any more, and we just re-checked it.
+
+Ah, ok.  Might be worth some comments - I find the comments in that
+function particularly unhelpful (even after Oleg mentions this is
+case 2.)
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
