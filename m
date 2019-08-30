@@ -2,90 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D63DA3B3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:03:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91DBDA3B55
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:05:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbfH3QDx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:03:53 -0400
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:36745 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbfH3QDx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:03:53 -0400
-Received: by mail-lf1-f51.google.com with SMTP id r5so5763635lfc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 09:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O41u0LaDz39ALIXuHv0yabeuXt1/muoAQJYzGxbd+Vw=;
-        b=ZBVoFQCN6MNrzzwJZVX2J48A0/aHFZjrkKuYNUWHmt13AKALINVRdBhChzKcPkihYN
-         p0xN9WEeK9Mwf77siewx9XgBUMz9FjYVFo5vi21h8mu+gD1wWAnbZvdj/M/wUq588kHc
-         GAQtzS1mnKGtj/4wDGgauqjsqXpvQ5QaojCqA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O41u0LaDz39ALIXuHv0yabeuXt1/muoAQJYzGxbd+Vw=;
-        b=lL0DQKBGDGzfm+0UPOAVC6hQDroE1QeUoxRLZNUMUy6jCOXj6ean9eX4LtkkWYGpIo
-         FhM6qwzNpAbwd4YvchVBezJsbiZZfdyTHZ9JWA7Rzxhiso0NBfaLD4Fv0bkwzLsBGi/d
-         JbHS6oI/HEhF0l8ItBAxevd+teQnrMByTRT5EDQqT9hDffgirOqcOMfqBxQSJZcycuai
-         zqVHdH++S9dz2yVYPUeENjdQY9Sru5mNwizB6q+WoFOwzvwQzTeZQhXY/PPaxgKD5Xy8
-         9J3hNgzdo2XTf/Iy8fD5OUpOsP3HtVAbHLF3bIuVeXQjzRoMvJ0CWfzm4wro/OWciW6q
-         qikQ==
-X-Gm-Message-State: APjAAAWgLnw/dKFJn8iyKIDLurAg4+cgPoHg658Iv3y5WMX/pCtR+zBS
-        ILNDaisIgeV372uKeJr2wNaYWHL9q5I=
-X-Google-Smtp-Source: APXvYqymMtDzmI54ztd0KqntgI+YPDClaAgEb76JmTtyT/OKOKO5qRfF7HHCBKuQVtKh6+hBrxMOVw==
-X-Received: by 2002:a19:c191:: with SMTP id r139mr9858584lff.23.1567181030497;
-        Fri, 30 Aug 2019 09:03:50 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id z2sm983212lfh.97.2019.08.30.09.03.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2019 09:03:49 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id g9so5772670lfb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 09:03:49 -0700 (PDT)
-X-Received: by 2002:ac2:4c9b:: with SMTP id d27mr9727934lfl.29.1567181029264;
- Fri, 30 Aug 2019 09:03:49 -0700 (PDT)
+        id S1728428AbfH3QF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:05:27 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3545 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727820AbfH3QF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:05:26 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id BE52241B7913997FE1D5;
+        Sat, 31 Aug 2019 00:05:10 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sat, 31 Aug 2019 00:05:10 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Sat, 31 Aug 2019 00:05:09 +0800
+Date:   Sat, 31 Aug 2019 00:04:20 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Chao Yu <yuchao0@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Joe Perches <joe@perches.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>, LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        "Fang Wei" <fangwei1@huawei.com>
+Subject: Re: [PATCH v3 6/7] erofs: remove all likely/unlikely annotations
+Message-ID: <20190830160415.GC69026@architecture4>
+References: <20190830032006.GA20217@architecture4>
+ <20190830033643.51019-1-gaoxiang25@huawei.com>
+ <20190830033643.51019-6-gaoxiang25@huawei.com>
+ <20190830154650.GB11571@infradead.org>
 MIME-Version: 1.0
-References: <20190827192255.wbyn732llzckmqmq@treble> <CAK8P3a2DWh54eroBLXo+sPgJc95aAMRWdLB2n-pANss1RbLiBw@mail.gmail.com>
- <CAKwvOdnD1mEd-G9sWBtnzfe9oGTeZYws6zNJA7opS69DN08jPg@mail.gmail.com>
- <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
- <CAK8P3a0bY9QfamCveE3P4H+Nrs1e6CTqWVgiY+MCd9hJmgMQZg@mail.gmail.com>
- <20190828152226.r6pl64ij5kol6d4p@treble> <CAK8P3a2ATzqRSqVeeKNswLU74+bjvwK_GmG0=jbMymVaSp2ysw@mail.gmail.com>
- <CAK8P3a1CONyt0AwBr2wQXZNo5+jpwAT8T3WfXe73=j799Jnv6A@mail.gmail.com>
- <20190829232439.w3whzmci2vqtq53s@treble> <CAK8P3a0ddxbGVj974XS+PM_mSJDu=aGfTGarjmqMCuLKn81mRg@mail.gmail.com>
- <20190830151422.o4pbvjyravrz2wre@treble>
-In-Reply-To: <20190830151422.o4pbvjyravrz2wre@treble>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 30 Aug 2019 09:03:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgcQBYjs-bX-v4CQUaT_bh_41EzEw4PmvSjBmAxGbr3OQ@mail.gmail.com>
-Message-ID: <CAHk-=wgcQBYjs-bX-v4CQUaT_bh_41EzEw4PmvSjBmAxGbr3OQ@mail.gmail.com>
-Subject: Re: objtool warning "uses BP as a scratch register" with clang-9
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Ilie Halip <ilie.halip@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190830154650.GB11571@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme701-chm.china.huawei.com (10.1.199.97) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 8:14 AM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> What about just adding a couple of WRITE_ONCE's to sas_ss_reset()?  That
-> would probably be the least disruptive option.
+Hi Christoph,
 
-I think that WRITE_ONCE() with a comment about why is a good idea.
+On Fri, Aug 30, 2019 at 08:46:50AM -0700, Christoph Hellwig wrote:
+> On Fri, Aug 30, 2019 at 11:36:42AM +0800, Gao Xiang wrote:
+> > As Dan Carpenter suggested [1], I have to remove
+> > all erofs likely/unlikely annotations.
+> 
+> Do you have to remove all of them, or just those where you don't have
+> a particularly good reason why you think in this particular case they
+> might actually matter?
 
-The reason I dislike WRITE_ONCE() in general is not because it's
-wrong, it's because people often use it mindlessly and the rationale
-for it isn't clear.
+I just added unlikely/likely for all erofs error handling paths or
+rare happened cases at first... (That is all in my thought...)
 
-But with a comment about why, that issue obviously goes away.
+I don't have some benchmark data for each unlikely/likely case (and I have
+no idea "is that worth to take time to benchmark rather than do another more
+useful stuffs"), so..I have to kill them all...
 
-            Linus
+Thanks,
+Gao Xiang
+
+
