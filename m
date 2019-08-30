@@ -2,66 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7779CA3CE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:20:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9EFA3CF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:24:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbfH3RUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 13:20:43 -0400
-Received: from mga02.intel.com ([134.134.136.20]:13903 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbfH3RUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:20:43 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Aug 2019 10:20:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,447,1559545200"; 
-   d="scan'208";a="182708052"
-Received: from floriank-mobl.ger.corp.intel.com (HELO localhost) ([10.252.38.77])
-  by fmsmga007.fm.intel.com with ESMTP; 30 Aug 2019 10:20:32 -0700
-Date:   Fri, 30 Aug 2019 20:20:31 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
-        Herbert Xu <herbert@gondor.apana.org.au>, davem@davemloft.net,
-        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com,
-        Arnd Bergmann <arnd@arndb.de>,
+        id S1728151AbfH3RYv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 13:24:51 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:52380 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727791AbfH3RYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 13:24:51 -0400
+Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id DED08EE13AF279517FC9;
+        Sat, 31 Aug 2019 01:24:48 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM405-HUB.china.huawei.com (10.3.20.213) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Sat, 31 Aug 2019 01:24:48 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Sat, 31 Aug 2019 01:24:47 +0800
+Date:   Sat, 31 Aug 2019 01:23:59 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "tee-dev @ lists . linaro . org" <tee-dev@lists.linaro.org>
-Subject: Re: [RFC/RFT v4 5/5] KEYS: trusted: Add generic trusted keys
- framework
-Message-ID: <20190830172031.dm5icfyakko6eqak@linux.intel.com>
-References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
- <1565682784-10234-6-git-send-email-sumit.garg@linaro.org>
- <CAFA6WYO7Z-Enmnqt8zA_+VV_p=mAc+AotTetv9hhf2xHm0mR9g@mail.gmail.com>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        "Dave Chinner" <david@fromorbit.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v6 04/24] erofs: add raw address_space operations
+Message-ID: <20190830172359.GD107220@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-5-gaoxiang25@huawei.com>
+ <20190829101721.GD20598@infradead.org>
+ <20190829114610.GF64893@architecture4>
+ <20190830164013.GC29603@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAFA6WYO7Z-Enmnqt8zA_+VV_p=mAc+AotTetv9hhf2xHm0mR9g@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190830164013.GC29603@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme702-chm.china.huawei.com (10.1.199.98) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 02:49:31PM +0530, Sumit Garg wrote:
-> Any comments/feedback on this patch before I send next version of TEE
-> patch-set with this patch included?
+Hi Christoph,
 
-Unfortunately don't have time before LPC to go deep with the follow up.
+On Fri, Aug 30, 2019 at 09:40:13AM -0700, Christoph Hellwig wrote:
+> On Thu, Aug 29, 2019 at 07:46:11PM +0800, Gao Xiang wrote:
+> > Hi Christoph,
+> > 
+> > On Thu, Aug 29, 2019 at 03:17:21AM -0700, Christoph Hellwig wrote:
+> > > The actual address_space operations seem to largely duplicate
+> > > the iomap versions.  Please use those instead.  Also I don't think
+> > > any new file system should write up ->bmap these days.
+> > 
+> > iomap doesn't support tail-end packing inline data till now,
+> > I think Chao and I told you and Andreas before [1].
+> > 
+> > Since EROFS keeps a self-contained driver for now, we will use
+> > iomap if it supports tail-end packing inline data later.
+> 
+> Well, so work with the maintainers to enhance the core kernel.  That
+> is how Linux development works.  We've added various iomap enhancements
+> for gfs in the last merge windows, and we've added more for the brand
+> new zonefs file system we plan to merge for 5.4.
 
-I will look into this in detail after LPC.
+That is a good idea, I think Chao will continue working on this
+(adding tail-end packing inline approach into iomap, thus we can
+ have few code in data.c.)
 
-/JArkko
+Thanks,
+Gao Xiang
+
