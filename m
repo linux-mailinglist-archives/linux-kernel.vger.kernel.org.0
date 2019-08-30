@@ -2,175 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E750A2FC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:24:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E4FCA2FC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 08:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbfH3GX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 02:23:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbfH3GX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 02:23:56 -0400
-Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3217321721;
-        Fri, 30 Aug 2019 06:23:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567146235;
-        bh=VouSvHWn/UeSvOBRtH3j7qOpgQGa4fijdPuKdzan2zc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BQM9J3mW81+oE3Z0EpA+xgWr51mmCFx+jJ28N+PwVlRRBAxyYc41qwKOsHIk6VzYQ
-         yvTG7IxUXinorwWkYfXGT8OgIC7/EsSGZSutcK2Bz7PzNgWnTLF+oAGoYGfEyLfhgi
-         zaNYeEja6KPjdOUDnVcMaSoXbHvSVdO5nHJkEj/s=
-Date:   Fri, 30 Aug 2019 15:23:51 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Aug 27 (objtool)
-Message-Id: <20190830152351.9311610b5cffb93110cbd6da@kernel.org>
-In-Reply-To: <20190829175931.sru23aud33hrdqbj@treble>
-References: <20190827190526.6f27e763@canb.auug.org.au>
-        <6c42e32f-901d-be78-e69b-cb9ff8703932@infradead.org>
-        <20190827155911.ct2zzo2zhcrauf3z@treble>
-        <2e8b18a0-a09c-b67e-c99f-45066ab9d511@infradead.org>
-        <20190828155147.v6eowc7rr7upr7dr@treble>
-        <f354f4be-99c7-346f-c7c5-ac5ce8a72a16@infradead.org>
-        <20190828161331.kvikro257blxtzu5@treble>
-        <20190828163433.4ltoxmtuujkqspar@treble>
-        <20190829105356.1fd4859f49c142945146855f@kernel.org>
-        <20190829175931.sru23aud33hrdqbj@treble>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727800AbfH3GYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 02:24:44 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:36918 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfH3GYo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 02:24:44 -0400
+Received: by mail-yb1-f193.google.com with SMTP id t5so2090540ybt.4
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 23:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=CRg35i2KWpjsknTISfFxKQ/QZUyPHEq1p0YfyQly9p0=;
+        b=JmcG7+8VBeJwdkL0srCfVuUiYENIyP2RgEaDEDY8NlPmzkibNggOUAP8bHIerZq4nH
+         TytJBi2hvzuYvRS6ch+1FHJWP/9ZRoF+dSl1pwpgi01MAwvT+VUoJCFToIJq1k1dQInV
+         NPJgo9t/Rrr4MGBBe8a5sfo/jCEVSLdYVySTe8YfkvTBQy/5eyaYRFB+ysOcpdhBcFSC
+         vEgfu88Q+EQivdqkzfHQkPQWR+klffAdPQoZM/sIvDVO3m1CIKkqghA35Jz+wf9tJ00K
+         VW+kuu2Maubrh4ZKtnq+mOWHW1YbTdlfLc9g7Gng9Vx4Z6Xi9OBTmKCwxsMH8F+9k2j3
+         4mNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CRg35i2KWpjsknTISfFxKQ/QZUyPHEq1p0YfyQly9p0=;
+        b=d26SLgR1I3BrUBu16B8kW4QGDYCPJ2XNBc2c96ttXK60X3a09uiaJAP6tFoED7NElb
+         DnZdk3sgjYrzT4Aw2ixyDf1sxPB/HxfC09qlA3+DS8TKK2WJYahmQQzzybDSbJPHSb0J
+         avQy16WQ/Zh2X/22dZlSRHvulLRECbA4X6kfh7StuC99fDk6/isn8qPWHV58eyPMbkR3
+         ZYmkcCU66MNx/TZf77zeUHWaHvRg9S/XoY/c/D28GEqmptLtPTHE93LIo3wenlPpmqjV
+         2B7bSpoxWV9Kj3EAgLfn7I/r8Bqn6JF0xtsbZR82+5colBRyj5emX5dZfDe/kK6p+AAY
+         k76A==
+X-Gm-Message-State: APjAAAV9v6FUiiBNXvszZLdvtBLOd5OgKUHauXYCN5drSDwBWFe1OWu2
+        lsq5x04iv7NKPNv0CJvecjZV3w==
+X-Google-Smtp-Source: APXvYqwlWNQGDdaoHm4ruUISqYzX0oZ1tMA0KTcAcnI6CC8hmRUBISY9eT6FQ8g7u2ShnwUYBrJG3Q==
+X-Received: by 2002:a25:7904:: with SMTP id u4mr9798468ybc.73.1567146283332;
+        Thu, 29 Aug 2019 23:24:43 -0700 (PDT)
+Received: from localhost.localdomain (li1320-244.members.linode.com. [45.79.221.244])
+        by smtp.gmail.com with ESMTPSA id r193sm976784ywe.8.2019.08.29.23.24.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2019 23:24:42 -0700 (PDT)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <Robert.Walker@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v1 0/3] perf cs-etm: Add support for callchain
+Date:   Fri, 30 Aug 2019 14:24:18 +0800
+Message-Id: <20190830062421.31275-1-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch seris adds support for instruction sample's callchain.
 
-Hi Josh,
+Patch 01 is to refactor the instruction size calculation; patch 02
+is to add thread stack and callchain support; patch 03 is a minor fixing
+for instruction sample generation thus the instruction sample can be
+alignment with the callchain generation.
 
-On Thu, 29 Aug 2019 12:59:31 -0500
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+Before:
 
-> On Thu, Aug 29, 2019 at 10:53:56AM +0900, Masami Hiramatsu wrote:
-> > Hi Josh,
-> > 
-> > On Wed, 28 Aug 2019 11:34:33 -0500
-> > Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > 
-> > > On Wed, Aug 28, 2019 at 11:13:31AM -0500, Josh Poimboeuf wrote:
-> > > > Turns out this patch does break something:
-> > > > 
-> > > >   arch/x86/xen/enlighten_pv.o: warning: objtool: xen_cpuid()+0x25: can't find jump dest instruction at .text+0x9c
-> > > > 
-> > > > I'll need to figure out a better way to whitelist that
-> > > > XEN_EMULATE_PREFIX fake instruction thing.  I'll probably just teach
-> > > > the objtool decoder about it.
-> > > 
-> > > Hi Masami,
-> > > 
-> > > Is it possible for the kernel x86 decoder to recognize the
-> > > XEN_EMULATE_PREFIX prefix?
-> > > 
-> > >         asm(XEN_EMULATE_PREFIX "cpuid"
-> > >                 : "=a" (*ax),
-> > >                   "=b" (*bx),
-> > >                   "=c" (*cx),
-> > >                   "=d" (*dx)
-> > >                 : "0" (*ax), "2" (*cx));
-> > > 
-> > > is disassembled to:
-> > > 
-> > >       33:       0f 0b                   ud2
-> > >       35:       78 65                   js     9c <xen_store_tr+0xc>
-> > >       37:       6e                      outsb  %ds:(%rsi),(%dx)
-> > >       38:       0f a2                   cpuid
-> > > 
-> > > which confuses objtool.  Presumably that would confuse other users of
-> > > the decoder as well.
-> > 
-> > Good catch! It should be problematic, since x86 decoder sanity test is
-> > based on objtool.
-> 
-> I think you mean the decoder test is based on objdump, not objtool?
+  # perf script --itrace=g16l64i100
+            main  1579        100      instructions:  ffff0000102137f0 group_sched_in+0xb0 ([kernel.kallsyms])
+            main  1579        100      instructions:  ffff000010213b78 flexible_sched_in+0xf0 ([kernel.kallsyms])
+            main  1579        100      instructions:  ffff0000102135ac event_sched_in.isra.57+0x74 ([kernel.kallsyms])
+            main  1579        100      instructions:  ffff000010219344 perf_swevent_add+0x6c ([kernel.kallsyms])
+            main  1579        100      instructions:  ffff000010214854 perf_event_update_userpage+0x4c ([kernel.kallsyms])
 
-Yes, it was my mistake. It depends on objdump.
+  [...]
 
-> Actually I wonder if X86_DECODER_SELFTEST is even still needed these
-> days, since objtool is enabled on default configs.  Objtool already uses
-> the decoder to disassemble every instruction in the kernel (except for a
-> few whitelisted files).
+After:
 
-Sometimes it have found bugs, so I would like to keep it. That test runs
-build time and in-kernel decoder is somewhat critical. It is better to
-run a test before install it.
+  # perf script --itrace=g16l64i100
 
-> 
-> > But I don't want to change the test code itself,
-> > because this problem is highly depending on Xen.
-> > 
-> > > That's a highly unlikely sequence of instructions, maybe the kernel
-> > > decoder should recognize it as a single instruction.
-> > 
-> > OK, it is better to be done in decoder (only for CONFIG_XEN_PVHVM)
-> > 
-> > BTW, could you also share what test case would you using?
-> 
-> Enable CONFIG_XEN_PV and CONFIG_STACK_VALIDATION, and remove the
-> STACK_FRAME_NON_STANDARD(xen_cpuid) line from
-> arch/x86/xen/enlighten_pv.c.  objtool will complain:
-> 
->   arch/x86/xen/enlighten_pv.o: warning: objtool: xen_cpuid()+0x25: can't find jump dest instruction at .text+0x9c
+  main  1579        100      instructions: 
+          ffff0000102137f0 group_sched_in+0xb0 ([kernel.kallsyms])
 
-Ah, OK, so that is for objtool, not for in-kernel decoder (anyway both
-need the fix.)
+  main  1579        100      instructions: 
+          ffff000010213b78 flexible_sched_in+0xf0 ([kernel.kallsyms])
+          ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
 
-> Basing it on CONFIG_XEN_PVHVM may be problematic.  The decoder is
-> duplicated in the tools directory so objtool can use it.  But the tools
-> don't know about kernel configs.
+  main  1579        100      instructions: 
+          ffff0000102135ac event_sched_in.isra.57+0x74 ([kernel.kallsyms])
+          ffff0000102137a0 group_sched_in+0x60 ([kernel.kallsyms])
+          ffff000010213b84 flexible_sched_in+0xfc ([kernel.kallsyms])
+          ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
 
-Yes, in that case you need enable it always.
+  main  1579        100      instructions: 
+          ffff000010219344 perf_swevent_add+0x6c ([kernel.kallsyms])
+          ffff0000102135f4 event_sched_in.isra.57+0xbc ([kernel.kallsyms])
+          ffff0000102137a0 group_sched_in+0x60 ([kernel.kallsyms])
+          ffff000010213b84 flexible_sched_in+0xfc ([kernel.kallsyms])
+          ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
 
-> BTW, I'm not sure if you're aware of this, but both objtool and perf
-> have identical copies of the decoder.  The makefiles warn if they get
-> out of sync with the kernel version.
-> 
-> We will always need at least one copy of the decoder in tools, because
-> the tools subdir is supposed to be standalone from the rest of the
-> kernel.  Still, I may look at combining the perf and objtool copies into
-> a single shared copy.
+  main  1579        100      instructions: 
+          ffff000010214854 perf_event_update_userpage+0x4c ([kernel.kallsyms])
+          ffff000010219360 perf_swevent_add+0x88 ([kernel.kallsyms])
+          ffff0000102135f4 event_sched_in.isra.57+0xbc ([kernel.kallsyms])
+          ffff0000102137a0 group_sched_in+0x60 ([kernel.kallsyms])
+          ffff000010213b84 flexible_sched_in+0xfc ([kernel.kallsyms])
+          ffff00001020c0b4 visit_groups_merge+0x12c ([kernel.kallsyms])
 
-Yes, we need to fix both.
+  [...]
 
-> 
-> > And what about attached patch? (just compile checked with/without CONFIG_XEN_PVHVM)
-> 
-> I copied the decoder to objtool, removed the CONFIG_XEN_PVHVM ifdef, and
-> played a bit with the includes, and got it to compile with objtool, but
-> it still fails:
-> 
->   $ make arch/x86/xen/enlighten_pv.o
->   arch/x86/xen/enlighten_pv.o: warning: objtool: xen_cpuid()+0x25: can't find jump dest instruction at .text+0x9c
+Leo Yan (3):
+  perf cs-etm: Refactor instruction size handling
+  perf cs-etm: Add callchain to instruction sample
+  perf cs-etm: Correct the packet usage for instruction sample
 
-[...]
-> @@ -58,6 +60,30 @@ void insn_init(struct insn *insn, const void *kaddr, int buf_len, int x86_64)
->  		insn->addr_bytes = 4;
->  }
->  
-> +static const insn_byte_t xen_prefix[] = { XEN_EMULATE_PREFIX };
-
-Oops, this must be __XEN_EMULATE_PREFIX. Mine is also have same bug.
-since insn_byte_t is char, that makes no error, but it should be
-initialized with __XEN_EMULATE_PREFIX, not XEN_EMULATE_PREFIX.
-
-Thank you,
+ tools/perf/util/cs-etm.c | 122 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 105 insertions(+), 17 deletions(-)
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.17.1
+
