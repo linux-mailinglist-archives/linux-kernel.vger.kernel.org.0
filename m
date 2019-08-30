@@ -2,150 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EBBBA32B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 10:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 745B0A32BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 10:36:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbfH3IeX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 04:34:23 -0400
-Received: from foss.arm.com ([217.140.110.172]:55984 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbfH3IeW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 04:34:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D533A344;
-        Fri, 30 Aug 2019 01:34:21 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7C5243F718;
-        Fri, 30 Aug 2019 01:34:20 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 09:34:18 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, "H.J. Lu" <hjl.tools@gmail.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH v2 2/2] ELF: Add ELF program property parsing support
-Message-ID: <20190830083415.GI27757@arm.com>
-References: <1566581020-9953-1-git-send-email-Dave.Martin@arm.com>
- <1566581020-9953-3-git-send-email-Dave.Martin@arm.com>
- <201908292224.007EB4D5@keescook>
+        id S1728079AbfH3IgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 04:36:00 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35952 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbfH3IgA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 04:36:00 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7U8Y1Q7157966;
+        Fri, 30 Aug 2019 08:35:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=5qQDKREBIOpHdjcAhX41kOtTEKTT3PXvNeLkBeWr4GA=;
+ b=DOBICrS+B9+nyFrqwktq0ryaroZKDA4Aep2xBK1TDM5+z5c6fMjptnDvB7CUNbtVbprJ
+ mp3QngjZFhyO/F4qxi+dAogd8t95pI2MBDUInDKOL2fzUH5NsoptABZrOwh4SPnxFhK/
+ vX1zpV+Plarl+TMJ2xtEk1vMBiBeQFdJxY6Sm3M5EDACU1Xp+ee0PZ/qJ6xIkeWjZr0b
+ TreacrSB+0XSv63gvHjiVT5HNGk4jRZwsgOZ2YlhXVT4l0Qq0xd4kPNyi09CVvyCESRi
+ dhOgmH6qR+Wlw5Y5ayOYnqQ3dUDVVdxVHMWhzO01oFtt1atDFdT+mUkAMCnI1xkuYB/n lg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2uq009g5pj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 08:35:00 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7U8Xlk6004822;
+        Fri, 30 Aug 2019 08:35:00 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2upc8x6487-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Aug 2019 08:34:59 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7U8Yrwu012117;
+        Fri, 30 Aug 2019 08:34:53 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 30 Aug 2019 01:34:53 -0700
+Date:   Fri, 30 Aug 2019 11:34:45 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     devel@driverdev.osuosl.org, Christoph Hellwig <hch@infradead.org>,
+        Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        linux-fsdevel@vger.kernel.org,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: [PATCH] staging: exfat: add exfat filesystem code to staging
+Message-ID: <20190830083445.GL23584@kadam>
+References: <20190829063955.GA30193@kroah.com>
+ <20190829094136.GA28643@infradead.org>
+ <20190829095019.GA13557@kroah.com>
+ <20190829103749.GA13661@infradead.org>
+ <20190829111810.GA23393@kroah.com>
+ <20190829151144.GJ23584@kadam>
+ <20190829152757.GA125003@architecture4>
+ <20190829154346.GK23584@kadam>
+ <20190829155127.GA136563@architecture4>
+ <20190829160441.GA141079@architecture4>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201908292224.007EB4D5@keescook>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190829160441.GA141079@architecture4>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908300092
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9364 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908300092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 06:37:45AM +0100, Kees Cook wrote:
-> On Fri, Aug 23, 2019 at 06:23:40PM +0100, Dave Martin wrote:
-> > ELF program properties will needed for detecting whether to enable
-> > optional architecture or ABI features for a new ELF process.
-> > 
-> > For now, there are no generic properties that we care about, so do
-> > nothing unless CONFIG_ARCH_USE_GNU_PROPERTY=y.
-> > 
-> > Otherwise, the presence of properties using the PT_PROGRAM_PROPERTY
-> > phdrs entry (if any), and notify each property to the arch code.
-> > 
-> > For now, the added code is not used.
-> > 
-> > Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+On Fri, Aug 30, 2019 at 12:04:41AM +0800, Gao Xiang wrote:
+> Anyway, I'm fine to delete them all if you like, but I think majority of these
+> are meaningful.
 > 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
+> data.c-		/* page is already locked */
+> data.c-		DBG_BUGON(PageUptodate(page));
+> data.c-
+> data.c:		if (unlikely(err))
+> data.c-			SetPageError(page);
+> data.c-		else
+> data.c-			SetPageUptodate(page);
 
-Thanks for the review.
+If we cared about speed here then we would delete the DBG_BUGON() check
+because that's going to be expensive.  The likely/unlikely annotations
+should be used in places a reasonable person thinks it will make a
+difference to benchmarks.
 
-Do you have any thoughts on Yu-Cheng Yu's comments?  It would be nice to
-early-terminate the scan if we can, but my feeling so far was that the
-scan is cheap, the number of properties is unlikely to be more than a
-smallish integer, and the code separation benefits of just calling the
-arch code for every property probably likely outweigh the costs of
-having to iterate over every property.  We could always optimise it
-later if necessary.
+regards,
+dan carpenter
 
-I need to double-check that there's no way we can get stuck in an
-infinite loop with the current code, though I've not seen it in my
-testing.  I should throw some malformed notes at it though.
-
-> Note below...
-> 
-> > [...]
-> > +static int parse_elf_property(const char *data, size_t *off, size_t datasz,
-> > +			      struct arch_elf_state *arch,
-> > +			      bool have_prev_type, u32 *prev_type)
-> > +{
-> > +	size_t size, step;
-> > +	const struct gnu_property *pr;
-> > +	int ret;
-> > +
-> > +	if (*off == datasz)
-> > +		return -ENOENT;
-> > +
-> > +	if (WARN_ON(*off > datasz || *off % elf_gnu_property_align))
-> > +		return -EIO;
-> > +
-> > +	size = datasz - *off;
-> > +	if (size < sizeof(*pr))
-> > +		return -EIO;
-> > +
-> > +	pr = (const struct gnu_property *)(data + *off);
-> > +	if (pr->pr_datasz > size - sizeof(*pr))
-> > +		return -EIO;
-> > +
-> > +	step = round_up(sizeof(*pr) + pr->pr_datasz, elf_gnu_property_align);
-> > +	if (step > size)
-> > +		return -EIO;
-> > +
-> > +	/* Properties are supposed to be unique and sorted on pr_type: */
-> > +	if (have_prev_type && pr->pr_type <= *prev_type)
-> > +		return -EIO;
-> > +	*prev_type = pr->pr_type;
-> > +
-> > +	ret = arch_parse_elf_property(pr->pr_type,
-> > +				      data + *off + sizeof(*pr),
-> > +				      pr->pr_datasz, ELF_COMPAT, arch);
-> 
-> I find it slightly hard to read the "cursor" motion in this parse. It
-> feels strange, for example, to refer twice to "data + *off" with the
-> second including consumed *pr size. Everything is fine AFAICT in the math,
-> though, and I haven't been able to construct a convincingly "cleaner"
-> version. Maybe:
-> 
-> 	data += *off;
-> 	pr = (const struct gnu_property *)data;
-> 	data += sizeof(*pr);
-> 	...
-> 	ret = arch_parse_elf_property(pr->pr_type, data,
-> 				      pr->pr_datasz, ELF_COMPAT, arch);
-
-Fair point.  The cursor is really *off, which I suppose I could update
-as we go through this function, or cache in a local variable and assign
-on the way out.
-
-> But that feels disjoint from the "step" calculation, so... I think what
-> you have is fine. :)
-
-It's good to be as clear as possible about exactly how far we have
-parsed, so I'll see if I can improve this when I repost.
-
-
-Do you have any objection to merging patch 1 with this one?  For
-upstreaming purposes, it seems overkill for that to be a separate patch.
-
-I may also convert elf_gnu_property_align to upper case, since unlike
-the other related definitions this one isn't trying to look like a
-struct tag.
-
-Do you have any opinion on the WARN_ON()s?  They should be un-hittable,
-so they're documenting assumptions rather than protecting against
-anything real.  Maybe I should replace them with comments.
-
-Cheers
----Dave
