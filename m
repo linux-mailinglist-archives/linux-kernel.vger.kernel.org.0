@@ -2,177 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38D9CA3A8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:40:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A3AA3A95
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 17:41:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfH3Pkq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 11:40:46 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42678 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728331AbfH3Pkp (ORCPT
+        id S1728444AbfH3Pl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 11:41:27 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41968 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728410AbfH3PlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:40:45 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y1so3518044plp.9
-        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:40:44 -0700 (PDT)
+        Fri, 30 Aug 2019 11:41:24 -0400
+Received: by mail-lj1-f196.google.com with SMTP id m24so6902156ljg.8
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:41:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:to:from:user-agent:date;
-        bh=Ni6vNyoiAeI273d2BSfT1RbRFUtf/5mAYsPvknqZkqM=;
-        b=muR7C5wWL5lPrP4S4XeyNe0FZ45O/GeNLN2/NCaK1O+WpN6QlMihoe7PQzPflJ02i6
-         GV+xG/6KhUXf03e1zxSM4P1ZsyC7i4I+MWgMBk0Ab5i+a50uYi4U+fIL8nHwiWM+3Jiq
-         DljDInXRECSbYBXAKNKHbWpE6HUOKD/nxznnw=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6l/MmER3LwxVChdeaRYIf4zH/5/oimVEhwZA0gfAJeA=;
+        b=hTMNumX8xZr51jZ2e8ioodaU7fZy7Zox0fVt25oHPu+ey/m2I7q6COdJTUw30VC209
+         kek6cE7p7Qc23NCmn25ahHuKo8wmqd/NbB/BBSNT1Jghi4IFJZOM6sr/9MWX6bHULgBL
+         qQFYDc/r1Z1RMajEzSGvyz2pVtBdstCLYcf3M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
-         :user-agent:date;
-        bh=Ni6vNyoiAeI273d2BSfT1RbRFUtf/5mAYsPvknqZkqM=;
-        b=dftjb2opw0p71m2luNpLaAEMu5HMeOdG3Q4IhSBCQkyd9h0OYgj+xH9Jl/OoVkpHwA
-         fXGLOF2YNX0ngcXRJ2z/IeBhXq05W0/yZteseMPeJn9DPa3irmbGhic1o6ui8puQk6a0
-         F55l2Xx7hbfCudRSoATo4uuz7rejt9XdgVZNFY1cOdcMYMV5GBkIo+TT2JCrT+ntAzj1
-         lZfmu9XAj3XeS1mTdXicAtrrqeHZdPhEo6EVsA1LzA/2KIiEawnmrwWyPeWLbc7UrvLH
-         1BfcoeUwr+NcYddGhClCxyoQDDr5WLIOZybkDkPRQQqQdWoIOj44Hdq6NPrIQUS63C2l
-         N2cg==
-X-Gm-Message-State: APjAAAXOeB9EDUNdHMWjM+wl86kWvDxkhHAEdkjrDK9s03/eb3FrsYG4
-        GE4zpC/HYPXT7y5W/6OECtzd7w==
-X-Google-Smtp-Source: APXvYqzZ0ZAHomdPr+u0gekRSspkMTVbLIDC9pDSXzLNL2dUFK/VU90FKtIevvRB/QYLVlF4ZbfAlA==
-X-Received: by 2002:a17:902:e9:: with SMTP id a96mr16802533pla.169.1567179644447;
-        Fri, 30 Aug 2019 08:40:44 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id i14sm3164228pfo.158.2019.08.30.08.40.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 08:40:43 -0700 (PDT)
-Message-ID: <5d69437b.1c69fb81.2722d.8556@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6l/MmER3LwxVChdeaRYIf4zH/5/oimVEhwZA0gfAJeA=;
+        b=U0giGfAcruum4bvRqaqxDcoqLBdWEifPb3GXwmZqdhrfqfQWOrZDFyISxJBpu4eQ3n
+         xbMFaO5kBk+VgxUIEJrzIpOx93m2x/j12qaic2s1f9Y5YGdkzSETxaWubxX/uWf4InGF
+         G4/zWT83tg4gFDOAwAYzmXsGoCWIth1SE6aK8Yf5tRXxdAXzpwnYoiTJuayz30PfZ6hD
+         LzUcI6GroGOdEW82dVvrsF1mqppMbDHs8QmMNvQy0yJhFmOLdd6pDvhwEz8FRCcWkQtj
+         lcFDwXPNqPHbZZtlx8pyGvbHA5K0aT7Yu7/0NAuQunFRSBjToB6QnB7YsnLMPqxurjz2
+         n4CA==
+X-Gm-Message-State: APjAAAW4Bx2gNTB4xHnRJZnzADJSZJQxjbrWa0fbwQnZw0xEq4QKf0ZD
+        16PoYYjtAcE57ncWkWe7x2E88gYHheo=
+X-Google-Smtp-Source: APXvYqxZrQVf5i33if9LPT98syLUwpRedS3t3CK51XnC+kKzyZ/1+PyMTeXgR0UtCS1AdBizFyprUw==
+X-Received: by 2002:a2e:7018:: with SMTP id l24mr8740705ljc.165.1567179681873;
+        Fri, 30 Aug 2019 08:41:21 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id b7sm912806ljk.80.2019.08.30.08.41.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2019 08:41:20 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id l14so6916937lje.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 08:41:19 -0700 (PDT)
+X-Received: by 2002:a2e:9702:: with SMTP id r2mr8837586lji.84.1567179679653;
+ Fri, 30 Aug 2019 08:41:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2926868.n5I8ZQlzTx@phil>
-References: <20190829224110.91103-1-swboyd@chromium.org> <20190829224110.91103-5-swboyd@chromium.org> <2926868.n5I8ZQlzTx@phil>
-Cc:     Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Andrey Pronin <apronin@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        <linux-kbuild@vger.kernel.org>
-Subject: Re: [PATCH v6 4/4] tpm: tpm_tis_spi: Support cr50 devices
-To:     Heiko Stuebner <heiko@sntech.de>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Fri, 30 Aug 2019 08:40:42 -0700
+References: <20190830140805.GD13294@shell.armlinux.org.uk> <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+In-Reply-To: <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 30 Aug 2019 08:41:03 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
+Message-ID: <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
+Subject: Re: [BUG] Use of probe_kernel_address() in task_rcu_dereference()
+ without checking return value
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Heiko Stuebner (2019-08-30 08:33:48)
-> Am Freitag, 30. August 2019, 00:41:10 CEST schrieb Stephen Boyd:
-> > From: Andrey Pronin <apronin@chromium.org>
-> >=20
-> > Add TPM2.0 PTP FIFO compatible SPI interface for chips with Cr50
-> > firmware. The firmware running on the currently supported H1 Secure
-> > Microcontroller requires a special driver to handle its specifics:
-> >=20
-> >  - need to ensure a certain delay between SPI transactions, or else
-> >    the chip may miss some part of the next transaction
-> >  - if there is no SPI activity for some time, it may go to sleep,
-> >    and needs to be waken up before sending further commands
-> >  - access to vendor-specific registers
-> >=20
-> > Cr50 firmware has a requirement to wait for the TPM to wakeup before
-> > sending commands over the SPI bus. Otherwise, the firmware could be in
-> > deep sleep and not respond. The method to wait for the device to wakeup
-> > is slightly different than the usual flow control mechanism described in
-> > the TCG SPI spec. Add a completion to tpm_tis_spi_transfer() before we
-> > start a SPI transfer so we can keep track of the last time the TPM
-> > driver accessed the SPI bus to support the flow control mechanism.
-> >=20
-> > Split the cr50 logic off into a different file to keep it out of the
-> > normal code flow of the existing SPI driver while making it all part of
-> > the same module when the code is optionally compiled into the same
-> > module. Export a new function, tpm_tis_spi_init(), and the associated
-> > read/write/transfer APIs so that we can do this. Make the cr50 code wrap
-> > the tpm_tis_spi_phy struct with its own struct to override the behavior
-> > of tpm_tis_spi_transfer() by supplying a custom flow control hook. This
-> > shares the most code between the core driver and the cr50 support
-> > without combining everything into the core driver or exporting module
-> > symbols.
-> >=20
-> > Signed-off-by: Andrey Pronin <apronin@chromium.org>
-> > Cc: Andrey Pronin <apronin@chromium.org>
-> > Cc: Duncan Laurie <dlaurie@chromium.org>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Guenter Roeck <groeck@chromium.org>
-> > Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
-> > Cc: Heiko Stuebner <heiko@sntech.de>
-> > [swboyd@chromium.org: Replace boilerplate with SPDX tag, drop
-> > suspended bit and remove ifdef checks in cr50.h, migrate to functions
-> > exported in tpm_tis_spi.h, combine into one module instead of two]
-> > Signed-off-by: Stephen Boyd <swboyd@chromium.org>
->=20
-> This variant breaks building the tpm as a module:
->=20
->=20
-> WARNING: modpost: missing MODULE_LICENSE() in drivers/char/tpm/cr50_spi.o
-> see include/linux/module.h for more information
-> ERROR: "tpm_tis_spi_write32" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_read32" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_read16" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_init" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_transfer" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_resume" [drivers/char/tpm/tpm_tis_spi.ko] undefined!
-> ERROR: "cr50_spi_probe" [drivers/char/tpm/tpm_tis_spi.ko] undefined!
-> make[2]: *** [../scripts/Makefile.modpost:103: modules-modpost] Fehler 1
-> make[1]: *** [/home/devel/hstuebner/00_git-repos/linux-rockchip/Makefile:=
-1302: modules] Fehler 2
-> make[1]: Verzeichnis =E2=80=9E/home/devel/hstuebner/00_git-repos/linux-ro=
-ckchip/_build-arm64=E2=80=9C wird verlassen
-> make: *** [Makefile:179: sub-make] Fehler 2
->=20
->=20
-> After adding a dummy MODULE_LICENSE I end up with:
->=20
-> ERROR: "tpm_tis_spi_write32" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_read32" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_read16" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_init" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_transfer" [drivers/char/tpm/cr50_spi.ko] undefined!
-> ERROR: "tpm_tis_spi_resume" [drivers/char/tpm/tpm_tis_spi.ko] undefined!
-> ERROR: "cr50_spi_probe" [drivers/char/tpm/tpm_tis_spi.ko] undefined!
->=20
->=20
-> So building things as modules this way clearly is not working. Going back
-> to the previous approach makes the module happy again, aka:
->=20
-> diff --git a/drivers/char/tpm/Makefile b/drivers/char/tpm/Makefile
-> index 6ff135d6f008..477fcddbff8c 100644
-> --- a/drivers/char/tpm/Makefile
-> +++ b/drivers/char/tpm/Makefile
-> @@ -21,7 +21,9 @@ tpm-$(CONFIG_EFI) +=3D eventlog/efi.o
->  tpm-$(CONFIG_OF) +=3D eventlog/of.o
->  obj-$(CONFIG_TCG_TIS_CORE) +=3D tpm_tis_core.o
->  obj-$(CONFIG_TCG_TIS) +=3D tpm_tis.o
-> -obj-$(CONFIG_TCG_TIS_SPI) +=3D tpm_tis_spi.o cr50_spi.o
-> +obj-$(CONFIG_TCG_TIS_SPI) +=3D tpm_tis_spi_mod.o
-> +tpm_tis_spi_mod-y :=3D tpm_tis_spi.o
-> +tpm_tis_spi_mod-y +=3D cr50_spi.o
->  obj-$(CONFIG_TCG_TIS_I2C_ATMEL) +=3D tpm_i2c_atmel.o
->  obj-$(CONFIG_TCG_TIS_I2C_INFINEON) +=3D tpm_i2c_infineon.o
->  obj-$(CONFIG_TCG_TIS_I2C_NUVOTON) +=3D tpm_i2c_nuvoton.o
->=20
+On Fri, Aug 30, 2019 at 8:30 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Do you actually see that behavior?
+>
+> Because the foillowing lines:
+>
+>         smp_rmb();
+>         if (unlikely(task != READ_ONCE(*ptask)))
+>                 goto retry;
 
-I wasn't happy that I had to make a tpm_tis_spi_mod target to get the
-.ko to build properly but I thought it was because of the extra Kconfig
-option. If two files can't be combined into one .ko and have it be named
-tpm_tis_spi.ko then we have to do the above workaround. Or we can
-#include the cr50_spi.c file into tpm_tis_spi.c file. Or we can rename
-tpm_tis_spi.c to tpm_tis_spi_base.c and then do the above change with a
-tpm_tis_spi-y. Maybe Masahiro has some hints.
+Side note: that code had better not be performance-critical, because
+"probe_kernel_address()" is actually really really slow.
 
+We really should do a real set of "read kernel with fault handling" functions.
+
+We have *one* right now: load_unaligned_zeropad(), but that one
+assumes that at least the first byte is valid and that the fault can
+only be because of unaligned page crossers.
+
+The problem with "probe_kernel_address()" is that it really just
+re-uses the user access functions, and then plays games to make them
+work for kernel addresses. Games we shouldn't play, and it's all very
+expensive when it really shouldn't need to be. Including changing
+limits, but also doing all the system instructions to allow user
+accesses (PAN on ARM, clac/stac on x86).
+
+Doing a set of "access kernel with error handling" should be trivial,
+it's just that every architecture needs to do it. So we'd probably
+need to do something where architectures can say "I have it", and fall
+back on the silly legacy implementation otherwise..
+
+             Linus
