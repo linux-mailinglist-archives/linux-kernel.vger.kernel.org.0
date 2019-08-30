@@ -2,81 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12ED7A3278
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 10:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D44EA3283
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 10:31:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfH3IbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 04:31:06 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:33869 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfH3IbG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 04:31:06 -0400
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: gregory.clement@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id A3C71100013;
-        Fri, 30 Aug 2019 08:31:03 +0000 (UTC)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Wolfram Sang <wsa@the-dreams.de>, Denis Efremov <efremov@linux.com>
-Cc:     linux-kernel@vger.kernel.org, joe@perches.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: i2c mv64xxx: Update documentation path
-In-Reply-To: <20190829200055.GJ3740@ninjato>
-References: <7cd8d12f59bcacd18a78f599b46dac555f7f16c0.camel@perches.com> <20190813060913.14722-1-efremov@linux.com> <20190829200055.GJ3740@ninjato>
-Date:   Fri, 30 Aug 2019 10:31:03 +0200
-Message-ID: <87a7brxdfc.fsf@FE-laptop>
+        id S1727876AbfH3Ibi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 04:31:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47956 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726495AbfH3Ibi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 04:31:38 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9BD1AAF47;
+        Fri, 30 Aug 2019 08:31:36 +0000 (UTC)
+Date:   Fri, 30 Aug 2019 10:31:35 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: Re: [PATCH v2 3/6] mm/memory_hotplug: Process all zones when
+ removing memory
+Message-ID: <20190830083135.GU28313@dhcp22.suse.cz>
+References: <20190826101012.10575-1-david@redhat.com>
+ <20190826101012.10575-4-david@redhat.com>
+ <20190829153936.GJ28313@dhcp22.suse.cz>
+ <c01ceaab-4032-49cd-3888-45838cb46e11@redhat.com>
+ <20190829162704.GL28313@dhcp22.suse.cz>
+ <b5a9f070-b43a-c21d-081b-9926b2007f5c@redhat.com>
+ <20190830060100.GP28313@dhcp22.suse.cz>
+ <18aed12d-0611-7d35-2994-075d09269513@redhat.com>
+ <20190830064724.GT28313@dhcp22.suse.cz>
+ <17de8d65-592f-72be-0891-6eaaedfd26f2@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <17de8d65-592f-72be-0891-6eaaedfd26f2@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wolfram Sang <wsa@the-dreams.de> writes:
+On Fri 30-08-19 09:07:59, David Hildenbrand wrote:
+> On 30.08.19 08:47, Michal Hocko wrote:
+> > On Fri 30-08-19 08:20:32, David Hildenbrand wrote:
+> > [...]
+> >> Regarding shrink_zone_span(), I suspect it was introduced by
+> >>
+> >> d0dc12e86b31 ("mm/memory_hotplug: optimize memory hotplug")
+> > 
+> > zone shrinking code is much older - 815121d2b5cd5. But I do not think
+> > this is really needed for Fixes tag.
+> > 
+> 
+> Yes it's older, but since d0dc12e86b31 we could run into uninitialized
+> nids for added memory when trying to shrink the zone.
 
-> On Tue, Aug 13, 2019 at 09:09:13AM +0300, Denis Efremov wrote:
->> Update MAINTAINERS record to reflect the file move
->> from i2c-mv64xxx.txt to marvell,mv64xxx-i2c.yaml.
->> 
->> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
->> Cc: Gregory CLEMENT <gregory.clement@bootlin.com>
->> Cc: linux-i2c@vger.kernel.org
->> Fixes: f8bbde72ef44 ("dt-bindings: i2c: mv64xxx: Add YAML schemas")
->> Signed-off-by: Denis Efremov <efremov@linux.com>
->
-> Looks OK to me, Gregory or Maxime?
-
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-
-Thanks,
-
-Gregory
-
-
->
->> ---
->>  MAINTAINERS | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 87ac0378186c..590dcebe627f 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -7505,7 +7505,7 @@ I2C MV64XXX MARVELL AND ALLWINNER DRIVER
->>  M:	Gregory CLEMENT <gregory.clement@bootlin.com>
->>  L:	linux-i2c@vger.kernel.org
->>  S:	Maintained
->> -F:	Documentation/devicetree/bindings/i2c/i2c-mv64xxx.txt
->> +F:	Documentation/devicetree/bindings/i2c/marvell,mv64xxx-i2c.yaml
->>  F:	drivers/i2c/busses/i2c-mv64xxx.c
->>  
->>  I2C OVER PARALLEL PORT
->> -- 
->> 2.21.0
->> 
+Well, not really. Strictly speaking pre d0dc12e86b31 would initialize
+struct page to zero so it is initialized but that doesn't mean that the
+struct page has a meaningfull and usable content. Zone index would be 0
+so the lowest zone which is not something you want to use on the
+hotremove path.
 
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Michal Hocko
+SUSE Labs
