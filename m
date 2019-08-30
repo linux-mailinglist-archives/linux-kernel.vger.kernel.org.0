@@ -2,71 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7558EA3E6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 21:31:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6F63A3E75
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 21:32:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbfH3TbO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 15:31:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48090 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727304AbfH3TbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 15:31:13 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9139C308218D;
-        Fri, 30 Aug 2019 19:31:13 +0000 (UTC)
-Received: from treble (ovpn-123-26.rdu2.redhat.com [10.10.123.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 068A15C1D4;
-        Fri, 30 Aug 2019 19:31:10 +0000 (UTC)
-Date:   Fri, 30 Aug 2019 14:31:09 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 0/4] objtool,perf: Use shared x86 insn decoder
-Message-ID: <20190830193109.p7jagidsrahoa4pn@treble>
-References: <cover.1567118001.git.jpoimboe@redhat.com>
- <20190830184020.GG28011@kernel.org>
- <20190830190058.GH28011@kernel.org>
+        id S1728275AbfH3Tck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 15:32:40 -0400
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:7426 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728242AbfH3Tch (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 15:32:37 -0400
+IronPort-SDR: X8fYbZV9kIhBAz3xaiJwabvVgUuAjxpsXsdSwmUl3SrfMdDgOxkW5PUELxt5VDmo37YpDbo0dh
+ ctlApsNp9KHshW36jxsUMOICVhhwtHslkpJbEl9QxX+TOZPFqTLxivmlNDEkNrJVqAObrLmDeg
+ KqHpeNNBQKjAhVy5BM2nBAxNVj4ikDtWzeGVfeG8gRIbAAqMl2048B8aDM79HMUS2zeihQ+Z+Y
+ 82KUWKYqADKSQ/TdZainFbOv4fB80Oz5JgRFPLg+qWCoFZLKQHUXEknTTji+Z29iOwzoNMOSZf
+ dNE=
+X-IronPort-AV: E=Sophos;i="5.64,447,1559548800"; 
+   d="scan'208";a="42727619"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa1.mentor.iphmx.com with ESMTP; 30 Aug 2019 11:32:36 -0800
+IronPort-SDR: iXn2p0LobRNISsxQgHKrhlc6v2VNwcoDy6dCvF6WpJxSsvAgXPJxbSy5CKSc+Q9tPh/GDd+VOj
+ y1lihhvoh33Fhv3Cg/zBxV+F3Ghvy4HYxKNPOIJYyKIhr0cvtPbW1PauPj95uiavsgTEF8mbDd
+ euluEADbiFelQM0bVUKgt6M8a7D/OYojZVWWUSacNZRqLLOq6SDuCc2Mdc1+99HHxgmDUwol/L
+ f8u+ewf1A+52SnKw2gsRq+vJAppzgl3Y4Ob3vz6wUCPaBidZwSk5BXWSqPWgBGOOcKRVBIqPL9
+ i0g=
+From:   "George G. Davis" <george_davis@mentor.com>
+To:     <shuah@kernel.org>, Jerry Hoemann <jerry.hoemann@hpe.com>,
+        "George G. Davis" <george_davis@mentor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+CC:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: [PATCH v3] selftests: watchdog: Add optional file argument
+Date:   Fri, 30 Aug 2019 15:32:23 -0400
+Message-ID: <1567193545-25171-1-git-send-email-george_davis@mentor.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190830190058.GH28011@kernel.org>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 30 Aug 2019 19:31:13 +0000 (UTC)
+Content-Type: text/plain
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
+ svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 04:00:58PM -0300, Arnaldo Carvalho de Melo wrote:
-> I.e. we need to make sure that it always gets the x86 stuff, not
-> something that is tied to the host arch, with the patch below we get it
-> to work, please take a look.
-> 
-> Probably this should go to the master copy, i.e. to the kernel sources,
-> no?
-> 
-> That or we'll have to ask the check-headers.sh and objtool sync-check
-> (hey, this should be unified, each project could provide just the list
-> of things it uses, but I digress) to ignore those lines...
-> 
-> I.e. we want to decode intel_PT traces on other arches, ditto for
-> CoreSight (not affected here, but similar concept).
-> 
-> will kick the full container build process now.
+Some systems have multiple watchdog devices where the first device
+registered is assigned to the /dev/watchdog device file. In order
+to test other watchdog devices, add an optional file argument for
+selecting non-default watchdog devices for testing.
 
-Interesting, I didn't realize other arches would be using it.  The patch
-looks good to me.
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Signed-off-by: George G. Davis <george_davis@mentor.com>
+---
+v1:
+- https://lkml.org/lkml/2019/8/29/16
+v2:
+- Update printf for ENOENT case based on report from Eugeniu Rosca
+v3:
+- Split long printf line in two as requested by Shuah Khan
+---
+ tools/testing/selftests/watchdog/watchdog-test.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-Ideally there wouldn't be any differences between the headers, but if
-that's unavoidable then I guess we can just use the same 'diff -I' trick
-we were using before in the check script(s).
-
+diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+index c2333c78cf04..6a68b486dd61 100644
+--- a/tools/testing/selftests/watchdog/watchdog-test.c
++++ b/tools/testing/selftests/watchdog/watchdog-test.c
+@@ -19,7 +19,7 @@
+ 
+ int fd;
+ const char v = 'V';
+-static const char sopts[] = "bdehp:t:Tn:NL";
++static const char sopts[] = "bdehp:t:Tn:NLf:";
+ static const struct option lopts[] = {
+ 	{"bootstatus",          no_argument, NULL, 'b'},
+ 	{"disable",             no_argument, NULL, 'd'},
+@@ -31,6 +31,7 @@ static const struct option lopts[] = {
+ 	{"pretimeout",    required_argument, NULL, 'n'},
+ 	{"getpretimeout",       no_argument, NULL, 'N'},
+ 	{"gettimeleft",		no_argument, NULL, 'L'},
++	{"file",          required_argument, NULL, 'f'},
+ 	{NULL,                  no_argument, NULL, 0x0}
+ };
+ 
+@@ -69,6 +70,8 @@ static void term(int sig)
+ static void usage(char *progname)
+ {
+ 	printf("Usage: %s [options]\n", progname);
++	printf(" -f, --file          Open watchdog device file\n");
++	printf("                     Default is /dev/watchdog\n");
+ 	printf(" -b, --bootstatus    Get last boot status (Watchdog/POR)\n");
+ 	printf(" -d, --disable       Turn off the watchdog timer\n");
+ 	printf(" -e, --enable        Turn on the watchdog timer\n");
+@@ -92,14 +95,20 @@ int main(int argc, char *argv[])
+ 	int ret;
+ 	int c;
+ 	int oneshot = 0;
++	char *file = "/dev/watchdog";
+ 
+ 	setbuf(stdout, NULL);
+ 
+-	fd = open("/dev/watchdog", O_WRONLY);
++	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
++		if (c == 'f')
++			file = optarg;
++	}
++
++	fd = open(file, O_WRONLY);
+ 
+ 	if (fd == -1) {
+ 		if (errno == ENOENT)
+-			printf("Watchdog device not enabled.\n");
++			printf("Watchdog device (%s) not found.\n", file);
+ 		else if (errno == EACCES)
+ 			printf("Run watchdog as root.\n");
+ 		else
+@@ -108,6 +117,8 @@ int main(int argc, char *argv[])
+ 		exit(-1);
+ 	}
+ 
++	optind = 0;
++
+ 	while ((c = getopt_long(argc, argv, sopts, lopts, NULL)) != -1) {
+ 		switch (c) {
+ 		case 'b':
+@@ -190,6 +201,9 @@ int main(int argc, char *argv[])
+ 			else
+ 				printf("WDIOC_GETTIMELEFT error '%s'\n", strerror(errno));
+ 			break;
++		case 'f':
++			/* Handled above */
++			break;
+ 
+ 		default:
+ 			usage(argv[0]);
 -- 
-Josh
+2.7.4
+
