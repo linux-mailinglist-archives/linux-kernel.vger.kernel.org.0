@@ -2,76 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AA79A3D18
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:41:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF975A3D20
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbfH3Rls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 13:41:48 -0400
-Received: from a9-46.smtp-out.amazonses.com ([54.240.9.46]:43362 "EHLO
-        a9-46.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727914AbfH3Rlr (ORCPT
+        id S1728120AbfH3Rnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 13:43:37 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:40788 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727904AbfH3Rnh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:41:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1567186906;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=O4l8bfyB+VvL+95TNWx4FpZqRMWRe8LWpmXp151rZPQ=;
-        b=jOwxuN0/GsY64oKXgfJmdwBB+AXtX2WpGHqJuhQjx2ptbH8DVIIqkqyXxRD8yOn8
-        GV8ejswyFu4wYPPvC5trc2TJ+u/8YK8DHJOysSHUEOvy5EY/yEQJyv85OgQB3tVrNRO
-        oEjKdNcHWMyjIds//broy3iaTxgNIeqHLNuDl3dY=
-Date:   Fri, 30 Aug 2019 17:41:46 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Ming Lei <ming.lei@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
- kmalloc(power-of-two)
-In-Reply-To: <20190829073921.GA21880@dhcp22.suse.cz>
-Message-ID: <0100016ce39e6bb9-ad20e033-f3f4-4e6d-85d6-87e7d07823ae-000000@email.amazonses.com>
-References: <20190826111627.7505-1-vbabka@suse.cz> <20190826111627.7505-3-vbabka@suse.cz> <0100016cd98bb2c1-a2af7539-706f-47ba-a68e-5f6a91f2f495-000000@email.amazonses.com> <20190828194607.GB6590@bombadil.infradead.org>
- <20190829073921.GA21880@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 30 Aug 2019 13:43:37 -0400
+Received: (qmail 1647 invoked by uid 2102); 30 Aug 2019 13:43:36 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 30 Aug 2019 13:43:36 -0400
+Date:   Fri, 30 Aug 2019 13:43:36 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Julius Werner <jwerner@chromium.org>, Greg KH <greg@kroah.com>
+cc:     Dan Williams <dcbw@redhat.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        USB Storage list <usb-storage@lists.one-eyed-alien.net>
+Subject: Re: [PATCH] usb: storage: Add ums-cros-aoa driver
+In-Reply-To: <CAODwPW8gTZ_2WEc9n=WJ2PEmQk2anTQYfwQ-898+kOq6wsjnZw@mail.gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1908301337150.1459-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.08.30-54.240.9.46
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Aug 2019, Michal Hocko wrote:
+On Thu, 29 Aug 2019, Julius Werner wrote:
 
-> > There are many places in the kernel which assume alignment.  They break
-> > when it's not supplied.  I believe we have a better overall system if
-> > the MM developers provide stronger guarantees than the MM consumers have
-> > to work around only weak guarantees.
->
-> I absolutely agree. A hypothetical benefit of a new implementation
-> doesn't outweigh the complexity the existing code has to jump over or
-> worse is not aware of and it is broken silently. My general experience
-> is that the later is more likely with a large variety of drivers we have
-> in the tree and odd things they do in general.
+> > In fact, there already is a way to do this in the kernel: write to the
+> > sysfs "bind" file.  The difficulty is that you can't force a driver to
+> > bind to an interface if it doesn't believe it is compatible with the
+> > interface.  And if the driver believes it is compatible, it will
+> > automatically attempt to bind with all such interfaces regardless of
+> > their path.
+> >
+> > Perhaps what you need is a usb_device_id flag to indicate that the
+> > entry should never be used for automatic matches -- only for matches
+> > made by the user via the "bind" file.  Greg KH would probably be
+> > willing to accept a new USB_DEVICE_ID_MATCH_NO_AUTO flag, which
+> > could be included in your unusual_devs.h entries.
+> 
+> This is an interesting idea, but I don't quite see how it can work as
+> you described? When I write to 'bind', the driver core calls
+> driver_match_device(), which ends up calling usb_device_match()
+> (right?), which is the same path that it would call for automatic
+> matching.
 
+Oh, too bad.  I had a vague memory that it did not call
+driver_match_device().
 
-The current behavior without special alignment for these caches has been
-in the wild for over a decade. And this is now coming up?
+>  It still ends up in usb_match_one_id(), and if I check for
+> the NO_AUTO flag there it would abort just as if it was an auto-match
+> attempt. I see no way to pass the information that this is an
+> explicit, user-requested "bind" rather than an automatic match across
+> the bus->match() callback into the USB code. (I could change the
+> signature of the match() callback, but that would require changing
+> code for all device busses in Linux, which I assume is something we
+> wouldn't want to do? I could also add a flag to struct device to
+> communicate "this is currently trying to match for a user-initiated
+> bind", but that seems hacky and not really the right place to put
+> that.)
+> 
+> I could instead add a new sysfs node 'force_bind' to the driver core,
+> that would work like 'bind' except for skipping the
+> driver_match_device() call entirely and forcing a probe(). Do you
+> think that would be acceptable? Or is that too big of a hammer to make
+> available for all drivers in Linux? Maybe if I do the same thing but
+> only for usb drivers, or even only for the usb-storage driver
+> specifically, would that be acceptable?
 
-There is one case now it seems with a broken hardware that has issues and
-we now move to an alignment requirement from the slabs with exceptions and
-this and that?
+This is a question for Greg.  The problem is that there may be drivers
+which can't handle being probed for devices they don't match.
 
-If there is an exceptional alignment requirement then that needs to be
-communicated to the allocator. A special flag or create a special
-kmem_cache or something.
+Still, we ought to have a mechanism for doing manual but not automatic 
+matches.
+
+Greg, any thoughts?
+
+> If none of this works, I could also extend the new_id interface to
+> allow subclass/protocol matches instead. I don't like that as much
+> because it doesn't allow me to control the devpath of the device I'm
+> matching, but I think it would be enough for my use case (I can't make
+> the usb-storage driver bind all AOA devices at all times, but at the
+> times where I do want to use it for my one device, I don't expect any
+> other AOA devices to be connected). The problem with this is that the
+> order of arguments for new ID is already set in stone (vendor,
+> product, interface class, refVendor, refProduct), and I don't think I
+> can use the refVendor/refProduct for my case so I can't just append
+> more numbers behind that. I could maybe instead change it so that it
+> also accepts a key-value style line (like "idVendor=abcd
+> idProduct=efgh bInterfaceSubClass=ff"), while still being
+> backwards-compatible to the old format if you only give it numbers?
+> What do you think?
+
+I prefer the manual/automatic approach.  It allows the user to control 
+exactly which device will be probed, which could be important.
+
+Alan Stern
+
