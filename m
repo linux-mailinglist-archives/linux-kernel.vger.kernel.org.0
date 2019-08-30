@@ -2,368 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C024A2CA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 04:07:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F8C4A2C8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 04:01:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728139AbfH3CHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 29 Aug 2019 22:07:31 -0400
-Received: from mga04.intel.com ([192.55.52.120]:38371 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727066AbfH3CHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 29 Aug 2019 22:07:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 19:07:30 -0700
-X-IronPort-AV: E=Sophos;i="5.64,445,1559545200"; 
-   d="scan'208";a="380977928"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga005-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Aug 2019 19:07:29 -0700
-Subject: [PATCH v5 10/10] acpi/numa/hmat: Register "soft reserved" memory as
- an "hmem" device
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     tglx@linutronix.de, rafael.j.wysocki@intel.com
-Cc:     Len Brown <lenb@kernel.org>, Keith Busch <keith.busch@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        peterz@infradead.org, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        x86@kernel.org
-Date:   Thu, 29 Aug 2019 18:53:12 -0700
-Message-ID: <156712999201.1616117.5589642966130091242.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <156712993795.1616117.3781864460118989466.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <156712993795.1616117.3781864460118989466.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1727530AbfH3CBw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 29 Aug 2019 22:01:52 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39723 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727386AbfH3CBv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 29 Aug 2019 22:01:51 -0400
+Received: by mail-pf1-f194.google.com with SMTP id a67so195618pfa.6
+        for <linux-kernel@vger.kernel.org>; Thu, 29 Aug 2019 19:01:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zO8PdeeIdG1tzfsClmI9LZenmd5UMF2AEWQotpYVtec=;
+        b=UV08w7N+5XgxFjTDWXP/3lw1pQs3F9sFih4WmrXbG9U1ct8t9lWf2ogCOxhxXaPehS
+         wA24OrTp0v0DshA8cBBQNpF3AssXMiO5fORzdCQ2I6FjT6U3h8F90v8b4SKDURnkPtVO
+         GD2Q5lxuwrOUlw6pYPSaTUbpToD/zQuObr2pfLVncswWmB+OdHrGoeAv/VOwUNIcjk0q
+         iSgKDDLJwcqC17yibYASvtIH4319ktHSVNtdJt8AJCGwS+y1UqSVCv3Q+zZd6DXBNwyU
+         sxVqGBvsnCQ7CsD5cufFmK7FGJRt436S2qTZcBlwtrfB5Ndou5BRp1SAQZ+abIKHc2re
+         67Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=zO8PdeeIdG1tzfsClmI9LZenmd5UMF2AEWQotpYVtec=;
+        b=lqpTtqfjy1C7XIX1w/huw2NsZ2JYLjE3+z0Jkiko1uzQGAQrfD1g2O+ZM71orjvchg
+         3kluXt5G54fmQKlKErq/0irwHPxDGdSoMbQgzZG1hM+tCmI3SOykR+LODs51HX0MYy13
+         AmBSoASx6xHYIYIsim93gWlk/jwJhVbqMPmOCSlqiFLxsEaT2PmlVuKy7dHTSyzUxG7y
+         8A1kp55EBNOCJJPfbibgRxlUVeO6rA0XtPgodDateBhRD38xsgotD6xXyOaXnP7roygK
+         VRqsoJJ8onPdvQNPGKHNRe9hqRn2MJwckdUYGYZOjx3drPwSweX7M7f9vEux9uN/+qTE
+         yn7w==
+X-Gm-Message-State: APjAAAWdhB41lPIB1MBHwNBB4ZAC/pWxJq6cHgZHLwMPsIKudvfxYPab
+        1ekTxgRQrEMbHhkbh6lpfF78OA==
+X-Google-Smtp-Source: APXvYqxAKUgTUdilFGku6rp2i6CciI9SDnT1shayBd62iyV14FjbrqVjZQH30hIzVPpbyDHjOrfotQ==
+X-Received: by 2002:a65:6281:: with SMTP id f1mr10331899pgv.400.1567130511065;
+        Thu, 29 Aug 2019 19:01:51 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:1ef2:3184:4148:fbd:376a? ([2601:646:c200:1ef2:3184:4148:fbd:376a])
+        by smtp.gmail.com with ESMTPSA id c5sm4502562pfo.175.2019.08.29.19.01.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 29 Aug 2019 19:01:50 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 0/7] Rework random blocking
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16G102)
+In-Reply-To: <20190830014906.GD10779@mit.edu>
+Date:   Thu, 29 Aug 2019 19:01:49 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>, Theodore Tso <tytso@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B9BEDD92-7EE4-40C9-96D2-389D32B8D040@amacapital.net>
+References: <cover.1567126741.git.luto@kernel.org> <20190830014906.GD10779@mit.edu>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory that has been tagged EFI_MEMORY_SP, and has performance
-properties described by the ACPI HMAT is expected to have an application
-specific consumer.
 
-Those consumers may want 100% of the memory capacity to be reserved from
-any usage by the kernel. By default, with this enabling, a platform
-device is created to represent this differentiated resource.
 
-The device-dax "hmem" driver claims these devices by default and
-provides an mmap interface for the target application.  If the
-administrator prefers, the hmem resource range can be made available to
-the core-mm via the device-dax hotplug facility, kmem, to online the
-memory with its own numa node.
+> On Aug 29, 2019, at 6:49 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>=20
+>> On Thu, Aug 29, 2019 at 06:11:35PM -0700, Andy Lutomirski wrote:
+>> This series also removes the blocking pool and makes /dev/random
+>> work just like getentropy(..., 0) and makes GRND_RANDOM a no-op.  I
+>> believe that Linux's blocking pool has outlived its usefulness.
+>> Linux's CRNG generates output that is good enough to use even for
+>> key generation.  The blocking pool is not stronger in any material
+>> way, and keeping it around requires a lot of infrastructure of
+>> dubious value.
+>=20
+> It's too late for the 5.4 cycle for a change of this magnitude, and
+> I'd just as soon let this wait until *after* the LTS kernel gets cut.
+> The reason for this is because at the moment, there are some PCI
+> compliance labs who believe that the "true randomness" of /dev/random
+> is necessary for PCI compliance and so they mandate the use of
+> /dev/random over /dev/urandom's "cryptographic randomness" for that
+> reason.  A lot of things which are thought to be needed for PCI
+> compliance that are about as useful as eye of newt and toe of frog,
+> but nothing says that PCI compliance (and enterprise customer
+> requirements :-) have to make sense.
+>=20
+> It may be that what we might need to really support people (or stupid
+> compliance labs) who have a fetish for "true randomness" to get a
+> better interface for hardware random number generators than
+> /dev/hwrng.  Specifically, one which allows for a more sane way of
+> selecting which hardware random number generator to use if there are
+> multiple available, and also one where we mix in some CRNG as a
+> whitening step just case the hardware number generator is busted in
+> some way.  (And to fix the issue that at the moment, if someone evil
+> fakes up a USB device with the USB manufacturer and minor device
+> number for a ChosKey device that generates a insecure sequence, it
+> will still get blindly trusted by the kernel without any kind of
+> authentication of said hardware device.)
+>=20
+> That probably means we need to come up with a new interface than
+> /dev/hwrng, or have some way of configuring /dev/random to use a
+> hardware RNG device for those people who really care about "true
+> randomness".  The current /dev/hwrng interface and how it is
+> configured via sysfs is pretty baroque IMO.
+>=20
+>                    =20
 
-This was tested with an emulated HMAT produced by qemu (with the pending
-HMAT enabling patches), and "efi_fake_mem=8G@9G:0x40000" on the kernel
-command line to mark the memory ranges associated with node2 and node3
-as EFI_MEMORY_SP.
+Hmm. Does this really need to be in the kernel?  ISTM it should be straightf=
+orward to write a little CUSE program that grabs bytes from RDSEED or RDRAND=
+, TPM, ChaosKey (if enabled, with a usb slot selected!), and whatever other s=
+ources are requested and, configurable to satisfy whoever actually cares, mi=
+xes some or all with a FIPS-compliant, provably-indististinguishable-from-ra=
+ndom, definitely not Dual-EC mixer, and spits out the result.  And filters i=
+t and checks all the sources for credibility, and generally does whatever th=
+e user actually needs.
 
-qemu numa configuration options:
+And the really over-the-top auditors can symlink it to /dev/random.
 
--numa node,mem=4G,cpus=0-19,nodeid=0
--numa node,mem=4G,cpus=20-39,nodeid=1
--numa node,mem=4G,nodeid=2
--numa node,mem=4G,nodeid=3
--numa dist,src=0,dst=0,val=10
--numa dist,src=0,dst=1,val=21
--numa dist,src=0,dst=2,val=21
--numa dist,src=0,dst=3,val=21
--numa dist,src=1,dst=0,val=21
--numa dist,src=1,dst=1,val=10
--numa dist,src=1,dst=2,val=21
--numa dist,src=1,dst=3,val=21
--numa dist,src=2,dst=0,val=21
--numa dist,src=2,dst=1,val=21
--numa dist,src=2,dst=2,val=10
--numa dist,src=2,dst=3,val=21
--numa dist,src=3,dst=0,val=21
--numa dist,src=3,dst=1,val=21
--numa dist,src=3,dst=2,val=21
--numa dist,src=3,dst=3,val=10
--numa hmat-lb,initiator=0,target=0,hierarchy=memory,data-type=access-latency,base-lat=10,latency=5
--numa hmat-lb,initiator=0,target=0,hierarchy=memory,data-type=access-bandwidth,base-bw=20,bandwidth=5
--numa hmat-lb,initiator=0,target=1,hierarchy=memory,data-type=access-latency,base-lat=10,latency=10
--numa hmat-lb,initiator=0,target=1,hierarchy=memory,data-type=access-bandwidth,base-bw=20,bandwidth=10
--numa hmat-lb,initiator=0,target=2,hierarchy=memory,data-type=access-latency,base-lat=10,latency=15
--numa hmat-lb,initiator=0,target=2,hierarchy=memory,data-type=access-bandwidth,base-bw=20,bandwidth=15
--numa hmat-lb,initiator=0,target=3,hierarchy=memory,data-type=access-latency,base-lat=10,latency=20
--numa hmat-lb,initiator=0,target=3,hierarchy=memory,data-type=access-bandwidth,base-bw=20,bandwidth=20
--numa hmat-lb,initiator=1,target=0,hierarchy=memory,data-type=access-latency,base-lat=10,latency=10
--numa hmat-lb,initiator=1,target=0,hierarchy=memory,data-type=access-bandwidth,base-bw=20,bandwidth=10
--numa hmat-lb,initiator=1,target=1,hierarchy=memory,data-type=access-latency,base-lat=10,latency=5
--numa hmat-lb,initiator=1,target=1,hierarchy=memory,data-type=access-bandwidth,base-bw=20,bandwidth=5
--numa hmat-lb,initiator=1,target=2,hierarchy=memory,data-type=access-latency,base-lat=10,latency=15
--numa hmat-lb,initiator=1,target=2,hierarchy=memory,data-type=access-bandwidth,base-bw=20,bandwidth=15
--numa hmat-lb,initiator=1,target=3,hierarchy=memory,data-type=access-latency,base-lat=10,latency=20
--numa hmat-lb,initiator=1,target=3,hierarchy=memory,data-type=access-bandwidth,base-bw=20,bandwidth=20
+Do the PCI folks actually care that it=E2=80=99s in the kernel?
 
-Result:
 
-# daxctl list -RDu
-[
-  {
-    "path":"\/platform\/hmem.1",
-    "id":1,
-    "size":"4.00 GiB (4.29 GB)",
-    "align":2097152,
-    "devices":[
-      {
-        "chardev":"dax1.0",
-        "size":"4.00 GiB (4.29 GB)"
-      }
-    ]
-  },
-  {
-    "path":"\/platform\/hmem.0",
-    "id":0,
-    "size":"4.00 GiB (4.29 GB)",
-    "align":2097152,
-    "devices":[
-      {
-        "chardev":"dax0.0",
-        "size":"4.00 GiB (4.29 GB)"
-      }
-    ]
-  }
-]
-
-# cat /proc/iomem
-[..]
-240000000-43fffffff : Soft Reserved
-  240000000-33fffffff : hmem.0
-    240000000-33fffffff : dax0.0
-  340000000-43fffffff : hmem.1
-    340000000-43fffffff : dax1.0
-
-Cc: Len Brown <lenb@kernel.org>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/acpi/numa/Kconfig |    1 
- drivers/acpi/numa/hmat.c  |  136 +++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 125 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/acpi/numa/Kconfig b/drivers/acpi/numa/Kconfig
-index d14582387ed0..c1be746e111a 100644
---- a/drivers/acpi/numa/Kconfig
-+++ b/drivers/acpi/numa/Kconfig
-@@ -8,6 +8,7 @@ config ACPI_HMAT
- 	bool "ACPI Heterogeneous Memory Attribute Table Support"
- 	depends on ACPI_NUMA
- 	select HMEM_REPORTING
-+	select MEMREGION
- 	help
- 	 If set, this option has the kernel parse and report the
- 	 platform's ACPI HMAT (Heterogeneous Memory Attributes Table),
-diff --git a/drivers/acpi/numa/hmat.c b/drivers/acpi/numa/hmat.c
-index 4707eb9dd07b..eaa5a0f93dec 100644
---- a/drivers/acpi/numa/hmat.c
-+++ b/drivers/acpi/numa/hmat.c
-@@ -8,12 +8,18 @@
-  * the applicable attributes with the node's interfaces.
-  */
- 
-+#define pr_fmt(fmt) "acpi/hmat: " fmt
-+#define dev_fmt(fmt) "acpi/hmat: " fmt
-+
- #include <linux/acpi.h>
- #include <linux/bitops.h>
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/list.h>
-+#include <linux/mm.h>
-+#include <linux/platform_device.h>
- #include <linux/list_sort.h>
-+#include <linux/memregion.h>
- #include <linux/memory.h>
- #include <linux/mutex.h>
- #include <linux/node.h>
-@@ -49,6 +55,7 @@ struct memory_target {
- 	struct list_head node;
- 	unsigned int memory_pxm;
- 	unsigned int processor_pxm;
-+	struct resource memregions;
- 	struct node_hmem_attrs hmem_attrs;
- 	struct list_head caches;
- 	struct node_cache_attrs cache_attrs;
-@@ -104,22 +111,36 @@ static __init void alloc_memory_initiator(unsigned int cpu_pxm)
- 	list_add_tail(&initiator->node, &initiators);
- }
- 
--static __init void alloc_memory_target(unsigned int mem_pxm)
-+static __init void alloc_memory_target(unsigned int mem_pxm,
-+		resource_size_t start, resource_size_t len)
- {
- 	struct memory_target *target;
- 
- 	target = find_mem_target(mem_pxm);
--	if (target)
--		return;
--
--	target = kzalloc(sizeof(*target), GFP_KERNEL);
--	if (!target)
--		return;
-+	if (!target) {
-+		target = kzalloc(sizeof(*target), GFP_KERNEL);
-+		if (!target)
-+			return;
-+		target->memory_pxm = mem_pxm;
-+		target->processor_pxm = PXM_INVAL;
-+		target->memregions = (struct resource) {
-+			.name	= "ACPI mem",
-+			.start	= 0,
-+			.end	= -1,
-+			.flags	= IORESOURCE_MEM,
-+		};
-+		list_add_tail(&target->node, &targets);
-+		INIT_LIST_HEAD(&target->caches);
-+	}
- 
--	target->memory_pxm = mem_pxm;
--	target->processor_pxm = PXM_INVAL;
--	list_add_tail(&target->node, &targets);
--	INIT_LIST_HEAD(&target->caches);
-+	/*
-+	 * There are potentially multiple ranges per PXM, so record each
-+	 * in the per-target memregions resource tree.
-+	 */
-+	if (!__request_region(&target->memregions, start, len, "memory target",
-+				IORESOURCE_MEM))
-+		pr_warn("failed to reserve %#llx - %#llx in pxm: %d\n",
-+				start, start + len, mem_pxm);
- }
- 
- static __init const char *hmat_data_type(u8 type)
-@@ -452,7 +473,7 @@ static __init int srat_parse_mem_affinity(union acpi_subtable_headers *header,
- 		return -EINVAL;
- 	if (!(ma->flags & ACPI_SRAT_MEM_ENABLED))
- 		return 0;
--	alloc_memory_target(ma->proximity_domain);
-+	alloc_memory_target(ma->proximity_domain, ma->base_address, ma->length);
- 	return 0;
- }
- 
-@@ -613,10 +634,91 @@ static void hmat_register_target_perf(struct memory_target *target)
- 	node_set_perf_attrs(mem_nid, &target->hmem_attrs, 0);
- }
- 
-+static void hmat_register_target_device(struct memory_target *target,
-+		struct resource *r)
-+{
-+	/* define a clean / non-busy resource for the platform device */
-+	struct resource res = {
-+		.start = r->start,
-+		.end = r->end,
-+		.flags = IORESOURCE_MEM,
-+	};
-+	struct platform_device *pdev;
-+	struct memregion_info info;
-+	int rc, id;
-+
-+	rc = region_intersects(res.start, resource_size(&res), IORESOURCE_MEM,
-+			IORES_DESC_SOFT_RESERVED);
-+	if (rc != REGION_INTERSECTS)
-+		return;
-+
-+	id = memregion_alloc(GFP_KERNEL);
-+	if (id < 0) {
-+		pr_err("memregion allocation failure for %pr\n", &res);
-+		return;
-+	}
-+
-+	pdev = platform_device_alloc("hmem", id);
-+	if (!pdev) {
-+		pr_err("hmem device allocation failure for %pr\n", &res);
-+		goto out_pdev;
-+	}
-+
-+	pdev->dev.numa_node = acpi_map_pxm_to_online_node(target->memory_pxm);
-+	info = (struct memregion_info) {
-+		.target_node = acpi_map_pxm_to_node(target->memory_pxm),
-+	};
-+	rc = platform_device_add_data(pdev, &info, sizeof(info));
-+	if (rc < 0) {
-+		pr_err("hmem memregion_info allocation failure for %pr\n", &res);
-+		goto out_pdev;
-+	}
-+
-+	rc = platform_device_add_resources(pdev, &res, 1);
-+	if (rc < 0) {
-+		pr_err("hmem resource allocation failure for %pr\n", &res);
-+		goto out_resource;
-+	}
-+
-+	rc = platform_device_add(pdev);
-+	if (rc < 0) {
-+		dev_err(&pdev->dev, "device add failed for %pr\n", &res);
-+		goto out_resource;
-+	}
-+
-+	return;
-+
-+out_resource:
-+	put_device(&pdev->dev);
-+out_pdev:
-+	memregion_free(id);
-+}
-+
-+static __init void hmat_register_target_devices(struct memory_target *target)
-+{
-+	struct resource *res;
-+
-+	/*
-+	 * Do not bother creating devices if no driver is available to
-+	 * consume them.
-+	 */
-+	if (!IS_ENABLED(CONFIG_DEV_DAX_HMEM))
-+		return;
-+
-+	for (res = target->memregions.child; res; res = res->sibling)
-+		hmat_register_target_device(target, res);
-+}
-+
- static void hmat_register_target(struct memory_target *target)
- {
- 	int nid = pxm_to_node(target->memory_pxm);
- 
-+	/*
-+	 * Devices may belong to either an offline or online
-+	 * node, so unconditionally add them.
-+	 */
-+	hmat_register_target_devices(target);
-+
- 	/*
- 	 * Skip offline nodes. This can happen when memory
- 	 * marked EFI_MEMORY_SP, "specific purpose", is applied
-@@ -677,11 +779,21 @@ static __init void hmat_free_structures(void)
- 	struct target_cache *tcache, *cnext;
- 
- 	list_for_each_entry_safe(target, tnext, &targets, node) {
-+		struct resource *res, *res_next;
-+
- 		list_for_each_entry_safe(tcache, cnext, &target->caches, node) {
- 			list_del(&tcache->node);
- 			kfree(tcache);
- 		}
-+
- 		list_del(&target->node);
-+		res = target->memregions.child;
-+		while (res) {
-+			res_next = res->sibling;
-+			__release_region(&target->memregions, res->start,
-+					resource_size(res));
-+			res = res_next;
-+		}
- 		kfree(target);
- 	}
- 
-
+As an aside, the first two patches could plausibly land before the rest of t=
+he series if that seems appropriate.=
