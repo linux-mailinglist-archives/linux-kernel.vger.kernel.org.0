@@ -2,66 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DDC1A3B63
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D0B2A3B7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 18:07:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbfH3QGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 12:06:25 -0400
-Received: from verein.lst.de ([213.95.11.211]:56881 "EHLO verein.lst.de"
+        id S1728345AbfH3QHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 12:07:10 -0400
+Received: from verein.lst.de ([213.95.11.211]:56912 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728058AbfH3QGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 12:06:25 -0400
+        id S1727884AbfH3QHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 12:07:09 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id C8F59227A8A; Fri, 30 Aug 2019 18:06:20 +0200 (CEST)
-Date:   Fri, 30 Aug 2019 18:06:20 +0200
+        id 5D5BB227A8A; Fri, 30 Aug 2019 18:07:05 +0200 (CEST)
+Date:   Fri, 30 Aug 2019 18:07:05 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Stafford Horne <shorne@gmail.com>
 Cc:     Christoph Hellwig <hch@lst.de>, Arnd Bergmann <arnd@arndb.de>,
         Guo Ren <guoren@kernel.org>, Michal Simek <monstr@monstr.eu>,
         Greentime Hu <green.hu@gmail.com>,
         Vincent Chen <deanbo422@gmail.com>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        alpha <linux-alpha@vger.kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:QUALCOMM HEXAGON..." <linux-hexagon@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org, nios2-dev@lists.rocketboards.org,
-        Openrisc <openrisc@lists.librecores.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 08/26] m68k: simplify ioremap_nocache
-Message-ID: <20190830160620.GD26887@lst.de>
-References: <20190817073253.27819-1-hch@lst.de> <20190817073253.27819-9-hch@lst.de> <CAMuHMdWyXGjokWi7tn9JHCTz9YMb_vHn6XKeE7KzH5n-54Sy0A@mail.gmail.com>
+        Guan Xuetao <gxt@pku.edu.cn>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-mtd@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/26] openrisc: map as uncached in ioremap
+Message-ID: <20190830160705.GF26887@lst.de>
+References: <20190817073253.27819-1-hch@lst.de> <20190817073253.27819-6-hch@lst.de> <20190823135539.GC24874@lianli.shorne-pla.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdWyXGjokWi7tn9JHCTz9YMb_vHn6XKeE7KzH5n-54Sy0A@mail.gmail.com>
+In-Reply-To: <20190823135539.GC24874@lianli.shorne-pla.net>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 10:56:02AM +0200, Geert Uytterhoeven wrote:
-> Hi Christoph,
-> 
-> On Sat, Aug 17, 2019 at 9:48 AM Christoph Hellwig <hch@lst.de> wrote:
-> > Just define ioremap_nocache to ioremap instead of duplicating the
-> > inline.  Also defined ioremap_uc in terms of ioremap instead of
-> > the using a double indirection.
-> >
+On Fri, Aug 23, 2019 at 10:55:39PM +0900, Stafford Horne wrote:
+> On Sat, Aug 17, 2019 at 09:32:32AM +0200, Christoph Hellwig wrote:
+> > Openrisc is the only architecture not mapping ioremap as uncached,
+> > which has been the default since the Linux 2.6.x days.  Switch it
+> > over to implement uncached semantics by default.
+> > 
 > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  arch/openrisc/include/asm/io.h      | 20 +++-----------------
+> >  arch/openrisc/include/asm/pgtable.h |  2 +-
+> >  arch/openrisc/mm/ioremap.c          |  8 ++++----
+> >  3 files changed, 8 insertions(+), 22 deletions(-)
 > 
-> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Acked-by: Stafford Horne <shorne@gmail.com>
 
-Do you mind picking this up through the m68k tree?
+Can you send this one to Linus for 5.4?  That would help with the
+possibility to remove ioremap_nocache after that.
