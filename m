@@ -2,292 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EB6DA3D0F
-	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:36:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3E34A3D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 30 Aug 2019 19:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbfH3RgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 13:36:07 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:45461 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727914AbfH3RgH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 13:36:07 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y8so3664416plr.12;
-        Fri, 30 Aug 2019 10:36:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pafo73I1UbBRX8XwIZQylqQ4gK9txbwYzG4pKvHI3F8=;
-        b=f/XzB+SeEsVRxFEknXHKYgibFNLpjaG/LE0MjGm3VLZ/Zx4lss9JzcDr/2nlg03iq2
-         xpFRuoFL+ArKTHR2Ic3szIPLegOknO4mWolM+GdCzrVU4OBEsGiqW4rFjkIXH4cqyGDL
-         ieLiEgR0SqVHWNkpusRL/q6UdVr5P8WNpNH0eVDZZyHnCdk1u9X/9GuPzEvkieTf4yzs
-         AHtSS8HpN+o5mADp30NlUtg0hxe39Cin6Lyou6n4LWNAAHXNcpsSo61E+yLN2NQO6G21
-         S3GIG4u2zdTtA9BZ8BWj3nWx1F1wvP5WXoWl5xWMVcFtLRwexcy+0ecGQVY91OXPZjof
-         c93Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pafo73I1UbBRX8XwIZQylqQ4gK9txbwYzG4pKvHI3F8=;
-        b=X3xEBBSGOsyNw8Roupfh9SB/BMH7iEkN0+qOYUSBFBQedSx0LIAZo1njt4UupFPft+
-         QkGMT/4iKI7Re86JsNv/QRZ0V7neGBJgneLbxw56ryT06GeJEUCXTVotw4fOT0/ar/QE
-         GTM6CmNKlD5h++XkjY1xoy2Xq6VDkQxRB9drtWvPsalT5VWITOOZBCGfnwGdmxquLOLN
-         ku4eOrBeT08smHY9EjmF2+ozR/iBsBeS1J/Av3HBDXCLY7LFwTjwG36ZQb7/insT1CGI
-         ozJTBnT+D+DiqU6lutWUlgoRjBC0wG/5slT34UYF6ixkb9/Ndr28AUIDfvN4bW6T0ssk
-         FrmQ==
-X-Gm-Message-State: APjAAAVhTaHh+qS/VZ3xanelkuGHydQbRltilqRNfoN0cEFWj/v1BtXQ
-        eyActNkKxPnkFDR4ye8tCQE=
-X-Google-Smtp-Source: APXvYqxpGugk/VQ+2edUg60V5g3B6e7BsglHIs5QrhYmn1FKo4djBUFftIpEWoFU+ny6R7+GZQawzg==
-X-Received: by 2002:a17:902:f204:: with SMTP id gn4mr16870589plb.23.1567186566135;
-        Fri, 30 Aug 2019 10:36:06 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r23sm8887772pfg.10.2019.08.30.10.36.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 30 Aug 2019 10:36:04 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 10:36:03 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Eddie James <eajames@linux.ibm.com>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org,
-        andrew@aj.id.au, joel@jms.id.au, mark.rutland@arm.com,
-        robh+dt@kernel.org, jdelvare@suse.com
-Subject: Re: [PATCH 3/3] pmbus: ibm-cffps: Add support for version 2 of the
- PSU
-Message-ID: <20190830173603.GA10472@roeck-us.net>
-References: <1567181385-22129-1-git-send-email-eajames@linux.ibm.com>
- <1567181385-22129-4-git-send-email-eajames@linux.ibm.com>
+        id S1728146AbfH3Rlu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 13:41:50 -0400
+Received: from mail-eopbgr720097.outbound.protection.outlook.com ([40.107.72.97]:62649
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727434AbfH3Rlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 13:41:49 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZNjPmaVtDZU2jAy47MeasN2X7ikYdU8TTgZcWfqKTK1onVXI41c3f98kFdLq8G/iqENV9ewkLUMqGivzGfAPvAm41/qULRh0DPZS3MzN/4lE3myOlFUWsEJ9Wtp7AGizt/JO9cEWUmZMe/0PEH8YT6UdEz+iDUtoU4h5pK4ye8sNxUEskcg4+pkcDH0K/htYlpUjJX0402V3VFM+3N0n9qAOUTzsnCq2MEZ2bd+HdVXmaJxf70bx+1f37nQpWhca0HO9xnuQSTyhwy093Jzei3ycZIlrCXlbK/r84xyXYSh5iLmeVT+R7c5irpFbzkCpUNEMdfgFEeRqudq1PIHXbA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oexsqe6FMa+egYRrxcs6nfgxPWGndpfhoiDhojZdDe0=;
+ b=Kk7Nec0AInGWfkFk/IYUnVKl47LaywOy0FmPGZAWw6sB1jI6Ps+pooZ4SZE8EXlEyp/UYM7luCndSnei9AH8+sjvEIkjnsM+11ntrk+zy8JSepzBucpThUK8t9YlGYkhPRZrFN8GLmiVABr49g4q+frwnvD9tn2GtK25a0yfaSuVWIkP4NAlEvqIjdu514lk7GB8Tsbd8L6lCx5FLWSs144vaBFAlirrYZhuX3HhEF+CQ9GgJMnEUEZeZp483dRZcwsuROeF5/fh5F5mIt+Ib9gUkR3HKaJFTiqdfx+Vi+mOMKW5x4q9dEo3kZJGAMF2yJXm9IjDgSABhZvO0BaBKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oexsqe6FMa+egYRrxcs6nfgxPWGndpfhoiDhojZdDe0=;
+ b=m0p/mIODkMTy+vD9+HRYfjC5taoGdLGkhQv2dxT0vBV5jo8iGJIDWrU80B1iLIN5zukdWdPYXSOsjYWBnEeunEepQ7dG+YebpfsQFts/n25KpYEHmgAv49b8WdJvFldx9AZ0sBV60RnYTme2JsxUddWu/2hrtoH0+oCP/yOM1lI=
+Received: from DM5PR21MB0137.namprd21.prod.outlook.com (10.173.173.12) by
+ DM5PR21MB0844.namprd21.prod.outlook.com (10.173.172.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2241.1; Fri, 30 Aug 2019 17:41:06 +0000
+Received: from DM5PR21MB0137.namprd21.prod.outlook.com
+ ([fe80::c437:6219:efcc:fb8a]) by DM5PR21MB0137.namprd21.prod.outlook.com
+ ([fe80::c437:6219:efcc:fb8a%7]) with mapi id 15.20.2241.000; Fri, 30 Aug 2019
+ 17:41:06 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     "lantianyu1986@gmail.com" <lantianyu1986@gmail.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>
+CC:     Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: RE: [PATCH] x86/Hyper-V: Fix overflow issue in the fill_gva_list()
+Thread-Topic: [PATCH] x86/Hyper-V: Fix overflow issue in the fill_gva_list()
+Thread-Index: AQHVXvphdgTb3vS6T0iILxQzg0FAQ6cTtUmw
+Date:   Fri, 30 Aug 2019 17:41:06 +0000
+Message-ID: <DM5PR21MB0137B7C2AAD0FC65CB3E1306D7BD0@DM5PR21MB0137.namprd21.prod.outlook.com>
+References: <20190830061540.211072-1-Tianyu.Lan@microsoft.com>
+In-Reply-To: <20190830061540.211072-1-Tianyu.Lan@microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-08-30T17:41:04.7566166Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=079b217d-92f2-49cb-b3e4-013ede42540f;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: db772134-055b-4ad3-bbe0-08d72d713c99
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM5PR21MB0844;
+x-ms-traffictypediagnostic: DM5PR21MB0844:|DM5PR21MB0844:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR21MB0844F1EAFF80741F7203D4ECD7BD0@DM5PR21MB0844.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-forefront-prvs: 0145758B1D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(396003)(136003)(346002)(39860400002)(376002)(189003)(199004)(66476007)(52536014)(7736002)(229853002)(22452003)(8990500004)(305945005)(25786009)(3846002)(6116002)(26005)(8676002)(4326008)(14444005)(81166006)(7696005)(256004)(486006)(186003)(81156014)(53936002)(102836004)(6506007)(55016002)(9686003)(8936002)(33656002)(6246003)(74316002)(6436002)(10090500001)(2201001)(66946007)(76116006)(7416002)(11346002)(14454004)(476003)(10290500003)(76176011)(446003)(86362001)(1511001)(71200400001)(54906003)(2501003)(110136005)(71190400001)(66556008)(66066001)(316002)(66446008)(478600001)(99286004)(5660300002)(2906002)(64756008)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR21MB0844;H:DM5PR21MB0137.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 2h5A9mx0fvCS0PRkAjLwgsBZfM1gYgra1TaSh3yslr/k5UrGkaNjQ14fk6KR0uWm2aPKpyPCY9nGTX+MuwtrbXypRdRWgBoTy7zSk1mQFJ4J5PYwPd7gal48j29pDj3xPoWQNUi0icVqvis2z4vkoKQHCpgTmewOY1Jbr3uycHYpsLRbavg6xxw4KwSyZQ3gowR02tX0ZXausaZtnTScT8VCcC+QPkTCnmZukTkCV3n2bruk8v0V92bxf2CExnigJUwlpIY0zqiYUII5caNE845cOPNOBdJ3K6WrkUKFGEPrm3d6Degee+ntgBjJHuF2IdeTLT9C9HeKTmCQZzTfOitwMEiaeNxyQXkhulrN3zjaElg03n5MUNn3XRde27FKf9MAy2BYwjurJTVJbzFplfl2jmG0Cw/HNXQmdh5hxso=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1567181385-22129-4-git-send-email-eajames@linux.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db772134-055b-4ad3-bbe0-08d72d713c99
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Aug 2019 17:41:06.5646
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hWwZfohga8a8L6XZnIPs7sjocR2zafNg4TnzzHWN6t/guLYkKnptCg0OAB+AeECChMMvWaRBAn8CL8GaWGyNb6IGpwobSijwmNXeriMv/mE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR21MB0844
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 11:09:45AM -0500, Eddie James wrote:
-> Version 2 of the PSU supports a second page of data and changes the
-> format of the FW version. Use the devicetree binding to differentiate
-> between the version the driver should use.
-> 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> ---
->  drivers/hwmon/pmbus/ibm-cffps.c | 109 ++++++++++++++++++++++++++++++++--------
->  1 file changed, 87 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/hwmon/pmbus/ibm-cffps.c b/drivers/hwmon/pmbus/ibm-cffps.c
-> index ee2ee9e..ca26fbd 100644
-> --- a/drivers/hwmon/pmbus/ibm-cffps.c
-> +++ b/drivers/hwmon/pmbus/ibm-cffps.c
-> @@ -12,16 +12,20 @@
->  #include <linux/leds.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> +#include <linux/of_device.h>
->  #include <linux/pmbus.h>
->  
->  #include "pmbus.h"
->  
-> +#define CFFPS_VERSIONS				2
-> +
+From: lantianyu1986@gmail.com  Sent: Thursday, August 29, 2019 11:16 PM
+>=20
+> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+>=20
+> fill_gva_list() populates gva list and adds offset
+> HV_TLB_FLUSH_UNIT(0x1000000) to variable "cur"
+> in the each loop. When diff between "end" and "cur" is
+> less than HV_TLB_FLUSH_UNIT, the gva entry should
+> be the last one and the loop should be end.
+>=20
+> If cur is equal or greater than 0xFF000000 on 32-bit
+> mode, "cur" will be overflow after adding HV_TLB_FLUSH_UNIT.
+> Its value will be wrapped and less than "end". fill_gva_list()
+> falls into an infinite loop and fill gva list out of
+> border finally.
+>=20
+> Set "cur" to be "end" to make loop end when diff is
+> less than HV_TLB_FLUSH_UNIT and add HV_TLB_FLUSH_UNIT to
+> "cur" when diff is equal or greater than HV_TLB_FLUSH_UNIT.
+> Fix the overflow issue.
 
-Any chance you can use an enum for the versions ? Using version
-numbers 1/2 combined with array indices 0/1 is confusing, error
-prone, and seems unnecessary.
+Let me suggest simplifying the commit message a bit.  It
+doesn't need to describe every line of the code change.   I think
+it should also make clear that the same problem could occur on
+64-bit systems with the right "start" address.  My suggestion:
 
-Thanks,
-Guenter
+When the 'start' parameter is >=3D  0xFF000000 on 32-bit
+systems, or >=3D 0xFFFFFFFF'FF000000 on 64-bit systems,
+fill_gva_list gets into an infinite loop.  With such inputs,
+'cur' overflows after adding HV_TLB_FLUSH_UNIT and always
+compares as less than end.  Memory is filled with guest virtual
+addresses until the system crashes
 
->  #define CFFPS_FRU_CMD				0x9A
->  #define CFFPS_PN_CMD				0x9B
->  #define CFFPS_SN_CMD				0x9E
->  #define CFFPS_CCIN_CMD				0xBD
-> -#define CFFPS_FW_CMD_START			0xFA
-> -#define CFFPS_FW_NUM_BYTES			4
-> +#define CFFPS_FW_CMD				0xFA
-> +#define CFFPS1_FW_NUM_BYTES			4
-> +#define CFFPS2_FW_NUM_WORDS			3
->  #define CFFPS_SYS_CONFIG_CMD			0xDA
->  
->  #define CFFPS_INPUT_HISTORY_CMD			0xD6
-> @@ -61,6 +65,7 @@ struct ibm_cffps_input_history {
->  };
->  
->  struct ibm_cffps {
-> +	int version;
->  	struct i2c_client *client;
->  
->  	struct ibm_cffps_input_history input_history;
-> @@ -132,6 +137,8 @@ static ssize_t ibm_cffps_debugfs_op(struct file *file, char __user *buf,
->  	struct ibm_cffps *psu = to_psu(idxp, idx);
->  	char data[I2C_SMBUS_BLOCK_MAX] = { 0 };
->  
-> +	pmbus_set_page(psu->client, 0);
-> +
->  	switch (idx) {
->  	case CFFPS_DEBUGFS_INPUT_HISTORY:
->  		return ibm_cffps_read_input_history(psu, buf, count, ppos);
-> @@ -152,16 +159,36 @@ static ssize_t ibm_cffps_debugfs_op(struct file *file, char __user *buf,
->  		rc = snprintf(data, 5, "%04X", rc);
->  		goto done;
->  	case CFFPS_DEBUGFS_FW:
-> -		for (i = 0; i < CFFPS_FW_NUM_BYTES; ++i) {
-> -			rc = i2c_smbus_read_byte_data(psu->client,
-> -						      CFFPS_FW_CMD_START + i);
-> -			if (rc < 0)
-> -				return rc;
-> +		switch (psu->version) {
-> +		case 1:
-> +			for (i = 0; i < CFFPS1_FW_NUM_BYTES; ++i) {
-> +				rc = i2c_smbus_read_byte_data(psu->client,
-> +							      CFFPS_FW_CMD +
-> +								i);
-> +				if (rc < 0)
-> +					return rc;
-> +
-> +				snprintf(&data[i * 2], 3, "%02X", rc);
-> +			}
->  
-> -			snprintf(&data[i * 2], 3, "%02X", rc);
-> -		}
-> +			rc = i * 2;
-> +			break;
-> +		case 2:
-> +			for (i = 0; i < CFFPS2_FW_NUM_WORDS; ++i) {
-> +				rc = i2c_smbus_read_word_data(psu->client,
-> +							      CFFPS_FW_CMD +
-> +								i);
-> +				if (rc < 0)
-> +					return rc;
-> +
-> +				snprintf(&data[i * 4], 5, "%04X", rc);
-> +			}
->  
-> -		rc = i * 2;
-> +			rc = i * 4;
-> +			break;
-> +		default:
-> +			return -EOPNOTSUPP;
-> +		}
->  		goto done;
->  	default:
->  		return -EINVAL;
-> @@ -279,6 +306,8 @@ static void ibm_cffps_led_brightness_set(struct led_classdev *led_cdev,
->  			psu->led_state = CFFPS_LED_ON;
->  	}
->  
-> +	pmbus_set_page(psu->client, 0);
-> +
->  	rc = i2c_smbus_write_byte_data(psu->client, CFFPS_SYS_CONFIG_CMD,
->  				       psu->led_state);
->  	if (rc < 0)
-> @@ -299,6 +328,8 @@ static int ibm_cffps_led_blink_set(struct led_classdev *led_cdev,
->  	if (led_cdev->brightness == LED_OFF)
->  		return 0;
->  
-> +	pmbus_set_page(psu->client, 0);
-> +
->  	rc = i2c_smbus_write_byte_data(psu->client, CFFPS_SYS_CONFIG_CMD,
->  				       CFFPS_LED_BLINK);
->  	if (rc < 0)
-> @@ -328,15 +359,32 @@ static void ibm_cffps_create_led_class(struct ibm_cffps *psu)
->  		dev_warn(dev, "failed to register led class: %d\n", rc);
->  }
->  
-> -static struct pmbus_driver_info ibm_cffps_info = {
-> -	.pages = 1,
-> -	.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
-> -		PMBUS_HAVE_PIN | PMBUS_HAVE_FAN12 | PMBUS_HAVE_TEMP |
-> -		PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 | PMBUS_HAVE_STATUS_VOUT |
-> -		PMBUS_HAVE_STATUS_IOUT | PMBUS_HAVE_STATUS_INPUT |
-> -		PMBUS_HAVE_STATUS_TEMP | PMBUS_HAVE_STATUS_FAN12,
-> -	.read_byte_data = ibm_cffps_read_byte_data,
-> -	.read_word_data = ibm_cffps_read_word_data,
-> +static struct pmbus_driver_info ibm_cffps_info[CFFPS_VERSIONS] = {
-> +	[0] = {
-> +		.pages = 1,
-> +		.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
-> +			PMBUS_HAVE_PIN | PMBUS_HAVE_FAN12 | PMBUS_HAVE_TEMP |
-> +			PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
-> +			PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
-> +			PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_STATUS_TEMP |
-> +			PMBUS_HAVE_STATUS_FAN12,
-> +		.read_byte_data = ibm_cffps_read_byte_data,
-> +		.read_word_data = ibm_cffps_read_word_data,
-> +	},
-> +	[1] = {
-> +		.pages = 2,
-> +		.func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
-> +			PMBUS_HAVE_PIN | PMBUS_HAVE_FAN12 | PMBUS_HAVE_TEMP |
-> +			PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
-> +			PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT |
-> +			PMBUS_HAVE_STATUS_INPUT | PMBUS_HAVE_STATUS_TEMP |
-> +			PMBUS_HAVE_STATUS_FAN12,
-> +		.func[1] = PMBUS_HAVE_VOUT | PMBUS_HAVE_IOUT |
-> +			PMBUS_HAVE_TEMP | PMBUS_HAVE_TEMP2 | PMBUS_HAVE_TEMP3 |
-> +			PMBUS_HAVE_STATUS_VOUT | PMBUS_HAVE_STATUS_IOUT,
-> +		.read_byte_data = ibm_cffps_read_byte_data,
-> +		.read_word_data = ibm_cffps_read_word_data,
-> +	},
->  };
->  
->  static struct pmbus_platform_data ibm_cffps_pdata = {
-> @@ -346,13 +394,21 @@ static void ibm_cffps_create_led_class(struct ibm_cffps *psu)
->  static int ibm_cffps_probe(struct i2c_client *client,
->  			   const struct i2c_device_id *id)
->  {
-> -	int i, rc;
-> +	int i, rc, vs;
->  	struct dentry *debugfs;
->  	struct dentry *ibm_cffps_dir;
->  	struct ibm_cffps *psu;
-> +	const void *md = of_device_get_match_data(&client->dev);
-> +
-> +	if (md)
-> +		vs = (int)md;
-> +	else if (id)
-> +		vs = (int)id->driver_data;
-> +	else
-> +		vs = 1;
->  
->  	client->dev.platform_data = &ibm_cffps_pdata;
-> -	rc = pmbus_do_probe(client, id, &ibm_cffps_info);
-> +	rc = pmbus_do_probe(client, id, &ibm_cffps_info[vs - 1]);
->  	if (rc)
->  		return rc;
->  
-> @@ -364,6 +420,7 @@ static int ibm_cffps_probe(struct i2c_client *client,
->  	if (!psu)
->  		return 0;
->  
-> +	psu->version = vs;
->  	psu->client = client;
->  	mutex_init(&psu->input_history.update_lock);
->  	psu->input_history.last_update = jiffies - HZ;
-> @@ -406,12 +463,20 @@ static int ibm_cffps_probe(struct i2c_client *client,
->  
->  static const struct i2c_device_id ibm_cffps_id[] = {
->  	{ "ibm_cffps1", 1 },
-> +	{ "ibm_cffps2", 2 },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(i2c, ibm_cffps_id);
->  
->  static const struct of_device_id ibm_cffps_of_match[] = {
-> -	{ .compatible = "ibm,cffps1" },
-> +	{
-> +		.compatible = "ibm,cffps1",
-> +		.data = (void *)1
-> +	},
-> +	{
-> +		.compatible = "ibm,cffps2",
-> +		.data = (void *)2
-> +	},
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, ibm_cffps_of_match);
-> -- 
-> 1.8.3.1
-> 
+Fix this by never incrementing 'cur' to be larger than 'end'.
+
+>=20
+> Reported-by: Jong Hyun Park <park.jonghyun@yonsei.ac.kr>
+> Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> Fixes: 2ffd9e33ce4a ("x86/hyper-v: Use hypercall for remote
+> TLB flush")
+
+The "Fixes:" line needs to not wrap.  It's exempt from the
+"wrap at 75 columns" rule in order to simplify parsing scripts.
+
+The code itself looks good.
+
+Michael
+
