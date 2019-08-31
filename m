@@ -2,52 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F873A41AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 04:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9182AA41B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 04:25:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbfHaCVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 22:21:00 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45304 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbfHaCU7 (ORCPT
+        id S1728333AbfHaCZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 22:25:32 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35083 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbfHaCZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 22:20:59 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id A03E71550AC01;
-        Fri, 30 Aug 2019 19:20:58 -0700 (PDT)
-Date:   Fri, 30 Aug 2019 19:20:49 -0700 (PDT)
-Message-Id: <20190830.192049.1447010488040109227.davem@davemloft.net>
-To:     cpaasch@apple.com
-Cc:     jonathan.lemon@gmail.com, stable@vger.kernel.org,
-        gregkh@linuxfoundation.org, tim.froidcoeur@tessares.net,
-        matthieu.baerts@tessares.net, aprout@ll.mit.edu,
-        edumazet@google.com, jtl@netflix.com, linux-kernel@vger.kernel.org,
-        mkubecek@suse.cz, ncardwell@google.com, sashal@kernel.org,
-        ycheng@google.com, netdev@vger.kernel.org
-Subject: Re: [PATCH 4.14] tcp: fix tcp_rtx_queue_tail in case of empty
- retransmit queue
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190830232657.GL45416@MacBook-Pro-64.local>
-References: <20190824060351.3776-1-tim.froidcoeur@tessares.net>
-        <400C4757-E7AD-4CCF-8077-79563EA869B1@gmail.com>
-        <20190830232657.GL45416@MacBook-Pro-64.local>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 30 Aug 2019 19:20:59 -0700 (PDT)
+        Fri, 30 Aug 2019 22:25:32 -0400
+Received: by mail-pf1-f196.google.com with SMTP id 205so3268662pfw.2
+        for <linux-kernel@vger.kernel.org>; Fri, 30 Aug 2019 19:25:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=7GGohDtFIzadHRK9qlBFqyaUQq3IDsI0G9jsiYfLeIA=;
+        b=RoHZR9AOQVftWcIO7bJGMrXpE/nIQAT8sYbyqtg2OX3OIHuU2phYl0hwHj4mdbiT0a
+         TNsMxoc/4q8mV7q0Xoey9q8Xe6Wle8Q6ON3ZLZa6vp0DmpMJv6MeQ6ft1k7Xsv2WiXEM
+         TebXTKo2jnj03IX2x/qJoITVMqBgG/0wv4wkccAgpVdQWluZUGlspulf1nvMXTp6bGY9
+         aJQV6Q9OUheeO/VEhKnjWsZRpRElyvTVGP6yd4w/rbr/QrpYYncrWdw42YMqsarxdakS
+         rGyZ2bC9+g9TKghXv/05M+7KWnGZDe2j2v24mz5uZJVJmg+k9BzuAaUhT/l507oefGhM
+         giZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=7GGohDtFIzadHRK9qlBFqyaUQq3IDsI0G9jsiYfLeIA=;
+        b=WHPR/gcacdyaSUdCOkWQEo606uITz1aE7h8XqRyeKWrEhSJ0vPJ3xJDaziOWJJivzb
+         Hszq0SMLCQdxwTfBGaIf7wqzXSVSRsGn51ACN07Cpclf1gjKnBgJp2aR+An7JvBYXgoe
+         j4ZATHzthwgsmlJX8XWGTkXWed47OVQHC/5VUajiiTKZJpPFZsEA2TAmKx2HyHuLJ0YK
+         8cEwMtEzFSDpuYwUC+Ws8ErQQ33MjxD7K9GN1EWTO5OUZsPNFVsXQWc4Hks6b48MsBVc
+         3vI44wW5CXcjaSw5ApaBtwGyvX4OaHwkP1eFGz7sGbHi0pBiZJY8NcZhlAkMqs8aFDuJ
+         NCeg==
+X-Gm-Message-State: APjAAAVGRtGv0pzYgz03Q19+OXPj2c8Jg/8uurjMV3e2R5qASbEiC5Jb
+        cQD8ImOnbQHLRDCBP5/rRyd4+ZmUdmY=
+X-Google-Smtp-Source: APXvYqwf/18nVOeRvdxzV0EYlJDBqTSPZ6dykzvlguaUwp12T3UpnfvaO5EsS7NXZ6aoekiVbIatOg==
+X-Received: by 2002:aa7:92d1:: with SMTP id k17mr20872378pfa.160.1567218331386;
+        Fri, 30 Aug 2019 19:25:31 -0700 (PDT)
+Received: from dell-inspiron ([117.220.112.196])
+        by smtp.gmail.com with ESMTPSA id s13sm8076449pfm.12.2019.08.30.19.25.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 30 Aug 2019 19:25:30 -0700 (PDT)
+Date:   Sat, 31 Aug 2019 07:55:15 +0530
+From:   P SAI PRASANTH <saip2823@gmail.com>
+To:     gregkh@linuxfoundation.org, kim.jamie.bradley@gmail.com
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] staging: rts5208: Fix checkpath warning
+Message-ID: <20190831022515.GA4917@dell-inspiron>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christoph Paasch <cpaasch@apple.com>
-Date: Fri, 30 Aug 2019 16:26:57 -0700
+This patch fixes the following checkpath warning
+in the file drivers/staging/rts5208/rtsx_transport.c:546
 
-> (I don't see it in the stable-queue)
+WARNING: line over 80 characters
++                               option = RTSX_SG_VALID | RTSX_SG_END |
+RTSX_SG_TRANS_DATA;
 
-I don't handle any stable branch before the most recent two, so this isn't
-my territory.
+Signed-off-by: P SAI PRASANTH <saip2823@gmail.com>
+---
+Changes in v3:
+ -Fixes the following error in da59abd45efc
+  >> drivers/staging//rts5208/rtsx_transport.c:548:4: error: expected
+     ';' before 'rtsx_add_sg_tbl'
+       rtsx_add_sg_tbl(chip, (u32)addr, (u32)len, option);
+       ^~~~~~~~~~~~~~~
+
+ drivers/staging/rts5208/rtsx_transport.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/rts5208/rtsx_transport.c b/drivers/staging/rts5208/rtsx_transport.c
+index 8277d78..3c67656 100644
+--- a/drivers/staging/rts5208/rtsx_transport.c
++++ b/drivers/staging/rts5208/rtsx_transport.c
+@@ -540,11 +540,10 @@ static int rtsx_transfer_sglist_adma(struct rtsx_chip *chip, u8 card,
+ 
+ 			dev_dbg(rtsx_dev(chip), "DMA addr: 0x%x, Len: 0x%x\n",
+ 				(unsigned int)addr, len);
+-
++
++			option = RTSX_SG_VALID | RTSX_SG_TRANS_DATA;
+ 			if (j == (sg_cnt - 1))
+-				option = RTSX_SG_VALID | RTSX_SG_END | RTSX_SG_TRANS_DATA;
+-			else
+-				option = RTSX_SG_VALID | RTSX_SG_TRANS_DATA;
++				option |= RTSX_SG_END;
+ 
+ 			rtsx_add_sg_tbl(chip, (u32)addr, (u32)len, option);
+ 
+-- 
+2.7.4
+
