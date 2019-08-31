@@ -2,83 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308F7A4305
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 09:18:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B11AA430A
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 09:23:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbfHaHSB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 03:18:01 -0400
-Received: from smtp02.smtpout.orange.fr ([80.12.242.124]:41522 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfHaHSB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 03:18:01 -0400
-Received: from localhost.localdomain ([90.126.97.183])
-        by mwinf5d55 with ME
-        id vjHt200053xPcdm03jHtj6; Sat, 31 Aug 2019 09:17:58 +0200
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 31 Aug 2019 09:17:58 +0200
-X-ME-IP: 90.126.97.183
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     davem@davemloft.net, yuehaibing@huawei.com, tglx@linutronix.de,
-        gregkh@linuxfoundation.org, tbogendoerfer@suse.de
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] net: seeq: Fix the function used to release some memory in an error handling path
-Date:   Sat, 31 Aug 2019 09:17:51 +0200
-Message-Id: <20190831071751.1479-1-christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.20.1
+        id S1726251AbfHaHXP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 03:23:15 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46324 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725899AbfHaHXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Aug 2019 03:23:15 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 487D385FE885572E61D9;
+        Sat, 31 Aug 2019 15:23:10 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 31 Aug
+ 2019 15:23:07 +0800
+Subject: Re: [PATCH v4] f2fs: add bio cache for IPU
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+References: <20190219081529.5106-1-yuchao0@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <d2b3c101-0399-4e85-5765-7b6504aaca74@huawei.com>
+Date:   Sat, 31 Aug 2019 15:23:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190219081529.5106-1-yuchao0@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In commit 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv"),
-a call to 'get_zeroed_page()' has been turned into a call to
-'dma_alloc_coherent()'. Only the remove function has been updated to turn
-the corresponding 'free_page()' into 'dma_free_attrs()'.
-The error hndling path of the probe function has not been updated.
+On 2019/2/19 16:15, Chao Yu wrote:
+> @@ -1976,10 +2035,13 @@ static int __write_data_page(struct page *page, bool *submitted,
+>  	}
+>  
+>  	unlock_page(page);
+> -	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
+> +	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode)) {
+> +		f2fs_submit_ipu_bio(sbi, bio, page);
+>  		f2fs_balance_fs(sbi, need_balance_fs);
+> +	}
 
-Fix it now.
+Above bio submission was added to avoid below deadlock:
 
-Rename the corresponding label to something more in line.
+- __write_data_page
+ - f2fs_do_write_data_page
+  - set_page_writeback        ---- set writeback flag
+  - f2fs_inplace_write_data
+ - f2fs_balance_fs
+  - f2fs_gc
+   - do_garbage_collect
+    - gc_data_segment
+     - move_data_page
+      - f2fs_wait_on_page_writeback
+       - wait_on_page_writeback  --- wait writeback
 
-Fixes: 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-If 'dma_alloc_coherent()' fails, maybe the message in printk could be
-improved. The comment above may also not be relevant.
----
- drivers/net/ethernet/seeq/sgiseeq.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+However, it breaks the merge of IPU IOs, to solve this issue, it looks we need
+to add global bio cache for such IPU merge case, then later
+f2fs_wait_on_page_writeback can check whether writebacked page is cached or not,
+and do the submission if necessary.
 
-diff --git a/drivers/net/ethernet/seeq/sgiseeq.c b/drivers/net/ethernet/seeq/sgiseeq.c
-index 7a5e6c5abb57..276c7cae7cee 100644
---- a/drivers/net/ethernet/seeq/sgiseeq.c
-+++ b/drivers/net/ethernet/seeq/sgiseeq.c
-@@ -794,15 +794,16 @@ static int sgiseeq_probe(struct platform_device *pdev)
- 		printk(KERN_ERR "Sgiseeq: Cannot register net device, "
- 		       "aborting.\n");
- 		err = -ENODEV;
--		goto err_out_free_page;
-+		goto err_out_free_attrs;
- 	}
- 
- 	printk(KERN_INFO "%s: %s %pM\n", dev->name, sgiseeqstr, dev->dev_addr);
- 
- 	return 0;
- 
--err_out_free_page:
--	free_page((unsigned long) sp->srings);
-+err_out_free_attrs:
-+	dma_free_attrs(&pdev->dev, sizeof(*sp->srings), sp->srings,
-+		       sp->srings_dma, DMA_ATTR_NON_CONSISTENT);
- err_out_free_dev:
- 	free_netdev(dev);
- 
--- 
-2.20.1
+Jaegeuk, any thoughts?
 
+Thanks,
