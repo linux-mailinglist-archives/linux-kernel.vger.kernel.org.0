@@ -2,76 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 085B5A457B
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 18:59:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 662CBA4580
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 19:07:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbfHaQ7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 12:59:42 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43223 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728333AbfHaQ7l (ORCPT
+        id S1728428AbfHaRHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 13:07:42 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44855 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728119AbfHaRHl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 12:59:41 -0400
-Received: by mail-lf1-f66.google.com with SMTP id q27so7559067lfo.10
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 09:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=OnqeOxbk+Jb4LkuzIvu3fnmtH0hxg9KKumo/IKgh7Zw=;
-        b=Z3D6Xj+S++8f/fh+RqA6S2BT1iLxYUe7oO0Vj8jQduwUIY2YqH6kKyqbt+3+klkS4l
-         gE4g4jYJAV4YnMdAazzwN8LkmpCovaDtgYt6skXRyrFHSnjhSgAKd6CpE7/wt5Is+7GF
-         xrEx3xR788fg6GuEHCJFTtSqf879MG5Hbqb6n9XRkFolHNjS6sYmPDLafpbiL8r9Ha9R
-         Ri98COos4u4z/NgxUEV4sxngwmiBXUEDTkjh1TJavlAcXF4iR3xEpgsflewZVB+bcqca
-         nS6UMQho/ez+Hn011MSOvNimZaNxBgbV03Re+2Br7TrhMF/i4PtpInngeuG1euKtqe81
-         dUqA==
+        Sat, 31 Aug 2019 13:07:41 -0400
+Received: by mail-ed1-f66.google.com with SMTP id a21so11559656edt.11;
+        Sat, 31 Aug 2019 10:07:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=OnqeOxbk+Jb4LkuzIvu3fnmtH0hxg9KKumo/IKgh7Zw=;
-        b=st5IgEvecCEZTHSjIjcXjCEQ75ey1Ba0yOjXhiVrw3+yEamQpHyFKAAa7My3/m5kYo
-         1BswbIDCX67x1RaoR+9teap/pncKhJ98E8X1f09AXwpQw0MPVBZGC/cJuTYwnD7911rE
-         5al0XbSd8eVHgmuUOLZOIldDKTjBcYf4kCsRgV3NqU1qJTTmRLl5irhYqszdDIfFu4NE
-         4AbboCR0Dp/RQiM7fMHzc93iyb/iE99gkRNivJ0beJSJqA179ynbm/lWnTTczZoKT3ku
-         68/L2N3DBChUu4c6LfOfikGvtMm9hx+CJUdtJYitXWwLSNbwGMSeYF5lSLkC9faazD5L
-         tsLA==
-X-Gm-Message-State: APjAAAW34vio/SKlmkhbG+2L75fHzPP/6O6e8Xrhl2+cKXej4nlsWffm
-        uq3wLMWMNX7qYINxCLFWrmwJRHycjIUlOBnGSZI=
-X-Google-Smtp-Source: APXvYqxAySuNwSMAHzT6NnnQlyJ2lZD9ab2rCZBcyCgUTXRNwvpFy5/J9QjBpQuj1djJY4Gq5qPzPR1uCZIjjx7nIbM=
-X-Received: by 2002:a19:2d19:: with SMTP id k25mr13720935lfj.76.1567270779761;
- Sat, 31 Aug 2019 09:59:39 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Lik2TQFtm24ZeMK7lbOS3RM+iMDhKtG/DlU1Hn/vZvk=;
+        b=IzJRNCSwoQaaawnqH5JdQhmrYzO19Ll6eYto0R1OjvO+dLU0rqEfq9SHnOBHM4ZJmd
+         PZVOH6es77IXwL9eQS9AS45/VuyjnKGEcSuFCpbTWMU8OqPgXZSrUdAN0ze+MSfUGe4h
+         UD8jfnSbkTUK+oALMnqQff0HvXr9w5bYf0Q4aBZH4x6D+BojR3LeEtdPFbQphnskvAPR
+         RFjb49+o+9L+N1BF6gyKlTMlODxDbg77UnIEdTQnUwbFJWTp1jkHJZG1h49eX8qgICpJ
+         Lnk+zEtSzCNjLeOlun606LVo6Zj4C/hyVR096kFtvgw5ptdfD+ph+r2roCxu+wTA4qLE
+         IQ4A==
+X-Gm-Message-State: APjAAAWnzPTprPpd4yAextydYr/KFliZwBLSAjicJFr7z5c+QVebLtpV
+        W5aUKwVNipYyFRQKWJQSdsE=
+X-Google-Smtp-Source: APXvYqwYiVn+T/jnXqHdTksQFpnl6eq02sfkOXYISHWm5GobK2D0xg22AxYic/zL89Sp0zVPu8fsxw==
+X-Received: by 2002:a50:88c5:: with SMTP id d63mr21674654edd.122.1567271258673;
+        Sat, 31 Aug 2019 10:07:38 -0700 (PDT)
+Received: from [10.68.32.192] (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
+        by smtp.gmail.com with ESMTPSA id i23sm1739594edv.11.2019.08.31.10.07.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 31 Aug 2019 10:07:38 -0700 (PDT)
+Subject: Re: [PATCH v3 01/11] checkpatch: check for nested (un)?likely() calls
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Joe Perches <joe@perches.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Boris Pismenny <borisp@mellanox.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        dri-devel@lists.freedesktop.org,
+        Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
+        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, linux-rdma@vger.kernel.org,
+        linux-wimax@intel.com, linux-xfs@vger.kernel.org,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        netdev@vger.kernel.org,
+        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sean Paul <sean@poorly.run>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        xen-devel@lists.xenproject.org, Enrico Weigelt <lkml@metux.net>
+References: <20190829165025.15750-1-efremov@linux.com>
+ <0d9345ed-f16a-de0b-6125-1f663765eb46@web.de>
+ <689c8baf-2298-f086-3461-5cd1cdd191c6@linux.com>
+ <493a7377-2de9-1d44-cd8f-c658793d15db@web.de>
+From:   Denis Efremov <efremov@linux.com>
+Message-ID: <c5e4479d-2fb3-b5a5-00c3-b06e5177d869@linux.com>
+Date:   Sat, 31 Aug 2019 20:07:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:ac2:5974:0:0:0:0:0 with HTTP; Sat, 31 Aug 2019 09:59:39
- -0700 (PDT)
-Reply-To: mrsnicolemarois0001@gmail.com
-From:   Nicole Marois <mrjohnmoses8@gmail.com>
-Date:   Sat, 31 Aug 2019 16:59:39 +0000
-Message-ID: <CACkZuE2LDa_juTsmMPwCeybRjz+eWNYwh=Or+-xiyfimiBKtpQ@mail.gmail.com>
-Subject: Hello Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <493a7377-2de9-1d44-cd8f-c658793d15db@web.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear.
-I=E2=80=99m Mrs. Nicole Maoris a manager in  HSBC  BANK in   Spain  Madrid,=
- I
-am sending  this brief letter  to seek for  your partnership and long
-term relationship, I have an important and urgent  issue I want to
-discuss with you privately about transaction fund  worth the sum of
-$9.5m America dollars left by most of the greedy Asia Kuwait
-politician in our bank here in Spain  Madrid.
 
-If you know that you can invest this fund into profitable business in
-your country at the end we shall have 50%50 share each,  kindly get
-back to me for more detail and procedures .
 
-Your urgent respond will be highly appreciated
-Awaiting to hear from you asap.
-My Regard.
-Mrs. Nicole Maoris=09
-Phone Number:  +34(62) 768 5146
+On 31.08.2019 19:45, Markus Elfring wrote:
+>>>> +# nested likely/unlikely calls
+>>>> +        if ($line =~ /\b(?:(?:un)?likely)\s*\(\s*!?\s*(IS_ERR(?:_OR_NULL|_VALUE)?|WARN)/) {
+>>>> +            WARN("LIKELY_MISUSE",
+>>>
+>>> How do you think about to use the specification “(?:IS_ERR(?:_(?:OR_NULL|VALUE))?|WARN)”
+>>> in this regular expression?
+> …
+>>    IS_ERR
+>>    (?:_ <- Another atomic group just to show that '_' is a common prefix?
+> 
+> Yes. - I hope that this specification detail can help a bit.
+
+I'm not sure that another pair of brackets for a single char worth it.
+
+>>            Usually, Perl interpreter is very good at optimizing such things.
+
+The interpreter optimizes it internally:
+echo 'IS_ERR_OR_NULL' | perl -Mre=debug -ne '/IS_ERR(?:_OR_NULL|_VALUE)?/ && print'
+Compiling REx "IS_ERR(?:_OR_NULL|_VALUE)?"
+Final program:
+   1: EXACT <IS_ERR> (4)
+   4: CURLYX[0]{0,1} (16)
+   6:   EXACT <_> (8)      <-- common prefix
+   8:   TRIE-EXACT[OV] (15)
+        <OR_NULL> 
+        <VALUE>
+...
+> 
+> Would you like to help this software component by omitting a pair of
+> non-capturing parentheses at the beginning?
+> 
+> \b(?:un)?likely\s*
+
+This pair of brackets is required to match "unlikely" and it's
+optional in order to match "likely".
+
+Regards,
+Denis
