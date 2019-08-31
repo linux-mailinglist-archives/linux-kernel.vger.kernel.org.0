@@ -2,102 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 332CBA45FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 21:37:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50D2AA460B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 22:02:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbfHaThN convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sat, 31 Aug 2019 15:37:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:47493 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728481AbfHaThN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 15:37:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Aug 2019 12:37:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,451,1559545200"; 
-   d="scan'208";a="193677253"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga002.jf.intel.com with ESMTP; 31 Aug 2019 12:37:11 -0700
-Received: from FMSMSX110.amr.corp.intel.com (10.18.116.10) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Sat, 31 Aug 2019 12:37:11 -0700
-Received: from hasmsx114.ger.corp.intel.com (10.184.198.65) by
- fmsmsx110.amr.corp.intel.com (10.18.116.10) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Sat, 31 Aug 2019 12:37:11 -0700
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.203]) by
- HASMSX114.ger.corp.intel.com ([169.254.14.15]) with mapi id 14.03.0439.000;
- Sat, 31 Aug 2019 22:37:08 +0300
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     YueHaibing <yuehaibing@huawei.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>
-CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: RE: [PATCH -next] scsi: ufs: Use kmemdup in
- ufshcd_read_string_desc()
-Thread-Topic: [PATCH -next] scsi: ufs: Use kmemdup in
- ufshcd_read_string_desc()
-Thread-Index: AQHVX/llv2uTA5dhSUimOZqnT0VJc6cVpp5g
-Date:   Sat, 31 Aug 2019 19:37:07 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DCA9308@hasmsx108.ger.corp.intel.com>
-References: <20190831124424.18642-1-yuehaibing@huawei.com>
-In-Reply-To: <20190831124424.18642-1-yuehaibing@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiY2U5NTBmYzAtYjVjYS00NDNmLWIzYjctNTRkNDU3MjI3MzJlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTlExUzdqYXVJN3pFXC9JemFkN3k5NDFUQjlTdHlHQ01RZmNuQTFSc1NtK28zM1dXejNWVWh0ektvTXI2K2dYREIifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.184.70.10]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        id S1728541AbfHaUC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 16:02:56 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55806 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728481AbfHaUC4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Aug 2019 16:02:56 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 57E3B14BBC0EC;
+        Sat, 31 Aug 2019 13:02:53 -0700 (PDT)
+Date:   Sat, 31 Aug 2019 13:02:50 -0700 (PDT)
+Message-Id: <20190831.130250.1236116087422472663.davem@davemloft.net>
+To:     linyunsheng@huawei.com
+Cc:     catalin.marinas@arm.com, will@kernel.org, mingo@redhat.com,
+        bp@alien8.de, rth@twiddle.net, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
+        dalias@libc.org, ralf@linux-mips.org, paul.burton@mips.com,
+        jhogan@kernel.org, jiaxun.yang@flygoat.com, chenhc@lemote.com,
+        akpm@linux-foundation.org, rppt@linux.ibm.com,
+        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
+        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, x86@kernel.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        len.brown@intel.com, axboe@kernel.dk, dledford@redhat.com,
+        jeffrey.t.kirsher@intel.com, linux-alpha@vger.kernel.org,
+        nfont@linux.vnet.ibm.com, naveen.n.rao@linux.vnet.ibm.com,
+        mwb@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, tbogendoerfer@suse.de,
+        linux-mips@vger.kernel.org, linuxarm@huawei.com
+Subject: Re: [PATCH v2 7/9] sparc64: numa: check the node id consistently
+ for sparc64
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <0195eb73-99ae-fec2-3e11-2cb9e6677926@huawei.com>
+References: <1567231103-13237-8-git-send-email-linyunsheng@huawei.com>
+        <20190830.235337.570776316111294728.davem@davemloft.net>
+        <0195eb73-99ae-fec2-3e11-2cb9e6677926@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 31 Aug 2019 13:02:54 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Yunsheng Lin <linyunsheng@huawei.com>
+Date: Sat, 31 Aug 2019 16:57:04 +0800
 
+> Did you mean sparc64 system does not has ACPI, the device's node id will
+> not specified by ACPI, so the ACPI is unrelated here?
 
-> Use kmemdup rather than duplicating its implementation
-> 
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-LGTM, ACK.
-Tomas
- 
-> ---
->  drivers/scsi/ufs/ufshcd.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c index
-> acf298da054c..6d5e2f5d8468 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -3309,12 +3309,11 @@ int ufshcd_read_string_desc(struct ufs_hba *hba,
-> u8 desc_index,
->  		str[ret++] = '\0';
-> 
->  	} else {
-> -		str = kzalloc(uc_str->len, GFP_KERNEL);
-> +		str = kmemdup(uc_str, uc_str->len, GFP_KERNEL);
->  		if (!str) {
->  			ret = -ENOMEM;
->  			goto out;
->  		}
-> -		memcpy(str, uc_str, uc_str->len);
->  		ret = uc_str->len;
->  	}
->  out:
-> 
-> 
+Yes, sparc64 never has and never will have ACPI.
 
+This is also true for several other platforms where you have made this
+change.
+
+The assumption of your entire patch set is that the semantics of the
+NUMA node ID are somehow completely defined by ACPI semantics.  Which
+is not true.
