@@ -2,94 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E390DA439C
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 11:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4682A439F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 11:18:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbfHaJQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 05:16:44 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:3548 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726116AbfHaJQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 05:16:43 -0400
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id 9EF652CB9F286DE110CA;
-        Sat, 31 Aug 2019 17:16:39 +0800 (CST)
-Received: from dggeme764-chm.china.huawei.com (10.3.19.110) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Sat, 31 Aug 2019 17:16:39 +0800
-Received: from [127.0.0.1] (10.184.39.28) by dggeme764-chm.china.huawei.com
- (10.3.19.110) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sat, 31
- Aug 2019 17:16:38 +0800
-Subject: Re: [PATCH] arm: fix page faults in do_alignment
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-References: <1567171877-101949-1-git-send-email-jingxiangfeng@huawei.com>
- <20190830133522.GZ13294@shell.armlinux.org.uk> <5D69D239.2080908@huawei.com>
- <20190831075524.GI13294@shell.armlinux.org.uk>
-CC:     <ebiederm@xmission.com>, <kstewart@linuxfoundation.org>,
-        <gregkh@linuxfoundation.org>, <gustavo@embeddedor.com>,
-        <bhelgaas@google.com>, <tglx@linutronix.de>,
-        <sakari.ailus@linux.intel.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-From:   Jing Xiangfeng <jingxiangfeng@huawei.com>
-Message-ID: <5D6A3AEC.7030709@huawei.com>
-Date:   Sat, 31 Aug 2019 17:16:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+        id S1727298AbfHaJSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 05:18:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40818 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfHaJSJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Aug 2019 05:18:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3eFAuIavvhkkXpaoSObdJRD+mB6l5THOKa3OP4PCgVA=; b=hlw78MeSadjwLy0PloSqG9Ser
+        9SJyTf8YOUD7Dnt1e/0ENTLCNRIUFnhrKJPDIdo4fX+N8C2P+kbjjXYZEqh2OnoLSF8wJwHLX6pG5
+        C1xHmeq+irT3+zbK/CB5QMMPPM9D+YLndA+rnQzRo+GJScoEiKPW6CEpRdzzAX1KmZhhtwq0uy2nH
+        vNkLzhNdRS1eGsgCgue3E1oP9pxa9ZVPU843RAMWOrI0XjwWUFsGiV3SlGDWW3cGQ3WvgtxlEuaNQ
+        QrCW6fIpLChDvEFDkm/bV9YQlqbmTE92U1RIF9+vKEc9Q5FOhi4j4nuaYT65n2tqRvNJuvoIoi69t
+        kS6pAstfg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3zWG-0001jL-NR; Sat, 31 Aug 2019 09:18:05 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 08733301A76;
+        Sat, 31 Aug 2019 11:17:28 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EF24329B2CD15; Sat, 31 Aug 2019 11:18:02 +0200 (CEST)
+Date:   Sat, 31 Aug 2019 11:18:02 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     acme@kernel.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, eranian@google.com,
+        alexander.shishkin@linux.intel.com, ak@linux.intel.com
+Subject: Re: [RESEND PATCH V3 3/8] perf/x86/intel: Support hardware TopDown
+ metrics
+Message-ID: <20190831091802.GI2369@hirez.programming.kicks-ass.net>
+References: <20190826144740.10163-1-kan.liang@linux.intel.com>
+ <20190826144740.10163-4-kan.liang@linux.intel.com>
+ <20190828151921.GD17205@worktop.programming.kicks-ass.net>
+ <fd95a255-4499-2907-8af9-d340f157da68@linux.intel.com>
+ <20190829135256.GW2369@hirez.programming.kicks-ass.net>
+ <cc2ee16d-b10f-a31e-7411-320e90413ceb@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190831075524.GI13294@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.39.28]
-X-ClientProxiedBy: dggeme713-chm.china.huawei.com (10.1.199.109) To
- dggeme764-chm.china.huawei.com (10.3.19.110)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc2ee16d-b10f-a31e-7411-320e90413ceb@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/31 15:55, Russell King - ARM Linux admin wrote:
-> On Sat, Aug 31, 2019 at 09:49:45AM +0800, Jing Xiangfeng wrote:
->> On 2019/8/30 21:35, Russell King - ARM Linux admin wrote:
->>> On Fri, Aug 30, 2019 at 09:31:17PM +0800, Jing Xiangfeng wrote:
->>>> The function do_alignment can handle misaligned address for user and
->>>> kernel space. If it is a userspace access, do_alignment may fail on
->>>> a low-memory situation, because page faults are disabled in
->>>> probe_kernel_address.
->>>>
->>>> Fix this by using __copy_from_user stead of probe_kernel_address.
->>>>
->>>> Fixes: b255188 ("ARM: fix scheduling while atomic warning in alignment handling code")
->>>> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
->>>
->>> NAK.
->>>
->>> The "scheduling while atomic warning in alignment handling code" is
->>> caused by fixing up the page fault while trying to handle the
->>> mis-alignment fault generated from an instruction in atomic context.
->>
->> __might_sleep is called in the function  __get_user which lead to that bug.
->> And that bug is triggered in a kernel space. Page fault can not be generated.
->> Right?
-> 
-> Your email is now fixed?
+On Thu, Aug 29, 2019 at 12:56:02PM -0400, Liang, Kan wrote:
+> On 8/29/2019 9:52 AM, Peter Zijlstra wrote:
 
-Yeah, I just checked the mailbox, it is normal now.
-
+> > What what? The PERF_METRICS contents depends on the FIXCTR3 value ?!
 > 
-> All of get_user(), __get_user(), copy_from_user() and __copy_from_user()
-> _can_ cause a page fault, which might need to fetch the page from disk.
-> All these four functions are equivalent as far as that goes - and indeed
-> as are their versions that write as well.
+> Yes.
 > 
-> If the page needs to come from disk, all of these functions _will_
-> sleep.  If they are called from an atomic context, and the page fault
-> handler needs to fetch data from disk, they will attempt to sleep,
-> which will issue a warning.
-> 
- I understand.
+> For current implementation, PERF_METRIC MSR is composed by four fields,
+> backend bound, frontend bound, bad speculation and retiring.
+> Each of the fields are populated using the below formula for eg:
+> PERF_METRIC[RETIRING] = (0xFF *
+> PERF_METRICS_RETIRING_INTERNAL_48bit_COUNTER)
+> / FIXCTR3
 
-	Thanks
+So it really depends on the actual exposed FIXCTR3 _value_ to compute
+the PERF_METRIC field? *mind boggles*, that's really unspeakable crap.
+And this isn't documented anywhere afaict.
 
+I was thinking they've have an internal counter for the SLOTS value too,
+so the PERF_METRIC fields are indenpendent; which would be like 'sane'.
+
+Exposing the internal counters would've been _soooo_ much better, just
+add 4 more fixed counters and call it a day.
+
+> The METRICS_OVF indicates the overflow of any internal counters.
+
+OK, but I'm thinking that by that time the fraction in PERF_METRIC will
+be too coarse and we're loosing precision. Reconstruction will be
+inaccurate.
+
+> The internal counters only start counting from 0, which cannot be programmed
+> by SW. But resetting the PERF_METRIC would implicitly resetting the internal
+> counters.
+
+The only possible option given the choices.
