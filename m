@@ -2,75 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F5F0A4487
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 15:01:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B4A9A448E
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 15:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727905AbfHaNAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 09:00:42 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33136 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726659AbfHaNAl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 09:00:41 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id CFE00A00FDAB9886FE67;
-        Sat, 31 Aug 2019 21:00:38 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 31 Aug 2019 21:00:31 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Don Brace <don.brace@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Murthy Bhat <Murthy.Bhat@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-CC:     YueHaibing <yuehaibing@huawei.com>, <esc.storagedev@microsemi.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
-Subject: [PATCH -next] scsi: smartpqi: remove set but not used variable 'ctrl_info'
-Date:   Sat, 31 Aug 2019 13:03:48 +0000
-Message-ID: <20190831130348.20552-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1728189AbfHaNFh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 09:05:37 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:56629 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726516AbfHaNFh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Aug 2019 09:05:37 -0400
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x7VD5TqB020331
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 22:05:30 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x7VD5TqB020331
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567256730;
+        bh=0xiVhnfMMmWO7lCRxWhVZrU4jkaKCy6a+KRY9o5Jbu4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Kri2Ds8ogcpZ2aBA93wUjYRsVQbbjbOWH2D6G/dOSdnKir2gS5V1TM/6yieK7qgKE
+         eVm0WFRanEcgOzQHud1R5JxHI/O6q1SNZe+IF7JhqcaWhqnM4LGq/UgH5CYVZv1h+r
+         MAkSGmVUQ/7JIt96MMoy4+U2cozp/24KxQvpcN/ccAcRXh9zC2MykC65Mfp5x6Kdwr
+         lc/bNeFNZxD+9mcf1HlekuYs9IXiFv+OET/PAMjbuU+4NClcpK9oGr9dRE68K0xgS5
+         WLkX9ap+KaS6hfWWQUGSrY0zCscNmDUMfjxMCass6xSgmQzB1X+q7KywlplZm1ZlF3
+         DYtxlHRFlESIA==
+X-Nifty-SrcIP: [209.85.222.50]
+Received: by mail-ua1-f50.google.com with SMTP id b2so3175849uak.3
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 06:05:30 -0700 (PDT)
+X-Gm-Message-State: APjAAAWDUVp2lJhnu/Vchoe0SNwd7OhR1MYUfPztjqpqbzVRIyk4x0BM
+        li6Co6E8MHeC7g2+S/qmudCVT3SVzBorjx/w3BI=
+X-Google-Smtp-Source: APXvYqzR9pk5p/4jleHhBZpmxoBL+K0heyBbkkV3l4/DuJMvaVfcKNJWdK4dQsrXO2z6et1E1AIQjB5xOdX55JpYFX4=
+X-Received: by 2002:ab0:32d8:: with SMTP id f24mr10368580uao.121.1567256729042;
+ Sat, 31 Aug 2019 06:05:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20190821092658.32764-1-yamada.masahiro@socionext.com>
+ <20190826113526.GA23425@infradead.org> <CAK7LNAQ_5Hz_CXAdx8W0bLjMWQ08KDWK3gG2pfDZOEE+cr0KEw@mail.gmail.com>
+ <20190830155322.GA30046@infradead.org>
+In-Reply-To: <20190830155322.GA30046@infradead.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sat, 31 Aug 2019 22:04:53 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR2JuZkdJGxO=f2hUxmQca5d7430NC-2hiqZwkJphJ9sA@mail.gmail.com>
+Message-ID: <CAK7LNAR2JuZkdJGxO=f2hUxmQca5d7430NC-2hiqZwkJphJ9sA@mail.gmail.com>
+Subject: Re: [PATCH] riscv: add arch/riscv/Kbuild
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Sat, Aug 31, 2019 at 12:53 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Tue, Aug 27, 2019 at 02:14:59PM +0900, Masahiro Yamada wrote:
+> > There is a small documentation about "Makefile" vs "Kbuild"
+> > in Documentation/kbuild/modules.rst section 3.2
+>
+> I know that part.
+>
+> >
+> > It is talking about external modules, but the benefit applies
+> > to arch/$(SRCARCH)/Kbuild as well.
+>
+> I fail to fully understand this part, though.
 
-drivers/scsi/smartpqi/smartpqi_init.c: In function 'pqi_driver_version_show':
-drivers/scsi/smartpqi/smartpqi_init.c:6164:24: warning:
- variable 'ctrl_info' set but not used [-Wunused-but-set-variable]
+Kbuild support two file names, "Makefile" and "Kbuild"
+for describing obj-y, obj-m, etc.
 
-commit 6d90615f1346 ("scsi: smartpqi: add sysfs entries") add it but never
-use, so remove it also variable 'shost'
+If both exist in the same directory, "Kbuild" takes precedence.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/scsi/smartpqi/smartpqi_init.c | 6 ------
- 1 file changed, 6 deletions(-)
+This is useful where we want to use "Makefile"
+for other purposes.
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index ea5409bebf57..b9e7dabee1e5 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -6160,12 +6160,6 @@ static ssize_t pqi_firmware_version_show(struct device *dev,
- static ssize_t pqi_driver_version_show(struct device *dev,
- 	struct device_attribute *attr, char *buffer)
- {
--	struct Scsi_Host *shost;
--	struct pqi_ctrl_info *ctrl_info;
--
--	shost = class_to_shost(dev);
--	ctrl_info = shost_to_hba(shost);
--
- 	return snprintf(buffer, PAGE_SIZE,
- 		"%s\n", DRIVER_VERSION BUILD_TIMESTAMP);
- }
+For external modules, we use "Makefile" as a start point,
+so we often want to  describe obj-m in "Kbuild" instead of "Makefile".
 
 
+Similarly, arch/$(SRCARCH)/Makefile is very special
+in that it is included from the top-level Makefile,
+and specify arch-specific compiler flags etc.
 
+We can use arch/$(SRCARCH)/Kbuild
+to specify obj-y, obj-m.
+The top-level Makefile does not need to know
+the directory structure under arch/$(SRCARCH)/.
+
+This is logical separation.
+
+
+>
+> > arch/$(SRCARCH)/Makefile is included by the top Makefile
+> > to specify arch-specific compiler flags, etc.
+> >
+> > On the other hand, arch/$(SRCARCH)/Kbuild, if exists, is included
+> > when Kbuild actually descends into arch/$(SRCARCH)/.
+> >
+> > This allows you to hierarchize the sub-directories to visit
+> > instead of specifying everything in flat in arch/$(SRCARCH)/Makefile.
+>
+> Yes, but what is the plan in the long run?  arch/$(ARCH)/Makefile
+> is still a weird hodge-podge of overriding global variables and misc
+> Makefile targets, it now just has a tiny little work.
+
+There are lots of arch-specific build settings.
+We definitely need a place to describe them,
+hence arch/$(SRCARCH)/Makefile.
+
+
+>  Is there any
+> actual benefit from using Kbuild for the build process?
+
+For example, arch/x86/Kbuild is quite useful
+since there are many directories in arch/x86.
+
+riscv does not have many directories for now since it is a new architecture,
+but it will be useful when it will have more directories.
+
+
+>  Can we
+> eventually move the setting of variables in the Makefile into another
+> special purpose file?  Is the support for actually compiling kernel
+> source files from the arch/$(ARCH) Makefile eventually going away?
+
+No, I do not think so.
+
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
