@@ -2,102 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 756D4A418A
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 03:41:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A783AA4190
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 03:50:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfHaBjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 21:39:51 -0400
-Received: from ozlabs.org ([203.11.71.1]:49471 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728122AbfHaBjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 21:39:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46KzYH4cyfz9s7T;
-        Sat, 31 Aug 2019 11:39:47 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567215588;
-        bh=ZhE2ziaWsxtBRLV18oDgQjAR/idM0NB15SZof0s+yak=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ev6GUJFUv7K96uKxLmIRZoFsM9n6t5PTx/XTPevcFVwCMbNwgrmBl21MoYy0CD1pj
-         NHmIEDAmKraQPunZSnxHnYQG/AtgH4+N+1AONHBCC0OTMFRqTflyZLXxWltOnWB5jS
-         sTf0I1IAqwEdMBgYVxJyl6OmQQo9Glkwulo7BhRBfrTPYS8/1qpOY3kZeC4XPsEuT6
-         J84R6pmy360fWWThWvuQJyzF8LH2P/SSPbKQTw8/fI/eRfzw4tM15ZTH0+66oDs0Kh
-         FQdo1z24dofMNQAafeN5ruNhZ7fROGJjAy5w9dSFJ9xc1XznJLTXkme2yWzp2wqAoz
-         mNu53EG0EOzPQ==
-Date:   Sat, 31 Aug 2019 11:39:39 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] checkpatch: Validate Fixes: tag using 'commit' checks
-Message-ID: <20190831113939.7c2dad32@canb.auug.org.au>
-In-Reply-To: <20190830163658.17043-1-sean.j.christopherson@intel.com>
-References: <20190830163658.17043-1-sean.j.christopherson@intel.com>
+        id S1728480AbfHaBuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 21:50:05 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36024 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726640AbfHaBuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 21:50:05 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 91D7F459F726074383CA;
+        Sat, 31 Aug 2019 09:50:03 +0800 (CST)
+Received: from [127.0.0.1] (10.184.39.28) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Sat, 31 Aug 2019
+ 09:50:02 +0800
+Subject: Re: [PATCH] arm: fix page faults in do_alignment
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+References: <1567171877-101949-1-git-send-email-jingxiangfeng@huawei.com>
+ <20190830133522.GZ13294@shell.armlinux.org.uk>
+CC:     <ebiederm@xmission.com>, <kstewart@linuxfoundation.org>,
+        <gregkh@linuxfoundation.org>, <gustavo@embeddedor.com>,
+        <bhelgaas@google.com>, <tglx@linutronix.de>,
+        <sakari.ailus@linux.intel.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
+From:   Jing Xiangfeng <jingxiangfeng@huawei.com>
+Message-ID: <5D69D239.2080908@huawei.com>
+Date:   Sat, 31 Aug 2019 09:49:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BfsFABxAuYqPx22dGr.rg2u";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20190830133522.GZ13294@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.39.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/BfsFABxAuYqPx22dGr.rg2u
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2019/8/30 21:35, Russell King - ARM Linux admin wrote:
+> On Fri, Aug 30, 2019 at 09:31:17PM +0800, Jing Xiangfeng wrote:
+>> The function do_alignment can handle misaligned address for user and
+>> kernel space. If it is a userspace access, do_alignment may fail on
+>> a low-memory situation, because page faults are disabled in
+>> probe_kernel_address.
+>>
+>> Fix this by using __copy_from_user stead of probe_kernel_address.
+>>
+>> Fixes: b255188 ("ARM: fix scheduling while atomic warning in alignment handling code")
+>> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
+> 
+> NAK.
+> 
+> The "scheduling while atomic warning in alignment handling code" is
+> caused by fixing up the page fault while trying to handle the
+> mis-alignment fault generated from an instruction in atomic context.
 
-Hi Sean,
+__might_sleep is called in the function  __get_user which lead to that bug.
+And that bug is triggered in a kernel space. Page fault can not be generated.
+Right?
 
-On Fri, 30 Aug 2019 09:36:58 -0700 Sean Christopherson <sean.j.christophers=
-on@intel.com> wrote:
->
-> @@ -2803,10 +2805,15 @@ sub process {
->  			($id, $description) =3D git_commit_info($orig_commit,
->  							      $id, $orig_desc);
-> =20
-> -			if (defined($id) &&
-> -			   ($short || $long || $space || $case || ($orig_desc ne $description=
-) || !$hasparens)) {
-> +
-> +			if (!defined($id)) {
-> +				if ($init_tag =3D~ /fixes:/i) {
-> +					ERROR("GIT_COMMIT_ID",
-> +					      "Target SHA1 '$orig_commit' does not exist\n" . $herecurr);
-> +				}
+> Your patch re-introduces that bug.
+> 
+>> ---
+>>  arch/arm/mm/alignment.c | 16 +++++++++++++---
+>>  1 file changed, 13 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/mm/alignment.c b/arch/arm/mm/alignment.c
+>> index 04b3643..2ccabd3 100644
+>> --- a/arch/arm/mm/alignment.c
+>> +++ b/arch/arm/mm/alignment.c
+>> @@ -774,6 +774,7 @@ static ssize_t alignment_proc_write(struct file *file, const char __user *buffer
+>>  	unsigned long instr = 0, instrptr;
+>>  	int (*handler)(unsigned long addr, unsigned long instr, struct pt_regs *regs);
+>>  	unsigned int type;
+>> +	mm_segment_t fs;
+>>  	unsigned int fault;
+>>  	u16 tinstr = 0;
+>>  	int isize = 4;
+>> @@ -784,16 +785,22 @@ static ssize_t alignment_proc_write(struct file *file, const char __user *buffer
+>>  
+>>  	instrptr = instruction_pointer(regs);
+>>  
+>> +	fs = get_fs();
+>> +	set_fs(KERNEL_DS);
+>>  	if (thumb_mode(regs)) {
+>>  		u16 *ptr = (u16 *)(instrptr & ~1);
+>> -		fault = probe_kernel_address(ptr, tinstr);
+>> +		fault = __copy_from_user(tinstr,
+>> +				(__force const void __user *)ptr,
+>> +				sizeof(tinstr));
+>>  		tinstr = __mem_to_opcode_thumb16(tinstr);
+>>  		if (!fault) {
+>>  			if (cpu_architecture() >= CPU_ARCH_ARMv7 &&
+>>  			    IS_T32(tinstr)) {
+>>  				/* Thumb-2 32-bit */
+>>  				u16 tinst2 = 0;
+>> -				fault = probe_kernel_address(ptr + 1, tinst2);
+>> +				fault = __copy_from_user(tinst2,
+>> +						(__force const void __user *)(ptr+1),
+>> +						sizeof(tinst2));
+>>  				tinst2 = __mem_to_opcode_thumb16(tinst2);
+>>  				instr = __opcode_thumb32_compose(tinstr, tinst2);
+>>  				thumb2_32b = 1;
+>> @@ -803,10 +810,13 @@ static ssize_t alignment_proc_write(struct file *file, const char __user *buffer
+>>  			}
+>>  		}
+>>  	} else {
+>> -		fault = probe_kernel_address((void *)instrptr, instr);
+>> +		fault = __copy_from_user(instr,
+>> +				(__force const void __user *)instrptr,
+>> +				sizeof(instr));
+>>  		instr = __mem_to_opcode_arm(instr);
+>>  	}
+>>  
+>> +	set_fs(fs);
+>>  	if (fault) {
+>>  		type = TYPE_FAULT;
+>>  		goto bad_or_fault;
+>> -- 
+>> 1.8.3.1
+>>
+>>
+> 
 
-Unfortunately, git_commit_info() just returns the passed in $id (which
-is explicitly set earlier) if git is not available or you are not in a
-git repository (and that latter check is not entirely correct anyway).
 
-Also, what you really need to test is if the specified commit is an
-ancestor of the place in the maintainer's tree where this patch is to
-be applied.  The commit may well exist in the developer's tree, but not
-be in the maintainer's tree :-(
-
-This will, however, catch the cases where the SHA1 has been mistyped,
-but we should encourage people not to type them anyway, instead
-generating them using "git log".
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BfsFABxAuYqPx22dGr.rg2u
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1pz9sACgkQAVBC80lX
-0Gzvhwf+Oi6TfTlPo9D7flbI4W1OngUci3Ex4xDH1v+g4Q+h7eXUqkrRjQWrDcll
-fVhcG4DwCAW9LWYwZ8PkixKPblt37v/jkBo5fLNUr1pg5B9ADhk2J14P2o5D2mx3
-Tiy8LkFBPyMmHSv9XcMXESqOws/HTqm8Y44XclLXwpRXtRq9JmbWVN9ssBefgHPt
-gPyMESOy5NjJ29qEn1P+1TP7zvplNuJMWJ2d0Dcfm8OFpSnxMeuPjBRZci7u4sWH
-7gZSzGnJPrl54duopG1Izqz3sVGHdNm/XF8yQtgP+VJfcBqJBb7Oaey62Hbrlxx7
-TYk/mgI6e0aU3YtkE0942nYfejmbnA==
-=urhi
------END PGP SIGNATURE-----
-
---Sig_/BfsFABxAuYqPx22dGr.rg2u--
