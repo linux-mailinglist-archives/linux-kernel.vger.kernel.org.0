@@ -2,92 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A97A45D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 21:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3179A45DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 21:24:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbfHaTCq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 15:02:46 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:47103 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728504AbfHaTCq (ORCPT
+        id S1728526AbfHaTYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 15:24:08 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:33822 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726705AbfHaTYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 15:02:46 -0400
-Received: by mail-pl1-f196.google.com with SMTP id o3so4789039plb.13
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 12:02:46 -0700 (PDT)
+        Sat, 31 Aug 2019 15:24:07 -0400
+Received: by mail-io1-f65.google.com with SMTP id s21so21131625ioa.1;
+        Sat, 31 Aug 2019 12:24:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZfFm6r3JOqEydofTNyuh4bAPJtkbL/0OkBXvCDSO3i0=;
-        b=dlgvG8eYRMaMeM92iutmfwBcjfRYro/1023f7K2yZK8fcKRkSCxKCaHdRZ16zEzF4G
-         +KlLBV6odsSkUE6iKg4fSNPoqYhWboYSJB2Dl32u40X0wFcQBp67hauNSNcqrMRAVCW+
-         j3E0VlIHJm1fFgBg80Ky9mAFfCmCQ88m1+cWI=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oaHmXaw2yPz0umTTJFpjPjSHfSCisDn+J54HsZ0/sx0=;
+        b=Z7zt88n/JThY9/taLIJq8U2fmyGpaukSGv5zPuITP0JqqNAzadGRHkxYKrzu4YwCPl
+         tnlzxv9ywnEODjBhPKTnHbj7i0Ovtehj3MTb5+mmVZxUSfWY8qIos7HGSTHyburRa/uk
+         qU/v0ykpLj2O2Nk/tRX333lWpa0pjuh9JM0mH2rYZjPkhjikBNgyuV7RQNr64VYrDto8
+         5c/uVh40Gh3rXWlAbQWahkvSr5Wm5jX3m6+suXinwnXoQmqu2dZytId0Ut+NitMKaeaB
+         VquNn61XKb85Sg0iim7vmvHgO6b/SVJ52Qm/yk2OsXeAphfrRjbss2b7d6DQI1587XI/
+         gxrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZfFm6r3JOqEydofTNyuh4bAPJtkbL/0OkBXvCDSO3i0=;
-        b=jGS/WUJbmX48cTcLjosddvZ6qfQr+VoHIXLXYgRSRxQetSQoYa11M2cA17ElCgtXo9
-         7pRsOv28qvDBBxbx8cNAszpEKxuaeGlDZalKYckIGisCYC2tqzf6+Kca/0iL8ne5MCvb
-         kE6ruwTRkoNDjLZEb42UEQq5TxkgGQsgaPHpcosRLSyajw0/QPzunu+WvBs0zFGhxOKv
-         32PPxK5lB6idicYWolftY8iVYYm/R2IPwyoccizAiTdCefL/XnMmZjZqx0S/OOM+1+4d
-         71kQ4peI4aPCIOYexwOYfG8R7HLszNQagU08O1f+wbFPj9IZZlzwDkGasWOaYnMUMCwd
-         esLg==
-X-Gm-Message-State: APjAAAU3VwZxVCToE5YQeMBFdoXPeVUFaathvaoqwirgPxC2YUyK7eGw
-        bNzV+/W3P/34l0ByLngm73EzPg==
-X-Google-Smtp-Source: APXvYqx0FbDpX+TZ/mbXiMkb0KXQX/S/FzklqT0mSbAfZd2tUbgpog6PC5lMVjZaNcpadM2AFbsCLA==
-X-Received: by 2002:a17:902:e83:: with SMTP id 3mr20781319plx.319.1567278165861;
-        Sat, 31 Aug 2019 12:02:45 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l6sm12626662pje.28.2019.08.31.12.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2019 12:02:44 -0700 (PDT)
-Date:   Sat, 31 Aug 2019 12:02:43 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Will Deacon <will@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        Jan Glauber <jglauber@marvell.com>
-Subject: Re: [PATCH v2 0/6] Rework REFCOUNT_FULL using atomic_fetch_*
- operations
-Message-ID: <201908311200.926B5C0F@keescook>
-References: <20190827163204.29903-1-will@kernel.org>
- <20190828073052.GL2332@hirez.programming.kicks-ass.net>
- <20190828141439.sqnpm5ff4tgyn66r@willie-the-truck>
- <201908281353.0EFD0776@keescook>
- <CAKv+Gu_Q=o_6xDW_7YTd3J6psqs-o+qBxW4r9MXCBwjmsGpTbQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu_Q=o_6xDW_7YTd3J6psqs-o+qBxW4r9MXCBwjmsGpTbQ@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oaHmXaw2yPz0umTTJFpjPjSHfSCisDn+J54HsZ0/sx0=;
+        b=gGtTB2h+p8KlT4NGilydU3I/zfOd883jBX0HGyjllNuDdLCuckaXFOWzhApDf44K6j
+         a6SHDwdpoEIg0Oko6x4QIvJz2srpqQng8ynYFX/EeJPqMZXC8MUu05mtKgTLWds0HXfb
+         1Nj8Lr/xweKPWqbBIVUs8BWWvAUYtYN4RwVgZAFAithixetmva2slR9uXZq7/heq0Zdh
+         wMIX7gC+sIz488CUYuNZlsIPqAtaQjqI1YrMyKewe8Kxag0cSnOxRCh1mnOTUi3T88Lp
+         iZXfWPhLJ1TMkcrVy8WC/3PtfUBrVPv9Ad7hCOpUPK8bIvdVyxQ0HPGcI2L6JxyeWkwu
+         rmgQ==
+X-Gm-Message-State: APjAAAXMBN9JttrnrNrtT7OxHHYsq3tvAL/2z+k9Qu3HXsT5V4kt2eW9
+        Zq6yjFSBcfBiI2gpCxv5RUIqiZal
+X-Google-Smtp-Source: APXvYqyp4+WUNod3hb3zn2ZiZKW54EA9jSMX+g5g51j9rn4vYxvGLCPN8yafHdoGPiaTB58QnWyczw==
+X-Received: by 2002:a5d:9842:: with SMTP id p2mr14054858ios.226.1567279446858;
+        Sat, 31 Aug 2019 12:24:06 -0700 (PDT)
+Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
+        by smtp.googlemail.com with ESMTPSA id 8sm8669250ion.26.2019.08.31.12.24.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 31 Aug 2019 12:24:06 -0700 (PDT)
+From:   Navid Emamdoost <navid.emamdoost@gmail.com>
+Cc:     emamd001@umn.edu, Navid Emamdoost <navid.emamdoost@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] bluetooth: bpa10x: change return value
+Date:   Sat, 31 Aug 2019 14:23:40 -0500
+Message-Id: <20190831192341.32539-1-navid.emamdoost@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 31, 2019 at 08:48:56PM +0300, Ard Biesheuvel wrote:
-> It's been ~2 years since I looked at this code in detail, but IIRC, it
-> looked like the inc-from-zero check was missing from the x86
-> implementation because it requires a load/compare/increment/store
-> sequence instead of a single increment instruction taking a memory
-> operand. Was there more rationale at the time for omitting this
-> particular case, and if so, was it based on a benchmark? Can we run it
-> against this implementation as well?
+When returning from bpa10x_send_frame, it is necessary to propagate any
+potential errno returned from usb_submit_urb.
 
-It was based on providing a protection against the pre-exploitation case
-(overflow: "something bad is about to happen, let's stop it") rather
-than the post-exploitation case (inc from zero, "something bad already
-happened, eek") with absolutely the fewest possible extra cycles, as
-various subsystem maintainers had zero tolerance for any measurable
-changes in refcounting performance.
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+---
+ drivers/bluetooth/bpa10x.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I much prefer the full coverage, even if it's a tiny bit slower. And
-based on the worse-case timings (where literally nothing else is
-happening) it seems like these changes should be WELL under the noise.
-
+diff --git a/drivers/bluetooth/bpa10x.c b/drivers/bluetooth/bpa10x.c
+index a0e84538cec8..1fa58c059cbf 100644
+--- a/drivers/bluetooth/bpa10x.c
++++ b/drivers/bluetooth/bpa10x.c
+@@ -337,7 +337,7 @@ static int bpa10x_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 
+ 	usb_free_urb(urb);
+ 
+-	return 0;
++	return err;
+ }
+ 
+ static int bpa10x_set_diag(struct hci_dev *hdev, bool enable)
 -- 
-Kees Cook
+2.17.1
+
