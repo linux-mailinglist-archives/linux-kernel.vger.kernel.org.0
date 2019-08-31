@@ -2,84 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F19AA43A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 11:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A923A439E
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 11:17:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727515AbfHaJTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 05:19:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40864 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfHaJTg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 05:19:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=we5Tr511phlcjEEmThH3qVv+D23i8ugbd1UVU1aMdkQ=; b=fVJw8GslMP00MVMjqcpSTMy9Y
-        EpP8Mng7pwd0r59ORAZfNPUvGMF0YfTEUC7oEyITWyPChjJbZMhMbJp9yfm7hCJtHUHDfaPf9LZ5K
-        AdqBcD7QSjsmL/H/AIW6t3xLCdNPCXovuVWWloqDvP06kAAiijicH8VEL8+CU2Z4q8j23x5a3k6cI
-        02WEUhkath+cw4MjKDTIVfg0RF72D6gbf/BojeDRhqUrwu8Mn91oGMUZEyAS620PAa63MPrrcRuB+
-        1dwS8NnjmfUdCdgBr1vMLIhT3bN+xa4YNWUgtJJKogORAnKPVBNwMWhDX7jLBhI/c5EU6xsQJUsbW
-        sdMNLRIYQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i3zXh-0001kr-9U; Sat, 31 Aug 2019 09:19:33 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 955BB301747;
-        Sat, 31 Aug 2019 11:18:56 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 89F8529B2CD17; Sat, 31 Aug 2019 11:19:31 +0200 (CEST)
-Date:   Sat, 31 Aug 2019 11:19:31 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     kan.liang@linux.intel.com, acme@kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, jolsa@kernel.org,
-        eranian@google.com, alexander.shishkin@linux.intel.com
-Subject: Re: [RESEND PATCH V3 3/8] perf/x86/intel: Support hardware TopDown
- metrics
-Message-ID: <20190831091931.GJ2369@hirez.programming.kicks-ass.net>
-References: <20190826144740.10163-1-kan.liang@linux.intel.com>
- <20190826144740.10163-4-kan.liang@linux.intel.com>
- <20190828150238.GC17205@worktop.programming.kicks-ass.net>
- <20190828190445.GQ5447@tassilo.jf.intel.com>
+        id S1728087AbfHaJRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 05:17:30 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:6157 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726116AbfHaJR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Aug 2019 05:17:29 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7FFAFC8D1225965FF1B8;
+        Sat, 31 Aug 2019 17:17:09 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Sat, 31 Aug 2019
+ 17:17:01 +0800
+From:   yu kuai <yukuai3@huawei.com>
+To:     <darrick.wong@oracle.com>
+CC:     <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yukuai3@huawei.com>, <zhengbin13@huawei.com>,
+        <yi.zhang@huawei.com>
+Subject: [PATCH v2] xfs: revise function comment for xfs_trans_ail_delete
+Date:   Sat, 31 Aug 2019 17:23:43 +0800
+Message-ID: <1567243423-59571-1-git-send-email-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828190445.GQ5447@tassilo.jf.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 12:04:45PM -0700, Andi Kleen wrote:
+Since xfs_trans_ail_delete_bulk no longer exists, revising the comment
+for new function xfs_trans_ail_delete.
 
-> > > NMI
-> > > ======
-> > > 
-> > > The METRICS register may be overflow. The bit 48 of STATUS register
-> > > will be set. If so, update all active slots and metrics events.
-> > 
-> > that happen? It would be useful to get that METRIC_OVF (can we please
-> 
-> This happens when the internal counters that feed the metrics
-> overflow.
-> 
-> > If this is so; then we can use this to update/reset PERF_METRICS and
-> > nothing else.
-> 
-> It has to be handled in the PMI.
+Fix following warning:
+make W=1 fs/xfs/xfs_trans_ail.o
+fs/xfs/xfs_trans_ail.c:793: warning: Function parameter or member 
+'ailp' not described in 'xfs_trans_ail_delete'
+fs/xfs/xfs_trans_ail.c:793: warning: Function parameter or member
+'lip' not described in 'xfs_trans_ail_delete'
+fs/xfs/xfs_trans_ail.c:793: warning: Function parameter or member
+'shutdown_type' not described in 'xfs_trans_ail_delete'
 
-That's what I wrote; Overflow is always NMI.
+Fixes:27af1bbf5244("xfs: remove xfs_trans_ail_delete_bulk")
+Signed-off-by: yu kuai <yukuai3@huawei.com>
+---
+ fs/xfs/xfs_trans_ail.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-> > Then there is no mucking about with that odd counter/metrics msr pair
-> > reset nonsense. Becuase that really stinks.
-> 
-> You have to write them to reset the internal counters.
+diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+index 6ccfd75..6c43b66e 100644
+--- a/fs/xfs/xfs_trans_ail.c
++++ b/fs/xfs/xfs_trans_ail.c
+@@ -765,25 +765,20 @@ xfs_ail_delete_one(
+ }
+ 
+-/**
+- * Remove a log items from the AIL
++/*
++ * xfs_trans_ail_delet - remove a log item from the AIL
+  *
+- * @xfs_trans_ail_delete_bulk takes an array of log items that all need to
+- * removed from the AIL. The caller is already holding the AIL lock, and done
+- * all the checks necessary to ensure the items passed in via @log_items are
+- * ready for deletion. This includes checking that the items are in the AIL.
++ * @xfs_trans_ail_delete takes a log item that needs to be removed from the
++ * AIL. The caller is already holding the AIL lock, and done all the checks
++ * necessary to ensure the item passed in via @lip are ready for deletion.
++ * This includes checking that the items are in the AIL.
+  *
+- * For each log item to be removed, unlink it  from the AIL, clear the IN_AIL
+- * flag from the item and reset the item's lsn to 0. If we remove the first
+- * item in the AIL, update the log tail to match the new minimum LSN in the
+- * AIL.
++ * For the log item to be removed, call xfs_ail_delete_one to unlink it
++ * from the AIL, clear the IN_AIL flag from the item and reset the item's
++ * lsn to 0. If we remove the first item in the AIL, update the log tail
++ * to match the new minimum LSN in the AIL.
+  *
+- * This function will not drop the AIL lock until all items are removed from
+- * the AIL to minimise the amount of lock traffic on the AIL. This does not
+- * greatly increase the AIL hold time, but does significantly reduce the amount
+- * of traffic on the lock, especially during IO completion.
+- *
+- * This function must be called with the AIL lock held.  The lock is dropped
+- * before returning.
++ * This function must be called with the AIL lock held. The lock will be
++ * dropped before returning.
+  */
+ void
+ xfs_trans_ail_delete(
+-- 
+2.7.4
 
-But not for ever read, only on METRIC_OVF.
