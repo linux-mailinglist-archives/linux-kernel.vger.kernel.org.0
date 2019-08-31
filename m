@@ -2,98 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EEEFA43C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 11:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B1A9A43D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 11:58:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727342AbfHaJto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 05:49:44 -0400
-Received: from sauhun.de ([88.99.104.3]:36442 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbfHaJto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 05:49:44 -0400
-Received: from localhost (p5486C98B.dip0.t-ipconnect.de [84.134.201.139])
-        by pokefinder.org (Postfix) with ESMTPSA id 649852C0093;
-        Sat, 31 Aug 2019 11:49:41 +0200 (CEST)
-Date:   Sat, 31 Aug 2019 11:49:41 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Ray Jui <ray.jui@broadcom.com>
-Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Lori Hikichi <lori.hikichi@broadcom.com>,
-        Icarus Chau <icarus.chau@broadcom.com>,
-        Shivaraj Shetty <sshetty1@broadcom.com>
-Subject: Re: [PATCH v1 1/1] i2c: iproc: Add i2c repeated start capability
-Message-ID: <20190831094940.GA1138@kunai>
-References: <1565150941-27297-1-git-send-email-rayagonda.kokatanur@broadcom.com>
- <20190830125626.GC2870@ninjato>
- <3e70fa7e-de13-4edd-2e17-b7c56e91d220@broadcom.com>
+        id S1727298AbfHaJ6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 05:58:15 -0400
+Received: from sender4-pp-o93.zoho.com ([136.143.188.93]:25354 "EHLO
+        sender4-pp-o93.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbfHaJ6P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Aug 2019 05:58:15 -0400
+X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Sat, 31 Aug 2019 05:58:14 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1567244589; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=jDIHexwKyOZO4WTIfjWayng7cZ7k2zQr0s9krLwFhObM1eWeDOddRXMZbu3ZtJM8n/spWSbmXscIFlGgkLpE0aCIwDOiG3bV059nD8GAYVESX+iwQjt4ouTaJZPTaOJgwZaAFmRF/XZSpVWC3OpLsOKHYbDCscc61YojJ5wepXc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1567244589; h=Content-Type:Content-Transfer-Encoding:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=xa9Mjn0mckJ2Ick178hK+v7PjRClIBQVucPVeCxwYJg=; 
+        b=XXkadnaz4uVp85O45LdocJiZcKWAxDvR7GP3b/rPmwqXDqbGv4a44oMwC4c2aHt3BohWn3cnm3oZQed1YcdQDJ4Jz7J9ODVMGz+p+7PP3Akwc7g67yJLnAwg6FnZll/jgpiRgk1aC7bTYY3MlEq7OacV+Vz3xw/m/b4RBotSHaE=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=ovari123@zoho.com;
+        dmarc=pass header.from=<ovari123@zoho.com> header.from=<ovari123@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=to:from:message-id:subject:date:user-agent:mime-version:content-type; 
+  b=Z1kgin7OdFXYPiqRh7U4B3oKfyB+EwCpAlznQD9iiuD1/owBy3wSLsHafQw47qLuOsHRGwHZnSPd
+    Gl3i/SdzC8bTPtaweZ//Qzqu30OdqYYKiKWdSZCKcab8Y8cnDFtH  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1567244589;
+        s=zm2019; d=zoho.com; i=ovari123@zoho.com;
+        h=To:From:Message-ID:Subject:Date:MIME-Version:Content-Type:Content-Transfer-Encoding;
+        l=290; bh=xa9Mjn0mckJ2Ick178hK+v7PjRClIBQVucPVeCxwYJg=;
+        b=FtH8FCflEEMA48zVrikyRm6pwq8oKlRK2lYnNLVJwKrGZzx/ywFU6P7VBtX0R2dO
+        UY4llhjxDw6lLspypOkk1bV9HWJUhtHxLvwpRQI1SlAoeSx8LmBy3CnEv3buSZEKnXd
+        ULOl2ocNLIQLySUmeesAtBDOsUoL1G7BeANWEteM=
+Received: from [192.168.1.3] (103.55.93.99 [103.55.93.99]) by mx.zohomail.com
+        with SMTPS id 1567244588668115.92537005305758; Sat, 31 Aug 2019 02:43:08 -0700 (PDT)
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   =?UTF-8?B?w5N2w6FyaQ==?= <ovari123@zoho.com>
+Message-ID: <d355e790-7c60-5681-3ea5-dc4fd6206628@zoho.com>
+Subject: Asus VivoBook Flip TP202NA-EH012T EMMC problem
+Date:   Sat, 31 Aug 2019 19:43:04 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
-Content-Disposition: inline
-In-Reply-To: <3e70fa7e-de13-4edd-2e17-b7c56e91d220@broadcom.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-AU
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---AhhlLboLdkugWU4S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+As per https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1818407/comment=
+s/26 here is an email.
 
-Hi Ray,
+Information is provided at https://bugs.launchpad.net/ubuntu/+source/linux/=
++bug/1818407/comments/32
 
-> > With all the limitations in place, I wonder if it might be easier to
-> > implement an smbus_xfer callback instead? What is left that makes this
-> > controller more than SMBus and real I2C?
-> >=20
->=20
-> Right. But what is the implication of using smbus_xfer instead of
-> master_xfer in our driver?
->=20
-> Does it mean it will break existing functions of the i2c app that our
-> customers developed based on i2cdev (e.g., I2C_RDWR)?
+Please advise what else you require.
 
-If the customers uses I2C_RDWR (and it cannot be mapped to i2c_smbus_*
-calls) then this is an indication that there is some I2C functionality
-left which the HW can provide. I'd be interested which one, though.
+Thank you
 
->=20
-> 1) Does
-
-Maybe you wanted to describe it here and it got accidently cut off?
-
-Regards,
-
-   Wolfram
+=C3=93v=C3=A1ri
 
 
---AhhlLboLdkugWU4S
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1qQrAACgkQFA3kzBSg
-KbbmbQ/9E9Ts1/5jZMraYl7CNxsXtWMbdSUWQFyuZDJGvO7UvZz9v7O0Aq9ct/MB
-mMb4lMVP4lLM/y1DMpVmoYoqVXyKPXzvMzGzsB0CMCs5e+XCbWKr1yCaDCLv0/Js
-HNbEe7PC1fuNz/YklNtYvHEe1LjSxf81lFWoLDFGPZ4FkSDcbUAZQkUfe/VpcKbc
-VVhYAQucc6GrBoJ12UMRSWSf3diIkR0CBqKhALZXCnrSLx9cXtTuqA0k7UnN9Piv
-qPZs/I20tTu52RCHXTpjnwFpWMLNuswRIoCWcMR6Vl1Ix6v0TB4NiUpMStk4Pw45
-KD6hdZSPBtFM4uQ04M7wbVFR634PF4mQx7wts+VjFXBe6rxEASwpIq3dMtxVFWgs
-GwZ2tyZDQBT/jqdJi2QyUsKw4UW2R7su3D3+/idNTtoT1JkqwAfsFix283Bcbees
-Kmx1W32dzB7p2G0k2vCWmNWx1CI+Mf/K16H0n2ffyD/5t4vCME7kLeIVcqkYNF7l
-i98hRkYVJm3iecvg2iVr5/y6a7T/V248YJl59WTs7ycb3wqZJib5hQDOmMKeZbmS
-DrKSbdHwlistLsHnatTQxOz8vlHG6ufoAXBy+x3PXs1b+HD21Zh94ugVqgoOHoSm
-xqIQaulWFBYVg6xi2y9ZyEPyKo4KEwBBmNFs4eTCPmSgTvKT3lg=
-=mcNR
------END PGP SIGNATURE-----
-
---AhhlLboLdkugWU4S--
