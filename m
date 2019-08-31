@@ -2,80 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F502A462F
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 22:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76FCCA4633
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 22:32:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728555AbfHaUZs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 16:25:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44248 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726705AbfHaUZs (ORCPT
+        id S1728589AbfHaUcG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 16:32:06 -0400
+Received: from smtprelay0062.hostedemail.com ([216.40.44.62]:41973 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728535AbfHaUcG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 16:25:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WhEmmlSfoWPVMMEnd4fAu09w+lcZbkWOYX9SlSyM9FQ=; b=tpod4DNP4f3Zzqv9BAj8TZsqP
-        ZRAVFjuQfZBQmWbrwidT84LpRKOAvex27C72vzAy2eYupcoeCvuwVBXO8bJwCgj6WFhWCmN/0nabT
-        ahE57OIzYaxZ8+b8V+0psf22YNlFbk6HbrAfLsXcvD6+nChaMnRBzHDbXYc+CC9hS/fUQpNRgR47a
-        Hhjp7RBryRDRWmDOGuylEskx6sgmmm+QSG7bdqzN6qvYdiN3r7A+jyxjbsb8dTY9LtCgfwEyaTKf4
-        0UzfcfNog9fGzjAAJDrTsGHASLBgLRP0kOs6qGaQRc8gM44fMbOWQDKAYAhyetqJloweqh9/mKWZD
-        m9nf0FbLg==;
-Received: from [2601:1c0:6200:6e8::4f71]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i49wJ-0005G8-By; Sat, 31 Aug 2019 20:25:39 +0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next RESEND] tracing: fix iomap.h build warnings
-Message-ID: <8a706c7b-5209-4bdd-e09f-5c2d619d75f5@infradead.org>
-Date:   Sat, 31 Aug 2019 13:25:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Sat, 31 Aug 2019 16:32:06 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id B1B09182CED28;
+        Sat, 31 Aug 2019 20:32:04 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 50,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:967:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2551:2553:2560:2564:2682:2685:2693:2828:2859:2892:2902:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:6691:8985:9025:9121:9901:10004:10400:10848:11026:11232:11233:11473:11658:11914:12043:12050:12295:12296:12297:12555:12740:12895:12986:13069:13095:13311:13357:13439:13894:14096:14097:14181:14659:14721:14775:21080:21433:21627:21811:21939:30012:30054:30070:30075:30090:30091,0,RBL:47.151.137.30:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
+X-HE-Tag: sleet46_4c2e89b9f004e
+X-Filterd-Recvd-Size: 2290
+Received: from XPS-9350.home (unknown [47.151.137.30])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 31 Aug 2019 20:32:03 +0000 (UTC)
+Message-ID: <762056d9c081c40f3fc760c9af79d6851f0a65e5.camel@perches.com>
+Subject: Re: [PATCH v3 09/11] Input: alps - remove unlikely() from IS_ERR*()
+ condition
+From:   Joe Perches <joe@perches.com>
+To:     Pali =?ISO-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Denis Efremov <efremov@linux.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-input@vger.kernel.org
+Date:   Sat, 31 Aug 2019 13:32:02 -0700
+In-Reply-To: <20190831152500.eg7xqo5ace6wu427@pali>
+References: <20190829165025.15750-1-efremov@linux.com>
+         <20190829165025.15750-9-efremov@linux.com>
+         <20190829175039.GA187474@dtor-ws> <20190831152500.eg7xqo5ace6wu427@pali>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+On Sat, 2019-08-31 at 17:25 +0200, Pali Rohár wrote:
+> On Thursday 29 August 2019 10:50:39 Dmitry Torokhov wrote:
+> > On Thu, Aug 29, 2019 at 07:50:23PM +0300, Denis Efremov wrote:
+> > > "unlikely(IS_ERR_OR_NULL(x))" is excessive. IS_ERR_OR_NULL() already uses
+> > > unlikely() internally.
+> > 
+> > The keyword here is _internally_.
+> > 
+> > https://lore.kernel.org/lkml/20190821174857.GD76194@dtor-ws/
+> > 
+> > So please no.
 
-Fix 30 warnings for missing "struct inode" declaration (like these) by
-adding a forward reference for it.
-These warnings come from 'headers_check' (CONFIG_HEADERS_CHECK):
-  CC      include/trace/events/iomap.h.s
+I think it poor form not to simply restate your original
+objection from 4 message levels below this link
 
-./../include/trace/events/iomap.h:49:18: warning: 'struct inode' declared inside parameter list will not be visible outside of this definition or declaration
-./../include/trace/events/iomap.h:77:18: warning: 'struct inode' declared inside parameter list will not be visible outside of this definition or declaration
+https://lists.gt.net/linux/kernel/2269724
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Darrick J. Wong <darrick.wong@oracle.com>
----
-Resend to correct maintainer(s).
-
- include/trace/events/iomap.h |    2 ++
- 1 file changed, 2 insertions(+)
-
---- linux-next-20190829.orig/include/trace/events/iomap.h
-+++ linux-next-20190829/include/trace/events/iomap.h
-@@ -44,6 +44,8 @@ DECLARE_EVENT_CLASS(iomap_page_class,
- 		  __entry->length)
- )
- 
-+struct inode;
-+
- #define DEFINE_PAGE_EVENT(name)		\
- DEFINE_EVENT(iomap_page_class, name,	\
- 	TP_PROTO(struct inode *inode, struct page *page, unsigned long off, \
+   Hm... I do not like this change. If I read code 
+    
+    if (unlikely(IS_ERR_OR_NULL(priv->dev3))) 
+    
+   then I know that it is really unlikely that condition will be truth and 
+   so this is some case of error/exception or something that normally does 
+   not happen too much. 
+    
+   But if I read code 
+    
+    if (IS_ERR_OR_NULL(priv->dev3)) 
+    
+   I know nothing about chance that this condition will be truth. Explicit 
+   unlikely in previous example give me more information. 
+    
+I alslo think this argument is dubious as it also applies
+to any IS_ERR and all the unlikely uses have been removed
+from those.
 
 
