@@ -2,79 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9DF9A436D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 10:49:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 749BFA4379
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 10:56:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727177AbfHaItZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 04:49:25 -0400
-Received: from foss.arm.com ([217.140.110.172]:39376 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbfHaItZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 04:49:25 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C85128;
-        Sat, 31 Aug 2019 01:49:24 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82FA53F59C;
-        Sat, 31 Aug 2019 01:49:23 -0700 (PDT)
-Date:   Sat, 31 Aug 2019 09:49:17 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Krzysztof Wilczynski <kw@linux.com>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Message-ID: <20190831084917.GA27466@e121166-lin.cambridge.arm.com>
-References: <20190830132311.7190ccc3@canb.auug.org.au>
- <CAErSpo618ewbJQHS3E3KWhTLe6T47u=Xjx9E-gYKMzjn=MmujA@mail.gmail.com>
- <9ae74244-f1e1-de7f-6d03-b2cca012f6fc@nvidia.com>
+        id S1727494AbfHaI4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 04:56:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37630 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726102AbfHaI4w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Aug 2019 04:56:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bpmJrLVfa0mf3hodzsOvY8P9oDNTTP+ppQS83HW7TuU=; b=qiono8HQcx8QMb67P+xwGsPTW
+        hJjYBTrxg3+Yk4GWZfJcquXrDgt7B8HtUI5jx+NHxBPbjbFcDxbkxbEX4rFiYOgNzm8rjxiXYXCY2
+        etA1eNQAnRoonCmdg9YEYakEi5hwYc0X5eLurwRMdQXe8Uj/3PK3Er7egbBd2c5r5NlfHKsbbhaUS
+        cudRPM4bnnBGRIQlI03YwfyYpc4rAy2PySVqM3qgv4L5CQdE3KJtvuEgdJEMxcWQYVEPsQVue2EU7
+        8A8Otkomvo6eVA4C7FxNvLKS8ZmxTAuQbczi1YAXTglJ91f5i3n8lWYqQge3fqosoxI+qv9c2aFlp
+        L6kX9czzA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i3zAh-0003Sj-AG; Sat, 31 Aug 2019 08:55:47 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C4B93300B8D;
+        Sat, 31 Aug 2019 10:55:04 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A1EE429B2CD09; Sat, 31 Aug 2019 10:55:39 +0200 (CEST)
+Date:   Sat, 31 Aug 2019 10:55:39 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yunsheng Lin <linyunsheng@huawei.com>
+Cc:     catalin.marinas@arm.com, will@kernel.org, mingo@redhat.com,
+        bp@alien8.de, rth@twiddle.net, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, heiko.carstens@de.ibm.com, gor@linux.ibm.com,
+        borntraeger@de.ibm.com, ysato@users.sourceforge.jp,
+        dalias@libc.org, davem@davemloft.net, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, jiaxun.yang@flygoat.com,
+        chenhc@lemote.com, akpm@linux-foundation.org, rppt@linux.ibm.com,
+        anshuman.khandual@arm.com, tglx@linutronix.de, cai@lca.pw,
+        robin.murphy@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, x86@kernel.org,
+        dave.hansen@linux.intel.com, luto@kernel.org, len.brown@intel.com,
+        axboe@kernel.dk, dledford@redhat.com, jeffrey.t.kirsher@intel.com,
+        linux-alpha@vger.kernel.org, nfont@linux.vnet.ibm.com,
+        naveen.n.rao@linux.vnet.ibm.com, mwb@linux.vnet.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        tbogendoerfer@suse.de, linux-mips@vger.kernel.org,
+        linuxarm@huawei.com
+Subject: Re: [PATCH v2 2/9] x86: numa: check the node id consistently for x86
+Message-ID: <20190831085539.GG2369@hirez.programming.kicks-ass.net>
+References: <1567231103-13237-1-git-send-email-linyunsheng@huawei.com>
+ <1567231103-13237-3-git-send-email-linyunsheng@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9ae74244-f1e1-de7f-6d03-b2cca012f6fc@nvidia.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1567231103-13237-3-git-send-email-linyunsheng@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 31, 2019 at 09:51:05AM +0530, Vidya Sagar wrote:
-> On 8/30/2019 6:00 PM, Bjorn Helgaas wrote:
-> > [+cc Krzysztof]
-> > 
-> > On Thu, Aug 29, 2019 at 10:23 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > Hi all,
-> > > 
-> > > After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-> > > failed like this:
-> > > 
-> > > drivers/pci/controller/dwc/pcie-tegra194.c:24:10: fatal error: linux/pci-aspm.h: No such file or directory
-> > >     24 | #include <linux/pci-aspm.h>
-> > >        |          ^~~~~~~~~~~~~~~~~~
-> > > 
-> > > Caused by commit
-> > > 
-> > >    81564976b1a9 ("PCI: tegra: Add Tegra194 PCIe support")
-> > > 
-> > > I have reverted that commit for todat.
-> > 
-> > Thanks, Stephen.
-> > 
-> > I *could* fix this by removing that include in the merge, since the
-> > contents of linux/pci-aspm.h were moved into linux/pci.h by
-> > https://git.kernel.org/cgit/linux/kernel/git/helgaas/pci.git/commit/?id=7ce2e76a0420
-> > 
-> > But as far as I can tell, pcie-tegra194.c doesn't actually require
-> > anything from linux/pci-aspm.h, so I'd rather amend the tegra194
-> > commit https://git.kernel.org/cgit/linux/kernel/git/lpieralisi/pci.git/commit/?id=81564976b1a9
-> > so it doesn't include pci-aspm.h in the first place.
-> Thanks Bjorn for the reply.
-> Yes. This header file is not required for now and can be removed.
-> Is there any action required from my side for this?
+On Sat, Aug 31, 2019 at 01:58:16PM +0800, Yunsheng Lin wrote:
+> According to Section 6.2.14 from ACPI spec 6.3 [1], the setting
+> of proximity domain is optional, as below:
+> 
+> This optional object is used to describe proximity domain
+> associations within a machine. _PXM evaluates to an integer
+> that identifies a device as belonging to a Proximity Domain
+> defined in the System Resource Affinity Table (SRAT).
 
-I updated my pci/tegra branch so that Bjorn can pull it.
+That's just words.. what does it actually mean?
 
-Lorenzo
+> This patch checks node id with the below case before returning
+> node_to_cpumask_map[node]:
+> 1. if node_id >= nr_node_ids, return cpu_none_mask
+> 2. if node_id < 0, return cpu_online_mask
+> 3. if node_to_cpumask_map[node_id] is NULL, return cpu_online_mask
+> 
+> [1] https://uefi.org/sites/default/files/resources/ACPI_6_3_final_Jan30.pdf
+> 
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  arch/x86/include/asm/topology.h | 6 ++++++
+>  arch/x86/mm/numa.c              | 2 +-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
+> index 4b14d23..f36e9c8 100644
+> --- a/arch/x86/include/asm/topology.h
+> +++ b/arch/x86/include/asm/topology.h
+> @@ -69,6 +69,12 @@ extern const struct cpumask *cpumask_of_node(int node);
+>  /* Returns a pointer to the cpumask of CPUs on Node 'node'. */
+>  static inline const struct cpumask *cpumask_of_node(int node)
+>  {
+> +	if (node >= nr_node_ids)
+> +		return cpu_none_mask;
+> +
+> +	if (node < 0 || !node_to_cpumask_map[node])
+> +		return cpu_online_mask;
+> +
+>  	return node_to_cpumask_map[node];
+>  }
+>  #endif
+
+I _reallly_ hate this. Users are expected to use valid numa ids. Now
+we're adding all this checking to all users. Why do we want to do that?
+
+Using '(unsigned)node >= nr_nods_ids' is an error.
+
+> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> index e6dad60..5e393d2 100644
+> --- a/arch/x86/mm/numa.c
+> +++ b/arch/x86/mm/numa.c
+> @@ -868,7 +868,7 @@ const struct cpumask *cpumask_of_node(int node)
+>  		dump_stack();
+>  		return cpu_none_mask;
+>  	}
+> -	if (node_to_cpumask_map[node] == NULL) {
+> +	if (node < 0 || !node_to_cpumask_map[node]) {
+>  		printk(KERN_WARNING
+>  			"cpumask_of_node(%d): no node_to_cpumask_map!\n",
+>  			node);
+> -- 
+> 2.8.1
+> 
