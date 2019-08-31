@@ -2,109 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 593DBA4594
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 19:27:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B504AA459F
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 19:45:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728443AbfHaR04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 13:26:56 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41240 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbfHaR04 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 13:26:56 -0400
-Received: by mail-lj1-f194.google.com with SMTP id m24so9257117ljg.8
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 10:26:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rJkDLV4v1T0ZlJal69EutIWWJNaMipXTowQmmuZqIEw=;
-        b=bijyrtLzJMpDV/QfoymnOP7MyNktKJQSo0LllG+wfXTIAZdYy44HJ1WbD2jhMHB7nC
-         +pA0onOjlhFVSeRhEPyqgH3K+3JnKD10bNr084nZ0HomqzcBmA9X6OcTmJFv+6UF2Sxv
-         QDLFjGy3jDzovxdewJh5aEwqDWV7ijBM4aiIHcJOYV5uojWJrau4PgcT9tOiaRW++VnN
-         jVvQh5Nw9YCu1D9iczWKua6YZ5o/Qp8P+bTWRjwZs4zJUBsGvXWyD/JfVLd60J2YZhdM
-         h+Yzmmbr5AZYJtgGXcab7pOY5HmsCj7YNXBaCT7AKoNZ1Z6rejRaxeB+mD+nO5/nuORl
-         IWyQ==
+        id S1728376AbfHaRn0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 13:43:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53948 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727816AbfHaRn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 31 Aug 2019 13:43:26 -0400
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 89A113D94D
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 17:43:25 +0000 (UTC)
+Received: by mail-qt1-f200.google.com with SMTP id v16so10883884qtp.14
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 10:43:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rJkDLV4v1T0ZlJal69EutIWWJNaMipXTowQmmuZqIEw=;
-        b=cNOG6yXbN3YWP6dudGJy8T4TMCBJyzExECuwbGxaChigTXFgu3KXOTWbfPFyq2QECC
-         LWZ3v5IJaQ0etXTOxqxoMjiE4OeyXrkEHOGkI9XhlAbVLvI+quWN7giqL0ebm6gBPOw6
-         ja079gWTakbImXmQkKtymPMY7YR+FTpZ+A/zUxG5qzLmhN69hCQ2RAyPPk6bfT2GdAGy
-         2R/OqFX0+odmdYsm5T7kk9+RtpLmJyyXR+lPc1CDZYDh0/9vkS8IUanNKR6JGtGvTGvD
-         wY1udMe2bbIwzPlh0TYHAYCYzwX9FGaudwN1Uc4TrReR6OksriQMTOSFNFr3Cyjw4M8I
-         9Vww==
-X-Gm-Message-State: APjAAAXpMi6o4rnBDwj7l+j0YO2u2YQ80/6f9nZ+qlwuzUxM1q40V+N7
-        UHeIRzDozxntaOPPBq1xZQs=
-X-Google-Smtp-Source: APXvYqzLz9TjucBk9Gq1E/bU6jz1XmD1zdYBh8oukD8QqhBwWU23nwqVGmcn3hFq7GpS9VEupaSl1g==
-X-Received: by 2002:a2e:88c7:: with SMTP id a7mr12143536ljk.72.1567272414022;
-        Sat, 31 Aug 2019 10:26:54 -0700 (PDT)
-Received: from [192.168.0.160] (ppp89-110-19-106.pppoe.avangarddsl.ru. [89.110.19.106])
-        by smtp.gmail.com with ESMTPSA id p10sm1016775lji.71.2019.08.31.10.26.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 31 Aug 2019 10:26:53 -0700 (PDT)
-Subject: Re: [PATCH] r8188eu: use skb_put_data instead of skb_put/memcpy pair
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sanjana Sanikommu <sanjana99reddy99@gmail.com>,
-        Vatsala Narang <vatsalanarang@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>
-References: <4c9e1e66-5ffc-c04b-9ea8-39cec5fd9b2a@gmail.com>
- <20190827103134.GC23584@kadam>
-From:   Ivan Safonov <insafonov@gmail.com>
-Message-ID: <33548df8-6eb3-0ce6-d37e-1b4b79b0dcfc@gmail.com>
-Date:   Sat, 31 Aug 2019 20:30:16 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cIHszIcXROJYsUB5SpC1UHCVwuIkppX7qGEFDj/5xo0=;
+        b=d3ZyVziITqVb84J3cOdIszQYkOMo3U1fj5Ha/Q754PZUILl5J1L8yHSTjDEGUILf4M
+         ZR2vP2dA9qsBnlrc4XKVPth/ly8PgAA9SmojGJ3dRJHGzlqJo1ll6jewZUNkcKoJbFU/
+         2/w0OMHQhLcXsInfWazmLL3Pb1I+0Ip51JBSCPlGHa+jexQFji3SpsH4l52cJwKKmS1x
+         ZRP8c+CRgvIt1sQ6/KDtWW8Vl92mwiQYLIPRtKyqyyKdh/RCqMsgz9Awk2Y8IrQzTy4p
+         +ndvRfAKs7m2ybjQ26hnGT8590zQAB08mvefZnYClYMZD5txs9EpFCgmaGxePO6fnzfU
+         siag==
+X-Gm-Message-State: APjAAAXGaV0VLNsqhs9HH6wyuh1j4K6s8gJS+VjDGcUxmOFmzpcKmF0t
+        ZKEWqbf9qu+/0ZHkdQdU8xFJrei40gFhbsAE1DtnVnpKg5ptwhnf3Oh0wQGSGKmBOlysO80Eeoj
+        ICjxwHx1BnzU9Rv49Vpca6pEJ
+X-Received: by 2002:a37:8204:: with SMTP id e4mr13824074qkd.281.1567273404563;
+        Sat, 31 Aug 2019 10:43:24 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyUVTZQ/NdVzrtHwlgWa3CZUvMoYBF799HKr9TzniFNFWi/Tj1PilrvJQdHknPVch1OD89j7A==
+X-Received: by 2002:a37:8204:: with SMTP id e4mr13824060qkd.281.1567273404418;
+        Sat, 31 Aug 2019 10:43:24 -0700 (PDT)
+Received: from redhat.com (bzq-79-180-62-110.red.bezeqint.net. [79.180.62.110])
+        by smtp.gmail.com with ESMTPSA id g19sm2433415qtb.2.2019.08.31.10.43.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 31 Aug 2019 10:43:23 -0700 (PDT)
+Date:   Sat, 31 Aug 2019 13:43:19 -0400
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Matej Genci <matej.genci@nutanix.com>
+Cc:     "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] virtio: Change typecasts in vring_init()
+Message-ID: <20190831134218-mutt-send-email-mst@kernel.org>
+References: <20190827152000.53920-1-matej.genci@nutanix.com>
+ <20190830095928-mutt-send-email-mst@kernel.org>
+ <41b8eb4b-0d3b-f103-9ec4-332a903612ee@nutanix.com>
 MIME-Version: 1.0
-In-Reply-To: <20190827103134.GC23584@kadam>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41b8eb4b-0d3b-f103-9ec4-332a903612ee@nutanix.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/27/19 1:31 PM, Dan Carpenter wrote:
-> On Sun, Aug 25, 2019 at 11:48:58PM +0300, Ivan Safonov wrote:
->> skb_put_data is shorter and clear.
->>
+On Fri, Aug 30, 2019 at 05:58:23PM +0000, Matej Genci wrote:
+> On 8/30/2019 3:02 PM, Michael S. Tsirkin wrote:
+> > On Tue, Aug 27, 2019 at 03:20:57PM +0000, Matej Genci wrote:
+> >> Compilers such as g++ 7.3 complain about assigning void* variable to
+> >> a non-void* variable (like struct pointers) and pointer arithmetics
+> >> on void*.
+> >>
+> >> Signed-off-by: Matej Genci <matej.genci@nutanix.com>
+> >> ---
+> >>   include/uapi/linux/virtio_ring.h | 9 +++++----
+> >>   1 file changed, 5 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
+> >> index 4c4e24c291a5..2c339b9e2923 100644
+> >> --- a/include/uapi/linux/virtio_ring.h
+> >> +++ b/include/uapi/linux/virtio_ring.h
+> >> @@ -168,10 +168,11 @@ static inline void vring_init(struct vring *vr, unsigned int num, void *p,
+> >>   			      unsigned long align)
+> >>   {
+> >>   	vr->num = num;
+> >> -	vr->desc = p;
+> >> -	vr->avail = p + num*sizeof(struct vring_desc);
+> >> -	vr->used = (void *)(((uintptr_t)&vr->avail->ring[num] + sizeof(__virtio16)
+> >> -		+ align-1) & ~(align - 1));
+> >> +	vr->desc = (struct vring_desc *)p;
+> >> +	vr->avail = (struct vring_avail *)((uintptr_t)p
+> >> +		+ num*sizeof(struct vring_desc));
+> >> +	vr->used = (struct vring_used *)(((uintptr_t)&vr->avail->ring[num]
+> >> +		+ sizeof(__virtio16) + align-1) & ~(align - 1));
+> >>   }
+> >>   
+> >>   static inline unsigned vring_size(unsigned int num, unsigned long align)
+> > 
+> > I'm not really interested in building with g++, sorry.
+> > Centainly not if it makes code less robust by forcing
+> > casts where they weren't previously necessary.
 > 
-> Please don't start the commit message in the middle of a sentence.  It
-> often gets split from the start of the sentence.  See how it looks here.
-> https://marc.info/?l=linux-driver-devel&m=156676594611401&w=2
-> 
-> 
->> Signed-off-by: Ivan Safonov <insafonov@gmail.com>
->> ---
->>   drivers/staging/rtl8188eu/core/rtw_recv.c        | 6 +-----
->>   drivers/staging/rtl8188eu/os_dep/usb_ops_linux.c | 3 +--
->>   2 files changed, 2 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/staging/rtl8188eu/core/rtw_recv.c
->> b/drivers/staging/rtl8188eu/core/rtw_recv.c
->> index 620da6c003d8..d4278361e002 100644
->> --- a/drivers/staging/rtl8188eu/core/rtw_recv.c
->> +++ b/drivers/staging/rtl8188eu/core/rtw_recv.c
->> @@ -1373,11 +1373,7 @@ static struct recv_frame *recvframe_defrag(struct
->> adapter *adapter,
->>                  /* append  to first fragment frame's tail (if privacy frame,
->> pull the ICV) */
->>                  skb_trim(prframe->pkt, prframe->pkt->len -
->> prframe->attrib.icv_len);
-> 
-> 
-> Your email client corrupted the patch so it can't be applied.
+> Can you elaborate on how these casts make the code less robust?
 
-Thanks, Dan.
+If we ever change the variable types build will still pass
+because of the cast.
+
+> They aren't necessary in C but I think being explicit can improve
+> readability as argued in
+> https://softwareengineering.stackexchange.com/a/275714
 > 
-> regards,
-> dan carpenter
+> > 
+> > However, vring_init and vring_size are legacy APIs anyway,
+> > so I'd be happy to add ifndefs that will allow userspace
+> > simply hide these functions if it does not need them.
+> > 
+> 
+> I feel like my patch is a harmless way of allowing this header
+> to be used in C++ projects, but I'm happy to drop it in lieu of
+> the guards if you feel strongly about it.
+> 
+> Thanks.
+> Matej
+
+Yea let's not even start.
+
+> > 
+> >> -- 
+> >> 2.22.0
+> >>
 > 
