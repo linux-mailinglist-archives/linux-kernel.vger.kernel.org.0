@@ -2,127 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAE2FA41A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 04:16:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C08AA41AF
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 04:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbfHaCQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 30 Aug 2019 22:16:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5258 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728271AbfHaCQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 30 Aug 2019 22:16:07 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AE9B3C599C90EDFDA3D8;
-        Sat, 31 Aug 2019 10:16:04 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.209) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 31 Aug
- 2019 10:16:02 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: convert inline_data in prior to
- i_size_write
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190830153453.24684-1-jaegeuk@kernel.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <d441bdaa-5155-3144-cdfe-01e8dcc7eff2@huawei.com>
-Date:   Sat, 31 Aug 2019 10:16:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1728407AbfHaCV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 30 Aug 2019 22:21:27 -0400
+Received: from [110.188.70.11] ([110.188.70.11]:21853 "EHLO spam1.hygon.cn"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728364AbfHaCV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 30 Aug 2019 22:21:26 -0400
+Received: from MK-DB.hygon.cn ([172.23.18.60])
+        by spam1.hygon.cn with ESMTP id x7V2KPaf005905;
+        Sat, 31 Aug 2019 10:20:25 +0800 (GMT-8)
+        (envelope-from puwen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-DB.hygon.cn with ESMTP id x7V2K3Ou098399;
+        Sat, 31 Aug 2019 10:20:03 +0800 (GMT-8)
+        (envelope-from puwen@hygon.cn)
+Received: from pw-vbox.hygon.cn (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Sat, 31 Aug
+ 2019 10:20:23 +0800
+From:   Pu Wen <puwen@hygon.cn>
+To:     <lenb@kernel.org>, <calvin.walton@kepstin.ca>
+CC:     <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Pu Wen <puwen@hygon.cn>
+Subject: [RFC PATCH v2] tools/power turbostat: Fix caller parameter of get_tdp_amd()
+Date:   Sat, 31 Aug 2019 10:19:58 +0800
+Message-ID: <1567217998-4356-1-git-send-email-puwen@hygon.cn>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20190830153453.24684-1-jaegeuk@kernel.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex02.Hygon.cn (172.23.18.12) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam1.hygon.cn x7V2KPaf005905
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/30 23:34, Jaegeuk Kim wrote:
-> This can guarantee inline_data has smaller i_size.
+Commit 9392bd98bba760be96ee ("tools/power turbostat: Add support for AMD
+Fam 17h (Zen) RAPL") add a function get_tdp_amd(), the parameter is CPU
+family. But the rapl_probe_amd() function use wrong model parameter.
+Fix the wrong caller parameter of get_tdp_amd() to use family.
 
-So I guess "f2fs: fix to avoid corruption during inline conversion" didn't fix
-such corruption right, I guess checkpoint & SPO before i_size recovery will
-cause this issue?
+Cc: <stable@vger.kernel.org> # v5.1+
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+Reviewed-by: Calvin Walton <calvin.walton@kepstin.ca>
+---
+ tools/power/x86/turbostat/turbostat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-	err = f2fs_convert_inline_inode(inode);
-	if (err) {
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 75fc4fb..1cd28eb 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -4002,7 +4002,7 @@ void rapl_probe_amd(unsigned int family, unsigned int model)
+ 	rapl_energy_units = ldexp(1.0, -(msr >> 8 & 0x1f));
+ 	rapl_power_units = ldexp(1.0, -(msr & 0xf));
+ 
+-	tdp = get_tdp_amd(model);
++	tdp = get_tdp_amd(family);
+ 
+ 	rapl_joule_counter_range = 0xFFFFFFFF * rapl_energy_units / tdp;
+ 	if (!quiet)
+-- 
+2.7.4
 
--->
-
-		/* recover old i_size */
-		i_size_write(inode, old_size);
-		return err;
-
-> 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-
-> ---
->  fs/f2fs/file.c | 25 +++++++++----------------
->  1 file changed, 9 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 08caaead6f16..a43193dd27cb 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -815,14 +815,20 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
->  
->  	if (attr->ia_valid & ATTR_SIZE) {
->  		loff_t old_size = i_size_read(inode);
-> -		bool to_smaller = (attr->ia_size <= old_size);
-> +
-> +		if (attr->ia_size > MAX_INLINE_DATA(inode)) {
-> +			/* should convert inline inode here */
-
-Would it be better:
-
-/* should convert inline inode here in piror to i_size_write to avoid
-inconsistent status in between inline flag and i_size */
-
-Thanks,
-
-> +			err = f2fs_convert_inline_inode(inode);
-> +			if (err)
-> +				return err;
-> +		}
->  
->  		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
->  		down_write(&F2FS_I(inode)->i_mmap_sem);
->  
->  		truncate_setsize(inode, attr->ia_size);
->  
-> -		if (to_smaller)
-> +		if (attr->ia_size <= old_size)
->  			err = f2fs_truncate(inode);
->  		/*
->  		 * do not trim all blocks after i_size if target size is
-> @@ -830,24 +836,11 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
->  		 */
->  		up_write(&F2FS_I(inode)->i_mmap_sem);
->  		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
-> -
->  		if (err)
->  			return err;
->  
-> -		if (!to_smaller) {
-> -			/* should convert inline inode here */
-> -			if (!f2fs_may_inline_data(inode)) {
-> -				err = f2fs_convert_inline_inode(inode);
-> -				if (err) {
-> -					/* recover old i_size */
-> -					i_size_write(inode, old_size);
-> -					return err;
-> -				}
-> -			}
-> -			inode->i_mtime = inode->i_ctime = current_time(inode);
-> -		}
-> -
->  		down_write(&F2FS_I(inode)->i_sem);
-> +		inode->i_mtime = inode->i_ctime = current_time(inode);
->  		F2FS_I(inode)->last_disk_size = i_size_read(inode);
->  		up_write(&F2FS_I(inode)->i_sem);
->  	}
-> 
