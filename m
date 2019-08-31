@@ -2,109 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0F1A4578
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 18:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 085B5A457B
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 18:59:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728428AbfHaQt3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 12:49:29 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:7640 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727816AbfHaQt2 (ORCPT
+        id S1728397AbfHaQ7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 12:59:42 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:43223 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728333AbfHaQ7l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 12:49:28 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d6aa51a0000>; Sat, 31 Aug 2019 09:49:30 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sat, 31 Aug 2019 09:49:27 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sat, 31 Aug 2019 09:49:27 -0700
-Received: from [10.25.72.86] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 31 Aug
- 2019 16:49:24 +0000
-Subject: Re: linux-next: build failure after merge of the pci tree
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Krzysztof Wilczynski <kw@linux.com>
-References: <20190830132311.7190ccc3@canb.auug.org.au>
- <CAErSpo618ewbJQHS3E3KWhTLe6T47u=Xjx9E-gYKMzjn=MmujA@mail.gmail.com>
- <9ae74244-f1e1-de7f-6d03-b2cca012f6fc@nvidia.com>
- <20190831084917.GA27466@e121166-lin.cambridge.arm.com>
-X-Nvconfidentiality: public
-From:   Vidya Sagar <vidyas@nvidia.com>
-Message-ID: <b4053e63-cfeb-9d38-d182-1fb88445474e@nvidia.com>
-Date:   Sat, 31 Aug 2019 22:19:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Sat, 31 Aug 2019 12:59:41 -0400
+Received: by mail-lf1-f66.google.com with SMTP id q27so7559067lfo.10
+        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 09:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=OnqeOxbk+Jb4LkuzIvu3fnmtH0hxg9KKumo/IKgh7Zw=;
+        b=Z3D6Xj+S++8f/fh+RqA6S2BT1iLxYUe7oO0Vj8jQduwUIY2YqH6kKyqbt+3+klkS4l
+         gE4g4jYJAV4YnMdAazzwN8LkmpCovaDtgYt6skXRyrFHSnjhSgAKd6CpE7/wt5Is+7GF
+         xrEx3xR788fg6GuEHCJFTtSqf879MG5Hbqb6n9XRkFolHNjS6sYmPDLafpbiL8r9Ha9R
+         Ri98COos4u4z/NgxUEV4sxngwmiBXUEDTkjh1TJavlAcXF4iR3xEpgsflewZVB+bcqca
+         nS6UMQho/ez+Hn011MSOvNimZaNxBgbV03Re+2Br7TrhMF/i4PtpInngeuG1euKtqe81
+         dUqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=OnqeOxbk+Jb4LkuzIvu3fnmtH0hxg9KKumo/IKgh7Zw=;
+        b=st5IgEvecCEZTHSjIjcXjCEQ75ey1Ba0yOjXhiVrw3+yEamQpHyFKAAa7My3/m5kYo
+         1BswbIDCX67x1RaoR+9teap/pncKhJ98E8X1f09AXwpQw0MPVBZGC/cJuTYwnD7911rE
+         5al0XbSd8eVHgmuUOLZOIldDKTjBcYf4kCsRgV3NqU1qJTTmRLl5irhYqszdDIfFu4NE
+         4AbboCR0Dp/RQiM7fMHzc93iyb/iE99gkRNivJ0beJSJqA179ynbm/lWnTTczZoKT3ku
+         68/L2N3DBChUu4c6LfOfikGvtMm9hx+CJUdtJYitXWwLSNbwGMSeYF5lSLkC9faazD5L
+         tsLA==
+X-Gm-Message-State: APjAAAW34vio/SKlmkhbG+2L75fHzPP/6O6e8Xrhl2+cKXej4nlsWffm
+        uq3wLMWMNX7qYINxCLFWrmwJRHycjIUlOBnGSZI=
+X-Google-Smtp-Source: APXvYqxAySuNwSMAHzT6NnnQlyJ2lZD9ab2rCZBcyCgUTXRNwvpFy5/J9QjBpQuj1djJY4Gq5qPzPR1uCZIjjx7nIbM=
+X-Received: by 2002:a19:2d19:: with SMTP id k25mr13720935lfj.76.1567270779761;
+ Sat, 31 Aug 2019 09:59:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190831084917.GA27466@e121166-lin.cambridge.arm.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1567270170; bh=/Z4mXFGx6fG9Ac342sfuiMn/y8zQuOXEAfS7/Y90TNc=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=RsPLTrKm90s9P8+rMbRrYn/vbrRgtp9lQ1KzWS87HTmF1jhSy6rccVNuCScNiuF29
-         ZMJsy7UO5uBXyxF7f0KmYY7JKoJycN4PoJkfRPiR8o0O126FsNQCv4ubzertSD5ujW
-         Yr5POvEQBLMFF6BN/+be+8HTZhw3nntmdulSWfUVbodI6QdM4gCygG2KKg3Rq45nk7
-         ba6fUJq9XXSZ79X1V/5qljcSzFMZ1Q9sRtXfelUPzGHeeX1Bhr7PE9u6eAzGJAEJz6
-         lvh2kaGRoudK1UqcUAK69/YWZYO8ZVirwlWe9KHjhpaMASKFPTXU4xaWdENIV5i2tA
-         xSzNuvCqa7O7g==
+Received: by 2002:ac2:5974:0:0:0:0:0 with HTTP; Sat, 31 Aug 2019 09:59:39
+ -0700 (PDT)
+Reply-To: mrsnicolemarois0001@gmail.com
+From:   Nicole Marois <mrjohnmoses8@gmail.com>
+Date:   Sat, 31 Aug 2019 16:59:39 +0000
+Message-ID: <CACkZuE2LDa_juTsmMPwCeybRjz+eWNYwh=Or+-xiyfimiBKtpQ@mail.gmail.com>
+Subject: Hello Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/31/2019 2:19 PM, Lorenzo Pieralisi wrote:
-> On Sat, Aug 31, 2019 at 09:51:05AM +0530, Vidya Sagar wrote:
->> On 8/30/2019 6:00 PM, Bjorn Helgaas wrote:
->>> [+cc Krzysztof]
->>>
->>> On Thu, Aug 29, 2019 at 10:23 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>
->>>> Hi all,
->>>>
->>>> After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
->>>> failed like this:
->>>>
->>>> drivers/pci/controller/dwc/pcie-tegra194.c:24:10: fatal error: linux/pci-aspm.h: No such file or directory
->>>>      24 | #include <linux/pci-aspm.h>
->>>>         |          ^~~~~~~~~~~~~~~~~~
->>>>
->>>> Caused by commit
->>>>
->>>>     81564976b1a9 ("PCI: tegra: Add Tegra194 PCIe support")
->>>>
->>>> I have reverted that commit for todat.
->>>
->>> Thanks, Stephen.
->>>
->>> I *could* fix this by removing that include in the merge, since the
->>> contents of linux/pci-aspm.h were moved into linux/pci.h by
->>> https://git.kernel.org/cgit/linux/kernel/git/helgaas/pci.git/commit/?id=7ce2e76a0420
->>>
->>> But as far as I can tell, pcie-tegra194.c doesn't actually require
->>> anything from linux/pci-aspm.h, so I'd rather amend the tegra194
->>> commit https://git.kernel.org/cgit/linux/kernel/git/lpieralisi/pci.git/commit/?id=81564976b1a9
->>> so it doesn't include pci-aspm.h in the first place.
->> Thanks Bjorn for the reply.
->> Yes. This header file is not required for now and can be removed.
->> Is there any action required from my side for this?
-> 
-> I updated my pci/tegra branch so that Bjorn can pull it.
-Thanks a lot Lorenzo and Bjorn.
+Hello Dear.
+I=E2=80=99m Mrs. Nicole Maoris a manager in  HSBC  BANK in   Spain  Madrid,=
+ I
+am sending  this brief letter  to seek for  your partnership and long
+term relationship, I have an important and urgent  issue I want to
+discuss with you privately about transaction fund  worth the sum of
+$9.5m America dollars left by most of the greedy Asia Kuwait
+politician in our bank here in Spain  Madrid.
 
-- Vidya Sagar
-> 
-> Lorenzo
-> 
+If you know that you can invest this fund into profitable business in
+your country at the end we shall have 50%50 share each,  kindly get
+back to me for more detail and procedures .
 
+Your urgent respond will be highly appreciated
+Awaiting to hear from you asap.
+My Regard.
+Mrs. Nicole Maoris=09
+Phone Number:  +34(62) 768 5146
