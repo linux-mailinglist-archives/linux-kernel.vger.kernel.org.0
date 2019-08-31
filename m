@@ -2,113 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDE00A456D
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 18:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACBDEA4576
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 18:49:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbfHaQqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 12:46:14 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:32860 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727836AbfHaQqO (ORCPT
+        id S1728376AbfHaQsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 12:48:45 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40767 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727816AbfHaQso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 31 Aug 2019 12:46:14 -0400
-Received: by mail-wm1-f68.google.com with SMTP id r17so8664753wme.0
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 09:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bWNyzY6frPd9AVvoBYLqQl+upEDUNdJLOAMB1R+T9tw=;
-        b=fS+2dRlMhE+Nq5glJysLmAuytzq9t4tg0oXMrARfiKlHHK7ICA88SF8nlV23LyVver
-         dZ7iD91N78LuBLyx36/IgB3mzS7pCjbMu0Burnkf9y8qaVzliT7X6jKR8Mkps5/hhljF
-         coeveC5lriwf0g1b01PlY3yav3r33RPaCOgRS7wd/DMXs+mIxBj/wk5zu7+sT7wxjGTr
-         fTHxhUPECasNXgXz79az5b4ChhtUd6Q2wxz6iuDKEqo+jjJiLwc9xdDZSusSWlvBgeJT
-         la19MgY9UhYxuhZ5wIeIVhMH0u3Loaw13hgns8mk//FxDYwBUuP/T2oWBLYXdu4kzfr5
-         c/rA==
+        Sat, 31 Aug 2019 12:48:44 -0400
+Received: by mail-ed1-f65.google.com with SMTP id v38so5683786edm.7;
+        Sat, 31 Aug 2019 09:48:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bWNyzY6frPd9AVvoBYLqQl+upEDUNdJLOAMB1R+T9tw=;
-        b=UQrmAaNGTneniIwR30BVLSy8NziXKvBfZYwKVy51ptXGxvoxC2E5i52RLR6AatS214
-         31+TiZRx3VJ8Ih5pH4JMqJ8zDtzWrK5vKwLbGrnGWNEPYNRXSDor/NdzTl74X9OwS3/g
-         sWVivEIMLMhafYXcxYssQ1JXtv/pgxQTsUGgj2M9n1HkV7rmxlv8MCGRlEYAL0BVMEeL
-         5gwXhIAa0Z8cjWLN56+vn6xkzkJHA8bOPcuXadLmQOZQ6AsMFXThBWi1oq5u6xJokvKY
-         +RKZqUDIg0D/d3Ztqv0568N6Jd9xz5jr28TVOtHQPO8sTmR48MWKudzKu8JelzeGlT/O
-         AjiA==
-X-Gm-Message-State: APjAAAWiu35az3K1Z54v+jrusUn/qch/iwYq3Gb5sWmXksuDV2j9A0Zw
-        yFqPfv+G/Pm2FP7LnsVUIL6iO6Fnf0KJQXQ42Ig7Nw==
-X-Google-Smtp-Source: APXvYqw73e47gqPAFZzq9Fl8OhY84mjlhLrpWKD4cPQ2bmwO8nm9bJP4z3WDbiTuRuxz5sygO3s2fj/kXPbJhsfJbJY=
-X-Received: by 2002:a7b:cb8e:: with SMTP id m14mr26387918wmi.10.1567269971792;
- Sat, 31 Aug 2019 09:46:11 -0700 (PDT)
+        bh=ztMy/qc6TZtxWztQakmFfR5mUH6yqYSc1RNJD7TlbZQ=;
+        b=s0DJ7pg3BA42rYndtdKLUHBIo9N2tWK9bc7/62X4w586Mz2sozc8X12oEH8IrZyxNC
+         c9iUvDNO2V1C+twP/W1CGx7WK8ay71ihd+CsYAtAPwDu4yRjPXZHOS0X+TKSfHX9t+mg
+         5xm4vdkVYN/Fyhh24QGD6KD7qweGTDz368CbcwpVFY9NoKiTaArhVMjsFiOQo3zZJHJj
+         95+ZUsHhGnjHyO6AJiDZ3GUoIbvny5RHVGZtFePhbaoA52BJTjRE+e6Ir2M7TOgTxIRp
+         I6uT+eun4MZ1pNDjHSJX5w8nJh6uTA68DBhc+TuI12nFYAg5x7u0I+5FYTREh7coDFCs
+         4TGg==
+X-Gm-Message-State: APjAAAX1hNbgDU3MD18mN5+nT/7/MxsnB5pScY7Hm+3xc8vyp1jsyG7e
+        LFlYwhW6d7LnxlFy/vrGpAOENLJgQwUIV8u4V86upA==
+X-Google-Smtp-Source: APXvYqyl4ibkLRkDUjYF8n0z5MtjgExy1a9DAIVq8L6fnpy7YHsbekFn804yrSKHc1SJcIQgcCR5/e/oZGJpW7b9VUQ=
+X-Received: by 2002:a50:bf4f:: with SMTP id g15mr21462355edk.92.1567270123028;
+ Sat, 31 Aug 2019 09:48:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190826153028.32639-1-pjones@redhat.com> <20190826153028.32639-2-pjones@redhat.com>
-In-Reply-To: <20190826153028.32639-2-pjones@redhat.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Sat, 31 Aug 2019 19:46:00 +0300
-Message-ID: <CAKv+Gu-MvRyq5ODkkMcT500iw6Di4CDWEfWh9-7pLkj425rPFA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] efi+tpm: don't traverse an event log with no events
-To:     Peter Jones <pjones@redhat.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Bartosz Szczepanek <bsz@semihalf.com>,
-        Lyude Paul <lyude@redhat.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190325173232.216357-1-Yazen.Ghannam@amd.com>
+ <SN6PR12MB26394D7FEE4582FD19860104F8230@SN6PR12MB2639.namprd12.prod.outlook.com>
+ <SN6PR12MB2639ABA1421E220FF5813738F8100@SN6PR12MB2639.namprd12.prod.outlook.com>
+In-Reply-To: <SN6PR12MB2639ABA1421E220FF5813738F8100@SN6PR12MB2639.namprd12.prod.outlook.com>
+From:   Len Brown <lenb@kernel.org>
+Date:   Sat, 31 Aug 2019 12:48:32 -0400
+Message-ID: <CAJvTdKk28qQnVv-fMkd6dPGrbfYryp+7PRHgqyurLyavMHSGbw@mail.gmail.com>
+Subject: Re: [PATCH] tools/power turbostat: Make interval calculation per
+ thread to reduce jitter
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "len.brown@intel.com" <len.brown@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 26 Aug 2019 at 18:30, Peter Jones <pjones@redhat.com> wrote:
->
-> When there are no entries to put into the final event log, some machines
-> will return the template they would have populated anyway.  In this case
-> the nr_events field is 0, but the rest of the log is just garbage.
->
-> This patch stops us from trying to iterate the table with
-> __calc_tpm2_event_size() when the number of events in the table is 0.
->
-> Signed-off-by: Peter Jones <pjones@redhat.com>
-> Tested-by: Lyude Paul <lyude@redhat.com>
-> ---
->  drivers/firmware/efi/tpm.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-> index 1d3f5ca3eaa..be51ed17c6e 100644
-> --- a/drivers/firmware/efi/tpm.c
-> +++ b/drivers/firmware/efi/tpm.c
-> @@ -75,11 +75,15 @@ int __init efi_tpm_eventlog_init(void)
->                 goto out;
->         }
->
-> -       tbl_size = tpm2_calc_event_log_size((void *)efi.tpm_final_log
-> -                                           + sizeof(final_tbl->version)
-> -                                           + sizeof(final_tbl->nr_events),
-> -                                           final_tbl->nr_events,
-> -                                           log_tbl->log);
-> +       tbl_size = 0;
-> +       if (final_tbl->nr_events != 0) {
-> +               void *events = (void *)efi.tpm_final_log
-> +                               + sizeof(final_tbl->version)
-> +                               + sizeof(final_tbl->nr_events);
+Yeah, I like this patch, and I have applied it.
 
-Please put a newline here
+thanks!
+-Len
 
-With that fixed,
-
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
-> +               tbl_size = tpm2_calc_event_log_size(events,
-> +                                                   final_tbl->nr_events,
-> +                                                   log_tbl->log);
-> +       }
->         memblock_reserve((unsigned long)final_tbl,
->                          tbl_size + sizeof(*final_tbl));
->         early_memunmap(final_tbl, sizeof(*final_tbl));
-> --
-> 2.23.0.rc2
+On Fri, Jun 7, 2019 at 12:28 PM Ghannam, Yazen <Yazen.Ghannam@amd.com> wrote:
 >
+> > -----Original Message-----
+> > From: Ghannam, Yazen <Yazen.Ghannam@amd.com>
+> > Sent: Tuesday, April 23, 2019 12:53 PM
+> > To: Ghannam, Yazen <Yazen.Ghannam@amd.com>; linux-pm@vger.kernel.org; len.brown@intel.com
+> > Cc: linux-kernel@vger.kernel.org; Len Brown <lenb@kernel.org>
+> > Subject: RE: [PATCH] tools/power turbostat: Make interval calculation per thread to reduce jitter
+> >
+> > > -----Original Message-----
+> > > From: linux-kernel-owner@vger.kernel.org <linux-kernel-owner@vger.kernel.org> On Behalf Of Ghannam, Yazen
+> > > Sent: Monday, March 25, 2019 12:33 PM
+> > > To: linux-pm@vger.kernel.org
+> > > Cc: Ghannam, Yazen <Yazen.Ghannam@amd.com>; linux-kernel@vger.kernel.org; lenb@kernel.org
+> > > Subject: [PATCH] tools/power turbostat: Make interval calculation per thread to reduce jitter
+> > >
+> > > From: Yazen Ghannam <yazen.ghannam@amd.com>
+> > >
+> > > Turbostat currently normalizes TSC and other values by dividing by an
+> > > interval. This interval is the delta between the start of one global
+> > > (all counters on all CPUs) sampling and the start of another. However,
+> > > this introduces a lot of jitter into the data.
+> > >
+> > > In order to reduce jitter, the interval calculation should be based on
+> > > timestamps taken per thread and close to the start of the thread's
+> > > sampling.
+> > >
+> > > Define a per thread time value to hold the delta between samples taken
+> > > on the thread.
+> > >
+> > > Use the timestamp taken at the beginning of sampling to calculate the
+> > > delta.
+> > >
+> > > Move the thread's beginning timestamp to after the CPU migration to
+> > > avoid jitter due to the migration.
+> > >
+> > > Use the global time delta for the average time delta.
+> > >
+> > > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> > > ---
+> >
+> > Hi Len,
+> >
+> > Any comments on this patch?
+> >
+>
+> Hi Len,
+>
+> Just wanted to check in. Do you have any comments on this patch?
+>
+> Thanks,
+> Yazen
+
+
+
+-- 
+Len Brown, Intel Open Source Technology Center
