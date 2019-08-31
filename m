@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81542A4429
-	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 12:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3CB1A4427
+	for <lists+linux-kernel@lfdr.de>; Sat, 31 Aug 2019 12:54:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbfHaKyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 31 Aug 2019 06:54:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43790 "EHLO mail.kernel.org"
+        id S1728244AbfHaKyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 31 Aug 2019 06:54:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727428AbfHaKyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727501AbfHaKyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 31 Aug 2019 06:54:12 -0400
 Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D7892343A;
+        by mail.kernel.org (Postfix) with ESMTPSA id B9DA823407;
         Sat, 31 Aug 2019 10:54:11 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.92)
         (envelope-from <rostedt@goodmis.org>)
-        id 1i411G-0001LU-PP; Sat, 31 Aug 2019 06:54:10 -0400
-Message-Id: <20190831105410.678550292@goodmis.org>
+        id 1i411G-0001Ly-U1; Sat, 31 Aug 2019 06:54:10 -0400
+Message-Id: <20190831105410.815421323@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sat, 31 Aug 2019 06:53:35 -0400
+Date:   Sat, 31 Aug 2019 06:53:36 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Subject: [for-linus][PATCH 6/7] ftrace/x86: Remove mcount() declaration
+        Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: [for-linus][PATCH 7/7] tracing: Correct kdoc formats
 References: <20190831105329.122820332@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
@@ -36,32 +36,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-Commit 562e14f72292 ("ftrace/x86: Remove mcount support") removed the
-support for using mcount, so we could remove the mcount() declaration
-to clean up.
+Fix the following kdoc warnings:
 
-Link: http://lkml.kernel.org/r/20190826170150.10f101ba@xhacker.debian
+kernel/trace/trace.c:1579: warning: Function parameter or member 'tr' not described in 'update_max_tr_single'
+kernel/trace/trace.c:1579: warning: Function parameter or member 'tsk' not described in 'update_max_tr_single'
+kernel/trace/trace.c:1579: warning: Function parameter or member 'cpu' not described in 'update_max_tr_single'
+kernel/trace/trace.c:1776: warning: Function parameter or member 'type' not described in 'register_tracer'
+kernel/trace/trace.c:2239: warning: Function parameter or member 'task' not described in 'tracing_record_taskinfo'
+kernel/trace/trace.c:2239: warning: Function parameter or member 'flags' not described in 'tracing_record_taskinfo'
+kernel/trace/trace.c:2269: warning: Function parameter or member 'prev' not described in 'tracing_record_taskinfo_sched_switch'
+kernel/trace/trace.c:2269: warning: Function parameter or member 'next' not described in 'tracing_record_taskinfo_sched_switch'
+kernel/trace/trace.c:2269: warning: Function parameter or member 'flags' not described in 'tracing_record_taskinfo_sched_switch'
+kernel/trace/trace.c:3078: warning: Function parameter or member 'ip' not described in 'trace_vbprintk'
+kernel/trace/trace.c:3078: warning: Function parameter or member 'fmt' not described in 'trace_vbprintk'
+kernel/trace/trace.c:3078: warning: Function parameter or member 'args' not described in 'trace_vbprintk'
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Link: http://lkml.kernel.org/r/20190828052549.2472-2-jakub.kicinski@netronome.com
+
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- arch/x86/include/asm/ftrace.h | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/trace/trace.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index 287f1f7b2e52..c38a66661576 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -16,7 +16,6 @@
- #define HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 525a97fbbc60..563e80f9006a 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1567,9 +1567,9 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
  
- #ifndef __ASSEMBLY__
--extern void mcount(void);
- extern atomic_t modifying_ftrace_code;
- extern void __fentry__(void);
+ /**
+  * update_max_tr_single - only copy one trace over, and reset the rest
+- * @tr - tracer
+- * @tsk - task with the latency
+- * @cpu - the cpu of the buffer to copy.
++ * @tr: tracer
++ * @tsk: task with the latency
++ * @cpu: the cpu of the buffer to copy.
+  *
+  * Flip the trace of a single CPU buffer between the @tr and the max_tr.
+  */
+@@ -1767,7 +1767,7 @@ static void __init apply_trace_boot_options(void);
  
+ /**
+  * register_tracer - register a tracer with the ftrace system.
+- * @type - the plugin for the tracer
++ * @type: the plugin for the tracer
+  *
+  * Register a new plugin tracer.
+  */
+@@ -2230,9 +2230,9 @@ static bool tracing_record_taskinfo_skip(int flags)
+ /**
+  * tracing_record_taskinfo - record the task info of a task
+  *
+- * @task  - task to record
+- * @flags - TRACE_RECORD_CMDLINE for recording comm
+- *        - TRACE_RECORD_TGID for recording tgid
++ * @task:  task to record
++ * @flags: TRACE_RECORD_CMDLINE for recording comm
++ *         TRACE_RECORD_TGID for recording tgid
+  */
+ void tracing_record_taskinfo(struct task_struct *task, int flags)
+ {
+@@ -2258,10 +2258,10 @@ void tracing_record_taskinfo(struct task_struct *task, int flags)
+ /**
+  * tracing_record_taskinfo_sched_switch - record task info for sched_switch
+  *
+- * @prev - previous task during sched_switch
+- * @next - next task during sched_switch
+- * @flags - TRACE_RECORD_CMDLINE for recording comm
+- *          TRACE_RECORD_TGID for recording tgid
++ * @prev: previous task during sched_switch
++ * @next: next task during sched_switch
++ * @flags: TRACE_RECORD_CMDLINE for recording comm
++ *         TRACE_RECORD_TGID for recording tgid
+  */
+ void tracing_record_taskinfo_sched_switch(struct task_struct *prev,
+ 					  struct task_struct *next, int flags)
+@@ -3072,7 +3072,9 @@ static void trace_printk_start_stop_comm(int enabled)
+ 
+ /**
+  * trace_vbprintk - write binary msg to tracing buffer
+- *
++ * @ip:    The address of the caller
++ * @fmt:   The string format to write to the buffer
++ * @args:  Arguments for @fmt
+  */
+ int trace_vbprintk(unsigned long ip, const char *fmt, va_list args)
+ {
 -- 
 2.20.1
 
