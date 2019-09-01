@@ -2,60 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EAE6DA480D
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 09:15:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BF39A4813
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 09:18:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728836AbfIAHO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 03:14:59 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40934 "EHLO mx1.redhat.com"
+        id S1728843AbfIAHR7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 03:17:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728758AbfIAHO6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 03:14:58 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726631AbfIAHR6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Sep 2019 03:17:58 -0400
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BB10F189DAD1;
-        Sun,  1 Sep 2019 07:14:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 41D0A19C70;
-        Sun,  1 Sep 2019 07:14:57 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190901020519.2392-1-hdanton@sina.com>
-References: <20190901020519.2392-1-hdanton@sina.com> <20190831135906.6028-1-hdanton@sina.com>
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
-        marc.dionne@auristor.com, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] rxrpc: Fix lack of conn cleanup when local endpoint is cleaned up [ver #2]
+        by mail.kernel.org (Postfix) with ESMTPSA id DE4CE22CF7;
+        Sun,  1 Sep 2019 07:17:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567322278;
+        bh=csVVin+Olpb/qDxAyD+cBrDfz5AYW4dnPEW/8nHkCXU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T27OuVHr9dwrxAnstXVsyaik9OZpoR4Vpdc8V26AcSOcVEDLxYXSQRUKEPVF9Efr7
+         2gsuumL5aEwqeupMejKbNDz7AEBBhcj2ObGMBGxIkvfPKa0jNR6MkcyhZhW89QLl2E
+         pIw0wT+ll3v0yX3/Ff2kspPG431Kosc9m6EveRKY=
+Date:   Sun, 1 Sep 2019 00:17:57 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, chao@kernel.org
+Subject: Re: [PATCH v4] f2fs: add bio cache for IPU
+Message-ID: <20190901071757.GA49907@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190219081529.5106-1-yuchao0@huawei.com>
+ <d2b3c101-0399-4e85-5765-7b6504aaca74@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <14575.1567322096.1@warthog.procyon.org.uk>
-Date:   Sun, 01 Sep 2019 08:14:56 +0100
-Message-ID: <14576.1567322096@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Sun, 01 Sep 2019 07:14:58 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2b3c101-0399-4e85-5765-7b6504aaca74@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hillf Danton <hdanton@sina.com> wrote:
+On 08/31, Chao Yu wrote:
+> On 2019/2/19 16:15, Chao Yu wrote:
+> > @@ -1976,10 +2035,13 @@ static int __write_data_page(struct page *page, bool *submitted,
+> >  	}
+> >  
+> >  	unlock_page(page);
+> > -	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode))
+> > +	if (!S_ISDIR(inode->i_mode) && !IS_NOQUOTA(inode)) {
+> > +		f2fs_submit_ipu_bio(sbi, bio, page);
+> >  		f2fs_balance_fs(sbi, need_balance_fs);
+> > +	}
+> 
+> Above bio submission was added to avoid below deadlock:
+> 
+> - __write_data_page
+>  - f2fs_do_write_data_page
+>   - set_page_writeback        ---- set writeback flag
+>   - f2fs_inplace_write_data
+>  - f2fs_balance_fs
+>   - f2fs_gc
+>    - do_garbage_collect
+>     - gc_data_segment
+>      - move_data_page
+>       - f2fs_wait_on_page_writeback
+>        - wait_on_page_writeback  --- wait writeback
+> 
+> However, it breaks the merge of IPU IOs, to solve this issue, it looks we need
+> to add global bio cache for such IPU merge case, then later
+> f2fs_wait_on_page_writeback can check whether writebacked page is cached or not,
+> and do the submission if necessary.
+> 
+> Jaegeuk, any thoughts?
 
-> > It's certainly possible that that can happen.  The reaper is per
-> > network-namespace.
-> > 
-> > conn->params.local holds a ref on the local endpoint.
-> > 
-> Then local endpoint can not become dead without connection reaper
-> running first, because of the ref held by connection. When it is
-> dead, however, there is no need to run reaper directly (rather than
-> through a workqueue).
+How about calling f2fs_submit_ipu_bio() when we need to do GC in the same
+context?
 
-The reaper is per-net_ns, not per-local.  There may be more than one local
-endpoint in a net_ns and they share the list of service connections.
-
-David
+> 
+> Thanks,
