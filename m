@@ -2,76 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F110A4C47
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 23:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15471A4C4A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 23:30:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbfIAV0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 17:26:35 -0400
-Received: from bilbo.ozlabs.org ([203.11.71.1]:50581 "EHLO ozlabs.org"
+        id S1729059AbfIAVax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 17:30:53 -0400
+Received: from onstation.org ([52.200.56.107]:48100 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728941AbfIAV0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 17:26:35 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1728773AbfIAVax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Sep 2019 17:30:53 -0400
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46M5r83p94z9s00;
-        Mon,  2 Sep 2019 07:26:31 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1567373192;
-        bh=UUnQe3VO7dn9iidyyYWuJbwGL4ZlD7iABjxXSNn7mEE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=qJt9dXqktmwv1NOrV232P93W5gPta/wIwIZq0vYUZAn2fSA7qtRZw0PP4J9e8pAB1
-         dQk0fF2UYP6DpQeHbYTjHF33o+4v9B4DrhsVUPBkWJgOnTOVjGFFpOkuEdFNUeQjgy
-         Cx5xjEQhquy2LlsW5NsbC4OOQPd0ZYP2/fGpLS8Irvx2jn+iYOV+Jrf4w59FhTuiHJ
-         VtqtccD4zUj5h4dn+uXoEAL26qxssEJ+MCRo7s/x+2H2sJBY3K80VZq60HqwmUMzy0
-         BuUyYqZiTa0LZQi5Aqa/yompi5ob5dU/MXUP8o6jplnpMY148daTM/s+CBSn8IvdSc
-         3vZ8Y4AKYa8OQ==
-Date:   Mon, 2 Sep 2019 07:26:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the vfs tree
-Message-ID: <20190902072631.310ccf95@canb.auug.org.au>
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 78BEA3E993;
+        Sun,  1 Sep 2019 21:30:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1567373452;
+        bh=Zamozm0CnNg3m9y2HsnLTS1dXVZIfN56PD4UedvYoz0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MY7eT/Sw7QTSp8Ub9ouPBLRLKMK4EDxpfb/wOds4fJogOnuNENG7xFfcDOYkKOeoX
+         35sXYnZQ0dfCxCd3AiY2uF3vYi3epuB+4rdIJqAc4WlZwHBPeUt0ZZ++XFU7ieAmZq
+         BnbsFScUwPYY7LCk4V/ydR90ErsDmUSrJ0H5IicE=
+From:   Brian Masney <masneyb@onstation.org>
+To:     robdclark@gmail.com, agross@kernel.org, bjorn.andersson@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kbuild test robot <lkp@intel.com>
+Subject: [PATCH] soc: qcom: ocmem: add missing includes
+Date:   Sun,  1 Sep 2019 17:30:37 -0400
+Message-Id: <20190901213037.25889-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3C.66g/4o==NACc1U3hbP3B";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/3C.66g/4o==NACc1U3hbP3B
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The kbuild bot reported the following compiler errors when compiling on
+MIPS with CONFIG_QCOM_OCMEM disabled:
 
-Hi all,
+  In file included from <command-line>:0:0:
+  >> include/soc/qcom/ocmem.h:43:49: warning: 'struct device' declared
+     inside parameter list will not be visible outside of this
+     definition or declaration
+      static inline struct ocmem *of_get_ocmem(struct device *dev)
+                                                      ^~~~~~
+     include/soc/qcom/ocmem.h: In function 'of_get_ocmem':
+  >> include/soc/qcom/ocmem.h:45:9: error: implicit declaration of
+     function 'ERR_PTR' [-Werror=implicit-function-declaration]
+       return ERR_PTR(-ENODEV);
+              ^~~~~~~
+  >> include/soc/qcom/ocmem.h:45:18: error: 'ENODEV' undeclared (first
+     use in this function)
+       return ERR_PTR(-ENODEV);
 
-Commit
+Add the proper includes to fix the compiler errors.
 
-  e013ec23b823 ("fs/namei.c: keep track of nd->root refcount status")
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+---
+My OCMEM series [1] hasn't landed upstream yet so let me know if you
+want me to squash this into the existing patch set. I made this a
+separate patch so that the Reported-by could be included. The kbuild
+report is at [2].
 
-is missing a Signed-off-by from its author and committer.
+[1] https://lore.kernel.org/lkml/20190823121637.5861-1-masneyb@onstation.org/
+[2] https://lists.01.org/pipermail/kbuild-all/2019-August/063530.html
 
---=20
-Cheers,
-Stephen Rothwell
+ include/soc/qcom/ocmem.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
---Sig_/3C.66g/4o==NACc1U3hbP3B
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+diff --git a/include/soc/qcom/ocmem.h b/include/soc/qcom/ocmem.h
+index a0ae336ba78b..02a8bc2677b1 100644
+--- a/include/soc/qcom/ocmem.h
++++ b/include/soc/qcom/ocmem.h
+@@ -9,6 +9,9 @@
+  * Copyright (C) 2015 Red Hat. Author: Rob Clark <robdclark@gmail.com>
+  */
+ 
++#include <linux/device.h>
++#include <linux/err.h>
++
+ #ifndef __OCMEM_H__
+ #define __OCMEM_H__
+ 
+-- 
+2.21.0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1sN4cACgkQAVBC80lX
-0GyGgwf/ROtl0gOe7y98vhIpw6opPjbPC4uP7ZbjNu/2RXA4XgzoyiniqZwOSRk3
-UVs9HiZXIIumLig18ys5TnGHwPtPOmGQN8fzckth2gbyEewP0ilcYOAf7xIdcgh5
-geYgAjS9b7VEYPBDWNKEnmrIMjAUkBL+Cx0QdSo+PKPxnfipTc6AfR96qDXHwIad
-34FnB5ECWN1n1k42CZFaD1eOcvw2VLweM7Vo3kpbVQaigBT60KO1vsOr+wQ1XNJ0
-W7FR+j8MBNm30uMnBg2grXEcrUJYxKJyIcpbY+mR9g1Go2dJZsn3m72uC3vPUqTT
-wyWTsU4hH5wIMflZDuaeca0kUKZW8g==
-=9MrC
------END PGP SIGNATURE-----
-
---Sig_/3C.66g/4o==NACc1U3hbP3B--
