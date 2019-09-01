@@ -2,91 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F01DA48BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 12:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3670AA48CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 12:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbfIAK0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 06:26:36 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47989 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728644AbfIAK0g (ORCPT
+        id S1728883AbfIAKtp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 06:49:45 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:49681 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728523AbfIAKtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 06:26:36 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 7577382318; Sun,  1 Sep 2019 12:26:20 +0200 (CEST)
-Date:   Sun, 1 Sep 2019 12:26:33 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] leds: is31fl32xx: Use struct_size() helper
-Message-ID: <20190901102633.GB29681@amd>
-References: <20190830181448.GA24483@embeddedor>
+        Sun, 1 Sep 2019 06:49:45 -0400
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1i4NQQ-0001RB-Iw; Sun, 01 Sep 2019 12:49:38 +0200
+Date:   Sun, 1 Sep 2019 11:49:36 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        yamada.masahiro@socionext.com, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] genirq: move debugfs option to kernel hacking
+Message-ID: <20190901114936.5e2f3490@why>
+In-Reply-To: <20190901101032.7pysfrpincyrci35@mail.google.com>
+References: <20190901035539.2957-1-changbin.du@gmail.com>
+        <alpine.DEB.2.21.1909010814360.3955@nanos.tec.linutronix.de>
+        <20190901101032.7pysfrpincyrci35@mail.google.com>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3uo+9/B/ebqu+fSQ"
-Content-Disposition: inline
-In-Reply-To: <20190830181448.GA24483@embeddedor>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: changbin.du@gmail.com, tglx@linutronix.de, akpm@linux-foundation.org, yamada.masahiro@socionext.com, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, 1 Sep 2019 18:10:33 +0800
+Changbin Du <changbin.du@gmail.com> wrote:
 
---3uo+9/B/ebqu+fSQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Sun, Sep 01, 2019 at 08:23:02AM +0200, Thomas Gleixner wrote:
+> > On Sun, 1 Sep 2019, Changbin Du wrote:
+> >   
+> > > Just like the other generic debug options, move the irq one to
+> > > 'Kernel hacking' menu.  
+> > 
+> > Why?
+> > 
+> > Kernel hacking is a inscrutable mess where you can waste a lot of time to
+> > find what you are looking for.
+> >  
+> yes, the 'kernel hacking' menu has many items now and are not well structured.
+> Let me see if it can be improved.
+> 
+> > If I want to debug interrupts then having the option right there where all
+> > other interrupt related configuration is makes tons of sense.
+> > 
+> > I would be less opposed to this when the kernel hacking menu would be
+> > halfways well structured, but you just chose another random place for that
+> > option which is worse than what we have now.
+> >   
+> We already have an irq debug option CONFIG_DEBUG_SHIRQ here. Maybe we can group
+> them into a submenu.
 
-On Fri 2019-08-30 13:14:48, Gustavo A. R. Silva wrote:
-> One of the more common cases of allocation size calculations is finding
-> the size of a structure that has a zero-sized array at the end, along
-> with memory for some number of elements for that array. For example:
->=20
-> struct is31fl32xx_priv {
-> 	...
->         struct is31fl32xx_led_data leds[0];
-> };
->=20
-> Make use of the struct_size() helper instead of an open-coded version
-> in order to avoid any potential type mistakes.
->=20
-> So, replace the following function:
->=20
-> static inline size_t sizeof_is31fl32xx_priv(int num_leds)
-> {
->        return sizeof(struct is31fl32xx_priv) +
->                      (sizeof(struct is31fl32xx_led_data) * num_leds);
-> }
->=20
-> with:
->=20
-> struct_size(priv, leds, count)
->=20
-> This code was detected with the help of Coccinelle.
->=20
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+DEBUG_SHIRQ is extremely different from GENERIC_IRQ_DEBUGFS. The former
+is a test option, verifying that endpoint drivers have a correct
+behaviour. The latter is a dump of the kernel internals, which is
+mostly for people dealing with the internals of the IRQ subsystem.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Preserving this distinction between the users of the IRQ API on one
+side and the debugging of the IRQ subsystem on the other is important.
+Moving these two things close together could make it even more confusing
+for the users (who usually do not need to mess with the IRQ subsystem's
+internals...).
 
---3uo+9/B/ebqu+fSQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1rnNkACgkQMOfwapXb+vIPxgCgpsICdNpvVqiE62UuGfp0t9A8
-QVQAn3e0reKEOTT22eUmr3FMkDGRBvUU
-=L98W
------END PGP SIGNATURE-----
-
---3uo+9/B/ebqu+fSQ--
+	M.
+-- 
+Without deviation from the norm, progress is not possible.
