@@ -2,92 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDDB8A4B49
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 21:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DA32A4B4A
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 21:12:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbfIATKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 15:10:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33416 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728830AbfIATKT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 15:10:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=udqiYKR1m77/U3JtKXAs1BCQma4/l5S0DGLhPu8CZzQ=; b=fuiHZduCC5LYy0nG7YVSBDcaH
-        oYeV5AjzSbMo9zQUfXqO+DaNfJI3gTw4u95yiXfcBxA2hEAx7TyxKd1DOKylqIl5yqGyvX1/skH7R
-        geTL5KhiNwhfaeezKkFk8TGoa+abJtrbBTQlWyyMly8FiB+NbJgerFk1KqPhHWKDvWEn1uICoZEKT
-        CTcKa1NNTTl/kiLv0ti/S3JGaQxOrz28KoFkZYSQV4VJ4SY7LxzZIsCFY9PGiqAd5oxwQ66DRdGDf
-        MQaK1ItTUMepKkGhFlDLA9jal6QWA6Vxikj6F7cKDprHg57tqpfrgv+ubmNjmRr1vFWaNIVXuyGd7
-        RME+i26xQ==;
-Received: from [2601:1c0:6200:6e8::4f71]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i4VEr-0000lH-HV; Sun, 01 Sep 2019 19:10:13 +0000
-Subject: Re: [PATCH v3] arch/microblaze: add support for get_user() of size 8
- bytes
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Steven J. Magnani" <steve@digidescorp.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <5a3e440f-4ec5-65d7-b2a4-c57fec0df973@infradead.org>
- <CAHk-=wg4mE8pSEdWViqJBC9Teh8h1c9LrqqP6=_g8ud5hvkfmA@mail.gmail.com>
- <CAHk-=whH+Wzj+h0WzgdLMu+xtFddokoVy8dWWvEJqJRGA_HLmw@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6184ffdd-30bf-668a-cdee-88cc8eb2ead7@infradead.org>
-Date:   Sun, 1 Sep 2019 12:10:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=whH+Wzj+h0WzgdLMu+xtFddokoVy8dWWvEJqJRGA_HLmw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1729214AbfIATLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 15:11:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59664 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728930AbfIATLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Sep 2019 15:11:13 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CD4818535D;
+        Sun,  1 Sep 2019 19:11:12 +0000 (UTC)
+Received: from localhost (ovpn-112-7.rdu2.redhat.com [10.10.112.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5E6A15D9D6;
+        Sun,  1 Sep 2019 19:11:10 +0000 (UTC)
+Date:   Sun, 01 Sep 2019 12:11:09 -0700 (PDT)
+Message-Id: <20190901.121109.1164811815017267709.davem@redhat.com>
+To:     christophe.jaillet@wanadoo.fr
+Cc:     yuehaibing@huawei.com, tglx@linutronix.de,
+        gregkh@linuxfoundation.org, tbogendoerfer@suse.de,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] net: seeq: Fix the function used to release some
+ memory in an error handling path
+From:   David Miller <davem@redhat.com>
+In-Reply-To: <20190831071751.1479-1-christophe.jaillet@wanadoo.fr>
+References: <20190831071751.1479-1-christophe.jaillet@wanadoo.fr>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Sun, 01 Sep 2019 19:11:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/1/19 10:31 AM, Linus Torvalds wrote:
-> On Sun, Sep 1, 2019 at 10:07 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> I guess I'll apply it. I'm not sure why you _care_ about microblaze, but ...
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Sat, 31 Aug 2019 09:17:51 +0200
 
-It was just a response to the 0day build bot reporting build errors.
-
-
-> Ugh. As I was going to apply it, my code cleanliness conscience struck.
+> In commit 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv"),
+> a call to 'get_zeroed_page()' has been turned into a call to
+> 'dma_alloc_coherent()'. Only the remove function has been updated to turn
+> the corresponding 'free_page()' into 'dma_free_attrs()'.
+> The error hndling path of the probe function has not been updated.
 > 
-> I can't deal with that unnecessary duplication of code. Does something
-> like the attached patch work instead?
+> Fix it now.
 > 
-> Totally untested, but looks much cleaner.
+> Rename the corresponding label to something more in line.
+> 
+> Fixes: 99cd149efe82 ("sgiseeq: replace use of dma_cache_wback_inv")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hm, I'm getting one (confusing) build error, in block/scsi_ioctl.c:
+Applied.
 
-  CC      block/scsi_ioctl.o
-In file included from ../include/linux/uaccess.h:11,
-                 from ../include/linux/highmem.h:9,
-                 from ../include/linux/pagemap.h:11,
-                 from ../include/linux/blkdev.h:16,
-                 from ../block/scsi_ioctl.c:9:
-../block/scsi_ioctl.c: In function 'sg_scsi_ioctl':
-../arch/microblaze/include/asm/uaccess.h:167:25: error: invalid initializer
-  typeof(ptr) __gu_ptr = (ptr);   \
-                         ^
-../block/scsi_ioctl.c:426:6: note: in expansion of macro 'get_user'
-  if (get_user(opcode, sic->data))
-      ^~~~~~~~
+> If 'dma_alloc_coherent()' fails, maybe the message in printk could be
+> improved. The comment above may also not be relevant.
 
-
--- 
-~Randy
+Memory allocation failures already give a stack backtrack down deep in the
+memory allocators, therefore printing messages at allocation call sites
+are veboten.
