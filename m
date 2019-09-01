@@ -2,100 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 286C6A48F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 13:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 416B4A48FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 13:54:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbfIALo4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 07:44:56 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40966 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbfIALo4 (ORCPT
+        id S1728764AbfIALyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 07:54:08 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:33252 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726260AbfIALyI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 07:44:56 -0400
-Received: by mail-ot1-f65.google.com with SMTP id o101so11107681ota.8;
-        Sun, 01 Sep 2019 04:44:55 -0700 (PDT)
+        Sun, 1 Sep 2019 07:54:08 -0400
+Received: by mail-qk1-f194.google.com with SMTP id x134so74668qkb.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2019 04:54:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=N5SW0h/ksHed7i/eHFWIqXI6qoMGR2BQIv5D3teJr74=;
-        b=vhanXbkPhCASy7yp6E70RWXSIea3XKgBgpX4J0cjIOAXFMJTvv4io0WvNACb2Q3NHI
-         KqPzpdfJDGsN3hcbHseg56/IVIqd+TCUKLGLCVlBCgoaBA3+DcXamXY36nT+rtVt/7UH
-         z0Sx87ePMve/U0njqJexwh8+c8PfcU7rKefFregulzCaq0LKPs65DamwrPTnAZQ0/xmK
-         +cduO/uBYFyqO1xVjiFqng6rNs1rMw21ZKXzSKn2lRN3OuElmSbwlOv+bg6vTiymyDXa
-         J8X6pRqog59PPe0G6EpFNcdUq0OlIcD6RqJttG9cIFjx7MaQ92QUm2Lw13rLH5OmKldY
-         wSAA==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=ovZKKba9IAjaaH0ubGHlJXn0IN6ojUYc0basa6zpbT4=;
+        b=fVQP6fhPY/Y99/BvcI2UUt5wiigqK8Nm+RZCZ6CD27CwDLf8eDZNycB7s/weyAcLyS
+         1zdpo613CuffA+4n6HMuk9xNGZYyhqolLBpS5Cg2g6XOlSbJKGVdvVgWNXOkk/SHgZBY
+         eaSvmHX58zmxA3WmCTw/Yqo+qcPplMRIRRheezG9mNipPSBC5wGJ0BaVUWdRJNhMJ3zV
+         5SYEAPieWU568vXlpGAYDSCd55Dw+TOMmOypkT+kSPT8luadFCtGzBzD0IVv19oc4sV/
+         A35wwaPrS8tbDlhR5ARjaH82dvVCNuazZqGtCIsAyEtlcKyqkAA8IQvyfMX5PCSv8D1H
+         vk3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=N5SW0h/ksHed7i/eHFWIqXI6qoMGR2BQIv5D3teJr74=;
-        b=mXSc7pfz36It3eRnEARa4DepoA1DGU56pvEvvodFHPsP63ELHyfLRYPcuZ3whjyb7+
-         9f9tYkX9rWdqzIyadB3S3AIPOoVHW47UydCJmCuBUxurs13waH1Pg/IBKc9njU+6JbDj
-         Z2Bmg9c8411mhEeqO4QVKU5T3QnkVJYTLBHk+jeeGIQ+W8B4BrRAMmhudU4xGeJxO6Eg
-         vhlwnYF4CVmvE6K4AtrYu+jUyJyFkOucptXLbcWYhWPqslQ51YZygYbSxvOWGol0PTK5
-         CZ+6MlmwvFVBGsxf8Hn7/GIcqWx8hg0uhv3grkUMflfApga0XT3b+/poapgfPntHMXj8
-         //ig==
-X-Gm-Message-State: APjAAAVVbl+uXSsV8QlNh9Tibaht5nycZQn7DNR4Qpo7zekZrxqLuNSi
-        M4BszCNc67KywXpKKBZCy6TlzZu86aV6Ocw1NX8=
-X-Google-Smtp-Source: APXvYqxLmXiuv+TRf/3RDHS6aD3eo3thHXEQG33YbJzqOL7vyoTqfUAXob2N+E96QZArxo0XcqUwg5ritXmDRv0E4k0=
-X-Received: by 2002:a9d:1d5:: with SMTP id e79mr19768337ote.98.1567338295280;
- Sun, 01 Sep 2019 04:44:55 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=ovZKKba9IAjaaH0ubGHlJXn0IN6ojUYc0basa6zpbT4=;
+        b=XxZNPlhGbKWJZtZKE1ImHEfJVfTyDZFjjtZIGIXP1ysMZbsjyaUANOg/eZTLzefmwX
+         bspdspBqSJhLq1Gi4oZi+Q99UsNWXmnD0LbGbNZ8bigGyMKzsmqKaRcqs+mZ619IeBEf
+         RUWJeFj2wBfCDHxuJk+kDJDgVY1DFDD04R8BDtMBC2THXQ5ZODJyav/5/FuO3xbA70lC
+         lXO6rhiIvL/YqBVub0AGERtpOypBtHpeXagN6KZLcgpS/8ldJOcgjalcDmG1Sy8BK3ML
+         aQ3HMewcThOvVwXCYNHWOLROoP/a3RRIUWMHj91oABQ3tDTZ4Yf3yNgAEAZXvq5i5oM0
+         z+Rg==
+X-Gm-Message-State: APjAAAWvmKF9B1xxYvcazD8qHtsuVzK+sJjQxpbEKvNULfa6dRKKjlU6
+        9Ke4ftWhdI7zOL8G16RF7pUwCdjfWPLlgplglCI=
+X-Google-Smtp-Source: APXvYqxAIc5eFf3ivMbyI2HeDJj6ko5rX7lr9502nn9WI3PPne9dbp3a5ryParAKysEodNIpVbgwWp59eu2FtONoVlg=
+X-Received: by 2002:a37:9fce:: with SMTP id i197mr23212080qke.175.1567338847011;
+ Sun, 01 Sep 2019 04:54:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190828202723.1145-1-linux.amoon@gmail.com> <20190828202723.1145-4-linux.amoon@gmail.com>
-In-Reply-To: <20190828202723.1145-4-linux.amoon@gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 1 Sep 2019 13:44:44 +0200
-Message-ID: <CAFBinCB9NPtncyJCMWDbbzJnQafeaY5U3XHh=NuRZSCNDdO=Hg@mail.gmail.com>
-Subject: Re: [PATCHv1 3/3] arm64: dts: meson: odroid-c2: Add missing regulator
- linked to HDMI supply
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Received: by 2002:a05:6214:1589:0:0:0:0 with HTTP; Sun, 1 Sep 2019 04:54:06
+ -0700 (PDT)
+Reply-To: joeakaba00@gmail.com
+From:   joe akaba <kagnalex@gmail.com>
+Date:   Sun, 1 Sep 2019 13:54:06 +0200
+Message-ID: <CACemp=6SgOXEBOqawoGvau+MMvsktnpnhbmkVzxsqqYAuxrntQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anand,
+Hello
 
-On Wed, Aug 28, 2019 at 10:27 PM Anand Moon <linux.amoon@gmail.com> wrote:
->
-> As per shematics HDMI_P5V0 is supplied by P5V0 so add missing link.
-typo: "schematics"
+My name is Joe Akaba I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
 
-> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> index a078a1ee5004..47789fd50415 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> @@ -213,6 +213,8 @@
->         status = "okay";
->         pinctrl-0 = <&hdmi_hpd_pins>, <&hdmi_i2c_pins>;
->         pinctrl-names = "default";
-> +       /* AP2331SA-7 */
-> +       hdmi-supply = <&p5v0>;
->  };
-my understanding based on odroid-c2_rev0.1_20150930.pdf is that:
-- there's a (fixed) hdmi_p5v0 regulator using p5v0 as input
-- the hdmi_p5v0 is the hdmi-supply
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:joeakaba00@gmail.com
 
-it doesn't change the functionality of this patch (since both supplies
-are fixed regulators anyways)
-you are already doing a nice cleanup with this series, so it would be
-a shame to take a shortcut here
+Many thanks in advance,
+Mr.Joe Akaba
 
 
-Martin
+Hallo
+
+Mein Name ist Joe Akaba. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+(8,5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: joeakaba00@gmail.com
+
+Vielen Dank im Voraus,
+Mr.Joe Akaba
