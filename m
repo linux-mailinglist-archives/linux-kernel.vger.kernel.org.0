@@ -2,120 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 543D2A49BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 16:08:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 703F9A49C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 16:17:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbfIAOId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 10:08:33 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35042 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfIAOId (ORCPT
+        id S1728968AbfIAORi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 10:17:38 -0400
+Received: from sonic315-13.consmr.mail.bf2.yahoo.com ([74.6.134.123]:42125
+        "EHLO sonic315-13.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726260AbfIAORi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 10:08:33 -0400
-Received: by mail-pl1-f194.google.com with SMTP id gn20so5403008plb.2;
-        Sun, 01 Sep 2019 07:08:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JPQn7evHwAIFUQeXNHFpGSBFL3fdvy+iWW2paQp4S8M=;
-        b=MCWJ0hsgzSN5UaUZHovyq4Rg62dozNlOmjOSV4kDAeFHyrxLyhBE+872oLqwjSzMfS
-         tdhB2GW3skNIRqR2O8foKq2UbHYMUOHY6RyzlK7OtGZALMzDSVtsaVTRrC8OOEvkU4u0
-         apKwfGtiKl573O9kHbWHt84lJBHyQNQjJihH/HB2aiz5Uu94e9DQGqNQVt76BuJEQd33
-         8W1tNFRB8kHV1AEBNvouTO1JN4oj2FeW0HUNuCFBEOIL1h6JSSLqQ8KnZ4mQnisBiOen
-         zR84OGxDrCF1NRJNOExM72sg8dvv4cuIg4mfrvMS1xYzgrssl52T8B2Vsrfsx6FEcY3A
-         dliw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JPQn7evHwAIFUQeXNHFpGSBFL3fdvy+iWW2paQp4S8M=;
-        b=hz+DgaDAYIOyI2mvIneP5kjQmwD9MBYca2c6v3sG3UodTLokbQ2AUP+ZGspv8jlFmS
-         fPRfvYRxtb6LmZ3xJU5dG+buM3ABeCuLCSBMo6DoDLVJakudIqwrT96NqXnMzPsZ4LhD
-         JFdRsfoRS1XZZZE+i9flWxFhWv3F6qYxhGEfPwIxj1zzFDwuoSGLh4fDi/wWtZLK2p/W
-         E5qvO1akPC3LdiS08BlizR5qpcqioH7tHGIQHrUqlQRpnU2Cxdo9O3AMXQstuZe6GnhU
-         PmQ8gAO34AEr3mWlfnyy+oeDTgtj84z1ufnwU6LKxIW0mJjz3rJ48LIdSNXwKMiYUyJ0
-         PsUA==
-X-Gm-Message-State: APjAAAXyZTLnvAqHi+qFtrTZ1LgMRhsTuByB1Y+bkU8U9WJd+HN/8z9f
-        il6lBUvC0+jqHtJhzQMGHbm/hlm4
-X-Google-Smtp-Source: APXvYqx6QwLwWBm5m9V9M4iM0czn+o3bSTA4lr19LvDJ4k33ZqbrZD/zfs0FTJrYnfx/49pqRiVUKQ==
-X-Received: by 2002:a17:902:9b8f:: with SMTP id y15mr26577918plp.194.1567346912108;
-        Sun, 01 Sep 2019 07:08:32 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id v15sm13058296pfn.69.2019.09.01.07.08.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 01 Sep 2019 07:08:31 -0700 (PDT)
-Subject: Re: [PATCH] Fix a double free bug in rsi_91x_deinit
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Hui Peng <benquike@gmail.com>, security@kernel.org,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190819220230.10597-1-benquike@gmail.com>
- <20190831181852.GA22160@roeck-us.net>
- <87k1asqw87.fsf@kamboji.qca.qualcomm.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <385361d3-048e-9b3f-c749-aa5861e397e7@roeck-us.net>
-Date:   Sun, 1 Sep 2019 07:08:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Sun, 1 Sep 2019 10:17:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567347457; bh=9VufCJ0uz1BZg2XZeYtdin2HH3n3ttYdATbALGknMwA=; h=Date:From:Reply-To:Subject:From:Subject; b=JUq74M+U2iLNMykpAvXwd7q7EBtEhANF/Eo0QysZGzNSjysfwp3mdya5Eflv3ZtVNCMcQDovuVkZG857rC3ZEkBuNLGmKbt8LXRJrb8L0VEQP01PVbcIUt6VHO4wr58kzq5eFKhbeESiVkRBuo/GwqopvbcNBPtcGv+OTln2jV9tn6DvKL+/qWW9wG/m+lXfbzN/wga4D+VBmqQ3C++CMDtZPLxEBF/yIH6gEC9591efrZ9RiMiRrAf6oJvzXZ2BewtDNUMfKEdExEz4s7WTH9TyShgb5XlBmv//rMFQ6MgN8V676/JcuWPtyll4sz2QzssMHc66c59tUcQ+D+ZSdA==
+X-YMail-OSG: 0gsfL7EVM1ljyWry_q8tLw4iEk9elTlSA3AWTJDMQK_EsU4NFIIcSNeqRVaQlUP
+ 9Ze8bOfGH.mJNjoyNJb_rUTsGsZFh57Mt77j1zd9dE5QyWkfTZhAG_K8A45POLdjV9F70jYqze7G
+ QUt0YLPR_NswvXeHBF8pRfwg2zh3lAhlYCBCWsZim1sVat8gPulzaTzKbMhqaz9.MH81CLqXMNXl
+ l2v64Ck5NfEsppk4Mw0U4Bcy6AuiWvFriXPReQhvClM6aLkq34df55.KtxD0cO9_0RD.vZqigDwZ
+ Dzk8wjzrx62ur4svAd4pQWpwWzzIETXVozUP8z4iVPjOS3VDdbgPrjvXBEkgcfdC.Znx5eIDOBCm
+ UQt0ZZYxV.8rtqXbqUbbQQ_Ng4avb8AU0aFVf1oDkbVXA2POF5sAufY5aQ27kbnnxRtaB_W67TKO
+ 6aRmkuc4CKKC_34PNOpma_Gto9s4RU_6ywbkIoiA1_mrecSDGSXcNbtWyn1JJKTlFidS6zJO2RCy
+ ZCAOGIbdiJ492I8xNRb5W4EzQlNhJcDLkKWkPZKEu9Bph6DPrsQSJCBq1t3a62Jxz2dE8FKTAsNA
+ WuJyVMF2.vN_c1Eghj8_GQDLQVGjGFtnunV1ByyG8lxKQNXpHFTnYBJHks8H.N1pmkbEQ6fE.FSq
+ lBkKTZvxk0bXeBOT.BgGEbseybhBiH8lSzjSS8RGb2VGKwWkD8wuSTcEGbRzCz2PEuNM1zJ5x261
+ oaDgXMVWD12nSdz2JDgWvi9iYjPRneoBcqe9Q8yzeI5MOCoggZPSwqlFWM7.wuvEO6sNMCXa0vse
+ txjFqz1mSgdU.BbFDhMPXprgelHxwKojRJMd5tGBM6EG7bEE94GeGKI9J6V1X1yqscy3dYJe8HK3
+ MFuus_v4bhq9Vp.rzvu8Y0U3vba0OEnrDfzBPzisCBJpnJeDLVkdd25TnHkdDUfn7wSwDyEosGwJ
+ M2cf239MKpEfu3Gc5xMDZv1Zj11PRQHJ6suqIyrYwQcMK0PATf.vL08W6voycMqc9LutFGx7x.I.
+ U.WjZK3W9kES5_fCxLsDcosvD7xt9YdAj8P8r8KeCUas85_FbcM6bj1U.7Yh4apya.rVPSxJdcCA
+ CWA.dMEDjHcwoLXUcDzvEnd6IccTDyxs_3PLzOTS8Xxqpr7hXQwmWKcot1KEhYwkkB3S68zPawwq
+ 1imF141Tp38Cy7P1IGwgl7HuSEXJbM0G.Nxh65l2T_QToKdXqMKjNclXxsJeFOnGk72szqTKtAye
+ ThOPHVV26SMkddPp9YTwp5m4-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Sun, 1 Sep 2019 14:17:37 +0000
+Date:   Sun, 1 Sep 2019 14:17:31 +0000 (UTC)
+From:   Mrs Alice Johnson <davidmark6682@gmail.com>
+Reply-To: mrsalicejohnson4@gmail.com
+Message-ID: <271952071.586821.1567347451845@mail.yahoo.com>
+Subject: Dear Friend,
 MIME-Version: 1.0
-In-Reply-To: <87k1asqw87.fsf@kamboji.qca.qualcomm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/1/19 1:03 AM, Kalle Valo wrote:
-> Guenter Roeck <linux@roeck-us.net> writes:
-> 
->> On Mon, Aug 19, 2019 at 06:02:29PM -0400, Hui Peng wrote:
->>> `dev` (struct rsi_91x_usbdev *) field of adapter
->>> (struct rsi_91x_usbdev *) is allocated  and initialized in
->>> `rsi_init_usb_interface`. If any error is detected in information
->>> read from the device side,  `rsi_init_usb_interface` will be
->>> freed. However, in the higher level error handling code in
->>> `rsi_probe`, if error is detected, `rsi_91x_deinit` is called
->>> again, in which `dev` will be freed again, resulting double free.
->>>
->>> This patch fixes the double free by removing the free operation on
->>> `dev` in `rsi_init_usb_interface`, because `rsi_91x_deinit` is also
->>> used in `rsi_disconnect`, in that code path, the `dev` field is not
->>>   (and thus needs to be) freed.
->>>
->>> This bug was found in v4.19, but is also present in the latest version
->>> of kernel.
->>>
->>> Reported-by: Hui Peng <benquike@gmail.com>
->>> Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
->>> Signed-off-by: Hui Peng <benquike@gmail.com>
->>
->> FWIW:
->>
->> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->>
->> This patch is listed as fix for CVE-2019-15504, which has a CVSS 2.0 score
->> of 10.0 (high) and CVSS 3.0 score of 9.8 (critical).
-> 
-> A double free in error path is considered as a critical CVE issue? I'm
-> very curious, why is that?
-> 
 
-You'd have to ask the people assigning CVSS scores. However, if the memory
-was reallocated, that reallocated memory (which is still in use) is freed.
-Then all kinds of bad things can happen.
 
-Guenter
+Dear Friend,
 
->> Are there any plans to apply this patch to the upstream kernel anytime
->> soon ?
-> 
-> I was on vacation last week and hence I have not been able to apply any
-> wireless patches. I should be able to catch up next week.
-> 
+I am Mrs Alice Johnson.am sending you this brief letter to solicit your
+partnership to transfer $18.5 million US Dollars.I shall send you more
+information and procedures when I receive positive response from you.
+please send me a message in my Email box (mrsalicejohnson4@gmail.com)
+as i wait to hear from you.
 
+Best regard
+Mrs Alice Johnson
