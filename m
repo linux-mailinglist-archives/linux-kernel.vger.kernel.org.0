@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 157DFA491C
+	by mail.lfdr.de (Postfix) with ESMTP id 7EE61A491D
 	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 14:23:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbfIAMXn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 08:23:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40160 "EHLO mail.kernel.org"
+        id S1728849AbfIAMXs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 08:23:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbfIAMXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 08:23:42 -0400
+        id S1726000AbfIAMXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Sep 2019 08:23:46 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9057A233A2;
-        Sun,  1 Sep 2019 12:23:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 251EC23429;
+        Sun,  1 Sep 2019 12:23:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567340621;
-        bh=R6U6P1kxmHoX+PerBAKuW53s3W1IlKx4XIZZVYcWbSo=;
+        s=default; t=1567340625;
+        bh=V8h3g+xyOa4KhhorQl3xHhkUdfwleAE01OpEUBxXQjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FtQkzzqqx+DLeamyw9fxMPlLUWcjy2pBawPm3lJyf2a9I2yObSco33VjIb8od83v3
-         bCo0bnAIEskugMefzvaeLkN/5MIHAAm0fZKMq40OSET3B/rmsUC0MfvQKaTh4stIvn
-         7uCgm3TMyofuCs5l6AQH31kbX0d2ewGsBQcztA0E=
+        b=n16j9EYj4qrxGeRC5eMkLyPHWxCC8sN8AvCzy9X8OyXxseOqOBG9oHPX4iF5A1R7R
+         Euk2gx8xLsTuQOa+mCDjunjRRQbL5SKKC/NBA6JqqMVf5TvjnEUI9o/YrA/FrSCUsu
+         cpsHtcN89q0i9O8Kbg8BZbnIPhlMVc6uJFrTCJ7I=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -35,9 +35,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Russ Anderson <russ.anderson@hpe.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/47] perf timechart: Refactor svg_build_topology_map()
-Date:   Sun,  1 Sep 2019 09:22:41 -0300
-Message-Id: <20190901122326.5793-3-acme@kernel.org>
+Subject: [PATCH 03/47] perf svghelper: Replace MAX_NR_CPUS with perf_env::nr_cpus_online
+Date:   Sun,  1 Sep 2019 09:22:42 -0300
+Message-Id: <20190901122326.5793-4-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190901122326.5793-1-acme@kernel.org>
 References: <20190901122326.5793-1-acme@kernel.org>
@@ -50,17 +50,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kyle Meyer <meyerk@hpe.com>
 
-Exchange the parameters of svg_build_topology_map() with 'struct
-perf_env *env' and adjust the function accordingly.
+'nr_cpus', the number of CPUs online during a record session bound by
+MAX_NR_CPUS, can be used as a dynamic alternative for MAX_NR_CPUS in
+svg_build_topology_map().
 
-This patch should not change any behavior, it is merely refactoring for
-the following patch.
-
-Committer notes:
-
-No need to include env.h from svghelper.h, all it needs is a forward
-declaration for 'struct perf_env', so move the include directive to
-svghelper.c, where it is really needed.
+The value of nr_cpus can be passed into str_to_bitmap(),
+scan_core_topology(), and svg_build_topology_map() to replace
+MAX_NR_CPUS as well.
 
 Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
 Reviewed-by: Jiri Olsa <jolsa@redhat.com>
@@ -68,107 +64,121 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Russ Anderson <russ.anderson@hpe.com>
-Link: http://lore.kernel.org/lkml/20190827214352.94272-2-meyerk@stormcage.eag.rdlabs.hpecorp.net
+Link: http://lore.kernel.org/lkml/20190827214352.94272-3-meyerk@stormcage.eag.rdlabs.hpecorp.net
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-timechart.c |  5 +----
- tools/perf/util/svghelper.c    | 20 ++++++++++++--------
- tools/perf/util/svghelper.h    |  4 +++-
- 3 files changed, 16 insertions(+), 13 deletions(-)
+ tools/perf/util/svghelper.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
-diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
-index 7d6a6ecf4e02..1ff81a790931 100644
---- a/tools/perf/builtin-timechart.c
-+++ b/tools/perf/builtin-timechart.c
-@@ -1518,10 +1518,7 @@ static int process_header(struct perf_file_section *section __maybe_unused,
- 		if (!tchart->topology)
- 			break;
- 
--		if (svg_build_topology_map(ph->env.sibling_cores,
--					   ph->env.nr_sibling_cores,
--					   ph->env.sibling_threads,
--					   ph->env.nr_sibling_threads))
-+		if (svg_build_topology_map(&ph->env))
- 			fprintf(stderr, "problem building topology\n");
- 		break;
- 
 diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
-index bbdd87163285..2e9971590590 100644
+index 2e9971590590..fef0f8a40e2f 100644
 --- a/tools/perf/util/svghelper.c
 +++ b/tools/perf/util/svghelper.c
-@@ -19,6 +19,7 @@
- #include <linux/zalloc.h>
- #include <perf/cpumap.h>
+@@ -697,7 +697,8 @@ struct topology {
+ 	int sib_thr_nr;
+ };
  
-+#include "env.h"
- #include "perf.h"
- #include "svghelper.h"
- #include "cpumap.h"
-@@ -752,23 +753,26 @@ static int str_to_bitmap(char *s, cpumask_t *b)
- 	return ret;
- }
- 
--int svg_build_topology_map(char *sib_core, int sib_core_nr,
--			   char *sib_thr, int sib_thr_nr)
-+int svg_build_topology_map(struct perf_env *env)
+-static void scan_thread_topology(int *map, struct topology *t, int cpu, int *pos)
++static void scan_thread_topology(int *map, struct topology *t, int cpu,
++				 int *pos, int nr_cpus)
  {
  	int i;
+ 	int thr;
+@@ -706,28 +707,24 @@ static void scan_thread_topology(int *map, struct topology *t, int cpu, int *pos
+ 		if (!test_bit(cpu, cpumask_bits(&t->sib_thr[i])))
+ 			continue;
+ 
+-		for_each_set_bit(thr,
+-				 cpumask_bits(&t->sib_thr[i]),
+-				 MAX_NR_CPUS)
++		for_each_set_bit(thr, cpumask_bits(&t->sib_thr[i]), nr_cpus)
+ 			if (map[thr] == -1)
+ 				map[thr] = (*pos)++;
+ 	}
+ }
+ 
+-static void scan_core_topology(int *map, struct topology *t)
++static void scan_core_topology(int *map, struct topology *t, int nr_cpus)
+ {
+ 	int pos = 0;
+ 	int i;
+ 	int cpu;
+ 
+ 	for (i = 0; i < t->sib_core_nr; i++)
+-		for_each_set_bit(cpu,
+-				 cpumask_bits(&t->sib_core[i]),
+-				 MAX_NR_CPUS)
+-			scan_thread_topology(map, t, cpu, &pos);
++		for_each_set_bit(cpu, cpumask_bits(&t->sib_core[i]), nr_cpus)
++			scan_thread_topology(map, t, cpu, &pos, nr_cpus);
+ }
+ 
+-static int str_to_bitmap(char *s, cpumask_t *b)
++static int str_to_bitmap(char *s, cpumask_t *b, int nr_cpus)
+ {
+ 	int i;
+ 	int ret = 0;
+@@ -740,7 +737,7 @@ static int str_to_bitmap(char *s, cpumask_t *b)
+ 
+ 	for (i = 0; i < m->nr; i++) {
+ 		c = m->map[i];
+-		if (c >= MAX_NR_CPUS) {
++		if (c >= nr_cpus) {
+ 			ret = -1;
+ 			break;
+ 		}
+@@ -755,10 +752,12 @@ static int str_to_bitmap(char *s, cpumask_t *b)
+ 
+ int svg_build_topology_map(struct perf_env *env)
+ {
+-	int i;
++	int i, nr_cpus;
  	struct topology t;
-+	char *sib_core, *sib_thr;
+ 	char *sib_core, *sib_thr;
  
--	t.sib_core_nr = sib_core_nr;
--	t.sib_thr_nr = sib_thr_nr;
--	t.sib_core = calloc(sib_core_nr, sizeof(cpumask_t));
--	t.sib_thr = calloc(sib_thr_nr, sizeof(cpumask_t));
-+	t.sib_core_nr = env->nr_sibling_cores;
-+	t.sib_thr_nr = env->nr_sibling_threads;
-+	t.sib_core = calloc(env->nr_sibling_cores, sizeof(cpumask_t));
-+	t.sib_thr = calloc(env->nr_sibling_threads, sizeof(cpumask_t));
++	nr_cpus = min(env->nr_cpus_online, MAX_NR_CPUS);
 +
-+	sib_core = env->sibling_cores;
-+	sib_thr = env->sibling_threads;
+ 	t.sib_core_nr = env->nr_sibling_cores;
+ 	t.sib_thr_nr = env->nr_sibling_threads;
+ 	t.sib_core = calloc(env->nr_sibling_cores, sizeof(cpumask_t));
+@@ -773,7 +772,7 @@ int svg_build_topology_map(struct perf_env *env)
+ 	}
  
- 	if (!t.sib_core || !t.sib_thr) {
+ 	for (i = 0; i < env->nr_sibling_cores; i++) {
+-		if (str_to_bitmap(sib_core, &t.sib_core[i])) {
++		if (str_to_bitmap(sib_core, &t.sib_core[i], nr_cpus)) {
+ 			fprintf(stderr, "topology: can't parse siblings map\n");
+ 			goto exit;
+ 		}
+@@ -782,7 +781,7 @@ int svg_build_topology_map(struct perf_env *env)
+ 	}
+ 
+ 	for (i = 0; i < env->nr_sibling_threads; i++) {
+-		if (str_to_bitmap(sib_thr, &t.sib_thr[i])) {
++		if (str_to_bitmap(sib_thr, &t.sib_thr[i], nr_cpus)) {
+ 			fprintf(stderr, "topology: can't parse siblings map\n");
+ 			goto exit;
+ 		}
+@@ -790,16 +789,16 @@ int svg_build_topology_map(struct perf_env *env)
+ 		sib_thr += strlen(sib_thr) + 1;
+ 	}
+ 
+-	topology_map = malloc(sizeof(int) * MAX_NR_CPUS);
++	topology_map = malloc(sizeof(int) * nr_cpus);
+ 	if (!topology_map) {
  		fprintf(stderr, "topology: no memory\n");
  		goto exit;
  	}
  
--	for (i = 0; i < sib_core_nr; i++) {
-+	for (i = 0; i < env->nr_sibling_cores; i++) {
- 		if (str_to_bitmap(sib_core, &t.sib_core[i])) {
- 			fprintf(stderr, "topology: can't parse siblings map\n");
- 			goto exit;
-@@ -777,7 +781,7 @@ int svg_build_topology_map(char *sib_core, int sib_core_nr,
- 		sib_core += strlen(sib_core) + 1;
- 	}
+-	for (i = 0; i < MAX_NR_CPUS; i++)
++	for (i = 0; i < nr_cpus; i++)
+ 		topology_map[i] = -1;
  
--	for (i = 0; i < sib_thr_nr; i++) {
-+	for (i = 0; i < env->nr_sibling_threads; i++) {
- 		if (str_to_bitmap(sib_thr, &t.sib_thr[i])) {
- 			fprintf(stderr, "topology: can't parse siblings map\n");
- 			goto exit;
-diff --git a/tools/perf/util/svghelper.h b/tools/perf/util/svghelper.h
-index e55338d5c3bd..81823e8bae3e 100644
---- a/tools/perf/util/svghelper.h
-+++ b/tools/perf/util/svghelper.h
-@@ -4,6 +4,8 @@
+-	scan_core_topology(topology_map, &t);
++	scan_core_topology(topology_map, &t, nr_cpus);
  
- #include <linux/types.h>
+ 	return 0;
  
-+struct perf_env;
-+
- void open_svg(const char *filename, int cpus, int rows, u64 start, u64 end);
- void svg_ubox(int Yslot, u64 start, u64 end, double height, const char *type, int fd, int err, int merges);
- void svg_lbox(int Yslot, u64 start, u64 end, double height, const char *type, int fd, int err, int merges);
-@@ -28,7 +30,7 @@ void svg_partial_wakeline(u64 start, int row1, char *desc1, int row2, char *desc
- void svg_interrupt(u64 start, int row, const char *backtrace);
- void svg_text(int Yslot, u64 start, const char *text);
- void svg_close(void);
--int svg_build_topology_map(char *sib_core, int sib_core_nr, char *sib_thr, int sib_thr_nr);
-+int svg_build_topology_map(struct perf_env *env);
- 
- extern int svg_page_width;
- extern u64 svg_highlight;
 -- 
 2.21.0
 
