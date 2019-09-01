@@ -2,132 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A158A4B7A
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 21:49:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30202A4B81
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 21:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728961AbfIATtP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 15:49:15 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46835 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728506AbfIATtP (ORCPT
+        id S1729013AbfIATtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 15:49:49 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50565 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728506AbfIATtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 15:49:15 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id B812181841; Sun,  1 Sep 2019 21:48:58 +0200 (CEST)
-Date:   Sun, 1 Sep 2019 21:49:11 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org, Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, Jacopo Mondi <jacopo@jmondi.org>,
-        Michael Scott <hashcode0f@gmail.com>
-Subject: Re: next-20190830 on Droid 4 was Re: [PATCH 0/4] musb host
- improvments mostly for omap2430 glue
-Message-ID: <20190901194911.GB30586@amd>
-References: <20190830232058.53414-1-tony@atomide.com>
- <20190901193925.GA30586@amd>
+        Sun, 1 Sep 2019 15:49:49 -0400
+Received: by mail-wm1-f66.google.com with SMTP id c10so466250wmc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2019 12:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=1t8RKux0b3auTyo3EU4Fjza8Z8XyMBYSPlq98c5flic=;
+        b=Fc4aT5+uP8DK3G5DqiX1PVV2U0OR5puONXiG36iLvcBgC5k9t3q5XjF75IRYjbbgxy
+         aIQkqrvX4ndW8RUayuyDYvIjx2aJFf4TbnI5pGadB7iNwZVsE9UD2tEN1XOCo0rbrhcv
+         ZgpnWW44RXkXooQLApzTxaK7xFfdgGHLw/sVzVJU09l6RwHZNWQUEI+ATBYN5Wb9TyNf
+         6GqU/CikpFvNy+g7jzE+5M0EjQxcTmWk7OxrDi3nsCaQSjwHkqB6LQwt4aT7oiBYLIxf
+         6qDyXfNfW77+yBUX8CoAfE7CQ6o8jwkqMD4aM/C2jBoTtRzavn8XletlmQJbR7vske2S
+         bvMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=1t8RKux0b3auTyo3EU4Fjza8Z8XyMBYSPlq98c5flic=;
+        b=dmOh1MWzxVA1gyO1xgET0VTRLenltqnchQEaGqNg1smdwlkHrd3zHvaw8WDY2i1j0A
+         ByHCWa1T2BlFwKUNGDkuNXsKSjJRMlgq2uUze+Vo4YqdfA9Jncketq1uQGHuTKS5Fmrg
+         zeWvXJLS/CvAMg7KhcHwl3AcRi3CGJekxnrsMOoISgR1AQPuNojge9dX+DnJ0VkDbM+5
+         1013URNhr1ovIOcdh8OIyqg7MVMKsq+6WFH0Ms9spfAm9P1NVmMsyDbq+G22+1S7EnzP
+         vHIedRjhlntZHKxd5GgSQ8RC4h+oHNbHKyu8Hmbyy7vq9TYJv4bbMqrQNXSblxO6CiB6
+         cZUQ==
+X-Gm-Message-State: APjAAAVKKz2ejo6Zqydxfc2EQH2HWSov5sbzOtO/Gq5ctVA/VtjVEgVN
+        s51WvwJx4vPHetADumR2b38=
+X-Google-Smtp-Source: APXvYqxlFS6lvb5mBA/RJA/yrpoHPmKtHhrVFCS4pgKnF8Uke2A+7VWsTMCrKWkhLoaeJouFKBHi7w==
+X-Received: by 2002:a7b:c857:: with SMTP id c23mr33536520wml.51.1567367386985;
+        Sun, 01 Sep 2019 12:49:46 -0700 (PDT)
+Received: from noxium ([86.124.23.129])
+        by smtp.gmail.com with ESMTPSA id f75sm17153683wmf.2.2019.09.01.12.49.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2019 12:49:46 -0700 (PDT)
+Message-ID: <5124dd295d2b5fb934ad567fbe19b2f6b37a8372.camel@gmail.com>
+Subject: Re: [PATCH] ASoC: fsl_sai: Set SAI Channel Mode to Output Mode
+From:   Cosmin-Gabriel Samoila <gabrielcsmo@gmail.com>
+To:     Daniel Baluta <daniel.baluta@nxp.com>, broonie@kernel.org
+Cc:     festevam@gmail.com, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
+        shengjiu.wang@nxp.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, timur@kernel.org,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+Date:   Sun, 01 Sep 2019 22:49:44 +0300
+In-Reply-To: <20190830225514.5283-1-daniel.baluta@nxp.com>
+References: <20190830225514.5283-1-daniel.baluta@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="JP+T4n/bALQSJXh8"
-Content-Disposition: inline
-In-Reply-To: <20190901193925.GA30586@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Looks good to me!
 
---JP+T4n/bALQSJXh8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Best regards,
+Cosmin
 
-On Sun 2019-09-01 21:39:25, Pavel Machek wrote:
-> Hi!
->=20
-> > So I ended up cleaning up omap2430 glue layer a bit for host mode with =
-the
-> > various reproducable errors I was seeing docking droid4 to a lapdock. T=
-here
-> > are a few fixes, and then we end up removing all the devctl register ti=
-nkering
-> > for omap2430 glue layer.
->=20
-> I thought I'd test this, so I took
->=20
-> commit 6d028043b55e54f48fbdf62ea8ce11a4ad830cac
->     Add linux-next specific files for 20190830
->=20
-> Series (and the other two patches you sent around it) applies ok, but
-> the result does not boot.
+On Sat, 2019-08-31 at 01:55 +0300, Daniel Baluta wrote:
+> From SAI datasheet:
+> 
+> CHMOD, configures if transmit data pins are configured for TDM mode
+> or Output mode.
+> 	* (0) TDM mode, transmit data pins are tri-stated when slots
+> are
+> 	masked or channels are disabled.
+> 	* (1) Output mode, transmit data pins are never tri-stated and
+> 	will output zero when slots are masked or channels are
+> disabled.
+> 
+> When data pins are tri-stated, there is noise on some channels
+> when FS clock value is high and data is read while fsclk is
+> transitioning from high to low.
+> 
+> Fix this by setting CHMOD to Output Mode so that pins will output
+> zero
+> when slots are masked or channels are disabled.
+> 
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Signed-off-by: Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
+> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> ---
+>  sound/soc/fsl/fsl_sai.c | 15 ++++++++++++---
+>  sound/soc/fsl/fsl_sai.h |  2 ++
+>  2 files changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+> index e896b577b1f7..b9daab0eb6eb 100644
+> --- a/sound/soc/fsl/fsl_sai.c
+> +++ b/sound/soc/fsl/fsl_sai.c
+> @@ -467,6 +467,12 @@ static int fsl_sai_hw_params(struct
+> snd_pcm_substream *substream,
+>  
+>  	val_cr4 |= FSL_SAI_CR4_FRSZ(slots);
+>  
+> +	/*
+> +	 * set CHMOD to Output Mode so that transmit data pins will
+> +	 * output zero when slots are masked or channels are disabled
+> +	 */
+> +	val_cr4 |= FSL_SAI_CR4_CHMOD;
+> +
+>  	/*
+>  	 * For SAI master mode, when Tx(Rx) sync with Rx(Tx) clock,
+> Rx(Tx) will
+>  	 * generate bclk and frame clock for Tx(Rx), we should set
+> RCR4(TCR4),
+> @@ -477,7 +483,8 @@ static int fsl_sai_hw_params(struct
+> snd_pcm_substream *substream,
+>  	if (!sai->is_slave_mode) {
+>  		if (!sai->synchronous[TX] && sai->synchronous[RX] &&
+> !tx) {
+>  			regmap_update_bits(sai->regmap,
+> FSL_SAI_TCR4(ofs),
+> -				FSL_SAI_CR4_SYWD_MASK |
+> FSL_SAI_CR4_FRSZ_MASK,
+> +				FSL_SAI_CR4_SYWD_MASK |
+> FSL_SAI_CR4_FRSZ_MASK |
+> +				FSL_SAI_CR4_CHMOD_MASK,
+>  				val_cr4);
+>  			regmap_update_bits(sai->regmap,
+> FSL_SAI_TCR5(ofs),
+>  				FSL_SAI_CR5_WNW_MASK |
+> FSL_SAI_CR5_W0W_MASK |
+> @@ -486,7 +493,8 @@ static int fsl_sai_hw_params(struct
+> snd_pcm_substream *substream,
+>  				~0UL - ((1 << channels) - 1));
+>  		} else if (!sai->synchronous[RX] && sai-
+> >synchronous[TX] && tx) {
+>  			regmap_update_bits(sai->regmap,
+> FSL_SAI_RCR4(ofs),
+> -				FSL_SAI_CR4_SYWD_MASK |
+> FSL_SAI_CR4_FRSZ_MASK,
+> +				FSL_SAI_CR4_SYWD_MASK |
+> FSL_SAI_CR4_FRSZ_MASK |
+> +				FSL_SAI_CR4_CHMOD_MASK,
+>  				val_cr4);
+>  			regmap_update_bits(sai->regmap,
+> FSL_SAI_RCR5(ofs),
+>  				FSL_SAI_CR5_WNW_MASK |
+> FSL_SAI_CR5_W0W_MASK |
+> @@ -497,7 +505,8 @@ static int fsl_sai_hw_params(struct
+> snd_pcm_substream *substream,
+>  	}
+>  
+>  	regmap_update_bits(sai->regmap, FSL_SAI_xCR4(tx, ofs),
+> -			   FSL_SAI_CR4_SYWD_MASK |
+> FSL_SAI_CR4_FRSZ_MASK,
+> +			   FSL_SAI_CR4_SYWD_MASK |
+> FSL_SAI_CR4_FRSZ_MASK |
+> +			   FSL_SAI_CR4_CHMOD_MASK,
+>  			   val_cr4);
+>  	regmap_update_bits(sai->regmap, FSL_SAI_xCR5(tx, ofs),
+>  			   FSL_SAI_CR5_WNW_MASK | FSL_SAI_CR5_W0W_MASK
+> |
+> diff --git a/sound/soc/fsl/fsl_sai.h b/sound/soc/fsl/fsl_sai.h
+> index f96f8d97489d..1e3b4a6889a8 100644
+> --- a/sound/soc/fsl/fsl_sai.h
+> +++ b/sound/soc/fsl/fsl_sai.h
+> @@ -119,6 +119,8 @@
+>  #define FSL_SAI_CR4_FRSZ_MASK	(0x1f << 16)
+>  #define FSL_SAI_CR4_SYWD(x)	(((x) - 1) << 8)
+>  #define FSL_SAI_CR4_SYWD_MASK	(0x1f << 8)
+> +#define FSL_SAI_CR4_CHMOD	BIT(5)
+> +#define FSL_SAI_CR4_CHMOD_MASK	GENMASK(5, 5)
+>  #define FSL_SAI_CR4_MF		BIT(4)
+>  #define FSL_SAI_CR4_FSE		BIT(3)
+>  #define FSL_SAI_CR4_FSP		BIT(1)
 
-Hmm. Maybe I'm just having problem with the backlight. I do see
-regulator failure:
-
-[    2.143920] cpcap-usb-phy cpcap-usb-phy.0: using device tree for
-GPIO lookup
-[    2.151031] of_get_named_gpiod_flags: parsed 'mode-gpios' property
-of node ')
-[    2.166015] gpio gpiochip2: Persistence not supported for GPIO 28
-214935] ------------[ cut here ]------------
-[    2.219604] WARNING: CPU: 0 PID: 1 at drivers/regulator/core.c:2040
-_regulat0
-[    2.228118] Modules linked in:
-[    2.231201] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-5.3.0-rc6-next-20190834
-[    2.238800] Hardware name: Generic OMAP4 (Flattened Device Tree)
-[    2.244873] [<c010f224>] (unwind_backtrace) from [<c010b4fc>]
-(show_stack+0x)
-[    2.252655] [<c010b4fc>] (show_stack) from [<c08ca584>]
-(dump_stack+0xa8/0xc)
-
-and some drm problems:
-
-[   59.303253] omap-mcbsp 40124000.mcbsp: CLKS: could not clk_get()
-prcm_fck
-[   59.311492] ------------[ cut here ]------------
-[   59.314666] WARNING: CPU: 0 PID: 2704 at
-drivers/gpu/drm/omapdrm/dss/hdmi4.c0
-[   59.325866] Modules linked in:
-[   59.328948] CPU: 0 PID: 2704 Comm: alsa-sink-HDMI  Tainted: G
-W      4
-[   59.337982] Hardware name: Generic OMAP4 (Flattened Device Tree)
-[   59.344757] [<c010f224>] (unwind_backtrace) from [<c010b4fc>]
-(show_stack+0x)
-[   59.352569] [<c010b4fc>] (show_stack) from [<c08ca584>]
-(dump_stack+0xa8/0xc)
-[   59.359832] [<c08ca584>] (dump_stack) from [<c012de94>]
-(__warn+0xc8/0xf0)
-
-But I get login prompt on the serial. And after I do:
-
-root@devuan:/sys/class/leds/lm3532::backlight# echo 255 > brightness
-
-I can even see X are running.
-
-Good so far :-).
-
-Best regards,							Pavel
-
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---JP+T4n/bALQSJXh8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1sILcACgkQMOfwapXb+vJyDACgkYHyNaGha8AzYvK35pKloee1
-m2EAoIvw/eYdUmGoDUBy6nO6XeLFC2/K
-=oxiI
------END PGP SIGNATURE-----
-
---JP+T4n/bALQSJXh8--
