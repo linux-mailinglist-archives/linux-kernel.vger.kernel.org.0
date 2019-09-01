@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C224DA4921
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 14:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C6B8A4922
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 14:24:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbfIAMX6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 08:23:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40446 "EHLO mail.kernel.org"
+        id S1728929AbfIAMYF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 08:24:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728894AbfIAMX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 08:23:56 -0400
+        id S1728894AbfIAMYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Sep 2019 08:24:00 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6580233A2;
-        Sun,  1 Sep 2019 12:23:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 579B42342E;
+        Sun,  1 Sep 2019 12:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567340635;
-        bh=OF/TsxDEcb3dU9Mj2bZdmKIZsYaInI6BV2UbgQolKis=;
+        s=default; t=1567340639;
+        bh=3ojWJkDiVmBLB6E6ua39FFAUfBtiVF8n/16tVWBch4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gRpyfGt459ximv2TH8EoIo15q0s4cdz8JlPOx1onvoLr4SHw5QqC+8EQDpYGpUQ6+
-         1l6uS6lhrWdHiyeyUmIfdJEsG3hE4tkKZ8AjKYdVtAezdjDDZMO7nCCnJAkWsg07JF
-         XkNaliqeKdCMLWAHUix84ziCHiG1ayT9vlqs/3xI=
+        b=y481QuGp4PjIlnDs4Txv0q2RvoIRit9hxqPw7Ph+o5k7BZj5hGAx1gs4Zh6OEMAz/
+         +xKy14SgUjIQYtLigyGPZvs/PfxFZGhZfpyiORAb0xqsryoiR4dkqPUTkX4JHdZiqU
+         ZDCnx+JFMN+sVuXZVAlFQPfCvV4QUzi3c4JG7wmA=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -35,9 +35,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Russ Anderson <russ.anderson@hpe.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 06/47] perf machine: Replace MAX_NR_CPUS with perf_env::nr_cpus_online
-Date:   Sun,  1 Sep 2019 09:22:45 -0300
-Message-Id: <20190901122326.5793-7-acme@kernel.org>
+Subject: [PATCH 07/47] perf header: Replace MAX_NR_CPUS with cpu__max_cpu()
+Date:   Sun,  1 Sep 2019 09:22:46 -0300
+Message-Id: <20190901122326.5793-8-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190901122326.5793-1-acme@kernel.org>
 References: <20190901122326.5793-1-acme@kernel.org>
@@ -50,9 +50,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kyle Meyer <meyerk@hpe.com>
 
-nr_cpus, the number of CPUs online during a record session bound by
-MAX_NR_CPUS, can be used as a dynamic alternative for MAX_NR_CPUS in
-__machine__synthesize_threads and machine__set_current_tid.
+The function cpu__max_cpu() returns the possible number of CPUs as
+defined in the sysfs and can be used as an alternative for MAX_NR_CPUS
+in write_cache.
+
+MAX_CACHES is replaced by cpu__max_cpu() * MAX_CACHE_LVL.
 
 Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
 Reviewed-by: Jiri Olsa <jolsa@redhat.com>
@@ -60,53 +62,37 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Russ Anderson <russ.anderson@hpe.com>
-Link: http://lore.kernel.org/lkml/20190827214352.94272-6-meyerk@stormcage.eag.rdlabs.hpecorp.net
+Link: http://lore.kernel.org/lkml/20190827214352.94272-7-meyerk@stormcage.eag.rdlabs.hpecorp.net
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ tools/perf/util/header.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 93483f1764d3..a1542b4c047b 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2619,7 +2619,9 @@ int __machine__synthesize_threads(struct machine *machine, struct perf_tool *too
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 0a842d9eff22..dd2bb0861ab1 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -1122,16 +1122,17 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
+ 	return 0;
+ }
  
- pid_t machine__get_current_tid(struct machine *machine, int cpu)
+-#define MAX_CACHES (MAX_NR_CPUS * 4)
++#define MAX_CACHE_LVL 4
+ 
+ static int write_cache(struct feat_fd *ff,
+ 		       struct evlist *evlist __maybe_unused)
  {
--	if (cpu < 0 || cpu >= MAX_NR_CPUS || !machine->current_tid)
-+	int nr_cpus = min(machine->env->nr_cpus_online, MAX_NR_CPUS);
-+
-+	if (cpu < 0 || cpu >= nr_cpus || !machine->current_tid)
- 		return -1;
+-	struct cpu_cache_level caches[MAX_CACHES];
++	u32 max_caches = cpu__max_cpu() * MAX_CACHE_LVL;
++	struct cpu_cache_level caches[max_caches];
+ 	u32 cnt = 0, i, version = 1;
+ 	int ret;
  
- 	return machine->current_tid[cpu];
-@@ -2629,6 +2631,7 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
- 			     pid_t tid)
- {
- 	struct thread *thread;
-+	int nr_cpus = min(machine->env->nr_cpus_online, MAX_NR_CPUS);
+-	ret = build_caches(caches, MAX_CACHES, &cnt);
++	ret = build_caches(caches, max_caches, &cnt);
+ 	if (ret)
+ 		goto out;
  
- 	if (cpu < 0)
- 		return -EINVAL;
-@@ -2636,14 +2639,14 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
- 	if (!machine->current_tid) {
- 		int i;
- 
--		machine->current_tid = calloc(MAX_NR_CPUS, sizeof(pid_t));
-+		machine->current_tid = calloc(nr_cpus, sizeof(pid_t));
- 		if (!machine->current_tid)
- 			return -ENOMEM;
--		for (i = 0; i < MAX_NR_CPUS; i++)
-+		for (i = 0; i < nr_cpus; i++)
- 			machine->current_tid[i] = -1;
- 	}
- 
--	if (cpu >= MAX_NR_CPUS) {
-+	if (cpu >= nr_cpus) {
- 		pr_err("Requested CPU %d too large. ", cpu);
- 		pr_err("Consider raising MAX_NR_CPUS\n");
- 		return -EINVAL;
 -- 
 2.21.0
 
