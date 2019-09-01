@@ -2,124 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B62AA4803
-	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 08:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC18AA480B
+	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 09:12:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbfIAG7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 02:59:45 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44272 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbfIAG7o (ORCPT
+        id S1728811AbfIAHMD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 03:12:03 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36105 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728783AbfIAHMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 02:59:44 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i18so5630822pgl.11
-        for <linux-kernel@vger.kernel.org>; Sat, 31 Aug 2019 23:59:44 -0700 (PDT)
+        Sun, 1 Sep 2019 03:12:02 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f19so5192053plr.3
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2019 00:12:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ksunGhRAcBahaT7W6iFOAG/wY/nv2ICL8Nw4My/hTvE=;
-        b=MIuk7Q+K0WGao5uA3+VT0F2UNG7iwCxqBSE3s47K4thfifDSTYwyUFGzXF/qoFpSBX
-         z3brLVeOyzjpV8s2XT1vH+xfHi3Xk5b/bNVvYDbcL7im++/PERMrJLdfY1eTyGKvxoGa
-         9eRAO748Aku/xxXieY04PW/9NSWhsVTk9dDiAesdTlqJ97ky109hWip/JU5/RI0xjc+k
-         ccUjrK3gp8td295bQnEGbwoPJf29paBnNDB+dBu3QGBDo80SiWzr2U4V9dc9I5oA5oR4
-         xCDChSYDqOBLbqsFNp1Db3FmpOlaJltxDG1YJPiAUxt+YmtWBB9VUPKMar0qExkrvx7D
-         HfNw==
+        d=sifive.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=vKTwNtpfVl/ofq1lszN6uNSXidoJKzu+EuY1m89tIBg=;
+        b=nkBdHU1bLcqhB0Pu13xor/HRU8pRbyHtm401VWyDRE09OfgA47ny3+8CsXdIm62QgZ
+         6sHuK8HnBmweVy81dP9vA2W6dmBiqC1Wb2mwfWlx3HwjwizUmBrxbTuqmLrYh5IQwUOg
+         IeW4PL+tq0zAmAdoH6vgWAyB2sWk8xxbWIW1BwIQWmrP6XANhXQsPToLBlSxOdm11P/L
+         TzcS/bG13nyF32qDIcsfaZk/QGb96vFzNz5+5Sno225zTqGNgLp80wKsvaWlFFr1wYY+
+         xpoqw0Ig04OhxhMkl+ckQhegRFM6pm1FtEXAlVhDyqCnen3hY4gdIqwBMcg3kQMN082o
+         tX7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ksunGhRAcBahaT7W6iFOAG/wY/nv2ICL8Nw4My/hTvE=;
-        b=qrX/SzyuLXN3IIHuhXCEtRIY8+3is1o2blpj4BtFGEQP16lgCsORoXeAEvYRzFi5IL
-         hTgIhpbH1TmadwJZn4caFaiTBomOmEd03UZO2JqgpCuVez/W7bMTe1e9q14lXC4YL+Pw
-         mDsO6cadnEC/8ic+BpOMkUxJ0BYfP17KRcuyHll6jGvQUPxtuaBQDLxdS3+njAX/AMvI
-         GeEUpFXyaa7tTbsxzXjDTgCBDcMvw1wYdUKj8XySxpeO/mnnHS6dte6QfjZFkkt1tSNl
-         sHa/PxysY1V5xm4jjQvvLjfYalWie9bpH9pdzYS6QwKwVHfJcV9gnn0ggWM+0SwvXrSc
-         ue4Q==
-X-Gm-Message-State: APjAAAXVE4i4xzRh3FCOgGhWkgL4iaZkx+o72rJk5yV7Q4gpIluxbQmm
-        9DdodWnZivUtWVZWbxk8R/I=
-X-Google-Smtp-Source: APXvYqyw3yfPJHl7dWO6wj8ONfTdvPpAfPr2Wvs2WIpDI5auHtERzSlOOZc8ng3grq9X4d+6S+qU9g==
-X-Received: by 2002:aa7:809a:: with SMTP id v26mr28118651pff.82.1567321184092;
-        Sat, 31 Aug 2019 23:59:44 -0700 (PDT)
-Received: from localhost.localdomain (ip-103-85-38-221.syd.xi.com.au. [103.85.38.221])
-        by smtp.gmail.com with ESMTPSA id i6sm3326055pfq.20.2019.08.31.23.59.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Aug 2019 23:59:43 -0700 (PDT)
-From:   Adam Zerella <adam.zerella@gmail.com>
-Cc:     Adam Zerella <adam.zerella@gmail.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] x86/xen/efi: Fix EFI variable 'name' type conversion
-Date:   Sun,  1 Sep 2019 16:58:28 +1000
-Message-Id: <20190901065828.7762-1-adam.zerella@gmail.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vKTwNtpfVl/ofq1lszN6uNSXidoJKzu+EuY1m89tIBg=;
+        b=W6BIQyLlzB4hoKyAgEIQxtfB7v8dxRY45xGCslJbCNlqTrAgMmsfaz1DmwH3QDUgRn
+         F2FVP8g3Unipq3V0vxPD5TJek5+SFzybiOBeSMOkciLG4vzB4wx3Y5Vpeez/cxmKYmAo
+         0RbCu5u7YptzKOqwHWxLktzZFW5e4pQa8k9HhPKmtld3RryArgVYaK+BxH/52TpDL4lp
+         rQXZVQ85ShtkpBgEv2fvjIUF4ud/CzOUnHm61X++tf3PUv4ebY6JL2uIZ+EAIwrKg7BH
+         4ic2NiiX1n8Xjdbb6pDswXfeMvYplEsK9bCixHORLA9+gIw60noO6KxGvsLVu4/5HVDL
+         L+Eg==
+X-Gm-Message-State: APjAAAW8c1SD9wor1ZMUagZWZxwf2QxM23ppuDcXdmZyoglKFnNnOdeM
+        5UFrQyzwy3weJShxBHDS02vpdA==
+X-Google-Smtp-Source: APXvYqwQny1Nmrz/C5sgtbnJWlSSGimvrNW83Dy1il6BLDq9WjeTfmJnQVGgEdpz2lT6oF5Pw/kQ/g==
+X-Received: by 2002:a17:902:f216:: with SMTP id gn22mr25329995plb.59.1567321921847;
+        Sun, 01 Sep 2019 00:12:01 -0700 (PDT)
+Received: from localhost.localdomain ([103.81.243.14])
+        by smtp.gmail.com with ESMTPSA id b185sm6968998pfg.14.2019.09.01.00.11.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 01 Sep 2019 00:12:01 -0700 (PDT)
+From:   Pragnesh Patel <pragnesh.patel@sifive.com>
+To:     palmer@sifive.com, paul.walmsley@sifive.com
+Cc:     Pragnesh Patel <pragnesh.patel@sifive.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: serial: Convert riscv,sifive-serial to json-schema
+Date:   Sun,  1 Sep 2019 12:39:21 +0530
+Message-Id: <1567321765-3738-1-git-send-email-pragnesh.patel@sifive.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This resolves a type conversion from 'char *' to 'unsigned short'.
-and static usage warning as hinted by Sparse.
+Convert the riscv,sifive-serial binding to DT schema using json-schema.
 
-Signed-off-by: Adam Zerella <adam.zerella@gmail.com>
+Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
 ---
- arch/x86/xen/efi.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ .../devicetree/bindings/serial/sifive-serial.txt   | 33 ------------
+ .../devicetree/bindings/serial/sifive-serial.yaml  | 62 ++++++++++++++++++++++
+ 2 files changed, 62 insertions(+), 33 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.yaml
 
-diff --git a/arch/x86/xen/efi.c b/arch/x86/xen/efi.c
-index 0d3365cb64de..1d4eff6c6f06 100644
---- a/arch/x86/xen/efi.c
-+++ b/arch/x86/xen/efi.c
-@@ -118,8 +118,8 @@ static enum efi_secureboot_mode xen_efi_get_secureboot(void)
- 	unsigned long size;
- 
- 	size = sizeof(secboot);
--	status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
--				  NULL, &size, &secboot);
-+	status = efi.get_variable((efi_char16_t *)L"SecureBoot",
-+				  &efi_variable_guid, NULL, &size, &secboot);
- 
- 	if (status == EFI_NOT_FOUND)
- 		return efi_secureboot_mode_disabled;
-@@ -128,8 +128,8 @@ static enum efi_secureboot_mode xen_efi_get_secureboot(void)
- 		goto out_efi_err;
- 
- 	size = sizeof(setupmode);
--	status = efi.get_variable(L"SetupMode", &efi_variable_guid,
--				  NULL, &size, &setupmode);
-+	status = efi.get_variable((efi_char16_t *)L"SetupMode",
-+				  &efi_variable_guid, NULL, &size, &setupmode);
- 
- 	if (status != EFI_SUCCESS)
- 		goto out_efi_err;
-@@ -139,8 +139,8 @@ static enum efi_secureboot_mode xen_efi_get_secureboot(void)
- 
- 	/* See if a user has put the shim into insecure mode. */
- 	size = sizeof(moksbstate);
--	status = efi.get_variable(L"MokSBStateRT", &shim_guid,
--				  NULL, &size, &moksbstate);
-+	status = efi.get_variable((efi_char16_t *)L"MokSBStateRT",
-+				  &shim_guid, NULL, &size, &moksbstate);
- 
- 	/* If it fails, we don't care why. Default to secure. */
- 	if (status != EFI_SUCCESS)
-@@ -158,7 +158,7 @@ static enum efi_secureboot_mode xen_efi_get_secureboot(void)
- 	return efi_secureboot_mode_unknown;
- }
- 
--void __init xen_efi_init(struct boot_params *boot_params)
-+static void __init xen_efi_init(struct boot_params *boot_params)
- {
- 	efi_system_table_t *efi_systab_xen;
- 
+diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.txt b/Documentation/devicetree/bindings/serial/sifive-serial.txt
+deleted file mode 100644
+index c86b1e5..0000000
+--- a/Documentation/devicetree/bindings/serial/sifive-serial.txt
++++ /dev/null
+@@ -1,33 +0,0 @@
+-SiFive asynchronous serial interface (UART)
+-
+-Required properties:
+-
+-- compatible: should be something similar to
+-	      "sifive,<chip>-uart" for the UART as integrated
+-	      on a particular chip, and "sifive,uart<version>" for the
+-	      general UART IP block programming model.	Supported
+-	      compatible strings as of the date of this writing are:
+-	      "sifive,fu540-c000-uart" for the SiFive UART v0 as
+-	      integrated onto the SiFive FU540 chip, or "sifive,uart0"
+-	      for the SiFive UART v0 IP block with no chip integration
+-	      tweaks (if any)
+-- reg: address and length of the register space
+-- interrupts: Should contain the UART interrupt identifier
+-- clocks: Should contain a clock identifier for the UART's parent clock
+-
+-
+-UART HDL that corresponds to the IP block version numbers can be found
+-here:
+-
+-https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
+-
+-
+-Example:
+-
+-uart0: serial@10010000 {
+-	compatible = "sifive,fu540-c000-uart", "sifive,uart0";
+-	interrupt-parent = <&plic0>;
+-	interrupts = <80>;
+-	reg = <0x0 0x10010000 0x0 0x1000>;
+-	clocks = <&prci PRCI_CLK_TLCLK>;
+-};
+diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.yaml b/Documentation/devicetree/bindings/serial/sifive-serial.yaml
+new file mode 100644
+index 0000000..56fa935
+--- /dev/null
++++ b/Documentation/devicetree/bindings/serial/sifive-serial.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/serial/sifive-serial.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: SiFive asynchronous serial interface (UART)
++
++maintainers:
++  - Pragnesh Patel <pragnesh.patel@sifive.com>
++  - Paul Walmsley  <paul.walmsley@sifive.com>
++  - Palmer Dabbelt <palmer@sifive.com>
++
++allOf:
++  - $ref: /schemas/serial.yaml#
++
++properties:
++  compatible:
++    enum:
++      - sifive,fu540-c000-uart
++      - sifive,uart0
++
++    description:
++      Should be something similar to "sifive,<chip>-uart"
++      for the UART as integrated on a particular chip,
++      and "sifive,uart<version>" for the general UART IP
++      block programming model.
++
++      UART HDL that corresponds to the IP block version
++      numbers can be found here -
++
++      https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++additionalProperties: false
++
++examples:
++  - |
++      #include <dt-bindings/clock/sifive-fu540-prci.h>
++      serial@10010000 {
++        compatible = "sifive,fu540-c000-uart", "sifive,uart0";
++        interrupt-parent = <&plic0>;
++        interrupts = <80>;
++        reg = <0x0 0x10010000 0x0 0x1000>;
++        clocks = <&prci PRCI_CLK_TLCLK>;
++      };
++
++...
 -- 
-2.21.0
+2.7.4
 
