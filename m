@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67735A4946
+	by mail.lfdr.de (Postfix) with ESMTP id DCED1A4947
 	for <lists+linux-kernel@lfdr.de>; Sun,  1 Sep 2019 14:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbfIAMZ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 08:25:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43468 "EHLO mail.kernel.org"
+        id S1729378AbfIAM0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 08:26:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729348AbfIAMZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 08:25:54 -0400
+        id S1729361AbfIAMZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Sep 2019 08:25:57 -0400
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D538321897;
-        Sun,  1 Sep 2019 12:25:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B3732339D;
+        Sun,  1 Sep 2019 12:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567340752;
-        bh=Jb1Et4bkfQj1QBHRSEuF1HC4NzDF9Z4bgRF6wQLDC2o=;
+        s=default; t=1567340756;
+        bh=9HV/on95HpmIwItesTLjB45Z8+DGSGWnM5TZpiLKMcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EAhOemNOL595EsX1kLjVq+f1wlYv+rVXF2J6aVNn6hb/G0/1Zwo9Z0sxwmyLJmWST
-         +JT6c0ZwlMNiY33p+cckKjpSIZg4HbVS4rMfND+L29M1qDPUlXEjs/v1aFpHiazDVr
-         bKxH41XlE6iagPVip1ZOycPd4lv18CqhOhRaKybA=
+        b=N/sbmOnsyWNbCnUUDQXZIOSmcWG2t0cEkZh2jbvw+9Q+jRl32BkXT81H9qsb6NHRp
+         VrwATvFI30F5fSbuGdtfT0NaDCjboNCLHl/9bpbMRU/EcFj9Qb7B/0MEr8s+Pry6eB
+         sMNlhurN+ZGLnNlOIt9gbcbkaQ6GL4KrNilCKwAI=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -34,9 +34,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 46/47] objtool: Update sync-check.sh from perf's check-headers.sh
-Date:   Sun,  1 Sep 2019 09:23:25 -0300
-Message-Id: <20190901122326.5793-47-acme@kernel.org>
+Subject: [PATCH 47/47] objtool: Ignore intentional differences for the x86 insn decoder
+Date:   Sun,  1 Sep 2019 09:23:26 -0300
+Message-Id: <20190901122326.5793-48-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190901122326.5793-1-acme@kernel.org>
 References: <20190901122326.5793-1-acme@kernel.org>
@@ -49,33 +49,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-To allow using the -I trick that will be needed for checking the x86
-insn decoder files.
-
-Without the specific -I lines we still get the same warnings as before:
-
-  $ make -C tools/objtool/ clean ; make -C tools/objtool/
-  make: Entering directory '/home/acme/git/perf/tools/objtool'
-    CLEAN    objtool
-  find  -name '*.o' -delete -o -name '\.*.cmd' -delete -o -name '\.*.d' -delete
-  rm -f arch/x86/inat-tables.c fixdep
-  <SNIP>
-    LD       objtool-in.o
-  make[1]: Leaving directory '/home/acme/git/perf/tools/objtool'
-  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/inat.h' differs from latest version at 'arch/x86/include/asm/inat.h'
-  diff -u tools/arch/x86/include/asm/inat.h arch/x86/include/asm/inat.h
-  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/insn.h' differs from latest version at 'arch/x86/include/asm/insn.h'
-  diff -u tools/arch/x86/include/asm/insn.h arch/x86/include/asm/insn.h
-  Warning: Kernel ABI header at 'tools/arch/x86/lib/inat.c' differs from latest version at 'arch/x86/lib/inat.c'
-  diff -u tools/arch/x86/lib/inat.c arch/x86/lib/inat.c
-  Warning: Kernel ABI header at 'tools/arch/x86/lib/insn.c' differs from latest version at 'arch/x86/lib/insn.c'
-  diff -u tools/arch/x86/lib/insn.c arch/x86/lib/insn.c
-  /home/acme/git/perf/tools/objtool
-    LINK     objtool
-  make: Leaving directory '/home/acme/git/perf/tools/objtool'
-  $
-
-The next patch will add the -I lines for those files.
+Since we need to build this in !x86, we need to explicitely use the x86
+files, not things like asm/insn.h, so we intentionally differ from the
+master copy in the kernel sources, add -I diff directives to ignore just
+these differences when checking for drift.
 
 Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Link: http://lore.kernel.org/lkml/20190830193109.p7jagidsrahoa4pn@treble
@@ -84,61 +61,39 @@ Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/n/tip-vu3p38mnxlwd80rlsnjkqcf2@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-j965m9b7xtdc83em3twfkh9o@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/objtool/sync-check.sh | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+ tools/objtool/sync-check.sh | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/tools/objtool/sync-check.sh b/tools/objtool/sync-check.sh
-index 66f1575b80f3..6fa87de1c765 100755
+index 6fa87de1c765..0a832e265a50 100755
 --- a/tools/objtool/sync-check.sh
 +++ b/tools/objtool/sync-check.sh
-@@ -12,18 +12,39 @@ arch/x86/lib/x86-opcode-map.txt
+@@ -2,12 +2,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ FILES='
+-arch/x86/include/asm/inat.h
+ arch/x86/include/asm/inat_types.h
+-arch/x86/include/asm/insn.h
+ arch/x86/include/asm/orc_types.h
+-arch/x86/lib/inat.c
+-arch/x86/lib/insn.c
+ arch/x86/lib/x86-opcode-map.txt
  arch/x86/tools/gen-insn-attr-x86.awk
  '
- 
--check()
--{
--	local file=$1
-+check_2 () {
-+  file1=$1
-+  file2=$2
- 
--	diff ../$file ../../$file > /dev/null ||
--		echo "Warning: synced file at 'tools/objtool/$file' differs from latest kernel version at '$file'"
-+  shift
-+  shift
-+
-+  cmd="diff $* $file1 $file2 > /dev/null"
-+
-+  test -f $file2 && {
-+    eval $cmd || {
-+      echo "Warning: Kernel ABI header at '$file1' differs from latest version at '$file2'" >&2
-+      echo diff -u $file1 $file2
-+    }
-+  }
-+}
-+
-+check () {
-+  file=$1
-+
-+  shift
-+
-+  check_2 tools/$file $file $*
- }
- 
- if [ ! -d ../../kernel ] || [ ! -d ../../tools ] || [ ! -d ../objtool ]; then
- 	exit 0
- fi
- 
-+cd ../..
-+
- for i in $FILES; do
+@@ -47,4 +43,9 @@ for i in $FILES; do
    check $i
  done
+ 
++check arch/x86/include/asm/inat.h     '-I "^#include [\"<]\(asm/\)*inat_types.h[\">]"'
++check arch/x86/include/asm/insn.h     '-I "^#include [\"<]\(asm/\)*inat.h[\">]"'
++check arch/x86/lib/inat.c             '-I "^#include [\"<]\(../include/\)*asm/insn.h[\">]"'
++check arch/x86/lib/insn.c             '-I "^#include [\"<]\(../include/\)*asm/in\(at\|sn\).h[\">]"'
 +
-+cd -
+ cd -
 -- 
 2.21.0
 
