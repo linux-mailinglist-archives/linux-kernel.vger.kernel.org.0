@@ -2,93 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED99DA5202
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EBA6A5207
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:42:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730737AbfIBIk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:40:29 -0400
-Received: from mail-eopbgr40112.outbound.protection.outlook.com ([40.107.4.112]:60152
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729870AbfIBIk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:40:28 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kt3aocTrOYM6B4otj6wFqGqy5YNS2LW8SJ6kt7TTbaNG66+xWuIUgvIVO08T5AwROJXtRty+6RYzpJslm78Xq3YfAXBemWVBOQaSnWNOmoDM8ZywBo8f0ESPJx513dahqwFgxQhaD+9Umr889LYd0iB8zjYcYZqgVJa02pS/WdYghjqL/OUhwAgUQ22AccWoKbFPMKkHQW5ZW6jR+eAqOVI6GqTQxAtmJIXQt4QWItrU38auKpHWkaPlkrBEFdFEHTidvUzbYTBCTa/dsF29WD2lSCk/rUZjg8OKtIEF7dYdSAr3Etx9k7Ck4FRhAubqmZ0GlMnzKl151jZgU0yALw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NYS+ze3M6QQcY2TTd/G6Wx5gv8uDYYgVBYNIeM44HvQ=;
- b=m1+2FffIgRkF7meVSygeec302Mfb/wD3N0BaiFPqE0TxC79LuzK9Dz2YJJB5gQXWT00t1EHvpl2KeKWkHz17u3rIJ39CiBZu9R3OUZeprUa/2L8ldQ2DctR5OWwjRPxQc7yFCYQT0I6nDFpq66ei35jjoOxcur2ExAxF/fu7NJi8zp0liU517xZayptD7Pk3f1lvfmJ62KPsBiMev0486yDibsRRrqXTuUWRUNZQk8wADukG1OUVNg/DNON0pxj67AIYXtkNPXhZW1A1diH1xGuKYQFP+pFDZN5GIL10TUKzTaNbCOjjChZTdqKFDrpxajKS4+ijEVzCTNg+wMDABQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
- dkim=pass header.d=habana.ai; arc=none
+        id S1730601AbfIBIm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:42:28 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34260 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbfIBIm2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:42:28 -0400
+Received: by mail-wm1-f67.google.com with SMTP id y135so9300943wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 01:42:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NYS+ze3M6QQcY2TTd/G6Wx5gv8uDYYgVBYNIeM44HvQ=;
- b=fjUu1cw6IzdYmn+MwjEBSuJNxRdeCCuqapgCM3Ocwy+bMbJqSjPSBiHDH7OViiUIXIp/gYZAIfSQDGuXCpP9gAboNLKQT0q8eU9LALXNgM/TGcr4JsCtZlN1IwLwR7JkD2h1I9GYoQxxolKLbamFA+uVSnsncLnCBCpHf0jRWP4=
-Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com (52.133.8.16) by
- AM6PR0202MB3287.eurprd02.prod.outlook.com (52.133.30.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.21; Mon, 2 Sep 2019 08:40:25 +0000
-Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com
- ([fe80::4171:a73:3c96:2c5b]) by AM6PR0202MB3382.eurprd02.prod.outlook.com
- ([fe80::4171:a73:3c96:2c5b%7]) with mapi id 15.20.2220.021; Mon, 2 Sep 2019
- 08:40:25 +0000
-From:   Omer Shpigelman <oshpigelman@habana.ai>
-To:     Oded Gabbay <oded.gabbay@gmail.com>,
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S5ic/apzAhNJMizzmg7Z7Kr644vcqN0qt9Jj+IPyHVQ=;
+        b=yGzShiFi4OIXKk+w4whGH6Owvtgm8Qd1cu7cDJrrkGcXiQm214cj6WNAbOTu7fFPEw
+         GCP022IcVghaj9dwxIZqvECi/UhpaT0w37tZBBurYF9KsyJfUUz0/zWHNqVORi24HW/g
+         bVn84aagL7tmdqT5nME7DqTCDaQj2bKmWaVazq6XcPfnj/SZKx2bq7u+dpdToARCGy1/
+         yQ2bEZw/CZGHgpSBhwZggljCcs8Y713a37AztcfWwT775I5YW5rIxHXVbtQmgqodAeJ8
+         IKnwRQrExJr8Cue3l/jqdvvETvU+uwwc+bcKYRB014esHABky3gWkdyIrs2L8qS3nqWj
+         ZBuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=S5ic/apzAhNJMizzmg7Z7Kr644vcqN0qt9Jj+IPyHVQ=;
+        b=LIWNi3B9rV0iuChWv6qB+R4W4gwgBBOz3YoL6WoKzM0Q14LxSOs/TjSCOtYyahBqUA
+         2VqfuF4BsHDs2JbhF/jesJ/smav+TyTPkff3rw/9ox0rLKMLWK3UhzTpTlAwHT5ZyvCL
+         JROfRlb4aCPskhyf5EBcHvjQuhMM8olc7kbNiClj4fNb4X25+dHmpQIF5sNKDSQ/G+mW
+         zWKDeYSVyVmZDDwd9t1AI0UMeDIx2nbwhoxhmdosCJPsJnN9mscLZ2thof0wId7dnITt
+         EGPIhx3Hw6ChgCnCdyy0Efzea3lE1mwW9RlDeXbHkhxjuhpwalfxIb1ZCYkaNh5EfOEF
+         21qA==
+X-Gm-Message-State: APjAAAV3vCxBN+hfJqCKvXe4iF9+vfpcJc/tT0KxrswQ/xIvZ341wyEA
+        c5G6LjKLpqkwKEUapEL95sBfQLTRQko=
+X-Google-Smtp-Source: APXvYqz+aBBsr2Bc3zTwypTpEdxjgwz+EUORZ14RZUx4Plmq6rEurTvNqhd6/VnNEtWaKDDwor9L7Q==
+X-Received: by 2002:a1c:1b0b:: with SMTP id b11mr34081913wmb.82.1567413745086;
+        Mon, 02 Sep 2019 01:42:25 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:c915:f063:f264:5032? ([2a01:e34:ed2f:f020:c915:f063:f264:5032])
+        by smtp.googlemail.com with ESMTPSA id z5sm11603486wrl.33.2019.09.02.01.42.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 02 Sep 2019 01:42:24 -0700 (PDT)
+Subject: Re: [PATCH 5/6] dt-bindings: timer: renesas: tmu: Document r8a774a1
+ bindings
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tomer Tayar <ttayar@habana.ai>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH 2/2] habanalabs: show correct id in error print
-Thread-Topic: [PATCH 2/2] habanalabs: show correct id in error print
-Thread-Index: AQHVYWMYyHgeupmj4k6wAz0op/ACbacYEToQ
-Date:   Mon, 2 Sep 2019 08:40:25 +0000
-Message-ID: <AM6PR0202MB3382496B88E3E7C39DE3377BB8BE0@AM6PR0202MB3382.eurprd02.prod.outlook.com>
-References: <20190902075024.27302-1-oded.gabbay@gmail.com>
- <20190902075024.27302-2-oded.gabbay@gmail.com>
-In-Reply-To: <20190902075024.27302-2-oded.gabbay@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=oshpigelman@habana.ai; 
-x-originating-ip: [31.154.190.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a5bbb5c7-2460-4048-667b-08d72f813358
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR0202MB3287;
-x-ms-traffictypediagnostic: AM6PR0202MB3287:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR0202MB32879768E923893BD13E1BB9B8BE0@AM6PR0202MB3287.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1201;
-x-forefront-prvs: 01480965DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(136003)(376002)(396003)(366004)(346002)(189003)(199004)(81156014)(81166006)(52536014)(476003)(305945005)(7696005)(74316002)(66446008)(9686003)(6246003)(11346002)(5660300002)(26005)(2501003)(66066001)(86362001)(66946007)(64756008)(256004)(66476007)(7736002)(558084003)(66556008)(2906002)(6436002)(14454004)(316002)(3846002)(8676002)(76176011)(446003)(102836004)(8936002)(110136005)(4326008)(55016002)(71190400001)(71200400001)(486006)(53936002)(186003)(25786009)(478600001)(6116002)(6506007)(33656002)(6636002)(99286004)(76116006)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3287;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: H/16O39orCvgWQ3KO9KvxPwsjfgQ8rqF4hGH1ul6l0JfpuuuYHeHJ8B++i8apI4N57lvZiIh6r22a8N1FVxdgTvORvCAiGx17f+/iXr/I/d7g1Av10p+b79n95kJjtpod5g3YFPGjB1ZUh+MLQsqpXDKSOmr09xC8lOizQA7RuRP8PqplZ03EKYsaTmyTNVsyrVhVqs5PUqpJHdG3/9J6wriozxzNzB+nHFPCPYk8Gwwu0DCRU9N3amKevwGlfTBmIgYjE8Uyr3bku0fgCD4hO6ia84DRMVeW5+hoS4LYXNVeo154jYgWugVBH4/a9nmnGpeTGJZ2kzx23LQC5ONuCpXnI0zpdXazBnaWWa6hay2nLo8UQ9elrt5M0JnGB/6phf6qPXoj1Q7otIYUy8BMt2Xe7pyIV0a3CdFWgXAkMI=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+References: <1560258401-9517-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1560258401-9517-6-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR01MB1770BF952221F50BBCDF3765C0BD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <20190902083224.mn5agbxf5akhhoqg@verge.net.au>
+ <CAMuHMdVuj1w_bQVPySpspk4OJPN1cNSF-JW6XKExTEdZbtALgw@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
+ mQINBFv/yykBEADDdW8RZu7iZILSf3zxq5y8YdaeyZjI/MaqgnvG/c3WjFaunoTMspeusiFE
+ sXvtg3ehTOoyD0oFjKkHaia1Zpa1m/gnNdT/WvTveLfGA1gH+yGes2Sr53Ht8hWYZFYMZc8V
+ 2pbSKh8wepq4g8r5YI1XUy9YbcTdj5mVrTklyGWA49NOeJz2QbfytMT3DJmk40LqwK6CCSU0
+ 9Ed8n0a+vevmQoRZJEd3Y1qXn2XHys0F6OHCC+VLENqNNZXdZE9E+b3FFW0lk49oLTzLRNIq
+ 0wHeR1H54RffhLQAor2+4kSSu8mW5qB0n5Eb/zXJZZ/bRiXmT8kNg85UdYhvf03ZAsp3qxcr
+ xMfMsC7m3+ADOtW90rNNLZnRvjhsYNrGIKH8Ub0UKXFXibHbafSuq7RqyRQzt01Ud8CAtq+w
+ P9EftUysLtovGpLSpGDO5zQ++4ZGVygdYFr318aGDqCljKAKZ9hYgRimPBToDedho1S1uE6F
+ 6YiBFnI3ry9+/KUnEP6L8Sfezwy7fp2JUNkUr41QF76nz43tl7oersrLxHzj2dYfWUAZWXva
+ wW4IKF5sOPFMMgxoOJovSWqwh1b7hqI+nDlD3mmVMd20VyE9W7AgTIsvDxWUnMPvww5iExlY
+ eIC0Wj9K4UqSYBOHcUPrVOKTcsBVPQA6SAMJlt82/v5l4J0pSQARAQABtCpEYW5pZWwgTGV6
+ Y2FubyA8ZGFuaWVsLmxlemNhbm9AbGluYXJvLm9yZz6JAlcEEwEIAEECGwEFCwkIBwIGFQoJ
+ CAsCBBYCAwECHgECF4ACGQEWIQQk1ibyU76eh+bOW/SP9LjScWdVJwUCXAkeagUJDRnjhwAK
+ CRCP9LjScWdVJ+vYEACStDg7is2JdE7xz1PFu7jnrlOzoITfw05BurgJMqlvoiFYt9tEeUMl
+ zdU2+r0cevsmepqSUVuUvXztN8HA/Ep2vccmWnCXzlE56X1AK7PRRdaQd1SK/eVsJVaKbQTr
+ ii0wjbs6AU1uo0LdLINLjwwItnQ83/ttbf1LheyN8yknlch7jn6H6J2A/ORZECTfJbG4ecVr
+ 7AEm4A/G5nyPO4BG7dMKtjQ+crl/pSSuxV+JTDuoEWUO+YOClg6azjv8Onm0cQ46x9JRtahw
+ YmXdIXD6NsJHmMG9bKmVI0I7o5Q4XL52X6QxkeMi8+VhvqXXIkIZeizZe5XLTYUvFHLdexzX
+ Xze0LwLpmMObFLifjziJQsLP2lWwOfg6ZiH8z8eQJFB8bYTSMqmfTulB61YO0mhd676q17Y7
+ Z7u3md3CLH7rh61wU1g7FcLm9p5tXXWWaAud9Aa2kne2O3sirO0+JhsKbItz3d9yXuWgv6w3
+ heOIF0b91JyrY6tjz42hvyjxtHywRr4cdAEQa2S7HeQkw48BQOG6PqQ9d3FYU34pt3WFJ19V
+ A5qqAiEjqc4N0uPkC79W32yLGdyg0EEe8v0Uhs3CxM9euGg37kr5fujMm+akMtR1ENITo+UI
+ fgsxdwjBD5lNb/UGodU4QvPipB/xx4zz7pS5+2jGimfLeoe7mgGJxrkBDQRb/8z6AQgAvSkg
+ 5w7dVCSbpP6nXc+i8OBz59aq8kuL3YpxT9RXE/y45IFUVuSc2kuUj683rEEgyD7XCf4QKzOw
+ +XgnJcKFQiACpYAowhF/XNkMPQFspPNM1ChnIL5KWJdTp0DhW+WBeCnyCQ2pzeCzQlS/qfs3
+ dMLzzm9qCDrrDh/aEegMMZFO+reIgPZnInAcbHj3xUhz8p2dkExRMTnLry8XXkiMu9WpchHy
+ XXWYxXbMnHkSRuT00lUfZAkYpMP7La2UudC/Uw9WqGuAQzTqhvE1kSQe0e11Uc+PqceLRHA2
+ bq/wz0cGriUrcCrnkzRmzYLoGXQHqRuZazMZn2/pSIMZdDxLbwARAQABiQI2BBgBCAAgFiEE
+ JNYm8lO+nofmzlv0j/S40nFnVScFAlv/zPoCGwwACgkQj/S40nFnVSf4OhAAhWJPjgUu6VfS
+ mV53AUGIyqpOynPvSaMoGJzhNsDeNUDfV5dEZN8K4qjuz2CTNvGIyt4DE/IJbtasvi5dW4wW
+ Fl85bF6xeLM0qpCaZtXAsU5gzp3uT7ut++nTPYW+CpfYIlIpyOIzVAmw7rZbfgsId2Lj7g1w
+ QCjvGHw19mq85/wiEiZZNHeJQ3GuAr/uMoiaRBnf6wVcdpUTFMXlkE8/tYHPWbW0YKcKFwJ3
+ uIsNxZUe6coNzYnL0d9GK2fkDoqKfKbFjNhW9TygfeL2Qhk949jMGQudFS3zlwvN9wwVaC0i
+ KC/D303DiTnB0WFPT8CltMAZSbQ1WEWfwqxhY26di3k9pj+X3BfOmDL9GBlnRTSgwjqjqzpG
+ VZsWouuTfXd9ZPPzvYdUBrlTKgojk1C8v4fhSqb+ard+bZcwNp8Tzl/EI9ygw6lYEATGCUYI
+ Wco+fjehCgG1FWvWavMU+jLNs8/8uwj1u+BtRpWFj4ug/VaDDIuiApKPwl1Ge+zoC7TLMtyb
+ c00W5/8EckjmNgLDIINEsOsidMH61ZOlwDKCxo2lbV+Ij078KHBIY76zuHlwonEQaHLCAdqm
+ WiI95pYZNruAJEqZCpvXDdClmBVMZRDRePzSljCvoHxn7ArEt3F14mabn2RRq/hqB8IhC6ny
+ xAEPQIZaxxginIFYEziOjR65AQ0EW//NCAEIALcJqSmQdkt04vIBD12dryF6WcVWYvVwhspt
+ RlZbZ/NZ6nzarzEYPFcXaYOZCOCv+Xtm6hB8fh5XHd7Y8CWuZNDVp3ozuqwTkzQuux/aVdNb
+ Fe4VNeKGN2FK1aNlguAXJNCDNRCpWgRHuU3rWwGUMgentJogARvxfex2/RV/5mzYG/N1DJKt
+ F7g1zEcQD3JtK6WOwZXd+NDyke3tdG7vsNRFjMDkV4046bOOh1BKbWYu8nL3UtWBxhWKx3Pu
+ 1VOBUVwL2MJKW6umk+WqUNgYc2bjelgcTSdz4A6ZhJxstUO4IUfjvYRjoqle+dQcx1u+mmCn
+ 8EdKJlbAoR4NUFZy7WUAEQEAAYkDbAQYAQgAIBYhBCTWJvJTvp6H5s5b9I/0uNJxZ1UnBQJb
+ /80IAhsCAUAJEI/0uNJxZ1UnwHQgBBkBCAAdFiEEGn3N4YVz0WNVyHskqDIjiipP6E8FAlv/
+ zQgACgkQqDIjiipP6E+FuggAl6lkO7BhTkrRbFhrcjCm0bEoYWnCkQtX9YFvElQeA7MhxznO
+ BY/r1q2Uf6Ifr3YGEkLnME/tQQzUwznydM94CtRJ8KDSa1CxOseEsKq6B38xJtjgYSxNdgQb
+ EIfCzUHIGfk94AFKPdV6pqqSU5VpPUagF+JxiAkoEPOdFiQCULFNRLMsOtG7yp8uSyJRp6Tz
+ cQ+0+1QyX1krcHBUlNlvfdmL9DM+umPtbS9F6oRph15mvKVYiPObI1z8ymHoc68ReWjhUuHc
+ IDQs4w9rJVAyLypQ0p+ySDcTc+AmPP6PGUayIHYX63Q0KhJFgpr1wH0pHKpC78DPtX1a7HGM
+ 7MqzQ4NbD/4oLKKwByrIp12wLpSe3gDQPxLpfGgsJs6BBuAGVdkrdfIx2e6ENnwDoF0Veeji
+ BGrVmjVgLUWV9nUP92zpyByzd8HkRSPNZNlisU4gnz1tKhQl+j6G/l2lDYsqKeRG55TXbu9M
+ LqJYccPJ85B0PXcy63fL9U5DTysmxKQ5RgaxcxIZCM528ULFQs3dfEx5euWTWnnh7pN30RLg
+ a+0AjSGd886Bh0kT1Dznrite0dzYlTHlacbITZG84yRk/gS7DkYQdjL8zgFr/pxH5CbYJDk0
+ tYUhisTESeesbvWSPO5uNqqy1dAFw+dqRcF5gXIh3NKX0gqiAA87NM7nL5ym/CNpJ7z7nRC8
+ qePOXubgouxumi5RQs1+crBmCDa/AyJHKdG2mqCt9fx5EPbDpw6Zzx7hgURh4ikHoS7/tLjK
+ iqWjuat8/HWc01yEd8rtkGuUcMqbCi1XhcAmkaOnX8FYscMRoyyMrWClRZEQRokqZIj79+PR
+ adkDXtr4MeL8BaB7Ij2oyRVjXUwhFQNKi5Z5Rve0a3zvGkkqw8Mz20BOksjSWjAF6g9byukl
+ CUVjC03PdMSufNLK06x5hPc/c4tFR4J9cLrV+XxdCX7r0zGos9SzTPGNuIk1LK++S3EJhLFj
+ 4eoWtNhMWc1uiTf9ENza0ntqH9XBWEQ6IA1gubCniGG+Xg==
+Message-ID: <244ca7ac-54d1-d07d-762f-e832b0e2a267@linaro.org>
+Date:   Mon, 2 Sep 2019 10:42:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5bbb5c7-2460-4048-667b-08d72f813358
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2019 08:40:25.4213
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lXA/xMAwJLz/AvJ1/uLFmAuGVkE4cGIJP2tQMO63kU80i754NkdqfH+AdMN49wOgMOQG2I3JfLAsXG9JJKSgOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3287
+In-Reply-To: <CAMuHMdVuj1w_bQVPySpspk4OJPN1cNSF-JW6XKExTEdZbtALgw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogT2RlZCBHYWJiYXkgPG9kZWQuZ2FiYmF5QGdtYWlsLmNvbT4NClNlbnQ6IE1vbmRheSwg
-MiBTZXB0ZW1iZXIgMjAxOSAxMDo1MA0KDQo+IElmIHRoZSBpbml0aWFsaXphdGlvbiBvZiBhIGRl
-dmljZSBmYWlsZWQsIHRoZSBkcml2ZXIgcHJpbnRzIGFuIGVycm9yIG1lc3NhZ2Ugd2l0aA0KPiB0
-aGUgaWQgb2YgdGhlIGRldmljZS4gVGhlIGRldmljZSBpbmRleCBvbiB0aGUgZmlsZSBzeXN0ZW0g
-aXMgdGhhdCBpZCBkaXZpZGVkIGJ5DQo+IDIuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBPZGVkIEdh
-YmJheSA8b2RlZC5nYWJiYXlAZ21haWwuY29tPg0KDQpSZXZpZXdlZC1ieTogT21lciBTaHBpZ2Vs
-bWFuIDxvc2hwaWdlbG1hbkBoYWJhbmEuYWk+DQo=
+On 02/09/2019 10:39, Geert Uytterhoeven wrote:
+> On Mon, Sep 2, 2019 at 10:32 AM Simon Horman <horms@verge.net.au> wrote:
+>> On Fri, Aug 30, 2019 at 10:37:54AM +0000, Fabrizio Castro wrote:
+>>> This patch has been reviewed by Geert, Simon, and Rob, so I think it's ok to apply.
+>>> Is anybody willing to take this patch?
+>>
+>> <2c> I think Geert can take this </2c>
+> 
+> If the timer people won't take it for v5.4, I can queue it in renesas-devel
+> for v5.5, in my branch for DT binding updates for subsystems that are
+> less DT-centric.
+
+Please do, thanks
+
+Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
