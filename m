@@ -2,66 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 816CFA5A93
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 17:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B5ABA5A9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 17:34:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbfIBPaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 11:30:10 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:43218 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfIBPaJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 11:30:09 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.1 #3 (Red Hat Linux))
-        id 1i4oHM-0000An-6r; Mon, 02 Sep 2019 15:30:04 +0000
-Date:   Mon, 2 Sep 2019 16:30:04 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     David Howells <dhowells@redhat.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Hajnoczi <stefanha@redhat.com>
-Subject: Re: linux-next: manual merge of the vfs tree with the fuse tree
-Message-ID: <20190902153004.GD1131@ZenIV.linux.org.uk>
-References: <20190830130119.446e7389@canb.auug.org.au>
- <CAJfpeguxmJvCV+PXr=wz5HXONKv4RDmZ1LpYNEqAtvw_smP5Ag@mail.gmail.com>
- <CAJfpegsijOi6TdRcObGSAJ+tS0JiZky=v6Wqh5u8RZTzi6tkjA@mail.gmail.com>
+        id S1726417AbfIBPdy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 11:33:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38384 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726375AbfIBPdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 11:33:54 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47C8A2087E;
+        Mon,  2 Sep 2019 15:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567438433;
+        bh=pghzbeWl3KPThv+7pJa01BvuqNz1rWFn0NoduQIlb60=;
+        h=Date:From:To:Cc:Subject:From;
+        b=IIh86nBJ251zD6ZEuIvhY1KFqzBeW54iEAQF21569JuTQAfNlxuzc+skPYuX+g9/p
+         0PCumn2ggdS8lHtYbQe1UEnLW4eZZsXvoTTZZP/qrv/14tv1zGt9qGdTTbZZGz1c7G
+         C1mDiQ0FO3sR44M2PbKYIO+Ic/HLS6kofJ6S3mWQ=
+Date:   Mon, 2 Sep 2019 17:33:51 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB fixes for 5.3-rc7
+Message-ID: <20190902153351.GA9779@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegsijOi6TdRcObGSAJ+tS0JiZky=v6Wqh5u8RZTzi6tkjA@mail.gmail.com>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 05:10:27PM +0200, Miklos Szeredi wrote:
-> On Mon, Sep 2, 2019 at 11:00 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Fri, Aug 30, 2019 at 5:01 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Hi all,
-> > >
-> > > Today's linux-next merge of the vfs tree got a conflict in:
-> > >
-> > >   fs/fuse/inode.c
-> > >
-> > > between commit:
-> > >
-> > >   1458e5e9f99a ("fuse: extract fuse_fill_super_common()")
-> > >
-> > > from the fuse tree and commit:
-> > >
-> > >   2ad9ab0f7429 ("vfs: Convert fuse to use the new mount API")
-> > >   48ceb15f98c8 ("vfs: Move the subtype parameter into fuse")
-> >
-> > And the latter is b0rked anyway.
-> 
-> Both, actually.
-> 
-> Pushed fixed ones to fuse.git#for-next.
+The following changes since commit d1abaeb3be7b5fa6d7a1fbbd2e14e3310005c4c1:
 
-... originals cheerfully dropped; will be gone in today's push to
-vfs.git#for-next.
+  Linux 5.3-rc5 (2019-08-18 14:31:08 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.3-rc7
+
+for you to fetch changes up to 1426bd2c9f7e3126e2678e7469dca9fd9fc6dd3e:
+
+  USB: cdc-wdm: fix race between write and disconnect due to flag abuse (2019-08-28 22:48:38 +0200)
+
+----------------------------------------------------------------
+USB fixes for 5.3-rc7
+
+Here are some small USB fixes that have been in linux-next this past
+week for 5.3-rc7
+
+They fix the usual xhci, syzbot reports, and other small issues that
+have come up last week.
+
+All have been in linux-next with no reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Colin Ian King (1):
+      typec: tcpm: fix a typo in the comparison of pdo_max_voltage
+
+Geert Uytterhoeven (1):
+      usb: host: xhci: rcar: Fix typo in compatible string matching
+
+Gustavo A. R. Silva (1):
+      usb: udc: lpc32xx: silence fall-through warning
+
+Henk van der Laan (1):
+      usb-storage: Add new JMS567 revision to unusual_devs
+
+Kai-Heng Feng (2):
+      USB: storage: ums-realtek: Update module parameter description for auto_delink_en
+      USB: storage: ums-realtek: Whitelist auto-delink support
+
+Nagarjuna Kristam (1):
+      usb: host: xhci-tegra: Set DMA mask correctly
+
+Oliver Neukum (2):
+      usbtmc: more sanity checking for packet size
+      USB: cdc-wdm: fix race between write and disconnect due to flag abuse
+
+Peter Chen (1):
+      usb: chipidea: udc: don't do hardware access if gadget has stopped
+
+Schmid, Carsten (1):
+      usb: hcd: use managed device resources
+
+Yoshihiro Shimoda (1):
+      usb: host: ohci: fix a race condition between shutdown and irq
+
+ drivers/usb/chipidea/udc.c           | 32 ++++++++++++++++++++++++--------
+ drivers/usb/class/cdc-wdm.c          | 16 ++++++++++++----
+ drivers/usb/class/usbtmc.c           |  3 +++
+ drivers/usb/core/hcd-pci.c           | 30 ++++++++----------------------
+ drivers/usb/gadget/udc/lpc32xx_udc.c |  2 +-
+ drivers/usb/host/ohci-hcd.c          | 15 ++++++++++++---
+ drivers/usb/host/xhci-rcar.c         |  2 +-
+ drivers/usb/host/xhci-tegra.c        | 10 ++++++++++
+ drivers/usb/storage/realtek_cr.c     | 15 +++++++++------
+ drivers/usb/storage/unusual_devs.h   |  2 +-
+ drivers/usb/typec/tcpm/tcpm.c        |  2 +-
+ 11 files changed, 82 insertions(+), 47 deletions(-)
