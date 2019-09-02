@@ -2,113 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46872A5272
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:02:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9FAA5279
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:06:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730805AbfIBJCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 05:02:17 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20508 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730445AbfIBJCR (ORCPT
+        id S1730846AbfIBJGA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 05:06:00 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44430 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730361AbfIBJGA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:02:17 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-194-rYYILk2VO0WqBm185IgfAA-1; Mon, 02 Sep 2019 10:02:09 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 2 Sep 2019 10:02:09 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 2 Sep 2019 10:02:09 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Josh Poimboeuf' <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     Arnd Bergmann <arnd@arndb.de>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Ilie Halip <ilie.halip@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: RE: objtool warning "uses BP as a scratch register" with clang-9
-Thread-Topic: objtool warning "uses BP as a scratch register" with clang-9
-Thread-Index: AQHVX1Liqj9VEXOMQ0SdqQ13OMpYJacYF/rQ
-Date:   Mon, 2 Sep 2019 09:02:08 +0000
-Message-ID: <e3111f698ba342ca8893f65610990624@AcuMS.aculab.com>
-References: <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
- <CAK8P3a0bY9QfamCveE3P4H+Nrs1e6CTqWVgiY+MCd9hJmgMQZg@mail.gmail.com>
- <20190828152226.r6pl64ij5kol6d4p@treble>
- <CAK8P3a2ATzqRSqVeeKNswLU74+bjvwK_GmG0=jbMymVaSp2ysw@mail.gmail.com>
- <20190829173458.skttfjlulbiz5s25@treble>
- <CAHk-=wi-epJZfBHDbKKDZ64us7WkF=LpUfhvYBmZSteO8Q0RAg@mail.gmail.com>
- <CAK8P3a1K5HgfACmJXr4dTTwDJFz5BeSCCa3RQWYbXGE-2q4TJQ@mail.gmail.com>
- <CAHk-=whuUdqrh2=LLNfRiW6oadx0zzGVkvqyx_O1cGLa2U6Jjg@mail.gmail.com>
- <20190830150208.jyk7tfzznqimc6ow@treble>
- <CAHk-=wgqAcRU99Dp20+ZAux7Mdgbnw5deOguwOjdCJY0eNnSkA@mail.gmail.com>
- <20190830164927.a2czlphx4ho3rhhf@treble>
-In-Reply-To: <20190830164927.a2czlphx4ho3rhhf@treble>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 2 Sep 2019 05:06:00 -0400
+Received: by mail-wr1-f68.google.com with SMTP id 30so2227040wrk.11
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 02:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=jsEBeFFNvFaPm+UINQ8FKKE9kI76YVop7KZk/SgIN0w=;
+        b=EQA/R7ER71h6q2L0q6RyD91BLLw2kzWILEICeJVIqMMoaPHkQfzCy4GrQ9R5sBh0A1
+         BjOBfnt6KrqiZ0OutIgU+RMQ09MN5jKZtdJA0dsG3V8suQ8tVyr/dj1aiudZ+fxB/DDe
+         vX87A/djueXnHzTheatGtTPNSbGoQvJoLH5PhcZeJ1U41Rmp1tfFywm65VbahANHD7q5
+         u9aVEyX61rZgbeFkaNPvkmJTyfsJVCxn26LtnrUK2P559KiRyUFqVKQrj9bonn6XeO4x
+         kDCfeE46xu39tfh4otV173ZC9Pg0stVfkSFPhpGkggefW/nSFj5ZKOaLEQFKq/U+sapt
+         aOvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=jsEBeFFNvFaPm+UINQ8FKKE9kI76YVop7KZk/SgIN0w=;
+        b=FNZnHTUK9hIYLhgBfGeh3KFmfR0YAwHEU/smG9ZQE7J7A8XbhYeEjbkTyE5Nx9Dwe4
+         cft2EDbX061DmkeOUziYUyK9BE9+9nrzR9QoKoEvKyd6LoqmzxXktlOXtMQK7QBsh+ZS
+         WrqpEzsfj9vVmFHe+QqvHLmPR6mQwp+BVINPq8X3v+GvwSlQJmW6s1ClGFYP6WD9vDbB
+         /puhXgtZ/IbcZUTB8oe81krUnEclfY1I5Bs6v6CxEllcFyJvEJ5zB7wpTvu8Uo7SyNTn
+         BA8cBPxXPquSvGczivq7qwvUunkPoMBYfGutKy+Ou/WUAe8IMTbhVeyLmYISSo2FZHYs
+         QDiw==
+X-Gm-Message-State: APjAAAV0a+RDCXrhjntBfXqqp4nn1crkaSRguQsF6hk1SJrgR59CQOOy
+        JSwmEXCpMjb9cnAnbjoO8mzthA==
+X-Google-Smtp-Source: APXvYqy3AlQzIqFirHwiqt0lgMFigNByRSNqVI0P1nO7V1nkPNQl8F2riQFP7gj6w0mv3ltiUhT2fA==
+X-Received: by 2002:a5d:678a:: with SMTP id v10mr9934885wru.145.1567415158006;
+        Mon, 02 Sep 2019 02:05:58 -0700 (PDT)
+Received: from dell ([95.147.198.93])
+        by smtp.gmail.com with ESMTPSA id h125sm32172794wmf.31.2019.09.02.02.05.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Sep 2019 02:05:57 -0700 (PDT)
+Date:   Mon, 2 Sep 2019 10:05:56 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: sm501: Include the GPIO driver header
+Message-ID: <20190902090556.GC32232@dell>
+References: <20190820103715.7489-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-X-MC-Unique: rYYILk2VO0WqBm185IgfAA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190820103715.7489-1-linus.walleij@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogSm9zaCBQb2ltYm9ldWYNCj4gU2VudDogMzAgQXVndXN0IDIwMTkgMTc6NDkNCj4gT24g
-RnJpLCBBdWcgMzAsIDIwMTkgYXQgMDg6NDg6NDlBTSAtMDcwMCwgTGludXMgVG9ydmFsZHMgd3Jv
-dGU6DQo+ID4gT24gRnJpLCBBdWcgMzAsIDIwMTkgYXQgODowMiBBTSBKb3NoIFBvaW1ib2V1ZiA8
-anBvaW1ib2VAcmVkaGF0LmNvbT4gd3JvdGU6DQo+ID4gPg0KPiA+ID4gRm9yIEtBU0FOLCB0aGUg
-Q2xhbmcgdGhyZXNob2xkIGZvciBpbnNlcnRpbmcgbWVtc2V0KCkgaXMgKjIqIGNvbnNlY3V0aXZl
-DQo+ID4gPiB3cml0ZXMgaW5zdGVhZCBvZiAxNy4gIElzbid0IHRoYXQgbGlrZWx5IHRvIGNhdXNl
-IHRlYXJpbmctcmVsYXRlZA0KPiA+ID4gc3VycHJpc2VzPw0KPiA+DQo+ID4gVGVhcmluZyBpc24n
-dCBsaWtlbHkgdG8gYmUgYSBwcm9ibGVtLg0KPiA+DQo+ID4gSXQncyBub3QgbGlrZSBtZW1jcHko
-KSBkb2VzIGJ5dGUtYnktYnl0ZSBjb3BpZXMuIElmIHlvdSBwYXNzIGl0IGENCj4gPiB3b3JkLWFs
-aWduZWQgcG9pbnRlciwgaXQgd2lsbCBkbyB3b3JkLWFsaWduZWQgYWNjZXNzZXMgc2ltcGx5IGZv
-cg0KPiA+IHBlcmZvcm1hbmNlIHJlYXNvbnMuDQo+ID4NCj4gPiBFdmVuIG9uIHg4Niwgd2hlcmUg
-d2UgdXNlICJyZXAgbW92c2IiLCB3ZSAoYSkgdGVuZCB0byBkaXNhYmxlIGl0IGZvcg0KPiA+IHNt
-YWxsIGNvcGllcyBhbmQgKGIpIGl0IHR1cm5zIG91dCB0aGF0IG1pY3JvY29kZSB0aGF0IGRvZXMg
-dGhlDQo+ID4gb3B0aW1pemVkIG1vdnNiICh3aGljaCBpcyB0aGUgb25seSBjYXNlIHdlIHVzZSBp
-dCkgcHJvYmFibHkgZW5kcyB1cA0KPiA+IGRvaW5nIGF0b21pYyB0aGluZ3MgYW55d2F5LiBOb3Rl
-IHRoZSAicHJvYmFibHkiLiBJIGRvbid0IGhhdmUNCj4gPiBtaWNyb2NvZGUgc291cmNlIGNvZGUs
-IGJ1dCB0aGVyZSBhcmUgb3RoZXIgaW5kaWNhdGlvbnMgbGlrZSAid2Uga25vdw0KPiA+IGl0IGRv
-ZXNuJ3QgdGFrZSBpbnRlcnJ1cHRzIG9uIGEgYnl0ZS1wZXItYnl0ZSBsZXZlbCwgb25seSBvbiB0
-aGUNCj4gPiBjYWNoZWxpbmUgbGV2ZWwiLg0KPiANCj4gVGhlIG1pY3JvY29kZSBhcmd1bWVudCBp
-cyBub3QgYWxsIHRoYXQgY29tZm9ydGluZyA6LSkNCj4gDQo+IEFsc28gd2hhdCBhYm91dCB1bmFs
-aWduZWQgYWNjZXNzZXMsIGUuZy4gaWYgYSBzdHJ1Y3QgbWVtYmVyIGlzbid0IG9uIGENCj4gd29y
-ZCBib3VuZGFyeT8gIEFybmQncyBnb2Rib2x0IGxpbmsgc2hvd2VkIHRob3NlIGNhbiBnZXQgY29t
-YmluZWQgdG9vLg0KDQpJJ2QgZ3Vlc3MgdGhhdCBpdCBoYXMgdG8gJ2NvbXBsZXRlJyBhIHBhcnRp
-YWwgY29weS4NCkFmdGVyIGFsbCB0aGVyZSBhcmUgbm8gbWlkLWluc3RydWN0aW9uIGludGVycnVw
-dCBzdGF0ZXMgc28gdGhlIGludGVycnVwdA0KcmV0dXJucyB0byBhIG5ldyAncmVwIG1vdnNiJyBp
-bnN0cnVjdGlvbiAodGhlIGlzciBjYW4gY2hhbmdlIHNpL2RpL2N4KS4NCkVpdGhlciB0aGUgc291
-cmNlLCBvciBkZXN0aW5hdGlvbiBpcyBhbG1vc3QgY2VydGFpbmx5IGNhY2hlIGxpbmUgYWxpZ25l
-ZC4NCg0KPiBJIGRvbid0IHNlZSB4ODYgbWVtY3B5KCkgZG9pbmcgYW55IGRlc3RpbmF0aW9uIGFs
-aWdubWVudCBjaGVja3MuDQoNCkkgZG9uJ3QgdGhpbmsgYW55b25lIGhhcyB0cmllZCB0byBpbnN0
-cnVtZW50IHdoZXRoZXIgaXQgaXMgYmV0dGVyIHRvDQpkbyBtaXNhbGlnbmVkIHJlYWRzIG9yIHdy
-aXRlcyAoYW5kIGl0IHByb2JhYmx5IGRlcGVuZHMgb24gdGhlIGNwdSkuDQpUaGUgY29kZSB3aWxs
-IHByb2JhYmx5IGJlIG1vcmUgY3JpdGljYWwgb24gdGhlIHJlYWRzLg0KVGhlIHJlYWwgZ2FpbiB3
-aWxsIGJlIHdoZW4gdGhlIHNvdXJjZSBhbmQgZGVzdGluYXRpb24gaGF2ZSB0aGUgc2FtZQ0KbWlz
-LWFsaWdubWVudC4NCg0KLi4uDQo+ID4gU28gaXQncyBwcm9iYWJseSBub3QgYW4gaXNzdWUgZnJv
-bSBhIHRlYXJpbmcgc3RhbmRwb2ludCAtIGJ1dCBpdA0KPiA+IHdvcnJpZXMgbWUgYmVjYXVzZSBv
-ZiAidGhpcyBoYXMgdG8gYmUgYSBsZWFmIGZ1bmN0aW9uIiBraW5kIG9mIGlzc3Vlcw0KPiA+IHdo
-ZXJlIHdlIG1heSBiZSB1c2luZyBpbmRpdmlkdWFsIHN0b3JlcyBvbiBwdXJwb3NlLiBXZSBkbyBo
-YXZlIHRoaW5ncw0KPiA+IGxpa2UgdGhhdC4NCj4gDQo+IEl0IHNvdW5kcyBsaWtlIGV2ZXJ5Ym9k
-eSdzIGluIGFncmVlbWVudCB0aGF0IHJlcGxhY2luZyBhY2Nlc3NlcyB3aXRoDQo+IG1lbXNldC9t
-ZW1jcHkgaXMgYmFkIGluIGEga2VybmVsIGNvbnRleHQuICBTaG91bGQgd2UgcHVzaCBmb3IgYSBu
-ZXcNCj4gZmluZS1ncmFpbmVkIGNvbXBpbGVyIG9wdGlvbiB0byBkaXNhYmxlIGl0Pw0KDQpJJ20g
-bm90IHN1cmUgaXQgaXMgYSBnb29kIGlkZWEgaW4gQU5ZIGNvbnRleHQuDQpJdCBzZWVtcyBsaWtl
-IHNvbWV0aGluZyB0aGUgY29tcGlsZXIgcGVvcGxlIGhhcyBkaXNjb3ZlcmVkIHRoZXkgY2FuIGRv
-DQp3aXRob3V0IGFjdHVhbGx5IGRlY2lkaW5nIHdoZXRoZXIgaXQgaXMgdXNlZnVsLg0KDQoJRGF2
-aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50
-IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTcz
-ODYgKFdhbGVzKQ0K
+On Tue, 20 Aug 2019, Linus Walleij wrote:
 
+> This driver creates a gpio chip so it needs to include the
+> appropriate header <linux/gpio/driver.h> explicitly rather
+> than implicitly.
+> 
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/mfd/sm501.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+Applied, thanks.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
