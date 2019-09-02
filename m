@@ -2,153 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03DE8A568B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B44AFA5682
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730930AbfIBMqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 08:46:11 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40185 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730558AbfIBMqJ (ORCPT
+        id S1730430AbfIBMpa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 08:45:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49038 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729571AbfIBMpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:46:09 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w16so8956840pfn.7
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 05:46:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=typeblog-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=i1gf/fWXrC1UDTPa/HgYMmRTeFmFTDpK3Sjfi5JLiP4=;
-        b=zuYm0kxlA3UZd2AfAZGCdmm0KMcyb3mO+Fa2dTsIu7PMGg/o0oB9QMBj3eyUs25sME
-         qfaiEmW1dsnRr8Q6YQ3ttGpIzNQD5H8fjPswWN9tBzXWgHdfRZDFIUTvA7NuJLBB5ESw
-         9LCUT1z0PQIQQEga3BFk9A89Cs8zO3QnJwgX3SssBQDFVjFO3cEelI6wkA5REqw9Xc3M
-         +CGIibhrTO96fKD2Zmo8km7LqiSsvThXZYEezUs3mv4XxwQNjkbl7lhVtKr+X5KuXZNO
-         GGWbnB4EP9thVZi70ghAhQ42jXnnJ0k7Cz9IPX6Dyu908F8HSsA2JJNKGr9EE/3lDty9
-         zdYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=i1gf/fWXrC1UDTPa/HgYMmRTeFmFTDpK3Sjfi5JLiP4=;
-        b=Yb+F4B0ih8XCs+OH0XTlQzrQLuiC03dzpxfZdJvofvtHCERlbxyI26H3xv3qTYiVxP
-         3dmoLZAsFKaJJw6Otck6BLVpA1ZXRShorg+hWtLXGSADnMlvtkDa9UEmUKFvdvxbvfU/
-         Qc5pbtEIF2CEf3Ga/bhXN7pAcCgFxOKrzqNF7qV8R7CpgPSj87yeAzJG3bJS7kQgF1V0
-         P5revqjfCt73emLra1dUEDxb4AjjeboXEgjmgucU1h/phq7toF9h2VApJHCqKw17wd2l
-         nQiPhcRxoMy4NR9dkiOGrNxO7nu049WirSYmEa8aFQiKQNHrbatXkkUY6xC/aSUeinqA
-         VTAw==
-X-Gm-Message-State: APjAAAWbI9Nw8ZltgTGOiNhTILtp/QK9Jf9pkZHv1FzpjxhUOgj2y9pl
-        4XuTKrLHZNhLqzNwgiXbNdmSdA==
-X-Google-Smtp-Source: APXvYqx2EJ+yyowBKcAvoN8UoSPZ6gpuS48SesGzR28go5Qbjp5hCRtr8nQmq993xztaJuRn8q/qlw==
-X-Received: by 2002:a65:6458:: with SMTP id s24mr24781132pgv.158.1567428368700;
-        Mon, 02 Sep 2019 05:46:08 -0700 (PDT)
-Received: from peter-pc.home ([91.207.174.229])
-        by smtp.gmail.com with ESMTPSA id 2sm15884652pjh.13.2019.09.02.05.46.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 05:46:07 -0700 (PDT)
-From:   Peter Cai <peter@typeblog.net>
-Cc:     Peter Cai <peter@typeblog.net>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [PATCH v3 2/2] touchscreen: goodix: define GPIO mapping for GPD P2 Max
-Date:   Mon,  2 Sep 2019 20:43:52 +0800
-Message-Id: <20190902124352.12291-2-peter@typeblog.net>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190902124352.12291-1-peter@typeblog.net>
-References: <20190831030916.13172-1-peter@typeblog.net>
- <20190902124352.12291-1-peter@typeblog.net>
+        Mon, 2 Sep 2019 08:45:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8e5pl/cUyEaSaTIP0gVix4kLe1LPGSDBfLiK5Z6oMK4=; b=ZVUGTMspxfe3xQHunBefXYA5b
+        RRbaGgX6OxaI5bD/kap+hgR/IMcivPmetVVU0OUh7XfX/onX4ou9VeUjDQzoj7QsZuFRnisygmRMR
+        6aSRZqCeGTIR7HBudutdMooyrGcPpR0hkheR6CyDRkG5dnHP0PPWBnPiut+u+ir5xS3zAUTvIKeMp
+        9kadYDIyHlr8crmhMNQf+xk98sFwL/p9FMNGUL465OFDk2tte+kQXPCeD4kLiTtAJCrJKcZsmRYhZ
+        uS4+zLv9VrGHCAGQSoOHn9VVeP/qV/SEF74aqb+LcB7q27YkoFsxkDnZqLUWMBKzyYIaO02PDTHcf
+        rwwT6O0Pw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i4lhx-00028u-J6; Mon, 02 Sep 2019 12:45:21 +0000
+Date:   Mon, 2 Sep 2019 05:45:21 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Gao Xiang <gaoxiang25@huawei.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, devel@driverdev.osuosl.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
+Message-ID: <20190902124521.GA22153@infradead.org>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-2-gaoxiang25@huawei.com>
+ <20190829095954.GB20598@infradead.org>
+ <20190901075240.GA2938@hsiangkao-HP-ZHAN-66-Pro-G1>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190901075240.GA2938@hsiangkao-HP-ZHAN-66-Pro-G1>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The firmware of GPD P2 Max could not handle panel resets although code
-is present in DSDT. The kernel needs to take on this job instead, but
-the DSDT does not provide _DSD, rendering kernel helpless when trying to
-find the respective GPIO pins.
+On Sun, Sep 01, 2019 at 03:54:11PM +0800, Gao Xiang wrote:
+> It could be better has a name though, because 1) erofs.mkfs uses this
+> definition explicitly, and we keep this on-disk definition erofs_fs.h
+> file up with erofs-utils.
+> 
+> 2) For kernel use, first we have,
+>    datamode < EROFS_INODE_LAYOUT_MAX; and
+>    !erofs_inode_is_data_compressed, so there are only two mode here,
+>         1) EROFS_INODE_FLAT_INLINE,
+>         2) EROFS_INODE_FLAT_PLAIN
+>    if its datamode isn't EROFS_INODE_FLAT_INLINE (tail-end block packing),
+>    it should be EROFS_INODE_FLAT_PLAIN.
+> 
+>    The detailed logic in erofs_read_inode and
+>    erofs_map_blocks_flatmode....
 
-Fortunately, this time GPD has proper DMI vendor / product strings that
-we could match against. We simply apply an acpi_gpio_mapping table when
-GPD P2 Max is matched.
+Ok.  At least the explicit numbering makes this a little more obvious
+now.  What seems fairly odd is that there are only various places that
+check for some inode layouts/formats but nothing that does a switch
+over all of them.
 
-Additionally, the DSDT definition of the irq pin specifies a wrong
-polarity. The new quirk introduced in the previous patch
-(ACPI_GPIO_QUIRK_OVERRIDE_POLARITY) is applied to correct this.
+> > why are we adding a legacy field to a brand new file system?
+> 
+> The difference is just EROFS_INODE_FLAT_COMPRESSION_LEGACY doesn't
+> have z_erofs_map_header, so it only supports default (4k clustersize)
+> fixed-sized output compression rather than per-file setting, nothing
+> special at all...
 
-Signed-off-by: Peter Cai <peter@typeblog.net>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+It still seems odd to add a legacy field to a brand new file system.
 
-v2: removed '#ifdef CONFIG_ACPI' as per suggestion. The #ifdef guards
-for CONFIG_DMI is kept for consistency with the other dmi_system_id
-definition in the same file.
+> > structures, as that keeps it clear in everyones mind what needs to
+> > stay persistent and what can be chenged easily.
+> 
+> All fields in this file are on-disk representation by design
+> (no logic for in-memory presentation).
 
-v3: minor style adjustments. Added 'const' to dmi_match and moved it in
-reverse xmas tree order as per suggestion.
----
- drivers/input/touchscreen/goodix.c | 31 ++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Ok, make sense.    Maybe add a note to the top of the file comment
+that this is the on-disk format.
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index 5178ea8b5f30..49ce478c1134 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -144,6 +144,31 @@ static const struct dmi_system_id rotated_screen[] = {
- 	{}
- };
- 
-+static const struct acpi_gpio_params irq_gpios_default = { 0, 0, false };
-+static const struct acpi_gpio_params reset_gpios_default = { 1, 0, false };
-+static const struct acpi_gpio_mapping gpio_mapping_force_irq_active_high[] = {
-+	{ "irq-gpios", &irq_gpios_default, 1, ACPI_GPIO_QUIRK_OVERRIDE_POLARITY },
-+	{ "reset-gpios", &reset_gpios_default, 1 },
-+	{}
-+};
-+
-+/*
-+ * Devices that need acpi_gpio_mapping to function correctly
-+ */
-+static const struct dmi_system_id need_gpio_mapping[] = {
-+#if defined(CONFIG_DMI) && defined(CONFIG_X86)
-+	{
-+		.ident = "GPD P2 Max",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "GPD"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "P2 MAX")
-+		},
-+		.driver_data = &gpio_mapping_force_irq_active_high
-+	},
-+#endif
-+	{}
-+};
-+
- /**
-  * goodix_i2c_read - read data from a register of the i2c slave device.
-  *
-@@ -793,9 +818,15 @@ static void goodix_disable_regulators(void *arg)
- static int goodix_ts_probe(struct i2c_client *client,
- 			   const struct i2c_device_id *id)
- {
-+	const struct dmi_system_id *dmi_match;
- 	struct goodix_ts_data *ts;
- 	int error;
- 
-+	dmi_match = dmi_first_match(need_gpio_mapping);
-+	if (dmi_match)
-+		devm_acpi_dev_add_driver_gpios(&client->dev,
-+					       dmi_match->driver_data);
-+
- 	dev_dbg(&client->dev, "I2C Address: 0x%02x\n", client->addr);
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
--- 
-2.23.0
-
+One little oddity is that erofs_inode_is_data_compressed is here, while
+is_inode_flat_inline is in internal.h.  There are arguments for either
+place, but I'd suggest to keep the related macros together.
