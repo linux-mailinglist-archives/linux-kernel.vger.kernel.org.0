@@ -2,52 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7A14A50E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39A34A50EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:10:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730108AbfIBIIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:08:09 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44814 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729634AbfIBIII (ORCPT
+        id S1729942AbfIBIKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:10:22 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42308 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbfIBIKW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:08:08 -0400
-Received: by mail-wr1-f66.google.com with SMTP id 30so2031338wrk.11
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 01:08:06 -0700 (PDT)
+        Mon, 2 Sep 2019 04:10:22 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b16so12956857wrq.9
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 01:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=RZo8WArml/7vG0RYj24lta//5luoUJUJmAZY76UyZ14=;
-        b=NmmVnOK7mXVQEe2XN0vdjc4SNOo+SjNOGMEIlZwSPmUjjCsbOkLMs+fUsPklF7kJqy
-         1tenxiZhLfUc7qNt+CJ20JhmLwuvTxXzS0PAyQNyezhuBckB+16e/LuVMYoZxfYx2pjY
-         ObLRjoa+Y25brv2KeMCuj17/u1jueOZGdfArPsCqHjgB2Hr9KK7sHsoKo+9uGFDrp/8A
-         IsAlu8WZe5gWgXiMmfoBnnVfalQlD0PNvjbOcg15AAUrqhNtKlDrUUZwLyEGiEI129Qd
-         iwBXETj6qJUTiNZjPxXiQQcN+ooXCZQzUVqWI3YBELbPmfEMVtJ8Ne+SSSJQ1lGJ8cgd
-         /SOw==
+        bh=UxImXA5gENUS3YkpBEe6n6FaMSjLQiNqZC4NJBHrA04=;
+        b=k6IMwS2zj+3LX9bNHSZegcJBfJ1BeX11b6RkKJ2K2ny6C1StLGE1bUhsPbapyLUBs0
+         0CvqeCmowvJD0DFhUrA50Ley/UFum6itfiAUOllvtH8wQJoymSsPFQ58IC+WdGygBM1N
+         HLWXVvIhXwbgmcT4gVe1k+IHtlyUQbdmTlNvrhesaHs7ttOnLRxvs5jVj7p6m6u1MDfg
+         WuZFNpGtsqwKFrrBdwHnhpUFuoABSMsrA277ARcpeoRRYacW3eTI/5FrVa0jfkx/Znqx
+         +ygJLtUaMCsdpC4j36DN6yQHp1W+F0JCEJMRao2heXuGSyZCx2C/xYfOSHHPuHUYmYxy
+         HH9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=RZo8WArml/7vG0RYj24lta//5luoUJUJmAZY76UyZ14=;
-        b=JEQkSSLaX5c4C67RGQG7HbdIB/TFdnti/yJOB40wm6rrrvCnCpbJE8HjFTb8OsgDU2
-         S9yxOQp6cUX3a1THAoQ6c3OWpM5VPIuDytOmnFK3ti6Bc4ZIRL3IS+LQnsE7Mf/sgS+4
-         2nWeQxXXytTKS9wZG4ZTzGhwVDx/29BnFhIb01YGCruu/kfvBQM+3ZzobgxJHz7pQHuJ
-         xHySol7qZAZVhCiZoySc0arX3bB3W3VY/hO77Fps4MTLX70fsZ9c2YRbh/8mD4e89EVI
-         LeACdf7AhkmjS042ozi18CBOVlC13Zf1F4feebtuL69f9+jHYqQ5zuu9p6tgYlVtbVaq
-         6CWg==
-X-Gm-Message-State: APjAAAUWTyOYyijYCY3UnqUJtEvj1i3dPKsfG7SQZN90Vxj7lGvddLnl
-        t+4SpG81aznkcRrfgjtfKSbdRJSmUU4=
-X-Google-Smtp-Source: APXvYqwt5QLqP19OkwKHcqUGCNFPAGKgzyqicVbDJkc+YQcUn5LJMd8evQtXKLeCCr/KgCwBQQi+Ww==
-X-Received: by 2002:a5d:4382:: with SMTP id i2mr18266108wrq.297.1567411685447;
-        Mon, 02 Sep 2019 01:08:05 -0700 (PDT)
+        bh=UxImXA5gENUS3YkpBEe6n6FaMSjLQiNqZC4NJBHrA04=;
+        b=ao98eP/r8QbJ40XnHWo0JNrLCswaG8URZmCFSYNca+8vBB0wwPfp8IbfMi/yhne4xE
+         gphKbNso4LBwCz+1pxpx/xBBEko+4bn74frBPofCW0ziA8SpiYOiY5lEhjQBmbyYc8pC
+         JFBf/QeFtn2+C2UcZMkDlXcA1UUvBnNtOV56vQhqGRSHyzJ7ahAeQfENIETMBxinfgc9
+         f42CH96i4puBMUkqfsIUU/YAVPzbRYVN8cpQmd9+QY5YayZHQ3rGIKDuGe1rZwOCiVh9
+         QWkU210/PTSPEPoGb2YBK1wE5hZXRfJ9glbo2Ul3Bdqp/B+7mPmbiJ/XWe1YRaB1pZxq
+         GLOw==
+X-Gm-Message-State: APjAAAWS98+vWwgH6czRgWcQFjq664Ym5k3ozSjBfno94XI4SrQlnigs
+        BkvyECzoIOe1nBu+sO7NnyW+R3bKaGo=
+X-Google-Smtp-Source: APXvYqwwixoTfwh901r3rlmgU2OmfZWfl4Hu6KZzHSC3qCsRTewonW/mdFtkD2LC8xuKJLK0eIyPvA==
+X-Received: by 2002:adf:db01:: with SMTP id s1mr25180884wri.164.1567411818471;
+        Mon, 02 Sep 2019 01:10:18 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 189sm11540852wmz.19.2019.09.02.01.08.04
+        by smtp.gmail.com with ESMTPSA id v186sm32578140wmb.5.2019.09.02.01.10.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Sep 2019 01:08:04 -0700 (PDT)
-Subject: Re: [PATCH 5/5] drm: dw-hdmi: update ELD on HPD event
+        Mon, 02 Sep 2019 01:10:17 -0700 (PDT)
+Subject: Re: [PATCH 3/5] drm: dw-hdmi: update CEC phys addr and EDID on HPD
+ event
 To:     Jonas Karlman <jonas@kwiboo.se>,
         Andrzej Hajda <a.hajda@samsung.com>
 Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
@@ -62,7 +63,7 @@ Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 References: <AM0PR06MB40049562E295DD62302C8DB7ACBF0@AM0PR06MB4004.eurprd06.prod.outlook.com>
  <20190901161426.1606-1-jonas@kwiboo.se>
- <AM0PR06MB4004F589E60DA4BA958FD316ACBF0@AM0PR06MB4004.eurprd06.prod.outlook.com>
+ <AM0PR06MB4004285BAA935D14F1A68787ACBF0@AM0PR06MB4004.eurprd06.prod.outlook.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -115,12 +116,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <29a3cd0b-af69-98ae-26c5-947526a7fc68@baylibre.com>
-Date:   Mon, 2 Sep 2019 10:08:04 +0200
+Message-ID: <d0d7a5b8-4301-9a08-64af-8474a0c4f5de@baylibre.com>
+Date:   Mon, 2 Sep 2019 10:10:17 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <AM0PR06MB4004F589E60DA4BA958FD316ACBF0@AM0PR06MB4004.eurprd06.prod.outlook.com>
+In-Reply-To: <AM0PR06MB4004285BAA935D14F1A68787ACBF0@AM0PR06MB4004.eurprd06.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -130,27 +131,59 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 01/09/2019 18:14, Jonas Karlman wrote:
-> Update connector ELD on HPD event, fixes stale ELD when
-> HDMI cable is unplugged/replugged or AVR is powered on/off.
+> Update CEC phys addr and EDID on HPD event, fixes lost CEC phys addr and
+> stale EDID when HDMI cable is unplugged/replugged or AVR is powered on/off.
 > 
 > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 > ---
->  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 0f07be1b5914..0a8268b20561 100644
+> index 91d86ddd6624..0f07be1b5914 100644
 > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -2178,6 +2178,8 @@ static int dw_hdmi_connector_update_edid(struct drm_connector *connector,
->  		cec_notifier_set_phys_addr_from_edid(hdmi->cec_notifier, edid);
->  		if (add_modes)
->  			ret = drm_add_edid_modes(connector, edid);
-> +		else
-> +			drm_edid_to_eld(connector, edid);
->  		kfree(edid);
->  	} else {
->  		dev_dbg(hdmi->dev, "failed to get edid\n");
+> @@ -2189,6 +2189,7 @@ static int dw_hdmi_connector_update_edid(struct drm_connector *connector,
+>  static enum drm_connector_status
+>  dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+>  {
+> +	enum drm_connector_status status;
+>  	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
+>  					     connector);
+>  
+> @@ -2198,7 +2199,14 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+>  	dw_hdmi_update_phy_mask(hdmi);
+>  	mutex_unlock(&hdmi->mutex);
+>  
+> -	return hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
+> +	status = hdmi->phy.ops->read_hpd(hdmi, hdmi->phy.data);
+> +
+> +	if (status == connector_status_connected)
+> +		dw_hdmi_connector_update_edid(connector, false);
+> +	else
+> +		cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
+> +
+> +	return status;
+>  }
+>  
+>  static int dw_hdmi_connector_get_modes(struct drm_connector *connector)
+> @@ -2438,12 +2446,6 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+>  		dw_hdmi_setup_rx_sense(hdmi,
+>  				       phy_stat & HDMI_PHY_HPD,
+>  				       phy_stat & HDMI_PHY_RX_SENSE);
+> -
+> -		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0) {
+> -			mutex_lock(&hdmi->cec_notifier_mutex);
+> -			cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
+> -			mutex_unlock(&hdmi->cec_notifier_mutex);
+> -		}
+>  	}
+>  
+>  	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
 > 
 
+Won't it possibly trigger twice edid readouts on each HPD event,
+one for CEC and one for modes ? It seems sane but not very efficient to me...
+
+Anyway:
 Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
