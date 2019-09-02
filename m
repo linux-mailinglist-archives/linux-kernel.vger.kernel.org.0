@@ -2,85 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E99B4A56E7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:01:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2983A56E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:00:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729922AbfIBNBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:01:31 -0400
-Received: from gate.crashing.org ([63.228.1.57]:53196 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729770AbfIBNBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:01:30 -0400
-Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x82D0CbT029470;
-        Mon, 2 Sep 2019 08:00:12 -0500
-Received: (from segher@localhost)
-        by gate.crashing.org (8.14.1/8.14.1/Submit) id x82D09fF029469;
-        Mon, 2 Sep 2019 08:00:09 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date:   Mon, 2 Sep 2019 08:00:08 -0500
-From:   Segher Boessenkool <segher@kernel.crashing.org>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Michal Suchanek <msuchanek@suse.de>, linuxppc-dev@lists.ozlabs.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Breno Leitao <leitao@debian.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Stanley <joel@jms.id.au>,
-        Hari Bathini <hbathini@linux.ibm.com>,
-        Michael Neuling <mikey@neuling.org>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Russell Currey <ruscur@russell.cc>,
-        Diana Craciun <diana.craciun@nxp.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Hildenbrand <david@redhat.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v7 5/6] powerpc/64: Make COMPAT user-selectable disabled on littleendian by default.
-Message-ID: <20190902130008.GZ31406@gate.crashing.org>
-References: <cover.1567198491.git.msuchanek@suse.de> <c7c88e88408588fa6fcf858a5ae503b5e2f4ec0b.1567198492.git.msuchanek@suse.de> <87ftlftpy7.fsf@mpe.ellerman.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ftlftpy7.fsf@mpe.ellerman.id.au>
-User-Agent: Mutt/1.4.2.3i
+        id S1729781AbfIBNAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:00:48 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36139 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729672AbfIBNAs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 09:00:48 -0400
+Received: by mail-wr1-f66.google.com with SMTP id y19so13950323wrd.3
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 06:00:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=AwtIASwzD2wQBnlL9oHyI7SdRwOZSjZruhQTBPnShKk=;
+        b=miDU0KYrIicIRBE0zL4/Itl/AJs4+B1X28hNpOLsd4u82nYRjtqm5YsetSNVou587O
+         l5czxqg5TxbhTwY/rJGt/3KjpM1CL8XRNByXdDn2EFouyUgw1gmHjO1Iimtg8ScndpvG
+         S30aTizsZUf9047APAU/CoXzU2jSs2VINLCFj94sFgTAfYopHzz4ET6kO6nemshLc7Kh
+         JGzuJFWbU9rZVojwTvg9ycy4e8W0BzPL/HHPQTw6g5beWRVk6hixc0NjM5d84FVwMheD
+         PxeLQndvg7+r2ZV+QYIQ0K/rzf3LdGRg0RAxlDkXB9/JITJab4lXygSZg0vdA/JRC4al
+         V8kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=AwtIASwzD2wQBnlL9oHyI7SdRwOZSjZruhQTBPnShKk=;
+        b=i2kKOlwq0CUf2Jr7Nl2Pjn9Bm38cJWQKMmojj8q5g9CaT8wsiZtxr+pLKM5IFIwpU6
+         FTKqcNNEDovMWvcE24WSOiYLvcJ18sc9TGYxTX63Y1PJggmBvXkfb5aF2gq2WmaTA53T
+         lCFgEwGj13al7dg3CwaFVwCMCLPpaV2HifYs6wUWrvP3zHrdwuiQCB43Fri6lDHE5LC1
+         4V+I+mkOSAFd3q/E4pLG5JgybQWuQpdsLlqwsOTfYlDaCu2ucQfuLO54rMW5Spw+QIEJ
+         78u9Hk6PRO0rhiP/uSwXTQWpgN1wKwJ9EaXtkjtxcnnfub2FabW4wTM3PV+NoRo0BzZ6
+         YR8w==
+X-Gm-Message-State: APjAAAUN8BmdLoN4ypQ/c9vf0qemCzwOyHTOAzNcU6sXl2Lfp6fuiu7P
+        kCgB2BFAXI4qFX6KhfkdiXplEcetWPrAuA==
+X-Google-Smtp-Source: APXvYqyYBW8VX3THfeDjkn30HbB7ZOHfQ8B3R0dRRt05rjR3UpR45PXXZOUTymd4u25da9bAS1a1pQ==
+X-Received: by 2002:adf:ecc7:: with SMTP id s7mr37562687wro.215.1567429245648;
+        Mon, 02 Sep 2019 06:00:45 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id m3sm12163829wmc.44.2019.09.02.06.00.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Sep 2019 06:00:45 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com
+Cc:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH] power: reset: gpio-restart: Fix typo when gpio reset is not found
+Date:   Mon,  2 Sep 2019 15:00:40 +0200
+Message-Id: <94b3d1f3ebeb6000c32a7bed6f8b9411bae9cf19.1567429238.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 12:03:12PM +1000, Michael Ellerman wrote:
-> Michal Suchanek <msuchanek@suse.de> writes:
-> > On bigendian ppc64 it is common to have 32bit legacy binaries but much
-> > less so on littleendian.
-> 
-> I think the toolchain people will tell you that there is no 32-bit
-> little endian ABI defined at all, if anything works it's by accident.
+Trivial patch which just corrects error message.
 
-There of course is a lot of powerpcle-* support.  The ABI used for it
-on linux is the SYSV ABI, just like on BE 32-bit.
+Fixes: 371bb20d6927 ("power: Add simple gpio-restart driver")
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+---
 
-There also is specific powerpcle-linux support in GCC, and in binutils,
-too.  Also, config.guess/config.sub supports it.  Half a year ago this
-all built fine (no, I don't test it often either).
+ drivers/power/reset/gpio-restart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I don't think glibc supports it though, so I wonder if anyone builds an
-actual system with it?  Maybe busybox or the like?
+diff --git a/drivers/power/reset/gpio-restart.c b/drivers/power/reset/gpio-restart.c
+index 2880cd5ae0d2..308ca9d9d276 100644
+--- a/drivers/power/reset/gpio-restart.c
++++ b/drivers/power/reset/gpio-restart.c
+@@ -65,7 +65,7 @@ static int gpio_restart_probe(struct platform_device *pdev)
+ 	gpio_restart->reset_gpio = devm_gpiod_get(&pdev->dev, NULL,
+ 			open_source ? GPIOD_IN : GPIOD_OUT_LOW);
+ 	if (IS_ERR(gpio_restart->reset_gpio)) {
+-		dev_err(&pdev->dev, "Could net get reset GPIO\n");
++		dev_err(&pdev->dev, "Could not get reset GPIO\n");
+ 		return PTR_ERR(gpio_restart->reset_gpio);
+ 	}
+ 
+-- 
+2.17.1
 
-> So I think we should not make this selectable, unless someone puts their
-> hand up to say they want it and are willing to test it and keep it
-> working.
-
-What about actual 32-bit LE systems?  Does anyone still use those?
-
-
-Segher
