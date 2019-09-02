@@ -2,29 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E65DEA516A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:19:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 626BAA5149
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:19:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730602AbfIBIT2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:19:28 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56167 "EHLO
+        id S1730165AbfIBIQi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:16:38 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56154 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730075AbfIBIQg (ORCPT
+        with ESMTP id S1730005AbfIBIQf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:16:36 -0400
+        Mon, 2 Sep 2019 04:16:35 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i4hVg-0007xG-JT; Mon, 02 Sep 2019 10:16:24 +0200
+        id 1i4hVh-0007xL-LM; Mon, 02 Sep 2019 10:16:26 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 35EED1C0DEC;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id AE03D1C0DE7;
         Mon,  2 Sep 2019 10:16:24 +0200 (CEST)
 Date:   Mon, 02 Sep 2019 08:16:24 -0000
 From:   "tip-bot2 for Kyle Meyer" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf stat: Replace MAX_NR_CPUS with cpu__max_cpu()
+Subject: [tip: perf/core] perf session: Replace MAX_NR_CPUS with
+ perf_env::nr_cpus_online
 Cc:     Kyle Meyer <kyle.meyer@hpe.com>, Jiri Olsa <jolsa@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Namhyung Kim <namhyung@kernel.org>,
@@ -33,10 +34,10 @@ Cc:     Kyle Meyer <kyle.meyer@hpe.com>, Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190827214352.94272-4-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190827214352.94272-4-meyerk@stormcage.eag.rdlabs.hpecorp.net>
+In-Reply-To: <20190827214352.94272-5-meyerk@stormcage.eag.rdlabs.hpecorp.net>
+References: <20190827214352.94272-5-meyerk@stormcage.eag.rdlabs.hpecorp.net>
 MIME-Version: 1.0
-Message-ID: <156741218411.17273.11828039652851567525.tip-bot2@tip-bot2>
+Message-ID: <156741218460.17276.8042810076556827432.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -52,18 +53,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     92b5a1545ad51e8225e691e9a29ba33cc9fe37bc
-Gitweb:        https://git.kernel.org/tip/92b5a1545ad51e8225e691e9a29ba33cc9fe37bc
+Commit-ID:     7df4e36a4785618f0c63f3dc2bacb164780ab0f6
+Gitweb:        https://git.kernel.org/tip/7df4e36a4785618f0c63f3dc2bacb164780ab0f6
 Author:        Kyle Meyer <meyerk@hpe.com>
-AuthorDate:    Tue, 27 Aug 2019 16:43:48 -05:00
+AuthorDate:    Tue, 27 Aug 2019 16:43:49 -05:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Thu, 29 Aug 2019 17:38:32 -03:00
 
-perf stat: Replace MAX_NR_CPUS with cpu__max_cpu()
+perf session: Replace MAX_NR_CPUS with perf_env::nr_cpus_online
 
-The function cpu__max_cpu() returns the possible number of CPUs as
-defined in the sysfs and can be used as an alternative for MAX_NR_CPUS
-in zero_per_pkg() and check_per_pkg().
+nr_cpus, the number of CPUs online during a record session bound by
+MAX_NR_CPUS, can be used as a dynamic alternative for MAX_NR_CPUS in
+perf_session__cpu_bitmap.
 
 Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
 Reviewed-by: Jiri Olsa <jolsa@redhat.com>
@@ -71,31 +72,30 @@ Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Russ Anderson <russ.anderson@hpe.com>
-Link: http://lore.kernel.org/lkml/20190827214352.94272-4-meyerk@stormcage.eag.rdlabs.hpecorp.net
+Link: http://lore.kernel.org/lkml/20190827214352.94272-5-meyerk@stormcage.eag.rdlabs.hpecorp.net
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/stat.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/session.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 66f8808..f6eb6af 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -210,7 +210,7 @@ void perf_evlist__reset_stats(struct evlist *evlist)
- static void zero_per_pkg(struct evsel *counter)
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 7350b0d..13486bc 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -2292,6 +2292,7 @@ int perf_session__cpu_bitmap(struct perf_session *session,
  {
- 	if (counter->per_pkg_mask)
--		memset(counter->per_pkg_mask, 0, MAX_NR_CPUS);
-+		memset(counter->per_pkg_mask, 0, cpu__max_cpu());
- }
+ 	int i, err = -1;
+ 	struct perf_cpu_map *map;
++	int nr_cpus = min(session->header.env.nr_cpus_online, MAX_NR_CPUS);
  
- static int check_per_pkg(struct evsel *counter,
-@@ -229,7 +229,7 @@ static int check_per_pkg(struct evsel *counter,
- 		return 0;
+ 	for (i = 0; i < PERF_TYPE_MAX; ++i) {
+ 		struct evsel *evsel;
+@@ -2316,7 +2317,7 @@ int perf_session__cpu_bitmap(struct perf_session *session,
+ 	for (i = 0; i < map->nr; i++) {
+ 		int cpu = map->map[i];
  
- 	if (!mask) {
--		mask = zalloc(MAX_NR_CPUS);
-+		mask = zalloc(cpu__max_cpu());
- 		if (!mask)
- 			return -ENOMEM;
- 
+-		if (cpu >= MAX_NR_CPUS) {
++		if (cpu >= nr_cpus) {
+ 			pr_err("Requested CPU %d too large. "
+ 			       "Consider raising MAX_NR_CPUS\n", cpu);
+ 			goto out_delete_map;
