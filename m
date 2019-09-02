@@ -2,101 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2668AA5C1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 20:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E199FA5C1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 20:11:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfIBSKP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 14:10:15 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51875 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfIBSKP (ORCPT
+        id S1726871AbfIBSLu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 14:11:50 -0400
+Received: from smtprelay0176.hostedemail.com ([216.40.44.176]:58928 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726448AbfIBSLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 14:10:15 -0400
-Received: by mail-wm1-f66.google.com with SMTP id k1so15480038wmi.1;
-        Mon, 02 Sep 2019 11:10:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vDUaJApxfkNhR6vhz6RrOHesiiSeGJbPpZ0PxPybk/I=;
-        b=X2KKFYMCm/kPAAybfVW+JyM12W8hl+Uuo1n8mKn/rzA7LzWsHHSQA7xH/fVkWWzDGQ
-         FngagQeC/98AzdbGqqGS31CY9XrdB/EAZC4eaeudzzJ+Mp1xSqkC0QDTh1WRwnzeYsMK
-         2JeNdEUWAPgUTWrG4GGn2rDlTSIv+YKvXBQcX9xoIbwkrbJgjh3AwFSWTcYDncochdG2
-         6Vyi/AakJtGrUSHWxfhHbk00+qsazqOCb+6rPkDAvDQ/n3CPu3oTFPdd99lproWciZs0
-         uh3UKoHaLH47LxWGCMzQN8UV9viJvdvvB3X46llQDKnaY4YX98QagxcrKXJc0buQUlfZ
-         Kzsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vDUaJApxfkNhR6vhz6RrOHesiiSeGJbPpZ0PxPybk/I=;
-        b=fMkiy8Mks7PEzai81fFyfmob9UeXsN+LhcjS7lKsikuy6qNHuColBNgup1SlKcfqUT
-         B3re5fJX+S7XEoWT8nLcQHq/f9kw7wiUZhYtq4n3DXWKCYPELCUIan7tI+woWrZHWP3m
-         NlBEwSqdmJTOinWh+vTgEEc1GT5IFDmy5ZOH6AZ4pOddIdqdAsDcYBQzZnrgSKdK9NZb
-         5f2NC++twiX0rUhDjXXpEq1tcqY0O1BzlbLX7BLzds9d5buqecTwbD7CFw3x4itTxn3W
-         ZEPDFhifmeyglZmMrOG6B41MMA0Ssbv3XL3LUX43cH9WhdDC9GRn5CXpzNtbnE5XqYnm
-         Iwtw==
-X-Gm-Message-State: APjAAAVYVYn1qAJZorHNNCM+OiDaY2H78dEyWZahIhBPVeNdvFffk7Rz
-        QSBcPQj6A6sByb3ct/jc9FY=
-X-Google-Smtp-Source: APXvYqxO9TEqstUE7hLdlfJ+mMtY+H2+e2SfFBVFtOUhNn1MKcufFoTLuu3znyHThDv+TE/BULRZ3g==
-X-Received: by 2002:a1c:ed05:: with SMTP id l5mr12399414wmh.21.1567447813348;
-        Mon, 02 Sep 2019 11:10:13 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id b144sm33844070wmb.3.2019.09.02.11.10.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 11:10:12 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 20:10:10 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Federico Vaga <federico.vaga@vaga.pv.it>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] doc:lock: remove reference to clever use of read-write
- lock
-Message-ID: <20190902181010.GA35858@gmail.com>
-References: <20190831134116.25417-1-federico.vaga@vaga.pv.it>
- <20190831084344.6fd7c039@lwn.net>
- <2216492.xyESGPMPG3@pcbe13614>
+        Mon, 2 Sep 2019 14:11:49 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id BF9D618224D8A;
+        Mon,  2 Sep 2019 18:11:47 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::,RULES_HIT:41:355:379:599:800:877:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1542:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2551:2553:2559:2562:2693:2828:3138:3139:3140:3141:3142:3354:3622:3865:3866:3867:3868:3870:3871:3874:4184:4250:4321:4423:5007:6119:7576:7903:7996:9545:10004:10400:10848:10967:11026:11232:11473:11658:11914:12043:12050:12296:12297:12438:12555:12663:12740:12760:12895:12986:13439:13848:14096:14097:14180:14181:14659:14721:21060:21080:21451:21611:21627:21740:21810:30054:30060:30090:30091,0,RBL:47.151.137.30:@perches.com:.lbl8.mailshell.net-62.8.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:34,LUA_SUMMARY:none
+X-HE-Tag: heat65_83e2ed7ab5f20
+X-Filterd-Recvd-Size: 3481
+Received: from XPS-9350.home (unknown [47.151.137.30])
+        (Authenticated sender: joe@perches.com)
+        by omf10.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  2 Sep 2019 18:11:46 +0000 (UTC)
+Message-ID: <f7f8f751e77578edb88c0d9888930de3f3b60670.camel@perches.com>
+Subject: Re: linux-next: Tree for Sep 2 (exfat)
+From:   Joe Perches <joe@perches.com>
+To:     Randy Dunlap <rdunlap@infradead.org>, Greg KH <greg@kroah.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Date:   Mon, 02 Sep 2019 11:11:45 -0700
+In-Reply-To: <13e2db80-0c89-0f36-6876-f9639f0d30ab@infradead.org>
+References: <20190902224310.208575dc@canb.auug.org.au>
+         <cecc2af6-7ef6-29f6-569e-b591365e45ad@infradead.org>
+         <20190902174631.GB31445@kroah.com>
+         <13e2db80-0c89-0f36-6876-f9639f0d30ab@infradead.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2216492.xyESGPMPG3@pcbe13614>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Federico Vaga <federico.vaga@vaga.pv.it> wrote:
-
-> On Saturday, August 31, 2019 4:43:44 PM CEST Jonathan Corbet wrote:
-> > On Sat, 31 Aug 2019 15:41:16 +0200
-> > 
-> > Federico Vaga <federico.vaga@vaga.pv.it> wrote:
-> > >  several CPU's and you want to use spinlocks you can potentially use
+On Mon, 2019-09-02 at 11:07 -0700, Randy Dunlap wrote:
+> On 9/2/19 10:46 AM, Greg KH wrote:
+> > On Mon, Sep 02, 2019 at 10:39:39AM -0700, Randy Dunlap wrote:
+> > > On 9/2/19 5:43 AM, Stephen Rothwell wrote:
+> > > > Hi all,
+> > > > 
+> > > > News: I will only be doing 2 more releases before I leave for Kernel
+> > > > Summit (there may be some reports on Thursday, but I doubt I will have
+> > > > time to finish the full release) and then no more until Sept 30.
+> > > > 
+> > > > Changes since 20190830:
+> > > > 
 > > > 
-> > > -cheaper versions of the spinlocks. IFF you know that the spinlocks are
-> > > +cheaper versions of the spinlocks. If you know that the spinlocks are
-> > > 
-> > >  never used in interrupt handlers, you can use the non-irq versions::
-> > I suspect that was not actually a typo; "iff" is a way for the
-> > mathematically inclined to say "if and only if".
+> > > Hi,
+> > > I am seeing lots of exfat build errors when CONFIG_BLOCK is not set/enabled.
+> > > Maybe its Kconfig should also say
+> > > 	depends on BLOCK
+> > > ?
 > > 
-> > jon
+> > Here's what I committed to my tree:
+> > 
+> > 
+> > From e2b880d3d1afaa5cad108c29be3e307b1917d195 Mon Sep 17 00:00:00 2001
+> > From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Date: Mon, 2 Sep 2019 19:45:06 +0200
+> > Subject: staging: exfat: make exfat depend on BLOCK
+> > 
+> > This should fix a build error in some configurations when CONFIG_BLOCK
+> > is not selected.  Also properly set the dependancy for no FAT support at
+> > the same time.
+> > 
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > 
-> I learned something new today :)
+> That works. Thanks.
+> Acked-by: Randy Dunlap <rdunlap@infradead.org> # build-tested
 > 
-> I am not used to the mathematical English jargon. It make sense, but then I 
-> would replace it with "If and only if": for clarity.
+> > ---
+> >  drivers/staging/exfat/Kconfig | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/staging/exfat/Kconfig b/drivers/staging/exfat/Kconfig
+> > index f52129c67f97..290dbfc7ace1 100644
+> > --- a/drivers/staging/exfat/Kconfig
+> > +++ b/drivers/staging/exfat/Kconfig
+> > @@ -1,11 +1,13 @@
+> >  config EXFAT_FS
+> >  	tristate "exFAT fs support"
+> > +	depends on BLOCK
+> >  	select NLS
+> >  	help
+> >  	  This adds support for the exFAT file system.
+> >  
+> >  config EXFAT_DONT_MOUNT_VFAT
+> >  	bool "Prohibit mounting of fat/vfat filesysems by exFAT"
+> > +	depends on EXFAT_FS
+> >  	default y
+> >  	help
+> >  	  By default, the exFAT driver will only mount exFAT filesystems, and refuse
 
-While it's used in a number of places and it's pretty common wording 
-overall in the literature, I agree that we should probably change this in 
-locking API user facing documentation.
+I think this last one is backwards and should be
 
-If you change it, please do it in both places it's used.
+config EXFAT_ALLOW_MOUNT_VFAT
+and
+default n
 
-Thanks,
+> 
+> 
 
-	Ingo
