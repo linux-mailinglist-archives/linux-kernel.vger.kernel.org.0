@@ -2,71 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BF70A580D
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DFEC7A582B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:42:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731216AbfIBNjJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:39:09 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50881 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731147AbfIBNjG (ORCPT
+        id S1731442AbfIBNjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:39:49 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35432 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731194AbfIBNjJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:39:06 -0400
-Received: by mail-wm1-f67.google.com with SMTP id c10so2735120wmc.0;
-        Mon, 02 Sep 2019 06:39:04 -0700 (PDT)
+        Mon, 2 Sep 2019 09:39:09 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g7so14103711wrx.2;
+        Mon, 02 Sep 2019 06:39:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:subject:references
-         :in-reply-to:cc:cc:to;
-        bh=c4HshC9nAsXvh0CM4Xw/Kywl+VsuIg86CWeyWDCZNw8=;
-        b=nUOYP3/BkP7nlK+bdvIOp5k8nq+GgcmSmqKIznO71owRg4+erE7zTHOpVSlGC/EO+g
-         piMxTWg6gk5kHMvHQzCp9nI1wcIP8Hg+Lf589xahePrt/2K7NrlyDJsk3w4FKEK+nb/n
-         h8u2kOkVzIpKwEXWSMWxzU4yX6tF2PaDVyTXkxfxEpiBqKLeOicO8rCdlF9YAK2IJXG3
-         wKYSI1OEDK1Fw+R7uM/fbZdrcPnFMxEPenTOAA/3v7VtoSIxEX4kHyBnkAGR2KqcWMU6
-         CpJ3vRH3zfGPBLb5ND7UEhFt3uNR9z7PhrMaL8Jv2N0LXAmVrzUFLO0UHwh8CZSkQ78F
-         n6Rg==
-X-Gm-Message-State: APjAAAVsDUavT7Fh96NnQAeosCougAPYd4EN+BbQ2RbWu5Hv/PyToeyf
-        qnvxPQt1KiPsDay2P82BAQ==
-X-Google-Smtp-Source: APXvYqwO6HHhku+0rZz6bR1PsEOF/M9tdBQBZMCOO26c8+wfPqrArykir4NPZWmSRZbUxaOgadevqw==
-X-Received: by 2002:a1c:c5cb:: with SMTP id v194mr14382889wmf.108.1567431543614;
-        Mon, 02 Sep 2019 06:39:03 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rl1/ze6kx/CUskXwTtnQLspfVQPuMYTtTqShk05XrUg=;
+        b=VaAk/s64C/XajP01q5KRSXCkcByra439P07kQUDRBR2xM4O+USdWHTRMaHWeAYnaT+
+         LSINNNgqC+0S6mKs3NabrR77n4DUr1P1PfWbkQ+q2JGqRkYp1g2wYZbSNMJAsEhElE83
+         kITdW3LiQA5VDPhVKdkuhPV3QejdzRvHtz54cF3bijPPLxX2FIKHs2+OPZCnTfMukkMj
+         Xyce4hwIFvQ6AZmypbM1QP1Yi9S2IjUY+OkYH0/SOpXniOvTs5Oup7tmiY4VuYHBSojl
+         mdIJHzTTjM95xZs6+Wybr42njwUil8WmEBTvQ5hczZ0KYsh142FAIW6E4ZXyVfxbgXQu
+         yOeg==
+X-Gm-Message-State: APjAAAUhrYaEbkoPaJNFf2gqdq7S65Yj61LnQFjAL5EIkh1jbRfT/vDV
+        3QYaPyzX1G//vrzyiAr8pQ==
+X-Google-Smtp-Source: APXvYqzsx1OHwq+enNcfrXd5T9LqvLOZuQM8cwOivIUua3i7l9LEHS3ykllvG2e6KcWTCqGzGABwWA==
+X-Received: by 2002:adf:e784:: with SMTP id n4mr20000809wrm.144.1567431546044;
+        Mon, 02 Sep 2019 06:39:06 -0700 (PDT)
 Received: from localhost ([212.187.182.166])
-        by smtp.gmail.com with ESMTPSA id s12sm3868057wra.82.2019.09.02.06.39.02
+        by smtp.gmail.com with ESMTPSA id a16sm7279173wmg.5.2019.09.02.06.39.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 06:39:03 -0700 (PDT)
-Message-ID: <5d6d1b77.1c69fb81.59c07.0f29@mx.google.com>
-Date:   Mon, 02 Sep 2019 14:39:02 +0100
+        Mon, 02 Sep 2019 06:39:05 -0700 (PDT)
+Message-ID: <5d6d1b79.1c69fb81.29f0d.e042@mx.google.com>
+Date:   Mon, 02 Sep 2019 14:39:04 +0100
 From:   Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 1/7] dt-bindings: usb: mtu3: support USB wakeup for MT8183
-References: <1567150854-30033-1-git-send-email-chunfeng.yun@mediatek.com> <1567150854-30033-2-git-send-email-chunfeng.yun@mediatek.com>
-In-Reply-To: <1567150854-30033-2-git-send-email-chunfeng.yun@mediatek.com>
-Content-Type: text/plain
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+To:     Biwen Li <biwen.li@nxp.com>
+Cc:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        mark.rutland@arm.com, leoyang.li@nxp.com,
+        linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Martin Fuzzey <mfuzzey@parkeon.com>
+Subject: Re: [1/2] dt-bindings: rtc: pcf85263/pcf85363: add some properties
+References: <20190830091720.41156-1-biwen.li@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190830091720.41156-1-biwen.li@nxp.com>
+X-Mutt-References: <20190830091720.41156-1-biwen.li@nxp.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 30 Aug 2019 15:40:48 +0800, Chunfeng Yun wrote:
-> Support USB wakeup by ip-sleep mode for MT8183
+On Fri, Aug 30, 2019 at 05:17:19PM +0800, Biwen Li wrote:
+> Add some properties for pcf85263/pcf85363 as follows:
+>   - interrupt-output-pin: string type
+>   - quartz-load-capacitance: integer type
+>   - quartz-drive-strength: integer type
+>   - quartz-low-jitter: bool type
+>   - wakeup-source: bool type
 > 
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> Signed-off-by: Martin Fuzzey <mfuzzey@parkeon.com>
+> Signed-off-by: Biwen Li <biwen.li@nxp.com>
 > ---
-> v2~v3: no changes
-> ---
->  Documentation/devicetree/bindings/usb/mediatek,mtu3.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/rtc/pcf85363.txt      | 31 +++++++++++++++++++
+>  include/dt-bindings/rtc/pcf85363.h            | 15 +++++++++
+>  2 files changed, 46 insertions(+)
+>  create mode 100644 include/dt-bindings/rtc/pcf85363.h
 > 
+> diff --git a/Documentation/devicetree/bindings/rtc/pcf85363.txt b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+> index 94adc1cf93d9..d83359990bd7 100644
+> --- a/Documentation/devicetree/bindings/rtc/pcf85363.txt
+> +++ b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+> @@ -8,10 +8,41 @@ Required properties:
+>  Optional properties:
+>  - interrupts: IRQ line for the RTC (not implemented).
+>  
+> +- interrupt-output-pin: The interrupt output pin must be
+> +  "NONE", "INTA" or "INTB", default value is "NONE"
+> +
+> +- quartz-load-capacitance: The internal capacitor to select for the quartz:
+> +	PCF85263_QUARTZCAP_7pF		[0]
+> +	PCF85263_QUARTZCAP_6pF		[1]
+> +	PCF85263_QUARTZCAP_12p5pF	[2] DEFAULT
 
-Acked-by: Rob Herring <robh@kernel.org>
+We have a common property for this. Use it.
+
+> +
+> +- quartz-drive-strength: Drive strength for the quartz:
+> +	PCF85263_QUARTZDRIVE_NORMAL	[0] DEFAULT
+> +	PCF85263_QUARTZDRIVE_LOW	[1]
+> +	PCF85263_QUARTZDRIVE_HIGH	[2]
+> +
+> +- quartz-low-jitter: Boolean property, if present enables low jitter mode
+> +  which reduces jitter at the cost of increased power consumption.
+
+These 2  need vendor prefixes.
+
+> +
+> +- wakeup-source: Boolean property, mark the chip as a wakeup source,
+> +  independently of the availability of an IRQ line connected to the SoC.
+> +  This is useful if the IRQ line is connected to a PMIC or other circuit
+> +  that can power up the device rather than to a normal SOC interrupt.
+> +
+>  Example:
+>  
+>  pcf85363: pcf85363@51 {
+>  	compatible = "nxp,pcf85363";
+>  	reg = <0x51>;
+> +
+> +	interrupt-parent = <&gpio1>;
+> +	interrupts = <18 IRQ_TYPE_EDGE_FALLING>;
+> +
+> +	#include <dt-bindings/rtc/pcf85363.h>
+> +	wakeup-source;
+> +	interrupt-output-pin = "INTA";
+> +	quartz-load-capacitance = <PCF85363_QUARTZCAP_12p5pF>;
+> +	quartz-drive-strength = <PCF85363_QUARTZDRIVE_LOW>;
+> +	quartz-low-jitter;
+>  };
+>  
+> diff --git a/include/dt-bindings/rtc/pcf85363.h b/include/dt-bindings/rtc/pcf85363.h
+> new file mode 100644
+> index 000000000000..2c06c28eb5ff
+> --- /dev/null
+> +++ b/include/dt-bindings/rtc/pcf85363.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _DT_BINDINGS_RTC_PCF85363_H
+> +#define _DT_BINDINGS_RTC_PCF85363_H
+> +
+> +/* Quartz capacitance */
+> +#define PCF85363_QUARTZCAP_7pF		0
+> +#define PCF85363_QUARTZCAP_6pF		1
+> +#define PCF85363_QUARTZCAP_12p5pF	2
+> +
+> +/* Quartz drive strength */
+> +#define PCF85363_QUARTZDRIVE_NORMAL	0
+> +#define PCF85363_QUARTZDRIVE_LOW	1
+> +#define PCF85363_QUARTZDRIVE_HIGH	2
+> +
+> +#endif /* _DT_BINDINGS_RTC_PCF85363_H */
+> -- 
+> 2.17.1
+> 
 
