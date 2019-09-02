@@ -2,106 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F624A5641
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:36:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 677DEA564C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:36:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731824AbfIBMfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 08:35:07 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57614 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731777AbfIBMfC (ORCPT
+        id S1731526AbfIBMfm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 08:35:42 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36916 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730106AbfIBMfl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:35:02 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i4lXi-0004Tx-GT; Mon, 02 Sep 2019 14:34:46 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id DC3561C0793;
-        Mon,  2 Sep 2019 14:34:45 +0200 (CEST)
-Date:   Mon, 02 Sep 2019 12:34:45 -0000
-From:   "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/uaccess: Don't leak the AC flags into
- __get_user() argument evaluation
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, broonie@kernel.org,
-        sfr@canb.auug.org.au, akpm@linux-foundation.org, mhocko@suse.cz,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20190829082445.GM2369@hirez.programming.kicks-ass.net>
-References: <20190829082445.GM2369@hirez.programming.kicks-ass.net>
+        Mon, 2 Sep 2019 08:35:41 -0400
+Received: by mail-io1-f66.google.com with SMTP id r4so13643787iop.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 05:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=vnhw4cu5Y19Ngs/FcBn3AtSwpWd+bzaeBt1B8o4ltr0=;
+        b=qpXZrNFOf8FMkMWjsohOjNNDkWvo69WRgme+57+rTRmXKIOiO1IiNxMMiGWCQSg94p
+         uKQg1D4YEnLemazeoGnZOS6K926UhvmB4PXev0a0SIEKpuA04Frl8bbWXiPZzrc0iZpU
+         S4kbzpImRnUHETvZHhfHwZEPB8D8zYmyebN2Ht/yydHW+1WdeXyGygmDjzQ4P1yCV0xv
+         jIVdjwpC34AgTkw54p5aFkpzLRm0cjkZ050coecWNregtgHKkGE2lkr6argOPvK6AB4v
+         RXkbdicD7E7yBQJ/cJLAX1RMugFIrBYYajEWSQxVQ+BhXGyVq7OdZkN609bfjzKec+6e
+         6ehQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=vnhw4cu5Y19Ngs/FcBn3AtSwpWd+bzaeBt1B8o4ltr0=;
+        b=eh2AtixIlJbf5F754cFYF+xFDa66605izSNtrj/GHZZduV6h+HVYncGi0/T3WPwym+
+         90MkPWTIaeo7rE3sE9THdoWFW72IL/EJeadN7KvzACVr390PYuipZq8vyAARKceX979E
+         5YaFlqBBFtJfmwlKS6B0S9NX+NqnqMHSm/0LG8xmb7B0jvHxBJ7hIjlRlucHS8mAnf8f
+         rJGI8alzKztZm7WLwFUVhc9ZOrJ9Fdjh3ju3QydRQfigszPrUJ7hUJIAsBd58Hl+AmYq
+         c93NKbBTHDH4k6T5a+9UqAQGddz3e/DZtSFnuDHJfuWkoTOJido6ScRF9NY/kDxWVb1m
+         QJBg==
+X-Gm-Message-State: APjAAAURfXvTNmOibRGdLj2uRV9pbnkKV+NdLHWCWZ6lE7jJVRTpewzz
+        BQz8gK4hlpKNgAZHb44AEmd+x0i8KBnKalKkz5nh3A==
+X-Google-Smtp-Source: APXvYqwH4WnK2YgFBebstftIqR2c3baQcgor+d3PzdCtsmEbNLL45XxEHTEDeCGgnIkf7NhdFMpzDt1Jmy5oZMTkWgQ=
+X-Received: by 2002:a5d:870b:: with SMTP id u11mr29928734iom.220.1567427741022;
+ Mon, 02 Sep 2019 05:35:41 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <156742768563.30370.14506895450404848829.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <20190724082508.27617-1-brgl@bgdev.pl> <20190902093137.GI32232@dell>
+In-Reply-To: <20190902093137.GI32232@dell>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Mon, 2 Sep 2019 14:35:30 +0200
+Message-ID: <CAMRc=Me2FYJDDHo=8noU5bPNdPXBL23jDU_3XQiPfRJ3-pGh7g@mail.gmail.com>
+Subject: Re: [PATCH v3 0/7] backlight: gpio: simplify the driver
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-sh@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+pon., 2 wrz 2019 o 11:31 Lee Jones <lee.jones@linaro.org> napisa=C5=82(a):
+>
+> On Wed, 24 Jul 2019, Bartosz Golaszewski wrote:
+>
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > While working on my other series related to gpio-backlight[1] I noticed
+> > that we could simplify the driver if we made the only user of platform
+> > data use GPIO lookups and device properties. This series tries to do
+> > that.
+> >
+> > The first patch adds all necessary data structures to ecovec24. Patch
+> > 2/7 unifies much of the code for both pdata and non-pdata cases. Patche=
+s
+> > 3-4/7 remove unused platform data fields. Last three patches contain
+> > additional improvements for the GPIO backlight driver while we're alrea=
+dy
+> > modifying it.
+> >
+> > I don't have access to this HW but hopefully this works. Only compile
+> > tested.
+> >
+> > [1] https://lkml.org/lkml/2019/6/25/900
+> >
+> > v1 -> v2:
+> > - rebased on top of v5.3-rc1 and adjusted to the recent changes from An=
+dy
+> > - added additional two patches with minor improvements
+> >
+> > v2 -> v3:
+> > - in patch 7/7: used initializers to set values for pdata and dev local=
+ vars
+> >
+> > Bartosz Golaszewski (7):
+> >   sh: ecovec24: add additional properties to the backlight device
+> >   backlight: gpio: simplify the platform data handling
+> >   sh: ecovec24: don't set unused fields in platform data
+> >   backlight: gpio: remove unused fields from platform data
+> >   backlight: gpio: remove dev from struct gpio_backlight
+> >   backlight: gpio: remove def_value from struct gpio_backlight
+> >   backlight: gpio: use a helper variable for &pdev->dev
+> >
+> >  arch/sh/boards/mach-ecovec24/setup.c         | 33 ++++++--
+> >  drivers/video/backlight/gpio_backlight.c     | 82 +++++---------------
+> >  include/linux/platform_data/gpio_backlight.h |  3 -
+> >  3 files changed, 44 insertions(+), 74 deletions(-)
+>
+> Can you collect all your Acks and re-submit please?
+>
 
-Commit-ID:     9b8bd476e78e89c9ea26c3b435ad0201c3d7dbf5
-Gitweb:        https://git.kernel.org/tip/9b8bd476e78e89c9ea26c3b435ad0201c3d7dbf5
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Thu, 29 Aug 2019 10:24:45 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 02 Sep 2019 14:22:38 +02:00
+Done.
 
-x86/uaccess: Don't leak the AC flags into __get_user() argument evaluation
+Bart
 
-Identical to __put_user(); the __get_user() argument evalution will too
-leak UBSAN crud into the __uaccess_begin() / __uaccess_end() region.
-While uncommon this was observed to happen for:
-
-  drivers/xen/gntdev.c: if (__get_user(old_status, batch->status[i]))
-
-where UBSAN added array bound checking.
-
-This complements commit:
-
-  6ae865615fc4 ("x86/uaccess: Dont leak the AC flag into __put_user() argument evaluation")
-
-Tested-by Sedat Dilek <sedat.dilek@gmail.com>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: broonie@kernel.org
-Cc: sfr@canb.auug.org.au
-Cc: akpm@linux-foundation.org
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: mhocko@suse.cz
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Link: https://lkml.kernel.org/r/20190829082445.GM2369@hirez.programming.kicks-ass.net
----
- arch/x86/include/asm/uaccess.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 9c44353..35c225e 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -444,8 +444,10 @@ __pu_label:							\
- ({									\
- 	int __gu_err;							\
- 	__inttype(*(ptr)) __gu_val;					\
-+	__typeof__(ptr) __gu_ptr = (ptr);				\
-+	__typeof__(size) __gu_size = (size);				\
- 	__uaccess_begin_nospec();					\
--	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
-+	__get_user_size(__gu_val, __gu_ptr, __gu_size, __gu_err, -EFAULT);	\
- 	__uaccess_end();						\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
- 	__builtin_expect(__gu_err, 0);					\
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
