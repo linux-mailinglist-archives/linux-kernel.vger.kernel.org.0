@@ -2,111 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67956A5133
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:18:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91ECAA5174
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:19:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730488AbfIBIR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:17:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56402 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729462AbfIBIRY (ORCPT
+        id S1730618AbfIBITw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:19:52 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58484 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729964AbfIBITv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:17:24 -0400
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1i4hWQ-0008Mf-J3; Mon, 02 Sep 2019 10:17:10 +0200
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 327551C0793;
-        Mon,  2 Sep 2019 10:17:10 +0200 (CEST)
-Date:   Mon, 02 Sep 2019 08:17:10 -0000
-From:   "tip-bot2 for John S. Gruber" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/boot: Preserve boot_params.secure_boot from sanitizing
-Cc:     "John S. Gruber" <JohnSGruber@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Mark Brown <broonie@kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-In-Reply-To: <CAPotdmSPExAuQcy9iAHqX3js_fc4mMLQOTr5RBGvizyCOPcTQQ@mail.gmail.com>
-References: <CAPotdmSPExAuQcy9iAHqX3js_fc4mMLQOTr5RBGvizyCOPcTQQ@mail.gmail.com>
+        Mon, 2 Sep 2019 04:19:51 -0400
+Received: from pendragon.ideasonboard.com (231.125-247-81.adsl-dyn.isp.belgacom.be [81.247.125.231])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 54748303;
+        Mon,  2 Sep 2019 10:19:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1567412389;
+        bh=5HBvswllGaiODYjSIoZK0GflOekHiZSNfmmM72aXnHo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ddESnutpxySaQ/3OkWOw3E0FVnOw68ZIr0ANYsVmiRXVIziGPIOVS4k0hcZquq8yP
+         tcAbH9x6nM6+Tf7h3nu9gNOw0JjmVEcqqIrA6IH2Lp9iEVehsHh3/GILJbqOIeEFQ3
+         RHnEDJc/VTN463sjn5hHj4hojUwkb9SHET+w1x28=
+Date:   Mon, 2 Sep 2019 11:19:42 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
+        <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 2/5] media: v4l2-ctrl: Document V4L2_CID_LOCATION
+Message-ID: <20190902081942.GE4777@pendragon.ideasonboard.com>
+References: <20190814202815.32491-1-jacopo@jmondi.org>
+ <20190814202815.32491-3-jacopo@jmondi.org>
+ <20190814224340.GD5015@pendragon.ideasonboard.com>
+ <664fe7b3-9051-30da-736e-710a4e9cecde@xs4all.nl>
+ <d60e4664-3a3f-1723-6c96-4fc822b6a7bb@xs4all.nl>
+ <20190815143423.vaoswb4jvzd2blxp@uno.localdomain>
+ <cb36e8a0-b941-ff37-e58c-0f9b7f62116a@xs4all.nl>
+ <20190901172457.GC1047@bug>
+ <20190902080002.GC4777@pendragon.ideasonboard.com>
+ <20190902080657.GC15850@amd>
 MIME-Version: 1.0
-Message-ID: <156741223005.17687.14072415887043895040.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190902080657.GC15850@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, Sep 02, 2019 at 10:06:57AM +0200, Pavel Machek wrote:
+> >>> Single integer. It's read-only, so it just reports the location.
+> >>> 
+> >>> It would be different if this was a writable control: then you need to
+> >>> know which locations are possible to set, and that requires a menu type.
+> >>> 
+> >>> But it doesn't make sense to set the location from software. However, the
+> >>> location might change as a result of other changes: e.g. if the camera
+> >>> has motor control of the tilt and the tilt changes from forward facing to
+> >>> downward facing, then the driver might change the location from FRONT
+> >>> to DOWN. A convoluted example perhaps, but this is just brainstorming.
+> >> 
+> >> There are phones with exactly such camera setup. And yes, it makes
+> >> sense to be writable in that case, as software can move the camera in
+> >> such case.
+> > 
+> > Out of curiosity, what phones are those ?
+> 
+> This one:
+> 
+> https://www.samsung.com/global/galaxy/galaxy-a80/
 
-Commit-ID:     29d9a0b50736768f042752070e5cdf4e4d4c00df
-Gitweb:        https://git.kernel.org/tip/29d9a0b50736768f042752070e5cdf4e4d4c00df
-Author:        John S. Gruber <JohnSGruber@gmail.com>
-AuthorDate:    Mon, 02 Sep 2019 00:00:54 +02:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Mon, 02 Sep 2019 09:17:45 +02:00
+Interesting device. I'm not sure we should control that through a
+location control though, as it seems there's more than the rotation of
+the camera involved. In any case I wouldn't care about it for now, and
+turn the location control from read-only to read-write later if needed.
+We need more information and more thought to support that use case.
 
-x86/boot: Preserve boot_params.secure_boot from sanitizing
+-- 
+Regards,
 
-Commit
-
-  a90118c445cc ("x86/boot: Save fields explicitly, zero out everything else")
-
-now zeroes the secure boot setting information (enabled/disabled/...)
-passed by the boot loader or by the kernel's EFI handover mechanism.
-
-The problem manifests itself with signed kernels using the EFI handoff
-protocol with grub and the kernel loses the information whether secure
-boot is enabled in the firmware, i.e., the log message "Secure boot
-enabled" becomes "Secure boot could not be determined".
-
-efi_main() arch/x86/boot/compressed/eboot.c sets this field early but it
-is subsequently zeroed by the above referenced commit.
-
-Include boot_params.secure_boot in the preserve field list.
-
- [ bp: restructure commit message and massage. ]
-
-Fixes: a90118c445cc ("x86/boot: Save fields explicitly, zero out everything else")
-Signed-off-by: John S. Gruber <JohnSGruber@gmail.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: stable <stable@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/CAPotdmSPExAuQcy9iAHqX3js_fc4mMLQOTr5RBGvizyCOPcTQQ@mail.gmail.com
----
- arch/x86/include/asm/bootparam_utils.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/include/asm/bootparam_utils.h b/arch/x86/include/asm/bootparam_utils.h
-index 9e5f3c7..981fe92 100644
---- a/arch/x86/include/asm/bootparam_utils.h
-+++ b/arch/x86/include/asm/bootparam_utils.h
-@@ -70,6 +70,7 @@ static void sanitize_boot_params(struct boot_params *boot_params)
- 			BOOT_PARAM_PRESERVE(eddbuf_entries),
- 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
- 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
-+			BOOT_PARAM_PRESERVE(secure_boot),
- 			BOOT_PARAM_PRESERVE(hdr),
- 			BOOT_PARAM_PRESERVE(e820_table),
- 			BOOT_PARAM_PRESERVE(eddbuf),
+Laurent Pinchart
