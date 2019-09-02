@@ -2,105 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39418A4F04
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 07:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B48FDA4F0F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 08:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729349AbfIBF6n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 01:58:43 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34901 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726008AbfIBF6m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 01:58:42 -0400
-Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <o.rempel@pengutronix.de>)
-        id 1i4fMO-0007zm-FU; Mon, 02 Sep 2019 07:58:40 +0200
-Subject: Re: [PATCH] [RFC] i2c: imx: make use of format specifier %dE
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <uwe@kleine-koenig.org>
-Cc:     Oleksij Rempel <linux@rempel-privat.de>, kernel@pengutronix.de,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Enrico Weigelt <lkml@metux.net>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190829042905.4850-1-uwe@kleine-koenig.org>
- <20190829203912.GU3740@ninjato>
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-Message-ID: <aefbf1c5-d0b7-bb6e-0f97-d65575d549ff@pengutronix.de>
-Date:   Mon, 2 Sep 2019 07:58:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729421AbfIBGJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 02:09:14 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50448 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725839AbfIBGJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 02:09:13 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id DA43FADD0A20B83956FB;
+        Mon,  2 Sep 2019 14:09:09 +0800 (CST)
+Received: from [127.0.0.1] (10.74.191.121) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Mon, 2 Sep 2019
+ 14:09:00 +0800
+Subject: Re: [PATCH v2 7/9] sparc64: numa: check the node id consistently for
+ sparc64
+To:     David Miller <davem@davemloft.net>
+CC:     <catalin.marinas@arm.com>, <will@kernel.org>, <mingo@redhat.com>,
+        <bp@alien8.de>, <rth@twiddle.net>, <ink@jurassic.park.msu.ru>,
+        <mattst88@gmail.com>, <benh@kernel.crashing.org>,
+        <paulus@samba.org>, <mpe@ellerman.id.au>,
+        <heiko.carstens@de.ibm.com>, <gor@linux.ibm.com>,
+        <borntraeger@de.ibm.com>, <ysato@users.sourceforge.jp>,
+        <dalias@libc.org>, <ralf@linux-mips.org>, <paul.burton@mips.com>,
+        <jhogan@kernel.org>, <jiaxun.yang@flygoat.com>,
+        <chenhc@lemote.com>, <akpm@linux-foundation.org>,
+        <rppt@linux.ibm.com>, <anshuman.khandual@arm.com>,
+        <tglx@linutronix.de>, <cai@lca.pw>, <robin.murphy@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <hpa@zytor.com>, <x86@kernel.org>,
+        <dave.hansen@linux.intel.com>, <luto@kernel.org>,
+        <peterz@infradead.org>, <len.brown@intel.com>, <axboe@kernel.dk>,
+        <dledford@redhat.com>, <jeffrey.t.kirsher@intel.com>,
+        <linux-alpha@vger.kernel.org>, <nfont@linux.vnet.ibm.com>,
+        <naveen.n.rao@linux.vnet.ibm.com>, <mwb@linux.vnet.ibm.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-s390@vger.kernel.org>,
+        <linux-sh@vger.kernel.org>, <sparclinux@vger.kernel.org>,
+        <tbogendoerfer@suse.de>, <linux-mips@vger.kernel.org>,
+        <linuxarm@huawei.com>
+References: <1567231103-13237-8-git-send-email-linyunsheng@huawei.com>
+ <20190830.235337.570776316111294728.davem@davemloft.net>
+ <0195eb73-99ae-fec2-3e11-2cb9e6677926@huawei.com>
+ <20190831.130250.1236116087422472663.davem@davemloft.net>
+From:   Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <1e128e33-427f-19a2-0e13-95a9c0656ab1@huawei.com>
+Date:   Mon, 2 Sep 2019 14:08:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <20190829203912.GU3740@ninjato>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190831.130250.1236116087422472663.davem@davemloft.net>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
-X-SA-Exim-Mail-From: o.rempel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.74.191.121]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 29.08.19 22:39, Wolfram Sang wrote:
-> On Thu, Aug 29, 2019 at 06:29:05AM +0200, Uwe Kleine-König wrote:
->> I created a patch that teaches printk et al to emit a symbolic error
->> name for an error valued integer[1]. With that applied
->>
->> 	dev_err(&pdev->dev, "can't enable I2C clock, ret=%dE\n", ret);
->>
->> emits
->>
->> 	... can't enable I2C clock, ret=EIO
->>
->> if ret is -EIO. Petr Mladek (i.e. one of the printk maintainers) had
->> concerns if this would be well received and worth the effort. He asked
->> to present it to a few subsystems. So for now, this patch converting the
->> i2c-imx driver shouldn't be applied yet but it would be great to get
->> some feedback about if you think that being able to easily printk (for
->> example) "EIO" instead of "-5" is a good idea. Would it help you? Do you
->> think it helps your users?
+On 2019/9/1 4:02, David Miller wrote:
+> From: Yunsheng Lin <linyunsheng@huawei.com>
+> Date: Sat, 31 Aug 2019 16:57:04 +0800
 > 
-> Yes, it would help me. And users, too, I am quite sure. For me, if I mix
-> up two numbers while debugging, I am hunting ghosts for a while until I
-> realize my mistake. So:
+>> Did you mean sparc64 system does not has ACPI, the device's node id will
+>> not specified by ACPI, so the ACPI is unrelated here?
 > 
-> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+> Yes, sparc64 never has and never will have ACPI.
 > 
-> I think the main drawback is that ERRORCODES in vsprintf.c now need
-> maintenance, but I think it is worth the effort. I'd be interested in
-> the overhead in size this causes, but I also think it is worth the
-> effort. (It could even be compiled out if we have some generic Kconfig
-> symbol for smaller kernels).
+> This is also true for several other platforms where you have made this
+> change.
+> 
+> The assumption of your entire patch set is that the semantics of the
+> NUMA node ID are somehow completely defined by ACPI semantics.  Which
+> is not true.
 
+Thanks for pointing out.
 
-I like it, at least it will safe me some time.
-I tested this patch together with the vprintf patch, so result looks like:
-[    0.281843] imx-i2c 21a0000.i2c: can't enable I2C clock, ret=EIO
-[    0.281891] imx-i2c: probe of 21a0000.i2c failed with error -5
+The NUMA node id in sparc64 system is defined by DT semantics?
 
-Tested-by: Oleksij Rempel <o.rempel@pengutronix.de>
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> 
+> .
+> 
 
-Kind regards,
-Oleksij Rempel
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
