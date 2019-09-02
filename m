@@ -2,93 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE1BA51FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D82EEA51D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730719AbfIBIj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:39:59 -0400
-Received: from mail-eopbgr30125.outbound.protection.outlook.com ([40.107.3.125]:23976
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729606AbfIBIj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:39:59 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MEKtDo27ruBcFIaUnSEPfQRRPVNwL79NdhtgmXuNIZ+dOuA2UMyw2twWj8uCtb30N6sh4rHXBXF2RVYWEcEDg6CrFSiZfro7eUhQVx/vskwCPOy8WaNhElpTaqxIqOlIgV/35JozC0+xxmsy2L2rKz7srqEIlrKixElnjwzBHd4eudyXiA8QFxr3QvgBBSyogrJQH0yFMzsk6KIscoxnEmecCmbC7m6/0nn4fCoJ1XHHg6vGKg4XJdtnyBDgp6VCzj4ptO0knj573rcmOfdo2jmDNqXqPLnZmLUhnUCsmDBX2EnZ9oPsX5BIzF4hxkVnxmqzktgBywtZ5jBmwKTCYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2q30Gsxa8+t3FtsREPTDYXCswjl66vNTW1BRcQN+GH0=;
- b=F0y0M/6PQ0guWceJJgMPONvr53ff8thJ6s1GH4sM5NzCG4OetofNSCgysFra8syTp+zdKy2zMLfRlGeMTr5MjkpfeUou5xpcdPS1gIbGtURAnHEdH6YUHuXHRtvei81NtuClFoeycYMx07S6sjZE6qaZbjVGijjSL0m8vIeA/EhQKpzEWea4uDK3JDmxo+yqFcu7/aCYCaLF1JhGcQLe4GsMnY31cpz2hOup8KzGJahTnRkrWbQ+kw/IOUi1ua66ztWjJUT7zM2zD6E6FZP9hrS/YMB2332a6z9FpzJOqARaomOqP5kqqhJ7JadVqb9JQxAX51AzM56kjmL7bUiXyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
- dkim=pass header.d=habana.ai; arc=none
+        id S1730328AbfIBIe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:34:56 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34477 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729602AbfIBIez (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:34:55 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n9so7145227pgc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 01:34:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2q30Gsxa8+t3FtsREPTDYXCswjl66vNTW1BRcQN+GH0=;
- b=sUn2kc9LR+oZtvgoBrwdXj+G4Kdfp/npJ+YDalzUJ3Q/eGbYXYtz5Jn1z3pkXJ7MnXn8hfm4VzdRPi1LWIztwCwC7ksu9buUB2msLhJsFDikjOBOQmcSUc54CGn6gUefnUxN8Kr+z2yrynHzGg0QvS4/8w39aRg1q2T3TebPskQ=
-Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com (52.133.8.16) by
- AM6PR0202MB3287.eurprd02.prod.outlook.com (52.133.30.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.21; Mon, 2 Sep 2019 08:39:55 +0000
-Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com
- ([fe80::4171:a73:3c96:2c5b]) by AM6PR0202MB3382.eurprd02.prod.outlook.com
- ([fe80::4171:a73:3c96:2c5b%7]) with mapi id 15.20.2220.021; Mon, 2 Sep 2019
- 08:39:55 +0000
-From:   Omer Shpigelman <oshpigelman@habana.ai>
-To:     Oded Gabbay <oded.gabbay@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tomer Tayar <ttayar@habana.ai>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: RE: [PATCH 1/2] habanalabs: stop using the acronym KMD
-Thread-Topic: [PATCH 1/2] habanalabs: stop using the acronym KMD
-Thread-Index: AQHVYWMXDoCFAMv1rUGzIkpoa3Z506cYEPqA
-Date:   Mon, 2 Sep 2019 08:39:55 +0000
-Message-ID: <AM6PR0202MB3382ED0E168DBC4A0D3AB86BB8BE0@AM6PR0202MB3382.eurprd02.prod.outlook.com>
-References: <20190902075024.27302-1-oded.gabbay@gmail.com>
-In-Reply-To: <20190902075024.27302-1-oded.gabbay@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=oshpigelman@habana.ai; 
-x-originating-ip: [31.154.190.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 64420a00-1a77-45f4-f7c3-08d72f81215b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR0202MB3287;
-x-ms-traffictypediagnostic: AM6PR0202MB3287:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM6PR0202MB328727F2D9AF04681CC0EAE9B8BE0@AM6PR0202MB3287.eurprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3826;
-x-forefront-prvs: 01480965DA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(136003)(376002)(396003)(366004)(346002)(189003)(199004)(81156014)(4744005)(81166006)(52536014)(476003)(305945005)(7696005)(74316002)(66446008)(9686003)(6246003)(11346002)(5660300002)(26005)(2501003)(66066001)(86362001)(66946007)(64756008)(256004)(66476007)(7736002)(66556008)(2906002)(6436002)(14454004)(316002)(3846002)(8676002)(76176011)(446003)(102836004)(8936002)(110136005)(4326008)(55016002)(71190400001)(71200400001)(486006)(53936002)(186003)(25786009)(478600001)(6116002)(6506007)(33656002)(6636002)(99286004)(76116006)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3287;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: habana.ai does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: xRZyix7P/+L8MukJcJUN2tGfJqM3mDKQjm/3zMM4UJi5sr+PeIm5ApZBq5pC4WYeT3TY4nAq1Y54dMEKIccA1+V8Hp5gn5lYrfTAs2XxrtMScAFrV73iwp33nJfXs0dOYWNkayAKHePaafN0yNCiylxxlSfuS+3RxOc0yZ8obuxMOSfp1n7Iq37FNBU75PS8JHIV1hRGULAHROB4uP4OqxgKIX4NS5J9ytaTmwTDLgyezsf81HKS4ORa4zp+fVQxjqqiYoKJLgALfkUQZgbpKIojEQLL2iLuTV1pSfz3fw2Tk8seXZF6R2URWD+TzSl6Ik+FEKT/zNKdPciXCDmSmhM6mo6OV0+QJeoXjKf8by8tWdddcf2fbgPlft2a9sUfMm+HfsMmcTkJ6jTqqrH1QY7xlwQi23UqFeoDc2YyKEw=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: habana.ai
-X-MS-Exchange-CrossTenant-Network-Message-Id: 64420a00-1a77-45f4-f7c3-08d72f81215b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2019 08:39:55.2317
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mNerA7dqOwutqG47Ry8oSRVpwbWWvR+txvrl9X7b1Cx3Fwo//ISUBW0mMuJ+7eakT+j29JAbcalrG73+qMOkNw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3287
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uFmY0zGFn+EQnA57VOg3VeO9qiRTqjJoOe1gdV98IwA=;
+        b=cYu84DUjPTKSgEfeLZtea5ZEO+oEaJLALl1KB7muOH5m/fFs57yP+LCBWA6ArhPio2
+         WkWh2wrJ47bV5YbLwT4iwCqb0Ai/rODNnzr2DLp/L4oyyVLmYnl8diGTiWZcLmPts4RT
+         Fvycb5VDcIqhCDQUwOkf5B/KrPFRGEDMpFQ0ye36mXAuIE2ktSav4aoIKXNO5UKgjCs9
+         XeRU/NPTPSKO6SIsAXPP6l9CAopbF2aMh6wQABGv4Bll8xPxRW8O0MHHWhR31XaYpl8N
+         rSDNcLd/VdJKmITmEkdXcJB0iI2uADXabuFqj6oUAtUumdu4JVui5i97iRe4w4fSGhL9
+         VORQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uFmY0zGFn+EQnA57VOg3VeO9qiRTqjJoOe1gdV98IwA=;
+        b=Wb1oMuwOUaojbCGhCkokGzPqaDtdrE/wHiwtR4O0IB6wrnz/CyvwTjt8ua48dyE2+V
+         DE+BJFGtNmTaHzaB/F9RhHpEXHuyjvlie++f81x6tcD5nt+LtEPBzIpQtNFEphzUPy4y
+         HadX+Y/Ws0zoukU7UcaIVwNBa4Dgv5B0s6/7VuXDfmKqCVIzFTZhMX4d1jbK2MIbaPGB
+         SNmT8XYWVJkALdL3QVwsV8mpBgmA1vb6XFaEKxlxD5GOAeGZk7WxnjxsCDnTfL1Y9n0m
+         Xpp5CxlnBEHolGlRLx5dRfRiudUG5v/qXwqRINNPa7GhhcwqpdzOJ+6RWsskYzuhR69+
+         TSbA==
+X-Gm-Message-State: APjAAAU5kh67rT4WpYGjEaYYT7JR5PvK4DBPM2Hr6GLrlf5m3rw0BDz0
+        dQ5xKmsa6m4UAuKa5s78ENw=
+X-Google-Smtp-Source: APXvYqykyTr1V1UXoAhEng9PvF5ygE64bFW8pzDF90EN8gbWoiWOHtdCIKRzyJWgs9NYY7KHzCPF3A==
+X-Received: by 2002:a63:184b:: with SMTP id 11mr25468636pgy.112.1567413294974;
+        Mon, 02 Sep 2019 01:34:54 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC.domain.name ([49.207.50.39])
+        by smtp.gmail.com with ESMTPSA id g9sm6977813pjl.0.2019.09.02.01.34.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Sep 2019 01:34:53 -0700 (PDT)
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     konrad.wilk@oracle.com, boris.ostrovsky@oracle.com,
+        jgross@suse.com, sstabellini@kernel.org
+Cc:     xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com,
+        Souptick Joarder <jrdr.linux@gmail.com>
+Subject: [PATCH v2] swiotlb-xen: Convert to use macro
+Date:   Mon,  2 Sep 2019 14:09:58 +0530
+Message-Id: <1567413598-4477-1-git-send-email-jrdr.linux@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogT2RlZCBHYWJiYXkgPG9kZWQuZ2FiYmF5QGdtYWlsLmNvbT4NClNlbnQ6IE1vbmRheSwg
-MiBTZXB0ZW1iZXIgMjAxOSAxMDo1MA0KDQo+IFdlIHdhbnQgdG8gc3RvcCB1c2luZyB0aGUgYWNy
-b255bSBLTUQuIFRoZXJlZm9yZSwgcmVwbGFjZSBhbGwgbG9jYXRpb25zDQo+IChleGNlcHQgZm9y
-IHJlZ2lzdGVyIG5hbWVzIHdlIGNhbid0IG1vZGlmeSkgd2hlcmUgS01EIGlzIHdyaXR0ZW4gdG8g
-b3RoZXINCj4gdGVybXMgc3VjaCBhcyAiTGludXgga2VybmVsIGRyaXZlciIgb3IgIkhvc3Qga2Vy
-bmVsIGRyaXZlciIsIGV0Yy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE9kZWQgR2FiYmF5IDxvZGVk
-LmdhYmJheUBnbWFpbC5jb20+DQoNClJldmlld2VkLWJ5OiBPbWVyIFNocGlnZWxtYW4gPG9zaHBp
-Z2VsbWFuQGhhYmFuYS5haT4NCg==
+Rather than using static int max_dma_bits, this
+can be coverted to use as macro.
+
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+---
+ drivers/xen/swiotlb-xen.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index ae1df49..d1eced5 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -38,6 +38,7 @@
+ #include <asm/xen/page-coherent.h>
+ 
+ #include <trace/events/swiotlb.h>
++#define MAX_DMA_BITS 32
+ /*
+  * Used to do a quick range check in swiotlb_tbl_unmap_single and
+  * swiotlb_tbl_sync_single_*, to see if the memory was in fact allocated by this
+@@ -114,8 +115,6 @@ static int is_xen_swiotlb_buffer(dma_addr_t dma_addr)
+ 	return 0;
+ }
+ 
+-static int max_dma_bits = 32;
+-
+ static int
+ xen_swiotlb_fixup(void *buf, size_t size, unsigned long nslabs)
+ {
+@@ -135,7 +134,7 @@ static int is_xen_swiotlb_buffer(dma_addr_t dma_addr)
+ 				p + (i << IO_TLB_SHIFT),
+ 				get_order(slabs << IO_TLB_SHIFT),
+ 				dma_bits, &dma_handle);
+-		} while (rc && dma_bits++ < max_dma_bits);
++		} while (rc && dma_bits++ < MAX_DMA_BITS);
+ 		if (rc)
+ 			return rc;
+ 
+-- 
+1.9.1
+
