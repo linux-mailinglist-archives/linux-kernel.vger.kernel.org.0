@@ -2,119 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BDB9A51AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5C3AA51CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:35:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730585AbfIBIct (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:32:49 -0400
-Received: from mga12.intel.com ([192.55.52.136]:64395 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730446AbfIBIco (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:32:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 01:32:43 -0700
-X-IronPort-AV: E=Sophos;i="5.64,457,1559545200"; 
-   d="scan'208";a="333504272"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga004-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 01:32:41 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-        by paasikivi.fi.intel.com (Postfix) with ESMTP id 3849D21057;
-        Mon,  2 Sep 2019 11:32:34 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@linux.intel.com>)
-        id 1i4hlQ-0005Jw-Ky; Mon, 02 Sep 2019 11:32:40 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH v4 11/11] lib/test_printf: Add tests for %pfw printk modifier
-Date:   Mon,  2 Sep 2019 11:32:40 +0300
-Message-Id: <20190902083240.20367-12-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
-References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729961AbfIBIdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:33:52 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:60406 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729722AbfIBIdw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:33:52 -0400
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1i4hmV-0001ln-NX; Mon, 02 Sep 2019 08:33:48 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     harry.wentland@amd.com, sunpeng.li@amd.com,
+        alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] drm/amd/display: Restore backlight brightness after system resume
+Date:   Mon,  2 Sep 2019 16:33:42 +0800
+Message-Id: <20190902083342.27393-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a test for the %pfw printk modifier using software nodes.
+Laptops with AMD APU doesn't restore display backlight brightness after
+system resume.
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+This issue started when DC was introduced.
+
+Let's use BL_CORE_SUSPENDRESUME so the backlight core calls
+update_status callback after system resume to restore the backlight
+level.
+
+Tested on Dell Inspiron 3180 (Stoney Ridge) and Dell Latitude 5495
+(Raven Ridge).
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 ---
- lib/test_printf.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index 944eb50f38625..9c6d716979fb1 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -22,6 +22,8 @@
- #include <linux/gfp.h>
- #include <linux/mm.h>
- 
-+#include <linux/property.h>
-+
- #include "../tools/testing/selftests/kselftest_module.h"
- 
- #define BUF_SIZE 256
-@@ -588,6 +590,40 @@ flags(void)
- 	kfree(cmp_buffer);
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 1b0949dd7808..183ef18ac6f3 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -2111,6 +2111,7 @@ static int amdgpu_dm_backlight_get_brightness(struct backlight_device *bd)
  }
  
-+static void __init fwnode_pointer(void)
-+{
-+	const struct software_node softnodes[] = {
-+		{ .name = "first", },
-+		{ .name = "second", .parent = &softnodes[0], },
-+		{ .name = "third", .parent = &softnodes[1], },
-+		{ NULL /* Guardian */ },
-+	};
-+	const char * const full_name = "/second/third";
-+	const char * const full_name_second = "/second";
-+	const char * const second_name = "second";
-+	const char * const third_name = "third";
-+	int rval;
-+
-+	rval = software_node_register_nodes(softnodes);
-+	if (rval) {
-+		pr_warn("cannot register softnodes; rval %d\n", rval);
-+		return;
-+	}
-+
-+	test(full_name_second, "%pfw",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-+	test(full_name, "%pfw",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-+	test(full_name, "%pfwf",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-+	test(second_name, "%pfwP",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-+	test(third_name, "%pfwP",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-+
-+	software_node_unregister_nodes(softnodes);
-+}
-+
- static void __init
- test_pointer(void)
- {
-@@ -610,6 +646,7 @@ test_pointer(void)
- 	bitmap();
- 	netdev_features();
- 	flags();
-+	fwnode_pointer();
- }
- 
- static void __init selftest(void)
+ static const struct backlight_ops amdgpu_dm_backlight_ops = {
++	.options = BL_CORE_SUSPENDRESUME,
+ 	.get_brightness = amdgpu_dm_backlight_get_brightness,
+ 	.update_status	= amdgpu_dm_backlight_update_status,
+ };
 -- 
-2.20.1
+2.17.1
 
