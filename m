@@ -2,136 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C3EA5700
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:03:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD35EA5706
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbfIBNDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:03:39 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:4404 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729672AbfIBNDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:03:39 -0400
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id 6A3C43110C48CBDD4B54;
-        Mon,  2 Sep 2019 21:03:37 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 2 Sep 2019 21:03:37 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Mon, 2 Sep 2019 21:03:36 +0800
-Date:   Mon, 2 Sep 2019 21:02:45 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-erofs@lists.ozlabs.org>
-Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
-Message-ID: <20190902130245.GC17916@architecture4>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-2-gaoxiang25@huawei.com>
- <20190829095954.GB20598@infradead.org>
- <20190901075240.GA2938@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190902124521.GA22153@infradead.org>
+        id S1730388AbfIBND5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:03:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36658 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730249AbfIBND4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 09:03:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=jw8Fv6wzy49CF5verrxJIhR/l1Jc+1IWvfjOczPJBbw=; b=PL+e1Zdr2JEzZT9ECWOEgUXIj
+        PfofQ/VUSphe5QCeOTp7hVitRbcBwO5EdK72d/pVGE9Al05kGGKjA898+8hdtXjKoTctl7h0PdacC
+        P898B+D6oQf8leL3R7qFDVwMz+UTwtptX7bm10xVhrcwZFPzA+WwvblcZokJJ9MWLL1CHVEC403k3
+        yZR22p/2zlSZ1dNzHE7/iT4XKcaRwmRLAmZsdsnwPPxjAOymEaUy3HVEN2o0LkkOho7mSpD7DrDA1
+        euVeuEZhe/LdLZ399jjWMaBG0TjH+3bM748sWpek8QJ+H81MukrKwHHfkFd0rETi4hEgJqJJIkx8x
+        QMq+VUvQQ==;
+Received: from [2001:4bb8:18c:1755:c70:4a89:bc61:2] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i4lzi-00018q-Rg; Mon, 02 Sep 2019 13:03:43 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stefano Stabellini <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        gross@suse.com, boris.ostrovsky@oracle.com
+Cc:     x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: swiotlb-xen cleanups v3
+Date:   Mon,  2 Sep 2019 15:03:26 +0200
+Message-Id: <20190902130339.23163-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190902124521.GA22153@infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme707-chm.china.huawei.com (10.1.199.103) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+Hi Xen maintainers and friends,
 
-On Mon, Sep 02, 2019 at 05:45:21AM -0700, Christoph Hellwig wrote:
-> On Sun, Sep 01, 2019 at 03:54:11PM +0800, Gao Xiang wrote:
-> > It could be better has a name though, because 1) erofs.mkfs uses this
-> > definition explicitly, and we keep this on-disk definition erofs_fs.h
-> > file up with erofs-utils.
-> > 
-> > 2) For kernel use, first we have,
-> >    datamode < EROFS_INODE_LAYOUT_MAX; and
-> >    !erofs_inode_is_data_compressed, so there are only two mode here,
-> >         1) EROFS_INODE_FLAT_INLINE,
-> >         2) EROFS_INODE_FLAT_PLAIN
-> >    if its datamode isn't EROFS_INODE_FLAT_INLINE (tail-end block packing),
-> >    it should be EROFS_INODE_FLAT_PLAIN.
-> > 
-> >    The detailed logic in erofs_read_inode and
-> >    erofs_map_blocks_flatmode....
-> 
-> Ok.  At least the explicit numbering makes this a little more obvious
-> now.  What seems fairly odd is that there are only various places that
-> check for some inode layouts/formats but nothing that does a switch
-> over all of them.
+please take a look at this series that cleans up the parts of swiotlb-xen
+that deal with non-coherent caches.
 
-(Maybe not explicitly for this part....)
+Boris and Juergen, can you take a look at patch 8, which touches x86
+a as well?
 
-erofs_map_blocks_flatmode()
-...
- 97         nblocks = DIV_ROUND_UP(inode->i_size, PAGE_SIZE);
- 98         lastblk = nblocks - is_inode_flat_inline(inode);
-                                ^ here
-...
+Changes since v2:
+ - further dma_cache_maint improvements
+ - split the previous patch 1 into 3 patches
 
-Believe me EROFS_INODE_FLAT_PLAIN is used widely for EROFS images....
-(if EROFS_INODE_FLAT_INLINE tail-end packing is not suitable and
- no compression....)
-
-> 
-> > > why are we adding a legacy field to a brand new file system?
-> > 
-> > The difference is just EROFS_INODE_FLAT_COMPRESSION_LEGACY doesn't
-> > have z_erofs_map_header, so it only supports default (4k clustersize)
-> > fixed-sized output compression rather than per-file setting, nothing
-> > special at all...
-> 
-> It still seems odd to add a legacy field to a brand new file system.
-
-Since 4.19 EROFS only supports EROFS_INODE_FLAT_COMPRESSION_LEGACY
-(per-filesystem setting), we'd like to introduce per-file setting and
-more configration for future requirements....
-
-> 
-> > > structures, as that keeps it clear in everyones mind what needs to
-> > > stay persistent and what can be chenged easily.
-> > 
-> > All fields in this file are on-disk representation by design
-> > (no logic for in-memory presentation).
-> 
-> Ok, make sense.    Maybe add a note to the top of the file comment
-> that this is the on-disk format.
-> 
-> One little oddity is that erofs_inode_is_data_compressed is here, while
-> is_inode_flat_inline is in internal.h.  There are arguments for either
-> place, but I'd suggest to keep the related macros together.
-
-(Just my personal thought... erofs_inode_is_data_compressed operates
-ondisk field like datamode (because we have 2 datamode for compression,
-need to wrap them to judge if the file is compressed...)
-so it stays at erofs_fs.h... is_inode_flat_inline operates in-memory
-struct inode so it in internal.h....)
-
-Thanks,
-Gao Xiang
-
+Changes since v1:
+ - rewrite dma_cache_maint to be much simpler
+ - improve various comments and commit logs
+ - remove page-coherent.h entirely
