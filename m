@@ -2,94 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01B8CA5679
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2A38A56A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730536AbfIBMnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 08:43:14 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39076 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729690AbfIBMnO (ORCPT
+        id S1730454AbfIBMvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 08:51:16 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52252 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729690AbfIBMvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:43:14 -0400
-Received: by mail-pg1-f194.google.com with SMTP id u17so7430699pgi.6;
-        Mon, 02 Sep 2019 05:43:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Ooe5z12tf4eCBGCVXGJZdyU61lnZf8UxozrPAtJtqFg=;
-        b=LyO2ylq1hMvJP8HhT7mG3uunF78cZErvlO24NmDxqyhxNiCdYGt6pNgVCw1Jxd9HtE
-         2gLGK6oFjGGUNacqqhFzoTnVtYoVhI1eP8mHDf2fEY9kSmDDGKqG9tCN00JhEw/uoxWw
-         NKw+ZSlhqJnxG5HRQDmIhgAeiBcHi8Qt5xYB+EqzGfeIFHSwzpiIztN/Y33b8qq3zHH1
-         dc11/UPJEVWoCK1awbsKTd/NBn0v/c6kBXk4CbcDli9aeug4q0uJc9wLIYhG1Zo4nQ3z
-         Ll9kbCP93B+XX6aytGvWmNweWxpbawacxilTi4M4GSiIL6ddW8l+0OE0Xv2FcwOH/BHt
-         Ogag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Ooe5z12tf4eCBGCVXGJZdyU61lnZf8UxozrPAtJtqFg=;
-        b=O4rpQgJqk57mzAoSKz5554iYsXSBg0ff8vKbNIfugvIWyna+4u1VbxA2aQRWHIXIQb
-         OWhkdh7U7XL/SGxYnSNWFucFXNhpA81CU0PGQ5c4HbwBOre8c6Vj7CQwoK+IQSrNlS0D
-         KeWZ2+uUCAZ5dJtyH0tR/axJIQbsm5zCJjxmz1JBVRnafFLN7S2o6PYS6kOGpJe2eunF
-         50fyT6NjdRxqu+FdD2orUJuBUuF0+0CDCphId5feaJBy2MKWkO7bUHaXFLd+SdkeFvLv
-         +BR0CXOFkNqaoAfL2vPj6u2UhQWRmxw0c6YoZ7EDPQ1JPa/3Ov6yppzu6Qb7CYD74TIK
-         ZC8Q==
-X-Gm-Message-State: APjAAAUDnn51rMH5Y+FChwhXj84LmulQ9hQPqkrgZYd+k1QNo9RXKDud
-        J6mRglmJKCoqKBByvMR17sE=
-X-Google-Smtp-Source: APXvYqyLyzHI4G7B5pK37XIuveSiZGZ9agj2nr+S8QgtKm0qzaCDTZJG50/mG2xYaudRpo8bEPEpEw==
-X-Received: by 2002:a62:e30d:: with SMTP id g13mr13849175pfh.42.1567428193475;
-        Mon, 02 Sep 2019 05:43:13 -0700 (PDT)
-Received: from jordon-HP-15-Notebook-PC.domain.name ([49.207.50.39])
-        by smtp.gmail.com with ESMTPSA id m102sm2126286pje.5.2019.09.02.05.43.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Sep 2019 05:43:12 -0700 (PDT)
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     b.zolnierkie@samsung.com
-Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com,
-        Souptick Joarder <jrdr.linux@gmail.com>
-Subject: [PATCH] video/fbdev/68328fb: Remove dead code
-Date:   Mon,  2 Sep 2019 18:19:04 +0530
-Message-Id: <1567428544-8620-1-git-send-email-jrdr.linux@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Mon, 2 Sep 2019 08:51:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2SRLGmzt9ygJ+k1758a7WeMkOp6QVS9SpfevL0fmQfQ=; b=p1wdTs4XDK/LQWfm/yELbp49u
+        phV0PdWujXYthfryE4TkwNYPNSjVRtyhrjikDgf3P3SMQVhM4XRwApkyG5tQzhuUZhc9Bz3ebmUh7
+        qJ3KM1c0uT+TU9dK8YwGrjAmSVzRQYI1dlCZedOFGQzdvco5MqhqYrS1C6rDLvn7gNyBDqmIo/xKW
+        G8ajsycXwdssNAKgMAPBfcubUQjWvXjRoblHim8dRKXzpDUS1z/aSV/OxkTDhuv2tYkihbFEL8+Ig
+        Joaenckr004Pz8x2NJ1XiFbwZSkzUEc91fCcuCSy47u20XG+/CKVdTloaqFrnExpE814on13j+pV8
+        EmKp8xVSg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i4lnZ-0004LV-VP; Mon, 02 Sep 2019 12:51:09 +0000
+Date:   Mon, 2 Sep 2019 05:51:09 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Gao Xiang <gaoxiang25@huawei.com>, Jan Kara <jack@suse.cz>,
+        Chao Yu <yuchao0@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, devel@driverdev.osuosl.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fsdevel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH v6 03/24] erofs: add super block operations
+Message-ID: <20190902125109.GA9826@infradead.org>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-4-gaoxiang25@huawei.com>
+ <20190829101545.GC20598@infradead.org>
+ <20190901085452.GA4663@hsiangkao-HP-ZHAN-66-Pro-G1>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190901085452.GA4663@hsiangkao-HP-ZHAN-66-Pro-G1>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is dead code since 3.15. If their is no plan to
-use it further, these can be removed forever.
+On Sun, Sep 01, 2019 at 04:54:55PM +0800, Gao Xiang wrote:
+> No modification at this... (some comments already right here...)
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
----
- drivers/video/fbdev/68328fb.c | 12 ------------
- 1 file changed, 12 deletions(-)
+>  20 /* 128-byte erofs on-disk super block */
+>  21 struct erofs_super_block {
+> ...
+>  24         __le32 features;        /* (aka. feature_compat) */
+> ...
+>  38         __le32 requirements;    /* (aka. feature_incompat) */
+> ...
+>  41 };
 
-diff --git a/drivers/video/fbdev/68328fb.c b/drivers/video/fbdev/68328fb.c
-index d48e960..02d22b7 100644
---- a/drivers/video/fbdev/68328fb.c
-+++ b/drivers/video/fbdev/68328fb.c
-@@ -405,20 +405,8 @@ static int mc68x328fb_mmap(struct fb_info *info, struct vm_area_struct *vma)
- 
- int __init mc68x328fb_setup(char *options)
- {
--#if 0
--	char *this_opt;
--#endif
--
- 	if (!options || !*options)
- 		return 1;
--#if 0
--	while ((this_opt = strsep(&options, ",")) != NULL) {
--		if (!*this_opt)
--			continue;
--		if (!strncmp(this_opt, "disable", 7))
--			mc68x328fb_enable = 0;
--	}
--#endif
- 	return 1;
- }
- 
--- 
-1.9.1
+This is only cosmetic, why not stick to feature_compat and
+feature_incompat?
 
+> > > +	bh = sb_bread(sb, 0);
+> > 
+> > Is there any good reasons to use buffer heads like this in new code
+> > vs directly using bios?
+> 
+> As you said, I want it in the page cache.
+> 
+> The reason "why not use read_mapping_page or similar?" is simply
+> read_mapping_page -> .readpage -> (for bdev inode) block_read_full_page
+>  -> create_page_buffers anyway...
+> 
+> sb_bread haven't obsoleted... It has similar function though...
+
+With the different that it keeps you isolated from the buffer_head
+internals.  This seems to be your only direct use of buffer heads,
+which while not deprecated are a bit of an ugly step child.  So if
+you can easily avoid creating a buffer_head dependency in a new
+filesystem I think you should avoid it.
+
+> > > +	sbi->build_time = le64_to_cpu(layout->build_time);
+> > > +	sbi->build_time_nsec = le32_to_cpu(layout->build_time_nsec);
+> > > +
+> > > +	memcpy(&sb->s_uuid, layout->uuid, sizeof(layout->uuid));
+> > > +	memcpy(sbi->volume_name, layout->volume_name,
+> > > +	       sizeof(layout->volume_name));
+> > 
+> > s_uuid should preferably be a uuid_t (assuming it is a real BE uuid,
+> > if it is le it should be a guid_t).
+> 
+> For this case, I have no idea how to deal with...
+> I have little knowledge about this uuid stuff, so I just copied
+> from f2fs... (Could be no urgent of this field...)
+
+Who fills out this field in the on-disk format and how?
+
+> The background is Al's comments in erofs v2....
+> (which simplify erofs_fill_super logic)
+> https://lore.kernel.org/r/20190720224955.GD17978@ZenIV.linux.org.uk/
+> 
+> with a specific notation...
+> https://lore.kernel.org/r/20190721040547.GF17978@ZenIV.linux.org.uk/
+> 
+> "
+> > OTOH, for the case of NULL ->s_root ->put_super() won't be called
+> > at all, so in that case you need it directly in ->kill_sb().
+> "
+
+Yes.  Although none of that is relevant for this initial version,
+just after more features are added.
