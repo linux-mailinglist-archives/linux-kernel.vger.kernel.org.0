@@ -2,82 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96601A56C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FCEDA56DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730600AbfIBM5N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 08:57:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55116 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730159AbfIBM5N (ORCPT
+        id S1731082AbfIBNAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:00:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44130 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730415AbfIBNAO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:57:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4uQk5Xm18GTABT+G8OsD3K71+2QPjkHFnf8r37qKtTE=; b=nerDje4bRvHKsxmrU9ErzEg6C
-        XmO0jcDPkxJ24FKir+7nJxLK3vQy2EYHByyseDUBBwwRSRbwXJ9VV4dvz3wkDzn309jwycyF6AFzF
-        WfVbR32AfUA50cq9ZK9Iy9KOZ/fJkYN8xgAMntTvHYkRi7GkAGfuKNU1ph7kgQsobxZPtBLckhVS8
-        v5NWE9kMiVz5npki47o7oME94ytvKEiGUi9gJ4WENLftj9K8L6aawRGWKRsnHOVMZsRUi2GW9yfnj
-        ZOJFaSSOFHSwb6tFEbEV3G66+AhALwuUIPsEBRB6ZFYL+ouHG9UItBQrV+PQsLtvsgnNqcnCYDvK1
-        gPfgRU2Pw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i4ltP-0006HV-IL; Mon, 02 Sep 2019 12:57:11 +0000
-Date:   Mon, 2 Sep 2019 05:57:11 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v8 11/24] erofs: introduce xattr & posixacl support
-Message-ID: <20190902125711.GA23462@infradead.org>
-References: <20190815044155.88483-1-gaoxiang25@huawei.com>
- <20190815044155.88483-12-gaoxiang25@huawei.com>
+        Mon, 2 Sep 2019 09:00:14 -0400
+Received: by mail-wr1-f66.google.com with SMTP id 30so2992365wrk.11;
+        Mon, 02 Sep 2019 06:00:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CR+WyZAA9xMYW0zZtGve7PJv/lFxf7k0Ilvhu1URmfo=;
+        b=LxuOHy9CeNfh66hew9jbYLP7/yrWYuvIjk+SQAw37alTfS0HlaA59hIpg/f2JhdVTh
+         TxVntIVZdxc0g611JfMqOq+Vh0jqMXHfpBFkNeMTcTmiocTXdqXbYx41rfDj+6ev6wEZ
+         OcGXnB3hgSJ/mBZNzuhbIScHPA+FlhEPx3wRhoXyz7lfqYQblCRpwMGcDVHkPebOmRXy
+         Zxrh3nZN95i0WE59peE0/PnZBokMo8mcaDBP0kNXc6Kwu+/ywTT/s/PokxNmRsUwvE5z
+         kXaWoT/XTdRzebZTQrjYvB5ke/c5R4HYlJ23TAQjcHXe84FeEnb+D+z8xvEalqkVmgw5
+         ldvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CR+WyZAA9xMYW0zZtGve7PJv/lFxf7k0Ilvhu1URmfo=;
+        b=DeN6EsG6OOdBXBIurB0oryg6vFxntxARxQ4NoAbvvIAzLnOnZXaFjD82y/5dFXZC7f
+         iTCNiWIiFnrv6yW0GzsSMZ01pjd0oihzpaVKBQfnXX9j14RfmrshTksM8+My1bNxFSfr
+         51sJKL1pGzYjio/axEzPLiQ+dZVdzbjubi/JErKfBXDeanXboiHwcENbg6HI03MrdWNy
+         l7/cjkJjdRKwta/lbM4fVdLXufJ2h72SC25zIy1MjN87XDrD0aOCLNn/YlQQT6/7YH6U
+         +XRWKDEUGcHm2BFey3u8RcmOBqBbzVbfOkA4DF69yg52hMgRAmze45gWecct0F1A43TT
+         TkSQ==
+X-Gm-Message-State: APjAAAW1T1/PupYje9Vwuf7Wady32700650QXVupAlYoFpk7vVUqxGeF
+        p2WTgivPjDbaM/B05jsqAxo=
+X-Google-Smtp-Source: APXvYqy2E//Dcr0bFJY8gdWVaU6D1gsWSGVoa5CLXjgU5KRe7Z2OSvATAvGTqQrq1pFA6i5bByfd/w==
+X-Received: by 2002:adf:aa85:: with SMTP id h5mr23089367wrc.329.1567429211920;
+        Mon, 02 Sep 2019 06:00:11 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:e34:eecb:7400:8425:c99f:73d7:9637])
+        by smtp.gmail.com with ESMTPSA id y14sm35168809wrd.84.2019.09.02.06.00.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2019 06:00:11 -0700 (PDT)
+From:   Erwan Velu <erwanaliasr1@gmail.com>
+X-Google-Original-From: Erwan Velu <e.velu@criteo.com>
+Cc:     Erwan Velu <e.velu@criteo.com>, Len Brown <lenb@kernel.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tools/power/x86/turbostat: Fixing PKG_MIN_PWR_LVL{1|2} values
+Date:   Mon,  2 Sep 2019 15:00:07 +0200
+Message-Id: <20190902130007.14854-1-e.velu@criteo.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815044155.88483-12-gaoxiang25@huawei.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +config EROFS_FS_XATTR
-> +	bool "EROFS extended attributes"
-> +	depends on EROFS_FS
-> +	default y
-> +	help
-> +	  Extended attributes are name:value pairs associated with inodes by
-> +	  the kernel or by users (see the attr(5) manual page, or visit
-> +	  <http://acl.bestbits.at/> for details).
-> +
-> +	  If unsure, say N.
-> +
-> +config EROFS_FS_POSIX_ACL
-> +	bool "EROFS Access Control Lists"
-> +	depends on EROFS_FS_XATTR
-> +	select FS_POSIX_ACL
-> +	default y
+As per Intel's documentation, those 2 registers are starting from offset 47 and not 48.
+As a result, the reported values were incorrect.
 
-Is there any good reason to make these optional these days?
+Signed-off-by: Erwan Velu <e.velu@criteo.com>
+---
+ tools/power/x86/turbostat/turbostat.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/power/x86/turbostat/turbostat.c b/tools/power/x86/turbostat/turbostat.c
+index 75fc4fb9901c..76456de6b140 100644
+--- a/tools/power/x86/turbostat/turbostat.c
++++ b/tools/power/x86/turbostat/turbostat.c
+@@ -2370,7 +2370,7 @@ dump_config_tdp(void)
+ 	get_msr(base_cpu, MSR_CONFIG_TDP_LEVEL_1, &msr);
+ 	fprintf(outf, "cpu%d: MSR_CONFIG_TDP_LEVEL_1: 0x%08llx (", base_cpu, msr);
+ 	if (msr) {
+-		fprintf(outf, "PKG_MIN_PWR_LVL1=%d ", (unsigned int)(msr >> 48) & 0x7FFF);
++		fprintf(outf, "PKG_MIN_PWR_LVL1=%d ", (unsigned int)(msr >> 47) & 0xFFFF);
+ 		fprintf(outf, "PKG_MAX_PWR_LVL1=%d ", (unsigned int)(msr >> 32) & 0x7FFF);
+ 		fprintf(outf, "LVL1_RATIO=%d ", (unsigned int)(msr >> 16) & 0xFF);
+ 		fprintf(outf, "PKG_TDP_LVL1=%d", (unsigned int)(msr) & 0x7FFF);
+@@ -2380,7 +2380,7 @@ dump_config_tdp(void)
+ 	get_msr(base_cpu, MSR_CONFIG_TDP_LEVEL_2, &msr);
+ 	fprintf(outf, "cpu%d: MSR_CONFIG_TDP_LEVEL_2: 0x%08llx (", base_cpu, msr);
+ 	if (msr) {
+-		fprintf(outf, "PKG_MIN_PWR_LVL2=%d ", (unsigned int)(msr >> 48) & 0x7FFF);
++		fprintf(outf, "PKG_MIN_PWR_LVL2=%d ", (unsigned int)(msr >> 47) & 0xFFFF);
+ 		fprintf(outf, "PKG_MAX_PWR_LVL2=%d ", (unsigned int)(msr >> 32) & 0x7FFF);
+ 		fprintf(outf, "LVL2_RATIO=%d ", (unsigned int)(msr >> 16) & 0xFF);
+ 		fprintf(outf, "PKG_TDP_LVL2=%d", (unsigned int)(msr) & 0x7FFF);
+-- 
+2.21.0
+
