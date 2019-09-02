@@ -2,82 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB656A5392
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:06:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFDC4A5394
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:06:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731011AbfIBKFK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 06:05:10 -0400
-Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25507 "EHLO
-        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729560AbfIBKFK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 06:05:10 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1567418704; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=TM+4mEo1xD2rzEeOfUxWndcC3p0c8zhKYLLPAqM/BOV14zqFaKumCXx8Zy6hu/18AsOsP+TPVaeLZ6bVemP8diEYHDUtiSrdc+2uwGNy4KNQ9PLRA9IP62A95m4Zdq78av9OhLMHjmxQpvXd4kGpx5CBmWAKV71d+vLLd295Bno=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1567418704; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=Ot31l6YpX1Hep2bcCR1LFgbNEtu8dKylpOjGYbOxviM=; 
-        b=biMCUT0zeW4LfaIQz+uiKhh4+fQoHdfApmOIaEMmq+7+RRv2qfDaiGqns4/K9isfdmumv+kaCUScwZIeIdCf0Hk2pPEnySpR5NS0qnsjXthJDtrJx+tzUld6g0W1c/0cjbkdCS9FhSYzfVBhoqUKbBEwdsg/BDJ1UYZ6uXHz+zQ=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=yehs2007@zoho.com;
-        dmarc=pass header.from=<yehs2007@zoho.com> header.from=<yehs2007@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id; 
-  b=czy/eCu1ugpkJGhENvNLqYJWEHDA7rdgLAiR+89XIzN4M3F28ach6VP6qA3xNdZmujT7mhNHokCP
-    rqxXqCcUvxCnXrXxzODJoYdpApi/RsxExfeDwO8ISwt71/kfEhTG  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1567418704;
-        s=zm2019; d=zoho.com; i=yehs2007@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id; l=911;
-        bh=Ot31l6YpX1Hep2bcCR1LFgbNEtu8dKylpOjGYbOxviM=;
-        b=QxLgzFE7GjTrKP6CgR4RAKH6pA4VZ3f28TEBGKKPr1hYWk8Xibf9nCE9OxBkS4iw
-        1u0MfRITi23bPn3e5Oq61rL25siCq5jjD2Y7XUDNVgiuF5iIdKM/SAaWR92UyuYTaDv
-        Jedy067xd+CjwOPefeZo8UCAM0joTFR8j3Ui7COc=
-Received: from YEHS1XPF1D05WL.lenovo.com (111.205.43.251 [111.205.43.251]) by mx.zohomail.com
-        with SMTPS id 1567418703324628.2466891855994; Mon, 2 Sep 2019 03:05:03 -0700 (PDT)
-From:   Huaisheng Ye <yehs2007@zoho.com>
-To:     mpatocka@redhat.com, snitzer@redhat.com, agk@redhat.com
-Cc:     prarit@redhat.com, tyu1@lenovo.com, dm-devel@redhat.com,
-        linux-kernel@vger.kernel.org, Huaisheng Ye <yehs1@lenovo.com>
-Subject: [PATCH] dm writecache: skip writecache_wait for pmem mode
-Date:   Mon,  2 Sep 2019 18:04:50 +0800
-Message-Id: <20190902100450.10600-1-yehs2007@zoho.com>
-X-Mailer: git-send-email 2.17.0.windows.1
-X-ZohoMailClient: External
+        id S1731047AbfIBKFi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 06:05:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729560AbfIBKFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 06:05:38 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A03E2217D7;
+        Mon,  2 Sep 2019 10:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567418737;
+        bh=iQNOaVNIibG/E83RsQu3zxq0uZKqXIRDYCf4g6iBZyI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g8wXqV6M5/b7tJLpLO0LrEhkHhwlyEquHOPeA+/io757PMkko1gtYUssOXg4jAA0/
+         UbiaoH21sH6/l23tq67ad74j98GVtopkkKLTlVPPUkFh99VWz8Mr+LGdjETDGcMSFK
+         hPvz+YDNRxP8GrEmsu+JhtwTSGQcnIrLjlI4mbdc=
+Date:   Mon, 2 Sep 2019 11:05:32 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Peter Collingbourne <pcc@google.com>
+Subject: Re: linux-next: manual merge of the powerpc tree with the arm64 tree
+Message-ID: <20190902100531.45bwfll4fmjrkmhp@willie-the-truck>
+References: <20190902094711.2625ba31@canb.auug.org.au>
+ <87lfv7tqt0.fsf@mpe.ellerman.id.au>
+ <20190902090846.GA15118@arrakis.emea.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190902090846.GA15118@arrakis.emea.arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huaisheng Ye <yehs1@lenovo.com>
+On Mon, Sep 02, 2019 at 10:08:46AM +0100, Catalin Marinas wrote:
+> On Mon, Sep 02, 2019 at 11:44:43AM +1000, Michael Ellerman wrote:
+> > Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> > > Hi all,
+> > >
+> > > Today's linux-next merge of the powerpc tree got a conflict in:
+> > >
+> > >   arch/Kconfig
+> > >
+> > > between commit:
+> > >
+> > >   5cf896fb6be3 ("arm64: Add support for relocating the kernel with RELR relocations")
+> > >
+> > > from the arm64 tree and commit:
+> > >
+> > >   0c9c1d563975 ("x86, s390: Move ARCH_HAS_MEM_ENCRYPT definition to arch/Kconfig")
+> > >
+> > > from the powerpc tree.
+> > >
+> > > I fixed it up (see below) and can carry the fix as necessary. This
+> > > is now fixed as far as linux-next is concerned, but any non trivial
+> > > conflicts should be mentioned to your upstream maintainer when your tree
+> > > is submitted for merging.  You may also want to consider cooperating
+> > > with the maintainer of the conflicting tree to minimise any particularly
+> > > complex conflicts.
+> > 
+> > Thanks.
+> > 
+> > That conflict seems entirely trivial, but Catalin/Will if it bothers you
+> > I have the conflicting commit in a topic branch based on rc2 which you
+> > could merge to resolve it:
+> 
+> It's a trivial conflict, easy to resolve. I don't think it's worth
+> trying to avoid it (Linus normally doesn't mind such conflicts).
 
-The array bio_in_progress[2] only have chance to be increased and
-decreased with ssd mode. For pmem mode, they are not involved at all.
-So skip writecache_wait_for_ios in writecache_flush for pmem.
+Agreed, we can live with this one :)
 
-Suggested-by: Doris Yu <tyu1@lenovo.com>
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
----
- drivers/md/dm-writecache.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/md/dm-writecache.c b/drivers/md/dm-writecache.c
-index c481947..d06b8aa 100644
---- a/drivers/md/dm-writecache.c
-+++ b/drivers/md/dm-writecache.c
-@@ -726,7 +726,8 @@ static void writecache_flush(struct dm_writecache *wc)
- 	}
- 	writecache_commit_flushed(wc);
- 
--	writecache_wait_for_ios(wc, WRITE);
-+	if (!WC_MODE_PMEM(wc))
-+		writecache_wait_for_ios(wc, WRITE);
- 
- 	wc->seq_count++;
- 	pmem_assign(sb(wc)->seq_count, cpu_to_le64(wc->seq_count));
--- 
-1.8.3.1
-
-
+Will
