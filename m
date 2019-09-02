@@ -2,105 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 122DBA51F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34DA9A51FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:39:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730681AbfIBIjP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:39:15 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39753 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729870AbfIBIjP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:39:15 -0400
-Received: by mail-oi1-f194.google.com with SMTP id w144so2900505oia.6;
-        Mon, 02 Sep 2019 01:39:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9ZpqrbK70Ld5mnKoMYiYvVEM2pi/doZB4O7a3wLCqTI=;
-        b=QctrxUtq1+doQV/xAxEv4gggNNifMs4r25MsynktzW5aP5WnEzSREJ4FqRiudPq2TX
-         B+DnQtQG5AlnUvRd3Gla1Kxb9K69WNIGbpXAUp9PFKek95Gj+x8Q87IYKfgBWc7d1mTV
-         NBV6RJPPh9ggNxSmeTWFu37Ua4306n+8Yuvf9LLtmhVqGNtWQDkrHxkK/m7UYCd4tqCK
-         e9exvOe22ALOCJcK3N1+4Vd1AvIXOeaI9cu2lpgDeWsmyesmAKg4tAPDIDT1rbMM6W8z
-         +zz/5QJtOAP2SGTjQDpzVi3Hmn/AjjqoDfnOOOfyswvmjD9YYQGXhJaZIW32SNm4gIX+
-         lQSg==
-X-Gm-Message-State: APjAAAWSv2TBn8Koi9bwX5PXLNJxYP/28uPr9wDy+jzSKuLICM+skxBz
-        Fh4U6j0aGZk88/prup63wONvBk5+enDd6DYcQGw=
-X-Google-Smtp-Source: APXvYqw++tYM+EEWK5AjkQiIj1oaLed6Hs8B/zga9tEOOV5NUPQZIfJRhnU/MTMKvV5E2rk1cdLAKGCNmS1sgYwW9UQ=
-X-Received: by 2002:aca:fc53:: with SMTP id a80mr1306498oii.131.1567413554435;
- Mon, 02 Sep 2019 01:39:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <1560258401-9517-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1560258401-9517-6-git-send-email-fabrizio.castro@bp.renesas.com>
- <TY1PR01MB1770BF952221F50BBCDF3765C0BD0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <20190902083224.mn5agbxf5akhhoqg@verge.net.au>
-In-Reply-To: <20190902083224.mn5agbxf5akhhoqg@verge.net.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 Sep 2019 10:39:03 +0200
-Message-ID: <CAMuHMdVuj1w_bQVPySpspk4OJPN1cNSF-JW6XKExTEdZbtALgw@mail.gmail.com>
-Subject: Re: [PATCH 5/6] dt-bindings: timer: renesas: tmu: Document r8a774a1 bindings
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1730705AbfIBIjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:39:19 -0400
+Received: from mail-eopbgr710055.outbound.protection.outlook.com ([40.107.71.55]:60799
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730155AbfIBIjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:39:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EfV3mq42xWciAZ6XYZokDky1YARkBta2o1J6lT6TSIVAP7/TazYGlkziY/L4hDUM12/2WKC+clDTewJfyxPd+8aMd2WQT398r53DjvqMNqFotd2WXlz3uw/FGC64RsOUmV2KioqaufkoOHMyROx5g1E/ASMRLfxLY5orWWAs/o8YmyIXIA8FclEqYH54ZbwniE4ZZZLnQdRV0k5t+cZWks/q/3PmFe7pWY4g2Td32qI1IvEO2JbnjxX/WSiV88+kftoWrRl7H6jGe2akvDR7mVH9Q8gfyz73EnfqDPGdneS/GgQq3JEh0En+fm+MXKtPLCioqEoCOolp1bBxeTdS/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ajzl+po9rLpeRV4D8+FDnTseMsOMZuK19i+zrkhwYbc=;
+ b=jTGMB1UcsMXTYTYc1GKh09aFKG9aJKti0Zxa4rLh0EiNkGwJRMh0Cz6GNhckcHFElNZj8VszVH8G6e4Oj7BdG+aNuX/6xX9NVACX/2dU8LVyGn+TiGpGy8/9k5ej+UqrYUaFsmYyM58X+JyemCD3rLt4G7tJM/TV7a3o5Y7U+4nDGQ0fnjHOAmzy0T2DIfJiPysDkdNdads6FLKyoUtc9/aAoNj80dlXIoHg9gSkpD9eaG8Dmuh3o/Hzfvx4tEHaBElFVEjXYjf9O5gNtzUm5C3xRAcZC/AsiDrhyRY9RZAOOB97ShsESE0Ml6ZICGEJDyvghSfjAyYbXJzUPXOLsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
+ dkim=pass header.d=micron.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ajzl+po9rLpeRV4D8+FDnTseMsOMZuK19i+zrkhwYbc=;
+ b=bYOhCRQAW8K81WpgEEnzUbPjVtN9lMj+kZDitPlQ8y0CUhlkmz3F45dI17V4EJA+St7t3DHKK7zSykJADOmKppe95o30sGbnhQtbSg8UpdTcBSy+cQQ4f89XJ7UO0PsF/4gAXDQLjdpCZI9MoeaH2bTz0XKeTM6qgJnCiDVf89I=
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com (20.176.179.87) by
+ BN7PR08MB6116.namprd08.prod.outlook.com (20.176.29.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2220.19; Mon, 2 Sep 2019 08:39:10 +0000
+Received: from BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::1c5f:b47c:d1c3:c30c]) by BN7PR08MB5684.namprd08.prod.outlook.com
+ ([fe80::1c5f:b47c:d1c3:c30c%7]) with mapi id 15.20.2220.021; Mon, 2 Sep 2019
+ 08:39:10 +0000
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Gross <agross@kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: RE: [EXT] [PATCH v4 1/3] scsi: ufs: Introduce vops for resetting
+ device
+Thread-Topic: [EXT] [PATCH v4 1/3] scsi: ufs: Introduce vops for resetting
+ device
+Thread-Index: AQHVXdVTwpSMXoBF7UGihYWygcclaqcYF7yQ
+Date:   Mon, 2 Sep 2019 08:39:10 +0000
+Message-ID: <BN7PR08MB5684EEDE565DC4AAC9E658A3DBBE0@BN7PR08MB5684.namprd08.prod.outlook.com>
+References: <20190828191756.24312-1-bjorn.andersson@linaro.org>
+ <20190828191756.24312-2-bjorn.andersson@linaro.org>
+In-Reply-To: <20190828191756.24312-2-bjorn.andersson@linaro.org>
+Accept-Language: en-150, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=beanhuo@micron.com; 
+x-originating-ip: [165.225.81.111]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3dd1d36d-c609-4f1b-40bd-08d72f810689
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BN7PR08MB6116;
+x-ms-traffictypediagnostic: BN7PR08MB6116:|BN7PR08MB6116:|BN7PR08MB6116:
+x-microsoft-antispam-prvs: <BN7PR08MB611680F2FAE12848DD64DAFDDBBE0@BN7PR08MB6116.namprd08.prod.outlook.com>
+x-ms-exchange-transport-forked: True
+x-ms-oob-tlc-oobclassifiers: OLM:400;
+x-forefront-prvs: 01480965DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(346002)(39860400002)(136003)(396003)(189003)(199004)(66556008)(486006)(446003)(54906003)(7416002)(11346002)(14454004)(33656002)(6506007)(2906002)(305945005)(110136005)(55236004)(7696005)(76176011)(5660300002)(4326008)(6436002)(26005)(6246003)(3846002)(53936002)(66946007)(25786009)(9686003)(558084003)(55016002)(229853002)(66066001)(256004)(64756008)(66476007)(66446008)(102836004)(71190400001)(71200400001)(76116006)(478600001)(6116002)(186003)(7736002)(99286004)(86362001)(81156014)(8936002)(81166006)(8676002)(74316002)(316002)(476003)(52536014);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR08MB6116;H:BN7PR08MB5684.namprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: micron.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UzZHpAECDrWVRr4stDrRWdYXyJbB6jG41ZWCFdT2kABFjulEnfQLY67nVFx5WhsxkPOGkaUtxUZXuqN1AIH6pZqzCDGk+dSaP6uXtl4AttwlWAV0Tk0S7ur5fCFysrzmIRphCxlKePstbxL9Brh/ysn1JAIqMsVNTGZFnu0z/rhTovb6hPNTZntHAGvzUDgWTX0tHHdEPnWmYSoaVattHpOOC+fJzBxFmNgzutQJXst2oWM5EKDCzdJy+snpit85BJKCgZWRBdk0Fx3qYY+0SEdairsLL1XsKgXLnzTa26BY3oKPEhDXLIGY0kwPQ8wEsVL+kPE2GXLL/Jb1nhZaxfB4O4mA0p/nNSVuOZb5Sw8bvGVCb/BEvEbwakru9mjZQfEngZVN5CppJU5+Ilwt8H8CACW9s82LZp7Qx2m2ocg=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dd1d36d-c609-4f1b-40bd-08d72f810689
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2019 08:39:10.1240
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Uf72roamKCbF1bCCV/T8qSdFueWMpctj5d/EhWDSxUgiEsPDa5kP7ye22dc+uQsc9lMRx7u6n7sIyZ8JpbQf/Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR08MB6116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 2, 2019 at 10:32 AM Simon Horman <horms@verge.net.au> wrote:
-> On Fri, Aug 30, 2019 at 10:37:54AM +0000, Fabrizio Castro wrote:
-> > This patch has been reviewed by Geert, Simon, and Rob, so I think it's ok to apply.
-> > Is anybody willing to take this patch?
 >
-> <2c> I think Geert can take this </2c>
+>Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+>Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
 
-If the timer people won't take it for v5.4, I can queue it in renesas-devel
-for v5.5, in my branch for DT binding updates for subsystems that are
-less DT-centric.
-
-> > > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > Sent: 11 June 2019 14:07
-> > > Subject: [PATCH 5/6] dt-bindings: timer: renesas: tmu: Document r8a774a1 bindings
-> > >
-> > > Document RZ/G2M (R8A774A1) SoC in the Renesas TMU bindings.
-> > >
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/timer/renesas,tmu.txt | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/timer/renesas,tmu.txt b/Documentation/devicetree/bindings/timer/renesas,tmu.txt
-> > > index 13ad074..9dff7e5 100644
-> > > --- a/Documentation/devicetree/bindings/timer/renesas,tmu.txt
-> > > +++ b/Documentation/devicetree/bindings/timer/renesas,tmu.txt
-> > > @@ -10,6 +10,7 @@ Required Properties:
-> > >
-> > >    - compatible: must contain one or more of the following:
-> > >      - "renesas,tmu-r8a7740" for the r8a7740 TMU
-> > > +    - "renesas,tmu-r8a774a1" for the r8a774A1 TMU
-> > >      - "renesas,tmu-r8a774c0" for the r8a774C0 TMU
-> > >      - "renesas,tmu-r8a7778" for the r8a7778 TMU
-> > >      - "renesas,tmu-r8a7779" for the r8a7779 TMU
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+//Bean Huo
