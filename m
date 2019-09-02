@@ -2,88 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 572CFA5790
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCAB3A5797
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:22:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730362AbfIBNTX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:19:23 -0400
-Received: from mga05.intel.com ([192.55.52.43]:19525 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726253AbfIBNTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:19:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 06:19:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,459,1559545200"; 
-   d="scan'208";a="266020670"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga001.jf.intel.com with ESMTP; 02 Sep 2019 06:19:21 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i4mEq-0002PJ-W7; Mon, 02 Sep 2019 16:19:20 +0300
-Date:   Mon, 2 Sep 2019 16:19:20 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] reset: Remove copy'n'paste redundancy in the comments
-Message-ID: <20190902131920.GK2680@smile.fi.intel.com>
-References: <20190819105252.81020-1-andriy.shevchenko@linux.intel.com>
+        id S1730378AbfIBNVo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:21:44 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:44835 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729571AbfIBNVn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 09:21:43 -0400
+Received: by mail-qt1-f193.google.com with SMTP id u40so6958768qth.11
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 06:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=LF6RwF/CzRyJsQcrs8WjGnS7vNmA2a1Lcfcz2b6Dekw=;
+        b=O5rvW2MU7cokhPaWeL16BWC624pJW1fqmzfcWd+dxwWKVNuPcSyJZLOLRVtAJS9brP
+         JC0mASpUNm6d1znr8gBUxX+Y2xqD4nX/LBuUjRkTYSoKC0F7D4z8JGnvAKFA5m5Ln1c3
+         fYoWA9A/gEa4oJFdObOdTRr9w9EteVYlAdnjOrXp+qAsKo8DIQFS8nCKl0KgG2yCFv+G
+         YWg6rqFjFCFfRoXrz5eMF+39IWQF8Wkb3ohmCfyuhg0J51Lomc9GqTOILcRvKiVUMFeF
+         LX+Y9AyhcOhd9xU4VVU6uIQowDmdRHlLs6IDHZPdWDPfPQMWh8ZeoPl308Wjvz2Vv+dC
+         xVyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=LF6RwF/CzRyJsQcrs8WjGnS7vNmA2a1Lcfcz2b6Dekw=;
+        b=saT0RBSdRxtxcOcwZ7Ol7vYHwiMDvlC9LHe1sNegtl4ZQDAgCB+7/nBZRMu1mhaC/y
+         ACiMhsu8tDI+uKq9zm2ehr9PiyeQMwTjFBPq/Gw5LALIZj7v7HfPTAMNER2v3iLZYwRL
+         rwmeYSBXqpLVozw5b2cuZ8mo1U99zxL6HgIY/0PDsaZ0NfOwdOKjCuDAhOGojbPAnOzG
+         fdOcvtR4aiAUgwhucgKjxyN4vU2l1FdgWdU5JUPzrlNokyJGcLtmmfTnZBn8Fts5Du0P
+         r3x9EtOFqhaKRNroaqMzrK61Ndswh5OxljfdGIlW152jAywuVAFptFC8vy/iQseck7ji
+         3aNg==
+X-Gm-Message-State: APjAAAXkF4aQWICOJys0NAsxili2h6tFaz2DPkT7tidUYb6EQogX1u0w
+        S6WSRWJkKL3+ttVjUBEwEDy9EtyuV8wzR8cEPDk=
+X-Google-Smtp-Source: APXvYqwsx6Kpp9hRh0xwTTOqGX/tVJ97EQtQxeBfdMfxLcN92xuG9OyogqBT8Y4bpd7jgBFki6xczM4/pjSa9i4tt/U=
+X-Received: by 2002:ac8:31b3:: with SMTP id h48mr28612829qte.300.1567430502690;
+ Mon, 02 Sep 2019 06:21:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190819105252.81020-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:ad4:54b1:0:0:0:0:0 with HTTP; Mon, 2 Sep 2019 06:21:42 -0700 (PDT)
+Reply-To: michellegoodman45@gmail.com
+From:   Michelle Goodman <michellegoodman358@gmail.com>
+Date:   Mon, 2 Sep 2019 13:21:42 +0000
+Message-ID: <CAAnwc9tKAhrRihQnyiCfCGLxeYD7cvC5jQ8NAWtSm+JtB2sKeg@mail.gmail.com>
+Subject: From Michelle
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 01:52:52PM +0300, Andy Shevchenko wrote:
-> It seems the commit bb475230b8e5
-> ("reset: make optional functions really optional")
-> brought couple of redundant lines in the comments.
-> 
-> Drop them here.
-
-Any comment on this?
-
-> 
-> Cc: Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/reset/core.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 213ff40dda11..2badff33a0db 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -334,7 +334,6 @@ EXPORT_SYMBOL_GPL(reset_control_reset);
->   * internal state to be reset, but must be prepared for this to happen.
->   * Consumers must not use reset_control_reset on shared reset lines when
->   * reset_control_(de)assert has been used.
-> - * return 0.
->   *
->   * If rstc is NULL it is an optional reset and the function will just
->   * return 0.
-> @@ -393,7 +392,6 @@ EXPORT_SYMBOL_GPL(reset_control_assert);
->   * After calling this function, the reset is guaranteed to be deasserted.
->   * Consumers must not use reset_control_reset on shared reset lines when
->   * reset_control_(de)assert has been used.
-> - * return 0.
->   *
->   * If rstc is NULL it is an optional reset and the function will just
->   * return 0.
-> -- 
-> 2.23.0.rc1
-> 
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Hallo, wie geht es dir? Hoffe, du hast meine Nachricht erhalten. Ich
+brauche jetzt deine dringende Antwort
+Vielen Dank
+Michelle
