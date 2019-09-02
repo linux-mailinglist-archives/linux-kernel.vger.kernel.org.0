@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3244FA4DB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 05:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FC60A4DBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 05:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729345AbfIBD3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 23:29:37 -0400
-Received: from ozlabs.org ([203.11.71.1]:36435 "EHLO ozlabs.org"
+        id S1729467AbfIBD3u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 23:29:50 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:32949 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729229AbfIBD3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 23:29:36 -0400
+        id S1729278AbfIBD3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Sep 2019 23:29:37 -0400
 Received: by ozlabs.org (Postfix, from userid 1034)
-        id 46MFv33Bqxz9sNk; Mon,  2 Sep 2019 13:29:35 +1000 (AEST)
+        id 46MFv35H4Gz9sNf; Mon,  2 Sep 2019 13:29:35 +1000 (AEST)
 X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: 3bbd2343734e44de92238eea1a5cd3ad32a6baf0
-In-Reply-To: <54f67bb7ac486c1350f2fa8905cd279f94b9dfb1.1566382841.git.christophe.leroy@c-s.fr>
+X-powerpc-patch-commit: a04565741284f695db4cfe5a3e61940d2259cb8f
+In-Reply-To: <b095e12c82fcba1ac4c09fc3b85d969f36614746.1566417610.git.christophe.leroy@c-s.fr>
 To:     Christophe Leroy <christophe.leroy@c-s.fr>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>
 From:   Michael Ellerman <patch-notifications@ellerman.id.au>
 Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/8xx: set STACK_END_MAGIC earlier on the init_stack
-Message-Id: <46MFv33Bqxz9sNk@ozlabs.org>
+Subject: Re: [PATCH] powerpc/8xx: drop unused self-modifying code alternative to FixupDAR.
+Message-Id: <46MFv35H4Gz9sNf@ozlabs.org>
 Date:   Mon,  2 Sep 2019 13:29:35 +1000 (AEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-08-21 at 10:20:51 UTC, Christophe Leroy wrote:
-> Today, the STACK_END_MAGIC is set on init_stack in start_kernel().
+On Wed, 2019-08-21 at 20:00:34 UTC, Christophe Leroy wrote:
+> The code which fixups the DAR on TLB errors for dbcX instructions
+> has a self-modifying code alternative that has never been used.
 > 
-> To avoid a false 'Thread overran stack, or stack corrupted' message
-> on early Oopses, setup STACK_END_MAGIC as soon as possible.
+> Drop it.
 > 
 > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
 Applied to powerpc next, thanks.
 
-https://git.kernel.org/powerpc/c/3bbd2343734e44de92238eea1a5cd3ad32a6baf0
+https://git.kernel.org/powerpc/c/a04565741284f695db4cfe5a3e61940d2259cb8f
 
 cheers
