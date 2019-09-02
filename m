@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91F68A526A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE901A5264
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:01:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730893AbfIBJBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 05:01:10 -0400
+        id S1730863AbfIBJBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 05:01:07 -0400
 Received: from mailgw02.mediatek.com ([210.61.82.184]:23447 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730805AbfIBJBI (ORCPT
+        with ESMTP id S1730604AbfIBJBG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:01:08 -0400
-X-UUID: bf31f31b85de45fea7022ecff2476d1c-20190902
-X-UUID: bf31f31b85de45fea7022ecff2476d1c-20190902
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        Mon, 2 Sep 2019 05:01:06 -0400
+X-UUID: 0b47a5c32ee04aa1b7443138ea4cb7bc-20190902
+X-UUID: 0b47a5c32ee04aa1b7443138ea4cb7bc-20190902
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1425359082; Mon, 02 Sep 2019 17:01:02 +0800
+        with ESMTP id 1796880267; Mon, 02 Sep 2019 17:01:01 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Mon, 2 Sep 2019 17:01:02 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -35,56 +35,39 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
         Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [RESEND PATCH v1 2/3] clk: mediatek: Runtime PM support for MT8183 mcucfg clock provider
-Date:   Mon, 2 Sep 2019 17:00:58 +0800
-Message-ID: <1567414859-3244-3-git-send-email-weiyi.lu@mediatek.com>
+Subject: [RESEND PATCH v1 3/3] arm64: dts: Add power-domains properity to mfgcfg
+Date:   Mon, 2 Sep 2019 17:00:59 +0800
+Message-ID: <1567414859-3244-4-git-send-email-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1567414859-3244-1-git-send-email-weiyi.lu@mediatek.com>
 References: <1567414859-3244-1-git-send-email-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 06FB24C120DB573E0C1FC9AF69C5EFE04ED9455100930063B6AE6F55424DE8B82000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable the runtime PM support and forward the struct device pointer for
-registration of MT8183 mcucfg clocks.
+mfgcfg clock is under MFG_ASYNC power domain
 
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
 ---
- drivers/clk/mediatek/clk-mt8183-mfgcfg.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-index 99a6b02..37b4162 100644
---- a/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-+++ b/drivers/clk/mediatek/clk-mt8183-mfgcfg.c
-@@ -5,6 +5,7 @@
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index c2749c4..3f948e9 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -388,6 +388,7 @@
+ 			compatible = "mediatek,mt8183-mfgcfg", "syscon";
+ 			reg = <0 0x13000000 0 0x1000>;
+ 			#clock-cells = <1>;
++			power-domains = <&scpsys MT8183_POWER_DOMAIN_MFG_ASYNC>;
+ 		};
  
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- 
- #include "clk-mtk.h"
- #include "clk-gate.h"
-@@ -30,10 +31,12 @@ static int clk_mt8183_mfg_probe(struct platform_device *pdev)
- 	struct clk_onecell_data *clk_data;
- 	struct device_node *node = pdev->dev.of_node;
- 
-+	pm_runtime_enable(&pdev->dev);
-+
- 	clk_data = mtk_alloc_clk_data(CLK_MFG_NR_CLK);
- 
--	mtk_clk_register_gates(node, mfg_clks, ARRAY_SIZE(mfg_clks),
--			clk_data);
-+	mtk_clk_register_gates_with_dev(node, mfg_clks, ARRAY_SIZE(mfg_clks),
-+			clk_data, &pdev->dev);
- 
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
+ 		mmsys: syscon@14000000 {
 -- 
 1.8.1.1.dirty
 
