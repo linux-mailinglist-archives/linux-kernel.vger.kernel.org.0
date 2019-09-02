@@ -2,132 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7693A50E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6ECBA5088
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730118AbfIBIIU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:08:20 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:9320 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729475AbfIBIIT (ORCPT
+        id S1729962AbfIBIAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:00:06 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:45188 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729535AbfIBIAG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:08:19 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R361e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01422;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0Tb6xSxi_1567411089;
-Received: from bn0418deMacBook-Pro.local(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0Tb6xSxi_1567411089)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 02 Sep 2019 15:58:10 +0800
-Subject: Re: [PATCH v2] vfio/type1: avoid redundant PageReserved checking
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>
-References: <20190827124041.4f986005@x1.home>
- <3517844d6371794cff59b13bf9c2baf1dcbe571c.1566966365.git.luoben@linux.alibaba.com>
- <20190828095501.12e71bd3@x1.home>
- <6c234632-b7e9-45c7-3d70-51a4c83161f6@linux.alibaba.com>
- <20190829110601.6dd74052@x1.home>
-From:   Ben Luo <luoben@linux.alibaba.com>
-Message-ID: <7e4b77e1-2f67-650c-bbf7-93e1b3d09fd6@linux.alibaba.com>
-Date:   Mon, 2 Sep 2019 15:58:09 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        Mon, 2 Sep 2019 04:00:06 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 3FF54283C69
+Received: by earth.universe (Postfix, from userid 1000)
+        id 0FA1A3C0B7F; Mon,  2 Sep 2019 10:00:01 +0200 (CEST)
+Date:   Mon, 2 Sep 2019 10:00:01 +0200
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     linux-kernel@vger.kernel.org, joe@perches.com,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: N900: Remove isp1704_charger.h record
+Message-ID: <20190902080001.66rj5spzaauarvqy@earth.universe>
+References: <20190325212737.27322-1-joe@perches.com>
+ <20190813061358.17223-1-efremov@linux.com>
 MIME-Version: 1.0
-In-Reply-To: <20190829110601.6dd74052@x1.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="krhurshqx4pzxoo3"
+Content-Disposition: inline
+In-Reply-To: <20190813061358.17223-1-efremov@linux.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-在 2019/8/30 上午1:06, Alex Williamson 写道:
-> On Fri, 30 Aug 2019 00:58:22 +0800
-> Ben Luo <luoben@linux.alibaba.com> wrote:
->
->> 在 2019/8/28 下午11:55, Alex Williamson 写道:
->>> On Wed, 28 Aug 2019 12:28:04 +0800
->>> Ben Luo <luoben@linux.alibaba.com> wrote:
->>>   
->>>> currently, if the page is not a tail of compound page, it will be
->>>> checked twice for the same thing.
->>>>
->>>> Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
->>>> ---
->>>>    drivers/vfio/vfio_iommu_type1.c | 3 +--
->>>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
->>>> index 054391f..d0f7346 100644
->>>> --- a/drivers/vfio/vfio_iommu_type1.c
->>>> +++ b/drivers/vfio/vfio_iommu_type1.c
->>>> @@ -291,11 +291,10 @@ static int vfio_lock_acct(struct vfio_dma *dma, long npage, bool async)
->>>>    static bool is_invalid_reserved_pfn(unsigned long pfn)
->>>>    {
->>>>    	if (pfn_valid(pfn)) {
->>>> -		bool reserved;
->>>>    		struct page *tail = pfn_to_page(pfn);
->>>>    		struct page *head = compound_head(tail);
->>>> -		reserved = !!(PageReserved(head));
->>>>    		if (head != tail) {
->>>> +			bool reserved = PageReserved(head);
->>>>    			/*
->>>>    			 * "head" is not a dangling pointer
->>>>    			 * (compound_head takes care of that)
->>> Thinking more about this, the code here was originally just a copy of
->>> kvm_is_mmio_pfn() which was simplified in v3.12 with the commit below.
->>> Should we instead do the same thing here?  Thanks,
->>>
->>> Alex
->> ok, and kvm_is_mmio_pfn() has also been updated since then, I will take
->> a look at that and compose a new patch
-> I'm not sure if the further updates are quite as relevant for vfio, but
-> appreciate your review of them.  Thanks,
->
-> Alex
-After studying the related code, my personal understandings are:
+--krhurshqx4pzxoo3
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-kvm_is_mmio_pfn() is used to find out whether a memory range is MMIO 
-mapped so
-that to set the proper MTRR TYPE to spte.
+Hi,
 
-is_invalid_reserved_pfn() is used in two scenarios:
-1, to tell whether a page should be counted against user's mlock limits, as
-the function's name implies, all 'invalid' PFNs who are not backed by struct
-page and those reserved pages (including zero page and those from NVDIMM 
-DAX)
-should be excluded.
-2, to check if we have got a valid and pinned pfn for the vma with VM_PFNMAP
-flag. So, for the zero page and 'RAM' backed PFNs without 'struct page',
-kvm_is_mmio_pfn() should return false because they are not MMIO and are
-cacheable, but is_invalid_reserved_pfn() should return true since they are
-truely reserved or invalid and should not be counted against user's mlock
-limits.
+On Tue, Aug 13, 2019 at 09:13:58AM +0300, Denis Efremov wrote:
+> Update MAINTAINERS to reflect that isp1704_charger.h file was removed.
+>=20
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Pali Roh=E1r <pali.rohar@gmail.com>
+> Cc: Sebastian Reichel <sebastian.reichel@collabora.com>
+> Cc: linux-pm@vger.kernel.org
+> Fixes: f5d782d46aa5 ("power: supply: isp1704: switch to gpiod API")
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
 
-For fsdax-page, current get_user_pages() returns -EOPNOTSUPP, and VFIO also
-returns this error code to user, seems not support fsdax for now, so 
-there is
-no chance to call into is_invalid_reserved_pfn() currently, if fsdax is 
-to be
-supported, not only this function needs to be updated, vaddr_get_pfn() also
-needs some changes.
+Thanks, queued.
 
-Now, with the assumption that PFNs of compound pages with reserved bit 
-set in
-head will not be passed to is_invalid_reserved_pfn(), we can simplify this
-function to:
+-- Sebastian
 
-static bool is_invalid_reserved_pfn(unsigned long pfn)
-{
-         if (pfn_valid(pfn))
-                 return PageReserved(pfn_to_page(pfn));
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 29514fc19b01..2776e0797ae3 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11400,7 +11400,6 @@ NOKIA N900 POWER SUPPLY DRIVERS
+>  R:	Pali Roh=E1r <pali.rohar@gmail.com>
+>  F:	include/linux/power/bq2415x_charger.h
+>  F:	include/linux/power/bq27xxx_battery.h
+> -F:	include/linux/power/isp1704_charger.h
+>  F:	drivers/power/supply/bq2415x_charger.c
+>  F:	drivers/power/supply/bq27xxx_battery.c
+>  F:	drivers/power/supply/bq27xxx_battery_i2c.c
+> --=20
+> 2.21.0
+>=20
 
-         return true;
-}
+--krhurshqx4pzxoo3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But, I am not sure if the assumption above is true, if not, we still need to
-check the reserved bit of head for a tail page as this PATCH v2 does.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl1szAAACgkQ2O7X88g7
++pod9A/+JUsyTh1EkTARCpyGyhu7UUwz6kyUB8RDrf8A7++VC3dElKc1lMqrpFw/
+W7xUSMjB2KXwx+im1D5UYOwnBo1AKnV7mfjOwcw1SxJ8xc69nNoMT2SjNYayi3iH
+VZDa9jOwU7k5+kSNOfacOLq45ZZKIkkA8uyV4qYL0sBzekItPaQ3Ag8QCTBbm+02
+2IDIQp4ifKuQrNPcMp25XN8wT+qTFYITBTAsmNHuAv86NXpHYmYi0M7FK8uEP8Pp
+8ch5v5MdXmRt91D5mwtqIEGBh2MX2nI8J9jUzBDZ49GgYK46BC5cVqs2OXLaXLzW
+ySIUHbJqvJ7PlWlOfuDREwrrIFDbQ+ytT4FUdLx1P0kpjKaV/jFEBJ6vJrrt9Smx
+1R1UCzeJiePXFa2DvqHLbux16KSB63FuGhoHbfiF17mAfYgYUlevSVzPTidED+My
+Yfe9Xt86gW6g2mZXf33XCEHmBpdB7rKZ+NWEIEzrNSLmuoy+Pz9kn08c0iEgxHm9
+9zGlSuLWJbL/QySZLSduO2ZR7DaqvlMmnX8WlViHanAxobnu3ZLxwQIaPPLIGeTu
+mIdoOy4+sQyE6QdJs7AJFEhYXCw8eZ0CI5jvxdzGIgMjfOpnpqJVRbv8pExyyald
++IVdpxrU6LpFHawwe5PFETDG+PaQhzRdyTDDWUfraWpvtctvRPk=
+=tdy4
+-----END PGP SIGNATURE-----
 
-     Ben
-
+--krhurshqx4pzxoo3--
