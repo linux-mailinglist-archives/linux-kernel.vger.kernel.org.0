@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 605CDA516B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:19:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8548A5148
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730613AbfIBITb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:19:31 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56157 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730021AbfIBIQf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730111AbfIBIQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 2 Sep 2019 04:16:35 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56137 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729950AbfIBIQe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:16:34 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i4hVi-0007xM-6l; Mon, 02 Sep 2019 10:16:26 +0200
+        id 1i4hVj-00080R-Bk; Mon, 02 Sep 2019 10:16:27 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 21C921C0DEC;
-        Mon,  2 Sep 2019 10:16:25 +0200 (CEST)
-Date:   Mon, 02 Sep 2019 08:16:25 -0000
-From:   "tip-bot2 for Kyle Meyer" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E7EF61C0DE7;
+        Mon,  2 Sep 2019 10:16:26 +0200 (CEST)
+Date:   Mon, 02 Sep 2019 08:16:26 -0000
+From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf machine: Replace MAX_NR_CPUS with
- perf_env::nr_cpus_online
-Cc:     Kyle Meyer <kyle.meyer@hpe.com>, Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+Subject: [tip: perf/core] perf header: Move CPUINFO_PROC to the only file
+ where it is used
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Russ Anderson <russ.anderson@hpe.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <20190827214352.94272-6-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-References: <20190827214352.94272-6-meyerk@stormcage.eag.rdlabs.hpecorp.net>
+In-Reply-To: <tip-ars2j5m3if3gypsvkbbijucq@git.kernel.org>
+References: <tip-ars2j5m3if3gypsvkbbijucq@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <156741218504.17280.8058375020426111095.tip-bot2@tip-bot2>
+Message-ID: <156741218675.17293.4112902995246071094.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -53,69 +51,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     8c7274691f0de5fb56f3b9fe9208ce7e515a2d2c
-Gitweb:        https://git.kernel.org/tip/8c7274691f0de5fb56f3b9fe9208ce7e515a2d2c
-Author:        Kyle Meyer <meyerk@hpe.com>
-AuthorDate:    Tue, 27 Aug 2019 16:43:50 -05:00
+Commit-ID:     a77494026309711a5f1e4b078e353cd46c2dad9f
+Gitweb:        https://git.kernel.org/tip/a77494026309711a5f1e4b078e353cd46c2dad9f
+Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate:    Thu, 29 Aug 2019 14:40:28 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Thu, 29 Aug 2019 17:38:32 -03:00
 
-perf machine: Replace MAX_NR_CPUS with perf_env::nr_cpus_online
+perf header: Move CPUINFO_PROC to the only file where it is used
 
-nr_cpus, the number of CPUs online during a record session bound by
-MAX_NR_CPUS, can be used as a dynamic alternative for MAX_NR_CPUS in
-__machine__synthesize_threads and machine__set_current_tid.
+To reduce perf-sys.h and eventually nuke it.
 
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
-Reviewed-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Link: http://lore.kernel.org/lkml/20190827214352.94272-6-meyerk@stormcage.eag.rdlabs.hpecorp.net
+Link: https://lkml.kernel.org/n/tip-ars2j5m3if3gypsvkbbijucq@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/machine.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ tools/perf/perf-sys.h    | 44 +---------------------------------------
+ tools/perf/util/header.c | 18 ++++++++++++++++-
+ 2 files changed, 18 insertions(+), 44 deletions(-)
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 93483f1..a1542b4 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2619,7 +2619,9 @@ int __machine__synthesize_threads(struct machine *machine, struct perf_tool *too
+diff --git a/tools/perf/perf-sys.h b/tools/perf/perf-sys.h
+index 3eb7a39..6ffb0fb 100644
+--- a/tools/perf/perf-sys.h
++++ b/tools/perf/perf-sys.h
+@@ -10,50 +10,6 @@
+ #include <linux/perf_event.h>
+ #include <asm/barrier.h>
  
- pid_t machine__get_current_tid(struct machine *machine, int cpu)
+-#ifdef __powerpc__
+-#define CPUINFO_PROC	{"cpu"}
+-#endif
+-
+-#ifdef __s390__
+-#define CPUINFO_PROC	{"vendor_id"}
+-#endif
+-
+-#ifdef __sh__
+-#define CPUINFO_PROC	{"cpu type"}
+-#endif
+-
+-#ifdef __hppa__
+-#define CPUINFO_PROC	{"cpu"}
+-#endif
+-
+-#ifdef __sparc__
+-#define CPUINFO_PROC	{"cpu"}
+-#endif
+-
+-#ifdef __alpha__
+-#define CPUINFO_PROC	{"cpu model"}
+-#endif
+-
+-#ifdef __arm__
+-#define CPUINFO_PROC	{"model name", "Processor"}
+-#endif
+-
+-#ifdef __mips__
+-#define CPUINFO_PROC	{"cpu model"}
+-#endif
+-
+-#ifdef __arc__
+-#define CPUINFO_PROC	{"Processor"}
+-#endif
+-
+-#ifdef __xtensa__
+-#define CPUINFO_PROC	{"core ID"}
+-#endif
+-
+-#ifndef CPUINFO_PROC
+-#define CPUINFO_PROC	{ "model name", }
+-#endif
+-
+ static inline int
+ sys_perf_event_open(struct perf_event_attr *attr,
+ 		      pid_t pid, int cpu, int group_fd,
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index dd2bb08..d252124 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -436,7 +436,25 @@ static int __write_cpudesc(struct feat_fd *ff, const char *cpuinfo_proc)
+ static int write_cpudesc(struct feat_fd *ff,
+ 		       struct evlist *evlist __maybe_unused)
  {
--	if (cpu < 0 || cpu >= MAX_NR_CPUS || !machine->current_tid)
-+	int nr_cpus = min(machine->env->nr_cpus_online, MAX_NR_CPUS);
-+
-+	if (cpu < 0 || cpu >= nr_cpus || !machine->current_tid)
- 		return -1;
++#if defined(__powerpc__) || defined(__hppa__) || defined(__sparc__)
++#define CPUINFO_PROC	{ "cpu", }
++#elif defined(__s390__)
++#define CPUINFO_PROC	{ "vendor_id", }
++#elif defined(__sh__)
++#define CPUINFO_PROC	{ "cpu type", }
++#elif defined(__alpha__) || defined(__mips__)
++#define CPUINFO_PROC	{ "cpu model", }
++#elif defined(__arm__)
++#define CPUINFO_PROC	{ "model name", "Processor", }
++#elif defined(__arc__)
++#define CPUINFO_PROC	{ "Processor", }
++#elif defined(__xtensa__)
++#define CPUINFO_PROC	{ "core ID", }
++#else
++#define CPUINFO_PROC	{ "model name", }
++#endif
+ 	const char *cpuinfo_procs[] = CPUINFO_PROC;
++#undef CPUINFO_PROC
+ 	unsigned int i;
  
- 	return machine->current_tid[cpu];
-@@ -2629,6 +2631,7 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
- 			     pid_t tid)
- {
- 	struct thread *thread;
-+	int nr_cpus = min(machine->env->nr_cpus_online, MAX_NR_CPUS);
- 
- 	if (cpu < 0)
- 		return -EINVAL;
-@@ -2636,14 +2639,14 @@ int machine__set_current_tid(struct machine *machine, int cpu, pid_t pid,
- 	if (!machine->current_tid) {
- 		int i;
- 
--		machine->current_tid = calloc(MAX_NR_CPUS, sizeof(pid_t));
-+		machine->current_tid = calloc(nr_cpus, sizeof(pid_t));
- 		if (!machine->current_tid)
- 			return -ENOMEM;
--		for (i = 0; i < MAX_NR_CPUS; i++)
-+		for (i = 0; i < nr_cpus; i++)
- 			machine->current_tid[i] = -1;
- 	}
- 
--	if (cpu >= MAX_NR_CPUS) {
-+	if (cpu >= nr_cpus) {
- 		pr_err("Requested CPU %d too large. ", cpu);
- 		pr_err("Consider raising MAX_NR_CPUS\n");
- 		return -EINVAL;
+ 	for (i = 0; i < ARRAY_SIZE(cpuinfo_procs); i++) {
