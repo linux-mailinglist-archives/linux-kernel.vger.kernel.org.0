@@ -2,113 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92C5DA57FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2993A5836
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:42:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731097AbfIBNjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:39:01 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35408 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731044AbfIBNi5 (ORCPT
+        id S1731523AbfIBNkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:40:22 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38954 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731048AbfIBNi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 2 Sep 2019 09:38:57 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g7so14103041wrx.2;
-        Mon, 02 Sep 2019 06:38:55 -0700 (PDT)
+Received: by mail-wm1-f66.google.com with SMTP id n2so13266573wmk.4;
+        Mon, 02 Sep 2019 06:38:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:subject:references
          :in-reply-to:cc:cc:to;
-        bh=nPRUA5yZXmPWTokSGym1lKZ6GQZy5ySBbJLcfcoglsY=;
-        b=BFcpCg0LAn+Q+c79wtcXvehQXl8AqZ6jW9xkIm8so5A5qQRk/Bnf4IC9He2z4Mi8FU
-         LWbBApIFugWYM6jWqKmyV0F21F/NhsA+hdmdhJUJ8/lwHVsV3xm1WEBfqok4YB5Z+/vG
-         rdXJlBOUpvmsDU1j/LDIYsdu9qLYWTfpuiIcjOd4/YKDm3WdzYqnaGV9s3A1TGpMsTm5
-         bgnYwuddXFknk+q7+rW7y5Ty9bo6pCTbZ1x2NHNfuQpP43Iz2OlC9dSxXtWU9/Uhsq0i
-         6Vs3MyBSf4ceOiTaJICerNTXgmAZL5fNHr2iOhzV96qzsoJ40wMITKqI2n+6UuLb3OHU
-         Uqew==
-X-Gm-Message-State: APjAAAXLJtbf477yjOyk6n0sUdJjXo/hdGbR07IbIHDcPktiayTJZzS6
-        Eyj2AvaK6beJZi9bkU5nnA==
-X-Google-Smtp-Source: APXvYqyvbrMPmMiV5b3gWdHNFD445UozayaIuP3ud47MYHnGtI4Z0dvVWaAlPFhYplcTUpqc5ajKFA==
-X-Received: by 2002:adf:ff8e:: with SMTP id j14mr35307186wrr.141.1567431534372;
-        Mon, 02 Sep 2019 06:38:54 -0700 (PDT)
+        bh=VHM7wVxbM3iFjk6g2BqysfNSZL4bn6Yh6NOKIm6VeQ8=;
+        b=GGG8Qyg+r3ce23l4JaTY51j6Y6J13+wPxHp+G0+m5cNBERwlL6wbSv6/kMOuIHThQE
+         qQ/QgLjhZaIrYp6YON7JgkL92AYaZkbXUCyGicy9kAYXvenxBKh0Yfcpsx0gJmaQgSe2
+         RQR8h/9JEE3meVKRRcOaicf9dbEkHFPActutDAoJ5z0yjOZ4/ZtRiIgV9Gc9a4VZil2i
+         xNieQwTYdTMwjA7Dg+Iy+41G10uMzyrnEFYxQ/Q3K8Pl6h7zUQjxNSfH0o/O8tTGoojS
+         yE59HhZBG7KE40nPLcJCrq9qtHraI27vjhhMBZ14oBMJHJ9pvDdcLlaqa2Uv7Hg/MUjC
+         UThg==
+X-Gm-Message-State: APjAAAWcZ3vNH2CsEfr5zxqbJmw2fNgvX1kqUJKM9RD5TtWlRvTCXdvT
+        dZA/hLExvW/XXfLUoIHOSw==
+X-Google-Smtp-Source: APXvYqy0KNBQfCwq+9RzjWG+pvrwpi4rW7y8999LenlesG4VEWMuewwgiR5JlpctG/2+f2gTGGix0A==
+X-Received: by 2002:a7b:c386:: with SMTP id s6mr4331454wmj.93.1567431535461;
+        Mon, 02 Sep 2019 06:38:55 -0700 (PDT)
 Received: from localhost ([212.187.182.166])
-        by smtp.gmail.com with ESMTPSA id t203sm15258248wmf.42.2019.09.02.06.38.53
+        by smtp.gmail.com with ESMTPSA id h8sm16761794wrq.49.2019.09.02.06.38.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 06:38:53 -0700 (PDT)
-Message-ID: <5d6d1b6d.1c69fb81.a78b7.2ccb@mx.google.com>
-Date:   Mon, 02 Sep 2019 14:38:53 +0100
+        Mon, 02 Sep 2019 06:38:54 -0700 (PDT)
+Message-ID: <5d6d1b6e.1c69fb81.c6a88.9b11@mx.google.com>
+Date:   Mon, 02 Sep 2019 14:38:54 +0100
 From:   Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH next v11 03/11] dt-bindings: usb: add binding for USB GPIO based connection detection driver
-References: <1567070558-29417-1-git-send-email-chunfeng.yun@mediatek.com> <1567070558-29417-4-git-send-email-chunfeng.yun@mediatek.com>
-In-Reply-To: <1567070558-29417-4-git-send-email-chunfeng.yun@mediatek.com>
-Content-Type: text/plain
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Biju Das <biju.das@bp.renesas.com>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Li Jun <jun.li@nxp.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Min Guo <min.guo@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nagarjuna Kristam <nkristam@nvidia.com>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+Subject: Re: [PATCH 1/2] iommu: Implement of_iommu_get_resv_regions()
+References: <20190829111407.17191-1-thierry.reding@gmail.com> <20190829111407.17191-2-thierry.reding@gmail.com>
+In-Reply-To: <20190829111407.17191-2-thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Thierry Reding <thierry.reding@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 29 Aug 2019 17:22:30 +0800, Chunfeng Yun wrote:
-> It's used to support dual role switch via GPIO when use Type-B
-> receptacle, typically the USB ID pin is connected to an input
-> GPIO, and also used to enable/disable device when the USB Vbus
-> pin is connected to an input GPIO.
+On Thu, 29 Aug 2019 13:14:06 +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> This is an implementation that IOMMU drivers can use to obtain reserved
+> memory regions from a device tree node. It uses the reserved-memory DT
+> bindings to find the regions associated with a given device. These
+> regions will be used to create 1:1 mappings in the IOMMU domain that
+> the devices will be attached to.
+> 
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> v11 changes:
->  1. add Reviewed-by Linus
->  2. change compatible as "gpio-usb-b-connector", and remove label
->     in example suggested by Rob
-> 
-> v9~v10 no changes
-> 
-> v8 changes:
->  1. rename the title
->  2. change the compatible as "linux,usb-conn-gpio" instead of
->     "linux,typeb-conn-gpio"
-> 
-> v7 changes:
->  1. add description for device only mode
-> 
-> v6 changes:
->  1. remove status and port nodes in example
->  2. make vbus-supply as optional property
-> 
-> v5 changes:
->  1. treat type-B connector as child device of USB controller's, but not
->     as a separate virtual device, suggested by Rob
->  2. put connector's port node under connector node, suggested by Rob
-> 
-> v4 no changes
-> 
-> v3 changes:
->  1. treat type-B connector as a virtual device, but not child device of
->     USB controller's
-> 
-> v2 changes:
->   1. new patch to make binding clear suggested by Hans
-> ---
->  .../devicetree/bindings/usb/usb-conn-gpio.txt | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/usb-conn-gpio.txt
+>  drivers/iommu/of_iommu.c | 39 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/of_iommu.h |  8 ++++++++
+>  2 files changed, 47 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
