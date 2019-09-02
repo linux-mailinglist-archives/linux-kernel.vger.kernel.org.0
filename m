@@ -2,122 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67740A5300
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:40:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0FDCA5305
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:41:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731235AbfIBJk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 05:40:27 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52890 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729489AbfIBJk1 (ORCPT
+        id S1731259AbfIBJlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 05:41:04 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39616 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729489AbfIBJlD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:40:27 -0400
-Received: by mail-wm1-f67.google.com with SMTP id t17so13787921wmi.2
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 02:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=iifGZMpQV6Q3Nf2FisGpoD7UwukxL/0AVB68SuFmS0Q=;
-        b=bwA9kUL60mjWtPOOWDrB79uuGqR9VnOx5Yr9aCS44l66Uk/PU4luTGcMgX2j+KMwL9
-         8Cic5YpYp5busLyPMqZkUBYjfRGw+exRs5PZJfsvu/rWyc9tN9LOHeMBXvjwJy85mBji
-         VkydsaCO809MVfGAeYcvB18PU0WlY2gNMHxLl7KaolxXWlkrGpxEnhA8wpBcEnBXSKCF
-         k9qWp5VQQ5qpimO8EnZpBEN4wzYxIQKQmBvNUud8RwQObFJYkJdNpVzLrA+8OWpvFKlm
-         MDipgDzjbhnEwJD2nRoH20SuYf7dfmzFNJVPivn3dtvMzhN4dQJjoHJxKkKLgBlbUtSP
-         RkQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=iifGZMpQV6Q3Nf2FisGpoD7UwukxL/0AVB68SuFmS0Q=;
-        b=KyA7KFxqRXH0u2YA6SLbpaLTQLeX0INRL/gtOB1qiifFsQTrijQVrOaNKRHl23i6IE
-         CqZcTPd8XH2I1q7smZgOVaDisa03RkGDZv1tbOErsCcU+M4+V0lJVwE7k/uhOK57OuBS
-         +XkFc8g9cJrmzatq19R7KOaKKdcU9uBUEl+VPLlitohFWR125TNTaCqvZXSzFEI2nfgh
-         hrXM30U2K8lM06SiSajP+DFIDlLr99tCODCQYBF0TeZXFIRQlxmKtoRsDak1F3KSJpqF
-         qOOhf50PVMAQhOWOCa2Mm/UU0/upsAiKUtY9m9aelvmXV5irhmaeQ/uQTKCxnYEOhLAB
-         PBNQ==
-X-Gm-Message-State: APjAAAUir5/nZ6V3Cy1hRhWpPw9JolZi2lEqA3X37x8doxAd+YTtV6Vl
-        QF4MzTPKY0CstqBeLNJh5qJbJA==
-X-Google-Smtp-Source: APXvYqxSOUGY9E1wZpKgjkViI6t3D6h4EFwO07OwMRVO+Sk6d4PG7Uu11p4XzMynDLxDlAkEP41+QA==
-X-Received: by 2002:a7b:ca50:: with SMTP id m16mr8080701wml.158.1567417225074;
-        Mon, 02 Sep 2019 02:40:25 -0700 (PDT)
-Received: from dell ([95.147.198.93])
-        by smtp.gmail.com with ESMTPSA id c6sm17020244wrb.60.2019.09.02.02.40.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Sep 2019 02:40:24 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 10:40:22 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Fabien Lahoudere <fabien.lahoudere@collabora.com>
-Cc:     gwendal@chromium.org, egranata@chromium.org, kernel@collabora.com,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Nick Vaccaro <nvaccaro@chromium.org>,
-        linux-iio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] counter: cros_ec: Add synchronization sensor
-Message-ID: <20190902094022.GK32232@dell>
-References: <cover.1566563833.git.fabien.lahoudere@collabora.com>
- <d985a8a811996148e8cda78b9fe47bb87b884b56.1566563833.git.fabien.lahoudere@collabora.com>
+        Mon, 2 Sep 2019 05:41:03 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x829da8n125845;
+        Mon, 2 Sep 2019 09:40:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=AfdOS5z9vEy8+ZDY2fpRv/BnQc3mYUEV45RXIeZtSJk=;
+ b=JvFPeW3zcoM8nqK6I0jf9k78GoBNImSYH9V7lPrtLaBMiHBJ4RqDtwyzrh0asUggWku4
+ q6g6fsD23jB7wG3P4BdyGLQUKpoig8bxYo5QjFfDM9Dds5TVdcrx3w5D5jEzlAR/e9CR
+ ewUyYsDFIim+u1zS8S4eo/xb7Vc1kZ7du++0KDX8YE5LxMs5DZvl/3kb9xsz2IHtx96c
+ H9hwfhwSvJBAIQTenxOJ8RCfKK5cG5dR/J5ASfHCHsYJv7phgCQT2gjK0FsGT21K3DZU
+ ztz+SgptptLiKYx7ttKzq+iKXxf9+ncGtS0dmnALYKei/vtf0uzz+G8dz0zP4ljFZrgb bg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2120.oracle.com with ESMTP id 2us0myg04v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Sep 2019 09:40:34 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x829dMcs112363;
+        Mon, 2 Sep 2019 09:40:34 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2uqg82xhs9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Sep 2019 09:40:33 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x829eWXs008355;
+        Mon, 2 Sep 2019 09:40:32 GMT
+Received: from [10.191.10.186] (/10.191.10.186)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Sep 2019 02:40:32 -0700
+Subject: Re: [PATCH] x86/boot/compressed/64: Fix 'may be used uninitialized'
+ issue
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86-ml <x86@kernel.org>
+References: <1567416624-26727-1-git-send-email-zhenzhong.duan@oracle.com>
+ <20190902093534.GB9605@zn.tnic>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <8361d582-3429-c91d-3f5a-0b988a0e16ed@oracle.com>
+Date:   Mon, 2 Sep 2019 17:40:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d985a8a811996148e8cda78b9fe47bb87b884b56.1566563833.git.fabien.lahoudere@collabora.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190902093534.GB9605@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9367 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909020110
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9367 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909020110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 23 Aug 2019, Fabien Lahoudere wrote:
 
-> From: Gwendal Grignou <gwendal@chromium.org>
-> 
-> EC returns a counter when there is an event on camera vsync.
-> This patch comes from chromeos kernel 4.4
-> 
-> Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-> Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
-> 
-> CROS EC sync sensor was originally designed as an IIO device.
-> Now that the counter subsystem will replace IIO_COUNTER, we
-> have to implement a new way to get sync count.
-> 
-> Signed-off-by: Fabien Lahoudere <fabien.lahoudere@collabora.com>
-> ---
->  Documentation/driver-api/generic-counter.rst  |   3 +
->  MAINTAINERS                                   |   7 +
->  drivers/counter/Kconfig                       |   9 +
->  drivers/counter/Makefile                      |   1 +
->  drivers/counter/counter.c                     |   2 +
->  drivers/counter/cros_ec_sensors_sync.c        | 208 ++++++++++++++++++
->  .../cros_ec_sensors/cros_ec_sensors_core.c    |   1 +
+On 2019/9/2 17:35, Borislav Petkov wrote:
+> On Mon, Sep 02, 2019 at 05:30:24PM +0800, Zhenzhong Duan wrote:
+>> Builds kernel with "make bzImage EXTRA_CFLAGS=-Wall", gcc complains:
+>>
+>> arch/x86/boot/compressed/pgtable_64.c: In function 'paging_prepare':
+>> arch/x86/boot/compressed/pgtable_64.c:92:7: warning: 'new' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>>     new = round_down(new, PAGE_SIZE);
+>>
+>> In theory a random value of variable new may pass all the check and be
+>> assigned to bios_start, fixing it by assigning it an initial value.
+>>
+>> Fixes: 0a46fff2f910 ("x86/boot/compressed/64: Fix boot on machines with broken E820 table")
+>> Signed-off-by: Zhenzhong Duan<zhenzhong.duan@oracle.com>
+>> Cc: Kirill A. Shutemov<kirill@shutemov.name>
+>> Cc: Thomas Gleixner<tglx@linutronix.de>
+>> Cc: Ingo Molnar<mingo@redhat.com>
+>> Cc: Borislav Petkov<bp@alien8.de>
+>> Cc: "H. Peter Anvin"<hpa@zytor.com>
+>> Cc: x86-ml<x86@kernel.org>
+>> ---
+>>   arch/x86/boot/compressed/pgtable_64.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+>> index 2faddeb..c886269 100644
+>> --- a/arch/x86/boot/compressed/pgtable_64.c
+>> +++ b/arch/x86/boot/compressed/pgtable_64.c
+>> @@ -72,7 +72,7 @@ static unsigned long find_trampoline_placement(void)
+>>   
+>>   	/* Find the first usable memory region under bios_start. */
+>>   	for (i = boot_params->e820_entries - 1; i >= 0; i--) {
+>> -		unsigned long new;
+>> +		unsigned long new = bios_start;
+>>   
+>>   		entry = &boot_params->e820_table[i];
+>>   
+>> -- 
+> https://git.kernel.org/tip/c96e8483cb2da6695c8b8d0896fe7ae272a07b54
+>
+> In the future, use tip/master when preparing fixes because it has the
+> latest state of the x86 tree and you won't have to duplicate effort,
+> like in this case.
 
->  drivers/mfd/cros_ec_dev.c                     |   3 +
+Ok, I see. Thanks for your suggestion.
 
-I can't see any reason for this change to be squashed into this patch.
+Zhenzhong
 
-Please separate it out.
-
->  include/linux/counter.h                       |   1 +
->  9 files changed, 235 insertions(+)
->  create mode 100644 drivers/counter/cros_ec_sensors_sync.c
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
