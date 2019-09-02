@@ -2,196 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AA5DA568C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:46:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76E43A5696
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:47:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730816AbfIBMqH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 08:46:07 -0400
-Received: from foss.arm.com ([217.140.110.172]:53558 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730558AbfIBMqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:46:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBF90337;
-        Mon,  2 Sep 2019 05:46:05 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B3C53F246;
-        Mon,  2 Sep 2019 05:46:05 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 13:46:03 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        leoyang.li@nxp.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
-        minghuan.Lian@nxp.com, mingkai.hu@nxp.com, roy.zang@nxp.com,
-        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, arnd@arndb.de,
-        gregkh@linuxfoundation.org, zhiqiang.hou@nxp.com
-Subject: Re: [PATCH v3 09/11] PCI: layerscape: Add EP mode support for
- ls1088a and ls2088a
-Message-ID: <20190902124603.GJ9720@e119886-lin.cambridge.arm.com>
-References: <20190902031716.43195-1-xiaowei.bao@nxp.com>
- <20190902031716.43195-10-xiaowei.bao@nxp.com>
+        id S1731029AbfIBMqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 08:46:24 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:41583 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729878AbfIBMqX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 08:46:23 -0400
+Received: by mail-pg1-f196.google.com with SMTP id x15so7432678pgg.8;
+        Mon, 02 Sep 2019 05:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pgpliINIcPhRc7BoPrS9B0ow1dlVmDoEwaS8EkZIGsk=;
+        b=iKcHDACooIYXG12YqobbLfwrs0m9jJ0g9pUEG/yHkkVSUkM+4P2KHKsylGwM7IFasO
+         77lLo5fMqVvA1ZyFcVvUs9kp97t7EYK9xLbVze9DNahb00gwgfTrT7i6NftOA7WOFszY
+         BQm26EUDi9RHFXHYXMgnFfZYRopoBYYZK8p+sd3Koqh5TbLKd5wi0n/Mm7UtAsrQjeFs
+         n/Z6jMYgcDOvMn+KGep5g5kdw5Ct9tg4tfK6fPPf2dY9tnz3iF+t0SiGmHqnQXI+tZpJ
+         AovmJaUzEHmO+HmLgO+yqXmIDkrKWIfHx51iUR3DplGeOYQ4uQ3QwGCr8/TqhGJH/6IK
+         vf4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pgpliINIcPhRc7BoPrS9B0ow1dlVmDoEwaS8EkZIGsk=;
+        b=A4KOY9h4wtF2HQWMuvaAf9cuKlr319RZKVSNpARiKbY7nWf9nZ8JmNUre4CDHEIWa9
+         7+zbNz0H5DnN69u9SKvLo6RQlc/ESScLtat52W63O343jOn5vkqRf+meHJknOsjQxIFq
+         7MvyGaniDT7s/RUfg1SJHqUYRh8lQV9KgYw5cUzuQ7fOPrkslKt0TpYaqOYKb7TM7HT4
+         1htSiJFYPcECnit2mky8Wm6NrEZ5i5Og2saTLw3fpOm22+AtpV7WIk2PL+Uo6e6FOR1y
+         wW7FJkwLMGow8TreHaKz48DVPp3MIIC54hp1/EcP2EUIn8z5/JErysJAWunrXqp8d2hG
+         NJRA==
+X-Gm-Message-State: APjAAAW4xTMRFH1gBaxZPDbsvIHe5dCUoTQlAWBiseVmkH15nzbx1vtv
+        jOULevzs0UEt96w535bqIc7dBe2ESo222mHhAQA=
+X-Google-Smtp-Source: APXvYqxXfUfYYlSHCGT8QWcRuQ7m0TRU6YfPCzIJqacGx9wipMEOCpcJgFUg1vZ65kU4tE0DEW8M4geXJQCCfGj37x8=
+X-Received: by 2002:aa7:8219:: with SMTP id k25mr34409763pfi.72.1567428382975;
+ Mon, 02 Sep 2019 05:46:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902031716.43195-10-xiaowei.bao@nxp.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+References: <20190830061540.211072-1-Tianyu.Lan@microsoft.com> <DM5PR21MB0137B7C2AAD0FC65CB3E1306D7BD0@DM5PR21MB0137.namprd21.prod.outlook.com>
+In-Reply-To: <DM5PR21MB0137B7C2AAD0FC65CB3E1306D7BD0@DM5PR21MB0137.namprd21.prod.outlook.com>
+From:   Tianyu Lan <lantianyu1986@gmail.com>
+Date:   Mon, 2 Sep 2019 20:46:15 +0800
+Message-ID: <CAOLK0pwEMg7kSsRNfKa6=uQ1eVGa-HdNG=qMBernoe7XwS-0_w@mail.gmail.com>
+Subject: Re: [PATCH] x86/Hyper-V: Fix overflow issue in the fill_gva_list()
+To:     Michael Kelley <mikelley@microsoft.com>
+Cc:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "cohuck@redhat.com" <cohuck@redhat.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 11:17:14AM +0800, Xiaowei Bao wrote:
-> Add PCIe EP mode support for ls1088a and ls2088a, there are some
-> difference between LS1 and LS2 platform, so refactor the code of
-> the EP driver.
-> 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> ---
-> v2: 
->  - This is a new patch for supporting the ls1088a and ls2088a platform.
-> v3:
->  - Adjust the some struct assignment order in probe function.
-> 
->  drivers/pci/controller/dwc/pci-layerscape-ep.c | 72 +++++++++++++++++++-------
->  1 file changed, 53 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> index 5f0cb99..723bbe5 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> @@ -20,27 +20,29 @@
->  
->  #define PCIE_DBI2_OFFSET		0x1000	/* DBI2 base address*/
->  
-> -struct ls_pcie_ep {
-> -	struct dw_pcie		*pci;
-> -	struct pci_epc_features	*ls_epc;
-> +#define to_ls_pcie_ep(x)	dev_get_drvdata((x)->dev)
-> +
-> +struct ls_pcie_ep_drvdata {
-> +	u32				func_offset;
-> +	const struct dw_pcie_ep_ops	*ops;
-> +	const struct dw_pcie_ops	*dw_pcie_ops;
->  };
->  
-> -#define to_ls_pcie_ep(x)	dev_get_drvdata((x)->dev)
-> +struct ls_pcie_ep {
-> +	struct dw_pcie			*pci;
-> +	struct pci_epc_features		*ls_epc;
-> +	const struct ls_pcie_ep_drvdata *drvdata;
-> +};
->  
->  static int ls_pcie_establish_link(struct dw_pcie *pci)
->  {
->  	return 0;
->  }
->  
-> -static const struct dw_pcie_ops ls_pcie_ep_ops = {
-> +static const struct dw_pcie_ops dw_ls_pcie_ep_ops = {
->  	.start_link = ls_pcie_establish_link,
->  };
->  
-> -static const struct of_device_id ls_pcie_ep_of_match[] = {
-> -	{ .compatible = "fsl,ls-pcie-ep",},
-> -	{ },
-> -};
-> -
->  static const struct pci_epc_features*
->  ls_pcie_ep_get_features(struct dw_pcie_ep *ep)
->  {
-> @@ -87,10 +89,39 @@ static int ls_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
->  	}
->  }
->  
-> -static const struct dw_pcie_ep_ops pcie_ep_ops = {
-> +static unsigned int ls_pcie_ep_func_conf_select(struct dw_pcie_ep *ep,
-> +						u8 func_no)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-> +	struct ls_pcie_ep *pcie = to_ls_pcie_ep(pci);
-> +
-> +	WARN_ON(func_no && !pcie->drvdata->func_offset);
-> +	return pcie->drvdata->func_offset * func_no;
-> +}
-> +
-> +static const struct dw_pcie_ep_ops ls_pcie_ep_ops = {
->  	.ep_init = ls_pcie_ep_init,
->  	.raise_irq = ls_pcie_ep_raise_irq,
->  	.get_features = ls_pcie_ep_get_features,
-> +	.func_conf_select = ls_pcie_ep_func_conf_select,
-> +};
-> +
-> +static const struct ls_pcie_ep_drvdata ls1_ep_drvdata = {
-> +	.ops = &ls_pcie_ep_ops,
-> +	.dw_pcie_ops = &dw_ls_pcie_ep_ops,
-> +};
-> +
-> +static const struct ls_pcie_ep_drvdata ls2_ep_drvdata = {
-> +	.func_offset = 0x20000,
-> +	.ops = &ls_pcie_ep_ops,
-> +	.dw_pcie_ops = &dw_ls_pcie_ep_ops,
-> +};
-> +
-> +static const struct of_device_id ls_pcie_ep_of_match[] = {
-> +	{ .compatible = "fsl,ls1046a-pcie-ep", .data = &ls1_ep_drvdata },
-> +	{ .compatible = "fsl,ls1088a-pcie-ep", .data = &ls2_ep_drvdata },
-> +	{ .compatible = "fsl,ls2088a-pcie-ep", .data = &ls2_ep_drvdata },
-> +	{ },
+On Sat, Aug 31, 2019 at 1:41 AM Michael Kelley <mikelley@microsoft.com> wrote:
+>
+> From: lantianyu1986@gmail.com  Sent: Thursday, August 29, 2019 11:16 PM
+> >
+> > From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> >
+> > fill_gva_list() populates gva list and adds offset
+> > HV_TLB_FLUSH_UNIT(0x1000000) to variable "cur"
+> > in the each loop. When diff between "end" and "cur" is
+> > less than HV_TLB_FLUSH_UNIT, the gva entry should
+> > be the last one and the loop should be end.
+> >
+> > If cur is equal or greater than 0xFF000000 on 32-bit
+> > mode, "cur" will be overflow after adding HV_TLB_FLUSH_UNIT.
+> > Its value will be wrapped and less than "end". fill_gva_list()
+> > falls into an infinite loop and fill gva list out of
+> > border finally.
+> >
+> > Set "cur" to be "end" to make loop end when diff is
+> > less than HV_TLB_FLUSH_UNIT and add HV_TLB_FLUSH_UNIT to
+> > "cur" when diff is equal or greater than HV_TLB_FLUSH_UNIT.
+> > Fix the overflow issue.
+>
+> Let me suggest simplifying the commit message a bit.  It
+> doesn't need to describe every line of the code change.   I think
+> it should also make clear that the same problem could occur on
+> 64-bit systems with the right "start" address.  My suggestion:
+>
+> When the 'start' parameter is >=  0xFF000000 on 32-bit
+> systems, or >= 0xFFFFFFFF'FF000000 on 64-bit systems,
+> fill_gva_list gets into an infinite loop.  With such inputs,
+> 'cur' overflows after adding HV_TLB_FLUSH_UNIT and always
+> compares as less than end.  Memory is filled with guest virtual
+> addresses until the system crashes
+>
+> Fix this by never incrementing 'cur' to be larger than 'end'.
+>
+> >
+> > Reported-by: Jong Hyun Park <park.jonghyun@yonsei.ac.kr>
+> > Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+> > Fixes: 2ffd9e33ce4a ("x86/hyper-v: Use hypercall for remote
+> > TLB flush")
+>
+> The "Fixes:" line needs to not wrap.  It's exempt from the
+> "wrap at 75 columns" rule in order to simplify parsing scripts.
+>
+> The code itself looks good.
 
-This removes support for "fsl,ls-pcie-ep" - was that intentional? If you do
-plan to drop it please make sure you explain why in the commit message. See
-also my comments in your dt-binding patch.
-
-Thanks,
-
-Andrew Murray
-
->  };
->  
->  static int __init ls_add_pcie_ep(struct ls_pcie_ep *pcie,
-> @@ -103,7 +134,7 @@ static int __init ls_add_pcie_ep(struct ls_pcie_ep *pcie,
->  	int ret;
->  
->  	ep = &pci->ep;
-> -	ep->ops = &pcie_ep_ops;
-> +	ep->ops = pcie->drvdata->ops;
->  
->  	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
->  	if (!res)
-> @@ -142,20 +173,23 @@ static int __init ls_pcie_ep_probe(struct platform_device *pdev)
->  	if (!ls_epc)
->  		return -ENOMEM;
->  
-> -	dbi_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
-> -	pci->dbi_base = devm_pci_remap_cfg_resource(dev, dbi_base);
-> -	if (IS_ERR(pci->dbi_base))
-> -		return PTR_ERR(pci->dbi_base);
-> +	pcie->drvdata = of_device_get_match_data(dev);
->  
-> -	pci->dbi_base2 = pci->dbi_base + PCIE_DBI2_OFFSET;
->  	pci->dev = dev;
-> -	pci->ops = &ls_pcie_ep_ops;
-> -	pcie->pci = pci;
-> +	pci->ops = pcie->drvdata->dw_pcie_ops;
->  
->  	ls_epc->bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
->  
-> +	pcie->pci = pci;
->  	pcie->ls_epc = ls_epc;
->  
-> +	dbi_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
-> +	pci->dbi_base = devm_pci_remap_cfg_resource(dev, dbi_base);
-> +	if (IS_ERR(pci->dbi_base))
-> +		return PTR_ERR(pci->dbi_base);
-> +
-> +	pci->dbi_base2 = pci->dbi_base + PCIE_DBI2_OFFSET;
-> +
->  	platform_set_drvdata(pdev, pcie);
->  
->  	ret = ls_add_pcie_ep(pcie, pdev);
-> -- 
-> 2.9.5
-> 
+Hi Michael:
+       Thanks for suggestion. Update commit log in V2.
+-- 
+Best regards
+Tianyu Lan
