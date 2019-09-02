@@ -2,173 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8455A5C03
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 20:05:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65825A5C09
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 20:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbfIBSFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 14:05:25 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:5236 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfIBSFZ (ORCPT
+        id S1726861AbfIBSHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 14:07:21 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37744 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfIBSHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 14:05:25 -0400
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Allan.Nielsen@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="Allan.Nielsen@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Allan.Nielsen@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: HER/O+P4nrAcLTa8XXysI/HXmsgFV0NarfvE+VbTxBhYBwO5Sgb7n3E3j6NWhNqmaUKTlx6ZWl
- EZ/54vKM4oBkyj6ECZ0HMRpWM9yoQcZLQRL/6WsnIKrxDdIrwPQjOGhyy5AXdhlo4dpJfPTOau
- pSoilXhn5muEODXKK/8eErgOjIJ1j5MzvYv1Q5u8YhOo07N47eL6Sn1qwN6WQVGz91i67Ne0xU
- /XBZsWd+HwqgeRz3Wq1vNTCKX0HELhNeMqa7MjotkyeGw+YKicsNae5a+OQwkS+ZQACIX7vFaJ
- IDk=
-X-IronPort-AV: E=Sophos;i="5.64,460,1559545200"; 
-   d="scan'208";a="47512522"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Sep 2019 11:05:22 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 2 Sep 2019 11:05:21 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Mon, 2 Sep 2019 11:05:20 -0700
-Date:   Mon, 2 Sep 2019 20:05:20 +0200
-From:   "Allan W. Nielsen" <allan.nielsen@microchip.com>
-To:     Jiri Pirko <jiri@resnulli.us>
-CC:     David Miller <davem@davemloft.net>, <idosch@idosch.org>,
-        <andrew@lunn.ch>, <horatiu.vultur@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <UNGLinuxDriver@microchip.com>,
-        <ivecera@redhat.com>, <f.fainelli@gmail.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] net: core: Notify on changes to dev->promiscuity.
-Message-ID: <20190902180519.ytbs6x2dx5z23hys@lx-anielsen.microsemi.net>
-References: <20190829193613.GA23259@splinter>
- <20190829.151201.940681219080864052.davem@davemloft.net>
- <20190830053940.GL2312@nanopsycho>
- <20190829.230233.287975311556641534.davem@davemloft.net>
- <20190830063624.GN2312@nanopsycho>
- <20190902174229.uur7r7duq4dvbnqq@lx-anielsen.microsemi.net>
- <20190902175124.GA2312@nanopsycho>
+        Mon, 2 Sep 2019 14:07:20 -0400
+Received: by mail-wm1-f65.google.com with SMTP id d16so15474731wme.2;
+        Mon, 02 Sep 2019 11:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2FP61o/rTW3HxqMEgs6ZmsTW0Pzgbyx4HaATesyroRc=;
+        b=HBBXjVcXyPoUX9Asnc9aIZcuXAz5XCTn37veQopKqIAVof3qtxqVYmqKBc2B4Ppra5
+         Y58KTaTk/nF08+uUkUU/+oSEPovt1UF2SY74JuMgjhCYqQP3vPUk3tNXnX25OXyP3esb
+         /bHFrxNIbLm89dE8OnG9Yax/CYvaVUJ/odjkWKvIBTBY26zjskZ3yvtJadNMOQOCL5rx
+         BV7ZKOitDRacIBTt2lPx8WSzEDmAowxX88zc7+zjgdEwE4Jr0bGVd68DWZRW5LZLfaI/
+         /z1i1lpLvxBu5Gt0B1Df7/X345wvA04TXZWDWQzjtLCWEkFICodhFOq7Lu3KJVrUIARb
+         TK0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2FP61o/rTW3HxqMEgs6ZmsTW0Pzgbyx4HaATesyroRc=;
+        b=OpXfRFt23TagndtsbEZ8Eq0nxAVXRFdDj6zOD8cstg0gqphJVrtOgkkI7URcQwtzl7
+         OTXavhGfw7L1+y0/aX6to/yzPq0VRzXkYo8emtwKb177fj/Xftv3zkGTgNhVyCE6LMXp
+         GModI5/57NHkfxb6mjw8kPCL5tDNgSQTIbu1s0mD4SbW71c+2W7j2i4AyuoM8BnK2AbK
+         2khtjiyrBmNUROr1fA4OJhKSX4ibvqJGVESjaUA7mqovidnMtO5sOH6ZvZe/+rA8HmSC
+         QOid3oPIpBo9OqNus/NujvMB8lJ7OLvDuaoCvoh9VhBLha8vdify9hP2NpD5B1smlx9L
+         4OqA==
+X-Gm-Message-State: APjAAAVVCg/N9kxRGAlCjsDYvVCdYd4rP1CSCH58De/xTPTKG6L/GLuK
+        xIjXIgsfpsPCubrLwzYjZj0=
+X-Google-Smtp-Source: APXvYqw1iHn46OE2NUICV9iUJgJFO0LHiEfe7scxyxXpgXgJ7+0k95/PZgmSBwtfuREkAbfiq2gXCQ==
+X-Received: by 2002:a1c:4b14:: with SMTP id y20mr4799177wma.10.1567447638782;
+        Mon, 02 Sep 2019 11:07:18 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id t203sm16421896wmf.42.2019.09.02.11.07.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2019 11:07:18 -0700 (PDT)
+Date:   Mon, 2 Sep 2019 20:07:16 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
+Message-ID: <20190902180716.GA34219@gmail.com>
+References: <20190902173102.53a44459@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190902175124.GA2312@nanopsycho>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190902173102.53a44459@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 09/02/2019 19:51, Jiri Pirko wrote:
-> External E-Mail
-> 
-> 
-> Mon, Sep 02, 2019 at 07:42:31PM CEST, allan.nielsen@microchip.com wrote:
-> >Hi Jiri,
-> >
-> >Sorry for joining the discussion this late, but I have been without mail access
-> >for the last few days.
-> >
-> >
-> >The 08/30/2019 08:36, Jiri Pirko wrote:
-> >> Fri, Aug 30, 2019 at 08:02:33AM CEST, davem@davemloft.net wrote:
-> >> >From: Jiri Pirko <jiri@resnulli.us>
-> >> >Date: Fri, 30 Aug 2019 07:39:40 +0200
-> >> >
-> >> >> Because the "promisc mode" would gain another meaning. Now how the
-> >> >> driver should guess which meaning the user ment when he setted it?
-> >> >> filter or trap?
-> >> >> 
-> >> >> That is very confusing. If the flag is the way to do this, let's
-> >> >> introduce another flag, like IFF_TRAPPING indicating that user wants
-> >> >> exactly this.
-> >> >
-> >> >I don't understand how the meaning of promiscuous mode for a
-> >> >networking device has suddenly become ambiguous, when did this start
-> >> >happening?
-> >> 
-> >> The promiscuity is a way to setup the rx filter. So promics == rx filter
-> >> off. For normal nics, where there is no hw fwd datapath,
-> >> this coincidentally means all received packets go to cpu.
-> >> But if there is hw fwd datapath, rx filter is still off, all rxed packets
-> >> are processed. But that does not mean they should be trapped to cpu.
-> >> 
-> >> Simple example:
-> >> I need to see slowpath packets, for example arps/stp/bgp/... that
-> >> are going to cpu, I do:
-> >> tcpdump -i swp1
-> >
-> >How is this different from "tcpdump -p -i swp1"
-> >
-> >> I don't want to get all the traffic running over hw running this cmd.
-> >> This is a valid usecase.
-> >> 
-> >> To cope with hw fwd datapath devices, I believe that tcpdump has to have
-> >> notion of that. Something like:
-> >> 
-> >> tcpdump -i swp1 --hw-trapping-mode
-> >> 
-> >> The logic can be inverse:
-> >> tcpdump -i swp1
-> >> tcpdump -i swp1 --no-hw-trapping-mode
-> >> 
-> >> However, that would provide inconsistent behaviour between existing and
-> >> patched tcpdump/kernel.
-> >> 
-> >> All I'm trying to say, there are 2 flags
-> >> needed (if we don't use tc trap).
-> >
-> >I have been reading through this thread several times and I still do not get it.
-> >
-> >As far as I understand you are arguing that we need 3 modes:
-> >
-> >- tcpdump -i swp1
-> 
-> Depends on default. Promisc is on.
-> 
-> 
-> >- tcpdump -p -i swp1
-> 
-> All traffic that is trapped to the cpu by default, not promisc means
-> only mac of the interface (if bridge for example haven't set promisc
-> already) and special macs. So host traffic (ip of host), bgp, arp, nsnd,
-> etc.
 
-In the case where the interface is enslaved to a bridge, it is put into promisc
-mode, which means that "tcpdump -i swp1" and "tcpdump -p -i swp1" give the same
-result, right?
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Is this desirable?
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in:
+> 
+>   tools/power/x86/turbostat/turbostat.c
+> 
+> between commit:
+> 
+>   cd188af5282d ("tools/power turbostat: Fix Haswell Core systems")
+>   b62b3184576b ("tools/power turbostat: add Jacobsville support")
+>   d93ea567fc4e ("tools/power turbostat: Add Ice Lake NNPI support")
+> 
+> from Linus' tree and commit:
+> 
+>   c66f78a6de4d ("x86/intel: Aggregate big core client naming")
+>   af239c44e3f9 ("x86/intel: Aggregate big core mobile naming")
+>   5e741407eab7 ("x86/intel: Aggregate big core graphics naming")
+>   5ebb34edbefa ("x86/intel: Aggregate microserver naming")
+> 
+> from the tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-> >- tcpdump -i swp1 --hw-trapping-mode
-> 
-> Promisc is on, all traffic received on the port and pushed to cpu. User
-> has to be careful because in case of mlxsw this can lead to couple
-> hundred gigabit traffic going over limited pci bandwidth (gigabits).
-> 
-> 
-> >
-> >Would you mind provide an example of the traffic you want to see in the 3 cases
-> >(or the traffic which you do not want to see).
-> >
-> >/Allan
-> >
-> 
+Thanks Stephen - I resolved this in -tip too, this conflict should not 
+trigger anymore in tomorrow's -next integration.
 
--- 
-/Allan
+Thanks,
+
+	Ingo
