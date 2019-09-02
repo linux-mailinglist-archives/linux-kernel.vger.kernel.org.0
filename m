@@ -2,143 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D41DDA5CA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 21:16:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F4CCA5C94
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 21:13:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfIBTQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 15:16:22 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39575 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbfIBTQW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 15:16:22 -0400
-Received: by mail-pf1-f195.google.com with SMTP id s12so2387897pfe.6;
-        Mon, 02 Sep 2019 12:16:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=oVYAlVrZfSgGuhdp8J1bJOh+7e8+KCFSvF87G3dnuqA=;
-        b=aQfs6DZWBspomDmj03PMKcrzoihdwGAFfddUfiMnPgm1hPtLEKwFNj8yZHEl3vicgW
-         icwFH52dChjMJ1dWfy66+x//XfKaeFMnkeh+/uifDY7vp2XjEcmeMxdwR6W5b5EPqCho
-         0AHQJ3lwMSfXnQle/zkFtjUKJtHMYnyFYN+tA+aSQzW57seUO/IAtuS1AjFyz8mpF+4b
-         u7JiGLbIUL8RoeFG6dw+xKWO+gMtaKuEHOgpBmNOdB7LGnxbK9ALV4STRJ9A3URnrUqp
-         kzoxtbmEZCuN7b0FlFPDy41xVEOFJ2enkv7inhcUh8F8t/fnDYX0pfgfHoa+Niq2NeR5
-         XNEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oVYAlVrZfSgGuhdp8J1bJOh+7e8+KCFSvF87G3dnuqA=;
-        b=NANDy0YmyqmxlTmozcyPhK9AloJXe6xWp8+et0Thr9j0CKgZ0l/pZM2t4dplEl0Xl7
-         wU9riEEaJOytXvYOZd+JoJ85fwxQkQ9eXKWDDntrk9Stox7yCzQ8J5xoE1i6AlY/yCRP
-         vMyR+1HOL83jHD9E0xAI1J+jyqUjOC5KSzTWnp2fcuPE3b8fheXtHRf5hDsQwJ7wqPo3
-         g+gwBKRa83oEz2SUDVMe5YesbufEkJ2gOgW7MIOPg8uMoj5gX9XT3gxUzDiYA8ASdwY5
-         TQAYp9H6gzfdwob89F2muCr8DdFK3hqlF9RdaadJHS/ScvwGCX8dFbGDceREu/BPwdQN
-         RW8g==
-X-Gm-Message-State: APjAAAVHSQ0bV3ePY3+u+iR0drvSqJ9OKBGMplypDBsbQFtEsJRY2yBQ
-        XcDnugjVAGFXHs8fEHihRtU=
-X-Google-Smtp-Source: APXvYqxxdFKA/8zfsRJSWBrXDIOku7j0IfD0ot3/W6xQOB4IhKcz/UTJl3JSizGbGLLcQDfi+OARxw==
-X-Received: by 2002:a17:90a:c694:: with SMTP id n20mr14181605pjt.24.1567451781462;
-        Mon, 02 Sep 2019 12:16:21 -0700 (PDT)
-Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id o35sm13021420pgm.29.2019.09.02.12.16.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 12:16:20 -0700 (PDT)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     linux@armlinux.org.uk, linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, arnd@arndb.de,
-        y2038@lists.linaro.org
-Subject: [PATCH] adfs: Fill in max and min timestamps in sb
-Date:   Mon,  2 Sep 2019 12:12:31 -0700
-Message-Id: <20190902191231.13346-1-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727063AbfIBTNd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 15:13:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40346 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726988AbfIBTNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 15:13:33 -0400
+Received: from earth.universe (unknown [185.62.205.105])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 772ED21883;
+        Mon,  2 Sep 2019 19:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567451611;
+        bh=2emdnbkw/A2Qn2r3YgBO+VwF9EdlPA7DAXyWwEZc5mU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UpOmjm5BXMBI12HnTpIeEPIQrVWfy1XfhdJNsBh8oKK+9/4aIrMvnzhtGjsQARnFX
+         e2Jk3yKxI1zkMVJ/nfm5pjJf8XFKPxoxpHZgmIZg+O41ordkK4h+mqbPJk4so4k8a8
+         sleKM+FCJGEQcLQ2Bzqro3qd5NdAmbY4HnMv40n0=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 3D59B3C0B7F; Mon,  2 Sep 2019 21:13:29 +0200 (CEST)
+Date:   Mon, 2 Sep 2019 21:13:29 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, krzk@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: bq25890_charger: Add the BQ25895 part
+Message-ID: <20190902191329.3fef5pmbf3ootov2@earth.universe>
+References: <20190705113751.18116-1-angus@akkea.ca>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="bgvlxohmiwmitvjc"
+Content-Disposition: inline
+In-Reply-To: <20190705113751.18116-1-angus@akkea.ca>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fill in the appropriate limits to avoid inconsistencies
-in the vfs cached inode times when timestamps are
-outside the permitted range.
 
-Note that the min timestamp is assumed to be
-01 Jan 1970 00:00:00 (Unix epoch). This is consistent
-with the way we convert timestamps in adfs_adfs2unix_time().
+--bgvlxohmiwmitvjc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
----
+Hi,
 
-This depends on the following patch in Arnd's y2038 tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground y2038
-188d20bcd1eb ("vfs: Add file timestamp range support")
+On Fri, Jul 05, 2019 at 05:37:51AM -0600, Angus Ainslie (Purism) wrote:
+> The BQ25895 is almost identical to the BQ25890.
+>=20
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+> ---
 
- fs/adfs/adfs.h  | 13 +++++++++++++
- fs/adfs/inode.c |  8 ++++----
- fs/adfs/super.c |  2 ++
- 3 files changed, 19 insertions(+), 4 deletions(-)
+Thanks, queued.
 
-diff --git a/fs/adfs/adfs.h b/fs/adfs/adfs.h
-index 699c4fa8b78b..504ad80072ef 100644
---- a/fs/adfs/adfs.h
-+++ b/fs/adfs/adfs.h
-@@ -3,6 +3,19 @@
- #include <linux/fs.h>
- #include <linux/adfs_fs.h>
- 
-+/*
-+ * 01 Jan 1970 00:00:00 (Unix epoch) as seconds since
-+ * 01 Jan 1900 00:00:00 (RISC OS epoch)
-+ */
-+#define RISC_OS_EPOCH_DELTA 2208988800LL
-+
-+/*
-+ * Convert 40 bit centi seconds to seconds
-+ * since 01 Jan 1900 00:00:00 (RISC OS epoch)
-+ * The result is 2248-06-03 06:57:57 GMT
-+ */
-+#define ADFS_MAX_TIMESTAMP ((0xFFFFFFFFFFLL / 100) - RISC_OS_EPOCH_DELTA)
-+
- /* Internal data structures for ADFS */
- 
- #define ADFS_FREE_FRAG		 0
-diff --git a/fs/adfs/inode.c b/fs/adfs/inode.c
-index 5b8017ab0a98..11acd74fb099 100644
---- a/fs/adfs/inode.c
-+++ b/fs/adfs/inode.c
-@@ -162,7 +162,10 @@ static int adfs_mode2atts(struct super_block *sb, struct inode *inode,
- 	return attr;
- }
- 
--static const s64 nsec_unix_epoch_diff_risc_os_epoch = 2208988800000000000LL;
-+/* 01 Jan 1970 00:00:00 (Unix epoch) as nanoseconds since
-+ * 01 Jan 1900 00:00:00 (RISC OS epoch)
-+ */
-+static const s64 nsec_unix_epoch_diff_risc_os_epoch = RISC_OS_EPOCH_DELTA * NSEC_PER_SEC;
- 
- /*
-  * Convert an ADFS time to Unix time.  ADFS has a 40-bit centi-second time
-@@ -173,9 +176,6 @@ static void
- adfs_adfs2unix_time(struct timespec64 *tv, struct inode *inode)
- {
- 	unsigned int high, low;
--	/* 01 Jan 1970 00:00:00 (Unix epoch) as nanoseconds since
--	 * 01 Jan 1900 00:00:00 (RISC OS epoch)
--	 */
- 	s64 nsec;
- 
- 	if (!adfs_inode_is_stamped(inode))
-diff --git a/fs/adfs/super.c b/fs/adfs/super.c
-index 7a3e6b394f2a..532e2afbc7a3 100644
---- a/fs/adfs/super.c
-+++ b/fs/adfs/super.c
-@@ -381,6 +381,8 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
- 	sb->s_fs_info = asb;
- 	sb->s_magic = ADFS_SUPER_MAGIC;
- 	sb->s_time_gran = 10000000;
-+	sb->s_time_min = 0;
-+	sb->s_time_max = ADFS_MAX_TIMESTAMP;
- 
- 	/* set default options */
- 	asb->s_uid = GLOBAL_ROOT_UID;
--- 
-2.17.1
+-- Sebastian
 
+>  drivers/power/supply/bq25890_charger.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/power/supply/bq25890_charger.c b/drivers/power/suppl=
+y/bq25890_charger.c
+> index d333f2b321b9..9d1ec8d677de 100644
+> --- a/drivers/power/supply/bq25890_charger.c
+> +++ b/drivers/power/supply/bq25890_charger.c
+> @@ -22,6 +22,7 @@
+>  #define BQ25890_IRQ_PIN			"bq25890_irq"
+> =20
+>  #define BQ25890_ID			3
+> +#define BQ25895_ID			7
+>  #define BQ25896_ID			0
+> =20
+>  enum bq25890_fields {
+> @@ -171,7 +172,7 @@ static const struct reg_field bq25890_reg_fields[] =
+=3D {
+>  	[F_WD]			=3D REG_FIELD(0x07, 4, 5),
+>  	[F_TMR_EN]		=3D REG_FIELD(0x07, 3, 3),
+>  	[F_CHG_TMR]		=3D REG_FIELD(0x07, 1, 2),
+> -	[F_JEITA_ISET]		=3D REG_FIELD(0x07, 0, 0),
+> +	[F_JEITA_ISET]		=3D REG_FIELD(0x07, 0, 0), // reserved on BQ25895
+>  	/* REG08 */
+>  	[F_BATCMP]		=3D REG_FIELD(0x08, 5, 7),
+>  	[F_VCLAMP]		=3D REG_FIELD(0x08, 2, 4),
+> @@ -180,7 +181,7 @@ static const struct reg_field bq25890_reg_fields[] =
+=3D {
+>  	[F_FORCE_ICO]		=3D REG_FIELD(0x09, 7, 7),
+>  	[F_TMR2X_EN]		=3D REG_FIELD(0x09, 6, 6),
+>  	[F_BATFET_DIS]		=3D REG_FIELD(0x09, 5, 5),
+> -	[F_JEITA_VSET]		=3D REG_FIELD(0x09, 4, 4),
+> +	[F_JEITA_VSET]		=3D REG_FIELD(0x09, 4, 4), // reserved on BQ25895
+>  	[F_BATFET_DLY]		=3D REG_FIELD(0x09, 3, 3),
+>  	[F_BATFET_RST_EN]	=3D REG_FIELD(0x09, 2, 2),
+>  	[F_PUMPX_UP]		=3D REG_FIELD(0x09, 1, 1),
+> @@ -188,7 +189,7 @@ static const struct reg_field bq25890_reg_fields[] =
+=3D {
+>  	/* REG0A */
+>  	[F_BOOSTV]		=3D REG_FIELD(0x0A, 4, 7),
+>  	/* PFM_OTG_DIS 3 on BQ25896 */
+> -	[F_BOOSTI]		=3D REG_FIELD(0x0A, 0, 2),
+> +	[F_BOOSTI]		=3D REG_FIELD(0x0A, 0, 2), // reserved on BQ25895
+>  	/* REG0B */
+>  	[F_VBUS_STAT]		=3D REG_FIELD(0x0B, 5, 7),
+>  	[F_CHG_STAT]		=3D REG_FIELD(0x0B, 3, 4),
+> @@ -392,6 +393,8 @@ static int bq25890_power_supply_get_property(struct p=
+ower_supply *psy,
+>  	case POWER_SUPPLY_PROP_MODEL_NAME:
+>  		if (bq->chip_id =3D=3D BQ25890_ID)
+>  			val->strval =3D "BQ25890";
+> +		else if (bq->chip_id =3D=3D BQ25895_ID)
+> +			val->strval =3D "BQ25895";
+>  		else if (bq->chip_id =3D=3D BQ25896_ID)
+>  			val->strval =3D "BQ25896";
+>  		else
+> @@ -862,7 +865,8 @@ static int bq25890_probe(struct i2c_client *client,
+>  		return bq->chip_id;
+>  	}
+> =20
+> -	if ((bq->chip_id !=3D BQ25890_ID) && (bq->chip_id !=3D BQ25896_ID)) {
+> +	if ((bq->chip_id !=3D BQ25890_ID) && (bq->chip_id !=3D BQ25895_ID)
+> +			&& (bq->chip_id !=3D BQ25896_ID)) {
+>  		dev_err(dev, "Chip with ID=3D%d, not supported!\n", bq->chip_id);
+>  		return -ENODEV;
+>  	}
+> --=20
+> 2.17.1
+>=20
+
+--bgvlxohmiwmitvjc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl1tadkACgkQ2O7X88g7
++prufA//alEGqOkxLUo5wi0lHGBnAyZ6XfVqTevdgayoqCxYYXV8e+MXy5JZ8Sol
+suJKne5GwLkmSW1EiJ60gTNHV3vUjbAq1gj0I7xvZUYG1hecfE8kWwTplOZiyU3E
+fDB0uNtnajJr+syYWDAwFXejmzN65Zlro7e5Gx1lnz8f5lTvwASHvMUtCwZj+/wK
+C0yEiwpNu8ZzykKJyl1OG8eqbmfGprVr+512QteYsrxNADuPSLz6CmxRpgkAW7Pz
+n1fKMK5YTOXkooq55QFAY1JNsAkee3qGQbdDb5F9fWzN7K4bu6gTz3mIA52SuiN6
+r4zRRwXkSFSStfGhzEoHp0SjKoI9Bmy6JL6xlF/IQs1JQ1Jt0GiMDQETT/M6CUhz
+5xqV7aFHOUToPRghMbUVojw0oC5x+961W7bgWsS6tMKX+klW1JGiwyt7pvktmGhI
+M/28UNHbnAIlWt++weaT49kNJW7vGwJyuCr7XprFsDRTiuVHxHJjC+r6XmU46kCJ
+zHBcJuaG5h1Nx4DaNUWEs3WPbp/wBff0Yc+VLbqFIvEwqjQj6zwW6p09aZnEwgYx
+bXXQXOGl2eFj24ARS3cf2QO8tTLLMrXnUzI0FX9CHBTPojK79e98R1CkzHkCOG7u
+m1ZSRCrvPLVqkik2wplPddZaB3q7ke78zEW8oZPppPgLLU9gZB8=
+=Zbr9
+-----END PGP SIGNATURE-----
+
+--bgvlxohmiwmitvjc--
