@@ -2,102 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB30DA4E6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 06:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95AA5A4E9D
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 06:28:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbfIBEZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 00:25:10 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:35702 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729566AbfIBEY4 (ORCPT
+        id S1729313AbfIBE0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 00:26:55 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44878 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfIBE0z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 00:24:56 -0400
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from parav@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 2 Sep 2019 07:24:53 +0300
-Received: from sw-mtx-036.mtx.labs.mlnx (sw-mtx-036.mtx.labs.mlnx [10.12.150.149])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id x824OeRP001225;
-        Mon, 2 Sep 2019 07:24:51 +0300
-From:   Parav Pandit <parav@mellanox.com>
-To:     alex.williamson@redhat.com, jiri@mellanox.com,
-        kwankhede@nvidia.com, cohuck@redhat.com, davem@davemloft.net
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, Parav Pandit <parav@mellanox.com>
-Subject: [PATCH v3 5/5] mtty: Optionally support mtty alias
-Date:   Sun,  1 Sep 2019 23:24:36 -0500
-Message-Id: <20190902042436.23294-6-parav@mellanox.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190902042436.23294-1-parav@mellanox.com>
-References: <20190826204119.54386-1-parav@mellanox.com>
- <20190902042436.23294-1-parav@mellanox.com>
+        Mon, 2 Sep 2019 00:26:55 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i18so6759898pgl.11
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2019 21:26:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=S99dbtNIAtu+fwZeUFVd1C5ofXlsVXppc5advXWFAIo=;
+        b=B6vp5dOerKyW4NLf3UQOZPvA11me7OSFejt3Ba+/aik9Ypvc1YRH4Gy5f3yQguT6Hp
+         b42hHB6zRWE4baUzr6mo6N/czsMsbYnTn3p6TXA2w9g6eSi7q+aILehWfoLrG99ZvU8h
+         4pHRV774A4iRLlwoQ3bO+PXNHKp0Se3avQaoHLwexcJHb6D1aAzkpDWIQVW76bA6wqPl
+         HcjBBVmCi79YdtG0UNFPJs8ySVDxmd6CRzSrD2gsHx5DHQP4wNW93jXFvqs9sZWV3I3B
+         OXHgrE+CMZ41dAY7Hz701SORZdVgS+RuYPmlnUWVhJkSIBZlpfinaHTnUZZh0CsW5zLw
+         rXYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=S99dbtNIAtu+fwZeUFVd1C5ofXlsVXppc5advXWFAIo=;
+        b=Sbynry7fgMCZberqERsvVyGjkBcMzt3uEvr840QgoHpqYgJGaWyCuohV5sqBJc/5hG
+         40qW++ooxberg3PjtICnJHF2X9SdMx3iTq6hnu6tpPbmwg6T9LbNqiw4cY3GtTUFtAJf
+         /VVrBh/DoQMrUwzucCsHCy0aKRygJs7k8RuK469N4uZjrn9nHo1O2wpztR0L+5GQxRPA
+         jX3HdUE1qjTIcCYXaq39lWJoHRcBRrzOSqLTGFj4u4CkdEEfcVrscYG5ubN6Id0eTr2m
+         evo4g4/4AVWIv0tB1J1e+Df+MkP7THkPcXlKRJyU6L54qBd11nTeWHP2G+H8QVL7FOMA
+         kviQ==
+X-Gm-Message-State: APjAAAULuZxad8FLuUhQ+Mb3x6SyyqMAkwyUecSS1++23RySuJEq2wP/
+        q8erur34hXiEyuG9Bw88qA==
+X-Google-Smtp-Source: APXvYqy1/ntAqH/lkVfec8bhetu106SKNH+oiBAtpTg7cylPfqWEAgUb9YKZna3G3hV1NsR8mP+xpg==
+X-Received: by 2002:a17:90a:a47:: with SMTP id o65mr11128422pjo.90.1567398414855;
+        Sun, 01 Sep 2019 21:26:54 -0700 (PDT)
+Received: from mypc ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id s7sm2730630pjn.8.2019.09.01.21.26.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2019 21:26:54 -0700 (PDT)
+Date:   Mon, 2 Sep 2019 12:26:42 +0800
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Gleixner <tglx@linutronix.de>, Andy Lutomirski <luto@kernel.org>,
+        x86@kernel.org, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, Qian Cai <cai@lca.pw>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Drake <drake@endlessm.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org, Dave Young <dyoung@redhat.com>,
+        Baoquan He <bhe@redhat.com>, kexec@lists.infradead.org
+Subject: Re: [PATCHv2 0/4] x86/mce: protect nr_cpus from rebooting by
+ broadcast mce
+Message-ID: <20190902042642.GA22792@mypc>
+References: <1566874943-4449-1-git-send-email-kernelfans@gmail.com>
+ <20190830141156.GB30413@zn.tnic>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190830141156.GB30413@zn.tnic>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a module parameter to set alias length to optionally generate
-mdev alias.
+On Fri, Aug 30, 2019 at 04:11:56PM +0200, Borislav Petkov wrote:
+> On Tue, Aug 27, 2019 at 11:02:19AM +0800, Pingfan Liu wrote:
+> > v1 -> v2: fix compile warning and error on x86_32
+> > 
+> > 
+> > This series include two related groups:
+> > [1-3/4]: protect nr_cpus from rebooting by broadcast mce
+> > [4/4]: improve "kexec -l" robustness against broadcast mce
+> > 
+> > When I tried to fix [1], Thomas raised concern about the nr_cpus' vulnerability
+> > to unexpected rebooting by broadcast mce. After analysis, I think only the
+> > following first case suffers from the rebooting by broadcast mce. [1-3/4] aims
+> > to fix that issue.
+> > 
+> > *** Back ground ***
+> > 
+> > On x86 it's required to have all logical CPUs set CR4.MCE=1. Otherwise, a
+> > broadcast MCE observing CR4.MCE=0b on any core will shutdown the machine.
+> > 
+> > The option 'nosmt' has already complied with the above rule by Thomas's patch.
+> > For detail, refer to 506a66f3748 (Revert "x86/apic: Ignore secondary threads if
+> > nosmt=force")
+> > 
+> > But for nr_cpus option, the exposure to broadcast MCE is a little complicated,
+> > and can be categorized into three cases.
+> 
+> One thing is not clear to me: are you "fixing" a hypothetical case here
+> or have you *actually* experienced an MCE happening while kdumping with
+> nr_cpus < num_online_cpus()?
+No, I do not hit this issue by myself.
 
-Example to request mdev alias.
-$ modprobe mtty alias_length=12
+But from the following two commits:
+commit 5bc329503e8191c91c4c40836f062ef771d8ba83
+Author: Xunlei Pang <xlpang@redhat.com>
+Date:   Mon Mar 13 10:50:19 2017 +0100
 
-Make use of mtty_alias() API when alias_length module parameter is set.
+    x86/mce: Handle broadcasted MCE gracefully with kexec
+And
+commit 506a66f374891ff08e064a058c446b336c5ac760
+Author: Thomas Gleixner <tglx@linutronix.de>
+Date:   Fri Jun 29 16:05:47 2018 +0200
 
-Signed-off-by: Parav Pandit <parav@mellanox.com>
----
-Changelog:
-v1->v2:
- - Added mdev_alias() usage sample
----
- samples/vfio-mdev/mtty.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+    Revert "x86/apic: Ignore secondary threads if nosmt=force"
 
-diff --git a/samples/vfio-mdev/mtty.c b/samples/vfio-mdev/mtty.c
-index 92e770a06ea2..075d65440bc0 100644
---- a/samples/vfio-mdev/mtty.c
-+++ b/samples/vfio-mdev/mtty.c
-@@ -150,6 +150,10 @@ static const struct file_operations vd_fops = {
- 	.owner          = THIS_MODULE,
- };
- 
-+static unsigned int mtty_alias_length;
-+module_param_named(alias_length, mtty_alias_length, uint, 0444);
-+MODULE_PARM_DESC(alias_length, "mdev alias length; default=0");
-+
- /* function prototypes */
- 
- static int mtty_trigger_interrupt(const guid_t *uuid);
-@@ -770,6 +774,9 @@ static int mtty_create(struct kobject *kobj, struct mdev_device *mdev)
- 	list_add(&mdev_state->next, &mdev_devices_list);
- 	mutex_unlock(&mdev_list_lock);
- 
-+	if (mtty_alias_length)
-+		dev_dbg(mdev_dev(mdev), "alias is %s\n", mdev_alias(mdev));
-+
- 	return 0;
- }
- 
-@@ -1410,6 +1417,11 @@ static struct attribute_group *mdev_type_groups[] = {
- 	NULL,
- };
- 
-+static unsigned int mtty_get_alias_length(void)
-+{
-+	return mtty_alias_length;
-+}
-+
- static const struct mdev_parent_ops mdev_fops = {
- 	.owner                  = THIS_MODULE,
- 	.dev_attr_groups        = mtty_dev_groups,
-@@ -1422,6 +1434,7 @@ static const struct mdev_parent_ops mdev_fops = {
- 	.read                   = mtty_read,
- 	.write                  = mtty_write,
- 	.ioctl		        = mtty_ioctl,
-+	.get_alias_length	= mtty_get_alias_length
- };
- 
- static void mtty_device_release(struct device *dev)
--- 
-2.19.2
+This issue is in practice.
 
+BTW, clarify one thing kdumping (kexec -p) will not suffer from mce
+issue as described in case 2. Only "kexec -l" will.
+
+> 
+> Btw, pls do not use lkml.org to refer to previous mails but
+> 
+> http://lkml.kernel.org/r/<Message-ID>
+OK, I will.
+
+Thanks,
+	Pingfan
