@@ -2,218 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C70FAA5822
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F8D4A5830
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:42:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731379AbfIBNj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:39:26 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37479 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731330AbfIBNjV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:39:21 -0400
-Received: by mail-wm1-f68.google.com with SMTP id d16so14655554wme.2;
-        Mon, 02 Sep 2019 06:39:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wPZgkYUgc3YwR+wsRfif0DfrV8qbGMQgmAEKsHAecWE=;
-        b=eKuQdGtexegE3PpOSoNtZBswPvbY08dfUGF/JdNDuTDheJnGpB2WCdV7eH0ACzjyPw
-         al24wTSCth1r4T923r8pGZfGEB8LdfINk112GO+kHocwx9OLAGUxZVJMQ7/ohv4ntTxE
-         2Q36vXj6N5QDikirRBtnSAsSj8LnMtRmqm1XVjafeD38UIgKCsGykHVwzIaKe6I/qgyZ
-         kKOJYt5HewE/XCbMLvX9b+WIxazyfPTX/pH5ho+NiF+LbNmnbNa6MwWo6JaYgoJZS4fe
-         72ud+yaa9cMb1gK1Y91QoI4hKWxWecX+l+Iv0wTehUQruNCtd9a07FPwCU18mf7qwc8Z
-         M5IQ==
-X-Gm-Message-State: APjAAAWnihenHi34Fh9ugIUdapT6segGo3wfTCNzPG7m2waTlsmZesG3
-        mNWLEd9J3j//Y/nFIR77Ng==
-X-Google-Smtp-Source: APXvYqybCVrAVCbPJoi8ueJ0dQ9Ncnp8wfj00aMU86WHtM1txDOX6nDXBPHLAZhUgCdNYthuSw+/sg==
-X-Received: by 2002:a7b:c244:: with SMTP id b4mr35203191wmj.125.1567431559382;
-        Mon, 02 Sep 2019 06:39:19 -0700 (PDT)
-Received: from localhost ([212.187.182.166])
-        by smtp.gmail.com with ESMTPSA id m17sm15277494wrs.9.2019.09.02.06.39.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 06:39:18 -0700 (PDT)
-Message-ID: <5d6d1b86.1c69fb81.f86b5.3988@mx.google.com>
-Date:   Mon, 02 Sep 2019 14:39:18 +0100
-From:   Rob Herring <robh@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "andre.przywara@arm.com" <andre.przywara@arm.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        id S1731485AbfIBNkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:40:05 -0400
+Received: from foss.arm.com ([217.140.110.172]:54764 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731454AbfIBNkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 09:40:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D16C7337;
+        Mon,  2 Sep 2019 06:40:01 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C16B3F59C;
+        Mon,  2 Sep 2019 06:39:57 -0700 (PDT)
+Subject: Re: [PATCH 1/7] iommu/arm-smmu: add Nvidia SMMUv2 implementation
+To:     Krishna Reddy <vdumpa@nvidia.com>
+Cc:     Sachin Nikam <Snikam@nvidia.com>,
+        "Thomas Zeng (SW-TEGRA)" <thomasz@nvidia.com>,
+        Juha Tukkinen <jtukkinen@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Pritesh Raithatha <praithatha@nvidia.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Timo Alho <talho@nvidia.com>, Yu-Huan Hsu <YHsu@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Alexander Van Brunt <avanbrunt@nvidia.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: mailbox: add binding doc for the ARM
- SMC/HVC mailbox
-References: <1567004515-3567-1-git-send-email-peng.fan@nxp.com>
- <1567004515-3567-2-git-send-email-peng.fan@nxp.com>
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "joro@8bytes.org" <joro@8bytes.org>
+References: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
+ <1567118827-26358-2-git-send-email-vdumpa@nvidia.com>
+ <2ae9e0c4-6916-b005-f4bd-29e06d2056c6@arm.com>
+ <BYAPR12MB2710D045303BE89A7D3FF2C1B3BD0@BYAPR12MB2710.namprd12.prod.outlook.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <3f2cbbe2-f6d7-07e3-3fef-18af518dedef@arm.com>
+Date:   Mon, 2 Sep 2019 14:39:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1567004515-3567-2-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <BYAPR12MB2710D045303BE89A7D3FF2C1B3BD0@BYAPR12MB2710.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 03:02:58AM +0000, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 30/08/2019 19:16, Krishna Reddy wrote:
+>>> +ARM_SMMU_MATCH_DATA(nvidia_smmuv2, ARM_SMMU_V2, NVIDIA_SMMUV2);
 > 
-> The ARM SMC/HVC mailbox binding describes a firmware interface to trigger
-> actions in software layers running in the EL2 or EL3 exception levels.
-> The term "ARM" here relates to the SMC instruction as part of the ARM
-> instruction set, not as a standard endorsed by ARM Ltd.
+>>  From the previous discussions, I got the impression that other than the 'novel' way they're integrated, the actual SMMU implementations were unmodified Arm MMU-500s. Is that the case, or have I misread something?
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  .../devicetree/bindings/mailbox/arm-smc.yaml       | 125 +++++++++++++++++++++
->  1 file changed, 125 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/arm-smc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/arm-smc.yaml b/Documentation/devicetree/bindings/mailbox/arm-smc.yaml
-> new file mode 100644
-> index 000000000000..f8eb28d5e307
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/arm-smc.yaml
-> @@ -0,0 +1,125 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/arm-smc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ARM SMC Mailbox Interface
-> +
-> +maintainers:
-> +  - Peng Fan <peng.fan@nxp.com>
-> +
-> +description: |
-> +  This mailbox uses the ARM smc (secure monitor call) and hvc (hypervisor
-> +  call) instruction to trigger a mailbox-connected activity in firmware,
-> +  executing on the very same core as the caller. By nature this operation
-> +  is synchronous and this mailbox provides no way for asynchronous messages
-> +  to be delivered the other way round, from firmware to the OS, but
-> +  asynchronous notification could also be supported. However the value of
-> +  r0/w0/x0 the firmware returns after the smc call is delivered as a received
-> +  message to the mailbox framework, so a synchronous communication can be
-> +  established, for a asynchronous notification, no value will be returned.
-> +  The exact meaning of both the action the mailbox triggers as well as the
-> +  return value is defined by their users and is not subject to this binding.
-> +
-> +  One use case of this mailbox is the SCMI interface, which uses shared memory
-> +  to transfer commands and parameters, and a mailbox to trigger a function
-> +  call. This allows SoCs without a separate management processor (or when
-> +  such a processor is not available or used) to use this standardized
-> +  interface anyway.
-> +
-> +  This binding describes no hardware, but establishes a firmware interface.
-> +  Upon receiving an SMC using one of the described SMC function identifiers,
-> +  the firmware is expected to trigger some mailbox connected functionality.
-> +  The communication follows the ARM SMC calling convention.
-> +  Firmware expects an SMC function identifier in r0 or w0. The supported
-> +  identifiers are passed from consumers, or listed in the the arm,func-ids
-> +  properties as described below. The firmware can return one value in
-> +  the first SMC result register, it is expected to be an error value,
-> +  which shall be propagated to the mailbox client.
-> +
-> +  Any core which supports the SMC or HVC instruction can be used, as long as
-> +  a firmware component running in EL3 or EL2 is handling these calls.
-> +
-> +properties:
-> +  compatible:
-> +    const: arm,smc-mbox
-> +
-> +  "#mbox-cells":
-> +    const: 1
-> +
-> +  arm,num-chans:
-> +    description: The number of channels supported.
-> +    items:
-> +      minimum: 1
-> +      maximum: 4096 # Should be enough?
-> +
-> +  method:
-> +    - enum:
+> The ARM MMU-500 implementation is unmodified.  It is the way the are integrated and used together(for interleaved accesses) is different from regular ARM MMU-500.
+> I have added it to get the model number and to be able differentiate the SMMU implementation in arm-smmu-impl.c.
 
-Did you build this with 'make dt_binding_check' as this should be a 
-warning. This should not be a list entry (i.e. drop the '-').
+In that case, I would rather keep smmu->model representing the MMU-500 
+microarchitecture - since you'll still want to pick up errata 
+workarounds etc. for that - and detect the Tegra integration via an 
+explicit of_device_is_compatible() check in arm_smmu_impl_init(). For 
+comparison, under ACPI we'd probably have to detect integration details 
+by looking at table headers, separately from the IORT "Model" field, so 
+I'd prefer if the DT vs. ACPI handling didn't diverge more than necessary.
 
-> +        - smc
-> +        - hvc
-> +
-> +  transports:
+Of course, that immediately opens the question of how best to combine 
+arm_mmu500_impl with nsmmu_impl, but hey, one step at a time :)
 
-arm,transports
-
-> +    - enum:
-> +        - mem
-> +        - reg
-> +
-> +  arm,func-ids:
-> +    description: |
-> +      An array of 32-bit values specifying the function IDs used by each
-> +      mailbox channel. Those function IDs follow the ARM SMC calling
-> +      convention standard [1].
-> +
-> +      There is one identifier per channel and the number of supported
-> +      channels is determined by the length of this array.
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 0
-> +    maxItems: 4096   # Should be enough?
-> +
-> +required:
-> +  - compatible
-> +  - "#mbox-cells"
-> +  - arm,num-chans
-> +  - transports
-> +  - method
-> +
-> +examples:
-> +  - |
-> +    sram@910000 {
-> +      compatible = "mmio-sram";
-> +      reg = <0x0 0x93f000 0x0 0x1000>;
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +      ranges = <0 0x0 0x93f000 0x1000>;
-> +
-> +      cpu_scp_lpri: scp-shmem@0 {
-> +        compatible = "arm,scmi-shmem";
-> +        reg = <0x0 0x200>;
-> +      };
-> +
-> +      cpu_scp_hpri: scp-shmem@200 {
-> +        compatible = "arm,scmi-shmem";
-> +        reg = <0x200 0x200>;
-> +      };
-> +    };
-> +
-> +    firmware {
-> +      smc_mbox: mailbox {
-> +        #mbox-cells = <1>;
-> +        compatible = "arm,smc-mbox";
-> +        method = "smc";
-> +        arm,num-chans = <0x2>;
-> +        transports = "mem";
-> +        /* Optional */
-> +        arm,func-ids = <0xc20000fe>, <0xc20000ff>;
-> +      };
-> +
-> +      scmi {
-> +        compatible = "arm,scmi";
-> +        mboxes = <&smc_mbox 0>, <&smc_mbox 1>;
-> +        mbox-names = "tx", "rx";
-> +        shmem = <&cpu_scp_lpri>, <&cpu_scp_hpri>;
-> +      };
-> +    };
-> +
-> +...
-> -- 
-> 2.16.4
-> 
-
+Robin.
