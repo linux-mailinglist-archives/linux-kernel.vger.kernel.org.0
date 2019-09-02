@@ -2,68 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAF98A52DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4FA1A52DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:35:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731126AbfIBJeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 05:34:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:29753 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731116AbfIBJeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:34:13 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 02:34:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,457,1559545200"; 
-   d="scan'208";a="382747800"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga006.fm.intel.com with ESMTP; 02 Sep 2019 02:34:07 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i4iis-0007xT-RM; Mon, 02 Sep 2019 12:34:06 +0300
-Date:   Mon, 2 Sep 2019 12:34:06 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        Divya Indi <divya.indi@oracle.com>
-Subject: Re: [PATCH v1] tracing: Drop static keyword for exported
- ftrace_set_clr_event()
-Message-ID: <20190902093406.GS2680@smile.fi.intel.com>
-References: <20190830193228.65446-1-andriy.shevchenko@linux.intel.com>
- <20190830170424.40c4188a@gandalf.local.home>
+        id S1731136AbfIBJep (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 05:34:45 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:33634 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729882AbfIBJep (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 05:34:45 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1i4ijL-0006Rq-1A; Mon, 02 Sep 2019 09:34:35 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        ocfs2-devel@oss.oracle.com
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] ocfs2: remove deadcode on variable tmp_oh check
+Date:   Mon,  2 Sep 2019 10:34:34 +0100
+Message-Id: <20190902093434.27739-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190830170424.40c4188a@gandalf.local.home>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 05:04:24PM -0400, Steven Rostedt wrote:
-> On Fri, 30 Aug 2019 22:32:28 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > When we export something, it shan't be static.
-> 
-> I'm finally getting around to my patch queue (it's unfortunately much
-> bigger than I should be). But my punishment is duplicate patches.
-> 
-> Someone beat you to it...
-> 
->  http://lkml.kernel.org/r/20190704172110.27041-1-efremov@linux.com
+From: Colin Ian King <colin.king@canonical.com>
 
-Looking to the original patch and taking into account that there is no user for
-it, I guess the best option to simple revert original one (it will clean up
-export table).
+At the end of ocfs2_inode_lock_tracker tmp_oh is true because an
+earlier check on tmp_oh being false returns out of the function.
+Since tmp_oh is true, the function will always return 1 so remove
+the redundant check and return of 0.
 
+Also update description in comment, return -EINVAL and not -1.
+
+Addresses-Coverity: ("Logically dead code")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: Fix typo of function name in description.
+    Update description in comment as noted by Joseph Qi
+
+---
+ fs/ocfs2/dlmglue.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index ad594fef2ab0..640eee2bb903 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -2626,7 +2626,8 @@ void ocfs2_inode_unlock(struct inode *inode,
+  *
+  * return < 0 on error, return == 0 if there's no lock holder on the stack
+  * before this call, return == 1 if this call would be a recursive locking.
+- * return == -1 if this lock attempt will cause an upgrade which is forbidden.
++ * return == -EINVAL if this lock attempt will cause an upgrade which is
++ * forbidden.
+  *
+  * When taking lock levels into account,we face some different situations.
+  *
+@@ -2712,7 +2713,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
+ 			return status;
+ 		}
+ 	}
+-	return tmp_oh ? 1 : 0;
++	return 1;
+ }
+ 
+ void ocfs2_inode_unlock_tracker(struct inode *inode,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.20.1
 
