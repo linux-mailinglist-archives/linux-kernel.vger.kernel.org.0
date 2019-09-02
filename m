@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEFF2A511C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6752A5158
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:19:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730368AbfIBIRA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:17:00 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56259 "EHLO
+        id S1730066AbfIBISe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:18:34 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56288 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730241AbfIBIQq (ORCPT
+        with ESMTP id S1730269AbfIBIQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:16:46 -0400
+        Mon, 2 Sep 2019 04:16:48 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i4hVx-00085A-0g; Mon, 02 Sep 2019 10:16:41 +0200
+        id 1i4hVx-000858-00; Mon, 02 Sep 2019 10:16:41 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id A31881C0DF8;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 2884D1C0DF7;
         Mon,  2 Sep 2019 10:16:33 +0200 (CEST)
 Date:   Mon, 02 Sep 2019 08:16:33 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf symbols: Add missing linux/refcount.h to symbol.h
+Subject: [tip: perf/core] perf symbol: Move C++ demangle defines to the only
+ file using it
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-5albrk0uve6x9cf6x3ebwpae@git.kernel.org>
-References: <tip-5albrk0uve6x9cf6x3ebwpae@git.kernel.org>
+In-Reply-To: <tip-es1ufxv7bihiumytn5dm3drn@git.kernel.org>
+References: <tip-es1ufxv7bihiumytn5dm3drn@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <156741219356.17336.2282885442037741095.tip-bot2@tip-bot2>
+Message-ID: <156741219308.17333.4189126842781233453.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -50,36 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     c38fa94d188234f40fe3911b1a7650e056ef42ea
-Gitweb:        https://git.kernel.org/tip/c38fa94d188234f40fe3911b1a7650e056ef42ea
+Commit-ID:     9bea81b36a8d7d23c9bb7f4d63a9a842eec134a0
+Gitweb:        https://git.kernel.org/tip/9bea81b36a8d7d23c9bb7f4d63a9a842eec134a0
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Fri, 30 Aug 2019 10:19:19 -03:00
+AuthorDate:    Fri, 30 Aug 2019 10:01:50 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Sat, 31 Aug 2019 22:19:28 -03:00
 
-perf symbols: Add missing linux/refcount.h to symbol.h
+perf symbol: Move C++ demangle defines to the only file using it
 
-We use refcount_t there, so we need that header or else it'll break when
-we remove dso.h, that is from where it is getting that definition now...
+No need to have it generally available in such a critical header as
+symbol.h.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-5albrk0uve6x9cf6x3ebwpae@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-es1ufxv7bihiumytn5dm3drn@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/symbol.h | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/symbol-elf.c | 6 ++++++
+ tools/perf/util/symbol.h     | 6 ------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
+diff --git a/tools/perf/util/symbol-elf.c b/tools/perf/util/symbol-elf.c
+index 7d504dc..6d22437 100644
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -40,6 +40,12 @@
+ 
+ typedef Elf64_Nhdr GElf_Nhdr;
+ 
++#ifndef DMGL_PARAMS
++#define DMGL_NO_OPTS     0              /* For readability... */
++#define DMGL_PARAMS      (1 << 0)       /* Include function args */
++#define DMGL_ANSI        (1 << 1)       /* Include const, volatile, etc */
++#endif
++
+ #ifdef HAVE_CPLUS_DEMANGLE_SUPPORT
+ extern char *cplus_demangle(const char *, int);
+ 
 diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index bcc0d84..22660c7 100644
+index 159c596..bcc0d84 100644
 --- a/tools/perf/util/symbol.h
 +++ b/tools/perf/util/symbol.h
-@@ -3,6 +3,7 @@
- #define __PERF_SYMBOL 1
+@@ -40,12 +40,6 @@ Elf_Scn *elf_section_by_name(Elf *elf, GElf_Ehdr *ep,
+ 			     GElf_Shdr *shp, const char *name, size_t *idx);
+ #endif
  
- #include <linux/types.h>
-+#include <linux/refcount.h>
- #include <stdbool.h>
- #include <stdint.h>
- #include <linux/list.h>
+-#ifndef DMGL_PARAMS
+-#define DMGL_NO_OPTS     0              /* For readability... */
+-#define DMGL_PARAMS      (1 << 0)       /* Include function args */
+-#define DMGL_ANSI        (1 << 1)       /* Include const, volatile, etc */
+-#endif
+-
+ /** struct symbol - symtab entry
+  *
+  * @ignore - resolvable but tools ignore it (e.g. idle routines)
