@@ -2,117 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82336A544E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:48:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E321A545B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:50:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731060AbfIBKsA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 06:48:00 -0400
-Received: from foss.arm.com ([217.140.110.172]:52000 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729806AbfIBKr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 06:47:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9561928;
-        Mon,  2 Sep 2019 03:47:58 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D76F03F246;
-        Mon,  2 Sep 2019 03:47:57 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 11:47:56 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
-        gustavo.pimentel@synopsys.com, digetx@gmail.com,
-        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V3 6/6] arm64: tegra: Add PCIe slot supply information in
- p2972-0000 platform
-Message-ID: <20190902104756.GE9720@e119886-lin.cambridge.arm.com>
-References: <20190828172850.19871-1-vidyas@nvidia.com>
- <20190828172850.19871-7-vidyas@nvidia.com>
+        id S1731180AbfIBKtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 06:49:50 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:58524 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730785AbfIBKtt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 06:49:49 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x82AhO5Q179751;
+        Mon, 2 Sep 2019 10:48:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=09Q4/fYIG9MJvMP7nWj77FfKeGU7L5Yn85N83DxgLrw=;
+ b=WhFDP2/IAFKDzmMK9FZuHXS9XTbT4hEwmQUa11WiaO3/aF1lXTAz2fg60WkvRhW9xu61
+ NbVJutLwz31Bsu26lfKGgBIpmuZ42eYeBy4GGqKylL5CGB2VGsh1OYy9jTVEtEOm8nCC
+ vSC0m6W/cTepEIcAS4EU4zn82WmiA4t+18S9hgtWJfkd4Kjilj7TfLJ6c/Co9RpjV51i
+ 9kf7AQOXcKFOr9U2juvglD7sXzrWHYaR88Tbg6U2aIwzuG1RTLe+55BjMoA/P6G/EDez
+ G4z6lfHa7BMgFMDi7i34PZ3Ajd1d2gcK8WW9qX4tlmnOUrhRZp8H/acP+ZevWCPFriOu ig== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2us1cbg2j3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Sep 2019 10:48:18 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x82Am2Y7174602;
+        Mon, 2 Sep 2019 10:48:18 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2uryv530x6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 02 Sep 2019 10:48:18 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x82AmGK4023171;
+        Mon, 2 Sep 2019 10:48:17 GMT
+Received: from [10.175.163.45] (/10.175.163.45)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 02 Sep 2019 03:48:16 -0700
+Subject: Re: [PATCH v2] cpuidle-haltpoll: vcpu hotplug support
+To:     Marcelo Tosatti <mtosatti@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <20190829151027.9930-1-joao.m.martins@oracle.com>
+ <20190829152714.GA15616@amt.cnet>
+From:   Joao Martins <joao.m.martins@oracle.com>
+Message-ID: <5df5b2b1-11ce-9b1a-dd4a-8fe32e491543@oracle.com>
+Date:   Mon, 2 Sep 2019 11:48:06 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828172850.19871-7-vidyas@nvidia.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20190829152714.GA15616@amt.cnet>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9367 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909020124
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9367 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909020123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 10:58:50PM +0530, Vidya Sagar wrote:
-> Add 3.3V and 12V supplies regulators information of x16 PCIe slot in
-> p2972-0000 platform which is owned by C5 controller and also enable C5
-> controller.
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+On 8/29/19 4:27 PM, Marcelo Tosatti wrote:
+> On Thu, Aug 29, 2019 at 04:10:27PM +0100, Joao Martins wrote:
+>> When cpus != maxcpus cpuidle-haltpoll will fail to register all vcpus
+>> past the online ones and thus fail to register the idle driver.
+>> This is because cpuidle_add_sysfs() will return with -ENODEV as a
+>> consequence from get_cpu_device() return no device for a non-existing
+>> CPU.
+>>
+>> Instead switch to cpuidle_register_driver() and manually register each
+>> of the present cpus through cpuhp_setup_state() callback and future
+>> ones that get onlined. This mimmics similar logic that intel_idle does.
+>>
+>> Fixes: fa86ee90eb11 ("add cpuidle-haltpoll driver")
+>> Signed-off-by: Joao Martins <joao.m.martins@oracle.com>
+>> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>> ---
+>> v2:
+>> * move cpus_read_unlock() right after unregistering all cpuidle_devices;
+>> (Marcello Tosatti)
+>> * redundant usage of cpuidle_unregister() when only
+>> cpuidle_unregister_driver() suffices; (Marcelo Tosatti)
+>> * cpuhp_setup_state() returns a state (> 0) on success with CPUHP_AP_ONLINE_DYN
+>> thus we set @ret to 0
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+[ ... ]
 
-> ---
-> V3:
-> * None
 > 
-> V2:
-> * None
+> Reviewed-by: Marcelo Tosatti <mtosatti@redhat.com>
 > 
->  .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi | 24 +++++++++++++++++++
->  .../boot/dts/nvidia/tegra194-p2972-0000.dts   |  4 +++-
->  2 files changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> index 62e07e1197cc..4c38426a6969 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2888.dtsi
-> @@ -289,5 +289,29 @@
->  			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 3) GPIO_ACTIVE_HIGH>;
->  			enable-active-high;
->  		};
-> +
-> +		vdd_3v3_pcie: regulator@2 {
-> +			compatible = "regulator-fixed";
-> +			reg = <2>;
-> +
-> +			regulator-name = "PEX_3V3";
-> +			regulator-min-microvolt = <3300000>;
-> +			regulator-max-microvolt = <3300000>;
-> +			gpio = <&gpio TEGRA194_MAIN_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
-> +			regulator-boot-on;
-> +			enable-active-high;
-> +		};
-> +
-> +		vdd_12v_pcie: regulator@3 {
-> +			compatible = "regulator-fixed";
-> +			reg = <3>;
-> +
-> +			regulator-name = "VDD_12V";
-> +			regulator-min-microvolt = <1200000>;
-> +			regulator-max-microvolt = <1200000>;
-> +			gpio = <&gpio TEGRA194_MAIN_GPIO(A, 1) GPIO_ACTIVE_LOW>;
-> +			regulator-boot-on;
-> +			enable-active-low;
-> +		};
->  	};
->  };
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> index 23597d53c9c9..d47cd8c4dd24 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra194-p2972-0000.dts
-> @@ -93,9 +93,11 @@
->  	};
->  
->  	pcie@141a0000 {
-> -		status = "disabled";
-> +		status = "okay";
->  
->  		vddio-pex-ctl-supply = <&vdd_1v8ao>;
-> +		vpcie3v3-supply = <&vdd_3v3_pcie>;
-> +		vpcie12v-supply = <&vdd_12v_pcie>;
->  
->  		phys = <&p2u_nvhs_0>, <&p2u_nvhs_1>, <&p2u_nvhs_2>,
->  		       <&p2u_nvhs_3>, <&p2u_nvhs_4>, <&p2u_nvhs_5>,
-> -- 
-> 2.17.1
-> 
+Thanks!
+
+Meanwhile upon re-reading cpuhp_setup_state() I found out the teardown/offlining
+and haltpoll_uninit() could be a bit simplified. So I sent out a new version[0],
+but didn't add your Rb because there's was some very slight functional changes.
+
+[0] https://lore.kernel.org/kvm/20190902104031.9296-1-joao.m.martins@oracle.com/
+
+	Joao
