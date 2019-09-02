@@ -2,32 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C2F2A5BC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 19:19:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BD2A5BBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 19:14:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfIBRTZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Sep 2019 13:19:25 -0400
-Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:34610
+        id S1726567AbfIBROE convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Sep 2019 13:14:04 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:60772
         "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
-        by vger.kernel.org with ESMTP id S1726185AbfIBRTY (ORCPT
+        by vger.kernel.org with ESMTP id S1726343AbfIBROE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 13:19:24 -0400
+        Mon, 2 Sep 2019 13:14:04 -0400
+X-Greylist: delayed 1559 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Sep 2019 13:14:04 EDT
 Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id EBB66B4B38B;
-        Mon,  2 Sep 2019 16:44:18 +0000 (UTC)
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id A3CBBB4C2CA;
+        Mon,  2 Sep 2019 16:53:39 +0000 (UTC)
 Received: from smspyt.cancun.gob.mx ([127.0.0.1])
         by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id gMPgF1c2kxUb; Mon,  2 Sep 2019 16:44:18 +0000 (UTC)
+        with ESMTP id fwjUw5cJPA-L; Mon,  2 Sep 2019 16:53:39 +0000 (UTC)
 Received: from localhost (localhost [127.0.0.1])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 584EDB4B901;
-        Mon,  2 Sep 2019 16:44:18 +0000 (UTC)
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 16958B4C24C;
+        Mon,  2 Sep 2019 16:53:39 +0000 (UTC)
 X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
 Received: from smspyt.cancun.gob.mx ([127.0.0.1])
         by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 847A3Zm827y9; Mon,  2 Sep 2019 16:44:18 +0000 (UTC)
+        with ESMTP id vN0LEwbVeoeN; Mon,  2 Sep 2019 16:53:39 +0000 (UTC)
 Received: from [100.95.144.205] (unknown [106.197.228.174])
-        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 427B9B4B8C2;
-        Mon,  2 Sep 2019 16:44:09 +0000 (UTC)
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 1C622B4C2A4;
+        Mon,  2 Sep 2019 16:53:30 +0000 (UTC)
 Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8BIT
@@ -35,8 +36,8 @@ Content-Description: Mail message body
 Subject: =?utf-8?q?Alerta_por_correo_electr=C3=B3nico?=
 To:     Recipients <info@no-reply.it>
 From:   Administrador de correo web <info@no-reply.it>
-Date:   Mon, 02 Sep 2019 22:14:00 +0530
-Message-Id: <20190902164410.427B9B4B8C2@smspyt.cancun.gob.mx>
+Date:   Mon, 02 Sep 2019 22:23:21 +0530
+Message-Id: <20190902165331.1C622B4C2A4@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
