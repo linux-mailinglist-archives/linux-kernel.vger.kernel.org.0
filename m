@@ -2,80 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD49CA575A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A102A5763
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:10:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730925AbfIBNJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:09:32 -0400
-Received: from mga11.intel.com ([192.55.52.93]:49446 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729840AbfIBNJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:09:31 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 06:09:30 -0700
-X-IronPort-AV: E=Sophos;i="5.64,459,1559545200"; 
-   d="scan'208";a="176318019"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 06:09:27 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 98BFB20B48; Mon,  2 Sep 2019 16:09:25 +0300 (EEST)
-Date:   Mon, 2 Sep 2019 16:09:25 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH v4 11/11] lib/test_printf: Add tests for %pfw printk
- modifier
-Message-ID: <20190902130925.GL5475@paasikivi.fi.intel.com>
-References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
- <20190902083240.20367-12-sakari.ailus@linux.intel.com>
- <20190902122627.GG2680@smile.fi.intel.com>
+        id S1730579AbfIBNKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:10:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60710 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729844AbfIBNKx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 09:10:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=nD3tPT+dPURhPutTDbnYpadEmPBrztQqjMF3uDUJm/Y=; b=IhsxVtMbisw/Wwd3qAP9O7qeWp
+        6qk9T320OB+gXlxiSzysiuAzs6RNVf5quqkzN/0ZsOihE/QgkKaVnXzqWXhyqU5xyiZe0M6cvihuf
+        XAk5GfnFbx/cKWCByrA0bJOG5sPmZRC+uqWos2PvrnsP52Io1sJc/djTusz/MgwCcMxXlMz+4KbDn
+        qLuDUzeuATJILgkcJM/FPadoo4uZlUZrGDleZa0o+jeqw9DCksoTf/epuaHvuduATYSR1KyMinbIu
+        32wMyg3iOstgkvujY4hWjL32bqj4gpGNCdE2bf2iU+GbBrdhHCoZ9QCv6pmMGdMM80YGmQpT2TmWj
+        uegJSHWQ==;
+Received: from 213-225-38-191.nat.highway.a1.net ([213.225.38.191] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i4m6c-0008Q1-8Z; Mon, 02 Sep 2019 13:10:50 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Stefano Stabellini <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        gross@suse.com, boris.ostrovsky@oracle.com
+Cc:     x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 11/13] swiotlb-xen: remove page-coherent.h
+Date:   Mon,  2 Sep 2019 15:03:37 +0200
+Message-Id: <20190902130339.23163-12-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190902130339.23163-1-hch@lst.de>
+References: <20190902130339.23163-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902122627.GG2680@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 03:26:27PM +0300, Andy Shevchenko wrote:
-> On Mon, Sep 02, 2019 at 11:32:40AM +0300, Sakari Ailus wrote:
-> > Add a test for the %pfw printk modifier using software nodes.
-> 
-> > +	const struct software_node softnodes[] = {
-> > +		{ .name = "first", },
-> > +		{ .name = "second", .parent = &softnodes[0], },
-> > +		{ .name = "third", .parent = &softnodes[1], },
-> > +		{ NULL /* Guardian */ },
-> > +	};
-> 
-> > +	test(full_name_second, "%pfw",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-> > +	test(full_name, "%pfw",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> > +	test(full_name, "%pfwf",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> > +	test(second_name, "%pfwP",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-> > +	test(third_name, "%pfwP",
-> > +	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-> 
-> 
-> These can be shorted and easier to parse if you use absolute indexes.
+The only thing left of page-coherent.h is two functions implemented by
+the architecture for non-coherent DMA support that are never called for
+fully coherent architectures.  Just move the prototypes for those to
+swiotlb-xen.h instead.
 
-The above doesn't end up accessing out-of-bounds memory without compiler
-errors or warnings if the array is changed, therefore I'd prefer to keep it
-as-is.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
+---
+ arch/arm/include/asm/xen/page-coherent.h   |  2 --
+ arch/arm64/include/asm/xen/page-coherent.h |  2 --
+ arch/x86/include/asm/xen/page-coherent.h   | 11 -----------
+ drivers/xen/swiotlb-xen.c                  |  3 ---
+ include/Kbuild                             |  1 -
+ include/xen/arm/page-coherent.h            | 10 ----------
+ include/xen/swiotlb-xen.h                  |  6 ++++++
+ 7 files changed, 6 insertions(+), 29 deletions(-)
+ delete mode 100644 arch/arm/include/asm/xen/page-coherent.h
+ delete mode 100644 arch/arm64/include/asm/xen/page-coherent.h
+ delete mode 100644 arch/x86/include/asm/xen/page-coherent.h
+ delete mode 100644 include/xen/arm/page-coherent.h
 
-But I'll remove the comma from the guardian entry for v5. :-)
-
+diff --git a/arch/arm/include/asm/xen/page-coherent.h b/arch/arm/include/asm/xen/page-coherent.h
+deleted file mode 100644
+index 27e984977402..000000000000
+--- a/arch/arm/include/asm/xen/page-coherent.h
++++ /dev/null
+@@ -1,2 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#include <xen/arm/page-coherent.h>
+diff --git a/arch/arm64/include/asm/xen/page-coherent.h b/arch/arm64/include/asm/xen/page-coherent.h
+deleted file mode 100644
+index 27e984977402..000000000000
+--- a/arch/arm64/include/asm/xen/page-coherent.h
++++ /dev/null
+@@ -1,2 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#include <xen/arm/page-coherent.h>
+diff --git a/arch/x86/include/asm/xen/page-coherent.h b/arch/x86/include/asm/xen/page-coherent.h
+deleted file mode 100644
+index c9c8398a31ff..000000000000
+--- a/arch/x86/include/asm/xen/page-coherent.h
++++ /dev/null
+@@ -1,11 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _ASM_X86_XEN_PAGE_COHERENT_H
+-#define _ASM_X86_XEN_PAGE_COHERENT_H
+-
+-static inline void xen_dma_sync_single_for_cpu(struct device *hwdev,
+-		dma_addr_t handle, size_t size, enum dma_data_direction dir) { }
+-
+-static inline void xen_dma_sync_single_for_device(struct device *hwdev,
+-		dma_addr_t handle, size_t size, enum dma_data_direction dir) { }
+-
+-#endif /* _ASM_X86_XEN_PAGE_COHERENT_H */
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index a642e284f1e2..95911ff9c11c 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -35,9 +35,6 @@
+ #include <xen/xen-ops.h>
+ #include <xen/hvc-console.h>
+ 
+-#include <asm/dma-mapping.h>
+-#include <asm/xen/page-coherent.h>
+-
+ #include <trace/events/swiotlb.h>
+ /*
+  * Used to do a quick range check in swiotlb_tbl_unmap_single and
+diff --git a/include/Kbuild b/include/Kbuild
+index c38f0d46b267..cce5cf6abf89 100644
+--- a/include/Kbuild
++++ b/include/Kbuild
+@@ -1189,7 +1189,6 @@ header-test-			+= video/vga.h
+ header-test-			+= video/w100fb.h
+ header-test-			+= xen/acpi.h
+ header-test-			+= xen/arm/hypercall.h
+-header-test-			+= xen/arm/page-coherent.h
+ header-test-			+= xen/arm/page.h
+ header-test-			+= xen/balloon.h
+ header-test-			+= xen/events.h
+diff --git a/include/xen/arm/page-coherent.h b/include/xen/arm/page-coherent.h
+deleted file mode 100644
+index 635492d41ebe..000000000000
+--- a/include/xen/arm/page-coherent.h
++++ /dev/null
+@@ -1,10 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
+-#ifndef _XEN_ARM_PAGE_COHERENT_H
+-#define _XEN_ARM_PAGE_COHERENT_H
+-
+-void xen_dma_sync_for_cpu(struct device *dev, dma_addr_t handle,
+-		phys_addr_t paddr, size_t size, enum dma_data_direction dir);
+-void xen_dma_sync_for_device(struct device *dev, dma_addr_t handle,
+-		phys_addr_t paddr, size_t size, enum dma_data_direction dir);
+-
+-#endif /* _XEN_ARM_PAGE_COHERENT_H */
+diff --git a/include/xen/swiotlb-xen.h b/include/xen/swiotlb-xen.h
+index 5e4b83f83dbc..a7c642872568 100644
+--- a/include/xen/swiotlb-xen.h
++++ b/include/xen/swiotlb-xen.h
+@@ -2,8 +2,14 @@
+ #ifndef __LINUX_SWIOTLB_XEN_H
+ #define __LINUX_SWIOTLB_XEN_H
+ 
++#include <linux/dma-mapping.h>
+ #include <linux/swiotlb.h>
+ 
++void xen_dma_sync_for_cpu(struct device *dev, dma_addr_t handle,
++		phys_addr_t paddr, size_t size, enum dma_data_direction dir);
++void xen_dma_sync_for_device(struct device *dev, dma_addr_t handle,
++		phys_addr_t paddr, size_t size, enum dma_data_direction dir);
++
+ extern int xen_swiotlb_init(int verbose, bool early);
+ extern const struct dma_map_ops xen_swiotlb_dma_ops;
+ 
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+2.20.1
+
