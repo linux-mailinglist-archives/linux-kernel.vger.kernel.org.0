@@ -2,70 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 034E4A5225
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B76A8A521B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:46:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730774AbfIBIsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:48:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46896 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729328AbfIBIsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:48:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5FE18B114;
-        Mon,  2 Sep 2019 08:48:30 +0000 (UTC)
-Date:   Mon, 2 Sep 2019 10:48:38 +0200
-From:   Jean Delvare <jdelvare@suse.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH] eeprom: Deprecate the legacy eeprom driver
-Message-ID: <20190902104838.058725c2@endymion>
-Organization: SUSE Linux
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730671AbfIBIqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:46:31 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:34090 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729524AbfIBIqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:46:31 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5FDD71A0024;
+        Mon,  2 Sep 2019 10:46:29 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C1BB21A0048;
+        Mon,  2 Sep 2019 10:46:24 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D2F17402F0;
+        Mon,  2 Sep 2019 16:46:18 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] arm64: dts: imx8mn-ddr4-evk: Enable GPIO LED
+Date:   Mon,  2 Sep 2019 16:45:38 -0400
+Message-Id: <1567457138-3002-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Time has come to get rid of the old eeprom driver. The at24 driver
-should be used instead. So mark the eeprom driver as deprecated and
-give users some time to migrate. Then we can remove the legacy
-eeprom driver completely.
+i.MX8MN DDR4 EVK board has a GPIO LED to indicate status,
+add support for it.
 
-Signed-off-by: Jean Delvare <jdelvare@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/misc/eeprom/Kconfig |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
---- linux-5.2.orig/drivers/misc/eeprom/Kconfig	2019-08-23 18:40:44.140314063 +0200
-+++ linux-5.2/drivers/misc/eeprom/Kconfig	2019-09-02 10:44:05.633190675 +0200
-@@ -45,13 +45,16 @@ config EEPROM_AT25
- 	  will be called at25.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
+index b698061..9349bad 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
+@@ -15,6 +15,18 @@
+ 		stdout-path = &uart2;
+ 	};
  
- config EEPROM_LEGACY
--	tristate "Old I2C EEPROM reader"
-+	tristate "Old I2C EEPROM reader (DEPRECATED)"
- 	depends on I2C && SYSFS
- 	help
- 	  If you say yes here you get read-only access to the EEPROM data
- 	  available on modern memory DIMMs and Sony Vaio laptops via I2C. Such
- 	  EEPROMs could theoretically be available on other devices as well.
- 
-+	  This driver is deprecated and will be removed soon, please use the
-+	  better at24 driver instead.
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_gpio_led>;
 +
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called eeprom.
++		status {
++			label = "status";
++			gpios = <&gpio3 16 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++	};
++
+ 	reg_usdhc2_vmmc: regulator-usdhc2 {
+ 		compatible = "regulator-fixed";
+ 		pinctrl-names = "default";
+@@ -54,6 +66,12 @@
+ 		>;
+ 	};
  
-
-
++	pinctrl_gpio_led: gpioledgrp {
++		fsl,pins = <
++			MX8MN_IOMUXC_NAND_READY_B_GPIO3_IO16	0x19
++		>;
++	};
++
+ 	pinctrl_i2c1: i2c1grp {
+ 		fsl,pins = <
+ 			MX8MN_IOMUXC_I2C1_SCL_I2C1_SCL		0x400001c3
 -- 
-Jean Delvare
-SUSE L3 Support
+2.7.4
+
