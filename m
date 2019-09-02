@@ -2,120 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 498CDA52D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98323A52DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:33:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731096AbfIBJbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 05:31:41 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35593 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730446AbfIBJbl (ORCPT
+        id S1731113AbfIBJdr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 05:33:47 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35829 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729887AbfIBJdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:31:41 -0400
-Received: by mail-wm1-f65.google.com with SMTP id n10so3143020wmj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 02:31:40 -0700 (PDT)
+        Mon, 2 Sep 2019 05:33:46 -0400
+Received: by mail-wm1-f68.google.com with SMTP id n10so3150261wmj.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 02:33:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=r8AwJSmMaHIEN05eTIkJ4SIO7fhuuHmNGUIve5f+2G0=;
-        b=Bt1VuYPsJX1pxqRR6NEEzZF0cAq3QqZSMeTnegdO8wAJVFRb/Jr0Ly4BgdgOysPSWb
-         IZVVibSQpS0gOBIr0OUQUsZUwFVf97qS4uto28oZHVLLEWbqLvQ/+C9xlwxydZuudplm
-         81UaLsko8zsLIGQXBw/VgDV7HZkHqUWUkEUWbs1UvWxFqMMsnxf+J2SceviM8fe7Ws7D
-         QYXzlFLYLoRmtUnbMXQLOVXJVHdGzIcoMqNyU2TC4Psa6PULLHTj9RdtGxZtxSu3bTkm
-         cnU2J3ip/ZBkcrqgo6YoEsJv/uU/p04nUgNpCOBqikubhWlYP2WpFFKnrv4ETvEbbXKA
-         p5Dg==
+        bh=0xz9pivsW1X+fkzwGjMbd/cLw8RxLJr78NFgGicHx+4=;
+        b=PuQm7M77gK8TDYqSFSZJw0maTSHeRE5xrz2Aa9bPdCEdHGD9LsffOUe7gOgY2WOKnO
+         pJmf4ac2qqXgwcYHOn5rS1idTHSiFp+TOizVesX0pCdgnjnTSvE9Vg6d29M2z0rhD6Wc
+         rUtgDTUGNDnKsumVf5wh4wJfNNGJWszCvGOO4/iBoTI8hplEqtCJQklxK5FdIG//TZx6
+         UAsBiUcoJ18897FkinJarrVjJqEzSDA7dD7i1D6hBl8KTZA+EXILsmEPJ8nB9VSW94F2
+         7+YBs9gGPXpiXHaTtIb2puqeBfDi1KEc8saThL0xltfGjZv+hWQXcb7FUW7BAlS3MKpz
+         BfTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=r8AwJSmMaHIEN05eTIkJ4SIO7fhuuHmNGUIve5f+2G0=;
-        b=c+CVNcdKNpMrutGNEMuKX1aHnotfAsSCkY2TucfndGXhgfVG8qbdVnAhmlEEK36TRU
-         3AmNdPXAeXHNHp1OGHEfUOURHjLEH3ASjhhEo8L/+wOlefXs/IdCX/bhfNGW8ifBxsjZ
-         oX0huXnj9qnwDMPWKK4LPwvDai8B5wErhBuQQhTr5DVTA9fyRVQZi6F4iaFZIfezUgok
-         qAPsdwqRV7Ev7P4R5qKrIp/9D1DKtjsELJQSTZQQ+tIgKWlPQGIU1lfqXZEDxf+swpPi
-         rLPphqddIT9PgZ5eKRhrYPwB6MN3djztgRLJwmP+2BiLgPk54nJOsDaoUOpLeHvzJiP9
-         CPSA==
-X-Gm-Message-State: APjAAAXQabKRFBypoZXUmBhflkF8RQjx1q8sxtNyRwJoGEa8ukjCeHrx
-        OO0Xgd5cQjBfrpfXoC7i5lQpsA==
-X-Google-Smtp-Source: APXvYqwSoSdzmSThKSMRUEmWnqBIzy3JLEQjsMsy3WU0XrIZvapOFxa+yJldgHFiQ3VCIhTfJdp9Wg==
-X-Received: by 2002:a1c:1f89:: with SMTP id f131mr33287131wmf.140.1567416699794;
-        Mon, 02 Sep 2019 02:31:39 -0700 (PDT)
+        bh=0xz9pivsW1X+fkzwGjMbd/cLw8RxLJr78NFgGicHx+4=;
+        b=YhN9t1NZh5nlEyqM4BLdc6Rv6cwqXEzq+CNR2H58kDTAefkxH83G01vND0hR7Lfgaa
+         0BUBptFr4d2O3Aikgu2qqWBNzws/gHH7MAiUNszNcZFZ+dwLEcbvHOAL6pGdZK1qlkkO
+         P114HxmMpYyAncpslHX4aCRinBBg3dn3zOzK338nu/NpbfCk8LdDDkPpl5OAeEsbLVZZ
+         SDZrOltHYYnH89/AO9brMbmxbRZAM86ETFh9wOqT25hoCAi0+OoFnQpAfs2GzzJ/WtuU
+         5dXLa/mSBxk9wSs89bINABvLYriKq7qXXb0KHbYCcfdZjCGCKHjaPYYYJAq0QnKB2ezE
+         oM2A==
+X-Gm-Message-State: APjAAAWR25T0HA9esgB3ApEHNCIu6wQuUxNt3mdl8mSyyq7V+HQQ7v4p
+        Zlds/Yil5XBULIiA9zB98asYSw==
+X-Google-Smtp-Source: APXvYqxHpHyKHeVnNR8LoYA2/Xy4ZP6iMCFRlAgWlGkxTezTtxF6pj+ynxkTmffkjEOCPkaSSBfDzg==
+X-Received: by 2002:a1c:a984:: with SMTP id s126mr34839595wme.26.1567416824468;
+        Mon, 02 Sep 2019 02:33:44 -0700 (PDT)
 Received: from dell ([95.147.198.93])
-        by smtp.gmail.com with ESMTPSA id v186sm33030150wmb.5.2019.09.02.02.31.38
+        by smtp.gmail.com with ESMTPSA id f75sm20403518wmf.2.2019.09.02.02.33.43
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Sep 2019 02:31:39 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 10:31:37 +0100
+        Mon, 02 Sep 2019 02:33:43 -0700 (PDT)
+Date:   Mon, 2 Sep 2019 10:33:42 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v3 0/7] backlight: gpio: simplify the driver
-Message-ID: <20190902093137.GI32232@dell>
-References: <20190724082508.27617-1-brgl@bgdev.pl>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>
+Subject: Re: [PATCH] mfd: db8500-prcmu: Support the higher DB8520 ARMSS
+Message-ID: <20190902093342.GJ32232@dell>
+References: <20190829112501.30185-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190724082508.27617-1-brgl@bgdev.pl>
+In-Reply-To: <20190829112501.30185-1-linus.walleij@linaro.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 24 Jul 2019, Bartosz Golaszewski wrote:
+On Thu, 29 Aug 2019, Linus Walleij wrote:
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> The DB8520 used in a lot of Samsung phones has a slightly higher
+> maximum ARMSS frequency than the DB8500. In order to not confuse
+> the OPP framework and cpufreq, make sure the PRCMU driver
+> returns the correct frequency.
 > 
-> While working on my other series related to gpio-backlight[1] I noticed
-> that we could simplify the driver if we made the only user of platform
-> data use GPIO lookups and device properties. This series tries to do
-> that.
-> 
-> The first patch adds all necessary data structures to ecovec24. Patch
-> 2/7 unifies much of the code for both pdata and non-pdata cases. Patches
-> 3-4/7 remove unused platform data fields. Last three patches contain
-> additional improvements for the GPIO backlight driver while we're already
-> modifying it.
-> 
-> I don't have access to this HW but hopefully this works. Only compile
-> tested.
-> 
-> [1] https://lkml.org/lkml/2019/6/25/900
-> 
-> v1 -> v2:
-> - rebased on top of v5.3-rc1 and adjusted to the recent changes from Andy
-> - added additional two patches with minor improvements
-> 
-> v2 -> v3:
-> - in patch 7/7: used initializers to set values for pdata and dev local vars
-> 
-> Bartosz Golaszewski (7):
->   sh: ecovec24: add additional properties to the backlight device
->   backlight: gpio: simplify the platform data handling
->   sh: ecovec24: don't set unused fields in platform data
->   backlight: gpio: remove unused fields from platform data
->   backlight: gpio: remove dev from struct gpio_backlight
->   backlight: gpio: remove def_value from struct gpio_backlight
->   backlight: gpio: use a helper variable for &pdev->dev
-> 
->  arch/sh/boards/mach-ecovec24/setup.c         | 33 ++++++--
->  drivers/video/backlight/gpio_backlight.c     | 82 +++++---------------
->  include/linux/platform_data/gpio_backlight.h |  3 -
->  3 files changed, 44 insertions(+), 74 deletions(-)
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Stephan Gerhold <stephan@gerhold.net>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/mfd/db8500-prcmu.c | 40 +++++++++++++++++++++++++++++++++-----
+>  1 file changed, 35 insertions(+), 5 deletions(-)
 
-Can you collect all your Acks and re-submit please?
+Applied, thanks.
 
 -- 
 Lee Jones [李琼斯]
