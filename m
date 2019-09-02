@@ -2,138 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 984B5A5399
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 499D4A53A5
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:10:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731158AbfIBKGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 06:06:21 -0400
-Received: from aclms1.advantech.com.tw ([61.58.41.199]:19842 "EHLO
-        ACLMS1.advantech.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729854AbfIBKGU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 06:06:20 -0400
-Received: from taipei08.ADVANTECH.CORP (unverified [172.20.0.235]) by ACLMS1.advantech.com.tw
- (Clearswift SMTPRS 5.6.0) with ESMTP id <Td9ff90b8f0ac14014b177c@ACLMS1.advantech.com.tw>;
- Mon, 2 Sep 2019 18:06:17 +0800
-From:   <Amy.Shih@advantech.com.tw>
-To:     <she90122@gmail.com>
-CC:     <amy.shih@advantech.com.tw>, <oakley.ding@advantech.com.tw>,
-        <bichan.lu@advantech.com.tw>, <jia.sui@advantech.com.cn>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [v6,1/1] hwmon: (nct7904) Fix incorrect temperature limitation register setting of LTD.
-Date:   Mon, 18 Jun 2085 15:57:19 +0000
-Message-ID: <20850618155720.24857-1-Amy.Shih@advantech.com.tw>
-X-Mailer: git-send-email 2.17.1
+        id S1731202AbfIBKKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 06:10:34 -0400
+Received: from mga14.intel.com ([192.55.52.115]:10867 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730077AbfIBKKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 06:10:34 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 03:10:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,457,1559545200"; 
+   d="scan'208";a="176284343"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga008.jf.intel.com with ESMTP; 02 Sep 2019 03:10:29 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1i4jI4-0008LW-QS; Mon, 02 Sep 2019 13:10:28 +0300
+Date:   Mon, 2 Sep 2019 13:10:28 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        rafael@kernel.org, linux-acpi@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v4 01/11] software node: Get reference to parent swnode
+ in get_parent op
+Message-ID: <20190902101028.GZ2680@smile.fi.intel.com>
+References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
+ <20190902083240.20367-2-sakari.ailus@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [172.17.10.63]
-X-ClientProxiedBy: ACLDAG.ADVANTECH.CORP (172.20.2.88) To
- taipei08.ADVANTECH.CORP (172.20.0.235)
-X-StopIT: No
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190902083240.20367-2-sakari.ailus@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "amy.shih" <amy.shih@advantech.com.tw>
+On Mon, Sep 02, 2019 at 11:32:30AM +0300, Sakari Ailus wrote:
+> The software_node_get_parent() returned a pointer to the parent swnode,
+> but did not take a reference to it, leading the caller to put a reference
+> that was not taken. Take that reference now.
+> 
 
-According to kernel hwmon sysfs-interface documentation, temperature
-critical max value, typically greater than corresponding temp_max values.
-Thus, reads the LTD_HV_HL (LTD HIGH VALUE HIGH LIMITATION) and LTD_LV_HL
-(LTD LOW VALUE HIGH LIMITATION) for case hwmon_temp_crit and
-hwmon_temp_crit_hyst. Reads the LTD_HV_LL (HIGH VALUE LOW LIMITATION)
-and LTD_LV_LL (LOW VALUE LOW LIMITATION) for case hwmon_temp_max
-and hwmon_temp_max_hyst.
+Missed already given
 
-Signed-off-by: amy.shih <amy.shih@advantech.com.tw>
----
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Changes in v6:
-- Fix incorrect temperature limitation register setting of LTD.
-Changes in v5:
-- Squashed subsequent fixes of three patches into one patch.
-Changes in v4:
-- Fix the incorrect return value of case hwmon_fan_min in function "nct7904_write_fan".
-- Fix the confused calculation of case hwmon_fan_min in function
-Changes in v3:
-- Squashed subsequent fixes of patches into one patch.
+> Fixes: 59abd83672f7 ("drivers: base: Introducing software nodes to the firmware node framework")
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> ---
+>  drivers/base/swnode.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+> index e7b3aa3bd55ad..a7cb41812cfda 100644
+> --- a/drivers/base/swnode.c
+> +++ b/drivers/base/swnode.c
+> @@ -520,7 +520,10 @@ software_node_get_parent(const struct fwnode_handle *fwnode)
+>  {
+>  	struct swnode *swnode = to_swnode(fwnode);
+>  
+> -	return swnode ? (swnode->parent ? &swnode->parent->fwnode : NULL) : NULL;
+> +	if (!swnode || !swnode->parent)
+> +		return NULL;
+> +
+> +	return fwnode_handle_get(&swnode->parent->fwnode);
+>  }
+>  
+>  static struct fwnode_handle *
+> -- 
+> 2.20.1
+> 
 
--- Fix bad fallthrough in various switch statements.
--- Fix the wrong declared of tmp as u8 in nct7904_write_in, declared tmp to int.
--- Fix incorrect register setting of voltage.
--- Fix incorrect register bit mapping of temperature alarm.
--- Fix wrong return code 0x1fff in function nct7904_write_fan.
--- Delete wrong comment in function nct7904_write_in.
--- Fix wrong attribute names for temperature.
--- Fix wrong registers setting for temperature.
-
-Changes in v2:
-- Fix bad fallthrough in various switch statements.
-- Fix the wrong declared of tmp as u8 in nct7904_write_in, declared tmp to int.
----
- drivers/hwmon/nct7904.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/hwmon/nct7904.c b/drivers/hwmon/nct7904.c
-index 76372f20d71a..ce688ab4fce2 100644
---- a/drivers/hwmon/nct7904.c
-+++ b/drivers/hwmon/nct7904.c
-@@ -398,22 +398,22 @@ static int nct7904_read_temp(struct device *dev, u32 attr, int channel,
- 		}
- 		return 0;
- 	case hwmon_temp_max:
--		reg1 = LTD_HV_HL_REG;
-+		reg1 = LTD_HV_LL_REG;
- 		reg2 = TEMP_CH1_W_REG;
- 		reg3 = DTS_T_CPU1_W_REG;
- 		break;
- 	case hwmon_temp_max_hyst:
--		reg1 = LTD_LV_HL_REG;
-+		reg1 = LTD_LV_LL_REG;
- 		reg2 = TEMP_CH1_WH_REG;
- 		reg3 = DTS_T_CPU1_WH_REG;
- 		break;
- 	case hwmon_temp_crit:
--		reg1 = LTD_HV_LL_REG;
-+		reg1 = LTD_HV_HL_REG;
- 		reg2 = TEMP_CH1_C_REG;
- 		reg3 = DTS_T_CPU1_C_REG;
- 		break;
- 	case hwmon_temp_crit_hyst:
--		reg1 = LTD_LV_LL_REG;
-+		reg1 = LTD_LV_HL_REG;
- 		reg2 = TEMP_CH1_CH_REG;
- 		reg3 = DTS_T_CPU1_CH_REG;
- 		break;
-@@ -507,22 +507,22 @@ static int nct7904_write_temp(struct device *dev, u32 attr, int channel,
- 
- 	switch (attr) {
- 	case hwmon_temp_max:
--		reg1 = LTD_HV_HL_REG;
-+		reg1 = LTD_HV_LL_REG;
- 		reg2 = TEMP_CH1_W_REG;
- 		reg3 = DTS_T_CPU1_W_REG;
- 		break;
- 	case hwmon_temp_max_hyst:
--		reg1 = LTD_LV_HL_REG;
-+		reg1 = LTD_LV_LL_REG;
- 		reg2 = TEMP_CH1_WH_REG;
- 		reg3 = DTS_T_CPU1_WH_REG;
- 		break;
- 	case hwmon_temp_crit:
--		reg1 = LTD_HV_LL_REG;
-+		reg1 = LTD_HV_HL_REG;
- 		reg2 = TEMP_CH1_C_REG;
- 		reg3 = DTS_T_CPU1_C_REG;
- 		break;
- 	case hwmon_temp_crit_hyst:
--		reg1 = LTD_LV_LL_REG;
-+		reg1 = LTD_LV_HL_REG;
- 		reg2 = TEMP_CH1_CH_REG;
- 		reg3 = DTS_T_CPU1_CH_REG;
- 		break;
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
