@@ -2,89 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4DF9A5AFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 18:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5993AA5AEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 18:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfIBQBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 12:01:41 -0400
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38236 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725934AbfIBQBj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 12:01:39 -0400
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x82G1NEh013661;
-        Mon, 2 Sep 2019 18:01:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=n/9J04bMASd91Yvy3ukzh2dvhlV4FPmYy3RQUpNIw6g=;
- b=tc8HivKwomhriFxrWx2/yMRi933JjZQRofezTwsFF4HKT3Q2Y/yXzPc/RaBolmt3R+20
- UeWPxSHZH9Yh91ix/A6VJZAIMleeIMHsoKskMMxvC7lMomfYOGuNgg182Te/KrdODZ8u
- +dN2oSp7/v8a8oWE2ee6D36KS2ND2jFgCbwayyO7XaCciLzmxwykMF+WNWHZwNyuMz3R
- fL1T8+eOSm3VHwI3Ay/Vg8lSMvKrCoaERHa2JAw045lZg/cGhpZIwrBIaxI7xX1xy5/G
- NhXyiV+0nHPezHDP+ViJChofBt/w3JQ+shRWqw8FRSG8DKFajBGrxiJ72zk3v9l21s66 mA== 
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2uqec2ngs8-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 02 Sep 2019 18:01:24 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3784F23;
-        Mon,  2 Sep 2019 16:01:11 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9596C2CF15F;
-        Mon,  2 Sep 2019 18:01:10 +0200 (CEST)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
- (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 2 Sep 2019
- 18:01:04 +0200
-Received: from localhost (10.201.23.16) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 2 Sep 2019 18:01:04
- +0200
-From:   Olivier Moysan <olivier.moysan@st.com>
-To:     <alexandre.torgue@st.com>, <olof@lixom.net>,
-        <horms+renesas@verge.net.au>, <arnd@arndb.de>, <krzk@kernel.org>,
-        <yannick.fertre@st.com>, <tony@atomide.com>,
-        <m.szyprowski@samsung.com>, <fabrice.gasnier@st.com>,
-        <enric.balletbo@collabora.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-CC:     <olivier.moysan@st.com>
-Subject: [PATCH 4/4] ARM: multi_v7_defconfig: enable audio graph card support
-Date:   Mon, 2 Sep 2019 18:00:41 +0200
-Message-ID: <1567440041-19220-5-git-send-email-olivier.moysan@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567440041-19220-1-git-send-email-olivier.moysan@st.com>
-References: <1567440041-19220-1-git-send-email-olivier.moysan@st.com>
+        id S1726341AbfIBQA4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 12:00:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46048 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbfIBQA4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 12:00:56 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C89E921881;
+        Mon,  2 Sep 2019 16:00:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567440055;
+        bh=mJwEXeh9CSD/UGKpq5I8/EKKhuH0yp4LBIc3MRNKusI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IokDy13upxRjfjtUAgiANVVb5OnMLv/ypAQlXMRYwgf7PNYfawBES++kL3BndpSyq
+         wmRXla5ruFdg/4tW1jDyC7volEhHr3UqY75gAI2gconNIjwmU+MH2nmHgpOo8zWGXa
+         yjHRGES2Yuocvxc4Ka10XexzBKcrvhehbuY4UkEs=
+Date:   Mon, 2 Sep 2019 18:00:44 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Hui Peng <benquike@gmail.com>
+Cc:     stable@vger.kernel.org,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, Wenwen Wang <wang6495@umn.edu>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Fix a stack buffer overflow bug in check_input_term
+Message-ID: <20190902160044.GC21884@kroah.com>
+References: <20190830214730.27842-1-benquike@gmail.com>
+ <CAKpmkkWv2cjrJCkVhGmEMnLG2_kCNxdbt29dZ8j-UM8Cf3quGQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.201.23.16]
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
- definitions=2019-09-02_06:2019-08-29,2019-09-02 signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKpmkkWv2cjrJCkVhGmEMnLG2_kCNxdbt29dZ8j-UM8Cf3quGQ@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable audio graph card support for stm32mp157a-dk1 board.
+On Fri, Aug 30, 2019 at 05:51:17PM -0400, Hui Peng wrote:
+> This is the backported patch for the following fix to v4.4.x and v4.14.x:
+> 19bce474c45b ("ALSA: usb-audio: Fix a stack buffer overflow bug in
+> check_input_term")
 
-Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Now queued up, thanks.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 03a4d93df8c4..c7104a1c1687 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -719,6 +719,7 @@ CONFIG_SND_SOC_SGTL5000=m
- CONFIG_SND_SOC_SPDIF=m
- CONFIG_SND_SOC_STI_SAS=m
- CONFIG_SND_SOC_WM8978=m
-+CONFIG_SND_AUDIO_GRAPH_CARD=m
- CONFIG_USB=y
- CONFIG_USB_OTG=y
- CONFIG_USB_XHCI_HCD=y
--- 
-2.7.4
-
+greg k-h
