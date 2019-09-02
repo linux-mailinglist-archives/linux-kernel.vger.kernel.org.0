@@ -2,118 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45DFAA537F
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:58:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B931AA538A
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731001AbfIBJ6P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 05:58:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:51350 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730538AbfIBJ6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:58:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B025428;
-        Mon,  2 Sep 2019 02:58:13 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 776463F246;
-        Mon,  2 Sep 2019 02:58:11 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 10:58:06 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Jonathan Chocron <jonnyc@amazon.com>
-Cc:     bhelgaas@google.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, andrew.murray@arm.com, dwmw@amazon.co.uk,
-        benh@kernel.crashing.org, alisaidi@amazon.com, ronenk@amazon.com,
-        barakw@amazon.com, talel@amazon.com, hanochu@amazon.com,
-        hhhawa@amazon.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] Amazon's Annapurna Labs DT-based PCIe host
- controller driver
-Message-ID: <20190902095806.GA14841@e121166-lin.cambridge.arm.com>
-References: <20190821153545.17635-1-jonnyc@amazon.com>
+        id S1730916AbfIBKCl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 06:02:41 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37907 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730250AbfIBKCl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 06:02:41 -0400
+Received: by mail-pf1-f194.google.com with SMTP id h195so2208644pfe.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 03:02:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RQ4bgGpDe1aO2dcXCN2kWEia8kVQV/JW3GaWgKM7FYE=;
+        b=mh3+HhRmMDF81+H6REGveUB1w/FITeP87l5Kn0pE/4A7ip3Z5n/gzLlKFGvZ4X1urg
+         uTrpaaPPotgwE1gr0/qkMLkkEL1LFvVDQ1g6zdBYh5mNyl/iYUjoMweg1L0+Iq06FP5f
+         f4Qty34vvU0ICYsKoQ6NQB2X16O+G5MR8/eRKCBB9pORO2u6OXD2bBaa+CskviGyjQRX
+         D39hS8k6KY0yQtWXsycwUKfCKd28ujoMsypj9cyIrODLgCNiyce+93/An3DIAZLTGnws
+         cujQTluCGz50xtILEjftm19ngvM+CNMXSRx2BuJDGhzdrOePRM8YHdbV93g9Xd4znWws
+         /1hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RQ4bgGpDe1aO2dcXCN2kWEia8kVQV/JW3GaWgKM7FYE=;
+        b=I8963KPNPlSpZFgwEbGm2hg3ly9JQUujZobb9tR2FbVOejFyhFBCeydsMDgmMC9pnv
+         YHrlK8y+GA1Nu/RENKZr2IzXKOPSjqs7Skl5IhsQ/w7ikyl55z8aPx1F7d78YERu/SNv
+         jKZCVnDgyq+IVXfFwePOCh6ckHbxUmTMx8OehnJ5B9MujqGEa1NDaIHCjFBcsePrRltQ
+         OElhpV1UNuX+Ci3ZUUReNPWKIdyQfk2g/xFcYlf9gWc9Jk1/pbjElx5hg27jxNVMRAm5
+         T8k5aVgCCA0bAz8M5m9cYlsGZgKIDKlpPI4KsgyBH1l9b7Xu8SaQk9j1SGm6z3OWTz5r
+         0Y4Q==
+X-Gm-Message-State: APjAAAUHOp+RFj8IWBcc+dlvwBe/Tw/vOGhDLQ0rfBgGx13mOtsYBOwz
+        WbU6qLXls+lrv0U5qm85OQ9gYA==
+X-Google-Smtp-Source: APXvYqxRf34N5BEFEv8etsDj/JI3+CfZ0JnpQI+TsEcRr5YSB05J7K3rQw7oqzyvUHr981kBtMIs4g==
+X-Received: by 2002:a62:2603:: with SMTP id m3mr34483187pfm.163.1567418560532;
+        Mon, 02 Sep 2019 03:02:40 -0700 (PDT)
+Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
+        by smtp.gmail.com with ESMTPSA id z4sm12783932pgp.80.2019.09.02.03.02.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2019 03:02:40 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] ALSA: hda/realtek - Enable internal speaker & headset mic of ASUS UX431FL
+Date:   Mon,  2 Sep 2019 18:00:56 +0800
+Message-Id: <20190902100054.6941-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821153545.17635-1-jonnyc@amazon.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 06:35:40PM +0300, Jonathan Chocron wrote:
-> This series adds support for Amazon's Annapurna Labs DT-based PCIe host
-> controller driver.
-> Additionally, it adds 3 quirks (ACS, VPD and MSI-X) and 2 generic DWC patches.
-> 
-> Changes since v3:
-> - Removed PATCH 8/8 since the usage of the PCI flags will be discussed
->   in the upcoming LPC
-> - Align commit subject with the folder convention
-> - Added explanation regarding ECAM "overload" mechanism
-> - Switched to read/write{_relaxed} APIs
-> - Modified a dev_err to dev_dbg
-> - Removed unnecessary variable
-> - Removed driver details from dt-binding description
-> - Changed to SoC specific compatibles
-> - Fixed typo in a commit message
-> - Added comment regarding MSI in the MSI-X quirk
-> 
-> Changes since v2:
-> - Added al_pcie_controller_readl/writel() wrappers
-> - Reorganized local vars in several functions according to reverse
->   tree structure
-> - Removed unnecessary check of ret value
-> - Changed return type of al_pcie_config_prepare() from int to void
-> - Removed check if link is up from probe() [done internally in
->   dw_pcie_rd/wr_conf()]
-> 
-> Changes since v1:
-> - Added comment regarding 0x0031 being used as a dev_id for non root-port devices as well
-> - Fixed different message/comment/print wordings
-> - Added panic stacktrace to commit message of MSI-x quirk patch
-> - Changed to pci_warn() instead of dev_warn()
-> - Added unit_address after node_name in dt-binding
-> - Updated Kconfig help description
-> - Used GENMASK and FIELD_PREP/GET where appropriate
-> - Removed leftover field from struct al_pcie and moved all ptrs to
->   the beginning
-> - Re-wrapped function definitions and invocations to use fewer lines
-> - Change %p to %px in dbg prints in rd/wr_conf() functions
-> - Removed validation that the port is configured to RC mode (as this is
->   added generically in PATCH 7/8)
-> - Removed unnecessary variable initializations
-> - Swtiched to %pR for printing resources
-> 
-> 
-> Ali Saidi (1):
->   PCI: Add ACS quirk for Amazon Annapurna Labs root ports
-> 
-> Jonathan Chocron (6):
->   PCI: Add Amazon's Annapurna Labs vendor ID
->   PCI/VPD: Add VPD release quirk for Amazon's Annapurna Labs Root Port
->   PCI: Add quirk to disable MSI-X support for Amazon's Annapurna Labs
->     Root Port
->   dt-bindings: PCI: Add Amazon's Annapurna Labs PCIe host bridge binding
->   PCI: dwc: al: Add support for DW based driver type
->   PCI: dwc: Add validation that PCIe core is set to correct mode
-> 
->  .../devicetree/bindings/pci/pcie-al.txt       |  46 +++
->  MAINTAINERS                                   |   3 +-
->  drivers/pci/controller/dwc/Kconfig            |  12 +
->  drivers/pci/controller/dwc/pcie-al.c          | 365 ++++++++++++++++++
->  .../pci/controller/dwc/pcie-designware-ep.c   |   8 +
->  .../pci/controller/dwc/pcie-designware-host.c |   8 +
->  drivers/pci/quirks.c                          |  37 ++
->  drivers/pci/vpd.c                             |  16 +
->  include/linux/pci_ids.h                       |   2 +
->  9 files changed, 496 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/pcie-al.txt
+Original pin node values of ASUS UX431FL with ALC294:
 
-Hi Jonathan,
+0x12 0xb7a60140
+0x13 0x40000000
+0x14 0x90170110
+0x15 0x411111f0
+0x16 0x411111f0
+0x17 0x90170111
+0x18 0x411111f0
+0x19 0x411111f0
+0x1a 0x411111f0
+0x1b 0x411111f0
+0x1d 0x4066852d
+0x1e 0x411111f0
+0x1f 0x411111f0
+0x21 0x04211020
 
-are you going to send a v5 for this series ? If we should consider
-it for v5.4 I expect it to be on the list this week as soon as possible.
+1. Has duplicated internal speakers (0x14 & 0x17) which makes the output
+   route become confused. So, the output volume cannot be changed by
+   setting.
+2. Misses the headset mic pin node.
 
-Thanks,
-Lorenzo
+This patch disables the confusing speaker (NID 0x14) and enables the
+headset mic (NID 0x19).
+
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ sound/pci/hda/patch_realtek.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index e333b3e30e31..0a1fa99a6723 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5797,6 +5797,7 @@ enum {
+ 	ALC286_FIXUP_ACER_AIO_HEADSET_MIC,
+ 	ALC256_FIXUP_ASUS_MIC_NO_PRESENCE,
+ 	ALC299_FIXUP_PREDATOR_SPK,
++	ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC,
+ };
+ 
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6837,6 +6838,16 @@ static const struct hda_fixup alc269_fixups[] = {
+ 			{ }
+ 		}
+ 	},
++	[ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x14, 0x411111f0 }, /* disable confusing internal speaker */
++			{ 0x19, 0x04a11150 }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -6995,6 +7006,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", ALC269VB_FIXUP_ASUS_ZENBOOK),
+ 	SND_PCI_QUIRK(0x1043, 0x1517, "Asus Zenbook UX31A", ALC269VB_FIXUP_ASUS_ZENBOOK_UX31A),
+ 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
++	SND_PCI_QUIRK(0x1043, 0x17d1, "ASUS UX431FL", ALC294_FIXUP_ASUS_INTSPK_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
+ 	SND_PCI_QUIRK(0x1043, 0x1a30, "ASUS X705UD", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1b13, "Asus U41SV", ALC269_FIXUP_INV_DMIC),
+-- 
+2.20.1
+
