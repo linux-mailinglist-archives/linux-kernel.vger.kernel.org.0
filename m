@@ -2,114 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EE00A5200
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 689ECA5203
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:40:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730724AbfIBIkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:40:23 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39009 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729870AbfIBIkX (ORCPT
+        id S1730747AbfIBIk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:40:29 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40685 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730727AbfIBIk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:40:23 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 28B04813BA; Mon,  2 Sep 2019 10:40:07 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 10:40:20 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v6 01/24] erofs: add on-disk layout
-Message-ID: <20190902084020.GB19557@amd>
-References: <20190802125347.166018-1-gaoxiang25@huawei.com>
- <20190802125347.166018-2-gaoxiang25@huawei.com>
- <20190829095954.GB20598@infradead.org>
+        Mon, 2 Sep 2019 04:40:28 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t9so13634316wmi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 01:40:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=xl3Ai/AmJFR6ZhTztzr3SBL0HsX+mzfXY2ojYs65AK8=;
+        b=GjeWNFh0qzJtRNv2HvHvICds/YkS4LdvROFX4CYEyI+4pLuL3eNmjv3XCtsie8gXNe
+         UptA6Vkinbxf2B4m2QNS2dJHMEtorZsE7he4AlyM6kxnQkbxQ1f7tXSrgZUlCujENiiQ
+         KbDmM6mjgN1X8aIchZswmgojxyWJM8ZqFivrjFpBFHNiFl0ZK7dp2qGlBzByaJTsVy2O
+         z02Ylk8HPjyWcmTuIKetoNU+djS6Hrh5wyc9L0icwNq/d6/cUgz5YMLD9DL24TFF7m0f
+         G4YU3dPXlkUJVnHG/Nn0VffzjL7K/0IPs2J4ObsxpAclJ2CtmHwogXVcuk3OqX95oeqZ
+         P57g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xl3Ai/AmJFR6ZhTztzr3SBL0HsX+mzfXY2ojYs65AK8=;
+        b=fgaJwndnQ/g/92HrVXp/4QNdx8Z6JsDClO/IbwPAPZ2CCUljooSy1H/vDPhXIToUyJ
+         6nBWeI18nwhqVmeFADErVVgjgR60dwW6v0GwgBIpXVu07cM8jcd3M5rc26to2+J4DVce
+         KJNMLHADbL175gsf3cK+NnBzT1+jWSVH2vhfTfGI8GFRmGbgqE2Stu0pY3+wlpKendSK
+         cE3/jcpnl/uy6U2sbD+K/V7L11Us0D4wQqTkkBRXfdd/hqoVf86Be3LGG77BYozGK2P7
+         UUWLAxlfozNV6OEJxLrjVIbe7E4TYsQ9mlWaFTJMkDNvaRkcibF6rA8i+uZgI6j8fcG5
+         HO8Q==
+X-Gm-Message-State: APjAAAWzzcB4cxpPkiw5OGiG0U5IqfuOMcHzYN4wNM+Z+24ZfZdRS84k
+        mr+7DkYPH1gFW4DbvmVDyiEGaQ==
+X-Google-Smtp-Source: APXvYqxQxojiBDTKZPusJic1q3Feb7uYrPchzyphP+/xVK/9HREqN30l5NNGO3CqPCl1x/VhD0itdQ==
+X-Received: by 2002:a1c:a383:: with SMTP id m125mr34928752wme.57.1567413626783;
+        Mon, 02 Sep 2019 01:40:26 -0700 (PDT)
+Received: from dell ([95.147.198.93])
+        by smtp.gmail.com with ESMTPSA id v186sm32753984wmb.5.2019.09.02.01.40.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Sep 2019 01:40:26 -0700 (PDT)
+Date:   Mon, 2 Sep 2019 09:40:24 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Alexander Shiyan <shc_work@mail.ru>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] video: backlight: Drop default m for
+ {LCD,BACKLIGHT_CLASS_DEVICE}
+Message-ID: <20190902084024.GR4804@dell>
+References: <20190813115853.30329-1-geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="NMuMz9nt05w80d4+"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190829095954.GB20598@infradead.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190813115853.30329-1-geert@linux-m68k.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 13 Aug 2019, Geert Uytterhoeven wrote:
 
---NMuMz9nt05w80d4+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> When running "make oldconfig" on a .config where
+> CONFIG_BACKLIGHT_LCD_SUPPORT is not set, two new config options
+> ("Lowlevel LCD controls" and "Lowlevel Backlight controls") appear, both
+> defaulting to "m".
+> 
+> Drop the "default m", as options should default to disabled, and because
+> several driver config options already select LCD_CLASS_DEVICE or
+> BACKLIGHT_CLASS_DEVICE when needed.
+> 
+> Fixes: 8c5dc8d9f19c7992 ("video: backlight: Remove useless BACKLIGHT_LCD_SUPPORT kernel symbol")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+>  drivers/video/backlight/Kconfig | 2 --
+>  1 file changed, 2 deletions(-)
 
-Hi!
+Applied, thanks.
 
-> > +struct erofs_super_block {
-> > +/*  0 */__le32 magic;           /* in the little endian */
-> > +/*  4 */__le32 checksum;        /* crc32c(super_block) */
-> > +/*  8 */__le32 features;        /* (aka. feature_compat) */
-> > +/* 12 */__u8 blkszbits;         /* support block_size =3D=3D PAGE_SIZE=
- only */
->=20
-> Please remove all the byte offset comments.  That is something that can
-> easily be checked with gdb or pahole.
-
-I don't think I agree. gdb will tell you byte offsets _on one
-architecture_. But filesystem is supposed to be portable between them.=20
-
-> > +/* 64 */__u8 volume_name[16];   /* volume name */
-> > +/* 80 */__le32 requirements;    /* (aka. feature_incompat) */
-> > +
-> > +/* 84 */__u8 reserved2[44];
-> > +} __packed;                     /* 128 bytes */
->=20
-> Please don't add __packed.  In this case I think you don't need it
-> (but double check with pahole), but even if you would need it using
-> proper padding fields and making sure all fields are naturally aligned
-> will give you much better code generation on architectures that don't
-> support native unaligned access.
-
-This is on-disk structure, right?
-
-drivers/staging/erofs/super.c:	struct erofs_super_block *layout;
-drivers/staging/erofs/super.c:	layout =3D (struct erofs_super_block
-*)((u8 *)bh->b_data
-
-So __packed is right thing to do. If architecture accesses that
-slowly, that's ungood, but different structures between architectures
-would be really bad.
-
-Best regards,
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---NMuMz9nt05w80d4+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1s1XQACgkQMOfwapXb+vK1qgCeMhRodxdCMHktGBYzM6YZ0upo
-P8IAnRXsAoM5UyuAx4MPbJJVq8NtKIG8
-=L04e
------END PGP SIGNATURE-----
-
---NMuMz9nt05w80d4+--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
