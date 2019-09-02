@@ -2,107 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65825A5C09
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 20:07:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D78A2A5C16
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 20:08:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfIBSHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 14:07:21 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37744 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfIBSHU (ORCPT
+        id S1726899AbfIBSHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 14:07:49 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:58151 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfIBSHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 14:07:20 -0400
-Received: by mail-wm1-f65.google.com with SMTP id d16so15474731wme.2;
-        Mon, 02 Sep 2019 11:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2FP61o/rTW3HxqMEgs6ZmsTW0Pzgbyx4HaATesyroRc=;
-        b=HBBXjVcXyPoUX9Asnc9aIZcuXAz5XCTn37veQopKqIAVof3qtxqVYmqKBc2B4Ppra5
-         Y58KTaTk/nF08+uUkUU/+oSEPovt1UF2SY74JuMgjhCYqQP3vPUk3tNXnX25OXyP3esb
-         /bHFrxNIbLm89dE8OnG9Yax/CYvaVUJ/odjkWKvIBTBY26zjskZ3yvtJadNMOQOCL5rx
-         BV7ZKOitDRacIBTt2lPx8WSzEDmAowxX88zc7+zjgdEwE4Jr0bGVd68DWZRW5LZLfaI/
-         /z1i1lpLvxBu5Gt0B1Df7/X345wvA04TXZWDWQzjtLCWEkFICodhFOq7Lu3KJVrUIARb
-         TK0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2FP61o/rTW3HxqMEgs6ZmsTW0Pzgbyx4HaATesyroRc=;
-        b=OpXfRFt23TagndtsbEZ8Eq0nxAVXRFdDj6zOD8cstg0gqphJVrtOgkkI7URcQwtzl7
-         OTXavhGfw7L1+y0/aX6to/yzPq0VRzXkYo8emtwKb177fj/Xftv3zkGTgNhVyCE6LMXp
-         GModI5/57NHkfxb6mjw8kPCL5tDNgSQTIbu1s0mD4SbW71c+2W7j2i4AyuoM8BnK2AbK
-         2khtjiyrBmNUROr1fA4OJhKSX4ibvqJGVESjaUA7mqovidnMtO5sOH6ZvZe/+rA8HmSC
-         QOid3oPIpBo9OqNus/NujvMB8lJ7OLvDuaoCvoh9VhBLha8vdify9hP2NpD5B1smlx9L
-         4OqA==
-X-Gm-Message-State: APjAAAVVCg/N9kxRGAlCjsDYvVCdYd4rP1CSCH58De/xTPTKG6L/GLuK
-        xIjXIgsfpsPCubrLwzYjZj0=
-X-Google-Smtp-Source: APXvYqw1iHn46OE2NUICV9iUJgJFO0LHiEfe7scxyxXpgXgJ7+0k95/PZgmSBwtfuREkAbfiq2gXCQ==
-X-Received: by 2002:a1c:4b14:: with SMTP id y20mr4799177wma.10.1567447638782;
-        Mon, 02 Sep 2019 11:07:18 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id t203sm16421896wmf.42.2019.09.02.11.07.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 11:07:18 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 20:07:16 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        Mon, 2 Sep 2019 14:07:48 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1i4qjq-0000he-P8; Mon, 02 Sep 2019 20:07:38 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 004851C0C76;
+        Mon,  2 Sep 2019 20:07:37 +0200 (CEST)
+Date:   Mon, 02 Sep 2019 18:07:37 -0000
+From:   "tip-bot2 for Tianyu Lan" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/hyper-v: Fix overflow bug in fill_gva_list()
+Cc:     Jong Hyun Park <park.jonghyun@yonsei.ac.kr>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Message-ID: <20190902180716.GA34219@gmail.com>
-References: <20190902173102.53a44459@canb.auug.org.au>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902173102.53a44459@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <156744765778.23765.3492272300473328838.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following commit has been merged into the x86/urgent branch of tip:
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Commit-ID:     4030b4c585c41eeefec7bd20ce3d0e100a0f2e4d
+Gitweb:        https://git.kernel.org/tip/4030b4c585c41eeefec7bd20ce3d0e100a0f2e4d
+Author:        Tianyu Lan <Tianyu.Lan@microsoft.com>
+AuthorDate:    Mon, 02 Sep 2019 20:41:43 +08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 02 Sep 2019 19:57:19 +02:00
 
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in:
-> 
->   tools/power/x86/turbostat/turbostat.c
-> 
-> between commit:
-> 
->   cd188af5282d ("tools/power turbostat: Fix Haswell Core systems")
->   b62b3184576b ("tools/power turbostat: add Jacobsville support")
->   d93ea567fc4e ("tools/power turbostat: Add Ice Lake NNPI support")
-> 
-> from Linus' tree and commit:
-> 
->   c66f78a6de4d ("x86/intel: Aggregate big core client naming")
->   af239c44e3f9 ("x86/intel: Aggregate big core mobile naming")
->   5e741407eab7 ("x86/intel: Aggregate big core graphics naming")
->   5ebb34edbefa ("x86/intel: Aggregate microserver naming")
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+x86/hyper-v: Fix overflow bug in fill_gva_list()
 
-Thanks Stephen - I resolved this in -tip too, this conflict should not 
-trigger anymore in tomorrow's -next integration.
+When the 'start' parameter is >=  0xFF000000 on 32-bit
+systems, or >= 0xFFFFFFFF'FF000000 on 64-bit systems,
+fill_gva_list() gets into an infinite loop.
 
-Thanks,
+With such inputs, 'cur' overflows after adding HV_TLB_FLUSH_UNIT
+and always compares as less than end.  Memory is filled with
+guest virtual addresses until the system crashes.
 
-	Ingo
+Fix this by never incrementing 'cur' to be larger than 'end'.
+
+Reported-by: Jong Hyun Park <park.jonghyun@yonsei.ac.kr>
+Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 2ffd9e33ce4a ("x86/hyper-v: Use hypercall for remote TLB flush")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/hyperv/mmu.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/hyperv/mmu.c b/arch/x86/hyperv/mmu.c
+index e65d7fe..5208ba4 100644
+--- a/arch/x86/hyperv/mmu.c
++++ b/arch/x86/hyperv/mmu.c
+@@ -37,12 +37,14 @@ static inline int fill_gva_list(u64 gva_list[], int offset,
+ 		 * Lower 12 bits encode the number of additional
+ 		 * pages to flush (in addition to the 'cur' page).
+ 		 */
+-		if (diff >= HV_TLB_FLUSH_UNIT)
++		if (diff >= HV_TLB_FLUSH_UNIT) {
+ 			gva_list[gva_n] |= ~PAGE_MASK;
+-		else if (diff)
++			cur += HV_TLB_FLUSH_UNIT;
++		}  else if (diff) {
+ 			gva_list[gva_n] |= (diff - 1) >> PAGE_SHIFT;
++			cur = end;
++		}
+ 
+-		cur += HV_TLB_FLUSH_UNIT;
+ 		gva_n++;
+ 
+ 	} while (cur < end);
