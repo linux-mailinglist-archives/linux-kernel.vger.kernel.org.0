@@ -2,210 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F2AA4E12
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 06:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D71A1A4E2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 06:04:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729328AbfIBECH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 00:02:07 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:43383 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728329AbfIBECH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 00:02:07 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R871e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0Tb4LMGb_1567396921;
-Received: from localhost(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0Tb4LMGb_1567396921)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 02 Sep 2019 12:02:04 +0800
-From:   Ben Luo <luoben@linux.alibaba.com>
-To:     tglx@linutronix.de, alex.williamson@redhat.com
-Cc:     linux-kernel@vger.kernel.org, tao.ma@linux.alibaba.com,
-        gerry@linux.alibaba.com, nanhai.zou@linux.alibaba.com
-Subject: [PATCH v6 3/3] vfio/pci: make use of irq_update_devid() and optimize irq ops
-Date:   Mon,  2 Sep 2019 12:01:52 +0800
-Message-Id: <670c992437dc83e988cf383b2e4ec4d7f448e151.1567394624.git.luoben@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <cover.1567394624.git.luoben@linux.alibaba.com>
-References: <cover.1567394624.git.luoben@linux.alibaba.com>
-In-Reply-To: <cover.1567394624.git.luoben@linux.alibaba.com>
-References: <cover.1567394624.git.luoben@linux.alibaba.com>
+        id S1728329AbfIBEEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 00:04:24 -0400
+Received: from ozlabs.org ([203.11.71.1]:41893 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725839AbfIBEEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 00:04:24 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46MGg82cSpz9sDQ;
+        Mon,  2 Sep 2019 14:04:20 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1567397061;
+        bh=1Yo6uY9vYsCcKQ0uEW9Q12DJgkCErmeFn5PqfY/sKWw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=pECNXKuf+e03cUscTqogf6/7IWR1KEnyVVEIWtbwLmaJrnR5t8Fum9SESkXoSqGbu
+         /7E/16FVZPfsWwuOZzD6dXMiPr5Nu6XP9csLbHioCMDU+FjwvnqNnePzjHHZr3H6BD
+         mu7kpT9xozaJ+irKQIhceQoJsKiYbfK8thaIJecKLL63pB2brr9fcTPG7aJZw6juy9
+         0GU3DvL6Cy0KftGeiGmpp6IAuxyFr3b6EIvwlxfqJnypr9xI5Oq1d4iJDCcWLXgb36
+         BKpehzOc4YyYY25TAZFKTbAGQXiKSIuoaerz2ixr3WJNpzCZTjMEI/KJ/Jxipi12ga
+         n6lGqXF87bjeQ==
+Date:   Mon, 2 Sep 2019 14:04:19 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: linux-next: manual merge of the sound-asoc tree with the jc_docs
+ tree
+Message-ID: <20190902140419.110a2c03@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/A.PmcI=jXekuU.+wnbKcZUc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When userspace (e.g. qemu) triggers a switch between KVM
-irqfd and userspace eventfd, only dev_id of irqaction
-(i.e. the "trigger" in this patch's context) will be
-changed, but a free-then-request-irq action is taken in
-current code. And, interrupt affinity setting in VM will
-also trigger a free-then-request-irq action, which actually
-changes nothing in irqaction.
+--Sig_/A.PmcI=jXekuU.+wnbKcZUc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch makes use of irq_update_devid() and optimize
-both cases above, which reduces the risk of losing interrupt
-and also cuts some overhead.
+Hi all,
 
-Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
----
- drivers/vfio/pci/vfio_pci_intrs.c | 118 ++++++++++++++++++++++++++------------
- 1 file changed, 81 insertions(+), 37 deletions(-)
+Today's linux-next merge of the sound-asoc tree got a conflict in:
 
-diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-index 3fa3f72..57b2de3 100644
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -284,8 +284,8 @@ static int vfio_msi_enable(struct vfio_pci_device *vdev, int nvec, bool msix)
- static int vfio_msi_set_vector_signal(struct vfio_pci_device *vdev,
- 				      int vector, int fd, bool msix)
- {
-+	struct eventfd_ctx *trigger = NULL;
- 	struct pci_dev *pdev = vdev->pdev;
--	struct eventfd_ctx *trigger;
- 	int irq, ret;
- 
- 	if (vector < 0 || vector >= vdev->num_ctx)
-@@ -293,61 +293,105 @@ static int vfio_msi_set_vector_signal(struct vfio_pci_device *vdev,
- 
- 	irq = pci_irq_vector(pdev, vector);
- 
-+	if (fd >= 0)
-+		trigger = eventfd_ctx_fdget(fd);
-+
-+	/*
-+	 * 'trigger' is NULL or invalid, disable the interrupt
-+	 * 'trigger' is same as before, only bounce the bypass registration
-+	 * 'trigger' is a new valid one, update it to irqaction and other
-+	 * data structures referencing to the old one; fallback to disable
-+	 * the interrupt on error
-+	 */
- 	if (vdev->ctx[vector].trigger) {
--		free_irq(irq, vdev->ctx[vector].trigger);
-+		/*
-+		 * even if the trigger is unchanged, we need to bounce the
-+		 * interrupt bypass connection to allow affinity changes in
-+		 * the guest to be realized.
-+		 */
- 		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
--		kfree(vdev->ctx[vector].name);
--		eventfd_ctx_put(vdev->ctx[vector].trigger);
--		vdev->ctx[vector].trigger = NULL;
-+
-+		if (vdev->ctx[vector].trigger == trigger) {
-+			/* avoid duplicated referencing to the same trigger */
-+			eventfd_ctx_put(trigger);
-+
-+		} else if (trigger && !IS_ERR(trigger)) {
-+			ret = irq_update_devid(irq,
-+					       vdev->ctx[vector].trigger,
-+					       trigger);
-+			if (unlikely(ret)) {
-+				dev_info(&pdev->dev,
-+					 "update devid of %d (token %p) failed: %d\n",
-+					 irq, vdev->ctx[vector].trigger, ret);
-+				eventfd_ctx_put(trigger);
-+				free_irq(irq, vdev->ctx[vector].trigger);
-+				kfree(vdev->ctx[vector].name);
-+				eventfd_ctx_put(vdev->ctx[vector].trigger);
-+				vdev->ctx[vector].trigger = NULL;
-+				return ret;
-+			}
-+			eventfd_ctx_put(vdev->ctx[vector].trigger);
-+			vdev->ctx[vector].producer.token = trigger;
-+			vdev->ctx[vector].trigger = trigger;
-+
-+		} else {
-+			free_irq(irq, vdev->ctx[vector].trigger);
-+			kfree(vdev->ctx[vector].name);
-+			eventfd_ctx_put(vdev->ctx[vector].trigger);
-+			vdev->ctx[vector].trigger = NULL;
-+		}
- 	}
- 
- 	if (fd < 0)
- 		return 0;
-+	else if (IS_ERR(trigger))
-+		return PTR_ERR(trigger);
- 
--	vdev->ctx[vector].name = kasprintf(GFP_KERNEL, "vfio-msi%s[%d](%s)",
--					   msix ? "x" : "", vector,
--					   pci_name(pdev));
--	if (!vdev->ctx[vector].name)
--		return -ENOMEM;
-+	if (!vdev->ctx[vector].trigger) {
-+		vdev->ctx[vector].name = kasprintf(GFP_KERNEL,
-+						   "vfio-msi%s[%d](%s)",
-+						   msix ? "x" : "", vector,
-+						   pci_name(pdev));
-+		if (!vdev->ctx[vector].name) {
-+			eventfd_ctx_put(trigger);
-+			return -ENOMEM;
-+		}
- 
--	trigger = eventfd_ctx_fdget(fd);
--	if (IS_ERR(trigger)) {
--		kfree(vdev->ctx[vector].name);
--		return PTR_ERR(trigger);
--	}
-+		/*
-+		 * The MSIx vector table resides in device memory which may be
-+		 * cleared via backdoor resets. We don't allow direct access to
-+		 * the vector table so even if a userspace driver attempts to
-+		 * save/restore around such a reset it would be unsuccessful.
-+		 * To avoid this, restore the cached value of the message prior
-+		 * to enabling.
-+		 */
-+		if (msix) {
-+			struct msi_msg msg;
- 
--	/*
--	 * The MSIx vector table resides in device memory which may be cleared
--	 * via backdoor resets. We don't allow direct access to the vector
--	 * table so even if a userspace driver attempts to save/restore around
--	 * such a reset it would be unsuccessful. To avoid this, restore the
--	 * cached value of the message prior to enabling.
--	 */
--	if (msix) {
--		struct msi_msg msg;
-+			get_cached_msi_msg(irq, &msg);
-+			pci_write_msi_msg(irq, &msg);
-+		}
- 
--		get_cached_msi_msg(irq, &msg);
--		pci_write_msi_msg(irq, &msg);
--	}
-+		ret = request_irq(irq, vfio_msihandler, 0,
-+				  vdev->ctx[vector].name, trigger);
-+		if (ret) {
-+			kfree(vdev->ctx[vector].name);
-+			eventfd_ctx_put(trigger);
-+			return ret;
-+		}
- 
--	ret = request_irq(irq, vfio_msihandler, 0,
--			  vdev->ctx[vector].name, trigger);
--	if (ret) {
--		kfree(vdev->ctx[vector].name);
--		eventfd_ctx_put(trigger);
--		return ret;
-+		vdev->ctx[vector].producer.token = trigger;
-+		vdev->ctx[vector].producer.irq = irq;
-+		vdev->ctx[vector].trigger = trigger;
- 	}
- 
--	vdev->ctx[vector].producer.token = trigger;
--	vdev->ctx[vector].producer.irq = irq;
-+	/* setup bypass connection and make irte updated */
- 	ret = irq_bypass_register_producer(&vdev->ctx[vector].producer);
- 	if (unlikely(ret))
- 		dev_info(&pdev->dev,
- 		"irq bypass producer (token %p) registration fails: %d\n",
- 		vdev->ctx[vector].producer.token, ret);
- 
--	vdev->ctx[vector].trigger = trigger;
--
- 	return 0;
- }
- 
--- 
-1.8.3.1
+  Documentation/devicetree/bindings/sound/sun8i-a33-codec.txt
 
+between commit:
+
+  aa95b4a960ab ("docs: fix a couple of new broken references")
+
+from the jc_docs tree and commit:
+
+  8a99f76ac1a5 ("ASoC: dt-bindings: Convert Allwinner A33 codec to a schema=
+")
+
+from the sound-asoc tree.
+
+I fixed it up (the latter removed the file, so I did that) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/A.PmcI=jXekuU.+wnbKcZUc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1slMMACgkQAVBC80lX
+0Gwv7QgAlJTP91u6YFVM1OZHrQUcYdIhXRuRZ88Y2tZJ2bTnNG+uFLsw30IXLaui
+Cdn97hQQ92IO23G37CeD/bpwafX4cxZHEz89aQJf1Zl7ndhIcE4r5nFeqcLKrMKE
+EYtf9Abv/mNgVLHr8fDVcHEfcbEex2Am/osceWRnhuw//VWcW9iDdnYi65VdIWmI
+1HGNeo37pglnhM2yzEHP3f07YC9U2prljT9BeOOXrP8y1opXuNHmIyNBWyG1whdt
+fspIp4PotXUEI/BezliBYCs0gvHGLoCgtEE0YYuhj3NURAisY2CyIkdGTI7Bkg9y
+aBtJ/W7dvXLaDrnLtakDu0nGnI/pDg==
+=b7Yz
+-----END PGP SIGNATURE-----
+
+--Sig_/A.PmcI=jXekuU.+wnbKcZUc--
