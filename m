@@ -2,84 +2,217 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28CDAA565E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:40:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1641BA5670
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 14:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730713AbfIBMjv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 08:39:51 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47446 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730672AbfIBMjv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:39:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4kBJEx+Qu3mSPv+hNIjzoykytvR4h7p7UM0vTM6s1vA=; b=q8ijxkngdjzFHlHeGzQ+04Tbg
-        S6qaZsvAE7t3yLIEKlaNgveLU8PEQG2luelC4qffbo8hYlHlt1e6e3nWdmNOq/bgn4pReBd87Yb+d
-        TWBi2CoUsD2MmTmBG1rq+jWZbVkwekhCsmOh7OjmPp+5rvj2fNylXm1etnnxXI3aSpWq4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i4lcX-0003GM-F8; Mon, 02 Sep 2019 12:39:45 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id B6FAE2742CCB; Mon,  2 Sep 2019 13:39:44 +0100 (BST)
-Date:   Mon, 2 Sep 2019 13:39:44 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     festevam@gmail.com, nicoleotsuka@gmail.com, Xiubo.Lee@gmail.com,
-        shengjiu.wang@nxp.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, timur@kernel.org,
-        gabrielcsmo@gmail.com, NXP Linux Team <linux-imx@nxp.com>,
-        Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>
-Subject: Re: [PATCH] ASoC: fsl_sai: Set SAI Channel Mode to Output Mode
-Message-ID: <20190902123944.GB5819@sirena.co.uk>
-References: <20190830225514.5283-1-daniel.baluta@nxp.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
-Content-Disposition: inline
-In-Reply-To: <20190830225514.5283-1-daniel.baluta@nxp.com>
-X-Cookie: Lost ticket pays maximum rate.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730805AbfIBMld (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 08:41:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40710 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730311AbfIBMlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 08:41:32 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3414C81F0E;
+        Mon,  2 Sep 2019 12:41:31 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-67.ams2.redhat.com [10.36.117.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C87AD5C207;
+        Mon,  2 Sep 2019 12:41:27 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id D6AC431EAD; Mon,  2 Sep 2019 14:41:26 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/5] drm/ttm: add drm_gem_ttm_print_info()
+Date:   Mon,  2 Sep 2019 14:41:22 +0200
+Message-Id: <20190902124126.7700-2-kraxel@redhat.com>
+In-Reply-To: <20190902124126.7700-1-kraxel@redhat.com>
+References: <20190902124126.7700-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 02 Sep 2019 12:41:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Now with ttm_buffer_object being a subclass of drm_gem_object we can
+easily lookup ttm_buffer_object for a given drm_gem_object, which in
+turm allows to create common helper functions.
 
---IiVenqGWf+H9Y6IX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch starts off with a drm_gem_ttm_print_info() helper function
+which prints adds some ttm specific lines to the debug output.
 
-On Sat, Aug 31, 2019 at 01:55:14AM +0300, Daniel Baluta wrote:
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/drm/drm_gem_ttm_helper.h     | 19 ++++++++
+ drivers/gpu/drm/drm_gem_ttm_helper.c | 67 ++++++++++++++++++++++++++++
+ Documentation/gpu/drm-mm.rst         | 12 +++++
+ drivers/gpu/drm/Kconfig              |  7 +++
+ drivers/gpu/drm/Makefile             |  3 ++
+ 5 files changed, 108 insertions(+)
+ create mode 100644 include/drm/drm_gem_ttm_helper.h
+ create mode 100644 drivers/gpu/drm/drm_gem_ttm_helper.c
 
-> Fix this by setting CHMOD to Output Mode so that pins will output zero
-> when slots are masked or channels are disabled.
+diff --git a/include/drm/drm_gem_ttm_helper.h b/include/drm/drm_gem_ttm_helper.h
+new file mode 100644
+index 000000000000..6268f89c5a48
+--- /dev/null
++++ b/include/drm/drm_gem_ttm_helper.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++#ifndef DRM_GEM_TTM_HELPER_H
++#define DRM_GEM_TTM_HELPER_H
++
++#include <linux/kernel.h>
++
++#include <drm/drm_gem.h>
++#include <drm/drm_device.h>
++#include <drm/ttm/ttm_bo_api.h>
++#include <drm/ttm/ttm_bo_driver.h>
++
++#define drm_gem_ttm_of_gem(gem_obj) \
++	container_of(gem_obj, struct ttm_buffer_object, base)
++
++void drm_gem_ttm_print_info(struct drm_printer *p, unsigned int indent,
++			    const struct drm_gem_object *gem);
++
++#endif
+diff --git a/drivers/gpu/drm/drm_gem_ttm_helper.c b/drivers/gpu/drm/drm_gem_ttm_helper.c
+new file mode 100644
+index 000000000000..cd6ac2cc8fdd
+--- /dev/null
++++ b/drivers/gpu/drm/drm_gem_ttm_helper.c
+@@ -0,0 +1,67 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include <linux/module.h>
++
++#include <drm/drm_gem_ttm_helper.h>
++
++/**
++ * DOC: overview
++ *
++ * This library provides helper functions for gem objects backed by
++ * ttm.
++ */
++
++/**
++ * drm_gem_ttm_print_info() - Print &ttm_buffer_object info for debugfs
++ * @p: DRM printer
++ * @indent: Tab indentation level
++ * @gem: GEM object
++ *
++ * This function can be used as the &drm_driver->gem_print_info callback.
++ */
++void drm_gem_ttm_print_info(struct drm_printer *p, unsigned int indent,
++			    const struct drm_gem_object *gem)
++{
++	static const char *plname[] = {
++		[ TTM_PL_SYSTEM ] = "system",
++		[ TTM_PL_TT     ] = "tt",
++		[ TTM_PL_VRAM   ] = "vram",
++		[ TTM_PL_PRIV   ] = "priv",
++
++		[ 16 ]            = "cached",
++		[ 17 ]            = "uncached",
++		[ 18 ]            = "wc",
++		[ 19 ]            = "contig",
++
++		[ 21 ]            = "pinned", /* NO_EVICT */
++		[ 22 ]            = "topdown",
++	};
++	const struct ttm_buffer_object *bo = drm_gem_ttm_of_gem(gem);
++	bool first = true;
++	unsigned int i;
++
++	for (i = 0; i < ARRAY_SIZE(plname); i++) {
++		if (!(bo->mem.placement & (1 << i)))
++			continue;
++		if (!plname[i])
++			continue;
++		if (first) {
++			first = false;
++			drm_printf_indent(p, indent, "placement=%s", plname[i]);
++		} else
++			drm_printf(p, ",%s", plname[i]);
++	}
++	if (!first)
++		drm_printf(p, "\n");
++
++	if (bo->mem.bus.is_iomem) {
++		drm_printf_indent(p, indent, "bus.base=%lx\n",
++				  (unsigned long)bo->mem.bus.base);
++		drm_printf_indent(p, indent, "bus.offset=%lx\n",
++				  (unsigned long)bo->mem.bus.offset);
++	}
++}
++EXPORT_SYMBOL(drm_gem_ttm_print_info);
++
++MODULE_DESCRIPTION("DRM gem ttm helpers");
++MODULE_LICENSE("GPL");
+diff --git a/Documentation/gpu/drm-mm.rst b/Documentation/gpu/drm-mm.rst
+index b664f054c259..a70a1d9f30ec 100644
+--- a/Documentation/gpu/drm-mm.rst
++++ b/Documentation/gpu/drm-mm.rst
+@@ -412,6 +412,18 @@ VRAM MM Helper Functions Reference
+ .. kernel-doc:: drivers/gpu/drm/drm_vram_mm_helper.c
+    :export:
+ 
++GEM TTM Helper Functions Reference
++-----------------------------------
++
++.. kernel-doc:: drivers/gpu/drm/drm_gem_ttm_helper.c
++   :doc: overview
++
++.. kernel-doc:: include/drm/drm_gem_ttm_helper.h
++   :internal:
++
++.. kernel-doc:: drivers/gpu/drm/drm_gem_ttm_helper.c
++   :export:
++
+ VMA Offset Manager
+ ==================
+ 
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index e6f40fb54c9a..f7b25519f95c 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -172,6 +172,13 @@ config DRM_VRAM_HELPER
+ 	help
+ 	  Helpers for VRAM memory management
+ 
++config DRM_TTM_HELPER
++	tristate
++	depends on DRM
++	select DRM_TTM
++	help
++	  Helpers for ttm-based gem objects
++
+ config DRM_GEM_CMA_HELPER
+ 	bool
+ 	depends on DRM
+diff --git a/drivers/gpu/drm/Makefile b/drivers/gpu/drm/Makefile
+index 10f8329a8b71..545c61d6528b 100644
+--- a/drivers/gpu/drm/Makefile
++++ b/drivers/gpu/drm/Makefile
+@@ -37,6 +37,9 @@ drm_vram_helper-y := drm_gem_vram_helper.o \
+ 		     drm_vram_mm_helper.o
+ obj-$(CONFIG_DRM_VRAM_HELPER) += drm_vram_helper.o
+ 
++drm_ttm_helper-y := drm_gem_ttm_helper.o
++obj-$(CONFIG_DRM_TTM_HELPER) += drm_ttm_helper.o
++
+ drm_kms_helper-y := drm_crtc_helper.o drm_dp_helper.o drm_dsc.o drm_probe_helper.o \
+ 		drm_plane_helper.o drm_dp_mst_topology.o drm_atomic_helper.o \
+ 		drm_kms_helper_common.o drm_dp_dual_mode_helper.o \
+-- 
+2.18.1
 
-This patch seems to do this unconditionally.  This is fine for
-configurations where the SoC is the only thing driving the bus but will
-mean that for TDM configurations where something else also drives some
-of the slots we'll end up with both devices driving simultaneously.  The
-safest thing would be to set this only if TDM isn't configured.
-
---IiVenqGWf+H9Y6IX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1tDY8ACgkQJNaLcl1U
-h9B6eQf/fWHBjGPAP86B03a4INm+HF3NUTJW3RUX7OufxZ6nXwI99zy/47e5hK4r
-RrYrDlh5Ybe5Dl6gK1/4VrO/SFMg6PyOJjpjwAijXRjW3y3CqiZe5e9bhLVoIcrM
-zAERB9q0o82bPAsKxlCqkG69MKZrHnDPH7pBAXM2kPRyn6QXQwWV8qqE2Rpfkto2
-ZprQEwsRlwatAPn4WfHBN7OsZy3BeVZqhT2VLD9GkF0zBdBhZEvO4opbj7cbQHdc
-Jdrw3AFvgUYHsjsNx+x1uVVy7DY1r/V2yh8ly8+WMn204eYDR8aKnm5oO0OpoN6o
-ibcFAnroXympSUaJvtWjiAzS0QBTBQ==
-=Wb+0
------END PGP SIGNATURE-----
-
---IiVenqGWf+H9Y6IX--
