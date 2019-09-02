@@ -2,130 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4074A51CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:35:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2405AA51D8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:36:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730247AbfIBIeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:34:24 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:53545 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729722AbfIBIeX (ORCPT
+        id S1730380AbfIBIfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:35:39 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:15162 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729459AbfIBIfj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:34:23 -0400
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7C8FA21E97;
-        Mon,  2 Sep 2019 04:34:22 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 02 Sep 2019 04:34:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-         h=date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=hMX0v7CVKYm4kqWEV/5zzQLKbi7
-        6ItOnSoow9qKgaMA=; b=EU0ACbEHdb4vy1KVDI47ff3Q+7n+IuOrLXYx7hpNr99
-        k65FClt1YVal3bcGmWXNjX+nqF5YsuQRpbxxp/QMkCHR4Pz9t6hAq8Ck7V9qTXBK
-        PgGcM8X0B2+DLOahZHq+7kCKZ4LwbBpOw6IY3xGd39mb511RqlvgdhZVxDh1KDRV
-        y/yp1Tf0FDqexJ8klWnz2EhFj4Di1mbZz9M6WHShHhYt4XWMI4Nctya9Bzd25h22
-        78DeUl4iY02kEQJ08oaDO7VAAuxhxKrDAJANm8igF9/a2e4qsGtQAmY3nXRgxfQK
-        zy45DqsY3lEHgRo47Mb91XxgNolD9ZI7E7/K1yIkAhw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=hMX0v7
-        CVKYm4kqWEV/5zzQLKbi76ItOnSoow9qKgaMA=; b=uDQx1bIc9jLTQVHqo9w/iI
-        AZwn/Yu9Q+mIGCynEzM3cyre5Ax7AXkQ5rNI3YMOu1s63ZrMecGWNoW81UJ6Uny0
-        4KCLRWapBo5hD5V4zaBdTO0ZzR41pu4ObgLJAz0RJ3+krwl6AFFwuF4h3XMXASfS
-        SLEbJW7uF9SdSqRg2QGrA3ZZOsx2EZ3eeNJgavjZ+bu+VcfcIZMTd56Qg3Wj3n7g
-        ntNFG7woqPqRDOU2m9zMPeDnCXssFy0Pcb4XBw8iNEsFcluocbhkMfc1bgwu9FqH
-        VSMhLoCOIJnJtSDtBjTdAWtu7mRHhMOxuF/eCwCxikIZXM6fq2nmfOmmaxVk0wKg
-        ==
-X-ME-Sender: <xms:DdRsXdxEDnRDkeGVpEmsKuwtPRPDTlMSKHmyzwGj-W87BfP0eFjrRA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudejtddgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepvfgrkhgr
-    shhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhird
-    hjpheqnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudegrdefrdejhedr
-    udekudenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmh
-    hotggthhhirdhjphenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:DdRsXZnma0Cuao4jLQWnXvqn4nJNAA7ZadOPmowzV9vCYaVSdITycA>
-    <xmx:DdRsXaGuKbFSXbqWEsh9k_hXTpNCgiiis6JUAnsPiFmIOYrys-Bepw>
-    <xmx:DdRsXRWgo1RK_IWUlqa5jZ0zs5MnA6xZNkzjKKL5_Thaou9DVF2cyg>
-    <xmx:DtRsXcB7l1PPWjV1Rsx97xSXelYPDucE5U2q0MU2L6Py1kFBT4esjg>
-Received: from workstation (ae075181.dynamic.ppp.asahi-net.or.jp [14.3.75.181])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E8F408005B;
-        Mon,  2 Sep 2019 04:34:19 -0400 (EDT)
-Date:   Mon, 2 Sep 2019 17:34:17 +0900
-From:   Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     clemens@ladisch.de, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: update entry of firewire audio drivers
-Message-ID: <20190902083416.GA14883@workstation>
-Mail-Followup-To: Takashi Iwai <tiwai@suse.de>, clemens@ladisch.de,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20190830132446.5154-1-o-takashi@sakamocchi.jp>
- <s5h4l1xl5im.wl-tiwai@suse.de>
+        Mon, 2 Sep 2019 04:35:39 -0400
+X-UUID: 5c2a12c169cf47e4a0c810056e94d8ec-20190902
+X-UUID: 5c2a12c169cf47e4a0c810056e94d8ec-20190902
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1645724099; Mon, 02 Sep 2019 16:35:32 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 2 Sep 2019 16:35:32 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 2 Sep 2019 16:35:32 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v1 0/3] Runtime PM support for MT8183 mcucfg clock provider
+Date:   Mon, 2 Sep 2019 16:35:07 +0800
+Message-ID: <1567413310-2589-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <s5h4l1xl5im.wl-tiwai@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 31, 2019 at 05:27:13PM +0200, Takashi Iwai wrote:
-> On Fri, 30 Aug 2019 15:24:46 +0200,
-> Takashi Sakamoto wrote:
-> > 
-> > This commit adds myself as one of maintainers for firewire audio
-> > drivers and IEC 61883-1/6 packet streaming engine. I call them ALSA
-> > firewire stack as a whole.
-> > 
-> > 6 years ago I joined in development for this category of drivers with
-> > heavy reverse-engineering tasks and over 100 models are now available
-> > from ALSA applications. IEEE 1394 bus itself and units on the bus are
-> > enough legacy but the development still continues.
-> > 
-> > I have a plan to add drastic enhancement in kernel v5.5 and v5.6 period.
-> > This commit adds myself into MAINTAINERS so that developers and users
-> > can easily find active developer to post their issues, especially for
-> > regression.
-> > 
-> > Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> 
-> Applied now (with a typo correction -- a superfluous '+' was added).
-> Thanks.
-> 
-> 
-> Takashi
- 
-Oops, thanks for your care to my typo...
+This series is based on v5.3-rc1 and Mediatek MT8183 scpsys support v7[1].
+Since Runtime PM is supported in Common Clock Framework which keeps
+clock controller's power domain enabled to ensure clock status accessing correctly.
 
-> > ---
-> >  MAINTAINERS | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 24e29b2e53c9..8929a2ec75f7 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -6264,8 +6264,9 @@ S:	Maintained
-> >  F:	drivers/hwmon/f75375s.c
-> >  F:	include/linux/f75375s.h
-> >  
-> > -FIREWIRE AUDIO DRIVERS
-> > +FIREWIRE AUDIO DRIVERS and IEC 61883-1/6 PACKET STREAMING ENGINE
-> >  M:	Clemens Ladisch <clemens@ladisch.de>
-> > ++M:	Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> >  L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-> >  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
-> >  S:	Maintained
-> > -- 
-> > 2.20.1
-> > 
+[1] https://patchwork.kernel.org/cover/11118371/
 
+---
 
-Regards
+Weiyi Lu (3):
+  clk: mediatek: Register clock gate with device
+  clk: mediatek: Runtime PM support for MT8183 mcucfg clock provider
+  arm64: dts: Add power-domains properity to mfgcfg
 
-Takashi Sakamoto
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi |  1 +
+ drivers/clk/mediatek/clk-gate.c          |  5 +++--
+ drivers/clk/mediatek/clk-gate.h          |  3 ++-
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c |  7 +++++--
+ drivers/clk/mediatek/clk-mtk.c           | 16 +++++++++++++---
+ drivers/clk/mediatek/clk-mtk.h           |  5 +++++
+ 6 files changed, 29 insertions(+), 8 deletions(-)
+
