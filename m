@@ -2,85 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF81FA5CD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 21:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5F6CA5CDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 22:06:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbfIBT5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 15:57:09 -0400
-Received: from sonic302-22.consmr.mail.ne1.yahoo.com ([66.163.186.148]:32862
-        "EHLO sonic302-22.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727188AbfIBT5J (ORCPT
+        id S1727314AbfIBUGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 16:06:40 -0400
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:48373 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727188AbfIBUGj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 15:57:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567454227; bh=yqDabFs/2ajL4+uqvl75CNrBfWTfbOsHh54Xr0A4zFM=; h=Date:From:Reply-To:Subject:From:Subject; b=Ra929z85qvL5NSy3DtTXhFT48p7LzHDF2FOc8FOWdlhF48iSSV1hvujpqEBJN14AQHVTMMEEvjekllDeI4SyMlhrL7Ls0eh4zSr/xueFvAfdTjMYdcgdHUzSR8zLfH+h8SaT+X9weh3jSpCewylH8iu5sUhWP0A43JEITGRfOKEMoyuwBOOcBATREPk97VA2p6rwwWkKMf5KTIuTG6uu7AfS9L1V4d9Ctgc20MgtcaApdjgnJMwl4oTxMtnhYX31pdVdf6ttU6dUGon+HXN45FvVeAoxsJaVRP0EIg+NlczLyZdQ7e7drmKY918Po6yO62RLKJbJ5oB+4qP8xiJDkA==
-X-YMail-OSG: a5faxnAVM1mAmncQm1mZLflfb34TQk4pAdslnOyCynn.WlXSxpSlWXQ04wGgVds
- W3cMTNICC5yLOVMxLBHLkQAHngBKUOYxsc6kLjMKmq.HoBwX_MHclWYRLrjF97Ssf1AjmVyzph95
- 8_0FuyReSyueLDzGZLGKr9KlCfvvjzbMVkCc1x3Jbq7qQjdL_2ZROUUnJRgzfDyBsm1durETP7XU
- JvZmH.r5PjGlUt3iOXiJqrSaLGv.5ZG.WrbiIeLslrWjPJBEJrpk9rL.0vb1kiF9_Buia0gkQHKn
- z45Uqt8RJivs370c1KKuYupTR_L2LwXHbOFlR60Jp3E8H5tlN0L5768bHyTYxC9CXxYy3YUb2W84
- y6J1Yt3GSvyVoaA0ideE.kaBxs5aVLneqMFEypHbTLxsjjY39qYF5Unp2ZzZn2xDvNXue41mUdpX
- GIq9BYB2uAqWVXOx9bcsE4DCpnygYAX3zW4zu07Z_A9a6JpxtSH8TBG3faErOxcXorkF9TLvCXPl
- .mpDaUc7ph_NptGHOeY3_dJmmfwCPKGTPa4KGRWSQz8zSkc3YRmLtVy4L4w4wyuLv5QZXH.A0uAf
- mdhR5GTiQ_Cn1YvbRk._2b18nVl.Aw1qB1pX3bBwxqoYj0rF3YD3cMsAZyOinwsLLoJMx6TkqMzh
- 1l3NHD1ajJUQH7oAu6jQSgaxs9Bhs_rYu5iyYJ_edXOuoptsMe_niRLuVoCGzNiDRzUmx5rKSUWG
- gDwYzHw3ap3wakz0URailELMq05YUjWMRiLEl2_0VeKED5Pgtia_TA.RB.1kyzH0VK5S4B3bYAIh
- 0x1XmrkN36O31hXVgiDPzeId74i9IwIM1rRSUe.Q4lSC97mRISHosA8J0dWFjicHZem24__16ORu
- JbQZJSWJ4FwyWY.UBEAyUgnMDOcxhyFdeqRkU2r3jZPuz7of1tgAAviT0HrWvYf_5Xlvvj2ArIVH
- PBmQxmbqZymi7knTz7KFWb_39dOSZxzGjuNplxTVGb2.ok_TOa5TR.qL4sg09OlkwFkNA3mGkGgh
- wA8xCW7LQnABNCTnwjx_TOrvWWghv4TKpymlaECCEmuWMP_WAPtya0a_c2xlJNE3EL14cCn4AIMw
- W6ZBs7Y3ZbqA0w5ds7TVO27GSfSyUcHEHBGMfgjySFKUx4BHRWBQztazA4fvUzGRpK1HiqqXel.2
- nb0Eynn4vSEtV.pNynCHVd3_kC8ZVoDQMkFiWcNl3_3MJ6Ayf9b9quxe9MOpmlgo-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 2 Sep 2019 19:57:07 +0000
-Date:   Mon, 2 Sep 2019 19:57:05 +0000 (UTC)
-From:   Elizabeth Edwards <mrselizabethedward1@gmail.com>
-Reply-To: ee3201366@gmail.com
-Message-ID: <580419624.1325005.1567454225426@mail.yahoo.com>
-Subject: Dear Friend,
+        Mon, 2 Sep 2019 16:06:39 -0400
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailout.west.internal (Postfix) with ESMTP id 1320362E;
+        Mon,  2 Sep 2019 16:06:38 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 02 Sep 2019 16:06:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=FAvLTBXJMFp5nXcvx3Bo9G6BMhn
+        oFVSkwgAThvpzQ0E=; b=PuLFFvJjjydqsD5PPNNZ/EcQZjy+LhTeYQefaKT8Qp9
+        ZJAj6L5Q0pWL4b+GcJ9bRp6JlDflgcd5CkdnvC1VIqsy+RciDYu4Qw4DNr9wOJCT
+        9N7f+Ng+yKQz0lmoAhfrpmIBn5ALb4ULIba8Uh6SceejMi8UsKqN3G+5Bfr4ttQp
+        4dcXulj4ML9ZHPiUPCa3F7AZ8wi/69c2H3dP+mAhgjKtTiuJ0BhYCDjwMmxw3Gi2
+        1M/O5G6DodkOt6hbEeSWjPTk42lIjmnmcfaFJpV+U6CMBv9Iv+7UXOJ3vMDYgDJU
+        U8n7Tg2uzYaUMABUToOmZlzRSxAmJcDvIzmCAeXrSng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=FAvLTB
+        XJMFp5nXcvx3Bo9G6BMhnoFVSkwgAThvpzQ0E=; b=fSM/lWN9/3VELwVFPVJ+4+
+        1dNc2eE/MONH7bQIu9vMRBceWDnizYiaWFw7MxTApeEqMxDRAvuejedQZXCDvdQf
+        YcyTyrl231eIc8ksNVntlyokmcp9AplYkaouSnPE67enZCVclVtJamWzBWNsKyCe
+        LMxA0ZvGqdHYYZMlvo/Rxx2BFgNGIIqJ1W7VRr1H8UBb0BplWeaSBVmOBCF/p9rR
+        GkXLybx2cyWjtZ73VKN+b54Zh8hKgGWkd1BPndKw/6DMb4faImPh9+w8thd0uXXB
+        3ak04VjeonTWMqxK3rmgEJkUyKeWvUFUDOkQhC9Pfg0H/DO1G/BxbgbqZjcMH5ag
+        ==
+X-ME-Sender: <xms:TXZtXXhBJm3zcYNoJEFv2vrb5bCNo_IehKJ90wRZYc42iuKe1nd-aA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudejtddgudeghecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrd
+    dutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhen
+    ucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:TXZtXf9uAIxB67ewV0loxu7hjkDYEpHTKSgix7j8J6B_Zno3VS-Eqg>
+    <xmx:TXZtXdP43TexLhjYdeypHMTmntaNRVRyBm08QRRSLOuRbvlO54lCjw>
+    <xmx:TXZtXapcOrZ2PIdbElxYG3fXAAG0KYWdvRevkc5Prbp77Tb5cPxktA>
+    <xmx:TXZtXY2szrMMwnkilSWtjDljCPNpRJHXLc2FYwd6pGBbZ6ge_427Qw>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 196D0D6005F;
+        Mon,  2 Sep 2019 16:06:37 -0400 (EDT)
+Date:   Mon, 2 Sep 2019 22:06:35 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Kalle Valo <kvalo@codeaurora.org>, Hui Peng <benquike@gmail.com>,
+        security@kernel.org, Mathias Payer <mathias.payer@nebelwelt.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix a double free bug in rsi_91x_deinit
+Message-ID: <20190902200635.GA29465@kroah.com>
+References: <20190819220230.10597-1-benquike@gmail.com>
+ <20190831181852.GA22160@roeck-us.net>
+ <87k1asqw87.fsf@kamboji.qca.qualcomm.com>
+ <385361d3-048e-9b3f-c749-aa5861e397e7@roeck-us.net>
+ <20190902184722.GC5697@kroah.com>
+ <804fb4dc-23e5-3442-c64e-9857d61d6b6c@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <804fb4dc-23e5-3442-c64e-9857d61d6b6c@roeck-us.net>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 02, 2019 at 12:32:37PM -0700, Guenter Roeck wrote:
+> On 9/2/19 11:47 AM, Greg KH wrote:
+> > On Sun, Sep 01, 2019 at 07:08:29AM -0700, Guenter Roeck wrote:
+> > > On 9/1/19 1:03 AM, Kalle Valo wrote:
+> > > > Guenter Roeck <linux@roeck-us.net> writes:
+> > > > 
+> > > > > On Mon, Aug 19, 2019 at 06:02:29PM -0400, Hui Peng wrote:
+> > > > > > `dev` (struct rsi_91x_usbdev *) field of adapter
+> > > > > > (struct rsi_91x_usbdev *) is allocated  and initialized in
+> > > > > > `rsi_init_usb_interface`. If any error is detected in information
+> > > > > > read from the device side,  `rsi_init_usb_interface` will be
+> > > > > > freed. However, in the higher level error handling code in
+> > > > > > `rsi_probe`, if error is detected, `rsi_91x_deinit` is called
+> > > > > > again, in which `dev` will be freed again, resulting double free.
+> > > > > > 
+> > > > > > This patch fixes the double free by removing the free operation on
+> > > > > > `dev` in `rsi_init_usb_interface`, because `rsi_91x_deinit` is also
+> > > > > > used in `rsi_disconnect`, in that code path, the `dev` field is not
+> > > > > >    (and thus needs to be) freed.
+> > > > > > 
+> > > > > > This bug was found in v4.19, but is also present in the latest version
+> > > > > > of kernel.
+> > > > > > 
+> > > > > > Reported-by: Hui Peng <benquike@gmail.com>
+> > > > > > Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+> > > > > > Signed-off-by: Hui Peng <benquike@gmail.com>
+> > > > > 
+> > > > > FWIW:
+> > > > > 
+> > > > > Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> > > > > 
+> > > > > This patch is listed as fix for CVE-2019-15504, which has a CVSS 2.0 score
+> > > > > of 10.0 (high) and CVSS 3.0 score of 9.8 (critical).
+> > > > 
+> > > > A double free in error path is considered as a critical CVE issue? I'm
+> > > > very curious, why is that?
+> > > > 
+> > > 
+> > > You'd have to ask the people assigning CVSS scores. However, if the memory
+> > > was reallocated, that reallocated memory (which is still in use) is freed.
+> > > Then all kinds of bad things can happen.
+> > 
+> > Yes, but moving from "bad things _can_ happen" to "bad things happen" in
+> > an instance like this will be a tough task.  It also requires physical
+> > access to the machine.
+> > 
+> 
+> Is this correct even with usbip enabled ?
 
+Who has usbip enabled anywhere?  :)
 
-Dear Friend,
+I don't know if usbip can trigger this type of thing, maybe someone
+needs to test that...
 
-Please forgive me for stressing you with my predicaments as I know that thi=
-s letter may come to you as big surprise. Actually, as my pastor advised me=
- to reject earthly reward and thanks by handing the project to someone I ha=
-ve never seen or met for a greater reward in heaven awaits for whoever can =
-give such a costly donation. I came across your E-mail from my personal sea=
-rch, and I decided to email you directly believing that you will be honest =
-to fulfill my final wish before or after my death.
+thanks,
 
-Meanwhile, I am Madam Elizabeth Edwards, 73 years, am from USA, still child=
-less. I am suffering from Adenocarcinoma Cancer of the lungs for the past 8=
- years and from all indication my condition is really deteriorating as my d=
-octors have confirmed and courageously advised me that I may not live beyon=
-d 2 weeks from now for the reason that my tumor has reached a critical stag=
-e which has defiled all forms of medical treatment.
-
-Since my days are numbered, I=E2=80=99ve decided willingly to fulfill my lo=
-ng-time vow to donate to the underprivileged the sum of Eighteen million fi=
-ve hundred thousand dollars ($18.5m) I deposited in a different account ove=
-r 8 years now because I have tried to handle this project by myself but I h=
-ave seen that my health could not allow me to do so anymore. My promise for=
- the poor includes building of well-equipped charity foundation hospital an=
-d a technical school for their survival.
-
-If you will be honest, kind and willing to assist me handle this charity pr=
-oject as I=E2=80=99ve mentioned here, I will like you to provide me your pe=
-rsonal data like. Contact me through this email address (elisabethe1981@mai=
-l.com) and also send me your private email address.
-
-(1) Your full name:
-(2) country:
-(3) phone number:
-(4) Age:
-
-Best Regards!
-Mrs. Elizabeth Edwards
+greg k-h
