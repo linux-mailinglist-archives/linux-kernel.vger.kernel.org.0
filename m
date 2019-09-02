@@ -2,86 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5465BA5B01
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 18:01:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 425A9A5B0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 18:03:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbfIBQBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 12:01:48 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5541 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726571AbfIBQBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 12:01:47 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 09:01:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,459,1559545200"; 
-   d="scan'208";a="357510056"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga005.jf.intel.com with ESMTP; 02 Sep 2019 09:01:42 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1i4olv-0004WG-EM; Mon, 02 Sep 2019 19:01:39 +0300
-Date:   Mon, 2 Sep 2019 19:01:39 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
-        linux-trace-devel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH v4 07/11] lib/vsprintf: Remove support for %pF and %pf in
- favour of %pS and %ps
-Message-ID: <20190902160139.GQ2680@smile.fi.intel.com>
-References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
- <20190902083240.20367-8-sakari.ailus@linux.intel.com>
- <20190902143935.xtd44jdvhjuc2wxe@pathway.suse.cz>
+        id S1726214AbfIBQDw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 12:03:52 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35035 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbfIBQDv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 12:03:51 -0400
+Received: by mail-wm1-f65.google.com with SMTP id n10so4480364wmj.0
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 09:03:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U9IqFz/rCcEzO9sp+80zoE9eGKQjzJcJCmdp79nsgKY=;
+        b=IoMj7wcRG5nrP1XZaokIgDQnJyPnhAsLUVzLVD+Y8a8n/Got9Tn4fTRNNAJzAJb4ci
+         byoY/In8Thaj/JTsbIo2F/izij0ckD+1KyFNX3wY8oWfSTBPd5Gqj9cUf7Lt5H3ol542
+         zF1TAGtzpa/at4wONaXeiX8rsnq68UC7i1L/8167bMVgz3eIW16ogAVrL3PAz2lkb3bU
+         JsqtrD4Ofl+CQFrU3p+7WyLY+ze5o84brxNX3Yfkulv0WB3GeuAGxguHff6ZiE224lHm
+         +cTpR4N2jhxq9kMz2Z8/Bfd0jxDNQH1Jsq3avRw9Hdgm5QLOZ57HePqlFyDSNTOYb+du
+         nKHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U9IqFz/rCcEzO9sp+80zoE9eGKQjzJcJCmdp79nsgKY=;
+        b=LfiWGzrKo8TQsbVOzTTqLLQqNA7jdZI/4EiXyz4lfFkYkb544d/bqrtfVtSACQ13z3
+         rtRzCBZ3BycpIA+fFsgS9t4r+SgoLWIexkOHNFigRoeLYZulOKGTvkt2gF9jmNDVBOoY
+         /TCvxvOaJxqhbe84buE9XHdvB3iGj82vBBzR/WBFfL6GK3JRqTk9mjj4Ydp6jTKJXwhK
+         KAxEwBhdtbL2QF7QIokioJzOcJtI0NKowpwGHDyYPI2UIG0ApfUvAW0Oo2MwBXXa0Hlo
+         jHlk4hM3AZsGN/+qiy/NPSPIckXCCymH2+XRrxurllG/eN1Ey4nY4f1FkoxOI3YKYq77
+         +hZg==
+X-Gm-Message-State: APjAAAWZoBrcILVdJsGwFKYzYYrXufyJEk4ieyo0aemzbPUXjBhFEFvM
+        wH8wdRWQxDH/ObJUAvqEF079ag==
+X-Google-Smtp-Source: APXvYqzzmST/34EWEs+z7TaicJFBkWqMl5acy9cm3cF71CYOV64yFL+lf6O3kMjOc4sDbgGKLWB+PQ==
+X-Received: by 2002:a7b:cc0f:: with SMTP id f15mr36009973wmh.39.1567440229675;
+        Mon, 02 Sep 2019 09:03:49 -0700 (PDT)
+Received: from starbuck.baylibre.local (uluru.liltaz.com. [163.172.81.188])
+        by smtp.googlemail.com with ESMTPSA id f15sm7507365wml.8.2019.09.02.09.03.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2019 09:03:49 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: meson: sm1: set gpio interrupt controller compatible
+Date:   Mon,  2 Sep 2019 18:03:34 +0200
+Message-Id: <20190902160334.14321-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902143935.xtd44jdvhjuc2wxe@pathway.suse.cz>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 04:39:35PM +0200, Petr Mladek wrote:
-> On Mon 2019-09-02 11:32:36, Sakari Ailus wrote:
-> > %pS and %ps are now the preferred conversion specifiers to print function
-> > names. The functionality is equivalent; remove the old, deprecated %pF
-> > and %pf support.
-> 
-> Hmm, I see the following in master:
-> 
-> $> git grep %pF
-> tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt:or events have "%pF" or "%pS" parameter in its format string. It is common to
-> 
-> $> git grep %pf
-> tools/lib/traceevent/event-parse.c:             if (asprintf(&format, "%%pf: (NO FORMAT FOUND at %llx)\n", addr) < 0)
-> tools/lib/traceevent/event-parse.c:     if (asprintf(&format, "%s: %s", "%pf", printk->printk) < 0)
-> 
-> I wonder how this is related to printk(). In each case, it seems
+Set the appropriate gpio interrupt controller compatible for the
+sm1 SoC family. This newer version of the controller can now
+trig irq on both edge of the input signal
 
-It's going thru binary printf() I suppose. The fist stage just saves the format
-string and argument addresses or so and prints in later on when user is looking
-for human-readable output.
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> that libtraceevent somehow implements the non-standard kernel
-> %p mofifiers. It looks error-prone to keep another %pf user
-> with the old semantic around.
-> 
-> I am adding some tracing people into CC.
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+index 521573f3a5ba..6152e928aef2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+@@ -134,6 +134,11 @@
+ 	power-domains = <&pwrc PWRC_SM1_ETH_ID>;
+ };
+ 
++&gpio_intc {
++	compatible = "amlogic,meson-sm1-gpio-intc",
++		     "amlogic,meson-gpio-intc";
++};
++
+ &pwrc {
+ 	compatible = "amlogic,meson-sm1-pwrc";
+ };
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.21.0
 
