@@ -2,97 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB8F3A5BE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 19:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 661E8A5BED
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 19:47:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbfIBRqg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 13:46:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41276 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbfIBRqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 13:46:35 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 990A8208E4;
-        Mon,  2 Sep 2019 17:46:33 +0000 (UTC)
-Date:   Mon, 2 Sep 2019 19:46:31 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: linux-next: Tree for Sep 2 (exfat)
-Message-ID: <20190902174631.GB31445@kroah.com>
-References: <20190902224310.208575dc@canb.auug.org.au>
- <cecc2af6-7ef6-29f6-569e-b591365e45ad@infradead.org>
+        id S1726795AbfIBRrt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 13:47:49 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:51096 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfIBRrt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 13:47:49 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.92)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1i4qQc-0007E3-4d; Mon, 02 Sep 2019 13:47:46 -0400
+Message-ID: <9b5ce5b9b5404fb955d6f55a246f3971cedb06cf.camel@surriel.com>
+Subject: Re: [PATCH 08/15] sched,fair: simplify timeslice length code
+From:   Rik van Riel <riel@surriel.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Kernel Team <kernel-team@fb.com>, Paul Turner <pjt@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mel Gorman <mgorman@techsingularity.net>
+Date:   Mon, 02 Sep 2019 13:47:45 -0400
+In-Reply-To: <CAKfTPtBddg=_cDU7YDnk19uUjtSP+82fE7Yb28KPrSctimGNdQ@mail.gmail.com>
+References: <20190822021740.15554-1-riel@surriel.com>
+         <20190822021740.15554-9-riel@surriel.com>
+         <CAKfTPtDxHijR3PCOFfxA-r02rf2hVP4LpB=y-9emHS7znTPxTA@mail.gmail.com>
+         <d703071084dadb477b8248b041d0d1aa730d65cd.camel@surriel.com>
+         <CAKfTPtDX+keNfNxf78yMoF3QaXSG_fZHJ_nqCFKYDMYGa84A6Q@mail.gmail.com>
+         <2a87463e8a51c34733e9c1fcf63380f9caa7afc4.camel@surriel.com>
+         <CAKfTPtCAU7bT3sJ_FPexqKrfFzd8Yk0hVTEB5Da=+VbqPViXpA@mail.gmail.com>
+         <2d3af2a8b6a433ea44a4605fc8b43bd0758102eb.camel@surriel.com>
+         <CAKfTPtBddg=_cDU7YDnk19uUjtSP+82fE7Yb28KPrSctimGNdQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-PLyN8MxfQTCvRx0FvTWn"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cecc2af6-7ef6-29f6-569e-b591365e45ad@infradead.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 10:39:39AM -0700, Randy Dunlap wrote:
-> On 9/2/19 5:43 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > News: I will only be doing 2 more releases before I leave for Kernel
-> > Summit (there may be some reports on Thursday, but I doubt I will have
-> > time to finish the full release) and then no more until Sept 30.
-> > 
-> > Changes since 20190830:
-> > 
-> 
-> Hi,
-> I am seeing lots of exfat build errors when CONFIG_BLOCK is not set/enabled.
-> Maybe its Kconfig should also say
-> 	depends on BLOCK
-> ?
 
-Here's what I committed to my tree:
+--=-PLyN8MxfQTCvRx0FvTWn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, 2019-09-02 at 09:51 +0200, Vincent Guittot wrote:
+> On Fri, 30 Aug 2019 at 17:02, Rik van Riel <riel@surriel.com> wrote:
 
-From e2b880d3d1afaa5cad108c29be3e307b1917d195 Mon Sep 17 00:00:00 2001
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Mon, 2 Sep 2019 19:45:06 +0200
-Subject: staging: exfat: make exfat depend on BLOCK
+> > I would be more than happy to drop this patch if you
+> > prefer. Just let me know.
+>=20
+> If i'm  not wrong, this change is not mandatory to flatten the
+> runqueue and because of the possible impact if you would prefer to
+> drop it from this serie
 
-This should fix a build error in some configurations when CONFIG_BLOCK
-is not selected.  Also properly set the dependancy for no FAT support at
-the same time.
+OK, will do.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Valdis Kletnieks <valdis.kletnieks@vt.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/staging/exfat/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+--=20
+All Rights Reversed.
 
-diff --git a/drivers/staging/exfat/Kconfig b/drivers/staging/exfat/Kconfig
-index f52129c67f97..290dbfc7ace1 100644
---- a/drivers/staging/exfat/Kconfig
-+++ b/drivers/staging/exfat/Kconfig
-@@ -1,11 +1,13 @@
- config EXFAT_FS
- 	tristate "exFAT fs support"
-+	depends on BLOCK
- 	select NLS
- 	help
- 	  This adds support for the exFAT file system.
- 
- config EXFAT_DONT_MOUNT_VFAT
- 	bool "Prohibit mounting of fat/vfat filesysems by exFAT"
-+	depends on EXFAT_FS
- 	default y
- 	help
- 	  By default, the exFAT driver will only mount exFAT filesystems, and refuse
--- 
-2.23.0
+--=-PLyN8MxfQTCvRx0FvTWn
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAl1tVcEACgkQznnekoTE
+3oNftwgAkftA1vPMK0kgSsybNa1IA9tj1ZPXbhXsmCoJAWDR6HdkcH0mTF5VB5fP
+q0Bz/dJH/RB/CcAWeDO8PhjTBTq5mjAHY9VZ82JzKHqdjvWeXBBS7aplGBAMD3VM
+dmSwS/mJ1XDEI+OEK+Wo1iaBLAoKViEkChxrvEAKjNnDyup1Lkg3jIrGqHBFg+IY
+7Ex6lNYLy2575MBGZfPPiSNM0Oy+GW1xlWXC/jL/2r2BCFlu7gKB4z56vOrm2/1Q
+/4AVhPJtLPMeLxJlWaj4r3rBl+Y/cf2z5Vgp2YJtIOllvyU9+EMuR32LwECU+Q6N
+On4VtCde5nje3NzT8Cw9g3OM4kElmA==
+=lqk0
+-----END PGP SIGNATURE-----
+
+--=-PLyN8MxfQTCvRx0FvTWn--
 
