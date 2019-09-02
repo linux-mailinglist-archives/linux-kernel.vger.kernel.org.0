@@ -2,70 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E186A5A0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 17:03:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE7D5A5A14
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 17:03:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731779AbfIBPBz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 11:01:55 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:41766 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730234AbfIBPBy (ORCPT
+        id S1731819AbfIBPCl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 11:02:41 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35573 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726382AbfIBPCl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 11:01:54 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1i4nq4-00007n-OK; Mon, 02 Sep 2019 15:01:52 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][cifs-next] cifs: fix dereference on ses before it is null checked
-Date:   Mon,  2 Sep 2019 16:01:52 +0100
-Message-Id: <20190902150152.21550-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 2 Sep 2019 11:02:41 -0400
+Received: by mail-wm1-f67.google.com with SMTP id n10so4281192wmj.0;
+        Mon, 02 Sep 2019 08:02:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=826HRnOO9gkPFIbB6Az28aCXDDsohCiv0HYoetjg0Tw=;
+        b=YKK1Dc/t6JefTK6vXu4TYoLNrZTKJMv5Zw6IRA0Fal8fSYaLzlMhLkMyz3jB7oh6WD
+         fBg+ljEgDjHzxjRrBxcLDkN+Px+34uFyxdi3HeZbNMHms9QVbRy7QYUtL92aGlUYXL2P
+         ME6JyI3pQoZPJg4djWuZllVc3NEiAnmpHVcAymDFyWk2SUBXR0W0tKcRnsVhahUQUkYA
+         UpOYhXPgbcc0Q4NbFWGGIaF/I0lxaIMS/rM3R6FMdXyaHKwsAlo5jLVvcZ6YrWsMXVE2
+         YyoLprnor68vN4LqQ8PJ+XcxcKs+bOD5FZ8qg04rnjpW0YezQvwoXMm5M0J0cPz/ZQns
+         Be7w==
+X-Gm-Message-State: APjAAAXWL736BNBexBePCa5eNghoOYHUCXt8ZgqYjiCNVhw4l7giDWnN
+        bs5ecBDJNYcmfXL/QnJCDw==
+X-Google-Smtp-Source: APXvYqwsFN2l5tkC+JBs24eIH7Pw0qd/XKAB/LcbG00xDIV0/3XXEc7ZO1aOKZ92BEnOCqOMH/fXTw==
+X-Received: by 2002:a1c:7513:: with SMTP id o19mr35701342wmc.126.1567436559727;
+        Mon, 02 Sep 2019 08:02:39 -0700 (PDT)
+Received: from localhost ([212.187.182.166])
+        by smtp.gmail.com with ESMTPSA id t22sm11681028wmi.11.2019.09.02.08.02.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2019 08:02:39 -0700 (PDT)
+Date:   Mon, 2 Sep 2019 16:02:38 +0100
+From:   Rob Herring <robh@kernel.org>
+To:     David Lechner <david@lechnology.com>
+Cc:     linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
+        David Lechner <david@lechnology.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] dt-bindings: counter: new bindings for TI eQEP
+Message-ID: <20190902150238.GA30757@bogus>
+References: <20190901225827.12301-1-david@lechnology.com>
+ <20190901225827.12301-3-david@lechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190901225827.12301-3-david@lechnology.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Sun,  1 Sep 2019 17:58:23 -0500, David Lechner wrote:
+> This documents device tree binding for the Texas Instruments Enhanced
+> Quadrature Encoder Pulse (eQEP) Module found in various TI SoCs.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> ---
+> 
+> v3 changes:
+> - fixed style issues
+> - fixed generic node name
+> - (was suggested to drop descriptions since there is only one interrupt and one
+>   clock, but I opted to keep them anyway)
+> v2 changes:
+> - convert to .yaml format
+> - rename clock to "sysclkout"
+> 
+>  .../devicetree/bindings/counter/ti-eqep.yaml  | 50 +++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/counter/ti-eqep.yaml
+> 
 
-The assignment of pointer server dereferences pointer ses, however,
-this dereference occurs before ses is null checked and hence we
-have a potential null pointer dereference.  Fix this by only
-dereferencing ses after it has been null checked.
-
-Addresses-Coverity: ("Dereference before null check")
-Fixes: 2808c6639104 ("cifs: add new debugging macro cifs_server_dbg")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- fs/cifs/transport.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
-index 0d60bd2f4dca..a90bd4d75b4d 100644
---- a/fs/cifs/transport.c
-+++ b/fs/cifs/transport.c
-@@ -1242,12 +1242,13 @@ SendReceive(const unsigned int xid, struct cifs_ses *ses,
- 	struct kvec iov = { .iov_base = in_buf, .iov_len = len };
- 	struct smb_rqst rqst = { .rq_iov = &iov, .rq_nvec = 1 };
- 	struct cifs_credits credits = { .value = 1, .instance = 0 };
--	struct TCP_Server_Info *server = ses->server;
-+	struct TCP_Server_Info *server;
- 
- 	if (ses == NULL) {
- 		cifs_dbg(VFS, "Null smb session\n");
- 		return -EIO;
- 	}
-+	server = ses->server;
- 	if (server == NULL) {
- 		cifs_dbg(VFS, "Null tcp session\n");
- 		return -EIO;
--- 
-2.20.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
