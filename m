@@ -2,67 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94933A5B97
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 18:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EACFA5B8F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 18:53:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbfIBQ7C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 12:59:02 -0400
-Received: from mail.pqgruber.com ([52.59.78.55]:42188 "EHLO mail.pqgruber.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbfIBQ7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 12:59:01 -0400
-X-Greylist: delayed 549 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Sep 2019 12:59:01 EDT
-Received: from archibald.tuxnet (213-47-165-233.cable.dynamic.surfer.at [213.47.165.233])
-        by mail.pqgruber.com (Postfix) with ESMTPSA id A5989C72856;
-        Mon,  2 Sep 2019 18:49:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pqgruber.com;
-        s=mail; t=1567442990;
-        bh=oJKuoxU5eSUldooJbFfaeJ+aojy6A8Sdw5Wn6VneLAk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Gd/onljmlyWrNMZ7HsAz0c7k0fm+4N1i2XEmPvC3ppswLGreJpShCZdzv+uXc4VUe
-         swTrTtMT+KrG7ANA0qWexJZGZ6Hgpin1D/rXeLfUlghQhveDibU/HOftsyuVjf4RAR
-         UDeZ4GOtnuIe742XSrFrRWY2RuOCnmI+hUUCbf6E=
-From:   Clemens Gruber <clemens.gruber@pqgruber.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        Clemens Gruber <clemens.gruber@pqgruber.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        zhaoyang <huangzhaoyang@gmail.com>
-Subject: [PATCH] arch: arm: reuse addr variable in pfn_valid
-Date:   Mon,  2 Sep 2019 18:46:22 +0200
-Message-Id: <20190902164622.18593-1-clemens.gruber@pqgruber.com>
-X-Mailer: git-send-email 2.23.0
+        id S1726451AbfIBQxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 12:53:18 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37112 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfIBQxR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 12:53:17 -0400
+Received: by mail-lf1-f68.google.com with SMTP id w67so10843531lff.4
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 09:53:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S0sB4uJ2RkWUY64omGBSg0LTZlyK7j9RYhxymEA8xlA=;
+        b=NFAIaXSr6l5y8gVKCoFwZRdr4P8irrfci/CQRScyPHsMH4QHudio483JZryYXz/ou5
+         LtHuBaJXE/j5vobcpWloKkFG4FAkIgch+8VibdXif2QDfMQ/RGstRGPi5AxBQbg4RcHn
+         n4xLmCW4Q9i++ObIkph4wmXkym65pjuj2Qyuo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S0sB4uJ2RkWUY64omGBSg0LTZlyK7j9RYhxymEA8xlA=;
+        b=Pggsm7vJQXvI5mSEpZfRjRITgHu13fuz7ayWcGziZDPTrHN/Vy7QVlApjkOGCDmOOX
+         nneAvZ+yA9bOga1nA/88BlwJS90uk6jZN5CHxVpLCt6LLGhfpoFGg03XX3hrjjV/QIAL
+         srb6EN4H4JqvS5Vfef4ZnyzuhP9CPuOq1tX8ft+llIKRKp4LmtrboLAV1Z/+3+Ae3DZZ
+         d96msOj+JnSx76iFSwwu5YQWuh0CduO/Gma33vZyK5toBpdgrZwIj+G1P9iQTeRZn0ZY
+         zdV2Vg4VrrcKY/bLxOiDfjW73AI0yBw34/OdIyhMxOKghvD64tj3qbPybrTOBSfM7qO8
+         KJ5Q==
+X-Gm-Message-State: APjAAAWHiShlpp9boalXVwbtJ5UQgNwaDMj6BqDblj2HiAw7YOz0Q6dh
+        ZnYqInw1cqKUFKt4zGIJXaIo0YblveY=
+X-Google-Smtp-Source: APXvYqy3BPwsIpfAL+oOr9ebv7VWm4QqyfZY8kE5DwzMbNjsbEw0NostwUfdF36/cEi0R5EQ9S9NcQ==
+X-Received: by 2002:ac2:520d:: with SMTP id a13mr7024309lfl.101.1567443195485;
+        Mon, 02 Sep 2019 09:53:15 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id h25sm1279493lfj.81.2019.09.02.09.53.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2019 09:53:14 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id n19so10806168lfe.13
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 09:53:14 -0700 (PDT)
+X-Received: by 2002:a05:6512:512:: with SMTP id o18mr12184962lfb.170.1567443194206;
+ Mon, 02 Sep 2019 09:53:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <5a3e440f-4ec5-65d7-b2a4-c57fec0df973@infradead.org>
+ <CAHk-=wg4mE8pSEdWViqJBC9Teh8h1c9LrqqP6=_g8ud5hvkfmA@mail.gmail.com>
+ <CAHk-=whH+Wzj+h0WzgdLMu+xtFddokoVy8dWWvEJqJRGA_HLmw@mail.gmail.com>
+ <6184ffdd-30bf-668a-cdee-88cc8eb2ead7@infradead.org> <98c83922-6ab1-98ca-7682-7796ae1facf4@infradead.org>
+ <CAHk-=wg7BwJ7jFXxj5ZOU5VOw4Eg74TpTzip4P+LEJTYbZVhng@mail.gmail.com> <89c8b8a1-8398-7432-8ad9-599bf1c18f56@monstr.eu>
+In-Reply-To: <89c8b8a1-8398-7432-8ad9-599bf1c18f56@monstr.eu>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 2 Sep 2019 09:52:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh_6wpDHrFZEH=ra4k___apjndVfPaOMdyFxd--b5ot8g@mail.gmail.com>
+Message-ID: <CAHk-=wh_6wpDHrFZEH=ra4k___apjndVfPaOMdyFxd--b5ot8g@mail.gmail.com>
+Subject: Re: [PATCH v3] arch/microblaze: add support for get_user() of size 8 bytes
+To:     Michal Simek <monstr@monstr.eu>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Steven J. Magnani" <steve@digidescorp.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Avoid calling __pfn_to_phys twice.
+On Mon, Sep 2, 2019 at 6:17 AM Michal Simek <monstr@monstr.eu> wrote:
+>
+> Randy/Linus: Are you going create regular patch from this?
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Mike Rapoport <rppt@linux.ibm.com>
-Cc: zhaoyang <huangzhaoyang@gmail.com>
-Signed-off-by: Clemens Gruber <clemens.gruber@pqgruber.com>
----
- arch/arm/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since I can't even test it, and Randy did most of the work (and that
+last patch worked for him too), I'd suggest he just send it in as his.
 
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index 98e17388a563..a5fe2bdc76de 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -179,7 +179,7 @@ int pfn_valid(unsigned long pfn)
- 	if (__phys_to_pfn(addr) != pfn)
- 		return 0;
- 
--	return memblock_is_map_memory(__pfn_to_phys(pfn));
-+	return memblock_is_map_memory(addr);
- }
- EXPORT_SYMBOL(pfn_valid);
- #endif
--- 
-2.23.0
+You can add my acked-by or sign-of depending on how you want to do it
+(but I really don't need authorship credit, it might as well go to
+Randy).
 
+              Linus
