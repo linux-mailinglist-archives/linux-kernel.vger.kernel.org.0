@@ -2,110 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89AA8A5AB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 17:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE872A5AB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 17:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbfIBPlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 11:41:55 -0400
-Received: from mga07.intel.com ([134.134.136.100]:52936 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725807AbfIBPlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 11:41:55 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 08:41:53 -0700
-X-IronPort-AV: E=Sophos;i="5.64,459,1559545200"; 
-   d="scan'208";a="194093317"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 08:41:51 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 6E4EB20B48; Mon,  2 Sep 2019 18:41:49 +0300 (EEST)
-Date:   Mon, 2 Sep 2019 18:41:49 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 08/11] lib/vsprintf: Make use of fwnode API to obtain
- node names and separators
-Message-ID: <20190902154149.GO5475@paasikivi.fi.intel.com>
-References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
- <20190902083240.20367-9-sakari.ailus@linux.intel.com>
- <20190902151803.wgt2x5rtpziggtgx@pathway.suse.cz>
+        id S1726124AbfIBPnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 11:43:33 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42739 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbfIBPnd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 11:43:33 -0400
+Received: by mail-qt1-f196.google.com with SMTP id t12so15994168qtp.9
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 08:43:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=m9XP5nIZMFuLEvytrkaRg1Divk5b4NiiJacy/t5k+NQ=;
+        b=nRfjxNgEJHwsLswXpBj7r+R6znfxzh13Quxvt3Q6D0cxUbIoJ2LG2u72BN1byeLND1
+         +Sjom77W0ZXYVqOQtSn4Iv2CMNRVlkUHwOgq5rB+wrUAIXs85Qb525pdStSmxtCN1jwD
+         mj3VThvJvHUQ01e9gYQnSdVfy41q4hQYe9mJWmb61GjyOOYR/bKR0PS879crltUnRcSH
+         Asrjz2930JN7eXMAKKZ7mTplbqydyfxL/hq5UnmeIhyd0eeMHic0j0ep1ZV4taSmnugM
+         OCRXjAUm84shD9fzMssf5F/hiCLouNN+5CXGTFfgomiQogKE3X0Ej87q2ZSek57lK1AX
+         Gp9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=m9XP5nIZMFuLEvytrkaRg1Divk5b4NiiJacy/t5k+NQ=;
+        b=FSBwTYl4PA1dVzauF1mJpS1JG1nWFgJfN6X0vxpSFDK8QjPqEdvpqmBEyi+dwfQbZK
+         kanPcBpq+zVT3tdyURSC4DaZGS6SiSSId3961+zFvB9dyeg7itbvODiaWJ/5BG+xYOA3
+         RHZGLDFtnXJi31LZyR28IurlMtR4X78FPmUhmk0vdS9lUg7Yfd7AWD0hMatn5Zn4G/J0
+         V882r0k6D/41xYMT1pn1Xu2qnULqwGQoRPxEqABxhVjSKcz34K8eE56Jks8E0hM7q/9D
+         1LgbUc4Ue1+8/+BRu+eVn+pzNlmHMu2KJydh0D34e1xlYUCqe/ZlrUYwOqtIZ+UgauDX
+         PcHg==
+X-Gm-Message-State: APjAAAWf7PCOBX2Lmk0sncQpAldajcJvncpZtJe0MZcdPaTwnpHFWP6I
+        6o1dszqu5FOwHoz0PMrRuPxjcpu8
+X-Google-Smtp-Source: APXvYqzPeMEqGetfuhf3I5OMIZQdt5bB6219X4/Ta+M5U1EBKWmuyzcwNwB/4U8bOc1jn382A/JfAA==
+X-Received: by 2002:ac8:690:: with SMTP id f16mr27952678qth.202.1567439012424;
+        Mon, 02 Sep 2019 08:43:32 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id d133sm2054151qkg.31.2019.09.02.08.43.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2019 08:43:31 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id D6D1041146; Mon,  2 Sep 2019 12:43:29 -0300 (-03)
+Date:   Mon, 2 Sep 2019 12:43:29 -0300
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Joe Mario <jmario@redhat.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH 3/3] perf stat: Add --per-numa agregation support
+Message-ID: <20190902154329.GE8396@kernel.org>
+References: <20190902121255.536-1-jolsa@kernel.org>
+ <20190902121255.536-4-jolsa@kernel.org>
+ <bdf81661-4c70-797f-51f2-726f4458d812@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190902151803.wgt2x5rtpziggtgx@pathway.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <bdf81661-4c70-797f-51f2-726f4458d812@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Petr,
-
-Thanks for the review.
-
-On Mon, Sep 02, 2019 at 05:18:03PM +0200, Petr Mladek wrote:
-> On Mon 2019-09-02 11:32:37, Sakari Ailus wrote:
-> > Instead of implementing our own means of discovering parent nodes, node
-> > names or counting how many parents a node has, use the newly added
-> > functions in the fwnode API to obtain that information.
+Em Mon, Sep 02, 2019 at 06:13:17PM +0300, Alexey Budankov escreveu:
+> 
+> On 02.09.2019 15:12, Jiri Olsa wrote:
+> > Adding new --per-numa option to aggregate counts per NUMA
+> > nodes for system-wide mode measurements.
 > > 
-> > Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >  lib/vsprintf.c | 38 ++++++++++++++++----------------------
-> >  1 file changed, 16 insertions(+), 22 deletions(-)
+> > You can specify --per-numa in live mode:
 > > 
-> > diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> > index b00b57f9f911f..a04a2167101ef 100644
-> > --- a/lib/vsprintf.c
-> > +++ b/lib/vsprintf.c
-> > @@ -1863,32 +1864,24 @@ char *flags_string(char *buf, char *end, void *flags_ptr,
-> >  	return format_flags(buf, end, flags, names);
-> >  }
-> >  
-> > -static const char *device_node_name_for_depth(const struct device_node *np, int depth)
-> > -{
-> > -	for ( ; np && depth; depth--)
-> > -		np = np->parent;
-> > -
-> > -	return kbasename(np->full_name);
-> > -}
-> > -
-> >  static noinline_for_stack
-> > -char *device_node_gen_full_name(const struct device_node *np, char *buf, char *end)
-> > +char *fwnode_full_name_string(struct fwnode_handle *fwnode, char *buf,
-> > +			      char *end)
-> >  {
-> >  	int depth;
-> > -	const struct device_node *parent = np->parent;
-> >  
-> > -	/* special case for root node */
-> > -	if (!parent)
-> > -		return string_nocheck(buf, end, "/", default_str_spec);
-> > +	for (depth = fwnode_count_parents(fwnode); depth >= 0; depth--) {
+> >   # perf stat  -a -I 1000 -e cycles --per-numa
+> >   #           time numa   cpus             counts unit events
 > 
-> It looked suspicious that it iterated "depth + 1" times. It might be
-> obvious for people traversing paths every day but not for me ;-)
-> Please, add a comment, for example:
-> 
-> 	/* Iterate over parents and current node. */
-> 
-> With the above comment:
-> 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> It might probably better have 'node' instead of 'numa' as in the 
+> option name '--per-node' as in the table header, like this:
 
-Thanks.
+Agreed
 
-How about:
-
-	/* Loop starting from the root node to the current node. */
+> 
+>     #           time node     cpus             counts unit events
+>          1.000542550 0        20          6,202,097      cycles
+>          1.000542550 1        20            639,559      cycles
+>          2.002040063 0        20          7,412,495      cycles
+>          2.002040063 1        20          2,185,577      cycles
+>          3.003451699 0        20          6,508,917      cycles
+>          3.003451699 1        20            765,607      cycles
+>    ...
+> 
+> BR,
+> Alexey
 
 -- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+
+- Arnaldo
