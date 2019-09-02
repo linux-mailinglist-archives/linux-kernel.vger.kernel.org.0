@@ -2,96 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8BCAA5BF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 19:55:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 407EDA5C04
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 20:05:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726791AbfIBRz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 13:55:29 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:65501 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfIBRz3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 13:55:29 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Allan.Nielsen@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="Allan.Nielsen@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Allan.Nielsen@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Allan.Nielsen@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: MAKZapXI/brCzKTAggHur1oxx5MEehc5gkNmGo6a/bkD8t2WLAyz5cuvNV2XjWv1zYJc4C3H40
- 5Us4QwCDeBylBXs295NjtRhpiKUgeXmx1kBUBhjva12/zPNDlaTSuBy/Z7pR9b77KyMwhBellT
- 1uNEoyTA2KdlzIwoHHplLqfOBdH4S7ktTVr8M8s4wgxSiHR8c8YTH0j8oQ9Wo583YPkaL4DEEK
- cLb+DbvgBzqd4+OKk+EUP9bivbmEPu7PfrthHruMae/Z7WgcJ/jQ2jbz9X/d2GtKPJePix6G0X
- zsE=
-X-IronPort-AV: E=Sophos;i="5.64,460,1559545200"; 
-   d="scan'208";a="44600008"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Sep 2019 10:55:28 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 2 Sep 2019 10:55:28 -0700
-Received: from localhost (10.10.85.251) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.1713.5 via Frontend
- Transport; Mon, 2 Sep 2019 10:55:27 -0700
-Date:   Mon, 2 Sep 2019 19:55:27 +0200
-From:   "Allan W. Nielsen" <allan.nielsen@microchip.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     Ido Schimmel <idosch@idosch.org>,
-        David Miller <davem@davemloft.net>, <jiri@resnulli.us>,
-        <horatiu.vultur@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <UNGLinuxDriver@microchip.com>, <ivecera@redhat.com>,
-        <f.fainelli@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/2] net: core: Notify on changes to dev->promiscuity.
-Message-ID: <20190902175526.72gsb4c4hoswd4ds@lx-anielsen.microsemi.net>
-References: <20190829175759.GA19471@splinter>
- <20190829182957.GA17530@lunn.ch>
- <20190829193613.GA23259@splinter>
- <20190829.151201.940681219080864052.davem@davemloft.net>
- <20190830094319.GA31789@splinter>
- <20190831193556.GB2647@lunn.ch>
- <20190831204705.GA28380@splinter>
- <20190901184819.GA24673@lunn.ch>
+        id S1726847AbfIBSF1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 14:05:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44740 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726506AbfIBSF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 14:05:26 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D898985539
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2019 18:05:26 +0000 (UTC)
+Received: by mail-io1-f72.google.com with SMTP id t8so19810987iom.8
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 11:05:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UkgUaL8VzlklW86uya8kYZjjavCTUDQ8aI35FGVFq8s=;
+        b=jgoa/KM65HeMqe2BHrTFVbOmbjLy/aZCOkmODVAz1j0b6G1dVWeBicwqBe+5i/AhBK
+         WaLUEGVsXusUNB3lv+1gnQBGudro7oF4CLE72bi04vl6jJn1/fYwS3rqwyIDfEuqBNVL
+         ft0BeCPmMCRuO4gDtfvLYqFB4D2ovu21Wxx/dHQhNe00c+d7LD297E5QV9SO6xaAr6zc
+         OTGP/hZelN2ngQYwQYIzvYUEcXOK9hgtIKJZQMGUpnQGJS0fBAcOUTcPCoLHhqCYVFSm
+         zpFc0LcbE7MTM1Z5NzC1THPc6Bd0NqGyghSS1IAIwzhySUVMmhyuUih/nx+fhjHwGElw
+         LPCw==
+X-Gm-Message-State: APjAAAUsj7QnL/JAokkRdJREkb2ahGYZsKBRV90ovyGNuXoWOW8+mKUJ
+        Tb3wOucSvi0o08jf2WBVejXaKMb1Df+Z/SZ1kOZ+guI+89P3iBFOPuM1X5hBeNarIjrw9MZ5dEW
+        uRL+K2EQ3wS473Ebuki3PxJfLgbuju6x2c3WvA91L
+X-Received: by 2002:a02:9a12:: with SMTP id b18mr26263196jal.70.1567447526342;
+        Mon, 02 Sep 2019 11:05:26 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxnLzafJ6PcT24LmpFEMVCZaodz/wkINz7GVGLbos75Tlsx/zjDptZUOJTEX5bD3/97D/+Tpax1FDlAP1hMiDE=
+X-Received: by 2002:a02:9a12:: with SMTP id b18mr26263171jal.70.1567447526101;
+ Mon, 02 Sep 2019 11:05:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20190901184819.GA24673@lunn.ch>
-User-Agent: NeoMutt/20180716
+References: <20190902143915.20576-1-yuehaibing@huawei.com>
+In-Reply-To: <20190902143915.20576-1-yuehaibing@huawei.com>
+From:   Miklos Szeredi <mszeredi@redhat.com>
+Date:   Mon, 2 Sep 2019 20:05:15 +0200
+Message-ID: <CAOssrKdfyd0=Vod6DC9AiN=wNnPaT2nN5MY8tSq73m80BLoANg@mail.gmail.com>
+Subject: Re: [PATCH -next] virtio-fs: Add missing include file
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 09/01/2019 20:48, Andrew Lunn wrote:
-> > Look, this again boils down to what promisc mode means with regards to
-> > hardware offload. You want it to mean punt all traffic to the CPU? Fine.
-> > Does not seem like anyone will be switching sides anyway, so lets move
-> > forward. But the current approach is not good. Each driver needs to have
-> > this special case logic and the semantics of promisc mode change not
-> > only with regards to the value of the promisc counter, but also with
-> > regards to the interface's uppers. This is highly fragile and confusing.
-> Yes, i agree. We want one function, in the core, which handles all the
-> different uppers. Maybe 2, if we need to consider L2 and L3 switches
-> differently.
-Are you suggesting that we continue the path in v3, but add a utility function
-to determinate if the interface needs to go into promisc mode (taking the
-bridge stats, the promisc counter, and the upper devices into account).
+On Mon, Sep 2, 2019 at 4:43 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> fs/fuse/virtio_fs.c: In function virtio_fs_requests_done_work:
+> fs/fuse/virtio_fs.c:348:6: error: implicit declaration of function zero_user_segment;
+>  did you mean get_user_pages? [-Werror=implicit-function-declaration]
+>       zero_user_segment(page, len, thislen);
+>       ^~~~~~~~~~~~~~~~~
+>       get_user_pages
+>
+> Add missing include file <linux/highmem.h>
 
-Or are you suggest that we like Ido go back to v2?
+Thanks, folded.
 
-/Allan
-
+Miklos
