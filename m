@@ -2,61 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9200A4F81
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 09:07:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75424A4F8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 09:10:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbfIBHHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 03:07:31 -0400
-Received: from mga17.intel.com ([192.55.52.151]:32610 "EHLO mga17.intel.com"
+        id S1729599AbfIBHKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 03:10:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729415AbfIBHHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 03:07:31 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 00:07:31 -0700
-X-IronPort-AV: E=Sophos;i="5.64,457,1559545200"; 
-   d="scan'208";a="206735160"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga004-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 00:07:29 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 5188020B09; Mon,  2 Sep 2019 10:07:27 +0300 (EEST)
-Date:   Mon, 2 Sep 2019 10:07:27 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v3 06/10] lib/vsprintf: Remove support for %pF and %pf in
- favour of %pS and %ps
-Message-ID: <20190902070727.GE5475@paasikivi.fi.intel.com>
-References: <20190829101043.24963-1-sakari.ailus@linux.intel.com>
- <20190829101043.24963-7-sakari.ailus@linux.intel.com>
- <20190830125532.GH2680@smile.fi.intel.com>
+        id S1729393AbfIBHKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 03:10:44 -0400
+Received: from earth.universe (dyndsl-091-096-044-124.ewe-ip-backbone.de [91.96.44.124])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19537214AE;
+        Mon,  2 Sep 2019 07:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567408243;
+        bh=nI1FQ+yp2NSHESE6VHXqC+vG7vvMeihbXOq9nd7cT1A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mWSlnzTBSy/PPFqJDIHARHDU+/BQEYEqj4GPMQrIhDr+kNWLJ+49QGkdtq7YbhXyx
+         L5a9DSxXXfztFm8QOvGrNo5hCpoTOup76ASYdaRF+/qBkzeugjCqizMogWx4OHXDu8
+         zxxFH2Am9/paHJQr11iJcNbnrm711xcwONt29Qh4=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 19BF63C0B7F; Mon,  2 Sep 2019 09:10:41 +0200 (CEST)
+Date:   Mon, 2 Sep 2019 09:10:41 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Nosthoff <committed@heine.so>
+Subject: Re: linux-next: Fixes tag needs some work in the battery tree
+Message-ID: <20190902071041.ukvc64tg5tjttk6w@earth.universe>
+References: <20190902093131.06f66c9f@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wm7d4y7wvhwlmzhu"
 Content-Disposition: inline
-In-Reply-To: <20190830125532.GH2680@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190902093131.06f66c9f@canb.auug.org.au>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 03:55:32PM +0300, Andy Shevchenko wrote:
-> On Thu, Aug 29, 2019 at 01:10:39PM +0300, Sakari Ailus wrote:
-> > %pS and %ps are now the preferred conversion specifiers to print function
-> > %names. The functionality is equivalent; remove the old, deprecated %pF
-> > %and %pf support.
-> 
-> Btw, too many % in the commit message.
 
-Will fix for v4.
+--wm7d4y7wvhwlmzhu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Joe sometimes does that if the first letter of the paragraph is some sort
-of a special character.
+Hi Stephen,
 
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+On Mon, Sep 02, 2019 at 09:31:31AM +1000, Stephen Rothwell wrote:
+> In commit
+>=20
+> b19aca4eb2d2 ("power: supply: sbs-battery: only return health when batter=
+y present")
+>=20
+> [...]
+>=20
+> Please do not split Fixes tags over more than one line.
+
+I have fixed this and rebased the branch, so the issue should be
+gone tomororw. Thanks for the notice,
+
+-- Sebastian
+
+--wm7d4y7wvhwlmzhu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl1swG0ACgkQ2O7X88g7
++ppgvw/+P6KS+HyVyg/uxc5+sXrC0VTxIZO+rYG2qFhMOO23u7dguRaQw0GreVms
+BoKEzxxVN/siZ0R95gUxAnnd8N9vMDdXXVvDBT2QD21HuEcKthM+fvrNYlZg70u5
+ZYDiTGfY+AIga+O113n3047P8vo26QpljbPP7K8slmemSoxfxgCjH7/Ccq1afYUk
+AZwyzGJ18OTvdqkFqt6/x5RzmKs1hb58BrlfZoZIsbA1zGghAk4C5lznSTOYobZi
+IoX783RA/gkjbOKGKSND7NrajjHf0vaps0rfgf3X/+f+fpiOIuOhuVlXfRHtMuMS
+Nxtcb2/KhI60rTNnMVgpl2QUWN4Lab4rBebDjqGm8U30v8tgTzGJzX2qs6N9jFhE
+FVv1bh3/SVAcB36Zsl7i4oYJ/ttNzeuo06pP/aL30y4TfwsNEnBhKhUdonQ4/36i
+qN5hHfzHziRXQi/C7lT2fsmGMufzpLUuF13GNPL1S+T9OVHwF73YbUQ3GzZ9oqaI
+HgGvFBDeP290u5sPHgdQ3gZ4hslmcQfHiHpCSylVfcHJ3IYjy3q+Zi+pipMUZMXT
+dPPqYuEhN0TnIB1QJA11rFhqtdXenG7VDWWG0ijsWAZAUni4GljKue/6O6f48dMD
+e8J5hazgLbbYMsxVed11d1QoDdhKaAx4cCNuxBk2wbr0BqPzgrM=
+=M2sM
+-----END PGP SIGNATURE-----
+
+--wm7d4y7wvhwlmzhu--
