@@ -2,115 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED1A1A518C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:28:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36109A5195
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:29:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730059AbfIBI1m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:27:42 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35701 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729423AbfIBI1m (ORCPT
+        id S1730110AbfIBI3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:29:15 -0400
+Received: from sonic305-20.consmr.mail.ne1.yahoo.com ([66.163.185.146]:46013
+        "EHLO sonic305-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726609AbfIBI3O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:27:42 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 2273A821DA; Mon,  2 Sep 2019 10:27:26 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 10:27:39 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
-        <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC 2/5] media: v4l2-ctrl: Document V4L2_CID_LOCATION
-Message-ID: <20190902082739.GE15850@amd>
-References: <20190814202815.32491-3-jacopo@jmondi.org>
- <20190814224340.GD5015@pendragon.ideasonboard.com>
- <664fe7b3-9051-30da-736e-710a4e9cecde@xs4all.nl>
- <d60e4664-3a3f-1723-6c96-4fc822b6a7bb@xs4all.nl>
- <20190815143423.vaoswb4jvzd2blxp@uno.localdomain>
- <cb36e8a0-b941-ff37-e58c-0f9b7f62116a@xs4all.nl>
- <20190901172457.GC1047@bug>
- <20190902080002.GC4777@pendragon.ideasonboard.com>
- <20190902080657.GC15850@amd>
- <20190902081942.GE4777@pendragon.ideasonboard.com>
+        Mon, 2 Sep 2019 04:29:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1567412953; bh=tPdyM4f7Tq8kspt5syr9wxbiHLUxanV8lkCr2Pkkkas=; h=Date:From:Reply-To:Subject:From:Subject; b=GLeqxm3YPHbhgihxMhf0X40A6UFhYnuKlKKzyMAe79JzKzwprNiLRlbKG4ifYjtlFHIuTY3cSNkB1NcVHCLWVtPDMToUHx+khmiUpQdngypn/n9rsZkThxOs6Q5v4jpNRRAyC8rFVovn/gjQE8JUYycxjDAESuIa48v7l2fCYghwMjwQyi8I6Qv+HFGATywtI3tziNMbLB7659I5zsq2xr62py7vuhvoKmW2Lg/u502K06WOLfDC/YrZoXWZiBRHDqENbvsD3H1ZfFJC5uVCxJ73gwjbUovaKuAFAXrfr9mzbh43oFzbSCLeuNvrgjYaXyK/VIegUeLhvjgMXZ6egQ==
+X-YMail-OSG: EGbqIn8VM1lR.pGuMQ9s3rMspiZkw3YBB1sFXUZj8ogrHWyEzi2.BXaVncoINJ2
+ OO_G8NaWxi8ACHt6Mg8IXG_pbXPzAhlsQR8OgQ5ATK2ODw.c.VXiKNWsjTCHuz_AvLyPWd4QJg64
+ k65G6XHxEuf8fIGpBtCl6BcdBdfH.Y3icRT.O1TZvcpipWOELsXLUVrI_jLZTAUp6SO0rt3.JAhF
+ h0_k.tvfDiiRk_r0vT2Zp9vcxvJFnChcuBJPoyRD97sM0txlqQZbiQpNdAChAOh.9jO5gBqouSZZ
+ IO05JenBwHNnkWe4Aid7BPOlG4UxTGKP6E61CFHFeTYFx4YTggIXpwMhibvySqSNWZcl.DHd2sLb
+ GuZQbNK3PrYxUkOtOn8ikgKjQ9n2Y128bwuaIJJR37FqTZVMnNf0IQ0Z.8CkOhisDXdJQ8mqpNCd
+ qnniURgjiYpoBPu2C73nFviPF44zvzDL3TKQl9Jr9bw6EcnkX49vXGFd74GpO47Br65G8MCe0k3g
+ kQdh6JxJL59gKx4cEpMU1WdwdWSm2ZCo4vD9XQiGTqVtRlnVrEAlcsomXq5xhHXn7prFuR2w04Rg
+ A7OPzwCGcTnSGauwVw4.LOrYWjDBnQO2YhOQLYP66MSpXHUsTgUtbi5NBwSXXufZAdf5ePCUZOP4
+ 7l0syGY5tnyU.mnNOpxzdeKE60sZplhSnUE._AUY1SobFDCdUMk1.7_hrt6FZGE17hetXJCH291X
+ EEUcdnf45Ird73P7nqvITD_CfaJiHmlTs4.i5Q99oBGbexXNrgKI2lpH.YjtbIED98piNC.kgFwZ
+ .bed1NAp4VwvQPjcTRw6yJQPEIEIBVMyVyYzr7bYLmt_wCpS2X8Wj0SNhCpQaewXbD11kOa0iY3f
+ x8mtBP5ydFDh_yk0zj8O1en9OTPmNETKDFFSV9Trgwgcah0CPBqlbaC4J45B_1gH2TJXnKIu9ZpY
+ 556eveEws1rkLT9GjegcBDv3B4ctnodbLyqAMjY4VVatwcfQgMBKpmB3CVAGJbkgqX6B6zP29yJN
+ 4fHXYMlui3zIeeCcbh1YvCBgUnWbtKYLOsCm2ut6PcqleBl727aLhC6JGihWv.z_UGSgbUPxJCr4
+ OKM8qqnZLmoJrFXolR5WhGuLP__3XLZm9egGQjRRsTJ0mH.e3tbQfHskiHUsqluKSO0T0N2BIteV
+ ci9JGTBplV9_OS5GjNLWcumY8iZ9L0QP1O3oZqihwB9vL3x5S7GQXmoa0sN8XxJhcsgCfh3ucNm6
+ 6nFBRkTrXnXk8
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Mon, 2 Sep 2019 08:29:13 +0000
+Date:   Mon, 2 Sep 2019 08:29:11 +0000 (UTC)
+From:   Aisha Gaddafi <aishagnnnn@gmail.com>
+Reply-To: gaisha983@gmail.com
+Message-ID: <736087669.1118295.1567412951480@mail.yahoo.com>
+Subject: Dear Friend,
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="2hMgfIw2X+zgXrFs"
-Content-Disposition: inline
-In-Reply-To: <20190902081942.GE4777@pendragon.ideasonboard.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Friend,
 
---2hMgfIw2X+zgXrFs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I came across your e-mail contact prior a private search while in need of 
+your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
+three Children. I am the only biological Daughter of late Libyan President 
+(Late Colonel Muammar Gaddafi).
 
-On Mon 2019-09-02 11:19:42, Laurent Pinchart wrote:
-> On Mon, Sep 02, 2019 at 10:06:57AM +0200, Pavel Machek wrote:
-> > >>> Single integer. It's read-only, so it just reports the location.
-> > >>>=20
-> > >>> It would be different if this was a writable control: then you need=
- to
-> > >>> know which locations are possible to set, and that requires a menu =
-type.
-> > >>>=20
-> > >>> But it doesn't make sense to set the location from software. Howeve=
-r, the
-> > >>> location might change as a result of other changes: e.g. if the cam=
-era
-> > >>> has motor control of the tilt and the tilt changes from forward fac=
-ing to
-> > >>> downward facing, then the driver might change the location from FRO=
-NT
-> > >>> to DOWN. A convoluted example perhaps, but this is just brainstormi=
-ng.
-> > >>=20
-> > >> There are phones with exactly such camera setup. And yes, it makes
-> > >> sense to be writable in that case, as software can move the camera in
-> > >> such case.
-> > >=20
-> > > Out of curiosity, what phones are those ?
-> >=20
-> > This one:
-> >=20
-> > https://www.samsung.com/global/galaxy/galaxy-a80/
->=20
-> Interesting device. I'm not sure we should control that through a
-> location control though, as it seems there's more than the rotation of
-> the camera involved. In any case I wouldn't care about it for now, and
-> turn the location control from read-only to read-write later if needed.
-> We need more information and more thought to support that use case.
+I have investment funds worth Twenty Seven Million Five Hundred Thousand 
+United State Dollar ($27.500.000.00 ) and i need a trusted investment 
+Manager/Partner because of my current refugee status, however, I am 
+interested in you for investment project assistance in your country, may be 
+from there, we can build business relationship in the nearest future.
 
-Well, the mechanism is there just to rotate the camera.
+I am willing to negotiate investment/business profit sharing ratio with you 
+base on the future investment earning profits.
 
-Anyway, that phone is probably nowhere close to having mainline
-support, so...
+If you are willing to handle this project on my behalf kindly reply urgent 
+to enable me provide you more information about the investment funds.
 
-									Pavel
+Your Urgent Reply Will Be Appreciated.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---2hMgfIw2X+zgXrFs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1s0nsACgkQMOfwapXb+vLK8wCeOolmxDwSiEfrrMCLr1uKyMwC
-x7oAnj1SKkwBc++DIAb84Xp8unM2RoHV
-=noqu
------END PGP SIGNATURE-----
-
---2hMgfIw2X+zgXrFs--
+Best Regards
+Mrs Aisha Gaddafi
+(gaisha983@gmail.com)
