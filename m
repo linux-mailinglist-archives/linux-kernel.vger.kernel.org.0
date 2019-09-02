@@ -2,148 +2,328 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2767A5000
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 09:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03A05A5006
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 09:38:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729797AbfIBHiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 03:38:12 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42142 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbfIBHiL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 03:38:11 -0400
-Received: by mail-ed1-f68.google.com with SMTP id y91so2817155ede.9;
-        Mon, 02 Sep 2019 00:38:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BlUusxOrxaCgMhXu0ZvmfJnQXORRPsMrgdIIDkov7+0=;
-        b=YpALctmpSx7YjEgiI9SuGVl7dMwk/SEK5o1T0kfxhfQ5XqdN12E4NwZ4afeqD6tdg9
-         l2+WuDUpxBppRmdo4g27iv7JCGBTm0Oh+H0oeRLZYPjYOpbsWs4hcfmk8K4vt4ZuSPAL
-         yEXUSIVLjwxpPSBN9vQeBfmTTzB7G6uR87dsjLuyBS3qGG15nAJFT5Xv65L5DKghKdJl
-         zpEqeWsFx4ZrnnAAyeMpTTERCJ/8F6bOqai1AthPs2ddc4uQPV4r5aSu6Hza4BaKM6ft
-         YhXXSuZHeqwmgj9GJ/XsnXYwKoqtSUjMKDti9H5vZt+dD+Wj/n61bcnjOwyxDP+ZSnBV
-         NbQQ==
+        id S1729808AbfIBHij (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 03:38:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37526 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725839AbfIBHij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 03:38:39 -0400
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 76BEC3B554
+        for <linux-kernel@vger.kernel.org>; Mon,  2 Sep 2019 07:38:38 +0000 (UTC)
+Received: by mail-pf1-f200.google.com with SMTP id v134so11167156pfc.18
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 00:38:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BlUusxOrxaCgMhXu0ZvmfJnQXORRPsMrgdIIDkov7+0=;
-        b=TQh52+tWU/VHayZllD2c9lEYkfxixH30dWXHXmMIYIt/SHEOOMNxI9SDZ+i/AhNAfm
-         Oo4pD+O22BEuFC31gKJN98IB05BX5Tmy83ZesmKH4UHjyc4iiPf2JBGIWnC4aXW9BwMu
-         ZtGPoBkDAi+xMHwXQFajbJf4gMxbYPQ2nrp7yO6LoRKyEYlUTKzWCEB3/ihHVdxi038n
-         VKPrQDL9RhD0GJeFblgWrFk9+P2IuCxzc3uU7Fyw3eo9tmES3kbpV/9nqvfmpUXhOGP8
-         ZoH0QMT7AeQYe8tWzksF0pdY9OOlgyhusW8PaTsCR1FS0JaBaMrbhKDrQXyA3+Lzhhhc
-         aNUw==
-X-Gm-Message-State: APjAAAWdWtOy+H8tTR/67fJYOqXWlwJgd5sFJ+iEqtTjKAe/tR+kLzJx
-        LmZuXHt8TpqLnrGgVAXexRo+Fef0STA=
-X-Google-Smtp-Source: APXvYqwBFeYG7Dq7UMXgmFD2WxbHkj27kQRrNBFLJil5mA01IdIMDyjZ3VnT5a8rho8cIXtM7B3Xdw==
-X-Received: by 2002:a17:906:318d:: with SMTP id 13mr22669114ejy.281.1567409888769;
-        Mon, 02 Sep 2019 00:38:08 -0700 (PDT)
-Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
-        by smtp.gmail.com with ESMTPSA id i5sm2751920edf.32.2019.09.02.00.38.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 00:38:07 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 09:38:06 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Krishna Reddy <vdumpa@nvidia.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Sachin Nikam <Snikam@nvidia.com>,
-        "Thomas Zeng (SW-TEGRA)" <thomasz@nvidia.com>,
-        Juha Tukkinen <jtukkinen@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Pritesh Raithatha <praithatha@nvidia.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Timo Alho <talho@nvidia.com>, Yu-Huan Hsu <YHsu@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Alexander Van Brunt <avanbrunt@nvidia.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 2/7] dt-bindings: arm-smmu: Add binding for nvidia,smmu-v2
-Message-ID: <20190902073806.GA930@ulmo>
-References: <1567118827-26358-1-git-send-email-vdumpa@nvidia.com>
- <1567118827-26358-3-git-send-email-vdumpa@nvidia.com>
- <37034b76-7e3f-5f3c-25b2-696e25127682@arm.com>
- <BYAPR12MB271012F225E35C1459E58D07B3BD0@BYAPR12MB2710.namprd12.prod.outlook.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cempGh8txjaiNfEhKediKSz1B2YFsDdJLO12R3i/OBE=;
+        b=Ah4GpdahD/a65ugubgaAKujsQMoQapiMp/7GpMfGAewDP4I/bOW4SBq5Z2yzkEHk4s
+         8u8Z4dO8K//NvN9UCBsLnzmVerasgrJ01O7obSl2kSyPe+adVzBPlHL2Jf8S1ejLj4Rh
+         ZnVUcVNLWFclLfYp+Qi1wOH4cugwhv4ppQ4zZ7e8vukKXh5s4v4YPoi0L1t5r4Cs5kVO
+         GTX1xiBrlHwFlJN2zvvZiZ1Pof/VahgflnR9VBJBMEDxMbx+Pxc3V0M2yyoQcGjJ6n1B
+         o2wIDhrgU0YCs7tEI1CnxHS6x8/qG/hsRf+pmY4JvMIu0ujq+uEugtpmjHrKgEeXvHRO
+         PjIw==
+X-Gm-Message-State: APjAAAUdpXZnVRUoeqIz6EUsyGnKjYJR5kp6157sH+RYX3+I3h6CM53h
+        EyiLS+OJT2+bAPT6cZtS/xqZel63b2QVGWgRRDNW4jqSQPlxp1TgyGJ9etP1Radw1VqXB/POydR
+        EKuNqJDbmGUKnefA2kcQ7mOiY
+X-Received: by 2002:a65:50c5:: with SMTP id s5mr24042156pgp.368.1567409917880;
+        Mon, 02 Sep 2019 00:38:37 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzFbzdBFR4NQntUKmudeBLYMKscKF5/o5GXgMqgYXlDtTNRCQbnWl9gRnXPcnsb19V4FGYaQg==
+X-Received: by 2002:a65:50c5:: with SMTP id s5mr24042139pgp.368.1567409917482;
+        Mon, 02 Sep 2019 00:38:37 -0700 (PDT)
+Received: from wlc-trust-99.pek2.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id l3sm12699532pjq.24.2019.09.02.00.38.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2019 00:38:36 -0700 (PDT)
+Subject: Re: [PATCH v2] x86/kdump: Reserve extra memory when SME or SEV is
+ active
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>,
+        Dave Young <dyoung@redhat.com>, x86@kernel.org,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>
+References: <20190826044535.9646-1-kasong@redhat.com>
+ <20190830164513.GE30413@zn.tnic>
+From:   Kairui Song <kasong@redhat.com>
+Message-ID: <e70f1e99-f696-51e2-f50c-148bcda5dfb6@redhat.com>
+Date:   Mon, 2 Sep 2019 15:38:22 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
-Content-Disposition: inline
-In-Reply-To: <BYAPR12MB271012F225E35C1459E58D07B3BD0@BYAPR12MB2710.namprd12.prod.outlook.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190830164513.GE30413@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 8/31/19 12:45 AM, Borislav Petkov wrote:
+> On Mon, Aug 26, 2019 at 12:45:35PM +0800, Kairui Song wrote:
+>> Since commit c7753208a94c ("x86, swiotlb: Add memory encryption support"),
+>> SWIOTLB will be enabled even if there is less than 4G of memory when SME
+>> is active, to support DMA of devices that not support address with the
+>> encrypt bit.
+>>
+>> And commit aba2d9a6385a ("iommu/amd: Do not disable SWIOTLB if SME is
+>> active") make the kernel keep SWIOTLB enabled even if there is an IOMMU.
+>>
+>> Then commit d7b417fa08d1 ("x86/mm: Add DMA support for SEV memory
+>> encryption") will always force SWIOTLB to be enabled when SEV is active
+>> in all cases.
+>>
+>> Now, when either SME or SEV is active, SWIOTLB will be force enabled,
+>> and this is also true for kdump kernel. As a result kdump kernel will
+>> run out of already scarce pre-reserved memory easily.
+>>
+>> So when SME/SEV is active, reserve extra memory for SWIOTLB to ensure
+>> kdump kernel have enough memory, except when "crashkernel=size[KMG],high"
+>> is specified or any offset is used. As for the high reservation case, an
+>> extra low memory region will always be reserved and that is enough for
+>> SWIOTLB. Else if the offset format is used, user should be fully aware
+>> of any possible kdump kernel memory requirement and have to organize the
+>> memory usage carefully.
+>>
+>> Signed-off-by: Kairui Song <kasong@redhat.com>
+>>
+>> ---
+>> Update from V1:
+>> - Use mem_encrypt_active() instead of "sme_active() || sev_active()"
+>> - Don't reserve extra memory when ",high" or "@offset" is used, and
+>>    don't print redundant message.
+>> - Fix coding style problem
+>>
+>>   arch/x86/kernel/setup.c | 31 ++++++++++++++++++++++++++++---
+>>   1 file changed, 28 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+>> index bbe35bf879f5..221beb10c55d 100644
+>> --- a/arch/x86/kernel/setup.c
+>> +++ b/arch/x86/kernel/setup.c
+>> @@ -528,7 +528,7 @@ static int __init reserve_crashkernel_low(void)
+>>   
+>>   static void __init reserve_crashkernel(void)
+>>   {
+>> -	unsigned long long crash_size, crash_base, total_mem;
+>> +	unsigned long long crash_size, crash_base, total_mem, mem_enc_req;
+>>   	bool high = false;
+>>   	int ret;
+>>   
+>> @@ -550,6 +550,15 @@ static void __init reserve_crashkernel(void)
+>>   		return;
+>>   	}
+>>   
+>> +	/*
+>> +	 * When SME/SEV is active, it will always required an extra SWIOTLB
+>> +	 * region.
+>> +	 */
+>> +	if (mem_encrypt_active())
+>> +		mem_enc_req = ALIGN(swiotlb_size_or_default(), SZ_1M);
+>> +	else
+>> +		mem_enc_req = 0;
+> 
+> Hmm, ugly.
 
---W/nzBZO5zC0uMSeA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I agree with this, but didn't have a better idea about how toimprove it, so thanks for the suggestions below.
 
-On Fri, Aug 30, 2019 at 06:12:08PM +0000, Krishna Reddy wrote:
-> >> +                        "nidia,smmu-v2"
-> >>                           "qcom,smmu-v2"
->=20
-> >I agree with Mikko that the compatible must be at least SoC-specific, bu=
-t potentially even instance-specific (e.g. "nvidia,tegra194-gpu-smmu")
-> > depending on how many of these parallel-SMMU configurations might be hi=
-ding in current and future SoCs.
->=20
-> I am correcting the spelling mistake pointed by Mikko.  The NVIDIA SMMUv2=
- implementation is getting used beyond  Tegra194 SOC. =20
-> To be able to use the smmu compatible string across multiple SOC's, "nvid=
-ia,smmu-v2" compatible string is chosen.
-> Are you suggesting to make it soc specific and add another one in future?
+> 
+> You set mem_enc_reg here ...
+> 
+>> +
+>>   	/* 0 means: find the address automatically */
+>>   	if (!crash_base) {
+>>   		/*
+>> @@ -563,11 +572,19 @@ static void __init reserve_crashkernel(void)
+>>   		if (!high)
+>>   			crash_base = memblock_find_in_range(CRASH_ALIGN,
+>>   						CRASH_ADDR_LOW_MAX,
+>> -						crash_size, CRASH_ALIGN);
+>> -		if (!crash_base)
+>> +						crash_size + mem_enc_req,
+>> +						CRASH_ALIGN);
+>> +		/*
+>> +		 * For high reservation, an extra low memory for SWIOTLB will
+>> +		 * always be reserved later, so no need to reserve extra
+>> +		 * memory for memory encryption case here.
+>> +		 */
+>> +		if (!crash_base) {
+>> +			mem_enc_req = 0;
+> 
+> ... but you clear it here...
+> 
+>>   			crash_base = memblock_find_in_range(CRASH_ALIGN,
+>>   						CRASH_ADDR_HIGH_MAX,
+>>   						crash_size, CRASH_ALIGN);
+>> +		}
+>>   		if (!crash_base) {
+>>   			pr_info("crashkernel reservation failed - No suitable area found.\n");
+>>   			return;
+>> @@ -575,6 +592,7 @@ static void __init reserve_crashkernel(void)
+>>   	} else {
+>>   		unsigned long long start;
+>>   
+>> +		mem_enc_req = 0;
+> 
+> ... and here...
+> 
+>>   		start = memblock_find_in_range(crash_base,
+>>   					       crash_base + crash_size,
+>>   					       crash_size, 1 << 20);
+>> @@ -583,6 +601,13 @@ static void __init reserve_crashkernel(void)
+>>   			return;
+>>   		}
+>>   	}
+>> +
+>> +	if (mem_enc_req) {
+>> +		pr_info("Memory encryption is active, crashkernel needs %ldMB extra memory\n",
+>> +			(unsigned long)(mem_enc_req >> 20));
+>> +		crash_size += mem_enc_req;
+>> +	}
+> 
+> ... and then you report only when it is still set.
+> 
+> How about you carve out that if (!crash_base) { ... } else { } piece
+> into a separate function without any further changes - only code
+> movement? That is your patch 1.
+> 
+> Your patch 2 is then adding the mem_encrypt_active() check in the if
+> (!crash_base && !high) case, i.e., only where you need it and issuing
+> the pr_info from there instead of stretching that logic throughout the
+> whole function and twisting my brain unnecessarily?
+> 
+> Thx.
+> 
 
-Yeah, I think that's the safest thing to do. Even if we're using the
-same implementation in future SoCs, chances are there will be some
-changes. Even if the changes are just fixes, having a SoC-specific
-compatible string will ensure we can apply workarounds only to the
-implementations that are missing the fixes.
+Will it be good if the final code looks like this?
 
-So I think "nvidia,tegra194-smmu" is a good candidate. It uniquely
-identifies the instantiation of the IP in Tegra194. Also, if it ever
-turns out that the instantiation of the SMMU in the next Tegra
-generation is *exactly* the same (even if highly unlikely), there's
-nothing wrong with reusing the "nvidia,tegra194-smmu".
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 48115cf11e0f..754b25d6e785 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -526,6 +526,69 @@ static int __init reserve_crashkernel_low(void)
+  	return 0;
+  }
+  
++static int __init crashkernel_find_region(
++		unsigned long long *base,
++		unsigned long long *size,
++		bool high)
++{
++	unsigned long long start, mem_enc_req = 0;
++
++	/*
++	 * *base == 0 means: find the address automatically, else just
++	 * verify the region is useable
++	 */
++	if (*base) {
++		start = memblock_find_in_range(*base, *base + *size,
++					       *size, 1 << 20);
++		if (start != *base) {
++			pr_info("crashkernel reservation failed - memory is in use.\n");
++			return -EBUSY;
++		}
++		return 0;
++	}
++
++	/*
++	 * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
++	 * crashkernel=x,high reserves memory over 4G, also allocates
++	 * 256M extra low memory for DMA buffers and swiotlb.
++	 * But the extra memory is not required for all machines.
++	 * So try low memory first and fall back to high memory
++	 * unless "crashkernel=size[KMG],high" is specified.
++	 */
++	if (!high) {
++		/*
++		 * When SME/SEV is active and not using high reserve,
++		 * it will always required an extra SWIOTLB region.
++		 */
++		if (mem_encrypt_active())
++			mem_enc_req = ALIGN(swiotlb_size_or_default(), SZ_1M);
++
++		*base = memblock_find_in_range(CRASH_ALIGN,
++					       CRASH_ADDR_LOW_MAX,
++					       *size + mem_enc_req,
++					       CRASH_ALIGN);
++		if (*base) {
++			if (mem_enc_req) {
++				pr_info("Memory encryption is active, crashkernel needs %ldMB extra memory\n",
++					(unsigned long)(mem_enc_req >> 20));
++				*size += mem_enc_req;
++			}
++			return 0;
++		}
++	}
++
++	/* Try high reserve */
++	*base = memblock_find_in_range(CRASH_ALIGN,
++				       CRASH_ADDR_HIGH_MAX,
++				       *size, CRASH_ALIGN);
++	if (!*base) {
++		pr_info("crashkernel reservation failed - No suitable area found.\n");
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
+  static void __init reserve_crashkernel(void)
+  {
+  	unsigned long long crash_size, crash_base, total_mem;
+@@ -550,39 +613,10 @@ static void __init reserve_crashkernel(void)
+  		return;
+  	}
+  
+-	/* 0 means: find the address automatically */
+-	if (!crash_base) {
+-		/*
+-		 * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
+-		 * crashkernel=x,high reserves memory over 4G, also allocates
+-		 * 256M extra low memory for DMA buffers and swiotlb.
+-		 * But the extra memory is not required for all machines.
+-		 * So try low memory first and fall back to high memory
+-		 * unless "crashkernel=size[KMG],high" is specified.
+-		 */
+-		if (!high)
+-			crash_base = memblock_find_in_range(CRASH_ALIGN,
+-						CRASH_ADDR_LOW_MAX,
+-						crash_size, CRASH_ALIGN);
+-		if (!crash_base)
+-			crash_base = memblock_find_in_range(CRASH_ALIGN,
+-						CRASH_ADDR_HIGH_MAX,
+-						crash_size, CRASH_ALIGN);
+-		if (!crash_base) {
+-			pr_info("crashkernel reservation failed - No suitable area found.\n");
+-			return;
+-		}
+-	} else {
+-		unsigned long long start;
++	ret = crashkernel_find_region(&crash_base, &crash_size, high);
++	if (ret)
++		return;
+  
+-		start = memblock_find_in_range(crash_base,
+-					       crash_base + crash_size,
+-					       crash_size, 1 << 20);
+-		if (start != crash_base) {
+-			pr_info("crashkernel reservation failed - memory is in use.\n");
+-			return;
+-		}
+-	}
+  	ret = memblock_reserve(crash_base, crash_size);
+  	if (ret) {
+  		pr_err("%s: Error reserving crashkernel memblock.\n", __func__);
 
-We've done similar things in the past, where some new IP was mostly
-compatible with old IP. Typically we still include a new compatible
-string in case any errata are discovered subsequently. It's not uncommon
-to see things like:
+---
 
-	compatible =3D "nvidia,tegra124-xyz", "nvidia,tegra20-xyz";
-
-Basically this means that this is the IP that was also used in Tegra20
-and the same Tegra20 driver can be used to drive this hardware on
-Tegra124. The Tegra124-specific compatible string may enable newer
-features if there's a driver that supports it.
-
-Thierry
-
---W/nzBZO5zC0uMSeA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1sxtoACgkQ3SOs138+
-s6GyPBAApW9UCw6JCRUfPi6qMLdZo6ec3gtTq0ja+vujc8MIwNw0hNPf3Z6XrJxr
-23cQ6NAbVv869Lv6yBjoa/s90EimzSOn9MSQh7u5Vocwxv+ptUcL3S+zeE5cYWCq
-6il8nVLmckknwL7lWG7gYfxJ0VC/jVtnzblUWSBQVUyRLNiABMEZomEvi9/8UaMk
-Ac9m3z7K5Le2aWyAeGgh1jsrkb/Vmid9f8stmrsM/kwp0v9CVfxXR0C9Wwt/n91A
-ibiOWlFW3mHuo0uadSLjyUFpA8YAj0dNsTCK1Gws0ojSoMMQM5arb+qSULe3tsmh
-nylujZWpqzpjSxZJ/0TgJxgJONmgRLamvFlbmFQNuApVK3oTc7PHNC3GPQVB/owk
-bbw4CNVlatnwXUPT+Wis14qid/rE5hxWHdEQTpAPd/kF5yFjTEWqHgDX1BPVMbnv
-HpxQmPwq8+x1W+9eHMBWrBoHvGXI2V4p5szFvst4fKlWH2cyfDNxMgJR6K6zBze7
-Qw81D3FhJ4ZdwsABSmMTULv8EYuCInKgZGjNPlmtlyuuAiKDZDU7xfxntVNvK7cj
-ay0xxvRolXiaKhFL5PptMX7hE+H/hlNeFcBqzGtf0hHOupI2g6gCZrB5+5h93ovq
-fy8z4p2GCZaEsJscj7Fp3nvBu+DMiFUp4rmygKSC+MWt4tMyXSI=
-=+U+B
------END PGP SIGNATURE-----
-
---W/nzBZO5zC0uMSeA--
+If you are OK with this, I will split it into two patch and send V3.
