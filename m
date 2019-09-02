@@ -2,71 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70F74A4D91
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 05:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C80F6A4D81
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 05:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729436AbfIBD17 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 23:27:59 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:33086 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729422AbfIBD15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 23:27:57 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A56901A063F;
-        Mon,  2 Sep 2019 05:27:55 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EB04B1A0006;
-        Mon,  2 Sep 2019 05:27:46 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id AC363402B7;
-        Mon,  2 Sep 2019 11:27:36 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        leoyang.li@nxp.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
-        minghuan.Lian@nxp.com, mingkai.hu@nxp.com, roy.zang@nxp.com,
-        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org, zhiqiang.hou@nxp.com,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCH v3 11/11] misc: pci_endpoint_test: Add LS1088a in pci_device_id table
-Date:   Mon,  2 Sep 2019 11:17:16 +0800
-Message-Id: <20190902031716.43195-12-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190902031716.43195-1-xiaowei.bao@nxp.com>
-References: <20190902031716.43195-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1729281AbfIBDXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 23:23:55 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:46285 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729233AbfIBDXy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 1 Sep 2019 23:23:54 -0400
+Received: by mail-qk1-f196.google.com with SMTP id 201so1837035qkd.13
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2019 20:23:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XPLkdTaS+cWviKWsyXZOkahcwDz4T4iRqzOYOjVp7Io=;
+        b=Bjd4dmZKm9ahzyCGqWgK2g+TjcFTBZ1FrTjYxEToos+V4YveECHwHx9p1DkAHT4Xhr
+         lpwY9V1q/wMkVg2z/8D56u825hL5LemsxNInEYAKLNu1m3Ubo/MP3i0tUBuFiul4q9HE
+         2KV/4MRk3FoYm0Abm4Yy+cLPpa64EpHV4Bg3evz6xas0jmbjo74Val4ikz9hgYgEqBQZ
+         yLBnUiKWnpmvSEvnBrCbcUC1yiQH0rulLfLcLYUJkShtVJBRGUG3CRZlvQDOI6O1Xz/M
+         TrMKTDHwZwEsA/1IpGibz/2F7lzpq+1noLo8OWrLNR0Nw1xcqHL8P8EhhnhWaS+/MdcP
+         O2QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XPLkdTaS+cWviKWsyXZOkahcwDz4T4iRqzOYOjVp7Io=;
+        b=amrtl/uzXKEFjoMFPKz0f1iBWFpRkdyZB4/GgVA0xOAVIyrvDtP78bwtVy8d4Ru1Hx
+         a0ZxyYIsE34rpyvfX3EnxC3TmylcingVyMNUnwH9UddkvxML08QybQTyOSDoL08oUcKy
+         cpXURSLgLTVFHB/aKDOSw8W4YtDMeLoPhgPDoZDK2F8PgQJ9hsprntF024JU6xGLw3bI
+         Fi/pJjg8F94uwCxjJfq/NpC0zh1PtudPkrdSZozoipD4bu1eLeBEBGJqqAWx+0z0rpw7
+         vNEwuatUbYL28H71gRhviUQLWnCakyqxBzeSr96F/Te4AknDJ4eHh6xn5E2SOWudvEPD
+         zIXA==
+X-Gm-Message-State: APjAAAUMSUfxz6EoPzmIIkJ42WLbODvXj1tas3SE8g4e1/3eLFSku1DO
+        ilePt+CbG5U6vh8oM43z+R1wx1madrxccpKxjnscQg==
+X-Google-Smtp-Source: APXvYqwuDxmO6gzEBlMckDuI4tFmeGOrN4ITnig+Q6JQUL8igiXxEEb0zy9iLW8xMBSNL4ZdAZ/FeIsmaj13+7TERTM=
+X-Received: by 2002:a37:985:: with SMTP id 127mr26358532qkj.43.1567394633574;
+ Sun, 01 Sep 2019 20:23:53 -0700 (PDT)
+MIME-Version: 1.0
+References: <0000000000009b3b80058af452ae@google.com> <0000000000000ec274059185a63e@google.com>
+In-Reply-To: <0000000000000ec274059185a63e@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Sun, 1 Sep 2019 20:23:42 -0700
+Message-ID: <CACT4Y+aT5z65OZE6_TQieU5zUYWDvDtAogC45f6ifLkshBK2iw@mail.gmail.com>
+Subject: Re: kernel panic: stack is corrupted in __lock_acquire (4)
+To:     syzbot <syzbot+83979935eb6304f8cd46@syzkaller.appspotmail.com>,
+        bpf <bpf@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add LS1088a in pci_device_id table so that pci-epf-test can be used
-for testing PCIe EP in LS1088a.
+On Sun, Sep 1, 2019 at 3:48 PM syzbot
+<syzbot+83979935eb6304f8cd46@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following crash on:
+>
+> HEAD commit:    38320f69 Merge branch 'Minor-cleanup-in-devlink'
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13d74356600000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1bbf70b6300045af
+> dashboard link: https://syzkaller.appspot.com/bug?extid=83979935eb6304f8cd46
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1008b232600000
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
----
-v2:
- - No change.
-v3:
- - No change.
- 
- drivers/misc/pci_endpoint_test.c | 1 +
- 1 file changed, 1 insertion(+)
+Stack corruption + bpf maps in repro triggers some bells. +bpf mailing list.
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 6e208a0..d531951 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -793,6 +793,7 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x80c0) },
- 	{ PCI_DEVICE_DATA(SYNOPSYS, EDDA, NULL) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654),
- 	  .driver_data = (kernel_ulong_t)&am654_data
--- 
-2.9.5
-
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+83979935eb6304f8cd46@syzkaller.appspotmail.com
+>
+> Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in:
+> __lock_acquire+0x36fa/0x4c30 kernel/locking/lockdep.c:3907
+> CPU: 0 PID: 8662 Comm: syz-executor.4 Not tainted 5.3.0-rc6+ #153
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+> Kernel Offset: disabled
+> Rebooting in 86400 seconds..
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/0000000000000ec274059185a63e%40google.com.
