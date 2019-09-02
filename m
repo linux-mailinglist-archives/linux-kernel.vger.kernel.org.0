@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA498A5BA5
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 19:05:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F096A5BC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 19:16:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfIBRFQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 13:05:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726589AbfIBRFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 13:05:09 -0400
-Subject: Re: [GIT PULL] Char/Misc driver fixes for 5.3-rc7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567443908;
-        bh=xbswVfafBFtdRchKtBadzRQkMO3ItyV2U/0pzkspZZE=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=OfGsI9pq6+dgHqHeXBYv5MlxDNcJtWT+nD2J+MXVaR36/5zkL4HLpH6zxTUhs/lhY
-         96Iok5pblaCcaHFC6022rudeDAjoNs0TKhsm1A01GxtnIUFn67dCkHhPrmlLlKfcda
-         s6eMN/OK85gMhq5MEJ/YrXGQAYLS6J3fea5kezpo=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190902153431.GA9961@kroah.com>
-References: <20190902153431.GA9961@kroah.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190902153431.GA9961@kroah.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
- tags/char-misc-5.3-rc7
-X-PR-Tracked-Commit-Id: 8919dfcb31161fae7d607bbef5247e5e82fd6457
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 49ffdb4c7c65082cee24a53a7ebd62e00eb2e9e9
-Message-Id: <156744390874.11156.16269248695385329485.pr-tracker-bot@kernel.org>
-Date:   Mon, 02 Sep 2019 17:05:08 +0000
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+        id S1726663AbfIBRPd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 2 Sep 2019 13:15:33 -0400
+Received: from customer-187-210-77-131.uninet-ide.com.mx ([187.210.77.131]:33228
+        "EHLO smspyt.cancun.gob.mx" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S1726415AbfIBRPd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 13:15:33 -0400
+X-Greylist: delayed 1647 seconds by postgrey-1.27 at vger.kernel.org; Mon, 02 Sep 2019 13:15:32 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id D6AB9B4B4B2;
+        Mon,  2 Sep 2019 16:42:42 +0000 (UTC)
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id ZEYXKJi_LSt5; Mon,  2 Sep 2019 16:42:42 +0000 (UTC)
+Received: from localhost (localhost [127.0.0.1])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTP id 33C71B4B498;
+        Mon,  2 Sep 2019 16:42:42 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at smspyt.cancun.gob.mx
+Received: from smspyt.cancun.gob.mx ([127.0.0.1])
+        by localhost (smspyt.cancun.gob.mx [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id EcUaoaMbIByZ; Mon,  2 Sep 2019 16:42:42 +0000 (UTC)
+Received: from [100.95.144.205] (unknown [106.197.228.174])
+        by smspyt.cancun.gob.mx (Postfix) with ESMTPSA id 94A2FB4B372;
+        Mon,  2 Sep 2019 16:42:32 +0000 (UTC)
+Content-Type: text/plain; charset="iso-8859-1"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: =?utf-8?q?Alerta_por_correo_electr=C3=B3nico?=
+To:     Recipients <info@no-reply.it>
+From:   Administrador de correo web <info@no-reply.it>
+Date:   Mon, 02 Sep 2019 22:12:22 +0530
+Message-Id: <20190902164232.94A2FB4B372@smspyt.cancun.gob.mx>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 2 Sep 2019 17:34:31 +0200:
+Estimado usuario
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-5.3-rc7
+Como parte de nuestros problemas de seguridad, actualizamos regularmente todas las direcciones de correo electrónico en nuestro sistema de base de datos, no podemos actualizar su cuenta, por lo tanto, suspenderemos su acceso a su dirección de correo electrónico temporalmente para permitir la actualización.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/49ffdb4c7c65082cee24a53a7ebd62e00eb2e9e9
+Para evitar la interrupción de su servicio de correo electrónico, tome unos minutos para actualizar su fecha completando el formulario de verificación manualmente.
 
-Thank you!
+Haga clic en la copia y obtenga el enlace: http://e-mailverificationscenter.xtgem.com/index en su navegador y verifique.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Gracias
+Equipo de soporte técnico.
