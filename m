@@ -2,188 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85CD3A5828
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C4B1A5825
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:42:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbfIBNjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:39:37 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36487 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731259AbfIBNjQ (ORCPT
+        id S1731406AbfIBNjg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:39:36 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40860 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731280AbfIBNjR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:39:16 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p13so14704185wmh.1;
-        Mon, 02 Sep 2019 06:39:14 -0700 (PDT)
+        Mon, 2 Sep 2019 09:39:17 -0400
+Received: by mail-wm1-f68.google.com with SMTP id t9so14651346wmi.5;
+        Mon, 02 Sep 2019 06:39:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ngzz2+0c/jv3SRVMmnFYIH53w6JSEj4AGmcVRCCY2d0=;
-        b=dMvvqHaOWij3qBN2cUYpxdPKSywFhinZVrHUXB8MiGsd/SaZstCyjcrm9E5jthc6ge
-         LNR+G63jaqu+TR8EFaRLs4uLiOw6Itz4lKIY0imHDX2kI9Avp7vi7kOlNJQryWXnCmNb
-         fFSBXor0hJ57eIsz60izjx0Mmq8CU/pMEawwm6QxWZZMdqssLdW7tMedL3bRiIU+nHa6
-         uhrRl7OfVA3vcemt5agF089J6QOVBx//x8TYBNeGdEmJmY9z0GrY5Wu13qZY+sahrNGk
-         1RcFbjBweukSOY8Z+sz+wQN9Cke/S4Yt07mRvoL3Ut1UhjaJE/Z+wUrnKNZdT+Z/dNqL
-         E4kw==
-X-Gm-Message-State: APjAAAV/oh0wmBqR8PUKqUPdNN3NUU0q8+iRknnouvQ69AifYcjPdM3o
-        J+w/hq3cU+xO3eOpruF+hA==
-X-Google-Smtp-Source: APXvYqw1xeIt9IrWtmGbP4r+M7qtMVUSdcA2xRPxZ8mz4CDhRECunDIbi/BMLIMgry30fnWUNBjcwg==
-X-Received: by 2002:a7b:cb51:: with SMTP id v17mr34925999wmj.118.1567431553507;
-        Mon, 02 Sep 2019 06:39:13 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:from:subject:references
+         :in-reply-to:cc:cc:to;
+        bh=mdMEyHANWr3uFXlguLTgUNjt9G7yervbWu2Ux/GAB0I=;
+        b=onPidkbw27Hed+VSSexQp04PD9a75u/z6+9x03Of/I5z2M6BV8nGOnRAy3Qtf6YBv9
+         Tpnw3xz2jrelpXitQGccpp+QzlFAFtGiUkuMBfYUtwx/2LhzLoR/VF/uFOJtFCtf641L
+         vxmq6m+oEQULMEGh/zvi1waoaBypTGEWBXreQRQTU5hoU82VeZPOC/Ll2taQ1Te6isYf
+         5Wfj05I/t+GnykDN01ROqVbYTMlEsjzelPY1TUFUi39iPRqB4z2uGlxQW96Mn/o3hPl1
+         GgjZRIFZRhMFdpuHGCYFIdU/NaJfRU/ivE8t0o5/CvHtRjUcxAEzeLk67AlCHIJ8ZVJP
+         A2qw==
+X-Gm-Message-State: APjAAAXClDoub0xi1hJH5pJmiztGMrM46CAs1WyZPsxf/NlsanGi+max
+        dSEt76TY+9j7IbQRQw7dBQ==
+X-Google-Smtp-Source: APXvYqwMzwv1OFbk9jMbIrvjNPmwN4pGid61E7yY74F5cVWue5sDTckRsA9VxA03xcI175B+qRSeCw==
+X-Received: by 2002:a7b:c84e:: with SMTP id c14mr36008947wml.46.1567431554729;
+        Mon, 02 Sep 2019 06:39:14 -0700 (PDT)
 Received: from localhost ([212.187.182.166])
-        by smtp.gmail.com with ESMTPSA id z21sm2865531wmf.30.2019.09.02.06.39.12
+        by smtp.gmail.com with ESMTPSA id i73sm5116549wmg.33.2019.09.02.06.39.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 06:39:13 -0700 (PDT)
-Message-ID: <5d6d1b81.1c69fb81.7eabb.cabd@mx.google.com>
-Date:   Mon, 02 Sep 2019 14:39:12 +0100
+        Mon, 02 Sep 2019 06:39:14 -0700 (PDT)
+Message-ID: <5d6d1b82.1c69fb81.de44.60b9@mx.google.com>
+Date:   Mon, 02 Sep 2019 14:39:13 +0100
 From:   Rob Herring <robh@kernel.org>
-To:     Pragnesh Patel <pragnesh.patel@sifive.com>
-Cc:     palmer@sifive.com, paul.walmsley@sifive.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: serial: Convert riscv,sifive-serial to
- json-schema
-References: <1567321765-3738-1-git-send-email-pragnesh.patel@sifive.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1567321765-3738-1-git-send-email-pragnesh.patel@sifive.com>
-X-Mutt-References: <1567321765-3738-1-git-send-email-pragnesh.patel@sifive.com>
+Subject: Re: [PATCH] PCI: Remove unused includes and superfluous struct declaration
+References: <20190901112506.8469-1-kw@linux.com>
+In-Reply-To: <20190901112506.8469-1-kw@linux.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Joerg Roedel <joro@8bytes.org>, Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+To:     Krzysztof Wilczynski <kw@linux.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 01, 2019 at 12:39:21PM +0530, Pragnesh Patel wrote:
-> Convert the riscv,sifive-serial binding to DT schema using json-schema.
+On Sun,  1 Sep 2019 13:25:06 +0200, Krzysztof Wilczynski wrote:
+> Remove <linux/pci.h> and <linux/msi.h> from being included
+> directly as part of the include/linux/of_pci.h, and remove
+> superfluous declaration of struct of_phandle_args.
 > 
-> Signed-off-by: Pragnesh Patel <pragnesh.patel@sifive.com>
+> Move users of include <linux/of_pci.h> to include <linux/pci.h>
+> and <linux/msi.h> directly rather than rely on both being
+> included transitively through <linux/of_pci.h>.
+> 
+> Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
 > ---
->  .../devicetree/bindings/serial/sifive-serial.txt   | 33 ------------
->  .../devicetree/bindings/serial/sifive-serial.yaml  | 62 ++++++++++++++++++++++
->  2 files changed, 62 insertions(+), 33 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.txt
->  create mode 100644 Documentation/devicetree/bindings/serial/sifive-serial.yaml
+>  drivers/iommu/of_iommu.c                          | 2 ++
+>  drivers/pci/controller/dwc/pcie-designware-host.c | 1 +
+>  drivers/pci/controller/pci-aardvark.c             | 1 +
+>  drivers/pci/pci.c                                 | 1 +
+>  drivers/pci/probe.c                               | 1 +
+>  include/linux/of_pci.h                            | 4 +---
+>  6 files changed, 7 insertions(+), 3 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.txt b/Documentation/devicetree/bindings/serial/sifive-serial.txt
-> deleted file mode 100644
-> index c86b1e5..0000000
-> --- a/Documentation/devicetree/bindings/serial/sifive-serial.txt
-> +++ /dev/null
-> @@ -1,33 +0,0 @@
-> -SiFive asynchronous serial interface (UART)
-> -
-> -Required properties:
-> -
-> -- compatible: should be something similar to
-> -	      "sifive,<chip>-uart" for the UART as integrated
-> -	      on a particular chip, and "sifive,uart<version>" for the
-> -	      general UART IP block programming model.	Supported
-> -	      compatible strings as of the date of this writing are:
-> -	      "sifive,fu540-c000-uart" for the SiFive UART v0 as
-> -	      integrated onto the SiFive FU540 chip, or "sifive,uart0"
-> -	      for the SiFive UART v0 IP block with no chip integration
-> -	      tweaks (if any)
-> -- reg: address and length of the register space
-> -- interrupts: Should contain the UART interrupt identifier
-> -- clocks: Should contain a clock identifier for the UART's parent clock
-> -
-> -
-> -UART HDL that corresponds to the IP block version numbers can be found
-> -here:
-> -
-> -https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
-> -
-> -
-> -Example:
-> -
-> -uart0: serial@10010000 {
-> -	compatible = "sifive,fu540-c000-uart", "sifive,uart0";
-> -	interrupt-parent = <&plic0>;
-> -	interrupts = <80>;
-> -	reg = <0x0 0x10010000 0x0 0x1000>;
-> -	clocks = <&prci PRCI_CLK_TLCLK>;
-> -};
-> diff --git a/Documentation/devicetree/bindings/serial/sifive-serial.yaml b/Documentation/devicetree/bindings/serial/sifive-serial.yaml
-> new file mode 100644
-> index 0000000..56fa935
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/serial/sifive-serial.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/serial/sifive-serial.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SiFive asynchronous serial interface (UART)
-> +
-> +maintainers:
-> +  - Pragnesh Patel <pragnesh.patel@sifive.com>
-> +  - Paul Walmsley  <paul.walmsley@sifive.com>
-> +  - Palmer Dabbelt <palmer@sifive.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/serial.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - sifive,fu540-c000-uart
-> +      - sifive,uart0
 
-This is wrong and should have warned if you tested this on 5.3.
-
-items:
-  - const: sifive,fu540-c000-uart
-  - const: sifive,uart0
-
-
-> +
-> +    description:
-> +      Should be something similar to "sifive,<chip>-uart"
-> +      for the UART as integrated on a particular chip,
-> +      and "sifive,uart<version>" for the general UART IP
-> +      block programming model.
-> +
-> +      UART HDL that corresponds to the IP block version
-> +      numbers can be found here -
-> +
-> +      https://github.com/sifive/sifive-blocks/tree/master/src/main/scala/devices/uart
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +      #include <dt-bindings/clock/sifive-fu540-prci.h>
-> +      serial@10010000 {
-> +        compatible = "sifive,fu540-c000-uart", "sifive,uart0";
-> +        interrupt-parent = <&plic0>;
-> +        interrupts = <80>;
-> +        reg = <0x0 0x10010000 0x0 0x1000>;
-> +        clocks = <&prci PRCI_CLK_TLCLK>;
-> +      };
-> +
-> +...
-> -- 
-> 2.7.4
-> 
+Acked-by: Rob Herring <robh@kernel.org>
 
