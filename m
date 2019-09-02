@@ -2,74 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39411A5AF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 18:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5465BA5B01
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 18:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfIBQBW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 12:01:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55102 "EHLO mx1.redhat.com"
+        id S1726606AbfIBQBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 12:01:48 -0400
+Received: from mga12.intel.com ([192.55.52.136]:5541 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbfIBQBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 12:01:22 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CBC20301E11C;
-        Mon,  2 Sep 2019 16:01:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 589CE600D1;
-        Mon,  2 Sep 2019 16:01:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20190902161935.78bf56f1@canb.auug.org.au>
-References: <20190902161935.78bf56f1@canb.auug.org.au> <20190829153116.7ffc7470@canb.auug.org.au>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     dhowells@redhat.com,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux USB Mailing List <linux-usb@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the keys tree
+        id S1726571AbfIBQBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 12:01:47 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 09:01:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,459,1559545200"; 
+   d="scan'208";a="357510056"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga005.jf.intel.com with ESMTP; 02 Sep 2019 09:01:42 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1i4olv-0004WG-EM; Mon, 02 Sep 2019 19:01:39 +0300
+Date:   Mon, 2 Sep 2019 19:01:39 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>, rafael@kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        linux-trace-devel@vger.kernel.org, Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH v4 07/11] lib/vsprintf: Remove support for %pF and %pf in
+ favour of %pS and %ps
+Message-ID: <20190902160139.GQ2680@smile.fi.intel.com>
+References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
+ <20190902083240.20367-8-sakari.ailus@linux.intel.com>
+ <20190902143935.xtd44jdvhjuc2wxe@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16835.1567440079.1@warthog.procyon.org.uk>
-Date:   Mon, 02 Sep 2019 17:01:19 +0100
-Message-ID: <16836.1567440079@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 02 Sep 2019 16:01:21 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190902143935.xtd44jdvhjuc2wxe@pathway.suse.cz>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Sep 02, 2019 at 04:39:35PM +0200, Petr Mladek wrote:
+> On Mon 2019-09-02 11:32:36, Sakari Ailus wrote:
+> > %pS and %ps are now the preferred conversion specifiers to print function
+> > names. The functionality is equivalent; remove the old, deprecated %pF
+> > and %pf support.
+> 
+> Hmm, I see the following in master:
+> 
+> $> git grep %pF
+> tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt:or events have "%pF" or "%pS" parameter in its format string. It is common to
+> 
+> $> git grep %pf
+> tools/lib/traceevent/event-parse.c:             if (asprintf(&format, "%%pf: (NO FORMAT FOUND at %llx)\n", addr) < 0)
+> tools/lib/traceevent/event-parse.c:     if (asprintf(&format, "%s: %s", "%pf", printk->printk) < 0)
+> 
+> I wonder how this is related to printk(). In each case, it seems
 
-> The forward declararion doesn't seem to work (at laste for the
-> !CONFIG_USB_NOTIFICATIONS case.
+It's going thru binary printf() I suppose. The fist stage just saves the format
+string and argument addresses or so and prints in later on when user is looking
+for human-readable output.
 
-In the !CONFIG_USB_NOTIFICATIONS case, the argument is to a stub inline
-function.  Even though the argument isn't actually used, it can't be an
-undefined type - and, I'm guessing, an undefined size, meaning the compiler
-doesn't know how many registers/how much stack space it would occupy before
-getting to the error argument.
+> that libtraceevent somehow implements the non-standard kernel
+> %p mofifiers. It looks error-prone to keep another %pf user
+> with the old semantic around.
+> 
+> I am adding some tracing people into CC.
 
-I have a fix for this in my tree that just makes it an unsigned int in the
-disabled case:
+-- 
+With Best Regards,
+Andy Shevchenko
 
-static inline void post_usb_device_notification(const struct usb_device *udev,
-						unsigned int subtype, u32 error) {}
 
-> +#include <linux/watch_queue.h>
-
-I was trying to avoid that if I could to avoid introducing the possibility of
-circular deps, but that might not be a problem in this case.
-
-> I then discovered that I needed to install libkeyutils-dev :-( but it
-> built OK after that.
-
-?  The kernel shouldn't require that to build.
-
-David
