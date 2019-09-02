@@ -2,93 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C936FA5D09
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 22:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD9CA5D11
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 22:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbfIBUR1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 16:17:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36390 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbfIBUR1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 16:17:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=vyrAwk633Q2uTNUkmkIFpLBBAXkNdWuZxdwn7dVGxrY=; b=hVIFb8G2bhmnQDj/v+uSR2npO
-        ojrsH0Y6h3ctrWe/irN5y65I1oa10334XO2C7SVcrctOZKqjhSnWQFT+et9ljyfayJLRYWsy9oRp/
-        QXqXw8f2RbsZHoGYMJRGiYi4AI4KNIcX/dqoHF3gk6+XmIgb7C1yvlKkU25SPjYBOf9L9Lfek/I5k
-        5NVZWnRuY0j57y2d3NXxu39tO0fHHzvFNor1OkjRBNrAztkRxnuezsEKjew+gcQumi5QhH2cuNC5p
-        G4lNzWSgAshmFI2hnwyV5EvTDn1LAy3LOXELiO14Ov2sUEmCG6NfZY9/glQz75uhGyFztLQmw/rnG
-        Y2fn5dKxg==;
-Received: from [177.159.247.242] (helo=coco.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i4slN-00021w-D9; Mon, 02 Sep 2019 20:17:21 +0000
-Date:   Mon, 2 Sep 2019 17:17:16 -0300
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>,
-        James Morse <james.morse@arm.com>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/5] EDAC: Small cleanups and fixes
-Message-ID: <20190902171716.50c226d6@coco.lan>
-In-Reply-To: <20190902123216.9809-1-rrichter@marvell.com>
-References: <20190902123216.9809-1-rrichter@marvell.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1727308AbfIBUVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 16:21:35 -0400
+Received: from ms.lwn.net ([45.79.88.28]:56534 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbfIBUVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 16:21:35 -0400
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 4487530D;
+        Mon,  2 Sep 2019 20:21:34 +0000 (UTC)
+Date:   Mon, 2 Sep 2019 14:21:33 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Federico Vaga <federico.vaga@vaga.pv.it>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH] doc:lock: remove reference to clever use of read-write
+ lock
+Message-ID: <20190902142133.37e106af@lwn.net>
+In-Reply-To: <4627860.yBeiQmOknq@harkonnen>
+References: <20190831134116.25417-1-federico.vaga@vaga.pv.it>
+        <2216492.xyESGPMPG3@pcbe13614>
+        <20190902181010.GA35858@gmail.com>
+        <4627860.yBeiQmOknq@harkonnen>
+Organization: LWN.net
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 2 Sep 2019 12:33:38 +0000
-Robert Richter <rrichter@marvell.com> escreveu:
+On Mon, 02 Sep 2019 21:19:24 +0200
+Federico Vaga <federico.vaga@vaga.pv.it> wrote:
 
-> A bunch of cleanups and fixes for issues found while working with the
-> code. Changes are individual and independent from each other. They can
-> be applied separately (only #4 depends on #3).
+> > > I am not used to the mathematical English jargon. It make sense, but then
+> > > I
+> > > would replace it with "If and only if": for clarity.  
+> > 
+> > While it's used in a number of places and it's pretty common wording
+> > overall in the literature, I agree that we should probably change this in
+> > locking API user facing documentation.  
 > 
-> Also updating the reviewer's entry as I will be able to do some
-> reviews for edac code.
-> 
-> Note that patch #3 is an updated version of a patch reviewed before:
-> 
->  https://lore.kernel.org/patchwork/patch/1093466/
-> 
-> Some references to ml discussions that are related to this series:
-> 
->  https://lore.kernel.org/patchwork/patch/1093480/#1312590
->  https://lore.kernel.org/patchwork/patch/1093466/#1310572
-> 
-> Robert Richter (5):
->   EDAC: Prefer 'unsigned int' to bare use of 'unsigned'
->   EDAC, mc_sysfs: Change dev_ch_attribute->channel to unsigned int
->   EDAC, mc_sysfs: Remove pointless gotos
->   EDAC, mc_sysfs: Make debug messages consistent
->   MAINTAINERS: update EDAC's reviewer entry
+> I would say not only in locking/. The argument is valid for the entire 
+> Documentation/. I wait for Jon's opinion before proceeding.
 
-For the entire series:
-
-Reviewed-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-
-> 
->  MAINTAINERS                  |  1 +
->  drivers/edac/edac_mc.c       | 20 ++++----
->  drivers/edac/edac_mc.h       |  6 +--
->  drivers/edac/edac_mc_sysfs.c | 91 ++++++++++++++++--------------------
->  drivers/edac/ghes_edac.c     |  2 +-
->  drivers/edac/i5100_edac.c    | 16 ++++---
->  include/linux/edac.h         | 10 ++--
->  7 files changed, 69 insertions(+), 77 deletions(-)
-> 
-
-
+I don't really have a problem with "iff"; it doesn't seem like *that*
+obscure a term to me.  But if you want spell it out, I guess I don't have
+a problem with that.  We can change it - iff you send a patch to do it :)
 
 Thanks,
-Mauro
+
+jon
