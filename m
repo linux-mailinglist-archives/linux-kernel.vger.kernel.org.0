@@ -2,157 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A8DA599B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 16:43:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA98A59AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 16:45:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731540AbfIBOnI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 10:43:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43190 "EHLO mx1.suse.de"
+        id S1731669AbfIBOoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 10:44:12 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:4405 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726382AbfIBOnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 10:43:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B6FAEAE89;
-        Mon,  2 Sep 2019 14:43:05 +0000 (UTC)
-Subject: Re: [PATCH 5/5] drm/qxl: use drm_gem_ttm_print_info
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@redhat.com>
-References: <20190902124126.7700-1-kraxel@redhat.com>
- <20190902124126.7700-6-kraxel@redhat.com>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
- IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
- AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
- 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
- hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
- YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
- 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
- tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
- R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
- E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
- kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
- 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
- 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
- A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
- NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
- VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
- iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
- VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
- iNx9uqqx
-Message-ID: <6648e4f5-8a86-1daa-f6e7-b724980a5be5@suse.de>
-Date:   Mon, 2 Sep 2019 16:42:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726382AbfIBOoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 10:44:11 -0400
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id 58F3A420F300ACFA4260;
+        Mon,  2 Sep 2019 22:43:56 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 2 Sep 2019 22:43:55 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Mon, 2 Sep 2019 22:43:55 +0800
+Date:   Mon, 2 Sep 2019 22:43:04 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
+        Chao Yu <yuchao0@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <devel@driverdev.osuosl.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        David Sterba <dsterba@suse.cz>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-erofs@lists.ozlabs.org>
+Subject: Re: [PATCH v6 03/24] erofs: add super block operations
+Message-ID: <20190902144303.GF2664@architecture4>
+References: <20190802125347.166018-1-gaoxiang25@huawei.com>
+ <20190802125347.166018-4-gaoxiang25@huawei.com>
+ <20190829101545.GC20598@infradead.org>
+ <20190901085452.GA4663@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190902125109.GA9826@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20190902124126.7700-6-kraxel@redhat.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="Clit6RfTTM8Htb9tNSh6wHS8QmmDLqS2V"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190902125109.GA9826@infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme706-chm.china.huawei.com (10.1.199.102) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Clit6RfTTM8Htb9tNSh6wHS8QmmDLqS2V
-Content-Type: multipart/mixed; boundary="nnvPW0OXUdx3uGyybx7O16Dcj4tJtS9wE";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc: David Airlie <airlied@linux.ie>, open list
- <linux-kernel@vger.kernel.org>,
- "open list:DRM DRIVER FOR QXL VIRTUAL GPU"
- <virtualization@lists.linux-foundation.org>,
- "open list:DRM DRIVER FOR QXL VIRTUAL GPU"
- <spice-devel@lists.freedesktop.org>, Dave Airlie <airlied@redhat.com>
-Message-ID: <6648e4f5-8a86-1daa-f6e7-b724980a5be5@suse.de>
-Subject: Re: [PATCH 5/5] drm/qxl: use drm_gem_ttm_print_info
-References: <20190902124126.7700-1-kraxel@redhat.com>
- <20190902124126.7700-6-kraxel@redhat.com>
-In-Reply-To: <20190902124126.7700-6-kraxel@redhat.com>
+Hi Christoph,
 
---nnvPW0OXUdx3uGyybx7O16Dcj4tJtS9wE
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 02, 2019 at 05:51:09AM -0700, Christoph Hellwig wrote:
+> On Sun, Sep 01, 2019 at 04:54:55PM +0800, Gao Xiang wrote:
+> > No modification at this... (some comments already right here...)
+> 
+> >  20 /* 128-byte erofs on-disk super block */
+> >  21 struct erofs_super_block {
+> > ...
+> >  24         __le32 features;        /* (aka. feature_compat) */
+> > ...
+> >  38         __le32 requirements;    /* (aka. feature_incompat) */
+> > ...
+> >  41 };
+> 
+> This is only cosmetic, why not stick to feature_compat and
+> feature_incompat?
 
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+Okay, will fix. (however, in my mind, I'm some confused why
+"features" could be incompatible...)
 
-Am 02.09.19 um 14:41 schrieb Gerd Hoffmann:
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  drivers/gpu/drm/qxl/qxl_drv.h    | 1 +
->  drivers/gpu/drm/qxl/qxl_object.c | 1 +
->  2 files changed, 2 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_dr=
-v.h
-> index 9e034c5fa87d..d4051409ce64 100644
-> --- a/drivers/gpu/drm/qxl/qxl_drv.h
-> +++ b/drivers/gpu/drm/qxl/qxl_drv.h
-> @@ -38,6 +38,7 @@
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_encoder.h>
->  #include <drm/drm_fb_helper.h>
-> +#include <drm/drm_gem_ttm_helper.h>
->  #include <drm/drm_ioctl.h>
->  #include <drm/drm_gem.h>
->  #include <drm/qxl_drm.h>
-> diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/qxl=
-_object.c
-> index 29aab7b14513..c013c516f561 100644
-> --- a/drivers/gpu/drm/qxl/qxl_object.c
-> +++ b/drivers/gpu/drm/qxl/qxl_object.c
-> @@ -86,6 +86,7 @@ static const struct drm_gem_object_funcs qxl_object_f=
-uncs =3D {
->  	.get_sg_table =3D qxl_gem_prime_get_sg_table,
->  	.vmap =3D qxl_gem_prime_vmap,
->  	.vunmap =3D qxl_gem_prime_vunmap,
-> +	.print_info =3D drm_gem_ttm_print_info,
->  };
-> =20
->  int qxl_bo_create(struct qxl_device *qdev,
->=20
+> 
+> > > > +	bh = sb_bread(sb, 0);
+> > > 
+> > > Is there any good reasons to use buffer heads like this in new code
+> > > vs directly using bios?
+> > 
+> > As you said, I want it in the page cache.
+> > 
+> > The reason "why not use read_mapping_page or similar?" is simply
+> > read_mapping_page -> .readpage -> (for bdev inode) block_read_full_page
+> >  -> create_page_buffers anyway...
+> > 
+> > sb_bread haven't obsoleted... It has similar function though...
+> 
+> With the different that it keeps you isolated from the buffer_head
+> internals.  This seems to be your only direct use of buffer heads,
+> which while not deprecated are a bit of an ugly step child.  So if
+> you can easily avoid creating a buffer_head dependency in a new
+> filesystem I think you should avoid it.
 
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG N=C3=BCrnberg)
+OK, let's use read_mapping_page instead.
+
+> 
+> > > > +	sbi->build_time = le64_to_cpu(layout->build_time);
+> > > > +	sbi->build_time_nsec = le32_to_cpu(layout->build_time_nsec);
+> > > > +
+> > > > +	memcpy(&sb->s_uuid, layout->uuid, sizeof(layout->uuid));
+> > > > +	memcpy(sbi->volume_name, layout->volume_name,
+> > > > +	       sizeof(layout->volume_name));
+> > > 
+> > > s_uuid should preferably be a uuid_t (assuming it is a real BE uuid,
+> > > if it is le it should be a guid_t).
+> > 
+> > For this case, I have no idea how to deal with...
+> > I have little knowledge about this uuid stuff, so I just copied
+> > from f2fs... (Could be no urgent of this field...)
+> 
+> Who fills out this field in the on-disk format and how?
+
+mkfs.erofs, but this field leaves 0 for now. Is that reasonable?
+(using libuuid can generate it easily...)
+
+> 
+> > The background is Al's comments in erofs v2....
+> > (which simplify erofs_fill_super logic)
+> > https://lore.kernel.org/r/20190720224955.GD17978@ZenIV.linux.org.uk/
+> > 
+> > with a specific notation...
+> > https://lore.kernel.org/r/20190721040547.GF17978@ZenIV.linux.org.uk/
+> > 
+> > "
+> > > OTOH, for the case of NULL ->s_root ->put_super() won't be called
+> > > at all, so in that case you need it directly in ->kill_sb().
+> > "
+> 
+> Yes.  Although none of that is relevant for this initial version,
+> just after more features are added.
+
+This patch uses it actually... since no failure path in erofs_fill_super()
+and s_root will be filled nearly at the end of the function...
+
+Thanks,
+Gao Xiang
 
 
---nnvPW0OXUdx3uGyybx7O16Dcj4tJtS9wE--
 
---Clit6RfTTM8Htb9tNSh6wHS8QmmDLqS2V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl1tKmwACgkQaA3BHVML
-eiNabAgAtv1B3wPVXOGKwUAvkeOBYizfbSBQdULp6Jca91gaG1yStTzQuU+yxJqd
-BEZzpuJRtal9jCt7iNOQJKpZuSo66kkyDDn64EYAAoIOxTjC7itN+ZKBl/z9aV+n
-/ztmjcmJadB+O5kvUD4X1D8tJ68EKOgBymdHMQecb9cL9qn54vFwoCzhhrL7/50E
-RNO3HwI7yi7TVNcEvSgsabn+2xH3wpiVYHqOGjN5jRjfizgJuFiULmmckg0adMOJ
-MbjR19Qu8wvvEe3CIa7dVsvCD/zbS0fsoALpsY8lxXsOhjfK9Uh0BmSiV56OP4N2
-Mnq91MRlMwnZB3m8ciAPS8rvxOk8ww==
-=Owph
------END PGP SIGNATURE-----
-
---Clit6RfTTM8Htb9tNSh6wHS8QmmDLqS2V--
