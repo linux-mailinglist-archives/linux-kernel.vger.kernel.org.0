@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FD3DA515E
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65308A5142
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:18:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbfIBISx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:18:53 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:56251 "EHLO
+        id S1730253AbfIBISS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:18:18 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:56304 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730223AbfIBIQp (ORCPT
+        with ESMTP id S1730285AbfIBIQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:16:45 -0400
+        Mon, 2 Sep 2019 04:16:51 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i4hVw-00088C-AJ; Mon, 02 Sep 2019 10:16:40 +0200
+        id 1i4hW2-00088c-0N; Mon, 02 Sep 2019 10:16:46 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id B63AE1C0DE7;
-        Mon,  2 Sep 2019 10:16:35 +0200 (CEST)
-Date:   Mon, 02 Sep 2019 08:16:35 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 38E011C0DEC;
+        Mon,  2 Sep 2019 10:16:36 +0200 (CEST)
+Date:   Mon, 02 Sep 2019 08:16:36 -0000
 From:   "tip-bot2 for Arnaldo Carvalho de Melo" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf tools: Move 'struct events_stats' and
- prototypes to separate header
+Subject: [tip: perf/core] perf tools: Remove needless sort.h include directives
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <tip-enqncj29ovzaat3cd9203rwl@git.kernel.org>
-References: <tip-enqncj29ovzaat3cd9203rwl@git.kernel.org>
+In-Reply-To: <tip-tom8k0lbsxd9joprr8zpu6w1@git.kernel.org>
+References: <tip-tom8k0lbsxd9joprr8zpu6w1@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <156741219554.17348.3161473190917894663.tip-bot2@tip-bot2>
+Message-ID: <156741219610.17351.15207644585939549590.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -51,211 +50,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     4772925885dac93aa5f00d1c1da93277778099cd
-Gitweb:        https://git.kernel.org/tip/4772925885dac93aa5f00d1c1da93277778099cd
+Commit-ID:     5c9dbe6da13398d09efc9ec479194afa6d9ec9e6
+Gitweb:        https://git.kernel.org/tip/5c9dbe6da13398d09efc9ec479194afa6d9ec9e6
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Fri, 30 Aug 2019 11:44:32 -03:00
+AuthorDate:    Fri, 30 Aug 2019 11:54:00 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Sat, 31 Aug 2019 22:24:10 -03:00
 
-perf tools: Move 'struct events_stats' and prototypes to separate header
+perf tools: Remove needless sort.h include directives
 
-This will allow us to untangle the header dependency a bit more, as some
-places will not need event.h anymore.
+Now that sort.h isn't included by any other header, we can check where
+it is really needed, i.e. we can remove it and be sure that it isn't
+being obtained indirectly.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-enqncj29ovzaat3cd9203rwl@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-tom8k0lbsxd9joprr8zpu6w1@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/auxtrace.h     |  5 +++-
- tools/perf/util/event.h        | 42 +---------------------------
- tools/perf/util/events_stats.h | 51 +++++++++++++++++++++++++++++++++-
- tools/perf/util/evlist.h       |  2 +-
- tools/perf/util/hist.h         |  4 +---
- tools/perf/util/sort.h         |  1 +-
- 6 files changed, 58 insertions(+), 47 deletions(-)
- create mode 100644 tools/perf/util/events_stats.h
+ tools/perf/builtin-top.c         | 1 +
+ tools/perf/ui/browsers/scripts.c | 1 -
+ tools/perf/util/hist.c           | 1 +
+ tools/perf/util/mem-events.c     | 1 -
+ tools/perf/util/session.c        | 1 -
+ 5 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
-index b5ac24c..c539e7b 100644
---- a/tools/perf/util/auxtrace.h
-+++ b/tools/perf/util/auxtrace.h
-@@ -30,6 +30,11 @@ struct record_opts;
- struct perf_record_auxtrace_info;
- struct events_stats;
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 0b7b12c..0f0d962 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -39,6 +39,7 @@
+ #include <linux/rbtree.h>
+ #include <subcmd/parse-options.h>
+ #include "util/parse-events.h"
++#include "util/callchain.h"
+ #include "util/cpumap.h"
+ #include "util/sort.h"
+ #include "util/string2.h"
+diff --git a/tools/perf/ui/browsers/scripts.c b/tools/perf/ui/browsers/scripts.c
+index 77809c0..bf1d9f9 100644
+--- a/tools/perf/ui/browsers/scripts.c
++++ b/tools/perf/ui/browsers/scripts.c
+@@ -1,7 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "../../builtin.h"
+ #include "../../perf.h"
+-#include "../../util/sort.h"
+ #include "../../util/util.h"
+ #include "../../util/hist.h"
+ #include "../../util/debug.h"
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index b526ef3..0978dc4 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -20,6 +20,7 @@
+ #include <math.h>
+ #include <inttypes.h>
+ #include <sys/param.h>
++#include <linux/rbtree.h>
+ #include <linux/string.h>
+ #include <linux/time64.h>
+ #include <linux/zalloc.h>
+diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
+index 42c3e5a..3a8d38c 100644
+--- a/tools/perf/util/mem-events.c
++++ b/tools/perf/util/mem-events.c
+@@ -11,7 +11,6 @@
+ #include "mem-events.h"
+ #include "debug.h"
+ #include "symbol.h"
+-#include "sort.h"
  
-+enum auxtrace_error_type {
-+       PERF_AUXTRACE_ERROR_ITRACE  = 1,
-+       PERF_AUXTRACE_ERROR_MAX
-+};
-+
- /* Auxtrace records must have the same alignment as perf event records */
- #define PERF_AUXTRACE_RECORD_ALIGNMENT 8
+ unsigned int perf_mem_events__loads_ldlat = 30;
  
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index 006aa43..47ad81d 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -151,11 +151,6 @@ struct perf_sample {
- 	 PERF_MEM_S(LOCK, NA) |\
- 	 PERF_MEM_S(TLB, NA))
- 
--enum auxtrace_error_type {
--	PERF_AUXTRACE_ERROR_ITRACE  = 1,
--	PERF_AUXTRACE_ERROR_MAX
--};
--
- /* Attribute type for custom synthesized events */
- #define PERF_TYPE_SYNTH		(INT_MAX + 1U)
- 
-@@ -277,43 +272,6 @@ static inline void *perf_synth__raw_data(void *p)
- 
- #define perf_sample__bad_synth_size(s, d) ((s)->raw_size < sizeof(d) - 4)
- 
--/*
-- * The kernel collects the number of events it couldn't send in a stretch and
-- * when possible sends this number in a PERF_RECORD_LOST event. The number of
-- * such "chunks" of lost events is stored in .nr_events[PERF_EVENT_LOST] while
-- * total_lost tells exactly how many events the kernel in fact lost, i.e. it is
-- * the sum of all struct perf_record_lost.lost fields reported.
-- *
-- * The kernel discards mixed up samples and sends the number in a
-- * PERF_RECORD_LOST_SAMPLES event. The number of lost-samples events is stored
-- * in .nr_events[PERF_RECORD_LOST_SAMPLES] while total_lost_samples tells
-- * exactly how many samples the kernel in fact dropped, i.e. it is the sum of
-- * all struct perf_record_lost_samples.lost fields reported.
-- *
-- * The total_period is needed because by default auto-freq is used, so
-- * multipling nr_events[PERF_EVENT_SAMPLE] by a frequency isn't possible to get
-- * the total number of low level events, it is necessary to to sum all struct
-- * perf_record_sample.period and stash the result in total_period.
-- */
--struct events_stats {
--	u64 total_period;
--	u64 total_non_filtered_period;
--	u64 total_lost;
--	u64 total_lost_samples;
--	u64 total_aux_lost;
--	u64 total_aux_partial;
--	u64 total_invalid_chains;
--	u32 nr_events[PERF_RECORD_HEADER_MAX];
--	u32 nr_non_filtered_samples;
--	u32 nr_lost_warned;
--	u32 nr_unknown_events;
--	u32 nr_invalid_chains;
--	u32 nr_unknown_id;
--	u32 nr_unprocessable_samples;
--	u32 nr_auxtrace_errors[PERF_AUXTRACE_ERROR_MAX];
--	u32 nr_proc_map_timeout;
--};
--
- enum {
- 	PERF_STAT_ROUND_TYPE__INTERVAL	= 0,
- 	PERF_STAT_ROUND_TYPE__FINAL	= 1,
-diff --git a/tools/perf/util/events_stats.h b/tools/perf/util/events_stats.h
-new file mode 100644
-index 0000000..859cb34
---- /dev/null
-+++ b/tools/perf/util/events_stats.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __PERF_EVENTS_STATS_
-+#define __PERF_EVENTS_STATS_
-+
-+#include <stdio.h>
-+#include <perf/event.h>
-+#include <linux/types.h>
-+#include "auxtrace.h"
-+
-+/*
-+ * The kernel collects the number of events it couldn't send in a stretch and
-+ * when possible sends this number in a PERF_RECORD_LOST event. The number of
-+ * such "chunks" of lost events is stored in .nr_events[PERF_EVENT_LOST] while
-+ * total_lost tells exactly how many events the kernel in fact lost, i.e. it is
-+ * the sum of all struct perf_record_lost.lost fields reported.
-+ *
-+ * The kernel discards mixed up samples and sends the number in a
-+ * PERF_RECORD_LOST_SAMPLES event. The number of lost-samples events is stored
-+ * in .nr_events[PERF_RECORD_LOST_SAMPLES] while total_lost_samples tells
-+ * exactly how many samples the kernel in fact dropped, i.e. it is the sum of
-+ * all struct perf_record_lost_samples.lost fields reported.
-+ *
-+ * The total_period is needed because by default auto-freq is used, so
-+ * multipling nr_events[PERF_EVENT_SAMPLE] by a frequency isn't possible to get
-+ * the total number of low level events, it is necessary to to sum all struct
-+ * perf_record_sample.period and stash the result in total_period.
-+ */
-+struct events_stats {
-+	u64 total_period;
-+	u64 total_non_filtered_period;
-+	u64 total_lost;
-+	u64 total_lost_samples;
-+	u64 total_aux_lost;
-+	u64 total_aux_partial;
-+	u64 total_invalid_chains;
-+	u32 nr_events[PERF_RECORD_HEADER_MAX];
-+	u32 nr_non_filtered_samples;
-+	u32 nr_lost_warned;
-+	u32 nr_unknown_events;
-+	u32 nr_invalid_chains;
-+	u32 nr_unknown_id;
-+	u32 nr_unprocessable_samples;
-+	u32 nr_auxtrace_errors[PERF_AUXTRACE_ERROR_MAX];
-+	u32 nr_proc_map_timeout;
-+};
-+
-+void events_stats__inc(struct events_stats *stats, u32 type);
-+
-+size_t events_stats__fprintf(struct events_stats *stats, FILE *fp);
-+
-+#endif /* __PERF_EVENTS_STATS_ */
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index ee28864..a55f0f2 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -9,7 +9,7 @@
- #include <api/fd/array.h>
- #include <stdio.h>
- #include <internal/evlist.h>
--#include "event.h"
-+#include "events_stats.h"
- #include "evsel.h"
- #include "mmap.h"
- #include <signal.h>
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 1c0a635..34803e3 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -6,8 +6,8 @@
- #include <linux/types.h>
- #include <pthread.h>
- #include "evsel.h"
--#include "header.h"
- #include "color.h"
-+#include "events_stats.h"
- 
- struct hist_entry;
- struct hist_entry_ops;
-@@ -190,8 +190,6 @@ void hists__reset_stats(struct hists *hists);
- void hists__inc_stats(struct hists *hists, struct hist_entry *h);
- void hists__inc_nr_events(struct hists *hists, u32 type);
- void hists__inc_nr_samples(struct hists *hists, bool filtered);
--void events_stats__inc(struct events_stats *stats, u32 type);
--size_t events_stats__fprintf(struct events_stats *stats, FILE *fp);
- 
- size_t hists__fprintf(struct hists *hists, bool show_header, int max_rows,
- 		      int max_cols, float min_pcnt, FILE *fp,
-diff --git a/tools/perf/util/sort.h b/tools/perf/util/sort.h
-index 3d7cef7..7b93f34 100644
---- a/tools/perf/util/sort.h
-+++ b/tools/perf/util/sort.h
-@@ -9,7 +9,6 @@
- #include "symbol_conf.h"
- #include "callchain.h"
- #include "values.h"
--
- #include "hist.h"
- 
- struct option;
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index f166da7..e5ac5f3 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -20,7 +20,6 @@
+ #include "symbol.h"
+ #include "session.h"
+ #include "tool.h"
+-#include "sort.h"
+ #include "cpumap.h"
+ #include "perf_regs.h"
+ #include "asm/bug.h"
