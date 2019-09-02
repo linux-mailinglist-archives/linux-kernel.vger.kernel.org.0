@@ -2,135 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE88CA5C82
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 21:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38F9DA5C83
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 21:06:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbfIBTFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 15:05:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36966 "EHLO mail.kernel.org"
+        id S1727056AbfIBTGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 15:06:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbfIBTFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 15:05:40 -0400
-Received: from earth.universe (unknown [185.62.205.105])
+        id S1726974AbfIBTGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 15:06:22 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00CFF21883;
-        Mon,  2 Sep 2019 19:05:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2209321883;
+        Mon,  2 Sep 2019 19:06:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567451139;
-        bh=Vr1yZlWF+4twzy+7EuAxHux0Cmmf1eUWlecK7qoeyTY=;
+        s=default; t=1567451181;
+        bh=zvRcbQCOY51GKOL5qbyTT97X2kqYQ4CVAIpuSfcp7o8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=feOUBzM/luMfregDyDUCAJn1qOw3odq3f2Zd4yVWpEBJPJsDHpEpTkZv5BrCa9NcA
-         9T/vJffTVs9d8eHEqLMhQoBs2dZAyco8D1HAm2jNfJXd01EvBLePaDqc5ZcSdaP7yU
-         7XCJzBM+2ZKEnb7aboPgw64ZvKNaLqi8xm/H2BBE=
-Received: by earth.universe (Postfix, from userid 1000)
-        id BF4FE3C0B7F; Mon,  2 Sep 2019 21:05:36 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 21:05:36 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     linus.walleij@linaro.org, lee.jones@linaro.org,
-        loic.pallardy@st.com, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] power: supply: ab8500: remove set but not used
- variables 'vbup33_vrtcn' and 'bup_vch_range'
-Message-ID: <20190902190536.irlrzzvjvduvl2qd@earth.universe>
-References: <20190717141848.31116-1-yuehaibing@huawei.com>
+        b=lmWXZApgoxbrSptmsO4LuoMFe+B2CSSNeTx4sy7Itg3caSDGj/n0qJmj2OuZgeYeM
+         tHBHUB715zWlMS3R4s7H2lYdA9cs+/r5/fETLy4BJYDYvy6sbogNHT9q5px030ZniO
+         FI/zmQ1ubYy+8XSX7RBjcc0jg0aP9Ta4QGLrrHVc=
+Date:   Mon, 2 Sep 2019 21:06:19 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Valdis =?utf-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>
+Cc:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Christoph Hellwig <hch@infradead.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/staging/exfat - by default, prohibit mount of
+ fat/vfat
+Message-ID: <20190902190619.GA25019@kroah.com>
+References: <245727.1567183359@turing-police>
+ <20190830164503.GA12978@infradead.org>
+ <267691.1567212516@turing-police>
+ <20190831064616.GA13286@infradead.org>
+ <295233.1567247121@turing-police>
+ <20190902073525.GA18988@infradead.org>
+ <20190902152524.GA4964@kroah.com>
+ <501797.1567450817@turing-police>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wirrsdh333qp3ti7"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190717141848.31116-1-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <501797.1567450817@turing-police>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Sep 02, 2019 at 03:00:17PM -0400, Valdis Klētnieks wrote:
+> On Mon, 02 Sep 2019 17:25:24 +0200, Greg Kroah-Hartman said:
+> 
+> > I dug up my old discussion with the current vfat maintainer and he said
+> > something to the affect of, "leave the existing code alone, make a new
+> > filesystem, I don't want anything to do with exfat".
+> >
+> > And I don't blame them, vfat is fine as-is and stable and shouldn't be
+> > touched for new things.
+> >
+> > We can keep non-vfat filesystems from being mounted with the exfat
+> > codebase, and make things simpler for everyone involved.
+> 
+> Ogawa:
+> 
+> Is this still your position, that you want exfat to be a separate module?
 
---wirrsdh333qp3ti7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Personally I agree that this should be separate at least for quite some
+time to shake things out at the very least.  But I'll defer to Ogawa if
+he thinks things should be merged.
 
-Hi,
+thanks,
 
-On Wed, Jul 17, 2019 at 10:18:48PM +0800, YueHaibing wrote:
-> Fixes gcc '-Wunused-but-set-variable' warnings:
->=20
-> drivers/power/supply/ab8500_charger.c:
->  In function ab8500_charger_init_hw_registers:
-> drivers/power/supply/ab8500_charger.c:3013:24: warning:
->  variable vbup33_vrtcn set but not used [-Wunused-but-set-variable]
-> drivers/power/supply/ab8500_charger.c:3013:5: warning:
->  variable bup_vch_range set but not used [-Wunused-but-set-variable]
->=20
-> They are not used since commit 4c4268dc97c4 ("power:
-> supply: ab8500: Drop AB8540/9540 support")
->=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
-> v2: Fix patch title
-> ---
-
-Thanks, queued.
-
--- Sebastian
-
->  drivers/power/supply/ab8500_charger.c | 7 -------
->  1 file changed, 7 deletions(-)
->=20
-> diff --git a/drivers/power/supply/ab8500_charger.c b/drivers/power/supply=
-/ab8500_charger.c
-> index 30de448..270a48a 100644
-> --- a/drivers/power/supply/ab8500_charger.c
-> +++ b/drivers/power/supply/ab8500_charger.c
-> @@ -3010,7 +3010,6 @@ static int ab8500_charger_usb_get_property(struct p=
-ower_supply *psy,
->  static int ab8500_charger_init_hw_registers(struct ab8500_charger *di)
->  {
->  	int ret =3D 0;
-> -	u8 bup_vch_range =3D 0, vbup33_vrtcn =3D 0;
-> =20
->  	/* Setup maximum charger current and voltage for ABB cut2.0 */
->  	if (!is_ab8500_1p1_or_earlier(di->parent)) {
-> @@ -3111,12 +3110,6 @@ static int ab8500_charger_init_hw_registers(struct=
- ab8500_charger *di)
->  		goto out;
->  	}
-> =20
-> -	/* Backup battery voltage and current */
-> -	if (di->bm->bkup_bat_v > BUP_VCH_SEL_3P1V)
-> -		bup_vch_range =3D BUP_VCH_RANGE;
-> -	if (di->bm->bkup_bat_v =3D=3D BUP_VCH_SEL_3P3V)
-> -		vbup33_vrtcn =3D VBUP33_VRTCN;
-> -
->  	ret =3D abx500_set_register_interruptible(di->dev,
->  		AB8500_RTC,
->  		AB8500_RTC_BACKUP_CHG_REG,
-> --=20
-> 2.7.4
->=20
->=20
-
---wirrsdh333qp3ti7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl1taAAACgkQ2O7X88g7
-+ppj/A/+MLmamV+oTuwzUSJCtBMLysTquQxub5rugYTV12fDwR0n9Z6izM1IRHZf
-fEfQbDJq4CWb32BZjpA/TtfaM+/WRBFptxrpmdXEdvj5XZ7ym3CdzuZjqT2RtIdL
-9BFYXmweR0vXfkKBncs2AmZWyx9iS1hTpPhseBkgu+1QSBLeUHyGgNBxjFtpjXvB
-NYtIC9LDYSoN4kQPdKtpMnNojFCTLNEyplc9U3zHm27uGX1TYZNPryZ7l1wwUkOv
-ctzE5Ju/4BsIMLzVmJK56Q1xJj7tnVSXtaMRfnhPCsX2UXClDG8Eb++5HIm9TqYt
-+lQCgSTPyGDet1hRWwVMrTMC5R8ftGCL2xAwEDcs467Xy1Nm9gVpjyPqEvlXKmmM
-pBN0uwG7eckdAiy+GZ5mKaY6Eq99JlF0EfU5P5sXLwe04IWn2usIk7JMxOmReuv0
-8T8w64kLY9Xrr1sPM7rfaWSjw8OWTf7KVsm+HiWcIPQMJW4/lFjmk0rScK/G6fe/
-U6e2vx95VC6RDqu8vYLn+SgVvrSB1HIZmCaJREYfsgbHeTAIywchadFWH9TpQ4gv
-3cSuIXx45rgPaMRfkdYTjTlcTA860Y0CHFCLjgHsio5KuuziRJJNP6HGOMfogXdM
-FhDPCFCiCRPLgItV3dyzGZosBQmegH90TAJjA4s51JFuO58VlEc=
-=JYRW
------END PGP SIGNATURE-----
-
---wirrsdh333qp3ti7--
+greg k-h
