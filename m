@@ -2,68 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94DEEA5955
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 16:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84C7BA5959
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 16:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731578AbfIBO1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 10:27:17 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50196 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731508AbfIBO1R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 10:27:17 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c10so2911085wmc.0;
-        Mon, 02 Sep 2019 07:27:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8aEmKxykDndXFGiMc09N0+3vyQXksajAhUoOKsW/WK0=;
-        b=c69GCzD5saQcdqLrMovQtXGXQEwVW2MJXB4LJN0f6H54qUBjTuHY/oTrgdLt0FjRLF
-         tfPeBAg3MhN5q7mKw5K2WZ4PZGfRwtGzqyEvCGvgV+XCJ3d/wJL6UgGo1jdmPVRALGub
-         LeC9ZK5XMqL/rlIsKclxKgA1vyyDY139Xkf5My6v1+1DnqGhEubJKeVjWgMQIf7+a9ab
-         zuxjBN1+pq4W61t71ndduHV20fsfcu6NFRXAZk0msgtmrGlFBuoOfoNzL6OLRgcS/eF1
-         6oAy2PcHFSN8e+K+XzCrqeIP5TYD/GBIFUcdOSxiWIBkHuz2WZKNK8ryAaA/8OMAu+3Q
-         n4IQ==
-X-Gm-Message-State: APjAAAWFN/H4pikAxCd7KkMXrH1gd//SUa3+MXkHtQqdd6O1ORs3a3UB
-        TpH43pbRyJ3rgCCfwWTWdTM=
-X-Google-Smtp-Source: APXvYqwyfddA/cMRPecq6/P3O1MlQw7z2N8mx8lHHIajlCGKJ0NFgh6GCVZjhxptGjVO52lBT01q+g==
-X-Received: by 2002:a7b:cc0a:: with SMTP id f10mr37660760wmh.6.1567434435563;
-        Mon, 02 Sep 2019 07:27:15 -0700 (PDT)
-Received: from liuwe-gateway.j3c5onc20sse1dnehy4noqpfcg.zx.internal.cloudapp.net ([51.140.50.101])
-        by smtp.gmail.com with ESMTPSA id g15sm12937489wmk.17.2019.09.02.07.27.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 07:27:14 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 14:27:13 +0000
-From:   Wei Liu <wei.liu@kernel.org>
-To:     lantianyu1986@gmail.com
-Cc:     kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        sashal@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        michael.h.kelley@microsoft.com,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wei Liu <wei.liu@kernel.org>
-Subject: Re: [PATCH] x86/Hyper-V: Fix reference of pv_ops with
- CONFIG_PARAVIRT=N
-Message-ID: <20190902142713.erskx45n3agnzvlu@liuwe-gateway.j3c5onc20sse1dnehy4noqpfcg.zx.internal.cloudapp.net>
-References: <20190828080747.204419-1-Tianyu.Lan@microsoft.com>
+        id S1731592AbfIBO1t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 10:27:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38530 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731482AbfIBO1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 10:27:49 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D111985546;
+        Mon,  2 Sep 2019 14:27:48 +0000 (UTC)
+Received: from cantor.redhat.com (ovpn-116-156.phx2.redhat.com [10.3.116.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 51B0760C05;
+        Mon,  2 Sep 2019 14:27:48 +0000 (UTC)
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Alexey Klimov <aklimov@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>
+Subject: [PATCH v4 0/4] tpm: add update_durations class op to allow override of chip supplied values
+Date:   Mon,  2 Sep 2019 07:27:32 -0700
+Message-Id: <20190902142735.6280-1-jsnitsel@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828080747.204419-1-Tianyu.Lan@microsoft.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 02 Sep 2019 14:27:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 04:07:47PM +0800, lantianyu1986@gmail.com wrote:
-> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> 
-> hv_setup_sched_clock() references pv_ops and this should
-> be under CONFIG_PARAVIRT=Y. Fix it.
-> 
-> Signed-off-by: Tianyu Lan <Tianyu.Lan@microsoft.com>
+We've run into a case where a customer has an STM TPM 1.2 chip
+(version 1.2.8.28), that is getting into an inconsistent state and
+they end up getting tpm transmit errors.  In really old tpm code this
+wasn't seen because the code that grabbed the duration values from the
+chip could fail silently, and would proceed to just use default values
+and move forward. More recent code though successfully gets the
+duration values from the chip, and using those values this particular
+chip version gets into the state seen by the customer.
 
-Reviewed-by: Wei Liu <wei.liu@kernel.org>
+The idea with this patchset is to provide a facility like the
+update_timeouts operation to allow the override of chip supplied
+values.
+
+changes from v3:
+    * Assign value to version when tpm1_getcap is successful for TPM 1.1 device
+      not when it fails.
+
+changes from v2:
+    * Added patch 1/3
+    * Rework tpm_tis_update_durations to make use of new version structs
+      and pull tpm1_getcap calls out of loop.
+
+changes from v1:
+    * Remove unneeded newline
+    * Formatting cleanups
+    * Change tpm_tis_update_durations to be a void function, and
+      use chip->duration_adjusted to track whether adjustment was
+      made.
+
+Jarkko Sakkinen (1):
+      tpm: Remove duplicate code from caps_show() in tpm-sysfs.c
+
+Jerry Snitselaar (2):
+      tpm: provide a way to override the chip returned durations
+      tpm_tis: override durations for STM tpm with firmware 1.2.8.28
+
+
