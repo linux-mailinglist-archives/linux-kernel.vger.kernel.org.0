@@ -2,72 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE901A5264
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:01:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46872A5272
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:02:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730863AbfIBJBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 05:01:07 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:23447 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730604AbfIBJBG (ORCPT
+        id S1730805AbfIBJCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 05:02:17 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20508 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730445AbfIBJCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:01:06 -0400
-X-UUID: 0b47a5c32ee04aa1b7443138ea4cb7bc-20190902
-X-UUID: 0b47a5c32ee04aa1b7443138ea4cb7bc-20190902
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1796880267; Mon, 02 Sep 2019 17:01:01 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 2 Sep 2019 17:01:02 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 2 Sep 2019 17:01:02 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [RESEND PATCH v1 3/3] arm64: dts: Add power-domains properity to mfgcfg
-Date:   Mon, 2 Sep 2019 17:00:59 +0800
-Message-ID: <1567414859-3244-4-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1567414859-3244-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1567414859-3244-1-git-send-email-weiyi.lu@mediatek.com>
+        Mon, 2 Sep 2019 05:02:17 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-194-rYYILk2VO0WqBm185IgfAA-1; Mon, 02 Sep 2019 10:02:09 +0100
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 2 Sep 2019 10:02:09 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 2 Sep 2019 10:02:09 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Josh Poimboeuf' <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Arnd Bergmann <arnd@arndb.de>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Ilie Halip <ilie.halip@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: RE: objtool warning "uses BP as a scratch register" with clang-9
+Thread-Topic: objtool warning "uses BP as a scratch register" with clang-9
+Thread-Index: AQHVX1Liqj9VEXOMQ0SdqQ13OMpYJacYF/rQ
+Date:   Mon, 2 Sep 2019 09:02:08 +0000
+Message-ID: <e3111f698ba342ca8893f65610990624@AcuMS.aculab.com>
+References: <CAK8P3a0nJL+3hxR0U9kT_9Y4E86tofkOnVzNTEvAkhOFxOEA3Q@mail.gmail.com>
+ <CAK8P3a0bY9QfamCveE3P4H+Nrs1e6CTqWVgiY+MCd9hJmgMQZg@mail.gmail.com>
+ <20190828152226.r6pl64ij5kol6d4p@treble>
+ <CAK8P3a2ATzqRSqVeeKNswLU74+bjvwK_GmG0=jbMymVaSp2ysw@mail.gmail.com>
+ <20190829173458.skttfjlulbiz5s25@treble>
+ <CAHk-=wi-epJZfBHDbKKDZ64us7WkF=LpUfhvYBmZSteO8Q0RAg@mail.gmail.com>
+ <CAK8P3a1K5HgfACmJXr4dTTwDJFz5BeSCCa3RQWYbXGE-2q4TJQ@mail.gmail.com>
+ <CAHk-=whuUdqrh2=LLNfRiW6oadx0zzGVkvqyx_O1cGLa2U6Jjg@mail.gmail.com>
+ <20190830150208.jyk7tfzznqimc6ow@treble>
+ <CAHk-=wgqAcRU99Dp20+ZAux7Mdgbnw5deOguwOjdCJY0eNnSkA@mail.gmail.com>
+ <20190830164927.a2czlphx4ho3rhhf@treble>
+In-Reply-To: <20190830164927.a2czlphx4ho3rhhf@treble>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+X-MC-Unique: rYYILk2VO0WqBm185IgfAA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mfgcfg clock is under MFG_ASYNC power domain
-
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index c2749c4..3f948e9 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -388,6 +388,7 @@
- 			compatible = "mediatek,mt8183-mfgcfg", "syscon";
- 			reg = <0 0x13000000 0 0x1000>;
- 			#clock-cells = <1>;
-+			power-domains = <&scpsys MT8183_POWER_DOMAIN_MFG_ASYNC>;
- 		};
- 
- 		mmsys: syscon@14000000 {
--- 
-1.8.1.1.dirty
+RnJvbTogSm9zaCBQb2ltYm9ldWYNCj4gU2VudDogMzAgQXVndXN0IDIwMTkgMTc6NDkNCj4gT24g
+RnJpLCBBdWcgMzAsIDIwMTkgYXQgMDg6NDg6NDlBTSAtMDcwMCwgTGludXMgVG9ydmFsZHMgd3Jv
+dGU6DQo+ID4gT24gRnJpLCBBdWcgMzAsIDIwMTkgYXQgODowMiBBTSBKb3NoIFBvaW1ib2V1ZiA8
+anBvaW1ib2VAcmVkaGF0LmNvbT4gd3JvdGU6DQo+ID4gPg0KPiA+ID4gRm9yIEtBU0FOLCB0aGUg
+Q2xhbmcgdGhyZXNob2xkIGZvciBpbnNlcnRpbmcgbWVtc2V0KCkgaXMgKjIqIGNvbnNlY3V0aXZl
+DQo+ID4gPiB3cml0ZXMgaW5zdGVhZCBvZiAxNy4gIElzbid0IHRoYXQgbGlrZWx5IHRvIGNhdXNl
+IHRlYXJpbmctcmVsYXRlZA0KPiA+ID4gc3VycHJpc2VzPw0KPiA+DQo+ID4gVGVhcmluZyBpc24n
+dCBsaWtlbHkgdG8gYmUgYSBwcm9ibGVtLg0KPiA+DQo+ID4gSXQncyBub3QgbGlrZSBtZW1jcHko
+KSBkb2VzIGJ5dGUtYnktYnl0ZSBjb3BpZXMuIElmIHlvdSBwYXNzIGl0IGENCj4gPiB3b3JkLWFs
+aWduZWQgcG9pbnRlciwgaXQgd2lsbCBkbyB3b3JkLWFsaWduZWQgYWNjZXNzZXMgc2ltcGx5IGZv
+cg0KPiA+IHBlcmZvcm1hbmNlIHJlYXNvbnMuDQo+ID4NCj4gPiBFdmVuIG9uIHg4Niwgd2hlcmUg
+d2UgdXNlICJyZXAgbW92c2IiLCB3ZSAoYSkgdGVuZCB0byBkaXNhYmxlIGl0IGZvcg0KPiA+IHNt
+YWxsIGNvcGllcyBhbmQgKGIpIGl0IHR1cm5zIG91dCB0aGF0IG1pY3JvY29kZSB0aGF0IGRvZXMg
+dGhlDQo+ID4gb3B0aW1pemVkIG1vdnNiICh3aGljaCBpcyB0aGUgb25seSBjYXNlIHdlIHVzZSBp
+dCkgcHJvYmFibHkgZW5kcyB1cA0KPiA+IGRvaW5nIGF0b21pYyB0aGluZ3MgYW55d2F5LiBOb3Rl
+IHRoZSAicHJvYmFibHkiLiBJIGRvbid0IGhhdmUNCj4gPiBtaWNyb2NvZGUgc291cmNlIGNvZGUs
+IGJ1dCB0aGVyZSBhcmUgb3RoZXIgaW5kaWNhdGlvbnMgbGlrZSAid2Uga25vdw0KPiA+IGl0IGRv
+ZXNuJ3QgdGFrZSBpbnRlcnJ1cHRzIG9uIGEgYnl0ZS1wZXItYnl0ZSBsZXZlbCwgb25seSBvbiB0
+aGUNCj4gPiBjYWNoZWxpbmUgbGV2ZWwiLg0KPiANCj4gVGhlIG1pY3JvY29kZSBhcmd1bWVudCBp
+cyBub3QgYWxsIHRoYXQgY29tZm9ydGluZyA6LSkNCj4gDQo+IEFsc28gd2hhdCBhYm91dCB1bmFs
+aWduZWQgYWNjZXNzZXMsIGUuZy4gaWYgYSBzdHJ1Y3QgbWVtYmVyIGlzbid0IG9uIGENCj4gd29y
+ZCBib3VuZGFyeT8gIEFybmQncyBnb2Rib2x0IGxpbmsgc2hvd2VkIHRob3NlIGNhbiBnZXQgY29t
+YmluZWQgdG9vLg0KDQpJJ2QgZ3Vlc3MgdGhhdCBpdCBoYXMgdG8gJ2NvbXBsZXRlJyBhIHBhcnRp
+YWwgY29weS4NCkFmdGVyIGFsbCB0aGVyZSBhcmUgbm8gbWlkLWluc3RydWN0aW9uIGludGVycnVw
+dCBzdGF0ZXMgc28gdGhlIGludGVycnVwdA0KcmV0dXJucyB0byBhIG5ldyAncmVwIG1vdnNiJyBp
+bnN0cnVjdGlvbiAodGhlIGlzciBjYW4gY2hhbmdlIHNpL2RpL2N4KS4NCkVpdGhlciB0aGUgc291
+cmNlLCBvciBkZXN0aW5hdGlvbiBpcyBhbG1vc3QgY2VydGFpbmx5IGNhY2hlIGxpbmUgYWxpZ25l
+ZC4NCg0KPiBJIGRvbid0IHNlZSB4ODYgbWVtY3B5KCkgZG9pbmcgYW55IGRlc3RpbmF0aW9uIGFs
+aWdubWVudCBjaGVja3MuDQoNCkkgZG9uJ3QgdGhpbmsgYW55b25lIGhhcyB0cmllZCB0byBpbnN0
+cnVtZW50IHdoZXRoZXIgaXQgaXMgYmV0dGVyIHRvDQpkbyBtaXNhbGlnbmVkIHJlYWRzIG9yIHdy
+aXRlcyAoYW5kIGl0IHByb2JhYmx5IGRlcGVuZHMgb24gdGhlIGNwdSkuDQpUaGUgY29kZSB3aWxs
+IHByb2JhYmx5IGJlIG1vcmUgY3JpdGljYWwgb24gdGhlIHJlYWRzLg0KVGhlIHJlYWwgZ2FpbiB3
+aWxsIGJlIHdoZW4gdGhlIHNvdXJjZSBhbmQgZGVzdGluYXRpb24gaGF2ZSB0aGUgc2FtZQ0KbWlz
+LWFsaWdubWVudC4NCg0KLi4uDQo+ID4gU28gaXQncyBwcm9iYWJseSBub3QgYW4gaXNzdWUgZnJv
+bSBhIHRlYXJpbmcgc3RhbmRwb2ludCAtIGJ1dCBpdA0KPiA+IHdvcnJpZXMgbWUgYmVjYXVzZSBv
+ZiAidGhpcyBoYXMgdG8gYmUgYSBsZWFmIGZ1bmN0aW9uIiBraW5kIG9mIGlzc3Vlcw0KPiA+IHdo
+ZXJlIHdlIG1heSBiZSB1c2luZyBpbmRpdmlkdWFsIHN0b3JlcyBvbiBwdXJwb3NlLiBXZSBkbyBo
+YXZlIHRoaW5ncw0KPiA+IGxpa2UgdGhhdC4NCj4gDQo+IEl0IHNvdW5kcyBsaWtlIGV2ZXJ5Ym9k
+eSdzIGluIGFncmVlbWVudCB0aGF0IHJlcGxhY2luZyBhY2Nlc3NlcyB3aXRoDQo+IG1lbXNldC9t
+ZW1jcHkgaXMgYmFkIGluIGEga2VybmVsIGNvbnRleHQuICBTaG91bGQgd2UgcHVzaCBmb3IgYSBu
+ZXcNCj4gZmluZS1ncmFpbmVkIGNvbXBpbGVyIG9wdGlvbiB0byBkaXNhYmxlIGl0Pw0KDQpJJ20g
+bm90IHN1cmUgaXQgaXMgYSBnb29kIGlkZWEgaW4gQU5ZIGNvbnRleHQuDQpJdCBzZWVtcyBsaWtl
+IHNvbWV0aGluZyB0aGUgY29tcGlsZXIgcGVvcGxlIGhhcyBkaXNjb3ZlcmVkIHRoZXkgY2FuIGRv
+DQp3aXRob3V0IGFjdHVhbGx5IGRlY2lkaW5nIHdoZXRoZXIgaXQgaXMgdXNlZnVsLg0KDQoJRGF2
+aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50
+IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTcz
+ODYgKFdhbGVzKQ0K
 
