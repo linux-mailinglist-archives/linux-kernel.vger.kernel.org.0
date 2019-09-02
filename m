@@ -2,119 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF0DA589A
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F04BBA58A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:58:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731300AbfIBN5w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:57:52 -0400
-Received: from mga06.intel.com ([134.134.136.31]:34043 "EHLO mga06.intel.com"
+        id S1731011AbfIBN64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:58:56 -0400
+Received: from mga05.intel.com ([192.55.52.43]:21910 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731080AbfIBN5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:57:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1730136AbfIBN64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 09:58:56 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 06:57:34 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 06:58:55 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,459,1559545200"; 
-   d="scan'208";a="189563848"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 06:57:32 -0700
-Received: from punajuuri.localdomain (punajuuri.localdomain [192.168.240.130])
-        by paasikivi.fi.intel.com (Postfix) with ESMTP id F408521150;
-        Mon,  2 Sep 2019 16:57:25 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@linux.intel.com>)
-        id 1i4mpo-00067j-U5; Mon, 02 Sep 2019 16:57:32 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-        rafael@kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH v5 11/11] lib/test_printf: Add tests for %pfw printk modifier
-Date:   Mon,  2 Sep 2019 16:57:32 +0300
-Message-Id: <20190902135732.23455-12-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190902135732.23455-1-sakari.ailus@linux.intel.com>
-References: <20190902135732.23455-1-sakari.ailus@linux.intel.com>
+   d="scan'208";a="183315151"
+Received: from doblerbe-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.53.100])
+  by fmsmga007.fm.intel.com with ESMTP; 02 Sep 2019 06:58:53 -0700
+Date:   Mon, 2 Sep 2019 16:58:51 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the tpmdd tree
+Message-ID: <20190902135851.tej2nj2poa2gskcs@linux.intel.com>
+References: <20190902073227.34b86449@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190902073227.34b86449@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a test for the %pfw printk modifier using software nodes.
+On Mon, Sep 02, 2019 at 07:32:27AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   8dbcb44f392e ("tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts")
+> 
+> is missing a Signed-off-by from its committer.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- lib/test_printf.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
+Thanks, fixed.
 
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index 944eb50f38625..9c6d716979fb1 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -22,6 +22,8 @@
- #include <linux/gfp.h>
- #include <linux/mm.h>
- 
-+#include <linux/property.h>
-+
- #include "../tools/testing/selftests/kselftest_module.h"
- 
- #define BUF_SIZE 256
-@@ -588,6 +590,40 @@ flags(void)
- 	kfree(cmp_buffer);
- }
- 
-+static void __init fwnode_pointer(void)
-+{
-+	const struct software_node softnodes[] = {
-+		{ .name = "first", },
-+		{ .name = "second", .parent = &softnodes[0], },
-+		{ .name = "third", .parent = &softnodes[1], },
-+		{ NULL /* Guardian */ },
-+	};
-+	const char * const full_name = "/second/third";
-+	const char * const full_name_second = "/second";
-+	const char * const second_name = "second";
-+	const char * const third_name = "third";
-+	int rval;
-+
-+	rval = software_node_register_nodes(softnodes);
-+	if (rval) {
-+		pr_warn("cannot register softnodes; rval %d\n", rval);
-+		return;
-+	}
-+
-+	test(full_name_second, "%pfw",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-+	test(full_name, "%pfw",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-+	test(full_name, "%pfwf",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-+	test(second_name, "%pfwP",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 3]));
-+	test(third_name, "%pfwP",
-+	     software_node_fwnode(&softnodes[ARRAY_SIZE(softnodes) - 2]));
-+
-+	software_node_unregister_nodes(softnodes);
-+}
-+
- static void __init
- test_pointer(void)
- {
-@@ -610,6 +646,7 @@ test_pointer(void)
- 	bitmap();
- 	netdev_features();
- 	flags();
-+	fwnode_pointer();
- }
- 
- static void __init selftest(void)
--- 
-2.20.1
-
+/Jarkko
