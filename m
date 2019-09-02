@@ -2,149 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EC45A4DD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 05:45:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 956B2A4DD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 05:45:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729361AbfIBDpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 1 Sep 2019 23:45:05 -0400
-Received: from [192.198.146.188] ([192.198.146.188]:15593 "EHLO
-        E6440.gar.corp.intel.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726385AbfIBDpE (ORCPT
+        id S1729307AbfIBDo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 1 Sep 2019 23:44:29 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36462 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbfIBDo3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 1 Sep 2019 23:45:04 -0400
-X-Greylist: delayed 589 seconds by postgrey-1.27 at vger.kernel.org; Sun, 01 Sep 2019 23:45:04 EDT
-Received: from E6440.gar.corp.intel.com (localhost [127.0.0.1])
-        by E6440.gar.corp.intel.com (Postfix) with ESMTP id 76A30C16C0;
-        Mon,  2 Sep 2019 11:35:13 +0800 (CST)
-From:   Harry Pan <harry.pan@intel.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     gs0622@gmail.com, Harry Pan <harry.pan@intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: [PATCH v2] perf/x86/intel: Update ICL Core and Package C-state event counters
-Date:   Mon,  2 Sep 2019 11:35:11 +0800
-Message-Id: <20190902033511.826-1-harry.pan@intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190726090846.6109-1-harry.pan@intel.com>
-References: <20190726090846.6109-1-harry.pan@intel.com>
+        Sun, 1 Sep 2019 23:44:29 -0400
+Received: by mail-pg1-f196.google.com with SMTP id l21so6714482pgm.3
+        for <linux-kernel@vger.kernel.org>; Sun, 01 Sep 2019 20:44:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=rN2S1v3/1BoBol8adRSL3kZXLWS4doEk15964RDMi4c=;
+        b=EnZ9xP+rSm8ScoPmKeP/EQoxVAJ9I+RcI3ej3gKp3qnvXSqp8ssZhibEEokG6LxKmT
+         dKWYDoPlAlf+2YXSp0X8dh7J6wJ2TosV1OZJkR4bvoso+kMi5OsVXPeVOlpqdqtHX8a9
+         ezJ2PMroj/n6N296V5VlkYMvZ8lLgz0q31AkHdotjmI9cb5y/ehlxLkqyxl0E2G8tMFA
+         oKC95J280UI37Efb3vbQOwti8EKZPrTy0oUXs/ahK8R/ym0Irb0KY8M7BYP5oAz/qZYW
+         +D196au6k86FHrP/j3wRMAsO4iV9U+/EMZB5fgzcViMgu01qOig0TXTr4Z+JyqwVLyE4
+         CdfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=rN2S1v3/1BoBol8adRSL3kZXLWS4doEk15964RDMi4c=;
+        b=HbnsFmTmPwi+6pN03vE6uVq4SkD5GUAHRh2RohG347gKIb+HZlpOHjv+WJHnRmv/Ho
+         g/CF54FwQdvBMcBVsltTuaajRHvFK7RM4EcShOOyUSNPoukSNTmSMxoPwnbA8RazjRmK
+         +clpiGrLA/1IYf7NpLJnNu7kYayjpX0rNAM621l/kKRfo4tA245+AxwfUnev6sHoxwGk
+         mx5eB6AltIMsiJAqKEAl6MAOrwVplt7V5IIWeJPACIY6s19XHQVbJotDY3ugUEKtjCPH
+         JSAx+hndwzs+Jfl1/Fx9EFUNtg5Kc+wlPl+sg3NcvoZSd8Az42e+WaPBn0q8FZ5G6aGr
+         4S4Q==
+X-Gm-Message-State: APjAAAWnSkKT/uikCqlOD4X+9FE0DExnRFGNjOIpNe+cbChZyn/4XCwU
+        i35wtKD6g/p/2KKcifa/eAKGCg==
+X-Google-Smtp-Source: APXvYqxlxWmu9zZdLS1CHbqHSr3II2Ru3qCkbdhu7MmOnG6HHOgVI3xr/4w3mT+LQeY1mfPVzL/FAQ==
+X-Received: by 2002:a17:90a:d149:: with SMTP id t9mr11457048pjw.58.1567395868605;
+        Sun, 01 Sep 2019 20:44:28 -0700 (PDT)
+Received: from ?IPv6:240e:362:407:a700:853f:6246:6ef0:b4ae? ([240e:362:407:a700:853f:6246:6ef0:b4ae])
+        by smtp.gmail.com with ESMTPSA id c12sm19051624pfc.22.2019.09.01.20.44.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 01 Sep 2019 20:44:28 -0700 (PDT)
+Subject: Re: [PATCH v2 2/2] uacce: add uacce driver
+From:   zhangfei <zhangfei.gao@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, jonathan.cameron@huawei.com,
+        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>,
+        linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>
+References: <1566998876-31770-1-git-send-email-zhangfei.gao@linaro.org>
+ <1566998876-31770-3-git-send-email-zhangfei.gao@linaro.org>
+ <20190828152201.GA10163@kroah.com>
+ <5c2b0889-ea05-1ecd-fe5b-40611bd31945@linaro.org>
+ <20190829095439.GA13915@kroah.com>
+ <39f792df-e3e3-eaa6-f78b-bf325b79f1b7@linaro.org>
+Message-ID: <eb9dd458-a82a-593a-1165-ff268ec995b0@linaro.org>
+Date:   Mon, 2 Sep 2019 11:44:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <39f792df-e3e3-eaa6-f78b-bf325b79f1b7@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ice Lake microarchitecture inherits Cannon Lake, it has CC1/PC8/PC9/PC10
-residency counters.
 
-Update the list of Ice Lake PMU event counters from the snb_cstates[] list
-of events to the cnl_cstates[] list of events, which keeps all previously
-supported events and also adds the CORE_C1, PKG_C8, PKG_C9, and PKG_C10
-residency counters.
+Hi, Greg
 
-This benefits users to profile them through the perf interface.
+On 2019/8/30 下午10:54, zhangfei wrote:
+>>> On 2019/8/28 下午11:22, Greg Kroah-Hartman wrote:
+>>>> On Wed, Aug 28, 2019 at 09:27:56PM +0800, Zhangfei Gao wrote:
+>>>>> +struct uacce {
+>>>>> +    const char *drv_name;
+>>>>> +    const char *algs;
+>>>>> +    const char *api_ver;
+>>>>> +    unsigned int flags;
+>>>>> +    unsigned long qf_pg_start[UACCE_QFRT_MAX];
+>>>>> +    struct uacce_ops *ops;
+>>>>> +    struct device *pdev;
+>>>>> +    bool is_vf;
+>>>>> +    u32 dev_id;
+>>>>> +    struct cdev cdev;
+>>>>> +    struct device dev;
+>>>>> +    void *priv;
+>>>>> +    atomic_t state;
+>>>>> +    int prot;
+>>>>> +    struct mutex q_lock;
+>>>>> +    struct list_head qs;
+>>>>> +};
+>>>> At a quick glance, this problem really stood out to me.  You CAN NOT
+>>>> have two different objects within a structure that have different
+>>>> lifetime rules and reference counts.  You do that here with both a
+>>>> 'struct cdev' and a 'struct device'.  Pick one or the other, but never
+>>>> both.
+>>>>
+>>>> I would recommend using a 'struct device' and then a 'struct cdev *'.
+>>>> That way you get the advantage of using the driver model properly, and
+>>>> then just adding your char device node pointer to "the side" which
+>>>> interacts with this device.
+>>>>
+>>>> Then you might want to call this "struct uacce_device" :)
+I think I understand now.
+'struct device' and then a 'struct cdev' have different refcounts.
+Using 'struct cdev *', the release is not in uacce.c, but controlled by 
+cdev itself.
+So uacce is decoupled with cdev.
 
-Signed-off-by: Harry Pan <harry.pan@intel.com>
+//Using 'struct cdev *'
+cdev_alloc->cdev_dynamic_release:kfree(p);
+uacce_destroy_chrdev: 
+cdev_device_del->cdev_del(cdev)->kobject_put(&p->kobj);
+if (refcount--) == 0
+cdev_dynamic_release->kfree(p);
 
----
+//Using 'struct device'
+cdev_init->cdev_default_release
+cdev is freed in uacce.c,
+So 'struct device' and then a 'struct cdev' are bind together, while 
+cdev and uacce->dev have different refcount.
 
- arch/x86/events/intel/cstate.c | 32 +++++++++++++++++---------------
- 1 file changed, 17 insertions(+), 15 deletions(-)
-
-diff --git a/arch/x86/events/intel/cstate.c b/arch/x86/events/intel/cstate.c
-index 688592b34564..82fbc4c6e5e6 100644
---- a/arch/x86/events/intel/cstate.c
-+++ b/arch/x86/events/intel/cstate.c
-@@ -35,56 +35,58 @@
-  *    The counters include PKG_C*_RESIDENCY.
-  *
-  * All of these counters are specified in the Intel® 64 and IA-32
-- * Architectures Software Developer.s Manual Vol3b.
-+ * Architectures Software Developer's Manual Vol4.
-  *
-  * Model specific counters:
-  *	MSR_CORE_C1_RES: CORE C1 Residency Counter
-  *			 perf code: 0x00
-- *			 Available model: SLM,AMT,GLM,CNL
-+ *			 Available model: SLM,AMT,GLM,CNL,ICL
-  *			 Scope: Core (each processor core has a MSR)
-  *	MSR_CORE_C3_RESIDENCY: CORE C3 Residency Counter
-  *			       perf code: 0x01
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,GLM,
--						CNL
-+ *						CNL,ICL
-  *			       Scope: Core
-  *	MSR_CORE_C6_RESIDENCY: CORE C6 Residency Counter
-  *			       perf code: 0x02
-  *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-- *						SKL,KNL,GLM,CNL
-+ *						SKL,KNL,GLM,CNL,ICL
-  *			       Scope: Core
-  *	MSR_CORE_C7_RESIDENCY: CORE C7 Residency Counter
-  *			       perf code: 0x03
-- *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL
-+ *			       Available model: SNB,IVB,HSW,BDW,SKL,CNL,ICL
-  *			       Scope: Core
-  *	MSR_PKG_C2_RESIDENCY:  Package C2 Residency Counter.
-  *			       perf code: 0x00
-- *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL
-+ *			       Available model: SNB,IVB,HSW,BDW,SKL,KNL,GLM,CNL,
-+ *						ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C3_RESIDENCY:  Package C3 Residency Counter.
-  *			       perf code: 0x01
-  *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,KNL,
-- *						GLM,CNL
-+ *						GLM,CNL,ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C6_RESIDENCY:  Package C6 Residency Counter.
-  *			       perf code: 0x02
-- *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW
-- *						SKL,KNL,GLM,CNL
-+ *			       Available model: SLM,AMT,NHM,WSM,SNB,IVB,HSW,BDW,
-+ *						SKL,KNL,GLM,CNL,ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C7_RESIDENCY:  Package C7 Residency Counter.
-  *			       perf code: 0x03
-- *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,CNL
-+ *			       Available model: NHM,WSM,SNB,IVB,HSW,BDW,SKL,CNL,
-+ *						ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C8_RESIDENCY:  Package C8 Residency Counter.
-  *			       perf code: 0x04
-- *			       Available model: HSW ULT,KBL,CNL
-+ *			       Available model: HSW ULT,KBL,CNL,ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C9_RESIDENCY:  Package C9 Residency Counter.
-  *			       perf code: 0x05
-- *			       Available model: HSW ULT,KBL,CNL
-+ *			       Available model: HSW ULT,KBL,CNL,ICL
-  *			       Scope: Package (physical package)
-  *	MSR_PKG_C10_RESIDENCY: Package C10 Residency Counter.
-  *			       perf code: 0x06
-- *			       Available model: HSW ULT,KBL,GLM,CNL
-+ *			       Available model: HSW ULT,KBL,GLM,CNL,ICL
-  *			       Scope: Package (physical package)
-  *
-  */
-@@ -625,8 +627,8 @@ static const struct x86_cpu_id intel_cstates_match[] __initconst = {
- 
- 	X86_CSTATES_MODEL(INTEL_FAM6_ATOM_GOLDMONT_PLUS, glm_cstates),
- 
--	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_MOBILE, snb_cstates),
--	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_DESKTOP, snb_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_MOBILE, cnl_cstates),
-+	X86_CSTATES_MODEL(INTEL_FAM6_ICELAKE_DESKTOP, cnl_cstates),
- 	{ },
- };
- MODULE_DEVICE_TABLE(x86cpu, intel_cstates_match);
--- 
-2.21.0
+Thanks for the patience.
 
