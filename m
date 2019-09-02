@@ -2,94 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29BC6A53DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CED1A53F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:26:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730295AbfIBKS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 06:18:59 -0400
-Received: from foss.arm.com ([217.140.110.172]:51620 "EHLO foss.arm.com"
+        id S1730817AbfIBK0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 06:26:38 -0400
+Received: from mga18.intel.com ([134.134.136.126]:47036 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729668AbfIBKS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 06:18:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82DE028;
-        Mon,  2 Sep 2019 03:18:58 -0700 (PDT)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED8013F246;
-        Mon,  2 Sep 2019 03:18:57 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 11:18:56 +0100
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Vidya Sagar <vidyas@nvidia.com>
-Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com, robh+dt@kernel.org,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, kishon@ti.com,
-        gustavo.pimentel@synopsys.com, digetx@gmail.com,
-        mperttunen@nvidia.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V3 3/6] PCI: tegra: Add support to configure sideband pins
-Message-ID: <20190902101855.GV14582@e119886-lin.cambridge.arm.com>
-References: <20190828172850.19871-1-vidyas@nvidia.com>
- <20190828172850.19871-4-vidyas@nvidia.com>
+        id S1730690AbfIBK0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 06:26:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 03:26:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,457,1559545200"; 
+   d="scan'208";a="183277100"
+Received: from lxy-clx-4s.sh.intel.com ([10.239.43.44])
+  by fmsmga007.fm.intel.com with ESMTP; 02 Sep 2019 03:26:35 -0700
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Cc:     Xiaoyao Li <xiaoyao.li@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] doc: kvm: fix return description of KVM_SET_MSRS
+Date:   Mon,  2 Sep 2019 18:12:14 +0800
+Message-Id: <20190902101214.77833-1-xiaoyao.li@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828172850.19871-4-vidyas@nvidia.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 10:58:47PM +0530, Vidya Sagar wrote:
-> Add support to configure sideband signal pins when information is present
-> in respective controller's device-tree node.
-> 
-> Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
+Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+---
+ Documentation/virt/kvm/api.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+diff --git a/Documentation/virt/kvm/api.txt b/Documentation/virt/kvm/api.txt
+index 2d067767b617..a2efc19e0f4e 100644
+--- a/Documentation/virt/kvm/api.txt
++++ b/Documentation/virt/kvm/api.txt
+@@ -586,7 +586,7 @@ Capability: basic
+ Architectures: x86
+ Type: vcpu ioctl
+ Parameters: struct kvm_msrs (in)
+-Returns: 0 on success, -1 on error
++Returns: number of msrs successfully set, -1 on error
+ 
+ Writes model-specific registers to the vcpu.  See KVM_GET_MSRS for the
+ data structures.
+-- 
+2.19.1
 
-> ---
-> V3:
-> * Used 'dev' instead of 'pcie->dev'
-> 
-> V2:
-> * Addressed review comment from Andrew Murray
-> * Handled failure case of pinctrl_pm_select_default_state() cleanly
-> 
->  drivers/pci/controller/dwc/pcie-tegra194.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-tegra194.c b/drivers/pci/controller/dwc/pcie-tegra194.c
-> index fc0dbeb31d78..77fa6f70bc96 100644
-> --- a/drivers/pci/controller/dwc/pcie-tegra194.c
-> +++ b/drivers/pci/controller/dwc/pcie-tegra194.c
-> @@ -1304,8 +1304,13 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
->  	if (ret < 0) {
->  		dev_err(dev, "Failed to get runtime sync for PCIe dev: %d\n",
->  			ret);
-> -		pm_runtime_disable(dev);
-> -		return ret;
-> +		goto fail_pm_get_sync;
-> +	}
-> +
-> +	ret = pinctrl_pm_select_default_state(dev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to configure sideband pins: %d\n", ret);
-> +		goto fail_pinctrl;
->  	}
->  
->  	tegra_pcie_init_controller(pcie);
-> @@ -1332,7 +1337,9 @@ static int tegra_pcie_config_rp(struct tegra_pcie_dw *pcie)
->  
->  fail_host_init:
->  	tegra_pcie_deinit_controller(pcie);
-> +fail_pinctrl:
->  	pm_runtime_put_sync(dev);
-> +fail_pm_get_sync:
->  	pm_runtime_disable(dev);
->  	return ret;
->  }
-> -- 
-> 2.17.1
-> 
