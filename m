@@ -2,146 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86ADAA5459
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E669CA5460
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731145AbfIBKtm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 06:49:42 -0400
-Received: from mail-oln040092065059.outbound.protection.outlook.com ([40.92.65.59]:26592
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1731240AbfIBKuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 06:50:03 -0400
+Received: from mail-eopbgr10056.outbound.protection.outlook.com ([40.107.1.56]:55940
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730973AbfIBKtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 06:49:42 -0400
+        id S1731192AbfIBKuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 06:50:03 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hFvnGT7kibWRZLn4pE9xG2yuusTkDqRTCsoGrVsE24MQfu1MJ1mOWx2pz5FNCLmBXVDFLhnCGRMp0lv6SA5F6xGCi5F9RqyaxOhrqCvSAUKyacWFSB4OCJtPQV1mOIbcgnnCj5REC+l/NE3fhvA0LTYdjQ1Q01cHCTDM5ihQzCcue1yDtlhQtrPeCCGq2q3TCqrcr6QySHIt/8Wzu7NXx3RYfeySAG7FzfddQETyGD3qDupwf9zGMDEgkYfBbc8KUsqF6qU8fNq74j5UxPGf5IDhEldEgphRLjeZF3M0Ij8o+5VhCdPCE7VsKfrNxEDH9i0hJ1HrOVshPgRDP6e4kQ==
+ b=cOSaw6d5v4TJKE3QcmR6vQCM0LCKSmwHqA2EJu6FDTlzl6emgs1E5ssnc7roHwEJ4X6ABwL6UHelRl+H4/t7dYKEliBbSmKiYCiCH47qjrsZ6vu1N9hz9vkHXD9+gszi7v2JEpzRDi7n5fzo2TV5c9Z2O488HgIDwVu77jEDFCOvhmGT4OuuxRCNP5SjWqOxc3y6STIo6rEQO240ingnxPU77+3GcyKIHTv2uLIP5+ICOtCq+qDagCxV7sQbc6iWQeqNtliZA5jen2IA61aoQuMkH3t0U1oNTL+WSjiSXWuTCeAmT32lmjUk0e0CZD2Oz9Ta/or1og0Zeog8O8Z/Ig==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gmFhpZxLwhZaIRYAzSaCQF50e+WXIPq9aD+svjhuYlw=;
- b=ixtj7bM4TVU8FmTTo4D3awLljH//x2q+pCG1OMySqEKAI/godc2moouLfcbnjPiiS+ADVSUrVTPq4qXcnyRhuRMNqaS33NwWsDLlaqAn5rriqmL5uQcWvzgBrFWR4zwCi6aapkEUlLxlt6uG+tXJyceCki8PWkyq2mBL6HdRuiabExFJy7S70WRb3l3ecsj6hZDp5BwAdo//TASjQMcAql2yjYU9x0tgVR9idArGjCAtKCXYz85/tXj0wvvxNy6cFPwqZrekcEI5qhqg9SWpXK/B+KtB3x0sa5Ss0VcsFytMWIXPhjCk/PsbD7SiGP2Nq+A00RsfJKI0vSQceWX04w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from HE1EUR01FT054.eop-EUR01.prod.protection.outlook.com
- (10.152.0.57) by HE1EUR01HT130.eop-EUR01.prod.protection.outlook.com
- (10.152.1.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2220.16; Mon, 2 Sep
- 2019 10:49:34 +0000
-Received: from HE1PR06MB4011.eurprd06.prod.outlook.com (10.152.0.58) by
- HE1EUR01FT054.mail.protection.outlook.com (10.152.1.61) with Microsoft SMTP
+ bh=NuhtYnzfhusV9OxQzs2EJk2b74vyp3IHqOmQDca5lIU=;
+ b=MYG6+QkVdsaw/9TPUGPPMXnrJkttxymtyy7B4DOEhAg8cm6/hN7snWPvsHQjSOD+cK0g5+iDj+rJ9DkSYZS7is9oOPsqEs3Po+KXBGFSF6OxWdyL0b8falvrirT5CXuV0thtqIvZQSbIlo6gfhc/RMXa4H+M94vAjjBvNIfjaVgdEJYToXaW5nOGP74PPRvK+bfGTgfDWoUUOl+ToC7Ex9Yv8YyaTJi1NMzPnhSDqal0ykLomuuIf+MPiYlDCccnbxuUbZubKpLb5kcuQkz1oe2djCMBu3xG1GWhLorOFnzQCWc2wV6aexWwC+nBKzGGpOdStnGGkc+vch+55u/+/w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NuhtYnzfhusV9OxQzs2EJk2b74vyp3IHqOmQDca5lIU=;
+ b=LStOEI5qrkwACLMAvFu3m/mIYvoWYZfd286tcwYqSgtrMHjxRteNlFYjkQVCPD9rlqXiaGoyG6Il1ok7yP2VxH9eFmXG5PQYanag5CG6H6YwERnLswecZ1+OPvBz543Fag4XHEs+6KpGcveiZbAIxmoHMO2jDpJ5Mru2mEH9xOE=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
+ VI1PR05MB4895.eurprd05.prod.outlook.com (20.177.51.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.16 via Frontend Transport; Mon, 2 Sep 2019 10:49:34 +0000
-Received: from HE1PR06MB4011.eurprd06.prod.outlook.com
- ([fe80::1188:7e7d:69b:a036]) by HE1PR06MB4011.eurprd06.prod.outlook.com
- ([fe80::1188:7e7d:69b:a036%5]) with mapi id 15.20.2220.022; Mon, 2 Sep 2019
- 10:49:34 +0000
-From:   Jonas Karlman <jonas@kwiboo.se>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/5] drm: dw-hdmi: update CEC phys addr and EDID on HPD
- event
-Thread-Topic: [PATCH 3/5] drm: dw-hdmi: update CEC phys addr and EDID on HPD
- event
-Thread-Index: AQHVYOBbQpm/ZMlRykOhaECOU9r4vKcYCfWAgAAsfYA=
-Date:   Mon, 2 Sep 2019 10:49:34 +0000
-Message-ID: <HE1PR06MB40112A70BFF02182310DD3E4ACBE0@HE1PR06MB4011.eurprd06.prod.outlook.com>
-References: <AM0PR06MB40049562E295DD62302C8DB7ACBF0@AM0PR06MB4004.eurprd06.prod.outlook.com>
- <20190901161426.1606-1-jonas@kwiboo.se>
- <AM0PR06MB4004285BAA935D14F1A68787ACBF0@AM0PR06MB4004.eurprd06.prod.outlook.com>
- <d0d7a5b8-4301-9a08-64af-8474a0c4f5de@baylibre.com>
-In-Reply-To: <d0d7a5b8-4301-9a08-64af-8474a0c4f5de@baylibre.com>
-Accept-Language: sv-SE, en-US
+ 15.20.2220.21; Mon, 2 Sep 2019 10:49:58 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::79a3:d971:d1f3:ab6f]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::79a3:d971:d1f3:ab6f%7]) with mapi id 15.20.2220.020; Mon, 2 Sep 2019
+ 10:49:58 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     Guenter Roeck <linux@roeck-us.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?iso-8859-1?Q?Thomas_Hellstr=F6m?= <thomas@shipmail.org>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Steven Price <steven.price@arm.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thomas Hellstrom <thellstrom@vmware.com>
+Subject: Re: [PATCH 2/3] pagewalk: separate function pointers from iterator
+ data
+Thread-Topic: [PATCH 2/3] pagewalk: separate function pointers from iterator
+ data
+Thread-Index: AQHVXauzoOyMGt/Rm0+/Xu8LAWoHTqcXL4MAgAAOHoCAABCOAIAAm4cAgAAjgICAAC/DAA==
+Date:   Mon, 2 Sep 2019 10:49:58 +0000
+Message-ID: <20190902104955.GB20@mellanox.com>
+References: <20190828141955.22210-1-hch@lst.de>
+ <20190828141955.22210-3-hch@lst.de> <20190901184530.GA18656@roeck-us.net>
+ <20190901193601.GB5208@mellanox.com>
+ <b26ac5ae-a90c-7db5-a26c-3ace2f1530c7@roeck-us.net>
+ <20190902055156.GA24116@mellanox.com> <20190902075859.GA29137@lst.de>
+In-Reply-To: <20190902075859.GA29137@lst.de>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1P191CA0022.EURP191.PROD.OUTLOOK.COM (2603:10a6:3:cf::32)
- To HE1PR06MB4011.eurprd06.prod.outlook.com (2603:10a6:7:9c::32)
-x-incomingtopheadermarker: OriginalChecksum:638B98758CD7D450D439C660868FDAFC89FF6AE35CFEA6ACCAF18B7034823439;UpperCasedChecksum:B50DD240BA448C26675459662D7AE8E7604ADDD060C0F2DE1649D363D59F51BF;SizeAsReceived:8108;Count:49
+x-clientproxiedby: AM0PR01CA0036.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:69::49) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:4d::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [3dJFHbEQVhsRIPcfawhfxKQ2oc8hNkbT]
-x-microsoft-original-message-id: <914c4edc-e3e2-9cb5-384b-c983427edf82@kwiboo.se>
+x-originating-ip: [193.47.165.251]
 x-ms-publictraffictype: Email
-x-incomingheadercount: 49
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(5050001)(7020095)(20181119158)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031322404)(2017031323274)(2017031324274)(1601125500)(1603101475)(1701031045);SRVR:HE1EUR01HT130;
-x-ms-traffictypediagnostic: HE1EUR01HT130:
-x-microsoft-antispam-message-info: ISEF/gA/HRMVbm2J7Y78IHeJdipYotDtJ979fTEVMYNEWyMJVqMXkYYucBPqt8bfnF7nxSsK5KhgPyQhiqyn02Mz6UC2fLfHB3n6apnFZHBlV8hloURKqi/f8uLaf2l/Y3HrhLX3RnSdC6/zz2eKB82z3KthsJS/PfSviSxxgJgnokcwcUnleK+ht5XglQEP
+x-ms-office365-filtering-correlation-id: 53469947-dbde-4e13-b9a6-08d72f934c4a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB4895;
+x-ms-traffictypediagnostic: VI1PR05MB4895:
+x-microsoft-antispam-prvs: <VI1PR05MB489527A66C2397AAEF7ECBABCFBE0@VI1PR05MB4895.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 01480965DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(376002)(39860400002)(396003)(366004)(199004)(189003)(86362001)(186003)(4326008)(478600001)(8936002)(36756003)(7736002)(305945005)(71190400001)(71200400001)(256004)(6512007)(14454004)(6436002)(81166006)(81156014)(8676002)(53936002)(316002)(26005)(102836004)(14444005)(33656002)(2906002)(6246003)(76176011)(54906003)(6506007)(386003)(66476007)(66556008)(64756008)(66446008)(6116002)(66946007)(3846002)(52116002)(11346002)(476003)(2616005)(486006)(25786009)(446003)(7416002)(229853002)(6486002)(1076003)(6916009)(66066001)(99286004)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4895;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: u3yP2zgBzHURzB9tJhA+7SX5ivEUZ0RwAuvSIBwod6Bd4lLddC4gbzx0hy6BMQ0J95S7RoGfD0g3pLQr2JC/bRymEarJ8YJNgSORJfdff/McSAcw9b9WGBNZfWssEbXPHpkp9dhdEJK13FAFjAZ/+dEvcrwm9/q9T53DX52cJxyNl+Zf3dTbut0QBcrQzdeqe8Swh0hYsA7pBVna8gGdrcXTLx7HcSIpICLuqhhnFluxAQFgiogiebCNpqA0z0DDRdAHgpdW7496NDEIxLYpG3g2kRbn9S/Wfw9PJVKRz4r6C8GwnrCSUpulA+z90xoQCks/SisPGGGWUt9bWxYrGIaU1vgTYg6vH3CPaHZ+6BxSYrtA6oI8T84CH659PiWsYNNyEb1pFhJGXnHJyrExflI8ahMKyQMy2UpG38+GUkQ=
 x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BEE870B58B10314283DDC3BB1DE2F89E@eurprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <0E3FE41A0CB6E74EA4443B039BEC2BBA@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 52b02354-cc05-4bc3-cb2f-08d72f933dc3
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2019 10:49:34.2382
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53469947-dbde-4e13-b9a6-08d72f934c4a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2019 10:49:58.5176
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR01HT130
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RTe3Biu3LyLvl9twoKSud2kxcqiUkNu2AhofwoPNFB8QguKsCxVLpcMVPik5vMe3ojKyoPMtKKtBFh6I85bq9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4895
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wOS0wMiAxMDoxMCwgTmVpbCBBcm1zdHJvbmcgd3JvdGU6DQo+IE9uIDAxLzA5LzIw
-MTkgMTg6MTQsIEpvbmFzIEthcmxtYW4gd3JvdGU6DQo+PiBVcGRhdGUgQ0VDIHBoeXMgYWRkciBh
-bmQgRURJRCBvbiBIUEQgZXZlbnQsIGZpeGVzIGxvc3QgQ0VDIHBoeXMgYWRkciBhbmQNCj4+IHN0
-YWxlIEVESUQgd2hlbiBIRE1JIGNhYmxlIGlzIHVucGx1Z2dlZC9yZXBsdWdnZWQgb3IgQVZSIGlz
-IHBvd2VyZWQgb24vb2ZmLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEpvbmFzIEthcmxtYW4gPGpv
-bmFzQGt3aWJvby5zZT4NCj4+IC0tLQ0KPj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3Bz
-eXMvZHctaGRtaS5jIHwgMTYgKysrKysrKysrLS0tLS0tLQ0KPj4gIDEgZmlsZSBjaGFuZ2VkLCA5
-IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5jIGIvZHJpdmVycy9ncHUvZHJtL2Jy
-aWRnZS9zeW5vcHN5cy9kdy1oZG1pLmMNCj4+IGluZGV4IDkxZDg2ZGRkNjYyNC4uMGYwN2JlMWI1
-OTE0IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9zeW5vcHN5cy9kdy1o
-ZG1pLmMNCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2Uvc3lub3BzeXMvZHctaGRtaS5j
-DQo+PiBAQCAtMjE4OSw2ICsyMTg5LDcgQEAgc3RhdGljIGludCBkd19oZG1pX2Nvbm5lY3Rvcl91
-cGRhdGVfZWRpZChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yLA0KPj4gIHN0YXRpYyBl
-bnVtIGRybV9jb25uZWN0b3Jfc3RhdHVzDQo+PiAgZHdfaGRtaV9jb25uZWN0b3JfZGV0ZWN0KHN0
-cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IsIGJvb2wgZm9yY2UpDQo+PiAgew0KPj4gKwll
-bnVtIGRybV9jb25uZWN0b3Jfc3RhdHVzIHN0YXR1czsNCj4+ICAJc3RydWN0IGR3X2hkbWkgKmhk
-bWkgPSBjb250YWluZXJfb2YoY29ubmVjdG9yLCBzdHJ1Y3QgZHdfaGRtaSwNCj4+ICAJCQkJCSAg
-ICAgY29ubmVjdG9yKTsNCj4+ICANCj4+IEBAIC0yMTk4LDcgKzIxOTksMTQgQEAgZHdfaGRtaV9j
-b25uZWN0b3JfZGV0ZWN0KHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IsIGJvb2wgZm9y
-Y2UpDQo+PiAgCWR3X2hkbWlfdXBkYXRlX3BoeV9tYXNrKGhkbWkpOw0KPj4gIAltdXRleF91bmxv
-Y2soJmhkbWktPm11dGV4KTsNCj4+ICANCj4+IC0JcmV0dXJuIGhkbWktPnBoeS5vcHMtPnJlYWRf
-aHBkKGhkbWksIGhkbWktPnBoeS5kYXRhKTsNCj4+ICsJc3RhdHVzID0gaGRtaS0+cGh5Lm9wcy0+
-cmVhZF9ocGQoaGRtaSwgaGRtaS0+cGh5LmRhdGEpOw0KPj4gKw0KPj4gKwlpZiAoc3RhdHVzID09
-IGNvbm5lY3Rvcl9zdGF0dXNfY29ubmVjdGVkKQ0KPj4gKwkJZHdfaGRtaV9jb25uZWN0b3JfdXBk
-YXRlX2VkaWQoY29ubmVjdG9yLCBmYWxzZSk7DQo+PiArCWVsc2UNCj4+ICsJCWNlY19ub3RpZmll
-cl9waHlzX2FkZHJfaW52YWxpZGF0ZShoZG1pLT5jZWNfbm90aWZpZXIpOw0KPj4gKw0KPj4gKwly
-ZXR1cm4gc3RhdHVzOw0KPj4gIH0NCj4+ICANCj4+ICBzdGF0aWMgaW50IGR3X2hkbWlfY29ubmVj
-dG9yX2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQ0KPj4gQEAgLTI0
-MzgsMTIgKzI0NDYsNiBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgZHdfaGRtaV9pcnEoaW50IGlycSwg
-dm9pZCAqZGV2X2lkKQ0KPj4gIAkJZHdfaGRtaV9zZXR1cF9yeF9zZW5zZShoZG1pLA0KPj4gIAkJ
-CQkgICAgICAgcGh5X3N0YXQgJiBIRE1JX1BIWV9IUEQsDQo+PiAgCQkJCSAgICAgICBwaHlfc3Rh
-dCAmIEhETUlfUEhZX1JYX1NFTlNFKTsNCj4+IC0NCj4+IC0JCWlmICgocGh5X3N0YXQgJiAoSERN
-SV9QSFlfUlhfU0VOU0UgfCBIRE1JX1BIWV9IUEQpKSA9PSAwKSB7DQo+PiAtCQkJbXV0ZXhfbG9j
-aygmaGRtaS0+Y2VjX25vdGlmaWVyX211dGV4KTsNCj4+IC0JCQljZWNfbm90aWZpZXJfcGh5c19h
-ZGRyX2ludmFsaWRhdGUoaGRtaS0+Y2VjX25vdGlmaWVyKTsNCj4+IC0JCQltdXRleF91bmxvY2so
-JmhkbWktPmNlY19ub3RpZmllcl9tdXRleCk7DQo+PiAtCQl9DQo+PiAgCX0NCj4+ICANCj4+ICAJ
-aWYgKGludHJfc3RhdCAmIEhETUlfSUhfUEhZX1NUQVQwX0hQRCkgew0KPj4NCj4gV29uJ3QgaXQg
-cG9zc2libHkgdHJpZ2dlciB0d2ljZSBlZGlkIHJlYWRvdXRzIG9uIGVhY2ggSFBEIGV2ZW50LA0K
-PiBvbmUgZm9yIENFQyBhbmQgb25lIGZvciBtb2RlcyA/IEl0IHNlZW1zIHNhbmUgYnV0IG5vdCB2
-ZXJ5IGVmZmljaWVudCB0byBtZS4uLg0KDQpZZXMgdGhlcmUgbWF5IGJlIEVESUQgcmVhZG91dCB0
-d2ljZSB3aXRoIHRoaXMgY2hhbmdlIGluIGNhc2UgYm90aCBkZXRlY3QgYW5kIGdldF9tb2RlcyBn
-ZXRzIGNhbGxlZC4NCkd1ZXNzIHdlIGNvdWxkIHNhdmUgdGhlIEVESUQgcmVhZG91dCBpbiBkZXRl
-Y3QgYW5kIHJldXNlIGl0IGluIGdldF9tb2RlcyBvciBzaW1pbGFyPw0KDQpUaGUgaXNzdWUgb2Jz
-ZXJ2ZWQgaXMgdGhhdCBDRUMgcGh5cyBhZGRyIG5ldmVyIGdldHMgdXBkYXRlZCBhZnRlciBhbiBp
-bnZhbGlkYXRpb24gKEhQRCkNCnVudGlsIGdldF9tb2RlcyBpcyBjYWxsZWQsIHdoZW4gVFYvQVZS
-IHRyaWdnZXJzIGFuIEVESUQgcmVmcmVzaCB1c2luZyBhIDEwMG1zIEhQRCBwdWxzZQ0Kb3IgYW4g
-QVZSIGlzIHBvd2VyZWQgb24vb2ZmIHRoZSBDRUMgcGh5cyBhZGRyLCBFRElEIGFuZCBFTEQgbmV2
-ZXIgZ2V0cyByZWZyZXNoZWQgYXMNCm9ubHkgZGV0ZWN0IGlzIGNhbGxlZCBhbmQgbm90IGdldF9t
-b2Rlcy4NCg0KUmVnYXJkcywNCkpvbmFzDQoNCj4NCj4gQW55d2F5Og0KPiBSZXZpZXdlZC1ieTog
-TmVpbCBBcm1zdHJvbmcgPG5hcm1zdHJvbmdAYmF5bGlicmUuY29tPg0KDQo=
+On Mon, Sep 02, 2019 at 09:58:59AM +0200, Christoph Hellwig wrote:
+> On Mon, Sep 02, 2019 at 05:51:58AM +0000, Jason Gunthorpe wrote:
+> > On Sun, Sep 01, 2019 at 01:35:16PM -0700, Guenter Roeck wrote:
+> > > > I belive the macros above are missing brackets.. Can you confirm th=
+e
+> > > > below takes care of things? I'll add a patch if so
+> > > >=20
+> > >=20
+> > > Good catch. Yes, that fixes the build problem.
+> >=20
+> > I added this to the hmm tree to fix it:
+>=20
+> This looks good.  Although I still haven't figure out how this is
+> related to the pagewalk changes to start with..
+
+It is this hunk:
+
+@@ -481,7 +461,10 @@ static int madvise_free_single_vma(struct
+vm_area_struct *vma,
+ 	       update_hiwater_rss(mm);
+=20
+	mmu_notifier_invalidate_range_start(&range);
+-	madvise_free_page_range(&tlb, vma, range.start, range.end);
++	tlb_start_vma(&tlb, vma);
++	walk_page_range(vma->vm_mm, range.start, range.end,
++                       &madvise_free_walk_ops, &tlb);
++			tlb_end_vma(&tlb, vma);
+
+&tlb does not expand properly in the csky tlb_start_vma macro, and
+previously it was just tlb
+
+Jason
