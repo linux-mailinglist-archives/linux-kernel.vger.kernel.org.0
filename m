@@ -2,208 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A247FA51FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE1BA51FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:40:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730715AbfIBIjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:39:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38479 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729870AbfIBIjQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:39:16 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l11so4263623wrx.5;
-        Mon, 02 Sep 2019 01:39:15 -0700 (PDT)
+        id S1730719AbfIBIj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:39:59 -0400
+Received: from mail-eopbgr30125.outbound.protection.outlook.com ([40.107.3.125]:23976
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729606AbfIBIj7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:39:59 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MEKtDo27ruBcFIaUnSEPfQRRPVNwL79NdhtgmXuNIZ+dOuA2UMyw2twWj8uCtb30N6sh4rHXBXF2RVYWEcEDg6CrFSiZfro7eUhQVx/vskwCPOy8WaNhElpTaqxIqOlIgV/35JozC0+xxmsy2L2rKz7srqEIlrKixElnjwzBHd4eudyXiA8QFxr3QvgBBSyogrJQH0yFMzsk6KIscoxnEmecCmbC7m6/0nn4fCoJ1XHHg6vGKg4XJdtnyBDgp6VCzj4ptO0knj573rcmOfdo2jmDNqXqPLnZmLUhnUCsmDBX2EnZ9oPsX5BIzF4hxkVnxmqzktgBywtZ5jBmwKTCYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2q30Gsxa8+t3FtsREPTDYXCswjl66vNTW1BRcQN+GH0=;
+ b=F0y0M/6PQ0guWceJJgMPONvr53ff8thJ6s1GH4sM5NzCG4OetofNSCgysFra8syTp+zdKy2zMLfRlGeMTr5MjkpfeUou5xpcdPS1gIbGtURAnHEdH6YUHuXHRtvei81NtuClFoeycYMx07S6sjZE6qaZbjVGijjSL0m8vIeA/EhQKpzEWea4uDK3JDmxo+yqFcu7/aCYCaLF1JhGcQLe4GsMnY31cpz2hOup8KzGJahTnRkrWbQ+kw/IOUi1ua66ztWjJUT7zM2zD6E6FZP9hrS/YMB2332a6z9FpzJOqARaomOqP5kqqhJ7JadVqb9JQxAX51AzM56kjmL7bUiXyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=habana.ai; dmarc=pass action=none header.from=habana.ai;
+ dkim=pass header.d=habana.ai; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=84tNa0LJ5qNP8ceq2AHt9GMRkk+XoKF4Wbr0EYQvIpE=;
-        b=JE+rTGDd3vfb9wVcnjiTAQ6VJuKqNZw1kp4lvjPYJQleCdZutoksvcSMrlbLlijgCD
-         eA0G7FMldjru0uK1XH4l74xGOPEmK3pJ1sPHZkOIrZr4BS6wnRxvwBqRoz9XiIQerESa
-         jX+iX5JReRbNpB+qIm2TIK6sWuVMsKA0S0XMYbWYNcj2+SuMNh2YzUcPN3Ivu6DSSW3b
-         rT05eDiPQfsvIDsgAW75tfQ1C52HqBA7opRcNIzA1Vmi/6sQ/3QfMZ+3+lgjZDe3fbDE
-         oOkXpLo2mcwKwq9a0L+APjev3rJXds2O1xredJzBH0qz936K/dnrmcjHVT3Q0ByGdP97
-         xxgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=84tNa0LJ5qNP8ceq2AHt9GMRkk+XoKF4Wbr0EYQvIpE=;
-        b=FYWDRnhcv8JMIpaGwtRaGbDlr553sJ5NDhPk7C7p0BWT89JtVuqWzqiGEdFBKBvfjh
-         7mV84UEFxqR99nNWFk2e/CsSHWAMq8gdrd3K8zkFUfzuywC1zbd71pYeqyYD7rurTmkv
-         bLXhWlKQBvqEBq0j4aDWzuXZLqwGY+Dgn4F7/H+ZeXii17ZG0AabURdUPlo4IhJ/yy5c
-         DCNrSEPtkcPdhFnEwI7DXJuUaOK1KJhZEviolenb/n+MDWrbScqO3wb03wYgpHA1LtIT
-         35iO+Vq4QDGQ/KoMpPBciiNRudLmEquKJuffXLbLuO2Eqvq/fw9ygtODSej8WX4ACzSW
-         nalA==
-X-Gm-Message-State: APjAAAUa3TR6P6WNRmjlMyBi0uV8bk5q+4AGELDARMO4QbZbJCOGC1ll
-        D1BiLc86foYVMuOkxvxdRVE=
-X-Google-Smtp-Source: APXvYqw8kmUFZTdml86OFk4ExnbC4on8hvb43jeEB+SHfHs0C2+GnjIN7wyw+xxJ23zIcyfbPlXgSw==
-X-Received: by 2002:a5d:6a45:: with SMTP id t5mr33771273wrw.228.1567413555153;
-        Mon, 02 Sep 2019 01:39:15 -0700 (PDT)
-Received: from localhost ([51.15.41.238])
-        by smtp.gmail.com with ESMTPSA id b18sm17854812wro.34.2019.09.02.01.39.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 01:39:14 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 09:39:12 +0100
-From:   Stefan Hajnoczi <stefanha@gmail.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Stefano Garzarella <sgarzare@redhat.com>, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH v4 1/5] vsock/virtio: limit the memory used per-socket
-Message-ID: <20190902083912.GA9069@stefanha-x1.localdomain>
-References: <20190717113030.163499-1-sgarzare@redhat.com>
- <20190717113030.163499-2-sgarzare@redhat.com>
- <20190729095956-mutt-send-email-mst@kernel.org>
- <20190830094059.c7qo5cxrp2nkrncd@steredhat>
- <20190901024525-mutt-send-email-mst@kernel.org>
+ d=habanalabs.onmicrosoft.com; s=selector2-habanalabs-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2q30Gsxa8+t3FtsREPTDYXCswjl66vNTW1BRcQN+GH0=;
+ b=sUn2kc9LR+oZtvgoBrwdXj+G4Kdfp/npJ+YDalzUJ3Q/eGbYXYtz5Jn1z3pkXJ7MnXn8hfm4VzdRPi1LWIztwCwC7ksu9buUB2msLhJsFDikjOBOQmcSUc54CGn6gUefnUxN8Kr+z2yrynHzGg0QvS4/8w39aRg1q2T3TebPskQ=
+Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com (52.133.8.16) by
+ AM6PR0202MB3287.eurprd02.prod.outlook.com (52.133.30.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2220.21; Mon, 2 Sep 2019 08:39:55 +0000
+Received: from AM6PR0202MB3382.eurprd02.prod.outlook.com
+ ([fe80::4171:a73:3c96:2c5b]) by AM6PR0202MB3382.eurprd02.prod.outlook.com
+ ([fe80::4171:a73:3c96:2c5b%7]) with mapi id 15.20.2220.021; Mon, 2 Sep 2019
+ 08:39:55 +0000
+From:   Omer Shpigelman <oshpigelman@habana.ai>
+To:     Oded Gabbay <oded.gabbay@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tomer Tayar <ttayar@habana.ai>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: RE: [PATCH 1/2] habanalabs: stop using the acronym KMD
+Thread-Topic: [PATCH 1/2] habanalabs: stop using the acronym KMD
+Thread-Index: AQHVYWMXDoCFAMv1rUGzIkpoa3Z506cYEPqA
+Date:   Mon, 2 Sep 2019 08:39:55 +0000
+Message-ID: <AM6PR0202MB3382ED0E168DBC4A0D3AB86BB8BE0@AM6PR0202MB3382.eurprd02.prod.outlook.com>
+References: <20190902075024.27302-1-oded.gabbay@gmail.com>
+In-Reply-To: <20190902075024.27302-1-oded.gabbay@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=oshpigelman@habana.ai; 
+x-originating-ip: [31.154.190.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 64420a00-1a77-45f4-f7c3-08d72f81215b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:AM6PR0202MB3287;
+x-ms-traffictypediagnostic: AM6PR0202MB3287:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR0202MB328727F2D9AF04681CC0EAE9B8BE0@AM6PR0202MB3287.eurprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3826;
+x-forefront-prvs: 01480965DA
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(136003)(376002)(396003)(366004)(346002)(189003)(199004)(81156014)(4744005)(81166006)(52536014)(476003)(305945005)(7696005)(74316002)(66446008)(9686003)(6246003)(11346002)(5660300002)(26005)(2501003)(66066001)(86362001)(66946007)(64756008)(256004)(66476007)(7736002)(66556008)(2906002)(6436002)(14454004)(316002)(3846002)(8676002)(76176011)(446003)(102836004)(8936002)(110136005)(4326008)(55016002)(71190400001)(71200400001)(486006)(53936002)(186003)(25786009)(478600001)(6116002)(6506007)(33656002)(6636002)(99286004)(76116006)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR0202MB3287;H:AM6PR0202MB3382.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: habana.ai does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: xRZyix7P/+L8MukJcJUN2tGfJqM3mDKQjm/3zMM4UJi5sr+PeIm5ApZBq5pC4WYeT3TY4nAq1Y54dMEKIccA1+V8Hp5gn5lYrfTAs2XxrtMScAFrV73iwp33nJfXs0dOYWNkayAKHePaafN0yNCiylxxlSfuS+3RxOc0yZ8obuxMOSfp1n7Iq37FNBU75PS8JHIV1hRGULAHROB4uP4OqxgKIX4NS5J9ytaTmwTDLgyezsf81HKS4ORa4zp+fVQxjqqiYoKJLgALfkUQZgbpKIojEQLL2iLuTV1pSfz3fw2Tk8seXZF6R2URWD+TzSl6Ik+FEKT/zNKdPciXCDmSmhM6mo6OV0+QJeoXjKf8by8tWdddcf2fbgPlft2a9sUfMm+HfsMmcTkJ6jTqqrH1QY7xlwQi23UqFeoDc2YyKEw=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
-Content-Disposition: inline
-In-Reply-To: <20190901024525-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-OriginatorOrg: habana.ai
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64420a00-1a77-45f4-f7c3-08d72f81215b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2019 08:39:55.2317
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4d4539-213c-4ed8-a251-dc9766ba127a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mNerA7dqOwutqG47Ry8oSRVpwbWWvR+txvrl9X7b1Cx3Fwo//ISUBW0mMuJ+7eakT+j29JAbcalrG73+qMOkNw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0202MB3287
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Sep 01, 2019 at 02:56:44AM -0400, Michael S. Tsirkin wrote:
-> On Fri, Aug 30, 2019 at 11:40:59AM +0200, Stefano Garzarella wrote:
-> > On Mon, Jul 29, 2019 at 10:04:29AM -0400, Michael S. Tsirkin wrote:
-> > > On Wed, Jul 17, 2019 at 01:30:26PM +0200, Stefano Garzarella wrote:
-> > > > Since virtio-vsock was introduced, the buffers filled by the host
-> > > > and pushed to the guest using the vring, are directly queued in
-> > > > a per-socket list. These buffers are preallocated by the guest
-> > > > with a fixed size (4 KB).
-> > > >=20
-> > > > The maximum amount of memory used by each socket should be
-> > > > controlled by the credit mechanism.
-> > > > The default credit available per-socket is 256 KB, but if we use
-> > > > only 1 byte per packet, the guest can queue up to 262144 of 4 KB
-> > > > buffers, using up to 1 GB of memory per-socket. In addition, the
-> > > > guest will continue to fill the vring with new 4 KB free buffers
-> > > > to avoid starvation of other sockets.
-> > > >=20
-> > > > This patch mitigates this issue copying the payload of small
-> > > > packets (< 128 bytes) into the buffer of last packet queued, in
-> > > > order to avoid wasting memory.
-> > > >=20
-> > > > Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-> > > > Signed-off-by: Stefano Garzarella <sgarzare@redhat.com>
-> > >=20
-> > > This is good enough for net-next, but for net I think we
-> > > should figure out how to address the issue completely.
-> > > Can we make the accounting precise? What happens to
-> > > performance if we do?
-> > >=20
-> >=20
-> > Since I'm back from holidays, I'm restarting this thread to figure out
-> > how to address the issue completely.
-> >=20
-> > I did a better analysis of the credit mechanism that we implemented in
-> > virtio-vsock to get a clearer view and I'd share it with you:
-> >=20
-> >     This issue affect only the "host->guest" path. In this case, when t=
-he
-> >     host wants to send a packet to the guest, it uses a "free" buffer
-> >     allocated by the guest (4KB).
-> >     The "free" buffers available for the host are shared between all
-> >     sockets, instead, the credit mechanism is per-socket, I think to
-> >     avoid the starvation of others sockets.
-> >     The guests re-fill the "free" queue when the available buffers are
-> >     less than half.
-> >=20
-> >     Each peer have these variables in the per-socket state:
-> >        /* local vars */
-> >        buf_alloc        /* max bytes usable by this socket
-> >                            [exposed to the other peer] */
-> >        fwd_cnt          /* increased when RX packet is consumed by the
-> >                            user space [exposed to the other peer] */
-> >        tx_cnt 	        /* increased when TX packet is sent to the other=
- peer */
-> >=20
-> >        /* remote vars  */
-> >        peer_buf_alloc   /* peer's buf_alloc */
-> >        peer_fwd_cnt     /* peer's fwd_cnt */
-> >=20
-> >     When a peer sends a packet, it increases the 'tx_cnt'; when the
-> >     receiver consumes the packet (copy it to the user-space buffer), it
-> >     increases the 'fwd_cnt'.
-> >     Note: increments are made considering the payload length and not the
-> >     buffer length.
-> >=20
-> >     The value of 'buf_alloc' and 'fwd_cnt' are sent to the other peer in
-> >     all packet headers or with an explicit CREDIT_UPDATE packet.
-> >=20
-> >     The local 'buf_alloc' value can be modified by the user space using
-> >     setsockopt() with optname=3DSO_VM_SOCKETS_BUFFER_SIZE.
-> >=20
-> >     Before to send a packet, the peer checks the space available:
-> >     	credit_available =3D peer_buf_alloc - (tx_cnt - peer_fwd_cnt)
-> >     and it will send up to credit_available bytes to the other peer.
-> >=20
-> > Possible solutions considering Michael's advice:
-> > 1. Use the buffer length instead of the payload length when we increment
-> >    the counters:
-> >   - This approach will account precisely the memory used per socket.
-> >   - This requires changes in both guest and host.
-> >   - It is not compatible with old drivers, so a feature should be negot=
-iated.
-> > 2. Decrease the advertised 'buf_alloc' taking count of bytes queued in
-> >    the socket queue but not used. (e.g. 256 byte used on 4K available in
-> >    the buffer)
-> >   - pkt->hdr.buf_alloc =3D buf_alloc - bytes_not_used.
-> >   - This should be compatible also with old drivers.
-> >=20
-> > Maybe the second is less invasive, but will it be too tricky?
-> > Any other advice or suggestions?
-> >=20
-> > Thanks in advance,
-> > Stefano
->=20
-> OK let me try to clarify.  The idea is this:
->=20
-> Let's say we queue a buffer of 4K, and we copy if len < 128 bytes.  This
-> means that in the worst case (128 byte packets), each byte of credit in
-> the socket uses up 4K/128 =3D 16 bytes of kernel memory. In fact we need
-> to also account for the virtio_vsock_pkt since I think it's kept around
-> until userspace consumes it.
->=20
-> Thus given X buf alloc allowed in the socket, we should publish X/16
-> credits to the other side. This will ensure the other side does not send
-> more than X/16 bytes for a given socket and thus we won't need to
-> allocate more than X bytes to hold the data.
->=20
-> We can play with the copy break value to tweak this.
-
-This seems like a reasonable solution.  Hopefully the benchmark results
-will come out okay too.
-
-Stefan
-
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAl1s1TAACgkQnKSrs4Gr
-c8gLsQf/X+M+3+I6vdXaOQqa3p6XuU6eKcoPYS3AZKsgf2/Hu7lfjlaFu1me49Qx
-eoM5VhsaVIzCfF7TJgUthcFsoG+nAc1sc+TPm16rBnDArLUHGMrny6LTZHGmkvi2
-HxnjGjLD/1CNxeeyL3HDyyzkKtG32surnGULXLKqW/599PQxHDq+QXSWysC8QTX7
-MKE3vc7zIpRh7PiXbPdh4IH8UUeHdEbdYrRoaK0uiXN47vUFOUdM1t8iMG1u/C8t
-8X3f/wnHGl7Z6k+QH/3SMme3xihN0/F/TQW8PqyZdUMB7I+X5URicB4ECRpQ3dgE
-c0cux2rhFpAIui9MpqD7+fagnhksmw==
-=wVO3
------END PGP SIGNATURE-----
-
---gKMricLos+KVdGMg--
+RnJvbTogT2RlZCBHYWJiYXkgPG9kZWQuZ2FiYmF5QGdtYWlsLmNvbT4NClNlbnQ6IE1vbmRheSwg
+MiBTZXB0ZW1iZXIgMjAxOSAxMDo1MA0KDQo+IFdlIHdhbnQgdG8gc3RvcCB1c2luZyB0aGUgYWNy
+b255bSBLTUQuIFRoZXJlZm9yZSwgcmVwbGFjZSBhbGwgbG9jYXRpb25zDQo+IChleGNlcHQgZm9y
+IHJlZ2lzdGVyIG5hbWVzIHdlIGNhbid0IG1vZGlmeSkgd2hlcmUgS01EIGlzIHdyaXR0ZW4gdG8g
+b3RoZXINCj4gdGVybXMgc3VjaCBhcyAiTGludXgga2VybmVsIGRyaXZlciIgb3IgIkhvc3Qga2Vy
+bmVsIGRyaXZlciIsIGV0Yy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE9kZWQgR2FiYmF5IDxvZGVk
+LmdhYmJheUBnbWFpbC5jb20+DQoNClJldmlld2VkLWJ5OiBPbWVyIFNocGlnZWxtYW4gPG9zaHBp
+Z2VsbWFuQGhhYmFuYS5haT4NCg==
