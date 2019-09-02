@@ -2,98 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FA86A5398
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 215E5A539B
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:07:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731082AbfIBKGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 06:06:18 -0400
-Received: from foss.arm.com ([217.140.110.172]:51404 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729854AbfIBKGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 06:06:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2569328;
-        Mon,  2 Sep 2019 03:06:15 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C8E73F246;
-        Mon,  2 Sep 2019 03:06:14 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 11:06:11 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Remi Pommarel <repk@triplefau.lt>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: aardvark: Don't rely on jiffies while holding
- spinlock
-Message-ID: <20190902100611.GB14841@e121166-lin.cambridge.arm.com>
-References: <20190901142303.27815-1-repk@triplefau.lt>
+        id S1730521AbfIBKGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 06:06:53 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:2317 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729741AbfIBKGx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 06:06:53 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0Tb8bwnz_1567418808;
+Received: from JosephdeMacBook-Pro.local(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Tb8bwnz_1567418808)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 02 Sep 2019 18:06:49 +0800
+Subject: Re: [PATCH][V2] ocfs2: remove deadcode on variable tmp_oh check
+To:     Colin King <colin.king@canonical.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>, ocfs2-devel@oss.oracle.com,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190902093434.27739-1-colin.king@canonical.com>
+From:   Joseph Qi <joseph.qi@linux.alibaba.com>
+Message-ID: <3ea5b370-8373-8ea7-9c2b-49218fcd0fd4@linux.alibaba.com>
+Date:   Mon, 2 Sep 2019 18:06:47 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190901142303.27815-1-repk@triplefau.lt>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190902093434.27739-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 01, 2019 at 04:23:03PM +0200, Remi Pommarel wrote:
-> advk_pcie_wait_pio() can be called while holding a spinlock (from
-> pci_bus_read_config_dword()), then depends on jiffies in order to
-> timeout while polling on PIO state registers. In the case the PIO
-> transaction failed, the timeout will never happen and will also cause
-> the cpu to stall.
+
+
+On 19/9/2 17:34, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> This decrements a variable and wait instead of using jiffies.
+> At the end of ocfs2_inode_lock_tracker tmp_oh is true because an
+> earlier check on tmp_oh being false returns out of the function.
+> Since tmp_oh is true, the function will always return 1 so remove
+> the redundant check and return of 0.
 > 
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> Also update description in comment, return -EINVAL and not -1.
+> 
+> Addresses-Coverity: ("Logically dead code")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
 > ---
->  drivers/pci/controller/pci-aardvark.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-
-Thomas, I would like to merge this patch and a couple of
-others from Remi, may I ask you please to review them ?
-
-https://patchwork.ozlabs.org/user/todo/linux-pci/?series=&submitter=67495&state=&q=&archive=
-
-Thanks,
-Lorenzo
-
-> diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-> index fc0fe4d4de49..1fa6d04ad7aa 100644
-> --- a/drivers/pci/controller/pci-aardvark.c
-> +++ b/drivers/pci/controller/pci-aardvark.c
-> @@ -175,7 +175,8 @@
->  	(PCIE_CONF_BUS(bus) | PCIE_CONF_DEV(PCI_SLOT(devfn))	| \
->  	 PCIE_CONF_FUNC(PCI_FUNC(devfn)) | PCIE_CONF_REG(where))
->  
-> -#define PIO_TIMEOUT_MS			1
-> +#define PIO_RETRY_CNT			10
-> +#define PIO_RETRY_DELAY			100 /* 100 us*/
->  
->  #define LINK_WAIT_MAX_RETRIES		10
->  #define LINK_WAIT_USLEEP_MIN		90000
-> @@ -383,17 +384,16 @@ static void advk_pcie_check_pio_status(struct advk_pcie *pcie)
->  static int advk_pcie_wait_pio(struct advk_pcie *pcie)
->  {
->  	struct device *dev = &pcie->pdev->dev;
-> -	unsigned long timeout;
-> +	size_t i;
->  
-> -	timeout = jiffies + msecs_to_jiffies(PIO_TIMEOUT_MS);
-> -
-> -	while (time_before(jiffies, timeout)) {
-> +	for (i = 0; i < PIO_RETRY_CNT; ++i) {
->  		u32 start, isr;
->  
->  		start = advk_readl(pcie, PIO_START);
->  		isr = advk_readl(pcie, PIO_ISR);
->  		if (!start && isr)
->  			return 0;
-> +		udelay(PIO_RETRY_DELAY);
+> 
+> V2: Fix typo of function name in description.
+>     Update description in comment as noted by Joseph Qi
+> 
+> ---
+>  fs/ocfs2/dlmglue.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+> index ad594fef2ab0..640eee2bb903 100644
+> --- a/fs/ocfs2/dlmglue.c
+> +++ b/fs/ocfs2/dlmglue.c
+> @@ -2626,7 +2626,8 @@ void ocfs2_inode_unlock(struct inode *inode,
+>   *
+>   * return < 0 on error, return == 0 if there's no lock holder on the stack
+>   * before this call, return == 1 if this call would be a recursive locking.
+> - * return == -1 if this lock attempt will cause an upgrade which is forbidden.
+> + * return == -EINVAL if this lock attempt will cause an upgrade which is
+> + * forbidden.
+>   *
+>   * When taking lock levels into account,we face some different situations.
+>   *
+> @@ -2712,7 +2713,7 @@ int ocfs2_inode_lock_tracker(struct inode *inode,
+>  			return status;
+>  		}
 >  	}
+> -	return tmp_oh ? 1 : 0;
+> +	return 1;
+>  }
 >  
->  	dev_err(dev, "config read/write timed out\n");
-> -- 
-> 2.20.1
+>  void ocfs2_inode_unlock_tracker(struct inode *inode,
 > 
