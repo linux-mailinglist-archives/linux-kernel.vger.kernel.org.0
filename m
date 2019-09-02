@@ -2,117 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31CDFA5927
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 16:20:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1F72A592E
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 16:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731505AbfIBOUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 10:20:21 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55342 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731097AbfIBOUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 10:20:21 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AB78EAD4E;
-        Mon,  2 Sep 2019 14:20:18 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 080BADA796; Mon,  2 Sep 2019 16:20:37 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 16:20:37 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Chao Yu <chao@kernel.org>
-Cc:     dsterba@suse.cz, Christoph Hellwig <hch@infradead.org>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v8 11/24] erofs: introduce xattr & posixacl support
-Message-ID: <20190902142037.GW2752@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Chao Yu <chao@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Gao Xiang <gaoxiang25@huawei.com>, linux-fsdevel@vger.kernel.org,
-        devel@driverdev.osuosl.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>, Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-References: <20190815044155.88483-1-gaoxiang25@huawei.com>
- <20190815044155.88483-12-gaoxiang25@huawei.com>
- <20190902125711.GA23462@infradead.org>
- <20190902130644.GT2752@suse.cz>
- <813e1b65-e6ba-631c-6506-f356738c477f@kernel.org>
+        id S1731523AbfIBOVJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 10:21:09 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:1409 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730237AbfIBOVI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 10:21:08 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d6d25560000>; Mon, 02 Sep 2019 07:21:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 02 Sep 2019 07:21:07 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 02 Sep 2019 07:21:07 -0700
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 2 Sep
+ 2019 14:21:06 +0000
+Subject: Re: [PATCH 1/1] merge_config.sh: ignore unwanted grep errors
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     <linux-kbuild@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@collabora.com>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <4f92e9b3a88e60c8b5962504d77bc596442b0a40.1567023309.git.guillaume.tucker@collabora.com>
+ <b1dc3c40-b658-211e-811c-e13083303d48@collabora.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a302a6fe-8f22-9ae6-559f-5b2ad13d5b05@nvidia.com>
+Date:   Mon, 2 Sep 2019 15:21:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <813e1b65-e6ba-631c-6506-f356738c477f@kernel.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <b1dc3c40-b658-211e-811c-e13083303d48@collabora.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1567434070; bh=d+3lnPHPBX264Bf1cBmGC7sI4oSJKlvQXa/cZ2KLhE0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=YajbdzbS0avBPia8RuYQ7j+PVgkwHzYlKv+TgMa7Q336gF7cOk1vleDXAvXQ/rSwh
+         pyucLH2Tx1r3ZulfC/2B8tqXvSRBcFtqol5NIpAPVAc7nMRqSrVx2WV1b/MPkeS6Js
+         oHp1rQnKcnhVpe4Gi8stlj181gG9JUwDL6st6tTEPIwbwpS0i8DcwBaX7c4LdGrB7K
+         WvwPsTN5KbyMXLp2t8f0YvpTYVyIjhVdt/KYWupCX5c5AQeIgpkTM3G6RBZw9pp/0Y
+         LrQ48J8UHbFzjouHjX+NPsvoAmA8/X4m1zU3YUiP6UQ0lAjHhxknUN1rFLWjDHl2S2
+         eo8ZXA/ntwKkw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 09:51:59PM +0800, Chao Yu wrote:
-> On 2019-9-2 21:06, David Sterba wrote:
-> > On Mon, Sep 02, 2019 at 05:57:11AM -0700, Christoph Hellwig wrote:
-> >>> +config EROFS_FS_XATTR
-> >>> +	bool "EROFS extended attributes"
-> >>> +	depends on EROFS_FS
-> >>> +	default y
-> >>> +	help
-> >>> +	  Extended attributes are name:value pairs associated with inodes by
-> >>> +	  the kernel or by users (see the attr(5) manual page, or visit
-> >>> +	  <http://acl.bestbits.at/> for details).
-> >>> +
-> >>> +	  If unsure, say N.
-> >>> +
-> >>> +config EROFS_FS_POSIX_ACL
-> >>> +	bool "EROFS Access Control Lists"
-> >>> +	depends on EROFS_FS_XATTR
-> >>> +	select FS_POSIX_ACL
-> >>> +	default y
-> >>
-> >> Is there any good reason to make these optional these days?
-> > 
-> > I objected against adding so many config options, not to say for the
-> > standard features. The various cache strategies or other implementation
-> > details have been removed but I agree that making xattr/acl configurable
-> > is not necessary as well.
-> 
-> I can see similar *_ACL option in btrfs/ext4/xfs, should we remove them as well
-> due to the same reason?
 
-Oh right, I think the reasons are historical and that we can remove the
-options nowadays. From the compatibility POV this should be safe, with
-ACLs compiled out, no tool would use them, and no harm done when the
-code is present but not used.
+On 02/09/2019 15:14, Guillaume Tucker wrote:
+> + Jon Hunter who hit a similar issue
 
-There were some efforts by embedded guys to make parts of kernel more
-configurable to allow removing subsystems to reduce the final image
-size. In this case I don't think it would make any noticeable
-difference, eg. the size of fs/btrfs/acl.o on release config is 1.6KiB,
-while the whole module is over 1.3MiB.
+Thanks for adding me.
+
+> On 28/08/2019 21:19, Guillaume Tucker wrote:
+>> The merge_config.sh script verifies that all the config options have
+>> their expected value in the resulting file and prints any issues as
+>> warnings.  These checks aren't intended to be treated as errors given
+>> the current implementation.  However, since "set -e" was added, if the
+>> grep command to look for a config option does not find it the script
+>> will then abort prematurely.
+>>
+>> Handle the case where the grep exit status is non-zero by setting
+>> ACTUAL_VAL to an empty string to restore previous functionality.
+>>
+>> Fixes: cdfca821571d ("merge_config.sh: Check error codes from make")
+>> Signed-off-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+>> ---
+>>  scripts/kconfig/merge_config.sh | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+>> index d924c51d28b7..d673268d414b 100755
+>> --- a/scripts/kconfig/merge_config.sh
+>> +++ b/scripts/kconfig/merge_config.sh
+>> @@ -177,7 +177,7 @@ make KCONFIG_ALLCONFIG=$TMP_FILE $OUTPUT_ARG $ALLTARGET
+>>  for CFG in $(sed -n -e "$SED_CONFIG_EXP1" -e "$SED_CONFIG_EXP2" $TMP_FILE); do
+>>  
+>>  	REQUESTED_VAL=$(grep -w -e "$CFG" $TMP_FILE)
+>> -	ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG")
+>> +	ACTUAL_VAL=$(grep -w -e "$CFG" "$KCONFIG_CONFIG" || echo)
+
+Shouldn't this just be 'true' instead of 'echo'?
+
+Cheers
+Jon
+
+-- 
+nvpublic
