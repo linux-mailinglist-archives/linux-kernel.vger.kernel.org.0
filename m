@@ -2,92 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75FE3A5478
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF31CA547F
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 12:56:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731213AbfIBKxw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 06:53:52 -0400
-Received: from foss.arm.com ([217.140.110.172]:52150 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729881AbfIBKxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 06:53:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46D2E28;
-        Mon,  2 Sep 2019 03:53:51 -0700 (PDT)
-Received: from [192.168.0.8] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDA4A3F246;
-        Mon,  2 Sep 2019 03:53:49 -0700 (PDT)
-Subject: Re: [PATCH RFC v4 0/15] sched,fair: flatten CPU controller runqueues
-To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-Cc:     kernel-team@fb.com, pjt@google.com, peterz@infradead.org,
-        mingo@redhat.com, morten.rasmussen@arm.com, tglx@linutronix.de,
-        mgorman@techsingularity.net, vincent.guittot@linaro.org
-References: <20190822021740.15554-1-riel@surriel.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <94ba95b9-9cfe-d715-dded-ff92700d47eb@arm.com>
-Date:   Mon, 2 Sep 2019 12:53:48 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1731376AbfIBK4N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 06:56:13 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:36011 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731278AbfIBK4M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 06:56:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1567421769;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=gh/3sTibgDq3nRs3zSWyY8xHtE864u/e8eeLmwdgoBQ=;
+        b=V+4+yhjO/EZrDZa6PNvva0wq4C5ycXNhO8V9qXv+HjKkc60hTGB7l7Bg/Ob/LZYGCQ
+        FYZuxlaq5bZJWYFUuLtJrZSNe+fJdaY7BWeUaHKeubrVhmWJcIKzQTibVyGbHVTYAcOl
+        Ew/1uUnIk5cHO987eZKNcPGULTyARTaUmM+nlcvp9YepM/dtuJrNn61Wadmz8zr1Zfid
+        OHjjsWVNczmt09ii97+g7YvZ348eiRqjISVFnbD5cF0RJodJKE/b1Xm70rnvOupv0bU5
+        vmYrMdFUKuCqwhUV4tJk06pl+xKQ++1sV5dTtEweeW95hRMdTAEdKXsiERxoDCNKNZfH
+        fkEg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXL8GTnvuHRT"
+X-RZG-CLASS-ID: mo00
+Received: from iMac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v82AtqPvg
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 2 Sep 2019 12:55:52 +0200 (CEST)
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+To:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        =?UTF-8?q?Andr=C3=A9=20Roth?= <neolynx@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        letux-kernel@openphoenux.org, kernel@pyra-handheld.com,
+        "H. Nikolaus Schaller" <hns@goldelico.com>
+Subject: [RFC 0/5] OMAP3: convert opp-v1 to opp-v2 and read speed binned / 720MHz grade bits
+Date:   Mon,  2 Sep 2019 12:55:46 +0200
+Message-Id: <cover.1567421750.git.hns@goldelico.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20190822021740.15554-1-riel@surriel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/08/2019 04:17, Rik van Riel wrote:
-> The current implementation of the CPU controller uses hierarchical
-> runqueues, where on wakeup a task is enqueued on its group's runqueue,
-> the group is enqueued on the runqueue of the group above it, etc.
-> 
-> This increases a fairly large amount of overhead for workloads that
-> do a lot of wakeups a second, especially given that the default systemd
-> hierarchy is 2 or 3 levels deep.
-> 
-> This patch series is an attempt at reducing that overhead, by placing
-> all the tasks on the same runqueue, and scaling the task priority by
-> the priority of the group, which is calculated periodically.
-> 
-> My main TODO items for the next period of time are likely going to
-> be testing, testing, and testing. I hope to find and flush out any
-> corner case I can find, and make sure performance does not regress
-> with any workloads, and hopefully improves some.
+This patch set converts the opp tables to opp-v2 format
+and extends the ti-cpufreq to support omap3.
 
-I did some testing with a small & simple rt-app based test-case:
+It adds 720 MHz (omap34xx) and 1 GHz (omap36xx) OPPs but
+tells the ti-cpufreq driver to disable them if the speed
+binned / 720MHz grade eFuse bits indicate that the chip
+is not rated for that speed. 
 
-2 CPUs (rq->cpu_capacity_orig=1024), CPUfreq performance governor
+It has been tested (for chip variant detection, not reliability
+of high speed OPPs) on:
+* BeagleBoard C2 (omap3430 600MHz)
+* BeagleBoard XM B (dm3730 800MHz)
+* GTA04A4 (dm3730 800MHz)
+* GTA04A5 (dm3730 1GHz)
 
-2 taskgroups /tg0 and /tg1
 
-6 CFS tasks (periodic, 8/16ms (runtime/period))
+H. Nikolaus Schaller (5):
+  cpufreq: ti-cpufreq: add support for omap34xx and omap36xx
+  ARM: dts: add support for opp-v2 for omap34xx and omap36xx
+  ARM: dts: omap3-evm-37xx: fix compatible from omap3630 to omap36xx
+  ARM: dts: omap3-n950-n9: remove opp-v1 table
+  ARM: dts: omap3-beagle: make explicitly compatible to ti,omap34xx
 
-/tg0 (cpu.shares=1024) ran 4 tasks and /tg1 (cpu.shares=1024) ran 2 tasks
+ arch/arm/boot/dts/omap3-beagle.dts   |  2 +-
+ arch/arm/boot/dts/omap3-evm-37xx.dts |  2 +-
+ arch/arm/boot/dts/omap3-n950-n9.dtsi |  7 ---
+ arch/arm/boot/dts/omap34xx.dtsi      | 59 ++++++++++++++++---
+ arch/arm/boot/dts/omap36xx.dtsi      | 47 ++++++++++++---
+ drivers/cpufreq/cpufreq-dt-platdev.c |  2 +-
+ drivers/cpufreq/ti-cpufreq.c         | 86 +++++++++++++++++++++++++++-
+ 7 files changed, 176 insertions(+), 29 deletions(-)
 
-(arm64 defconfig with !CONFIG_NUMA_BALANCING, !CONFIG_SCHED_AUTOGROUP)
+-- 
+2.19.1
 
----
-
-v5.2:
-
-The 2 /tg1 tasks ran 8/16ms. The 4 /tg0 tasks ran 4/16ms in the
-beginning and then 8/16ms after the 2 /tg1 tasks did finish.
-
----
-
-v5.2 + v4:
-
-There is no runtime/period pattern visible anymore. I see a lot of extra
-wakeup latency for those tasks though.
-
-v5.2 + (v4 without 07/15, 08/15, 15/15) didn't change much.
-
----
-
-I could try to reduce the stack even further (e.g. without 13/15).
-
-IMHO it's a good idea to have a set of these small & simple test-cases
-handy to verify that the base-functionality is still in place. This
-might be hard to achieve with benchmarks.
