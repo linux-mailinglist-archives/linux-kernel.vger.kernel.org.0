@@ -2,123 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D0A93A5C9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 21:16:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B36C5A5CA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 21:16:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbfIBTPx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 15:15:53 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:46544 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727022AbfIBTPw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 15:15:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jLmXpLU6F1RGPbvNG04Pwx+M4aB058HdSSdmCuhuLak=; b=ABUi6bxwns6yQEN+1PnwjRCTK
-        GpwKo/K2O4pz7QylK87ZTmWEBXC3cVnMf4e54Wg0s5A0GhBfCrxAY5UkSmMCD2l120rKEBOMtmmSx
-        fQv7FhbjUE0Rpx3DiFQyebngjv0bSKpYfLtzd6C7v0yuII8sKLhPVKc2NYTg4oEjO86VlgdYYl2rw
-        /2rqFgmolMcY8H2vtNv4U8p9VQ9qhC7n/cEEEv5csuBN+Cf0JtVgyQGd6kZTDlEJSlCZaDYqDu3gN
-        nj7VnN5S6ckTuLGYXWcKmdyXpwxgRfmGWokUG7W1qrM5Pncbt6HIFrG7uIE9qeQYXi0H+WkSD6QRc
-        ZKFJaOhww==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i4rmW-0003ny-LE; Mon, 02 Sep 2019 19:14:28 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1727175AbfIBTQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 15:16:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726937AbfIBTQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 15:16:27 -0400
+Received: from earth.universe (unknown [185.62.205.105])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 393DE306023;
-        Mon,  2 Sep 2019 21:13:46 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E09FA29B9FF21; Mon,  2 Sep 2019 21:14:21 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 21:14:21 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Yunsheng Lin <linyunsheng@huawei.com>, dalias@libc.org,
-        linux-sh@vger.kernel.org, catalin.marinas@arm.com,
-        dave.hansen@linux.intel.com, heiko.carstens@de.ibm.com,
-        linuxarm@huawei.com, jiaxun.yang@flygoat.com,
-        linux-kernel@vger.kernel.org, mwb@linux.vnet.ibm.com,
-        paulus@samba.org, hpa@zytor.com, sparclinux@vger.kernel.org,
-        chenhc@lemote.com, will@kernel.org, linux-s390@vger.kernel.org,
-        ysato@users.sourceforge.jp, mpe@ellerman.id.au, x86@kernel.org,
-        rppt@linux.ibm.com, borntraeger@de.ibm.com, dledford@redhat.com,
-        mingo@redhat.com, jeffrey.t.kirsher@intel.com,
-        benh@kernel.crashing.org, jhogan@kernel.org,
-        nfont@linux.vnet.ibm.com, mattst88@gmail.com, len.brown@intel.com,
-        gor@linux.ibm.com, anshuman.khandual@arm.com,
-        ink@jurassic.park.msu.ru, cai@lca.pw, luto@kernel.org,
-        tglx@linutronix.de, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, rth@twiddle.net,
-        axboe@kernel.dk, robin.murphy@arm.com, linux-mips@vger.kernel.org,
-        ralf@linux-mips.org, tbogendoerfer@suse.de, paul.burton@mips.com,
-        linux-alpha@vger.kernel.org, bp@alien8.de,
-        akpm@linux-foundation.org, linuxppc-dev@lists.ozlabs.org,
-        davem@davemloft.net,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2 2/9] x86: numa: check the node id consistently for x86
-Message-ID: <20190902191421.GT2369@hirez.programming.kicks-ass.net>
-References: <1567231103-13237-1-git-send-email-linyunsheng@huawei.com>
- <1567231103-13237-3-git-send-email-linyunsheng@huawei.com>
- <20190831085539.GG2369@hirez.programming.kicks-ass.net>
- <4d89c688-49e4-a2aa-32ee-65e36edcd913@huawei.com>
- <20190831161247.GM2369@hirez.programming.kicks-ass.net>
- <ae64285f-5134-4147-7b02-34bb5d519e8c@huawei.com>
- <20190902072542.GN2369@hirez.programming.kicks-ass.net>
- <5fa2aa99-89fa-cd41-b090-36a23cfdeb73@huawei.com>
- <20190902125644.GQ2369@hirez.programming.kicks-ass.net>
- <20190902182252.GC35858@gmail.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 945E521883;
+        Mon,  2 Sep 2019 19:16:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567451786;
+        bh=DDCYrv3lGKJ63xn/Bvcw9F7AwwviJwsM2ns4CptNxNA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jSf+/qBaSV27D7/nD6ebiZkSY4fKuT2tny+urCaRlf8ahzGELYKyLwtw/rsBpYM6j
+         tA0SZJmnTnPUU8GDzbC3E+zeGn0vqiMwoqJP8fPW0tHgSSW4biGgVrAUrYIGtJXDA/
+         dy81qZj658dgCGwsAF/ZxlB5MmyMH7AYXF6UYgWY=
+Received: by earth.universe (Postfix, from userid 1000)
+        id E44A53C0B7F; Mon,  2 Sep 2019 21:16:23 +0200 (CEST)
+Date:   Mon, 2 Sep 2019 21:16:23 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] power: supply: max77650: add MODULE_ALIAS()
+Message-ID: <20190902191623.t4l4hlcorkbsjnqj@earth.universe>
+References: <20190703084811.9582-1-brgl@bgdev.pl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rxknfcmqlmimaizl"
 Content-Disposition: inline
-In-Reply-To: <20190902182252.GC35858@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190703084811.9582-1-brgl@bgdev.pl>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 02, 2019 at 08:22:52PM +0200, Ingo Molnar wrote:
-> 
-> * Peter Zijlstra <peterz@infradead.org> wrote:
 
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index f0dd8e38fee3..2caf204966a0 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -2120,8 +2120,16 @@ int device_add(struct device *dev)
-> >  		dev->kobj.parent = kobj;
-> >  
-> >  	/* use parent numa_node */
-> > -	if (parent && (dev_to_node(dev) == NUMA_NO_NODE))
-> > -		set_dev_node(dev, dev_to_node(parent));
-> > +	if (dev_to_node(dev) == NUMA_NO_NODE) {
-> > +		if (parent)
-> > +			set_dev_node(dev, dev_to_node(parent));
-> > +#ifdef CONFIG_NUMA
-> > +		else {
-> > +			pr_err("device: '%s': has no assigned NUMA node\n", dev_name(dev));
-> > +			set_dev_node(dev, 0);
-> > +		}
-> > +#endif
-> 
-> BTW., is firmware required to always provide a NUMA node on NUMA systems?
-> 
-> I.e. do we really want this warning on non-NUMA systems that don't assign 
-> NUMA nodes?
+--rxknfcmqlmimaizl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Good point; we might have to exclude nr_node_ids==1 systems from
-warning.
+Hi,
 
-> Also, even on NUMA systems, is firmware required to provide a NUMA node - 
-> i.e. is it in principle invalid to offer no NUMA binding?
+On Wed, Jul 03, 2019 at 10:48:10AM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>=20
+> Define a MODULE_ALIAS() in the charger sub-driver for max77650 so that
+> the appropriate module gets loaded together with the core mfd driver.
+>=20
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-I think so; a device needs to be _somewhere_, right? Typically though;
-devices are on a PCI bus, and the PCI bridge itself will have a NUMA
-binding and then the above parent rule will make everything just work.
+Thanks, queued. Sorry for the delay.
 
-But I don't see how you can be outside of the NUMA topology.
+-- Sebastian
+
+>  drivers/power/supply/max77650-charger.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/power/supply/max77650-charger.c b/drivers/power/supp=
+ly/max77650-charger.c
+> index e34714cb05ec..5f9477c5cf5a 100644
+> --- a/drivers/power/supply/max77650-charger.c
+> +++ b/drivers/power/supply/max77650-charger.c
+> @@ -366,3 +366,4 @@ module_platform_driver(max77650_charger_driver);
+>  MODULE_DESCRIPTION("MAXIM 77650/77651 charger driver");
+>  MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
+>  MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:max77650-charger");
+> --=20
+> 2.21.0
+>=20
+
+--rxknfcmqlmimaizl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl1taocACgkQ2O7X88g7
++ppuTg//dK84CNX4lS56lFT7mQTU/KJd75YQoJg6CIHH/H0QmkHm0+MZg/7w4Fu+
+x8WANmvOV1G+nk9GFE2Um6KwRCIUzfkAyPf0XBAlb43M82jIxqBOfk2waXrEvGA6
+DdwJT0j2l1jZRiqxvsAVt675Ine86M6BB9v1S3ZSX+VOMfyOtKHVFAx32eJ1mKHg
+DMNEdkGRW/DBWYXDrtY5v6dpGeYCafGFEn++3r8GO3bmjQwLQkTlzk7JkEop75Wb
++cs0+kwbnOWiVO95W2dSorkagr8yhlRwGxkHV57VAQenQRxk0Di1tKZfoxavk4BU
+dMeOeBS2/Wfrw+pEC/hQ8xiHWJnmKqzxmv9QL2+3Ta1QmgduOD9T4aZNrHcgX/ET
+V8C3lmpL/LsASk9llcvs+a6EuQo+Vgr7bIPcd6Y8a9cA7zY2WPd4mZK96GL2GiBb
+yChk6FJWgZjClO/vMEyILUzq2DwksEHDlyF6CO9lo09AW41qYFTj7mu6CiONUjp8
+8rZz0O/RXIUX02Cs+Tk18oFmVTOqjXgZMLo3kkaRkaHwdtmdShjQKQQlB4apf8sx
+RZhNnNRbY1ymMEo8w9hnTpycoX8MWpTr53vbLC8UjsZu45iG+UlkQLPReOZ9dp4f
+IuG/yjWqB2EijOMnRWTGx6L8I/deaQ1jw5TrzjRFkW1mcUWYw3A=
+=fAmd
+-----END PGP SIGNATURE-----
+
+--rxknfcmqlmimaizl--
