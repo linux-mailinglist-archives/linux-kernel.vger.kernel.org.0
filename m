@@ -2,41 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0299A5777
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9711EA5783
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 15:16:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730877AbfIBNNH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 09:13:07 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35202 "EHLO
+        id S1730571AbfIBNPU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 09:15:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36622 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729690AbfIBNNG (ORCPT
+        with ESMTP id S1729889AbfIBNPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 09:13:06 -0400
+        Mon, 2 Sep 2019 09:15:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WUT2tiM88hPNkRtYXbHex8vC4m/OZCxIoGmn21PiEzg=; b=B6461RqGBtBH0KvXzaW8gyE1di
-        GNR0A4uyyj8ExfMELYP3VZkyAGwY6+begEERVgg7lTlpC0MJuiW7f8kqUm2GgK6gMnmLcNPDcrkmh
-        z3MxWlMA7p8dH+gac4nQqy46dF0HtEaYLr57yX90WRs51OeH5NH825iZp70lz03vDITtknrHmGZyT
-        zPmNPVQwbUonkMu/pkmu2tKa/HiQScOjFywXrII680+PS8FHxVj+Z91/w8g71hstuq/AQJfgaklzv
-        men9DAHq4czBJLy8Q1O/YWZSAlbjfdVDjU1o111d7b1N4Ynuaao5JCOn1pDg1pEPV3h+GPKO0Qya5
-        jj8KCK9A==;
+        bh=NmR+a6Uj1v91V4iU31zXRZrXbA98s0lz9xVim531aU8=; b=UBoCs/LGuwtUGE1GVpA3t3lyz4
+        i9EVFHXjXPkdzrlvo47lXY36sri3FCuLIJH0GBt9eZ+aGN32f5ga1vDul64qb8vTaCuAQWDAVW03e
+        WCQFBYARUXV6sqf2DrpI2i3+zrCZvpfB4O0Z7SGMt5eD1Jt7DWaH+IwVeC0ZdZ22D+ivgOdLEFZyE
+        yH6nCpFBmHYI7bfJecf0nMlri4dZjkk52FWSERpEkv47O/esiXYIXLUThffhwVzvsh0Y2UmUabvHp
+        6zNfrcmIxxQBOvdF/exGwu7QnipFCyfCvXaSWGVH9Clt+VVhcMAM5mIyCU8pNXPqeFRt35FxsVFUK
+        WxBiGuXg==;
 Received: from 213-225-38-191.nat.highway.a1.net ([213.225.38.191] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i4m8l-0000VK-Cr; Mon, 02 Sep 2019 13:13:03 +0000
+        id 1i4mAu-00024f-GO; Mon, 02 Sep 2019 13:15:16 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Stefano Stabellini <sstabellini@kernel.org>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         gross@suse.com, boris.ostrovsky@oracle.com
 Cc:     x86@kernel.org, linux-arm-kernel@lists.infradead.org,
         xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 12/13] swiotlb-xen: merge xen_unmap_single into xen_swiotlb_unmap_page
-Date:   Mon,  2 Sep 2019 15:03:38 +0200
-Message-Id: <20190902130339.23163-13-hch@lst.de>
+        linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>
+Subject: [PATCH 13/13] arm64: use asm-generic/dma-mapping.h
+Date:   Mon,  2 Sep 2019 15:03:39 +0200
+Message-Id: <20190902130339.23163-14-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190902130339.23163-1-hch@lst.de>
 References: <20190902130339.23163-1-hch@lst.de>
@@ -48,54 +48,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No need for a no-op wrapper.
+Now that the Xen special cases are gone nothing worth mentioning is
+left in the arm64 <asm/dma-mapping.h> file, so switch to use the
+asm-generic version instead.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Will Deacon <will@kernel.org>
 Reviewed-by: Stefano Stabellini <sstabellini@kernel.org>
 ---
- drivers/xen/swiotlb-xen.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+ arch/arm64/include/asm/Kbuild        |  1 +
+ arch/arm64/include/asm/dma-mapping.h | 22 ----------------------
+ arch/arm64/mm/dma-mapping.c          |  1 +
+ 3 files changed, 2 insertions(+), 22 deletions(-)
+ delete mode 100644 arch/arm64/include/asm/dma-mapping.h
 
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 95911ff9c11c..384304a77020 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -414,9 +414,8 @@ static dma_addr_t xen_swiotlb_map_page(struct device *dev, struct page *page,
-  * After this call, reads by the cpu to the buffer are guaranteed to see
-  * whatever the device wrote there.
-  */
--static void xen_unmap_single(struct device *hwdev, dma_addr_t dev_addr,
--			     size_t size, enum dma_data_direction dir,
--			     unsigned long attrs)
-+static void xen_swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
-+		size_t size, enum dma_data_direction dir, unsigned long attrs)
- {
- 	phys_addr_t paddr = xen_bus_to_phys(dev_addr);
- 
-@@ -430,13 +429,6 @@ static void xen_unmap_single(struct device *hwdev, dma_addr_t dev_addr,
- 		swiotlb_tbl_unmap_single(hwdev, paddr, size, dir, attrs);
- }
- 
--static void xen_swiotlb_unmap_page(struct device *hwdev, dma_addr_t dev_addr,
--			    size_t size, enum dma_data_direction dir,
--			    unsigned long attrs)
+diff --git a/arch/arm64/include/asm/Kbuild b/arch/arm64/include/asm/Kbuild
+index c52e151afab0..98a5405c8558 100644
+--- a/arch/arm64/include/asm/Kbuild
++++ b/arch/arm64/include/asm/Kbuild
+@@ -4,6 +4,7 @@ generic-y += delay.h
+ generic-y += div64.h
+ generic-y += dma.h
+ generic-y += dma-contiguous.h
++generic-y += dma-mapping.h
+ generic-y += early_ioremap.h
+ generic-y += emergency-restart.h
+ generic-y += hw_irq.h
+diff --git a/arch/arm64/include/asm/dma-mapping.h b/arch/arm64/include/asm/dma-mapping.h
+deleted file mode 100644
+index 67243255a858..000000000000
+--- a/arch/arm64/include/asm/dma-mapping.h
++++ /dev/null
+@@ -1,22 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * Copyright (C) 2012 ARM Ltd.
+- */
+-#ifndef __ASM_DMA_MAPPING_H
+-#define __ASM_DMA_MAPPING_H
+-
+-#ifdef __KERNEL__
+-
+-#include <linux/types.h>
+-#include <linux/vmalloc.h>
+-
+-#include <xen/xen.h>
+-#include <asm/xen/hypervisor.h>
+-
+-static inline const struct dma_map_ops *get_arch_dma_ops(struct bus_type *bus)
 -{
--	xen_unmap_single(hwdev, dev_addr, size, dir, attrs);
+-	return NULL;
 -}
 -
- static void
- xen_swiotlb_sync_single_for_cpu(struct device *dev, dma_addr_t dma_addr,
- 		size_t size, enum dma_data_direction dir)
-@@ -477,7 +469,8 @@ xen_swiotlb_unmap_sg(struct device *hwdev, struct scatterlist *sgl, int nelems,
- 	BUG_ON(dir == DMA_NONE);
+-#endif	/* __KERNEL__ */
+-#endif	/* __ASM_DMA_MAPPING_H */
+diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+index 4b244a037349..6578abcfbbc7 100644
+--- a/arch/arm64/mm/dma-mapping.c
++++ b/arch/arm64/mm/dma-mapping.c
+@@ -8,6 +8,7 @@
+ #include <linux/cache.h>
+ #include <linux/dma-noncoherent.h>
+ #include <linux/dma-iommu.h>
++#include <xen/xen.h>
+ #include <xen/swiotlb-xen.h>
  
- 	for_each_sg(sgl, sg, nelems, i)
--		xen_unmap_single(hwdev, sg->dma_address, sg_dma_len(sg), dir, attrs);
-+		xen_swiotlb_unmap_page(hwdev, sg->dma_address, sg_dma_len(sg),
-+				dir, attrs);
- 
- }
- 
+ #include <asm/cacheflush.h>
 -- 
 2.20.1
 
