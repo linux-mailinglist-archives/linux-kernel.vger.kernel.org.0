@@ -2,82 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3298CA528C
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 667AEA5294
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 11:12:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730946AbfIBJK7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 05:10:59 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51398 "EHLO
+        id S1730971AbfIBJLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 05:11:35 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37044 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730015AbfIBJK7 (ORCPT
+        with ESMTP id S1730015AbfIBJLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 05:10:59 -0400
-Received: by mail-wm1-f67.google.com with SMTP id k1so13680620wmi.1
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 02:10:57 -0700 (PDT)
+        Mon, 2 Sep 2019 05:11:34 -0400
+Received: by mail-wm1-f67.google.com with SMTP id d16so13750124wme.2
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 02:11:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=F+R1VokAMpRs9tEY/DwWMta9ZH4Twx4r2rQIJQM1G/I=;
-        b=p63qBkbfBV6lM1WU5vBh/cE2qcf9fweRiYXdO/0wTiXgPKpFTvAtxCAzFOWh1eLBsA
-         7+Vwfn6FbEbdu/HKroatQsZTneRFwAbHDcJfek36BDZtE8iFedFMxEioiM8YRSOaFrS1
-         arJ9ZHt7P/19Dhl362GkEpEJ/vTzur/yebCX63WS2fUleJaEYFzlH7o9qaAtnEl1pSML
-         fZYAvXQQaAeoGRw6W8QFFH3+CByWxgP+jtSI3MTjyZ/OJhKyIdFAjEFmcnuczQws4Hia
-         L/hM0i4xkAN3yl/gnqaDHSdAwyigHY0j0XP1V+EIirNSPMaYNejTT2wqgzkEwBwxLA0x
-         i8uw==
+        bh=8oqJdBiHyKqAlISuPnLa2MGGfZJDAaKp4XjFcqqHTI8=;
+        b=DIHmB+MhpRayg6spOmLydYJ01PHT4VKTWXLlYhvJPb+LIBpWOOgWnzwVP9Emq17Spb
+         8lPzi2/StfEbpYNaD3ubpzc+CkNRKgTx0mPxR56ZaqRQ2hZqkPMbtu790XYGirmaYKIB
+         ShOSAq5oxixfW/1idndxBdzTSy0fCMrA1dsEEHQauEwpO+USJiaw0r4acOgDtxUpovnk
+         sCRsT5siGKSqyshqIeIE/0CFUbmTbr2iaDvAGstjGPD1k9vkNiX5GM/QwUsdIOJeQw3y
+         y4hoirYqZgpW/jo3rscQSbPHqKBMeO4KAorS2upSf46AV+2Ta85G4U69DxF7exqggh8f
+         kOOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=F+R1VokAMpRs9tEY/DwWMta9ZH4Twx4r2rQIJQM1G/I=;
-        b=WZiozTbGG2emY12GMlagvknAzOEuJhKIn01VSlf1qtBocCH4JbBlO+4GZf9FAS2gXY
-         2x1Jen8Nl9kD6r/qLgpmv8HEIrQuaA55nAIfkeQI+6mEojuImAUPgH3KVPb9mqlDbRHb
-         Yx+7I/v+M70uGcGrCYLFaZQmIzo0r6AKj0MY5w+KIMEknndg9vmTYbPSFWK9xVTtG50w
-         UY2C+RNom7KVrbGqOfevA2SKlgR+RlW+8z70vfuuNkFwc7fKd/vpQ3Yw8zHMvpxLcs8R
-         JUsnMY6L/5KDzm5qYfwrS4I9VyjZruKxiPf58+AcihB3OUDVtJ5XHa5RaDwWDyshiEhx
-         pTqg==
-X-Gm-Message-State: APjAAAVJ7voAb6N7j1uXX+G1MyczY51pCgjj3rQoGLz6EqZhoz83uNRC
-        nRvko9Hfm9C2YIuNG5rULP9scpBWIUDjWQ==
-X-Google-Smtp-Source: APXvYqwFRKtM/WYAg/TV5ot4eMnd9RM3Jn9GeeEoncMi/2YqmCEYkjAamqX3AC04cglaU9fc5336gw==
-X-Received: by 2002:a1c:a796:: with SMTP id q144mr26533342wme.15.1567415456793;
-        Mon, 02 Sep 2019 02:10:56 -0700 (PDT)
+        bh=8oqJdBiHyKqAlISuPnLa2MGGfZJDAaKp4XjFcqqHTI8=;
+        b=CiCtoVKb08NkcDBFyhBaTQcA4PL64F4xuMruVpYs4RWpH3a7OfthBZfOiWIzpCA69i
+         c1sIV/TQcqPicHBz2XPOE33/nSB09vRIuqFOFt4+ydNIM4ZPpnnQOKXWsFMMjyR0PYiq
+         HOw++Jsboh7YKZHqgtCRSPi7DYbigKAlRzdB0jB8lCUOrhmmCLww23T+xoh0d/BDUQeh
+         1DIzc82cgpOkxxnPZnl5R6ndvdsho+gIH9U5eMt7OAJywQUKwRsO2ki6tj2XIS/80g4T
+         fWUPeg0+xRkkTFk8C12RidoQ3sSRHS4OBOkU3z8QCGvd7SbVrZ9K9IynZjCNyz9h29pf
+         kH3w==
+X-Gm-Message-State: APjAAAVOIbG9LbVy1IG1pA+0KmVSfLYYV/l1dYF54Nc8BFghtKr6pB6O
+        pWpAP9HacJQNQk6wpBxsIuxYYg==
+X-Google-Smtp-Source: APXvYqz6zTE3+7Cab43jkjP1vZUcgAoMSLfW1kYAvqHXdmLYBFVgNKWMXsb5YhZZGLOZta3H6WSVOg==
+X-Received: by 2002:a1c:7619:: with SMTP id r25mr299001wmc.153.1567415492632;
+        Mon, 02 Sep 2019 02:11:32 -0700 (PDT)
 Received: from dell ([95.147.198.93])
-        by smtp.gmail.com with ESMTPSA id q26sm905084wmf.45.2019.09.02.02.10.56
+        by smtp.gmail.com with ESMTPSA id s15sm6398842wmh.12.2019.09.02.02.11.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Sep 2019 02:10:56 -0700 (PDT)
-Date:   Mon, 2 Sep 2019 10:10:54 +0100
+        Mon, 02 Sep 2019 02:11:32 -0700 (PDT)
+Date:   Mon, 2 Sep 2019 10:11:30 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mfd: intel-lpss: Use MODULE_SOFTDEP() instead of
- implicit request
-Message-ID: <20190902091054.GF32232@dell>
-References: <20190821083712.4635-1-andriy.shevchenko@linux.intel.com>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     jingoohan1@gmail.com, daniel.thompson@linaro.org,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, paul.kocialkowski@bootlin.com
+Subject: Re: [PATCH v3] backlight: gpio-backlight: Correct initial power
+ state handling
+Message-ID: <20190902091130.GG32232@dell>
+References: <20190731084018.5318-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190821083712.4635-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20190731084018.5318-1-peter.ujfalusi@ti.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Aug 2019, Andy Shevchenko wrote:
+On Wed, 31 Jul 2019, Peter Ujfalusi wrote:
 
-> There is no need to handle optional module request in the driver
-> when user space tools has that feature for ages.
+> The default-on property - or the def_value via legacy pdata) should be
+> handled as:
+> if it is 1, the backlight must be enabled (kept enabled)
+> if it is 0, the backlight must be disabled (kept disabled)
 > 
-> Replace custom code by MODULE_SOFTDEP() macro to let user space know
-> that we would like to have the DMA driver loaded first, if any.
+> This only works for the case when default-on is set. If it is not set then
+> the brightness of the backlight is set to 0. Now if the backlight is
+> enabled by external driver (graphics) the backlight will stay disabled since
+> the brightness is configured as 0. The backlight will not turn on.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> In order to minimize screen flickering during device boot:
+> 
+> The initial brightness should be set to 1.
+> 
+> If booted in non DT mode or no phandle link to the backlight node:
+> follow the def_value/default-on to select UNBLANK or POWERDOWN
+> 
+> If in DT boot we have phandle link then leave the GPIO in a state which the
+> bootloader left it and let the user of the backlight to configure it
+> further.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 > ---
->  drivers/mfd/intel-lpss.c | 29 ++++++++---------------------
->  1 file changed, 8 insertions(+), 21 deletions(-)
+> Hi,
+> 
+> sorry for the delay, but got distracted a bit with the resend of this...
+> Let's try again ;)
+> 
+> Changes since v2 (https://lore.kernel.org/patchwork/patch/1002359/):
+> - Rebased on drm-next
+> 
+> Changes since v1:
+> - Implement similiar initial power state handling as pwm backlight have
+> 
+> Regards,
+> Peter
+> 
+>  drivers/video/backlight/gpio_backlight.c | 24 ++++++++++++++++++++----
+>  1 file changed, 20 insertions(+), 4 deletions(-)
 
 Applied, thanks.
 
