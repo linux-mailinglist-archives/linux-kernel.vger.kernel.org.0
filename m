@@ -2,85 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80024A50BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:03:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E2AA50A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  2 Sep 2019 10:02:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbfIBICj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 04:02:39 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58302 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730036AbfIBICT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:02:19 -0400
-Received: from pendragon.ideasonboard.com (231.125-247-81.adsl-dyn.isp.belgacom.be [81.247.125.231])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6D2A0303;
-        Mon,  2 Sep 2019 10:02:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1567411337;
-        bh=9LpLDBZKeRKxbRTdwGzHizcveEKiifXyzbvf6jL+liQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l4oUO988Hlc4uTdtzaHPaZBcV30LXMyIR1ns7Ywb9XZhhkX6dXKaawv+8gDacGTqR
-         pX6ZkK0asuMtPvXmXgwPYY3LdyNOirfYSlhJpz6yUaj65XTRlet3PMwl3d40Pom9Yt
-         rq3DS4oYOEZlq5VQHWw7i6i2ZUbG4fZRQKf4k5Ug=
-Date:   Mon, 2 Sep 2019 11:02:11 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
-        <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [RFC 1/5] media: dt-bindings: Document 'location' property
-Message-ID: <20190902080211.GD4777@pendragon.ideasonboard.com>
-References: <20190814202815.32491-1-jacopo@jmondi.org>
- <20190814202815.32491-2-jacopo@jmondi.org>
- <20190815065635.GJ6133@paasikivi.fi.intel.com>
- <20190901172414.GB1047@bug>
+        id S1730135AbfIBICW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 04:02:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55394 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730119AbfIBICV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 04:02:21 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 24A2AB654;
+        Mon,  2 Sep 2019 08:02:20 +0000 (UTC)
+Date:   Mon, 2 Sep 2019 10:02:18 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Khalid Aziz <khalid.aziz@oracle.com>
+Cc:     Bharath Vedartham <linux.bhar@gmail.com>,
+        akpm@linux-foundation.org, vbabka@suse.cz,
+        mgorman@techsingularity.net, dan.j.williams@intel.com,
+        osalvador@suse.de, richard.weiyang@gmail.com, hannes@cmpxchg.org,
+        arunks@codeaurora.org, rppt@linux.vnet.ibm.com, jgg@ziepe.ca,
+        amir73il@gmail.com, alexander.h.duyck@linux.intel.com,
+        linux-mm@kvack.org, linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] Add predictive memory reclamation and compaction
+Message-ID: <20190902080218.GF14028@dhcp22.suse.cz>
+References: <20190813140553.GK17933@dhcp22.suse.cz>
+ <3cb0af00-f091-2f3e-d6cc-73a5171e6eda@oracle.com>
+ <20190814085831.GS17933@dhcp22.suse.cz>
+ <d3895804-7340-a7ae-d611-62913303e9c5@oracle.com>
+ <20190815170215.GQ9477@dhcp22.suse.cz>
+ <2668ad2e-ee52-8c88-22c0-1952243af5a1@oracle.com>
+ <20190821140632.GI3111@dhcp22.suse.cz>
+ <20190826204420.GA16800@bharath12345-Inspiron-5559>
+ <20190827061606.GN7538@dhcp22.suse.cz>
+ <23eca880-d0d7-00f9-cb1b-b2998f2a1dff@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190901172414.GB1047@bug>
+In-Reply-To: <23eca880-d0d7-00f9-cb1b-b2998f2a1dff@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
+On Fri 30-08-19 15:35:06, Khalid Aziz wrote:
+[...]
+> - Kernel is not self-tuning and is dependent upon a userspace tool to
+> perform well in a fundamental area of memory management.
 
-On Sun, Sep 01, 2019 at 07:24:15PM +0200, Pavel Machek wrote:
-> > > +++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
-> > > @@ -89,6 +89,10 @@ Optional properties
-> > >    but a number of degrees counter clockwise. Typical values are 0 and 180
-> > >    (upside down).
-> > > 
-> > > +- location: The camera device mounting position, relative to the device
-> > > +  usage orientation. Possible values are:
-> > > +  0 - Front camera. The image sensor is mounted on the front side of the device.
-> > > +  1 - Back camera. The image sensor is mounted on the back side of the device.
-> > 
-> > Would it make sense to make this a little more generic? Such as s/image
-> > sensor/ device/, for instance?
-> > 
-> > Is this also relevant for flash or lens devices?
-> > 
-> > Flash (torch) devices could be present, at least principle, without a
-> > camera. There once was even such a Nokia phone, 1100 unless I'm mistaken.
-> > :-)
-> 
-> Well, I'd call them LEDs, not camera flashes ... if there's no camera. And IIRC 
-> these devices had LEDs on top of the phone... so neither front nor back side.
-
-I would go for the name "torch" in that case. It really depends on the
-device, but in any case, the torch LEDs would have a location (and we
-would possibly need to expand this property to
-include the top, bottom, left and right sides).
-
+You keep bringing this up without an actual analysis of a wider range of
+workloads that would prove that the default behavior is really
+suboptimal. You are making some assumptions based on a very specific DB
+workload which might benefit from a more aggressive background workload.
+If you really want to sell any changes to auto tuning then you really
+need to come up with more workloads and an actual theory why an early
+and more aggressive reclaim pays off.
 -- 
-Regards,
-
-Laurent Pinchart
+Michal Hocko
+SUSE Labs
