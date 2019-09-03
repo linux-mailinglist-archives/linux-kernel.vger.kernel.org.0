@@ -2,113 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE621A7463
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:13:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B35ACA746E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:13:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbfICUNT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 16:13:19 -0400
-Received: from mail.efficios.com ([167.114.142.138]:39972 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbfICUNS (ORCPT
+        id S1727604AbfICUNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 16:13:49 -0400
+Received: from a9-36.smtp-out.amazonses.com ([54.240.9.36]:59984 "EHLO
+        a9-36.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725882AbfICUNr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:13:18 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 89D542B26AD;
-        Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id puKZCFzi-A_U; Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 2F94F2B26A9;
-        Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2F94F2B26A9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1567541596;
-        bh=OBpnBEQngVIyBPnbvPZMnptXtvsASksMY7cFdQ0lF3Y=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=S+B+Acs+PR1tWyVsKzxubkHBDh7+xqtxfkkp3dUs9fFFJxAFbEltgIkqEOkYZe2iW
-         F+1Wvvnmjmmne48U5CrkNZo1Ih+dtSqrTv1DjdxrGufHnl2iBCUAEpv49TK2yj11yD
-         b7A2egfrrTF2/G1gc9rjxiQDtvVPwUlESNHxMQof497O8Kocu5OlheWpe1KWaIwilk
-         54F1NraiCG0TujufC6JdSn2mD7MbpZSCLGRGEccUT5j1oImEfJQUWGHaPt1SefQrRj
-         hRSXPHm5wPwgrvpXIg+LlkgSTTcX5JpI6Xgb3x1+y4cA/AegxnL8dx0vupvvPdrAka
-         38VJx8Bxued7A==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id iREVIGk4xrlA; Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 189AC2B26A2;
-        Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
-Date:   Tue, 3 Sep 2019 16:13:15 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
-        Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <250946344.642.1567541595914.JavaMail.zimbra@efficios.com>
-In-Reply-To: <CAHk-=wiY-Lh1SvzpG2OPh_DUNJMeTTSyfNmx=ALz1UuZ4EiC=g@mail.gmail.com>
-References: <20190903160036.2400-1-mathieu.desnoyers@efficios.com> <20190903160036.2400-3-mathieu.desnoyers@efficios.com> <CAHk-=wiY-Lh1SvzpG2OPh_DUNJMeTTSyfNmx=ALz1UuZ4EiC=g@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] Fix: sched/membarrier: READ_ONCE p->mm in
- membarrier_global_expedited
+        Tue, 3 Sep 2019 16:13:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=6gbrjpgwjskckoa6a5zn6fwqkn67xbtw; d=amazonses.com; t=1567541625;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=3CTlLgcwUNm+oBDTSqVhwT6v0ROJvSsfzOlbmJ233Hs=;
+        b=Cn915KxoRAOo3PmJZOOm/ld4evNzr6pLGhw1L27Pj4A6Fs/aZr4YyJgWGbjjuYtj
+        jeVgNkAMHrsCuy8IfzOPqbjM31SPPbl46ewrDDjxMgWc5IdaUb6qSn4OWC/M8d9fnKh
+        6hQcvnAzb8uFmTKLv3L+pNjqUii1U+7KYP92y6TI=
+Date:   Tue, 3 Sep 2019 20:13:45 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-btrfs@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] mm, sl[aou]b: guarantee natural alignment for
+ kmalloc(power-of-two)
+In-Reply-To: <20190901005205.GA2431@bombadil.infradead.org>
+Message-ID: <0100016cf8c3033d-bbcc9ba3-2d59-4654-a7c2-8ba094f8a7de-000000@email.amazonses.com>
+References: <20190826111627.7505-1-vbabka@suse.cz> <20190826111627.7505-3-vbabka@suse.cz> <0100016cd98bb2c1-a2af7539-706f-47ba-a68e-5f6a91f2f495-000000@email.amazonses.com> <20190828194607.GB6590@bombadil.infradead.org> <20190829073921.GA21880@dhcp22.suse.cz>
+ <0100016ce39e6bb9-ad20e033-f3f4-4e6d-85d6-87e7d07823ae-000000@email.amazonses.com> <20190901005205.GA2431@bombadil.infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3829)
-Thread-Topic: sched/membarrier: READ_ONCE p->mm in membarrier_global_expedited
-Thread-Index: bXVkDHRWDIkHySjFGkamrMQYOacg3g==
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.09.03-54.240.9.36
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Sep 3, 2019, at 12:23 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
+On Sat, 31 Aug 2019, Matthew Wilcox wrote:
 
-> On Tue, Sep 3, 2019 at 9:00 AM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> Due to the lack of READ_ONCE() on p->mm, this code can in fact turn into
->> a NULL deref when we hit do_exit() around exit_mm(). The first p->mm
->> read is before and sees !NULL, the second is after and does observe
->> NULL, which triggers a null pointer dereference.
-> 
-> This is horribly ugly, and I don't think it is necessary.
-> 
-> The way to fix the problem you are addressing in patches 2-3 is to
-> move the MEMBARRIER_STATE_GLOBAL_EXPEDITED flag from the mm struct to
-> the task struct, and avoiding the whole issue with "mm may be released
-> at any point" that way.
-> 
-> Now, your reaction will be "but lots of threads can share an 'mm', so
-> we can't do that", but that doesn't seem to be true. Looking at the
-> place that _sets_ this, you already handle the single-thread cases
-> specially, and the multiple threads has to do a "synchronize_rcu()".
-> You might as well either walk the current CPU's and set it in all
-> threads where the thread->mm matches the mm. And then you make the
-> scheduler set the bit on newly scheduled entities.
-> 
-> NOTE! When you walk all current cpu's in
-> membarrier_register_global_expedited(), you only look at the
-> 'task->mm' _value_, you don't dereference it. And that's ok, because
-> 'task' itself is stable, it's just mm that can go away.
-> 
-> Wouldn't that solve the issue much more cleanly?
+> > The current behavior without special alignment for these caches has been
+> > in the wild for over a decade. And this is now coming up?
+>
+> In the wild ... and rarely enabled.  When it is enabled, it may or may
+> not be noticed as data corruption, or tripping other debugging asserts.
+> Users then turn off the rare debugging option.
 
-Indeed it would! I just sent a patch as RFC implementing your idea.
+Its enabled in all full debug session as far as I know. Fedora for
+example has been running this for ages to find breakage in device drivers
+etc etc.
 
-Thanks!
+> > If there is an exceptional alignment requirement then that needs to be
+> > communicated to the allocator. A special flag or create a special
+> > kmem_cache or something.
+>
+> The only way I'd agree to that is if we deliberately misalign every
+> allocation that doesn't have this special flag set.  Because right now,
+> breakage happens everywhere when these debug options are enabled, and
+> the very people who need to be helped are being hurt by the debugging.
 
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+That is customarily occurring for testing by adding "slub_debug" to the
+kernel commandline (or adding debug kernel options) and since my
+information is that this is done frequently (and has been for over a
+decade now) I am having a hard time believing the stories of great
+breakage here. These drivers were not tested with debugging on before?
+Never ran with a debug kernel?
