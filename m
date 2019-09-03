@@ -2,170 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8026CA73DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 21:45:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9EA8A73E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 21:46:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfICTpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 15:45:04 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38302 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfICTpE (ORCPT
+        id S1726802AbfICTpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 15:45:52 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:54082 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfICTpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 15:45:04 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d10so5190639pgo.5;
-        Tue, 03 Sep 2019 12:45:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0HJ26q274yfFUxN/rroX+4JQvPYL2ewq9OiwcW+uRuw=;
-        b=Qz0J8r4oFdvQg/dAAM1QCZCGRCVSvFYnglOc6l7CxmpCB7gRRw5K35YC9ZIBo6urqQ
-         l7waJyKm7IIpQ2+1jrwyvxcKZDBzKBzIIr+VEheJ/oj5MxC4l5TYko3xdozWVHt7xCyZ
-         iRHvsZWeA+d9AcIT4F5Pr4ho3VSqDiqD5Lfn8vEUMFOWjctsQGmtB9URxBeO9xcjX4IZ
-         9xqPrbrxSJZZ8s6cM4aI6eEwzcrG2BAEALXbeNC7pDAd/3FVNbgxRK1sXDmlbXVHUpW6
-         ACKDtniAnTBAT1lvx0Or9A6eRl62SEyAdtvqh3SIjauh5Plt0UmGRUkYqHfOhg38Bn3/
-         X64w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0HJ26q274yfFUxN/rroX+4JQvPYL2ewq9OiwcW+uRuw=;
-        b=Jg+wjVrexATCnOXJlCncOAT84N64CxeE+H4bbA03wzcI9qmfzIde7g9eAYFNN7Ipog
-         Rdio9b9rn46O03IilxQ/kvlgaLDguFegnK3gOStl0GFQ5fxEproxw+GqK0FyKvhhmRZq
-         FS2KOiYrr0OEtK2XZmZldhshx3Jv+KZvdpdTZyg1ko6+7unaQIuHYxF7rzII4ezxkcLI
-         UB884zF2uwwoH6l6pHhRUnKQmR90Jo42i4xuPPtQ+DnW3FfXM2wsjEoFKnu9AH1kLo+B
-         Dxn3b3ftCXGgSk5b27PXraO7aWYMkVHceTYEXe3aDngHHtWu8lxx8rcwX9p8GIeKhnWw
-         NuOg==
-X-Gm-Message-State: APjAAAXSLhkYrWhUGVyiNF8w+tQYvxI3h9VIiFTA8seS4TmhOTwKvcdc
-        skxN3zy0/S3kcxV1ARCIBGU=
-X-Google-Smtp-Source: APXvYqxyryJcHkFNROieNWtJumnnoeWeMUdMWu8tXA0GfFAglnu4D54Rkj6WwuvV/N+3/Y2Ws02EEA==
-X-Received: by 2002:a63:7887:: with SMTP id t129mr32041977pgc.309.1567539903272;
-        Tue, 03 Sep 2019 12:45:03 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d16sm23501330pfd.81.2019.09.03.12.45.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Sep 2019 12:45:02 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 12:45:02 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 2/3] hwmon: w83792d: convert to use
- devm_i2c_new_dummy_device
-Message-ID: <20190903194501.GA32299@roeck-us.net>
-References: <20190903181256.13450-1-wsa+renesas@sang-engineering.com>
- <20190903181256.13450-3-wsa+renesas@sang-engineering.com>
+        Tue, 3 Sep 2019 15:45:52 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83JiMXo009875;
+        Tue, 3 Sep 2019 19:45:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=TcHYT7fQGknNXWrgw/oj3v7CjWyrsoPnPVhaJsYNEW8=;
+ b=LvcTFOSQnIbIlVQ11aR89BouEb4CDaGqxZMrtM9VxYc5KH0xulLKDi9OWuN5FuMYlbxC
+ Cm2nizsd4UVR30jRt0H3jRVHeRJiertalfBbPsb9UVZ+HjzpoWFItQMnkQ7E4XQyOphA
+ pLGFWvxlwpzJpl1nfUqPfU5/DNAkyVGpV0BOfUhn/mqwPlJ9q16BCviNFQE7chQeF7k9
+ djWheAtxSuadqt7ubXe4tSq+UAk3UTF2iXB4jUO8fx3mnVibZJNAcWiBAqzQieQMnfyK
+ rvLnz6ddmtPMc0FSmJJH0azQ3kUGUmEpn7G2g2dMF5o0WmyOswG0y4llZ4Ayhoej1eeB OQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2usxjh00eg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Sep 2019 19:45:29 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83JidaA021983;
+        Tue, 3 Sep 2019 19:45:28 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2us4weeaea-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Sep 2019 19:45:28 +0000
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x83JjOYv011183;
+        Tue, 3 Sep 2019 19:45:24 GMT
+Received: from [10.65.151.64] (/10.65.151.64)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Sep 2019 12:45:24 -0700
+Subject: Re: [RFC PATCH 0/2] Add predictive memory reclamation and compaction
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Bharath Vedartham <linux.bhar@gmail.com>,
+        akpm@linux-foundation.org, vbabka@suse.cz,
+        mgorman@techsingularity.net, dan.j.williams@intel.com,
+        osalvador@suse.de, richard.weiyang@gmail.com, hannes@cmpxchg.org,
+        arunks@codeaurora.org, rppt@linux.vnet.ibm.com, jgg@ziepe.ca,
+        amir73il@gmail.com, alexander.h.duyck@linux.intel.com,
+        linux-mm@kvack.org, linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <20190813140553.GK17933@dhcp22.suse.cz>
+ <3cb0af00-f091-2f3e-d6cc-73a5171e6eda@oracle.com>
+ <20190814085831.GS17933@dhcp22.suse.cz>
+ <d3895804-7340-a7ae-d611-62913303e9c5@oracle.com>
+ <20190815170215.GQ9477@dhcp22.suse.cz>
+ <2668ad2e-ee52-8c88-22c0-1952243af5a1@oracle.com>
+ <20190821140632.GI3111@dhcp22.suse.cz>
+ <20190826204420.GA16800@bharath12345-Inspiron-5559>
+ <20190827061606.GN7538@dhcp22.suse.cz>
+ <23eca880-d0d7-00f9-cb1b-b2998f2a1dff@oracle.com>
+ <20190902080218.GF14028@dhcp22.suse.cz>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <017a11b1-4115-bdf6-6ebe-e121dd03b386@oracle.com>
+Date:   Tue, 3 Sep 2019 13:45:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903181256.13450-3-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190902080218.GF14028@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=880
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909030196
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=933 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909030196
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 08:12:55PM +0200, Wolfram Sang wrote:
-> And simplify the error handling.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On 9/2/19 2:02 AM, Michal Hocko wrote:
+> On Fri 30-08-19 15:35:06, Khalid Aziz wrote:
+> [...]
+>> - Kernel is not self-tuning and is dependent upon a userspace tool to
+>> perform well in a fundamental area of memory management.
+>=20
+> You keep bringing this up without an actual analysis of a wider range o=
+f
+> workloads that would prove that the default behavior is really
+> suboptimal. You are making some assumptions based on a very specific DB=
 
-Applied to hwmon-next.
+> workload which might benefit from a more aggressive background workload=
+=2E
+> If you really want to sell any changes to auto tuning then you really
+> need to come up with more workloads and an actual theory why an early
+> and more aggressive reclaim pays off.
+>=20
+
+Hi Michal,
+
+Fair enough. I have seen DB and cloud server workloads suffer under
+default behavior of reclaim/compaction. It manifests itself as prolonged
+delays in populating new database and in launching new cloud
+applications. It is fair to ask for the predictive algorithm to be
+proven before pulling something like this in kernel. I will implement
+this same algorithm in userspace and use existing knobs to tune kernel
+dynamically. Running that with large number of workloads will provide
+data on how often does this help. If I find any useful tunables missing,
+I will be sure to bring it up.
 
 Thanks,
-Guenter
+Khalid
 
-> ---
->  drivers/hwmon/w83792d.c | 32 +++++++++-----------------------
->  1 file changed, 9 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/hwmon/w83792d.c b/drivers/hwmon/w83792d.c
-> index da8a6d62aa23..7fc8a1160c8f 100644
-> --- a/drivers/hwmon/w83792d.c
-> +++ b/drivers/hwmon/w83792d.c
-> @@ -924,7 +924,7 @@ store_sf2_level(struct device *dev, struct device_attribute *attr,
->  static int
->  w83792d_detect_subclients(struct i2c_client *new_client)
->  {
-> -	int i, id, err;
-> +	int i, id;
->  	int address = new_client->addr;
->  	u8 val;
->  	struct i2c_adapter *adapter = new_client->adapter;
-> @@ -938,8 +938,7 @@ w83792d_detect_subclients(struct i2c_client *new_client)
->  				dev_err(&new_client->dev,
->  					"invalid subclient address %d; must be 0x48-0x4f\n",
->  					force_subclients[i]);
-> -				err = -ENODEV;
-> -				goto ERROR_SC_0;
-> +				return -ENODEV;
->  			}
->  		}
->  		w83792d_write_value(new_client, W83792D_REG_I2C_SUBADDR,
-> @@ -949,28 +948,21 @@ w83792d_detect_subclients(struct i2c_client *new_client)
->  
->  	val = w83792d_read_value(new_client, W83792D_REG_I2C_SUBADDR);
->  	if (!(val & 0x08))
-> -		data->lm75[0] = i2c_new_dummy(adapter, 0x48 + (val & 0x7));
-> +		data->lm75[0] = devm_i2c_new_dummy_device(&new_client->dev, adapter,
-> +							  0x48 + (val & 0x7));
->  	if (!(val & 0x80)) {
-> -		if ((data->lm75[0] != NULL) &&
-> +		if (!IS_ERR(data->lm75[0]) &&
->  			((val & 0x7) == ((val >> 4) & 0x7))) {
->  			dev_err(&new_client->dev,
->  				"duplicate addresses 0x%x, use force_subclient\n",
->  				data->lm75[0]->addr);
-> -			err = -ENODEV;
-> -			goto ERROR_SC_1;
-> +			return -ENODEV;
->  		}
-> -		data->lm75[1] = i2c_new_dummy(adapter,
-> -					      0x48 + ((val >> 4) & 0x7));
-> +		data->lm75[1] = devm_i2c_new_dummy_device(&new_client->dev, adapter,
-> +							  0x48 + ((val >> 4) & 0x7));
->  	}
->  
->  	return 0;
-> -
-> -/* Undo inits in case of errors */
-> -
-> -ERROR_SC_1:
-> -	i2c_unregister_device(data->lm75[0]);
-> -ERROR_SC_0:
-> -	return err;
->  }
->  
->  static SENSOR_DEVICE_ATTR(in0_input, S_IRUGO, show_in, NULL, 0);
-> @@ -1396,7 +1388,7 @@ w83792d_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	/* Register sysfs hooks */
->  	err = sysfs_create_group(&dev->kobj, &w83792d_group);
->  	if (err)
-> -		goto exit_i2c_unregister;
-> +		return err;
->  
->  	/*
->  	 * Read GPIO enable register to check if pins for fan 4,5 are used as
-> @@ -1441,9 +1433,6 @@ w83792d_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  	sysfs_remove_group(&dev->kobj, &w83792d_group);
->  	for (i = 0; i < ARRAY_SIZE(w83792d_group_fan); i++)
->  		sysfs_remove_group(&dev->kobj, &w83792d_group_fan[i]);
-> -exit_i2c_unregister:
-> -	i2c_unregister_device(data->lm75[0]);
-> -	i2c_unregister_device(data->lm75[1]);
->  	return err;
->  }
->  
-> @@ -1459,9 +1448,6 @@ w83792d_remove(struct i2c_client *client)
->  		sysfs_remove_group(&client->dev.kobj,
->  				   &w83792d_group_fan[i]);
->  
-> -	i2c_unregister_device(data->lm75[0]);
-> -	i2c_unregister_device(data->lm75[1]);
-> -
->  	return 0;
->  }
->  
-> -- 
-> 2.20.1
-> 
