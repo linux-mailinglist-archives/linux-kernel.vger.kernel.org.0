@@ -2,101 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54649A6D75
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:03:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D436A6D9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729855AbfICQDo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:03:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17506 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728571AbfICQDo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:03:44 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x83Fw3BH016754;
-        Tue, 3 Sep 2019 12:03:29 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2usryr6h97-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 12:03:29 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x83G1OjL032076;
-        Tue, 3 Sep 2019 16:03:28 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma03wdc.us.ibm.com with ESMTP id 2uqgh6kfyv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 16:03:28 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x83G3Rwq46792968
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Sep 2019 16:03:27 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85F20BE062;
-        Tue,  3 Sep 2019 16:03:27 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F0A3ABE053;
-        Tue,  3 Sep 2019 16:03:25 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.133.34])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Tue,  3 Sep 2019 16:03:25 +0000 (GMT)
-References: <20190902163951.6280e030@canb.auug.org.au> <20190902140347.GA23482@8bytes.org> <d2493e6b-08fa-9ea8-a0a4-076def54e91b@amd.com> <20190903152849.770ae819@canb.auug.org.au> <20190903132038.GE11530@8bytes.org>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Lendacky\, Thomas" <Thomas.Lendacky@amd.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommu: Don't use sme_active() in generic code
-In-reply-to: <20190903132038.GE11530@8bytes.org>
-Date:   Tue, 03 Sep 2019 13:03:21 -0300
-Message-ID: <87mufll646.fsf@morokweng.localdomain>
+        id S1730007AbfICQJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:09:16 -0400
+Received: from mout.web.de ([212.227.17.11]:40543 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728679AbfICQJP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:09:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1567526632;
+        bh=/nekiW6MnMYef0+et4HGmSzRulN/vr7UdPk6serwXNc=;
+        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
+        b=pgwVhDMqYYUoIpCyIDpIKZ3HAA2OsJ9b4yNZZYxTnaIA+cc7WWSDC2+zNR3UPinul
+         +JGH6WtWsf/OOYkejDsgAUPpu2GVy3v5NipIuagnkqDr10w6Jm0uqumI6ZL5OWA06+
+         8xqlPCU0DJw5zToV7CDZ2GIfawO4GH3Mi7+22R6k=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.133.133.43]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MXpZD-1hhvEV0w6R-00WlO9; Tue, 03
+ Sep 2019 18:03:52 +0200
+Cc:     Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        linux-kernel@vger.kernel.org, Mark Fasheh <mark@fasheh.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20190726101447.9153-1-baijiaju1990@gmail.com>
+Subject: Re: [1/3 v2] ocfs2: Fix possible null-pointer dereferences in
+ ocfs2_xa_prepare_entry()
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>, ocfs2-devel@oss.oracle.com
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <bd4ce5e6-9803-be94-5004-97beeee64c6c@web.de>
+Date:   Tue, 3 Sep 2019 18:03:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=957 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909030164
+In-Reply-To: <20190726101447.9153-1-baijiaju1990@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:DQpW/47ntw0GSyJSERN7BolyMXIlBN8A5W/qcydme1j9ToNC1Wc
+ UuJc8oPbtK0Bvq7TeERRV9SMjCEp5EuBGLodlqRPkJe4ASPmlbpGBL3cIGvJNzn14/cdxHK
+ C8TV9bOSL6bt8S8R3U970KAccHyEuOaP90KVYtWOohGx5erxP/FAiM0zE+eBaaGzJVmeg+i
+ pKnyiHIkEsnTg36rYdrUA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:l30lEsAd2OA=:l68jQFc4hyVLhuxV12UVtV
+ 6MfbysOHSQxs8ESvVUCfEJ6HSCxKZRgdz0IrlmIhStvSq/lTcvcyyIeG5ZOqVHE6OQjwpaoQH
+ 4CctrdjBjkDhBS1l1Sv4La9mIlyMckDpDMgtdD9n5GivrmjMgmWxMk4LVPJS6hZFQeWgdHiGr
+ JMKC8PSLupWH+5jSGYv3WpArgSD6tRHLKLKrtNlhYTcL1D0iPfA/94I2+IhEXAwR6G/r2Jf3L
+ bU/4+w0mmzvJIiljWbtJky18Mg27z8kyKOMVaDrQGBDACAf1zElE/AORpvuA5o2rp38l6Hmr0
+ Ff5KC/96yNyJnZfHj4AILTkf8fgOIBtoW5MTeqPCkQT6swxlwp57hREWfqWEDZDnp7eCZvrcX
+ 4zzRWs8AE0IG9lIvzlLzeJf/ZwbajJpmUTLlRNh9kz/aspLQduMJPrhERPp/Jg5aO5+XmAz/W
+ CbNnuNChpo3EOpWvXuZqSAKhX8c0v0y2ApkosNGOHOARfmEDo4738ZhBvVQFit9y1Wod+ToiK
+ dg+ssxGJnJQGDlVLy1yUfZh4kdemnIJ6qBRyKfHmz5ODTrJSoAFLq8nyU3BZ4a9WDuz3R6R1r
+ 0Prw7hojePoDzZ7lkmMpxWH2uCX7VJTsKxRsasLGpvD5xRqwor3uBAbHriOIMeyhLUFD3IPfe
+ adVx9RcswC7l8WrH2cpyF7SQJP4bmStYda1UiRrJn87pbVaiXjmJMmo4/9+O0RsphBcZmVR4g
+ KOphpE5VhmaPWbIFIv/SnuBLM/ff1z5cO4kpP2zZqM4/7XTta8hTdZJ5F5bD8cmKHy6pcI+y1
+ FmCwHLPV+hK30hwLBkF4PDgyMjsG8YQi4PyZ1kBPSBUw1ER4rLVXWpjyUZm9bmVsGWjKosuQ3
+ KGFdHEFXrpli+20VTWgVp65TsK2dBvPamOSTxOjWlipQI/5MPLrRHpJE00SntEVg8QYbcDx1Q
+ c/pDR2yNlSBgovKZm2Wmt7F0TDu3+JDLR9UnknTKsjdx+D7ZtFKHMRr56qc81krdEOXC93r6J
+ qOwTPfKgXXliCtyeb58Vh3951s2853hY06tZRRqTV7IW3h1xJRh8oR0vLZHW2MNvgVuqbxk2d
+ ol1HFn0cHSK7wXLoLfZmKfjTgHSEOs+qoMnfsz+Io9GwJVh7AyDI1sERcnhsBH34N7WmHoc4u
+ LYrRgpAcQSJuPsfwExi3bjzBRvtbsAQmyiQOnf6Tuu6AvBL9hSnNyruJ3eoMvbl9J7vWg+xVk
+ D75ITbUMswDSKsI66
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> These bugs are found by a static analysis tool STCheck written by us.
 
-Joerg Roedel <joro@8bytes.org> writes:
+Would you like to improve any more commit descriptions also by
+adjusting such a wording?
 
-> On Tue, Sep 03, 2019 at 03:28:49PM +1000, Stephen Rothwell wrote:
->> Hi all,
->> 
->> On Mon, 2 Sep 2019 14:26:40 +0000 "Lendacky, Thomas" <Thomas.Lendacky@amd.com> wrote:
->> > Maybe we should make this mem_encrypt_active(), since this will probably
->> > be needed if/when an IOMMU device is eventually added to a guest, and the
->> > referenced commit below doesn't remove that call.
->> 
->> I have done that for today:
->
-> Thanks Stephen and Tom. I queued the attached patch into the iommu tree
-> to fix the problem.
->
-> From 2896ba40d0becdb72b45f096cad70633abc014f6 Mon Sep 17 00:00:00 2001
-> From: Joerg Roedel <jroedel@suse.de>
-> Date: Tue, 3 Sep 2019 15:15:44 +0200
-> Subject: [PATCH] iommu: Don't use sme_active() in generic code
->
-> Switch to the generic function mem_encrypt_active() because
-> sme_active() is x86 specific and can't be called from
-> generic code on other platforms than x86.
->
-> Fixes: 2cc13bb4f59f ("iommu: Disable passthrough mode when SME is active")
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-
-Thank you!
-
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+Regards,
+Markus
