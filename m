@@ -2,138 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB42DA6B61
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:27:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38368A6B66
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbfICO1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:27:38 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35992 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728571AbfICO1h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:27:37 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p13so18564415wmh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:27:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ztizy0u6H258Ae8Jp90WnU8QSxT6Zt2zjZWBgoNCqd4=;
-        b=ESXVtTHUIucPYUIW1KPWDFAOdL8m9NXsKyjVChp9ailvsURMWpL7cAjJpYWKtpfyjo
-         aTUNFlhzx6/Uq94sFsvnuBW77/sqooIEgBNaNA4TsxyKcHoNmQS0YMQyxnbuPyrmZOPR
-         cpErI4PE/vbSEEH5mbgzmNSiX7hRQGC7xEm+EbJGk1tC92VvuI0loiD31fgwhPjboX3a
-         qJo6ZVACakyH82ZNpOAXG9DIdiVdv3mn9Fsm73/XCSgMszSoIvOySfYbCxJC3P+zXxzo
-         OKGPDAeu/vXEfiXZ6b7vjDUb+xgQ9uLTU9sZSBed+ptPt9/IqNFyFw/YCSGsthvlUds+
-         xeHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ztizy0u6H258Ae8Jp90WnU8QSxT6Zt2zjZWBgoNCqd4=;
-        b=bu6X7HE6qjZoe9mgOesm13Yi6igf1fUcjoG99g3DpPt+Db25chEAb+op/YSbru9qHx
-         YeVBwo/L3qqrPWPAkwmiitFwIJy197lNROy2BMEsMHt0euzHpBohJHYPc4rob2BJKO5i
-         gLe6rkdqgUoe5eV8MiVj2vU696lm9ntq6BdDuMn4kr4UfDrdk3047jQdhfYbk4TRB+8s
-         dKzFLjd2SKd2DVAPrUMYPOfTNeEKVIX47mzOPgd98pZaQ6GeYb0fjJov8MwxWrGr72hG
-         NQ/INjhRcI/XLaWWNSNQuAqT6FJqJ4MGqjwJntmg+fk+ZSwWibjxM864TjI6klHN8/I0
-         x5bQ==
-X-Gm-Message-State: APjAAAXfT3xeVe+MZqXc8ZmD3667KXdLpxmngnrjo1q7TGs0ZO2sX6Gh
-        VdfmshKKJ7WoUN5qeL/In4Gcsw==
-X-Google-Smtp-Source: APXvYqxwSZ6oVFY6ZQ+MXwrwDJGE2SrgSvya83qum4+mf2S+HXiY1Ja9udjVszHndrpe58MWjHIOPw==
-X-Received: by 2002:a7b:c1cc:: with SMTP id a12mr355823wmj.73.1567520855044;
-        Tue, 03 Sep 2019 07:27:35 -0700 (PDT)
-Received: from google.com ([2a00:79e0:d:210:e751:37a0:1e95:e65d])
-        by smtp.gmail.com with ESMTPSA id n1sm862908wrg.67.2019.09.03.07.27.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 07:27:34 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 15:27:32 +0100
-From:   Alessio Balsini <balsini@android.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@kernel.org, juri.lelli@redhat.com,
-        linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
-        luca.abeni@santannapisa.it, bristot@redhat.com, dvyukov@google.com,
-        tglx@linutronix.de, vpillai@digitalocean.com, rostedt@goodmis.org
-Subject: Re: [RFC][PATCH 00/13] SCHED_DEADLINE server infrastructure
-Message-ID: <20190903142732.GA35593@google.com>
-References: <20190726145409.947503076@infradead.org>
+        id S1729682AbfICO2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:28:14 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:45354 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729659AbfICO2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 10:28:13 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46N8ST1qcLz9ttRm;
+        Tue,  3 Sep 2019 16:28:09 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=NadPAAvo; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id YIqAoA6_GE1M; Tue,  3 Sep 2019 16:28:09 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46N8ST0jlLz9ttRl;
+        Tue,  3 Sep 2019 16:28:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1567520889; bh=kXB46zG+6q2eXqvLmy0/IgVzs9oH8tQXmcdlQmiB+wg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NadPAAvoij6yX6RdAFRjaR6rpb/dkxjSxBl8j5gqqihJMv86k9SOHVFf3G90VUqTH
+         HhMohZu/PT9TKaaLsqXnapF2ZadS/o7ZcSFQpAKcQalYSpNNzAXTk3ElF93YgzXC+H
+         dhY/cDlTR4wrqUoaKBESSfRJofXwcs3s7TZF1fdA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 934488B86E;
+        Tue,  3 Sep 2019 16:28:10 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 6LTJD3JQLISg; Tue,  3 Sep 2019 16:28:10 +0200 (CEST)
+Received: from [192.168.4.90] (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 663128B868;
+        Tue,  3 Sep 2019 16:28:09 +0200 (CEST)
+Subject: Re: [PATCH v2 3/6] powerpc: Convert flush_icache_range & friends to C
+To:     Segher Boessenkool <segher@kernel.crashing.org>,
+        Alastair D'Silva <alastair@au1.ibm.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>, alastair@d-silva.org,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Allison Randal <allison@lohutok.net>
+References: <20190903052407.16638-1-alastair@au1.ibm.com>
+ <20190903052407.16638-4-alastair@au1.ibm.com>
+ <20190903130430.GC31406@gate.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <d268ee78-607e-5eb3-ed89-d5c07f672046@c-s.fr>
+Date:   Tue, 3 Sep 2019 16:28:09 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190726145409.947503076@infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190903130430.GC31406@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
 
-While testing your series (peterz/sched/wip-deadline 7a9e91d3fe951), I ended up
-in a panic at boot on a x86_64 kvm guest, would you please have a look?  Here
-attached the backtrace.
-Happy to test any suggestion that fixes the issue.
 
-Thanks,
-Alessio
----
------->8------
-[    0.798326] ------------[ cut here ]------------       
-[    0.798328] kernel BUG at kernel/sched/deadline.c:1542!            
-[    0.798335] invalid opcode: 0000 [#1] SMP PTI                                  
-[    0.798339] CPU: 4 PID: 0 Comm: swapper/4 Not tainted 5.3.0-rc6+ #28
-[    0.798340] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.12.0-1 04/01/2014
-[    0.798349] RIP: 0010:enqueue_dl_entity+0x3f8/0x440
-[    0.798351] Code: ff 48 8b 85 60 0a 00 00 8b 48 28 85 c9 0f 85 99 fd ff ff c7 40 28 01 00 00 00 e9 8d fd ff ff 85 c0 75 20 f                                                                                                                             
-[    0.798353] RSP: 0000:ffffb68e40154f10 EFLAGS: 00010096
-[    0.798356] RAX: 0000000000000020 RBX: ffff974bc74d0c00 RCX: ffff974bc751b200
-[    0.798358] RDX: 0000000000000001 RSI: ffff974bc7929410 RDI: ffff974bc7929410
-[    0.798359] RBP: 0000000000000009 R08: 00000000a73eb274 R09: 00000000000f4887
-[    0.798361] R10: 0000000000000000 R11: 0000000000000000 R12: ffff974bc74d0c80
-[    0.798362] R13: 0000000000000000 R14: ffff974bc74d0d00 R15: 0000000000000000
-[    0.798365] FS:  0000000000000000(0000) GS:ffff974bc7900000(0000) knlGS:0000000000000000
-[    0.798371] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033 
-[    0.798372] CR2: 00000000ffffffff CR3: 000000000480a000 CR4: 00000000000006e0
-[    0.798374] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[    0.798375] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[    0.798376] Call Trace:                       
-[    0.798397]  <IRQ>                                                
-[    0.798402]  enqueue_task_fair+0xe69/0x11d0   
-[    0.798407]  activate_task+0x58/0x90                                
-[    0.798412]  ? kvm_sched_clock_read+0xd/0x20              
-[    0.798416]  ttwu_do_activate.isra.96+0x3a/0x50                 
-[    0.798420]  sched_ttwu_pending+0x5e/0x90                                              
-[    0.798424]  scheduler_ipi+0x9f/0x120               
-[    0.798430]  reschedule_interrupt+0xf/0x20           
-[    0.798432]  </IRQ>                                                                           
-[    0.798436] RIP: 0010:default_idle+0x20/0x140   
-[    0.798438] Code: 90 90 90 90 90 90 90 90 90 90 41 55 41 54 55 65 8b 2d f4 40 d7 70 53 0f 1f 44 00 00 e9 07 00 00 00 0f 00 5                                                                                                                             
-[    0.798440] RSP: 0000:ffffb68e40083ec0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff02
-[    0.798442] RAX: ffffffff8f29c250 RBX: 0000000000000004 RCX: ffff974bc7916000               
-[    0.798444] RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffff974bc791ca80
-[    0.798445] RBP: 0000000000000004 R08: 000000009d74022b R09: 0000004d7ebb5820
-[    0.798447] R10: 0000000000000400 R11: 0000000000000400 R12: 0000000000000000
-[    0.798448] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-[    0.798451]  ? __cpuidle_text_start+0x8/0x8 
-[    0.798455]  do_idle+0x19e/0x210              
-[    0.798458]  cpu_startup_entry+0x14/0x20
-[    0.798464]  start_secondary+0x144/0x170                       
-[    0.798467]  secondary_startup_64+0xa4/0xb0   
-[    0.798469] Modules linked in:              
-[    0.798478] ---[ end trace c2be7729c78a55ad ]---
-[    0.798482] RIP: 0010:enqueue_dl_entity+0x3f8/0x440                                   
-[    0.798484] Code: ff 48 8b 85 60 0a 00 00 8b 48 28 85 c9 0f 85 99 fd ff ff c7 40 28 01 00 00 00 e9 8d fd ff ff 85 c0 75 20 f                                                                                                                             
-[    0.798485] RSP: 0000:ffffb68e40154f10 EFLAGS: 00010096
-[    0.798487] RAX: 0000000000000020 RBX: ffff974bc74d0c00 RCX: ffff974bc751b200
-[    0.798489] RDX: 0000000000000001 RSI: ffff974bc7929410 RDI: ffff974bc7929410
-[    0.798490] RBP: 0000000000000009 R08: 00000000a73eb274 R09: 00000000000f4887
-[    0.798491] R10: 0000000000000000 R11: 0000000000000000 R12: ffff974bc74d0c80
-[    0.798493] R13: 0000000000000000 R14: ffff974bc74d0d00 R15: 0000000000000000
-[    0.798495] FS:  0000000000000000(0000) GS:ffff974bc7900000(0000) knlGS:0000000000000000
-[    0.798500] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.798501] CR2: 00000000ffffffff CR3: 000000000480a000 CR4: 00000000000006e0
-[    0.798502] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[    0.798504] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[    0.798505] Kernel panic - not syncing: Fatal exception in interrupt
-[    0.799522] Kernel Offset: 0xd800000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-[    0.875144] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
-------8<------
+Le 03/09/2019 à 15:04, Segher Boessenkool a écrit :
+> Hi!
+> 
+> On Tue, Sep 03, 2019 at 03:23:57PM +1000, Alastair D'Silva wrote:
+>> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+> 
+>> +#if !defined(CONFIG_PPC_8xx) & !defined(CONFIG_PPC64)
+> 
+> Please write that as &&?  That is more usual, and thus, easier to read.
+> 
+>> +static void flush_dcache_icache_phys(unsigned long physaddr)
+> 
+>> +	asm volatile(
+>> +		"   mtctr %2;"
+>> +		"   mtmsr %3;"
+>> +		"   isync;"
+>> +		"0: dcbst   0, %0;"
+>> +		"   addi    %0, %0, %4;"
+>> +		"   bdnz    0b;"
+>> +		"   sync;"
+>> +		"   mtctr %2;"
+>> +		"1: icbi    0, %1;"
+>> +		"   addi    %1, %1, %4;"
+>> +		"   bdnz    1b;"
+>> +		"   sync;"
+>> +		"   mtmsr %5;"
+>> +		"   isync;"
+>> +		: "+r" (loop1), "+r" (loop2)
+>> +		: "r" (nb), "r" (msr), "i" (bytes), "r" (msr0)
+>> +		: "ctr", "memory");
+> 
+> This outputs as one huge assembler statement, all on one line.  That's
+> going to be fun to read or debug.
 
+Do you mean \n has to be added after the ; ?
+
+> 
+> loop1 and/or loop2 can be assigned the same register as msr0 or nb.  They
+> need to be made earlyclobbers.  (msr is fine, all of its reads are before
+> any writes to loop1 or loop2; and bytes is fine, it's not a register).
+
+Can you explicit please ? Doesn't '+r' means that they are input and 
+output at the same time ?
+
+"to be made earlyclobbers", what does this means exactly ? How to do that ?
+
+Christophe
