@@ -2,144 +2,301 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EC54A5EF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 03:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B6A4A5F01
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 03:59:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfICBwh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 21:52:37 -0400
-Received: from mail-eopbgr70074.outbound.protection.outlook.com ([40.107.7.74]:1159
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725813AbfICBwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 21:52:36 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jy2UdIQQSQ9G5kEyC0C6ny6dGGiYKrOpcs9BijwcpsJAax3ACjqyMZH5k650xJeH61MV2RwxyqQx3VC7bir2uQwu71xhm5Ypo8JTCYi/7/emx/rk4nriuq2H+VsfKVJjrsMMrhVI3YJySOePmeMs2swsudNxFV4zc+xLe85CW0RrrcTKWQzt9vR01gKrXtQfW450wj7Qb4n4dk8itHS1TvVvLBbMFH5Mdf65dm4WW2nkupum6QXSTrheZ2K1FduKTcbR0s5RZz1wMfwgdC7qKCTgg8Qj1KSu7ACcqntM9a1hQX1oGbIyrFP7GuzJ+YFT/53CeSkyHzInE/tJlN1upg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u2KCzUsLh99JcTh+aINqPXRfHG3CRRPEUbdOM71Bgn4=;
- b=Xk2HXqBfdkVFBUhgZf/02GQn2FN1IHNH3t3VY7KSvSHMxfCgqKWKrWM08bpUNYf5caSwM6Bsw/JZqHcJeuoSPMSdcPR6GFBEGn7Pe+uxLZqoDHcx4tJTI9Sf7WEtk2d6of7Rmus8YnqPunG4Ps4K3Uq2/Ob1pJmYCg6wSqyVlLj3Pr9DXN8vNFXwQpgsb2mlDEcqXLAsGY6qXjW9tTbH/SCKi17TJLSrFjAMjvAE+IdjReaH1wf6O6wYqakM6ls7LBl+63gsMKGvBsSGytz7D1WiXp8mWj8zVUCRf+M/B6Tv+kQtwSsipZIj1mgoRUN4L6FovwutmCan0C8qoa427Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u2KCzUsLh99JcTh+aINqPXRfHG3CRRPEUbdOM71Bgn4=;
- b=YGpZDlwPJLrFpz7fU2qi3R/jAFqgHJe5VbKpwEqmyvFwM394HW/M94nU6jCeuoeO8k1gzY9vdHbvJu8IZFNrZmuvAA9jUx4DtZkMy3vRxAX4PPlR973svn7AKNsYaUbQismznjaeIvmVem7aEMvDtnFX3mbRaMMH3YXCCRpTl3Y=
-Received: from AM5PR04MB3299.eurprd04.prod.outlook.com (10.173.255.158) by
- AM5PR04MB3028.eurprd04.prod.outlook.com (10.167.170.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.20; Tue, 3 Sep 2019 01:52:30 +0000
-Received: from AM5PR04MB3299.eurprd04.prod.outlook.com
- ([fe80::5dd3:ddc9:411a:db41]) by AM5PR04MB3299.eurprd04.prod.outlook.com
- ([fe80::5dd3:ddc9:411a:db41%3]) with mapi id 15.20.2220.022; Tue, 3 Sep 2019
- 01:52:30 +0000
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     Andrew Murray <andrew.murray@arm.com>
-CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, "kishon@ti.com" <kishon@ti.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: RE: [PATCH v3 11/11] misc: pci_endpoint_test: Add LS1088a in
- pci_device_id table
-Thread-Topic: [PATCH v3 11/11] misc: pci_endpoint_test: Add LS1088a in
- pci_device_id table
-Thread-Index: AQHVYT5qk2ZfW7svpUGDLJ0EtdcJHacYWL4AgADX6sA=
-Date:   Tue, 3 Sep 2019 01:52:30 +0000
-Message-ID: <AM5PR04MB3299D598229952C13C492B48F5B90@AM5PR04MB3299.eurprd04.prod.outlook.com>
-References: <20190902031716.43195-1-xiaowei.bao@nxp.com>
- <20190902031716.43195-12-xiaowei.bao@nxp.com>
- <20190902125454.GK9720@e119886-lin.cambridge.arm.com>
-In-Reply-To: <20190902125454.GK9720@e119886-lin.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xiaowei.bao@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 947cf303-db21-4008-0d87-08d730116168
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM5PR04MB3028;
-x-ms-traffictypediagnostic: AM5PR04MB3028:|AM5PR04MB3028:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM5PR04MB30283125427A491665E0B524F5B90@AM5PR04MB3028.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 01494FA7F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(136003)(39860400002)(376002)(346002)(189003)(199004)(13464003)(316002)(33656002)(256004)(99286004)(305945005)(7736002)(66066001)(8936002)(2906002)(486006)(446003)(11346002)(81166006)(476003)(81156014)(8676002)(44832011)(66946007)(66446008)(76116006)(7416002)(66476007)(66556008)(64756008)(54906003)(229853002)(76176011)(7696005)(6916009)(71200400001)(71190400001)(102836004)(53546011)(186003)(6506007)(26005)(55016002)(6436002)(74316002)(9686003)(3846002)(6116002)(25786009)(4326008)(5660300002)(14454004)(53936002)(6246003)(86362001)(52536014)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR04MB3028;H:AM5PR04MB3299.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 6UmghHag1Pu8mrDpJgeEEu4336DGx7YIiXnTfd100QtG4P25ECBB1Rf51p0OfrZwvC/trx/PiwoGDrkozY6gJbF+eJufsxvULwlmsYtSSVc3D4ES95D+3L0clTc9sR6E9vUcpTcztKnVVSXNW0LLTrqfHMG94D+r+fyXaqwz0ZeG4g0RT3VcsaZgxLeaIS3Ijpv7dmiBMIWXxrrAoCeROH366Ya3okdgGOEeEa53QVZZtsOx6I7TbrZvUHFl/B38K8jBQWu7QA9P1lhUpwFoVlStEiQ6ZT/kdKaUE9sCbJOM/92tuygmGReLKAgQ7LFc8AnLRKgrTH5oBdHzT4U7UUe41ADAkQtJgYTqtVXK9RT7AmkqLZIC0tba4hbnrPrT1P+K4zAF0l8g49Y4VfqrrUy0rfmETr8exh2EXorRzVI=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1726766AbfICB6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 21:58:32 -0400
+Received: from mga04.intel.com ([192.55.52.120]:28616 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725306AbfICB6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 21:58:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 18:58:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,461,1559545200"; 
+   d="scan'208";a="181988659"
+Received: from dpdk-virtio-tbie-2.sh.intel.com (HELO ___) ([10.67.104.71])
+  by fmsmga008.fm.intel.com with ESMTP; 02 Sep 2019 18:58:29 -0700
+Date:   Tue, 3 Sep 2019 09:56:02 +0800
+From:   Tiwei Bie <tiwei.bie@intel.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     mst@redhat.com, alex.williamson@redhat.com,
+        maxime.coquelin@redhat.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, dan.daly@intel.com,
+        cunming.liang@intel.com, zhihong.wang@intel.com,
+        lingshan.zhu@intel.com
+Subject: Re: [RFC v3] vhost: introduce mdev based hardware vhost backend
+Message-ID: <20190903015602.GA11404@___>
+References: <20190828053712.26106-1-tiwei.bie@intel.com>
+ <b91820c4-2fe2-55ee-5089-5f7c94322521@redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 947cf303-db21-4008-0d87-08d730116168
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2019 01:52:30.2011
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LT0F11TPV7kOOu9WoVEIlU7JzAZhQMA/uGmaFLLWu1l0FejQ4Lq0fNbPVTZ1no8bCPB6AKdL6u5qRMFSdDTtRg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR04MB3028
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b91820c4-2fe2-55ee-5089-5f7c94322521@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kcmV3IE11cnJheSA8
-YW5kcmV3Lm11cnJheUBhcm0uY29tPg0KPiBTZW50OiAyMDE5xOo51MIyyNUgMjA6NTUNCj4gVG86
-IFhpYW93ZWkgQmFvIDx4aWFvd2VpLmJhb0BueHAuY29tPg0KPiBDYzogcm9iaCtkdEBrZXJuZWwu
-b3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgc2hhd25ndW9Aa2VybmVsLm9yZzsgTGVvDQo+IExp
-IDxsZW95YW5nLmxpQG54cC5jb20+OyBraXNob25AdGkuY29tOyBsb3JlbnpvLnBpZXJhbGlzaUBh
-cm0uY29tOyBNLmguDQo+IExpYW4gPG1pbmdodWFuLmxpYW5AbnhwLmNvbT47IE1pbmdrYWkgSHUg
-PG1pbmdrYWkuaHVAbnhwLmNvbT47IFJveQ0KPiBaYW5nIDxyb3kuemFuZ0BueHAuY29tPjsgamlu
-Z29vaGFuMUBnbWFpbC5jb207DQo+IGd1c3Rhdm8ucGltZW50ZWxAc3lub3BzeXMuY29tOyBsaW51
-eC1wY2lAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGlu
-dXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZy
-YWRlYWQub3JnOyBsaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZzsNCj4gYXJuZEBhcm5kYi5k
-ZTsgZ3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc7IFoucS4gSG91DQo+IDx6aGlxaWFuZy5ob3VA
-bnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAxMS8xMV0gbWlzYzogcGNpX2VuZHBv
-aW50X3Rlc3Q6IEFkZCBMUzEwODhhIGluDQo+IHBjaV9kZXZpY2VfaWQgdGFibGUNCj4gDQo+IE9u
-IE1vbiwgU2VwIDAyLCAyMDE5IGF0IDExOjE3OjE2QU0gKzA4MDAsIFhpYW93ZWkgQmFvIHdyb3Rl
-Og0KPiA+IEFkZCBMUzEwODhhIGluIHBjaV9kZXZpY2VfaWQgdGFibGUgc28gdGhhdCBwY2ktZXBm
-LXRlc3QgY2FuIGJlIHVzZWQNCj4gPiBmb3IgdGVzdGluZyBQQ0llIEVQIGluIExTMTA4OGEuDQo+
-ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBYaWFvd2VpIEJhbyA8eGlhb3dlaS5iYW9AbnhwLmNvbT4N
-Cj4gPiAtLS0NCj4gPiB2MjoNCj4gPiAgLSBObyBjaGFuZ2UuDQo+ID4gdjM6DQo+ID4gIC0gTm8g
-Y2hhbmdlLg0KPiA+DQo+ID4gIGRyaXZlcnMvbWlzYy9wY2lfZW5kcG9pbnRfdGVzdC5jIHwgMSAr
-DQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiA+DQo+ID4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvbWlzYy9wY2lfZW5kcG9pbnRfdGVzdC5jDQo+ID4gYi9kcml2ZXJzL21pc2Mv
-cGNpX2VuZHBvaW50X3Rlc3QuYw0KPiA+IGluZGV4IDZlMjA4YTAuLmQ1MzE5NTEgMTAwNjQ0DQo+
-ID4gLS0tIGEvZHJpdmVycy9taXNjL3BjaV9lbmRwb2ludF90ZXN0LmMNCj4gPiArKysgYi9kcml2
-ZXJzL21pc2MvcGNpX2VuZHBvaW50X3Rlc3QuYw0KPiA+IEBAIC03OTMsNiArNzkzLDcgQEAgc3Rh
-dGljIGNvbnN0IHN0cnVjdCBwY2lfZGV2aWNlX2lkDQo+IHBjaV9lbmRwb2ludF90ZXN0X3RibFtd
-ID0gew0KPiA+ICAJeyBQQ0lfREVWSUNFKFBDSV9WRU5ET1JfSURfVEksIFBDSV9ERVZJQ0VfSURf
-VElfRFJBNzR4KSB9LA0KPiA+ICAJeyBQQ0lfREVWSUNFKFBDSV9WRU5ET1JfSURfVEksIFBDSV9E
-RVZJQ0VfSURfVElfRFJBNzJ4KSB9LA0KPiA+ICAJeyBQQ0lfREVWSUNFKFBDSV9WRU5ET1JfSURf
-RlJFRVNDQUxFLCAweDgxYzApIH0sDQo+ID4gKwl7IFBDSV9ERVZJQ0UoUENJX1ZFTkRPUl9JRF9G
-UkVFU0NBTEUsIDB4ODBjMCkgfSwNCj4gDQo+IFRoZSBGcmVlc2NhbGUgUENJIGRldmljZXMgYXJl
-IHRoZSBvbmx5IGRldmljZXMgaW4gdGhpcyB0YWJsZSB0aGF0IGRvbid0IGhhdmUgYQ0KPiBkZWZp
-bmUgZm9yIHRoZWlyIGRldmljZSBJRC4gSSB0aGluayBhIGRlZmluZSBzaG91bGQgYmUgY3JlYXRl
-ZCBmb3IgYm90aCBvZiB0aGUNCj4gZGV2aWNlIElEcyBhYm92ZS4NCg0KT0ssIGJ1dCBJIG9ubHkg
-ZGVmaW5lIGluIHRoaXMgZmlsZSwgSSBhbSBub3Qgc3VyZSB0aGlzIGNhbiBkZWZpbmUgaW4gaW5j
-bHVkZS9saW51eC9wY2lfaWRzLmgNCmZpbGUgDQoNClRoYW5rcyANClhpYW93ZWkNCg0KPiANCj4g
-VGhhbmtzLA0KPiANCj4gQW5kcmV3IE11cnJheQ0KPiANCj4gPiAgCXsgUENJX0RFVklDRV9EQVRB
-KFNZTk9QU1lTLCBFRERBLCBOVUxMKSB9LA0KPiA+ICAJeyBQQ0lfREVWSUNFKFBDSV9WRU5ET1Jf
-SURfVEksIFBDSV9ERVZJQ0VfSURfVElfQU02NTQpLA0KPiA+ICAJICAuZHJpdmVyX2RhdGEgPSAo
-a2VybmVsX3Vsb25nX3QpJmFtNjU0X2RhdGENCj4gPiAtLQ0KPiA+IDIuOS41DQo+ID4NCg==
+On Mon, Sep 02, 2019 at 12:15:05PM +0800, Jason Wang wrote:
+> On 2019/8/28 下午1:37, Tiwei Bie wrote:
+> > Details about this can be found here:
+> > 
+> > https://lwn.net/Articles/750770/
+> > 
+> > What's new in this version
+> > ==========================
+> > 
+> > There are three choices based on the discussion [1] in RFC v2:
+> > 
+> > > #1. We expose a VFIO device, so we can reuse the VFIO container/group
+> > >      based DMA API and potentially reuse a lot of VFIO code in QEMU.
+> > > 
+> > >      But in this case, we have two choices for the VFIO device interface
+> > >      (i.e. the interface on top of VFIO device fd):
+> > > 
+> > >      A) we may invent a new vhost protocol (as demonstrated by the code
+> > >         in this RFC) on VFIO device fd to make it work in VFIO's way,
+> > >         i.e. regions and irqs.
+> > > 
+> > >      B) Or as you proposed, instead of inventing a new vhost protocol,
+> > >         we can reuse most existing vhost ioctls on the VFIO device fd
+> > >         directly. There should be no conflicts between the VFIO ioctls
+> > >         (type is 0x3B) and VHOST ioctls (type is 0xAF) currently.
+> > > 
+> > > #2. Instead of exposing a VFIO device, we may expose a VHOST device.
+> > >      And we will introduce a new mdev driver vhost-mdev to do this.
+> > >      It would be natural to reuse the existing kernel vhost interface
+> > >      (ioctls) on it as much as possible. But we will need to invent
+> > >      some APIs for DMA programming (reusing VHOST_SET_MEM_TABLE is a
+> > >      choice, but it's too heavy and doesn't support vIOMMU by itself).
+> > This version is more like a quick PoC to try Jason's proposal on
+> > reusing vhost ioctls. And the second way (#1/B) in above three
+> > choices was chosen in this version to demonstrate the idea quickly.
+> > 
+> > Now the userspace API looks like this:
+> > 
+> > - VFIO's container/group based IOMMU API is used to do the
+> >    DMA programming.
+> > 
+> > - Vhost's existing ioctls are used to setup the device.
+> > 
+> > And the device will report device_api as "vfio-vhost".
+> > 
+> > Note that, there are dirty hacks in this version. If we decide to
+> > go this way, some refactoring in vhost.c/vhost.h may be needed.
+> > 
+> > PS. The direct mapping of the notify registers isn't implemented
+> >      in this version.
+> > 
+> > [1] https://lkml.org/lkml/2019/7/9/101
+> 
+> 
+> Thanks for the patch, see comments inline.
+> 
+> 
+> > 
+> > Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
+> > ---
+> >   drivers/vhost/Kconfig      |   9 +
+> >   drivers/vhost/Makefile     |   3 +
+> >   drivers/vhost/mdev.c       | 382 +++++++++++++++++++++++++++++++++++++
+> >   include/linux/vhost_mdev.h |  58 ++++++
+> >   include/uapi/linux/vfio.h  |   2 +
+> >   include/uapi/linux/vhost.h |   8 +
+> >   6 files changed, 462 insertions(+)
+> >   create mode 100644 drivers/vhost/mdev.c
+> >   create mode 100644 include/linux/vhost_mdev.h
+[...]
+> > +
+> > +		break;
+> > +	}
+> > +	case VFIO_DEVICE_GET_REGION_INFO:
+> > +	case VFIO_DEVICE_GET_IRQ_INFO:
+> > +	case VFIO_DEVICE_SET_IRQS:
+> > +	case VFIO_DEVICE_RESET:
+> > +		ret = -EINVAL;
+> > +		break;
+> > +
+> > +	case VHOST_MDEV_SET_STATE:
+> > +		ret = vhost_set_state(vdpa, argp);
+> > +		break;
+> 
+> 
+> So this is used to start or stop the device. This means if userspace want to
+> drive a network device, the API is not 100% compatible. Any blocker for
+> this? E.g for SET_BACKEND, we can pass a fd and then identify the type of
+> backend.
+
+This is a legacy from the previous RFC code. I didn't try to
+get rid of it while getting this POC to work. I can try to make
+the vhost ioctls fully compatible with the existing userspace
+if possible.
+
+> 
+> Another question is, how can user know the type of a device?
+
+Maybe we can introduce an attribute in $UUID/ to tell the type.
+
+> 
+> 
+> > +	case VHOST_GET_FEATURES:
+> > +		ret = vhost_get_features(vdpa, argp);
+> > +		break;
+> > +	case VHOST_SET_FEATURES:
+> > +		ret = vhost_set_features(vdpa, argp);
+> > +		break;
+> > +	case VHOST_GET_VRING_BASE:
+> > +		ret = vhost_get_vring_base(vdpa, argp);
+> > +		break;
+> > +	default:
+> > +		ret = vhost_dev_ioctl(&vdpa->dev, cmd, argp);
+> > +		if (ret == -ENOIOCTLCMD)
+> > +			ret = vhost_vring_ioctl(&vdpa->dev, cmd, argp);
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+[...]
+> > +struct mdev_device;
+> > +struct vhost_mdev;
+> > +
+> > +typedef int (*vhost_mdev_start_device_t)(struct vhost_mdev *vdpa);
+> > +typedef int (*vhost_mdev_stop_device_t)(struct vhost_mdev *vdpa);
+> > +typedef int (*vhost_mdev_set_features_t)(struct vhost_mdev *vdpa);
+> > +typedef void (*vhost_mdev_notify_device_t)(struct vhost_mdev *vdpa, int queue_id);
+> > +typedef u64 (*vhost_mdev_get_notify_addr_t)(struct vhost_mdev *vdpa, int queue_id);
+> > +typedef u16 (*vhost_mdev_get_vring_base_t)(struct vhost_mdev *vdpa, int queue_id);
+> > +typedef void (*vhost_mdev_features_changed_t)(struct vhost_mdev *vdpa);
+> > +
+> > +struct vhost_mdev_device_ops {
+> > +	vhost_mdev_start_device_t	start;
+> > +	vhost_mdev_stop_device_t	stop;
+> > +	vhost_mdev_notify_device_t	notify;
+> > +	vhost_mdev_get_notify_addr_t	get_notify_addr;
+> > +	vhost_mdev_get_vring_base_t	get_vring_base;
+> > +	vhost_mdev_features_changed_t	features_changed;
+> > +};
+> 
+> 
+> Consider we want to implement a network device, who is going to implement
+> the device configuration space? I believe it's not good to invent another
+> set of API for doing this. So I believe we want something like
+> read_config/write_config here.
+> 
+> Then I came up an idea:
+> 
+> 1) introduce a new mdev bus transport, and a new mdev driver virtio_mdev
+> 2) vDPA (either software or hardware) can register as a device of virtio
+> mdev device
+> 3) then we can use kernel virtio driver to drive vDPA device and utilize
+> kernel networking/storage stack
+> 4) for userspace driver like vhost-mdev, it could be built of top of mdev
+> transport
+> 
+> Having a full new transport for virtio, the advantages are obvious:
+> 
+> 1) A generic solution for both kernel and userspace driver and support
+> configuration space access
+> 2) For kernel driver, exist kernel networking/storage stack could be reused,
+> and so did fast path implementation (e.g XDP, io_uring etc).
+> 2) For userspace driver, the function of virtio transport is a superset of
+> vhost, any API could be built on top easily (e.g vhost ioctl).
+> 
+> What's your thought?
+
+This sounds interesting to me! ;)
+
+But I'm not quite sure whether it's the best choice to abstract
+vhost accelerators as virtio device in vDPA. Virtio device is
+the frontend device. There are some backend features missing in
+virtio currently. E.g. there is no way to tell the virtio device
+to do dirty page logging. Besides, e.g. the control vq in network
+case seems not a quite good interface for a backend device. In
+this case, the userspace virtio-mdev driver in QEMU will do the
+DMA mapping to allow guest driver to be able to use GPA/IOVA to
+access the Rx/Tx queues of the virtio-mdev device directly, but
+I'm wondering will this userspace virtio-mdev driver in QEMU use
+similar IOVA to access the software based control vq of the same
+virtio-mdev device at the same time?
+
+Thanks,
+Tiwei
+
+> 
+> Thanks
+> 
+> 
+> > +
+> > +struct vhost_mdev *vhost_mdev_alloc(struct mdev_device *mdev,
+> > +		void *private, int nvqs);
+> > +void vhost_mdev_free(struct vhost_mdev *vdpa);
+> > +
+> > +ssize_t vhost_mdev_read(struct mdev_device *mdev, char __user *buf,
+> > +		size_t count, loff_t *ppos);
+> > +ssize_t vhost_mdev_write(struct mdev_device *mdev, const char __user *buf,
+> > +		size_t count, loff_t *ppos);
+> > +long vhost_mdev_ioctl(struct mdev_device *mdev, unsigned int cmd,
+> > +		unsigned long arg);
+> > +int vhost_mdev_mmap(struct mdev_device *mdev, struct vm_area_struct *vma);
+> > +int vhost_mdev_open(struct mdev_device *mdev);
+> > +void vhost_mdev_close(struct mdev_device *mdev);
+> > +
+> > +int vhost_mdev_set_device_ops(struct vhost_mdev *vdpa,
+> > +		const struct vhost_mdev_device_ops *ops);
+> > +int vhost_mdev_set_features(struct vhost_mdev *vdpa, u64 features);
+> > +struct eventfd_ctx *vhost_mdev_get_call_ctx(struct vhost_mdev *vdpa,
+> > +		int queue_id);
+> > +int vhost_mdev_get_acked_features(struct vhost_mdev *vdpa, u64 *features);
+> > +int vhost_mdev_get_vring_num(struct vhost_mdev *vdpa, int queue_id, u16 *num);
+> > +int vhost_mdev_get_vring_base(struct vhost_mdev *vdpa, int queue_id, u16 *base);
+> > +int vhost_mdev_get_vring_addr(struct vhost_mdev *vdpa, int queue_id,
+> > +		struct vhost_vring_addr *addr);
+> > +int vhost_mdev_get_log_base(struct vhost_mdev *vdpa, int queue_id,
+> > +		void **log_base, u64 *log_size);
+> > +struct mdev_device *vhost_mdev_get_mdev(struct vhost_mdev *vdpa);
+> > +void *vhost_mdev_get_private(struct vhost_mdev *vdpa);
+> > +
+> > +#endif /* _VHOST_MDEV_H */
+> > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> > index 8f10748dac79..0300d6831cc5 100644
+> > --- a/include/uapi/linux/vfio.h
+> > +++ b/include/uapi/linux/vfio.h
+> > @@ -201,6 +201,7 @@ struct vfio_device_info {
+> >   #define VFIO_DEVICE_FLAGS_AMBA  (1 << 3)	/* vfio-amba device */
+> >   #define VFIO_DEVICE_FLAGS_CCW	(1 << 4)	/* vfio-ccw device */
+> >   #define VFIO_DEVICE_FLAGS_AP	(1 << 5)	/* vfio-ap device */
+> > +#define VFIO_DEVICE_FLAGS_VHOST	(1 << 6)	/* vfio-vhost device */
+> >   	__u32	num_regions;	/* Max region index + 1 */
+> >   	__u32	num_irqs;	/* Max IRQ index + 1 */
+> >   };
+> > @@ -217,6 +218,7 @@ struct vfio_device_info {
+> >   #define VFIO_DEVICE_API_AMBA_STRING		"vfio-amba"
+> >   #define VFIO_DEVICE_API_CCW_STRING		"vfio-ccw"
+> >   #define VFIO_DEVICE_API_AP_STRING		"vfio-ap"
+> > +#define VFIO_DEVICE_API_VHOST_STRING		"vfio-vhost"
+> >   /**
+> >    * VFIO_DEVICE_GET_REGION_INFO - _IOWR(VFIO_TYPE, VFIO_BASE + 8,
+> > diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
+> > index 40d028eed645..5afbc2f08fa3 100644
+> > --- a/include/uapi/linux/vhost.h
+> > +++ b/include/uapi/linux/vhost.h
+> > @@ -116,4 +116,12 @@
+> >   #define VHOST_VSOCK_SET_GUEST_CID	_IOW(VHOST_VIRTIO, 0x60, __u64)
+> >   #define VHOST_VSOCK_SET_RUNNING		_IOW(VHOST_VIRTIO, 0x61, int)
+> > +/* VHOST_MDEV specific defines */
+> > +
+> > +#define VHOST_MDEV_SET_STATE	_IOW(VHOST_VIRTIO, 0x70, __u64)
+> > +
+> > +#define VHOST_MDEV_S_STOPPED	0
+> > +#define VHOST_MDEV_S_RUNNING	1
+> > +#define VHOST_MDEV_S_MAX	2
+> > +
+> >   #endif
