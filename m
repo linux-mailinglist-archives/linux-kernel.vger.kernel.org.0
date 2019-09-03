@@ -2,105 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72818A64BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:10:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD26A64C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbfICJJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 05:09:59 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:43345 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726631AbfICJJ7 (ORCPT
+        id S1728307AbfICJMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 05:12:02 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38861 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726631AbfICJMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:09:59 -0400
-Received: from [109.168.11.45] (port=41976 helo=[192.168.101.73])
-        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1i54p2-002t5L-6Q; Tue, 03 Sep 2019 11:09:56 +0200
-Subject: Re: [RFC,v2 3/6] media: dt-bindings: add DS90UB954-Q1 video
- deserializer
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-media@vger.kernel.org, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Peter Rosin <peda@axentia.se>
-References: <20190723203723.11730-1-luca@lucaceresoli.net>
- <20190723203723.11730-4-luca@lucaceresoli.net> <20190902204841.GB7253@kunai>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <63d99d6d-ecdd-7dd8-0dcb-126bfd89b258@lucaceresoli.net>
-Date:   Tue, 3 Sep 2019 11:09:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 3 Sep 2019 05:12:02 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w11so7642517plp.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 02:12:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MoQ/YzF/BXZU2pkUOeSlEfyBs1BxoTuutkdWFPwC+B4=;
+        b=HPxAQbA6FqDQ6gJZCEOEliHdjeyaOGfEG+31HOMEG3ZzsV0gk/ILuuGpQf1aNnhaX5
+         NwmU3AElGY5WsvPUqCCZRgRQA3zU7cxg5rMgrWbyb3BtyyfjAdCUGIfd8EFf4oqQxWdO
+         qTtX24bP2cXY7RBTfi11vB6cjlrXQIUpgxyPnkrNTz5XqRtBEQBbZfufQps6YAG3bjGl
+         bxSWFZYBkkdcDqaosgSeVYOa9T+lb1wymFbQzJoSzYG5hWZof5BVpiGNqlqMtTrPxA7A
+         fMxTkdEihvERV6sEainork5JAuUlEl0yyCBMvlAZ77ANfR9PDy6knoqPmzOR4Ot1VcCk
+         FzIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=MoQ/YzF/BXZU2pkUOeSlEfyBs1BxoTuutkdWFPwC+B4=;
+        b=cHWeOGO5VywTboqEDwDiJ207z+kT3UOMlxbevcUOQDsAKi8A6Wv4rar7oLJCz6Wfl4
+         xuC3+kS0axmGhg7cdcU9hS+XxQ9jqDrBoINcQNsey1CAMuzi/uBJbTNN46C3rW3qXL+4
+         CqJN1nIb3YPL0MvJcuoLdpt/gwIaHZ/uA14IJk7htWCtGC76N+yat3mxGak8T5AyaYSw
+         KvpLf/IKIx8W+H6hs/zWbj6anxiMym3mZ0smXkv5zQuu1O70STygIfBugJK/VEtA/x1J
+         atkqOuJkWvSz4wwyZB2p2nWdQCpnEEFtreu++qH0JTyItbWX7LvuiOeQnwzS/BPGOVhu
+         POOQ==
+X-Gm-Message-State: APjAAAXy66GS21g8BMchZGX4dA5m3CDTrrWUgN58Zk+2BCDIcxz87N/O
+        qc86yBFXdEk7HiLfiSTg3TboWg==
+X-Google-Smtp-Source: APXvYqzFm2VsRYmVToawLTXEtQdNt6T/sq2myq1CA846ubpUEQ/9KguQBRxDv1DK6UL7KgUU5r2jEQ==
+X-Received: by 2002:a17:902:b497:: with SMTP id y23mr9904062plr.201.1567501921283;
+        Tue, 03 Sep 2019 02:12:01 -0700 (PDT)
+Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
+        by smtp.gmail.com with ESMTPSA id m24sm4899121pfa.37.2019.09.03.02.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 02:12:00 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] Bluetooth: btrtl: Additional Realtek 8822CE Bluetooth devices
+Date:   Tue,  3 Sep 2019 17:10:42 +0800
+Message-Id: <20190903091041.13969-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20190902204841.GB7253@kunai>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+The ASUS X412FA laptop contains a Realtek RTL8822CE device with an
+associated BT chip using a USB ID of 04ca:4005. This ID is added to the
+driver.
 
-On 02/09/19 22:48, Wolfram Sang wrote:
-> 
->> + - i2c-alias-pool: list of I2C addresses that are known to be available on the
->> +                   "local" (SoC-to-deser) I2C bus; they will be picked at
->> +		   runtime and used as aliases to reach remove I2C chips
-> 
-> After some internal discussion, I have been kinda convinced that it may
-> be better to assume all non-described addresses are free to use and
-> enter the pool.
-> 
-> The problem with the binding above is that you may run out of aliases
-> depending on how many aliases one to-be-attached module needs or how
-> many modules will be attached.
+The /sys/kernel/debug/usb/devices portion for this device is:
 
-Not if you define enough addresses in the pool. E.g. the DS90UB954
-hardware can have 8 aliases per port, so if you have (n_ports * 8)
-addresses in the pool the problem is solved.
+T:  Bus=01 Lev=01 Prnt=01 Port=09 Cnt=04 Dev#=  4 Spd=12   MxCh= 0
+D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=04ca ProdID=4005 Rev= 0.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Radio
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=a0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-> And another add-on module with
-> non-repogrammable devices may occupy addresses from the defined pool
-> above.
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204707
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-You mean a new device on the local (SoC-to-ATR) bus? Well, it could as
-well occupy a non-described address that the ATR has already picked as
-an alias.
-
-> I am not perfectly happy with the assumption that all undescribed
-> addresses are automatically free. That also might need DTS updates to
-> describe all clients properly. But this change only needs to be done
-> once, and it will improve the description of the hardware.
-
-Right, but I still suspect some users won't do their homework and
-discover address conflicts at runtime, maybe months later, in a painful
-way. Also a chip might be undocumented on a given board, so they could
-do their homework and still have problems.
-
-Despite my comments, I'm not strongly against your proposal. To me it
-doesn't seem to solve any problem, while it does introduce some degree
-of risk. Could you elaborate more on but what benefit it introduces?
-
-Thanks,
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 5cf0734eb31b..67c0ca9b1f63 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -384,6 +384,9 @@ static const struct usb_device_id blacklist_table[] = {
+ 	{ USB_DEVICE(0x13d3, 0x3526), .driver_info = BTUSB_REALTEK },
+ 	{ USB_DEVICE(0x0b05, 0x185c), .driver_info = BTUSB_REALTEK },
+ 
++	/* Additional Realtek 8822CE Bluetooth devices */
++	{ USB_DEVICE(0x04ca, 0x4005), .driver_info = BTUSB_REALTEK },
++
+ 	/* Silicon Wave based devices */
+ 	{ USB_DEVICE(0x0c10, 0x0000), .driver_info = BTUSB_SWAVE },
+ 
 -- 
-Luca
+2.20.1
+
