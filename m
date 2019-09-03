@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C9C9A6E0B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B5A7A6EAF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbfICQY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:24:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44118 "EHLO mail.kernel.org"
+        id S1731029AbfICQ2G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:28:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730083AbfICQY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:24:28 -0400
+        id S1730528AbfICQ17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:27:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACC452343A;
-        Tue,  3 Sep 2019 16:24:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6B9F238C6;
+        Tue,  3 Sep 2019 16:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527867;
-        bh=Cr28IlIcupKpxIcbAqC+yK30blAqNUi8R7XGBvucZuI=;
+        s=default; t=1567528078;
+        bh=tUGdMBJf65IiFRyiMd6tSnbbwmB1wNqA8i8OFvyBO9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UosT9gD8xLrvhv4YTrI1xwrHfSUdIawmEVkY1KYAlIbsN2V3iJr+LoeRtJ70iKzsb
-         MFk/TeohCgM+FW1Sbg1J5t5C+hdOeDuD8btdMQvXG675YkAiEHxoNnquRMpFBMJhHd
-         c4q47r0Cq3aVkrf4b1io+Q17f2vqk69xCnVXd6fo=
+        b=CY3XEip6PGTrxekHChuxHvldQmPbs5LU0quYXHi4SHgtVlSGK4FuHI91smmHlpLUS
+         ttZdEKkUBPn4om+dk5qGH9oUaA7Gb2QVbfL6HRfoenYMaqU1zXU5HFcPlq8RsBPr8R
+         VUnmo4te8qLC/LFRawLbXA8PC5HCjm6TYQlOOx9U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-bcache@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 02/23] bcache: add comments for mutex_lock(&b->write_lock)
+Cc:     Moni Shoua <monis@mellanox.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 091/167] IB/mlx5: Reset access mask when looping inside page fault handler
 Date:   Tue,  3 Sep 2019 12:24:03 -0400
-Message-Id: <20190903162424.6877-2-sashal@kernel.org>
+Message-Id: <20190903162519.7136-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903162424.6877-1-sashal@kernel.org>
-References: <20190903162424.6877-1-sashal@kernel.org>
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,48 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Coly Li <colyli@suse.de>
+From: Moni Shoua <monis@mellanox.com>
 
-When accessing or modifying BTREE_NODE_dirty bit, it is not always
-necessary to acquire b->write_lock. In bch_btree_cache_free() and
-mca_reap() acquiring b->write_lock is necessary, and this patch adds
-comments to explain why mutex_lock(&b->write_lock) is necessary for
-checking or clearing BTREE_NODE_dirty bit there.
+[ Upstream commit 1abe186ed8a6593069bc122da55fc684383fdc1c ]
 
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+If page-fault handler spans multiple MRs then the access mask needs to
+be reset before each MR handling or otherwise write access will be
+granted to mapped pages instead of read-only.
+
+Cc: <stable@vger.kernel.org> # 3.19
+Fixes: 7bdf65d411c1 ("IB/mlx5: Handle page faults")
+Reported-by: Jerome Glisse <jglisse@redhat.com>
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/btree.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/infiniband/hw/mlx5/odp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-index 3fbadf2058a65..9788b2ee6638f 100644
---- a/drivers/md/bcache/btree.c
-+++ b/drivers/md/bcache/btree.c
-@@ -655,6 +655,11 @@ static int mca_reap(struct btree *b, unsigned int min_order, bool flush)
- 		up(&b->io_mutex);
- 	}
+diff --git a/drivers/infiniband/hw/mlx5/odp.c b/drivers/infiniband/hw/mlx5/odp.c
+index 9e1cac8cb2609..453e5c4ac19f4 100644
+--- a/drivers/infiniband/hw/mlx5/odp.c
++++ b/drivers/infiniband/hw/mlx5/odp.c
+@@ -497,7 +497,7 @@ void mlx5_ib_free_implicit_mr(struct mlx5_ib_mr *imr)
+ static int pagefault_mr(struct mlx5_ib_dev *dev, struct mlx5_ib_mr *mr,
+ 			u64 io_virt, size_t bcnt, u32 *bytes_mapped)
+ {
+-	u64 access_mask = ODP_READ_ALLOWED_BIT;
++	u64 access_mask;
+ 	int npages = 0, page_shift, np;
+ 	u64 start_idx, page_mask;
+ 	struct ib_umem_odp *odp;
+@@ -522,6 +522,7 @@ static int pagefault_mr(struct mlx5_ib_dev *dev, struct mlx5_ib_mr *mr,
+ 	page_shift = mr->umem->page_shift;
+ 	page_mask = ~(BIT(page_shift) - 1);
+ 	start_idx = (io_virt - (mr->mmkey.iova & page_mask)) >> page_shift;
++	access_mask = ODP_READ_ALLOWED_BIT;
  
-+	/*
-+	 * BTREE_NODE_dirty might be cleared in btree_flush_btree() by
-+	 * __bch_btree_node_write(). To avoid an extra flush, acquire
-+	 * b->write_lock before checking BTREE_NODE_dirty bit.
-+	 */
- 	mutex_lock(&b->write_lock);
- 	if (btree_node_dirty(b))
- 		__bch_btree_node_write(b, &cl);
-@@ -778,6 +783,11 @@ void bch_btree_cache_free(struct cache_set *c)
- 	while (!list_empty(&c->btree_cache)) {
- 		b = list_first_entry(&c->btree_cache, struct btree, list);
- 
-+		/*
-+		 * This function is called by cache_set_free(), no I/O
-+		 * request on cache now, it is unnecessary to acquire
-+		 * b->write_lock before clearing BTREE_NODE_dirty anymore.
-+		 */
- 		if (btree_node_dirty(b)) {
- 			btree_complete_write(b, btree_current_write(b));
- 			clear_bit(BTREE_NODE_dirty, &b->flags);
+ 	if (mr->umem->writable)
+ 		access_mask |= ODP_WRITE_ALLOWED_BIT;
 -- 
 2.20.1
 
