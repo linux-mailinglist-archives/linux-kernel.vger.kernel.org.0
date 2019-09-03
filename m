@@ -2,132 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CD34A61F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EECF2A61F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:56:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727551AbfICG4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:56:09 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45078 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfICG4I (ORCPT
+        id S1727453AbfICGz5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:55:57 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:59391 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfICGz4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:56:08 -0400
-Received: by mail-pf1-f195.google.com with SMTP id y72so2587965pfb.12
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:56:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=63naJTzVpAIq0B9AEz7oC56daTv5sIo3itON2f7HCdg=;
-        b=qlIc1kZNUSEis4xPtAe2vGproYxzVQ4Sqyq9xvpjUKmmWltJv/1g/l4c/k7azDOSF7
-         TMiWaxjoVaBFuIyIWWMpBTRxRQl2QSgi1TXErgRIgFS0/quWdUWJ06sEgwHatwbuZtzc
-         ZppTe4/4kpyRpaSlYbExx9j+3L1X8gCS7TPK5bylEI6r/Y+5T/VG01xhyA65NM4pMuIH
-         i1QwXYW0nH87NZWZNoULz9kv2StEte877lqujLvYnEK0MXiFMYBUBoLYVskwqkTwQwn8
-         h+65MVd3gQ6oTiTiEnZzBJfMHswIF6ccifNGBiqmqFgMjq5ICFomUz3SdBVD6xeHpf47
-         9QNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=63naJTzVpAIq0B9AEz7oC56daTv5sIo3itON2f7HCdg=;
-        b=gjxDzCPQTZBWGYlWvbsyz7vGMCWojPitJG0fUuLtWYFOrunaQUxt6bMCEk70xEnF31
-         oxXjk811pr2cw/sM/OuoXHH65VJ6F42074Eyj5P2km1LYVl1fJTDinwluRGVN1C0+Z9P
-         qSdRe5x9ZngBZ8we+kWCPhvbOuoofaQF/gLhMThJc9+QDyE8Yl+E/wBpJl+CfVjnOUnE
-         DFi65AZSKwCP5VYQvbA4o1PQG8jkd0n93u+vr3c54VSVRYr03N9He17HSW487adNoNFE
-         fUwst/OKj1XiOq76bMBPUi57+GxOQCfW8wnk51dP4fLzMpWjvEJwaYBNHshNYFVU7w85
-         QdXQ==
-X-Gm-Message-State: APjAAAVIihsjC4Pr9f1bLUXP2lPbNPb8K9cTQfdQ1f7DvP/+TBV6L7Ur
-        pFim4fxurcOloF02p6EMtWAL/Q==
-X-Google-Smtp-Source: APXvYqxd/j+T8QJmSIsIzaygKzKALx+cde7roGbSkff1Tptv3dOOMPVjCFVwg3YlkwTTrw/JnG/gHw==
-X-Received: by 2002:a17:90a:b108:: with SMTP id z8mr17183365pjq.108.1567493767618;
-        Mon, 02 Sep 2019 23:56:07 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id e189sm19370762pgc.15.2019.09.02.23.56.03
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 02 Sep 2019 23:56:07 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     stable@vger.kernel.org, chris@chris-wilson.co.uk, airlied@linux.ie
-Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        arnd@arndb.de, baolin.wang@linaro.org, orsonzhai@gmail.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
-Subject: [BACKPORT 4.14.y 1/8] drm/i915/fbdev: Actually configure untiled displays
-Date:   Tue,  3 Sep 2019 14:55:26 +0800
-Message-Id: <5723d9006de706582fb46f9e1e3eb8ce168c2126.1567492316.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1567492316.git.baolin.wang@linaro.org>
-References: <cover.1567492316.git.baolin.wang@linaro.org>
+        Tue, 3 Sep 2019 02:55:56 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x836trTA023086, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCAS12.realtek.com.tw[172.21.6.16])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x836trTA023086
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 3 Sep 2019 14:55:54 +0800
+Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
+ RTITCAS12.realtek.com.tw ([::1]) with mapi id 14.03.0439.000; Tue, 3 Sep 2019
+ 14:55:52 +0800
+From:   Hayes Wang <hayeswang@realtek.com>
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     nic_swsd <nic_swsd@realtek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] r8152: modify rtl8152_set_speed function
+Thread-Topic: [PATCH net-next] r8152: modify rtl8152_set_speed function
+Thread-Index: AQHVYYTrRMaVJv63vEGfeZKbVbiDuqcYMZIAgAEQO0D//7KEAIAAiqfA//9+BQCAAIbSYA==
+Date:   Tue, 3 Sep 2019 06:55:51 +0000
+Message-ID: <0835B3720019904CB8F7AA43166CEEB2F18DAD2A@RTITMBSVM03.realtek.com.tw>
+References: <1394712342-15778-326-Taiwan-albertk@realtek.com>
+ <280e6a3d-c6c3-ef32-a65d-19566190a1d3@gmail.com>
+ <0835B3720019904CB8F7AA43166CEEB2F18DAB41@RTITMBSVM03.realtek.com.tw>
+ <aa9513ff-3cef-4b9f-ecbd-1310660a911c@gmail.com>
+ <0835B3720019904CB8F7AA43166CEEB2F18DACE1@RTITMBSVM03.realtek.com.tw>
+ <56675c6b-c792-245e-54d0-eacd50e7a139@gmail.com>
+In-Reply-To: <56675c6b-c792-245e-54d0-eacd50e7a139@gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.177.214]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
-
-If we skipped all the connectors that were not part of a tile, we would
-leave conn_seq=0 and conn_configured=0, convincing ourselves that we
-had stagnated in our configuration attempts. Avoid this situation by
-starting conn_seq=ALL_CONNECTORS, and repeating until we find no more
-connectors to configure.
-
-Fixes: 754a76591b12 ("drm/i915/fbdev: Stop repeating tile configuration on stagnation")
-Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190215123019.32283-1-chris@chris-wilson.co.uk
-Cc: <stable@vger.kernel.org> # v3.19+
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- drivers/gpu/drm/i915/intel_fbdev.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/intel_fbdev.c b/drivers/gpu/drm/i915/intel_fbdev.c
-index da2d309..14eb8a0 100644
---- a/drivers/gpu/drm/i915/intel_fbdev.c
-+++ b/drivers/gpu/drm/i915/intel_fbdev.c
-@@ -326,8 +326,8 @@ static bool intel_fb_initial_config(struct drm_fb_helper *fb_helper,
- 				    bool *enabled, int width, int height)
- {
- 	struct drm_i915_private *dev_priv = to_i915(fb_helper->dev);
--	unsigned long conn_configured, conn_seq, mask;
- 	unsigned int count = min(fb_helper->connector_count, BITS_PER_LONG);
-+	unsigned long conn_configured, conn_seq;
- 	int i, j;
- 	bool *save_enabled;
- 	bool fallback = true, ret = true;
-@@ -345,10 +345,9 @@ static bool intel_fb_initial_config(struct drm_fb_helper *fb_helper,
- 		drm_modeset_backoff(&ctx);
- 
- 	memcpy(save_enabled, enabled, count);
--	mask = GENMASK(count - 1, 0);
-+	conn_seq = GENMASK(count - 1, 0);
- 	conn_configured = 0;
- retry:
--	conn_seq = conn_configured;
- 	for (i = 0; i < count; i++) {
- 		struct drm_fb_helper_connector *fb_conn;
- 		struct drm_connector *connector;
-@@ -361,7 +360,8 @@ static bool intel_fb_initial_config(struct drm_fb_helper *fb_helper,
- 		if (conn_configured & BIT(i))
- 			continue;
- 
--		if (conn_seq == 0 && !connector->has_tile)
-+		/* First pass, only consider tiled connectors */
-+		if (conn_seq == GENMASK(count - 1, 0) && !connector->has_tile)
- 			continue;
- 
- 		if (connector->status == connector_status_connected)
-@@ -465,8 +465,10 @@ static bool intel_fb_initial_config(struct drm_fb_helper *fb_helper,
- 		conn_configured |= BIT(i);
- 	}
- 
--	if ((conn_configured & mask) != mask && conn_configured != conn_seq)
-+	if (conn_configured != conn_seq) { /* repeat until no more are found */
-+		conn_seq = conn_configured;
- 		goto retry;
-+	}
- 
- 	/*
- 	 * If the BIOS didn't enable everything it could, fall back to have the
--- 
-1.7.9.5
-
+SGVpbmVyIEthbGx3ZWl0IFttYWlsdG86aGthbGx3ZWl0MUBnbWFpbC5jb21dDQo+IFNlbnQ6IFR1
+ZXNkYXksIFNlcHRlbWJlciAwMywgMjAxOSAyOjQ1IFBNDQpbLi4uXQ0KPiA+IEJlc2lkZXMsIEkg
+aGF2ZSBhIHF1ZXN0aW9uLiBJIHRoaW5rIEkgZG9uJ3QgbmVlZCBydGw4MTUyX3NldF9zcGVlZCgp
+DQo+ID4gaWYgSSBpbXBsZW1lbnQgcGh5bGliLiBIb3dldmVyLCBJIG5lZWQgdG8gcmVjb3JkIHNv
+bWUgaW5mb3JtYXRpb24NCj4gPiBhY2NvcmRpbmcgdG8gdGhlIHNldHRpbmdzIG9mIHNwZWVkLiBG
+b3Igbm93LCBJIGRvIGl0IGluIHJ0bDgxNTJfc2V0X3NwZWVkKCkuDQo+ID4gRG8geW91IGhhdmUg
+YW55IGlkZWEgYWJvdXQgaG93IEkgc2hvdWxkIGRvIGl0IHdpdGggcGh5bGliIHdpdGhvdXQNCj4g
+PiBydGw4MTUyX3NldF9zcGVlZCgpPw0KPiA+DQo+IFdoZW4gc2F5aW5nICJyZWNvcmQgc29tZSBp
+bmZvcm1hdGlvbiIsIHdoYXQga2luZCBvZiBpbmZvcm1hdGlvbj8NCg0KU29tZSBvZiBvdXIgY2hp
+cHMgc3VwcG9ydCB0aGUgZmVhdHVyZSBvZiBVUFMuIFdoZW4gc2F0aXNmeWluZyBjZXJ0YWluDQpj
+b25kaXRpb24sIHRoZSBodyB3b3VsZCByZWNvdmVyIHRoZSBzZXR0aW5ncyBvZiBzcGVlZC4gVGhl
+cmVmb3JlLCBJIGhhdmUNCnRvIHJlY29yZCB0aGUgc2V0dGluZ3Mgb2YgdGhlIHNwZWVkLCBhbmQg
+c2V0IHRoZW0gdG8gaHcuDQoNCj4gVGhlIHNwZWVkIGl0c2VsZiBpcyBzdG9yZWQgaW4gc3RydWN0
+IHBoeV9kZXZpY2UsIGlmIHlvdSBuZWVkIHRvIGFkanVzdA0KPiBjZXJ0YWluIGNoaXAgc2V0dGlu
+Z3MgZGVwZW5kaW5nIG9uIG5lZ290aWF0ZWQgc3BlZWQsIHRoZW4geW91IGNhbiBkbw0KPiB0aGlz
+IGluIGEgY2FsbGJhY2sgKHBhcmFtZXRlciBoYW5kbGVyIG9mIHBoeV9jb25uZWN0X2RpcmVjdCku
+DQo+IFNlZSBlLmcuIHI4MTY5X3BoeWxpbmtfaGFuZGxlcigpDQoNClRoYW5rcy4gSSB3b3VsZCBz
+dHVkeSBpdC4NCg0KQmVzdCBSZWdhcmRzLA0KSGF5ZXMNCg0KDQo=
