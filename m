@@ -2,160 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EE02A6940
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:06:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37539A694E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:07:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbfICNGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:06:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50322 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728576AbfICNGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:06:09 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9C87DB60E;
-        Tue,  3 Sep 2019 13:06:07 +0000 (UTC)
-Date:   Tue, 3 Sep 2019 15:06:07 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     rafael@kernel.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v4 10/11] lib/vsprintf: Add %pfw conversion specifier for
- printing fwnode names
-Message-ID: <20190903130607.cf2qv3s3evobbd5g@pathway.suse.cz>
-References: <20190902083240.20367-1-sakari.ailus@linux.intel.com>
- <20190902083240.20367-11-sakari.ailus@linux.intel.com>
+        id S1729384AbfICNGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:06:40 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58520 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729088AbfICNGj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 09:06:39 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E38C36090E; Tue,  3 Sep 2019 13:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567515997;
+        bh=iYGhXpPlajGpKbgH+Vr47Mz8PaZJai97C3ZVp5vJip0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=DJN8UxEpeLXw+LNie/A0qWBTUGTZBwqVQGYr5b4G+FThYhhV+aEY9MPSpDkmuIqkh
+         oZIpks6R2pbUFc6jEpwOwvrXhiGkjFcuykPgbKHKGscHuml/7ftxlocoH2vnnwltdV
+         PdAwOtcYuSKt6m7v7JEy3h5IOBtd9VcDlNgamBnc=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A4616602F2;
+        Tue,  3 Sep 2019 13:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567515997;
+        bh=iYGhXpPlajGpKbgH+Vr47Mz8PaZJai97C3ZVp5vJip0=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=bNeeRYqTRtYpuIsgSbAPI/D9RUHO0pja5RYmMoKD0/sjflArFZVcUyEKpt3yRWbBG
+         K+T2AHXjNc2WcVFxcKxQDb+QO8Nhp/wBx5Xb6U2DjQwsAQTD1BQCLGdt6hi9l5c48x
+         zLo/GDuxby3CRwugfbTlPSfBPh4rdG7068ZCK1sY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A4616602F2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902083240.20367-11-sakari.ailus@linux.intel.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] rtlwifi: fix non-kerneldoc comment in usb.c
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <34195.1565229118@turing-police>
+References: <34195.1565229118@turing-police>
+To:     "Valdis =?utf-8?q?Kl=C4=93tnieks?= " <valdis.kletnieks@vt.edu>
+Cc:     Ping-Ke Shih <pkshih@realtek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190903130637.E38C36090E@smtp.codeaurora.org>
+Date:   Tue,  3 Sep 2019 13:06:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-09-02 11:32:39, Sakari Ailus wrote:
-> Add support for %pfw conversion specifier (with "f" and "P" modifiers) to
-> support printing full path of the node, including its name ("f") and only
-> the node's name ("P") in the printk family of functions. The two flags
-> have equivalent functionality to existing %pOF with the same two modifiers
-> ("f" and "P") on OF based systems. The ability to do the same on ACPI
-> based systems is added by this patch.
-> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-> index 922a29eb70e6c..abba210f67567 100644
-> --- a/Documentation/core-api/printk-formats.rst
-> +++ b/Documentation/core-api/printk-formats.rst
-> @@ -418,6 +418,30 @@ Examples::
->  
->  Passed by reference.
->  
-> +Fwnode handles
-> +--------------
-> +
-> +::
-> +
-> +	%pfw[fP]
-> +
-> +For printing information on fwnode handles. The default is to print the full
-> +node name, including the path. The modifiers are functionally equivalent to
-> +%pOF above.
-> +
-> +	- f - full name of the node, including the path
-> +	- P - the name of the node including an address (if there is one)
-> +
-> +Examples (ACPI):
+"Valdis wrote:
 
-s/:/::/ for the .rst formar.
+> Fix spurious warning message when building with W=1:
+> 
+>   CC [M]  drivers/net/wireless/realtek/rtlwifi/usb.o
+> drivers/net/wireless/realtek/rtlwifi/usb.c:243: warning: Cannot understand  * on line 243 - I thought it was a doc line
+> drivers/net/wireless/realtek/rtlwifi/usb.c:760: warning: Cannot understand  * on line 760 - I thought it was a doc line
+> drivers/net/wireless/realtek/rtlwifi/usb.c:790: warning: Cannot understand  * on line 790 - I thought it was a doc line
+> 
+> Clean up the comment format.
+> 
+> Signed-off-by: Valdis Kletnieks <valdis.kletnieks@vt.edu>
 
-> +
-> +	%pfwf	\_SB.PCI0.CIO2.port@1.endpoint@0	- Full node name
-> +	%pfwP	endpoint@0				- Node name
-> +
-> +Examples (OF):
+Patch applied to wireless-drivers-next.git, thanks.
 
-Same here.
+b6326fc025aa rtlwifi: fix non-kerneldoc comment in usb.c
 
-> +
-> +	%pfwf	/ocp@68000000/i2c@48072000/camera@10/port/endpoint - Full name
-> +	%pfwP	endpoint				- Node name
-> +
->  Time and date (struct rtc_time)
->  -------------------------------
->  
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 4ad9332d54ba6..b9b4c835db063 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -1981,6 +1981,36 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
->  	return widen_string(buf, buf - buf_start, end, spec);
->  }
->  
-> +static noinline_for_stack
-> +char *fwnode_string(char *buf, char *end, struct fwnode_handle *fwnode,
-> +		    struct printf_spec spec, const char *fmt)
-> +{
-> +	struct printf_spec str_spec = spec;
-> +	char *buf_start = buf;
-> +
-> +	str_spec.field_width = -1;
-> +
-> +	if (*fmt != 'w')
-> +		return error_string(buf, end, "(%pfw?)", spec);
+-- 
+https://patchwork.kernel.org/patch/11083073/
 
-This means that only "%pfw" will dereference the pointer by
-fwnode_full_name_string() or fwnode_get_name(). All the other
-eventual misuses of the obsolete %pf format will result in this
-error message.
-
-OK, it is hard to imagine using "%pf" to get symbol name and always add
-'w' suffix. Therefore it looks that reusing the obsolete %pf format
-modifier is pretty safe after all.
-
-
-> +	if (check_pointer(&buf, end, fwnode, spec))
-> +		return buf;
-> +
-> +	fmt++;
-> +
-> +	switch (*fmt) {
-> +	case 'f':	/* full_name */
-> +	default:
-
-Using default: in the middle of switch might cause a lot of confusion.
-Please, make it the last label.
-
-
-> +		buf = fwnode_full_name_string(fwnode, buf, end);
-> +		break;
-> +	case 'P':	/* name */
-> +		buf = string(buf, end, fwnode_get_name(fwnode), str_spec);
-> +		break;
-> +	}
-> +
-> +	return widen_string(buf, buf - buf_start, end, spec);
-> +}
-> +
->  /*
->   * Show a '%p' thing.  A kernel extension is that the '%p' is followed
->   * by an extra set of alphanumeric characters that are extended format
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index a60c241112cd4..8df50911ff4e9 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -5995,7 +5995,8 @@ sub process {
->  				while ($fmt =~ /(\%[\*\d\.]*p(\w))/g) {
->  					$specifier = $1;
->  					$extension = $2;
-> -					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxt]/) {
-> +					if ($extension !~ /[SsBKRraEhMmIiUDdgVCbGNOxtf]/ ||
-> +					    $extension =~ /^f[^w]/) {
-
-This does not work. $extension seems to have only one character.
-
-Best Regards,
-Petr
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
