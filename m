@@ -2,147 +2,324 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97AB0A6165
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:28:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E3F7A616F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726555AbfICG2M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:28:12 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40498 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbfICG2L (ORCPT
+        id S1727281AbfICG32 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:29:28 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:52263 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbfICG32 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:28:11 -0400
-Received: by mail-pg1-f195.google.com with SMTP id w10so8546294pgj.7
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3UjuVbvJVhJAU0IH4ZbNm2Jlx5L7+f9v4Qm0AxsrvR0=;
-        b=wL2ybVnw/vZTE94Xlb5xNn6xFzOU0UBcajT5ZX8iLCFCwV0n5PB4oIlQz48eacDYVj
-         ytsZyjwjhWQ1OyE6tUH5+Fw3vuDDJRwzLal/K5HBzVBwgrKvvmMe5GeNlWO1WhxyccUV
-         TwlIgLZwtVm9qfRHB4O//OKoPLU1wfEtKHfj06We2tjZQBl2SBKGSCKkfScfh/XMv6a3
-         Jxwa+zf0f/0wDZhgKmHEzqJdf/zypEzxM+/ZA4H8i6bRuUpTHWUWP8CO2c1uSie3Gvy5
-         DPrjLacNZAls6mFBSNsEmMyRo9L784IaV/PYWdAlL4gBtSGkIK6Qvsz1M7uDfjwIDexd
-         VLCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3UjuVbvJVhJAU0IH4ZbNm2Jlx5L7+f9v4Qm0AxsrvR0=;
-        b=gc6BHYqLgq6nL6iarH8penouLseRo5HfcZ9+sNmWk4w20VJeOXpTQS/rM3CFU/Z57u
-         sW1H15wSYPXctij3wEd6U5NOF0K3Ny941LIGXl61zgQ7WfYMU82aZyG+B1K5HpBy1rC+
-         9E/sq2w6jQnWE12jatn9nsod3yD/gIKR53YaNm7Eug6x5ob5GVKN1vO7m3Drszb5XaH6
-         ZgEFqAeV4UB5VWIrhwzZL3Fcyg43rs88bP5vgRAGDfyCqx/2C1uIqyXq+f1WUNdWEN/5
-         c9CCfufjC7iJNpGZjbf9/T3F67htmr8SfoKKg5PeA2aCXsCUD8lysMxaIB9Qwpami9Cv
-         wRDA==
-X-Gm-Message-State: APjAAAXc0Le0P7mE6HfTO92P+UOoiSA5kijhMJmO/WYNZFkkE+MJBcdX
-        bJ20++ZPnGNj06x4hnIXdUtwiQ==
-X-Google-Smtp-Source: APXvYqwazyPlv855qi7l9Cvtv6Ry/4WLau0L7ow/Xvvtoyuzbt1Tlw+/d8AZcxMClQX/5LVzlajoKw==
-X-Received: by 2002:a62:e802:: with SMTP id c2mr2520855pfi.212.1567492090953;
-        Mon, 02 Sep 2019 23:28:10 -0700 (PDT)
-Received: from localhost ([122.167.132.221])
-        by smtp.gmail.com with ESMTPSA id b5sm23696486pfp.38.2019.09.02.23.28.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Sep 2019 23:28:10 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 11:58:08 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        =?utf-8?B?QW5kcsOp?= Roth <neolynx@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: Re: [RFC 4/5] ARM: dts: omap3-n950-n9: remove opp-v1 table
-Message-ID: <20190903062808.p6jkgwylyqxcjs4z@vireshk-i7>
-References: <cover.1567421750.git.hns@goldelico.com>
- <2f978667c1533e46e3a5df58871e9048f3eb74e9.1567421751.git.hns@goldelico.com>
- <20190903023635.44yf32jowpm3hgfp@vireshk-i7>
- <8BC1AEC9-7B24-4C07-8659-16741D018164@goldelico.com>
- <20190903061403.k3d333f54gj2kuxi@vireshk-i7>
- <6B7B0EDB-8A60-48A0-AFAB-8A266358300C@goldelico.com>
+        Tue, 3 Sep 2019 02:29:28 -0400
+Received: from soja.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:13da])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <o.rempel@pengutronix.de>)
+        id 1i52Jg-0001vX-Jw; Tue, 03 Sep 2019 08:29:24 +0200
+Subject: Re: [PATCH V2 2/5] input: keyboard: imx_sc: Add i.MX system
+ controller power key support
+To:     Anson Huang <Anson.Huang@nxp.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org, dmitry.torokhov@gmail.com, aisheng.dong@nxp.com,
+        ulf.hansson@linaro.org, fugang.duan@nxp.com, peng.fan@nxp.com,
+        daniel.baluta@nxp.com, leonard.crestez@nxp.com, mripard@kernel.org,
+        olof@lixom.net, arnd@arndb.de, jagan@amarulasolutions.com,
+        bjorn.andersson@linaro.org, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, stefan@agner.ch,
+        gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
+        yuehaibing@huawei.com, tglx@linutronix.de, ronald@innovation.ch,
+        m.felsch@pengutronix.de, ping.bai@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+References: <1567519424-32271-1-git-send-email-Anson.Huang@nxp.com>
+ <1567519424-32271-2-git-send-email-Anson.Huang@nxp.com>
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+Message-ID: <6d8dd5df-02da-b4cd-e61d-a4a15d0bf0c8@pengutronix.de>
+Date:   Tue, 3 Sep 2019 08:29:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6B7B0EDB-8A60-48A0-AFAB-8A266358300C@goldelico.com>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <1567519424-32271-2-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:13da
+X-SA-Exim-Mail-From: o.rempel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03-09-19, 08:23, H. Nikolaus Schaller wrote:
-> 
-> > Am 03.09.2019 um 08:14 schrieb Viresh Kumar <viresh.kumar@linaro.org>:
-> > 
-> > On 03-09-19, 08:01, H. Nikolaus Schaller wrote:
-> >> 
-> >>> Am 03.09.2019 um 04:36 schrieb Viresh Kumar <viresh.kumar@linaro.org>:
-> >>> 
-> >>> On 02-09-19, 12:55, H. Nikolaus Schaller wrote:
-> >>>> With opp-v2 in omap36xx.dtsi and ti-cpufreq driver the
-> >>>> 1GHz capability is automatically detected.
-> >>>> 
-> >>>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> >>>> ---
-> >>>> arch/arm/boot/dts/omap3-n950-n9.dtsi | 7 -------
-> >>>> 1 file changed, 7 deletions(-)
-> >>>> 
-> >>>> diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-> >>>> index 5441e9ffdbb4..e98b0c615f19 100644
-> >>>> --- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
-> >>>> +++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-> >>>> @@ -11,13 +11,6 @@
-> >>>> 	cpus {
-> >>>> 		cpu@0 {
-> >>>> 			cpu0-supply = <&vcc>;
-> >>>> -			operating-points = <
-> >>>> -				/* kHz    uV */
-> >>>> -				300000  1012500
-> >>>> -				600000  1200000
-> >>>> -				800000  1325000
-> >>>> -				1000000	1375000
-> >>>> -			>;
-> >>>> 		};
-> >>>> 	};
-> >>> 
-> >>> This should be merged with 2/5 ?
-> >> 
-> >> Well, it bloats 2/5.
-> > 
-> > It is logically the right place to do this as that's where we are
-> > adding opp-v2.
-> 
-> Well, sometimes the philosophy of patches is to add something new
-> first and remove the old in a second separate patch if the system
-> can live with both. This makes it easier to digest single patches
-> (because they are smaller) and might also better pinpoint an issue
-> by bisect.
+Hi,
 
-Right, but you already removed some of the opp-v1 stuff in patch 2/5.
-Why leave this one out ?
-
-> > 
-> >> What I hope (I can't test) is that this opp-v1 table
-> >> is ignored if an opp-v2 table exists. So that it can be
-> >> removed by a separate follow-up patch.
-> > 
-> > It should work as that's what we are doing in OPP core, but I still
-> > feel this better get merged with 2/5.
+On 03.09.19 16:03, Anson Huang wrote:
+> i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
+> inside, the system controller is in charge of controlling power,
+> clock and power key etc..
 > 
-> Ok, I see. Noted for RFCv2.
+> Adds i.MX system controller power key driver support, Linux kernel
+> has to communicate with system controller via MU (message unit) IPC
+> to get power key's status.
 > 
-> There will also be a big batch of changes for the compatible record
-> (omap3530->omap35xx, add omap34xx where needed) of ca. 10 board definition
-> DTS files. Should this then also become part of the new 2/5?
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> Changes since V1:
+> 	- remove "wakeup-source" property operation, scu power key uses generic scu irq,
+> 	  no need to have this property for device wakeup operation.
+> ---
+>   drivers/input/keyboard/Kconfig         |   7 ++
+>   drivers/input/keyboard/Makefile        |   1 +
+>   drivers/input/keyboard/imx_sc_pwrkey.c | 169 +++++++++++++++++++++++++++++++++
+>   3 files changed, 177 insertions(+)
+>   create mode 100644 drivers/input/keyboard/imx_sc_pwrkey.c
+> 
+> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+> index 2e6d288..3aaeb9c 100644
+> --- a/drivers/input/keyboard/Kconfig
+> +++ b/drivers/input/keyboard/Kconfig
+> @@ -469,6 +469,13 @@ config KEYBOARD_IMX
+>   	  To compile this driver as a module, choose M here: the
+>   	  module will be called imx_keypad.
+>   
+> +config KEYBOARD_IMX_SC_PWRKEY
+> +	tristate "IMX SCU Power Key Driver"
+> +	depends on IMX_SCU
+> +	help
+> +	  This is the system controller powerkey driver for NXP i.MX SoCs with
+> +	  system controller inside.
 
-Compatible thing should be separate patch anyway, I was just talking
-about replacing opp-v1 with v2.
+The KEY is configurable over devicetree, why is it called PWRKEY? It looks for me as 
+generic SCU key handler.
+
+>   config KEYBOARD_NEWTON
+>   	tristate "Newton keyboard"
+>   	select SERIO
+> diff --git a/drivers/input/keyboard/Makefile b/drivers/input/keyboard/Makefile
+> index 9510325..9ea5585 100644
+> --- a/drivers/input/keyboard/Makefile
+> +++ b/drivers/input/keyboard/Makefile
+> @@ -29,6 +29,7 @@ obj-$(CONFIG_KEYBOARD_HIL)		+= hil_kbd.o
+>   obj-$(CONFIG_KEYBOARD_HIL_OLD)		+= hilkbd.o
+>   obj-$(CONFIG_KEYBOARD_IPAQ_MICRO)	+= ipaq-micro-keys.o
+>   obj-$(CONFIG_KEYBOARD_IMX)		+= imx_keypad.o
+> +obj-$(CONFIG_KEYBOARD_IMX_SC_PWRKEY)	+= imx_sc_pwrkey.o
+>   obj-$(CONFIG_KEYBOARD_HP6XX)		+= jornada680_kbd.o
+>   obj-$(CONFIG_KEYBOARD_HP7XX)		+= jornada720_kbd.o
+>   obj-$(CONFIG_KEYBOARD_LKKBD)		+= lkkbd.o
+> diff --git a/drivers/input/keyboard/imx_sc_pwrkey.c b/drivers/input/keyboard/imx_sc_pwrkey.c
+> new file mode 100644
+> index 0000000..53aa9a4
+> --- /dev/null
+> +++ b/drivers/input/keyboard/imx_sc_pwrkey.c
+> @@ -0,0 +1,169 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2019 NXP.
+> + */
+> +
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/firmware/imx/sci.h>
+> +#include <linux/init.h>
+> +#include <linux/input.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define DEBOUNCE_TIME	100
+> +#define REPEAT_INTERVAL	60
+> +
+> +#define SC_IRQ_BUTTON		1
+> +#define SC_IRQ_GROUP_WAKE	3
+> +#define IMX_SC_MISC_FUNC_GET_BUTTON_STATUS	18
+> +
+> +struct imx_pwrkey_drv_data {
+> +	int keycode;
+> +	bool keystate;  /* 1: pressed, 0: release */
+> +	bool delay_check;
+> +	struct delayed_work check_work;
+> +	struct input_dev *input;
+> +};
+> +
+> +struct imx_sc_msg_pwrkey {
+> +	struct imx_sc_rpc_msg hdr;
+> +	u8 state;
+> +};
+> +static struct imx_pwrkey_drv_data *pdata;
+
+Why is it global struct? It seems to be flexible configurable over devicetree. So I would 
+assume it should be able to handle more then one button. Please remove global variables, 
+make it allocatable per OF node.
+
+Please use different name "pdata" is usually used as platform data. Please, use "priv".
+
+> +static struct imx_sc_ipc *pwrkey_ipc_handle;
+
+same as before, no global variables.
+
+> +
+> +static int imx_sc_pwrkey_notify(struct notifier_block *nb,
+> +				unsigned long event, void *group)
+> +{
+> +	if ((event & SC_IRQ_BUTTON) && (*(u8 *)group == SC_IRQ_GROUP_WAKE)
+> +	    && !pdata->delay_check) {
+> +		pdata->delay_check = 1;
+> +		schedule_delayed_work(&pdata->check_work,
+> +				      msecs_to_jiffies(REPEAT_INTERVAL));
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void imx_sc_check_for_events(struct work_struct *work)
+> +{
+> +	struct input_dev *input = pdata->input;
+> +	struct imx_sc_msg_pwrkey msg;
+> +	struct imx_sc_rpc_msg *hdr = &msg.hdr;
+> +	bool state;
+> +
+> +	hdr->ver = IMX_SC_RPC_VERSION;
+> +	hdr->svc = IMX_SC_RPC_SVC_MISC;
+> +	hdr->func = IMX_SC_MISC_FUNC_GET_BUTTON_STATUS;
+> +	hdr->size = 1;
+> +
+> +	/*
+> +	 * Current SCU firmware does NOT have return value for
+> +	 * this API, that means it is always successful.
+> +	 */
+
+It is not true for the kernel part:
+https://elixir.bootlin.com/linux/latest/source/drivers/firmware/imx/imx-scu.c#L157
+
+imx_scu_call_rpc() may fail in different ways and provide proper error value. Please use it.
+
+> +	imx_scu_call_rpc(pwrkey_ipc_handle, &msg, true); > +	state = msg.state;
+
+the conversation u8 to bool should be done here.
+
+> +
+> +	if (!state && !pdata->keystate)
+> +		state = true;
+> +
+> +	if (state ^ pdata->keystate) {
+> +		pm_wakeup_event(input->dev.parent, 0);
+> +		pdata->keystate = !!state;
+
+		the state is already bool. Why do you need extra conversations?
+
+> +		input_event(input, EV_KEY, pdata->keycode, !!state);
+
+same here.
+
+> +		input_sync(input);
+> +		if (!state)
+> +			pdata->delay_check = 0;
+> +		pm_relax(pdata->input->dev.parent);
+> +	}
+> +
+> +	if (state)
+> +		schedule_delayed_work(&pdata->check_work,
+> +				      msecs_to_jiffies(DEBOUNCE_TIME));
+> +}
+> +
+> +static struct notifier_block imx_sc_pwrkey_notifier = {
+> +	.notifier_call = imx_sc_pwrkey_notify,
+> +};
+> +
+> +static int imx_sc_pwrkey_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np = pdev->dev.of_node;
+> +	struct input_dev *input;
+> +	int ret;
+> +
+> +	ret = imx_scu_get_handle(&pwrkey_ipc_handle);
+> +	if (ret)
+> +		return ret;
+> +
+> +	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+> +	if (!pdata)
+> +		return -ENOMEM;
+> +
+> +	if (of_property_read_u32(np, "linux,keycode", &pdata->keycode) > +		pdata->keycode = KEY_POWER;
+
+According binding documentation, linux,keycode is requered parameter, in this case you 
+should fail if it is not set.
+
+> +		dev_warn(&pdev->dev, "KEY_POWER without setting in dts\n");
+> +	}
+> +
+> +	INIT_DELAYED_WORK(&pdata->check_work, imx_sc_check_for_events);
+> +
+> +	input = devm_input_allocate_device(&pdev->dev);
+> +	if (!input) {
+> +		dev_err(&pdev->dev, "failed to allocate the input device\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	input->name = pdev->name;
+> +	input->phys = "imx-sc-pwrkey/input0";
+> +	input->id.bustype = BUS_HOST;
+> +
+> +	input_set_capability(input, EV_KEY, pdata->keycode);
+> +
+> +	ret = input_register_device(input);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed to register input device\n");
+> +		return ret;
+> +	}
+> +
+> +	pdata->input = input;
+> +	platform_set_drvdata(pdev, pdata);
+> +
+> +	ret = imx_scu_irq_group_enable(SC_IRQ_GROUP_WAKE, SC_IRQ_BUTTON, true);
+> +	if (ret) {
+> +		dev_warn(&pdev->dev, "enable scu group irq failed\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = imx_scu_irq_register_notifier(&imx_sc_pwrkey_notifier);
+> +	if (ret) {
+> +		imx_scu_irq_group_enable(SC_IRQ_GROUP_WAKE, SC_IRQ_BUTTON, false);
+> +		dev_warn(&pdev->dev, "register scu notifier failed\n");
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct of_device_id imx_sc_pwrkey_ids[] = {
+> +	{ .compatible = "fsl,imx-sc-pwrkey" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, imx_sc_pwrkey_ids);
+> +
+> +static struct platform_driver imx_sc_pwrkey_driver = {
+> +	.driver = {
+> +		.name = "imx-sc-pwrkey",
+> +		.of_match_table = imx_sc_pwrkey_ids,
+> +	},
+> +	.probe = imx_sc_pwrkey_probe,
+> +};
+> +module_platform_driver(imx_sc_pwrkey_driver);
+> +
+> +MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
+> +MODULE_DESCRIPTION("i.MX System Controller Power Key Driver");
+> +MODULE_LICENSE("GPL v2");
+> 
+
+Kind regards,
+Oleksij Rempel
 
 -- 
-viresh
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
