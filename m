@@ -2,70 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36FC7A73DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 21:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5549EA73E7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 21:46:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbfICTp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 15:45:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44328 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbfICTp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 15:45:28 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61EBE2087E;
-        Tue,  3 Sep 2019 19:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567539927;
-        bh=6rDGf6Mr2PWH+edV87q7LtUbadgXTDv9RgfsX/XKqn8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jw3H8NWSRa/rp7Tx15FaQOmdJ42hgPL1DfPKDvlJtMeuGY3Dg6vh3yf8D4795tj5m
-         tI59r7Ki98NrvwlFHhIZ6Bx15f1w2DWv8YOHeEZ/koehoD56ZFPYbTSK0ngOX9DVfi
-         MAIVxuFzvhWu76lGqTl8bZoIzPrXfYJEXGunY9Z8=
-Date:   Tue, 3 Sep 2019 15:45:26 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Vineet Gupta <vgupta@synopsys.com>,
-        linux-snps-arc@lists.infradead.org
-Subject: Re: [PATCH AUTOSEL 4.19 111/167] signal/arc: Use force_sig_fault
- where appropriate
-Message-ID: <20190903194526.GH5281@sasha-vm>
-References: <20190903162519.7136-1-sashal@kernel.org>
- <20190903162519.7136-111-sashal@kernel.org>
- <87ef0xqq9f.fsf@x220.int.ebiederm.org>
+        id S1726873AbfICTqB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 15:46:01 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:53477 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfICTqB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 15:46:01 -0400
+Received: by mail-io1-f71.google.com with SMTP id l21so4218777iob.20
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 12:46:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=kXCvpHAYN0cOVaTNuIIyT705Bu5FecEadrVziKUxy6Q=;
+        b=GBoOwpfFndjOX9hMc1gBd9iuXlRiUBkBtUWGSgXE6miUZsQazvrDZ2uWtgZJEcpvTe
+         RT14XSRLc8A7eHQiRJUjVuebJJ/8PL4Z73MvQAFiMvnjfeOgv0nHbonGozQGfv343qi9
+         fbmtj/a393bv+Rv3Fth2ByAH38KW9gkmErFZd6zj2+0HySyVdua+IymyndOIiBmhjiJj
+         /sl42EjV/ZPqS5++W4VaD+jfF8moRQage43ekDpkVS7n4EXyjcefimeJVm9QET/QyvXj
+         CIhI+AQtIuz18MjxG7QNvMZaX9J4lOHpL29GMRJGVmQpsPRXyL4wrow5jjyRQu45HnZK
+         4UOA==
+X-Gm-Message-State: APjAAAUyhRF2kdP2YgvoHV/ehsAoi7HsO6o2JRbczToyXOR6+iRsnc8o
+        t7UtvROjKQcvoCHNv1zYsW0MYh6i3xV8G/KG/I/dz4BdTV3b
+X-Google-Smtp-Source: APXvYqxfj1sQQ3xKi9kgOKoFd/RTuW+Eik1p8S9uObwW6Wr/ZjuS6oTW/EALOyvbQSKtDYelMARQ70pjhIclDjrjwQY7vKbsWorC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <87ef0xqq9f.fsf@x220.int.ebiederm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a5d:80c8:: with SMTP id h8mr10417001ior.188.1567539960460;
+ Tue, 03 Sep 2019 12:46:00 -0700 (PDT)
+Date:   Tue, 03 Sep 2019 12:46:00 -0700
+In-Reply-To: <Pine.LNX.4.44L0.1909031516520.1859-100000@iolanthe.rowland.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000083be0c0591ab561e@google.com>
+Subject: Re: general protection fault in pk_probe
+From:   syzbot <syzbot+1088533649dafa1c9004@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        jikos@kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 11:49:16AM -0500, Eric W. Biederman wrote:
->Sasha Levin <sashal@kernel.org> writes:
->
->> From: "Eric W. Biederman" <ebiederm@xmission.com>
->>
->> [ Upstream commit 15773ae938d8d93d982461990bebad6e1d7a1830 ]
->
->To the best of my knowledge this is just a clean up, no changes in
->behavior are present.
->
->The only reason I can see to backport this is so that later fixes could
->be applied cleanly.
->
->So while I have no objections to this patch being backported I don't see
->why you would want to either.
+Hello,
 
-This patch along with the next one came in as a dependency for
-a8c715b4dd73c ("ARC: mm: SIGSEGV userspace trying to access kernel
-virtual memory").
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
---
-Thanks,
-Sasha
+Reported-and-tested-by:  
+syzbot+1088533649dafa1c9004@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         eea39f24 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d0c62209eedfd54e
+dashboard link: https://syzkaller.appspot.com/bug?extid=1088533649dafa1c9004
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=139bc892600000
+
+Note: testing is done by a robot and is best-effort only.
