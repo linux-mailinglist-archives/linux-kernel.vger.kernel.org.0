@@ -2,80 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 30928A6A24
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5092DA6A2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729424AbfICNkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:40:05 -0400
-Received: from muru.com ([72.249.23.125]:59570 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbfICNkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:40:05 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id B540380CF;
-        Tue,  3 Sep 2019 13:40:33 +0000 (UTC)
-Date:   Tue, 3 Sep 2019 06:40:00 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        =?utf-8?B?QW5kcsOp?= Roth <neolynx@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: Re: [RFC 5/5] ARM: dts: omap3-beagle: make explicitly compatible to
- ti,omap34xx
-Message-ID: <20190903134000.GM52127@atomide.com>
-References: <cover.1567421750.git.hns@goldelico.com>
- <150eb34a95b2e7ead8ac81a9ab275592ea31595b.1567421751.git.hns@goldelico.com>
+        id S1729410AbfICNks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:40:48 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51744 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbfICNkr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 09:40:47 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D15F660907; Tue,  3 Sep 2019 13:40:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567518046;
+        bh=kGoj/xp0kX7mOwdsd2X5M3W7dTHktSJCTS0WiuYdXKA=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=g8noLUsxOpTFeCU8y5QURhp2EV9OVmtVoHU6OmoxL0Ws8a/6Ca/9LYajuOttA1j1F
+         2c0WYrxo2WKmqURU8LE8twh1EcaFSMYL0I4qKmCqOPbvs+17r+Df4K13g0lUhCmd1v
+         m3uWz2Ujvw6Zc89MrT4yPICMylkzri9AlsJOEB2k=
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        pdx-caf-mail.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=2.0 tests=ALL_TRUSTED,BAYES_00,
+        DKIM_INVALID,DKIM_SIGNED,MISSING_DATE,MISSING_MID,SPF_NONE autolearn=no
+        autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E43AE605A2;
+        Tue,  3 Sep 2019 13:40:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1567518046;
+        bh=kGoj/xp0kX7mOwdsd2X5M3W7dTHktSJCTS0WiuYdXKA=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=TIlpV6BeruheFKPvxmNS4/No17Ba5o+UDxz0JXVRHEXf2pw8rDNKKo0wdD9QTdVm2
+         p6z9RlH39dPT7ZNO6OzwAOr57wdUvD68lgX3nKeNzgvwYMS5GbA2ViXQIF9BAvG4tk
+         NmfIi2gNznLjJIiyehTFjHPcy9S+inwMx5SpI/G4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E43AE605A2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <150eb34a95b2e7ead8ac81a9ab275592ea31595b.1567421751.git.hns@goldelico.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] ipw2x00: fix spelling mistake "initializationg" ->
+ "initialization"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190822220025.5690-1-colin.king@canonical.com>
+References: <20190822220025.5690-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Stanislav Yakovlev <stas.yakovlev@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190903134046.D15F660907@smtp.codeaurora.org>
+Date:   Tue,  3 Sep 2019 13:40:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* H. Nikolaus Schaller <hns@goldelico.com> [190902 10:56]:
-> Matching the ti-cpufreq driver needs to specify explicitly if
-> a board uses an omap34xx or omap36xx chip.
+Colin King <colin.king@canonical.com> wrote:
+
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> ---
->  arch/arm/boot/dts/omap3-beagle.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> There is a spelling mistake in an IPW_DEBUG_INFO message. Fix it.
 > 
-> diff --git a/arch/arm/boot/dts/omap3-beagle.dts b/arch/arm/boot/dts/omap3-beagle.dts
-> index e3df3c166902..d47213c7a4d0 100644
-> --- a/arch/arm/boot/dts/omap3-beagle.dts
-> +++ b/arch/arm/boot/dts/omap3-beagle.dts
-> @@ -8,7 +8,7 @@
->  
->  / {
->  	model = "TI OMAP3 BeagleBoard";
-> -	compatible = "ti,omap3-beagle", "ti,omap3";
-> +	compatible = "ti,omap3-beagle", "ti,omap34xx", "ti,omap3";
->  
->  	cpus {
->  		cpu@0 {
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-For a clean-up patch, we should just use the following compatibles
-in general for omap3:
+Patch applied to wireless-drivers-next.git, thanks.
 
-ti,omap3	omap3
-ti,omap34	omap34xx and omap35xx
-ti,omap36	omap36xx and dm37xx
-ti,am35		am35xx
+14aba89386a4 ipw2x00: fix spelling mistake "initializationg" -> "initialization"
 
-So we should just leave out the "xx" part. But we still need parse
-also the legacy binding with "xx" in drivers.
+-- 
+https://patchwork.kernel.org/patch/11110159/
 
-Regards,
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-Tony
