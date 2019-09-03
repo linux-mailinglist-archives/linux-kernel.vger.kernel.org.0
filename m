@@ -2,177 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EB76A612C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:19:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36862A6169
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbfICGTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:19:42 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:18832 "EHLO pegase1.c-s.fr"
+        id S1727045AbfICG3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:29:07 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:46958 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbfICGTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:19:41 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46Mxcq0v7nzB09ZC;
-        Tue,  3 Sep 2019 08:19:39 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=MLogrkjT; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id q27xp8ZHa-je; Tue,  3 Sep 2019 08:19:39 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46Mxcp6v03z9vBnX;
-        Tue,  3 Sep 2019 08:19:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1567491579; bh=vpywQY0jhYCtLj16pKTZzrclmKJxpqH5sO++tsorcW0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=MLogrkjT5XOSI5cZayVsFTMCcSoCuHf36ABgH/ikEzCiH2/FPIB9FWVSFOLz4UQhK
-         HSIteJrIO9Uh4EL7RssqI+2ia25i4v8EQDp/PA3dj2u+1a9/I0BLYTsE+NwQuxa9t0
-         D7v7bsXUQULUZAhTwvluxL9d+EpRFhNrNed6e3jg=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D15A28B7A3;
-        Tue,  3 Sep 2019 08:19:39 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id xkPFnxZYp08y; Tue,  3 Sep 2019 08:19:39 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A71078B761;
-        Tue,  3 Sep 2019 08:19:38 +0200 (CEST)
-Subject: Re: [PATCH v2 4/6] powerpc: Chunk calls to flush_dcache_range in
- arch_*_memory
-To:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Qian Cai <cai@lca.pw>, Nicholas Piggin <npiggin@gmail.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20190903052407.16638-1-alastair@au1.ibm.com>
- <20190903052407.16638-5-alastair@au1.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <3bde4dbc-5176-0df5-a0bf-993eef2a333b@c-s.fr>
-Date:   Tue, 3 Sep 2019 08:19:38 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190903052407.16638-5-alastair@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        id S1726053AbfICG3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:29:07 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0FC0B1A02B3;
+        Tue,  3 Sep 2019 08:29:04 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 764581A0050;
+        Tue,  3 Sep 2019 08:28:59 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8A3D9402B7;
+        Tue,  3 Sep 2019 14:28:53 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, leoyang.li@nxp.com
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>,
+        Martin Fuzzey <mfuzzey@parkeon.com>
+Subject: [v3,1/2] dt-bindings: rtc: pcf85263/pcf85363: add some properties
+Date:   Tue,  3 Sep 2019 14:18:52 +0800
+Message-Id: <20190903061853.19793-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add some properties for pcf85263/pcf85363 as follows:
+  - interrupt-output-pin: string type
+  - quartz-load-femtofarads: integer type
+  - nxp,quartz-drive-strength: integer type
+  - nxp,quartz-low-jitter: bool type
+  - wakeup-source: bool type
 
+Signed-off-by: Martin Fuzzey <mfuzzey@parkeon.com>
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+Change in v3:
+	- None
 
-Le 03/09/2019 à 07:23, Alastair D'Silva a écrit :
-> From: Alastair D'Silva <alastair@d-silva.org>
-> 
-> When presented with large amounts of memory being hotplugged
-> (in my test case, ~890GB), the call to flush_dcache_range takes
-> a while (~50 seconds), triggering RCU stalls.
-> 
-> This patch breaks up the call into 1GB chunks, calling
-> cond_resched() inbetween to allow the scheduler to run.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-> ---
->   arch/powerpc/mm/mem.c | 18 ++++++++++++++++--
->   1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-> index cd540123874d..854aaea2c6ae 100644
-> --- a/arch/powerpc/mm/mem.c
-> +++ b/arch/powerpc/mm/mem.c
-> @@ -104,11 +104,14 @@ int __weak remove_section_mapping(unsigned long start, unsigned long end)
->   	return -ENODEV;
->   }
->   
-> +#define FLUSH_CHUNK_SIZE SZ_1G
+Change in v2:
+	- Replace properties name
+	  quartz-load-capacitance -> quartz-load-femtofarads
+	  quartz-drive-strength -> nxp,quartz-drive-strength
+	  quartz-low-jitter -> nxp,quartz-low-jitter
+	- Replace drive strength name
+	  PCF85263_QUARTZDRIVE_NORMAL -> PCF85263_QUARTZDRIVE_100ko
+	  PCF85263_QUARTZDRIVE_LOW -> PCF85263_QUARTZDRIVE_60ko
+	  PCF85263_QUARTZDRIVE_HIGH -> PCF85263_QUARTZDRIVE_500ko
+	- Set default interrupt-output-pin as "INTA"
 
-Maybe the name is a bit long for a local define. See if we could reduce 
-code line splits below by shortening this name.
+ .../devicetree/bindings/rtc/pcf85363.txt      | 29 +++++++++++++++++++
+ include/dt-bindings/rtc/pcf85363.h            | 15 ++++++++++
+ 2 files changed, 44 insertions(+)
+ create mode 100644 include/dt-bindings/rtc/pcf85363.h
 
-> +
->   int __ref arch_add_memory(int nid, u64 start, u64 size,
->   			struct mhp_restrictions *restrictions)
->   {
->   	unsigned long start_pfn = start >> PAGE_SHIFT;
->   	unsigned long nr_pages = size >> PAGE_SHIFT;
-> +	u64 i;
->   	int rc;
->   
->   	resize_hpt_for_hotplug(memblock_phys_mem_size());
-> @@ -120,7 +123,12 @@ int __ref arch_add_memory(int nid, u64 start, u64 size,
->   			start, start + size, rc);
->   		return -EFAULT;
->   	}
-> -	flush_dcache_range(start, start + size);
-> +
-> +	for (i = 0; i < size; i += FLUSH_CHUNK_SIZE) {
-> +		flush_dcache_range(start + i,
-> +				   min(start + size, start + i + FLUSH_CHUNK_SIZE));
+diff --git a/Documentation/devicetree/bindings/rtc/pcf85363.txt b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+index 94adc1cf93d9..588f688b30d1 100644
+--- a/Documentation/devicetree/bindings/rtc/pcf85363.txt
++++ b/Documentation/devicetree/bindings/rtc/pcf85363.txt
+@@ -8,10 +8,39 @@ Required properties:
+ Optional properties:
+ - interrupts: IRQ line for the RTC (not implemented).
+ 
++- interrupt-output-pin: The interrupt output pin must be
++  "INTA" or "INTB", default value is "INTA"
++
++- quartz-load-femtofarads: The internal capacitor to select for the quartz:
++	PCF85263_QUARTZCAP_7pF		[0]
++	PCF85263_QUARTZCAP_6pF		[1]
++	PCF85263_QUARTZCAP_12p5pF	[2] DEFAULT
++
++- nxp,quartz-drive-strength: Drive strength for the quartz:
++	PCF85263_QUARTZDRIVE_100ko	[0] DEFAULT
++	PCF85263_QUARTZDRIVE_60ko	[1]
++	PCF85263_QUARTZDRIVE_500ko	[2]
++
++- nxp,quartz-low-jitter: Boolean property, if present enables low jitter mode
++  which reduces jitter at the cost of increased power consumption.
++
++- wakeup-source: Boolean property, Please refer to
++  Documentation/devicetree/bindings/power/wakeup-source.txt
++
+ Example:
+ 
+ pcf85363: pcf85363@51 {
+ 	compatible = "nxp,pcf85363";
+ 	reg = <0x51>;
++
++	interrupt-parent = <&gpio1>;
++	interrupts = <18 IRQ_TYPE_EDGE_FALLING>;
++
++	#include <dt-bindings/rtc/pcf85363.h>
++	wakeup-source;
++	interrupt-output-pin = "INTA";
++	quartz-load-femtofarads = <PCF85363_QUARTZCAP_12p5pF>;
++	nxp,quartz-drive-strength = <PCF85363_QUARTZDRIVE_60ko>;
++	nxp,quartz-low-jitter;
+ };
+ 
+diff --git a/include/dt-bindings/rtc/pcf85363.h b/include/dt-bindings/rtc/pcf85363.h
+new file mode 100644
+index 000000000000..f71b151bc481
+--- /dev/null
++++ b/include/dt-bindings/rtc/pcf85363.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _DT_BINDINGS_RTC_PCF85363_H
++#define _DT_BINDINGS_RTC_PCF85363_H
++
++/* Quartz capacitance */
++#define PCF85363_QUARTZCAP_7pF		0
++#define PCF85363_QUARTZCAP_6pF		1
++#define PCF85363_QUARTZCAP_12p5pF	2
++
++/* Quartz drive strength */
++#define PCF85363_QUARTZDRIVE_100ko	0
++#define PCF85363_QUARTZDRIVE_60ko	1
++#define PCF85363_QUARTZDRIVE_500ko	2
++
++#endif /* _DT_BINDINGS_RTC_PCF85363_H */
+-- 
+2.17.1
 
-My eyes don't like it.
-
-What about
-	for (; i < size; i += FLUSH_CHUNK_SIZE) {
-		int len = min(size - i, FLUSH_CHUNK_SIZE);
-
-		flush_dcache_range(start + i, start + i + len);
-		cond_resched();
-	}
-
-or
-
-	end = start + size;
-	for (; start < end; start += FLUSH_CHUNK_SIZE, size -= FLUSH_CHUNK_SIZE) {
-		int len = min(size, FLUSH_CHUNK_SIZE);
-
-		flush_dcache_range(start, start + len);
-		cond_resched();
-	}
-
-> +		cond_resched();
-> +	}
->   
->   	return __add_pages(nid, start_pfn, nr_pages, restrictions);
->   }
-> @@ -131,13 +139,19 @@ void __ref arch_remove_memory(int nid, u64 start, u64 size,
->   	unsigned long start_pfn = start >> PAGE_SHIFT;
->   	unsigned long nr_pages = size >> PAGE_SHIFT;
->   	struct page *page = pfn_to_page(start_pfn) + vmem_altmap_offset(altmap);
-> +	u64 i;
->   	int ret;
->   
->   	__remove_pages(page_zone(page), start_pfn, nr_pages, altmap);
->   
->   	/* Remove htab bolted mappings for this section of memory */
->   	start = (unsigned long)__va(start);
-> -	flush_dcache_range(start, start + size);
-> +	for (i = 0; i < size; i += FLUSH_CHUNK_SIZE) {
-> +		flush_dcache_range(start + i,
-> +				   min(start + size, start + i + FLUSH_CHUNK_SIZE));
-> +		cond_resched();
-> +	}
-> +
-
-This piece of code looks pretty similar to the one before. Can we 
-refactor into a small helper ?
-
->   	ret = remove_section_mapping(start, start + size);
->   	WARN_ON_ONCE(ret);
->   
-> 
-
-Christophe
