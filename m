@@ -2,204 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EE3AA7431
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:05:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEBE2A7441
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:06:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfICUFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 16:05:17 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42898 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfICUFQ (ORCPT
+        id S1726989AbfICUGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 16:06:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53716 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfICUGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:05:16 -0400
-Received: by mail-pf1-f194.google.com with SMTP id w22so3106295pfi.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 13:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=29Qri/KXgUDgYfdOZ88fjJJOMZcARQYfy1B4reZQb8c=;
-        b=Bc9wK/zblLGMuThMFStgTMR+Yuk5YZw/2OmzZKkNBCmEcFehCD/s4K1pbKKLrFQA05
-         mPmHzEIztfOvQcEOIKXnzaWKwPLSifbtOQKvCSKx1ILGYfhNrkkFERSz53zkUM9YgF5j
-         2Qzq8rXeRv4y/MaRj50LsMtZJS/kv+gom5Ifo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=29Qri/KXgUDgYfdOZ88fjJJOMZcARQYfy1B4reZQb8c=;
-        b=G1qClCbmsxP02ciYIzUkxCCqjQUgRqRQK8GerZErkILo1rfWDdeNZSHWt2Z1YUXHlw
-         xYlRotwblNlQ1xHgB7NQPTkNRVBWmR7kD19pl6g7Jpn5udFYz+lUgtUxPO7q0b93hjUU
-         /JLYyUaWKv3gkpHechmA7bJsBP//ktbgyzd3hq+hUzQ+kJugk6O9Dx444NvHR3Zp7eIg
-         wu45l10nQmkrMMu8rNr0Q1X2lH9x9p/CMA8A7yFeMzcQqw0mf4+9nmxQmUIs270NLTD7
-         7LIfFz4zxqwmj3ReoDPQ6kkexDk24i0nmEfXvLZVmgVVOYnuuFFkavPmMBtNGLzlUAOh
-         CzEQ==
-X-Gm-Message-State: APjAAAU2IMwjeiUwT9DSrwgHnBCnOlb7UMv/8p8Gjbapkw1oDgIxjQoK
-        a0jjKq+rH1C1AL2jFw5aTZ3jBe6j/Rw=
-X-Google-Smtp-Source: APXvYqzWwyyPykUJ8+f6u/buSmFd9exUPGkAK1eD0pBWdCTcvskP3nkPl9BvPjdTnUwebYQ7ayLfuA==
-X-Received: by 2002:a17:90a:d990:: with SMTP id d16mr1009540pjv.55.1567541114848;
-        Tue, 03 Sep 2019 13:05:14 -0700 (PDT)
-Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
-        by smtp.gmail.com with ESMTPSA id k36sm16606308pgl.42.2019.09.03.13.05.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 13:05:14 -0700 (PDT)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Tim Murray <timmurray@google.com>, carmenjackson@google.com,
-        mayankgupta@google.com, dancol@google.com, rostedt@goodmis.org,
-        minchan@kernel.org, akpm@linux-foundation.org,
-        kernel-team@android.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Jerome Glisse" <jglisse@redhat.com>, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.cz>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH] mm: emit tracepoint when RSS changes by threshold
-Date:   Tue,  3 Sep 2019 16:05:03 -0400
-Message-Id: <20190903200503.147973-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+        Tue, 3 Sep 2019 16:06:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=s/mxBv481g4gknPtfmgtkEvU8Nr3mAfkiqeLHsTDIQ0=; b=ilKCQ7OunKsvHtouU1msoWwVh
+        4G5Ha3b/T1/I/Sah2EY9NQ/wKA6JfImRCwX1VWlUMrt8TsPKtvjnSq3xyUGhpoEO5D2XYl2Jh28qj
+        KoACNHg2EvRbMxy15aJnQ6zj2iZ7pk61sHtakaNpZ2eH8/vqxkM8KPyS8gAy9Vj1gCPK0kW+aXF52
+        t3tSd35yTSdOGZYEnzG4vrkGqrmC7UvmFEvFPkTYZ5TPtdnoHi5TLozGxg95lY9U3bIA0fJs71bI8
+        fV015J+2lXOo+TBuja8TMrlMTBKqCib/+xMCROmKKDPi4ChNIZfQAJ7IEU2NSFOgKF1Hhtyo9LAgg
+        TXHv1XeYg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5F41-0006sN-ME; Tue, 03 Sep 2019 20:06:07 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 39697301A76;
+        Tue,  3 Sep 2019 22:05:27 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7A1A12097777E; Tue,  3 Sep 2019 22:06:03 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 22:06:03 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH 2/3] task: RCU protect tasks on the runqueue
+Message-ID: <20190903200603.GW2349@hirez.programming.kicks-ass.net>
+References: <87tv9uiq9r.fsf@x220.int.ebiederm.org>
+ <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
+ <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
+ <878sr6t21a.fsf_-_@x220.int.ebiederm.org>
+ <20190903074117.GX2369@hirez.programming.kicks-ass.net>
+ <20190903074718.GT2386@hirez.programming.kicks-ass.net>
+ <87k1apqqgk.fsf@x220.int.ebiederm.org>
+ <CAHk-=wjVGLr8wArT9P4MXxA-XpkG=9ZXdjM3vpemSF25vYiLoA@mail.gmail.com>
+ <874l1tp7st.fsf@x220.int.ebiederm.org>
+ <CAHk-=wjvyRJEdativFqqGGxzSgWnc-m7b+B04iQBMcZV4uM=hA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjvyRJEdativFqqGGxzSgWnc-m7b+B04iQBMcZV4uM=hA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Useful to track how RSS is changing per TGID. Several Android teams have
-been using this patch in various kernel trees for half a year now. Many
-reported to me it is really useful.
+On Tue, Sep 03, 2019 at 12:18:47PM -0700, Linus Torvalds wrote:
+> Now, if you can point to some particular field where that ordering
+> makes sense for the particular case of "make it active on the
+> runqueue" vs "look up the task from the runqueue using RCU", then I do
+> think that the whole release->acquire consistency makes sense.
+> 
+> But it's not clear that such a field exists, particularly when this is
+> in no way the *common* way to even get a task pointer, and other paths
+> do *not* use the runqueue as the serialization point.
 
-Initial patch developed by Tim Murray. Changes I made from original patch:
-o Prevent any additional space consumed by mm_struct.
-o Keep overhead low by checking if tracing is enabled.
-o Add some noise reduction and lower overhead by emitting only on
-  threshold changes.
+Even if we could find a case (and I'm not seeing one in a hurry), I
+would try really hard to avoid adding extra barriers here and instead
+make the consumer a little more complicated if at all possible.
 
-Co-developed-by: Tim Murray <timmurray@google.com>
-Signed-off-by: Tim Murray <timmurray@google.com>
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+The Power folks got rid of a SYNC (yes, more expensive than LWSYNC) from
+their __switch_to() implementation and that had a measurable impact.
 
----
-
-Cc: carmenjackson@google.com
-Cc: mayankgupta@google.com
-Cc: dancol@google.com
-Cc: rostedt@goodmis.org
-Cc: minchan@kernel.org
-Cc: akpm@linux-foundation.org
-Cc: kernel-team@android.com
-
- include/linux/mm.h          | 14 +++++++++++---
- include/trace/events/kmem.h | 21 +++++++++++++++++++++
- mm/memory.c                 | 20 ++++++++++++++++++++
- 3 files changed, 52 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0334ca97c584..823aaf759bdb 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1671,19 +1671,27 @@ static inline unsigned long get_mm_counter(struct mm_struct *mm, int member)
- 	return (unsigned long)val;
- }
- 
-+void mm_trace_rss_stat(int member, long count, long value);
-+
- static inline void add_mm_counter(struct mm_struct *mm, int member, long value)
- {
--	atomic_long_add(value, &mm->rss_stat.count[member]);
-+	long count = atomic_long_add_return(value, &mm->rss_stat.count[member]);
-+
-+	mm_trace_rss_stat(member, count, value);
- }
- 
- static inline void inc_mm_counter(struct mm_struct *mm, int member)
- {
--	atomic_long_inc(&mm->rss_stat.count[member]);
-+	long count = atomic_long_inc_return(&mm->rss_stat.count[member]);
-+
-+	mm_trace_rss_stat(member, count, 1);
- }
- 
- static inline void dec_mm_counter(struct mm_struct *mm, int member)
- {
--	atomic_long_dec(&mm->rss_stat.count[member]);
-+	long count = atomic_long_dec_return(&mm->rss_stat.count[member]);
-+
-+	mm_trace_rss_stat(member, count, -1);
- }
- 
- /* Optimized variant when page is already known not to be PageAnon */
-diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-index eb57e3037deb..8b88e04fafbf 100644
---- a/include/trace/events/kmem.h
-+++ b/include/trace/events/kmem.h
-@@ -315,6 +315,27 @@ TRACE_EVENT(mm_page_alloc_extfrag,
- 		__entry->change_ownership)
- );
- 
-+TRACE_EVENT(rss_stat,
-+
-+	TP_PROTO(int member,
-+		long count),
-+
-+	TP_ARGS(member, count),
-+
-+	TP_STRUCT__entry(
-+		__field(int, member)
-+		__field(long, size)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->member = member;
-+		__entry->size = (count << PAGE_SHIFT);
-+	),
-+
-+	TP_printk("member=%d size=%ldB",
-+		__entry->member,
-+		__entry->size)
-+	);
- #endif /* _TRACE_KMEM_H */
- 
- /* This part must be outside protection */
-diff --git a/mm/memory.c b/mm/memory.c
-index e2bb51b6242e..9d81322c24a3 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -72,6 +72,8 @@
- #include <linux/oom.h>
- #include <linux/numa.h>
- 
-+#include <trace/events/kmem.h>
-+
- #include <asm/io.h>
- #include <asm/mmu_context.h>
- #include <asm/pgalloc.h>
-@@ -140,6 +142,24 @@ static int __init init_zero_pfn(void)
- }
- core_initcall(init_zero_pfn);
- 
-+/*
-+ * This threshold is the boundary in the value space, that the counter has to
-+ * advance before we trace it. Should be a power of 2. It is to reduce unwanted
-+ * trace overhead. The counter is in units of number of pages.
-+ */
-+#define TRACE_MM_COUNTER_THRESHOLD 128
-+
-+void mm_trace_rss_stat(int member, long count, long value)
-+{
-+	long thresh_mask = ~(TRACE_MM_COUNTER_THRESHOLD - 1);
-+
-+	if (!trace_rss_stat_enabled())
-+		return;
-+
-+	/* Threshold roll-over, trace it */
-+	if ((count & thresh_mask) != ((count - value) & thresh_mask))
-+		trace_rss_stat(member, count);
-+}
- 
- #if defined(SPLIT_RSS_COUNTING)
- 
--- 
-2.23.0.187.g17f5b7556c-goog
+9145effd626d ("powerpc/64: Drop explicit hwsync in context switch")
