@@ -2,121 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 25FD0A65EA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:43:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DE33A65FC
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfICJnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 05:43:13 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36873 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfICJnN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:43:13 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r195so1133203wme.2
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 02:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0J18E0tZ/M/Swa0MUYxxRnMzuj0KjoIKolLmA5LLu3s=;
-        b=T/ttRM9OHTtfzkq6pm9FFDX4XlOx+nR6jsMAwQPplwFxKY4FU81c6dnzDYIZ6R1a21
-         w++T6Z0eqyHOMsTFsD8OF4nn2uSESNoTCMsgz+twP5K3GjKvCIHc6FhBWegxMHNh8BWO
-         S8TMW7e7ofYZyWIhFBjiONySFaUBe2/jgzmrBkRP1VoeIAtxf0keoWJDoq72Fs+By48F
-         pVrNR3x05ZIhXKaX6a8bP2zKnkzjXIS87zx78+eGrvUpGJSEi3hcuSlyEr4b1fjanFY/
-         lwz9LOh8xJgKt3IkJH6yOYhF1xyiO8e/zSGISv2GdfmM3pGc8ZJtL4uULR9pB/jwEdDG
-         2iAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0J18E0tZ/M/Swa0MUYxxRnMzuj0KjoIKolLmA5LLu3s=;
-        b=SYvuRaRqZkBUH9TycNU78YWiSs9TQgrYbURXAP1hpaa4stANJ4K0SpUUlCPvkuu9fh
-         yKhNwfhH4cxcqvdExr4JOdX7r9AoZpgsqu7s7/pD0oxVKUSDL4GmWGRKy7dwJEKF1wzl
-         lMGboJgNS6Fxn9EsHVevyP556Z/6lFXW4h60jlCWTIYRjoYteINnypFnxMuQs54NPNmC
-         fYPLYXS518p11+tRrvU9CdLI4v2Kly7qoiNK/gEAXbt6uX00dQ6qoJ6yKazD4kaQFnXk
-         +5l+axQr2rlaAKlC03431fGsZzOzoHSzEf+XJaSBj/icUi2WNX+/6jVOXo++ZCu21/Ye
-         Ar8w==
-X-Gm-Message-State: APjAAAUK6wobg9Wtlcz0H0D3Pu26hqVRlAVmPzNjnyQ2Ly2i/0btoRCZ
-        LZbpeKX/qVxYG6PEDA3FVc/aFbFWPts39Wqk9kzG8sa57t1XmA==
-X-Google-Smtp-Source: APXvYqxbJlSC6bbjR/fc9S4RRnrIxUzp53YKAKAPuow/KORWKimQsGdW7wlS1bRSUd9j2/LNiTSbDOCOd/vDymgnCMQ=
-X-Received: by 2002:a05:600c:21d1:: with SMTP id x17mr2235442wmj.123.1567503790526;
- Tue, 03 Sep 2019 02:43:10 -0700 (PDT)
+        id S1728621AbfICJqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 05:46:13 -0400
+Received: from mga18.intel.com ([134.134.136.126]:11447 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728592AbfICJqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 05:46:09 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 02:46:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,462,1559545200"; 
+   d="scan'208";a="187200218"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga006.jf.intel.com with ESMTP; 03 Sep 2019 02:46:05 -0700
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1i55O1-000FcR-BB; Tue, 03 Sep 2019 17:46:05 +0800
+Date:   Tue, 3 Sep 2019 17:45:47 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     kbuild-all@01.org, Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH 3/3] task: Clean house now that tasks on the runqueue are
+ rcu protected
+Message-ID: <201909031743.p1GcoXXk%lkp@intel.com>
+References: <8736het20c.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-References: <20190813212251.12316-1-ben.whitten@gmail.com> <20190814100115.GF4640@sirena.co.uk>
- <CAF3==iuZvCnmAg9hqs8ivHw0wHaUQEf8k9U8=KTekMMjdyyEKg@mail.gmail.com> <20190814161938.GI4640@sirena.co.uk>
-In-Reply-To: <20190814161938.GI4640@sirena.co.uk>
-From:   Ben Whitten <ben.whitten@gmail.com>
-Date:   Tue, 3 Sep 2019 10:42:59 +0100
-Message-ID: <CAF3==ivJycGpSpSy3Y9cL7kNf27=kZmETpb-v0=L7BNd1ZPJtg@mail.gmail.com>
-Subject: Re: [PATCH] regmap: fix writes to non incrementing registers
-To:     Mark Brown <broonie@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, nandor.han@vaisala.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8736het20c.fsf_-_@x220.int.ebiederm.org>
+X-Patchwork-Hint: ignore
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Aug 2019 at 17:19, Mark Brown <broonie@kernel.org> wrote:
->
-> On Wed, Aug 14, 2019 at 02:09:11PM +0100, Ben Whitten wrote:
->
-> > So it appeared that the last patch in this area for validating a register
-> > block [1] broke the regmap_noinc_write use case.
->
-> Please include human readable descriptions of things like commits and
-> issues being discussed in e-mail in your mails, this makes them much
-> easier for humans to read especially when they have no internet access.
-> I do frequently catch up on my mail on flights or while otherwise
-> travelling so this is even more pressing for me than just being about
-> making things a bit easier to read.
+Hi "Eric,
 
-Sure thing, the patch adds in a call which checks if range of registers
-is writeable within _regmap_raw_write_impl. This check uses the length
-of the data given to _regmap_raw_write_impl to determine the range
-of registers to check from the given starting register.
+Thank you for the patch! Perhaps something to improve:
 
-> > Because regmap_noinc_write calls _regmap_raw_write and in
-> > turn hits the _regmap_raw_write_impl, the val_len is the depth of the
-> > one register to write to and not a block of registers which is assumed
-> > by the previous check. By inserting a check that the first (and only)
-> > register is a noinc one allows me to start writing to my FIFO again.
->
-> > I'm all for an alternative solution though if there is a cleaner approach.
->
-> Like I said if we're checking for nonincrementing registers it shouldn't
-> just be on the first register, it should be for every address in the
-> range.  Probably accept it if the nonincrementing register is the first
-> and error otherwise, with some documentation explaining what's going on.
+[auto build test WARNING on linus/master]
+[cannot apply to v5.3-rc7 next-20190902]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-I see yes, we don't want to stumble into a noinc register by mistake when
-writing a register range.
+url:    https://github.com/0day-ci/linux/commits/Eric-W-Biederman/task-Making-tasks-on-the-runqueue-rcu-protected/20190903-130546
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-You mentioned that we likely have breakage elsewhere, I believe that
-regmap_noinc_write probably shouldn't ever have been calling
-_regmap_raw_write.
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-Whilst regmap_noinc_read calls _regmap_raw_read, this function doesn't
-do any massage and just calls map->bus->read after selecting a page.
-regmap_raw_write on the other hand is meant for writing blocks to
-register ranges as these added checks show, and does split work based
-on page length etc.
-This splitting up is something that shouldn't apply to the FIFO as it's a
-deep register.
 
-I modified regmap_noinc_write to be much more like the raw_read
-internals, just select page then attempt a map->bus->gather_write,
-falling back to linearising if that's not supported.
-This approach worked at getting writing working into the FIFO.
+sparse warnings: (new ones prefixed by >>)
 
-So I would propose that there are two 'Fixes:' patches here, one
-enhancing the checking when writing a register range to ensure you
-don't stumble into a noinc register.
-And one to fix noinc_writes to send data directly to the bus once the
-page is selected with no splitting up as you would a range.
+>> kernel/sched/membarrier.c:74:21: sparse: sparse: incompatible types in comparison expression (different address spaces):
+>> kernel/sched/membarrier.c:74:21: sparse:    struct task_struct [noderef] <asn:4> *
+>> kernel/sched/membarrier.c:74:21: sparse:    struct task_struct *
+   kernel/sched/membarrier.c:153:21: sparse: sparse: incompatible types in comparison expression (different address spaces):
+   kernel/sched/membarrier.c:153:21: sparse:    struct task_struct [noderef] <asn:4> *
+   kernel/sched/membarrier.c:153:21: sparse:    struct task_struct *
 
-Kind regards,
-Ben
+vim +74 kernel/sched/membarrier.c
+
+    32	
+    33	static int membarrier_global_expedited(void)
+    34	{
+    35		int cpu;
+    36		bool fallback = false;
+    37		cpumask_var_t tmpmask;
+    38	
+    39		if (num_online_cpus() == 1)
+    40			return 0;
+    41	
+    42		/*
+    43		 * Matches memory barriers around rq->curr modification in
+    44		 * scheduler.
+    45		 */
+    46		smp_mb();	/* system call entry is not a mb. */
+    47	
+    48		/*
+    49		 * Expedited membarrier commands guarantee that they won't
+    50		 * block, hence the GFP_NOWAIT allocation flag and fallback
+    51		 * implementation.
+    52		 */
+    53		if (!zalloc_cpumask_var(&tmpmask, GFP_NOWAIT)) {
+    54			/* Fallback for OOM. */
+    55			fallback = true;
+    56		}
+    57	
+    58		cpus_read_lock();
+    59		for_each_online_cpu(cpu) {
+    60			struct task_struct *p;
+    61	
+    62			/*
+    63			 * Skipping the current CPU is OK even through we can be
+    64			 * migrated at any point. The current CPU, at the point
+    65			 * where we read raw_smp_processor_id(), is ensured to
+    66			 * be in program order with respect to the caller
+    67			 * thread. Therefore, we can skip this CPU from the
+    68			 * iteration.
+    69			 */
+    70			if (cpu == raw_smp_processor_id())
+    71				continue;
+    72	
+    73			rcu_read_lock();
+  > 74			p = rcu_dereference(cpu_rq(cpu)->curr);
+    75			if (p && p->mm && (atomic_read(&p->mm->membarrier_state) &
+    76					   MEMBARRIER_STATE_GLOBAL_EXPEDITED)) {
+    77				if (!fallback)
+    78					__cpumask_set_cpu(cpu, tmpmask);
+    79				else
+    80					smp_call_function_single(cpu, ipi_mb, NULL, 1);
+    81			}
+    82			rcu_read_unlock();
+    83		}
+    84		if (!fallback) {
+    85			preempt_disable();
+    86			smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
+    87			preempt_enable();
+    88			free_cpumask_var(tmpmask);
+    89		}
+    90		cpus_read_unlock();
+    91	
+    92		/*
+    93		 * Memory barrier on the caller thread _after_ we finished
+    94		 * waiting for the last IPI. Matches memory barriers around
+    95		 * rq->curr modification in scheduler.
+    96		 */
+    97		smp_mb();	/* exit from system call is not a mb */
+    98		return 0;
+    99	}
+   100	
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
