@@ -2,115 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB973A6B35
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F5E9A6B39
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:22:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbfICOWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:22:14 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42856 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729113AbfICOWL (ORCPT
+        id S1729615AbfICOWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:22:42 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46714 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729589AbfICOWk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:22:11 -0400
-Received: by mail-qk1-f195.google.com with SMTP id f13so16039109qkm.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:11 -0700 (PDT)
+        Tue, 3 Sep 2019 10:22:40 -0400
+Received: by mail-lf1-f65.google.com with SMTP id t8so582326lfc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zXvrHc8bIlM8VodivjNDsnx6+oAEFk8HI08Pi/PdZy0=;
-        b=arZrudyLT8vTBXeGc+RzCc8cTYEs3iyuTYalOAK8Glv1IOK+eWWBNQWyvS8kFPmvs8
-         cXIvmXi+hJkM1FOJpx5IPOjfYvPRIzhid3fb2nB/JrVWSTaqecT2VZSSzQiT3GLBEhVD
-         smanZ/a5pgEUewoLHRsTzIMv9ved1r7kbjWXhXrjDyLyY7rPLZf0ySFrYu7mKpvQJxkF
-         6zkSA2MEAIopfNY5Ll0n+vlI8Z1hVWLGrtAY/KyJTTp+EipIkSMRL9vg7B0zT/2F6vW+
-         GLuEGCAkw1KhNkAUKZ5Qs8nmOqIqiZ993sMb4VYDVKWNLkoIjdzO2woNnmAnCXfVizng
-         kRPg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Jh5yAZhoAj5RycS/TnID5yrHbMp2QKGAFD93Hw0bAOI=;
+        b=cELaEzNikSOlmreYq+cxGTxRpffSojGMN41csSVqIGCzJKNrr/a7hyJZ1SLbsRfp9q
+         TpymGj9OO6h9wE5NxjGDLLSXxMZrciULGZE/Uq12zZkxx64h+9Zbixi/10lgQN8iEjjb
+         cwl5rNwuq4hziY7vSlAgWzQ9STjxeVV+o56PhVA5S6KfApTp0LM1Nsy/5QbDRfhCeDnb
+         a2GFjq3E0Da9kDGLDMKInpKxhyaTS+yTbe5Ja/BRBnp3bh9jqXqisysukIUCNUer0Gvm
+         M65mWyyyc4/+2nuttKsZ2TjFCbhLcPbkGqr+nS9ANXQndoauAkU+K3MpcuABubjSWSyL
+         2haQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zXvrHc8bIlM8VodivjNDsnx6+oAEFk8HI08Pi/PdZy0=;
-        b=Wxc5T0dy+G30uE2yM2uUj9eMscNRZ7EnVc/sgyKC8jjVCnDWOHPgBpzCOl9oVgYsTj
-         jGpKIsdKuzam9fiG6vm/b6NiDji2AMMPc6N/UVlWO6sNoxd/WVDX0nJfYw5S5mcgx5FX
-         gJSsQmRIvmTcFVAHqmdmhBhSLxu+m/M1x3kmMOg/dHCylVvNtEss2OMllg1N6oBHwkbj
-         QLZQBMAGKmjyg+YKcGXEP2FFNabcN6mdHDRele9wWOq5kE7azneHeYICz7E0zQ8boohY
-         UkdlhNkE0Z0mRsEGHswitXDCWxUKt7KI4A9BpOwA+CMOnJpUVInPuGFxD9vlxXzJPbNJ
-         VHDg==
-X-Gm-Message-State: APjAAAXupm6sDzLrDzTm8y1UBOEY8W/B3P2PC2IQuglvQNzEsebApyVn
-        AHnmmF0eOE/YvH/aU+frPs8AKonulBCBvblF+6dnhw==
-X-Google-Smtp-Source: APXvYqzRj6Qy94zXxM718BMGrBx7jps9qVb8rKF7Cps40w/i6I9cXmMkiicMdflzzRvbKZLV3AfkOSAorVEoJeh+BqA=
-X-Received: by 2002:a05:620a:1367:: with SMTP id d7mr12839832qkl.20.1567520530372;
- Tue, 03 Sep 2019 07:22:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190822132811.31294-1-patrick.bellasi@arm.com>
- <20190822132811.31294-2-patrick.bellasi@arm.com> <CAJuCfpGWtrg02LNE3PJZag9-LLVT=by2v+9x_tm1PyoXwZ8DqQ@mail.gmail.com>
- <20190903085248.GB8756@blackbody.suse.cz>
-In-Reply-To: <20190903085248.GB8756@blackbody.suse.cz>
-From:   Joel Fernandes <joelaf@google.com>
-Date:   Tue, 3 Sep 2019 10:21:59 -0400
-Message-ID: <CAJWu+opnNT3bQwe+SsdR0Q+PSt7DA=JAQ_5sbZ6h2DXd4ZqwHA@mail.gmail.com>
-Subject: Re: [PATCH v14 1/6] sched/core: uclamp: Extend CPU's cgroup controller
-To:     =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Alessio Balsini <balsini@android.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Paul Turner <pjt@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Todd Kjos <tkjos@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        cgroups mailinglist <cgroups@vger.kernel.org>,
-        linux-api@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Jh5yAZhoAj5RycS/TnID5yrHbMp2QKGAFD93Hw0bAOI=;
+        b=c/EFKd3MpvLMnX0mriIHJXApRsKBlAf3W0xp7xcFG1e8xBoT5GD0/UcTuUyw779w8C
+         gA1JNVhr61AR/DQ9KCfcaqv4U6Ch5+i5eE8OvphDnu2OeEKmFkKFX9qPhtoD3Mzi0JjD
+         mRZQB5f+tslXVkA4yt3afv1P8ojY7ypBwNN/NrnrYmTpzEgrI1qmyaYHFn59vjO4i4C9
+         usCy9EUpro0hOQLvQ3zOpwXj82LkEZ4c465jYjFsl0HDDdiGM1ELlW4I9x4awqC8D9P/
+         sUtisJVur9J+DXJWx1T4a7k/eRBo3i8oxe/E2Hg/yXRRmKhoPjCogUZTRveH3tojUgnC
+         KYtA==
+X-Gm-Message-State: APjAAAXzOoZMnUDsH8TBD/a6l3bRLGjar63y82Z+B8KO1s541iq1dLSK
+        xgcfwxnMbGXxlkb+7D6XvSdjcQ==
+X-Google-Smtp-Source: APXvYqx500m4vzr+UFCeYKz2c0FMSfasvwBbVgJxSTzvqlZDtcVpzL2mXRCD90OhISPXEiSC4VxOew==
+X-Received: by 2002:a19:c3d3:: with SMTP id t202mr21404817lff.48.1567520558740;
+        Tue, 03 Sep 2019 07:22:38 -0700 (PDT)
+Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id v10sm2430862ljc.64.2019.09.03.07.22.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 07:22:38 -0700 (PDT)
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Cc:     Shawn Lin <shawn.lin@rock-chips.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Yong Mao <yong.mao@mediatek.com>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 04/11] mmc: core: Move code to get pending SDIO IRQs to a function
+Date:   Tue,  3 Sep 2019 16:22:00 +0200
+Message-Id: <20190903142207.5825-5-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190903142207.5825-1-ulf.hansson@linaro.org>
+References: <20190903142207.5825-1-ulf.hansson@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 4:53 AM Michal Koutn=C3=BD <mkoutny@suse.com> wrote:
->
-> On Mon, Sep 02, 2019 at 04:02:57PM -0700, Suren Baghdasaryan <surenb@goog=
-le.com> wrote:
-> > > +static inline void cpu_uclamp_print(struct seq_file *sf,
-> > > +                                   enum uclamp_id clamp_id)
-> > > [...]
-> > > +       rcu_read_lock();
-> > > +       tg =3D css_tg(seq_css(sf));
-> > > +       util_clamp =3D tg->uclamp_req[clamp_id].value;
-> > > +       rcu_read_unlock();
-> > > +
-> > > +       if (util_clamp =3D=3D SCHED_CAPACITY_SCALE) {
-> > > +               seq_puts(sf, "max\n");
-> > > +               return;
-> > > +       }
-> > > +
-> > > +       percent =3D tg->uclamp_pct[clamp_id];
-> >
-> > You are taking RCU lock when accessing tg->uclamp_req but not when
-> > accessing tg->uclamp_pct.
-> Good point.
->
-> > Is that intentional? Can tg be destroyed under you?
-> Actually, the rcu_read{,un}lock should be unnecessary in the context of
-> the kernfs file op handler -- the tg/css won't go away as long as its
-> kernfs file is being worked with.
->
+From: Matthias Kaehlcke <mka@chromium.org>
 
-Also, add to that the fact that there is no rcu_dereference() call to
-access any of the pointers in the reader or any of its callers. And, I
-don't see any "wait for completion" type of pattern here so that
-rcu_read_{lock, unlock}() pair does seem useless.
+To improve code quality, let's move the code that gets pending SDIO IRQs
+from process_sdio_pending_irqs() into a dedicated function.
 
-thanks,
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+[Ulf: Converted function into static]
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
+ drivers/mmc/core/sdio_irq.c | 46 ++++++++++++++++++++++++-------------
+ 1 file changed, 30 insertions(+), 16 deletions(-)
 
- - Joel
+diff --git a/drivers/mmc/core/sdio_irq.c b/drivers/mmc/core/sdio_irq.c
+index 0bcc5e83bd1a..f75043266984 100644
+--- a/drivers/mmc/core/sdio_irq.c
++++ b/drivers/mmc/core/sdio_irq.c
+@@ -27,6 +27,34 @@
+ #include "core.h"
+ #include "card.h"
+ 
++static int sdio_get_pending_irqs(struct mmc_host *host, u8 *pending)
++{
++	struct mmc_card *card = host->card;
++	int ret;
++
++	WARN_ON(!host->claimed);
++
++	ret = mmc_io_rw_direct(card, 0, 0, SDIO_CCCR_INTx, 0, pending);
++	if (ret) {
++		pr_debug("%s: error %d reading SDIO_CCCR_INTx\n",
++		       mmc_card_id(card), ret);
++		return ret;
++	}
++
++	if (*pending && mmc_card_broken_irq_polling(card) &&
++	    !(host->caps & MMC_CAP_SDIO_IRQ)) {
++		unsigned char dummy;
++
++		/* A fake interrupt could be created when we poll SDIO_CCCR_INTx
++		 * register with a Marvell SD8797 card. A dummy CMD52 read to
++		 * function 0 register 0xff can avoid this.
++		 */
++		mmc_io_rw_direct(card, 0, 0, 0xff, 0, &dummy);
++	}
++
++	return 0;
++}
++
+ static int process_sdio_pending_irqs(struct mmc_host *host)
+ {
+ 	struct mmc_card *card = host->card;
+@@ -49,23 +77,9 @@ static int process_sdio_pending_irqs(struct mmc_host *host)
+ 		return 1;
+ 	}
+ 
+-	ret = mmc_io_rw_direct(card, 0, 0, SDIO_CCCR_INTx, 0, &pending);
+-	if (ret) {
+-		pr_debug("%s: error %d reading SDIO_CCCR_INTx\n",
+-		       mmc_card_id(card), ret);
++	ret = sdio_get_pending_irqs(host, &pending);
++	if (ret)
+ 		return ret;
+-	}
+-
+-	if (pending && mmc_card_broken_irq_polling(card) &&
+-	    !(host->caps & MMC_CAP_SDIO_IRQ)) {
+-		unsigned char dummy;
+-
+-		/* A fake interrupt could be created when we poll SDIO_CCCR_INTx
+-		 * register with a Marvell SD8797 card. A dummy CMD52 read to
+-		 * function 0 register 0xff can avoid this.
+-		 */
+-		mmc_io_rw_direct(card, 0, 0, 0xff, 0, &dummy);
+-	}
+ 
+ 	count = 0;
+ 	for (i = 1; i <= 7; i++) {
+-- 
+2.17.1
+
