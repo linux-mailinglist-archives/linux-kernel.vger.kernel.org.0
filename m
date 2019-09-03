@@ -2,37 +2,33 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ED83A6ED3
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4811A6EF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730275AbfICQ27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:28:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51200 "EHLO mail.kernel.org"
+        id S1731266AbfICQ3E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:29:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731178AbfICQ2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:28:51 -0400
+        id S1731178AbfICQ3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:29:00 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 484A223431;
-        Tue,  3 Sep 2019 16:28:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0FAD238CD;
+        Tue,  3 Sep 2019 16:28:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528130;
-        bh=SQyxLkOf/O6d/Hq0r71pzE4mhrqkkJQ4k3Ezo+dnXf8=;
+        s=default; t=1567528139;
+        bh=BvuGDEuuCV3tL/5E1orvDAlLtATndOot/2zhu3g99Hc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HkM0G6QgRKkAg2Co4fV7zfWiXzV5PGWWecY75fvaWTt0+9fAQt108wqMMTlq0/6aI
-         5NP65ZCAvOjRfm4LuPDo8NDee/78KjtUwPkWMP1H1kwiAgeB2/LFvxQZZbJy459ksD
-         G90h5aDqkHvbIZ84JgBvCGSonsfV70vRcmA5oBbo=
+        b=NUHfoW2crAgzF6TnIUp4UUPUrNyye2F9Je9v7Gc6FKADdb4hIrV+E1brLoxEcxFem
+         VeQlfyX5bA2yTnAb54DTYNbv9Jh9KINO4EYQ7EpBu+e/oO13yyvRe++TyBWdIusu8k
+         0Gj4PZoYC95ICGaHWZfESAvZdI740XbZpt8zcWT0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roman Bolshakov <r.bolshakov@yadro.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 125/167] scsi: target/iblock: Fix overrun in WRITE SAME emulation
-Date:   Tue,  3 Sep 2019 12:24:37 -0400
-Message-Id: <20190903162519.7136-125-sashal@kernel.org>
+Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 130/167] ALSA: hda - Don't resume forcibly i915 HDMI/DP codec
+Date:   Tue,  3 Sep 2019 12:24:42 -0400
+Message-Id: <20190903162519.7136-130-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -45,44 +41,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Bolshakov <r.bolshakov@yadro.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 5676234f20fef02f6ca9bd66c63a8860fce62645 ]
+[ Upstream commit 4914da2fb0c89205790503f20dfdde854f3afdd8 ]
 
-WRITE SAME corrupts data on the block device behind iblock if the command
-is emulated. The emulation code issues (M - 1) * N times more bios than
-requested, where M is the number of 512 blocks per real block size and N is
-the NUMBER OF LOGICAL BLOCKS specified in WRITE SAME command. So, for a
-device with 4k blocks, 7 * N more LBAs gets written after the requested
-range.
+We apply the codec resume forcibly at system resume callback for
+updating and syncing the jack detection state that may have changed
+during sleeping.  This is, however, superfluous for the codec like
+Intel HDMI/DP, where the jack detection is managed via the audio
+component notification; i.e. the jack state change shall be reported
+sooner or later from the graphics side at mode change.
 
-The issue happens because the number of 512 byte sectors to be written is
-decreased one by one while the real bios are typically from 1 to 8 512 byte
-sectors per bio.
+This patch changes the codec resume callback to avoid the forcible
+resume conditionally with a new flag, codec->relaxed_resume, for
+reducing the resume time.  The flag is set in the codec probe.
 
-Fixes: c66ac9db8d4a ("[SCSI] target: Add LIO target core v4.0.0-rc6")
+Although this doesn't fix the entire bug mentioned in the bugzilla
+entry below, it's still a good optimization and some improvements are
+seen.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201901
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Roman Bolshakov <r.bolshakov@yadro.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_iblock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/hda_codec.c  | 8 ++++++--
+ sound/pci/hda/hda_codec.h  | 2 ++
+ sound/pci/hda/patch_hdmi.c | 6 +++++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-index 1bc9b14236d8b..854b2bcca7c1a 100644
---- a/drivers/target/target_core_iblock.c
-+++ b/drivers/target/target_core_iblock.c
-@@ -515,7 +515,7 @@ iblock_execute_write_same(struct se_cmd *cmd)
+diff --git a/sound/pci/hda/hda_codec.c b/sound/pci/hda/hda_codec.c
+index a6233775e779f..82b0dc9f528f0 100644
+--- a/sound/pci/hda/hda_codec.c
++++ b/sound/pci/hda/hda_codec.c
+@@ -2947,15 +2947,19 @@ static int hda_codec_runtime_resume(struct device *dev)
+ #ifdef CONFIG_PM_SLEEP
+ static int hda_codec_force_resume(struct device *dev)
+ {
++	struct hda_codec *codec = dev_to_hda_codec(dev);
++	bool forced_resume = !codec->relaxed_resume;
+ 	int ret;
  
- 		/* Always in 512 byte units for Linux/Block */
- 		block_lba += sg->length >> SECTOR_SHIFT;
--		sectors -= 1;
-+		sectors -= sg->length >> SECTOR_SHIFT;
- 	}
+ 	/* The get/put pair below enforces the runtime resume even if the
+ 	 * device hasn't been used at suspend time.  This trick is needed to
+ 	 * update the jack state change during the sleep.
+ 	 */
+-	pm_runtime_get_noresume(dev);
++	if (forced_resume)
++		pm_runtime_get_noresume(dev);
+ 	ret = pm_runtime_force_resume(dev);
+-	pm_runtime_put(dev);
++	if (forced_resume)
++		pm_runtime_put(dev);
+ 	return ret;
+ }
  
- 	iblock_submit_bios(&list);
+diff --git a/sound/pci/hda/hda_codec.h b/sound/pci/hda/hda_codec.h
+index acacc19002658..2003403ce1c82 100644
+--- a/sound/pci/hda/hda_codec.h
++++ b/sound/pci/hda/hda_codec.h
+@@ -261,6 +261,8 @@ struct hda_codec {
+ 	unsigned int auto_runtime_pm:1; /* enable automatic codec runtime pm */
+ 	unsigned int force_pin_prefix:1; /* Add location prefix */
+ 	unsigned int link_down_at_suspend:1; /* link down at runtime suspend */
++	unsigned int relaxed_resume:1;	/* don't resume forcibly for jack */
++
+ #ifdef CONFIG_PM
+ 	unsigned long power_on_acct;
+ 	unsigned long power_off_acct;
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index 35931a18418f3..e4fbfb5557ab7 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -2293,8 +2293,10 @@ static void generic_hdmi_free(struct hda_codec *codec)
+ 	struct hdmi_spec *spec = codec->spec;
+ 	int pin_idx, pcm_idx;
+ 
+-	if (codec_has_acomp(codec))
++	if (codec_has_acomp(codec)) {
+ 		snd_hdac_acomp_register_notifier(&codec->bus->core, NULL);
++		codec->relaxed_resume = 0;
++	}
+ 
+ 	for (pin_idx = 0; pin_idx < spec->num_pins; pin_idx++) {
+ 		struct hdmi_spec_per_pin *per_pin = get_pin(spec, pin_idx);
+@@ -2550,6 +2552,8 @@ static void register_i915_notifier(struct hda_codec *codec)
+ 	spec->drm_audio_ops.pin_eld_notify = intel_pin_eld_notify;
+ 	snd_hdac_acomp_register_notifier(&codec->bus->core,
+ 					&spec->drm_audio_ops);
++	/* no need for forcible resume for jack check thanks to notifier */
++	codec->relaxed_resume = 1;
+ }
+ 
+ /* setup_stream ops override for HSW+ */
 -- 
 2.20.1
 
