@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDC9AA6EB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C409A6E4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfICQ2W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:28:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50100 "EHLO mail.kernel.org"
+        id S1730359AbfICQZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:25:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731080AbfICQ2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:28:17 -0400
+        id S1730307AbfICQZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:25:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EFA3238C6;
-        Tue,  3 Sep 2019 16:28:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3490A2343A;
+        Tue,  3 Sep 2019 16:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528096;
-        bh=dyrfv+WP+eThW7h6SeQXXHb7vB1kv65ppMyTfn8KQow=;
+        s=default; t=1567527911;
+        bh=ZnpwUH/bPiEE4wslv4yPlhf2ZtPaAnT2HGWxhurSN98=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1iZbDcN0rFadrEOo41N4z2PB+gL7ULkZePJJNhx3OIgeCG9phzPT+1wkyM8BsxQmy
-         nWceNAjZ7oT8/i5b5oeEH6KTCKl83FMzBt302hR1oTLWXxj0xCvIfngiOJ7xGgNM+U
-         B2HcG90eaRfTH/dqvY7f719Kc8N2Obk64eDdNnSc=
+        b=1+a3l8pYptK6lnQ+XfHUf+FPXUpOmv0zmCRn8M60zeClwUOwfj2ZdqUXaxvxEtpO1
+         km0lM/t5bUg80YDXDGk7QQWzlz8rBrtHf3rCYc4C5QEdJCR7/k3/Mx2jzgLmnmDNGh
+         9df/qUrFX7r4osWDGDUMS3TMBaP7h6Mi/+wkc4jI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yufen Yu <yuyufen@huawei.com>, stable@vger.kernl.org,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 105/167] dm mpath: fix missing call of path selector type->end_io
-Date:   Tue,  3 Sep 2019 12:24:17 -0400
-Message-Id: <20190903162519.7136-105-sashal@kernel.org>
+Cc:     John Harrison <John.C.Harrison@Intel.com>,
+        "Robert M . Fosha" <robert.m.fosha@intel.com>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Sasha Levin <sashal@kernel.org>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 20/23] drm/i915: Support whitelist workarounds on all engines
+Date:   Tue,  3 Sep 2019 12:24:21 -0400
+Message-Id: <20190903162424.6877-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
-References: <20190903162519.7136-1-sashal@kernel.org>
+In-Reply-To: <20190903162424.6877-1-sashal@kernel.org>
+References: <20190903162424.6877-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -43,141 +46,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufen Yu <yuyufen@huawei.com>
+From: John Harrison <John.C.Harrison@Intel.com>
 
-[ Upstream commit 5de719e3d01b4abe0de0d7b857148a880ff2a90b ]
+[ Upstream commit ebd2de47a19f1c17ae47f8331aae3cd436766663 ]
 
-After commit 396eaf21ee17 ("blk-mq: improve DM's blk-mq IO merging via
-blk_insert_cloned_request feedback"), map_request() will requeue the tio
-when issued clone request return BLK_STS_RESOURCE or BLK_STS_DEV_RESOURCE.
+Newer hardware requires setting up whitelists on engines other than
+render. So, extend the whitelist code to support all engines.
 
-Thus, if device driver status is error, a tio may be requeued multiple
-times until the return value is not DM_MAPIO_REQUEUE.  That means
-type->start_io may be called multiple times, while type->end_io is only
-called when IO complete.
-
-In fact, even without commit 396eaf21ee17, setup_clone() failure can
-also cause tio requeue and associated missed call to type->end_io.
-
-The service-time path selector selects path based on in_flight_size,
-which is increased by st_start_io() and decreased by st_end_io().
-Missed calls to st_end_io() can lead to in_flight_size count error and
-will cause the selector to make the wrong choice.  In addition,
-queue-length path selector will also be affected.
-
-To fix the problem, call type->end_io in ->release_clone_rq before tio
-requeue.  map_info is passed to ->release_clone_rq() for map_request()
-error path that result in requeue.
-
-Fixes: 396eaf21ee17 ("blk-mq: improve DM's blk-mq IO merging via blk_insert_cloned_request feedback")
-Cc: stable@vger.kernl.org
-Signed-off-by: Yufen Yu <yuyufen@huawei.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: John Harrison <John.C.Harrison@Intel.com>
+Signed-off-by: Robert M. Fosha <robert.m.fosha@intel.com>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Signed-off-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190618010108.27499-3-John.C.Harrison@Intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-mpath.c         | 17 ++++++++++++++++-
- drivers/md/dm-rq.c            |  8 ++++----
- drivers/md/dm-target.c        |  3 ++-
- include/linux/device-mapper.h |  3 ++-
- 4 files changed, 24 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/i915/intel_workarounds.c | 65 +++++++++++++++++-------
+ 1 file changed, 47 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/md/dm-mpath.c b/drivers/md/dm-mpath.c
-index baa966e2778c0..481e54ded9dc7 100644
---- a/drivers/md/dm-mpath.c
-+++ b/drivers/md/dm-mpath.c
-@@ -554,8 +554,23 @@ static int multipath_clone_and_map(struct dm_target *ti, struct request *rq,
- 	return DM_MAPIO_REMAPPED;
+diff --git a/drivers/gpu/drm/i915/intel_workarounds.c b/drivers/gpu/drm/i915/intel_workarounds.c
+index 1db826b12774e..0b80fde927899 100644
+--- a/drivers/gpu/drm/i915/intel_workarounds.c
++++ b/drivers/gpu/drm/i915/intel_workarounds.c
+@@ -1012,48 +1012,79 @@ static void gen9_whitelist_build(struct i915_wa_list *w)
+ 	whitelist_reg(w, GEN8_HDC_CHICKEN1);
  }
  
--static void multipath_release_clone(struct request *clone)
-+static void multipath_release_clone(struct request *clone,
-+				    union map_info *map_context)
+-static void skl_whitelist_build(struct i915_wa_list *w)
++static void skl_whitelist_build(struct intel_engine_cs *engine)
  {
-+	if (unlikely(map_context)) {
-+		/*
-+		 * non-NULL map_context means caller is still map
-+		 * method; must undo multipath_clone_and_map()
-+		 */
-+		struct dm_mpath_io *mpio = get_mpio(map_context);
-+		struct pgpath *pgpath = mpio->pgpath;
++	struct i915_wa_list *w = &engine->whitelist;
 +
-+		if (pgpath && pgpath->pg->ps.type->end_io)
-+			pgpath->pg->ps.type->end_io(&pgpath->pg->ps,
-+						    &pgpath->path,
-+						    mpio->nr_bytes);
-+	}
++	if (engine->class != RENDER_CLASS)
++		return;
 +
- 	blk_put_request(clone);
+ 	gen9_whitelist_build(w);
+ 
+ 	/* WaDisableLSQCROPERFforOCL:skl */
+ 	whitelist_reg(w, GEN8_L3SQCREG4);
  }
  
-diff --git a/drivers/md/dm-rq.c b/drivers/md/dm-rq.c
-index 264b84e274aac..17c6a73c536c6 100644
---- a/drivers/md/dm-rq.c
-+++ b/drivers/md/dm-rq.c
-@@ -219,7 +219,7 @@ static void dm_end_request(struct request *clone, blk_status_t error)
- 	struct request *rq = tio->orig;
- 
- 	blk_rq_unprep_clone(clone);
--	tio->ti->type->release_clone_rq(clone);
-+	tio->ti->type->release_clone_rq(clone, NULL);
- 
- 	rq_end_stats(md, rq);
- 	if (!rq->q->mq_ops)
-@@ -270,7 +270,7 @@ static void dm_requeue_original_request(struct dm_rq_target_io *tio, bool delay_
- 	rq_end_stats(md, rq);
- 	if (tio->clone) {
- 		blk_rq_unprep_clone(tio->clone);
--		tio->ti->type->release_clone_rq(tio->clone);
-+		tio->ti->type->release_clone_rq(tio->clone, NULL);
- 	}
- 
- 	if (!rq->q->mq_ops)
-@@ -495,7 +495,7 @@ static int map_request(struct dm_rq_target_io *tio)
- 	case DM_MAPIO_REMAPPED:
- 		if (setup_clone(clone, rq, tio, GFP_ATOMIC)) {
- 			/* -ENOMEM */
--			ti->type->release_clone_rq(clone);
-+			ti->type->release_clone_rq(clone, &tio->info);
- 			return DM_MAPIO_REQUEUE;
- 		}
- 
-@@ -505,7 +505,7 @@ static int map_request(struct dm_rq_target_io *tio)
- 		ret = dm_dispatch_clone_request(clone, rq);
- 		if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE) {
- 			blk_rq_unprep_clone(clone);
--			tio->ti->type->release_clone_rq(clone);
-+			tio->ti->type->release_clone_rq(clone, &tio->info);
- 			tio->clone = NULL;
- 			if (!rq->q->mq_ops)
- 				r = DM_MAPIO_DELAY_REQUEUE;
-diff --git a/drivers/md/dm-target.c b/drivers/md/dm-target.c
-index 314d17ca64668..64dd0b34fcf49 100644
---- a/drivers/md/dm-target.c
-+++ b/drivers/md/dm-target.c
-@@ -136,7 +136,8 @@ static int io_err_clone_and_map_rq(struct dm_target *ti, struct request *rq,
- 	return DM_MAPIO_KILL;
- }
- 
--static void io_err_release_clone_rq(struct request *clone)
-+static void io_err_release_clone_rq(struct request *clone,
-+				    union map_info *map_context)
+-static void bxt_whitelist_build(struct i915_wa_list *w)
++static void bxt_whitelist_build(struct intel_engine_cs *engine)
  {
+-	gen9_whitelist_build(w);
++	if (engine->class != RENDER_CLASS)
++		return;
++
++	gen9_whitelist_build(&engine->whitelist);
  }
  
-diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-index bef2e36c01b4b..91f9f95ad5066 100644
---- a/include/linux/device-mapper.h
-+++ b/include/linux/device-mapper.h
-@@ -62,7 +62,8 @@ typedef int (*dm_clone_and_map_request_fn) (struct dm_target *ti,
- 					    struct request *rq,
- 					    union map_info *map_context,
- 					    struct request **clone);
--typedef void (*dm_release_clone_request_fn) (struct request *clone);
-+typedef void (*dm_release_clone_request_fn) (struct request *clone,
-+					     union map_info *map_context);
+-static void kbl_whitelist_build(struct i915_wa_list *w)
++static void kbl_whitelist_build(struct intel_engine_cs *engine)
+ {
++	struct i915_wa_list *w = &engine->whitelist;
++
++	if (engine->class != RENDER_CLASS)
++		return;
++
+ 	gen9_whitelist_build(w);
  
- /*
-  * Returns:
+ 	/* WaDisableLSQCROPERFforOCL:kbl */
+ 	whitelist_reg(w, GEN8_L3SQCREG4);
+ }
+ 
+-static void glk_whitelist_build(struct i915_wa_list *w)
++static void glk_whitelist_build(struct intel_engine_cs *engine)
+ {
++	struct i915_wa_list *w = &engine->whitelist;
++
++	if (engine->class != RENDER_CLASS)
++		return;
++
+ 	gen9_whitelist_build(w);
+ 
+ 	/* WA #0862: Userspace has to set "Barrier Mode" to avoid hangs. */
+ 	whitelist_reg(w, GEN9_SLICE_COMMON_ECO_CHICKEN1);
+ }
+ 
+-static void cfl_whitelist_build(struct i915_wa_list *w)
++static void cfl_whitelist_build(struct intel_engine_cs *engine)
+ {
+-	gen9_whitelist_build(w);
++	if (engine->class != RENDER_CLASS)
++		return;
++
++	gen9_whitelist_build(&engine->whitelist);
+ }
+ 
+-static void cnl_whitelist_build(struct i915_wa_list *w)
++static void cnl_whitelist_build(struct intel_engine_cs *engine)
+ {
++	struct i915_wa_list *w = &engine->whitelist;
++
++	if (engine->class != RENDER_CLASS)
++		return;
++
+ 	/* WaEnablePreemptionGranularityControlByUMD:cnl */
+ 	whitelist_reg(w, GEN8_CS_CHICKEN1);
+ }
+ 
+-static void icl_whitelist_build(struct i915_wa_list *w)
++static void icl_whitelist_build(struct intel_engine_cs *engine)
+ {
++	struct i915_wa_list *w = &engine->whitelist;
++
++	if (engine->class != RENDER_CLASS)
++		return;
++
+ 	/* WaAllowUMDToModifyHalfSliceChicken7:icl */
+ 	whitelist_reg(w, GEN9_HALF_SLICE_CHICKEN7);
+ 
+@@ -1069,24 +1100,22 @@ void intel_engine_init_whitelist(struct intel_engine_cs *engine)
+ 	struct drm_i915_private *i915 = engine->i915;
+ 	struct i915_wa_list *w = &engine->whitelist;
+ 
+-	GEM_BUG_ON(engine->id != RCS0);
+-
+ 	wa_init_start(w, "whitelist");
+ 
+ 	if (IS_GEN(i915, 11))
+-		icl_whitelist_build(w);
++		icl_whitelist_build(engine);
+ 	else if (IS_CANNONLAKE(i915))
+-		cnl_whitelist_build(w);
++		cnl_whitelist_build(engine);
+ 	else if (IS_COFFEELAKE(i915))
+-		cfl_whitelist_build(w);
++		cfl_whitelist_build(engine);
+ 	else if (IS_GEMINILAKE(i915))
+-		glk_whitelist_build(w);
++		glk_whitelist_build(engine);
+ 	else if (IS_KABYLAKE(i915))
+-		kbl_whitelist_build(w);
++		kbl_whitelist_build(engine);
+ 	else if (IS_BROXTON(i915))
+-		bxt_whitelist_build(w);
++		bxt_whitelist_build(engine);
+ 	else if (IS_SKYLAKE(i915))
+-		skl_whitelist_build(w);
++		skl_whitelist_build(engine);
+ 	else if (INTEL_GEN(i915) <= 8)
+ 		return;
+ 	else
 -- 
 2.20.1
 
