@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32497A6B43
+	by mail.lfdr.de (Postfix) with ESMTP id 9B928A6B44
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:23:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729587AbfICOWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:22:39 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38099 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729419AbfICOWh (ORCPT
+        id S1729599AbfICOWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:22:40 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46713 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729083AbfICOWi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:22:37 -0400
-Received: by mail-lj1-f193.google.com with SMTP id h3so9390976ljb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:35 -0700 (PDT)
+        Tue, 3 Sep 2019 10:22:38 -0400
+Received: by mail-lf1-f67.google.com with SMTP id t8so582210lfc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=D5QBbUbIGIGd6IsxRdoAWwzoHYpPt8QRqVo3tuh083M=;
-        b=RP7NBDNto85o8qwpd+eBtArA8GsDbwZzo/N21c5w/x6H5zZ5ZPvBKOgT5AKNZjn4UQ
-         VtlHjUycq/Sjk7L+8sIg5gVnv9YNWJl5mP61BIRnivL/jWz1tFolfQUSHRItCk0FfYBB
-         tTbntNmCtOIEAtIBHrJLVQcmfKNvs03l4FAeYhME9rQZYWB2FEJ58cmnmtC30es9NDRV
-         VCHMolZ3jrdPU57/NxfzMw6I7vpgpIjQyMAfJrwOxX9/5dccWgMqFFjuDxfa0iGilerx
-         7mr+AforWPw4ExJA6GKojspQDjLzq8ixKdjDidfmy3xZkXBIoaTRRLSfwlfYKC72AKzE
-         OAug==
+        bh=SADru+zeJoUa6Kq7NgE3oCMhDB2qphP6ONJw4NgANKU=;
+        b=OFHtfa4wufhXWOWb3kQTUHd0i9YHGWH7vS4YpuePByo1apgcQx0qPn5D2rDAPelA2Z
+         c9AFN0rmRl04Af4morxrZ3mOH/6uAa5o24p5hlLofES39wmRTB39cuKWKsxsRbwOPueA
+         DWKNvjHA7bcEZ1WnlxtbCacM07rt3dqTsZp4a0qXvTQeCR28W5+16F2Hu7sZslGhNe+2
+         /aLGk/irsE8VSg2imBO3LXorORY3s5UnmKKS0pZ1Wf/Tcs/Byda5X4A+tL6KlvEDpHqt
+         vHpl86saT3X7iGXCPgRyUtq7iDDP1IjtuQWaqjKo5k1t5UqNlEovBQ6B26wBM3t7/M3q
+         dWQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=D5QBbUbIGIGd6IsxRdoAWwzoHYpPt8QRqVo3tuh083M=;
-        b=sPbTV5v+jnFnEZA/81JJZ9kVvDNCHZ3UO4OTSg5txYQVJ0z1RoDHjyZBQhWKZU5tY/
-         4wSuNDkNMSIyJb5UYE5+jg9Kp6FRLRHebXsGQUCsPabCW05eRlzyin//4EF67h1nj7oS
-         v/P/CYe/iOG7rBcliAVNdsFb27iCnrIAbNXvJPQd2Hu3uBn2x0GdPeJGxcqGzHNGDfo/
-         0wB/J0RZVWH3bbEcrmIZddWBfoVOHJ4oIrfKwvd5ImryhC5hZpEmRyyYomCphKnjFjIH
-         nrOciQzg/UD0En7CAT3fdNbLL2p9pxFDbtfQN1NkV47REVyQIoDYR1l4Za+pZjJHLx+m
-         z48Q==
-X-Gm-Message-State: APjAAAXcsbgZr1f4k5BtxhxijING13OsBzSt0HtYcLSbT+dBGMsODCrx
-        44wKeoGfB1w1IkJPILSKuQCLwQ==
-X-Google-Smtp-Source: APXvYqyYZS0LZ/x/v3d6oArjV2CxJmO4miYGU2bMEsj46wakq+VgwT1upJ9K3Ttnb344DmtcvFVNBQ==
-X-Received: by 2002:a2e:99d7:: with SMTP id l23mr1996664ljj.86.1567520554912;
-        Tue, 03 Sep 2019 07:22:34 -0700 (PDT)
+        bh=SADru+zeJoUa6Kq7NgE3oCMhDB2qphP6ONJw4NgANKU=;
+        b=XeDsL/HmruFtICnskX4IpvyM07Amaqc8K2JgWllRQkc7Ln1RgIoN/OOT2RtPr3F2bE
+         JFDwG7kEfKeyRypI2SP4pr7KmM34jCmljiPNBmqUisZPTlXHhf0sjUZRdmGd93pROOKM
+         fa3o6YUr6Owoh0dWrB60snIEqbqVchQBB9CvEN+8I3BI0DD1oOlkYDjReflR6wTeeGKr
+         uV4SxN3wtC3rhyBlKeD7t7CxF4gl9Nvxdu0dkLInOK5XDoRaevkaa3C6+5eh75ozP5Q+
+         Xj0+Cld8+vzKKHhcV2bckD8lpOD9YhESd35T8EjgMNVBi1KCdnGl1KjGVFsf4kZRx/O5
+         U/Qw==
+X-Gm-Message-State: APjAAAXIwXh7qgP69xcq6sqMHwlLY9G00vLHtcc5TR8aZjRZkqkVssnZ
+        wI6XY3EZt2T2DXfv5k6KraLXnw==
+X-Google-Smtp-Source: APXvYqx/2ml75qZUvcITEBML+/VXCJWVUP/iHChuBbmOfuQX/0u72UoOykubRwkl0ub8F7RLyPaLPA==
+X-Received: by 2002:ac2:4906:: with SMTP id n6mr451699lfi.81.1567520556123;
+        Tue, 03 Sep 2019 07:22:36 -0700 (PDT)
 Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id v10sm2430862ljc.64.2019.09.03.07.22.33
+        by smtp.gmail.com with ESMTPSA id v10sm2430862ljc.64.2019.09.03.07.22.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 07:22:34 -0700 (PDT)
+        Tue, 03 Sep 2019 07:22:35 -0700 (PDT)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
@@ -54,9 +54,9 @@ Cc:     Shawn Lin <shawn.lin@rock-chips.com>,
         Yong Mao <yong.mao@mediatek.com>,
         Chaotian Jing <chaotian.jing@mediatek.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 01/11] mmc: core: Add helper function to indicate if SDIO IRQs is enabled
-Date:   Tue,  3 Sep 2019 16:21:57 +0200
-Message-Id: <20190903142207.5825-2-ulf.hansson@linaro.org>
+Subject: [PATCH 02/11] mmc: dw_mmc: Re-store SDIO IRQs mask at system resume
+Date:   Tue,  3 Sep 2019 16:21:58 +0200
+Message-Id: <20190903142207.5825-3-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190903142207.5825-1-ulf.hansson@linaro.org>
 References: <20190903142207.5825-1-ulf.hansson@linaro.org>
@@ -65,40 +65,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To avoid each host driver supporting SDIO IRQs, from keeping track
-internally about if SDIO IRQs has been enabled, let's introduce a common
-helper function, sdio_irq_enabled().
+In cases when SDIO IRQs have been enabled, runtime suspend is prevented by
+the driver. However, this still means dw_mci_runtime_suspend|resume() gets
+called during system suspend/resume, via pm_runtime_force_suspend|resume().
+This means during system suspend/resume, the register context of the dw_mmc
+device most likely loses its register context, even in cases when SDIO IRQs
+have been enabled.
 
-The function returns true if SDIO IRQs are enabled, via using the
-information about the number of claimed irqs. This is safe, even without
-any locks, as long as the helper function is called only from
-runtime/system suspend callbacks of the host driver.
+To re-enable the SDIO IRQs during system resume, the dw_mmc driver
+currently relies on the mmc core to re-enable the SDIO IRQs when it resumes
+the SDIO card, but this isn't the recommended solution. Instead, it's
+better to deal with this locally in the dw_mmc driver, so let's do that.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- include/linux/mmc/host.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/mmc/host/dw_mmc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 4a351cb7f20f..0c0a565c7ff1 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -493,6 +493,15 @@ void mmc_command_done(struct mmc_host *host, struct mmc_request *mrq);
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index eea52e2c5a0c..f114710e82b4 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -3460,6 +3460,10 @@ int dw_mci_runtime_resume(struct device *dev)
+ 	/* Force setup bus to guarantee available clock output */
+ 	dw_mci_setup_bus(host->slot, true);
  
- void mmc_cqe_request_done(struct mmc_host *host, struct mmc_request *mrq);
- 
-+/*
-+ * May be called from host driver's system/runtime suspend/resume callbacks,
-+ * to know if SDIO IRQs has been enabled.
-+*/
-+static inline bool sdio_irq_enabled(struct mmc_host *host)
-+{
-+	return host->sdio_irqs > 0;
-+}
++	/* Re-enable SDIO interrupts. */
++	if (sdio_irq_enabled(host->slot->mmc))
++		__dw_mci_enable_sdio_irq(host->slot, 1);
 +
- static inline void mmc_signal_sdio_irq(struct mmc_host *host)
- {
- 	host->ops->enable_sdio_irq(host, 0);
+ 	/* Now that slots are all setup, we can enable card detect */
+ 	dw_mci_enable_cd(host);
+ 
 -- 
 2.17.1
 
