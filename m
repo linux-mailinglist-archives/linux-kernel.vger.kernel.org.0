@@ -2,14 +2,14 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15D71A7216
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:00:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3307BA7214
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:00:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbfICSAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 14:00:32 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40922 "EHLO
+        id S1730129AbfICSA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 14:00:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40890 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729877AbfICSA3 (ORCPT
+        with ESMTP id S1725782AbfICSA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Sep 2019 14:00:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -18,27 +18,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=CYvNu2cKcY4lT8gMAf5xfJU7mlv/HVixnNOL6VgZw80=; b=mKZb8ShhW/Wa
-        XlRY0/tZDWa+xfy9DsdTnvQJOnOxBeIji1CC93FzPJLs8bx7Rivo/4/d3SpWyw5pASUVu3Zhmknbb
-        Mh1llsTWcIKxdc6pvXuxJ5t6sSm+qjsCmpmovy+xM/HgK082gO6x9gO6+Ao/jwWQpMNHPy3NkZOGP
-        P4irE=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        List-Archive; bh=Z1/6KbixvXgzeLN5YqOSqKmNDnkEfTxK979SrcIDgOw=; b=aJ8OyIbO9+OM
+        GENRjF/rGpQ/B6FMenV8d7b2xrnJqRJwcgDGyGH8w5enynE+WyAOmDUjXhG2gQrRxAkkCX+XL23pS
+        Xqj9y2GYy8QrO4INslmwvVDbccEwT4GN0tp3xlbcQs9lYS72wwatBaS/Rwg6bCbKMweQy8vB9Uf5J
+        5ntMs=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i5D6J-0000zW-0C; Tue, 03 Sep 2019 18:00:19 +0000
+        id 1i5D6J-0000zX-4Y; Tue, 03 Sep 2019 18:00:19 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 6118D2740A97; Tue,  3 Sep 2019 19:00:18 +0100 (BST)
+        id 8E9D62740FDC; Tue,  3 Sep 2019 19:00:18 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Katsuhiro Suzuki <katsuhiro@katsuster.net>
 Cc:     alsa-devel@alsa-project.org, Daniel Drake <drake@endlessm.com>,
         David Yang <yangxiaohua@everest-semi.com>,
         Hans de Goede <hdegoede@redhat.com>,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: es8316: add clock control of MCLK" to the asoc tree
-In-Reply-To: <20190903165322.20791-2-katsuhiro@katsuster.net>
+Subject: Applied "ASoC: es8316: add DT-bindings" to the asoc tree
+In-Reply-To: <20190903165322.20791-4-katsuhiro@katsuster.net>
 X-Patchwork-Hint: ignore
-Message-Id: <20190903180018.6118D2740A97@ypsilon.sirena.org.uk>
+Message-Id: <20190903180018.8E9D62740FDC@ypsilon.sirena.org.uk>
 Date:   Tue,  3 Sep 2019 19:00:18 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,7 +47,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: es8316: add clock control of MCLK
+   ASoC: es8316: add DT-bindings
 
 has been applied to the asoc tree at
 
@@ -72,112 +72,47 @@ to this mail.
 Thanks,
 Mark
 
-From 6dd567dc964878c04269a44114ef13693712edf1 Mon Sep 17 00:00:00 2001
+From 3a3edd6ffe671115c4b3d715f08ed0cf4e927ce1 Mon Sep 17 00:00:00 2001
 From: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Date: Wed, 4 Sep 2019 01:53:20 +0900
-Subject: [PATCH] ASoC: es8316: add clock control of MCLK
+Date: Wed, 4 Sep 2019 01:53:22 +0900
+Subject: [PATCH] ASoC: es8316: add DT-bindings
 
-This patch introduce clock property for MCLK master freq control.
-Driver will set rate of MCLK master if set_sysclk is called and
-changing sysclk by board driver.
-
-[Modified slightly to apply without an earlier patch in the series due
-to context diffs -- broonie]
+This patch adds missing DT-bindings document for Everest ES8316.
 
 Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Link: https://lore.kernel.org/r/20190903165322.20791-2-katsuhiro@katsuster.net
+Link: https://lore.kernel.org/r/20190903165322.20791-4-katsuhiro@katsuster.net
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/es8316.c | 36 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+ .../bindings/sound/everest,es8316.txt         | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/everest,es8316.txt
 
-diff --git a/sound/soc/codecs/es8316.c b/sound/soc/codecs/es8316.c
-index 6db002cc2058..6248b01ca049 100644
---- a/sound/soc/codecs/es8316.c
-+++ b/sound/soc/codecs/es8316.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/module.h>
- #include <linux/acpi.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/i2c.h>
- #include <linux/mod_devicetable.h>
-@@ -33,6 +34,7 @@ static const unsigned int supported_mclk_lrck_ratios[] = {
- 
- struct es8316_priv {
- 	struct mutex lock;
-+	struct clk *mclk;
- 	struct regmap *regmap;
- 	struct snd_soc_component *component;
- 	struct snd_soc_jack *jack;
-@@ -360,7 +362,7 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- {
- 	struct snd_soc_component *component = codec_dai->component;
- 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
--	int i;
-+	int i, ret;
- 	int count = 0;
- 
- 	es8316->sysclk = freq;
-@@ -368,6 +370,12 @@ static int es8316_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 	if (freq == 0)
- 		return 0;
- 
-+	if (es8316->mclk) {
-+		ret = clk_set_rate(es8316->mclk, freq);
-+		if (ret)
-+			return ret;
-+	}
+diff --git a/Documentation/devicetree/bindings/sound/everest,es8316.txt b/Documentation/devicetree/bindings/sound/everest,es8316.txt
+new file mode 100644
+index 000000000000..aefcff9c48a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/everest,es8316.txt
+@@ -0,0 +1,20 @@
++Everest ES8316 audio CODEC
 +
- 	/* Limit supported sample rates to ones that can be autodetected
- 	 * by the codec running in slave mode.
- 	 */
-@@ -697,9 +705,26 @@ static int es8316_set_jack(struct snd_soc_component *component,
- static int es8316_probe(struct snd_soc_component *component)
- {
- 	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
-+	int ret;
- 
- 	es8316->component = component;
- 
-+	es8316->mclk = devm_clk_get(component->dev, "mclk");
-+	if (PTR_ERR(es8316->mclk) == -EPROBE_DEFER)
-+		return -EPROBE_DEFER;
-+	if (IS_ERR(es8316->mclk)) {
-+		dev_err(component->dev, "clock is invalid, ignored\n");
-+		es8316->mclk = NULL;
-+	}
++This device supports both I2C and SPI.
 +
-+	if (es8316->mclk) {
-+		ret = clk_prepare_enable(es8316->mclk);
-+		if (ret) {
-+			dev_err(component->dev, "unable to enable clock\n");
-+			return ret;
-+		}
-+	}
++Required properties:
 +
- 	/* Reset codec and enable current state machine */
- 	snd_soc_component_write(component, ES8316_RESET, 0x3f);
- 	usleep_range(5000, 5500);
-@@ -722,8 +747,17 @@ static int es8316_probe(struct snd_soc_component *component)
- 	return 0;
- }
- 
-+static void es8316_remove(struct snd_soc_component *component)
-+{
-+	struct es8316_priv *es8316 = snd_soc_component_get_drvdata(component);
++  - compatible  : should be "everest,es8316"
++  - reg : the I2C address of the device for I2C
++  - clocks : a list of phandle, should contain entries for clock-names
++  - clock-names : should include as follows:
++         "mclk" : master clock (MCLK) of the device
 +
-+	if (es8316->mclk)
-+		clk_disable_unprepare(es8316->mclk);
-+}
++Example:
 +
- static const struct snd_soc_component_driver soc_component_dev_es8316 = {
- 	.probe			= es8316_probe,
-+	.remove			= es8316_remove,
- 	.set_jack		= es8316_set_jack,
- 	.controls		= es8316_snd_controls,
- 	.num_controls		= ARRAY_SIZE(es8316_snd_controls),
++es8316: codec@11 {
++	compatible = "everest,es8316";
++	reg = <0x11>;
++	clocks = <&clks 10>;
++	clock-names = "mclk";
++};
 -- 
 2.20.1
 
