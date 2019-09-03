@@ -2,89 +2,192 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEBE2A7441
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:06:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6455A7449
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:09:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726989AbfICUGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 16:06:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53716 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfICUGS (ORCPT
+        id S1726946AbfICUJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 16:09:22 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:27290 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725882AbfICUJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:06:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=s/mxBv481g4gknPtfmgtkEvU8Nr3mAfkiqeLHsTDIQ0=; b=ilKCQ7OunKsvHtouU1msoWwVh
-        4G5Ha3b/T1/I/Sah2EY9NQ/wKA6JfImRCwX1VWlUMrt8TsPKtvjnSq3xyUGhpoEO5D2XYl2Jh28qj
-        KoACNHg2EvRbMxy15aJnQ6zj2iZ7pk61sHtakaNpZ2eH8/vqxkM8KPyS8gAy9Vj1gCPK0kW+aXF52
-        t3tSd35yTSdOGZYEnzG4vrkGqrmC7UvmFEvFPkTYZ5TPtdnoHi5TLozGxg95lY9U3bIA0fJs71bI8
-        fV015J+2lXOo+TBuja8TMrlMTBKqCib/+xMCROmKKDPi4ChNIZfQAJ7IEU2NSFOgKF1Hhtyo9LAgg
-        TXHv1XeYg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i5F41-0006sN-ME; Tue, 03 Sep 2019 20:06:07 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 39697301A76;
-        Tue,  3 Sep 2019 22:05:27 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7A1A12097777E; Tue,  3 Sep 2019 22:06:03 +0200 (CEST)
-Date:   Tue, 3 Sep 2019 22:06:03 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: Re: [PATCH 2/3] task: RCU protect tasks on the runqueue
-Message-ID: <20190903200603.GW2349@hirez.programming.kicks-ass.net>
-References: <87tv9uiq9r.fsf@x220.int.ebiederm.org>
- <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
- <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
- <878sr6t21a.fsf_-_@x220.int.ebiederm.org>
- <20190903074117.GX2369@hirez.programming.kicks-ass.net>
- <20190903074718.GT2386@hirez.programming.kicks-ass.net>
- <87k1apqqgk.fsf@x220.int.ebiederm.org>
- <CAHk-=wjVGLr8wArT9P4MXxA-XpkG=9ZXdjM3vpemSF25vYiLoA@mail.gmail.com>
- <874l1tp7st.fsf@x220.int.ebiederm.org>
- <CAHk-=wjvyRJEdativFqqGGxzSgWnc-m7b+B04iQBMcZV4uM=hA@mail.gmail.com>
+        Tue, 3 Sep 2019 16:09:21 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x83K7haO121886;
+        Tue, 3 Sep 2019 16:08:48 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2usx1nsqkr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 03 Sep 2019 16:08:48 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x83K84SE123175;
+        Tue, 3 Sep 2019 16:08:47 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2usx1nsqjw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 03 Sep 2019 16:08:47 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x83K4l70021669;
+        Tue, 3 Sep 2019 20:08:46 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma04dal.us.ibm.com with ESMTP id 2uqgh6svj7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 03 Sep 2019 20:08:46 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x83K8jNW13173434
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Sep 2019 20:08:45 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 77DB2B2066;
+        Tue,  3 Sep 2019 20:08:45 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 486B3B205F;
+        Tue,  3 Sep 2019 20:08:45 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Sep 2019 20:08:45 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 7174B16C1074; Tue,  3 Sep 2019 13:08:49 -0700 (PDT)
+Date:   Tue, 3 Sep 2019 13:08:49 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, byungchul.park@lge.com,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 1/5] rcu/rcuperf: Add kfree_rcu() performance Tests
+Message-ID: <20190903200849.GF4125@linux.ibm.com>
+Reply-To: paulmck@kernel.org
+References: <5d657e33.1c69fb81.54250.01dd@mx.google.com>
+ <20190828211226.GW26530@linux.ibm.com>
+ <20190829205637.GA162830@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjvyRJEdativFqqGGxzSgWnc-m7b+B04iQBMcZV4uM=hA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190829205637.GA162830@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909030201
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 12:18:47PM -0700, Linus Torvalds wrote:
-> Now, if you can point to some particular field where that ordering
-> makes sense for the particular case of "make it active on the
-> runqueue" vs "look up the task from the runqueue using RCU", then I do
-> think that the whole release->acquire consistency makes sense.
+On Thu, Aug 29, 2019 at 04:56:37PM -0400, Joel Fernandes wrote:
+> On Wed, Aug 28, 2019 at 02:12:26PM -0700, Paul E. McKenney wrote:
+
+[ . . . ]
+
+> > > +static int
+> > > +kfree_perf_thread(void *arg)
+> > > +{
+> > > +	int i, loop = 0;
+> > > +	long me = (long)arg;
+> > > +	struct kfree_obj *alloc_ptr;
+> > > +	u64 start_time, end_time;
+> > > +
+> > > +	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
+> > > +	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
+> > > +	set_user_nice(current, MAX_NICE);
+> > > +
+> > > +	start_time = ktime_get_mono_fast_ns();
+> > > +
+> > > +	if (atomic_inc_return(&n_kfree_perf_thread_started) >= kfree_nrealthreads) {
+> > > +		if (gp_exp)
+> > > +			b_rcu_gp_test_started = cur_ops->exp_completed() / 2;
+> > 
+> > At some point, it would be good to use the new grace-period
+> > sequence-counter functions (rcuperf_seq_diff(), for example) instead of
+> > the open-coded division by 2.  I freely admit that you are just copying
+> > my obsolete hack in this case, so not needed in this patch.
 > 
-> But it's not clear that such a field exists, particularly when this is
-> in no way the *common* way to even get a task pointer, and other paths
-> do *not* use the runqueue as the serialization point.
+> But I am using rcu_seq_diff() below in the pr_alert().
+> 
+> Anyway, I agree this can be a follow-on since this pattern is borrowed from
+> another part of rcuperf. However, I am also confused about the pattern
+> itself.
+> 
+> If I understand, you are doing the "/ 2" because expedited_sequence
+> progresses by 2 for every expedited batch.
+> 
+> But does rcu_seq_diff() really work on these expedited GP numbers, and will
+> it be immune to changes in RCU_SEQ_STATE_MASK? Sorry for the silly questions,
+> but admittedly I have not looked too much yet into expedited RCU so I could
+> be missing the point.
 
-Even if we could find a case (and I'm not seeing one in a hurry), I
-would try really hard to avoid adding extra barriers here and instead
-make the consumer a little more complicated if at all possible.
+Yes, expedited grace periods use the common sequence-number functions.
+Oddly enough, normal grace periods were the last to make use of these.
 
-The Power folks got rid of a SYNC (yes, more expensive than LWSYNC) from
-their __switch_to() implementation and that had a measurable impact.
+> > > +		else
+> > > +			b_rcu_gp_test_finished = cur_ops->get_gp_seq();
+> > > +
+> > > +		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld\n",
+> > > +		       (unsigned long long)(end_time - start_time), kfree_loops,
+> > > +		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started));
+> > > +		if (shutdown) {
+> > > +			smp_mb(); /* Assign before wake. */
+> > > +			wake_up(&shutdown_wq);
+> > > +		}
+> > > +	}
+> > > +
+> > > +	torture_kthread_stopping("kfree_perf_thread");
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static void
+> > > +kfree_perf_cleanup(void)
+> > > +{
+> > > +	int i;
+> > > +
+> > > +	if (torture_cleanup_begin())
+> > > +		return;
+> > > +
+> > > +	if (kfree_reader_tasks) {
+> > > +		for (i = 0; i < kfree_nrealthreads; i++)
+> > > +			torture_stop_kthread(kfree_perf_thread,
+> > > +					     kfree_reader_tasks[i]);
+> > > +		kfree(kfree_reader_tasks);
+> > > +	}
+> > > +
+> > > +	torture_cleanup_end();
+> > > +}
+> > > +
+> > > +/*
+> > > + * shutdown kthread.  Just waits to be awakened, then shuts down system.
+> > > + */
+> > > +static int
+> > > +kfree_perf_shutdown(void *arg)
+> > > +{
+> > > +	do {
+> > > +		wait_event(shutdown_wq,
+> > > +			   atomic_read(&n_kfree_perf_thread_ended) >=
+> > > +			   kfree_nrealthreads);
+> > > +	} while (atomic_read(&n_kfree_perf_thread_ended) < kfree_nrealthreads);
+> > > +
+> > > +	smp_mb(); /* Wake before output. */
+> > > +
+> > > +	kfree_perf_cleanup();
+> > > +	kernel_power_off();
+> > > +	return -EINVAL;
+> > 
+> > These last four lines should be combined with those of
+> > rcu_perf_shutdown().  Actually, you could fold the two functions together
+> > with only a pair of arguments and two one-line wrapper functions, which
+> > would be even better.
+> 
+> But the cleanup() function is different in the 2 cases and will have to be
+> passed in as a function pointer. I believe we discussed this last review as
+> well.
 
-9145effd626d ("powerpc/64: Drop explicit hwsync in context switch")
+Calling through a pointer should be a non-problem in this case.  We are
+nowhere near a fastpath.
+
+							Thanx, Paul
