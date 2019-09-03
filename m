@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E297BA67E2
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 13:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EFBA67E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 13:57:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbfICL5r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 07:57:47 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52812 "EHLO
+        id S1729034AbfICL5z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 07:57:55 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52930 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbfICL5q (ORCPT
+        with ESMTP id S1727077AbfICL5v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:57:46 -0400
+        Tue, 3 Sep 2019 07:57:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=/0nVzZLscQEkPV21dY0hCRFyg/dKRi0kgvgnarXzPLo=; b=Ymon4Vioox5e
-        kbeDb0mwCldrxjluTgBxtAAcCgCx85UfVTherPsUahZIUV1ThYC0AvnHurAN55ZBYH8ZNuVZrhfRU
-        LUEOKBE4EwoU8/R+G/e+Npuv/y7Sh2LsUbjV1I3wZywAQJAcSIOOq35p5RYLD7lfU0E/zUjXiYDdc
-        997PA=;
+        List-Archive; bh=Xg0WTUeN+jYfK1+m1b37wnEGgFLPO5Z6ot6Ky5LT0BA=; b=TfBXTvCdKIWZ
+        Hva3PRAuAZ8jsJG/NaWDs3y5/SYSq2uRT8NchmWsLqrfXlIK8BEAo4WZeag6+2CmZ/da57YqQaqkS
+        l0avL7MuTuuzGxqeu4oYzYvaf4oJqOMXVdgRta7neF2HzbRngssD5rLanFr0utVJjfcusP8ZU/B5T
+        7Nx/k=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i57RQ-0008Lo-12; Tue, 03 Sep 2019 11:57:44 +0000
+        id 1i57RV-0008Lx-3W; Tue, 03 Sep 2019 11:57:49 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 912A72742D32; Tue,  3 Sep 2019 12:57:43 +0100 (BST)
+        id A1DA72742D32; Tue,  3 Sep 2019 12:57:48 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: add missing 'static inline' to a helper's stub" to the regulator tree
-In-Reply-To: <20190902151332.28058-1-brgl@bgdev.pl>
+To:     Vladimir Oltean <olteanv@gmail.com>
+Cc:     broonie@kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "spi: spi-fsl-dspi: Fix race condition in TCFQ/EOQ interrupt" to the spi tree
+In-Reply-To: <20190903105708.32273-1-olteanv@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190903115743.912A72742D32@ypsilon.sirena.org.uk>
-Date:   Tue,  3 Sep 2019 12:57:43 +0100 (BST)
+Message-Id: <20190903115748.A1DA72742D32@ypsilon.sirena.org.uk>
+Date:   Tue,  3 Sep 2019 12:57:48 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -45,11 +45,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: add missing 'static inline' to a helper's stub
+   spi: spi-fsl-dspi: Fix race condition in TCFQ/EOQ interrupt
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -70,40 +70,63 @@ to this mail.
 Thanks,
 Mark
 
-From d072cb263f9e0ce3f8f6089c17e3466885971fa8 Mon Sep 17 00:00:00 2001
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date: Mon, 2 Sep 2019 17:13:32 +0200
-Subject: [PATCH] regulator: add missing 'static inline' to a helper's stub
+From e327364948492f6a4e866417d3d4d17d95fed285 Mon Sep 17 00:00:00 2001
+From: Vladimir Oltean <olteanv@gmail.com>
+Date: Tue, 3 Sep 2019 13:57:08 +0300
+Subject: [PATCH] spi: spi-fsl-dspi: Fix race condition in TCFQ/EOQ interrupt
 
-The build fails when CONFIG_REGULATOR is not selected because the stub
-for regulator_bulk_set_supply_names() is missing the 'static inline'
-attribute.
+When the driver is working in TCFQ/EOQ mode (i.e. interacts with the SPI
+controller's FIFOs directly) the following sequence of operations
+happens:
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Link: https://lore.kernel.org/r/20190902151332.28058-1-brgl@bgdev.pl
+- The first byte of the tx buffer gets pushed to the TX FIFO (dspi->len
+  gets decremented). This triggers the train of interrupts that handle
+  the rest of the bytes.
+
+- The dspi_interrupt handles a TX confirmation event. It reads the newly
+  available byte from the RX FIFO, checks the dspi->len exit condition,
+  and if there's more to be done, it kicks off the next interrupt in the
+  train by writing the next byte to the TX FIFO.
+
+Now the problem is that the wait queue is woken up one byte too early,
+because dspi->len becomes 0 as soon as the byte has been pushed into the
+TX FIFO. Its interrupt has not yet been processed and the RX byte has
+not been put from the FIFO into the buffer.
+
+Depending on the timing of the wait queue wakeup vs the handling of the
+last dspi_interrupt, it can happen that the main SPI message pump thread
+has already returned back into the spi_device driver. When the rx buffer
+is on stack (which it can be, because in this mode, the DSPI doesn't do
+DMA), the last interrupt will perform a memory write into an rx buffer
+that has been freed. This manifests as stack corruption.
+
+The solution is to only wake up the wait queue when dspi_rxtx says so,
+i.e. after it has processed the last TX confirmation interrupt and
+collected the last RX byte.
+
+Fixes: c55be3059159 ("spi: spi-fsl-dspi: Use poll mode in case the platform IRQ is missing")
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+Link: https://lore.kernel.org/r/20190903105708.32273-1-olteanv@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/linux/regulator/consumer.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/spi/spi-fsl-dspi.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 6d2181a76987..337a46391527 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -586,9 +586,10 @@ static inline int regulator_list_voltage(struct regulator *regulator, unsigned s
- 	return -EINVAL;
- }
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index 77db43f1290f..bec758e978fb 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -710,9 +710,7 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
+ 	if (!(spi_sr & (SPI_SR_EOQF | SPI_SR_TCFQF)))
+ 		return IRQ_NONE;
  
--void regulator_bulk_set_supply_names(struct regulator_bulk_data *consumers,
--				     const char *const *supply_names,
--				     unsigned int num_supplies)
-+static inline void
-+regulator_bulk_set_supply_names(struct regulator_bulk_data *consumers,
-+				const char *const *supply_names,
-+				unsigned int num_supplies)
- {
- }
- 
+-	dspi_rxtx(dspi);
+-
+-	if (!dspi->len) {
++	if (dspi_rxtx(dspi) == 0) {
+ 		dspi->waitflags = 1;
+ 		wake_up_interruptible(&dspi->waitq);
+ 	}
 -- 
 2.20.1
 
