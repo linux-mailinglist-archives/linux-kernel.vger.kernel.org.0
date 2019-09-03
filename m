@@ -2,64 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A722A6203
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B286A61E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:54:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfICG5T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:57:19 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49374 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725919AbfICG5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:57:19 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 65F0365CFEEEB187FB60;
-        Tue,  3 Sep 2019 14:57:17 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 3 Sep 2019 14:57:10 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <catalin.marinas@arm.com>
-CC:     <will@kernel.org>, <zhongjiang@huawei.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH] crypto: arm64: Use PTR_ERR_OR_ZERO rather than its implementation.
-Date:   Tue, 3 Sep 2019 14:54:16 +0800
-Message-ID: <1567493656-19916-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1726958AbfICGyr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:54:47 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:56396 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfICGyq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:54:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=T+PF9nI/UzswEFIMDskT8tvvKXEkHyUFFsZIV3W9dq4=; b=NckRZ4e1JnfYIjs6wsInfvUGS
+        4fwfAQLoC4cCGwbGbVj9yFOF5MHFfTl392qKh9kB2l0RLPCmNVK1+fhXWNMajto2/IalTJSl7Vn0z
+        9mCVwRuZ2eS2+6MsSwN1+17ZQ9V4LZI4zgzrX1CL0cn0WZhujA2r6V27/7+LuaG1Ddsho5LGVIhqL
+        AU5CpoReMG3TjoYQNWNELQjLDTUegQ0z887aUeUr/TLPwZ8AkMyFAqreJX8B9n8QKkkNwpwo2hgil
+        hsx957IysdYrxsnRMxoltaK7PrsUV18dniBryxIIJMdmSbpSbet0Frhn7JmUE7qi2FkC/z4Tsl4U8
+        dxxjaey9g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i52iA-0000tZ-LK; Tue, 03 Sep 2019 06:54:42 +0000
+Date:   Mon, 2 Sep 2019 23:54:42 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        iommu@lists.linux-foundation.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 5/5] iommu: virt: Use iommu_put_resv_regions_simple()
+Message-ID: <20190903065442.GB28322@infradead.org>
+References: <20190829111752.17513-1-thierry.reding@gmail.com>
+ <20190829111752.17513-6-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190829111752.17513-6-thierry.reding@gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PTR_ERR_OR_ZERO contains if(IS_ERR(...)) + PTR_ERR. It is better to
-use it directly. hence just replace it.
-
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- arch/arm64/crypto/aes-glue.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/arch/arm64/crypto/aes-glue.c b/arch/arm64/crypto/aes-glue.c
-index ca0c84d..2a2e0a3 100644
---- a/arch/arm64/crypto/aes-glue.c
-+++ b/arch/arm64/crypto/aes-glue.c
-@@ -409,10 +409,8 @@ static int essiv_cbc_init_tfm(struct crypto_skcipher *tfm)
- 	struct crypto_aes_essiv_cbc_ctx *ctx = crypto_skcipher_ctx(tfm);
- 
- 	ctx->hash = crypto_alloc_shash("sha256", 0, 0);
--	if (IS_ERR(ctx->hash))
--		return PTR_ERR(ctx->hash);
- 
--	return 0;
-+	return PTR_ERR_OR_ZERO(ctx->hash);
- }
- 
- static void essiv_cbc_exit_tfm(struct crypto_skcipher *tfm)
--- 
-1.7.12.4
-
+I think the subject should say virtio instead of virt.
