@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7436A6E8C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F33A6E8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730707AbfICQ0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:26:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47532 "EHLO mail.kernel.org"
+        id S1730727AbfICQ0v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:26:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730669AbfICQ0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:26:35 -0400
+        id S1730678AbfICQ0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:26:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E647F23789;
-        Tue,  3 Sep 2019 16:26:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C801C23789;
+        Tue,  3 Sep 2019 16:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527994;
-        bh=99vI5vKcRGeRvP/ZZt4/CfY7lB6MsEgoUTllPFqFQXc=;
+        s=default; t=1567527998;
+        bh=MVLZQSfnTmoyEXqpBENYUw+6JiZTtBhjO8y0I001DNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dp6fYkyIwKb9eqAotN4S9ZjF3u/UOnXnkQYx8CEwIRlQ4NBV5hESYAsve3r7sA7mW
-         /BSJ0hpsHS+ZtWsk2HVaqngz7BLT/GrcUgCjIYTNx7T7PgxiRXMfdWxBovtAIR8fEc
-         mlq81XCbAF2u7p8g+M9aaxnQhSGGGJ4oVDx4GVkw=
+        b=2bXkJ/O7JARS5aeZkot+zMCtqc0dt/SRkCy8nV9vip8XzTU5bMFFenKtmY/YT4fCI
+         QXwT1tuonGPzMHTdBITgs2WY9ex12YnjxUdxjDgnBc3hnuMACesSzV0/PMB0Bqv6RS
+         aS+JvRAiDyVl+24fJt47RHnN06rA+NL5xnbZF3WY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 044/167] drm/amdgpu: validate user pitch alignment
-Date:   Tue,  3 Sep 2019 12:23:16 -0400
-Message-Id: <20190903162519.7136-44-sashal@kernel.org>
+Cc:     Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 046/167] btrfs: volumes: Make sure no dev extent is beyond device boundary
+Date:   Tue,  3 Sep 2019 12:23:18 -0400
+Message-Id: <20190903162519.7136-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -46,45 +42,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Qu Wenruo <wqu@suse.com>
 
-[ Upstream commit 89f23b6efef554766177bf51aa754bce14c3e7da ]
+[ Upstream commit 05a37c48604c19b50873fd9663f9140c150469d1 ]
 
-Userspace may request pitch alignment that is not supported by GPU.
-Some requests 32, but GPU ignores it and uses default 64 when cpp is
-4. If GEM object is allocated based on the smaller alignment, GPU
-DMA will go out of bound.
+Add extra dev extent end check against device boundary.
 
-Cc: stable@vger.kernel.org # v4.2+
-Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/btrfs/volumes.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index 686a26de50f91..6e67814d33e29 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -527,6 +527,16 @@ amdgpu_display_user_framebuffer_create(struct drm_device *dev,
- 	struct drm_gem_object *obj;
- 	struct amdgpu_framebuffer *amdgpu_fb;
- 	int ret;
-+	struct amdgpu_device *adev = dev->dev_private;
-+	int cpp = drm_format_plane_cpp(mode_cmd->pixel_format, 0);
-+	int pitch = mode_cmd->pitches[0] / cpp;
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index 6e008bd5c8cd1..c20708bfae561 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -7411,6 +7411,7 @@ static int verify_one_dev_extent(struct btrfs_fs_info *fs_info,
+ 	struct extent_map_tree *em_tree = &fs_info->mapping_tree.map_tree;
+ 	struct extent_map *em;
+ 	struct map_lookup *map;
++	struct btrfs_device *dev;
+ 	u64 stripe_len;
+ 	bool found = false;
+ 	int ret = 0;
+@@ -7460,6 +7461,22 @@ static int verify_one_dev_extent(struct btrfs_fs_info *fs_info,
+ 			physical_offset, devid);
+ 		ret = -EUCLEAN;
+ 	}
 +
-+	pitch = amdgpu_align_pitch(adev, pitch, cpp, false);
-+	if (mode_cmd->pitches[0] != pitch) {
-+		DRM_DEBUG_KMS("Invalid pitch: expecting %d but got %d\n",
-+			      pitch, mode_cmd->pitches[0]);
-+		return ERR_PTR(-EINVAL);
++	/* Make sure no dev extent is beyond device bondary */
++	dev = btrfs_find_device(fs_info, devid, NULL, NULL);
++	if (!dev) {
++		btrfs_err(fs_info, "failed to find devid %llu", devid);
++		ret = -EUCLEAN;
++		goto out;
 +	}
- 
- 	obj = drm_gem_object_lookup(file_priv, mode_cmd->handles[0]);
- 	if (obj ==  NULL) {
++	if (physical_offset + physical_len > dev->disk_total_bytes) {
++		btrfs_err(fs_info,
++"dev extent devid %llu physical offset %llu len %llu is beyond device boundary %llu",
++			  devid, physical_offset, physical_len,
++			  dev->disk_total_bytes);
++		ret = -EUCLEAN;
++		goto out;
++	}
+ out:
+ 	free_extent_map(em);
+ 	return ret;
 -- 
 2.20.1
 
