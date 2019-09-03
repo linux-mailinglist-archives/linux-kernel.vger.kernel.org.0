@@ -2,185 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1DB1A5FE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 05:47:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C6A7A5FF0
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 05:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726429AbfICDrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 23:47:40 -0400
-Received: from mail-eopbgr20086.outbound.protection.outlook.com ([40.107.2.86]:43526
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725854AbfICDrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 23:47:40 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=akY6Ht57UaLe9mUHB89fqEwsPpFuthlc0smCtVKADDGqrFMqslYo6zcs07t2LU7XVisHtMh5NRKUrX7QMRatmy7t0c5PiydBPQl6qNALXElDmO1QLbHKLdYi5lfiLwWRGT7tSuqET05QPCcAFUJ7CopBsleE3NiuLotg+ePWAyjoXXtyjR6nCZ4VdDZK4pf4xs/xuSqwb7+3I10D1Jwn8oedU3eJsfGcwdOlnDUDtuqSg7DVC4qowPPX2s4oMOgdYE6DCKMKhsnyRAaoikpLXkxlE/fm8XTGB//mfym8HTd98wzik5z3CSEYIG7FZG6M6nDRCnJrGqMrUbGzO3QVbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vWhQXdv/lsPLcFVXdKKkPX7qk52sHE5hAZxR+rcE7nY=;
- b=RlLtj/cWwRyl8cLvuU+88Oi1XpqVnwwzQH8ovroq+Q8dDxx8nqvkaL5EdMpSHcdxX/BvQDBvrAgxewT0SkTdrXJIrmRJ2vDDGhUA9/lTABcUU7C9sdpwO5c9w/T0EucbeMmkgnir2/LvOKRJJ9uJzGbJ+HLmAftOBXwv+IyHvl73Cf2o6Tq/YVmGgOvR8Wge2l1Tf5ONMjWrDc528IHtBDj5AdEQy3NZ39HaxalDUFlRLQBfYjQk/TgjI72373OTokGm/YyC8CzRp6qvEXNGtNI17341lVZhbV3LS+krhhc3ZJhz+HWkZ1KUrtlqAJZPjO1tXIi0DOLSJCoFiw2sEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vWhQXdv/lsPLcFVXdKKkPX7qk52sHE5hAZxR+rcE7nY=;
- b=Jiu2bgyKmMEOf5fFkGqdT8tmNVc9qvu1LWXCiNLD1bH7N7EN0NPMy8h5wnKitmgAGurYUkNoXof5ITSpZ8NDuqA7swlCkkvmIVaSOFWwFt6Ik0TNoXzSp3nNVtFaWIxMiQKWXVF3ldoCCQHh+S0JxmRleZWGkpr5n24zx7n2S34=
-Received: from AM0PR05MB4866.eurprd05.prod.outlook.com (20.176.214.160) by
- AM0PR05MB4161.eurprd05.prod.outlook.com (52.134.91.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.20; Tue, 3 Sep 2019 03:47:35 +0000
-Received: from AM0PR05MB4866.eurprd05.prod.outlook.com
- ([fe80::bc4c:7c4c:d3e2:8b28]) by AM0PR05MB4866.eurprd05.prod.outlook.com
- ([fe80::bc4c:7c4c:d3e2:8b28%6]) with mapi id 15.20.2220.022; Tue, 3 Sep 2019
- 03:47:35 +0000
-From:   Parav Pandit <parav@mellanox.com>
-To:     Cornelia Huck <cohuck@redhat.com>
-CC:     "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "kwankhede@nvidia.com" <kwankhede@nvidia.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: RE: [PATCH v2 1/6] mdev: Introduce sha1 based mdev alias
-Thread-Topic: [PATCH v2 1/6] mdev: Introduce sha1 based mdev alias
-Thread-Index: AQHVXluia2ak8fbBtkW+HkGgDQ+zpacTarsAgAA0s9CAAAPGgIAAA/owgAATMoCAABuDUIAEp7AAgADYuGA=
-Date:   Tue, 3 Sep 2019 03:47:35 +0000
-Message-ID: <AM0PR05MB4866B62A2EDFE341AC4EA1B5D1B90@AM0PR05MB4866.eurprd05.prod.outlook.com>
-References: <20190826204119.54386-1-parav@mellanox.com>
-        <20190829111904.16042-1-parav@mellanox.com>
-        <20190829111904.16042-2-parav@mellanox.com>
-        <20190830111720.04aa54e9.cohuck@redhat.com>
-        <AM0PR05MB48660877881F7A2D757A9C82D1BD0@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190830143927.163d13a7.cohuck@redhat.com>
-        <AM0PR05MB486621283F935B673455DA63D1BD0@AM0PR05MB4866.eurprd05.prod.outlook.com>
-        <20190830160223.332fd81f.cohuck@redhat.com>
-        <AM0PR05MB48661F9608F284AB5C9BAEB5D1BD0@AM0PR05MB4866.eurprd05.prod.outlook.com>
- <20190902164604.1d04614f.cohuck@redhat.com>
-In-Reply-To: <20190902164604.1d04614f.cohuck@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=parav@mellanox.com; 
-x-originating-ip: [106.51.18.188]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c0ec3a94-1851-42fd-bdd3-08d73021751f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR05MB4161;
-x-ms-traffictypediagnostic: AM0PR05MB4161:|AM0PR05MB4161:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR05MB4161022081014823305F6C92D1B90@AM0PR05MB4161.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 01494FA7F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(396003)(136003)(366004)(39860400002)(13464003)(189003)(199004)(6916009)(71190400001)(71200400001)(66066001)(53936002)(11346002)(52536014)(486006)(476003)(6436002)(6246003)(5660300002)(446003)(6116002)(14444005)(256004)(55016002)(55236004)(86362001)(76116006)(102836004)(478600001)(26005)(66556008)(66476007)(64756008)(66446008)(9686003)(53546011)(6506007)(74316002)(316002)(3846002)(186003)(9456002)(99286004)(2906002)(8936002)(7736002)(76176011)(305945005)(33656002)(229853002)(54906003)(4326008)(8676002)(66946007)(7696005)(25786009)(81166006)(81156014)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR05MB4161;H:AM0PR05MB4866.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: kO1uJPcuA2vgGWiyUsjiJ31l7bGKDBUpLj+3ElhFo3SzHg2s7eoR2GSQFU0i4j+MaYj/v3TUuPLriq3doaGVhPy+5wxW5zF1PS5x1px+lxLKRkYUtXxWVPF3CvS+/LUBmglZEW4efy5C478oGgHg3MqwHZceGa0YVK9Z/eFDhs7Dpnor0EQDDWQI8u0WSjraIZfmlToAaIlBiNFpokqMHHDM5SpA+yLvZThd3RgLPqr7lrtSb+xs+/VhqJvGRZ7xSl7eI0TaNVFU6N645uoOjecVyEcxxcdCDnZLQ4nRf3uVmxErVglBOGkooM7SeKdn+9CFskGlc6VqX5wk9Smtoru4H0OQQuTSBPNLF0Q1pteVn3ArU67lIOljJVGynj7cx0nfu1JpkhpNt5fxqPW04ajAHV2TgwMsE1ER2OpejnE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0ec3a94-1851-42fd-bdd3-08d73021751f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2019 03:47:35.1783
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: S03fps6uhwNC9+ZOM8j+Gb28xIf2kkCa/OZDDBXrJtLRKBLH+Mn1DJlvxzk27eZuuBNfNftFhu9Gi1pW/OjgZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR05MB4161
+        id S1726263AbfICDzD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 23:55:03 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38530 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfICDzD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 23:55:03 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d10so3792744pgo.5
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 20:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=L/Ylww4xlUThxeTDdjn9aGKgbvbOPz27jtSswl52ZqI=;
+        b=syOytE7Z9tJHwn1wsEtJ+hWykOXtCwEqInp70AFKkSJnDD8cu3UoXeRNpzzTjjh0Yk
+         Uu3HeK+xXmdb6gBc/tjxHDIM5KAB4ioB4hiVRLcsg4SwVe+00ylaE7Bn0GVlsBICme7p
+         TX87GJUTwtm5zT4JUt7hdIbEieCOvGRt3vJWLiAnmGDATcreCTVJA9xVbx7oVJxnz3ny
+         HoozRHqBQ/KC5Q64ZDiXftawkJoyeaDxMOB9zPfwAeMwTc/Caje0JhR+h2HtJjJpupqg
+         oMfudjhENWIvp0agkl62UOqU4YEtl9ovP2vKLpUfWedTOTM7cMqnPTaNfwA8DvEL+5l2
+         NQnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=L/Ylww4xlUThxeTDdjn9aGKgbvbOPz27jtSswl52ZqI=;
+        b=exTWBPZF/oneSwl59QrwsMjltQNyNOyUJaIV3Mu2ZNqfdtJCmHGV9NMe9aU5bcIYHE
+         992sfh56FAuZ7fy8ptbE6f9R+8ztI0MwVFMRCkTWyuAWFiygIYPUBRP6JMI3mxv7TaQP
+         5/Xqs6EPslJwLc1TUi7pQNk3Q9xTGmWlsV2wmPboSyRD0DW6xyP9SCMgnvcXYow85DN9
+         DeayahQm6p8xqYguyVRe1oKzJywHnO4EO5yGOT6S0bORU3ohc/UeufQ0YK99GcSyhmOU
+         WS4Xfa6d/kun7kVogB+fG4oSaqL4MUthy0xpEWm5fU9/J2h7w8628KHM9cDfonVM7FhM
+         mk0A==
+X-Gm-Message-State: APjAAAX54ISD3Mbdj/W9to09MlaRbYh4wMJAxnFgS4dcFPqL8mXy7kgc
+        l4/JfUPvet1vjxq0ZKIZET69TQ==
+X-Google-Smtp-Source: APXvYqzI2d82S8ib2l+6cTXqTZCZPHujRgDijaeP5i2M7M1KNF7dffpDtFhMujXccIXKh/nBZE2wSg==
+X-Received: by 2002:aa7:9117:: with SMTP id 23mr14656447pfh.94.1567482902071;
+        Mon, 02 Sep 2019 20:55:02 -0700 (PDT)
+Received: from localhost.localdomain ([240e:362:47f:ba00:a424:c9b7:932a:4fc2])
+        by smtp.gmail.com with ESMTPSA id j7sm6826356pfi.96.2019.09.02.20.53.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Sep 2019 20:55:01 -0700 (PDT)
+From:   Zhangfei Gao <zhangfei.gao@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, jonathan.cameron@huawei.com,
+        kenneth-lee-2012@foxmail.com, Wangzhou <wangzhou1@hisilicon.com>
+Cc:     linux-accelerators@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Zhangfei Gao <zhangfei.gao@linaro.org>
+Subject: [PATCH v3 0/2] Add uacce module for Accelerator
+Date:   Tue,  3 Sep 2019 11:52:56 +0800
+Message-Id: <1567482778-5700-1-git-send-email-zhangfei.gao@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Uacce (Unified/User-space-access-intended Accelerator Framework) targets to
+provide Shared Virtual Addressing (SVA) between accelerators and processes.
+So accelerator can access any data structure of the main cpu.
+This differs from the data sharing between cpu and io device, which share
+data content rather than address.
+Because of unified address, hardware and user space of process can share
+the same virtual address in the communication.
+
+Uacce is intended to be used with Jean Philippe Brucker's SVA
+patchset[1], which enables IO side page fault and PASID support. 
+We have keep verifying with Jean's sva/current [2]
+We also keep verifying with Eric's SMMUv3 Nested Stage patch [3]
+
+This series and related zip & qm driver
+https://github.com/Linaro/linux-kernel-warpdrive/tree/5.3-rc1-warpdrive-v3
+
+The library and user application:
+https://github.com/Linaro/warpdrive/tree/wdprd-v1-upstream
+
+References:
+[1] http://jpbrucker.net/sva/
+[2] http://www.linux-arm.org/git?p=linux-jpb.git;a=shortlog;h=refs/heads/sva/current
+[3] https://github.com/eauger/linux/tree/v5.3.0-rc0-2stage-v9
+
+Change History:
+v3:
+Recommended by Greg, use sturct uacce_device instead of struct uacce,
+and use struct *cdev in struct uacce_device, as a result, 
+cdev can be released by itself when refcount decreased to 0.
+So the two structures are decoupled and self-maintained by themsleves.
+Also add dev.release for put_device.
+
+v2:
+Address comments from Greg and Jonathan
+Modify interface uacce_register
+Drop noiommu mode first
+
+v1:
+1. Rebase to 5.3-rc1
+2. Build on iommu interface
+3. Verifying with Jean's sva and Eric's nested mode iommu.
+4. User library has developed a lot: support zlib, openssl etc.
+5. Move to misc first
+
+RFC3:
+https://lkml.org/lkml/2018/11/12/1951
+
+RFC2:
+https://lwn.net/Articles/763990/
 
 
-> -----Original Message-----
-> From: Cornelia Huck <cohuck@redhat.com>
-> Sent: Monday, September 2, 2019 8:16 PM
-> To: Parav Pandit <parav@mellanox.com>
-> Cc: alex.williamson@redhat.com; Jiri Pirko <jiri@mellanox.com>;
-> kwankhede@nvidia.com; davem@davemloft.net; kvm@vger.kernel.org;
-> linux-kernel@vger.kernel.org; netdev@vger.kernel.org
-> Subject: Re: [PATCH v2 1/6] mdev: Introduce sha1 based mdev alias
->=20
-> On Fri, 30 Aug 2019 15:45:13 +0000
-> Parav Pandit <parav@mellanox.com> wrote:
->=20
-> > > > > > > This detour via the local variable looks weird to me. Can
-> > > > > > > you either create the alias directly in the mdev (would need
-> > > > > > > to happen later in the function, but I'm not sure why you
-> > > > > > > generate the alias before checking for duplicates anyway), or=
- do
-> an explicit copy?
-> > > > > > Alias duplicate check is done after generating it, because
-> > > > > > duplicate alias are
-> > > > > not allowed.
-> > > > > > The probability of collision is rare.
-> > > > > > So it is speculatively generated without hold the lock,
-> > > > > > because there is no
-> > > > > need to hold the lock.
-> > > > > > It is compared along with guid while mutex lock is held in sing=
-le
-> loop.
-> > > > > > And if it is duplicate, there is no need to allocate mdev.
-> > > > > >
-> > > > > > It will be sub optimal to run through the mdev list 2nd time
-> > > > > > after mdev
-> > > > > creation and after generating alias for duplicate check.
-> > > > >
-> > > > > Ok, but what about copying it? I find this "set local variable
-> > > > > to NULL after ownership is transferred" pattern a bit unintuitive=
-.
-> > > > > Copying it to the mdev (and then unconditionally freeing it)
-> > > > > looks more
-> > > obvious to me.
-> > > > Its not unconditionally freed.
-> > >
-> > > That's not what I have been saying :(
-> > >
-> > Ah I see. You want to allocate alias memory twice; once inside mdev dev=
-ice
-> and another one in _create() function.
-> > _create() one you want to free unconditionally.
-> >
-> > Well, passing pointer is fine.
->=20
-> It's not that it doesn't work, but it feels fragile due to its non-obviou=
-sness.
-And its well commented as Alex asked.
+Background of why Uacce:
+Von Neumann processor is not good at general data manipulation.
+It is designed for control-bound rather than data-bound application.
+The latter need less control path facility and more/specific ALUs.
+So there are more and more heterogeneous processors, such as
+encryption/decryption accelerators, TPUs, or
+EDGE (Explicated Data Graph Execution) processors, introduced to gain
+better performance or power efficiency for particular applications
+these days.
 
->=20
-> > mdev_register_device() has similar little tricky pattern that makes par=
-ent =3D
-> NULL on __find_parent_device() finds duplicate one.
->=20
-> I don't think that the two are comparable.
->
-They are very similar.
-Why parent should be marked null otherwise.
+There are generally two ways to make use of these heterogeneous processors:
 
- > >
-> > Ownership transfer is more straight forward code.
->=20
-> I have to disagree here.
->
-Ok. It is better than allocating memory twice. So I prefer to stick to this=
- method.
-=20
-> >
-> > It is similar to device_initialize(), device init sequence code, where =
-once
-> device_initialize is done, freeing the device memory will be left to the
-> put_device(), we don't call kfree() on mdev device.
->=20
-> This does not really look similar to me: devices are refcounted structure=
-s,
-> while strings aren't; you transfer a local pointer to a refcounted struct=
-ure
-> and then discard the local reference.
+The first is to make them co-processors, just like FPU.
+This is good for some application but it has its own cons:
+It changes the ISA set permanently.
+You must save all state elements when the process is switched out.
+But most data-bound processors have a huge set of state elements.
+It makes the kernel scheduler more complex.
+
+The second is Accelerator.
+It is taken as a IO device from the CPU's point of view
+(but it need not to be physically). The process, running on CPU,
+hold a context of the accelerator and send instructions to it as if
+it calls a function or thread running with FPU.
+The context is bound with the processor itself.
+So the state elements remain in the hardware context until
+the context is released.
+
+We believe this is the core feature of an "Accelerator" vs. Co-processor
+or other heterogeneous processors.
+
+The intention of Uacce is to provide the basic facility to backup
+this scenario. Its first step is to make sure the accelerator and process
+can share the same address space. So the accelerator ISA can directly
+address any data structure of the main CPU.
+This differs from the data sharing between CPU and IO device,
+which share data content rather than address.
+So it is different comparing to the other DMA libraries.
+
+In the future, we may add more facility to support linking accelerator
+library to the main application, or managing the accelerator context as
+special thread.
+But no matter how, this can be a solid start point for new processor
+to be used as an "accelerator" as this is the essential requirement.
+
+
+Kenneth Lee (2):
+  uacce: Add documents for uacce
+  uacce: add uacce driver
+
+ Documentation/ABI/testing/sysfs-driver-uacce |   47 ++
+ Documentation/misc-devices/uacce.rst         |  309 ++++++++
+ drivers/misc/Kconfig                         |    1 +
+ drivers/misc/Makefile                        |    1 +
+ drivers/misc/uacce/Kconfig                   |   13 +
+ drivers/misc/uacce/Makefile                  |    2 +
+ drivers/misc/uacce/uacce.c                   | 1094 ++++++++++++++++++++++++++
+ include/linux/uacce.h                        |  172 ++++
+ include/uapi/misc/uacce.h                    |   39 +
+ 9 files changed, 1678 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-uacce
+ create mode 100644 Documentation/misc-devices/uacce.rst
+ create mode 100644 drivers/misc/uacce/Kconfig
+ create mode 100644 drivers/misc/uacce/Makefile
+ create mode 100644 drivers/misc/uacce/uacce.c
+ create mode 100644 include/linux/uacce.h
+ create mode 100644 include/uapi/misc/uacce.h
+
+-- 
+2.7.4
+
