@@ -2,190 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D3B7A6606
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BE4CA660B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:49:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbfICJtF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 05:49:05 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36347 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbfICJtE (ORCPT
+        id S1728636AbfICJtw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 05:49:52 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:16788 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726840AbfICJtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:49:04 -0400
-Received: by mail-ed1-f66.google.com with SMTP id g24so17933886edu.3
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 02:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mEls2kUVvBcaBZpvYEuQESBA2MX/ZhbqTw7OA+f9Nbs=;
-        b=WahOyVBEl0OVaAAIgzp1mXqBhNiSKi1rS1iYLd8wycHTbKi9/P+SA0o2wH8J4y5QPR
-         e6OiZXQUwJKelCzLkw5rPDo2/QvL+Dd4Ih+zYTNICr6DnqQDCFNDX/UxfyFVlF2AMTJ4
-         u7rovqA4TvuCbkOQOZXKzTLg9rORSmdP27cXo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=mEls2kUVvBcaBZpvYEuQESBA2MX/ZhbqTw7OA+f9Nbs=;
-        b=M60q/hx21zbBSkmAFLkkfG0lR6sUIiYnPZU5mnx49/wpBa3ooIpF2q2shSVtLdq0aQ
-         T7VXrYfp/A7vlwHFO1QKx7sKTNdOIn2zOoaqJp5LYnoOZENmNPXvoOklpPrYyEcnY7Y2
-         mc6ZouEF03k/u9ymqa0uluwLue9TAhaHJFJFbuHI9IQXXPGhcnGqSLKdLLBd4/T9Dsrz
-         kpnzKqiczAd2mRT0LfWP5Td4kuNPvQtRRHVKNsskDhVvAyeHmJdXNKuvwSLKrc7ZAeCR
-         r1fQTADjFDWrBsHsSLf6BKv/2ZiDILwVWZpgsIC5iVYUPzpqeE4byRgbvpQvEHHIWn7b
-         2f/A==
-X-Gm-Message-State: APjAAAUC0jwlusWxxCkODtC/P3uoMndUe9JMYrt3NiMlPLnKdZj6I5UK
-        8XiJ6/UHlqMAqdhddhnq4FlY4Q==
-X-Google-Smtp-Source: APXvYqxY0hmUni95XwccqU3GO7ZXnZTxf/p+ya82BW6ix0VT35ImlZc/up0XizPcjgRP0ff5z5gp6Q==
-X-Received: by 2002:a17:906:74d4:: with SMTP id z20mr16917924ejl.191.1567504142161;
-        Tue, 03 Sep 2019 02:49:02 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id k16sm1860071ejv.87.2019.09.03.02.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 02:49:01 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 11:48:59 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, tzimmermann@suse.de,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 05/17] drm: add mmap() to drm_gem_object_funcs
-Message-ID: <20190903094859.GQ2112@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org, tzimmermann@suse.de,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190808134417.10610-1-kraxel@redhat.com>
- <20190808134417.10610-6-kraxel@redhat.com>
+        Tue, 3 Sep 2019 05:49:52 -0400
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x839f35N006869;
+        Tue, 3 Sep 2019 11:49:32 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=qAPgp0EL893ZaRTISydhUDXeZQ3+/E80TJjDmAJXx5Q=;
+ b=taVd6utEbIlSPk9e7arumd8UuD3ssEO0SJK3MH5YmXM9d014PMtOZ8akkZexU97nSoBW
+ qCY0RtB1BO/hT3GCsV/w0W2yB2GJDXSBJjPAXmX/VJxXLiBmMqtwSy5OsAFGlzbinslj
+ pYrgzpjQYvWOqMFAnRoxKotHeh46F0pulaADwR9ICuu1cszefzmtvEXZqHyVby/yvaw8
+ /amMaZEeVAi4eYRsZPqkmBYQMf8dE0eimPs238Km9db/PAIw6Dqnx2X0oW4RXlMs3g9Y
+ q5V91LXy4lOoaZVTUjyIN9GkiM5gN/PwApPElwjzUwcDqWMKMHecdImkDzn07l8NZ5sk Nw== 
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2uqenv1y63-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 03 Sep 2019 11:49:32 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9D29223;
+        Tue,  3 Sep 2019 09:49:28 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EFD722C2A0B;
+        Tue,  3 Sep 2019 11:49:27 +0200 (CEST)
+Received: from [10.48.0.131] (10.75.127.45) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Sep
+ 2019 11:49:27 +0200
+Subject: Re: [PATCH v5 1/2] rpmsg: core: add API to get message length
+To:     Suman Anna <s-anna@ti.com>, Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        xiang xiao <xiaoxiang781216@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+CC:     Fabien DESSENNE <fabien.dessenne@st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>
+References: <1567005566-10986-1-git-send-email-arnaud.pouliquen@st.com>
+ <1567005566-10986-2-git-send-email-arnaud.pouliquen@st.com>
+ <7dc4d1cf-4f15-19ab-b8dd-424175f2a11a@ti.com>
+From:   Arnaud Pouliquen <arnaud.pouliquen@st.com>
+Message-ID: <f6f2ad3e-123a-268b-2586-544752c54db7@st.com>
+Date:   Tue, 3 Sep 2019 11:49:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190808134417.10610-6-kraxel@redhat.com>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7dc4d1cf-4f15-19ab-b8dd-424175f2a11a@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG3NODE1.st.com
+ (10.75.127.7)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.70,1.0.8
+ definitions=2019-09-03_01:2019-09-03,2019-09-03 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 08, 2019 at 03:44:05PM +0200, Gerd Hoffmann wrote:
-> drm_gem_object_funcs->vm_ops alone can't handle
-> everything mmap() needs.  Add a new callback for it.
+hi Suman
+
+On 8/29/19 12:34 AM, Suman Anna wrote:
+> Hi Arnaud,
 > 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
->  include/drm/drm_gem.h     | 9 +++++++++
->  drivers/gpu/drm/drm_gem.c | 6 ++++++
->  2 files changed, 15 insertions(+)
+> On 8/28/19 10:19 AM, Arnaud Pouliquen wrote:
+>> Return the rpmsg buffer size for sending message, so rpmsg users
+>> can split a long message in several sub rpmsg buffers.
 > 
-> diff --git a/include/drm/drm_gem.h b/include/drm/drm_gem.h
-> index ae693c0666cd..ee3c4ad742c6 100644
-> --- a/include/drm/drm_gem.h
-> +++ b/include/drm/drm_gem.h
-> @@ -150,6 +150,15 @@ struct drm_gem_object_funcs {
->  	 */
->  	void (*vunmap)(struct drm_gem_object *obj, void *vaddr);
->  
-> +	/**
-> +	 * @mmap:
-> +	 *
-> +	 * Called by drm_gem_mmap() for additional checks/setup.
-> +	 *
-> +	 * This callback is optional.
-> +	 */
-> +	int (*mmap)(struct drm_gem_object *obj, struct vm_area_struct *vma);
+> Thanks for the patch, I also have a need for the same to be able to
+> compute permissible payload size. Minor comments below.
 
-I think if we do an mmap callback, it should replace all the mmap handling
-(except the drm_gem_object_get) that drm_gem_mmap_obj does. So maybe
-something like the below:
+Thanks for your review. i will update it ASAP. Then if you need it and 
+ack it, i suppose that we could request Bjorn to integrate it in a first 
+step, if the rpmsg tty driver has not a level of quality sufficient to 
+be accepted...
 
-
-diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-index 6854f5867d51..e8b7779633dd 100644
---- a/drivers/gpu/drm/drm_gem.c
-+++ b/drivers/gpu/drm/drm_gem.c
-@@ -1104,17 +1104,22 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
- 	if (obj_size < vma->vm_end - vma->vm_start)
- 		return -EINVAL;
- 
--	if (obj->funcs && obj->funcs->vm_ops)
--		vma->vm_ops = obj->funcs->vm_ops;
--	else if (dev->driver->gem_vm_ops)
--		vma->vm_ops = dev->driver->gem_vm_ops;
--	else
--		return -EINVAL;
--
--	vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
- 	vma->vm_private_data = obj;
--	vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
--	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
-+
-+	if (obj->funcs && obj->funcs->mmap)
-+		obj->funcs->mmap(obj, vma);
-+	else {
-+		if (obj->funcs && obj->funcs->vm_ops)
-+			vma->vm_ops = obj->funcs->vm_ops;
-+		else if (dev->driver->gem_vm_ops)
-+			vma->vm_ops = dev->driver->gem_vm_ops;
-+		else
-+			return -EINVAL;
-+
-+		vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP;
-+		vma->vm_page_prot = pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
-+		vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
-+	}
- 
- 	/* Take a ref for this mapping of the object, so that the fault
- 	 * handler can dereference the mmap offset's pointer to the object.
-
-Since I remember quite a few discussions where the default vma flag
-wrangling we're doing is seriously getting in the way of things too.
-
-I think even better would be if this new ->mmap hook could also be used
-directly by the dma-buf mmap code, without having to jump through hoops
-creating a fake file and fake vma offset and everything. I think with that
-we'd have a really solid case to add this ->mmap hook.
--Daniel
-
-
-> +
->  	/**
->  	 * @vm_ops:
->  	 *
-> diff --git a/drivers/gpu/drm/drm_gem.c b/drivers/gpu/drm/drm_gem.c
-> index afc38cece3f5..84db8de217e1 100644
-> --- a/drivers/gpu/drm/drm_gem.c
-> +++ b/drivers/gpu/drm/drm_gem.c
-> @@ -1105,6 +1105,8 @@ int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
->  		vma->vm_ops = obj->funcs->vm_ops;
->  	else if (dev->driver->gem_vm_ops)
->  		vma->vm_ops = dev->driver->gem_vm_ops;
-> +	else if (obj->funcs && obj->funcs->mmap)
-> +		/* obj->funcs->mmap must set vma->vm_ops */;
->  	else
->  		return -EINVAL;
->  
-> @@ -1192,6 +1194,10 @@ int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
->  	ret = drm_gem_mmap_obj(obj, drm_vma_node_size(node) << PAGE_SHIFT,
->  			       vma);
->  
-> +	if (ret == 0)
-> +		if (obj->funcs->mmap)
-> +			ret = obj->funcs->mmap(obj, vma);
-> +
->  	drm_gem_object_put_unlocked(obj);
->  
->  	return ret;
-> -- 
-> 2.18.1
+Regards
+Arnaud
 > 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+>>
+>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@st.com>
+>> ---
+>> V4 to V5 :
+>>    - rename rpmsg_get_buf_payload_size to rpmsg_get_mtu
+>>
+>>   drivers/rpmsg/rpmsg_core.c       | 21 +++++++++++++++++++++
+>>   drivers/rpmsg/rpmsg_internal.h   |  2 ++
+>>   drivers/rpmsg/virtio_rpmsg_bus.c | 10 ++++++++++
+>>   include/linux/rpmsg.h            | 10 ++++++++++
+>>   4 files changed, 43 insertions(+)
+>>
+>> diff --git a/drivers/rpmsg/rpmsg_core.c b/drivers/rpmsg/rpmsg_core.c
+>> index 8122807db380..daca2e24fc71 100644
+>> --- a/drivers/rpmsg/rpmsg_core.c
+>> +++ b/drivers/rpmsg/rpmsg_core.c
+>> @@ -283,6 +283,27 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>>   }
+>>   EXPORT_SYMBOL(rpmsg_trysend_offchannel);
+>>   
+>> +/**
+>> + * rpmsg_get_mtu() - get maximum transmission buffer size for sending message.
+>> + * @ept: the rpmsg endpoint
+>> + *
+>> + * This function returns maximum buffer size available for a single message.
+>> + *
+>> + * Return: the maximum transmission size on success and an appropriate error
+>> + * value on failure.
+>> + */
+>> +
+>> +ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>> +{
+>> +	if (WARN_ON(!ept))
+>> +		return -EINVAL;
+>> +	if (!ept->ops->get_buf_mtu)
+> 
+> How about calling the ops just get_mtu or rename the function to follow
+> the ops name, like all the others.
+> 
+>> +		return -ENXIO;
+> 
+> Perhaps ENOTSUPP or EOPNOTSUPP.
+> 
+>> +
+>> +	return ept->ops->get_buf_mtu(ept);
+>> +}
+>> +EXPORT_SYMBOL(rpmsg_get_mtu);
+>> +
+>>   /*
+>>    * match an rpmsg channel with a channel info struct.
+>>    * this is used to make sure we're not creating rpmsg devices for channels
+>> diff --git a/drivers/rpmsg/rpmsg_internal.h b/drivers/rpmsg/rpmsg_internal.h
+>> index 0d791c30b7ea..645c402569ac 100644
+>> --- a/drivers/rpmsg/rpmsg_internal.h
+>> +++ b/drivers/rpmsg/rpmsg_internal.h
+>> @@ -46,6 +46,7 @@ struct rpmsg_device_ops {
+>>    * @trysend:		see @rpmsg_trysend(), required
+>>    * @trysendto:		see @rpmsg_trysendto(), optional
+>>    * @trysend_offchannel:	see @rpmsg_trysend_offchannel(), optional
+>> + * @get_buf_payload_size: see @rpmsg_get_buf_payload_size(), optional
+> 
+> Missed updating the kerneldoc to the new name.
+> 
+>>    *
+>>    * Indirection table for the operations that a rpmsg backend should implement.
+>>    * In addition to @destroy_ept, the backend must at least implement @send and
+>> @@ -65,6 +66,7 @@ struct rpmsg_endpoint_ops {
+>>   			     void *data, int len);
+>>   	__poll_t (*poll)(struct rpmsg_endpoint *ept, struct file *filp,
+>>   			     poll_table *wait);
+>> +	ssize_t (*get_buf_mtu)(struct rpmsg_endpoint *ept);
+>>   };
+>>   
+>>   int rpmsg_register_device(struct rpmsg_device *rpdev);
+>> diff --git a/drivers/rpmsg/virtio_rpmsg_bus.c b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> index e757f0038a1c..f80b1ad23e7e 100644
+>> --- a/drivers/rpmsg/virtio_rpmsg_bus.c
+>> +++ b/drivers/rpmsg/virtio_rpmsg_bus.c
+>> @@ -178,6 +178,7 @@ static int virtio_rpmsg_trysendto(struct rpmsg_endpoint *ept, void *data,
+>>   				  int len, u32 dst);
+>>   static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+>>   					   u32 dst, void *data, int len);
+>> +static ssize_t virtio_get_buf_mtu(struct rpmsg_endpoint *ept);
+> 
+> Minor nit, virtio_rpmsg_ prefix similar to all the other ops.
+> 
+> regards
+> Suman
+> 
+>>   
+>>   static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+>>   	.destroy_ept = virtio_rpmsg_destroy_ept,
+>> @@ -187,6 +188,7 @@ static const struct rpmsg_endpoint_ops virtio_endpoint_ops = {
+>>   	.trysend = virtio_rpmsg_trysend,
+>>   	.trysendto = virtio_rpmsg_trysendto,
+>>   	.trysend_offchannel = virtio_rpmsg_trysend_offchannel,
+>> +	.get_buf_mtu = virtio_get_buf_mtu,
+>>   };
+>>   
+>>   /**
+>> @@ -702,6 +704,14 @@ static int virtio_rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src,
+>>   	return rpmsg_send_offchannel_raw(rpdev, src, dst, data, len, false);
+>>   }
+>>   
+>> +static ssize_t virtio_get_buf_mtu(struct rpmsg_endpoint *ept)
+>> +{
+>> +	struct rpmsg_device *rpdev = ept->rpdev;
+>> +	struct virtio_rpmsg_channel *vch = to_virtio_rpmsg_channel(rpdev);
+>> +
+>> +	return vch->vrp->buf_size - sizeof(struct rpmsg_hdr);
+>> +}
+>> +
+>>   static int rpmsg_recv_single(struct virtproc_info *vrp, struct device *dev,
+>>   			     struct rpmsg_hdr *msg, unsigned int len)
+>>   {
+>> diff --git a/include/linux/rpmsg.h b/include/linux/rpmsg.h
+>> index 9fe156d1c018..9d638bf2bdce 100644
+>> --- a/include/linux/rpmsg.h
+>> +++ b/include/linux/rpmsg.h
+>> @@ -135,6 +135,8 @@ int rpmsg_trysend_offchannel(struct rpmsg_endpoint *ept, u32 src, u32 dst,
+>>   __poll_t rpmsg_poll(struct rpmsg_endpoint *ept, struct file *filp,
+>>   			poll_table *wait);
+>>   
+>> +ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept);
+>> +
+>>   #else
+>>   
+>>   static inline int register_rpmsg_device(struct rpmsg_device *dev)
+>> @@ -242,6 +244,14 @@ static inline __poll_t rpmsg_poll(struct rpmsg_endpoint *ept,
+>>   	return 0;
+>>   }
+>>   
+>> +static ssize_t rpmsg_get_mtu(struct rpmsg_endpoint *ept)
+>> +{
+>> +	/* This shouldn't be possible */
+>> +	WARN_ON(1);
+>> +
+>> +	return -ENXIO;
+>> +}
+>> +
+>>   #endif /* IS_ENABLED(CONFIG_RPMSG) */
+>>   
+>>   /* use a macro to avoid include chaining to get THIS_MODULE */
+>>
+> 
