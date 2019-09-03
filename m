@@ -2,100 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D04DA6BD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:50:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14F23A6BE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:52:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729559AbfICOuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:50:01 -0400
-Received: from foss.arm.com ([217.140.110.172]:38518 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbfICOuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:50:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF1EC337;
-        Tue,  3 Sep 2019 07:49:59 -0700 (PDT)
-Received: from [10.37.8.116] (unknown [10.37.8.116])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3E663F246;
-        Tue,  3 Sep 2019 07:49:57 -0700 (PDT)
-Subject: Re: [PATCH v2 7/8] mips: vdso: Remove unused VDSO_HAS_32BIT_FALLBACK
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "salyzyn@android.com" <salyzyn@android.com>,
-        "0x7f454c46@gmail.com" <0x7f454c46@gmail.com>,
-        "luto@kernel.org" <luto@kernel.org>
-References: <20190830135902.20861-1-vincenzo.frascino@arm.com>
- <20190830135902.20861-8-vincenzo.frascino@arm.com>
- <20190903143801.7upetfqe6upouzlh@pburton-laptop>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <f783346b-3e33-1bce-f204-f9737ef493e0@arm.com>
-Date:   Tue, 3 Sep 2019 15:51:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729616AbfICOwS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:52:18 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:38952 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728490AbfICOwQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 10:52:16 -0400
+Received: by mail-vs1-f68.google.com with SMTP id y62so11470813vsb.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:52:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZwoxSskeP0023k+XOLK7qG1mfuenS/a51g77gLnDidE=;
+        b=Fa33lR9t7UgiD8FO8rUeW2DVG3Nv4mjXNYBCR/EGzrJTPKb6tzmtE0h96gDu5DZJbk
+         dzVwPLR8SXffeq49jjnD/jCRKWKvOW71V9cVVKCBGKhGwQFZmDiPEXuNRk/DMjApoXTw
+         +eQQoOLHW8BH+SR8Ak8nD1aIA94HNlogEgnlmn3OqopmA1e2pdiR4L4LKJ2QoYe+Qp+l
+         UvQIjcQqPScxkltSFzRxFI7O+VwNc+lIVFFTvkd09gL2k1YXZ5NzUczfyXJXocIIWET6
+         CBEJWXJ2bmtX+YI0J2a56uha5NjAX3ldZE+OnnRZT/sYmnSmFel9Xul35wtutHem3YOL
+         U1aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZwoxSskeP0023k+XOLK7qG1mfuenS/a51g77gLnDidE=;
+        b=RC0+1kLekGfVS+eJZvo8hnFpSvUHIKE75aw2834q3PluuQ4tXcjgPwPYJyRW5US/c0
+         bA4DUPTqWJvzTYa6H2iNzMsgjBF+7v6ZGvjU6dpv9q8wBe2KunPLY0QKjBiz6zroCTRA
+         uZn217q2ZuHBLTHY0ZORbBfiWml27H9NV6+onyYblWTj+6PKwBTODKM23+ASIeBuDM1m
+         tsYAYuzJ6HKswRYsl/8T+faLi6og5vjX/g/qB4gWOqp9aGW2+IXswrPeS1tyNFZYCdPu
+         2xrDN/06Um8DBKRyuuBJz801cTIf/Z+orL2dbBunLKdZ9LEcJ6lZekPpckUzEzMZQD/u
+         +V/A==
+X-Gm-Message-State: APjAAAUJs1MKCWx9seo5/NxuI2rqaperk1l2q65Dd7DE7Dca+i9/AVdy
+        3ePBc6eyL2oTA/0C1mt4mygA2gHs3/OybTkohpaAMQ==
+X-Google-Smtp-Source: APXvYqxyKdAe+67a84cVralvrTfBWlQLBTBDbGFtaZa2djugNbwh3dVLkKbYtbj6MuCPe9Vu0KOOjWZI1bOfSON+L/w=
+X-Received: by 2002:a67:983:: with SMTP id 125mr13634122vsj.191.1567522335355;
+ Tue, 03 Sep 2019 07:52:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190903143801.7upetfqe6upouzlh@pburton-laptop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190903115114.33053-1-alcooperx@gmail.com>
+In-Reply-To: <20190903115114.33053-1-alcooperx@gmail.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 3 Sep 2019 16:51:39 +0200
+Message-ID: <CAPDyKFqaNBH3Thwy1O+KXkcsgM2gMrm9zNGYWH8vVP+Y2vSLdA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci: Fix incorrect switch to HS mode
+To:     Al Cooper <alcooperx@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On Tue, 3 Sep 2019 at 13:51, Al Cooper <alcooperx@gmail.com> wrote:
+>
+> When switching from any MMC speed mode that requires 1.8v
+> (HS200, HS400 and HS400ES) to High Speed (HS) mode, the system
+> ends up configured for SDR12 with a 50MHz clock which is an illegal
+> mode.
+>
+> This happens because the SDHCI_CTRL_VDD_180 bit in the
+> SDHCI_HOST_CONTROL2 register is left set and when this bit is
+> set, the speed mode is controlled by the SDHCI_CTRL_UHS field
+> in the SDHCI_HOST_CONTROL2 register. The SDHCI_CTRL_UHS field
+> will end up being set to 0 (SDR12) by sdhci_set_uhs_signaling()
+> because there is no UHS mode being set.
+>
+> The fix is to change sdhci_set_uhs_signaling() to set the
+> SDHCI_CTRL_UHS field to SDR25 (which is the same as HS) for
+> any switch to HS mode.
+>
+> This was found on a new eMMC controller that does strict checking
+> of the speed mode and the corresponding clock rate. It caused the
+> switch to HS400 mode to fail because part of the sequence to switch
+> to HS400 requires a switch from HS200 to HS before going to HS400.
+>
+> This fix was suggested by Adrian Hunter
+>
+> Signed-off-by: Al Cooper <alcooperx@gmail.com>
 
-On 9/3/19 3:46 PM, Paul Burton wrote:
-> Hi Vincenzo,
-> 
-> On Fri, Aug 30, 2019 at 02:59:01PM +0100, Vincenzo Frascino wrote:
->> VDSO_HAS_32BIT_FALLBACK has been removed from the core since
->> the architectures that support the generic vDSO library have
->> been converted to support the 32 bit fallbacks.
->>
->> Remove unused VDSO_HAS_32BIT_FALLBACK from mips vdso.
->>
->> Cc: Paul Burton <paul.burton@mips.com>
->> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> 
-> Do you want this one in mips-next too, or applied somewhere else along
-> with the rest of the series? If the latter:
-> 
->     Acked-by: Paul Burton <paul.burton@mips.com>
-> 
+Should this be applied for fixes and tagged for stable you think?
 
-This patch has a dependency on patch n5 hence can not be applied independently.
+Kind regards
+Uffe
 
-Thanks,
-Vincenzo
-
-> Thanks,
->     Paul
-> 
->> ---
->>  arch/mips/include/asm/vdso/gettimeofday.h | 2 --
->>  1 file changed, 2 deletions(-)
->>
->> diff --git a/arch/mips/include/asm/vdso/gettimeofday.h b/arch/mips/include/asm/vdso/gettimeofday.h
->> index e78462e8ca2e..5ad2b086626d 100644
->> --- a/arch/mips/include/asm/vdso/gettimeofday.h
->> +++ b/arch/mips/include/asm/vdso/gettimeofday.h
->> @@ -107,8 +107,6 @@ static __always_inline int clock_getres_fallback(
->>  
->>  #if _MIPS_SIM != _MIPS_SIM_ABI64
->>  
->> -#define VDSO_HAS_32BIT_FALLBACK	1
->> -
->>  static __always_inline long clock_gettime32_fallback(
->>  					clockid_t _clkid,
->>  					struct old_timespec32 *_ts)
->> -- 
->> 2.23.0
->>
-
+> ---
+>  drivers/mmc/host/sdhci.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 61d845fe0b97..068149640ecd 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1858,7 +1858,9 @@ void sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)
+>                 ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
+>         else if (timing == MMC_TIMING_UHS_SDR12)
+>                 ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
+> -       else if (timing == MMC_TIMING_UHS_SDR25)
+> +       else if (timing == MMC_TIMING_SD_HS ||
+> +                timing == MMC_TIMING_MMC_HS ||
+> +                timing == MMC_TIMING_UHS_SDR25)
+>                 ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
+>         else if (timing == MMC_TIMING_UHS_SDR50)
+>                 ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
+> --
+> 2.17.1
+>
