@@ -2,158 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8A8A6210
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:59:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1CFAA6215
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:59:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbfICG7M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:59:12 -0400
-Received: from mail-ot1-f45.google.com ([209.85.210.45]:37352 "EHLO
-        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbfICG7L (ORCPT
+        id S1727722AbfICG7h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:59:37 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40871 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbfICG7h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:59:11 -0400
-Received: by mail-ot1-f45.google.com with SMTP id 97so12833443otr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:59:11 -0700 (PDT)
+        Tue, 3 Sep 2019 02:59:37 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so8590533pgj.7
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tessares-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=XvLI4nhOg17VvgP8/NkdRtVRVRohTIN7xR7OZSWHP1E=;
-        b=TFFcxvXeswXxwVv57GhiWDQBgHHv/H7/4OZMAf9BgYQgDHX53QtNvtfHSjiBbLXgjR
-         afz+gg4hJ+d22XnMwwrShNQZsz0sBIq0X4qA/svjHa99MEmsyFCZY1/IvTgnuKAqwuEw
-         oy9QK6fchWFRoVQXPl9BQpy1wr5OhrWFLSbSljSIv5/YAlB0ZtYe4kDV+SsdlOAmaOqU
-         8N5AyUqvY9gjo3BRnXawmCrdPasLSpQ8tTaHMp9f9a2T8cBJrW0mirYmreKV4BPV1pRL
-         19FiiExtk0kBFyLp8Ex0PjH3h1kgEHb61NdEhqZamqWm3WQLi25Cfl0PxI40k4oju3RG
-         kf+g==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Qa2NPAU3nUxhMhka8HdV81hTcVfR5ad6LZDKEEK+E8I=;
+        b=Z4AVnwpG4rHHCb7eTykmNN4YGIgNaMlnQTD+N+iPSXwRNBG+coPsaxg9Nwq3x3Wkte
+         JCHjLySZ867EN8Z2AeH8mah4+X/bfHodXgETIrb6E8bFU1qOSlzBzdGA8su+8NqyXJ7K
+         /3jFMSUF+Ifu0X4x6KC8cd0sWy/R5HQfish+yqAxdg6g9mILJfKfcYRmZoaR6kqKl2NE
+         OAxL+RStVT3/50mXjXBmVm15Ds7yLg6B6JGku8l830FhcL2s/SO460iHPmeT6QEDd3hk
+         UsjMoNdmj54+trhaGlxTcXQjdM4m3hp2R+nCJCBGUvoipZrokyX7GzGL3xTvz9OMoDDD
+         uabg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=XvLI4nhOg17VvgP8/NkdRtVRVRohTIN7xR7OZSWHP1E=;
-        b=sWFMXPJlri0qjTH3+Zeu9yRJfOHCShQJIH5WYxom+nhztFlsCJ2zKzPVrypHLs1qwI
-         fecOapr4AJGYrK66VJJGLE6W5d3X34OzZcHc/Kt741y6T0MlW/vtEDJmU/O07e5a1MlD
-         Lr5qI3bDc9enD7x2vJNMeVFVQ7WmKybvYyw7M18miiNRpgEk+lf+7SjhNPZCXkSzlO0N
-         vs4LxxYB+wqaPutPZJWE1+Y1J85JZ8UJrEJJJVEi3C+fvtR8ZgHGHFmCMPmXiD5bm1tW
-         5u0CLK+0MlcCsEvILEApSE0cdRYVFeW30CzPm1GkSsAgFsq9TXj18on0wuOt74eNSAlP
-         YUIw==
-X-Gm-Message-State: APjAAAV++eAJthoyqFbhYFgz9DOXrcX1RcW1EDmyByzyt3Rqt1sWj5Zw
-        AZ1cWTvMaVnf15YxxF7o3+fHNda6c1aQ+sAzGUH5oEu6gYWv5cqvCfC9N+aRFdQ8QvMp2CeBWS7
-        FXbQBxTU9e8T5e6XUqN8tPqEdUxC41IXktQ==
-X-Google-Smtp-Source: APXvYqx35cNljM/L2CPC6zi87YfAiEcrAsPoQ0BB/qKtC35yDmXooI9h+LuFXDaaFrOCwntPfDPnZdwyXjKpzImIYXg=
-X-Received: by 2002:a05:6830:1054:: with SMTP id b20mr13165770otp.65.1567493950717;
- Mon, 02 Sep 2019 23:59:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190824060351.3776-1-tim.froidcoeur@tessares.net>
- <400C4757-E7AD-4CCF-8077-79563EA869B1@gmail.com> <20190830232657.GL45416@MacBook-Pro-64.local>
- <20190830.192049.1447010488040109227.davem@davemloft.net> <F95AC9340317A84688A5F0DF0246F3F21AAAA8E1@dggeml532-mbs.china.huawei.com>
- <CAOj+RUsqTUF9fuetskRRw26Z=sBM-mELSMcV21Ch06007aP5yQ@mail.gmail.com> <F95AC9340317A84688A5F0DF0246F3F21AAB8F82@dggeml512-mbx.china.huawei.com>
-In-Reply-To: <F95AC9340317A84688A5F0DF0246F3F21AAB8F82@dggeml512-mbx.china.huawei.com>
-From:   Tim Froidcoeur <tim.froidcoeur@tessares.net>
-Date:   Tue, 3 Sep 2019 08:58:33 +0200
-Message-ID: <CAOj+RUvXMaoVKzSeDab4oTn3p=-BJtuhgqwKDCUuhCQWHO7bgQ@mail.gmail.com>
-Subject: Re: [PATCH 4.14] tcp: fix tcp_rtx_queue_tail in case of empty
- retransmit queue
-To:     maowenan <maowenan@huawei.com>
-Cc:     David Miller <davem@davemloft.net>,
-        "cpaasch@apple.com" <cpaasch@apple.com>,
-        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "matthieu.baerts@tessares.net" <matthieu.baerts@tessares.net>,
-        "aprout@ll.mit.edu" <aprout@ll.mit.edu>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "jtl@netflix.com" <jtl@netflix.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mkubecek@suse.cz" <mkubecek@suse.cz>,
-        "ncardwell@google.com" <ncardwell@google.com>,
-        "sashal@kernel.org" <sashal@kernel.org>,
-        "ycheng@google.com" <ycheng@google.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Qa2NPAU3nUxhMhka8HdV81hTcVfR5ad6LZDKEEK+E8I=;
+        b=OIxTg3H7Bytr3ELIiqndDP2mDyWLIFFkXALHLrwMolMxH98px7sXqUoNFg6pgK3CYE
+         n4CFIgZZXutqo3VOgLZRcSSpSz8k69d92NHPSwA8LYSpSoJuYk4ayNPYmEkanISMe6Jy
+         7C98Ak7mkq4luMPMVphPVQHF2LOkH55kA+xWKHcoie4d/9xr/oOAIVYzAyZ/Zjv8mUO4
+         +eSqU+ate0ZspxV9EmzfCHOftxNxyvJ/yr8NDPRO0CqW0/KphZexwAmFXPlrrrDWhd5r
+         euNvRnoghtyP4pN10Q9+1HzVdCmaqmxzd+cm9PjkU/82sl+/pGXc/H9UaEx5TqIbtL8n
+         AV4w==
+X-Gm-Message-State: APjAAAWM+IBIWq3qxLc2VDVceDCmECl32qtmZeHir6zR/S6RX60yWJLZ
+        cog1sbH3au9pdL15TxPqI0wYnA==
+X-Google-Smtp-Source: APXvYqy06dfUmL6YeJyX0gzRHXOV+gw16shOwg0WfImzMkX6z1TQmab0bN6NRdoWpCgaaX3XisBOAw==
+X-Received: by 2002:a63:8dc9:: with SMTP id z192mr28152038pgd.151.1567493976851;
+        Mon, 02 Sep 2019 23:59:36 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id b18sm18820190pfi.160.2019.09.02.23.59.33
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Sep 2019 23:59:36 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     stable@vger.kernel.org, linus.walleij@linaro.org,
+        natechancellor@gmail.com
+Cc:     linux-gpio@vger.kernel.org, arnd@arndb.de, baolin.wang@linaro.org,
+        orsonzhai@gmail.com, vincent.guittot@linaro.org,
+        linux-kernel@vger.kernel.org
+Subject: [BACKPORT 4.14.y 5/8] pinctrl: sprd: Use define directive for sprd_pinconf_params values
+Date:   Tue,  3 Sep 2019 14:59:11 +0800
+Message-Id: <8c7e95c293e81412a1dadc3c4376bafb45fefeeb.1567492316.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1567492316.git.baolin.wang@linaro.org>
+References: <cover.1567492316.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-I also tried to reproduce this in a targeted way, and run into the
-same difficulty as you: satisfying the first condition =E2=80=9C
-(sk->sk_wmem_queued >> 1) > limit =E2=80=9C.
-I will not have bandwidth the coming days to try and reproduce it in
-this way. Maybe simply forcing a very small send buffer using sysctl
-net.ipv4.tcp_wmem might even do the trick?
+Clang warns when one enumerated type is implicitly converted to another:
 
-I suspect that the bug is easier to trigger with the MPTCP patch like
-I did originally, due to the way this patch manages the tcp subflow
-buffers (it can temporarily overfill the buffers, satisfying that
-first condition more often).
+drivers/pinctrl/sprd/pinctrl-sprd.c:845:19: warning: implicit conversion
+from enumeration type 'enum sprd_pinconf_params' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        {"sprd,control", SPRD_PIN_CONFIG_CONTROL, 0},
+        ~                ^~~~~~~~~~~~~~~~~~~~~~~
+drivers/pinctrl/sprd/pinctrl-sprd.c:846:22: warning: implicit conversion
+from enumeration type 'enum sprd_pinconf_params' to different
+enumeration type 'enum pin_config_param' [-Wenum-conversion]
+        {"sprd,sleep-mode", SPRD_PIN_CONFIG_SLEEP_MODE, 0},
+        ~                   ^~~~~~~~~~~~~~~~~~~~~~~~~~
 
-another thing, the stacktrace you shared before seems caused by
-another issue (corrupted socket?), it will not be solved by the patch
-we submitted.
+It is expected that pinctrl drivers can extend pin_config_param because
+of the gap between PIN_CONFIG_END and PIN_CONFIG_MAX so this conversion
+isn't an issue. Most drivers that take advantage of this define the
+PIN_CONFIG variables as constants, rather than enumerated values. Do the
+same thing here so that Clang no longer warns.
 
-kind regards,
+Link: https://github.com/ClangBuiltLinux/linux/issues/138
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/pinctrl/sprd/pinctrl-sprd.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Tim
-
-
-On Tue, Sep 3, 2019 at 5:22 AM maowenan <maowenan@huawei.com> wrote:
->
-> Hi Tim,
->
->
->
-> I try to reproduce it with packetdrill or user application, but I can=E2=
-=80=99t.
->
-> The first condition =E2=80=9C (sk->sk_wmem_queued >> 1) > limit =E2=80=9C=
-    can=E2=80=99t be satisfied,
->
-> This condition is to avoid tiny SO_SNDBUF values set by user.
->
-> It also adds the some room due to the fact that tcp_sendmsg()
->
-> and tcp_sendpage() might overshoot sk_wmem_queued by about one full
->
-> TSO skb (64KB size).
->
->
->
->         limit =3D sk->sk_sndbuf + 2 * SKB_TRUESIZE(GSO_MAX_SIZE);
->
->         if (unlikely((sk->sk_wmem_queued >> 1) > limit &&
->
->                      skb !=3D tcp_rtx_queue_head(sk) &&
->
->                      skb !=3D tcp_rtx_queue_tail(sk))) {
->
->                 NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPWQUEUETOOBIG);
->
->                 return -ENOMEM;
->
->         }
->
->
->
-> Can you try to reproduce it with packetdrill or C socket application?
->
->
-
-
-
---=20
-Tim Froidcoeur | R&D engineer HAG
-tim.froidcoeur@tessares.net
-Tessares SA | Hybrid Access Solutions
-www.tessares.net
-1 Avenue Jean Monnet, 1348 Louvain-la-Neuve, Belgium
-
---=20
-
-
-Disclaimer: https://www.tessares.net/mail-disclaimer/=20
-<https://www.tessares.net/mail-disclaimer/>
-
+diff --git a/drivers/pinctrl/sprd/pinctrl-sprd.c b/drivers/pinctrl/sprd/pinctrl-sprd.c
+index 6352991..83958bd 100644
+--- a/drivers/pinctrl/sprd/pinctrl-sprd.c
++++ b/drivers/pinctrl/sprd/pinctrl-sprd.c
+@@ -159,10 +159,8 @@ struct sprd_pinctrl {
+ 	struct sprd_pinctrl_soc_info *info;
+ };
+ 
+-enum sprd_pinconf_params {
+-	SPRD_PIN_CONFIG_CONTROL = PIN_CONFIG_END + 1,
+-	SPRD_PIN_CONFIG_SLEEP_MODE = PIN_CONFIG_END + 2,
+-};
++#define SPRD_PIN_CONFIG_CONTROL		(PIN_CONFIG_END + 1)
++#define SPRD_PIN_CONFIG_SLEEP_MODE	(PIN_CONFIG_END + 2)
+ 
+ static int sprd_pinctrl_get_id_by_name(struct sprd_pinctrl *sprd_pctl,
+ 				       const char *name)
+-- 
+1.7.9.5
 
