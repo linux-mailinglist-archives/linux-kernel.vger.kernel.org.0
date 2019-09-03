@@ -2,100 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 618B8A6D03
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93CEFA6CFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbfICPiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 11:38:00 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47816 "EHLO mx1.redhat.com"
+        id S1729845AbfICPhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 11:37:48 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57538 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbfICPho (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:37:44 -0400
+        id S1729790AbfICPhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 11:37:45 -0400
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A21FD3081CFF;
-        Tue,  3 Sep 2019 15:37:44 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 619C0308427D;
+        Tue,  3 Sep 2019 15:37:45 +0000 (UTC)
 Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 102CB19C78;
-        Tue,  3 Sep 2019 15:37:43 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C311619C78;
+        Tue,  3 Sep 2019 15:37:44 +0000 (UTC)
 From:   Prarit Bhargava <prarit@redhat.com>
 To:     platform-driver-x86@vger.kernel.org
 Cc:     Prarit Bhargava <prarit@redhat.com>,
         Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
         David Arcari <darcari@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/8] tools/power/x86/intel-speed-select: Change turbo ratio output to maximum turbo frequency
-Date:   Tue,  3 Sep 2019 11:37:32 -0400
-Message-Id: <20190903153734.11904-7-prarit@redhat.com>
+Subject: [PATCH 7/8] tools/power/x86/intel-speed-select: Output human readable CPU list
+Date:   Tue,  3 Sep 2019 11:37:33 -0400
+Message-Id: <20190903153734.11904-8-prarit@redhat.com>
 In-Reply-To: <20190903153734.11904-1-prarit@redhat.com>
 References: <20190903153734.11904-1-prarit@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 03 Sep 2019 15:37:44 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 03 Sep 2019 15:37:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The intel-speed-select tool currently outputs the turbo ratio for every
-bucket.  Make the output more user-friendly by changing the output to the
-maximum turbo frequency.
+The intel-speed-select tool currently only outputs a hexidecimal CPU mask,
+which requires translation for use with kernel parameters such as
+isolcpus.
+
+Along with the CPU mask, output a human readable CPU list.
 
 Signed-off-by: Prarit Bhargava <prarit@redhat.com>
 Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 Cc: David Arcari <darcari@redhat.com>
 Cc: linux-kernel@vger.kernel.org
 ---
- .../x86/intel-speed-select/isst-display.c      | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ .../x86/intel-speed-select/isst-display.c     | 39 +++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
 diff --git a/tools/power/x86/intel-speed-select/isst-display.c b/tools/power/x86/intel-speed-select/isst-display.c
-index 4ec1924ff7a9..cfeee0beb78d 100644
+index cfeee0beb78d..890a01bfee4b 100644
 --- a/tools/power/x86/intel-speed-select/isst-display.c
 +++ b/tools/power/x86/intel-speed-select/isst-display.c
-@@ -336,9 +336,11 @@ void isst_ctdp_display_information(int cpu, FILE *outf, int tdp_level,
- 			snprintf(value, sizeof(value), "%d", j);
- 			format_and_print(outf, base_level + 6, header, value);
+@@ -8,6 +8,33 @@
  
--			snprintf(header, sizeof(header), "turbo-ratio");
-+			snprintf(header, sizeof(header),
-+				"max-turbo-frequency(MHz)");
- 			snprintf(value, sizeof(value), "%d",
--				 ctdp_level->trl_sse_active_cores[j]);
-+				 ctdp_level->trl_sse_active_cores[j] *
-+				  DISP_FREQ_MULTIPLIER);
- 			format_and_print(outf, base_level + 6, header, value);
- 		}
- 		snprintf(header, sizeof(header), "turbo-ratio-limits-avx");
-@@ -351,9 +353,11 @@ void isst_ctdp_display_information(int cpu, FILE *outf, int tdp_level,
- 			snprintf(value, sizeof(value), "%d", j);
- 			format_and_print(outf, base_level + 6, header, value);
+ #define DISP_FREQ_MULTIPLIER 100
  
--			snprintf(header, sizeof(header), "turbo-ratio");
-+			snprintf(header, sizeof(header),
-+				"max-turbo-frequency(MHz)");
- 			snprintf(value, sizeof(value), "%d",
--				 ctdp_level->trl_avx_active_cores[j]);
-+				 ctdp_level->trl_avx_active_cores[j] *
-+				  DISP_FREQ_MULTIPLIER);
- 			format_and_print(outf, base_level + 6, header, value);
- 		}
++static void printcpulist(int str_len, char *str, int mask_size,
++			 cpu_set_t *cpu_mask)
++{
++	int i, first, curr_index, index;
++
++	if (!CPU_COUNT_S(mask_size, cpu_mask)) {
++		snprintf(str, str_len, "none");
++		return;
++	}
++
++	curr_index = 0;
++	first = 1;
++	for (i = 0; i < get_topo_max_cpus(); ++i) {
++		if (!CPU_ISSET_S(i, mask_size, cpu_mask))
++			continue;
++		if (!first) {
++			index = snprintf(&str[curr_index],
++					 str_len - curr_index, ",");
++			curr_index += index;
++		}
++		index = snprintf(&str[curr_index], str_len - curr_index, "%d",
++				 i);
++		curr_index += index;
++		first = 0;
++	}
++}
++
+ static void printcpumask(int str_len, char *str, int mask_size,
+ 			 cpu_set_t *cpu_mask)
+ {
+@@ -166,6 +193,12 @@ static void _isst_pbf_display_information(int cpu, FILE *outf, int level,
+ 		     pbf_info->core_cpumask);
+ 	format_and_print(outf, disp_level + 1, header, value);
  
-@@ -367,9 +371,11 @@ void isst_ctdp_display_information(int cpu, FILE *outf, int tdp_level,
- 			snprintf(value, sizeof(value), "%d", j);
- 			format_and_print(outf, base_level + 6, header, value);
++	snprintf(header, sizeof(header), "high-priority-cpu-list");
++	printcpulist(sizeof(value), value,
++		     pbf_info->core_cpumask_size,
++		     pbf_info->core_cpumask);
++	format_and_print(outf, disp_level + 1, header, value);
++
+ 	snprintf(header, sizeof(header), "low-priority-base-frequency(MHz)");
+ 	snprintf(value, sizeof(value), "%d",
+ 		 pbf_info->p1_low * DISP_FREQ_MULTIPLIER);
+@@ -287,6 +320,12 @@ void isst_ctdp_display_information(int cpu, FILE *outf, int tdp_level,
+ 			     ctdp_level->core_cpumask);
+ 		format_and_print(outf, base_level + 4, header, value);
  
--			snprintf(header, sizeof(header), "turbo-ratio");
-+			snprintf(header, sizeof(header),
-+				"max-turbo-frequency(MHz)");
- 			snprintf(value, sizeof(value), "%d",
--				 ctdp_level->trl_avx_512_active_cores[j]);
-+				 ctdp_level->trl_avx_512_active_cores[j] *
-+				  DISP_FREQ_MULTIPLIER);
- 			format_and_print(outf, base_level + 6, header, value);
- 		}
- 		if (ctdp_level->pbf_support)
++		snprintf(header, sizeof(header), "enable-cpu-list");
++		printcpulist(sizeof(value), value,
++			     ctdp_level->core_cpumask_size,
++			     ctdp_level->core_cpumask);
++		format_and_print(outf, base_level + 4, header, value);
++
+ 		snprintf(header, sizeof(header), "thermal-design-power-ratio");
+ 		snprintf(value, sizeof(value), "%d", ctdp_level->tdp_ratio);
+ 		format_and_print(outf, base_level + 4, header, value);
 -- 
 2.21.0
 
