@@ -2,95 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5E6A6D96
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:08:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BEEA6D98
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:08:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbfICQIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:08:22 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60132 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728679AbfICQIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:08:22 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 09:08:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
-   d="scan'208";a="183603458"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Sep 2019 09:08:12 -0700
-Date:   Tue, 3 Sep 2019 09:08:12 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        id S1729985AbfICQIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:08:50 -0400
+Received: from tartarus.angband.pl ([54.37.238.230]:46552 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728679AbfICQIu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:08:50 -0400
+Received: from [2a02:a31c:853f:a300::4] (helo=valinor.angband.pl)
+        by tartarus.angband.pl with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1i5BML-0005on-BJ; Tue, 03 Sep 2019 18:08:47 +0200
+Received: from kilobyte by valinor.angband.pl with local (Exim 4.92.1)
+        (envelope-from <kilobyte@valinor.angband.pl>)
+        id 1i5BMK-000EhM-Ch; Tue, 03 Sep 2019 18:08:44 +0200
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] checkpatch: Remove obsolete period from "ambiguous SHA1"
- query
-Message-ID: <20190903160812.GD10768@linux.intel.com>
-References: <20190830163103.15914-1-sean.j.christopherson@intel.com>
- <19c9b30b3d77a65c6c4289a2eeeb6cbe40594aab.camel@perches.com>
- <20190830171731.GB15405@linux.intel.com>
- <a8afdbf13db47e7650473c7f71384f177f3dff59.camel@perches.com>
+Cc:     Adam Borowski <kilobyte@angband.pl>
+Date:   Tue,  3 Sep 2019 18:08:40 +0200
+Message-Id: <20190903160840.56652-1-kilobyte@angband.pl>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a8afdbf13db47e7650473c7f71384f177f3dff59.camel@perches.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a02:a31c:853f:a300::4
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on tartarus.angband.pl
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.1 required=8.0 tests=BAYES_00=-1.9,RDNS_NONE=0.793,
+        SPF_PASS=-0.001 autolearn=no autolearn_force=no languages=en
+Subject: [PATCH] Documentation: sysrq: don't recommend 'S' 'U' before 'B'
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 11:01:29AM -0700, Joe Perches wrote:
-> On Fri, 2019-08-30 at 10:17 -0700, Sean Christopherson wrote:
-> > On Fri, Aug 30, 2019 at 09:37:51AM -0700, Joe Perches wrote:
-> > > On Fri, 2019-08-30 at 09:31 -0700, Sean Christopherson wrote:
-> > > > Git dropped the period from its "ambiguous SHA1" error message in commit
-> > > > 0c99171ad2 ("get_short_sha1: mark ambiguity error for translation"),
-> > > > circa 2016.  Drop the period from checkpatch's associated query so as to
-> > > > match both the old and new error messages.
-> > > > 
-> > > > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> > > > ---
-> > > >  scripts/checkpatch.pl | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > > > index 93a7edfe0f05..ef3642c53100 100755
-> > > > --- a/scripts/checkpatch.pl
-> > > > +++ b/scripts/checkpatch.pl
-> > > > @@ -962,7 +962,7 @@ sub git_commit_info {
-> > > >  
-> > > >  	return ($id, $desc) if ($#lines < 0);
-> > > >  
-> > > > -	if ($lines[0] =~ /^error: short SHA1 $commit is ambiguous\./) {
-> > > > +	if ($lines[0] =~ /^error: short SHA1 $commit is ambiguous/) {
-> > > >  # Maybe one day convert this block of bash into something that returns
-> > > >  # all matching commit ids, but it's very slow...
-> > > >  #
-> > > 
-> > > Thanks.
-> > > 
-> > > Did git ever change to actually support human readable
-> > > messages in multiple languages?
-> > 
-> > Yep, e.g.:
-> > 
-> >   error: Kurzer SHA-1 745f ist mehrdeutig.
-> > 
-> > > If so, this won't work for non-english output.
-> > 
-> > Yep again.  The next check for 'fatal: ambiguous argument' obviously fails
-> > as well and checkpatch ends up using git's error message as the id and
-> > description.
-> > 
-> >   ERROR: Please use git ... - ie: 'commit error: Kurze ("")'
-> 
-> Does git exit with unique failure codes?
+This advice is obsolete and slightly harmful for filesystems from this
+millenium: any modern filesystem can handle unexpected crashes without
+requiring fsck -- and on the other hand, trying to write to the disk when
+the kernel is in a bad state risks introducing corruption.
 
-Nope, AFAICT usage errors get exit(129) and everything else gets exit(128).
+For ext2, any unsafe shutdown meant widespread breakage, but it's no longer
+a reasonable filesystem for any non-special use.
 
-> If so, maybe the waitid/siginfo_t error could be used instead.
+Signed-off-by: Adam Borowski <kilobyte@angband.pl>
+---
+ Documentation/admin-guide/sysrq.rst | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/admin-guide/sysrq.rst b/Documentation/admin-guide/sysrq.rst
+index 7b9035c01a2e..72b2cfb066f4 100644
+--- a/Documentation/admin-guide/sysrq.rst
++++ b/Documentation/admin-guide/sysrq.rst
+@@ -171,22 +171,20 @@ It seems others find it useful as (System Attention Key) which is
+ useful when you want to exit a program that will not let you switch consoles.
+ (For example, X or a svgalib program.)
+ 
+-``reboot(b)`` is good when you're unable to shut down. But you should also
+-``sync(s)`` and ``umount(u)`` first.
++``reboot(b)`` is good when you're unable to shut down, it is an equivalent
++of pressing the "reset" button.
+ 
+ ``crash(c)`` can be used to manually trigger a crashdump when the system is hung.
+ Note that this just triggers a crash if there is no dump mechanism available.
+ 
+-``sync(s)`` is great when your system is locked up, it allows you to sync your
+-disks and will certainly lessen the chance of data loss and fscking. Note
+-that the sync hasn't taken place until you see the "OK" and "Done" appear
+-on the screen. (If the kernel is really in strife, you may not ever get the
+-OK or Done message...)
++``sync(s)`` is handy before yanking removable medium or after using a rescue
++shell that provides no graceful shutdown -- it will ensure your data is
++safely written to the disk. Note that the sync hasn't taken place until you see
++the "OK" and "Done" appear on the screen.
+ 
+-``umount(u)`` is basically useful in the same ways as ``sync(s)``. I generally
+-``sync(s)``, ``umount(u)``, then ``reboot(b)`` when my system locks. It's saved
+-me many a fsck. Again, the unmount (remount read-only) hasn't taken place until
+-you see the "OK" and "Done" message appear on the screen.
++``umount(u)`` can be used to mark filesystems as properly unmounted. From the
++running system's point of view, they will be remounted read-only. The remount
++isn't complete until you see the "OK" and "Done" message appear on the screen.
+ 
+ The loglevels ``0``-``9`` are useful when your console is being flooded with
+ kernel messages you do not want to see. Selecting ``0`` will prevent all but
+-- 
+2.23.0
+
