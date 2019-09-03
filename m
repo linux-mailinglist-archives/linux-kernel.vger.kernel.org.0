@@ -2,66 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD3AA6D43
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC4E9A6D4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:52:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbfICPuF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 11:50:05 -0400
-Received: from mx1.math.uh.edu ([129.7.128.32]:56392 "EHLO mx1.math.uh.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729393AbfICPuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:50:05 -0400
-Received: from epithumia.math.uh.edu ([129.7.128.2])
-        by mx1.math.uh.edu with esmtp (Exim 4.92)
-        (envelope-from <tibbs@math.uh.edu>)
-        id 1i5B40-00036N-4s; Tue, 03 Sep 2019 10:50:03 -0500
-Received: by epithumia.math.uh.edu (Postfix, from userid 7225)
-        id 159ED801554; Tue,  3 Sep 2019 10:49:48 -0500 (CDT)
-From:   Jason L Tibbitts III <tibbs@math.uh.edu>
-To:     bfields@fieldses.org (J. Bruce Fields)
-Cc:     linux-nfs@vger.kernel.org, km@cm4all.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: Regression in 5.1.20: Reading long directory fails
-References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
-        <ufapnkxkn0x.fsf@epithumia.math.uh.edu>
-        <20190828174609.GB29148@fieldses.org>
-        <ufay2zduosz.fsf@epithumia.math.uh.edu>
-Date:   Tue, 03 Sep 2019 10:49:48 -0500
-In-Reply-To: <ufay2zduosz.fsf@epithumia.math.uh.edu> (Jason L. Tibbitts, III's
-        message of "Wed, 28 Aug 2019 13:29:00 -0500")
-Message-ID: <ufa5zm9s7kz.fsf@epithumia.math.uh.edu>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        id S1729741AbfICPwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 11:52:00 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44474 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728860AbfICPwA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 11:52:00 -0400
+Received: by mail-lj1-f196.google.com with SMTP id u14so9990892ljj.11
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 08:51:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fbZGYf3OM74TDoZcG4y1Mo3Qe7dm90Zsdt+bqnPSAQI=;
+        b=NfkWCRoRsGlKw3xdjMaVldpa586an4pWg7h4VWCWhYSlcEHn++uHuPt48P8rFcZbYK
+         W5w8X+o2iBB6KzG7FvEZXB7fw0wp5nCxwNZAHLN66OG9o3AyF7JTsIzq0T9arTknwldF
+         3CvUol2k6c8RCQgu2YbTlJg3M8g2QYwkRrkhs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fbZGYf3OM74TDoZcG4y1Mo3Qe7dm90Zsdt+bqnPSAQI=;
+        b=NqK5VY7zCqSFXVXUXpnMo032+s80SMyfYzOSHyDiSPmX7Ln5cxKyp0WKdx6vZlBOoQ
+         k01UvNMCXXvwD/iqdnqWtd7eUaNIkkFJKQNx8Qw9ZE8buw9f4T6eEiGY/wqBFMog4OJ4
+         e5bQIx2iPdIFqmlwNd1QVF6+fMzkDav7XS/Hq9TEatR3XwiMdw/eIqKs6govq4mw/47/
+         r/7FUZpCZuYnOfi4Ka2iVlooflWYB6y3ZYknNnkE8c5ErPlRyJib23oZ31C7Zu47mEof
+         Xz+9TJHNODuMLRUeqS2r+4agTArtj4CzbJtm2oJY/NnJVpfAc98YITXYN6m8BJ41kBip
+         mRQg==
+X-Gm-Message-State: APjAAAVi9TC0PmTwSgS3Nm9cN5+hWX/Kk8WziZR/dgpv1P6LpRoyboxD
+        Im45xHR3rC5yjsr3v0P3tUf+lLfg/20=
+X-Google-Smtp-Source: APXvYqyPrTpQe5qEeuWFylDVP6Jp1yLkSzf/J1MyJ7lXQ2fU9AvR/f8cCEyEW2Kh/vmR0zNP1pgYTw==
+X-Received: by 2002:a05:651c:292:: with SMTP id b18mr4084508ljo.131.1567525917831;
+        Tue, 03 Sep 2019 08:51:57 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id d28sm2218751lfq.88.2019.09.03.08.51.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Sep 2019 08:51:57 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 7so7029659ljw.7
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 08:51:57 -0700 (PDT)
+X-Received: by 2002:a2e:9a84:: with SMTP id p4mr20175666lji.52.1567525496143;
+ Tue, 03 Sep 2019 08:44:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -2.9 (--)
+References: <20190830140805.GD13294@shell.armlinux.org.uk> <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+ <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
+ <20190830160957.GC2634@redhat.com> <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
+ <87o906wimo.fsf@x220.int.ebiederm.org> <20190902134003.GA14770@redhat.com>
+ <87tv9uiq9r.fsf@x220.int.ebiederm.org> <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
+ <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
+In-Reply-To: <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 3 Sep 2019 08:44:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgQ_tZXQkovVked+nEsZhZqGVNnKmoy3b699dycZqCdKA@mail.gmail.com>
+Message-ID: <CAHk-=wgQ_tZXQkovVked+nEsZhZqGVNnKmoy3b699dycZqCdKA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] task: Making tasks on the runqueue rcu protected
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "JLT" == Jason L Tibbitts <tibbs@math.uh.edu> writes:
+On Mon, Sep 2, 2019 at 9:50 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> I have split this work into 3 simple patches, so the code is straight
+> forward to review and so that if any mistakes slip in it is easy to
+> bisect them.  In the process of review what it takes to remove
+> task_rcu_dereference I found yet another user of tasks on the
+> runqueue in rcu context; the rcuwait_event code.  That code only needs
+> it now unnecessary limits removed.
 
-JLT> Certainly a server reboot, or maybe even just
-JLT> unmounting and remounting the filesystem or copying the data to
-JLT> another filesystem would tell me that.  In any case, as soon as I
-JLT> am able to mess with that server, I'll know more.
+Looks very good to me.
 
-Rebooting the server did not make any difference, and now more users are
-seeing the problem.  At this point I'm in a state where NFS simply isn't
-reliable at all, and I'm not sure what to do.  If Centos 8 were out,
-I'd work on moving to that just so that the server was a little more
-modern.  (Currently the server is Centos 7.)  I guess I could try using
-Fedora, or installing one of the upstream kernels, just in case this has
-to do with some interaction between the client and the old RHEL7 kernel.
+I think PeterZ is right that the rcu_assign_pointer() in [PATCH 2/3]
+could be a RCU_INIT_POINTER() due to condition #3 in the
+RCU_INIT_POINTER rules. The initialization of the pointer value simply
+has nothing to do with what the pointer points to - we're just
+switching it to another case.
 
-I do have a packet capture of a directory listing that fails with EIO,
-but I'm not sure if it's safe to simply post it, and I'm not sure what
-tshark options would be useful in decoding it.
+That said, it won't affect any of the core architectures much, because
+smp_store_release() isn't that expensive (it's just a compiler barrier
+on x86, it's a cheap instruction on arm64, and it should be very cheap
+on any other architecture too unless they do insane things - even on
+powerpc, which is about the worst case for any barriers, it's just an
+lwsync).
 
-I do know that I can rsync one of the problematic directories to a
-different server (running the same kernel) and it doesn't have the same
-problem.  What I'll try next is rsyncing to a different filesystem on
-the same server, but again I'll have to wait until people log off to do
-proper testing.
+It might be good to have Paul _look_ at it, and because of the minimal
+performance impact I don't worry about it too much if it happens
+later, but it should be something we keep in mind.
 
- - J<
+                  Linus
