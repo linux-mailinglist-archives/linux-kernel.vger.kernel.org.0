@@ -2,57 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E8FA7611
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 23:18:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03B43A760B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 23:18:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727001AbfICVSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 17:18:02 -0400
-Received: from smtprelay0243.hostedemail.com ([216.40.44.243]:50939 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726375AbfICVSB (ORCPT
+        id S1726853AbfICVR5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 17:17:57 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:41590 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726375AbfICVR5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 17:18:01 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id B1FED100E86CC;
-        Tue,  3 Sep 2019 21:17:59 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::::::::::::::::::::,RULES_HIT:41:355:379:599:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1537:1560:1593:1594:1711:1714:1730:1747:1777:1792:2194:2199:2393:2559:2562:2693:2828:2895:3138:3139:3140:3141:3142:3622:3865:3867:3870:4321:5007:6742:9108:10004:10400:10848:11232:11658:11914:12219:12296:12297:12740:12760:12895:13069:13311:13357:13439:14659:14721:14777:14818:21080:21627:30003:30019:30022:30054:30070:30074:30091,0,RBL:172.58.30.235:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:30,LUA_SUMMARY:none
-X-HE-Tag: trade03_4529f89b0df58
-X-Filterd-Recvd-Size: 1411
-Received: from XPS-9350 (unknown [172.58.30.235])
-        (Authenticated sender: joe@perches.com)
-        by omf08.hostedemail.com (Postfix) with ESMTPA;
-        Tue,  3 Sep 2019 21:17:55 +0000 (UTC)
-Message-ID: <7cd37b0130f9dcabc00721913b63cab222267a78.camel@perches.com>
-Subject: Re: [PATCH] mailmap: Update email address for Quentin Perret
-From:   Joe Perches <joe@perches.com>
-To:     Will Deacon <will@kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        peterz@infradead.org, mingo@redhat.com, rjw@rjwysocki.net,
-        vincent.guittot@linaro.org, juri.lelli@redhat.com,
-        catalin.marinas@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, dietmar.eggemann@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        qais.yousef@arm.com, qperret@qperret.net, corbet@lwn.net
-Date:   Tue, 03 Sep 2019 14:17:25 -0700
-In-Reply-To: <20190903145950.xko5fejupxj3f5nx@willie-the-truck>
-References: <20190902105036.32419-1-quentin.perret@arm.com>
-         <20190903145950.xko5fejupxj3f5nx@willie-the-truck>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        Tue, 3 Sep 2019 17:17:57 -0400
+Received: from callcc.thunk.org (guestnat-104-133-0-96.corp.google.com [104.133.0.96] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x83LHmaX031393
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 3 Sep 2019 17:17:49 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id E453442049E; Tue,  3 Sep 2019 17:17:47 -0400 (EDT)
+Date:   Tue, 3 Sep 2019 17:17:47 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     Qian Cai <cai@lca.pw>, Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: "beyond 2038" warnings from loopback mount is noisy
+Message-ID: <20190903211747.GD2899@mit.edu>
+References: <1567523922.5576.57.camel@lca.pw>
+ <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-09-03 at 15:59 +0100, Will Deacon wrote:
-> What's the best way
-> for get_maintainer.pl to retrieve up-to-date contact details for developers
-> who aren't in MAINTAINERS?
+On Tue, Sep 03, 2019 at 09:18:44AM -0700, Deepa Dinamani wrote:
+> 
+> This prints a warning for each inode that doesn't extend limits beyond
+> 2038. It is rate limited by the ext4_warning_inode().
+> Looks like your filesystem has inodes that cannot be extended.
+> We could use a different rate limit or ignore this corner case. Do the
+> maintainers have a preference?
 
-Updated .mailmap entries.
+We need to drop this commit (ext4: Initialize timestamps limits), or
+at least the portion which adds the call to the EXT4_INODE_SET_XTIME
+macro in ext4.h.  
 
+I know of a truly vast number of servers in production all over the
+world which are using 128 byte inodes, and spamming the inodes at the
+maximum rate limit is a really bad idea.  This includes at some major
+cloud data centers where the life of individual servers in their data
+centers is well understood (they're not going to last until 2038) and
+nothing stored on the local Linux file systems are long-lived ---
+that's all stored in the cluster file systems.  The choice of 128 byte
+inode was deliberately chosen to maximize storage TCO, and so spamming
+a warning at high rates is going to be extremely unfriendly.
 
+In cases where the inode size is such that there is no chance at all
+to support timestamps beyond 2038, a single warning at mount time, or
+maybe a warning at mkfs time might be acceptable.  But there's no
+point printing a warning time each time we set a timestamp on such a
+file system.  It's not going to change, and past a certain point, we
+need to trust that people who are using 128 byte inodes did so knowing
+what the tradeoffs might be.  After all, it is *not* the default.
+
+     	 	   	      	    	 - Ted
