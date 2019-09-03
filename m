@@ -2,145 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B26EA76CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 00:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47BCEA76BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 00:15:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbfICWRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 18:17:35 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55920 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfICWRf (ORCPT
+        id S1726440AbfICWPe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 18:15:34 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:12727 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfICWPe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 18:17:35 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83MGLCV144895;
-        Tue, 3 Sep 2019 22:17:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=GeUYapGqJ7X1RqLeZ5D3WvZkjvGBR68Zj6gWWXTs05g=;
- b=WEfe0SSr6lWViAVt0SXqTWsYTGUedM3VoGE80F8pBVurZCRtzktcdQKrGuCV/DfKqawE
- SthgIL3ZwNXk1GA2PZo6enK0QO9kqKpF72NX8RggpRf4ci81G+jJ++bt1O1kkEcOLyOs
- arhlTuflRS83mMDxGYBlG8VZewiYFkqN5XHmsYaLHVZYPmJj9v4tT3rfOW0fzuOWhyPQ
- ae3Dravyc9idfhe4PpOIGAbcpxsAhqeMnTB0LB898i1GGinuNsGXigr2WNTiAfmPYMjm
- uAuI/qxLex+sPVaOtw1XIT30scY9reTWCyZyWmCOUFk/F34rJYxBIo0kK7cxOlY3mmcP 2Q== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2ut0tqg04c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Sep 2019 22:17:14 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83ME2pG066676;
-        Tue, 3 Sep 2019 22:15:13 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserp3020.oracle.com with ESMTP id 2us5phcjm8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 03 Sep 2019 22:15:13 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x83MFBg9011620;
-        Tue, 3 Sep 2019 22:15:11 GMT
-Received: from bostrovs-us.us.oracle.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 03 Sep 2019 15:15:10 -0700
-Subject: Re: [PATCH 08/13] swiotlb-xen: always use dma-direct helpers to alloc
- coherent pages
-To:     Christoph Hellwig <hch@lst.de>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        gross@suse.com
-Cc:     x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-References: <20190902130339.23163-1-hch@lst.de>
- <20190902130339.23163-9-hch@lst.de>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <5799ca4b-7993-b1c5-73fa-396a560f58e8@oracle.com>
-Date:   Tue, 3 Sep 2019 18:15:09 -0400
+        Tue, 3 Sep 2019 18:15:34 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id AAA2C3F671;
+        Wed,  4 Sep 2019 00:15:31 +0200 (CEST)
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=gzAlelyj;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Mux16M2QUtvF; Wed,  4 Sep 2019 00:15:30 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 41A923F40A;
+        Wed,  4 Sep 2019 00:15:27 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id A05D8360160;
+        Wed,  4 Sep 2019 00:15:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1567548926; bh=nIA64ocI+n5D4OB+HLLwxnXOxaEz/oh4I3ffyVh/4nI=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=gzAlelyj5XfF8b0pUv5ucT29pTfUWzHP+CHn+fdiPmCWMNfcMMYM/NgEKnnzNigLa
+         rXY9n015AJAntQ8+AkhcwiR3QzM+/D4MknyfY0yLeZU4v8NM8DZwIDYXOa5Dx3p3RL
+         7/OtoeIHgTVIiPT7kVVZla9sAEl+lsHl9M83Z7vc=
+Subject: Re: [PATCH v2 3/4] drm/ttm, drm/vmwgfx: Correctly support support AMD
+ memory encryption
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        pv-drivers@vmware.com,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20190903131504.18935-1-thomas_os@shipmail.org>
+ <20190903131504.18935-4-thomas_os@shipmail.org>
+ <b54bd492-9702-5ad7-95da-daf20918d3d9@intel.com>
+ <CAKMK7uFv+poZq43as8XoQaSuoBZxCQ1p44VCmUUTXOXt4Y+Bjg@mail.gmail.com>
+ <6d0fafcc-b596-481b-7b22-1f26f0c02c5c@intel.com>
+ <bed2a2d9-17f0-24bd-9f4a-c7ee27f6106e@shipmail.org>
+ <7fa3b178-b9b4-2df9-1eee-54e24d48342e@intel.com>
+ <ba77601a-d726-49fa-0c88-3b02165a9a21@shipmail.org>
+ <CALCETrVnNpPwmRddGLku9hobE7wG30_3j+QfcYxk09hZgtaYww@mail.gmail.com>
+ <44b094c8-63fe-d9e5-1bf4-7da0788caccf@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <6d122d62-9c96-4c29-8d06-02f7134e5e2a@shipmail.org>
+Date:   Wed, 4 Sep 2019 00:15:26 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <20190902130339.23163-9-hch@lst.de>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <44b094c8-63fe-d9e5-1bf4-7da0788caccf@shipmail.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=821
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1909030221
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=875 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1909030221
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/2/19 9:03 AM, Christoph Hellwig wrote:
-> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-> index b8808677ae1d..f9dd4cb6e4b3 100644
-> --- a/drivers/xen/swiotlb-xen.c
-> +++ b/drivers/xen/swiotlb-xen.c
-> @@ -299,8 +299,7 @@ xen_swiotlb_alloc_coherent(struct device *hwdev, size_t size,
->  	 * address. In fact on ARM virt_to_phys only works for kernel direct
->  	 * mapped RAM memory. Also see comment below.
->  	 */
-> -	ret = xen_alloc_coherent_pages(hwdev, size, dma_handle, flags, attrs);
-> -
-> +	ret = dma_direct_alloc(hwdev, size, dma_handle, flags, attrs);
+On 9/4/19 12:08 AM, Thomas Hellström (VMware) wrote:
+> On 9/3/19 11:46 PM, Andy Lutomirski wrote:
+>> On Tue, Sep 3, 2019 at 2:05 PM Thomas Hellström (VMware)
+>> <thomas_os@shipmail.org> wrote:
+>>> On 9/3/19 10:51 PM, Dave Hansen wrote:
+>>>> On 9/3/19 1:36 PM, Thomas Hellström (VMware) wrote:
+>>>>> So the question here should really be, can we determine already at 
+>>>>> mmap
+>>>>> time whether backing memory will be unencrypted and adjust the *real*
+>>>>> vma->vm_page_prot under the mmap_sem?
+>>>>>
+>>>>> Possibly, but that requires populating the buffer with memory at mmap
+>>>>> time rather than at first fault time.
+>>>> I'm not connecting the dots.
+>>>>
+>>>> vma->vm_page_prot is used to create a VMA's PTEs regardless of if they
+>>>> are created at mmap() or fault time.  If we establish a good
+>>>> vma->vm_page_prot, can't we just use it forever for demand faults?
+>>> With SEV I think that we could possibly establish the encryption flags
+>>> at vma creation time. But thinking of it, it would actually break with
+>>> SME where buffer content can be moved between encrypted system memory
+>>> and unencrypted graphics card PCI memory behind user-space's back. That
+>>> would imply killing all user-space encrypted PTEs and at fault time set
+>>> up new ones pointing to unencrypted PCI memory..
+>>>
+>>>> Or, are you concerned that if an attempt is made to demand-fault page
+>>>> that's incompatible with vma->vm_page_prot that we have to SEGV?
+>>>>
+>>>>> And it still requires knowledge whether the device DMA is always
+>>>>> unencrypted (or if SEV is active).
+>>>> I may be getting mixed up on MKTME (the Intel memory encryption) and
+>>>> SEV.  Is SEV supported on all memory types?  Page cache, hugetlbfs,
+>>>> anonymous?  Or just anonymous?
+>>> SEV AFAIK encrypts *all* memory except DMA memory. To do that it uses a
+>>> SWIOTLB backed by unencrypted memory, and it also flips coherent DMA
+>>> memory to unencrypted (which is a very slow operation and patch 4 deals
+>>> with caching such memory).
+>>>
+>> I'm still lost.  You have some fancy VMA where the backing pages
+>> change behind the application's back.  This isn't particularly novel
+>> -- plain old anonymous memory and plain old mapped files do this too.
+>> Can't you all the insert_pfn APIs and call it a day?  What's so
+>> special that you need all this magic?  ISTM you should be able to
+>> allocate memory that's addressable by the device (dma_alloc_coherent()
+>> or whatever) and then map it into user memory just like you'd map any
+>> other page.
+>>
+>> I feel like I'm missing something here.
+>
+> Yes, so in this case we use dma_alloc_coherent().
+>
+> With SEV, that gives us unencrypted pages. (Pages whose linear kernel 
+> map is marked unencrypted). With SME that (typcially) gives us 
+> encrypted pages. In both these cases, vm_get_page_prot() returns
+> an encrypted page protection, which lands in vma->vm_page_prot.
+>
+> In the SEV case, we therefore need to modify the page protection to 
+> unencrypted. Hence we need to know whether we're running under SEV and 
+> therefore need to modify the protection. If not, the user-space PTE 
+> would incorrectly have the encryption flag set.
+>
+> /Thomas
+>
+>
+And, of course, had we not been "fancy", we could have used 
+dma_mmap_coherent(), which in theory should set up the correct 
+user-space page protection. But now we're moving stuff around so we can't.
 
-
-If I am reading __dma_direct_alloc_pages() correctly there is a path
-that will force us to use GFP_DMA32 and as Juergen pointed out in
-another message that may not be desirable.
-
--boris
-
+/Thomas
 
 
