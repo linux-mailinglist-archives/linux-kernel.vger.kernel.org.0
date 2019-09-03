@@ -2,135 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0674BA6428
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 10:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC4DFA6433
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 10:46:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbfICIp1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 04:45:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbfICIp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 04:45:27 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF497230F2;
-        Tue,  3 Sep 2019 08:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567500326;
-        bh=TfLcqVZI8L0vFKtsZxUpSt1VNzMBPAPesOSpXiHIeLw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YGDSdqYiACbjr7nYurhrPCyfi+SGa8k5xiy/AroGa84SfqqLM5CKNXbiOqDSUmWsH
-         LwlzP+7IlDam5RrAgkvU4DRbv5YIIHsRuZEiQOMp9VOIrkNh49bOJEftCcYmwodQEb
-         629XJZxqNUOEuztnd5zXo80cqCohKFQqCgRT6LyQ=
-Received: by mail-qt1-f177.google.com with SMTP id o12so7192604qtf.3;
-        Tue, 03 Sep 2019 01:45:25 -0700 (PDT)
-X-Gm-Message-State: APjAAAUImicItQGNgkPkyTXaXrWTeF6Tqz6tB4r2DrpX7bYVEoEAA6x/
-        0ESWnhmn+5kfGICIujqrLiTBkykEWHzgOViJeg==
-X-Google-Smtp-Source: APXvYqyk/lAUl1vjxNsNPD2AOpSFtOu+yA00RV1lmAkNqJ0wvqQzPOIKEBMNaM4Hpk/TT1QQ9rfBnaB4mWp+uNUkc6o=
-X-Received: by 2002:a05:6214:10e1:: with SMTP id q1mr21183926qvt.148.1567500325065;
- Tue, 03 Sep 2019 01:45:25 -0700 (PDT)
+        id S1728293AbfICIqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 04:46:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34364 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726557AbfICIqX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 04:46:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=b70sepwhN8q1iqLMO3aK0ToUTreTjvrdLY0yLnuLs1s=; b=FJTvHrbiUE5UkVsFYMAHXOD2I
+        sCg2YlKoLGXVGsfFYYG0Jn5K9fgTDd4GB7Up7EM82M9wTLdBskzVnHkmVTT7Uv6eyYP8vU2o1lbcK
+        BXVE97NOqNi/on8BQTU3FivWew6c9b/vJHjwovZh7U0hMMnweK4r4KbCuFs2MMDx2NEWJ3fPQqyM5
+        ac+3uIhJROXdxr2uzo/9G7sdY1R1PVG1AkkVV9tmRtF53BssRlwSdGuheiBXCm7cZKmhgE9eSqz0p
+        q5Ss89/LkA6f+pl1QkKmE3dARRBd9dtO1654xqflNqs7M73zhXSZqZ2g4W2D1qcrgcP+CodmHP6CJ
+        /82hasdnQ==;
+Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i54SA-0003qm-UH; Tue, 03 Sep 2019 08:46:19 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>
+Cc:     Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org,
+        usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
+Subject: usb dma_mask fixups
+Date:   Tue,  3 Sep 2019 10:46:09 +0200
+Message-Id: <20190903084615.19161-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190903080336.32288-1-philippe.schenker@toradex.com> <20190903080336.32288-4-philippe.schenker@toradex.com>
-In-Reply-To: <20190903080336.32288-4-philippe.schenker@toradex.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 3 Sep 2019 09:45:13 +0100
-X-Gmail-Original-Message-ID: <CAL_JsqLnqZ80soGVMvZjAMZvu+K=ebDUz2bM_ZodPp7YRvUnDw@mail.gmail.com>
-Message-ID: <CAL_JsqLnqZ80soGVMvZjAMZvu+K=ebDUz2bM_ZodPp7YRvUnDw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dt-bindings: regulator: add regulator-fixed-clock binding
-To:     Philippe Schenker <philippe.schenker@toradex.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Stefan Agner <stefan.agner@toradex.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Luka Pivk <luka.pivk@toradex.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 3, 2019 at 9:03 AM Philippe Schenker
-<philippe.schenker@toradex.com> wrote:
->
-> This adds the documentation to the compatible regulator-fixed-clock
+Hi all,
 
-Please explain what that is in this patch.
-
->
-> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
->
-> ---
->
->  .../bindings/regulator/fixed-regulator.yaml    | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-> index a650b457085d..5fd081e80b43 100644
-> --- a/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-> +++ b/Documentation/devicetree/bindings/regulator/fixed-regulator.yaml
-> @@ -19,9 +19,19 @@ description:
->  allOf:
->    - $ref: "regulator.yaml#"
->
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: regulator-fixed-clock
-> +  required:
-> +    - clocks
-
-You don't need this.
-
-If you add a new compatible, then this should probably be a new schema
-doc. Is the 'gpio' property valid in this case as if a clock is the
-enable, can you also have a gpio enable? That said, it seems like the
-new compatible is only for validating the DT in the driver. You could
-just use a clock if present and default to current behavior if not.
-It's not the kernel's job to validate DTs.
-
->
->  properties:
->    compatible:
-> -    const: regulator-fixed
-> +    items:
-> +      - const: regulator-fixed
-> +      - const: regulator-fixed-clock
-
-This says you must have 'compatible = "regulator-fixed",
-"regulator-fixed-clock";'.
-
-What you want is:
-
-enum:
-  - regulator-fixed
-  - regulator-fixed-clock
-
->    regulator-name: true
->
-> @@ -29,6 +39,12 @@ properties:
->      description: gpio to use for enable control
->      maxItems: 1
->
-> +  clocks:
-> +    description:
-> +      clock to use for enable control. This binding is only available if
-> +      the compatible is chosen to regulator-fixed-clock. The clock binding
-> +      is mandatory if compatible is chosen to regulator-fixed-clock.
-
-Need to define how many clocks (maxItems: 1).
-
-> +
->    startup-delay-us:
->      description: startup time in microseconds
->      $ref: /schemas/types.yaml#/definitions/uint32
-> --
-> 2.23.0
->
+the first patch fixes the ohci-sm501 regression that Guenther reported
+due to the platform device dma_mask changes.  The second one ports that
+fix to another driver that works the same way.  The rest cleans up
+various loose ends left over from the dma related usb changes in the
+last two merge windows.
