@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8A46A63FE
+	by mail.lfdr.de (Postfix) with ESMTP id 3A9A6A63FD
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 10:32:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbfICIcT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 04:32:19 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:59245 "EHLO
+        id S1728532AbfICIcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 04:32:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:59246 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728479AbfICIcH (ORCPT
+        with ESMTP id S1728481AbfICIcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Sep 2019 04:32:07 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i54EJ-0002pa-B9; Tue, 03 Sep 2019 10:31:59 +0200
+        id 1i54EK-0002q6-In; Tue, 03 Sep 2019 10:32:00 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E1F171C0772;
-        Tue,  3 Sep 2019 10:31:58 +0200 (CEST)
-Date:   Tue, 03 Sep 2019 08:31:58 -0000
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 1948A1C0772;
+        Tue,  3 Sep 2019 10:32:00 +0200 (CEST)
+Date:   Tue, 03 Sep 2019 08:31:59 -0000
 From:   "tip-bot2 for Christoph Hellwig" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm: Unexport set_memory_x() and set_memory_nx()
+Subject: [tip: x86/mm] x86/mm: Remove set_pages_x() and set_pages_nx()
 Cc:     Christoph Hellwig <hch@lst.de>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Andy Lutomirski <luto@kernel.org>,
@@ -35,10 +35,10 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         Rik van Riel <riel@surriel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20190826075558.8125-2-hch@lst.de>
-References: <20190826075558.8125-2-hch@lst.de>
+In-Reply-To: <20190826075558.8125-4-hch@lst.de>
+References: <20190826075558.8125-4-hch@lst.de>
 MIME-Version: 1.0
-Message-ID: <156749951872.13279.5570680731854717726.tip-bot2@tip-bot2>
+Message-ID: <156749951990.13285.2642052726812267592.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -54,17 +54,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the x86/mm branch of tip:
 
-Commit-ID:     ec46133d3b81053701e2a29047dfb6228ff487bd
-Gitweb:        https://git.kernel.org/tip/ec46133d3b81053701e2a29047dfb6228ff487bd
+Commit-ID:     185be15143aa308184310df9fde3d409ca9f83bb
+Gitweb:        https://git.kernel.org/tip/185be15143aa308184310df9fde3d409ca9f83bb
 Author:        Christoph Hellwig <hch@lst.de>
-AuthorDate:    Mon, 26 Aug 2019 09:55:54 +02:00
+AuthorDate:    Mon, 26 Aug 2019 09:55:56 +02:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Tue, 03 Sep 2019 09:26:37 +02:00
 
-x86/mm: Unexport set_memory_x() and set_memory_nx()
+x86/mm: Remove set_pages_x() and set_pages_nx()
 
-No module currently messed with clearing or setting the execute
-permission of kernel memory, and none really should.
+These wrappers don't provide a real benefit over just using
+set_memory_x() and set_memory_nx().
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
@@ -76,29 +76,87 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20190826075558.8125-2-hch@lst.de
+Link: https://lkml.kernel.org/r/20190826075558.8125-4-hch@lst.de
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/pageattr.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/x86/include/asm/set_memory.h  |  2 --
+ arch/x86/kernel/machine_kexec_32.c |  4 ++--
+ arch/x86/mm/init_32.c              |  2 +-
+ arch/x86/mm/pageattr.c             | 16 ----------------
+ 4 files changed, 3 insertions(+), 21 deletions(-)
 
+diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+index 899ec9a..fd549c3 100644
+--- a/arch/x86/include/asm/set_memory.h
++++ b/arch/x86/include/asm/set_memory.h
+@@ -75,8 +75,6 @@ int set_pages_array_wb(struct page **pages, int addrinarray);
+ 
+ int set_pages_uc(struct page *page, int numpages);
+ int set_pages_wb(struct page *page, int numpages);
+-int set_pages_x(struct page *page, int numpages);
+-int set_pages_nx(struct page *page, int numpages);
+ int set_pages_ro(struct page *page, int numpages);
+ int set_pages_rw(struct page *page, int numpages);
+ 
+diff --git a/arch/x86/kernel/machine_kexec_32.c b/arch/x86/kernel/machine_kexec_32.c
+index 77854b1..7b45e8d 100644
+--- a/arch/x86/kernel/machine_kexec_32.c
++++ b/arch/x86/kernel/machine_kexec_32.c
+@@ -148,7 +148,7 @@ int machine_kexec_prepare(struct kimage *image)
+ {
+ 	int error;
+ 
+-	set_pages_x(image->control_code_page, 1);
++	set_memory_x((unsigned long)page_address(image->control_code_page), 1);
+ 	error = machine_kexec_alloc_page_tables(image);
+ 	if (error)
+ 		return error;
+@@ -162,7 +162,7 @@ int machine_kexec_prepare(struct kimage *image)
+  */
+ void machine_kexec_cleanup(struct kimage *image)
+ {
+-	set_pages_nx(image->control_code_page, 1);
++	set_memory_nx((unsigned long)page_address(image->control_code_page), 1);
+ 	machine_kexec_free_page_tables(image);
+ }
+ 
+diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
+index 4068abb..930edeb 100644
+--- a/arch/x86/mm/init_32.c
++++ b/arch/x86/mm/init_32.c
+@@ -916,7 +916,7 @@ static void mark_nxdata_nx(void)
+ 
+ 	if (__supported_pte_mask & _PAGE_NX)
+ 		printk(KERN_INFO "NX-protecting the kernel data: %luk\n", size >> 10);
+-	set_pages_nx(virt_to_page(start), size >> PAGE_SHIFT);
++	set_memory_nx(start, size >> PAGE_SHIFT);
+ }
+ 
+ void mark_rodata_ro(void)
 diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index e14e95e..08a6f04 100644
+index 1f97a72..d5586a0 100644
 --- a/arch/x86/mm/pageattr.c
 +++ b/arch/x86/mm/pageattr.c
-@@ -1977,7 +1977,6 @@ int set_memory_x(unsigned long addr, int numpages)
- 
- 	return change_page_attr_clear(&addr, numpages, __pgprot(_PAGE_NX), 0);
+@@ -2113,22 +2113,6 @@ int set_pages_array_wb(struct page **pages, int numpages)
  }
--EXPORT_SYMBOL(set_memory_x);
+ EXPORT_SYMBOL(set_pages_array_wb);
  
- int set_memory_nx(unsigned long addr, int numpages)
+-int set_pages_x(struct page *page, int numpages)
+-{
+-	unsigned long addr = (unsigned long)page_address(page);
+-
+-	return set_memory_x(addr, numpages);
+-}
+-EXPORT_SYMBOL(set_pages_x);
+-
+-int set_pages_nx(struct page *page, int numpages)
+-{
+-	unsigned long addr = (unsigned long)page_address(page);
+-
+-	return set_memory_nx(addr, numpages);
+-}
+-EXPORT_SYMBOL(set_pages_nx);
+-
+ int set_pages_ro(struct page *page, int numpages)
  {
-@@ -1986,7 +1985,6 @@ int set_memory_nx(unsigned long addr, int numpages)
- 
- 	return change_page_attr_set(&addr, numpages, __pgprot(_PAGE_NX), 0);
- }
--EXPORT_SYMBOL(set_memory_nx);
- 
- int set_memory_ro(unsigned long addr, int numpages)
- {
+ 	unsigned long addr = (unsigned long)page_address(page);
