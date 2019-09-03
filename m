@@ -2,225 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08991A65C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:40:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 670EDA65A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728921AbfICJkB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 05:40:01 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:47511 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728426AbfICJkB (ORCPT
+        id S1728821AbfICJiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 05:38:54 -0400
+Received: from smtprelay0022.hostedemail.com ([216.40.44.22]:43643 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728550AbfICJix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:40:01 -0400
-X-UUID: cb6a366d39bd4e8fa62f4b3972d6e544-20190903
-X-UUID: cb6a366d39bd4e8fa62f4b3972d6e544-20190903
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 695586970; Tue, 03 Sep 2019 17:39:55 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 3 Sep 2019 17:39:55 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 3 Sep 2019 17:39:53 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Evan Green <evgreen@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yong.wu@mediatek.com>,
-        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>, <anan.sun@mediatek.com>,
-        <cui.zhang@mediatek.com>, <chao.hao@mediatek.com>,
-        <ming-fan.chen@mediatek.com>,
-        Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v3 12/14] drm/mediatek: Add pm runtime support for ovl and rdma
-Date:   Tue, 3 Sep 2019 17:37:34 +0800
-Message-ID: <1567503456-24725-13-git-send-email-yong.wu@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1567503456-24725-1-git-send-email-yong.wu@mediatek.com>
-References: <1567503456-24725-1-git-send-email-yong.wu@mediatek.com>
+        Tue, 3 Sep 2019 05:38:53 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id AEB3E2B347;
+        Tue,  3 Sep 2019 09:38:51 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:355:379:599:960:968:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1461:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2198:2199:2393:2559:2562:2731:2828:3138:3139:3140:3141:3142:3352:3622:3865:3866:3867:3868:3870:3871:3872:3874:4250:4321:4605:5007:6117:6119:6120:7809:7903:10004:10400:10848:11232:11658:11914:12043:12048:12297:12740:12760:12895:13069:13311:13357:13439:14180:14659:14721:14819:21060:21080:21324:21433:21611:21627:21740:30029:30030:30054:30091,0,RBL:47.151.137.30:@perches.com:.lbl8.mailshell.net-62.14.0.100 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:27,LUA_SUMMARY:none
+X-HE-Tag: geese64_4d259d89bf017
+X-Filterd-Recvd-Size: 2574
+Received: from XPS-9350.home (unknown [47.151.137.30])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  3 Sep 2019 09:38:50 +0000 (UTC)
+Message-ID: <be9cd5d933486de9cf88a1550c2020c56348670d.camel@perches.com>
+Subject: Re: [PATCH v5 00/11] Device property improvements, add %pfw format
+ specifier
+From:   Joe Perches <joe@perches.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        rafael@kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Date:   Tue, 03 Sep 2019 02:38:48 -0700
+In-Reply-To: <20190902135732.23455-1-sakari.ailus@linux.intel.com>
+References: <20190902135732.23455-1-sakari.ailus@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yongqiang Niu <yongqiang.niu@mediatek.com>
+On Mon, 2019-09-02 at 16:57 +0300, Sakari Ailus wrote:
+> Hi all,
+> 
+> This set adds functionality into the device property API (counting a
+> node's parents as well as obtaining its name) in order to support printing
+> fwnode names using a new conversion specifier "%pfw". The names that are
+> produced are equivalent to its OF counterpart "%pOF" on OF systems for the
+> two supported modifiers ("f" and "P").
+> 
+> Printing a node's name is something that's been available on OF for a long
+> time and if something is converted to device property API (such as the
+> V4L2 fwnode framework) it always got removed of a nice feature that was
+> sometimes essential in debugging. With this set, that no longer is the
+> case.
 
-Display use the dispsys device to call pm_rumtime_get_sync before.
-This patch add pm_runtime_xx with ovl and rdma device which has linked
-with larb0, then it will enable the correpsonding larb0 clock
-automatically by the device link.
+Doesn't this still have dependencies on removing all
+existing %p[fF] uses?
 
-Signed-off-by: Yongqiang Niu <yongqiang.niu@mediatek.com>
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c     |  5 +++++
- drivers/gpu/drm/mediatek/mtk_disp_rdma.c    |  5 +++++
- drivers/gpu/drm/mediatek/mtk_drm_crtc.c     | 18 ++++++++++++++++--
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c |  9 +++++++++
- drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h |  1 +
- 5 files changed, 36 insertions(+), 2 deletions(-)
+In Linus' tree:
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-index c4f07c2..51958cf 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
-@@ -9,6 +9,7 @@
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- 
- #include "mtk_drm_crtc.h"
- #include "mtk_drm_ddp_comp.h"
-@@ -300,6 +301,8 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	pm_runtime_enable(dev);
-+
- 	ret = component_add(dev, &mtk_disp_ovl_component_ops);
- 	if (ret)
- 		dev_err(dev, "Failed to add component: %d\n", ret);
-@@ -311,6 +314,8 @@ static int mtk_disp_ovl_remove(struct platform_device *pdev)
- {
- 	component_del(&pdev->dev, &mtk_disp_ovl_component_ops);
- 
-+	pm_runtime_disable(&pdev->dev);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-index 9a6f0a2..15e5c3a 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
-@@ -9,6 +9,7 @@
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- 
- #include "mtk_drm_crtc.h"
- #include "mtk_drm_ddp_comp.h"
-@@ -306,6 +307,8 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, priv);
- 
-+	pm_runtime_enable(dev);
-+
- 	ret = component_add(dev, &mtk_disp_rdma_component_ops);
- 	if (ret)
- 		dev_err(dev, "Failed to add component: %d\n", ret);
-@@ -317,6 +320,8 @@ static int mtk_disp_rdma_remove(struct platform_device *pdev)
- {
- 	component_del(&pdev->dev, &mtk_disp_rdma_component_ops);
- 
-+	pm_runtime_disable(&pdev->dev);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-index c1e891e..daf002e 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-@@ -358,13 +358,21 @@ static void mtk_drm_crtc_atomic_enable(struct drm_crtc *crtc,
- 				       struct drm_crtc_state *old_state)
- {
- 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
-+	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
- 	int ret;
- 
- 	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
- 
-+	ret = pm_runtime_get_sync(comp->dev);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(comp->dev, "Failed to enable power domain: %d\n",
-+			      ret);
-+
- 	ret = mtk_crtc_ddp_hw_init(mtk_crtc);
--	if (ret)
-+	if (ret) {
-+		pm_runtime_put(comp->dev);
- 		return;
-+	}
- 
- 	drm_crtc_vblank_on(crtc);
- 	mtk_crtc->enabled = true;
-@@ -374,7 +382,8 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
- 					struct drm_crtc_state *old_state)
- {
- 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(crtc);
--	int i;
-+	struct mtk_ddp_comp *comp = mtk_crtc->ddp_comp[0];
-+	int i, ret;
- 
- 	DRM_DEBUG_DRIVER("%s %d\n", __func__, crtc->base.id);
- 	if (!mtk_crtc->enabled)
-@@ -398,6 +407,11 @@ static void mtk_drm_crtc_atomic_disable(struct drm_crtc *crtc,
- 	mtk_crtc_ddp_hw_fini(mtk_crtc);
- 
- 	mtk_crtc->enabled = false;
-+
-+	ret = pm_runtime_put(comp->dev);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(comp->dev, "Failed to disable power domain: %d\n",
-+			      ret);
- }
- 
- static void mtk_drm_crtc_atomic_begin(struct drm_crtc *crtc,
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-index 7dc8496..c45e1f0 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-@@ -256,6 +256,8 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
- 		      struct mtk_ddp_comp *comp, enum mtk_ddp_comp_id comp_id,
- 		      const struct mtk_ddp_comp_funcs *funcs)
- {
-+	struct platform_device *comp_pdev;
-+
- 	if (comp_id < 0 || comp_id >= DDP_COMPONENT_ID_MAX)
- 		return -EINVAL;
- 
-@@ -282,6 +284,13 @@ int mtk_ddp_comp_init(struct device *dev, struct device_node *node,
- 	if (IS_ERR(comp->clk))
- 		return PTR_ERR(comp->clk);
- 
-+	comp_pdev = of_find_device_by_node(node);
-+	if (!comp_pdev) {
-+		dev_err(dev, "Waiting for device %s\n", node->full_name);
-+		return -EPROBE_DEFER;
-+	}
-+	comp->dev = &comp_pdev->dev;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-index 108de60..d1838a8 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h
-@@ -83,6 +83,7 @@ struct mtk_ddp_comp {
- 	struct clk *clk;
- 	void __iomem *regs;
- 	int irq;
-+	struct device *dev;
- 	enum mtk_ddp_comp_id id;
- 	const struct mtk_ddp_comp_funcs *funcs;
- };
--- 
-1.9.1
+tools/lib/traceevent/Documentation/libtraceevent-func_apis.txt:or events have "%pF" or "%pS" parameter in its format string. It is common to
+tools/lib/traceevent/event-parse.c:             if (asprintf(&format, "%%pf: (NO FORMAT FOUND at %llx)\n", addr) < 0)
+tools/lib/traceevent/event-parse.c:     if (asprintf(&format, "%s: %s", "%pf", printk->printk) < 0)
+
+And these in -next:
+
+drivers/scsi/lpfc/lpfc_hbadisc.c:                                        "3185 FIND node filter %pf DID "
+drivers/scsi/lpfc/lpfc_hbadisc.c:                        "3186 FIND node filter %pf NOT FOUND.\n", filter);
+drivers/scsi/lpfc/lpfc_sli.c:                           "(%d):0307 Mailbox cmd x%x (x%x/x%x) Cmpl %pf "
+
 
