@@ -2,102 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4605A728F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:33:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F175A7294
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfICSdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 14:33:36 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:40073 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725882AbfICSdf (ORCPT
+        id S1726562AbfICSdu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 14:33:50 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38542 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725882AbfICSds (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 14:33:35 -0400
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 6A2FE2B0E;
-        Tue,  3 Sep 2019 14:33:34 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 03 Sep 2019 14:33:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=0oVSMAna4kl3ETzzaxWLpTjV167
-        ytiAyprd3AP+QQXw=; b=PserZJwwfQjDUhVLwb/5F3N1u/ETLAjozYldNmdsd59
-        C12dTcJOKvfjFMJBpYqcE8lBbu0G0B2EDDZYNbYj/XcdoDJtgKOyyD/lx4zM6Cqr
-        pcJl1oXdXENQcB5/nnaKcxQf+4JqmtgAD+/gFV858lksC6KktQpTM7cy7ZC7aZS8
-        SodE2PzZRNgZlOc54gsETmMzAz8B38LtP/0B8lS2afS8Vs0bXIC/6ysCrs+QuSem
-        UARqh0pvVnp3bA77ndzrjJx/vaRQiHyIUz47S/JU4ESiceV8nhQmih9l2reoxiHl
-        hdyrCqMewL20r9tRgsHcFIhf0hxxUDg0+SVlqF78iMQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=0oVSMA
-        na4kl3ETzzaxWLpTjV167ytiAyprd3AP+QQXw=; b=1AxtKOYrmlq6eSttWS8/0h
-        N1IF6Kb+qO2ihJcgUrNpcbYIG5QSGOOfP/6eRXt4Gkke1NPTbn8mJOFpOIZVNYvD
-        8BVqaZ8yqdXg90wcl2h3qjoC3X4DKIDFenHStLj0GQnytHkQ6HAiWub0QwH5/bXL
-        c0ky4AFwOfUcfKzViNlffue+Mkr9eveH2sYngzmZA1ksbs7Yua27CeVl82WgcVGU
-        EboAfYV6A3wmQr6RfTvWZR2aA4kUxPotd75gmPsmRLXl6/QPXcOdKtpluPBQdgYH
-        mtRiH9J3+NqwxPyRFOgzXjPFCcQHB9+NhSZ9Cp71/JUfpNMkxlOPzJac8c/07URg
-        ==
-X-ME-Sender: <xms:_bFuXeHlbcEIwt-w9gyEdsbOdEogfPHRw0o8ZvVgB95SsAe78d2Yiw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudejfedgleejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuffhomhgrihhnpehnvggvuggvug
-    drnhgvthenucfkphepkeefrdekiedrkeelrddutdejnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehgrhgvgheskhhrohgrhhdrtghomhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:_bFuXcsXOYeI7lCn8pNMPn4p_9g9uT5VRTOnQAjwrQotwpYtt9WjUw>
-    <xmx:_bFuXXDPFV3bBOQY7O5eBBTgLN_G1b-brbKWrUSDd_dwJGmjKv6PVQ>
-    <xmx:_bFuXRQEfS3vOYsq_2-4MSqwe95WFfcClzC6irEJKVdPhLu60ecP7A>
-    <xmx:_rFuXXSQVSipUIezTmy7mUaCzax62G-NbHj3REnGt3Qaj66pFKTQjw>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 30D57D6005E;
-        Tue,  3 Sep 2019 14:33:33 -0400 (EDT)
-Date:   Tue, 3 Sep 2019 20:33:31 +0200
-From:   Greg KH <greg@kroah.com>
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, stable@vger.kernel.org,
-        vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net,
-        hariprasad.kelam@gmail.com, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, arnd@arndb.de, orsonzhai@gmail.com,
-        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [BACKPORT 4.14.y 4/8] net: sctp: fix warning "NULL check before
- some freeing functions is not needed"
-Message-ID: <20190903183331.GB26562@kroah.com>
-References: <cover.1567492316.git.baolin.wang@linaro.org>
- <0e71732006c11f119826b3be9c1a9ccd102742d8.1567492316.git.baolin.wang@linaro.org>
- <20190903145206.GB3499@localhost.localdomain>
+        Tue, 3 Sep 2019 14:33:48 -0400
+Received: by mail-wr1-f68.google.com with SMTP id l11so9726960wrx.5
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 11:33:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joaomoreno-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=pspeRXdO2j1HTYVZdDPL9GbMWHeSQdfOo4maF+TAMok=;
+        b=mZqmbg8YdNqm34eF30MUz6zRJpRyWQwWiHvgFGGDoIc5o/DLmk4lWlBvIxB1TWT5PS
+         SMt4UNMbxD+X9bDEnkCxLYHz4qaPKkrMwUm+PeqX4UVxc3VcYgI1SR68yWPae4NXD4bw
+         l9RXbjfoGnpmRzR7t+WyAURZLrH/cIILLenAF24VwIaGUxU+I60L6pSbHqpHOIWeoPJ5
+         DcFwJVx7j/RKZrHrAY0/4cW/mcvFR3TOQX8PDwkYZ9/f5P+GgDaI6FIn80XUnmSaT4hr
+         j7F8Ruoiw/0oC2VkRg8jarJnoUHkXyHekZKB/B4gW4s1JiN+KVyGrvWEDhJsOSbnYjk4
+         k9lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=pspeRXdO2j1HTYVZdDPL9GbMWHeSQdfOo4maF+TAMok=;
+        b=QlM6nZVTdjVZFzGcbp0/MvmVWfq5lL8gISPbB470KE2VcpjtyIvZXIo99e1jBLA8Mo
+         MaWdlTUcSC4HtXQf9wV6H5xCWjNOYvshKgs9ba6aI7ahxBACgZbnRUHZY+Js/OzbLSI+
+         iDYHFQ2PBDjx31BmU7t0oJmj7RCZxepkm1TlFcFzUzCAIX25Mi9p38zjhhbXIarXB7ZX
+         UXqtAPcpHMy9w60q0SKQeMlQrHTOTLSbXqJsqNrOBrsiSWmSfabuMvuS7l68WLa0ZFFf
+         FzR+kYwlnBHQP/RuDPD624ke9757qHWTd8X0tSv0kOckE58uUhfnahX95ezCwX3qnrF6
+         sRWw==
+X-Gm-Message-State: APjAAAVCT93uZIYfbazdJjUvypVMuDlGKsPUcuUoiKgz0hGrtJofw0dZ
+        3TDKVx49Nfu6N5JlJnpIwZ4qqK3UNt6kMD2af4dNew==
+X-Google-Smtp-Source: APXvYqy/XvaP6187x664PfozZKvN1XpiK8C6lANO0NJPJjHlN8sofCs58c1EFb512gWlwYZ/ifV+D642d6Sk2TTlDno=
+X-Received: by 2002:a5d:6211:: with SMTP id y17mr3220387wru.35.1567535625608;
+ Tue, 03 Sep 2019 11:33:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903145206.GB3499@localhost.localdomain>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190903144632.26299-1-benjamin.tissoires@redhat.com>
+In-Reply-To: <20190903144632.26299-1-benjamin.tissoires@redhat.com>
+From:   =?UTF-8?B?Sm/Do28gTW9yZW5v?= <mail@joaomoreno.com>
+Date:   Tue, 3 Sep 2019 20:33:34 +0200
+Message-ID: <CAHxFc3SXM6hkbpTGZCsWOk70tByHE8af59ftOBwahY4fL0Sz=g@mail.gmail.com>
+Subject: Re: [PATCH v2] HID: apple: Fix stuck function keys when using FN
+To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 11:52:06AM -0300, Marcelo Ricardo Leitner wrote:
-> On Tue, Sep 03, 2019 at 02:58:16PM +0800, Baolin Wang wrote:
-> > From: Hariprasad Kelam <hariprasad.kelam@gmail.com>
-> > 
-> > This patch removes NULL checks before calling kfree.
-> > 
-> > fixes below issues reported by coccicheck
-> > net/sctp/sm_make_chunk.c:2586:3-8: WARNING: NULL check before some
-> > freeing functions is not needed.
-> > net/sctp/sm_make_chunk.c:2652:3-8: WARNING: NULL check before some
-> > freeing functions is not needed.
-> > net/sctp/sm_make_chunk.c:2667:3-8: WARNING: NULL check before some
-> > freeing functions is not needed.
-> > net/sctp/sm_make_chunk.c:2684:3-8: WARNING: NULL check before some
-> > freeing functions is not needed.
-> 
-> Hi. This doesn't seem the kind of patch that should be backported to
-> such old/stable releases. After all, it's just a cleanup.
+Hi Benjamin,
 
-I agree, this does not seem necessary _unless_ it is needed for a later
-real fix.
+On Tue, 3 Sep 2019 at 16:46, Benjamin Tissoires
+<benjamin.tissoires@redhat.com> wrote:
+>
+> From: Joao Moreno <mail@joaomoreno.com>
+>
+> This fixes an issue in which key down events for function keys would be
+> repeatedly emitted even after the user has raised the physical key. For
+> example, the driver fails to emit the F5 key up event when going through
+> the following steps:
+> - fnmode=3D1: hold FN, hold F5, release FN, release F5
+> - fnmode=3D2: hold F5, hold FN, release F5, release FN
+>
+> The repeated F5 key down events can be easily verified using xev.
+>
+> Signed-off-by: Joao Moreno <mail@joaomoreno.com>
+> Co-developed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+> ---
+>
+> Hi Joao,
+>
+> last chance to pull back :)
+>
+> If you are still happy, I'll push this version
+>
+> Cheers,
+> Benjamin
+>
 
-thanks,
+Looks great. Thanks a bunch for your help!
 
-greg k-h
+Cheers,
+Jo=C3=A3o
+
+>  drivers/hid/hid-apple.c | 49 +++++++++++++++++++++++------------------
+>  1 file changed, 28 insertions(+), 21 deletions(-)
+>
+> diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+> index 81df62f48c4c..6ac8becc2372 100644
+> --- a/drivers/hid/hid-apple.c
+> +++ b/drivers/hid/hid-apple.c
+> @@ -54,7 +54,6 @@ MODULE_PARM_DESC(swap_opt_cmd, "Swap the Option (\"Alt\=
+") and Command (\"Flag\")
+>  struct apple_sc {
+>         unsigned long quirks;
+>         unsigned int fn_on;
+> -       DECLARE_BITMAP(pressed_fn, KEY_CNT);
+>         DECLARE_BITMAP(pressed_numlock, KEY_CNT);
+>  };
+>
+> @@ -181,6 +180,8 @@ static int hidinput_apple_event(struct hid_device *hi=
+d, struct input_dev *input,
+>  {
+>         struct apple_sc *asc =3D hid_get_drvdata(hid);
+>         const struct apple_key_translation *trans, *table;
+> +       bool do_translate;
+> +       u16 code =3D 0;
+>
+>         if (usage->code =3D=3D KEY_FN) {
+>                 asc->fn_on =3D !!value;
+> @@ -189,8 +190,6 @@ static int hidinput_apple_event(struct hid_device *hi=
+d, struct input_dev *input,
+>         }
+>
+>         if (fnmode) {
+> -               int do_translate;
+> -
+>                 if (hid->product >=3D USB_DEVICE_ID_APPLE_WELLSPRING4_ANS=
+I &&
+>                                 hid->product <=3D USB_DEVICE_ID_APPLE_WEL=
+LSPRING4A_JIS)
+>                         table =3D macbookair_fn_keys;
+> @@ -202,25 +201,33 @@ static int hidinput_apple_event(struct hid_device *=
+hid, struct input_dev *input,
+>                 trans =3D apple_find_translation (table, usage->code);
+>
+>                 if (trans) {
+> -                       if (test_bit(usage->code, asc->pressed_fn))
+> -                               do_translate =3D 1;
+> -                       else if (trans->flags & APPLE_FLAG_FKEY)
+> -                               do_translate =3D (fnmode =3D=3D 2 && asc-=
+>fn_on) ||
+> -                                       (fnmode =3D=3D 1 && !asc->fn_on);
+> -                       else
+> -                               do_translate =3D asc->fn_on;
+> -
+> -                       if (do_translate) {
+> -                               if (value)
+> -                                       set_bit(usage->code, asc->pressed=
+_fn);
+> -                               else
+> -                                       clear_bit(usage->code, asc->press=
+ed_fn);
+> -
+> -                               input_event(input, usage->type, trans->to=
+,
+> -                                               value);
+> -
+> -                               return 1;
+> +                       if (test_bit(trans->from, input->key))
+> +                               code =3D trans->from;
+> +                       else if (test_bit(trans->to, input->key))
+> +                               code =3D trans->to;
+> +
+> +                       if (!code) {
+> +                               if (trans->flags & APPLE_FLAG_FKEY) {
+> +                                       switch (fnmode) {
+> +                                       case 1:
+> +                                               do_translate =3D !asc->fn=
+_on;
+> +                                               break;
+> +                                       case 2:
+> +                                               do_translate =3D asc->fn_=
+on;
+> +                                               break;
+> +                                       default:
+> +                                               /* should never happen */
+> +                                               do_translate =3D false;
+> +                                       }
+> +                               } else {
+> +                                       do_translate =3D asc->fn_on;
+> +                               }
+> +
+> +                               code =3D do_translate ? trans->to : trans=
+->from;
+>                         }
+> +
+> +                       input_event(input, usage->type, code, value);
+> +                       return 1;
+>                 }
+>
+>                 if (asc->quirks & APPLE_NUMLOCK_EMULATION &&
+> --
+> 2.19.2
+>
