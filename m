@@ -2,81 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 670E4A6DFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEAB6A6E88
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbfICQXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:23:10 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34726 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729692AbfICQXK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:23:10 -0400
-Received: by mail-wr1-f68.google.com with SMTP id s18so18212960wrn.1;
-        Tue, 03 Sep 2019 09:23:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TepBcnay70WrGmb0WBkOD/Cs9CShXo+TxS9/OGqh6Bw=;
-        b=EKHkp/aqR3DigOCLFd9MIjlOwoKCQetnK8fr3HngH/gmy44B/y+LUfRJnQJYWb6Cvo
-         8mEv5H9vPsNOdeBU6+QazVE8YKbL4Ks0DybjlhHXBqNmcH8loNv9Yp47V1EmvhvpineH
-         M0H4k3nAyfQh480J1dBLjqfa+BSK1wWphJaM2ef0qpf7OjVmdoHnF9SQt+HNNmNQ2at/
-         Y9yU3fbQC4I2CC9fwIX1huaI5p9BHj9JMlCN+EKbXwcPw3B/YI8zycMEkVzAScoOuEf1
-         juB1OBjcPWcL3N+j+VnKYHpHRr34IiVZ//Oo17/9CkRglejFCo2L6hRYuW4uNwWs2/er
-         nO3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TepBcnay70WrGmb0WBkOD/Cs9CShXo+TxS9/OGqh6Bw=;
-        b=mDVJcfuwdqr9YWNQo95DSAOJ4+Ex/BhxIblcdPsGpZaiTdLiwxTzz2CytqX3uKFAR2
-         Nb+1cFSLdQ6ke/4weyXcKVOv6ZmYxaLt9a1+19BqiqyqpBD3IeMz/H5J4AFDrrQB2V8L
-         ZRIChqxmwneojC0p2XJ8YjvSYZbYndzMdZVXTWx5jy8DrNh39/siTdbjcMJqQdSRdLWP
-         mmv8K0h1+NwBB6bh0okcO1wsgzjRaIJO8r4zSokJfV9XtrngHbduyLnnC8AgRA3fL/7B
-         yPrQtP+0zGI40kYAqfIRLG0tgiGJH5KSI/k3y2BEc3Ppe9c3UqAyGd5DVXZCB3mIandd
-         w3jA==
-X-Gm-Message-State: APjAAAVLWd0HzAOeDMGD4VPlBZ+XbQv39sRli68MmFYHiXbRJTmOcI+w
-        quzTu1s7bYyn7+7Vbs3bMw==
-X-Google-Smtp-Source: APXvYqwx0bJ6xnL9cz14xzE50FT6ThicgK4OWReQhuR8YKvDLg+VcrlLQG0HKsV1CSwULWCwxVvs1A==
-X-Received: by 2002:adf:f20f:: with SMTP id p15mr8540655wro.17.1567527788037;
-        Tue, 03 Sep 2019 09:23:08 -0700 (PDT)
-Received: from avx2 ([46.53.254.228])
-        by smtp.gmail.com with ESMTPSA id c74sm11892wme.46.2019.09.03.09.23.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Sep 2019 09:23:07 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 19:23:03 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     mingo@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-        linux-block@vger.kernel.org, dm-devel@redhat.com, axboe@kernel.dk,
-        aarcange@redhat.com
-Subject: Re: [PATCH] sched: make struct task_struct::state 32-bit
-Message-ID: <20190903162303.GA2173@avx2>
-References: <20190902210558.GA23013@avx2>
- <7b94004e-4a65-462b-cd6b-5cbd23d607bf@arm.com>
+        id S1730663AbfICQ0d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:26:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47034 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730581AbfICQ0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:26:17 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E52FF238CD;
+        Tue,  3 Sep 2019 16:26:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567527976;
+        bh=Eij9Lcp61mwnXfyqWxsgTftupagr0ZRNvm2GXlKk+Yk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kSORdLEWlYxc6tUgSCDL+dctOdCbB9UPccj+lR5yBak8vwmJ00tGJxAR2mI7JRFWC
+         Ny4hl++ElgImJo+2agxpM86DJoIFc8v74AEnvUvECNqUWlCf0TdLLnIjAeWLFx/Jjn
+         UV7k8hSiT3PXdYY6NQxqDFIQ0PgGBRTCZCmp79JE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        syzbot+69780d144754b8071f4b@syzkaller.appspotmail.com,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 032/167] media: vim2m: use cancel_delayed_work_sync instead of flush_schedule_work
+Date:   Tue,  3 Sep 2019 12:23:04 -0400
+Message-Id: <20190903162519.7136-32-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7b94004e-4a65-462b-cd6b-5cbd23d607bf@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 12:02:38AM +0100, Valentin Schneider wrote:
-> struct task_struct {
-> 	struct thread_info         thread_info;          /*     0    24 */
-> 	volatile int               state;                /*    24     4 */
-> 
-> 	/* XXX 4 bytes hole, try to pack */
-> 
-> 	void *                     stack;                /*    32     8 */
-> 
-> Though seeing as this is also the boundary of the randomized layout we can't
-> really do much better without changing the boundary itself. So much for
-> cacheline use :/
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-Cacheline use of task_struct is pretty hopeless because of all the ifdefs.
+[ Upstream commit 52117be68b82ee05c96da0a7beec319906ccf6cc ]
+
+The use of flush_schedule_work() made no sense and caused a syzkaller error.
+Replace with the correct cancel_delayed_work_sync().
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Reported-by: syzbot+69780d144754b8071f4b@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>      # for v4.20 and up
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/vim2m.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
+index 6f87ef025ff19..de7f9fe7e7cd9 100644
+--- a/drivers/media/platform/vim2m.c
++++ b/drivers/media/platform/vim2m.c
+@@ -797,10 +797,11 @@ static int vim2m_start_streaming(struct vb2_queue *q, unsigned count)
+ static void vim2m_stop_streaming(struct vb2_queue *q)
+ {
+ 	struct vim2m_ctx *ctx = vb2_get_drv_priv(q);
++	struct vim2m_dev *dev = ctx->dev;
+ 	struct vb2_v4l2_buffer *vbuf;
+ 	unsigned long flags;
+ 
+-	flush_scheduled_work();
++	cancel_delayed_work_sync(&dev->work_run);
+ 	for (;;) {
+ 		if (V4L2_TYPE_IS_OUTPUT(q->type))
+ 			vbuf = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+-- 
+2.20.1
+
