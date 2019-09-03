@@ -2,192 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6455A7449
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:09:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C9E0A7446
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfICUJW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 16:09:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:27290 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725882AbfICUJV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:09:21 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x83K7haO121886;
-        Tue, 3 Sep 2019 16:08:48 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2usx1nsqkr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 16:08:48 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x83K84SE123175;
-        Tue, 3 Sep 2019 16:08:47 -0400
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2usx1nsqjw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 16:08:47 -0400
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x83K4l70021669;
-        Tue, 3 Sep 2019 20:08:46 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma04dal.us.ibm.com with ESMTP id 2uqgh6svj7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 20:08:46 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x83K8jNW13173434
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Sep 2019 20:08:45 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 77DB2B2066;
-        Tue,  3 Sep 2019 20:08:45 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 486B3B205F;
-        Tue,  3 Sep 2019 20:08:45 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Sep 2019 20:08:45 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7174B16C1074; Tue,  3 Sep 2019 13:08:49 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 13:08:49 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, byungchul.park@lge.com,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH 1/5] rcu/rcuperf: Add kfree_rcu() performance Tests
-Message-ID: <20190903200849.GF4125@linux.ibm.com>
-Reply-To: paulmck@kernel.org
-References: <5d657e33.1c69fb81.54250.01dd@mx.google.com>
- <20190828211226.GW26530@linux.ibm.com>
- <20190829205637.GA162830@google.com>
+        id S1726858AbfICUJE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 16:09:04 -0400
+Received: from mail-eopbgr00062.outbound.protection.outlook.com ([40.107.0.62]:24230
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725882AbfICUJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 16:09:03 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=SwrIHNbbuth5/1E+hUZOjirgRgfdMEuJppl8zuVgR7P4S/iFpH3rFp6aOOiCp21jwHtdqE2N6XqemZzzoDoybG1tWEZvyOBpl7LIgO9D1hD22hoSdLyliSc/QRokCNpaBqqYK8+QOca7BINDznS+dKbYoIaQIUndEH2PpKyBz21Vq/CO9drEQDcswzYNlMyXn4wgYPyUydLILInaK7GtqnrGHKjWBzPcDtHRbWlwwizHcsNBW+33/V7gLy2sMLpPZaHCATGYWHMbefXwzRQOkgxMeqHlozArkNtqWOqF+AK/JS1naxdtAvee+yuiyj2AkAOgkMwkKBpbArIw4KiERQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D0hZSsQiW1yu8OrrxMN8IQcEgWGhXbAtyC2JfdWtzHg=;
+ b=KgBoX1B5ZkSEgH47SX0vnN4SiObm9ZrtP3U1LZ4o6G4oEJmwMD2ERtm16C+iCs6xZmBj8WwlUa1FkAl8gVvIsJe9QGmY9tZBGVG7z2jjt2rj88caGY+0FBsu0Avum37hrl8rykKEpX4oEkwzvlrSqaQfgNbzIpEykuhAwRuzPBfY59vtDKCNv/JcgTh0dCtzr8wMVEAcZnCaxEUF2zPybXSA0HlPtZGvCTFfvKxWWyit5AZon2h+aJ0fV/6euGCWm9sWAiagDDn9I6Huym2bNSWNiHshaU9PrVd3jMvfDgSoUAYtP2pwxdUrhsyew1TVtii8M8X0aaqxRv5yiHzrJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D0hZSsQiW1yu8OrrxMN8IQcEgWGhXbAtyC2JfdWtzHg=;
+ b=Tqn5KwIs+pAqM8YbS1LdL56zaJFPZcAxVUF5TSOFhOWbIFkwMvb4grPTwmklgqb2MyAuR0vCi02xqb1qyGim5wzqU4cJKWYMYP7Ca2CrHqiLCxpUa8lsQpQc7nE4rJwpis5OZ9uOIEBFn3haA4IvSPVKIFTQ8TgWME1Rg1MGWvY=
+Received: from AM4PR0501MB2756.eurprd05.prod.outlook.com (10.172.216.138) by
+ AM4PR0501MB2612.eurprd05.prod.outlook.com (10.172.221.139) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.21; Tue, 3 Sep 2019 20:08:57 +0000
+Received: from AM4PR0501MB2756.eurprd05.prod.outlook.com
+ ([fe80::58d1:d1d6:dbda:3576]) by AM4PR0501MB2756.eurprd05.prod.outlook.com
+ ([fe80::58d1:d1d6:dbda:3576%4]) with mapi id 15.20.2220.021; Tue, 3 Sep 2019
+ 20:08:56 +0000
+From:   Saeed Mahameed <saeedm@mellanox.com>
+To:     "zhongjiang@huawei.com" <zhongjiang@huawei.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "leon@kernel.org" <leon@kernel.org>
+Subject: Re: [PATCH] net/mlx5: Use PTR_ERR_OR_ZERO rather than its
+ implementation
+Thread-Topic: [PATCH] net/mlx5: Use PTR_ERR_OR_ZERO rather than its
+ implementation
+Thread-Index: AQHVYiUbtHW+f4OkM0m4fuPqj7OPRKcaYomA
+Date:   Tue, 3 Sep 2019 20:08:56 +0000
+Message-ID: <797f3807c00a52ea923301b4859f24145f0a291a.camel@mellanox.com>
+References: <1567493770-20074-1-git-send-email-zhongjiang@huawei.com>
+In-Reply-To: <1567493770-20074-1-git-send-email-zhongjiang@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=saeedm@mellanox.com; 
+x-originating-ip: [209.116.155.178]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fec1a3ca-5f34-48b6-b2fe-08d730aa8d52
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM4PR0501MB2612;
+x-ms-traffictypediagnostic: AM4PR0501MB2612:
+x-microsoft-antispam-prvs: <AM4PR0501MB26126691991FE7002909E016BEB90@AM4PR0501MB2612.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:635;
+x-forefront-prvs: 01494FA7F7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(136003)(366004)(346002)(376002)(189003)(199004)(8676002)(14454004)(6246003)(91956017)(76116006)(8936002)(6436002)(81166006)(81156014)(99286004)(66946007)(446003)(11346002)(186003)(2616005)(6512007)(6486002)(6116002)(76176011)(478600001)(86362001)(102836004)(486006)(3846002)(5660300002)(26005)(305945005)(53936002)(7736002)(316002)(6506007)(476003)(14444005)(229853002)(2501003)(71200400001)(36756003)(71190400001)(66066001)(2906002)(58126008)(25786009)(4326008)(54906003)(110136005)(4744005)(66476007)(118296001)(66556008)(66446008)(64756008)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0501MB2612;H:AM4PR0501MB2756.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: a2BE/bbCmj8upemUAYy0jb2265oEgZ47WOZoXbr4xv6zzSgVqSBSmzzIyp7BL75/IlN9grfVs/entHh5JWzk4Py56YZZtumH7z9TrzQvFIMQh/aQ59YYy3n4tzEnDxxtg7K0J5R3Uo2tH7iybnyjeLyGY9MOq1lILBrKrZz0EpMlpoBBghJpg2xYypRjst6HckMM5q6M+h2LMkdQdnLR97ra9lo9F+wZw3JWuu+XzP1KqQgs/iqiXG3aI8+PfOTkJb+JiJfOXix3ulYi4IQ20juP9avrORExvOs2SGZ4aW6VnRhaGK5cm/veGagMdxsNAyY2K0HC1WGnoWG8Rg9LjzyanWN/3FEWc3BljPo0d1cjk1iDhdaH5WJeJ8/8eSTWY5G64RKZjBFE+i1QhgwCqahzBkegnBrkakKuqLRpUQU=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0EF271330B8D22479621DF09EEEA0807@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190829205637.GA162830@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1034 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909030201
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fec1a3ca-5f34-48b6-b2fe-08d730aa8d52
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2019 20:08:56.8146
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4hcbjNL1wRtR8RO+KSDOpLliwdEfpjnfkAMD51/EU/b+ekMrPqtzXfirSEiLAJZ6dwejDJdMqPgblBMq7JMJ7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0501MB2612
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 29, 2019 at 04:56:37PM -0400, Joel Fernandes wrote:
-> On Wed, Aug 28, 2019 at 02:12:26PM -0700, Paul E. McKenney wrote:
-
-[ . . . ]
-
-> > > +static int
-> > > +kfree_perf_thread(void *arg)
-> > > +{
-> > > +	int i, loop = 0;
-> > > +	long me = (long)arg;
-> > > +	struct kfree_obj *alloc_ptr;
-> > > +	u64 start_time, end_time;
-> > > +
-> > > +	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
-> > > +	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
-> > > +	set_user_nice(current, MAX_NICE);
-> > > +
-> > > +	start_time = ktime_get_mono_fast_ns();
-> > > +
-> > > +	if (atomic_inc_return(&n_kfree_perf_thread_started) >= kfree_nrealthreads) {
-> > > +		if (gp_exp)
-> > > +			b_rcu_gp_test_started = cur_ops->exp_completed() / 2;
-> > 
-> > At some point, it would be good to use the new grace-period
-> > sequence-counter functions (rcuperf_seq_diff(), for example) instead of
-> > the open-coded division by 2.  I freely admit that you are just copying
-> > my obsolete hack in this case, so not needed in this patch.
-> 
-> But I am using rcu_seq_diff() below in the pr_alert().
-> 
-> Anyway, I agree this can be a follow-on since this pattern is borrowed from
-> another part of rcuperf. However, I am also confused about the pattern
-> itself.
-> 
-> If I understand, you are doing the "/ 2" because expedited_sequence
-> progresses by 2 for every expedited batch.
-> 
-> But does rcu_seq_diff() really work on these expedited GP numbers, and will
-> it be immune to changes in RCU_SEQ_STATE_MASK? Sorry for the silly questions,
-> but admittedly I have not looked too much yet into expedited RCU so I could
-> be missing the point.
-
-Yes, expedited grace periods use the common sequence-number functions.
-Oddly enough, normal grace periods were the last to make use of these.
-
-> > > +		else
-> > > +			b_rcu_gp_test_finished = cur_ops->get_gp_seq();
-> > > +
-> > > +		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld\n",
-> > > +		       (unsigned long long)(end_time - start_time), kfree_loops,
-> > > +		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started));
-> > > +		if (shutdown) {
-> > > +			smp_mb(); /* Assign before wake. */
-> > > +			wake_up(&shutdown_wq);
-> > > +		}
-> > > +	}
-> > > +
-> > > +	torture_kthread_stopping("kfree_perf_thread");
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static void
-> > > +kfree_perf_cleanup(void)
-> > > +{
-> > > +	int i;
-> > > +
-> > > +	if (torture_cleanup_begin())
-> > > +		return;
-> > > +
-> > > +	if (kfree_reader_tasks) {
-> > > +		for (i = 0; i < kfree_nrealthreads; i++)
-> > > +			torture_stop_kthread(kfree_perf_thread,
-> > > +					     kfree_reader_tasks[i]);
-> > > +		kfree(kfree_reader_tasks);
-> > > +	}
-> > > +
-> > > +	torture_cleanup_end();
-> > > +}
-> > > +
-> > > +/*
-> > > + * shutdown kthread.  Just waits to be awakened, then shuts down system.
-> > > + */
-> > > +static int
-> > > +kfree_perf_shutdown(void *arg)
-> > > +{
-> > > +	do {
-> > > +		wait_event(shutdown_wq,
-> > > +			   atomic_read(&n_kfree_perf_thread_ended) >=
-> > > +			   kfree_nrealthreads);
-> > > +	} while (atomic_read(&n_kfree_perf_thread_ended) < kfree_nrealthreads);
-> > > +
-> > > +	smp_mb(); /* Wake before output. */
-> > > +
-> > > +	kfree_perf_cleanup();
-> > > +	kernel_power_off();
-> > > +	return -EINVAL;
-> > 
-> > These last four lines should be combined with those of
-> > rcu_perf_shutdown().  Actually, you could fold the two functions together
-> > with only a pair of arguments and two one-line wrapper functions, which
-> > would be even better.
-> 
-> But the cleanup() function is different in the 2 cases and will have to be
-> passed in as a function pointer. I believe we discussed this last review as
-> well.
-
-Calling through a pointer should be a non-problem in this case.  We are
-nowhere near a fastpath.
-
-							Thanx, Paul
+T24gVHVlLCAyMDE5LTA5LTAzIGF0IDE0OjU2ICswODAwLCB6aG9uZyBqaWFuZyB3cm90ZToNCj4g
+UFRSX0VSUl9PUl9aRVJPIGNvbnRhaW5zIGlmKElTX0VSUiguLi4pKSArIFBUUl9FUlIuIEl0IGlz
+IGJldHRlcg0KPiB0byB1c2UgaXQgZGlyZWN0bHkuIGhlbmNlIGp1c3QgcmVwbGFjZSBpdC4NCj4g
+DQo+IFNpZ25lZC1vZmYtYnk6IHpob25nIGppYW5nIDx6aG9uZ2ppYW5nQGh1YXdlaS5jb20+DQo+
+IC0tLQ0KPiAgZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL2VuX3RjLmMg
+fCA1ICstLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDQgZGVsZXRpb25z
+KC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4
+NS9jb3JlL2VuX3RjLmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2Nv
+cmUvZW5fdGMuYw0KPiBpbmRleCA1NTgxYTgwLi4yZTBiNDY3IDEwMDY0NA0KPiAtLS0gYS9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fdGMuYw0KPiArKysgYi9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHg1L2NvcmUvZW5fdGMuYw0KPiBAQCAtOTg5LDEw
+ICs5ODksNyBAQCBzdGF0aWMgdm9pZCBtbHg1ZV9oYWlycGluX2Zsb3dfZGVsKHN0cnVjdA0KPiBt
+bHg1ZV9wcml2ICpwcml2LA0KPiAgCQkJCQkgICAgJmZsb3dfYWN0LCBkZXN0LCBkZXN0X2l4KTsN
+Cj4gIAltdXRleF91bmxvY2soJnByaXYtPmZzLnRjLnRfbG9jayk7DQo+ICANCj4gLQlpZiAoSVNf
+RVJSKGZsb3ctPnJ1bGVbMF0pKQ0KPiAtCQlyZXR1cm4gUFRSX0VSUihmbG93LT5ydWxlWzBdKTsN
+Cj4gLQ0KPiAtCXJldHVybiAwOw0KPiArCXJldHVybiBQVFJfRVJSX09SX1pFUk8oZmxvdy0+cnVs
+ZVswXSk7DQo+ICB9DQo+ICANCj4gIHN0YXRpYyB2b2lkIG1seDVlX3RjX2RlbF9uaWNfZmxvdyhz
+dHJ1Y3QgbWx4NWVfcHJpdiAqcHJpdiwNCg0KQWNrZWQtYnk6IFNhZWVkIE1haGFtZWVkIDxzYWVl
+ZG1AbWVsbGFub3guY29tPg0K
