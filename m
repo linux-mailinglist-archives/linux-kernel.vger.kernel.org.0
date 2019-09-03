@@ -2,82 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 480E9A69E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F88EA69FF
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729020AbfICNdX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:33:23 -0400
-Received: from mga12.intel.com ([192.55.52.136]:41965 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbfICNdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:33:23 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 06:33:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
-   d="scan'208";a="198770919"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 03 Sep 2019 06:33:20 -0700
-Received: by lahna (sSMTP sendmail emulation); Tue, 03 Sep 2019 16:33:19 +0300
-Date:   Tue, 3 Sep 2019 16:33:19 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Brad Campbell <lists2009@fnarfbargle.com>
-Cc:     linux-kernel@vger.kernel.org, michael.jamet@intel.com,
-        YehezkelShB@gmail.com
-Subject: Re: Thunderbolt DP oddity on v5.2.9 on iMac 12,2
-Message-ID: <20190903133319.GG2691@lahna.fi.intel.com>
-References: <20190828073302.GO3177@lahna.fi.intel.com>
- <7c9474d2-d948-4d1d-6f7b-94335b8b1f15@fnarfbargle.com>
- <20190828102342.GT3177@lahna.fi.intel.com>
- <e3a8fa91-2cfd-76a4-641c-610c32122833@fnarfbargle.com>
- <20190828131943.GZ3177@lahna.fi.intel.com>
- <be32b369-b013-cca8-5475-9b56acaa3e18@fnarfbargle.com>
- <20190903101325.GC2691@lahna.fi.intel.com>
- <71e34f9e-8e0d-f5f2-bc55-006aeb8a383b@fnarfbargle.com>
- <20190903115527.GE2691@lahna.fi.intel.com>
- <30fe86c0-e4f9-e852-a4d8-7b8263b373ef@fnarfbargle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30fe86c0-e4f9-e852-a4d8-7b8263b373ef@fnarfbargle.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1729245AbfICNhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:37:38 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46342 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727941AbfICNhh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 09:37:37 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x83DbaDG046431
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Sep 2019 09:37:37 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2usnvdqytj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 09:37:05 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Tue, 3 Sep 2019 14:36:43 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 3 Sep 2019 14:36:41 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x83Dad3F32768276
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 3 Sep 2019 13:36:39 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7B661A4054;
+        Tue,  3 Sep 2019 13:36:39 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E555A405F;
+        Tue,  3 Sep 2019 13:36:39 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  3 Sep 2019 13:36:39 +0000 (GMT)
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: [PATCH 1/1] s390: vfio-ap: fix warning reset not completed
+Date:   Tue,  3 Sep 2019 15:36:18 +0200
+X-Mailer: git-send-email 2.17.1
+X-TM-AS-GCONF: 00
+x-cbid: 19090313-0016-0000-0000-000002A62061
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19090313-0017-0000-0000-000033068869
+Message-Id: <20190903133618.9122-1-pasic@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1909030144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 08:54:02PM +0800, Brad Campbell wrote:
-> On 3/9/19 7:55 pm, Mika Westerberg wrote:
-> > On Tue, Sep 03, 2019 at 07:11:32PM +0800, Brad Campbell wrote:
-> > 
-> > I think the problem is that for some reason, probably because this is
-> > first generation hardware with all the bugs included, you cannot read
-> > the second dword from DP adapter path config space (you can write it
-> > though).
-> > 
-> > I've updated the patch so that it reads only the first dword when it
-> > discovers paths and also when it disables them. Can you try it out and
-> > see if it makes a difference? This should also get rid of the warnings
-> > you get.
-> > 
-> 
-> It would seem so. Now I get 3 heads on a cold or warm boot and no warnings
-> in the log, so it looks like that did the job. I've attached the dmesg from
-> the last cold boot for reference.
+The intention seems to be to warn once when we don't wait enough for the
+reset to complete. Let's use the right retry counter to accomplish that
+semantic.
 
-Great, thanks for checking. I will create a proper patch and submit
-upstream hopefully later this week or early next.
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+---
+ drivers/s390/crypto/vfio_ap_ops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I forgot to mention I did try the chained monitors over the weekend, but
-> that resulted in some carnage (corrupted displays and some form of hard lock
-> when starting X). I've not had a chance to get netconsole configured up to
-> catch any wreckage when it explodes as it didn't leave anything on disk.
-> 
-> I will do that in the next couple of days just for completeness.
+diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+index 0604b49a4d32..5c0f53c6dde7 100644
+--- a/drivers/s390/crypto/vfio_ap_ops.c
++++ b/drivers/s390/crypto/vfio_ap_ops.c
+@@ -1143,7 +1143,7 @@ int vfio_ap_mdev_reset_queue(unsigned int apid, unsigned int apqi,
+ 				msleep(20);
+ 				status = ap_tapq(apqn, NULL);
+ 			}
+-			WARN_ON_ONCE(retry <= 0);
++			WARN_ON_ONCE(retry2 <= 0);
+ 			return 0;
+ 		case AP_RESPONSE_RESET_IN_PROGRESS:
+ 		case AP_RESPONSE_BUSY:
+-- 
+2.17.1
 
-Yeah, it would be interesting to see where it blows up. From graphics
-perspective the two cases should not make any difference.
