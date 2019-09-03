@@ -2,104 +2,446 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 362EEA72DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C050A72E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 20:56:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbfICSyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 14:54:38 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:6122 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726270AbfICSyh (ORCPT
+        id S1726763AbfICS4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 14:56:00 -0400
+Received: from valentin-vidic.from.hr ([94.229.67.141]:44835 "EHLO
+        valentin-vidic.from.hr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbfICS4A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 14:54:37 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x83IptcL025953;
-        Tue, 3 Sep 2019 14:54:04 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2uswkc0h2c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 14:54:03 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x83IqpVo028192;
-        Tue, 3 Sep 2019 14:54:03 -0400
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2uswkc0h1x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 14:54:03 -0400
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x83Ij4TZ023100;
-        Tue, 3 Sep 2019 18:54:02 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma01wdc.us.ibm.com with ESMTP id 2uqgh6mcvy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Sep 2019 18:54:02 +0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x83Is2a954198674
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Sep 2019 18:54:02 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 01B8DAC059;
-        Tue,  3 Sep 2019 18:54:02 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A1607AC067;
-        Tue,  3 Sep 2019 18:53:57 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.133.34])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Tue,  3 Sep 2019 18:53:57 +0000 (GMT)
-References: <20190806044919.10622-2-bauerman@linux.ibm.com> <46MFPW6NYNz9sDQ@ozlabs.org>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     x86@kernel.org, linux-s390@vger.kernel.org,
-        Lianbo Jiang <lijiang@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, linux-kernel@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Halil Pasic <pasic@linux.ibm.com>,
-        iommu@lists.linux-foundation.org, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-fsdevel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linuxppc-dev@lists.ozlabs.org, Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v4 1/6] x86, s390: Move ARCH_HAS_MEM_ENCRYPT definition to arch/Kconfig
-In-reply-to: <46MFPW6NYNz9sDQ@ozlabs.org>
-Date:   Tue, 03 Sep 2019 15:53:54 -0300
-Message-ID: <87k1apky7x.fsf@morokweng.localdomain>
+        Tue, 3 Sep 2019 14:56:00 -0400
+X-Virus-Scanned: Debian amavisd-new at valentin-vidic.from.hr
+Received: by valentin-vidic.from.hr (Postfix, from userid 1000)
+        id DE9AF3A32A; Tue,  3 Sep 2019 20:55:48 +0200 (CEST)
+From:   Valentin Vidic <vvidic@valentin-vidic.from.hr>
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Valentin Vidic <vvidic@valentin-vidic.from.hr>
+Subject: [PATCH] staging: exfat: drop local TRUE/FALSE defines
+Date:   Tue,  3 Sep 2019 20:55:37 +0200
+Message-Id: <20190903185537.25099-1-vvidic@valentin-vidic.from.hr>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190903181946.GA14349@kroah.com>
+References: <20190903181946.GA14349@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-09-03_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1909030186
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Replace with bool where it makes sense. Also drop unused local
+variable lossy in fat_find_dir_entry.
 
-Michael Ellerman <patch-notifications@ellerman.id.au> writes:
+Signed-off-by: Valentin Vidic <vvidic@valentin-vidic.from.hr>
+---
+ drivers/staging/exfat/exfat.h       |  3 --
+ drivers/staging/exfat/exfat_core.c  | 81 +++++++++++++++--------------
+ drivers/staging/exfat/exfat_nls.c   |  2 +-
+ drivers/staging/exfat/exfat_super.c | 18 ++++---
+ 4 files changed, 53 insertions(+), 51 deletions(-)
 
-> On Tue, 2019-08-06 at 04:49:14 UTC, Thiago Jung Bauermann wrote:
->> powerpc is also going to use this feature, so put it in a generic location.
->> 
->> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
->> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
->> Reviewed-by: Christoph Hellwig <hch@lst.de>
->
-> Series applied to powerpc topic/mem-encrypt, thanks.
->
-> https://git.kernel.org/powerpc/c/0c9c1d56397518eb823d458b00b06bcccd956794
-
-Thank you!
-
+diff --git a/drivers/staging/exfat/exfat.h b/drivers/staging/exfat/exfat.h
+index 816681d1103a..0aa14dea4e09 100644
+--- a/drivers/staging/exfat/exfat.h
++++ b/drivers/staging/exfat/exfat.h
+@@ -86,9 +86,6 @@
+ #define CLUSTER_16(x)		((u16)(x))
+ #define CLUSTER_32(x)		((u32)(x))
+ 
+-#define FALSE			0
+-#define TRUE			1
+-
+ #define START_SECTOR(x)							\
+ 	((((sector_t)((x) - 2)) << p_fs->sectors_per_clu_bits) +	\
+ 	 p_fs->data_start_sector)
+diff --git a/drivers/staging/exfat/exfat_core.c b/drivers/staging/exfat/exfat_core.c
+index 1246afcffb8d..1630f16459a3 100644
+--- a/drivers/staging/exfat/exfat_core.c
++++ b/drivers/staging/exfat/exfat_core.c
+@@ -705,7 +705,7 @@ static s32 __load_upcase_table(struct super_block *sb, sector_t sector,
+ 	struct buffer_head *tmp_bh = NULL;
+ 	sector_t end_sector = num_sectors + sector;
+ 
+-	u8	skip = FALSE;
++	bool	skip = false;
+ 	u32	index = 0;
+ 	u16	uni = 0;
+ 	u16 **upcase_table;
+@@ -742,11 +742,11 @@ static s32 __load_upcase_table(struct super_block *sb, sector_t sector,
+ 				index += uni;
+ 				pr_debug("to 0x%X (amount of 0x%X)\n",
+ 					 index, uni);
+-				skip = FALSE;
++				skip = false;
+ 			} else if (uni == index) {
+ 				index++;
+ 			} else if (uni == 0xFFFF) {
+-				skip = TRUE;
++				skip = true;
+ 			} else { /* uni != index , uni != 0xFFFF */
+ 				u16 col_index = get_col_index(index);
+ 
+@@ -787,7 +787,7 @@ static s32 __load_default_upcase_table(struct super_block *sb)
+ 	u32 j;
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+ 
+-	u8	skip = FALSE;
++	bool	skip = false;
+ 	u32	index = 0;
+ 	u16	uni = 0;
+ 	u16 **upcase_table;
+@@ -804,11 +804,11 @@ static s32 __load_default_upcase_table(struct super_block *sb)
+ 			pr_debug("skip from 0x%X ", index);
+ 			index += uni;
+ 			pr_debug("to 0x%X (amount of 0x%X)\n", index, uni);
+-			skip = FALSE;
++			skip = false;
+ 		} else if (uni == index) {
+ 			index++;
+ 		} else if (uni == 0xFFFF) {
+-			skip = TRUE;
++			skip = true;
+ 		} else { /* uni != index , uni != 0xFFFF */
+ 			u16 col_index = get_col_index(index);
+ 
+@@ -1399,7 +1399,7 @@ void init_dos_entry(struct dos_dentry_t *ep, u32 type, u32 start_clu)
+ void init_ext_entry(struct ext_dentry_t *ep, s32 order, u8 chksum, u16 *uniname)
+ {
+ 	int i;
+-	u8 end = FALSE;
++	bool end = false;
+ 
+ 	fat_set_entry_type((struct dentry_t *) ep, TYPE_EXTEND);
+ 	ep->order = (u8) order;
+@@ -1411,7 +1411,7 @@ void init_ext_entry(struct ext_dentry_t *ep, s32 order, u8 chksum, u16 *uniname)
+ 		if (!end) {
+ 			SET16(ep->unicode_0_4+i, *uniname);
+ 			if (*uniname == 0x0)
+-				end = TRUE;
++				end = true;
+ 			else
+ 				uniname++;
+ 		} else {
+@@ -1423,7 +1423,7 @@ void init_ext_entry(struct ext_dentry_t *ep, s32 order, u8 chksum, u16 *uniname)
+ 		if (!end) {
+ 			SET16_A(ep->unicode_5_10 + i, *uniname);
+ 			if (*uniname == 0x0)
+-				end = TRUE;
++				end = true;
+ 			else
+ 				uniname++;
+ 		} else {
+@@ -1435,7 +1435,7 @@ void init_ext_entry(struct ext_dentry_t *ep, s32 order, u8 chksum, u16 *uniname)
+ 		if (!end) {
+ 			SET16_A(ep->unicode_11_12 + i, *uniname);
+ 			if (*uniname == 0x0)
+-				end = TRUE;
++				end = true;
+ 			else
+ 				uniname++;
+ 		} else {
+@@ -2146,8 +2146,9 @@ s32 fat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 		       struct uni_name_t *p_uniname, s32 num_entries,
+ 		       struct dos_name_t *p_dosname, u32 type)
+ {
+-	int i, dentry = 0, lossy = FALSE, len;
+-	s32 order = 0, is_feasible_entry = TRUE, has_ext_entry = FALSE;
++	int i, dentry = 0, len;
++	s32 order = 0;
++	bool is_feasible_entry = true, has_ext_entry = false;
+ 	s32 dentries_per_clu;
+ 	u32 entry_type;
+ 	u16 entry_uniname[14], *uniname = NULL, unichar;
+@@ -2190,11 +2191,11 @@ s32 fat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 						return dentry;
+ 
+ 					dos_ep = (struct dos_dentry_t *) ep;
+-					if ((!lossy) && (!nls_dosname_cmp(sb, p_dosname->name, dos_ep->name)))
++					if (!nls_dosname_cmp(sb, p_dosname->name, dos_ep->name))
+ 						return dentry;
+ 				}
+-				is_feasible_entry = TRUE;
+-				has_ext_entry = FALSE;
++				is_feasible_entry = true;
++				has_ext_entry = false;
+ 			} else if (entry_type == TYPE_EXTEND) {
+ 				if (is_feasible_entry) {
+ 					ext_ep = (struct ext_dentry_t *) ep;
+@@ -2212,16 +2213,16 @@ s32 fat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 					*(uniname+len) = 0x0;
+ 
+ 					if (nls_uniname_cmp(sb, uniname, entry_uniname))
+-						is_feasible_entry = FALSE;
++						is_feasible_entry = false;
+ 
+ 					*(uniname+len) = unichar;
+ 				}
+-				has_ext_entry = TRUE;
++				has_ext_entry = true;
+ 			} else if (entry_type == TYPE_UNUSED) {
+ 				return -2;
+ 			}
+-			is_feasible_entry = TRUE;
+-			has_ext_entry = FALSE;
++			is_feasible_entry = true;
++			has_ext_entry = false;
+ 		}
+ 
+ 		if (p_dir->dir == CLUSTER_32(0))
+@@ -2244,7 +2245,8 @@ s32 exfat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 			 struct dos_name_t *p_dosname, u32 type)
+ {
+ 	int i = 0, dentry = 0, num_ext_entries = 0, len, step;
+-	s32 order = 0, is_feasible_entry = FALSE;
++	s32 order = 0;
++	bool is_feasible_entry = false;
+ 	s32 dentries_per_clu, num_empty = 0;
+ 	u32 entry_type;
+ 	u16 entry_uniname[16], *uniname = NULL, unichar;
+@@ -2288,7 +2290,7 @@ s32 exfat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 			step = 1;
+ 
+ 			if ((entry_type == TYPE_UNUSED) || (entry_type == TYPE_DELETED)) {
+-				is_feasible_entry = FALSE;
++				is_feasible_entry = false;
+ 
+ 				if (p_fs->hint_uentry.entry == -1) {
+ 					num_empty++;
+@@ -2311,9 +2313,9 @@ s32 exfat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 					file_ep = (struct file_dentry_t *) ep;
+ 					if ((type == TYPE_ALL) || (type == entry_type)) {
+ 						num_ext_entries = file_ep->num_ext;
+-						is_feasible_entry = TRUE;
++						is_feasible_entry = true;
+ 					} else {
+-						is_feasible_entry = FALSE;
++						is_feasible_entry = false;
+ 						step = file_ep->num_ext + 1;
+ 					}
+ 				} else if (entry_type == TYPE_STREAM) {
+@@ -2323,7 +2325,7 @@ s32 exfat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 						    p_uniname->name_len == strm_ep->name_len) {
+ 							order = 1;
+ 						} else {
+-							is_feasible_entry = FALSE;
++							is_feasible_entry = false;
+ 							step = num_ext_entries;
+ 						}
+ 					}
+@@ -2343,7 +2345,7 @@ s32 exfat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 						*(uniname+len) = 0x0;
+ 
+ 						if (nls_uniname_cmp(sb, uniname, entry_uniname)) {
+-							is_feasible_entry = FALSE;
++							is_feasible_entry = false;
+ 							step = num_ext_entries - order + 1;
+ 						} else if (order == num_ext_entries) {
+ 							p_fs->hint_uentry.dir = CLUSTER_32(~0);
+@@ -2354,7 +2356,7 @@ s32 exfat_find_dir_entry(struct super_block *sb, struct chain_t *p_dir,
+ 						*(uniname+len) = unichar;
+ 					}
+ 				} else {
+-					is_feasible_entry = FALSE;
++					is_feasible_entry = false;
+ 				}
+ 			}
+ 
+@@ -2522,17 +2524,17 @@ bool is_dir_empty(struct super_block *sb, struct chain_t *p_dir)
+ 			type = p_fs->fs_func->get_entry_type(ep);
+ 
+ 			if (type == TYPE_UNUSED)
+-				return TRUE;
++				return true;
+ 			if ((type != TYPE_FILE) && (type != TYPE_DIR))
+ 				continue;
+ 
+ 			if (p_dir->dir == CLUSTER_32(0)) /* FAT16 root_dir */
+-				return FALSE;
++				return false;
+ 
+ 			if (p_fs->vol_type == EXFAT)
+-				return FALSE;
++				return false;
+ 			if ((p_dir->dir == p_fs->root_dir) || ((++count) > 2))
+-				return FALSE;
++				return false;
+ 		}
+ 
+ 		if (p_dir->dir == CLUSTER_32(0))
+@@ -2548,7 +2550,7 @@ bool is_dir_empty(struct super_block *sb, struct chain_t *p_dir)
+ 			break;
+ 	}
+ 
+-	return TRUE;
++	return true;
+ }
+ 
+ /*
+@@ -2741,7 +2743,8 @@ s32 extract_uni_name_from_name_entry(struct name_dentry_t *ep, u16 *uniname,
+ s32 fat_generate_dos_name(struct super_block *sb, struct chain_t *p_dir,
+ 			  struct dos_name_t *p_dosname)
+ {
+-	int i, j, count = 0, count_begin = FALSE;
++	int i, j, count = 0;
++	bool count_begin = false;
+ 	s32 dentries_per_clu;
+ 	u32 type;
+ 	u8 bmap[128/* 1 ~ 1023 */];
+@@ -2779,14 +2782,14 @@ s32 fat_generate_dos_name(struct super_block *sb, struct chain_t *p_dir,
+ 				continue;
+ 
+ 			count = 0;
+-			count_begin = FALSE;
++			count_begin = false;
+ 
+ 			for (j = 0; j < 8; j++) {
+ 				if (ep->name[j] == ' ')
+ 					break;
+ 
+ 				if (ep->name[j] == '~') {
+-					count_begin = TRUE;
++					count_begin = true;
+ 				} else if (count_begin) {
+ 					if ((ep->name[j] >= '0') &&
+ 					    (ep->name[j] <= '9')) {
+@@ -2794,7 +2797,7 @@ s32 fat_generate_dos_name(struct super_block *sb, struct chain_t *p_dir,
+ 							(ep->name[j] - '0');
+ 					} else {
+ 						count = 0;
+-						count_begin = FALSE;
++						count_begin = false;
+ 					}
+ 				}
+ 			}
+@@ -3613,7 +3616,7 @@ int sector_read(struct super_block *sb, sector_t sec, struct buffer_head **bh,
+ 	if (!p_fs->dev_ejected) {
+ 		ret = bdev_read(sb, sec, bh, 1, read);
+ 		if (ret != FFS_SUCCESS)
+-			p_fs->dev_ejected = TRUE;
++			p_fs->dev_ejected = 1;
+ 	}
+ 
+ 	return ret;
+@@ -3642,7 +3645,7 @@ int sector_write(struct super_block *sb, sector_t sec, struct buffer_head *bh,
+ 	if (!p_fs->dev_ejected) {
+ 		ret = bdev_write(sb, sec, bh, 1, sync);
+ 		if (ret != FFS_SUCCESS)
+-			p_fs->dev_ejected = TRUE;
++			p_fs->dev_ejected = 1;
+ 	}
+ 
+ 	return ret;
+@@ -3665,7 +3668,7 @@ int multi_sector_read(struct super_block *sb, sector_t sec,
+ 	if (!p_fs->dev_ejected) {
+ 		ret = bdev_read(sb, sec, bh, num_secs, read);
+ 		if (ret != FFS_SUCCESS)
+-			p_fs->dev_ejected = TRUE;
++			p_fs->dev_ejected = 1;
+ 	}
+ 
+ 	return ret;
+@@ -3693,7 +3696,7 @@ int multi_sector_write(struct super_block *sb, sector_t sec,
+ 	if (!p_fs->dev_ejected) {
+ 		ret = bdev_write(sb, sec, bh, num_secs, sync);
+ 		if (ret != FFS_SUCCESS)
+-			p_fs->dev_ejected = TRUE;
++			p_fs->dev_ejected = 1;
+ 	}
+ 
+ 	return ret;
+diff --git a/drivers/staging/exfat/exfat_nls.c b/drivers/staging/exfat/exfat_nls.c
+index 2ca58616159b..03cb8290b5d2 100644
+--- a/drivers/staging/exfat/exfat_nls.c
++++ b/drivers/staging/exfat/exfat_nls.c
+@@ -225,7 +225,7 @@ void nls_uniname_to_dosname(struct super_block *sb,
+ 		*dosname = 0x05;
+ 
+ 	if (*uniname != 0x0)
+-		lossy = TRUE;
++		lossy = true;
+ 
+ 	if (upper & lower)
+ 		p_dosname->name_case = 0xFF;
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index e44b860e35e8..03de872aaa1d 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -452,7 +452,7 @@ static int ffsMountVol(struct super_block *sb)
+ 	buf_init(sb);
+ 
+ 	sema_init(&p_fs->v_sem, 1);
+-	p_fs->dev_ejected = FALSE;
++	p_fs->dev_ejected = 0;
+ 
+ 	/* open the block device */
+ 	bdev_open(sb);
+@@ -903,7 +903,8 @@ static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
+ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+ 			void *buffer, u64 count, u64 *wcount)
+ {
+-	s32 modified = FALSE, offset, sec_offset, clu_offset;
++	bool modified = false;
++	s32 offset, sec_offset, clu_offset;
+ 	s32 num_clusters, num_alloc, num_alloced = (s32) ~0;
+ 	int ret = 0;
+ 	u32 clu, last_clu;
+@@ -1011,14 +1012,14 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+ 				if (new_clu.flags == 0x01)
+ 					fid->flags = 0x01;
+ 				fid->start_clu = new_clu.dir;
+-				modified = TRUE;
++				modified = true;
+ 			} else {
+ 				if (new_clu.flags != fid->flags) {
+ 					exfat_chain_cont_cluster(sb,
+ 								 fid->start_clu,
+ 								 num_clusters);
+ 					fid->flags = 0x01;
+-					modified = TRUE;
++					modified = true;
+ 				}
+ 				if (new_clu.flags == 0x01)
+ 					FAT_write(sb, last_clu, new_clu.dir);
+@@ -1088,7 +1089,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+ 
+ 		if (fid->size < fid->rwoffset) {
+ 			fid->size = fid->rwoffset;
+-			modified = TRUE;
++			modified = true;
+ 		}
+ 	}
+ 
+@@ -1828,7 +1829,8 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
+ 
+ static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
+ {
+-	s32 num_clusters, num_alloced, modified = FALSE;
++	s32 num_clusters, num_alloced;
++	bool modified = false;
+ 	u32 last_clu;
+ 	int ret = FFS_SUCCESS;
+ 	sector_t sector = 0;
+@@ -1906,13 +1908,13 @@ static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
+ 			if (new_clu.flags == 0x01)
+ 				fid->flags = 0x01;
+ 			fid->start_clu = new_clu.dir;
+-			modified = TRUE;
++			modified = true;
+ 		} else {
+ 			if (new_clu.flags != fid->flags) {
+ 				exfat_chain_cont_cluster(sb, fid->start_clu,
+ 							 num_clusters);
+ 				fid->flags = 0x01;
+-				modified = TRUE;
++				modified = true;
+ 			}
+ 			if (new_clu.flags == 0x01)
+ 				FAT_write(sb, last_clu, new_clu.dir);
 -- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+2.20.1
+
