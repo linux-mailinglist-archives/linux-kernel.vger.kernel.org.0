@@ -2,72 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37CA1A612A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E24CA6121
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:15:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfICGSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:18:08 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:5723 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725848AbfICGSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:18:07 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 92518136F1EDB68BA3F9;
-        Tue,  3 Sep 2019 14:18:05 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 3 Sep 2019 14:17:59 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-To:     <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <amd-gfx@lists.freedesktop.org>,
-        <zhongjiang@huawei.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/amdgpu: remove the redundant null check
-Date:   Tue, 3 Sep 2019 14:15:05 +0800
-Message-ID: <1567491305-18320-1-git-send-email-zhongjiang@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1726852AbfICGP2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:15:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56116 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725919AbfICGP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:15:27 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AD2173082E4E;
+        Tue,  3 Sep 2019 06:15:27 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-67.ams2.redhat.com [10.36.117.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 03A7E19D70;
+        Tue,  3 Sep 2019 06:15:25 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id A2AD346D3; Tue,  3 Sep 2019 08:15:24 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 08:15:24 +0200
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     dri-devel@lists.freedesktop.org, Jonathan Corbet <corbet@lwn.net>,
+        David Airlie <airlied@linux.ie>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH 1/5] drm/ttm: add drm_gem_ttm_print_info()
+Message-ID: <20190903061524.v75akt6rmx5vow2n@sirius.home.kraxel.org>
+References: <20190902124126.7700-1-kraxel@redhat.com>
+ <20190902124126.7700-2-kraxel@redhat.com>
+ <199bbf8d-68bc-ea99-723e-3b88045970c4@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <199bbf8d-68bc-ea99-723e-3b88045970c4@suse.de>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 03 Sep 2019 06:15:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-debugfs_remove and kfree has taken the null check in account.
-hence it is unnecessary to check it. Just remove the condition.
-No functional change.
+  Hi,
 
-Signed-off-by: zhong jiang <zhongjiang@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+> > +		[ TTM_PL_SYSTEM ] = "system",
+> > +		[ TTM_PL_TT     ] = "tt",
+> > +		[ TTM_PL_VRAM   ] = "vram",
+> > +		[ TTM_PL_PRIV   ] = "priv",
+> > +
+> 
+> This 'gap' in the array seems to be a problem for drivers that use these
+> bits. Could the print logic be moved into s separate function that also
+> takes the array as an argument?
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-index 5652cc7..cb94627 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-@@ -1077,8 +1077,7 @@ static int amdgpu_debugfs_ib_preempt(void *data, u64 val)
- 
- 	ttm_bo_unlock_delayed_workqueue(&adev->mman.bdev, resched);
- 
--	if (fences)
--		kfree(fences);
-+	kfree(fences);
- 
- 	return 0;
- }
-@@ -1103,8 +1102,7 @@ int amdgpu_debugfs_init(struct amdgpu_device *adev)
- 
- void amdgpu_debugfs_preempt_cleanup(struct amdgpu_device *adev)
- {
--	if (adev->debugfs_preempt)
--		debugfs_remove(adev->debugfs_preempt);
-+	debugfs_remove(adev->debugfs_preempt);
- }
- 
- #else
--- 
-1.7.12.4
+Are there any drivers which actually use these bits and which therefore
+might want to use a different array?
+
+Also note they should not cause any problems (other than not being
+printed).  There is an explicit check here ...
+
+> > +		if (!plname[i])
+> > +			continue;
+
+.. to skip unknown bits.
+
+cheers,
+  Gerd
 
