@@ -2,204 +2,187 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70A5BA75FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 23:13:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08A84A7602
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 23:13:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbfICVND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 17:13:03 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:46948 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbfICVNC (ORCPT
+        id S1727175AbfICVNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 17:13:43 -0400
+Received: from mail-qt1-f176.google.com ([209.85.160.176]:32944 "EHLO
+        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726394AbfICVNm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 17:13:02 -0400
-Received: by mail-io1-f69.google.com with SMTP id o3so10493253iom.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 14:13:01 -0700 (PDT)
+        Tue, 3 Sep 2019 17:13:42 -0400
+Received: by mail-qt1-f176.google.com with SMTP id r5so16582232qtd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 14:13:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jnl/m8TXoOotHWDOnj1qBzvcERm07JKi+F3CfQzw2js=;
+        b=ndBNDIivbuLYyTCd7EJ2jU7WpGS8fuwvFdFLihFHvaRiYrY6NoM2UNoQ2UIcoJob6M
+         Gj9oyNeOjzVT7tF80mxULimWGlDerjfhdHUCf8/aAvPJ0wTU2mScUvrTzbK2tehQOQVE
+         mFvBf8l6j0BWFLHAe3mui7s+hRpsNM/umQWj6UqeSlkW4gTT4wAQUfPOdwK3+mPe0vMg
+         PcaPsUktxEqcExjBJoGrwbORsMhgmG0kRz6GwJBOe8M+efSYHjbJg2gvEfDMV0nY7GqY
+         +NVQD2E/9NVVWBQ+XhSng7qrM0n6+NQPDRdQrKcbtrZUzkHdTQh2XlK73uuiwRBB/z4p
+         tOkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=1WKGwcpaWquE3NyVH1G6d6wvJxvfHkoeVrMFiDnZFIo=;
-        b=OdJ4FEOiNcUMiSfS5OZufKVnuh1Wt7BmS05xEaVkwHFVnEhCobylK7d73mZI3UFWdN
-         7DIsHd6apF6yITR80FC9bDGKfk0+hIRUOZmEjAYPBU19TQsT017yT966CZMdgAP28aVo
-         x1nGhIaW5H8byC0Qd/JOp133FOGEA0C3unbEYP2rKO1TGd21pKpAvmKnfwJGGTLiVb00
-         AdBzOTzKDC3B+Jn+7FR/LQPhHRNpm6Ly5hZ0aoGlogV8zJgCJBGbJSVjTN3hQvGSlJam
-         kILm4hKinVmFoUifQ5932sbGJcDpePVXbmLesBPRj8ItXM78ONqp6y0fGJgCkPSk0t/n
-         mNVQ==
-X-Gm-Message-State: APjAAAXqKcd0soglYp7JPdxDARVZtTNeH2BuDvbisM2PdTDouA+/hqc+
-        RIQAMMTQelFVFhyxYfSAhSe1JeM9IVyf0ZV6TNX3Zw8RAU/i
-X-Google-Smtp-Source: APXvYqzi2rirV/nztYOLJlRgO8bFME++mdwnvIaTDpXKuCIw3SswPQpijqiahmKwtlY/rzexG5FGRfQ9/rIDKz77FQZInQGxmXy3
-MIME-Version: 1.0
-X-Received: by 2002:a02:9a12:: with SMTP id b18mr4209405jal.70.1567545181433;
- Tue, 03 Sep 2019 14:13:01 -0700 (PDT)
-Date:   Tue, 03 Sep 2019 14:13:01 -0700
-In-Reply-To: <Pine.LNX.4.44L0.1909031654240.1859-100000@iolanthe.rowland.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b580440591ac8df5@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in usb_reset_and_verify_device
-From:   syzbot <syzbot+35f4d916c623118d576e@syzkaller.appspotmail.com>
-To:     Thinh.Nguyen@synopsys.com, andreyknvl@google.com,
-        dianders@chromium.org, gregkh@linuxfoundation.org,
-        jflat@chromium.org, kai.heng.feng@canonical.com,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        malat@debian.org, mathias.nyman@linux.intel.com,
-        nsaenzjulienne@suse.de, stern@rowland.harvard.edu,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jnl/m8TXoOotHWDOnj1qBzvcERm07JKi+F3CfQzw2js=;
+        b=OFg8k2KJOBwDwnxTXjr/nSIsvzhbjLuSbm6o+BltFr/f7suSBwVC1rjTVVIcEdOg77
+         DF4fojQxecnmNwkDHJXunex9puxgo9Zyge7eugV1cw+vVvgW1I6tpYvF1LSJ9rNfen2r
+         1/NQgk5MjE1a6j/dFHwDOOaPnVQ7/JAL2eiBebZFrusGdzmbiMmXWLUIYCO2ubzX+eDY
+         8KhBpomt/QinmrXSI1RhoRK+1FPED/RLoIbEv7S4KRIuQemvW1LHxN7HXmojMHHSgOgy
+         inhOgw+GSUqSkyVamPRw4u8FgRZ+Kn2l9iJN/r29kZVp0em1W7mD/qukSWxGXikN7ecM
+         Mrcg==
+X-Gm-Message-State: APjAAAWT9a497O3cmBJdRLcoqkXr9H4OGPXkWtjls7cMn9Fggeo7HbJ+
+        NAS0DWmyo4N+uH7u6LbhHGsxKg==
+X-Google-Smtp-Source: APXvYqy41p17kftMw+o3sX9TP7VjpmgEb51xudEyvUtef56+owEq15L2WS8U3bi7v0yk/tthhfXEKQ==
+X-Received: by 2002:a0c:d4d0:: with SMTP id y16mr23107610qvh.191.1567545221037;
+        Tue, 03 Sep 2019 14:13:41 -0700 (PDT)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id q13sm8878141qkm.120.2019.09.03.14.13.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Sep 2019 14:13:40 -0700 (PDT)
+Message-ID: <1567545218.5576.66.camel@lca.pw>
+Subject: Re: "beyond 2038" warnings from loopback mount is noisy
+From:   Qian Cai <cai@lca.pw>
+To:     Arnd Bergmann <arnd@arndb.de>, Andreas Dilger <adilger@dilger.ca>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>
+Date:   Tue, 03 Sep 2019 17:13:38 -0400
+In-Reply-To: <CAK8P3a19PNVv0tEd8h93F9iszcCC-AmeqZ=pFkuSAyxAfhaQ-Q@mail.gmail.com>
+References: <1567523922.5576.57.camel@lca.pw>
+         <CABeXuvoPdAbDr-ELxNqUPg5n84fubZJZKiryERrXdHeuLhBQjQ@mail.gmail.com>
+         <CABeXuvq7n+ZW7-HOiur+cyQXBjYKKWw1nRgFTJXTBZ9JNusPeg@mail.gmail.com>
+         <1567534549.5576.62.camel@lca.pw>
+         <82F89AEA-994B-44B5-93E7-CD339E4F78F6@dilger.ca>
+         <CAK8P3a19PNVv0tEd8h93F9iszcCC-AmeqZ=pFkuSAyxAfhaQ-Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, 2019-09-03 at 21:50 +0200, Arnd Bergmann wrote:
+> On Tue, Sep 3, 2019 at 9:39 PM Andreas Dilger <adilger@dilger.ca> wrote:
+> > 
+> > On Sep 3, 2019, at 12:15 PM, Qian Cai <cai@lca.pw> wrote:
+> > > 
+> > > On Tue, 2019-09-03 at 09:36 -0700, Deepa Dinamani wrote:
+> > > > We might also want to consider updating the file system the LTP is
+> > > > being run on here.
+> > > 
+> > > It simply format (mkfs.ext4) a loop back device on ext4 with the kernel.
+> > > 
+> > > CONFIG_EXT4_FS=m
+> > > # CONFIG_EXT4_USE_FOR_EXT2 is not set
+> > > # CONFIG_EXT4_FS_POSIX_ACL is not set
+> > > # CONFIG_EXT4_FS_SECURITY is not set
+> > > # CONFIG_EXT4_DEBUG is not set
+> > > 
+> > > using e2fsprogs-1.44.6. Do you mean people now need to update the kernel
+> > > to
+> > > enable additional config to avoid the spam of warnings now?
+> > 
+> > Strange.  The defaults for mkfs.ext4 _should_ default to use options that
+> > allow enough space for the extra timestamps.
+> > 
+> > Can you please provide "dumpe2fs -h" output for your filesystem, and the
+> > formatting options that you used when creating this filesystem.
+> 
+> According to the man page,
+> 
+>         "The default inode size is controlled by the mke2fs.conf(5)
+> file.  In the
+>          mke2fs.conf file shipped with  e2fsprogs, the default inode size is
+> 256
+>          bytes for most file systems, except for small file systems
+> where the inode
+>          size will be 128 bytes."
+> 
+> If this (small file systems) is the problem, then I think we need to
+> do two things:
+> 
+> 1. Change the per-inode warning to not warn if the inode size for the
+>     file system is less than 256. We already get a mount-time warning
+>     in that case.
+> 
+> 2. Change the mkfs.ext4 defaults to never pick a 128 byte inode unless
+>     the user really wants this (maybe not even then).
 
-syzbot has tested the proposed patch but the reproducer still triggered  
-crash:
-KASAN: slab-out-of-bounds Read in usb_reset_and_verify_device
+Indeed.
 
-usb 6-1: Using ep0 maxpacket: 16
-usb 6-1: BOS total length 54, descriptor 168
-usb 6-1: Old BOS ffff8881cd814f60  Len 0xa8
-usb 6-1: New BOS ffff8881cd257ae0  Len 0xa8
-==================================================================
-BUG: KASAN: slab-out-of-bounds in memcmp+0xa6/0xb0 lib/string.c:904
-Read of size 1 at addr ffff8881cd257c36 by task kworker/1:0/17
+# dd if=/dev/zero of=small bs=1M count=50
+50+0 records in
+50+0 records out
+52428800 bytes (52 MB, 50 MiB) copied, 0.0168322 s, 3.1 GB/s
 
-CPU: 1 PID: 17 Comm: kworker/1:0 Not tainted 5.3.0-rc5+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: usb_hub_wq hub_event
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xca/0x13e lib/dump_stack.c:113
-  print_address_description+0x6a/0x32c mm/kasan/report.c:351
-  __kasan_report.cold+0x1a/0x33 mm/kasan/report.c:482
-  kasan_report+0xe/0x12 mm/kasan/common.c:612
-  memcmp+0xa6/0xb0 lib/string.c:904
-  memcmp include/linux/string.h:400 [inline]
-  descriptors_changed drivers/usb/core/hub.c:5579 [inline]
-  usb_reset_and_verify_device+0x5a8/0x1350 drivers/usb/core/hub.c:5736
-  usb_reset_device+0x4c1/0x920 drivers/usb/core/hub.c:5905
-  rt2x00usb_probe+0x53/0x7af  
-drivers/net/wireless/ralink/rt2x00/rt2x00usb.c:806
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2165
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2165
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+# losetup -f small
 
-Allocated by task 17:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_kmalloc mm/kasan/common.c:487 [inline]
-  __kasan_kmalloc.constprop.0+0xbf/0xd0 mm/kasan/common.c:460
-  kmalloc include/linux/slab.h:557 [inline]
-  kzalloc include/linux/slab.h:748 [inline]
-  usb_get_bos_descriptor+0x1e4/0x315 drivers/usb/core/config.c:955
-  hub_port_init+0x169a/0x2d30 drivers/usb/core/hub.c:4837
-  usb_reset_and_verify_device+0x3aa/0x1350 drivers/usb/core/hub.c:5720
-  usb_reset_device+0x4c1/0x920 drivers/usb/core/hub.c:5905
-  rt2x00usb_probe+0x53/0x7af  
-drivers/net/wireless/ralink/rt2x00/rt2x00usb.c:806
-  usb_probe_interface+0x305/0x7a0 drivers/usb/core/driver.c:361
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2165
-  usb_set_configuration+0xdf6/0x1670 drivers/usb/core/message.c:2023
-  generic_probe+0x9d/0xd5 drivers/usb/core/generic.c:210
-  usb_probe_device+0x99/0x100 drivers/usb/core/driver.c:266
-  really_probe+0x281/0x6d0 drivers/base/dd.c:548
-  driver_probe_device+0x101/0x1b0 drivers/base/dd.c:721
-  __device_attach_driver+0x1c2/0x220 drivers/base/dd.c:828
-  bus_for_each_drv+0x162/0x1e0 drivers/base/bus.c:454
-  __device_attach+0x217/0x360 drivers/base/dd.c:894
-  bus_probe_device+0x1e4/0x290 drivers/base/bus.c:514
-  device_add+0xae6/0x16f0 drivers/base/core.c:2165
-  usb_new_device.cold+0x6a4/0xe79 drivers/usb/core/hub.c:2536
-  hub_port_connect drivers/usb/core/hub.c:5098 [inline]
-  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
-  port_event drivers/usb/core/hub.c:5359 [inline]
-  hub_event+0x1b5c/0x3640 drivers/usb/core/hub.c:5441
-  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
-  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
-  kthread+0x318/0x420 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+# mkfs.ext4 /dev/loop0
 
-Freed by task 2190:
-  save_stack+0x1b/0x80 mm/kasan/common.c:69
-  set_track mm/kasan/common.c:77 [inline]
-  __kasan_slab_free+0x130/0x180 mm/kasan/common.c:449
-  slab_free_hook mm/slub.c:1423 [inline]
-  slab_free_freelist_hook mm/slub.c:1474 [inline]
-  slab_free mm/slub.c:3016 [inline]
-  kfree+0xe4/0x2f0 mm/slub.c:3957
-  free_rb_tree_fname+0x7f/0xe0 fs/ext4/dir.c:404
-  ext4_htree_free_dir_info fs/ext4/dir.c:426 [inline]
-  ext4_release_dir+0x41/0x60 fs/ext4/dir.c:624
-  __fput+0x2d7/0x840 fs/file_table.c:280
-  task_work_run+0x13f/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x1d2/0x200 arch/x86/entry/common.c:163
-  prepare_exit_to_usermode arch/x86/entry/common.c:194 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:274 [inline]
-  do_syscall_64+0x45f/0x580 arch/x86/entry/common.c:299
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881cd257c00
-  which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 54 bytes inside of
-  64-byte region [ffff8881cd257c00, ffff8881cd257c40)
-The buggy address belongs to the page:
-page:ffffea00073495c0 refcount:1 mapcount:0 mapping:ffff8881da003180  
-index:0xffff8881cd257f00
-flags: 0x200000000000200(slab)
-raw: 0200000000000200 ffffea00073442c0 0000001d0000001d ffff8881da003180
-raw: ffff8881cd257f00 00000000802a0028 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881cd257b00: 00 00 fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-  ffff8881cd257b80: fc fc fc fc fb fb fb fb fb fb fb fb fc fc fc fc
-> ffff8881cd257c00: 00 00 00 00 00 00 06 fc fc fc fc fc fb fb fb fb
-                                      ^
-  ffff8881cd257c80: fb fb fb fb fc fc fc fc fb fb fb fb fb fb fb fb
-  ffff8881cd257d00: fc fc fc fc 00 00 00 00 00 00 00 00 fc fc fc fc
-==================================================================
-
-
-Tested on:
-
-commit:         eea39f24 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17cc619e600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d0c62209eedfd54e
-dashboard link: https://syzkaller.appspot.com/bug?extid=35f4d916c623118d576e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10b73476600000
-
+# dumpe2fs -h /dev/loop0 
+dumpe2fs 1.44.6 (5-Mar-2019)
+Filesystem volume name:   <none>
+Last mounted on:          <not available>
+Filesystem UUID:          8cd1b7f1-dec9-45fc-807b-26cceedcdaa7
+Filesystem magic number:  0xEF53
+Filesystem revision #:    1 (dynamic)
+Filesystem features:      has_journal ext_attr resize_inode dir_index filetype
+extent 64bit flex_bg sparse_super large_file huge_file dir_nlink extra_isize
+metadata_csum
+Filesystem flags:         unsigned_directory_hash 
+Default mount options:    user_xattr acl
+Filesystem state:         clean
+Errors behavior:          Continue
+Filesystem OS type:       Linux
+Inode count:              12824
+Block count:              51200
+Reserved block count:     2560
+Free blocks:              44440
+Free inodes:              12813
+First block:              1
+Block size:               1024
+Fragment size:            1024
+Group descriptor size:    64
+Reserved GDT blocks:      256
+Blocks per group:         8192
+Fragments per group:      8192
+Inodes per group:         1832
+Inode blocks per group:   229
+Flex block group size:    16
+Filesystem created:       Tue Sep  3 16:10:35 2019
+Last mount time:          Tue Sep  3 16:10:42 2019
+Last write time:          Tue Sep  3 16:10:48 2019
+Mount count:              1
+Maximum mount count:      -1
+Last checked:             Tue Sep  3 16:10:35 2019
+Check interval:           0 (<none>)
+Lifetime writes:          6050 kB
+Reserved blocks uid:      0 (user root)
+Reserved blocks gid:      0 (group root)
+First inode:              11
+Inode size:	          128
+Journal inode:            8
+Default directory hash:   half_md4
+Directory Hash Seed:      6507a815-ee3a-4573-99c8-2f9103061dec
+Journal backup:           inode blocks
+Checksum type:            crc32c
+Checksum:                 0x4b0ec46e
+Journal features:         journal_64bit journal_checksum_v3
+Journal size:             4096k
+Journal length:           4096
+Journal sequence:         0x00000004
+Journal start:            0
+Journal checksum type:    crc32c
+Journal checksum:         0x23f8be20
