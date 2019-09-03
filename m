@@ -2,154 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4169A6B87
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B35A6B79
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729840AbfICObE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:31:04 -0400
-Received: from mga09.intel.com ([134.134.136.24]:34539 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbfICObE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:31:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 07:31:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
-   d="scan'208";a="184768017"
-Received: from vkuppusa-mobl2.ger.corp.intel.com (HELO localhost) ([10.252.39.67])
-  by orsmga003.jf.intel.com with ESMTP; 03 Sep 2019 07:30:54 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org
-Cc:     akpm@linux-foundation.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, bp@alien8.de, josh@joshtriplett.org,
-        luto@kernel.org, kai.huang@intel.com, rientjes@google.com,
-        cedric.xing@intel.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH v22 24/24] docs: x86/sgx: Document kernel internals
-Date:   Tue,  3 Sep 2019 17:26:55 +0300
-Message-Id: <20190903142655.21943-25-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
-References: <20190903142655.21943-1-jarkko.sakkinen@linux.intel.com>
+        id S1729788AbfICOaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:30:07 -0400
+Received: from mail-qk1-f175.google.com ([209.85.222.175]:45513 "EHLO
+        mail-qk1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729780AbfICOaH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 10:30:07 -0400
+Received: by mail-qk1-f175.google.com with SMTP id z67so3234423qkb.12
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:30:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=txdROfjUl9dM+2yPuRDkyhhvxXozqecsN8VhuY+SZ7M=;
+        b=ULLfLJRUthwwQFUok6aLJJI3L7rutVQkHBR3ssAcfR9bKNBce8F3ZlwoOGVyfZ4cus
+         ibChoEl7Y/q5ODSkTcgP078pg6570sweuswR7Yv2yl1RcCn/DifjZ2IH25UD7N/+mEK5
+         dZCZJHiRk+pYhTy7bC6pXU8c7C8KhBIuVgKikPM6a7Wp3h4JsmJe6XL6Hn/ZOHzQETvU
+         a4m5MWNgT1ZeeYrFELvhWWgBKJoMwQdhNudjyTxkycwAPJc7pKGIBgmwQ6MKRro6cg5E
+         LmO8vu9lgqZBVyb21JQF5EGylqfiJp55wa6NBlt/HN2r4LCrokKX+KDMzZSOgZqdg040
+         pY2Q==
+X-Gm-Message-State: APjAAAUkpvk2buhnaDCRuT3mZ7yHpwI2/JgbqbTrbbdJqPyhPC77yqEa
+        KPEfUZ71Ost9w9qOUQUhIoASkEqpusbLT++g6Is=
+X-Google-Smtp-Source: APXvYqwLjTNx47Gj2QNqFyNsIzMwL+B4ROtxwyKeybUMtTA2U06E+WJnLtr/oIupoTE/Ww1krRjNLWQNdg1l/SO1/Tg=
+X-Received: by 2002:a37:4b0d:: with SMTP id y13mr33577722qka.3.1567521006053;
+ Tue, 03 Sep 2019 07:30:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <878srdzjpj.fsf@FE-laptop>
+In-Reply-To: <878srdzjpj.fsf@FE-laptop>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 3 Sep 2019 16:29:49 +0200
+Message-ID: <CAK8P3a1+mZ43aKg5mEU+LsAtCr5paLseYdCPv5qJ=xH3Qaufjw@mail.gmail.com>
+Subject: Re: [GIT PULL] ARM: mvebu: dt for v5.4 (#1)
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        SoC Team <soc@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+On Wed, Aug 28, 2019 at 12:07 PM Gregory CLEMENT
+<gregory.clement@bootlin.com> wrote:
 
-Document some of the more tricky parts of the kernel implementation
-internals.
+> ----------------------------------------------------------------
+> mvebu dt for 5.4 (part 1)
+>
+>  - Disable the kirkwood RTC that doesn't work on the ts219 board
+>
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- Documentation/x86/sgx/2.Kernel-internals.rst | 76 ++++++++++++++++++++
- Documentation/x86/sgx/index.rst              |  1 +
- 2 files changed, 77 insertions(+)
- create mode 100644 Documentation/x86/sgx/2.Kernel-internals.rst
+Pulled into arm/dt, thanks!
 
-diff --git a/Documentation/x86/sgx/2.Kernel-internals.rst b/Documentation/x86/sgx/2.Kernel-internals.rst
-new file mode 100644
-index 000000000000..5c90a65936f2
---- /dev/null
-+++ b/Documentation/x86/sgx/2.Kernel-internals.rst
-@@ -0,0 +1,76 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+================
-+Kernel Internals
-+================
-+
-+CPU configuration
-+=================
-+
-+Because SGX has an ever evolving and expanding feature set, it's possible for
-+a BIOS or VMM to configure a system in such a way that not all CPUs are equal,
-+e.g. where Launch Control is only enabled on a subset of CPUs.  Linux does
-+*not* support such a heterogeneous system configuration, nor does it even
-+attempt to play nice in the face of a misconfigured system.  With the exception
-+of Launch Control's hash MSRs, which can vary per CPU, Linux assumes that all
-+CPUs have a configuration that is identical to the boot CPU.
-+
-+EPC management
-+==============
-+
-+Because the kernel can't arbitrarily read EPC memory or share RO backing pages
-+between enclaves, traditional memory models such as CoW and fork() do not work
-+with enclaves.  In other words, the architectural rules of EPC forces it to be
-+treated as MAP_SHARED at all times.
-+
-+The inability to employ traditional memory models also means that EPC memory
-+must be isolated from normal memory pools, e.g. attempting to use EPC memory
-+for normal mappings would result in faults and/or perceived data corruption.
-+Furthermore, EPC is not enumerated by as normal memory, e.g. BIOS enumerates
-+EPC as reserved memory in the e820 tables, or not at all.  As a result, EPC
-+memory is directly managed by the SGX subsystem, e.g. SGX employs VM_PFNMAP to
-+manually insert/zap/swap page table entries, and exposes EPC to userspace via
-+a well known device, /dev/sgx/enclave.
-+
-+The net effect is that all enclave VMAs must be MAP_SHARED and are backed by
-+a single file, /dev/sgx/enclave.
-+
-+EPC oversubscription
-+====================
-+
-+SGX allows to have larger enclaves than amount of available EPC by providing a
-+subset of leaf instruction for swapping EPC pages to the system memory.  The
-+details of these instructions are discussed in the architecture document. Due
-+to the unique requirements for swapping EPC pages, and because EPC pages do not
-+have associated page structures, management of the EPC is not handled by the
-+standard memory subsystem.
-+
-+SGX directly handles swapping of EPC pages, including a thread to initiate the
-+reclaiming process and a rudimentary LRU mechanism. When the amount of free EPC
-+pages goes below a low watermark the swapping thread starts reclaiming pages.
-+The pages that have not been recently accessed (i.e. do not have the A bit set)
-+are selected as victim pages. Each enclave holds an shmem file as a backing
-+storage for reclaimed pages.
-+
-+Launch Control
-+==============
-+
-+The current kernel implementation supports only writable MSRs. The launch is
-+performed by setting the MSRs to the hash of the public key modulus of the
-+enclave signer and a token with the valid bit set to zero. Because kernel makes
-+ultimately all the launch decisions token are not needed for anything.  We
-+don't need or have a launch enclave for generating them as the MSRs must always
-+be writable.
-+
-+Provisioning
-+============
-+
-+The use of provisioning must be controlled because it allows to get access to
-+the provisioning keys to attest to a remote party that the software is running
-+inside a legit enclave. This could be used by a malware network to ensure that
-+its nodes are running inside legit enclaves.
-+
-+The driver introduces a special device file /dev/sgx/provision and a special
-+ioctl SGX_IOC_ENCLAVE_SET_ATTRIBUTE to accomplish this. A file descriptor
-+pointing to /dev/sgx/provision is passed to ioctl from which kernel authorizes
-+the PROVISION_KEY attribute to the enclave.
-diff --git a/Documentation/x86/sgx/index.rst b/Documentation/x86/sgx/index.rst
-index c5dfef62e612..5d660e83d984 100644
---- a/Documentation/x86/sgx/index.rst
-+++ b/Documentation/x86/sgx/index.rst
-@@ -14,3 +14,4 @@ potentially malicious.
-    :maxdepth: 1
- 
-    1.Architecture
-+   2.Kernel-internals
--- 
-2.20.1
 
+    Arnd
