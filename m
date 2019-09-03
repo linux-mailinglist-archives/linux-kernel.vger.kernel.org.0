@@ -2,142 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88264A6931
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01F19A693B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:05:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbfICNDa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:03:30 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42300 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728094AbfICNDa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:03:30 -0400
-Received: by mail-qt1-f196.google.com with SMTP id t12so19736194qtp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 06:03:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8rs9sV5jz4oBwRMFrobVfTbIAhnmRuYrVcw2V0hyBK8=;
-        b=KpuUUTZd7SU5IA+HJujngj0k+2czMnMpq5bMz7TXr1o6NfSf9mWcJ1DyVxVXZXxMiW
-         6+GBkE7LgP/03EAQlC0rJ9rivF+Hf/pUTNylpQDvbB5Aywo0tQuVKGGUdvQEMaILmQjh
-         KounDll/1de53oPvCEhdT9cecYWAYz97LRwmzaj9KtTP/4qsSb/ct3oV6saoYlS7cqEn
-         S887WTCvRHqtcT271h9qSBKEtOVLORzKJrPCIoZcYkIA6N64P0c6SPstNdlSjnQcb0fm
-         hpWuqowzoww0wdyk6ugkG0fwjbTYeb2n93QNieV8M6/zNAb1ytsDDddtUgRRCSrzPRxu
-         pvNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8rs9sV5jz4oBwRMFrobVfTbIAhnmRuYrVcw2V0hyBK8=;
-        b=gKgbKrLWp3W0MqCSg74Yvnv+V9suRmsV4cLKSs5fAjKplP1PHrylUv7av1ZFN0y+vt
-         MYGbZYQBpJtDGhMz7L101xkno8oUtHtzVy2CsvzH9NIiSihXEUe57+zBu1LLfJkt+PFT
-         5ca3CUApMvoGmv+Z0magcHBrzRw5Udq16smtAm2U9PfhNNlXhWS/T6YpFMHM8Ym+1WX5
-         n8k3ve882jK5wtb2I8vGoF1jng68Fn8KOIIZ3ccoFF9PUI+9SU61DDwLpcVUOC/Qoj9u
-         RqzcbRp0POiBRXHZNZRbk3Jm73x5gcsa4BXDLbpv/wHfbMNUjkHYe+/Xh9nqtmkRL4tb
-         w6LQ==
-X-Gm-Message-State: APjAAAVBPgEzuh4cvUzdSzU4iw76+VI8XRwn6FMcKAGI7yKQOWSGO/U5
-        JoWSRl97YVvT5Ufx+Rbyurhb1Q==
-X-Google-Smtp-Source: APXvYqxsJrSjoToBnrsolskXjnGmZCsOCbBu3q5jz9CLd4A6ZvZq5eGjdfPaeCSS24yLTspVM/yPtg==
-X-Received: by 2002:ad4:4047:: with SMTP id r7mr15405745qvp.197.1567515809127;
-        Tue, 03 Sep 2019 06:03:29 -0700 (PDT)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id z5sm5781257qtb.49.2019.09.03.06.03.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 03 Sep 2019 06:03:28 -0700 (PDT)
-Message-ID: <1567515806.5576.41.camel@lca.pw>
-Subject: Re: [PATCH -next v2] sched/fair: fix -Wunused-but-set-variable
- warnings
-From:   Qian Cai <cai@lca.pw>
-To:     mingo@redhat.com, peterz@infradead.org
-Cc:     bsegall@google.com, chiluk+linux@indeed.com, pauld@redhat.com,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 03 Sep 2019 09:03:26 -0400
-In-Reply-To: <1566326455-8038-1-git-send-email-cai@lca.pw>
-References: <1566326455-8038-1-git-send-email-cai@lca.pw>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+        id S1729263AbfICNFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:05:23 -0400
+Received: from gate.crashing.org ([63.228.1.57]:32926 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728576AbfICNFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 09:05:23 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x83D4XqU001876;
+        Tue, 3 Sep 2019 08:04:33 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x83D4VSl001875;
+        Tue, 3 Sep 2019 08:04:31 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Tue, 3 Sep 2019 08:04:31 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     "Alastair D'Silva" <alastair@au1.ibm.com>
+Cc:     alastair@d-silva.org, David Hildenbrand <david@redhat.com>,
+        linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Qian Cai <cai@lca.pw>, Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Allison Randal <allison@lohutok.net>
+Subject: Re: [PATCH v2 3/6] powerpc: Convert flush_icache_range & friends to C
+Message-ID: <20190903130430.GC31406@gate.crashing.org>
+References: <20190903052407.16638-1-alastair@au1.ibm.com> <20190903052407.16638-4-alastair@au1.ibm.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903052407.16638-4-alastair@au1.ibm.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingo or Peter, please take a look at this trivial patch. Still see the warning
-in linux-next every day.
+Hi!
 
-On Tue, 2019-08-20 at 14:40 -0400, Qian Cai wrote:
-> The linux-next commit "sched/fair: Fix low cpu usage with high
-> throttling by removing expiration of cpu-local slices" [1] introduced a
-> few compilation warnings,
-> 
-> kernel/sched/fair.c: In function '__refill_cfs_bandwidth_runtime':
-> kernel/sched/fair.c:4365:6: warning: variable 'now' set but not used
-> [-Wunused-but-set-variable]
-> kernel/sched/fair.c: In function 'start_cfs_bandwidth':
-> kernel/sched/fair.c:4992:6: warning: variable 'overrun' set but not used
-> [-Wunused-but-set-variable]
-> 
-> Also, __refill_cfs_bandwidth_runtime() does no longer update the
-> expiration time, so fix the comments accordingly.
-> 
-> [1] https://lore.kernel.org/lkml/1558121424-2914-1-git-send-email-chiluk+linux
-> @indeed.com/
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
-> 
-> v2: Keep hrtimer_forward_now() in start_cfs_bandwidth() per Ben.
-> 
->  kernel/sched/fair.c | 19 ++++++-------------
->  1 file changed, 6 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 84959d3285d1..06782491691f 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4354,21 +4354,16 @@ static inline u64 sched_cfs_bandwidth_slice(void)
->  }
->  
->  /*
-> - * Replenish runtime according to assigned quota and update expiration time.
-> - * We use sched_clock_cpu directly instead of rq->clock to avoid adding
-> - * additional synchronization around rq->lock.
-> + * Replenish runtime according to assigned quota. We use sched_clock_cpu
-> + * directly instead of rq->clock to avoid adding additional synchronization
-> + * around rq->lock.
->   *
->   * requires cfs_b->lock
->   */
->  void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
->  {
-> -	u64 now;
-> -
-> -	if (cfs_b->quota == RUNTIME_INF)
-> -		return;
-> -
-> -	now = sched_clock_cpu(smp_processor_id());
-> -	cfs_b->runtime = cfs_b->quota;
-> +	if (cfs_b->quota != RUNTIME_INF)
-> +		cfs_b->runtime = cfs_b->quota;
->  }
->  
->  static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
-> @@ -4989,15 +4984,13 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->  
->  void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
->  {
-> -	u64 overrun;
-> -
->  	lockdep_assert_held(&cfs_b->lock);
->  
->  	if (cfs_b->period_active)
->  		return;
->  
->  	cfs_b->period_active = 1;
-> -	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
-> +	hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
->  	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
->  }
->  
+On Tue, Sep 03, 2019 at 03:23:57PM +1000, Alastair D'Silva wrote:
+> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+
+> +#if !defined(CONFIG_PPC_8xx) & !defined(CONFIG_PPC64)
+
+Please write that as &&?  That is more usual, and thus, easier to read.
+
+> +static void flush_dcache_icache_phys(unsigned long physaddr)
+
+> +	asm volatile(
+> +		"   mtctr %2;"
+> +		"   mtmsr %3;"
+> +		"   isync;"
+> +		"0: dcbst   0, %0;"
+> +		"   addi    %0, %0, %4;"
+> +		"   bdnz    0b;"
+> +		"   sync;"
+> +		"   mtctr %2;"
+> +		"1: icbi    0, %1;"
+> +		"   addi    %1, %1, %4;"
+> +		"   bdnz    1b;"
+> +		"   sync;"
+> +		"   mtmsr %5;"
+> +		"   isync;"
+> +		: "+r" (loop1), "+r" (loop2)
+> +		: "r" (nb), "r" (msr), "i" (bytes), "r" (msr0)
+> +		: "ctr", "memory");
+
+This outputs as one huge assembler statement, all on one line.  That's
+going to be fun to read or debug.
+
+loop1 and/or loop2 can be assigned the same register as msr0 or nb.  They
+need to be made earlyclobbers.  (msr is fine, all of its reads are before
+any writes to loop1 or loop2; and bytes is fine, it's not a register).
+
+
+Segher
