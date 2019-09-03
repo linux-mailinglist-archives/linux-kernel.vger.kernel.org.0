@@ -2,156 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DE33A65FC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC85A65F6
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:46:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728621AbfICJqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 05:46:13 -0400
-Received: from mga18.intel.com ([134.134.136.126]:11447 "EHLO mga18.intel.com"
+        id S1728500AbfICJqC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 05:46:02 -0400
+Received: from foss.arm.com ([217.140.110.172]:34958 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728592AbfICJqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:46:09 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 02:46:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,462,1559545200"; 
-   d="scan'208";a="187200218"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 03 Sep 2019 02:46:05 -0700
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1i55O1-000FcR-BB; Tue, 03 Sep 2019 17:46:05 +0800
-Date:   Tue, 3 Sep 2019 17:45:47 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     kbuild-all@01.org, Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Metcalf <cmetcalf@ezchip.com>,
-        Christoph Lameter <cl@linux.com>,
-        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH 3/3] task: Clean house now that tasks on the runqueue are
- rcu protected
-Message-ID: <201909031743.p1GcoXXk%lkp@intel.com>
-References: <8736het20c.fsf_-_@x220.int.ebiederm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8736het20c.fsf_-_@x220.int.ebiederm.org>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1727078AbfICJqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 05:46:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F1C228;
+        Tue,  3 Sep 2019 02:46:01 -0700 (PDT)
+Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.42.170])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CDC9C3F59C;
+        Tue,  3 Sep 2019 02:45:53 -0700 (PDT)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org,
+        catalin.marinas@arm.com, will@kernel.org
+Cc:     mark.rutland@arm.com, mhocko@suse.com, ira.weiny@intel.com,
+        david@redhat.com, cai@lca.pw, logang@deltatee.com,
+        cpandya@codeaurora.org, arunks@codeaurora.org,
+        dan.j.williams@intel.com, mgorman@techsingularity.net,
+        osalvador@suse.de, ard.biesheuvel@arm.com, steve.capper@arm.com,
+        broonie@kernel.org, valentin.schneider@arm.com,
+        Robin.Murphy@arm.com, steven.price@arm.com, suzuki.poulose@arm.com
+Subject: [PATCH V7 0/3] arm64/mm: Enable memory hot remove
+Date:   Tue,  3 Sep 2019 15:15:55 +0530
+Message-Id: <1567503958-25831-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi "Eric,
+This series enables memory hot remove on arm64 after fixing a memblock
+removal ordering problem in generic try_remove_memory() and a possible
+arm64 platform specific kernel page table race condition. This series
+is based on the following current arm64 tree.
 
-Thank you for the patch! Perhaps something to improve:
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git (for-next/core)
 
-[auto build test WARNING on linus/master]
-[cannot apply to v5.3-rc7 next-20190902]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Concurrent vmalloc() and hot-remove conflict:
 
-url:    https://github.com/0day-ci/linux/commits/Eric-W-Biederman/task-Making-tasks-on-the-runqueue-rcu-protected/20190903-130546
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-rc1-7-g2b96cd8-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+As pointed out earlier on the v5 thread [2] there can be potential conflict
+between concurrent vmalloc() and memory hot-remove operation. The problem here
+is caused by inadequate locking in vmalloc() which protects installation of a
+page table page but not the walk or the leaf entry modification.
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+Lets not free page table pages if any for vmemmap mappings after unmapping
+it's virtual range if vmalloc and vmemap range overlaps. The only downside
+here is that some page table pages might remain empty and unused until next
+memory hot-add operation for the same memory range. But as mentioned earlier
+those will be minimal.
 
+Only the following two configurations have vmalloc and vmemmap overlap where
+free_empty_tables() function is not getting called.
 
-sparse warnings: (new ones prefixed by >>)
+1. 4K page size with 48 bit VA space
+2. 16K page size with 48 bit VA space
 
->> kernel/sched/membarrier.c:74:21: sparse: sparse: incompatible types in comparison expression (different address spaces):
->> kernel/sched/membarrier.c:74:21: sparse:    struct task_struct [noderef] <asn:4> *
->> kernel/sched/membarrier.c:74:21: sparse:    struct task_struct *
-   kernel/sched/membarrier.c:153:21: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   kernel/sched/membarrier.c:153:21: sparse:    struct task_struct [noderef] <asn:4> *
-   kernel/sched/membarrier.c:153:21: sparse:    struct task_struct *
+Testing:
 
-vim +74 kernel/sched/membarrier.c
+Memory hot remove has been tested on arm64 for 4K, 16K, 64K page config
+options with all possible CONFIG_ARM64_VA_BITS and CONFIG_PGTABLE_LEVELS
+combinations. It is only build tested on non-arm64 platforms.
 
-    32	
-    33	static int membarrier_global_expedited(void)
-    34	{
-    35		int cpu;
-    36		bool fallback = false;
-    37		cpumask_var_t tmpmask;
-    38	
-    39		if (num_online_cpus() == 1)
-    40			return 0;
-    41	
-    42		/*
-    43		 * Matches memory barriers around rq->curr modification in
-    44		 * scheduler.
-    45		 */
-    46		smp_mb();	/* system call entry is not a mb. */
-    47	
-    48		/*
-    49		 * Expedited membarrier commands guarantee that they won't
-    50		 * block, hence the GFP_NOWAIT allocation flag and fallback
-    51		 * implementation.
-    52		 */
-    53		if (!zalloc_cpumask_var(&tmpmask, GFP_NOWAIT)) {
-    54			/* Fallback for OOM. */
-    55			fallback = true;
-    56		}
-    57	
-    58		cpus_read_lock();
-    59		for_each_online_cpu(cpu) {
-    60			struct task_struct *p;
-    61	
-    62			/*
-    63			 * Skipping the current CPU is OK even through we can be
-    64			 * migrated at any point. The current CPU, at the point
-    65			 * where we read raw_smp_processor_id(), is ensured to
-    66			 * be in program order with respect to the caller
-    67			 * thread. Therefore, we can skip this CPU from the
-    68			 * iteration.
-    69			 */
-    70			if (cpu == raw_smp_processor_id())
-    71				continue;
-    72	
-    73			rcu_read_lock();
-  > 74			p = rcu_dereference(cpu_rq(cpu)->curr);
-    75			if (p && p->mm && (atomic_read(&p->mm->membarrier_state) &
-    76					   MEMBARRIER_STATE_GLOBAL_EXPEDITED)) {
-    77				if (!fallback)
-    78					__cpumask_set_cpu(cpu, tmpmask);
-    79				else
-    80					smp_call_function_single(cpu, ipi_mb, NULL, 1);
-    81			}
-    82			rcu_read_unlock();
-    83		}
-    84		if (!fallback) {
-    85			preempt_disable();
-    86			smp_call_function_many(tmpmask, ipi_mb, NULL, 1);
-    87			preempt_enable();
-    88			free_cpumask_var(tmpmask);
-    89		}
-    90		cpus_read_unlock();
-    91	
-    92		/*
-    93		 * Memory barrier on the caller thread _after_ we finished
-    94		 * waiting for the last IPI. Matches memory barriers around
-    95		 * rq->curr modification in scheduler.
-    96		 */
-    97		smp_mb();	/* exit from system call is not a mb */
-    98		return 0;
-    99	}
-   100	
+Changes in V7:
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+- vmalloc_vmemmap_overlap gets evaluated early during boot for a given config
+- free_empty_tables() gets conditionally called based on vmalloc_vmemmap_overlap
+
+Changes in V6: (https://lkml.org/lkml/2019/7/15/36)
+
+- Implemented most of the suggestions from Mark Rutland
+- Added <linux/memory_hotplug.h> in ptdump
+- remove_pagetable() now has two distinct passes over the kernel page table
+- First pass unmap_hotplug_range() removes leaf level entries at all level
+- Second pass free_empty_tables() removes empty page table pages
+- Kernel page table lock has been dropped completely
+- vmemmap_free() does not call freee_empty_tables() to avoid conflict with vmalloc()
+- All address range scanning are converted to do {} while() loop
+- Added 'unsigned long end' in __remove_pgd_mapping()
+- Callers need not provide starting pointer argument to free_[pte|pmd|pud]_table() 
+- Drop the starting pointer argument from free_[pte|pmd|pud]_table() functions
+- Fetching pxxp[i] in free_[pte|pmd|pud]_table() is wrapped around in READ_ONCE()
+- free_[pte|pmd|pud]_table() now computes starting pointer inside the function
+- Fixed TLB handling while freeing huge page section mappings at PMD or PUD level
+- Added WARN_ON(!page) in free_hotplug_page_range()
+- Added WARN_ON(![pm|pud]_table(pud|pmd)) when there is no section mapping
+
+- [PATCH 1/3] mm/hotplug: Reorder memblock_[free|remove]() calls in try_remove_memory()
+- Request earlier for separate merger (https://patchwork.kernel.org/patch/10986599/)
+- s/__remove_memory/try_remove_memory in the subject line
+- s/arch_remove_memory/memblock_[free|remove] in the subject line
+- A small change in the commit message as re-order happens now for memblock remove
+  functions not for arch_remove_memory()
+
+Changes in V5: (https://lkml.org/lkml/2019/5/29/218)
+
+- Have some agreement [1] over using memory_hotplug_lock for arm64 ptdump
+- Change 7ba36eccb3f8 ("arm64/mm: Inhibit huge-vmap with ptdump") already merged
+- Dropped the above patch from this series
+- Fixed indentation problem in arch_[add|remove]_memory() as per David
+- Collected all new Acked-by tags
+ 
+Changes in V4: (https://lkml.org/lkml/2019/5/20/19)
+
+- Implemented most of the suggestions from Mark Rutland
+- Interchanged patch [PATCH 2/4] <---> [PATCH 3/4] and updated commit message
+- Moved CONFIG_PGTABLE_LEVELS inside free_[pud|pmd]_table()
+- Used READ_ONCE() in missing instances while accessing page table entries
+- s/p???_present()/p???_none() for checking valid kernel page table entries
+- WARN_ON() when an entry is !p???_none() and !p???_present() at the same time
+- Updated memory hot-remove commit message with additional details as suggested
+- Rebased the series on 5.2-rc1 with hotplug changes from David and Michal Hocko
+- Collected all new Acked-by tags
+
+Changes in V3: (https://lkml.org/lkml/2019/5/14/197)
+ 
+- Implemented most of the suggestions from Mark Rutland for remove_pagetable()
+- Fixed applicable PGTABLE_LEVEL wrappers around pgtable page freeing functions
+- Replaced 'direct' with 'sparse_vmap' in remove_pagetable() with inverted polarity
+- Changed pointer names ('p' at end) and removed tmp from iterations
+- Perform intermediate TLB invalidation while clearing pgtable entries
+- Dropped flush_tlb_kernel_range() in remove_pagetable()
+- Added flush_tlb_kernel_range() in remove_pte_table() instead
+- Renamed page freeing functions for pgtable page and mapped pages
+- Used page range size instead of order while freeing mapped or pgtable pages
+- Removed all PageReserved() handling while freeing mapped or pgtable pages
+- Replaced XXX_index() with XXX_offset() while walking the kernel page table
+- Used READ_ONCE() while fetching individual pgtable entries
+- Taken overall init_mm.page_table_lock instead of just while changing an entry
+- Dropped previously added [pmd|pud]_index() which are not required anymore
+- Added a new patch to protect kernel page table race condition for ptdump
+- Added a new patch from Mark Rutland to prevent huge-vmap with ptdump
+
+Changes in V2: (https://lkml.org/lkml/2019/4/14/5)
+
+- Added all received review and ack tags
+- Split the series from ZONE_DEVICE enablement for better review
+- Moved memblock re-order patch to the front as per Robin Murphy
+- Updated commit message on memblock re-order patch per Michal Hocko
+- Dropped [pmd|pud]_large() definitions
+- Used existing [pmd|pud]_sect() instead of earlier [pmd|pud]_large()
+- Removed __meminit and __ref tags as per Oscar Salvador
+- Dropped unnecessary 'ret' init in arch_add_memory() per Robin Murphy
+- Skipped calling into pgtable_page_dtor() for linear mapping page table
+  pages and updated all relevant functions
+
+Changes in V1: (https://lkml.org/lkml/2019/4/3/28)
+
+References:
+
+[1] https://lkml.org/lkml/2019/5/28/584
+[2] https://lkml.org/lkml/2019/6/11/709
+
+Anshuman Khandual (3):
+  mm/hotplug: Reorder memblock_[free|remove]() calls in try_remove_memory()
+  arm64/mm: Hold memory hotplug lock while walking for kernel page table dump
+  arm64/mm: Enable memory hot remove
+
+ arch/arm64/Kconfig              |   3 +
+ arch/arm64/include/asm/memory.h |   1 +
+ arch/arm64/mm/mmu.c             | 338 +++++++++++++++++++++++++++++++-
+ arch/arm64/mm/ptdump_debugfs.c  |   4 +
+ mm/memory_hotplug.c             |   4 +-
+ 5 files changed, 339 insertions(+), 11 deletions(-)
+
+-- 
+2.20.1
+
