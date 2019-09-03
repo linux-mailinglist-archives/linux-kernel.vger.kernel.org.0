@@ -2,78 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31007A73F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 21:46:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE7D2A73F3
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 21:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfICTq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 15:46:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44736 "EHLO mail.kernel.org"
+        id S1726973AbfICTrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 15:47:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbfICTq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 15:46:56 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S1725994AbfICTrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 15:47:20 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 792C321881;
-        Tue,  3 Sep 2019 19:46:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C81C21881;
+        Tue,  3 Sep 2019 19:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567540015;
-        bh=iGpP72X9Gfm1P4HKsR74LYZo3Ydpk9P15xifOisfBxo=;
+        s=default; t=1567540039;
+        bh=u8oGsza9gJmw72Q+gBCjR4WxraGtmr0E2rtxlvf3ehc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dukkqYi+oIhKbc5l4o0v/PgTWPmdhzuAp1/a1bTLNTKocjXl5O/F3bHdUaJtpa0tV
-         5L87acgduZm74OZL7niFVcxCJBRY89xN+UhwedzmFyxm1UWyXZNG/sw+PEP7/NOK2O
-         GuMT+liOsStYPwbJHAyztoZ7vvDT3M89tOkVkzZU=
-Date:   Tue, 3 Sep 2019 15:46:54 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Jonathan Bakker <xc-racer2@live.ca>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        linux-iio@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 066/167] iio: adc: exynos-adc: Add S5PV210
- variant
-Message-ID: <20190903194654.GI5281@sasha-vm>
-References: <20190903162519.7136-1-sashal@kernel.org>
- <20190903162519.7136-66-sashal@kernel.org>
- <20190903185328.74299c4d@archlinux>
+        b=bsGlApp3fczlJAlN0YdyWIWKCWy9F6SSscBxVOOan8wHCg23Ij/rvzYlcqaMvALlL
+         5W3aBF/VI3Kv+xxtmCODZUTCQTUfuDX4L1PDiz6TDva0DCHAdBnC5aESyE/aCaI8dD
+         6ZnEaPNQBq7HWdz1ed9fLBfseSPlWgbcgkc2b94g=
+Date:   Tue, 3 Sep 2019 21:46:57 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Chanwoo Choi (chanwoo@kernel.org)" <chanwoo@kernel.org>,
+        =?utf-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
+Subject: Re: [GIT PULL] extcon next for v5.4
+Message-ID: <20190903194657.GA13390@kroah.com>
+References: <CGME20190826025109epcas1p2add5354e4989028cd942b2121447dfd8@epcas1p2.samsung.com>
+ <4c61ce13-69c7-f6ce-ae37-722f370371f4@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190903185328.74299c4d@archlinux>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <4c61ce13-69c7-f6ce-ae37-722f370371f4@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 06:53:28PM +0100, Jonathan Cameron wrote:
->On Tue,  3 Sep 2019 12:23:38 -0400
->Sasha Levin <sashal@kernel.org> wrote:
->
->> From: Jonathan Bakker <xc-racer2@live.ca>
->>
->> [ Upstream commit 882bf52fdeab47dbe991cc0e564b0b51c571d0a3 ]
->>
->> S5PV210's ADC variant is almost the same as v1 except that it has 10
->> channels and doesn't require the pmu register
->>
->> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
->> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
->> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->I have no particular objection to adding new IDs (which is more
->or less what this patch is), but I didn't know autosel was
->picking them up.  So a bit of surprise... If intentional
->then fine to apply to stable.
+On Mon, Aug 26, 2019 at 11:55:13AM +0900, Chanwoo Choi wrote:
+> Dear Greg,
+> 
+> This is extcon-next pull request for v5.4. I add detailed description of
+> this pull request on below. Please pull extcon with following updates.
+> 
+> 
+> Detailed description for this pull request:
+> 1. Clean up the and fix the minor issue of extcon provider driver
+> - extcon-arizona/max77843 replace the helper function
+>   with more correct helper function without operation changes.
+> - extcon-fsa9480 supports the FSA880 variant by adding the compatible name.
+> - extcon-arizona updates the dt-binding file for the readability.
+> - extcon-gpio initializes the interrupt flags according to active-low state.
+> - Clean up extcon-sm5502/axp288/adc-jack
+> 
+> Best Regards,
+> Chanwoo Choi
+> 
+> 
+> The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+> 
+>   Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-5.4
 
-I dragged it in because 103cda6a3b8d2 ("iio: adc: exynos-adc: Use proper
-number of channels for Exynos4x12") which is tagged for stable depended
-on this patch, and given it just adds new IDs which is part of what we
-take for stable I just took it in as is.
+Pulled and pushed out, thanks.
 
---
-Thanks,
-Sasha
+greg k-h
