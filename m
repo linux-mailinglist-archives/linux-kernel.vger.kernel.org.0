@@ -2,103 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72813A6C35
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:07:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16918A6C7A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:09:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbfICPHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 11:07:05 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43724 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727941AbfICPHF (ORCPT
+        id S1729979AbfICPIN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 11:08:13 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37608 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729878AbfICPIM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:07:05 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 90so13190890otg.10;
-        Tue, 03 Sep 2019 08:07:04 -0700 (PDT)
+        Tue, 3 Sep 2019 11:08:12 -0400
+Received: by mail-lj1-f193.google.com with SMTP id t14so16438529lji.4
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 08:08:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h2yAjc2hJCjjaepN2ZkdwcHMrEZsiJoFozFvDMefoRw=;
+        b=qtrVEo5hiEW35+KHBeaMmVNP+7Pnoux7SAr+dyV7tNyctOLt0hM5XqWoYPZZAosKMI
+         ujnpolv8ByO91hPnZoRt+YWHlIUkQ2u6/6VjKlmhzdkIm1sgCit0OGgmOzsuH+PhZFUN
+         oJC0gsIhqSEQ4sl0+ZbfG4zHMuIEyQj8ZZEsQ4ApjqeVnKOmrp3jQqmSxchD7PA6YekT
+         FF8nlVXY10LaZFbVioK8GJ3bIVnbNhubmxqaMJROiKkgRe5kFzb0X3peWRlm8c4Pez6a
+         Qkzbxs/8bH4vGVU1vD00OoGGnuZVseGxwWA2ITQ25bYTNpqqOtM18qDObGrQ1QKjECus
+         n/rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ESEycbkGEsTf561HdtK9W+JMPb2DaqG5d3IDc2e1GG4=;
-        b=gT7CpYeMWEJCGw+VbQwfn5wErprIG3SSBokyScYjprdRza1k7XOUUhzbuMh/uN9Cn5
-         83UbEg2mITWzjpfzSZ1YGwJH+J/E1izU2fzi3TDGJlgbnetGskBDLT4pxH20QIHbsfBQ
-         HCkleKIxe2TKhPKBH3ZIOtbbOoH9b27sFkXUrAWRpXNjMHJfxjIezY8kLjtH3nS6HdUO
-         1a9MO4qcywkxw+C0X3bfB65LRUo73PSr0jrVsinfokGUs4IVqTj259nivSEX57beq1y9
-         iazM0ezgdloDG+YbSgXpBP/v5MkxMJKC9xQXvs/K8u4sM9noMH5tMJJV3jOILx8hM+ve
-         LQsQ==
-X-Gm-Message-State: APjAAAXGqwXNnr3oFkFNGOcOqXR3GAtWSUFo1EVcYWPX/H0Vb60y8qqH
-        TPIKC7Z39HLHbUeaai0P+5hOdMLzZJxEMRiDR1g=
-X-Google-Smtp-Source: APXvYqxA9MC/Nx8W7llobkbX6NluWUXF0YQ9719X7MRA85ibLXQx6GzR3vQgyLYDbPoIeefD+uw420FZJO2CBcdT6z4=
-X-Received: by 2002:a9d:68c5:: with SMTP id i5mr12305575oto.250.1567523224339;
- Tue, 03 Sep 2019 08:07:04 -0700 (PDT)
+        bh=h2yAjc2hJCjjaepN2ZkdwcHMrEZsiJoFozFvDMefoRw=;
+        b=NL8Ub/D+rbxjKMGctMLJlODGlyRT/5slhE8ERy01ro3E/R1YnSyF94iGNH1Fo7XFFw
+         eXpV7Xkgzt+8VydR1WD1V9UZF1ZNrXUonJSfgRMNUx1adQeltlCvLoMZPQjr/n7mGw8U
+         l5/9SJpI/XRv3+6irBSYI9VuDoVPWUH9zHJjXyeUpT3/5Mu3fpjNjPN7wcZiZsZHeC6I
+         9Ep7IY5lEh1KQITCifJncpO8UZr2Sb+irkg9k9sjt6f+d61VQvLZ/mq4uDsCz5FqDsKT
+         NkAsBAVKbsnKF9HV+sUHPXH6Lge1hhPF/SCR+KDb/mFIsKusrnNIAiewd4M11X/gH0VQ
+         h+RA==
+X-Gm-Message-State: APjAAAV2jgMf10S3xjXOD5C8F6Sg1hovqQPgG5uJdjwMjh8ojmA3rRyC
+        qbfYhyiH0OlUQRQsfVvGp373hYpF0RARPoIxBlU73w==
+X-Google-Smtp-Source: APXvYqzHTJ4rXh88bRtnP+VcBH4Tx2ddUfKifZ8gVfeGmMwa3ovSQrn97zqTmcBfvcoIoTIQ1izbtNDwn6zYYGzgiKY=
+X-Received: by 2002:a2e:884d:: with SMTP id z13mr13192354ljj.62.1567523291209;
+ Tue, 03 Sep 2019 08:08:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190330141637.22632-1-boris.brezillon@collabora.com> <20190425194451.GA14552@kroah.com>
-In-Reply-To: <20190425194451.GA14552@kroah.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Sep 2019 17:06:52 +0200
-Message-ID: <CAMuHMdViBLGurV+w=EN4TMOsDey9vC=YS6qoX6wA4gwvirOoAA@mail.gmail.com>
-Subject: Re: [PATCH] eeprom: at25: Convert the driver to the spi-mem interface
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Boris Brezillon <boris.brezillon@collabora.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>
+References: <20190903141215.18283-1-dinguyen@kernel.org>
+In-Reply-To: <20190903141215.18283-1-dinguyen@kernel.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 3 Sep 2019 17:07:59 +0200
+Message-ID: <CACRpkdZOn+P6R3RmQEyk-LQ9-g-ng-mVepghS6+Cic-6xMrNjg@mail.gmail.com>
+Subject: Re: [PATCHv7] drivers/amba: add reset control to amba bus probe
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Apr 25, 2019 at 9:44 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Sat, Mar 30, 2019 at 03:16:37PM +0100, Boris Brezillon wrote:
-> > The AT25 protocol fits pretty well in the spi-mem model. Convert the
-> > at25 spi driver to a spi-mem driver and use the dirmap API instead of
-> > forging SPI messages manually.
-> > This makes the driver compatible with spi-mem-only controllers
-> > (controllers implementing only the spi_mem ops).
-> >
-> > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > ---
-> >  drivers/misc/eeprom/at25.c | 282 +++++++++++++++++++++++--------------
-> >  1 file changed, 176 insertions(+), 106 deletions(-)
+On Tue, Sep 3, 2019 at 4:20 PM Dinh Nguyen <dinguyen@kernel.org> wrote:
+
+> The primecell controller on some SoCs, i.e. SoCFPGA, is held in reset by
+> default. Until recently, the DMA controller was brought out of reset by the
+> bootloader(i.e. U-Boot). But a recent change in U-Boot, the peripherals
+> that are not used are held in reset and are left to Linux to bring them
+> out of reset.
 >
-> Will there be a new version of this to fix up the problems that 0-day
-> found in it?
+> Add a mechanism for getting the reset property and de-assert the primecell
+> module from reset if found. This is a not a hard fail if the reset properti
+> is not present in the device tree node, so the driver will continue to
+> probe.
+>
+> Because there are different variants of the controller that may have
+> multiple reset signals, the code will find all reset(s) specified and
+> de-assert them.
+>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-gmail-whitespace-damaged fix:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
-index f2abe27010eff133..98145d7d43d0c728 100644
---- a/drivers/misc/eeprom/Kconfig
-+++ b/drivers/misc/eeprom/Kconfig
-@@ -36,6 +36,7 @@ config EEPROM_AT25
-        depends on SPI && SYSFS
-        select NVMEM
-        select NVMEM_SYSFS
-+       select SPI_MEM
-        help
-          Enable this driver to get read/write support to most SPI EEPROMs,
-          after you configure the board init code to know about each eeprom
+Please put this patch into Russell's patch tracker.
 
-Boris: what's the plan?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
