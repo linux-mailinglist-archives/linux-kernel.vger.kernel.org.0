@@ -2,96 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB618A70AA
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B5FA70B4
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:41:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730900AbfICQj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:39:59 -0400
-Received: from mga18.intel.com ([134.134.136.126]:46920 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729953AbfICQj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:39:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 09:39:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
-   d="scan'208";a="183621162"
-Received: from vkuppusa-mobl2.ger.corp.intel.com ([10.252.39.67])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Sep 2019 09:39:52 -0700
-Message-ID: <a950f3986375ee4893dff156dc2f9554338c27d8.camel@linux.intel.com>
-Subject: Re: [PATCH v6 4/4] tpm: tpm_tis_spi: Support cr50 devices
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stephen Boyd <swboyd@chromium.org>, Peter Huewe <peterhuewe@gmx.de>
-Cc:     Andrey Pronin <apronin@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Date:   Tue, 03 Sep 2019 19:39:51 +0300
-In-Reply-To: <20190829224110.91103-5-swboyd@chromium.org>
-References: <20190829224110.91103-1-swboyd@chromium.org>
-         <20190829224110.91103-5-swboyd@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.2-1 
+        id S1730670AbfICQkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:40:51 -0400
+Received: from mail.netline.ch ([148.251.143.178]:44907 "EHLO
+        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730324AbfICQks (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:40:48 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by netline-mail3.netline.ch (Postfix) with ESMTP id C88342B2001;
+        Tue,  3 Sep 2019 18:40:45 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
+Received: from netline-mail3.netline.ch ([127.0.0.1])
+        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id OTzcp-hFgXy5; Tue,  3 Sep 2019 18:40:45 +0200 (CEST)
+Received: from thor (116.245.63.188.dynamic.wline.res.cust.swisscom.ch [188.63.245.116])
+        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 819202AA15E;
+        Tue,  3 Sep 2019 18:40:45 +0200 (CEST)
+Received: from localhost ([::1])
+        by thor with esmtp (Exim 4.92.1)
+        (envelope-from <michel@daenzer.net>)
+        id 1i5BrI-0007pS-6D; Tue, 03 Sep 2019 18:40:44 +0200
+Subject: Re: [PATCH AUTOSEL 4.19 044/167] drm/amdgpu: validate user pitch
+ alignment
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Yu Zhao <yuzhao@google.com>, dri-devel@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>
+References: <20190903162519.7136-1-sashal@kernel.org>
+ <20190903162519.7136-44-sashal@kernel.org>
+From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
+Openpgp: preference=signencrypt
+Autocrypt: addr=michel@daenzer.net; prefer-encrypt=mutual; keydata=
+ mQGiBDsehS8RBACbsIQEX31aYSIuEKxEnEX82ezMR8z3LG8ktv1KjyNErUX9Pt7AUC7W3W0b
+ LUhu8Le8S2va6hi7GfSAifl0ih3k6Bv1Itzgnd+7ZmSrvCN8yGJaHNQfAevAuEboIb+MaVHo
+ 9EMJj4ikOcRZCmQWw7evu/D9uQdtkCnRY9iJiAGxbwCguBHtpoGMxDOINCr5UU6qt+m4O+UD
+ /355ohBBzzyh49lTj0kTFKr0Ozd20G2FbcqHgfFL1dc1MPyigej2gLga2osu2QY0ObvAGkOu
+ WBi3LTY8Zs8uqFGDC4ZAwMPoFy3yzu3ne6T7d/68rJil0QcdQjzzHi6ekqHuhst4a+/+D23h
+ Za8MJBEcdOhRhsaDVGAJSFEQB1qLBACOs0xN+XblejO35gsDSVVk8s+FUUw3TSWJBfZa3Imp
+ V2U2tBO4qck+wqbHNfdnU/crrsHahjzBjvk8Up7VoY8oT+z03sal2vXEonS279xN2B92Tttr
+ AgwosujguFO/7tvzymWC76rDEwue8TsADE11ErjwaBTs8ZXfnN/uAANgPLQjTWljaGVsIERh
+ ZW56ZXIgPG1pY2hlbEBkYWVuemVyLm5ldD6IXgQTEQIAHgUCQFXxJgIbAwYLCQgHAwIDFQID
+ AxYCAQIeAQIXgAAKCRBaga+OatuyAIrPAJ9ykonXI3oQcX83N2qzCEStLNW47gCeLWm/QiPY
+ jqtGUnnSbyuTQfIySkK5AQ0EOx6FRRAEAJZkcvklPwJCgNiw37p0GShKmFGGqf/a3xZZEpjI
+ qNxzshFRFneZze4f5LhzbX1/vIm5+ZXsEWympJfZzyCmYPw86QcFxyZflkAxHx9LeD+89Elx
+ bw6wT0CcLvSv8ROfU1m8YhGbV6g2zWyLD0/naQGVb8e4FhVKGNY2EEbHgFBrAAMGA/0VktFO
+ CxFBdzLQ17RCTwCJ3xpyP4qsLJH0yCoA26rH2zE2RzByhrTFTYZzbFEid3ddGiHOBEL+bO+2
+ GNtfiYKmbTkj1tMZJ8L6huKONaVrASFzLvZa2dlc2zja9ZSksKmge5BOTKWgbyepEc5qxSju
+ YsYrX5xfLgTZC5abhhztpYhGBBgRAgAGBQI7HoVFAAoJEFqBr45q27IAlscAn2Ufk2d6/3p4
+ Cuyz/NX7KpL2dQ8WAJ9UD5JEakhfofed8PSqOM7jOO3LCA==
+Message-ID: <7957107d-634f-4771-327e-99fdd5e6474e@daenzer.net>
+Date:   Tue, 3 Sep 2019 18:40:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190903162519.7136-44-sashal@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-29 at 15:41 -0700, Stephen Boyd wrote:
-> From: Andrey Pronin <apronin@chromium.org>
+On 2019-09-03 6:23 p.m., Sasha Levin wrote:
+> From: Yu Zhao <yuzhao@google.com>
 > 
-> Add TPM2.0 PTP FIFO compatible SPI interface for chips with Cr50
-> firmware. The firmware running on the currently supported H1 Secure
-> Microcontroller requires a special driver to handle its specifics:
-> 
->  - need to ensure a certain delay between SPI transactions, or else
->    the chip may miss some part of the next transaction
->  - if there is no SPI activity for some time, it may go to sleep,
->    and needs to be waken up before sending further commands
->  - access to vendor-specific registers
-> 
-> Cr50 firmware has a requirement to wait for the TPM to wakeup before
-> sending commands over the SPI bus. Otherwise, the firmware could be in
-> deep sleep and not respond. The method to wait for the device to wakeup
-> is slightly different than the usual flow control mechanism described in
-> the TCG SPI spec. Add a completion to tpm_tis_spi_transfer() before we
-> start a SPI transfer so we can keep track of the last time the TPM
-> driver accessed the SPI bus to support the flow control mechanism.
-> 
-> Split the cr50 logic off into a different file to keep it out of the
-> normal code flow of the existing SPI driver while making it all part of
-> the same module when the code is optionally compiled into the same
-> module. Export a new function, tpm_tis_spi_init(), and the associated
-> read/write/transfer APIs so that we can do this. Make the cr50 code wrap
-> the tpm_tis_spi_phy struct with its own struct to override the behavior
-> of tpm_tis_spi_transfer() by supplying a custom flow control hook. This
-> shares the most code between the core driver and the cr50 support
-> without combining everything into the core driver or exporting module
-> symbols.
-> 
-> Signed-off-by: Andrey Pronin <apronin@chromium.org>
-> Cc: Andrey Pronin <apronin@chromium.org>
-> Cc: Duncan Laurie <dlaurie@chromium.org>
-> Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Guenter Roeck <groeck@chromium.org>
-> Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
+> [ Upstream commit 89f23b6efef554766177bf51aa754bce14c3e7da ]
 
-Had to time to look at this patch set after all before LPC. I just
-realized that the kconfig has taken away. Not sure why is that
-because there's been only request to not have a new LKM. There
-still should be ability opt-out to have Cr50 support in vmlinux.
+Hold your horses!
 
-/Jarkko
+This commit and c4a32b266da7bb702e60381ca0c35eaddbc89a6c had to be
+reverted, as they caused regressions. See commits
+25ec429e86bb790e40387a550f0501d0ac55a47c &
+92b0730eaf2d549fdfb10ecc8b71f34b9f472c12 .
 
+
+This isn't bolstering confidence in how these patches are selected...
+I'm also a little nervous about others which change values by an order
+of magnitude. There were cases before where such patches were backported
+to branches which didn't have other corresponding changes, so they ended
+up breaking stuff instead of fixing anything.
+
+
+-- 
+Earthling Michel Dänzer               |               https://redhat.com
+Libre software enthusiast             |             Mesa and X developer
