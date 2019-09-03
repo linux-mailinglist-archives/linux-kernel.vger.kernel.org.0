@@ -2,55 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF1D8A5F95
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 05:16:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 071E1A5F99
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 05:21:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbfICDQx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 23:16:53 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:45701 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfICDQx (ORCPT
+        id S1726079AbfICDVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 23:21:48 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40994 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725870AbfICDVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 23:16:53 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x833GneI013859, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x833GneI013859
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 3 Sep 2019 11:16:49 +0800
-Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
- RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0468.000; Tue, 3 Sep
- 2019 11:16:48 +0800
-From:   Hayes Wang <hayeswang@realtek.com>
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-CC:     nic_swsd <nic_swsd@realtek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next] r8152: modify rtl8152_set_speed function
-Thread-Topic: [PATCH net-next] r8152: modify rtl8152_set_speed function
-Thread-Index: AQHVYYTrRMaVJv63vEGfeZKbVbiDuqcYMZIAgAEQO0A=
-Date:   Tue, 3 Sep 2019 03:16:48 +0000
-Message-ID: <0835B3720019904CB8F7AA43166CEEB2F18DAB41@RTITMBSVM03.realtek.com.tw>
-References: <1394712342-15778-326-Taiwan-albertk@realtek.com>
- <280e6a3d-c6c3-ef32-a65d-19566190a1d3@gmail.com>
-In-Reply-To: <280e6a3d-c6c3-ef32-a65d-19566190a1d3@gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.177.214]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 2 Sep 2019 23:21:48 -0400
+Received: by mail-pf1-f195.google.com with SMTP id b13so3244277pfo.8
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 20:21:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2YCNZUFFCq8Dg+vMJfD+J8C6FHbcggQzGWyRcaMVlho=;
+        b=U6PG039pK9bsS1zvciaOqcNObGI7jJccmjXdUEK3bXW97rnyaYZIU4jE2Le2Bll2gU
+         f6wEHFLch/afAO+ke4X2XUzvqFw+uEOXR4rg7nyqUeEYPph1iH9KOzGyvAOZp73VJJGF
+         MFpW0y9CcZd0DAfU1m/Z3+unbIbVBjZynhqhLq/uKJQzvGq6gSpfn3cpQMaHu3f7DQ5x
+         Ks6TnsBJyijVpdkAwPOTCH4PP1v2cZmxWLgth2QRegHt8FSWZv2pqmwOMeHnmpQCdKsj
+         hP5ZbfprjgFmy5Fo7zs2SVOXGvmNnkHMCKcbbjw/qT10aprc2Df1p5UqKMUurV6bGmu4
+         TZWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2YCNZUFFCq8Dg+vMJfD+J8C6FHbcggQzGWyRcaMVlho=;
+        b=Wk1wtW7MFYCLzPPKQoudfUnusHVdqrBJYVVjUacQ4jDb1GsKX6YXaNWkyr4zDBzzRG
+         8+ARhKTxuJTjF5u8/jNPlcvCOInEqAllHD11AJFDgk8hh33kuhoUA2onr05tZyc0w19S
+         yKI3rNF471u939W856puly0J8AYvLg+4W71fSPL4pegyNZpOSMFZPPeF0nUPBl5T91eh
+         Mu5pZvEEtP5fchaIY+u8QI3jDHbo4fuyclunvGZD1zDj4uM+UxsA/8rvrrFIDlfEOSGr
+         C3lWBxHd//l3CAxNadPVBhFehHmkQmui/LbTcMeuZMso7zBAe+DNSi9+94PZ5VDhsmhx
+         /23w==
+X-Gm-Message-State: APjAAAUx1A4lxQAFatS2SwSbcEActcV2yLymfmP1kaDObi38qQyMSXXI
+        ln0n6/n5snKlhPvEqKnFw/tlbQtzn68=
+X-Google-Smtp-Source: APXvYqwRrr7EZTieX+RMyO61+sJm9FbeCeWoneGeKcok9cTk8OK8st2NyVow7YmYF3F8MXfmQAKbkw==
+X-Received: by 2002:a63:3148:: with SMTP id x69mr26074750pgx.300.1567480907715;
+        Mon, 02 Sep 2019 20:21:47 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id p2sm23361696pfb.122.2019.09.02.20.21.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2019 20:21:47 -0700 (PDT)
+Date:   Mon, 2 Sep 2019 20:21:44 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     catalin.marinas@arm.com, will@kernel.org, olof@lixom.net,
+        arnd@arndb.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] arm64: defconfig: Enable Qualcomm GENI based I2C
+ controller
+Message-ID: <20190903032144.GS6167@minitux>
+References: <20190902130724.12030-1-lee.jones@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190902130724.12030-1-lee.jones@linaro.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVpbmVyIEthbGx3ZWl0IFttYWlsdG86aGthbGx3ZWl0MUBnbWFpbC5jb21dDQo+IFNlbnQ6IFR1
-ZXNkYXksIFNlcHRlbWJlciAwMywgMjAxOSAyOjM3IEFNDQpbLi4uXQ0KPiBTZWVpbmcgYWxsIHRo
-aXMgY29kZSBpdCBtaWdodCBiZSBhIGdvb2QgaWRlYSB0byBzd2l0Y2ggdGhpcyBkcml2ZXINCj4g
-dG8gcGh5bGliLCBzaW1pbGFyIHRvIHdoYXQgSSBkaWQgd2l0aCByODE2OSBzb21lIHRpbWUgYWdv
-Lg0KDQpJdCBpcyB0b28gY29tcGxleCB0byBiZSBjb21wbGV0ZWQgZm9yIG1lIGF0IHRoZSBtb21l
-bnQuDQpJZiB0aGlzIHBhdGNoIGlzIHVuYWNjZXB0YWJsZSwgSSB3b3VsZCBzdWJtaXQgb3RoZXIN
-CnBhdGNoZXMgZmlyc3QuIFRoYW5rcy4NCg0KQmVzdCBSZWdhcmRzLA0KSGF5ZXMNCg0KDQo=
+On Mon 02 Sep 06:07 PDT 2019, Lee Jones wrote:
+
+> Tested on the Lenovo Yoga C630 where this patch enables the
+> keyboard, touchpad and touchscreen.
+> 
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index facf19cc275d..0fe943ac53b5 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -366,6 +366,7 @@ CONFIG_I2C_IMX_LPI2C=y
+>  CONFIG_I2C_MESON=y
+>  CONFIG_I2C_MV64XXX=y
+>  CONFIG_I2C_PXA=y
+> +CONFIG_I2C_QCOM_GENI=m
+>  CONFIG_I2C_QUP=y
+>  CONFIG_I2C_RK3X=y
+>  CONFIG_I2C_SH_MOBILE=y
+> -- 
+> 2.17.1
+> 
