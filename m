@@ -2,76 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E13BEA693A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:05:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C64BA6942
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbfICNE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:04:59 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54940 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728576AbfICNE7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:04:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WDdubMT5F5wNmO/6JU13bpheGre0HSUXt5GjH/gJ15c=; b=OsS7d9R1kVXGcZlxE+BK17GPxl
-        ECD96UxW6oR8oCSyjbUqwjWgX3h3Hcfz/FtaJ/vNu9+Z16baaBRrJa59L7UctjpQxEe0eoepQyerY
-        aTBF3VoVFu2fkyE4hIII3EVKZSqucpwPwVZiFs0OGJgfmffNlBTBwMMD605VUXtCiuqKHBJX4ansg
-        atpx8D2c0IldrYaVbf91H9eko4VsVwChMMvewJK6Y23r0eogVkTYZ5kvhj9apFx4oWfFvr3F/Y6oV
-        0a5wEBP4WNbNder7E+/ELmVz1HmrySoTS2Q/IBsyX56FlYd2rUpNhSZnC1G4OoS8xhQ5aHy+63GcU
-        PsKmhvvA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i58US-0003yD-6f; Tue, 03 Sep 2019 13:04:56 +0000
-Date:   Tue, 3 Sep 2019 06:04:56 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Qian Cai <cai@lca.pw>, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: "fs/namei.c: keep track of nd->root refcount status" causes boot
- panic
-Message-ID: <20190903130456.GA9567@infradead.org>
-References: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
- <20190903123719.GF1131@ZenIV.linux.org.uk>
+        id S1729312AbfICNGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:06:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48174 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728576AbfICNGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 09:06:11 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 52040305D637;
+        Tue,  3 Sep 2019 13:06:11 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.63])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 35A6360126;
+        Tue,  3 Sep 2019 13:06:08 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue,  3 Sep 2019 15:06:10 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 15:06:06 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Christoph Lameter <cl@linux.com>,
+        Kirill Tkhai <tkhai@yandex.ru>, Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH 3/3] task: Clean house now that tasks on the runqueue are
+ rcu protected
+Message-ID: <20190903130606.GA17626@redhat.com>
+References: <CAHk-=whuggNup=-MOS=7gBkuRqUigk7ABot_Pxi5koF=dM3S5Q@mail.gmail.com>
+ <CAHk-=wiSFvb7djwa7D=-rVtnq3C5msh3u=CF7CVoU6hTJ=VdLw@mail.gmail.com>
+ <20190830160957.GC2634@redhat.com>
+ <CAHk-=wiZY53ac=mp8R0gjqyUd4ksD3tGHsUS9gvoHiJOT5_cEg@mail.gmail.com>
+ <87o906wimo.fsf@x220.int.ebiederm.org>
+ <20190902134003.GA14770@redhat.com>
+ <87tv9uiq9r.fsf@x220.int.ebiederm.org>
+ <CAHk-=wgm+JNNtFZYTBUZ_eEPzebZ0s=kSq1SS6ETr+K5v4uHwg@mail.gmail.com>
+ <87k1aqt23r.fsf_-_@x220.int.ebiederm.org>
+ <8736het20c.fsf_-_@x220.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190903123719.GF1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <8736het20c.fsf_-_@x220.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Tue, 03 Sep 2019 13:06:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 01:37:19PM +0100, Al Viro wrote:
-> On Tue, Sep 03, 2019 at 12:21:36AM -0400, Qian Cai wrote:
-> > The linux-next commit "fs/namei.c: keep track of nd->root refcount status” [1] causes boot panic on all
-> > architectures here on today’s linux-next (0902). Reverted it will fix the issue.
-> 
-> <swearing>
-> 
-> OK, I see what's going on.  Incremental to be folded in:
-> 
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index 20ce2f917ef4..2ed0942a67f8 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -20,8 +20,8 @@ enum {LAST_NORM, LAST_ROOT, LAST_DOT, LAST_DOTDOT, LAST_BIND};
->  #define LOOKUP_FOLLOW		0x0001	/* follow links at the end */
->  #define LOOKUP_DIRECTORY	0x0002	/* require a directory */
->  #define LOOKUP_AUTOMOUNT	0x0004  /* force terminal automount */
-> -#define LOOKUP_EMPTY		0x4000	/* accept empty path [user_... only] */
-> -#define LOOKUP_DOWN		0x8000	/* follow mounts in the starting point */
-> +#define LOOKUP_EMPTY		0x8000	/* accept empty path [user_... only] */
-> +#define LOOKUP_DOWN		0x10000	/* follow mounts in the starting point */
+On 09/02, Eric W. Biederman wrote:
+>
+> @@ -1644,7 +1644,7 @@ static void task_numa_compare(struct task_numa_env *env,
+>  		return;
 >  
->  #define LOOKUP_REVAL		0x0020	/* tell ->d_revalidate() to trust no cache */
->  #define LOOKUP_RCU		0x0040	/* RCU pathwalk mode; semi-internal */
+>  	rcu_read_lock();
+> -	cur = task_rcu_dereference(&dst_rq->curr);
+> +	cur = rcu_dereference(dst_rq->curr);
+>  	if (cur && ((cur->flags & PF_EXITING) || is_idle_task(cur)))
+>  		cur = NULL;
 
-Any chance to keep these ordered numerically to avoid someone else
-introdcing this kind of bug again later on?
+afaics rq->curr can't be NULL, so you can also simplify the "if" check
+
+	cur = task_rcu_dereference(&dst_rq->curr);
+	if ((cur->flags & PF_EXITING) || is_idle_task(cur))
+		cur = NULL;
+
+Same for membarrier_global_expedited/membarrier_private_expedited changed
+by this patch.
+
+Oleg.
+
