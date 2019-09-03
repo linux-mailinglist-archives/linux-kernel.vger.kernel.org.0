@@ -2,188 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EECEA7462
+	by mail.lfdr.de (Postfix) with ESMTP id AE621A7463
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 22:13:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbfICUNP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 16:13:15 -0400
-Received: from mail-oln040092065042.outbound.protection.outlook.com ([40.92.65.42]:21166
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727083AbfICUNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 16:13:13 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UIXCJIDF39sLRApHp+eAvQEgG2kGT7bFg9VXwR/uCO2tuph+GiqB5JFdnf7AwI7WCsdk5KLOYywdUafvTTiH/VtZhPPYRdvdgMG4qVTe7Wmn1c5pRq1P0cCNkw/EWDvUQwkTKKgEMN31Nq0BlvgY/jhdb1oz7QYsvaFD3bPHiPwtmOsorRn41UH8NmH9zy75r4J1rAYnjYcitCcS2FPjYE0w6opsYfZOMW8TEa6yY6lUEjv3/9900/hOVIY5K7EXkNSbXidqMnaNdVhufwLAJDX5hlbIWETZiLJP2NEmQeAagxVm668oqexk7maoEaAdcvdyAnwiKGTVwwnjX1YLfw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Wkbzfw94ZovJnRbTc+uMA5aFjAxPR2BJT65NTKwk2n4=;
- b=nNwl9Swj2cRWGllJnz77gFDfDnLEGvQmeR9Vt1/TvuBcWgGusvieBMiGfEjnuXSA4JPtLf7nX73iA2pCgExqKC4qCxKHRNxnPYSLFrYH18bf7JNSpZei/Xpe2FwvA4pNQWyrPupfNTxxGqw1V6BEkGLc6EZ5pEHNTjqbdEmLkSlooLTM7t9KoD9LRQIaZa/lTbOriwoPDWT/B3+D3k10QszXSv2icIqwrbrrOqm38agwmN577tzU7lfPf5I93gmvmI9iJaKrEILeWj23V2RyZRDGfZj7GDX8Ftkth1vDvb+kppppb4CwHrksl0gZ5QJHFWA+j+rNLACuFRUR/4g7aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-Received: from DB5EUR01FT045.eop-EUR01.prod.protection.outlook.com
- (10.152.4.60) by DB5EUR01HT225.eop-EUR01.prod.protection.outlook.com
- (10.152.5.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2220.16; Tue, 3 Sep
- 2019 20:13:08 +0000
-Received: from HE1PR06MB4011.eurprd06.prod.outlook.com (10.152.4.58) by
- DB5EUR01FT045.mail.protection.outlook.com (10.152.4.180) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.2220.16 via Frontend Transport; Tue, 3 Sep 2019 20:13:08 +0000
-Received: from HE1PR06MB4011.eurprd06.prod.outlook.com
- ([fe80::59e6:329d:5fc7:5181]) by HE1PR06MB4011.eurprd06.prod.outlook.com
- ([fe80::59e6:329d:5fc7:5181%5]) with mapi id 15.20.2241.014; Tue, 3 Sep 2019
- 20:13:08 +0000
-From:   Jonas Karlman <jonas@kwiboo.se>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Ezequiel Garcia <ezequiel@collabora.com>
-CC:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 03/12] media: hantro: Fix H264 motion vector buffer offset
-Thread-Topic: [PATCH 03/12] media: hantro: Fix H264 motion vector buffer
- offset
-Thread-Index: AQHVYMMqTL16PRzVbkakeBcuIqgT/qcZy4qAgACa7gA=
-Date:   Tue, 3 Sep 2019 20:13:08 +0000
-Message-ID: <HE1PR06MB401167BD655F537D4136737AACB90@HE1PR06MB4011.eurprd06.prod.outlook.com>
-References: <HE1PR06MB40117D0EE96E6FA638A04B78ACBF0@HE1PR06MB4011.eurprd06.prod.outlook.com>
- <20190901124531.23645-1-jonas@kwiboo.se>
- <HE1PR06MB40115337CD86C429EF24430CACBF0@HE1PR06MB4011.eurprd06.prod.outlook.com>
- <1567508315.5229.3.camel@pengutronix.de>
-In-Reply-To: <1567508315.5229.3.camel@pengutronix.de>
-Accept-Language: sv-SE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR05CA0381.eurprd05.prod.outlook.com
- (2603:10a6:7:94::40) To HE1PR06MB4011.eurprd06.prod.outlook.com
- (2603:10a6:7:9c::32)
-x-incomingtopheadermarker: OriginalChecksum:A1D0513A921B7CB73DC04472AAE55CC7CB084039ECCC2B4F70013F220F2B074B;UpperCasedChecksum:5C63691025E9445E533495F08A886F2AF851E41277955C9169C4704572765C5F;SizeAsReceived:7968;Count:49
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [5cLWjUJ8VeupLS07pQSFJ4ue3jhVye99]
-x-microsoft-original-message-id: <bb2b94e8-0dab-9bbc-4211-fa1d99136dff@kwiboo.se>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 49
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(5050001)(7020095)(20181119110)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:DB5EUR01HT225;
-x-ms-traffictypediagnostic: DB5EUR01HT225:
-x-microsoft-antispam-message-info: OBsC2l1tb9gg2iwyc8Vjpf9Y+s4Lbd5CfXTKCDy5Wsq54Kf1CTYP9ai23d0MG0xw/WzDb7D9qjVue73l2za2Or3VPp6IYczzLC4+SeywZDXe1OHxbl8xUlpwDgwP2kPO8fSeWvGO5EAAQsV4EedxyKhs3dBua/IAbpDWJDjP6AZr72H61cjnO5bOaPYEpV8M
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0AEA8BFA2FB26D429009542510288FBE@eurprd06.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1727338AbfICUNT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 16:13:19 -0400
+Received: from mail.efficios.com ([167.114.142.138]:39972 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbfICUNS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 16:13:18 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 89D542B26AD;
+        Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id puKZCFzi-A_U; Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 2F94F2B26A9;
+        Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2F94F2B26A9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1567541596;
+        bh=OBpnBEQngVIyBPnbvPZMnptXtvsASksMY7cFdQ0lF3Y=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=S+B+Acs+PR1tWyVsKzxubkHBDh7+xqtxfkkp3dUs9fFFJxAFbEltgIkqEOkYZe2iW
+         F+1Wvvnmjmmne48U5CrkNZo1Ih+dtSqrTv1DjdxrGufHnl2iBCUAEpv49TK2yj11yD
+         b7A2egfrrTF2/G1gc9rjxiQDtvVPwUlESNHxMQof497O8Kocu5OlheWpe1KWaIwilk
+         54F1NraiCG0TujufC6JdSn2mD7MbpZSCLGRGEccUT5j1oImEfJQUWGHaPt1SefQrRj
+         hRSXPHm5wPwgrvpXIg+LlkgSTTcX5JpI6Xgb3x1+y4cA/AegxnL8dx0vupvvPdrAka
+         38VJx8Bxued7A==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id iREVIGk4xrlA; Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 189AC2B26A2;
+        Tue,  3 Sep 2019 16:13:16 -0400 (EDT)
+Date:   Tue, 3 Sep 2019 16:13:15 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        Chris Metcalf <cmetcalf@ezchip.com>,
+        Chris Lameter <cl@linux.com>, Kirill Tkhai <tkhai@yandex.ru>,
+        Mike Galbraith <efault@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <250946344.642.1567541595914.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CAHk-=wiY-Lh1SvzpG2OPh_DUNJMeTTSyfNmx=ALz1UuZ4EiC=g@mail.gmail.com>
+References: <20190903160036.2400-1-mathieu.desnoyers@efficios.com> <20190903160036.2400-3-mathieu.desnoyers@efficios.com> <CAHk-=wiY-Lh1SvzpG2OPh_DUNJMeTTSyfNmx=ALz1UuZ4EiC=g@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] Fix: sched/membarrier: READ_ONCE p->mm in
+ membarrier_global_expedited
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74632d7d-249c-41b3-0656-08d730ab232e
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2019 20:13:08.6572
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR01HT225
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3829)
+Thread-Topic: sched/membarrier: READ_ONCE p->mm in membarrier_global_expedited
+Thread-Index: bXVkDHRWDIkHySjFGkamrMQYOacg3g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wOS0wMyAxMjo1OCwgUGhpbGlwcCBaYWJlbCB3cm90ZToNCj4gSGkgSm9uYXMsDQo+
-DQo+IE9uIFN1biwgMjAxOS0wOS0wMSBhdCAxMjo0NSArMDAwMCwgSm9uYXMgS2FybG1hbiB3cm90
-ZToNCj4+IEEgZGVjb2RlZCA4LWJpdCA0OjI6MCBmcmFtZSBuZWVkIG1lbW9yeSBmb3IgdXAgdG8g
-NDQ4IG1hY3JvYmxvY2tzDQo+PiBhbmQgaXMgbGFpZCBvdXQgaW4gbWVtb3J5IGFzIGZvbGxvdzoN
-Cj4gRG8geW91IG1lYW4gIkEgZGVjb2RlZCA4LWJpdCA0OjI6MCBmcmFtZSBuZWVkcyB1cCB0byA0
-NDggYnl0ZXMgcGVyDQo+IG1hY3JvYmxvY2siPw0KPg0KPiBBIDEyODB4NzIwIGZyYW1lIGFscmVh
-ZHkgY29uc2lzdHMgb2YgMzYwMCBtYWNyb2Jsb2NrcyAoZWFjaCAxNngxNiBZICsNCj4gMng4eDgg
-Q2IsQ3IpLg0KDQpZb3UgYXJlIGNvcnJlY3QsIHRoYW5rcyBmb3IgcG9pbnRpbmcgb3V0LCBJIHdp
-bGwgY2hhbmdlIGluIGEgdjIuDQoNCj4NCj4+ICstLS0tLS0tLS0tLS0tLS0tLS0tKw0KPj4+IFkt
-cGxhbmUgICAyNTYgTUJzIHwNCj4gU28gdGhhdCBsb29rcyBsaWtlIGl0IHNob3VsZCBiZSAyNTYg
-Ynl0ZXMgKiBudW1iZXIgb2YgbWFjcm9ibG9ja3MNCj4gaW5zdGVhZCwgc2FtZSBmb3IgdGhlIGZv
-bGxvd2luZyB0d28uDQoNCkFjay4NCg0KPg0KPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+Pj4g
-VVYtcGxhbmUgIDEyOCBNQnMgfA0KPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+Pj4gTVYgYnVm
-ZmVyICA2NCBNQnMgfA0KPj4gKy0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+Pg0KPj4gVGhlIG1vdGlv
-biB2ZWN0b3IgYnVmZmVyIG9mZnNldCBpcyBjdXJyZW50bHkgY29ycmVjdCBmb3IgNDoyOjAgYmVj
-YXVzZQ0KPj4gdGhlIGV4dHJhIHNwYWNlIGZvciBtb3Rpb24gdmVjdG9ycyBpcyBvdmVyYWxsb2Nh
-dGVkIHdpdGggYW4gZXh0cmEgNjQgTUJzLg0KPj4NCj4+IFdyb25nIG9mZnNldCBmb3IgYm90aCBk
-ZXN0aW5hdGlvbiBhbmQgbW90aW9uIHZlY3RvciBidWZmZXIgYXJlIHVzZWQNCj4+IGZvciB0aGUg
-Ym90dG9tIGZpZWxkIG9mIGZpZWxkIGVuY29kZWQgY29udGVudCwgd3Jvbmcgb2Zmc2V0IGlzDQo+
-PiBhbHNvIHVzZWQgZm9yIDQ6MDowIChtb25vY2hyb21lKSBjb250ZW50Lg0KPj4NCj4+IEZpeCB0
-aGlzIGJ5IGFsd2F5cyBzZXR0aW5nIHRoZSBtb3Rpb24gdmVjdG9yIGFkZHJlc3MgdG8gdGhlIGV4
-cGVjdGVkDQo+PiAzODQgTUJzIG9mZnNldCBmb3IgNDoyOjAgYW5kIDI1NiBNQnMgb2Zmc2V0IGZv
-ciA0OjA6MCBjb250ZW50Lg0KPiBFeHBlY3RlZCBieSB3aG9tPyBGb3IgZXhhbXBsZSwgY291bGQg
-dGhlc2UgYmUgcGxhY2VkIGluIHNlcGFyYXRlIGJ1ZmZlcnMNCj4gaW5zdGVhZCBvZiBhcHBlbmRl
-ZCB0byB0aGUgVkIyIGFsbG9jYXRlZCBidWZmZXJzPw0KDQpGcm9tIHdoYXQgSSB1bmRlcnN0YW5k
-IG1haW4gYW5kIGhpZ2ggcHJvZmlsZSBkZWNvZGluZyBoYXZlIGh3IGNvbnN0cmFpbnRzIGluIHRo
-YXQNCnRoZSBkaXJlY3QgbW9kZSBtb3Rpb24gdmVjdG9ycyBidWZmZXIgbXVzdCBiZSBsb2NhdGVk
-IGNvbnRpbnVvdXNseSBhZnRlciB0aGUgWVVWIGJ1ZmZlci4NCg0KSSBhbHNvIG9ic2VydmVkIGlu
-c3RhbmNlcyB3aGVyZSB0aGUgY3VycmVudCByZXF1aXJlbWVudCBmb3IgcHJvZmlsZV9pZGMgPiA2
-NiBjYXVzZWQgaXNzdWVzDQpmb3Igc29tZSBzdHJlYW1zLCBlLmcuIGJpZ19idWNrX2J1bm55XzEw
-ODBwX0gyNjRfQUFDXzI1ZnBzXzcyMDBLLm1wNA0KDQpCZWNhdXNlIG9mIHRoaXMgaXQgd2FzIGp1
-c3QgZWFzaWVyIHRvIGFsd2F5cyBjb25maWd1cmUgdGhlIG1vdGlvbiB2ZWN0b3IgYnVmZmVyIGFk
-ZHJlc3MuDQoNCj4NCj4+IEFsc28gdXNlIGNvcnJlY3QgZGVzdGluYXRpb24gYW5kIG1vdGlvbiB2
-ZWN0b3IgYnVmZmVyIG9mZnNldA0KPj4gZm9yIHRoZSBib3R0b20gZmllbGQgb2YgZmllbGQgZW5j
-b2RlZCBjb250ZW50Lg0KPj4NCj4+IFdoaWxlIGF0IGl0IGFsc28gZXh0ZW5kIHRoZSBjaGVjayBm
-b3IgNDowOjAgKG1vbm9jaHJvbWUpIHRvIGluY2x1ZGUgYW4NCj4+IGFkZGl0aW9uYWwgY2hlY2sg
-Zm9yIEhpZ2ggUHJvZmlsZSAoMTAwKS4NCj4+DQo+PiBGaXhlczogZGVhMGE4MmYzZDIyICgibWVk
-aWE6IGhhbnRybzogQWRkIHN1cHBvcnQgZm9yIEgyNjQgZGVjb2Rpbmcgb24gRzEiKQ0KPj4gU2ln
-bmVkLW9mZi1ieTogSm9uYXMgS2FybG1hbiA8am9uYXNAa3dpYm9vLnNlPg0KPj4gLS0tDQo+PiAg
-Li4uL3N0YWdpbmcvbWVkaWEvaGFudHJvL2hhbnRyb19nMV9oMjY0X2RlYy5jIHwgMzMgKysrKysr
-KysrKystLS0tLS0tLQ0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCspLCAxNCBk
-ZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zdGFnaW5nL21lZGlhL2hh
-bnRyby9oYW50cm9fZzFfaDI2NF9kZWMuYyBiL2RyaXZlcnMvc3RhZ2luZy9tZWRpYS9oYW50cm8v
-aGFudHJvX2cxX2gyNjRfZGVjLmMNCj4+IGluZGV4IDdhYjUzNDkzNjg0My4uMTU5YmQ2N2UwYTM2
-IDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9zdGFnaW5nL21lZGlhL2hhbnRyby9oYW50cm9fZzFf
-aDI2NF9kZWMuYw0KPj4gKysrIGIvZHJpdmVycy9zdGFnaW5nL21lZGlhL2hhbnRyby9oYW50cm9f
-ZzFfaDI2NF9kZWMuYw0KPj4gQEAgLTE5LDYgKzE5LDkgQEANCj4+ICAjaW5jbHVkZSAiaGFudHJv
-X2h3LmgiDQo+PiAgI2luY2x1ZGUgImhhbnRyb192NGwyLmgiDQo+PiAgDQo+PiArI2RlZmluZSBN
-Vl9PRkZTRVRfNDIwCTM4NA0KPj4gKyNkZWZpbmUgTVZfT0ZGU0VUXzQwMAkyNTYNCj4+ICsNCj4+
-ICBzdGF0aWMgdm9pZCBzZXRfcGFyYW1zKHN0cnVjdCBoYW50cm9fY3R4ICpjdHgpDQo+PiAgew0K
-Pj4gIAljb25zdCBzdHJ1Y3QgaGFudHJvX2gyNjRfZGVjX2N0cmxzICpjdHJscyA9ICZjdHgtPmgy
-NjRfZGVjLmN0cmxzOw0KPj4gQEAgLTQ5LDggKzUyLDggQEAgc3RhdGljIHZvaWQgc2V0X3BhcmFt
-cyhzdHJ1Y3QgaGFudHJvX2N0eCAqY3R4KQ0KPj4gIAl2ZHB1X3dyaXRlX3JlbGF4ZWQodnB1LCBy
-ZWcsIEcxX1JFR19ERUNfQ1RSTDApOw0KPj4gIA0KPj4gIAkvKiBEZWNvZGVyIGNvbnRyb2wgcmVn
-aXN0ZXIgMS4gKi8NCj4+IC0JcmVnID0gRzFfUkVHX0RFQ19DVFJMMV9QSUNfTUJfV0lEVEgoc3Bz
-LT5waWNfd2lkdGhfaW5fbWJzX21pbnVzMSArIDEpIHwNCj4+IC0JICAgICAgRzFfUkVHX0RFQ19D
-VFJMMV9QSUNfTUJfSEVJR0hUX1Aoc3BzLT5waWNfaGVpZ2h0X2luX21hcF91bml0c19taW51czEg
-KyAxKSB8DQo+PiArCXJlZyA9IEcxX1JFR19ERUNfQ1RSTDFfUElDX01CX1dJRFRIKEgyNjRfTUJf
-V0lEVEgoY3R4LT5kc3RfZm10LndpZHRoKSkgfA0KPj4gKwkgICAgICBHMV9SRUdfREVDX0NUUkwx
-X1BJQ19NQl9IRUlHSFRfUChIMjY0X01CX0hFSUdIVChjdHgtPmRzdF9mbXQuaGVpZ2h0KSkgfA0K
-Pj4gIAkgICAgICBHMV9SRUdfREVDX0NUUkwxX1JFRl9GUkFNRVMoc3BzLT5tYXhfbnVtX3JlZl9m
-cmFtZXMpOw0KPj4gIAl2ZHB1X3dyaXRlX3JlbGF4ZWQodnB1LCByZWcsIEcxX1JFR19ERUNfQ1RS
-TDEpOw0KPj4gIA0KPj4gQEAgLTc5LDcgKzgyLDcgQEAgc3RhdGljIHZvaWQgc2V0X3BhcmFtcyhz
-dHJ1Y3QgaGFudHJvX2N0eCAqY3R4KQ0KPj4gIAkJcmVnIHw9IEcxX1JFR19ERUNfQ1RSTDRfQ0FC
-QUNfRTsNCj4+ICAJaWYgKHNwcy0+ZmxhZ3MgJiBWNEwyX0gyNjRfU1BTX0ZMQUdfRElSRUNUXzhY
-OF9JTkZFUkVOQ0UpDQo+PiAgCQlyZWcgfD0gRzFfUkVHX0RFQ19DVFJMNF9ESVJfOFg4X0lORkVS
-X0U7DQo+PiAtCWlmIChzcHMtPmNocm9tYV9mb3JtYXRfaWRjID09IDApDQo+PiArCWlmIChzcHMt
-PnByb2ZpbGVfaWRjID49IDEwMCAmJiBzcHMtPmNocm9tYV9mb3JtYXRfaWRjID09IDApDQo+PiAg
-CQlyZWcgfD0gRzFfUkVHX0RFQ19DVFJMNF9CTEFDS1dISVRFX0U7DQo+PiAgCWlmIChwcHMtPmZs
-YWdzICYgVjRMMl9IMjY0X1BQU19GTEFHX1dFSUdIVEVEX1BSRUQpDQo+PiAgCQlyZWcgfD0gRzFf
-UkVHX0RFQ19DVFJMNF9XRUlHSFRfUFJFRF9FOw0KPj4gQEAgLTIzMyw2ICsyMzYsNyBAQCBzdGF0
-aWMgdm9pZCBzZXRfYnVmZmVycyhzdHJ1Y3QgaGFudHJvX2N0eCAqY3R4KQ0KPj4gIAlzdHJ1Y3Qg
-dmIyX3Y0bDJfYnVmZmVyICpzcmNfYnVmLCAqZHN0X2J1ZjsNCj4+ICAJc3RydWN0IGhhbnRyb19k
-ZXYgKnZwdSA9IGN0eC0+ZGV2Ow0KPj4gIAlkbWFfYWRkcl90IHNyY19kbWEsIGRzdF9kbWE7DQo+
-PiArCXVuc2lnbmVkIGludCBvZmZzZXQgPSBNVl9PRkZTRVRfNDIwOw0KPj4gIA0KPj4gIAlzcmNf
-YnVmID0gaGFudHJvX2dldF9zcmNfYnVmKGN0eCk7DQo+PiAgCWRzdF9idWYgPSBoYW50cm9fZ2V0
-X2RzdF9idWYoY3R4KTsNCj4+IEBAIC0yNDMsMTkgKzI0NywyMCBAQCBzdGF0aWMgdm9pZCBzZXRf
-YnVmZmVycyhzdHJ1Y3QgaGFudHJvX2N0eCAqY3R4KQ0KPj4gIA0KPj4gIAkvKiBEZXN0aW5hdGlv
-biAoZGVjb2RlZCBmcmFtZSkgYnVmZmVyLiAqLw0KPj4gIAlkc3RfZG1hID0gdmIyX2RtYV9jb250
-aWdfcGxhbmVfZG1hX2FkZHIoJmRzdF9idWYtPnZiMl9idWYsIDApOw0KPj4gKwlpZiAoY3RybHMt
-PnNsaWNlc1swXS5mbGFncyAmIFY0TDJfSDI2NF9TTElDRV9GTEFHX0JPVFRPTV9GSUVMRCkNCj4+
-ICsJCWRzdF9kbWEgKz0gQUxJR04oY3R4LT5kc3RfZm10LndpZHRoLCBIMjY0X01CX0RJTSk7DQo+
-IEhvdyBkb2VzIHRoaXMgd29yaz8gRG9lcyB1c2Vyc3BhY2UgZGVjb2RlIHR3byBmaWVsZHMgaW50
-byB0aGUgc2FtZQ0KPiBjYXB0dXJlIGJ1ZmZlciBhbmQgdGhlIGhhcmR3YXJlIHdyaXRlcyBlYWNo
-IGZpZWxkIHdpdGggYSBzdHJpZGUgb2YgMg0KPiBsaW5lcz8gSSBzdXBwb3NlIHRoaXMgY29ycmVz
-cG9uZHMgdG8gVjRMMl9GSUVMRF9JTlRFUkxBQ0VELiBDb3VsZCB0aGlzDQo+IGFsc28gYmUgbWFk
-ZSB0byBzdXBwb3J0IFY0TDJfRklFTERfU0VRX1RCIG91dHB1dD8NCg0KWWVzLCBib3RoIGZpZWxk
-cyBhcmUgZGVjb2RlZCBpbnRvIHRoZSBzYW1lIGNhcHR1cmUgYnVmZmVyLCB0b3AgZmllbGQgdG8g
-b2RkIG51bWJlcmVkIGxpbmVzDQphbmQgYm90dG9tIGZpZWxkIHRvIGV2ZW4gbnVtYmVyZWQgbGlu
-ZXMsIHNvIEkgZ3Vlc3MgdGhpcyBjb3JyZXNwb25kcyB0byBWNEwyX0ZJRUxEX0lOVEVSTEFDRUQu
-DQpUaGlzIGlzIGFsc28gaG93IHRoZSBjZWRydXMgZHJpdmVyIGhhbmRsZXMgZmllbGQgZGVjb2Rp
-bmcgd2l0aCBKZXJuZWoncyBoMjY0IHBhdGNoZXMuDQoNCkkgZG8gbm90IGtub3cgaWYgaXQgaXMg
-cG9zc2libGUgdG8gY29uZmlndXJlIHRoZSBodyB0byBkZWNvZGUgaW50byBhIFY0TDJfRklFTERf
-U0VRX1RCIHR5cGUgb3V0cHV0Lg0KDQpSZWdhcmRzLA0KSm9uYXMNCg0KPg0KPiByZWdhcmRzDQo+
-IFBoaWxpcHANCg0K
+----- On Sep 3, 2019, at 12:23 PM, Linus Torvalds torvalds@linux-foundation.org wrote:
+
+> On Tue, Sep 3, 2019 at 9:00 AM Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> Due to the lack of READ_ONCE() on p->mm, this code can in fact turn into
+>> a NULL deref when we hit do_exit() around exit_mm(). The first p->mm
+>> read is before and sees !NULL, the second is after and does observe
+>> NULL, which triggers a null pointer dereference.
+> 
+> This is horribly ugly, and I don't think it is necessary.
+> 
+> The way to fix the problem you are addressing in patches 2-3 is to
+> move the MEMBARRIER_STATE_GLOBAL_EXPEDITED flag from the mm struct to
+> the task struct, and avoiding the whole issue with "mm may be released
+> at any point" that way.
+> 
+> Now, your reaction will be "but lots of threads can share an 'mm', so
+> we can't do that", but that doesn't seem to be true. Looking at the
+> place that _sets_ this, you already handle the single-thread cases
+> specially, and the multiple threads has to do a "synchronize_rcu()".
+> You might as well either walk the current CPU's and set it in all
+> threads where the thread->mm matches the mm. And then you make the
+> scheduler set the bit on newly scheduled entities.
+> 
+> NOTE! When you walk all current cpu's in
+> membarrier_register_global_expedited(), you only look at the
+> 'task->mm' _value_, you don't dereference it. And that's ok, because
+> 'task' itself is stable, it's just mm that can go away.
+> 
+> Wouldn't that solve the issue much more cleanly?
+
+Indeed it would! I just sent a patch as RFC implementing your idea.
+
+Thanks!
+
+Mathieu
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
