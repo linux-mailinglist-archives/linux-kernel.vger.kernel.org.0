@@ -2,130 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0686A75D9
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 23:01:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 139C4A75E8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 23:05:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727083AbfICVBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 17:01:01 -0400
-Received: from mail-eopbgr800104.outbound.protection.outlook.com ([40.107.80.104]:7800
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725953AbfICVBA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 17:01:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=MSFlb6L76FOTBkw9d6tZAq1mBDr9HFVAykGZL/beLoWPflucXzLRmh98Bcbifd89Rq0zen2N7vG4mOQVar54Q2cIccB04hLAKpM4JVo83Wf8R4tYvDanxtljPru5LlYEJw6SB8Vf11KGqD/8gJfe6Eq42U71q75qpM2/4DbboTjgJHSeja4BAu+sX0DMqBiGCsjY7WJawVkgPbSAN4x9mpxb3SZUay02jma1UuCxP9al9xUhMbpRtdN8ezgi66pdGQFARhb6pyYA7Bc/7Om/9b6Jr7cfjDIf5cDpW2ysWas/4n+t7OPLtMWXhCNI5crYhPCG/kQax7emR0XhOJb2Wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cHe+nRs17sEsXXBKjE7Wm2h+HNWZwys85dH9KzCIaeg=;
- b=ZyP3V5fQY8R88Xz3MjEZh1/Zri1phSJJMs/II1Hf7Cem98/DTCUUN8LfT1p1vZkAff1DuQYosaoz7cpd9bV/nKyNOii8yIE9LX3KtFwIuRLitvlcrkOsr0+GdGQaIpbB3YypjVaGucQkeDzGPQ/ABRRDuwMn+Ve/HdmQ0Y5YZgTezc+KgT5s7MnOkdZxL1qLZFFOawGCsPOoRHhCEDQy51Pq9RXoQ9bfphF7OaJJimSlAA/KREZSnSf+ikkb3T9plwtEmtdW/e9gX+FLkg1Ulc59itZN5Rj6VBGksDrd/nSDkvjM9PRSSVTY6iLo0jywkYfkQ+fir6zzJk3CROdPOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
- dkim=pass header.d=mips.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cHe+nRs17sEsXXBKjE7Wm2h+HNWZwys85dH9KzCIaeg=;
- b=WUVpWvQYd/b8YHlZ30o06xC6aGkigy7yGaOccKHGj8bkXL4Zr4q2EPO+X8+sHD7nGFPxzyHZPHuYAV4MOv1ZXuMJiyPfggUa3DlBzLAL7MgqScsDXCabNCqmMgRrG22PVupe1utSHJozh1gyQ9CCZPFPtUQvOJdSCbXca0tCsh8=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1551.namprd22.prod.outlook.com (10.174.170.164) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.20; Tue, 3 Sep 2019 21:00:57 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::f9e8:5e8c:7194:fad3]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::f9e8:5e8c:7194:fad3%11]) with mapi id 15.20.2220.021; Tue, 3 Sep 2019
- 21:00:57 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-CC:     "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "salyzyn@android.com" <salyzyn@android.com>,
-        "0x7f454c46@gmail.com" <0x7f454c46@gmail.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH v2 3/8] mips: compat: vdso: Use legacy syscalls as
- fallback
-Thread-Topic: [PATCH v2 3/8] mips: compat: vdso: Use legacy syscalls as
- fallback
-Thread-Index: AQHVYpquVTUocwY3d0uz1j8PNA3NAg==
-Date:   Tue, 3 Sep 2019 21:00:57 +0000
-Message-ID: <MWHPR2201MB1277ED2AD21C031201F749EAC1B90@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20190830135902.20861-4-vincenzo.frascino@arm.com>
-In-Reply-To: <20190830135902.20861-4-vincenzo.frascino@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0480.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a2::36) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.196.167.206]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ff988808-de10-4ae0-5a8f-08d730b1d103
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1551;
-x-ms-traffictypediagnostic: MWHPR2201MB1551:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MWHPR2201MB15518335CDAC1F1178B5C2DBC1B90@MWHPR2201MB1551.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 01494FA7F7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(136003)(39850400004)(376002)(199004)(189003)(55236004)(316002)(42882007)(7736002)(305945005)(4326008)(8936002)(6916009)(74316002)(386003)(6506007)(256004)(7696005)(81166006)(76176011)(102836004)(54906003)(186003)(25786009)(8676002)(81156014)(71200400001)(71190400001)(26005)(229853002)(478600001)(966005)(99286004)(5660300002)(52536014)(3846002)(6116002)(2906002)(52116002)(33656002)(14454004)(486006)(53936002)(6246003)(64756008)(66476007)(66556008)(66946007)(446003)(44832011)(66446008)(9686003)(11346002)(7416002)(4744005)(476003)(6436002)(6306002)(55016002)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1551;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Lo0x0Jh2oXuLX5JZhpQmBBuMCZ2IPJFHMZClsa04RSG3Z92aOAe+YdCS3uEyrWFlmyVdZdwwhFWq+CTTQK33S56C7wxAXE2keHyhUDXp/EbHEViNgnsdQ82KpsmlCUmFGDRq6seiug3JSkpTCW7fp6AsttfNsfP/NX3UuzcGjCwRxv9iaieV4IC/J8TE6Kho/gJdbvDtm953vZLuaa29ChN4IOaq2gesawcKrVdGFEoLyNuqPhxT0yMuxk5XMHHStlI7JFScGK95JUbvoNFo7o3ain73ae25TF6crmmee96djOsa5PINRVFfeG4b9eh8YoUbzl1H93ZuwUzDpqvAg52zC4e6p2D84mlsR3OzdFY6XCnIzwySaiLEusFNODKg+HrCNwMyUo1MxIoN8akRnDqlbpcubbyGwBHIyFH3uJ8=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727022AbfICVFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 17:05:33 -0400
+Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:57979 "EHLO
+        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfICVFd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 17:05:33 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 30F0C3F3EF;
+        Tue,  3 Sep 2019 23:05:31 +0200 (CEST)
+Authentication-Results: ste-pvt-msa1.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=NpihaS58;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
+        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id XIBw9yZbCl08; Tue,  3 Sep 2019 23:05:30 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id 350063F333;
+        Tue,  3 Sep 2019 23:05:26 +0200 (CEST)
+Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id 6380C360160;
+        Tue,  3 Sep 2019 23:05:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1567544726; bh=/li7YegAhw6RYebLGGt/o3WJvHeG1ytUqRCNCZ9yHwo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NpihaS584vAezzYGEJFzcCqhRmOPFt5+xrYeQK5B9B2tNMdEtQQufvDy2twLS8/Lr
+         +V1hvYJ9E3E+XhWlmlOQ8pnECLnM3I0Js1Zpog+5Cv/TNXfjxsNpvQLHiloHigHe8c
+         RCbL+v7L5SnK7SFv5+0MrTxSTs78rki5TArr4mNM=
+Subject: Re: [PATCH v2 3/4] drm/ttm, drm/vmwgfx: Correctly support support AMD
+ memory encryption
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>, pv-drivers@vmware.com,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20190903131504.18935-1-thomas_os@shipmail.org>
+ <20190903131504.18935-4-thomas_os@shipmail.org>
+ <b54bd492-9702-5ad7-95da-daf20918d3d9@intel.com>
+ <CAKMK7uFv+poZq43as8XoQaSuoBZxCQ1p44VCmUUTXOXt4Y+Bjg@mail.gmail.com>
+ <6d0fafcc-b596-481b-7b22-1f26f0c02c5c@intel.com>
+ <bed2a2d9-17f0-24bd-9f4a-c7ee27f6106e@shipmail.org>
+ <7fa3b178-b9b4-2df9-1eee-54e24d48342e@intel.com>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <ba77601a-d726-49fa-0c88-3b02165a9a21@shipmail.org>
+Date:   Tue, 3 Sep 2019 23:05:26 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ff988808-de10-4ae0-5a8f-08d730b1d103
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2019 21:00:57.1566
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FsCJgR/o5cPJLaGQBxzwofEvEivm+RyDYhetHFlca0WvlvLtRW12y77S8Y9XM46+oWy7g7q9MongdJBtbWKUzg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1551
+In-Reply-To: <7fa3b178-b9b4-2df9-1eee-54e24d48342e@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 9/3/19 10:51 PM, Dave Hansen wrote:
+> On 9/3/19 1:36 PM, Thomas Hellström (VMware) wrote:
+>> So the question here should really be, can we determine already at mmap
+>> time whether backing memory will be unencrypted and adjust the *real*
+>> vma->vm_page_prot under the mmap_sem?
+>>
+>> Possibly, but that requires populating the buffer with memory at mmap
+>> time rather than at first fault time.
+> I'm not connecting the dots.
+>
+> vma->vm_page_prot is used to create a VMA's PTEs regardless of if they
+> are created at mmap() or fault time.  If we establish a good
+> vma->vm_page_prot, can't we just use it forever for demand faults?
 
-Vincenzo Frascino wrote:
-> The generic VDSO implementation uses the Y2038 safe clock_gettime64() and
-> clock_getres_time64() syscalls as fallback for 32bit VDSO. This breaks
-> seccomp setups because these syscalls might be not (yet) allowed.
->=20
-> Implement the 32bit variants which use the legacy syscalls and select the
-> variant in the core library.
->=20
-> The 64bit time variants are not removed because they are required for the
-> time64 based vdso accessors.
+With SEV I think that we could possibly establish the encryption flags 
+at vma creation time. But thinking of it, it would actually break with 
+SME where buffer content can be moved between encrypted system memory 
+and unencrypted graphics card PCI memory behind user-space's back. That 
+would imply killing all user-space encrypted PTEs and at fault time set 
+up new ones pointing to unencrypted PCI memory..
 
-Applied to mips-next.
+>
+> Or, are you concerned that if an attempt is made to demand-fault page
+> that's incompatible with vma->vm_page_prot that we have to SEGV?
+>
+>> And it still requires knowledge whether the device DMA is always
+>> unencrypted (or if SEV is active).
+> I may be getting mixed up on MKTME (the Intel memory encryption) and
+> SEV.  Is SEV supported on all memory types?  Page cache, hugetlbfs,
+> anonymous?  Or just anonymous?
 
-> commit 932bb934ed4d
-> https://git.kernel.org/mips/c/932bb934ed4d
->=20
-> Fixes: 00b26474c2f1 ("lib/vdso: Provide generic VDSO implementation")
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> Signed-off-by: Paul Burton <paul.burton@mips.com>
+SEV AFAIK encrypts *all* memory except DMA memory. To do that it uses a 
+SWIOTLB backed by unencrypted memory, and it also flips coherent DMA 
+memory to unencrypted (which is a very slow operation and patch 4 deals 
+with caching such memory).
 
-Thanks,
-    Paul
+/Thomas
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+
+
+
