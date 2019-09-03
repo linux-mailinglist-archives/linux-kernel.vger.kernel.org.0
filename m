@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7BBEA6E8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D0BDA6E8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:28:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730673AbfICQ0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:26:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47110 "EHLO mail.kernel.org"
+        id S1730698AbfICQ0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:26:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730602AbfICQ0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:26:19 -0400
+        id S1730639AbfICQ02 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:26:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B02C238CE;
-        Tue,  3 Sep 2019 16:26:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FCA623789;
+        Tue,  3 Sep 2019 16:26:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527979;
-        bh=eK+L9MGfvPLzftIEDXerbgiNvYTvBEHJUW/ZcohqNQI=;
+        s=default; t=1567527987;
+        bh=zcaZGov+Sx+qJqjVxtWIJ7I6t8QnU1clZteyGB2qa3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0aYXvjI637FZDGFn+OUoO1heyMML8XpiH82IRX6SFiWP2VExCSySFfJLNwlAU3x9M
-         9DqHBhSR0Evu5NeljLb+eX2QH5nrY/HvEUch3CkUMQ6PxipQI4Wolx7tVXdPvCVztS
-         7/DtvTmi6ivZMFj+fLVukkJUpeSBJu8dR+Wr+H5w=
+        b=RdfBNDRh/pm8ntzl4p7nJ5u+9va6LwUYeejYRS3PrDLUlGAclwkc2rycQlD1Q8qZj
+         4f/s8lHO87pgp3F/8gFDu+WdKt2oSKtw2pQmnrrSA/dbStI7wZikgJMTxKw3DEFIy2
+         NZ+i+PX1gRyC5AUyGjqyl2Y4OnG+buc7bh0uYUbo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
+Cc:     Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 034/167] drm/i915: Cleanup gt powerstate from gem
-Date:   Tue,  3 Sep 2019 12:23:06 -0400
-Message-Id: <20190903162519.7136-34-sashal@kernel.org>
+        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 041/167] scsi: megaraid_sas: Add check for reset adapter bit
+Date:   Tue,  3 Sep 2019 12:23:13 -0400
+Message-Id: <20190903162519.7136-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -44,65 +45,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
 
-[ Upstream commit 30b710840e4b9c9699d3d4b33fb19ad8880d4614 ]
+[ Upstream commit de93b40d98ead27ee2f7f7df93fdd4914a6c8d8d ]
 
-Since the gt powerstate is allocated by i915_gem_init, clean it from
-i915_gem_fini for symmetry and to correct the imbalance on error.
+For SAS3 and later controllers, FW sets the reset adapter bit indicating
+the driver to perform a controller reset.  Driver needs to check if this
+bit is set before doing a reset.  This reduces the driver probe failure
+time to 180seconds in case there is a faulty controller connected.
 
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Reviewed-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180812223642.24865-1-chris@chris-wilson.co.uk
+Signed-off-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Signed-off-by: Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/i915/i915_gem.c      | 3 +++
- drivers/gpu/drm/i915/intel_display.c | 4 ----
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ drivers/scsi/megaraid/megaraid_sas_base.c | 33 +++++++++++++++--------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index 5019dfd8bcf16..e81abd468a15d 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -5624,6 +5624,7 @@ int i915_gem_init(struct drm_i915_private *dev_priv)
- void i915_gem_fini(struct drm_i915_private *dev_priv)
+diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
+index b6fc7c6337610..749f10146f630 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_base.c
++++ b/drivers/scsi/megaraid/megaraid_sas_base.c
+@@ -5218,7 +5218,7 @@ static int megasas_init_fw(struct megasas_instance *instance)
  {
- 	i915_gem_suspend_late(dev_priv);
-+	intel_disable_gt_powersave(dev_priv);
+ 	u32 max_sectors_1;
+ 	u32 max_sectors_2, tmp_sectors, msix_enable;
+-	u32 scratch_pad_2, scratch_pad_3, scratch_pad_4;
++	u32 scratch_pad_2, scratch_pad_3, scratch_pad_4, status_reg;
+ 	resource_size_t base_addr;
+ 	struct megasas_register_set __iomem *reg_set;
+ 	struct megasas_ctrl_info *ctrl_info = NULL;
+@@ -5226,6 +5226,7 @@ static int megasas_init_fw(struct megasas_instance *instance)
+ 	int i, j, loop, fw_msix_count = 0;
+ 	struct IOV_111 *iovPtr;
+ 	struct fusion_context *fusion;
++	bool do_adp_reset = true;
  
- 	/* Flush any outstanding unpin_work. */
- 	i915_gem_drain_workqueue(dev_priv);
-@@ -5635,6 +5636,8 @@ void i915_gem_fini(struct drm_i915_private *dev_priv)
- 	i915_gem_contexts_fini(dev_priv);
- 	mutex_unlock(&dev_priv->drm.struct_mutex);
+ 	fusion = instance->ctrl_context;
  
-+	intel_cleanup_gt_powersave(dev_priv);
+@@ -5274,19 +5275,29 @@ static int megasas_init_fw(struct megasas_instance *instance)
+ 	}
+ 
+ 	if (megasas_transition_to_ready(instance, 0)) {
+-		atomic_set(&instance->fw_reset_no_pci_access, 1);
+-		instance->instancet->adp_reset
+-			(instance, instance->reg_set);
+-		atomic_set(&instance->fw_reset_no_pci_access, 0);
+-		dev_info(&instance->pdev->dev,
+-			"FW restarted successfully from %s!\n",
+-			__func__);
++		if (instance->adapter_type >= INVADER_SERIES) {
++			status_reg = instance->instancet->read_fw_status_reg(
++					instance->reg_set);
++			do_adp_reset = status_reg & MFI_RESET_ADAPTER;
++		}
+ 
+-		/*waitting for about 30 second before retry*/
+-		ssleep(30);
++		if (do_adp_reset) {
++			atomic_set(&instance->fw_reset_no_pci_access, 1);
++			instance->instancet->adp_reset
++				(instance, instance->reg_set);
++			atomic_set(&instance->fw_reset_no_pci_access, 0);
++			dev_info(&instance->pdev->dev,
++				 "FW restarted successfully from %s!\n",
++				 __func__);
 +
- 	intel_uc_fini_misc(dev_priv);
- 	i915_gem_cleanup_userptr(dev_priv);
++			/*waiting for about 30 second before retry*/
++			ssleep(30);
  
-diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-index 2622dfc7d2d9a..6902fd2da19ca 100644
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -15972,8 +15972,6 @@ void intel_modeset_cleanup(struct drm_device *dev)
- 	flush_work(&dev_priv->atomic_helper.free_work);
- 	WARN_ON(!llist_empty(&dev_priv->atomic_helper.free_list));
+-		if (megasas_transition_to_ready(instance, 0))
++			if (megasas_transition_to_ready(instance, 0))
++				goto fail_ready_state;
++		} else {
+ 			goto fail_ready_state;
++		}
+ 	}
  
--	intel_disable_gt_powersave(dev_priv);
--
- 	/*
- 	 * Interrupts and polling as the first thing to avoid creating havoc.
- 	 * Too much stuff here (turning of connectors, ...) would
-@@ -16001,8 +15999,6 @@ void intel_modeset_cleanup(struct drm_device *dev)
- 
- 	intel_cleanup_overlay(dev_priv);
- 
--	intel_cleanup_gt_powersave(dev_priv);
--
- 	intel_teardown_gmbus(dev_priv);
- 
- 	destroy_workqueue(dev_priv->modeset_wq);
+ 	megasas_init_ctrl_params(instance);
 -- 
 2.20.1
 
