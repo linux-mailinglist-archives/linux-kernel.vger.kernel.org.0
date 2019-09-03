@@ -2,110 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26DE0A66EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 12:57:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3227A66F2
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 12:58:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728829AbfICK5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 06:57:24 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38372 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728749AbfICK5X (ORCPT
+        id S1728859AbfICK6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 06:58:33 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33732 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728571AbfICK6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 06:57:23 -0400
-Received: by mail-wr1-f66.google.com with SMTP id l11so8144665wrx.5;
-        Tue, 03 Sep 2019 03:57:22 -0700 (PDT)
+        Tue, 3 Sep 2019 06:58:32 -0400
+Received: by mail-ed1-f66.google.com with SMTP id o9so6545412edq.0
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 03:58:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=itJJvwat1ZzdUKCW7HBECx8xflq282h9g6c0CkxJ03Q=;
-        b=uHkbm2fi4XultRlk6FjQPFKo3sR9RbTFlJElLA8Uz1rnZjqLwSWsTvf8qCHclyoUPE
-         VHmlFjmwmOsqjGbiu5EG3H1B+Rb40x5q7MuyMKtDVNgFzUF9kePyT2+euFV+cLupGFcJ
-         wcASy+eJpfXTA4quApjhjNRFrWjAgkg749J0NXxresQZUb1l7KcJ+qipZo6e8Z4cMq+9
-         sRAHYfgMDtnhZ9csYslCkFcg+HNVHuuxFLzuak+LxMFLzS/MHpeKSm/mKITmR2e5MgR9
-         s4domngpc87p1co6hqNDXCq2m9JMyyAb5VzTYUtSlrU3yXe91iPHJleiyz8l2uxoLpVz
-         VTZA==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1fmMyGS0tNg2ZrUjMXrQHItun5hzN9B9+GAHYDnxm80=;
+        b=UMkvzjLsCC2sjAxyLFkC+oxnIHOCVIrCP8LNWhgtHwHfHVoDJNqWNA1lb/Wtp8jGo2
+         GCGAA8VSliVvR7CFYm9CMTgUUn06B+IoCzWE6JtVQRmjVzPXu3RQfegMMdsswRxHLQfT
+         B+9IEE/xV2uvU/uuhS+1E9HVKQPPbYYMvBYLQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=itJJvwat1ZzdUKCW7HBECx8xflq282h9g6c0CkxJ03Q=;
-        b=ZuWSsOFH/BfDjXFo2aByWc1bXsTQHp/OdIuURwGJzR5DBUi2wz75OF12slJJLeTB95
-         EgNvYLYJ5BJYniTcRcKN2VI6Cp0GFrhkPKLcym4n2Q9TuIOXX4++mgDK6HZc5EZgs3O2
-         d8gizqt5ZTR1RX9PFSN+IzVxdq/jlBwGizBqg+iHbTUCVEhjFKRhH2XAH6J/L+1Jh7/7
-         3XVrqrm1GV4kNUCfRUTEPAJ2zdZeMaprCCjth/Rt9+Tzcp5MGCmZGt+AJngKtRIbvfh8
-         GYxht/egM6ZSGR9IIv4pPeaS+krhBuzM9RbGQ7GIlDhULiUFpBgUlEh/5RWwGxyGqySv
-         q1hA==
-X-Gm-Message-State: APjAAAXs5XivCPS5DCcefe6GVKCtaYZqP2mXWNxDxxF+6kVXDUHgiKzW
-        AQUfxVQKKycmPmtfDx+Lxj4=
-X-Google-Smtp-Source: APXvYqxTSETBqUn2trqP/0D4rt67cUkegxIBjW0deREiAzLj7zwworFS45VMj+Jf3/dasIJxaRayNw==
-X-Received: by 2002:adf:ef44:: with SMTP id c4mr20998859wrp.216.1567508241709;
-        Tue, 03 Sep 2019 03:57:21 -0700 (PDT)
-Received: from localhost.localdomain ([86.126.25.232])
-        by smtp.gmail.com with ESMTPSA id o12sm973493wmh.43.2019.09.03.03.57.20
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=1fmMyGS0tNg2ZrUjMXrQHItun5hzN9B9+GAHYDnxm80=;
+        b=sCnTtgxhfZj/ejwq7JuHhvxqRTv342Ull1/1HpJhp9Tv4NQTla268fgXvyK/KyI0Zh
+         plyUL90ywt1JC6HBOkdIOcQS3Jw7VvCFu0ucwiRYK3XCm8dIg9dfH8rw03Cghld83k45
+         AkKT+MMU33Q+HtjUbqwQ4XRYv6FkLCVIhQf3HuJeZMPqDaANrorYb1J+ZaE9JhP3ZWZv
+         VTlFIy+5lik8kfI+TvhhhUmdjfMnzWGzgBcVcfP2k0FQo0BPKlegWj7QsLESa8F5YCwt
+         iAUtICvmPHzRF+xrfpIADYV99oFPG2gnwxb7UAxYrvSTJA1zPTcs+6AI/0UssmBJlcTH
+         oOvQ==
+X-Gm-Message-State: APjAAAVtXhzMuWq+jdk7+Fc0izOryMhnognGaPnFKXhlVHIjv2IPpoa3
+        D0rt5pp8DG1Fv+tdsT29ScJ7Qg==
+X-Google-Smtp-Source: APXvYqw5isHmx06+1+EN3i1c9akHWdMgAFkS8ga2Hxp68Sh6sDTlsUNHiff4YPNE1vu4FjaDz+IcUQ==
+X-Received: by 2002:a17:906:ce48:: with SMTP id se8mr22871363ejb.98.1567508310915;
+        Tue, 03 Sep 2019 03:58:30 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id p11sm146389edh.77.2019.09.03.03.58.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 03:57:21 -0700 (PDT)
-From:   Vladimir Oltean <olteanv@gmail.com>
-To:     broonie@kernel.org
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vladimir Oltean <olteanv@gmail.com>
-Subject: [PATCH] spi: spi-fsl-dspi: Fix race condition in TCFQ/EOQ interrupt
-Date:   Tue,  3 Sep 2019 13:57:08 +0300
-Message-Id: <20190903105708.32273-1-olteanv@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 03 Sep 2019 03:58:30 -0700 (PDT)
+Date:   Tue, 3 Sep 2019 12:58:28 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/6] drm/vram: use drm_gem_ttm_print_info
+Message-ID: <20190903105828.GW2112@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190903101248.12879-1-kraxel@redhat.com>
+ <20190903101248.12879-4-kraxel@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903101248.12879-4-kraxel@redhat.com>
+X-Operating-System: Linux phenom 5.2.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the driver is working in TCFQ/EOQ mode (i.e. interacts with the SPI
-controller's FIFOs directly) the following sequence of operations
-happens:
+On Tue, Sep 03, 2019 at 12:12:45PM +0200, Gerd Hoffmann wrote:
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+> ---
+>  drivers/gpu/drm/drm_gem_vram_helper.c | 4 +++-
+>  drivers/gpu/drm/Kconfig               | 1 +
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_gem_vram_helper.c b/drivers/gpu/drm/drm_gem_vram_helper.c
+> index fd751078bae1..71552f757b4a 100644
+> --- a/drivers/gpu/drm/drm_gem_vram_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_vram_helper.c
+> @@ -1,5 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0-or-later
+>  
+> +#include <drm/drm_gem_ttm_helper.h>
+>  #include <drm/drm_gem_vram_helper.h>
+>  #include <drm/drm_device.h>
+>  #include <drm/drm_mode.h>
+> @@ -633,5 +634,6 @@ static const struct drm_gem_object_funcs drm_gem_vram_object_funcs = {
+>  	.pin	= drm_gem_vram_object_pin,
+>  	.unpin	= drm_gem_vram_object_unpin,
+>  	.vmap	= drm_gem_vram_object_vmap,
+> -	.vunmap	= drm_gem_vram_object_vunmap
+> +	.vunmap	= drm_gem_vram_object_vunmap,
+> +	.print_info = drm_gem_ttm_print_info,
 
-- The first byte of the tx buffer gets pushed to the TX FIFO (dspi->len
-  gets decremented). This triggers the train of interrupts that handle
-  the rest of the bytes.
+Yeah definitely link to the new way of doing stuff in the kerneldoc of the
+previous patch. For this.
 
-- The dspi_interrupt handles a TX confirmation event. It reads the newly
-  available byte from the RX FIFO, checks the dspi->len exit condition,
-  and if there's more to be done, it kicks off the next interrupt in the
-  train by writing the next byte to the TX FIFO.
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Now the problem is that the wait queue is woken up one byte too early,
-because dspi->len becomes 0 as soon as the byte has been pushed into the
-TX FIFO. Its interrupt has not yet been processed and the RX byte has
-not been put from the FIFO into the buffer.
+>  };
+> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+> index f7b25519f95c..1be8ad30d8fe 100644
+> --- a/drivers/gpu/drm/Kconfig
+> +++ b/drivers/gpu/drm/Kconfig
+> @@ -169,6 +169,7 @@ config DRM_VRAM_HELPER
+>  	tristate
+>  	depends on DRM
+>  	select DRM_TTM
+> +	select DRM_TTM_HELPER
 
-Depending on the timing of the wait queue wakeup vs the handling of the
-last dspi_interrupt, it can happen that the main SPI message pump thread
-has already returned back into the spi_device driver. When the rx buffer
-is on stack (which it can be, because in this mode, the DSPI doesn't do
-DMA), the last interrupt will perform a memory write into an rx buffer
-that has been freed. This manifests as stack corruption.
+Select isn't recursive, which means anyone who selects vram helpers now
+also needs to select ttm helpers. This is already broken with DRM_TTM I
+think ...
+-Daniel
 
-The solution is to only wake up the wait queue when dspi_rxtx says so,
-i.e. after it has processed the last TX confirmation interrupt and
-collected the last RX byte.
 
-Fixes: c55be3059159 ("spi: spi-fsl-dspi: Use poll mode in case the platform IRQ is missing")
-Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
----
- drivers/spi/spi-fsl-dspi.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+>  	help
+>  	  Helpers for VRAM memory management
+>  
+> -- 
+> 2.18.1
+> 
 
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 77db43f1290f..bec758e978fb 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -710,9 +710,7 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
- 	if (!(spi_sr & (SPI_SR_EOQF | SPI_SR_TCFQF)))
- 		return IRQ_NONE;
- 
--	dspi_rxtx(dspi);
--
--	if (!dspi->len) {
-+	if (dspi_rxtx(dspi) == 0) {
- 		dspi->waitflags = 1;
- 		wake_up_interruptible(&dspi->waitq);
- 	}
 -- 
-2.17.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
