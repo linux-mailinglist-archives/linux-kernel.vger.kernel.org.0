@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F15A6566
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:34:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3F1AA6568
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 11:34:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728846AbfICJdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 05:33:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58882 "EHLO
+        id S1728873AbfICJdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 05:33:38 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59100 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728826AbfICJdd (ORCPT
+        with ESMTP id S1728845AbfICJdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 05:33:33 -0400
+        Tue, 3 Sep 2019 05:33:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/RuB2Y6mJ6yOjOgDRUhsi44/HAF7J7Sy140w2tlLVIw=; b=lvZYE7NnhTncnE8kc2S2bOPp8T
-        XP4TqEnjKwTqiLhSJs5SKdKCG2mlNGOVQUws0oh6v/zuLbC7NZVol/TC/K/C2XFEAAMYtyB/yzXo+
-        x1B89wIJdWey7s9W5WQMb4acMPlvSV8tsllQg6UZG+oocc8akKST9L3iXpxxrZEXglSLlnZvU3EpL
-        hs2yACcBpZD6ERU7VApjUBwwDDmHreKYRxStQ3yZ+jk35JD/QtvbkawXmsS+H/sxW77RNu8TTppQj
-        3dONTRnPMowy/geLoZpJl3kYCZKDlpzYiND2V+iQLAFSdfG8jmEfUDMVgCJfb5Oi8VHncotbSumPQ
-        rT580MfQ==;
+        bh=UTFu87w+XEtxou+h9sB6RKxA59A9q/pV/jkzaJrvpcg=; b=fc5MP86CrSTKOzd3QkOriE8h4J
+        YTzk8wtFdxcfgJr5m3fwj4QKfGj/CgNNnldYUl7l4vvhJOi3IR2eloh1YeeXLjvApaw9J9cCA6KU7
+        x4EjITeVgN3gbFGJQ4iKrTZ/9cm+RdNss/OpTq2l05pRpYPfnEa5EbKSEzopoQjXdFIW6+rOkrpc+
+        75DP1x8IGLx2HvhMpO84/Y6wuuUii5gIjxsdwA0hnyuFG6v7GWYIdS4uxmTIe79I52X6YxlvkB72Q
+        PEhp7F25GUb6AOTa8xaSW255NzL+XnyWvYGJp9TEScZWgujVHK1hEIrlX6cUQlAl3uq8kWL9AO6nE
+        GKwZGxrg==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i55Bq-0004wY-2G; Tue, 03 Sep 2019 09:33:30 +0000
+        id 1i55Bt-0004zL-5m; Tue, 03 Sep 2019 09:33:33 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Palmer Dabbelt <palmer@sifive.com>,
         Paul Walmsley <paul.walmsley@sifive.com>
 Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
         linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 19/20] riscv: provide a flat image loader
-Date:   Tue,  3 Sep 2019 11:32:38 +0200
-Message-Id: <20190903093239.21278-20-hch@lst.de>
+Subject: [PATCH 20/20] riscv: disable the EFI PECOFF header for M-mode
+Date:   Tue,  3 Sep 2019 11:32:39 +0200
+Message-Id: <20190903093239.21278-21-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903093239.21278-1-hch@lst.de>
 References: <20190903093239.21278-1-hch@lst.de>
@@ -46,105 +46,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This allows just loading the kernel at a pre-set address without
-qemu going bonkers trying to map the ELF file.
+No point in bloating the kernel image with a bootloader header if
+we run bare metal.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/riscv/Makefile        | 13 +++++++++----
- arch/riscv/boot/Makefile   |  7 ++++++-
- arch/riscv/boot/loader.S   |  8 ++++++++
- arch/riscv/boot/loader.lds | 14 ++++++++++++++
- 4 files changed, 37 insertions(+), 5 deletions(-)
- create mode 100644 arch/riscv/boot/loader.S
- create mode 100644 arch/riscv/boot/loader.lds
+ arch/riscv/kernel/head.S | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/Makefile b/arch/riscv/Makefile
-index a73659e30f8d..bdad38beda78 100644
---- a/arch/riscv/Makefile
-+++ b/arch/riscv/Makefile
-@@ -80,13 +80,18 @@ PHONY += vdso_install
- vdso_install:
- 	$(Q)$(MAKE) $(build)=arch/riscv/kernel/vdso $@
+diff --git a/arch/riscv/kernel/head.S b/arch/riscv/kernel/head.S
+index 102520e4bdc8..5a36c36bc823 100644
+--- a/arch/riscv/kernel/head.S
++++ b/arch/riscv/kernel/head.S
+@@ -16,6 +16,7 @@
  
--all: Image.gz
-+ifeq ($(CONFIG_RISCV_M_MODE),y)
-+KBUILD_IMAGE := $(boot)/loader
-+else
-+KBUILD_IMAGE := $(boot)/Image.gz
-+endif
-+BOOT_TARGETS := Image Image.gz loader
+ __INIT
+ ENTRY(_start)
++#ifndef CONFIG_RISCV_M_MODE
+ 	/*
+ 	 * Image header expected by Linux boot-loaders. The image header data
+ 	 * structure is described in asm/image.h.
+@@ -47,6 +48,7 @@ ENTRY(_start)
  
--Image: vmlinux
--	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-+all:	$(notdir $(KBUILD_IMAGE))
- 
--Image.%: Image
-+$(BOOT_TARGETS): vmlinux
- 	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
-+	@$(kecho) '  Kernel: $(boot)/$@ is ready'
- 
- zinstall install:
- 	$(Q)$(MAKE) $(build)=$(boot) $@
-diff --git a/arch/riscv/boot/Makefile b/arch/riscv/boot/Makefile
-index 0990a9fdbe5d..32d2addeddba 100644
---- a/arch/riscv/boot/Makefile
-+++ b/arch/riscv/boot/Makefile
-@@ -16,7 +16,7 @@
- 
- OBJCOPYFLAGS_Image :=-O binary -R .note -R .note.gnu.build-id -R .comment -S
- 
--targets := Image
-+targets := Image loader
- 
- $(obj)/Image: vmlinux FORCE
- 	$(call if_changed,objcopy)
-@@ -24,6 +24,11 @@ $(obj)/Image: vmlinux FORCE
- $(obj)/Image.gz: $(obj)/Image FORCE
- 	$(call if_changed,gzip)
- 
-+loader.o: $(src)/loader.S $(obj)/Image
-+
-+$(obj)/loader: $(obj)/loader.o $(obj)/Image FORCE
-+	$(Q)$(LD) -T $(src)/loader.lds -o $@ $(obj)/loader.o
-+
- install:
- 	$(CONFIG_SHELL) $(srctree)/$(src)/install.sh $(KERNELRELEASE) \
- 	$(obj)/Image System.map "$(INSTALL_PATH)"
-diff --git a/arch/riscv/boot/loader.S b/arch/riscv/boot/loader.S
-new file mode 100644
-index 000000000000..5586e2610dbb
---- /dev/null
-+++ b/arch/riscv/boot/loader.S
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+	.align 4
-+	.section .payload, "ax", %progbits
-+	.globl _start
-+_start:
-+	.incbin "arch/riscv/boot/Image"
-+
-diff --git a/arch/riscv/boot/loader.lds b/arch/riscv/boot/loader.lds
-new file mode 100644
-index 000000000000..da9efd57bf44
---- /dev/null
-+++ b/arch/riscv/boot/loader.lds
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+OUTPUT_ARCH(riscv)
-+ENTRY(_start)
-+
-+SECTIONS
-+{
-+	. = 0x80000000;
-+
-+	.payload : {
-+		*(.payload)
-+		. = ALIGN(8);
-+	}
-+}
+ .global _start_kernel
+ _start_kernel:
++#endif /* CONFIG_RISCV_M_MODE */
+ 	/* Mask all interrupts */
+ 	csrw CSR_XIE, zero
+ 	csrw CSR_XIP, zero
 -- 
 2.20.1
 
