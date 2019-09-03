@@ -2,42 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92400A6CAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB1E7A6CB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 17:17:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbfICPOx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 11:14:53 -0400
-Received: from mga02.intel.com ([134.134.136.20]:43344 "EHLO mga02.intel.com"
+        id S1729465AbfICPRc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 11:17:32 -0400
+Received: from mga07.intel.com ([134.134.136.100]:9903 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727667AbfICPOx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 11:14:53 -0400
+        id S1728679AbfICPRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 11:17:32 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 08:14:52 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Sep 2019 08:17:31 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,463,1559545200"; 
-   d="scan'208";a="207116288"
+   d="scan'208";a="207117469"
 Received: from ladijant-mobl.amr.corp.intel.com (HELO [10.251.22.158]) ([10.251.22.158])
-  by fmsmga004.fm.intel.com with ESMTP; 03 Sep 2019 08:14:51 -0700
-Subject: Re: [PATCH v2 1/4] x86/mm: Export force_dma_unencrypted
-To:     =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>, dri-devel@lists.freedesktop.org,
-        pv-drivers@vmware.com, linux-graphics-maintainer@vmware.com,
-        linux-kernel@vger.kernel.org
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
+  by fmsmga004.fm.intel.com with ESMTP; 03 Sep 2019 08:17:30 -0700
+Subject: Re: [RFC PATCH v2 0/3] x86/mm/tlb: Defer TLB flushes with PTI
+To:     Nadav Amit <namit@vmware.com>, Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-References: <20190903131504.18935-1-thomas_os@shipmail.org>
- <20190903131504.18935-2-thomas_os@shipmail.org>
+        Ingo Molnar <mingo@redhat.com>
+References: <20190823225248.15597-1-namit@vmware.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -83,12 +73,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <10077630-7081-1e57-adc1-222a8d8044a9@intel.com>
-Date:   Tue, 3 Sep 2019 08:14:51 -0700
+Message-ID: <f63027ae-2e3a-fac0-69f8-bb11c1b680b0@intel.com>
+Date:   Tue, 3 Sep 2019 08:17:30 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190903131504.18935-2-thomas_os@shipmail.org>
+In-Reply-To: <20190823225248.15597-1-namit@vmware.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -97,13 +87,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 9/3/19 6:15 AM, Thomas Hellström (VMware) wrote:
-> The force_dma_unencrypted symbol is needed by TTM to set up the correct
-> page protection when memory encryption is active. Export it.
+On 8/23/19 3:52 PM, Nadav Amit wrote:
+> n_pages		concurrent	+deferred-pti		change
+> -------		----------	-------------		------
+>  1		2119		1986 			-6.7%
+>  10		6791		5417 			 -20%
+> 
+> Please let me know if I missed something that affects security or
+> performance.
 
-It would be great if this had enough background that I didn't have to
-look at patch 4 to figure out what TTM might be.
+Hi Nadav,
 
-Why is TTM special?  How many other drivers would have to be modified in
-a one-off fashion if we go this way?  What's the logic behind this being
-a non-GPL export?
+Is this in a VM or on bare metal?  Could you also share the bare
+/proc/cpuinfo for one of the CPU threads?  I want to make sure that any
+oddities in the stepping or microcode are known.
