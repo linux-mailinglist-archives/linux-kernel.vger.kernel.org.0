@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2554CA6D6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:00:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 102FDA6D70
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729871AbfICQAr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:00:47 -0400
-Received: from mail.efficios.com ([167.114.142.138]:48752 "EHLO
+        id S1729897AbfICQAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:00:52 -0400
+Received: from mail.efficios.com ([167.114.142.138]:48798 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729661AbfICQAq (ORCPT
+        with ESMTP id S1727069AbfICQAq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 3 Sep 2019 12:00:46 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C31962AD040;
-        Tue,  3 Sep 2019 12:00:44 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id 654A42AD057;
+        Tue,  3 Sep 2019 12:00:45 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id EphBwRFn-4t9; Tue,  3 Sep 2019 12:00:43 -0400 (EDT)
+        with ESMTP id 7hkK1hRKA1wf; Tue,  3 Sep 2019 12:00:45 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 9AB5D2AD032;
-        Tue,  3 Sep 2019 12:00:43 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 9AB5D2AD032
+        by mail.efficios.com (Postfix) with ESMTP id D92F62AD048;
+        Tue,  3 Sep 2019 12:00:44 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com D92F62AD048
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1567526443;
-        bh=k5CKeSUxPsj6j/dB1hvkDB9UORtbJi60JtUm4Cx5s6Q=;
+        s=default; t=1567526444;
+        bh=Zqhr/+MbOuomokLdwjrVX2IWsufug4RaFYpEXDeAvVU=;
         h=From:To:Date:Message-Id;
-        b=nv6N8hPPFWUw9zv2Y1vs0FOv/Z2vNJgjPyVnE/nwXvr6QZeHAo99OAT+IIt/CKvmy
-         BVUNlUUvYrtOJ7jcNV+a4ATPIk38xWTTRKJxgypC3hOakSqtg01PgU38FnR/Qnp8HZ
-         CeLEPIgeU9O7psejg7Y9RY2iC3GtBxGKD4NCK22l2td1+b+TYqpbcx68vgayEDbB1u
-         OY9KtlNtR07lMT7NmJJZKH4i5CQarTJCgRcKcJiAqMKLOzOKs0/SzjJia15m//++kF
-         vqfpUs6sq2Pcn3s04Di4PXxIfLgNBgNLKpsWG42Ttnyxqu1oNXQ9rt6uVkSB3g7g5R
-         Fh64SaEsXKWCw==
+        b=lAcoMRpFssL1+ZedFAhjlG+0Dnuw1I+PUEexxmpXS4NWGWnK7iBMJ9E0TZg4KrULa
+         Ef6ZZTtO4R2Oq5dPNhVrfyCJ0GX94Sv/9GY6xd4p0DuWYRcq1cSJ/K4g87OPuyMje+
+         fUQ3lYoG8myPqK0zZFP7SZT8MrCQRQalcQhFgPK+TuIQ02gz9vo5tzYSKd+tiGFDtl
+         03tnxT4ieaqfej+nGFdi8xlsVc0k3tdKvKFOSTQNmP1vbMyOp6x+LtUVmnbftWulfS
+         enMYlycYelXnC++/o+E/StSGSkhq7XM2Mb2r7y5ZSn6WPgpEHlxLbDkcvvUwjNLLyl
+         /wXGtEkHnVOrQ==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 8QqFABYLnlDB; Tue,  3 Sep 2019 12:00:43 -0400 (EDT)
+        with ESMTP id oanwNV4MFyzd; Tue,  3 Sep 2019 12:00:44 -0400 (EDT)
 Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
-        by mail.efficios.com (Postfix) with ESMTPSA id 63B1B2AD024;
+        by mail.efficios.com (Postfix) with ESMTPSA id 943BB2AD02B;
         Tue,  3 Sep 2019 12:00:43 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
@@ -52,9 +52,9 @@ To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@kernel.org>
 Cc:     linux-kernel@vger.kernel.org,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH 1/3] Fix: sched: task_rcu_dereference: check probe_kernel_address return value
-Date:   Tue,  3 Sep 2019 12:00:34 -0400
-Message-Id: <20190903160036.2400-2-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH 2/3] Fix: sched/membarrier: READ_ONCE p->mm in membarrier_global_expedited
+Date:   Tue,  3 Sep 2019 12:00:35 -0400
+Message-Id: <20190903160036.2400-3-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190903160036.2400-1-mathieu.desnoyers@efficios.com>
 References: <20190903160036.2400-1-mathieu.desnoyers@efficios.com>
@@ -63,12 +63,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-probe_kernel_address can return -EFAULT on error, which leads to use of
-an uninitialized or partially initialized sighand variable.
-
-There is ongoing discussion on removing task_rcu_dereference altogether,
-which seems like a nice way forward. This patch is submitted as a fix
-aiming to be backported to prior stable kernel releases.
+Due to the lack of READ_ONCE() on p->mm, this code can in fact turn into
+a NULL deref when we hit do_exit() around exit_mm(). The first p->mm
+read is before and sees !NULL, the second is after and does observe
+NULL, which triggers a null pointer dereference.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
@@ -83,23 +81,35 @@ Cc: Mike Galbraith <efault@gmx.de>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/exit.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ kernel/sched/membarrier.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 5b4a5dcce8f8..b1c3e1ba501c 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -249,7 +249,8 @@ struct task_struct *task_rcu_dereference(struct task_struct **ptask)
- 	if (!task)
- 		return NULL;
+diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
+index aa8d75804108..02feb7c8da4f 100644
+--- a/kernel/sched/membarrier.c
++++ b/kernel/sched/membarrier.c
+@@ -72,12 +72,16 @@ static int membarrier_global_expedited(void)
  
--	probe_kernel_address(&task->sighand, sighand);
-+	if (probe_kernel_address(&task->sighand, sighand))
-+		sighand = NULL;
- 
- 	/*
- 	 * Pairs with atomic_dec_and_test() in put_task_struct(). If this task
+ 		rcu_read_lock();
+ 		p = task_rcu_dereference(&cpu_rq(cpu)->curr);
+-		if (p && p->mm && (atomic_read(&p->mm->membarrier_state) &
++		if (p) {
++			struct mm_struct *mm = READ_ONCE(p->mm);
++
++			if (mm && (atomic_read(&mm->membarrier_state) &
+ 				   MEMBARRIER_STATE_GLOBAL_EXPEDITED)) {
+-			if (!fallback)
+-				__cpumask_set_cpu(cpu, tmpmask);
+-			else
+-				smp_call_function_single(cpu, ipi_mb, NULL, 1);
++				if (!fallback)
++					__cpumask_set_cpu(cpu, tmpmask);
++				else
++					smp_call_function_single(cpu, ipi_mb, NULL, 1);
++			}
+ 		}
+ 		rcu_read_unlock();
+ 	}
 -- 
 2.17.1
 
