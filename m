@@ -2,236 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AFC7A6238
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:06:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C918A621C
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:00:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbfICHGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 03:06:39 -0400
-Received: from mail-sh.amlogic.com ([58.32.228.43]:19737 "EHLO
-        mail-sh.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbfICHGh (ORCPT
+        id S1727604AbfICHA0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 03:00:26 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41912 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfICHA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 03:06:37 -0400
-X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Tue, 03 Sep 2019 03:06:26 EDT
-Received: from droid13.amlogic.com (116.236.93.172) by mail-sh.amlogic.com
- (10.18.11.5) with Microsoft SMTP Server id 15.1.1591.10; Tue, 3 Sep 2019
- 14:52:14 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        <linux-amlogic@lists.infradead.org>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Carlo Caione <carlo@caione.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Tao Zeng <tao.zeng@amlogic.com>
-Subject: [PATCH 4/4] arm64: dts: add support for A1 based Amlogic AD401
-Date:   Tue, 3 Sep 2019 02:51:15 -0400
-Message-ID: <1567493475-75451-5-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567493475-75451-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1567493475-75451-1-git-send-email-jianxin.pan@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [116.236.93.172]
+        Tue, 3 Sep 2019 03:00:26 -0400
+Received: by mail-pg1-f193.google.com with SMTP id x15so8585521pgg.8
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 00:00:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=a26K1G4II4kSTCpPaGf8xIGxYORQ0ipUth+fFd+YiK8=;
+        b=UPU7L+KPhHP8odNhmO413net+8H+PjG3HBOL/x+TlXWTBUfqXIFOLxkNVDYSLJ2XLe
+         k9CtHzOGplSirS4CWcPWtl842R/pPk47Eop6wdsFo4tN1YtN3GJAZLlVR/fZYhF2EQe5
+         p6tuFG2kTLwUv2RGrYI5KUNKLA2OGq9RhwJdUPsO75BHOU/1VVqp2+JHXBuFskppDtTb
+         PqRtJF0EHcewXECVEwFz14qPujJgvMSCAc0VEIYb8oW8Uya94HLV3S8J2nhymFrGPd7k
+         5uz187MHG68fKQRwD8q1XQEUZ0EEGwVFqS1SWgmrXpEvrSMWIbOM0dRM4rypz/N2QO+7
+         fKCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=a26K1G4II4kSTCpPaGf8xIGxYORQ0ipUth+fFd+YiK8=;
+        b=tZyYMmQv0bUL3ETjcTO3l0V9N5sY7P7MTa7FdN5dfX8IflK0rkgt94Uu8ohRzKPbm8
+         dp9D6OxptfPjgWQhxg9TW9mPpywpDWHDijc5s7XVeoaB+3HBucCgfLiTleBvdRrK2Ecm
+         DmO2+J0V47gvqYjn+Nvk0XKNWk1CQ9TT1et0cZEq4pSS/EyiKoP9gNtCi5qLdy6D+vH2
+         MKtFnUrEKOl57Lc+caVNofA9da3k8G1i0LQUBnYgsDd+hOAxCcq0CAz+gY9V9UlRQFf8
+         uLSZAD6baW9xExykQTS52XMPSlm3LKW/HEzw5ZFPY7Gpp94D3YYfDYon2Xj/qLAmXFmz
+         jSrg==
+X-Gm-Message-State: APjAAAX7H5n9aG2OppUOdsvNigWuR6BcVya4e9Bs7mea9HxgmN4EZmKh
+        BCMQPc78/kazKnYrtRCX+a78wJBG9AHyzQ==
+X-Google-Smtp-Source: APXvYqymysOYUOCz8E4NKrZC4xIqdnSdzUBf34OpeOICcOfXYKfVlxK0NwEJqCB3TAzP2fUb9Xdx0g==
+X-Received: by 2002:a17:90a:32c8:: with SMTP id l66mr16676286pjb.44.1567494025517;
+        Tue, 03 Sep 2019 00:00:25 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id t12sm13376138pfe.58.2019.09.03.00.00.22
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 03 Sep 2019 00:00:25 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     stable@vger.kernel.org, sre@kernel.org
+Cc:     david@lechnology.com, linux-pm@vger.kernel.org, arnd@arndb.de,
+        baolin.wang@linaro.org, orsonzhai@gmail.com,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
+Subject: [BACKPORT 4.14.y 6/8] power: supply: sysfs: ratelimit property read error message
+Date:   Tue,  3 Sep 2019 14:59:59 +0800
+Message-Id: <582e968f59d6ece6de33c3e4f3d65c5e4a198fa1.1567492316.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1567492316.git.baolin.wang@linaro.org>
+References: <cover.1567492316.git.baolin.wang@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add basic support for the Amlogic A1 based Amlogic AD401 board:
-which describe components as follows: Reserve Memory, CPU, GIC, IRQ,
-Timer, UART. It's capable of booting up into the serial console.
+From: David Lechner <david@lechnology.com>
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+This adds rate limiting to the message that is printed when reading a
+power supply property via sysfs returns an error. This will prevent
+userspace applications from unintentionally dDOSing the system by
+continuously reading a property that returns an error.
+
+Signed-off-by: David Lechner <david@lechnology.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- arch/arm64/boot/dts/amlogic/Makefile           |   1 +
- arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts |  30 ++++++
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi      | 121 +++++++++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
- create mode 100644 arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+ drivers/power/supply/power_supply_sysfs.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index edbf128..1720c45 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -36,3 +36,4 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-sm1-sei610.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-sm1-khadas-vim3l.dtb
-+dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts b/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
-new file mode 100644
-index 00000000..3c05cc0
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1-ad401.dts
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "meson-a1.dtsi"
-+
-+/ {
-+	compatible = "amlogic,ad401", "amlogic,a1";
-+	model = "Amlogic Meson A1 AD401 Development Board";
-+
-+	aliases {
-+		serial0 = &uart_AO_B;
-+	};
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+	memory@0 {
-+		device_type = "memory";
-+		linux,usable-memory = <0x0 0x0 0x0 0x8000000>;
-+	};
-+};
-+
-+&uart_AO_B {
-+	status = "okay";
-+	/*pinctrl-0 = <&uart_ao_a_pins>;*/
-+	/*pinctrl-names = "default";*/
-+};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-new file mode 100644
-index 00000000..b98d648
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -0,0 +1,121 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "amlogic,a1";
-+
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <0x2>;
-+		#size-cells = <0x0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a35";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a35";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			next-level-cache = <&l2>;
-+		};
-+
-+		l2: l2-cache0 {
-+			compatible = "cache";
-+		};
-+	};
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			reusable;
-+			size = <0x0 0x800000>;
-+			alignment = <0x0 0x400000>;
-+			linux,cma-default;
-+		};
-+	};
-+
-+	sm: secure-monitor {
-+		compatible = "amlogic,meson-gxbb-sm";
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		uart_AO: serial@fe001c00 {
-+			compatible = "amlogic,meson-gx-uart",
-+				     "amlogic,meson-ao-uart";
-+			reg = <0x0 0xfe001c00 0x0 0x18>;
-+			interrupts = <GIC_SPI 25 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&xtal>, <&xtal>, <&xtal>;
-+			clock-names = "xtal", "pclk", "baud";
-+			status = "disabled";
-+		};
-+
-+		uart_AO_B: serial@fe002000 {
-+			compatible = "amlogic,meson-gx-uart",
-+				     "amlogic,meson-ao-uart";
-+				     reg = <0x0 0xfe002000 0x0 0x18>;
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&xtal>, <&xtal>, <&xtal>;
-+			clock-names = "xtal", "pclk", "baud";
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@ff901000 {
-+			compatible = "arm,gic-400";
-+			reg = <0x0 0xff901000 0x0 0x1000>,
-+			      <0x0 0xff902000 0x0 0x2000>,
-+			      <0x0 0xff904000 0x0 0x2000>,
-+			      <0x0 0xff906000 0x0 0x2000>;
-+			interrupt-controller;
-+			interrupts = <GIC_PPI 9
-+				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+			(GIC_CPU_MASK_RAW(0xff) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	xtal: xtal-clk {
-+		compatible = "fixed-clock";
-+		clock-frequency = <24000000>;
-+		clock-output-names = "xtal";
-+		#clock-cells = <0>;
-+	};
-+};
+diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+index eb5dc74..2ccaf4f 100644
+--- a/drivers/power/supply/power_supply_sysfs.c
++++ b/drivers/power/supply/power_supply_sysfs.c
+@@ -91,7 +91,8 @@ static ssize_t power_supply_show_property(struct device *dev,
+ 				dev_dbg(dev, "driver has no data for `%s' property\n",
+ 					attr->attr.name);
+ 			else if (ret != -ENODEV && ret != -EAGAIN)
+-				dev_err(dev, "driver failed to report `%s' property: %zd\n",
++				dev_err_ratelimited(dev,
++					"driver failed to report `%s' property: %zd\n",
+ 					attr->attr.name, ret);
+ 			return ret;
+ 		}
 -- 
-2.7.4
+1.7.9.5
 
