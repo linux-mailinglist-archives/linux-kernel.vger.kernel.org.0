@@ -2,133 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 220CAA6EE5
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0056A6ECB
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:29:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730760AbfICQ3U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:29:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730333AbfICQ3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:29:18 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E06EC238C5;
-        Tue,  3 Sep 2019 16:29:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528156;
-        bh=SMG6crDeDLKZ8Wa1i6tr98xOE7QNGjkD2lNR624+nXQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F1NDXQEQLKGTL35X0VYSQ/VSAVEqVTs491ZtuNKKiBCZ+YNn/MGD+GtW5JekTlscZ
-         D6+rNSyAGxryq1b+fNmBMgyVS9EJXu1rV1Ae85tNqcNHcY59f1QYNp6HBgy4SLD4sV
-         oDIwryH/4QUFv1273WB8oq/N13MCkpTmD7KIidBY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>, Borislav Petkov <bp@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Lianbo Jiang <lijiang@redhat.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>, bhe@redhat.com,
-        dyoung@redhat.com, kexec@lists.infradead.org, mingo@redhat.com,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 142/167] resource: Include resource end in walk_*() interfaces
-Date:   Tue,  3 Sep 2019 12:24:54 -0400
-Message-Id: <20190903162519.7136-142-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
-References: <20190903162519.7136-1-sashal@kernel.org>
+        id S1731140AbfICQ2l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:28:41 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:36526 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfICQ2c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:28:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=A01EoZVAbENBU2ODnei5aZC/eSyCxIe7RviRDSpgglA=; b=oCJ92zCv0vaLqsiIF+BEQ5E5E
+        8tWg574OR1tXDNAdgxaEW9ZOtC9RgXU1YeUw55xOc80zTVRnxZCyUCNLfBkNAZiwoSCt+KyE7f7Kk
+        ECF8MrNiznXkAufY1RvmwEc4odtOEh9+oHbf3hsI4VKg4VwUYZq5xwAupL2R1uln6DSGhJXwYQuI8
+        RZQyCR8PGBPL7nxrArCSdqjcBVWN6LLgHZFUTqJMg7UzRJqLSd6mxYw8FwJFmVgpPJ2xIqwp5z5fm
+        /eE8MkNJ96Iu/HNE71eque6R66Ku7pz2Xo1iouPfCUsPb8CZ13tGOYrgSNMyfPJp/XL4BMK5TpA+i
+        lQqXK0fyg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i5BfT-000149-Ek; Tue, 03 Sep 2019 16:28:31 +0000
+Date:   Tue, 3 Sep 2019 09:28:31 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     William Kucharski <william.kucharski@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        Bob Kasten <robert.a.kasten@intel.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Chad Mynhier <chad.mynhier@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Johannes Weiner <jweiner@fb.com>
+Subject: Re: [PATCH v5 1/2] mm: Allow the page cache to allocate large pages
+Message-ID: <20190903162831.GI29434@bombadil.infradead.org>
+References: <20190902092341.26712-1-william.kucharski@oracle.com>
+ <20190902092341.26712-2-william.kucharski@oracle.com>
+ <20190903115748.GS14028@dhcp22.suse.cz>
+ <20190903121155.GD29434@bombadil.infradead.org>
+ <20190903121952.GU14028@dhcp22.suse.cz>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903121952.GU14028@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Tue, Sep 03, 2019 at 02:19:52PM +0200, Michal Hocko wrote:
+> On Tue 03-09-19 05:11:55, Matthew Wilcox wrote:
+> > On Tue, Sep 03, 2019 at 01:57:48PM +0200, Michal Hocko wrote:
+> > > On Mon 02-09-19 03:23:40, William Kucharski wrote:
+> > > > Add an 'order' argument to __page_cache_alloc() and
+> > > > do_read_cache_page(). Ensure the allocated pages are compound pages.
+> > > 
+> > > Why do we need to touch all the existing callers and change them to use
+> > > order 0 when none is actually converted to a different order? This just
+> > > seem to add a lot of code churn without a good reason. If anything I
+> > > would simply add __page_cache_alloc_order and make __page_cache_alloc
+> > > call it with order 0 argument.
+> > 
+> > Patch 2/2 uses a non-zero order.
+> 
+> It is a new caller and it can use a new function right?
+> 
+> > I agree it's a lot of churn without
+> > good reason; that's why I tried to add GFP_ORDER flags a few months ago.
+> > Unfortunately, you didn't like that approach either.
+> 
+> Is there any future plan that all/most __page_cache_alloc will get a
+> non-zero order argument?
 
-[ Upstream commit a98959fdbda1849a01b2150bb635ed559ec06700 ]
+I'm not sure about "most".  It will certainly become more common, as
+far as I can tell.
 
-find_next_iomem_res() finds an iomem resource that covers part of a range
-described by "start, end".  All callers expect that range to be inclusive,
-i.e., both start and end are included, but find_next_iomem_res() doesn't
-handle the end address correctly.
+> > > Also is it so much to ask callers to provide __GFP_COMP explicitly?
+> > 
+> > Yes, it's an unreasonable burden on the callers.
+> 
+> Care to exaplain why? __GFP_COMP tends to be used in the kernel quite
+> extensively.
 
-If it finds an iomem resource that contains exactly the end address, it
-skips it, e.g., if "start, end" is [0x0-0x10000] and there happens to be an
-iomem resource [mem 0x10000-0x10000] (the single byte at 0x10000), we skip
-it:
-
-  find_next_iomem_res(...)
-  {
-    start = 0x0;
-    end = 0x10000;
-    for (p = next_resource(...)) {
-      # p->start = 0x10000;
-      # p->end = 0x10000;
-      # we *should* return this resource, but this condition is false:
-      if ((p->end >= start) && (p->start < end))
-        break;
-
-Adjust find_next_iomem_res() so it allows a resource that includes the
-single byte at the end of the range.  This is a corner case that we
-probably don't see in practice.
-
-Fixes: 58c1b5b07907 ("[PATCH] memory hotadd fixes: find_next_system_ram catch range fix")
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Brijesh Singh <brijesh.singh@amd.com>
-CC: Dan Williams <dan.j.williams@intel.com>
-CC: H. Peter Anvin <hpa@zytor.com>
-CC: Lianbo Jiang <lijiang@redhat.com>
-CC: Takashi Iwai <tiwai@suse.de>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Tom Lendacky <thomas.lendacky@amd.com>
-CC: Vivek Goyal <vgoyal@redhat.com>
-CC: Yaowei Bai <baiyaowei@cmss.chinamobile.com>
-CC: bhe@redhat.com
-CC: dan.j.williams@intel.com
-CC: dyoung@redhat.com
-CC: kexec@lists.infradead.org
-CC: mingo@redhat.com
-CC: x86-ml <x86@kernel.org>
-Link: http://lkml.kernel.org/r/153805812254.1157.16736368485811773752.stgit@bhelgaas-glaptop.roam.corp.google.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/resource.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/resource.c b/kernel/resource.c
-index 30e1bc68503b5..155ec873ea4d1 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -319,7 +319,7 @@ int release_resource(struct resource *old)
- EXPORT_SYMBOL(release_resource);
- 
- /*
-- * Finds the lowest iomem resource existing within [res->start.res->end).
-+ * Finds the lowest iomem resource existing within [res->start..res->end].
-  * The caller must specify res->start, res->end, res->flags, and optionally
-  * desc.  If found, returns 0, res is overwritten, if not found, returns -1.
-  * This function walks the whole tree and not just first level children until
-@@ -352,7 +352,7 @@ static int find_next_iomem_res(struct resource *res, unsigned long desc,
- 			p = NULL;
- 			break;
- 		}
--		if ((p->end >= start) && (p->start < end))
-+		if ((p->end >= start) && (p->start <= end))
- 			break;
- 	}
- 
--- 
-2.20.1
+Most of the places which call this function get their gfp_t from
+mapping->gfp_mask.  If we only want to allocate a single page, we
+must not set __GFP_COMP.  If we want to allocate a large page, we must
+set __GFP_COMP.  Rather than require individual filesystems to concern
+themselves with this wart of the GFP interface, we can solve it in the
+page cache.
 
