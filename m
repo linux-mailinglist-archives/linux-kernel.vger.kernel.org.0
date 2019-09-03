@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 75AA5A6B3E
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:22:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDC71A6B47
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:23:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfICOWv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:22:51 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39845 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729630AbfICOWr (ORCPT
+        id S1729685AbfICOW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:22:59 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34418 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729633AbfICOWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:22:47 -0400
-Received: by mail-lf1-f67.google.com with SMTP id l11so13050552lfk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:45 -0700 (PDT)
+        Tue, 3 Sep 2019 10:22:48 -0400
+Received: by mail-lf1-f65.google.com with SMTP id z21so13064740lfe.1
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hUKvWKooE3Nr2LfWI7qknPBybhkMjg8O69FVSs9vXkc=;
-        b=IyCgQPw2ykZcke64WeocrNRFfaD/9n4LX7jp4OolaJu1chstHr8JQY7az9MsM2LHfu
-         8LnV9+FB2P45atdwxzfs9q/98aYbBbqFB5/0BxMEdS//a2gDnHY/GYf8z0Qp5EBNSK85
-         IIJ7o+AfG0+am8hlLHi+fYcB7rdS3ni89UoSdaaIUQ7vTBikpGzly3mo3OcRApe7OwGQ
-         twMGIlge9iU3ldpxwXFOFGJcklC/73gUGANUrHanqOveSb0DgprvK6HLjkK2NFnak9YP
-         X3XrGDU2OW5ywt4hKN45BGBzSvIzXn5Pspth/FugIwTE4wJW1Otk2zU2/sS0ea0xxdFt
-         askQ==
+        bh=oRUCHCrSXAlVd+d5h26u6KUeDoevWOErPZA9CCjpQxk=;
+        b=cuSTDxro2oT3broDfM4Vhr93npdKcTrzQwf/hurN/LzTaOclC+JagWmOYz8XhLpzp1
+         WQfMy9rnaUZWsyQJ2l0461oXe37BJnCpWuYs2kyrijCXRdsx7onpMgb3djgBof//Yh6k
+         TE7eq/LEiVO1FXLbK6yNgRwFuzlA8aZOe1WBgrM2i/W1seNF+h/tBzhoyQKVAb0XfH9x
+         siDR1HffQVdt+yQmle0S3R6LFECw7C5/ni/D5ULuKwwCKg/MGpyU+NJaIhY+WcM6uNxw
+         V5c/yQAX+33zQRNvcNGYfO3vCrMHdFTlGzCDKZtpZET7N3SUkhWtkU2A5MMP8Z0NmHvk
+         /a7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=hUKvWKooE3Nr2LfWI7qknPBybhkMjg8O69FVSs9vXkc=;
-        b=QVRxM+V/gvMuHlDWNlFCwh6a/Dr4j7jGmCNbfck7rJB/EIP+SSe/iajgSvslg+oX7O
-         PnCPRvjueuiC+b11EupGk+E5T46gc3jKS9cZVq4IIfwqs7+J0TIcM4eXb6J7rmhKCIg/
-         gEJhmTzCJ6fub8T4rWUZBNLxpmoCQSKuuJludz0/noxo+yPXxUPzQUAZHdlTqWuay+sq
-         MEGPX10/JkEZUQZnKPislNKJ3nbzPKNcJiUeVpw51Jy8ROH7M/O6O3ozVN+i7AemMVnQ
-         npwKPk4bJSzkOn6b7/EephSZK9d2r0U92I8VKhEz66/JV12fS1hdjVeYupDCTCT93UEK
-         pHpQ==
-X-Gm-Message-State: APjAAAV7XYF5aWyk/nOsnwUcz3aTTCfXnffdyuVmRFjOgOGtZ1BKfvPF
-        Dv8Qgkk5nGAGy/iQvqElSp8eeQ==
-X-Google-Smtp-Source: APXvYqxdOyp0rTA+keK8Vz0OkfEJsyNPg/rV68LgoYLikCASTYSTPK8ZKcshiuJ0b1rvVD46hW0z+g==
-X-Received: by 2002:ac2:5633:: with SMTP id b19mr4772155lff.103.1567520565203;
-        Tue, 03 Sep 2019 07:22:45 -0700 (PDT)
+        bh=oRUCHCrSXAlVd+d5h26u6KUeDoevWOErPZA9CCjpQxk=;
+        b=bcJncCesCYDQy+dLhgtrMzzNK6Jti8bxqUX0dRUi5DrjEvmBumcqcbGTf+Xf4QbVFT
+         XoMy9RBldEHF2R5kkBMPgk+vm62MmhfdLFLfc7kAD6+RgXjgSYfhPzAS+QQ6QLLrqEdO
+         p7CUIlQVk3/49djD0gTrwn2Uwyrhl+LuDa2nUYKz2SeGy4YAurELYhAd5mUW/0ZTWfN1
+         0T8gqu/tBDuL3xLy5x76OdrqCVrJdIuY3NGUdHu00jko6oJFOzA9m49oFbIHpS9cp6Zd
+         mpZC7oJV1MCAU8ikT5Qfn3V8f44Qx4dh+nqfpqWQYOvoaSSHOsya7wImh1rdHga9/aZR
+         5ouw==
+X-Gm-Message-State: APjAAAVdhnNS/9ZvsXpc1aW1l+/Hy57L0gLPfy7RDeIBnH4wkqv6E/jh
+        ZGqrrJIEc0y6Gjj7L7HvR0kiTQ==
+X-Google-Smtp-Source: APXvYqxulXC0EVgK6/kIKcgM16qMgDbBItv63++f/7a5797d7tuL/bpKNSln0qr1e0rf25vagSHLrQ==
+X-Received: by 2002:a05:6512:499:: with SMTP id v25mr16750469lfq.30.1567520566370;
+        Tue, 03 Sep 2019 07:22:46 -0700 (PDT)
 Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id v10sm2430862ljc.64.2019.09.03.07.22.44
+        by smtp.gmail.com with ESMTPSA id v10sm2430862ljc.64.2019.09.03.07.22.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 07:22:44 -0700 (PDT)
+        Tue, 03 Sep 2019 07:22:45 -0700 (PDT)
 From:   Ulf Hansson <ulf.hansson@linaro.org>
 To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
@@ -54,9 +54,9 @@ Cc:     Shawn Lin <shawn.lin@rock-chips.com>,
         Yong Mao <yong.mao@mediatek.com>,
         Chaotian Jing <chaotian.jing@mediatek.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 09/11] mmc: sdhci: Drop redundant check in sdhci_ack_sdio_irq()
-Date:   Tue,  3 Sep 2019 16:22:05 +0200
-Message-Id: <20190903142207.5825-10-ulf.hansson@linaro.org>
+Subject: [PATCH 10/11] mmc: sdhci: Drop redundant code for SDIO IRQs
+Date:   Tue,  3 Sep 2019 16:22:06 +0200
+Message-Id: <20190903142207.5825-11-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190903142207.5825-1-ulf.hansson@linaro.org>
 References: <20190903142207.5825-1-ulf.hansson@linaro.org>
@@ -65,29 +65,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sdhci_ack_sdio_irq() is called only when SDIO IRQs are enabled.
-Therefore, let's drop the redundant check of the internal
-SDHCI_SDIO_IRQ_ENABLED flag and just re-enable the IRQs immediately.
+Nowadays sdhci prevents runtime suspend when SDIO IRQs are enabled.
+
+However, some variants such as sdhci-esdhc-imx's, tries to allow runtime
+suspend while having the SDIO IRQs enabled, but without supporting remote
+wakeups. This support is a bit questionable, especially if the host device
+have a PM domain attached that can be power gated, but more importantly,
+the code have also become redundant (which was not the case when it was
+introduced).
+
+Rather than keeping the redundant code around, let's drop it and leave this
+to be revisited later on.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/mmc/host/sdhci.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/mmc/host/sdhci-esdhc-imx.c | 34 +++++++++++++-----------------
+ drivers/mmc/host/sdhci.c           |  2 +-
+ drivers/mmc/host/sdhci.h           |  5 -----
+ 3 files changed, 16 insertions(+), 25 deletions(-)
 
+diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
+index 776a94216248..1c988d6a2433 100644
+--- a/drivers/mmc/host/sdhci-esdhc-imx.c
++++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+@@ -1666,12 +1666,10 @@ static int sdhci_esdhc_runtime_suspend(struct device *dev)
+ 	if (host->tuning_mode != SDHCI_TUNING_MODE_3)
+ 		mmc_retune_needed(host->mmc);
+ 
+-	if (!sdhci_sdio_irq_enabled(host)) {
+-		imx_data->actual_clock = host->mmc->actual_clock;
+-		esdhc_pltfm_set_clock(host, 0);
+-		clk_disable_unprepare(imx_data->clk_per);
+-		clk_disable_unprepare(imx_data->clk_ipg);
+-	}
++	imx_data->actual_clock = host->mmc->actual_clock;
++	esdhc_pltfm_set_clock(host, 0);
++	clk_disable_unprepare(imx_data->clk_per);
++	clk_disable_unprepare(imx_data->clk_ipg);
+ 	clk_disable_unprepare(imx_data->clk_ahb);
+ 
+ 	if (imx_data->socdata->flags & ESDHC_FLAG_PMQOS)
+@@ -1695,15 +1693,15 @@ static int sdhci_esdhc_runtime_resume(struct device *dev)
+ 	if (err)
+ 		goto remove_pm_qos_request;
+ 
+-	if (!sdhci_sdio_irq_enabled(host)) {
+-		err = clk_prepare_enable(imx_data->clk_per);
+-		if (err)
+-			goto disable_ahb_clk;
+-		err = clk_prepare_enable(imx_data->clk_ipg);
+-		if (err)
+-			goto disable_per_clk;
+-		esdhc_pltfm_set_clock(host, imx_data->actual_clock);
+-	}
++	err = clk_prepare_enable(imx_data->clk_per);
++	if (err)
++		goto disable_ahb_clk;
++
++	err = clk_prepare_enable(imx_data->clk_ipg);
++	if (err)
++		goto disable_per_clk;
++
++	esdhc_pltfm_set_clock(host, imx_data->actual_clock);
+ 
+ 	err = sdhci_runtime_resume_host(host, 0);
+ 	if (err)
+@@ -1715,11 +1713,9 @@ static int sdhci_esdhc_runtime_resume(struct device *dev)
+ 	return err;
+ 
+ disable_ipg_clk:
+-	if (!sdhci_sdio_irq_enabled(host))
+-		clk_disable_unprepare(imx_data->clk_ipg);
++	clk_disable_unprepare(imx_data->clk_ipg);
+ disable_per_clk:
+-	if (!sdhci_sdio_irq_enabled(host))
+-		clk_disable_unprepare(imx_data->clk_per);
++	clk_disable_unprepare(imx_data->clk_per);
+ disable_ahb_clk:
+ 	clk_disable_unprepare(imx_data->clk_ahb);
+ remove_pm_qos_request:
 diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index c1ebc26846db..2a9be044448a 100644
+index 2a9be044448a..a7df22ed65aa 100644
 --- a/drivers/mmc/host/sdhci.c
 +++ b/drivers/mmc/host/sdhci.c
-@@ -2161,8 +2161,7 @@ static void sdhci_ack_sdio_irq(struct mmc_host *mmc)
- 	unsigned long flags;
+@@ -3046,7 +3046,7 @@ static irqreturn_t sdhci_irq(int irq, void *dev_id)
  
- 	spin_lock_irqsave(&host->lock, flags);
--	if (host->flags & SDHCI_SDIO_IRQ_ENABLED)
--		sdhci_enable_sdio_irq_nolock(host, true);
-+	sdhci_enable_sdio_irq_nolock(host, true);
- 	spin_unlock_irqrestore(&host->lock, flags);
+ 	spin_lock(&host->lock);
+ 
+-	if (host->runtime_suspended && !sdhci_sdio_irq_enabled(host)) {
++	if (host->runtime_suspended) {
+ 		spin_unlock(&host->lock);
+ 		return IRQ_NONE;
+ 	}
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index cf3d1ed91909..8effaac61c3a 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -753,11 +753,6 @@ static inline void sdhci_read_caps(struct sdhci_host *host)
+ 	__sdhci_read_caps(host, NULL, NULL, NULL);
  }
  
+-static inline bool sdhci_sdio_irq_enabled(struct sdhci_host *host)
+-{
+-	return !!(host->flags & SDHCI_SDIO_IRQ_ENABLED);
+-}
+-
+ u16 sdhci_calc_clk(struct sdhci_host *host, unsigned int clock,
+ 		   unsigned int *actual_clock);
+ void sdhci_set_clock(struct sdhci_host *host, unsigned int clock);
 -- 
 2.17.1
 
