@@ -2,97 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D92F8A677C
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 13:37:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C252BA6788
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 13:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbfICLg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 07:36:59 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46383 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728979AbfICLgy (ORCPT
+        id S1729044AbfICLh4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 07:37:56 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46104 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729025AbfICLh4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 07:36:54 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h7so15769693wrt.13
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 04:36:53 -0700 (PDT)
+        Tue, 3 Sep 2019 07:37:56 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q5so2747304pfg.13;
+        Tue, 03 Sep 2019 04:37:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9KHg7Qe2ES8vkKFWvrCHSGJdsSSlcK8bcwIxUgcjXNM=;
-        b=uYPuC0yVQGlcY2cTAR5JGAnD5f2N1lZR4isNU72syvJSAYwVtciTX7bqqDdw2BvR7i
-         JLKZ19hueQKoiIP5/2imTa6n2YbhWYxYPl3RjTCWdicnvkkeFTC+WQT0bDPD8yhI10J/
-         yftzHRMVwND/+L70ex2h5fnZjX995Qo8yVg2vEjjan6rWeAblQBbFz+eUh5BT+evLMqJ
-         7SAjxQ7Aq28+4bX6+0rkkQDX45fIlOqlxaOxWYVpUWy0p/68DUoV8tSy8RXvpkOMAPl1
-         jwkaveo27gIfLpaRnTCmlicPnPu8rsKSvjE/BiHMxoZAwPd64BOAy0ZUGcv/fsqFTDA+
-         sKOA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NVdJdOAmZ0hGRuynRqiYY+kOL59PW+u7NGSvQi3VwYs=;
+        b=eHM8cp4ihsKGLyApe2LHYWhPFemeX8QNSzZr3hpo6gJWwTRjfG8ULLup/PcLmFz2L2
+         T5KUwoZmaXL4Eke2nJFQs20/Wo6eJCBJ51es1m6Ovq5iWbRJw7j6EKqX29dqD1y2uKp2
+         V89HpB+BNLwlyyearYVpGXdYM4qVUD0+i1h6+nez2rZ6dptyoQjf57FwzbOyRHHu9+yD
+         hLw4f20VFxI3+Mvvo7VZxmNYXRqi117G3RnyGiP4eu+ZFCTjzvy48+FSouCOooq7lPGb
+         jBNzSBE03TVmlhVf/4on95nCmSD5utEDQtksDhbYb+jVo/WtfG3c2vkyOrMryjycrpzV
+         AuFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=9KHg7Qe2ES8vkKFWvrCHSGJdsSSlcK8bcwIxUgcjXNM=;
-        b=rWy5eofOIJjZXBe11SWL0a9nlvxYYAJ6wQCvgqFH4mzQPbynkylHsjqEa4ofzMB7gA
-         vp1q3v6mwzHIEVdq9FMD4weJfrAp3IMQsvZpVghESN0t6KRf7HG5kcTQdHVtdQ010k4G
-         u663rJNxSEIWr2KWy6fuStwUGbjyh5BDlnZ+W53X/HC1dKwgp/Z28UiEX89SXyVvK21A
-         A6IeBu527myprMjNL5LKQW22qsTXEwY1BS0GI6N5eIgmsD/DtddGkvTuD4PgXdjIm/Rx
-         68vIElnHfpsPLQNFw+IoGh8e4Q81Cu2SjXWE1F2rweVjyn9cUkgp47W0zagUl5rQtysR
-         EXFQ==
-X-Gm-Message-State: APjAAAV/aJ1mzXioxO/2H/EZSI71tbe6mmj5Wl98I45SxNRIeeMshWoc
-        7NHXhPYrb5gJ8VoBWnPucmxryR1/KDSBKw==
-X-Google-Smtp-Source: APXvYqxH3YjlOc0QiUvufW8q79U+uj37cujkxwcAjATvhnH7t23jzxkO+dFnCBlBh+/2zAahJaCltA==
-X-Received: by 2002:adf:fcc1:: with SMTP id f1mr12863956wrs.308.1567510612755;
-        Tue, 03 Sep 2019 04:36:52 -0700 (PDT)
-Received: from localhost.localdomain (ip5b4096c3.dynamic.kabel-deutschland.de. [91.64.150.195])
-        by smtp.gmail.com with ESMTPSA id y186sm32950067wmd.26.2019.09.03.04.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 04:36:52 -0700 (PDT)
-From:   Krzysztof Wilczynski <kw@linux.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Guo Ren <guoren@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] csky: Move static keyword to the front of declaration
-Date:   Tue,  3 Sep 2019 13:36:51 +0200
-Message-Id: <20190903113651.3862-1-kw@linux.com>
-X-Mailer: git-send-email 2.23.0
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NVdJdOAmZ0hGRuynRqiYY+kOL59PW+u7NGSvQi3VwYs=;
+        b=B5a2BT+Lad+Nr7L1GmbH7M9wLTsq2k4IXnn1WqUNt/aPXepGco8IOpYBmTUmWasdJE
+         lS8vEuC3GAOaoOuCMN4/AC2Fmgt/OQaLpqN42VBhZoOvFd9fTtAXf1nC+sLuWqvB6bmH
+         uXCCUFzGKQpUU355CUi2g2nY605bWuCpFzl5SJe3LnkxfJXjCgHs5kW3EkUwCnxyoq17
+         I2P69YzSBiCSeIichOOqK/4jtKFWW9aSutMjlfEgv7IneUcJ4AaWkYnD0C3UQnQUl13/
+         2M4RTSXA2mWVRtk+ReipOaolL5kfxI6MP1RJ3wxQgxLJDILD4KxgzcAYKUd7x855tZyZ
+         WgTQ==
+X-Gm-Message-State: APjAAAVbqH0yxPfGwGBuQsD2OqPndUewZaA/Z8jWCaGBtuTDcEK23NnP
+        UgLSGaFHfvZ1MtV/tUixZ+s=
+X-Google-Smtp-Source: APXvYqx+X9ArMamcoRQOqiJM66DXertYbZ4q3mJOy2DsEFr1QLydMsyCEfW6yDu0kFkJoqUw9PHWnA==
+X-Received: by 2002:a17:90a:9bc5:: with SMTP id b5mr4450619pjw.107.1567510675387;
+        Tue, 03 Sep 2019 04:37:55 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id k5sm12461188pfp.109.2019.09.03.04.37.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Sep 2019 04:37:54 -0700 (PDT)
+Date:   Tue, 3 Sep 2019 04:37:53 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] usb/ohci-sm501: remove the HCD_DMA flag
+Message-ID: <20190903113753.GA20198@roeck-us.net>
+References: <20190903084615.19161-1-hch@lst.de>
+ <20190903084615.19161-2-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903084615.19161-2-hch@lst.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the static keyword to the front of declaration of
-csky_pmu_of_device_ids, and resolve the following compiler
-warning that can be seen when building with warnings
-enabled (W=1):
+On Tue, Sep 03, 2019 at 10:46:10AM +0200, Christoph Hellwig wrote:
+> This driver doesn't support normal DMA, only direct access to its
+> local memory.  Remove the HCD_DMA flag to properly express that fact.
+> 
+> Fixes: 1e4946c4412e ("usb: add a HCD_DMA flag instead of guestimating DMA capabilities")
+> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-arch/csky/kernel/perf_event.c:1340:1: warning:
-  ‘static’ is not at beginning of declaration [-Wold-style-declaration]
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
----
-Related: https://lore.kernel.org/r/20190827233017.GK9987@google.com
+on top of next-20190903.
 
- arch/csky/kernel/perf_event.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks!
 
-diff --git a/arch/csky/kernel/perf_event.c b/arch/csky/kernel/perf_event.c
-index 4c1a1934d76a..bc33e4ed189d 100644
---- a/arch/csky/kernel/perf_event.c
-+++ b/arch/csky/kernel/perf_event.c
-@@ -1337,7 +1337,7 @@ int csky_pmu_device_probe(struct platform_device *pdev,
- 	return ret;
- }
- 
--const static struct of_device_id csky_pmu_of_device_ids[] = {
-+static const struct of_device_id csky_pmu_of_device_ids[] = {
- 	{.compatible = "csky,csky-pmu"},
- 	{},
- };
--- 
-2.22.1
+Guenter
 
+> ---
+>  drivers/usb/host/ohci-sm501.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/ohci-sm501.c b/drivers/usb/host/ohci-sm501.c
+> index 0b2aea6e28d4..c158cda9e4b9 100644
+> --- a/drivers/usb/host/ohci-sm501.c
+> +++ b/drivers/usb/host/ohci-sm501.c
+> @@ -49,7 +49,7 @@ static const struct hc_driver ohci_sm501_hc_driver = {
+>  	 * generic hardware linkage
+>  	 */
+>  	.irq =			ohci_irq,
+> -	.flags =		HCD_USB11 | HCD_DMA | HCD_MEMORY,
+> +	.flags =		HCD_USB11 | HCD_MEMORY,
+>  
+>  	/*
+>  	 * basic lifecycle operations
+> -- 
+> 2.20.1
+> 
