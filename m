@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04076A6EC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:29:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0707A6E4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbfICQ2b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:28:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50398 "EHLO mail.kernel.org"
+        id S1730384AbfICQZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:25:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730326AbfICQ2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:28:25 -0400
+        id S1730322AbfICQZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:25:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5267A23431;
-        Tue,  3 Sep 2019 16:28:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19B0A2343A;
+        Tue,  3 Sep 2019 16:25:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528105;
-        bh=Cd42BbHH5UF+TyBnCjl/rXkhEI+SJZOhpWmiAdM/aIE=;
+        s=default; t=1567527915;
+        bh=YaelBjv9CrC3Jq0WoYTd+rflT0fewMxLIJgPOZWkLcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z5IBgNLWSHiP7PGJKnGUBT1uulqGW6MlADtxnUy4a1thNgG1Qqwa5QEcgTDW7fyyV
-         59ns7us25ijh5B3rXDMxiu75pnhT+qFU0kDd7Pac+a0jqbFXzNNjNBG3DLUtgnecCj
-         c2YlzalEoXO0qggVexz2w4R7H4G8OL+7mWgBO0mY=
+        b=yThhcpjJ9ttmo1oTs1wt3c1R1/rgO50Rn6XiBjbSuPsRQNsefJ7r7grfFCqU/Uf2Q
+         uAhnpQsOnf0ThglT40I+UYN58AItz17Y0XZfWvWaSIaZeB7x8tZSD6xrXYkropFo6D
+         RRt7hPu+Wd4eT2Zb/wiZllOuZB/pTqhGafpgaWXk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+Cc:     Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Anuj Phogat <anuj.phogat@gmail.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@intel.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 111/167] signal/arc: Use force_sig_fault where appropriate
-Date:   Tue,  3 Sep 2019 12:24:23 -0400
-Message-Id: <20190903162519.7136-111-sashal@kernel.org>
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.2 23/23] drm/i915/icl: whitelist PS_(DEPTH|INVOCATION)_COUNT
+Date:   Tue,  3 Sep 2019 12:24:24 -0400
+Message-Id: <20190903162424.6877-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
-References: <20190903162519.7136-1-sashal@kernel.org>
+In-Reply-To: <20190903162424.6877-1-sashal@kernel.org>
+References: <20190903162424.6877-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -44,79 +46,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
 
-[ Upstream commit 15773ae938d8d93d982461990bebad6e1d7a1830 ]
+[ Upstream commit cf8f9aa1eda7d916bd23f6b8c226404deb11690c ]
 
-Acked-by: Vineet Gupta <vgupta@synopsys.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+The same tests failing on CFL+ platforms are also failing on ICL.
+Documentation doesn't list the
+WaAllowPMDepthAndInvocationCountAccessFromUMD workaround for ICL but
+applying it fixes the same tests as CFL.
+
+v2: Use only one whitelist entry (Lionel)
+
+Signed-off-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Tested-by: Anuj Phogat <anuj.phogat@gmail.com>
+Cc: stable@vger.kernel.org # 6883eab27481: drm/i915: Support flags in whitlist WAs
+Cc: stable@vger.kernel.org
+Acked-by: Chris Wilson <chris@chris-wilson.co.uk>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190628120720.21682-4-lionel.g.landwerlin@intel.com
+(cherry picked from commit 3fe0107e45ab396342497e06b8924cdd485cde3b)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/mm/fault.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/i915/intel_workarounds.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
-index f28db0b112a30..a0366f9dca051 100644
---- a/arch/arc/mm/fault.c
-+++ b/arch/arc/mm/fault.c
-@@ -66,14 +66,12 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	struct vm_area_struct *vma = NULL;
- 	struct task_struct *tsk = current;
- 	struct mm_struct *mm = tsk->mm;
--	siginfo_t info;
-+	int si_code;
- 	int ret;
- 	vm_fault_t fault;
- 	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
- 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+diff --git a/drivers/gpu/drm/i915/intel_workarounds.c b/drivers/gpu/drm/i915/intel_workarounds.c
+index efea5a18fa6db..edd57a5e0495f 100644
+--- a/drivers/gpu/drm/i915/intel_workarounds.c
++++ b/drivers/gpu/drm/i915/intel_workarounds.c
+@@ -1107,6 +1107,19 @@ static void icl_whitelist_build(struct intel_engine_cs *engine)
  
--	clear_siginfo(&info);
--
- 	/*
- 	 * We fault-in kernel-space virtual memory on-demand. The
- 	 * 'reference' page table is init_mm.pgd.
-@@ -91,7 +89,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 			return;
- 	}
+ 		/* WaEnableStateCacheRedirectToCS:icl */
+ 		whitelist_reg(w, GEN9_SLICE_COMMON_ECO_CHICKEN1);
++
++		/*
++		 * WaAllowPMDepthAndInvocationCountAccessFromUMD:icl
++		 *
++		 * This covers 4 register which are next to one another :
++		 *   - PS_INVOCATION_COUNT
++		 *   - PS_INVOCATION_COUNT_UDW
++		 *   - PS_DEPTH_COUNT
++		 *   - PS_DEPTH_COUNT_UDW
++		 */
++		whitelist_reg_ext(w, PS_INVOCATION_COUNT,
++				  RING_FORCE_TO_NONPRIV_RD |
++				  RING_FORCE_TO_NONPRIV_RANGE_4);
+ 		break;
  
--	info.si_code = SEGV_MAPERR;
-+	si_code = SEGV_MAPERR;
- 
- 	/*
- 	 * If we're in an interrupt or have no user
-@@ -119,7 +117,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	 * we can handle it..
- 	 */
- good_area:
--	info.si_code = SEGV_ACCERR;
-+	si_code = SEGV_ACCERR;
- 
- 	/* Handle protection violation, execute on heap or stack */
- 
-@@ -204,11 +202,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 	/* User mode accesses just cause a SIGSEGV */
- 	if (user_mode(regs)) {
- 		tsk->thread.fault_address = address;
--		info.si_signo = SIGSEGV;
--		info.si_errno = 0;
--		/* info.si_code has been set above */
--		info.si_addr = (void __user *)address;
--		force_sig_info(SIGSEGV, &info, tsk);
-+		force_sig_fault(SIGSEGV, si_code, (void __user *)address, tsk);
- 		return;
- 	}
- 
-@@ -243,9 +237,5 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
- 		goto no_context;
- 
- 	tsk->thread.fault_address = address;
--	info.si_signo = SIGBUS;
--	info.si_errno = 0;
--	info.si_code = BUS_ADRERR;
--	info.si_addr = (void __user *)address;
--	force_sig_info(SIGBUS, &info, tsk);
-+	force_sig_fault(SIGBUS, BUS_ADRERR, (void __user *)address, tsk);
- }
+ 	case VIDEO_DECODE_CLASS:
 -- 
 2.20.1
 
