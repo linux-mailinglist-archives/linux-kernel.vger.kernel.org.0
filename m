@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0215CA6E6B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D477A6E70
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbfICQ0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:26:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46242 "EHLO mail.kernel.org"
+        id S1730601AbfICQ0S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:26:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730103AbfICQZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:25:54 -0400
+        id S1730531AbfICQ0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:26:03 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75A4823717;
-        Tue,  3 Sep 2019 16:25:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E66C23711;
+        Tue,  3 Sep 2019 16:26:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527953;
-        bh=qUDXs+NRk9kq4QOIe8TO4tnvqCIQP/qICPClCjAc3Kg=;
+        s=default; t=1567527962;
+        bh=8DzK93u3leP8+ss5457ROWWffQZJNtZmAWFrX94wVjs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dmWpGoTvgLAU39UmPomTJN0cDldoLCAmFcFhgkXF/7hPqzeFCfo3PQRxaknskDlvn
-         Hki1MiXQwZ3+1HJnxHqOT1rGq97dGgDqNrI/u7C8w+OyvENyYaklTy2tyfYXpKuxrv
-         g9oavyA++9iG5MnftRgY0vzrVhW1kh7DmUNcHTq4=
+        b=nMVAf5e1G+vk8fwfvzPqf+cM3h1knhL/v13Wv9hd/H7dyMK+vFEOGr1V4cTphCwy2
+         4B2+aQjkU82Rhh+ltCt2rSfOkIjW/4v5N7mRTEh8poos89KP17QQlj2yF2HmYXKHKH
+         C/qITbkwYFhVtI9cCb1qFSGdMDwFK6uSnqneiiTY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lyude Paul <lyude@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     Rex Zhu <Rex.Zhu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Hersen Wu <hersenxs.wu@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 019/167] drm/atomic_helper: Disallow new modesets on unregistered connectors
-Date:   Tue,  3 Sep 2019 12:22:51 -0400
-Message-Id: <20190903162519.7136-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 023/167] drm/amd/pp: Fix truncated clock value when set watermark
+Date:   Tue,  3 Sep 2019 12:22:55 -0400
+Message-Id: <20190903162519.7136-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -44,70 +45,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+From: Rex Zhu <Rex.Zhu@amd.com>
 
-[ Upstream commit 4d80273976bf880c4bed9359b8f2d45663140c86 ]
+[ Upstream commit 4d454e9ffdb1ef5a51ebc147b5389c96048db683 ]
 
-With the exception of modesets which would switch the DPMS state of a
-connector from on to off, we want to make sure that we disallow all
-modesets which would result in enabling a new monitor or a new mode
-configuration on a monitor if the connector for the display in question
-is no longer registered. This allows us to stop userspace from trying to
-enable new displays on connectors for an MST topology that were just
-removed from the system, without preventing userspace from disabling
-DPMS on those connectors.
+the clk value should be tranferred to MHz first and
+then transfer to uint16. otherwise, the clock value
+will be truncated.
 
-Changes since v5:
-- Fix typo in comment, nothing else
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Reported-by: Hersen Wu <hersenxs.wu@amd.com>
+Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20181008232437.5571-2-lyude@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_atomic_helper.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+ .../gpu/drm/amd/powerplay/hwmgr/smu_helper.c  | 32 +++++++++----------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index c22062cc99923..71c70a031a043 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -307,6 +307,26 @@ update_connector_routing(struct drm_atomic_state *state,
- 		return 0;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c
+index a321c465b7dce..cede78cdf28db 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu_helper.c
+@@ -669,20 +669,20 @@ int smu_set_watermarks_for_clocks_ranges(void *wt_table,
+ 	for (i = 0; i < wm_with_clock_ranges->num_wm_dmif_sets; i++) {
+ 		table->WatermarkRow[1][i].MinClock =
+ 			cpu_to_le16((uint16_t)
+-			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_min_dcfclk_clk_in_khz) /
+-			1000);
++			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_min_dcfclk_clk_in_khz /
++			1000));
+ 		table->WatermarkRow[1][i].MaxClock =
+ 			cpu_to_le16((uint16_t)
+-			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_max_dcfclk_clk_in_khz) /
+-			1000);
++			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_max_dcfclk_clk_in_khz /
++			1000));
+ 		table->WatermarkRow[1][i].MinUclk =
+ 			cpu_to_le16((uint16_t)
+-			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_min_mem_clk_in_khz) /
+-			1000);
++			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_min_mem_clk_in_khz /
++			1000));
+ 		table->WatermarkRow[1][i].MaxUclk =
+ 			cpu_to_le16((uint16_t)
+-			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_max_mem_clk_in_khz) /
+-			1000);
++			(wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_max_mem_clk_in_khz /
++			1000));
+ 		table->WatermarkRow[1][i].WmSetting = (uint8_t)
+ 				wm_with_clock_ranges->wm_dmif_clocks_ranges[i].wm_set_id;
  	}
- 
-+	crtc_state = drm_atomic_get_new_crtc_state(state,
-+						   new_connector_state->crtc);
-+	/*
-+	 * For compatibility with legacy users, we want to make sure that
-+	 * we allow DPMS On->Off modesets on unregistered connectors. Modesets
-+	 * which would result in anything else must be considered invalid, to
-+	 * avoid turning on new displays on dead connectors.
-+	 *
-+	 * Since the connector can be unregistered at any point during an
-+	 * atomic check or commit, this is racy. But that's OK: all we care
-+	 * about is ensuring that userspace can't do anything but shut off the
-+	 * display on a connector that was destroyed after its been notified,
-+	 * not before.
-+	 */
-+	if (!READ_ONCE(connector->registered) && crtc_state->active) {
-+		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
-+				 connector->base.id, connector->name);
-+		return -EINVAL;
-+	}
-+
- 	funcs = connector->helper_private;
- 
- 	if (funcs->atomic_best_encoder)
-@@ -351,7 +371,6 @@ update_connector_routing(struct drm_atomic_state *state,
- 
- 	set_best_encoder(state, new_connector_state, new_encoder);
- 
--	crtc_state = drm_atomic_get_new_crtc_state(state, new_connector_state->crtc);
- 	crtc_state->connectors_changed = true;
- 
- 	DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] using [ENCODER:%d:%s] on [CRTC:%d:%s]\n",
+@@ -690,20 +690,20 @@ int smu_set_watermarks_for_clocks_ranges(void *wt_table,
+ 	for (i = 0; i < wm_with_clock_ranges->num_wm_mcif_sets; i++) {
+ 		table->WatermarkRow[0][i].MinClock =
+ 			cpu_to_le16((uint16_t)
+-			(wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_min_socclk_clk_in_khz) /
+-			1000);
++			(wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_min_socclk_clk_in_khz /
++			1000));
+ 		table->WatermarkRow[0][i].MaxClock =
+ 			cpu_to_le16((uint16_t)
+-			(wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_max_socclk_clk_in_khz) /
+-			1000);
++			(wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_max_socclk_clk_in_khz /
++			1000));
+ 		table->WatermarkRow[0][i].MinUclk =
+ 			cpu_to_le16((uint16_t)
+-			(wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_min_mem_clk_in_khz) /
+-			1000);
++			(wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_min_mem_clk_in_khz /
++			1000));
+ 		table->WatermarkRow[0][i].MaxUclk =
+ 			cpu_to_le16((uint16_t)
+-			(wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_max_mem_clk_in_khz) /
+-			1000);
++			(wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_max_mem_clk_in_khz /
++			1000));
+ 		table->WatermarkRow[0][i].WmSetting = (uint8_t)
+ 				wm_with_clock_ranges->wm_mcif_clocks_ranges[i].wm_set_id;
+ 	}
 -- 
 2.20.1
 
