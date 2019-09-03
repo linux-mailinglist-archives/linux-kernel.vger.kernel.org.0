@@ -2,133 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEF61A6B82
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:31:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE10CA6B8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 16:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729825AbfICOaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 10:30:39 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:30282 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727667AbfICOai (ORCPT
+        id S1729593AbfICOb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 10:31:59 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:17012 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbfICOb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 10:30:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1567521037; x=1599057037;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=TsVQ4YmQUOxpHUFBpHr6G7zfIEU+Q8EKLJiiqblwGRM=;
-  b=vfmCkPa9b2A9Jz4PsTGp2yQ+T2ucJ4f6CmAb7GiZkUhXOI8Zqv6YTXne
-   RFUQIXq/ToQiRX/KcQHY31bPy8QLBIGsGWGfQOjmZ8Yafg2NGltqn1vbk
-   3GPpnhYiVsUx2sQDKpQYUAPF0bCg0Q5UXMhk+VEyR8hOJgK6H0IP6ogNu
-   o=;
-X-IronPort-AV: E=Sophos;i="5.64,463,1559520000"; 
-   d="scan'208";a="748773588"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-538b0bfb.us-west-2.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 03 Sep 2019 14:30:35 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-538b0bfb.us-west-2.amazon.com (Postfix) with ESMTPS id 3294EA2DEE;
-        Tue,  3 Sep 2019 14:30:34 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 3 Sep 2019 14:30:11 +0000
-Received: from u79c5a0a55de558.ant.amazon.com (10.43.162.242) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 3 Sep 2019 14:30:08 +0000
-From:   Alexander Graf <graf@amazon.com>
-To:     <kvm@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joerg Roedel <joro@8bytes.org>,
-        Jim Mattson <jmattson@google.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "Sean Christopherson" <sean.j.christopherson@intel.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 2/2] KVM: SVM: Disable posted interrupts for odd IRQs
-Date:   Tue, 3 Sep 2019 16:29:54 +0200
-Message-ID: <20190903142954.3429-3-graf@amazon.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190903142954.3429-1-graf@amazon.com>
-References: <20190903142954.3429-1-graf@amazon.com>
+        Tue, 3 Sep 2019 10:31:58 -0400
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x83EVtVI008834
+        for <linux-kernel@vger.kernel.org>; Tue, 3 Sep 2019 23:31:56 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x83EVtVI008834
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1567521116;
+        bh=peXU42EyKwQnnz8I8342mhS/H7burl4NL19/9YgGjD0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=To2J9hU4oq963etpjneGoIRkK8muL4ge1eFeFd+JOKSAJyIFu3eQLEfFuPe/7fCfD
+         T6Ev74+Bkwbd1zwYdlvOP/d2NpKZCY+Hzd8zQD1nzMEigbEsphDDV/eIrwuyVYscvM
+         j0A2ou96yem5vS0c3y30DGhGUicO2XSK2Rst8fxojqelE7n4rTVQBy1a5c0h8ImzIr
+         rGlQg/N9hc6wngoGrFAX16cLhWEnalbrkeA0kX3OCEtSbM1PYQQre9cTthEKjkO2A7
+         ECX/HlIMqBK/5owGmVEGMlrjUp2m2wbc6DhoPmskMp4Gs9OBrMAgV/SpAdK3DsI0ri
+         PBR0ztSiH6jAA==
+X-Nifty-SrcIP: [209.85.222.53]
+Received: by mail-ua1-f53.google.com with SMTP id n13so5548575uap.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 07:31:55 -0700 (PDT)
+X-Gm-Message-State: APjAAAWoMQbXdaMTiosmZ7GQYXkAyPtz+/ZmXHykP1frurHNeKOb1v8k
+        2c5rafJMhSZ5V8vbvKnw5gtv2hGqusewGgIjOTY=
+X-Google-Smtp-Source: APXvYqx4IX1fbc76BZv6H/GxXFHjyN7GN25SCkBJrPe9gxiGH6cezOB6+0NoGTi8i0Op3jHd2IuwId/eGsLoOtOPNkg=
+X-Received: by 2002:a9f:2213:: with SMTP id 19mr4944903uad.25.1567521114572;
+ Tue, 03 Sep 2019 07:31:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.43.162.242]
-X-ClientProxiedBy: EX13D27UWA002.ant.amazon.com (10.43.160.30) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
+References: <20190821092658.32764-1-yamada.masahiro@socionext.com>
+ <20190826113526.GA23425@infradead.org> <CAK7LNAQ_5Hz_CXAdx8W0bLjMWQ08KDWK3gG2pfDZOEE+cr0KEw@mail.gmail.com>
+ <20190830155322.GA30046@infradead.org> <CAK7LNAR2JuZkdJGxO=f2hUxmQca5d7430NC-2hiqZwkJphJ9sA@mail.gmail.com>
+ <20190902074256.GA754@infradead.org>
+In-Reply-To: <20190902074256.GA754@infradead.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 3 Sep 2019 23:31:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASMx7XBDUALd+UOj1jw=0kU-XoJBExCpSvKyQwV37mz7A@mail.gmail.com>
+Message-ID: <CAK7LNASMx7XBDUALd+UOj1jw=0kU-XoJBExCpSvKyQwV37mz7A@mail.gmail.com>
+Subject: Re: [PATCH] riscv: add arch/riscv/Kbuild
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Albert Ou <aou@eecs.berkeley.edu>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We can easily route hardware interrupts directly into VM context when
-they target the "Fixed" or "LowPriority" delivery modes.
+On Mon, Sep 2, 2019 at 4:42 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Sat, Aug 31, 2019 at 10:04:53PM +0900, Masahiro Yamada wrote:
+> > Kbuild support two file names, "Makefile" and "Kbuild"
+> > for describing obj-y, obj-m, etc.
+>
+> <snipping the basic explanation, which is documented pretty well,
+> I I think I full understand>
+>
+> > Similarly, arch/$(SRCARCH)/Makefile is very special
+> > in that it is included from the top-level Makefile,
+> > and specify arch-specific compiler flags etc.
+> >
+> > We can use arch/$(SRCARCH)/Kbuild
+> > to specify obj-y, obj-m.
+> > The top-level Makefile does not need to know
+> > the directory structure under arch/$(SRCARCH)/.
+> >
+> > This is logical separation.
+>
+> But only if we document this specific split and eventually stop allowing
+> to build objects from arch/$(SRCARCH)/Makefile.
 
-However, on modes such as "SMI" or "Init", we need to go via KVM code
-to actually put the vCPU into a different mode of operation, so we can
-not post the interrupt
+I like this idea, but it would change the link order (i.e. probe order)
 
-Add code in the SVM PI logic to explicitly refuse to establish posted
-mappings for advanced IRQ deliver modes.
+For example, I want move all drivers-y in arch/x86/Makefile
+to arch/x86/Kbuild.
 
-This fixes a bug I have with code which configures real hardware to
-inject virtual SMIs into my guest.
-
-Signed-off-by: Alexander Graf <graf@amazon.com>
----
- arch/x86/kvm/svm.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 1f220a85514f..9a6ea78c3239 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -5266,6 +5266,21 @@ get_pi_vcpu_info(struct kvm *kvm, struct kvm_kernel_irq_routing_entry *e,
- 		return -1;
- 	}
- 
-+	switch (irq.delivery_mode) {
-+	case dest_Fixed:
-+	case dest_LowestPrio:
-+		break;
-+	default:
-+		/*
-+		 * For non-trivial interrupt events, we need to go
-+		 * through the full KVM IRQ code, so refuse to take
-+		 * any direct PI assignments here.
-+		 */
-+		pr_debug("SVM: %s: use legacy intr remap mode for irq %u\n",
-+			 __func__, irq.vector);
-+		return -1;
-+	}
-+
- 	pr_debug("SVM: %s: use GA mode for irq %u\n", __func__,
- 		 irq.vector);
- 	*svm = to_svm(vcpu);
-@@ -5314,6 +5329,7 @@ static int svm_update_pi_irte(struct kvm *kvm, unsigned int host_irq,
- 		 * 1. When cannot target interrupt to a specific vcpu.
- 		 * 2. Unsetting posted interrupt.
- 		 * 3. APIC virtialization is disabled for the vcpu.
-+		 * 4. IRQ has extended delivery mode (SMI, INIT, etc)
- 		 */
- 		if (!get_pi_vcpu_info(kvm, e, &vcpu_info, &svm) && set &&
- 		    kvm_vcpu_apicv_active(&svm->vcpu)) {
--- 
-2.17.1
+I do not know how much we care about the probe order.
 
 
+>  And in my perfect world
+> we'd eventually phase out the magic arch/$(SRCARCH)/Makefile entire=C5=80=
+y.
+> In addition to the normal Kbuild file we'd then have say (names entirely
+> made up and probably not the best idea)
+>
+>   arch/$(SRCARCH)/flags.mk to set the various compiler flags and co
+>   arch/$(SRCARCH)/targets.mk for extra arch-specific targets
+
+I am not sure whether this split is a good idea.
+What is the problem with having the single arch-Makefile?
 
 
-Amazon Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
-Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
-Sitz: Berlin
-Ust-ID: DE 289 237 879
-
-
-
+--=20
+Best Regards
+Masahiro Yamada
