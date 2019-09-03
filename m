@@ -2,30 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C439A5F23
+	by mail.lfdr.de (Postfix) with ESMTP id 1D27EA5F22
 	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 04:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfICCGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 2 Sep 2019 22:06:40 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:43510 "EHLO huawei.com"
+        id S1726829AbfICCGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 2 Sep 2019 22:06:37 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5720 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726014AbfICCGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 2 Sep 2019 22:06:38 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 651AC3224263269A3DC7;
-        Tue,  3 Sep 2019 10:06:37 +0800 (CST)
+        id S1726014AbfICCGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 2 Sep 2019 22:06:37 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2BC6DC61656970BAF950;
+        Tue,  3 Sep 2019 10:06:35 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
  14.3.439.0; Tue, 3 Sep 2019 10:06:30 +0800
 From:   Chao Yu <yuchao0@huawei.com>
 To:     <jaegeuk@kernel.org>
 CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 1/2] f2fs: fix error path of f2fs_convert_inline_page()
-Date:   Tue, 3 Sep 2019 10:06:25 +0800
-Message-ID: <20190903020626.93020-1-yuchao0@huawei.com>
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>
+Subject: [PATCH v2 2/2] f2fs: convert inline_data in prior to i_size_write
+Date:   Tue, 3 Sep 2019 10:06:26 +0800
+Message-ID: <20190903020626.93020-2-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20190903020626.93020-1-yuchao0@huawei.com>
+References: <20190903020626.93020-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.120.216.130]
@@ -35,26 +36,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In error path of f2fs_convert_inline_page(), we missed to truncate newly
-reserved block in .i_addrs[0] once we failed in get_node_info(), fix it.
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Fixes: 7735730d39d7 ("f2fs: fix to propagate error from __get_meta_page()")
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
+In below call path, we change i_size before inline conversion, however,
+if we failed to convert inline inode, the inode may have wrong i_size
+which is larger than max inline size, result inline inode corruption.
+
+- f2fs_setattr
+ - truncate_setsize
+ - f2fs_convert_inline_inode
+
+This patch reorders truncate_setsize() and f2fs_convert_inline_inode()
+to guarantee inline_data has valid i_size.
+
+Fixes: 0cab80ee0c9e ("f2fs: fix to convert inline inode in ->setattr")
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/inline.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/f2fs/file.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 78d6ebe165cd..16ebdd4d1f2c 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -131,6 +131,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6528216ab832..10927a0b8df3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -814,14 +814,24 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	}
  
- 	err = f2fs_get_node_info(fio.sbi, dn->nid, &ni);
- 	if (err) {
-+		f2fs_truncate_data_blocks_range(dn, 1);
- 		f2fs_put_dnode(dn);
- 		return err;
+ 	if (attr->ia_valid & ATTR_SIZE) {
+-		bool to_smaller = (attr->ia_size <= i_size_read(inode));
++		loff_t old_size = i_size_read(inode);
++
++		if (attr->ia_size > MAX_INLINE_DATA(inode)) {
++			/*
++			 * should convert inline inode before i_size_write to
++			 * keep smaller than inline_data size with inline flag.
++			 */
++			err = f2fs_convert_inline_inode(inode);
++			if (err)
++				return err;
++		}
+ 
+ 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 		down_write(&F2FS_I(inode)->i_mmap_sem);
+ 
+ 		truncate_setsize(inode, attr->ia_size);
+ 
+-		if (to_smaller)
++		if (attr->ia_size <= old_size)
+ 			err = f2fs_truncate(inode);
+ 		/*
+ 		 * do not trim all blocks after i_size if target size is
+@@ -829,21 +839,11 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 		 */
+ 		up_write(&F2FS_I(inode)->i_mmap_sem);
+ 		up_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+-
+ 		if (err)
+ 			return err;
+ 
+-		if (!to_smaller) {
+-			/* should convert inline inode here */
+-			if (!f2fs_may_inline_data(inode)) {
+-				err = f2fs_convert_inline_inode(inode);
+-				if (err)
+-					return err;
+-			}
+-			inode->i_mtime = inode->i_ctime = current_time(inode);
+-		}
+-
+ 		down_write(&F2FS_I(inode)->i_sem);
++		inode->i_mtime = inode->i_ctime = current_time(inode);
+ 		F2FS_I(inode)->last_disk_size = i_size_read(inode);
+ 		up_write(&F2FS_I(inode)->i_sem);
  	}
 -- 
 2.18.0.rc1
