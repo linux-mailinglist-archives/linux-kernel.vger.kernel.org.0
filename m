@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F293DA643A
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 10:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C28AA6437
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 10:46:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728430AbfICIqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 04:46:31 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:34384 "EHLO
+        id S1728370AbfICIq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 04:46:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34406 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728309AbfICIqZ (ORCPT
+        with ESMTP id S1726557AbfICIq2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 04:46:25 -0400
+        Tue, 3 Sep 2019 04:46:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oKltuC+bB0pJtvp7qUclBSom6VtgzauxKPZ6u/A2tVA=; b=QlJ6KAk20XGkQDBVS98nV/rEN3
-        6Td6kdBXVqr9N0zcgE7xRDLUvdlVxBPRUH+s065LXXUY0/ukchTUvC9XCTzI0BFuqqbZTJV2kBOp7
-        JMjdXklo9soii250kn0j1raivpm13RZffrS+jqkHWeGFLKE0ABrO9RD5fauLQqzHb5K57Q92xBAv3
-        hFIn6LVBrlrb+hnwcfx5a6wmNxHLpGLY94B1ut95+1LrmuZcMMJ9rQpDr2ef8JAIDCz7tDH+tFkrB
-        8q6+Osk615QF2/2e7kA/37UMThCmBU+RxUnBHQcnoBiuuHjdENg9CqoBYp0/G/BUWKD22YFLnXJHR
-        l+DK8KYQ==;
+        bh=WowrPXJWXwRHe/ZfVy1xduZ4nYQkuT9srIDr2fzdgQ0=; b=urmie0jpX7kIOxzUC5bJPxUdzt
+        4QIxmuSU6F+JeljlXqUa4ZkB5j2RKtK4ouc1C5gEVrmHq54PZsrnY+XPqCdnDVdH1/nWMhIQ8DhVU
+        FwGyFddo4xsQVaBtDxN8hI+YYKW9D+WcNjbUwHrwySdyQZMJ2et0BvebPmFRSButdTMNq5ry1I2HB
+        hXZSX9NKZsuQMsIEErFVmQeL3lp/f/nIzHU8L6pRIvPcWj7evGqQgd6TlLIeUGLvPvooIwln31oCD
+        AQ86ILYtYvBZyVa8TaHMlsjCzMdTniBBrZLX2RV8rbubyX6rFOIviivIXOIlj/9+Nmo+0tNmwR7Mq
+        OB2JdhDQ==;
 Received: from clnet-p19-102.ikbnet.co.at ([83.175.77.102] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i54SF-0003rU-BK; Tue, 03 Sep 2019 08:46:23 +0000
+        id 1i54SH-0003ro-GQ; Tue, 03 Sep 2019 08:46:25 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Guenter Roeck <linux@roeck-us.net>,
         Lee Jones <lee.jones@linaro.org>
 Cc:     Alan Stern <stern@rowland.harvard.edu>, linux-usb@vger.kernel.org,
         usb-storage@lists.one-eyed-alien.net, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] usb/ohci-tmio: remove the HCD_DMA flag
-Date:   Tue,  3 Sep 2019 10:46:11 +0200
-Message-Id: <20190903084615.19161-3-hch@lst.de>
+Subject: [PATCH 3/6] usb-storage: use hcd_uses_dma to check for DMA capabilities
+Date:   Tue,  3 Sep 2019 10:46:12 +0200
+Message-Id: <20190903084615.19161-4-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903084615.19161-1-hch@lst.de>
 References: <20190903084615.19161-1-hch@lst.de>
@@ -47,28 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver doesn't support normal DMA, only direct access to its
-local memory.  Remove the HCD_DMA flag to properly express that fact.
+The dma_mask on its own doesn't mean much.  Instead check for the actual
+flag.
 
-Fixes: 1e4946c4412e ("usb: add a HCD_DMA flag instead of guestimating DMA capabilities")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/usb/host/ohci-tmio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/storage/scsiglue.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/ohci-tmio.c b/drivers/usb/host/ohci-tmio.c
-index 8edbacd3eb17..d5a293a707b6 100644
---- a/drivers/usb/host/ohci-tmio.c
-+++ b/drivers/usb/host/ohci-tmio.c
-@@ -153,7 +153,7 @@ static const struct hc_driver ohci_tmio_hc_driver = {
+diff --git a/drivers/usb/storage/scsiglue.c b/drivers/usb/storage/scsiglue.c
+index 05b80211290d..7e0bc640c237 100644
+--- a/drivers/usb/storage/scsiglue.c
++++ b/drivers/usb/storage/scsiglue.c
+@@ -40,6 +40,7 @@
+ #include <scsi/scsi_eh.h>
  
- 	/* generic hardware linkage */
- 	.irq =			ohci_irq,
--	.flags =		HCD_USB11 | HCD_DMA | HCD_MEMORY,
-+	.flags =		HCD_USB11 | HCD_MEMORY,
+ #include "usb.h"
++#include <linux/usb/hcd.h>
+ #include "scsiglue.h"
+ #include "debug.h"
+ #include "transport.h"
+@@ -141,11 +142,10 @@ static int slave_configure(struct scsi_device *sdev)
  
- 	/* basic lifecycle operations */
- 	.start =		ohci_tmio_start,
+ 	/*
+ 	 * Some USB host controllers can't do DMA; they have to use PIO.
+-	 * They indicate this by setting their dma_mask to NULL.  For
+-	 * such controllers we need to make sure the block layer sets
++	 * For such controllers we need to make sure the block layer sets
+ 	 * up bounce buffers in addressable memory.
+ 	 */
+-	if (!us->pusb_dev->bus->controller->dma_mask)
++	if (!hcd_uses_dma(bus_to_hcd(us->pusb_dev->bus)))
+ 		blk_queue_bounce_limit(sdev->request_queue, BLK_BOUNCE_HIGH);
+ 
+ 	/*
 -- 
 2.20.1
 
