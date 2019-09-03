@@ -2,79 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D583A71AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 19:29:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E818A71B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 19:32:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730247AbfICR3m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 13:29:42 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34763 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728679AbfICR3l (ORCPT
+        id S1730026AbfICRcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 13:32:48 -0400
+Received: from mail-qt1-f175.google.com ([209.85.160.175]:43392 "EHLO
+        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728854AbfICRcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 13:29:41 -0400
-Received: by mail-wr1-f67.google.com with SMTP id s18so18421248wrn.1;
-        Tue, 03 Sep 2019 10:29:40 -0700 (PDT)
+        Tue, 3 Sep 2019 13:32:48 -0400
+Received: by mail-qt1-f175.google.com with SMTP id l22so8675704qtp.10;
+        Tue, 03 Sep 2019 10:32:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1y/QzUkCcqpWnaaB2UPlBL6rkcc+2weJiERqBvIAqW8=;
-        b=MryhOSBGWlQz1kkg3QeUJSHxIud9ulNj676luGixnwIsJunfQ/raQ0UOMW5ZnTpZAB
-         nL7BC79A/NcxDJ3OUQXXoremlBKrBeI5fUCicnubhX8DMXFAOVhdJNPmQEbSCNJ5MGxR
-         bPOU2d0JfdPhfBG6nd1WbJmTXBQGZ1eFYpKbljGLPT4Yd/g/CH3mTd5otKm3BcpTDuXW
-         9f7n0EASbxwMzkR8a3H4H7PvbT4ueAR+q2PFja9KwbGI8Zx8Wr1FMj31ZedcESNftj1Q
-         1WDuiNrpyxCPSwIKRNRLnL9+5MgH9PE9jC/0aKhQAr3TL1xwbLpBll7N5P/RtPWbj0J0
-         B8/A==
-X-Gm-Message-State: APjAAAWSeWOFMDobF0XeAkjlgkkwCHYGjrCqLO6SLpiKIFp7e8fsCq6M
-        JzfgRFIxJz6vI8sF9Vgpmw==
-X-Google-Smtp-Source: APXvYqxjsJYbE9ohCD01WYDc+yGRZ8dFjprGZ4Y0cLOYuKvgEwksgp61q+aQrJWH5lax8biar1g1TA==
-X-Received: by 2002:adf:db01:: with SMTP id s1mr35665426wri.164.1567531779299;
-        Tue, 03 Sep 2019 10:29:39 -0700 (PDT)
-Received: from localhost ([176.12.107.132])
-        by smtp.gmail.com with ESMTPSA id o9sm15518959wrm.88.2019.09.03.10.29.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 10:29:38 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 18:29:37 +0100
-From:   Rob Herring <robh@kernel.org>
-To:     Mircea Caprioru <mircea.caprioru@analog.com>
-Cc:     jic23@kernel.org, Michael.Hennerich@analog.com,
-        stefan.popa@analog.com, lars@metafoo.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, Mircea Caprioru <mircea.caprioru@analog.com>
-Subject: Re: [PATCH V4 4/4] dt-bindings: iio: adc: ad7192: Add binding
- documentation for AD7192
-Message-ID: <20190903172937.GA15494@bogus>
-References: <20190902130831.23057-1-mircea.caprioru@analog.com>
- <20190902130831.23057-4-mircea.caprioru@analog.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vgjm2gNxQwoJZ8v0bniiaqPHu8QBdyk+Apmy2AFV2l4=;
+        b=mnpH9A+wo4+d0QCiKZyQS3pzhLE0G0H7uxzVC1uveIhsg0yFDk6n1SdByvR97YhKAl
+         dWLbAEkUw9+EuIay+WpxUhDcL1naUboXtDm0t9W9SJL9MSucyyjaZ+O8SJXHKEnZd4WX
+         ASmMzUAjqEl+0h4yDSBxtLY0vBpf4nMbJ+twPJGqopXeCyAAi3CiUKq1sNdM3Ru3JitC
+         VpkCqinM6qMmfuvoDrCNPu1ScPGFaSS3WAzF2BWLQh3F5nJ7rqp7MeTIEqz9iVDCQ1Lw
+         VC9FVvJw6R/Vt5DL8HJXC968ri7bXXdjkOZNFJymJsYY1OQX9rhhNbJCrn5ZDAi/m8m5
+         49JQ==
+X-Gm-Message-State: APjAAAUpfpBVe9E8hU/7k291U1XT1ixF/FN3/SvNHew7VNZvb8N9qToI
+        LnqVrQEAP5WTcxXhd0z05jmVJzogIiIcmtxq+kwViA==
+X-Google-Smtp-Source: APXvYqyVRUIJPIQEHx95xhwPjnvSTza+9sTHKmCNkiM1M8D9DvwWC/dFC/I4zoquypk9wQ0vA4TbG60cCWZR89wfsHQ=
+X-Received: by 2002:ac8:6b1a:: with SMTP id w26mr11188688qts.304.1567531967226;
+ Tue, 03 Sep 2019 10:32:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190902130831.23057-4-mircea.caprioru@analog.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190816163042.6604-1-krzk@kernel.org> <20190816163042.6604-3-krzk@kernel.org>
+ <CAJKOXPfdvzvomUfmxhGf0qjEQH3K8TADCneo9SM6m50k4b=Gyw@mail.gmail.com>
+In-Reply-To: <CAJKOXPfdvzvomUfmxhGf0qjEQH3K8TADCneo9SM6m50k4b=Gyw@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 3 Sep 2019 19:32:31 +0200
+Message-ID: <CAK8P3a0sa8WgcNnL8jusYKFr22FqGnut4kRKM-1QcB8G+ygnMg@mail.gmail.com>
+Subject: Re: [GIT PULL 2/3] ARM: samsung: mach for v5.4
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        SoC Team <soc@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2 Sep 2019 16:08:31 +0300, Mircea Caprioru wrote:
-> This patch add device tree binding documentation for AD7192 adc in YAML
-> format.
-> 
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-> ---
-> Changelog V2:
-> - no changes here
-> 
-> Changelog V3:
-> - no changes here
-> 
-> Changelog V4:
-> - remove the const value from avdd and dvdd supply
-> 
->  .../bindings/iio/adc/adi,ad7192.yaml          | 119 ++++++++++++++++++
->  1 file changed, 119 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> 
+On Wed, Aug 21, 2019 at 9:52 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Fri, 16 Aug 2019 at 18:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> > ----------------------------------------------------------------
+> > Linus Walleij (1):
+> >       ARM: samsung: Include GPIO driver header
+> >
+> > Pankaj Dubey (1):
+> >       ARM: exynos: Enable exynos-chipid driver
+>
+> This last patch should be dropped so I will rework the pull request
+> and send later v2. Please ignore it for now.
+
+I don't see the v2 yet. Are you still planning to send it?
+
+        Arnd
