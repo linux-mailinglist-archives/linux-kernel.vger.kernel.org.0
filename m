@@ -2,151 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37A2BA697B
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00455A6984
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:16:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbfICNP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:15:29 -0400
-Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:39744 "EHLO
-        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729332AbfICNP3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:15:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 5CD594041E;
-        Tue,  3 Sep 2019 15:15:21 +0200 (CEST)
-Authentication-Results: pio-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=kRDnlGIx;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id HEPT9RSmogm2; Tue,  3 Sep 2019 15:15:19 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 3AAC94047D;
-        Tue,  3 Sep 2019 15:15:18 +0200 (CEST)
-Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id E453F360330;
-        Tue,  3 Sep 2019 15:15:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1567516518; bh=1DziKwTjiIMj17OZYZOeUEJ6CP5BMAzv4f1IdbkdopM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kRDnlGIxm2xAiKU2h+6QgzVP4jgLGi7H7/e3P/PcpWk2QfzaUVu6YHSkh4zYUw4AB
-         cUsOOvXQOE0f5q8skRRj2Z6FvIhsATajksRYEOj/SPQmulnssLTAa5DJniDGmjbcbG
-         t0Z4hJkPl5N9cWf9aRIhktUPL0iSoqtRb76d20xc=
-From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
-        <thomas_os@shipmail.org>
-To:     dri-devel@lists.freedesktop.org, pv-drivers@vmware.com,
-        linux-graphics-maintainer@vmware.com, linux-kernel@vger.kernel.org
-Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-Subject: [PATCH v2 4/4] drm/ttm: Cache dma pool decrypted pages when AMD SEV is active
-Date:   Tue,  3 Sep 2019 15:15:04 +0200
-Message-Id: <20190903131504.18935-5-thomas_os@shipmail.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903131504.18935-1-thomas_os@shipmail.org>
-References: <20190903131504.18935-1-thomas_os@shipmail.org>
+        id S1729398AbfICNQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:16:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55712 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729056AbfICNQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 09:16:51 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 601472053B;
+        Tue,  3 Sep 2019 13:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567516610;
+        bh=8PuZ6CIqZbdEBj3j4oeP67KLW98tynqyHAl8TbwhiXI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XJ5AeAZzeFeTCivD9ka2My05hXt3PIAQJcDC2hQCNv3XXtjnNEal5KPrGskU+aRkL
+         Fb7mJGcameV9z/0jlgsFsA3xenw1vZrO962QjdE3qYdJ52pwevwvt68X/M97/NiNcr
+         w68My8yDF7l0slRsIsy3dAxykLbCpUE+mmJs9Gow=
+Date:   Tue, 3 Sep 2019 15:16:48 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: usb dma_mask fixups
+Message-ID: <20190903131648.GA19335@kroah.com>
+References: <20190903084615.19161-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190903084615.19161-1-hch@lst.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Hellstrom <thellstrom@vmware.com>
+On Tue, Sep 03, 2019 at 10:46:09AM +0200, Christoph Hellwig wrote:
+> Hi all,
+> 
+> the first patch fixes the ohci-sm501 regression that Guenther reported
+> due to the platform device dma_mask changes.  The second one ports that
+> fix to another driver that works the same way.  The rest cleans up
+> various loose ends left over from the dma related usb changes in the
+> last two merge windows.
 
-The TTM dma pool allocates coherent pages for use with TTM. When forcing
-unencrypted DMA, such allocations become very expensive since the linear
-kernel map has to be changed to mark the pages decrypted. To avoid too many
-such allocations and frees, cache the decrypted pages even if they
-are in the normal cpu caching state, where otherwise the pool frees them
-immediately when unused.
+Thanks for these, all now queued up.
 
-Tested with vmwgfx on SEV-ES.
-
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Christian König <christian.koenig@amd.com>
-Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
----
- drivers/gpu/drm/ttm/ttm_page_alloc_dma.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-index 9b15df8ecd49..a3247f24e106 100644
---- a/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-+++ b/drivers/gpu/drm/ttm/ttm_page_alloc_dma.c
-@@ -1000,7 +1000,7 @@ void ttm_dma_unpopulate(struct ttm_dma_tt *ttm_dma, struct device *dev)
- 	struct dma_pool *pool;
- 	struct dma_page *d_page, *next;
- 	enum pool_type type;
--	bool is_cached = false;
-+	bool immediate_free = false;
- 	unsigned count, i, npages = 0;
- 	unsigned long irq_flags;
- 
-@@ -1035,8 +1035,17 @@ void ttm_dma_unpopulate(struct ttm_dma_tt *ttm_dma, struct device *dev)
- 	if (!pool)
- 		return;
- 
--	is_cached = (ttm_dma_find_pool(pool->dev,
--		     ttm_to_type(ttm->page_flags, tt_cached)) == pool);
-+	/*
-+	 * If memory is cached and sev encryption is not active, allocating
-+	 * and freeing coherent memory is relatively cheap, so we can free
-+	 * it immediately. If sev encryption is active, allocating coherent
-+	 * memory involves a call to set_memory_decrypted() which is very
-+	 * expensive, so cache coherent pages is sev is active.
-+	 */
-+	immediate_free = (ttm_dma_find_pool
-+			  (pool->dev,
-+			   ttm_to_type(ttm->page_flags, tt_cached)) == pool &&
-+			  !force_dma_unencrypted(dev));
- 
- 	/* make sure pages array match list and count number of pages */
- 	count = 0;
-@@ -1051,13 +1060,13 @@ void ttm_dma_unpopulate(struct ttm_dma_tt *ttm_dma, struct device *dev)
- 			d_page->vaddr &= ~VADDR_FLAG_UPDATED_COUNT;
- 		}
- 
--		if (is_cached)
-+		if (immediate_free)
- 			ttm_dma_page_put(pool, d_page);
- 	}
- 
- 	spin_lock_irqsave(&pool->lock, irq_flags);
- 	pool->npages_in_use -= count;
--	if (is_cached) {
-+	if (immediate_free) {
- 		pool->nfrees += count;
- 	} else {
- 		pool->npages_free += count;
--- 
-2.20.1
-
+greg k-h
