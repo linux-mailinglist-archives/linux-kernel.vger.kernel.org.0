@@ -2,122 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56546A611D
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:14:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37CA1A612A
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:18:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727042AbfICGOH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:14:07 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38130 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbfICGOG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:14:06 -0400
-Received: by mail-pl1-f196.google.com with SMTP id w11so7446214plp.5
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X56IDYGgH848OXVqS7siup3yiE3wR0xEVNMSreTqgdo=;
-        b=y3AMEKKLSVUNqigZFRl6vqbivo8ONu2wWnALKLMDMc58mKXv8dt1WPoc5s1l7AoJkd
-         bEd1/DYAizZBXBqpKoDvl0EwvbqFaBz5xRhAGLQZ7xmctZRSQ1LnS/PPfEZMDqiYjrOz
-         J5oppKWr7CODmyaxen0zqJKrJYVK40EJM1RvSaQwkVQ0z3SBy6X41YZKS2wrAxRKC0gd
-         B7bcAj3+Z9+/j+VwkhNq/gdzmyT5fuCFtrXdI1sANy1IuHwIolvMPMl9caZ6GZdzsGUf
-         C4ByUzzvg9vWkZfp3cCL+GDvvMtxUe0f603Gm4VlXnGPwkXyFph0x0XaNn3I3vyu1b4Y
-         uyrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X56IDYGgH848OXVqS7siup3yiE3wR0xEVNMSreTqgdo=;
-        b=uhBLXTX7SIi4+QiuB/Rc+pB/34B3tY2ufXyIcBmVaaBtzEJn3m35Vmba9F20M1TAi3
-         zNACFcRCN82ib3bepXfLVZOxAYwrbeLZW5oQwjjI9MfDQRmKT5/6IDLcdtpi8VhO7qdf
-         9Sj1eMsmn+bpkuliTe1FEOq0DDj3LB08bZbtoUgtR/CqH0EFr1est3lYu4BtdMNhSi94
-         akfzj0wEYgkLU09MSPYzkiMTl6BdJJ9dRnuYy/oCkhkfPVveUji8NgQl7n/4S7DbuZLX
-         WsJrJ/uzikBcHJ5OGmJU7sVwLm/kLLwxesAatHL49lBDFijuHNcoND6jmlZFRWCn1jNs
-         nDFw==
-X-Gm-Message-State: APjAAAVZcg6bBf08Y1auuYkMFYF5LRpMlAbwMWRFT50UayXYMR6FaDVc
-        cgM89vFDyC1lzv+oiXkm5/LPbQ==
-X-Google-Smtp-Source: APXvYqy2jgf96BPa+1HJhxpna1B7VYdeAxyhRykT9911XHflctDbHWllU730nibd82llGhzGl3E/gQ==
-X-Received: by 2002:a17:902:1122:: with SMTP id d31mr34104469pla.254.1567491245848;
-        Mon, 02 Sep 2019 23:14:05 -0700 (PDT)
-Received: from localhost ([122.167.132.221])
-        by smtp.gmail.com with ESMTPSA id p10sm18500683pff.132.2019.09.02.23.14.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 02 Sep 2019 23:14:05 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 11:44:03 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        =?utf-8?B?QW5kcsOp?= Roth <neolynx@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        letux-kernel@openphoenux.org, kernel@pyra-handheld.com
-Subject: Re: [RFC 4/5] ARM: dts: omap3-n950-n9: remove opp-v1 table
-Message-ID: <20190903061403.k3d333f54gj2kuxi@vireshk-i7>
-References: <cover.1567421750.git.hns@goldelico.com>
- <2f978667c1533e46e3a5df58871e9048f3eb74e9.1567421751.git.hns@goldelico.com>
- <20190903023635.44yf32jowpm3hgfp@vireshk-i7>
- <8BC1AEC9-7B24-4C07-8659-16741D018164@goldelico.com>
+        id S1727109AbfICGSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:18:08 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:5723 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725848AbfICGSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:18:07 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 92518136F1EDB68BA3F9;
+        Tue,  3 Sep 2019 14:18:05 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 3 Sep 2019 14:17:59 +0800
+From:   zhong jiang <zhongjiang@huawei.com>
+To:     <airlied@linux.ie>, <daniel@ffwll.ch>
+CC:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
+        <David1.Zhou@amd.com>, <amd-gfx@lists.freedesktop.org>,
+        <zhongjiang@huawei.com>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] drm/amdgpu: remove the redundant null check
+Date:   Tue, 3 Sep 2019 14:15:05 +0800
+Message-ID: <1567491305-18320-1-git-send-email-zhongjiang@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8BC1AEC9-7B24-4C07-8659-16741D018164@goldelico.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03-09-19, 08:01, H. Nikolaus Schaller wrote:
-> 
-> > Am 03.09.2019 um 04:36 schrieb Viresh Kumar <viresh.kumar@linaro.org>:
-> > 
-> > On 02-09-19, 12:55, H. Nikolaus Schaller wrote:
-> >> With opp-v2 in omap36xx.dtsi and ti-cpufreq driver the
-> >> 1GHz capability is automatically detected.
-> >> 
-> >> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
-> >> ---
-> >> arch/arm/boot/dts/omap3-n950-n9.dtsi | 7 -------
-> >> 1 file changed, 7 deletions(-)
-> >> 
-> >> diff --git a/arch/arm/boot/dts/omap3-n950-n9.dtsi b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-> >> index 5441e9ffdbb4..e98b0c615f19 100644
-> >> --- a/arch/arm/boot/dts/omap3-n950-n9.dtsi
-> >> +++ b/arch/arm/boot/dts/omap3-n950-n9.dtsi
-> >> @@ -11,13 +11,6 @@
-> >> 	cpus {
-> >> 		cpu@0 {
-> >> 			cpu0-supply = <&vcc>;
-> >> -			operating-points = <
-> >> -				/* kHz    uV */
-> >> -				300000  1012500
-> >> -				600000  1200000
-> >> -				800000  1325000
-> >> -				1000000	1375000
-> >> -			>;
-> >> 		};
-> >> 	};
-> > 
-> > This should be merged with 2/5 ?
-> 
-> Well, it bloats 2/5.
+debugfs_remove and kfree has taken the null check in account.
+hence it is unnecessary to check it. Just remove the condition.
+No functional change.
 
-It is logically the right place to do this as that's where we are
-adding opp-v2.
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> What I hope (I can't test) is that this opp-v1 table
-> is ignored if an opp-v2 table exists. So that it can be
-> removed by a separate follow-up patch.
-
-It should work as that's what we are doing in OPP core, but I still
-feel this better get merged with 2/5.
-
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+index 5652cc7..cb94627 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
+@@ -1077,8 +1077,7 @@ static int amdgpu_debugfs_ib_preempt(void *data, u64 val)
+ 
+ 	ttm_bo_unlock_delayed_workqueue(&adev->mman.bdev, resched);
+ 
+-	if (fences)
+-		kfree(fences);
++	kfree(fences);
+ 
+ 	return 0;
+ }
+@@ -1103,8 +1102,7 @@ int amdgpu_debugfs_init(struct amdgpu_device *adev)
+ 
+ void amdgpu_debugfs_preempt_cleanup(struct amdgpu_device *adev)
+ {
+-	if (adev->debugfs_preempt)
+-		debugfs_remove(adev->debugfs_preempt);
++	debugfs_remove(adev->debugfs_preempt);
+ }
+ 
+ #else
 -- 
-viresh
+1.7.12.4
+
