@@ -2,138 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE099A7784
-	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 01:19:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F70BA7789
+	for <lists+linux-kernel@lfdr.de>; Wed,  4 Sep 2019 01:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfICXTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 19:19:01 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41780 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbfICXS7 (ORCPT
+        id S1727692AbfICXXz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 19:23:55 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:60478 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727312AbfICXXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 19:18:59 -0400
-Received: by mail-pl1-f195.google.com with SMTP id m9so8640655pls.8;
-        Tue, 03 Sep 2019 16:18:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=hAmHof5HSYuYAUNCiL3ISHJlEemOn6yRBu9YZMQZqPc=;
-        b=Bz1I0OTlqz2IoLpCYGYgb1LSAEBFeQi1RlyBJUQcPySBSoouYlGdoh4vmyb5BJgYLU
-         6/3vw4RyGQgIBAQhjO0tLroffsJegDWjJ3gbKS4IqfpWic6gJFYCG5iSkEWlKqsOliBw
-         xGrQ0qPsjrd5cQJ/6Pr8RyyQ3iQr2DFDVwD1GlIkDOW1VhOJMo6qasyGNrrJUH1n0k8V
-         KYZm6QWXwl8xHb2Dqrqfsz7s2NOFHgO0u8VWYnp3KEY1vwZOjt4207zx1gIEaOKUCJ7u
-         qaoE5YJWM43R4frGNRZQjhqO1FCWdUyfJD4ky27ZAPJyMX4nBFkwQTHo6wpezFqpwdfD
-         DSZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=hAmHof5HSYuYAUNCiL3ISHJlEemOn6yRBu9YZMQZqPc=;
-        b=pu90uH54CliPNFGV96/gHX39MEmUEJVVN+EziUhZTilQgfUyB9jtYwdlXZqpXqjZjm
-         NQR9pfzOgCBIHpbP7Kpo9CnDkz+xFhLcz05e5YxfMf2lyEke0YTjUncrOUYS/wLajDQ8
-         qClXyWMToN25xagfTBnuE5rS0wLQ6tc1zZiE2KiP4qJKg4KbxgvZSCK3xpY9/RxA0RDm
-         N+rfP+nvfPG1qWGBpkTYx0urF3n4nuQv3QnreOtG2NrQLbfUKuS9Y3484SJq2lPjczuW
-         uY6SINI+JRF/WbMCF9cJ6XOCvYC2LGFm1emvMtlcca4Vc+GI1nybR2K2OYz/F3AQlOYV
-         xc1Q==
-X-Gm-Message-State: APjAAAWB0O2rUqJ57PA9Wg1Bx3pK8O+I0UU7zMjTn84u51AeyQSXiScu
-        IGGLRvbop8rXeQoe2kNCN04=
-X-Google-Smtp-Source: APXvYqze4lacj4Iix2KiSq3/g6RLQ/Q4EuaBlhKRfCw7Dt/xtfK8GI1PVrQ2rKRgfIRsPRjy4caUXw==
-X-Received: by 2002:a17:902:5a1:: with SMTP id f30mr38620237plf.64.1567552738880;
-        Tue, 03 Sep 2019 16:18:58 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id z12sm20840701pfg.21.2019.09.03.16.18.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 16:18:58 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 16:18:56 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] gpiolib: of: fix fallback quirks handling
-Message-ID: <20190903231856.GA165165@dtor-ws>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 3 Sep 2019 19:23:55 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83NJ1Vl190771;
+        Tue, 3 Sep 2019 23:22:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=UJw1Y7uj9g+SZ5DNCrU6LVe85QHvYGaiIqcF/IakMzU=;
+ b=EIQPFezCGZombwumJIllsao9P3vulQ05xy4KvTAHKiCCFloSPNeEKHi5OlHoGrv1KywI
+ oEjbyHmiYhG44mYXPnuwylFQ1PzN52amHke/Zqanyf1DeLJs33cQ6c6sQsWUJi6B0oRQ
+ Drv2yt+TAm6pTYcek0KfqBPYO68mTLgiaot870Q9pRx0VwCHt2BXwhNyJPg/ILYlstTz
+ dHS9ipoRL3q3zFEds5pVEeot46kL4vk7FwkCLqaVvmtonqeSjWLha6eU2qfLzqTt5vVV
+ 3oHXFMY1QDUKJMIrPl8SG4xS0YyxidZue22yDHP8mmwjkwJPZQoA39+sbrFauYHxrsKK zA== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2ut1qf80je-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Sep 2019 23:22:20 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x83NJNdf003211;
+        Tue, 3 Sep 2019 23:20:19 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2us5phdxgm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 03 Sep 2019 23:20:19 +0000
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x83NKGsT015382;
+        Tue, 3 Sep 2019 23:20:16 GMT
+Received: from [192.168.14.112] (/79.176.230.160)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 03 Sep 2019 16:20:16 -0700
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
+Subject: Re: [PATCH 2/2] KVM: SVM: Disable posted interrupts for odd IRQs
+From:   Liran Alon <liran.alon@oracle.com>
+In-Reply-To: <20190903142954.3429-3-graf@amazon.com>
+Date:   Wed, 4 Sep 2019 02:20:08 +0300
+Cc:     kvm list <kvm@vger.kernel.org>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Joerg Roedel <joro@8bytes.org>,
+        Jim Mattson <jmattson@google.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <7AEDDBE7-138A-455F-957C-C2DE64BD8B06@oracle.com>
+References: <20190903142954.3429-1-graf@amazon.com>
+ <20190903142954.3429-3-graf@amazon.com>
+To:     Alexander Graf <graf@amazon.com>
+X-Mailer: Apple Mail (2.3445.4.7)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1909030234
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9369 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1909030234
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We should only try to execute fallback quirks handling when previous
-call returned -ENOENT, and not when we did not get -EPROBE_DEFER.
-The other errors should be treated as hard errors: we did find the GPIO
-description, but for some reason we failed to handle it properly.
-
-The fallbacks should only be executed when previous handlers returned
--ENOENT, which means the mapping/description was not found.
-
-Also let's remove the explicit deferral handling when iterating through
-GPIO suffixes: it is not needed anymore as we will not be calling
-fallbacks for anything but -ENOENT.
-
-Fixes: df451f83e1fc ("gpio: of: fix Freescale SPI CS quirk handling")
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
- drivers/gpio/gpiolib-of.c | 27 +++++++++------------------
- 1 file changed, 9 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index b034abe59f28..b45b39c48a34 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -457,36 +457,27 @@ struct gpio_desc *of_find_gpio(struct device *dev, const char *con_id,
- 
- 		desc = of_get_named_gpiod_flags(dev->of_node, prop_name, idx,
- 						&of_flags);
--		/*
--		 * -EPROBE_DEFER in our case means that we found a
--		 * valid GPIO property, but no controller has been
--		 * registered so far.
--		 *
--		 * This means we don't need to look any further for
--		 * alternate name conventions, and we should really
--		 * preserve the return code for our user to be able to
--		 * retry probing later.
--		 */
--		if (IS_ERR(desc) && PTR_ERR(desc) == -EPROBE_DEFER)
--			return desc;
- 
--		if (!IS_ERR(desc) || (PTR_ERR(desc) != -ENOENT))
-+		if (!IS_ERR(desc) || PTR_ERR(desc) != -ENOENT)
- 			break;
- 	}
- 
--	/* Special handling for SPI GPIOs if used */
--	if (IS_ERR(desc))
-+	if (IS_ERR(desc) && PTR_ERR(desc) == -ENOENT) {
-+		/* Special handling for SPI GPIOs if used */
- 		desc = of_find_spi_gpio(dev, con_id, &of_flags);
--	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER) {
-+	}
-+
-+	if (IS_ERR(desc) && PTR_ERR(desc) == -ENOENT) {
- 		/* This quirk looks up flags and all */
- 		desc = of_find_spi_cs_gpio(dev, con_id, idx, flags);
- 		if (!IS_ERR(desc))
- 			return desc;
- 	}
- 
--	/* Special handling for regulator GPIOs if used */
--	if (IS_ERR(desc) && PTR_ERR(desc) != -EPROBE_DEFER)
-+	if (IS_ERR(desc) && PTR_ERR(desc) == -ENOENT) {
-+		/* Special handling for regulator GPIOs if used */
- 		desc = of_find_regulator_gpio(dev, con_id, &of_flags);
-+	}
- 
- 	if (IS_ERR(desc))
- 		return desc;
--- 
-2.23.0.187.g17f5b7556c-goog
 
 
--- 
-Dmitry
+> On 3 Sep 2019, at 17:29, Alexander Graf <graf@amazon.com> wrote:
+>=20
+> We can easily route hardware interrupts directly into VM context when
+> they target the "Fixed" or "LowPriority" delivery modes.
+>=20
+> However, on modes such as "SMI" or "Init", we need to go via KVM code
+> to actually put the vCPU into a different mode of operation, so we can
+> not post the interrupt
+>=20
+> Add code in the SVM PI logic to explicitly refuse to establish posted
+> mappings for advanced IRQ deliver modes.
+>=20
+> This fixes a bug I have with code which configures real hardware to
+> inject virtual SMIs into my guest.
+>=20
+> Signed-off-by: Alexander Graf <graf@amazon.com>
+
+Nit: I prefer to squash both commits into one that change both VMX & =
+SVM.
+As it=E2=80=99s exactly the same change.
+
+> ---
+> arch/x86/kvm/svm.c | 16 ++++++++++++++++
+> 1 file changed, 16 insertions(+)
+>=20
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 1f220a85514f..9a6ea78c3239 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -5266,6 +5266,21 @@ get_pi_vcpu_info(struct kvm *kvm, struct =
+kvm_kernel_irq_routing_entry *e,
+> 		return -1;
+> 	}
+>=20
+> +	switch (irq.delivery_mode) {
+> +	case dest_Fixed:
+> +	case dest_LowestPrio:
+> +		break;
+> +	default:
+> +		/*
+> +		 * For non-trivial interrupt events, we need to go
+> +		 * through the full KVM IRQ code, so refuse to take
+> +		 * any direct PI assignments here.
+> +		 */
+> +		pr_debug("SVM: %s: use legacy intr remap mode for irq =
+%u\n",
+> +			 __func__, irq.vector);
+> +		return -1;
+> +	}
+> +
+
+Prefer changing printed string to something different than the =
+!kvm_intr_is_single_vcpu() case.
+To assist debugging.
+
+Having said that,
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
+
+-Liran
+
+> 	pr_debug("SVM: %s: use GA mode for irq %u\n", __func__,
+> 		 irq.vector);
+> 	*svm =3D to_svm(vcpu);
+> @@ -5314,6 +5329,7 @@ static int svm_update_pi_irte(struct kvm *kvm, =
+unsigned int host_irq,
+> 		 * 1. When cannot target interrupt to a specific vcpu.
+> 		 * 2. Unsetting posted interrupt.
+> 		 * 3. APIC virtialization is disabled for the vcpu.
+> +		 * 4. IRQ has extended delivery mode (SMI, INIT, etc)
+> 		 */
+> 		if (!get_pi_vcpu_info(kvm, e, &vcpu_info, &svm) && set =
+&&
+> 		    kvm_vcpu_apicv_active(&svm->vcpu)) {
+> --=20
+> 2.17.1
+>=20
+>=20
+>=20
+>=20
+> Amazon Development Center Germany GmbH
+> Krausenstr. 38
+> 10117 Berlin
+> Geschaeftsfuehrung: Christian Schlaeger, Ralf Herbrich
+> Eingetragen am Amtsgericht Charlottenburg unter HRB 149173 B
+> Sitz: Berlin
+> Ust-ID: DE 289 237 879
+>=20
+>=20
+>=20
+
