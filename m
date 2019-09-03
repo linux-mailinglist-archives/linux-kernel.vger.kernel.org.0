@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E007A7035
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:39:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46C4BA7039
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:39:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730505AbfICQZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:25:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46024 "EHLO mail.kernel.org"
+        id S1730534AbfICQ0D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:26:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730453AbfICQZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:25:46 -0400
+        id S1730480AbfICQZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:25:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FC4923697;
-        Tue,  3 Sep 2019 16:25:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82C092343A;
+        Tue,  3 Sep 2019 16:25:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527945;
-        bh=RfQVQt92+3Wv3MPrBbg81D1UzAB3v3En6KOZI/CkvAI=;
+        s=default; t=1567527949;
+        bh=rsK/26JHP6dw/JKoiZY1zzQkRQGxmrL23SyTuBKBINY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fYdT/c4E8pr/RZ/I4TtJRJloeasxmeCvt2Irjr4TU6/l6+EFL2ubaXN7gxt1VnZlg
-         V+sw6OjWSFh2IgwmNiMGjGL62V4De90Ex3gJqdl4zdXz6wuH9npIfflV1KVQ8EYXhz
-         3Wwvod4hYbpwI8ffrwtQqoHHF24LQ8bWGR4R2Ksc=
+        b=PSN5SPKZx1M8rpSjnl5/YDpUT3hw8zOI9YcSAnxn4/7JJU6coR8X0c1b0+NVPbFEZ
+         viAv6/OhmbaFo8205hKFi6PSME7VAvBmLjpUXQKlYJkjLqVoBQy92tWv3CalKl9QdW
+         tnBKFF91huhR6sJFKMiLK6/PHUJvmWgj50e4wT0s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 013/167] KVM: x86: hyperv: keep track of mismatched VP indexes
-Date:   Tue,  3 Sep 2019 12:22:45 -0400
-Message-Id: <20190903162519.7136-13-sashal@kernel.org>
+Cc:     Lyude Paul <lyude@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sasha Levin <sashal@kernel.org>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 016/167] drm/i915: Fix intel_dp_mst_best_encoder()
+Date:   Tue,  3 Sep 2019 12:22:48 -0400
+Message-Id: <20190903162519.7136-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -44,79 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Lyude Paul <lyude@redhat.com>
 
-[ Upstream commit 87ee613d076351950b74383215437f841ebbeb75 ]
+[ Upstream commit a9f9ca33d1fe9325f414914be526c0fc4ba5281c ]
 
-In most common cases VP index of a vcpu matches its vcpu index. Userspace
-is, however, free to set any mapping it wishes and we need to account for
-that when we need to find a vCPU with a particular VP index. To keep search
-algorithms optimal in both cases introduce 'num_mismatched_vp_indexes'
-counter showing how many vCPUs with mismatching VP index we have. In case
-the counter is zero we can assume vp_index == vcpu_idx.
+Currently, i915 appears to rely on blocking modesets on
+no-longer-present MSTB ports by simply returning NULL for
+->best_encoder(), which in turn causes any new atomic commits that don't
+disable the CRTC to fail. This is wrong however, since we still want to
+allow userspace to disable CRTCs on no-longer-present MSTB ports by
+changing the DPMS state to off and this still requires that we retrieve
+an encoder.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+So, fix this by always returning a valid encoder regardless of the state
+of the MST port.
+
+Changes since v1:
+- Remove mst atomic helper, since this got replaced with a much simpler
+  solution
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: stable@vger.kernel.org
+Link: https://patchwork.freedesktop.org/patch/msgid/20181008232437.5571-6-lyude@redhat.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/kvm_host.h |  3 +++
- arch/x86/kvm/hyperv.c           | 26 +++++++++++++++++++++++---
- 2 files changed, 26 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/i915/intel_dp_mst.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 3245b95ad2d97..b6417454a9d79 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -784,6 +784,9 @@ struct kvm_hv {
- 	u64 hv_reenlightenment_control;
- 	u64 hv_tsc_emulation_control;
- 	u64 hv_tsc_emulation_status;
-+
-+	/* How many vCPUs have VP index != vCPU index */
-+	atomic_t num_mismatched_vp_indexes;
- };
+diff --git a/drivers/gpu/drm/i915/intel_dp_mst.c b/drivers/gpu/drm/i915/intel_dp_mst.c
+index 1fec0c71b4d95..58ba14966d4f1 100644
+--- a/drivers/gpu/drm/i915/intel_dp_mst.c
++++ b/drivers/gpu/drm/i915/intel_dp_mst.c
+@@ -408,8 +408,6 @@ static struct drm_encoder *intel_mst_atomic_best_encoder(struct drm_connector *c
+ 	struct intel_dp *intel_dp = intel_connector->mst_port;
+ 	struct intel_crtc *crtc = to_intel_crtc(state->crtc);
  
- enum kvm_irqchip_mode {
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 3f2775aac5545..2bb554b90b3c2 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1045,11 +1045,31 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
- 	struct kvm_vcpu_hv *hv_vcpu = &vcpu->arch.hyperv;
+-	if (!READ_ONCE(connector->registered))
+-		return NULL;
+ 	return &intel_dp->mst_encoders[crtc->pipe]->base.base;
+ }
  
- 	switch (msr) {
--	case HV_X64_MSR_VP_INDEX:
--		if (!host || (u32)data >= KVM_MAX_VCPUS)
-+	case HV_X64_MSR_VP_INDEX: {
-+		struct kvm_hv *hv = &vcpu->kvm->arch.hyperv;
-+		int vcpu_idx = kvm_vcpu_get_idx(vcpu);
-+		u32 new_vp_index = (u32)data;
-+
-+		if (!host || new_vp_index >= KVM_MAX_VCPUS)
- 			return 1;
--		hv_vcpu->vp_index = (u32)data;
-+
-+		if (new_vp_index == hv_vcpu->vp_index)
-+			return 0;
-+
-+		/*
-+		 * The VP index is initialized to vcpu_index by
-+		 * kvm_hv_vcpu_postcreate so they initially match.  Now the
-+		 * VP index is changing, adjust num_mismatched_vp_indexes if
-+		 * it now matches or no longer matches vcpu_idx.
-+		 */
-+		if (hv_vcpu->vp_index == vcpu_idx)
-+			atomic_inc(&hv->num_mismatched_vp_indexes);
-+		else if (new_vp_index == vcpu_idx)
-+			atomic_dec(&hv->num_mismatched_vp_indexes);
-+
-+		hv_vcpu->vp_index = new_vp_index;
- 		break;
-+	}
- 	case HV_X64_MSR_VP_ASSIST_PAGE: {
- 		u64 gfn;
- 		unsigned long addr;
 -- 
 2.20.1
 
