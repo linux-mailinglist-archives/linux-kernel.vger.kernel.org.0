@@ -2,192 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D220AA7067
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:39:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59909A7078
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:39:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731450AbfICQjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:39:08 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45334 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730650AbfICQjH (ORCPT
+        id S1731205AbfICQjh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:39:37 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:42196 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729939AbfICQjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:39:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SJ8sp8FvDRuyze29OLcsHkJ1fO3LZuMK56azmXlvfRM=; b=APOdbs66SGlqWMxcn+FKIVqGD
-        tpbvxPtv+sFs7ndBggj7ezK7Mrix3mSgR/vgyiXmz5V5wCSEnj9fAuriGJY0xtnxbG/nbbMAPIoBZ
-        OS5/sm/FO0LZp0EflXUnHsjTqHjyK3+V6ExMsM0RClrjcL3uRHOucUulOjdhVNPklxobo=;
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i5Bp8-0000lg-QW; Tue, 03 Sep 2019 16:38:30 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 5A9D62740A95; Tue,  3 Sep 2019 17:38:29 +0100 (BST)
-Date:   Tue, 3 Sep 2019 17:38:29 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     richtek.jeff.chang@gmail.com
-Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        matthias.bgg@gmail.com, alsa-devel@alsa-project.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [MT6660] Mediatek Smart Amplifier Driver
-Message-ID: <20190903163829.GB7916@sirena.co.uk>
-References: <1567494501-3427-1-git-send-email-richtek.jeff.chang@gmail.com>
+        Tue, 3 Sep 2019 12:39:35 -0400
+Received: by mail-io1-f68.google.com with SMTP id n197so35441307iod.9
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 09:39:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JzftJXzoOTFgbjF3xTbUoWc131CYvIfGIZLcafzYJHs=;
+        b=jRpQzv72f0HZUJvx5o8Tjjf1nGxAfyjIBUkYXUQHDIflZYZp5Y3OWrgG3NoATvrbIT
+         99h1T7plhj3mbL68RFdH+otunF0AX/njw29m+8yntWCKN3b25UO9S9youqKfZwYlrGLy
+         HyfBZy3AQeRmy9xGVhAVntJcGG7A4s/zhBMA1dNM0TYfVYJxF58st0I5w+UuZN6B8bSi
+         dqwntQuIcjlQhaZEODpPQW7i4W4uZjPrh7KGdWfUMa+8dOjqp0zHbKnlW8gjuLcI29Ed
+         t35dGdAd1t8hQ2rYkwqjPRHste2w+ZGJ4xnrRCe5P6EJLYUKf7E16RCtNjlE0UlfJkLg
+         ALvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JzftJXzoOTFgbjF3xTbUoWc131CYvIfGIZLcafzYJHs=;
+        b=YBipFauYZSaeK0t5o0G2vlTraA6OEiaTM9KxhZFrE1N3LQ7XaxQ7eZ4obWHZRtYzuB
+         IbDtzxAmdTc1WRck88AHjT7E2shqrSbuHTWKSrs0qsCkCPoQriFDp+1j9vQV2MG36mcR
+         kBe7ijb3do9Pcfghiq7JRH59lSbR0Q/C3FYI6KtvwFuj6/1VtVsSLPPRM1DLFWjYefmB
+         bzy2jZHldDj3Uby+uWphYnrA11/yb9VzTpAKbPlsdKU7Kasmy7HYVUukemo/exDTA9Xr
+         v4kfcxUGM35JCuIKaba7X/l0LA4b19XOGkKvLjbSJ6ePzrKkSFeo0UM9wn45L4UvYwtf
+         78NA==
+X-Gm-Message-State: APjAAAU5lj2LbLj+3FjE76pXrSrUCw0UsQ0Z1xMCKezj3nzk6QFinWVO
+        1wBPcNVipv52nm+racjlRdPInvEFfuYyNxeaPJ0=
+X-Google-Smtp-Source: APXvYqxFcxaXizUfkzAkarARBL9OQt+CU3nnchi5sZTg5CAf54xc5ETUf7QWVo7WdxDzekz2H/nhunhKKyEH9Q13vNM=
+X-Received: by 2002:a6b:6d0f:: with SMTP id a15mr20477540iod.278.1567528774230;
+ Tue, 03 Sep 2019 09:39:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UHN/qo2QbUvPLonB"
-Content-Disposition: inline
-In-Reply-To: <1567494501-3427-1-git-send-email-richtek.jeff.chang@gmail.com>
-X-Cookie: You will pass away very quickly.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190830060116.10476-1-kraxel@redhat.com>
+In-Reply-To: <20190830060116.10476-1-kraxel@redhat.com>
+From:   Chia-I Wu <olvaffe@gmail.com>
+Date:   Tue, 3 Sep 2019 09:39:23 -0700
+Message-ID: <CAPaKu7TuBg0pAKJrvWAG4B0dWjKuGh_HwMKS4JoktS8q_NwOyg@mail.gmail.com>
+Subject: Re: [PATCH] drm/virtio: add worker for object release
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---UHN/qo2QbUvPLonB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Sep 03, 2019 at 03:08:21PM +0800, richtek.jeff.chang@gmail.com wrote:
-
-> --- /dev/null
-> +++ b/sound/soc/codecs/mt6660.c
-> @@ -0,0 +1,802 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019 MediaTek Inc.
-> + */
-
-Please make the entire comment block a C++ comment so things look more
-consistent.
-
-> +struct reg_size_table {
-> +	u32 addr;
-> +	u8 size;
-> +};
-
-> +static const struct reg_size_table mt6660_reg_size_table[] = {
-> +	{ MT6660_REG_HPF1_COEF, 4 },
-> +	{ MT6660_REG_HPF2_COEF, 4 },
-> +	{ MT6660_REG_TDM_CFG3, 2 },
-> +	{ MT6660_REG_RESV17, 2 },
-> +	{ MT6660_REG_RESV23, 2 },
-> +	{ MT6660_REG_SIGMAX, 2 },
-> +	{ MT6660_REG_DEVID, 2},
-> +	{ MT6660_REG_TDM_CFG3, 2},
-> +	{ MT6660_REG_HCLIP_CTRL, 2},
-> +	{ MT6660_REG_DA_GAIN, 2},
-> +};
-
-Please talk to your hardware designers about the benefits of consistent
-register sizes :/
-
-> +static int32_t mt6660_i2c_update_bits(struct mt6660_chip *chip,
-> +	uint32_t addr, uint32_t mask, uint32_t data)
+On Thu, Aug 29, 2019 at 11:01 PM Gerd Hoffmann <kraxel@redhat.com> wrote:
+>
+> Move object release into a separate worker.  Releasing objects requires
+> sending commands to the host.  Doing that in the dequeue worker will
+> cause deadlocks in case the command queue gets filled up, because the
+> dequeue worker is also the one which will free up slots in the command
+> queue.
+>
+> Reported-by: Chia-I Wu <olvaffe@gmail.com>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Tested-by: Chia-I Wu <olvaffe@gmail.com>
+Reviewed-by: Chia-I Wu <olvaffe@gmail.com>
+> ---
+>  drivers/gpu/drm/virtio/virtgpu_drv.h |  8 ++++++++
+>  drivers/gpu/drm/virtio/virtgpu_gem.c | 27 +++++++++++++++++++++++++++
+>  drivers/gpu/drm/virtio/virtgpu_kms.c |  6 ++++++
+>  drivers/gpu/drm/virtio/virtgpu_vq.c  |  2 +-
+>  4 files changed, 42 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> index fb35831ed351..314e02f94d9c 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_drv.h
+> +++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
+> @@ -78,6 +78,7 @@ struct virtio_gpu_object {
+>
+>  struct virtio_gpu_object_array {
+>         struct ww_acquire_ctx ticket;
+> +       struct list_head next;
+>         u32 nents, total;
+>         struct drm_gem_object *objs[];
+>  };
+> @@ -197,6 +198,10 @@ struct virtio_gpu_device {
+>
+>         struct work_struct config_changed_work;
+>
+> +       struct work_struct obj_free_work;
+> +       spinlock_t obj_free_lock;
+> +       struct list_head obj_free_list;
+> +
+>         struct virtio_gpu_drv_capset *capsets;
+>         uint32_t num_capsets;
+>         struct list_head cap_cache;
+> @@ -246,6 +251,9 @@ void virtio_gpu_array_unlock_resv(struct virtio_gpu_object_array *objs);
+>  void virtio_gpu_array_add_fence(struct virtio_gpu_object_array *objs,
+>                                 struct dma_fence *fence);
+>  void virtio_gpu_array_put_free(struct virtio_gpu_object_array *objs);
+> +void virtio_gpu_array_put_free_delayed(struct virtio_gpu_device *vgdev,
+> +                                      struct virtio_gpu_object_array *objs);
+> +void virtio_gpu_array_put_free_work(struct work_struct *work);
+>
+>  /* virtio vg */
+>  int virtio_gpu_alloc_vbufs(struct virtio_gpu_device *vgdev);
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_gem.c b/drivers/gpu/drm/virtio/virtgpu_gem.c
+> index b812094ae916..4c1f579edfb3 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_gem.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_gem.c
+> @@ -239,3 +239,30 @@ void virtio_gpu_array_put_free(struct virtio_gpu_object_array *objs)
+>                 drm_gem_object_put_unlocked(objs->objs[i]);
+>         virtio_gpu_array_free(objs);
+>  }
+> +
+> +void virtio_gpu_array_put_free_delayed(struct virtio_gpu_device *vgdev,
+> +                                      struct virtio_gpu_object_array *objs)
 > +{
-
-It would be good to implement a regmap rather than open coding
-*everything* - it'd give you things like this without needing to open
-code them.  Providing you don't use the cache code it should cope fine
-with variable register sizes.
-
+> +       spin_lock(&vgdev->obj_free_lock);
+> +       list_add_tail(&objs->next, &vgdev->obj_free_list);
+> +       spin_unlock(&vgdev->obj_free_lock);
+> +       schedule_work(&vgdev->obj_free_work);
+> +}
 > +
-> +static int mt6660_i2c_init_setting(struct mt6660_chip *chip)
+> +void virtio_gpu_array_put_free_work(struct work_struct *work)
 > +{
-> +	int i, len, ret;
-> +	const struct codec_reg_val *init_table;
+> +       struct virtio_gpu_device *vgdev =
+> +               container_of(work, struct virtio_gpu_device, obj_free_work);
+> +       struct virtio_gpu_object_array *objs;
 > +
-> +	init_table = e4_reg_inits;
-> +	len = ARRAY_SIZE(e4_reg_inits);
+> +       spin_lock(&vgdev->obj_free_lock);
+> +       while (!list_empty(&vgdev->obj_free_list)) {
+> +               objs = list_first_entry(&vgdev->obj_free_list,
+> +                                       struct virtio_gpu_object_array, next);
+> +               list_del(&objs->next);
+> +               spin_unlock(&vgdev->obj_free_lock);
+> +               virtio_gpu_array_put_free(objs);
+> +               spin_lock(&vgdev->obj_free_lock);
+> +       }
+> +       spin_unlock(&vgdev->obj_free_lock);
+> +}
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
+> index 231c4e27b3b3..0b3cdb0d83b0 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_kms.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
+> @@ -147,6 +147,11 @@ int virtio_gpu_init(struct drm_device *dev)
+>         INIT_WORK(&vgdev->config_changed_work,
+>                   virtio_gpu_config_changed_work_func);
+>
+> +       INIT_WORK(&vgdev->obj_free_work,
+> +                 virtio_gpu_array_put_free_work);
+> +       INIT_LIST_HEAD(&vgdev->obj_free_list);
+> +       spin_lock_init(&vgdev->obj_free_lock);
 > +
-> +	for (i = 0; i < len; i++) {
-> +		ret = mt6660_i2c_update_bits(chip, init_table[i].addr,
-> +				init_table[i].mask, init_table[i].data);
-> +		if (ret < 0)
-> +			return ret;
-
-Why are we not using the chip defaults here?
-
-> +static int mt6660_chip_power_on(
-> +	struct snd_soc_component *component, int on_off)
-> +{
-> +	struct mt6660_chip *chip = (struct mt6660_chip *)
-> +		snd_soc_component_get_drvdata(component);
-> +	int ret = 0;
-> +	unsigned int val;
-> +
-> +	dev_dbg(component->dev, "%s: on_off = %d\n", __func__, on_off);
-> +	mutex_lock(&chip->var_lock);
-> +	if (on_off) {
-> +		if (chip->pwr_cnt == 0) {
-> +			ret = mt6660_i2c_update_bits(chip,
-> +				MT6660_REG_SYSTEM_CTRL, 0x01, 0x00);
-> +			val = mt6660_i2c_read(chip, MT6660_REG_IRQ_STATUS1);
-> +			dev_info(chip->dev,
-> +				"%s reg0x05 = 0x%x\n", __func__, val);
-> +		}
-> +		chip->pwr_cnt++;
-
-This looks like you're open coding runtime PM stuff?  AFAICT the issue
-is that you need to write to this register to do any I/O.  Just
-implement this via the standard runtime PM framework, you'll need to do
-something about the register I/O in the controls (ideally in the
-framework, it'd be a lot easier if you did have a cache) but you could
-cut out this bit.
-
-> +static int mt6660_component_set_bias_level(struct snd_soc_component *component,
-> +	enum snd_soc_bias_level level)
-> +{
-> +	struct snd_soc_dapm_context *dapm =
-> +		snd_soc_component_get_dapm(component);
-> +	int ret;
-> +	unsigned int val;
-> +	struct mt6660_chip *chip = snd_soc_component_get_drvdata(component);
-> +
-> +	if (dapm->bias_level == level) {
-> +		dev_warn(component->dev, "%s: repeat level change\n", __func__);
-
-This shouldn't be a warning.
-
-> +static const struct snd_kcontrol_new mt6660_component_snd_controls[] = {
-> +	SOC_SINGLE_EXT_TLV("Volume_Ctrl", MT6660_REG_VOL_CTRL, 0, 255,
-> +			   1, snd_soc_get_volsw, mt6660_component_put_volsw,
-> +			   vol_ctl_tlv),
-> +	SOC_SINGLE_EXT("WDT_Enable", MT6660_REG_WDT_CTRL, 7, 1, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-
-These control names should all use standard ALSA control names - on/off
-switches should end in Switch, volume controls in Volume.
-
-> +	SOC_SINGLE_EXT("I2SLRS", MT6660_REG_DATAO_SEL, 6, 3, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("I2SDOLS", MT6660_REG_DATAO_SEL, 3, 7, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-> +	SOC_SINGLE_EXT("I2SDORS", MT6660_REG_DATAO_SEL, 0, 7, 0,
-> +		       snd_soc_get_volsw, mt6660_component_put_volsw),
-
-What do these controls do?
-
---UHN/qo2QbUvPLonB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1ulwQACgkQJNaLcl1U
-h9DsxAf8DiH9juppC2atx8j+pwupdXbxOIeEil91IOqQMEBBSSJ1oa1nPDIz1HkH
-yJY7jq4QIijIkqA0b5Op3zEXSHIve3j3ZoUnN/Wrj6ODeyzrDXSvsDm/gB2/G3xJ
-AQYMGCGEaL3i0OmnFBf3LKCqG/FceKjOmg7QqcuNMGqLkdHdwiNMguc+5QkuSamM
-dvb3ZKnicrimjhMSocpe38qRFfcld4gJp6psfeDIQ8z2A1V8dtiNNrAbza/ArDUB
-kfUE1VkdWMTs1kOrjrTZl067ZzOTLBbSiulfxzDtM1UjB3LSteshyCkoVI5K+QBW
-qJJLfLqnH76e09UCIYvXbbV1J/oeRw==
-=1Pf1
------END PGP SIGNATURE-----
-
---UHN/qo2QbUvPLonB--
+>  #ifdef __LITTLE_ENDIAN
+>         if (virtio_has_feature(vgdev->vdev, VIRTIO_GPU_F_VIRGL))
+>                 vgdev->has_virgl_3d = true;
+> @@ -226,6 +231,7 @@ void virtio_gpu_deinit(struct drm_device *dev)
+>  {
+>         struct virtio_gpu_device *vgdev = dev->dev_private;
+>
+> +       flush_work(&vgdev->obj_free_work);
+>         vgdev->vqs_ready = false;
+>         flush_work(&vgdev->ctrlq.dequeue_work);
+>         flush_work(&vgdev->cursorq.dequeue_work);
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_vq.c b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> index ecf57df965b0..595fa6ec2d58 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_vq.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_vq.c
+> @@ -227,7 +227,7 @@ void virtio_gpu_dequeue_ctrl_func(struct work_struct *work)
+>
+>         list_for_each_entry_safe(entry, tmp, &reclaim_list, list) {
+>                 if (entry->objs)
+> -                       virtio_gpu_array_put_free(entry->objs);
+> +                       virtio_gpu_array_put_free_delayed(vgdev, entry->objs);
+>                 list_del(&entry->list);
+>                 free_vbuf(vgdev, entry);
+>         }
+> --
+> 2.18.1
+>
