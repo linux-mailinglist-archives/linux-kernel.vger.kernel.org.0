@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1841FA6E62
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6206FA6E65
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 18:26:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730054AbfICQZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 12:25:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46008 "EHLO mail.kernel.org"
+        id S1730517AbfICQZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 12:25:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729791AbfICQZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:25:45 -0400
+        id S1730056AbfICQZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:25:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C44C2343A;
-        Tue,  3 Sep 2019 16:25:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13D952377B;
+        Tue,  3 Sep 2019 16:25:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567527944;
-        bh=CC0jLTX4WDNq6QPJuI18WeL6EaFRS3B/x7g/1f+OPqk=;
+        s=default; t=1567527947;
+        bh=ZNTGHZTr5fVwrH58A37+A6lh43m3BveK3ZxWBoLycK0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=glqzn8vVQSqMROJNOcBuCiRlfPSNXnrEG+6n6A+hVwT+iC3C0rCDlmToSk8+goWHq
-         r+axZ4hmuO2dASkWiU9/J59kdtKzRLYkc9jVF6L8uWhqFHD4Ehxz0QsXMVcVoCeORj
-         dSWnqy6otg9qiFCyUR4QLO0qoo0MvsRjPEFg+kz4=
+        b=1gG975HFLkiMFBcd5ZIOW3zirwP4k3lNMqyO02JL29S8sqDtfUq/PdioN9/cmXlFf
+         3yWr7aKZodwyUn8//Kuspgtcx2q9hxi7s/jIPQQir54+wMUuwLAMwNcN1sF4MJX+Kl
+         LdJd56xsBvMnOgfzkIvegWZTrRKgvsCbOeoe8Kg8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
+Cc:     Ladi Prosek <lprosek@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Liran Alon <liran.alon@oracle.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 012/167] KVM: x86: hyperv: consistently use 'hv_vcpu' for 'struct kvm_vcpu_hv' variables
-Date:   Tue,  3 Sep 2019 12:22:44 -0400
-Message-Id: <20190903162519.7136-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 014/167] KVM: hyperv: define VP assist page helpers
+Date:   Tue,  3 Sep 2019 12:22:46 -0400
+Message-Id: <20190903162519.7136-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
 References: <20190903162519.7136-1-sashal@kernel.org>
@@ -44,94 +45,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Ladi Prosek <lprosek@redhat.com>
 
-[ Upstream commit 1779a39f786397760ae7a7cc03cf37697d8ae58d ]
+[ Upstream commit 72bbf9358c3676bd89dc4bd8fb0b1f2a11c288fc ]
 
-Rename 'hv' to 'hv_vcpu' in kvm_hv_set_msr/kvm_hv_get_msr(); 'hv' is
-'reserved' for 'struct kvm_hv' variables across the file.
+The state related to the VP assist page is still managed by the LAPIC
+code in the pv_eoi field.
 
+Signed-off-by: Ladi Prosek <lprosek@redhat.com>
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
+Reviewed-by: Liran Alon <liran.alon@oracle.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/hyperv.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/x86/kvm/hyperv.c | 23 +++++++++++++++++++++--
+ arch/x86/kvm/hyperv.h |  4 ++++
+ arch/x86/kvm/lapic.c  |  4 ++--
+ arch/x86/kvm/lapic.h  |  2 +-
+ arch/x86/kvm/x86.c    |  2 +-
+ 5 files changed, 29 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 73fa074b9089a..3f2775aac5545 100644
+index 2bb554b90b3c2..5842c5f587fe9 100644
 --- a/arch/x86/kvm/hyperv.c
 +++ b/arch/x86/kvm/hyperv.c
-@@ -1042,20 +1042,20 @@ static u64 current_task_runtime_100ns(void)
+@@ -691,6 +691,24 @@ void kvm_hv_vcpu_uninit(struct kvm_vcpu *vcpu)
+ 		stimer_cleanup(&hv_vcpu->stimer[i]);
+ }
  
- static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
++bool kvm_hv_assist_page_enabled(struct kvm_vcpu *vcpu)
++{
++	if (!(vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE))
++		return false;
++	return vcpu->arch.pv_eoi.msr_val & KVM_MSR_ENABLED;
++}
++EXPORT_SYMBOL_GPL(kvm_hv_assist_page_enabled);
++
++bool kvm_hv_get_assist_page(struct kvm_vcpu *vcpu,
++			    struct hv_vp_assist_page *assist_page)
++{
++	if (!kvm_hv_assist_page_enabled(vcpu))
++		return false;
++	return !kvm_read_guest_cached(vcpu->kvm, &vcpu->arch.pv_eoi.data,
++				      assist_page, sizeof(*assist_page));
++}
++EXPORT_SYMBOL_GPL(kvm_hv_get_assist_page);
++
+ static void stimer_prepare_msg(struct kvm_vcpu_hv_stimer *stimer)
  {
--	struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
-+	struct kvm_vcpu_hv *hv_vcpu = &vcpu->arch.hyperv;
- 
- 	switch (msr) {
- 	case HV_X64_MSR_VP_INDEX:
- 		if (!host || (u32)data >= KVM_MAX_VCPUS)
- 			return 1;
--		hv->vp_index = (u32)data;
-+		hv_vcpu->vp_index = (u32)data;
- 		break;
- 	case HV_X64_MSR_VP_ASSIST_PAGE: {
- 		u64 gfn;
- 		unsigned long addr;
+ 	struct hv_message *msg = &stimer->msg;
+@@ -1076,7 +1094,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
  
  		if (!(data & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE)) {
--			hv->hv_vapic = data;
-+			hv_vcpu->hv_vapic = data;
- 			if (kvm_lapic_enable_pv_eoi(vcpu, 0))
+ 			hv_vcpu->hv_vapic = data;
+-			if (kvm_lapic_enable_pv_eoi(vcpu, 0))
++			if (kvm_lapic_enable_pv_eoi(vcpu, 0, 0))
  				return 1;
  			break;
-@@ -1066,7 +1066,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
- 			return 1;
- 		if (__clear_user((void __user *)addr, PAGE_SIZE))
- 			return 1;
--		hv->hv_vapic = data;
-+		hv_vcpu->hv_vapic = data;
+ 		}
+@@ -1089,7 +1107,8 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
+ 		hv_vcpu->hv_vapic = data;
  		kvm_vcpu_mark_page_dirty(vcpu, gfn);
  		if (kvm_lapic_enable_pv_eoi(vcpu,
- 					    gfn_to_gpa(gfn) | KVM_MSR_ENABLED))
-@@ -1082,7 +1082,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
- 	case HV_X64_MSR_VP_RUNTIME:
- 		if (!host)
+-					    gfn_to_gpa(gfn) | KVM_MSR_ENABLED))
++					    gfn_to_gpa(gfn) | KVM_MSR_ENABLED,
++					    sizeof(struct hv_vp_assist_page)))
  			return 1;
--		hv->runtime_offset = data - current_task_runtime_100ns();
-+		hv_vcpu->runtime_offset = data - current_task_runtime_100ns();
  		break;
- 	case HV_X64_MSR_SCONTROL:
- 	case HV_X64_MSR_SVERSION:
-@@ -1174,11 +1174,11 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata,
- 			  bool host)
- {
- 	u64 data = 0;
--	struct kvm_vcpu_hv *hv = &vcpu->arch.hyperv;
-+	struct kvm_vcpu_hv *hv_vcpu = &vcpu->arch.hyperv;
+ 	}
+diff --git a/arch/x86/kvm/hyperv.h b/arch/x86/kvm/hyperv.h
+index d6aa969e20f19..0e66c12ed2c3d 100644
+--- a/arch/x86/kvm/hyperv.h
++++ b/arch/x86/kvm/hyperv.h
+@@ -62,6 +62,10 @@ void kvm_hv_vcpu_init(struct kvm_vcpu *vcpu);
+ void kvm_hv_vcpu_postcreate(struct kvm_vcpu *vcpu);
+ void kvm_hv_vcpu_uninit(struct kvm_vcpu *vcpu);
  
- 	switch (msr) {
- 	case HV_X64_MSR_VP_INDEX:
--		data = hv->vp_index;
-+		data = hv_vcpu->vp_index;
++bool kvm_hv_assist_page_enabled(struct kvm_vcpu *vcpu);
++bool kvm_hv_get_assist_page(struct kvm_vcpu *vcpu,
++			    struct hv_vp_assist_page *assist_page);
++
+ static inline struct kvm_vcpu_hv_stimer *vcpu_to_stimer(struct kvm_vcpu *vcpu,
+ 							int timer_index)
+ {
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 031bd7f91f98a..ccf5a04de94c3 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -2628,7 +2628,7 @@ int kvm_hv_vapic_msr_read(struct kvm_vcpu *vcpu, u32 reg, u64 *data)
+ 	return 0;
+ }
+ 
+-int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data)
++int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len)
+ {
+ 	u64 addr = data & ~KVM_MSR_ENABLED;
+ 	if (!IS_ALIGNED(addr, 4))
+@@ -2638,7 +2638,7 @@ int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data)
+ 	if (!pv_eoi_enabled(vcpu))
+ 		return 0;
+ 	return kvm_gfn_to_hva_cache_init(vcpu->kvm, &vcpu->arch.pv_eoi.data,
+-					 addr, sizeof(u8));
++					 addr, len);
+ }
+ 
+ void kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
+index ed0ed39abd369..ff6ef9c3d760c 100644
+--- a/arch/x86/kvm/lapic.h
++++ b/arch/x86/kvm/lapic.h
+@@ -120,7 +120,7 @@ static inline bool kvm_hv_vapic_assist_page_enabled(struct kvm_vcpu *vcpu)
+ 	return vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
+ }
+ 
+-int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data);
++int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len);
+ void kvm_lapic_init(void);
+ void kvm_lapic_exit(void);
+ 
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index e10a7a42449b3..ed6b43f344b0c 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2494,7 +2494,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+ 
  		break;
- 	case HV_X64_MSR_EOI:
- 		return kvm_hv_vapic_msr_read(vcpu, APIC_EOI, pdata);
-@@ -1187,10 +1187,10 @@ static int kvm_hv_get_msr(struct kvm_vcpu *vcpu, u32 msr, u64 *pdata,
- 	case HV_X64_MSR_TPR:
- 		return kvm_hv_vapic_msr_read(vcpu, APIC_TASKPRI, pdata);
- 	case HV_X64_MSR_VP_ASSIST_PAGE:
--		data = hv->hv_vapic;
-+		data = hv_vcpu->hv_vapic;
+ 	case MSR_KVM_PV_EOI_EN:
+-		if (kvm_lapic_enable_pv_eoi(vcpu, data))
++		if (kvm_lapic_enable_pv_eoi(vcpu, data, sizeof(u8)))
+ 			return 1;
  		break;
- 	case HV_X64_MSR_VP_RUNTIME:
--		data = current_task_runtime_100ns() + hv->runtime_offset;
-+		data = current_task_runtime_100ns() + hv_vcpu->runtime_offset;
- 		break;
- 	case HV_X64_MSR_SCONTROL:
- 	case HV_X64_MSR_SVERSION:
+ 
 -- 
 2.20.1
 
