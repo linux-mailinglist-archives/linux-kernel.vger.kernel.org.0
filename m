@@ -2,221 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0552A61D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:52:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CDC6A61E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 08:54:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbfICGwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 02:52:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:48338 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726053AbfICGwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 02:52:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B2D34AD44;
-        Tue,  3 Sep 2019 06:52:32 +0000 (UTC)
-Subject: Re: [PATCH 4/5] drm/qxl: use drm_gem_object_funcs callbacks
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        Dave Airlie <airlied@redhat.com>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>
-References: <20190902124126.7700-1-kraxel@redhat.com>
- <20190902124126.7700-5-kraxel@redhat.com>
- <0a9d97c7-26a4-bee6-e9a2-120abbd5277c@suse.de>
- <20190903062417.a4gpgaollk5jruas@sirius.home.kraxel.org>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
- IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
- AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
- 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
- hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
- YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
- 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
- tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
- R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
- E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
- kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
- 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
- 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
- A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
- NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
- VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
- iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
- VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
- iNx9uqqx
-Message-ID: <61b2c31a-6d0a-c42d-a456-ea13b17c9aec@suse.de>
-Date:   Tue, 3 Sep 2019 08:52:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190903062417.a4gpgaollk5jruas@sirius.home.kraxel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="sTjO2c2Xh1w2ytuKOwUgkevjL9602HtnZ"
+        id S1727381AbfICGyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 02:54:50 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45944 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727078AbfICGyt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 02:54:49 -0400
+Received: by mail-pf1-f193.google.com with SMTP id y72so2585931pfb.12
+        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 23:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=dZueRWZd1uZbZNG0riAle5evD2RPXFUMBIbKb1n2stM=;
+        b=FGEtBmTw+UijXa25Ipc7xQ4tq+qIvfBqVg1NmnanWKkTe7yno7WjcxKffa1nMJRAxD
+         AOYney+tqn0eT+NmaNjlkHQOanv2QIDA74pDFkjN2+P7BgoLwUFLkf7WRlMExbShWPkY
+         li/3kKiY2mP6zBN27Xf9uW7QmC1Xh1uz3qOhy4WUq3vxN6fp1IjTUXp0jvN9sbegwtGr
+         jBZD8enNnF01X7NkZsKZipwUc+J5nvDpaxa6aPgYmHKkqoD/xsVarFNXkIr2mGdpaGkC
+         eWL7t0M4ytePKm2cj76neBQtC3gx6gqV2FTcsx3B5KgRrVZLgUaYfZ51ZUJWctoicY7C
+         TIoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dZueRWZd1uZbZNG0riAle5evD2RPXFUMBIbKb1n2stM=;
+        b=VwHwyLWPIFA0qPRYydcsBPygMXFjNTgn163SH3wuhlITf2ULHoBX2Wg5pWzvax71yY
+         eRj1mdx7TzPTEsD3VdvrAzNdHbnTTw6NVPhv0ykabeco6DD3QCdGMCPZlq2JaqGzCCtA
+         Vey7udMtPPRtJyjCa3KwaETSnKvDBIJJQyrgq/PvpR0S1DwFeqn943UzV9QeOpQIhdhE
+         IipMwleqvcFg+82fzE/NFo9IHqgaAikhg9phdepG2r0igAuCWHQT+WFOhYoxwkAJohej
+         /q0NcSilcg0cnxb0WviECa20kmlKvGLdKMIGSYb1AA8kJSqTXg0Cgum19EZ6wmvOvYwz
+         Rlkw==
+X-Gm-Message-State: APjAAAWPgM0w/N7lTuFZkxy23VxBPfLHjEJLWBoNaZszS8RFh2C7gFyG
+        QVoC4D8jjTT7nOs4v2uNASK7bQ==
+X-Google-Smtp-Source: APXvYqxkoDM0uGwkQpRgclz5RRJ0gAHteeMYv8Fxj1KTi5HwH2NFSQ2AQjYuF7bCDIFRGM9OMwEfJg==
+X-Received: by 2002:a63:7887:: with SMTP id t129mr28954591pgc.309.1567493688797;
+        Mon, 02 Sep 2019 23:54:48 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id s7sm5872032pjn.8.2019.09.02.23.54.39
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 02 Sep 2019 23:54:48 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     stable@vger.kernel.org, chris@chris-wilson.co.uk, airlied@linux.ie,
+        davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        edumazet@google.com, peterz@infradead.org, mingo@redhat.com,
+        vyasevich@gmail.com, nhorman@tuxdriver.com,
+        linus.walleij@linaro.org, natechancellor@gmail.com, sre@kernel.org,
+        paulus@samba.org, gregkh@linuxfoundation.org
+Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        netdev@vger.kernel.org, longman@redhat.com,
+        hariprasad.kelam@gmail.com, linux-sctp@vger.kernel.org,
+        linux-gpio@vger.kernel.org, david@lechnology.com,
+        linux-pm@vger.kernel.org, ebiggers@google.com,
+        linux-ppp@vger.kernel.org, lanqing.liu@unisoc.com,
+        linux-serial@vger.kernel.org, arnd@arndb.de,
+        baolin.wang@linaro.org, orsonzhai@gmail.com,
+        vincent.guittot@linaro.org, linux-kernel@vger.kernel.org
+Subject: [BACKPORT 4.14.y 0/8] Candidates from Spreadtrum 4.14 product kernel
+Date:   Tue,  3 Sep 2019 14:53:46 +0800
+Message-Id: <cover.1567492316.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---sTjO2c2Xh1w2ytuKOwUgkevjL9602HtnZ
-Content-Type: multipart/mixed; boundary="iawTWFCrY3WzO9gNZyPaM2AqQcrXu2JUN";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: David Airlie <airlied@linux.ie>, open list
- <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
- "open list:DRM DRIVER FOR QXL VIRTUAL GPU"
- <virtualization@lists.linux-foundation.org>, Dave Airlie
- <airlied@redhat.com>,
- "open list:DRM DRIVER FOR QXL VIRTUAL GPU"
- <spice-devel@lists.freedesktop.org>
-Message-ID: <61b2c31a-6d0a-c42d-a456-ea13b17c9aec@suse.de>
-Subject: Re: [PATCH 4/5] drm/qxl: use drm_gem_object_funcs callbacks
-References: <20190902124126.7700-1-kraxel@redhat.com>
- <20190902124126.7700-5-kraxel@redhat.com>
- <0a9d97c7-26a4-bee6-e9a2-120abbd5277c@suse.de>
- <20190903062417.a4gpgaollk5jruas@sirius.home.kraxel.org>
-In-Reply-To: <20190903062417.a4gpgaollk5jruas@sirius.home.kraxel.org>
+With Arnd's script [1] help, I found some bugfixes in Spreadtrum 4.14 product
+kernel, but missing in v4.14.141:
 
---iawTWFCrY3WzO9gNZyPaM2AqQcrXu2JUN
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+86fda90ab588 net: sctp: fix warning "NULL check before some freeing functions is not needed"
+25a09ce79639 ppp: mppe: Revert "ppp: mppe: Add softdep to arc4"
+d9b308b1f8a1 drm/i915/fbdev: Actually configure untiled displays
+47d3d7fdb10a ip6: fix skb leak in ip6frag_expire_frag_queue()
+5b9cea15a3de serial: sprd: Modify the baud rate calculation formula
+513e1073d52e locking/lockdep: Add debug_locks check in __lock_downgrade()
+957063c92473 pinctrl: sprd: Use define directive for sprd_pinconf_params values
+87a2b65fc855 power: supply: sysfs: ratelimit property read error message
 
-Hi
+[1] https://lore.kernel.org/lkml/20190322154425.3852517-19-arnd@arndb.de/T/
 
-Am 03.09.19 um 08:24 schrieb Gerd Hoffmann:
-> On Mon, Sep 02, 2019 at 04:34:49PM +0200, Thomas Zimmermann wrote:
->> This patch seems unrelated.
->=20
-> Well, patch 5/5 depends on it because it hooks the
-> drm_gem_ttm_print_info helper into the new
-> qxl_object_funcs added by this patch.
+Chris Wilson (1):
+  drm/i915/fbdev: Actually configure untiled displays
 
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+David Lechner (1):
+  power: supply: sysfs: ratelimit property read error message
 
+Eric Biggers (1):
+  ppp: mppe: Revert "ppp: mppe: Add softdep to arc4"
 
->=20
->> Am 02.09.19 um 14:41 schrieb Gerd Hoffmann:
->>> Switch qxl to use drm_gem_object_funcs callbacks
->>> instead of drm_driver callbacks.
->>>
->>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
->>> ---
->>>  drivers/gpu/drm/qxl/qxl_drv.c    |  8 --------
->>>  drivers/gpu/drm/qxl/qxl_object.c | 12 ++++++++++++
->>>  2 files changed, 12 insertions(+), 8 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_=
-drv.c
->>> index 2b726a51a302..996d428fa7e6 100644
->>> --- a/drivers/gpu/drm/qxl/qxl_drv.c
->>> +++ b/drivers/gpu/drm/qxl/qxl_drv.c
->>> @@ -258,16 +258,8 @@ static struct drm_driver qxl_driver =3D {
->>>  #endif
->>>  	.prime_handle_to_fd =3D drm_gem_prime_handle_to_fd,
->>>  	.prime_fd_to_handle =3D drm_gem_prime_fd_to_handle,
->>> -	.gem_prime_pin =3D qxl_gem_prime_pin,
->>> -	.gem_prime_unpin =3D qxl_gem_prime_unpin,
->>> -	.gem_prime_get_sg_table =3D qxl_gem_prime_get_sg_table,
->>>  	.gem_prime_import_sg_table =3D qxl_gem_prime_import_sg_table,
->>> -	.gem_prime_vmap =3D qxl_gem_prime_vmap,
->>> -	.gem_prime_vunmap =3D qxl_gem_prime_vunmap,
->>>  	.gem_prime_mmap =3D qxl_gem_prime_mmap,
->>> -	.gem_free_object_unlocked =3D qxl_gem_object_free,
->>> -	.gem_open_object =3D qxl_gem_object_open,
->>> -	.gem_close_object =3D qxl_gem_object_close,
->>>  	.fops =3D &qxl_fops,
->>>  	.ioctls =3D qxl_ioctls,
->>>  	.irq_handler =3D qxl_irq_handler,
->>> diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/q=
-xl_object.c
->>> index 548dfe6f3b26..29aab7b14513 100644
->>> --- a/drivers/gpu/drm/qxl/qxl_object.c
->>> +++ b/drivers/gpu/drm/qxl/qxl_object.c
->>> @@ -77,6 +77,17 @@ void qxl_ttm_placement_from_domain(struct qxl_bo *=
-qbo, u32 domain, bool pinned)
->>>  	}
->>>  }
->>> =20
->>> +static const struct drm_gem_object_funcs qxl_object_funcs =3D {
->>> +	.free =3D qxl_gem_object_free,
->>> +	.open =3D qxl_gem_object_open,
->>> +	.close =3D qxl_gem_object_close,
->>> +	.pin =3D qxl_gem_prime_pin,
->>> +	.unpin =3D qxl_gem_prime_unpin,
->>> +	.get_sg_table =3D qxl_gem_prime_get_sg_table,
->>> +	.vmap =3D qxl_gem_prime_vmap,
->>> +	.vunmap =3D qxl_gem_prime_vunmap,
->>> +};
->>> +
->>>  int qxl_bo_create(struct qxl_device *qdev,
->>>  		  unsigned long size, bool kernel, bool pinned, u32 domain,
->>>  		  struct qxl_surface *surf,
->>> @@ -100,6 +111,7 @@ int qxl_bo_create(struct qxl_device *qdev,
->>>  		kfree(bo);
->>>  		return r;
->>>  	}
->>> +	bo->tbo.base.funcs =3D &qxl_object_funcs;
->>>  	bo->type =3D domain;
->>>  	bo->pin_count =3D pinned ? 1 : 0;
->>>  	bo->surface_id =3D 0;
->>>
->>
->> --=20
->> Thomas Zimmermann
->> Graphics Driver Developer
->> SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
->> GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
->> HRB 21284 (AG N=C3=BCrnberg)
->>
->=20
->=20
->=20
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->=20
+Eric Dumazet (1):
+  ip6: fix skb leak in ip6frag_expire_frag_queue()
 
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Linux GmbH, Maxfeldstrasse 5, 90409 Nuernberg, Germany
-GF: Felix Imend=C3=B6rffer, Mary Higgins, Sri Rasiah
-HRB 21284 (AG N=C3=BCrnberg)
+Hariprasad Kelam (1):
+  net: sctp: fix warning "NULL check before some freeing functions is
+    not needed"
 
+Lanqing Liu (1):
+  serial: sprd: Modify the baud rate calculation formula
 
---iawTWFCrY3WzO9gNZyPaM2AqQcrXu2JUN--
+Nathan Chancellor (1):
+  pinctrl: sprd: Use define directive for sprd_pinconf_params values
 
---sTjO2c2Xh1w2ytuKOwUgkevjL9602HtnZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+Waiman Long (1):
+  locking/lockdep: Add debug_locks check in __lock_downgrade()
 
------BEGIN PGP SIGNATURE-----
+ drivers/gpu/drm/i915/intel_fbdev.c        |   12 +++++++-----
+ drivers/net/ppp/ppp_mppe.c                |    1 -
+ drivers/pinctrl/sprd/pinctrl-sprd.c       |    6 ++----
+ drivers/power/supply/power_supply_sysfs.c |    3 ++-
+ drivers/tty/serial/sprd_serial.c          |    2 +-
+ include/net/ipv6_frag.h                   |    1 -
+ kernel/locking/lockdep.c                  |    3 +++
+ net/sctp/sm_make_chunk.c                  |   12 ++++--------
+ 8 files changed, 19 insertions(+), 21 deletions(-)
 
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAl1uDa8ACgkQaA3BHVML
-eiPQoQf/Wl/J5K/3RKwGAJERCr8fOCYgY7SYWZoF4BJknAUMFttOVdQ/V3lvJIrR
-4Tr1l5MNfKwJGdOoQuSBvJU+WD3Nq/xQHLvc+2ZqHF3FYASr1EBp88Kj8CHLMdnP
-tsLXP3aE7YQ0eo2XRJnc8lyoOKf0gCLox/wAs+PPQQ8DjGkvg9VoF+a4WaxoTUg2
-s5zvfkuTnQRiSY0AGo9uHl3usBtDb/wE0lM4ZJBlciorkd9dU0vAM4y2uk7QbHJS
-s5gaYaD0eyyd662jyADWR0y/ii2LSZh1Yjb3SqrbCWHkY6HAnW41iregzvydB3fP
-ihmam6WVMv6BKWwDv0OMpnhO9SFktg==
-=BJVE
------END PGP SIGNATURE-----
+-- 
+1.7.9.5
 
---sTjO2c2Xh1w2ytuKOwUgkevjL9602HtnZ--
