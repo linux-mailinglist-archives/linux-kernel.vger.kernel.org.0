@@ -2,105 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28C7BA6319
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EA49A6326
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 09:55:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbfICHwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 03:52:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:55610 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbfICHwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 03:52:31 -0400
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D54E22A09A2
-        for <linux-kernel@vger.kernel.org>; Tue,  3 Sep 2019 07:52:30 +0000 (UTC)
-Received: by mail-qk1-f200.google.com with SMTP id k68so18191314qkb.19
-        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 00:52:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xgXUEt0EG11zEupkHnOGVQFJLT+xonOin/Bks/3F7us=;
-        b=dLmsJ1JL+vAUWXQGzkRSlYkrF7WstJ33903eoBEzX7t165aMbRT4AZmyamkDKJMu77
-         WjtPy//l8nRqvuViv6V8ChKimSQH5GtRZ2I3TUHBaEfvdoIeQrY16DAJMQ7wbPRZPf0R
-         akCulXfJRzhkJm//4BuHjLV3g82LGmOfT/cA/eIA8kpAQkXU0+wtu0z6jpgA2RWJU1bg
-         gRFgwSe8CgKPFyn5z31uancz6ohpCm76u9KrT8FkByNfiRvMV3+rWGYqYUrwhdzgPss/
-         4LZu0DW++kct2RFI4VdFs6aZfQQe9LZYJZ1rlXY8lND6O6ccHBt4jEPtgTzolBqG7JgZ
-         ELHA==
-X-Gm-Message-State: APjAAAVlItYUiAT6r7O+PZZtpaUYrO9nQMRJ885SXQkfIXF4TVTHqiwa
-        D6o2TS+zxErma2g/6Th0tn+iaBkiXyjfPDjQdWNsy3+cQuiVDhI7W0klTw0+XsqaMIaUg99/HxA
-        TlAhnkT9eKgjqRaXWDy9Mn3b5
-X-Received: by 2002:a37:5844:: with SMTP id m65mr11138654qkb.8.1567497150226;
-        Tue, 03 Sep 2019 00:52:30 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxPKf56D4zulPkjS1uniJi2ZthFcDbuCfyyWQiloLWW+r84IVWn8HgdNxVCd23C2u8N+9ZKag==
-X-Received: by 2002:a37:5844:: with SMTP id m65mr11138647qkb.8.1567497150074;
-        Tue, 03 Sep 2019 00:52:30 -0700 (PDT)
-Received: from redhat.com (bzq-79-180-62-110.red.bezeqint.net. [79.180.62.110])
-        by smtp.gmail.com with ESMTPSA id d45sm5358006qtc.70.2019.09.03.00.52.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 00:52:29 -0700 (PDT)
-Date:   Tue, 3 Sep 2019 03:52:24 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Stefano Garzarella <sgarzare@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org,
-        Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] vsock/virtio: limit the memory used per-socket
-Message-ID: <20190903034747-mutt-send-email-mst@kernel.org>
-References: <20190730093539.dcksure3vrykir3g@steredhat>
- <20190730163807-mutt-send-email-mst@kernel.org>
- <20190801104754.lb3ju5xjfmnxioii@steredhat>
- <20190801091106-mutt-send-email-mst@kernel.org>
- <20190801133616.sik5drn6ecesukbb@steredhat>
- <20190901025815-mutt-send-email-mst@kernel.org>
- <20190901061707-mutt-send-email-mst@kernel.org>
- <20190902095723.6vuvp73fdunmiogo@steredhat>
- <20190903003823-mutt-send-email-mst@kernel.org>
- <20190903074554.mq6spyivftuodahy@steredhat>
+        id S1728006AbfICHy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 03:54:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34456 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726946AbfICHy5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 03:54:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=G28iE/deGPG0P4VQTMIwzwCBVO7DdIpw/n7sMkoDPlI=; b=Gx11pokC7ZUSl6Ij7jfDO7foa
+        BzXtIUvI7BsKuZKZpzM+5G7ZKYV2bgimYA3TvtJtVnJmrEnfKf4/DZYEwLbWECE1CXBm38zkHi+33
+        uAl73vaUfsiml7p5HmwBrZr7owO5zm1VQYk0wiXRzfwITffEOTqlRY2wp1pjlRiwzPUUqryDTiTVk
+        SaUovfNgliw3iF28YkNVvFDQ7BMk89W+Cy4V6ekrFWKmxau3LTU03Zy3bshbvteHJqKf62dyihpPN
+        8pJwTi952NtGpBG4HsfMuKd9nAW69xR2W9ZRvjh33aDIekkJwH93lq1b+vDAJoxE1OTiWvP+L+OnS
+        cx2bk6/1Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i53dU-0008BU-Bc; Tue, 03 Sep 2019 07:53:56 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6470330116F;
+        Tue,  3 Sep 2019 09:53:16 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6EFC529C073C2; Tue,  3 Sep 2019 09:53:52 +0200 (CEST)
+Date:   Tue, 3 Sep 2019 09:53:52 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>, dalias@libc.org,
+        linux-sh@vger.kernel.org, catalin.marinas@arm.com,
+        dave.hansen@linux.intel.com, heiko.carstens@de.ibm.com,
+        linuxarm@huawei.com, jiaxun.yang@flygoat.com,
+        linux-mips@vger.kernel.org, mwb@linux.vnet.ibm.com,
+        paulus@samba.org, hpa@zytor.com, sparclinux@vger.kernel.org,
+        chenhc@lemote.com, will@kernel.org, cai@lca.pw,
+        linux-s390@vger.kernel.org, ysato@users.sourceforge.jp,
+        mpe@ellerman.id.au, x86@kernel.org, rppt@linux.ibm.com,
+        borntraeger@de.ibm.com, dledford@redhat.com, mingo@redhat.com,
+        jeffrey.t.kirsher@intel.com, benh@kernel.crashing.org,
+        jhogan@kernel.org, nfont@linux.vnet.ibm.com, mattst88@gmail.com,
+        len.brown@intel.com, gor@linux.ibm.com, anshuman.khandual@arm.com,
+        bp@alien8.de, luto@kernel.org, tglx@linutronix.de,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, rth@twiddle.net,
+        axboe@kernel.dk, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, ralf@linux-mips.org,
+        tbogendoerfer@suse.de, paul.burton@mips.com,
+        linux-alpha@vger.kernel.org, ink@jurassic.park.msu.ru,
+        akpm@linux-foundation.org, robin.murphy@arm.com,
+        davem@davemloft.net
+Subject: [PATCH] x86/mm: Fix cpumask_of_node() error condition
+Message-ID: <20190903075352.GY2369@hirez.programming.kicks-ass.net>
+References: <1567231103-13237-1-git-send-email-linyunsheng@huawei.com>
+ <1567231103-13237-3-git-send-email-linyunsheng@huawei.com>
+ <20190831085539.GG2369@hirez.programming.kicks-ass.net>
+ <4d89c688-49e4-a2aa-32ee-65e36edcd913@huawei.com>
+ <20190831161247.GM2369@hirez.programming.kicks-ass.net>
+ <ae64285f-5134-4147-7b02-34bb5d519e8c@huawei.com>
+ <20190902072542.GN2369@hirez.programming.kicks-ass.net>
+ <20190902181731.GB35858@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190903074554.mq6spyivftuodahy@steredhat>
+In-Reply-To: <20190902181731.GB35858@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 09:45:54AM +0200, Stefano Garzarella wrote:
-> On Tue, Sep 03, 2019 at 12:39:19AM -0400, Michael S. Tsirkin wrote:
-> > On Mon, Sep 02, 2019 at 11:57:23AM +0200, Stefano Garzarella wrote:
-> > > > 
-> > > > Assuming we miss nothing and buffers < 4K are broken,
-> > > > I think we need to add this to the spec, possibly with
-> > > > a feature bit to relax the requirement that all buffers
-> > > > are at least 4k in size.
-> > > > 
-> > > 
-> > > Okay, should I send a proposal to virtio-dev@lists.oasis-open.org?
-> > 
-> > How about we also fix the bug for now?
-> 
-> This series unintentionally fix the bug because we are introducing a way
-> to split the packet depending on the buffer size ([PATCH 4/5] vhost/vsock:
-> split packets to send using multiple buffers) and we removed the limit
-> to 4K buffers ([PATCH 5/5] vsock/virtio: change the maximum packet size
-> allowed).
-> 
-> I discovered that there was a bug while we discussed memory accounting.
-> 
-> Do you think it's enough while we introduce the feature bit in the spec?
-> 
-> Thanks,
-> Stefano
+On Mon, Sep 02, 2019 at 08:17:31PM +0200, Ingo Molnar wrote:
 
-Well locking is also broken (patch 3/5).  It seems that 3/5 and 4/5 work
-by themselves, right?  So how about we ask Dave to send these to stable?
-Also, how about 1/5? Also needed for stable?
+> Nitpicking: please also fix the kernel message to say ">=".
 
+Full patch below.
 
--- 
-MST
+---
+Subject: x86/mm: Fix cpumask_of_node() error condition
+
+When CONFIG_DEBUG_PER_CPU_MAPS we validate that the @node argument of
+cpumask_of_node() is a valid node_id. It however forgets to check for
+negative numbers. Fix this by explicitly casting to unsigned.
+
+  (unsigned)node >= nr_node_ids
+
+verifies: 0 <= node < nr_node_ids
+
+Also ammend the error message to match the condition.
+
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ arch/x86/mm/numa.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+index e6dad600614c..4123100e0eaf 100644
+--- a/arch/x86/mm/numa.c
++++ b/arch/x86/mm/numa.c
+@@ -861,9 +861,9 @@ void numa_remove_cpu(int cpu)
+  */
+ const struct cpumask *cpumask_of_node(int node)
+ {
+-	if (node >= nr_node_ids) {
++	if ((unsigned)node >= nr_node_ids) {
+ 		printk(KERN_WARNING
+-			"cpumask_of_node(%d): node > nr_node_ids(%u)\n",
++			"cpumask_of_node(%d): (unsigned)node >= nr_node_ids(%u)\n",
+ 			node, nr_node_ids);
+ 		dump_stack();
+ 		return cpu_none_mask;
