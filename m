@@ -2,58 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C0B4A6A5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52BF7A6A68
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 15:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729316AbfICNuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 09:50:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38396 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728679AbfICNuZ (ORCPT
+        id S1729416AbfICNu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 09:50:58 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39281 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729169AbfICNu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 09:50:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qAvvvTd/kG24q/y3ajQFQZLkXwSn6IFFif86NAbeoXA=; b=tTKvxXx15sgkgyowmyu2biBee
-        jd97cdn7jtEzlUV8Y2AJ9nKvpEci1B2v5YXfCWKmEOF1HzgR/Tp8B3bJ22mEoFHrhJNqIOA2uqYUe
-        kCdaddNGAShMcg8n7+w97paoSFHWSzDlOhLBNg3G7A1t5B0/A9HOXHynLh0ew/QOdi32UT6BNIAQV
-        n4yv5lJrxW2kDyJhXCQ8t/qYrq5YzdGiEtxe63iqZYf0DAPCU7N39qKuFkDeALYtXZKmB8c8b2ogE
-        0SzGFHlclZbnfFP8QviIpGO4kVvlGnaEyyzmAt6mZKz64bexoz6sbREJcdFRfhUCQhcxvCOVPUr2e
-        TIw42cing==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i59CS-0003Rw-6p; Tue, 03 Sep 2019 13:50:24 +0000
-Date:   Tue, 3 Sep 2019 06:50:24 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@infradead.org>, Qian Cai <cai@lca.pw>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: "fs/namei.c: keep track of nd->root refcount status" causes boot
- panic
-Message-ID: <20190903135024.GA8274@infradead.org>
-References: <7C6CCE98-1E22-433C-BF70-A3CBCDED4635@lca.pw>
- <20190903123719.GF1131@ZenIV.linux.org.uk>
- <20190903130456.GA9567@infradead.org>
- <20190903134832.GH1131@ZenIV.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190903134832.GH1131@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Tue, 3 Sep 2019 09:50:57 -0400
+Received: by mail-wr1-f68.google.com with SMTP id t16so17606817wra.6
+        for <linux-kernel@vger.kernel.org>; Tue, 03 Sep 2019 06:50:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=aOyM32hMSWR1qRMtRvlicJ7f1Z5Z1CPh11gGjkkMTtY=;
+        b=SEnDskUHk7MKEpfjF3e0404Vx6RbV3Us34tpICArdFY5gu+Ad0LCkJkr+CWV8p0R7D
+         0P9jX11NcJR/cppXMJNg4DK7nZ4wLb6hHDDRE5vjvkM60LHU4/vAUwvFhKtPrHwDZ2ed
+         MSUFYAAPsEguqTREsrN9QgP2MicHw3nwD4o0WSQ9aRwsqQbzSqEACxn4LH5D+Vp78CVk
+         zGVrqCc8E494TwnqdASdi1A/hNkXjwD2RO4iTxLPHlIZqeX4ExGXV9jYgJPO74QRp3dQ
+         cpqFJjn1ShGo0tkINNFZOWHirhB8CwhLCdXMAd2igfWtPSS/kpS4LJwQGOzp98a8ZqJS
+         bO/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aOyM32hMSWR1qRMtRvlicJ7f1Z5Z1CPh11gGjkkMTtY=;
+        b=B/6lMMtlCA6mATSta4fRoBg9kikon3eEysSJLR/lRzYIOhVofqtCYV7vG1Wt/IoHyg
+         1m+hq/AeR5O/8gxe83WjF6uekrFe5rEIxIQ+/EbOjh7TSlcbQRk2+bL47Jvfb5I7qRBe
+         E0l1ccDO4ahEusmgv+Xx4ZyNJKLa+jTTC9L63PD7CkotHlcYvAZLUdvESpKtWx2OWmt/
+         Jd1VUr8+ghtDXm9jQTJuGoMTvA5mhexU3dBzjY+p6FLHwiYmxvmWaIOOdTMFocdoMxlM
+         CwXdWW7Q1iTukfmyZt3u8pszNhLE11ZRHn/8aexNgdmSIvlc+2dQRvU3MdFn/swxEZWh
+         9OnQ==
+X-Gm-Message-State: APjAAAWAQuRaXou6GBKFF808wjuk6qfqUZmqNqkHA3veW6KOYUQfo7Bk
+        69lWLaT3sH6SCw7TR/rcyBNAqA==
+X-Google-Smtp-Source: APXvYqwcNl225P8oK2CwZViBuGxf6CcNTfssQRviSxt65FF0BMbjIKf7EyVLOO4EJX1BTSuZUsMZLg==
+X-Received: by 2002:adf:9e09:: with SMTP id u9mr43453065wre.169.1567518656051;
+        Tue, 03 Sep 2019 06:50:56 -0700 (PDT)
+Received: from localhost.localdomain ([95.147.198.93])
+        by smtp.gmail.com with ESMTPSA id a17sm20710665wmm.47.2019.09.03.06.50.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Sep 2019 06:50:55 -0700 (PDT)
+From:   Lee Jones <lee.jones@linaro.org>
+To:     agross@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH 1/1] soc: qcom: geni: Provide parameter error checking
+Date:   Tue,  3 Sep 2019 14:50:52 +0100
+Message-Id: <20190903135052.13827-1-lee.jones@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 03, 2019 at 02:48:32PM +0100, Al Viro wrote:
-> Not sure what would be the best way to do it...  I don't mind breaking
-> the out-of-tree modules, whatever their license is; what I would rather
-> avoid is _quiet_ breaking of such.
+When booting with ACPI, the Geni Serial Engine is not set as the I2C/SPI
+parent and thus, the wrapper (parent device) is unassigned.  This causes
+the kernel to crash with a null dereference error.
 
-Any out of tree module running against an upstream kernel will need
-a recompile for a new version anyway.  So I would not worry about it
-at all.
+Fixes: 8bc529b25354 ("soc: qcom: geni: Add support for ACPI")
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+Since we are already at -rc7 this patch should be processed ASAP - thank you.
+
+drivers/soc/qcom/qcom-geni-se.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/soc/qcom/qcom-geni-se.c b/drivers/soc/qcom/qcom-geni-se.c
+index d5cf953b4337..7d622ea1274e 100644
+--- a/drivers/soc/qcom/qcom-geni-se.c
++++ b/drivers/soc/qcom/qcom-geni-se.c
+@@ -630,6 +630,9 @@ int geni_se_tx_dma_prep(struct geni_se *se, void *buf, size_t len,
+ 	struct geni_wrapper *wrapper = se->wrapper;
+ 	u32 val;
+ 
++	if (!wrapper)
++		return -EINVAL;
++
+ 	*iova = dma_map_single(wrapper->dev, buf, len, DMA_TO_DEVICE);
+ 	if (dma_mapping_error(wrapper->dev, *iova))
+ 		return -EIO;
+@@ -663,6 +666,9 @@ int geni_se_rx_dma_prep(struct geni_se *se, void *buf, size_t len,
+ 	struct geni_wrapper *wrapper = se->wrapper;
+ 	u32 val;
+ 
++	if (!wrapper)
++		return -EINVAL;
++
+ 	*iova = dma_map_single(wrapper->dev, buf, len, DMA_FROM_DEVICE);
+ 	if (dma_mapping_error(wrapper->dev, *iova))
+ 		return -EIO;
+-- 
+2.17.1
+
