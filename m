@@ -2,202 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97D93A60D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 07:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A403BA60D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  3 Sep 2019 07:53:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfICFvN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 3 Sep 2019 01:51:13 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42977 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfICFvN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 3 Sep 2019 01:51:13 -0400
-Received: by mail-pf1-f195.google.com with SMTP id w22so1627814pfi.9
-        for <linux-kernel@vger.kernel.org>; Mon, 02 Sep 2019 22:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TkPI7O1fVqnq6R/nJ+Pnt20RhQ4GXULllM+CXg8v034=;
-        b=K51UO9D1aK3b/3+8I8RJfUnmD0e4/8iXNOPu94gB7YnCEMvStQ4ALdBjUCj5CQCsNK
-         A1DXvkowreIHI/5gRRYxx9ZT8oZJq7skjn5YAvwNNDBhdy2b+89gjVkJPFxELRiAGCpH
-         Er4/qOP3ASoq2/XBObfI2FaPdQjTHx5bnKmU8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TkPI7O1fVqnq6R/nJ+Pnt20RhQ4GXULllM+CXg8v034=;
-        b=SJ72jR3FCXBViBY0TIXbmHNU3flxACbRCkJv0YgVQTgEZKsGQVLNXMuhSkXg/Aw3MZ
-         7+LEPZrveTgF8+ogO9EQlYPi6oD32xJbDUKT6eZAVgWfMq2XveyAmvymBPPV5i83AodG
-         atZ+sRmRLNvBgifdrvLjLWSADLdQGZIcPPvUdiCsWT/Fm7GQ9olaWWbea71DvwMmtw9I
-         6kAdgboLl47/W7vdE2PfJXntXp82XZKAAnBFAdjMA9nhbQZyxBLzqBXEzkd/bzBB6cH3
-         9q6oyjJnAhN1JpAKaFzgZv9UiXjpw1H665yfyPsGIQ6iZmjQd7qWb4Jjn7wYCVlBnzUO
-         hHMA==
-X-Gm-Message-State: APjAAAXdjLvT3kZ8sDOL33nWnkwcMMyT+0AJoVsrO+M26B0U9moUTnXP
-        ht5YI8K5x3bTqcoDu6Usmwi/PkE8zIY=
-X-Google-Smtp-Source: APXvYqy+o0Y8D6HEyRM06kw7O9+KYZ0JH6HO+T0Xt4tKvQ5MDBFAx9QHtwodeC4EErYbNCsjkWMd+g==
-X-Received: by 2002:a63:2a08:: with SMTP id q8mr28160269pgq.415.1567489872170;
-        Mon, 02 Sep 2019 22:51:12 -0700 (PDT)
-Received: from localhost ([2401:fa00:1:10:79b4:bd83:e4a5:a720])
-        by smtp.gmail.com with ESMTPSA id g24sm6508687pfo.178.2019.09.02.22.51.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2019 22:51:11 -0700 (PDT)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, a.hajda@samsung.com,
-        Laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch, kuninori.morimoto.gx@renesas.com,
-        sam@ravnborg.org, cychiang@chromium.org, dianders@chromium.org,
-        dgreid@chromium.org, tzungbi@chromium.org,
-        zhengxing@rock-chips.com, cain.cai@rock-chips.com,
-        eddie.cai@rock-chips.com, jeffy.chen@rock-chips.com,
-        kuankuan.y@gmail.com, enric.balletbo@collabora.com,
-        dri-devel@lists.freedesktop.org, Yakir Yang <ykk@rock-chips.com>
-Subject: [PATCH] drm: bridge/dw_hdmi: add audio sample channel status setting
-Date:   Tue,  3 Sep 2019 13:51:03 +0800
-Message-Id: <20190903055103.134764-1-cychiang@chromium.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
-MIME-Version: 1.0
+        id S1726719AbfICFxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 3 Sep 2019 01:53:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56664 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725895AbfICFxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 3 Sep 2019 01:53:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0CECBAC35;
+        Tue,  3 Sep 2019 05:53:07 +0000 (UTC)
+Date:   Tue, 03 Sep 2019 07:53:06 +0200
+Message-ID: <s5hy2z6hqnx.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Jian-Hong Pan <jian-hong@endlessm.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        Linux Upstreaming Team <linux@endlessm.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ALSA: hda/realtek - Enable internal speaker & headset mic of ASUS UX431FL
+In-Reply-To: <CAPpJ_edbfN_6yfxjBSV5dnp40ufCeWeMiF_QdsPmWmHubagCQw@mail.gmail.com>
+References: <20190902100054.6941-1-jian-hong@endlessm.com>
+        <s5hwoerx6wf.wl-tiwai@suse.de>
+        <CAPpJ_edbfN_6yfxjBSV5dnp40ufCeWeMiF_QdsPmWmHubagCQw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yakir Yang <ykk@rock-chips.com>
+On Tue, 03 Sep 2019 07:30:04 +0200,
+Jian-Hong Pan wrote:
+> 
+> Takashi Iwai <tiwai@suse.de> 於 2019年9月2日 週一 下午7:41寫道：
+> >
+> > On Mon, 02 Sep 2019 12:00:56 +0200,
+> > Jian-Hong Pan wrote:
+> > >
+> > > Original pin node values of ASUS UX431FL with ALC294:
+> > >
+> > > 0x12 0xb7a60140
+> > > 0x13 0x40000000
+> > > 0x14 0x90170110
+> > > 0x15 0x411111f0
+> > > 0x16 0x411111f0
+> > > 0x17 0x90170111
+> > > 0x18 0x411111f0
+> > > 0x19 0x411111f0
+> > > 0x1a 0x411111f0
+> > > 0x1b 0x411111f0
+> > > 0x1d 0x4066852d
+> > > 0x1e 0x411111f0
+> > > 0x1f 0x411111f0
+> > > 0x21 0x04211020
+> > >
+> > > 1. Has duplicated internal speakers (0x14 & 0x17) which makes the output
+> > >    route become confused. So, the output volume cannot be changed by
+> > >    setting.
+> > > 2. Misses the headset mic pin node.
+> > >
+> > > This patch disables the confusing speaker (NID 0x14) and enables the
+> > > headset mic (NID 0x19).
+> >
+> > Is 0x14 really a dead pin?  Or is a surround/bass speaker or such?
+> 
+> I checked Windows (updated to latest and including Realtek MEDIA) on
+> ASUS UX431FL laptop again.  Although it has two internal speaker pins,
+> there is only one set of internal speaker including left/right
+> channels.  And the audio test (Speaker Setup) only shows left/right
+> channels.  So, NID 0x14 can be disabled.
 
-When transmitting IEC60985 linear PCM audio, we configure the
-Audio Sample Channel Status information of all the channel
-status bits in the IEC60958 frame.
-Refer to 60958-3 page 10 for frequency, original frequency, and
-wordlength setting.
+OK, thanks for clarification.
+I applied the patch now.
 
-This fix the issue that audio does not come out on some monitors
-(e.g. LG 22CV241)
 
-Signed-off-by: Yakir Yang <ykk@rock-chips.com>
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 59 +++++++++++++++++++++++
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.h | 20 ++++++++
- 2 files changed, 79 insertions(+)
-
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index bd65d0479683..34d46e25d610 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -582,6 +582,63 @@ static unsigned int hdmi_compute_n(unsigned int freq, unsigned long pixel_clk)
- 	return n;
- }
- 
-+static void hdmi_set_schnl(struct dw_hdmi *hdmi)
-+{
-+	u8 aud_schnl_samplerate;
-+	u8 aud_schnl_8;
-+
-+	/* These registers are on RK3288 using version 2.0a. */
-+	if (hdmi->version != 0x200a)
-+		return;
-+
-+	switch (hdmi->sample_rate) {
-+	case 32000:
-+		aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_32K;
-+		break;
-+	case 44100:
-+		aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_44K1;
-+		break;
-+	case 48000:
-+		aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_48K;
-+		break;
-+	case 88200:
-+		aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_88K2;
-+		break;
-+	case 96000:
-+		aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_96K;
-+		break;
-+	case 176400:
-+		aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_176K4;
-+		break;
-+	case 192000:
-+		aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_192K;
-+		break;
-+	case 768000:
-+		aud_schnl_samplerate = HDMI_FC_AUDSCHNLS7_SMPRATE_768K;
-+		break;
-+	default:
-+		dev_warn(hdmi->dev, "Unsupported audio sample rate (%u)\n",
-+			 hdmi->sample_rate);
-+		return;
-+	}
-+
-+	/* set channel status register */
-+	hdmi_modb(hdmi, aud_schnl_samplerate, HDMI_FC_AUDSCHNLS7_SMPRATE_MASK,
-+		  HDMI_FC_AUDSCHNLS7);
-+
-+	/*
-+	 * Set original frequency to be the same as frequency.
-+	 * Use one-complement value as stated in IEC60958-3 page 13.
-+	 */
-+	aud_schnl_8 = (~aud_schnl_samplerate) <<
-+			HDMI_FC_AUDSCHNLS8_ORIGSAMPFREQ_OFFSET;
-+
-+	/* This means word length is 16 bit. Refer to IEC60958-3 page 12. */
-+	aud_schnl_8 |= 2 << HDMI_FC_AUDSCHNLS8_WORDLEGNTH_OFFSET;
-+
-+	hdmi_writeb(hdmi, aud_schnl_8, HDMI_FC_AUDSCHNLS8);
-+}
-+
- static void hdmi_set_clk_regenerator(struct dw_hdmi *hdmi,
- 	unsigned long pixel_clk, unsigned int sample_rate)
- {
-@@ -620,6 +677,8 @@ static void hdmi_set_clk_regenerator(struct dw_hdmi *hdmi,
- 	hdmi->audio_cts = cts;
- 	hdmi_set_cts_n(hdmi, cts, hdmi->audio_enable ? n : 0);
- 	spin_unlock_irq(&hdmi->audio_lock);
-+
-+	hdmi_set_schnl(hdmi);
- }
- 
- static void hdmi_init_clk_regenerator(struct dw_hdmi *hdmi)
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-index 6988f12d89d9..619ebc1c8354 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.h
-@@ -158,6 +158,17 @@
- #define HDMI_FC_SPDDEVICEINF                    0x1062
- #define HDMI_FC_AUDSCONF                        0x1063
- #define HDMI_FC_AUDSSTAT                        0x1064
-+#define HDMI_FC_AUDSV                           0x1065
-+#define HDMI_FC_AUDSU                           0x1066
-+#define HDMI_FC_AUDSCHNLS0                      0x1067
-+#define HDMI_FC_AUDSCHNLS1                      0x1068
-+#define HDMI_FC_AUDSCHNLS2                      0x1069
-+#define HDMI_FC_AUDSCHNLS3                      0x106a
-+#define HDMI_FC_AUDSCHNLS4                      0x106b
-+#define HDMI_FC_AUDSCHNLS5                      0x106c
-+#define HDMI_FC_AUDSCHNLS6                      0x106d
-+#define HDMI_FC_AUDSCHNLS7                      0x106e
-+#define HDMI_FC_AUDSCHNLS8                      0x106f
- #define HDMI_FC_DATACH0FILL                     0x1070
- #define HDMI_FC_DATACH1FILL                     0x1071
- #define HDMI_FC_DATACH2FILL                     0x1072
-@@ -706,6 +717,15 @@ enum {
- /* HDMI_FC_AUDSCHNLS7 field values */
- 	HDMI_FC_AUDSCHNLS7_ACCURACY_OFFSET = 4,
- 	HDMI_FC_AUDSCHNLS7_ACCURACY_MASK = 0x30,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_MASK = 0x0f,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_192K = 0xe,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_176K4 = 0xc,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_96K = 0xa,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_768K = 0x9,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_88K2 = 0x8,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_32K = 0x3,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_48K = 0x2,
-+	HDMI_FC_AUDSCHNLS7_SMPRATE_44K1 = 0x0,
- 
- /* HDMI_FC_AUDSCHNLS8 field values */
- 	HDMI_FC_AUDSCHNLS8_ORIGSAMPFREQ_MASK = 0xf0,
--- 
-2.23.0.187.g17f5b7556c-goog
-
+Takashi
